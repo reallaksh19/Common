@@ -1,0 +1,303 @@
+--- a/GLB_Viewer_Editor/src/core/app.js
++++ b/GLB_Viewer_Editor/src/core/app.js
+@@ -17,8 +17,6 @@
+ import { renderLogs }     from '../tabs/logs-tab.js';
+ import { renderPcfGlbExporterPanel } from '../js/pcf2glb/ui/PcfGlbExporterPanel.js';
+ import { renderAdvancedGlbViewerPanel } from '../js/pcf2glb/ui/AdvancedGlbViewerPanel.js';
+-import { renderProGlbEditorPanel } from '../js/pcf2glb/pro-editor/ui/ProGlbEditorPanel.js';
+-import { renderPRO2EDITOR_Panel } from '../js/pcf2glb/pro2-editor/ui/PRO2EDITOR_Panel.js';
+ 
+ const IS_LOCAL_DEV = (() => {
+   const host = (window.location && window.location.hostname || '').toLowerCase();
+@@ -27,8 +25,8 @@
+ 
+ const ALL_TABS = [
+   { id: 'adv-glb',   label: 'Advanced GLB Viewer', render: renderAdvancedGlbViewerPanel },
+-  { id: 'pro-glb',   label: 'Pro GLB Editor', render: renderProGlbEditorPanel },
+-  { id: 'pro2-glb',  label: 'PRO2 Editor', render: renderPRO2EDITOR_Panel },
++  { id: 'pro-glb',   label: 'Pro GLB Editor', render: renderProGlbEditorFallback },
++  { id: 'pro2-glb',  label: 'PRO2 Editor', render: renderPro2EditorFallback },
+   { id: 'glb-export',label: 'Simple GLB Exporter', render: renderPcfGlbExporterPanel },
+   { id: 'debug',     label: 'Debug',       render: renderDebug    }
+ ];
+@@ -39,7 +37,35 @@
+   return tabId !== 'debug' && tabId !== 'logs' && tabId !== 'config';
+ }
+ 
+-let _activeRenderer = null;
++let _activeDestroyFn = null;
++
++function renderMissingEditorTab(container, title, details) {
++  container.innerHTML = `
++    <div style="padding:24px;font-family:system-ui,sans-serif;">
++      <h2 style="margin:0 0 12px;">${title}</h2>
++      <div style="padding:12px 14px;border:1px solid #e5a50a;background:#2b2412;color:#f8e7b0;border-radius:8px;">
++        <div style="font-weight:700;margin-bottom:8px;">Editor implementation is not present in this source bundle.</div>
++        <ul style="margin:0;padding-left:18px;">${details.map(d => `<li>${d}</li>`).join('')}</ul>
++      </div>
++    </div>
++  `;
++}
++
++function renderProGlbEditorFallback(container) {
++  renderMissingEditorTab(container, 'Pro GLB Editor', [
++    'Missing folder: src/js/pcf2glb/pro-editor/',
++    'app.js references the tab, but no implementation exists in this ZIP.',
++    'Restore the Pro editor sources or remove the tab registration.'
++  ]);
++}
++
++function renderPro2EditorFallback(container) {
++  renderMissingEditorTab(container, 'PRO2 Editor', [
++    'Missing folder: src/js/pcf2glb/pro2-editor/',
++    'The original work instruction asked for a cloned second-generation editor, but only the tab import remained.',
++    'Use a guarded fallback until the PRO2 source tree is added.'
++  ]);
++}
+ 
+ /** Bootstrap the app — called from index.html */
+ export function init() {
+@@ -137,24 +163,35 @@
+   });
+ }
+ 
++
+ function _switchTab(tabId) {
+   state.activeTab = tabId;
+   const content = document.getElementById('tab-content');
+   if (!content) return;
+ 
+-  // Update active button
++  if (typeof _activeDestroyFn === 'function') {
++    try { _activeDestroyFn(); } catch (err) { console.warn('[app] destroy failed:', err); }
++    _activeDestroyFn = null;
++  }
++
+   document.querySelectorAll('.tab-btn').forEach(btn => {
+     btn.classList.toggle('active', btn.dataset.tab === tabId);
+   });
+   _updateTabVisibility();
+ 
+-  // Render tab
+   const tab = TABS.find(t => t.id === tabId);
+   if (!tab) return;
+-  tab.render(content);
++
++  content.innerHTML = '';
++  const rendered = tab.render(content);
++  Promise.resolve(rendered).then(result => {
++    if (result && typeof result.destroy === 'function') _activeDestroyFn = result.destroy;
++    else if (result && typeof result.dispose === 'function') _activeDestroyFn = result.dispose;
++  }).catch(err => console.warn('[app] tab render promise rejected:', err));
+ 
+   emit('tab-changed', tabId);
+ }
++
+ 
+ // ── File loading ───────────────────────────────────────────────────────────
+ 
+--- a/CRF_with_GLB_viewer/src/core/app.js
++++ b/CRF_with_GLB_viewer/src/core/app.js
+@@ -46,7 +46,7 @@
+   return tabId !== 'debug' && tabId !== 'logs' && tabId !== 'config';
+ }
+ 
+-let _activeRenderer = null;
++let _activeDestroyFn = null;
+ 
+ /** Bootstrap the app — called from index.html */
+ export function init() {
+@@ -144,24 +144,34 @@
+   });
+ }
+ 
++
+ function _switchTab(tabId) {
+   state.activeTab = tabId;
+   const content = document.getElementById('tab-content');
+   if (!content) return;
+ 
+-  // Update active button
++  if (typeof _activeDestroyFn === 'function') {
++    try { _activeDestroyFn(); } catch (err) { console.warn('[app] destroy failed:', err); }
++    _activeDestroyFn = null;
++  }
++
+   document.querySelectorAll('.tab-btn').forEach(btn => {
+     btn.classList.toggle('active', btn.dataset.tab === tabId);
+   });
+   _updateTabVisibility();
+ 
+-  // Render tab
+   const tab = TABS.find(t => t.id === tabId);
+   if (!tab) return;
+-  tab.render(content);
++  content.innerHTML = '';
++  const rendered = tab.render(content);
++  Promise.resolve(rendered).then(result => {
++    if (result && typeof result.destroy === 'function') _activeDestroyFn = result.destroy;
++    else if (result && typeof result.dispose === 'function') _activeDestroyFn = result.dispose;
++  }).catch(err => console.warn('[app] tab render promise rejected:', err));
+ 
+   emit('tab-changed', tabId);
+ }
++
+ 
+ // ── File loading ───────────────────────────────────────────────────────────
+ 
+--- a/GLB_Viewer_Editor/src/js/pcf2glb/glb/exportSceneToGLB.js
++++ b/GLB_Viewer_Editor/src/js/pcf2glb/glb/exportSceneToGLB.js
+@@ -1,4 +1,4 @@
+-import { GLTFExporter } from 'gltf-exporter';
++import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+ 
+ export async function exportSceneToGLB(scene) {
+   const exporter = new GLTFExporter();
+--- a/CRF_with_GLB_viewer/src/js/pcf2glb/glb/exportSceneToGLB.js
++++ b/CRF_with_GLB_viewer/src/js/pcf2glb/glb/exportSceneToGLB.js
+@@ -1,4 +1,4 @@
+-import { GLTFExporter } from 'gltf-exporter';
++import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+ 
+ export async function exportSceneToGLB(scene) {
+   const exporter = new GLTFExporter();
+--- a/GLB_Viewer_Editor/src/tabs/geometry-tab.js
++++ b/GLB_Viewer_Editor/src/tabs/geometry-tab.js
+@@ -229,6 +229,13 @@
+   });
+ 
+   container.querySelector('#btn-fit-all')?.addEventListener('click', () => _renderer?.resetView());
++
++container.querySelector('#btn-fit-sel')?.addEventListener('click', () => _renderer?.fitSelection?.());
++container.querySelector('#btn-fly')?.addEventListener('click', () => {
++    const toolBtns = container.querySelectorAll('.btn-icon[data-mode]');
++    toolBtns.forEach(b => b.classList.remove('active'));
++    _renderer?.setNavMode?.('fly');
++});
+   container.querySelector('#btn-proj')?.addEventListener('click', () => _renderer?.toggleProjection());
+ 
+   // Settings Drawer toggle
+--- a/GLB_Viewer_Editor/src/geometry/isometric-renderer.js
++++ b/GLB_Viewer_Editor/src/geometry/isometric-renderer.js
+@@ -762,6 +762,10 @@
+           // so it computes the Box3 correctly using world matrix (including sceneRoot rotations).
+           fitCamera(this._camera, this._controls, this._selectedObject, this._container.clientWidth, this._container.clientHeight);
+       });
++  }
++
++  fitSelection() {
++      this._frameSelection();
+   }
+ 
+   resetView() {
+@@ -1583,8 +1587,14 @@
+     }
+   }
+ 
+-  destroy() {
+-    cancelAnimationFrame(this._animId);
+-    this._renderer.dispose();
+-  }
++
++destroy() {
++  cancelAnimationFrame(this._animId);
++  if (this._viewCubeEl?.remove) this._viewCubeEl.remove();
++  if (this._gizmoEl?.remove) this._gizmoEl.remove();
++  if (this._orbitTargetEl?.remove) this._orbitTargetEl.remove();
++  if (this._css2d?.domElement?.remove) this._css2d.domElement.remove();
++  if (this._renderer?.domElement?.remove) this._renderer.domElement.remove();
++  this._renderer?.dispose();
+ }
++}
+--- a/GLB_Viewer_Editor/src/js/pcf2glb/ui/AdvancedGlbViewerPanel.js
++++ b/GLB_Viewer_Editor/src/js/pcf2glb/ui/AdvancedGlbViewerPanel.js
+@@ -71,6 +71,7 @@
+   });
+ 
+   let currentFile = null;
++  let currentObjectUrl = null;
+ 
+   fileInput.addEventListener('change', (e) => {
+     if (e.target.files.length > 0) {
+@@ -84,24 +85,47 @@
+ 
+   const viewerApp = createViewerApp(previewContainer, toolbarContainer, propPanel, propContent, debugLogs);
+ 
+-  btnLoad.addEventListener('click', async () => {
+-      if (!currentFile) return;
+-      const url = URL.createObjectURL(currentFile);
+-      await viewerApp.loadGLB(url);
+-      btnExportPcfx.disabled = false;
+-  });
++
++btnLoad.addEventListener('click', async () => {
++    if (!currentFile) return;
++    try {
++        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
++        currentObjectUrl = URL.createObjectURL(currentFile);
++        await viewerApp.loadGLB(currentObjectUrl);
++        btnExportPcfx.disabled = false;
++    } catch (err) {
++        console.error('Advanced viewer load failed', err);
++        alert(`Failed to load file: ${err.message || err}`);
++    }
++});
+ 
+   btnImportPcfx.addEventListener('click', () => {
+       const input = document.createElement('input');
+       input.type = 'file';
+-      input.accept = '.pcfx';
++      input.accept = '.pcfx,.pcf';
+       input.onchange = async (e) => {
+           const file = e.target.files?.[0];
+           if (!file) return;
+-          const text = await file.text();
+-          try {
+-              const pcfx = JSON.parse(text);
+-              const items = pcfx.canonical?.items || [];
++
++const text = await file.text();
++try {
++    if (/\.pcf$/i.test(file.name)) {
++        const { parsePcfText } = await import('../pcf/parsePcfText.js');
++        const { normalizePcfModel } = await import('../pcf/normalizePcfModel.js');
++        const { buildExportScene } = await import('../glb/buildExportScene.js');
++        const { exportSceneToGLB } = await import('../glb/exportSceneToGLB.js');
++        const parsed = parsePcfText(text, console);
++        const model = normalizePcfModel(parsed, console);
++        const scene = buildExportScene(model, console);
++        const blob = await exportSceneToGLB(scene);
++        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
++        currentObjectUrl = URL.createObjectURL(blob);
++        await viewerApp.loadGLB(currentObjectUrl);
++        btnExportPcfx.disabled = false;
++        return;
++    }
++    const pcfx = JSON.parse(text);
++    const items = pcfx.canonical?.items || [];
+               if (items.length === 0) {
+                   alert('No canonical items found in PCFX file.');
+                   return;
+@@ -177,4 +201,11 @@
+       propPanel.style.display = 'none';
+   });
+ 
++
++  return {
++    destroy() {
++      if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
++      viewerApp?.dispose?.();
++    }
++  };
+ }
+--- a/GLB_Viewer_Editor/src/js/pcf2glb/advanced/createViewerApp.js
++++ b/GLB_Viewer_Editor/src/js/pcf2glb/advanced/createViewerApp.js
+@@ -216,6 +216,8 @@
+           }, undefined, reject);
+       });
+     },
++    getSceneIndex: () => sceneIndex,
++    getCurrentRoot: () => currentRoot,
+     dispose: () => {
+       if (animationId) cancelAnimationFrame(animationId);
+       if (disposeRenderer) disposeRenderer();
