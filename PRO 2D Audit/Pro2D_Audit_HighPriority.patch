@@ -1,0 +1,227 @@
+*** Begin Patch
+*** Add File: js/pro2d/Pro2D_ToolRegistry.mjs
++export const Pro2D_toolRegistry = [
++  { id: 'select', label: 'Select', icon: '🖱', zone: 'draft', implemented: true },
++  { id: 'marquee', label: 'Marquee', icon: '▭', zone: 'draft', implemented: true, note: 'Uses existing drag selection in viewport; expose explicitly in UI.' },
++  { id: 'measure', label: 'Measure', icon: '📏', zone: 'draft', implemented: false, note: 'No measure overlay or distance report is currently implemented.' },
++  { id: 'line', label: 'Pipe', icon: '／', zone: 'draft', implemented: true },
++  { id: 'bend', label: 'Bend', icon: '↷', zone: 'draft', implemented: false, note: 'No bend creation command exists yet.' },
++  { id: 'tee', label: 'Tee', icon: '┬', zone: 'draft', implemented: false, note: 'No tee creation command exists yet.' },
++  { id: 'polyline', label: 'Polyline', icon: '〰', zone: 'draft', implemented: true },
++  { id: 'spline', label: 'Spline', icon: '∿', zone: 'draft', implemented: true },
++  { id: 'support', label: 'Support', icon: '✚', zone: 'fittings', implemented: true },
++  { id: 'valve', label: 'Valve', icon: '◇', zone: 'fittings', implemented: true },
++  { id: 'flange', label: 'Flange', icon: '▮', zone: 'fittings', implemented: true },
++  { id: 'fvf', label: 'FVF', icon: '▮◇▮', zone: 'fittings', implemented: true },
++  { id: 'reducer', label: 'Reducer', icon: '⬘', zone: 'fittings', implemented: true },
++  { id: 'break', label: 'Break', icon: '✂', zone: 'repair', implemented: false, note: 'Ribbon button exists but there is no break command path.' },
++  { id: 'connect', label: 'Connect', icon: '⛓', zone: 'repair', implemented: false, note: 'Ribbon button exists but there is no connect command path.' },
++  { id: 'stretch', label: 'Stretch', icon: '↔', zone: 'repair', implemented: false, note: 'Ribbon button exists but there is no stretch command path.' },
++  { id: 'gapClean', label: 'Gap Clean', icon: '🧹', zone: 'repair', implemented: false, note: 'Placeholder only.' },
++  { id: 'overlapSolver', label: 'Overlap', icon: '🧩', zone: 'repair', implemented: false, note: 'Placeholder only.' },
++  { id: 'convertBend', label: 'Convert Bend', icon: '↷', zone: 'repair', implemented: false, note: 'Placeholder only.' },
++  { id: 'convertTee', label: 'Convert Tee', icon: '┬', zone: 'repair', implemented: false, note: 'Placeholder only.' },
++];
++
++export const Pro2D_toolMap = Object.fromEntries(Pro2D_toolRegistry.map((t) => [t.id, t]));
++
+*** Add File: js/pro2d/Pro2D_DebugDock.tsx
++import React from 'react';
++
++const Pro2D_DebugDock: React.FC<{ logs: Array<{ level: string; text: string }>; validation: any; benchmark: any; pipelineMetrics: any }> = ({ logs, validation, benchmark, pipelineMetrics }) => {
++  return (
++    <div className="border-t border-slate-800 bg-black/60 text-[11px] text-slate-300 grid grid-cols-3 min-h-[140px] max-h-[180px] overflow-hidden">
++      <div className="border-r border-slate-800 p-2 overflow-auto">
++        <div className="uppercase tracking-wide text-cyan-400 mb-2">Action Log</div>
++        <div className="space-y-1">
++          {logs.length === 0 ? <div className="text-slate-500">No actions recorded.</div> : logs.slice(-30).reverse().map((log, i) => (
++            <div key={i} className={log.level === 'error' ? 'text-rose-300' : 'text-slate-300'}>{log.text}</div>
++          ))}
++        </div>
++      </div>
++      <div className="border-r border-slate-800 p-2 overflow-auto">
++        <div className="uppercase tracking-wide text-amber-400 mb-2">Validation</div>
++        <div>Errors: {validation?.summary?.errors ?? 0}</div>
++        <div>Warnings: {validation?.summary?.warnings ?? 0}</div>
++        <div>Entities: {validation?.summary?.totalEntities ?? 0}</div>
++        <div>Nodes: {validation?.summary?.totalNodes ?? 0}</div>
++        <div className="mt-2 space-y-1">
++          {(validation?.issues || []).slice(0, 8).map((issue: any, idx: number) => (
++            <div key={idx} className={issue.severity === 'error' ? 'text-rose-300' : 'text-amber-200'}>{issue.code}: {issue.message}</div>
++          ))}
++        </div>
++      </div>
++      <div className="p-2 overflow-auto">
++        <div className="uppercase tracking-wide text-emerald-400 mb-2">Performance / Pipeline</div>
++        <div>Emit route points: {pipelineMetrics?.routePointCount ?? '—'}</div>
++        <div>Emit count: {pipelineMetrics?.emitCount ?? '—'}</div>
++        <div>Auto supports: {pipelineMetrics?.autoSupportCount ?? '—'}</div>
++        <div>Final elements: {pipelineMetrics?.finalElementCount ?? '—'}</div>
++        <div className="mt-2">Benchmark mock load: {benchmark?.phase1LoadMs ?? '—'} ms</div>
++        <div>Benchmark validate: {benchmark?.phase1ValidateMs ?? '—'} ms</div>
++        <div>Benchmark 10k load: {benchmark?.phase3Load10kMs ?? '—'} ms</div>
++        <div>Benchmark 10k validate: {benchmark?.phase3Validate10kMs ?? '—'} ms</div>
++      </div>
++    </div>
++  );
++};
++
++export default Pro2D_DebugDock;
++
+*** Update File: js/pro2d/Pro2D_RibbonConfig.mjs
+@@
+-export const Pro2D_ribbonSections = [
++import { Pro2D_toolMap } from './Pro2D_ToolRegistry.mjs';
++
++export const Pro2D_ribbonSections = [
+@@
+   {
+     id: 'draft',
+     title: 'Draft',
+     actions: [
+-      { id: 'tool_select', label: 'Select', icon: '🖱' },
++      { id: 'tool_select', label: 'Select', icon: '🖱', implemented: Pro2D_toolMap.select.implemented },
++      { id: 'tool_marquee', label: 'Marquee', icon: '▭', implemented: Pro2D_toolMap.marquee.implemented, note: Pro2D_toolMap.marquee.note },
++      { id: 'tool_measure', label: 'Measure', icon: '📏', implemented: Pro2D_toolMap.measure.implemented, note: Pro2D_toolMap.measure.note },
+       { id: 'tool_line', label: 'Pipe', icon: '／' },
++      { id: 'tool_bend', label: 'Bend', icon: '↷', implemented: Pro2D_toolMap.bend.implemented, note: Pro2D_toolMap.bend.note },
++      { id: 'tool_tee', label: 'Tee', icon: '┬', implemented: Pro2D_toolMap.tee.implemented, note: Pro2D_toolMap.tee.note },
+       { id: 'tool_polyline', label: 'Polyline', icon: '〰' },
+       { id: 'tool_spline', label: 'Spline', icon: '∿' },
+       { id: 'tool_support', label: 'Support', icon: '✚' },
+     ],
+   },
+@@
+-      { id: 'convertBend', label: 'Convert Bend', icon: '↷' },
+-      { id: 'convertTee', label: 'Convert Tee', icon: '┬' },
++      { id: 'convertBend', label: 'Convert Bend', icon: '↷', implemented: false, note: Pro2D_toolMap.convertBend.note },
++      { id: 'convertTee', label: 'Convert Tee', icon: '┬', implemented: false, note: Pro2D_toolMap.convertTee.note },
+     ],
+   },
+@@
+-      { id: 'break', label: 'Break', icon: '✂' },
+-      { id: 'connect', label: 'Connect', icon: '⛓' },
+-      { id: 'stretch', label: 'Stretch', icon: '↔' },
+-      { id: 'gapClean', label: 'Gap Clean', icon: '🧹' },
+-      { id: 'overlapSolver', label: 'Overlap', icon: '🧩' },
++      { id: 'break', label: 'Break', icon: '✂', implemented: false, note: Pro2D_toolMap.break.note },
++      { id: 'connect', label: 'Connect', icon: '⛓', implemented: false, note: Pro2D_toolMap.connect.note },
++      { id: 'stretch', label: 'Stretch', icon: '↔', implemented: false, note: Pro2D_toolMap.stretch.note },
++      { id: 'gapClean', label: 'Gap Clean', icon: '🧹', implemented: false, note: Pro2D_toolMap.gapClean.note },
++      { id: 'overlapSolver', label: 'Overlap', icon: '🧩', implemented: false, note: Pro2D_toolMap.overlapSolver.note },
+     ],
+   },
+*** Update File: js/pro2d/Pro2D_Ribbon.tsx
+@@
+-                <button
++                <button
+                   key={action.id}
+-                  className="rounded-lg border border-slate-700 bg-slate-900 hover:border-amber-500 hover:text-amber-200 px-3 py-2 text-xs flex items-center gap-2"
+-                  onClick={() => onAction(action.id)}
+-                  title={action.label}
++                  className={`rounded-lg border px-3 py-2 text-xs flex items-center gap-2 ${action.implemented === false ? 'border-slate-800 bg-slate-950 text-slate-500 cursor-not-allowed opacity-60' : 'border-slate-700 bg-slate-900 hover:border-amber-500 hover:text-amber-200'}`}
++                  onClick={() => action.implemented === false ? null : onAction(action.id)}
++                  title={action.implemented === false ? `${action.label} — ${action.note || 'Planned, not implemented yet.'}` : action.label}
++                  disabled={action.implemented === false}
+                 >
+                   <span>{action.icon}</span>
+                   <span>{action.label}</span>
+                 </button>
+*** Update File: js/pro2d/Pro2D_LeftRail.tsx
+@@
+ import React from 'react';
+ import { useSceneStore } from '../smart2dcanvas/Smart2Dcanvas_SceneStore';
++import { Pro2D_toolMap } from './Pro2D_ToolRegistry.mjs';
+@@
+ const TOOLS = [
+   { id: 'select', label: 'Select', icon: '🖱' },
++  { id: 'marquee', label: 'Marquee', icon: '▭' },
++  { id: 'measure', label: 'Measure', icon: '📏' },
+   { id: 'pan', label: 'Pan', icon: '✋' },
+   { id: 'line', label: 'Pipe', icon: '／' },
++  { id: 'bend', label: 'Bend', icon: '↷' },
++  { id: 'tee', label: 'Tee', icon: '┬' },
+   { id: 'polyline', label: 'Polyline', icon: '〰' },
+   { id: 'spline', label: 'Spline', icon: '∿' },
+@@
+       {TOOLS.map((tool) => (
++        (() => {
++          const meta = Pro2D_toolMap[tool.id] || { implemented: true };
++          const disabled = meta.implemented === false;
++          return (
+         <button
+           key={tool.id}
+-          className={`rounded-lg border px-2 py-2 text-xs text-center ${activeTool === tool.id ? 'border-amber-500 bg-amber-500/10 text-amber-200' : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500'}`}
+-          onClick={() => setActiveTool(tool.id as any)}
+-          title={tool.label}
++          className={`rounded-lg border px-2 py-2 text-xs text-center ${disabled ? 'border-slate-900 bg-slate-950 text-slate-600 cursor-not-allowed opacity-60' : activeTool === tool.id ? 'border-amber-500 bg-amber-500/10 text-amber-200' : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500'}`}
++          onClick={() => disabled ? null : setActiveTool(tool.id as any)}
++          title={disabled ? `${tool.label} — ${meta.note || 'Planned, not implemented yet.'}` : tool.label}
++          disabled={disabled}
+         >
+           <div className="text-base">{tool.icon}</div>
+           <div className="mt-1 leading-tight">{tool.label}</div>
+         </button>
++          );
++        })()
+       ))}
+     </div>
+   );
+*** Update File: js/pro2d/Pro2D_AppShell.tsx
+@@
+ import Pro2D_PropertyPanel from './Pro2D_PropertyPanel';
++import Pro2D_DebugDock from './Pro2D_DebugDock';
+@@
+   const [pipelineMetrics, setPipelineMetrics] = useState<any>(null);
++  const [logs, setLogs] = useState<Array<{ level: string; text: string }>>([]);
+@@
+   const loadDoc = (nextDoc: any) => {
+     const validated = Pro2D_validateState(nextDoc);
+     setDoc({ ...nextDoc });
+     setValidation({ ...validated });
+     pushToStore(Pro2D_toSceneBundle(nextDoc));
+     clearSelection();
++    setLogs((prev) => [...prev, { level: 'info', text: `[doc] loaded ${Object.keys(nextDoc?.entities || {}).length} entities / ${Object.keys(nextDoc?.nodes || {}).length} nodes` }].slice(-200));
+   };
+@@
+     if (actionId === 'validate') {
+       const next = { ...doc };
+-      setValidation({ ...Pro2D_validateState(next) });
++      const result = { ...Pro2D_validateState(next) };
++      setValidation(result);
++      setLogs((prev) => [...prev, { level: result.summary.errors > 0 ? 'error' : 'info', text: `[validate] ${result.summary.errors} errors / ${result.summary.warnings} warnings` }].slice(-200));
+       return;
+     }
+@@
+     if (actionId === 'benchmark') {
+-      setBenchmark(Pro2D_runBenchmark());
++      const result = Pro2D_runBenchmark();
++      setBenchmark(result);
++      setLogs((prev) => [...prev, { level: 'info', text: `[benchmark] mock=${result.phase1LoadMs}ms validate=${result.phase1ValidateMs}ms big=${result.phase3Load10kMs}ms` }].slice(-200));
+       return;
+     }
+@@
+     if (actionId === 'emitCuts' || actionId === 'autoSupports' || actionId === 'routeToPcf') {
+       const metrics = Pro2D_runEmitPipeline({ route: Pro2D_mockRoute, bore: 250, emits: Pro2D_mockEmits }).metrics;
+       setPipelineMetrics(metrics);
++      setLogs((prev) => [...prev, { level: 'info', text: `[pipeline:${actionId}] emits=${metrics.emitCount} supports=${metrics.autoSupportCount} elements=${metrics.finalElementCount}` }].slice(-200));
+       return;
+     }
+     if (actionId.startsWith('tool_')) {
+-      useSceneStore.getState().setActiveTool(actionId.replace('tool_', '') as any);
++      const toolId = actionId.replace('tool_', '');
++      useSceneStore.getState().setActiveTool(toolId as any);
++      setLogs((prev) => [...prev, { level: 'info', text: `[tool] ${toolId}` }].slice(-200));
+       return;
+     }
+-    // Placeholder commands kept visible on ribbon for phase 3 tools.
+-    console.info('[Pro2D] Ribbon action invoked:', actionId);
++    setLogs((prev) => [...prev, { level: 'error', text: `[unhandled] ${actionId} has no command implementation` }].slice(-200));
++    console.info('[Pro2D] Ribbon action invoked:', actionId);
+   };
+@@
+           )}
++          <Pro2D_DebugDock logs={logs} validation={validation} benchmark={benchmark} pipelineMetrics={pipelineMetrics} />
+           <Smart2Dcanvas_StatusBar />
+         </div>
+*** End Patch
