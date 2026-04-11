@@ -1,4 +1,4 @@
-# Misc Calc Audit Report — `misc calc(2).zip`
+# Misc Calc Audit Report 
 
 ## Scope
 Audited the uploaded patch against the agreed requirements:
