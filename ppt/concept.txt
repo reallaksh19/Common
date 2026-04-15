@@ -1,0 +1,46 @@
+
+Pipe profiles are mentioned PR-01, PR-02… (PR=flange to flange), Most of PR are used in multiple configs i.e, 108m,119m and 18m. It is mandatory to match support location and support type.
+refer attached pdfs
+
+In addition, a detailed interchangeability study has been performed across multiple configurations (18 m / 108 m / 199 m models). The resulting support locations and support types have been incorporated in the attached markup.
+
+It should be noted that, considering the requirement for removable supports, the routing and support arrangement have been optimized to ensure that sleepers carrying Rest (R) and Rest + Guide (R+G) experience minimal lateral loads. 
+Line Stop (LS) has been provided at the T-post to ensure sleeper interchangeability and to achieve optimized load distribution.
+
+As per standard practice:
+•	The piping layout shall be updated based on stress recommendations and CSS interchangeability requirements.
+•	Civil shall update their deliverables based on CSS interchangeability requirements.
+
+Unlike other projects, we may not have continuous PS numbers across the plant; instead, unique PS numbers will be assigned for distinct pipe profiles.
+
+Civil Load :
+To issue civil loads, please share the relevant link of Navis with Civil once model is ready and include the following notes:
+1.	At all R and R+G locations, unless otherwise specified, consider loads as per below
+Sleeper (Except near Tie-in and near Crossover):
+R/ R+G:
+o	Fvertical=2.0 kN
+o	Flateral=0.6 kN 
+T-Post:
+R:
+o	Fvertical=2.75 kN
+o	Flateral=0.82 kN 
+R+G:
+o	Fvertical=3.5 kN
+o	Flateral=2 kN 
+2.	At R+G+LS locations, consider Vertical and Lateral loads as below
+T-post/Sleeper (Anchor/LineStop):
+o	Fvertical=2.7 5kN
+o	Flateral= 1.0 kN 
+o	Axial load = 5 kN (HOLD) 
+3.	At Tie-in supports (Sleepers 2 support near tie-in in each production and steam), consider
+R/R+G:
+o	Fvertical=6 kN
+o	Flateral=1.5 kN 
+4.	Sleepers near Crossover, consider
+R/R+G:
+o	Fvertical=8 kN
+o	Flateral=3 kN 
+5.	Choke valve actuator requires support, consider Load as follows(HOLD)
+R:
+o	Fvertical=2.75 kN
+o	Flateral=0.82 kN 
