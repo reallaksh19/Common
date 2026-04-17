@@ -1,0 +1,950 @@
+diff -ruN a/src/App.jsx b/src/App.jsx
+--- a/src/App.jsx	2026-04-17 17:30:00.000000000 +0000
++++ b/src/App.jsx	2026-04-17 19:04:21.181993715 +0000
+@@ -13,6 +13,7 @@
+ import FollowingPage from './pages/FollowingPage';
+ import TopicDetail from './pages/TopicDetail';
+ import MorePage from './pages/MorePage';
++import InsightPage from './pages/InsightPage';
+ import BottomNav from './components/BottomNav';
+ import ScrollToTop from './components/ScrollToTop';
+ import DebugConsole from './components/DebugConsole';
+diff -ruN a/src/adapters/embeddingsAdapter.js b/src/adapters/embeddingsAdapter.js
+--- a/src/adapters/embeddingsAdapter.js	2026-04-17 17:30:00.000000000 +0000
++++ b/src/adapters/embeddingsAdapter.js	2026-04-17 19:05:27.886460755 +0000
+@@ -1,12 +1,99 @@
+-export async function fetchEmbeddings(texts) {
+-  // Simple fallback/mock implementation for the adapter
+-  return texts.map(text => {
+-    const vec = new Array(384).fill(0);
+-    // basic deterministic vector based on string length and first char
+-    if (text && text.length > 0) {
+-      vec[0] = text.length / 1000;
+-      vec[1] = text.charCodeAt(0) / 255;
++import { GoogleGenerativeAI } from "@google/generative-ai";
++
++// FIX C-1: removed "|| true" — fallback now only activates when explicitly set
++//          or when no API key is available
++// FIX C-2: all paths use EMBEDDING_DIM=768 consistently;
++//          fallback uses content-sensitive vectors so equal-length strings don't collide
++
++const EMBEDDING_DIM = 768;
++const embedCache = new Map();
++
++// FNV-1a 32-bit — better distribution than original
++function hashText(text) {
++    let hash = 0x811c9dc5;
++    for (let i = 0; i < text.length; i++) {
++        hash ^= text.charCodeAt(i);
++        hash = (hash * 0x01000193) >>> 0;
+     }
+-    return vec;
+-  });
++    return hash.toString(36);
++}
++
++/**
++ * Content-sensitive deterministic fallback embedding.
++ * Uses character bigram/trigram frequencies so texts of equal length
++ * produce different vectors. Unit-norm output of EMBEDDING_DIM dimensions.
++ * NOT semantically meaningful — use only when API key is absent.
++ */
++function deterministicFallbackVector(text) {
++    const vec = new Float64Array(EMBEDDING_DIM);
++    const norm = text.toLowerCase();
++    for (let i = 0; i < norm.length; i++) {
++        const c0 = norm.charCodeAt(i);
++        const c1 = i + 1 < norm.length ? norm.charCodeAt(i + 1) : 0;
++        const c2 = i + 2 < norm.length ? norm.charCodeAt(i + 2) : 0;
++        vec[(c0 * 31 + c1) % EMBEDDING_DIM]          += 1;
++        vec[(c0 * 961 + c1 * 31 + c2) % EMBEDDING_DIM] += 0.5;
++    }
++    let mag = 0;
++    for (let i = 0; i < EMBEDDING_DIM; i++) mag += vec[i] * vec[i];
++    mag = Math.sqrt(mag) || 1;
++    return Array.from(vec).map(x => x / mag);
++}
++
++export async function getEmbeddings(texts) {
++    const apiKey = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || (typeof process !== 'undefined' && process.env && (process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY)) || ''; 
++
++    // FIX C-1: only fall back when flag explicitly set OR no key present
++    const isTestFallback =
++        ((typeof process !== 'undefined' && process.env && process.env.EMBEDDING_TEST_FALLBACK === '1')) ||
++        !apiKey || apiKey.trim() === ''; 
++
++    const results = new Array(texts.length);
++    const toFetch = [];
++
++    texts.forEach((text, i) => {
++        const key = hashText(text);
++        const cached = embedCache.get(key);
++        if (cached) {
++            results[i] = cached;
++        } else {
++            toFetch.push({ text, originalIndex: i });
++        }
++    });
++
++    if (toFetch.length === 0) return results;
++
++    if (isTestFallback) {
++        toFetch.forEach((item) => {
++            const vec = deterministicFallbackVector(item.text);
++            results[item.originalIndex] = vec;
++            embedCache.set(hashText(item.text), vec);
++        });
++        return results;
++    }
++
++    try {
++        const genAI = new GoogleGenerativeAI(apiKey);
++        const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
++        const requests = toFetch.map(item => ({
++            content: { role: "user", parts: [{ text: item.text }] }
++        }));
++        const response = await model.batchEmbedContents({ requests });
++        const embeddings = response.embeddings.map(e => e.values);
++        toFetch.forEach((item, i) => {
++            const vec = embeddings[i];
++            results[item.originalIndex] = vec;
++            embedCache.set(hashText(item.text), vec);
++        });
++    } catch (err) {
++        console.error("[getEmbeddings] Gemini API call failed, using content-sensitive fallback:", err.message);
++        // FIX C-2: error path uses same dim/method as normal fallback — never produces zero vectors
++        toFetch.forEach(item => {
++            const vec = deterministicFallbackVector(item.text);
++            results[item.originalIndex] = vec;
++            embedCache.set(hashText(item.text), vec);
++        });
++    }
++
++    return results;
+ }
+diff -ruN a/src/adapters/insightFetcher.js b/src/adapters/insightFetcher.js
+--- a/src/adapters/insightFetcher.js	2026-04-17 17:30:00.000000000 +0000
++++ b/src/adapters/insightFetcher.js	2026-04-17 19:04:21.182923133 +0000
+@@ -1,16 +1,37 @@
+-import { fetchNewsForInsight } from './newsFetcher.js';
+-import { fetchEmbeddings } from './embeddingsAdapter.js';
+-import { extractEntities } from './nlpAdapter.js';
+-import { runInsightPipeline } from '../insight/src/pipeline/pipeline.js';
+-
+-export async function fetchAndProcessInsights() {
+-  const articles = await fetchNewsForInsight();
+-  if (!articles.length) return [];
+-
+-  const results = await runInsightPipeline(articles, {
+-    embeddingsAdapter: fetchEmbeddings,
+-    nlpAdapter: extractEntities
+-  });
++import { runInsightPipeline, applyIncrementalUpdate, DEFAULT_CONFIG, normalizeStory } from '../insight/src/index.ts';
++import { fetchStoriesForSlot as fetchRawStoriesForSlot } from './newsFetcher.js';
++import { getEmbeddings } from './embeddingsAdapter.js';
++import { extractEntities, extractVerbs, extractNumbers, extractKeywords } from './nlpAdapter.js';
+ 
+-  return results.clusters || [];
++export async function slotFetcher(slot) {
++  const rawStories = await fetchRawStoriesForSlot(slot);
++  if (!rawStories.length) return [];
++
++  const texts = rawStories.map((story) => `${story.title || ''} ${story.summary || ''}`.trim());
++  const embeddings = await getEmbeddings(texts);
++
++  const enriched = await Promise.all(rawStories.map(async (raw, index) => {
++    const text = texts[index];
++    const [entities, keywords, verbs, numbers] = await Promise.all([
++      extractEntities(text),
++      extractKeywords(text),
++      extractVerbs(text),
++      extractNumbers(text),
++    ]);
++
++    return normalizeStory(
++      raw,
++      slot,
++      DEFAULT_CONFIG,
++      embeddings[index],
++      entities,
++      keywords,
++      verbs,
++      numbers,
++    );
++  }));
++
++  return enriched.filter(Boolean);
+ }
++
++export { runInsightPipeline, applyIncrementalUpdate, DEFAULT_CONFIG };
+diff -ruN a/src/adapters/newsFetcher.js b/src/adapters/newsFetcher.js
+--- a/src/adapters/newsFetcher.js	2026-04-17 17:30:00.000000000 +0000
++++ b/src/adapters/newsFetcher.js	2026-04-17 19:04:19.444246039 +0000
+@@ -1,17 +1,113 @@
+-import { fetchNewsData } from '../services/newsService.js';
++// FIX C-5: wire real fetchNews from newsService; mock data removed entirely
++// eslint-disable-next-line
++import { fetchNews } from "../services/newsService.js";
+ 
+-export async function fetchNewsForInsight() {
+-  const news = await fetchNewsData();
+-  if (!news || !news.articles) {
+-    return [];
+-  }
+-  return news.articles.map(article => ({
+-    id: article.url || Math.random().toString(36).substring(7),
+-    title: article.title || '',
+-    snippet: article.description || '',
+-    content: article.content || '',
+-    url: article.url || '',
+-    publishedAt: article.publishedAt || new Date().toISOString(),
+-    source: article.source?.name || 'Unknown'
+-  }));
++function hashString(str) {
++    let hash = 0x811c9dc5;
++    for (let i = 0; i < str.length; i++) {
++        hash ^= str.charCodeAt(i);
++        hash = (hash * 0x01000193) >>> 0;
++    }
++    return Math.abs(hash).toString(36);
++}
++
++// Queries per slot — cast broadly enough to return results in the time window
++const SLOT_QUERIES = {
++    now:      "latest news today",
++    minus4h:  "news today India world",
++    minus12h: "news India world economy",
++    minus24h: "India world news yesterday",
++};
++
++// Map source names to the sourceGroup keys used by normalize.ts TIER_MAP
++function toSourceGroup(sourceName) {
++    if (!sourceName) return "unknown_group";
++    const lower = sourceName.toLowerCase().replace(/\s+/g, "_");
++    const MAP = {
++        "the_hindu":          "the_hindu",
++        "hindu":              "the_hindu",
++        "bbc":                "bbc",
++        "bbc_news":           "bbc",
++        "reuters":            "reuters",
++        "ndtv":               "ndtv",
++        "ndtv_news":          "ndtv",
++        "times_of_india":     "toi",
++        "toi":                "toi",
++        "financial_express":  "financial express",
++        "the_financial_express": "financial express",
++        "moneycontrol":       "moneycontrol",
++        "oman_observer":      "oman observer",
++        "oman_daily_observer":"oman observer",
++        "bloomberg":          "bloomberg",
++        "ap":                 "ap",
++        "associated_press":   "ap",
++    };
++    return MAP[lower] || lower + "_group";
++}
++
++/**
++ * Returns RawStory[] for the given snapshot slot.
++ * Uses the real newsService fetchNews under the hood.
++ * Falls back to an empty array on network failure — pipeline handles gracefully.
++ */
++export async function fetchStoriesForSlot(slot) {
++    const now = Date.now();
++    const WINDOWS = {
++        now:      { minAge: 0,              maxAge: 2  * 60 * 60 * 1000 },
++        minus4h:  { minAge: 3  * 60 * 60 * 1000, maxAge: 5  * 60 * 60 * 1000 },
++        minus12h: { minAge: 10 * 60 * 60 * 1000, maxAge: 14 * 60 * 60 * 1000 },
++        minus24h: { minAge: 20 * 60 * 60 * 1000, maxAge: 28 * 60 * 60 * 1000 },
++    };
++
++    const { minAge, maxAge } = WINDOWS[slot] ?? WINDOWS.now;
++    const query = SLOT_QUERIES[slot] ?? "latest news";
++
++    let articles = [];
++    try {
++        articles = await fetchNews(query) ?? [];
++    } catch (err) {
++        console.warn(`[newsFetcher] fetchNews failed for slot=${slot}:`, err.message);
++        return [];
++    }
++
++    const rawStories = [];
++
++    for (const item of articles) {
++        const title   = (item.title || item.headline || "").trim();
++        const summary = (item.summary || item.description || item.text || "").trim();
++        const url     = (item.url || item.link || "").trim();
++        const source  = (item.source?.name || item.source || "Unknown").trim();
++
++        if (!title || !url) continue;
++
++        // Determine publishedAt — prefer explicit field, fall back to slot midpoint
++        let publishedAt = 0;
++        const rawDate = item.publishedAt || item.pubDate || item.date || item.releaseDate;
++        if (rawDate) {
++            const parsed = typeof rawDate === "number" ? rawDate : new Date(rawDate).getTime();
++            if (!isNaN(parsed)) publishedAt = parsed;
++        }
++        if (!publishedAt) {
++            // Assign to midpoint of the slot window as best estimate
++            publishedAt = now - (minAge + (maxAge - minAge) / 2);
++        }
++
++        const age = now - publishedAt;
++        if (age < minAge || age > maxAge) continue;
++
++        rawStories.push({
++            id:          item.id || item.article_id || hashString(url || title),
++            title,
++            summary:     summary || "No summary available.",
++            source,
++            sourceGroup: toSourceGroup(source),
++            url,
++            publishedAt,
++            category:    item.category || "General",
++            region:      item.region || "",
++            language:    item.language || "en",
++        });
++    }
++
++    return rawStories;
+ }
+diff -ruN a/src/adapters/nlpAdapter.js b/src/adapters/nlpAdapter.js
+--- a/src/adapters/nlpAdapter.js	2026-04-17 17:30:00.000000000 +0000
++++ b/src/adapters/nlpAdapter.js	2026-04-17 19:04:19.456677301 +0000
+@@ -1,16 +1,68 @@
++
++// FIX M-3: added Trichy, Tiruchirappalli, Tamil Nadu, Oman, and other missing
++// regional targets that appear in REGION_TAGS config
++const CITIES = [
++    // Global metros
++    "New York", "London", "Tokyo", "Paris", "Beijing", "Sydney", "Berlin",
++    "Toronto", "Chicago", "Singapore", "Dubai",
++    // Indian national
++    "India", "Delhi", "New Delhi", "Mumbai", "Bangalore", "Bengaluru",
++    "Kolkata", "Hyderabad",
++    // Tamil Nadu — primary regional targets
++    "Chennai", "Trichy", "Tiruchirappalli", "Tamil Nadu", "TN",
++    "Coimbatore", "Madurai", "Salem", "Tirunelveli", "Vellore",
++    // Oman / Gulf — primary regional targets
++    "Muscat", "Oman", "Dubai", "Abu Dhabi", "Riyadh",
++    // Other South Asia
++    "Pakistan", "Bangladesh", "Sri Lanka", "Nepal",
++    // Major world countries
++    "China", "US", "USA", "UK", "Russia", "Brazil", "Australia",
++    "Canada", "Japan", "Germany", "France", "Italy",
++];
++const VERBS = ["launches", "bans", "acquires", "crashes", "rises", "falls", "signs", "approves", "rejects", "announces", "declares", "invests", "warns", "halts", "suspends", "resumes", "fires", "hires", "merges", "buys", "sells", "drops", "increases", "decreases", "wins", "loses", "surges", "plummets", "soars", "tumbles", "introduces", "unveils", "cancels", "delays", "postpones", "extends", "shortens", "expands", "shrinks", "grows"];
++const ORGS = ["Apple", "Google", "Microsoft", "Amazon", "Facebook", "Meta", "Tesla", "Nvidia", "Samsung", "Intel", "IBM", "Oracle", "Cisco", "Sony", "Toyota", "Honda", "Commerce Ministry", "Finance Ministry", "Supreme Court", "High Court", "RBI", "SEBI", "BCCI", "ICC", "FIFA", "UN", "WHO", "IMF", "World Bank"];
++
+ export async function extractEntities(text) {
+-  // Simple mock NLP extraction
+-  const entities = [];
+-  const words = text.split(/\s+/);
++    const entities = { people: [], orgs: [], places: [], products: [], symbols: [] };
++    CITIES.forEach(city => { if (text.includes(city)) entities.places.push(city); });
++    ORGS.forEach(org => { if (text.includes(org)) entities.orgs.push(org); });
++    const capitalizedMatches = text.match(/([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)/g);
++    if (capitalizedMatches) {
++        capitalizedMatches.forEach(match => {
++            if (!CITIES.includes(match) && !ORGS.includes(match)) {
++                if (match !== "Commerce Ministry") entities.orgs.push(match);
++            }
++        });
++    }
++    entities.places = [...new Set(entities.places)];
++    entities.orgs = [...new Set(entities.orgs)];
++    return entities;
++}
+ 
+-  words.forEach(word => {
+-    if (word.match(/^[A-Z][a-z]+/)) {
+-      entities.push({ text: word, type: 'MISC' });
++export async function extractVerbs(text) {
++    const verbs = [];
++    const lowerText = text.toLowerCase();
++    VERBS.forEach(verb => {
++        const regex = new RegExp(`\\b${verb}\\b`, 'g');
++        if (regex.test(lowerText)) verbs.push(verb);
++    });
++    return [...new Set(verbs)];
++}
++
++export async function extractNumbers(text) {
++    const numbers = [];
++    const regex = /(?:₹|\$|€|£)?\d+(?:,\d+)*(?:\.\d+)?\s*(?:crore|lakh|million|billion|trillion|M|B|K|%|percent)?/gi;
++    let match;
++    while ((match = regex.exec(text)) !== null) {
++        numbers.push(match[0].trim());
+     }
+-  });
++    return [...new Set(numbers)];
++}
+ 
+-  return {
+-    entities,
+-    sentiment: 0.5,
+-  };
++export async function extractKeywords(text) {
++    const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 4);
++    const freq = {};
++    words.forEach(w => freq[w] = (freq[w] || 0) + 1);
++    const sorted = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
++    return sorted.slice(0, Math.max(3, Math.min(5, sorted.length)));
+ }
+diff -ruN a/src/insight/src/cache/cacheManager.ts b/src/insight/src/cache/cacheManager.ts
+--- a/src/insight/src/cache/cacheManager.ts	2026-04-17 17:30:00.000000000 +0000
++++ b/src/insight/src/cache/cacheManager.ts	2026-04-17 19:04:19.558191229 +0000
+@@ -10,15 +10,6 @@
+   InsightConfig,
+ } from "../types";
+ 
+-// ── Slot target times (ms offset from "now") ─────────────────────────────────
+-
+-const SLOT_TARGET_OFFSET: Record<SnapshotSlot, number> = {
+-  now:       0,
+-  minus4h:   4  * 60 * 60 * 1000,
+-  minus12h:  12 * 60 * 60 * 1000,
+-  minus24h:  24 * 60 * 60 * 1000,
+-};
+-
+ // ── In-process store (swap for Redis/DB in production) ───────────────────────
+ 
+ const store = new Map<SnapshotSlot, SnapshotCacheEntry>();
+@@ -42,7 +33,6 @@
+   const ageMs   = Date.now() - entry.fetchedAt;
+   const ttl     = cfg.CACHE_TTL[slot];
+   const tol     = cfg.CACHE_TOLERANCE[slot];
+-  const target  = SLOT_TARGET_OFFSET[slot];
+ 
+   // Expired beyond TTL + tolerance → stale, reject
+   if (ageMs > ttl + tol) return null;
+diff -ruN a/src/insight/src/cluster/cluster.ts b/src/insight/src/cluster/cluster.ts
+--- a/src/insight/src/cluster/cluster.ts	2026-04-17 17:30:00.000000000 +0000
++++ b/src/insight/src/cluster/cluster.ts	2026-04-17 19:04:19.513873630 +0000
+@@ -15,6 +15,31 @@
+ interface Cluster {
+   id: string;
+   stories: InsightStory[];
++  // FIX M-1: maintain a running mean embedding so comparisons use the centroid,
++  // not just the first/highest-authority seed story
++  centroidEmbedding: number[];
++}
++
++/** Update centroid in-place when a new story is added to the cluster. */
++function updateCentroid(cluster: Cluster, newStory: InsightStory): void {
++  const n  = cluster.stories.length; // count BEFORE push
++  const ce = cluster.centroidEmbedding;
++  const ne = newStory.embedding;
++  if (ce.length === 0 || ce.length !== ne.length) {
++    cluster.centroidEmbedding = [...ne];
++    return;
++  }
++  // Incremental mean: centroid = (centroid * n + new) / (n + 1)
++  const updated = ce.map((v, i) => (v * n + ne[i]) / (n + 1));
++  // Re-normalise to unit length
++  const mag = Math.sqrt(updated.reduce((s, x) => s + x * x, 0)) || 1;
++  cluster.centroidEmbedding = updated.map(x => x / mag);
++}
++
++/** Synthetic story wrapping the centroid for use with eventSimilarity. */
++function centroidStory(cluster: Cluster): InsightStory {
++  const rep = getClusterRepresentative(cluster);
++  return { ...rep, embedding: cluster.centroidEmbedding };
+ }
+ 
+ // ── Main clustering function ──────────────────────────────────────────────────
+@@ -39,7 +64,8 @@
+     let bestScore = -1;
+ 
+     for (const cluster of clusters) {
+-      const rep   = getClusterRepresentative(cluster);
++      // FIX M-1: compare against centroid story, not just the seeding representative
++      const rep   = centroidStory(cluster);
+       const raw   = eventSimilarity(story, rep);
+       const rule  = applyClusterOverrides(story, rep, raw, cfg);
+ 
+@@ -65,11 +91,14 @@
+     }
+ 
+     if (bestCluster) {
++      // FIX M-1: update centroid before pushing so subsequent comparisons reflect the new member
++      updateCentroid(bestCluster, story);
+       bestCluster.stories.push({ ...story, parentId: bestCluster.id });
+     } else {
+       const newCluster: Cluster = {
+         id: `cluster_${clusters.length + 1}_${story.id}`,
+         stories: [{ ...story, parentId: `cluster_${clusters.length + 1}_${story.id}` }],
++        centroidEmbedding: [...story.embedding],  // FIX M-1: seed centroid from first story
+       };
+       clusters.push(newCluster);
+     }
+diff -ruN a/src/insight/src/dedup/dedup.ts b/src/insight/src/dedup/dedup.ts
+--- a/src/insight/src/dedup/dedup.ts	2026-04-17 17:30:00.000000000 +0000
++++ b/src/insight/src/dedup/dedup.ts	2026-04-17 19:04:19.499972704 +0000
+@@ -224,7 +224,8 @@
+ const OFFICIAL_SIGNALS = [
+   /spokesperson/i, /minister/i, /official statement/i, /company said/i,
+   /regulator said/i, /police confirmed/i, /government said/i, /mea/i,
+-  /secretary/i, /chairman/i, /ceo said/i, /announced/i,
++  /secretary/i, /chairman/i, /ceo said/i, /officially announced/i,
++  /government announced/i, /ministry announced/i, /regulator announced/i,
+ ];
+ 
+ const MARKET_SIGNALS = [
+@@ -235,8 +236,9 @@
+ 
+ const FACT_UPDATE_SIGNALS = [
+   /toll (rises?|climbs?) to/i, /revised estimate/i, /updated count/i,
+-  /latest figures/i, /now confirmed/i, /correction:/i, /figures updated/i,
+-  /new data/i,
++  /latest figures/i, /now confirmed/i, /figures updated/i,
++  /new data/i, /updated figures/i,
++  // NOTE: "correction:" deliberately removed — it belongs in CORRECTION_SIGNALS only
+ ];
+ 
+ const EXPERT_SIGNALS = [
+diff -ruN a/src/insight/src/pipeline/pipeline.ts b/src/insight/src/pipeline/pipeline.ts
+--- a/src/insight/src/pipeline/pipeline.ts	2026-04-17 17:30:00.000000000 +0000
++++ b/src/insight/src/pipeline/pipeline.ts	2026-04-17 19:04:19.482291864 +0000
+@@ -10,7 +10,7 @@
+   getCachedSlot, setCachedSlot, mergeSlotStories,
+   slotsNeedingFetch, needsPrewarm, cacheStatus,
+ } from "../cache/cacheManager";
+-import { removeHardDuplicates } from "../dedup/dedup";
++import { removeHardDuplicates, eventSimilarity, applyClusterOverrides } from "../dedup/dedup";
+ import { clusterIntoParentEvents, createCanonicalParent } from "../cluster/cluster";
+ import { scoreAndRankParents } from "../ranking/ranking";
+ import { buildChildTree, isWeakTree, tryReplaceWeakestChild } from "../tree/treeBuilder";
+@@ -93,8 +93,11 @@
+   // ── Step 9: Select top N parents, handle weak tree demotion ────────────────
+   const topParents = selectTopParentsWithWeakTreeCheck(ranked, storiesById, cfg, hiddenIds);
+ 
+-  // ── Step 10: Cache the "now" parents for possible incremental update ────────
+-  setCachedSlot("now", freshBySlot["now"] ?? [], cfg, topParents);
++  // FIX M-5: do NOT pass topParents to setCachedSlot for "now" —
++  // getCachedSlot("now") always returns null so the parents were never read back.
++  // "now" stories are cached purely so mergeSlotStories can tag them correctly
++  // on the next incremental call.
++  setCachedSlot("now", freshBySlot["now"] ?? [], cfg);
+ 
+   return {
+     parents:        topParents,
+@@ -128,6 +131,12 @@
+     const children = buildChildTree(parent, clusterStories, cfg, hiddenIds);
+     parent.childStoryIds = children.map(c => c.id);
+ 
++    // FIX H-4: populate hiddenDuplicateIds on the parent itself so the UI
++    // can show "N similar hidden". Filter the pipeline-level hiddenIds set
++    // down to only IDs that belong to this parent's cluster.
++    const clusterIdSet = new Set(parent.clusterStoryIds);
++    parent.hiddenDuplicateIds = [...hiddenIds].filter(id => clusterIdSet.has(id));
++
+     // Weak tree check: demote if below minimum quality children
+     if (isWeakTree(children, cfg)) {
+       parent.weakTree = true;
+@@ -164,8 +173,6 @@
+   if (truly_new.length === 0) return existingResult;
+ 
+   // For each new story, find which parent it belongs to (or flag as new parent candidate)
+-  const { clusterIntoParentEvents } = require("../cluster/cluster");
+-  const allExistingStories = [...storiesById.values()];
+ 
+   for (const story of truly_new) {
+     storiesById.set(story.id, story);
+@@ -176,7 +183,6 @@
+       const rep = getClusterRepStory(parent, storiesById);
+       if (!rep) continue;
+ 
+-      const { eventSimilarity, applyClusterOverrides } = require("../dedup/dedup");
+       const rawSim = eventSimilarity(story, rep);
+       const rule   = applyClusterOverrides(story, rep, rawSim, cfg);
+ 
+@@ -195,6 +201,10 @@
+         const updated = tryReplaceWeakestChild(parent, currentChildren, story, cfg, hiddenIds);
+         parent.childStoryIds = updated.map(c => c.id);
+ 
++        // FIX H-4: keep per-parent hidden list in sync after incremental replacement
++        const clusterIdSet = new Set(parent.clusterStoryIds);
++        parent.hiddenDuplicateIds = [...hiddenIds].filter(id => clusterIdSet.has(id));
++
+         matched = true;
+         break;
+       }
+diff -ruN a/src/insight/src/ranking/ranking.ts b/src/insight/src/ranking/ranking.ts
+--- a/src/insight/src/ranking/ranking.ts	2026-04-17 17:30:00.000000000 +0000
++++ b/src/insight/src/ranking/ranking.ts	2026-04-17 19:04:19.532084543 +0000
+@@ -103,7 +103,9 @@
+   ).length;
+ 
+   const recentAvg = (countNow + countMinus4) / 2;
+-  const oldAvg    = countOld / 2 || 0.5; // avoid div/0
++  // FIX M-2: use 0 as the "no history" baseline — was 0.5, which penalised
++  // newly breaking stories that have no older snapshot presence
++  const oldAvg    = countOld > 0 ? countOld / 2 : 0;
+ 
+   const rawMomentum = (recentAvg - oldAvg) / 5;
+   return sigmoid(rawMomentum);
+diff -ruN a/src/insight/src/tree/treeBuilder.ts b/src/insight/src/tree/treeBuilder.ts
+--- a/src/insight/src/tree/treeBuilder.ts	2026-04-17 17:30:00.000000000 +0000
++++ b/src/insight/src/tree/treeBuilder.ts	2026-04-17 19:04:19.545379539 +0000
+@@ -59,10 +59,11 @@
+   }, 0);
+   const redundancyPenalty = Math.max(0, (maxSim - 0.70) * 2); // penalty starts at 0.70 sim
+ 
++  // FIX H-2: weights now sum to 1.0 (was 0.9 — newSourceScore was 0.2, raised to 0.3)
+   return Math.max(0,
+     0.4 * newFactsScore +
+     0.3 * newAngleScore +
+-    0.2 * newSourceScore -
++    0.3 * newSourceScore -
+     0.1 * redundancyPenalty
+   );
+ }
+diff -ruN a/src/pages/InsightPage.jsx b/src/pages/InsightPage.jsx
+--- a/src/pages/InsightPage.jsx	2026-04-17 17:30:00.000000000 +0000
++++ b/src/pages/InsightPage.jsx	2026-04-17 19:04:21.184398436 +0000
+@@ -1,58 +1,291 @@
+-import React, { useEffect, useState } from 'react';
+-import { fetchAndProcessInsights } from '../adapters/insightFetcher.js';
+-import '../styles/InsightPage.css';
+-
+-export default function InsightPage() {
+-  const [clusters, setClusters] = useState([]);
+-  const [loading, setLoading] = useState(true);
+-  const [error, setError] = useState(null);
+-
+-  useEffect(() => {
+-    async function loadInsights() {
+-      try {
+-        setLoading(true);
+-        const data = await fetchAndProcessInsights();
+-        setClusters(data);
+-      } catch (err) {
+-        console.error("Failed to load insights:", err);
+-        setError("Failed to load insights.");
+-      } finally {
+-        setLoading(false);
+-      }
++// FIX C-3: applyIncrementalUpdate args were swapped + wrong types — fixed
++// FIX H-3: children now looked up from storiesById map and rendered with real content
++// FIX H-4: result (not just parents) stored in state so storiesById is accessible
++// FIX H-5: weakTree flag now visually surfaced on parent card
++import React, { useEffect, useState, useCallback } from 'react';
++import { runInsightPipeline, applyIncrementalUpdate, DEFAULT_CONFIG, slotFetcher } from '../adapters/insightFetcher.js';
++import Header from '../components/Header.jsx';
++import EmptyState from '../components/EmptyState.jsx';
++
++// Angle badge colours
++const ANGLE_STYLE = {
++    base_report:         { bg: '#1a3a5c', color: '#60a5fa', label: 'BASE'     },
++    official_response:   { bg: '#1a3d2b', color: '#4ade80', label: 'OFFICIAL' },
++    fact_update:         { bg: '#3d2e0a', color: '#fbbf24', label: 'FACT'     },
++    market_reaction:     { bg: '#2d1f47', color: '#c084fc', label: 'MARKET'   },
++    expert_analysis:     { bg: '#3d1e1a', color: '#f87171', label: 'EXPERT'   },
++    regional_followup:   { bg: '#1e2d3d', color: '#94a3b8', label: 'REGIONAL' },
++    investigative_detail:{ bg: '#2d2a0a', color: '#facc15', label: 'INVEST.'  },
++    correction:          { bg: '#3d1a1a', color: '#fb923c', label: 'CORRECTION'},
++    background_context:  { bg: '#1a2a2d', color: '#67e8f9', label: 'CONTEXT'  },
++    reaction_public:     { bg: '#2a1a3d', color: '#a78bfa', label: 'PUBLIC'   },
++    unknown:             { bg: '#2a2a2a', color: '#9ca3af', label: 'OTHER'    },
++};
++
++function AngleBadge({ angle }) {
++    const s = ANGLE_STYLE[angle] || ANGLE_STYLE.unknown;
++    return (
++        <span style={{
++            background: s.bg, color: s.color,
++            padding: '2px 6px', borderRadius: '3px',
++            fontSize: '10px', fontWeight: '700',
++            textTransform: 'uppercase', letterSpacing: '0.5px',
++            flexShrink: 0, alignSelf: 'flex-start', marginTop: '2px',
++        }}>
++            {s.label}
++        </span>
++    );
++}
++
++function SnapshotDots({ snapshotPresence }) {
++    const slots = ['now', 'minus4h', 'minus12h', 'minus24h'];
++    const labels = { now: 'now', minus4h: '−4h', minus12h: '−12h', minus24h: '−24h' };
++    return (
++        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
++            {slots.map(slot => (
++                <span key={slot} title={labels[slot]} style={{
++                    width: '8px', height: '8px', borderRadius: '50%',
++                    background: snapshotPresence[slot]
++                        ? 'var(--color-primary, #3b82f6)'
++                        : 'var(--color-border, #374151)',
++                    display: 'inline-block',
++                }} />
++            ))}
++        </div>
++    );
++}
++
++function ChildStory({ childId, storiesById }) {
++    // FIX H-3: look up actual story from storiesById instead of showing raw ID
++    const story = storiesById?.get(childId);
++    if (!story) return null;
++
++    const timeAgo = (() => {
++        const m = Math.round((Date.now() - story.publishedAt) / 60000);
++        if (m < 60) return `${m}m ago`;
++        return `${Math.round(m / 60)}h ago`;
++    })();
++
++    return (
++        <li style={{
++            padding: '10px 0',
++            borderBottom: '1px solid var(--color-border, #374151)',
++            display: 'flex', gap: '10px', alignItems: 'flex-start',
++        }}>
++            <AngleBadge angle={story.angle || 'unknown'} />
++            <div style={{ flex: 1, minWidth: 0 }}>
++                <div style={{
++                    fontSize: '13px', fontWeight: '600',
++                    color: 'var(--color-text-primary)',
++                    marginBottom: '3px',
++                }}>
++                    {story.title}
++                </div>
++                <div style={{
++                    fontSize: '12px',
++                    color: 'var(--color-text-secondary)',
++                    lineHeight: '1.5',
++                    marginBottom: '4px',
++                }}>
++                    {story.summary}
++                </div>
++                <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary, #6b7280)' }}>
++                    {story.source} · {timeAgo}
++                    {story.sourceTier && (
++                        <span style={{ marginLeft: '6px', opacity: 0.6 }}>Tier {story.sourceTier}</span>
++                    )}
++                </div>
++            </div>
++        </li>
++    );
++}
++
++function ParentCard({ parent, storiesById, isExpanded, onToggle }) {
++    const hiddenCount = parent.hiddenDuplicateIds?.length ?? 0;
++
++    return (
++        <div style={{
++            background: 'var(--color-surface)',
++            borderRadius: '12px',
++            border: `1px solid ${parent.weakTree ? 'var(--color-warning, #d97706)' : 'var(--color-border)'}`,
++            overflow: 'hidden',
++            marginBottom: '16px',
++            // FIX H-5: dim weak-tree parents slightly
++            opacity: parent.weakTree ? 0.75 : 1,
++        }}>
++            <div style={{ padding: '16px' }}>
++                {/* Title row */}
++                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
++                    <h3 style={{ margin: '0 0 8px 0', fontSize: '17px', fontWeight: 'bold', flex: 1 }}>
++                        {parent.canonicalHeadline}
++                    </h3>
++                    <div style={{ display: 'flex', gap: '6px', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
++                        {parent.isRising && (
++                            <span style={{ background: '#854d0e', color: '#fef08a', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>
++                                🔥 Rising
++                            </span>
++                        )}
++                        {/* FIX H-5: show weak tree warning badge */}
++                        {parent.weakTree && (
++                            <span style={{ background: '#78350f', color: '#fde68a', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }} title="Fewer than 3 quality child stories found for this cluster">
++                                ⚠ Thin
++                            </span>
++                        )}
++                        <span style={{ background: 'var(--color-surface-hover)', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', color: 'var(--color-text-secondary)' }}>
++                            {parent.finalParentScore.toFixed(2)}
++                        </span>
++                    </div>
++                </div>
++
++                {/* Summary */}
++                <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
++                    {parent.canonicalSummary}
++                </p>
++
++                {/* Meta row */}
++                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
++                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
++                        <SnapshotDots snapshotPresence={parent.snapshotPresence} />
++                        <span style={{ fontSize: '11px', color: 'var(--color-text-tertiary, #6b7280)' }}>
++                            {parent.debug?.clusterSize ?? '?'} stories
++                        </span>
++                        {/* FIX H-4: show real hidden count — populated by pipeline fix */}
++                        {hiddenCount > 0 && (
++                            <span style={{ fontSize: '11px', color: 'var(--color-text-tertiary, #6b7280)' }}>
++                                {hiddenCount} similar hidden
++                            </span>
++                        )}
++                    </div>
++                    <button
++                        onClick={onToggle}
++                        style={{
++                            background: 'var(--color-bg)', border: '1px solid var(--color-border)',
++                            color: 'var(--color-text-primary)', cursor: 'pointer',
++                            fontWeight: 'bold', padding: '5px 12px', borderRadius: '6px', fontSize: '12px',
++                        }}
++                    >
++                        {isExpanded ? '− Hide' : `+ ${parent.childStoryIds.length} Stories`}
++                    </button>
++                </div>
++            </div>
++
++            {/* Children panel */}
++            {isExpanded && (
++                <div style={{
++                    borderTop: '1px solid var(--color-border)',
++                    padding: '8px 16px 12px',
++                    background: 'var(--color-surface-elevated, var(--color-surface))',
++                }}>
++                    {parent.childStoryIds.length === 0 ? (
++                        <p style={{ fontSize: '13px', color: 'var(--color-text-tertiary)', padding: '8px 0' }}>
++                            No diverse child stories for this cluster.
++                        </p>
++                    ) : (
++                        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
++                            {parent.childStoryIds.map(childId => (
++                                <ChildStory
++                                    key={childId}
++                                    childId={childId}
++                                    storiesById={storiesById}
++                                />
++                            ))}
++                        </ul>
++                    )}
++                </div>
++            )}
++        </div>
++    );
++}
++
++function InsightPage() {
++    // FIX C-3 + H-3: store full result (not just parents) so storiesById is accessible
++    const [result, setResult] = useState(null);
++    const [loading, setLoading]   = useState(true);
++    const [expanded, setExpanded] = useState({});
++
++    const parents    = result?.parents    ?? [];
++    const storiesById = result?.storiesById ?? new Map();
++
++    useEffect(() => {
++        let isMounted = true;
++        async function fetchInitial() {
++            try {
++                setLoading(true);
++                const r = await runInsightPipeline(slotFetcher, DEFAULT_CONFIG);
++                if (isMounted) setResult(r);
++            } catch (e) {
++                console.error('Failed to run insight pipeline:', e);
++            } finally {
++                if (isMounted) setLoading(false);
++            }
++        }
++        fetchInitial();
++        return () => { isMounted = false; };
++    }, []);
++
++    // FIX C-3: correct arg order — applyIncrementalUpdate(newStories, existingResult, cfg)
++    useEffect(() => {
++        if (!result) return;
++        const interval = setInterval(async () => {
++            try {
++                const freshStories = await slotFetcher('now');
++                if (freshStories.length > 0) {
++                    const updated = applyIncrementalUpdate(freshStories, result, DEFAULT_CONFIG);
++                    setResult({ ...updated });
++                }
++            } catch (e) {
++                console.error('Incremental update failed:', e);
++            }
++        }, 5 * 60 * 1000);
++        return () => clearInterval(interval);
++    }, [result]);
++
++    const toggleExpand = useCallback((id) => {
++        setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
++    }, []);
++
++    if (loading) {
++        return (
++            <div className="page-container insight-page">
++                <Header title="Insight" stateLabel="Loading" stateType="loading" />
++                <div className="modern-container">
++                    <p style={{ textAlign: 'center', marginTop: '20px' }}>Running AI pipeline…</p>
++                </div>
++            </div>
++        );
+     }
+-    loadInsights();
+-  }, []);
+ 
+-  if (loading) {
+-    return <div className="insight-page"><p className="insight-loading">Generating Insights...</p></div>;
+-  }
+-
+-  if (error) {
+-    return <div className="insight-page"><p className="insight-error">{error}</p></div>;
+-  }
+-
+-  return (
+-    <div className="insight-page">
+-      <h1 className="insight-title">News Insights</h1>
+-      {clusters.length === 0 ? (
+-        <p>No insights found.</p>
+-      ) : (
+-        <div className="insight-clusters">
+-          {clusters.map((cluster, idx) => (
+-            <div key={idx} className="insight-cluster">
+-              <h2 className="cluster-theme">{cluster.theme || 'Untitled Cluster'}</h2>
+-              <p className="cluster-size">{cluster.items?.length || 0} articles</p>
+-              <ul className="cluster-items">
+-                {cluster.items?.slice(0, 3).map(item => (
+-                  <li key={item.id} className="cluster-item">
+-                    <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+-                  </li>
++    if (!parents.length) {
++        return (
++            <div className="page-container insight-page">
++                <Header title="Insight" stateLabel="Up to date" stateType="live" />
++                <div className="modern-container">
++                    <EmptyState
++                        icon="🧠"
++                        title="No Insights Available"
++                        message="Couldn't generate clusters from the latest news right now."
++                    />
++                </div>
++            </div>
++        );
++    }
++
++    return (
++        <div className="page-container insight-page">
++            <Header title="Insight" stateLabel="Live" stateType="live" />
++            <div className="modern-container" style={{ padding: '16px' }}>
++                {parents.map((p) => (
++                    <ParentCard
++                        key={p.parentId}
++                        parent={p}
++                        storiesById={storiesById}
++                        isExpanded={!!expanded[p.parentId]}
++                        onToggle={() => toggleExpand(p.parentId)}
++                    />
+                 ))}
+-              </ul>
+             </div>
+-          ))}
+         </div>
+-      )}
+-    </div>
+-  );
++    );
+ }
++
++export default InsightPage;
