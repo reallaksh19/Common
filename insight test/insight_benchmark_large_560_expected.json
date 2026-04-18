@@ -1,0 +1,1423 @@
+{
+  "benchmark_name": "Insight Large Synthetic Stress Benchmark 500+",
+  "type": "synthetic_but_realistic",
+  "as_of": "2024-06-04T20:00:00+05:30",
+  "window_slots": [
+    "now",
+    "minus4h",
+    "minus12h",
+    "minus24h"
+  ],
+  "target_top_parents": 7,
+  "expected_parents": [
+    {
+      "canonical_id": "india-election-coalition-verdict",
+      "representative_title": "NDA returns but BJP falls short of solo majority, allies turn crucial",
+      "expected_rank": 1,
+      "category": "politics",
+      "must_include": true,
+      "snapshot_presence": {
+        "now": true,
+        "minus4h": true,
+        "minus12h": true,
+        "minus24h": true
+      },
+      "entities": [
+        "BJP",
+        "NDA",
+        "TDP",
+        "JD(U)",
+        "Modi",
+        "India election"
+      ],
+      "keywords": [
+        "election",
+        "majority",
+        "allies",
+        "coalition",
+        "verdict",
+        "seat count"
+      ],
+      "child_groups": [
+        {
+          "angle": "verdict",
+          "topic": "Election result leaves BJP short of solo majority",
+          "story_ids": [
+            "rss-0001",
+            "rss-0002",
+            "rss-0003",
+            "rss-0004",
+            "rss-0005"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "ally-math",
+          "topic": "Allies become crucial to coalition arithmetic",
+          "story_ids": [
+            "rss-0009",
+            "rss-0010",
+            "rss-0011",
+            "rss-0012",
+            "rss-0013"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "seat-map",
+          "topic": "State-by-state seat swings reshape mandate",
+          "story_ids": [
+            "rss-0017",
+            "rss-0018",
+            "rss-0019",
+            "rss-0020",
+            "rss-0021"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "opposition",
+          "topic": "Opposition outperforms expectations",
+          "story_ids": [
+            "rss-0025",
+            "rss-0026",
+            "rss-0027",
+            "rss-0028",
+            "rss-0029"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "explainer",
+          "topic": "What the verdict means for policy continuity",
+          "story_ids": [
+            "rss-0033",
+            "rss-0034",
+            "rss-0035",
+            "rss-0036",
+            "rss-0037"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "fact-update",
+          "topic": "Updated seat count revisions and late tallies",
+          "story_ids": [
+            "rss-0041",
+            "rss-0042",
+            "rss-0043",
+            "rss-0044",
+            "rss-0045"
+          ],
+          "duplicate_count": 3
+        }
+      ],
+      "representative_story_ids": [
+        "rss-0001",
+        "rss-0002",
+        "rss-0003",
+        "rss-0004",
+        "rss-0005",
+        "rss-0006",
+        "rss-0007"
+      ],
+      "hidden_duplicate_total": 41,
+      "weak_tree": false,
+      "rising_story": true
+    },
+    {
+      "canonical_id": "markets-selloff-rupee-bond-reaction",
+      "representative_title": "Indian markets tumble and rupee weakens after surprise election outcome",
+      "expected_rank": 2,
+      "category": "markets",
+      "must_include": true,
+      "snapshot_presence": {
+        "now": true,
+        "minus4h": true,
+        "minus12h": true,
+        "minus24h": true
+      },
+      "entities": [
+        "Sensex",
+        "Nifty",
+        "Rupee",
+        "Bond yields",
+        "FPIs"
+      ],
+      "keywords": [
+        "stocks",
+        "markets",
+        "rupee",
+        "selloff",
+        "bond",
+        "election reaction"
+      ],
+      "child_groups": [
+        {
+          "angle": "equities",
+          "topic": "Stocks plunge as investors reassess reform certainty",
+          "story_ids": [
+            "rss-0049",
+            "rss-0050",
+            "rss-0051",
+            "rss-0052",
+            "rss-0053"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "rupee",
+          "topic": "Rupee posts sharp fall against the dollar",
+          "story_ids": [
+            "rss-0057",
+            "rss-0058",
+            "rss-0059",
+            "rss-0060",
+            "rss-0061"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "bonds",
+          "topic": "Bond yields move as political risk is repriced",
+          "story_ids": [
+            "rss-0065",
+            "rss-0066",
+            "rss-0067",
+            "rss-0068",
+            "rss-0069"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "sector-moves",
+          "topic": "Banks, infrastructure and PSU names swing wildly",
+          "story_ids": [
+            "rss-0073",
+            "rss-0074",
+            "rss-0075",
+            "rss-0076",
+            "rss-0077"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "fpi",
+          "topic": "Foreign flows and derivatives amplify selling",
+          "story_ids": [
+            "rss-0081",
+            "rss-0082",
+            "rss-0083",
+            "rss-0084",
+            "rss-0085"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "recovery",
+          "topic": "Late-session recovery attempts fail to calm nerves",
+          "story_ids": [
+            "rss-0089",
+            "rss-0090",
+            "rss-0091",
+            "rss-0092",
+            "rss-0093"
+          ],
+          "duplicate_count": 3
+        }
+      ],
+      "representative_story_ids": [
+        "rss-0049",
+        "rss-0050",
+        "rss-0051",
+        "rss-0052",
+        "rss-0053",
+        "rss-0054",
+        "rss-0055"
+      ],
+      "hidden_duplicate_total": 41,
+      "weak_tree": false,
+      "rising_story": true
+    },
+    {
+      "canonical_id": "chennai-water-desalination-and-supply-crunch",
+      "representative_title": "Chennai supply crunch, desalination push and local outage advisories dominate city coverage",
+      "expected_rank": 3,
+      "category": "city",
+      "must_include": true,
+      "snapshot_presence": {
+        "now": true,
+        "minus4h": true,
+        "minus12h": true,
+        "minus24h": true
+      },
+      "entities": [
+        "Chennai Metro Water",
+        "Velachery",
+        "T Nagar",
+        "desalination plant",
+        "reservoirs"
+      ],
+      "keywords": [
+        "Chennai",
+        "water",
+        "supply",
+        "desalination",
+        "outage",
+        "Metro Water"
+      ],
+      "child_groups": [
+        {
+          "angle": "water-cut",
+          "topic": "Neighbourhood water disruptions and tanker demand rise",
+          "story_ids": [
+            "rss-0097",
+            "rss-0098",
+            "rss-0099",
+            "rss-0100",
+            "rss-0101"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "desalination",
+          "topic": "New desalination capacity is proposed/advanced",
+          "story_ids": [
+            "rss-0105",
+            "rss-0106",
+            "rss-0107",
+            "rss-0108",
+            "rss-0109"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "reservoirs",
+          "topic": "Reservoir levels and rainfall deficit explained",
+          "story_ids": [
+            "rss-0113",
+            "rss-0114",
+            "rss-0115",
+            "rss-0116",
+            "rss-0117"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "traffic",
+          "topic": "Works linked diversions affect commuter routes",
+          "story_ids": [
+            "rss-0121",
+            "rss-0122",
+            "rss-0123",
+            "rss-0124",
+            "rss-0125"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "local-politics",
+          "topic": "Civic response and opposition criticism",
+          "story_ids": [
+            "rss-0129",
+            "rss-0130",
+            "rss-0131",
+            "rss-0132",
+            "rss-0133"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "consumer",
+          "topic": "Household coping costs and timing of supply restoration",
+          "story_ids": [
+            "rss-0137",
+            "rss-0138",
+            "rss-0139",
+            "rss-0140",
+            "rss-0141"
+          ],
+          "duplicate_count": 3
+        }
+      ],
+      "representative_story_ids": [
+        "rss-0097",
+        "rss-0098",
+        "rss-0099",
+        "rss-0100",
+        "rss-0101",
+        "rss-0102",
+        "rss-0103"
+      ],
+      "hidden_duplicate_total": 41,
+      "weak_tree": false,
+      "rising_story": true
+    },
+    {
+      "canonical_id": "oman-weather-cyclone-watch-and-port-alerts",
+      "representative_title": "Oman weather watch brings port advisories, rainfall alerts and school warnings",
+      "expected_rank": 4,
+      "category": "weather_alerts",
+      "must_include": true,
+      "snapshot_presence": {
+        "now": true,
+        "minus4h": true,
+        "minus12h": true,
+        "minus24h": true
+      },
+      "entities": [
+        "Civil Aviation Authority",
+        "Muscat",
+        "Sohar",
+        "Duqm",
+        "ports"
+      ],
+      "keywords": [
+        "Oman",
+        "Muscat",
+        "weather",
+        "storm",
+        "port",
+        "advisory"
+      ],
+      "child_groups": [
+        {
+          "angle": "forecast",
+          "topic": "Storm track and rainfall forecast update",
+          "story_ids": [
+            "rss-0145",
+            "rss-0146",
+            "rss-0147",
+            "rss-0148",
+            "rss-0149"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "ports",
+          "topic": "Port and fishing advisories issued",
+          "story_ids": [
+            "rss-0153",
+            "rss-0154",
+            "rss-0155",
+            "rss-0156",
+            "rss-0157"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "schools",
+          "topic": "School/work-from-home advisories discussed",
+          "story_ids": [
+            "rss-0161",
+            "rss-0162",
+            "rss-0163",
+            "rss-0164",
+            "rss-0165"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "roads",
+          "topic": "Flood-prone road and wadi warnings",
+          "story_ids": [
+            "rss-0169",
+            "rss-0170",
+            "rss-0171",
+            "rss-0172",
+            "rss-0173"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "aviation",
+          "topic": "Flight and airport disruption watch",
+          "story_ids": [
+            "rss-0177",
+            "rss-0178",
+            "rss-0179",
+            "rss-0180",
+            "rss-0181"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "safety",
+          "topic": "Emergency preparation guidance and hotline alerts",
+          "story_ids": [
+            "rss-0185",
+            "rss-0186",
+            "rss-0187",
+            "rss-0188",
+            "rss-0189"
+          ],
+          "duplicate_count": 3
+        }
+      ],
+      "representative_story_ids": [
+        "rss-0145",
+        "rss-0146",
+        "rss-0147",
+        "rss-0148",
+        "rss-0149",
+        "rss-0150",
+        "rss-0151"
+      ],
+      "hidden_duplicate_total": 41,
+      "weak_tree": false,
+      "rising_story": true
+    },
+    {
+      "canonical_id": "ai-chip-export-curbs-and-semiconductor-ripple",
+      "representative_title": "AI chip export restrictions ripple through semiconductor names and cloud strategy",
+      "expected_rank": 5,
+      "category": "tech",
+      "must_include": true,
+      "snapshot_presence": {
+        "now": true,
+        "minus4h": true,
+        "minus12h": true,
+        "minus24h": true
+      },
+      "entities": [
+        "Nvidia",
+        "AMD",
+        "AI chips",
+        "export controls",
+        "cloud providers"
+      ],
+      "keywords": [
+        "AI chips",
+        "export controls",
+        "Nvidia",
+        "AMD",
+        "semiconductor",
+        "cloud"
+      ],
+      "child_groups": [
+        {
+          "angle": "policy",
+          "topic": "Fresh export-control language and compliance scope",
+          "story_ids": [
+            "rss-0193",
+            "rss-0194",
+            "rss-0195",
+            "rss-0196",
+            "rss-0197"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "stocks",
+          "topic": "Chip stocks and suppliers react",
+          "story_ids": [
+            "rss-0201",
+            "rss-0202",
+            "rss-0203",
+            "rss-0204",
+            "rss-0205"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "cloud",
+          "topic": "Cloud providers revise procurement strategies",
+          "story_ids": [
+            "rss-0209",
+            "rss-0210",
+            "rss-0211",
+            "rss-0212",
+            "rss-0213"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "china",
+          "topic": "China-related supply chain exposure examined",
+          "story_ids": [
+            "rss-0217",
+            "rss-0218",
+            "rss-0219",
+            "rss-0220",
+            "rss-0221"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "startups",
+          "topic": "AI startups fear cost and access shocks",
+          "story_ids": [
+            "rss-0225",
+            "rss-0226",
+            "rss-0227",
+            "rss-0228",
+            "rss-0229"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "analysis",
+          "topic": "What the rules mean for the next 12 months",
+          "story_ids": [
+            "rss-0233",
+            "rss-0234",
+            "rss-0235",
+            "rss-0236",
+            "rss-0237"
+          ],
+          "duplicate_count": 3
+        }
+      ],
+      "representative_story_ids": [
+        "rss-0193",
+        "rss-0194",
+        "rss-0195",
+        "rss-0196",
+        "rss-0197",
+        "rss-0198",
+        "rss-0199"
+      ],
+      "hidden_duplicate_total": 41,
+      "weak_tree": false,
+      "rising_story": true
+    },
+    {
+      "canonical_id": "airline-fare-sale-and-airport-ops-disruption",
+      "representative_title": "Airline flash sales collide with airport delays and summer travel congestion",
+      "expected_rank": 6,
+      "category": "travel",
+      "must_include": true,
+      "snapshot_presence": {
+        "now": true,
+        "minus4h": true,
+        "minus12h": true,
+        "minus24h": true
+      },
+      "entities": [
+        "IndiGo",
+        "Air India",
+        "SalamAir",
+        "Muscat Airport",
+        "Chennai Airport"
+      ],
+      "keywords": [
+        "airline sale",
+        "fare",
+        "airport delays",
+        "travel congestion",
+        "promo",
+        "flight"
+      ],
+      "child_groups": [
+        {
+          "angle": "sale",
+          "topic": "Flash fares and promo windows drive searches",
+          "story_ids": [
+            "rss-0241",
+            "rss-0242",
+            "rss-0243",
+            "rss-0244",
+            "rss-0245"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "ops",
+          "topic": "Operational delays and slot congestion hit departures",
+          "story_ids": [
+            "rss-0249",
+            "rss-0250",
+            "rss-0251",
+            "rss-0252",
+            "rss-0253"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "airport",
+          "topic": "Airport rush and security waiting times spike",
+          "story_ids": [
+            "rss-0257",
+            "rss-0258",
+            "rss-0259",
+            "rss-0260",
+            "rss-0261"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "consumer",
+          "topic": "Baggage, refund and rebooking complaints rise",
+          "story_ids": [
+            "rss-0265",
+            "rss-0266",
+            "rss-0267",
+            "rss-0268",
+            "rss-0269"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "routes",
+          "topic": "Popular routes and seasonal demand hotspots",
+          "story_ids": [
+            "rss-0273",
+            "rss-0274",
+            "rss-0275",
+            "rss-0276",
+            "rss-0277"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "tips",
+          "topic": "Fare-tracking and booking timing guidance",
+          "story_ids": [
+            "rss-0281",
+            "rss-0282",
+            "rss-0283",
+            "rss-0284",
+            "rss-0285"
+          ],
+          "duplicate_count": 3
+        }
+      ],
+      "representative_story_ids": [
+        "rss-0241",
+        "rss-0242",
+        "rss-0243",
+        "rss-0244",
+        "rss-0245",
+        "rss-0246",
+        "rss-0247"
+      ],
+      "hidden_duplicate_total": 41,
+      "weak_tree": false,
+      "rising_story": true
+    },
+    {
+      "canonical_id": "ott-release-controversy-and-censorship-debate",
+      "representative_title": "OTT release controversy triggers censorship, legal and culture-war coverage",
+      "expected_rank": 7,
+      "category": "entertainment",
+      "must_include": true,
+      "snapshot_presence": {
+        "now": true,
+        "minus4h": true,
+        "minus12h": true,
+        "minus24h": true
+      },
+      "entities": [
+        "OTT platform",
+        "film board",
+        "streaming rights",
+        "court petition",
+        "producer guild"
+      ],
+      "keywords": [
+        "OTT",
+        "streaming",
+        "censorship",
+        "controversy",
+        "court",
+        "release"
+      ],
+      "child_groups": [
+        {
+          "angle": "release",
+          "topic": "Digital release timing and platform rights",
+          "story_ids": [
+            "rss-0289",
+            "rss-0290",
+            "rss-0291",
+            "rss-0292",
+            "rss-0293"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "controversy",
+          "topic": "Political and religious backlash expands",
+          "story_ids": [
+            "rss-0297",
+            "rss-0298",
+            "rss-0299",
+            "rss-0300",
+            "rss-0301"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "legal",
+          "topic": "Court filings and certification questions",
+          "story_ids": [
+            "rss-0305",
+            "rss-0306",
+            "rss-0307",
+            "rss-0308",
+            "rss-0309"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "reviews",
+          "topic": "Critics and early reviews split sharply",
+          "story_ids": [
+            "rss-0313",
+            "rss-0314",
+            "rss-0315",
+            "rss-0316",
+            "rss-0317"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "box-office",
+          "topic": "Streaming versus theatrical economics debated",
+          "story_ids": [
+            "rss-0321",
+            "rss-0322",
+            "rss-0323",
+            "rss-0324",
+            "rss-0325"
+          ],
+          "duplicate_count": 3
+        },
+        {
+          "angle": "platform",
+          "topic": "Platform response and content labeling changes",
+          "story_ids": [
+            "rss-0329",
+            "rss-0330",
+            "rss-0331",
+            "rss-0332",
+            "rss-0333"
+          ],
+          "duplicate_count": 3
+        }
+      ],
+      "representative_story_ids": [
+        "rss-0289",
+        "rss-0290",
+        "rss-0291",
+        "rss-0292",
+        "rss-0293",
+        "rss-0294",
+        "rss-0295"
+      ],
+      "hidden_duplicate_total": 41,
+      "weak_tree": false,
+      "rising_story": true
+    }
+  ],
+  "duplicate_groups": [
+    {
+      "canonical_id": "india-election-coalition-verdict",
+      "angle": "verdict",
+      "members": [
+        "rss-0001",
+        "rss-0002",
+        "rss-0003",
+        "rss-0004",
+        "rss-0005",
+        "rss-0006",
+        "rss-0007",
+        "rss-0008"
+      ]
+    },
+    {
+      "canonical_id": "india-election-coalition-verdict",
+      "angle": "ally-math",
+      "members": [
+        "rss-0009",
+        "rss-0010",
+        "rss-0011",
+        "rss-0012",
+        "rss-0013",
+        "rss-0014",
+        "rss-0015",
+        "rss-0016"
+      ]
+    },
+    {
+      "canonical_id": "india-election-coalition-verdict",
+      "angle": "seat-map",
+      "members": [
+        "rss-0017",
+        "rss-0018",
+        "rss-0019",
+        "rss-0020",
+        "rss-0021",
+        "rss-0022",
+        "rss-0023",
+        "rss-0024"
+      ]
+    },
+    {
+      "canonical_id": "india-election-coalition-verdict",
+      "angle": "opposition",
+      "members": [
+        "rss-0025",
+        "rss-0026",
+        "rss-0027",
+        "rss-0028",
+        "rss-0029",
+        "rss-0030",
+        "rss-0031",
+        "rss-0032"
+      ]
+    },
+    {
+      "canonical_id": "india-election-coalition-verdict",
+      "angle": "explainer",
+      "members": [
+        "rss-0033",
+        "rss-0034",
+        "rss-0035",
+        "rss-0036",
+        "rss-0037",
+        "rss-0038",
+        "rss-0039",
+        "rss-0040"
+      ]
+    },
+    {
+      "canonical_id": "india-election-coalition-verdict",
+      "angle": "fact-update",
+      "members": [
+        "rss-0041",
+        "rss-0042",
+        "rss-0043",
+        "rss-0044",
+        "rss-0045",
+        "rss-0046",
+        "rss-0047",
+        "rss-0048"
+      ]
+    },
+    {
+      "canonical_id": "markets-selloff-rupee-bond-reaction",
+      "angle": "equities",
+      "members": [
+        "rss-0049",
+        "rss-0050",
+        "rss-0051",
+        "rss-0052",
+        "rss-0053",
+        "rss-0054",
+        "rss-0055",
+        "rss-0056"
+      ]
+    },
+    {
+      "canonical_id": "markets-selloff-rupee-bond-reaction",
+      "angle": "rupee",
+      "members": [
+        "rss-0057",
+        "rss-0058",
+        "rss-0059",
+        "rss-0060",
+        "rss-0061",
+        "rss-0062",
+        "rss-0063",
+        "rss-0064"
+      ]
+    },
+    {
+      "canonical_id": "markets-selloff-rupee-bond-reaction",
+      "angle": "bonds",
+      "members": [
+        "rss-0065",
+        "rss-0066",
+        "rss-0067",
+        "rss-0068",
+        "rss-0069",
+        "rss-0070",
+        "rss-0071",
+        "rss-0072"
+      ]
+    },
+    {
+      "canonical_id": "markets-selloff-rupee-bond-reaction",
+      "angle": "sector-moves",
+      "members": [
+        "rss-0073",
+        "rss-0074",
+        "rss-0075",
+        "rss-0076",
+        "rss-0077",
+        "rss-0078",
+        "rss-0079",
+        "rss-0080"
+      ]
+    },
+    {
+      "canonical_id": "markets-selloff-rupee-bond-reaction",
+      "angle": "fpi",
+      "members": [
+        "rss-0081",
+        "rss-0082",
+        "rss-0083",
+        "rss-0084",
+        "rss-0085",
+        "rss-0086",
+        "rss-0087",
+        "rss-0088"
+      ]
+    },
+    {
+      "canonical_id": "markets-selloff-rupee-bond-reaction",
+      "angle": "recovery",
+      "members": [
+        "rss-0089",
+        "rss-0090",
+        "rss-0091",
+        "rss-0092",
+        "rss-0093",
+        "rss-0094",
+        "rss-0095",
+        "rss-0096"
+      ]
+    },
+    {
+      "canonical_id": "chennai-water-desalination-and-supply-crunch",
+      "angle": "water-cut",
+      "members": [
+        "rss-0097",
+        "rss-0098",
+        "rss-0099",
+        "rss-0100",
+        "rss-0101",
+        "rss-0102",
+        "rss-0103",
+        "rss-0104"
+      ]
+    },
+    {
+      "canonical_id": "chennai-water-desalination-and-supply-crunch",
+      "angle": "desalination",
+      "members": [
+        "rss-0105",
+        "rss-0106",
+        "rss-0107",
+        "rss-0108",
+        "rss-0109",
+        "rss-0110",
+        "rss-0111",
+        "rss-0112"
+      ]
+    },
+    {
+      "canonical_id": "chennai-water-desalination-and-supply-crunch",
+      "angle": "reservoirs",
+      "members": [
+        "rss-0113",
+        "rss-0114",
+        "rss-0115",
+        "rss-0116",
+        "rss-0117",
+        "rss-0118",
+        "rss-0119",
+        "rss-0120"
+      ]
+    },
+    {
+      "canonical_id": "chennai-water-desalination-and-supply-crunch",
+      "angle": "traffic",
+      "members": [
+        "rss-0121",
+        "rss-0122",
+        "rss-0123",
+        "rss-0124",
+        "rss-0125",
+        "rss-0126",
+        "rss-0127",
+        "rss-0128"
+      ]
+    },
+    {
+      "canonical_id": "chennai-water-desalination-and-supply-crunch",
+      "angle": "local-politics",
+      "members": [
+        "rss-0129",
+        "rss-0130",
+        "rss-0131",
+        "rss-0132",
+        "rss-0133",
+        "rss-0134",
+        "rss-0135",
+        "rss-0136"
+      ]
+    },
+    {
+      "canonical_id": "chennai-water-desalination-and-supply-crunch",
+      "angle": "consumer",
+      "members": [
+        "rss-0137",
+        "rss-0138",
+        "rss-0139",
+        "rss-0140",
+        "rss-0141",
+        "rss-0142",
+        "rss-0143",
+        "rss-0144"
+      ]
+    },
+    {
+      "canonical_id": "oman-weather-cyclone-watch-and-port-alerts",
+      "angle": "forecast",
+      "members": [
+        "rss-0145",
+        "rss-0146",
+        "rss-0147",
+        "rss-0148",
+        "rss-0149",
+        "rss-0150",
+        "rss-0151",
+        "rss-0152"
+      ]
+    },
+    {
+      "canonical_id": "oman-weather-cyclone-watch-and-port-alerts",
+      "angle": "ports",
+      "members": [
+        "rss-0153",
+        "rss-0154",
+        "rss-0155",
+        "rss-0156",
+        "rss-0157",
+        "rss-0158",
+        "rss-0159",
+        "rss-0160"
+      ]
+    },
+    {
+      "canonical_id": "oman-weather-cyclone-watch-and-port-alerts",
+      "angle": "schools",
+      "members": [
+        "rss-0161",
+        "rss-0162",
+        "rss-0163",
+        "rss-0164",
+        "rss-0165",
+        "rss-0166",
+        "rss-0167",
+        "rss-0168"
+      ]
+    },
+    {
+      "canonical_id": "oman-weather-cyclone-watch-and-port-alerts",
+      "angle": "roads",
+      "members": [
+        "rss-0169",
+        "rss-0170",
+        "rss-0171",
+        "rss-0172",
+        "rss-0173",
+        "rss-0174",
+        "rss-0175",
+        "rss-0176"
+      ]
+    },
+    {
+      "canonical_id": "oman-weather-cyclone-watch-and-port-alerts",
+      "angle": "aviation",
+      "members": [
+        "rss-0177",
+        "rss-0178",
+        "rss-0179",
+        "rss-0180",
+        "rss-0181",
+        "rss-0182",
+        "rss-0183",
+        "rss-0184"
+      ]
+    },
+    {
+      "canonical_id": "oman-weather-cyclone-watch-and-port-alerts",
+      "angle": "safety",
+      "members": [
+        "rss-0185",
+        "rss-0186",
+        "rss-0187",
+        "rss-0188",
+        "rss-0189",
+        "rss-0190",
+        "rss-0191",
+        "rss-0192"
+      ]
+    },
+    {
+      "canonical_id": "ai-chip-export-curbs-and-semiconductor-ripple",
+      "angle": "policy",
+      "members": [
+        "rss-0193",
+        "rss-0194",
+        "rss-0195",
+        "rss-0196",
+        "rss-0197",
+        "rss-0198",
+        "rss-0199",
+        "rss-0200"
+      ]
+    },
+    {
+      "canonical_id": "ai-chip-export-curbs-and-semiconductor-ripple",
+      "angle": "stocks",
+      "members": [
+        "rss-0201",
+        "rss-0202",
+        "rss-0203",
+        "rss-0204",
+        "rss-0205",
+        "rss-0206",
+        "rss-0207",
+        "rss-0208"
+      ]
+    },
+    {
+      "canonical_id": "ai-chip-export-curbs-and-semiconductor-ripple",
+      "angle": "cloud",
+      "members": [
+        "rss-0209",
+        "rss-0210",
+        "rss-0211",
+        "rss-0212",
+        "rss-0213",
+        "rss-0214",
+        "rss-0215",
+        "rss-0216"
+      ]
+    },
+    {
+      "canonical_id": "ai-chip-export-curbs-and-semiconductor-ripple",
+      "angle": "china",
+      "members": [
+        "rss-0217",
+        "rss-0218",
+        "rss-0219",
+        "rss-0220",
+        "rss-0221",
+        "rss-0222",
+        "rss-0223",
+        "rss-0224"
+      ]
+    },
+    {
+      "canonical_id": "ai-chip-export-curbs-and-semiconductor-ripple",
+      "angle": "startups",
+      "members": [
+        "rss-0225",
+        "rss-0226",
+        "rss-0227",
+        "rss-0228",
+        "rss-0229",
+        "rss-0230",
+        "rss-0231",
+        "rss-0232"
+      ]
+    },
+    {
+      "canonical_id": "ai-chip-export-curbs-and-semiconductor-ripple",
+      "angle": "analysis",
+      "members": [
+        "rss-0233",
+        "rss-0234",
+        "rss-0235",
+        "rss-0236",
+        "rss-0237",
+        "rss-0238",
+        "rss-0239",
+        "rss-0240"
+      ]
+    },
+    {
+      "canonical_id": "airline-fare-sale-and-airport-ops-disruption",
+      "angle": "sale",
+      "members": [
+        "rss-0241",
+        "rss-0242",
+        "rss-0243",
+        "rss-0244",
+        "rss-0245",
+        "rss-0246",
+        "rss-0247",
+        "rss-0248"
+      ]
+    },
+    {
+      "canonical_id": "airline-fare-sale-and-airport-ops-disruption",
+      "angle": "ops",
+      "members": [
+        "rss-0249",
+        "rss-0250",
+        "rss-0251",
+        "rss-0252",
+        "rss-0253",
+        "rss-0254",
+        "rss-0255",
+        "rss-0256"
+      ]
+    },
+    {
+      "canonical_id": "airline-fare-sale-and-airport-ops-disruption",
+      "angle": "airport",
+      "members": [
+        "rss-0257",
+        "rss-0258",
+        "rss-0259",
+        "rss-0260",
+        "rss-0261",
+        "rss-0262",
+        "rss-0263",
+        "rss-0264"
+      ]
+    },
+    {
+      "canonical_id": "airline-fare-sale-and-airport-ops-disruption",
+      "angle": "consumer",
+      "members": [
+        "rss-0265",
+        "rss-0266",
+        "rss-0267",
+        "rss-0268",
+        "rss-0269",
+        "rss-0270",
+        "rss-0271",
+        "rss-0272"
+      ]
+    },
+    {
+      "canonical_id": "airline-fare-sale-and-airport-ops-disruption",
+      "angle": "routes",
+      "members": [
+        "rss-0273",
+        "rss-0274",
+        "rss-0275",
+        "rss-0276",
+        "rss-0277",
+        "rss-0278",
+        "rss-0279",
+        "rss-0280"
+      ]
+    },
+    {
+      "canonical_id": "airline-fare-sale-and-airport-ops-disruption",
+      "angle": "tips",
+      "members": [
+        "rss-0281",
+        "rss-0282",
+        "rss-0283",
+        "rss-0284",
+        "rss-0285",
+        "rss-0286",
+        "rss-0287",
+        "rss-0288"
+      ]
+    },
+    {
+      "canonical_id": "ott-release-controversy-and-censorship-debate",
+      "angle": "release",
+      "members": [
+        "rss-0289",
+        "rss-0290",
+        "rss-0291",
+        "rss-0292",
+        "rss-0293",
+        "rss-0294",
+        "rss-0295",
+        "rss-0296"
+      ]
+    },
+    {
+      "canonical_id": "ott-release-controversy-and-censorship-debate",
+      "angle": "controversy",
+      "members": [
+        "rss-0297",
+        "rss-0298",
+        "rss-0299",
+        "rss-0300",
+        "rss-0301",
+        "rss-0302",
+        "rss-0303",
+        "rss-0304"
+      ]
+    },
+    {
+      "canonical_id": "ott-release-controversy-and-censorship-debate",
+      "angle": "legal",
+      "members": [
+        "rss-0305",
+        "rss-0306",
+        "rss-0307",
+        "rss-0308",
+        "rss-0309",
+        "rss-0310",
+        "rss-0311",
+        "rss-0312"
+      ]
+    },
+    {
+      "canonical_id": "ott-release-controversy-and-censorship-debate",
+      "angle": "reviews",
+      "members": [
+        "rss-0313",
+        "rss-0314",
+        "rss-0315",
+        "rss-0316",
+        "rss-0317",
+        "rss-0318",
+        "rss-0319",
+        "rss-0320"
+      ]
+    },
+    {
+      "canonical_id": "ott-release-controversy-and-censorship-debate",
+      "angle": "box-office",
+      "members": [
+        "rss-0321",
+        "rss-0322",
+        "rss-0323",
+        "rss-0324",
+        "rss-0325",
+        "rss-0326",
+        "rss-0327",
+        "rss-0328"
+      ]
+    },
+    {
+      "canonical_id": "ott-release-controversy-and-censorship-debate",
+      "angle": "platform",
+      "members": [
+        "rss-0329",
+        "rss-0330",
+        "rss-0331",
+        "rss-0332",
+        "rss-0333",
+        "rss-0334",
+        "rss-0335",
+        "rss-0336"
+      ]
+    }
+  ],
+  "must_not_surface_as_parents": [
+    "cricket-training-camp",
+    "gold-prices-global",
+    "oil-prices-global",
+    "film-teaser",
+    "mall-opening",
+    "startup-funding",
+    "local-roadworks",
+    "college-festival",
+    "sports-injury",
+    "device-launch"
+  ],
+  "evaluation_rules": {
+    "parent_recall_target": 1.0,
+    "top7_precision_target": 0.85,
+    "duplicate_leak_target": 0,
+    "noise_parent_leak_target": 0,
+    "snapshot_presence_consistency_required": true,
+    "angle_diversity_expected_per_parent_min": 5
+  }
+}
