@@ -1,0 +1,928 @@
+diff -ruN /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/embeddingsAdapter.js /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/embeddingsAdapter.js
+--- /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/embeddingsAdapter.js	2026-04-19 07:59:55.000000000 +0000
++++ /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/embeddingsAdapter.js	2026-04-19 12:38:06.952895653 +0000
+@@ -1,12 +1,89 @@
++import { GoogleGenerativeAI } from '@google/generative-ai';
++
++const EMBEDDING_DIM = 768;
++const embedCache = new Map();
++
++function hashText(text) {
++  let hash = 0x811c9dc5;
++  for (let i = 0; i < text.length; i++) {
++    hash ^= text.charCodeAt(i);
++    hash = (hash * 0x01000193) >>> 0;
++  }
++  return hash.toString(36);
++}
++
++function deterministicFallbackVector(text) {
++  const vec = new Float64Array(EMBEDDING_DIM);
++  const norm = String(text || '').toLowerCase();
++  for (let i = 0; i < norm.length; i++) {
++    const c0 = norm.charCodeAt(i);
++    const c1 = i + 1 < norm.length ? norm.charCodeAt(i + 1) : 0;
++    const c2 = i + 2 < norm.length ? norm.charCodeAt(i + 2) : 0;
++    vec[(c0 * 31 + c1) % EMBEDDING_DIM] += 1;
++    vec[(c0 * 961 + c1 * 31 + c2) % EMBEDDING_DIM] += 0.5;
++  }
++  let mag = 0;
++  for (let i = 0; i < EMBEDDING_DIM; i++) mag += vec[i] * vec[i];
++  mag = Math.sqrt(mag) || 1;
++  return Array.from(vec).map((x) => x / mag);
++}
++
++function getApiKey() {
++  if (typeof import.meta !== 'undefined' && import.meta.env) {
++    return import.meta.env.VITE_GEMINI_API_KEY || '';
++  }
++  return '';
++}
++
+ export async function getEmbeddings(texts) {
+-  // Simple fallback/mock implementation for the adapter
+-  return texts.map(text => {
+-    const vec = new Array(384).fill(0);
+-    // basic deterministic vector based on string length and first char
+-    if (text && text.length > 0) {
+-      vec[0] = text.length / 1000;
+-      vec[1] = text.charCodeAt(0) / 255;
++  const apiKey = getApiKey();
++  const useFallback = !apiKey || !apiKey.trim();
++  const results = new Array(texts.length);
++  const pending = [];
++
++  texts.forEach((text, index) => {
++    const key = hashText(text);
++    const cached = embedCache.get(key);
++    if (cached) {
++      results[index] = cached;
++    } else {
++      pending.push({ text, index, key });
+     }
+-    return vec;
+   });
++
++  if (!pending.length) return results;
++
++  if (useFallback) {
++    pending.forEach(({ text, index, key }) => {
++      const vec = deterministicFallbackVector(text);
++      embedCache.set(key, vec);
++      results[index] = vec;
++    });
++    return results;
++  }
++
++  try {
++    const genAI = new GoogleGenerativeAI(apiKey);
++    const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
++    const response = await model.batchEmbedContents({
++      requests: pending.map(({ text }) => ({
++        content: { role: 'user', parts: [{ text }] },
++      })),
++    });
++    response.embeddings.forEach((embedding, i) => {
++      const vec = embedding.values;
++      const { index, key } = pending[i];
++      embedCache.set(key, vec);
++      results[index] = vec;
++    });
++  } catch (error) {
++    console.error('[getEmbeddings] API failure, using deterministic fallback:', error?.message || error);
++    pending.forEach(({ text, index, key }) => {
++      const vec = deterministicFallbackVector(text);
++      embedCache.set(key, vec);
++      results[index] = vec;
++    });
++  }
++
++  return results;
+ }
+diff -ruN /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/insightFetcher.js /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/insightFetcher.js
+--- /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/insightFetcher.js	2026-04-19 07:59:55.000000000 +0000
++++ /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/insightFetcher.js	2026-04-19 12:38:06.952727900 +0000
+@@ -1,7 +1,17 @@
+-import { runInsightPipeline, applyIncrementalUpdate, DEFAULT_CONFIG, normalizeStory } from '../insight/src/index.ts';
++import {
++  runInsightPipeline,
++  applyIncrementalUpdate,
++  DEFAULT_CONFIG,
++  normalizeStory,
++} from '../insight/src/index.ts';
+ import { fetchStoriesForSlot as fetchRawStoriesForSlot } from './newsFetcher.js';
+ import { getEmbeddings } from './embeddingsAdapter.js';
+-import { extractEntities, extractVerbs, extractNumbers, extractKeywords } from './nlpAdapter.js';
++import {
++  extractEntities,
++  extractKeywords,
++  extractVerbs,
++  extractNumbers,
++} from './nlpAdapter.js';
+ 
+ export async function slotFetcher(slot) {
+   const rawStories = await fetchRawStoriesForSlot(slot);
+@@ -10,28 +20,45 @@
+   const texts = rawStories.map((story) => `${story.title || ''} ${story.summary || ''}`.trim());
+   const embeddings = await getEmbeddings(texts);
+ 
+-  const enriched = await Promise.all(rawStories.map(async (raw, index) => {
+-    const text = texts[index];
+-    const [entities, keywords, verbs, numbers] = await Promise.all([
+-      extractEntities(text),
+-      extractKeywords(text),
+-      extractVerbs(text),
+-      extractNumbers(text),
+-    ]);
+-
+-    return normalizeStory(
+-      raw,
+-      slot,
+-      DEFAULT_CONFIG,
+-      embeddings[index],
+-      entities,
+-      keywords,
+-      verbs,
+-      numbers,
+-    );
+-  }));
++  const enriched = await Promise.all(
++    rawStories.map(async (raw, index) => {
++      const text = texts[index];
++      const [entities, keywords, verbs, numbers] = await Promise.all([
++        extractEntities(text),
++        extractKeywords(text),
++        extractVerbs(text),
++        extractNumbers(text),
++      ]);
++
++      return normalizeStory(
++        raw,
++        slot,
++        DEFAULT_CONFIG,
++        embeddings[index],
++        entities,
++        keywords,
++        verbs,
++        numbers,
++      );
++    })
++  );
+ 
+   return enriched.filter(Boolean);
+ }
+ 
++export async function fetchAndProcessInsights(configOverrides = {}) {
++  return runInsightPipeline(slotFetcher, {
++    ...DEFAULT_CONFIG,
++    ...configOverrides,
++  });
++}
++
++export async function refreshInsightsIncrementally(existingResult, configOverrides = {}) {
++  const freshStories = await slotFetcher('now');
++  return applyIncrementalUpdate(freshStories, existingResult, {
++    ...DEFAULT_CONFIG,
++    ...configOverrides,
++  });
++}
++
+ export { runInsightPipeline, applyIncrementalUpdate, DEFAULT_CONFIG };
+diff -ruN /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/newsFetcher.js /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/newsFetcher.js
+--- /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/newsFetcher.js	2026-04-19 07:59:55.000000000 +0000
++++ /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/newsFetcher.js	2026-04-19 12:38:06.952593181 +0000
+@@ -1,21 +1,125 @@
+ /* eslint-disable */
+ import { fetchNews } from '../services/newsService.js';
+ 
++const SLOT_WINDOWS = {
++  now: { minAgeMs: 0, maxAgeMs: 2 * 60 * 60 * 1000 },
++  minus4h: { minAgeMs: 3 * 60 * 60 * 1000, maxAgeMs: 5 * 60 * 60 * 1000 },
++  minus12h: { minAgeMs: 10 * 60 * 60 * 1000, maxAgeMs: 14 * 60 * 60 * 1000 },
++  minus24h: { minAgeMs: 20 * 60 * 60 * 1000, maxAgeMs: 28 * 60 * 60 * 1000 },
++};
++
++const SLOT_QUERIES = {
++  now: 'breaking news OR latest headlines OR top news',
++  minus4h: 'news today india world business',
++  minus12h: 'india world politics markets technology news',
++  minus24h: 'yesterday news india world analysis',
++};
++
++const SOURCE_GROUP_MAP = new Map([
++  ['reuters', 'reuters'],
++  ['bbc', 'bbc'],
++  ['bbc news', 'bbc'],
++  ['ap', 'ap'],
++  ['associated press', 'ap'],
++  ['bloomberg', 'bloomberg'],
++  ['financial times', 'ft'],
++  ['ft', 'ft'],
++  ['the hindu', 'the hindu'],
++  ['hindu', 'the hindu'],
++  ['ndtv', 'ndtv'],
++  ['times of india', 'toi'],
++  ['toi', 'toi'],
++  ['moneycontrol', 'moneycontrol'],
++  ['cnbc tv18', 'cnbc'],
++  ['oman observer', 'oman observer'],
++  ['oman daily observer', 'oman observer'],
++]);
++
++function hashString(str) {
++  let hash = 0x811c9dc5;
++  for (let i = 0; i < str.length; i++) {
++    hash ^= str.charCodeAt(i);
++    hash = (hash * 0x01000193) >>> 0;
++  }
++  return Math.abs(hash).toString(36);
++}
++
++function toSourceGroup(sourceName) {
++  const lower = String(sourceName || '').trim().toLowerCase();
++  if (!lower) return 'unknown_group';
++  if (SOURCE_GROUP_MAP.has(lower)) return SOURCE_GROUP_MAP.get(lower);
++  return lower.replace(/[^a-z0-9]+/g, '_');
++}
++
++function parsePublishedAt(rawValue) {
++  if (typeof rawValue === 'number' && Number.isFinite(rawValue) && rawValue > 0) {
++    return rawValue;
++  }
++  if (typeof rawValue === 'string' && rawValue.trim()) {
++    const parsed = new Date(rawValue).getTime();
++    if (Number.isFinite(parsed)) return parsed;
++  }
++  return 0;
++}
++
++function slotMidpoint(nowMs, slot) {
++  const window = SLOT_WINDOWS[slot] || SLOT_WINDOWS.now;
++  return nowMs - Math.round((window.minAgeMs + window.maxAgeMs) / 2);
++}
++
++function normalizeArticle(article, nowMs, slot) {
++  const title = String(article?.headline || article?.title || '').trim();
++  const summary = String(article?.summary || article?.description || '').trim();
++  const url = String(article?.url || article?.link || '').trim();
++  const source = String(article?.source?.name || article?.source || 'Unknown').trim() || 'Unknown';
++  if (!title || !url) return null;
++
++  const publishedAt = parsePublishedAt(article?.publishedAt || article?.pubDate || article?.date) || slotMidpoint(nowMs, slot);
++
++  return {
++    id: article?.id || article?.article_id || hashString(url || `${title}::${source}`),
++    title,
++    summary: summary || 'No summary available.',
++    source,
++    sourceGroup: toSourceGroup(source),
++    url,
++    publishedAt,
++    category: article?.category || 'general',
++    region: article?.region || '',
++    language: article?.language || 'en',
++  };
++}
++
+ export async function fetchStoriesForSlot(slot) {
+-  // 'fetchNews' expects (query, keys)
+-  // For the insight page mock we just query for 'latest news' or 'top news'
+-  const news = await fetchNews('latest news', { newsApiKey: '' });
+-  if (!news || !Array.isArray(news)) {
++  const nowMs = Date.now();
++  const { minAgeMs, maxAgeMs } = SLOT_WINDOWS[slot] || SLOT_WINDOWS.now;
++  const query = SLOT_QUERIES[slot] || SLOT_QUERIES.now;
++
++  let articles = [];
++  try {
++    articles = await fetchNews(query, { newsApiKey: '' });
++  } catch (error) {
++    console.warn(`[newsFetcher] fetchNews failed for slot=${slot}:`, error?.message || error);
+     return [];
+   }
+-  return news.map(article => ({
+-    id: article.id || Math.random().toString(36).substring(7),
+-    title: article.headline || '',
+-    summary: article.summary || '',
+-    content: article.summary || '',
+-    url: article.url || '',
+-    publishedAt: article.time ? new Date().toISOString() : new Date().toISOString(), // Mock ISO from time
+-    source: article.source || 'Unknown',
+-    sourceGroup: 'digital'
+-  }));
++
++  if (!Array.isArray(articles)) return [];
++
++  const seen = new Set();
++  const normalized = [];
++  for (const article of articles) {
++    const story = normalizeArticle(article, nowMs, slot);
++    if (!story) continue;
++    const ageMs = nowMs - story.publishedAt;
++    if (ageMs < minAgeMs || ageMs > maxAgeMs) continue;
++
++    const dedupeKey = `${story.url}::${story.title.toLowerCase()}`;
++    if (seen.has(dedupeKey)) continue;
++    seen.add(dedupeKey);
++    normalized.push(story);
++  }
++
++  return normalized;
+ }
++
++export { toSourceGroup };
+diff -ruN /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/nlpAdapter.js /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/nlpAdapter.js
+--- /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/nlpAdapter.js	2026-04-19 07:59:55.000000000 +0000
++++ /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/adapters/nlpAdapter.js	2026-04-19 12:38:06.952986006 +0000
+@@ -1,67 +1,82 @@
+-// FIX M-3: added Trichy, Tiruchirappalli, Tamil Nadu, Oman, and other missing
+-// regional targets that appear in REGION_TAGS config
+-const CITIES = [
+-    // Global metros
+-    "New York", "London", "Tokyo", "Paris", "Beijing", "Sydney", "Berlin",
+-    "Toronto", "Chicago", "Singapore", "Dubai",
+-    // Indian national
+-    "India", "Delhi", "New Delhi", "Mumbai", "Bangalore", "Bengaluru",
+-    "Kolkata", "Hyderabad",
+-    // Tamil Nadu — primary regional targets
+-    "Chennai", "Trichy", "Tiruchirappalli", "Tamil Nadu", "TN",
+-    "Coimbatore", "Madurai", "Salem", "Tirunelveli", "Vellore",
+-    // Oman / Gulf — primary regional targets
+-    "Muscat", "Oman", "Dubai", "Abu Dhabi", "Riyadh",
+-    // Other South Asia
+-    "Pakistan", "Bangladesh", "Sri Lanka", "Nepal",
+-    // Major world countries
+-    "China", "US", "USA", "UK", "Russia", "Brazil", "Australia",
+-    "Canada", "Japan", "Germany", "France", "Italy",
++const CITY_TERMS = [
++  'New York', 'London', 'Tokyo', 'Paris', 'Beijing', 'Sydney', 'Berlin',
++  'Toronto', 'Chicago', 'Singapore', 'Dubai', 'India', 'Delhi', 'New Delhi',
++  'Mumbai', 'Bangalore', 'Bengaluru', 'Kolkata', 'Hyderabad', 'Chennai',
++  'Trichy', 'Tiruchirappalli', 'Tamil Nadu', 'Coimbatore', 'Madurai',
++  'Salem', 'Tirunelveli', 'Vellore', 'Muscat', 'Oman', 'Abu Dhabi', 'Riyadh',
++  'Pakistan', 'Bangladesh', 'Sri Lanka', 'Nepal', 'China', 'USA', 'US', 'UK',
++  'Russia', 'Brazil', 'Australia', 'Canada', 'Japan', 'Germany', 'France', 'Italy'
+ ];
+-const VERBS = ["launches", "bans", "acquires", "crashes", "rises", "falls", "signs", "approves", "rejects", "announces", "declares", "invests", "warns", "halts", "suspends", "resumes", "fires", "hires", "merges", "buys", "sells", "drops", "increases", "decreases", "wins", "loses", "surges", "plummets", "soars", "tumbles", "introduces", "unveils", "cancels", "delays", "postpones", "extends", "shortens", "expands", "shrinks", "grows"];
+-const ORGS = ["Apple", "Google", "Microsoft", "Amazon", "Facebook", "Meta", "Tesla", "Nvidia", "Samsung", "Intel", "IBM", "Oracle", "Cisco", "Sony", "Toyota", "Honda", "Commerce Ministry", "Finance Ministry", "Supreme Court", "High Court", "RBI", "SEBI", "BCCI", "ICC", "FIFA", "UN", "WHO", "IMF", "World Bank"];
++
++const ORG_TERMS = [
++  'Apple', 'Google', 'Microsoft', 'Amazon', 'Meta', 'Tesla', 'Nvidia', 'Samsung',
++  'Intel', 'IBM', 'Oracle', 'Cisco', 'Sony', 'Toyota', 'Honda', 'Commerce Ministry',
++  'Finance Ministry', 'Supreme Court', 'High Court', 'RBI', 'SEBI', 'BCCI', 'ICC',
++  'FIFA', 'UN', 'WHO', 'IMF', 'World Bank', 'NDA', 'BJP', 'Congress'
++];
++
++const PRODUCT_TERMS = ['iPhone', 'Galaxy', 'ChatGPT', 'Copilot', 'Gemini', 'Windows', 'PlayStation', 'MacBook'];
++const VERBS = ['launches','bans','acquires','crashes','rises','falls','signs','approves','rejects','announces','declares','invests','warns','halts','suspends','resumes','fires','hires','merges','buys','sells','drops','increases','decreases','wins','loses','surges','plummets','soars','tumbles','introduces','unveils','cancels','delays','postpones','extends','shortens','expands','shrinks','grows'];
++const STOPWORDS = new Set(['about','after','again','against','below','between','could','during','first','further','headline','latest','news','their','there','these','those','through','today','under','until','while','would','which','where','with','from','into','this','that','have','has','been','will','were','they','them','than']);
++
++function uniq(list) {
++  return [...new Set(list.filter(Boolean))];
++}
+ 
+ export async function extractEntities(text) {
+-    const entities = { people: [], orgs: [], places: [], products: [], symbols: [] };
+-    CITIES.forEach(city => { if (text.includes(city)) entities.places.push(city); });
+-    ORGS.forEach(org => { if (text.includes(org)) entities.orgs.push(org); });
+-    const capitalizedMatches = text.match(/([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)/g);
+-    if (capitalizedMatches) {
+-        capitalizedMatches.forEach(match => {
+-            if (!CITIES.includes(match) && !ORGS.includes(match)) {
+-                if (match !== "Commerce Ministry") entities.orgs.push(match);
+-            }
+-        });
++  const value = String(text || '');
++  const entities = { people: [], orgs: [], places: [], products: [], symbols: [] };
++
++  CITY_TERMS.forEach((term) => {
++    if (value.includes(term)) entities.places.push(term);
++  });
++  ORG_TERMS.forEach((term) => {
++    if (value.includes(term)) entities.orgs.push(term);
++  });
++  PRODUCT_TERMS.forEach((term) => {
++    if (value.includes(term)) entities.products.push(term);
++  });
++
++  const tickerMatches = value.match(/\$[A-Z]{1,5}|[A-Z]{2,5}(?:\.NS|\.O|\.L)?/g) || [];
++  entities.symbols.push(...tickerMatches.map((token) => token.trim()));
++
++  const multiWordNames = value.match(/[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2}/g) || [];
++  multiWordNames.forEach((name) => {
++    if (CITY_TERMS.includes(name) || ORG_TERMS.includes(name)) return;
++    if (/Ministry|Court|Bank|University|Party|Council|Commission/.test(name)) {
++      entities.orgs.push(name);
++    } else {
++      entities.people.push(name);
+     }
+-    entities.places = [...new Set(entities.places)];
+-    entities.orgs = [...new Set(entities.orgs)];
+-    return entities;
++  });
++
++  entities.people = uniq(entities.people);
++  entities.orgs = uniq(entities.orgs);
++  entities.places = uniq(entities.places);
++  entities.products = uniq(entities.products);
++  entities.symbols = uniq(entities.symbols);
++  return entities;
+ }
+ 
+ export async function extractVerbs(text) {
+-    const verbs = [];
+-    const lowerText = text.toLowerCase();
+-    VERBS.forEach(verb => {
+-        const regex = new RegExp(`\\b${verb}\\b`, 'g');
+-        if (regex.test(lowerText)) verbs.push(verb);
+-    });
+-    return [...new Set(verbs)];
++  const lower = String(text || '').toLowerCase();
++  return uniq(VERBS.filter((verb) => new RegExp(`\b${verb}\b`, 'i').test(lower)));
+ }
+ 
+ export async function extractNumbers(text) {
+-    const numbers = [];
+-    const regex = /(?:₹|\$|€|£)?\d+(?:,\d+)*(?:\.\d+)?\s*(?:crore|lakh|million|billion|trillion|M|B|K|%|percent)?/gi;
+-    let match;
+-    while ((match = regex.exec(text)) !== null) {
+-        numbers.push(match[0].trim());
+-    }
+-    return [...new Set(numbers)];
++  const matches = String(text || '').match(/(?:₹|\$|€|£)?\d+(?:,\d+)*(?:\.\d+)?\s*(?:crore|lakh|million|billion|trillion|M|B|K|%|percent)?/gi) || [];
++  return uniq(matches.map((m) => m.trim()));
+ }
+ 
+ export async function extractKeywords(text) {
+-    const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 4);
+-    const freq = {};
+-    words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+-    const sorted = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
+-    return sorted.slice(0, Math.max(3, Math.min(5, sorted.length)));
++  const words = String(text || '')
++    .toLowerCase()
++    .split(/[^a-z0-9]+/)
++    .filter((word) => word.length > 3 && !STOPWORDS.has(word));
++  const freq = new Map();
++  words.forEach((word) => freq.set(word, (freq.get(word) || 0) + 1));
++  return [...freq.entries()]
++    .sort((a, b) => b[1] - a[1])
++    .slice(0, 8)
++    .map(([word]) => word);
+ }
+diff -ruN /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/pages/InsightPage.jsx /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/pages/InsightPage.jsx
+--- /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/pages/InsightPage.jsx	2026-04-19 07:59:55.000000000 +0000
++++ /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/pages/InsightPage.jsx	2026-04-19 12:38:06.953121186 +0000
+@@ -1,176 +1,276 @@
+-/* eslint-disable */
+-import React, { useEffect, useState } from 'react';
++import React, { useCallback, useEffect, useMemo, useState } from 'react';
+ import Header from '../components/Header.jsx';
+-import { runInsightPipeline, DEFAULT_CONFIG } from '../insight/src/index.ts';
+-import { slotFetcher } from '../adapters/insightFetcher.js';
+-import '../styles/InsightPage.css';
+-
+-function ICard({ story, index }) {
+-  const [open, setOpen] = useState(false);
+-  const pct = Math.min(Math.round((story.finalParentScore || 0) * 100), 100);
+-
+-  const isBreaking = story.isRising || false;
+-  const srcCount = story.clusterStoryIds?.length || 1;
+-  const timeAgo = "Live";
+-  const sources = [...new Set(story.clusterStoryIds.map(id => id.split('-')[0] || 'Unknown'))].slice(0, 3);
++import EmptyState from '../components/EmptyState.jsx';
++import {
++  fetchAndProcessInsights,
++  refreshInsightsIncrementally,
++} from '../adapters/insightFetcher.js';
++
++const ANGLE_STYLE = {
++  base_report: { bg: '#1a3a5c', color: '#60a5fa', label: 'BASE' },
++  official_response: { bg: '#1a3d2b', color: '#4ade80', label: 'OFFICIAL' },
++  fact_update: { bg: '#3d2e0a', color: '#fbbf24', label: 'FACT' },
++  market_reaction: { bg: '#2d1f47', color: '#c084fc', label: 'MARKET' },
++  expert_analysis: { bg: '#3d1e1a', color: '#f87171', label: 'EXPERT' },
++  regional_followup: { bg: '#1e2d3d', color: '#94a3b8', label: 'REGIONAL' },
++  investigative_detail: { bg: '#2d2a0a', color: '#facc15', label: 'INVEST.' },
++  correction: { bg: '#3d1a1a', color: '#fb923c', label: 'CORR.' },
++  background_context: { bg: '#1a2a2d', color: '#67e8f9', label: 'CONTEXT' },
++  reaction_public: { bg: '#2a1a3d', color: '#a78bfa', label: 'PUBLIC' },
++  unknown: { bg: '#2a2a2a', color: '#9ca3af', label: 'OTHER' },
++};
++
++function formatStoryTime(publishedAt) {
++  if (!publishedAt) return 'Unknown time';
++  const date = new Date(publishedAt);
++  if (Number.isNaN(date.getTime())) return 'Unknown time';
++  return date.toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
++}
+ 
++function AngleBadge({ angle }) {
++  const style = ANGLE_STYLE[angle] || ANGLE_STYLE.unknown;
+   return (
+-    <div className={`icard ${open ? 'open' : ''}`} data-top="true">
+-      <div className="icard-top" onClick={() => setOpen(o => !o)}>
+-        <div className="irank">{String(index + 1).padStart(2, '0')}</div>
+-        <div className="ibody">
+-          <div className="imeta-row">
+-            <span className="isource">Cluster</span><span className="idot" />
+-            <span className="itime">{timeAgo}</span>
+-            {isBreaking && <span className="itag breaking">🔥 Rising</span>}
+-            {srcCount > 1 && <span className="itag multi">{srcCount} stories</span>}
+-            {story.weakTree && <span className="itag" style={{ background: '#78350f', color: '#fde68a' }}>⚠ Thin</span>}
+-          </div>
+-          <h3>{story.canonicalHeadline}</h3>
+-          <div className="iimpact"><div className="ibar"><span style={{ width: `${pct}%` }} /></div><div className="ival">{(story.finalParentScore || 0).toFixed(2)}</div></div>
+-          <div className="isrcs">{sources.map((s, i) => <span key={i} className="s">{s}</span>)}</div>
+-        </div>
+-        <button className="expand-btn" tabIndex={-1}>{open ? '−' : '+'}</button>
+-      </div>
+-      {open && (
+-        <div className="iexpand"><div className="iexpand-inner">
+-          <div className="exp-block">
+-            <div className="exp-label"><span className="dot" />Summary</div>
+-            <p className="exp-summary">{story.canonicalSummary}</p>
+-          </div>
++    <span style={{
++      background: style.bg,
++      color: style.color,
++      padding: '2px 6px',
++      borderRadius: '4px',
++      fontSize: '10px',
++      fontWeight: 700,
++      textTransform: 'uppercase',
++      letterSpacing: '0.4px',
++      flexShrink: 0,
++      alignSelf: 'flex-start',
++      marginTop: '2px',
++    }}>
++      {style.label}
++    </span>
++  );
++}
+ 
+-          <div className="exp-block">
+-            <div className="exp-label"><span className="dot" style={{ background: 'var(--warn, #F0883E)' }} />Child Stories</div>
+-            <div className="src-list">
+-              {story.childStoryIds.length === 0 ? (
+-                 <p className="ctxt">No diverse child stories found.</p>
+-              ) : (
+-                 story.childStoryIds.map((childId, i) => (
+-                    <div key={i} className="src-item">
+-                      <span className="sname">Child {i+1}</span>
+-                      <span className="sdesc">{childId}</span>
+-                      <span className="ang diff">Sub-angle</span>
+-                    </div>
+-                 ))
+-              )}
+-            </div>
+-          </div>
+-        </div></div>
+-      )}
++function SnapshotDots({ snapshotPresence }) {
++  const labels = [
++    ['now', 'now'],
++    ['minus4h', '−4h'],
++    ['minus12h', '−12h'],
++    ['minus24h', '−24h'],
++  ];
++  return (
++    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
++      {labels.map(([slot, label]) => (
++        <span
++          key={slot}
++          title={label}
++          style={{
++            width: '8px',
++            height: '8px',
++            borderRadius: '50%',
++            display: 'inline-block',
++            background: snapshotPresence?.[slot] ? 'var(--color-primary, #3b82f6)' : 'var(--color-border, #374151)',
++          }}
++        />
++      ))}
+     </div>
+   );
+ }
+ 
+-function InsightTab({ result }) {
+-  const parents = result?.parents || [];
++function ChildStory({ childId, storiesById }) {
++  const story = storiesById?.get(childId);
++  if (!story) return null;
+ 
+   return (
+-    <div className="scroll insight-page">
+-      <div className="ins-pulse">
+-        <div className="ins-ring">
+-          <svg viewBox="0 0 100 100" aria-hidden="true">
+-            <defs>
+-              <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+-                <stop offset="0" stopColor="#00D4AA" /><stop offset="1" stopColor="#58A6FF" />
+-              </linearGradient>
+-            </defs>
+-            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="9" />
+-            <circle cx="50" cy="50" r="40" fill="none" stroke="url(#rg)" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${0.86 * 251.2} 251.2`} />
+-          </svg>
+-          <div className="ircenter">
+-            <div className="irscore">86</div>
+-            <div className="irslbl">Signal</div>
+-          </div>
++    <li style={{
++      padding: '10px 0',
++      borderBottom: '1px solid var(--color-border, #374151)',
++      display: 'flex',
++      gap: '10px',
++      alignItems: 'flex-start',
++    }}>
++      <AngleBadge angle={story.angle || 'unknown'} />
++      <div style={{ flex: 1, minWidth: 0 }}>
++        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '3px' }}>
++          {story.title}
+         </div>
+-        <div className="ins-body">
+-          <div className="eyebrow"><span className="bip" />Live feed</div>
+-          <p>Day leans <em>positive</em> — <em>{parents.filter(p => p.isRising).length} breaking</em> threads active</p>
+-          <div className="ins-meta">
+-            <span>Just updated</span><span>·</span>
+-            <span><b>{parents.length}</b> clusters</span><span>·</span>
+-            <span>next in <b>05:00</b></span>
+-          </div>
++        <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)', lineHeight: '1.5', marginBottom: '4px' }}>
++          {story.summary}
++        </div>
++        <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary, #6b7280)' }}>
++          {story.source} · {formatStoryTime(story.publishedAt)}
++          {story.sourceTier ? <span style={{ marginLeft: '6px', opacity: 0.65 }}>Tier {story.sourceTier}</span> : null}
+         </div>
+       </div>
+-      <div className="sstrip">
+-        <div className="sig" data-t="info"><div className="snum">{parents.length}</div><div className="slb">Ranked</div></div>
+-        <div className="sig" data-t="warn"><div className="snum">{parents.filter(p => p.isRising).length}</div><div className="slb">Rising</div></div>
+-        <div className="sig" data-t="good"><div className="snum">{parents.reduce((acc, p) => acc + p.clusterStoryIds.length, 0)}</div><div className="slb">Stories</div></div>
+-        <div className="sig" data-t="teal"><div className="snum">9<span style={{ color: 'var(--muted)', fontSize: '.75rem' }}>/9</span></div><div className="slb">Sections</div></div>
+-        <div className="sig" data-t="mute"><div className="snum">Live</div><div className="slb">Fresh</div></div>
+-      </div>
+-      <div className="isec">
+-        <h3><span className="glyph">▲</span>Top Ranked</h3>
+-        <span className="imeta"><b>{parents.length}</b> shown · tap + to expand</span>
+-      </div>
+-      {parents.map((p, i) => <ICard key={p.parentId} story={p} index={i} />)}
+-    </div>
++    </li>
+   );
+ }
+ 
+-function EmptyState({ icon, title, message }) {
+-    return (
+-        <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--muted, #9CA5B0)' }}>
+-            <div style={{ fontSize: '40px', marginBottom: '16px' }}>{icon}</div>
+-            <h3 style={{ margin: '0 0 8px 0', color: 'var(--txt, #FFFFFF)' }}>{title}</h3>
+-            <p style={{ margin: 0, fontSize: '14px' }}>{message}</p>
++function ParentCard({ parent, storiesById, isExpanded, onToggle }) {
++  const hiddenCount = parent.hiddenDuplicateIds?.length ?? 0;
++  const sourceList = useMemo(() => {
++    const resolved = parent.clusterStoryIds
++      .map((id) => storiesById.get(id)?.sourceGroup || storiesById.get(id)?.source)
++      .filter(Boolean);
++    return [...new Set(resolved)].slice(0, 4);
++  }, [parent.clusterStoryIds, storiesById]);
++
++  return (
++    <div style={{
++      background: 'var(--color-surface)',
++      borderRadius: '12px',
++      border: `1px solid ${parent.weakTree ? 'var(--color-warning, #d97706)' : 'var(--color-border)'}`,
++      overflow: 'hidden',
++      marginBottom: '16px',
++      opacity: parent.weakTree ? 0.82 : 1,
++    }}>
++      <div style={{ padding: '16px' }}>
++        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
++          <h3 style={{ margin: '0 0 8px 0', fontSize: '17px', fontWeight: 'bold', flex: 1 }}>
++            {parent.canonicalHeadline}
++          </h3>
++          <div style={{ display: 'flex', gap: '6px', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
++            {parent.isRising ? <span style={{ background: '#854d0e', color: '#fef08a', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>🔥 Rising</span> : null}
++            {parent.weakTree ? <span style={{ background: '#78350f', color: '#fde68a', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>⚠ Thin</span> : null}
++            <span style={{ background: 'var(--color-surface-hover)', padding: '2px 7px', borderRadius: '4px', fontSize: '11px', color: 'var(--color-text-secondary)' }}>
++              {Number(parent.finalParentScore || 0).toFixed(2)}
++            </span>
++          </div>
+         </div>
+-    );
++
++        <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
++          {parent.canonicalSummary}
++        </p>
++
++        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
++          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
++            <SnapshotDots snapshotPresence={parent.snapshotPresence} />
++            <span style={{ fontSize: '11px', color: 'var(--color-text-tertiary, #6b7280)' }}>
++              {parent.debug?.clusterSize ?? parent.clusterStoryIds.length} stories
++            </span>
++            {hiddenCount > 0 ? (
++              <span style={{ fontSize: '11px', color: 'var(--color-text-tertiary, #6b7280)' }}>
++                {hiddenCount} similar hidden
++              </span>
++            ) : null}
++            {sourceList.map((source) => (
++              <span key={source} style={{ fontSize: '11px', color: 'var(--color-text-secondary)', background: 'var(--color-surface-hover)', padding: '2px 6px', borderRadius: '999px' }}>
++                {source}
++              </span>
++            ))}
++          </div>
++          <button
++            onClick={onToggle}
++            style={{
++              background: 'var(--color-bg)',
++              border: '1px solid var(--color-border)',
++              color: 'var(--color-text-primary)',
++              cursor: 'pointer',
++              fontWeight: 'bold',
++              padding: '5px 12px',
++              borderRadius: '6px',
++              fontSize: '12px',
++            }}
++          >
++            {isExpanded ? '− Hide' : `+ ${parent.childStoryIds.length} Stories`}
++          </button>
++        </div>
++      </div>
++
++      {isExpanded ? (
++        <div style={{ borderTop: '1px solid var(--color-border)', padding: '8px 16px 12px', background: 'var(--color-surface-elevated, var(--color-surface))' }}>
++          {parent.childStoryIds.length === 0 ? (
++            <p style={{ fontSize: '13px', color: 'var(--color-text-tertiary)', padding: '8px 0' }}>No diverse child stories for this cluster.</p>
++          ) : (
++            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
++              {parent.childStoryIds.map((childId) => (
++                <ChildStory key={childId} childId={childId} storiesById={storiesById} />
++              ))}
++            </ul>
++          )}
++        </div>
++      ) : null}
++    </div>
++  );
+ }
+ 
+ export default function InsightPage() {
+-    const [result, setResult] = useState(null);
+-    const [loading, setLoading] = useState(true);
+-
+-    useEffect(() => {
+-        let isMounted = true;
+-        async function fetchInitial() {
+-            try {
+-                setLoading(true);
+-                const r = await runInsightPipeline(slotFetcher, DEFAULT_CONFIG);
+-                if (isMounted) setResult(r);
+-            } catch (e) {
+-                console.error('Failed to run insight pipeline:', e);
+-            } finally {
+-                if (isMounted) setLoading(false);
+-            }
+-        }
+-        fetchInitial();
+-        return () => { isMounted = false; };
+-    }, []);
+-
+-    if (loading) {
+-        return (
+-            <div className="page-container insight-page">
+-                <Header title="Insight" stateLabel="Loading" stateType="loading" />
+-                <div className="modern-container">
+-                    <p style={{ textAlign: 'center', marginTop: '20px' }}>Running AI pipeline…</p>
+-                </div>
+-            </div>
+-        );
++  const [result, setResult] = useState(null);
++  const [loading, setLoading] = useState(true);
++  const [expanded, setExpanded] = useState({});
++
++  const parents = result?.parents ?? [];
++  const storiesById = result?.storiesById ?? new Map();
++
++  useEffect(() => {
++    let isMounted = true;
++    async function loadInitial() {
++      try {
++        setLoading(true);
++        const next = await fetchAndProcessInsights();
++        if (isMounted) setResult(next);
++      } catch (error) {
++        console.error('Failed to run insight pipeline:', error);
++      } finally {
++        if (isMounted) setLoading(false);
++      }
+     }
++    loadInitial();
++    return () => {
++      isMounted = false;
++    };
++  }, []);
++
++  useEffect(() => {
++    if (!result) return undefined;
++    const timer = setInterval(async () => {
++      try {
++        const next = await refreshInsightsIncrementally(result);
++        setResult({ ...next });
++      } catch (error) {
++        console.error('Incremental insight refresh failed:', error);
++      }
++    }, 5 * 60 * 1000);
++    return () => clearInterval(timer);
++  }, [result]);
++
++  const toggleExpand = useCallback((parentId) => {
++    setExpanded((prev) => ({ ...prev, [parentId]: !prev[parentId] }));
++  }, []);
+ 
+-    if (!result?.parents?.length) {
+-        return (
+-            <div className="page-container insight-page">
+-                <Header title="Insight" stateLabel="Up to date" stateType="live" />
+-                <div className="modern-container">
+-                    <EmptyState
+-                        icon="🧠"
+-                        title="No Insights Available"
+-                        message="Couldn't generate clusters from the latest news right now."
+-                    />
+-                </div>
+-            </div>
+-        );
+-    }
++  if (loading) {
++    return (
++      <div className='page-container insight-page'>
++        <Header title='Insight' stateLabel='Loading' stateType='loading' />
++        <div className='modern-container'>
++          <p style={{ textAlign: 'center', marginTop: '20px' }}>Running Insight pipeline…</p>
++        </div>
++      </div>
++    );
++  }
+ 
++  if (!parents.length) {
+     return (
+-        <div className="page-container">
+-            <Header title="Insight" stateLabel="Live" stateType="live" />
+-            <div className="modern-container">
+-                <InsightTab result={result} />
+-            </div>
++      <div className='page-container insight-page'>
++        <Header title='Insight' stateLabel='Up to date' stateType='live' />
++        <div className='modern-container'>
++          <EmptyState icon='🧠' title='No Insights Available' message="Couldn't generate clusters from the latest news right now." />
+         </div>
++      </div>
+     );
++  }
++
++  return (
++    <div className='page-container insight-page'>
++      <Header title='Insight' stateLabel='Live' stateType='live' />
++      <div className='modern-container' style={{ padding: '16px' }}>
++        {parents.map((parent) => (
++          <ParentCard
++            key={parent.parentId}
++            parent={parent}
++            storiesById={storiesById}
++            isExpanded={!!expanded[parent.parentId]}
++            onToggle={() => toggleExpand(parent.parentId)}
++          />
++        ))}
++      </div>
++    </div>
++  );
+ }
+diff -ruN /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/services/newsService.js /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/services/newsService.js
+--- /tmp/nwv7pg_orig/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/services/newsService.js	2026-04-19 07:59:55.000000000 +0000
++++ /tmp/nwv7pg_jules/NWv-7-PG-jules-nwv7-phase-3-6-completion-18240861467690822217/src/services/newsService.js	2026-04-19 12:38:06.952424968 +0000
+@@ -70,6 +70,7 @@
+                         source: item.source_id,
+                         url: item.link,
+                         time: new Date(item.pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
++                        publishedAt: item.pubDate ? new Date(item.pubDate).getTime() : null,
+                         confidence: 'HIGH',
+                         sourceCount: 1
+                     }));
+@@ -114,6 +115,7 @@
+                 source: source,
+                 url: item.link,
+                 time: new Date(item.pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
++                publishedAt: item.pubDate ? new Date(item.pubDate).getTime() : null,
+                 confidence: 'MEDIUM',
+                 sourceCount: 1,
+                 originalTitle: item.title
+@@ -167,6 +169,7 @@
+             source: item.author || 'DuckDuckGo/Bing',
+             url: item.link,
+             time: new Date(item.pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
++            publishedAt: item.pubDate ? new Date(item.pubDate).getTime() : null,
+             confidence: 'MEDIUM',
+             sourceCount: 1
+         }));
