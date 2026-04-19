@@ -1,0 +1,2403 @@
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -3,6 +3,7 @@
+ import MainPage from './pages/MainPage';
+ import UpAheadPage from './pages/UpAheadPage';
+ import MyPlannerPage from './pages/MyPlannerPage';
++import InsightPage from './pages/InsightPage';
+ import WeatherPage from './pages/WeatherPage';
+ import MarketPage from './pages/MarketPage';
+ import TechSocialPage from './pages/TechSocialPage';
+@@ -98,6 +99,7 @@
+                 <div className="app">
+                   <Routes>
+                     <Route path="/" element={<MainPage />} />
++                    <Route path="/insight" element={<InsightPage />} />
+                     <Route path="/up-ahead" element={<UpAheadPage />} />
+                     <Route path="/my-planner" element={<MyPlannerPage />} />
+                     <Route path="/more" element={<MorePage />} />
+
+--- a/src/components/BottomNav.jsx
++++ b/src/components/BottomNav.jsx
+@@ -8,9 +8,9 @@
+ 
+     const navItems = [
+         { path: '/', label: 'Main', icon: '🏠' },
++        { path: '/insight', label: 'Insight', icon: '📊' },
+         { path: '/up-ahead', label: 'Up Ahead', icon: '🗓️' },
+         { path: '/my-planner', label: 'Planner', icon: '📌' },
+-        { path: '/following', label: 'Follow', icon: '🧭' },
+         { path: '/more', label: 'More', icon: '⋯' }
+     ];
+ 
+
+--- /dev/null
++++ b/src/pages/InsightPage.jsx
+@@ -0,0 +1,217 @@
++import React, { useMemo } from 'react';
++import { Link } from 'react-router-dom';
++import Header from '../components/Header';
++import InsightPageView from '../ui/insight/InsightPageView';
++import { useNews } from '../context/NewsContext';
++import { useMediaQuery } from '../hooks/useMediaQuery';
++import { shortenSourceLabel } from '../utils/storyMeta';
++import { analyzeArticleSentiment } from '../utils/sentimentAnalyzer';
++import { getRuntimeCapabilities } from '../runtime/runtimeCapabilities';
++
++function formatAgeLabel(value) {
++  const timestamp = new Date(value).getTime();
++  if (!Number.isFinite(timestamp) || timestamp <= 0) return 'Unknown';
++  const diffMs = Date.now() - timestamp;
++  const mins = Math.max(1, Math.round(diffMs / 60000));
++  if (mins < 60) return `${mins}m ago`;
++  const hrs = Math.round(mins / 60);
++  if (hrs < 24) return `${hrs}h ago`;
++  const days = Math.round(hrs / 24);
++  return `${days}d ago`;
++}
++
++function normalizeImpact(score, maxScore) {
++  const safeScore = Number(score || 0);
++  const safeMax = Number(maxScore || 0);
++  if (!Number.isFinite(safeScore) || safeMax <= 0) return 0.42;
++  const raw = safeScore / safeMax;
++  return Math.max(0.18, Math.min(0.98, raw));
++}
++
++function buildSourceComparisons(item) {
++  const sources = Array.isArray(item.allSources) && item.allSources.length ? item.allSources : [item.source].filter(Boolean);
++  return sources.slice(0, 5).map((src, idx) => ({
++    name: shortenSourceLabel(src),
++    angle: idx === 0 ? 'same' : 'diff',
++    desc: idx === 0 ? 'Primary source carried in the ranked story cluster' : 'Additional confirming or alternate-angle coverage',
++    time: formatAgeLabel(item.publishedAt)
++  }));
++}
++
++function buildAngles(item, audit) {
++  const angles = [];
++  if (item.section) {
++    angles.push({ cat: 'Section', txt: `Primary classification leans toward ${String(item.section).replace(/-/g, ' ')}.` });
++  }
++  if (item.sourceCount > 1) {
++    angles.push({ cat: 'Consensus', txt: `${item.sourceCount} unique sources contribute to this ranked story.` });
++  }
++  if (audit?.consensus?.badge) {
++    angles.push({ cat: 'Validation', txt: `Cross-source validation badge ${audit.consensus.badge} with ${audit.consensus.count} corroborating source signals.` });
++  }
++  if (audit?.relevance?.matches?.length) {
++    angles.push({ cat: 'Audience Fit', txt: `Matched tracked interests or followed topics: ${audit.relevance.matches.slice(0, 4).join(', ')}.` });
++  }
++  if (audit?.anomaly?.badge) {
++    angles.push({ cat: 'Anomaly', txt: `Audit flagged this story as ${audit.anomaly.type}.` });
++  }
++  if (item.description) {
++    angles.push({ cat: 'Context', txt: item.description.length > 120 ? `${item.description.slice(0, 117)}…` : item.description });
++  }
++  return angles.slice(0, 5);
++}
++
++function buildSentiment(item) {
++  const res = analyzeArticleSentiment(item.title || item.headline || '', item.description || item.summary || '');
++  const comp = Math.max(-0.35, Math.min(0.35, res.comparative || 0));
++  const pos = Math.max(5, Math.min(90, Math.round(34 + comp * 90)));
++  const neg = Math.max(5, Math.min(90, Math.round(34 - comp * 90)));
++  const neu = Math.max(0, 100 - pos - neg);
++  return { pos, neg, neu };
++}
++
++function buildCoverage(newsData, loadedSections, errors) {
++  const sections = [
++    ['world', 'World'],
++    ['india', 'India'],
++    ['chennai', 'Tamil Nadu'],
++    ['trichy', 'Trichy'],
++    ['local', 'Muscat'],
++    ['business', 'Business'],
++    ['technology', 'Tech'],
++    ['social', 'Social'],
++    ['entertainment', 'Entertainment']
++  ];
++  return sections.map(([id, name]) => {
++    const articles = Array.isArray(newsData[id]) ? newsData[id] : [];
++    const loaded = loadedSections.includes(id);
++    const hasError = Boolean(errors?.[id]);
++    return {
++      id,
++      name,
++      status: hasError ? 'err' : loaded ? 'ok' : 'q',
++      countText: hasError ? 'error' : loaded ? `${articles.length} items` : 'queued',
++      percent: hasError ? 8 : loaded ? Math.min(100, Math.max(12, articles.length * 10)) : 25
++    };
++  });
++}
++
++function buildStats(rankedStories, coverage) {
++  const breaking = rankedStories.filter((s) => s.isBreaking).length;
++  const consensus = rankedStories.filter((s) => s.sourceCount > 1).length;
++  const live = coverage.filter((c) => c.status === 'ok').length;
++  return [
++    { key: 'ranked', label: 'Ranked', value: rankedStories.length, tone: 'info' },
++    { key: 'breaking', label: 'Breaking', value: breaking, tone: 'warn' },
++    { key: 'consensus', label: 'Consensus', value: consensus, tone: 'good' },
++    { key: 'sections', label: 'Sections', value: `${live}/${coverage.length}`, tone: 'teal' },
++    { key: 'fresh', label: 'Fresh', value: rankedStories[0]?.ageLabel?.replace(' ago', '') || '0m', tone: 'mute' }
++  ];
++}
++
++function buildPulse(rankedStories, coverage) {
++  const avgImpact = rankedStories.length ? rankedStories.reduce((sum, story) => sum + story.impact, 0) / rankedStories.length : 0.35;
++  const signalScore = Math.round(Math.min(98, Math.max(22, avgImpact * 100)));
++  const liveSections = coverage.filter((c) => c.status === 'ok').length;
++  const breakingCount = rankedStories.filter((s) => s.isBreaking).length;
++  const toneLabel = rankedStories.filter((s) => s.sentiment.neg > s.sentiment.pos).length > rankedStories.length / 2 ? 'cautious' : 'positive';
++  const runtime = getRuntimeCapabilities();
++  return {
++    signalScore,
++    toneLabel,
++    breakingCount,
++    freshnessLabel: rankedStories[0]?.ageLabel || 'now',
++    coveredSections: liveSections,
++    totalSections: coverage.length,
++    nextRefreshLabel: '05:00',
++    dataMode: runtime.runtimeLabel === 'static-host' ? 'snapshot' : 'live'
++  };
++}
++
++function mapInsightModel(newsData, breakingNews, loadedSections, errors, auditResults) {
++  const candidates = Array.isArray(newsData.frontPage) && newsData.frontPage.length
++    ? newsData.frontPage
++    : ['world', 'india', 'chennai', 'trichy', 'local', 'business', 'technology', 'social', 'entertainment']
++        .flatMap((key) => Array.isArray(newsData[key]) ? newsData[key] : []);
++
++  const deduped = [];
++  const seen = new Set();
++  for (const item of candidates) {
++    const key = String(item.hiddenKey || item.canonicalId || item.id || item.link || item.title || '').trim();
++    if (!key || seen.has(key)) continue;
++    seen.add(key);
++    deduped.push(item);
++  }
++
++  const sorted = [...deduped].sort((a, b) => (b.impactScore || 0) - (a.impactScore || 0));
++  const maxScore = sorted[0]?.impactScore || 1;
++  const top = sorted.slice(0, 5);
++
++  const rankedStories = top.map((item, index) => {
++    const audit = auditResults?.[item.id] || null;
++    const sourceTags = (Array.isArray(item.allSources) && item.allSources.length ? item.allSources : [item.source].filter(Boolean))
++      .slice(0, 4)
++      .map(shortenSourceLabel);
++    const sourceCount = item.sourceCount || sourceTags.length || 1;
++    return {
++      id: item.id,
++      rank: index + 1,
++      source: shortenSourceLabel(item.source),
++      ageLabel: formatAgeLabel(item.publishedAt),
++      sourceCount,
++      isBreaking: Boolean(item.isBreaking || (item.breakingScore && item.breakingScore > 1.5)),
++      impact: normalizeImpact(item.impactScore, maxScore),
++      title: item.title || item.headline || 'Untitled story',
++      summary: item.description || item.summary || 'No summary available for this story.',
++      criticsTake: audit?.relevance?.matches?.length
++        ? `Audience-fit matches detected: ${audit.relevance.matches.slice(0, 4).join(', ')}.`
++        : sourceCount > 2
++          ? 'Multiple outlets are converging on this topic, suggesting a durable top-story thread.'
++          : null,
++      sources: buildSourceComparisons(item),
++      angles: buildAngles(item, audit),
++      sentiment: buildSentiment(item),
++      sourceTags,
++      hiddenDuplicateCount: Math.max(0, sourceCount - sourceTags.length),
++      weakTree: sourceCount <= 1,
++      rising: index < 2 || (item.breakingScore || 0) > 1.5,
++      snapshotDots: [
++        { key: 'now', on: index < 3 },
++        { key: '-4h', on: sourceCount > 1 },
++        { key: '-12h', on: Boolean(audit?.consensus?.count && audit.consensus.count > 1) },
++        { key: '-24h', on: Boolean(item.clusteredItems && item.clusteredItems > 1) }
++      ]
++    };
++  });
++
++  const coverage = buildCoverage(newsData, loadedSections, errors);
++  return {
++    pulse: buildPulse(rankedStories, coverage),
++    stats: buildStats(rankedStories, coverage),
++    rankedStories,
++    coverage,
++    breakingCount: breakingNews?.length || 0
++  };
++}
++
++export default function InsightPage() {
++  const { newsData, loading, refreshNews, breakingNews, loadedSections, errors, auditResults } = useNews();
++  const { isWebView } = useMediaQuery();
++  const model = useMemo(() => mapInsightModel(newsData, breakingNews, loadedSections, errors, auditResults), [newsData, breakingNews, loadedSections, errors, auditResults]);
++
++  const headerActions = (
++    <div className="header__actions">
++      <button type="button" className="header__action-btn" onClick={() => refreshNews()} title="Refresh Insight">🔄</button>
++      <Link to="/settings" className="header__action-btn">⚙️</Link>
++    </div>
++  );
++
++  return (
++    <div className={`page-container ${isWebView ? 'page-container--desktop' : ''}`}>
++      <Header title="Insight" actions={headerActions} loadingPhase={loading ? 1 : 3} />
++      <main className={`main-content ${isWebView ? 'main-content--desktop' : ''}`} style={{ padding: '16px' }}>
++        <InsightPageView pulse={model.pulse} stats={model.stats} rankedStories={model.rankedStories} coverage={model.coverage} />
++      </main>
++    </div>
++  );
++}
+
+--- a/src/pages/MarketPage.jsx
++++ b/src/pages/MarketPage.jsx
+@@ -1,91 +1,52 @@
+-import React, { useEffect, useState, useCallback } from 'react';
++import React, { useCallback, useEffect, useMemo, useState } from 'react';
+ import MarketStickyHeader from '../components/MarketStickyHeader';
+-import MutualFundCard from '../components/MutualFundCard';
+-import IPOCard from '../components/IPOCard';
+-import SectionNavigator from '../components/SectionNavigator';
+-import MarketSparkline from '../components/MarketSparkline';
+ import { useMarket } from '../context/MarketContext';
+ import { useSettings } from '../context/SettingsContext';
+ import { usePullToRefresh } from '../hooks/usePullToRefresh';
+ import { getMarketSessionState } from '../utils/marketSession';
+ import EmptyState from '../components/EmptyState';
++import MarketPageView from '../ui/market/MarketPageView';
+ 
+ const PRIMARY_INDEX_NAMES = ['NIFTY 50', 'SENSEX', 'BANK NIFTY', 'MIDCAP 150'];
+ const GLOBAL_INDEX_NAMES = ['S&P 500', 'NASDAQ', 'NIKKEI 225', 'HANG SENG', 'FTSE 100'];
+ const INDEX_ALIAS_MAP = {
+-    'NIFTY 50': ['NIFTY 50', 'NIFTY50', '^NSEI'],
+-    'SENSEX': ['SENSEX', 'BSE SENSEX', '^BSESN'],
+-    'BANK NIFTY': ['BANK NIFTY', 'NIFTY BANK', '^NSEBANK'],
+-    'MIDCAP 150': ['MIDCAP 150', 'MIDCAP', 'NIFTY MIDCAP 150', 'NIFTYMIDCAP150.NS']
++  'NIFTY 50': ['NIFTY 50', 'NIFTY50', '^NSEI'],
++  'SENSEX': ['SENSEX', 'BSE SENSEX', '^BSESN'],
++  'BANK NIFTY': ['BANK NIFTY', 'NIFTY BANK', '^NSEBANK'],
++  'MIDCAP 150': ['MIDCAP 150', 'MIDCAP', 'NIFTY MIDCAP 150', 'NIFTYMIDCAP150.NS'],
+ };
+ const GLOBAL_INDEX_ALIAS_MAP = {
+-    'S&P 500': ['S&P 500', 'SP 500', '^GSPC'],
+-    'NASDAQ': ['NASDAQ', '^IXIC'],
+-    'NIKKEI 225': ['NIKKEI 225', '^N225'],
+-    'HANG SENG': ['HANG SENG', '^HSI'],
+-    'FTSE 100': ['FTSE 100', '^FTSE']
++  'S&P 500': ['S&P 500', 'SP 500', '^GSPC'],
++  NASDAQ: ['NASDAQ', '^IXIC'],
++  'NIKKEI 225': ['NIKKEI 225', '^N225'],
++  'HANG SENG': ['HANG SENG', '^HSI'],
++  'FTSE 100': ['FTSE 100', '^FTSE'],
+ };
+ 
+-function formatUpdated(timestamp) {
+-    if (!timestamp) return '--';
+-    return new Date(timestamp).toLocaleString('en-IN', {
+-        hour: '2-digit',
+-        minute: '2-digit',
+-        day: '2-digit',
+-        month: 'short'
+-    });
+-}
+-
+-function getIndexByName(indices, names) {
+-    return names
+-        .map((name) => indices?.find((item) => item.name === name))
+-        .filter(Boolean);
++function getFloat(value, fallback = 0) {
++  const parsed = Number(value);
++  return Number.isFinite(parsed) ? parsed : fallback;
+ }
+ 
+ function getIndexByAliases(indices, map, names) {
+-    return names
+-        .map((name) => {
+-            const aliases = map[name] || [name];
+-            return indices?.find((item) => aliases.some((alias) => item.name === alias || item.symbol === alias));
+-        })
+-        .filter(Boolean);
++  return names
++    .map((name) => {
++      const aliases = map[name] || [name];
++      return indices?.find((item) => aliases.some((alias) => item.name === alias || item.symbol === alias));
++    })
++    .filter(Boolean);
+ }
+ 
+-function getFloat(value, fallback = 0) {
+-    const parsed = Number(value);
+-    return Number.isFinite(parsed) ? parsed : fallback;
++function getIndexByName(indices, names) {
++  return names.map((name) => indices?.find((item) => item.name === name)).filter(Boolean);
+ }
+ 
+ function getMarketMood(indices) {
+-    if (!indices || indices.length === 0) {
+-        return { tone: 'neutral', label: 'No active market data' };
+-    }
+-
+-    const avg = indices.reduce((sum, item) => sum + getFloat(item.changePercent), 0) / indices.length;
+-    if (avg >= 0.6) return { tone: 'positive', label: 'Broad risk-on tone' };
+-    if (avg <= -0.6) return { tone: 'negative', label: 'Broad risk-off tone' };
+-    return { tone: 'neutral', label: 'Mixed market tone' };
+-}
+-
+-function getMarketTone(value) {
+-    const parsed = getFloat(value);
+-    if (parsed > 0) return 'positive';
+-    if (parsed < 0) return 'negative';
+-    return 'neutral';
+-}
+-
+-function getMarketToneClass(value) {
+-    return `market-tone--${getMarketTone(value)}`;
+-}
+-
+-function MarketStat({ label, value, hint, tone = 'neutral' }) {
+-    return (
+-        <div className={`market-stat market-stat--${tone}`}>
+-            <div className="market-stat__label">{label}</div>
+-            <div className="market-stat__value">{value}</div>
+-            {hint && <div className="market-stat__hint">{hint}</div>}
+-        </div>
+-    );
++  if (!indices || indices.length === 0) return { tone: 'neutral', label: 'No active market data', subtitle: 'Waiting for market snapshot', pill: 'Neutral' };
++  const avg = indices.reduce((sum, item) => sum + getFloat(item.changePercent), 0) / indices.length;
++  if (avg >= 0.6) return { tone: 'positive', label: 'Broad risk-on tone', subtitle: 'Momentum is favouring advancers across headline indices', pill: 'Risk On' };
++  if (avg <= -0.6) return { tone: 'negative', label: 'Broad risk-off tone', subtitle: 'Weak breadth and falling leaders are pressuring the tape', pill: 'Risk Off' };
++  return { tone: 'neutral', label: 'Mixed market tone', subtitle: 'Leadership is uneven and conviction remains selective', pill: 'Mixed' };
+ }
+ 
+ function hasUsableSectionData(section) {
+@@ -94,486 +55,137 @@
+   return Object.keys(section).length > 0;
+ }
+ 
++function normalizeMacroRows(rows = []) {
++  return rows.map((item) => ({
++    name: item.name,
++    value: item.value,
++    changePercent: item.changePercent,
++    unit: item.unit,
++    source: item.source,
++  }));
++}
++
++function normalizeIndices(rows = []) {
++  return rows.map((item) => ({
++    ...item,
++    dayLow: item.dayLow,
++    dayHigh: item.dayHigh,
++    history: item.history || item.series?.map((p) => p.close) || [],
++  }));
++}
++
+ function MarketPage() {
+-    const { marketData, loading, error, refreshMarket, lastFetch } = useMarket();
+-    const { settings } = useSettings();
+-    const marketSettings = settings?.market || {};
+-    const [showBackToTop, setShowBackToTop] = useState(false);
+-
+-    const handleRefresh = useCallback(() => refreshMarket(true), [refreshMarket]);
+-    const { pullDistance } = usePullToRefresh(handleRefresh);
+-
+-    useEffect(() => {
+-        const handleScroll = () => {
+-            setShowBackToTop(window.scrollY > 400);
+-        };
+-        window.addEventListener('scroll', handleScroll);
+-        return () => window.removeEventListener('scroll', handleScroll);
+-    }, []);
+-
+-    // Phase 6: Log offline/snapshot fallback metrics
+-    useEffect(() => {
+-        if (!loading && marketData?.indices?.length) {
+-            const firstIndex = marketData.indices[0];
+-            if (import.meta.env.DEV) {
+-                console.log('[Phase 6 Diagnostics]', {
+-                    page: 'market',
+-                    sourceMode: firstIndex?.sourceMode || 'none'
+-                });
+-            }
+-        }
+-    }, [loading, marketData]);
+-
+-    const indices = marketData?.indices || [];
+-    const primaryIndices = getIndexByAliases(indices, INDEX_ALIAS_MAP, PRIMARY_INDEX_NAMES);
+-    const globalIndices = getIndexByAliases(indices, GLOBAL_INDEX_ALIAS_MAP, GLOBAL_INDEX_NAMES);
+-    const mood = getMarketMood(primaryIndices.length ? primaryIndices : indices.slice(0, 3));
+-    const sourceHealth = marketData?.sourceHealth || {};
+-    const sessionState = getMarketSessionState({
+-        lastUpdated: lastFetch || marketData?.fetchedAt,
+-        tradingHolidays: marketSettings.tradingHolidays || []
+-    });
+-    const moverGainers = marketData?.movers?.gainers || [];
+-    const moverLosers = marketData?.movers?.losers || [];
+-    const marketBreath = {
+-        up: indices.filter((item) => getFloat(item.change) >= 0).length,
+-        down: indices.filter((item) => getFloat(item.change) < 0).length
+-    };
+-    const displayedPrimaryIndices = primaryIndices.length ? primaryIndices : indices.slice(0, 4);
+-    const heroIndex = displayedPrimaryIndices[0] || indices[0];
+-    const heroSeries = heroIndex?.series || heroIndex?.history || [];
+-    const sectoralIndices = (marketData?.sectorals?.length ? marketData.sectorals : getIndexByName(indices, ['BANK NIFTY', 'NIFTY IT', 'NIFTY PHARMA', 'NIFTY AUTO']))
+-        .filter((item, idx, arr) => arr.findIndex((candidate) => candidate.name === item.name) === idx);
+-
+-    const navSections = [
+-        (marketSettings.showGainers !== false || marketSettings.showLosers !== false) && { id: 'market-movers', icon: '📈', label: 'Top Movers' },
+-        marketSettings.showSectorals !== false && { id: 'sectoral-indices', icon: '🏛️', label: 'Sectorals' },
+-        marketSettings.showCommodities !== false && hasUsableSectionData(marketData?.commodities) && { id: 'commodities', icon: '🪙', label: 'Commodities' },
+-        marketSettings.showCurrency !== false && hasUsableSectionData(marketData?.currencies) && { id: 'currency', icon: '💱', label: 'Currency' },
+-        marketSettings.showFIIDII !== false && (hasUsableSectionData(marketData?.fiidii?.fii) || hasUsableSectionData(marketData?.fiidii?.dii)) && { id: 'fiidii', icon: '🏦', label: 'FII/DII' },
+-        marketSettings.showMutualFunds !== false && hasUsableSectionData(marketData?.mutualFunds) && { id: 'mutual-funds', icon: '💰', label: 'Mutual Funds' },
+-        marketSettings.showMarketHealth !== false && { id: 'source-health', icon: '📡', label: 'Source Health' },
+-        marketSettings.showIPO !== false && (hasUsableSectionData(marketData?.ipo?.upcoming) || hasUsableSectionData(marketData?.ipo?.live) || hasUsableSectionData(marketData?.ipo?.recent)) && { id: 'ipo-tracker', icon: '🎯', label: 'IPO Watch' }
+-    ].filter(Boolean);
+-
+-    const scrollToTop = () => {
+-        window.scrollTo({ top: 0, behavior: 'smooth' });
+-    };
+-
+-    if (loading && !marketData) {
+-        return (
+-            <div className="page-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+-                <div className="loading">
+-                    <div className="loading__spinner" />
+-                    <span>Loading Market Data...</span>
+-                </div>
+-            </div>
+-        );
++  const { marketData, loading, error, refreshMarket, lastFetch } = useMarket();
++  const { settings } = useSettings();
++  const marketSettings = settings?.market || {};
++  const [showBackToTop, setShowBackToTop] = useState(false);
++
++  const handleRefresh = useCallback(() => refreshMarket(true), [refreshMarket]);
++  const { pullDistance } = usePullToRefresh(handleRefresh);
++
++  useEffect(() => {
++    const handleScroll = () => setShowBackToTop(window.scrollY > 400);
++    window.addEventListener('scroll', handleScroll);
++    return () => window.removeEventListener('scroll', handleScroll);
++  }, []);
++
++  const indices = marketData?.indices || [];
++  const primaryIndices = getIndexByAliases(indices, INDEX_ALIAS_MAP, PRIMARY_INDEX_NAMES);
++  const globalIndices = getIndexByAliases(indices, GLOBAL_INDEX_ALIAS_MAP, GLOBAL_INDEX_NAMES);
++  const displayedPrimaryIndices = primaryIndices.length ? primaryIndices : indices.slice(0, 4);
++  const mood = getMarketMood(displayedPrimaryIndices);
++  const sessionState = getMarketSessionState({
++    lastUpdated: lastFetch || marketData?.fetchedAt,
++    tradingHolidays: marketSettings.tradingHolidays || [],
++  });
++  const moverGainers = marketData?.movers?.gainers || [];
++  const moverLosers = marketData?.movers?.losers || [];
++  const sectoralIndices = (marketData?.sectorals?.length ? marketData.sectorals : getIndexByName(indices, ['BANK NIFTY', 'NIFTY IT', 'NIFTY PHARMA', 'NIFTY AUTO']))
++    .filter((item, idx, arr) => arr.findIndex((candidate) => candidate?.name === item?.name) === idx);
++
++  const disclaimer = useMemo(() => {
++    if (marketData?.isSnapshot) return 'Offline snapshot mode: some live market sections may be delayed or unavailable.';
++    if (marketData?.isStale) return `Cached mode: ${marketData.staleReason || 'showing cached data due to live fetch issues'}.`;
++    if (!hasUsableSectionData(marketData?.commodities) || !hasUsableSectionData(marketData?.currencies) || !hasUsableSectionData(marketData?.fiidii?.fii) || !hasUsableSectionData(marketData?.ipo?.upcoming)) {
++      return 'Some market subsections are unavailable in the current runtime or source mode.';
+     }
++    return 'Market data is indicative. Verify with official broker, exchange, AMC or issuer sources before acting.';
++  }, [marketData]);
+ 
++  if (loading && !marketData) {
+     return (
+-        <div className="page-container market-page-shell" style={{ padding: 0 }}>
+-            <div style={{
+-                height: `${pullDistance}px`,
+-                display: 'flex',
+-                alignItems: 'center',
+-                justifyContent: 'center',
+-                overflow: 'hidden',
+-                background: 'var(--bg-secondary)',
+-                color: 'var(--accent-primary)',
+-                fontSize: '0.8rem',
+-                transition: pullDistance === 0 ? 'height 0.3s ease' : 'none'
+-            }}>
+-                <span style={{ transform: `rotate(${pullDistance * 2}deg)` }}>↻</span>
+-                <span style={{ marginLeft: '8px' }}>Pull to refresh...</span>
+-            </div>
+-
+-            <MarketStickyHeader
+-                marketData={marketData}
+-                indices={primaryIndices.length ? primaryIndices : indices.slice(0, 4)}
+-                onRefresh={refreshMarket}
+-                loading={loading}
+-                lastUpdated={lastFetch}
+-                tradingHolidays={marketSettings.tradingHolidays || []}
+-            />
+-
+-            <main className="main-content market-page market-page--revamp" style={{ padding: '16px', marginTop: 0 }}>
+-                {error && (
+-                    <div className="market-inline-banner">
+-                        <div className="market-inline-banner__title">Degraded feed detected</div>
+-                        <div className="market-inline-banner__body">{error}</div>
+-                    </div>
+-                )}
+-
+-                {marketSettings.showIndices !== false && displayedPrimaryIndices.length > 0 && (
+-                    <section className="market-hero-grid">
+-                        <div className="market-hero-panel modern-card">
+-                            <div className="market-hero-panel__top">
+-                                <div>
+-                                    <div className="market-hero-panel__eyebrow">India-first market board</div>
+-                                    <h1 className="market-hero-panel__title">Market pulse</h1>
+-                                    <div className={`market-hero-panel__status ${mood.tone === 'positive' ? 'text-success' : mood.tone === 'negative' ? 'text-danger' : 'text-muted'}`}>
+-                                        {mood.label}
+-                                    </div>
+-                                </div>
+-                                <div className={`market-status-pill market-status-pill--${sessionState.tone}`}>
+-                                    {sessionState.label} · {sessionState.ageLabel}
+-                                </div>
+-                            </div>
+-
+-                            <div className="market-hero-panel__body">
+-                                <div className="market-hero-board">
+-                                    {displayedPrimaryIndices.map((index, idx) => {
+-                                        const isUp = getFloat(index.change) >= 0;
+-                                        return (
+-                                            <div key={`${index.name}-${idx}`} className={`market-hero-board__tile ${getMarketToneClass(index.change)}`}>
+-                                                <div className="market-hero-board__symbol">{index.name}</div>
+-                                                <div className="market-hero-board__value">{index.value}</div>
+-                                                <div className={`market-hero-board__change ${isUp ? 'text-success' : 'text-danger'}`}>
+-                                                    {isUp ? '▲' : '▼'} {Math.abs(getFloat(index.changePercent)).toFixed(2)}%
+-                                                </div>
+-                                                <div className="market-hero-board__range">
+-                                                    {index.dayLow ? Number(index.dayLow).toLocaleString('en-IN') : '--'} - {index.dayHigh ? Number(index.dayHigh).toLocaleString('en-IN') : '--'}
+-                                                </div>
+-                                            </div>
+-                                        );
+-                                    })}
+-                                </div>
+-                                <div className="market-hero-panel__spark">
+-                                    <MarketSparkline series={heroSeries} positive={getFloat(displayedPrimaryIndices[0]?.change) >= 0} />
+-                                    <div className="market-hero-panel__timestamp">Updated {formatUpdated(lastFetch || marketData?.fetchedAt)}</div>
+-                                </div>
+-                            </div>
+-
+-                            <div className="market-stat-grid">
+-                                <MarketStat
+-                                    label="Breadth"
+-                                    value={`${marketBreath.up}/${marketBreath.down}`}
+-                                    hint="advancers / decliners"
+-                                    tone={marketBreath.up >= marketBreath.down ? 'positive' : 'negative'}
+-                                />
+-                                <MarketStat
+-                                    label="Last Fetch"
+-                                    value={lastFetch ? new Date(lastFetch).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '--'}
+-                                    hint="local cache or live"
+-                                />
+-                                <MarketStat
+-                                    label="Feed Age"
+-                                    value={sessionState.ageLabel}
+-                                    hint={sessionState.reason}
+-                                />
+-                                <MarketStat
+-                                    label="Source Mode"
+-                                    value={sessionState.label}
+-                                    hint={sessionState.reason}
+-                                    tone={sessionState.tone === 'success' ? 'positive' : sessionState.tone === 'warning' ? 'warning' : 'neutral'}
+-                                />
+-                            </div>
+-                        </div>
+-
+-                        <div className="market-hero-side">
+-                            {marketSettings.showGlobalIndices !== false && (
+-                                <div className="market-side-panel modern-card">
+-                                    <div className="market-side-panel__title">Global context</div>
+-                                    <div className="market-global-rail">
+-                                        {globalIndices.length > 0 ? globalIndices.map((item) => {
+-                                            const isUp = getFloat(item.change) >= 0;
+-                                            return (
+-                                                <div key={item.name} className={`market-global-rail__item ${getMarketToneClass(item.change)}`}>
+-                                                    <div className="market-global-rail__name">{item.name}</div>
+-                                                    <div className="market-global-rail__value">{item.value}</div>
+-                                                    <div className={`market-global-rail__change ${isUp ? 'text-success' : 'text-danger'}`}>
+-                                                        {isUp ? '▲' : '▼'} {Math.abs(getFloat(item.changePercent)).toFixed(2)}%
+-                                                    </div>
+-                                                </div>
+-                                            );
+-                                        }) : (
+-                                            <div className="market-empty-state">Global indices unavailable.</div>
+-                                        )}
+-                                    </div>
+-                                </div>
+-                            )}
+-
+-                        </div>
+-                    </section>
+-                )}
+-
+-                {(marketSettings.showGainers !== false || marketSettings.showLosers !== false) && (
+-                    <section id="market-movers" className="market-section modern-card">
+-                        <div className="market-section__header">
+-                            <div>
+-                                <div className="market-section__eyebrow">Live movers</div>
+-                                <h2 className="market-section__title">Top Movers</h2>
+-                            </div>
+-                            <div className="market-section__subtitle">Market breadth leaders and laggards</div>
+-                        </div>
+-
+-                        <div className="market-movers-grid">
+-                            {marketSettings.showGainers !== false && (
+-                                <div className="market-movers-column">
+-                                    <div className="market-column-title text-success">Top Gainers</div>
+-                                    <div className="market-table">
+-                                        {moverGainers.length > 0 ? moverGainers.slice(0, 5).map((stock, idx) => (
+-                                            <div key={`${stock.symbol}-${idx}`} className={`market-table__row ${getMarketToneClass(stock.changePercent)}`}>
+-                                                <div>
+-                                                    <div className="market-table__symbol">{stock.symbol}</div>
+-                                                    <div className="market-table__meta">{stock.action || stock.volume ? `Vol ${stock.volume || '--'}` : 'Live quote'}</div>
+-                                                </div>
+-                                                <div className="market-table__value">
+-                                                    <div>{stock.price}</div>
+-                                                    <div className="text-success">+{Math.abs(getFloat(stock.changePercent)).toFixed(2)}%</div>
+-                                                </div>
+-                                            </div>
+-                                        )) : <div className="market-empty-state">No gainers data available.</div>}
+-                                    </div>
+-                                </div>
+-                            )}
+-
+-                            {marketSettings.showLosers !== false && (
+-                                <div className="market-movers-column">
+-                                    <div className="market-column-title text-danger">Top Losers</div>
+-                                    <div className="market-table">
+-                                        {moverLosers.length > 0 ? moverLosers.slice(0, 5).map((stock, idx) => (
+-                                            <div key={`${stock.symbol}-${idx}`} className={`market-table__row ${getMarketToneClass(stock.changePercent)}`}>
+-                                                <div>
+-                                                    <div className="market-table__symbol">{stock.symbol}</div>
+-                                                    <div className="market-table__meta">{stock.action || stock.volume ? `Vol ${stock.volume || '--'}` : 'Live quote'}</div>
+-                                                </div>
+-                                                <div className="market-table__value">
+-                                                    <div>{stock.price}</div>
+-                                                    <div className="text-danger">-{Math.abs(getFloat(stock.changePercent)).toFixed(2)}%</div>
+-                                                </div>
+-                                            </div>
+-                                        )) : <div className="market-empty-state">No losers data available.</div>}
+-                                    </div>
+-                                </div>
+-                            )}
+-                        </div>
+-                    </section>
+-                )}
+-
+-                {marketSettings.showSectorals !== false && (
+-                    <section id="sectoral-indices" className="market-section modern-card">
+-                        <div className="market-section__header">
+-                            <div>
+-                                <div className="market-section__eyebrow">Rotation map</div>
+-                                <h2 className="market-section__title">Sectoral Indices</h2>
+-                            </div>
+-                            <div className="market-section__subtitle">Breadth by sector, not just headline indices</div>
+-                        </div>
+-
+-                        <div className="market-heatmap">
+-                            {sectoralIndices.length > 0 ? sectoralIndices.map((sector) => {
+-                                const isUp = getFloat(sector.changePercent) >= 0;
+-                                return (
+-                                    <div key={sector.name} className={`market-heatmap__tile ${isUp ? 'market-heatmap__tile--up' : 'market-heatmap__tile--down'} ${getMarketToneClass(sector.changePercent)}`}>
+-                                        <div className="market-heatmap__name">{sector.name}</div>
+-                                        <div className="market-heatmap__value">{sector.value}</div>
+-                                        <div className={isUp ? 'text-success' : 'text-danger'}>
+-                                            {isUp ? '▲' : '▼'} {Math.abs(getFloat(sector.changePercent)).toFixed(2)}%
+-                                        </div>
+-                                    </div>
+-                                );
+-                            }) : <div className="market-empty-state">Sector data unavailable.</div>}
+-                        </div>
+-                    </section>
+-                )}
+-
+-                <section className="market-macro-grid">
+-                    {marketSettings.showCommodities !== false && (
+-                        !hasUsableSectionData(marketData?.commodities) ?
+-                        <div id="commodities" className="market-section"><div className="market-section__header"><h3 className="market-section__title">🪙 Commodities</h3></div><div className="market-empty-explanation">Commodities snapshot unavailable</div></div> :
+-                        <div id="commodities" className="market-section modern-card">
+-                            <div className="market-section__header">
+-                                <div>
+-                                    <div className="market-section__eyebrow">Macro watch</div>
+-                                    <h2 className="market-section__title">Commodities</h2>
+-                                </div>
+-                                <div className="market-section__subtitle">Gold, silver and crude</div>
+-                            </div>
+-
+-                            <div className="market-macro-list">
+-                                {marketData.commodities.map((commodity) => {
+-                                    const isUp = getFloat(commodity.changePercent) >= 0;
+-                                    return (
+-                                        <div key={commodity.name} className={`market-macro-item ${getMarketToneClass(commodity.changePercent)}`}>
+-                                            <div>
+-                                                <div className="market-macro-item__name">{commodity.name}</div>
+-                                                <div className="market-macro-item__meta">{commodity.unit}</div>
+-                                            </div>
+-                                            <div className="market-macro-item__value">
+-                                                <div>{commodity.value}</div>
+-                                                <div className={isUp ? 'text-success' : 'text-danger'}>
+-                                                    {isUp ? '+' : ''}{getFloat(commodity.changePercent).toFixed(2)}%
+-                                                </div>
+-                                            </div>
+-                                        </div>
+-                                    );
+-                                })}
+-                            </div>
+-                        </div>
+-                    )}
+-
+-                    {marketSettings.showCurrency !== false && (
+-                        !hasUsableSectionData(marketData?.currencies) ?
+-                        <div id="currency" className="market-section"><div className="market-section__header"><h3 className="market-section__title">💱 Currency</h3></div><div className="market-empty-explanation">Currency snapshot unavailable</div></div> :
+-                        <div id="currency" className="market-section modern-card">
+-                            <div className="market-section__header">
+-                                <div>
+-                                    <div className="market-section__eyebrow">FX</div>
+-                                    <h2 className="market-section__title">Currency Rates</h2>
+-                                </div>
+-                                <div className="market-section__subtitle">INR reference pairs</div>
+-                            </div>
+-
+-                            <div className="market-macro-list">
+-                                {marketData.currencies.map((currency) => {
+-                                    const isUp = getFloat(currency.changePercent) >= 0;
+-                                    return (
+-                                        <div key={currency.name} className={`market-macro-item ${getMarketToneClass(currency.changePercent)}`}>
+-                                            <div>
+-                                                <div className="market-macro-item__name">{currency.name}</div>
+-                                                <div className="market-macro-item__meta">{currency.source || 'live'}</div>
+-                                            </div>
+-                                            <div className="market-macro-item__value">
+-                                                <div>{currency.value}</div>
+-                                                <div className={isUp ? 'text-success' : 'text-danger'}>
+-                                                    {isUp ? '+' : ''}{getFloat(currency.changePercent).toFixed(2)}%
+-                                                </div>
+-                                            </div>
+-                                        </div>
+-                                    );
+-                                })}
+-                            </div>
+-                        </div>
+-                    )}
+-
+-                    {marketSettings.showFIIDII !== false && (
+-                        !(hasUsableSectionData(marketData?.fiidii?.fii) || hasUsableSectionData(marketData?.fiidii?.dii)) ?
+-                        <div id="fiidii" className="market-section"><div className="market-section__header"><h3 className="market-section__title">🏦 FII / DII Activity</h3></div><div className="market-empty-explanation">FII/DII feed not configured</div></div> :
+-                        <div id="fiidii" className="market-section modern-card">
+-                            <div className="market-section__header">
+-                                <div>
+-                                    <div className="market-section__eyebrow">Flows</div>
+-                                    <h2 className="market-section__title">FII / DII Activity</h2>
+-                                </div>
+-                                <div className="market-section__subtitle">Latest available institutional flow readout</div>
+-                            </div>
+-
+-                            <div className="market-flow-grid">
+-                                <div className={`market-flow-card ${getMarketToneClass(marketData?.fiidii?.fii?.net)}`}>
+-                                    <div className="market-flow-card__title">FII</div>
+-                                    <div className="market-flow-card__row"><span>Buy</span><strong className="text-success">₹{marketData?.fiidii?.fii?.buy ?? '--'} Cr</strong></div>
+-                                    <div className="market-flow-card__row"><span>Sell</span><strong className="text-danger">₹{marketData?.fiidii?.fii?.sell ?? '--'} Cr</strong></div>
+-                                    <div className="market-flow-card__row"><span>Net</span><strong className={getFloat(marketData?.fiidii?.fii?.net) >= 0 ? 'text-success' : 'text-danger'}>₹{marketData?.fiidii?.fii?.net ?? '--'} Cr</strong></div>
+-                                </div>
+-                                <div className={`market-flow-card ${getMarketToneClass(marketData?.fiidii?.dii?.net)}`}>
+-                                    <div className="market-flow-card__title">DII</div>
+-                                    <div className="market-flow-card__row"><span>Buy</span><strong className="text-success">₹{marketData?.fiidii?.dii?.buy ?? '--'} Cr</strong></div>
+-                                    <div className="market-flow-card__row"><span>Sell</span><strong className="text-danger">₹{marketData?.fiidii?.dii?.sell ?? '--'} Cr</strong></div>
+-                                    <div className="market-flow-card__row"><span>Net</span><strong className={getFloat(marketData?.fiidii?.dii?.net) >= 0 ? 'text-success' : 'text-danger'}>₹{marketData?.fiidii?.dii?.net ?? '--'} Cr</strong></div>
+-                                </div>
+-                            </div>
+-                            <div className="market-flow-card__footer">As of {marketData?.fiidii?.date || 'N/A'}</div>
+-                        </div>
+-                    )}
+-                </section>
+-
+-                <section className="market-bottom-grid">
+-                    {marketSettings.showMutualFunds !== false && (
+-                        !hasUsableSectionData(marketData?.mutualFunds) ? (
+-                            <div id="mutual-funds" className="market-section modern-card">
+-                                <div className="market-section__header">
+-                                    <h3 className="market-section__title">💰 Mutual Funds</h3>
+-                                </div>
+-                                <div className="market-empty-explanation">Mutual funds snapshot unavailable</div>
+-                            </div>
+-                        ) : (
+-                        <div id="mutual-funds" className="market-section modern-card">
+-                            <div className="market-section__header">
+-                                <div>
+-                                    <div className="market-section__eyebrow">NAV board</div>
+-                                    <h2 className="market-section__title">Mutual Funds</h2>
+-                                </div>
+-                                <div className="market-section__subtitle">Tracked funds with latest NAV movement</div>
+-                            </div>
+-                            <MutualFundCard funds={marketData.mutualFunds} />
+-                        </div>
+-                        )
+-                    )}
+-
+-                    {marketSettings.showIPO !== false && (
+-                        !(hasUsableSectionData(marketData?.ipo?.upcoming) || hasUsableSectionData(marketData?.ipo?.live) || hasUsableSectionData(marketData?.ipo?.recent)) ? (
+-                            <div id="ipo-tracker" className="market-section modern-card">
+-                                <div className="market-section__header">
+-                                    <h3 className="market-section__title">🎯 IPO Watch</h3>
+-                                </div>
+-                                <div className="market-empty-explanation">IPO live scrape disabled in static-host mode</div>
+-                            </div>
+-                        ) : (
+-                        <div id="ipo-tracker" className="market-section modern-card">
+-                            <div className="market-section__header">
+-                                <div>
+-                                    <div className="market-section__eyebrow">Primary issues</div>
+-                                    <h2 className="market-section__title">IPO Tracker</h2>
+-                                </div>
+-                                <div className="market-section__subtitle">Upcoming, live and recent issues</div>
+-                            </div>
+-                            <IPOCard ipoData={marketData.ipo} />
+-                        </div>
+-                        )
+-                    )}
+-                </section>
+-
+-
+-
+-                {marketSettings.showMarketHealth !== false && (
+-                    <section id="source-health" className="market-section modern-card market-source-health-section">
+-                        <div className="market-section__header">
+-                            <div>
+-                                <div className="market-section__eyebrow">Reliability</div>
+-                                <h2 className="market-section__title">Source health</h2>
+-                            </div>
+-                            <div className="market-section__subtitle">Live, snapshot, or failed status by feed</div>
+-                        </div>
+-
+-                        <div className="market-health-list market-health-list--bottom">
+-                            {Object.entries(sourceHealth).length > 0 ? Object.entries(sourceHealth).map(([section, status]) => (
+-                                <div key={section} className="market-health-row">
+-                                    <span className="market-health-row__label">{section.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase())}</span>
+-                                    <span className={`market-status-pill market-status-pill--${status === 'live' ? 'success' : status === 'snapshot' ? 'warning' : status === 'failed' ? 'danger' : 'muted'}`}>
+-                                        {status}
+-                                    </span>
+-                                </div>
+-                            )) : (
+-                                <div className="market-empty-state">Source health unavailable.</div>
+-                            )}
+-                        </div>
+-                    </section>
+-                )}
+-
+-                <div className="market-disclaimer market-disclaimer--revamp">
+-                    <div>* Data is for informational purposes only. Not investment advice.</div>
+-                    <div className="market-disclaimer__meta">
+-                        Last Updated: {marketData?.fetchedAt ? new Date(marketData.fetchedAt).toLocaleString() : 'N/A'}
+-                    </div>
+-                </div>
+-            </main>
+-
+-            <SectionNavigator sections={navSections} />
+-
+-            <button
+-                onClick={scrollToTop}
+-                className="market-back-to-top"
+-                style={{
+-                    opacity: showBackToTop ? 1 : 0,
+-                    pointerEvents: showBackToTop ? 'auto' : 'none'
+-                }}
+-            >
+-                ↑
+-            </button>
++      <div className="page-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
++        <div className="loading">
++          <div className="loading__spinner" />
++          <span>Loading Market Data...</span>
+         </div>
++      </div>
+     );
++  }
++
++  return (
++    <div className="page-container market-page-shell" style={{ padding: 0 }}>
++      <div style={{
++        height: `${pullDistance}px`,
++        display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
++        background: 'var(--bg-secondary)', color: 'var(--accent-primary)', fontSize: '0.8rem',
++        transition: pullDistance === 0 ? 'height 0.3s ease' : 'none',
++      }}>
++        <span style={{ transform: `rotate(${pullDistance * 2}deg)` }}>↻</span>
++        <span style={{ marginLeft: '8px' }}>Pull to refresh...</span>
++      </div>
++
++      <MarketStickyHeader
++        marketData={marketData}
++        indices={displayedPrimaryIndices}
++        onRefresh={refreshMarket}
++        loading={loading}
++        lastUpdated={lastFetch}
++        tradingHolidays={marketSettings.tradingHolidays || []}
++      />
++
++      <main className="main-content market-page" style={{ padding: '16px', marginTop: 0 }}>
++        {error ? (
++          <div style={{
++            padding: '10px 14px', borderRadius: 12, marginBottom: 14,
++            background: 'rgba(255,71,87,0.08)', border: '1px solid rgba(255,71,87,0.3)'
++          }}>
++            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#ffb0b7', marginBottom: 4 }}>Degraded feed detected</div>
++            <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>{error}</div>
++          </div>
++        ) : null}
++
++        {!indices.length ? (
++          <EmptyState title="Market board unavailable" message="No usable market data was returned. Try refreshing or check static-host snapshot configuration." />
++        ) : (
++          <MarketPageView
++            mood={{ ...mood, subtitle: `${sessionState.label} · ${sessionState.ageLabel}` }}
++            primaryIndices={normalizeIndices(displayedPrimaryIndices)}
++            globalIndices={normalizeIndices(globalIndices)}
++            gainers={moverGainers}
++            losers={moverLosers}
++            sectors={sectoralIndices}
++            commodities={marketSettings.showCommodities !== false ? normalizeMacroRows(marketData?.commodities || []) : []}
++            currencies={marketSettings.showCurrency !== false ? normalizeMacroRows(marketData?.currencies || []) : []}
++            fiidii={marketSettings.showFIIDII !== false ? (marketData?.fiidii || {}) : {}}
++            ipo={marketSettings.showIPO !== false ? (marketData?.ipo || {}) : {}}
++            disclaimer={disclaimer}
++          />
++        )}
++      </main>
++
++      {showBackToTop && (
++        <button
++          type="button"
++          className="back-to-top"
++          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
++          aria-label="Back to top"
++        >
++          ↑
++        </button>
++      )}
++    </div>
++  );
+ }
+ 
+ export default MarketPage;
+
+--- a/src/pages/MyPlannerPage.jsx
++++ b/src/pages/MyPlannerPage.jsx
+@@ -1,53 +1,24 @@
+-import React, { useState, useEffect, useRef } from 'react';
++import React, { useState, useEffect } from 'react';
+ import Header from '../components/Header';
+ import plannerStorage from '../utils/plannerStorage';
+ import { downloadCalendarEvent } from '../utils/calendar';
+-
+-function useLongPress(onLongPress, delay = 450) {
+-  const timerRef = useRef(null);
+-
+-  const start = () => {
+-    timerRef.current = setTimeout(onLongPress, delay);
+-  };
+-
+-  const clear = () => {
+-    if (timerRef.current) clearTimeout(timerRef.current);
+-    timerRef.current = null;
+-  };
+-
+-  return {
+-    onTouchStart: start,
+-    onTouchEnd: clear,
+-    onMouseDown: start,
+-    onMouseUp: clear,
+-    onMouseLeave: clear
+-  };
+-}
++import { useLongPress } from '../hooks/useLongPress';
++import PlannerSummaryCard from '../ui/planner/PlannerSummaryCard';
++import PlannerDayCard from '../ui/planner/PlannerDayCard';
+ 
+ function SwipeableItem({ item, dateKey, onRemove, onLongPressAction }) {
+     const [offset, setOffset] = useState(0);
+     const [startX, setStartX] = useState(0);
+ 
+-    const handleTouchStart = (e) => {
+-        setStartX(e.touches[0].clientX);
+-    };
+-
++    const handleTouchStart = (e) => setStartX(e.touches[0].clientX);
+     const handleTouchMove = (e) => {
+         if (startX === 0) return;
+-        const currentX = e.touches[0].clientX;
+-        const diff = currentX - startX;
+-        // Only allow swiping left
+-        if (diff < 0) {
+-            setOffset(diff);
+-        }
++        const diff = e.touches[0].clientX - startX;
++        if (diff < 0) setOffset(diff);
+     };
+-
+     const handleTouchEnd = () => {
+-        if (offset < -80) {
+-            onRemove(item, dateKey);
+-        } else {
+-            setOffset(0);
+-        }
++        if (offset < -80) onRemove(item, dateKey);
++        else setOffset(0);
+         setStartX(0);
+     };
+ 
+@@ -56,53 +27,42 @@
+     return (
+         <div style={{ position: 'relative', overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+             <div style={{
+-                position: 'absolute',
+-                top: 0, right: 0, bottom: 0,
+-                width: '80px',
+-                background: 'var(--accent-danger, #ef4444)',
+-                display: 'flex',
+-                alignItems: 'center',
+-                justifyContent: 'center',
+-                color: 'white',
+-                fontWeight: 'bold',
+-                zIndex: 0
++                position: 'absolute', top: 0, right: 0, bottom: 0, width: '84px',
++                background: 'linear-gradient(180deg, rgba(255,71,87,0.75), rgba(255,71,87,0.6))',
++                display: 'flex', alignItems: 'center', justifyContent: 'center',
++                color: 'white', fontWeight: 'bold', zIndex: 0, fontSize: '0.8rem'
+             }}>
+-                Delete
++                Remove
+             </div>
+             <div
+-                className="ua-plan-event-item"
+                 {...longPressHandlers}
+-                onTouchStart={(e) => {
+-                    handleTouchStart(e);
+-                    longPressHandlers.onTouchStart(e);
+-                }}
+-                onTouchMove={(e) => {
+-                    handleTouchMove(e);
+-                    longPressHandlers.onTouchEnd(e);
+-                }}
+-                onTouchEnd={(e) => {
+-                    handleTouchEnd(e);
+-                    longPressHandlers.onTouchEnd(e);
+-                }}
++                onTouchStart={(e) => { handleTouchStart(e); longPressHandlers.onTouchStart(e); }}
++                onTouchMove={(e) => { handleTouchMove(e); longPressHandlers.onTouchEnd(e); }}
++                onTouchEnd={(e) => { handleTouchEnd(e); longPressHandlers.onTouchEnd(e); }}
+                 style={{
+                     transform: `translateX(${offset}px)`,
+                     transition: startX === 0 ? 'transform 0.2s ease-out' : 'none',
+                     position: 'relative',
+                     zIndex: 1,
+-                    background: 'var(--bg-secondary, #1a1a1a)',
+-                    display: 'flex', alignItems: 'center', padding: '12px 0'
++                    background: 'transparent',
++                    display: 'flex',
++                    alignItems: 'center',
++                    gap: '10px',
++                    padding: '12px 0'
+                 }}
+             >
+-                <button className="ua-plan-delete-btn" onClick={() => onRemove(item, dateKey)} aria-label="Remove event" style={{background:'none', border:'none', cursor:'pointer', color:'var(--text-muted)', fontSize:'0.9rem', padding: '0 8px 0 0'}}>✕</button>
+-                <a href={item.link} target="_blank" draggable="false" rel="noopener noreferrer" style={{flex:1, display:'flex', alignItems:'center', gap:'10px', textDecoration:'none', color:'inherit'}}>
+-                    <span className="ua-event-icon">{item.icon || '📌'}</span>
+-                    <div style={{display:'flex', flexDirection:'column'}}>
+-                        <span className="ua-event-title" style={{ fontWeight: 600 }}>{item.title}</span>
+-                        {item.category && <span className="ua-event-subtitle" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{item.category}</span>}
++                <button onClick={() => onRemove(item, dateKey)} aria-label="Remove event" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '0.95rem', padding: 0 }}>✕</button>
++                <a href={item.link} target="_blank" draggable="false" rel="noopener noreferrer" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit', minWidth: 0 }}>
++                    <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>{item.icon || '📌'}</span>
++                    <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
++                        <span style={{ fontWeight: 600, color: 'var(--txt)', lineHeight: 1.3 }}>{item.title}</span>
++                        <span style={{ fontSize: '0.76rem', color: 'var(--muted)', textTransform: 'capitalize', marginTop: 2 }}>
++                            {item.category || item.type || 'saved item'}
++                        </span>
+                     </div>
+                 </a>
+-                <div style={{display:'flex', gap:'8px'}}>
+-                    <button className="ua-plan-action-btn" onClick={() => downloadCalendarEvent(item.title, item.description || item.title)} title="Add to Calendar" style={{background:'none', border:'none', cursor:'pointer', fontSize:'1.1rem'}}>📅</button>
++                <div style={{ display: 'flex', gap: '6px' }}>
++                    <button onClick={(e) => { e.preventDefault(); downloadCalendarEvent(item.title, item.description || item.title); }} title="Add to Calendar" style={{ background: 'rgba(88,166,255,0.12)', border: '1px solid rgba(88,166,255,0.25)', borderRadius: 10, padding: '8px', cursor: 'pointer' }}>📅</button>
+                 </div>
+             </div>
+         </div>
+@@ -114,128 +74,114 @@
+     const [undoItem, setUndoItem] = useState(null);
+ 
+     const loadPlan = () => {
+-        if (plannerStorage.getPlan) {
+-            setPlanData(plannerStorage.getPlan());
+-        }
++        if (plannerStorage.getPlan) setPlanData(plannerStorage.getPlan());
+     };
+ 
+     useEffect(() => {
+-        // eslint-disable-next-line react-hooks/set-state-in-effect
+         loadPlan();
+     }, []);
+ 
+     const removeWithUndo = (item, dateKey) => {
+         const id = item.hiddenKey || item.canonicalId || item.id;
+         if (!id) return;
+-        if (plannerStorage.removeItem) {
+-            plannerStorage.removeItem(dateKey, id);
+-            if (plannerStorage.addToBlacklist) {
+-                plannerStorage.addToBlacklist(id);
+-            }
+-
+-            setUndoItem({ date: dateKey, item: item });
+-            loadPlan(); // Refresh data from storage
+-
+-            setTimeout(() => {
+-                setUndoItem(null);
+-            }, 5000);
+-        }
++        plannerStorage.removeItem?.(dateKey, id);
++        plannerStorage.addToBlacklist?.(id);
++        setUndoItem({ date: dateKey, item });
++        loadPlan();
++        setTimeout(() => setUndoItem(null), 5000);
+     };
+ 
+     const undoLastRemove = () => {
+         if (!undoItem) return;
+-
+-        // Remove from blacklist if necessary
+         const id = undoItem.item.hiddenKey || undoItem.item.canonicalId || undoItem.item.id;
+         if (id) {
+             const list = Array.from(plannerStorage.getBlacklist?.() || []);
+             const updated = list.filter(key => key !== id);
+             plannerStorage.saveBlacklistToApi?.(updated);
+         }
+-
+         plannerStorage.addItem?.(undoItem.date, undoItem.item);
+         setUndoItem(null);
+         loadPlan();
+     };
+ 
+     const handleLongPress = (item, dateKey) => {
+-        if (confirm(`Remove "${item.title}" from your planner?`)) {
+-            removeWithUndo(item, dateKey);
+-        }
++        if (window.confirm(`Remove "${item.title}" from your planner?`)) removeWithUndo(item, dateKey);
+     };
+ 
+-    // Prepare sorted dates, auto-prune past dates
+     const today = new Date();
+     today.setHours(0,0,0,0);
+-    const sortedDates = Object.keys(planData).filter(dateStr => {
+-        const d = new Date(dateStr);
+-        return isNaN(d.getTime()) || d >= today;
+-    }).sort();
++    const sortedDates = Object.keys(planData)
++        .filter(dateStr => {
++            const d = new Date(dateStr);
++            return isNaN(d.getTime()) || d >= today;
++        })
++        .sort();
++
++    const totalItems = sortedDates.reduce((sum, dateKey) => sum + (planData[dateKey]?.length || 0), 0);
++    const nextDateLabel = sortedDates[0]
++        ? (() => {
++            const d = new Date(sortedDates[0]);
++            return !isNaN(d.getTime()) ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : sortedDates[0];
++          })()
++        : '—';
+ 
+     return (
+         <div className="page-container">
+-            <Header title="My Planner" icon="📌" />
+-
++            <Header title="Planner" />
+             <main className="main-content" style={{ padding: '16px' }}>
+-                <div className="ua-weekly-plan">
+-                    {sortedDates.length === 0 ? (
+-                        <div className="empty-state">
+-                            <span style={{ fontSize: '3rem' }}>📭</span>
+-                            <h3>Your planner is empty</h3>
+-                            <p>Find events and releases in 'Up Ahead' and add them to your planner.</p>
+-                        </div>
+-                    ) : (
+-                        sortedDates.map((dateKey) => {
++                <PlannerSummaryCard totalDays={sortedDates.length} totalItems={totalItems} nextDateLabel={nextDateLabel} />
++
++                {sortedDates.length === 0 ? (
++                    <div className="nwv7-card" style={{ padding: '22px 16px', textAlign: 'center' }}>
++                        <span style={{ fontSize: '3rem' }}>📭</span>
++                        <h3>Your planner is empty</h3>
++                        <p style={{ color: 'var(--muted)' }}>Find events and releases in Up Ahead and add them here.</p>
++                    </div>
++                ) : (
++                    <div>
++                        {sortedDates.map((dateKey) => {
+                             const items = planData[dateKey];
+                             if (!items || items.length === 0) return null;
+-
+-                            // Format date for display
+                             const dateObj = new Date(dateKey);
+-                            const displayDate = !isNaN(dateObj.getTime()) ? dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : dateKey;
+-
++                            const displayDate = !isNaN(dateObj.getTime())
++                                ? dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
++                                : dateKey;
++                            const subtitle = !isNaN(dateObj.getTime())
++                                ? dateObj.toLocaleDateString('en-US', { year: 'numeric' })
++                                : 'Saved items';
+                             return (
+-                                <div key={dateKey} className="modern-card" style={{ marginBottom: '16px' }}>
+-                                    <div className="modern-card__header" style={{ paddingBottom: '0', borderBottom: 'none' }}>
+-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+-                                            <div className="ua-plan-ribbon" style={{ borderRadius: '8px', background: 'var(--accent-primary)', padding: '4px 12px', color: '#fff' }}>
+-                                                <div style={{fontSize: '0.95rem', fontWeight: 800, whiteSpace: 'nowrap'}}>
+-                                                    {displayDate}
+-                                                </div>
+-                                            </div>
+-                                        </div>
+-                                    </div>
+-                                    <div className="ua-plan-day-content" style={{ border: 'none', padding: '8px 0 0 0', background: 'transparent' }}>
+-                                        {items.map((item, idx) => (
+-                                            <SwipeableItem key={idx} item={item} dateKey={dateKey} onRemove={removeWithUndo} onLongPressAction={handleLongPress} />
+-                                        ))}
+-                                    </div>
+-                                </div>
++                                <PlannerDayCard key={dateKey} title={displayDate} subtitle={subtitle} count={items.length}>
++                                    {items.map((item, idx) => (
++                                        <SwipeableItem key={idx} item={item} dateKey={dateKey} onRemove={removeWithUndo} onLongPressAction={handleLongPress} />
++                                    ))}
++                                </PlannerDayCard>
+                             );
+-                        })
+-                    )}
+-                </div>
++                        })}
++                    </div>
++                )}
+ 
+                 {undoItem && (
+                     <div style={{
+                         position: 'fixed',
+-                        bottom: '80px',
++                        bottom: '82px',
+                         left: '50%',
+                         transform: 'translateX(-50%)',
+-                        background: 'var(--bg-primary)',
+-                        color: 'var(--text-primary)',
+-                        padding: '12px 24px',
+-                        borderRadius: '24px',
+-                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
++                        background: 'rgba(10,13,17,0.95)',
++                        color: 'var(--txt)',
++                        padding: '12px 16px',
++                        borderRadius: '14px',
++                        border: '1px solid var(--border)',
++                        boxShadow: '0 12px 34px rgba(0,0,0,0.28)',
+                         display: 'flex',
+                         alignItems: 'center',
+                         gap: '16px',
+                         zIndex: 1000
+                     }}>
+-                        <span style={{ fontSize: '0.9rem' }}>Event removed</span>
++                        <span style={{ fontSize: '0.88rem' }}>Event removed</span>
+                         <button onClick={undoLastRemove} style={{
+                             background: 'none',
+                             border: 'none',
+-                            color: 'var(--accent-primary)',
++                            color: 'var(--teal)',
+                             fontWeight: 'bold',
+                             cursor: 'pointer',
+                             fontSize: '0.9rem'
+
+--- a/src/pages/UpAheadPage.jsx
++++ b/src/pages/UpAheadPage.jsx
+@@ -18,6 +18,9 @@
+ import { useSettings } from '../context/SettingsContext';
+ import { usePullToRefresh } from '../hooks/usePullToRefresh';
+ import ProgressBar from '../components/ProgressBar';
++import PageIntroCard from '../ui/shared/PageIntroCard';
++import InlineSegmentTabs from '../ui/shared/InlineSegmentTabs';
++import UpAheadHeroCard from '../ui/upahead/UpAheadHeroCard';
+ import { shortenSourceLabel } from '../utils/storyMeta';
+ import { getRuntimeCapabilities } from '../runtime/runtimeCapabilities';
+ import './UpAhead.css';
+@@ -227,11 +230,20 @@
+     if (loading && !data) {
+         return (
+             <div className="page-container">
+-                <Header title="Up Ahead" icon="🗓️" loadingPhase={loadingPhase} />
+-                <div className="loading">
+-                    <div className="loading__spinner"></div>
+-                    <p>Scanning horizon...</p>
+-                </div>
++                <Header title="Up Ahead" loadingPhase={loadingPhase} />
++                <main className="main-content" style={{ padding: '16px' }}>
++                    <PageIntroCard
++                        eyebrow="Loading"
++                        title="Scanning the next few days"
++                        subtitle="Collecting alerts, offers, releases, and local upcoming items."
++                        accent="var(--teal)"
++                        stats={[{ label: 'Phase', value: loadingPhase || 0 }]}
++                    />
++                    <div className="loading">
++                        <div className="loading__spinner"></div>
++                        <p>Scanning horizon...</p>
++                    </div>
++                </main>
+             </div>
+         );
+     }
+@@ -239,14 +251,20 @@
+     if (!data || !data.timeline || data.timeline.length === 0) {
+          return (
+             <div className="page-container">
+-                <Header title="Up Ahead" icon="🗓️" loadingPhase={loadingPhase} />
+-                <div className="empty-state">
+-                    <span style={{ fontSize: '3rem' }}>🔭</span>
+-                    <h3>Nothing on the radar</h3>
+-                    <p>No upcoming events found.</p>
+-                    <button onClick={() => loadData({ forceRefresh: true, liveOnly: true })} className="btn btn--primary" style={{ marginTop: '1rem' }}>Force Refresh</button>
+-                    <div style={{ marginTop: '0.75rem' }}><small>Try adding more locations or categories in <Link to="/settings" style={{ color: 'var(--accent-primary)' }}>Settings</Link>.</small></div>
+-                </div>
++                <Header title="Up Ahead" loadingPhase={loadingPhase} />
++                <main className="main-content" style={{ padding: '16px' }}>
++                    <PageIntroCard
++                        eyebrow="No horizon items"
++                        title="Nothing urgent or upcoming was found"
++                        subtitle="Try enabling more categories or adding more locations in settings."
++                        accent="var(--warn)"
++                    >
++                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
++                            <button onClick={() => loadData({ forceRefresh: true, liveOnly: true })} className="btn btn--primary">Force Refresh</button>
++                            <Link to="/settings" className="btn btn--secondary" style={{ textDecoration: 'none' }}>Open Settings</Link>
++                        </div>
++                    </PageIntroCard>
++                </main>
+             </div>
+         );
+     }
+@@ -271,6 +289,18 @@
+     const modeStr = isStaticHost ? (data?.sourceMode === 'snapshot' ? 'snapshot' : 'degraded') : (data?.sourceMode === 'cache' ? 'cached' : 'live');
+     const modeLabel = isStaticHost ? (data?.sourceMode === 'snapshot' ? 'Snapshot' : 'Limited') : (data?.sourceMode === 'cache' ? 'Cached' : 'Live');
+ 
++
++    const tabItems = [
++        { id: 'plan', label: 'Suggested' },
++        { id: 'offers', label: 'Offers' },
++        { id: 'movies', label: 'Releasing Soon' },
++        { id: 'events', label: 'Upcoming Events' },
++        { id: 'alerts', label: 'Alerts' },
++        { id: 'festivals', label: 'Festivals' },
++        { id: 'feed', label: 'Timeline' }
++    ];
++
++    const timelineCount = Array.isArray(data?.timeline) ? data.timeline.reduce((sum, day) => sum + ((day.items || []).length), 0) : 0;
+     const rightElementUI = (
+         <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+             {isRefreshing && <div className="scanning-indicator" style={{fontSize:'0.7rem', color:'var(--accent-primary)'}}>Scanning...</div>}
+@@ -300,41 +330,41 @@
+                 actions={rightElementUI}
+             />
+ 
+-            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--text-muted)', padding: '6px', background: 'var(--bg-secondary)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+-                {isRefreshing ? (
+-                    <>
+-                        <div className="loading__spinner" style={{width:'12px', height:'12px', borderWidth:'2px'}}></div>
+-                        <span>Scanning horizon...</span>
+-                    </>
+-                ) : (
+-                    <>
+-                        <span>Live Feed • {settings.upAhead?.locations?.join(', ') || 'All Locations'}</span>
+-                        <button onClick={() => loadData({ forceRefresh: true })} style={{background:'none', border:'none', cursor:'pointer', fontSize:'0.8rem'}} title="Refresh using cached and static data first">🔄</button>
+-                        <button onClick={() => loadData({ forceRefresh: true, liveOnly: true })} className="btn btn--secondary" style={{ padding: '4px 8px', fontSize: '0.7rem' }} title="Clear stale Up Ahead cache and reload from live feeds only">Force Refresh</button>
+-                    </>
+-                )}
+-            </div>
+-
+-            {highPriorityAlert && (
+-                <div className={`ua-alert-banner ${weatherAlerts.length > 0 ? 'weather-alert' : ''}`}>
+-                    <span className="ua-alert-icon">{alertIcon}</span>
+-                    <div className="ua-alert-content">
+-                        <h4>{alertTitle}</h4>
+-                        <p>{highPriorityAlert.text}</p>
++            <main className="main-content" style={{ padding: '16px' }}>
++                <UpAheadHeroCard
++                    modeLabel={`${modeLabel} feed`}
++                    locationsLabel={settings.upAhead?.locations?.join(', ') || 'All Locations'}
++                    timelineCount={timelineCount}
++                    alertCount={combinedAlerts.length}
++                    offerCount={offerItems.length}
++                    isRefreshing={isRefreshing}
++                />
++
++                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
++                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
++                        {isRefreshing ? 'Scanning horizon…' : `Feed · ${settings.upAhead?.locations?.join(', ') || 'All Locations'}`}
++                    </div>
++                    <div style={{ display: 'flex', gap: 8 }}>
++                        <button onClick={() => loadData({ forceRefresh: true })} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 10, cursor: 'pointer', fontSize: '0.8rem', padding: '7px 10px', color: 'var(--txt2)' }} title="Refresh using cached and static data first">🔄 Refresh</button>
++                        <button onClick={() => loadData({ forceRefresh: true, liveOnly: true })} className="btn btn--secondary" style={{ padding: '7px 10px', fontSize: '0.74rem' }} title="Clear stale Up Ahead cache and reload from live feeds only">Force Refresh</button>
+                     </div>
+                 </div>
+-            )}
+ 
+-            <main className="main-content">
+-                <div className="ua-view-toggle scrollable-tabs">
+-                    <button className={`ua-toggle-btn ${view === 'plan' ? 'active' : ''}`} onClick={() => setView('plan')}>Suggested</button>
+-                    <button className={`ua-toggle-btn ${view === 'offers' ? 'active' : ''}`} onClick={() => setView('offers')}>Offers</button>
+-                    <button className={`ua-toggle-btn ${view === 'movies' ? 'active' : ''}`} onClick={() => setView('movies')}>Releasing Soon</button>
+-                    <button className={`ua-toggle-btn ${view === 'events' ? 'active' : ''}`} onClick={() => setView('events')}>Upcoming Events</button>
+-                    <button className={`ua-toggle-btn ${view === 'alerts' ? 'active' : ''}`} onClick={() => setView('alerts')}>Alerts</button>
+-                    <button className={`ua-toggle-btn ${view === 'festivals' ? 'active' : ''}`} onClick={() => setView('festivals')}>Festivals</button>
+-                    <button className={`ua-toggle-btn ${view === 'feed' ? 'active' : ''}`} onClick={() => setView('feed')}>Timeline</button>
+-                </div>
++                {highPriorityAlert && (
++                    <PageIntroCard
++                        eyebrow={alertTitle}
++                        title={highPriorityAlert.title || highPriorityAlert.text || 'Important alert'}
++                        subtitle={highPriorityAlert.description || highPriorityAlert.text}
++                        accent={weatherAlerts.length > 0 ? 'var(--blue)' : 'var(--warn)'}
++                        stats={[
++                            { label: 'Source', value: shortenSourceLabel(highPriorityAlert.source || 'Up Ahead') },
++                            { label: 'Mode', value: modeLabel },
++                        ]}
++                        style={{ marginBottom: '14px' }}
++                    />
++                )}
++
++                <InlineSegmentTabs items={tabItems} activeId={view} onChange={setView} />
+ 
+                 {view === 'plan' && (
+                     <div className="ua-weekly-plan">
+
+--- a/src/pages/MorePage.jsx
++++ b/src/pages/MorePage.jsx
+@@ -1,37 +1,61 @@
+ import React from 'react';
+-import { Link } from 'react-router-dom';
+ import Header from '../components/Header';
++import PageIntroCard from '../ui/shared/PageIntroCard';
++import MoreLinkCard from '../ui/more/MoreLinkCard';
+ 
+ function MorePage() {
+-    const secondaryNavItems = [
+-        { path: '/newspaper', label: 'Newspaper', icon: '📰', description: 'Daily headlines and e-paper format' },
+-        { path: '/markets', label: 'Markets', icon: '📈', description: 'Stock indices, IPOs, and mutual funds' },
+-        { path: '/tech-social', label: 'Buzz', icon: '🎭', description: 'Tech, science, and social media trends' },
+-        { path: '/weather', label: 'Weather', icon: '☁️', description: 'Detailed weather forecasts and conditions' },
+-        { path: '/settings', label: 'Settings', icon: '⚙️', description: 'App configuration and customization' }
++    const primaryItems = [
++        { path: '/newspaper', label: 'Newspaper', icon: '📰', description: 'Daily headlines and the visual front-page style layout.' },
++        { path: '/markets', label: 'Markets', icon: '📈', description: 'Indices, IPOs, movers, flows, and market snapshots.' },
++        { path: '/insight', label: 'Insight', icon: '📊', description: 'Ranked source consensus, coverage health, and angle analysis.' },
++        { path: '/up-ahead', label: 'Up Ahead', icon: '🗓️', description: 'Upcoming events, offers, releases, alerts, and timeline view.' },
++        { path: '/my-planner', label: 'Planner', icon: '📌', description: 'Your saved shortlist for the next few days.' },
++        { path: '/following', label: 'Following', icon: '🧭', description: 'Tracked topics and custom follow feeds.' },
++    ];
++
++    const utilityItems = [
++        { path: '/tech-social', label: 'Buzz', icon: '🎭', description: 'Tech, science, and social-media driven trend coverage.' },
++        { path: '/weather', label: 'Weather', icon: '☁️', description: 'Detailed weather forecasts and conditions.' },
++        { path: '/settings', label: 'Settings', icon: '⚙️', description: 'App configuration, categories, and personal preferences.' },
+     ];
+ 
+     return (
+         <div className="page-container">
+-            <Header title="More" icon="⋯" />
+-
++            <Header title="More" />
+             <main className="main-content" style={{ padding: '16px' }}>
+-                <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+-                    {secondaryNavItems.map(item => (
+-                        <Link key={item.path} to={item.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+-                            <div className="modern-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-2px)' } }}>
+-                                <span style={{ fontSize: '2rem' }}>{item.icon}</span>
+-                                <div>
+-                                    <h3 style={{ margin: '0 0 4px 0', fontSize: '1.1rem' }}>{item.label}</h3>
+-                                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{item.description}</p>
+-                                </div>
+-                            </div>
+-                        </Link>
+-                    ))}
++                <PageIntroCard
++                    eyebrow="Explore"
++                    title="Everything outside the main dashboard lives here"
++                    subtitle="Use this as the control room for deeper views, tracked topics, and app settings."
++                    accent="var(--blue)"
++                    stats={[
++                        { label: 'Primary', value: primaryItems.length },
++                        { label: 'Tools', value: utilityItems.length },
++                    ]}
++                />
++
++                <div style={{ marginBottom: '18px' }}>
++                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 0 10px' }}>
++                        <h3 style={{ margin: 0, fontSize: '0.95rem' }}>Explore</h3>
++                        <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>{primaryItems.length} entries</span>
++                    </div>
++                    <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '12px' }}>
++                        {primaryItems.map(item => <MoreLinkCard key={item.path} to={item.path} icon={item.icon} label={item.label} description={item.description} />)}
++                    </div>
++                </div>
++
++                <div>
++                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 0 10px' }}>
++                        <h3 style={{ margin: 0, fontSize: '0.95rem' }}>Utilities</h3>
++                        <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>{utilityItems.length} entries</span>
++                    </div>
++                    <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '12px' }}>
++                        {utilityItems.map(item => <MoreLinkCard key={item.path} to={item.path} icon={item.icon} label={item.label} description={item.description} />)}
++                    </div>
+                 </div>
+             </main>
+         </div>
+     );
+ }
+ 
+-export default MorePage;
+\ No newline at end of file
++export default MorePage;
+
+--- /dev/null
++++ b/src/ui/shared/PageIntroCard.jsx
+@@ -0,0 +1,35 @@
++import React from 'react';
++
++export default function PageIntroCard({ eyebrow, title, subtitle, stats = [], accent = 'var(--teal)', children, style }) {
++  return (
++    <div
++      className="nwv7-card"
++      style={{
++        padding: '14px',
++        marginBottom: '14px',
++        background: `radial-gradient(300px 160px at 80% 0%, color-mix(in srgb, ${accent} 18%, transparent), transparent 60%), linear-gradient(180deg, rgba(22,27,34,0.72), rgba(14,18,24,0.68))`,
++        ...style
++      }}
++    >
++      {eyebrow ? (
++        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--mono)', fontSize: '0.62rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: accent, marginBottom: 8 }}>
++          <span style={{ width: 6, height: 6, borderRadius: '50%', background: accent, boxShadow: `0 0 6px ${accent}` }} />
++          {eyebrow}
++        </div>
++      ) : null}
++      <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--txt)', marginBottom: subtitle ? 6 : 0 }}>{title}</div>
++      {subtitle ? <div style={{ fontSize: '0.86rem', color: 'var(--txt2)', lineHeight: 1.5 }}>{subtitle}</div> : null}
++      {stats.length ? (
++        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
++          {stats.map((stat) => (
++            <div key={stat.label} style={{ padding: '7px 10px', borderRadius: 10, border: '1px solid var(--bsoft)', background: 'rgba(255,255,255,0.03)' }}>
++              <div style={{ fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 2 }}>{stat.label}</div>
++              <div style={{ fontFamily: 'var(--mono)', fontWeight: 700, color: 'var(--txt2)', fontSize: '0.84rem' }}>{stat.value}</div>
++            </div>
++          ))}
++        </div>
++      ) : null}
++      {children ? <div style={{ marginTop: 12 }}>{children}</div> : null}
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/shared/InlineSegmentTabs.jsx
+@@ -0,0 +1,31 @@
++import React from 'react';
++
++export default function InlineSegmentTabs({ items = [], activeId, onChange }) {
++  return (
++    <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 14 }}>
++      {items.map((item) => {
++        const active = activeId === item.id;
++        return (
++          <button
++            key={item.id}
++            type="button"
++            onClick={() => onChange?.(item.id)}
++            style={{
++              flex: '0 0 auto',
++              borderRadius: 999,
++              padding: '8px 12px',
++              border: `1px solid ${active ? 'rgba(0,212,170,0.35)' : 'var(--border)'}`,
++              background: active ? 'rgba(0,212,170,0.10)' : 'rgba(255,255,255,0.03)',
++              color: active ? 'var(--teal)' : 'var(--muted)',
++              fontSize: '0.72rem',
++              fontWeight: 700,
++              letterSpacing: '0.04em'
++            }}
++          >
++            {item.label}
++          </button>
++        );
++      })}
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/planner/PlannerSummaryCard.jsx
+@@ -0,0 +1,18 @@
++import React from 'react';
++import PageIntroCard from '../shared/PageIntroCard';
++
++export default function PlannerSummaryCard({ totalDays = 0, totalItems = 0, nextDateLabel = '—' }) {
++  return (
++    <PageIntroCard
++      eyebrow="Saved agenda"
++      title="Your planner is your short-list for the week ahead"
++      subtitle="Swipe to remove, long-press for quick actions, and keep the next few days easy to scan."
++      accent="var(--blue)"
++      stats={[
++        { label: 'Days', value: totalDays },
++        { label: 'Saved', value: totalItems },
++        { label: 'Next', value: nextDateLabel },
++      ]}
++    />
++  );
++}
+
+--- /dev/null
++++ b/src/ui/planner/PlannerDayCard.jsx
+@@ -0,0 +1,20 @@
++import React from 'react';
++
++export default function PlannerDayCard({ title, subtitle, count, children }) {
++  return (
++    <div className="nwv7-card" style={{ marginBottom: 16, overflow: 'hidden' }}>
++      <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
++        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
++          <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--txt)' }}>{title}</div>
++          {subtitle ? <div style={{ fontSize: '0.74rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>{subtitle}</div> : null}
++        </div>
++        <div style={{ padding: '4px 10px', borderRadius: 999, border: '1px solid rgba(0,212,170,0.3)', background: 'rgba(0,212,170,0.08)', color: 'var(--teal)', fontSize: '0.68rem', fontWeight: 700 }}>
++          {count} item{count === 1 ? '' : 's'}
++        </div>
++      </div>
++      <div style={{ padding: '4px 14px 8px' }}>
++        {children}
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/upahead/UpAheadHeroCard.jsx
+@@ -0,0 +1,18 @@
++import React from 'react';
++import PageIntroCard from '../shared/PageIntroCard';
++
++export default function UpAheadHeroCard({ modeLabel, locationsLabel, timelineCount, alertCount, offerCount, isRefreshing = false }) {
++  return (
++    <PageIntroCard
++      eyebrow={isRefreshing ? 'Refreshing' : 'Next 7 days'}
++      title="Scan upcoming events, offers, releases, and alerts"
++      subtitle={`${modeLabel} feed · ${locationsLabel}`}
++      accent="var(--teal)"
++      stats={[
++        { label: 'Timeline', value: timelineCount },
++        { label: 'Alerts', value: alertCount },
++        { label: 'Offers', value: offerCount },
++      ]}
++    />
++  );
++}
+
+--- /dev/null
++++ b/src/ui/more/MoreLinkCard.jsx
+@@ -0,0 +1,16 @@
++import React from 'react';
++import { Link } from 'react-router-dom';
++
++export default function MoreLinkCard({ to, icon, label, description }) {
++  return (
++    <Link to={to} style={{ textDecoration: 'none', color: 'inherit' }}>
++      <div className="nwv7-card" style={{ padding: '14px', height: '100%', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
++        <span style={{ fontSize: '1.7rem', lineHeight: 1 }}>{icon}</span>
++        <div>
++          <div style={{ margin: '0 0 4px 0', fontSize: '0.96rem', fontWeight: 700, color: 'var(--txt)' }}>{label}</div>
++          <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--muted)', lineHeight: 1.45 }}>{description}</p>
++        </div>
++      </div>
++    </Link>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/insight/InsightPulseCard.jsx
+@@ -0,0 +1,65 @@
++import React from 'react';
++import { DataStatePill } from '../../components/Header';
++
++export default function InsightPulseCard({
++  signalScore = 0,
++  toneLabel = 'mixed',
++  breakingCount = 0,
++  freshnessLabel = 'now',
++  coveredSections = 0,
++  totalSections = 0,
++  nextRefreshLabel = '5m',
++  dataMode = 'live'
++}) {
++  const pct = Math.max(0, Math.min(100, signalScore));
++  return (
++    <div
++      className="modern-card"
++      style={{
++        display: 'flex',
++        alignItems: 'center',
++        gap: '14px',
++        padding: '14px',
++        borderRadius: '20px',
++        background:
++          'radial-gradient(300px 160px at 80% 0%,rgba(0,212,170,0.15),transparent 60%), linear-gradient(180deg,rgba(22,27,34,0.7),rgba(14,18,24,0.7))',
++        marginBottom: '14px',
++        position: 'relative',
++        overflow: 'hidden'
++      }}
++    >
++      <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
++        <svg viewBox="0 0 100 100" aria-hidden="true" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
++          <defs>
++            <linearGradient id="insight-ring" x1="0" y1="0" x2="1" y2="1">
++              <stop offset="0" stopColor="#00D4AA" />
++              <stop offset="1" stopColor="#58A6FF" />
++            </linearGradient>
++          </defs>
++          <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="9" />
++          <circle cx="50" cy="50" r="40" fill="none" stroke="url(#insight-ring)" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${(pct / 100) * 251.2} 251.2`} />
++        </svg>
++        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
++          <div style={{ fontSize: '1.3rem', fontWeight: 700, fontFamily: 'Roboto Mono, monospace' }}>{Math.round(signalScore)}</div>
++          <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Signal</div>
++        </div>
++      </div>
++
++      <div style={{ flex: 1, minWidth: 0 }}>
++        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontFamily: 'Roboto Mono, monospace', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent-primary)', marginBottom: 6 }}>
++          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent-primary)', boxShadow: '0 0 6px var(--accent-primary)' }} />
++          Live feed
++        </div>
++        <p style={{ fontSize: '0.88rem', fontWeight: 600, lineHeight: 1.3, color: 'var(--text-primary)', margin: 0 }}>
++          Day leans <em style={{ color: 'var(--accent-primary)', fontStyle: 'normal' }}>{toneLabel}</em> — <em style={{ color: 'var(--accent-primary)', fontStyle: 'normal' }}>{breakingCount} breaking</em> threads active
++        </p>
++        <div style={{ marginTop: 10, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', fontFamily: 'Roboto Mono, monospace', fontSize: '0.65rem', color: 'var(--text-muted)' }}>
++          <span>{freshnessLabel}</span><span>·</span>
++          <span><b style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{coveredSections}</b>/{totalSections} sections</span><span>·</span>
++          <span>next in <b style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{nextRefreshLabel}</b></span>
++          <DataStatePill mode={dataMode} label={dataMode === 'live' ? 'Live' : dataMode} />
++        </div>
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/insight/InsightStatStrip.jsx
+@@ -0,0 +1,33 @@
++import React from 'react';
++
++function toneColor(tone) {
++  return tone === 'info' ? 'var(--accent-secondary)' : tone === 'warn' ? 'var(--accent-warning)' : tone === 'good' ? 'var(--accent-success)' : tone === 'teal' ? 'var(--accent-primary)' : '#55606C';
++}
++
++export default function InsightStatStrip({ items = [] }) {
++  return (
++    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.max(items.length, 1)},1fr)`, gap: 7, marginBottom: 16 }}>
++      {items.map((item) => (
++        <div
++          key={item.key || item.label}
++          style={{
++            border: '1px solid var(--border-default)',
++            borderRadius: 13,
++            background: 'rgba(18,23,30,0.6)',
++            padding: '9px 7px 10px',
++            display: 'flex',
++            flexDirection: 'column',
++            gap: 3,
++            position: 'relative',
++            overflow: 'hidden',
++            alignItems: 'flex-start'
++          }}
++        >
++          <span style={{ position: 'absolute', left: 10, right: 10, top: 0, height: 2, borderRadius: '0 0 2px 2px', background: toneColor(item.tone), opacity: 0.85 }} />
++          <div style={{ fontSize: '1.05rem', fontWeight: 700, fontFamily: 'Roboto Mono, monospace', letterSpacing: '-0.02em' }}>{item.value}</div>
++          <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.2 }}>{item.label}</div>
++        </div>
++      ))}
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/insight/InsightExpandedPanel.jsx
+@@ -0,0 +1,75 @@
++import React from 'react';
++
++export default function InsightExpandedPanel({ summary, criticsTake, sources = [], angles = [], sentiment = null }) {
++  return (
++    <div style={{ borderTop: '1px solid var(--border-default)', background: 'rgba(10,13,17,0.5)' }}>
++      <div style={{ padding: '14px 14px 16px' }}>
++        <div style={{ marginBottom: 14 }}>
++          <div style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Summary</div>
++          <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.55, margin: 0 }}>{summary}</p>
++        </div>
++
++        {criticsTake ? (
++          <div style={{ marginBottom: 14 }}>
++            <div style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Analyst Take</div>
++            <div style={{ padding: '10px 12px', borderRadius: 12, background: 'rgba(88,166,255,0.06)', borderLeft: '2px solid rgba(88,166,255,0.55)' }}>
++              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, fontStyle: 'italic', margin: 0 }}>
++                "{criticsTake}"
++              </p>
++            </div>
++          </div>
++        ) : null}
++
++        {sources.length ? (
++          <div style={{ marginBottom: 14 }}>
++            <div style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Other Sources</div>
++            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
++              {sources.map((src, i) => (
++                <div key={`${src.name}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 10, background: 'rgba(255,255,255,0.025)', border: '1px solid var(--glass-border)' }}>
++                  <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'Roboto Mono, monospace', minWidth: 68 }}>{src.name}</span>
++                  <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)', flex: 1, lineHeight: 1.3 }}>{src.desc}</span>
++                  <span style={{ fontSize: '0.63rem', color: 'var(--text-muted)', fontFamily: 'Roboto Mono, monospace', flexShrink: 0 }}>{src.time}</span>
++                  <span style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 6px', borderRadius: 999, flexShrink: 0, background: src.angle === 'same' ? 'rgba(63,185,80,0.1)' : 'rgba(88,166,255,0.1)', color: src.angle === 'same' ? '#7ee38a' : '#90bfff', border: src.angle === 'same' ? '1px solid rgba(63,185,80,0.28)' : '1px solid rgba(88,166,255,0.28)' }}>
++                    {src.angle === 'same' ? 'Same angle' : 'New angle'}
++                  </span>
++                </div>
++              ))}
++            </div>
++          </div>
++        ) : null}
++
++        {angles.length ? (
++          <div style={{ marginBottom: 14 }}>
++            <div style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Related Angles</div>
++            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
++              {angles.map((a, i) => (
++                <div key={`${a.cat}-${i}`} style={{ padding: '9px 11px', borderRadius: 10, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}>
++                  <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent-primary)', marginBottom: 4 }}>{a.cat}</div>
++                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>{a.txt}</div>
++                </div>
++              ))}
++            </div>
++          </div>
++        ) : null}
++
++        {sentiment ? (
++          <div>
++            <div style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Sentiment</div>
++            <div style={{ display: 'flex', gap: 8 }}>
++              {[
++                { key: 'pos', label: 'Positive', value: sentiment.pos, color: 'var(--accent-success)', bg: 'rgba(63,185,80,0.05)', border: 'rgba(63,185,80,0.3)' },
++                { key: 'neg', label: 'Negative', value: sentiment.neg, color: '#ff8c96', bg: 'rgba(255,71,87,0.05)', border: 'rgba(255,71,87,0.3)' },
++                { key: 'neu', label: 'Neutral', value: sentiment.neu, color: 'var(--text-muted)', bg: 'rgba(255,255,255,0.02)', border: 'var(--glass-border)' }
++              ].map((pill) => (
++                <div key={pill.key} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '9px 6px', borderRadius: 11, border: `1px solid ${pill.border}`, background: pill.bg }}>
++                  <span style={{ fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 700, color: pill.color }}>{pill.label}</span>
++                  <span style={{ fontSize: '1rem', fontWeight: 700, fontFamily: 'Roboto Mono, monospace', color: pill.color }}>{pill.value}%</span>
++                </div>
++              ))}
++            </div>
++          </div>
++        ) : null}
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/insight/InsightRankedCard.jsx
+@@ -0,0 +1,74 @@
++import React, { useState } from 'react';
++import InsightExpandedPanel from './InsightExpandedPanel';
++
++export default function InsightRankedCard({
++  rank,
++  source,
++  ageLabel,
++  sourceCount,
++  isBreaking,
++  impact,
++  title,
++  sources = [],
++  sourceTags = [],
++  summary,
++  criticsTake,
++  angles = [],
++  sentiment,
++  hiddenDuplicateCount = 0,
++  weakTree = false,
++  rising = false,
++  snapshotDots = []
++}) {
++  const [open, setOpen] = useState(false);
++  const pct = Math.round((impact || 0) * 100);
++
++  return (
++    <div className="modern-card" style={{ marginBottom: 10, overflow: 'hidden', borderColor: open ? 'rgba(0,212,170,0.5)' : 'var(--border-default)' }}>
++      <div onClick={() => setOpen((v) => !v)} style={{ display: 'grid', gridTemplateColumns: '28px 1fr 36px', gap: 10, padding: '13px 12px', cursor: 'pointer', alignItems: 'start' }}>
++        <div style={{ fontFamily: 'Roboto Mono, monospace', fontSize: '0.95rem', fontWeight: 600, color: rank <= 3 ? 'var(--accent-primary)' : 'var(--text-muted)', paddingTop: 2, textAlign: 'center' }}>
++          {String(rank).padStart(2, '0')}
++        </div>
++        <div style={{ minWidth: 0 }}>
++          <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap', marginBottom: 5 }}>
++            {source ? <span style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'Roboto Mono, monospace' }}>{source}</span> : null}
++            {ageLabel ? <><span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--text-muted)', opacity: 0.45 }} /><span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'Roboto Mono, monospace' }}>{ageLabel}</span></> : null}
++            {isBreaking ? <span style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 7px', borderRadius: 999, background: 'rgba(255,71,87,0.14)', color: '#ff8c96', border: '1px solid rgba(255,71,87,0.35)' }}>⚡ Breaking</span> : null}
++            {sourceCount ? <span style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 7px', borderRadius: 999, background: 'rgba(63,185,80,0.12)', color: '#7ee38a', border: '1px solid rgba(63,185,80,0.3)' }}>{sourceCount} sources</span> : null}
++            {rising ? <span style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 7px', borderRadius: 999, background: 'rgba(0,212,170,0.12)', color: 'var(--accent-primary)', border: '1px solid rgba(0,212,170,0.3)' }}>↗ Rising</span> : null}
++            {weakTree ? <span style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 7px', borderRadius: 999, background: 'rgba(240,136,62,0.12)', color: '#f0b070', border: '1px solid rgba(240,136,62,0.3)' }}>Weak tree</span> : null}
++          </div>
++
++          <h3 style={{ fontSize: '0.96rem', fontWeight: 600, lineHeight: 1.33, letterSpacing: '-0.005em', margin: 0 }}>{title}</h3>
++
++          <div style={{ marginTop: 9, display: 'flex', alignItems: 'center', gap: 9 }}>
++            <div style={{ flex: 1, height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.05)', overflow: 'hidden' }}>
++              <span style={{ display: 'block', height: '100%', borderRadius: 3, width: `${pct}%`, background: 'linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))' }} />
++            </div>
++            <div style={{ fontFamily: 'Roboto Mono, monospace', fontSize: '0.66rem', color: 'var(--text-muted)', minWidth: 36, textAlign: 'right' }}>{(impact || 0).toFixed(2)}</div>
++          </div>
++
++          {(sourceTags.length || hiddenDuplicateCount || snapshotDots.length) ? (
++            <div style={{ marginTop: 7, display: 'flex', gap: 5, flexWrap: 'wrap', alignItems: 'center' }}>
++              {sourceTags.map((s) => (
++                <span key={s} style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'Roboto Mono, monospace', padding: '2px 6px', borderRadius: 6, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)' }}>{s}</span>
++              ))}
++              {hiddenDuplicateCount ? <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'Roboto Mono, monospace', padding: '2px 6px', borderRadius: 6, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)' }}>+{hiddenDuplicateCount} hidden</span> : null}
++              {snapshotDots.length ? (
++                <span style={{ display: 'inline-flex', gap: 4, marginLeft: 2 }}>
++                  {snapshotDots.map((d) => <span key={d.key} title={d.key} style={{ width: 7, height: 7, borderRadius: '50%', background: d.on ? 'var(--accent-primary)' : '#55606C', opacity: d.on ? 1 : 0.45 }} />)}
++                </span>
++              ) : null}
++            </div>
++          ) : null}
++        </div>
++
++        <button type="button" tabIndex={-1} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${open ? 'rgba(0,212,170,0.5)' : 'var(--border-default)'}`, background: open ? 'rgba(0,212,170,0.08)' : 'rgba(255,255,255,0.03)', color: open ? 'var(--accent-primary)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', lineHeight: 1, alignSelf: 'flex-start', marginTop: 2 }}>
++          {open ? '−' : '+'}
++        </button>
++      </div>
++
++      {open ? <InsightExpandedPanel summary={summary} criticsTake={criticsTake} sources={sources} angles={angles} sentiment={sentiment} /> : null}
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/insight/CoverageGrid.jsx
+@@ -0,0 +1,29 @@
++import React from 'react';
++
++function CoverageCell({ name, status = 'ok', countText, percent = 0 }) {
++  const dotColor = status === 'ok' ? 'var(--accent-success)' : status === 'err' ? 'var(--accent-danger)' : '#55606C';
++  const bg = status === 'err' ? 'rgba(255,71,87,0.04)' : 'rgba(255,255,255,0.025)';
++  const border = status === 'err' ? 'rgba(255,71,87,0.3)' : 'var(--glass-border)';
++  return (
++    <div style={{ padding: '9px 10px', borderRadius: 11, background: bg, border: `1px solid ${border}`, minHeight: 62, display: 'flex', flexDirection: 'column', gap: 4, opacity: status === 'q' ? 0.6 : 1 }}>
++      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
++        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 72 }}>{name}</span>
++        <span style={{ width: 7, height: 7, borderRadius: '50%', background: dotColor }} />
++      </div>
++      <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', fontFamily: 'Roboto Mono, monospace' }}>{countText}</div>
++      <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.05)', overflow: 'hidden', marginTop: 'auto' }}>
++        <span style={{ display: 'block', height: '100%', borderRadius: 2, width: `${percent}%`, background: status === 'err' ? 'var(--accent-danger)' : 'var(--accent-primary)' }} />
++      </div>
++    </div>
++  );
++}
++
++export default function CoverageGrid({ items = [] }) {
++  return (
++    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7, padding: 14, borderRadius: '16px', background: 'rgba(18,23,30,0.6)', border: '1px solid var(--border-default)' }}>
++      {items.map((item) => (
++        <CoverageCell key={item.id || item.name} name={item.name} status={item.status} countText={item.countText} percent={item.percent} />
++      ))}
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/insight/InsightPageView.jsx
+@@ -0,0 +1,33 @@
++import React from 'react';
++import InsightPulseCard from './InsightPulseCard';
++import InsightStatStrip from './InsightStatStrip';
++import InsightRankedCard from './InsightRankedCard';
++import CoverageGrid from './CoverageGrid';
++
++export default function InsightPageView({ pulse, stats, rankedStories = [], coverage = [] }) {
++  return (
++    <>
++      <InsightPulseCard {...pulse} />
++      <InsightStatStrip items={stats} />
++
++      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 0 10px' }}>
++        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, letterSpacing: '-0.01em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
++          <span style={{ width: 22, height: 22, borderRadius: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,212,170,0.1)', color: 'var(--accent-primary)', fontSize: '0.72rem', border: '1px solid rgba(0,212,170,0.28)' }}>▲</span>
++          Top Ranked
++        </h3>
++        <span style={{ fontFamily: 'Roboto Mono, monospace', fontSize: '0.65rem', color: 'var(--text-muted)' }}><b style={{ color: 'var(--text-secondary)' }}>{rankedStories.length}</b> shown · tap + to expand</span>
++      </div>
++      {rankedStories.map((story) => <InsightRankedCard key={story.id} {...story} />)}
++
++      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 0 10px' }}>
++        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, letterSpacing: '-0.01em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
++          <span style={{ width: 22, height: 22, borderRadius: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,212,170,0.1)', color: 'var(--accent-primary)', fontSize: '0.72rem', border: '1px solid rgba(0,212,170,0.28)' }}>◉</span>
++          Section Coverage
++        </h3>
++        <span style={{ fontFamily: 'Roboto Mono, monospace', fontSize: '0.65rem', color: 'var(--text-muted)' }}><b style={{ color: 'var(--text-secondary)' }}>{coverage.filter((x) => x.status === 'ok').length}</b> live · <b style={{ color: 'var(--text-secondary)' }}>{coverage.filter((x) => x.status === 'err').length}</b> error</span>
++      </div>
++      <CoverageGrid items={coverage} />
++      <div style={{ height: 8 }} />
++    </>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/MarketMoodBanner.jsx
+@@ -0,0 +1,46 @@
++import React from 'react';
++
++export default function MarketMoodBanner({ tone = 'neutral', label = 'Mixed market tone', subtitle = '', pill = 'Neutral' }) {
++  const toneMap = {
++    positive: {
++      bg: 'rgba(63,185,80,0.07)',
++      border: 'rgba(63,185,80,0.25)',
++      color: 'var(--accent-success)',
++      pillBg: 'rgba(63,185,80,0.15)',
++      pillBorder: 'rgba(63,185,80,0.35)',
++    },
++    negative: {
++      bg: 'rgba(255,71,87,0.07)',
++      border: 'rgba(255,71,87,0.25)',
++      color: '#ff8c96',
++      pillBg: 'rgba(255,71,87,0.15)',
++      pillBorder: 'rgba(255,71,87,0.35)',
++    },
++    neutral: {
++      bg: 'rgba(255,255,255,0.03)',
++      border: 'var(--border-default)',
++      color: 'var(--text-muted)',
++      pillBg: 'rgba(255,255,255,0.04)',
++      pillBorder: 'var(--border-default)',
++    },
++  };
++  const style = toneMap[tone] || toneMap.neutral;
++
++  return (
++    <div style={{
++      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
++      padding: '10px 14px', borderRadius: 12, marginBottom: 14,
++      background: style.bg, border: `1px solid ${style.border}`,
++    }}>
++      <div>
++        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: style.color }}>{label}</div>
++        {subtitle ? <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 2 }}>{subtitle}</div> : null}
++      </div>
++      <div style={{
++        fontFamily: 'Roboto Mono, ui-monospace, monospace', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em',
++        padding: '3px 10px', borderRadius: 999, textTransform: 'uppercase',
++        background: style.pillBg, color: style.color, border: `1px solid ${style.pillBorder}`,
++      }}>{pill}</div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/IndexGrid.jsx
+@@ -0,0 +1,38 @@
++import React from 'react';
++import MarketSparkline from '../../components/MarketSparkline';
++
++export default function IndexGrid({ indices = [] }) {
++  if (!indices.length) return null;
++
++  return (
++    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
++      {indices.map((item) => {
++        const pct = Number(item.changePercent || 0);
++        const isUp = pct >= 0;
++        return (
++          <div
++            key={item.name}
++            style={{
++              padding: '12px 13px', borderRadius: 12,
++              background: 'linear-gradient(160deg,rgba(22,27,34,0.8),rgba(14,18,24,0.6))',
++              border: `1px solid ${isUp ? 'rgba(63,185,80,0.3)' : 'rgba(255,71,87,0.3)'}`,
++              position: 'relative', overflow: 'hidden', minHeight: 120,
++            }}
++          >
++            <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 4 }}>{item.name}</div>
++            <div style={{ fontSize: '1.15rem', fontWeight: 700, fontFamily: 'Roboto Mono, ui-monospace, monospace', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{item.value}</div>
++            <div style={{ fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Roboto Mono, ui-monospace, monospace', marginTop: 3, color: isUp ? 'var(--accent-success)' : '#ff8c96' }}>
++              {isUp ? '▲' : '▼'} {Math.abs(pct).toFixed(2)}%
++            </div>
++            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontFamily: 'Roboto Mono, ui-monospace, monospace', marginTop: 4 }}>
++              {item.dayLow && item.dayHigh ? `L ${Number(item.dayLow).toLocaleString('en-IN')} · H ${Number(item.dayHigh).toLocaleString('en-IN')}` : 'Day range unavailable'}
++            </div>
++            <div style={{ position: 'absolute', right: 0, bottom: 0, opacity: 0.28, width: '48%', height: 52 }}>
++              <MarketSparkline series={item.history || item.series?.map((p) => p.close) || []} positive={isUp} />
++            </div>
++          </div>
++        );
++      })}
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/GlobalRail.jsx
+@@ -0,0 +1,20 @@
++import React from 'react';
++
++export default function GlobalRail({ items = [] }) {
++  if (!items.length) return null;
++  return (
++    <div style={{ display: 'flex', overflowX: 'auto', gap: 0, marginBottom: 14, borderRadius: 12, border: '1px solid var(--border-default)', background: 'rgba(14,18,24,0.5)' }}>
++      {items.map((item) => {
++        const pct = Number(item.changePercent || 0);
++        const isUp = pct >= 0;
++        return (
++          <div key={item.name} style={{ flex: '0 0 auto', padding: '10px 14px', borderRight: '1px solid var(--border-default)', display: 'flex', flexDirection: 'column', gap: 3, minWidth: 100 }}>
++            <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{item.name}</div>
++            <div style={{ fontSize: '0.88rem', fontWeight: 700, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: 'var(--text-primary)' }}>{item.value}</div>
++            <div style={{ fontSize: '0.7rem', fontWeight: 600, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: isUp ? 'var(--accent-success)' : '#ff8c96' }}>{isUp ? '▲' : '▼'} {Math.abs(pct).toFixed(2)}%</div>
++          </div>
++        );
++      })}
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/MoversCard.jsx
+@@ -0,0 +1,43 @@
++import React from 'react';
++
++function Column({ title, tone, rows = [] }) {
++  return (
++    <div style={{ padding: '10px 12px', borderRight: title === 'Top Gainers' ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
++      <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8, color: tone === 'gain' ? 'var(--accent-success)' : '#ff8c96' }}>{title}</div>
++      {rows.length ? rows.slice(0, 5).map((stock, idx) => {
++        const pct = Number(stock.changePercent || 0);
++        const up = pct >= 0;
++        return (
++          <div key={`${stock.symbol}-${idx}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: idx < Math.min(rows.length, 5) - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
++            <div>
++              <div style={{ fontSize: '0.78rem', fontWeight: 600, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: 'var(--text-secondary)' }}>{stock.symbol}</div>
++              <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginTop: 1, fontFamily: 'Roboto Mono, ui-monospace, monospace' }}>{stock.volume ? `Vol ${stock.volume}` : 'Live quote'}</div>
++            </div>
++            <div style={{ textAlign: 'right' }}>
++              <div style={{ fontSize: '0.78rem', fontWeight: 700, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: 'var(--text-primary)' }}>{stock.price}</div>
++              <div style={{ fontSize: '0.68rem', fontWeight: 600, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: up ? 'var(--accent-success)' : '#ff8c96' }}>{up ? '+' : '-'}{Math.abs(pct).toFixed(2)}%</div>
++            </div>
++          </div>
++        );
++      }) : <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>No data available.</div>}
++    </div>
++  );
++}
++
++export default function MoversCard({ gainers = [], losers = [] }) {
++  return (
++    <div style={{ borderRadius: 16, border: '1px solid var(--border-default)', background: 'linear-gradient(180deg,rgba(22,27,34,0.5),rgba(14,18,24,0.5))', marginBottom: 12, overflow: 'hidden' }}>
++      <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
++        <div>
++          <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 2 }}>Live movers</div>
++          <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>Top Movers</h3>
++        </div>
++        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>Market breadth leaders and laggards</div>
++      </div>
++      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
++        <Column title="Top Gainers" tone="gain" rows={gainers} />
++        <Column title="Top Losers" tone="loss" rows={losers} />
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/SectorHeatmap.jsx
+@@ -0,0 +1,29 @@
++import React from 'react';
++
++export default function SectorHeatmap({ sectors = [] }) {
++  if (!sectors.length) return null;
++  return (
++    <div style={{ borderRadius: 16, border: '1px solid var(--border-default)', background: 'linear-gradient(180deg,rgba(22,27,34,0.5),rgba(14,18,24,0.5))', marginBottom: 12, overflow: 'hidden' }}>
++      <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
++        <div>
++          <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 2 }}>Rotation map</div>
++          <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>Sectoral Indices</h3>
++        </div>
++        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>Breadth by sector</div>
++      </div>
++      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, padding: '10px 12px 12px' }}>
++        {sectors.map((sector) => {
++          const pct = Number(sector.changePercent || 0);
++          const up = pct >= 0;
++          return (
++            <div key={sector.name} style={{ padding: '10px 8px', borderRadius: 11, textAlign: 'center', border: `1px solid ${up ? 'rgba(63,185,80,0.25)' : 'rgba(255,71,87,0.2)'}`, background: up ? 'rgba(63,185,80,0.1)' : 'rgba(255,71,87,0.1)' }}>
++              <div style={{ fontSize: '0.62rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{sector.name}</div>
++              <div style={{ fontSize: '0.82rem', fontWeight: 700, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: 'var(--text-primary)' }}>{sector.value}</div>
++              <div style={{ fontSize: '0.7rem', fontWeight: 600, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: up ? 'var(--accent-success)' : '#ff8c96' }}>{up ? '▲' : '▼'} {Math.abs(pct).toFixed(2)}%</div>
++            </div>
++          );
++        })}
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/MacroCard.jsx
+@@ -0,0 +1,34 @@
++import React from 'react';
++
++export default function MacroCard({ title, eyebrow, subtitle, rows = [] }) {
++  if (!rows.length) return null;
++  return (
++    <div style={{ borderRadius: 16, border: '1px solid var(--border-default)', background: 'linear-gradient(180deg,rgba(22,27,34,0.5),rgba(14,18,24,0.5))', marginBottom: 12, overflow: 'hidden' }}>
++      <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
++        <div>
++          <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 2 }}>{eyebrow}</div>
++          <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>{title}</h3>
++        </div>
++        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>{subtitle}</div>
++      </div>
++      <div style={{ padding: '8px 12px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
++        {rows.map((row) => {
++          const pct = Number(row.changePercent || 0);
++          const up = pct >= 0;
++          return (
++            <div key={row.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 11px', borderRadius: 10, background: 'rgba(255,255,255,0.025)', border: '1px solid var(--bsoft)' }}>
++              <div>
++                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{row.name}</div>
++                <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 2 }}>{row.unit || row.source || ''}</div>
++              </div>
++              <div style={{ textAlign: 'right' }}>
++                <div style={{ fontSize: '0.88rem', fontWeight: 700, fontFamily: 'Roboto Mono, ui-monospace, monospace' }}>{row.value}</div>
++                <div style={{ fontSize: '0.7rem', fontWeight: 600, fontFamily: 'Roboto Mono, ui-monospace, monospace', color: up ? 'var(--accent-success)' : '#ff8c96' }}>{up ? '+' : ''}{pct.toFixed(2)}%</div>
++              </div>
++            </div>
++          );
++        })}
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/FlowCard.jsx
+@@ -0,0 +1,33 @@
++import React from 'react';
++
++function FlowBox({ title, data = {} }) {
++  const net = Number(data.net || 0);
++  const positive = net >= 0;
++  return (
++    <div style={{ padding: '11px 12px', borderRadius: 12, background: 'rgba(255,255,255,0.025)', border: '1px solid var(--bsoft)' }}>
++      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8, letterSpacing: '0.06em' }}>{title}</div>
++      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.78rem' }}><span style={{ color: 'var(--text-muted)' }}>Buy</span><strong style={{ color: 'var(--accent-success)' }}>₹{data.buy ?? '--'} Cr</strong></div>
++      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.78rem' }}><span style={{ color: 'var(--text-muted)' }}>Sell</span><strong style={{ color: '#ff8c96' }}>₹{data.sell ?? '--'} Cr</strong></div>
++      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0 4px', fontSize: '0.78rem' }}><span style={{ color: 'var(--text-muted)' }}>Net</span><strong style={{ color: positive ? 'var(--accent-success)' : '#ff8c96' }}>₹{data.net ?? '--'} Cr</strong></div>
++    </div>
++  );
++}
++
++export default function FlowCard({ fii = {}, dii = {}, date = '' }) {
++  if (!Object.keys(fii).length && !Object.keys(dii).length) return null;
++  return (
++    <div style={{ borderRadius: 16, border: '1px solid var(--border-default)', background: 'linear-gradient(180deg,rgba(22,27,34,0.5),rgba(14,18,24,0.5))', marginBottom: 12, overflow: 'hidden' }}>
++      <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
++        <div>
++          <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 2 }}>Flows</div>
++          <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>FII / DII Activity</h3>
++        </div>
++        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>{date || 'Latest available'}</div>
++      </div>
++      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '10px 12px 12px' }}>
++        <FlowBox title="FII" data={fii} />
++        <FlowBox title="DII" data={dii} />
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/IpoList.jsx
+@@ -0,0 +1,38 @@
++import React from 'react';
++
++function statusStyle(status) {
++  if (status === 'live' || status === 'open') return { bg: 'rgba(63,185,80,0.15)', color: 'var(--accent-success)', border: 'rgba(63,185,80,0.4)', label: 'Live' };
++  if (status === 'recent' || status === 'closed') return { bg: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', border: 'var(--bsoft)', label: 'Closed' };
++  return { bg: 'rgba(88,166,255,0.12)', color: '#90bfff', border: 'rgba(88,166,255,0.3)', label: 'Upcoming' };
++}
++
++export default function IpoList({ upcoming = [], live = [], recent = [] }) {
++  const items = [...live, ...upcoming, ...recent].slice(0, 8);
++  if (!items.length) return null;
++  return (
++    <div style={{ borderRadius: 16, border: '1px solid var(--border-default)', background: 'linear-gradient(180deg,rgba(22,27,34,0.5),rgba(14,18,24,0.5))', marginBottom: 12, overflow: 'hidden' }}>
++      <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
++        <div>
++          <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 2 }}>Primary issues</div>
++          <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>IPO Tracker</h3>
++        </div>
++        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>Upcoming, live and recent issues</div>
++      </div>
++      <div style={{ padding: '8px 12px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
++        {items.map((ipo, idx) => {
++          const st = statusStyle(ipo.status);
++          return (
++            <div key={`${ipo.name}-${idx}`} style={{ padding: '11px 12px', borderRadius: 11, background: 'rgba(255,255,255,0.025)', border: '1px solid var(--bsoft)', display: 'flex', alignItems: 'center', gap: 12 }}>
++              <span style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 7px', borderRadius: 999, flexShrink: 0, alignSelf: 'flex-start', background: st.bg, color: st.color, border: `1px solid ${st.border}` }}>{st.label}</span>
++              <div style={{ flex: 1 }}>
++                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 3 }}>{ipo.name}</div>
++                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{ipo.openDate || 'TBA'}{ipo.closeDate ? ` → ${ipo.closeDate}` : ''}{ipo.isSME ? ' · SME' : ''}</div>
++              </div>
++              <div style={{ fontFamily: 'Roboto Mono, ui-monospace, monospace', fontSize: '0.68rem', color: 'var(--text-muted)', textAlign: 'right', flexShrink: 0 }}>{ipo.issueSize || '-'}</div>
++            </div>
++          );
++        })}
++      </div>
++    </div>
++  );
++}
+
+--- /dev/null
++++ b/src/ui/market/MarketPageView.jsx
+@@ -0,0 +1,26 @@
++import React from 'react';
++import MarketMoodBanner from './MarketMoodBanner';
++import IndexGrid from './IndexGrid';
++import GlobalRail from './GlobalRail';
++import MoversCard from './MoversCard';
++import SectorHeatmap from './SectorHeatmap';
++import MacroCard from './MacroCard';
++import FlowCard from './FlowCard';
++import IpoList from './IpoList';
++
++export default function MarketPageView({ mood, primaryIndices = [], globalIndices = [], gainers = [], losers = [], sectors = [], commodities = [], currencies = [], fiidii = {}, ipo = {}, disclaimer = '' }) {
++  return (
++    <div>
++      <MarketMoodBanner tone={mood.tone} label={mood.label} subtitle={mood.subtitle} pill={mood.pill} />
++      <IndexGrid indices={primaryIndices} />
++      <GlobalRail items={globalIndices} />
++      <MoversCard gainers={gainers} losers={losers} />
++      <SectorHeatmap sectors={sectors} />
++      <MacroCard title="Commodities" eyebrow="Macro watch" subtitle="Gold, silver and crude" rows={commodities} />
++      <MacroCard title="Currency Rates" eyebrow="FX" subtitle="INR reference pairs" rows={currencies} />
++      <FlowCard fii={fiidii?.fii} dii={fiidii?.dii} date={fiidii?.date} />
++      <IpoList upcoming={ipo?.upcoming} live={ipo?.live} recent={ipo?.recent} />
++      {disclaimer ? <div style={{ padding: '10px 14px', textAlign: 'center', fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'Roboto Mono, ui-monospace, monospace', lineHeight: 1.5, marginTop: 4 }}>{disclaimer}</div> : null}
++    </div>
++  );
++}
+
