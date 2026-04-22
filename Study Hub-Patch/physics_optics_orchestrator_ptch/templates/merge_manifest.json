@@ -1,0 +1,27 @@
+{
+  "scope": {
+    "subject": "Physics",
+    "class": "10",
+    "topic": "Light \u2014 Reflection and Plane Mirror Systems"
+  },
+  "expected_outputs": [
+    "topic.json",
+    "pages/*.json",
+    "question-library.json",
+    "assets-manifest.json",
+    "resource-links.md",
+    "MERGE_SUMMARY.md",
+    "QA_REPORT.md",
+    "UPLOAD_STEPS.md"
+  ],
+  "agent_inputs": {
+    "A1": "structure shell",
+    "A2": "lesson content",
+    "A3": "question bank"
+  },
+  "merge_priority": {
+    "ids_and_structure": "A1",
+    "lesson_content": "A2",
+    "questions": "A3"
+  }
+}
