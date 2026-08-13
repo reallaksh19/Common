@@ -60,4 +60,4 @@ Apply the relevant gates:
 - `QG9 PROVENANCE`
 - `QG10 PUBLICATION_QA`
 
-Read `../../shared/grade9-workflow.md` when a full multi-stage build is requested. Use `../../shared/grade9-master.schema.json` as the canonical structured-data contract when producing reusable master data.
+Read `references/grade9-workflow.md` when a full multi-stage build is requested. Use `references/grade9-master.schema.json` as the canonical structured-data contract when producing reusable master data.
