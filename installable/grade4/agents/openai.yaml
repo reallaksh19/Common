@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 4 Learning Studio"
+  short_description: "Build Grade 4 Math and English learning content"
+  default_prompt: "Use $grade4 to create or analyze Grade 4 learning materials with subject-specific pedagogy, diagnostics, mastery, transfer, and PDF-ready quality checks."
