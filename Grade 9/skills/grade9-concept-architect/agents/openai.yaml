@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Concept Architect"
+  short_description: "Build concept graphs and learning links"
+  default_prompt: "Use $grade9-concept-architect to map these Grade 9 sources into stable concepts, prerequisites, practice, and challenge links."
