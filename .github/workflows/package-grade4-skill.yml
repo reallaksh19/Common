@@ -1,0 +1,47 @@
+name: Package Grade 4 Skill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'installable/grade4/**'
+      - '.github/workflows/package-grade4-skill.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f installable/grade4/SKILL.md
+          test -d installable/grade4/references/workflows
+          test -d installable/grade4/references/schemas
+          grep -q '^name: grade4$' installable/grade4/SKILL.md
+          grep -q '^description:' installable/grade4/SKILL.md
+
+      - name: Build uploadable ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          mkdir -p dist
+          cd installable
+          zip -r ../dist/grade4-skill.zip grade4 \
+            -x '*/.DS_Store' '*/__pycache__/*'
+
+      - name: Upload packaged skill
+        uses: actions/upload-artifact@v4
+        with:
+          name: grade4-skill
+          path: dist/grade4-skill.zip
+          if-no-files-found: error
+          retention-days: 90
