@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Chemistry"
+  short_description: "Reason and calibrate Grade 9 chemistry"
+  default_prompt: "Use $grade9-chemistry to analyze these Grade 9 chemistry sources across macroscopic, particle, symbolic, and experimental representations."
