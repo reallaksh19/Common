@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Learning Router"
+  short_description: "Route Grade 9 learning-content workflows"
+  default_prompt: "Use $grade9 to build or update Grade 9 learning material from my sources with calibrated practice and linked outputs."
