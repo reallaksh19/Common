@@ -1,0 +1,77 @@
+{
+  "schema": "AivSmallFlareNetworkValidationRecord.v1",
+  "title": "Two relief valves to subheader and main flare header — AIV screening example",
+  "implementation": {
+    "repository": "reallaksh19/3D_Converters",
+    "mergeCommit": "fbe7f1a4ec27087997df0ef717a62faf7bbb2f8e",
+    "calculationId": "VIB.AIV.ACOUSTIC",
+    "qualificationMode": "screening",
+    "screeningResultScope": "ASSESSMENT",
+    "designAuthority": false
+  },
+  "examplePath": "AIV/Examples/Small-Flare-Network/",
+  "network": {
+    "schema": "AivFlareNetwork.v1",
+    "networkId": "SMALL-FLARE-NETWORK-2RV",
+    "revision": "1",
+    "caseId": "SIMULTANEOUS-RELIEF-CASE-1",
+    "nodes": [
+      {"canonicalId":"RV-101","kind":"SOURCE","tag":"RV-101","line":"FL-BR-A","sourceDeviceType":"RELIEF_VALVE","branchNominalSize":"2 in"},
+      {"canonicalId":"RV-102","kind":"SOURCE","tag":"RV-102","line":"FL-BR-B","sourceDeviceType":"RELIEF_VALVE","branchNominalSize":"3 in"},
+      {"canonicalId":"J-101","kind":"JUNCTION","tag":"Subheader merge","line":"FL-SH-001"},
+      {"canonicalId":"J-102","kind":"JUNCTION","tag":"Subheader to main header","line":"FL-HDR-001"},
+      {"canonicalId":"AIV-HDR-ASSESS-001","kind":"ASSESSMENT","tag":"8x4 header tee assessment","line":"FL-HDR-001","assessmentType":"WELDED_TEE"}
+    ],
+    "segments": [
+      {"segmentId":"BR-A-001","from":"RV-101","to":"J-101","nominalSize":"2 in","physicalLength":{"value":6,"unit":"m"}},
+      {"segmentId":"BR-B-001","from":"RV-102","to":"J-101","nominalSize":"3 in","physicalLength":{"value":9,"unit":"m"}},
+      {"segmentId":"SH-001","from":"J-101","to":"J-102","nominalSize":"4 in","physicalLength":{"value":12,"unit":"m"}},
+      {"segmentId":"HDR-001","from":"J-102","to":"AIV-HDR-ASSESS-001","nominalSize":"8 in","physicalLength":{"value":20,"unit":"m"}}
+    ],
+    "resolvedPaths": [
+      {"sourceCanonicalId":"RV-101","assessmentCanonicalId":"AIV-HDR-ASSESS-001","segmentIds":["BR-A-001","SH-001","HDR-001"],"physicalDistance":{"value":38,"unit":"m"}},
+      {"sourceCanonicalId":"RV-102","assessmentCanonicalId":"AIV-HDR-ASSESS-001","segmentIds":["BR-B-001","SH-001","HDR-001"],"physicalDistance":{"value":41,"unit":"m"}}
+    ]
+  },
+  "sourceInputs": [
+    {"sourceCanonicalId":"RV-101","caseId":"SIMULTANEOUS-RELIEF-CASE-1","sourceDeviceType":"RELIEF_VALVE","sourceState":"RELIEVING","phase":"GAS","massFlow":{"value":14.580864295191764,"unit":"kg/s"},"upstreamPressure":{"value":5,"unit":"MPa","basis":"ABSOLUTE"},"downstreamPressure":{"value":1,"unit":"MPa","basis":"ABSOLUTE"},"upstreamTemperature":{"value":300,"unit":"K"},"molecularWeight":{"value":20,"unit":"g/mol"},"lowNoiseTrim":{"state":"NONE"},"sonicState":"NON_SONIC","effectiveSourcePwlDb":160.0},
+    {"sourceCanonicalId":"RV-102","caseId":"SIMULTANEOUS-RELIEF-CASE-1","sourceDeviceType":"RELIEF_VALVE","sourceState":"RELIEVING","phase":"GAS","massFlow":{"value":7.307743040001827,"unit":"kg/s"},"upstreamPressure":{"value":5,"unit":"MPa","basis":"ABSOLUTE"},"downstreamPressure":{"value":1,"unit":"MPa","basis":"ABSOLUTE"},"upstreamTemperature":{"value":300,"unit":"K"},"molecularWeight":{"value":20,"unit":"g/mol"},"lowNoiseTrim":{"state":"NONE"},"sonicState":"NON_SONIC","effectiveSourcePwlDb":154.0}
+  ],
+  "assessmentInput": {
+    "assessmentCanonicalId":"AIV-HDR-ASSESS-001","assessmentType":"WELDED_TEE","mainNominalSize":"8 in","branchNominalSize":"4 in","mainOutsideDiameter":{"value":219.1,"unit":"mm"},"mainInsideDiameter":{"value":202.74,"unit":"mm"},"mainWallThickness":{"value":8.18,"unit":"mm"},"branchOutsideDiameter":{"value":114.3,"unit":"mm"},"material":"CARBON_STEEL","duplexState":"NO"
+  },
+  "generatedRelationships": [
+    {"sourceCanonicalId":"RV-101","assessmentCanonicalId":"AIV-HDR-ASSESS-001","caseId":"SIMULTANEOUS-RELIEF-CASE-1","applicabilityDisposition":"APPLICABLE","physicalDistance":{"value":38,"unit":"m"},"distanceAuthority":"EXPLICIT_SEGMENT_ENGINEERING_LENGTH_SUM","simultaneousSourceGroup":"FLARE-GROUP-1"},
+    {"sourceCanonicalId":"RV-102","assessmentCanonicalId":"AIV-HDR-ASSESS-001","caseId":"SIMULTANEOUS-RELIEF-CASE-1","applicabilityDisposition":"APPLICABLE","physicalDistance":{"value":41,"unit":"m"},"distanceAuthority":"EXPLICIT_SEGMENT_ENGINEERING_LENGTH_SUM","simultaneousSourceGroup":"FLARE-GROUP-1"}
+  ],
+  "screeningResult": {
+    "sourceResults": [
+      {"sourceCanonicalId":"RV-101","effectiveSourcePwlDb":160.0,"attenuationDb":11.24593074874223,"pointPwlDb":148.75406925125776},
+      {"sourceCanonicalId":"RV-102","effectiveSourcePwlDb":154.0,"attenuationDb":12.133767386800828,"pointPwlDb":141.86623261319917}
+    ],
+    "assessmentCanonicalId":"AIV-HDR-ASSESS-001",
+    "combinedPointPwlDb":149.56302572849327,
+    "t26Intermediates": {"B":152.207,"log10N":9.902567870507482,"N":7990388037.921443,"diameterRatio":1.9168853893263342,"FLM1Mode":"PUBLISHED","FLM1":1.2133,"calculatedFLM1FromGeometry":1.327921644354955,"FLM1Variance":0.11462164435495503,"FLM2":0.20000003428444862,"NAfterFLM1":9694737806.410088,"NAfterFLM2":1938947893.6607578,"Lf":0.3134809023906855,"lof":0.29},
+    "lof":0.29,
+    "authority":{"qualificationState":"SCREENING","screeningAuthority":"AUTHORIZED","screeningResultScope":"ASSESSMENT","designAuthority":false}
+  },
+  "modelScopeNotes": [
+    "SVG coordinates are presentation-only and are never converted to engineering distance.",
+    "Source-to-assessment distance is the sum of explicit graph segment engineering lengths.",
+    "Current screening attenuation uses the resolved total physical distance and the assessment main inside diameter; it does not integrate each segment's 2/3/4/8-in diameter separately.",
+    "Stage 8 uses CONFIGURED_D23_INTERMEDIATES with PUBLISHED FLM1=1.2133. The geometry-derived FLM1 is retained as trace but is not the selected FLM1 in the current screening model.",
+    "The result is assessment-level SCREENING only and carries no design authority.",
+    "The line/case configured summary, if displayed by the product, is not authoritative for screening."
+  ],
+  "validation": {
+    "status":"CALCULATED_FROM_MERGED_FORMULAS",
+    "checks":[
+      {"id":"SRC-101-PWL","expected":160.0,"actual":160.0,"status":"PASS"},
+      {"id":"SRC-102-PWL","expected":154.0,"actual":154.0,"status":"PASS"},
+      {"id":"RV101-PATH","expectedM":38,"actualM":38,"status":"PASS"},
+      {"id":"RV102-PATH","expectedM":41,"actualM":41,"status":"PASS"},
+      {"id":"COMBINED-PWL","actualDb":149.56302572849327,"status":"PASS"},
+      {"id":"ASSESSMENT-LOF","actual":0.29,"status":"PASS"}
+    ]
+  }
+}
