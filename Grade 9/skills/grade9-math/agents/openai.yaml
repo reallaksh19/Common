@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Mathematics"
+  short_description: "Reason and calibrate Grade 9 mathematics"
+  default_prompt: "Use $grade9-math to analyze these Grade 9 mathematics anchors and preserve their reasoning difficulty."
