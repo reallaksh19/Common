@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Textbook Publisher"
+  short_description: "Publish linked Grade 9 learning PDFs"
+  default_prompt: "Use $grade9-textbook-publisher to turn this validated Grade 9 master data into a kid-friendly linked textbook and question bank PDF."
