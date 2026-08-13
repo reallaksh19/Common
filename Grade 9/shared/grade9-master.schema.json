@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/reallaksh19/Common/Grade%209/shared/grade9-master.schema.json",
+  "title": "Grade 9 Learning Master",
+  "type": "object",
+  "required": ["project", "sources", "concepts", "questions", "qa"],
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": ["grade", "subject", "chapter"],
+      "properties": {
+        "grade": {"const": 9},
+        "subject": {"type": "string"},
+        "chapter": {"type": "string"},
+        "target_level": {"type": "string"},
+        "core_question_count": {"type": "integer", "minimum": 0},
+        "challenge_question_count": {"type": "integer", "minimum": 0},
+        "version": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "provenance_class"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "title": {"type": "string"},
+          "provenance_class": {
+            "enum": [
+              "USER_UPLOADED_ANCHOR",
+              "OFFICIAL_PYQ",
+              "SECONDARY_VERIFIED_PYQ",
+              "PUBLISHED_REFERENCE",
+              "ORIGINAL_CALIBRATED",
+              "RECONSTRUCTED_FROM_SCAN"
+            ]
+          },
+          "location": {"type": ["string", "null"]},
+          "notes": {"type": ["string", "null"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["concept_id", "title"],
+        "properties": {
+          "concept_id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "primary_anchor_ids": {"type": "array", "items": {"type": "string"}},
+          "prerequisites": {"type": "array", "items": {"type": "string"}},
+          "same_level_question_ids": {"type": "array", "items": {"type": "string"}},
+          "challenge_question_ids": {"type": "array", "items": {"type": "string"}},
+          "misconception_ids": {"type": "array", "items": {"type": "string"}},
+          "mastery_path": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "questions": {
+      "type": "object",
+      "required": ["anchors", "core_calibrated", "challenges"],
+      "properties": {
+        "anchors": {"$ref": "#/$defs/questionArray"},
+        "core_calibrated": {"$ref": "#/$defs/questionArray"},
+        "challenges": {"$ref": "#/$defs/questionArray"}
+      },
+      "additionalProperties": true
+    },
+    "misconceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "wrong_model"],
+        "properties": {
+          "id": {"type": "string"},
+          "wrong_model": {"type": "string"},
+          "observable_error": {"type": "string"},
+          "diagnostic_question": {"type": "string"},
+          "repair_explanation": {"type": "string"},
+          "micro_example": {"type": "string"},
+          "transfer_check": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "mixed_tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["test_id", "question_ids"],
+        "properties": {
+          "test_id": {"type": "string"},
+          "question_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "diagnosis_map": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "publication": {
+      "type": "object",
+      "properties": {
+        "student_textbook": {"type": "object"},
+        "question_bank": {"type": "object"},
+        "integrated_edition": {"type": "object"},
+        "teacher_edition": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "qa": {
+      "type": "object",
+      "required": ["source_qc_complete", "answers_verified", "concept_links_verified"],
+      "properties": {
+        "source_qc_complete": {"type": "boolean"},
+        "answers_verified": {"type": "boolean"},
+        "difficulty_checked": {"type": "boolean"},
+        "concept_links_verified": {"type": "boolean"},
+        "pdf_render_checked": {"type": "boolean"},
+        "pdf_links_checked": {"type": "boolean"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "questionArray": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/question"}
+    },
+    "question": {
+      "type": "object",
+      "required": ["id", "provenance_class", "primary_concept_id", "question"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "provenance_class": {
+          "enum": [
+            "USER_UPLOADED_ANCHOR",
+            "OFFICIAL_PYQ",
+            "SECONDARY_VERIFIED_PYQ",
+            "PUBLISHED_REFERENCE",
+            "ORIGINAL_CALIBRATED",
+            "RECONSTRUCTED_FROM_SCAN"
+          ]
+        },
+        "transcription_status": {
+          "enum": ["VERIFIED_TRANSCRIPTION", "RECONSTRUCTED", "QC_ALERT", "SOURCE_UNRESOLVED"]
+        },
+        "primary_concept_id": {"type": "string", "minLength": 1},
+        "secondary_concept_ids": {"type": "array", "items": {"type": "string"}},
+        "anchor_ids": {"type": "array", "items": {"type": "string"}},
+        "relationship": {"type": "string"},
+        "difficulty": {"type": "object"},
+        "question": {"type": "string", "minLength": 1},
+        "answer": {},
+        "solution_path": {"type": "array", "items": {"type": "string"}},
+        "helper": {"type": "object"},
+        "hints": {"type": "array"},
+        "misconception_ids": {"type": "array", "items": {"type": "string"}},
+        "verified": {"type": "boolean"},
+        "source_id": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
