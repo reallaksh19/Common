@@ -583,7 +583,7 @@ Every strong anchor should have one short transfer prompt testing whether the id
 A textbook-quality benchmark used in this project is the *Progress in Mathematics* viewer. The goal is **not to copy its artwork or page design**. Extract only high-level publishing principles:
 
 - clear hierarchy;
-- generous white space;
+- purposeful whitespace: use breathing room, but convert large unused regions into working space, reflection, practice previews, diagnostics, or navigation;
 - consistent chapter/page furniture;
 - color-coded instructional layers;
 - short blocks instead of uninterrupted text;
@@ -592,36 +592,55 @@ A textbook-quality benchmark used in this project is the *Progress in Mathematic
 
 Reference: `https://secure.viewer.zmags.com/publication/d804a52f#/d804a52f/32`
 
-### 11.2 Recommended page system
+### 11.2 Recommended linked page system
 
-For detailed textbook chapters:
+The textbook and question bank should be two views of one canonical concept/question graph. Use stable IDs (for example `SEQ-C01`) rather than page numbers as the semantic authority.
 
-```text
-Cover
-Chapter map / How to use
-
-For each seed:
-  Page A - Question + concept fingerprint + notice + helper + early hints
-  Page B - later hints + solution studio + misconceptions + transfer
-
-Pattern-recognition summary
-Answer/provenance page
-```
-
-For a compact 30-question bank:
+For a Grade 9 concept hub, prefer a compact 1-2 page learning loop:
 
 ```text
-Cover
-How to use / difficulty legend
-Core questions (30)
-Core hint ladder
-Core answer key
-Next-level challenge appendix
-Challenge hints
-Challenge answers
-Concept map
-Provenance register
+YOUR MISSION (anchor problem / phenomenon)
+-> SPOT THE PATTERN
+-> TOOLBOX
+-> FIRST MOVE
+-> concise SOLUTION TRAIL / worked anchor
+-> WHY IT WORKS
+-> MISCONCEPTION CLINIC
+-> TRY NOW (same-level practice)
+-> LEVEL UP PREVIEW
+-> EXIT TICKET
+-> purposeful WORK ZONE
 ```
+
+For a compact question bank:
+
+```text
+Mastery / concept map
+Core bank (user count; default 30)
+Mixed mastery tests (reuse core IDs; do not reveal concept before attempt)
+Diagnosis map -> exact concept IDs
+Next-level challenge bank
+Helper / hint map
+Answers + solution paths
+Misconception clinic
+Source / QC / provenance register
+```
+
+The integrated edition is the canonical interactive PDF: concept links must jump to practice/challenge; every bank question must return to its primary concept; mixed-test diagnosis, hints, answers, and misconceptions should also route to the relevant concept/question. Standalone textbook and bank files may use stable IDs instead of cross-document links.
+
+#### Page-density rule
+
+Do not optimize for a fixed percentage mechanically. The practical rule is **no accidental blank zones**. Large remaining regions must have an instructional purpose, such as:
+
+- ruled or grid working space;
+- a `First Move` or strategy scratchpad;
+- a confidence / mastery check;
+- a practice preview;
+- a misconception diagnostic;
+- a retake plan;
+- concept navigation.
+
+Avoid both extremes: report-like pages with one small box and half a page empty, and >90% visual occupancy that removes breathing room.
 
 ### 11.3 Design tokens
 
@@ -921,6 +940,65 @@ These are examples used during development of this schema; future topics should 
 
 ---
 
+## 20A. Proven linked textbook/question-bank architecture
+
+The Sequence & Series v3 implementation established a reusable linked-learning pattern. Treat the metrics below as an implementation example, not universal page-count requirements.
+
+### 20A.1 Canonical graph
+
+```text
+Concept ID
+  <-> uploaded/source anchor
+  <-> same-level calibrated practice
+  <-> next-level challenge
+  <-> helper / hints
+  <-> misconception diagnostic
+  <-> answer / solution path
+  <-> mixed-test diagnosis
+```
+
+Question-to-concept mapping may be many-to-many, but every scored question has exactly one `primary_concept_id` for navigation and analytics.
+
+### 20A.2 Master-data authority
+
+Generate all PDFs from a canonical JSON (or equivalent structured model), not from already-laid-out PDF pages. The model stores concept IDs, questions, difficulty vectors, prerequisites, hints, misconceptions, solutions, QC/provenance, and navigation targets. Page numbers are render outputs only.
+
+### 20A.3 Core-bank allocation
+
+When the core bank is smaller than a fixed number of variants per anchor, allocate the limited new questions to the concepts with the greatest need for additional practice (high recognition load, transfer value, or thin source coverage). Do not distribute mechanically.
+
+### 20A.4 Mixed mastery
+
+Concept-grouped practice teaches recognition but can also leak the intended method. Therefore reuse the core bank in mixed tests that hide concept labels before the attempt. After marking, provide a diagnosis map back to exact concept IDs and suggested retakes.
+
+### 20A.5 PDF link QA
+
+For an integrated linked edition:
+
+1. create named/internal destinations from stable IDs;
+2. generate all concept -> question/challenge links;
+3. generate question/challenge -> concept return links;
+4. link diagnosis, hints, answers, and misconception entries;
+5. save the PDF and verify destination resolution;
+6. count/inspect PDF link annotations programmatically;
+7. render all pages and visually inspect them.
+
+### 20A.6 Sequence & Series v3 implementation reference
+
+The tested v3 example used:
+
+- 20 exact concept hubs (`SEQ-C01` ... `SEQ-C20`);
+- Core 30 = 20 uploaded anchors + 10 calibrated originals;
+- 20 next-level challenges;
+- three 10-question mixed mastery tests reusing Core 30 exactly once;
+- a 24-page standalone student textbook;
+- a 22-page standalone question bank;
+- a 44-page integrated edition with more than 400 internal navigation annotations.
+
+The page counts are not targets. The reusable requirements are stable IDs, purposeful page density, bidirectional concept/practice navigation, source/QC visibility, and render/link QA.
+
+---
+
 ## 21. Definition of done
 
 A bank is complete only when:
@@ -937,7 +1015,11 @@ A bank is complete only when:
 - [ ] the final PDF uses an original visual design;
 - [ ] every PDF page has been rendered and visually inspected;
 - [ ] QC alerts/reconstructions are visible to the reader;
-- [ ] answer keys and IDs are consistent.
+- [ ] answer keys and IDs are consistent;
+- [ ] every scored bank question has a primary concept ID;
+- [ ] integrated-edition concept/practice/challenge return links have been verified;
+- [ ] large whitespace regions are purposeful rather than accidental;
+- [ ] mixed-test diagnosis routes learners back to exact concepts.
 
 ---
 
