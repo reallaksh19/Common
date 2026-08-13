@@ -1,0 +1,55 @@
+{
+  "schema": "AivFlareNetworkExampleValidationRecord.v1",
+  "exampleId": "SMALL-FLARE-2RV-SUBHEADER-001",
+  "createdDate": "2026-08-13",
+  "implementation": {
+    "repository": "reallaksh19/3D_Converters",
+    "mergeCommit": "fbe7f1a4ec27087997df0ef717a62faf7bbb2f8e",
+    "calculationId": "VIB.AIV.ACOUSTIC",
+    "qualificationMode": "screening",
+    "screeningResultScope": "ASSESSMENT",
+    "designAuthority": false
+  },
+  "fixture": {
+    "caseId": "RELIEF-COMBINED",
+    "common": {"p1":"5 MPa abs","p2":"1 MPa abs","temperature":"300 K","molecularWeight":"20 g/mol","sonicState":"SONIC","trim":"NONE"},
+    "sources": [
+      {"id":"RV-101","branch":"2 in x 6 m","massFlowKgS":7.307743040001822,"effectiveSourcePwlDb":160.0},
+      {"id":"RV-102","branch":"3 in x 9 m","massFlowKgS":3.6625475182774654,"effectiveSourcePwlDb":154.0}
+    ],
+    "sharedPath": ["4 in subheader x 12 m","8 in header x 20 m"],
+    "assessment": {"id":"AIV-ASSESS-HDR-001","type":"WELDED_TEE","mainOdMm":219.1,"mainIdMm":202.74,"mainWallMm":8.18,"branchOdMm":114.3,"branchWallMm":6.02}
+  },
+  "generatedRelationships": [
+    {"source":"RV-101","assessment":"AIV-ASSESS-HDR-001","distanceM":38,"segments":["RV101-BRANCH","SUBHEADER-4IN","HEADER-8IN"],"simultaneousGroup":"FLARE-GROUP-1"},
+    {"source":"RV-102","assessment":"AIV-ASSESS-HDR-001","distanceM":41,"segments":["RV102-BRANCH","SUBHEADER-4IN","HEADER-8IN"],"simultaneousGroup":"FLARE-GROUP-1"}
+  ],
+  "calculation": {
+    "pointContributions": [
+      {"source":"RV-101","attenuationDb":11.24593074874223,"pointPwlDb":148.75406925125776},
+      {"source":"RV-102","attenuationDb":12.133767386800828,"pointPwlDb":141.86623261319917}
+    ],
+    "combinedPointPwlDb":149.56302572849327,
+    "assessmentLof":0.29,
+    "lineCaseTraceLof":1.48,
+    "lineCaseAuthoritativeForScreening":false,
+    "t26":{"stage8Model":"CONFIGURED_D23_INTERMEDIATES","diameterRatio":1.9168853893263342,"configuredFlm1":1.2133,"geometryFlm1":1.327921644354955,"flm1Variance":0.11462164435495505,"flm1Tolerance":0.0024,"flm2":0.20000003428444862,"Lf":0.3134809023906855}
+  },
+  "validation": {
+    "sourcePwl":"PASS",
+    "graphDistances":"PASS",
+    "simultaneousSourceCombination":"PASS",
+    "assessmentLof":"PASS",
+    "flm1GeometryParity":"MISMATCH",
+    "overallStatus":"INTEGRATION_PASS_GEOMETRY_QUALIFICATION_MISMATCH",
+    "nativePackageRun":"NOT_RUN",
+    "realBrowserAcceptance":"NOT_RUN"
+  },
+  "notes": [
+    "SVG coordinates are presentation-only; distances are sums of explicit segment engineering lengths.",
+    "All process values and nominal pipe dimensions are visible example assumptions and user-configurable.",
+    "Assessment LOF 0.29 is the screening result. Line/Case 1.48 is non-authoritative trace only.",
+    "The 8x4 geometry fails the D.2.3-configured FLM1 tolerance, so this is an integration sample, not arbitrary-geometry qualification.",
+    "The current screening attenuation uses total resolved distance and the assessment main ID; it does not integrate each segment diameter separately."
+  ]
+}
