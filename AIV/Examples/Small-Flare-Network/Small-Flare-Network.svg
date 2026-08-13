@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="940" viewBox="0 0 1440 940"
+ data-aiv-network-id="AIV-SMALL-FLARE-NETWORK" data-aiv-network-revision="SAMPLE-1" data-implementation-commit="fbe7f1a4ec27087997df0ef717a62faf7bbb2f8e">
+<title>Small AIV flare network — two relief valves to subheader and main header</title>
+<desc>Two relief valves with unequal source PWL feed 2 in and 3 in branches into a 4 in subheader, then an 8 in main header. SVG coordinates are presentation only; distances are explicit engineering lengths.</desc>
+<metadata>{"schema": "AivFlareNetworkExampleSvg.v1", "networkId": "AIV-SMALL-FLARE-NETWORK", "revision": "SAMPLE-1", "implementationCommit": "fbe7f1a4ec27087997df0ef717a62faf7bbb2f8e", "assessmentLof": 0.29, "combinedPointPwlDb": 149.56302572849327, "distanceAuthority": "EXPLICIT_SEGMENT_ENGINEERING_LENGTH_SUM"}</metadata>
+<defs>
+<style>
+.bg{fill:#07111f} .panel{fill:#0f172a;stroke:#334155;stroke-width:1.5} .title{fill:#f8fafc;font:700 24px sans-serif}
+.sub{fill:#94a3b8;font:13px sans-serif} .label{fill:#e5e7eb;font:700 13px sans-serif} .small{fill:#cbd5e1;font:12px sans-serif}
+.muted{fill:#94a3b8;font:11px sans-serif} .good{fill:#86efac;font:700 12px sans-serif} .warn{fill:#fbbf24;font:700 12px sans-serif}
+.src{fill:#0b1220;stroke:#7dd3fc;stroke-width:2.5} .junc{fill:#0b1220;stroke:#67e8f9;stroke-width:2}
+.assess{fill:#0b1220;stroke:#c4b5fd;stroke-width:2.5} .boundary{fill:#0b1220;stroke:#94a3b8;stroke-width:2}
+.p2{stroke:#38bdf8;stroke-width:5;fill:none} .p3{stroke:#22d3ee;stroke-width:7;fill:none} .p4{stroke:#a78bfa;stroke-width:9;fill:none}
+.p8{stroke:#f59e0b;stroke-width:14;fill:none} .grid{stroke:#1e293b} .cell{fill:#0b1220;stroke:#1e293b}
+</style>
+</defs>
+<rect class="bg" width="1440" height="940"/>
+<text class="title" x="38" y="42">Small Flare Network — 2 RVs to 4&quot; Subheader to 8&quot; Main Header</text>
+<text class="sub" x="38" y="68">Registered AIV screening implementation fbe7f1a4ec27087997df0ef717a62faf7bbb2f8e · Sample case RELIEF-SIMULTANEOUS</text>
+
+<rect class="panel" x="30" y="92" width="910" height="530" rx="12"/>
+<text class="label" x="52" y="120">Engineering network</text>
+<text class="muted" x="52" y="140">Pipe widths are visual only. Engineering distances are the explicit labels below and the graph segment properties.</text>
+
+<g transform="translate(140 225)">
+<circle r="33" class="src"/><path d="M-16 7 L0 -12 L16 7 Z M0 -12 V-24 M-10 16 H10" fill="none" stroke="#7dd3fc" stroke-width="2"/>
+<text class="label" text-anchor="middle" y="55">RV-101</text><text class="small" text-anchor="middle" y="72">PWL 160.000 dB</text>
+</g>
+<g transform="translate(140 455)">
+<circle r="33" class="src"/><path d="M-16 7 L0 -12 L16 7 Z M0 -12 V-24 M-10 16 H10" fill="none" stroke="#7dd3fc" stroke-width="2"/>
+<text class="label" text-anchor="middle" y="55">RV-102</text><text class="small" text-anchor="middle" y="72">PWL 154.000 dB</text>
+</g>
+
+<path d="M173 225 L410 330" class="p2"/><text class="small" x="260" y="248">2&quot; branch · BR-A-2IN · 6 m</text>
+<path d="M173 455 L410 330" class="p3"/><text class="small" x="246" y="448">3&quot; branch · BR-B-3IN · 9 m</text>
+
+<g transform="translate(430 330)"><circle r="22" class="junc"/><path d="M-30 0 H30 M0 -30 V0" fill="none" stroke="#67e8f9" stroke-width="2"/>
+<text class="label" text-anchor="middle" y="48">J-101</text></g>
+
+<path d="M452 330 L670 330" class="p4"/><text class="small" x="500" y="310">4&quot; subheader · SH-01-4IN · 12 m</text>
+
+<g transform="translate(690 330)"><circle r="15" class="junc"/><text class="label" text-anchor="middle" y="42">J-102</text></g>
+
+<path d="M705 330 L870 330" class="p8"/><text class="small" x="724" y="300">8&quot; main header · MH-01-8IN · 20 m</text>
+
+<g transform="translate(895 330)">
+<rect x="-28" y="-28" width="56" height="56" rx="7" class="assess"/><path d="M-18 8 H18 M0 8 V-16 M-8 -16 H8" fill="none" stroke="#c4b5fd" stroke-width="2"/>
+<text class="label" text-anchor="middle" y="53">AIV-ASSESS-MH-01</text><text class="small" text-anchor="middle" y="70">8×2 WELDOLET</text>
+</g>
+<path d="M923 330 L1135 330" class="p8"/><text class="small" x="970" y="300">8&quot; downstream header · 15 m</text>
+<g transform="translate(1170 330)"><rect x="-32" y="-25" width="64" height="50" rx="10" class="boundary"/><text class="label" text-anchor="middle" y="5">FLARE</text></g>
+
+<rect class="cell" x="60" y="535" width="840" height="62" rx="6"/>
+<text class="small" x="78" y="558">RV-101 path to assessment: 6 + 12 + 20 = <tspan class="good">38 m</tspan> · attenuation 11.245931 dB · point 148.754069 dB</text>
+<text class="small" x="78" y="580">RV-102 path to assessment: 9 + 12 + 20 = <tspan class="good">41 m</tspan> · attenuation 12.133767 dB · point 141.866233 dB</text>
+
+<rect class="panel" x="970" y="92" width="440" height="530" rx="12"/>
+<text class="label" x="992" y="120">Screening result</text>
+<text class="small" x="992" y="156">RV-101 effective source PWL</text><text class="good" x="1260" y="156">160.000 dB</text>
+<text class="small" x="992" y="180">RV-102 effective source PWL</text><text class="good" x="1260" y="180">154.000 dB</text>
+<text class="small" x="992" y="220">RV-101 at assessment</text><text class="good" x="1260" y="220">148.754069 dB</text>
+<text class="small" x="992" y="244">RV-102 at assessment</text><text class="good" x="1260" y="244">141.866233 dB</text>
+<text class="label" x="992" y="288">Combined point PWL</text><text class="good" x="1260" y="288">149.563026 dB</text>
+<line x1="992" y1="312" x2="1385" y2="312" class="grid"/>
+<text class="small" x="992" y="342">FLM2</text><text class="small" x="1260" y="342">0.200000034</text>
+<text class="small" x="992" y="366">Loss factor Lf</text><text class="small" x="1260" y="366">0.313480902</text>
+<text class="label" x="992" y="408">Assessment LOF</text><text class="good" x="1260" y="408">0.29</text>
+<text class="small" x="992" y="442">Line/case trace LOF</text><text class="warn" x="1260" y="442">1.48 non-authoritative</text>
+<rect x="990" y="474" width="398" height="118" rx="7" fill="#2b1b08" stroke="#92400e"/>
+<text class="warn" x="1008" y="498">MODEL-SCOPE NOTE</text>
+<text class="muted" x="1008" y="520">Stage 8 currently uses CONFIGURED_D23_INTERMEDIATES</text>
+<text class="muted" x="1008" y="540">and selected published FLM1 = 1.2133.</text>
+<text class="muted" x="1008" y="560">8×2 geometry recalculated FLM1 = 1.133402,</text>
+<text class="muted" x="1008" y="580">so this sample is integration/screening evidence, not design authority.</text>
+
+<rect class="panel" x="30" y="650" width="1380" height="250" rx="12"/>
+<text class="label" x="52" y="678">Auto-generated AIV table mirror</text>
+<text class="small" x="52" y="710">Source</text><text class="small" x="210" y="710">Case</text><text class="small" x="420" y="710">Branch</text><text class="small" x="560" y="710">PWL</text><text class="small" x="700" y="710">Assessment</text><text class="small" x="970" y="710">Distance</text>
+<line x1="50" y1="720" x2="1385" y2="720" class="grid"/>
+<text class="small" x="52" y="748">RV-101</text><text class="small" x="210" y="748">RELIEF-SIMULTANEOUS</text><text class="small" x="420" y="748">2&quot;</text><text class="small" x="560" y="748">160.000</text><text class="small" x="700" y="748">AIV-ASSESS-MH-01</text><text class="small" x="970" y="748">38 m</text>
+<text class="small" x="52" y="778">RV-102</text><text class="small" x="210" y="778">RELIEF-SIMULTANEOUS</text><text class="small" x="420" y="778">3&quot;</text><text class="small" x="560" y="778">154.000</text><text class="small" x="700" y="778">AIV-ASSESS-MH-01</text><text class="small" x="970" y="778">41 m</text>
+<text class="muted" x="52" y="826">Simultaneous Source Group: AUTO:AIV-ASSESS-MH-01:RELIEF-SIMULTANEOUS</text>
+<text class="muted" x="52" y="852">Distance authority: EXPLICIT_SEGMENT_ENGINEERING_LENGTH_SUM · SVG pixels authoritative for distance: false</text>
+<text class="muted" x="52" y="878">Assessment screening scope only · designAuthority=false</text>
+</svg>
