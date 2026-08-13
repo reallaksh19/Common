@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Physics"
+  short_description: "Model and calibrate Grade 9 physics"
+  default_prompt: "Use $grade9-physics to analyze these Grade 9 physics sources using model, graph, units, and physical-validation reasoning."
