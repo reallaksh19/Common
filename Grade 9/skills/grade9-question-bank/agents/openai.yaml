@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Question Bank"
+  short_description: "Build difficulty-calibrated Grade 9 banks"
+  default_prompt: "Use $grade9-question-bank to create a Grade 9 bank that matches my anchor difficulty and includes controlled Level-Up questions."
