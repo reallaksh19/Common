@@ -208,3 +208,75 @@ Agent replacement alone is not a reason to create a new PR.
 ## 11. Repository role
 
 `Common` is the cross-repository governance and controlled-reference repository. Changes to reusable Skills, methodology, controlled evidence, or cross-repo policy can affect many downstream repositories and therefore require explicit provenance, narrow scope, and durable compatibility reasoning.
+
+## 12. AUTO MODE — autonomous phase execution
+
+The exact owner keyword `AUTO MODE` grants **phase-progression authority**, not unlimited authority.
+
+When the current owner instruction contains `AUTO MODE`, persist:
+
+```text
+EXECUTION_MODE = AUTO
+AUTO_STATE = RUNNING
+SCOPE_AUTHORITY = LOCKED_TO_APPROVED_MISSION
+PHASE_PROGRESSION = AUTO
+MERGE_AUTHORITY = OWNER_ONLY
+```
+
+`AUTO MODE` does **not** imply `AUTO MERGE`. Merge authority remains owner-only unless the owner separately and explicitly authorizes automatic merge.
+
+### AUTO execution loop
+
+While the approved mission remains incomplete and no hard-stop condition exists, the agent shall:
+
+1. re-check current durable repository/PR state and active overlaps;
+2. select the next approved phase from the recorded plan;
+3. record the phase objective, expected files, rationale, predicted behavior, validation, and invariants;
+4. implement only that phase;
+5. validate and classify evidence accurately;
+6. update the work report, findings, changed-file ledger, status/claims, and Appendix A if the next unresolved work changed;
+7. create a durable checkpoint;
+8. evaluate the hard-stop conditions below;
+9. if none applies, continue automatically to the next approved phase.
+
+Completion of a normal phase is **not** a reason to ask for owner confirmation.
+
+While `EXECUTION_MODE=AUTO`, the following are invalid routine stops unless a defined hard-stop condition exists:
+
+- `Phase complete; awaiting confirmation.`
+- `Would you like me to continue?`
+- `Let me know if you want the next stage.`
+- `Should I run the remaining planned tests?`
+- `I can continue if desired.`
+
+### AUTO hard-stop conditions
+
+AUTO progression must stop and record the exact reason when any of the following occurs:
+
+- the next action materially expands or changes approved scope;
+- the approved plan is materially invalidated and a new owner-level product/engineering choice is required;
+- an engineering authority, governing formulation, controlled source, runtime/writer/canvas, or other protected authority must change beyond what was already authorized;
+- safety-critical uncertainty cannot be bounded by existing approved evidence;
+- takeover qualification fails, expires, or write authority is revoked;
+- an independent oracle materially contradicts the implementation and bounded diagnosis cannot resolve it within approved scope;
+- an unresolved `BLOCKED_BY_ACTIVE_CLAIM` or equivalent multi-agent authority collision exists;
+- a destructive, credential, security, permission, or irreversible operation requires new authorization;
+- continuing requires guessing engineering intent or silently weakening a validation/acceptance gate;
+- `SUPERSEDE` or `ABANDON` would discard material work and owner disposition is required;
+- merge is the next action but merge authority has not been separately granted.
+
+On a hard stop set `AUTO_STATE` to `BLOCKED`, `OWNER_DECISION_REQUIRED`, or `TAKEOVER_REQUIRED` as appropriate, keep `HANDOVER_READINESS` current, and record the evidence, exact blocker, safe options, and one executable next action.
+
+### Bounded self-recovery
+
+AUTO MODE may automatically investigate, repair, rerun validation, and continue when the problem remains inside approved scope and authority boundaries.
+
+It must not thrash indefinitely. If repeated attempts do not narrow the uncertainty, or the agent can no longer state a concrete current hypothesis, falsifier, next isolating experiment, and protected invariants, stop production mutation and set:
+
+```text
+PR_RECOVERY_STATE = TAKEOVER_REQUIRED
+TAKEOVER_AUTHORITY = READ_ONLY
+AUTO_STATE = TAKEOVER_REQUIRED
+```
+
+Refresh the work report and Appendix A so another qualified agent can recover immediately.

@@ -1,6 +1,6 @@
 ---
 name: engineering-pr-delivery
-description: Execute, investigate, review, recover, validate, or hand over GitHub pull-request work under a strict engineering delivery protocol. Use for repository issues/PRs, implementation work, agent takeovers, lost or incapable agents, stale or contaminated PRs, multi-agent work in one repository, engineering/FEA/numerical changes, validation, handover, salvage, supersession, and closure. Establish live repository truth first, keep every PR continuously handover-ready, require repository-specific takeover qualification before engineering-critical production changes, and never merge unless explicitly authorized.
+description: Execute, investigate, review, recover, validate, hand over, or autonomously progress GitHub pull-request work under a strict engineering delivery protocol. Use for repository issues/PRs, implementation work, AUTO MODE phase execution, agent takeovers, lost or incapable agents, stale or contaminated PRs, multi-agent work in one repository, engineering/FEA/numerical changes, validation, handover, salvage, supersession, and closure. Establish live repository truth first, keep every PR continuously handover-ready, require repository-specific takeover qualification before engineering-critical production changes, and never infer merge authority from AUTO MODE.
 ---
 
 # Engineering PR Delivery
@@ -326,3 +326,15 @@ Do not merge unless the owner explicitly authorizes merge.
 Do not create or modify workflow files unless authorized.
 
 Read `references/git-pr-policy.md`.
+
+## 17. Honor AUTO MODE
+
+When the owner's current instruction contains the exact keyword `AUTO MODE`, set `EXECUTION_MODE=AUTO` and persist the authorization in the work report/status record.
+
+AUTO MODE means: execute the approved plan phase by phase without asking for routine confirmation after each successful phase. It does not grant scope expansion, engineering-authority changes, destructive-operation permission, or merge authority.
+
+After every phase, validate, synchronize the recovery artifacts, create a durable checkpoint, evaluate hard-stop conditions, and automatically continue when none applies.
+
+Do not stop merely to ask `Would you like me to continue?` while AUTO MODE is active.
+
+Read `references/auto-mode.md` before AUTO execution.
