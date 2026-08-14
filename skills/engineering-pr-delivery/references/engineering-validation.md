@@ -1,89 +1,37 @@
 # Engineering-Critical Validation
 
-Load this reference when criticality is `ENGINEERING_CRITICAL` or `SAFETY_CRITICAL`.
+Load this reference when `CRITICALITY=ENGINEERING_CRITICAL` or `SAFETY_CRITICAL`.
 
-Software correctness and engineering correctness are separate claims.
+## Required principles
 
-## Freeze the basis before changing mechanics
+1. Establish governing units, axes, sign/end conventions, geometry, material/property authority, and relevant code/standard basis before comparing numbers.
+2. Prefer independent analytical, authoritative-reference, cross-solver, or experimentally grounded expected values.
+3. Keep implementation-coupled regressions separate from independent verification.
+4. Fail closed where required engineering inputs/authority are missing.
+5. Isolate one mechanism at a time when practical.
+6. Record provenance for every benchmark and expected value.
 
-Record as applicable:
+## FEA / structural / piping solver work
 
-- governing units;
-- coordinate axes and handedness;
-- DOF ordering;
-- sign conventions;
-- element/end conventions;
-- geometry and topology authority;
-- material/section/property authority;
-- load and restraint authority;
-- governing code/standard edition;
-- expected physical behavior;
-- independent expected-value source;
-- acceptance tolerance and why it is appropriate.
+Where applicable require:
 
-Missing or ambiguous engineering authority must fail closed. Do not silently substitute defaults.
+- six-DOF residual/equilibrium checks;
+- element/member free-body cuts;
+- raw end-action recovery such as `q = K u - f_fixed - f_initial`;
+- local/global axis verification;
+- unit verification;
+- DOF and end-I/end-J ordering/sign verification;
+- transformation and moment-transport verification;
+- trace from at least one failed reported row back to the raw solver quantity;
+- independent benchmark or analytical solution;
+- convergence/sensitivity where discretization is relevant.
 
-## Numerical validation
+Do not change stiffness/load assembly merely to correct a downstream recovery/reporting defect.
 
-Require the relevant combination of:
+## Piping-specific mechanisms
 
-- closed-form/analytical benchmark;
-- independent numerical reproduction;
-- force equilibrium;
-- moment equilibrium;
-- six-DOF residual checks where applicable;
-- free-body cuts;
-- dimensional consistency;
-- energy consistency where applicable;
-- rigid-body/mechanism checks;
-- mesh convergence where applicable;
-- orientation/member-reversal invariance where applicable;
-- limiting/special-case behavior;
-- cross-solver or commercial comparison where applicable.
+When relevant isolate B31J flexibility, bend ovalization, pressure stiffening, translational/rotational Bourdon effects, pressure thrust, bend tangent/end conventions, SIF use versus flexibility use, pressure area, wall/geometry/orientation, and units through single-factor tests and predicted sensitive cases.
 
-For finite-element/end-action recovery work, trace the failed reported quantity back to the raw solver quantity. Distinguish stiffness/load assembly, solver equilibrium, local/global transformation, fixed/initial actions, end-I/end-J signs, moment transport, result recovery, and report mapping rather than changing several mechanisms simultaneously.
+## Authority promotion
 
-Where appropriate verify the relationship:
-
-```text
-q = K u - f_fixed - f_initial
-```
-
-using the repository's declared conventions.
-
-## Commercial-program comparison
-
-A commercial comparison is meaningful only when the following are matched or explicitly reconciled:
-
-- geometry;
-- material/section properties;
-- loads;
-- restraints/springs/gaps;
-- element formulation and flexibility factors;
-- pressure/thermal/Bourdon options where relevant;
-- units;
-- coordinate system;
-- result location;
-- sign/end convention.
-
-## Expected values
-
-Do not generate the expected value from the implementation under test and then call the match independent verification.
-
-## UI / publication authority
-
-Rendering, contouring, smoothing, averaging, autoscaling, display projection, report mapping, or preview state must not silently become numerical authority.
-
-## Capability maturity
-
-Track separately:
-
-```text
-IMPLEMENTATION: NOT_STARTED / PARTIAL / IMPLEMENTED
-INTEGRATION: NOT_INTEGRATED / PARTIAL / INTEGRATED
-SOFTWARE_VALIDATION: NOT_RUN / FAIL / PASS
-ENGINEERING_VALIDATION: NOT_REQUIRED / NOT_RUN / PARTIAL / FAIL / PASS
-RELEASE_STATE: NOT_READY / BLOCKED / READY
-```
-
-Do not collapse these into one `DONE` state.
+A usable implementation does not automatically gain engineering/screening/design authority. Record calculation state, qualification state, authority state, and missing qualification evidence separately.

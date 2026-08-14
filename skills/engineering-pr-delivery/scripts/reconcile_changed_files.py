@@ -1,68 +1,31 @@
 #!/usr/bin/env python3
-"""Compare Git changed files with the work-report changed-file ledger."""
-from __future__ import annotations
-
-import re
-import subprocess
-import sys
 from pathlib import Path
+import re, sys
 
+def ledger_paths(text):
+    section = re.split(r"##\s+\d*\.*\s*Changed-File Ledger", text, flags=re.I)
+    body = section[-1] if len(section) > 1 else text
+    return set(re.findall(r"`([^`\n]+(?:\.[A-Za-z0-9_-]+))`", body))
 
-def git_files(base: str) -> set[str]:
-    out = subprocess.check_output(
-        ["git", "diff", "--name-only", f"{base}...HEAD"], text=True
-    )
-    return {line.strip() for line in out.splitlines() if line.strip()}
-
-
-def ledger_files(text: str) -> set[str]:
-    files: set[str] = set()
-    in_ledger = False
-    for line in text.splitlines():
-        if line.startswith("## Changed-File Ledger"):
-            in_ledger = True
-            continue
-        if in_ledger and line.startswith("## "):
-            break
-        if not in_ledger or not line.startswith("|"):
-            continue
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if not cells or cells[0] in {"File", "---", ""} or set(cells[0]) <= {"-", ":"}:
-            continue
-        candidate = cells[0].strip("`")
-        if "/" in candidate or "." in Path(candidate).name:
-            files.add(candidate)
-    return files
-
-
-def main() -> int:
+def main():
     if len(sys.argv) != 3:
-        print("Usage: reconcile_changed_files.py <base-ref> <workreport.md>", file=sys.stderr)
+        print("Usage: reconcile_changed_files.py <workreport.md> <actual_paths.txt>", file=sys.stderr)
         return 2
-    base, report = sys.argv[1], Path(sys.argv[2])
-    if not report.is_file():
-        print(f"FAIL: work report not found: {report}")
-        return 1
-    actual = git_files(base)
-    ledger = ledger_files(report.read_text(encoding="utf-8"))
+    report = Path(sys.argv[1]).read_text(encoding="utf-8")
+    actual = {x.strip() for x in Path(sys.argv[2]).read_text(encoding="utf-8").splitlines() if x.strip()}
+    ledger = ledger_paths(report)
     missing = sorted(actual - ledger)
     extra = sorted(ledger - actual)
-    print(f"Actual changed files: {len(actual)}")
-    print(f"Ledger files: {len(ledger)}")
     if missing:
-        print("Missing from ledger:")
-        for item in missing:
-            print(f"- {item}")
+        print("FAIL: actual files absent from ledger:")
+        for p in missing: print("  ", p)
     if extra:
-        print("Ledger entries not in diff:")
-        for item in extra:
-            print(f"- {item}")
-    if missing or extra:
-        print("CHANGED-FILE RECONCILIATION: FAIL")
+        print("WARN: ledger-like paths not in actual diff:")
+        for p in extra: print("  ", p)
+    if missing:
         return 1
-    print("CHANGED-FILE RECONCILIATION: PASS")
+    print(f"PASS: {len(actual)} actual changed paths represented in report")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

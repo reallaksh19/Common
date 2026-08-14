@@ -1,59 +1,59 @@
 #!/usr/bin/env python3
-"""Lightweight structural validation for engineering PR work reports."""
-from __future__ import annotations
-
-import re
-import sys
 from pathlib import Path
+import re, sys
 
 REQUIRED_HEADINGS = [
-    "# CURRENT STATE — READ THIS FIRST",
-    "## Handover in 60 Seconds",
-    "## Repository Ground Truth",
-    "## Mission and Engineering Intent",
-    "## Capability Status",
-    "## Active Engineering Items",
-    "## Validation Summary",
-    "## Changed-File Ledger",
-    "## Exact Next Action",
-    "## Next-Agent Handover",
-    "# HISTORICAL RECORD — DO NOT USE AS CURRENT STATE",
+    "CURRENT RECOVERY STATE",
+    "Handover in 60 Seconds",
+    "Repository Ground Truth",
+    "Mission / Scope / Acceptance",
+    "Current Implementation State",
+    "Active Engineering Item Register",
+    "Authority and Invariants",
+    "Current Validation",
+    "Changed-File Ledger",
+    "Continuation State",
+    "APPENDIX A",
 ]
 
-VALID_STATUSES = {"PASS", "FAIL", "NOT_RUN", "NOT_APPLICABLE"}
+REQUIRED_FIELDS = [
+    "HANDOVER_READINESS:",
+    "PR_RECOVERY_STATE:",
+    "TAKEOVER_AUTHORITY:",
+    "REPORT_BASIS_HEAD:",
+    "MAIN_HEAD_LAST_CHECKED:",
+    "REPORT_SYNC:",
+    "APPENDIX_A_STATUS:",
+    "GROUNDING_EPOCH:",
+    "EXACT_NEXT_ACTION:",
+]
 
-
-def main() -> int:
+def main():
     if len(sys.argv) != 2:
         print("Usage: validate_workreport.py <workreport.md>", file=sys.stderr)
         return 2
-    path = Path(sys.argv[1])
-    if not path.is_file():
-        print(f"FAIL: file not found: {path}")
-        return 1
-    text = path.read_text(encoding="utf-8")
-    errors: list[str] = []
-    for heading in REQUIRED_HEADINGS:
-        if heading not in text:
-            errors.append(f"missing heading: {heading}")
-    if not re.search(r"Current HEAD\s*\|\s*[^|\n]+", text, re.IGNORECASE):
-        errors.append("Current HEAD appears missing or empty")
-    seen_statuses = set(re.findall(r"\b(?:PASS|FAIL|NOT_RUN|NOT_APPLICABLE)\b", text))
-    if not seen_statuses:
-        errors.append("no controlled validation status found")
-    unknown = set(re.findall(r"\b[A-Z]+_[A-Z_]+\b", text)) - VALID_STATUSES
-    # Unknown tokens are informational only; many are valid workflow states.
+    p = Path(sys.argv[1])
+    text = p.read_text(encoding="utf-8")
+    errors = []
+    for h in REQUIRED_HEADINGS:
+        if h.lower() not in text.lower():
+            errors.append(f"missing heading/section: {h}")
+    for f in REQUIRED_FIELDS:
+        if f not in text:
+            errors.append(f"missing recovery field: {f}")
+    if "HANDOVER_READINESS: READY" in text:
+        if "REPORT_SYNC: CURRENT" not in text:
+            errors.append("READY requires REPORT_SYNC: CURRENT")
+        if "APPENDIX_A_STATUS: STALE" in text:
+            errors.append("READY cannot have stale Appendix A")
+    if re.search(r"\bPR_PENDING_workreport\.md\b", text):
+        errors.append("single shared PR_PENDING_workreport.md is forbidden; use unique WIP ID")
     if errors:
-        print("WORKREPORT VALIDATION: FAIL")
-        for error in errors:
-            print(f"- {error}")
+        for e in errors:
+            print("FAIL:", e)
         return 1
-    print("WORKREPORT VALIDATION: PASS")
-    print(f"Controlled validation statuses observed: {', '.join(sorted(seen_statuses))}")
-    if unknown:
-        print(f"Other controlled tokens observed: {', '.join(sorted(unknown))}")
+    print("PASS: work report structural recovery gate")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

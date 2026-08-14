@@ -1,47 +1,32 @@
 # Authority Boundaries
 
-An authority boundary defines which state or component is allowed to determine an engineering/product fact.
-
-Examples include:
-
-- engineering calculation authority;
-- geometry/topology authority;
-- unit authority;
-- material/property authority;
-- XML/file writer authority;
-- runtime publication authority;
-- renderer/canvas authority;
-- CAD/SVG authority;
-- registry authority;
-- support/classification authority;
-- persistence authority;
-- product-export authority.
-
-## Before changing an authority boundary
-
-1. Identify the current authority from production behavior/source.
-2. Determine whether the approved task requires changing it.
-3. Preserve it if the task does not require a change.
-4. If changing it, create a `DEC-*` item.
-5. Record old authority, new authority, rationale, affected consumers, migration/compatibility behavior, and focused validation.
-
-## Invariants
-
-For each critical invariant record:
+For sensitive changes trace:
 
 ```text
-What must remain true
-Where it is enforced
-How it was validated
-Whether this PR changes it
+authority
+-> canonical data
+-> transformation
+-> solver/calculation
+-> recovery
+-> publication
+-> report/UI/export
 ```
 
-Example invariants:
+Identify where the symptom first becomes wrong.
 
-```text
-Preview state must never become solver authority.
-Unrelated rendering must not discard uncommitted engineering input.
+For each layer state:
+- source of truth;
+- permitted mutations;
+- downstream consumers;
+- tests/evidence;
+- whether this PR may change it.
+
+Protect engineering authority, XML/writers, runtime publication, CAD/rendering geometry, topology, support classification, persistence, master data, and engineering exports from accidental duplicate authority.
+
+Preview/UI state must not silently become solver/calculation authority.
+
+Unrelated rendering/state updates must not discard uncommitted engineering input.
+
 Model-changing mutations must invalidate incompatible execution state.
-```
 
-Future agents should not need to reconstruct important engineering intent from code archaeology alone.
+Record `DEC-*` for material authority-boundary decisions.

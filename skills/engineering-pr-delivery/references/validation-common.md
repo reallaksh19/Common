@@ -1,68 +1,22 @@
-# Common Validation Protocol
+# Common Validation Contract
 
-Separate software verification, engineering verification, observation method, and oracle independence.
+Every material validation has three independent dimensions.
 
-## Validation status
+## Status
+`PASS`, `FAIL`, `NOT_RUN`, `NOT_APPLICABLE`.
 
-- `PASS`
-- `FAIL`
-- `NOT_RUN`
-- `NOT_APPLICABLE`
-
-Never write only `tests pass`. Name the exact test/check and tested HEAD where practical.
-
-## Observation method
-
-- `LOCAL_EXECUTION`
-- `REMOTE_EXECUTION`
-- `SOURCE_INSPECTION`
-- `ARTIFACT_INSPECTION`
-- `USER_SUPPLIED`
-- `INFERRED`
-- `NOT_OBSERVED`
-
-Do not describe source inspection as an executed PASS.
+## Observation
+`LOCAL_EXECUTION`, `REMOTE_EXECUTION`, `SOURCE_INSPECTION`, `ARTIFACT_INSPECTION`, `USER_SUPPLIED`, `INFERRED`, `NOT_OBSERVED`.
 
 ## Oracle independence
+`NONE`, `IMPLEMENTATION_COUPLED`, `INDEPENDENT_REPRODUCTION`, `ANALYTICAL`, `AUTHORITATIVE_REFERENCE`, `CROSS_SOLVER`, `EXPERIMENTAL`.
 
-- `NONE`
-- `IMPLEMENTATION_COUPLED`
-- `INDEPENDENT_REPRODUCTION`
-- `ANALYTICAL`
-- `AUTHORITATIVE_REFERENCE`
-- `CROSS_SOLVER`
-- `EXPERIMENTAL`
+A regression PASS with an implementation-coupled oracle is valid regression evidence but is not independent verification.
 
-A test is not independent validation when its expected value is generated from the same algorithm, formulation, transformation, data source, or code path being tested.
+Record tested implementation HEAD/basis, exact command or evidence, expected and actual results, tolerance when meaningful, and limitations.
 
-## Validation record
+Classify failures/warnings as `PREEXISTING`, `INTRODUCED_BY_PR`, `RESOLVED_BY_PR`, or `UNKNOWN_ORIGIN`.
 
-Record where material:
+Negative assurance is required for sensitive work: state behavior intentionally changed, behavior that must remain unchanged, and evidence of invariance.
 
-```text
-Validation
-Status
-Observation
-Oracle
-Expected
-Actual
-Tolerance / acceptance rule
-HEAD
-Evidence / artifact / command
-```
-
-## Software validation examples
-
-- unit tests;
-- integration tests;
-- regression tests;
-- type checking;
-- linting;
-- build;
-- runtime smoke tests.
-
-## Explicitly not validated
-
-Maintain a visible list of significant properties that remain unproven.
-
-Never turn `not checked` into `assumed correct`.
+Never convert missing tooling, CI no-start, environment blockage, or unexecuted checks into product PASS.
