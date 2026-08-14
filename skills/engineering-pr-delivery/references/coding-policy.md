@@ -1,48 +1,24 @@
-# Engineering Coding Policy
+# Coding and Scope Policy
 
-Repository-specific standards override these general preferences unless they conflict with an explicit task requirement or engineering-safety rule.
+Keep changes surgical.
 
-## Structure
-
-Prefer cohesive modules. Approximate limits of 300 physical lines for new JS/TS modules and 40 logical lines for functions are review heuristics, not correctness gates. Do not split cohesive engineering logic merely to satisfy a line count.
-
-Split large existing files only when directly required by the task or when the change cannot be made safely without clarifying ownership.
-
-Use branch history instead of committed `.bak`, `.old`, or copied-source backups.
-
-## Design
-
-Prefer:
-
-- named exports;
-- pure functions for deterministic transformations/calculations;
-- explicit state ownership;
-- bounded mutation at UI/runtime/store/transaction boundaries;
-- explicit dependencies where authority matters.
-
-Avoid:
-
-- hidden globals;
-- implicit singleton authority;
-- mutation-heavy shared-object designs;
-- duplicate sources of truth.
-
-## Mocks, defaults, shims, abstractions
-
-- No hidden/default mocks in production.
-- No silent fallback engineering data.
-- No placeholder production calculations.
+- No broad refactors, dependency upgrades, generated churn, abandoned flags, backup copies, or unrelated cleanup.
+- New JavaScript modules should normally remain under 300 physical lines; functions under 40 logical lines where practical. These are maintainability heuristics, not correctness gates.
+- Prefer named exports, pure functions, explicit dependencies, bounded mutation, and no hidden singleton authority.
+- No hidden/default production mocks.
+- No silent engineering-data fallback.
 - No temporary authority-changing shims.
-- Compatibility adapters must be explicit, bounded, tested, and production-consumed.
-- Every new adapter, resolver, service, session, store, or abstraction must have a real production consumer in the same PR.
-- New unused production modules: `0`.
-- No speculative infrastructure.
-- If unavoidable hard-coded/default behavior exists, expose it clearly where relevant and document the authority/rationale.
+- New abstractions should have a real production consumer in the same PR unless explicitly approved otherwise.
+- Avoid unused speculative infrastructure.
 
-## Scope control
+Action-first gate:
 
-- No broad unrelated refactor.
-- No unrelated dependency upgrade.
-- No generated-data churn unless required.
-- No abandoned feature flags.
-- No unrelated cleanup or formatting churn.
+```text
+core production behavior
+-> production integration
+-> operator-visible/downloadable/measurable result
+-> focused regression
+-> required engineering evidence
+```
+
+Docs/schema/validator-only work does not prove production completion unless that is explicitly the mission.

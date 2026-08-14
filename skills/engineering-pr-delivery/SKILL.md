@@ -1,280 +1,328 @@
 ---
 name: engineering-pr-delivery
-description: Govern implementation, debugging, investigation, technical review, validation, PR delivery, and handover for engineering-software repository work. Use when working on a Git repository, GitHub issue, or pull request where production behavior, changed-file control, validation evidence, engineering authority, numerical correctness, or durable agent handover must be maintained. Do not use for standalone programming explanations or small code examples without repository work.
+description: Execute, investigate, review, recover, validate, or hand over GitHub pull-request work under a strict engineering delivery protocol. Use for repository issues/PRs, implementation work, agent takeovers, lost or incapable agents, stale or contaminated PRs, multi-agent work in one repository, engineering/FEA/numerical changes, validation, handover, salvage, supersession, and closure. Establish live repository truth first, keep every PR continuously handover-ready, require repository-specific takeover qualification before engineering-critical production changes, and never merge unless explicitly authorized.
 ---
 
 # Engineering PR Delivery
 
-## Purpose
+## Governing objective
 
-Deliver usable production capability through a traceable, evidence-backed repository workflow.
+Preserve a recoverable chain of engineering work, not conversation memory.
 
-```text
-production behavior
--> real production integration
--> observable result
--> focused software validation
--> engineering validation where applicable
--> changed-file reconciliation
--> durable handover
-```
+At every durable checkpoint, another qualified agent must be able to recover the mission, current truth, evidence, risks, authority boundaries, partial work, and exact next action from the repository and PR artifacts alone.
 
-Schemas, validators, documentation, tests, or abstractions alone do not establish production completion.
+Treat agent failure, loss of context, takeover, and PR supersession as normal controlled states.
 
-## Core invariants
+## 1. Classify before acting
 
-- Keep assignment work on one PR unless the owner explicitly changes scope.
-- Do not merge unless explicitly instructed.
-- Do not silently broaden scope.
-- Do not call an unexecuted check `PASS`.
-- Do not convert assumptions or source inspection into runtime proof.
-- Do not introduce hidden engineering defaults, silent fallback engineering data, production mocks, or authority-changing shims.
-- Do not change an authority boundary unless required by the task and explicitly recorded.
-- Do not commit unrelated files, backup copies, formatting churn, or unrelated dependency upgrades.
-- A new abstraction must have a real production consumer in the same PR.
-- Another competent agent must be able to continue from the repository, PR, and work report without conversation history.
-
-## 1. Classify the task
-
-Determine the independent classifications before acting.
-
-### Work intent
-
-- `IMPLEMENT`
-- `INVESTIGATE`
-- `REVIEW`
-- `AUDIT`
-- `HANDOVER`
-
-### Repository state
-
-- `NO_PR`
-- `NEW_PR_REQUIRED`
-- `EXISTING_PR`
-
-### Mutation authority
-
-- `READ_ONLY`
-- `WRITE_ALLOWED`
-
-### Criticality
-
-- `STANDARD`
-- `ENGINEERING_CRITICAL`
-- `SAFETY_CRITICAL`
-
-A task may transition between work intents. Do not modify repository state when mutation authority is `READ_ONLY`.
-
-Set `ENGINEERING_CRITICAL` or higher when work affects solver mechanics, FEA, stress, loads, formulas, geometry/topology, meshing, units, material/section/property authority, code assessment, engineering result recovery, or engineering exports.
-
-## 2. Follow the execution state machine
-
-Use the applicable states:
+Classify independently:
 
 ```text
-BOOTSTRAP -> BASELINE -> PLAN -> IMPLEMENT -> VALIDATE -> RECONCILE -> HANDOVER -> CLOSURE
+WORK_INTENT
+  IMPLEMENT | INVESTIGATE | REVIEW | AUDIT | HANDOVER
+
+REPOSITORY_STATE
+  NO_PR | NEW_PR_REQUIRED | EXISTING_PR
+
+MUTATION_AUTHORITY
+  READ_ONLY | WRITE_ALLOWED
+
+CRITICALITY
+  STANDARD | ENGINEERING_CRITICAL | SAFETY_CRITICAL
 ```
 
-Review/audit work may stop after `BASELINE`, inspection/validation, and `HANDOVER`.
+Do not infer write authority from the existence of a branch or PR.
 
-Continuation work must recover existing state before resuming.
+For takeover of an existing engineering-critical PR, start `READ_ONLY` until re-grounding and Appendix A qualification are complete.
 
-Do not jump from `BOOTSTRAP` directly to production implementation.
+## 2. Read repository-local instructions first
 
-Read `references/stage-protocol.md`.
+Inspect applicable repository instructions before changing code.
 
-## 3. Establish repository ground truth
+If the repository uses the protocol structure, read:
 
-Before implementation claims or planning, establish mutable repository state from the repository/GitHub, not from conversation history.
+- `agents/MASTER_INDEX.md`;
+- own `agents/PR<NUMBER>_workreport.md` or unique WIP report;
+- own status/claim records;
+- repo-local agent policy.
+
+Then fetch live Git/GitHub state. Markdown does not override live mutable repository state.
 
 Read `references/repository-ground-truth.md`.
 
-If repository, work report, local checkout, PR metadata, or conversation history disagree, record and reconcile the discrepancy before relying on the disputed value.
+## 3. Continuous handover invariant
 
-## 4. Recover or initialize one living work report
+Assume the active agent may disappear or become incapable immediately after any meaningful action.
 
-For implementation work maintain exactly one current report:
+No essential engineering state may exist only in chat history or private reasoning.
+
+Before and after each meaningful implementation/investigation unit, keep the work report current and create a durable checkpoint soon enough that another agent can continue.
+
+Use unique `WIP-<id>` records before PR allocation; never use one shared `PR_PENDING_workreport.md` in a multi-agent repository.
+
+Read `references/continuous-handover.md` and use `references/workreport-template.md`.
+
+## 4. Establish repository ground truth
+
+Recover at least:
 
 ```text
-agents/PR<NUMBER>_workreport.md
+repository
+default/base branch
+live main/base SHA
+working branch
+PR number/state/draft state
+PR head SHA
+merge base
+changed files
+commits
+checks/workflows
+open review threads/requested changes
+linked source task
+relevant predecessor/follow-on PRs
+active status/claims
+base drift
 ```
 
-Before a PR number exists:
+Classify discrepancies between prior reports and live state. Do not silently overwrite history.
+
+Create a grounding epoch for takeover or material reconciliation.
+
+## 5. Check repository-wide coordination
+
+Before implementation and before each new stage:
+
+1. inspect the master index;
+2. fetch live open PRs;
+3. inspect active status/claim records;
+4. compare intended exact files and path prefixes;
+5. compare engineering/software authority domains;
+6. compare dependencies/workstreams;
+7. classify `SAFE`, `COORDINATION_REQUIRED`, `BLOCKED_BY_ACTIVE_CLAIM`, or `UNKNOWN`.
+
+A lack of exact-file overlap does not prove authority independence.
+
+Read `references/multi-agent-coordination.md`.
+
+## 6. Recover or initialize the work report
+
+The current-state section is recovery authority; history is not.
+
+Maintain:
+
+- recovery header;
+- Handover in 60 Seconds;
+- live ground truth;
+- mission/scope/acceptance;
+- current implementation/partial state;
+- active `ISS-*`, `IMP-*`, `RISK-*`, `DEC-*`, `QST-*`, `DEBT-*`;
+- current technical diagnosis and falsifier;
+- authority/invariants;
+- validation ledger;
+- changed-file ledger;
+- review/CI state;
+- overlap/dependency state;
+- exact continuation state;
+- takeover/grounding chain;
+- Appendix A.
+
+Do not use an impossible self-referential `REPORT_HEAD == containing commit SHA` rule. Use `REPORT_BASIS_HEAD` as described in `references/continuous-handover.md`.
+
+## 7. Use the execution state machine
 
 ```text
-agents/PR_PENDING_workreport.md
+BOOTSTRAP
+  -> COORDINATION CHECK
+  -> BASELINE
+  -> PLAN
+  -> IMPLEMENT / INVESTIGATE
+  -> VALIDATE
+  -> RECONCILE
+  -> HANDOVER
+  -> CLOSURE
 ```
 
-If a valid report exists, recover and synchronize it rather than replacing it.
+For takeover:
 
-Read `references/workreport-template.md`.
+```text
+READ-ONLY
+  -> LIVE RE-GROUND
+  -> REPORT/LIVE RECONCILIATION
+  -> DIFF/EVIDENCE INSPECTION
+  -> APPENDIX A
+  -> CONTINUE | QUARANTINE | SALVAGE | SUPERSEDE
+```
 
-The report is current-state authority for the assignment, but live repository state overrides stale report metadata.
+Never jump from stale handover material directly to production modification.
 
-## 5. Establish technical baseline before editing
+## 8. Require implementation takeover qualification
 
-Inspect the real production path and distinguish claim state:
+Appendix A is an implementation authorization gate, not a knowledge quiz.
 
-- `OBSERVED` — directly verified.
-- `DEMONSTRATED` — reproducibly validated.
-- `INFERRED` — supported indirectly.
-- `EXPECTED` — predicted but unverified.
-- `ASSUMED` — intentionally accepted without proof.
-- `UNKNOWN` — insufficient evidence.
+Normally create five repository-specific 20-mark challenges:
 
-Also classify baseline findings as:
+```text
+A1 Production Trace
+A2 Current Failure Isolation
+A3 Authority / Invariant
+A4 Independent Validation
+A5 Next-Commit / Minimal Patch
+```
 
-- `PREEXISTING`
-- `INTRODUCED_BY_CURRENT_WORK`
-- `UNKNOWN_ORIGIN`
+Reject generic questions answerable without opening the current repository.
 
-Never convert an assumption, expectation, or source inspection into a demonstrated fact.
+Require concrete repository anchors, evidence, a prediction, a falsifier, and next-commit implications.
 
-## 6. Register every credible finding
+Do not provide model answers that reveal the diagnosis.
 
-Use durable IDs:
+For engineering-critical takeover, default threshold:
 
-- `ISS-###` confirmed defect
-- `IMP-###` improvement opportunity
-- `RISK-###` engineering/release risk
-- `DEC-###` deliberate decision
-- `QST-###` unresolved question
-- `DEBT-###` accepted technical debt
+```text
+total >= 92/100
+every question >= 17/20
+```
 
-Read `references/finding-taxonomy.md`.
+Unsafe/fabricated/anti-validation claims can fail immediately regardless of score.
 
-Never silently discard a credible finding because it is outside scope. Resolve, accept, defer, reject with rationale, block, or transfer it.
+Read `references/takeover-qualification.md`.
 
-## 7. Protect authority boundaries
+## 9. Detect engineering-critical work
 
-Before changing ownership of engineering data, calculation logic, topology, persistence, publication, rendering, export, registries, classifications, or similar authoritative behavior, read `references/authority-boundaries.md`.
+Set `ENGINEERING_CRITICAL` when the change can affect, among other things:
 
-Intentional authority changes require a `DEC-*` item and focused validation.
+- FEA/stress/loads/reactions;
+- formulas/correlations;
+- geometry/topology/meshing;
+- units, coordinate systems, signs, end conventions;
+- material/property authority;
+- code/standard assessment;
+- engineering master data;
+- numerical recovery/transformation/publication;
+- engineering exports used for design decisions.
 
-## 8. Plan small reviewable stages
+Then read `references/engineering-validation.md` in addition to common validation.
 
-Before each implementation stage record current truth, objective, expected files, engineering rationale, planned behavior, edge cases, validation, and known risks.
+## 10. Protect authority boundaries
 
-Then implement.
+Trace semantic impact:
 
-After each stage record implementation performed, deviations, actual behavior, validation, new findings, remaining risks, and stage decision.
+```text
+authority
+-> canonical data
+-> transformation
+-> solver/calculation
+-> recovery
+-> publication
+-> report/UI/export
+```
 
-Do not implement first and retrospectively invent the plan.
+Identify the first wrong boundary before changing upstream mechanics.
 
-## 9. Implement action-first
+Record negative assurance: what intentionally changed and what must remain invariant.
+
+Read `references/authority-boundaries.md`.
+
+## 11. Implement action-first
 
 Prefer:
 
 ```text
-production behavior
--> real production consumer
--> operator-visible/downloadable/measurable result
--> focused regression validation
--> minimum durable evidence
+core production behavior
+-> real production integration
+-> visible/downloadable/measurable result
+-> focused regression
+-> independent engineering evidence where required
 ```
 
-Do not substitute:
+Do not substitute schemas, validators, certification prose, placeholder adapters, or unused abstractions for usable production behavior.
+
+Keep scope surgical. Read `references/coding-policy.md`.
+
+## 12. Validate with explicit evidence dimensions
+
+For every material check record:
 
 ```text
-schema -> validator -> framework -> placeholder adapter -> no usable capability
+STATUS
+  PASS | FAIL | NOT_RUN | NOT_APPLICABLE
+
+OBSERVATION
+  LOCAL_EXECUTION | REMOTE_EXECUTION | SOURCE_INSPECTION
+  ARTIFACT_INSPECTION | USER_SUPPLIED | INFERRED | NOT_OBSERVED
+
+ORACLE
+  NONE | IMPLEMENTATION_COUPLED | INDEPENDENT_REPRODUCTION
+  ANALYTICAL | AUTHORITATIVE_REFERENCE | CROSS_SOLVER | EXPERIMENTAL
 ```
 
-Use this acceptance question throughout:
+Also record tested HEAD, command/evidence, expected/actual, tolerance where applicable, limitations, and failure origin:
 
-> Can the intended operator now use, see, calculate, download, export, inspect, or measure the intended capability through the real production path?
-
-If `No`, do not claim production completion.
-
-Read `references/coding-policy.md` for implementation conventions.
-
-## 10. Apply validation discipline
+```text
+PREEXISTING | INTRODUCED_BY_PR | RESOLVED_BY_PR | UNKNOWN_ORIGIN
+```
 
 Read `references/validation-common.md`.
 
-Record validation in three independent dimensions.
+## 13. Enforce integrity rules
 
-### Status
+Never:
 
-- `PASS`
-- `FAIL`
-- `NOT_RUN`
-- `NOT_APPLICABLE`
-
-### Observation
-
-- `LOCAL_EXECUTION`
-- `REMOTE_EXECUTION`
-- `SOURCE_INSPECTION`
-- `ARTIFACT_INSPECTION`
-- `USER_SUPPLIED`
-- `INFERRED`
-- `NOT_OBSERVED`
-
-### Oracle
-
-- `NONE`
-- `IMPLEMENTATION_COUPLED`
-- `INDEPENDENT_REPRODUCTION`
-- `ANALYTICAL`
-- `AUTHORITATIVE_REFERENCE`
-- `CROSS_SOLVER`
-- `EXPERIMENTAL`
-
-A regression test with an implementation-coupled oracle may be useful, but it is not independent engineering verification.
-
-If criticality is `ENGINEERING_CRITICAL` or `SAFETY_CRITICAL`, read `references/engineering-validation.md` before planning implementation and apply all relevant requirements.
-
-## 11. Enforce integrity / anti-gaming rules
+- weaken a tolerance merely because a test fails;
+- replace independent expected values with production output;
+- delete a difficult benchmark to obtain green status;
+- claim pre-step/CI/tool failure as product PASS;
+- replace an independent oracle with the implementation;
+- hard-code fixture IDs into production;
+- silence fail-closed behavior to obtain green tests;
+- claim an unexecuted check as PASS;
+- treat docs/schema/validator-only work as production completion;
+- change several numerical mechanisms at once when isolation is possible.
 
 Read `references/anti-gaming-rules.md`.
 
-Never obtain a green gate by weakening the gate instead of correcting production behavior unless the gate itself is independently demonstrated to be wrong.
+## 14. Recover damaged PRs without sunk-cost bias
 
-## 12. Validate semantic impact and negative assurance
+If the report cannot explain the diff, authority is unclear, expected values and production changed together, commits cannot be classified, main drift is material, or takeover requires guessing intent, quarantine first.
 
-For engineering-sensitive changes trace the relevant chain, for example:
+Perform a salvage assessment.
+
+Valid outcomes:
 
 ```text
-authority -> canonical data -> transformation -> solver/calculation -> recovery -> publication -> report/UI/export
+CONTINUE
+SALVAGE_PARTIAL
+SUPERSEDE
+ABANDON
 ```
 
-Record both:
+Preserve known-good commits, benchmarks, independent evidence, accepted decisions/invariants, and provenance. Rebuild untrusted implementation from current main when safer.
 
-- behavior intended to change; and
-- behavior required to remain invariant.
+Agent replacement alone is not a reason for a new PR.
 
-Provide evidence for both where material.
+Read `references/recovery-salvage.md`.
 
-## 13. Reconcile changed files
+## 15. Reconcile before handover or closure
 
-Before closure compare the documented changed-file ledger against the actual PR/repository changed-file list.
+Reconcile actual GitHub changed files against the ledger.
 
-Every discrepancy must be investigated. Any unexplained changed file blocks closure.
+Explain every changed path. Unexplained files block closure.
 
-Use `scripts/reconcile_changed_files.py` when a local checkout is available.
+Refresh review/check status and multi-agent overlap state.
 
-## 14. Maintain handover continuously
+A PR remains handover-ready even while waiting for review/merge.
 
-The current report must always state:
-
-- what is now true;
-- what is being worked on;
-- what remains unfinished;
-- what must not be assumed;
-- current PR/branch/HEAD;
-- last completed/current stage;
-- known failing checks;
-- open questions;
-- important deferred work;
-- highest-risk remaining item;
-- exact next action.
-
-Do not write vague handover text such as `Continue implementation`.
-
-## 15. Closure
+Appendix A may become `NOT_REQUIRED` only when no further technical implementation authority is needed.
 
 Read `references/closure-gate.md`.
 
-Do not collapse implementation, integration, software validation, engineering validation, and release readiness into one `DONE` state.
+## 16. Git/PR rules
 
-If mandatory closure conditions remain unmet, report the work as partial or blocked rather than complete.
+Use one PR per coherent assignment unless scope is explicitly changed.
+
+Keep commits logical and recoverable.
+
+Do not merge unless the owner explicitly authorizes merge.
+
+Do not create or modify workflow files unless authorized.
+
+Read `references/git-pr-policy.md`.
