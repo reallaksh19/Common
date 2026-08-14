@@ -9,6 +9,13 @@ HANDOVER_READINESS:
 PR_RECOVERY_STATE:
 TAKEOVER_AUTHORITY:
 
+EXECUTION_MODE: MANUAL | AUTO
+AUTO_STATE: NOT_ACTIVE | RUNNING | VALIDATING | RECOVERING | BLOCKED | OWNER_DECISION_REQUIRED | TAKEOVER_REQUIRED | COMPLETE
+SCOPE_AUTHORITY: LOCKED_TO_APPROVED_MISSION | OWNER_EXPANDED
+PHASE_PROGRESSION: MANUAL | AUTO
+MERGE_AUTHORITY: OWNER_ONLY | AUTO_AFTER_EXPLICIT_AUTHORIZATION
+AUTO_STOP_REASON:
+
 REPOSITORY:
 SOURCE_TASK:
 PR_OR_WIP:
@@ -32,6 +39,8 @@ LAST_DURABLE_CHECKPOINT:
 
 EXACT_NEXT_ACTION:
 ```
+
+When `EXECUTION_MODE=AUTO`, also record the current approved plan boundary and any hard-stop condition using `references/auto-mode.md`.
 
 ## 2. Handover in 60 Seconds
 
@@ -57,6 +66,8 @@ Record live PR/main state, current changed-file count, reviews, checks, mergeabi
 - acceptance criteria;
 - owner instructions;
 - critical constraints.
+
+For AUTO MODE also record the approved phase plan and the explicit boundary beyond which owner authorization is required.
 
 ## 5. Current Implementation State
 
@@ -142,6 +153,8 @@ Highest-risk remaining item:
 Exact next action:
 ```
 
+If AUTO MODE is active, state whether the next action is inside the approved plan and whether any hard-stop condition exists. If none exists, the next agent should continue automatically after qualifying/re-grounding as required.
+
 ## 14. Takeover / Custody Chain
 
 Append-only `TKO-*` events and `GE-*` grounding epochs. Record inherited-and-revalidated, inherited-not-revalidated, superseded, contradicted, and newly-observed facts.
@@ -166,6 +179,7 @@ Create repository-specific A1–A5 challenges using `references/takeover-qualifi
 # HISTORICAL RECORD — NOT CURRENT AUTHORITY
 
 ## Stage Execution Log
+## AUTO MODE Phase History
 ## Closed Findings
 ## Prior Validation
 ## Decision / Invariant History
