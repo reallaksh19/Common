@@ -1,0 +1,18 @@
+{
+  "package": "Grade9 ChatGPT Skills",
+  "version": "1.0.0",
+  "schema_change": false,
+  "skills": [
+    "grade9",
+    "grade9-source-grounding",
+    "grade9-concept-architect",
+    "grade9-question-bank",
+    "grade9-learning-enrichment",
+    "grade9-textbook-publisher",
+    "grade9-math",
+    "grade9-physics",
+    "grade9-chemistry"
+  ],
+  "source_methodology": "Existing Grade 9 operational baseline",
+  "notes": "ChatGPT-specific portability conversion; no Grade 9 master-schema migration."
+}

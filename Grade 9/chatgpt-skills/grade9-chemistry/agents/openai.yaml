@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Chemistry"
+  short_description: "Apply Grade 9 chemistry reasoning"
+  default_prompt: "Analyze or build this Grade 9 Chemistry material using macro-particle-symbolic, conservation, and experimental reasoning."

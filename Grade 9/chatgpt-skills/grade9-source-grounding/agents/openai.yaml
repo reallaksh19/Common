@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Source Grounding"
+  short_description: "Extract sources with QC and provenance"
+  default_prompt: "Ground these Grade 9 materials faithfully, identify QC issues, and preserve provenance before enrichment."

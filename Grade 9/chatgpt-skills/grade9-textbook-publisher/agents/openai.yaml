@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Textbook Publisher"
+  short_description: "Publish linked Grade 9 learning products"
+  default_prompt: "Turn this validated Grade 9 master content into a student-friendly textbook/question-bank or integrated product and run publication QA."

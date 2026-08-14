@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Learning System"
+  short_description: "Orchestrate Grade 9 learning workflows"
+  default_prompt: "Build or update Grade 9 learning material from my source using the established source-to-concept-to-practice-to-publication workflow."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Concept Architect"
+  short_description: "Build stable concept and prerequisite graphs"
+  default_prompt: "Turn these Grade 9 source anchors into stable concept IDs, prerequisites, and learning links."

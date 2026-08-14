@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Grade 9 Learning Master",
+  "type": "object",
+  "required": ["project", "sources", "concepts", "questions", "qa"],
+  "properties": {
+    "project": {"type":"object","required":["grade","subject","chapter"],"properties":{"grade":{"const":9},"subject":{"type":"string"},"chapter":{"type":"string"},"target_level":{"type":"string"},"core_question_count":{"type":"integer","minimum":0},"challenge_question_count":{"type":"integer","minimum":0},"version":{"type":"string"}},"additionalProperties":true},
+    "sources": {"type":"array","items":{"type":"object"}},
+    "concepts": {"type":"array","items":{"type":"object","required":["concept_id","title"],"properties":{"concept_id":{"type":"string"},"title":{"type":"string"},"primary_anchor_ids":{"type":"array","items":{"type":"string"}},"prerequisites":{"type":"array","items":{"type":"string"}},"same_level_question_ids":{"type":"array","items":{"type":"string"}},"challenge_question_ids":{"type":"array","items":{"type":"string"}}},"additionalProperties":true}},
+    "questions": {"type":"object","required":["anchors","core_calibrated","challenges"],"properties":{"anchors":{"$ref":"#/$defs/questionArray"},"core_calibrated":{"$ref":"#/$defs/questionArray"},"challenges":{"$ref":"#/$defs/questionArray"}},"additionalProperties":true},
+    "misconceptions": {"type":"array"},
+    "mixed_tests": {"type":"array"},
+    "publication": {"type":"object"},
+    "qa": {"type":"object","required":["source_qc_complete","answers_verified","concept_links_verified"],"properties":{"source_qc_complete":{"type":"boolean"},"answers_verified":{"type":"boolean"},"difficulty_checked":{"type":"boolean"},"concept_links_verified":{"type":"boolean"},"pdf_render_checked":{"type":"boolean"},"pdf_links_checked":{"type":"boolean"}},"additionalProperties":true}
+  },
+  "$defs": {
+    "questionArray": {"type":"array","items":{"$ref":"#/$defs/question"}},
+    "question": {"type":"object","required":["id","provenance_class","primary_concept_id","question"],"properties":{"id":{"type":"string"},"provenance_class":{"type":"string"},"transcription_status":{"type":"string"},"primary_concept_id":{"type":"string"},"secondary_concept_ids":{"type":"array","items":{"type":"string"}},"difficulty":{"type":"object"},"question":{"type":"string"},"answer":{},"verified":{"type":"boolean"}},"additionalProperties":true}
+  },
+  "additionalProperties": true
+}

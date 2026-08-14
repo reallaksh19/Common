@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Learning Enrichment"
+  short_description: "Add hints, diagnostics, and transfer"
+  default_prompt: "Enrich these validated Grade 9 concepts and questions with recognition prompts, hints, misconceptions, diagnostics, solutions, and transfer."

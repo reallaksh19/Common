@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Question Bank"
+  short_description: "Build difficulty-controlled practice banks"
+  default_prompt: "Create a Grade 9 Core question bank and challenges matched to these validated anchors."
