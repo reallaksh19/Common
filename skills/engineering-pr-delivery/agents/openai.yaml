@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering PR Delivery"
+  short_description: "Govern evidence-backed engineering repository delivery"
+  default_prompt: "Use $engineering-pr-delivery to investigate, implement, validate, and hand over this repository task with live repository truth and engineering evidence."
