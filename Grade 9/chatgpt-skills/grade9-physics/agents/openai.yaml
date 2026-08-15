@@ -1,4 +1,4 @@
 interface:
   display_name: "Grade 9 Physics"
-  short_description: "Apply Grade 9 physics reasoning"
-  default_prompt: "Analyze or build this Grade 9 Physics material using model, representation, unit, and validation reasoning."
+  short_description: "Physics reasoning and concept-book pedagogy"
+  default_prompt: "Analyze or build this Grade 9 Physics material using model, representation, unit, validation, and SEE -> REALIZE -> UNDERSTAND concept-book reasoning when applicable."
