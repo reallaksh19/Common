@@ -1,0 +1,106 @@
+schema: grade9-physics-motion-source-map/v1
+chapter: motion-in-a-straight-line
+grade: 9
+source_question_count: 68
+stable_source_key: question_number
+source_order_note: >-
+  Use question number rather than scanned printed-page order. The scan around
+  Q41-Q68 is not in reliable printed-page sequence.
+
+concepts:
+  CB0: language_of_motion
+  CB1: position_distance_displacement
+  CB2: speed_velocity_average_motion
+  CB3: acceleration_meaning
+  CB4: velocity_under_constant_acceleration
+  CB5: displacement_under_constant_acceleration
+  CB6: time_eliminated_kinematics
+  CB7: special_patterns_nth_second_stopping
+  CB8: delayed_multistage_motion
+  CB9: gravity_free_fall
+  CB10: vertical_projection
+  CB11: two_body_release_relative_motion
+  CB12: graphs
+
+questions:
+  - {id: Q1, concepts: [CB1], insight: zero_displacement_nonzero_distance}
+  - {id: Q2, concepts: [CB1], insight: displacement_distance_ratio_bound}
+  - {id: Q3, concepts: [CB1], insight: arc_distance_vs_diameter_displacement}
+  - {id: Q4, concepts: [CB1], insight: closed_path_zero_displacement}
+  - {id: Q5, concepts: [CB1], insight: circular_final_position_controls_displacement}
+  - {id: Q6, concepts: [CB2], insight: distance_displacement_average_speed_average_velocity}
+  - {id: Q7, concepts: [CB2], insight: speed_distance_time}
+  - {id: Q8, concepts: [CB2], insight: equal_time_average_speed}
+  - {id: Q9, concepts: [CB2], insight: equal_distance_average_speed}
+  - {id: Q10, concepts: [CB2], insight: cyclic_forward_backward_motion}
+  - {id: Q11, concepts: [CB3, CB4], insight: deceleration_to_rest}
+  - {id: Q12, concepts: [CB3], insight: acceleration_from_rest_to_speed}
+  - {id: Q13, concepts: [CB5, CB7], insight: first_interval_vs_next_interval}
+  - {id: Q14, concepts: [CB3], insight: acceleration_from_rest_to_speed}
+  - {id: Q15, concepts: [CB6, CB7], insight: stopping_distance_speed_squared}
+  - {id: Q16, concepts: [CB7], insight: distance_in_nth_second}
+  - {id: Q17, concepts: [CB7], insight: successive_distance_odd_number_ratio}
+  - {id: Q18, concepts: [CB6, CB7], insight: repeated_equal_distance_constant_retardation}
+  - {id: Q19, concepts: [CB8], insight: delayed_start_same_acceleration}
+  - {id: Q20, concepts: [CB5, CB7], insight: interval_distance_from_cumulative_distance}
+  - {id: Q21, concepts: [CB6, CB7], insight: penetration_distance_velocity_squared}
+  - {id: Q22, concepts: [CB4, CB8], insight: evaluate_velocity_before_event}
+  - {id: Q23, concepts: [CB5], insight: average_velocity_uniform_acceleration}
+  - {id: Q24, concepts: [CB5], insight: acceleration_from_displacement_polynomial}
+  - {id: Q25, concepts: [CB6, CB8], insight: two_body_stopping_distance_bookkeeping}
+  - {id: Q26, concepts: [CB5], insight: initial_velocity_from_displacement_polynomial}
+  - {id: Q27, concepts: [CB7], insight: adjacent_equal_interval_distance_difference}
+  - {id: Q28, concepts: [CB3, CB12], insight: acceleration_as_velocity_time_slope}
+  - {id: Q29, concepts: [CB3, CB4], insight: same_speed_opposite_velocity, qa_flag: uniform_acceleration_not_explicit}
+  - {id: Q30, concepts: [CB3], insight: direction_change_causes_average_acceleration}
+  - {id: Q31, concepts: [CB3], insight: average_acceleration_from_velocity_change}
+  - {id: Q32, concepts: [CB7], insight: successive_distance_odd_number_ratio}
+  - {id: Q33, concepts: [CB5, CB8], insight: delta_v_acceleration_average_velocity_chain}
+  - {id: Q34, concepts: [CB7], insight: nth_second_vs_total_distance_ratio}
+  - {id: Q35, concepts: [CB9], insight: window_crossing_after_different_fall_distance}
+  - {id: Q36, concepts: [CB10], insight: maximum_height_gravity_scaling}
+  - {id: Q37, concepts: [CB10], insight: same_height_two_times_quadratic_roots}
+  - {id: Q38, concepts: [CB10], insight: highest_point_velocity_zero_acceleration_nonzero}
+  - {id: Q39, concepts: [CB11], insight: common_gravity_relative_acceleration_cancels}
+  - {id: Q40, concepts: [CB9, CB5], insight: average_velocity_free_fall}
+  - {id: Q41, concepts: [CB9, CB11], insight: resistance_proportional_to_mass_force_per_mass}
+  - {id: Q42, concepts: [CB9], insight: numerical_equality_velocity_displacement}
+  - {id: Q43, concepts: [CB9], insight: tower_height_from_fall_time}
+  - {id: Q44, concepts: [CB9, CB7], insight: last_distance_as_interval}
+  - {id: Q45, concepts: [CB10], insight: time_to_highest_point}
+  - {id: Q46, concepts: [CB10, CB11], insight: upward_downward_launch_same_final_speed_magnitude}
+  - {id: Q47, concepts: [CB10, CB11], insight: upward_downward_launch_time_gap}
+  - {id: Q48, concepts: [CB10], insight: same_level_flight_time_proportional_to_initial_speed}
+  - {id: Q49, concepts: [CB10], insight: maximum_height_inverse_gravity, qa_flag: moon_earth_g_ratio_required}
+  - {id: Q50, concepts: [CB10], insight: maximum_height_speed_squared_scaling}
+  - {id: Q51, concepts: [CB11], insight: dropped_and_upward_projected_meeting}
+  - {id: Q52, concepts: [CB11], insight: release_from_accelerating_balloon_inherits_velocity, qa_flag: scan_obscures_numeric_stem}
+  - {id: Q53, concepts: [CB9], insight: fall_time_square_root_height_scaling}
+  - {id: Q54, concepts: [CB10, CB11], insight: opposite_initial_directions_same_final_speed}
+  - {id: Q55, concepts: [CB10], insight: required_speed_square_root_height_scaling}
+  - {id: Q56, concepts: [CB9], insight: free_fall_velocity_from_time}
+  - {id: Q57, concepts: [CB10], insight: height_fraction_from_speed_fraction}
+  - {id: Q58, concepts: [CB10], insight: mass_irrelevant_height_speed_squared}
+  - {id: Q59, concepts: [CB9, CB7], insight: successive_free_fall_distance_odd_numbers}
+  - {id: Q60, concepts: [CB9], insight: free_fall_height_from_time}
+  - {id: Q61, concepts: [CB10], insight: signed_displacement_upward_launch_from_bridge}
+  - {id: Q62, concepts: [CB11], insight: release_from_ascending_carrier_inherits_velocity}
+  - {id: Q63, concepts: [CB12], insight: graph_slope_and_area_meaning}
+  - {id: Q64, concepts: [CB12, CB10], insight: vertical_projection_velocity_time_linear}
+  - {id: Q65, concepts: [CB12, CB6], insight: velocity_displacement_relation, qa_flag: curve_name_depends_on_axes}
+  - {id: Q66, concepts: [CB12, CB10], insight: vertical_projection_displacement_time_parabola}
+  - {id: Q67, concepts: [CB12], insight: motion_time_graph_single_valuedness}
+  - {id: Q68, concepts: [CB12], insight: velocity_time_graph_physical_single_valuedness}
+
+qa_flags:
+  Q29: expected_solution_appears_to_require_uniform_acceleration_not_visible_in_stem
+  Q49: earth_moon_gravity_ratio_must_be_supplied_or_preestablished
+  Q52: exact_numeric_stem_requires_scan_verification
+  Q65: teach_invariant_v_squared_relation_before_curve_name
+
+acceptance:
+  mapped_questions_required: 68
+  orphan_questions_allowed: 0
+  pedagogy: SEE_REALIZE_UNDERSTAND
+  major_equations_require_passport: true
+  preserve_source_ambiguity: true
