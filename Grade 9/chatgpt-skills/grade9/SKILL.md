@@ -1,6 +1,6 @@
 ---
 name: grade9
-description: Orchestrate Grade 9 learning-material work across source grounding, subject reasoning, concept architecture, difficulty-matched question banks, learning enrichment, diagnostics, and textbook/question-bank publication. Use for multi-stage Grade 9 Mathematics, Physics, or Chemistry tasks, including source-based chapter creation, Part 2 gap supplements, HOTS/competitive-foundation practice, mixed mastery, challenge appendices, and linked learning products.
+description: Orchestrate Grade 9 learning-material work across source grounding, subject reasoning, concept architecture, difficulty-matched question banks, learning enrichment, diagnostics, and textbook/question-bank publication. Use for multi-stage Grade 9 Mathematics, Physics, or Chemistry tasks, including source-based chapter creation, concept books, Part 2 gap supplements, HOTS/competitive-foundation practice, mixed mastery, challenge appendices, and linked learning products.
 ---
 
 # Grade 9 Learning System
@@ -23,6 +23,19 @@ When the relevant specialist skills are installed, combine them as needed:
 6. `grade9-textbook-publisher` only when a rendered textbook/question-bank/workbook/teacher/integrated product is requested.
 
 ChatGPT may use more than one installed skill for a full build. For narrow work, use only specialists that materially apply.
+
+## Physics concept-book routing
+
+When the user asks for a Grade 9 Physics **Concept Book**, reference book, chalkboard-style explanation, or asks to make equations genuinely understandable rather than merely provide formulas:
+
+1. route subject reasoning through `grade9-physics`;
+2. preserve the source as assessment/coverage authority;
+3. use `SEE THE EQUATION -> REALIZE -> UNDERSTAND` as the cognitive sequence;
+4. require source-to-concept traceability before publication;
+5. do not accept elementary intuition alone when the source requires Grade 9 / competitive-foundation reasoning;
+6. keep the Concept Book distinct from the First-Step Reference and Question Bank.
+
+For Motion, the Physics specialist includes a worked Motion exemplar and source-QA rules.
 
 ## Non-negotiable rules
 
@@ -52,6 +65,17 @@ SOURCE / USER REQUEST
   -> canonical master data
   -> textbook / question bank / integrated edition
   -> QA
+```
+
+For Physics concept-book work, insert the additional teaching loop before publication:
+
+```text
+SOURCE / CONCEPT
+  -> SEE THE EQUATION
+  -> REALIZE
+  -> UNDERSTAND
+  -> CONNECT TO SOURCE IDS
+  -> FIRST-STEP / PRACTICE / PUBLICATION
 ```
 
 ## Completion gates
