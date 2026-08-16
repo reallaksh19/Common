@@ -1,6 +1,6 @@
-# IMO Mathematics Grade 4 — Learning Schema
+# IMO Mathematics Grade 4 - Learning Schema
 
-This folder defines the learning architecture for Grade 4 IMO preparation, especially for a learner transitioning from secure Grade 3 mathematics into Grade 4 Olympiad work.
+This folder defines the learning architecture for Grade 4 IMO preparation, especially for a learner bridging from Grade 3 into Grade 4 work.
 
 ## Core principle
 
@@ -8,118 +8,147 @@ Do not model the learner as:
 
 `exam section -> chapter -> easy/medium/hard worksheet`
 
-Instead separate three kinds of truth:
+Separate:
 
-1. **Mathematical Core** — concepts and mathematical skills such as number sense, operations, fractions, geometry and measurement.
-2. **Logical Reasoning** — an independent reasoning-capability graph.
-3. **Everyday Mathematics** — an application/transfer layer that references Mathematical Core skills rather than duplicating them.
+1. **Mathematical Core** - mathematical concepts and skills.
+2. **Logical Reasoning** - reusable reasoning capabilities.
+3. **Everyday Mathematics** - application/transfer structures that reference Mathematical Core skills.
 
-`Achievers` is not a fourth curriculum. It is a higher cognitive-demand mode applied to existing mathematical or reasoning skills.
+`Achievers` is a higher-demand mode, not a separate curriculum.
 
-## Grade 3 -> Grade 4 bridge principle
+## Two rounds with different jobs
 
-Use challenge-first diagnosis, but keep assessment, diagnostic evidence, instruction, reinforcement and transfer as different object types.
+Round 1 and Round 2 must not use the same question-order policy.
 
-Internal learning loop:
+### Round 1 - CLIMB THE LADDER
 
-`assessment -> probe -> teach -> reinforce -> fade -> transfer -> Olympiad application -> Achievers`
+Round 1 is a structured learning bridge, not an exam simulation.
 
-Learner-facing loop:
+Questions are grouped into short concept clusters:
 
-`ROUND 1 -> HELP -> ROUND 2`
+```text
+familiar Grade 3 rung
+-> direct Grade 4 extension
+-> Grade 4 application / one extra reasoning demand
+```
 
-Do not start all learners with low-level prerequisite questions. A wrong question is evidence, not a diagnosis. Determine whether the learner lacks the underlying skill/reasoning move, cannot organize the information, is overloaded by language/working memory, or fails only when the skill is transferred into an unfamiliar Olympiad form.
+Neighboring questions should be conceptually similar enough that the learner can reuse a method and experience progress.
 
-## Assessment and intervention objects
+If a rung is difficult, the exact question changes role:
 
-The schema distinguishes:
+```text
+question attempt
+-> LET'S WORK THIS ONE OUT TOGETHER
+-> same question becomes a partial worked example
+-> optional small diagnostic check only if needed
+-> child completes a key step
+-> close new question
+-> continue the cluster
+```
 
-- `assessment_item` — clean independent attempt before instruction;
-- `diagnostic_probe` — minimal cue-free check of the nearest prerequisite or atomic reasoning move;
-- `instructional_activity` — teaching, representation, worked step or strategy support;
-- `reinforcement_item` — guided and near-independent practice used to fade support;
-- `transfer_item` — fresh unsupported item used to test independence.
+Once converted to an example, the original question is `instructionally_exposed` and can no longer prove independent mastery.
 
-A visual cue is not a diagnostic level. A mathematical or reasoning representation is an instructional component used when it exposes the relevant structure.
+### Round 2 - MIX IT UP
 
-See `intervention-and-support-schema.md` for the full cross-domain contract.
+Round 2 is mixed pre-IMO transfer.
 
-## One-page reinforcement Help Book
+Concept families are shuffled, cluster headings disappear, and the learner must recognize which idea to use.
 
-The Help Book is designed to make the learner progressively independent, not merely explain the answer.
+Round 2 should:
 
-For each Round 1 or Round 2 question that needs support, use one question-grounded page:
+- mix previous- and current-class retrieval;
+- contain mostly Grade 4 core and pre-IMO application;
+- use plausible distractors;
+- vary wording and surface form;
+- provide no instructional representation;
+- include only a small amount of higher-demand material unless explicitly building an Achievers round.
+
+A Round 2 item solved after opening help is `supported`, not `independent`. A later unseen item is required.
+
+## Question-to-example conversion
+
+A difficult question is not merely followed by an explanation. The difficult question itself becomes the instructional example.
+
+Preferred child-facing wording:
+
+```text
+LET'S WORK THIS ONE OUT TOGETHER
+We'll find the first step, then you can finish it.
+```
+
+Preferred page flow:
 
 ```text
 YOUR QUESTION
-    |
-    v
-QUICK CHECK                 # internal Part B
-    |
-    v
-STOP — TRY FIRST
-    |
-    v
-SEE / BUILD                 # internal Part C
-    |
-    v
-PRACTICE WITH ME
-    |
-    v
-YOUR TURN
-    |
-    v
-TRY YOUR ORIGINAL QUESTION AGAIN
+-> LET'S WORK THIS ONE OUT TOGETHER
+-> optional: IF THIS PART IS HARD...
+-> SEE IT THIS WAY
+-> YOUR STEP
+-> TRY ONE
 ```
 
-The page repeats the original question number, exact question and answer choices. The Quick Check remains above a reveal boundary so it retains diagnostic value. The teaching block then works with the same numbers, figures, clues or relationships from the original item.
+The original numbers, figures, sequence, path, clues, and answer choices remain visible so the learner does not have to infer how a separate example connects back.
 
-The guided example and independent near example reinforce the same atomic skill before the learner retries the original question.
+The worked example should usually be partial: expose enough structure to make the next thinking step achievable, then give responsibility back to the learner.
 
-Child-facing material should not use labels such as `Part B`, `Part C`, `diagnose`, `fade`, `transfer`, `T3` or `H5`.
+See `intervention-and-support-schema.md`.
 
-## Round 2 evidence rule
+## Quick Check is conditional
 
-Round 2 is first attempted as a clean transfer assessment.
+Do not force a diagnostic probe onto every help page.
 
-If the learner needs the Round 2 Help page, the corrected answer is `supported`, not `independent`.
+Use a small cue-free check only when the failure path is ambiguous and the result will change what is taught.
 
-A later unseen item without help is required to establish independent transfer.
+If the prerequisite is already independently demonstrated elsewhere, teach the actual missing structure directly.
+
+## Number Sense bridge
+
+For Numbers / Number Sense, use the dedicated Grade 3 -> Grade 4 bridge in `number-sense-bridge-schema.md`.
+
+The Class 3 -> Class 4 transition is especially suited to clustered Round 1 design:
 
 ```text
-Round 2 independent success -> independent evidence
-Round 2 + Help success       -> supported evidence
-later unseen success         -> independent evidence
+4-digit understanding
+-> larger-number extension
+-> reasoning/application
 ```
+
+Recommended clusters include:
+
+- place value and representation;
+- comparing and ordering;
+- forming numbers under rules;
+- rounding;
+- Roman numerals;
+- number names as an optional bridge when needed.
+
+Factors and Multiples should remain a separate mathematical cluster/chapter rather than being silently mixed into Number Sense.
 
 ## Logical Reasoning adaptation
 
-The same Help Book architecture applies to Logical Reasoning, but the Quick Check normally probes an **atomic reasoning move** rather than a mathematical prerequisite.
+The same conversion rule applies to Logical Reasoning.
 
-Examples:
+If a reasoning item is difficult, teach from the exact original material:
 
 ```text
-sequence       -> what changed between two frames?
-analogy        -> what is the A-to-B relation?
-coding         -> decode one mapping pair
-ranking        -> place one relative pair
-direction      -> follow one turn
-rotation       -> turn or mirror?
-reflection     -> identify the mirror axis
-composition    -> identify one component shape
-combination    -> apply one constraint
-time/calendar  -> perform one shift
+sequence       -> mark the first change; child checks/repeats it
+analogy        -> expose A-to-B relation; child applies it to C
+coding         -> reveal one original mapping; child completes the table
+ranking        -> place one original clue; child places the next
+方向/direction -> draw the first move/turn; child completes the path
+rotation       -> trace the first transformation; child applies the next
+reflection     -> show the original mirror axis; child predicts the image
 ```
 
-The `SEE / BUILD` block should annotate the original reasoning material: mark sequence changes, draw the original direction arrows, place original ranking clues into slots, trace a rotation, show a mirror axis, create a relation table from the original code, or eliminate original choices using the governing rule.
+The objective is a reusable reasoning routine, not answer revelation.
 
-See `logical-reasoning-reinforcement-schema.md` for the domain-specific page patterns.
+See `logical-reasoning-schema.md` and `logical-reasoning-reinforcement-schema.md`.
 
 ## Learner evidence
 
-Avoid chapter-level scores such as `Numbers = 58%` or `Logical Reasoning = 62%` as the primary model.
+Avoid chapter-level percentages as the primary evidence model.
 
-Track evidence at atomic-skill and question-archetype level using states such as:
+Track states such as:
 
 - `unknown`
 - `needs_instruction`
@@ -129,28 +158,27 @@ Track evidence at atomic-skill and question-archetype level using states such as
 
 Also track:
 
-- support used;
-- representation dependence;
-- Quick Check result;
-- whether the Quick Check was attempted before reveal;
+- initial unsupported result;
+- guessed / needed help;
+- whether the original item was converted to a worked example;
+- whether a diagnostic probe was used;
+- representation used;
+- child-completed step;
 - guided reinforcement result;
-- independent near-reinforcement result;
-- original-item retry result;
-- transfer success;
+- near-independent result;
+- fresh transfer result;
 - failure mode;
-- reasoning/cognitive load;
-- whether the learner can explain the first useful step;
-- whether the original answer was independent, guessed or completed with help.
+- ability to explain the first useful step.
 
-Success on a Help page is normally `supported`, not `independent`. Fresh unsupported transfer is required before upgrading the evidence state.
+A converted original item is burned for independent evidence.
 
 ## Difficulty model
 
-Difficulty is multidimensional. A question may vary independently in:
+Difficulty is multidimensional. Track dimensions such as:
 
 - concept complexity;
 - reasoning steps;
-- number of simultaneous constraints;
+- simultaneous constraints;
 - representation;
 - distractor similarity;
 - language load;
@@ -159,66 +187,55 @@ Difficulty is multidimensional. A question may vary independently in:
 - information load;
 - unit/conversion load.
 
-A single scalar `difficulty = 3` is insufficient as the underlying schema.
+Difficulty is separate from `representationAffordance`.
 
-Difficulty is also separate from `representationAffordance`. Do not automatically give visual support to a fixed percentage of the hardest questions. Some hard questions need clue organization rather than a picture; some simpler questions strongly benefit from a number line, transformation arrow, place-value chart, interval diagram, relation table or ranking line.
-
-## Documents
-
-- `logical-reasoning-schema.md` — independent reasoning-capability model for IMO Logical Reasoning.
-- `logical-reasoning-reinforcement-schema.md` — question-grounded Quick Check / See-Build / reinforcement patterns for Logical Reasoning.
-- `everyday-mathematics-schema.md` — application/transfer model for Everyday Mathematics.
-- `intervention-and-support-schema.md` — cross-domain assessment, same-page reinforcement, question-grounded help, fading and transfer contract.
+Do not automatically add a picture to the hardest questions. Use a representation only when it exposes useful structure.
 
 ## Architecture
 
 ```text
-                    IMO Exam Blueprint
-                           |
-         ---------------------------------------
-         |                  |                  |
- Mathematical Core   Logical Reasoning    Application Schema
-         |                  |                  |
-     skill graph        reasoning graph      problem schemas
-         |                  |                  |
-         -------- Learner Evidence -----------
-                           |
-                     Bridge Planner
-                           |
-               ROUND 1 clean assessment
-                           |
-                     HELP if needed
-                           |
-        --------------------------------------
-        |          |          |              |
-   Quick Check  See/Build  Guided Practice  Your Turn
-        --------------------------------------
-                           |
-                    retry original
-                           |
-                   ROUND 2 transfer
-                           |
-              independent? / help again
-                           |
-                  later unseen transfer
-                           |
-                  Olympiad / Achievers
+                 IMO Exam Blueprint
+                        |
+        ---------------------------------
+        |               |               |
+ Mathematical Core  Logical Reasoning  Application
+        |               |               |
+        -------- Learner Evidence -------
+                        |
+                  Bridge Planner
+                        |
+              ROUND 1 CLUSTERS
+                        |
+        independent? / convert-to-example
+                        |
+                faded close practice
+                        |
+               ROUND 2 MIXED TRANSFER
+                        |
+          independent / supported / later retry
+                        |
+                Olympiad / Achievers
 ```
 
-The bridge planner should determine whether a learner lacks the underlying mathematics, lacks the atomic reasoning move, cannot organize multiple constraints, is overloaded by representation/language/working memory, is misled by distractors, or knows the skill but cannot transfer it into an Olympiad-style question. Those cases must not receive the same intervention.
+## Documents
+
+- `intervention-and-support-schema.md` - question-to-example conversion, optional probing, fading and evidence rules.
+- `number-sense-bridge-schema.md` - Grade 3 -> Grade 4 Number Sense clusters and Round 1 / Round 2 generation contract.
+- `logical-reasoning-schema.md` - Logical Reasoning capability model.
+- `logical-reasoning-reinforcement-schema.md` - question-grounded reasoning reinforcement patterns.
+- `everyday-mathematics-schema.md` - application/transfer schema.
 
 ## Printable-material principle
 
-For learner-facing support pages:
+For learner-facing material:
 
-- repeat the exact triggering question;
-- keep the Quick Check above a clear reveal boundary;
-- use one main mathematical/reasoning idea per page;
+- use child-friendly labels;
+- keep one dominant idea per page or cluster;
 - use large readable type and consistent alignment;
-- prefer one useful representation over decorative visuals;
-- keep explanations short and spatially close to the relevant part of the question;
-- distinguish guided practice from independent near practice;
 - preserve whitespace;
-- make the route back to the original question obvious.
+- keep explanations short and spatially close to the relevant question step;
+- require the child to complete something inside a worked example;
+- keep a close new item after the example;
+- avoid exposing internal terms such as `diagnostic_probe`, `fade`, `transfer`, `Part B`, or skill IDs.
 
-The representation must do mathematical or reasoning work. Decoration alone is not support.
+Complexity belongs in the system, not in the child's navigation.
