@@ -18,46 +18,102 @@ Instead separate three kinds of truth:
 
 ## Grade 3 -> Grade 4 bridge principle
 
-Use challenge-first diagnosis, but keep assessment, diagnosis, instruction and transfer as different object types.
+Use challenge-first diagnosis, but keep assessment, diagnostic evidence, instruction, reinforcement and transfer as different object types.
 
 Internal learning loop:
 
-`assessment -> diagnose when needed -> teach missing structure -> fade support -> transfer -> Olympiad application -> Achievers`
+`assessment -> probe -> teach -> reinforce -> fade -> transfer -> Olympiad application -> Achievers`
 
 Learner-facing loop:
 
 `ROUND 1 -> HELP -> ROUND 2`
 
-Do not start all learners with low-level prerequisite questions. Easier items should normally remain fallback diagnostic probes, used only when the failure path is ambiguous.
-
-A wrong question is evidence, not a diagnosis. Before remediation, determine whether the learner lacks the underlying skill, cannot organize the information, is overloaded by language/working memory, or fails only when the skill is transferred into an unfamiliar Olympiad form.
+Do not start all learners with low-level prerequisite questions. A wrong question is evidence, not a diagnosis. Determine whether the learner lacks the underlying skill/reasoning move, cannot organize the information, is overloaded by language/working memory, or fails only when the skill is transferred into an unfamiliar Olympiad form.
 
 ## Assessment and intervention objects
 
 The schema distinguishes:
 
 - `assessment_item` — clean independent attempt before instruction;
-- `diagnostic_probe` — minimal cue-free probe used only to classify an ambiguous failure;
-- `instructional_activity` — teaching, representation, worked example or strategy support;
-- `transfer_item` — fresh unsupported item used after teaching to test independence.
+- `diagnostic_probe` — minimal cue-free check of the nearest prerequisite or atomic reasoning move;
+- `instructional_activity` — teaching, representation, worked step or strategy support;
+- `reinforcement_item` — guided and near-independent practice used to fade support;
+- `transfer_item` — fresh unsupported item used to test independence.
 
-A visual cue is not a diagnostic level. A mathematical representation is an instructional component that should be used only when it exposes the relevant mathematical or reasoning structure.
+A visual cue is not a diagnostic level. A mathematical or reasoning representation is an instructional component used when it exposes the relevant structure.
 
 See `intervention-and-support-schema.md` for the full cross-domain contract.
 
-## Question-grounded help
+## One-page reinforcement Help Book
 
-When a learner needs help, the child-facing material should remain visibly tied to the question that triggered it.
+The Help Book is designed to make the learner progressively independent, not merely explain the answer.
 
-Preferred page pattern:
+For each Round 1 or Round 2 question that needs support, use one question-grounded page:
 
-`YOUR QUESTION -> LOOK AT THIS QUESTION THIS WAY -> TRY YOUR QUESTION AGAIN`
+```text
+YOUR QUESTION
+    |
+    v
+QUICK CHECK                 # internal Part B
+    |
+    v
+STOP — TRY FIRST
+    |
+    v
+SEE / BUILD                 # internal Part C
+    |
+    v
+PRACTICE WITH ME
+    |
+    v
+YOUR TURN
+    |
+    v
+TRY YOUR ORIGINAL QUESTION AGAIN
+```
 
-The helper page should repeat the original question number, exact question and answer choices before unpacking the same numbers, clues or relationships.
+The page repeats the original question number, exact question and answer choices. The Quick Check remains above a reveal boundary so it retains diagnostic value. The teaching block then works with the same numbers, figures, clues or relationships from the original item.
 
-The backend may map several items to one skill or representation family, but the child should navigate by the question they remember rather than by internal module IDs.
+The guided example and independent near example reinforce the same atomic skill before the learner retries the original question.
 
-Internal labels such as `diagnose`, `fade`, `transfer`, `T3` or `H5` should not become learner-facing navigation burden.
+Child-facing material should not use labels such as `Part B`, `Part C`, `diagnose`, `fade`, `transfer`, `T3` or `H5`.
+
+## Round 2 evidence rule
+
+Round 2 is first attempted as a clean transfer assessment.
+
+If the learner needs the Round 2 Help page, the corrected answer is `supported`, not `independent`.
+
+A later unseen item without help is required to establish independent transfer.
+
+```text
+Round 2 independent success -> independent evidence
+Round 2 + Help success       -> supported evidence
+later unseen success         -> independent evidence
+```
+
+## Logical Reasoning adaptation
+
+The same Help Book architecture applies to Logical Reasoning, but the Quick Check normally probes an **atomic reasoning move** rather than a mathematical prerequisite.
+
+Examples:
+
+```text
+sequence       -> what changed between two frames?
+analogy        -> what is the A-to-B relation?
+coding         -> decode one mapping pair
+ranking        -> place one relative pair
+direction      -> follow one turn
+rotation       -> turn or mirror?
+reflection     -> identify the mirror axis
+composition    -> identify one component shape
+combination    -> apply one constraint
+time/calendar  -> perform one shift
+```
+
+The `SEE / BUILD` block should annotate the original reasoning material: mark sequence changes, draw the original direction arrows, place original ranking clues into slots, trace a rotation, show a mirror axis, create a relation table from the original code, or eliminate original choices using the governing rule.
+
+See `logical-reasoning-reinforcement-schema.md` for the domain-specific page patterns.
 
 ## Learner evidence
 
@@ -75,14 +131,18 @@ Also track:
 
 - support used;
 - representation dependence;
+- Quick Check result;
+- whether the Quick Check was attempted before reveal;
+- guided reinforcement result;
+- independent near-reinforcement result;
+- original-item retry result;
 - transfer success;
 - failure mode;
 - reasoning/cognitive load;
-- whether the learner can explain the method;
-- whether the answer was independent, guessed or completed with help;
-- whether a diagnostic probe was necessary before instruction.
+- whether the learner can explain the first useful step;
+- whether the original answer was independent, guessed or completed with help.
 
-Success on a helper page with a supplied representation is normally `supported`, not `independent`. Fresh unsupported transfer is required before upgrading the evidence state.
+Success on a Help page is normally `supported`, not `independent`. Fresh unsupported transfer is required before upgrading the evidence state.
 
 ## Difficulty model
 
@@ -101,13 +161,14 @@ Difficulty is multidimensional. A question may vary independently in:
 
 A single scalar `difficulty = 3` is insufficient as the underlying schema.
 
-Difficulty is also separate from `representationAffordance`. Do not automatically give visual support to a fixed percentage of the hardest questions. Some hard questions need clue organization rather than a picture; some simpler questions strongly benefit from a number line, place-value chart, array, interval diagram or bar model.
+Difficulty is also separate from `representationAffordance`. Do not automatically give visual support to a fixed percentage of the hardest questions. Some hard questions need clue organization rather than a picture; some simpler questions strongly benefit from a number line, transformation arrow, place-value chart, interval diagram, relation table or ranking line.
 
 ## Documents
 
 - `logical-reasoning-schema.md` — independent reasoning-capability model for IMO Logical Reasoning.
+- `logical-reasoning-reinforcement-schema.md` — question-grounded Quick Check / See-Build / reinforcement patterns for Logical Reasoning.
 - `everyday-mathematics-schema.md` — application/transfer model for Everyday Mathematics.
-- `intervention-and-support-schema.md` — cross-domain assessment, diagnosis, question-grounded help, representation, fading and transfer contract.
+- `intervention-and-support-schema.md` — cross-domain assessment, same-page reinforcement, question-grounded help, fading and transfer contract.
 
 ## Architecture
 
@@ -124,31 +185,40 @@ Difficulty is also separate from `representationAffordance`. Do not automaticall
                            |
                      Bridge Planner
                            |
-          -----------------------------------
-          |                |                |
-     assessment        diagnosis        instruction
-       ROUND 1          if needed           HELP
-          |                                  |
-          |                              fade support
-          |                                  |
-          ---------------- transfer ----------
-                         ROUND 2
+               ROUND 1 clean assessment
+                           |
+                     HELP if needed
+                           |
+        --------------------------------------
+        |          |          |              |
+   Quick Check  See/Build  Guided Practice  Your Turn
+        --------------------------------------
+                           |
+                    retry original
+                           |
+                   ROUND 2 transfer
+                           |
+              independent? / help again
+                           |
+                  later unseen transfer
                            |
                   Olympiad / Achievers
 ```
 
-The bridge planner should determine whether a learner lacks the underlying mathematics, lacks the reasoning structure, cannot organize multiple constraints, is overloaded by representation/language/working memory, or knows the skill but cannot transfer it into an Olympiad-style question. Those cases must not receive the same remediation.
+The bridge planner should determine whether a learner lacks the underlying mathematics, lacks the atomic reasoning move, cannot organize multiple constraints, is overloaded by representation/language/working memory, is misled by distractors, or knows the skill but cannot transfer it into an Olympiad-style question. Those cases must not receive the same intervention.
 
 ## Printable-material principle
 
 For learner-facing support pages:
 
 - repeat the exact triggering question;
-- keep one dominant mathematical idea per page;
+- keep the Quick Check above a clear reveal boundary;
+- use one main mathematical/reasoning idea per page;
 - use large readable type and consistent alignment;
 - prefer one useful representation over decorative visuals;
 - keep explanations short and spatially close to the relevant part of the question;
+- distinguish guided practice from independent near practice;
 - preserve whitespace;
 - make the route back to the original question obvious.
 
-The representation must do mathematical work. Decoration alone is not support.
+The representation must do mathematical or reasoning work. Decoration alone is not support.
