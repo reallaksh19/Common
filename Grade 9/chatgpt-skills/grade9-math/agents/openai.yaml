@@ -1,4 +1,4 @@
 interface:
   display_name: "Grade 9 Mathematics"
-  short_description: "Apply Grade 9 math reasoning"
-  default_prompt: "Analyze or build this Grade 9 Mathematics material using the subject reasoning and difficulty model."
+  short_description: "Math reasoning and concept-book pedagogy"
+  default_prompt: "Analyze or build this Grade 9 Mathematics material using structural reasoning and SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book pedagogy when applicable."

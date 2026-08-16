@@ -1,6 +1,6 @@
 ---
 name: grade9
-description: Orchestrate Grade 9 learning-material work across source grounding, subject reasoning, concept architecture, difficulty-matched question banks, learning enrichment, diagnostics, and textbook/question-bank publication. Use for multi-stage Grade 9 Mathematics, Physics, or Chemistry tasks, including source-based chapter creation, concept books, Part 2 gap supplements, HOTS/competitive-foundation practice, mixed mastery, challenge appendices, and linked learning products.
+description: Orchestrate Grade 9 learning-material work across source grounding, subject reasoning, concept architecture, difficulty-matched question banks, learning enrichment, diagnostics, concept books, and textbook/question-bank publication. Use for multi-stage Grade 9 Mathematics, Physics, or Chemistry tasks, including source-based chapter creation, concept books, Part 2 gap supplements, HOTS/competitive-foundation practice, mixed mastery, challenge appendices, and linked learning products.
 ---
 
 # Grade 9 Learning System
@@ -22,7 +22,18 @@ When the relevant specialist skills are installed, combine them as needed:
 5. `grade9-learning-enrichment` for helpers, hints, misconceptions, diagnostics, solutions, transfer, and mastery evidence.
 6. `grade9-textbook-publisher` only when a rendered textbook/question-bank/workbook/teacher/integrated product is requested.
 
-ChatGPT may use more than one installed skill for a full build. For narrow work, use only specialists that materially apply.
+## Mathematics concept-book routing
+
+When the user asks for a Grade 9 Mathematics **Concept Book**, chalkboard-style explanation, formula-understanding book, or asks to make mathematics structurally understandable rather than formula-first:
+
+1. route subject reasoning through `grade9-math`;
+2. preserve source/anchor coverage authority;
+3. use `SEE -> REALIZE -> UNDERSTAND -> ADOPT` as the cognitive sequence;
+4. keep `CONNECT` as source traceability/navigation rather than a fifth cognitive stage;
+5. require visible pattern/representation, explicit invariant, derivation/reconstruction, contrast, first-move independence, and transfer;
+6. keep the Concept Book distinct from the First-Step Reference and Question Bank.
+
+For Sequence & Series, the Mathematics specialist includes a worked exemplar with summation-as-addition, power sums, hidden-series transformations, and JEE bridge guidance.
 
 ## Physics concept-book routing
 
@@ -67,15 +78,11 @@ SOURCE / USER REQUEST
   -> QA
 ```
 
-For Physics concept-book work, insert the additional teaching loop before publication:
+Concept-book teaching loops are subject-specific and occur before publication:
 
 ```text
-SOURCE / CONCEPT
-  -> SEE THE EQUATION
-  -> REALIZE
-  -> UNDERSTAND
-  -> CONNECT TO SOURCE IDS
-  -> FIRST-STEP / PRACTICE / PUBLICATION
+MATHEMATICS: SEE -> REALIZE -> UNDERSTAND -> ADOPT -> CONNECT
+PHYSICS:     SEE THE EQUATION -> REALIZE -> UNDERSTAND -> CONNECT
 ```
 
 ## Completion gates

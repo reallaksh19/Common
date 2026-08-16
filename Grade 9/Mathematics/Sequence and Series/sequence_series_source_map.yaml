@@ -1,0 +1,86 @@
+chapter: Sequence and Series
+grade: 9
+subject: Mathematics
+concept_book_method:
+  cognitive_sequence: [SEE, REALIZE, UNDERSTAND, ADOPT]
+  connect_is_traceability_only: true
+schema_migration: false
+
+sources:
+  - source_id: SEQ-PDF
+    type: USER_UPLOADED_SOURCE
+    title: Sequence and series - Math.pdf
+    pages: 23
+    authority: primary_source
+
+handwritten_pages:
+  - pages: [3]
+    topics: [sequence_vs_series, finite_infinite_sequence, piecewise_sequence]
+    lenses: [POSITION, ACCUMULATION]
+  - pages: [4]
+    topics: [fibonacci_recurrence, ap_general_term]
+    lenses: [POSITION, CHANGE]
+  - pages: [5, 6, 7, 8, 9]
+    topics: [ap, ap_properties, arithmetic_mean, ap_sum, ap_worked_examples]
+    lenses: [CHANGE, ACCUMULATION]
+  - pages: [10, 11, 12, 13, 14, 15, 16, 17]
+    topics: [gp, finite_gp_sum, am_gm, repeated_digit_series, repeated_decimal_series, infinite_gp]
+    lenses: [RATIO, ACCUMULATION, TRANSFORM]
+  - pages: [18, 19, 20, 21]
+    topics: [hp, harmonic_means, am_gm_hm, hp_indexed_terms]
+    lenses: [TRANSFORM, POSITION]
+  - pages: [22]
+    topics: [logarithmic_ap]
+    lenses: [TRANSFORM]
+  - pages: [23]
+    topics: [infinite_gp_sum]
+    lenses: [RATIO, ACCUMULATION]
+
+printed_anchors:
+  source_pages: [1, 2]
+  ids: [Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18, Q19, Q20]
+  use: advanced_source_anchors
+
+source_qc:
+  - id: SEQ-QC-01
+    location: page_3
+    issue: piecewise_even_subsequence
+    source_faithful: [-1/2, -1/4, -1/6]
+  - id: SEQ-QC-02
+    location: page_4
+    issue: fibonacci_domain
+    source_faithful: "n > 2"
+  - id: SEQ-QC-03
+    location: page_17
+    issue: infinite_gp_ratio_result
+    verified_result: "r = 3/5"
+  - id: SEQ-QC-04
+    location: page_19
+    issue: harmonic_mean_endpoints
+    source_faithful: ["2/3", "2/13"]
+  - id: SEQ-QC-05
+    location: page_21
+    issue: unfinished_hp_solution
+    status: SOURCE_INCOMPLETE
+  - id: SEQ-QC-06
+    location: page_22
+    issue: logarithmic_ap_branch
+    valid_branch: "2^x = 2/5"
+    rejected_branch: "2^x = -1/2"
+
+extension_material:
+  provenance_class: EXTERNAL_BRIDGE
+  must_not_be_presented_as_handwritten_source: true
+  topics:
+    - sigma_notation
+    - power_sum_k_squared
+    - power_sum_k_cubed
+    - nested_sums
+    - alternating_powers
+    - telescoping
+  jee_bridge_ids: [B1, B2, B3, B4, B5, B6, B7, B8, B9, B10, B11, B12, B13, B14, B15, B16, B17, B18]
+
+products:
+  concept_book: "SEE -> REALIZE -> UNDERSTAND -> ADOPT"
+  first_step_reference: "SEE -> REALIZE -> WRITE -> CHOOSE -> CHECK"
+  question_bank: "RECOGNIZE -> SOLVE -> CHECK -> TRANSFER"

@@ -1,6 +1,6 @@
 ---
 name: grade9
-description: Route Grade 9 learning-material tasks to the correct source-grounding, concept architecture, question-bank, enrichment, subject, and publishing workflows. Use for Grade 9 source analysis, textbook creation, concept maps, difficulty-matched question banks, HOTS/competitive-foundation practice, diagnostics, mixed mastery, challenge appendices, and linked student/teacher PDF production in Mathematics, Physics, or Chemistry.
+description: Route Grade 9 learning-material tasks to the correct source-grounding, concept architecture, question-bank, enrichment, subject, concept-book, and publishing workflows. Use for Grade 9 source analysis, textbook creation, concept books, difficulty-matched question banks, HOTS/competitive-foundation practice, diagnostics, mixed mastery, challenge appendices, and linked student/teacher PDF production in Mathematics, Physics, or Chemistry.
 ---
 
 # Grade 9 Router Skill
@@ -32,6 +32,23 @@ SOURCE / USER REQUEST
 - Helpers, progressive hints, misconceptions, diagnostics, transfer questions -> `../grade9-learning-enrichment/SKILL.md`.
 - Student textbook, question bank, integrated edition, PDF layout, internal links, render/preflight -> `../grade9-textbook-publisher/SKILL.md`.
 
+## Mathematics concept-book routing
+
+When the user asks for a Grade 9 Mathematics **Concept Book**, chalkboard-style explanation, formula-understanding book, or asks to make mathematics structurally understandable rather than formula-first:
+
+1. route through `grade9-math` Concept Book mode;
+2. preserve source/anchor coverage authority;
+3. use `SEE -> REALIZE -> UNDERSTAND -> ADOPT` as the cognitive sequence;
+4. treat `CONNECT` as traceability/navigation rather than a learning stage;
+5. require pattern/invariant/representation/reconstruction/transfer before publication;
+6. keep Concept Book, First-Step Reference, and Question Bank as distinct companion products.
+
+For Sequence & Series, the Mathematics specialist includes the worked exemplar and summation/hidden-series bridge rules.
+
+## Physics concept-book routing
+
+When the user asks for a Grade 9 Physics Concept Book, route through `grade9-physics` and use `SEE THE EQUATION -> REALIZE -> UNDERSTAND`, retaining CONNECT as source traceability/navigation.
+
 ## Non-negotiable rules
 
 1. Treat user-supplied sources as the primary authority when the request is source-grounded.
@@ -60,4 +77,4 @@ Apply the relevant gates:
 - `QG9 PROVENANCE`
 - `QG10 PUBLICATION_QA`
 
-Read `references/grade9-workflow.md` when a full multi-stage build is requested. Use `references/grade9-master.schema.json` as the canonical structured-data contract when producing reusable master data.
+Read `references/grade9-workflow.md` when a full multi-stage build is requested. Use `references/grade9-master.schema.json` as the unchanged canonical structured-data contract when producing reusable master data.
