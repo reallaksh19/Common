@@ -2,34 +2,34 @@
 
 ## Purpose
 
-This document defines the cross-domain learning loop for a Grade 3 -> Grade 4 learner preparing for IMO-style work.
+This document defines the cross-domain learning loop for Grade 4 IMO preparation, including learners who need a more explicit bridge from Grade 3 and learners moving from Grade 4 core into pre-IMO transfer.
 
 The central rule is:
 
-> A difficult question can change role. Once the learner struggles with it and support begins, that exact question becomes an instructional example and must no longer be used as evidence of independent mastery.
+> A difficult question can change role. Once support begins, that exact question becomes an instructional example and must no longer be used as evidence of independent mastery.
 
 This applies to Mathematical Core, Logical Reasoning, and Everyday Mathematics.
 
-The system may be sophisticated internally, but the child-facing journey should stay simple.
+The child-facing journey should remain simple even when the backend evidence model is detailed.
 
 ```text
-TRY A QUESTION
-    |
-    +-- comfortable -> keep climbing
-    |
-    +-- difficult -> LET'S WORK THIS ONE OUT TOGETHER
-                         |
-                         v
-                  same question becomes example
-                         |
-                         v
-                  child completes a key step
-                         |
-                         v
-                  close new question
-                         |
-                         v
-                  later fresh transfer
+TRY
+ |
+ +-- independent -> continue
+ |
+ +-- difficult -> LET'S WORK THIS ONE OUT TOGETHER
+                     |
+                     v
+              same question becomes example
+                     |
+                     v
+              child completes a key step
+                     |
+                     v
+                fresh close item
+                     |
+                     v
+              later mixed transfer
 ```
 
 ## 1. Object roles
@@ -41,7 +41,7 @@ Purpose: obtain unsupported evidence before teaching.
 Rules:
 
 - no instructional hint;
-- no extra representation added to make the target easier;
+- no added representation whose purpose is to reveal the method;
 - intrinsic diagrams remain part of the item;
 - record independent / guessed / needed help.
 
@@ -49,92 +49,76 @@ Rules:
 
 Purpose: teach from the exact question that was difficult.
 
-Conversion occurs when the learner has already attempted an assessment or ladder item and the adult/system decides to support it.
-
 After conversion:
 
 - preserve the original numbers, figures, clues, wording, and answer choices;
-- explicitly treat the item as instruction rather than assessment;
-- reveal the first useful structure or step;
-- do not fully remove the child's thinking when a partial example is sufficient;
-- mark the original item as `instructionally_exposed: true`;
+- treat the item as instruction, not assessment;
+- expose the first useful structure or step;
+- prefer partial completion over fully solving the item when possible;
+- mark `instructionallyExposed: true`;
 - never later count a corrected answer to that same item as independent evidence.
 
-Suggested learner-facing wording:
+Preferred learner-facing wording:
 
 ```text
 LET'S WORK THIS ONE OUT TOGETHER
 We'll find the first step, then you can finish it.
 ```
 
-Avoid learner-facing language such as:
-
-```text
-THIS QUESTION NOW BECOMES OUR EXAMPLE
-We are not testing it anymore
-```
-
-The internal role change is important; the child does not need assessment vocabulary.
-
 ### `diagnostic_probe`
 
-Purpose: isolate the nearest prerequisite or atomic reasoning move when the failure path is genuinely ambiguous.
+Purpose: isolate the nearest prerequisite or atomic reasoning move only when the failure path is ambiguous.
 
-Important: the probe is **conditional**, not mandatory.
-
-Use it when one difficult item could plausibly reflect several different bottlenecks and current evidence cannot distinguish them.
+The probe is conditional, not mandatory.
 
 Rules:
 
-- usually one small check;
-- cue-free before teaching is revealed;
-- reduced cognitive load, not arbitrarily lower grade level;
+- usually one small cue-free check;
+- use reduced cognitive load, not arbitrary grade reduction;
 - stop once the failure path is clear;
-- do not turn it into a prerequisite worksheet.
+- do not turn the Help Book into a prerequisite worksheet.
 
 ### `instructional_activity`
 
-Purpose: expose the structure that was hidden in the original item.
+Purpose: expose hidden structure in the original question.
 
 May include:
 
-- worked steps;
-- partially completed examples;
-- place-value charts;
-- number lines;
+- number line;
+- place-value alignment;
 - digit slots;
-- relation tables;
-- clue boards;
+- clue board;
+- relation table;
+- balance bars;
+- ordered list;
+- possibility / case table;
 - direction or transformation arrows;
-- concise verbal explanation;
-- elimination of distractors;
-- externalization of multi-step information.
+- elimination marks;
+- concise worked steps.
 
 ### `guided_reinforcement_item`
 
-Purpose: use the same atomic idea with one scaffold still supplied.
+Purpose: reuse the atomic idea with one scaffold still supplied.
 
 ### `independent_near_item`
 
-Purpose: require the learner to reconstruct the same method with little or no supplied scaffold.
-
-Success is stronger than guided practice but is still near-transfer evidence.
+Purpose: require reconstruction of the same idea with little or no supplied scaffold.
 
 ### `transfer_item`
 
-Purpose: test whether the method survives after support is removed and surface cues are mixed or changed.
+Purpose: determine whether the learner can recognize and use the idea when surface cues change.
 
 Rules:
 
 - unseen;
 - no Help Book visible;
 - not the converted original question;
-- vary numbers, context, clue order, representation, or neighboring concepts;
-- use this evidence to distinguish `supported` from `independent`.
+- change context, wording, representation, clue order, or question archetype while preserving the intended underlying structure;
+- allow learner-created representations.
 
 ## 2. Conversion layer
 
-The conversion layer sits between a difficult question and any optional Quick Check / See-Build instruction.
+The conversion layer sits between the failed attempt and instruction.
 
 ```text
 QUESTION ATTEMPT
@@ -143,30 +127,27 @@ QUESTION ATTEMPT
 DIFFICULT?
       |
       v
-CONVERT THE SAME QUESTION TO A WORKED EXAMPLE
+CONVERT SAME QUESTION TO WORKED EXAMPLE
       |
-      +-- failure path unclear -> optional QUICK CHECK
-      |
-      v
-SEE / BUILD THE ORIGINAL QUESTION
+      +-- failure path unclear -> optional SMALL CHECK
       |
       v
-CHILD COMPLETES A KEY STEP
+SEE / BUILD ORIGINAL QUESTION
       |
       v
-GUIDED OR CLOSE NEW QUESTION
+CHILD COMPLETES KEY STEP
       |
       v
-LESS-SUPPORTED NEW QUESTION
+FRESH CLOSE ITEM
 ```
 
-The converted item is now a teaching artifact.
+The original question is now a teaching artifact.
 
-Do not ask the learner to "prove independence" by retrying the same exposed question. A retry may be useful for reconstruction or confidence, but its evidence state remains `supported`.
+Do not use a retry of the exposed original to prove independence.
 
-## 3. Preferred help-page contract
+## 3. Help-page contract
 
-For a learner who needs additional scaffolding, the standard page should be:
+Preferred page:
 
 ```text
 YOUR QUESTION
@@ -174,60 +155,27 @@ YOUR QUESTION
      v
 LET'S WORK THIS ONE OUT TOGETHER
      |
-     +-- optional: SMALL CHECK if the first step is unclear
+     +-- optional: IF THIS PART IS HARD...
      |
      v
-SEE / BUILD THIS SAME QUESTION
+SEE IT THIS WAY
      |
      v
-YOUR STEP - finish one important part
+YOUR STEP
      |
      v
-TRY ONE - close new question
+TRY ONE
 ```
 
-If the learner still needs support on `TRY ONE`, add one more faded item rather than jumping immediately to a much harder problem.
+The Help page should not feel like six different worksheets. Use visual hierarchy and whitespace so the learner experiences one continuous path.
 
-The page does not need every internal stage printed as a separate colored box. Visual hierarchy should reduce, not add, cognitive load.
+## 4. Partial worked examples
 
-## 4. Quick Check is conditional
-
-Do **not** automatically put a Quick Check on every difficult question.
-
-Use it only when diagnostic value justifies the extra step.
-
-Examples where a Quick Check is useful:
-
-```text
-large inclusive range wrong
--> check whether small inclusive counting is understood
-
-multi-constraint number puzzle wrong
--> check the relational clue separately if other evidence is unclear
-
-multi-turn direction item wrong
--> check one turn if direction vocabulary may be unstable
-```
-
-Examples where it may be unnecessary:
-
-```text
-learner already demonstrates the prerequisite independently elsewhere
-failure is clearly due to clue organization
-failure is clearly due to an unfamiliar representation
-```
-
-## 5. Worked example should preserve thinking
-
-The default is not to solve the entire difficult question immediately.
-
-Prefer a **partial worked example** when possible.
+Default to preserving some thinking for the child.
 
 Example:
 
 ```text
-2,400 = 6 x ? x 20
-
 show:
 6 x 20 = 120
 2,400 = 120 x ?
@@ -236,303 +184,342 @@ child completes:
 ? = ____
 ```
 
-For reasoning:
+For a clue-number problem:
 
 ```text
-show the first transformation
-ask the learner to identify whether the same transformation repeats
-then let the learner apply it to the next step
+show digit slots
+fill direct clues
+externalize one relationship
+
+child completes the final missing pair
+```
+
+For a visual reasoning problem:
+
+```text
+mark the first transformation
+child checks whether it repeats
+child applies the next step
 ```
 
 Support should make the next thinking step achievable, not make thinking unnecessary.
 
-## 6. Fading
+## 5. Fading
 
-Use a gradual hand-back of responsibility:
+Use gradual hand-back:
 
 ```text
 converted original: high support
--> child finishes a late/key step
--> close new item with partial support
--> close new item with no supplied representation
+-> child completes a key step
+-> close item with partial support
+-> close item with no supplied representation
 -> later mixed transfer
 ```
 
-If the learner needs more support, insert another faded item.
+If the learner quickly reconstructs the method, fade faster. If the close item is still difficult, insert one more faded item rather than changing topic immediately.
 
-If the learner quickly reconstructs the method, fade faster.
+## 6. Round 1 has two legitimate forms
 
-## 7. Evidence rules
+Round 1 should never be treated as a random mini-exam, but its structure depends on the learner stage.
+
+### Bridge Round 1
+
+For a Grade 3 -> Grade 4 transition, use tight concept ladders:
+
+```text
+familiar prerequisite
+-> direct Grade 4 extension
+-> one extra reasoning demand
+```
+
+Neighboring questions may share the same archetype because controlled extension is the goal.
+
+### Pre-IMO Round 1
+
+For a learner with enough Grade 4 core to begin transfer work, do **not** teach by repeating ten near-identical templates.
+
+Use a curated progression of different question archetypes that exercise a connected conceptual backbone.
+
+Example Number Sense progression:
+
+```text
+place-value magnitude
+-> equivalent regrouping
+-> missing-digit comparison constraint
+-> number-line distance
+-> boundary continuity
+-> rounding interval
+-> representation conversion
+-> parity structure
+-> equality / balance
+-> systematic enumeration
+```
+
+The learner should encounter varied surfaces while still being able to connect them to a manageable set of thinking tools.
+
+## 7. Round 2 is deliberately interleaved transfer
+
+Round 2 should be mixed, but not random in the loose sense.
+
+Its purpose is method recognition:
+
+> What kind of structure is hidden here, and what tool could help me?
+
+Rules:
+
+- remove concept-family labels;
+- do not simply reuse Round 1 wording with different numbers;
+- change question archetype when possible;
+- mix families across the round;
+- avoid obvious adjacent near-copies;
+- use plausible distractors;
+- provide no instructional representation;
+- allow the learner to construct their own representation;
+- keep most items at Grade 4 core / pre-IMO demand unless the task explicitly targets Achievers.
+
+Examples of useful transfer changes:
+
+```text
+place value -> quantify whole-number change after a digit substitution
+comparison -> smallest digit satisfying an inequality
+distance -> equally spaced markers
+rounding -> smallest value in a rounding interval
+clue construction -> identify which candidate satisfies all clues
+number formation -> count all valid cases
+Roman recognition -> decode, operate, encode
+expanded form -> compose nonstandard place-value groups
+successor -> nth value after crossing a number boundary
+midpoint -> predecessor/successor symmetry or balance
+```
+
+## 8. Learner-created representations are positive evidence
+
+`No supplied representation` does not mean `no drawing allowed`.
+
+In transfer rounds, a child who independently draws an appropriate representation is demonstrating strategy selection.
+
+Useful self-generated representations include:
+
+- number line;
+- place-value columns;
+- digit slots;
+- clue board;
+- ordered list;
+- case table;
+- balance bars;
+- elimination marks.
+
+Suggested record:
+
+```yaml
+selfGeneratedRepresentation:
+  used: true
+  type: number_line
+  appropriate: true
+  promptedByAdult: false
+```
+
+The goal is not to remove visual thinking. The goal is to move from **representation supplied by teacher** to **representation selected and built by learner**.
+
+## 9. Round 2 Help behavior
+
+An optional Round 2 Help Book may exist, but only after the clean attempt.
+
+If opened:
+
+```text
+Round 2 item attempted independently
+-> difficult
+-> convert exact Round 2 item to worked example
+-> supported learning
+-> fresh close item
+-> later unseen transfer required
+```
+
+The original Round 2 item is burned for transfer evidence.
+
+Do not count a corrected answer after Help as independent.
+
+## 10. Evidence states
 
 Suggested interpretation:
 
 ```text
-item correct before support
-    -> independent evidence
+initial item correct without support
+-> independent
 
-item difficult; item converted to example
-    -> item is burned for independent evidence
+item converted to example
+-> supported
 
-converted example completed correctly
-    -> supported learning
+fresh close item correct with scaffold
+-> supported / emerging
 
-close new item solved with partial support
-    -> supported / emerging
+fresh close item correct without supplied scaffold
+-> near-independent
 
-close new item solved without supplied scaffold
-    -> near-independent evidence
+Round 2 unseen item correct without Help
+-> independent transfer
 
-later unseen mixed transfer solved without help
-    -> independent evidence
+Round 2 item correct after learner independently creates a useful representation
+-> independent transfer + positive strategy-selection evidence
 
-later transfer retained across time and mixed retrieval
-    -> secure
+Round 2 item corrected after Help
+-> supported
+
+later unseen mixed retrieval succeeds
+-> independent / secure depending on retention
 ```
 
 Suggested record:
 
 ```yaml
 originalItem:
-  itemId: NUM-R1-C3-Q2
+  itemId: NUM-R1-Q04
   initialResult: incorrect
   convertedToWorkedExample: true
   instructionallyExposed: true
 
-probe:
-  used: false
-
 instruction:
-  groundedToOriginalItem: true
-  representation: digit_slots
+  representation: number_line
   childCompletionRequired: true
 
 reinforcement:
-  guidedItemId: NUM-R1-C3-Q2-G1
-  guidedResult: correct
-  nearItemId: NUM-R1-C3-Q2-N1
-  nearResult: correct
+  closeItemResult: correct
+  suppliedRepresentation: false
 
 stateAfterHelp: supported
 
 transfer:
-  itemId: NUM-R2-Q07
+  itemId: NUM-R2-Q03
   result: correct
-  supportUsed: []
+  helpUsed: false
+  selfGeneratedRepresentation:
+    used: true
+    type: equal_spacing_line
+    appropriate: true
   stateAfter: independent
 ```
 
-## 8. Round 1 and Round 2 have different jobs
+## 11. Failure classification
 
-Round 1 and Round 2 must not be generated from the same randomization policy.
+A wrong answer is evidence, not a diagnosis.
 
-### Round 1 - structured learning ladder
-
-Round 1 is a **clustered bridge**, especially for a learner performing below the expected level.
-
-Its purpose is to build momentum and reveal the learner's boundary while teaching can occur immediately.
-
-Rules:
-
-- group questions by conceptual family;
-- order each family from accessible -> one added demand -> application/reasoning;
-- keep neighboring questions conceptually similar enough that the learner can reuse a method;
-- change one major demand at a time;
-- use Grade 3 knowledge as the entry rung and Grade 4 knowledge as the destination;
-- if a rung is difficult, convert that rung into the worked example, then continue with a close new rung;
-- do not randomize unrelated concepts inside a cluster;
-- do not interpret Round 1 as a single clean exam score.
-
-Preferred cluster shape:
+Possible failure classes:
 
 ```text
-RUNG 1 - familiar prerequisite / late Grade 3
-RUNG 2 - direct Grade 4 extension
-RUNG 3 - Grade 4 application or one extra reasoning demand
+concept_gap
+procedure_gap
+rule_not_detected
+wrong_rule_selected
+representation_misread
+operation_selection
+constraint_organization
+working_memory_load
+language_load
+transfer_failure
+distractor_elimination_failure
+systematic_enumeration_failure
+boundary_count_error
+careless_execution
+guess
+unknown
 ```
 
-The first rung in a cluster may be a clean diagnostic. Later rungs remain unsupported attempts unless an earlier rung has already triggered instruction.
+Ask:
 
-### Round 2 - mixed pre-IMO transfer
+1. What atomic skill or reasoning move was required?
+2. Is that move independently demonstrated elsewhere?
+3. Did the learner fail because the representation was missing, misread, or never selected?
+4. Was the challenge concept complexity, wording, multiple constraints, distractors, or working memory?
+5. What is the least-supportive useful representation?
+6. What fresh close item can hand the thinking back?
+7. What later interleaved item can test genuine recognition and transfer?
 
-Round 2 is the clean mixed retrieval stage.
+## 12. Logical Reasoning adaptation
 
-Rules:
+The same architecture applies to Logical Reasoning.
 
-- shuffle concept families;
-- remove cluster headings that reveal the method;
-- use mostly Grade 4 core / pre-IMO application with some Grade 3 retrieval;
-- do not show helper representations;
-- use plausible distractors;
-- vary wording, number size, context, and clue order;
-- include a small number of higher-demand questions without turning the whole round into Achievers.
-
-Round 2 answers are useful evidence only if solved without the Help Book.
-
-If Round 2 help is needed, the Round 2 question may itself be converted to a worked example, but it is then burned for transfer evidence and a later unseen item is required.
-
-## 9. Round 1 cluster design rules
-
-A good Round 1 cluster should have **conceptual continuity**.
-
-Bad:
-
-```text
-place value -> Roman numerals -> interval counting -> forming numbers
-```
-
-Better:
-
-```text
-place value of a digit
--> place value in a 5-digit number
--> expanded/regrouped representation of the same idea
-```
-
-Another example:
-
-```text
-compare two familiar numbers
--> compare close 5-digit numbers
--> order four close 5-digit numbers / identify second-highest
-```
-
-The learner should feel, "I know what kind of thinking this is," before the task adds another layer.
-
-## 10. Learner-facing language
-
-Recommended labels:
-
-```text
-ROUND 1: CLIMB THE LADDER
-YOUR QUESTION
-LET'S WORK THIS ONE OUT TOGETHER
-IF THIS PART IS HARD...        # optional probe
-SEE IT THIS WAY
-YOUR STEP
-TRY ONE
-
-ROUND 2: MIX IT UP
-```
-
-Do not expose:
-
-```text
-assessment
-converted_worked_example
-diagnostic_probe
-Part B
-Part C
-fade
-transfer
-module ID
-```
-
-## 11. Logical Reasoning adaptation
-
-The conversion rule applies directly to Logical Reasoning.
-
-If a reasoning question is difficult, annotate the exact original figures, sequence, path, code, or clues.
+A pre-IMO Round 1 should not be ten surface copies of one sequence or coding pattern. Preserve the reasoning capability while varying the surface form.
 
 Examples:
 
 ```text
-sequence
--> mark the change from frame 1 to frame 2
--> child checks whether the same change repeats
--> close sequence with one feature changed
-
-analogy
--> expose the A-to-B relation on the original pair
--> child applies it to C
--> close analogy with new symbols
-
-direction
--> draw the first move/turn from the original path
--> child completes the remaining path
--> close path with changed directions
-
-ranking
--> place one original clue on a line
--> child places the next clue
--> close ranking problem with new names
-
-rotation/reflection
--> trace the first transformation on the original figure
--> child identifies the next transformation
--> close figure with changed orientation
+sequence -> identify transformation -> apply to changed symbols
+analogy -> relation recognition -> changed representation
+ranking -> pairwise clue -> multi-clue order
+coding -> mapping -> reverse / partial mapping
+spatial -> rotation -> distinguish rotation from reflection
+combination -> one constraint -> systematic elimination
 ```
 
-The aim is to teach a reusable reasoning routine, not merely reveal the answer.
+If a Logical Reasoning question is difficult, teach from the exact original figures / clues and hand one step back to the learner.
 
-## 12. Presentation requirements
+## 13. Presentation requirements
 
 For printable Grade 3-4 material:
 
-- one dominant idea per page;
-- original question at the top;
-- conversion message immediately after it when help is used;
-- short, child-friendly wording;
+- one dominant idea per Help page;
+- exact original question at top;
+- conversion message immediately after it;
+- short child-friendly wording;
 - large readable type;
-- consistent alignment;
 - one useful representation rather than decorative clutter;
-- child response space embedded inside the example;
-- close-practice item spatially separated from the worked example;
-- avoid too many equally prominent sections;
-- preserve whitespace;
-- use visual flow from top to bottom.
+- response space inside the worked example;
+- fresh close practice visually separated;
+- enough workspace in transfer rounds for learner-created representations;
+- do not expose internal evidence labels.
 
-## 13. Planner contract
+## 14. Planner contract
 
 ```text
-ROUND 1 CLUSTER
+ROUND 1
    |
    v
-rung attempted
+unsupported attempt
    |
-   +-- independent -> next rung in same concept family
+   +-- independent -> continue planned progression
    |
    +-- difficult
           |
           v
-   convert exact rung to worked example
+   convert exact item to worked example
           |
-          +-- uncertainty about prerequisite? -> optional small probe
-          |
-          v
-   expose first useful structure
+          +-- prerequisite ambiguity? -> optional probe
           |
           v
-   child completes a key step
+   expose useful structure
           |
           v
-   close new item
+   child completes key step
           |
           v
-   continue cluster / fade support
+   fresh close item
 
-AFTER CLUSTERS
+AFTER ROUND 1
    |
    v
-ROUND 2 MIXED PRE-IMO
+ROUND 2 DELIBERATELY INTERLEAVED TRANSFER
    |
    +-- independent success -> independent evidence
    |
-   +-- difficult -> may convert to instruction, but burn item for transfer evidence
-                      |
-                      v
-                later unseen transfer
+   +-- independently self-generates useful representation -> positive strategy evidence
+   |
+   +-- difficult -> optional Help -> supported only
+                         |
+                         v
+                 later unseen transfer
 ```
 
-## 14. Non-goals
+## 15. Non-goals
 
 This schema does not:
 
 - randomize Round 1 as if it were an exam;
-- force a Quick Check onto every help page;
+- teach pre-IMO transfer through repetitive near-copy worksheets;
+- force a Quick Check onto every Help page;
 - count a taught original question as independent mastery;
-- solve every difficult question completely for the learner;
-- keep the learner on one concept forever;
-- jump from a worked example directly to an Achievers-level problem;
-- use visual support merely because a question is hard;
-- infer a broad ability deficit from one wrong item;
-- expose internal taxonomy to the child.
+- forbid drawing or self-created representations in transfer rounds;
+- treat a supplied picture as automatically helpful;
+- use `right-brain / left-brain learner` as a scientific classification;
+- infer a broad learner deficit from one wrong item;
+- jump directly from a worked example to full Achievers complexity.
