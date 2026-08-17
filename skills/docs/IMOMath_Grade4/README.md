@@ -1,6 +1,6 @@
 # IMO Mathematics Grade 4 - Learning Schema
 
-This folder defines the learning architecture for Grade 4 IMO preparation, especially for a learner bridging from Grade 3 into Grade 4 work.
+This folder defines the learning architecture for Grade 4 IMO preparation, including both Grade 3 -> Grade 4 bridge work and Grade 4 -> pre-IMO transfer.
 
 ## Core principle
 
@@ -10,64 +10,90 @@ Do not model the learner as:
 
 Separate:
 
-1. **Mathematical Core** - mathematical concepts and skills.
+1. **Mathematical Core** - concepts and mathematical skills.
 2. **Logical Reasoning** - reusable reasoning capabilities.
-3. **Everyday Mathematics** - application/transfer structures that reference Mathematical Core skills.
+3. **Everyday Mathematics** - application structures that reference the Mathematical Core.
 
 `Achievers` is a higher-demand mode, not a separate curriculum.
 
-## Two rounds with different jobs
+## Round 1 and Round 2 have different jobs
 
-Round 1 and Round 2 must not use the same question-order policy.
+Round 1 teaches and strengthens thinking tools. Round 2 tests whether the learner can recognize those tools when the surface cues disappear.
 
-### Round 1 - CLIMB THE LADDER
+### Round 1 - build the thinking tools
 
-Round 1 is a structured learning bridge, not an exam simulation.
+Round 1 is intentionally sequenced, not randomized.
 
-Questions are grouped into short concept clusters:
+Two valid modes exist.
+
+#### Bridge mode
+
+For Grade 3 -> Grade 4 transition:
 
 ```text
-familiar Grade 3 rung
+familiar prerequisite
 -> direct Grade 4 extension
--> Grade 4 application / one extra reasoning demand
+-> one extra reasoning demand
 ```
 
-Neighboring questions should be conceptually similar enough that the learner can reuse a method and experience progress.
+Tight clusters are useful because the learner can reuse a method while only one demand changes.
 
-If a rung is difficult, the exact question changes role:
+#### Grade 4 pre-IMO mode
+
+Once enough Grade 4 core is present, avoid teaching with repetitive near-copy templates.
+
+Use a curated progression of different question archetypes that share a compact conceptual backbone.
+
+For Number Sense this may include:
+
+- place-value magnitude;
+- flexible regrouping;
+- missing-digit inequalities;
+- distance / equal spacing;
+- number-boundary continuity;
+- rounding intervals;
+- Roman numeral operations;
+- parity reasoning;
+- equality / balance;
+- systematic enumeration;
+- clue / constraint organization.
+
+Conceptual continuity remains, but surface repetition is reduced.
+
+### Round 2 - deliberately interleaved transfer
+
+Round 2 is mixed, but not random in the loose sense.
+
+It should require the learner to decide:
+
+> What kind of structure is hidden here, and what tool could help me?
+
+Rules:
+
+- concept labels disappear;
+- question forms change relative to Round 1;
+- families are interleaved;
+- obvious near-copies are avoided;
+- no instructional representation is supplied;
+- the learner may create their own number line, place-value columns, digit slots, list, case table, clue board, or balance model;
+- plausible distractors reflect real misconceptions;
+- most items remain Grade 4 core / pre-IMO unless an Achievers round is explicitly intended.
+
+## Question-to-example conversion
+
+If a question is difficult, that exact question changes role.
 
 ```text
 question attempt
 -> LET'S WORK THIS ONE OUT TOGETHER
 -> same question becomes a partial worked example
 -> optional small diagnostic check only if needed
+-> SEE IT THIS WAY
 -> child completes a key step
--> close new question
--> continue the cluster
+-> TRY ONE: fresh close question
 ```
 
-Once converted to an example, the original question is `instructionally_exposed` and can no longer prove independent mastery.
-
-### Round 2 - MIX IT UP
-
-Round 2 is mixed pre-IMO transfer.
-
-Concept families are shuffled, cluster headings disappear, and the learner must recognize which idea to use.
-
-Round 2 should:
-
-- mix previous- and current-class retrieval;
-- contain mostly Grade 4 core and pre-IMO application;
-- use plausible distractors;
-- vary wording and surface form;
-- provide no instructional representation;
-- include only a small amount of higher-demand material unless explicitly building an Achievers round.
-
-A Round 2 item solved after opening help is `supported`, not `independent`. A later unseen item is required.
-
-## Question-to-example conversion
-
-A difficult question is not merely followed by an explanation. The difficult question itself becomes the instructional example.
+Once converted, the original is `instructionally_exposed` and can no longer prove independent mastery.
 
 Preferred child-facing wording:
 
@@ -76,79 +102,108 @@ LET'S WORK THIS ONE OUT TOGETHER
 We'll find the first step, then you can finish it.
 ```
 
-Preferred page flow:
-
-```text
-YOUR QUESTION
--> LET'S WORK THIS ONE OUT TOGETHER
--> optional: IF THIS PART IS HARD...
--> SEE IT THIS WAY
--> YOUR STEP
--> TRY ONE
-```
-
-The original numbers, figures, sequence, path, clues, and answer choices remain visible so the learner does not have to infer how a separate example connects back.
-
-The worked example should usually be partial: expose enough structure to make the next thinking step achievable, then give responsibility back to the learner.
-
 See `intervention-and-support-schema.md`.
 
 ## Quick Check is conditional
 
-Do not force a diagnostic probe onto every help page.
+Do not force a diagnostic probe onto every Help page.
 
 Use a small cue-free check only when the failure path is ambiguous and the result will change what is taught.
 
-If the prerequisite is already independently demonstrated elsewhere, teach the actual missing structure directly.
+## Learner-created representations
 
-## Number Sense bridge
-
-For Numbers / Number Sense, use the dedicated Grade 3 -> Grade 4 bridge in `number-sense-bridge-schema.md`.
-
-The Class 3 -> Class 4 transition is especially suited to clustered Round 1 design:
+A major transfer goal is the shift from:
 
 ```text
-4-digit understanding
--> larger-number extension
--> reasoning/application
+teacher supplies the representation
 ```
 
-Recommended clusters include:
+to:
 
-- place value and representation;
-- comparing and ordering;
-- forming numbers under rules;
-- rounding;
-- Roman numerals;
-- number names as an optional bridge when needed.
+```text
+learner recognizes the structure
+-> learner chooses / draws a useful representation
+```
 
-Factors and Multiples should remain a separate mathematical cluster/chapter rather than being silently mixed into Number Sense.
+This is positive evidence, not a sign that the learner failed to work mentally.
+
+Examples:
+
+- drawing an equal-spacing number line;
+- aligning place values;
+- building digit boxes from clues;
+- listing valid cases systematically;
+- drawing balance bars;
+- crossing out candidates that violate a condition.
+
+Suggested evidence:
+
+```yaml
+selfGeneratedRepresentation:
+  used: true
+  type: clue_board
+  appropriate: true
+  promptedByAdult: false
+```
+
+## Round 2 Help rule
+
+Round 2 must first be attempted cleanly.
+
+An optional Help Book may exist afterward.
+
+If Round 2 Help is opened:
+
+```text
+Round 2 item
+-> converted to worked example
+-> supported learning
+-> fresh close item
+-> later unseen transfer required
+```
+
+A corrected Round 2 answer after Help is `supported`, not `independent`.
+
+## Number Sense
+
+See `number-sense-bridge-schema.md` for the full Number Sense contract.
+
+It now covers:
+
+- Grade 3 -> Grade 4 clustered bridge mode;
+- Grade 4 pre-IMO varied-archetype Round 1;
+- deliberately interleaved Round 2;
+- self-generated representation evidence;
+- optional Round 2 Help behavior;
+- distractor and archetype guidance.
+
+Factors and Multiples remains a separate mathematical topic family rather than being silently mixed into a Number Sense-only set.
 
 ## Logical Reasoning adaptation
 
-The same conversion rule applies to Logical Reasoning.
+The same architecture applies to Logical Reasoning.
 
-If a reasoning item is difficult, teach from the exact original material:
+Do not build transfer by showing ten surface copies of one reasoning puzzle.
+
+Preserve the reasoning capability while varying the surface form:
 
 ```text
-sequence       -> mark the first change; child checks/repeats it
-analogy        -> expose A-to-B relation; child applies it to C
-coding         -> reveal one original mapping; child completes the table
-ranking        -> place one original clue; child places the next
-方向/direction -> draw the first move/turn; child completes the path
-rotation       -> trace the first transformation; child applies the next
-reflection     -> show the original mirror axis; child predicts the image
+sequence       -> detect transformation -> apply to changed symbols
+analogy        -> relation recognition -> changed representation
+coding         -> mapping -> reverse / partial mapping
+ranking        -> pairwise relation -> multi-clue order
+direction      -> one turn -> changed path
+rotation       -> transform -> distinguish from reflection
+combination    -> one constraint -> systematic elimination
 ```
 
-The objective is a reusable reasoning routine, not answer revelation.
+If a question is difficult, teach from the exact original figures or clues and hand one step back to the learner.
 
 See `logical-reasoning-schema.md` and `logical-reasoning-reinforcement-schema.md`.
 
 ## Learner evidence
 
-Avoid chapter-level percentages as the primary evidence model.
-
-Track states such as:
+Primary evidence states:
 
 - `unknown`
 - `needs_instruction`
@@ -156,21 +211,30 @@ Track states such as:
 - `independent`
 - `secure`
 
-Also track:
+Track:
 
 - initial unsupported result;
 - guessed / needed help;
-- whether the original item was converted to a worked example;
-- whether a diagnostic probe was used;
-- representation used;
+- whether the original became a worked example;
+- diagnostic probe use;
+- supplied representation;
+- learner-generated representation;
 - child-completed step;
-- guided reinforcement result;
-- near-independent result;
-- fresh transfer result;
+- close-practice result;
+- mixed transfer result;
 - failure mode;
 - ability to explain the first useful step.
 
-A converted original item is burned for independent evidence.
+Key rules:
+
+```text
+converted original -> supported
+fresh close item -> near-independent at best
+unseen Round 2 success without Help -> independent transfer
+unseen Round 2 success using a self-generated appropriate representation -> independent transfer + positive strategy evidence
+Round 2 success after Help -> supported
+later retained mixed success -> secure
+```
 
 ## Difficulty model
 
@@ -185,11 +249,11 @@ Difficulty is multidimensional. Track dimensions such as:
 - memory load;
 - transfer distance;
 - information load;
-- unit/conversion load.
+- question-archetype novelty.
 
 Difficulty is separate from `representationAffordance`.
 
-Do not automatically add a picture to the hardest questions. Use a representation only when it exposes useful structure.
+Do not automatically add a picture to the hardest questions. Use a representation when it exposes structure; in later transfer, allow the learner to decide whether to create it.
 
 ## Architecture
 
@@ -204,38 +268,41 @@ Do not automatically add a picture to the hardest questions. Use a representatio
                         |
                   Bridge Planner
                         |
-              ROUND 1 CLUSTERS
+                 ROUND 1
+          bridge ladder / pre-IMO progression
                         |
         independent? / convert-to-example
                         |
-                faded close practice
+                 fresh close item
                         |
-               ROUND 2 MIXED TRANSFER
+             ROUND 2 INTERLEAVED TRANSFER
                         |
-          independent / supported / later retry
+       recognize structure + select strategy
+                        |
+      independent / supported / later unseen
                         |
                 Olympiad / Achievers
 ```
 
 ## Documents
 
-- `intervention-and-support-schema.md` - question-to-example conversion, optional probing, fading and evidence rules.
-- `number-sense-bridge-schema.md` - Grade 3 -> Grade 4 Number Sense clusters and Round 1 / Round 2 generation contract.
+- `intervention-and-support-schema.md` - conversion, partial worked examples, fading, interleaved transfer, representation evidence, and support rules.
+- `number-sense-bridge-schema.md` - bridge and pre-IMO Number Sense generation contract.
 - `logical-reasoning-schema.md` - Logical Reasoning capability model.
 - `logical-reasoning-reinforcement-schema.md` - question-grounded reasoning reinforcement patterns.
-- `everyday-mathematics-schema.md` - application/transfer schema.
+- `everyday-mathematics-schema.md` - application / transfer schema.
 
 ## Printable-material principle
 
 For learner-facing material:
 
 - use child-friendly labels;
-- keep one dominant idea per page or cluster;
-- use large readable type and consistent alignment;
-- preserve whitespace;
-- keep explanations short and spatially close to the relevant question step;
-- require the child to complete something inside a worked example;
-- keep a close new item after the example;
-- avoid exposing internal terms such as `diagnostic_probe`, `fade`, `transfer`, `Part B`, or skill IDs.
+- keep initial attempts free of instructional hints;
+- preserve whitespace for learner-created work;
+- keep explanations short and spatially close to the relevant step;
+- require the learner to complete something inside a worked example;
+- include a fresh close question after support;
+- keep Round 2 concept labels hidden;
+- avoid exposing internal terms such as `diagnostic_probe`, `fade`, `transfer`, or skill IDs.
 
 Complexity belongs in the system, not in the child's navigation.
