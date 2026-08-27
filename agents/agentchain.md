@@ -3,9 +3,9 @@
 AGENTCHAIN_VERSION: 2
 
 EXECUTION_MODE: AUTO
-AUTO_STATE: TAKEOVER_REQUIRED
+AUTO_STATE: RUNNING
 SCOPE_AUTHORITY: LOCKED_TO_APPROVED_MISSION
-MERGE_AUTHORITY: OWNER_ONLY
+MERGE_AUTHORITY: OWNER_AUTHORIZED_FOR_COMPLETION
 
 MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint-file architecture. Their exact historical content is preserved in Git blob `2ea710e3b0120e2a2e739b96e6c035d3caca35f5`; they are not rewritten into synthetic normalized endpoint files.
 
@@ -13,7 +13,7 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2 | Qualify and stage bounded root-policy adoption of merged relay v2 while preserving v1 fallback | EP-0007 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md | #19 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | AUTO hard stop: distinct verifier follows QS-COMMON-V2-0007 verifier handoff, checks post-merge candidate evidence, and records verdict before AGENTS.md mutation |
+| COMMON-ENG-PR-DELIVERY-V2 | Complete canonical Common adoption and prove downstream relay operation | EP-0008 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0008.md | PENDING | READY_FOR_NEXT_LEG | Cross-repository engineering-agent delivery governance | Open/merge Common closure PR, then start Advanced_Analysis abrupt-loss and fabricated-anchor pilot without touching production engineering code |
 
 ## ENDPOINT LOG
 
@@ -26,3 +26,4 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 | EP-0005 | COMMON-ENG-PR-DELIVERY-V2 | LEG-001 | be44c1f1e1f47c0069c4061bafcf5d00732567cd | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0005.md |
 | EP-0006 | COMMON-ENG-PR-DELIVERY-V2 | LEG-001 | 5a6c9d37b2b3a409c0504f8e62422ac354b3576f | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md |
 | EP-0007 | COMMON-ENG-PR-DELIVERY-V2 | LEG-002 | 98b36f72015f12d8bf4f4e1bedce4753d911bfdc | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md |
+| EP-0008 | COMMON-ENG-PR-DELIVERY-V2 | LEG-003 | 77d7afc1fda71ec916e5d5b12f9730847cc52309 | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0008.md |
