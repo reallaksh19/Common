@@ -2,158 +2,232 @@
 
 This file applies to **all contributors and agents** working in this repository: ChatGPT, Codex, Claude, Cursor, Copilot, Gemini, local agents, scripts acting as agents, and humans.
 
-The repository—not a chat session—is the durable source of work state.
+The repository—not a chat session—is the durable source of engineering-work state.
 
-The canonical reusable delivery protocol is maintained in:
+## Canonical delivery protocol
 
-- `skills/engineering-pr-delivery/SKILL.md`
-- `skills/engineering-pr-delivery/references/`
-- `skills/engineering-pr-delivery/scripts/`
+For new engineering work, active relay work, takeover, abrupt-agent recovery, multi-agent coordination, and AUTO MODE, the canonical reusable delivery protocol is:
 
-Repository-local rules may be stricter. Explicit current owner instructions override generic defaults, but no agent may silently weaken engineering evidence, validation integrity, or handover requirements.
+- `skills/engineering-pr-delivery-v2/SKILL.md`
+- `skills/engineering-pr-delivery-v2/references/`
+- `skills/engineering-pr-delivery-v2/scripts/`
+- repo-wide relay index: `agents/agentchain.md`
 
-## 1. Continuous handover invariant
+The previous protocol remains available under:
 
-Assume the active agent may disappear, lose context, become incapable, or be replaced after any meaningful action.
+- `skills/engineering-pr-delivery/**`
 
-At every durable checkpoint, another qualified agent must be able to recover the work from repository + PR artifacts without chat history.
+but is now **LEGACY / ROLLBACK-ONLY**. Do not start new workreport-centric chains under v1 unless an explicit owner instruction requires rollback or a repository has not yet adopted v2.
 
-No essential mission state, engineering reasoning, current hypothesis, validation limitation, authority decision, risk, or exact next action may exist only in private reasoning or conversation history.
+Repository-local rules may be stricter. Explicit current owner instructions override generic workflow defaults, but no agent may silently weaken source authority, engineering evidence, validation integrity, takeover qualification, or anti-gaming controls.
 
-## 2. Establish live ground truth before mutation
+## 1. Core relay invariant
 
-Before changing production or engineering-sensitive files, determine from live Git/GitHub where available:
+Assume the active agent may disappear after any meaningful action.
 
-- repository and default/base branch;
-- current base/main SHA;
-- WIP/branch/PR identity;
-- current PR head and merge base;
-- actual changed files and commits;
-- checks/workflows and review state;
-- source issue/task;
-- predecessor/follow-on PRs;
-- other active work that may overlap.
+A competent next agent must be able to recover the mission from repository + PR artifacts without chat history and without the outgoing agent.
 
-Live mutable repository state overrides stale work reports and prior conversations.
-
-## 3. Durable work identity
-
-The durable work identity is the **WIP/PR**, not the agent session.
-
-Before a PR exists, use a unique identity:
+The canonical durable identity is:
 
 ```text
-WIP-<short-id>
-agents/WIP-<short-id>_workreport.md
+REPOSITORY
+  -> CHAIN_ID
+  -> LEG_ID
+  -> ENDPOINT_ID
+  -> PR / branch / commits
 ```
 
-Do not use one shared `PR_PENDING_workreport.md` in a multi-agent repository.
+A PR is a delivery container; it is not the durable engineering-work identity.
 
-After PR allocation, use:
+## 2. Repository traffic control
+
+Use:
 
 ```text
-agents/PR<NUMBER>_workreport.md
+agents/agentchain.md
 ```
 
-If status/claim registries exist, keep the matching `agents/status/` and `agents/claims/` records current.
+as the repo-wide traffic/index log.
 
-## 4. Work report must remain recovery-first
+Use immutable detailed endpoints at:
 
-For implementation or engineering investigation, keep the work report synchronized around every meaningful state transition.
+```text
+agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
+```
 
-The current-state portion must identify at least:
+`agents/agentchain.md` contains:
 
-- `HANDOVER_READINESS`;
-- `PR_RECOVERY_STATE`;
-- `TAKEOVER_AUTHORITY`;
-- report basis/current live grounding;
-- mission, scope, acceptance and non-goals;
-- current implementation/partial work;
-- active `ISS-*`, `IMP-*`, `RISK-*`, `DEC-*`, `QST-*`, `DEBT-*`;
-- current technical diagnosis and falsifier;
-- authority boundaries and invariants;
-- validation PASS/FAIL/NOT_RUN state;
-- changed-file ledger;
-- open reviews/checks;
-- highest remaining risk;
-- exact file/function/location where work resumes;
-- one executable `EXACT_NEXT_ACTION`.
+1. `ACTIVE CHAINS` — mutable current traffic state;
+2. `ENDPOINT LOG` — append-only compact history.
 
-Historical stage logs do not override current recovery state.
+Detailed endpoint files are created once and must not be rewritten merely to clean history. Correct prior state by appending a later endpoint with explicit reconciliation/supersession provenance.
 
-## 5. Incoming-agent takeover starts read-only
+## 3. Mandatory endpoint content
 
-When taking over an existing engineering-critical PR, begin with:
+Every non-terminal durable endpoint must contain:
+
+- mission and current state;
+- completed/current/remaining work;
+- one executable `EXACT_NEXT_ACTION`;
+- known/proven state;
+- not-proven state;
+- explicit `NOT_RUN` / `NOT_APPLICABLE` classifications;
+- current hypothesis and falsifier;
+- protected invariants;
+- `DO NOT REDO` and `DO NOT CHANGE` boundaries;
+- expected next-leg files/domains;
+- changed-this-leg summary;
+- validation summary and open risks;
+- exactly five next-agent qualification questions;
+- exact source/input custody described below.
+
+### Required source/input custody at every endpoint
+
+Always list:
+
+```text
+INPUTS
+BENCHMARKS
+COMMON / GOVERNING DOCUMENTS
+AUTHORITATIVE SOURCES
+PRODUCTION PATHS
+VALIDATION / TEST PATHS
+```
+
+Where practical pin repository/path/commit/blob/hash and the relevant standard/source locator. If a category is genuinely empty, record `NONE — <reason>` rather than silently omitting it.
+
+## 4. Endpoint triggers
+
+Create a new durable endpoint at meaningful transitions, especially:
+
+- before first engineering-critical mutation;
+- after a coherent implementation unit;
+- after a material hypothesis change;
+- after significant validation PASS/FAIL;
+- when a blocker changes;
+- before/after PR transition;
+- before intentional stop;
+- before merge request;
+- during recovery after agent loss;
+- when ready for the next engineering leg;
+- when the chain is objectively complete.
+
+Do not create endpoints for trivial commentary-only edits.
+
+## 5. Exactly five next-agent questions
+
+Every non-terminal endpoint must contain exactly:
+
+```text
+Q1 Production Trace
+Q2 Current Unresolved Problem / Failure Isolation
+Q3 Authority / Invariant
+Q4 Independent Validation
+Q5 Next Contribution / Minimal Patch
+```
+
+Questions test the **next unresolved engineering work**. They are invalid if they are generic textbook prompts or can be answered correctly without opening the current repository/PR/evidence.
+
+Prefer tasks requiring the candidate to trace, reproduce, calculate, isolate, predict, falsify, compare, prove, reconcile, or define an exact patch boundary.
+
+## 6. Incoming takeover begins READ_ONLY
+
+For engineering-critical takeover:
 
 ```text
 TAKEOVER_AUTHORITY = READ_ONLY
 ```
 
-The incoming agent must independently:
+The incoming candidate must independently:
 
-1. re-ground against live repository state;
-2. reconcile the prior report against the actual PR diff/head/main;
-3. inspect important code/tests/evidence;
-4. identify stale, contradicted, inherited and newly observed facts;
-5. complete repository-specific takeover qualification;
-6. decide whether the PR is safe to continue.
+1. read `agents/agentchain.md` and the latest endpoint;
+2. read the endpoint-listed inputs, benchmarks, Common/governing docs, authoritative sources, production paths, and validation paths;
+3. re-ground live main/PR/head/diff/reviews/checks;
+4. reconcile live state with the endpoint;
+5. inspect material commits after the endpoint;
+6. answer Q1–Q5;
+7. obtain a separate verifier verdict;
+8. acquire engineering-critical write authority only after a valid verdict.
 
-Do not grant write authority because an agent claims expertise.
+The outgoing agent is never required.
 
-## 6. Appendix A is an implementation qualification gate
+## 7. Qualification separation and threshold
 
-For engineering-critical takeover, maintain **Appendix A — Implementation Takeover Qualification** against the **current unresolved work**.
-
-Normally use five challenges:
+Candidate-answer and verifier-verdict artifacts are separate:
 
 ```text
-A1 Production Trace
-A2 Current Failure Isolation
-A3 Authority / Invariant
-A4 Independent Validation
-A5 Next-Commit / Minimal Patch
+agents/qualifications/<CHAIN_ID>/<QUESTION_SET_ID>-<candidate>-answer.md
+agents/qualifications/<CHAIN_ID>/<QUESTION_SET_ID>-<candidate>-verdict.md
 ```
 
-A question is invalid if it can be answered correctly without opening the current repository/PR/evidence.
-
-Prefer tasks that require the agent to trace, reproduce, calculate, isolate, predict, falsify, compare, prove, reconcile, or define an exact patch boundary.
-
-Do not use generic textbook prompts such as `What is FEA?`, `Explain validation`, or `Describe dependency injection` as qualification evidence.
-
-For engineering-critical takeover, default qualification is:
+Rules:
 
 ```text
+candidate != verifier
+candidate cannot self-award WRITE_ALLOWED
+verdict basis == question material basis
 total >= 92/100
-minimum per challenge >= 17/20
+minimum each >= 17/20
 ```
 
-Fabricated repository evidence, unsafe engineering claims, validation gaming, or incorrect authority assumptions may cause immediate failure regardless of score.
+Fabricated repository evidence, unsafe engineering claims, validation gaming, incorrect authority assumptions, or other substantive automatic-failure reasons may fail qualification regardless of numeric score.
 
-## 7. Multi-agent coordination
+An owner may authorize scope/merge/product direction but such authorization must not be rewritten as fabricated independent technical verification.
 
-Before implementation and before each new stage, inspect other active PRs/WIPs.
+## 8. Qualification freshness
 
-Check overlap in:
+Every current question set binds to:
 
-- exact files;
-- directory/path prefixes;
-- engineering/software authority domains;
-- shared validation/release infrastructure;
-- dependencies and stacked PR lineage;
+```text
+QUALIFICATION_BASIS_HEAD
+QUESTION_SET_ID
+QUESTION_SET_STATUS
+```
+
+Material changes to production, tests, benchmarks, oracles, engineering inputs, source authority, behavior-changing configuration, methodology, or publication authority make the prior qualification stale.
+
+Metadata-only index synchronization does not by itself change the material basis.
+
+## 9. Crash recovery
+
+If an agent disappears, recover from the latest durable repository state.
+
+If commits exist after the latest endpoint, inspect and classify them:
+
+```text
+RECOVERABLE
+PARTIAL_UNKNOWN
+CONTAMINATED
+UNTRUSTED
+```
+
+Then create a recovery endpoint. Never represent abrupt loss as a graceful handoff.
+
+If a detailed endpoint was written but the index update did not occur before the crash, treat it as an **orphan durable endpoint** requiring reconciliation; do not silently delete it or ignore it.
+
+## 10. Multi-agent coordination
+
+Before mutation and before each new leg, compare active chains for:
+
+- exact-file overlap;
+- path-prefix overlap;
+- authority-domain overlap;
+- benchmark/oracle overlap;
+- dependency/stacking;
 - base/main drift.
 
-Classify coordination as:
+Classify:
 
 ```text
 SAFE
 COORDINATION_REQUIRED
-BLOCKED_BY_ACTIVE_CLAIM
+BLOCKED_BY_ACTIVE_CHAIN
 UNKNOWN
 ```
 
-No exact-file overlap does **not** prove semantic/authority independence.
+No exact-file overlap does not prove semantic independence.
 
-## 8. Engineering validation integrity
+## 11. Engineering validation integrity
 
 Separate software regression evidence from independent engineering verification.
 
@@ -161,122 +235,114 @@ Every material validation should record:
 
 ```text
 STATUS      = PASS | FAIL | NOT_RUN | NOT_APPLICABLE
-OBSERVATION = execution/inspection/inference basis
-ORACLE      = implementation-coupled or independent authority class
+OBSERVATION = execution | source inspection | artifact inspection | inference
+ORACLE      = implementation-coupled | independent reproduction |
+              analytical | authoritative reference | cross-solver | experimental
 ```
 
 Never:
 
-- weaken a tolerance just because a test fails;
+- weaken a tolerance merely because a test fails;
 - replace an independent expected value with production output;
 - change implementation and oracle together and call it independent verification;
-- delete/skip a difficult benchmark merely to obtain green status;
+- delete/skip a difficult benchmark to obtain green status;
 - hard-code fixture answers into production;
 - silence a fail-closed condition to make a test pass;
 - represent source inspection as runtime proof;
-- claim `NOT_RUN` as `PASS`.
+- represent `NOT_RUN` as `PASS`.
 
-## 9. Damaged or incapable-agent PRs
+## 12. Anti-gaming / fail-closed qualification
 
-Do not preserve a PR because of sunk effort.
+The canonical validators must reject, at minimum:
 
-If current intent cannot be reconstructed safely, authority is unclear, commits cannot be classified, expected values changed with implementation, or rebase/conflict resolution requires guessing engineering intent, quarantine and assess salvage.
+- candidate self-verification;
+- candidate self-scoring/WRITE_ALLOWED claims;
+- duplicate critical control fields;
+- duplicate verdict/scores intended to exploit first/last-match parsing;
+- stale active-index pointers;
+- cross-chain/skipped predecessor lineage;
+- missing endpoint files;
+- orphan endpoint files without reconciliation;
+- active historical-blob locators;
+- missing required source/benchmark inventories;
+- PASS below threshold;
+- meaningless automatic-failure overrides.
 
-Valid recovery outcomes are:
+A syntactically valid Markdown artifact is not substantive proof. Verifiers must independently open repository anchors; fabricated paths/functions/SHAs are automatic failure.
 
-```text
-CONTINUE
-SALVAGE_PARTIAL
-SUPERSEDE
-ABANDON
-```
-
-Preserve useful benchmarks, independent evidence, known-good commits, decisions, invariants and provenance even when the implementation PR is superseded.
-
-Agent replacement alone is not a reason to create a new PR.
-
-## 10. Scope, commit and merge discipline
+## 13. PR and merge discipline
 
 - One coherent assignment per PR unless the owner explicitly changes scope.
 - Keep implementation changes surgical and reviewable.
 - Explain every changed file before closure.
 - Do not silently broaden scope.
-- Do not modify workflow files unless explicitly authorized.
-- Keep the PR handover-ready while waiting for review/merge.
+- Do not modify workflows unless explicitly authorized.
+- Keep the chain recoverable while waiting for review/merge.
+- PR merge does not imply chain completion.
 - **Never merge without explicit owner authorization.**
 
-## 11. Repository role
+## 14. AUTO MODE
 
-`Common` is the cross-repository governance and controlled-reference repository. Changes to reusable Skills, methodology, controlled evidence, or cross-repo policy can affect many downstream repositories and therefore require explicit provenance, narrow scope, and durable compatibility reasoning.
+The exact owner keyword `AUTO MODE` grants autonomous phase progression within the approved mission. It does not waive qualification, source authority, validation integrity, destructive-operation controls, or merge authority.
 
-## 12. AUTO MODE — autonomous phase execution
+While no hard stop exists:
 
-The exact owner keyword `AUTO MODE` grants **phase-progression authority**, not unlimited authority.
+1. re-check live repository and active-chain overlap;
+2. select the next bounded action;
+3. preserve hypothesis, prediction, invariants, and expected files;
+4. implement one coherent unit;
+5. validate accurately;
+6. create/refresh the endpoint and Q1–Q5;
+7. continue automatically.
 
-When the current owner instruction contains `AUTO MODE`, persist:
+Hard stops include material scope expansion, unresolved authority change, stale/failed qualification, unresolved active-chain collision, validation gaming pressure, destructive/security operations needing new authorization, or merge without owner merge authority.
 
-```text
-EXECUTION_MODE = AUTO
-AUTO_STATE = RUNNING
-SCOPE_AUTHORITY = LOCKED_TO_APPROVED_MISSION
-PHASE_PROGRESSION = AUTO
-MERGE_AUTHORITY = OWNER_ONLY
-```
+## 15. Completion semantics
 
-`AUTO MODE` does **not** imply `AUTO MERGE`. Merge authority remains owner-only unless the owner separately and explicitly authorizes automatic merge.
-
-### AUTO execution loop
-
-While the approved mission remains incomplete and no hard-stop condition exists, the agent shall:
-
-1. re-check current durable repository/PR state and active overlaps;
-2. select the next approved phase from the recorded plan;
-3. record the phase objective, expected files, rationale, predicted behavior, validation, and invariants;
-4. implement only that phase;
-5. validate and classify evidence accurately;
-6. update the work report, findings, changed-file ledger, status/claims, and Appendix A if the next unresolved work changed;
-7. create a durable checkpoint;
-8. evaluate the hard-stop conditions below;
-9. if none applies, continue automatically to the next approved phase.
-
-Completion of a normal phase is **not** a reason to ask for owner confirmation.
-
-While `EXECUTION_MODE=AUTO`, the following are invalid routine stops unless a defined hard-stop condition exists:
-
-- `Phase complete; awaiting confirmation.`
-- `Would you like me to continue?`
-- `Let me know if you want the next stage.`
-- `Should I run the remaining planned tests?`
-- `I can continue if desired.`
-
-### AUTO hard-stop conditions
-
-AUTO progression must stop and record the exact reason when any of the following occurs:
-
-- the next action materially expands or changes approved scope;
-- the approved plan is materially invalidated and a new owner-level product/engineering choice is required;
-- an engineering authority, governing formulation, controlled source, runtime/writer/canvas, or other protected authority must change beyond what was already authorized;
-- safety-critical uncertainty cannot be bounded by existing approved evidence;
-- takeover qualification fails, expires, or write authority is revoked;
-- an independent oracle materially contradicts the implementation and bounded diagnosis cannot resolve it within approved scope;
-- an unresolved `BLOCKED_BY_ACTIVE_CLAIM` or equivalent multi-agent authority collision exists;
-- a destructive, credential, security, permission, or irreversible operation requires new authorization;
-- continuing requires guessing engineering intent or silently weakening a validation/acceptance gate;
-- `SUPERSEDE` or `ABANDON` would discard material work and owner disposition is required;
-- merge is the next action but merge authority has not been separately granted.
-
-On a hard stop set `AUTO_STATE` to `BLOCKED`, `OWNER_DECISION_REQUIRED`, or `TAKEOVER_REQUIRED` as appropriate, keep `HANDOVER_READINESS` current, and record the evidence, exact blocker, safe options, and one executable next action.
-
-### Bounded self-recovery
-
-AUTO MODE may automatically investigate, repair, rerun validation, and continue when the problem remains inside approved scope and authority boundaries.
-
-It must not thrash indefinitely. If repeated attempts do not narrow the uncertainty, or the agent can no longer state a concrete current hypothesis, falsifier, next isolating experiment, and protected invariants, stop production mutation and set:
+Distinguish:
 
 ```text
-PR_RECOVERY_STATE = TAKEOVER_REQUIRED
-TAKEOVER_AUTHORITY = READ_ONLY
-AUTO_STATE = TAKEOVER_REQUIRED
+AGENT_LEG_COMPLETE
+PR_COMPLETE
+CHAIN_COMPLETE
 ```
 
-Refresh the work report and Appendix A so another qualified agent can recover immediately.
+A terminal endpoint uses:
+
+```text
+STATE: COMPLETE
+NEXT_AGENT_QUALIFICATION: NOT_REQUIRED
+QUESTION_SET_STATUS: NOT_REQUIRED
+COMPLETION_BASIS:
+```
+
+Remove completed chains from `ACTIVE CHAINS` but retain their endpoint-log history.
+
+## 16. Legacy v1 policy
+
+`skills/engineering-pr-delivery/**` remains preserved for:
+
+- audit/history;
+- rollback if v2 proves defective;
+- repositories not yet migrated;
+- explicit owner-directed compatibility work.
+
+Legacy artifacts such as `PR<NUMBER>_workreport.md`, status/claim registries, and embedded Appendix A remain readable evidence but are **not mandatory for new v2 chains** unless repository-local policy explicitly requires them.
+
+Do not delete historical workreports merely because v2 is canonical.
+
+## 17. Executable controls
+
+Use the v2 scripts under:
+
+```text
+skills/engineering-pr-delivery-v2/scripts/
+```
+
+including the agentchain, candidate-answer, qualification, composite relay, transition/freshness/source/overlap controls, and self-tests.
+
+Structural validation does not replace engineering judgment or independent technical verification.
+
+## 18. Repository role
+
+`Common` is the cross-repository governance and controlled-reference repository. Changes to reusable Skills, methodology, controlled evidence, or cross-repo policy can affect many downstream repositories and therefore require explicit provenance, narrow scope, durable compatibility reasoning, and rollback traceability.
