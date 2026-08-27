@@ -1,16 +1,19 @@
 # Repo-wide Agent Chain Schema
 
-## Primary file
+## Repository layout
 
 ```text
 agents/agentchain.md
+agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
 ```
 
-This file is the repository-wide relay index and append-only endpoint ledger.
+`agents/agentchain.md` is the compact repository-wide traffic/index log.
 
-It is not a replacement for engineering evidence. It points to that evidence.
+Detailed endpoint files are immutable durable baton records. They contain the engineering state, source custody, next action, and five questions.
 
-## Header
+This split avoids making one ever-growing Markdown file a multi-agent write hotspot.
+
+## Compact index
 
 Start with:
 
@@ -21,33 +24,72 @@ AGENTCHAIN_VERSION: 2
 
 ## ACTIVE CHAINS
 
-| Chain | Mission | Latest endpoint | PR | State | Authority domain | Next action |
-|---|---|---|---|---|---|---|
+| Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
+|---|---|---|---|---|---|---|---|
+
+## ENDPOINT LOG
+
+| Endpoint | Chain | Leg | Checkpoint head | State | Locator |
+|---|---|---|---|---|---|
 ```
 
-Only the compact `ACTIVE CHAINS` table is mutable summary state. Endpoint records below it are append-only after creation.
+### ACTIVE CHAINS rules
 
-For every non-terminal chain, the table must point to that chain's actual latest ledger endpoint and the table state must equal the endpoint `STATE`. An active row must never point to an endpoint owned by another chain or to a terminal `COMPLETE`/`SUPERSEDED` endpoint.
+- one row for every non-terminal chain;
+- no row for a terminal `COMPLETE` or `SUPERSEDED` chain;
+- `Latest endpoint` must be the actual latest endpoint logged for that chain;
+- `Endpoint file` must resolve to that endpoint's current repository file;
+- row `State` must match the detailed endpoint `STATE`;
+- an active row may not use a historical legacy blob locator.
 
-## Endpoint identifiers
+### ENDPOINT LOG rules
 
-Use repository-unique endpoint IDs. Recommended forms:
+The endpoint log is append-only after a row is durable.
+
+Normal locator:
+
+```text
+agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
+```
+
+For controlled migration of endpoints that existed before the split architecture, a historical row may use:
+
+```text
+git-blob:<40-hex-blob-sha>#<ENDPOINT_ID>
+```
+
+A legacy blob locator is historical custody only. It must never be the active endpoint of a non-terminal chain.
+
+## Endpoint identifiers and lineage
+
+Use repository-unique endpoint IDs, for example:
 
 ```text
 EP-0001
 EP-0002
 ```
 
-or chain-prefixed forms where the repository benefits from them.
+or chain-prefixed forms where useful.
 
-Every endpoint references `PREVIOUS_ENDPOINT` except the first endpoint of a chain.
+`PREVIOUS_ENDPOINT` is chain-local:
 
-`PREVIOUS_ENDPOINT` is chain-local, not merely repository-global. For a chain that already has an endpoint, the next endpoint must reference that chain's immediately preceding/latest endpoint. It may not skip over a newer endpoint or point to an endpoint belonging to another chain.
+- the first endpoint of a chain uses `NONE — chain start` or equivalent;
+- every later endpoint points to the immediately preceding/latest endpoint for the same `CHAIN_ID`;
+- it may not skip a newer endpoint;
+- it may not point into another chain.
 
-## Mandatory endpoint schema
+## Detailed endpoint file
+
+Default path:
 
 ```text
-## <ENDPOINT_ID>
+agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
+```
+
+Mandatory body:
+
+```text
+# <ENDPOINT_ID> — <short endpoint title>
 
 CHAIN_ID:
 LEG_ID:
@@ -132,7 +174,7 @@ QUESTION_SET_STATUS: CURRENT | STALE | NOT_REQUIRED
 
 ## Endpoint reason values
 
-Recommended values:
+Recommended:
 
 ```text
 CHAIN_START
@@ -150,11 +192,9 @@ TASK_COMPLETE
 SUPERSESSION
 ```
 
-Repositories may extend this vocabulary but must not use ambiguous reasons such as `UPDATE` when a more specific state applies.
+Repositories may extend the vocabulary but should prefer precise reasons over `UPDATE`.
 
 ## State values
-
-Recommended:
 
 ```text
 ACTIVE
@@ -168,13 +208,12 @@ SUPERSEDED
 
 ## Exact next action
 
-A non-terminal endpoint must contain one executable next action.
+Every non-terminal endpoint must contain one executable next action.
 
 Bad:
 
 ```text
 Continue implementation.
-Finish remaining work.
 Review and proceed.
 ```
 
@@ -184,23 +223,30 @@ Good:
 Trace `transformLoadsToWrcFrame()` from the canonical global load object into the six WRC local components and independently reproduce the frozen gamma=5 case before modifying production.
 ```
 
-## Empty sections
+## Mandatory source/reference inventories
 
-Do not silently omit mandatory inventories.
+Every endpoint contains:
 
-Use:
+```text
+Inputs
+Benchmarks
+Common / governing documents
+Authoritative sources
+Production paths
+Validation / test paths
+```
+
+Do not silently omit an inventory. If genuinely absent, state for example:
 
 ```text
 NONE — no independent benchmark exists yet; creating one is part of the next leg.
 ```
 
-or equivalent explicit reasoning.
+## Append-only endpoint rule
 
-## Append-only rule
+Once a detailed endpoint file is durable, do not rewrite its technical assertions to make history cleaner.
 
-After an endpoint is durable, do not rewrite its technical assertions to make history look cleaner.
-
-A correction is a new endpoint with:
+Correct by creating a later endpoint with explicit fields such as:
 
 ```text
 SUPERSEDES_ENDPOINT:
@@ -209,11 +255,24 @@ CORRECTED_STATE:
 EVIDENCE:
 ```
 
-The active-chain summary row may be updated to the newest endpoint.
+Only the compact current `ACTIVE CHAINS` row is routinely replaced as custody advances. The endpoint log gains a new row rather than rewriting old rows.
+
+## Crash between endpoint and index update
+
+Because endpoint creation and index update are separate repository writes, a crash may leave a detailed endpoint file that is not yet logged.
+
+Treat this as an orphan durable endpoint:
+
+1. do not delete it silently;
+2. re-ground it against live repository state;
+3. classify it as valid/recoverable/untrusted;
+4. repair the index with recovery provenance or supersede it explicitly.
+
+The validator should detect unlogged endpoint files so the condition cannot remain silent.
 
 ## Completion endpoint
 
-A terminal chain endpoint must replace the five questions with:
+A terminal `COMPLETE` endpoint replaces the five questions with:
 
 ```text
 NEXT_AGENT_QUALIFICATION: NOT_REQUIRED
@@ -221,4 +280,6 @@ QUESTION_SET_STATUS: NOT_REQUIRED
 COMPLETION_BASIS:
 ```
 
-Do not use this merely because a PR merged.
+Remove the chain from `ACTIVE CHAINS`; retain its `ENDPOINT LOG` row.
+
+A PR merge alone is not a completion basis.
