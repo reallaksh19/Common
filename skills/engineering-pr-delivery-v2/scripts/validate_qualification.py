@@ -8,28 +8,60 @@ PASS_MIN = 17
 EMPTY_REASON_TOKENS = {"", "NONE", "N/A", "NA", "NOT_APPLICABLE"}
 
 
+def field_values(text: str, name: str):
+    return [
+        value.strip()
+        for value in re.findall(
+            rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n#]+)", text
+        )
+    ]
+
+
 def field_value(text: str, name: str):
-    m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n#]+)", text)
-    return m.group(1).strip() if m else None
+    values = field_values(text, name)
+    return values[0] if len(values) == 1 else None
 
 
 def meaningful_reason(value):
     return bool(value and value.strip().upper() not in EMPTY_REASON_TOKENS)
 
 
-def score_value(text: str, q: int):
-    m = re.search(rf"(?mi)^\s*Q{q}\s+(\d{{1,2}})\s*/\s*20\s*$", text)
-    return int(m.group(1)) if m else None
+def score_values(text: str, q: int):
+    return [
+        int(value)
+        for value in re.findall(
+            rf"(?mi)^\s*Q{q}\s+(\d{{1,2}})\s*/\s*20\s*$", text
+        )
+    ]
 
 
-def declared_total(text: str):
-    m = re.search(r"(?mi)^\s*TOTAL\s+(\d{1,3})\s*/\s*100\s*$", text)
-    return int(m.group(1)) if m else None
+def declared_totals(text: str):
+    return [
+        int(value)
+        for value in re.findall(
+            r"(?mi)^\s*TOTAL\s+(\d{1,3})\s*/\s*100\s*$", text
+        )
+    ]
 
 
-def declared_min(text: str):
-    m = re.search(r"(?mi)^\s*MINIMUM_QUESTION\s+(\d{1,2})\s*/\s*20\s*$", text)
-    return int(m.group(1)) if m else None
+def declared_mins(text: str):
+    return [
+        int(value)
+        for value in re.findall(
+            r"(?mi)^\s*MINIMUM_QUESTION\s+(\d{1,2})\s*/\s*20\s*$", text
+        )
+    ]
+
+
+def require_exactly_one_field(text: str, name: str, label: str, errors: list[str]):
+    values = field_values(text, name)
+    if not values:
+        errors.append(f"{label} missing {name}")
+        return None
+    if len(values) != 1:
+        errors.append(f"{label} field {name} must appear exactly once; found {len(values)}")
+        return None
+    return values[0]
 
 
 def main():
@@ -51,77 +83,106 @@ def main():
         "QUALIFICATION_BASIS_HEAD",
         "CANDIDATE_ID",
     ]
+    shared = {}
     for name in shared_fields:
-        av = field_value(answer, name)
-        vv = field_value(verdict, name)
-        if not av:
-            errors.append(f"answer missing {name}")
-        if not vv:
-            errors.append(f"verdict missing {name}")
+        av = require_exactly_one_field(answer, name, "answer", errors)
+        vv = require_exactly_one_field(verdict, name, "verdict", errors)
+        shared[name] = (av, vv)
         if av and vv and av != vv:
             errors.append(f"{name} mismatch: answer={av} verdict={vv}")
 
-    candidate = field_value(verdict, "CANDIDATE_ID")
-    verifier = field_value(verdict, "VERIFIER_ID")
-    if not verifier:
-        errors.append("verdict missing VERIFIER_ID")
+    candidate = shared.get("CANDIDATE_ID", (None, None))[1]
+    verifier = require_exactly_one_field(verdict, "VERIFIER_ID", "verdict", errors)
     if candidate and verifier and candidate == verifier:
         errors.append("candidate and verifier are identical: INVALID_SELF_VERIFIED")
 
-    basis = field_value(verdict, "QUALIFICATION_BASIS_HEAD")
-    verdict_basis = field_value(verdict, "VERDICT_BASIS_HEAD")
-    if not verdict_basis:
-        errors.append("verdict missing VERDICT_BASIS_HEAD")
-    elif basis and verdict_basis != basis:
+    basis = shared.get("QUALIFICATION_BASIS_HEAD", (None, None))[1]
+    verdict_basis = require_exactly_one_field(
+        verdict, "VERDICT_BASIS_HEAD", "verdict", errors
+    )
+    if verdict_basis and basis and verdict_basis != basis:
         errors.append(
             f"verdict basis {verdict_basis} differs from qualification basis {basis}; re-ground/requalify"
         )
 
+    auto_fail_values = field_values(verdict, "AUTOMATIC_FAILURE_REASON")
+    if len(auto_fail_values) != 1:
+        errors.append(
+            f"verdict field AUTOMATIC_FAILURE_REASON must appear exactly once; found {len(auto_fail_values)}"
+        )
+    auto_fail = auto_fail_values[0] if len(auto_fail_values) == 1 else None
+
+    decision = require_exactly_one_field(verdict, "VERDICT", "verdict", errors)
+
     for q in range(1, 6):
-        if not re.search(rf"(?mi)^#+\s+Q{q}\b", answer):
+        headings = re.findall(rf"(?mi)^#+\s+Q{q}\b[^\n]*$", answer)
+        if not headings:
             errors.append(f"answer missing Q{q} response section")
+        elif len(headings) != 1:
+            errors.append(
+                f"answer Q{q} response heading must appear exactly once; found {len(headings)}"
+            )
 
     scores = []
     for q in range(1, 6):
-        score = score_value(verdict, q)
-        if score is None:
+        values = score_values(verdict, q)
+        if not values:
             errors.append(f"verdict missing score Q{q} __/20")
-        elif not 0 <= score <= 20:
+            scores.append(None)
+            continue
+        if len(values) != 1:
+            errors.append(f"verdict score Q{q} must appear exactly once; found {len(values)}")
+            scores.append(None)
+            continue
+        score = values[0]
+        if not 0 <= score <= 20:
             errors.append(f"Q{q} score out of range: {score}")
         scores.append(score)
+
+    totals = declared_totals(verdict)
+    if not totals:
+        errors.append("verdict missing TOTAL __/100")
+        total = None
+    elif len(totals) != 1:
+        errors.append(f"verdict TOTAL must appear exactly once; found {len(totals)}")
+        total = None
+    else:
+        total = totals[0]
+
+    minimums = declared_mins(verdict)
+    if not minimums:
+        errors.append("verdict missing MINIMUM_QUESTION __/20")
+        minimum = None
+    elif len(minimums) != 1:
+        errors.append(
+            f"verdict MINIMUM_QUESTION must appear exactly once; found {len(minimums)}"
+        )
+        minimum = None
+    else:
+        minimum = minimums[0]
 
     if all(s is not None for s in scores):
         actual_total = sum(scores)
         actual_min = min(scores)
-        total = declared_total(verdict)
-        minimum = declared_min(verdict)
-        if total is None:
-            errors.append("verdict missing TOTAL __/100")
-        elif total != actual_total:
+
+        if total is not None and total != actual_total:
             errors.append(f"TOTAL arithmetic mismatch: declared {total}, actual {actual_total}")
-        if minimum is None:
-            errors.append("verdict missing MINIMUM_QUESTION __/20")
-        elif minimum != actual_min:
+        if minimum is not None and minimum != actual_min:
             errors.append(
                 f"MINIMUM_QUESTION mismatch: declared {minimum}, actual {actual_min}"
             )
 
-        decision = field_value(verdict, "VERDICT")
         qualified = actual_total >= PASS_TOTAL and actual_min >= PASS_MIN
-        if not decision:
-            errors.append("verdict missing VERDICT field")
-        elif decision == "PASS_WRITE_ALLOWED" and not qualified:
+        if decision == "PASS_WRITE_ALLOWED" and not qualified:
             errors.append(
                 f"PASS_WRITE_ALLOWED invalid below threshold: total={actual_total}, minimum={actual_min}"
             )
         elif decision == "FAIL_READ_ONLY" and qualified:
-            # A verifier may still fail for an automatic-failure reason, but it must be substantive.
-            auto_fail = field_value(verdict, "AUTOMATIC_FAILURE_REASON")
             if not meaningful_reason(auto_fail):
                 errors.append(
                     "FAIL_READ_ONLY despite passing numeric threshold requires a substantive AUTOMATIC_FAILURE_REASON"
                 )
-        elif decision not in {
+        elif decision and decision not in {
             "PASS_WRITE_ALLOWED",
             "FAIL_READ_ONLY",
             "STALE_REQUALIFICATION_REQUIRED",
@@ -134,7 +195,7 @@ def main():
             print("FAIL:", error)
         return 1
 
-    print("PASS: independent qualification structure and scoring")
+    print("PASS: independent qualification structure, uniqueness, and scoring")
     return 0
 
 
