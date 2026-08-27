@@ -4,7 +4,20 @@
 
 Engineering work is a chain of durable repository endpoints, not a sequence of chat sessions.
 
-The outgoing agent is never required for recovery. The latest valid endpoint is the baton.
+The outgoing agent is never required for recovery. The repository owns the baton.
+
+## Repository layout
+
+```text
+agents/agentchain.md
+agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
+agents/qualifications/<CHAIN_ID>/<QUESTION_SET_ID>-<candidate>-answer.md
+agents/qualifications/<CHAIN_ID>/<QUESTION_SET_ID>-<candidate>-verdict.md
+```
+
+`agents/agentchain.md` is intentionally compact. It contains repo-wide traffic state and endpoint locators, not full endpoint bodies.
+
+Detailed endpoint files are immutable after durable creation. This avoids turning one large Markdown file into a multi-agent write hotspot.
 
 ## Work identity
 
@@ -38,10 +51,10 @@ A normal flow is:
 
 ```text
 ACTIVE
-  -> endpoint
+  -> endpoint file + index row
   -> QUALIFICATION_REQUIRED for new incoming custody
   -> qualified contribution
-  -> endpoint
+  -> endpoint file + index row
   -> ...
 ```
 
@@ -60,9 +73,22 @@ ACTIVE
 
 No `AGENT_A_RELEASES_BATON` event is required.
 
+## Index authority
+
+The index has two different mutation semantics:
+
+```text
+ACTIVE CHAINS   mutable current traffic summary
+ENDPOINT LOG    append-only endpoint locator history
+```
+
+For every non-terminal chain, `ACTIVE CHAINS` must point to that chain's actual latest endpoint and endpoint file.
+
+A terminal chain is removed from `ACTIVE CHAINS` but remains in `ENDPOINT LOG`.
+
 ## Endpoint authority
 
-A completed endpoint is append-only.
+A completed detailed endpoint file is immutable.
 
 If an earlier endpoint contains an error, a later endpoint must record:
 
@@ -74,6 +100,8 @@ EVIDENCE:
 ```
 
 Do not rewrite historical custody claims.
+
+`PREVIOUS_ENDPOINT` is chain-local. It must reference the immediately preceding endpoint for that chain, not merely any earlier repository endpoint.
 
 ## Material state
 
@@ -96,16 +124,9 @@ Relay metadata-only changes do not create a new engineering material state by th
 
 Work that exists only in an agent's private context, local unpushed workspace, or chat is not durable authority.
 
-The system guarantees recovery only up to the latest persisted endpoint and any later repository commits that can be independently reconciled.
+The system guarantees recovery only up to the latest persisted endpoint plus later repository commits that can be independently reconciled.
 
-Therefore prefer small coherent durable units:
-
-```text
-intent/hypothesis endpoint
--> one focused engineering unit
--> validation
--> next endpoint
-```
+If an endpoint file is created but the index update is interrupted, the endpoint is an orphan durable artifact, not lost work. Recovery must reconcile it and repair the index rather than deleting it silently.
 
 ## Separation of completion states
 
