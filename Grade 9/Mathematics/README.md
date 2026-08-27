@@ -23,9 +23,34 @@ This mirrors the role of `Physics/Motion/`: a chapter-level proving ground for t
 
 ## Reusable skill authority
 
+General Grade 9 Mathematics concept-book work should use the subject-level math workflow when installed:
+
 - `../skills/grade9-math/SKILL.md`
 - `../skills/grade9-math/references/concept-book-see-realize-understand-adopt.md`
 
+Question-pattern bucketing should use the separate bucket-builder skill:
+
+- `../skills/grade9-question-bucket-builder/SKILL.md`
+- `../skills/grade9-question-bucket-builder/references/bucket-output-template.md`
+- `../skills/grade9-question-bucket-builder/references/pdf-layout-contract.md`
+
+## Question bucket workflow
+
+Use the bucket-builder when the source is a mixed question set and the requested output is:
+
+```text
+Group N / Bucket N
+  -> Source trace
+  -> Hidden invariant
+  -> Anchor question
+  -> Concept / application / solution
+  -> Extension questions
+  -> CBSE / IOQM / IMO-foundation variations
+  -> Cited PDF / workbook page
+```
+
+This workflow is intentionally separate from chapter teaching. It groups by mathematical structure, not by surface wording or answer type.
+
 ## Schema status
 
-No Grade 9 master-schema migration is introduced here. Chapter authoring maps and concept-book protocols operate within the existing shared workflow.
+No Grade 9 master-schema migration is introduced here. Chapter authoring maps, concept-book protocols, and question-bucket protocols operate within the existing shared workflow.
