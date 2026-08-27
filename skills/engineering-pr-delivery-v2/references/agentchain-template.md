@@ -1,15 +1,29 @@
+# Agent Chain Templates
+
+## 1. Repo-wide compact index — `agents/agentchain.md`
+
+```text
 # Engineering Agent Chain
 
 AGENTCHAIN_VERSION: 2
 
 ## ACTIVE CHAINS
 
-| Chain | Mission | Latest endpoint | PR | State | Authority domain | Next action |
-|---|---|---|---|---|---|---|
+| Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
+|---|---|---|---|---|---|---|---|
 
-# ENDPOINTS
+## ENDPOINT LOG
 
-## EP-0001
+| Endpoint | Chain | Leg | Checkpoint head | State | Locator |
+|---|---|---|---|---|---|
+```
+
+For a live chain, add one `ACTIVE CHAINS` row and one append-only `ENDPOINT LOG` row per endpoint.
+
+## 2. Detailed endpoint — `agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md`
+
+```text
+# EP-0001 — <short endpoint title>
 
 CHAIN_ID:
 LEG_ID:
@@ -116,3 +130,29 @@ Expected changed files/domains:
 Protected unchanged files/domains:
 Validation required:
 Rollback/falsifier boundary:
+```
+
+## 3. Example index rows
+
+```text
+## ACTIVE CHAINS
+
+| Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
+|---|---|---|---|---|---|---|---|
+| EXAMPLE-1 | Close example engineering discrepancy | EP-0002 | agents/agentchain/EXAMPLE-1/EP-0002.md | #42 | QUALIFICATION_REQUIRED | example authority | Incoming agent answers EP-0002 Q1-Q5 before mutation |
+
+## ENDPOINT LOG
+
+| Endpoint | Chain | Leg | Checkpoint head | State | Locator |
+|---|---|---|---|---|---|
+| EP-0001 | EXAMPLE-1 | LEG-001 | abc123 | QUALIFICATION_REQUIRED | agents/agentchain/EXAMPLE-1/EP-0001.md |
+| EP-0002 | EXAMPLE-1 | LEG-001 | def456 | QUALIFICATION_REQUIRED | agents/agentchain/EXAMPLE-1/EP-0002.md |
+```
+
+For a migrated historical endpoint that predates split endpoint files:
+
+```text
+| EP-0001 | LEGACY-CHAIN | LEG-001 | abc123 | QUALIFICATION_REQUIRED | git-blob:<40hex>#EP-0001 |
+```
+
+Historical blob locators may appear only in `ENDPOINT LOG`, never as the active endpoint file for a non-terminal chain.
