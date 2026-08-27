@@ -33,19 +33,32 @@ def main():
     if len(sys.argv) != 3:
         print("Usage: validate_relay_transition.py <previous-endpoint.md> <current-endpoint.md>", file=sys.stderr)
         return 2
-    prev = load(sys.argv[1]); cur = load(sys.argv[2]); errors = []
-    if not all(prev.values() | {"previous": True}):
-        pass
-    if prev["chain"] != cur["chain"]:
+    prev = load(sys.argv[1])
+    cur = load(sys.argv[2])
+    errors = []
+
+    for label, data, required in (
+        ("previous", prev, ("chain", "endpoint", "state")),
+        ("current", cur, ("chain", "endpoint", "previous", "state")),
+    ):
+        for key in required:
+            if not data.get(key):
+                errors.append(f"{label} endpoint missing or duplicate {key}")
+
+    if prev["chain"] and cur["chain"] and prev["chain"] != cur["chain"]:
         errors.append(f"cross-chain transition: {prev['chain']} -> {cur['chain']}")
-    if cur["previous"] != prev["endpoint"]:
+    if prev["endpoint"] and cur["previous"] and cur["previous"] != prev["endpoint"]:
         errors.append(f"PREVIOUS_ENDPOINT mismatch: expected {prev['endpoint']} got {cur['previous']}")
-    if prev["state"] not in ALLOWED:
+    if prev["state"] and prev["state"] not in ALLOWED:
         errors.append(f"unknown previous STATE: {prev['state']}")
-    elif cur["state"] not in ALLOWED.get(prev["state"], set()):
+    elif prev["state"] and cur["state"] and cur["state"] not in ALLOWED.get(prev["state"], set()):
         errors.append(f"illegal state transition: {prev['state']} -> {cur['state']}")
+    if cur["state"] and cur["state"] not in ALLOWED:
+        errors.append(f"unknown current STATE: {cur['state']}")
+
     if errors:
-        for e in errors: print("FAIL:", e)
+        for e in errors:
+            print("FAIL:", e)
         return 1
     print(f"PASS: relay transition {prev['state']} -> {cur['state']} is legal and chain-local")
     return 0
