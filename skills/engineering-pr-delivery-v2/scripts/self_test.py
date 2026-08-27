@@ -143,6 +143,16 @@ VERDICT: PASS_WRITE_ALLOWED
 
 SELF_VERDICT = VALID_VERDICT.replace("VERIFIER_ID: agent-c", "VERIFIER_ID: agent-b")
 
+LOW_SCORE_PASS = (
+    VALID_VERDICT.replace("Q4 18/20", "Q4 16/20")
+    .replace("TOTAL 94/100", "TOTAL 92/100")
+    .replace("MINIMUM_QUESTION 18/20", "MINIMUM_QUESTION 16/20")
+)
+
+UNJUSTIFIED_FAIL = VALID_VERDICT.replace(
+    "VERDICT: PASS_WRITE_ALLOWED", "VERDICT: FAIL_READ_ONLY"
+)
+
 
 def expect(result, should_pass, label):
     ok = result.returncode == 0
@@ -161,12 +171,16 @@ def main():
         answer = root / "answer.md"
         verdict = root / "verdict.md"
         self_verdict = root / "self-verdict.md"
+        low_score_pass = root / "low-score-pass.md"
+        unjustified_fail = root / "unjustified-fail.md"
         bad_chain = root / "bad-agentchain.md"
 
         chain.write_text(VALID_CHAIN, encoding="utf-8")
         answer.write_text(VALID_ANSWER, encoding="utf-8")
         verdict.write_text(VALID_VERDICT, encoding="utf-8")
         self_verdict.write_text(SELF_VERDICT, encoding="utf-8")
+        low_score_pass.write_text(LOW_SCORE_PASS, encoding="utf-8")
+        unjustified_fail.write_text(UNJUSTIFIED_FAIL, encoding="utf-8")
         bad_chain.write_text(
             VALID_CHAIN.replace("validation/example.json @ abc123", ""),
             encoding="utf-8",
@@ -183,6 +197,16 @@ def main():
                 run("validate_qualification.py", answer, self_verdict),
                 False,
                 "self-verification rejected",
+            ),
+            expect(
+                run("validate_qualification.py", answer, low_score_pass),
+                False,
+                "PASS_WRITE_ALLOWED rejected when any question is below 17/20",
+            ),
+            expect(
+                run("validate_qualification.py", answer, unjustified_fail),
+                False,
+                "numeric pass cannot be failed with AUTOMATIC_FAILURE_REASON=NONE",
             ),
             expect(
                 run("validate_agentchain.py", bad_chain),
