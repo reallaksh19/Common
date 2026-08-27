@@ -154,6 +154,39 @@ UNJUSTIFIED_FAIL = VALID_VERDICT.replace(
 )
 
 
+def second_endpoint(chain_id="TEST-1", previous="EP-0001"):
+    endpoint = VALID_CHAIN.split("# ENDPOINTS\n", 1)[1]
+    endpoint = endpoint.replace("## EP-0001", "## EP-0002", 1)
+    endpoint = endpoint.replace("CHAIN_ID: TEST-1", f"CHAIN_ID: {chain_id}", 1)
+    endpoint = endpoint.replace("ENDPOINT_ID: EP-0001", "ENDPOINT_ID: EP-0002", 1)
+    endpoint = endpoint.replace(
+        "PREVIOUS_ENDPOINT: NONE — chain start",
+        f"PREVIOUS_ENDPOINT: {previous}",
+        1,
+    )
+    endpoint = endpoint.replace("QUESTION_SET_ID: QS-0001", "QUESTION_SET_ID: QS-0002", 1)
+    return endpoint
+
+
+STALE_ACTIVE_CHAIN = VALID_CHAIN + second_endpoint()
+
+VALID_TWO_ENDPOINT_CHAIN = STALE_ACTIVE_CHAIN.replace(
+    "| TEST-1 | test relay | EP-0001 | #1 | QUALIFICATION_REQUIRED | test | inspect live path |",
+    "| TEST-1 | test relay | EP-0002 | #1 | QUALIFICATION_REQUIRED | test | inspect live path |",
+    1,
+)
+
+CROSS_CHAIN_PREDECESSOR = (
+    VALID_CHAIN.replace(
+        "| TEST-1 | test relay | EP-0001 | #1 | QUALIFICATION_REQUIRED | test | inspect live path |",
+        "| TEST-1 | test relay | EP-0001 | #1 | QUALIFICATION_REQUIRED | test | inspect live path |\n"
+        "| TEST-2 | second relay | EP-0002 | #2 | QUALIFICATION_REQUIRED | test-2 | inspect second path |",
+        1,
+    )
+    + second_endpoint(chain_id="TEST-2", previous="EP-0001")
+)
+
+
 def expect(result, should_pass, label):
     ok = result.returncode == 0
     if ok != should_pass:
@@ -174,6 +207,9 @@ def main():
         low_score_pass = root / "low-score-pass.md"
         unjustified_fail = root / "unjustified-fail.md"
         bad_chain = root / "bad-agentchain.md"
+        stale_active = root / "stale-active.md"
+        valid_two = root / "valid-two.md"
+        cross_chain = root / "cross-chain.md"
 
         chain.write_text(VALID_CHAIN, encoding="utf-8")
         answer.write_text(VALID_ANSWER, encoding="utf-8")
@@ -185,9 +221,27 @@ def main():
             VALID_CHAIN.replace("validation/example.json @ abc123", ""),
             encoding="utf-8",
         )
+        stale_active.write_text(STALE_ACTIVE_CHAIN, encoding="utf-8")
+        valid_two.write_text(VALID_TWO_ENDPOINT_CHAIN, encoding="utf-8")
+        cross_chain.write_text(CROSS_CHAIN_PREDECESSOR, encoding="utf-8")
 
         checks = [
             expect(run("validate_agentchain.py", chain), True, "valid agentchain"),
+            expect(
+                run("validate_agentchain.py", valid_two),
+                True,
+                "valid two-endpoint chain with current active pointer",
+            ),
+            expect(
+                run("validate_agentchain.py", stale_active),
+                False,
+                "stale ACTIVE CHAINS endpoint pointer rejected",
+            ),
+            expect(
+                run("validate_agentchain.py", cross_chain),
+                False,
+                "cross-chain PREVIOUS_ENDPOINT rejected",
+            ),
             expect(
                 run("validate_qualification.py", answer, verdict),
                 True,
