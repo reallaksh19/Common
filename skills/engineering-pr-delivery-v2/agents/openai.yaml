@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering PR Delivery v2"
+  short_description: "Crash-safe repo relay with expert takeover gates"
+  default_prompt: "Use $engineering-pr-delivery-v2 to recover live repository truth from agents/agentchain.md, follow the latest relay endpoint, qualify the next engineering leg, contribute safely, and leave a new endpoint with pinned inputs/benchmarks/common docs plus exactly five next-agent questions."
