@@ -13,12 +13,29 @@ SUITES = [
     "self_test_policy_controls.py",
 ]
 
+SUITE_TIMEOUT_SECONDS = 20
+
 
 def main():
     failed = []
     for suite in SUITES:
-        print(f"=== {suite} ===")
-        result = subprocess.run([sys.executable, str(HERE / suite)])
+        print(f"=== {suite} ===", flush=True)
+        try:
+            result = subprocess.run(
+                [sys.executable, str(HERE / suite)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                timeout=SUITE_TIMEOUT_SECONDS,
+            )
+        except subprocess.TimeoutExpired as exc:
+            if exc.stdout:
+                print(exc.stdout, end="")
+            print(f"FAIL: {suite} exceeded {SUITE_TIMEOUT_SECONDS}s")
+            failed.append(suite)
+            continue
+
+        print(result.stdout, end="")
         if result.returncode != 0:
             failed.append(suite)
 
