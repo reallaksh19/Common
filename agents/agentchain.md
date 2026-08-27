@@ -13,7 +13,7 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2 | Introduce and qualify crash-safe repo-wide engineering relay without replacing v1 yet | EP-0006 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md | #17 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | AUTO hard stop: independent verifier follows `agents/qualifications/COMMON-ENG-PR-DELIVERY-V2/QS-COMMON-V2-0006-verifier-handoff.md`, checks the candidate against live repo, and records verdict; root-policy adoption remains blocked until PASS |
+| COMMON-ENG-PR-DELIVERY-V2 | Qualify and stage bounded root-policy adoption of merged relay v2 while preserving v1 fallback | EP-0007 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md | PENDING | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | Candidate answers QS-COMMON-V2-0007 from post-merge main; distinct verifier verdict required before AGENTS.md mutation |
 
 ## ENDPOINT LOG
 
@@ -25,3 +25,4 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 | EP-0004 | COMMON-ENG-PR-DELIVERY-V2 | LEG-001 | cde9ee0f9d3a6ddf143b15d6c3cf24096e779ddb | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0004.md |
 | EP-0005 | COMMON-ENG-PR-DELIVERY-V2 | LEG-001 | be44c1f1e1f47c0069c4061bafcf5d00732567cd | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0005.md |
 | EP-0006 | COMMON-ENG-PR-DELIVERY-V2 | LEG-001 | 5a6c9d37b2b3a409c0504f8e62422ac354b3576f | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md |
+| EP-0007 | COMMON-ENG-PR-DELIVERY-V2 | LEG-002 | 98b36f72015f12d8bf4f4e1bedce4753d911bfdc | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md |
