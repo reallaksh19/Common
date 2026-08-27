@@ -2,13 +2,18 @@
 
 AGENTCHAIN_VERSION: 2
 
+EXECUTION_MODE: AUTO
+AUTO_STATE: TAKEOVER_REQUIRED
+SCOPE_AUTHORITY: LOCKED_TO_APPROVED_MISSION
+MERGE_AUTHORITY: OWNER_ONLY
+
 MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint-file architecture. Their exact historical content is preserved in Git blob `2ea710e3b0120e2a2e739b96e6c035d3caca35f5`; they are not rewritten into synthetic normalized endpoint files.
 
 ## ACTIVE CHAINS
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2 | Introduce and qualify crash-safe repo-wide engineering relay without replacing v1 yet | EP-0006 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md | #17 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | Independent verifier checks QS-COMMON-V2-0006 candidate evidence against live repo and records verdict; root-policy adoption remains blocked until PASS |
+| COMMON-ENG-PR-DELIVERY-V2 | Introduce and qualify crash-safe repo-wide engineering relay without replacing v1 yet | EP-0006 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md | #17 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | AUTO hard stop: independent verifier checks QS-COMMON-V2-0006 candidate evidence against live repo and records verdict; root-policy adoption remains blocked until PASS |
 
 ## ENDPOINT LOG
 
