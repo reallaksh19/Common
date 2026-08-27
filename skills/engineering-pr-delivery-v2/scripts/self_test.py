@@ -10,6 +10,7 @@ SUITES = [
     "self_test_candidate_answer.py",
     "self_test_qualification_policy.py",
     "self_test_verdict_uniqueness.py",
+    "self_test_policy_controls.py",
 ]
 
 
