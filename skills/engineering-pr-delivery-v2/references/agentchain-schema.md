@@ -27,6 +27,8 @@ AGENTCHAIN_VERSION: 2
 
 Only the compact `ACTIVE CHAINS` table is mutable summary state. Endpoint records below it are append-only after creation.
 
+For every non-terminal chain, the table must point to that chain's actual latest ledger endpoint and the table state must equal the endpoint `STATE`. An active row must never point to an endpoint owned by another chain or to a terminal `COMPLETE`/`SUPERSEDED` endpoint.
+
 ## Endpoint identifiers
 
 Use repository-unique endpoint IDs. Recommended forms:
@@ -39,6 +41,8 @@ EP-0002
 or chain-prefixed forms where the repository benefits from them.
 
 Every endpoint references `PREVIOUS_ENDPOINT` except the first endpoint of a chain.
+
+`PREVIOUS_ENDPOINT` is chain-local, not merely repository-global. For a chain that already has an endpoint, the next endpoint must reference that chain's immediately preceding/latest endpoint. It may not skip over a newer endpoint or point to an endpoint belonging to another chain.
 
 ## Mandatory endpoint schema
 
