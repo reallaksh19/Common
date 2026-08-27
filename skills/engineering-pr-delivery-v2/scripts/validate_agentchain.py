@@ -68,6 +68,8 @@ VALID_STATES = {
     "SUPERSEDED",
 }
 
+TERMINAL_STATES = {"COMPLETE", "SUPERSEDED"}
+
 
 def field_value(block: str, name: str):
     m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n#]+)", block)
@@ -84,6 +86,30 @@ def section_body(block: str, title: str):
         block,
     )
     return m.group(1).strip() if m else None
+
+
+def parse_active_rows(text: str):
+    m = re.search(
+        r"(?mis)^##\s+ACTIVE CHAINS\s*$\n(.*?)(?=^#\s+ENDPOINTS\s*$|\Z)",
+        text,
+    )
+    if not m:
+        return []
+
+    rows = []
+    for line in m.group(1).splitlines():
+        stripped = line.strip()
+        if not (stripped.startswith("|") and stripped.endswith("|")):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if not cells:
+            continue
+        if cells[0].lower() == "chain":
+            continue
+        if all(re.fullmatch(r":?-{3,}:?", cell.replace(" ", "")) for cell in cells):
+            continue
+        rows.append(cells)
+    return rows
 
 
 def main():
@@ -116,7 +142,9 @@ def main():
             errors.append(f"duplicate endpoint id: {eid}")
         ids.add(eid)
 
-    seen = set()
+    endpoint_meta = {}
+    latest_by_chain = {}
+
     for eid, block in endpoints:
         prefix = f"{eid}:"
         for name in REQUIRED_FIELDS:
@@ -128,17 +156,29 @@ def main():
         if declared and declared != eid:
             errors.append(f"{prefix} ENDPOINT_ID field is {declared}")
 
+        chain_id = field_value(block, "CHAIN_ID")
         state = field_value(block, "STATE")
         if state and state not in VALID_STATES:
             errors.append(f"{prefix} invalid STATE {state}")
 
         previous = field_value(block, "PREVIOUS_ENDPOINT")
-        if previous and not previous.upper().startswith("NONE"):
-            previous_id = previous.split()[0]
-            if previous_id not in seen:
-                errors.append(
-                    f"{prefix} PREVIOUS_ENDPOINT {previous_id} is missing or not earlier in ledger"
-                )
+        prior_for_chain = latest_by_chain.get(chain_id) if chain_id else None
+        if previous:
+            if previous.upper().startswith("NONE"):
+                if prior_for_chain:
+                    errors.append(
+                        f"{prefix} PREVIOUS_ENDPOINT cannot be NONE; prior endpoint for {chain_id} is {prior_for_chain}"
+                    )
+            else:
+                previous_id = previous.split()[0]
+                if not prior_for_chain:
+                    errors.append(
+                        f"{prefix} PREVIOUS_ENDPOINT {previous_id} supplied but this is the first ledger endpoint for chain {chain_id}"
+                    )
+                elif previous_id != prior_for_chain:
+                    errors.append(
+                        f"{prefix} PREVIOUS_ENDPOINT must be latest prior endpoint {prior_for_chain} for chain {chain_id}, found {previous_id}"
+                    )
 
         for title in REQUIRED_SECTIONS:
             if not has_section(block, title):
@@ -185,14 +225,61 @@ def main():
                             f"{prefix} Q{n} title must be '{expected}', found '{title.strip()}'"
                         )
 
-        seen.add(eid)
+        if chain_id:
+            latest_by_chain[chain_id] = eid
+        endpoint_meta[eid] = {"chain": chain_id, "state": state}
+
+    active_rows = parse_active_rows(text)
+    active_by_chain = {}
+    for cells in active_rows:
+        if len(cells) < 5:
+            errors.append(f"ACTIVE CHAINS row has too few columns: {' | '.join(cells)}")
+            continue
+        chain_id, latest_endpoint, row_state = cells[0], cells[2], cells[4]
+        if chain_id in active_by_chain:
+            errors.append(f"duplicate ACTIVE CHAINS row for {chain_id}")
+            continue
+        active_by_chain[chain_id] = latest_endpoint
+
+        meta = endpoint_meta.get(latest_endpoint)
+        if not meta:
+            errors.append(
+                f"ACTIVE CHAINS {chain_id} points to missing endpoint {latest_endpoint}"
+            )
+            continue
+        if meta["chain"] != chain_id:
+            errors.append(
+                f"ACTIVE CHAINS {chain_id} points to {latest_endpoint}, which belongs to {meta['chain']}"
+            )
+        expected_latest = latest_by_chain.get(chain_id)
+        if expected_latest and latest_endpoint != expected_latest:
+            errors.append(
+                f"ACTIVE CHAINS {chain_id} is stale: points to {latest_endpoint}, latest ledger endpoint is {expected_latest}"
+            )
+        if row_state != meta["state"]:
+            errors.append(
+                f"ACTIVE CHAINS {chain_id} state {row_state} disagrees with {latest_endpoint} state {meta['state']}"
+            )
+        if meta["state"] in TERMINAL_STATES:
+            errors.append(
+                f"ACTIVE CHAINS {chain_id} points to terminal endpoint {latest_endpoint} ({meta['state']})"
+            )
+
+    for chain_id, latest_endpoint in latest_by_chain.items():
+        state = endpoint_meta[latest_endpoint]["state"]
+        if state not in TERMINAL_STATES and chain_id not in active_by_chain:
+            errors.append(
+                f"non-terminal chain {chain_id} latest endpoint {latest_endpoint} is missing from ACTIVE CHAINS"
+            )
 
     if errors:
         for error in errors:
             print("FAIL:", error)
         return 1
 
-    print(f"PASS: agentchain relay structure ({len(endpoints)} endpoints)")
+    print(
+        f"PASS: agentchain relay structure ({len(endpoints)} endpoints, {len(active_by_chain)} active chains)"
+    )
     return 0
 
 
