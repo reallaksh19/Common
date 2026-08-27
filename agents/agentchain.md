@@ -4,8 +4,8 @@ AGENTCHAIN_VERSION: 2
 
 EXECUTION_MODE: AUTO
 AUTO_STATE: RUNNING
-SCOPE_AUTHORITY: LOCKED_TO_APPROVED_MISSION
-MERGE_AUTHORITY: OWNER_AUTHORIZED_FOR_COMPLETION
+SCOPE_AUTHORITY: REPOSITORY_ENGINEERING_RELAY
+MERGE_AUTHORITY: OWNER_ONLY_UNLESS_EXPLICITLY_GRANTED
 
 MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint-file architecture. Their exact historical content is preserved in Git blob `2ea710e3b0120e2a2e739b96e6c035d3caca35f5`; they are not rewritten into synthetic normalized endpoint files.
 
@@ -13,7 +13,6 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2 | Complete canonical Common adoption and prove downstream relay operation | EP-0009 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0009.md | PENDING | READY_FOR_NEXT_LEG | Cross-repository engineering-agent delivery governance | Open/merge Common closure PR, then start Advanced_Analysis abrupt-loss and fabricated-anchor pilot without touching production engineering code |
 
 ## ENDPOINT LOG
 
@@ -28,3 +27,4 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 | EP-0007 | COMMON-ENG-PR-DELIVERY-V2 | LEG-002 | 98b36f72015f12d8bf4f4e1bedce4753d911bfdc | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md |
 | EP-0008 | COMMON-ENG-PR-DELIVERY-V2 | LEG-003 | 77d7afc1fda71ec916e5d5b12f9730847cc52309 | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0008.md |
 | EP-0009 | COMMON-ENG-PR-DELIVERY-V2 | LEG-003 | 961e0a4917c622b9ee45a357fe73f9b74325ad1b | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0009.md |
+| EP-0010 | COMMON-ENG-PR-DELIVERY-V2 | LEG-004 | d9f19ea4d5ab988ef2f2ab6500fba906e8a7184f | COMPLETE | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0010.md |
