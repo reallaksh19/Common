@@ -13,7 +13,7 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2 | Qualify and stage bounded root-policy adoption of merged relay v2 while preserving v1 fallback | EP-0007 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md | #19 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | Candidate answers QS-COMMON-V2-0007 from post-merge main; distinct verifier verdict required before AGENTS.md mutation |
+| COMMON-ENG-PR-DELIVERY-V2 | Qualify and stage bounded root-policy adoption of merged relay v2 while preserving v1 fallback | EP-0007 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md | #19 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | AUTO hard stop: distinct verifier follows QS-COMMON-V2-0007 verifier handoff, checks post-merge candidate evidence, and records verdict before AGENTS.md mutation |
 
 ## ENDPOINT LOG
 
