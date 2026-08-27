@@ -13,7 +13,7 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2 | Complete canonical Common adoption and prove downstream relay operation | EP-0008 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0008.md | PENDING | READY_FOR_NEXT_LEG | Cross-repository engineering-agent delivery governance | Open/merge Common closure PR, then start Advanced_Analysis abrupt-loss and fabricated-anchor pilot without touching production engineering code |
+| COMMON-ENG-PR-DELIVERY-V2 | Complete canonical Common adoption and prove downstream relay operation | EP-0009 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0009.md | PENDING | READY_FOR_NEXT_LEG | Cross-repository engineering-agent delivery governance | Open/merge Common closure PR, then start Advanced_Analysis abrupt-loss and fabricated-anchor pilot without touching production engineering code |
 
 ## ENDPOINT LOG
 
@@ -27,3 +27,4 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 | EP-0006 | COMMON-ENG-PR-DELIVERY-V2 | LEG-001 | 5a6c9d37b2b3a409c0504f8e62422ac354b3576f | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md |
 | EP-0007 | COMMON-ENG-PR-DELIVERY-V2 | LEG-002 | 98b36f72015f12d8bf4f4e1bedce4753d911bfdc | QUALIFICATION_REQUIRED | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0007.md |
 | EP-0008 | COMMON-ENG-PR-DELIVERY-V2 | LEG-003 | 77d7afc1fda71ec916e5d5b12f9730847cc52309 | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0008.md |
+| EP-0009 | COMMON-ENG-PR-DELIVERY-V2 | LEG-003 | 961e0a4917c622b9ee45a357fe73f9b74325ad1b | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0009.md |
