@@ -8,7 +8,7 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2 | Introduce and qualify crash-safe repo-wide engineering relay without replacing v1 yet | EP-0006 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md | #17 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | Candidate answers EP-0006 Q1-Q5 under deferred/read-only authority; separate verifier required before root-policy adoption/pilot |
+| COMMON-ENG-PR-DELIVERY-V2 | Introduce and qualify crash-safe repo-wide engineering relay without replacing v1 yet | EP-0006 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0006.md | #17 | QUALIFICATION_REQUIRED | Cross-repository engineering-agent delivery governance | Independent verifier checks QS-COMMON-V2-0006 candidate evidence against live repo and records verdict; root-policy adoption remains blocked until PASS |
 
 ## ENDPOINT LOG
 
