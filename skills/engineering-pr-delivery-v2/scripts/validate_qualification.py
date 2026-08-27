@@ -5,11 +5,16 @@ import sys
 
 PASS_TOTAL = 92
 PASS_MIN = 17
+EMPTY_REASON_TOKENS = {"", "NONE", "N/A", "NA", "NOT_APPLICABLE"}
 
 
 def field_value(text: str, name: str):
     m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n#]+)", text)
     return m.group(1).strip() if m else None
+
+
+def meaningful_reason(value):
+    return bool(value and value.strip().upper() not in EMPTY_REASON_TOKENS)
 
 
 def score_value(text: str, q: int):
@@ -39,7 +44,13 @@ def main():
     verdict = Path(sys.argv[2]).read_text(encoding="utf-8")
     errors = []
 
-    shared_fields = ["CHAIN_ID", "ENDPOINT_ID", "QUESTION_SET_ID", "QUALIFICATION_BASIS_HEAD", "CANDIDATE_ID"]
+    shared_fields = [
+        "CHAIN_ID",
+        "ENDPOINT_ID",
+        "QUESTION_SET_ID",
+        "QUALIFICATION_BASIS_HEAD",
+        "CANDIDATE_ID",
+    ]
     for name in shared_fields:
         av = field_value(answer, name)
         vv = field_value(verdict, name)
@@ -104,11 +115,11 @@ def main():
                 f"PASS_WRITE_ALLOWED invalid below threshold: total={actual_total}, minimum={actual_min}"
             )
         elif decision == "FAIL_READ_ONLY" and qualified:
-            # A verifier may still fail for an automatic-failure reason, but it must say why.
+            # A verifier may still fail for an automatic-failure reason, but it must be substantive.
             auto_fail = field_value(verdict, "AUTOMATIC_FAILURE_REASON")
-            if not auto_fail:
+            if not meaningful_reason(auto_fail):
                 errors.append(
-                    "FAIL_READ_ONLY despite passing numeric threshold requires AUTOMATIC_FAILURE_REASON"
+                    "FAIL_READ_ONLY despite passing numeric threshold requires a substantive AUTOMATIC_FAILURE_REASON"
                 )
         elif decision not in {
             "PASS_WRITE_ALLOWED",
