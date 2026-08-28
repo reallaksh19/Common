@@ -97,13 +97,13 @@ A year or question number must never be attributed to author-created material.
 
 # Internal-complete P0 packages
 
-All four packages below are:
+All five packages below are:
 
 `INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
 They have PYQ grounding, concept/student drafts, First-Step cards, F0→F4→PYQ→XF ladders, reviewed transfer banks, recognition labs, first-line labs, mixed mastery tests, diagnostic error tags, second math/editorial passes and gate-by-gate QA.
 
-Publication-stage blockers remain classroom timing/readability calibration, student/teacher output separation, production metadata and final typography/render QA.
+Publication-stage blockers remain classroom timing/readability calibration, student/teacher output separation, production metadata and final typography/render QA. Geometry additionally requires exact figure ingestion before figure-dependent historical anchors can be published.
 
 ## P0-1 — Polynomial & Root Structure
 
@@ -179,16 +179,41 @@ Connected coverage:
 
 Internal assets include 14 First-Step cards, 10 mechanism ladders, an 18-item reviewed transfer bank, 20 recognition items, 12 first-line items and a 12-question mixed mastery test.
 
+## P0-5 — Circle / Tangent Recognition
+
+`03_Concept_Books/Geometry/Circle_Tangent_Recognition/`
+
+Connected coverage:
+
+- circle/chord/arc/tangent visual grammar;
+- radius perpendicular to tangent;
+- equal tangents from an external point;
+- centre-angle vs inscribed-angle relation;
+- same-segment angles;
+- diameter/semicircle right angle;
+- cyclic quadrilateral supplement + converse;
+- tangent-chord / alternate-segment theorem;
+- intersecting-chord theorem;
+- secant/tangent power of a point;
+- tangent + parallel angle transfer;
+- tangent-circle centre distance / scale bridge;
+- metric Pythagoras/similarity after forced marks;
+- diagram-not-to-scale discipline;
+- exact-figure/source custody.
+
+Internal assets include 14 First-Step cards, 10 mechanism ladders, an 18-item text-complete transfer bank, 20 recognition items, 12 first-line items and a 12-question mixed mastery test.
+
+Exact historical figure ingestion remains a publication blocker for many 2019–2025 geometry anchors; the theorem curriculum does not fabricate those diagrams.
+
 ## Existing exemplar
 
 Use `../Sequence and Series/` as the architectural exemplar for source custody, concept-book depth, first-step recognition and transfer separation. Preserve the cognitive contract but use domain-appropriate mathematical lenses.
 
 ## Next build order
 
-1. **Circle / Tangent Recognition**;
-2. Sequence & Series Preliminary layer;
-3. Counting / Permutations / Combinations / Pigeonhole / Inclusion–Exclusion;
-4. remaining geometry theorem families;
-5. Mathematical Induction;
-6. Greatest / Least Integer functions;
-7. mixed Preliminary synthesis and mocks.
+1. **Sequence & Series Preliminary layer**;
+2. Counting / Permutations / Combinations / Pigeonhole / Inclusion–Exclusion;
+3. remaining geometry theorem families (including Apollonius / Stewart);
+4. Mathematical Induction;
+5. Greatest / Least Integer functions;
+6. mixed Preliminary synthesis and mocks.
