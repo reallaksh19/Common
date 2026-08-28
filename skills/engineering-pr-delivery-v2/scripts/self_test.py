@@ -11,6 +11,7 @@ SUITES = [
     "self_test_qualification_policy.py",
     "self_test_verdict_uniqueness.py",
     "self_test_policy_controls.py",
+    "self_test_chain_concurrency.py",
 ]
 
 SUITE_TIMEOUT_SECONDS = 20
