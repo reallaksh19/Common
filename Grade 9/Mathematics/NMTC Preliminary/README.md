@@ -59,7 +59,7 @@ A year/question number must never be attributed to author-created material.
 
 # Internal-complete Preliminary packages
 
-All **eight** packages below are:
+All **nine** packages below are:
 
 `INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
@@ -111,20 +111,31 @@ Outcome definition, addition/multiplication principles, P&C derived from structu
 
 `03_Concept_Books/Geometry/Triangle_Metric_Apollonius_Stewart/`
 
+Median/altitude/angle-bisector/general-cevian classification, Stewart from Pythagorean elimination, Apollonius as midpoint specialization, altitude side-square cancellation, angle-bisector theorem + Stewart, coordinate/vector method choice, right-triangle `R:r` reconstruction and source-conflict handling.
+
+## P2-1 — Mathematical Induction
+
+`03_Concept_Books/Algebra/Mathematical_Induction/`
+
+This is a **syllabus-first** package because the qualified five-year corpus does not currently justify an induction recurrence claim.
+
 Connected coverage:
 
-- median/altitude/angle-bisector/general-cevian classification;
-- Stewart derived from Pythagorean elimination;
-- Apollonius as the midpoint specialization of Stewart;
-- altitude side-square cancellation;
-- angle-bisector theorem + Stewart;
-- theorem vs coordinate/vector method choice;
-- right-triangle `R:r` metric reconstruction;
-- source-conflict handling for 2023 Q02.
+- precise proposition/domain statement;
+- correct starting index and base case;
+- induction-hypothesis discipline;
+- `P(k)->P(k+1)` bridge construction;
+- sum/product identities;
+- divisibility induction;
+- inequalities with auxiliary-domain checks;
+- recurrence formula verification;
+- step-size >1 / multiple base cases;
+- strong induction bridge;
+- broken-proof diagnosis;
+- direct-proof-vs-induction method selection;
+- historical-attribution/source integrity.
 
-Clean/source-useful grounding includes 2018 Q23, 2019 Q02 and 2025 Q06, with 2024 Q19 as a bridge. Stewart itself is treated as `SYLLABUS_REQUIRED_AUTHOR_CREATED_CORE` rather than assigned fake PYQ evidence.
-
-Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer items, 20 recognition items, 12 first-line items, 12-question mixed mastery test, second math/editorial audit and QA `PASS_INTERNAL`.
+Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer items, 20 recognition items, 12 first-line items, 12-question mastery test, second math/logic audit and QA `PASS_INTERNAL`.
 
 ## Existing exemplar relationship
 
@@ -132,6 +143,5 @@ Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer
 
 ## Next build order
 
-1. **Mathematical Induction**;
-2. Greatest / Least Integer functions;
-3. mixed Preliminary synthesis and mocks.
+1. **Greatest / Least Integer functions**;
+2. mixed Preliminary synthesis and mocks.
