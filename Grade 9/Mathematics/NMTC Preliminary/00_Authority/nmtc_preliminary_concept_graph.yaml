@@ -1,0 +1,215 @@
+schema: nmtc-bhaskara-preliminary-concept-graph/v1
+scope: BHASKARA_PRELIMINARY_ONLY
+basis:
+  qualified_years: [2018, 2019, 2023, 2024, 2025]
+  recurrence_file: ../01_PYQ_Corpus/Five_Year_Scored_Recurrence_v1.md
+  syllabus_topics_never_removed_by_frequency: true
+
+learning_contracts:
+  concept: [SEE, REALIZE, UNDERSTAND, ADOPT]
+  performance: [SEE, RECOGNIZE, FIRST_MOVE, SOLVE_EFFICIENTLY, CHECK, TRANSFER]
+
+nodes:
+  A0_ALGEBRA_FOUNDATION:
+    domain: ALGEBRA
+    priority: PREREQUISITE
+    prerequisites: []
+    capabilities: [identities, factorization, linear_equations, exponent_laws, radical_basics, rational_expressions]
+
+  A1_STRUCTURE_TRANSFORM:
+    domain: ALGEBRA
+    priority: P0
+    prerequisites: [A0_ALGEBRA_FOUNDATION]
+    recurrence: HISTORICALLY_RECURRENT_5Y
+    capabilities: [factor_before_expand, common_basis, reciprocal_transform, parity_symmetry, low_degree_power_reduction]
+
+  A2_QUADRATIC_STRUCTURE:
+    domain: ALGEBRA
+    priority: P0
+    prerequisites: [A1_STRUCTURE_TRANSFORM]
+    capabilities: [factor_root_view, discriminant, root_existence, repeated_root]
+
+  A3_VIETA_TRANSFORMED_ROOTS:
+    domain: ALGEBRA
+    priority: P0
+    prerequisites: [A2_QUADRATIC_STRUCTURE]
+    recurrence: RECURRENT_3Y_PLUS_NETWORK
+    capabilities: [root_sum_product, symmetric_targets, reciprocal_roots, shifted_roots, positive_integer_root_constraints]
+    clean_pyq_anchors: [NMTC-BH-P-2024-Q14, NMTC-BH-P-2024-Q17, NMTC-BH-P-2024-Q22]
+
+  A4_POLYNOMIAL_REMAINDER_NETWORK:
+    domain: ALGEBRA
+    priority: P0
+    prerequisites: [A1_STRUCTURE_TRANSFORM, A2_QUADRATIC_STRUCTURE]
+    recurrence: RECURRENT_3Y_PLUS_NETWORK
+    capabilities: [remainder_theorem, factor_theorem, polynomial_mod_reduction, quadratic_divisor_remainder]
+    clean_pyq_anchors: [NMTC-BH-P-2018-Q06, NMTC-BH-P-2019-Q08, NMTC-BH-P-2024-Q05, NMTC-BH-P-2024-Q16]
+
+  A5_HIGHER_DEGREE_REDUCTION:
+    domain: ALGEBRA
+    priority: P0
+    prerequisites: [A3_VIETA_TRANSFORMED_ROOTS, A4_POLYNOMIAL_REMAINDER_NETWORK]
+    recurrence: RECURRENT_2Y_PLUS
+    capabilities: [simple_rational_roots, structural_factorization, symmetric_substitution, common_root_elimination]
+    clean_pyq_anchors: [NMTC-BH-P-2019-Q25, NMTC-BH-P-2024-Q24]
+    bonus_evidence: [NMTC-BH-P-2023-Q16]
+
+  A6_RADICAL_EXPONENT_LOG:
+    domain: ALGEBRA
+    priority: P0
+    prerequisites: [A1_STRUCTURE_TRANSFORM, A2_QUADRATIC_STRUCTURE]
+    recurrence: HISTORICALLY_RECURRENT_5Y
+    capabilities: [common_radical_basis, conjugate_reconstruction, exponent_normalization, log_variable_substitution, log_domain]
+
+  A7_INEQUALITY_BOUND_EQUALITY:
+    domain: ALGEBRA
+    priority: P0
+    prerequisites: [A1_STRUCTURE_TRANSFORM, A2_QUADRATIC_STRUCTURE]
+    recurrence: HISTORICALLY_RECURRENT_5Y
+    capabilities: [boundedness_check, am_gm, cauchy_style_bound, equality_condition, interval_count]
+    contrast_pyq_anchors: [NMTC-BH-P-2023-Q17]
+
+  N0_NUMBER_FOUNDATION:
+    domain: NUMBER_THEORY
+    priority: PREREQUISITE
+    prerequisites: []
+    capabilities: [divisibility, gcd_lcm, prime_factors, parity, place_value]
+
+  N1_MODULAR_LANGUAGE:
+    domain: NUMBER_THEORY
+    priority: P0
+    prerequisites: [N0_NUMBER_FOUNDATION]
+    recurrence: HISTORICALLY_RECURRENT_5Y_NETWORK
+    capabilities: [remainder_to_congruence, residue_arithmetic, power_cycles]
+
+  N2_REMAINDER_GCD_LCM:
+    domain: NUMBER_THEORY
+    priority: P0
+    prerequisites: [N1_MODULAR_LANGUAGE]
+    capabilities: [common_remainder_lcm, equal_remainder_gcd_differences, simultaneous_congruences]
+
+  N3_DIGIT_DIVISIBILITY:
+    domain: NUMBER_THEORY
+    priority: P0
+    prerequisites: [N0_NUMBER_FOUNDATION, N1_MODULAR_LANGUAGE]
+    recurrence: RECURRENT_3Y_PLUS
+    capabilities: [place_value_equations, digit_sum_rules, reversal, constrained_count]
+
+  N4_INTEGER_DIVISIBILITY_REDUCTION:
+    domain: NUMBER_THEORY
+    priority: P0
+    prerequisites: [N0_NUMBER_FOUNDATION, A1_STRUCTURE_TRANSFORM]
+    capabilities: [integer_valued_rational, factor_pair_constraints, coprime_power_structure]
+
+  N5_HIGH_CEILING_MODULAR:
+    domain: NUMBER_THEORY
+    priority: P1_BRIDGE
+    prerequisites: [N1_MODULAR_LANGUAGE, N2_REMAINDER_GCD_LCM, N4_INTEGER_DIVISIBILITY_REDUCTION]
+    capabilities: [prefix_residues, multiplicative_order_filtering, balanced_representation]
+
+  G0_GEOMETRY_FOUNDATION:
+    domain: GEOMETRY
+    priority: PREREQUISITE
+    prerequisites: []
+    capabilities: [triangle_angles, parallel_angles, isosceles, pythagoras, similarity, area_ratio]
+
+  G1_CIRCLE_ANGLE_GRAMMAR:
+    domain: GEOMETRY
+    priority: P0
+    prerequisites: [G0_GEOMETRY_FOUNDATION]
+    recurrence: HISTORICALLY_RECURRENT_5Y_NETWORK
+    capabilities: [central_inscribed_angles, same_segment, diameter_right_angle, cyclic_quadrilateral]
+
+  G2_TANGENT_GRAMMAR:
+    domain: GEOMETRY
+    priority: P0
+    prerequisites: [G1_CIRCLE_ANGLE_GRAMMAR]
+    capabilities: [radius_perpendicular_tangent, equal_tangents, alternate_segment, parallel_transfer]
+
+  G3_POWER_METRIC:
+    domain: GEOMETRY
+    priority: P0
+    prerequisites: [G1_CIRCLE_ANGLE_GRAMMAR, G2_TANGENT_GRAMMAR]
+    capabilities: [intersecting_chords, secant_tangent_power, similarity_metric]
+
+  G4_TRIANGLE_METRIC_THEOREMS:
+    domain: GEOMETRY
+    priority: P1_SYLLABUS_REQUIRED
+    prerequisites: [G0_GEOMETRY_FOUNDATION]
+    capabilities: [apollonius, stewart, median_metric, altitude_square_difference]
+
+  S1_SEQUENCE_POSITION_CHANGE:
+    domain: ALGEBRA
+    priority: P1
+    prerequisites: [A0_ALGEBRA_FOUNDATION]
+    capabilities: [nth_term, recurrence, ap_gp_recognition]
+
+  S2_SEQUENCE_ACCUMULATION_TRANSFORM:
+    domain: ALGEBRA
+    priority: P1
+    prerequisites: [S1_SEQUENCE_POSITION_CHANGE, A1_STRUCTURE_TRANSFORM]
+    recurrence: RECURRENT_3Y_PLUS
+    capabilities: [summation, weighted_power_sums, recurrence_linearization, infinite_gp, high_index_cancellation]
+
+  C1_COUNTING_MODEL:
+    domain: COMBINATORICS
+    priority: P1_SYLLABUS_REQUIRED
+    prerequisites: []
+    capabilities: [fundamental_counting, casework, permutations, combinations]
+
+  C2_COUNTING_ADVANCED_TOOLS:
+    domain: COMBINATORICS
+    priority: P1_SYLLABUS_REQUIRED
+    prerequisites: [C1_COUNTING_MODEL]
+    capabilities: [complement, pigeonhole, inclusion_exclusion]
+
+  C3_COUNTING_REPRESENTATION_BRIDGE:
+    domain: COMBINATORICS
+    priority: P1_BRIDGE
+    prerequisites: [C1_COUNTING_MODEL, C2_COUNTING_ADVANCED_TOOLS]
+    recurrence: RECURRENT_2Y_HIGH_CEILING
+    capabilities: [subset_product, path_state_count, coefficient_as_count, balanced_representation]
+
+  I1_MATHEMATICAL_INDUCTION:
+    domain: ALGEBRA
+    priority: P2_SYLLABUS_REQUIRED
+    prerequisites: [A0_ALGEBRA_FOUNDATION, S1_SEQUENCE_POSITION_CHANGE]
+    recurrence: WEAK_CURRENT_5Y
+    capabilities: [base_case, induction_hypothesis, induction_step, false_induction_detection]
+
+  F1_FLOOR_CEILING:
+    domain: NUMBER_THEORY
+    priority: P2_SYLLABUS_REQUIRED
+    prerequisites: [N0_NUMBER_FOUNDATION, A0_ALGEBRA_FOUNDATION]
+    recurrence: WEAK_CURRENT_5Y
+    capabilities: [interval_definition, endpoints, floor_equations, counting]
+
+edges:
+  - [A1_STRUCTURE_TRANSFORM, A2_QUADRATIC_STRUCTURE]
+  - [A2_QUADRATIC_STRUCTURE, A3_VIETA_TRANSFORMED_ROOTS]
+  - [A1_STRUCTURE_TRANSFORM, A4_POLYNOMIAL_REMAINDER_NETWORK]
+  - [A3_VIETA_TRANSFORMED_ROOTS, A5_HIGHER_DEGREE_REDUCTION]
+  - [A4_POLYNOMIAL_REMAINDER_NETWORK, A5_HIGHER_DEGREE_REDUCTION]
+  - [A1_STRUCTURE_TRANSFORM, A6_RADICAL_EXPONENT_LOG]
+  - [A1_STRUCTURE_TRANSFORM, A7_INEQUALITY_BOUND_EQUALITY]
+  - [N1_MODULAR_LANGUAGE, N2_REMAINDER_GCD_LCM]
+  - [N1_MODULAR_LANGUAGE, N3_DIGIT_DIVISIBILITY]
+  - [A1_STRUCTURE_TRANSFORM, N4_INTEGER_DIVISIBILITY_REDUCTION]
+  - [G1_CIRCLE_ANGLE_GRAMMAR, G2_TANGENT_GRAMMAR]
+  - [G2_TANGENT_GRAMMAR, G3_POWER_METRIC]
+  - [S1_SEQUENCE_POSITION_CHANGE, S2_SEQUENCE_ACCUMULATION_TRANSFORM]
+  - [C1_COUNTING_MODEL, C2_COUNTING_ADVANCED_TOOLS]
+  - [C2_COUNTING_ADVANCED_TOOLS, C3_COUNTING_REPRESENTATION_BRIDGE]
+
+publication_rule:
+  required_products:
+    - prerequisite_diagnostic
+    - concept_book
+    - first_step_card
+    - practice_ladder_F0_F4
+    - pyq_anchor_where_clean
+    - non_identical_transfer
+    - recognition_drill
+    - mixed_unlabelled_test
+    - source_coverage
+  gates: [PRELIM, MSRU]
