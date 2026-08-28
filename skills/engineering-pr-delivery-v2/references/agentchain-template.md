@@ -23,6 +23,9 @@ ACTIVE_CUSTODIAN: <agent-id>
 CUSTODY_EPOCH: 1
 COORDINATION_STATE: SAFE
 DEPENDENCIES: NONE
+COMMON_PROTOCOL: engineering-pr-delivery-v2
+COMMON_PROTOCOL_BASIS: <live Common commit SHA actually read for this leg>
+COMMON_PROTOCOL_STATUS: CURRENT
 ROADMAPS: <path>@<blob-sha> | NONE — <reason>
 ROADMAP_REVIEW_STATUS: COMPLETE | NOT_APPLICABLE | BLOCKED
 HANDOVER_READY: TRUE
@@ -37,6 +40,10 @@ LEG_ID:
 ENDPOINT_ID:
 PREVIOUS_ENDPOINT:
 CUSTODY_EPOCH:
+COMMON_PROTOCOL: engineering-pr-delivery-v2
+COMMON_PROTOCOL_BASIS:
+COMMON_PROTOCOL_STATUS: CURRENT
+PREWORK_QUALIFICATION_READY: TRUE
 ROADMAPS:
 ROADMAP_REVIEW_STATUS:
 HANDOVER_READY: TRUE
@@ -61,6 +68,7 @@ Endpoint:
 PR / status / branch / PR head / main:
 Merge authority:
 Engineering / custody / qualification / write state:
+Protocol basis / status:
 Roadmap:
 Inputs:
 Benchmarks:
@@ -158,6 +166,10 @@ Fail if:
 ```
 
 The snapshot is <300 words; detailed Q1-Q5 remain outside that limit.
+
+`PREWORK_QUALIFICATION_READY: TRUE` means this endpoint and its Q1-Q5 existed as the accepted work-ahead baton before the bounded material batch it protects. Do not set it retrospectively to disguise code-first/question-later work.
+
+At every substantive user-facing handover/status boundary, reproduce the concise active snapshot including Q1-Q5. Do not merely state that the endpoint contains questions.
 
 ## Takeover admission receipt
 
