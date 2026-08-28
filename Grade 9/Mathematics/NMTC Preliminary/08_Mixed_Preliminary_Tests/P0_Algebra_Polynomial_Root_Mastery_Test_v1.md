@@ -113,7 +113,7 @@ Find the sum of their squares.
 ---
 
 ## Q9
-Factor completely over the reals:
+Factor as far as possible over the rational numbers:
 
 `x^4+4x^3+5x^2+4x+1`.
 
@@ -308,25 +308,17 @@ Sum of squares:
 ## Q9
 **First move:** `FT`, recognize palindromic structure.
 
-One route:
+A compact rational factorization is
 
-`(x^2+x+1)(x^2+3x+1)`
+`(x^2+x+1)(x^2+3x+1)`.
 
-expands to
+Expanding verifies:
 
 `x^4+4x^3+5x^2+4x+1`.
 
-Further factorization over the reals:
+The first quadratic has discriminant `-3`; the second has discriminant `5`. Neither factors further over the rational numbers.
 
-`x^2+x+1` has discriminant `-3`, so it is irreducible over the reals.
-
-`x^2+3x+1` has real roots and can be written as
-
-`(x-(-3+sqrt5)/2)(x-(-3-sqrt5)/2)`.
-
-Thus a real-linear complete factorization is possible, but for Grade IX/X structural use the quadratic factorization above is the intended compact form.
-
-**Accepted structural answer:** `(x^2+x+1)(x^2+3x+1)`.
+**Answer:** `(x^2+x+1)(x^2+3x+1)`.
 
 **Error tags:** `PALINDROMIC_STRUCTURE_MISSED`.
 
