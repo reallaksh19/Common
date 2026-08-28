@@ -13,24 +13,35 @@ def blob_sha(data: bytes) -> str:
     return hashlib.sha1(f"blob {len(data)}\0".encode("ascii") + data).hexdigest()
 
 
-def write_case(root: Path, *, roadmaps: str, review: str, state: str = "READY_FOR_NEXT_LEG"):
+def write_case(
+    root: Path,
+    *,
+    roadmaps: str,
+    review: str,
+    state: str = "READY_FOR_NEXT_LEG",
+    include_section: bool = True,
+):
     chain = "TEST-ROADMAP"
     chain_dir = root / "agents" / "chains" / chain
     endpoint_dir = chain_dir / "endpoints"
     endpoint_dir.mkdir(parents=True, exist_ok=True)
-    endpoint = endpoint_dir / "EP-0001.md"
-    endpoint.write_text(
-        "\n".join(
+    endpoint_lines = [
+        f"CHAIN_ID: {chain}",
+        "ENDPOINT_ID: EP-0001",
+        f"ROADMAPS: {roadmaps}",
+        f"ROADMAP_REVIEW_STATUS: {review}",
+        f"STATE: {state}",
+    ]
+    if include_section:
+        endpoint_lines.extend(
             [
-                f"CHAIN_ID: {chain}",
-                "ENDPOINT_ID: EP-0001",
-                f"ROADMAPS: {roadmaps}",
-                f"ROADMAP_REVIEW_STATUS: {review}",
-                f"STATE: {state}",
+                "",
+                "### Owner roadmaps",
+                "Binding/discovery/alignment evidence recorded for test fixture.",
             ]
         )
-        + "\n",
-        encoding="utf-8",
+    (endpoint_dir / "EP-0001.md").write_text(
+        "\n".join(endpoint_lines) + "\n", encoding="utf-8"
     )
     (chain_dir / "ACTIVE.md").write_text(
         "\n".join(
@@ -119,6 +130,16 @@ def main():
         binding = f"docs/roadmaps/Overallroadmap_wrc.md@{blob_sha(data)}"
         write_case(root, roadmaps=binding, review="BLOCKED", state="READY_FOR_NEXT_LEG")
         ok &= expect("blocked roadmap review requires blocked chain", run(root), 1)
+
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        write_case(
+            root,
+            roadmaps="NONE — policy-only test",
+            review="NOT_APPLICABLE",
+            include_section=False,
+        )
+        ok &= expect("missing Owner roadmaps evidence section rejected", run(root), 1)
 
     return 0 if ok else 1
 
