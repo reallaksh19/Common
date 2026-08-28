@@ -8,72 +8,74 @@ Track the actual Previous-Year Preliminary corpus used to ground the curriculum.
 
 | Paper | Stable paper ID | Source | Provenance | Observed reproduced structure | Corpus status |
 |---|---|---|---|---|---|
-| Bhaskara Screening 2025 | `NMTC-BH-P-2025` | Cheenta, `https://cheenta.com/nmtc-screening-test-bhaskara-contest-2025/` | `P2_REPUTABLE_SECONDARY_ARCHIVE` | 30 questions; Q1–15 options, Q16–30 fill-in | `SEED_FINGERPRINTED` |
-| Bhaskara Screening 2024–2025 | `NMTC-BH-P-2024` | Cheenta, `https://cheenta.com/screening-test-bhaskara-contestnmtc-junior-level-ix-and-x-grades2024-2025/` | `P2_REPUTABLE_SECONDARY_ARCHIVE` | 30 questions; Q1–15 options, Q16–30 fill-in | `SEED_FINGERPRINTED` |
-| Bhaskara Stage I 2023 | `NMTC-BH-P-2023` | Cheenta, `https://cheenta.com/bhaskara-contest-nmtc-junior-level-ix-and-x-grades-2023-problems-and-solutions/` | `P2_REPUTABLE_SECONDARY_ARCHIVE` | 30 questions; Q1–15 options, Q16–30 fill-in | `SEED_FINGERPRINTED` |
-| Bhaskara Stage I 2022 | `NMTC-BH-P-2022` | Listed by Cheenta NMTC Resource Center | `P2_DISCOVERED_SOURCE_INDEX_AMBIGUITY` | resource index currently resolves Bhaskara link to 2023 page; paper not normalized | `BLOCKED_SOURCE_DISCOVERY` |
-| Bhaskara Stage I 2019 | `NMTC-BH-P-2019` | Cheenta, `https://cheenta.com/bhaskara-contest-nmtc-primary-2019-ix-and-x-grades-stage-i-problems-and-solution/` | `P2_REPUTABLE_SECONDARY_ARCHIVE` | **25 questions**; Q1–15 options, Q16–25 fill-in | `SEED_FINGERPRINTED` |
-| Bhaskara Stage I 2018 | `NMTC-BH-P-2018` | Cheenta, `https://cheenta.com/bhaskara-contest-nmtc-junior-2018-ix-and-x-grades-stage-i-problems-and-solution/` | `P2_REPUTABLE_SECONDARY_ARCHIVE` | 30 questions; Q1–15 options, Q16–30 fill-in | `SEED_FINGERPRINTED` |
-
-Resource index: `https://cheenta.com/nmtc-past-papers-and-resources/`.
+| Bhaskara Screening 2025 | `NMTC-BH-P-2025` | Cheenta | `P2_REPUTABLE_SECONDARY_ARCHIVE` | 30 questions; Q1–15 options, Q16–30 fill-in | `SEED_FINGERPRINTED` |
+| Bhaskara Screening 2024–2025 | `NMTC-BH-P-2024` | Cheenta | `P2_REPUTABLE_SECONDARY_ARCHIVE` | 30 questions; Q1–15 options, Q16–30 fill-in | `SEED_FINGERPRINTED` |
+| Bhaskara Stage I 2023 | `NMTC-BH-P-2023` | Cheenta | `P2_REPUTABLE_SECONDARY_ARCHIVE` | 30 questions; Q1–15 options, Q16–30 fill-in | `SEED_FINGERPRINTED` |
+| Bhaskara Stage I 2022 | `NMTC-BH-P-2022` | Cheenta resource index | `P2_DISCOVERED_SOURCE_INDEX_AMBIGUITY` | index link currently resolves incorrectly; not normalized | `BLOCKED_SOURCE_DISCOVERY` |
+| Bhaskara Stage I 2019 | `NMTC-BH-P-2019` | Cheenta truncated reproduction + Resonance 2019 Junior solution PDF + matching copies | `P1_VERIFIED_FAITHFUL_REPRODUCTION` for recovered structure/content; not AMTI-hosted | **30 questions**; Q1–15 options, Q16–30 fill-in | `SOLUTION_QUALIFICATION_ACTIVE` |
+| Bhaskara Stage I 2018 | `NMTC-BH-P-2018` | Cheenta + independent AMTI-paper/solution reproduction | `P1_VERIFIED_FAITHFUL_REPRODUCTION` for matched items; not AMTI-hosted | 30 questions; Q1–15 options, Q16–30 fill-in | `SOLUTION_QUALIFICATION_ACTIVE` |
 
 ## Current corpus size
 
 Five reproduced years are now question-slot normalized:
 
 - 2018: 30
-- 2019: 25
+- 2019: 30
 - 2023: 30
 - 2024: 30
 - 2025: 30
 
-Total seed-fingerprinted question slots: **145**.
+Total seed-fingerprinted question slots: **150**.
 
-This is not yet a 145-question verified official corpus. All five current paper sources remain P2 secondary reproductions until independently matched to original/official evidence.
+This is not yet a 150-question verified official corpus. P1 means independently matched faithful reproduction; only an exact AMTI original can be P0.
 
-## Format finding
+## 2019 truncation correction
 
-The available reproductions falsify any assumption that the historical Preliminary format is permanently fixed at 30 questions:
+The first Cheenta 2019 page used at seed stage ends after Q25. That led to a temporary, incorrect 25-question interpretation. Independent recovery from the Resonance-hosted 2019 Junior solution PDF and matching reproductions shows Q26–Q30 and an answer key through Q30.
 
-- 2018: 30
-- 2019: 25
-- 2023: 30
-- 2024: 30
-- 2025: 30
+**Rule strengthened:** absence from one secondary webpage is never evidence that a paper ended there. Paper-length claims require either a complete source or an independent end-of-paper match.
 
-Therefore mock-paper format must be **versioned and evidence-driven**. A current mock profile may choose a current-like format, but must not call that format timeless or universal.
+## Format evidence
+
+All five currently normalized complete reproductions contain 30 questions with a 15+15 split. This is useful historical evidence for these years, but still does **not** justify calling 30 questions a timeless NMTC rule. Mock format must remain versioned to current/explicit evidence.
+
+## Source-resolution findings
+
+### 2018
+
+An independent reproduction carrying the AMTI paper/solution text marks Q03, Q05 and Q07 as **BONUS**. Their apparently invalid multiple-choice options therefore must not be treated as ordinary scored-item defects or included in scored difficulty/frequency counts.
+
+### 2019
+
+Independent recovery:
+
+- restores Q14's missing stem/options and identifies answer A (`126` impossible);
+- confirms Q15's terminal term is `T × I`, not `T × 1`;
+- marks Q20 as **BONUS**;
+- recovers Q26–Q30 and their answer-key values (`97,25,122,12,61`).
 
 ## Official current-cycle evidence
 
-AMTI's 58th NMTC 2026 exam portal identifies:
-
-- Preliminary Test: 30 August 2026
-- Final Test: 25 October 2026
-
-Portal: `https://nmtc.amtionline.com/Account/Login`
-
-This confirms the two-stage current cycle, but it is not itself a question-paper source.
+AMTI's 58th NMTC 2026 exam portal identifies a Preliminary Test and a Final Test in the current cycle. The portal is cycle evidence, not a question-paper source.
 
 ## Historical official pattern evidence
 
-The official AMTI 54th NMTC 2022 prospectus describes the Preliminary as an **objective type** test evaluated by participating institutions using an AMTI-supplied key and states a difficulty intent of approximately 20% moderate and 80% higher-level questions. This historical statement is useful as policy evidence, but must not be assumed unchanged for 2026 without current-cycle confirmation.
-
-Locator: `https://amtionline.com/54th-NMTC-Prospectus-2022.pdf`
+The official AMTI 54th NMTC 2022 prospectus describes the Preliminary as an objective-type test evaluated by participating institutions using an AMTI-supplied key and states a historical difficulty intent. Do not assume those details unchanged for 2026 without current-cycle confirmation.
 
 ## Ingestion states
 
-- `DISCOVERED` — a source exists but has not been question-normalized.
-- `SEED_FINGERPRINTED` — all visible question slots have stable IDs and initial mechanism classification, but solutions/source verification may remain incomplete.
-- `FINGERPRINTED` — all questions have the complete v1 schema fields and internally checked mathematical paths.
-- `SOURCE_VERIFIED` — reproduction checked against an official/original or independent matching copy.
-- `CURRICULUM_MAPPED` — all archetypes/prerequisites mapped to teaching products.
+- `DISCOVERED` — source exists but has not been normalized.
+- `SEED_FINGERPRINTED` — stable IDs + initial mechanism classification.
+- `SOLUTION_QUALIFICATION_ACTIVE` — independent mathematical derivation/source matching in progress.
+- `FINGERPRINTED` — complete v1.1 fields + internally checked paths.
+- `SOURCE_VERIFIED` — reproduction checked against original or independent faithful match.
+- `CURRICULUM_MAPPED` — archetypes/prerequisites mapped to teaching products.
 
 ## Verification backlog
 
-1. Locate an exact official AMTI 2026 prospectus URL and promote the syllabus only after exact comparison.
-2. Locate official/original or independent copies for 2018, 2019, 2023, 2024 and 2025 and compare question order, figures, notation, and response format.
-3. Resolve the 2022 Stage-I source-index ambiguity and ingest the actual Bhaskara paper.
-4. Recover all image-dependent geometry/combinatorics questions; do not infer missing diagrams from text alone.
-5. Resolve all seed-stage source conflicts/transcription defects before canonical use.
-6. Independently derive answers and minimum expert paths; obtain answer-key evidence where available and keep its provenance separate.
-7. Compute quantitative cross-year recurrence only after the seed classifications are solution-checked.
+1. locate an exact official AMTI 2026 prospectus locator;
+2. resolve the actual 2022 Bhaskara Stage-I paper source;
+3. recover all image assets needed for clean geometry/combinatorics anchors;
+4. finish solution qualification for 2023–2025;
+5. preserve bonus/non-scored disposition in recurrence statistics;
+6. compute quantitative cross-year recurrence only from qualified scored items.
