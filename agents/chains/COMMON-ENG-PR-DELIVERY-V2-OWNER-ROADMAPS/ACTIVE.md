@@ -3,7 +3,7 @@ CHAIN_ID: COMMON-ENG-PR-DELIVERY-V2-OWNER-ROADMAPS
 MISSION: Add owner-governed roadmap architecture to engineering-pr-delivery-v2
 ACTIVE_ENDPOINT: EP-0001
 ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-OWNER-ROADMAPS/endpoints/EP-0001.md
-PR: PENDING
+PR: 23
 BRANCH: engineering-pr-delivery-v2-owner-roadmaps
 HEAD: d264fbd3fc44b328787526ea703531503fca1ea6
 STATE: READY_FOR_NEXT_LEG
