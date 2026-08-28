@@ -12,16 +12,14 @@ V3_ACTIVE_FIELDS = [
     "ACTIVE_CUSTODIAN", "CUSTODY_EPOCH", "COORDINATION_STATE",
     "DEPENDENCIES", "ROADMAPS", "ROADMAP_REVIEW_STATUS", "HANDOVER_READY",
 ]
-
 SNAPSHOT_LABELS = [
     "Repo:", "Task:", "Chain:", "Endpoint:", "PR:", "PR status:",
     "Merge authority:", "Roadmap:", "Inputs:", "Benchmarks:",
     "Governing docs / authoritative sources:", "Exact next action:",
 ]
-
 VALID_ENGINEERING = {"READY", "IN_PROGRESS", "BLOCKED", "COMPLETE"}
 VALID_CUSTODY = {"HELD", "VACANT", "TAKEOVER_REQUIRED", "QUALIFIED_PENDING_RECONCILIATION", "RECONCILING"}
-VALID_QUAL = {"NOT_REQUIRED", "PENDING", "PASS", "FAIL", "DEFERRED"}
+VALID_QUAL = {"NOT_REQUIRED", "PENDING", "PASS", "FAIL", "DEFERRED", "REQUALIFICATION_REQUIRED"}
 VALID_WRITE = {"READ_ONLY", "WRITE_ALLOWED", "BLOCKED"}
 VALID_AUTO = {"RUNNING", "PAUSED", "BLOCKED", "NOT_APPLICABLE"}
 VALID_MERGE = {"OWNER_ONLY", "AUTHORIZED"}
@@ -61,13 +59,14 @@ def roadmap_errors(root, chain, active):
             errors.append(f"{chain}: roadmap binding lacks @blob: {item}")
             continue
         rel, expected = item.rsplit("@", 1)
-        if not re.fullmatch(r"[0-9a-fA-F]{40}", expected.strip()):
+        expected = expected.strip().lower()
+        if not re.fullmatch(r"[0-9a-f]{40}", expected):
             errors.append(f"{chain}: invalid roadmap blob in {item}")
             continue
         p = root / rel.strip()
         if not p.is_file():
             errors.append(f"{chain}: roadmap missing {rel.strip()}")
-        elif git_blob_sha(p) != expected.strip().lower():
+        elif git_blob_sha(p) != expected:
             errors.append(f"{chain}: stale roadmap binding {rel.strip()}")
     return errors
 
@@ -100,7 +99,7 @@ def validate_chain(root, chain_dir):
     auto = field(active, "AUTO_STATE")
     if custody in {"VACANT", "TAKEOVER_REQUIRED", "QUALIFIED_PENDING_RECONCILIATION", "RECONCILING"} and write == "WRITE_ALLOWED":
         errors.append(f"{chain}: {custody} cannot have WRITE_ALLOWED")
-    if qual in {"PENDING", "FAIL", "DEFERRED"} and write == "WRITE_ALLOWED":
+    if qual in {"PENDING", "FAIL", "DEFERRED", "REQUALIFICATION_REQUIRED"} and write == "WRITE_ALLOWED":
         errors.append(f"{chain}: {qual} qualification cannot have WRITE_ALLOWED")
     if write == "WRITE_ALLOWED" and custody != "HELD":
         errors.append(f"{chain}: WRITE_ALLOWED requires CUSTODY_STATE HELD")

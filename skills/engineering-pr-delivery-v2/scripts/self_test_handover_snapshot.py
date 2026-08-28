@@ -92,6 +92,10 @@ def main():
         root = Path(td); make(root, custody="QUALIFIED_PENDING_RECONCILIATION", qual="PASS", write="WRITE_ALLOWED"); ok &= expect("PASS still read-only before reconciliation", run(root), 1)
     with tempfile.TemporaryDirectory() as td:
         root = Path(td); make(root, custody="TAKEOVER_REQUIRED", qual="PENDING", write="READ_ONLY", auto="RUNNING"); ok &= expect("agent loss pauses AUTO", run(root), 1)
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td); make(root, custody="HELD", qual="REQUALIFICATION_REQUIRED", write="WRITE_ALLOWED"); ok &= expect("requalification-required cannot write", run(root), 1)
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td); make(root, custody="HELD", qual="REQUALIFICATION_REQUIRED", write="READ_ONLY"); ok &= expect("requalification-required read-only is valid", run(root), 0)
     return 0 if ok else 1
 
 
