@@ -24,7 +24,8 @@ def main():
         structure = "legacy relay index"
     else:
         rc = run("validate_chain_store.py", str(relay_arg))
-        structure = "canonical chain-local relay store"
+        rc |= run("validate_roadmap_bindings.py", str(relay_arg))
+        structure = "canonical chain-local relay store + roadmap bindings"
 
     if len(sys.argv) >= 3:
         rc |= run("validate_candidate_answer.py", sys.argv[2])
