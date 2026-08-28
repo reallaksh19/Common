@@ -1,220 +1,165 @@
-# Agent Chain Templates
+# Agent Chain Templates — version 3 qualification-first
 
-## 1. Canonical chain state — `agents/chains/<CHAIN_ID>/ACTIVE.md`
-
-For new coding chains use version 2:
+## 1. ACTIVE.md
 
 ```text
-CHAIN_STATE_VERSION: 2
+CHAIN_STATE_VERSION: 3
 CHAIN_ID: <CHAIN_ID>
 MISSION: <one-line mission>
 ACTIVE_ENDPOINT: EP-0001
 ACTIVE_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
 PR: <number-or-PENDING>
 BRANCH: <branch>
-HEAD: <sha>
-STATE: QUALIFICATION_REQUIRED
-AUTHORITY_DOMAIN: <engineering/software authority domain>
+HEAD: <accepted checkpoint head>
+STATE: ACTIVE
+ENGINEERING_STATE: READY
+CUSTODY_STATE: HELD
+QUALIFICATION_STATE: NOT_REQUIRED
+WRITE_AUTHORITY: WRITE_ALLOWED
+AUTO_STATE: NOT_APPLICABLE
+MERGE_AUTHORITY: OWNER_ONLY
+AUTHORITY_DOMAIN: <domain>
 ACTIVE_CUSTODIAN: <agent-id>
 CUSTODY_EPOCH: 1
 COORDINATION_STATE: SAFE
 DEPENDENCIES: NONE
-ROADMAPS: docs/roadmaps/Overallroadmap_<domain>.md@<40-hex-git-blob-sha>
-ROADMAP_REVIEW_STATUS: COMPLETE
+ROADMAPS: <path>@<blob-sha> | NONE — <reason>
+ROADMAP_REVIEW_STATUS: COMPLETE | NOT_APPLICABLE | BLOCKED
+HANDOVER_READY: TRUE
 ```
 
-When no product/domain roadmap applies:
+## 2. Non-terminal endpoint
 
 ```text
-ROADMAPS: NONE — <explicit discovery reason>
-ROADMAP_REVIEW_STATUS: NOT_APPLICABLE
-```
-
-Rules:
-
-- one mutable `ACTIVE.md` per chain;
-- different chains never edit each other's `ACTIVE.md`;
-- advance using exact prior repository blob/version and `CUSTODY_EPOCH + 1`;
-- conflict/epoch change = stale write -> re-ground;
-- roadmap binding uses exact current Git blob SHA;
-- if the roadmap blob changes, re-read and re-bind before further material coding;
-- terminal chains may retain `ACTIVE.md` with `COMPLETE`/`SUPERSEDED`.
-
-Version-1 canonical chains are compatibility state created before roadmap binding. Before their next material coding leg, migrate them to version 2 at a new endpoint.
-
-## 2. Canonical endpoint — `agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md`
-
-```text
-# EP-0001 — <short endpoint title>
-
+# EP-0001 — <title>
 CHAIN_ID: <CHAIN_ID>
 LEG_ID: LEG-001
 ENDPOINT_ID: EP-0001
 PREVIOUS_ENDPOINT: NONE — chain start
 CUSTODY_EPOCH: 1
-ROADMAPS: docs/roadmaps/Overallroadmap_<domain>.md@<40-hex-git-blob-sha>
-ROADMAP_REVIEW_STATUS: COMPLETE
-
+ROADMAPS: <binding>
+ROADMAP_REVIEW_STATUS: <status>
+HANDOVER_READY: TRUE
 CREATED_AT:
 ENDPOINT_REASON: CHAIN_START
-
 TASK / ISSUE:
 PR:
 BRANCH:
-
 CHECKPOINT_HEAD:
 MAIN_HEAD_OBSERVED:
 MERGE_BASE:
+STATE: ACTIVE
+ENGINEERING_STATE:
+CUSTODY_STATE:
+QUALIFICATION_STATE:
+WRITE_AUTHORITY:
+AUTO_STATE:
+MERGE_AUTHORITY:
 
-STATE: QUALIFICATION_REQUIRED
+### Handover snapshot
+Repo: <repo>
+Task: <task>
+Chain: <CHAIN_ID>
+Endpoint: <EP>
+PR: <PR>; PR status: <draft/open/etc>; Branch / PR head / main: <refs>
+Merge authority: <state>
+Engineering / custody / qualification / write state: <states>
+Roadmap: <path@blob or NONE>
+Inputs: <key pointers>
+Benchmarks: <key pointers>
+Governing docs / authoritative sources: <key pointers>
+Current blocker: <one line>
+Exact next action: <one executable work action>
+Q1: <concise production-reconstruction exam prompt>
+Q2: <concise calculation/failure-isolation prompt>
+Q3: <concise authority/falsifier prompt>
+Q4: <concise independent-oracle prompt>
+Q5: <concise safe-patch/NO-PATCH prompt>
 
 ### Mission
-
 ### This leg completed
-
 ### Currently in progress
-
 ### Remaining work
-
 ### Exact next action
-
 ### Known / proven
-
 ### Not proven
-
 ### NOT_RUN
-
 ### Active hypothesis
-
 ### Falsifier
-
 ### Protected invariants
-
 ### Do not redo
-
 ### Do not change
-
 ### Expected next-leg files / domains
-
 ### Owner roadmaps
-
-For each applicable roadmap record roadmap ID/path, exact blob basis, owner intent relevant to this leg, observed-status claims re-grounded against live evidence, alignment classification, and any roadmap proposal created.
-
 ### Inputs
-
 ### Benchmarks
-
 ### Common / governing documents
-
 ### Authoritative sources
-
 ### Production paths
-
 ### Validation / test paths
-
 ### Changed during this leg
-
 ### Validation summary
-
 ### Open risks / questions
 
 ### Next-agent qualification
+Compatibility locator only. The actual version-3 exam is the Takeover qualification pack below; Q1-Q5 are qualification, never the work baton.
 
-QUALIFICATION_BASIS_HEAD:
+### Takeover qualification pack
+PURPOSE: QUALIFICATION_ONLY
+NOT_AN_IMPLEMENTATION_TASK: TRUE
+QUALIFICATION_PROTOCOL_VERSION: 3
+QUALIFICATION_BASIS_HEAD: <sha>
 QUESTION_SET_ID: QS-<CHAIN_ID>-0001
 QUESTION_SET_STATUS: CURRENT
+QUESTION_SET_AUTHOR: <prior-agent/question-authority>
 
 #### Q1 — Production Trace
-
 Repository anchors:
-Required evidence:
-Falsifier / decisive observation:
+Production object/case:
+Required technical work:
+Required numerical/technical evidence:
+First authority/ownership boundaries:
+Fail if:
 
 #### Q2 — Current Unresolved Problem / Failure Isolation
-
 Repository anchors:
-Prediction:
-Required evidence:
+Calculation/reconstruction:
+Required numerical/technical evidence:
+Predicted intermediate values:
+First wrong boundary:
 Falsifier:
+Fail if:
 
 #### Q3 — Authority / Invariant
-
 Repository anchors:
-Required authority trace:
+Required technical work:
+Authority/source trace:
 Protected invariant:
-Invalid shortcut to reject:
+First wrong boundary:
+Falsifier:
+Invalid shortcut:
+Fail if:
 
 #### Q4 — Independent Validation
-
 Repository anchors:
-Independent oracle/reference required:
-Units/sign/tolerance requirements:
-Required evidence:
+Required technical work:
+Independent oracle:
+Required numerical/technical evidence:
+Units/sign/tolerance:
+Falsifier:
+Fail if:
 
 #### Q5 — Next Contribution / Minimal Patch
-
 Repository anchors:
-Smallest legitimate change:
-Expected changed files/domains:
-Protected unchanged files/domains:
+Required technical work:
+Safe patch boundary:
+Expected before/after evidence:
+Protected unchanged domains:
 Validation required:
+Negative test:
 Rollback/falsifier boundary:
+No-patch condition:
+Fail if:
 ```
 
-`EP-0001` may be reused in another chain because the full key is `(CHAIN_ID, ENDPOINT_ID)`.
-
-## 3. Example parallel chains
-
-```text
-agents/chains/ADV-WRC-1389/
-  ACTIVE.md
-  endpoints/EP-0001.md
-  roadmap-proposals/RP-0001.md        # optional advisory proposal
-  roadmap-decisions/RD-0001.md        # only after explicit Owner decision
-
-agents/chains/ADV-LAFEA-1422/
-  ACTIVE.md
-  endpoints/EP-0001.md
-
-agents/chains/ADV-LOADCALC-1505/
-  ACTIVE.md
-  endpoints/EP-0001.md
-```
-
-This is valid and should not create relay conflicts.
-
-## 4. Derived dashboard
-
-Generate repo-wide navigation with:
-
-```text
-python skills/engineering-pr-delivery-v2/scripts/render_agentchain_dashboard.py .
-```
-
-The output is derived from `agents/chains/*/ACTIVE.md`. Normal chain advancement does not require committing a shared dashboard update.
-
-## 5. Terminal endpoint
-
-A terminal endpoint uses:
-
-```text
-STATE: COMPLETE
-NEXT_AGENT_QUALIFICATION: NOT_REQUIRED
-QUESTION_SET_STATUS: NOT_REQUIRED
-COMPLETION_BASIS: <objective evidence>
-```
-
-Update that chain's `ACTIVE.md` to the terminal endpoint/epoch. Derived dashboards omit terminal chains.
-
-## 6. Legacy compatibility
-
-Historical/shared-index repositories may still contain:
-
-```text
-agents/agentchain.md
-agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
-```
-
-Do not mass-rewrite that history. Existing legacy chains may finish there or deliberately migrate.
-
-Version-1 chain-local records under `agents/chains/**` also remain readable historical state. New material coding legs should use/migrate to `CHAIN_STATE_VERSION: 2` so the applicable owner roadmap is pinned before coding.
+The handover snapshot is <300 words; detailed exam content is outside that limit. Existing v1/v2 history is never rewritten. A replacement qualifies first on the latest accepted set, then reconciles and migrates to version 3 before material mutation.
