@@ -35,15 +35,34 @@ Performance layer:
 
 `SEE -> RECOGNIZE -> FIRST MOVE -> SOLVE EFFICIENTLY -> CHECK -> TRANSFER`
 
-## Authoring files
+## Package files
 
-- `Polynomial_Root_Structure_Concept_Book_Spec.md`
-- `Polynomial_Root_Structure_Source_Coverage_Map.md`
-- `../../../04_First_Step_Reference/P0_Algebra_First_Step_Cards.md`
-- `../../../05_Practice_Ladders/P0_Algebra_Polynomial_Root_Structure_Ladder.md`
+- `Polynomial_Root_Structure_Concept_Book_Spec.md` — pedagogical/authoring authority.
+- `Polynomial_Root_Structure_Source_Coverage_Map.md` — qualified PYQ mechanism traceability.
+- `Polynomial_Root_Structure_Student_Draft_v0.1.md` — first student-facing concept-book draft.
+- `../../../04_First_Step_Reference/P0_Algebra_First_Step_Cards.md` — recognition and first-move cards.
+- `../../../05_Practice_Ladders/P0_Algebra_Polynomial_Root_Structure_Ladder.md` — F0→F4→PYQ→XF ladder.
+- `../../../00_Authority/NMTC_Preliminary_Concept_Dependency_Map.md` — upstream dependency placement.
+- `../../../00_Authority/nmtc_preliminary_concept_graph.yaml` — machine-readable concept dependencies.
 
-## Publication state
+## Current state
 
-`STATUS: AUTHORING_READY_NOT_STUDENT_PUBLISHED`
+`STATUS: STUDENT_DRAFT_IN_PROGRESS`
 
-Reason: the unit now has a qualified PYQ evidence base, dependency home and first-step architecture, but the complete student-facing worked pages, transfer bank and timed mastery test are not yet authored.
+Completed:
+
+- qualified five-year evidence base;
+- dependency home;
+- source coverage map;
+- first-step cards;
+- F0→F4→PYQ→XF practice architecture;
+- student draft v0.1 with diagnostics, derivations, contrasts, first-move lab and self-test.
+
+Still required before publication:
+
+- larger reviewed transfer bank;
+- complete worked-solution bank;
+- timed recognition/first-line sheets;
+- mastery test with diagnostic error tags;
+- final `PRELIM-*` / `MSRU-*` gate audit;
+- publication typography/render QA.
