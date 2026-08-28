@@ -35,16 +35,44 @@ The learner can:
 
 ## Package files
 
+Core concept/source:
+
 - `Radical_Exponent_Log_Concept_Book_Spec.md`
 - `Radical_Exponent_Log_Source_Coverage_Map.md`
 - `Radical_Exponent_Log_Student_Draft_v0.1.md`
+
+Performance/transfer:
+
 - `../../../04_First_Step_Reference/P0_Algebra_Radical_Exponent_Log_First_Step_Cards.md`
 - `../../../05_Practice_Ladders/P0_Algebra_Radical_Exponent_Log_Ladder.md`
+- `../../../06_Speed_Labs/P0_Algebra_Radical_Exponent_Log_Recognition_Lab_v1.md`
+- `../../../06_Speed_Labs/P0_Algebra_Radical_Exponent_Log_First_Line_Lab_v1.md`
+- `../../../07_Mastery_Banks/P0_Algebra_Radical_Exponent_Log_Transfer_Bank_v1.md`
+- `../../../08_Mixed_Preliminary_Tests/P0_Algebra_Radical_Exponent_Log_Mastery_Test_v1.md`
+- `../../../09_QA/P0_Algebra_Radical_Exponent_Log_QA.md`
 
-Transfer bank, speed labs, mastery test and QA are built in the next internal pass.
+## Source discipline
+
+Clean scored Preliminary anchors are used for teaching. Source-sensitive or conflicted items remain explicitly blocked from canonical use; in particular, the package does not silently repair 2023 notation-sensitive items or the 2025 Q18 root/key convention conflict.
+
+Author-created exercises are never assigned fake NMTC years or question numbers.
 
 ## Current state
 
-`STATUS: STUDENT_DRAFT_AUTHORING`
+```text
+PYQ grounding:             PASS
+Concept book draft:        PASS_INTERNAL_v0.1
+First-step cards:          PASS
+Foundation ladder:         PASS
+Transfer bank:             PASS_v1 (18 items)
+Recognition lab:           PASS_v1 (20 items)
+First-line lab:            PASS_v1 (12 items)
+Mixed mastery test:        PASS_v1 (12 items)
+Second math review:        PASS
+Classroom timing:          NOT_RUN
+Final editorial/render QA: NOT_RUN
 
-The package is grounded in the solution-qualified five-year Preliminary corpus, but it is not yet publication-ready.
+STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY
+```
+
+The remaining work is publication-stage calibration and final rendering/editorial QA, not missing pedagogy or PYQ grounding.
