@@ -144,12 +144,42 @@ Connected coverage:
 
 Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer items, 20 recognition items, 12 first-line items, 12-question mastery test, second math/editorial audit and QA `PASS_INTERNAL`.
 
+# Capstone mixed assessment system
+
+`08_Mixed_Preliminary_Tests/`
+
+Status:
+
+`INTERNAL_MOCK_SYSTEM_COMPLETE_NOT_PUBLICATION_READY`
+
+The v1 capstone contains:
+
+- `Mock_System_Blueprint_v1.md`;
+- three full 30-question student mocks A/B/C;
+- three separate teacher diagnostic keys;
+- 90 author-created transfer questions in total;
+- package/first-move/error-code mapping;
+- `Mock_Diagnostic_Record_Template_v1.md`;
+- second-pass authority at `09_QA/Mixed_Preliminary_Mock_System_QA.md`.
+
+The author-created T24 training profile uses the qualified 2024 paper as format evidence: 120 minutes, 30 questions/marks and `+1/-0.5`; the 15-option + 15-numerical split follows the qualified 2024 answer-key shape. This is not claimed as a universal NMTC historical format.
+
+The 90-item second pass caught and corrected two pre-promotion defects:
+
+1. insufficient geometry allocation in the initial mock drafts;
+2. an omitted `greater than 5` boundary in Mock B Q13 that otherwise made 5 itself valid.
+
+No stale answer remains after correction.
+
+No psychometric pass mark, percentile or qualification probability is frozen before classroom calibration.
+
 ## Existing exemplar relationship
 
 `../Sequence and Series/` remains the architectural/deep-concept exemplar. Domain packages preserve the cognitive contract while using domain-appropriate mathematical lenses.
 
 ## Next build order
 
-1. **mixed Preliminary synthesis and full mock-test system**;
-2. publication/calibration pass across all packages;
-3. recover/qualify 2022 and re-run recurrence before any six-year weighting claim.
+1. **cross-package publication/calibration pass** — classroom timing/readability, student/teacher separation, machine metadata, notation and rendered QA;
+2. recover exact historical figures still gated for canonical PYQ publication;
+3. recover/qualify 2022 and re-run recurrence before any six-year weighting claim;
+4. only then freeze publication-ready mock thresholds/rotation if supported by calibration evidence.
