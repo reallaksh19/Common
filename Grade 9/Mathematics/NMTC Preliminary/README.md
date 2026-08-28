@@ -97,7 +97,7 @@ A year or question number must never be attributed to author-created material.
 
 # Internal-complete P0 packages
 
-All three packages below are:
+All four packages below are:
 
 `INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
@@ -158,17 +158,37 @@ Connected coverage:
 - direct standard bounds;
 - source/key extremum conflicts.
 
+## P0-4 — Modular / Divisibility / Digit Structures
+
+`03_Concept_Books/Number_Theory/Modular_Divisibility_Digit_Structure/`
+
+Connected coverage:
+
+- division algorithm and congruence meaning;
+- modular addition/multiplication;
+- power residue cycles;
+- same-remainder LCM vs GCD-of-differences contrast;
+- simultaneous congruence reconstruction;
+- base-10 place-value encoding;
+- divisibility-by-9/11 derivation;
+- integer-valued rational/divisor reduction;
+- factor-pair parity and coprimality;
+- prefix-residue block counting;
+- multiplicative-order ceiling bridge;
+- source-integrity handling for damaged notation.
+
+Internal assets include 14 First-Step cards, 10 mechanism ladders, an 18-item reviewed transfer bank, 20 recognition items, 12 first-line items and a 12-question mixed mastery test.
+
 ## Existing exemplar
 
 Use `../Sequence and Series/` as the architectural exemplar for source custody, concept-book depth, first-step recognition and transfer separation. Preserve the cognitive contract but use domain-appropriate mathematical lenses.
 
 ## Next build order
 
-1. **Modular / Divisibility / Digit Structures**;
-2. Circle / Tangent Recognition;
-3. Sequence & Series Preliminary layer;
-4. Counting / Permutations / Combinations / Pigeonhole / Inclusion–Exclusion;
-5. remaining geometry theorem families;
-6. Mathematical Induction;
-7. Greatest / Least Integer functions;
-8. mixed Preliminary synthesis and mocks.
+1. **Circle / Tangent Recognition**;
+2. Sequence & Series Preliminary layer;
+3. Counting / Permutations / Combinations / Pigeonhole / Inclusion–Exclusion;
+4. remaining geometry theorem families;
+5. Mathematical Induction;
+6. Greatest / Least Integer functions;
+7. mixed Preliminary synthesis and mocks.
