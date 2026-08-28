@@ -67,8 +67,21 @@ Source-QC contrast:
 - `../../../08_Mixed_Preliminary_Tests/P1_Sequence_Series_Preliminary_Mastery_Test_v1.md`
 - `../../../09_QA/P1_Sequence_Series_Preliminary_QA.md`
 
+## Internal assets
+
+- 14 First-Step cards;
+- 10 mechanism ladders;
+- 18-item reviewed transfer bank;
+- 20-item recognition lab;
+- 12-item first-line lab;
+- 12-question mixed mastery test;
+- second math/editorial audit: PASS;
+- gate-by-gate QA: PASS_INTERNAL.
+
 ## Status
 
-`STATUS: OVERLAY_AUTHORING`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
+
+Remaining publication-stage blockers are classroom timing/readability calibration, final student/teacher output separation, production-bank machine metadata and final notation/render QA.
 
 No claim is made that 2025 Q30 is a clean historical anchor, and no six-year recurrence claim is permitted until 2022 is recovered and qualified.
