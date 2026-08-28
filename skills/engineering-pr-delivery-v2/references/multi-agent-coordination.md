@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Allow multiple agents to work concurrently in one repository without manufacturing bookkeeping conflicts, while still preventing silent engineering-authority collisions.
+Allow multiple agents to work concurrently in one repository without manufacturing bookkeeping conflicts, while still preventing silent engineering-authority or planning-authority collisions.
 
 ## Coordination source
 
@@ -12,7 +12,7 @@ For canonical chains, discover current state from:
 agents/chains/*/ACTIVE.md
 ```
 
-Then read each referenced active endpoint and verify live PRs/branches/diffs.
+Then read each referenced active endpoint, bound owner roadmap(s), and live PR/branch/diff.
 
 `agents/agentchain.md` is a derived/legacy navigation surface, not the canonical mutable pointer for new chains.
 
@@ -41,6 +41,7 @@ engineering/software authority overlap
 benchmark/oracle overlap
 shared controlled inputs
 release/publication overlap
+owner-roadmap mutation overlap
 dependency or stacked-PR relationship
 main/base drift
 ```
@@ -74,6 +75,43 @@ Examples:
 - one chain changes source authority while another promotes a route that assumes it;
 - two chains change separate UI/export paths that publish the same engineering quantity.
 
+## Shared roadmap reading versus mutation
+
+Multiple chains may safely read and bind the same owner roadmap.
+
+Example:
+
+```text
+ADV-WRC-1389   -> reads Overallroadmap_wrc.md
+ADV-WRC-1501   -> reads Overallroadmap_wrc.md
+```
+
+Reading is not a custody conflict.
+
+An authorized roadmap mutation is different. If one chain changes a roadmap that another active chain has pinned, the other chain's roadmap blob binding becomes stale. Therefore roadmap mutation requires coordination across every active chain bound to that roadmap.
+
+Before an authorized roadmap update:
+
+1. discover active chains;
+2. identify which chains bind the roadmap being changed;
+3. classify whether their current production work may continue during the roadmap mutation;
+4. perform only the Owner-authorized roadmap change;
+5. require affected chains to re-read/re-bind before their next material coding action.
+
+Do not rewrite the other chains' endpoints or `ACTIVE.md` on their behalf merely to make the validator green.
+
+## Roadmap proposals do not collide
+
+Agent proposals are chain-local:
+
+```text
+agents/chains/<CHAIN_ID>/roadmap-proposals/**
+```
+
+Different agents may independently propose changes to the same roadmap. Proposals are advisory and do not create write authority.
+
+If proposals conflict, present them to the Owner as competing strategic options rather than silently merging them into the roadmap.
+
 ## Chain-local custody
 
 Each chain's `ACTIVE.md` carries:
@@ -83,9 +121,11 @@ ACTIVE_CUSTODIAN
 CUSTODY_EPOCH
 COORDINATION_STATE
 DEPENDENCIES
+ROADMAPS
+ROADMAP_REVIEW_STATUS
 ```
 
-The endpoint carries the same `CUSTODY_EPOCH`.
+The endpoint carries the same custody epoch and roadmap binding.
 
 Advancing one chain requires compare-and-swap discipline on that chain's current `ACTIVE.md` only. A different chain's advancement must not force a relay conflict.
 
@@ -102,7 +142,7 @@ EP-0007
 then:
 
 1. stop treating either branch as automatically authoritative;
-2. compare both against the common endpoint basis;
+2. compare both against the common endpoint and roadmap basis;
 3. classify engineering differences/evidence;
 4. select `CONTINUE`, `SALVAGE_PARTIAL`, `SUPERSEDE`, or a reconciled leg;
 5. create a later reconciliation endpoint;
@@ -133,6 +173,7 @@ When a chain moves to a successor PR, preserve:
 CHAIN_ID
 PREVIOUS_ENDPOINT
 CUSTODY_EPOCH sequence
+ROADMAPS binding
 predecessor PR
 successor PR
 reason for transition
@@ -148,8 +189,9 @@ Canonical chain-local store:
 
 ```text
 python skills/engineering-pr-delivery-v2/scripts/detect_chain_overlap.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_roadmap_bindings.py .
 ```
 
-Legacy shared-index repositories remain supported by passing `agents/agentchain.md` instead.
+Legacy shared-index repositories remain supported by passing `agents/agentchain.md` to the legacy-compatible checks.
 
-See `chain-concurrency.md`.
+See `chain-concurrency.md` and `owner-roadmaps.md`.

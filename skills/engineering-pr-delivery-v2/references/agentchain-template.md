@@ -2,8 +2,10 @@
 
 ## 1. Canonical chain state — `agents/chains/<CHAIN_ID>/ACTIVE.md`
 
+For new coding chains use version 2:
+
 ```text
-CHAIN_STATE_VERSION: 1
+CHAIN_STATE_VERSION: 2
 CHAIN_ID: <CHAIN_ID>
 MISSION: <one-line mission>
 ACTIVE_ENDPOINT: EP-0001
@@ -17,6 +19,15 @@ ACTIVE_CUSTODIAN: <agent-id>
 CUSTODY_EPOCH: 1
 COORDINATION_STATE: SAFE
 DEPENDENCIES: NONE
+ROADMAPS: docs/roadmaps/Overallroadmap_<domain>.md@<40-hex-git-blob-sha>
+ROADMAP_REVIEW_STATUS: COMPLETE
+```
+
+When no product/domain roadmap applies:
+
+```text
+ROADMAPS: NONE — <explicit discovery reason>
+ROADMAP_REVIEW_STATUS: NOT_APPLICABLE
 ```
 
 Rules:
@@ -25,7 +36,11 @@ Rules:
 - different chains never edit each other's `ACTIVE.md`;
 - advance using exact prior repository blob/version and `CUSTODY_EPOCH + 1`;
 - conflict/epoch change = stale write -> re-ground;
+- roadmap binding uses exact current Git blob SHA;
+- if the roadmap blob changes, re-read and re-bind before further material coding;
 - terminal chains may retain `ACTIVE.md` with `COMPLETE`/`SUPERSEDED`.
+
+Version-1 canonical chains are compatibility state created before roadmap binding. Before their next material coding leg, migrate them to version 2 at a new endpoint.
 
 ## 2. Canonical endpoint — `agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md`
 
@@ -37,6 +52,8 @@ LEG_ID: LEG-001
 ENDPOINT_ID: EP-0001
 PREVIOUS_ENDPOINT: NONE — chain start
 CUSTODY_EPOCH: 1
+ROADMAPS: docs/roadmaps/Overallroadmap_<domain>.md@<40-hex-git-blob-sha>
+ROADMAP_REVIEW_STATUS: COMPLETE
 
 CREATED_AT:
 ENDPOINT_REASON: CHAIN_START
@@ -78,6 +95,10 @@ STATE: QUALIFICATION_REQUIRED
 ### Do not change
 
 ### Expected next-leg files / domains
+
+### Owner roadmaps
+
+For each applicable roadmap record roadmap ID/path, exact blob basis, owner intent relevant to this leg, observed-status claims re-grounded against live evidence, alignment classification, and any roadmap proposal created.
 
 ### Inputs
 
@@ -148,6 +169,8 @@ Rollback/falsifier boundary:
 agents/chains/ADV-WRC-1389/
   ACTIVE.md
   endpoints/EP-0001.md
+  roadmap-proposals/RP-0001.md        # optional advisory proposal
+  roadmap-decisions/RD-0001.md        # only after explicit Owner decision
 
 agents/chains/ADV-LAFEA-1422/
   ACTIVE.md
@@ -192,4 +215,6 @@ agents/agentchain.md
 agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
 ```
 
-Do not mass-rewrite that history. Existing legacy chains may finish there or deliberately migrate. New chains should use `agents/chains/**`.
+Do not mass-rewrite that history. Existing legacy chains may finish there or deliberately migrate.
+
+Version-1 chain-local records under `agents/chains/**` also remain readable historical state. New material coding legs should use/migrate to `CHAIN_STATE_VERSION: 2` so the applicable owner roadmap is pinned before coding.
