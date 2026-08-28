@@ -39,30 +39,38 @@ Performance layer:
 
 - `Polynomial_Root_Structure_Concept_Book_Spec.md` — pedagogical/authoring authority.
 - `Polynomial_Root_Structure_Source_Coverage_Map.md` — qualified PYQ mechanism traceability.
-- `Polynomial_Root_Structure_Student_Draft_v0.1.md` — first student-facing concept-book draft.
+- `Polynomial_Root_Structure_Student_Draft_v0.1.md` — student-facing concept-book draft.
 - `../../../04_First_Step_Reference/P0_Algebra_First_Step_Cards.md` — recognition and first-move cards.
 - `../../../05_Practice_Ladders/P0_Algebra_Polynomial_Root_Structure_Ladder.md` — F0→F4→PYQ→XF ladder.
+- `../../../06_Speed_Labs/P0_Algebra_Recognition_FirstLine_Labs_v1.md` — recognition/first-line speed training.
+- `../../../07_Mastery_Banks/P0_Algebra_Polynomial_Root_Transfer_Bank_v1.md` — 18 reviewed non-identical transfer items.
+- `../../../08_Mixed_Preliminary_Tests/P0_Algebra_Polynomial_Root_Mastery_Test_v1.md` — unlabelled 12-question mastery test.
+- `../../../09_QA/P0_Algebra_Polynomial_Root_Structure_QA.md` — gate-by-gate readiness state.
 - `../../../00_Authority/NMTC_Preliminary_Concept_Dependency_Map.md` — upstream dependency placement.
 - `../../../00_Authority/nmtc_preliminary_concept_graph.yaml` — machine-readable concept dependencies.
 
 ## Current state
 
-`STATUS: STUDENT_DRAFT_IN_PROGRESS`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
 Completed:
 
-- qualified five-year evidence base;
-- dependency home;
-- source coverage map;
+- qualified five-year PYQ evidence base;
+- dependency/source maps;
 - first-step cards;
 - F0→F4→PYQ→XF practice architecture;
-- student draft v0.1 with diagnostics, derivations, contrasts, first-move lab and self-test.
+- student draft v0.1;
+- 18-item reviewed transfer bank with difficulty vectors;
+- recognition and first-line labs;
+- mixed mastery test with diagnostic error tags;
+- P0 gate re-audit.
 
 Still required before publication:
 
-- larger reviewed transfer bank;
-- complete worked-solution bank;
-- timed recognition/first-line sheets;
-- mastery test with diagnostic error tags;
-- final `PRELIM-*` / `MSRU-*` gate audit;
-- publication typography/render QA.
+- second editorial/math review;
+- classroom/readability timing calibration;
+- production-bank metadata for any ladder prompts promoted as standalone items;
+- final notation/typography/render QA;
+- optional separation into student copy and teacher/solution copy.
+
+Global project blocker retained separately: 2022 Bhaskara Preliminary source recovery is still unresolved and is required before any six-year recurrence claim.
