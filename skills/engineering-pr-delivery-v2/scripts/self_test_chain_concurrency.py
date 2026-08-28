@@ -93,7 +93,7 @@ CHAIN_ID: {chain}
 MISSION: test mission
 ACTIVE_ENDPOINT: {eid}
 ACTIVE_ENDPOINT_FILE: agents/chains/{chain}/endpoints/{eid}.md
-PR: #1
+PR: 1
 BRANCH: test
 HEAD: {head}
 STATE: READY_FOR_NEXT_LEG
@@ -142,7 +142,6 @@ def main():
 
     with tempfile.TemporaryDirectory() as td:
         root = Path(td)
-        # Same EP-0001 is intentionally valid in three different chains.
         write_chain(root, "ADV-WRC-1389", [("EP-0001", "NONE — chain start", 1)], "EP-0001", 1, "src/core/emp1")
         write_chain(root, "ADV-LAFEA-1422", [("EP-0001", "NONE — chain start", 1)], "EP-0001", 1, "src/core/lafea")
         write_chain(root, "ADV-LOADCALC-1505", [("EP-0001", "NONE — chain start", 1)], "EP-0001", 1, "src/core/loadcalc")
