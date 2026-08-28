@@ -47,6 +47,14 @@ Question Bank:
 - `Sequence_Series_JEE_Bridge_Map.md` — bridge ladder and B1-B18 traceability.
 - `ARTIFACTS.md` — generated artifact manifest/checksums.
 
+## NMTC Bhaskara Preliminary overlay
+
+The deep chapter here remains concept authority. Preliminary-specific Previous-Year grounding, recognition-speed drills, first-move cards, F0→F4→PYQ→XF ladders, source-QC contrasts and mixed mastery are maintained separately at:
+
+`../NMTC Preliminary/03_Concept_Books/Algebra/Sequence_Series_Preliminary/`
+
+Do not copy Preliminary timing/weighting assumptions back into the general chapter. The overlay reuses this chapter's POSITION / CHANGE / RATIO / ACCUMULATION / TRANSFORM / REVERSE lenses.
+
 ## Reusable skill references
 
 - `../../skills/grade9-math/SKILL.md`
