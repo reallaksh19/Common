@@ -24,7 +24,7 @@ All items are `AUTHOR_CREATED_TRANSFER`.
 | 16 | 4 | P0-3 | AM-GM equality forces all roots 1 | FM |
 | 17 | 5 | P0-2 | use `t^3=2` directly | REP |
 | 18 | 4 | P0-3 | `|x-5|<3`, then exclude denominator zero | DOM |
-| 19 | 2 | P0-4 | fourth-power cycles modulo 5 | CHECK |
+| 19 | 113 | P0-5 | opposite angles of a cyclic quadrilateral sum 180 | FIG |
 | 20 | 4 | P0-4 | digit sum must be divisible by 9 | FM |
 | 21 | 48 | P1-1 | solve `a/(1-r)=12`, `ar=3` | REP |
 | 22 | 20 | P1-2 | `C(6,3)` | COUNT |
@@ -63,6 +63,9 @@ A set with no consecutive integers can contain at most one from each pair `(1,2)
 
 ### Q18
 `3/|x-5|>1` requires `0<|x-5|<3`. Integer solutions are `3,4,6,7`, giving 4.
+
+### Q19
+Opposite angles of a cyclic quadrilateral are supplementary, so the required angle is `180-67=113` degrees.
 
 ### Q21
 `r=3/a`. Then
