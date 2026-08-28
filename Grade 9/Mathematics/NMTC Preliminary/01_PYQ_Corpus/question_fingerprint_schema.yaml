@@ -1,0 +1,86 @@
+schema: nmtc-bhaskara-preliminary-question-fingerprint/v1
+
+required:
+  - question_id
+  - paper_id
+  - year
+  - stage
+  - source
+  - response_format
+  - primary_domain
+  - primary_concept
+  - visible_form
+  - hidden_structure
+  - first_move
+  - minimum_solution_path
+  - archetype
+  - source_status
+  - preliminary_profile
+
+question_id: NMTC-BH-P-YYYY-QNN
+paper_id: NMTC-BH-P-YYYY
+year: YYYY
+stage: PRELIMINARY
+
+source:
+  provenance_class: P0_OFFICIAL_AMTI_ORIGINAL | P1_VERIFIED_FAITHFUL_REPRODUCTION | P2_REPUTABLE_SECONDARY_ARCHIVE | P3_PARTIAL_OR_UNVERIFIED_TRANSCRIPTION
+  url: ""
+  locator: ""
+  independent_match: null
+
+source_status: SOURCE_COMPLETE | SOURCE_IMAGE_REQUIRED | SOURCE_TRANSCRIPTION_SUSPECT | SOURCE_INCOMPLETE | SOURCE_CONFLICT
+response_format: MCQ | FILL_IN | SHORT_OBJECTIVE | UNKNOWN
+
+primary_domain: ALGEBRA | GEOMETRY | NUMBER_THEORY | COMBINATORICS | ARITHMETIC_FOUNDATION | MIXED
+primary_concept: ""
+secondary_concepts: []
+prerequisites: []
+
+visible_form: "What the student sees on the surface"
+hidden_structure: "Invariant, transformation, or relation that makes the problem tractable"
+first_move: "Best first useful mathematical line or construction"
+minimum_solution_path:
+  - "step 1"
+  - "step 2"
+
+archetype: UPPER_SNAKE_CASE_STABLE_ID
+representation_switches: []
+conditions_cases: []
+
+traps:
+  tempting_wrong_move: ""
+  distractor_mechanisms: []
+  boundary_risk: ""
+
+preliminary_profile:
+  conceptual: 0        # 0-10
+  recognition: 0       # 0-10
+  first_move: 0        # 0-10
+  reasoning_steps: 0   # 0-10
+  algebra: 0           # 0-10
+  hidden_structure: 0  # 0-10
+  constraints_cases: 0 # 0-10
+  calculation_burden: 0# 0-10
+  trap_density: 0      # 0-10
+  time_pressure: 0     # 0-10
+  speed_class: DIRECT | FAST_IF_RECOGNIZED | MULTISTEP | CASE_HEAVY | CALCULATION_HEAVY
+
+student_use:
+  concept_book_anchor: false
+  first_step_card: false
+  practice_ladder_target: false
+  speed_lab_candidate: false
+  mastery_bank_anchor: false
+
+transfer_contract:
+  foundation_needed: []
+  non_identical_transfer_required: true
+  surface_features_to_change: []
+  invariant_to_preserve: ""
+
+solution_authority:
+  derived_solution_status: NOT_DONE | HAND_DERIVED | INDEPENDENTLY_CHECKED
+  answer_key_source: null
+  answer_key_match: null
+
+notes: ""
