@@ -71,25 +71,56 @@ Purpose:
 
 The five-year scored corpus signal is approximately:
 
-- Algebra 45.2%;
-- Geometry 23.7%;
-- Number Theory 17.8%;
-- Combinatorics 5.9%;
-- Arithmetic/Foundation 7.4%.
+- Algebra: 45.2%;
+- Geometry: 23.7%;
+- Number Theory: 17.8%;
+- Combinatorics: 5.9%;
+- Arithmetic/Foundation: 7.4%.
 
 These are **not official weightages**.
 
-Mock allocation uses them only as a broad historical signal. It deliberately prevents frequency overfit by ensuring that sparse-but-explicit syllabus nodes appear across the three-paper rotation.
+The mocks use these only as a broad historical signal. They intentionally overweight two areas relative to the raw five-year shares:
 
-Target per 30-question mock, with small rotation allowed:
+1. explicit P2 algebra topics, because weak recurrence does not reduce syllabus obligation;
+2. combinatorial modeling, because the sparse sample still demonstrates a legitimate high ceiling and the syllabus requires full coverage.
 
-- Algebra / sequences / inequalities / radicals / polynomial / P2 algebra: 12–14;
-- Geometry: 6–7;
-- Number Theory: 4–6;
-- Combinatorics: 2–3;
-- cumulative arithmetic/modeling: 1–2.
+The frozen v1 per-paper allocation is:
 
-Across the three mocks, both P2 topics—Mathematical Induction and Greatest/Least Integer Functions—must be assessed repeatedly despite weak current PYQ recurrence.
+### Mock A
+
+- Algebra including P2 and Sequences: 16
+- Geometry: 6
+- Number Theory: 4
+- Combinatorics: 3
+- Arithmetic/Foundation: 1
+
+### Mock B
+
+- Algebra including P2 and Sequences: 16
+- Geometry: 6
+- Number Theory: 4
+- Combinatorics: 3
+- Arithmetic/Foundation: 1
+
+### Mock C
+
+- Algebra including P2 and Sequences: 15
+- Geometry: 6
+- Number Theory: 4
+- Combinatorics: 4
+- Arithmetic/Foundation: 1
+
+Across all 90 questions:
+
+- Algebra including P2/Sequences: 47 / 90
+- Geometry: 18 / 90
+- Number Theory: 12 / 90
+- Combinatorics: 10 / 90
+- Arithmetic/Foundation: 3 / 90
+
+This distribution is a **training design**, not a reconstructed historical weighting model.
+
+Across the three mocks, both P2 topics—Mathematical Induction and Greatest/Least Integer Functions—are assessed repeatedly despite weak current PYQ recurrence.
 
 ## Package codes used by teacher keys
 
@@ -195,7 +226,7 @@ This separation prevents chapter labels from leaking the intended method.
 
 ## Current status
 
-`STATUS: MOCK_SYSTEM_AUTHORING`
+`STATUS: MOCK_SYSTEM_MATH_QA_PENDING`
 
 Publication blockers remain:
 
