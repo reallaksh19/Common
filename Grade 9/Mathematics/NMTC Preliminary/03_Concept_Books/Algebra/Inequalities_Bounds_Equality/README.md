@@ -48,8 +48,29 @@ Performance layer:
 - `../../../08_Mixed_Preliminary_Tests/P0_Algebra_Inequalities_Bounds_Mastery_Test_v1.md`
 - `../../../09_QA/P0_Algebra_Inequalities_Bounds_QA.md`
 
+## Internal completion evidence
+
+- Concept Book specification: PASS
+- student self-learning draft: PASS_INTERNAL
+- PYQ source coverage map: PASS
+- first-step cards: PASS
+- 9-family `F0 -> F4 -> PYQ -> XF` ladder: PASS
+- reviewed transfer bank: 18 items, PASS
+- recognition lab: 20 items, PASS
+- first-line lab: 12 items, PASS
+- mixed mastery test: 12 items, PASS
+- second math/editorial pass: PASS
+- gate-by-gate QA: PASS_INTERNAL
+
 ## Current state
 
-`STATUS: PACKAGE_AUTHORING`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
-The unit is grounded in the qualified five-year Preliminary corpus. Student-facing publication remains blocked until the full internal package and QA pass are complete.
+Remaining blockers are publication-stage only:
+
+- classroom/readability timing calibration;
+- student/teacher output separation;
+- production-bank machine-readable metadata for promoted standalone items;
+- final notation/typography/render QA.
+
+The global 2022 PYQ recovery backlog remains separate and does not justify a six-year recurrence claim yet.
