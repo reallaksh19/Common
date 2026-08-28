@@ -59,7 +59,7 @@ A year/question number must never be attributed to author-created material.
 
 # Internal-complete Preliminary packages
 
-All **nine** packages below are:
+All **ten** packages below are:
 
 `INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
@@ -117,25 +117,32 @@ Median/altitude/angle-bisector/general-cevian classification, Stewart from Pytha
 
 `03_Concept_Books/Algebra/Mathematical_Induction/`
 
-This is a **syllabus-first** package because the qualified five-year corpus does not currently justify an induction recurrence claim.
+Syllabus-first coverage: proposition/domain statement, start index/base case, induction-hypothesis discipline, bridge construction, identities, divisibility, inequalities, recurrence verification, multiple bases/step size, strong induction, broken-proof diagnosis, method selection and source integrity.
+
+## P2-2 — Greatest / Least Integer Functions
+
+`03_Concept_Books/Algebra/Greatest_Least_Integer_Functions/`
+
+This is also **syllabus-first**: direct recurrence is not established in the qualified five-year corpus.
 
 Connected coverage:
 
-- precise proposition/domain statement;
-- correct starting index and base case;
-- induction-hypothesis discipline;
-- `P(k)->P(k+1)` bridge construction;
-- sum/product identities;
-- divisibility induction;
-- inequalities with auxiliary-domain checks;
-- recurrence formula verification;
-- step-size >1 / multiple base cases;
-- strong induction bridge;
-- broken-proof diagnosis;
-- direct-proof-vs-induction method selection;
-- historical-attribution/source integrity.
+- floor/ceiling definitions from order;
+- half-open interval translations;
+- negative inputs and truncation falsifier;
+- integer shifts and reflection `ceil(x)=-floor(-x)`;
+- fractional part including negative inputs;
+- floor/ceiling equations and inequalities;
+- `x=n+r` / `n=floor(x)` case method;
+- nested/idempotent forms;
+- floor-sum identities and shifted-floor identities;
+- integer counting in real intervals;
+- square-root, quotient/grouping and cross-domain bridges;
+- source-QC separation of primary mechanism from incidental final floor operation.
 
-Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer items, 20 recognition items, 12 first-line items, 12-question mastery test, second math/logic audit and QA `PASS_INTERNAL`.
+`NMTC-BH-P-2024-Q27` is bridge evidence only; it is primarily an infinite-GP problem.
+
+Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer items, 20 recognition items, 12 first-line items, 12-question mastery test, second math/editorial audit and QA `PASS_INTERNAL`.
 
 ## Existing exemplar relationship
 
@@ -143,5 +150,6 @@ Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer
 
 ## Next build order
 
-1. **Greatest / Least Integer functions**;
-2. mixed Preliminary synthesis and mocks.
+1. **mixed Preliminary synthesis and full mock-test system**;
+2. publication/calibration pass across all packages;
+3. recover/qualify 2022 and re-run recurrence before any six-year weighting claim.
