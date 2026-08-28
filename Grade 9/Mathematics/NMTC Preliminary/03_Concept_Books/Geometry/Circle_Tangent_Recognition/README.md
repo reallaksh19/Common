@@ -62,6 +62,20 @@ Preliminary performance layer:
 
 A recovered answer or prose solution is not custody of an original diagram. Figure-dependent historical items remain `FIGURE_GATED` until the exact source figure is retained and checked.
 
+## Internal assets
+
+- 14 First-Step cards;
+- 10 mechanism ladders;
+- 18-item reviewed text-complete transfer bank;
+- 20-item recognition lab;
+- 12-item first-line lab;
+- 12-question unlabelled mastery test;
+- source-custody diagnostic items;
+- second math/editorial audit: PASS;
+- gate-by-gate QA: PASS_INTERNAL.
+
 ## Current state
 
-`STATUS: PACKAGE_AUTHORING`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
+
+Publication-stage blockers remain exact PYQ figure ingestion, classroom/readability timing calibration, student/teacher separation, machine-readable production metadata and final typography/render QA.
