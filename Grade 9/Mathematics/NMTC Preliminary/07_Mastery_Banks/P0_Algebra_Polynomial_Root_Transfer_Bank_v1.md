@@ -336,7 +336,7 @@ Solve
 ---
 
 ## E2
-Factor completely over the reals:
+Factor as far as possible over the rational numbers:
 
 `x^4+5x^3+8x^2+5x+1`.
 
@@ -354,7 +354,7 @@ These correspond to
 
 `x^2+2x+1` and `x^2+3x+1`.
 
-Their product is the original quartic.
+Their product is the original quartic. The second quadratic has discriminant 5, so it does not factor further over the rationals.
 
 **Profile:** `7/8/7/6/6/8/3/4/7/7`; `FAST_IF_RECOGNIZED`.
 
