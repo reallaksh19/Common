@@ -24,7 +24,7 @@ All items are `AUTHOR_CREATED_TRANSFER`.
 | 16 | 5 | P0-1 | `(alpha+beta)/(alphabeta)=5/3` | FM |
 | 17 | 7 | P0-2 | `27sqrt3=3^(7/2)` | REP |
 | 18 | 5 | P0-3 | convert to `1<x<7`, then count integers | DOM |
-| 19 | 1 | P0-4 | last-digit cycle of 7 | CHECK |
+| 19 | 5 | P1-3 | hypotenuse is 10, then `R=c/2` | REC |
 | 20 | 4 | P0-4 | `1+6/(n-1)` -> positive divisors of 6 | REP/DOM |
 | 21 | 93 | P1-1 | finite GP sum | ALG |
 | 22 | 20 | P1-2 | coefficient is `C(6,3)` | REC |
@@ -71,6 +71,9 @@ Median square:
 
 ### Q16
 `1/alpha+1/beta=(alpha+beta)/(alphabeta)=5/3`.
+
+### Q19
+The hypotenuse is `sqrt(6^2+8^2)=10`. For a right triangle, the circumradius is half the hypotenuse, so `R=5`.
 
 ### Q20
 `(n+5)/(n-1)=1+6/(n-1)`. Since `n` is positive and `n!=1`, admissible positive `n-1` are `1,2,3,6`, giving 4 values.
