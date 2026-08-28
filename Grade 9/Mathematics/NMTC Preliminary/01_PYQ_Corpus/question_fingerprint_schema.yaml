@@ -1,4 +1,4 @@
-schema: nmtc-bhaskara-preliminary-question-fingerprint/v1
+schema: nmtc-bhaskara-preliminary-question-fingerprint/v1.1
 
 required:
   - question_id
@@ -15,6 +15,7 @@ required:
   - minimum_solution_path
   - archetype
   - source_status
+  - scoring_disposition
   - preliminary_profile
 
 question_id: NMTC-BH-P-YYYY-QNN
@@ -27,9 +28,17 @@ source:
   url: ""
   locator: ""
   independent_match: null
+  independent_match_class: null
 
-source_status: SOURCE_COMPLETE | SOURCE_IMAGE_REQUIRED | SOURCE_TRANSCRIPTION_SUSPECT | SOURCE_INCOMPLETE | SOURCE_CONFLICT
+source_status: SOURCE_COMPLETE | SOURCE_IMAGE_REQUIRED | SOURCE_TRANSCRIPTION_SUSPECT | SOURCE_INCOMPLETE | SOURCE_CONFLICT | SOURCE_RESOLVED_BY_INDEPENDENT_MATCH
+scoring_disposition: SCORED | BONUS | UNKNOWN | NOT_APPLICABLE
 response_format: MCQ | FILL_IN | SHORT_OBJECTIVE | UNKNOWN
+
+source_resolution:
+  status: UNRESOLVED | RESOLVED_MATCH | RESOLVED_BONUS | RESOLVED_TRANSCRIPTION | NOT_NEEDED
+  evidence: []
+  canonical_use_allowed: false
+  rationale: ""
 
 primary_domain: ALGEBRA | GEOMETRY | NUMBER_THEORY | COMBINATORICS | ARITHMETIC_FOUNDATION | MIXED
 primary_concept: ""
@@ -80,6 +89,7 @@ transfer_contract:
 
 solution_authority:
   derived_solution_status: NOT_DONE | HAND_DERIVED | INDEPENDENTLY_CHECKED
+  derived_answer: null
   answer_key_source: null
   answer_key_match: null
 
