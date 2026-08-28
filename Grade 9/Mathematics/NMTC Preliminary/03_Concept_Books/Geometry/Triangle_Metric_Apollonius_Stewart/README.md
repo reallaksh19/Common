@@ -63,10 +63,23 @@ Source-QC contrast:
 - `../../../08_Mixed_Preliminary_Tests/P1_Geometry_Triangle_Metric_Mastery_Test_v1.md`
 - `../../../09_QA/P1_Geometry_Triangle_Metric_QA.md`
 
+## Internal assets
+
+- 14 First-Step cards;
+- 10 mechanism ladders;
+- 18 reviewed transfer items;
+- 20-item recognition lab;
+- 12-item first-line lab;
+- 12-question unlabelled mastery test;
+- second mathematical/editorial pass;
+- QA `PASS_INTERNAL`.
+
 ## Source boundary
 
 Theorems may be taught from complete author-created diagrams/text. Historical figure-dependent items remain gated until exact source figures are retained. A known answer or solution prose is not figure custody.
 
 ## Current state
 
-`STATUS: PACKAGE_AUTHORING`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
+
+Remaining blockers are classroom timing/readability calibration, student/teacher split, production-bank metadata, final typography/equation/render QA and exact figure ingestion for any historical figure-based anchor promoted to final publication.
