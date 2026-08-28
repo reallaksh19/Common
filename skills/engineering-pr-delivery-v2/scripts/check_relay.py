@@ -18,6 +18,14 @@ def protocol_version(path: str | None):
     return m.group(1).strip() if m else None
 
 
+def repo_root_for(relay: Path):
+    if relay.is_file():
+        return relay.parent.parent if relay.parent.name == "agents" else relay.parent
+    if relay.name == "chains" and relay.parent.name == "agents":
+        return relay.parent.parent
+    return relay
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("relay")
@@ -28,21 +36,31 @@ def main():
     parser.add_argument("--answer")
     parser.add_argument("--verdict")
     parser.add_argument("--reconciliation")
+    parser.add_argument("--active", help="ACTIVE.md for the new material leg; enables protocol/pre-work adoption gate")
+    parser.add_argument("--base-ref", help="base ref for rejecting new writes to legacy agents/agentchain paths")
+    parser.add_argument("--head-ref", default="HEAD")
     args = parser.parse_args()
 
     answer = args.answer or args.legacy_answer
     verdict = args.verdict or args.legacy_verdict
     relay = Path(args.relay).resolve()
+    root = repo_root_for(relay)
 
     if relay.is_file():
         rc = run("validate_agentchain.py", str(relay))
         structure = "legacy relay index"
     else:
-        rc = run("validate_chain_store.py", str(relay))
+        rc = run("validate_repository_overlay.py", str(root))
+        rc |= run("validate_chain_store.py", str(relay))
         rc |= run("validate_roadmap_bindings.py", str(relay))
         rc |= run("validate_handover_snapshot.py", str(relay))
         rc |= run("validate_qualification_questions.py", str(relay))
-        structure = "canonical relay + roadmap + handover + expert-question gates"
+        structure = "project-overlay + canonical relay + roadmap + handover + expert-question gates"
+
+    if args.active:
+        rc |= run("validate_leg_adoption.py", str(root), args.active)
+    if args.base_ref:
+        rc |= run("validate_legacy_relay_diff.py", str(root), args.base_ref, args.head_ref)
 
     v3 = protocol_version(answer) == "3" or protocol_version(verdict) == "3"
 
@@ -77,6 +95,10 @@ def main():
 
     if rc == 0:
         print(f"PASS: {structure}")
+        if args.active:
+            print("PASS: material leg has current Common basis, canonical v3 custody and pre-work Q1-Q5")
+        if args.base_ref:
+            print("PASS: material-leg diff does not write legacy relay paths")
         if v3 and verdict and not args.reconciliation:
             print("NOTE: qualified READ_ONLY; post-basis reconciliation is still required before WRITE_ALLOWED.")
         if args.reconciliation:
