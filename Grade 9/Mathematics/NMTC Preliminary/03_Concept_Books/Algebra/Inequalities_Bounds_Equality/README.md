@@ -35,6 +35,20 @@ Performance layer:
 
 `RECOGNIZE -> BOUNDEDNESS -> FIRST MOVE -> EQUALITY/DOMAIN -> SOLVE -> CHECK -> TRANSFER`
 
+## Grounding anchors
+
+Clean/source-usable Preliminary evidence includes:
+
+- `NMTC-BH-P-2018-Q12` — reciprocal/Cauchy bound;
+- `NMTC-BH-P-2018-Q13` — completing-square optimization;
+- `NMTC-BH-P-2023-Q17` — requested maximum is unbounded;
+- `NMTC-BH-P-2024-Q17` — AM-GM equality collapses four positive roots;
+- `NMTC-BH-P-2024-Q30` — direct trigonometric bound plus symmetry;
+- `NMTC-BH-P-2025-Q10` — absolute reciprocal inequality plus integer count;
+- `NMTC-BH-P-2025-Q16` — zero-sum-square collapse.
+
+Supporting evidence is used only where its role is explicit; sparse direct PYQ evidence does not remove prerequisite rational-inequality teaching.
+
 ## Package files
 
 - `Inequalities_Bounds_Equality_Concept_Book_Spec.md`
