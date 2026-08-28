@@ -14,6 +14,7 @@ SUITES = [
     "self_test_roadmap_governance.py",
     "self_test_handover_snapshot.py",
     "self_test_qualification_questions.py",
+    "self_test_qualification_first_verdict.py",
 ]
 SUITE_TIMEOUT_SECONDS = 20
 

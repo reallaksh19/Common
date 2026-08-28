@@ -10,16 +10,14 @@ ACTIVE_ENDPOINT: EP-0001
 ACTIVE_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
 PR: <number-or-PENDING>
 BRANCH: <branch>
-HEAD: <accepted material/checkpoint head>
+HEAD: <accepted checkpoint head>
 STATE: ACTIVE
-
 ENGINEERING_STATE: READY
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: NOT_REQUIRED
 WRITE_AUTHORITY: WRITE_ALLOWED
 AUTO_STATE: NOT_APPLICABLE
 MERGE_AUTHORITY: OWNER_ONLY
-
 AUTHORITY_DOMAIN: <domain>
 ACTIVE_CUSTODIAN: <agent-id>
 CUSTODY_EPOCH: 1
@@ -30,13 +28,10 @@ ROADMAP_REVIEW_STATUS: COMPLETE | NOT_APPLICABLE | BLOCKED
 HANDOVER_READY: TRUE
 ```
 
-For agent-loss entry, do not let a replacement mutate this file before qualification. The accepted state remains the locator; the replacement's effective takeover state is READ_ONLY/PENDING until independent PASS.
-
 ## 2. Non-terminal endpoint
 
 ```text
 # EP-0001 — <title>
-
 CHAIN_ID: <CHAIN_ID>
 LEG_ID: LEG-001
 ENDPOINT_ID: EP-0001
@@ -45,7 +40,11 @@ CUSTODY_EPOCH: 1
 ROADMAPS: <binding>
 ROADMAP_REVIEW_STATUS: <status>
 HANDOVER_READY: TRUE
-
+CREATED_AT:
+ENDPOINT_REASON: CHAIN_START
+TASK / ISSUE:
+PR:
+BRANCH:
 CHECKPOINT_HEAD:
 MAIN_HEAD_OBSERVED:
 MERGE_BASE:
@@ -58,14 +57,13 @@ AUTO_STATE:
 MERGE_AUTHORITY:
 
 ### Handover snapshot
-
 Repo: <repo>
 Task: <task>
 Chain: <CHAIN_ID>
 Endpoint: <EP>
 PR: <PR>; PR status: <draft/open/etc>; Branch / PR head / main: <refs>
 Merge authority: <state>
-Engineering / custody / qualification / write state: <compact states>
+Engineering / custody / qualification / write state: <states>
 Roadmap: <path@blob or NONE>
 Inputs: <key pointers>
 Benchmarks: <key pointers>
@@ -79,61 +77,41 @@ Q4: <concise independent-oracle prompt>
 Q5: <concise safe-patch/NO-PATCH prompt>
 
 ### Mission
-
 ### This leg completed
-
 ### Currently in progress
-
 ### Remaining work
-
 ### Exact next action
-
 ### Known / proven
-
 ### Not proven
-
 ### NOT_RUN
-
 ### Active hypothesis
-
 ### Falsifier
-
 ### Protected invariants
-
 ### Do not redo
-
 ### Do not change
-
 ### Expected next-leg files / domains
-
 ### Owner roadmaps
-
 ### Inputs
-
 ### Benchmarks
-
 ### Common / governing documents
-
 ### Authoritative sources
-
 ### Production paths
-
 ### Validation / test paths
-
 ### Changed during this leg
-
 ### Validation summary
-
 ### Open risks / questions
 
-### Takeover qualification pack
+### Next-agent qualification
+Compatibility locator only. The actual version-3 exam is the Takeover qualification pack below; Q1-Q5 are qualification, never the work baton.
 
+### Takeover qualification pack
 PURPOSE: QUALIFICATION_ONLY
 NOT_AN_IMPLEMENTATION_TASK: TRUE
+QUALIFICATION_PROTOCOL_VERSION: 3
 QUALIFICATION_BASIS_HEAD: <sha>
 QUESTION_SET_ID: QS-<CHAIN_ID>-0001
 QUESTION_SET_STATUS: CURRENT
-QUESTION_SET_AUTHOR: <agent/question-authority>
+QUESTION_SET_AUTHOR: <prior-agent/question-authority>
 
 #### Q1 — Production Trace
 Repository anchors:
@@ -184,20 +162,4 @@ No-patch condition:
 Fail if:
 ```
 
-The `### Handover snapshot` must remain under 300 words. Detailed qualification content is not included in that word limit.
-
-## 3. Replacement agent sequence
-
-```text
-minimal locator bootstrap
--> Q1-Q5
--> independent verdict
--> PASS_QUALIFIED_READ_ONLY
--> reconcile crash window/current authority
--> new recovery endpoint + custody epoch
--> WRITE_ALLOWED only if safe
-```
-
-## 4. Existing version 1/2 chains
-
-Do not rewrite immutable history. A replacement qualifies first using the latest accepted endpoint/question set. After PASS and reconciliation, migrate to version 3 in a new endpoint before material mutation.
+The handover snapshot is <300 words; detailed exam content is outside that limit. Existing v1/v2 history is never rewritten. A replacement qualifies first on the latest accepted set, then reconciles and migrates to version 3 before material mutation.
