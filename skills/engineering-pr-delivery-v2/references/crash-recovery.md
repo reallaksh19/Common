@@ -4,33 +4,41 @@
 
 The protocol never depends on an outgoing agent intentionally releasing the baton.
 
-The latest valid durable endpoint is the recovery basis.
+For canonical chains, the recovery basis is:
+
+```text
+agents/chains/<CHAIN_ID>/ACTIVE.md
++ referenced immutable endpoint
++ live repository state
+```
 
 ## Recovery entry conditions
 
 Use crash recovery when:
 
 - the prior agent disappeared or became unavailable;
-- the prior chat/context is lost;
-- repository changes exist after the latest endpoint and their intent is not yet reconciled;
-- an incoming agent cannot prove that the live material state still matches the endpoint;
-- the previous agent's qualification or authority state is unknown.
+- prior chat/context is lost;
+- repository changes exist after the latest endpoint and intent is not reconciled;
+- the live material state cannot be proven to match the endpoint;
+- previous qualification/authority is unknown;
+- an orphan endpoint exists because the prior agent died before advancing `ACTIVE.md`;
+- an `ACTIVE.md` write failed because another agent advanced the custody epoch.
 
 ## Recovery sequence
 
-1. Locate the chain's latest endpoint in `agents/agentchain.md`.
-2. Record its `CHECKPOINT_HEAD`, `MAIN_HEAD_OBSERVED`, PR, branch, exact next action, Q1-Q5, and indexed dependencies.
-3. Fetch live main/base, PR head, merge base, diff, reviews, and checks.
-4. Compare every material commit/path after `CHECKPOINT_HEAD`.
-5. Classify post-endpoint work.
-6. Preserve known-good evidence and explicitly isolate uncertainty.
-7. Create a new `AGENT_LOST_RECOVERY` endpoint.
-8. Regenerate Q1-Q5 if current material state or unresolved work differs materially.
-9. Incoming engineering-critical mutation remains READ_ONLY until qualification.
+1. Locate `agents/chains/<CHAIN_ID>/ACTIVE.md`.
+2. Record `ACTIVE_ENDPOINT`, `CUSTODY_EPOCH`, custodian, head, PR, branch, authority domain, coordination state, and dependencies.
+3. Open the referenced endpoint and record its `CHECKPOINT_HEAD`, exact next action, Q1-Q5, and indexed dependencies/sources.
+4. Fetch live main/base, PR head, merge base, diff, reviews, and checks.
+5. Compare every material commit/path after `CHECKPOINT_HEAD`.
+6. Inspect the chain's `endpoints/` directory for unreferenced/orphan or divergent successors.
+7. Classify post-endpoint work and custody state.
+8. Preserve known-good evidence and isolate uncertainty.
+9. Create an `AGENT_LOST_RECOVERY` or reconciliation endpoint.
+10. Advance `ACTIVE.md` using exact prior blob/version + next custody epoch.
+11. Incoming engineering-critical mutation remains READ_ONLY until qualification.
 
 ## Post-endpoint classification
-
-Use:
 
 ```text
 RECOVERABLE
@@ -55,7 +63,7 @@ SUPERSEDE
 ABANDON
 ```
 
-Agent replacement alone is not a reason to create a new PR. Choose a new PR only when it is the safer coherent implementation vehicle.
+Agent replacement alone is not a reason to create a new PR.
 
 ## Recovery endpoint requirements
 
@@ -66,6 +74,7 @@ ENDPOINT_REASON: AGENT_LOST_RECOVERY
 RECOVERY_FROM_ENDPOINT:
 RECOVERY_BASIS_HEAD:
 LIVE_HEAD:
+CUSTODY_EPOCH:
 POST_ENDPOINT_COMMITS:
 CLASSIFICATION:
 RECOVERED_KNOWN_GOOD:
@@ -78,15 +87,35 @@ EXACT_NEXT_ACTION:
 
 Then provide fresh source indexes and Q1-Q5 against the recovered state.
 
+## Endpoint written but ACTIVE.md not advanced
+
+This is a normal crash window.
+
+The endpoint is an orphan durable artifact, not lost work:
+
+1. do not delete it silently;
+2. compare its `PREVIOUS_ENDPOINT`, `CHECKPOINT_HEAD`, and `CUSTODY_EPOCH` with current chain state;
+3. check whether another successor was created from the same prior endpoint;
+4. classify the orphan as valid/recoverable/divergent/untrusted;
+5. either advance `ACTIVE.md` or create an explicit reconciliation/supersession endpoint.
+
+## Stale ACTIVE.md write
+
+If the prior blob/version or `CUSTODY_EPOCH` changed between read and update:
+
+```text
+STALE_WRITE
+```
+
+Do not force the pointer. Another agent may have advanced the same chain. Re-ground and reconcile.
+
+This stale-write rule applies to the same chain only. A WRC chain update should not conflict with LAFEA or LoadCalc relay state because those chains own different `ACTIVE.md` files.
+
 ## Unpersisted work
 
-If the previous agent changed local files but never persisted them to a repository-visible durable state, that work is not recoverable authority.
-
-Do not invent its content from chat summaries or infer that it was complete.
+Local unpushed changes are not recoverable authority. Do not invent their content from chat summaries.
 
 ## Mid-change recovery
-
-A diff after the latest endpoint is not automatically bad.
 
 For each changed file ask:
 
@@ -101,8 +130,8 @@ Can the change be isolated or reverted cleanly?
 
 If any material answer requires guessing, quarantine that part before continuing.
 
-## Concurrent resurrection
+## Legacy recovery
 
-The prior agent may not actually be permanently gone.
+For a legacy-format chain that has not migrated, recover from `agents/agentchain.md` plus its referenced legacy endpoint. Do not rewrite historical endpoints merely to fit the new directory layout.
 
-Therefore the repository state, not session liveness, is authoritative. If two agents contribute from divergent material states, classify it as a coordination/reconciliation problem before accepting either as the current chain state.
+See `chain-concurrency.md` for migration and custody rules.
