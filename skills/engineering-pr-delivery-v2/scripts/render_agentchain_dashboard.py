@@ -2,7 +2,7 @@
 from pathlib import Path
 import sys
 
-from validate_agentchain import field_value, TERMINAL_STATES
+from validate_chain_store import field_value, TERMINAL_STATES
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
         return 1
 
     rows = []
-    for chain_dir in sorted(p for p in chains_dir.iterdir() if p.is_dir()):
+    for chain_dir in sorted(path for path in chains_dir.iterdir() if path.is_dir()):
         active = chain_dir / "ACTIVE.md"
         if not active.is_file():
             continue
