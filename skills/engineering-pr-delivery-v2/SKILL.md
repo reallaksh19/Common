@@ -1,13 +1,13 @@
 ---
 name: engineering-pr-delivery-v2
-description: Execute, recover, qualify, and relay engineering repository work across multiple agents using chain-local mutable state under agents/chains/<CHAIN_ID>/ACTIVE.md plus immutable chain-scoped endpoints. Use for engineering implementation, investigation, audit, PR progression, abrupt agent loss, expert takeover, concurrent WRC/LAFEA/LoadCalc workstreams, AUTO MODE, and long-running tasks spanning multiple PRs. Enforce maintainable modular implementation, explicit engineering authority boundaries, validation integrity, source custody, stale-write protection, and crash-safe takeover. Every durable endpoint records trusted repository state, inputs/benchmarks/common and governing documents, exact next action, protected authority, validation limits, and exactly five repository-specific questions for the next agent. Graceful handoff is optional and candidate self-qualification never grants engineering-critical write authority.
+description: Execute, recover, qualify, and relay engineering repository work across multiple agents using chain-local mutable state under agents/chains/<CHAIN_ID>/ACTIVE.md plus immutable chain-scoped endpoints. Use for engineering implementation, investigation, audit, PR progression, abrupt agent loss, expert takeover, concurrent WRC/LAFEA/LoadCalc workstreams, AUTO MODE, and long-running tasks spanning multiple PRs. Enforce owner-governed roadmap review before coding, maintainable modular implementation, explicit engineering authority boundaries, validation integrity, source custody, stale-write protection, and crash-safe takeover. Agents may propose strategic roadmap changes but may not mutate owner roadmaps without explicit owner authorization.
 ---
 
 # Engineering PR Delivery v2 — Relay Engineering
 
 ## Governing objective
 
-Run engineering work as a crash-safe, concurrency-safe relay.
+Run engineering work as a crash-safe, concurrency-safe relay while preserving owner-controlled strategic direction.
 
 The repository owns the baton. The outgoing agent, chat session, and private reasoning are never required for recovery.
 
@@ -19,13 +19,22 @@ agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md  immutable detailed endpoint
 agents/qualifications/<CHAIN_ID>/...                 qualification artifacts
 ```
 
+Owner-governed strategic direction normally lives under:
+
+```text
+docs/roadmaps/ROADMAP_REGISTRY.md
+docs/roadmaps/Overallroadmap_<domain>.md
+```
+
+Existing repository-specific owner roadmap paths such as `docs/OWNER_ROADMAP.md` are valid when explicitly registered/bound.
+
 Compatibility / derived navigation:
 
 ```text
 agents/agentchain.md
 ```
 
-The split is intentional. Independent WRC, LAFEA, LoadCalc, and other agents should not edit one shared relay pointer merely because they work in the same repository.
+Independent WRC, LAFEA, LoadCalc, and other agents should not edit one shared relay pointer merely because they work in the same repository.
 
 ## 1. Core invariants
 
@@ -68,9 +77,19 @@ R27 Canonical chain custody advances by CUSTODY_EPOCH + 1 using exact prior
     ACTIVE.md repository version/blob; stale writes fail closed and re-ground.
 R28 agents/agentchain.md is derived/legacy navigation for canonical chains,
     not the authoritative mutable pointer and not required on every endpoint.
+R29 Before material coding, every agent reads and pins every applicable
+    owner roadmap and re-grounds roadmap status claims used for scope.
+R30 Owner roadmaps are OWNER_CONTROLLED; roadmap mutation requires explicit
+    owner authorization for that roadmap/change boundary.
+R31 Agents may create immutable roadmap proposals, but proposals are advisory
+    and never grant roadmap write authority.
+R32 A changed roadmap blob invalidates an old chain binding; re-read and
+    re-bind before further material coding.
+R33 Roadmap intent is planning authority, not a substitute for codes, sources,
+    independent benchmarks, numerical oracles, tests, or live repository truth.
 ```
 
-Read `references/relay-model.md`, `references/agentchain-schema.md`, `references/chain-concurrency.md`, and `references/code-quality.md`.
+Read `references/relay-model.md`, `references/agentchain-schema.md`, `references/chain-concurrency.md`, `references/code-quality.md`, and `references/owner-roadmaps.md`.
 
 ## 2. Durable work identity
 
@@ -102,7 +121,9 @@ Canonical current-state file:
 agents/chains/<CHAIN_ID>/ACTIVE.md
 ```
 
-Required fields:
+For new material coding chains use `CHAIN_STATE_VERSION: 2`.
+
+Required fields include:
 
 ```text
 CHAIN_STATE_VERSION
@@ -119,6 +140,22 @@ ACTIVE_CUSTODIAN
 CUSTODY_EPOCH
 COORDINATION_STATE
 DEPENDENCIES
+ROADMAPS
+ROADMAP_REVIEW_STATUS
+```
+
+Roadmap binding format:
+
+```text
+ROADMAPS: docs/roadmaps/Overallroadmap_wrc.md@<40-hex-git-blob-sha>
+ROADMAP_REVIEW_STATUS: COMPLETE
+```
+
+Multiple roadmaps are separated by semicolons. If no roadmap applies:
+
+```text
+ROADMAPS: NONE — <explicit discovery reason>
+ROADMAP_REVIEW_STATUS: NOT_APPLICABLE
 ```
 
 Every chain writes only its own `ACTIVE.md`.
@@ -131,6 +168,8 @@ Before advancing it:
 4. if the write conflicts or the epoch changed, classify `STALE_WRITE`, return READ_ONLY, re-ground, and reconcile.
 
 Do not force a stale pointer.
+
+Version-1 canonical chains remain compatibility history. Before their next material coding leg, migrate them to version 2 at a new endpoint and complete roadmap discovery/review.
 
 Repository-wide traffic is discovered by scanning:
 
@@ -150,13 +189,15 @@ agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md
 
 Create a new file at every durable endpoint. Never edit a durable endpoint merely to make history cleaner. Correct it with a later endpoint and explicit supersession/reconciliation fields.
 
-Every canonical endpoint also records:
+Every canonical endpoint records:
 
 ```text
 CUSTODY_EPOCH: <positive integer>
+ROADMAPS: <same binding as ACTIVE.md>
+ROADMAP_REVIEW_STATUS: COMPLETE | NOT_APPLICABLE | BLOCKED
 ```
 
-The first endpoint uses `1`; every accepted direct successor increments by exactly one.
+The first endpoint uses custody epoch `1`; every accepted direct successor increments by exactly one.
 
 Every non-terminal endpoint must contain:
 
@@ -168,6 +209,7 @@ Every non-terminal endpoint must contain:
 - current hypothesis and falsifier;
 - protected invariants, do-not-redo, do-not-change;
 - expected next-leg files/domains;
+- Owner roadmaps;
 - Inputs;
 - Benchmarks;
 - Common/governing documents;
@@ -180,9 +222,79 @@ Every non-terminal endpoint must contain:
 - open risks/questions;
 - exactly Q1–Q5 for the next agent.
 
-Read `references/source-indexing.md`.
+The `Owner roadmaps` section records binding/discovery basis, relevant owner intent, re-grounded observed status, alignment classification, and roadmap proposals/decisions if any.
 
-## 5. Endpoint triggers
+Read `references/source-indexing.md` and `references/owner-roadmaps.md`.
+
+## 5. Mandatory owner-roadmap gate before coding
+
+Before the first material coding action of a new chain or leg:
+
+1. read repository `AGENTS.md`;
+2. read `docs/roadmaps/ROADMAP_REGISTRY.md` when present;
+3. identify every roadmap applicable to the issue, authority domain, expected changed paths, benchmark/oracle domain, and dependencies;
+4. read the full applicable roadmap(s);
+5. re-ground any roadmap observed-status claim that affects the proposed change against live source/tests/PR/evidence;
+6. pin exact roadmap path + Git blob SHA in `ACTIVE.md` and the active endpoint;
+7. classify:
+
+```text
+ALIGNED
+ROADMAP_STATUS_STALE_BUT_SCOPE_ALIGNED
+OWNER_DECISION_REQUIRED
+NO_APPLICABLE_ROADMAP
+```
+
+8. do not start material coding if planned work contradicts owner intent or requires an unapproved roadmap change.
+
+Owner intent and observed status are different. Owner intent remains authoritative until changed. Observed status may be stale; when stale, continue from live truth within approved scope and create a `STATUS_REFRESH` proposal rather than editing the roadmap.
+
+A roadmap change after qualification or endpoint creation is material planning drift. Re-read and determine whether qualification/scope must be refreshed before continuing.
+
+## 6. Roadmap proposals and owner decisions
+
+Agents may propose strategic changes without touching the roadmap:
+
+```text
+agents/chains/<CHAIN_ID>/roadmap-proposals/RP-0001.md
+```
+
+Typical proposal types:
+
+```text
+CONCEPT_CHANGE
+SCOPE_ADDITION
+SCOPE_REDUCTION
+BENCHMARK_ADDITION
+BENCHMARK_REPLACEMENT
+PHASE_REORDER
+AUTHORITY_BOUNDARY_CHANGE
+DEPENDENCY_CHANGE
+STATUS_REFRESH
+DEPRECATION
+MIGRATION
+```
+
+A proposal must record exact roadmap basis/evidence and remains:
+
+```text
+PROPOSAL_STATUS: PROPOSED
+ROADMAP_WRITE_AUTHORITY: NONE
+```
+
+When the Owner explicitly approves/rejects/modifies a proposal or roadmap change, preserve a decision receipt:
+
+```text
+agents/chains/<CHAIN_ID>/roadmap-decisions/RD-0001.md
+```
+
+Do not infer roadmap approval from AUTO MODE, merge approval, permission to continue coding, issue assignment, silence, or a prior roadmap authorization.
+
+When authorized, roadmap mutation should normally be its own leg/PR. Combining roadmap mutation with production code requires explicit Owner authorization for the combined scope.
+
+Read `references/owner-roadmaps.md`, `references/owner-roadmap-template.md`, `references/roadmap-registry-template.md`, and `references/roadmap-proposal-template.md`.
+
+## 7. Endpoint triggers
 
 Create an endpoint at meaningful durable transitions, especially:
 
@@ -197,13 +309,15 @@ before intentional stop
 before merge request
 recovery after agent loss
 same-chain custody reconciliation
+owner roadmap changed / roadmap binding refreshed
+owner roadmap decision materially changes next work
 ready for next engineering leg
 chain completion
 ```
 
-Do not create endpoints for trivial commentary-only edits.
+Do not create endpoints for trivial commentary-only changes.
 
-## 6. Incoming takeover
+## 8. Incoming takeover
 
 For engineering-critical takeover:
 
@@ -215,17 +329,18 @@ Then:
 
 1. locate the chain under `agents/chains/<CHAIN_ID>/ACTIVE.md`;
 2. open its referenced active endpoint;
-3. read the endpoint-listed inputs, benchmarks, common/governing docs, authoritative sources, production paths, and validation paths;
-4. fetch live main/PR/head/diff/reviews/checks;
-5. reconcile live state, current `CUSTODY_EPOCH`, and endpoint state;
-6. inspect any material commits and orphan/divergent endpoint files after the active endpoint;
-7. answer Q1–Q5;
-8. obtain an independent verifier verdict;
-9. only after a valid verdict acquire engineering-critical write authority.
+3. read every roadmap bound by `ROADMAPS` and verify the pinned blob still matches;
+4. read endpoint-listed inputs, benchmarks, common/governing docs, authoritative sources, production paths, and validation paths;
+5. fetch live main/PR/head/diff/reviews/checks;
+6. reconcile live state, roadmap state, current `CUSTODY_EPOCH`, and endpoint state;
+7. inspect any material commits and orphan/divergent endpoint files after the active endpoint;
+8. answer Q1–Q5;
+9. obtain an independent verifier verdict;
+10. only after a valid verdict acquire engineering-critical write authority.
 
 For a legacy-format chain that has not migrated, recover from its existing `agents/agentchain.md` locator instead. Do not require the outgoing agent.
 
-## 7. Five-question gate
+## 9. Five-question gate
 
 Every non-terminal endpoint has exactly:
 
@@ -237,11 +352,11 @@ Q4 Independent Validation
 Q5 Next Contribution / Minimal Patch
 ```
 
-The questions must be generated from the current unresolved next leg, not generic theory and not retrospective praise of the completed leg.
+Questions must come from the current unresolved next leg, not generic theory or retrospective praise. Where a roadmap governs the leg, at least one question should force the candidate to reconcile the planned contribution with the relevant roadmap intent/basis when that is material to safe takeover.
 
 Read `references/qualification.md`.
 
-## 8. Separation of qualification roles
+## 10. Separation of qualification roles
 
 Keep separate artifacts:
 
@@ -260,21 +375,15 @@ total >= 92/100
 every question >= 17/20
 ```
 
-A verifier may still fail a numeric pass for a substantive automatic-failure reason such as fabricated evidence or unsafe authority claims.
+A verifier may still fail a numeric pass for substantive automatic-failure reasons such as fabricated evidence, stale roadmap basis, or unsafe authority claims.
 
 Question-set IDs should be visibly chain-namespaced, for example `QS-ADV-WRC-1389-0012`.
 
-## 9. Crash recovery
+## 11. Crash recovery
 
-If an agent disappears, recover from that chain's `ACTIVE.md`, referenced immutable endpoint, and live repository state.
+If an agent disappears, recover from that chain's `ACTIVE.md`, referenced immutable endpoint, bound roadmap(s), and live repository state.
 
-If later commits exist after the endpoint:
-
-```text
-ENDPOINT_HEAD -> live PR HEAD
-```
-
-inspect every material commit and classify:
+If later commits exist after the endpoint, inspect every material commit and classify:
 
 ```text
 RECOVERABLE
@@ -285,9 +394,11 @@ UNTRUSTED
 
 If an endpoint exists but `ACTIVE.md` was not advanced, treat it as an orphan durable artifact. If another agent already advanced `ACTIVE.md`, do not overwrite it; re-ground and reconcile same-chain custody.
 
-Read `references/crash-recovery.md` and `references/chain-concurrency.md`.
+If a bound roadmap changed, treat the old roadmap basis as stale and re-read before production mutation.
 
-## 10. Qualification freshness
+Read `references/crash-recovery.md`, `references/chain-concurrency.md`, and `references/owner-roadmaps.md`.
+
+## 12. Qualification freshness
 
 Bind question sets to:
 
@@ -297,11 +408,11 @@ QUESTION_SET_ID
 QUESTION_SET_STATUS
 ```
 
-Material changes to production, tests, benchmarks, oracles, engineering inputs, source authority, behavior-changing configuration, methodology, or publication authority make the old question set stale.
+Material changes to production, tests, benchmarks, oracles, engineering inputs, source authority, behavior-changing configuration, methodology, publication authority, or applicable owner roadmap intent may make the old question set stale.
 
-Relay metadata-only changes do not by themselves change the material basis.
+Relay metadata-only synchronization does not by itself change the material basis.
 
-## 11. Engineering validation integrity
+## 13. Engineering validation integrity
 
 For material checks distinguish:
 
@@ -314,9 +425,11 @@ ORACLE      implementation-coupled | independent reproduction |
 
 Never weaken tolerances, overwrite independent expected values from production output, delete difficult benchmarks, silence fail-closed behavior, or call `NOT_RUN` a PASS.
 
+A roadmap may require a benchmark program, but it does not itself constitute an independent engineering oracle.
+
 Read `references/engineering-validation.md` and `references/anti-gaming-rules.md`.
 
-## 12. Multi-agent coordination
+## 14. Multi-agent coordination
 
 Different chains own different relay files. Do not create a coordination problem merely because several agents work in one repository.
 
@@ -327,6 +440,7 @@ Before mutation and before a new leg, compare active chains for:
 - benchmark/oracle overlap;
 - controlled-input overlap;
 - release/publication overlap;
+- applicable-roadmap overlap when one chain proposes/executes an authorized roadmap mutation;
 - dependency/stacking;
 - base drift.
 
@@ -339,24 +453,13 @@ BLOCKED_BY_ACTIVE_CHAIN
 UNKNOWN
 ```
 
-Examples:
+Reading the same roadmap is safe. Mutating a roadmap shared by other active chains is coordination-sensitive because it invalidates their pinned roadmap basis.
 
-```text
-WRC src/core/emp1/** vs LAFEA src/core/lafea/**
-  -> likely SAFE if authority/benchmarks/inputs are also independent
-
-WRC and LAFEA both modify src/core/non-fea-common-checker/**
-  -> COORDINATION_REQUIRED
-
-separate files but both change canonical units/source authority
-  -> COORDINATION_REQUIRED or BLOCKED
-```
-
-Same-chain concurrent advancement is different: one `ACTIVE.md` + one custody epoch sequence. Divergent successors must reconcile before either becomes authoritative.
+Same-chain concurrent advancement remains one `ACTIVE.md` + one custody epoch sequence. Divergent successors must reconcile before either becomes authoritative.
 
 Read `references/multi-agent-coordination.md` and `references/chain-concurrency.md`.
 
-## 13. Code quality and maintainability
+## 15. Code quality and maintainability
 
 Apply the code-quality gate to every leg that changes production code.
 
@@ -371,6 +474,7 @@ These are design-review triggers, not blind hard limits. Do not game them by cre
 
 Before material coding, identify:
 
+- the applicable owner roadmap and strategic boundary;
 - the existing owner implementation;
 - the intended module responsibility;
 - engineering/software authority boundaries;
@@ -394,29 +498,34 @@ no duplicate production engineering calculation path
 source / calculation / oracle / publication / UI boundaries preserved
 negative / fail-closed behavior tested where applicable
 no unrelated refactor or formatting churn
+roadmap alignment preserved or proposal/owner decision recorded
 ```
 
-For engineering software, modularity follows domain and authority boundaries before cosmetic size goals. A cohesive justified 330-line numerical kernel can be safer than three artificial files that obscure ownership; conversely a 220-line module that mixes source authority, solver mechanics, and publication authority should be split even though it is below the size threshold.
+For engineering software, modularity follows domain and authority boundaries before cosmetic size goals.
 
 Read `references/code-quality.md`.
 
-## 14. PR discipline
+## 16. PR discipline
 
-A PR is a delivery container, not the durable work identity.
+A PR is a delivery container, not durable work identity.
 
 Keep one coherent assignment per PR unless scope is explicitly changed. Never infer chain completion from merge. Never merge without owner authorization.
 
+Roadmap write authorization and PR merge authorization are separate permissions.
+
 Read `references/git-pr-policy.md`.
 
-## 15. AUTO MODE
+## 17. AUTO MODE
 
-`AUTO MODE` permits automatic progression through an approved plan; it does not waive qualification, source authority, validation integrity, concurrency/custody checks, code-quality gates, destructive-operation limits, or merge authority.
+`AUTO MODE` permits automatic progression through an approved plan; it does not waive qualification, owner-roadmap write controls, roadmap re-read/binding, source authority, validation integrity, concurrency/custody checks, code-quality gates, destructive-operation limits, or merge authority.
 
-While AUTO is active, continue through ordinary successful phases, create durable endpoints at material transitions, use compare-and-swap discipline when advancing `ACTIVE.md`, and stop on stale write, real authority overlap, or other defined hard stops.
+AUTO MODE may autonomously create roadmap proposals when strategic evidence warrants one. It may not autonomously apply those proposals to an owner roadmap.
 
-Read `references/auto-mode.md`.
+Stop when roadmap intent conflicts with the proposed implementation or when a roadmap mutation is needed without explicit Owner authorization.
 
-## 16. Chain completion
+Read `references/auto-mode.md` and `references/owner-roadmaps.md`.
+
+## 18. Chain completion
 
 Distinguish:
 
@@ -437,7 +546,9 @@ COMPLETION_BASIS:
 
 Advance that chain's `ACTIVE.md` to the terminal endpoint/epoch. Derived dashboards omit terminal chains automatically. Retain immutable endpoint history.
 
-## 17. Legacy compatibility
+Roadmap status is not automatically edited on chain completion; propose a status refresh if strategically useful.
+
+## 19. Legacy compatibility
 
 Existing repositories may contain:
 
@@ -448,14 +559,15 @@ agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
 
 Preserve these artifacts as historical/recovery evidence. Do not mass-rewrite immutable history.
 
-Existing legacy-format chains may finish under the legacy structure or migrate deliberately at a new endpoint. New chains and independent new workstreams should use `agents/chains/**`.
+Existing legacy-format chains may finish under the legacy structure or migrate deliberately at a new endpoint. Version-1 chain-local records remain readable; new material coding legs should migrate to `CHAIN_STATE_VERSION: 2` for roadmap binding.
 
-## 18. Executable checks
+## 20. Executable checks
 
 Canonical chain-local store:
 
 ```text
 python skills/engineering-pr-delivery-v2/scripts/validate_chain_store.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_roadmap_bindings.py .
 python skills/engineering-pr-delivery-v2/scripts/detect_chain_overlap.py .
 python skills/engineering-pr-delivery-v2/scripts/render_agentchain_dashboard.py .
 python skills/engineering-pr-delivery-v2/scripts/check_relay.py . [<answer.md> <verdict.md>]
@@ -475,4 +587,4 @@ python skills/engineering-pr-delivery-v2/scripts/validate_qualification.py <answ
 python skills/engineering-pr-delivery-v2/scripts/self_test.py
 ```
 
-Structural checks do not replace expert engineering verification. Code-size thresholds do not replace architectural review. A syntactically perfect generic or fabricated answer must still fail substantive verification.
+Structural checks do not replace expert engineering verification. Roadmap intent does not replace live repository/source/benchmark truth. Code-size thresholds do not replace architectural review. A syntactically perfect generic or fabricated answer must still fail substantive verification.
