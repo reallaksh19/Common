@@ -154,7 +154,7 @@ If `3^x = 27sqrt3`, find `2x`.
 How many integers satisfy `|x-4|<3`?
 
 ## Q19
-Find the remainder when `7^100` is divided by `10`.
+A right triangle has legs `6` and `8`. Find its circumradius.
 
 ## Q20
 How many positive integers `n` make `(n+5)/(n-1)` an integer?
