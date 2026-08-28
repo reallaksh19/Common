@@ -17,6 +17,8 @@ SUITES = [
     "self_test_qualification_first_verdict.py",
     "self_test_question_set_admission.py",
     "self_test_post_basis_drift.py",
+    "self_test_repository_overlay.py",
+    "self_test_leg_adoption.py",
 ]
 SUITE_TIMEOUT_SECONDS = 20
 
