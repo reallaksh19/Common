@@ -1,12 +1,12 @@
-# P0 Algebra — Polynomial & Root Structure QA Status
+# P0 Algebra — Polynomial & Root Structure QA Status v2
 
 ## Current verdict
 
-`STATUS: NOT_READY_FOR_PUBLICATION`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
-`AUTHORING_STATE: STUDENT_DRAFT_v0.1_COMPLETE_FOR_CORE_CONCEPT_PASS`
+`AUTHORING_STATE: STUDENT_DRAFT_v0.1 + TRANSFER_BANK_v1 + SPEED_LABS_v1 + MASTERY_TEST_v1`
 
-The package is grounded and teachable as an internal draft, but it has not yet passed the full Preliminary publication contract.
+The package now has all major learning-product types required for an internal NMTC Preliminary cycle. Remaining blockers are editorial/calibration/global-corpus issues rather than missing pedagogy.
 
 ---
 
@@ -15,13 +15,13 @@ The package is grounded and teachable as an internal draft, but it has not yet p
 | Gate | Status | Evidence / blocker |
 |---|---|---|
 | `PRELIM-01 PRELIMINARY_ONLY` | PASS | only Bhaskara Preliminary corpus drives weighting/anchors |
-| `PRELIM-02 SYLLABUS_CUSTODY` | PASS | quadratics/higher degree/remainder are explicit supplied syllabus; prerequisites separated |
-| `PRELIM-03 NO_FREQUENCY_OVERFIT` | PASS | low-frequency common-root and syllabus nodes retained without fake weight |
-| `PRELIM-04 PAPER_LEDGERED` | PASS_WITH_BACKLOG | 2018/2019/2023/2024/2025 normalized; 2022 remains blocked source recovery |
-| `PRELIM-05 STABLE_IDS` | PASS | all referenced PYQs use stable IDs |
+| `PRELIM-02 SYLLABUS_CUSTODY` | PASS | quadratics/higher degree/remainder explicit; prerequisites separated |
+| `PRELIM-03 NO_FREQUENCY_OVERFIT` | PASS | weak-frequency nodes retained where structurally/syllabus required |
+| `PRELIM-04 PAPER_LEDGERED` | PASS_WITH_GLOBAL_BACKLOG | 2018/2019/2023/2024/2025 normalized; 2022 unresolved |
+| `PRELIM-05 STABLE_IDS` | PASS | all PYQ references use stable IDs |
 | `PRELIM-06 PROVENANCE_CLASSIFIED` | PASS | P0/P1/P2/P3 boundaries retained |
-| `PRELIM-07 SOURCE_DEFECTS_VISIBLE` | PASS | bonus/source-conflict/figure states explicit |
-| `PRELIM-08 NO_FAKE_OFFICIAL` | PASS | author-created teaching questions are not year-attributed |
+| `PRELIM-07 SOURCE_DEFECTS_VISIBLE` | PASS | bonus/starred/source-conflict states explicit |
+| `PRELIM-08 NO_FAKE_OFFICIAL` | PASS | author-created banks explicitly labeled author-created |
 
 ---
 
@@ -29,15 +29,15 @@ The package is grounded and teachable as an internal draft, but it has not yet p
 
 | Gate | Status | Evidence / blocker |
 |---|---|---|
-| `PRELIM-09 PRIMARY_SECONDARY_CONCEPTS` | PASS | source map + dependency map |
-| `PRELIM-10 HIDDEN_STRUCTURE` | PASS | each major unit states invariant/representation switch |
-| `PRELIM-11 FIRST_MOVE` | PASS | dedicated P0 first-step cards |
-| `PRELIM-12 MINIMUM_PATH` | PASS | qualification ledgers + source map |
-| `PRELIM-13 TRAP_MODEL` | PASS | wrong-method contrasts and error tags |
-| `PRELIM-14 ARCHETYPE` | PASS | archetype catalogue v2 |
-| `PRELIM-15 DIFFICULTY_VECTOR` | PARTIAL | PYQ qualifications include local profiles; author-created F0–F4 items not yet individually vector-tagged |
+| `PRELIM-09 PRIMARY_SECONDARY_CONCEPTS` | PASS | dependency map + source coverage |
+| `PRELIM-10 HIDDEN_STRUCTURE` | PASS | every major mechanism names invariant/representation switch |
+| `PRELIM-11 FIRST_MOVE` | PASS | dedicated First-Step cards + labs |
+| `PRELIM-12 MINIMUM_PATH` | PASS | qualified PYQ ledgers + worked bank solutions |
+| `PRELIM-13 TRAP_MODEL` | PASS | contrast cases + diagnostic error tags |
+| `PRELIM-14 ARCHETYPE` | PASS | five-year archetype catalogue v2 |
+| `PRELIM-15 DIFFICULTY_VECTOR` | PASS_FOR_TRANSFER_BANK / PARTIAL_LADDER | all 18 transfer-bank items vector-tagged; F0–F4 architecture items still need item-level vectors if promoted into production bank |
 
-Blocker for full pass: add difficulty/recognition metadata to all student-bank items during bank engineering.
+This partial does not block internal teaching use; it blocks final production-bank metadata completeness.
 
 ---
 
@@ -45,12 +45,12 @@ Blocker for full pass: add difficulty/recognition metadata to all student-bank i
 
 | Gate | Status | Evidence / blocker |
 |---|---|---|
-| `PRELIM-16 CONCEPT_HOME` | PASS | P0 Polynomial & Root Structure package |
+| `PRELIM-16 CONCEPT_HOME` | PASS | connected Polynomial & Root Structure package |
 | `PRELIM-17 FIRST_STEP_CARD` | PASS | `P0_Algebra_First_Step_Cards.md` |
-| `PRELIM-18 FOUNDATION_LADDER` | PASS_ARCHITECTURE | F0→F4 ladders exist; larger reviewed item counts still needed |
-| `PRELIM-19 VERIFIED_PYQ_ANCHOR` | PASS | clean scored anchors named for power reduction/remainder/Vieta/factorization |
-| `PRELIM-20 TRANSFER` | PARTIAL | XF contracts/prompts exist; full reviewed solution set not complete |
-| `PRELIM-21 CONTRAST` | PASS | solve-vs-reduce, Vieta-vs-roots, linear-vs-quadratic divisor, boundedness, source conflict |
+| `PRELIM-18 FOUNDATION_LADDER` | PASS_v1 | F0→F4→PYQ→XF architecture exists across six major families |
+| `PRELIM-19 VERIFIED_PYQ_ANCHOR` | PASS | clean scored anchors named per mechanism |
+| `PRELIM-20 TRANSFER` | PASS_v1 | 18 reviewed non-identical author-created transfer items |
+| `PRELIM-21 CONTRAST` | PASS | solve-vs-reduce, Vieta-vs-roots, divisor-degree, boundedness, source conflict |
 
 ---
 
@@ -58,11 +58,13 @@ Blocker for full pass: add difficulty/recognition metadata to all student-bank i
 
 | Gate | Status | Evidence / blocker |
 |---|---|---|
-| `PRELIM-22 RECOGNITION_DRILL` | PARTIAL | first-move labs exist; dedicated timed sheet not yet built |
-| `PRELIM-23 FIRST_LINE_DRILL` | PARTIAL | contract exists; dedicated scored sheet not yet built |
-| `PRELIM-24 SHORT_SOLVE` | PARTIAL | student self-test + F-ladder items exist; calibrated timed set pending |
-| `PRELIM-25 MIXED_UNLABELLED` | PARTIAL | draft has mixed first-move/self-test; full mastery form pending |
-| `PRELIM-26 CHECK_STRATEGY` | PASS_CORE | domain, boundedness, sign, factor/divisor and source checks explicitly taught |
+| `PRELIM-22 RECOGNITION_DRILL` | PASS_INTERNAL_v1 | 20-item recognition lab |
+| `PRELIM-23 FIRST_LINE_DRILL` | PASS_INTERNAL_v1 | 12-item first-line lab |
+| `PRELIM-24 SHORT_SOLVE` | PASS_INTERNAL_v1 | transfer bank + self-test + mastery test |
+| `PRELIM-25 MIXED_UNLABELLED` | PASS_INTERNAL_v1 | 12-question unlabelled mastery test |
+| `PRELIM-26 CHECK_STRATEGY` | PASS | domain, sign, divisor-zero, boundedness and source consistency taught/tested |
+
+Timing thresholds are internal training targets only and still need classroom calibration.
 
 ---
 
@@ -70,10 +72,10 @@ Blocker for full pass: add difficulty/recognition metadata to all student-bank i
 
 | Gate | Status | Evidence / blocker |
 |---|---|---|
-| `PRELIM-27 YEAR_COVERAGE` | PARTIAL | 2022 remains unresolved |
-| `PRELIM-28 QUESTION_COVERAGE` | PASS_FOR_NORMALIZED_5Y | 150 slots normalized; exclusions visible |
-| `PRELIM-29 FIGURE_RECOVERY` | NOT_APPLICABLE_CORE / GLOBAL_PARTIAL | this algebra package does not depend on missing figures; global Preliminary project still does |
-| `PRELIM-30 CROSS_YEAR_RECURRENCE` | PASS_v1 | five-year scored recurrence exists with eligibility guardrails |
+| `PRELIM-27 YEAR_COVERAGE` | PARTIAL_GLOBAL | 2022 remains unresolved |
+| `PRELIM-28 QUESTION_COVERAGE` | PASS_FOR_NORMALIZED_5Y | 150 slots normalized; exclusions explicit |
+| `PRELIM-29 FIGURE_RECOVERY` | NOT_APPLICABLE_CORE / GLOBAL_PARTIAL | P0 algebra package has no figure dependency; global project still does |
+| `PRELIM-30 CROSS_YEAR_RECURRENCE` | PASS_v1 | scored five-year recurrence with eligibility guardrails |
 
 ---
 
@@ -81,48 +83,67 @@ Blocker for full pass: add difficulty/recognition metadata to all student-bank i
 
 | Gate | Status | Notes |
 |---|---|---|
-| `MSRU-01 NO_NAKED_FORMULA` | PASS | Remainder/Vieta are derived before use |
-| `MSRU-02 SEE_BEFORE_NAME` | PASS_CORE | sections begin with visible examples/patterns |
-| `MSRU-03 INVARIANT_EXPLICIT` | PASS | representation/reduction/root/remainder invariants stated |
-| `MSRU-04 EXPLAIN_FORM` | PASS | signs in Vieta, divisor zero, remainder degree explained |
-| `MSRU-05 REPRESENTATION_TRANSLATION` | PASS | coefficients/factors/roots; relation→rewriting rule; modular polynomial views |
-| `MSRU-06 CONTRAST_PAIR` | PASS | multiple explicit contrasts |
-| `MSRU-07 FIRST_MOVE` | PASS | first-step cards + labs |
-| `MSRU-08 RECONSTRUCTION` | PASS_CORE | Vieta/Remainder rebuilt; new-cycle derivation required |
-| `MSRU-09 TRANSFER` | PARTIAL | transfer prompts exist; full reviewed transfer bank pending |
-| `MSRU-10 SOURCE_TRACEABILITY` | PASS | separate source coverage map + stable IDs |
-| `MSRU-11 NO_SILENT_REPAIR` | PASS | 2025 Q20 retained as source conflict |
-| `MSRU-12 GRADE9_DEPTH` | PASS_DRAFT | depth appropriate for competitive Grade IX/X foundation; final classroom readability review pending |
-| `MSRU-13 SUMMATION_AS_ADDITION` | NOT_APPLICABLE | this package is not a summation unit |
-| `MSRU-14 TRANSFORM_BEFORE_CALCULATE` | PASS_STRONG | central pedagogy |
-| `MSRU-15 ADOPT_MASTERY` | PARTIAL | mixed labs/self-test exist; full mastery bank pending |
+| `MSRU-01 NO_NAKED_FORMULA` | PASS | Remainder/Vieta derived before use |
+| `MSRU-02 SEE_BEFORE_NAME` | PASS | visible examples precede formal statements |
+| `MSRU-03 INVARIANT_EXPLICIT` | PASS | reduction/root/remainder invariants explicit |
+| `MSRU-04 EXPLAIN_FORM` | PASS | signs, factors, divisor zeros, remainder degree explained |
+| `MSRU-05 REPRESENTATION_TRANSLATION` | PASS | coefficient/factor/root/mod-polynomial/function-shift views |
+| `MSRU-06 CONTRAST_PAIR` | PASS | multiple near-neighbor contrasts |
+| `MSRU-07 FIRST_MOVE` | PASS_STRONG | cards + timed first-line lab |
+| `MSRU-08 RECONSTRUCTION` | PASS | Vieta/Remainder rebuilt; new mod cycles derived |
+| `MSRU-09 TRANSFER` | PASS_v1 | 18 non-identical transfer items with reviewed solutions |
+| `MSRU-10 SOURCE_TRACEABILITY` | PASS | stable IDs + source coverage map |
+| `MSRU-11 NO_SILENT_REPAIR` | PASS | source/key conflicts retained explicitly |
+| `MSRU-12 GRADE9_DEPTH` | PASS_INTERNAL | competitive IX/X depth; final readability calibration pending |
+| `MSRU-13 SUMMATION_AS_ADDITION` | NOT_APPLICABLE | non-summation unit |
+| `MSRU-14 TRANSFORM_BEFORE_CALCULATE` | PASS_STRONG | central architecture |
+| `MSRU-15 ADOPT_MASTERY` | PASS_INTERNAL_v1 | recognition + first-line + transfer + mixed mastery test |
 
 ---
 
-# Required next batch for this P0 package
+# Math/content review checkpoint
 
-1. create a reviewed **Transfer Bank v1** with at least 3 non-identical items per major mechanism;
-2. create **Timed Recognition Lab v1** and **First-Line Lab v1**;
-3. create **Mastery Test v1** with unlabelled mixed problems and diagnostic error tags;
-4. independently solve/review every author-created bank item;
-5. attach local difficulty vectors to bank items;
-6. run a final math/notation consistency audit;
-7. only then consider PDF/layout publication.
+Completed in this batch:
 
-## Current blockers summary
+- student concept draft v0.1;
+- 18-item transfer bank with compact reviewed solutions and difficulty vectors;
+- 20-item recognition lab;
+- 12-item first-line lab;
+- 12-question mixed mastery test with answers/error tags;
+- wording correction on rational quartic factorization after QA caught an overstrong “over the reals” prompt.
+
+This correction demonstrates that the QA loop is active rather than decorative.
+
+---
+
+# Remaining blockers before final student publication
+
+1. second editorial/math pass over every author-created item;
+2. classroom/readability calibration of timing thresholds and difficulty labels;
+3. item-level metadata for any F0–F4 prompts promoted into the production question bank;
+4. final notation/typography/render audit;
+5. optional student/teacher separation of answer sections for the final product;
+6. global 2022 source recovery before claiming six-year historical recurrence.
+
+None of these blockers invalidates the current internal learning architecture.
+
+## Current summary
 
 ```text
-PYQ grounding:               PASS
-Concept architecture:        PASS
-Student concept draft:       PASS_v0.1
-First-step architecture:     PASS
-Foundation ladder:           PASS_ARCHITECTURE
-Reviewed transfer bank:      MISSING
-Timed recognition lab:       MISSING
-Timed first-line lab:        MISSING
-Mastery test:                MISSING
-Author-created item vectors: MISSING
-2022 global corpus:          BLOCKED_SOURCE_RECOVERY
+PYQ grounding:                    PASS_5Y
+Concept dependency architecture: PASS
+Student concept draft:            PASS_INTERNAL_v0.1
+First-step cards:                 PASS
+F0-F4-PYQ-XF ladders:             PASS_v1
+Reviewed transfer bank:           PASS_v1 (18 items)
+Recognition lab:                  PASS_INTERNAL_v1
+First-line lab:                   PASS_INTERNAL_v1
+Mixed mastery test:               PASS_INTERNAL_v1
+Diagnostic error tags:            PASS
+Production-bank item metadata:    PARTIAL
+Classroom timing calibration:     NOT_RUN
+Final editorial/render QA:        NOT_RUN
+2022 global corpus:               BLOCKED_SOURCE_RECOVERY
 
-STATUS: NOT_READY_FOR_PUBLICATION
+STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY
 ```
