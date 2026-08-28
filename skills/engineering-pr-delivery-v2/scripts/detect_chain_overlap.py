@@ -3,7 +3,7 @@ from pathlib import Path
 import re
 import sys
 
-from validate_agentchain import field_value, TERMINAL_STATES
+from validate_chain_store import field_value, TERMINAL_STATES
 
 
 def section_paths(endpoint_text: str):
@@ -15,13 +15,13 @@ def section_paths(endpoint_text: str):
         "Benchmarks",
         "Authoritative sources",
     ):
-        m = re.search(
+        match = re.search(
             rf"(?mis)^###\s+{re.escape(heading)}\s*$\n(.*?)(?=^###\s+|\Z)",
             endpoint_text,
         )
-        if not m:
+        if not match:
             continue
-        for token in re.findall(r"`([^`]+)`", m.group(1)):
+        for token in re.findall(r"`([^`]+)`", match.group(1)):
             token = token.strip()
             if token and not token.startswith(("PASS", "FAIL", "NOT_")):
                 found.add(token.rstrip("/"))
@@ -36,7 +36,8 @@ def overlaps(a: str, b: str):
 
 def load_canonical_rows(chains_dir: Path):
     rows = []
-    for chain_dir in sorted(p for p in chains_dir.iterdir() if p.is_dir()):
+    repo_root = chains_dir.parent.parent
+    for chain_dir in sorted(path for path in chains_dir.iterdir() if path.is_dir()):
         active = chain_dir / "ACTIVE.md"
         if not active.is_file():
             continue
@@ -45,7 +46,7 @@ def load_canonical_rows(chains_dir: Path):
         if state in TERMINAL_STATES:
             continue
         locator = field_value(text, "ACTIVE_ENDPOINT_FILE")
-        endpoint = chains_dir.parent.parent / locator if locator else None
+        endpoint = repo_root / locator if locator else None
         endpoint_text = endpoint.read_text(encoding="utf-8") if endpoint and endpoint.is_file() else ""
         rows.append(
             {
@@ -60,14 +61,14 @@ def load_canonical_rows(chains_dir: Path):
 
 
 def parse_legacy_active_rows(text: str):
-    m = re.search(r"(?mis)^## ACTIVE CHAINS\s*$\n(.*?)(?=^## ENDPOINT LOG\s*$|\Z)", text)
-    if not m:
+    match = re.search(r"(?mis)^## ACTIVE CHAINS\s*$\n(.*?)(?=^## ENDPOINT LOG\s*$|\Z)", text)
+    if not match:
         return []
     rows = []
-    for line in m.group(1).splitlines():
+    for line in match.group(1).splitlines():
         if not line.startswith("|") or "---" in line or "Chain" in line:
             continue
-        cols = [c.strip() for c in line.strip().strip("|").split("|")]
+        cols = [cell.strip() for cell in line.strip().strip("|").split("|")]
         if len(cols) >= 8:
             rows.append({"chain": cols[0], "endpoint_file": cols[3], "authority": cols[6]})
     return rows
@@ -76,8 +77,8 @@ def parse_legacy_active_rows(text: str):
 def load_legacy_rows(index: Path):
     rows = []
     for row in parse_legacy_active_rows(index.read_text(encoding="utf-8")):
-        p = (index.parent.parent / row["endpoint_file"]).resolve()
-        text = p.read_text(encoding="utf-8") if p.exists() else ""
+        path = (index.parent.parent / row["endpoint_file"]).resolve()
+        text = path.read_text(encoding="utf-8") if path.exists() else ""
         rows.append(
             {
                 "chain": row["chain"],
