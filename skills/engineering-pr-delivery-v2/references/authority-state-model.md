@@ -2,9 +2,9 @@
 
 ## Why state is split
 
-A single `STATE: BLOCKED` cannot distinguish an engineering blocker from an absent custodian, failed qualification, paused AUTO mode, or missing merge authority. Version 3 therefore uses orthogonal state planes.
+One `STATE` cannot distinguish engineering readiness, custody, qualification, write authority, AUTO state, or merge permission.
 
-## Required state planes
+## Required planes
 
 ```text
 ENGINEERING_STATE
@@ -14,7 +14,7 @@ CUSTODY_STATE
 HELD | VACANT | TAKEOVER_REQUIRED | QUALIFIED_PENDING_RECONCILIATION | RECONCILING
 
 QUALIFICATION_STATE
-NOT_REQUIRED | PENDING | PASS | FAIL | DEFERRED
+NOT_REQUIRED | PENDING | PASS | FAIL | DEFERRED | REQUALIFICATION_REQUIRED
 
 WRITE_AUTHORITY
 READ_ONLY | WRITE_ALLOWED | BLOCKED
@@ -26,72 +26,67 @@ MERGE_AUTHORITY
 OWNER_ONLY | AUTHORIZED
 ```
 
-`STATE` may remain as a derived compatibility summary for existing scripts, but it does not grant authority.
+`STATE` may remain a derived compatibility summary but grants no authority.
 
-## Replacement-agent transition
+## Replacement transition
 
 ```text
 agent lost
--> CUSTODY_STATE TAKEOVER_REQUIRED
--> QUALIFICATION_STATE PENDING
--> WRITE_AUTHORITY READ_ONLY
--> AUTO_STATE PAUSED
+-> TAKEOVER_REQUIRED / PENDING / READ_ONLY / AUTO PAUSED
+
+question-set admission VALID
+-> exam may be administered; no authority change
 
 independent qualification PASS
--> QUALIFICATION_STATE PASS
--> CUSTODY_STATE QUALIFIED_PENDING_RECONCILIATION
--> WRITE_AUTHORITY READ_ONLY
+-> PASS / QUALIFIED_PENDING_RECONCILIATION / READ_ONLY
 
 post-PASS reconciliation starts
--> CUSTODY_STATE RECONCILING
--> WRITE_AUTHORITY READ_ONLY
-
-reconciliation clears live/crash-window/roadmap/overlap authority
--> CUSTODY_STATE HELD
--> WRITE_AUTHORITY WRITE_ALLOWED
+-> RECONCILING / READ_ONLY
 ```
 
-Qualification PASS is necessary but not sufficient for write authority.
-
-## Fail/deferred
+Then apply post-basis drift:
 
 ```text
-FAIL or DEFERRED
+NONE | METADATA_ONLY
+-> qualification coverage RETAINED
+
+MATERIAL_WITHIN_QUALIFIED_BOUNDARY
+-> independent coverage confirmation required
+
+MATERIAL_BOUNDARY_CHANGED | AUTHORITY_CHANGED | CONTAMINATED
+-> QUALIFICATION_STATE REQUALIFICATION_REQUIRED
 -> WRITE_AUTHORITY READ_ONLY
--> no accepted production mutation
 ```
 
-## Current custodian continuing
-
-A currently accepted custodian may use:
+Only reconciliation with valid qualification coverage and clear current-state authority may yield:
 
 ```text
 CUSTODY_STATE: HELD
-QUALIFICATION_STATE: NOT_REQUIRED
 WRITE_AUTHORITY: WRITE_ALLOWED
 ```
 
-until a qualification-refresh trigger or custody change occurs.
-
 ## Hard invalid combinations
 
-Reject or fail closed when:
+Fail closed when:
 
-- `TAKEOVER_REQUIRED` or `VACANT` has `WRITE_ALLOWED`;
-- `PENDING`, `FAIL`, or `DEFERRED` has `WRITE_ALLOWED`;
-- `QUALIFIED_PENDING_RECONCILIATION` has `WRITE_ALLOWED`;
-- `RECONCILING` has `WRITE_ALLOWED`;
+- `TAKEOVER_REQUIRED`, `VACANT`, `QUALIFIED_PENDING_RECONCILIATION`, or `RECONCILING` has `WRITE_ALLOWED`;
+- `PENDING`, `FAIL`, `DEFERRED`, or `REQUALIFICATION_REQUIRED` has `WRITE_ALLOWED`;
 - `WRITE_ALLOWED` exists without `CUSTODY_STATE: HELD`;
-- agent loss leaves AUTO `RUNNING`.
+- agent loss leaves AUTO `RUNNING`;
+- question-set admission is not `VALID` but qualification proceeds;
+- material/authority/contaminated drift grants write without required requalification;
+- candidate self-admission/self-verification/self-confirmation is used to grant authority.
 
 ## Separate authorities
 
-These do not imply one another:
+These never imply one another:
 
 ```text
+question-set admission VALID
 qualification PASS
 engineering validation PASS
 roadmap-write authorization
+qualification-coverage retention
 WRITE_ALLOWED
 merge authorization
 chain completion

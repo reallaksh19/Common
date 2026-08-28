@@ -1,6 +1,6 @@
 # Agent Chain Templates — version 3 qualification-first
 
-## 1. ACTIVE.md
+## ACTIVE.md
 
 ```text
 CHAIN_STATE_VERSION: 3
@@ -28,27 +28,24 @@ ROADMAP_REVIEW_STATUS: COMPLETE | NOT_APPLICABLE | BLOCKED
 HANDOVER_READY: TRUE
 ```
 
-## 2. Non-terminal endpoint
+## Non-terminal endpoint
 
 ```text
 # EP-0001 — <title>
-CHAIN_ID: <CHAIN_ID>
-LEG_ID: LEG-001
-ENDPOINT_ID: EP-0001
-PREVIOUS_ENDPOINT: NONE — chain start
-CUSTODY_EPOCH: 1
-ROADMAPS: <binding>
-ROADMAP_REVIEW_STATUS: <status>
+CHAIN_ID:
+LEG_ID:
+ENDPOINT_ID:
+PREVIOUS_ENDPOINT:
+CUSTODY_EPOCH:
+ROADMAPS:
+ROADMAP_REVIEW_STATUS:
 HANDOVER_READY: TRUE
-CREATED_AT:
-ENDPOINT_REASON: CHAIN_START
 TASK / ISSUE:
 PR:
 BRANCH:
 CHECKPOINT_HEAD:
 MAIN_HEAD_OBSERVED:
 MERGE_BASE:
-STATE: ACTIVE
 ENGINEERING_STATE:
 CUSTODY_STATE:
 QUALIFICATION_STATE:
@@ -57,24 +54,24 @@ AUTO_STATE:
 MERGE_AUTHORITY:
 
 ### Handover snapshot
-Repo: <repo>
-Task: <task>
-Chain: <CHAIN_ID>
-Endpoint: <EP>
-PR: <PR>; PR status: <draft/open/etc>; Branch / PR head / main: <refs>
-Merge authority: <state>
-Engineering / custody / qualification / write state: <states>
-Roadmap: <path@blob or NONE>
-Inputs: <key pointers>
-Benchmarks: <key pointers>
-Governing docs / authoritative sources: <key pointers>
-Current blocker: <one line>
-Exact next action: <one executable work action>
-Q1: <concise production-reconstruction exam prompt>
-Q2: <concise calculation/failure-isolation prompt>
-Q3: <concise authority/falsifier prompt>
-Q4: <concise independent-oracle prompt>
-Q5: <concise safe-patch/NO-PATCH prompt>
+Repo:
+Task:
+Chain:
+Endpoint:
+PR / status / branch / PR head / main:
+Merge authority:
+Engineering / custody / qualification / write state:
+Roadmap:
+Inputs:
+Benchmarks:
+Governing docs / authoritative sources:
+Current blocker:
+Exact next action:
+Q1: <concise production reconstruction>
+Q2: <concise calculation/failure isolation>
+Q3: <concise authority/falsifier>
+Q4: <concise independent oracle>
+Q5: <concise safe patch/NO-PATCH>
 
 ### Mission
 ### This leg completed
@@ -101,17 +98,15 @@ Q5: <concise safe-patch/NO-PATCH prompt>
 ### Validation summary
 ### Open risks / questions
 
-### Next-agent qualification
-Compatibility locator only. The actual version-3 exam is the Takeover qualification pack below; Q1-Q5 are qualification, never the work baton.
-
 ### Takeover qualification pack
 PURPOSE: QUALIFICATION_ONLY
 NOT_AN_IMPLEMENTATION_TASK: TRUE
 QUALIFICATION_PROTOCOL_VERSION: 3
-QUALIFICATION_BASIS_HEAD: <sha>
-QUESTION_SET_ID: QS-<CHAIN_ID>-0001
+QUALIFICATION_BASIS_HEAD:
+QUESTION_SET_ID:
 QUESTION_SET_STATUS: CURRENT
-QUESTION_SET_AUTHOR: <prior-agent/question-authority>
+QUESTION_SET_AUTHOR:
+QUESTION_SET_ADMISSION_REQUIREMENT: REQUIRED_ON_TAKEOVER
 
 #### Q1 — Production Trace
 Repository anchors:
@@ -162,4 +157,45 @@ No-patch condition:
 Fail if:
 ```
 
-The handover snapshot is <300 words; detailed exam content is outside that limit. Existing v1/v2 history is never rewritten. A replacement qualifies first on the latest accepted set, then reconciles and migrates to version 3 before material mutation.
+The snapshot is <300 words; detailed Q1-Q5 remain outside that limit.
+
+## Takeover admission receipt
+
+Recommended:
+
+```text
+QUALIFICATION_PROTOCOL_VERSION: 3
+CHAIN_ID:
+ENDPOINT_ID:
+QUESTION_SET_ID:
+QUALIFICATION_BASIS_HEAD:
+QUESTION_SET_ADMISSION_STATUS: VALID
+ADMISSION_AUTHORITY_ID:
+BASIS_RETRIEVABLE: TRUE
+TECHNICAL_DEPTH_STATUS: PASS
+ROADMAP_AUTHORITY_STATUS: VALID | NOT_APPLICABLE
+SOURCE_ORACLE_AUTHORITY_STATUS: VALID | NOT_APPLICABLE
+LEGACY_SET: TRUE | FALSE
+ADMISSION_EVIDENCE:
+```
+
+## Post-PASS reconciliation receipt
+
+```text
+QUALIFICATION_PROTOCOL_VERSION: 3
+CHAIN_ID:
+ENDPOINT_ID:
+QUESTION_SET_ID:
+QUALIFICATION_BASIS_HEAD:
+CANDIDATE_ID:
+RECONCILIATION_REVIEWER_ID:
+LIVE_HEAD:
+POST_BASIS_COMMITS:
+POST_BASIS_DRIFT:
+QUALIFICATION_COVERAGE:
+CURRENT_STATE_AUTHORITY: CLEAR | BLOCKED
+WRITE_AUTHORITY_DECISION: READ_ONLY | WRITE_ALLOWED
+RECONCILIATION_EVIDENCE:
+```
+
+Existing v1/v2 history is never rewritten. A legacy set must be admitted before use; after qualification and reconciliation, migrate to version 3 before material mutation.
