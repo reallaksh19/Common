@@ -19,9 +19,9 @@ The learner can:
 5. interpret a coefficient as the number of combinatorial choices;
 6. convert a sum over subsets into a product expansion when appropriate;
 7. define states for constrained path/counting problems;
-8. apply pigeonhole by identifying pigeons, boxes and the forced occupancy;
+8. apply pigeonhole by identifying pigeons, boxes and forced occupancy;
 9. use inclusion–exclusion to correct double-counting;
-10. recognize when a geometry/counting PYQ is figure-gated and cannot be reconstructed safely.
+10. recognize when a historical counting PYQ is figure/source-gated and cannot be reconstructed safely.
 
 ## Cognitive contract
 
@@ -46,10 +46,31 @@ Preliminary performance layer:
 - `../../../08_Mixed_Preliminary_Tests/P1_Combinatorics_Mastery_Test_v1.md`
 - `../../../09_QA/P1_Combinatorics_QA.md`
 
-## Source boundary
+## Evidence posture
 
-Clean PYQ evidence is used at mechanism level. Figure-dependent historical counting problems remain `FIGURE_GATED` until exact source custody exists. Pigeonhole and inclusion–exclusion are `SYLLABUS_REQUIRED`; author-created material is used where current clean PYQ recurrence is sparse.
+Clean/useful Preliminary grounding includes:
+
+- 2019 Q07 — subset-product expansion;
+- 2019 Q09 — classify configurations before counting;
+- 2019 Q30 — coefficient as exponent-pair count;
+- 2019 Q28 — high-ceiling representation/count bridge;
+- 2025 Q21 — digit/divisibility counting.
+
+2019 Q12/Q23 remain figure-gated. 2023 Q25 remains source/key-conflicted. Pigeonhole and inclusion–exclusion are syllabus-required and therefore use explicit author-created foundation/transfer material rather than being omitted for weak current recurrence.
+
+## Internal assets
+
+- 14 First-Step cards;
+- 10 mechanism ladders;
+- 18-item reviewed transfer bank;
+- 20-item recognition lab;
+- 12-item first-line lab;
+- 12-question unlabelled mastery test;
+- second mathematical/editorial audit;
+- gate-by-gate QA.
 
 ## Current state
 
-`STATUS: PACKAGE_AUTHORING`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
+
+Publication blockers remain classroom timing/readability calibration, final student/teacher separation, production metadata and final typography/render QA. Exact historical figure ingestion remains required before figure-dependent PYQ reproduction.
