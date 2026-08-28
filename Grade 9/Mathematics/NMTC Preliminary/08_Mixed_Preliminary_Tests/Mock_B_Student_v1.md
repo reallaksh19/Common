@@ -58,7 +58,7 @@ If `log_4 x=3/2`, then x is
 A. 6  B. 8  C. 12  D. 16
 
 ## Q13
-The least positive integer leaving remainder 5 when divided by each of 6, 8 and 9 is
+The least positive integer greater than 5 that leaves remainder 5 when divided by each of 6, 8 and 9 is
 A. 41  B. 53  C. 77  D. 149
 
 ## Q14
