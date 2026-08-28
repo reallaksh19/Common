@@ -8,7 +8,7 @@ CHAIN_ID: <CHAIN_ID>
 MISSION: <one-line mission>
 ACTIVE_ENDPOINT: EP-0001
 ACTIVE_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
-PR: #<number-or-PENDING>
+PR: <number-or-PENDING>
 BRANCH: <branch>
 HEAD: <sha>
 STATE: QUALIFICATION_REQUIRED
