@@ -85,13 +85,11 @@ In triangle `ABC`, `BD=4`, `DC=6`, `AC=8`, `AD=5`. Find `AB^2`.
 ### C3
 A cevian divides the opposite side into `2` and `5`. The adjacent sides are `6` and `9`, with side `6` adjacent to the segment `5`. Find the square of the cevian.
 
-**Answer:** `142/7`.
+**Answer:** `272/7`.
 
 **Label check:** take `AB=6=c`, `AC=9=b`, `BD=2=m`, `DC=5=n`, `a=7`.
 
 `81(2)+36(5)=7(d^2+10)` -> `342=7d^2+70` -> `d^2=272/7`.
-
-**Correction note:** the computed value is `272/7`; this is the authoritative answer for C3. The heading answer must not be used if copied elsewhere.
 
 **Profile:** 4/5, 3/5, 5/5.
 
@@ -187,5 +185,5 @@ A source reproduction claims that a triangle with fixed side data has an angle v
 # Review notes
 
 - All numeric items were independently recomputed during authoring.
-- C3 intentionally retains an inline correction record because the first drafted answer line was inconsistent with the completed Stewart arithmetic. The correct value is `272/7`; production promotion must remove the stale `142/7` line rather than conceal the audit history.
-- Before publication, promote only after a second editorial pass verifies all answer headers match the reviewed arithmetic.
+- Answer headers and worked arithmetic were reconciled in the second pass.
+- Before publication, final typography/render QA remains required.
