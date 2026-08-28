@@ -15,6 +15,18 @@ def field_value(text: str, name: str):
     return value or None
 
 
+def has_section(text: str, title: str) -> bool:
+    return bool(re.search(rf"(?mi)^###\s+{re.escape(title)}\s*$", text))
+
+
+def section_body(text: str, title: str):
+    match = re.search(
+        rf"(?mis)^###\s+{re.escape(title)}\s*$\n(.*?)(?=^###\s+|\Z)",
+        text,
+    )
+    return match.group(1).strip() if match else None
+
+
 def git_blob_sha(path: Path) -> str:
     data = path.read_bytes()
     header = f"blob {len(data)}\0".encode("ascii")
@@ -79,6 +91,12 @@ def validate_chain(repo_root: Path, active_path: Path):
     if endpoint_review != review:
         errors.append(
             f"{chain}: ACTIVE.md ROADMAP_REVIEW_STATUS != active endpoint status"
+        )
+    if not has_section(endpoint_text, "Owner roadmaps"):
+        errors.append(f"{chain}: active endpoint missing section: Owner roadmaps")
+    elif not (section_body(endpoint_text, "Owner roadmaps") or "").strip():
+        errors.append(
+            f"{chain}: Owner roadmaps section must record binding/discovery/alignment evidence"
         )
 
     if roadmaps.upper().startswith("NONE"):
