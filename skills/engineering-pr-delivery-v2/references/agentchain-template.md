@@ -1,34 +1,42 @@
 # Agent Chain Templates
 
-## 1. Repo-wide compact index — `agents/agentchain.md`
+## 1. Canonical chain state — `agents/chains/<CHAIN_ID>/ACTIVE.md`
 
 ```text
-# Engineering Agent Chain
-
-AGENTCHAIN_VERSION: 2
-
-## ACTIVE CHAINS
-
-| Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
-|---|---|---|---|---|---|---|---|
-
-## ENDPOINT LOG
-
-| Endpoint | Chain | Leg | Checkpoint head | State | Locator |
-|---|---|---|---|---|---|
+CHAIN_STATE_VERSION: 1
+CHAIN_ID: <CHAIN_ID>
+MISSION: <one-line mission>
+ACTIVE_ENDPOINT: EP-0001
+ACTIVE_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
+PR: #<number-or-PENDING>
+BRANCH: <branch>
+HEAD: <sha>
+STATE: QUALIFICATION_REQUIRED
+AUTHORITY_DOMAIN: <engineering/software authority domain>
+ACTIVE_CUSTODIAN: <agent-id>
+CUSTODY_EPOCH: 1
+COORDINATION_STATE: SAFE
+DEPENDENCIES: NONE
 ```
 
-For a live chain, add one `ACTIVE CHAINS` row and one append-only `ENDPOINT LOG` row per endpoint.
+Rules:
 
-## 2. Detailed endpoint — `agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md`
+- one mutable `ACTIVE.md` per chain;
+- different chains never edit each other's `ACTIVE.md`;
+- advance using exact prior repository blob/version and `CUSTODY_EPOCH + 1`;
+- conflict/epoch change = stale write -> re-ground;
+- terminal chains may retain `ACTIVE.md` with `COMPLETE`/`SUPERSEDED`.
+
+## 2. Canonical endpoint — `agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md`
 
 ```text
 # EP-0001 — <short endpoint title>
 
-CHAIN_ID:
-LEG_ID:
+CHAIN_ID: <CHAIN_ID>
+LEG_ID: LEG-001
 ENDPOINT_ID: EP-0001
 PREVIOUS_ENDPOINT: NONE — chain start
+CUSTODY_EPOCH: 1
 
 CREATED_AT:
 ENDPOINT_REASON: CHAIN_START
@@ -92,7 +100,7 @@ STATE: QUALIFICATION_REQUIRED
 ### Next-agent qualification
 
 QUALIFICATION_BASIS_HEAD:
-QUESTION_SET_ID:
+QUESTION_SET_ID: QS-<CHAIN_ID>-0001
 QUESTION_SET_STATUS: CURRENT
 
 #### Q1 — Production Trace
@@ -132,27 +140,56 @@ Validation required:
 Rollback/falsifier boundary:
 ```
 
-## 3. Example index rows
+`EP-0001` may be reused in another chain because the full key is `(CHAIN_ID, ENDPOINT_ID)`.
+
+## 3. Example parallel chains
 
 ```text
-## ACTIVE CHAINS
+agents/chains/ADV-WRC-1389/
+  ACTIVE.md
+  endpoints/EP-0001.md
 
-| Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
-|---|---|---|---|---|---|---|---|
-| EXAMPLE-1 | Close example engineering discrepancy | EP-0002 | agents/agentchain/EXAMPLE-1/EP-0002.md | #42 | QUALIFICATION_REQUIRED | example authority | Incoming agent answers EP-0002 Q1-Q5 before mutation |
+agents/chains/ADV-LAFEA-1422/
+  ACTIVE.md
+  endpoints/EP-0001.md
 
-## ENDPOINT LOG
-
-| Endpoint | Chain | Leg | Checkpoint head | State | Locator |
-|---|---|---|---|---|---|
-| EP-0001 | EXAMPLE-1 | LEG-001 | abc123 | QUALIFICATION_REQUIRED | agents/agentchain/EXAMPLE-1/EP-0001.md |
-| EP-0002 | EXAMPLE-1 | LEG-001 | def456 | QUALIFICATION_REQUIRED | agents/agentchain/EXAMPLE-1/EP-0002.md |
+agents/chains/ADV-LOADCALC-1505/
+  ACTIVE.md
+  endpoints/EP-0001.md
 ```
 
-For a migrated historical endpoint that predates split endpoint files:
+This is valid and should not create relay conflicts.
+
+## 4. Derived dashboard
+
+Generate repo-wide navigation with:
 
 ```text
-| EP-0001 | LEGACY-CHAIN | LEG-001 | abc123 | QUALIFICATION_REQUIRED | git-blob:<40hex>#EP-0001 |
+python skills/engineering-pr-delivery-v2/scripts/render_agentchain_dashboard.py .
 ```
 
-Historical blob locators may appear only in `ENDPOINT LOG`, never as the active endpoint file for a non-terminal chain.
+The output is derived from `agents/chains/*/ACTIVE.md`. Normal chain advancement does not require committing a shared dashboard update.
+
+## 5. Terminal endpoint
+
+A terminal endpoint uses:
+
+```text
+STATE: COMPLETE
+NEXT_AGENT_QUALIFICATION: NOT_REQUIRED
+QUESTION_SET_STATUS: NOT_REQUIRED
+COMPLETION_BASIS: <objective evidence>
+```
+
+Update that chain's `ACTIVE.md` to the terminal endpoint/epoch. Derived dashboards omit terminal chains.
+
+## 6. Legacy compatibility
+
+Historical/shared-index repositories may still contain:
+
+```text
+agents/agentchain.md
+agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
+```
+
+Do not mass-rewrite that history. Existing legacy chains may finish there or deliberately migrate. New chains should use `agents/chains/**`.
