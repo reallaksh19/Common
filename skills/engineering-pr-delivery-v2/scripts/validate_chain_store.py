@@ -3,12 +3,73 @@ from pathlib import Path
 import re
 import sys
 
-from validate_agentchain import (
-    TERMINAL_STATES,
-    VALID_STATES,
-    field_value,
-    validate_endpoint_content,
-)
+REQUIRED_ENDPOINT_FIELDS = [
+    "CHAIN_ID",
+    "LEG_ID",
+    "ENDPOINT_ID",
+    "PREVIOUS_ENDPOINT",
+    "CUSTODY_EPOCH",
+    "ENDPOINT_REASON",
+    "CHECKPOINT_HEAD",
+    "MAIN_HEAD_OBSERVED",
+    "STATE",
+]
+
+REQUIRED_SECTIONS = [
+    "Mission",
+    "This leg completed",
+    "Currently in progress",
+    "Remaining work",
+    "Exact next action",
+    "Known / proven",
+    "Not proven",
+    "NOT_RUN",
+    "Active hypothesis",
+    "Falsifier",
+    "Protected invariants",
+    "Do not redo",
+    "Do not change",
+    "Expected next-leg files / domains",
+    "Inputs",
+    "Benchmarks",
+    "Common / governing documents",
+    "Authoritative sources",
+    "Production paths",
+    "Validation / test paths",
+    "Changed during this leg",
+    "Validation summary",
+    "Open risks / questions",
+    "Next-agent qualification",
+]
+
+REQUIRED_INVENTORIES = [
+    "Inputs",
+    "Benchmarks",
+    "Common / governing documents",
+    "Authoritative sources",
+    "Production paths",
+    "Validation / test paths",
+]
+
+QUESTION_TITLES = {
+    1: "Production Trace",
+    2: "Current Unresolved Problem / Failure Isolation",
+    3: "Authority / Invariant",
+    4: "Independent Validation",
+    5: "Next Contribution / Minimal Patch",
+}
+
+VALID_STATES = {
+    "ACTIVE",
+    "QUALIFICATION_REQUIRED",
+    "RECOVERY_REQUIRED",
+    "BLOCKED",
+    "READY_FOR_NEXT_LEG",
+    "COMPLETE",
+    "SUPERSEDED",
+}
+
+TERMINAL_STATES = {"COMPLETE", "SUPERSEDED"}
 
 ACTIVE_REQUIRED_FIELDS = [
     "CHAIN_STATE_VERSION",
@@ -36,14 +97,111 @@ VALID_COORDINATION_STATES = {
 }
 
 
-def endpoint_key(chain_id: str, endpoint_id: str):
-    return (chain_id, endpoint_id)
+def field_value(text: str, name: str):
+    match = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n]+?)\s*$", text)
+    if not match:
+        return None
+    value = match.group(1).strip()
+    return value or None
+
+
+def has_section(text: str, title: str) -> bool:
+    return bool(re.search(rf"(?mi)^###\s+{re.escape(title)}\s*$", text))
+
+
+def section_body(text: str, title: str):
+    match = re.search(
+        rf"(?mis)^###\s+{re.escape(title)}\s*$\n(.*?)(?=^###\s+|\Z)",
+        text,
+    )
+    return match.group(1).strip() if match else None
 
 
 def positive_int(value: str | None):
     if value is None or not re.fullmatch(r"[1-9][0-9]*", value):
         return None
     return int(value)
+
+
+def validate_endpoint_content(text: str, expected: dict, prior_endpoint: str | None):
+    errors = []
+    eid = expected["endpoint"]
+    prefix = f"{expected['chain']}/{eid}:"
+
+    for name in REQUIRED_ENDPOINT_FIELDS:
+        if not field_value(text, name):
+            errors.append(f"{prefix} missing field {name}")
+
+    comparisons = {
+        "CHAIN_ID": expected["chain"],
+        "LEG_ID": expected["leg"],
+        "ENDPOINT_ID": eid,
+        "CHECKPOINT_HEAD": expected["head"],
+        "STATE": expected["state"],
+    }
+    for name, wanted in comparisons.items():
+        actual = field_value(text, name)
+        if actual and actual != wanted:
+            errors.append(f"{prefix} {name} mismatch: expected={wanted}, endpoint={actual}")
+
+    previous = field_value(text, "PREVIOUS_ENDPOINT")
+    if prior_endpoint is None:
+        if previous and not previous.upper().startswith("NONE"):
+            errors.append(
+                f"{prefix} first endpoint must use PREVIOUS_ENDPOINT NONE, found {previous}"
+            )
+    else:
+        previous_id = previous.split()[0] if previous else None
+        if previous_id != prior_endpoint:
+            errors.append(
+                f"{prefix} PREVIOUS_ENDPOINT must be same-chain prior endpoint {prior_endpoint}, found {previous}"
+            )
+
+    for title in REQUIRED_SECTIONS:
+        if not has_section(text, title):
+            errors.append(f"{prefix} missing section: {title}")
+
+    for title in REQUIRED_INVENTORIES:
+        body = section_body(text, title)
+        if body is not None and not body.strip():
+            errors.append(
+                f"{prefix} empty inventory {title}; use explicit NONE/UNRESOLVED with reason"
+            )
+
+    state = expected["state"]
+    if state == "COMPLETE":
+        if "NEXT_AGENT_QUALIFICATION: NOT_REQUIRED" not in text:
+            errors.append(f"{prefix} COMPLETE requires NEXT_AGENT_QUALIFICATION: NOT_REQUIRED")
+        if not field_value(text, "COMPLETION_BASIS"):
+            errors.append(f"{prefix} COMPLETE requires COMPLETION_BASIS")
+    elif state == "SUPERSEDED":
+        pass
+    else:
+        if not field_value(text, "QUALIFICATION_BASIS_HEAD"):
+            errors.append(f"{prefix} missing QUALIFICATION_BASIS_HEAD")
+        if not field_value(text, "QUESTION_SET_ID"):
+            errors.append(f"{prefix} missing QUESTION_SET_ID")
+        qstatus = field_value(text, "QUESTION_SET_STATUS")
+        if qstatus not in {"CURRENT", "STALE"}:
+            errors.append(
+                f"{prefix} QUESTION_SET_STATUS must be CURRENT or STALE for non-terminal endpoint"
+            )
+
+        qmatches = re.findall(r"(?mi)^####\s+Q([1-5])\s+—\s+(.+?)\s*$", text)
+        if len(qmatches) != 5:
+            errors.append(f"{prefix} expected exactly five Q1-Q5 headings, found {len(qmatches)}")
+        else:
+            nums = [int(number) for number, _ in qmatches]
+            if nums != [1, 2, 3, 4, 5]:
+                errors.append(f"{prefix} question order/numbering must be Q1..Q5")
+            for number, title in qmatches:
+                wanted = QUESTION_TITLES[int(number)]
+                if title.strip().lower() != wanted.lower():
+                    errors.append(
+                        f"{prefix} Q{number} title must be '{wanted}', found '{title.strip()}'"
+                    )
+
+    return errors
 
 
 def load_endpoint(path: Path):
@@ -103,7 +261,7 @@ def validate_chain_dir(chain_dir: Path):
         errors.append(f"{chain_dir.name}: endpoints/ contains no endpoint files")
         return errors
 
-    endpoints = {}
+    by_id = {}
     for path in endpoint_paths:
         data = load_endpoint(path)
         eid = data["endpoint"]
@@ -111,20 +269,16 @@ def validate_chain_dir(chain_dir: Path):
             errors.append(f"{path}: missing ENDPOINT_ID")
             continue
         if path.stem != eid:
-            errors.append(
-                f"{path}: filename must equal ENDPOINT_ID ({eid}.md), found {path.name}"
-            )
+            errors.append(f"{path}: filename must equal ENDPOINT_ID ({eid}.md), found {path.name}")
         if data["chain"] != chain_id:
             errors.append(
                 f"{path}: CHAIN_ID mismatch: ACTIVE={chain_id}, endpoint={data['chain']}"
             )
-        key = endpoint_key(chain_id or chain_dir.name, eid)
-        if key in endpoints:
+        if eid in by_id:
             errors.append(f"{chain_dir.name}: duplicate chain-local endpoint id {eid}")
             continue
-        endpoints[key] = data
+        by_id[eid] = data
 
-    by_id = {data["endpoint"]: data for data in endpoints.values() if data["endpoint"]}
     successors = {eid: [] for eid in by_id}
     roots = []
 
@@ -166,7 +320,6 @@ def validate_chain_dir(chain_dir: Path):
                 f"{chain_dir.name}/{eid}: divergent successors {children}; reconcile custody instead of accepting parallel same-chain advancement"
             )
 
-    # Detect cycles and validate custody epoch increments along the unique chain.
     if len(roots) == 1:
         seen = set()
         current = roots[0]
@@ -230,7 +383,7 @@ def main():
         print(f"FAIL: canonical chain store not found: {chains_dir}", file=sys.stderr)
         return 1
 
-    chain_dirs = sorted(p for p in chains_dir.iterdir() if p.is_dir())
+    chain_dirs = sorted(path for path in chains_dir.iterdir() if path.is_dir())
     if not chain_dirs:
         print("PASS: canonical chain store exists; no chains present")
         return 0
