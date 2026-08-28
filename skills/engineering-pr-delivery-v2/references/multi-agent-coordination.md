@@ -2,13 +2,33 @@
 
 ## Purpose
 
-A repo-wide relay index must also prevent two active chains from silently modifying the same engineering authority.
+Allow multiple agents to work concurrently in one repository without manufacturing bookkeeping conflicts, while still preventing silent engineering-authority collisions.
 
 ## Coordination source
 
-Use the `ACTIVE CHAINS` table in `agents/agentchain.md` as the first navigation surface, then verify live PRs/branches and actual diffs.
+For canonical chains, discover current state from:
 
-The table is not a substitute for live GitHub state.
+```text
+agents/chains/*/ACTIVE.md
+```
+
+Then read each referenced active endpoint and verify live PRs/branches/diffs.
+
+`agents/agentchain.md` is a derived/legacy navigation surface, not the canonical mutable pointer for new chains.
+
+## Different modules / independent chains
+
+WRC, LAFEA, LoadCalc, and other independent workstreams should use separate chain directories:
+
+```text
+agents/chains/ADV-WRC-1389/**
+agents/chains/ADV-LAFEA-1422/**
+agents/chains/ADV-LOADCALC-1505/**
+```
+
+They may each use `EP-0001`, `EP-0002`, and so on because endpoint identity is `(CHAIN_ID, ENDPOINT_ID)`.
+
+Independent agents do not edit each other's `ACTIVE.md` or endpoint files.
 
 ## Check dimensions
 
@@ -34,49 +54,76 @@ SAFE
 COORDINATION_REQUIRED
   Work may proceed only with explicit ordering, ownership, or reconciliation.
 
-BLOCKED
+BLOCKED_BY_ACTIVE_CHAIN
   Active authority collision makes concurrent mutation unsafe.
 
 UNKNOWN
   Insufficient evidence to establish independence.
 ```
 
-`UNKNOWN` is not equivalent to `SAFE`.
+`UNKNOWN` is not `SAFE`.
 
 ## Authority overlap
 
 No exact-file overlap does not prove engineering independence.
 
-Examples of semantic overlap:
+Examples:
 
 - one chain changes canonical units while another changes a solver consuming them;
 - one chain changes a benchmark while another changes production against that benchmark;
 - one chain changes source authority while another promotes a route that assumes it;
-- two chains change separate UI and export paths that both publish the same engineering quantity.
+- two chains change separate UI/export paths that publish the same engineering quantity.
 
-## Chain row information
+## Chain-local custody
 
-Where practical, include in the active-chain row or latest endpoint:
+Each chain's `ACTIVE.md` carries:
 
 ```text
-current PR
-authority domain
-expected next-leg files/domains
-dependency chain(s)
-coordination state
+ACTIVE_CUSTODIAN
+CUSTODY_EPOCH
+COORDINATION_STATE
+DEPENDENCIES
 ```
+
+The endpoint carries the same `CUSTODY_EPOCH`.
+
+Advancing one chain requires compare-and-swap discipline on that chain's current `ACTIVE.md` only. A different chain's advancement must not force a relay conflict.
 
 ## Divergent agents on one chain
 
-If two agents continue from the same prior endpoint and create divergent material states:
+If two agents continue from the same prior endpoint:
+
+```text
+EP-0007
+  -> EP-0008-A
+  -> EP-0008-B
+```
+
+then:
 
 1. stop treating either branch as automatically authoritative;
 2. compare both against the common endpoint basis;
-3. classify engineering differences and evidence;
-4. select `CONTINUE`, `SALVAGE_PARTIAL`, `SUPERSEDE`, or a newly reconciled leg;
-5. create a new endpoint documenting the custody/reconciliation decision.
+3. classify engineering differences/evidence;
+4. select `CONTINUE`, `SALVAGE_PARTIAL`, `SUPERSEDE`, or a reconciled leg;
+5. create a later reconciliation endpoint;
+6. advance `ACTIVE.md` only from the accepted lineage.
 
-Do not resolve engineering conflicts solely by choosing the newest timestamp or largest diff.
+Do not resolve by timestamp, larger diff, or force-writing `ACTIVE.md`.
+
+## Stale-write rule
+
+An agent advancing `ACTIVE.md` must write against the exact repository blob/version it read and increment `CUSTODY_EPOCH` by one.
+
+If the write conflicts or the observed epoch changed:
+
+```text
+STALE_WRITE
+→ READ_ONLY
+→ re-ground chain
+→ reconcile
+```
+
+Do not force a stale current pointer.
 
 ## PR transitions
 
@@ -85,6 +132,7 @@ When a chain moves to a successor PR, preserve:
 ```text
 CHAIN_ID
 PREVIOUS_ENDPOINT
+CUSTODY_EPOCH sequence
 predecessor PR
 successor PR
 reason for transition
@@ -92,4 +140,16 @@ known-good inherited evidence
 unresolved work
 ```
 
-The successor PR does not create a new engineering mission unless scope genuinely changes.
+A successor PR does not create a new engineering mission unless scope genuinely changes.
+
+## Executable overlap check
+
+Canonical chain-local store:
+
+```text
+python skills/engineering-pr-delivery-v2/scripts/detect_chain_overlap.py .
+```
+
+Legacy shared-index repositories remain supported by passing `agents/agentchain.md` instead.
+
+See `chain-concurrency.md`.
