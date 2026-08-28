@@ -1,131 +1,239 @@
-# Relay Takeover Qualification
+# Takeover Qualification — Expert Engineering Gate
 
 ## Purpose
 
-Qualification answers one question:
+Takeover qualification answers one question **before a replacement agent takes custody**:
 
-> Can this incoming agent safely perform the next unresolved engineering leg against the current repository state?
+> Does this candidate demonstrate enough live-repository and domain-engineering competence to be trusted with the next unresolved implementation boundary?
 
-It is not a retrospective score for the outgoing agent and not a theory quiz.
+It is not the task itself, not a recovery checklist, not a theory quiz, and not permission to merge.
 
-## Separation of roles
+## Qualification is first
 
-Use three logical roles where possible:
+After a prior agent disappears or custody changes, the candidate begins READ_ONLY and performs only the minimal bootstrap needed to locate:
 
 ```text
-OUTGOING / ENDPOINT AUTHOR
-  -> prepares the next-leg question set as part of the endpoint
+repository
+chain / ACTIVE.md
+latest accepted endpoint
+PR
+QUESTION_SET_ID
+QUALIFICATION_BASIS_HEAD
+Q1-Q5
+```
+
+The candidate then takes the exam **before substantive recovery/reconciliation**.
+
+It may read pinned code/tests/data/roadmaps/sources and perform calculations needed to answer. It may not mutate accepted engineering state, advance custody, create an accepted recovery endpoint, change production/tests/oracles/roadmaps, or resume AUTO MODE.
+
+## PASS is not WRITE_ALLOWED
+
+Qualification proves competence, not current-state safety.
+
+After independent PASS:
+
+```text
+QUALIFICATION_STATE: PASS
+CUSTODY_STATE: QUALIFIED_PENDING_RECONCILIATION
+WRITE_AUTHORITY: READ_ONLY
+```
+
+Only then may the candidate reconcile live PR/main, crash-window commits, active-chain overlap, roadmap/source changes, orphan endpoints, reviews/checks, and validation drift. If that reconciliation is safe, custody may become `HELD` and write authority may become `WRITE_ALLOWED`.
+
+## Always-ready question set
+
+Every non-terminal endpoint pre-authors exactly Q1-Q5 for the **next unresolved implementation boundary**. This is what makes abrupt loss recoverable.
+
+A crash after the accepted endpoint may leave later commits. Those commits form a crash window; they do not erase the exam. The candidate qualifies against the pinned accepted basis first and reconciles the later material after PASS.
+
+The question set becomes unusable only when its pinned basis/artifacts cannot be retrieved or the set is malformed. A candidate may not author an easier replacement set and use it to self-qualify.
+
+## Roles
+
+```text
+ENDPOINT / QUESTION AUTHOR
+  pre-authors Q1-Q5 before a crash can occur
 
 INCOMING CANDIDATE
-  -> answers from live repository evidence while READ_ONLY
+  answers against the pinned basis while READ_ONLY
 
-VERIFIER
-  -> independently evaluates the candidate answer and grants or denies authority
+INDEPENDENT VERIFIER
+  evaluates technical correctness and evidence
 ```
 
 Hard rule:
 
 ```text
 candidate_id == verifier_id
--> SELF_VERIFIED
--> cannot grant WRITE_ALLOWED for engineering-critical mutation
+-> INVALID_SELF_VERIFIED
 ```
 
-The same person/system may prepare an endpoint and later serve as verifier for a different candidate if independence and repository evidence remain valid. The candidate never grants itself authority.
+## Mandatory five questions
 
-## Question timing
-
-Q1-Q5 exist at every non-terminal endpoint, not only graceful handoff.
-
-This ensures abrupt agent loss does not remove the next-agent exam.
-
-When the endpoint's unresolved work changes materially, create a new endpoint and new question set.
-
-## Mandatory questions
-
-Exactly five questions:
+The headings remain stable for compatibility, but their technical meaning is strict.
 
 ### Q1 — Production Trace
 
-Require the candidate to trace one critical current value/state through actual live production files/functions/data boundaries.
+This is **production reconstruction**, not “describe the flow.”
 
-Evidence should include concrete repository anchors and the first boundary where the value could become wrong.
+Require a real object/case/value from the current task, such as:
+
+- actual FEA element/node/load case and mesh hash;
+- actual WRC geometry/load vector and transformed component;
+- actual CAESAR record/pointer/cardinality and byte span;
+- actual production request/model/result identity.
+
+The candidate must extract exact repository identifiers/data and trace the same object/value through the real production boundaries. Generic architecture prose fails.
+
+Required structured fields:
+
+```text
+Repository anchors:
+Production object/case:
+Required technical work:
+Required numerical/technical evidence:
+First authority/ownership boundaries:
+Fail if:
+```
 
 ### Q2 — Current Unresolved Problem / Failure Isolation
 
-Use an actual current failure, blocker, risk, unresolved question, or active hypothesis.
+Require a real calculation or technically exact reconstruction tied to the current unresolved issue.
 
-Require:
+Examples:
+
+- T6 shape-function derivatives, Jacobian and `det(J)` at a stated integration point;
+- frame stiffness/end-force/reaction calculation;
+- WRC `r x F`, transferred moment and local component mapping;
+- pressure/stress/unit transformation;
+- fixed-format I13 pointer/cardinality/physical-span arithmetic;
+- parser/state-machine/hash reconstruction where arithmetic is not the natural domain.
+
+The candidate must state predicted values at relevant implementation boundaries, identify the first wrong boundary, and give an observation that falsifies the diagnosis.
+
+Required fields:
 
 ```text
-minimum isolating experiment
-prediction
-falsifier
-first wrong boundary
+Repository anchors:
+Calculation/reconstruction:
+Required numerical/technical evidence:
+Predicted intermediate values:
+First wrong boundary:
+Falsifier:
+Fail if:
 ```
 
 ### Q3 — Authority / Invariant
 
-Require identification of:
+Require exact source/engineering/software ownership, not policy recitation.
+
+The candidate must connect the current implementation boundary to authoritative sources/inputs/roadmap constraints, state what may and may not change, and reject at least one plausible but invalid shortcut.
+
+Required fields:
 
 ```text
-authoritative source
-owned/derived data boundaries
-what may change
-what must not change
-one plausible but invalid shortcut/fix
+Repository anchors:
+Required technical work:
+Authority/source trace:
+Protected invariant:
+First wrong boundary:
+Falsifier:
+Invalid shortcut:
+Fail if:
 ```
 
 ### Q4 — Independent Validation
 
-Require an independent or authoritative basis where available:
+Require an independent expected result. Production output cannot be its own oracle.
+
+Acceptable classes include:
 
 ```text
-analytical/hand calculation
-authoritative published/reference result
-independent arithmetic
-cross-solver
+hand/closed-form calculation
+authoritative published example/code equation
+independent arithmetic/postimage construction
+cross-solver result
 experimental evidence
 independently frozen expected value
 ```
 
-Require units/sign conventions/tolerance/provenance and limitations.
+The candidate must show units, signs/coordinates, tolerance, provenance, and limitations where applicable.
+
+Required fields:
+
+```text
+Repository anchors:
+Required technical work:
+Independent oracle:
+Required numerical/technical evidence:
+Units/sign/tolerance:
+Falsifier:
+Fail if:
+```
 
 ### Q5 — Next Contribution / Minimal Patch
 
-Require the smallest legitimate next engineering contribution:
+This is a **safe implementation boundary exam**, not an implementation instruction.
+
+The candidate must state what the smallest legitimate patch would be **if** the evidence authorizes a patch, including exact file/function/domain, expected before/after values, focused/public tests, negative test, protected unchanged domains, rollback condition, and when the correct action is NO PATCH.
+
+Required fields:
 
 ```text
-exact file/function/domain
-expected changed files
-protected unchanged files/domains
-focused tests/evidence
-rollback/falsifier boundary
+Repository anchors:
+Required technical work:
+Safe patch boundary:
+Expected before/after evidence:
+Protected unchanged domains:
+Validation required:
+Negative test:
+Rollback/falsifier boundary:
+No-patch condition:
+Fail if:
 ```
 
-## Question quality gate
+Do not write Q5 as `Implement...`, `Fix...`, `Modify...`, or another task imperative.
 
-Reject any question that:
+## Set-level quality gate
 
-- can be answered correctly without the current repository;
-- could be copied unchanged into an unrelated task;
-- asks mainly about completed work rather than the next unresolved leg;
-- has no required repository evidence;
-- lacks a falsifiable prediction/decision where applicable;
-- does not test knowledge needed for the next contribution.
-
-Avoid generic prompts such as:
+A valid engineering-critical set normally requires:
 
 ```text
-What is FEA?
-Explain WRC 537.
-Describe validation.
-What is dependency injection?
+exactly 5 questions
+>=3 questions with exact live-repository anchors
+>=2 questions with numerical/hand or equivalent exact technical reconstruction
+>=1 end-to-end production reconstruction
+>=1 independent oracle
+>=1 explicit falsifier
+Q5 includes exact safe-patch and NO-PATCH boundaries
 ```
 
-## Candidate answer artifact
+For non-numerical domains, a technically demanding substitute is allowed, for example exact byte offsets, pointer/cardinality arithmetic, parser transitions, topology ownership, deterministic hash/state reconstruction. “Explain the code” is not a substitute.
 
-Store outside `agentchain.md`, for example:
+Reject questions that:
+
+- can be answered without opening the pinned repository basis;
+- could be copied unchanged into another project;
+- ask mainly about completed work rather than the next unresolved boundary;
+- use generic theory as the main evidence;
+- lack actual IDs/data/files/functions/coordinates where available;
+- lack calculation/reconstruction where technically applicable;
+- ask the candidate to perform the patch as part of qualification;
+- make production output the expected oracle.
+
+Weak examples that must fail:
+
+```text
+Explain how the solver works.
+Trace Writer2.
+Describe the benchmark.
+Which file would you inspect?
+What would you change?
+```
+
+## Candidate artifact
+
+Recommended path:
 
 ```text
 agents/qualifications/<CHAIN_ID>/<QUESTION_SET_ID>-<candidate>-answer.md
@@ -141,14 +249,11 @@ QUALIFICATION_BASIS_HEAD:
 CANDIDATE_ID:
 LIVE_PR_HEAD_OBSERVED:
 LIVE_MAIN_HEAD_OBSERVED:
-RECONCILIATION: MATCH | METADATA_DRIFT | MATERIAL_DRIFT | CONTRADICTION
 ```
 
-Then answer Q1-Q5 with concrete evidence.
+The answer may report observed live drift, but it must answer the exam against the pinned basis. Full crash-window reconciliation is post-PASS work.
 
-The candidate may identify uncertainty but must not assign final authorization to itself.
-
-## Verifier verdict artifact
+## Independent verdict
 
 Recommended path:
 
@@ -156,19 +261,7 @@ Recommended path:
 agents/qualifications/<CHAIN_ID>/<QUESTION_SET_ID>-<candidate>-verdict.md
 ```
 
-Minimum header:
-
-```text
-CHAIN_ID:
-ENDPOINT_ID:
-QUESTION_SET_ID:
-QUALIFICATION_BASIS_HEAD:
-CANDIDATE_ID:
-VERIFIER_ID:
-VERDICT_BASIS_HEAD:
-```
-
-Score each question:
+Score:
 
 ```text
 Q1 __/20
@@ -180,72 +273,35 @@ TOTAL __/100
 MINIMUM_QUESTION __/20
 ```
 
-Default engineering-critical pass:
+Default pass:
 
 ```text
 total >= 92/100
 minimum each >= 17/20
 ```
 
-Verdict:
+Verdicts:
 
 ```text
-PASS_WRITE_ALLOWED
+PASS_QUALIFIED_READ_ONLY
 FAIL_READ_ONLY
-STALE_REQUALIFICATION_REQUIRED
+DEFERRED_READ_ONLY
 INVALID_SELF_VERIFIED
 ```
 
-## Scoring guidance
+A PASS verdict does not itself grant `WRITE_ALLOWED`.
 
-Per question, a useful default rubric is:
+## Scoring emphasis
 
-```text
-Repository evidence          /6
-Correct implementation trace /5
-Engineering reasoning        /4
-Falsifiable validation       /3
-Authority/scope protection   /2
-Total                       /20
-```
-
-Adjust emphasis only when the endpoint clearly requires a different engineering competency.
-
-## Automatic failure conditions
-
-Regardless of numerical score, fail for material instances of:
-
-- fabricated repository evidence or invented objects;
-- unsafe engineering claims;
-- expected values replaced from production output and called independent;
-- tolerance weakening solely to force PASS;
-- NOT_RUN represented as PASS;
-- silent fallback authority;
-- benchmark/oracle corruption;
-- shotgun changes to multiple numerical mechanisms without isolation when isolation is possible;
-- candidate self-verification presented as independent authorization.
-
-## Freshness
-
-The question set is bound to:
+Use domain-expert evidence, not verbosity:
 
 ```text
-ENDPOINT_ID
-QUALIFICATION_BASIS_HEAD
-current unresolved problem
+Exact live repository evidence       /5
+Correct technical reconstruction     /5
+Independent engineering reasoning    /4
+Falsifier / failure isolation        /3
+Authority / safe patch protection    /3
+                                      20
 ```
 
-Material drift requires re-grounding and normally a new question set.
-
-Do not invalidate solely because an `agentchain.md` metadata commit moved the branch head while production/test/source authority remained materially unchanged.
-
-## No independent verifier available
-
-Use:
-
-```text
-QUALIFICATION_STATUS: DEFERRED_VERIFICATION
-TAKEOVER_AUTHORITY: READ_ONLY
-```
-
-The candidate may continue inspection, reproduction, and evidence gathering. It may not invent a verifier or self-grant engineering-critical production authority.
+Automatic fail for fabricated repository evidence, unsafe source/authority assumptions, production-as-oracle reasoning, tolerance weakening to force green, NOT_RUN represented as PASS, or self-verification.
