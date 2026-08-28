@@ -38,10 +38,29 @@ The learner can:
 - `../../../08_Mixed_Preliminary_Tests/P2_Mathematical_Induction_Mastery_Test_v1.md`
 - `../../../09_QA/P2_Mathematical_Induction_QA.md`
 
+## Internal assets
+
+- 14 First-Step cards;
+- 10 mechanism ladders;
+- 18 reviewed author-created transfer items;
+- 20-item recognition lab;
+- 12-item first-line lab;
+- 12-question unlabelled mastery test;
+- second mathematical/logic audit;
+- QA `PASS_INTERNAL`.
+
 ## Provenance boundary
 
 Until a clean qualified Preliminary induction item is recovered, induction examples in this package are `AUTHOR_CREATED_FOUNDATION` or `AUTHOR_CREATED_TRANSFER`. They must not receive invented NMTC years/question numbers.
 
+## Publication-stage blockers
+
+- classroom timing/readability calibration;
+- final student/teacher output separation;
+- production-bank machine-readable metadata;
+- final typography/render QA;
+- 2022 source recovery may change historical evidence status.
+
 ## Current state
 
-`STATUS: PACKAGE_AUTHORING`
+`INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
