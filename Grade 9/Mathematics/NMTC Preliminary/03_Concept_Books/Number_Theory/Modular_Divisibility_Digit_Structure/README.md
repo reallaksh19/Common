@@ -8,7 +8,7 @@ The recurring behavior is:
 
 `INTEGER FORM -> DIVISIBILITY / REMAINDER STRUCTURE -> COMPRESS -> RECONSTRUCT / COUNT -> CHECK`
 
-This unit therefore connects modular arithmetic, divisibility, HCF/LCM, digit structure and integer-valued expressions instead of teaching them as unrelated tricks.
+This unit connects modular arithmetic, divisibility, HCF/LCM, digit structure and integer-valued expressions instead of teaching them as unrelated tricks.
 
 ## Student mastery target
 
@@ -19,12 +19,12 @@ The learner can:
 3. distinguish same-remainder LCM problems from same-remainder GCD-of-differences problems;
 4. find residues of large powers using cycles without expanding the power;
 5. encode two- and three-digit numbers using place value;
-6. use divisibility tests as consequences of place value modulo a divisor;
+6. derive divisibility tests from place value modulo a divisor;
 7. turn an integer-valued rational expression into a divisor condition;
 8. exploit coprimality and factor-pair structure;
 9. reconstruct simultaneous congruences systematically;
-10. understand prefix residues and multiplicative order as Preliminary ceiling tools;
-11. identify when a source transcription is too weak for a canonical PYQ anchor.
+10. use prefix residues and multiplicative order as Preliminary ceiling tools after core mastery;
+11. identify when source transcription is too weak for a canonical PYQ anchor.
 
 ## Cognitive contract
 
@@ -49,8 +49,21 @@ Preliminary performance layer:
 - `../../../08_Mixed_Preliminary_Tests/P0_Number_Theory_Modular_Divisibility_Digit_Mastery_Test_v1.md`
 - `../../../09_QA/P0_Number_Theory_Modular_Divisibility_Digit_QA.md`
 
+## Internal assets
+
+- 14 First-Step cards;
+- 10 mechanism ladders;
+- 18-item reviewed transfer bank;
+- 20-item recognition lab;
+- 12-item first-line lab;
+- 12-question unlabelled mastery test;
+- second math/editorial audit;
+- gate-by-gate QA.
+
 ## Current state
 
-`STATUS: PACKAGE_AUTHORING`
+`STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
+
+The remaining blockers are publication-stage only: classroom/readability calibration, student/teacher separation, production-bank metadata and final notation/typography/render QA.
 
 The unit is grounded in the qualified five-year Preliminary corpus. No six-year recurrence claim is permitted until 2022 is recovered and qualified.
