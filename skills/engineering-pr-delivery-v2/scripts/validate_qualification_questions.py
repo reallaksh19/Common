@@ -42,16 +42,19 @@ def validate_endpoint(path):
     if pack is None:
         return [f"{path}: missing Takeover qualification pack"]
     errors = []
-    if "PURPOSE: QUALIFICATION_ONLY" not in pack:
-        errors.append(f"{path}: qualification PURPOSE must be QUALIFICATION_ONLY")
-    if "NOT_AN_IMPLEMENTATION_TASK: TRUE" not in pack:
-        errors.append(f"{path}: missing NOT_AN_IMPLEMENTATION_TASK: TRUE")
-    if not field(pack, "QUALIFICATION_BASIS_HEAD"):
-        errors.append(f"{path}: missing QUALIFICATION_BASIS_HEAD")
-    if not field(pack, "QUESTION_SET_ID"):
-        errors.append(f"{path}: missing QUESTION_SET_ID")
-    if not field(pack, "QUESTION_SET_AUTHOR"):
-        errors.append(f"{path}: missing QUESTION_SET_AUTHOR")
+    required_headers = {
+        "PURPOSE": "QUALIFICATION_ONLY",
+        "NOT_AN_IMPLEMENTATION_TASK": "TRUE",
+        "QUALIFICATION_PROTOCOL_VERSION": "3",
+        "QUESTION_SET_ADMISSION_REQUIREMENT": "REQUIRED_ON_TAKEOVER",
+    }
+    for name, expected in required_headers.items():
+        if field(pack, name) != expected:
+            errors.append(f"{path}: {name} must be {expected}")
+    for name in ("QUALIFICATION_BASIS_HEAD", "QUESTION_SET_ID", "QUESTION_SET_AUTHOR"):
+        if not field(pack, name):
+            errors.append(f"{path}: missing {name}")
+
     bodies = {}
     for n in range(1, 6):
         body = qbody(pack, n)
@@ -65,28 +68,24 @@ def validate_endpoint(path):
             errors.append(f"{path}: Q{n} requires explicit Fail if")
         if len(re.findall(r"\S+", body)) < 25:
             errors.append(f"{path}: Q{n} is too shallow (<25 words of rubric/evidence)")
-    if 1 in bodies:
-        for marker in ("Production object/case", "Required technical work"):
-            if not nonempty_marker(bodies[1], marker):
-                errors.append(f"{path}: Q1 missing {marker}")
-    if 2 in bodies:
-        for marker in ("Calculation/reconstruction", "Required numerical/technical evidence", "Predicted intermediate values", "First wrong boundary", "Falsifier"):
-            if not nonempty_marker(bodies[2], marker):
-                errors.append(f"{path}: Q2 missing {marker}")
-    if 3 in bodies:
-        for marker in ("Authority/source trace", "Protected invariant", "Falsifier", "Invalid shortcut"):
-            if not nonempty_marker(bodies[3], marker):
-                errors.append(f"{path}: Q3 missing {marker}")
-    if 4 in bodies:
-        for marker in ("Independent oracle", "Required numerical/technical evidence", "Units/sign/tolerance", "Falsifier"):
-            if not nonempty_marker(bodies[4], marker):
-                errors.append(f"{path}: Q4 missing {marker}")
-    if 5 in bodies:
-        for marker in ("Safe patch boundary", "Expected before/after evidence", "Validation required", "Negative test", "Rollback/falsifier boundary", "No-patch condition"):
-            if not nonempty_marker(bodies[5], marker):
-                errors.append(f"{path}: Q5 missing {marker}")
-        if re.search(r"(?mi)^\s*(Implement|Fix|Modify|Patch|Change|Create)\b", bodies[5]):
-            errors.append(f"{path}: Q5 is written as an implementation task, not qualification")
+
+    requirements = {
+        1: ("Production object/case", "Required technical work"),
+        2: ("Calculation/reconstruction", "Required numerical/technical evidence", "Predicted intermediate values", "First wrong boundary", "Falsifier"),
+        3: ("Authority/source trace", "Protected invariant", "Falsifier", "Invalid shortcut"),
+        4: ("Independent oracle", "Required numerical/technical evidence", "Units/sign/tolerance", "Falsifier"),
+        5: ("Safe patch boundary", "Expected before/after evidence", "Validation required", "Negative test", "Rollback/falsifier boundary", "No-patch condition"),
+    }
+    for n, markers in requirements.items():
+        if n not in bodies:
+            continue
+        for marker in markers:
+            if not nonempty_marker(bodies[n], marker):
+                errors.append(f"{path}: Q{n} missing {marker}")
+
+    if 5 in bodies and re.search(r"(?mi)^\s*(Implement|Fix|Modify|Patch|Change|Create)\b", bodies[5]):
+        errors.append(f"{path}: Q5 is written as an implementation task, not qualification")
+
     technical = sum(nonempty_marker(bodies.get(n, ""), "Required numerical/technical evidence") for n in range(1, 6))
     technical += int(nonempty_marker(bodies.get(2, ""), "Calculation/reconstruction"))
     if technical < 2:

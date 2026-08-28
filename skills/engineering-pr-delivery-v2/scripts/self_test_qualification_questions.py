@@ -12,10 +12,12 @@ def strong_pack(q5_prefix="Repository anchors:"):
     return f"""### Takeover qualification pack
 PURPOSE: QUALIFICATION_ONLY
 NOT_AN_IMPLEMENTATION_TASK: TRUE
+QUALIFICATION_PROTOCOL_VERSION: 3
 QUALIFICATION_BASIS_HEAD: abc
 QUESTION_SET_ID: QS-T-1
 QUESTION_SET_STATUS: CURRENT
 QUESTION_SET_AUTHOR: prior-agent
+QUESTION_SET_ADMISSION_REQUIREMENT: REQUIRED_ON_TAKEOVER
 #### Q1 — Production Trace
 Repository anchors: src/a.js; tests/a.test.js
 Production object/case: element E17 / load case LC1 / result hash H1
@@ -86,14 +88,19 @@ def main():
     weak = """### Takeover qualification pack
 PURPOSE: QUALIFICATION_ONLY
 NOT_AN_IMPLEMENTATION_TASK: TRUE
+QUALIFICATION_PROTOCOL_VERSION: 3
 QUALIFICATION_BASIS_HEAD: a
 QUESTION_SET_ID: q
 QUESTION_SET_AUTHOR: a
+QUESTION_SET_ADMISSION_REQUIREMENT: REQUIRED_ON_TAKEOVER
 """ + "\n".join([f"#### Q{i} — {t}\nRepository anchors: repo\nFail if: wrong" for i,t in [(1,'Production Trace'),(2,'Current Unresolved Problem / Failure Isolation'),(3,'Authority / Invariant'),(4,'Independent Validation'),(5,'Next Contribution / Minimal Patch')]])
     with tempfile.TemporaryDirectory() as td:
         root = Path(td); make(root, weak); ok &= expect("generic shallow pack rejected", run(root), 1)
     with tempfile.TemporaryDirectory() as td:
         root = Path(td); make(root, strong_pack("Implement the fix now.\nRepository anchors:")); ok &= expect("Q5 task imperative rejected", run(root), 1)
+    missing_admission = strong_pack().replace("QUESTION_SET_ADMISSION_REQUIREMENT: REQUIRED_ON_TAKEOVER\n", "")
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td); make(root, missing_admission); ok &= expect("missing admission requirement rejected", run(root), 1)
     return 0 if ok else 1
 
 
