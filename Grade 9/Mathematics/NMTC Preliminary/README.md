@@ -12,11 +12,11 @@ Build a student who can self-learn, self-evaluate, self-test, and apply mathemat
 
 `SEE -> RECOGNIZE -> FIRST MOVE -> SOLVE EFFICIENTLY -> CHECK -> TRANSFER`
 
-Deep concept teaching continues to use the Grade 9 Mathematics cognitive contract:
+Deep concept teaching continues to use:
 
 `SEE -> REALIZE -> UNDERSTAND -> ADOPT`
 
-The Preliminary performance layer emphasizes recognition latency, first-move selection, compact reasoning, trap resistance, and reliable checking.
+The Preliminary layer emphasizes recognition latency, first-move selection, compact reasoning, trap resistance and reliable checking.
 
 ## Grounding rule
 
@@ -32,11 +32,11 @@ No chapter is publishable until available relevant Preliminary questions have be
 6. represented by a foundation-to-PYQ ladder;
 7. followed by non-identical transfer.
 
-Historical frequency controls **practice emphasis**, never syllabus inclusion. A syllabus topic remains required even if historically rare.
+Historical frequency controls **practice emphasis**, never syllabus inclusion.
 
 ## Current qualified corpus
 
-Normalized and solution-qualified years:
+Normalized and solution-qualified:
 
 - 2018 — 30 slots;
 - 2019 — 30 slots;
@@ -46,7 +46,7 @@ Normalized and solution-qualified years:
 
 Total normalized slots: **150**.
 
-The first scored-only recurrence model uses **135 eligible scored/source-clean-enough questions** after explicitly excluding bonus/starred/source-conflicted items.
+The scored-only recurrence model uses **135 eligible questions** after explicitly excluding bonus/starred/source-conflicted items.
 
 2022 remains `BLOCKED_SOURCE_RECOVERY`; no six-year frequency claim is allowed until the actual Bhaskara Preliminary paper is safely recovered and qualified.
 
@@ -89,45 +89,86 @@ A year or question number must never be attributed to author-created material.
 - `02_Archetypes/` — Preliminary mechanism catalogue derived from PYQs.
 - `03_Concept_Books/` — student concept mastery.
 - `04_First_Step_Reference/` — recognition and first-move cards.
-- `05_Practice_Ladders/` — F0 -> F4 -> PYQ -> XF progression.
-- `06_Speed_Labs/` — recognition-only, first-line-only and timed drills.
+- `05_Practice_Ladders/` — `F0 -> F4 -> PYQ -> XF` progression.
+- `06_Speed_Labs/` — recognition-only and first-line drills.
 - `07_Mastery_Banks/` — reviewed original transfer practice.
 - `08_Mixed_Preliminary_Tests/` — unlabelled mixed mastery tests.
-- `09_QA/` — publication/grounding gates.
+- `09_QA/` — grounding/publication gates.
 
-## First P0 package
+# Internal-complete P0 packages
 
-`03_Concept_Books/Algebra/Polynomial_Root_Structure/`
-
-Current state:
+All three packages below are:
 
 `INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
-It now contains/supports:
+They have PYQ grounding, concept/student drafts, First-Step cards, F0→F4→PYQ→XF ladders, reviewed transfer banks, recognition labs, first-line labs, mixed mastery tests, diagnostic error tags, second math/editorial passes and gate-by-gate QA.
 
-- connected concept-book specification;
-- student draft v0.1;
-- PYQ source coverage map;
-- First-Step recognition cards;
-- F0→F4→PYQ→XF ladder;
-- 18-item reviewed transfer bank;
-- recognition and first-line speed labs;
-- unlabelled mastery test;
-- gate-by-gate QA status.
+Publication-stage blockers remain classroom timing/readability calibration, student/teacher output separation, production metadata and final typography/render QA.
 
-The package teaches Quadratics, Vieta, factor/remainder reasoning, high-power reduction and higher-degree structural factorization as one connected Preliminary network rather than isolated formula chapters.
+## P0-1 — Polynomial & Root Structure
+
+`03_Concept_Books/Algebra/Polynomial_Root_Structure/`
+
+Connected coverage:
+
+- quadratics;
+- Vieta and transformed roots;
+- factor/remainder theorem;
+- polynomial modular reduction;
+- high-power reduction;
+- higher-degree structural factorization;
+- positive/integer-root constraints;
+- common-root elimination;
+- source-integrity checking.
+
+## P0-2 — Radicals / Exponents / Logarithmic Transformations
+
+`03_Concept_Books/Algebra/Radical_Exponent_Log_Transformations/`
+
+Connected coverage:
+
+- common radical basis;
+- hidden/conjugate surd reconstruction;
+- principal-root signs;
+- reversible vs non-reversible transformations;
+- reciprocal radical invariants;
+- exponential normalization;
+- logarithms as exponents;
+- log-variable selection;
+- log-to-algebra conversion;
+- exact inverse structure;
+- domain/source-integrity checking.
+
+## P0-3 — Inequalities / Bounds / Equality Conditions
+
+`03_Concept_Books/Algebra/Inequalities_Bounds_Equality/`
+
+Connected coverage:
+
+- boundedness before optimization;
+- AM-GM derivation and direction;
+- equality attainability;
+- fixed-sum vs fixed-product reasoning;
+- Cauchy/Engel reciprocal bounds;
+- completing-square bounds;
+- zero-sum-square collapse;
+- discriminant feasibility;
+- absolute/rational inequalities;
+- integer filtering;
+- direct standard bounds;
+- source/key extremum conflicts.
 
 ## Existing exemplar
 
-Use `../Sequence and Series/` as the architectural exemplar for source custody, concept-book depth, first-step recognition, and transfer separation. Do not blindly reuse Sequence & Series mathematical lenses in other domains; preserve the cognitive contract while using domain-appropriate lenses.
+Use `../Sequence and Series/` as the architectural exemplar for source custody, concept-book depth, first-step recognition and transfer separation. Preserve the cognitive contract but use domain-appropriate mathematical lenses.
 
 ## Next build order
 
-After the P0 polynomial/root package editorial pass:
-
-1. Radicals / Exponents / Logarithmic Transformations;
-2. Inequalities / Bounds / Equality Conditions;
-3. Modular / Divisibility / Digit Structures;
-4. Circle / Tangent Recognition;
-5. Sequence & Series Preliminary layer;
-6. remaining explicit syllabus units.
+1. **Modular / Divisibility / Digit Structures**;
+2. Circle / Tangent Recognition;
+3. Sequence & Series Preliminary layer;
+4. Counting / Permutations / Combinations / Pigeonhole / Inclusion–Exclusion;
+5. remaining geometry theorem families;
+6. Mathematical Induction;
+7. Greatest / Least Integer functions;
+8. mixed Preliminary synthesis and mocks.
