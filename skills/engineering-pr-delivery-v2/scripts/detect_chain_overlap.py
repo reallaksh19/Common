@@ -3,28 +3,25 @@ from pathlib import Path
 import re
 import sys
 
-
-def parse_active_rows(text: str):
-    m = re.search(r"(?mis)^## ACTIVE CHAINS\s*$\n(.*?)(?=^## ENDPOINT LOG\s*$|\Z)", text)
-    if not m:
-        return []
-    rows = []
-    for line in m.group(1).splitlines():
-        if not line.startswith("|") or "---" in line or "Chain" in line:
-            continue
-        cols = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cols) >= 8:
-            rows.append({"chain": cols[0], "endpoint_file": cols[3], "authority": cols[6]})
-    return rows
+from validate_chain_store import field_value, TERMINAL_STATES
 
 
 def section_paths(endpoint_text: str):
     found = set()
-    for heading in ("Expected next-leg files / domains", "Production paths", "Validation / test paths"):
-        m = re.search(rf"(?mis)^###\s+{re.escape(heading)}\s*$\n(.*?)(?=^###\s+|\Z)", endpoint_text)
-        if not m:
+    for heading in (
+        "Expected next-leg files / domains",
+        "Production paths",
+        "Validation / test paths",
+        "Benchmarks",
+        "Authoritative sources",
+    ):
+        match = re.search(
+            rf"(?mis)^###\s+{re.escape(heading)}\s*$\n(.*?)(?=^###\s+|\Z)",
+            endpoint_text,
+        )
+        if not match:
             continue
-        for token in re.findall(r"`([^`]+)`", m.group(1)):
+        for token in re.findall(r"`([^`]+)`", match.group(1)):
             token = token.strip()
             if token and not token.startswith(("PASS", "FAIL", "NOT_")):
                 found.add(token.rstrip("/"))
@@ -32,35 +29,115 @@ def section_paths(endpoint_text: str):
 
 
 def overlaps(a: str, b: str):
-    aa = a.rstrip("/*"); bb = b.rstrip("/*")
+    aa = a.rstrip("/*")
+    bb = b.rstrip("/*")
     return aa == bb or aa.startswith(bb + "/") or bb.startswith(aa + "/")
+
+
+def load_canonical_rows(chains_dir: Path):
+    rows = []
+    repo_root = chains_dir.parent.parent
+    for chain_dir in sorted(path for path in chains_dir.iterdir() if path.is_dir()):
+        active = chain_dir / "ACTIVE.md"
+        if not active.is_file():
+            continue
+        text = active.read_text(encoding="utf-8")
+        state = field_value(text, "STATE") or "UNKNOWN"
+        if state in TERMINAL_STATES:
+            continue
+        locator = field_value(text, "ACTIVE_ENDPOINT_FILE")
+        endpoint = repo_root / locator if locator else None
+        endpoint_text = endpoint.read_text(encoding="utf-8") if endpoint and endpoint.is_file() else ""
+        rows.append(
+            {
+                "chain": field_value(text, "CHAIN_ID") or chain_dir.name,
+                "authority": field_value(text, "AUTHORITY_DOMAIN") or "",
+                "dependencies": field_value(text, "DEPENDENCIES") or "",
+                "coordination": field_value(text, "COORDINATION_STATE") or "UNKNOWN",
+                "paths": section_paths(endpoint_text),
+            }
+        )
+    return rows
+
+
+def parse_legacy_active_rows(text: str):
+    match = re.search(r"(?mis)^## ACTIVE CHAINS\s*$\n(.*?)(?=^## ENDPOINT LOG\s*$|\Z)", text)
+    if not match:
+        return []
+    rows = []
+    for line in match.group(1).splitlines():
+        if not line.startswith("|") or "---" in line or "Chain" in line:
+            continue
+        cols = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cols) >= 8:
+            rows.append({"chain": cols[0], "endpoint_file": cols[3], "authority": cols[6]})
+    return rows
+
+
+def load_legacy_rows(index: Path):
+    rows = []
+    for row in parse_legacy_active_rows(index.read_text(encoding="utf-8")):
+        path = (index.parent.parent / row["endpoint_file"]).resolve()
+        text = path.read_text(encoding="utf-8") if path.exists() else ""
+        rows.append(
+            {
+                "chain": row["chain"],
+                "authority": row["authority"],
+                "dependencies": "",
+                "coordination": "UNKNOWN",
+                "paths": section_paths(text),
+            }
+        )
+    return rows
 
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: detect_chain_overlap.py <agents/agentchain.md>", file=sys.stderr)
+        print(
+            "Usage: detect_chain_overlap.py <repo-root-or-agents/chains-or-legacy-agentchain.md>",
+            file=sys.stderr,
+        )
         return 2
-    index = Path(sys.argv[1]).resolve()
-    rows = parse_active_rows(index.read_text(encoding="utf-8"))
-    details = []
-    for row in rows:
-        p = (index.parent.parent / row["endpoint_file"]).resolve()
-        paths = section_paths(p.read_text(encoding="utf-8")) if p.exists() else set()
-        details.append((row, paths))
+
+    supplied = Path(sys.argv[1]).resolve()
+    if supplied.is_file():
+        rows = load_legacy_rows(supplied)
+        mode = "legacy-index"
+    else:
+        chains_dir = supplied if supplied.name == "chains" else supplied / "agents" / "chains"
+        if not chains_dir.is_dir():
+            print(f"FAIL: canonical chain store not found: {chains_dir}", file=sys.stderr)
+            return 1
+        rows = load_canonical_rows(chains_dir)
+        mode = "chain-local"
 
     conflicts = []
-    for i in range(len(details)):
-        for j in range(i + 1, len(details)):
-            a, ap = details[i]; b, bp = details[j]
-            authority_overlap = a["authority"] == b["authority"] and a["authority"] not in {"", "NONE", "N/A"}
-            path_hits = sorted((x, y) for x in ap for y in bp if overlaps(x, y))
-            if authority_overlap or path_hits:
-                conflicts.append((a["chain"], b["chain"], authority_overlap, path_hits))
+    for i in range(len(rows)):
+        for j in range(i + 1, len(rows)):
+            a = rows[i]
+            b = rows[j]
+            authority_overlap = (
+                a["authority"] == b["authority"]
+                and a["authority"] not in {"", "NONE", "N/A"}
+            )
+            path_hits = sorted(
+                (x, y) for x in a["paths"] for y in b["paths"] if overlaps(x, y)
+            )
+            dependency_overlap = b["chain"] in a["dependencies"] or a["chain"] in b["dependencies"]
+            if authority_overlap or path_hits or dependency_overlap:
+                conflicts.append(
+                    (a["chain"], b["chain"], authority_overlap, dependency_overlap, path_hits)
+                )
+
     if conflicts:
-        for a, b, auth, hits in conflicts:
-            print(f"COORDINATION_REQUIRED: {a} <-> {b}; authority_overlap={auth}; path_overlap={hits}")
+        for a, b, auth, dep, hits in conflicts:
+            print(
+                f"COORDINATION_REQUIRED: {a} <-> {b}; "
+                f"authority_overlap={auth}; dependency={dep}; path_overlap={hits}"
+            )
         return 1
-    print("PASS: no active-chain authority/path overlap detected")
+
+    print(f"PASS: no active-chain authority/path/dependency overlap detected ({mode})")
     return 0
 
 

@@ -1,31 +1,38 @@
 ---
 name: engineering-pr-delivery-v2
-description: Execute, recover, qualify, and relay engineering repository work across multiple agents using a compact repo-wide agents/agentchain.md index plus immutable chain-scoped endpoint files. Use for engineering implementation, investigation, audit, PR progression, abrupt agent loss, expert takeover, multi-agent workstreams, AUTO MODE, and long-running tasks spanning multiple PRs. Every durable endpoint records trusted repository state, inputs/benchmarks/common and governing documents, exact next action, protected authority, validation limits, and exactly five repository-specific questions for the next agent. Graceful handoff is optional and candidate self-qualification never grants engineering-critical write authority.
+description: Execute, recover, qualify, and relay engineering repository work across multiple agents using chain-local mutable state under agents/chains/<CHAIN_ID>/ACTIVE.md plus immutable chain-scoped endpoints. Use for engineering implementation, investigation, audit, PR progression, abrupt agent loss, expert takeover, concurrent WRC/LAFEA/LoadCalc workstreams, AUTO MODE, and long-running tasks spanning multiple PRs. Enforce maintainable modular implementation, explicit engineering authority boundaries, validation integrity, source custody, stale-write protection, and crash-safe takeover. Every durable endpoint records trusted repository state, inputs/benchmarks/common and governing documents, exact next action, protected authority, validation limits, and exactly five repository-specific questions for the next agent. Graceful handoff is optional and candidate self-qualification never grants engineering-critical write authority.
 ---
 
 # Engineering PR Delivery v2 — Relay Engineering
 
 ## Governing objective
 
-Run engineering work as a crash-safe relay.
+Run engineering work as a crash-safe, concurrency-safe relay.
 
 The repository owns the baton. The outgoing agent, chat session, and private reasoning are never required for recovery.
 
-Use:
+For new chains use:
 
 ```text
-agents/agentchain.md                         repo-wide traffic/index log
-agents/agentchain/<CHAIN_ID>/<ENDPOINT>.md  immutable detailed endpoint
+agents/chains/<CHAIN_ID>/ACTIVE.md                    mutable chain-local current state
+agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md  immutable detailed endpoint
+agents/qualifications/<CHAIN_ID>/...                 qualification artifacts
 ```
 
-The split is intentional. A single ever-growing Markdown baton becomes a multi-agent write hotspot. The repo-wide index stays small; detailed endpoints are created once and never rewritten.
+Compatibility / derived navigation:
+
+```text
+agents/agentchain.md
+```
+
+The split is intentional. Independent WRC, LAFEA, LoadCalc, and other agents should not edit one shared relay pointer merely because they work in the same repository.
 
 ## 1. Core invariants
 
 ```text
 R1  Repository state, not conversation memory, is the baton.
 R2  Agent disappearance is a normal recoverable condition.
-R3  agents/agentchain.md is the compact repo-wide index/log.
+R3  Each canonical chain owns one mutable agents/chains/<CHAIN_ID>/ACTIVE.md.
 R4  Detailed endpoint files are immutable after durable creation.
 R5  Every non-terminal endpoint contains exactly five next-agent questions.
 R6  Questions test the NEXT unresolved engineering work.
@@ -39,11 +46,31 @@ R12 A chain may span many agents, commits, branches, and PRs.
 R13 PR merge does not imply engineering-chain completion.
 R14 Every non-terminal endpoint has one exact next safe action.
 R15 Detailed evidence stays in its owning artifact; endpoints index it.
-R16 ACTIVE CHAINS must point to the actual latest endpoint for that chain.
+R16 ACTIVE.md must point to the actual latest accepted endpoint for its chain.
 R17 PREVIOUS_ENDPOINT is chain-local and cannot skip or cross chains.
+R18 New production modules normally stay <= 300 physical lines; exceeding
+    the threshold requires review and justification, not metric gaming.
+R19 Functions/methods normally stay <= 40 logical lines; split when a
+    coherent responsibility, invariant, failure mode, or test seam exists.
+R20 Module boundaries follow responsibility, state ownership, and
+    engineering authority boundaries, not arbitrary line-count splitting.
+R21 New abstractions require a real production consumer in the same PR
+    unless an explicitly approved staged prerequisite says otherwise.
+R22 New unused production modules are 0 by default.
+R23 Hidden globals and implicit singleton engineering authority are prohibited.
+R24 Source authority, applicability, numerical mechanics, independent oracle,
+    publication/release authority, and presentation remain separable.
+R25 Every production-coding leg records a pre/post code-quality review and
+    explicitly justifies any size, modularity, or ownership exception.
+R26 ENDPOINT_ID is unique within CHAIN_ID; the durable key is
+    (CHAIN_ID, ENDPOINT_ID), not ENDPOINT_ID alone.
+R27 Canonical chain custody advances by CUSTODY_EPOCH + 1 using exact prior
+    ACTIVE.md repository version/blob; stale writes fail closed and re-ground.
+R28 agents/agentchain.md is derived/legacy navigation for canonical chains,
+    not the authoritative mutable pointer and not required on every endpoint.
 ```
 
-Read `references/relay-model.md` and `references/agentchain-schema.md`.
+Read `references/relay-model.md`, `references/agentchain-schema.md`, `references/chain-concurrency.md`, and `references/code-quality.md`.
 
 ## 2. Durable work identity
 
@@ -57,32 +84,79 @@ REPOSITORY
 
 `CHAIN_ID` identifies the engineering mission and survives PR transitions. A new PR for the same unresolved mission normally starts a new leg, not a new chain.
 
-## 3. Repo-wide index
-
-Primary index:
+Endpoint identity is chain-scoped:
 
 ```text
-agents/agentchain.md
+ADV-WRC-1389/EP-0001
+ADV-LAFEA-1422/EP-0001
+ADV-LOADCALC-1505/EP-0001
 ```
 
-It contains only:
+All three are valid simultaneously.
 
-1. `ACTIVE CHAINS` — mutable current traffic table;
-2. `ENDPOINT LOG` — compact append-only endpoint rows.
+## 3. Chain-local current state
 
-Every non-terminal chain must have exactly one active row pointing to its actual latest endpoint and endpoint file. Completed/superseded chains leave the active table but remain in the endpoint log.
+Canonical current-state file:
 
-Do not put full calculations, investigation narratives, or full endpoint bodies into the index.
+```text
+agents/chains/<CHAIN_ID>/ACTIVE.md
+```
+
+Required fields:
+
+```text
+CHAIN_STATE_VERSION
+CHAIN_ID
+MISSION
+ACTIVE_ENDPOINT
+ACTIVE_ENDPOINT_FILE
+PR
+BRANCH
+HEAD
+STATE
+AUTHORITY_DOMAIN
+ACTIVE_CUSTODIAN
+CUSTODY_EPOCH
+COORDINATION_STATE
+DEPENDENCIES
+```
+
+Every chain writes only its own `ACTIVE.md`.
+
+Before advancing it:
+
+1. read the exact current repository blob/version and `CUSTODY_EPOCH`;
+2. create the next immutable endpoint with `epoch + 1`;
+3. update `ACTIVE.md` against the exact prior version;
+4. if the write conflicts or the epoch changed, classify `STALE_WRITE`, return READ_ONLY, re-ground, and reconcile.
+
+Do not force a stale pointer.
+
+Repository-wide traffic is discovered by scanning:
+
+```text
+agents/chains/*/ACTIVE.md
+```
+
+A shared dashboard may be rendered for convenience, but normal endpoint progression does not require a dashboard commit.
 
 ## 4. Detailed endpoints
 
 Default path:
 
 ```text
-agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
+agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md
 ```
 
-Create a new file at every durable endpoint. Never edit a durable endpoint merely to make history cleaner. Correct it with a later endpoint and explicit supersession fields.
+Create a new file at every durable endpoint. Never edit a durable endpoint merely to make history cleaner. Correct it with a later endpoint and explicit supersession/reconciliation fields.
+
+Every canonical endpoint also records:
+
+```text
+CUSTODY_EPOCH: <positive integer>
+```
+
+The first endpoint uses `1`; every accepted direct successor increments by exactly one.
 
 Every non-terminal endpoint must contain:
 
@@ -102,6 +176,7 @@ Every non-terminal endpoint must contain:
 - Validation/test paths;
 - changed-this-leg summary;
 - validation summary;
+- code-quality gate result and justified exceptions when production code changed;
 - open risks/questions;
 - exactly Q1–Q5 for the next agent.
 
@@ -121,11 +196,12 @@ before/after PR transition
 before intentional stop
 before merge request
 recovery after agent loss
+same-chain custody reconciliation
 ready for next engineering leg
 chain completion
 ```
 
-Do not create endpoints for trivial commentary-only changes.
+Do not create endpoints for trivial commentary-only edits.
 
 ## 6. Incoming takeover
 
@@ -137,17 +213,17 @@ TAKEOVER_AUTHORITY = READ_ONLY
 
 Then:
 
-1. read `agents/agentchain.md`;
-2. find the chain and latest endpoint file;
+1. locate the chain under `agents/chains/<CHAIN_ID>/ACTIVE.md`;
+2. open its referenced active endpoint;
 3. read the endpoint-listed inputs, benchmarks, common/governing docs, authoritative sources, production paths, and validation paths;
 4. fetch live main/PR/head/diff/reviews/checks;
-5. reconcile live state with the endpoint;
-6. inspect any material commits after the endpoint;
+5. reconcile live state, current `CUSTODY_EPOCH`, and endpoint state;
+6. inspect any material commits and orphan/divergent endpoint files after the active endpoint;
 7. answer Q1–Q5;
 8. obtain an independent verifier verdict;
 9. only after a valid verdict acquire engineering-critical write authority.
 
-Do not require the outgoing agent.
+For a legacy-format chain that has not migrated, recover from its existing `agents/agentchain.md` locator instead. Do not require the outgoing agent.
 
 ## 7. Five-question gate
 
@@ -186,9 +262,11 @@ every question >= 17/20
 
 A verifier may still fail a numeric pass for a substantive automatic-failure reason such as fabricated evidence or unsafe authority claims.
 
+Question-set IDs should be visibly chain-namespaced, for example `QS-ADV-WRC-1389-0012`.
+
 ## 9. Crash recovery
 
-If an agent disappears, recover from the latest indexed endpoint and live repository state.
+If an agent disappears, recover from that chain's `ACTIVE.md`, referenced immutable endpoint, and live repository state.
 
 If later commits exist after the endpoint:
 
@@ -205,11 +283,9 @@ CONTAMINATED
 UNTRUSTED
 ```
 
-Then create a recovery endpoint. Never pretend an abrupt loss was a graceful handoff.
+If an endpoint exists but `ACTIVE.md` was not advanced, treat it as an orphan durable artifact. If another agent already advanced `ACTIVE.md`, do not overwrite it; re-ground and reconcile same-chain custody.
 
-If an endpoint file exists but the index was not updated before the crash, treat it as an orphan durable artifact: reconcile it, then repair the index with explicit recovery provenance rather than deleting it.
-
-Read `references/crash-recovery.md`.
+Read `references/crash-recovery.md` and `references/chain-concurrency.md`.
 
 ## 10. Qualification freshness
 
@@ -223,7 +299,7 @@ QUESTION_SET_STATUS
 
 Material changes to production, tests, benchmarks, oracles, engineering inputs, source authority, behavior-changing configuration, methodology, or publication authority make the old question set stale.
 
-Metadata-only relay/index synchronization does not by itself change the material basis.
+Relay metadata-only changes do not by themselves change the material basis.
 
 ## 11. Engineering validation integrity
 
@@ -242,11 +318,15 @@ Read `references/engineering-validation.md` and `references/anti-gaming-rules.md
 
 ## 12. Multi-agent coordination
 
+Different chains own different relay files. Do not create a coordination problem merely because several agents work in one repository.
+
 Before mutation and before a new leg, compare active chains for:
 
 - exact-file/path overlap;
 - authority-domain overlap;
 - benchmark/oracle overlap;
+- controlled-input overlap;
+- release/publication overlap;
 - dependency/stacking;
 - base drift.
 
@@ -259,11 +339,68 @@ BLOCKED_BY_ACTIVE_CHAIN
 UNKNOWN
 ```
 
-The compact index is traffic control, not proof that semantic overlap is absent.
+Examples:
 
-Read `references/multi-agent-coordination.md`.
+```text
+WRC src/core/emp1/** vs LAFEA src/core/lafea/**
+  -> likely SAFE if authority/benchmarks/inputs are also independent
 
-## 13. PR discipline
+WRC and LAFEA both modify src/core/non-fea-common-checker/**
+  -> COORDINATION_REQUIRED
+
+separate files but both change canonical units/source authority
+  -> COORDINATION_REQUIRED or BLOCKED
+```
+
+Same-chain concurrent advancement is different: one `ACTIVE.md` + one custody epoch sequence. Divergent successors must reconcile before either becomes authoritative.
+
+Read `references/multi-agent-coordination.md` and `references/chain-concurrency.md`.
+
+## 13. Code quality and maintainability
+
+Apply the code-quality gate to every leg that changes production code.
+
+Default review thresholds:
+
+```text
+new production module     normally <= 300 physical lines
+function / method          normally <= 40 logical lines
+```
+
+These are design-review triggers, not blind hard limits. Do not game them by creating arbitrary `part1`/`part2` files or meaningless wrappers.
+
+Before material coding, identify:
+
+- the existing owner implementation;
+- the intended module responsibility;
+- engineering/software authority boundaries;
+- state and mutation ownership;
+- expected size and meaningful extraction boundaries;
+- independent test seams;
+- the real production consumer for every new abstraction;
+- any existing calculation/source/tolerance implementation that would otherwise be duplicated.
+
+After implementation, verify:
+
+```text
+new modules <= 300 lines or exception justified
+functions <= 40 logical lines or exception justified
+no god module / mixed authority owner introduced
+no hidden globals or implicit singleton authority
+mutation boundaries explicit
+no circular ownership
+new unused production modules = 0 unless explicitly staged
+no duplicate production engineering calculation path
+source / calculation / oracle / publication / UI boundaries preserved
+negative / fail-closed behavior tested where applicable
+no unrelated refactor or formatting churn
+```
+
+For engineering software, modularity follows domain and authority boundaries before cosmetic size goals. A cohesive justified 330-line numerical kernel can be safer than three artificial files that obscure ownership; conversely a 220-line module that mixes source authority, solver mechanics, and publication authority should be split even though it is below the size threshold.
+
+Read `references/code-quality.md`.
+
+## 14. PR discipline
 
 A PR is a delivery container, not the durable work identity.
 
@@ -271,15 +408,15 @@ Keep one coherent assignment per PR unless scope is explicitly changed. Never in
 
 Read `references/git-pr-policy.md`.
 
-## 14. AUTO MODE
+## 15. AUTO MODE
 
-`AUTO MODE` permits automatic progression through an approved plan; it does not waive qualification, source authority, validation integrity, destructive-operation limits, or merge authority.
+`AUTO MODE` permits automatic progression through an approved plan; it does not waive qualification, source authority, validation integrity, concurrency/custody checks, code-quality gates, destructive-operation limits, or merge authority.
 
-While AUTO is active, continue through ordinary successful phases, create durable endpoints at material transitions, and stop only at defined hard stops.
+While AUTO is active, continue through ordinary successful phases, create durable endpoints at material transitions, use compare-and-swap discipline when advancing `ACTIVE.md`, and stop on stale write, real authority overlap, or other defined hard stops.
 
 Read `references/auto-mode.md`.
 
-## 15. Chain completion
+## 16. Chain completion
 
 Distinguish:
 
@@ -298,17 +435,44 @@ QUESTION_SET_STATUS: NOT_REQUIRED
 COMPLETION_BASIS:
 ```
 
-Remove the chain from `ACTIVE CHAINS` but retain its endpoint-log history.
+Advance that chain's `ACTIVE.md` to the terminal endpoint/epoch. Derived dashboards omit terminal chains automatically. Retain immutable endpoint history.
 
-## 16. Executable checks
+## 17. Legacy compatibility
 
-Use:
+Existing repositories may contain:
+
+```text
+agents/agentchain.md
+agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
+```
+
+Preserve these artifacts as historical/recovery evidence. Do not mass-rewrite immutable history.
+
+Existing legacy-format chains may finish under the legacy structure or migrate deliberately at a new endpoint. New chains and independent new workstreams should use `agents/chains/**`.
+
+## 18. Executable checks
+
+Canonical chain-local store:
+
+```text
+python skills/engineering-pr-delivery-v2/scripts/validate_chain_store.py .
+python skills/engineering-pr-delivery-v2/scripts/detect_chain_overlap.py .
+python skills/engineering-pr-delivery-v2/scripts/render_agentchain_dashboard.py .
+python skills/engineering-pr-delivery-v2/scripts/check_relay.py . [<answer.md> <verdict.md>]
+```
+
+Legacy shared-index store:
 
 ```text
 python skills/engineering-pr-delivery-v2/scripts/validate_agentchain.py agents/agentchain.md
-python skills/engineering-pr-delivery-v2/scripts/validate_qualification.py <answer.md> <verdict.md>
 python skills/engineering-pr-delivery-v2/scripts/check_relay.py agents/agentchain.md [<answer.md> <verdict.md>]
+```
+
+Qualification:
+
+```text
+python skills/engineering-pr-delivery-v2/scripts/validate_qualification.py <answer.md> <verdict.md>
 python skills/engineering-pr-delivery-v2/scripts/self_test.py
 ```
 
-Structural checks do not replace expert engineering verification. A syntactically perfect generic or fabricated answer must still fail substantive verification.
+Structural checks do not replace expert engineering verification. Code-size thresholds do not replace architectural review. A syntactically perfect generic or fabricated answer must still fail substantive verification.
