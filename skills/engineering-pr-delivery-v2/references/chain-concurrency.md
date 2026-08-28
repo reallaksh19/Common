@@ -76,7 +76,7 @@ CHAIN_ID: ADV-WRC-1389
 MISSION: Close bounded WRC gamma=5 production qualification
 ACTIVE_ENDPOINT: EP-0012
 ACTIVE_ENDPOINT_FILE: agents/chains/ADV-WRC-1389/endpoints/EP-0012.md
-PR: #1510
+PR: 1510
 BRANCH: emp1-wrc-next-batch
 HEAD: <sha>
 STATE: ACTIVE
