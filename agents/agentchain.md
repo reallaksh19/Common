@@ -13,7 +13,6 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 
 | Chain | Mission | Latest endpoint | Endpoint file | PR | State | Authority domain | Next action |
 |---|---|---|---|---|---|---|---|
-| COMMON-ENG-PR-DELIVERY-V2-CODE-QUALITY | Promote modular code-quality practice into canonical v2 | EP-CQ-0001 | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2-CODE-QUALITY/EP-CQ-0001.md | #22 | READY_FOR_NEXT_LEG | Engineering delivery skill maintainability policy | Review PR #22 exact diff and relay integrity, then await explicit owner merge authorization |
 
 ## ENDPOINT LOG
 
@@ -29,4 +28,3 @@ MIGRATION_NOTE: EP-0001 and EP-0002 were created before the split index/endpoint
 | EP-0008 | COMMON-ENG-PR-DELIVERY-V2 | LEG-003 | 77d7afc1fda71ec916e5d5b12f9730847cc52309 | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0008.md |
 | EP-0009 | COMMON-ENG-PR-DELIVERY-V2 | LEG-003 | 961e0a4917c622b9ee45a357fe73f9b74325ad1b | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0009.md |
 | EP-0010 | COMMON-ENG-PR-DELIVERY-V2 | LEG-004 | d9f19ea4d5ab988ef2f2ab6500fba906e8a7184f | COMPLETE | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2/EP-0010.md |
-| EP-CQ-0001 | COMMON-ENG-PR-DELIVERY-V2-CODE-QUALITY | LEG-001 | a49a5830b5b8777495d8163bf760f13d3837ed75 | READY_FOR_NEXT_LEG | agents/agentchain/COMMON-ENG-PR-DELIVERY-V2-CODE-QUALITY/EP-CQ-0001.md |
