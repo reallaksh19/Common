@@ -81,7 +81,7 @@ If `4^x=8`, find `4x`.
 Find the greatest integer m for which `x^2-6x+m=0` has real roots.
 
 ## Q19
-Find the least positive integer N satisfying `N ≡ 1 (mod 4)` and `N ≡ 2 (mod 5)`.
+A circle has radius 6 and centre O. An external point P satisfies `OP=10`. Find the length of a tangent from P to the circle.
 
 ## Q20
 How many positive integers n make `(n+7)/(n+1)` an integer?
