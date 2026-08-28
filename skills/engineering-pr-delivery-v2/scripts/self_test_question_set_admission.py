@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+
+HERE = Path(__file__).resolve().parent
+VALIDATOR = HERE / "validate_question_set_admission.py"
+
+ENDPOINT = """CHAIN_ID: X
+ENDPOINT_ID: EP-1
+QUALIFICATION_BASIS_HEAD: 0123456789012345678901234567890123456789
+QUESTION_SET_ID: QS-X-1
+### Takeover qualification pack
+#### Q1 — Production Trace
+x
+#### Q2 — Current Unresolved Problem / Failure Isolation
+x
+#### Q3 — Authority / Invariant
+x
+#### Q4 — Independent Validation
+x
+#### Q5 — Next Contribution / Minimal Patch
+x
+"""
+
+BASE = """QUALIFICATION_PROTOCOL_VERSION: 3
+CHAIN_ID: X
+ENDPOINT_ID: EP-1
+QUESTION_SET_ID: QS-X-1
+QUALIFICATION_BASIS_HEAD: 0123456789012345678901234567890123456789
+QUESTION_SET_ADMISSION_STATUS: {status}
+ADMISSION_AUTHORITY_ID: verifier-a
+BASIS_RETRIEVABLE: TRUE
+TECHNICAL_DEPTH_STATUS: PASS
+ROADMAP_AUTHORITY_STATUS: VALID
+SOURCE_ORACLE_AUTHORITY_STATUS: VALID
+LEGACY_SET: TRUE
+ADMISSION_EVIDENCE: exact basis and governing authority checked
+"""
+
+ANSWER = """CANDIDATE_ID: candidate-b
+"""
+
+def run(ep, receipt, answer=None):
+    with tempfile.TemporaryDirectory() as td:
+        p = Path(td)
+        epf = p/"ep.md"; epf.write_text(ep)
+        rf = p/"admission.md"; rf.write_text(receipt)
+        cmd = [sys.executable, str(VALIDATOR), str(epf), str(rf)]
+        if answer is not None:
+            af=p/"answer.md"; af.write_text(answer); cmd.append(str(af))
+        return subprocess.run(cmd, capture_output=True, text=True)
+
+def main():
+    cases = [
+        ("valid", BASE.format(status="VALID"), ANSWER, 0),
+        ("authority contaminated", BASE.format(status="AUTHORITY_CONTAMINATED"), ANSWER, 1),
+        ("candidate self admission", BASE.format(status="VALID").replace("verifier-a","candidate-b"), ANSWER, 1),
+        ("roadmap authority blocked", BASE.format(status="VALID").replace("ROADMAP_AUTHORITY_STATUS: VALID","ROADMAP_AUTHORITY_STATUS: UNPROVEN"), ANSWER, 1),
+        ("shallow status", BASE.format(status="VALID").replace("TECHNICAL_DEPTH_STATUS: PASS","TECHNICAL_DEPTH_STATUS: FAIL"), ANSWER, 1),
+    ]
+    failed=0
+    for name, receipt, answer, expected in cases:
+        r=run(ENDPOINT, receipt, answer)
+        ok=r.returncode==expected
+        print(("PASS" if ok else "FAIL")+": "+name)
+        if not ok:
+            print(r.stdout+r.stderr); failed+=1
+    return 1 if failed else 0
+
+if __name__=="__main__":
+    raise SystemExit(main())
