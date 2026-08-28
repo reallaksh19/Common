@@ -1,6 +1,6 @@
 ---
 name: engineering-pr-delivery-v2
-description: Execute, recover, qualify, and relay engineering repository work across multiple agents using a compact repo-wide agents/agentchain.md index plus immutable chain-scoped endpoint files. Use for engineering implementation, investigation, audit, PR progression, abrupt agent loss, expert takeover, multi-agent workstreams, AUTO MODE, and long-running tasks spanning multiple PRs. Every durable endpoint records trusted repository state, inputs/benchmarks/common and governing documents, exact next action, protected authority, validation limits, and exactly five repository-specific questions for the next agent. Graceful handoff is optional and candidate self-qualification never grants engineering-critical write authority.
+description: Execute, recover, qualify, and relay engineering repository work across multiple agents using a compact repo-wide agents/agentchain.md index plus immutable chain-scoped endpoint files. Use for engineering implementation, investigation, audit, PR progression, abrupt agent loss, expert takeover, multi-agent workstreams, AUTO MODE, and long-running tasks spanning multiple PRs. Enforce maintainable modular implementation, explicit engineering authority boundaries, validation integrity, source custody, and crash-safe takeover. Every durable endpoint records trusted repository state, inputs/benchmarks/common and governing documents, exact next action, protected authority, validation limits, and exactly five repository-specific questions for the next agent. Graceful handoff is optional and candidate self-qualification never grants engineering-critical write authority.
 ---
 
 # Engineering PR Delivery v2 — Relay Engineering
@@ -41,9 +41,23 @@ R14 Every non-terminal endpoint has one exact next safe action.
 R15 Detailed evidence stays in its owning artifact; endpoints index it.
 R16 ACTIVE CHAINS must point to the actual latest endpoint for that chain.
 R17 PREVIOUS_ENDPOINT is chain-local and cannot skip or cross chains.
+R18 New production modules normally stay <= 300 physical lines; exceeding
+    the threshold requires review and justification, not metric gaming.
+R19 Functions/methods normally stay <= 40 logical lines; split when a
+    coherent responsibility, invariant, failure mode, or test seam exists.
+R20 Module boundaries follow responsibility, state ownership, and
+    engineering authority boundaries, not arbitrary line-count splitting.
+R21 New abstractions require a real production consumer in the same PR
+    unless an explicitly approved staged prerequisite says otherwise.
+R22 New unused production modules are 0 by default.
+R23 Hidden globals and implicit singleton engineering authority are prohibited.
+R24 Source authority, applicability, numerical mechanics, independent oracle,
+    publication/release authority, and presentation remain separable.
+R25 Every production-coding leg records a pre/post code-quality review and
+    explicitly justifies any size, modularity, or ownership exception.
 ```
 
-Read `references/relay-model.md` and `references/agentchain-schema.md`.
+Read `references/relay-model.md`, `references/agentchain-schema.md`, and `references/code-quality.md`.
 
 ## 2. Durable work identity
 
@@ -102,6 +116,7 @@ Every non-terminal endpoint must contain:
 - Validation/test paths;
 - changed-this-leg summary;
 - validation summary;
+- code-quality gate result and justified exceptions when production code changed;
 - open risks/questions;
 - exactly Q1–Q5 for the next agent.
 
@@ -263,7 +278,51 @@ The compact index is traffic control, not proof that semantic overlap is absent.
 
 Read `references/multi-agent-coordination.md`.
 
-## 13. PR discipline
+## 13. Code quality and maintainability
+
+Apply the code-quality gate to every leg that changes production code.
+
+Default review thresholds:
+
+```text
+new production module     normally <= 300 physical lines
+function / method          normally <= 40 logical lines
+```
+
+These are design-review triggers, not blind hard limits. Do not game them by creating arbitrary `part1`/`part2` files or meaningless wrappers.
+
+Before material coding, identify:
+
+- the existing owner implementation;
+- the intended module responsibility;
+- engineering/software authority boundaries;
+- state and mutation ownership;
+- expected size and meaningful extraction boundaries;
+- independent test seams;
+- the real production consumer for every new abstraction;
+- any existing calculation/source/tolerance implementation that would otherwise be duplicated.
+
+After implementation, verify:
+
+```text
+new modules <= 300 lines or exception justified
+functions <= 40 logical lines or exception justified
+no god module / mixed authority owner introduced
+no hidden globals or implicit singleton authority
+mutation boundaries explicit
+no circular ownership
+new unused production modules = 0 unless explicitly staged
+no duplicate production engineering calculation path
+source / calculation / oracle / publication / UI boundaries preserved
+negative / fail-closed behavior tested where applicable
+no unrelated refactor or formatting churn
+```
+
+For engineering software, modularity follows domain and authority boundaries before cosmetic size goals. A cohesive justified 330-line numerical kernel can be safer than three artificial files that obscure ownership; conversely a 220-line module that mixes source authority, solver mechanics, and publication authority should be split even though it is below the size threshold.
+
+Read `references/code-quality.md`.
+
+## 14. PR discipline
 
 A PR is a delivery container, not the durable work identity.
 
@@ -271,15 +330,15 @@ Keep one coherent assignment per PR unless scope is explicitly changed. Never in
 
 Read `references/git-pr-policy.md`.
 
-## 14. AUTO MODE
+## 15. AUTO MODE
 
-`AUTO MODE` permits automatic progression through an approved plan; it does not waive qualification, source authority, validation integrity, destructive-operation limits, or merge authority.
+`AUTO MODE` permits automatic progression through an approved plan; it does not waive qualification, source authority, validation integrity, code-quality gates, destructive-operation limits, or merge authority.
 
 While AUTO is active, continue through ordinary successful phases, create durable endpoints at material transitions, and stop only at defined hard stops.
 
 Read `references/auto-mode.md`.
 
-## 15. Chain completion
+## 16. Chain completion
 
 Distinguish:
 
@@ -300,7 +359,7 @@ COMPLETION_BASIS:
 
 Remove the chain from `ACTIVE CHAINS` but retain its endpoint-log history.
 
-## 16. Executable checks
+## 17. Executable checks
 
 Use:
 
@@ -311,4 +370,4 @@ python skills/engineering-pr-delivery-v2/scripts/check_relay.py agents/agentchai
 python skills/engineering-pr-delivery-v2/scripts/self_test.py
 ```
 
-Structural checks do not replace expert engineering verification. A syntactically perfect generic or fabricated answer must still fail substantive verification.
+Structural checks do not replace expert engineering verification. Code-size thresholds do not replace architectural review. A syntactically perfect generic or fabricated answer must still fail substantive verification.
