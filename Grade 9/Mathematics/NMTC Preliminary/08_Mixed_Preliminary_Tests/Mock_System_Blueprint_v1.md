@@ -226,7 +226,11 @@ This separation prevents chapter labels from leaking the intended method.
 
 ## Current status
 
-`STATUS: MOCK_SYSTEM_MATH_QA_PENDING`
+`STATUS: INTERNAL_MOCK_SYSTEM_COMPLETE_NOT_PUBLICATION_READY`
+
+Second-pass authority:
+
+`../09_QA/Mixed_Preliminary_Mock_System_QA.md`
 
 Publication blockers remain:
 
