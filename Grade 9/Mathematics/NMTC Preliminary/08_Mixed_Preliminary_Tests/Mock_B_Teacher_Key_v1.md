@@ -24,13 +24,13 @@ All items are `AUTHOR_CREATED_TRANSFER`.
 | 16 | 16 | P0-3 | AM-GM equality forces all roots 2 | FM |
 | 17 | 6 | P0-2 | common base 2 | REP |
 | 18 | 9 | P0-3 | discriminant `>=0` | FM |
-| 19 | 17 | P0-4 | test residues modulo 20 | FM |
+| 19 | 8 | P0-5 | right triangle `OPT`: `PT^2=OP^2-r^2` | FIG |
 | 20 | 3 | P0-4 | `1+6/(n+1)` -> divisor reduction | REP/DOM |
 | 21 | 55 | P1-1 | standard arithmetic sum | ALG |
 | 22 | 30 | P1-2 | divide `5!` by repeated-letter factorials | COUNT |
 | 23 | 2 | P1-3 | right-triangle `r=(a+b-c)/2` | REC |
 | 24 | 19 | P1-3 | Stewart with labelled segments | FIG/ALG |
-| 25 | 26 | P2-1 / P1-1 | recurrence increments are odd numbers | REP |
+| 25 | 26 | P1-1 | recurrence increments are odd numbers | REP |
 | 26 | 2 | P2-2 | translate floor equality to half-open interval | DOM |
 | 27 | 75 | AF | include hour-hand motion | REP |
 | 28 | 1 | P0-1 | shift argument before solving | REP |
@@ -59,6 +59,9 @@ Multiples of 2: 15. Multiples of 3: 10. Multiples of 6: 5. Union count `15+10-5=
 
 ### Q16
 For four positive roots with product 16, AM-GM gives sum at least `4*16^(1/4)=8`. Equality with given sum 8 forces every root to be 2; square sum is 16.
+
+### Q19
+The radius to the tangent point is perpendicular to the tangent. Thus `PT^2=10^2-6^2=64`, so `PT=8`.
 
 ### Q20
 `(n+7)/(n+1)=1+6/(n+1)`. For positive n, `n+1` is a positive divisor of 6 greater than 1: 2,3,6. Thus 3 values.
