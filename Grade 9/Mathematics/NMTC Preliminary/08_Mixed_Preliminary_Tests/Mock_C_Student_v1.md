@@ -88,7 +88,7 @@ Let `t=cuberoot2`. Find `2(t^3+1/t^3)`.
 How many integers satisfy `3/|x-5|>1`?
 
 ## Q19
-Find the remainder when `2^100+3^100` is divided by 5.
+One angle of a cyclic quadrilateral is 67 degrees. Find the opposite angle in degrees.
 
 ## Q20
 A three-digit number has hundreds digit 2 and tens digit 3. If it is divisible by 9, find its units digit.
