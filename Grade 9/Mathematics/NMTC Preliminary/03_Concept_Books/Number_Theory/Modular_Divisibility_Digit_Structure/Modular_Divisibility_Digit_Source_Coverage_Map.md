@@ -35,9 +35,10 @@ These two must be taught as a contrast pair.
 ### Integer-valued / factor-divisor constraints
 
 - `NMTC-BH-P-2018-Q10` — coprimality converts a rational condition into divisor restrictions.
+- `NMTC-BH-P-2018-Q18` — difference-of-squares factorization plus the same-parity condition on `(k-n),(k+n)`.
 - `NMTC-BH-P-2018-Q19` — integrality/perfect-square restriction after algebraic reduction.
-- `NMTC-BH-P-2025-Q26` — substitution `t=2n-1` converts integrality to `t | 25`.
 - `NMTC-BH-P-2019-Q27` — factor a difference of squares and combine divisibility with bounds.
+- `NMTC-BH-P-2025-Q26` — substitution `t=2n-1` converts integrality to `t | 25`.
 
 ### Prefix residues / attainable totals / representation ceiling
 
@@ -63,7 +64,7 @@ The five-year evidence supports a connected Number Theory package with the follo
 4. simultaneous congruence reconstruction;
 5. place-value and divisibility tests;
 6. integer-valued rational/divisor reduction;
-7. coprime/factor-pair restrictions;
+7. factor-pair parity and coprime restrictions;
 8. prefix-residue and multiplicative-order ceiling bridges;
 9. source-integrity checking.
 
