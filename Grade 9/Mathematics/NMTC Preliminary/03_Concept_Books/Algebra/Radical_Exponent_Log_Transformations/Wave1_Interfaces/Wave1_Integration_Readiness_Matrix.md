@@ -231,3 +231,9 @@ All six interfaces enforce:
 `WAVE1_INTERNAL_STREAMS_COMPLETE`
 
 The interfaces are integration-ready. They are **not** themselves a student book and must not be concatenated mechanically. Wave 2 must turn them into a coherent learning journey with discovery, explanation, attempts, diagnosis, fading and unlabelled adoption.
+
+## 12. PR handoff
+
+Current implementation lives on draft PR #55, branch `issue-45-wave0-radical-exponent-log-grounding`.
+
+Wave 1 is complete on this branch. The PR remains draft/unmerged because Issue #45 Waves 2–5 are still open; no merge authorization is assumed.
