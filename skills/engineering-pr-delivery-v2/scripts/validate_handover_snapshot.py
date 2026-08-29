@@ -12,7 +12,15 @@ V3_ACTIVE_FIELDS = [
     "ACTIVE_CUSTODIAN", "CUSTODY_EPOCH", "COORDINATION_STATE",
     "DEPENDENCIES", "ROADMAPS", "ROADMAP_REVIEW_STATUS", "HANDOVER_READY",
 ]
-SNAPSHOT_LABELS = [
+STATE_CARD_LABELS = [
+    "Repo:", "Task:", "Chain:", "Endpoint:", "PR:", "PR status:",
+    "Branch / PR head / main:", "Merge authority:",
+    "Engineering / custody / qualification / write state:", "AUTO:",
+    "Protocol basis / status:", "Roadmap:", "Inputs:", "Benchmarks:",
+    "Governing docs / authoritative sources:", "Current blocker:",
+    "Leg diagnosis:", "Exact next action:",
+]
+LEGACY_LABELS = [
     "Repo:", "Task:", "Chain:", "Endpoint:", "PR:", "PR status:",
     "Merge authority:", "Roadmap:", "Inputs:", "Benchmarks:",
     "Governing docs / authoritative sources:", "Exact next action:",
@@ -71,6 +79,47 @@ def roadmap_errors(root, chain, active):
     return errors
 
 
+def validate_v2_snapshot(chain, text, errors):
+    snap = section(text, "Active handover snapshot")
+    if snap is None:
+        errors.append(f"{chain}: protocol-v2 endpoint missing Active handover snapshot")
+        return
+    words = len(re.findall(r"\S+", snap))
+    if words >= 220:
+        errors.append(f"{chain}: Active handover State Card must be <220 words, found {words}")
+    for label in STATE_CARD_LABELS:
+        if label.lower() not in snap.lower():
+            errors.append(f"{chain}: Active handover snapshot missing {label}")
+    if re.search(r"(?mi)^Q[1-5]\s*:", snap):
+        errors.append(f"{chain}: full Q1-Q5 must be outside the State Card word limit")
+    questions = section(text, "Active qualification questions")
+    if questions is None:
+        errors.append(f"{chain}: protocol-v2 endpoint missing Active qualification questions")
+        return
+    matches = re.findall(r"(?mi)^Q([1-5])\s*:\s*(.+)$", questions)
+    if [n for n, _ in matches] != ["1", "2", "3", "4", "5"]:
+        errors.append(f"{chain}: Active qualification questions must contain exactly ordered Q1-Q5")
+    for n, prompt in matches:
+        if len(prompt.split()) < 8:
+            errors.append(f"{chain}: Active qualification Q{n} is only a topic label/too compressed")
+
+
+def validate_legacy_snapshot(chain, text, errors):
+    snap = section(text, "Handover snapshot")
+    if snap is None:
+        errors.append(f"{chain}: active endpoint missing Handover snapshot")
+        return
+    words = len(re.findall(r"\S+", snap))
+    if words >= 300:
+        errors.append(f"{chain}: Handover snapshot must be <300 words, found {words}")
+    for label in LEGACY_LABELS:
+        if label.lower() not in snap.lower():
+            errors.append(f"{chain}: Handover snapshot missing {label}")
+    for q in range(1, 6):
+        if not re.search(rf"(?mi)^Q{q}\s*:", snap):
+            errors.append(f"{chain}: Handover snapshot missing Q{q}")
+
+
 def validate_chain(root, chain_dir):
     errors = []
     active_path = chain_dir / "ACTIVE.md"
@@ -105,29 +154,17 @@ def validate_chain(root, chain_dir):
         errors.append(f"{chain}: WRITE_ALLOWED requires CUSTODY_STATE HELD")
     if custody in {"VACANT", "TAKEOVER_REQUIRED"} and auto == "RUNNING":
         errors.append(f"{chain}: agent-loss/takeover state cannot leave AUTO RUNNING")
-    if field(active, "HANDOVER_READY") != "TRUE":
-        errors.append(f"{chain}: HANDOVER_READY must be TRUE")
+
     endpoint_rel = field(active, "ACTIVE_ENDPOINT_FILE")
     ep = root / endpoint_rel
     if not ep.is_file():
         errors.append(f"{chain}: active endpoint missing {endpoint_rel}")
         return errors
     text = ep.read_text(encoding="utf-8")
-    snap = section(text, "Handover snapshot")
-    if snap is None:
-        errors.append(f"{chain}: active endpoint missing Handover snapshot")
+    if field(text, "HANDOVER_PROTOCOL_VERSION") == "2" or field(active, "HANDOVER_PROTOCOL_VERSION") == "2":
+        validate_v2_snapshot(chain, text, errors)
     else:
-        words = len(re.findall(r"\S+", snap))
-        if words >= 300:
-            errors.append(f"{chain}: Handover snapshot must be <300 words, found {words}")
-        for label in SNAPSHOT_LABELS:
-            if label.lower() not in snap.lower():
-                errors.append(f"{chain}: Handover snapshot missing {label}")
-        for q in range(1, 6):
-            if not re.search(rf"(?mi)^Q{q}\s*:", snap):
-                errors.append(f"{chain}: Handover snapshot missing Q{q}")
-    if field(text, "HANDOVER_READY") != "TRUE":
-        errors.append(f"{chain}: endpoint HANDOVER_READY must be TRUE")
+        validate_legacy_snapshot(chain, text, errors)
     errors.extend(roadmap_errors(root, chain, active))
     return errors
 
