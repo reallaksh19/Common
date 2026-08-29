@@ -8,6 +8,7 @@ CHAIN_ID: <CHAIN_ID>
 MISSION: <one-line mission>
 ACTIVE_ENDPOINT: EP-0001
 ACTIVE_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
 PR: <number-or-PENDING>
 BRANCH: <branch>
 HEAD: <accepted checkpoint head>
@@ -24,12 +25,14 @@ CUSTODY_EPOCH: 1
 COORDINATION_STATE: SAFE
 DEPENDENCIES: NONE
 COMMON_PROTOCOL: engineering-pr-delivery-v2
-COMMON_PROTOCOL_BASIS: <live Common commit SHA actually read for this leg>
+COMMON_PROTOCOL_BASIS: <40-hex live Common commit actually read for this leg>
 COMMON_PROTOCOL_STATUS: CURRENT
 ROADMAPS: <path>@<blob-sha> | NONE — <reason>
 ROADMAP_REVIEW_STATUS: COMPLETE | NOT_APPLICABLE | BLOCKED
 HANDOVER_READY: TRUE
 ```
+
+`MATERIAL_LEG_PREWORK_ENDPOINT_FILE` persists for the entire current material leg even after `ACTIVE_ENDPOINT` advances. It is the Git-history anchor proving that the work-ahead endpoint and Q1–Q5 existed before material mutation.
 
 ## Non-terminal endpoint
 
@@ -44,6 +47,7 @@ COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS:
 COMMON_PROTOCOL_STATUS: CURRENT
 PREWORK_QUALIFICATION_READY: TRUE
+QUALIFICATION_PROFILE: FEA | WRC_LOCAL_STRESS | LOAD_CALC | FIXED_FORMAT_WRITER | PARSER_TOPOLOGY | SOURCE_GOVERNANCE | GENERAL_ENGINEERING
 ROADMAPS:
 ROADMAP_REVIEW_STATUS:
 HANDOVER_READY: TRUE
@@ -53,6 +57,7 @@ BRANCH:
 CHECKPOINT_HEAD:
 MAIN_HEAD_OBSERVED:
 MERGE_BASE:
+STATE:
 ENGINEERING_STATE:
 CUSTODY_STATE:
 QUALIFICATION_STATE:
@@ -78,7 +83,7 @@ Exact next action:
 Q1: <concise production reconstruction>
 Q2: <concise calculation/failure isolation>
 Q3: <concise authority/falsifier>
-Q4: <concise independent oracle>
+Q4: <concise independent oracle/reconstruction>
 Q5: <concise safe patch/NO-PATCH>
 
 ### Mission
@@ -110,6 +115,7 @@ Q5: <concise safe patch/NO-PATCH>
 PURPOSE: QUALIFICATION_ONLY
 NOT_AN_IMPLEMENTATION_TASK: TRUE
 QUALIFICATION_PROTOCOL_VERSION: 3
+QUALIFICATION_PROFILE: <same profile as endpoint>
 QUALIFICATION_BASIS_HEAD:
 QUESTION_SET_ID:
 QUESTION_SET_STATUS: CURRENT
@@ -119,6 +125,8 @@ QUESTION_SET_ADMISSION_REQUIREMENT: REQUIRED_ON_TAKEOVER
 #### Q1 — Production Trace
 Repository anchors:
 Production object/case:
+Domain challenge:
+Exact repository data required:
 Required technical work:
 Required numerical/technical evidence:
 First authority/ownership boundaries:
@@ -126,6 +134,8 @@ Fail if:
 
 #### Q2 — Current Unresolved Problem / Failure Isolation
 Repository anchors:
+Domain challenge:
+Exact repository data required:
 Calculation/reconstruction:
 Required numerical/technical evidence:
 Predicted intermediate values:
@@ -135,6 +145,8 @@ Fail if:
 
 #### Q3 — Authority / Invariant
 Repository anchors:
+Domain challenge:
+Exact repository data required:
 Required technical work:
 Authority/source trace:
 Protected invariant:
@@ -145,6 +157,9 @@ Fail if:
 
 #### Q4 — Independent Validation
 Repository anchors:
+Domain challenge:
+Exact repository data required:
+Calculation/reconstruction:
 Required technical work:
 Independent oracle:
 Required numerical/technical evidence:
@@ -154,6 +169,8 @@ Fail if:
 
 #### Q5 — Next Contribution / Minimal Patch
 Repository anchors:
+Domain challenge:
+Exact repository data required:
 Required technical work:
 Safe patch boundary:
 Expected before/after evidence:
@@ -165,11 +182,11 @@ No-patch condition:
 Fail if:
 ```
 
-The snapshot is <300 words; detailed Q1-Q5 remain outside that limit.
+The snapshot is <300 words; detailed Q1–Q5 remain outside that limit.
 
-`PREWORK_QUALIFICATION_READY: TRUE` means this endpoint and its Q1-Q5 existed as the accepted work-ahead baton before the bounded material batch it protects. Do not set it retrospectively to disguise code-first/question-later work.
+`PREWORK_QUALIFICATION_READY: TRUE` is valid only when this endpoint and its expert Q1–Q5 were committed before the first material change of the leg. `validate_prework_history.py` proves that ordering from Git history; same-commit endpoint+material work fails.
 
-At every substantive user-facing handover/status boundary, reproduce the concise active snapshot including Q1-Q5. Do not merely state that the endpoint contains questions.
+At every substantive user-facing handover/status boundary, reproduce the concise active snapshot including Q1–Q5. Do not merely state that the endpoint contains questions.
 
 ## Takeover admission receipt
 
