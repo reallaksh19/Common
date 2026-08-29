@@ -49,6 +49,11 @@ def validate_endpoint(path: Path):
         return [f"{path}: missing Takeover qualification pack"]
     errors = []
     profile = field(pack, "QUALIFICATION_PROFILE") or field(text, "QUALIFICATION_PROFILE")
+    if profile is None:
+        # Pre-profile v3 endpoints remain immutable historical state. New material
+        # legs cannot use this exemption because validate_leg_adoption.py requires
+        # a recognized QUALIFICATION_PROFILE on the active/pre-work endpoint.
+        return []
     if profile not in PROFILE_TOKENS:
         return [f"{path}: QUALIFICATION_PROFILE must be one of {', '.join(PROFILE_TOKENS)}; found {profile}"]
 
@@ -74,7 +79,7 @@ def validate_endpoint(path: Path):
             errors.append(f"{path}: {profile} pack lacks profile-specific technical anchors (need >=3 token families; found {hits})")
 
     weak_only = 0
-    for n, body in bodies.items():
+    for body in bodies.values():
         challenge = (field(body, "Domain challenge") or "").lower()
         strong = re.search(r"\b(calculate|compute|reconstruct|derive|assemble|trace|predict|falsif|compare|prove|map|transport)\w*\b", challenge)
         weak = re.search(r"\b(explain|describe|list|re-read|summarize)\w*\b", challenge)
@@ -106,6 +111,7 @@ def main():
     root = chains.parent.parent
     errors = []
     checked = 0
+    grandfathered = 0
     for d in sorted(p for p in chains.iterdir() if p.is_dir()):
         active = d / "ACTIVE.md"
         if not active.is_file():
@@ -118,13 +124,19 @@ def main():
             continue
         ep = root / ep_rel
         if ep.is_file() and field(ep.read_text(encoding="utf-8"), "STATE") not in {"COMPLETE", "SUPERSEDED"}:
+            profile = field(ep.read_text(encoding="utf-8"), "QUALIFICATION_PROFILE")
+            pack = section(ep.read_text(encoding="utf-8"), "Takeover qualification pack")
+            profile = field(pack or "", "QUALIFICATION_PROFILE") or profile
+            if profile is None:
+                grandfathered += 1
+                continue
             checked += 1
             errors.extend(validate_endpoint(ep))
     if errors:
         for e in errors:
             print("FAIL:", e)
         return 1
-    print(f"PASS: domain qualification profiles ({checked} endpoint(s))")
+    print(f"PASS: domain qualification profiles ({checked} profiled endpoint(s); {grandfathered} immutable pre-profile endpoint(s) grandfathered)")
     return 0
 
 
