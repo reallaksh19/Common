@@ -29,8 +29,9 @@ START
  |      |-- A ± B√d / nested radical / fractional surd power? -> HIDDEN POWER
  |      |-- equation with even roots? -> DOMAIN -> ISOLATE -> SQUARE ONLY IF NEEDED
  |
- |-- Powers / exponential equation?
+ |-- Powers / exponential expression?
  |      |
+ |      |-- negative/fractional exponent meaning unstable? -> RECIPROCAL / RADICAL LANGUAGE
  |      |-- related bases? -> NORMALIZE BASES
  |      |-- a^(2x), a^x, constant? -> t = a^x, record t>0
  |      |-- homogeneous two-base pattern? -> divide by positive power -> ratio variable
@@ -64,6 +65,7 @@ START
 | `CB` | several related square/cube/nth roots | one common radical basis is hidden | extract perfect powers; rewrite all terms in the same basis |
 | `HS` | `A±B√d`, nested radical, surd to `1/2` or `3/2` power | expression may already be a binomial square/cube | reverse an identity before expanding |
 | `PR` | `√(g(x)^2)` | principal square root controls the sign | write `|g(x)|` unless sign is known |
+| `EM` | negative/fractional exponent | reciprocal or radical meaning is the real structure | rewrite explicitly as reciprocal/radical before manipulating |
 | `EN` | bases like `2,4,8` or `3,9,27` | same-base normalization may remove the exponential difficulty | rewrite all bases first |
 | `EV` | `a^(2x), a^x, 1` | low-degree algebra in one positive exponential variable | set `t=a^x`, write `t>0` |
 | `ER` | homogeneous mixtures such as `9^x,6^x,4^x` | ratio variable is cheaper than separate powers | divide by a positive common power; set a ratio variable |
@@ -147,7 +149,23 @@ START
 
 ---
 
-## Card 4 — Exponent normalization `EN`
+## Card 4 — Exponent meaning `EM`
+
+**SEE:** negative or fractional exponent.
+
+**WRITE:**
+
+`a^(-n)=1/a^n` for `a≠0`;
+
+translate fractional powers into root language when that makes the structure clearer.
+
+**CHOOSE:** stabilize the meaning before applying exponent laws.
+
+**Reject:** treating a negative exponent as a negative value or confusing `a^-n` with `(-a)^n`.
+
+---
+
+## Card 5 — Exponent normalization `EN`
 
 **SEE:** related bases.
 
@@ -159,7 +177,7 @@ START
 
 ---
 
-## Card 5 — Exponential variable `EV`
+## Card 6 — Exponential variable `EV`
 
 **SEE:** `a^(2x), a^x, constant`.
 
@@ -171,7 +189,7 @@ START
 
 ---
 
-## Card 6 — Exponential ratio `ER`
+## Card 7 — Exponential ratio `ER`
 
 **SEE:** homogeneous powers of two bases, e.g. `9^x,6^x,4^x`.
 
@@ -181,7 +199,7 @@ START
 
 ---
 
-## Card 7 — Radical equation / reversibility `RQ`
+## Card 8 — Radical equation / reversibility `RQ`
 
 **SEE:** even roots in an equation.
 
@@ -195,7 +213,7 @@ START
 
 ---
 
-## Card 8 — Zero-case protection `ZR`
+## Card 9 — Zero-case protection `ZR`
 
 **SEE:** temptation to divide by `g(x)`.
 
@@ -207,7 +225,7 @@ START
 
 ---
 
-## Card 9 — Reciprocal invariant `RI`
+## Card 10 — Reciprocal invariant `RI`
 
 **SEE:** symmetry under `x↔1/x`.
 
@@ -223,7 +241,7 @@ For `S_n=x^n+x^-n`:
 
 ---
 
-## Card 10 — Log definition `LD`
+## Card 11 — Log definition `LD`
 
 **SEE:** a log law or log meaning is uncertain.
 
@@ -239,7 +257,7 @@ with `b>0`, `b≠1`, `y>0`.
 
 ---
 
-## Card 11 — Log variable `LV / LS`
+## Card 12 — Log variable `LV / LS`
 
 **SEE:** one log object repeats.
 
@@ -252,7 +270,7 @@ with `b>0`, `b≠1`, `y>0`.
 
 ---
 
-## Card 12 — Log to algebra `LA`
+## Card 13 — Log to algebra `LA`
 
 **SEE:** equal logs or related bases connecting variables.
 
@@ -264,7 +282,7 @@ with `b>0`, `b≠1`, `y>0`.
 
 ---
 
-## Card 13 — Exact inverse `LI`
+## Card 14 — Exact inverse `LI`
 
 **SEE:** exponent and logarithm with compatible bases.
 
@@ -276,7 +294,7 @@ with `b>0`, `b≠1`, `y>0`.
 
 ---
 
-## Card 14 — Domain/reversibility audit `DR`
+## Card 15 — Domain/reversibility audit `DR`
 
 Before accepting a transformed answer ask:
 
@@ -289,7 +307,7 @@ Before accepting a transformed answer ask:
 
 ---
 
-## Card 15 — Source integrity `QC`
+## Card 16 — Source integrity `QC`
 
 **SEE:** source/key conflicts with valid recomputation.
 
@@ -310,8 +328,8 @@ Before committing to a method, ask:
 1. **Basis or hidden power?**  
    Are the radicals meant to combine after normalization, or is one structured surd meant to be reconstructed?
 
-2. **Normalize or logarithm?**  
-   Can the exponential bases already be made common?
+2. **Exponent meaning, normalization, or logarithm?**  
+   Is the issue a reciprocal/root meaning, related bases, or genuinely unrelated bases?
 
 3. **Equivalent or candidate-generating?**  
    Does the transformation preserve both directions?
@@ -389,7 +407,7 @@ Historical IDs below ground mechanisms only; full third-party statements are not
 
 For each prompt, write only the best first-step code from:
 
-`CB HS PR EN EV ER RQ ZR RI LD LV LS LA LI DR QC`
+`CB HS PR EM EN EV ER RQ ZR RI LD LV LS LA LI DR QC`
 
 1. `(√50+√8)/√2`.
 2. `√(19-6√10)`.
@@ -439,8 +457,8 @@ For each prompt, write only the best first-step code from:
 19 `EN`  
 20 `QC` + `DR`  
 21 `RI` **recognition, then boundary check**: the target is asymmetric, so `x+1/x` alone may not determine its sign/value uniquely  
-22 exponent-meaning trap -> use `EN`/exponent-definition repair; rewrite as reciprocal  
-23 `LD` (derive law from exponent meaning; reject false sum law)  
+22 `EM`  
+23 `LD` (derive the law from exponent meaning; reject the false sum law)  
 24 `LS` + `DR` (`u≥0`)
 
 ### Recognition standard
@@ -458,6 +476,7 @@ These bands are internal study diagnostics, not psychometric or official NMTC th
 - **When radicals look different, first ask whether they share a basis.**
 - **When a surd looks engineered, run an identity backwards before expanding.**
 - **When a square root contains a square, principal-root sign comes first.**
+- **When a negative/fractional exponent is unstable, rewrite its reciprocal/root meaning first.**
 - **When exponential bases are related, normalize before taking logs.**
 - **When one exponential object repeats, name it and keep its positivity.**
 - **When reciprocal powers are symmetric, compute the invariant before solving the hidden variable.**
