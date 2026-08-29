@@ -24,15 +24,23 @@
 - gcd/lcm;
 - arithmetic progressions.
 
-## 3. RECOGNITION_CUES
+## 3. LIKELY_HALF_KNOWLEDGE
+
+- can list numbers in one residue class but does not see each congruence as an arithmetic progression;
+- assumes any two remainder conditions have a common solution;
+- thinks non-coprime moduli automatically make a system unsolvable, or alternatively ignores compatibility entirely;
+- finds one candidate and forgets the full repeating solution class;
+- flattens remainders of successive quotients into congruences for the original number.
+
+## 4. RECOGNITION_CUES
 
 - one fixed unknown number with two or more remainder conditions applied directly to that same number;
 - “smallest positive integer satisfying …”;
 - several congruences displayed simultaneously;
 - non-coprime moduli such as 4 and 6;
-- beware wording such as “then the quotient was divided by …”, which is a different representation.
+- wording involving a quotient being divided again, which signals a different representation.
 
-## 4. FIRST_MOVES
+## 5. FIRST_MOVES
 
 1. Confirm that every remainder condition applies to the **same original unknown**, not to successive quotients.
 2. Before constructing, check compatibility when moduli share a gcd.
@@ -41,14 +49,14 @@
 5. Continue progressively.
 6. Verify the final candidate in every original condition.
 
-## 5. INVARIANTS
+## 6. INVARIANTS
 
 - `N≡a (modm)` is the progression `a+mk`;
 - two congruences `N≡a (modm)`, `N≡b (modn)` are compatible iff `a≡b (mod gcd(m,n))`;
 - when compatible, all common solutions repeat modulo `lcm(m,n)`;
 - pairwise-coprime moduli are a convenient special case, not the only solvable case.
 
-## 6. REPRESENTATION_SWITCHES
+## 7. REPRESENTATION_SWITCHES
 
 - congruence -> arithmetic progression;
 - progression intersection -> congruence in parameter `k`;
@@ -56,7 +64,7 @@
 - one found solution `N0` -> full family `N≡N0 (mod lcm(...))`;
 - successive quotient/remainder chain -> nested division algorithm, not a simultaneous congruence system.
 
-## 7. LEGALITY / CONDITIONS
+## 8. LEGALITY / ADMISSIBILITY CONDITIONS
 
 - do not assume every set of remainder conditions is compatible;
 - if residues are not written canonically, reduce them before compatibility checks;
@@ -64,7 +72,7 @@
 - “least positive solution” means choose the positive representative after the full class is established;
 - do not flatten a remainder of a quotient into a congruence for the original number.
 
-## 8. DECISION_BOUNDARIES
+## 9. DECISION_BOUNDARIES
 
 **DB-D1 coprime vs non-coprime compatible**  
 `N≡2 (mod5)`, `N≡1 (mod3)` is automatically compatible.  
@@ -77,26 +85,25 @@
 Finding 7 for `N≡2 (mod5)`, `N≡1 (mod3)` is not the full statement: `N≡7 (mod15)`.
 
 **DB-D4 simultaneous vs successive division**  
-`N leaves remainders 3,1,1 when divided directly by 5,6,7` is a simultaneous-congruence problem.  
-`N÷5` leaves 3, then the quotient ÷6 leaves 2, then that quotient ÷7 leaves 2 is a nested quotient/remainder chain and must be reconstructed backward.
+Direct remainder conditions on the same `N` form a simultaneous-congruence system. A remainder condition on a quotient after a prior division belongs to a nested division-algorithm chain.
 
-## 9. MISCONCEPTION_TRAPS
+## 10. MISCONCEPTION_TRAPS
 
 - brute-force listing without seeing progression intersection;
 - assuming “CRT” means moduli must always be coprime;
 - skipping compatibility for shared factors;
 - stopping after one solution when a family is requested;
 - failing to check all original congruences after progressive substitution;
-- reading “successively divided” as if all remainders belonged to the original number.
+- reading quotient remainders as if all remainders belonged to the original number.
 
-## 10. CONTRAST_PAIRS
+## 11. CONTRAST_PAIRS
 
 1. `x≡1 (mod4), x≡3 (mod6)` -> compatible.
 2. `x≡1 (mod4), x≡2 (mod6)` -> incompatible.
 3. `x=7` as least positive solution vs `x≡7 (mod15)` as complete class.
 4. Direct remainders on one number vs remainders of successive quotients.
 
-## 11. TRANSFER_MECHANISMS
+## 12. TRANSFER_MECHANISMS
 
 - three congruences where the easiest starting modulus is not the first listed;
 - non-coprime compatible system;
@@ -104,18 +111,22 @@ Finding 7 for `N≡2 (mod5)`, `N≡1 (mod3)` is not the full statement: `N≡7 (
 - word problem that hides simultaneous congruences;
 - near-miss wording where quotient remainders require nested reconstruction instead.
 
-## 12. SOURCE_IDS_AND_DISPOSITIONS
+## 13. SOURCE_IDS_AND_DISPOSITIONS
 
 There is currently **no exact clean historical anchor frozen for generic simultaneous-congruence/CRT reconstruction**.
 
-`NMTC-BH-P-2024-Q20` is clean scored evidence for **successive quotient/remainder reconstruction**, not simultaneous congruences. Exact-source verification shows the divisions are successive: divide `N` by 5, then its quotient by 6, then that quotient by 7. The earlier repository summary that flattened Q20 into three congruences is superseded for Issue #47 custody.
+`NMTC-BH-P-2024-Q20` is now classified for Issue #47 as:
+
+`SOURCE_CONFLICT_EVIDENCE — BLOCKED_EXACT_ANCHOR`.
+
+Reason: the reproduced stem is ambiguous; the published solution interprets successive quotient division and then assumes an unstated range/top-quotient condition to obtain the keyed `43*`. The older repository summary that described Q20 as three simultaneous congruences is also mathematically incompatible with 43.
 
 Therefore this stream uses:
 - `AUTHOR_CREATED_FOUNDATION` for compatibility, constructive intersection and complete solution classes;
 - `AUTHOR_CREATED_TRANSFER` for disguised CRT-style systems;
-- `NMTC-BH-P-2024-Q20` only as a **decision-boundary contrast** between simultaneous and successive remainder structures.
+- Q20 only as a source-QC/representation-boundary case, never as a clean worked anchor.
 
-## 13. CANDIDATE_MASTERY_ITEMS
+## 14. CANDIDATE_MASTERY_ITEMS
 
 `D-M1` Solve `N≡2 (mod5)`, `N≡1 (mod3)`; give least positive and complete class.
 
@@ -125,20 +136,16 @@ Therefore this stream uses:
 
 `D-M4` Find the least positive `N` satisfying `N≡2 (mod3)`, `N≡3 (mod5)`, `N≡2 (mod7)`.
 
-`D-M5` A number is divided by 5 with remainder 3; its quotient is divided by 6 with remainder 2; that quotient is divided by 7 with remainder 2. Explain why this is not D-M4-type simultaneous congruence data and reconstruct the remainder modulo 120.
+`D-M5` In a clearly stated successive-division chain, `N=5q1+3`, `q1=6q2+2`, `q2=7t+2`. Express `N` in terms of `t` and decide whether these data alone determine a unique remainder modulo 120.
 
 Independent check:
 - D-M1: `N≡7 (mod15)`;
 - D-M2: no solution; parity conflict;
 - D-M3: `N≡9 (mod12)`;
 - D-M4: least positive solution 23; complete class `N≡23 (mod105)`;
-- D-M5: `N=5(6(7q+2)+2)+3=210q+73`? Recompute carefully: inner quotient `q2=7t+2`; previous quotient `q1=6q2+2=42t+14`; original `N=5q1+3=210t+73`. Thus remainder modulo 120 is not fixed by this alone unless the original source constrains the top quotient/range. The historical Q20 solution structure must therefore be treated exactly from its source, not reconstructed from a shortened verbal paraphrase.
+- D-M5: `N=210t+73`; modulo 120 this is `90t+73`, so the remainder depends on `t`; the data alone do **not** determine one remainder modulo 120.
 
-### D-M5 custody note
-
-The source answer `43` shows that the shortened web paraphrase/solution needs exact quotient-chain details before being used as a mathematical teaching item. Therefore **D-M5 is a source-QC recognition prompt only**, not a promoted solved exercise. No exact historical statement is reproduced in Wave 1.
-
-## 14. DIAGNOSTIC_TAGS
+## 15. DIAGNOSTIC_TAGS
 
 - `CRT_AS_BRUTE_FORCE`
 - `NONCOPRIME_COMPATIBILITY_MISSING`
@@ -148,7 +155,7 @@ The source answer `43` shows that the shortened web paraphrase/solution needs ex
 - `SUCCESSIVE_QUOTIENT_FLATTENED_TO_CONGRUENCES`
 - `SOURCE_PARAPHRASE_INCOMPLETE`
 
-## 15. H3_TO_H0_FADE_PLAN
+## 16. H3_TO_H0_FADE_PLAN
 
 - `D-F1 H3`: supply `N=a+mk` and the next substitution line.
 - `D-F2 H2`: cue “view each congruence as a progression; check shared gcd.”
