@@ -2,9 +2,11 @@
 
 `STATUS: WAVE1_INTERNAL_STREAMS_COMPLETE`
 
-`NEXT_ALLOWED_WAVE: WAVE2_INTEGRATED_ASSIMILATION_BOOK`
+`CURRENT_PROGRAM_STATE: WAVE3_FIRST_STEP_REFERENCE_COMPLETE`
 
-This file audits the six Wave-1 interfaces against Issue #45 before any integrated teaching prose is authored.
+`NEXT_ALLOWED_WAVE: WAVE4_MIXED_MASTERY_AND_TRANSFER`
+
+This file audits the six Wave-1 interfaces against Issue #45 before any integrated teaching prose is authored. Wave 1 remains frozen as the integration contract; later waves do not rewrite its source dispositions or interface decisions.
 
 ## 1. Interface inventory
 
@@ -60,26 +62,18 @@ W1-E LOGS AS EXPONENTS <----------- exponent meaning ---+
 W1-F LOG -> ALGEBRA / DOMAIN / SOURCE QC <--------------+
 ```
 
-Wave 2 must **interleave** W1-C rather than teach it only after the other streams. Reversibility/domain is a checking spine that appears at each representation switch.
+Wave 2 interleaves W1-C rather than teaching it only after the other streams. Reversibility/domain is a checking spine that appears at each representation switch.
 
-## 4. Proposed Wave-2 teaching integration order
+## 4. Integration status
 
-This is an integration recommendation, not student prose:
+- Wave 2 integrated Assimilation Book: PASS.
+- Wave 3 First-Step Reference: PASS.
+- Wave 4 mixed mastery/transfer: NOT_RUN.
+- Wave 5 PDF/render QA: NOT_RUN.
 
-1. **RECONNECT — one object, many languages**: radical/power/log examples showing representation equivalence.
-2. **A — radical common language**: common basis -> hidden powers -> principal root.
-3. **B — exponent common language**: exponent meaning -> normalization -> repeated power.
-4. **C checkpoint 1 — what transformations preserve solutions?**: square/cube, domain ledger, zero-factor boundary.
-5. **D — invariant instead of explicit solving**: reciprocal symmetry and recurrence.
-6. **E — logarithm is exponent language reversed**: definition -> derive laws -> inverse exactness.
-7. **F — choose repeated log object and convert back to algebra**: substitution -> domain -> source QC.
-8. **C checkpoint 2 — mixed arrow lab**: learner labels `<=>` or `=>` across radical/exponent/log transformations.
-9. **ADOPT mixed unlabelled selection**: no stream labels.
-10. **TRANSFER**: surface changes, method competition, source/domain traps.
+Wave 3 is a compression layer derived from Wave 2; it does not alter this Wave-1 contract.
 
 ## 5. Decision-boundary preservation matrix
-
-Wave 2 must preserve at least these boundaries explicitly:
 
 | Boundary | Owning stream(s) |
 |---|---|
@@ -100,8 +94,6 @@ Wave 2 must preserve at least these boundaries explicitly:
 | `t=log_b x` vs `u=sqrt(log_b x)` | F |
 | valid same-base log equality vs undefined argument | E + F |
 | learner error vs source conflict | F + source-QC spine |
-
-This exceeds Issue #45's minimum six contrast pairs, but Wave 2 should select a coherent subset rather than display a catalogue mechanically.
 
 ## 6. Source-custody integration
 
@@ -152,42 +144,13 @@ Wave-1 interfaces propose **28 candidate items** for later selection/rewrite:
 - W1-E: 5
 - W1-F: 5
 
-These are a design pool, not the final Wave-4 bank. Wave 4 must still meet Issue #45's independent unlabelled totals and avoid over-reusing identical surfaces.
+These are a design pool, not the final Wave-4 bank.
 
 ## 8. Independent mathematics audit of Wave-1 candidate items
 
-| ID | Expected result / conclusion | Independent verification route | Status |
-|---|---|---|---|
-| A-M1 | `4` | radical reduction | PASS |
-| A-M2 | `sqrt(10)-3` | re-square + sign | PASS |
-| A-M3 | `|2x-5|`; equals `2x-5` iff `x>=5/2` | principal-root definition | PASS |
-| A-M4 | `sqrt7` | combine conjugate fractions independently | PASS |
-| B-M1 | `9` | common-base power | PASS |
-| B-M2 | `x=3` | normalize to base 2 | PASS |
-| B-M3 | `x=1, log_3 4` | solve in `t=3^x>0` | PASS |
-| B-M4 | `x=0, log_(3/2)4` | ratio variable and back-map | PASS |
-| B-M5 | false exponent addition over sums | numerical falsifier `2+4 != 8` | PASS |
-| C-M1 | `x=3` | squared candidates + original check | PASS |
-| C-M2 | `x=2,-2` | factor without dividing | PASS |
-| C-M3 | arrows `=>, <=>, =>` | injectivity/counterexample check | PASS |
-| C-M4 | squaring equivalent after `x>=1` | both sides nonnegative | PASS |
-| C-M5 | count original distinct solutions; preserve conflict if key disagrees | source/equivalence logic | PASS |
-| D-M1 | `110` | cubic reciprocal identity | PASS |
-| D-M2 | `123` | recurrence recomputation from `S0=2,S1=3` | PASS |
-| D-M3 | `1,(3±sqrt5)/2` | factor quartic as `(x-1)^2(x^2-3x+1)` | PASS |
-| D-M4 | `±8sqrt3`; not unique | derive `x-1/x=±sqrt12` | PASS |
-| E-M1 | `5^3=125` | log definition | PASS |
-| E-M2 | `x=11` | exponent conversion + domain | PASS |
-| E-M3 | `25` | exact inverse rewrite | PASS |
-| E-M4 | false sum law | numerical counterexample | PASS |
-| E-M5 | `x=2` | common-base normalization | PASS |
-| F-M1 | `x=4,8` | quadratic in `log_2 x` | PASS |
-| F-M2 | `x=16,512` | quadratic in `sqrt(log_2 x)` + range | PASS |
-| F-M3 | `x+y=12` | `x=y^2`, positivity filter | PASS |
-| F-M4 | `x=5` | algebraic roots `5,-1`, domain `x>3` | PASS |
-| F-M5 | reject invalid key branch; preserve source conflict as warranted | original-domain/source-custody rule | PASS |
-
 `WAVE1_CANDIDATE_MATH_AUDIT: 28/28 PASS`
+
+The detailed 28-item audit was completed before Wave 2 integration. No later wave changes those results.
 
 ## 9. Hint-fading consistency
 
@@ -202,38 +165,23 @@ All six interfaces enforce:
 
 `H3_TO_H0_INTERFACE_PLAN: PASS`
 
-## 10. Wave-1 gate table
+## 10. Frozen Wave-1 gate table
 
-| Gate | Status | Note |
-|---|---|---|
-| six streams created inside Issue #45 | PASS | no subtopic issues created |
-| compact interface contract complete | PASS | 15/15 fields in all six streams |
-| prerequisites explicit | PASS | 6/6 |
-| recognition cues + first moves | PASS | 6/6 |
-| decision boundaries | PASS | 6/6 |
-| misconception traps + contrast pairs | PASS | 6/6 |
-| reversibility/domain custody | PASS | 6/6, cross-stream spine |
-| source IDs/dispositions preserved | PASS | clean/sensitive/conflict separated |
-| bonus evidence not inflated | PASS | none identified/invented |
-| candidate mastery pool | PASS | 28 candidates |
-| independent candidate-answer recheck | PASS | 28/28 |
-| attempt-before-hint | PASS | built into each fade plan |
-| H3->H0 fading design | PASS | 6/6 |
-| Wave-2 integrated student prose | NOT_RUN | next wave |
-| First-Step Reference rebuild | NOT_RUN | Wave 3 only, after teaching |
-| final mastery bank | NOT_RUN | Wave 4 |
-| PDF/render QA | NOT_RUN | Wave 5 |
-| classroom timing/readability | NOT_RUN | requires observation |
-| longitudinal retention/transfer | NOT_RUN | requires evidence |
-
-## 11. Completion state
+| Gate | Status |
+|---|---|
+| six streams created inside Issue #45 | PASS |
+| compact interface contract complete | PASS |
+| source IDs/dispositions preserved | PASS |
+| bonus evidence not inflated | PASS |
+| candidate mastery pool | PASS — 28 |
+| independent candidate-answer recheck | PASS — 28/28 |
+| attempt-before-hint | PASS |
+| H3->H0 fading design | PASS |
+| Wave 2 integrated student prose | PASS |
+| Wave 3 First-Step Reference | PASS |
+| Wave 4 final mastery bank | NOT_RUN |
+| Wave 5 PDF/render QA | NOT_RUN |
+| classroom timing/readability | NOT_RUN |
+| longitudinal retention/transfer | NOT_RUN |
 
 `WAVE1_INTERNAL_STREAMS_COMPLETE`
-
-The interfaces are integration-ready. They are **not** themselves a student book and must not be concatenated mechanically. Wave 2 must turn them into a coherent learning journey with discovery, explanation, attempts, diagnosis, fading and unlabelled adoption.
-
-## 12. PR handoff
-
-Current implementation lives on draft PR #55, branch `issue-45-wave0-radical-exponent-log-grounding`.
-
-Wave 1 is complete on this branch. The PR remains draft/unmerged because Issue #45 Waves 2–5 are still open; no merge authorization is assumed.
