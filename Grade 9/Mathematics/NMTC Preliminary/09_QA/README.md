@@ -18,6 +18,7 @@ This directory separates **internal mathematical QA** from **publication/calibra
 - `Mixed_Preliminary_Mock_System_QA.md` — 90-question mathematical/editorial second pass.
 - `Mock_Item_Metadata_Validation_v1.md` — live-key reconciliation and machine-ledger validation.
 - `Mock_Student_Render_QA_v1.md` — first actual student PDF/render inspection.
+- `Mock_Teacher_Render_QA_v1.md` — first actual teacher-key PDF/render inspection.
 - machine ledger: `../08_Mixed_Preliminary_Tests/Mock_Item_Metadata_v1.csv`.
 - schema: `../08_Mixed_Preliminary_Tests/Mock_Item_Metadata_Schema_v1.md`.
 
@@ -35,8 +36,10 @@ MOCK_STUDENT_TEACHER_SOURCE_SPLIT = PASS_STATIC
 TOPIC_SOURCE_LEVEL_SPLIT = PASS_STATIC
 PRODUCTION_NOTATION_CONTRACT = DEFINED
 MOCK_STUDENT_LAYOUT_RENDER_QA = PASS_PREVIEW
-MOCK_STUDENT_FINAL_NOTATION_QA = PARTIAL
-MOCK_TEACHER_RENDER_QA = NOT_RUN
+MOCK_TEACHER_LAYOUT_RENDER_QA = PASS_PREVIEW
+MOCK_ARTIFACT_SEPARATION_RENDER_EVIDENCE = PASS_PREVIEW
+MOCK_FINAL_NOTATION_QA = PARTIAL
+FINAL_MOCK_RENDER_QA = NOT_READY
 TOPIC_MACHINE_METADATA = NOT_RUN
 CLASSROOM_TIMING_CALIBRATION = NOT_RUN
 HISTORICAL_FIGURE_RECOVERY = PARTIAL/BLOCKED
@@ -46,9 +49,8 @@ FINAL_PUBLICATION = NOT_READY
 
 ## Next valid work
 
-1. normalize mock mathematical notation to final publication typesetting;
-2. render/inspect teacher keys and re-run leakage checks;
-3. populate topic-bank machine metadata, starting with mastery/transfer banks;
-4. run classroom timing/readability pilots under the calibration protocol;
-5. recover exact historical figures still required for canonical PYQ publication;
-6. recover/qualify 2022 before any six-year recurrence claim.
+1. normalize mock mathematical notation to final publication typesetting, then re-render all six mock artifacts;
+2. populate topic-bank machine metadata, starting with mastery/transfer banks;
+3. run classroom timing/readability pilots under the calibration protocol;
+4. recover exact historical figures still required for canonical PYQ publication;
+5. recover/qualify 2022 before any six-year recurrence claim.
