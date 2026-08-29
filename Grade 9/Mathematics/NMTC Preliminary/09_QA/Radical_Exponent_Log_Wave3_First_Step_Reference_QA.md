@@ -4,228 +4,125 @@
 
 `STATUS: WAVE3_FIRST_STEP_REFERENCE_PASS_INTERNAL`
 
-## 1. Architecture audit
+The Wave-3 artifact was created after the Wave-2 Assimilation Book and is explicitly a compression/revision layer using `SEE -> REALIZE -> WRITE -> CHOOSE -> CHECK`.
 
-The Wave-3 artifact was created **after** the Wave-2 Assimilation Book and explicitly identifies itself as a compression/revision layer.
+## Required components
 
-It does not attempt to re-run the full `RECONNECT -> DISCOVER -> MAKE SENSE -> TRY -> DIAGNOSE -> FADE -> ADOPT -> TRANSFER` teaching sequence.
+- recognition atlas: PASS — 17 codes;
+- phrase/structure decoder: PASS;
+- quick decision tree: PASS;
+- First-Step cards: PASS — 16;
+- common traps: PASS;
+- source-to-mechanism map: PASS;
+- recognition-only drill: PASS — 24 prompts;
+- final domain/reversibility/source check: PASS.
 
-Instead it uses the required compression routine:
+## Audit correction
 
-`SEE -> REALIZE -> WRITE -> CHOOSE -> CHECK`.
-
-`REFERENCE_IS_COMPRESSION: PASS`
-
-`TEACHING_LAYER_PRECEDES_REFERENCE: PASS`
-
----
-
-## 2. Required component audit
-
-| Required Wave-3 component | Evidence | Status |
-|---|---|---|
-| recognition atlas | 17 recognition codes | PASS |
-| phrase/structure decoder | 16 structure-to-first-move translations | PASS |
-| quick decision tree | 10-second branching tree | PASS |
-| First-Step cards | 16 compact cards | PASS |
-| common traps | 16 trap -> repair statements | PASS |
-| source-to-mechanism map | clean/sensitive/conflict map | PASS |
-| recognition-only drill | 24 unlabelled prompts | PASS |
-| quick final check | representation/domain/reversibility/range/original/source checklist | PASS |
-
----
-
-## 3. Recognition-code audit
-
-The final code set is:
-
-- `CB` common radical basis;
-- `HS` hidden surd/power;
-- `PR` principal-root sign;
-- `EM` negative/fractional exponent meaning;
-- `EN` exponential base normalization;
-- `EV` repeated exponential variable;
-- `ER` exponential ratio variable;
-- `RQ` radical equation / isolate-then-transform;
-- `ZR` zero-case protection before division;
-- `RI` reciprocal invariant;
-- `LD` logarithm definition / law reconstruction;
-- `LV` repeated logarithm variable;
-- `LS` repeated square-root-log variable;
-- `LA` log-to-algebra relation;
-- `LI` exact log/exponent inverse;
-- `DR` domain/reversibility audit;
-- `QC` source-integrity check.
-
-### Audit correction made during Wave 3
-
-The first draft forced negative/fractional exponent meaning into `EN` (normalization). This was too coarse. The reference was revised to add independent code `EM`, preserving the Wave-1 boundary:
+The first draft grouped negative/fractional exponent meaning into exponent normalization. That was too coarse. `EM` was introduced as an independent recognition code, preserving:
 
 `exponent meaning != base normalization`.
 
 `RECOGNITION_TAXONOMY_PRECISION: PASS_AFTER_CORRECTION`
 
----
+## Decision-boundary preservation
 
-## 4. Decision-boundary preservation
-
-The compression preserves the major method-choice boundaries from Waves 0–2:
+The reference preserves at least these boundaries:
 
 1. common radical basis vs hidden-power reconstruction;
 2. principal square root vs roots of a square equation;
-3. negative/fractional exponent meaning vs base normalization;
+3. exponent meaning vs base normalization;
 4. common-base normalization vs unnecessary logarithms;
 5. repeated exponential variable vs ratio variable;
-6. squaring vs cubing / reversible vs candidate-generating transformation;
-7. division by known non-zero constant vs zero-capable variable expression;
-8. reciprocal invariant vs explicit hidden-variable solving;
-9. symmetric reciprocal target vs asymmetric target;
+6. reversible `<=>` vs candidate-generating `=>`;
+7. non-zero constant division vs zero-capable variable factor;
+8. reciprocal invariant vs explicit solving;
+9. symmetric vs asymmetric reciprocal target;
 10. log definition/law reconstruction vs false sum law;
 11. `t=log_b x` vs `u=sqrt(log_b x)`;
 12. exact inverse simplification vs decimal approximation;
-13. transformed algebraic root vs original valid solution;
+13. algebraic candidate vs original valid solution;
 14. learner error vs source conflict.
 
 `DECISION_BOUNDARY_COVERAGE: PASS_STRONG`
 
----
+## Recognition drill audit
 
-## 5. Independent recognition-drill audit
+All 24 prompts were independently reviewed.
 
-All 24 recognition prompts were independently reviewed for the stated first-step code.
-
-| Item | Code | Audit note | Status |
-|---:|---|---|---|
-| 1 | `CB` | square roots share `sqrt2` basis | PASS |
-| 2 | `HS` | `19-6sqrt10=(sqrt10-3)^2` | PASS |
-| 3 | `PR` | principal root of a square | PASS |
-| 4 | `EN` | 27 and 9 normalize to base 3 | PASS |
-| 5 | `EV` | polynomial in `2^x` | PASS |
-| 6 | `ER` | divide by `4^x`; ratio `(5/2)^x` | PASS |
-| 7 | `RQ` | radical equation requires domain/sign before squaring | PASS |
-| 8 | `ZR` | dividing by `x-3` could lose zero case | PASS |
-| 9 | `RI` | symmetric reciprocal high power | PASS |
-| 10 | `LD` | interpret log through exponent definition | PASS |
-| 11 | `LV` | polynomial in `log_2 x` | PASS |
-| 12 | `LS` | repeated `sqrt(log_2 x)` | PASS |
-| 13 | `LA` | related log bases encode a power relation | PASS |
-| 14 | `LI` | exact inverse after rewriting `25=5^2` | PASS |
-| 15 | `DR` | transformed candidates require original check | PASS |
-| 16 | `DR` | supplied x makes log argument invalid; domain first | PASS |
-| 17 | `CB` | all terms reduce to `sqrt5` | PASS |
-| 18 | `HS` | structured surd should be reconstructed before `3/2` power | PASS |
-| 19 | `EN` | related bases make logs inferior | PASS |
-| 20 | `QC+DR` | invalid original domain plus printed-key inconsistency | PASS |
-| 21 | `RI` + boundary | reciprocal structure visible; asymmetric target may not be uniquely determined | PASS |
-| 22 | `EM` | negative exponent means reciprocal | PASS |
-| 23 | `LD` | reconstruct valid log laws from exponent meaning | PASS |
-| 24 | `LS+DR` | square-root-log substitution carries `u>=0` | PASS |
+- 1 `CB`: PASS
+- 2 `HS`: PASS; `19-6sqrt10=(sqrt10-3)^2`
+- 3 `PR`: PASS
+- 4 `EN`: PASS
+- 5 `EV`: PASS
+- 6 `ER`: PASS
+- 7 `RQ`: PASS
+- 8 `ZR`: PASS
+- 9 `RI`: PASS
+- 10 `LD`: PASS
+- 11 `LV`: PASS
+- 12 `LS`: PASS
+- 13 `LA`: PASS
+- 14 `LI`: PASS
+- 15 `DR`: PASS
+- 16 `DR`: PASS
+- 17 `CB`: PASS
+- 18 `HS`: PASS
+- 19 `EN`: PASS
+- 20 `QC+DR`: PASS
+- 21 `RI` + asymmetric-target boundary: PASS
+- 22 `EM`: PASS
+- 23 `LD`: PASS
+- 24 `LS+DR`: PASS
 
 `RECOGNITION_DRILL_AUDIT: 24/24 PASS`
 
----
+## Mathematical micro-audit
 
-## 6. Mathematical micro-checks
-
-- reciprocal recurrence `S_n=S_1S_(n-1)-S_(n-2)`: PASS;
-- `sqrt(g(x)^2)=|g(x)|`: PASS;
-- `a^-n=1/a^n`, `a!=0`: PASS;
-- positive exponential substitution `t=a^x>0`: PASS;
-- real log domain `b>0`, `b!=1`, argument `>0`: PASS;
-- `log_b y=z <=> b^z=y` under valid real log conditions: PASS;
-- cubing over reals injective: PASS;
-- squaring over reals not injective: PASS;
-- same-base valid-log equality uses injectivity: PASS;
-- `u=sqrt(log_b x)` implies `u>=0`: PASS.
+- reciprocal recurrence: PASS;
+- principal-root absolute value: PASS;
+- negative exponent reciprocal condition: PASS;
+- positive exponential-variable range: PASS;
+- real logarithm base/argument domain: PASS;
+- log/exponent equivalence: PASS;
+- real cubing injective: PASS;
+- real squaring non-injective: PASS;
+- same-base log injectivity after domain check: PASS;
+- `sqrt(log)` substitution non-negativity: PASS.
 
 `MATH_MICRO_AUDIT: PASS`
 
----
+## Source custody
 
-## 7. Source-custody audit
-
-### Clean scored anchors represented: 16 unique IDs
-
-- `NMTC-BH-P-2018-Q01`
-- `NMTC-BH-P-2018-Q21`
-- `NMTC-BH-P-2018-Q26`
-- `NMTC-BH-P-2023-Q07`
-- `NMTC-BH-P-2023-Q21`
-- `NMTC-BH-P-2023-Q26`
-- `NMTC-BH-P-2024-Q04`
-- `NMTC-BH-P-2024-Q09`
-- `NMTC-BH-P-2024-Q12`
-- `NMTC-BH-P-2024-Q26`
-- `NMTC-BH-P-2024-Q28`
-- `NMTC-BH-P-2025-Q03`
-- `NMTC-BH-P-2025-Q04`
-- `NMTC-BH-P-2025-Q09`
-- `NMTC-BH-P-2025-Q12`
-- `NMTC-BH-P-2025-Q27`
-
-Source-sensitive bridge evidence: `NMTC-BH-P-2023-Q04`, `NMTC-BH-P-2023-Q20`.
-
-Source-conflict evidence: `NMTC-BH-P-2025-Q18` — QC only; no canonical repair.
-
-Bonus evidence: none identified; none inferred or invented.
+- 16 clean scored anchors retained;
+- `NMTC-BH-P-2023-Q04` and `NMTC-BH-P-2023-Q20`: source-sensitive bridge only;
+- `NMTC-BH-P-2025-Q18`: source-conflict QC only;
+- bonus evidence: none identified/invented.
 
 `SOURCE_CUSTODY: PASS`
 
----
+## Continuity integrity
 
-## 8. Compression quality versus legacy First-Step cards
+During status-handling, the full First-Step artifact and the detailed Wave-1 readiness matrix were explicitly restored rather than allowing summaries to replace qualification evidence.
 
-Wave 3 adds or strengthens:
+`UPSTREAM_EVIDENCE_PRESERVATION: PASS`
 
-- `EM` exponent-meaning boundary;
-- principal-root recognition as a standalone code;
-- exponential variable vs ratio-variable distinction;
-- zero-case protection before division;
-- `<=>` versus `=>` arrow guide;
-- symmetric vs asymmetric reciprocal-target boundary;
-- log-variable vs square-root-log-variable choice;
-- final domain/reversibility/source audit;
-- 24-item recognition-only mixed drill;
-- direct source-disposition map.
-
-`BENCHMARK_PEDAGOGY_PARITY: PASS_INTERNAL`
-
----
-
-## 9. Student/teacher leakage audit
-
-The recognition drill contains no worked solutions. Its key appears after all 24 prompts and gives only recognition codes plus minimal boundary notes.
-
-`ATTEMPT_BEFORE_KEY_STRUCTURE: PASS_INTERNAL`
-
-`FINAL_STUDENT_TEACHER_SEPARATION: NOT_RUN — Wave 5 layout/render decision`
-
----
-
-## 10. Wave-3 gates
+## Wave-3 gates
 
 | Gate | Status |
 |---|---|
 | First-Step produced only after teaching | PASS |
-| recognition atlas | PASS |
-| phrase/structure decoder | PASS |
-| quick decision tree | PASS |
-| first-step cards | PASS |
-| common traps | PASS |
-| source-to-mechanism map | PASS |
-| recognition-only drill | PASS — 24 items |
-| drill key independently checked | PASS — 24/24 |
-| decision boundaries retained | PASS_STRONG |
+| required compression components | PASS |
+| recognition drill | PASS — 24 |
+| independent drill review | PASS — 24/24 |
+| decision boundaries | PASS_STRONG |
 | reversibility/domain compression | PASS |
 | source conflict preserved | PASS |
 | bonus evidence not inflated | PASS |
 | reference does not replace teaching | PASS |
-| prior Wave-1 qualification evidence preserved | PASS — full readiness matrix restored |
 | final PDF/render QA | NOT_RUN — Wave 5 |
 | classroom timing/readability | NOT_RUN |
 | longitudinal mastery | NOT_RUN |
-
-## 11. Completion state
 
 `WAVE3_FIRST_STEP_REFERENCE_COMPLETE`
 
