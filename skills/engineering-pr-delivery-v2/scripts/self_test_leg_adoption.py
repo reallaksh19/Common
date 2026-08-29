@@ -19,7 +19,7 @@ engineering
 """
 
 
-def make(root: Path, *, status="CURRENT", prework="TRUE", legacy=False):
+def make(root: Path, *, status="CURRENT", prework="TRUE", legacy=False, profile="FEA"):
     (root / "AGENTS.md").write_text(OVERLAY, encoding="utf-8")
     if legacy:
         chain = root / "agents/agentchain/T"
@@ -37,6 +37,7 @@ COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: {BASIS}
 COMMON_PROTOCOL_STATUS: {status}
 PREWORK_QUALIFICATION_READY: {prework}
+QUALIFICATION_PROFILE: {profile}
 HANDOVER_READY: TRUE
 QUESTION_SET_STATUS: CURRENT
 QUALIFICATION_PROTOCOL_VERSION: 3
@@ -50,6 +51,7 @@ Q3: falsify
 Q4: oracle
 Q5: safe patch
 ### Takeover qualification pack
+QUALIFICATION_PROFILE: {profile}
 #### Q1 — Production Trace
 x
 #### Q2 — Current Unresolved Problem / Failure Isolation
@@ -64,6 +66,7 @@ x
     active.write_text(f"""CHAIN_STATE_VERSION: 3
 CHAIN_ID: T
 ACTIVE_ENDPOINT_FILE: {ep_rel}
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: {ep_rel}
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: {BASIS}
 COMMON_PROTOCOL_STATUS: {status}
@@ -94,6 +97,8 @@ def main():
         root = Path(td); active = make(root, prework="FALSE"); ok &= expect("code-first/question-later marker rejected", run(root, active), 1)
     with tempfile.TemporaryDirectory() as td:
         root = Path(td); active = make(root, legacy=True); ok &= expect("legacy relay path rejected for new leg", run(root, active), 1)
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td); active = make(root, profile="UNKNOWN"); ok &= expect("unknown qualification profile rejected", run(root, active), 1)
     return 0 if ok else 1
 
 
