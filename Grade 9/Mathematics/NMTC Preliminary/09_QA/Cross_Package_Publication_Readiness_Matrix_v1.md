@@ -17,25 +17,45 @@ A package can be mathematically complete while still being blocked from student 
 
 ## Current matrix
 
-| Package / system | Internal math/editorial QA | Student/teacher production split | Machine-readable item metadata | Static notation/source QA | Classroom timing/readability | Render/PDF QA | Historical figure custody | Publication state |
+| Package / system | Internal math/editorial QA | Student/teacher source split | Machine-readable item metadata | Static notation/source QA | Classroom timing/readability | Render/PDF QA | Historical figure custody | Publication state |
 |---|---|---|---|---|---|---|---|---|
-| P0-1 Polynomial & Root Structure | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
-| P0-2 Radicals / Exponents / Logs | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
-| P0-3 Inequalities / Bounds | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
-| P0-4 Modular / Divisibility / Digits | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
-| P0-5 Circle / Tangent | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `BLOCKED_SOURCE` for exact historical figures | `NOT_READY` |
-| P1-1 Sequence & Series Preliminary | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
-| P1-2 Combinatorics | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | historical figure-gated items remain non-canonical | `NOT_READY` |
-| P1-3 Triangle Metric / Apollonius / Stewart | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | source-conflicted/figure-dependent historical anchors remain gated | `NOT_READY` |
-| P2-1 Mathematical Induction | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
-| P2-2 Greatest / Least Integer Functions | `PASS_INTERNAL` | `PARTIAL` | `NOT_RUN` | `PASS_STATIC` for current author-created package | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
-| Mixed Mock System A/B/C | `PASS_INTERNAL` | `PASS_STATIC` — student paper/key physically separated | `PASS_STATIC` for v1 mock ledger once `Mock_Item_Metadata_v1.csv` is present | `PASS_STATIC` source/editorial; rendering still pending | `NOT_RUN` | `NOT_RUN` | `N/A` — all v1 questions are author-created and text-complete | `NOT_READY` |
+| P0-1 Polynomial & Root Structure | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
+| P0-2 Radicals / Exponents / Logs | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
+| P0-3 Inequalities / Bounds | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
+| P0-4 Modular / Divisibility / Digits | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
+| P0-5 Circle / Tangent | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `BLOCKED_SOURCE` for exact historical figures | `NOT_READY` |
+| P1-1 Sequence & Series Preliminary | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
+| P1-2 Combinatorics | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | historical figure-gated items remain non-canonical | `NOT_READY` |
+| P1-3 Triangle Metric / Apollonius / Stewart | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | source-conflicted/figure-dependent historical anchors remain gated | `NOT_READY` |
+| P2-1 Mathematical Induction | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PARTIAL` | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
+| P2-2 Greatest / Least Integer Functions | `PASS_INTERNAL` | `PASS_STATIC` manifest frozen; rendered leakage audit pending | `NOT_RUN` | `PASS_STATIC` for current author-created package | `NOT_RUN` | `NOT_RUN` | `N/A` | `NOT_READY` |
+| Mixed Mock System A/B/C | `PASS_INTERNAL` | `PASS_STATIC` — student paper/key physically separated | `PASS_STATIC` — 90-row live-key-reconciled ledger | `PASS_STATIC` source/editorial; rendering still pending | `NOT_RUN` | `NOT_RUN` | `N/A` — all v1 questions are author-created and text-complete | `NOT_READY` |
 
-## Why `PARTIAL` is used for topic student/teacher split
+## Topic source split now closed statically
 
-The topic architecture already separates student drafts, first-step references, transfer banks, mastery tests and QA files. That is sufficient for authoring, but it is **not yet a frozen production manifest** proving that no answer, teacher cue, provenance note, or diagnostic tag leaks into a student export.
+`Topic_Package_Production_Manifests_v1.md` defines the allowed student and teacher projections for all ten packages.
 
-The production split must therefore be governed by a separate manifest before publication.
+This closes the **semantic/source-level** split:
+
+```text
+PACKAGE_MANIFESTS_DEFINED = 10/10
+TOPIC_SOURCE_LEVEL_SPLIT = PASS_STATIC
+```
+
+It does not yet prove that a rendered student PDF contains no leaked solution/diagnostic material. That remains part of final render QA.
+
+## Mock machine metadata now closed statically
+
+`Mock_Item_Metadata_v1.csv` contains 90 unique author-created item IDs and has been reconciled against the current live A/B/C teacher keys.
+
+`Mock_Item_Metadata_Validation_v1.md` freezes:
+
+- 90 unique rows;
+- 30 questions per mock;
+- 15 MCQ + 15 numeric per mock;
+- 47 Algebra, 18 Geometry, 12 Number Theory, 10 Combinatorics, 3 Arithmetic/Foundation;
+- no official-NMTC flags;
+- timing status `NOT_RUN` for all items.
 
 ## Static checks that are already legitimate
 
@@ -46,9 +66,9 @@ The following can be closed without classroom data:
 3. source-conflict visibility;
 4. no fake official attribution;
 5. notation conventions at source level;
-6. student/teacher file-role separation;
-7. machine-readable metadata completeness;
-8. deterministic question IDs;
+6. student/teacher source-role separation;
+7. mock machine-readable metadata completeness;
+8. deterministic mock question IDs;
 9. mock domain/package allocation;
 10. answer-vector consistency.
 
@@ -83,15 +103,19 @@ No row may become `NMTC_PRELIMINARY_PUBLISHED` solely because `PASS_INTERNAL` ex
 
 Minimum publication path:
 
-`PASS_INTERNAL -> production split -> metadata -> static notation/source QA -> classroom timing/readability evidence -> render/PDF QA -> source blockers resolved where applicable -> publication decision`
+`PASS_INTERNAL -> source split -> metadata -> static notation/source QA -> classroom timing/readability evidence -> render/PDF QA -> source blockers resolved where applicable -> publication decision`
 
 ## Current aggregate verdict
 
 ```text
 TOPIC_PACKAGES_INTERNAL_COMPLETE = 10/10
 MIXED_MOCK_SYSTEM_INTERNAL_COMPLETE = YES
+TOPIC_SOURCE_LEVEL_SPLIT = PASS_STATIC
+MOCK_MACHINE_METADATA = PASS_STATIC
+MOCK_SOURCE_NOTATION_QA = PASS_STATIC
 CLASSROOM_TIMING_CALIBRATION = NOT_RUN
 PRODUCTION_RENDER_QA = NOT_RUN
+TOPIC_MACHINE_METADATA = NOT_RUN
 2022_RECOVERY = BLOCKED_SOURCE
 FINAL_PUBLICATION = NOT_READY
 ```
