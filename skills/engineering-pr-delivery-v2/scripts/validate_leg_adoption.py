@@ -57,6 +57,9 @@ def main():
     basis = field(at, "COMMON_PROTOCOL_BASIS")
     if not basis or not re.fullmatch(r"[0-9a-fA-F]{40}", basis):
         errors.append("ACTIVE COMMON_PROTOCOL_BASIS must be the 40-hex Common commit actually read")
+    history_root = field(at, "MATERIAL_HISTORY_ROOT_BASE")
+    if not history_root or not re.fullmatch(r"[0-9a-fA-F]{40}", history_root):
+        errors.append("ACTIVE MATERIAL_HISTORY_ROOT_BASE must be a 40-hex commit before the chain's first material batch")
 
     prework_rel = field(at, "MATERIAL_LEG_PREWORK_ENDPOINT_FILE")
     if not prework_rel:
@@ -123,7 +126,7 @@ def main():
         for e in errors:
             print("FAIL:", e)
         return 1
-    print("PASS: material leg uses current Common protocol, canonical v3 custody, prework history anchor and profiled Q1-Q5")
+    print("PASS: material leg uses current Common protocol, canonical v3 custody, material-history root, prework anchor and profiled Q1-Q5")
     return 0
 
 
