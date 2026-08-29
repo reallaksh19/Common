@@ -10,6 +10,18 @@ The recurring behavior is:
 
 This package therefore teaches them as one connected structural network.
 
+## Learner model
+
+The current Quadratics v2 teaching layer targets a student who already carries part of the concept but does not yet own the connections, recognition rules, or transfer boundaries.
+
+Operational loop:
+
+`RECONNECT -> DISCOVER -> MAKE SENSE -> TRY -> DIAGNOSE -> FADE -> ADOPT -> TRANSFER`
+
+The legacy macro contract remains:
+
+`SEE -> REALIZE -> UNDERSTAND -> ADOPT`
+
 ## Student mastery target
 
 The learner can:
@@ -17,34 +29,33 @@ The learner can:
 1. recognize when a low-degree relation should reduce high powers;
 2. distinguish “find the roots” from “use information about the roots”;
 3. use Vieta before explicit root calculation when appropriate;
-4. convert divisibility into a remainder condition;
-5. reduce powers modulo a polynomial;
-6. factor cubics/quartics structurally before using heavy methods;
+4. connect discriminant language to root count/tangency rather than formula memory;
+5. choose vertex/completing-square form for extrema;
+6. use transformed-root sum/product structure;
 7. exploit integer/positive-root constraints;
 8. detect domain, sign, boundedness and source inconsistencies;
 9. write the first useful line under Preliminary time pressure;
-10. transfer the same invariant to a non-identical problem.
+10. reject a tempting nearby method and explain the decision boundary;
+11. solve a non-identical transfer problem without a chapter label.
 
-## Cognitive contract
+## Quadratics v2 teaching products
 
-Concept learning:
+- `Quadratics_Assimilation_Concept_Map.md` — prerequisite/bridge/invariant/decision-boundary/transfer authority.
+- `Quadratics_Assimilation_Book_v2.md` — primary partial-knowledge teaching layer.
+- `Quadratics_First_Step_Reference_v2.md` — compression/revision layer to use after assimilation.
 
-`SEE -> REALIZE -> UNDERSTAND -> ADOPT`
+These v2 products do **not** replace the broader polynomial/remainder/higher-degree source package. They replace the earlier short-form Quadratics teaching presentation for future regenerated student PDFs.
 
-Performance layer:
-
-`SEE -> RECOGNIZE -> FIRST MOVE -> SOLVE EFFICIENTLY -> CHECK -> TRANSFER`
-
-## Package files
+## Broader package files
 
 - `Polynomial_Root_Structure_Concept_Book_Spec.md` — pedagogical/authoring authority.
 - `Polynomial_Root_Structure_Source_Coverage_Map.md` — qualified PYQ mechanism traceability.
-- `Polynomial_Root_Structure_Student_Draft_v0.1.md` — student-facing concept-book draft.
+- `Polynomial_Root_Structure_Student_Draft_v0.1.md` — original broader polynomial/root student draft retained for history and non-Quadratics units.
 - `../../../04_First_Step_Reference/P0_Algebra_First_Step_Cards.md` — recognition and first-move cards.
 - `../../../05_Practice_Ladders/P0_Algebra_Polynomial_Root_Structure_Ladder.md` — F0→F4→PYQ→XF ladder.
 - `../../../06_Speed_Labs/P0_Algebra_Recognition_FirstLine_Labs_v1.md` — recognition/first-line speed training.
-- `../../../07_Mastery_Banks/P0_Algebra_Polynomial_Root_Transfer_Bank_v1.md` — 18 reviewed non-identical transfer items.
-- `../../../08_Mixed_Preliminary_Tests/P0_Algebra_Polynomial_Root_Mastery_Test_v1.md` — unlabelled 12-question mastery test.
+- `../../../07_Mastery_Banks/P0_Algebra_Polynomial_Root_Transfer_Bank_v1.md` — reviewed non-identical transfer items.
+- `../../../08_Mixed_Preliminary_Tests/P0_Algebra_Polynomial_Root_Mastery_Test_v1.md` — unlabelled mastery test.
 - `../../../09_QA/P0_Algebra_Polynomial_Root_Structure_QA.md` — gate-by-gate readiness state.
 - `../../../00_Authority/NMTC_Preliminary_Concept_Dependency_Map.md` — upstream dependency placement.
 - `../../../00_Authority/nmtc_preliminary_concept_graph.yaml` — machine-readable concept dependencies.
@@ -53,24 +64,14 @@ Performance layer:
 
 `STATUS: INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
-Completed:
+Quadratics v2 static authoring/render status:
 
-- qualified five-year PYQ evidence base;
-- dependency/source maps;
-- first-step cards;
-- F0→F4→PYQ→XF practice architecture;
-- student draft v0.1;
-- 18-item reviewed transfer bank with difficulty vectors;
-- recognition and first-line labs;
-- mixed mastery test with diagnostic error tags;
-- P0 gate re-audit.
-
-Still required before publication:
-
-- second editorial/math review;
-- classroom/readability timing calibration;
-- production-bank metadata for any ladder prompts promoted as standalone items;
-- final notation/typography/render QA;
-- optional separation into student copy and teacher/solution copy.
+- concept map: authored;
+- assimilation source: authored;
+- First-Step source: authored;
+- mathematical notation/typesetting regeneration: completed locally for review;
+- static render QA: completed locally for review;
+- classroom timing/readability calibration: `NOT_RUN`;
+- publication approval: `NOT_READY`.
 
 Global project blocker retained separately: 2022 Bhaskara Preliminary source recovery is still unresolved and is required before any six-year recurrence claim.
