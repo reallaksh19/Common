@@ -4,6 +4,11 @@ import re
 import subprocess
 import sys
 
+VALID_PROFILES = {
+    "FEA", "WRC_LOCAL_STRESS", "LOAD_CALC", "FIXED_FORMAT_WRITER",
+    "PARSER_TOPOLOGY", "SOURCE_GOVERNANCE", "GENERAL_ENGINEERING",
+}
+
 
 def field(text: str, name: str):
     m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n]+?)\s*$", text)
@@ -53,6 +58,18 @@ def main():
     if not basis or not re.fullmatch(r"[0-9a-fA-F]{40}", basis):
         errors.append("ACTIVE COMMON_PROTOCOL_BASIS must be the 40-hex Common commit actually read")
 
+    prework_rel = field(at, "MATERIAL_LEG_PREWORK_ENDPOINT_FILE")
+    if not prework_rel:
+        errors.append("ACTIVE missing MATERIAL_LEG_PREWORK_ENDPOINT_FILE")
+    else:
+        prework = root / prework_rel
+        if not prework.is_file():
+            errors.append(f"material-leg prework endpoint missing: {prework_rel}")
+        try:
+            prework.relative_to(root / "agents" / "chains")
+        except ValueError:
+            errors.append("MATERIAL_LEG_PREWORK_ENDPOINT_FILE must be under agents/chains/**")
+
     ep_rel = field(at, "ACTIVE_ENDPOINT_FILE")
     if not ep_rel:
         errors.append("ACTIVE_ENDPOINT_FILE missing")
@@ -82,6 +99,15 @@ def main():
         ebasis = field(et, "COMMON_PROTOCOL_BASIS")
         if ebasis != basis:
             errors.append(f"endpoint COMMON_PROTOCOL_BASIS {ebasis} != ACTIVE basis {basis}")
+        profile = field(et, "QUALIFICATION_PROFILE")
+        if profile not in VALID_PROFILES:
+            errors.append(f"endpoint QUALIFICATION_PROFILE invalid or missing: {profile}")
+        pack_profile = None
+        pack = re.search(r"(?mis)^###\s+Takeover qualification pack\s*$\n(.*?)(?=^###\s+|\Z)", et)
+        if pack:
+            pack_profile = field(pack.group(1), "QUALIFICATION_PROFILE")
+        if pack_profile != profile:
+            errors.append(f"qualification-pack profile {pack_profile} != endpoint profile {profile}")
         qheads = re.findall(r"(?mi)^####\s+Q([1-5])\s+—", et)
         if qheads != ["1", "2", "3", "4", "5"]:
             errors.append(f"endpoint must contain exactly ordered Q1-Q5, found {qheads}")
@@ -97,7 +123,7 @@ def main():
         for e in errors:
             print("FAIL:", e)
         return 1
-    print("PASS: material leg uses current Common protocol, canonical v3 custody and pre-work Q1-Q5")
+    print("PASS: material leg uses current Common protocol, canonical v3 custody, prework history anchor and profiled Q1-Q5")
     return 0
 
 
