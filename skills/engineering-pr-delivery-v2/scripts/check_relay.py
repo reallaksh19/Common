@@ -36,8 +36,8 @@ def main():
     parser.add_argument("--answer")
     parser.add_argument("--verdict")
     parser.add_argument("--reconciliation")
-    parser.add_argument("--active", help="ACTIVE.md for the new material leg; enables protocol/pre-work adoption gate")
-    parser.add_argument("--base-ref", help="base ref for rejecting new writes to legacy agents/agentchain paths")
+    parser.add_argument("--active", help="ACTIVE.md for the material leg; enables protocol/pre-work adoption gate")
+    parser.add_argument("--base-ref", help="material-leg base ref; enables legacy-write and prework-history audit")
     parser.add_argument("--head-ref", default="HEAD")
     args = parser.parse_args()
 
@@ -55,12 +55,18 @@ def main():
         rc |= run("validate_roadmap_bindings.py", str(relay))
         rc |= run("validate_handover_snapshot.py", str(relay))
         rc |= run("validate_qualification_questions.py", str(relay))
-        structure = "project-overlay + canonical relay + roadmap + handover + expert-question gates"
+        rc |= run("validate_qualification_profile.py", str(relay))
+        structure = "project-overlay + canonical relay + roadmap + handover + expert-question + domain-profile gates"
 
     if args.active:
         rc |= run("validate_leg_adoption.py", str(root), args.active)
     if args.base_ref:
         rc |= run("validate_legacy_relay_diff.py", str(root), args.base_ref, args.head_ref)
+        if not args.active:
+            print("FAIL: --base-ref material-leg audit requires --active for prework history proof", file=sys.stderr)
+            rc |= 1
+        else:
+            rc |= run("validate_prework_history.py", str(root), args.base_ref, args.head_ref, args.active)
 
     v3 = protocol_version(answer) == "3" or protocol_version(verdict) == "3"
 
@@ -96,9 +102,9 @@ def main():
     if rc == 0:
         print(f"PASS: {structure}")
         if args.active:
-            print("PASS: material leg has current Common basis, canonical v3 custody and pre-work Q1-Q5")
+            print("PASS: material leg has current Common basis, canonical v3 custody and profiled pre-work Q1-Q5")
         if args.base_ref:
-            print("PASS: material-leg diff does not write legacy relay paths")
+            print("PASS: material-leg diff avoids legacy relay writes and Git history proves pre-work Q1-Q5 preceded material mutation")
         if v3 and verdict and not args.reconciliation:
             print("NOTE: qualified READ_ONLY; post-basis reconciliation is still required before WRITE_ALLOWED.")
         if args.reconciliation:
