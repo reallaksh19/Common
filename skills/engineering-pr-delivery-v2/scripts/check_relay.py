@@ -37,7 +37,7 @@ def main():
     parser.add_argument("--verdict")
     parser.add_argument("--reconciliation")
     parser.add_argument("--active", help="ACTIVE.md for the material leg; enables protocol/pre-work adoption gate")
-    parser.add_argument("--base-ref", help="material-leg base ref; enables legacy-write and prework-history audit")
+    parser.add_argument("--base-ref", help="material-leg base ref; enables legacy-write and current-leg prework audit")
     parser.add_argument("--head-ref", default="HEAD")
     args = parser.parse_args()
 
@@ -56,7 +56,8 @@ def main():
         rc |= run("validate_handover_snapshot.py", str(relay))
         rc |= run("validate_qualification_questions.py", str(relay))
         rc |= run("validate_qualification_profile.py", str(relay))
-        structure = "project-overlay + canonical relay + roadmap + handover + expert-question + domain-profile gates"
+        rc |= run("validate_material_leg_history.py", str(root))
+        structure = "project-overlay + canonical relay + roadmap + handover + expert-question + domain-profile + material-history gates"
 
     if args.active:
         rc |= run("validate_leg_adoption.py", str(root), args.active)
@@ -104,7 +105,9 @@ def main():
         if args.active:
             print("PASS: material leg has current Common basis, canonical v3 custody and profiled pre-work Q1-Q5")
         if args.base_ref:
-            print("PASS: material-leg diff avoids legacy relay writes and Git history proves pre-work Q1-Q5 preceded material mutation")
+            print("PASS: current material-leg diff avoids legacy relay writes and Git history proves pre-work Q1-Q5 preceded mutation")
+        if not relay.is_file():
+            print("PASS: completed AUTO/material batches have append-only history receipts with no hidden inter-leg/trailing material")
         if v3 and verdict and not args.reconciliation:
             print("NOTE: qualified READ_ONLY; post-basis reconciliation is still required before WRITE_ALLOWED.")
         if args.reconciliation:
