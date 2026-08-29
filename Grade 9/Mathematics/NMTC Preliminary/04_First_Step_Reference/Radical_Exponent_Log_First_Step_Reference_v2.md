@@ -125,9 +125,7 @@ START
 
 **SEE:** `A±B√d`, nested radical, or a surd base raised to `3/2`.
 
-**WRITE:** test
-
-`A±B√d=(√m±√n)^2`.
+**WRITE:** test `A±B√d=(√m±√n)^2`.
 
 **CHOOSE:** reconstruct before applying the outer power.
 
@@ -153,11 +151,7 @@ START
 
 **SEE:** negative or fractional exponent.
 
-**WRITE:**
-
-`a^(-n)=1/a^n` for `a≠0`;
-
-translate fractional powers into root language when that makes the structure clearer.
+**WRITE:** `a^(-n)=1/a^n` for `a≠0`; translate fractional powers into root language when useful.
 
 **CHOOSE:** stabilize the meaning before applying exponent laws.
 
@@ -229,11 +223,7 @@ translate fractional powers into root language when that makes the structure cle
 
 **SEE:** symmetry under `x↔1/x`.
 
-**WRITE:** `S1=x+1/x`, with `x≠0`.
-
-For `S_n=x^n+x^-n`:
-
-`S0=2`, `S_n=S1*S_(n-1)-S_(n-2)`.
+**WRITE:** `S1=x+1/x`, with `x≠0`; for `S_n=x^n+x^-n`, use `S0=2`, `S_n=S1*S_(n-1)-S_(n-2)`.
 
 **CHOOSE:** compute the invariant directly.
 
@@ -245,11 +235,7 @@ For `S_n=x^n+x^-n`:
 
 **SEE:** a log law or log meaning is uncertain.
 
-**WRITE:**
-
-`log_b y=z <=> b^z=y`,
-
-with `b>0`, `b≠1`, `y>0`.
+**WRITE:** `log_b y=z <=> b^z=y`, with `b>0`, `b≠1`, `y>0`.
 
 **CHOOSE:** derive the law from exponent structure if needed.
 
@@ -311,9 +297,7 @@ Before accepting a transformed answer ask:
 
 **SEE:** source/key conflicts with valid recomputation.
 
-**WRITE:** keep three separate records:
-
-`PRINTED SOURCE | DERIVED MATHEMATICS | KEY / DISPOSITION`.
+**WRITE:** keep three separate records: `PRINTED SOURCE | DERIVED MATHEMATICS | KEY / DISPOSITION`.
 
 **CHOOSE:** preserve the conflict.
 
@@ -323,25 +307,12 @@ Before accepting a transformed answer ask:
 
 # 5. The six boundary questions
 
-Before committing to a method, ask:
-
-1. **Basis or hidden power?**  
-   Are the radicals meant to combine after normalization, or is one structured surd meant to be reconstructed?
-
-2. **Exponent meaning, normalization, or logarithm?**  
-   Is the issue a reciprocal/root meaning, related bases, or genuinely unrelated bases?
-
-3. **Equivalent or candidate-generating?**  
-   Does the transformation preserve both directions?
-
-4. **Invariant or explicit variable?**  
-   Is the requested target symmetric under `x↔1/x`?
-
-5. **Which repeated object?**  
-   Is it `log_b x`, `√(log_b x)`, or another larger repeated structure?
-
-6. **Algebraic candidate or original solution?**  
-   Did all original sign/domain/range conditions survive?
+1. **Basis or hidden power?** Are radicals meant to combine after normalization, or is one structured surd meant to be reconstructed?
+2. **Exponent meaning, normalization, or logarithm?** Is the issue reciprocal/root meaning, related bases, or genuinely unrelated bases?
+3. **Equivalent or candidate-generating?** Does the transformation preserve both directions?
+4. **Invariant or explicit variable?** Is the requested target symmetric under `x↔1/x`?
+5. **Which repeated object?** Is it `log_b x`, `√(log_b x)`, or another larger repeated structure?
+6. **Algebraic candidate or original solution?** Did all original sign/domain/range conditions survive?
 
 ---
 
@@ -351,7 +322,7 @@ Before committing to a method, ask:
 |---|---|---|
 | add/subtract same expression | `<=>` where defined | domain of expressions still matters |
 | multiply/divide by known non-zero constant | `<=>` | none |
-| divide by `g(x)` | conditional | must separately handle/prove `g(x)≠0` |
+| divide by `g(x)` | conditional | separately handle/prove `g(x)≠0` |
 | square both sides | usually `=>` | becomes `<=>` if both sides are known non-negative (or both known non-positive with care) |
 | cube both sides over reals | `<=>` | real-domain assumption |
 | `log_b y=z` to `b^z=y` | `<=>` | valid base and positive argument |
@@ -367,7 +338,7 @@ Before committing to a method, ask:
 |---|---|
 | `√(a+b)=√a+√b` | radical multiplication behavior does not distribute over sums |
 | `√(x^2)=x` | write `|x|`; remove bars only after a sign argument |
-| radical symbol interpreted as `±` | `√A` is the principal non-negative root; `u^2=A` is a different statement |
+| radical symbol interpreted as `±` | `√A` is the principal non-negative root; `u^2=A` is different |
 | `a^-n` treated as negative | negative exponent means reciprocal |
 | exponent law used across addition | exponent addition law belongs to multiplication of same bases |
 | logs used immediately | normalize related bases first |
@@ -375,9 +346,9 @@ Before committing to a method, ask:
 | square-root equation squared immediately | write domain/sign; isolate first |
 | every same-operation step called equivalent | test injectivity / zero cases |
 | divide by variable factor | preserve its zero case |
-| solve `x` when only reciprocal symmetric target is asked | compute the invariant directly |
+| solve `x` for reciprocal symmetric target | compute the invariant directly |
 | `log(a+b)` split | no logarithm sum law |
-| log argument restriction forgotten after logs disappear | original domain remains authoritative |
+| log restriction forgotten after logs disappear | original domain remains authoritative |
 | `u=√(log_b x)` allowed negative | definition forces `u≥0` |
 | exact log/exponent expression approximated | expose inverse structure first |
 | source altered to match key | preserve source conflict after independent recomputation |
@@ -386,7 +357,7 @@ Before committing to a method, ask:
 
 # 8. Source-to-mechanism map
 
-Historical IDs below ground mechanisms only; full third-party statements are not reproduced.
+Historical IDs ground mechanisms only; full third-party statements are not reproduced.
 
 | Mechanism | Clean scored evidence | Other disposition |
 |---|---|---|
@@ -458,7 +429,7 @@ For each prompt, write only the best first-step code from:
 20 `QC` + `DR`  
 21 `RI` **recognition, then boundary check**: the target is asymmetric, so `x+1/x` alone may not determine its sign/value uniquely  
 22 `EM`  
-23 `LD` (derive the law from exponent meaning; reject the false sum law)  
+23 `LD`  
 24 `LS` + `DR` (`u≥0`)
 
 ### Recognition standard
@@ -481,11 +452,11 @@ These bands are internal study diagnostics, not psychometric or official NMTC th
 - **When one exponential object repeats, name it and keep its positivity.**
 - **When reciprocal powers are symmetric, compute the invariant before solving the hidden variable.**
 - **When a transformation may lose sign or a zero case, mark it as conditional/candidate-generating.**
-- **When logarithms appear, remember that they are exponent statements with domain restrictions.**
+- **When logarithms appear, remember they are exponent statements with domain restrictions.**
 - **When a compound log object repeats, substitute the whole repeated object and carry its range.**
-- **When logs can disappear into algebra, their original domain does not disappear.**
+- **When logs disappear into algebra, their original domain does not disappear.**
 - **When exponent and log are inverse structures, simplify exactly before approximating.**
-- **When the source/key disagrees with valid mathematics, preserve the conflict; do not repair history silently.**
+- **When source/key disagrees with valid mathematics, preserve the conflict; do not repair history silently.**
 
 ---
 
@@ -501,5 +472,7 @@ SUBSTITUTION range respected?            yes / no
 ORIGINAL problem checked if required?    yes / no
 SOURCE disposition preserved?            yes / no
 ```
+
+`WAVE3_FIRST_STEP_REFERENCE_COMPLETE`
 
 `NEXT_ALLOWED_STATE: WAVE4_MIXED_MASTERY_AND_TRANSFER`
