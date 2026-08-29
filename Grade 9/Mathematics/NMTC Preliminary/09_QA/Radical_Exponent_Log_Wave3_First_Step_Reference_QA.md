@@ -2,13 +2,13 @@
 
 `STATUS: WAVE3_FIRST_STEP_REFERENCE_PASS_INTERNAL`
 
-Wave 3 is complete. The full `Radical_Exponent_Log_First_Step_Reference_v2.md` is the authoritative compression artifact.
+The full `Radical_Exponent_Log_First_Step_Reference_v2.md` is the authoritative compression artifact. This file records the gate state only.
 
-Static gates: First-Step after teaching PASS; recognition atlas PASS (17 codes); decoder PASS; decision tree PASS; 16 cards PASS; traps PASS; source map PASS; 24-item recognition drill PASS; independent drill audit 24/24 PASS; exponent-meaning `EM` separation PASS_AFTER_CORRECTION; decision boundaries PASS_STRONG; reversibility/domain PASS; source custody PASS; upstream evidence preservation PASS.
+PASS: First-Step after teaching; 17-code recognition atlas; phrase decoder; quick decision tree; 16 cards; trap/repair layer; source map; 24-item recognition drill; independent 24/24 drill audit; `EM` exponent-meaning separation; decision boundaries; reversibility/domain compression; source custody; upstream evidence preservation.
 
-Source custody: 16 clean anchors; 2023 Q04/Q20 source-sensitive bridge-only; 2025 Q18 source-conflict QC-only; no topic-specific bonus evidence identified or invented.
+Source custody: 16 clean anchors; 2023 Q04/Q20 source-sensitive bridge only; 2025 Q18 source-conflict QC only; no topic-specific bonus evidence identified/invented.
 
-Evidence-dependent: PDF/render QA NOT_RUN (Wave 5); classroom timing/readability NOT_RUN; longitudinal mastery NOT_RUN.
+NOT_RUN: Wave-5 PDF/render QA; classroom timing/readability; longitudinal mastery.
 
 `WAVE3_FIRST_STEP_REFERENCE_COMPLETE`
 
