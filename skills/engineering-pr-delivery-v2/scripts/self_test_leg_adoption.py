@@ -19,7 +19,7 @@ engineering
 """
 
 
-def make(root: Path, *, status="CURRENT", prework="TRUE", legacy=False, profile="FEA"):
+def make(root: Path, *, status="CURRENT", prework="TRUE", legacy=False, profile="FEA", history_root=BASIS):
     (root / "AGENTS.md").write_text(OVERLAY, encoding="utf-8")
     if legacy:
         chain = root / "agents/agentchain/T"
@@ -66,6 +66,7 @@ x
     active.write_text(f"""CHAIN_STATE_VERSION: 3
 CHAIN_ID: T
 ACTIVE_ENDPOINT_FILE: {ep_rel}
+MATERIAL_HISTORY_ROOT_BASE: {history_root}
 MATERIAL_LEG_PREWORK_ENDPOINT_FILE: {ep_rel}
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: {BASIS}
@@ -99,6 +100,8 @@ def main():
         root = Path(td); active = make(root, legacy=True); ok &= expect("legacy relay path rejected for new leg", run(root, active), 1)
     with tempfile.TemporaryDirectory() as td:
         root = Path(td); active = make(root, profile="UNKNOWN"); ok &= expect("unknown qualification profile rejected", run(root, active), 1)
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td); active = make(root, history_root="NOT_A_SHA"); ok &= expect("missing/invalid material history root rejected", run(root, active), 1)
     return 0 if ok else 1
 
 
