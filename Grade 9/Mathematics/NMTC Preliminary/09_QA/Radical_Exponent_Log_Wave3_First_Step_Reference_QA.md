@@ -86,8 +86,6 @@ The compression preserves the major method-choice boundaries from Waves 0–2:
 13. transformed algebraic root vs original valid solution;
 14. learner error vs source conflict.
 
-Issue #45 requires at least six close contrast pairs in the integrated teaching. The reference compresses more than six without turning the sheet into a formula catalogue.
-
 `DECISION_BOUNDARY_COVERAGE: PASS_STRONG`
 
 ---
@@ -118,7 +116,7 @@ All 24 recognition prompts were independently reviewed for the stated first-step
 | 18 | `HS` | structured surd should be reconstructed before `3/2` power | PASS |
 | 19 | `EN` | related bases make logs inferior | PASS |
 | 20 | `QC+DR` | invalid original domain plus printed-key inconsistency | PASS |
-| 21 | `RI` + boundary | reciprocal structure is visible, but asymmetric target may not be uniquely determined | PASS |
+| 21 | `RI` + boundary | reciprocal structure visible; asymmetric target may not be uniquely determined | PASS |
 | 22 | `EM` | negative exponent means reciprocal | PASS |
 | 23 | `LD` | reconstruct valid log laws from exponent meaning | PASS |
 | 24 | `LS+DR` | square-root-log substitution carries `u>=0` | PASS |
@@ -129,16 +127,14 @@ All 24 recognition prompts were independently reviewed for the stated first-step
 
 ## 6. Mathematical micro-checks
 
-Selected compressed relations were independently checked:
-
-- reciprocal recurrence `S_n=S_1S_(n-1)-S_(n-2)` for `S_n=x^n+x^-n`: PASS by multiplication and cancellation;
-- `sqrt(g(x)^2)=|g(x)|`: PASS for real `g(x)`;
+- reciprocal recurrence `S_n=S_1S_(n-1)-S_(n-2)`: PASS;
+- `sqrt(g(x)^2)=|g(x)|`: PASS;
 - `a^-n=1/a^n`, `a!=0`: PASS;
-- positive exponential substitution `t=a^x>0` for `a>0`: PASS;
+- positive exponential substitution `t=a^x>0`: PASS;
 - real log domain `b>0`, `b!=1`, argument `>0`: PASS;
 - `log_b y=z <=> b^z=y` under valid real log conditions: PASS;
-- cubing over reals is injective: PASS;
-- squaring is not injective over reals: PASS;
+- cubing over reals injective: PASS;
+- squaring over reals not injective: PASS;
 - same-base valid-log equality uses injectivity: PASS;
 - `u=sqrt(log_b x)` implies `u>=0`: PASS.
 
@@ -167,18 +163,11 @@ Selected compressed relations were independently checked:
 - `NMTC-BH-P-2025-Q12`
 - `NMTC-BH-P-2025-Q27`
 
-### Source-sensitive bridge evidence
+Source-sensitive bridge evidence: `NMTC-BH-P-2023-Q04`, `NMTC-BH-P-2023-Q20`.
 
-- `NMTC-BH-P-2023-Q04`
-- `NMTC-BH-P-2023-Q20`
+Source-conflict evidence: `NMTC-BH-P-2025-Q18` — QC only; no canonical repair.
 
-### Source-conflict evidence
-
-- `NMTC-BH-P-2025-Q18` — QC only; no canonical repair.
-
-### Bonus evidence
-
-None identified in the topic source map. None inferred or invented.
+Bonus evidence: none identified; none inferred or invented.
 
 `SOURCE_CUSTODY: PASS`
 
@@ -186,20 +175,18 @@ None identified in the topic source map. None inferred or invented.
 
 ## 8. Compression quality versus legacy First-Step cards
 
-The legacy cards were useful but largely family-based. Wave 3 adds or strengthens:
+Wave 3 adds or strengthens:
 
-- explicit `EM` exponent-meaning boundary;
+- `EM` exponent-meaning boundary;
 - principal-root recognition as a standalone code;
-- repeated exponential variable vs ratio-variable distinction;
+- exponential variable vs ratio-variable distinction;
 - zero-case protection before division;
-- explicit `<=>` versus `=>` arrow guide;
+- `<=>` versus `=>` arrow guide;
 - symmetric vs asymmetric reciprocal-target boundary;
 - log-variable vs square-root-log-variable choice;
 - final domain/reversibility/source audit;
 - 24-item recognition-only mixed drill;
 - direct source-disposition map.
-
-This is a redesign for Issue #45 assimilation, not a copy of the legacy cards or Quadratics benchmark layout.
 
 `BENCHMARK_PEDAGOGY_PARITY: PASS_INTERNAL`
 
@@ -207,9 +194,7 @@ This is a redesign for Issue #45 assimilation, not a copy of the legacy cards or
 
 ## 9. Student/teacher leakage audit
 
-The recognition drill contains no worked solutions. Its key appears **after all 24 prompts** and gives only recognition codes plus minimal boundary notes for ambiguous/checking cases.
-
-This is acceptable for a self-review reference layer, but final PDF production must ensure the recognition key is visually separated so a student can attempt first.
+The recognition drill contains no worked solutions. Its key appears after all 24 prompts and gives only recognition codes plus minimal boundary notes.
 
 `ATTEMPT_BEFORE_KEY_STRUCTURE: PASS_INTERNAL`
 
@@ -235,7 +220,7 @@ This is acceptable for a self-review reference layer, but final PDF production m
 | source conflict preserved | PASS |
 | bonus evidence not inflated | PASS |
 | reference does not replace teaching | PASS |
-| prior Wave-1 qualification evidence preserved | PASS — full readiness matrix restored after status-edit audit |
+| prior Wave-1 qualification evidence preserved | PASS — full readiness matrix restored |
 | final PDF/render QA | NOT_RUN — Wave 5 |
 | classroom timing/readability | NOT_RUN |
 | longitudinal mastery | NOT_RUN |
