@@ -235,6 +235,7 @@ This is acceptable for a self-review reference layer, but final PDF production m
 | source conflict preserved | PASS |
 | bonus evidence not inflated | PASS |
 | reference does not replace teaching | PASS |
+| prior Wave-1 qualification evidence preserved | PASS — full readiness matrix restored after status-edit audit |
 | final PDF/render QA | NOT_RUN — Wave 5 |
 | classroom timing/readability | NOT_RUN |
 | longitudinal mastery | NOT_RUN |
