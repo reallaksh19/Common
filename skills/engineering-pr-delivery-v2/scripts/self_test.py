@@ -21,6 +21,7 @@ SUITES = [
     "self_test_leg_adoption.py",
     "self_test_qualification_profiles.py",
     "self_test_prework_history.py",
+    "self_test_material_leg_history.py",
 ]
 SUITE_TIMEOUT_SECONDS = 20
 
