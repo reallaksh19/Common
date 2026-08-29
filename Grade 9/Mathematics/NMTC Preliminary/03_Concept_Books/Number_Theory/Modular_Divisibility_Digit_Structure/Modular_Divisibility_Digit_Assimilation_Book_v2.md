@@ -950,7 +950,7 @@ A damaged/ambiguous historical item is rewritten to match a published answer.
 
 - `B1 — H3 available:` least integer greater than 100 leaving remainder 5 modulo 12 and 18.
 - `B2 — H2 maximum:` greatest divisor leaving the same remainder on 84,129,174.
-- `B3 — H1 maximum:` largest integer below 3000 leaving remainder 11 when divided by 8,15,20.
+- `B3 — H1 maximum:` largest integer below 3000 leaving remainder 3 when divided by 8,15,20.
 - `B4 — H0:` greatest divisor leaving remainder 8 on 71,116,161.
 
 ## Track C — place-value/divisibility counting
@@ -1016,7 +1016,7 @@ A light pattern has 4 phases corresponding to the successive last digits of powe
 
 ### T4 — synchronized remainder condition
 
-A ticket number leaves remainder 11 when divided by 8, 15 and 20. Find the largest such ticket number below 3000.
+A ticket number leaves remainder 3 when divided by 8, 15 and 20. Find the largest such ticket number below 3000.
 
 ### T5 — unknown box capacity
 
