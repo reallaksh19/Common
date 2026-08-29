@@ -3,7 +3,7 @@ CHAIN_ID: COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY
 MISSION: Centralize reusable repository-agent policy and enforce v3 prework/profile adoption
 ACTIVE_ENDPOINT: EP-0002
 ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0002.md
-MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0001.md
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0002.md
 PR: 33
 BRANCH: engineering-pr-delivery-v2-central-policy-v3-recovery
 HEAD: 0e4f2120d0cc9b94e6025d081004ad1f3d6d14a2
