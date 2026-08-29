@@ -1,28 +1,31 @@
 CHAIN_STATE_VERSION: 3
 CHAIN_ID: COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY
-MISSION: Centralize reusable repository-agent policy and enforce v3 prework/profile adoption
-ACTIVE_ENDPOINT: EP-0004
-ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0004.md
+MISSION: Centralize reusable repository-agent policy and enforce v3/v4 handover, qualification and exclusive-work-item controls
+ACTIVE_ENDPOINT: EP-0005
+ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0005.md
 MATERIAL_HISTORY_ROOT_BASE: 325cc3013e4542c3943afa24073c48373c4658ad
-MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0003.md
-PR: 33
-BRANCH: engineering-pr-delivery-v2-central-policy-v3-recovery
-HEAD: 2d79aaa33cff1ee0d6499ac6b657d8a1f2a9185f
-STATE: READY_FOR_NEXT_LEG
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0005.md
+PR: PENDING
+BRANCH: engineering-pr-delivery-v2-handover-quality-p0-v2
+HEAD: 8772e42afc0c8ef5801a451c3d7df55bba3fa297
+STATE: ACTIVE
 ENGINEERING_STATE: READY
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: NOT_REQUIRED
 WRITE_AUTHORITY: WRITE_ALLOWED
 AUTO_STATE: NOT_APPLICABLE
 MERGE_AUTHORITY: OWNER_ONLY
-AUTHORITY_DOMAIN: Common engineering delivery governance and executable relay controls
-ACTIVE_CUSTODIAN: gpt-5.6-sol
-CUSTODY_EPOCH: 4
+AUTHORITY_DOMAIN: Common engineering delivery governance; response envelope, qualification-baseline, handover-readiness and exclusive work-item controls
+ACTIVE_CUSTODIAN: chatgpt-sol-20260830T0516-01
+AGENT_INSTANCE_ID: chatgpt-sol-20260830T0516-01
+WORK_ITEM_KEY: common:engineering-pr-delivery-v2:handover-quality-p0
+WORK_ITEM_MODE: EXCLUSIVE
+CUSTODY_EPOCH: 5
 COORDINATION_STATE: SAFE
-DEPENDENCIES: Advanced_Analysis PR #1527 depends on Common PR #33
+DEPENDENCIES: NONE
 COMMON_PROTOCOL: engineering-pr-delivery-v2
-COMMON_PROTOCOL_BASIS: 325cc3013e4542c3943afa24073c48373c4658ad
+COMMON_PROTOCOL_BASIS: b3c955be1fb0d6151501cfd11bc23e106c5a8280
 COMMON_PROTOCOL_STATUS: CURRENT
-ROADMAPS: NONE — Common reusable policy/validator change; no product-domain owner roadmap applies
+ROADMAPS: NONE — Common reusable governance/validator scope
 ROADMAP_REVIEW_STATUS: NOT_APPLICABLE
 HANDOVER_READY: TRUE
