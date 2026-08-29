@@ -2,7 +2,7 @@
 
 `STATUS: WAVE3_FIRST_STEP_REFERENCE_PASS_INTERNAL`
 
-The full `Radical_Exponent_Log_First_Step_Reference_v2.md` is the authoritative compression artifact. This file records the gate state only.
+The full `Radical_Exponent_Log_First_Step_Reference_v2.md` is the authoritative compression artifact.
 
 PASS: First-Step after teaching; 17-code recognition atlas; phrase decoder; quick decision tree; 16 cards; trap/repair layer; source map; 24-item recognition drill; independent 24/24 drill audit; `EM` exponent-meaning separation; decision boundaries; reversibility/domain compression; source custody; upstream evidence preservation.
 
