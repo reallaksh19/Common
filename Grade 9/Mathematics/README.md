@@ -4,7 +4,7 @@ This folder contains chapter-level authoring authorities and worked exemplars fo
 
 ## Subject Concept Book method
 
-Mathematics uses:
+Mathematics uses the macro cognitive contract:
 
 `SEE -> REALIZE -> UNDERSTAND -> ADOPT`
 
@@ -13,13 +13,22 @@ Mathematics uses:
 - **UNDERSTAND** by deriving/reconstructing and explaining why the result has its form.
 - **ADOPT** by recognizing and using the structure independently in disguise.
 
+For difficult concepts, the default learner model is a student with partial prior knowledge rather than a blank slate. The operational teaching loop is:
+
+`RECONNECT -> DISCOVER -> MAKE SENSE -> TRY -> DIAGNOSE -> FADE -> ADOPT -> TRANSFER`
+
+This loop is the teaching choreography inside the four-stage macro contract.
+
 `CONNECT` is reserved for source traceability/navigation.
 
-## Current worked exemplar
+## Current worked exemplars
 
 - `Sequence and Series/`
+- `NMTC Preliminary/03_Concept_Books/Algebra/Polynomial_Root_Structure/Quadratics_Assimilation_Concept_Map.md`
+- `NMTC Preliminary/03_Concept_Books/Algebra/Polynomial_Root_Structure/Quadratics_Assimilation_Book_v2.md`
+- `NMTC Preliminary/03_Concept_Books/Algebra/Polynomial_Root_Structure/Quadratics_First_Step_Reference_v2.md`
 
-This mirrors the role of `Physics/Motion/`: a chapter-level proving ground for the subject methodology.
+Sequence & Series remains a first-step/reference exemplar. Quadratics v2 is the proving ground for the partial-knowledge assimilation model: repair missing connections first, then compress them into a fast reference.
 
 ## Reusable skill authority
 
@@ -27,6 +36,7 @@ General Grade 9 Mathematics concept-book work should use the subject-level math 
 
 - `../skills/grade9-math/SKILL.md`
 - `../skills/grade9-math/references/concept-book-see-realize-understand-adopt.md`
+- `../skills/grade9-math/references/partial-knowledge-assimilation-concept-map.md`
 
 Question-pattern bucketing should use the separate bucket-builder skill:
 
@@ -78,4 +88,4 @@ The bucket-builder v2 workflow makes these safeguards mandatory:
 
 ## Schema status
 
-No Grade 9 master-schema migration is introduced here. Chapter authoring maps, concept-book protocols, and question-bucket protocols operate within the existing shared workflow.
+No Grade 9 master-schema migration is introduced here. Chapter authoring maps, concept-book protocols, partial-knowledge assimilation maps, and question-bucket protocols operate within the existing shared workflow.
