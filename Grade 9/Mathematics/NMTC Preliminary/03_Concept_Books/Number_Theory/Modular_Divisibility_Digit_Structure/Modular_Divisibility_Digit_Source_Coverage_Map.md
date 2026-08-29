@@ -19,12 +19,6 @@ Only the solution-qualified Bhaskara Preliminary corpus may define PYQ grounding
 
 These two must be taught as a contrast pair.
 
-### Successive quotient/remainder reconstruction
-
-- `NMTC-BH-P-2024-Q20` — **successive division**, not simultaneous congruences. The number is divided by 5, then the resulting quotient by 6, then the next quotient by 7, with remainders 3,2,2 respectively. Reconstructing backward gives `N = 5(6(7q+2)+2)+3`, hence `N ≡ 43 (mod 120)`.
-
-**Custody correction:** an earlier qualification/source-map summary flattened Q20 into `N≡3 (mod5), N≡2 (mod6), N≡2 (mod7)`. That interpretation is mathematically incompatible with answer 43 and is superseded. Q20 must not be used as a clean CRT/simultaneous-congruence anchor.
-
 ### Simultaneous congruences
 
 No exact clean historical anchor is currently frozen for the generic CRT-style interface. This mechanism remains required by Issue #47 and is taught with `AUTHOR_CREATED_FOUNDATION` / `AUTHOR_CREATED_TRANSFER` until a qualified exact anchor is identified.
@@ -58,11 +52,34 @@ No exact clean historical anchor is currently frozen for the generic CRT-style i
 
 ## Source-sensitive / blocked evidence
 
-- `NMTC-BH-P-2023-Q12` has a corrupted searchable statement. The recovered solution indicates a modulo-4 parity/residue mechanism, but the exact question is **not** a canonical student anchor until the original wording is recovered.
+### `NMTC-BH-P-2023-Q12`
+
+- searchable statement is corrupted;
+- recovered solution indicates a modulo-4 parity/residue mechanism;
+- exact question is **not** a canonical student anchor until original wording is recovered.
+
+Disposition: `SOURCE_SENSITIVE_EVIDENCE — BLOCKED_EXACT_ANCHOR`.
+
+### `NMTC-BH-P-2024-Q20`
+
+The reproduced stem says Simon was asked to divide a number by 120 and “divided the number by 5, 6 and 7 and got 3, 2 and 2 as remainders respectively.” The 2024 answer key records `43*`.
+
+A published worked solution interprets the wording as **successive quotient division**:
+
+`N=5q1+3`, `q1=6q2+2`, `q2=7q3+2`,
+
+which gives `N=210q3+73`. It then chooses `q3=1` on the unstated assumption that `N>120`, yielding `N=283` and remainder 43 modulo 120.
+
+This is not a clean simultaneous-congruence item, and the step forcing `q3=1` is not justified by the reproduced stem. Therefore Q20 is demoted for Issue #47 to:
+
+`SOURCE_CONFLICT_EVIDENCE — BLOCKED_EXACT_ANCHOR`.
+
+Allowed use: source-QC / representation-boundary discussion only.  
+Forbidden use: clean CRT anchor or canonical solved student exercise.
 
 ## Upstream ledger note
 
-The repository's 2024 qualification ledger currently summarizes Q20 as three simultaneous congruences while also retaining answer 43. The exact source wording establishes successive quotient/remainder division instead. Issue #47 treats the topic coverage correction in this file as authoritative for teaching custody; the global qualification-ledger summary should be corrected separately when that upstream authority file is next revised.
+The repository's 2024 qualification ledger currently summarizes Q20 as three simultaneous congruences while also retaining answer 43. That summary is mathematically inconsistent. Issue #47 source custody supersedes that row for teaching use; the global qualification-ledger summary remains an upstream correction debt.
 
 ## Coverage conclusion
 
@@ -71,11 +88,11 @@ The five-year evidence supports a connected Number Theory package with the follo
 1. remainder language and congruence operations;
 2. cycles and power residues;
 3. same-remainder LCM vs GCD contrast;
-4. successive quotient/remainder reconstruction, with generic simultaneous congruences supplied as author-created foundation pending a clean historical anchor;
+4. simultaneous congruence reconstruction as author-created foundation pending a clean historical anchor;
 5. place-value and divisibility tests;
 6. integer-valued rational/divisor reduction;
 7. factor-pair parity and coprime restrictions;
 8. prefix-residue and multiplicative-order ceiling bridges;
-9. source-integrity checking.
+9. source-integrity checking, including 2023 Q12 and 2024 Q20.
 
 Do not describe the frequency or item counts as official AMTI weightage.
