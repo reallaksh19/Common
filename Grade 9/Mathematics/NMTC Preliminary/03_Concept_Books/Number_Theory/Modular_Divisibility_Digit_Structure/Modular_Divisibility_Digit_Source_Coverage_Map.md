@@ -19,9 +19,15 @@ Only the solution-qualified Bhaskara Preliminary corpus may define PYQ grounding
 
 These two must be taught as a contrast pair.
 
+### Successive quotient/remainder reconstruction
+
+- `NMTC-BH-P-2024-Q20` — **successive division**, not simultaneous congruences. The number is divided by 5, then the resulting quotient by 6, then the next quotient by 7, with remainders 3,2,2 respectively. Reconstructing backward gives `N = 5(6(7q+2)+2)+3`, hence `N ≡ 43 (mod 120)`.
+
+**Custody correction:** an earlier qualification/source-map summary flattened Q20 into `N≡3 (mod5), N≡2 (mod6), N≡2 (mod7)`. That interpretation is mathematically incompatible with answer 43 and is superseded. Q20 must not be used as a clean CRT/simultaneous-congruence anchor.
+
 ### Simultaneous congruences
 
-- `NMTC-BH-P-2024-Q20` — reconstruct a number satisfying several remainder conditions.
+No exact clean historical anchor is currently frozen for the generic CRT-style interface. This mechanism remains required by Issue #47 and is taught with `AUTHOR_CREATED_FOUNDATION` / `AUTHOR_CREATED_TRANSFER` until a qualified exact anchor is identified.
 
 ### Digit / place-value structure
 
@@ -54,6 +60,10 @@ These two must be taught as a contrast pair.
 
 - `NMTC-BH-P-2023-Q12` has a corrupted searchable statement. The recovered solution indicates a modulo-4 parity/residue mechanism, but the exact question is **not** a canonical student anchor until the original wording is recovered.
 
+## Upstream ledger note
+
+The repository's 2024 qualification ledger currently summarizes Q20 as three simultaneous congruences while also retaining answer 43. The exact source wording establishes successive quotient/remainder division instead. Issue #47 treats the topic coverage correction in this file as authoritative for teaching custody; the global qualification-ledger summary should be corrected separately when that upstream authority file is next revised.
+
 ## Coverage conclusion
 
 The five-year evidence supports a connected Number Theory package with the following homes:
@@ -61,7 +71,7 @@ The five-year evidence supports a connected Number Theory package with the follo
 1. remainder language and congruence operations;
 2. cycles and power residues;
 3. same-remainder LCM vs GCD contrast;
-4. simultaneous congruence reconstruction;
+4. successive quotient/remainder reconstruction, with generic simultaneous congruences supplied as author-created foundation pending a clean historical anchor;
 5. place-value and divisibility tests;
 6. integer-valued rational/divisor reduction;
 7. factor-pair parity and coprime restrictions;
