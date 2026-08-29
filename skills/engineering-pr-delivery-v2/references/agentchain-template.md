@@ -70,7 +70,9 @@ Repo:
 Task:
 Chain:
 Endpoint:
-PR / status / branch / PR head / main:
+PR:
+PR status:
+Branch / PR head / main:
 Merge authority:
 Engineering / custody / qualification / write state:
 Protocol basis / status:
