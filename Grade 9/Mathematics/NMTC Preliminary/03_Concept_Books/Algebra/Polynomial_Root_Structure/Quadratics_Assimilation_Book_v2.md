@@ -571,7 +571,7 @@ Diagnostic: 1. `(x-3)(x-4)`; 2. `2,3`; 3. `7,10`; 4. repeated real root; 5. `(x-
 
 Section 2: 1. `k=+-8`; 2. `m<9`; 3. `t>4`.
 
-Section 3: 1. `42`; 2. `-5/2`; 3. `17/4`; 4. `180`.
+Section 3: 1. `42`; 2. `-5/2`; 3. `33/4`; 4. `180`.
 
 Section 4 for `x^2-6x+5`: shifted by 2 -> `x^2-10x+21=0`; reciprocal -> `5x^2-6x+1=0`; squared -> `x^2-26x+25=0`.
 
