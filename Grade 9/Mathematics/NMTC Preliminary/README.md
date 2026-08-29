@@ -59,7 +59,7 @@ A year/question number must never be attributed to author-created material.
 
 # Internal-complete Preliminary packages
 
-All **nine** packages below are:
+All **ten** packages below are:
 
 `INTERNAL_PACKAGE_COMPLETE_NOT_PUBLICATION_READY`
 
@@ -117,25 +117,61 @@ Median/altitude/angle-bisector/general-cevian classification, Stewart from Pytha
 
 `03_Concept_Books/Algebra/Mathematical_Induction/`
 
-This is a **syllabus-first** package because the qualified five-year corpus does not currently justify an induction recurrence claim.
+Syllabus-first coverage: proposition/domain statement, start index/base case, induction-hypothesis discipline, bridge construction, identities, divisibility, inequalities, recurrence verification, multiple bases/step size, strong induction, broken-proof diagnosis, method selection and source integrity.
+
+## P2-2 — Greatest / Least Integer Functions
+
+`03_Concept_Books/Algebra/Greatest_Least_Integer_Functions/`
+
+This is also **syllabus-first**: direct recurrence is not established in the qualified five-year corpus.
 
 Connected coverage:
 
-- precise proposition/domain statement;
-- correct starting index and base case;
-- induction-hypothesis discipline;
-- `P(k)->P(k+1)` bridge construction;
-- sum/product identities;
-- divisibility induction;
-- inequalities with auxiliary-domain checks;
-- recurrence formula verification;
-- step-size >1 / multiple base cases;
-- strong induction bridge;
-- broken-proof diagnosis;
-- direct-proof-vs-induction method selection;
-- historical-attribution/source integrity.
+- floor/ceiling definitions from order;
+- half-open interval translations;
+- negative inputs and truncation falsifier;
+- integer shifts and reflection `ceil(x)=-floor(-x)`;
+- fractional part including negative inputs;
+- floor/ceiling equations and inequalities;
+- `x=n+r` / `n=floor(x)` case method;
+- nested/idempotent forms;
+- floor-sum identities and shifted-floor identities;
+- integer counting in real intervals;
+- square-root, quotient/grouping and cross-domain bridges;
+- source-QC separation of primary mechanism from incidental final floor operation.
 
-Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer items, 20 recognition items, 12 first-line items, 12-question mastery test, second math/logic audit and QA `PASS_INTERNAL`.
+`NMTC-BH-P-2024-Q27` is bridge evidence only; it is primarily an infinite-GP problem.
+
+Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer items, 20 recognition items, 12 first-line items, 12-question mastery test, second math/editorial audit and QA `PASS_INTERNAL`.
+
+# Capstone mixed assessment system
+
+`08_Mixed_Preliminary_Tests/`
+
+Status:
+
+`INTERNAL_MOCK_SYSTEM_COMPLETE_NOT_PUBLICATION_READY`
+
+The v1 capstone contains:
+
+- `Mock_System_Blueprint_v1.md`;
+- three full 30-question student mocks A/B/C;
+- three separate teacher diagnostic keys;
+- 90 author-created transfer questions in total;
+- package/first-move/error-code mapping;
+- `Mock_Diagnostic_Record_Template_v1.md`;
+- second-pass authority at `09_QA/Mixed_Preliminary_Mock_System_QA.md`.
+
+The author-created T24 training profile uses the qualified 2024 paper as format evidence: 120 minutes, 30 questions/marks and `+1/-0.5`; the 15-option + 15-numerical split follows the qualified 2024 answer-key shape. This is not claimed as a universal NMTC historical format.
+
+The 90-item second pass caught and corrected two pre-promotion defects:
+
+1. insufficient geometry allocation in the initial mock drafts;
+2. an omitted `greater than 5` boundary in Mock B Q13 that otherwise made 5 itself valid.
+
+No stale answer remains after correction.
+
+No psychometric pass mark, percentile or qualification probability is frozen before classroom calibration.
 
 ## Existing exemplar relationship
 
@@ -143,5 +179,7 @@ Internal assets: 14 First-Step cards, 10 mechanism ladders, 18 reviewed transfer
 
 ## Next build order
 
-1. **Greatest / Least Integer functions**;
-2. mixed Preliminary synthesis and mocks.
+1. **cross-package publication/calibration pass** — classroom timing/readability, student/teacher separation, machine metadata, notation and rendered QA;
+2. recover exact historical figures still gated for canonical PYQ publication;
+3. recover/qualify 2022 and re-run recurrence before any six-year weighting claim;
+4. only then freeze publication-ready mock thresholds/rotation if supported by calibration evidence.
