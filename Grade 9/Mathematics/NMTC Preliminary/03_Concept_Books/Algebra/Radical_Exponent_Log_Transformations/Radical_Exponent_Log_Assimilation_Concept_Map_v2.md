@@ -710,15 +710,10 @@ Consequences:
 Clean scored mechanism bridge/anchors:
 
 - `NMTC-BH-P-2024-Q28` — exact log-exponent simplification;
-- `NMTC-BH-P-2024-Q12` and `NMTC-BH-P-2025-Q12` — log quantities treated algebraically after meaning/domain are secure;
-- `NMTC-BH-P-2025-Q27` — log relation converted back to algebra.
+- `NMTC-BH-P-2024-Q12` and `NMTC-BH-P-2025-Q12` — log quantities used as transformed algebra variables;
+- `NMTC-BH-P-2025-Q27` — log-to-algebra system conversion.
 
-Author-created foundation is mandatory for:
-
-- definition-first log meaning;
-- derivation of log laws;
-- valid-base and positive-argument conditions;
-- false sum-law contrasts.
+Author-created foundation is mandatory for log definition/laws because PYQs mostly assume them.
 
 ---
 
@@ -726,36 +721,34 @@ Author-created foundation is mandatory for:
 
 ## PRIOR_KNOWLEDGE
 
-- solve a quadratic once a substitution is supplied;
-- use change of base procedurally;
-- check positivity when explicitly reminded.
+- solve a quadratic after substitution is supplied;
+- basic log laws;
+- check a final numerical answer if prompted.
 
 ## LIKELY_HALF_KNOWLEDGE
 
-- strips away logs and forgets the original domain;
-- chooses `t=log_b x` even when a larger repeated object would lower the degree;
-- accepts algebraic roots that make an original log undefined;
-- trusts a historical answer key over a contradiction found by valid algebra.
+- mechanically sets `t=log_b x` even when a larger object repeats;
+- drops `t>=0` after a square-root substitution;
+- forgets positivity once the logs have been converted away;
+- treats a key as an authority over recomputed mathematics.
 
 ## MISSING_BRIDGES
 
-`F-B1` The substitution must match the repeated structural object.
+`F-B1` Choose the entire repeated object as the algebraic variable.
 
-`F-B2` The substitution carries its own range restrictions; e.g. `u=sqrt(log_b x)` implies `u>=0`.
+`F-B2` Every substitution carries a range/domain into the transformed algebra.
 
-`F-B3` Log equations often encode simple power relations through injectivity.
+`F-B3` Logarithmic equalities can encode simple power relations; solve the smaller algebra, then restore positivity.
 
-`F-B4` Removing logarithms does not remove their domain restrictions.
-
-`F-B5` Mathematical validation and source custody are separate from key matching.
+`F-B4` Source/key disagreement is a separate QC state, not a license to edit the mathematics.
 
 ## INVARIANTS / STRUCTURES
 
-- log/exponential injectivity for a valid fixed base;
-- positivity of log arguments;
-- substitution range;
-- original-domain authority;
-- source-disposition preservation.
+- repeated-object substitution;
+- injectivity of valid logs/exponentials;
+- argument/base domain persistence;
+- map-back filtering;
+- source custody.
 
 ## REPRESENTATIONS
 
@@ -1069,4 +1062,20 @@ No stream is integration-ready if it contains formulas and exercises but lacks m
 | reversibility/domain as cross-stream bridge | Sections 1, 7, 11–14 | PASS |
 | concept map before new teaching prose | this file is the first Issue #45 Wave-0 authoring artifact | PASS |
 
-`NEXT_ALLOWED_STATE: WAVE0_GROUNDING_RESEARCH_AND_EVIDENCE_INVENTORY`
+---
+
+# 19. Successor execution state
+
+Wave 1 has now implemented the Section 17 contract in six independent interface files under `Wave1_Interfaces/`.
+
+Current status:
+
+- W1-A through W1-F interfaces: PASS;
+- 15/15 interface fields: PASS across 6/6;
+- candidate mastery design pool: 28;
+- independent candidate mathematics recheck: 28/28 PASS;
+- source custody unchanged: 16 clean, 2 source-sensitive, 1 conflict, no topic-specific bonus evidence identified;
+- First-Step remains intentionally untouched as a rebuild product until after Wave 2 teaching;
+- next allowed state: `WAVE2_INTEGRATED_ASSIMILATION_BOOK`.
+
+See `Wave1_Interfaces/Wave1_Integration_Readiness_Matrix.md` for the detailed audit.
