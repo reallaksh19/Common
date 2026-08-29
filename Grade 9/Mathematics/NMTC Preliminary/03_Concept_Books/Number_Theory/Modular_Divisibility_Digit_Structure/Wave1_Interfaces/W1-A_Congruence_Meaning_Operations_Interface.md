@@ -23,7 +23,14 @@
 - gcd/coprimality;
 - elementary algebraic rearrangement.
 
-## 3. RECOGNITION_CUES
+## 3. LIKELY_HALF_KNOWLEDGE
+
+- can compute a remainder but treats congruence notation as a new equality symbol;
+- reduces large numbers modulo `m` correctly but may divide/cancel residues as in ordinary equations;
+- remembers a rule such as “same remainder means subtract” without knowing it comes from divisibility of a difference;
+- expects a linear congruence to have one residue-class solution even when the coefficient is not invertible.
+
+## 4. RECOGNITION_CUES
 
 - “remainder when divided by …”;
 - “same remainder”;
@@ -31,27 +38,27 @@
 - large numbers where only a remainder is requested;
 - a proposed simplification that divides both sides of a congruence.
 
-## 4. FIRST_MOVES
+## 5. FIRST_MOVES
 
 1. Translate `N leaves remainder r on division by m` to `N = mq+r`, hence `N ≡ r (mod m)`.
 2. Translate `a ≡ b (mod m)` back to `m | (a-b)` whenever legality is unclear.
 3. Reduce operands before adding/multiplying.
 4. Before cancellation ask: `gcd(c,m)=1?` If not, do not cancel modulo the same modulus by reflex.
 
-## 5. INVARIANTS
+## 6. INVARIANTS
 
 - integers in one congruence class differ by a multiple of the modulus;
 - sums/differences/products of congruent representatives stay congruent;
 - a factor has a multiplicative inverse modulo `m` iff it is coprime to `m`;
-- non-invertible cancellation can enlarge or otherwise change the residue class description.
+- non-invertible cancellation can enlarge or otherwise change the residue-class description.
 
-## 6. REPRESENTATION_SWITCHES
+## 7. REPRESENTATION_SWITCHES
 
 - words ↔ `N=mq+r` ↔ `N≡r (modm)` ↔ `m|(N-r)`;
 - `a≡b (modm)` ↔ `a-b=km`;
 - modular equation ↔ ordinary divisibility equation when cancellation is questionable.
 
-## 7. LEGALITY / CONDITIONS
+## 8. LEGALITY / ADMISSIBILITY CONDITIONS
 
 Safe without extra conditions:
 - add/subtract congruences with the same modulus;
@@ -62,7 +69,7 @@ Condition-sensitive:
 - cancelling `c` from `ca≡cb (modm)` modulo the same `m` requires `gcd(c,m)=1`;
 - if `d=gcd(c,m)>1`, one may often reduce to `a≡b (mod m/d)` after dividing the divisibility relation by `d`, not retain modulus `m`.
 
-## 8. DECISION_BOUNDARIES
+## 9. DECISION_BOUNDARIES
 
 **DB-A1 congruence vs equality**  
 `17≡2 (mod5)` is true; `17=2` is false.
@@ -75,7 +82,7 @@ From `2x≡2 (mod6)`, `x≡1 (mod6)` is false; correct reduction is `x≡1 (mod3
 `5x≡10 (mod12)` -> multiply by inverse of 5, valid.  
 `4x≡8 (mod12)` -> 4 is not invertible modulo 12; solutions must be handled through divisibility/reduced modulus.
 
-## 9. MISCONCEPTION_TRAPS
+## 10. MISCONCEPTION_TRAPS
 
 - treating `≡` as weak equality rather than an equivalence relation on residue classes;
 - reducing the exponent modulo the modulus because the base was reduced modulo the modulus;
@@ -83,24 +90,25 @@ From `2x≡2 (mod6)`, `x≡1 (mod6)` is false; correct reduction is `x≡1 (mod3
 - forgetting that moduli should be positive in the standard school convention;
 - assuming a modular equation has one residue-class solution when a non-unit coefficient can create several.
 
-## 10. CONTRAST_PAIRS
+## 11. CONTRAST_PAIRS
 
 1. `23≡3 (mod5)` vs `23=3`.
 2. `7x≡7 (mod10)` permits cancellation by 7; `2x≡2 (mod6)` does not permit cancellation modulo 6.
 3. `x≡2 (mod5)` and `x≡7 (mod5)` are the same class; `x=2` and `x=7` are different integers.
 
-## 11. TRANSFER_MECHANISMS
+## 12. TRANSFER_MECHANISMS
 
 - diagnose a worked solution whose only error is illegal cancellation;
 - solve a congruence with non-coprime coefficient by reverting to divisibility;
 - translate a verbal remainder condition into an algebraic family and back;
 - compare two different congruence descriptions and determine whether they define the same class.
 
-## 12. SOURCE_IDS_AND_DISPOSITIONS
+## 13. SOURCE_IDS_AND_DISPOSITIONS
 
-Clean scored mechanism anchors:
-- `NMTC-BH-P-2025-Q13` — direct residue squaring;
-- `NMTC-BH-P-2024-Q20` — simultaneous congruence use builds on this stream.
+Clean scored mechanism anchor:
+- `NMTC-BH-P-2025-Q13` — direct residue squaring modulo 11.
+
+Nearby clean anchors from other streams use congruence meaning, especially `NMTC-BH-P-2024-Q21` and `NMTC-BH-P-2025-Q01`, but their primary mechanisms remain same-remainder structure.
 
 Author-created foundation is mandatory for:
 - explicit congruence meaning;
@@ -108,9 +116,9 @@ Author-created foundation is mandatory for:
 - modular inverse/coprimality boundary;
 - multiple-solution behavior of non-unit coefficients.
 
-No source-sensitive item is promoted here.
+`NMTC-BH-P-2024-Q20` is **not** promoted here; Issue #47 now classifies it as source-conflict/QC evidence.
 
-## 13. CANDIDATE_MASTERY_ITEMS
+## 14. CANDIDATE_MASTERY_ITEMS
 
 `A-M1` Translate: “N leaves remainder 7 when divided by 12.” Write three equivalent forms.
 
@@ -124,12 +132,12 @@ No source-sensitive item is promoted here.
 
 Independent check:
 - A-M1: `N=12q+7`, `N≡7 (mod12)`, `12|(N-7)`;
-- A-M2 true since 30 divisible by 10;
+- A-M2 true since 30 is divisible by 10;
 - A-M3 `2·4+1=9≡0`;
 - A-M4 `x≡1,4 (mod6)`; equivalently `x≡1 (mod3)`;
 - A-M5 `x≡2 (mod12)`.
 
-## 14. DIAGNOSTIC_TAGS
+## 15. DIAGNOSTIC_TAGS
 
 - `CONGRUENCE_AS_EQUALITY`
 - `DIVISION_ALGORITHM_BRIDGE_MISSING`
@@ -137,7 +145,7 @@ Independent check:
 - `NONUNIT_COEFFICIENT_UNSEEN`
 - `REPRESENTATIVE_CLASS_CONFUSION`
 
-## 15. H3_TO_H0_FADE_PLAN
+## 16. H3_TO_H0_FADE_PLAN
 
 - `A-F1 H3`: give `a≡b (modm) <=> m|(a-b)` and ask learner to verify one congruence.
 - `A-F2 H2`: state “return to divisibility before cancelling” for a non-unit coefficient equation.
