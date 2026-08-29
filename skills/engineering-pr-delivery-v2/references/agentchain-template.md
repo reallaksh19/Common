@@ -8,6 +8,7 @@ CHAIN_ID: <CHAIN_ID>
 MISSION: <one-line mission>
 ACTIVE_ENDPOINT: EP-0001
 ACTIVE_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
+MATERIAL_HISTORY_ROOT_BASE: <40-hex commit before first material batch>
 MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/EP-0001.md
 PR: <number-or-PENDING>
 BRANCH: <branch>
@@ -32,7 +33,7 @@ ROADMAP_REVIEW_STATUS: COMPLETE | NOT_APPLICABLE | BLOCKED
 HANDOVER_READY: TRUE
 ```
 
-`MATERIAL_LEG_PREWORK_ENDPOINT_FILE` persists for the entire current material leg even after `ACTIVE_ENDPOINT` advances. It is the Git-history anchor proving that the work-ahead endpoint and Q1–Q5 existed before material mutation.
+`MATERIAL_HISTORY_ROOT_BASE` anchors the append-only material-batch audit for this chain. `MATERIAL_LEG_PREWORK_ENDPOINT_FILE` points to the work-ahead endpoint for the current material batch; after that batch completes, preserve its proof in a `material-legs/<MATERIAL_LEG_ID>.md` receipt before starting the next batch.
 
 ## Non-terminal endpoint
 
@@ -186,9 +187,27 @@ Fail if:
 
 The snapshot is <300 words; detailed Q1–Q5 remain outside that limit.
 
-`PREWORK_QUALIFICATION_READY: TRUE` is valid only when this endpoint and its expert Q1–Q5 were committed before the first material change of the leg. `validate_prework_history.py` proves that ordering from Git history; same-commit endpoint+material work fails.
+`PREWORK_QUALIFICATION_READY: TRUE` is valid only when this endpoint and its expert Q1–Q5 were committed before the first material change of the batch. `validate_prework_history.py` proves the current batch ordering; append-only material-leg receipts preserve the proof for all completed batches.
 
 At every substantive user-facing handover/status boundary, reproduce the concise active snapshot including Q1–Q5. Do not merely state that the endpoint contains questions.
+
+## Material-leg completion receipt
+
+After each completed material batch, before starting another:
+
+```text
+# agents/chains/<CHAIN_ID>/material-legs/LEG-001.md
+CHAIN_ID:
+MATERIAL_LEG_ID: LEG-001
+PREVIOUS_MATERIAL_LEG: NONE | LEG-000
+MATERIAL_LEG_BASE: <commit before this batch's first material commit; prework endpoint already exists or is introduced after this base>
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/<CHAIN_ID>/endpoints/<EP>.md
+MATERIAL_LEG_HEAD: <last material commit in this batch>
+MATERIAL_LEG_HISTORY_STATUS: RECORDED
+MATERIAL_SCOPE: <bounded material change>
+```
+
+Inter-leg gaps and trailing changes after the last receipt must be relay/qualification-only. See `material-leg-history.md`.
 
 ## Takeover admission receipt
 
