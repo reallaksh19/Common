@@ -9,10 +9,11 @@ VALID_PROFILES = {
     "FEA", "WRC_LOCAL_STRESS", "LOAD_CALC", "FIXED_FORMAT_WRITER",
     "PARSER_TOPOLOGY", "SOURCE_GOVERNANCE", "GENERAL_ENGINEERING",
 }
+WORK_ITEM_SOURCES = {"GITHUB_ISSUE", "REPOSITORY_TASK", "OWNER_DIRECT"}
 
 
 def field(text: str, name: str):
-    m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n]+?)\s*$", text)
+    m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n]+?)\s*$", text or "")
     return m.group(1).strip().strip('`') if m else None
 
 
@@ -59,7 +60,6 @@ def main():
         "COMMON_PROTOCOL": "engineering-pr-delivery-v2",
         "COMMON_PROTOCOL_STATUS": "CURRENT",
         "HANDOVER_PROTOCOL_VERSION": "2",
-        "HANDOVER_READY": "TRUE",
         "REPORTING_CONTRACT": "ACTIVE_HANDOVER_FIRST",
         "HANDOVER_RESPONSE_REQUIRED": "ALWAYS",
         "RESPONSE_DELTA_MODE": "DELTA_ONLY",
@@ -69,12 +69,15 @@ def main():
         got = field(at, name)
         if got != wanted:
             errors.append(f"ACTIVE {name} expected {wanted}, found {got}")
+
     basis = field(at, "COMMON_PROTOCOL_BASIS")
     if not basis or not re.fullmatch(r"[0-9a-fA-F]{40}", basis):
         errors.append("ACTIVE COMMON_PROTOCOL_BASIS must be the 40-hex Common commit actually read")
     history_root = field(at, "MATERIAL_HISTORY_ROOT_BASE")
     if not history_root or not re.fullmatch(r"[0-9a-fA-F]{40}", history_root):
         errors.append("ACTIVE MATERIAL_HISTORY_ROOT_BASE must be a 40-hex commit before the chain's first material batch")
+    if field(at, "WORK_ITEM_SOURCE") not in WORK_ITEM_SOURCES:
+        errors.append("ACTIVE WORK_ITEM_SOURCE must be GITHUB_ISSUE, REPOSITORY_TASK or OWNER_DIRECT")
     if not field(at, "WORK_ITEM_KEY"):
         errors.append("ACTIVE WORK_ITEM_KEY required for new material leg")
     if field(at, "WORK_ITEM_MODE") not in {"EXCLUSIVE", "PARTITIONED"}:
@@ -103,20 +106,29 @@ def main():
     elif "/agents/agentchain/" in ep.as_posix() or ep.as_posix().endswith("/agents/agentchain.md"):
         errors.append("legacy agentchain endpoint cannot govern a new material leg")
 
+    modern = field(at, "OWNER_PROGRESSION_COMMAND") is not None
+    if modern:
+        # The command validator owns Q refresh/display semantics. Handover readiness may be FALSE,
+        # especially for `proceed next, no Qs` with stale qualification coverage.
+        for name in (
+            "QUALIFICATION_SCOPE_ID", "QUESTION_SET_ID", "QUESTION_SET_STATUS",
+            "QUESTION_PACK_ACTION", "QUESTION_DISPLAY", "CHAIN_HANDOVER_READY",
+            "TAKEOVER_QUALIFICATION_READY",
+        ):
+            if field(at, name) is None:
+                errors.append(f"ACTIVE missing modern progression field {name}")
+
     if ep and ep.is_file():
         et = ep.read_text(encoding="utf-8")
         checks = {
             "COMMON_PROTOCOL": "engineering-pr-delivery-v2",
             "COMMON_PROTOCOL_STATUS": "CURRENT",
-            "PREWORK_QUALIFICATION_READY": "TRUE",
             "QUALIFICATION_PROFILE_VERSION": "2",
             "HANDOVER_PROTOCOL_VERSION": "2",
-            "HANDOVER_READY": "TRUE",
             "REPORTING_CONTRACT": "ACTIVE_HANDOVER_FIRST",
             "HANDOVER_RESPONSE_REQUIRED": "ALWAYS",
             "RESPONSE_DELTA_MODE": "DELTA_ONLY",
             "OWNER_QUALIFICATION_BASELINE_DISCOVERY": "COMPLETE",
-            "QUESTION_SET_STATUS": "CURRENT",
             "QUALIFICATION_PROTOCOL_VERSION": "3",
             "QUESTION_SET_ADMISSION_REQUIREMENT": "REQUIRED_ON_TAKEOVER",
         }
@@ -126,12 +138,9 @@ def main():
                 errors.append(f"endpoint {name} expected {wanted}, found {got}")
         if field(et, "COMMON_PROTOCOL_BASIS") != basis:
             errors.append(f"endpoint COMMON_PROTOCOL_BASIS {field(et, 'COMMON_PROTOCOL_BASIS')} != ACTIVE basis {basis}")
-        if field(et, "WORK_ITEM_KEY") != field(at, "WORK_ITEM_KEY"):
-            errors.append("endpoint WORK_ITEM_KEY must equal ACTIVE WORK_ITEM_KEY")
-        if field(et, "WORK_ITEM_MODE") != field(at, "WORK_ITEM_MODE"):
-            errors.append("endpoint WORK_ITEM_MODE must equal ACTIVE WORK_ITEM_MODE")
-        if field(et, "AGENT_INSTANCE_ID") != field(at, "AGENT_INSTANCE_ID"):
-            errors.append("endpoint AGENT_INSTANCE_ID must equal ACTIVE AGENT_INSTANCE_ID")
+        for name in ("WORK_ITEM_SOURCE", "WORK_ITEM_KEY", "WORK_ITEM_MODE", "AGENT_INSTANCE_ID"):
+            if field(et, name) != field(at, name):
+                errors.append(f"endpoint {name} must equal ACTIVE {name}")
         profile = field(et, "QUALIFICATION_PROFILE")
         if profile not in VALID_PROFILES:
             errors.append(f"endpoint QUALIFICATION_PROFILE invalid or missing: {profile}")
@@ -141,30 +150,41 @@ def main():
             errors.append(f"qualification-pack profile {pack_profile} != endpoint profile {profile}")
         qheads = re.findall(r"(?mi)^####\s+Q([1-5])\s+—", et)
         if qheads != ["1", "2", "3", "4", "5"]:
-            errors.append(f"endpoint must contain exactly ordered detailed Q1-Q5, found {qheads}")
+            errors.append(f"endpoint must retain exactly ordered durable Q1-Q5, found {qheads}")
         if not re.search(r"(?mi)^###\s+Active handover snapshot\s*$", et):
             errors.append("endpoint missing Active handover snapshot")
         visible = re.search(r"(?mis)^###\s+Active qualification questions\s*$\n(.*?)(?=^###\s+|\Z)", et)
         vq = re.findall(r"(?mi)^Q([1-5])\s*:", visible.group(1)) if visible else []
         if vq != ["1", "2", "3", "4", "5"]:
-            errors.append(f"endpoint Active qualification questions must contain Q1-Q5, found {vq}")
+            errors.append(f"endpoint durable Active qualification questions must contain Q1-Q5, found {vq}")
+        if modern:
+            for name in (
+                "OWNER_PROGRESSION_COMMAND", "QUALIFICATION_SCOPE_ID", "QUESTION_SET_ID",
+                "QUESTION_SET_STATUS", "QUESTION_PACK_ACTION", "QUESTION_DISPLAY",
+                "CHAIN_HANDOVER_READY", "TAKEOVER_QUALIFICATION_READY",
+            ):
+                if field(et, name) != field(at, name):
+                    errors.append(f"endpoint {name} must equal ACTIVE {name}")
 
     if errors:
         for e in errors:
             print("FAIL:", e)
         return 1
 
-    rc = 0
-    for script in (
+    scripts = [
         "validate_work_item_exclusivity.py",
         "validate_handover_readiness.py",
         "validate_owner_qualification_baseline.py",
         "validate_engineering_question_payload.py",
-    ):
+        "validate_issue_control_plane.py",
+        "validate_progression_command.py",
+    ]
+    rc = 0
+    for script in scripts:
         rc |= run(script, root)
     if rc:
         return 1
-    print("PASS: material leg uses current Common protocol, canonical v3 custody, handover-v2 reporting, exact work-item identity, Owner-baseline discovery and profile-v2 Q1-Q5")
+    print("PASS: material leg uses current Common protocol, canonical v3 custody, exact work-item identity, applicable Issue control plane and one of the three Owner progression states")
     return 0
 
 
