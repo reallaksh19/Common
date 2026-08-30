@@ -62,6 +62,7 @@ LEG_ID:
 ENDPOINT_ID:
 PREVIOUS_ENDPOINT:
 CUSTODY_EPOCH:
+ENDPOINT_REASON:
 CHAIN_STATE_VERSION: 3
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS:
@@ -90,6 +91,9 @@ TASK / ISSUE:
 PR:
 BRANCH:
 CHECKPOINT_HEAD:
+QUALIFICATION_BASIS_HEAD:
+QUESTION_SET_ID:
+QUESTION_SET_STATUS: CURRENT | STALE
 MAIN_HEAD_OBSERVED:
 MERGE_BASE:
 STATE:
@@ -151,6 +155,9 @@ Q5: <full safe-patch/rollback/NO-PATCH prompt>
 ### Changed during this leg
 ### Validation summary
 ### Open risks / questions
+
+### Next-agent qualification
+Q1-Q5 below are takeover qualification only, never the task list.
 
 ### Takeover qualification pack
 PURPOSE: QUALIFICATION_ONLY
