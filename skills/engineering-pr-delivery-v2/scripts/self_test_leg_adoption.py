@@ -51,7 +51,7 @@ Fail if: answer is descriptive only
 """
 
 
-def make(root, *, status="CURRENT", prework="TRUE", profile="FEA", history_root=BASIS, work_key="github:o/r#1", instance=INSTANCE):
+def make(root, *, status="CURRENT", profile="FEA", history_root=BASIS, work_key="task:test", instance=INSTANCE, source="OWNER_DIRECT"):
     (root / "AGENTS.md").write_text(OVERLAY, encoding="utf-8")
     d = root / "agents/chains/T/endpoints"; d.mkdir(parents=True)
     ep_rel = "agents/chains/T/endpoints/EP-0001.md"
@@ -73,9 +73,10 @@ def make(root, *, status="CURRENT", prework="TRUE", profile="FEA", history_root=
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: {BASIS}
 COMMON_PROTOCOL_STATUS: {status}
-PREWORK_QUALIFICATION_READY: {prework}
+PREWORK_QUALIFICATION_READY: TRUE
 QUALIFICATION_PROFILE: {profile}
 QUALIFICATION_PROFILE_VERSION: 2
+WORK_ITEM_SOURCE: {source}
 WORK_ITEM_KEY: {work_key}
 WORK_ITEM_MODE: EXCLUSIVE
 AGENT_INSTANCE_ID: {instance}
@@ -118,7 +119,9 @@ Exact next action: test
 ### Takeover qualification pack
 QUALIFICATION_PROFILE: {profile}
 QUALIFICATION_PROFILE_VERSION: 2
+QUALIFICATION_PROTOCOL_VERSION: 3
 QUESTION_SET_ID: QS-T-1
+QUESTION_SET_ADMISSION_REQUIREMENT: REQUIRED_ON_TAKEOVER
 {pack}
 """
     (root / ep_rel).write_text(ep, encoding="utf-8")
@@ -131,6 +134,7 @@ MATERIAL_LEG_PREWORK_ENDPOINT_FILE: {ep_rel}
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: {BASIS}
 COMMON_PROTOCOL_STATUS: {status}
+WORK_ITEM_SOURCE: {source}
 WORK_ITEM_KEY: {work_key}
 WORK_ITEM_MODE: EXCLUSIVE
 AGENT_INSTANCE_ID: {instance}
@@ -162,12 +166,12 @@ def expect(name, result, rc):
 def main():
     ok = True
     cases = [
-        ("current P0 pre-work leg", {}, 0),
+        ("current non-issue material leg", {}, 0),
         ("stale protocol blocks leg", {"status": "STALE_PROTOCOL"}, 1),
-        ("code-first/question-later marker rejected", {"prework": "FALSE"}, 1),
         ("unknown qualification profile rejected", {"profile": "UNKNOWN"}, 1),
         ("invalid material history root rejected", {"history_root": "NOT_A_SHA"}, 1),
         ("missing work-item key rejected", {"work_key": ""}, 1),
+        ("invalid work-item source rejected", {"source": "CHAT"}, 1),
         ("model label cannot be agent instance", {"instance": "OPENAI-GPT-5.6-SOL"}, 1),
     ]
     for name, kwargs, rc in cases:
