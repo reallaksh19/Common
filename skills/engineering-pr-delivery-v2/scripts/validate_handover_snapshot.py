@@ -12,13 +12,25 @@ V3_ACTIVE_FIELDS = [
     "ACTIVE_CUSTODIAN", "CUSTODY_EPOCH", "COORDINATION_STATE",
     "DEPENDENCIES", "ROADMAPS", "ROADMAP_REVIEW_STATUS", "HANDOVER_READY",
 ]
-STATE_CARD_LABELS = [
+P0_STATE_CARD_LABELS = [
     "Repo:", "Task:", "Chain:", "Endpoint:", "PR:", "PR status:",
     "Branch / PR head / main:", "Merge authority:",
     "Engineering / custody / qualification / write state:", "AUTO:",
     "Protocol basis / status:", "Roadmap:", "Inputs:", "Benchmarks:",
     "Governing docs / authoritative sources:", "Current blocker:",
     "Leg diagnosis:", "Exact next action:",
+]
+MODERN_STATE_CARD_LABELS = [
+    "Repo:", "Task:", "Chain:", "Endpoint:", "PR:", "PR status:",
+    "Branch / PR head / main:", "Mergeability:", "Reviews:",
+    "Unresolved review threads:", "Required checks:", "Merge authority:",
+    "Merge authorized:", "Engineering / custody / qualification / write state:",
+    "AUTO:", "Protocol basis / status:", "Work item / source:", "Issue basis:",
+    "Owner roadmap(s):", "Other governing roadmaps:", "Roadmap alignment / drift:",
+    "Roadmap mutation authority:", "Original task status:", "Inputs:",
+    "Benchmarks / oracles:", "Qualification:", "Scope:", "Question set:",
+    "Question status:", "Question action:", "Takeover qualification ready:",
+    "Chain handover ready:", "Current blocker:", "Leg diagnosis:", "Exact next action:",
 ]
 LEGACY_LABELS = [
     "Repo:", "Task:", "Chain:", "Endpoint:", "PR:", "PR status:",
@@ -34,12 +46,12 @@ VALID_MERGE = {"OWNER_ONLY", "AUTHORIZED"}
 
 
 def field(text, name):
-    m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n]+?)\s*$", text)
+    m = re.search(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n]+?)\s*$", text or "")
     return m.group(1).strip() if m else None
 
 
 def section(text, title):
-    m = re.search(rf"(?mis)^###\s+{re.escape(title)}\s*$\n(.*?)(?=^###\s+|\Z)", text)
+    m = re.search(rf"(?mis)^###\s+{re.escape(title)}\s*$\n(.*?)(?=^###\s+|\Z)", text or "")
     return m.group(1).strip() if m else None
 
 
@@ -79,6 +91,19 @@ def roadmap_errors(root, chain, active):
     return errors
 
 
+def validate_questions(chain, text, errors):
+    questions = section(text, "Active qualification questions")
+    if questions is None:
+        errors.append(f"{chain}: protocol-v2 endpoint missing durable Active qualification questions")
+        return
+    matches = re.findall(r"(?mi)^Q([1-5])\s*:\s*(.+)$", questions)
+    if [n for n, _ in matches] != ["1", "2", "3", "4", "5"]:
+        errors.append(f"{chain}: durable Active qualification questions must contain exactly ordered Q1-Q5")
+    for n, prompt in matches:
+        if len(prompt.split()) < 8:
+            errors.append(f"{chain}: Active qualification Q{n} is only a topic label/too compressed")
+
+
 def validate_v2_snapshot(chain, text, errors):
     snap = section(text, "Active handover snapshot")
     if snap is None:
@@ -87,21 +112,14 @@ def validate_v2_snapshot(chain, text, errors):
     words = len(re.findall(r"\S+", snap))
     if words >= 220:
         errors.append(f"{chain}: Active handover State Card must be <220 words, found {words}")
-    for label in STATE_CARD_LABELS:
+    modern = field(text, "OWNER_PROGRESSION_COMMAND") is not None
+    labels = MODERN_STATE_CARD_LABELS if modern else P0_STATE_CARD_LABELS
+    for label in labels:
         if label.lower() not in snap.lower():
             errors.append(f"{chain}: Active handover snapshot missing {label}")
     if re.search(r"(?mi)^Q[1-5]\s*:", snap):
         errors.append(f"{chain}: full Q1-Q5 must be outside the State Card word limit")
-    questions = section(text, "Active qualification questions")
-    if questions is None:
-        errors.append(f"{chain}: protocol-v2 endpoint missing Active qualification questions")
-        return
-    matches = re.findall(r"(?mi)^Q([1-5])\s*:\s*(.+)$", questions)
-    if [n for n, _ in matches] != ["1", "2", "3", "4", "5"]:
-        errors.append(f"{chain}: Active qualification questions must contain exactly ordered Q1-Q5")
-    for n, prompt in matches:
-        if len(prompt.split()) < 8:
-            errors.append(f"{chain}: Active qualification Q{n} is only a topic label/too compressed")
+    validate_questions(chain, text, errors)
 
 
 def validate_legacy_snapshot(chain, text, errors):
