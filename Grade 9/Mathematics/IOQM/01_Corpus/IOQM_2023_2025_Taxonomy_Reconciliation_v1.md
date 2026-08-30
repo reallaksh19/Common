@@ -1,6 +1,6 @@
 # IOQM Grade 9 — Taxonomy Reconciliation v1
 
-Status: `TAXONOMY_PRIMARY_OWNERSHIP_RECONCILED__ANSWER_RECOMPUTATION_NOT_RUN`
+Status: `TAXONOMY_PRIMARY_OWNERSHIP_RECONCILED__ANSWER_VERIFICATION_PASS_90_OF_90`
 
 ## 1. Why this pass exists
 
@@ -17,7 +17,7 @@ A question may be cross-domain. Primary ownership is not a claim that the other 
 | Geometry | 25 |
 | Combinatorics | 23 |
 
-The earlier rough survey should therefore be treated as superseded by this item-level ledger.
+The earlier rough survey is superseded by this item-level ledger.
 
 These counts are **not official IOQM weightage** and must not be translated into chapter percentages.
 
@@ -52,14 +52,16 @@ The following rules apply when a production topic consumes cross-domain question
 
 | Overlap | Canonical primary owner rule | Bridge role |
 |---|---|---|
-| integer geometry | Geometry owns when geometric feasibility/metric relation is the decisive structure | NT-04 receives integer/factor filtering as a bridge |
+| integer geometry | Geometry owns when geometric feasibility/metric relation is decisive | NT-04 receives integer/factor filtering as a bridge |
 | digit counting | COMB-01 owns when the main task is counting admissible digit strings; NT-05 owns when place value/divisibility/carry structure is decisive | cross-tag the other |
-| polynomial + recurrence | ALG-03 owns when quotient/coefficient algebra is the decisive object; COMB-03 owns when state evolution/count recurrence is the decisive representation | cross-tag |
-| inequalities in geometry | geometry owns if the bound is used to establish a geometric feasibility/metric fact; ALG-02 owns if the central learning target is bound/equality/attainment | cross-tag |
-| Vieta in geometry | geometry owns if triangle/circle reconstruction is prerequisite and Vieta only packages symmetric data | ALG-03 is bridge |
-| modular digit problems | NT-05 owns if decimal/place-value structure is primary; NT-02 owns if residue cycle/congruence is primary | cross-tag |
-| state search vs games | COMB-03 owns deterministic shortest-path/state-evolution questions; COMB-04 owns adversarial optimal-play/invariant games | cross-tag where useful |
-| extremal geometry/combinatorics | COMB-05 owns when an extremal counting/selection principle is decisive; geometry owns when metric/incidence geometry is the decisive feasibility structure | cross-tag |
+| polynomial + recurrence | ALG-03 owns quotient/coefficient algebra; COMB-03 owns state-evolution/count recurrence | cross-tag |
+| inequalities in geometry | geometry owns if the bound establishes geometric feasibility/metric fact; ALG-02 owns if bound/equality/attainment is the learning target | cross-tag |
+| Vieta in geometry | geometry may own the historical problem if geometry reconstructs the quantities and Vieta only packages symmetric data | ALG-03 remains canonical Vieta teacher |
+| modular digit problems | NT-05 owns decimal/place-value structure; NT-02 owns residue-cycle/congruence structure | cross-tag |
+| state search vs games | COMB-03 owns deterministic state evolution; COMB-04 owns adversarial optimal-play/invariant games | cross-tag where useful |
+| extremal geometry/combinatorics | COMB-05 owns when extremal selection is decisive; geometry owns metric/incidence feasibility | cross-tag |
+
+The production-wide detailed ownership matrix is now frozen at `02_Production/IOQM_G9_Canonical_Overlap_Ownership_v1.md`.
 
 ## 5. Medium-confidence review set
 
@@ -86,28 +88,40 @@ The following rules apply when a production topic consumes cross-domain question
 Total medium-confidence ownership records: **41**.
 High-confidence ownership records: **49**.
 
-No quantitative micro-mechanism recurrence should be frozen until the medium-confidence set has been independently reviewed against worked solutions or a second expert route.
+No fine-grained micro-mechanism recurrence should be frozen solely from these ownership labels. Topic leads may conduct a second-route review and propose an ownership change through explicit change control.
 
 ## 6. What is now frozen
 
 - 90 unique stable IDs;
 - official/validated paper and key custody;
+- independent answer verification 90/90 with zero key mismatches;
 - one primary domain per item;
 - one primary main-topic ID per item;
 - secondary-domain bridge tags;
 - first-pass visible clue, invariant and first-move metadata;
-- source-integrity events known from the official/final keys;
-- no double counting in main-topic recurrence.
+- source-integrity events known from official/final keys;
+- no double counting in main-topic recurrence;
+- 22 main-topic production issues and dependency waves;
+- canonical overlap-owner rules for production.
 
-## 7. What remains NOT_RUN
+## 7. What remains NOT_RUN / open evidence
 
-- independent recomputation of all 90 official answers;
-- solution-route verification for all medium-confidence ownership items;
+- second-route ownership review for medium-confidence items where a topic lead challenges current ownership;
 - calibrated difficulty scores;
 - classroom timing/readability;
 - longitudinal transfer/retention;
+- psychometric discrimination;
 - any probability of qualification.
+
+Answer recomputation is **no longer NOT_RUN**: all 90 validated answers have been independently recomputed and agree with key authority.
 
 ## 8. Promotion rule
 
-A main-topic production issue may use this ledger for **source coverage and candidate anchor selection**, but any historical answer promoted into a worked teaching solution must first set `answer_verified_independently=true` for that item.
+A main-topic production issue may use this ledger for source coverage, candidate anchor selection and answer-level historical teaching authority, provided:
+
+1. exact source wording/figures are read from the validated paper;
+2. `IOQM-2023-Q04` and `IOQM-2025-Q28` obey the metadata-correction overlay;
+3. borrowed mechanisms obey canonical overlap ownership;
+4. no topic-frequency claim is presented as official IOQM weightage.
+
+Production issues are registered in `02_Production/IOQM_G9_Main_Topic_Issue_Registry_v1.md`.
