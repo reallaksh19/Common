@@ -44,7 +44,7 @@ The repository uses four levels:
 
 Microstream agents may research, classify PYQs, derive mathematics, propose contrasts, generate candidate transfer items, or independently audit answers. They must not independently publish adjacent student-facing chapters that are later concatenated.
 
-This rule is a direct control against the failure mode observed in the earlier multi-agent Quadratics build: locally strong subchapters, but delayed integration, prerequisite inversion, repeated onboarding, overlapping concept ownership, and workflow leakage into the student artifact.
+This rule controls the failure mode observed in the earlier multi-agent Quadratics build: locally strong subchapters, but delayed integration, prerequisite inversion, repeated onboarding, overlapping concept ownership, and workflow leakage into the student artifact.
 
 ## Core architecture authority
 
@@ -68,7 +68,9 @@ Initial normalized corpus:
 - IOQM 2023 — 30 questions;
 - IOQM 2024 — 30 questions;
 - IOQM 2025 (7 September) — 30 questions;
-- total — **90 stable historical IDs**.
+- total — **90 stable historical IDs**;
+- independently recomputed answers — **90/90**;
+- independent/key mismatches — **0**.
 
 Current reconciled primary-domain classification:
 
@@ -79,18 +81,30 @@ Current reconciled primary-domain classification:
 
 These are operational classifications of the three-paper seed corpus, **not official IOQM weightage**. The earlier rough pre-ledger split is superseded.
 
-Corpus files:
+Corpus authority files:
 
 1. `01_Corpus/IOQM_2023_2025_90Q_Ledger_v1.csv`
 2. `01_Corpus/IOQM_2023_2025_Source_Coverage_Map_v1.md`
 3. `01_Corpus/IOQM_2023_2025_Taxonomy_Reconciliation_v1.md`
 4. `01_Corpus/IOQM_2023_2025_Corpus_Tagging_QA_v1.md`
+5. `01_Corpus/Verification/IOQM_2023_2025_Answer_Verification_Ledger_v1.csv`
+6. `01_Corpus/Verification/IOQM_2023_2025_Metadata_Correction_Overlay_v1.md`
+7. three independent verification batch reports covering Q01–Q30 × all three years.
 
 Every historical question uses stable ID:
 
 `IOQM-YYYY-QNN`
 
 and retains year/question provenance in downstream metadata.
+
+### Two repository metadata corrections
+
+The answer audit found two classifier/extraction defects, not historical source defects:
+
+- `IOQM-2023-Q04`: validated paper has `x^4`, not `x/4`;
+- `IOQM-2025-Q28`: validated paper has nested radical `√(x-√(x+a))=√a-y`.
+
+Until the detailed classifier ledger is regenerated, the official/validated paper plus `IOQM_2023_2025_Metadata_Correction_Overlay_v1.md` controls exact-stem use for these IDs.
 
 ## Current gates
 
@@ -100,17 +114,19 @@ CORPUS_90Q_SOURCE_KEY_CUSTODY = PASS_STATIC
 CORPUS_90Q_PRIMARY_TAGGING = PASS_STATIC
 TOPIC_COVERAGE_22_OF_22 = PASS_STATIC
 ANSWER_KEY_VALUES_CAPTURED = 90/90
-INDEPENDENT_ANSWER_RECOMPUTATION = NOT_RUN
+INDEPENDENT_ANSWER_RECOMPUTATION = PASS_STATIC_90_OF_90
+ANSWER_KEY_MISMATCHES = 0
+METADATA_EXTRACTION_DEFECTS = 2_ISOLATED
 MEDIUM_CONFIDENCE_OVERLAP_REVIEW = PARTIAL / 41 ITEMS
 DIFFICULTY_CALIBRATION = NOT_RUN
 CLASSROOM_TIMING_READABILITY = NOT_RUN
 PSYCHOMETRIC_CALIBRATION = NOT_RUN
 ```
 
-A historical answer may not be promoted as worked teaching authority until that item is independently recomputed and its ledger field `answer_verified_independently` becomes `true`.
+The independently verified answers may now serve as answer-level historical teaching authority, provided future materials preserve exact paper wording/figures and source custody. This does not automatically validate any newly transcribed stem or derived solution prose.
 
-## Publication state
+## Production state
 
-`ARCHITECTURE_AND_CORPUS_STATIC_COMPLETE__PRODUCTION_NOT_STARTED`
+`CORPUS_V1_STATIC_COMPLETE__MAIN_TOPIC_PRODUCTION_PLANNING_READY`
 
-No topic is publication-ready merely because architecture and source tagging exist. Each main topic must separately close its source, pedagogy, mathematics, student-export and render gates.
+The next static phase is to freeze main-topic production waves, overlap ownership and one-issue prompts. No main topic becomes publication-ready merely because architecture and corpus verification are complete; each must separately close source, pedagogy, mathematics, student-export and render gates.
