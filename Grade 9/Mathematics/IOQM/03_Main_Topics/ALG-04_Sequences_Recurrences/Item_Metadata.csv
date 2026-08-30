@@ -1,0 +1,11 @@
+item_id,asset_type,provenance,historical_anchor_id,mechanism,first_move,student_export,teacher_export,timing_status
+ALG04-PYQ-2025-26,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2025-Q26,sliding-window averages,subtract adjacent windows,true,true,NOT_RUN
+ALG04-PYQ-2023-10,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2023-Q10,recurrence invariant,test transformed neighboring-term combination,true,true,NOT_RUN
+ALG04-F0-001,FOUNDATION,AUTHOR_CREATED_FOUNDATION,,term-vs-sum,use S_n-S_{n-1},true,true,NOT_RUN
+ALG04-F1-001,PRACTICE,AUTHOR_CREATED_FOUNDATION,,AP recognition,check first difference,true,true,NOT_RUN
+ALG04-F1-002,PRACTICE,AUTHOR_CREATED_FOUNDATION,,GP recognition,check ratio,true,true,NOT_RUN
+ALG04-F2-001,PRACTICE,AUTHOR_CREATED_TRANSFER,,window cancellation,subtract adjacent windows,true,true,NOT_RUN
+ALG04-F2-002,PRACTICE,AUTHOR_CREATED_TRANSFER,,recurrence transform,study first differences,true,true,NOT_RUN
+ALG04-XF-001,TRANSFER,AUTHOR_CREATED_TRANSFER,,telescoping,partial-fraction neighboring terms,true,true,NOT_RUN
+ALG04-H0-001,MASTERY,AUTHOR_CREATED_TRANSFER,,high-index recurrence,transform before iteration,true,true,NOT_RUN
+ALG04-H0-002,MASTERY,AUTHOR_CREATED_TRANSFER,,periodicity from windows,subtract equal windows,true,true,NOT_RUN
