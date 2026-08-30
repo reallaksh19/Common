@@ -1,0 +1,11 @@
+item_id,asset_type,provenance,historical_anchor_id,mechanism,first_move,student_export,teacher_export,timing_status
+NT01-PYQ-2025-02,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2025-Q02,divisibility counting,count multiples then subtract overlap,true,true,NOT_RUN
+NT01-PYQ-2025-27,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2025-Q27,lcm/gcd normalization,rewrite lcm through gcd structure,true,true,NOT_RUN
+NT01-F0-001,FOUNDATION,AUTHOR_CREATED_FOUNDATION,,divisibility meaning,rewrite b=ak,true,true,NOT_RUN
+NT01-F1-001,PRACTICE,AUTHOR_CREATED_FOUNDATION,,same remainder,subtract numbers,true,true,NOT_RUN
+NT01-F1-002,PRACTICE,AUTHOR_CREATED_FOUNDATION,,lcm construction,identify least common multiple,true,true,NOT_RUN
+NT01-F2-001,PRACTICE,AUTHOR_CREATED_TRANSFER,,Euclidean algorithm,replace pair by remainder,true,true,NOT_RUN
+NT01-XF-001,TRANSFER,AUTHOR_CREATED_TRANSFER,,linear combination,use integer combination to force divisor,true,true,NOT_RUN
+NT01-H0-001,MASTERY,AUTHOR_CREATED_TRANSFER,,same remainder,subtract then gcd,true,true,NOT_RUN
+NT01-H0-002,MASTERY,AUTHOR_CREATED_TRANSFER,,remainder construction,remove remainder then lcm,true,true,NOT_RUN
+NT01-H0-003,MASTERY,AUTHOR_CREATED_TRANSFER,,gcd-lcm product,use product invariant,true,true,NOT_RUN
