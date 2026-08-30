@@ -25,6 +25,8 @@ SUITES = [
     "self_test_engineering_question_payload.py",
     "self_test_owner_qualification_baseline.py",
     "self_test_work_item_exclusivity.py",
+    "self_test_issue_control_plane.py",
+    "self_test_progression_commands.py",
     "self_test_prework_history.py",
     "self_test_material_leg_history.py",
 ]
