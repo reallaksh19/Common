@@ -1,44 +1,45 @@
 CHAIN_STATE_VERSION: 3
 CHAIN_ID: COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY
-MISSION: Centralize reusable repository-agent policy and enforce every-task handover, no-downgrade qualification and exclusive work-item controls
-ACTIVE_ENDPOINT: EP-0006
-ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0006.md
+MISSION: Centralize reusable repository-agent policy and add issue-based durable handover plus three Owner progression commands
+ACTIVE_ENDPOINT: EP-0007
+ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0007.md
 MATERIAL_HISTORY_ROOT_BASE: 325cc3013e4542c3943afa24073c48373c4658ad
-MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0006.md
-PR: 61
-BRANCH: engineering-pr-delivery-v2-handover-quality-p0-v2
-HEAD: b190de3aa4a31ebf712da1248efb09543f641423
-STATE: BLOCKED
-ENGINEERING_STATE: BLOCKED
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-CENTRAL-POLICY/endpoints/EP-0007.md
+PR: PENDING
+BRANCH: engineering-pr-delivery-v2-issue-architecture-three-commands
+HEAD: 6745d4854962d2da1faad70a6a17258a224db221
+STATE: ACTIVE
+ENGINEERING_STATE: READY
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: NOT_REQUIRED
-WRITE_AUTHORITY: READ_ONLY
-AUTO_STATE: BLOCKED
+WRITE_AUTHORITY: WRITE_ALLOWED
+AUTO_STATE: NOT_APPLICABLE
 MERGE_AUTHORITY: OWNER_ONLY
-AUTHORITY_DOMAIN: Common engineering delivery governance; every-response handover, Owner qualification baseline, concrete question payload, evidence readiness and exact work-item custody
-ACTIVE_CUSTODIAN: ChatGPT P0 handover hardening agent
-AGENT_INSTANCE_ID: chatgpt:6c19e9d4-4be3-4f4c-9b4a-7a1f52d1e930
-WORK_ITEM_KEY: common:engineering-pr-delivery-v2:handover-quality-p0
+AUTHORITY_DOMAIN: Common engineering delivery governance; GitHub-Issue control plane, cumulative custody ledgers and exact three-command progression semantics
+ACTIVE_CUSTODIAN: ChatGPT issue-control-plane policy agent
+AGENT_INSTANCE_ID: chatgpt:8a07d154-daea-48ad-b3ef-cc9729a8cdcf
+WORK_ITEM_SOURCE: OWNER_DIRECT
+WORK_ITEM_KEY: common:engineering-pr-delivery-v2:issue-control-plane-three-commands
 WORK_ITEM_MODE: EXCLUSIVE
 WORK_ITEM_PARTITION: NONE
 WORK_ITEM_PARTITION_AUTHORITY: NONE
-CUSTODY_EPOCH: 6
+CUSTODY_EPOCH: 7
 COORDINATION_STATE: SAFE
-DEPENDENCIES: repository-capable checkout required for canonical P0 focused + aggregate execution before HANDOVER_READY/WRITE_ALLOWED promotion
+DEPENDENCIES: prior P0 aggregate execution debt remains NOT_RUN and independent; no product-domain dependency
 COMMON_PROTOCOL: engineering-pr-delivery-v2
-COMMON_PROTOCOL_BASIS: b3c955be1fb0d6151501cfd11bc23e106c5a8280
+COMMON_PROTOCOL_BASIS: 2e5fca39ad72f9bd1828ac54c245b9200c916b74
 COMMON_PROTOCOL_STATUS: CURRENT
 ROADMAPS: NONE — Common reusable governance/validator scope
 ROADMAP_REVIEW_STATUS: NOT_APPLICABLE
 HANDOVER_PROTOCOL_VERSION: 2
 HANDOVER_CONTENT_READY: TRUE
 HANDOVER_VALIDATION_STATUS: NOT_RUN
-HANDOVER_VALIDATION_EVIDENCE: NONE — faithful full Common checkout unavailable because direct GitHub DNS resolution failed
+HANDOVER_VALIDATION_EVIDENCE: NONE — pre-work baton only
 HANDOVER_READY: FALSE
 REPORTING_CONTRACT: ACTIVE_HANDOVER_FIRST
 HANDOVER_RESPONSE_REQUIRED: ALWAYS
 RESPONSE_DELTA_MODE: DELTA_ONLY
 OWNER_QUALIFICATION_BASELINE_DISCOVERY: COMPLETE
-OWNER_QUALIFICATION_BASELINE_SOURCE: NONE
+OWNER_QUALIFICATION_BASELINE_SOURCE: conversation:2026-08-30-revised-durable-architecture-and-three-commands
 OWNER_QUALIFICATION_BASELINE_MANIFEST: NONE
-OWNER_QUALIFICATION_BASELINE_STATUS: NOT_APPLICABLE
+OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
