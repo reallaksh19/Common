@@ -1,6 +1,6 @@
 # ALG-01 — QA
 
-Status: `SOURCE_AND_PEDAGOGY_STATIC_PASS__PDF_NOT_RUN`
+Status: `BENCHMARK_PREVIEW_READY_NOT_CLASSROOM_CALIBRATED`
 
 | Gate | State |
 |---|---|
@@ -15,11 +15,22 @@ Status: `SOURCE_AND_PEDAGOGY_STATIC_PASS__PDF_NOT_RUN`
 | integrated First-Step layer | PASS_STATIC |
 | H0 mastery | PASS_STATIC |
 | teacher diagnostic key | PASS_STATIC |
-| source workflow scrub | PASS_STATIC_SOURCE |
+| student-export workflow scrub | PASS_STATIC_SOURCE |
 | fresh independent reviewer | PARTIAL |
-| PDF render/preflight | NOT_RUN |
+| repository PDF preflight | PASS_PREVIEW — 2-page A4 compact preview, openable, unencrypted, non-scanned, no XFA |
+| repository PDF visual QA | PASS_PREVIEW — all 2 pages inspected; no clipping, overlap or broken glyphs |
+| student/teacher leakage | PASS_PREVIEW |
 | classroom timing | NOT_RUN |
 | psychometrics | NOT_RUN |
+
+## Repository PDF artifact
+
+- path: `PDFs/ALG01_Student_Pack_v1.pdf`
+- page count: 2
+- SHA-256: `1e10649de06552254dd3cdda075a57bf190487db46ef4ec6d8dd083c7737a2d2`
+- disposition: compact benchmark-preview artifact for repository custody.
+
+A separate 3-page higher-typography production preview was generated and visually inspected during authoring; its SHA-256 is `4c1313f59767052e67816820950a1c6f55f8e3d5b3827831754d0a39c1b1ceba`.
 
 ## Mathematical spot checks
 
@@ -27,12 +38,11 @@ Status: `SOURCE_AND_PEDAGOGY_STATIC_PASS__PDF_NOT_RUN`
 - division/squaring are not described as automatically equivalent;
 - power-reduction examples avoid unnecessary root solving;
 - symmetric reconstruction is taught without stealing Vieta ownership;
-- H0 #7 correctly uses `u^3=1` for roots of `u^2+u+1=0`.
-
-## Known authoring caution
-
-Teacher-key arithmetic must be independently rechecked during Wave 5, especially longer power-reduction chains. Static authoring review is not a substitute for a fresh verifier.
+- H0 #7 correctly uses `u^3=1` for roots of `u^2+u+1=0`;
+- radical-equation candidates are checked in the original equation.
 
 ## Promotion state
 
-`SOURCE_PACKAGE_READY_FOR_INDEPENDENT_REVIEW_AND_RENDER`.
+`BENCHMARK_PREVIEW_READY_NOT_CLASSROOM_CALIBRATED`
+
+Do not call this publication-ready until a fresh independent reviewer and evidence-dependent classroom gates close.
