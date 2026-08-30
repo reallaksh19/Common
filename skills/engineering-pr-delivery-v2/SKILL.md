@@ -1,99 +1,97 @@
 ---
 name: engineering-pr-delivery-v2
-description: Crash-safe, qualification-first engineering PR delivery with centralized cross-repository policy. Downstream AGENTS.md files are project-only overlays; every material leg re-grounds the live Common protocol, uses canonical v3 chain paths, pre-authors expert Q1-Q5 before coding, and exposes the active handover snapshot to the user. A replacement first passes question-set admission, then takeover qualification while READ_ONLY; only after independent PASS and post-basis drift reconciliation may it acquire write authority.
+description: Crash-safe, qualification-first engineering PR delivery with centralized cross-repository policy. Every bounded repository-work response starts with the Active handover snapshot and full expert Q1-Q5. New material legs use canonical v3 custody, exact work-item ownership, UUID-backed agent instances, Owner-question no-downgrade baselines, concrete engineering payloads, Git-provable prework and append-only material receipts. A replacement qualifies while READ_ONLY before reconciliation or write authority.
 ---
 
-# Engineering PR Delivery v2 — qualification-first relay
+# Engineering PR Delivery v2 — qualification-first, crash-ready, every-turn handover
 
 ## 1. Governing objective
 
-The repository must remain **handover-ready after any agent crash**. A replacement agent must not need the outgoing chat or outgoing agent.
+The repository must remain handover-ready after any agent crash. A replacement must not need the outgoing chat.
 
-Reusable cross-repository policy lives in this Common skill. Repository-root `AGENTS.md` files are project overlays only; they must not fork or copy the relay/qualification state machine.
+Reusable policy lives in this Common skill. Downstream `AGENTS.md` files are project overlays only.
 
-For a replacement agent, the first engineering competence gate is takeover qualification. Before the exam, only a narrow READ_ONLY **question-set admission** check is allowed to prove that the exam itself is valid.
+Takeover sequence:
 
 ```text
-agent loss / custody change
--> minimal READ_ONLY locator bootstrap
--> QUESTION-SET ADMISSION
--> TAKEOVER QUALIFICATION FIRST
--> independent PASS_QUALIFIED_READ_ONLY
--> post-basis reconciliation while READ_ONLY
--> drift/authority classification
--> WRITE_ALLOWED only if current-state authority is safe
--> execute EXACT_NEXT_ACTION
+agent loss / custodian change
+→ minimal READ_ONLY locator bootstrap
+→ question-set admission
+→ TAKEOVER QUALIFICATION FIRST
+→ independent PASS_QUALIFIED_READ_ONLY
+→ post-basis reconciliation while READ_ONLY
+→ drift/authority classification
+→ requalify if boundary/authority changed
+→ WRITE_ALLOWED only when current-state authority is safe
+→ execute EXACT_NEXT_ACTION
 ```
 
-Question-set admission is not task execution and not crash-window recovery. It only validates the exam.
+Question-set admission validates the exam only. Qualification PASS proves competence only; it does not grant write, roadmap or merge authority.
 
-## 2. Protocol precedence and required references
-
-This file is canonical. `references/protocol-foundation-v2.2.md` preserves the full preceding v2 protocol and remains binding where this qualification-first revision does not supersede it.
+## 2. Required references and precedence
 
 Read at minimum:
 
 ```text
 references/repository-agent-policy.md
+references/reality-check-p0.md
 references/project-agents-template.md
+references/handover-snapshot.md
 references/qualification.md
+references/qualification-profiles.md
+references/owner-qualification-baseline.md
 references/question-set-admission.md
 references/post-basis-drift.md
-references/handover-snapshot.md
 references/authority-state-model.md
 references/crash-recovery.md
 references/owner-roadmaps.md
 references/chain-concurrency.md
+references/material-leg-history.md
+references/prework-history.md
 references/code-quality.md
 ```
 
-The following remain protected unless explicitly strengthened here:
+`references/protocol-foundation-v2.2.md` preserves the prior protocol and remains binding where not superseded.
 
-- chain-local `agents/chains/<CHAIN_ID>/**` custody and stale-write protection;
-- owner-governed roadmap rules;
-- source/benchmark/oracle separation;
-- validation integrity and explicit `NOT_RUN`;
-- code-quality/modularity gates;
-- multi-agent overlap detection;
-- AUTO MODE scope limits;
-- owner-only merge unless explicitly authorized;
-- no silent fallback engineering data.
-
-Where older wording conflicts with this revision, this revision wins. In particular, a question set may be unusable because it is `STALE`, `AUTHORITY_CONTAMINATED`, or `INSUFFICIENT_TECHNICAL_DEPTH`, not only because it is missing or malformed.
+For new material legs, `reality-check-p0.md` supersedes conflicting older wording about handover frequency, question compression, work-item identity and readiness evidence.
 
 ## 3. Core invariants
 
 ```text
 R1  Repository state, not conversation memory, is the baton.
-R2  Reusable relay/qualification policy lives in Common; downstream AGENTS.md is project-only.
-R3  Every new material leg re-grounds and records the live Common protocol basis.
-R4  STALE_PROTOCOL or UNKNOWN protocol status blocks material coding and AUTO progression.
-R5  New material legs use canonical v3 chain paths; legacy relay paths are read-only history.
-R6  Every non-terminal accepted endpoint is handover-ready before material work starts.
-R7  Q1-Q5 are takeover qualification only; they are never the task list.
+R2  Generic policy lives in Common; downstream AGENTS.md is project-only.
+R3  Every new material leg re-grounds live Common and records its basis.
+R4  STALE_PROTOCOL or UNKNOWN blocks material coding and AUTO.
+R5  New material work uses agents/chains/**; legacy relay is read-only history.
+R6  Pre-work endpoint + expert Q1-Q5 exist before the material batch.
+R7  Q1-Q5 are qualification, never the implementation task list.
 R8  EXACT_NEXT_ACTION is the work baton for a qualified custodian.
-R9  Q1-Q5 are pre-authored before the bounded material batch they protect.
-R10 A replacement agent passes question-set admission before taking Q1-Q5.
-R11 Admission checks the exam only; it does not recover or mutate engineering work.
-R12 A replacement agent qualifies before substantive crash-window recovery/reconciliation.
-R13 Qualification PASS is necessary but not sufficient for WRITE_ALLOWED.
-R14 After PASS, crash-window/live/roadmap/source drift is reconciled READ_ONLY.
-R15 Post-basis drift is explicitly classified before write authority can be granted.
-R16 Material boundary/authority drift or contamination forces requalification.
-R17 Candidate self-verification, self-admission, or self-confirmation of material coverage cannot grant authority.
-R18 Questions are implementation/engineering examinations, not generic descriptions.
-R19 Where technically applicable, at least two questions require numerical/hand reconstruction.
-R20 Every set requires live repository anchors, an independent oracle, a falsifier, and a safe patch boundary.
-R21 Owner roadmap mutation remains separately owner-authorized.
-R22 NOT_RUN, blockers, assumptions, and authority boundaries survive the relay.
-R23 Endpoint IDs remain chain-local; custody epochs protect same-chain writes.
-R24 Merge authority remains independent of qualification, validation, roadmap authority, and write authority.
-R25 At every substantive handover/status boundary the user sees the active snapshot including Q1-Q5; saying only that they exist is invalid.
+R9  Owner-authored qualification/challenges are a no-downgrade floor.
+R10 Numerical engineering packs carry concrete payload, not topic labels.
+R11 Exact WORK_ITEM_KEY collision is checked before semantic overlap.
+R12 A model family/name is not a unique AGENT_INSTANCE_ID.
+R13 A replacement qualifies before substantive crash-window recovery.
+R14 Qualification PASS is necessary but not sufficient for WRITE_ALLOWED.
+R15 Post-basis drift is classified before write authority can be granted.
+R16 Material/authority drift or contamination forces requalification.
+R17 Candidate cannot self-verify, self-admit or self-confirm coverage.
+R18 Owner roadmap mutation remains separately Owner-authorized.
+R19 NOT_RUN, blockers, assumptions and authority boundaries survive relay.
+R20 Merge authority is independent and Owner-controlled unless explicitly granted.
+R21 Every completed material batch gets an append-only history receipt.
+R22 HANDOVER_READY is evidence-derived, never a self-declared synonym for content existing.
+R23 Every bounded repository-work response starts with Active handover snapshot.
+R24 Full Q1-Q5 are outside the State Card word limit and visible every time.
+R25 After the snapshot/questions, ordinary reporting is delta-only unless Owner asks for detail.
 ```
 
-## 4. Chain state version 3
+## 4. Chain state and authority planes
 
-New chains and the next material leg/custodian transition use `CHAIN_STATE_VERSION: 3`.
+Canonical chain version remains:
+
+```text
+CHAIN_STATE_VERSION: 3
+```
 
 Authority planes:
 
@@ -106,125 +104,196 @@ AUTO_STATE: RUNNING | PAUSED | BLOCKED | NOT_APPLICABLE
 MERGE_AUTHORITY: OWNER_ONLY | AUTHORIZED
 ```
 
-Also retain chain identity, PR/head, custody epoch, coordination, dependencies, roadmap binding/review state, `HANDOVER_READY`, and the protocol-adoption fields:
+New material/successor state also records:
 
 ```text
 COMMON_PROTOCOL: engineering-pr-delivery-v2
-COMMON_PROTOCOL_BASIS: <live Common commit SHA actually read>
-COMMON_PROTOCOL_STATUS: CURRENT | STALE_PROTOCOL | UNKNOWN
+COMMON_PROTOCOL_BASIS: <live Common SHA actually read>
+COMMON_PROTOCOL_STATUS: CURRENT
+WORK_ITEM_KEY: <stable identity>
+WORK_ITEM_MODE: EXCLUSIVE | PARTITIONED
+AGENT_INSTANCE_ID: <agent-class>:<UUID>
 ```
 
-A replacement that passed the exam but has not reconciled current state is:
+For `PARTITIONED`, require distinct partition identity plus `WORK_ITEM_PARTITION_AUTHORITY: OWNER:<locator>`.
+
+## 5. Protocol-adoption gate before every material batch
 
 ```text
-CUSTODY_STATE: QUALIFIED_PENDING_RECONCILIATION
-QUALIFICATION_STATE: PASS
-WRITE_AUTHORITY: READ_ONLY
+1. read project overlay
+2. re-ground live Common skill/references
+3. record COMMON_PROTOCOL_BASIS / CURRENT
+4. confirm canonical v3 chain path
+5. reserve exact WORK_ITEM_KEY
+6. confirm UUID-backed AGENT_INSTANCE_ID
+7. discover Owner qualification baseline
+8. create work-ahead endpoint
+9. author full profile-v2 Q1-Q5
+10. validate handover/baseline/payload/work-item gates
+11. only then mutate material engineering/policy/source/benchmark/publication files
 ```
 
-If post-basis reconciliation finds changed engineering/authority boundaries:
+Fail closed on stale protocol, duplicate exclusive work item, invalid agent instance, invalid handover, missing Owner baseline coverage or insufficient technical depth.
+
+## 6. Exact work-item concurrency
+
+For `WORK_ITEM_MODE: EXCLUSIVE`, at most one non-terminal chain may hold a work-item key such as:
 
 ```text
-QUALIFICATION_STATE: REQUALIFICATION_REQUIRED
-WRITE_AUTHORITY: READ_ONLY
+WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#1535
 ```
 
-Read `references/authority-state-model.md`.
+A second agent does not create another writer chain; it joins/takes over the existing chain under qualification-first rules or stops.
 
-## 5. Repository overlay and protocol-adoption gate
+Partitioning requires explicit Owner-authorized non-overlapping partitions. After exact work-item admission, still run path/authority/benchmark/release overlap detection.
 
-Repository-root `AGENTS.md` is a project overlay only. Follow `references/repository-agent-policy.md` and `references/project-agents-template.md`.
+Read `chain-concurrency.md`.
 
-Before every new material leg, including AUTO progression into another bounded implementation/source/benchmark/publication leg:
+## 7. Every-turn Active handover response contract
+
+For **any** response that performed, attempted, audited, blocked, resumed, advanced, completed or re-grounded repository work, the first user-visible section is:
 
 ```text
-1. read the project overlay
-2. re-ground live Common engineering-pr-delivery-v2
-3. record COMMON_PROTOCOL_BASIS
-4. classify COMMON_PROTOCOL_STATUS
-5. confirm CHAIN_STATE_VERSION: 3
-6. confirm canonical agents/chains/** custody
-7. confirm no new legacy relay write is planned
-8. only then prepare the pre-work endpoint and Q1-Q5
+# Active handover snapshot
 ```
 
-Fail closed:
+No prose precedes it. This includes `proceed next`, AUTO batches, read-only audits, NOT_RUN/blockers, PR create/update, status/review gates, merge gates and task completion.
+
+New durable endpoints use:
 
 ```text
-STALE_PROTOCOL | UNKNOWN
--> READ_ONLY
--> NO MATERIAL CODING
--> NO AUTO PROGRESSION
+### Active handover snapshot
+<State Card; target <220 words>
+
+### Active qualification questions
+Q1: <full prompt>
+Q2: <full prompt>
+Q3: <full prompt>
+Q4: <full prompt>
+Q5: <full prompt>
 ```
 
-A historical endpoint's old Common pin is evidence of what governed that historical leg. It is not permission to keep using that pin for a new leg.
+The State Card includes repo/task/chain/endpoint, PR/branch/head/main/status, merge authority, engineering/custody/qualification/write/AUTO state, protocol, roadmap, inputs/benchmarks/source pointers, blocker, leg diagnosis and exact next action.
 
-Legacy paths such as `agents/agentchain.md` and `agents/agentchain/<CHAIN_ID>/**` are read/cite/recovery provenance only for new v3 work. Do not create new material endpoints there.
+The word limit applies only to the State Card. Never delete numerical inputs, derivations, oracle requirements or falsifiers from Q1-Q5 to fit it.
 
-## 6. Handover-ready endpoint and visible handover
-
-Every non-terminal endpoint contains two distinct outputs:
+After the questions, ordinary turn reporting is:
 
 ```text
-A. WORK BATON
-   what a qualified custodian does next
-
-B. TAKEOVER QUALIFICATION PACK
-   whether a replacement is competent to take custody
+## Changed this turn
 ```
 
-It also contains a `### Handover snapshot` of fewer than 300 words with:
+with at most eight concise bullets unless Owner explicitly asks for a detailed report.
 
-1. repo, task, chain, endpoint;
-2. PR/branch/head/main/status and merge authority;
-3. roadmap, inputs, benchmarks, governing docs/source pointers;
-4. engineering/custody/qualification/write state, blocker, exact next action;
-5. concise Q1-Q5 prompts.
+It is invalid to say only `EP-xxxx contains Q1-Q5`.
 
-Detailed evidence and exam rubrics remain outside the 300-word snapshot.
+## 8. Evidence-derived handover readiness
 
-At every substantive stop, PR creation/update boundary, blocker, owner-decision boundary, merge boundary, or explicit handover, the agent's user-facing response must reproduce the active snapshot or an equivalent concise rendering **including Q1-Q5**. It is not sufficient to say `EP-xxxx contains Q1-Q5`.
+New successor endpoints use:
 
-Read `references/repository-agent-policy.md` and `references/handover-snapshot.md`.
+```text
+HANDOVER_PROTOCOL_VERSION: 2
+HANDOVER_CONTENT_READY: TRUE | FALSE
+HANDOVER_VALIDATION_STATUS: PASS | FAIL | NOT_RUN
+HANDOVER_VALIDATION_EVIDENCE: <durable evidence or NONE>
+HANDOVER_READY: TRUE | FALSE
+REPORTING_CONTRACT: ACTIVE_HANDOVER_FIRST
+HANDOVER_RESPONSE_REQUIRED: ALWAYS
+RESPONSE_DELTA_MODE: DELTA_ONLY
+```
 
-## 7. Always-ready crash discipline — write ahead
+`HANDOVER_READY: TRUE` requires content ready + validation PASS + non-empty evidence. If validation is NOT_RUN/FAIL, preserve the baton but keep HANDOVER_READY FALSE.
 
-Before a material engineering batch, the accepted endpoint must already contain the exact intended next action and Q1-Q5 capable of qualifying a replacement for that boundary.
+Historical endpoints are not rewritten. The next material leg adopts protocol version 2.
+
+## 9. Owner qualification baseline — no downgrade
+
+Before writing a new Q pack, inspect current Owner instructions, issue body/appendix, Owner roadmaps and accepted handovers for Owner-authored qualification questions or explicit challenges.
+
+Record:
+
+```text
+OWNER_QUALIFICATION_BASELINE_DISCOVERY: COMPLETE
+OWNER_QUALIFICATION_BASELINE_SOURCE: NONE | <owner locator>
+OWNER_QUALIFICATION_BASELINE_MANIFEST: NONE | <repo-relative JSON>
+OWNER_QUALIFICATION_BASELINE_STATUS: NOT_APPLICABLE | SATISFIED | BLOCKED
+```
+
+If Owner questions exist, the active pack may reorganize/strengthen them but may not remove supplied coordinates/loads/dimensions/materials/integration points, requested hand derivations, mechanisms, independent oracles, negative controls, falsifiers or safe-patch reasoning.
+
+The manifest maps each Owner question to active Q1-Q5 and preserves required literals/concepts/obligations. Incomplete coverage is `INSUFFICIENT_TECHNICAL_DEPTH` and blocks the next material batch.
+
+Read `owner-qualification-baseline.md`.
+
+## 10. Q1-Q5 expert standard and concrete payload
+
+Exactly five questions:
+
+```text
+Q1 Production Trace
+Q2 Current Unresolved Problem / Failure Isolation
+Q3 Authority / Invariant
+Q4 Independent Validation
+Q5 Next Contribution / Minimal Patch
+```
+
+Q5 tests competence; it is not an instruction to implement.
+
+New packs declare:
+
+```text
+QUALIFICATION_PROFILE_VERSION: 2
+```
+
+Each detailed question includes:
+
+```text
+Domain challenge:
+Exact repository data required:
+Concrete payload:
+Required derivation:
+```
+
+Q2/Q4 retain `Calculation/reconstruction:`.
+
+For FEA/WRC/Load Calc/fixed-format profiles, at least two questions contain real hand-computable values/coordinates/loads/dimensions/record offsets or equivalent exact payload. Q2/Q4 normally contain at least three concrete numeric literals plus an explicit derivation.
+
+Minimum set quality:
+
+```text
+>=2 numerical/hand or equivalent exact reconstructions
+>=3 questions requiring exact live-repository evidence
+>=1 end-to-end production reconstruction
+>=1 independent engineering oracle
+>=1 explicit falsifier
+>=1 exact safe-patch + NO-PATCH boundary
+```
+
+Topic labels such as `Reconstruct distorted-T6 Jacobians` are insufficient when the element coordinates/integration points are known.
+
+Read `qualification.md` and `qualification-profiles.md`.
+
+## 11. Write-ahead crash discipline and material history
 
 Required order:
 
 ```text
-PROTOCOL ADOPTION GATE
--> PRE-WORK V3 ENDPOINT
--> Q1-Q5 QUALITY VALIDATION
--> MATERIAL WORK
--> VALIDATION TRUTH
--> SUCCESSOR ENDPOINT BEFORE NEXT MATERIAL BATCH
+PROTOCOL + WORK-ITEM ADOPTION
+→ PRE-WORK ENDPOINT
+→ Q1-Q5 / BASELINE / HANDOVER VALIDATION
+→ MATERIAL BATCH
+→ EXECUTION TRUTH
+→ MATERIAL-LEG RECEIPT
+→ SUCCESSOR ENDPOINT BEFORE ANOTHER MATERIAL BATCH
 ```
 
-Do not code first and manufacture the qualification pack afterward.
+`validate_prework_history.py` proves the work-ahead endpoint preceded material mutation. `validate_material_leg_history.py` preserves that proof for every completed AUTO/material batch and rejects hidden inter-leg/trailing material.
 
-After a coherent material batch, create the next endpoint **before starting another material batch**.
+## 12. Question-set admission and takeover
 
-Therefore a crash leaves:
-
-```text
-last accepted endpoint
-+ pinned qualification basis
-+ pre-authored Q1-Q5
-+ exact next action / expected safe patch boundary
-```
-
-available to the replacement.
-
-If the pre-work endpoint/Q pack is absent or invalid, AUTO MODE pauses before mutation.
-
-## 8. Question-set admission — pre-qualification integrity gate
-
-Before a replacement answers Q1-Q5, classify the exam:
+Admission statuses:
 
 ```text
-QUESTION_SET_ADMISSION_STATUS:
 VALID
 STALE
 MALFORMED
@@ -232,133 +301,19 @@ AUTHORITY_CONTAMINATED
 INSUFFICIENT_TECHNICAL_DEPTH
 ```
 
-Only `VALID` proceeds to qualification.
+Only VALID proceeds to qualification. Admission checks the exam, current baseline coverage, authority assumptions and technical depth. Candidate may supply evidence but cannot be sole authority admitting its own questionable set.
 
-Admission verifies exactly Q1-Q5, retrievable basis, expert technical depth, concrete repository anchors, and valid roadmap/source/benchmark/oracle/methodology/release-authority assumptions. A technically current exam can still be `AUTHORITY_CONTAMINATED`.
-
-The candidate may supply evidence but cannot be the sole authority that admits its own exam. Legacy v1/v2 endpoints require explicit admission under the current standard before their Q1-Q5 are used.
-
-If admission fails, remain READ_ONLY. An independent question authority/Owner repairs or adopts a valid set; the candidate does not self-author and self-qualify.
-
-Read `references/question-set-admission.md`.
-
-## 9. Qualification-first takeover
-
-For a replacement engineering-critical agent:
+After independent PASS:
 
 ```text
-TAKEOVER_AUTHORITY: READ_ONLY
+CUSTODY_STATE: QUALIFIED_PENDING_RECONCILIATION
+QUALIFICATION_STATE: PASS
+WRITE_AUTHORITY: READ_ONLY
 ```
 
-Allowed before qualification:
+Then reconcile current PR/main/crash-window/roadmap/source/oracle/overlap state.
 
-```text
-locate repo / chain / ACTIVE.md / latest accepted endpoint
-locate PR and qualification basis
-perform question-set admission
-read pinned code/tests/data/roadmaps/sources needed to answer
-perform calculations needed for Q1-Q5
-```
-
-Not allowed before PASS:
-
-- advance `ACTIVE.md` or custody epoch;
-- create an accepted recovery endpoint;
-- reconcile later commits as accepted work;
-- modify production/tests/oracles/roadmaps;
-- resume AUTO MODE;
-- grant write authority.
-
-Sequence:
-
-```text
-1. minimal locator/bootstrap
-2. question-set admission = VALID
-3. answer pinned Q1-Q5
-4. independent verifier scores
-5. FAIL/DEFERRED -> READ_ONLY
-6. PASS -> PASS_QUALIFIED_READ_ONLY / QUALIFIED_PENDING_RECONCILIATION
-7. reconcile live PR/main, crash-window commits, roadmaps/sources/oracles, overlaps
-8. classify POST_BASIS_DRIFT
-9. retain qualification, independently confirm coverage, or requalify as required
-10. only if all current-state authority clears -> HELD + WRITE_ALLOWED
-11. execute EXACT_NEXT_ACTION
-```
-
-## 10. Q1-Q5 expert qualification standard
-
-Exactly five questions:
-
-```text
-Q1 Production Trace
-   actual object/case/value; exact files/functions/IDs/hashes; end-to-end reconstruction
-
-Q2 Current Unresolved Problem / Failure Isolation
-   real hand/numerical or equivalent technical reconstruction; predicted intermediates; first wrong boundary
-
-Q3 Authority / Invariant
-   source/ownership boundary plus exact falsifier and invalid shortcut
-
-Q4 Independent Validation
-   independent hand calculation/published oracle/cross-solver/byte reconstruction with units/signs/tolerance
-
-Q5 Next Contribution / Minimal Patch
-   safe implementation boundary exam; exact files/functions, before/after values, tests, rollback and NO-PATCH condition
-```
-
-Q5 is not an instruction to patch.
-
-Minimum set quality where the domain permits:
-
-```text
->=2 numerical/hand or equivalent exact technical reconstructions
->=3 questions requiring exact live-repository evidence
->=1 end-to-end production reconstruction
->=1 independent engineering oracle
->=1 explicit falsifier
->=1 exact safe-patch design with NO-PATCH condition
-```
-
-Non-numerical domains may substitute byte offsets, pointer/cardinality arithmetic, parser transitions, topology ownership, deterministic hashes, or equivalent exact reconstruction.
-
-Generic questions such as `Explain the solver`, `Describe the benchmark`, `Which file would you inspect?`, `List the claims`, or source-reading comprehension without available implementation reconstruction are invalid.
-
-For FEA/WRC/load-calculation/fixed-format work, prefer real calculation/reconstruction: actual element/node/load case, Jacobian/determinant, stiffness/end-force, equilibrium/free body, `r x F` and moment transfer, local/global axes, pointer/cardinality/byte arithmetic, or another domain-equivalent falsifiable computation.
-
-Read `references/qualification.md` and `references/repository-agent-policy.md`.
-
-## 11. Qualification roles and scoring
-
-Artifacts remain separate under `agents/qualifications/<CHAIN_ID>/`.
-
-Rules:
-
-```text
-candidate != verifier
-candidate cannot self-award WRITE_ALLOWED
-candidate cannot self-admit its own questionable set
-question set is pre-authored by prior endpoint author/question authority
-verdict basis == pinned qualification basis
-total >= 92/100
-every question >= 17/20
-```
-
-Version-3 verdicts:
-
-```text
-PASS_QUALIFIED_READ_ONLY
-FAIL_READ_ONLY
-DEFERRED_READ_ONLY
-INVALID_SELF_VERIFIED
-```
-
-PASS proves competence only.
-
-## 12. Post-PASS reconciliation and drift classification
-
-After PASS, reconcile every post-basis commit/path and current authority while still READ_ONLY.
-
-Classify:
+## 13. Post-basis drift
 
 ```text
 POST_BASIS_DRIFT:
@@ -370,59 +325,61 @@ AUTHORITY_CHANGED
 CONTAMINATED
 ```
 
-Consequences:
-
 ```text
 NONE | METADATA_ONLY
--> QUALIFICATION_COVERAGE: RETAINED
+→ qualification retained
 
 MATERIAL_WITHIN_QUALIFIED_BOUNDARY
--> QUALIFICATION_COVERAGE: INDEPENDENTLY_CONFIRMED required
+→ independent coverage confirmation required
 
 MATERIAL_BOUNDARY_CHANGED | AUTHORITY_CHANGED | CONTAMINATED
--> QUALIFICATION_COVERAGE: REQUALIFICATION_REQUIRED
--> WRITE_AUTHORITY: READ_ONLY
--> fresh independently authored Q1-Q5 against recovered basis
--> qualify again
+→ REQUALIFICATION_REQUIRED
+→ WRITE_AUTHORITY: READ_ONLY
+→ fresh independently authored Q1-Q5 against recovered basis
 ```
 
-A candidate cannot self-classify material drift as covered and self-enable writes.
+## 14. Roadmaps, validation, AUTO and merge
 
-Read `references/post-basis-drift.md`.
+Applicable Owner roadmaps are read/pinned before material coding. Roadmap mutation requires explicit Owner authorization. Source/benchmark/oracle authority remains independent.
 
-## 13. Roadmaps, validation, concurrency, AUTO, merge
+Validation always distinguishes PASS/FAIL/NOT_RUN/NOT_APPLICABLE. Empty workflow jobs, transport failure, mergeability or source inspection cannot become engineering PASS.
 
-All prior controls remain binding. In particular:
+AUTO cannot bypass protocol/work-item/prework/qualification/handover gates and cannot authorize roadmap/source/oracle changes or merge.
 
-- applicable owner roadmap(s) are read/pinned before material coding;
-- roadmap mutation needs explicit Owner authorization;
-- source/benchmark/oracle authority is independent;
-- validation distinguishes PASS/FAIL/NOT_RUN/NOT_APPLICABLE;
-- cross-chain overlap is checked before mutation;
-- AUTO MODE cannot enter a material leg until protocol adoption, pre-work endpoint and Q-pack validation are complete;
-- AUTO MODE pauses on agent loss and cannot resume merely because qualification passed;
-- merge remains Owner-controlled unless separately authorized.
+Merge remains Owner-controlled unless separately authorized.
 
-## 14. Executable controls
+## 15. Executable controls
 
-Canonical structural checks:
+Canonical relay:
 
 ```text
 python skills/engineering-pr-delivery-v2/scripts/validate_chain_store.py .
 python skills/engineering-pr-delivery-v2/scripts/validate_roadmap_bindings.py .
 python skills/engineering-pr-delivery-v2/scripts/validate_handover_snapshot.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_handover_readiness.py .
 python skills/engineering-pr-delivery-v2/scripts/validate_qualification_questions.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_qualification_profile.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_engineering_question_payload.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_owner_qualification_baseline.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_work_item_exclusivity.py .
+python skills/engineering-pr-delivery-v2/scripts/validate_material_leg_history.py .
 ```
 
-Takeover gates:
+New material leg:
 
 ```text
-python skills/engineering-pr-delivery-v2/scripts/validate_question_set_admission.py <endpoint.md> <admission.md> [candidate-answer.md]
-python skills/engineering-pr-delivery-v2/scripts/validate_qualification.py <answer.md> <verdict.md>
-python skills/engineering-pr-delivery-v2/scripts/validate_post_basis_drift.py <reconciliation.md>
+python skills/engineering-pr-delivery-v2/scripts/validate_leg_adoption.py <repo-root> <ACTIVE.md>
+python skills/engineering-pr-delivery-v2/scripts/validate_prework_history.py <repo-root> <base-ref> <head-ref> <ACTIVE.md>
+python skills/engineering-pr-delivery-v2/scripts/validate_legacy_relay_diff.py <repo-root> <base-ref> <head-ref>
 ```
 
-Repository adoption/legacy-write controls are defined in `references/repository-agent-policy.md`; when their executable validators are available in the current skill revision, they are mandatory before a new material leg.
+Takeover:
+
+```text
+python skills/engineering-pr-delivery-v2/scripts/validate_question_set_admission.py <endpoint> <admission> [answer]
+python skills/engineering-pr-delivery-v2/scripts/validate_qualification.py <answer> <verdict>
+python skills/engineering-pr-delivery-v2/scripts/validate_post_basis_drift.py <reconciliation>
+```
 
 Aggregate:
 
@@ -431,4 +388,4 @@ python skills/engineering-pr-delivery-v2/scripts/check_relay.py . [options]
 python skills/engineering-pr-delivery-v2/scripts/self_test.py
 ```
 
-Legacy v1/v2 history remains readable and is not mass-rewritten. Structural validation never replaces expert engineering verification.
+Historical v1/v2/pre-P0 endpoints remain readable immutable evidence. Structural validation never replaces expert engineering verification.
