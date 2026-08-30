@@ -1,0 +1,11 @@
+item_id,asset_type,provenance,historical_anchor_id,mechanism,first_move,student_export,teacher_export,timing_status
+ALG01-PYQ-2025-01,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2025-Q01,percentage symmetry,translate relation algebraically,true,true,NOT_RUN
+ALG01-PYQ-2025-21,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2025-Q21,integer algebra,represent consecutive/integer structure,true,true,NOT_RUN
+ALG01-PYQ-2024-05,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2024-Q05,identity recognition,match target to identity,true,true,NOT_RUN
+ALG01-PYQ-2024-11,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2024-Q11,substitution,name repeated structure,true,true,NOT_RUN
+ALG01-F1-001,PRACTICE,AUTHOR_CREATED_FOUNDATION,,factor-vs-expand,match representation to target,true,true,NOT_RUN
+ALG01-F2-001,PRACTICE,AUTHOR_CREATED_TRANSFER,,power reduction,use low-degree relation,true,true,NOT_RUN
+ALG01-F2-002,PRACTICE,AUTHOR_CREATED_TRANSFER,,symmetry,use sum-product identity,true,true,NOT_RUN
+ALG01-XF-001,TRANSFER,AUTHOR_CREATED_TRANSFER,,equivalence,record domain then verify,true,true,NOT_RUN
+ALG01-H0-001,MASTERY,AUTHOR_CREATED_TRANSFER,,relation reduction,reduce powers,true,true,NOT_RUN
+ALG01-H0-002,MASTERY,AUTHOR_CREATED_TRANSFER,,representation choice,justify factor/expand choice,true,true,NOT_RUN
