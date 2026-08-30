@@ -2,13 +2,19 @@
 
 ## Purpose
 
-The Active handover is no longer an occasional end-of-session artifact. For every response that performed, attempted, audited, blocked, resumed, advanced, completed or re-grounded repository work, the agent's **first user-visible section** is the Active handover snapshot.
+Every response that performed, attempted, audited, blocked, resumed, advanced, completed or re-grounded repository work starts with:
 
-No narrative prose precedes it. After the snapshot, show the full active qualification questions. Optional turn-specific reporting is limited to `## Changed this turn` with at most eight concise bullets unless the Owner explicitly asks for a detailed report.
+```text
+# Active handover snapshot
+```
 
-## Durable endpoint structure
+No narrative prose precedes it.
 
-New successor endpoints under `HANDOVER_PROTOCOL_VERSION: 2` contain two separate sections:
+The snapshot is always shown. **Full Q1-Q5 are not always shown.** Their generation/display is controlled only by the three Owner progression commands in `owner-progression-commands.md`.
+
+## State Card
+
+New successor endpoints under `HANDOVER_PROTOCOL_VERSION: 2` contain:
 
 ```text
 ### Active handover snapshot
@@ -16,92 +22,180 @@ Repo:
 Task:
 Chain:
 Endpoint:
+
 PR:
 PR status:
 Branch / PR head / main:
+Mergeability:
+Reviews:
+Unresolved review threads:
+Required checks:
 Merge authority:
+Merge authorized:
+
 Engineering / custody / qualification / write state:
 AUTO:
 Protocol basis / status:
-Roadmap:
+Work item / source:
+Issue basis: <id/status or NOT_APPLICABLE>
+
+Owner roadmap(s):
+Other governing roadmaps:
+Roadmap alignment / drift:
+Roadmap mutation authority:
+
+Original task status:
 Inputs:
-Benchmarks:
-Governing docs / authoritative sources:
+Benchmarks / oracles:
+
+Qualification:
+Scope:
+Question set:
+Question status:
+Question action:
+Takeover qualification ready:
+Chain handover ready:
+
 Current blocker:
 Leg diagnosis:
 Exact next action:
-
-### Active qualification questions
-Q1: <full expert prompt>
-Q2: <full expert prompt>
-Q3: <full expert prompt>
-Q4: <full expert prompt>
-Q5: <full expert prompt>
 ```
 
-The full questions correspond exactly to the detailed `### Takeover qualification pack` below them. They are not topic labels.
+The State Card target is `<220 words`; concise counts are allowed only when unresolved/failed/open rows remain durably locatable in the Issue Basis/endpoint/ledger.
 
-## Word limit
+`MERGE_AUTHORITY` and `MERGEABILITY` are independent. Always show both. Also show whether merge has actually been authorized in the current chain state.
 
-The `<220 words` target applies only to the State Card inside `### Active handover snapshot`.
+## Question display
 
-Q1-Q5 are deliberately outside that limit. Do not remove numerical values, coordinates, loads, dimensions, integration points, required derivations, independent-oracle requirements, falsifiers or NO-PATCH reasoning to make the card shorter.
+### `proceed next`
 
-Historical v3 endpoints using `### Handover snapshot` and the former `<300 words including Q1-Q5` format remain immutable history. The next material leg adopts protocol version 2.
-
-## Every-response triggers
-
-The Active handover envelope is mandatory after all of these, not only at a traditional handover:
+If the current Q-set remains valid:
 
 ```text
-proceed next
-AUTO batch
-read-only audit
-blocked / NOT_RUN outcome
-PR create/update
-review/status re-ground
-material batch completion
-owner-decision boundary
-merge boundary
-explicit handover
-task completion
+Question action: REUSED
+Question display: HIDE
 ```
 
-Saying only `EP-xxxx contains Q1-Q5` is invalid.
+Do not print unchanged Q1-Q5.
 
-## Readiness evidence
-
-New endpoints use:
+If the qualification scope changed or the set became stale, refresh and show full questions:
 
 ```text
-HANDOVER_PROTOCOL_VERSION: 2
+## Active qualification questions
+Q1 ...
+Q2 ...
+Q3 ...
+Q4 ...
+Q5 ...
+```
+
+### `proceed next, no Qs`
+
+```text
+Question action: SUPPRESSED_BY_OWNER
+Question display: HIDE
+```
+
+Never generate, refresh or display Q1-Q5 in that bounded progression. If existing coverage becomes stale, show:
+
+```text
+Question status: STALE
+Takeover qualification ready: FALSE
+```
+
+The chain may still be handover-recoverable because task/input/benchmark/roadmap/PR custody is separate from qualification readiness.
+
+### `proceed next, hand over ready`
+
+Full current Q1-Q5 are mandatory in the response and durable takeover checkpoint. If they are stale, refresh them before claiming takeover readiness.
+
+```text
+## Active qualification questions
+Q1 ... Q5 ...
+```
+
+If current questions/sync/validation cannot be completed, report the exact blocker and leave the applicable readiness flag FALSE.
+
+## Changed-this-turn reporting
+
+After the snapshot and any command-required questions, normal reporting is:
+
+```text
+## Changed this turn
+```
+
+with at most eight concise delta bullets unless the Owner asks for a detailed report.
+
+Do not replace cumulative State Card custody with a long narrative.
+
+## Issue-based cumulative state
+
+For `WORK_ITEM_SOURCE: GITHUB_ISSUE`, the State Card must carry current cumulative status for:
+
+```text
+original issue task / acceptance obligations
+inputs
+benchmarks / oracles
+Owner Roadmap(s) and other applicable roadmaps
+```
+
+These categories cannot disappear merely because nothing changed this turn. The GitHub Issue Active Handover comment contains the same cumulative state and links to the current Issue Basis and endpoint history. See `github-issue-control-plane.md`.
+
+## Readiness fields
+
+Use distinct readiness planes:
+
+```text
 HANDOVER_CONTENT_READY: TRUE | FALSE
 HANDOVER_VALIDATION_STATUS: PASS | FAIL | NOT_RUN
-HANDOVER_VALIDATION_EVIDENCE: <durable evidence locator or NONE>
-HANDOVER_READY: TRUE | FALSE
-REPORTING_CONTRACT: ACTIVE_HANDOVER_FIRST
-HANDOVER_RESPONSE_REQUIRED: ALWAYS
-RESPONSE_DELTA_MODE: DELTA_ONLY
+HANDOVER_VALIDATION_EVIDENCE: <durable evidence or NONE>
+HANDOVER_READY: TRUE | FALSE              # legacy/aggregate compatibility
+CHAIN_HANDOVER_READY: TRUE | FALSE
+TAKEOVER_QUALIFICATION_READY: TRUE | FALSE
 ```
 
-`HANDOVER_READY: TRUE` is valid only when:
+`CHAIN_HANDOVER_READY` means the engineering chain can be reconstructed from durable task/roadmap/input/benchmark/PR/endpoint state.
+
+`TAKEOVER_QUALIFICATION_READY` means a valid current Q-set is available for a replacement to enter admission/qualification immediately.
+
+For new states, `HANDOVER_READY` should reflect complete takeover readiness:
 
 ```text
-HANDOVER_CONTENT_READY == TRUE
-HANDOVER_VALIDATION_STATUS == PASS
-HANDOVER_VALIDATION_EVIDENCE is non-empty and not NONE
+HANDOVER_READY == CHAIN_HANDOVER_READY && TAKEOVER_QUALIFICATION_READY
 ```
 
-If structural/qualification handover validation is `NOT_RUN` or `FAIL`, keep the baton content but report:
+subject to handover validation/sync evidence. `proceed next, no Qs` may legitimately end with:
 
 ```text
-HANDOVER_CONTENT_READY: TRUE
-HANDOVER_VALIDATION_STATUS: NOT_RUN | FAIL
+CHAIN_HANDOVER_READY: TRUE
+TAKEOVER_QUALIFICATION_READY: FALSE
 HANDOVER_READY: FALSE
 ```
 
-This prevents self-declared readiness from being mistaken for executed validation evidence.
+## GitHub-Issue synchronization
+
+For issue-based work, `proceed next, hand over ready` requires:
+
+```text
+ISSUE_HANDOVER_SYNC_STATUS: IN_SYNC
+```
+
+before `CHAIN_HANDOVER_READY: TRUE` is claimed as the current human-visible control-plane state.
+
+Ordinary `proceed next` also updates the mutable Active Handover comment after the accepted endpoint. If synchronization fails, preserve repository custody but block the next material progression until the Issue projection is reconciled.
 
 ## Crash discipline
 
-Before a material batch, a current work-ahead endpoint and full expert Q1-Q5 must already exist. After a coherent material batch, publish the receipt/successor endpoint before another material batch begins. A replacement qualifies against the pinned accepted basis first; later crash-window work is reconciled only after qualification PASS.
+A valid Q-set is required for **takeover qualification**, not for every same-agent endpoint. Qualification is scope-bound rather than turn-bound.
+
+Before a replacement takes custody:
+
+```text
+TAKEOVER_QUALIFICATION_READY: TRUE
+→ question-set admission
+→ qualification
+```
+
+If FALSE, the replacement remains READ_ONLY while an independent question authority/Owner establishes a current set.
+
+Historical endpoints/comments remain immutable.
