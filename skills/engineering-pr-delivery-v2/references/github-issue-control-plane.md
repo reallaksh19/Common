@@ -19,7 +19,8 @@ Repository artifacts remain the machine-verifiable authority. GitHub Issue comme
 explicit current Owner instruction
 → applicable Owner Roadmap(s)
 → immutable Issue Basis
-→ active engineering chain / repository state
+→ mutable repository Issue Current State
+→ active engineering chain / endpoints / receipts
 → PR / validation / release state
 → synchronized Issue comments as projection/navigation
 ```
@@ -84,27 +85,46 @@ IB-0001
 
 Never edit IB-0001 to make history look as though the new requirement always existed.
 
-## 4. Cumulative custody — no dilution
+## 4. Mutable Issue Current State — cumulative no-dilution ledger
 
-Four ledgers are mandatory for issue-based work and must survive every accepted checkpoint:
+Do not require Agent 5 or Agent 10 to replay all endpoint deltas just to know current task/input/benchmark/roadmap state.
+
+Maintain one repository-authoritative materialized current-state file:
 
 ```text
-ORIGINAL TASK / ACCEPTANCE
-INPUTS
-BENCHMARKS / ORACLES
-ROADMAPS
+agents/chains/<CHAIN_ID>/issue-state/CURRENT.md
 ```
 
-The Owner qualification baseline is a fifth protected reference when applicable.
+`ACTIVE.md` records:
+
+```text
+ISSUE_CURRENT_STATE_FILE: agents/chains/<CHAIN_ID>/issue-state/CURRENT.md
+ISSUE_CURRENT_STATE_BASIS: <ISSUE_BASIS_ID>
+ISSUE_CURRENT_STATE_ENDPOINT: <EP-ID>
+```
+
+`CURRENT.md` repeats the four protected ledgers item-by-item with current status/evidence:
+
+```text
+### Original task / acceptance ledger
+### Input ledger
+### Benchmark / oracle ledger
+### Roadmap ledger
+```
+
+and the current Owner qualification baseline locator/status.
 
 Rules:
 
-1. Stable row IDs cannot be silently deleted, renamed or merged.
+1. Stable row IDs from the current Issue Basis cannot be silently deleted, renamed, merged or replaced.
 2. Status may change only with a durable evidence locator or explicit Owner disposition.
 3. Aggregate counts may summarize but never replace item-level rows.
 4. `PASS`, `FAIL`, `NOT_RUN` and `NOT_APPLICABLE` remain distinct.
-5. A later agent may add newly discovered rows, but must record provenance and why they were absent from the Issue Basis.
-6. If the issue/body/roadmap changes, classify drift before material continuation.
+5. Newly discovered rows may be appended only with provenance and discovery endpoint.
+6. A successor Issue Basis explicitly maps retained/added/removed Owner-authorized rows.
+7. Every accepted endpoint updates `CURRENT.md` before the Issue Active Handover comment is synchronized.
+
+The mutable `CURRENT.md` is current-state authority; immutable Issue Basis + endpoint history prove how it evolved.
 
 ## 5. Three GitHub Issue comment roles
 
@@ -123,9 +143,8 @@ ISSUE_BASIS_ID=<IB-ID>
 Contains:
 
 - issue, chain and mode;
-- Issue Basis locator;
-- original task summary/counts;
-- input/benchmark/roadmap baseline summary;
+- Issue Basis and Issue Current State locators;
+- original task/input/benchmark/roadmap baseline summaries;
 - Owner qualification baseline status;
 - initial endpoint;
 - Active Handover comment ID.
@@ -145,7 +164,9 @@ CHAIN_ID=<CHAIN_ID>
 
 It is updated after every accepted endpoint and is the first issue comment a replacement agent should locate.
 
-It must show current cumulative state, not merely the latest-turn delta:
+It projects the current repository `issue-state/CURRENT.md`, not a hand-written memory summary.
+
+It must show current cumulative state:
 
 ```text
 Repo / issue / chain / endpoint
@@ -153,13 +174,13 @@ PR / branch / head / main
 PR status / mergeability / reviews / unresolved threads / required checks
 merge authority / merge authorized
 engineering / custody / qualification / write / AUTO
-Issue Basis + status
+Issue Basis + current-state locator/status
 Owner Roadmap(s) + bound revision/blob + alignment + mutation authority
 other governing roadmaps + class + status
 roadmap proposals / Owner decisions
-original-task ledger summary + open rows
-input ledger summary + unresolved rows
-benchmark/oracle summary + FAIL/NOT_RUN rows
+original-task ledger summary + every OPEN/PARTIAL/BLOCKED row
+input ledger summary + every UNRESOLVED/MISSING row
+benchmark/oracle summary + every FAIL/NOT_RUN/BLOCKED row
 qualification scope / question-set status / takeover-qualification readiness
 current blocker / leg diagnosis / exact next action
 endpoint history links
@@ -184,7 +205,7 @@ Agent instance
 Endpoint / predecessor endpoint
 Previous Issue endpoint comment ID
 PR head / main observed
-Issue Basis ID
+Issue Basis ID + Issue Current State endpoint
 Owner-roadmap bindings/drift
 Original-task status changes
 Input status changes
@@ -207,6 +228,9 @@ WORK_ITEM_SOURCE: GITHUB_ISSUE
 ISSUE_BASIS_ID:
 ISSUE_BASIS_FILE:
 ISSUE_BASIS_STATUS: CURRENT
+ISSUE_CURRENT_STATE_FILE:
+ISSUE_CURRENT_STATE_BASIS:
+ISSUE_CURRENT_STATE_ENDPOINT:
 ISSUE_CHAIN_ROOT_COMMENT_ID:
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID:
 ISSUE_LATEST_ENDPOINT_COMMENT_ID:
@@ -228,8 +252,9 @@ For `WORK_ITEM_SOURCE: GITHUB_ISSUE`:
 
 ```text
 accepted repository endpoint
+→ update issue-state/CURRENT.md
 → immutable endpoint checkpoint comment published
-→ mutable Active Handover comment updated
+→ mutable Active Handover comment updated from CURRENT.md
 → repository comment IDs recorded
 → ISSUE_HANDOVER_SYNC_STATUS = IN_SYNC
 → only then start another material progression
@@ -240,7 +265,7 @@ If Issue synchronization fails:
 ```text
 preserve current material work and repository baton
 ISSUE_HANDOVER_SYNC_STATUS = FAILED | STALE | NOT_RUN
-CHAIN_HANDOVER_READY = TRUE only if repository custody is complete
+CHAIN_HANDOVER_READY may remain TRUE only for repository custody
 AUTO = BLOCKED before another material progression
 ```
 
@@ -248,7 +273,7 @@ Do not convert a connector/network failure into `IN_SYNC`.
 
 ## 8. Roadmap custody and drift
 
-The Issue Basis pins every applicable roadmap by path/locator and immutable revision/blob where available.
+The Issue Basis pins every applicable roadmap by path/locator and immutable revision/blob where available. `CURRENT.md` carries the live classified status.
 
 The Active Handover shows both the basis binding and current binding when they differ:
 
@@ -295,10 +320,10 @@ A sixth agent should need only:
 ```text
 1. read issue body/current Owner comments
 2. locate ENG-PR-V2:ACTIVE
-3. resolve ISSUE_BASIS_ID / Issue Basis file
+3. resolve ISSUE_BASIS_ID and ISSUE_CURRENT_STATE_FILE
 4. read latest endpoint checkpoint
 5. verify WORK_ITEM_KEY/exclusive custody
-6. inspect history only where needed
+6. inspect older history only where needed
 7. admit current question set if takeover qualification is ready
 8. qualify
 9. reconcile post-basis drift
