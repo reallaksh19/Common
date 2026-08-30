@@ -59,24 +59,58 @@ Read in this order before creating any IOQM student material:
 7. `00_Architecture/IOQM_G9_Production_Gates_v1.md`
 8. `../../skills/ioqm-grade9-main-topic-builder/SKILL.md`
 
-## Baseline official/validated source set
+## Validated corpus authority
 
-Initial paper corpus:
+Read `01_Corpus/` before opening any main-topic production issue.
 
-- IOQM 2023 — validated paper/key source;
-- IOQM 2024 — official HBCSE paper + answer key;
-- IOQM 2025 — official HBCSE paper + final answer key.
+Initial normalized corpus:
 
-Every historical question must use stable ID:
+- IOQM 2023 — 30 questions;
+- IOQM 2024 — 30 questions;
+- IOQM 2025 (7 September) — 30 questions;
+- total — **90 stable historical IDs**.
+
+Current reconciled primary-domain classification:
+
+- Number Theory — 24;
+- Algebra — 18;
+- Geometry — 25;
+- Combinatorics — 23.
+
+These are operational classifications of the three-paper seed corpus, **not official IOQM weightage**. The earlier rough pre-ledger split is superseded.
+
+Corpus files:
+
+1. `01_Corpus/IOQM_2023_2025_90Q_Ledger_v1.csv`
+2. `01_Corpus/IOQM_2023_2025_Source_Coverage_Map_v1.md`
+3. `01_Corpus/IOQM_2023_2025_Taxonomy_Reconciliation_v1.md`
+4. `01_Corpus/IOQM_2023_2025_Corpus_Tagging_QA_v1.md`
+
+Every historical question uses stable ID:
 
 `IOQM-YYYY-QNN`
 
-and must retain year/question provenance in all downstream metadata.
+and retains year/question provenance in downstream metadata.
 
-The paper corpus controls evidence and practice emphasis. It does **not** create an unofficial syllabus or official weightage claim.
+## Current gates
+
+```text
+CORE_ARCHITECTURE = COMPLETE_STATIC
+CORPUS_90Q_SOURCE_KEY_CUSTODY = PASS_STATIC
+CORPUS_90Q_PRIMARY_TAGGING = PASS_STATIC
+TOPIC_COVERAGE_22_OF_22 = PASS_STATIC
+ANSWER_KEY_VALUES_CAPTURED = 90/90
+INDEPENDENT_ANSWER_RECOMPUTATION = NOT_RUN
+MEDIUM_CONFIDENCE_OVERLAP_REVIEW = PARTIAL / 41 ITEMS
+DIFFICULTY_CALIBRATION = NOT_RUN
+CLASSROOM_TIMING_READABILITY = NOT_RUN
+PSYCHOMETRIC_CALIBRATION = NOT_RUN
+```
+
+A historical answer may not be promoted as worked teaching authority until that item is independently recomputed and its ledger field `answer_verified_independently` becomes `true`.
 
 ## Publication state
 
-`ARCHITECTURE_V1_DRAFT`
+`ARCHITECTURE_AND_CORPUS_STATIC_COMPLETE__PRODUCTION_NOT_STARTED`
 
-No topic is publication-ready merely because this architecture exists. Each main topic must separately close its source, pedagogy, mathematics, student-export and render gates.
+No topic is publication-ready merely because architecture and source tagging exist. Each main topic must separately close its source, pedagogy, mathematics, student-export and render gates.
