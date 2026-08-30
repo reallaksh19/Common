@@ -13,6 +13,7 @@ SUITES = [
     "self_test_chain_concurrency.py",
     "self_test_roadmap_governance.py",
     "self_test_handover_snapshot.py",
+    "self_test_handover_contract_v2.py",
     "self_test_handover_readiness.py",
     "self_test_qualification_questions.py",
     "self_test_qualification_first_verdict.py",
