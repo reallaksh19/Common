@@ -1,6 +1,6 @@
 # IOQM Grade 9 — 90-Question Corpus Tagging QA v1
 
-Status: `PASS_STATIC_CORPUS_STRUCTURE__ANSWER_RECOMPUTATION_NOT_RUN`
+Status: `PASS_STATIC_90Q_CORPUS_AND_ANSWER_VERIFICATION`
 
 ## Structural validation
 
@@ -20,10 +20,55 @@ Status: `PASS_STATIC_CORPUS_STRUCTURE__ANSWER_RECOMPUTATION_NOT_RUN`
 | official/validated source links present | PASS |
 | official answer-key value captured | PASS — 90/90 |
 | known 2025 provisional-key correction preserved | PASS — `IOQM-2025-Q11` |
+| independent answer recomputation | PASS — 90/90 |
+| independent/key answer mismatches | PASS — 0 |
+| repository metadata defects isolated | PASS — 2 |
 | difficulty calibration | NOT_RUN |
-| independent answer recomputation | NOT_RUN — 0/90 promoted as independently verified |
 | classroom timing/readability | NOT_RUN |
 | psychometric calibration | NOT_RUN |
+
+## Independent verification authority
+
+Answer verification is recorded in:
+
+- `Verification/IOQM_Independent_Answer_Verification_Batch_A_Q01_Q10_v1.md`;
+- `Verification/IOQM_Independent_Answer_Verification_Batch_B_Q11_Q20_v1.md`;
+- `Verification/IOQM_Independent_Answer_Verification_Batch_C_Q21_Q30_v1.md`;
+- `Verification/IOQM_2023_2025_Answer_Verification_Ledger_v1.csv`.
+
+The three batches independently recompute Q01–Q30 for each of 2023, 2024 and 2025. All 90 recomputed answers agree with the validated/final key authority.
+
+This closes **answer-level mathematical verification** for the seed corpus. It does not by itself qualify every future transcription, diagram recreation, classroom explanation or derived transfer item.
+
+## Metadata-correction overlay
+
+Two errors were found in the repository's classifier/extraction metadata. Neither is a historical source defect.
+
+### `IOQM-2023-Q04`
+
+Validated paper mathematics contains `x^4`, not `x/4`.
+
+Disposition:
+
+- historical source remains clean;
+- answer `07` independently verified;
+- downstream teaching/source use must read the validated paper or correction overlay, not the stale flattened clue in the first classifier row.
+
+### `IOQM-2025-Q28`
+
+Validated paper mathematics is the nested radical
+
+`√(x - √(x+a)) = √a - y`.
+
+The first classifier row flattened this to a difference of two radicals.
+
+Disposition:
+
+- historical source remains clean;
+- answer `91` independently verified from the nested-radical statement;
+- downstream teaching/source use must use the validated paper or correction overlay.
+
+These are `REPOSITORY_METADATA_CORRECTION_REQUIRED`, not `SOURCE_CONFLICT`.
 
 ## Domain totals
 
@@ -31,6 +76,8 @@ Status: `PASS_STATIC_CORPUS_STRUCTURE__ANSWER_RECOMPUTATION_NOT_RUN`
 - ALG: 18
 - GEO: 25
 - COMB: 23
+
+These are single-primary-classification counts over this three-paper seed corpus. They are operational curriculum signals only, **not official IOQM weightage**.
 
 ## Classification-review status
 
@@ -67,10 +114,21 @@ Secondary domains/mechanisms are pedagogical bridge tags only. Recurrence tables
 
 ## Promotion gate
 
-The ledger may now drive:
-- source coverage maps;
-- topic issue scoping;
-- recognition/misconception research;
-- candidate PYQ-anchor selection.
+The corpus may now drive:
 
-It may **not yet** be used to claim that every official answer has been independently verified. A historical item must be recomputed before its answer/solution is promoted as teaching authority.
+- source coverage maps;
+- main-topic issue scoping;
+- recognition/misconception research;
+- candidate PYQ-anchor selection;
+- answer-level historical teaching authority for the 90 validated items, provided the exact paper statement/figure is used;
+- production planning and recurrence analysis using the explicit 90-question denominator.
+
+It must **not** be used to claim:
+
+- official IOQM topic weightage;
+- classroom difficulty/timing;
+- psychometric discrimination;
+- qualification probability;
+- publication readiness of future student books.
+
+For `IOQM-2023-Q04` and `IOQM-2025-Q28`, the correction overlay is mandatory until the detailed classifier ledger itself is regenerated from the exact validated stem.
