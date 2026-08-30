@@ -37,23 +37,60 @@ def show_file(root: Path, commit: str, rel: str):
 
 def validate_prework_content(text: str, where: str):
     errors = []
-    expected = {
-        "PREWORK_QUALIFICATION_READY": "TRUE",
+    for name, wanted in {
         "COMMON_PROTOCOL": "engineering-pr-delivery-v2",
         "COMMON_PROTOCOL_STATUS": "CURRENT",
-        "QUALIFICATION_PROTOCOL_VERSION": "3",
-        "QUESTION_SET_STATUS": "CURRENT",
-        "QUESTION_SET_ADMISSION_REQUIREMENT": "REQUIRED_ON_TAKEOVER",
-    }
-    for name, wanted in expected.items():
+    }.items():
         if field(text, name) != wanted:
             errors.append(f"{where}: {name} expected {wanted}, found {field(text, name)}")
+
     profile = field(text, "QUALIFICATION_PROFILE")
     if not profile:
         errors.append(f"{where}: missing QUALIFICATION_PROFILE")
-    qheads = re.findall(r"(?mi)^####\s+Q([1-5])\s+—", text or "")
-    if qheads != ["1", "2", "3", "4", "5"]:
-        errors.append(f"{where}: historical prework endpoint must already contain ordered Q1-Q5, found {qheads}")
+
+    cmd = field(text, "OWNER_PROGRESSION_COMMAND")
+    if not cmd:
+        # Historical P0 rule: before progression-command protocol, each prework endpoint
+        # had to carry a fresh current qualification pack.
+        expected = {
+            "PREWORK_QUALIFICATION_READY": "TRUE",
+            "QUALIFICATION_PROTOCOL_VERSION": "3",
+            "QUESTION_SET_STATUS": "CURRENT",
+            "QUESTION_SET_ADMISSION_REQUIREMENT": "REQUIRED_ON_TAKEOVER",
+        }
+        for name, wanted in expected.items():
+            if field(text, name) != wanted:
+                errors.append(f"{where}: historical {name} expected {wanted}, found {field(text, name)}")
+    else:
+        if cmd not in {"PROCEED_NEXT", "PROCEED_NEXT_NO_QS", "PROCEED_NEXT_HANDOVER_READY"}:
+            errors.append(f"{where}: invalid progression command {cmd}")
+        qstatus = field(text, "QUESTION_SET_STATUS")
+        action = field(text, "QUESTION_PACK_ACTION")
+        display = field(text, "QUESTION_DISPLAY")
+        takeover = field(text, "TAKEOVER_QUALIFICATION_READY")
+        if cmd == "PROCEED_NEXT":
+            if qstatus not in {"CURRENT", "NOT_APPLICABLE"}:
+                errors.append(f"{where}: proceed next prework must have current/applicable qualification coverage")
+            if action not in {"REUSED", "REFRESHED", "NOT_APPLICABLE"}:
+                errors.append(f"{where}: proceed next invalid question action {action}")
+        elif cmd == "PROCEED_NEXT_NO_QS":
+            if action != "SUPPRESSED_BY_OWNER" or display != "HIDE":
+                errors.append(f"{where}: no-Q prework must suppress refresh and hide questions")
+            if qstatus == "STALE" and takeover != "FALSE":
+                errors.append(f"{where}: stale no-Q prework must set takeover qualification readiness FALSE")
+        elif cmd == "PROCEED_NEXT_HANDOVER_READY":
+            if qstatus not in {"CURRENT", "NOT_APPLICABLE"}:
+                errors.append(f"{where}: hand-over-ready prework cannot use stale qualification")
+            if qstatus == "CURRENT" and display != "SHOW":
+                errors.append(f"{where}: hand-over-ready prework must show current Q1-Q5")
+            if takeover != "TRUE":
+                errors.append(f"{where}: hand-over-ready prework requires takeover qualification readiness TRUE")
+
+    # Durable question history remains present when questions apply, even if user-facing display is hidden.
+    if field(text, "QUESTION_SET_STATUS") != "NOT_APPLICABLE":
+        qheads = re.findall(r"(?mi)^####\s+Q([1-5])\s+—", text or "")
+        if qheads != ["1", "2", "3", "4", "5"]:
+            errors.append(f"{where}: prework endpoint must retain ordered durable Q1-Q5 when qualification applies, found {qheads}")
     return errors
 
 
@@ -104,7 +141,7 @@ def main():
                 for e in errors:
                     print("FAIL:", e)
                 return 1
-            print(f"PASS: prework endpoint historically valid; no material paths in {base_ref}..{head_ref}")
+            print(f"PASS: prework custody endpoint historically valid; no material paths in {base_ref}..{head_ref}")
             return 0
 
         first_material_lines = git(root, "log", "--reverse", "--format=%H", f"{base}..{head}", "--", *material).stdout.splitlines()
@@ -120,7 +157,7 @@ def main():
             for e in errors:
                 print("FAIL:", e)
             return 1
-        print(f"PASS: prework endpoint {prework_rel}@{prework_commit} precedes first material commit {first_material}")
+        print(f"PASS: prework custody endpoint {prework_rel}@{prework_commit} precedes first material commit {first_material}")
         return 0
     except RuntimeError as exc:
         print(f"FAIL: PREWORK_HISTORY_STATUS INVALID_OR_UNPROVEN — {exc}")
