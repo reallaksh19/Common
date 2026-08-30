@@ -2,57 +2,87 @@
 
 ## Purpose
 
-Allow many independent engineering chains to advance in the same repository without creating relay-file conflicts merely because they share one bookkeeping file.
+Allow independent engineering chains to advance without shared relay-file conflicts, while preventing accidental duplicate writers on the **same work item**.
 
-The canonical write authority for a new chain is chain-local:
+Canonical chain state remains:
 
 ```text
 agents/chains/<CHAIN_ID>/ACTIVE.md
 agents/chains/<CHAIN_ID>/endpoints/<ENDPOINT_ID>.md
 ```
 
-`agents/agentchain.md` is a derived/compatibility dashboard. It is not the authoritative active pointer for canonical chain-local work and does not need to change at every endpoint.
+`agents/agentchain.md` is historical/derived navigation, not active authority.
+
+## Work-item identity — first concurrency gate
+
+Path/authority overlap is not sufficient to detect two agents working the same GitHub issue. Every new material leg/successor endpoint records:
+
+```text
+WORK_ITEM_KEY: <stable work identity>
+WORK_ITEM_MODE: EXCLUSIVE | PARTITIONED
+AGENT_INSTANCE_ID: <agent-class>:<UUID>
+```
+
+Recommended GitHub form:
+
+```text
+WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#1535
+```
+
+`AGENT_INSTANCE_ID` identifies one live agent/conversation instance. A model family/name such as `OPENAI-GPT-5.6-SOL`, `GPT-5.6`, or `claude` is not a unique instance identity and is invalid for new material custody.
+
+Canonical examples:
+
+```text
+AGENT_INSTANCE_ID: chatgpt:6c19e9d4-4be3-4f4c-9b4a-7a1f52d1e930
+AGENT_INSTANCE_ID: codex:3487ad68-7933-4b62-a35b-c9a803948477
+```
+
+### EXCLUSIVE
+
+For `WORK_ITEM_MODE: EXCLUSIVE`, at most one non-terminal canonical chain may hold the same `WORK_ITEM_KEY`.
+
+If another live chain already holds it:
+
+```text
+BLOCK_NEW_CHAIN
+→ READ existing ACTIVE/endpoint
+→ explicit takeover/join/supersession decision
+→ qualification-first if custodian changes
+```
+
+Do not create a second mutable chain merely because file/path overlap appears disjoint.
+
+### PARTITIONED
+
+Partitioning one work item across agents requires explicit Owner authority:
+
+```text
+WORK_ITEM_MODE: PARTITIONED
+WORK_ITEM_PARTITION: <stable non-overlapping partition identity>
+WORK_ITEM_PARTITION_AUTHORITY: OWNER:<durable authorization locator>
+```
+
+Two live chains may share a work-item key only when each has a distinct partition and valid Owner partition authority. Duplicate partition identity fails closed.
+
+Exact work-item collision is evaluated **before** semantic path/authority overlap. Semantic overlap remains an additional control.
 
 ## Endpoint identity
 
-Endpoint IDs are unique **within a chain**, not across the repository.
-
-Valid:
-
-```text
-ADV-WRC-1389/EP-0001
-ADV-LAFEA-1422/EP-0001
-ADV-LOADCALC-1505/EP-0001
-```
-
-Invalid:
-
-```text
-ADV-WRC-1389/EP-0003
-ADV-WRC-1389/EP-0003
-```
-
-The durable endpoint key is:
+Endpoint IDs are unique within a chain, not repository-wide. Durable endpoint key:
 
 ```text
 (CHAIN_ID, ENDPOINT_ID)
 ```
 
-Question-set IDs should remain visibly namespaced by chain, for example:
+Question-set IDs remain visibly chain-namespaced.
+
+## ACTIVE.md identity fields
+
+Current new-material state includes at minimum:
 
 ```text
-QS-ADV-WRC-1389-0003
-QS-ADV-LAFEA-1422-0003
-```
-
-## ACTIVE.md
-
-`ACTIVE.md` is the single mutable current-state record for one chain.
-
-Required fields:
-
-```text
-CHAIN_STATE_VERSION: 1
+CHAIN_STATE_VERSION: 3
 CHAIN_ID:
 MISSION:
 ACTIVE_ENDPOINT:
@@ -63,81 +93,36 @@ HEAD:
 STATE:
 AUTHORITY_DOMAIN:
 ACTIVE_CUSTODIAN:
+AGENT_INSTANCE_ID:
+WORK_ITEM_KEY:
+WORK_ITEM_MODE:
 CUSTODY_EPOCH:
 COORDINATION_STATE:
 DEPENDENCIES:
 ```
 
-Example:
+`ACTIVE_CUSTODIAN` may be a human-readable label, but write/collision identity uses `AGENT_INSTANCE_ID`.
 
-```text
-CHAIN_STATE_VERSION: 1
-CHAIN_ID: ADV-WRC-1389
-MISSION: Close bounded WRC gamma=5 production qualification
-ACTIVE_ENDPOINT: EP-0012
-ACTIVE_ENDPOINT_FILE: agents/chains/ADV-WRC-1389/endpoints/EP-0012.md
-PR: 1510
-BRANCH: emp1-wrc-next-batch
-HEAD: <sha>
-STATE: ACTIVE
-AUTHORITY_DOMAIN: WRC_EMP1
-ACTIVE_CUSTODIAN: agent-b
-CUSTODY_EPOCH: 12
-COORDINATION_STATE: SAFE
-DEPENDENCIES: NONE
-```
+## Custody epoch / compare-and-swap
 
-A terminal chain may keep `ACTIVE.md` with `STATE: COMPLETE` or `SUPERSEDED`; discovery tools ignore terminal chains.
+Each direct successor increments `CUSTODY_EPOCH` by exactly one. Before updating ACTIVE:
 
-## Custody epoch / compare-and-swap rule
-
-Every endpoint in a canonical chain records:
-
-```text
-CUSTODY_EPOCH: <positive integer>
-```
-
-The first endpoint uses `1`. Every direct successor increments by exactly one.
-
-Before updating `ACTIVE.md`:
-
-1. read its current repository blob/version and `CUSTODY_EPOCH`;
+1. read the current ACTIVE blob/version and epoch;
 2. create the next immutable endpoint from that exact state;
-3. update `ACTIVE.md` using the exact prior blob/version and `epoch + 1`;
-4. if the write is rejected, conflicts, or the observed epoch changed, stop and re-ground.
+3. update ACTIVE using the exact prior blob/version and `epoch + 1`;
+4. if the write conflicts or the epoch changed, stop and re-ground.
 
-Do not force a stale update merely because both agents began from the same endpoint.
-
-This is a repository compare-and-swap discipline. Git merge conflicts and contents-API blob-SHA checks are both valid stale-write signals.
+Do not force a stale update merely because two agents began from the same endpoint.
 
 ## Same-chain divergence
 
-Two successors from one endpoint are not silently accepted:
+Two successors from one endpoint are not silently accepted. Competing successors require explicit reconciliation/supersession; newest timestamp or biggest diff does not win automatically.
 
-```text
-EP-0004
-  -> EP-0005-A
-  -> EP-0005-B
-```
+If another `AGENT_INSTANCE_ID` attempts to continue the same chain without an accepted custody transition, it remains READ_ONLY until qualification/takeover controls clear.
 
-The validator reports divergent custody. Incoming work must compare both material states and create an explicit reconciliation/supersession endpoint. Newest timestamp or largest diff does not win automatically.
+## Different-work-item concurrency
 
-## Different-chain concurrency
-
-Independent chains should not touch each other's relay state:
-
-```text
-WRC agent
-  -> agents/chains/ADV-WRC-1389/**
-
-LAFEA agent
-  -> agents/chains/ADV-LAFEA-1422/**
-
-LoadCalc agent
-  -> agents/chains/ADV-LOADCALC-1505/**
-```
-
-They coordinate only when there is a real overlap in:
+Independent chains with different `WORK_ITEM_KEY` values may advance concurrently when there is no real overlap in:
 
 ```text
 exact file/path
@@ -148,31 +133,12 @@ release/publication authority
 dependency/stacking
 ```
 
-No relay-file collision should manufacture a coordination problem that does not exist in the engineering work.
+Use semantic overlap detection after the exact work-item gate.
 
 ## Derived dashboard
 
-Use:
-
-```text
-python skills/engineering-pr-delivery-v2/scripts/render_agentchain_dashboard.py .
-```
-
-to render current non-terminal chain traffic from `agents/chains/*/ACTIVE.md`.
-
-The rendered dashboard is navigation convenience only. It may be regenerated for reporting or maintenance, but normal endpoint advancement must not require a shared dashboard commit.
+`render_agentchain_dashboard.py` remains navigation convenience only. Normal endpoint advancement does not require a shared dashboard commit.
 
 ## Legacy compatibility
 
-Repositories that already contain:
-
-```text
-agents/agentchain.md
-agents/agentchain/<CHAIN_ID>/<ENDPOINT_ID>.md
-```
-
-retain those artifacts as historical/recovery evidence. Do not mass-rewrite immutable history.
-
-Existing legacy-format chains may finish in legacy format or migrate at a deliberate endpoint. New chains and new independent workstreams should use the canonical chain-local store.
-
-During migration, use the old `validate_agentchain.py` for legacy history and `validate_chain_store.py` for canonical chain-local state.
+Historical `agents/agentchain*` artifacts remain read/cite/recovery evidence and are not mass-rewritten. The next material leg deliberately adopts canonical chain-local state, exact work-item identity and agent-instance identity.

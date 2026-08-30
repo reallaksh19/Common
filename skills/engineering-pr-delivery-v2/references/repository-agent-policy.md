@@ -1,47 +1,34 @@
 # Repository Agent Policy — shared engineering-pr-delivery-v2 rules
 
-This file is the reusable cross-repository policy for repositories adopting `engineering-pr-delivery-v2`. Repository-root `AGENTS.md` files are **project overlays**, not copies of this protocol.
+This is the reusable cross-repository policy for `engineering-pr-delivery-v2`. Repository-root `AGENTS.md` files are **project overlays**, not copies of this protocol.
+
+For new material legs, `reality-check-p0.md` is a binding amendment. Where older wording conflicts with it, the P0 amendment wins.
 
 ## 1. Policy layering
-
-The authority order is:
 
 ```text
 explicit current Owner instruction
 → repository project overlay (`AGENTS.md`)
-→ this shared repository-agent policy
+→ this shared repository-agent policy + reality-check-p0 amendment
 → engineering-pr-delivery-v2 `SKILL.md` + references
 ```
 
-A project overlay may be stricter for its own domain. It may not silently weaken qualification, source/oracle custody, validation truth, owner-roadmap authority, chain/custody controls, anti-gaming rules, or merge authority.
+A project overlay may be stricter for its domain. It may not silently weaken qualification, source/oracle custody, validation truth, owner-roadmap authority, chain/custody controls, work-item exclusivity, anti-gaming rules or merge authority.
 
-Repository overlays should contain only project-specific facts such as:
-
-- project identity and engineering criticality;
-- repository-specific roadmaps and source authorities;
-- protected solver/method/data/publication domains;
-- project-specific validation commands and benchmarks;
-- project-specific AUTO hard stops;
-- local workflow/release restrictions that are stricter than Common.
-
-Do **not** duplicate the reusable relay state machine, qualification sequence, Q1–Q5 schema, canonical chain paths, generic AUTO semantics, generic merge rules, or crash-recovery procedure into downstream `AGENTS.md` files. Duplicated generic policy becomes stale authority.
+Downstream `AGENTS.md` should contain only project identity/criticality, repository-specific roadmaps/sources, protected solver/method/data/publication domains, local validation commands/benchmarks, project-specific AUTO hard stops and stricter workflow/release restrictions. Do not duplicate the generic relay state machine, qualification sequence, Q1–Q5 schema, canonical chain paths, generic AUTO semantics, generic merge rules or crash-recovery procedure.
 
 ## 2. Protocol-adoption gate — before every new material leg
 
-Before material coding, source-governance mutation, benchmark/oracle mutation, engineering-result publication work, or AUTO progression into a new leg, re-ground the reusable protocol.
-
-Record in the active endpoint:
+Before material coding, source-governance mutation, benchmark/oracle mutation, engineering-result publication work or AUTO progression into another material leg, re-ground live Common and record:
 
 ```text
 COMMON_PROTOCOL: engineering-pr-delivery-v2
-COMMON_PROTOCOL_BASIS: <live Common commit SHA>
+COMMON_PROTOCOL_BASIS: <live Common commit SHA actually read>
 COMMON_PROTOCOL_STATUS: CURRENT | STALE_PROTOCOL | UNKNOWN
 CHAIN_STATE_VERSION: 3
 ```
 
-`COMMON_PROTOCOL_BASIS` is the Common commit actually read for this leg, not an inherited endpoint pin.
-
-If the repository project overlay declares a minimum acceptable Common basis, the live/read basis must contain that basis or a later compatible revision. A failed network transport does not authorize falling back to an old protocol when another repository-access channel is available.
+An inherited endpoint pin is historical evidence, not permission to keep using an old Common basis.
 
 Fail closed:
 
@@ -52,9 +39,11 @@ STALE_PROTOCOL | UNKNOWN
 → READ_ONLY protocol reconciliation
 ```
 
+New-material adoption also requires the P0 fields defined in `reality-check-p0.md`: exact work-item identity, UUID-backed agent instance, handover protocol 2, reporting contract, Owner-baseline discovery and qualification profile version 2.
+
 ## 3. Canonical relay paths
 
-For every new chain, takeover migration, or new material leg that is not explicitly grandfathered history:
+For every new chain, takeover migration or new material leg:
 
 ```text
 agents/chains/<CHAIN_ID>/ACTIVE.md
@@ -64,77 +53,51 @@ agents/qualifications/<CHAIN_ID>/**
 
 Use `CHAIN_STATE_VERSION: 3`.
 
-Legacy history is read-only evidence:
+Legacy `agents/agentchain*`, PR workreports, status and claims files remain READ/CITE/RECOVER/MIGRATION-PROVENANCE only. Do not create new mutable endpoints or AUTO custody there.
+
+## 4. Exact work-item custody — before semantic overlap
+
+Every new material leg records:
 
 ```text
-agents/agentchain.md
-agents/agentchain/<CHAIN_ID>/**
-agents/PR*_workreport.md
-agents/status/**
-agents/claims/**
+WORK_ITEM_KEY: <stable identity, e.g. github:owner/repo#1535>
+WORK_ITEM_MODE: EXCLUSIVE | PARTITIONED
+AGENT_INSTANCE_ID: <agent-class>:<UUID>
 ```
 
-Allowed on legacy artifacts:
+A model family/name is not a unique agent instance. For `EXCLUSIVE`, a second non-terminal chain with the same work-item key is blocked before path/authority overlap is considered. The second agent joins/takes over the existing chain or stops.
 
-```text
-READ / CITE / RECOVER / MIGRATION-PROVENANCE
-```
+`PARTITIONED` requires distinct `WORK_ITEM_PARTITION` values and `WORK_ITEM_PARTITION_AUTHORITY: OWNER:<locator>`. Semantic path/authority/benchmark/release overlap remains an additional gate after exact work-item admission.
 
-Not allowed for a new material leg:
+Read `chain-concurrency.md`.
 
-```text
-NEW ENDPOINT
-NEW ACTIVE POINTER
-NEW AUTO LEG
-NEW TAKEOVER CUSTODY
-```
+## 5. Handover-ready before work, not after work
 
-Do not update a legacy shared index merely to announce a new v3 endpoint. Discover active traffic from `agents/chains/*/ACTIVE.md`. Historical files are not deleted or mass-rewritten.
-
-## 4. Handover-ready before work, not after work
-
-Crash readiness is a write-ahead control.
-
-Before each material engineering batch, the accepted active endpoint must already contain:
-
-- the intended bounded `Exact next action`;
-- hypothesis and falsifier;
-- protected authority/engineering boundaries;
-- expected changed domains;
-- inputs, benchmarks, governing docs, sources, production and validation paths;
-- a current, expert Q1–Q5 pack for a replacement agent.
-
-Sequence:
+Crash readiness is write-ahead control. Before each material batch, the accepted endpoint already contains the exact next action, hypothesis/falsifier, protected authority boundaries, expected changed domains, inputs/benchmarks/sources/production/validation paths and a current expert Q1–Q5 pack.
 
 ```text
 PROTOCOL ADOPTION GATE
 → PRE-WORK V3 ENDPOINT
-→ Q1–Q5 QUALITY VALIDATION
+→ Q1–Q5 QUALITY + OWNER-BASELINE VALIDATION
 → MATERIAL WORK
 → VALIDATION TRUTH
-→ SUCCESSOR ENDPOINT BEFORE NEXT MATERIAL BATCH
+→ MATERIAL RECEIPT / SUCCESSOR ENDPOINT
+→ only then another material batch
 ```
 
-Do not code first and manufacture the takeover exam afterward.
+Do not code first and manufacture the takeover exam afterward. AUTO pauses before mutation if the work-ahead endpoint, Q pack, baseline coverage or handover readiness is invalid.
 
-If the pre-work endpoint or Q pack is missing/invalid, AUTO MODE pauses before mutation.
+## 6. Expert Q1–Q5 and Owner no-downgrade floor
 
-## 5. Expert Q1–Q5 requirements
+The five questions are a competence examination for the next unresolved implementation boundary, never a task checklist.
 
-Use the qualification standard in `qualification.md`. The five questions are a competence examination for the **next unresolved implementation boundary**, never a task checklist.
+Before authoring them, inspect current Owner instructions, issue appendix/questions, Owner roadmaps and accepted handovers for Owner-authored technical questions/challenges. Record baseline discovery. If Owner questions exist, they are the minimum difficulty/coverage floor.
 
-For engineering-critical numerical work, the pack should normally force the candidate to perform real technical work, not merely explain repository prose. Examples include:
+The active pack may reorganize or strengthen them but may not silently remove supplied numerical values, coordinates, loads, geometry, materials, integration points, requested derivations, required mechanisms, independent oracles, falsifiers or negative controls. Bind a JSON coverage manifest under the chain and validate it with `validate_owner_qualification_baseline.py`.
 
-- actual element/node/load-case reconstruction;
-- stiffness/load assembly or recovery arithmetic;
-- Jacobian / determinant / transformation calculation;
-- WRC/local-axis/load-transfer hand calculation;
-- equilibrium/free-body/residual reconstruction;
-- fixed-format pointer/cardinality/byte-span arithmetic;
-- exact parser/state/hash reconstruction;
-- independent source or published benchmark calculation.
+For profile version 2, each detailed question carries `Concrete payload:` and `Required derivation:`. FEA/WRC/Load Calc/fixed-format work requires at least two hand-computable concrete payload questions; Q2/Q4 normally contain actual numerical payload and derivation. Technical vocabulary alone is insufficient.
 
-Where applicable require:
+Minimum set quality remains:
 
 ```text
 >= 2 numerical/hand or equivalent exact technical reconstructions
@@ -145,40 +108,19 @@ Where applicable require:
 >= 1 exact safe-patch + NO-PATCH boundary
 ```
 
-Questions such as `Explain the solver`, `List the claims`, `Describe the benchmark`, `Which file would you inspect?`, or source-reading comprehension without implementation reconstruction are insufficient when stronger implementation/calculation evidence is available.
+Questions such as `Explain the solver`, `List the claims`, `Describe the benchmark`, `Which file would you inspect?` or `Reconstruct the T6 Jacobian` without known element data are insufficient when stronger evidence is available.
 
-## 6. Engineering evidence expectations
+Read `qualification.md`, `qualification-profiles.md` and `owner-qualification-baseline.md`.
 
-Where relevant, distinguish:
+## 7. Engineering evidence expectations
 
-```text
-input/source authority
-→ geometry/topology
-→ stiffness/load assembly
-→ solver equilibrium
-→ element/local recovery
-→ local/global transformation
-→ moment/load transport
-→ result contract
-→ presentation/publication
-```
+Where relevant distinguish source/input authority → geometry/topology → stiffness/load assembly → solver equilibrium → local recovery → transformation/load transport → result contract → presentation/publication.
 
-For structural/FEA discrepancies, require as applicable:
+For structural/FEA discrepancies use as applicable six-DOF equilibrium/residual checks, free-body cuts, `q = K u - f_fixed - f_initial`, DOF ordering, end-I/end-J, local/global axes, moment-reference transport, raw-solver trace and an analytical/authoritative/experimental/independent cross-solver oracle. Do not change several mechanics when a single-factor falsifier can isolate the first wrong boundary.
 
-- six-DOF equilibrium/residual checks;
-- free-body cuts;
-- `q = K u - f_fixed - f_initial` or method-equivalent reconstruction;
-- units, DOF ordering and end-I/end-J verification;
-- local/global axes and transformation matrices;
-- load/moment reference-point transport;
-- trace from reported result back to raw solver quantity;
-- analytical, authoritative-reference, experimental, or independent cross-solver evidence.
+## 8. Takeover qualification and recovery
 
-Do not change several mechanics at once when a single-factor falsifier can isolate the first wrong boundary.
-
-## 7. Takeover qualification and recovery
-
-On agent loss or custody change:
+On agent loss/custody change:
 
 ```text
 minimal READ_ONLY locator bootstrap
@@ -186,14 +128,14 @@ minimal READ_ONLY locator bootstrap
 → TAKEOVER QUALIFICATION FIRST
 → independent PASS_QUALIFIED_READ_ONLY
 → post-basis reconciliation while READ_ONLY
-→ post-basis drift classification
+→ drift classification
 → retain / independently confirm / requalify
 → WRITE_ALLOWED only when current-state authority is safe
 ```
 
-The candidate cannot self-admit its own questionable exam, self-verify, self-confirm material qualification coverage, or infer write authority from qualification PASS.
+The candidate cannot self-admit its questionable exam, self-verify, self-confirm material qualification coverage or infer write authority from qualification PASS.
 
-## 8. Validation integrity
+## 9. Validation integrity
 
 Every material check distinguishes:
 
@@ -204,53 +146,55 @@ ORACLE      = implementation-coupled | independent reproduction |
               analytical | authoritative reference | cross-solver | experimental
 ```
 
-Never promote source inspection, mergeability, compilation not actually run, empty workflow jobs, or transport failure into engineering PASS.
+Never promote source inspection, mergeability, compilation not run, empty workflow jobs or transport failure into engineering PASS. Never weaken tolerances because a case fails, replace independent expected values with production output, change implementation and oracle together and call it independent, delete hard benchmarks to obtain green state or hard-code benchmark answers.
 
-Never weaken tolerances because a case fails, replace an independent expected value with production output, change implementation and oracle together and call it independent, delete difficult benchmarks to obtain green state, or hard-code benchmark answers into production.
+## 10. Handover readiness is evidence-derived
 
-## 9. Scope, damaged work, AUTO and merge
-
-One coherent assignment per PR unless the Owner changes scope. Keep changes surgical and explain each changed file. Do not silently broaden authority.
-
-If intent cannot be reconstructed safely, authority is unclear, commits cannot be classified, or conflict resolution would require guessing engineering intent, use:
+New successor endpoints use:
 
 ```text
-CONTINUE | SALVAGE_PARTIAL | SUPERSEDE | ABANDON
+HANDOVER_PROTOCOL_VERSION: 2
+HANDOVER_CONTENT_READY: TRUE | FALSE
+HANDOVER_VALIDATION_STATUS: PASS | FAIL | NOT_RUN
+HANDOVER_VALIDATION_EVIDENCE: <durable evidence or NONE>
+HANDOVER_READY: TRUE | FALSE
+REPORTING_CONTRACT: ACTIVE_HANDOVER_FIRST
+HANDOVER_RESPONSE_REQUIRED: ALWAYS
+RESPONSE_DELTA_MODE: DELTA_ONLY
 ```
 
-`AUTO MODE` progresses only within the approved mission. It does not authorize scope expansion, engineering-authority changes, benchmark/oracle changes, roadmap mutation, validation weakening, destructive operations, or merge.
+`HANDOVER_READY: TRUE` requires content ready + validation PASS + non-empty evidence. If validation is NOT_RUN/FAIL, preserve the baton but keep `HANDOVER_READY: FALSE`.
 
-Merge authority is independent and Owner-controlled unless explicitly granted.
+## 11. User-visible response contract — every bounded repository-work response
 
-## 10. User-visible handover requirement
-
-At every substantive stop, PR creation/update boundary, blocker, owner-decision boundary, merge boundary, or explicit handover, the agent's user-facing response must show the active handover snapshot itself. It is invalid to say only `the endpoint contains Q1–Q5`.
-
-The visible handover must include, concisely:
+Any response that performed, attempted, audited, blocked, resumed, advanced, completed or re-grounded repository work starts with:
 
 ```text
-Repo / task / chain / endpoint
-PR / branch / head / main / status
-roadmap + inputs + governing/source pointers
-engineering/custody/qualification/write state
-current blocker + exact next action
-Q1
-Q2
-Q3
-Q4
-Q5
+# Active handover snapshot
 ```
 
-The concise visible snapshot target remains `<300 words`; detailed evidence remains in the endpoint.
+No narrative prose precedes it. This includes `proceed next`, AUTO, audit-only turns, blockers, NOT_RUN, PR create/update, review gates, merge gates and task completion.
 
-## 11. Completion
-
-Distinguish:
+The State Card targets `<220 words` and excludes the questions. Immediately after it show the **full** active Q1–Q5; do not compress them into topic labels. Then, if needed:
 
 ```text
-AGENT_LEG_COMPLETE
-PR_COMPLETE
-CHAIN_COMPLETE
+## Changed this turn
 ```
 
-A completed chain is terminal only when the engineering mission is objectively complete. PR merge alone does not imply chain completion.
+with at most eight concise bullets unless the Owner explicitly requests a detailed report.
+
+Required State Card information: repo/task/chain/endpoint, PR/branch/head/main/status, merge authority, engineering/custody/qualification/write/AUTO states, protocol, roadmap, inputs/benchmarks/source pointers, blocker, leg diagnosis and exact next action.
+
+It is invalid to say only `the endpoint contains Q1-Q5`.
+
+Read `handover-snapshot.md` and `reality-check-p0.md`.
+
+## 12. Scope, AUTO and merge
+
+One coherent assignment per PR unless Owner changes scope. Keep changes surgical. If intent/authority/commit classification cannot be reconstructed safely, use `CONTINUE | SALVAGE_PARTIAL | SUPERSEDE | ABANDON`.
+
+AUTO progresses only within the approved mission. It does not authorize scope expansion, authority changes, benchmark/oracle changes, roadmap mutation, validation weakening, destructive operations or merge. Merge authority remains independent and Owner-controlled unless explicitly granted.
+
+## 13. Completion
+
+Distinguish `AGENT_LEG_COMPLETE`, `PR_COMPLETE`, and `CHAIN_COMPLETE`. PR merge alone does not imply chain completion.
