@@ -51,6 +51,12 @@ def main():
         structure = "legacy relay index"
     else:
         rc = 0
+        root_scripts = {
+            "validate_repository_overlay.py", "validate_engineering_question_payload.py",
+            "validate_owner_qualification_baseline.py", "validate_work_item_exclusivity.py",
+            "validate_handover_readiness.py", "validate_issue_control_plane.py",
+            "validate_progression_command.py", "validate_material_leg_history.py",
+        }
         for script in (
             "validate_repository_overlay.py",
             "validate_chain_store.py",
@@ -62,14 +68,12 @@ def main():
             "validate_engineering_question_payload.py",
             "validate_owner_qualification_baseline.py",
             "validate_work_item_exclusivity.py",
+            "validate_issue_control_plane.py",
+            "validate_progression_command.py",
             "validate_material_leg_history.py",
         ):
-            rc |= run(script, str(root if script in {
-                "validate_repository_overlay.py", "validate_engineering_question_payload.py",
-                "validate_owner_qualification_baseline.py", "validate_work_item_exclusivity.py",
-                "validate_handover_readiness.py", "validate_material_leg_history.py"
-            } else relay))
-        structure = "project-overlay + canonical relay + roadmap + handover-v2 + readiness + expert-question + concrete-payload + Owner-baseline + exact-work-item + material-history gates"
+            rc |= run(script, str(root if script in root_scripts else relay))
+        structure = "project-overlay + canonical relay + roadmap + handover/readiness + expert-question + Owner-baseline + exact-work-item + GitHub-Issue-control-plane + three-command-progression + material-history gates"
 
     if args.active:
         rc |= run("validate_leg_adoption.py", str(root), args.active)
@@ -114,11 +118,11 @@ def main():
     if rc == 0:
         print(f"PASS: {structure}")
         if args.active:
-            print("PASS: material leg has current Common basis, exact work-item custody, handover-v2 readiness, Owner-baseline discovery and profile-v2 Q1-Q5")
+            print("PASS: material leg has current Common basis and accepted custody/authority state")
         if args.base_ref:
-            print("PASS: current material-leg diff avoids legacy relay writes and Git history proves pre-work Q1-Q5 preceded mutation")
+            print("PASS: current material-leg diff avoids legacy relay writes and satisfies applicable prework history")
         if not relay.is_file():
-            print("PASS: completed AUTO/material batches have append-only receipts with no hidden inter-leg/trailing material")
+            print("PASS: issue-based chains preserve current cumulative control-plane state and all adopted chains satisfy one of the exact three progression-command states")
         if v3 and verdict and not args.reconciliation:
             print("NOTE: qualified READ_ONLY; post-basis reconciliation is still required before WRITE_ALLOWED.")
     return 1 if rc else 0
