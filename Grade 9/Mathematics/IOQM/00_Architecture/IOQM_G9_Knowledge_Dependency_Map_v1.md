@@ -1,6 +1,6 @@
 # IOQM Grade 9 — Knowledge Dependency Map v1
 
-Status: `DRAFT_DEPENDENCY_AUTHORITY`
+Status: `V1_FROZEN_FOR_PRODUCTION_WAVES`
 
 Purpose: prevent prerequisite inversion and make the learner journey explicit before topic prose exists.
 
@@ -52,7 +52,7 @@ F0/F1
   |       |
   |       +--> NT-02 Modular Arithmetic/Cycles
   |       |       |
-  |       |       +--> NT-05 Digit/Base Structure (many divisibility/cycle applications)
+  |       |       +--> NT-05 Digit/Base Structure
   |       |
   |       +--> NT-03 Prime Factorisation/Divisors/Perfect Powers
   |               |
@@ -62,10 +62,9 @@ F0/F1
 ```
 
 Notes:
-
 - NT-01 is the main structural prerequisite for NT-02 and NT-03.
 - NT-04 depends jointly on factorisation/algebra and number-theoretic restrictions.
-- NT-05 can begin early with place value, but advanced divisibility/cycle work should follow NT-02.
+- NT-05 can begin early with place value, but advanced divisibility/cycle work follows NT-02.
 
 ## 4. Algebra dependency graph
 
@@ -95,7 +94,6 @@ F0/F1
 ```
 
 Important ownership rule:
-
 - Vieta is canonically taught in ALG-03.
 - Other topics may retrieve/use Vieta but must not create an independent canonical derivation.
 - AM-GM/equality is canonically taught in ALG-02.
@@ -120,7 +118,6 @@ F0 geometry + F1 proof habits
 ```
 
 Notes:
-
 - GEO-01 and GEO-04 can be authored in parallel after their prerequisite interfaces are frozen.
 - Coordinate/vector methods are alternate representations, not mandatory first methods for every geometry problem.
 - exact figure custody belongs to source provenance, not mathematical dependency.
@@ -149,48 +146,51 @@ COMB-04 and COMB-05 do not require advanced permutation formulas; they require m
 ## 7. Cross-domain prerequisite edges
 
 ### Number Theory -> Combinatorics
-
 - parity/residue invariants `APPLICATION_OF NT-02` in COMB-04;
 - divisor/factor-state models `APPLICATION_OF NT-03` in counting problems.
 
 ### Algebra -> Number Theory
-
 - factorisation/substitution `APPLICATION_OF ALG-01` in NT-04;
 - discriminant/perfect-square feasibility `APPLICATION_OF ALG-03` where an integer quadratic is used.
 
 ### Algebra -> Geometry
-
 - inequalities `APPLICATION_OF ALG-02` in geometric bounds;
 - polynomial/Vieta data `APPLICATION_OF ALG-03` only when geometry encodes roots;
 - coordinates `BRIDGE_REQUIRES G9_CORE algebra` in GEO-05.
 
 ### Geometry -> Algebra
-
 No general prerequisite. Geometry may provide transfer surfaces for algebraic invariants.
 
 ### Combinatorics -> Algebra
-
 - recurrence notation in COMB-03 may `BRIDGE_REQUIRE ALG-04` or be introduced locally at minimal depth.
 
-## 8. Build-order policy
+## 8. Frozen production waves
 
-Dependency does not mean every topic must wait globally.
+Dependency does not mean every topic waits globally. The production schedule is frozen in `02_Production/IOQM_G9_Main_Topic_Production_Waves_v1.md`:
 
-Use three states:
+### Wave 1 — parallel canonical primitives
+`NT-01`, `ALG-01`, `ALG-04`, `ALG-07`, `GEO-02`, `GEO-03`, `GEO-05`, `COMB-01`, `COMB-05`.
+
+### Wave 2 — after prerequisite interfaces
+`NT-02`, `NT-03`, `ALG-02`, `ALG-03`, `ALG-05`, `ALG-06`, `GEO-01`, `GEO-04`, `COMB-02`, `COMB-03`.
+
+### Wave 3 — composite/cross-domain
+`NT-04`, `NT-05`, `COMB-04`.
+
+A downstream topic waits for a **stable prerequisite interface**, not necessarily the upstream final PDF.
+
+## 9. Build-order states
 
 ### READY_PARALLEL
-
 Topic prerequisites are frozen; production may proceed independently.
 
 ### WAIT_FOR_INTERFACE
-
 The topic needs a stable prerequisite interface but not the final upstream PDF.
 
 ### WAIT_FOR_CANONICAL_TEACHING
-
 The topic would otherwise teach a concept before its canonical owner. Do not author integrated prose yet.
 
-## 9. Example anti-failure rule
+## 10. Anti-failure rule
 
 Forbidden sequence:
 
@@ -203,10 +203,9 @@ Allowed sequence:
 3. downstream prose gives only a short retrieval cue;
 4. learner is routed to ALG-03 for reconstruction if diagnostic shows the prerequisite is missing.
 
-## 10. Main-topic dependency checklist
+## 11. Main-topic dependency checklist
 
 Before Wave 0 closes, answer:
-
 - Which concepts are `REQUIRES` prerequisites?
 - Which are only `BRIDGE_REQUIRES`?
 - Which overlap concepts have another canonical owner?
@@ -216,3 +215,7 @@ Before Wave 0 closes, answer:
 - Can the dependency be reduced by teaching a small bridge rather than importing a whole higher-grade chapter?
 
 Any unresolved prerequisite inversion blocks integrated prose.
+
+## Change-control rule
+
+The dependency graph is frozen for v1 production. A new hard dependency must be recorded explicitly with its effect on production wave, overlap ownership and issue registry. Do not silently serialize the program.
