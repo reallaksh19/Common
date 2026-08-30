@@ -1,20 +1,46 @@
-# NT-01 — H0 Mastery Test
+# NT-01 - H0 Mastery Test
 
-No default hints. No method labels.
+No default hints. No method labels are attached to the questions. Show enough reasoning to justify the first move and the final check.
 
-1. Find the greatest positive integer that leaves the same remainder when dividing 428, 596 and 764.
-2. Find the least positive integer greater than 11 that leaves remainder 11 when divided by 18, 24 and 30.
-3. Compute `gcd(123456,7890)` without prime-factorising either number completely.
-4. Positive integers `a,b` satisfy `gcd(a,b)=14` and `lcm(a,b)=840`. Find `ab`.
-5. A positive integer `d` divides both `11n+8` and `7n+5`. Find the largest possible value of `d` that can occur for some integer `n`.
-6. Find all positive integers `d` such that 305, 473 and 641 leave the same remainder upon division by `d`.
-7. The least common multiple of two positive integers is 360 and their gcd is 12. If one number is 72, find the other.
-8. Three events recur every 28, 42 and 63 days and occur together today. After how many days do they next occur together?
-9. Explain in two sentences why `gcd(a,b)=gcd(a,a-b)`.
-10. Without solving a modular-arithmetic problem, explain why the statement “`a` and `b` have the same remainder on division by `d`” forces `d|(a-b)`.
+## Part A - Notice and first useful line
 
-## Mastery decision questions
+1. Greatest positive integer giving the same remainder on 428, 596 and 764. Write only the first reduction.
+2. Least positive integer greater than 11 leaving remainder 11 when divided by 18, 24 and 30. Write only the first equation.
+3. `d|(13n+9)` and `d|(8n+5)`. Write one integer linear combination that sharply restricts `d`.
+4. `gcd(a,b)=14`, `lcm(a,b)=840`; write the first invariant if the target is `ab`.
 
-For any two items above, also answer:
-- What clue determined your first move?
-- What tempting alternative method was less direct, and why?
+## Part B - Full mixed solve
+
+5. Compute `gcd(123456,7890)` without completely prime-factorising either number.
+6. Find the greatest positive integer giving the same remainder on 428, 596 and 764.
+7. Find the least positive integer greater than 11 leaving remainder 11 on division by 18, 24 and 30.
+8. Positive integers `a,b` satisfy `gcd(a,b)=14`, `lcm(a,b)=840`. Find `ab`.
+9. A positive integer `d` divides both `11n+8` and `7n+5`. Find the largest possible `d` for some integer `n`.
+10. Find all positive integers `d` such that 305, 473 and 641 leave the same remainder on division by `d`.
+11. The lcm of two positive integers is 360 and their gcd is 12. If one number is 72, find the other and verify both gcd and lcm.
+12. Three events recur every 28, 42 and 63 days and occur together today. After how many days do they next occur together?
+
+## Part C - Same surface, different decision
+
+13. Problem A: find the greatest integer that gives the same remainder when dividing 221, 323 and 425.  
+    Problem B: find the least integer `N>5` that leaves remainder 5 on division by 6, 10 and 15.  
+    Solve both and state in one sentence why their first moves differ.
+
+14. Problem A: determine whether `7425` is divisible by 9.  
+    Problem B: if `d|(4n+7)` and `d|(7n+13)`, determine the possible positive `d`.  
+    Solve both and state why the first problem may use a divisibility test while the second should use structural divisibility.
+
+## Part D - Transfer and WHY-NOT
+
+15. Marks are placed at positions 812 m, 1046 m and 1280 m along a route. Find the largest unit length `d` for which all three positions have the same offset from a unit boundary. State the hidden arithmetic model.
+16. A learner says: "Because same remainders are mentioned, I always take an lcm." Give a counterexample from this test and write the correct decision boundary in one sentence.
+
+## Mastery reflection
+
+For any three solved items, add:
+
+- What visible clue mattered?
+- What was the hidden structure?
+- What was your first useful line?
+- What nearby method was tempting but less direct or wrong?
+- What final check did you perform?
