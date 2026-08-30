@@ -5,10 +5,7 @@ import sys
 
 VALID_STATUS = "VALID"
 ALLOWED_STATUSES = {
-    "VALID",
-    "STALE",
-    "MALFORMED",
-    "AUTHORITY_CONTAMINATED",
+    "VALID", "STALE", "MALFORMED", "AUTHORITY_CONTAMINATED",
     "INSUFFICIENT_TECHNICAL_DEPTH",
 }
 VALID_AUTHORITY = {"VALID", "NOT_APPLICABLE"}
@@ -42,6 +39,14 @@ def main():
     admission = admission_path.read_text(encoding="utf-8")
     candidate = Path(sys.argv[3]).read_text(encoding="utf-8") if len(sys.argv) == 4 else None
     errors = []
+
+    takeover_ready = one(endpoint, "TAKEOVER_QUALIFICATION_READY", "endpoint", errors, required=False)
+    if takeover_ready is not None and takeover_ready != "TRUE":
+        errors.append(f"endpoint is not ready for takeover qualification: TAKEOVER_QUALIFICATION_READY={takeover_ready}")
+
+    endpoint_qstatus = one(endpoint, "QUESTION_SET_STATUS", "endpoint", errors, required=False)
+    if takeover_ready is not None and endpoint_qstatus == "STALE":
+        errors.append("STALE question set cannot enter takeover admission")
 
     ep_fields = {}
     adm_fields = {}
@@ -119,7 +124,7 @@ def main():
             print("FAIL:", error)
         return 1
 
-    print("PASS: question-set admission is VALID, independently attributable, and preserves required Owner-baseline disposition")
+    print("PASS: question-set admission is VALID, takeover-ready, independently attributable, and preserves required Owner-baseline disposition")
     return 0
 
 
