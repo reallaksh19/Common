@@ -13,6 +13,7 @@ SUITES = [
     "self_test_chain_concurrency.py",
     "self_test_roadmap_governance.py",
     "self_test_handover_snapshot.py",
+    "self_test_handover_readiness.py",
     "self_test_qualification_questions.py",
     "self_test_qualification_first_verdict.py",
     "self_test_question_set_admission.py",
@@ -20,6 +21,9 @@ SUITES = [
     "self_test_repository_overlay.py",
     "self_test_leg_adoption.py",
     "self_test_qualification_profiles.py",
+    "self_test_engineering_question_payload.py",
+    "self_test_owner_qualification_baseline.py",
+    "self_test_work_item_exclusivity.py",
     "self_test_prework_history.py",
     "self_test_material_leg_history.py",
 ]
