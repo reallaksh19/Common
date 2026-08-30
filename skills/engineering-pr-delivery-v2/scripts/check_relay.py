@@ -36,8 +36,8 @@ def main():
     parser.add_argument("--answer")
     parser.add_argument("--verdict")
     parser.add_argument("--reconciliation")
-    parser.add_argument("--active", help="ACTIVE.md for the material leg; enables protocol/pre-work adoption gate")
-    parser.add_argument("--base-ref", help="material-leg base ref; enables legacy-write and current-leg prework audit")
+    parser.add_argument("--active", help="ACTIVE.md for the material leg; enables current adoption gate")
+    parser.add_argument("--base-ref", help="material-leg base ref; enables legacy-write and prework audit")
     parser.add_argument("--head-ref", default="HEAD")
     args = parser.parse_args()
 
@@ -50,14 +50,26 @@ def main():
         rc = run("validate_agentchain.py", str(relay))
         structure = "legacy relay index"
     else:
-        rc = run("validate_repository_overlay.py", str(root))
-        rc |= run("validate_chain_store.py", str(relay))
-        rc |= run("validate_roadmap_bindings.py", str(relay))
-        rc |= run("validate_handover_snapshot.py", str(relay))
-        rc |= run("validate_qualification_questions.py", str(relay))
-        rc |= run("validate_qualification_profile.py", str(relay))
-        rc |= run("validate_material_leg_history.py", str(root))
-        structure = "project-overlay + canonical relay + roadmap + handover + expert-question + domain-profile + material-history gates"
+        rc = 0
+        for script in (
+            "validate_repository_overlay.py",
+            "validate_chain_store.py",
+            "validate_roadmap_bindings.py",
+            "validate_handover_snapshot.py",
+            "validate_handover_readiness.py",
+            "validate_qualification_questions.py",
+            "validate_qualification_profile.py",
+            "validate_engineering_question_payload.py",
+            "validate_owner_qualification_baseline.py",
+            "validate_work_item_exclusivity.py",
+            "validate_material_leg_history.py",
+        ):
+            rc |= run(script, str(root if script in {
+                "validate_repository_overlay.py", "validate_engineering_question_payload.py",
+                "validate_owner_qualification_baseline.py", "validate_work_item_exclusivity.py",
+                "validate_handover_readiness.py", "validate_material_leg_history.py"
+            } else relay))
+        structure = "project-overlay + canonical relay + roadmap + handover-v2 + readiness + expert-question + concrete-payload + Owner-baseline + exact-work-item + material-history gates"
 
     if args.active:
         rc |= run("validate_leg_adoption.py", str(root), args.active)
@@ -70,7 +82,6 @@ def main():
             rc |= run("validate_prework_history.py", str(root), args.base_ref, args.head_ref, args.active)
 
     v3 = protocol_version(answer) == "3" or protocol_version(verdict) == "3"
-
     if args.admission:
         if not args.endpoint:
             print("FAIL: --admission requires --endpoint", file=sys.stderr)
@@ -103,15 +114,13 @@ def main():
     if rc == 0:
         print(f"PASS: {structure}")
         if args.active:
-            print("PASS: material leg has current Common basis, canonical v3 custody and profiled pre-work Q1-Q5")
+            print("PASS: material leg has current Common basis, exact work-item custody, handover-v2 readiness, Owner-baseline discovery and profile-v2 Q1-Q5")
         if args.base_ref:
             print("PASS: current material-leg diff avoids legacy relay writes and Git history proves pre-work Q1-Q5 preceded mutation")
         if not relay.is_file():
-            print("PASS: completed AUTO/material batches have append-only history receipts with no hidden inter-leg/trailing material")
+            print("PASS: completed AUTO/material batches have append-only receipts with no hidden inter-leg/trailing material")
         if v3 and verdict and not args.reconciliation:
             print("NOTE: qualified READ_ONLY; post-basis reconciliation is still required before WRITE_ALLOWED.")
-        if args.reconciliation:
-            print("NOTE: reconciliation validator checks drift/coverage logic; custody epoch and all other authority gates must still clear before mutation.")
     return 1 if rc else 0
 
 
