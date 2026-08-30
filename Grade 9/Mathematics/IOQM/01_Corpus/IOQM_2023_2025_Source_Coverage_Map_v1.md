@@ -1,6 +1,6 @@
 # IOQM Grade 9 — 2023–2025 Source Coverage Map v1
 
-Status: `90Q_PRIMARY_CLASSIFICATION_COMPLETE__ANSWER_RECOMPUTATION_NOT_RUN`
+Status: `90Q_PRIMARY_CLASSIFICATION_COMPLETE__ANSWER_VERIFICATION_PASS_90_OF_90`
 
 Primary-count rule: every historical question has exactly one primary `main_topic_id`; secondary domains remain bridge tags and do not inflate recurrence.
 
@@ -10,6 +10,8 @@ Primary-count rule: every historical question has exactly one primary `main_topi
 - IOQM 2024: 30 questions, HBCSE official paper + HBCSE key.
 - IOQM 2023: 30 questions, HBCSE-linked MTAI paper with embedded key.
 - Total: **90**.
+- Independent answer recomputation: **90/90 PASS**.
+- Answer/key mismatches: **0**.
 
 ## Primary domain counts
 
@@ -54,13 +56,30 @@ These are operational classifications of this three-paper seed corpus, **not off
 - `IOQM-2025-Q11`: `KEY_CORRECTED`. The final official key records that the provisional answer 61 was erroneous and corrects it to 26.
 - `IOQM-2025-Q23`: final-key challenge review explicitly considered and rejected a degenerate alternate interpretation; canonical non-degenerate reading retained.
 - IOQM 2025 also has a paper-level notation typo noted by the final-key committee; it is preserved as a source note and is not silently normalized into a different historical question.
+- `IOQM-2023-Q04`: repository classifier metadata had `x/4`; validated paper has `x^4`. This is a repository metadata defect, not a source conflict.
+- `IOQM-2025-Q28`: repository classifier metadata flattened the nested radical. Exact-stem use must follow the validated paper and metadata-correction overlay.
 
 ## Classification confidence
 
 - HIGH: 49 items
 - MEDIUM: 41 items
-- No item is frozen as LOW-confidence in v1; medium-confidence items are the required overlap-review set before any finer-grained mechanism frequency claim.
+- No item is frozen as LOW-confidence in v1; medium-confidence means **primary pedagogical ownership may be cross-domain**, not source uncertainty.
+
+The canonical overlap-owner matrix now controls production. Topic leads may propose an ownership change only through explicit second-route evidence and denominator-safe change control.
+
+## Answer-verification authority
+
+Independent recomputation is recorded in `01_Corpus/Verification/`:
+
+- Batch A Q01–Q10 × all three years;
+- Batch B Q11–Q20 × all three years;
+- Batch C Q21–Q30 × all three years;
+- consolidated `IOQM_2023_2025_Answer_Verification_Ledger_v1.csv`.
+
+All 90 validated answers agree with independent recomputation.
 
 ## Important gate
 
-`answer_verified_independently=false` remains true for all 90 rows at this phase. Official/embedded key custody is captured, but independent recomputation of every promoted answer is a separate batch and must not be implied by this ledger.
+The corpus is ready to ground main-topic production and answer-level historical teaching authority, provided exact paper wording/figures and correction overlays are respected.
+
+This does **not** establish classroom timing, psychometric difficulty, qualification probability, publication readiness, or official IOQM topic weightage.
