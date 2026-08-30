@@ -1,15 +1,16 @@
 # IOQM Grade 9 — Topic Taxonomy v1
 
-Status: `DRAFT_TAXONOMY_FOR_SOURCE_RECONCILIATION`
+Status: `V1_FROZEN_FOR_MAIN_TOPIC_PRODUCTION`
 
 This taxonomy is an operational Grade-9 curriculum map. It is not an official Grade-9-only IOQM syllabus and does not claim official topic weightage.
+
+It has now been reconciled against the validated 2023–2025 90-question corpus, answer-verification authority and canonical overlap-owner rules. Primary historical ownership may still be changed through explicit second-route change control, but the **22 main-topic unit boundaries are frozen for production**.
 
 ## Domain NT — Number Theory
 
 ### IOQM-G9-NT-01 — Divisibility, GCD, LCM & Euclidean Structure
 
 Core scope:
-
 - divisibility as structural relation;
 - Euclidean algorithm;
 - gcd/lcm identities;
@@ -19,31 +20,22 @@ Core scope:
 - divisibility chains;
 - basic valuation awareness where useful.
 
-Likely microstreams:
-
-A. divisibility meaning and algebra
-B. Euclidean algorithm
-C. gcd/lcm reconstruction
-D. same remainder and differences
-E. divisibility chains / extremal divisors
-F. source/PYQ interface
+Likely microstreams: divisibility meaning/algebra; Euclidean algorithm; gcd/lcm reconstruction; same remainder/differences; divisibility chains; source/PYQ interface.
 
 ### IOQM-G9-NT-02 — Modular Arithmetic, Residues & Power Cycles
 
 Core scope:
-
 - congruence meaning;
 - legal modular arithmetic;
 - reduction of large powers;
 - last digits;
-- cycles and multiplicative order intuition;
+- cycles and multiplicative-order intuition;
 - inverses/cancellation legality;
 - simultaneous congruences at Grade-9-appropriate depth.
 
 ### IOQM-G9-NT-03 — Prime Factorisation, Divisors & Perfect Powers
 
 Core scope:
-
 - Fundamental Theorem of Arithmetic;
 - divisor counting;
 - parity of divisor count;
@@ -55,7 +47,6 @@ Core scope:
 ### IOQM-G9-NT-04 — Diophantine Equations & Integer Restrictions
 
 Core scope:
-
 - factorisation into integer cases;
 - parity and gcd constraints;
 - bounding;
@@ -67,7 +58,6 @@ Core scope:
 ### IOQM-G9-NT-05 — Digits, Place Value & Base Structure
 
 Core scope:
-
 - place-value representation;
 - digit sum/product;
 - divisibility by 9/11 and related derivations;
@@ -81,7 +71,6 @@ Core scope:
 ### IOQM-G9-ALG-01 — Identities, Transformations & Equation Structure
 
 Core scope:
-
 - algebraic identities as structure;
 - factor/expand strategically;
 - substitutions;
@@ -92,7 +81,6 @@ Core scope:
 ### IOQM-G9-ALG-02 — Inequalities, Bounds & Equality Conditions
 
 Core scope:
-
 - boundedness before optimization;
 - direction of inequality;
 - AM-GM and equality;
@@ -104,7 +92,6 @@ Core scope:
 ### IOQM-G9-ALG-03 — Polynomials, Roots, Vieta & Remainders
 
 Core scope:
-
 - representations of polynomials;
 - roots/factors;
 - Vieta from factor expansion;
@@ -118,7 +105,6 @@ Core scope:
 ### IOQM-G9-ALG-04 — Sequences, Progressions & Recurrences
 
 Core scope:
-
 - term vs sum;
 - AP/GP;
 - recurrence reading;
@@ -131,7 +117,6 @@ Core scope:
 ### IOQM-G9-ALG-05 — Functional Equations — Strategic Substitution
 
 Core scope:
-
 - domain/codomain awareness only as required;
 - special-value substitution;
 - symmetry/involution cues;
@@ -142,7 +127,6 @@ Core scope:
 ### IOQM-G9-ALG-06 — Exponents, Radicals & Logarithms
 
 Core scope:
-
 - exponent normalization;
 - common-base recognition;
 - radicals and principal-root conditions;
@@ -155,7 +139,6 @@ Core scope:
 ### IOQM-G9-ALG-07 — Floor, Ceiling & Discrete Functions
 
 Core scope:
-
 - floor/ceiling from inequalities;
 - half-open intervals;
 - negative values;
@@ -170,7 +153,6 @@ Core scope:
 ### IOQM-G9-GEO-01 — Triangle Feasibility, Metric Relations & Special Cevians
 
 Core scope:
-
 - triangle inequality;
 - right/acute/obtuse criteria;
 - medians, altitudes and angle bisectors;
@@ -182,7 +164,6 @@ Core scope:
 ### IOQM-G9-GEO-02 — Angles, Lines, Quadrilaterals & Polygon Structure
 
 Core scope:
-
 - angle chasing;
 - parallel lines;
 - quadrilateral angle structure;
@@ -194,7 +175,6 @@ Core scope:
 ### IOQM-G9-GEO-03 — Similarity, Ratio, Area & Centroid Structure
 
 Core scope:
-
 - similarity criteria;
 - ratio transfer;
 - area ratios;
@@ -205,7 +185,6 @@ Core scope:
 ### IOQM-G9-GEO-04 — Circles, Cyclicity & Tangency
 
 Core scope:
-
 - centre/inscribed angles;
 - cyclic quadrilaterals;
 - tangent-radius;
@@ -218,7 +197,6 @@ Core scope:
 ### IOQM-G9-GEO-05 — Coordinate, Vector & Mensuration Representations
 
 Core scope:
-
 - coordinate placement as representation choice;
 - distance/slope/midpoint;
 - centroid coordinates;
@@ -231,7 +209,6 @@ Core scope:
 ### IOQM-G9-COMB-01 — Basic Counting, Restrictions & Inclusion–Exclusion
 
 Core scope:
-
 - define objects/outcomes;
 - addition/multiplication principles;
 - permutation/combination from structure;
@@ -244,7 +221,6 @@ Core scope:
 ### IOQM-G9-COMB-02 — Graphs, Colouring & Incidence Counting
 
 Core scope:
-
 - vertices/edges as modelling language;
 - degree counting;
 - handshaking;
@@ -256,7 +232,6 @@ Core scope:
 ### IOQM-G9-COMB-03 — Recurrence, Tilings & State Evolution
 
 Core scope:
-
 - state definition;
 - recurrence from first step;
 - tiling recurrences;
@@ -267,7 +242,6 @@ Core scope:
 ### IOQM-G9-COMB-04 — Games & Invariants
 
 Core scope:
-
 - identify move-invariant quantity;
 - parity/colour/residue invariants;
 - monovariants;
@@ -277,7 +251,6 @@ Core scope:
 ### IOQM-G9-COMB-05 — Pigeonhole & Extremal Reasoning
 
 Core scope:
-
 - boxes/objects representation;
 - direct pigeonhole;
 - generalized pigeonhole;
@@ -287,14 +260,7 @@ Core scope:
 
 ## Foundation overlay — not a fifth IOQM domain
 
-The architecture may create prerequisite repair assets for:
-
-- ratio/proportion/percentage;
-- fractions and rational manipulation;
-- algebraic expansion/factorisation;
-- elementary coordinate geometry;
-- basic probability vocabulary only when a counting problem uses it;
-- notation literacy.
+The architecture may create prerequisite repair assets for ratio/proportion/percentage; fractions/rational manipulation; algebraic expansion/factorisation; elementary coordinate geometry; basic probability vocabulary only when a counting problem uses it; and notation literacy.
 
 These are `FOUNDATION_OVERLAY` assets. Their presence does not create a fifth official domain.
 
@@ -304,13 +270,10 @@ Create **one GitHub issue/PR per main topic above**, not one issue per microstre
 
 Within a main-topic issue, Wave-1 microstreams may run in parallel but must emit the standard interface and converge into one lead-authored student product.
 
-## Taxonomy promotion gate
+Production issues #68–#89 implement all 22 main topics. Their dependency schedule is frozen in `02_Production/IOQM_G9_Main_Topic_Production_Waves_v1.md` and overlap ownership in `02_Production/IOQM_G9_Canonical_Overlap_Ownership_v1.md`.
 
-Before freezing this taxonomy as `V1_FROZEN`, reconcile every main topic against:
+## Frozen-scope rule
 
-1. latest official IOQM/HBCSE syllabus language;
-2. validated 2023, 2024 and 2025 papers;
-3. exact per-question mechanism metadata;
-4. cross-topic overlap ownership.
+Do not delete a syllabus-supported topic merely because it appears rarely in three papers, and do not call recurrence official weightage.
 
-Do not delete a syllabus-supported topic merely because it appears rarely in three papers, and do not call a recurring mechanism official weightage.
+Any proposal to split/merge a main topic now requires explicit architecture change control with dependency, overlap, source-coverage and issue-registry impact.
