@@ -12,13 +12,11 @@ ALLOWED_STATUSES = {
     "INSUFFICIENT_TECHNICAL_DEPTH",
 }
 VALID_AUTHORITY = {"VALID", "NOT_APPLICABLE"}
+VALID_OWNER_BASELINE = {"SATISFIED", "NOT_APPLICABLE"}
 
 
 def fields(text: str, name: str):
-    return [
-        v.strip()
-        for v in re.findall(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n#]+)", text)
-    ]
+    return [v.strip() for v in re.findall(rf"(?mi)^\s*{re.escape(name)}\s*:\s*([^\n#]+)", text)]
 
 
 def one(text: str, name: str, label: str, errors: list[str], required=True):
@@ -35,10 +33,7 @@ def one(text: str, name: str, label: str, errors: list[str], required=True):
 
 def main():
     if len(sys.argv) not in {3, 4}:
-        print(
-            "Usage: validate_question_set_admission.py <endpoint.md> <admission.md> [<candidate-answer.md>]",
-            file=sys.stderr,
-        )
+        print("Usage: validate_question_set_admission.py <endpoint.md> <admission.md> [<candidate-answer.md>]", file=sys.stderr)
         return 2
 
     endpoint_path = Path(sys.argv[1])
@@ -83,6 +78,17 @@ def main():
         if value and value not in VALID_AUTHORITY:
             errors.append(f"{name} must be VALID or NOT_APPLICABLE")
 
+    profile_v2 = one(endpoint, "QUALIFICATION_PROFILE_VERSION", "endpoint", errors, required=False) == "2"
+    if profile_v2:
+        ep_baseline = one(endpoint, "OWNER_QUALIFICATION_BASELINE_STATUS", "endpoint", errors)
+        adm_baseline = one(admission, "OWNER_BASELINE_STATUS", "admission", errors)
+        if ep_baseline not in VALID_OWNER_BASELINE:
+            errors.append(f"endpoint Owner baseline is not admissible: {ep_baseline}")
+        if adm_baseline not in VALID_OWNER_BASELINE:
+            errors.append(f"OWNER_BASELINE_STATUS must be SATISFIED or NOT_APPLICABLE; found {adm_baseline}")
+        if ep_baseline and adm_baseline and ep_baseline != adm_baseline:
+            errors.append(f"Owner baseline mismatch: endpoint={ep_baseline} admission={adm_baseline}")
+
     legacy = one(admission, "LEGACY_SET", "admission", errors)
     if legacy not in {"TRUE", "FALSE"}:
         errors.append("LEGACY_SET must be TRUE or FALSE")
@@ -90,6 +96,9 @@ def main():
     evidence = one(admission, "ADMISSION_EVIDENCE", "admission", errors)
     if not evidence or evidence.upper() in {"NONE", "N/A", "NOT_APPLICABLE"}:
         errors.append("ADMISSION_EVIDENCE must identify concrete admission evidence")
+
+    if profile_v2 and legacy == "TRUE":
+        errors.append("profile-v2 current endpoint cannot be admitted as LEGACY_SET: TRUE")
 
     candidate_id = None
     if candidate is not None:
@@ -110,7 +119,7 @@ def main():
             print("FAIL:", error)
         return 1
 
-    print("PASS: question-set admission is VALID and independently attributable")
+    print("PASS: question-set admission is VALID, independently attributable, and preserves required Owner-baseline disposition")
     return 0
 
 
