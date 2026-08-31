@@ -58,7 +58,7 @@ Before calculating:
 
 - T2: divisibility difference statement -> congruence notation.
 - T2: huge integer power -> short finite residue state.
-- T3: last-digit / clock / cyclic schedule surfaces.
+- T3: last digit / clock / cyclic schedule surfaces.
 - T3: simultaneous schedules -> simultaneous congruences.
 - T4: residues become invariant states in COMB-04 and digit filters in NT-05.
 
