@@ -1,11 +1,49 @@
-item_id,asset_type,provenance,historical_anchor_id,mechanism,first_move,student_export,teacher_export,timing_status
-ALG04-PYQ-2025-26,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2025-Q26,sliding-window averages,subtract adjacent windows,true,true,NOT_RUN
-ALG04-PYQ-2023-10,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2023-Q10,recurrence invariant,test transformed neighboring-term combination,true,true,NOT_RUN
-ALG04-F0-001,FOUNDATION,AUTHOR_CREATED_FOUNDATION,,term-vs-sum,use S_n-S_{n-1},true,true,NOT_RUN
-ALG04-F1-001,PRACTICE,AUTHOR_CREATED_FOUNDATION,,AP recognition,check first difference,true,true,NOT_RUN
-ALG04-F1-002,PRACTICE,AUTHOR_CREATED_FOUNDATION,,GP recognition,check ratio,true,true,NOT_RUN
-ALG04-F2-001,PRACTICE,AUTHOR_CREATED_TRANSFER,,window cancellation,subtract adjacent windows,true,true,NOT_RUN
-ALG04-F2-002,PRACTICE,AUTHOR_CREATED_TRANSFER,,recurrence transform,study first differences,true,true,NOT_RUN
-ALG04-XF-001,TRANSFER,AUTHOR_CREATED_TRANSFER,,telescoping,partial-fraction neighboring terms,true,true,NOT_RUN
-ALG04-H0-001,MASTERY,AUTHOR_CREATED_TRANSFER,,high-index recurrence,transform before iteration,true,true,NOT_RUN
-ALG04-H0-002,MASTERY,AUTHOR_CREATED_TRANSFER,,periodicity from windows,subtract equal windows,true,true,NOT_RUN
+item_id,location,asset_type,provenance,historical_anchor_id,year_q,key_status,official_answer,answer_verified_independently,mechanism,first_move,hint_level,transfer_level,student_export,teacher_export,timing_status
+ALG04-PYQ-2025-26,SOURCE_MAP,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2025-Q26,2025 Q26,FINAL_OFFICIAL,10,true,WINDOW_CANCELLATION,subtract adjacent windows,,T2,true,true,NOT_RUN
+ALG04-PYQ-2023-10,SOURCE_MAP,PYQ_ANCHOR,HISTORICAL_VALIDATED_PYQ,IOQM-2023-Q10,2023 Q10,HBCSE_LINKED_MTAI_EMBEDDED_KEY,51,true,RECURRENCE_INVARIANT,compare D_n at neighboring indices,,T2,true,true,NOT_RUN
+ALG04-P01,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,AP,check first difference,H0,T0,true,true,NOT_RUN
+ALG04-P02,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,GP,check ratio,H0,T0,true,true,NOT_RUN
+ALG04-P03,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,TERM_FROM_SUM,S_n-S_{n-1},H0,T1,true,true,NOT_RUN
+ALG04-P04,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,EXPLICIT_VS_RECURSIVE,classify representation and initialization,H0,T2,true,true,NOT_RUN
+ALG04-P05,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,NEITHER_AP_GP,check both invariants,H0,T1,true,true,NOT_RUN
+ALG04-P06,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,WINDOW_CANCELLATION,subtract adjacent windows,H0,T1,true,true,NOT_RUN
+ALG04-P07,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,TELESCOPING,partial fraction to neighbor difference,H0,T1,true,true,NOT_RUN
+ALG04-P08,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_FOUNDATION,,,,,true,RECURRENCE_VERIFICATION,check initials and recurrence symbolically,H0,T2,true,true,NOT_RUN
+ALG04-P09,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,TERM_FROM_SUM_TO_AP,finite difference,H0,T2,true,true,NOT_RUN
+ALG04-P10,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,RECURRENCE_TRANSFORM,first differences,H0,T2,true,true,NOT_RUN
+ALG04-P11,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,TELESCOPING,neighbor difference,H0,T1,true,true,NOT_RUN
+ALG04-P12,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,WINDOW_PERIODICITY,subtract equal windows,H0,T2,true,true,NOT_RUN
+ALG04-P13,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,DUAL_WINDOW_INEQUALITIES,subtract adjacent averages,H0,T2,true,true,NOT_RUN
+ALG04-P14,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,RECURRENCE_INVARIANT,derive D_{n+1}=7D_n,H0,T2,true,true,NOT_RUN
+ALG04-P15,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,SUM_RECURRENCE_TO_TERM,T_n-T_{n-1},H0,T2,true,true,NOT_RUN
+ALG04-P16,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,ODD_FACTOR_TELESCOPE,partial fractions,H0,T2,true,true,NOT_RUN
+ALG04-P17,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,DIFFERENCE_RECURRENCE,first differences,H0,T2,true,true,NOT_RUN
+ALG04-P18,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,WINDOW_PERIODICITY,subtract equal 4-term windows,H0,T2,true,true,NOT_RUN
+ALG04-P19,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,FINITE_DIFFERENCE,S_n-S_{n-1},H0,T2,true,true,NOT_RUN
+ALG04-P20,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,WHY_NOT_PREFIX_GP,distinguish finite evidence from rule,H0,T2,true,true,NOT_RUN
+ALG04-P21,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,TERM_FROM_SUM,S_n-S_{n-1},H3,T1,true,true,NOT_RUN
+ALG04-P22,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,RECURRENCE_TRANSFORM,first differences,H2,T2,true,true,NOT_RUN
+ALG04-P23,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,TELESCOPING,neighboring factors,H1,T2,true,true,NOT_RUN
+ALG04-P24,05_Practice_and_Transfer_Bank,PRACTICE,AUTHOR_CREATED_TRANSFER,,,,,true,WINDOW_PERIODICITY,subtract equal windows,H0,T2,true,true,NOT_RUN
+ALG04-P25,05_Practice_and_Transfer_Bank,TRANSFER,AUTHOR_CREATED_TRANSFER,,,,,true,ROLLING_TOTAL_TRANSFER,subtract rolling totals,H0,T3,true,true,NOT_RUN
+ALG04-P26,05_Practice_and_Transfer_Bank,TRANSFER,AUTHOR_CREATED_TRANSFER,,,,,true,ACCUMULATION_TRANSFER,C_n-C_{n-1},H0,T2,true,true,NOT_RUN
+ALG04-P27,05_Practice_and_Transfer_Bank,TRANSFER,AUTHOR_CREATED_TRANSFER,,,,,true,RECURRENCE_INVARIANT_TRANSFER,derive Q_{n+1}=-3Q_n,H0,T3,true,true,NOT_RUN
+ALG04-P28,05_Practice_and_Transfer_Bank,TRANSFER,AUTHOR_CREATED_TRANSFER,,,,,true,TELESCOPE_REPRESENTATION_TRANSFER,show termwise equivalence,H0,T2,true,true,NOT_RUN
+ALG04-P29,05_Practice_and_Transfer_Bank,TRANSFER,AUTHOR_CREATED_TRANSFER,,,,,true,LOCAL_VS_GLOBAL_TRANSFER,choose representation,H0,T3,true,true,NOT_RUN
+ALG04-P30,05_Practice_and_Transfer_Bank,TRANSFER,AUTHOR_CREATED_TRANSFER,,,,,true,COMB_STATE_OWNERSHIP_BRIDGE,separate recurrence use from derivation,H0,T4,true,true,NOT_RUN
+ALG04-H0-01,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,TERM_FROM_SUM,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-02,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,WINDOW_CANCELLATION,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-03,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,EXPLICIT_FORM,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-04,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,RECURRENCE_TRANSFORM,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-05,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,TERM_FROM_SUM,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-06,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,RECURRENCE_TRANSFORM,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-07,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,TELESCOPING,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-08,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,WINDOW_PERIODICITY,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-09,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,RECURRENCE_INVARIANT,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-10,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,AP_VS_GP,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-11,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,EXPLICIT_VS_RECURSIVE,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-12,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,TELESCOPE_BOUNDARY,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-13,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,ROLLING_TOTAL_TRANSFER,student selects first move,H0,T3,true,true,NOT_RUN
+ALG04-H0-14,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,RECURRENCE_INVARIANT_TRANSFER,student selects first move,H0,T3,true,true,NOT_RUN
+ALG04-H0-15,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,RECURRENCE_VERIFICATION,student selects first move,H0,T2,true,true,NOT_RUN
+ALG04-H0-16,06_H0_Mastery_Test,MASTERY,AUTHOR_CREATED_MASTERY,,,,,true,COMB_STATE_OWNERSHIP_BRIDGE,student selects first move,H0,T4,true,true,NOT_RUN
