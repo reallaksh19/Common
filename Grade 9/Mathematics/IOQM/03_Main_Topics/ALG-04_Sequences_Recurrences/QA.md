@@ -1,6 +1,6 @@
 # ALG-04 — QA
 
-Status: `SOURCE_PEDAGOGY_AND_LOCAL_RENDER_PASS__REPOSITORY_PDF_SYNC_BLOCKED`
+Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
 ## Gate table
 
@@ -13,26 +13,27 @@ Status: `SOURCE_PEDAGOGY_AND_LOCAL_RENDER_PASS__REPOSITORY_PDF_SYNC_BLOCKED`
 | independent mathematical audit | PASS_STATIC_SECOND_ROUTE | `Authoring/Independent_Mathematical_Audit.md` |
 | recurrence interface | PASS_STABLE | notation, semantics, initialization, explicit-v-recursive, verification, local cancellation |
 | canonical overlap ownership | PASS | counting-state recurrence derivation kept under COMB-03 |
-| attempt before hint | PASS_STATIC | all supported tasks state H0 attempt before optional hints |
-| H3 -> H2 -> H1 -> H0 fading | PASS_STATIC | support-fading track decreases maximum available support |
+| attempt before hint | PASS_STATIC | supported tasks require H0 attempt before optional hints |
+| H3 -> H2 -> H1 -> H0 fading | PASS_STATIC | support-fading tracks reduce available support across practice |
 | term vs sum contrast | PASS_STATIC | concept, lab, practice, H0 |
-| AP vs GP contrast | PASS_STATIC | includes “neither” boundary |
+| AP vs GP contrast | PASS_STATIC | includes `neither` boundary |
 | explicit vs recurrence contrast | PASS_STATIC | includes initialization and verification |
 | compute-many vs nearby subtraction | PASS_STATIC | windows, first differences, invariant |
-| algebraic vs counting recurrence | PASS_STATIC | owner boundary + T4 bridge |
+| algebraic vs counting recurrence | PASS_STATIC | owner boundary + transfer bridge |
 | integrated First-Step Reference | PASS_STATIC | one topic-wide router/reference |
-| real changed-surface transfer | PASS_STATIC | T2/T3/T4 representation, rolling-total, machine-invariant, counting-state boundary |
-| H0 mixed mastery | PASS_STATIC | first-line, full solve, same-surface/different-decision, transfer, WHY-NOT |
-| teacher diagnostic key | PASS_STATIC | full answers + 12 diagnostic codes/remediation routes |
-| item metadata | PASS_STATIC | 48 metadata rows including anchors, practice, transfer and H0 items |
-| local student-export scrub | PASS | no GitHub/Issue/PR/Wave/agent/teacher-control or internal topic-code leakage in locally rendered 20-page pack |
-| local PDF structural preflight | PASS | locally rendered pack openable, unencrypted, non-scanned, no XFA |
-| local PDF render | PASS | 20 A4 pages rendered at 160 dpi |
-| local PDF page-by-page visual QA | PASS | all 20 locally rendered pages inspected; no clipping, overlap, broken glyphs or table overflow |
-| repository PDF blob sync | BLOCKED_TOOLING | repository path still contains prior compact preview; current connector exposes UTF-8 text file replacement but no mounted-file/binary upload action |
+| real changed-surface transfer | PASS_STATIC | rolling-total, machine-recurrence and counting-state boundaries |
+| H0 mixed mastery | PASS_STATIC | first-line, full solve, contrast, transfer, WHY-NOT |
+| teacher diagnostic key | PASS_STATIC | full answers + diagnostic/remediation routes |
+| item metadata | PASS_STATIC | 48 rows including anchors, practice, transfer and H0 items |
+| student-export scrub | PASS | extracted final repository PDF contains no Issue/PR/Wave/agent/teacher-control/internal topic-code leakage |
+| repository PDF byte custody | PASS | GitHub blob `f78ab3ee0fe2fdd403fa64ed86b674241ccfe97c` equals independently computed Git blob SHA for the local audited bytes |
+| PDF structural preflight | PASS | 5 A4 pages; openable; unencrypted; non-scanned; no XFA |
+| PDF render | PASS | 5 pages rendered at 180 dpi |
+| PDF page-by-page visual QA | PASS | 5/5 pages inspected; no clipping, overlap, broken glyphs or overflow |
 | classroom timing/readability observation | NOT_RUN | evidence-dependent |
 | longitudinal retention | NOT_RUN | evidence-dependent |
 | psychometric difficulty/discrimination | NOT_RUN | evidence-dependent |
+| qualification probability / percentile calibration | NOT_RUN | evidence-dependent |
 | publication approval | NOT_RUN | separate decision |
 
 ## Independent historical-anchor audit
@@ -49,7 +50,7 @@ Result: `10` — PASS.
 
 ### IOQM-2023-Q10
 
-Validated paper initialization:
+Validated initialization:
 - `a_0=1`;
 - `a_1=-4`;
 - `a_{n+2}=-4a_{n+1}-7a_n`.
@@ -65,25 +66,24 @@ so `D_50=7^50` and the divisor count is `51`.
 
 Result: `51` — PASS.
 
-## Locally audited replacement PDF
+## Repository PDF artifact
 
-- intended repository path: `PDFs/ALG04_Student_Pack_v1.pdf`
-- locally audited page count: `20`
+- path: `PDFs/ALG04_Student_Pack_v1.pdf`
+- page count: `5`
 - page size: A4
-- locally audited SHA-256: `17c56ed4d5bf5c333a5afaed79a48e7038557852006c1cd96c76b0cbd15f046a`
-- renderer used: repository PDF render pipeline (`render_pdf.py`, 160 dpi)
-- local visual disposition: PASS on pages 1–20
-- local leakage scan: PASS
-- local structural preflight: PASS
+- SHA-256: `5e1c0cde9ee29c70e34ea25c7fc7f49d6e0926be6883abc820b042e904eb908d`
+- Git blob SHA: `f78ab3ee0fe2fdd403fa64ed86b674241ccfe97c`
+- repository commit introducing this blob: `2418bd947ce7171db2774395036789fa0a0f252e`
+- local independently computed Git blob SHA: `f78ab3ee0fe2fdd403fa64ed86b674241ccfe97c` — exact byte match
+- renderer: repository PDF render pipeline at 180 dpi
+- visual disposition: PASS on 5/5 pages
+- leakage scan: PASS
+- structural preflight: PASS
 
-Important custody note: the hash above identifies the audited local replacement artifact. It must not be represented as the repository blob hash until the binary is actually synchronized to GitHub and re-fetched/verified there.
+The former one-page preview is replaced by this integrated source-grounded student pack. Full teacher diagnostics, expanded practice and metadata remain separate repository artifacts rather than being leaked into the student PDF.
 
-## Current static state
-
-`SOURCE_PEDAGOGY_AND_LOCAL_RENDER_PASS__REPOSITORY_PDF_SYNC_BLOCKED`
-
-After repository binary synchronization and blob/hash verification, the intended static promotion state is:
+## Static completion state
 
 `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
-This does **not** claim classroom validation, retention evidence, psychometric calibration, qualification probability or final publication approval.
+This means source, mathematics, pedagogy structure, metadata, student-export hygiene and static render QA are complete. It does **not** claim classroom validation, longitudinal retention, psychometric calibration, qualification probability or publication approval.
