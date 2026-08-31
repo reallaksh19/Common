@@ -35,8 +35,10 @@ Vieta is derived from factor expansion only here. Discriminant root behavior, tr
 
 ## Render evidence
 
+Repository binary custody: `PENDING_CONNECTOR_MATERIALIZATION`. The exact rendered files below are locally present and fully verified; `PDFs/README.md` records their expected hashes. This does not downgrade the render inspection result, but it does block claiming that the binary PDF files themselves are already committed.
+
 Student PDF:
-- path: `PDFs/ALG03_Student_Pack_v1.pdf`
+- intended repository path: `PDFs/ALG03_Student_Pack_v1.pdf`
 - pages: 9
 - page size: A4
 - SHA-256: `c6f4cf0efdf44c351645bfc22429f085a370b2b52895f18ab52f22e6edb71ca4`
@@ -44,7 +46,7 @@ Student PDF:
 - visual QA: PASS - 9/9 pages, no clipping/overlap/broken-glyph or teacher-answer leakage observed
 
 Teacher PDF:
-- path: `PDFs/ALG03_Teacher_Key_v1.pdf`
+- intended repository path: `PDFs/ALG03_Teacher_Key_v1.pdf`
 - pages: 3
 - page size: A4
 - SHA-256: `f21726ea4df1abf62d1bf346e2677ae46a720ce635efd7cece7347a37e2c9fe1`
