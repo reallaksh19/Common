@@ -35,8 +35,10 @@ The static audit rechecked square-completion extrema, AM-GM equality, justified 
 
 ## Render evidence
 
+Repository binary custody: `PENDING_CONNECTOR_MATERIALIZATION`. The exact rendered files below are locally present and fully verified; `PDFs/README.md` records their expected hashes. This does not downgrade the render inspection result, but it does block claiming that the binary PDF files themselves are already committed.
+
 Student PDF:
-- path: `PDFs/ALG02_Student_Pack_v1.pdf`
+- intended repository path: `PDFs/ALG02_Student_Pack_v1.pdf`
 - pages: 9
 - page size: A4
 - SHA-256: `6c006398e2abfdcb2f586a751b5018a5dd69510e075775b44e45c43d57d50149`
@@ -44,7 +46,7 @@ Student PDF:
 - visual QA: PASS - 9/9 pages, no clipping/overlap/broken-glyph or teacher-answer leakage observed
 
 Teacher PDF:
-- path: `PDFs/ALG02_Teacher_Key_v1.pdf`
+- intended repository path: `PDFs/ALG02_Teacher_Key_v1.pdf`
 - pages: 3
 - page size: A4
 - SHA-256: `e27833bad7d3afbecafbb9be9caede3c8490de0ba72be02240c72397695fcf39`
