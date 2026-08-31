@@ -1,48 +1,58 @@
-# ALG-01 — QA
+# ALG-01 - QA
 
-Status: `BENCHMARK_PREVIEW_READY_NOT_CLASSROOM_CALIBRATED`
+Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
 | Gate | State |
 |---|---|
-| Wave 0 dependency map | PASS |
-| governing representation-choice router | PASS |
-| canonical overlap ownership | PASS — Vieta/discriminant deferred to ALG-03; radical/log doctrine to ALG-06 |
-| validated primary anchors | PASS — 4 |
-| anchor answers independently verified | PASS |
-| attempt-before-hints | PASS_STATIC |
-| H3->H0 fading | PASS_STATIC |
-| contrast pairs | PASS_STATIC |
-| integrated First-Step layer | PASS_STATIC |
-| H0 mastery | PASS_STATIC |
-| teacher diagnostic key | PASS_STATIC |
-| student-export workflow scrub | PASS_STATIC_SOURCE |
-| fresh independent reviewer | PARTIAL |
-| repository PDF preflight | PASS_PREVIEW — 2-page A4 compact preview, openable, unencrypted, non-scanned, no XFA |
-| repository PDF visual QA | PASS_PREVIEW — all 2 pages inspected; no clipping, overlap or broken glyphs |
-| student/teacher leakage | PASS_PREVIEW |
-| classroom timing | NOT_RUN |
-| psychometrics | NOT_RUN |
+| G0 source authority | PASS - historical rows carry validated paper/key URLs and stable IDs |
+| G1 dependency map before prose | PASS |
+| G2 governing model | PASS - `What form makes the requested target cheapest?` |
+| G3 canonical overlap ownership | PASS - Vieta/discriminant/remainder stay ALG-03; AM-GM/equality stays ALG-02; radical/log doctrine stays ALG-06 |
+| G4 Wave-1 interfaces | PASS - mandatory A-P evidence contract |
+| G5 single-lead integration | PASS |
+| G6 deduplication | PASS |
+| G7 decision contrasts | PASS - 8 explicit collisions |
+| G8 attempt-before-help / H3->H0 | PASS_STATIC |
+| G9 one First-Step layer | PASS |
+| G10 mixed unlabelled H0 | PASS |
+| G11 independent mathematics | PASS - `Authoring/Independent_Mathematics_Audit.md` |
+| G12 source custody | PASS |
+| G13 student-export hygiene | PASS |
+| G14 one render authority | PASS - ReportLab unified A4 production, 18 mm side margins |
+| G15 page-by-page render QA | PASS - 14/14 pages inspected |
+| G16 T2-T4 transfer | PASS_STATIC |
+| G17 six-question ownership | PASS_STATIC |
+| classroom timing/readability | NOT_RUN |
+| longitudinal retention/transfer | NOT_RUN |
+| psychometric calibration | NOT_RUN |
+| qualification probability | NOT_RUN |
 
-## Repository PDF artifact
+## Repair disposition
 
+The prior non-unique diagnostic `x^4+3x^2+1` under `x^2+x=1` was rejected and replaced by the uniquely determined target `x^4+3x=2`.
+
+`Item_Metadata.csv` conforms to the frozen program schema and historical rows now carry source URLs. `Authoring/ALG01_Stable_Prerequisite_Interface_v1.md` is frozen for downstream consumption.
+
+## Render evidence
+
+Student PDF:
 - path: `PDFs/ALG01_Student_Pack_v1.pdf`
-- page count: 2
-- SHA-256: `1e10649de06552254dd3cdda075a57bf190487db46ef4ec6d8dd083c7737a2d2`
-- disposition: compact benchmark-preview artifact for repository custody.
+- pages: 10
+- page size: A4
+- SHA-256: `2f9663f902f62a47c21ce11e1ad0664466426e0adbb6428ba588581e026a4dc0`
+- structural preflight: PASS - openable, unencrypted, non-scanned, no XFA
+- visual QA: PASS - 10/10 pages, no clipping/overlap/broken-glyph or teacher-answer leakage observed
 
-A separate 3-page higher-typography production preview was generated and visually inspected during authoring; its SHA-256 is `4c1313f59767052e67816820950a1c6f55f8e3d5b3827831754d0a39c1b1ceba`.
-
-## Mathematical spot checks
-
-- distinction between identity and relation-on-solutions is explicit;
-- division/squaring are not described as automatically equivalent;
-- power-reduction examples avoid unnecessary root solving;
-- symmetric reconstruction is taught without stealing Vieta ownership;
-- H0 #7 correctly uses `u^3=1` for roots of `u^2+u+1=0`;
-- radical-equation candidates are checked in the original equation.
+Teacher PDF:
+- path: `PDFs/ALG01_Teacher_Key_v1.pdf`
+- pages: 4
+- page size: A4
+- SHA-256: `db1e923bcb5bd836e22d1a9ee5ea4c2a63a5e5c6cc2e41681fab17d95bfe81c5`
+- structural preflight: PASS
+- visual QA: PASS - 4/4 pages, no clipping or overlap observed
 
 ## Promotion state
 
-`BENCHMARK_PREVIEW_READY_NOT_CLASSROOM_CALIBRATED`
+`BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
-Do not call this publication-ready until a fresh independent reviewer and evidence-dependent classroom gates close.
+This freezes the ALG-01 algebra-transformation prerequisite interface without making a publication-readiness or classroom-calibration claim.
