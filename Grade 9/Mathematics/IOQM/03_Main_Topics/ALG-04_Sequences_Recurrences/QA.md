@@ -1,6 +1,6 @@
 # ALG-04 — QA
 
-Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
+Status: `SOURCE_PEDAGOGY_AND_LOCAL_RENDER_PASS__REPOSITORY_PDF_SYNC_BLOCKED`
 
 ## Gate table
 
@@ -25,10 +25,11 @@ Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 | H0 mixed mastery | PASS_STATIC | first-line, full solve, same-surface/different-decision, transfer, WHY-NOT |
 | teacher diagnostic key | PASS_STATIC | full answers + 12 diagnostic codes/remediation routes |
 | item metadata | PASS_STATIC | 48 metadata rows including anchors, practice, transfer and H0 items |
-| student-export scrub | PASS | no GitHub/Issue/PR/Wave/agent/teacher-control or internal topic-code leakage in final PDF text |
-| PDF structural preflight | PASS | openable, unencrypted, non-scanned, no XFA |
-| PDF render | PASS | 20 A4 pages rendered at 160 dpi |
-| PDF page-by-page visual QA | PASS | all 20 final rendered pages inspected; no clipping, overlap, broken glyphs or table overflow |
+| local student-export scrub | PASS | no GitHub/Issue/PR/Wave/agent/teacher-control or internal topic-code leakage in locally rendered 20-page pack |
+| local PDF structural preflight | PASS | locally rendered pack openable, unencrypted, non-scanned, no XFA |
+| local PDF render | PASS | 20 A4 pages rendered at 160 dpi |
+| local PDF page-by-page visual QA | PASS | all 20 locally rendered pages inspected; no clipping, overlap, broken glyphs or table overflow |
+| repository PDF blob sync | BLOCKED_TOOLING | repository path still contains prior compact preview; current connector exposes UTF-8 text file replacement but no mounted-file/binary upload action |
 | classroom timing/readability observation | NOT_RUN | evidence-dependent |
 | longitudinal retention | NOT_RUN | evidence-dependent |
 | psychometric difficulty/discrimination | NOT_RUN | evidence-dependent |
@@ -64,23 +65,25 @@ so `D_50=7^50` and the divisor count is `51`.
 
 Result: `51` — PASS.
 
-## PDF artifact
+## Locally audited replacement PDF
 
-- path: `PDFs/ALG04_Student_Pack_v1.pdf`
-- page count: `20`
+- intended repository path: `PDFs/ALG04_Student_Pack_v1.pdf`
+- locally audited page count: `20`
 - page size: A4
-- SHA-256: `17c56ed4d5bf5c333a5afaed79a48e7038557852006c1cd96c76b0cbd15f046a`
+- locally audited SHA-256: `17c56ed4d5bf5c333a5afaed79a48e7038557852006c1cd96c76b0cbd15f046a`
 - renderer used: repository PDF render pipeline (`render_pdf.py`, 160 dpi)
-- visual disposition: PASS on pages 1–20
-- leakage scan: PASS
-- structural preflight: PASS
+- local visual disposition: PASS on pages 1–20
+- local leakage scan: PASS
+- local structural preflight: PASS
 
-The previous one-page compact preview is replaced by this integrated 20-page student pack.
+Important custody note: the hash above identifies the audited local replacement artifact. It must not be represented as the repository blob hash until the binary is actually synchronized to GitHub and re-fetched/verified there.
 
-## Static completion state
+## Current static state
+
+`SOURCE_PEDAGOGY_AND_LOCAL_RENDER_PASS__REPOSITORY_PDF_SYNC_BLOCKED`
+
+After repository binary synchronization and blob/hash verification, the intended static promotion state is:
 
 `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
-This state means:
-- source, mathematics, pedagogy structure, metadata and static render QA are complete;
-- it does **not** claim classroom validation, retention evidence, psychometric calibration, qualification probability or final publication approval.
+This does **not** claim classroom validation, retention evidence, psychometric calibration, qualification probability or final publication approval.
