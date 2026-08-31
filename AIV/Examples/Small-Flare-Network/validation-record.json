@@ -1,0 +1,123 @@
+{
+  "schema": "AivSmallFlareNetworkValidationRecord.v1",
+  "sampleId": "AIV-SMALL-FLARE-2RV-SH-MH-001",
+  "implementation": {
+    "repository": "reallaksh19/3D_Converters",
+    "commit": "fbe7f1a4ec27087997df0ef717a62faf7bbb2f8e",
+    "calculationId": "VIB.AIV.ACOUSTIC",
+    "calculatorBlob": "08f1664f1be6a104fe421655e96a46ca66c6a80c",
+    "flareNetworkBlob": "2964b517ecf38c36226e049c5464fc09a5a60d8c",
+    "tableGeneratorBlob": "1964ff04cd58999b55135d74e5fd7a214c8ae34e"
+  },
+  "network": {
+    "networkId": "AIV-SMALL-FLARE-NETWORK",
+    "revision": "SAMPLE-1",
+    "caseId": "RELIEF-SIMULTANEOUS",
+    "sources": [
+      {
+        "canonicalId": "RV-101",
+        "branchSize": "2 in",
+        "branchLengthM": 6,
+        "massFlowKgS": 8.662561706634852,
+        "upstreamPressureBara": 99,
+        "downstreamPressureBara": 1,
+        "temperatureK": 410.15,
+        "molecularWeightGPerMol": 21.75,
+        "effectiveSourcePwlDb": 160.0
+      },
+      {
+        "canonicalId": "RV-102",
+        "branchSize": "3 in",
+        "branchLengthM": 9,
+        "massFlowKgS": 4.341565337873864,
+        "upstreamPressureBara": 99,
+        "downstreamPressureBara": 1,
+        "temperatureK": 410.15,
+        "molecularWeightGPerMol": 21.75,
+        "effectiveSourcePwlDb": 154.0
+      }
+    ],
+    "subheader": {
+      "size": "4 in",
+      "segmentId": "SH-01-4IN",
+      "lengthM": 12
+    },
+    "mainHeader": {
+      "size": "8 in",
+      "segmentId": "MH-01-8IN",
+      "lengthM": 20,
+      "insideDiameterMm": 202.74
+    },
+    "assessment": {
+      "canonicalId": "AIV-ASSESS-MH-01",
+      "type": "WELDOLET",
+      "mainOutsideDiameterMm": 219.1,
+      "mainInsideDiameterMm": 202.74,
+      "branchOutsideDiameterMm": 60.3
+    },
+    "paths": [
+      {
+        "sourceCanonicalId": "RV-101",
+        "segmentIds": ["BR-A-2IN", "SH-01-4IN", "MH-01-8IN"],
+        "physicalDistanceM": 38
+      },
+      {
+        "sourceCanonicalId": "RV-102",
+        "segmentIds": ["BR-B-3IN", "SH-01-4IN", "MH-01-8IN"],
+        "physicalDistanceM": 41
+      }
+    ],
+    "distanceAuthority": "EXPLICIT_SEGMENT_ENGINEERING_LENGTH_SUM",
+    "svgPixelsAuthoritativeForDistance": false
+  },
+  "generatedTableContracts": {
+    "sources": "AivSourceCsv.v2",
+    "assessments": "AivAssessmentCsv.v1",
+    "relationships": "AivSourceAssessmentCsv.v1",
+    "relationshipCount": 2,
+    "simultaneousSourceGroup": "AUTO:AIV-ASSESS-MH-01:RELIEF-SIMULTANEOUS"
+  },
+  "result": {
+    "rv101": {
+      "effectiveSourcePwlDb": 160.0,
+      "physicalDistanceM": 38,
+      "attenuationDb": 11.24593074874223,
+      "pointPwlDb": 148.75406925125776
+    },
+    "rv102": {
+      "effectiveSourcePwlDb": 154.0,
+      "physicalDistanceM": 41,
+      "attenuationDb": 12.133767386800828,
+      "pointPwlDb": 141.86623261319917
+    },
+    "combinedPointPwlDb": 149.56302572849327,
+    "assessmentLof": 0.29,
+    "screeningResultScope": "ASSESSMENT",
+    "lineCaseTraceLof": 1.48,
+    "lineCaseTraceAuthoritativeForScreening": false,
+    "designAuthority": false
+  },
+  "modelScope": {
+    "stage8Model": "CONFIGURED_D23_INTERMEDIATES",
+    "selectedFlm1Mode": "PUBLISHED",
+    "selectedFlm1": 1.2133,
+    "sampleGeometryRecalculatedFlm1": 1.133401846935044,
+    "sampleGeometryFlm1Variance": 0.07989815306495607,
+    "d23VarianceTolerance": 0.0024,
+    "note": "The current registered screening path uses the qualified D.2.3 configured Stage-8 intermediates. LOF 0.29 is therefore recorded as the current screening output for this network integration sample, not as independent arbitrary-geometry or design qualification."
+  },
+  "checks": [
+    {"id": "UNIQUE_DIRECTED_PATHS", "status": "PASS"},
+    {"id": "EXPLICIT_DISTANCE_SUM", "status": "PASS"},
+    {"id": "RV101_SOURCE_PWL_160", "status": "PASS"},
+    {"id": "RV102_SOURCE_PWL_154", "status": "PASS"},
+    {"id": "TWO_SOURCE_COMBINATION", "status": "PASS"},
+    {"id": "ASSESSMENT_LOF", "status": "PASS_WITH_MODEL_SCOPE_NOTE", "actual": 0.29},
+    {"id": "DESIGN_AUTHORITY", "status": "NOT_CLAIMED"}
+  ],
+  "validationStatus": "PASS_FOR_FLARE_NETWORK_TABLE_AND_MULTI_SOURCE_INTEGRATION_WITH_MODEL_SCOPE_NOTE",
+  "files": [
+    "Small-Flare-Network.svg",
+    "validation-record.json"
+  ]
+}
