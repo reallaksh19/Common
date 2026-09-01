@@ -1,4 +1,4 @@
-# ALG-01 - H0 Mixed Mastery Test
+# ALG-01 - Independent Mixed Mastery Check
 
 No default hints. No method labels. For each problem, decide the first move yourself.
 
@@ -6,7 +6,7 @@ No default hints. No method labels. For each problem, decide the first move your
 2. If `a+b=13` and `ab=36`, find `a^3+b^3`.
 3. If `x^2=2x+5`, express `x^5` as `Ax+B`.
 4. Given `p-q=4` and `pq=21`, find `p^2+q^2`.
-5. Solve `sqrt(3x+4)=x+2`, preserving all conditions and candidate checks.
+5. Solve `(3x+4)^2=(x+2)^2` by an equivalent factorization. State why the factorization does not create extra candidates.
 6. Let `y+1/y=5`, `y!=0`. Find `y^3+1/y^3` without solving for `y`.
 7. If `u^2+u+1=0`, determine `u^2026`.
 8. An equation contains `(x^2+3x)` repeatedly. Write a substitution that lowers structural complexity and state the test for whether it is useful.
