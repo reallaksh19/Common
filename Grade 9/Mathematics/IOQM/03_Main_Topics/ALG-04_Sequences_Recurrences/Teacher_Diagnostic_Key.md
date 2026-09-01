@@ -32,15 +32,13 @@
 5. Neither AP nor GP; first differences are `3,5,7,9,...`.
 6. `a_{i+4}>a_i`.
 7. `20/21`.
-8. Initials: formula gives `1,4`. Substitution gives
-   `3*2^(n+1)-2 = 3(3*2^n-2)-2(3*2^(n-1)-2)`, so the recurrence holds.
+8. Initials: formula gives `1,4`. Substitution gives `3*2^(n+1)-2 = 3(3*2^n-2)-2(3*2^(n-1)-2)`, so the recurrence holds.
 9. `a_n=4n-3`; common difference `4`.
-10. Let `d_n=a_{n+1}-a_n`; then `d_{n+1}=3d_n`, `d_1=3`, so
-    `a_n=2+sum_{j=1}^{n-1}3^j=(3^n+1)/2`; `a_8=3281`.
+10. Let `d_n=a_{n+1}-a_n`; then `d_{n+1}=3d_n`, `d_1=3`, so `a_n=2+sum_{j=1}^{n-1}3^j=(3^n+1)/2`; `a_8=3281`.
 11. `1-1/n=(n-1)/n`.
 12. Adjacent 3-term windows give `a_{i+3}=a_i`.
 13. `a_{i+5}>a_i` and `a_{i+7}<a_i`.
-14. `D_{n+1}=7D_n`, `D_1=1`; hence `D_20=7^19`, with `20` positive divisors.
+14. `D_{n+1}=7D_n`, `D_1=1`; hence `D_20=7^19`. Stop there: converting this prime power to a divisor count is owned by NT-03 and is not required by the repaired ALG-04 item.
 15. `a_n=T_n-T_{n-1}=2T_{n-1}+2`.
 16. `1/[(2k-1)(2k+1)]=(1/2)[1/(2k-1)-1/(2k+1)]`; sum `n/(2n+1)`.
 17. First differences double: `d_1=3`, `d_n=3*2^(n-1)`; `a_10=1535`.
@@ -56,9 +54,11 @@
 27. General invariant gives `Q_{n+1}=-3Q_n`; ratio `-3`.
 28. Since `1/[k(k+1)]=1/k-1/(k+1)`, they are identical term-by-term representations.
 29. In A, direct substitution is cheapest. In B, high index suggests a transform/invariant because the representation is recursive. High index alone is not a method label.
-30. ALG-04: read notation, initialization, verify/manipulate supplied recurrence. COMB-03: define state, prove disjoint/exhaustive first-step decomposition, base states, and therefore the recurrence.
+30. Sequence algebra: read notation, initialization, verify/manipulate a supplied recurrence. Counting-model ownership: define the state, prove a disjoint/exhaustive first-step decomposition, establish base states, and only then justify the recurrence.
 
-## H0 Mixed Mastery Test
+## H0 control map for the learner-facing Independent Mixed Mastery Check
+
+The H0 designation is retained here only as teacher/control metadata; it is not displayed in the learner-facing mastery title.
 
 1. `a_n=S_n-S_{n-1}`.
 2. If `W_i=a_i+...+a_{i+5}`, then `W_{i+1}-W_i=a_{i+6}-a_i>0`.
@@ -68,7 +68,7 @@
 6. First differences satisfy `d_{n+1}=4d_n`, `d_1=3`; this gives `a_n=4^(n-1)`, so `a_8=16384`.
 7. `50/51`.
 8. `a_{i+4}=a_i`; `99≡3 (mod 4)`, so `a_99=4`.
-9. `D_{n+1}=7D_n`, `D_1=1`; `D_20=7^19`; divisor count `20`.
+9. `D_{n+1}=7D_n`, `D_1=1`; hence `D_20=7^19`. No divisor-count theorem is required in ALG-04.
 10. A: AP, difference 4. B: GP, ratio 3.
 11. A explicit; B recursive. Without `a_1=4`, infinitely many sequences can satisfy `a_{n+1}=a_n+3`.
 12. The first decomposes exactly as `1/k-1/(k+1)`; the second has no such immediate consecutive-factor identity and needs a different analysis.
@@ -106,6 +106,6 @@
 ## Historical anchor custody
 
 - `IOQM-2025-Q26`: verified answer `10`; window-difference anchor.
-- `IOQM-2023-Q10`: verified answer `51`; neighboring-term invariant anchor.
+- `IOQM-2023-Q10`: verified answer `51`; neighboring-term invariant anchor. The historical question's divisor-count finish remains source custody; new ALG-04 practice/mastery items no longer teach the NT-03 divisor-count doctrine.
 
 Historical source wording remains controlled by the validated papers.
