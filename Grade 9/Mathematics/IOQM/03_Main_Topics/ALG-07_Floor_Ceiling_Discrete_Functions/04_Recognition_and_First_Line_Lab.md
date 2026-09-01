@@ -19,4 +19,4 @@ Write only the first useful mathematical line unless the item explicitly asks fo
 15. `floor(x)=ceil(x)`. State the structural condition you should test.
 16. For `floor(x)=4`, identify the included endpoint and excluded endpoint.
 
-No method labels should appear in later H0 mastery items.
+No method-control labels should appear in later independent mastery items.
