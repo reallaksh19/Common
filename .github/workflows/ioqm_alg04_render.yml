@@ -30,7 +30,7 @@ jobs:
           pdfinfo "$PDF" > /tmp/pdfinfo.txt
           pdftotext -layout "$PDF" /tmp/pdf.txt
           rm -f /tmp/alg04-page-*.pgm
-          pdftoppm -gray -r 36 -pgm "$PDF" /tmp/alg04-page >/dev/null
+          pdftoppm -gray -r 36 "$PDF" /tmp/alg04-page >/dev/null
           PDF="$PDF" REPORT="$REPORT" python - <<'PY'
           from pathlib import Path
           import hashlib, os, re, subprocess
@@ -56,7 +56,6 @@ jobs:
 
           practice = section_numbers('Practice and Transfer Bank', 'Independent Mixed Mastery Check')
           mastery = section_numbers('Independent Mixed Mastery Check')
-          # dedupe while preserving order; section prose can repeat examples, but authored item sequence must appear.
           def ordered_unique(xs):
               out=[]
               for x in xs:
@@ -97,7 +96,6 @@ jobs:
               else:
                   xs=[p[0] for p in ink]; ys=[p[1] for p in ink]
                   bbox=(min(xs),min(ys),max(xs),max(ys))
-                  # Require visible whitespace around all sides; footer intentionally reaches near bottom.
                   if bbox[0] < 4 or bbox[1] < 4 or bbox[2] > w-5 or bbox[3] > h-4:
                       raster_ok=False
               tw,th=60,40
@@ -123,8 +121,7 @@ jobs:
           forbidden_ok = not forbidden
           overall = pages_match and raster_ok and practice_ok and mastery_ok and forbidden_ok
 
-          lines=[]
-          lines += ['ALG-04 EXACT RENDER QA REPORT', '================================', '']
+          lines=['ALG-04 EXACT RENDER QA REPORT','================================','']
           lines += [f'bytes={len(data)}', f'sha256={hashlib.sha256(data).hexdigest()}', f'git_blob={subprocess.check_output(["git","hash-object",str(pdf)], text=True).strip()}']
           for key in ('Pages:', 'Page size:'):
               for line in info.splitlines():
