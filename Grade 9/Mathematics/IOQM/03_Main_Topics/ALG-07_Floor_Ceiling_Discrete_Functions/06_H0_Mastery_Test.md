@@ -1,4 +1,4 @@
-# ALG-07 - H0 Mastery Test
+# ALG-07 - Independent Mastery Check
 
 No default hints. No method labels.
 
