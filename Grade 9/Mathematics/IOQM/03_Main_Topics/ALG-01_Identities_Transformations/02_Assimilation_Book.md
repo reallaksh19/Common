@@ -114,10 +114,9 @@ A common reflex is:
 
 That route may be valid, but it solves more than the target asks. Relation reduction keeps the information in its cheapest form.
 
-### Boundary with ALG-03
+### Boundary with later polynomial methods
 
-Here we learn the **elementary habit** "a relation can rewrite higher powers."  
-ALG-03 canonically owns polynomial remainder/reduction as a general polynomial method.
+Here we learn the **elementary habit** "a relation can rewrite higher powers." A later polynomial chapter develops polynomial remainder/reduction as a general method.
 
 ---
 
@@ -183,10 +182,9 @@ Solving `u` and `v` individually is unnecessary.
 
 If the target is `u-v` rather than `(u-v)^2`, order/sign information matters. Sum and product may not decide the requested signed value by themselves.
 
-### Boundary with Vieta
+### Boundary with root-coefficient methods
 
-ALG-01 owns reconstruction from **already supplied** sum/product information.  
-ALG-03 owns the derivation that polynomial coefficients give root sum/product.
+This chapter owns reconstruction from **already supplied** sum/product information. A later polynomial chapter derives root sum/product from polynomial coefficients.
 
 ---
 
@@ -226,11 +224,11 @@ A later algebraic candidate that violates an original denominator restriction is
 
 ---
 
-## 7. TRY - support fades H3 -> H2 -> H1 -> H0
+## 7. TRY - support fades toward independence
 
 Each item is attempted before using the stated support.
 
-### H3 - execution relation supplied
+### Full support available
 
 Given `a+b=12`, `ab=20`, find `a^2+b^2`.
 
@@ -239,7 +237,7 @@ Use:
 
 Answer: `104`.
 
-### H2 - representation supplied, execution withheld
+### Structural prompt available
 
 Given `x^2=3x-1`, express `x^5` as `Ax+B`.
 
@@ -247,13 +245,13 @@ Representation cue: treat `x^2=3x-1` as a rewriting rule and reduce after every 
 
 Check after your attempt: `x^5=55x-21`.
 
-### H1 - recognition clue only
+### Recognition prompt only
 
 Given `p+q=9`, `pq=14`, find `p^3+q^3`.
 
 Clue: the target is unchanged when `p,q` are swapped.
 
-### H0 - no route supplied
+### Independent
 
 Given `t^2=2t+3`, reduce `t^6-5t^4` to `At+B`.
 
@@ -323,23 +321,23 @@ These four items are evidence for mechanisms, not a claim of official topic weig
 
 ### To inequalities
 
-Before applying a bound, ALG-02 asks which representation exposes the quantity to be bounded. The transformation habit comes from here; AM-GM/equality/attainment are taught there.
+Before applying a bound, a later inequalities chapter asks which representation exposes the quantity to be bounded. The transformation habit comes from here; bound selection, equality and attainment are taught there.
 
 ### To polynomials
 
-ALG-03 turns relation rewriting into a canonical polynomial-reduction method and turns symmetric root data into Vieta. Retrieve the target-first habit; do not duplicate those derivations here.
+A later polynomial chapter turns relation rewriting into a canonical polynomial-reduction method and turns symmetric root data into root-coefficient identities. Retrieve the target-first habit; do not duplicate those derivations here.
 
 ### To functional equations
 
-ALG-05 uses substitution strategically: choose inputs that expose a relation instead of plugging random values.
+A later functional-equations chapter uses substitution strategically: choose inputs that expose a relation instead of plugging random values.
 
 ### To radicals and logarithms
 
-ALG-06 owns domain and reversibility doctrine for those families. The transferable ALG-01 habit is to ask whether each transformation preserves equivalence.
+A later radicals-and-logarithms chapter owns its domain and reversibility doctrine. The transferable habit here is to ask whether each transformation preserves equivalence.
 
 ### To integer equations
 
-NT-04 often uses ALG-01 factorisation or substitution to create a finite integer structure, then applies number-theoretic restrictions.
+A later integer-equations chapter often uses factorisation or substitution to create a finite integer structure, then applies number-theoretic restrictions.
 
 ---
 
