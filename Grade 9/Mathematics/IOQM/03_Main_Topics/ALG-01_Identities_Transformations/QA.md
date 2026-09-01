@@ -22,8 +22,8 @@ This QA record describes the repaired current source package and the regenerated
 | G11 mathematics | PASS_STATIC | Historical anchors and repaired authored items remain consistent with the teacher key. |
 | G12 source custody | PASS_STATIC | `source_authority` normalization is complete and author-created items remain distinct from PYQs. |
 | G13 student-source hygiene | PASS_STATIC | Current learner sources and student PDF contain no H0-H3/T-level/Wave/PR/Issue/downstream-topic control labels. |
-| G14 rendered artifact custody | PASS_CURRENT_BLOBS | Student and teacher PDFs were regenerated from source head `05c6c9efba26a368111cae18e30cd0dacfc7d304` and committed as exact verified Git blobs. |
-| G15 current-blob structural/visual QA | PASS | Student 5/5 pages and teacher 2/2 pages structurally preflighted, rendered and visually inspected with no clipping, overlap or broken glyphs. |
+| G14 rendered artifact custody | PASS_CURRENT_BLOBS | Student and teacher PDFs were deterministically regenerated from the repaired learner/key snapshot at `05c6c9efba26a368111cae18e30cd0dacfc7d304`; the committed Git blobs exactly match the independently preflighted/rendered files. |
+| G15 current-blob structural/visual QA | PASS | Student 9/9 pages and teacher 2/2 pages structurally preflighted, rendered and visually inspected with no clipping, overlap or broken glyphs. |
 | G16 transfer quality | PASS_STATIC | Transfer intent remains present without learner-facing control taxonomy. |
 | G17 ownership completeness | PASS_STATIC | meaning, trigger, boundary, first move, independent solve and transfer remain covered. |
 | classroom timing/readability | NOT_RUN | evidence-dependent. |
@@ -53,25 +53,27 @@ Authoritative Wave-1 interfaces are the six separate A-P files under `Authoring/
 ### Student artifact
 
 - path: `PDFs/ALG01_Student_Pack_v1.pdf`
-- source snapshot: learner files at branch head `05c6c9efba26a368111cae18e30cd0dacfc7d304`
-- Git blob SHA: `2e53f4cf8f52ca614639b0cf834cc63ccf93ac46`
-- SHA-256: `b1a1510751b64ca5d67dd274a9aee80e3760a04ca19dcfc46fa86a0c63f357e6`
-- bytes: 11191
+- source snapshot: learner files at `05c6c9efba26a368111cae18e30cd0dacfc7d304`
+- artifact commit: `18a20c83e3e656033763f02322b5c511d5cb9aae`
+- Git blob SHA: `83927c63ff239dcfb0d3647ec0544da0960b3a80`
+- SHA-256: `bfe50ceab8678edf7e8db64dd47655e5ed0e12e7c86aa8dbd9ea61045200f76f`
+- bytes: 15676
 - page size: US Letter
-- pages: 5
-- Practice inventory: 1-32 present exactly once in the practice section
-- Independent mastery inventory: 1-16 present exactly once in the mastery section
+- pages: 9
+- Practice inventory: 1-32 preserved in the practice section
+- Independent mastery inventory: 1-16 preserved in the mastery section
 - structural preflight: PASS
 - forbidden learner-control label scan: PASS
-- exact-artifact visual inspection: PASS 5/5
+- exact-artifact visual inspection: PASS 9/9
 
 ### Teacher artifact
 
 - path: `PDFs/ALG01_Teacher_Key_v1.pdf`
-- source: current `Teacher_Diagnostic_Key.md`
-- Git blob SHA: `9857d3cd0f6d6701bb877ab9a6fe4f279994bd26`
-- SHA-256: `7e49c8ffdd56a94981ea1a1d8fa7ba7f1bfbdf8ca9ac58a4d540f869388db52a`
-- bytes: 6358
+- source: current `Teacher_Diagnostic_Key.md` from the repaired source snapshot
+- artifact commit: `18a20c83e3e656033763f02322b5c511d5cb9aae`
+- Git blob SHA: `e041d8c9f5952de6a91e73b68b3365c3850524c4`
+- SHA-256: `6317edcb7008b29dae0ed8cdf1bc25f115fb34e98e37b6027afce27b2158c789`
+- bytes: 4953
 - page size: US Letter
 - pages: 2
 - structural preflight: PASS
