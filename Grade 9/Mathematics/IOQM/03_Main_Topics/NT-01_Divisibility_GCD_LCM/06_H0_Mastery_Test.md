@@ -1,4 +1,4 @@
-# NT-01 - H0 Mastery Test
+# NT-01 - Independent Mastery Check
 
 No default hints. No method labels are attached to the questions. Show enough reasoning to justify the first move and the final check.
 
