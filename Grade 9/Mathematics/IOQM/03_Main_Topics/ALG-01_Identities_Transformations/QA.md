@@ -1,94 +1,95 @@
 # ALG-01 - QA
 
-Status: `STATIC_SOURCE_REPAIRED__RENDER_REVALIDATION_REQUIRED`
+Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
-This file records the current branch after remediation of the independent review findings. Current-source gates are separated from stale render claims.
+This QA record describes the repaired current source package and the regenerated student/teacher artifacts. Evidence-dependent classroom and psychometric gates remain separate from static promotion readiness.
 
-| Gate | State |
-|---|---|
-| G0 source authority | PASS_REPAIRED - historical metadata rows use exact frozen `HBCSE_OFFICIAL` authority with validated paper/key URLs and stable IDs |
-| G1 dependency map before prose | PASS_REPAIRED - Lab #6, Practice #12/#20 and mastery #5 no longer require principal-root/radical-domain doctrine from downstream ALG-06 |
-| G2 governing model | PASS - `What form makes the requested target cheapest?` |
-| G3 canonical overlap ownership | PASS_REPAIRED - Vieta/discriminant/remainder stay ALG-03; inequality equality/attainment stays ALG-02; radical/log doctrine stays ALG-06 |
-| G4 Wave-1 interfaces | PASS_REPAIRED - six per-microstream files follow the mandatory naming/header/A-P evidence contract |
-| G5 single-lead integration | PASS |
-| G6 deduplication | PASS |
-| G7 decision contrasts | PASS |
-| G8 attempt-before-help / internal fading control | PASS_STATIC - learner-facing mastery no longer uses H0 in its title |
-| G9 one First-Step layer | PASS |
-| G10 mastery | PASS_REPAIRED - learner-facing title is `Independent Mixed Mastery Check`; H0 remains only in teacher/control metadata |
-| G11 independent mathematics | PASS_STATIC - historical anchor audit remains valid; repaired replacement items are keyed by reversible algebraic derivations |
-| G12 source custody | PASS_REPAIRED - authority enum drift corrected |
-| G13 student-source hygiene | PASS_REPAIRED - radical dependency examples and learner-facing transfer/H0 control labels removed from repaired sources |
-| G14 one render authority | STALE_AFTER_SOURCE_CHANGE - committed PDFs predate the repaired learner/teacher sources |
-| G15 page-by-page render QA | NOT_RUN_CURRENT_SOURCE - current-source PDFs must be regenerated and independently inspected |
-| G16 transfer | PASS_STATIC_REPAIRED - learner-facing T2/T3/T4 labels removed while teacher metadata may retain control taxonomy |
-| G17 six-question ownership | PASS_STATIC |
-| classroom timing/readability | NOT_RUN |
-| longitudinal retention/transfer | NOT_RUN |
-| psychometric calibration | NOT_RUN |
-| qualification probability | NOT_RUN |
+## Current static gate table
 
-## Dependency repair
+| Gate | State | Evidence / disposition |
+|---|---|---|
+| G0 source authority | PASS_STATIC | Historical metadata rows use frozen `HBCSE_OFFICIAL` authority with validated paper/key URLs and stable IDs. |
+| G1 dependency | PASS_STATIC_REPAIRED | Recognition #6, Practice #12/#20 and mastery #5 are domain-neutral polynomial/equivalence exercises and do not require downstream radical/principal-root doctrine. |
+| G2 governing model | PASS_STATIC | `What form makes the requested target cheapest?` |
+| G3 ownership/overlap | PASS_STATIC | Vieta/discriminant/general polynomial reduction, inequality attainment, and radical/log doctrine remain downstream. |
+| G4 research-interface discipline | PASS_STATIC | Six per-microstream A-P interface files follow the mandatory naming/header contract; the consolidated interface file is index-only. |
+| G5 lead integration | PASS_STATIC | One integrated learner book plus a topic-wide First-Step layer. |
+| G6 deduplication | PASS_STATIC | Downstream canon is referenced rather than duplicated. |
+| G7 decision contrasts | PASS_STATIC | factor/expand, substitution, symmetry, relation rewrite and equivalence boundaries are explicit. |
+| G8 attempt-before-help / fading | PASS_STATIC | Learner support is descriptive and does not expose internal H/T labels. |
+| G9 First-Step layer | PASS_STATIC | `03_First_Step_Reference.md` remains integrated. |
+| G10 independent mastery | PASS_STATIC | Learner-facing title is `Independent Mixed Mastery Check`; H0 remains teacher/control metadata only. |
+| G11 mathematics | PASS_STATIC | Historical anchors and repaired authored items remain consistent with the teacher key. |
+| G12 source custody | PASS_STATIC | `source_authority` normalization is complete and author-created items remain distinct from PYQs. |
+| G13 student-source hygiene | PASS_STATIC | Current learner sources and student PDF contain no H0-H3/T-level/Wave/PR/Issue/downstream-topic control labels. |
+| G14 rendered artifact custody | PASS_CURRENT_BLOBS | Student and teacher PDFs were regenerated from source head `05c6c9efba26a368111cae18e30cd0dacfc7d304` and committed as exact verified Git blobs. |
+| G15 current-blob structural/visual QA | PASS | Student 5/5 pages and teacher 2/2 pages structurally preflighted, rendered and visually inspected with no clipping, overlap or broken glyphs. |
+| G16 transfer quality | PASS_STATIC | Transfer intent remains present without learner-facing control taxonomy. |
+| G17 ownership completeness | PASS_STATIC | meaning, trigger, boundary, first move, independent solve and transfer remain covered. |
+| classroom timing/readability | NOT_RUN | evidence-dependent. |
+| longitudinal retention/transfer | NOT_RUN | evidence-dependent. |
+| psychometric calibration | NOT_RUN | evidence-dependent. |
+| qualification probability / percentile calibration | NOT_RUN | evidence-dependent. |
 
-The prior review correctly identified an inversion: ALG-01 deferred radical/principal-root doctrine to ALG-06 while learner items required it. Those items are now domain-neutral equivalence exercises:
+## Dependency repair verification
 
-- Recognition Lab #6: equality of polynomial squares, solved by difference-of-squares factorization;
-- Practice #12: `(2x+3)^2=x^2`, solved by an equivalent factorization;
-- Practice #20: `(x+6)^2-x^2=20`, solved by reversible algebraic rewriting;
-- mastery #5: `(3x+4)^2=(x+2)^2`, solved by an equivalent factorization.
+The prior dependency inversion into the later radicals/logarithms chapter is removed:
 
-No square-root domain, principal-root condition, or radical candidate-filter doctrine is required by these repaired ALG-01 items.
+- Recognition Lab #6: `(x+3)^2=(x-1)^2`, solved by equivalent difference-of-squares factorization;
+- Practice #12: `(2x+3)^2=x^2`, giving `x=-3,-1` by equivalent factorization;
+- Practice #20: `(x+6)^2-x^2=20`, giving `x=-4/3` by reversible algebraic rewriting;
+- mastery #5: `(3x+4)^2=(x+2)^2`, giving `x=-1,-3/2` by equivalent factorization.
 
-## Metadata repair
+No principal-root rule, square-root domain restriction, or radical candidate-filter doctrine is needed.
 
-`Item_Metadata.csv` remains on the frozen 31-column program schema. The four historical rows now use exact `HBCSE_OFFICIAL` authority rather than shortened `HBCSE`. Metadata for Practice #12/#20 and mastery #5 now describes the repaired polynomial-equivalence items rather than the superseded radical exercises. Internal H0 identifiers remain only as control metadata; learner disposition is unlabelled.
+## Metadata and interfaces
 
-## Per-microstream interfaces
+`Item_Metadata.csv` remains on the frozen 31-column program schema. Historical rows use exact `HBCSE_OFFICIAL`; repaired item metadata describes the current polynomial-equivalence items. Internal H0 identifiers are control metadata only.
 
-Current required authoring interfaces:
+Authoritative Wave-1 interfaces are the six separate A-P files under `Authoring/`; `Authoring/Microstream_Interfaces.md` is index/synopsis evidence only.
 
-- `Authoring/IOQM-G9-ALG-01__W1-A__factor-expand__interface.md`
-- `Authoring/IOQM-G9-ALG-01__W1-B__substitutions__interface.md`
-- `Authoring/IOQM-G9-ALG-01__W1-C__symmetric-identities__interface.md`
-- `Authoring/IOQM-G9-ALG-01__W1-D__reversible-transformations__interface.md`
-- `Authoring/IOQM-G9-ALG-01__W1-E__hidden-relations-power-reduction__interface.md`
-- `Authoring/IOQM-G9-ALG-01__W1-F__source-pyq-misconception-audit__interface.md`
+## Current render custody
 
-The previous consolidated interface file is synopsis evidence only and is not used to claim schema conformance.
+### Student artifact
 
-## Mathematical checkpoints for repaired items
+- path: `PDFs/ALG01_Student_Pack_v1.pdf`
+- source snapshot: learner files at branch head `05c6c9efba26a368111cae18e30cd0dacfc7d304`
+- Git blob SHA: `2e53f4cf8f52ca614639b0cf834cc63ccf93ac46`
+- SHA-256: `b1a1510751b64ca5d67dd274a9aee80e3760a04ca19dcfc46fa86a0c63f357e6`
+- bytes: 11191
+- page size: US Letter
+- pages: 5
+- Practice inventory: 1-32 present exactly once in the practice section
+- Independent mastery inventory: 1-16 present exactly once in the mastery section
+- structural preflight: PASS
+- forbidden learner-control label scan: PASS
+- exact-artifact visual inspection: PASS 5/5
 
-- Practice #12: `(2x+3)^2-x^2=(x+3)(3x+3)=0`, giving `x=-3,-1`.
-- Practice #20: `(x+6)^2-x^2=12x+36=20`, giving `x=-4/3`.
-- Mastery #5: `(3x+4)^2-(x+2)^2=(2x+2)(4x+6)=0`, giving `x=-1,-3/2`.
+### Teacher artifact
 
-These are equivalence-preserving algebraic transformations and do not create radical-domain obligations.
+- path: `PDFs/ALG01_Teacher_Key_v1.pdf`
+- source: current `Teacher_Diagnostic_Key.md`
+- Git blob SHA: `9857d3cd0f6d6701bb877ab9a6fe4f279994bd26`
+- SHA-256: `7e49c8ffdd56a94981ea1a1d8fa7ba7f1bfbdf8ca9ac58a4d540f869388db52a`
+- bytes: 6358
+- page size: US Letter
+- pages: 2
+- structural preflight: PASS
+- exact-artifact visual inspection: PASS 2/2
 
-## Render custody
-
-The repository currently contains an older student PDF, and QA previously claimed a teacher PDF that the independent re-review did not find at the reviewed head. Since the canonical learner and teacher sources have now changed again, no prior PDF hash/page inspection can certify this repaired source state.
-
-Required before promotion:
-
-1. regenerate the student PDF from the current canonical learner sources;
-2. generate the teacher PDF if the architecture requires it and ensure it is committed;
-3. record exact Git blob SHA, SHA-256 and page count for each current artifact;
-4. run structural/leakage preflight;
-5. independently inspect every page of the exact current blobs;
-6. only then restore G14/G15 PASS claims.
+Teacher/control H-level and diagnostic codes are intentionally permitted in the teacher artifact and are not learner-facing leakage.
 
 ## Promotion state
 
 ```text
 WAVE0_ARCHITECTURE_FROZEN
-WAVE1_INTERFACES_COMPLETE_REPAIRED
-WAVE2_INTEGRATED_ASSIMILATION_SOURCE_REPAIRED
+WAVE1_INTERFACES_COMPLETE
+WAVE2_INTEGRATED_ASSIMILATION_PASS
 WAVE3_FIRST_STEP_PASS
-WAVE4_MASTERY_SOURCE_PASS
+WAVE4_MASTERY_PASS
 WAVE5_STATIC_SOURCE_QA_PASS
-WAVE6_CURRENT_RENDER_QA_NOT_RUN
-NOT_READY__RENDER_REVALIDATION_REQUIRED
+WAVE6_STATIC_RENDER_QA_PASS
+BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED
 ```
 
-Classroom timing/readability, longitudinal retention, psychometrics and qualification probability remain `NOT_RUN`.
+No classroom timing/readability, longitudinal retention, psychometric, qualification-probability or publication-readiness claim is made.
