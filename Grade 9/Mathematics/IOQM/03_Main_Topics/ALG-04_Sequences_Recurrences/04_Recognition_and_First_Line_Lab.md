@@ -1,6 +1,6 @@
-# ALG-04 — Recognition and First-Line Lab
+# ALG-04 - Recognition and First-Line Lab
 
-First attempt is H0. Write only the recognition statement or first useful mathematical line; do not finish the whole problem unless needed to justify the first move.
+Make an independent first attempt. Write only the recognition statement or first useful mathematical line; do not finish the whole problem unless needed to justify the first move.
 
 ## Core recognition
 
