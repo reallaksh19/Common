@@ -38,14 +38,16 @@ All items here are author-created. Historical IOQM IDs are not assigned to them.
 20. Find the greatest `d` such that 1001, 1457 and 1913 leave the same remainder upon division by `d`.
 21. Find the least positive integer `N` such that `N+5` is divisible by 18, 24 and 30.
 22. A positive integer `d` divides both `11n+8` and `7n+5`. Find the largest possible value of `d` over all integers `n`.
-23. Positive integers `a,b,c<=50` satisfy the same lcm relation as the validated 2025 anchor. Re-derive the key gcd restriction before any enumeration, but do not use the historical answer as a starting assumption.
+23. Positive integers `a,b,c<=50` satisfy
+   `27(lcm(a,c)+lcm(b,c))=26c(a+b)`.
+   Let `x=gcd(a,c)` and `y=gcd(b,c)`. Re-derive the key restriction on `x,y` before any enumeration. Do not use the historical answer as a starting assumption.
 24. A number `N` leaves remainder 5 when divided by 12 and 18, but remainder 0 when divided by 5. Find the least `N>5` satisfying all three conditions, or prove none exists.
 
 ## Transfer prompts
 
-25. T2 representation change: express "`a` and `b` leave the same remainder when divided by `d`" using only divisibility language, without congruence notation.
-26. T3 context change: explain why a largest equal spacing problem and a first-synchronization problem usually route to different operations.
-27. T3 changed target: two numbers have gcd 18 and lcm 630. Explain why the product is determined but the ordered pair need not be unique.
-28. T4 downstream bridge: state exactly which NT-01 fact a later modular-arithmetic chapter may retrieve when it writes `a` and `b` as having the same residue modulo `d`.
-29. WHY-NOT: Why is lcm the wrong first move for "greatest divisor giving the same remainder on 437, 581 and 725"?
-30. WHY-NOT: Why do `gcd(a,b)=12`, `lcm(a,b)=420` not force only the pair `(12,420)`?
+25. **Representation change:** express "`a` and `b` leave the same remainder when divided by `d`" using only divisibility language, without congruence notation.
+26. **Context change:** explain why a largest equal-spacing problem and a first-synchronization problem usually route to different operations.
+27. **Changed target:** two numbers have gcd 18 and lcm 630. Explain why the product is determined but the ordered pair need not be unique.
+28. **Downstream bridge:** state exactly which divisibility fact a later modular-arithmetic chapter may retrieve when it writes `a` and `b` as having the same residue modulo `d`.
+29. **WHY-NOT:** Why is lcm the wrong first move for "greatest divisor giving the same remainder on 437, 581 and 725"?
+30. **WHY-NOT:** Why do `gcd(a,b)=12`, `lcm(a,b)=420` not force only the pair `(12,420)`?
