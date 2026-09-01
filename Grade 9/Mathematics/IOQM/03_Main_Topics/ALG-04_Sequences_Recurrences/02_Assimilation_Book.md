@@ -1,4 +1,4 @@
-# Sequences, Progressions & Recurrences — Assimilation Book
+# Sequences, Progressions & Recurrences - Assimilation Book
 
 For a learner who can often compute terms or remember AP/GP formulas, but does not yet reliably choose the cheapest representation.
 
@@ -24,7 +24,7 @@ The goal is not to avoid computation. The goal is to compute **after** structure
 
 ---
 
-## 1. RECONNECT — name the object before the formula
+## 1. RECONNECT - name the object before the formula
 
 A sequence is an ordered list:
 `a_1, a_2, a_3, ...`
@@ -34,7 +34,7 @@ Here `a_n` means the **term at position n**.
 A partial sum is a different object:
 `S_n=a_1+a_2+...+a_n`.
 
-### H0 reconnect check
+### Reconnect check
 
 Without solving fully, write the first question you would ask.
 
@@ -72,7 +72,7 @@ The important move is not expansion. It is recognizing that **adjacent totals is
 
 ---
 
-## 2. DISCOVER — AP and GP are local invariants
+## 2. DISCOVER - AP and GP are local invariants
 
 The familiar formulas should come **after** the invariant.
 
@@ -106,7 +106,7 @@ Do not force a chapter label onto a sequence whose invariant is different.
 
 ---
 
-## 3. MAKE SENSE — explicit and recursive are different representations
+## 3. MAKE SENSE - explicit and recursive are different representations
 
 ### Explicit definition
 
@@ -150,7 +150,7 @@ Verification has two parts.
 
 ---
 
-## 4. DISCOVER — subtract nearby windows
+## 4. DISCOVER - subtract nearby windows
 
 Let a fixed `k`-term window be
 
@@ -174,13 +174,13 @@ For the validated 2025 Q26 anchor:
 - increasing 4-term averages give `a_{i+4}>a_i`;
 - decreasing 7-term averages give `a_{i+7}<a_i`.
 
-The original surface is “averages.” The useful representation is an **index-shift inequality graph**.
+The original surface is "averages." The useful representation is an **index-shift inequality graph**.
 
 > Adopt: a moving-window problem is usually a subtraction problem before it is an averaging problem.
 
 ---
 
-## 5. MAKE SENSE — transform a recurrence before iterating
+## 5. MAKE SENSE - transform a recurrence before iterating
 
 Consider
 
@@ -204,7 +204,7 @@ This is the local/global decision:
 - global brute force: compute many `a_n`;
 - local structural route: find a simpler quantity that evolves predictably.
 
-The transform is not always “first differences.” It may be:
+The transform is not always "first differences." It may be:
 - a sum/difference of nearby terms;
 - a ratio;
 - an alternating transform;
@@ -212,7 +212,7 @@ The transform is not always “first differences.” It may be:
 
 ---
 
-## 6. MAKE SENSE — a high-index neighboring-term invariant
+## 6. MAKE SENSE - a high-index neighboring-term invariant
 
 A second-order recurrence can preserve a simple determinant-like combination.
 
@@ -271,13 +271,13 @@ Let `b_0=0, b_1=1` and
 Then `D_1=1`, so
 `D_20=7^19`.
 
-The number of positive divisors is `19+1=20`.
+Stop at this recurrence-invariant endpoint in this chapter. Any later question about the number of divisors of `7^19` belongs to the subsequent number-theory treatment of prime powers and divisor counts.
 
 The raw terms become huge; the invariant stays tiny.
 
 ---
 
-## 7. DISCOVER — telescoping is cancellation across a sum
+## 7. DISCOVER - telescoping is cancellation across a sum
 
 Consider
 
@@ -314,42 +314,42 @@ All are local comparisons between neighboring indices.
 
 ---
 
-## 8. TRY — H0 first, then optional help
+## 8. TRY - attempt first, then optional help
 
-For each problem, attempt a first line **before** reading any hint.
+For each problem, attempt a first line **before** reading any prompt.
 
-### Try A — term from accumulation
+### Try A - term from accumulation
 
 `S_n=3n^2-n`. Find `a_n`.
 
 If stuck:
-- H1: one term is hidden between two neighboring totals.
-- H2: compare `S_n` and `S_{n-1}`.
-- H3: write `a_n=S_n-S_{n-1}`.
+- **Recognition prompt:** one term is hidden between two neighboring totals.
+- **Structural prompt:** compare `S_n` and `S_{n-1}`.
+- **Full support:** write `a_n=S_n-S_{n-1}`.
 
-### Try B — moving window
+### Try B - moving window
 
 Every 6-term sum is larger than the preceding 6-term sum. State the direct term inequality.
 
 If stuck:
-- H1: the two sums share five terms.
-- H2: subtract adjacent 6-term windows.
-- H3: write `W_{i+1}-W_i=a_{i+6}-a_i`.
+- **Recognition prompt:** the two sums share five terms.
+- **Structural prompt:** subtract adjacent 6-term windows.
+- **Full support:** write `W_{i+1}-W_i=a_{i+6}-a_i`.
 
-### Try C — recurrence transform
+### Try C - recurrence transform
 
 `a_{n+2}=5a_{n+1}-4a_n`.
 
 Find a recurrence for `d_n=a_{n+1}-a_n`.
 
 If stuck:
-- H1: compare neighboring terms rather than raw values.
-- H2: rewrite in first differences.
-- H3: `a_{n+2}-a_{n+1}=4(a_{n+1}-a_n)`.
+- **Recognition prompt:** compare neighboring terms rather than raw values.
+- **Structural prompt:** rewrite in first differences.
+- **Full support:** `a_{n+2}-a_{n+1}=4(a_{n+1}-a_n)`.
 
 ---
 
-## 9. DIAGNOSE — why the tempting start fails
+## 9. DIAGNOSE - why the tempting start fails
 
 | Wrong move | Why it is tempting | Missing link | Repair |
 |---|---|---|---|
@@ -358,44 +358,44 @@ If stuck:
 | ignore initial values | recurrence looks like a formula | semantics | recurrence + range + initialization |
 | verify only first few terms | examples match | proof/check | initials + recurrence for all valid `n` |
 | compute 50 recurrence terms | procedure is obvious | method selection | search local transform/invariant |
-| expand two moving averages | surface says “average” | representation | cancel overlapping windows |
+| expand two moving averages | surface says "average" | representation | cancel overlapping windows |
 | telescope any rational sum | one example was memorable | boundary | prove exact neighbor difference |
-| derive a tiling recurrence here | notation looks identical | ownership/model | COMB-03 defines counting state first |
+| derive a counting recurrence here | notation looks identical | ownership/model | the counting chapter defines the state first |
 | lose one index | nearby subscripts look similar | execution | write both shifted relations explicitly |
 
 ---
 
-## 10. FADE — support decreases across the set
+## 10. FADE - support decreases across the set
 
 The available support now fades.
 
-### H3-available
+### Full support available
 `S_n=2n^2+3n`. Find `a_n`.
 
 Maximum support if needed:
 `a_n=S_n-S_{n-1}`.
 
-### H2-maximum
+### Structural prompt only
 `a_{n+2}=4a_{n+1}-3a_n`. Find a simpler sequence.
 
 Maximum support:
 study first differences.
 
-### H1-maximum
+### Recognition prompt only
 Evaluate
 `sum_{k=2}^n 1/[k(k-1)]`.
 
 Maximum support:
 look for neighboring-factor cancellation.
 
-### H0
+### Independent
 A sequence has all 4-term sums equal. Prove a periodicity statement.
 
 No hint.
 
 ---
 
-## 11. ADOPT — the first-move rules
+## 11. ADOPT - the first-move rules
 
 1. **Term or sum?** Name the object.
 2. **Explicit or recurrent?** Decide whether direct substitution or dependency is present.
@@ -403,15 +403,15 @@ No hint.
 4. **Nearby relations?** Subtract before iterating.
 5. **Telescoping?** Seek an exact neighbor difference.
 6. **High index?** Search transformed sequence/invariant.
-7. **Counting state?** ALG-04 supplies notation only; COMB-03 must define the state and derive the recurrence.
+7. **Counting state?** This chapter supplies recurrence notation only; a later combinatorics chapter must define the state and derive a counting recurrence.
 
 Say this in your own words:
 
-> “When neighboring indices share most of their structure, I compare them before I calculate.”
+> "When neighboring indices share most of their structure, I compare them before I calculate."
 
 ---
 
-## 12. TRANSFER — changed surfaces
+## 12. TRANSFER - changed surfaces
 
 ### Rolling measurements
 
@@ -439,21 +439,21 @@ Different coefficients, same invariant mechanism.
 
 ### A recurrence from tilings
 
-Suppose a tiling book states a recurrence `t_n=t_{n-1}+t_{n-2}`.
+Suppose a later tiling chapter states a recurrence `t_n=t_{n-1}+t_{n-2}`.
 
-ALG-04 can:
+From this chapter you can:
 - read the notation;
 - use initial values;
 - verify or manipulate the recurrence.
 
-But the statement “why is the count equal to `t_{n-1}+t_{n-2}`?” belongs to COMB-03. It requires a state and a disjoint, exhaustive first-step partition.
+But the statement "why is the count equal to `t_{n-1}+t_{n-2}`?" belongs to the counting-model chapter. It requires a state and a disjoint, exhaustive first-step partition.
 
 ---
 
 ## 13. Historical anchors
 
-- IOQM 2025 Q26 — window comparison and high-index cancellation by local inequalities; verified answer `10`.
-- IOQM 2023 Q10 — neighboring-term determinant invariant under a second-order recurrence; verified answer `51`.
+- IOQM 2025 Q26 - window comparison and high-index cancellation by local inequalities; verified answer `10`.
+- IOQM 2023 Q10 - neighboring-term determinant invariant under a second-order recurrence; verified answer `51`.
 
 Historical wording remains controlled by the validated papers. The exercises in this book that are not explicitly identified by year/question are author-created.
 
