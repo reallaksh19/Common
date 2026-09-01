@@ -21,7 +21,7 @@ Attempt every item before consulting support or the teacher key.
 ## F2 - standard
 
 11. If `t^2=3t+1`, find `t^6` in the form `At+B`.
-12. Solve `sqrt(2x+3)=x` with candidate checks.
+12. Solve `(2x+3)^2=x^2` by rewriting as a difference of squares. State why the factorization is equivalent to the original equation.
 13. Given `p-q=5`, `pq=14`, find `(p+q)^2`.
 14. If `z+1/z=3`, find `z^4+1/z^4` without solving for `z`.
 15. Explain why cancelling `(x-1)` from `(x-1)(x+4)=0` is not equivalent unless the `x=1` branch is retained.
@@ -32,7 +32,7 @@ Attempt every item before consulting support or the teacher key.
 17. If `a+b+c=0`, simplify `a^3+b^3+c^3` structurally.
 18. Given `r+s=5` and `r^2+s^2=13`, find `r^4+s^4` without solving `r,s`.
 19. A real nonzero `x` satisfies `x+1/x=4`. Find `x^5+1/x^5`.
-20. Solve `sqrt(x+6)=x` and identify the implication-only step.
+20. Solve `(x+6)^2-x^2=20` using a structure-preserving rewrite. Identify why each transformation is reversible.
 
 ## F4 - preliminary-style selection
 
@@ -42,12 +42,12 @@ Attempt every item before consulting support or the teacher key.
 24. The equation `(x^2+3x)^2-7(x^2+3x)+10=0` is given. Introduce one substitution and solve for the *possible values of the repeated block only*.
 25. Given `x^2+x=1`, evaluate `x^4+3x` without solving for `x`.
 
-## Transfer T2-T4
+## Transfer
 
-26. **Representation change (T2):** rewrite a high-power target under `x^2=4x-1` so that it becomes linear in `x`; explain why this is a bridge to ALG-03 but not yet polynomial remainder theory.
-27. **Context change (T3):** a rectangle has side lengths `u,v` with known perimeter and area. Explain which symmetric expressions can be found without reconstructing each side.
-28. **Functional bridge (T3):** if a functional equation repeatedly contains `f(x)+f(1-x)`, propose a strategic substitution/combination goal without teaching ALG-05.
-29. **Integer bridge (T3):** transform `mn+m+n=35` into a factored form suitable for integer case analysis.
-30. **Cross-domain (T4):** explain how the question "what form makes the target cheapest?" should be reused before choosing an inequality representation in ALG-02.
+26. **Representation change:** rewrite a high-power target under `x^2=4x-1` so that it becomes linear in `x`; explain why this is a bridge to polynomial methods without using polynomial-remainder theory here.
+27. **Context change:** a rectangle has side lengths `u,v` with known perimeter and area. Explain which symmetric expressions can be found without reconstructing each side.
+28. **Functional bridge:** if a functional equation repeatedly contains `f(x)+f(1-x)`, propose a strategic substitution/combination goal without developing functional-equation theory here.
+29. **Integer bridge:** transform `mn+m+n=35` into a factored form suitable for integer case analysis.
+30. **Cross-domain:** explain how the question "what form makes the target cheapest?" should be reused before choosing an inequality representation.
 31. Construct one case where expansion is cheaper than factorisation and justify the target.
 32. Construct one case where factorisation is cheaper than expansion and justify the target.
