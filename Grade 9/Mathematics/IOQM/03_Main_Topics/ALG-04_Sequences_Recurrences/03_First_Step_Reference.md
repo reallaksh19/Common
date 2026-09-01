@@ -1,4 +1,4 @@
-# ALG-04 — First-Step Reference
+# ALG-04 - First-Step Reference
 
 This is a compression layer. Use it after the Assimilation Book.
 
@@ -31,7 +31,7 @@ ONLY THEN COMPUTE TERMS
 | high-index recurrence | can a transform simplify? | write nearby-index copies |
 | `k(k+1)` / `(k-1)k` | exact telescope? | seek `F(k)-F(k+1)` |
 | squares/products of neighboring recurrence terms | invariant candidate? | compare candidate at `n,n+1` |
-| tilings/paths/states | where did recurrence come from? | route state derivation to COMB-03 |
+| tilings/paths/states | where did recurrence come from? | route state derivation to the later combinatorics chapter |
 
 ## AP / GP card
 
