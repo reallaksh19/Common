@@ -1,0 +1,25 @@
+name: IOQM ALG04 static render
+on:
+  push:
+    branches: [ioqm-g9-alg04-sequences]
+permissions:
+  contents: write
+jobs:
+  render:
+    if: ${{ !contains(github.event.head_commit.message, '[skip render]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Render deterministic PDF
+        run: python 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/render_static_pdf.py'
+      - name: Commit exact artifact
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf'
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'ALG-04: regenerate exact PDF [skip render]'
+          git push
