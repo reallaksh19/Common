@@ -290,19 +290,19 @@ When one divisibility relation feeds another, transitivity may remove whole bran
 
 ## 9. TRY - attempt before help
 
-For each problem, make a first attempt **before** reading any hint. If stuck, reveal H3 first, then move toward less support on later problems.
+For each problem, make a first attempt **before** reading any support. If stuck, use the fullest support first; on later problems, work with progressively less support until you can solve independently.
 
 ### Problem A
 
 Find the greatest integer that leaves the same remainder when dividing 437, 581 and 725.
 
-**H3 - execution relation:** compute the differences `581-437` and `725-581`, then take their gcd.
+**Full support:** compute the differences `581-437` and `725-581`, then take their gcd.
 
-**H2 - structure:** an unknown common divisor must divide every difference.
+**Structural prompt:** an unknown common divisor must divide every difference.
 
-**H1 - recognition:** equal remainders disappear under subtraction.
+**Recognition prompt:** equal remainders disappear under subtraction.
 
-**H0:** later problems give no hint.
+**Independent target:** later problems give no support.
 
 Answer: `144`.
 
@@ -310,13 +310,13 @@ Answer: `144`.
 
 Find the least `N>9` that leaves remainder 9 when divided by 12, 15 and 20.
 
-**H3 - execution relation:** `N-9=lcm(12,15,20)` for the least solution.
+**Full support:** `N-9=lcm(12,15,20)` for the least solution.
 
-**H2 - structure:** remove the prescribed remainder so that every divisor divides the same number.
+**Structural prompt:** remove the prescribed remainder so that every divisor divides the same number.
 
-**H1 - recognition:** the unknown is the number being constructed, not the divisor.
+**Recognition prompt:** the unknown is the number being constructed, not the divisor.
 
-**H0:** later problems give no hint.
+**Independent target:** later problems give no support.
 
 Answer: `69`.
 
@@ -324,13 +324,13 @@ Answer: `69`.
 
 Compute `gcd(2025,748)`.
 
-**H3 - execution relation:** repeatedly use `a=qb+r` and replace `(a,b)` by `(b,r)`.
+**Full support:** repeatedly use `a=qb+r` and replace `(a,b)` by `(b,r)`.
 
-**H2 - structure:** preserve the common-divisor set while shrinking the pair.
+**Structural prompt:** preserve the common-divisor set while shrinking the pair.
 
-**H1 - recognition:** division with remainder is cheaper than full factorization here.
+**Recognition prompt:** division with remainder is cheaper than full factorization here.
 
-**H0:** later problems give no hint.
+**Independent target:** later problems give no support.
 
 Answer: `1`.
 
@@ -389,7 +389,7 @@ Repair: write the chain first. Transitivity can make some conditions automatic.
 
 The official item is a counting question about integers up to 100 divisible by 3 but not by 2. The structural move is to count multiples of 3 and remove those also divisible by 2, i.e. multiples of 6. The independently checked answer is 17.
 
-Learning use: divisibility condition -> common-multiple overlap. This is not a claim that inclusion-exclusion belongs canonically to NT-01; the counting machinery is a bridge.
+Learning use: divisibility condition -> common-multiple overlap. This is not a claim that inclusion-exclusion belongs canonically to this topic; the counting machinery is a bridge.
 
 ### IOQM-2025-Q27
 
@@ -405,21 +405,21 @@ Learning use: when lcm appears inside an algebraic relation, rewrite it through 
 
 ## 13. TRANSFER - same invariant, changed surface
 
-### T2 - representation change
+### Representation change
 
 "Several measurements have the same remainder when measured in units of length `d`." Translate to differences divisible by `d`.
 
-### T3 - context change
+### Context change
 
 "Three machines reset every 18, 24 and 40 minutes." Translate to the first positive common multiple.
 
-### T3 - spacing change
+### Spacing change
 
 "Marks are at positions 1001, 1457 and 1913 on a line. What is the largest equal step that lands on all marks after a common offset?" Translate to gcd of differences.
 
-### T4 - downstream modular bridge
+### Downstream modular bridge
 
-Later, NT-02 will write equal-remainder information with congruence notation. The underlying NT-01 fact remains `d|(a-b)`; NT-02 retrieves it rather than reteaching this chapter.
+A later modular-arithmetic chapter may write equal-remainder information with congruence notation. The underlying fact from this chapter remains `d|(a-b)`; the later chapter retrieves it rather than requiring this chapter to introduce its notation.
 
 ### Final self-check
 
