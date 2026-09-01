@@ -1,4 +1,4 @@
-# ALG-01 — First-Step Reference
+# ALG-01 - First-Step Reference
 
 ## Recognition atlas
 
@@ -46,4 +46,4 @@ After squaring/dividing/clearing denominators, verify candidates in the original
 - identity vs solution-only relation;
 - solving variables vs evaluating a symmetric expression;
 - reversible step vs one-way implication;
-- algebraic transformation here vs Vieta/discriminant canon in ALG-03.
+- elementary relation rewriting here vs general root-coefficient and polynomial-reduction methods in a later polynomial chapter.
