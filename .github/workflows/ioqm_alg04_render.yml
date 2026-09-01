@@ -15,11 +15,28 @@ jobs:
           python-version: '3.12'
       - name: Render deterministic PDF
         run: python 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/render_static_pdf.py'
-      - name: Commit exact artifact
+      - name: Create temporary exact-blob inspection chunks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, hashlib
+          pdf = Path('Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf')
+          out = Path('Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/_render_blob_chunks')
+          out.mkdir(exist_ok=True)
+          data = pdf.read_bytes()
+          b64 = base64.b64encode(data).decode('ascii')
+          for old in out.glob('part_*.txt'):
+              old.unlink()
+          size = 5000
+          for i in range(0, len(b64), size):
+              (out / f'part_{i//size:02d}.txt').write_text(b64[i:i+size])
+          (out / 'manifest.txt').write_text(f'bytes={len(data)}\nsha256={hashlib.sha256(data).hexdigest()}\nparts={(len(b64)+size-1)//size}\n')
+          PY
+      - name: Commit exact artifact and inspection bridge
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf'
+          git add 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf' 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/_render_blob_chunks'
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'ALG-04: regenerate exact PDF [skip render]'
+          git commit -m 'ALG-04: stage exact PDF inspection chunks [skip render]'
           git push
