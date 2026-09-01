@@ -157,10 +157,10 @@ Solve `floor((x-1)/2)=3`.
 
 Attempt first.
 
-- H3: write `3 <= (x-1)/2 < 4`, then solve both sides.
-- H2: replace the floor equation by its half-open interval.
-- H1: which endpoint is strict for floor?
-- H0: solve `floor((3x+2)/5)=-1` independently.
+- **Full support:** write `3 <= (x-1)/2 < 4`, then solve both sides.
+- **Structural prompt:** replace the floor equation by its half-open interval.
+- **Recognition prompt:** which endpoint is strict for floor?
+- **Independent target:** solve `floor((3x+2)/5)=-1` independently.
 
 ### Track B - ceiling equation
 
@@ -168,10 +168,10 @@ Solve `ceil((x+2)/3)=2`.
 
 Attempt first.
 
-- H3: write `1 < (x+2)/3 <= 2`.
-- H2: ceiling uses a left-open, right-closed interval.
-- H1: decode before doing algebra.
-- H0: solve `ceil((2x-5)/4)=-2` independently.
+- **Full support:** write `1 < (x+2)/3 <= 2`.
+- **Structural prompt:** ceiling uses a left-open, right-closed interval.
+- **Recognition prompt:** decode before doing algebra.
+- **Independent target:** solve `ceil((2x-5)/4)=-2` independently.
 
 ### Track C - integer filtering
 
@@ -179,10 +179,10 @@ Find all integers `n` with `floor((n-2)/4)=3`.
 
 Attempt first.
 
-- H3: `3 <= (n-2)/4 < 4`, then keep only integers.
-- H2: solve a real interval, then intersect with `Z`.
-- H1: do not count before the interval is correct.
-- H0: find the number of integers `n` satisfying `ceil(n/5)=3`.
+- **Full support:** `3 <= (n-2)/4 < 4`, then keep only integers.
+- **Structural prompt:** solve a real interval, then intersect with `Z`.
+- **Recognition prompt:** do not count before the interval is correct.
+- **Independent target:** find the number of integers `n` satisfying `ceil(n/5)=3`.
 
 ## 10. DIAGNOSE - common wrong starts
 
