@@ -23,4 +23,4 @@ Do not fully solve unless the prompt asks. Write only the **first useful mathema
 
 For each item, identify the target type without solving: `DIVISOR`, `MULTIPLE`, `REDUCTION`, `RECONSTRUCTION`, `CHAIN`, or `LOCAL_TEST`.
 
-The final H0 mastery test removes these labels.
+The later independent mastery check removes these labels.
