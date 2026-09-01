@@ -15,7 +15,7 @@
 3. `t=x+1/x`, retaining `x!=0`.
 4. `a^2+b^2=(a+b)^2-2ab`.
 5. Start with `x^2=4x-2` and reduce after each multiplication.
-6. Require `x-1>=0` (and hence the radical side is defined); square only after recording the condition, then check.
+6. Subtract the right-hand square and factor the difference of squares: `[(x+3)-(x-1)][(x+3)+(x-1)]=0`.
 7. No. Zero-product structure is already visible.
 8. `(u+v)^2=(u-v)^2+4uv`.
 9. `x!=-2`.
@@ -27,7 +27,7 @@
 15. Factor.
 16. `(m-n)^2=(m+n)^2-4mn` determines magnitude only; the sign depends on which variable is larger.
 17. Begin from `y^2=5y-1`; multiply and reduce.
-18. Substitute both candidates into the original, pre-squaring equation.
+18. Substitute every candidate into the original equation before the implication-only step.
 
 ## Practice bank answers/checkpoints
 
@@ -42,7 +42,7 @@
 9. `8^3-3*12*8=224`.
 10. `x=7,-2`.
 11. `t^3=10t+3`, `t^4=33t+10`, `t^5=109t+33`, `t^6=360t+109`.
-12. Original RHS requires `x>=0`. Squaring gives `x^2-2x-3=0`; candidates `3,-1`; only `3` survives.
+12. Move all terms to one side and factor: `(2x+3)^2-x^2=[(2x+3)-x][(2x+3)+x]=(x+3)(3x+3)=0`. Thus `x=-3,-1`. Subtracting equal expressions and factoring an identity are equivalence-preserving; no radical/domain doctrine is involved.
 13. `(p+q)^2=(p-q)^2+4pq=25+56=81`.
 14. Let `S_n=z^n+z^-n`. `S_1=3`, `S_2=7`, `S_3=18`, `S_4=47`.
 15. Cancelling can lose `x=1`; preserve that branch before division.
@@ -50,7 +50,7 @@
 17. `a^3+b^3+c^3=3abc`.
 18. `rs=(25-13)/2=6`; `r^4+s^4=(r^2+s^2)^2-2r^2s^2=169-72=97`.
 19. `S_0=2,S_1=4,S_n=4S_(n-1)-S_(n-2)`; `S_5=724`.
-20. Require `x>=0`; squaring gives `x=3,-2`; only `3` survives. Squaring is the implication-only step.
+20. Use difference of squares: `(x+6)^2-x^2=6(2x+6)=20`. Hence `12x+36=20`, so `x=-4/3`. Each step is reversible; no candidate-filter step is introduced.
 21. Under `q^2=2q+1`: `q^3=5q+2`, `q^4=12q+5`, `q^5=29q+12`, `q^6=70q+29`, `q^7=169q+70`; subtract `13q^3=65q+26`, giving `104q+44`.
 22. `(a-b)^2=36-20=16`, so `(a-b)^4=256`.
 23. `w+1/w=2` gives `(w-1)^2/w=0`, so `w=1`; target `2`. (A recurrence also gives the same.)
@@ -60,16 +60,18 @@
 27. With perimeter and area, `u+v` and `uv` are known; symmetric powers such as `u^2+v^2` can be reconstructed.
 28. Accept a goal that treats the repeated pair as a structured object and chooses inputs that expose/cancel it; do not require functional-equation theory.
 29. `(m+1)(n+1)=36`.
-30. Retrieve ALG-01 target/representation selection; ALG-02 then owns the bound/equality/attainment machinery.
+30. Retrieve ALG-01 target/representation selection; the inequality topic then owns the bound/equality/attainment machinery.
 31-32. Evaluate whether the chosen representation is demonstrably cheaper for the stated target.
 
-## H0 mastery answers
+## H0 control map for the learner-facing Independent Mixed Mastery Check
+
+The H0 designation remains teacher/control metadata only and is not displayed in the learner-facing mastery title.
 
 1. `(1007-993)(1007+993)=14*2000=28000`.
 2. `13^3-3*36*13=793`.
 3. `x^3=9x+10`, `x^4=28x+45`, `x^5=101x+140`.
 4. `p^2+q^2=(p-q)^2+2pq=16+42=58`.
-5. Need `3x+4>=0` and `x+2>=0`; the stronger lower bound is `x>=-4/3`. Squaring gives `x(x+1)=0`; `x=0,-1`, and both satisfy the original.
+5. Subtract the squares and factor: `[(3x+4)-(x+2)][(3x+4)+(x+2)]=(2x+2)(4x+6)=0`. Thus `x=-1,-3/2`. The transformation is an identity-equivalent rewrite, so it creates no extra candidates.
 6. `S_3=5^3-3*5=110`.
 7. From `u^2+u+1=0`, `u^3=1`; `2026 mod 3=1`, so `u^2026=u`.
 8. Example `t=x^2+3x`; it is useful when rewriting in `t` reduces repetition/degree and recoverable restrictions remain visible.
@@ -97,6 +99,6 @@
 - R1/R2 -> First-Step router + contrast items 10/11.
 - R3 -> substitution tests in the Assimilation Book.
 - R4 -> symmetric reconstruction contrast.
-- R5 -> relation-rewrite examples, then H0 #13.
-- R6 -> equivalence section, then H0 #5/#14.
+- R5 -> relation-rewrite examples, then mastery #13.
+- R6 -> equivalence section, then mastery #5/#14.
 - R7 -> route learner to the canonical downstream topic rather than reteaching it here.
