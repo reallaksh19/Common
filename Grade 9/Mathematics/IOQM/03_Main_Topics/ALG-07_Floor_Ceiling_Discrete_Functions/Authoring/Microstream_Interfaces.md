@@ -1,52 +1,25 @@
-# ALG-07 - Consolidated Research Interfaces
+# ALG-07 — Microstream Interface Index
 
-Authoring-only evidence. These are not standalone student chapters.
+Status: `INDEX_ONLY__NOT_INTERFACE_AUTHORITY`
 
-## A. Definition/order
-- invariant: `floor(x)=n <=> n<=x<n+1`; `ceil(x)=n <=> n-1<x<=n`;
-- first move: decode the half-open interval;
-- misconception: treating the symbol as decimal deletion;
-- QA: derivation PASS.
+This file is retained only as a navigation index. It is **not** a substitute for the mandatory per-microstream files and must not be used alone to certify G4/WAVE1.
 
-## B. Endpoint control
-- invariant: floor is left-closed/right-open; ceiling is left-open/right-closed;
-- first move: mark brackets before algebra;
-- contrast: included vs excluded endpoint;
-- QA: PASS.
+The authoritative ALG-07 Wave-1 research interfaces are:
 
-## C. Negative inputs
-- invariant: floor moves toward `-infinity`, not toward zero;
-- first move: locate between consecutive integers;
-- misconception: truncation;
-- QA: PASS.
+- `IOQM-G9-ALG-07__W1-A__definition-order__interface.md`
+- `IOQM-G9-ALG-07__W1-B__endpoint-control__interface.md`
+- `IOQM-G9-ALG-07__W1-C__negative-inputs__interface.md`
+- `IOQM-G9-ALG-07__W1-D__translation-reflection-fractional-part__interface.md`
+- `IOQM-G9-ALG-07__W1-E__equations-inequalities__interface.md`
+- `IOQM-G9-ALG-07__W1-F__integer-filtering-counting__interface.md`
+- `IOQM-G9-ALG-07__W1-G__source-pyq-audit__interface.md`
 
-## D. Translation/reflection/fractional part
-- identities: integer shifts commute with floor/ceiling; `ceil(x)=-floor(-x)`; `{x}=x-floor(x)`;
-- boundary: integer shift identity does not extend naively to noninteger shifts;
-- QA: PASS.
+Each authoritative file follows `IOQM_G9_Microstream_Interface_Schema_v1.md`: required filename convention, YAML header, fields A–P, dependency declarations and independent QA status.
 
-## E. Equations/inequalities
-- floor equation -> double inequality;
-- ceiling equation -> opposite half-open double inequality;
-- general inequality doctrine is not imported from ALG-02;
-- QA: PASS.
+## Ownership boundary
 
-## F. Integer filtering/counting
-- first solve real interval, then intersect with `Z`;
-- count via first/last admissible integer and endpoint audit;
-- misconception: rounding endpoints inconsistently;
-- QA: PASS.
+The integrated learner-facing owner remains ALG-07. General inequality optimization/equality/attainment doctrine stays with ALG-02. Microstream and production-control labels must not appear in learner-facing output.
 
-## G. Source/PYQ audit
-- `IOQM-2024-Q21`: independent result 91, source/key agreement PASS;
-- `IOQM-2024-Q26`: independent result 33, source/key agreement PASS;
-- no metadata correction overlay applies to either anchor.
+## Certification rule
 
-## Lead integration disposition
-
-Teach the interval definitions once, then retrieve them. Keep one learner vocabulary: **decode -> solve -> filter -> check endpoints**. Do not expose microstream labels or control-plane terms in student exports.
-
-`DERIVATIONS_CHECKED: PASS`
-`PROMOTED_NUMERICAL_ANSWERS_CHECKED: PASS`
-`SOURCE_IDS_VERIFIED: PASS`
-`DEPENDENCY_CONFLICTS: NONE`
+`WAVE1_INTERFACES_COMPLETE` may be asserted only from the seven separate interface files above. This index has no independent certification authority.
