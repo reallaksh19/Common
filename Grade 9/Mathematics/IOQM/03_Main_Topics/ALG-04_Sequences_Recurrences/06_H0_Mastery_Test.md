@@ -1,4 +1,4 @@
-# ALG-04 — H0 Mixed Mastery Test
+# ALG-04 — Independent Mixed Mastery Check
 
 No default hints and no method labels. First attempt is independent.
 
@@ -20,7 +20,7 @@ No default hints and no method labels. First attempt is independent.
 9. Let `b_0=0,b_1=1`,
    `b_{n+2}=-4b_{n+1}-7b_n`,
    and `D_n=b_n^2-b_{n-1}b_{n+1}`.
-   Find the number of positive divisors of `D_20`.
+   Find `D_20` without computing `b_20`. Stop at the invariant result; divisor-count doctrine is outside this topic.
 
 ## Part C — Same surface, different decision
 
