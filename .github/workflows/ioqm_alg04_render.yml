@@ -13,30 +13,136 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Ensure PDF inspection tools
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftotext >/dev/null || ! command -v pdftoppm >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y poppler-utils
+          fi
       - name: Render deterministic PDF
         run: python 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/render_static_pdf.py'
-      - name: Create temporary exact-blob inspection chunks
+      - name: Inspect exact PDF and build raster QA report
+        shell: bash
         run: |
-          python - <<'PY'
+          set -euo pipefail
+          PDF='Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf'
+          REPORT='Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/_render_qa_report.txt'
+          pdfinfo "$PDF" > /tmp/pdfinfo.txt
+          pdftotext -layout "$PDF" /tmp/pdf.txt
+          rm -f /tmp/alg04-page-*.pgm
+          pdftoppm -gray -r 36 -pgm "$PDF" /tmp/alg04-page >/dev/null
+          PDF="$PDF" REPORT="$REPORT" python - <<'PY'
           from pathlib import Path
-          import base64, hashlib
-          pdf = Path('Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf')
-          out = Path('Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/_render_blob_chunks')
-          out.mkdir(exist_ok=True)
+          import hashlib, os, re, subprocess
+
+          pdf = Path(os.environ['PDF'])
+          report = Path(os.environ['REPORT'])
           data = pdf.read_bytes()
-          b64 = base64.b64encode(data).decode('ascii')
-          for old in out.glob('part_*.txt'):
-              old.unlink()
-          size = 5000
-          for i in range(0, len(b64), size):
-              (out / f'part_{i//size:02d}.txt').write_text(b64[i:i+size])
-          (out / 'manifest.txt').write_text(f'bytes={len(data)}\nsha256={hashlib.sha256(data).hexdigest()}\nparts={(len(b64)+size-1)//size}\n')
+          text = Path('/tmp/pdf.txt').read_text(errors='replace')
+          info = Path('/tmp/pdfinfo.txt').read_text(errors='replace')
+
+          forbidden_re = re.compile(r'(?i)(?<![A-Za-z0-9])(?:H[0-3]|T[234]|WAVE|PR|ISSUE|NT-03|COMB-03|COMB-04)(?![A-Za-z0-9])')
+          forbidden = sorted(set(m.group(0) for m in forbidden_re.finditer(text)))
+
+          def section_numbers(start, end=None):
+              i = text.find(start)
+              if i < 0:
+                  return []
+              j = text.find(end, i + len(start)) if end else len(text)
+              if j < 0:
+                  j = len(text)
+              sec = text[i:j]
+              return [int(m.group(1)) for m in re.finditer(r'(?m)^\s*(\d{1,2})\.\s', sec)]
+
+          practice = section_numbers('Practice and Transfer Bank', 'Independent Mixed Mastery Check')
+          mastery = section_numbers('Independent Mixed Mastery Check')
+          # dedupe while preserving order; section prose can repeat examples, but authored item sequence must appear.
+          def ordered_unique(xs):
+              out=[]
+              for x in xs:
+                  if x not in out: out.append(x)
+              return out
+          practice_u = ordered_unique(practice)
+          mastery_u = ordered_unique(mastery)
+
+          def read_pgm(path):
+              raw = Path(path).read_bytes()
+              pos = 0
+              def token():
+                  nonlocal pos
+                  while pos < len(raw):
+                      if raw[pos:pos+1] == b'#':
+                          while pos < len(raw) and raw[pos:pos+1] not in (b'\n', b'\r'): pos += 1
+                      elif raw[pos:pos+1].isspace(): pos += 1
+                      else: break
+                  start = pos
+                  while pos < len(raw) and not raw[pos:pos+1].isspace(): pos += 1
+                  return raw[start:pos]
+              magic = token(); w = int(token()); h = int(token()); maxv = int(token())
+              while pos < len(raw) and raw[pos:pos+1].isspace(): pos += 1
+              if magic != b'P5' or maxv != 255: raise ValueError((magic, maxv))
+              pix = raw[pos:pos+w*h]
+              if len(pix) != w*h: raise ValueError('truncated pgm')
+              return w,h,pix
+
+          chars=' .:-=+*#%@'
+          page_reports=[]
+          raster_ok=True
+          pgms=sorted(Path('/tmp').glob('alg04-page-*.pgm'))
+          for idx,path in enumerate(pgms,1):
+              w,h,pix=read_pgm(path)
+              ink=[(i%w,i//w) for i,v in enumerate(pix) if v < 245]
+              if not ink:
+                  bbox=None; raster_ok=False
+              else:
+                  xs=[p[0] for p in ink]; ys=[p[1] for p in ink]
+                  bbox=(min(xs),min(ys),max(xs),max(ys))
+                  # Require visible whitespace around all sides; footer intentionally reaches near bottom.
+                  if bbox[0] < 4 or bbox[1] < 4 or bbox[2] > w-5 or bbox[3] > h-4:
+                      raster_ok=False
+              tw,th=60,40
+              thumb=[]
+              for ty in range(th):
+                  row=[]
+                  y0=ty*h//th; y1=max(y0+1,(ty+1)*h//th)
+                  for tx in range(tw):
+                      x0=tx*w//tw; x1=max(x0+1,(tx+1)*w//tw)
+                      vals=[]
+                      for y in range(y0,y1):
+                          vals.extend(pix[y*w+x0:y*w+x1])
+                      avg=sum(vals)/len(vals)
+                      darkness=255-avg
+                      ci=min(len(chars)-1,int(darkness/256*len(chars)))
+                      row.append(chars[ci])
+                  thumb.append(''.join(row).rstrip())
+              page_reports.append((idx,w,h,bbox,thumb))
+
+          pages_match = len(pgms)==12
+          practice_ok = all(n in practice_u for n in range(1,31))
+          mastery_ok = all(n in mastery_u for n in range(1,17))
+          forbidden_ok = not forbidden
+          overall = pages_match and raster_ok and practice_ok and mastery_ok and forbidden_ok
+
+          lines=[]
+          lines += ['ALG-04 EXACT RENDER QA REPORT', '================================', '']
+          lines += [f'bytes={len(data)}', f'sha256={hashlib.sha256(data).hexdigest()}', f'git_blob={subprocess.check_output(["git","hash-object",str(pdf)], text=True).strip()}']
+          for key in ('Pages:', 'Page size:'):
+              for line in info.splitlines():
+                  if line.startswith(key): lines.append(line)
+          lines += [f'forbidden_labels={forbidden or "NONE"}', f'practice_numbers={practice_u}', f'mastery_numbers={mastery_u}', f'raster_page_count={len(pgms)}', f'raster_bounds_pass={raster_ok}', f'overall_static_render_qa={"PASS" if overall else "FAIL"}', '']
+          for idx,w,h,bbox,thumb in page_reports:
+              lines += [f'PAGE {idx:02d} raster={w}x{h} ink_bbox={bbox}', '-'*60]
+              lines += thumb
+              lines += ['']
+          report.write_text('\n'.join(lines)+'\n')
+          if not overall:
+              raise SystemExit('static render QA failed; inspect committed report')
           PY
-      - name: Commit exact artifact and inspection bridge
+      - name: Commit exact artifact and QA report
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf' 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/_render_blob_chunks'
+          git add 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/PDFs/ALG04_Student_Pack_v1.pdf' 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-04_Sequences_Recurrences/Authoring/_render_qa_report.txt'
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'ALG-04: stage exact PDF inspection chunks [skip render]'
+          git commit -m 'ALG-04: stage exact rendered-page QA report [skip render]'
           git push
