@@ -1,6 +1,6 @@
 # ALG-04 — Practice and Transfer Bank
 
-First attempt every item at H0. The first section repairs foundations; later sections increase decision complexity.
+First attempt every item independently. The first section repairs foundations; later sections increase decision complexity.
 
 ## F0 — Foundation
 
@@ -36,7 +36,7 @@ First attempt every item at H0. The first section repairs foundations; later sec
 14. Let `b_0=0,b_1=1` and
     `b_{n+2}=-4b_{n+1}-7b_n`.
     Define `D_n=b_n^2-b_{n-1}b_{n+1}`.
-    Find `D_20` and the number of its positive divisors without computing `b_20`.
+    Find `D_20` without computing `b_20`. Stop once the invariant has determined `D_20`; no divisor-count formula is needed here.
 15. Let `T_n=a_1+...+a_n` and
     `T_n=3T_{n-1}+2` for `n>=2`.
     Rewrite `a_n` directly in terms of `T_{n-1}`.
@@ -58,51 +58,51 @@ First attempt every item at H0. The first section repairs foundations; later sec
 
 ## Support-fading tracks
 
-These four tasks deliberately reduce the **maximum available** hint support.
+These four tasks deliberately reduce the maximum available support. The support labels below are learner-facing descriptions rather than internal control codes.
 
-### H3-available
+### Full support available
 21. `S_n=5n^2+n`. Find `a_n`.
-- H1 if needed: compare neighboring accumulated totals.
-- H2 if needed: use `S_n-S_{n-1}`.
-- H3 if needed: start with `a_n=(5n^2+n)-[5(n-1)^2+(n-1)]`.
+- First prompt if needed: compare neighboring accumulated totals.
+- Second prompt if needed: use `S_n-S_{n-1}`.
+- Execution prompt if needed: start with `a_n=(5n^2+n)-[5(n-1)^2+(n-1)]`.
 
-### H2-maximum
+### Medium support available
 22. `a_{n+2}=6a_{n+1}-5a_n`. Find a simpler recurrence.
-- H1 if needed: compare neighboring terms.
-- H2 if needed: study first differences.
+- First prompt if needed: compare neighboring terms.
+- Second prompt if needed: study first differences.
 
-### H1-maximum
+### Light support available
 23. Evaluate `sum_{k=3}^{n} 1/[(k-1)k]`.
-- H1 if needed: consecutive factors suggest local cancellation.
+- Prompt if needed: consecutive factors suggest local cancellation.
 
-### H0
+### Independent
 24. Every 5-term sum equals the preceding 5-term sum. Prove the strongest simple periodicity statement you can.
 
 ## Transfer bank
 
-25. **T3 context change — rolling totals.**  
+25. **Context change — rolling totals.**  
     A sensor's consecutive 6-day totals are strictly increasing. Without computing any total explicitly, prove a direct inequality between two readings six days apart.
 
-26. **T2 representation change — accumulation to contribution.**  
+26. **Representation change — accumulation to contribution.**  
     A layered design has cumulative cost `C_n=n(n+1)/2` after `n` layers. Find the cost of layer `n` using no summation formula.
 
-27. **T3 context change — invariant audit.**  
+27. **Context change — invariant audit.**  
     Machine readings satisfy
     `x_{n+2}=2x_{n+1}+3x_n`.
     For `Q_n=x_n^2-x_{n-1}x_{n+1}`, determine `Q_{n+1}/Q_n` whenever `Q_n!=0`.
 
-28. **T2 representation change — telescope recognition.**  
+28. **Representation change — telescope recognition.**  
     Compare
     `sum (1/k-1/(k+1))`
     with
     `sum 1/[k(k+1)]`.
     Explain why they are the same cancellation written in different representations.
 
-29. **T3 close boundary — local versus global.**  
+29. **Close boundary — local versus global.**  
     Problem A gives an explicit `a_n=f(n)` and asks for `a_500`.  
     Problem B gives a second-order recurrence and asks for `a_500`.  
     Explain why “high index” alone does not determine the method.
 
-30. **T4 ownership bridge — counting state.**  
+30. **Ownership bridge — counting state.**  
     A tiling count is asserted to satisfy `t_n=t_{n-1}+t_{n-2}`.
-    List what ALG-04 can verify once this recurrence is supplied, and what COMB-03 must prove before the recurrence is legitimate.
+    List what sequence algebra can verify once this recurrence is supplied, and what must be proved from the counting model before the recurrence is legitimate.
