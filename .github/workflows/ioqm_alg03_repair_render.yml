@@ -48,7 +48,9 @@ jobs:
           forbidden_re=re.compile(r'(?i)(?<![A-Za-z0-9])(?:H[0-3]|T[234]|WAVE|PR|ISSUE|ALG-01|ALG-02|ALG-03)(?![A-Za-z0-9])')
           forbidden=sorted(set(m.group(0) for m in forbidden_re.finditer(text)))
 
-          p=text.find('Practice and Transfer Bank')
+          # The full practice title can wrap under PDF extraction. F0 is the stable
+          # first subsection in the practice bank and uniquely precedes mastery.
+          p=text.find('F0 - foundation')
           m=text.find('Independent Mixed Mastery Check')
           nums=lambda s:[int(x) for x in re.findall(r'(?m)^\s*(\d{1,2})\.\s',s)]
           def uniq(xs):
