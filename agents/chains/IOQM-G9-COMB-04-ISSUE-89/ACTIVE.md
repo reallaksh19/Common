@@ -26,26 +26,26 @@ ISSUE_BASIS_ID: `IB-0001`
 ISSUE_CURRENT_STATE_ENDPOINT: `EP-0005`  
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5514391026`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`
 
 BRANCH: `ioqm-g9-comb04-games`  
 PRODUCTION_BASE: `grade9-ioqm-90q-corpus-v1@bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
 WAVE4_MATERIAL_HEAD: `13e9d7dce3df96911ce8285d2e1a87ae0df2cbc8`  
 WAVE4_MATERIAL_RECEIPT_COMMIT: `aa62eeea8a73980856821b9a761a57df14665c54`  
 WAVE4_ENDPOINT_COMMIT: `42722b6e885172c9dfe6e9f915361a1cf56a37a0`  
-SYNC_RECEIPT: `PENDING`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0005.md`  
 PR: `NONE`
 
 OWNER_ROADMAP_DRIFT: `NO_DRIFT`  
 SOURCE_ORACLE_DRIFT: `NONE`  
 HANDOVER_CONTENT_READY: `TRUE`  
 HANDOVER_VALIDATION_STATUS: `PASS_STATIC_WAVE4`  
-HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave4_Assessment_Audit.md + Item_Metadata.csv + Teacher_Diagnostic_Key.md`  
-CHAIN_HANDOVER_READY: `FALSE_PENDING_ISSUE_SYNC`  
+HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave4_Assessment_Audit.md + Item_Metadata.csv + Teacher_Diagnostic_Key.md + SYNC-0005`  
+CHAIN_HANDOVER_READY: `TRUE`  
 HANDOVER_READY: `FALSE`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`
 
-CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
-LEG_DIAGNOSIS: `Wave 4 learner assessment/transfer/metadata layer is complete; 34 authored items and 3 historical anchor rows use the frozen 31-column schema; authored independent review remains NOT_RUN.`  
-EXACT_NEXT_ACTION: `Synchronize EP-0005 to issue #89; then Wave 5 fresh independent math/source/pedagogy audit before render/PDF work.`
+CURRENT_BLOCKER: `NONE_FOR_WAVE5`  
+LEG_DIAGNOSIS: `Wave 4 learner assessment/transfer/metadata layer is complete; 34 authored items and 3 historical anchor rows use the frozen 31-column schema; authored independent review remains NOT_RUN; issue and repository custody are synchronized.`  
+EXACT_NEXT_ACTION: `Wave 5 — fresh independent math/source/pedagogy audit of all promoted answers/proofs, source IDs/key status, metadata integrity, dependency order, duplication, and learner-export hygiene before render/PDF work.`
