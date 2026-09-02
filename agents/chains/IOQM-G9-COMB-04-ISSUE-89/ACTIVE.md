@@ -5,7 +5,7 @@ COMMON_PROTOCOL: `engineering-pr-delivery-v2`
 COMMON_PROTOCOL_BASIS: `aa832f5f9f204c3834ffcee40102b482f121ce76`  
 WORK_ITEM_KEY: `github:reallaksh19/Common#89`  
 CHAIN_ID: `IOQM-G9-COMB-04-ISSUE-89`  
-ACTIVE_ENDPOINT: `EP-0002`
+ACTIVE_ENDPOINT: `EP-0003`
 
 ENGINEERING_STATE: `IN_PROGRESS`  
 CUSTODY_STATE: `HELD`  
@@ -23,27 +23,27 @@ QUESTION_DISPLAY: `HIDE`
 TAKEOVER_QUALIFICATION_READY: `FALSE`
 
 ISSUE_BASIS_ID: `IB-0001`  
-ISSUE_CURRENT_STATE_ENDPOINT: `EP-0002`  
+ISSUE_CURRENT_STATE_ENDPOINT: `EP-0003`  
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513790332`  
-ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
+ISSUE_HANDOVER_SYNC_STATUS: `PENDING`
 
 BRANCH: `ioqm-g9-comb04-games`  
 PRODUCTION_BASE: `grade9-ioqm-90q-corpus-v1@bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
-WAVE1_MATERIAL_HEAD: `732548d4cad2602aca851214eb4ccdc98666ea01`  
-SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0002.md`  
+WAVE2_BOOK_COMMIT: `47dd69b59da2b6d6c50fcc5379629384f4174f24`  
+WAVE2_MATERIAL_HEAD: `6bc7d6107df4359ecde979cf2ee21e3db904ca2a`  
 PR: `NONE`
 
 OWNER_ROADMAP_DRIFT: `NO_DRIFT`  
 SOURCE_ORACLE_DRIFT: `NONE`  
 HANDOVER_CONTENT_READY: `TRUE`  
-HANDOVER_VALIDATION_STATUS: `PASS`  
-HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave1_Interface_Audit.md + frozen independent corpus oracle + SYNC-0002`  
-CHAIN_HANDOVER_READY: `TRUE`  
+HANDOVER_VALIDATION_STATUS: `PASS_STATIC_WAVE2`  
+HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave2_Integration_Audit.md + frozen independent corpus oracle`  
+CHAIN_HANDOVER_READY: `FALSE_PENDING_ISSUE_SYNC`  
 HANDOVER_READY: `FALSE`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`
 
-CURRENT_BLOCKER: `NONE_FOR_WAVE2`  
-LEG_DIAGNOSIS: `Seven A-P Wave-1 interfaces are READY_FOR_LEAD; issue and repository custody are synchronized; no integrated learner prose has started.`  
-EXACT_NEXT_ACTION: `Wave 2 — synthesize one integrated 02_Assimilation_Book.md from the seven interfaces; do not concatenate interface prose, reteach NT-01/NT-02, or blur the COMB-03 deterministic/adversarial boundary.`
+CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
+LEG_DIAGNOSIS: `One integrated Assimilation Book is complete; seven Wave-1 interfaces were synthesized without learner-visible seams; no First-Step/mastery/render/PR work entered this phase.`  
+EXACT_NEXT_ACTION: `Synchronize EP-0003 to issue #89; then Wave 3 is one integrated 03_First_Step_Reference.md for the whole topic.`
