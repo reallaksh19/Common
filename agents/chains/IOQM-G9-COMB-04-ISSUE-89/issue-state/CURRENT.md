@@ -40,8 +40,8 @@ ROADMAP_MUTATION_AUTHORITY: `NONE_GRANTED`
 Branch: `ioqm-g9-comb04-games`  
 Production base observed: `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
 Wave-1 material/audit head: `732548d4cad2602aca851214eb4ccdc98666ea01`  
-Wave-1 receipt commit: `56c2dfdc29da0714ce98aca549a62e14a255e388`  
-Endpoint commit: `19bf57f64b04d6b9f8c2ec895f806963a5fe358f`  
+Wave-1 material receipt: `ML-0002-WAVE1`  
+Endpoint: `EP-0002`  
 PR: `NONE`  
 Merge authority: `OWNER_ONLY`  
 Merge authorized: `FALSE`
@@ -75,8 +75,8 @@ HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
-SYNC_RECEIPT: `PENDING_SYNC-0002`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513790332`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0002.md`
 
-Wave 1 is repository-durable; issue projection is pending endpoint/comment synchronization.
+Wave 1 is durably recoverable from repository custody and the synchronized issue projection.
