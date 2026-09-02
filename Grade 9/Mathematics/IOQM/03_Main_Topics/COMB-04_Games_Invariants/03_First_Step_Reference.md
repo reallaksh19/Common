@@ -165,7 +165,7 @@ A colouring is useful because of its move equations, not because it looks symmet
 | “maximum number of moves” | quantitative monovariant | bound total possible change |
 | “for which n does there exist” | obstruction + construction | split proof into necessity and sufficiency |
 | many examples with a periodic pattern | theorem still needed | prove all move/successor classes, not only observed cases |
-| many branches but no opponent | deterministic/reachability boundary | route generic state evolution to COMB-03 rather than calling it a game |
+| many branches but no opponent | deterministic/reachability boundary | route generic state evolution to the earlier deterministic-state toolkit rather than calling it a game |
 | same invariant at start and target | compatibility only | seek construction or completeness proof |
 
 ---
