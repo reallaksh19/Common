@@ -47,7 +47,12 @@ repls = {
 for name, pairs in repls.items():
     p = ROOT / name
     s = p.read_text()
-    for a,b in pairs: s=s.replace(a,b)
+    for a,b in pairs:
+        s=s.replace(a,b)
+    # Final defensive scrub: learner files must not expose internal topic identifiers.
+    s=s.replace('ALG-01', 'the prerequisite algebra topic')
+    s=s.replace('ALG-02', 'this inequality topic')
+    s=s.replace('ALG-03', 'the polynomial/root-feasibility topic')
     p.write_text(s)
 
 # Fail if learner surfaces still expose control-plane labels/codes.
