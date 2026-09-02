@@ -128,7 +128,7 @@ def footer(canvas, doc):
     canvas.saveState()
     canvas.setStrokeColor(colors.HexColor("#D6E1E8")); canvas.line(18 * mm, 13 * mm, A4[0] - 18 * mm, 13 * mm)
     canvas.setFont("DV", 7); canvas.setFillColor(colors.HexColor("#607789"))
-    canvas.drawString(18 * mm, 8.5 * mm, "IOQM Grade 9 | ALG-03")
+    canvas.drawString(18 * mm, 8.5 * mm, "IOQM Grade 9 | Polynomials, Roots, Vieta & Remainders")
     canvas.drawRightString(A4[0] - 18 * mm, 8.5 * mm, f"Page {doc.page}")
     canvas.restoreState()
 
@@ -154,12 +154,12 @@ def build(path, title, subtitle, sources):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    build(STUDENT, "ALG-03: Polynomials, Roots, Vieta & Remainders",
+    build(STUDENT, "Polynomials, Roots, Vieta & Remainders",
           "Student Assimilation Pack | Representation before calculation",
           ["02_Assimilation_Book.md", "03_First_Step_Reference.md",
            "04_Recognition_and_First_Line_Lab.md", "05_Practice_and_Transfer_Bank.md",
            "06_H0_Mastery_Test.md"])
-    build(TEACHER, "ALG-03 Teacher Diagnostic Key",
+    build(TEACHER, "Polynomials, Roots, Vieta & Remainders - Teacher Diagnostic Key",
           "Diagnostic routes, hint ladder and verified answers", ["Teacher_Diagnostic_Key.md"])
 
 

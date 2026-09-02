@@ -1,4 +1,4 @@
-# ALG-03 - Recognition and First-Line Lab
+# Polynomials, Roots, Vieta & Remainders - Recognition and First-Line Lab
 
 Write only the first useful line or representation decision.
 

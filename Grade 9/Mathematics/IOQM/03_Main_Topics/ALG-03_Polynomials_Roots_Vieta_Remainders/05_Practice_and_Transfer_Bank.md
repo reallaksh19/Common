@@ -1,4 +1,4 @@
-# ALG-03 - Practice and Transfer Bank
+# Polynomials, Roots, Vieta & Remainders - Practice and Transfer Bank
 
 ## F0 - foundation
 
@@ -40,10 +40,10 @@
 24. Find the remainder of `x^20` upon division by `x^2+x+1`.
 25. A quadratic has integer coefficients, roots differing by `1`, sum `9`. Reconstruct the roots and monic polynomial using invariant information before expanding.
 
-## Transfer T2-T4
+## Transfer
 
-26. **T2 representation:** solve `alpha^2+beta^2` once by explicit roots and once by Vieta; compare information cost.
-27. **T2 boundary:** for `x^2-4x+5`, answer both “number of real roots” and “minimum value,” naming the two canonical topics/methods.
-28. **T3 transformed input:** if roots of `P` are unknown but the target roots are `alpha-3,beta-3`, write the transformed polynomial directly.
-29. **T3 recurrence:** explain why a recurrence characteristic relation can turn high powers into low-degree remainders without teaching the recurrence topic here.
-30. **T4 common structure:** explain how common-root elimination is a precursor to polynomial gcd thinking.
+26. **Representation change:** solve `alpha^2+beta^2` once by explicit roots and once by Vieta; compare information cost.
+27. **Boundary contrast:** for `x^2-4x+5`, answer both “number of real roots” and “minimum value,” naming the two canonical topics/methods.
+28. **Transformed-input context:** if roots of `P` are unknown but the target roots are `alpha-3,beta-3`, write the transformed polynomial directly.
+29. **Recurrence context:** explain why a recurrence characteristic relation can turn high powers into low-degree remainders without teaching the recurrence topic here.
+30. **Common-structure transfer:** explain how common-root elimination is a precursor to polynomial gcd thinking.

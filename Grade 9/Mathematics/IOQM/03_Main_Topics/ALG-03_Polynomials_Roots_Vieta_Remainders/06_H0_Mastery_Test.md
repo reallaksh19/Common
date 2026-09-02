@@ -1,4 +1,4 @@
-# ALG-03 - H0 Mixed Mastery Test
+# Polynomials, Roots, Vieta & Remainders - Independent Mixed Mastery Check
 
 No labels or default hints.
 

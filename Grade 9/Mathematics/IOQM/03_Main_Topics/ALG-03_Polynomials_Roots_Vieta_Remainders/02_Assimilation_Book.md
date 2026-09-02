@@ -107,13 +107,13 @@ controls real-root behavior:
 
 The parabola `y=ax^2+bx+c` meets the x-axis twice, touches once, or does not meet it according to the same three cases.
 
-### Mandatory boundary with ALG-02
+### Mandatory boundary with the inequality/optimization topic
 
 Question: “How many real roots does `x^2-4x+5=0` have?”  
 Use discriminant: `Delta=16-20=-4`, so none.
 
 Question: “What is the minimum value of `x^2-4x+5`?”  
-That is an optimization request. Complete the square in ALG-02:
+That is an optimization request. Complete the square in the inequality/optimization topic:
 `(x-2)^2+1`, minimum `1`.
 
 Same quadratic, different requested information, different canonical method.
@@ -171,11 +171,11 @@ For `P(x)=x^3+2x+5`, remainder on division by `x-2` is
 
 ---
 
-## 6. DISCOVER - polynomial reduction is the canonical extension of ALG-01 relation rewriting
+## 6. DISCOVER - polynomial reduction is the canonical extension of the prerequisite algebra topic relation rewriting
 
-ALG-01 taught the local habit: if an admissible `x` satisfies `x^2=3x-1`, replace higher powers rather than solving the roots.
+the prerequisite algebra topic taught the local habit: if an admissible `x` satisfies `x^2=3x-1`, replace higher powers rather than solving the roots.
 
-ALG-03 generalizes this to polynomial reduction.
+this polynomial topic generalizes this to polynomial reduction.
 
 Modulo the relation
 
@@ -237,30 +237,30 @@ This is cheaper than solving two quadratics separately and intersecting the answ
 
 ---
 
-## 8. TRY - H3 -> H2 -> H1 -> H0
+## 8. TRY - support fades toward independence
 
 Attempt before support.
 
-### H3 - execution relation supplied
+### Full support - execution relation supplied
 
 Roots `alpha,beta` of `x^2-8x+12=0`. Find `alpha^2+beta^2`.
 
 Use Vieta `alpha+beta=8`, `alpha beta=12`, then
 `alpha^2+beta^2=(alpha+beta)^2-2alpha beta=40`.
 
-### H2 - representation supplied
+### Medium support - representation supplied
 
 Find the polynomial whose roots are `5` more than the roots of `x^2-3x-4`.
 
 Cue: use `P(x-5)` and simplify.
 
-### H1 - recognition clue
+### Light support - recognition clue
 
 Find the remainder of `x^50` modulo `x^2-1`.
 
 Clue: do not expand powers; reduce the relation first.
 
-### H0 - no route supplied
+### Independent - no route supplied
 
 Two monic quadratics share a root:
 `x^2-7x+10=0`, `x^2-5x+4=0`. Find the common root.
@@ -275,7 +275,7 @@ Repair: Vieta first; solve roots only if target still distinguishes them.
 
 ### Error B - use discriminant for a vertex-value request
 
-Repair: root count -> ALG-03 discriminant; minimum/maximum -> ALG-02 square completion.
+Repair: root count -> this polynomial topic discriminant; minimum/maximum -> the inequality/optimization topic square completion.
 
 ### Error C - shift polynomial input in the same direction as desired root shift
 

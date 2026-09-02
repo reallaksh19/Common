@@ -1,4 +1,4 @@
-# ALG-03 - First-Step Reference
+# Polynomials, Roots, Vieta & Remainders - First-Step Reference
 
 ## One topic-wide router
 
