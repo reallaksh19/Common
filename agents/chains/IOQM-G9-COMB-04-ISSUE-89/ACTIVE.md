@@ -34,15 +34,16 @@ ISSUE_CURRENT_STATE_FILE: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/issue-state/CU
 ISSUE_CURRENT_STATE_BASIS: `IB-0001`  
 ISSUE_CURRENT_STATE_ENDPOINT: `EP-0001`
 
-ISSUE_CHAIN_ROOT_COMMENT_ID: `NOT_RUN`  
-ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `NOT_RUN`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `NOT_RUN`  
-ISSUE_HANDOVER_SYNC_STATUS: `NOT_RUN`
+ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
+ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513608320`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`
 
 BRANCH: `ioqm-g9-comb04-games`  
 PRODUCTION_BASE: `grade9-ioqm-90q-corpus-v1`  
 PRODUCTION_BASE_HEAD_OBSERVED: `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
-ENDPOINT_COMMIT: `PENDING_POST_COMMIT_SYNC`  
+ENDPOINT_MATERIAL_COMMIT: `a7a0923f257c80a07776042bd049592871b3af2b`  
+CUSTODY_SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0001.md`  
 PR: `NONE`
 
 OWNER_ROADMAP_DRIFT: `NO_DRIFT`  
@@ -51,9 +52,10 @@ SOURCE_ORACLE_DRIFT: `NONE`
 
 HANDOVER_CONTENT_READY: `TRUE`  
 HANDOVER_VALIDATION_STATUS: `PASS_STATIC_WAVE0`  
-CHAIN_HANDOVER_READY: `FALSE_PENDING_ISSUE_SYNC`  
-HANDOVER_READY: `FALSE`
+CHAIN_HANDOVER_READY: `TRUE`  
+HANDOVER_READY: `FALSE`  
+# HANDOVER_READY remains FALSE because a reusable takeover qualification set was suppressed by Owner.
 
-CURRENT_BLOCKER: `NONE_FOR_WAVE1_AFTER_SYNC`  
-LEG_DIAGNOSIS: `Wave-0 authority, providers, source anchors, ownership, and learner router are frozen; no learner prose has started.`  
-EXACT_NEXT_ACTION: `After repository↔Issue sync reaches IN_SYNC, materialize the seven complete Wave-1 A-P research interfaces; begin with parity invariants and residue/colour invariants.`
+CURRENT_BLOCKER: `NONE_FOR_WAVE1`  
+LEG_DIAGNOSIS: `Wave-0 authority, providers, source anchors, ownership, and learner router are frozen; issue/repository custody is synchronized; no learner prose has started.`  
+EXACT_NEXT_ACTION: `Materialize the seven complete Wave-1 A-P research interfaces; begin with parity invariants and residue/colour invariants; do not start integrated learner prose.`

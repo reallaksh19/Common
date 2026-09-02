@@ -20,7 +20,7 @@ STATE_MATERIALIZED_FOR: `WAVE0`
 
 ## Input ledger
 
-INPUT-001..INPUT-009 from `IB-0001` remain AVAILABLE/AVAILABLE_CONTEXT with no missing input.
+INPUT-001..INPUT-009 from `IB-0001` remain `AVAILABLE` / `AVAILABLE_CONTEXT`; no required Wave-0 input is missing.
 
 ## Benchmark / oracle ledger
 
@@ -39,6 +39,7 @@ ROADMAP_MUTATION_AUTHORITY: `NONE_GRANTED`
 
 Branch: `ioqm-g9-comb04-games`  
 Production base observed: `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
+Wave-0 material commit: `a7a0923f257c80a07776042bd049592871b3af2b`  
 PR: `NONE`  
 Merge authority: `OWNER_ONLY`  
 Merge authorized: `FALSE`
@@ -62,9 +63,10 @@ EXACT_NEXT_ACTION: `Materialize the seven complete COMB-04 Wave-1 A-P research i
 
 ## Issue synchronization
 
-ISSUE_HANDOVER_SYNC_STATUS: `NOT_RUN`  
-ISSUE_CHAIN_ROOT_COMMENT_ID: `NOT_RUN`  
-ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `NOT_RUN`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `NOT_RUN`
+ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
+ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513608320`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0001.md`
 
-These fields are intentionally finalized in the post-commit synchronization receipt.
+Wave 0 is durably recoverable from repository state plus the synchronized issue projections.
