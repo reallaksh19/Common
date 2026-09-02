@@ -1,4 +1,4 @@
-# ALG-02 - Practice and Transfer Bank
+# Inequalities, Bounds & Equality Conditions - Practice and Transfer Bank
 
 ## F0 - foundation
 
@@ -40,10 +40,10 @@
 24. For integer `n`, find the minimum of `n^2-7n+15` and compare it with the real minimum.
 25. Determine whether the set `{x+1/x : x>1}` has a minimum; justify attainment rather than quoting a bound alone.
 
-## Transfer T2-T4
+## Transfer
 
-26. **T2 representation:** solve the same real minimum `x^2-6x+13` by square completion, then explain why a discriminant route would answer a different natural question.
-27. **T3 domain:** change the domain of `x^2` from real `x` to `x>0` to nonzero integers. State how the extremum conclusion changes each time.
-28. **T3 number theory:** an inequality reduces an integer variable to `10<=n<=14`. Explain what inequality has accomplished and what remains for the integer owner.
-29. **T3 geometry:** fixed perimeter gives a fixed sum of side lengths. Explain why the area maximum is an ALG-02 mechanism inside a geometry surface.
-30. **T4 mixed:** create an example where a true lower bound is not a minimum because equality is excluded.
+26. **Representation change:** solve the same real minimum `x^2-6x+13` by square completion, then explain why a discriminant route would answer a different natural question.
+27. **Domain change:** change the domain of `x^2` from real `x` to `x>0` to nonzero integers. State how the extremum conclusion changes each time.
+28. **Number-theory surface:** an inequality reduces an integer variable to `10<=n<=14`. Explain what inequality has accomplished and what remains for the integer owner.
+29. **Geometry surface:** fixed perimeter gives a fixed sum of side lengths. Explain why the area maximum is the inequality/attainment mechanism inside a geometry surface.
+30. **Mixed transfer:** create an example where a true lower bound is not a minimum because equality is excluded.

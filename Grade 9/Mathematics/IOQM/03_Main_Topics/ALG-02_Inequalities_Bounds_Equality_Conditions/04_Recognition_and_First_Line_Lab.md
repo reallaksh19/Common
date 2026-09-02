@@ -1,4 +1,4 @@
-# ALG-02 - Recognition and First-Line Lab
+# Inequalities, Bounds & Equality Conditions - Recognition and First-Line Lab
 
 Write only the first useful line or the first logical question.
 
@@ -10,7 +10,7 @@ Write only the first useful line or the first logical question.
 6. Minimize `(n-1/2)^2+3` over integers `n`.
 7. Minimize `1/x+1/y` for `x,y>0`, `x+y=12`.
 8. A proof gives `f(x)>=7` with equality only at `x=0`, but the domain is `x>0`. What must you conclude/check next?
-9. A question asks how many real roots `x^2+kx+4=0` has. Is this canonically an ALG-02 optimization problem?
+9. A question asks how many real roots `x^2+kx+4=0` has. Is this canonically an inequality-optimization problem?
 10. A question asks for the minimum value of `x^2+kx+4` as a function of `x`. Which representation is canonical here?
 11. For positive `a,b` with `ab=9`, minimize `a+b`.
 12. For positive `a,b` with `a+b=9`, is there a minimum positive value of `ab`?

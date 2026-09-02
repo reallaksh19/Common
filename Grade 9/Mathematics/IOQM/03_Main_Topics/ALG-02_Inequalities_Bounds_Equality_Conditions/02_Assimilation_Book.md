@@ -90,7 +90,7 @@ Since `(x-2)^2>=0`,
 
 ### Boundary with discriminant
 
-If the request is “for which parameter values does a quadratic equation have real roots?”, that is a root-feasibility question canonically owned by ALG-03. Do not turn every quadratic optimization problem into a discriminant problem.
+If the request is “for which parameter values does a quadratic equation have real roots?”, that is a root-feasibility question owned by the polynomial/root-feasibility topic. Do not turn every quadratic optimization problem into a discriminant problem.
 
 ---
 
@@ -182,30 +182,30 @@ To maximize `xy` under fixed sum, proving `xy>=0` is true but irrelevant.
 
 ---
 
-## 7. TRY - H3 -> H2 -> H1 -> H0
+## 7. TRY - support fades toward independence
 
 Attempt before reading support.
 
-### H3 - execution supplied
+### Full support - execution supplied
 
 For `x>0`, minimize `x+16/x`.
 
 Use AM-GM:
 `x+16/x >= 2sqrt(16)=8`, equality at `x=4`.
 
-### H2 - representation supplied
+### Medium support - representation supplied
 
 For real `x`, find the minimum of `x^2+8x+20`.
 
 Cue: complete the square. Execute and verify equality yourself.
 
-### H1 - recognition clue
+### Light support - recognition clue
 
 For positive `a,b` with `a+b=14`, maximize `ab`.
 
 Clue: fixed sum, product target, equality should be balanced.
 
-### H0 - no route supplied
+### Independent - no route supplied
 
 For integer `n`, find the minimum of `n^2-5n+9`.
 
@@ -266,7 +266,7 @@ A bound attained over reals may fail to be attained over positive reals, integer
 
 ### Geometry
 
-A perimeter/area problem may reduce to a fixed-sum product bound. Geometry remains the historical owner when the geometric structure is decisive; ALG-02 supplies the optimization mechanism.
+A perimeter/area problem may reduce to a fixed-sum product bound. Geometry remains the historical owner when the geometric structure is decisive; this inequality topic supplies the optimization mechanism.
 
 ### Number theory
 
@@ -274,7 +274,7 @@ A continuous inequality can create a short interval, after which integer/divisib
 
 ### Polynomial boundary
 
-If the request is root count/real-root existence, retrieve ALG-01 transformation habits but route to ALG-03 discriminant canon. If the request is the quadratic’s minimum value, remain in ALG-02 and complete the square.
+If the request is root count/real-root existence, retrieve reversible-transformation habits and route to the polynomial/root-feasibility topic. If the request is the quadratic’s minimum value, stay with inequality optimization and complete the square.
 
 ## Final belief
 

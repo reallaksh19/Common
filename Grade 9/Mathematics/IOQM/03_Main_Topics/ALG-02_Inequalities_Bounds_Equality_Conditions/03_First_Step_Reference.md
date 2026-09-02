@@ -1,4 +1,4 @@
-# ALG-02 - First-Step Reference
+# Inequalities, Bounds & Equality Conditions - First-Step Reference
 
 ## One-question router
 
@@ -19,7 +19,7 @@ REQUEST -> DOMAIN -> BOUNDED? -> DIRECTION -> REPRESENTATION
 | reciprocal sum + fixed sum | Engel/Cauchy justified? |
 | integer domain | where is real optimum, then which nearby integers? |
 | strict domain / excluded equality point | is the bound attained? |
-| root-existence request | route to ALG-03 discriminant canon? |
+| root-existence request | route to the polynomial/root-feasibility method? |
 
 ## Equality checklist
 
