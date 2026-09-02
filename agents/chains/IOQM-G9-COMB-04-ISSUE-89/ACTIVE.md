@@ -26,25 +26,26 @@ ISSUE_BASIS_ID: `IB-0001`
 ISSUE_CURRENT_STATE_ENDPOINT: `EP-0004`  
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5514194146`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`
 
 BRANCH: `ioqm-g9-comb04-games`  
 PRODUCTION_BASE: `grade9-ioqm-90q-corpus-v1@bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
 WAVE3_FIRST_STEP_COMMIT: `0f9327e515e5a246da60670e50ef5987cdd688a6`  
 WAVE3_MATERIAL_HEAD: `10d79237ad0be8292d7d990b39095bc473f161f6`  
 WAVE3_MATERIAL_RECEIPT_COMMIT: `a864f1f9a89274c9de366dd5750712f26e706ff5`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0004.md`  
 PR: `NONE`
 
 OWNER_ROADMAP_DRIFT: `NO_DRIFT`  
 SOURCE_ORACLE_DRIFT: `NONE`  
 HANDOVER_CONTENT_READY: `TRUE`  
 HANDOVER_VALIDATION_STATUS: `PASS_STATIC_WAVE3`  
-HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave3_First_Step_Audit.md + frozen independent corpus oracle`  
-CHAIN_HANDOVER_READY: `FALSE_PENDING_ISSUE_SYNC`  
+HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave3_First_Step_Audit.md + frozen independent corpus oracle + SYNC-0004`  
+CHAIN_HANDOVER_READY: `TRUE`  
 HANDOVER_READY: `FALSE`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`
 
-CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
-LEG_DIAGNOSIS: `One integrated First-Step Reference is complete and learner-export scrubbed; no Wave-4 mastery/transfer/metadata material has started.`  
-EXACT_NEXT_ACTION: `Synchronize EP-0004 to issue #89; then Wave 4 is the integrated recognition/first-line lab, practice/transfer bank, H0 mastery test, teacher diagnostic key, and frozen 31-column metadata.`
+CURRENT_BLOCKER: `NONE_FOR_WAVE4`  
+LEG_DIAGNOSIS: `One integrated First-Step Reference is complete and learner-export scrubbed; issue and repository custody are synchronized; no Wave-4 mastery/transfer/metadata material has started.`  
+EXACT_NEXT_ACTION: `Wave 4 — create 04_Recognition_and_First_Line_Lab.md, 05_Practice_and_Transfer_Bank.md, 06_H0_Mastery_Test.md, Teacher_Diagnostic_Key.md, and frozen 31-column Item_Metadata.csv; keep first mastery attempts unlabelled and unhinted.`
