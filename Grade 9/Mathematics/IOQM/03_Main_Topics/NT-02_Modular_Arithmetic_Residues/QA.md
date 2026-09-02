@@ -2,37 +2,38 @@
 
 Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
+This record supersedes the earlier static claim that used a consolidated-only interface file and learner-facing H-level/internal-topic controls. The current state below is tied to the repaired source snapshot and exact regenerated PDF blob.
+
 ## Gate table
 
 | Gate | State | Evidence |
 |---|---|---|
-| G0 source authority | PASS_STATIC | Q03/Q23/Q20 official source/key custody retained; no weightage claim. |
-| G1 dependency | PASS_STATIC | frozen NT-01 interface consumed by retrieval only; no gcd/lcm reteaching. |
+| G0 source authority | PASS_STATIC | Q03/Q23/Q20 source/key custody retained; no topic-weightage claim. |
+| G1 dependency | PASS_REPAIRED | frozen divisibility/gcd interface is retrieved without re-teaching Euclidean/gcd/lcm canon. |
 | G2 governing model | PASS_STATIC | `TARGET MODULUS -> REDUCE STATE -> LEGAL OPERATIONS -> CYCLE / SIMULTANEOUS STRUCTURE -> CHECK`. |
-| G3 ownership/overlap | PASS_STATIC | NT-02 owns congruence legality/cycles; NT-01 divisibility/gcd and NT-05 place-value canon remain separate. |
-| G4 research-interface discipline | PASS_STATIC | consolidated authoring interfaces only. |
-| G5 lead integration | PASS_STATIC | one integrated Assimilation Book and vocabulary. |
-| G6 deduplication | PASS_STATIC | NT-01 facts retrieved in one line; no duplicate canonical derivation. |
-| G7 contrasts | PASS_STATIC | equality/congruence, divisibility/congruence, cycle/brute force, legal/illegal cancellation plus five more. |
-| G8 attempt-before-help/fading | PASS_STATIC | H3 -> H2 -> H1 -> H0 tracks for meaning, cycles, cancellation and simultaneous congruences. |
-| G9 integrated First-Step | PASS_STATIC | one topic-wide reference. |
-| G10 H0 mastery | PASS_STATIC | 16 unlabelled items across first line, mixed solve, contrasts, transfer/WHY-NOT. |
-| G11 independent mathematics | PASS_STATIC_FRESH_REAUDIT | historical anchors independently recomputed; promoted numeric/cancellation/compatibility answers spot-checked programmatically and manually. |
-| G12 source custody | PASS_STATIC | author-created items have no historical IDs; Q23 exact fourth-power statement follows verified source authority. |
-| G13 student-export hygiene | PASS_STATIC | source/PDF leakage scans clear of control-plane terminology. |
-| G14 render authority | PASS_STATIC | one deterministic ReportLab build. |
-| G15 render/preflight | PASS_STATIC | 3/3 pages rendered and visually inspected; structural preflight passes. |
-| G16 transfer quality | PASS_STATIC | T2 residue representation, T3 decimal/cyclic contexts, T4 NT-05/COMB-04 bridges. |
-| G17 six-question ownership | PASS_STATIC | why/trigger/boundary/first-line/full-solve/changed-surface coverage present. |
-| G18 evidence-dependent | NOT_RUN | classroom timing/readability, retention, psychometrics, qualification probability, percentile/pass-mark calibration. |
+| G3 ownership/overlap | PASS_REPAIRED | modular congruence legality/cycles are owned here; prior divisibility/gcd and later place-value canon remain separate. |
+| G4 per-microstream interface schema | PASS_REPAIRED | seven `IOQM-G9-NT-02__W2-*__*__interface.md` files use the mandatory header and A-P contract; `Microstream_Interfaces.md` is index-only. |
+| G5 lead integration | PASS | one integrated Assimilation Book and vocabulary. |
+| G6 deduplication | PASS_REPAIRED | prior divisibility facts are retrieved briefly; no duplicate canonical derivation. |
+| G7 contrasts | PASS | equality/congruence, divisibility/congruence, cycle/brute force, legal/illegal cancellation and compatibility boundaries. |
+| G8 attempt-before-help/fading | PASS_REPAIRED | learner-facing support uses Full/Medium/Light/Independent descriptions; H3-H0 remains authoring-control terminology only. |
+| G9 integrated First-Step | PASS_REPAIRED | one topic-wide legality/cycle/simultaneous-congruence reference. |
+| G10 mastery | PASS_REPAIRED | learner title is `Independent Mixed Mastery Check`; 16 items; no H0 control label on learner surface. |
+| G11 independent mathematics | PASS_STATIC_SECOND_ROUTE | Q03=25, Q23=31 and Q20=42 independently reconstructed; authored cancellation/compatibility items spot-checked. |
+| G12 source custody | PASS | author-created items have no historical IDs; historical anchors preserve stable source IDs and verified statements. |
+| G13 student-export hygiene | PASS_REPAIRED | current learner source/PDF excludes H0-H3, T2-T4, Wave/PR/Issue and internal topic codes used as control labels. |
+| G14 render authority | PASS_CURRENT_SOURCE | deterministic ReportLab render generated from the repaired canonical learner files 02-06. |
+| G15 structural preflight | PASS | openable, unencrypted, no forms/XFA, US Letter, 6 pages. |
+| G16 exact-blob visual QA | PASS_6_OF_6 | all six pages rendered and inspected; no clipping, overlap, blank page, broken glyph or answer leakage observed. |
+| G17 learner inventory | PASS | Practice 1-30 and Independent Mastery 1-16 present in extracted text. |
+| G18 transfer quality | PASS_REPAIRED | downstream transfer is expressed in learner language without exposing internal topic codes. |
+| G19 evidence-dependent | NOT_RUN | classroom timing/readability, retention, psychometrics, qualification probability, percentile/pass-mark calibration. |
 
 ## Historical anchor audit
 
-- `IOQM-2024-Q03`: `5^k mod 100` stabilizes at 25 for k>=2; answer **25**.
-- `IOQM-2024-Q23`: moduli below 31 fail (pigeonhole or explicit collision); fourth-power residues for 1..14 are distinct mod31; answer **31**.
-- `IOQM-2025-Q20`: universal period for `n^n mod7` must preserve multiples-of-7 positions and nonzero exponent period 6; minimum **42**.
-
-All agree with the consolidated independent-verification authority.
+- `IOQM-2024-Q03`: `5^k mod 100` stabilizes at 25 for `k>=2`; answer **25**.
+- `IOQM-2024-Q23`: moduli below 31 fail by pigeonhole or explicit collision; fourth-power residues for 1 through 14 are distinct modulo 31; answer **31**.
+- `IOQM-2025-Q20`: a universal period for `n^n mod 7` must preserve positions modulo 7 and the nonzero exponent period 6; minimum **42**.
 
 ## Metadata QA
 
@@ -43,22 +44,36 @@ All agree with the consolidated independent-verification authority.
 - malformed-width rows: 0;
 - human difficulty/psychometric evidence: not claimed.
 
+## Per-microstream interface authority
+
+- `Authoring/IOQM-G9-NT-02__W2-A__congruence-meaning__interface.md`
+- `Authoring/IOQM-G9-NT-02__W2-B__legal-operations__interface.md`
+- `Authoring/IOQM-G9-NT-02__W2-C__inverses-cancellation__interface.md`
+- `Authoring/IOQM-G9-NT-02__W2-D__power-cycles__interface.md`
+- `Authoring/IOQM-G9-NT-02__W2-E__last-digits-target-modulus__interface.md`
+- `Authoring/IOQM-G9-NT-02__W2-F__simultaneous-congruences__interface.md`
+- `Authoring/IOQM-G9-NT-02__W2-G__source-pyq-audit__interface.md`
+
+The consolidated `Authoring/Microstream_Interfaces.md` is navigation/index evidence only.
+
 ## Stable downstream interface
 
-`Authoring/NT02_Prerequisite_Interface.md` is `FROZEN_V1_FOR_DOWNSTREAM_RETRIEVAL`, exporting residue/cycle legality to NT-05 and COMB-04 without moving canonical ownership.
+`Authoring/NT02_Prerequisite_Interface.md` remains the downstream residue/cycle legality interface. It exports reusable facts without moving canonical ownership.
 
-## PDF custody
+## Exact current PDF custody
 
 - path: `PDFs/NT02_Student_Pack_v1.pdf`
-- page size: 612 x 792 pt
-- page count: **3**
-- SHA-256: **`e63c82f276067fb8eb0711b7f13d2543a0867f603af52511fa27b6e3b33fef5f`**
+- page size: US Letter, `612 x 792 pt`
+- page count: **6**
+- file size: **12,312 bytes**
+- Git blob SHA: **`504ab373fa500b8025a05cf8b4015d850454f6e0`**
+- SHA-256: **`d13070a11c4350c8d97d92378023fc30b4a50a723abe74c764fc1016d075bcca`**
 - encrypted: no
-- openable: yes
-- form/XFA: none observed
-- 3/3 pages visually inspected at 150 dpi
-- clipping/overlap/broken glyphs/margin overflow: none observed
-- teacher-answer leakage: none observed
+- forms/XFA: none
+- forbidden learner-control scan: **PASS / NONE**
+- Practice inventory: **1-30 PASS**
+- Independent Mastery inventory: **1-16 PASS**
+- visual inspection: **6/6 PASS**
 
 ## Explicit NOT_RUN
 
@@ -68,11 +83,11 @@ Classroom timing/readability, longitudinal retention, psychometric difficulty/di
 
 ```text
 WAVE0_ARCHITECTURE_FROZEN
-WAVE1_INTERFACES_COMPLETE
+WAVE1_INTERFACES_COMPLETE_REPAIRED
 WAVE2_INTEGRATED_ASSIMILATION_PASS
 WAVE3_FIRST_STEP_PASS
-WAVE4_H0_MASTERY_PASS
+WAVE4_MASTERY_PASS
 WAVE5_INDEPENDENT_QA_PASS
-WAVE6_STATIC_RENDER_QA_PASS
+WAVE6_CURRENT_RENDER_QA_PASS
 BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED
 ```
