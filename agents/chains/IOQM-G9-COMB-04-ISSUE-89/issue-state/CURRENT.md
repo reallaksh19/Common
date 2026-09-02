@@ -100,8 +100,8 @@ HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_EP0006_ISSUE_PROJECTION`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
-SYNC_RECEIPT: `PENDING_SYNC_0006`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5514559665`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0006.md`
 
-Wave-5 pre-audit is durably recoverable; formal independent promotion and all PDF/render work remain blocked until G11 is satisfied.
+Wave-5 pre-audit is durably recoverable and issue-synchronized. Formal independent promotion and all PDF/render work remain blocked until G11 is satisfied.
