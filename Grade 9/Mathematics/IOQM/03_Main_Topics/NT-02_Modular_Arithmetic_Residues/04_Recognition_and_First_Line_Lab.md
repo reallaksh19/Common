@@ -1,4 +1,4 @@
-# NT-02 - Recognition and First-Line Lab
+# Modular Arithmetic, Residues & Power Cycles - Recognition and First-Line Lab
 
 Write only the first useful line unless asked for a value.
 

@@ -1,4 +1,4 @@
-# NT-02 - First-Step Reference
+# Modular Arithmetic, Residues & Power Cycles - First-Step Reference
 
 ## Recognition atlas
 
@@ -8,27 +8,34 @@
 | huge power modulo m | reduce base; list a short power cycle |
 | last digit | work mod 10 |
 | last two digits | work mod 100 |
-| common factor on both sides | test gcd(factor,m)=1 before cancelling |
-| `ax congruent b` | look for inverse of a, if it exists |
-| two congruences | parametrize/list one class and test the other |
-| distinct residues | convert collision to divisibility of a difference |
-| `n^n`-style periodicity | track both base residue and exponent residue |
+| modular equation with a coefficient | test whether the coefficient is invertible |
+| two congruences | parametrize one class, then test the other |
+| shared-factor moduli | check compatibility modulo their gcd first |
 
-## Router
+## Legal-operation checklist
 
-`MODULUS -> REDUCE -> LEGAL? -> CYCLE/COMBINE -> CHECK`
+From `a congruent b (mod m)` you may safely add, subtract, multiply and take positive integer powers. Division or cancellation needs an invertible factor.
 
-## Contrast strip
+Before cancelling `c` from `ac congruent bc (mod m)`, check `gcd(c,m)=1`.
 
-- equality vs congruence: exact value vs residue class;
-- divisibility vs congruence: one expression vs comparison by difference;
-- brute powers vs cycle: expansion vs finite state;
-- legal vs illegal cancellation: inverse exists vs not;
-- mod 10 vs mod 100: target decides modulus;
-- compatible vs incompatible simultaneous congruences.
+## Power-cycle checklist
 
-## Quick legality checks
+1. Choose the modulus from the target.
+2. Reduce the base.
+3. List powers only until the residue state repeats.
+4. Reduce the exponent by the justified cycle length.
+5. Handle zero/non-invertible residue cases separately when needed.
 
-Safe: add, subtract, multiply, raise congruent quantities to positive integer powers.
+## Simultaneous-congruence checklist
 
-Conditional: cancel/divide only through an inverse; check gcd with the modulus first.
+1. Check compatibility if moduli share factors.
+2. Write one congruence as a parametrized class.
+3. Substitute into the other congruence.
+4. State the combined repeating class and its period.
+
+## WHY-NOT reminders
+
+- Congruence is not ordinary equality.
+- A common factor does not always cancel.
+- A large exponent is not a signal to expand.
+- The target determines the modulus; do not default to mod 10.

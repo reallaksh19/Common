@@ -2,7 +2,7 @@
 
 ## 1. RECONNECT - from divisibility to congruence
 
-From NT-01, `m|(a-b)` means `a` and `b` differ by a multiple of `m`. NT-02 compresses that into
+From prior divisibility work, `m|(a-b)` means `a` and `b` differ by a multiple of `m`. Modular arithmetic compresses that into
 
 `a congruent b (mod m)`.
 
@@ -82,31 +82,31 @@ At Grade-9 depth, listing or parametrizing one congruence and checking the other
 
 ### Track A - meaning
 Show `83 congruent 11 (mod 12)`.
-- H3: subtract and show divisibility by 12.
-- H2: same remainder means difference divisible by modulus.
-- H1: compare remainders.
-- H0: decide whether `137 congruent 5 (mod 11)`.
+- Full support: subtract and show divisibility by 12.
+- Medium support: same remainder means difference divisible by modulus.
+- Light support: compare remainders.
+- Independent: decide whether `137 congruent 5 (mod 11)`.
 
 ### Track B - cycle
 Find `3^100 mod 7`.
-- H3: list residues of `3,3^2,...` until 1 returns; use exponent modulo cycle length.
-- H2: find the cycle before touching exponent 100.
-- H1: huge power -> small repeated residue state.
-- H0: find the last digit of `7^2026`.
+- Full support: list residues of `3,3^2,...` until 1 returns; use exponent modulo cycle length.
+- Medium support: find the cycle before touching exponent 100.
+- Light support: huge power -> small repeated residue state.
+- Independent: find the last digit of `7^2026`.
 
 ### Track C - cancellation
 Solve `4x congruent 3 (mod 7)`.
-- H3: inverse of 4 mod 7 is 2; multiply both sides.
-- H2: test gcd(4,7)=1, then invert.
-- H1: cancellation/division requires invertibility.
-- H0: analyze `6x congruent 9 (mod 15)` without illegal cancellation.
+- Full support: inverse of 4 mod 7 is 2; multiply both sides.
+- Medium support: test gcd(4,7)=1, then invert.
+- Light support: cancellation/division requires invertibility.
+- Independent: analyze `6x congruent 9 (mod 15)` without illegal cancellation.
 
 ### Track D - simultaneous congruences
 Solve `x congruent 1 (mod 4)`, `x congruent 4 (mod 5)`.
-- H3: write x=1+4k and test modulo 5.
-- H2: parametrize one residue class.
-- H1: combine two repeating lists.
-- H0: solve `x congruent 2 (mod 6)`, `x congruent 5 (mod 9)` or prove impossible.
+- Full support: write x=1+4k and test modulo 5.
+- Medium support: parametrize one residue class.
+- Light support: combine two repeating lists.
+- Independent: solve `x congruent 2 (mod 6)`, `x congruent 5 (mod 9)` or prove impossible.
 
 ## 8. DIAGNOSE
 
@@ -129,7 +129,7 @@ Solve `x congruent 1 (mod 4)`, `x congruent 4 (mod 5)`.
 ## 10. TRANSFER
 
 Residues later become:
-- last-digit/place-value filters in NT-05;
-- parity/residue invariants in COMB-04;
+- last-digit and place-value filters in later number-theory work;
+- parity/residue invariants in later combinatorial work;
 - finite states in cyclic processes;
 - collision detectors: two values share a residue iff their difference is divisible by the modulus.

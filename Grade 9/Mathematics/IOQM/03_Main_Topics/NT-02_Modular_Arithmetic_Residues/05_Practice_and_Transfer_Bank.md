@@ -1,4 +1,4 @@
-# NT-02 - Practice and Transfer Bank
+# Modular Arithmetic, Residues & Power Cycles - Practice and Transfer Bank
 
 All items are author-created.
 

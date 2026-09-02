@@ -1,4 +1,4 @@
-# NT-02 - H0 Mastery Test
+# Modular Arithmetic, Residues & Power Cycles - Independent Mixed Mastery Check
 
 No default hints or method labels.
 
