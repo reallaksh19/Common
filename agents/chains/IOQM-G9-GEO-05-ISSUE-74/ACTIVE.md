@@ -1,15 +1,15 @@
 CHAIN_STATE_VERSION: 3
 CHAIN_ID: IOQM-G9-GEO-05-ISSUE-74
 MISSION: Complete and publish the exact IOQM G9 GEO-05 Coordinate, Vector & Mensuration Representations package under issue #74 without weakening source, ownership, PDF-custody or merge gates.
-ACTIVE_ENDPOINT: EP-0004
-ACTIVE_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0004.md
+ACTIVE_ENDPOINT: EP-0005
+ACTIVE_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0005.md
 MATERIAL_HISTORY_ROOT_BASE: bc4a26aa17d9117f8e8ef57459a3414fcec7a156
 MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0001.md
 PR: NONE
 BRANCH: ioqm-g9-geo05-coordinate-vector-mensuration
 HEAD: bc4a26aa17d9117f8e8ef57459a3414fcec7a156
-STATE: IN_PROGRESS
-ENGINEERING_STATE: IN_PROGRESS
+STATE: BLOCKED_INPUT
+ENGINEERING_STATE: BLOCKED_INPUT
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: PASS
 WRITE_AUTHORITY: WRITE_ALLOWED
@@ -23,7 +23,7 @@ AGENT_INSTANCE_ID: chatgpt:0da025c9-9b93-469d-872e-b57d967935ba
 WORK_ITEM_SOURCE: GITHUB_ISSUE
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 WORK_ITEM_MODE: EXCLUSIVE
-CUSTODY_EPOCH: 4
+CUSTODY_EPOCH: 5
 COORDINATION_STATE: SAFE
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: aa832f5f9f204c3834ffcee40102b482f121ce76
@@ -39,12 +39,12 @@ QUESTION_PACK_ACTION: NOT_APPLICABLE
 QUESTION_DISPLAY: HIDE
 ISSUE_CURRENT_STATE_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/issue-state/CURRENT.md
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0004
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0005
 CHAIN_ROOT_COMMENT_ID: 5513649898
 ACTIVE_HANDOVER_COMMENT_ID: 5513646846
-PREVIOUS_ENDPOINT_COMMENT_ID: 5513727942
-LATEST_ENDPOINT_COMMENT_ID: 5513945203
-ISSUE_HANDOVER_SYNC_STATUS: IN_SYNC
+PREVIOUS_ENDPOINT_COMMENT_ID: 5513945203
+LATEST_ENDPOINT_COMMENT_ID: PENDING
+ISSUE_HANDOVER_SYNC_STATUS: PENDING
 HANDOVER_CONTENT_READY: TRUE
 HANDOVER_VALIDATION_STATUS: PASS_STATIC_RECONCILIATION
 CHAIN_HANDOVER_READY: TRUE
@@ -57,5 +57,5 @@ VERIFIER_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_verify.py
 INTAKE_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_intake.py
 OVERLAY_GUARD_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_overlay_guard.py
 RECOVERY_SCANNER_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_recovery_scan.py
-CURRENT_BLOCKER: exact canonical 24-file GEO-05 package missing; GitHub-visible recovery exhausted, full-checkout unreachable-object scan or external exact-byte recovery required
-EXACT_NEXT_ACTION: run geo05_recovery_scan.py on a faithful/full Common checkout or admit externally recovered exact package bytes; then run verifier-backed intake and remaining visual PDF QA before any material commit
+CURRENT_BLOCKER: exact canonical 24-file GEO-05 package missing; server-visible recovery exhausted and full-checkout local-object scan cannot execute in this runtime because outbound Git DNS is unavailable
+EXACT_NEXT_ACTION: admit externally recovered exact package bytes, or run geo05_recovery_scan.py in an environment with a faithful/full Common checkout and local object history; then run verifier-backed intake and remaining visual PDF QA before any material commit
