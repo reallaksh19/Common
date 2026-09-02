@@ -8,9 +8,32 @@ Qualification answers one question:
 
 It is not a retrospective score for the outgoing agent and not a theory quiz.
 
+Qualification is a **takeover/recovery gate**. It must not be repurposed to stop a continuous active agent that is already executing the same bounded leg under explicit owner authorization and a durably recorded continuation basis.
+
+## Applicability
+
+Use candidate/verifier qualification when engineering-critical authority is being transferred or reconstructed, including:
+
+```text
+new incoming engineering agent
+abrupt-agent recovery
+session/agent handoff where continuity cannot be established
+materially changed unresolved leg being taken over by a different candidate
+```
+
+Do not create an artificial candidate/verifier loop merely because:
+
+```text
+the same active agent created a new endpoint
+the owner explicitly said proceed/continue/next
+a relay metadata commit moved the branch head
+```
+
+For continuous owner-authorized work, use the continuation rules in `SKILL.md#6A` and record the bounded authority in a pre-mutation endpoint.
+
 ## Separation of roles
 
-Use three logical roles where possible:
+For takeover qualification, use three logical roles where possible:
 
 ```text
 OUTGOING / ENDPOINT AUTHOR
@@ -20,7 +43,7 @@ INCOMING CANDIDATE
   -> answers from live repository evidence while READ_ONLY
 
 VERIFIER
-  -> independently evaluates the candidate answer and grants or denies authority
+  -> independently evaluates the candidate answer and grants or denies takeover authority
 ```
 
 Hard rule:
@@ -28,10 +51,43 @@ Hard rule:
 ```text
 candidate_id == verifier_id
 -> SELF_VERIFIED
--> cannot grant WRITE_ALLOWED for engineering-critical mutation
+-> cannot grant WRITE_ALLOWED for engineering-critical takeover mutation
 ```
 
 The same person/system may prepare an endpoint and later serve as verifier for a different candidate if independence and repository evidence remain valid. The candidate never grants itself authority.
+
+A continuous active agent under `OWNER_AUTHORIZED_CONTINUATION` is not a takeover candidate and therefore does not create a self-verdict artifact. Its authority derives from explicit owner authorization plus a bounded durable continuation endpoint, not from claiming that its own engineering judgment is independent verification.
+
+## Continuous owner-authorized continuation
+
+Before engineering-critical mutation without a takeover verifier, the continuous active agent must durably record:
+
+```text
+CONTINUATION_MODE: OWNER_AUTHORIZED_CONTINUATION
+CONTINUATION_AGENT_ID:
+CONTINUATION_BASIS_HEAD:
+OWNER_AUTHORIZATION_EVIDENCE:
+ENGINEERING_CRITICAL_WRITE_AUTHORITY: BOUNDED
+AUTHORIZED_SCOPE:
+PROHIBITED_SCOPE:
+PROTECTED_INVARIANTS:
+VALIDATION_OR_FALSIFIER:
+ROLLBACK_OR_STOP_CONDITION:
+MERGE_AUTHORITY: OWNER_ONLY
+```
+
+The following are not waived:
+
+- authoritative-source custody;
+- preimage/postimage or equivalent engineering validation;
+- independent oracle requirements where the engineering method itself requires one;
+- exact changed-file/scope review;
+- NOT_RUN visibility;
+- multi-agent coordination;
+- destructive-operation restrictions;
+- merge authorization.
+
+Continuation authority ends immediately on material scope expansion, source-authority contradiction, uncontrolled base drift, blocked/unknown coordination, owner revocation, or handoff to another engineering agent.
 
 ## Question timing
 
@@ -40,6 +96,8 @@ Q1-Q5 exist at every non-terminal endpoint, not only graceful handoff.
 This ensures abrupt agent loss does not remove the next-agent exam.
 
 When the endpoint's unresolved work changes materially, create a new endpoint and new question set.
+
+For continuous active work, Q1-Q5 are recovery/takeover material for the **next** agent; the current agent is not required to answer its own endpoint to continue an already owner-authorized bounded leg.
 
 ## Mandatory questions
 
@@ -125,7 +183,7 @@ What is dependency injection?
 
 ## Candidate answer artifact
 
-Store outside `agentchain.md`, for example:
+For takeover qualification, store outside `agentchain.md`, for example:
 
 ```text
 agents/qualifications/<CHAIN_ID>/<QUESTION_SET_ID>-<candidate>-answer.md
@@ -180,7 +238,7 @@ TOTAL __/100
 MINIMUM_QUESTION __/20
 ```
 
-Default engineering-critical pass:
+Default engineering-critical takeover pass:
 
 ```text
 total >= 92/100
@@ -213,7 +271,7 @@ Adjust emphasis only when the endpoint clearly requires a different engineering 
 
 ## Automatic failure conditions
 
-Regardless of numerical score, fail for material instances of:
+Regardless of numerical score, fail takeover qualification for material instances of:
 
 - fabricated repository evidence or invented objects;
 - unsafe engineering claims;
@@ -225,9 +283,11 @@ Regardless of numerical score, fail for material instances of:
 - shotgun changes to multiple numerical mechanisms without isolation when isolation is possible;
 - candidate self-verification presented as independent authorization.
 
+The same anti-gaming rules apply to owner-authorized continuation even though no candidate/verifier artifact is involved.
+
 ## Freshness
 
-The question set is bound to:
+The takeover question set is bound to:
 
 ```text
 ENDPOINT_ID
@@ -239,13 +299,17 @@ Material drift requires re-grounding and normally a new question set.
 
 Do not invalidate solely because an `agentchain.md` metadata commit moved the branch head while production/test/source authority remained materially unchanged.
 
+A continuation endpoint is separately bound to `CONTINUATION_BASIS_HEAD` and `AUTHORIZED_SCOPE`; material scope drift requires a new continuation endpoint before further mutation.
+
 ## No independent verifier available
 
-Use:
+For an **incoming takeover candidate**, use:
 
 ```text
 QUALIFICATION_STATUS: DEFERRED_VERIFICATION
 TAKEOVER_AUTHORITY: READ_ONLY
 ```
 
-The candidate may continue inspection, reproduction, and evidence gathering. It may not invent a verifier or self-grant engineering-critical production authority.
+The takeover candidate may continue inspection, reproduction, and evidence gathering. It may not invent a verifier or self-grant engineering-critical takeover authority.
+
+For a **continuous active agent**, absence of a verifier is not itself a blocker when the owner has explicitly authorized continuation and the Section 6A continuation controls are satisfied. Do not mislabel that agent as a takeover candidate solely to force a verifier cycle.
