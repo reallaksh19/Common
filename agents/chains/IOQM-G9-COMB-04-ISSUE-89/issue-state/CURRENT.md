@@ -2,61 +2,66 @@
 
 ISSUE_BASIS_ID: `IB-0001`  
 WORK_ITEM_KEY: `github:reallaksh19/Common#89`  
-ISSUE_CURRENT_STATE_ENDPOINT: `EP-0005`  
-STATE_MATERIALIZED_FOR: `WAVE4`
+ISSUE_CURRENT_STATE_ENDPOINT: `EP-0006`  
+STATE_MATERIALIZED_FOR: `WAVE5_PREAUDIT`
 
 ## Original task / acceptance ledger
 
 | ID | Current status | Evidence / next obligation |
 |---|---|---|
-| TASK-001 | PARTIAL | Waves 0–4 complete through learner assessment/transfer/metadata; independent audit, render/QA, and Draft PR remain |
+| TASK-001 | PARTIAL | Waves 0–4 complete; Wave-5 second-pass pre-audit complete; fresh-reviewer G11, render/QA, and Draft PR remain |
 | TASK-002 | PASS_WAVE0 | scope/router/ownership frozen in `00_Concept_and_Dependency_Map.md` |
 | TASK-003 | PASS_WAVE1_STATIC | seven A-P interfaces complete and `READY_FOR_LEAD` |
 | TASK-004 | PASS_STATIC | frozen independent verification records Q22=66 / Q25=36 / 2023-Q28=67 |
-| TASK-005 | PASS_WAVE4_STATIC | Assimilation Book, First-Step Reference, recognition/first-line lab, transfer bank, H0 mastery, teacher key, and 31-column metadata complete |
-| TASK-006 | OPEN | fresh independent Wave-5 math/source/pedagogy audit not yet run; v2 validator scripts `NOT_RUN` |
-| TASK-007 | OPEN | render authority/PDFs/page-by-page QA and COMB-04 Draft PR not yet produced |
+| TASK-005 | PASS_WAVE4_STATIC | integrated learner/teacher source layer and frozen 31-column metadata complete |
+| TASK-006 | BLOCKED_G11 | second-pass audit found no defect, but formal independent gate requires a fresh reviewer separate from Waves 0–4 authoring/materialization |
+| TASK-007 | OPEN_BLOCKED_BY_G11 | unified renderer/PDFs/page-by-page QA and Draft PR remain |
 | TASK-008 | ENFORCED | merge authority `OWNER_ONLY`; authorization `FALSE` |
 
-## Input ledger
+## Input / benchmark ledger
 
-INPUT-001..INPUT-009 from `IB-0001` remain `AVAILABLE` / `AVAILABLE_CONTEXT`. Wave 4 retains NT-01/NT-02 retrieval, COMB-03 deterministic/adversarial boundary, and source custody for the historical anchors.
+INPUT-001..INPUT-009 from `IB-0001` remain available. Provider/source drift observed: `NONE`.
 
-## Benchmark / oracle ledger
-
-- BM-001 `IOQM-2025-Q22`: `PASS_STATIC_INHERITED = 66`.
-- BM-002 `IOQM-2025-Q25`: `PASS_STATIC_INHERITED = 36`.
-- BM-003 `IOQM-2023-Q28`: `PASS_STATIC_INHERITED = 67`.
-- authored Wave-4 answers: `LEAD_STATIC_CHECKED`; independent Wave-5 status `NOT_RUN`.
+- BM-001 `IOQM-2025-Q22`: live source + verification `66 / PASS / true / CLEAN`.
+- BM-002 `IOQM-2025-Q25`: live source + verification `36 / PASS / true / CLEAN`.
+- BM-003 `IOQM-2023-Q28`: live source + verification `67 / PASS / true / CLEAN`.
+- authored Wave-4 answers: second-pass recomputation `NO_DEFECT_FOUND`; fresh-reviewer independent flag not promoted.
 - classroom/retention/psychometric/calibration/publication benchmarks: `NOT_RUN`.
 
-## Roadmap ledger
+## Roadmap / ownership
 
-RM-001..RM-004 remain `ALIGNED`.  
+RM-001..RM-004: `ALIGNED`.  
 ROADMAP_DRIFT: `NO_DRIFT`  
-ROADMAP_MUTATION_AUTHORITY: `NONE_GRANTED`
+OWNERSHIP_CONFLICT: `NONE_FOUND`  
+DETERMINISTIC_ADVERSARIAL_BOUNDARY: `PRESERVED`  
+NT01_NT02_RETRIEVAL_BOUNDARY: `PRESERVED`
 
 ## Branch / PR state
 
 Branch: `ioqm-g9-comb04-games`  
-Production base observed before Wave 4: `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
-Wave-4 assessment audit/material head: `13e9d7dce3df96911ce8285d2e1a87ae0df2cbc8`  
-Wave-4 material receipt commit: `aa62eeea8a73980856821b9a761a57df14665c54`  
-Endpoint commit: `42722b6e885172c9dfe6e9f915361a1cf56a37a0`  
-Endpoint: `EP-0005`  
+Production base observed at Wave-5 entry: `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
+Wave-5 pre-audit content head: `088a6345836bccb06b0303447a0093b1f40a2666`  
+Wave-5 material receipt commit: `a4d438775c006251325bbc6967840a74c7ef88f0`  
+Endpoint commit: `8147a1fbc0d24771081d2c891dcffe57e2ffa844`  
+Endpoint: `EP-0006`  
 PR: `NONE`  
 Merge authority: `OWNER_ONLY`  
 Merge authorized: `FALSE`
 
-## Wave-4 inventory
+## Wave-5 pre-audit findings
 
-- recognition/first-line items: `12`;
-- practice/transfer items: `12`;
-- H0 mastery items: `10`;
-- authored metadata rows: `34`;
-- historical metadata rows: `3`;
-- metadata columns: `31`;
-- H0 first attempt: unlabelled/unhinted `PASS_STATIC`.
+SECOND_PASS_MATH_AUDIT: `PASS_NO_DEFECT_FOUND`  
+SECOND_PASS_SOURCE_AUDIT: `PASS_NO_DEFECT_FOUND`  
+SECOND_PASS_METADATA_AUDIT: `PASS_STRUCTURAL`  
+SECOND_PASS_DEPENDENCY_AUDIT: `PASS_NO_DEFECT_FOUND`  
+SECOND_PASS_DEDUP_AUDIT: `PASS_NO_DEFECT_FOUND`  
+SECOND_PASS_STUDENT_EXPORT_AUDIT: `PASS_NO_DEFECT_FOUND`
+
+Formal G11 truth:
+
+`BLOCKED_FRESH_REVIEWER_REQUIRED`.
+
+The current custodian authored/materialized Waves 0–4, so `WAVE5_INDEPENDENT_QA_PASS` is not asserted and authored metadata correctly remains `answer_verified_independently=false`.
 
 ## Qualification / custody
 
@@ -72,10 +77,11 @@ TAKEOVER_QUALIFICATION_READY: `FALSE`.
 
 ## Current phase
 
-ENGINEERING_STATE: `IN_PROGRESS`  
-COMPLETED_PHASE: `WAVE4_MASTERY_TRANSFER_METADATA`  
-CURRENT_BLOCKER: `NONE_FOR_WAVE5`  
-EXACT_NEXT_ACTION: `Wave 5 — perform a fresh independent math/source/pedagogy audit of all promoted answers/proofs, metadata/source identity, dependency order, duplication, and learner-export hygiene before any render/PDF work.`
+ENGINEERING_STATE: `BLOCKED`  
+COMPLETED_PHASE: `WAVE5_SECOND_PASS_PREAUDIT`  
+CURRENT_BLOCKER: `FRESH_REVIEWER_REQUIRED_FOR_G11`  
+PDF_PRODUCTION: `BLOCKED_UNTIL_WAVE5_INDEPENDENT_QA_PASS`  
+EXACT_NEXT_ACTION: `A fresh reviewer independent of Waves 0–4 must recompute promoted authored answers/proofs and source-condition claims and record WAVE5_INDEPENDENT_QA_PASS or defects. On pass, proceed directly to Wave 6 unified PDF/render production.`
 
 ## Validation truth
 
@@ -83,19 +89,19 @@ WAVE1_INTERFACE_AUDIT: `PASS_STATIC`
 WAVE2_INTEGRATION_AUDIT: `PASS_STATIC_WAVE2`  
 WAVE3_FIRST_STEP_AUDIT: `PASS_STATIC_WAVE3`  
 WAVE4_ASSESSMENT_AUDIT: `PASS_STATIC_WAVE4`  
-METADATA_31_COLUMN_WIDTH: `PASS_STATIC`  
-AUTHORED_INDEPENDENT_ANSWER_AUDIT: `NOT_RUN`  
+WAVE5_SECOND_PASS_PREAUDIT: `PASS_NO_DEFECT_FOUND`  
+WAVE5_INDEPENDENT_QA_PASS: `NOT_ASSERTED`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`  
-INDEPENDENT_TOPIC_WIDE_AUDIT: `NOT_RUN`  
 RENDER_QA: `NOT_RUN`  
+PDF_PREFLIGHT: `NOT_RUN`  
 HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ## Issue synchronization
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5514391026`  
-ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
-SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0005.md`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_EP0006_ISSUE_PROJECTION`  
+ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
+SYNC_RECEIPT: `PENDING_SYNC_0006`
 
-Wave 4 is durably recoverable from repository custody and the synchronized issue projection.
+Wave-5 pre-audit is durably recoverable; formal independent promotion and all PDF/render work remain blocked until G11 is satisfied.
