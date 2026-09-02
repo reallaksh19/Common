@@ -107,6 +107,12 @@ jobs:
           mastery_ok=mastery==list(range(1,17))
           overall=(not forbidden) and practice_ok and mastery_ok and sbounds and tbounds and len(spgms)>0 and len(tpgms)>0
 
+          print('QA_DIAGNOSTIC forbidden=',forbidden)
+          print('QA_DIAGNOSTIC practice=',practice,'ok=',practice_ok,'markers=',p,m)
+          print('QA_DIAGNOSTIC mastery=',mastery,'ok=',mastery_ok)
+          print('QA_DIAGNOSTIC student_pages=',len(spgms),'bounds=',sbounds)
+          print('QA_DIAGNOSTIC teacher_pages=',len(tpgms),'bounds=',tbounds)
+
           lines=['ALG-03 EXACT RENDER QA REPORT','================================','']
           for label,path in [('student',stud),('teacher',teach)]:
               b=path.read_bytes()
