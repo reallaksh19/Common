@@ -81,8 +81,8 @@ HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
-SYNC_RECEIPT: `PENDING_SYNC-0004`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5514194146`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0004.md`
 
-Wave 3 material is accepted in repository custody; issue projection synchronization remains the only pending step for EP-0004.
+Wave 3 is durably recoverable from repository custody and the synchronized issue projection.
