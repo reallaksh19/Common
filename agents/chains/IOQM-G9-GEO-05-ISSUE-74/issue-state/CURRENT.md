@@ -1,7 +1,7 @@
 # GEO-05 Issue Current State
 
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0006
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0007
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 
 ### Original task / acceptance ledger
@@ -16,12 +16,13 @@ TASK-007 | One Draft PR; never merge/ready without explicit Owner authorization.
 ### Input ledger
 INPUT-001 | Issue #74 + Owner assignment. | AVAILABLE | GitHub
 INPUT-002 | Production architecture/control authorities at bc4a26aa17d9117f8e8ef57459a3414fcec7a156. | AVAILABLE | repository
-INPUT-003 | Exact canonical 24-file GEO-05 package. | UNRESOLVED | server-visible recovery exhausted; faithful/full local-object scan NOT_EXECUTABLE_IN_THIS_RUNTIME because outbound Git DNS cannot resolve github.com; external exact-byte recovery or another full-checkout environment required
+INPUT-003 | Exact canonical 24-file GEO-05 package. | UNRESOLVED | runtime, server-visible GitHub and connected Google Drive recovery exhausted; faithful/full local-object scan remains unavailable in this runtime; external exact-byte recovery required
 INPUT-004 | Static GEO-05 custody verifier. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_verify.py
 INPUT-005 | Exact-byte intake helper. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_intake.py
 INPUT-006 | GEO-05-only overlay guard. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_overlay_guard.py
 INPUT-007 | Full-checkout Git/reflog/unreachable-object recovery scanner. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_recovery_scan.py
 INPUT-008 | Atomic exact-byte restoration contract. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_restore_contract.py
+INPUT-009 | Connected Google Drive recovery source. | EXHAUSTED | no accessible filename/package/hash/GEO05 match
 
 ### Benchmark / oracle ledger
 BM-001 | IOQM-2025-Q10 = 54. | READY | independent handover evidence
@@ -42,14 +43,10 @@ OWNER_QUALIFICATION_BASELINE_SOURCE: conversation:2026-09-02T17:25:50Z
 OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
 
 ### EP-0005 recovery evidence
-- Runtime mirror-clone attempt: `NOT_EXECUTABLE_IN_THIS_RUNTIME` because `github.com` DNS resolution failed; this is not evidence that unreachable objects are absent.
-- GitHub tag refs: none.
-- GitHub historical pull refs are exposed, but no GEO-05 PR/publication path was found.
-- All-PR search for `GEO-05`: no result.
-- Commit search for `GEO-05`: no result.
-- Recent PR inventory confirms current GEO-02 #113 and GEO-03 #125 plus unrelated topic PRs; no GEO-05 PR/head.
-- Runtime filesystem contains only GEO-05 custody tools/test fixtures; no canonical package/PDF payload.
-- Material branch remains identical to production at `bc4a26aa17d9117f8e8ef57459a3414fcec7a156` and has not been mutated.
+- Runtime mirror-clone attempt: `NOT_EXECUTABLE_IN_THIS_RUNTIME` because `github.com` DNS resolution failed; not evidence that unreachable objects are absent.
+- GitHub tag refs: none; no GEO-05 PR/publication path; no `GEO-05` commit-search result.
+- Runtime filesystem had no canonical package/PDF payload.
+- Material branch remained identical to production at `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`.
 
 ### EP-0006 restoration contract evidence
 - `geo05_restore_contract.py` makes external exact-byte recovery executable without broadening authority.
@@ -57,8 +54,16 @@ OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
 - No regeneration, normalization, repair or material Git mutation is performed by the contract.
 - Negative fail-closed fixture PASS; fake package rejected.
 - Tool SHA-256: `e704f4524dc79f7cc7a95231f936ca85f9ecfcc37d39e05257e76c603fdd77c3`.
-- EP-0006 issue checkpoint comment ID: `5514181200`; Active Handover issue projection remains comment `5513646846`.
 
-Current blocker: exact canonical 24-file GEO-05 package unavailable; all in-runtime/server-visible recovery is exhausted.
-Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__EXACT_BYTE_RESTORATION_CONTRACT_READY__EXTERNAL_CANONICAL_BYTES_REQUIRED
-Exact next action: admit externally recovered package bytes through `geo05_restore_contract.py`; only `PASS_ADMITTED_AND_STAGED` may clear INPUT-003, after which verifier-backed visual PDF QA and the single material overlay commit may proceed.
+### EP-0007 connected Drive recovery evidence
+- `GEO05_Student_Pack_v1.pdf`: no accessible Drive result.
+- `GEO05_Teacher_Key_v1.pdf`: no accessible Drive result.
+- `GEO-05_Coordinate_Vector_Mensuration_Representations`: no accessible Drive result.
+- `GEO-05 Coordinate Vector Mensuration`: no accessible Drive result.
+- student SHA-256 `45468a443e8e150110299117d2f033e0ae8be111e747492b6ce490e80f8c5247`: no accessible Drive result.
+- teacher SHA-256 `54ba2add1bbdbdc4e18df11fac55dab3e739ba60f5cb8459e825bcbbeca94115`: no accessible Drive result.
+- broad `GEO05`: no accessible Drive result.
+
+Current blocker: exact canonical 24-file GEO-05 package unavailable after all recovery surfaces accessible in this environment were exhausted.
+Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__RESTORATION_CONTRACT_READY__RUNTIME_GITHUB_DRIVE_RECOVERY_EXHAUSTED__EXTERNAL_CANONICAL_BYTES_REQUIRED
+Exact next action: admit externally recovered package bytes through `geo05_restore_contract.py`; only `PASS_ADMITTED_AND_STAGED` may clear INPUT-003, after which verifier-backed remaining PDF visual QA and the single material overlay commit may proceed.
