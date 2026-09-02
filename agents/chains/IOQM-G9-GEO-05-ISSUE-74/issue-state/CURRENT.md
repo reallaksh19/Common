@@ -1,7 +1,7 @@
 # GEO-05 Issue Current State
 
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0001
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0002
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 
 ### Original task / acceptance ledger
@@ -17,7 +17,7 @@ TASK-007 | One Draft PR; never merge/ready without explicit Owner authorization.
 INPUT-001 | Issue #74 + Owner assignment. | AVAILABLE | GitHub
 INPUT-002 | Production architecture/control authorities at bc4a26aa17d9117f8e8ef57459a3414fcec7a156. | AVAILABLE | repository
 INPUT-003 | Exact canonical 24-file GEO-05 package. | UNRESOLVED | missing from runtime and repository refs
-INPUT-004 | Static GEO-05 custody verifier. | AVAILABLE | /mnt/data/geo05_verify.py
+INPUT-004 | Static GEO-05 custody verifier. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_verify.py on custody branch
 
 ### Benchmark / oracle ledger
 BM-001 | IOQM-2025-Q10 = 54. | READY | independent handover evidence
@@ -38,5 +38,5 @@ OWNER_QUALIFICATION_BASELINE_SOURCE: conversation:2026-09-02T17:25:50Z
 OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
 
 Current blocker: exact canonical 24-file GEO-05 package unavailable.
-Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__MATERIAL_INPUT_MISSING
-Exact next action: recover exact package bytes; run static verifier; render and visually inspect remaining student pages 4–7 and teacher pages 1–3; then update QA/PDF custody and construct one material overlay commit on the live production base.
+Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__VERIFIER_PERSISTED__MATERIAL_INPUT_MISSING
+Exact next action: recover exact package bytes; run custody verifier; render and visually inspect remaining student pages 4-7 and teacher pages 1-3; then update QA/PDF custody and construct one material overlay commit on freshly fetched production.

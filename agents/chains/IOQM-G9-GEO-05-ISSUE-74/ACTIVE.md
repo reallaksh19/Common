@@ -1,8 +1,8 @@
 CHAIN_STATE_VERSION: 3
 CHAIN_ID: IOQM-G9-GEO-05-ISSUE-74
 MISSION: Complete and publish the exact IOQM G9 GEO-05 Coordinate, Vector & Mensuration Representations package under issue #74 without weakening source, ownership, PDF-custody or merge gates.
-ACTIVE_ENDPOINT: EP-0001
-ACTIVE_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0001.md
+ACTIVE_ENDPOINT: EP-0002
+ACTIVE_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0002.md
 MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0001.md
 PR: NONE
 BRANCH: ioqm-g9-geo05-coordinate-vector-mensuration
@@ -22,7 +22,7 @@ AGENT_INSTANCE_ID: chatgpt:0da025c9-9b93-469d-872e-b57d967935ba
 WORK_ITEM_SOURCE: GITHUB_ISSUE
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 WORK_ITEM_MODE: EXCLUSIVE
-CUSTODY_EPOCH: 1
+CUSTODY_EPOCH: 2
 COORDINATION_STATE: SAFE
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: aa832f5f9f204c3834ffcee40102b482f121ce76
@@ -33,7 +33,10 @@ QUALIFICATION_EVIDENCE: owner-direct:conversation:2026-09-02T17:25:50Z
 POST_BASIS_DRIFT: NONE
 ISSUE_CURRENT_STATE_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/issue-state/CURRENT.md
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0001
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0002
+CHAIN_ROOT_COMMENT_ID: 5513649898
+ACTIVE_HANDOVER_COMMENT_ID: 5513646846
+PREVIOUS_ENDPOINT_COMMENT_ID: 5513644145
 HANDOVER_CONTENT_READY: TRUE
 HANDOVER_VALIDATION_STATUS: PASS_STATIC_RECONCILIATION
 CHAIN_HANDOVER_READY: TRUE
@@ -42,5 +45,6 @@ HANDOVER_READY: FALSE
 ROADMAP_REVIEW_STATUS: COMPLETE
 ROADMAP_ALIGNMENT: ALIGNED
 ROADMAP_MUTATION_AUTHORITY: NONE
+VERIFIER_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_verify.py
 CURRENT_BLOCKER: exact canonical 24-file GEO-05 package missing from runtime/repository refs
-EXACT_NEXT_ACTION: recover exact package bytes; run geo05_verify.py; visually inspect student pages 4-7 and teacher pages 1-3; update QA/PDF custody; refresh production; create one GEO-05-only material commit; verify 1 ahead/0 behind; create one Draft PR for #74
+EXACT_NEXT_ACTION: recover exact package bytes; run custody verifier; visually inspect student pages 4-7 and teacher pages 1-3; update QA/PDF custody; refresh production; create one GEO-05-only material commit; verify 1 ahead/0 behind; create one Draft PR for #74
