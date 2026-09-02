@@ -2,25 +2,25 @@
 
 ISSUE_BASIS_ID: `IB-0001`  
 WORK_ITEM_KEY: `github:reallaksh19/Common#89`  
-ISSUE_CURRENT_STATE_ENDPOINT: `EP-0002`  
-STATE_MATERIALIZED_FOR: `WAVE1`
+ISSUE_CURRENT_STATE_ENDPOINT: `EP-0003`  
+STATE_MATERIALIZED_FOR: `WAVE2`
 
 ## Original task / acceptance ledger
 
 | ID | Current status | Evidence / next obligation |
 |---|---|---|
-| TASK-001 | PARTIAL | Wave-0 architecture + Wave-1 research interfaces complete; integrated learner/teacher package remains |
+| TASK-001 | PARTIAL | Wave-0 architecture, Wave-1 research, and Wave-2 integrated Assimilation Book complete; later learner/teacher outputs remain |
 | TASK-002 | PASS_WAVE0 | scope/router/ownership frozen in `00_Concept_and_Dependency_Map.md` |
-| TASK-003 | PASS_WAVE1_STATIC | seven A-P interfaces complete and `READY_FOR_LEAD`; `Wave1_Interface_Audit.md` passes structurally |
+| TASK-003 | PASS_WAVE1_STATIC | seven A-P interfaces complete and `READY_FOR_LEAD` |
 | TASK-004 | PASS_STATIC | frozen independent verification records Q22=66 / Q25=36 / 2023-Q28=67 |
-| TASK-005 | OPEN | integrated book, later first-step/lab/transfer/mastery/metadata/student hygiene remain |
+| TASK-005 | PARTIAL_WAVE2 | integrated `02_Assimilation_Book.md` complete; First-Step/lab/transfer/mastery/metadata/student hygiene remain |
 | TASK-006 | OPEN | independent topic audit/render QA not yet run; v2 validator scripts NOT_RUN this session |
 | TASK-007 | OPEN | no COMB-04 PR yet |
 | TASK-008 | ENFORCED | merge authority `OWNER_ONLY`; authorization `FALSE` |
 
 ## Input ledger
 
-INPUT-001..INPUT-009 from `IB-0001` remain `AVAILABLE` / `AVAILABLE_CONTEXT`. Wave-1 consumers used the frozen NT-01, NT-02 and COMB-03 provider interfaces without changing their ownership.
+INPUT-001..INPUT-009 from `IB-0001` remain `AVAILABLE` / `AVAILABLE_CONTEXT`. Wave 2 consumed the seven Wave-1 interfaces as evidence and retained the frozen NT-01, NT-02 and COMB-03 ownership boundaries.
 
 ## Benchmark / oracle ledger
 
@@ -39,9 +39,10 @@ ROADMAP_MUTATION_AUTHORITY: `NONE_GRANTED`
 
 Branch: `ioqm-g9-comb04-games`  
 Production base observed: `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
-Wave-1 material/audit head: `732548d4cad2602aca851214eb4ccdc98666ea01`  
-Wave-1 material receipt: `ML-0002-WAVE1`  
-Endpoint: `EP-0002`  
+Wave-2 book commit: `47dd69b59da2b6d6c50fcc5379629384f4174f24`  
+Wave-2 material/audit head: `6bc7d6107df4359ecde979cf2ee21e3db904ca2a`  
+Material receipt: `ML-0003-WAVE2`  
+Endpoint: `EP-0003`  
 PR: `NONE`  
 Merge authority: `OWNER_ONLY`  
 Merge authorized: `FALSE`
@@ -61,22 +62,25 @@ TAKEOVER_QUALIFICATION_READY: `FALSE` — a future replacement still needs curre
 ## Current phase
 
 ENGINEERING_STATE: `IN_PROGRESS`  
-COMPLETED_PHASE: `WAVE1_RESEARCH_INTERFACES`  
-CURRENT_BLOCKER: `NONE_FOR_WAVE2`  
-EXACT_NEXT_ACTION: `Synthesize the seven A-P interfaces into one integrated 02_Assimilation_Book.md; do not concatenate interfaces, reteach NT-01/NT-02, or blur the COMB-03 deterministic/adversarial boundary.`
+COMPLETED_PHASE: `WAVE2_INTEGRATED_ASSIMILATION`  
+CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
+EXACT_NEXT_ACTION: `Synchronize EP-0003 to issue #89; after sync, Wave 3 is one topic-wide 03_First_Step_Reference.md with recognition atlas, decoder, router, first-step cards, contrasts, traps, recognition drill, and source-to-mechanism map.`
 
 ## Validation truth
 
 WAVE1_INTERFACE_AUDIT: `PASS_STATIC`  
+WAVE2_INTEGRATION_AUDIT: `PASS_STATIC_WAVE2`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`  
+INDEPENDENT_TOPIC_WIDE_AUDIT: `NOT_RUN`  
+RENDER_QA: `NOT_RUN`  
 HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ## Issue synchronization
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513790332`  
-ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
-SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0002.md`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
+ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
+PREVIOUS_SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0002.md`
 
-Wave 1 is durably recoverable from repository custody and the synchronized issue projection.
+Wave 2 is accepted in repository custody; issue projection is the only remaining step for this progression.
