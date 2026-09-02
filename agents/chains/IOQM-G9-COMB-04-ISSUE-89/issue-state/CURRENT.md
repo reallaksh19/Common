@@ -74,8 +74,8 @@ TAKEOVER_QUALIFICATION_READY: `FALSE`.
 
 ENGINEERING_STATE: `IN_PROGRESS`  
 COMPLETED_PHASE: `WAVE4_MASTERY_TRANSFER_METADATA`  
-CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
-EXACT_NEXT_ACTION: `Synchronize EP-0005 to issue #89; then Wave 5 is a fresh independent math/source/pedagogy audit before any render/PDF work.`
+CURRENT_BLOCKER: `NONE_FOR_WAVE5`  
+EXACT_NEXT_ACTION: `Wave 5 — perform a fresh independent math/source/pedagogy audit of all promoted answers/proofs, metadata/source identity, dependency order, duplication, and learner-export hygiene before any render/PDF work.`
 
 ## Validation truth
 
@@ -94,8 +94,8 @@ HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
-SYNC_RECEIPT: `PENDING`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5514391026`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0005.md`
 
-Wave 4 is durably recorded in repository custody; issue projection is the remaining bounded action.
+Wave 4 is durably recoverable from repository custody and the synchronized issue projection.
