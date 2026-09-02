@@ -57,6 +57,7 @@ OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
 - No regeneration, normalization, repair or material Git mutation is performed by the contract.
 - Negative fail-closed fixture PASS; fake package rejected.
 - Tool SHA-256: `e704f4524dc79f7cc7a95231f936ca85f9ecfcc37d39e05257e76c603fdd77c3`.
+- EP-0006 issue checkpoint comment ID: `5514181200`; Active Handover issue projection remains comment `5513646846`.
 
 Current blocker: exact canonical 24-file GEO-05 package unavailable; all in-runtime/server-visible recovery is exhausted.
 Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__EXACT_BYTE_RESTORATION_CONTRACT_READY__EXTERNAL_CANONICAL_BYTES_REQUIRED
