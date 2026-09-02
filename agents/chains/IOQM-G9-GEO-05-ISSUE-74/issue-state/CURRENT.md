@@ -1,22 +1,22 @@
 # GEO-05 Issue Current State
 
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0004
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0005
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 
 ### Original task / acceptance ledger
-TASK-001 | Deliver one integrated GEO-05 topic package. | OPEN | canonical package bytes still missing
+TASK-001 | Deliver one integrated GEO-05 topic package. | BLOCKED | canonical package bytes unavailable in this runtime/repository custody
 TASK-002 | Seven separate full A–P microstream interfaces; index-only consolidated interface. | PARTIAL | prior handover says complete; exact bytes unrecovered
 TASK-003 | Five historical anchors and source custody. | PARTIAL | answers independently established; exact package rows unrecovered
 TASK-004 | 42 learner = 42 metadata = 42 teacher-key closure; 47 rows, 31 columns. | PARTIAL | prior handover says PASS; exact package bytes unrecovered
 TASK-005 | Final PDF custody + page-by-page visual QA. | BLOCKED | canonical PDFs absent
 TASK-006 | Frozen alternate-representation provider for GEO-01/GEO-03/GEO-04. | PARTIAL | prior handover says complete; exact bytes unrecovered
-TASK-007 | One Draft PR; never merge/ready without explicit Owner authorization. | OPEN | no GEO-05 PR exists
+TASK-007 | One Draft PR; never merge/ready without explicit Owner authorization. | BLOCKED | material input missing; no GEO-05 PR exists
 
 ### Input ledger
 INPUT-001 | Issue #74 + Owner assignment. | AVAILABLE | GitHub
 INPUT-002 | Production architecture/control authorities at bc4a26aa17d9117f8e8ef57459a3414fcec7a156. | AVAILABLE | repository
-INPUT-003 | Exact canonical 24-file GEO-05 package. | UNRESOLVED | GitHub-visible recovery exhausted; requires faithful/full-checkout unreachable-object scan or external exact-byte recovery
+INPUT-003 | Exact canonical 24-file GEO-05 package. | UNRESOLVED | server-visible recovery exhausted; faithful/full local-object scan NOT_EXECUTABLE_IN_THIS_RUNTIME because outbound Git DNS cannot resolve github.com; external exact-byte recovery or another full-checkout environment required
 INPUT-004 | Static GEO-05 custody verifier. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_verify.py
 INPUT-005 | Exact-byte intake helper. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_intake.py
 INPUT-006 | GEO-05-only overlay guard. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_overlay_guard.py
@@ -28,8 +28,8 @@ BM-002 | IOQM-2025-Q17 = 23. | READY | independent handover evidence
 BM-003 | IOQM-2024-Q07 = 99. | READY | independent handover evidence
 BM-004 | IOQM-2023-Q14 = 40. | READY | independent handover evidence
 BM-005 | IOQM-2023-Q23 = 18. | READY | independent handover evidence
-BM-006 | Student PDF final custody. | NOT_RUN | bytes unavailable
-BM-007 | Teacher PDF final custody. | NOT_RUN | bytes unavailable
+BM-006 | Student PDF final custody. | NOT_RUN | exact bytes unavailable
+BM-007 | Teacher PDF final custody. | NOT_RUN | exact bytes unavailable
 BM-008 | Human/classroom/psychometric/publication evidence. | NOT_RUN | preserve NOT_RUN
 
 ### Roadmap ledger
@@ -40,14 +40,16 @@ RM-002 | IOQM_G9_Canonical_Overlap_Ownership_v1.md@0538869a50aea8d4f4ee479e607f6
 OWNER_QUALIFICATION_BASELINE_SOURCE: conversation:2026-09-02T17:25:50Z
 OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
 
-### EP-0004 recovery escalation evidence
-- GitHub code search for `GEO05_Student_Pack_v1.pdf`: no result.
-- GitHub issue search for the student PDF filename and frozen student SHA-256: no result.
-- Repository Actions inventory: 23 workflow runs visible; no GEO-05 run/artifact trail.
-- All visible branches were previously enumerated; only the canonical GEO-05 material branch matches and it is still identical to production.
-- Production vs material comparison rechecked at EP-0004: `0 ahead / 0 behind`, base/head `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`.
-- Recovery scanner compiles and passed a synthetic positive test that found a GEO-05-named object without reconstructing bytes.
+### EP-0005 recovery evidence
+- Runtime mirror-clone attempt: `NOT_EXECUTABLE_IN_THIS_RUNTIME` because `github.com` DNS resolution failed; this is not evidence that unreachable objects are absent.
+- GitHub tag refs: none.
+- GitHub historical pull refs are exposed, but no GEO-05 PR/publication path was found.
+- All-PR search for `GEO-05`: no result.
+- Commit search for `GEO-05`: no result.
+- Recent PR inventory confirms current GEO-02 #113 and GEO-03 #125 plus unrelated topic PRs; no GEO-05 PR/head.
+- Runtime filesystem contains only GEO-05 custody tools/test fixtures; no canonical package/PDF payload.
+- Material branch remains identical to production at `bc4a26aa17d9117f8e8ef57459a3414fcec7a156` based on the last comparison and has not been mutated in this progression.
 
-Current blocker: exact canonical 24-file GEO-05 package unavailable.
-Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__GITHUB_VISIBLE_RECOVERY_EXHAUSTED__FULL_CHECKOUT_OR_EXTERNAL_BYTES_REQUIRED
-Exact next action: run `geo05_recovery_scan.py` against a faithful/full Common checkout (refs + reflogs + unreachable objects) or admit externally recovered exact bytes; if exact package becomes available, run verifier-backed intake and remaining rendered visual QA before publication.
+Current blocker: exact canonical 24-file GEO-05 package unavailable; remaining local unreachable-object recovery cannot run in this environment.
+Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__SERVER_RECOVERY_EXHAUSTED__RUNTIME_FULL_CHECKOUT_UNAVAILABLE__EXTERNAL_EXACT_BYTES_REQUIRED
+Exact next action: provide/admit externally recovered exact package bytes, or run `geo05_recovery_scan.py` in an environment holding a faithful/full Common checkout with local object history; only after exact-byte recovery proceed to verifier-backed intake and remaining rendered visual QA.
