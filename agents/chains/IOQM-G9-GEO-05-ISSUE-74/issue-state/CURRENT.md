@@ -1,7 +1,7 @@
 # GEO-05 Issue Current State
 
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0005
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0006
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 
 ### Original task / acceptance ledger
@@ -21,6 +21,7 @@ INPUT-004 | Static GEO-05 custody verifier. | AVAILABLE | agents/chains/IOQM-G9-
 INPUT-005 | Exact-byte intake helper. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_intake.py
 INPUT-006 | GEO-05-only overlay guard. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_overlay_guard.py
 INPUT-007 | Full-checkout Git/reflog/unreachable-object recovery scanner. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_recovery_scan.py
+INPUT-008 | Atomic exact-byte restoration contract. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_restore_contract.py
 
 ### Benchmark / oracle ledger
 BM-001 | IOQM-2025-Q10 = 54. | READY | independent handover evidence
@@ -48,8 +49,15 @@ OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
 - Commit search for `GEO-05`: no result.
 - Recent PR inventory confirms current GEO-02 #113 and GEO-03 #125 plus unrelated topic PRs; no GEO-05 PR/head.
 - Runtime filesystem contains only GEO-05 custody tools/test fixtures; no canonical package/PDF payload.
-- Material branch remains identical to production at `bc4a26aa17d9117f8e8ef57459a3414fcec7a156` based on the last comparison and has not been mutated in this progression.
+- Material branch remains identical to production at `bc4a26aa17d9117f8e8ef57459a3414fcec7a156` and has not been mutated.
 
-Current blocker: exact canonical 24-file GEO-05 package unavailable; remaining local unreachable-object recovery cannot run in this environment.
-Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__SERVER_RECOVERY_EXHAUSTED__RUNTIME_FULL_CHECKOUT_UNAVAILABLE__EXTERNAL_EXACT_BYTES_REQUIRED
-Exact next action: provide/admit externally recovered exact package bytes, or run `geo05_recovery_scan.py` in an environment holding a faithful/full Common checkout with local object history; only after exact-byte recovery proceed to verifier-backed intake and remaining rendered visual QA.
+### EP-0006 restoration contract evidence
+- `geo05_restore_contract.py` makes external exact-byte recovery executable without broadening authority.
+- Exact package-name check, symlink rejection, verifier-backed 24-file intake, atomic staging and source/staged per-file byte identity are mandatory.
+- No regeneration, normalization, repair or material Git mutation is performed by the contract.
+- Negative fail-closed fixture PASS; fake package rejected.
+- Tool SHA-256: `e704f4524dc79f7cc7a95231f936ca85f9ecfcc37d39e05257e76c603fdd77c3`.
+
+Current blocker: exact canonical 24-file GEO-05 package unavailable; all in-runtime/server-visible recovery is exhausted.
+Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__EXACT_BYTE_RESTORATION_CONTRACT_READY__EXTERNAL_CANONICAL_BYTES_REQUIRED
+Exact next action: admit externally recovered package bytes through `geo05_restore_contract.py`; only `PASS_ADMITTED_AND_STAGED` may clear INPUT-003, after which verifier-backed visual PDF QA and the single material overlay commit may proceed.
