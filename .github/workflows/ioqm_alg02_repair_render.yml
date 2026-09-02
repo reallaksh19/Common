@@ -1,0 +1,109 @@
+name: IOQM ALG02 repair render
+on:
+  push:
+    branches: [ioqm-g9-alg02-inequalities]
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: ${{ !contains(github.event.head_commit.message, '[skip alg02]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install render tools
+        run: |
+          pip install reportlab
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y poppler-utils >/dev/null
+      - name: Repair source and render exact PDFs
+        run: python 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-02_Inequalities_Bounds_Equality_Conditions/Authoring/repair_render_alg02.py'
+      - name: Exact structural and raster QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT='Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-02_Inequalities_Bounds_Equality_Conditions'
+          STUD="$ROOT/PDFs/ALG02_Student_Pack_v1.pdf"
+          TEACH="$ROOT/PDFs/ALG02_Teacher_Key_v1.pdf"
+          REPORT="$ROOT/Authoring/_render_qa_report.txt"
+          pdfinfo "$STUD" >/tmp/stud.info
+          pdftotext -layout "$STUD" /tmp/stud.txt
+          pdfinfo "$TEACH" >/tmp/teach.info
+          pdftotext -layout "$TEACH" /tmp/teach.txt
+          rm -f /tmp/alg02-page-*.pgm
+          pdftoppm -gray -r 36 "$STUD" /tmp/alg02-page >/dev/null
+          ROOT="$ROOT" STUD="$STUD" TEACH="$TEACH" REPORT="$REPORT" python - <<'PY'
+          from pathlib import Path
+          import hashlib, os, re, subprocess
+          stud=Path(os.environ['STUD']); teach=Path(os.environ['TEACH']); report=Path(os.environ['REPORT'])
+          text=Path('/tmp/stud.txt').read_text(errors='replace')
+          info=Path('/tmp/stud.info').read_text(errors='replace')
+          tinfo=Path('/tmp/teach.info').read_text(errors='replace')
+          forbidden_re=re.compile(r'(?i)(?<![A-Za-z0-9])(?:H[0-3]|T[234]|WAVE|PR|ISSUE|ALG-01|ALG-02|ALG-03)(?![A-Za-z0-9])')
+          forbidden=sorted(set(m.group(0) for m in forbidden_re.finditer(text)))
+          p=text.find('Practice and Transfer'); m=text.find('Independent Mixed Mastery')
+          nums=lambda s:[int(x) for x in re.findall(r'(?m)^\s*(\d{1,2})\.\s',s)]
+          def uniq(xs):
+              out=[]
+              for x in xs:
+                  if x not in out: out.append(x)
+              return out
+          practice=uniq(nums(text[p:m])) if p>=0 and m>=0 else []
+          mastery=uniq(nums(text[m:])) if m>=0 else []
+          def read_pgm(path):
+              raw=Path(path).read_bytes(); pos=0
+              def tok():
+                  nonlocal pos
+                  while pos<len(raw):
+                      if raw[pos:pos+1]==b'#':
+                          while pos<len(raw) and raw[pos:pos+1] not in (b'\n',b'\r'): pos+=1
+                      elif raw[pos:pos+1].isspace(): pos+=1
+                      else: break
+                  st=pos
+                  while pos<len(raw) and not raw[pos:pos+1].isspace(): pos+=1
+                  return raw[st:pos]
+              magic=tok(); w=int(tok()); h=int(tok()); maxv=int(tok())
+              while pos<len(raw) and raw[pos:pos+1].isspace(): pos+=1
+              pix=raw[pos:pos+w*h]
+              if magic!=b'P5' or maxv!=255 or len(pix)!=w*h: raise ValueError(path)
+              return w,h,pix
+          chars=' .:-=+*#%@'; pages=[]; bounds=True
+          pgms=sorted(Path('/tmp').glob('alg02-page-*.pgm'))
+          for i,path in enumerate(pgms,1):
+              w,h,pix=read_pgm(path); ink=[(j%w,j//w) for j,v in enumerate(pix) if v<245]
+              if not ink: bbox=None; bounds=False
+              else:
+                  xs=[q[0] for q in ink]; ys=[q[1] for q in ink]; bbox=(min(xs),min(ys),max(xs),max(ys))
+                  if bbox[0]<4 or bbox[1]<4 or bbox[2]>w-5 or bbox[3]>h-4: bounds=False
+              thumb=[]; tw,th=60,35
+              for ty in range(th):
+                  row=[]; y0=ty*h//th; y1=max(y0+1,(ty+1)*h//th)
+                  for tx in range(tw):
+                      x0=tx*w//tw; x1=max(x0+1,(tx+1)*w//tw); vals=[]
+                      for yy in range(y0,y1): vals.extend(pix[yy*w+x0:yy*w+x1])
+                      d=255-sum(vals)/len(vals); row.append(chars[min(len(chars)-1,int(d/256*len(chars)))])
+                  thumb.append(''.join(row).rstrip())
+              pages.append((i,w,h,bbox,thumb))
+          practice_ok=practice==list(range(1,31)); mastery_ok=mastery==list(range(1,17))
+          overall=(not forbidden) and practice_ok and mastery_ok and bounds and len(pgms)>0
+          lines=['ALG-02 EXACT RENDER QA REPORT','================================','']
+          for label,path in [('student',stud),('teacher',teach)]:
+              b=path.read_bytes(); lines += [f'{label}_bytes={len(b)}',f'{label}_sha256={hashlib.sha256(b).hexdigest()}',f'{label}_git_blob={subprocess.check_output(["git","hash-object",str(path)],text=True).strip()}']
+          lines += [x for x in info.splitlines() if x.startswith(('Pages:','Page size:','Encrypted:','Form:'))]
+          lines += ['teacher_'+x for x in tinfo.splitlines() if x.startswith(('Pages:','Page size:','Encrypted:','Form:'))]
+          lines += [f'forbidden_labels={forbidden or "NONE"}',f'practice_numbers={practice}',f'mastery_numbers={mastery}',f'raster_page_count={len(pgms)}',f'raster_bounds_pass={bounds}',f'overall_static_render_qa={"PASS" if overall else "FAIL"}','']
+          for i,w,h,bbox,thumb in pages:
+              lines += [f'PAGE {i:02d} raster={w}x{h} ink_bbox={bbox}','-'*60,*thumb,'']
+          report.write_text('\n'.join(lines)+'\n')
+          if not overall: raise SystemExit('ALG-02 exact render QA failed')
+          PY
+      - name: Commit repaired package and QA evidence
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'Grade 9/Mathematics/IOQM/03_Main_Topics/ALG-02_Inequalities_Bounds_Equality_Conditions'
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'ALG-02: repair learner surfaces, interfaces and exact PDFs [skip alg02]'
+          git push
