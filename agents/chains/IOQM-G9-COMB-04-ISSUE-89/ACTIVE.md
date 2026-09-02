@@ -26,23 +26,24 @@ ISSUE_BASIS_ID: `IB-0001`
 ISSUE_CURRENT_STATE_ENDPOINT: `EP-0002`  
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513790332`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`
 
 BRANCH: `ioqm-g9-comb04-games`  
 PRODUCTION_BASE: `grade9-ioqm-90q-corpus-v1@bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
 WAVE1_MATERIAL_HEAD: `732548d4cad2602aca851214eb4ccdc98666ea01`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0002.md`  
 PR: `NONE`
 
 OWNER_ROADMAP_DRIFT: `NO_DRIFT`  
 SOURCE_ORACLE_DRIFT: `NONE`  
 HANDOVER_CONTENT_READY: `TRUE`  
 HANDOVER_VALIDATION_STATUS: `PASS`  
-HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave1_Interface_Audit.md; frozen independent corpus oracle`  
-CHAIN_HANDOVER_READY: `FALSE_PENDING_ISSUE_SYNC`  
+HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave1_Interface_Audit.md + frozen independent corpus oracle + SYNC-0002`  
+CHAIN_HANDOVER_READY: `TRUE`  
 HANDOVER_READY: `FALSE`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`
 
-CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
-LEG_DIAGNOSIS: `Seven A-P Wave-1 interfaces are READY_FOR_LEAD; no integrated learner prose has started.`  
-EXACT_NEXT_ACTION: `Synchronize EP-0002 to issue #89; then Wave 2 is one integrated 02_Assimilation_Book.md synthesized from the seven interfaces.`
+CURRENT_BLOCKER: `NONE_FOR_WAVE2`  
+LEG_DIAGNOSIS: `Seven A-P Wave-1 interfaces are READY_FOR_LEAD; issue and repository custody are synchronized; no integrated learner prose has started.`  
+EXACT_NEXT_ACTION: `Wave 2 — synthesize one integrated 02_Assimilation_Book.md from the seven interfaces; do not concatenate interface prose, reteach NT-01/NT-02, or blur the COMB-03 deterministic/adversarial boundary.`
