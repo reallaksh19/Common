@@ -26,22 +26,22 @@ ISSUE_BASIS_ID: `IB-0001`
 ISSUE_CURRENT_STATE_ENDPOINT: `EP-0006`  
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_EP0006_ISSUE_PROJECTION`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5514559665`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`
 
 BRANCH: `ioqm-g9-comb04-games`  
 PRODUCTION_BASE: `grade9-ioqm-90q-corpus-v1@bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
 WAVE5_PREAUDIT_HEAD: `088a6345836bccb06b0303447a0093b1f40a2666`  
 WAVE5_MATERIAL_RECEIPT_COMMIT: `a4d438775c006251325bbc6967840a74c7ef88f0`  
 WAVE5_ENDPOINT_COMMIT: `8147a1fbc0d24771081d2c891dcffe57e2ffa844`  
-SYNC_RECEIPT: `PENDING_SYNC_0006`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0006.md`  
 PR: `NONE`
 
 OWNER_ROADMAP_DRIFT: `NO_DRIFT`  
 SOURCE_ORACLE_DRIFT: `NONE`  
 HANDOVER_CONTENT_READY: `TRUE`  
 HANDOVER_VALIDATION_STATUS: `PASS_SECOND_PASS__FORMAL_G11_BLOCKED`  
-HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave5_Fresh_Review_PreAudit.md + QA.md + live production source/verification ledgers`  
+HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave5_Fresh_Review_PreAudit.md + QA.md + live production source/verification ledgers + SYNC-0006`  
 CHAIN_HANDOVER_READY: `TRUE`  
 HANDOVER_READY: `FALSE`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`
@@ -52,5 +52,5 @@ WAVE5_INDEPENDENT_QA_PASS: `NOT_ASSERTED`
 PDF_PRODUCTION: `BLOCKED_UNTIL_WAVE5_INDEPENDENT_QA_PASS`
 
 CURRENT_BLOCKER: `FRESH_REVIEWER_REQUIRED_FOR_G11`  
-LEG_DIAGNOSIS: `Wave-5 second-pass math/source/pedagogy review found no defect, but current custodian authored/materialized Waves 0–4 and cannot truthfully self-certify the mandatory fresh-reviewer independent gate.`  
+LEG_DIAGNOSIS: `Wave-5 second-pass math/source/pedagogy review found no defect, but current custodian authored/materialized Waves 0–4 and cannot truthfully self-certify the mandatory fresh-reviewer independent gate. Issue and repository custody are synchronized.`  
 EXACT_NEXT_ACTION: `Fresh reviewer independently recomputes all promoted authored answers/proofs and source-condition claims and records WAVE5_INDEPENDENT_QA_PASS or defects. On pass, proceed directly to Wave 6 unified PDF/render production, every-page visual QA, preflight, leakage scrub, page counts and SHA-256/blob receipts.`
