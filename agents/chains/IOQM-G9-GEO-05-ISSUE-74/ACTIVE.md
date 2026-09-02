@@ -1,8 +1,8 @@
 CHAIN_STATE_VERSION: 3
 CHAIN_ID: IOQM-G9-GEO-05-ISSUE-74
 MISSION: Complete and publish the exact IOQM G9 GEO-05 Coordinate, Vector & Mensuration Representations package under issue #74 without weakening source, ownership, PDF-custody or merge gates.
-ACTIVE_ENDPOINT: EP-0007
-ACTIVE_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0007.md
+ACTIVE_ENDPOINT: EP-0008
+ACTIVE_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0008.md
 MATERIAL_HISTORY_ROOT_BASE: bc4a26aa17d9117f8e8ef57459a3414fcec7a156
 MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/endpoints/EP-0001.md
 PR: NONE
@@ -23,7 +23,7 @@ AGENT_INSTANCE_ID: chatgpt:0da025c9-9b93-469d-872e-b57d967935ba
 WORK_ITEM_SOURCE: GITHUB_ISSUE
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 WORK_ITEM_MODE: EXCLUSIVE
-CUSTODY_EPOCH: 7
+CUSTODY_EPOCH: 8
 COORDINATION_STATE: SAFE
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: aa832f5f9f204c3834ffcee40102b482f121ce76
@@ -39,11 +39,11 @@ QUESTION_PACK_ACTION: NOT_APPLICABLE
 QUESTION_DISPLAY: HIDE
 ISSUE_CURRENT_STATE_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/issue-state/CURRENT.md
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0007
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0008
 CHAIN_ROOT_COMMENT_ID: 5513649898
 ACTIVE_HANDOVER_COMMENT_ID: 5513646846
-PREVIOUS_ENDPOINT_COMMENT_ID: 5514181200
-LATEST_ENDPOINT_COMMENT_ID: 5514335850
+PREVIOUS_ENDPOINT_COMMENT_ID: 5514335850
+LATEST_ENDPOINT_COMMENT_ID: 5514430835
 ISSUE_HANDOVER_SYNC_STATUS: IN_SYNC
 HANDOVER_CONTENT_READY: TRUE
 HANDOVER_VALIDATION_STATUS: PASS_STATIC_RECONCILIATION
@@ -58,5 +58,6 @@ INTAKE_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_intake.py
 OVERLAY_GUARD_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_overlay_guard.py
 RECOVERY_SCANNER_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_recovery_scan.py
 RESTORATION_CONTRACT_FILE: agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_restore_contract.py
-CURRENT_BLOCKER: exact canonical 24-file GEO-05 package missing; runtime, GitHub server-visible and connected Google Drive recovery are exhausted; external canonical bytes are required
-EXACT_NEXT_ACTION: admit externally recovered package through geo05_restore_contract.py; only PASS_ADMITTED_AND_STAGED clears INPUT-003; then complete remaining visual PDF QA before any material commit
+GMAIL_RECOVERY: PROHIBITED_BY_OWNER
+CURRENT_BLOCKER: exact canonical 24-file GEO-05 package missing; all currently allowed/accessible non-Gmail recovery surfaces are exhausted; external canonical bytes or user upload are required
+EXACT_NEXT_ACTION: admit externally recovered/user-provided package through geo05_restore_contract.py; only PASS_ADMITTED_AND_STAGED clears INPUT-003; then complete remaining visual PDF QA before any material commit
