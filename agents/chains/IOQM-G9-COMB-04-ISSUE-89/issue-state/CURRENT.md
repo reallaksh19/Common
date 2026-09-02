@@ -2,25 +2,25 @@
 
 ISSUE_BASIS_ID: `IB-0001`  
 WORK_ITEM_KEY: `github:reallaksh19/Common#89`  
-ISSUE_CURRENT_STATE_ENDPOINT: `EP-0001`  
-STATE_MATERIALIZED_FOR: `WAVE0`
+ISSUE_CURRENT_STATE_ENDPOINT: `EP-0002`  
+STATE_MATERIALIZED_FOR: `WAVE1`
 
 ## Original task / acceptance ledger
 
 | ID | Current status | Evidence / next obligation |
 |---|---|---|
-| TASK-001 | PARTIAL | Wave-0 architecture materialized; learner/teacher package not yet authored |
+| TASK-001 | PARTIAL | Wave-0 architecture + Wave-1 research interfaces complete; integrated learner/teacher package remains |
 | TASK-002 | PASS_WAVE0 | scope/router/ownership frozen in `00_Concept_and_Dependency_Map.md` |
-| TASK-003 | OPEN | seven Wave-1 A-P interfaces are next phase |
-| TASK-004 | PASS_STATIC | frozen verification authority records 66 / 36 / 67 |
-| TASK-005 | OPEN | metadata/student-export hygiene belongs later phases |
-| TASK-006 | OPEN | independent topic audit/render QA not yet run |
+| TASK-003 | PASS_WAVE1_STATIC | seven A-P interfaces complete and `READY_FOR_LEAD`; `Wave1_Interface_Audit.md` passes structurally |
+| TASK-004 | PASS_STATIC | frozen independent verification records Q22=66 / Q25=36 / 2023-Q28=67 |
+| TASK-005 | OPEN | integrated book, later first-step/lab/transfer/mastery/metadata/student hygiene remain |
+| TASK-006 | OPEN | independent topic audit/render QA not yet run; v2 validator scripts NOT_RUN this session |
 | TASK-007 | OPEN | no COMB-04 PR yet |
 | TASK-008 | ENFORCED | merge authority `OWNER_ONLY`; authorization `FALSE` |
 
 ## Input ledger
 
-INPUT-001..INPUT-009 from `IB-0001` remain `AVAILABLE` / `AVAILABLE_CONTEXT`; no required Wave-0 input is missing.
+INPUT-001..INPUT-009 from `IB-0001` remain `AVAILABLE` / `AVAILABLE_CONTEXT`. Wave-1 consumers used the frozen NT-01, NT-02 and COMB-03 provider interfaces without changing their ownership.
 
 ## Benchmark / oracle ledger
 
@@ -39,7 +39,9 @@ ROADMAP_MUTATION_AUTHORITY: `NONE_GRANTED`
 
 Branch: `ioqm-g9-comb04-games`  
 Production base observed: `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
-Wave-0 material commit: `a7a0923f257c80a07776042bd049592871b3af2b`  
+Wave-1 material/audit head: `732548d4cad2602aca851214eb4ccdc98666ea01`  
+Wave-1 receipt commit: `56c2dfdc29da0714ce98aca549a62e14a255e388`  
+Endpoint commit: `19bf57f64b04d6b9f8c2ec895f806963a5fe358f`  
 PR: `NONE`  
 Merge authority: `OWNER_ONLY`  
 Merge authorized: `FALSE`
@@ -47,26 +49,34 @@ Merge authorized: `FALSE`
 ## Qualification / custody
 
 Owner decision locator: issue comment `5513552057`.  
+Latest Owner progression command: `proceed next`.  
 QUALIFICATION_STATE: `PASS`  
 CUSTODY_STATE: `HELD`  
 WRITE_AUTHORITY: `WRITE_ALLOWED`  
-QUESTION_PACK_ACTION: `SUPPRESSED_BY_OWNER`  
+QUESTION_PACK_ACTION: `REUSED`  
 QUESTION_SET_ID: `NONE_OWNER_DISPOSITION`  
+QUESTION_DISPLAY: `HIDE`  
 TAKEOVER_QUALIFICATION_READY: `FALSE` — a future replacement still needs current qualification authority.
 
 ## Current phase
 
 ENGINEERING_STATE: `IN_PROGRESS`  
-COMPLETED_PHASE: `WAVE0_ARCHITECTURE`  
-CURRENT_BLOCKER: `NONE_FOR_WAVE1`  
-EXACT_NEXT_ACTION: `Materialize the seven complete COMB-04 Wave-1 A-P research interfaces, beginning with parity invariants and residue/colour invariants; do not write integrated learner prose yet.`
+COMPLETED_PHASE: `WAVE1_RESEARCH_INTERFACES`  
+CURRENT_BLOCKER: `NONE_FOR_WAVE2`  
+EXACT_NEXT_ACTION: `Synthesize the seven A-P interfaces into one integrated 02_Assimilation_Book.md; do not concatenate interfaces, reteach NT-01/NT-02, or blur the COMB-03 deterministic/adversarial boundary.`
+
+## Validation truth
+
+WAVE1_INTERFACE_AUDIT: `PASS_STATIC`  
+V2_VALIDATOR_SCRIPTS: `NOT_RUN`  
+HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ## Issue synchronization
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513608320`  
-ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
-SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0001.md`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
+ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
+SYNC_RECEIPT: `PENDING_SYNC-0002`
 
-Wave 0 is durably recoverable from repository state plus the synchronized issue projections.
+Wave 1 is repository-durable; issue projection is pending endpoint/comment synchronization.
