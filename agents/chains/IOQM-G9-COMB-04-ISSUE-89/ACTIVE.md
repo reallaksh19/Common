@@ -26,24 +26,25 @@ ISSUE_BASIS_ID: `IB-0001`
 ISSUE_CURRENT_STATE_ENDPOINT: `EP-0003`  
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513953782`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`
 
 BRANCH: `ioqm-g9-comb04-games`  
 PRODUCTION_BASE: `grade9-ioqm-90q-corpus-v1@bc4a26aa17d9117f8e8ef57459a3414fcec7a156`  
 WAVE2_BOOK_COMMIT: `47dd69b59da2b6d6c50fcc5379629384f4174f24`  
 WAVE2_MATERIAL_HEAD: `6bc7d6107df4359ecde979cf2ee21e3db904ca2a`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0003.md`  
 PR: `NONE`
 
 OWNER_ROADMAP_DRIFT: `NO_DRIFT`  
 SOURCE_ORACLE_DRIFT: `NONE`  
 HANDOVER_CONTENT_READY: `TRUE`  
 HANDOVER_VALIDATION_STATUS: `PASS_STATIC_WAVE2`  
-HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave2_Integration_Audit.md + frozen independent corpus oracle`  
-CHAIN_HANDOVER_READY: `FALSE_PENDING_ISSUE_SYNC`  
+HANDOVER_VALIDATION_EVIDENCE: `Authoring/Wave2_Integration_Audit.md + frozen independent corpus oracle + SYNC-0003`  
+CHAIN_HANDOVER_READY: `TRUE`  
 HANDOVER_READY: `FALSE`  
 V2_VALIDATOR_SCRIPTS: `NOT_RUN`
 
-CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
-LEG_DIAGNOSIS: `One integrated Assimilation Book is complete; seven Wave-1 interfaces were synthesized without learner-visible seams; no First-Step/mastery/render/PR work entered this phase.`  
-EXACT_NEXT_ACTION: `Synchronize EP-0003 to issue #89; then Wave 3 is one integrated 03_First_Step_Reference.md for the whole topic.`
+CURRENT_BLOCKER: `NONE_FOR_WAVE3`  
+LEG_DIAGNOSIS: `One integrated Assimilation Book is complete; seven Wave-1 interfaces were synthesized without learner-visible seams; issue and repository custody are synchronized.`  
+EXACT_NEXT_ACTION: `Wave 3 — create one integrated 03_First_Step_Reference.md for the whole topic: recognition atlas, phrase/structure decoder, decision router, first-step cards, contrast strip, traps/checks, recognition-only drill, and source-to-mechanism map.`
