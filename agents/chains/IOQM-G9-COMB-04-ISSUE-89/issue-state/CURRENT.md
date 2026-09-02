@@ -63,8 +63,8 @@ TAKEOVER_QUALIFICATION_READY: `FALSE` — a future replacement still needs curre
 
 ENGINEERING_STATE: `IN_PROGRESS`  
 COMPLETED_PHASE: `WAVE2_INTEGRATED_ASSIMILATION`  
-CURRENT_BLOCKER: `ISSUE_SYNC_ONLY`  
-EXACT_NEXT_ACTION: `Synchronize EP-0003 to issue #89; after sync, Wave 3 is one topic-wide 03_First_Step_Reference.md with recognition atlas, decoder, router, first-step cards, contrasts, traps, recognition drill, and source-to-mechanism map.`
+CURRENT_BLOCKER: `NONE_FOR_WAVE3`  
+EXACT_NEXT_ACTION: `Wave 3 — create one integrated 03_First_Step_Reference.md for the whole topic: recognition atlas, phrase/structure decoder, decision router, first-step cards, contrast strip, traps/checks, recognition-only drill, concise source-to-mechanism map.`
 
 ## Validation truth
 
@@ -79,8 +79,8 @@ HUMAN_EVIDENCE_GATES: `NOT_RUN`
 
 ISSUE_CHAIN_ROOT_COMMENT_ID: `5513605803`  
 ISSUE_ACTIVE_HANDOVER_COMMENT_ID: `5513611335`  
-ISSUE_LATEST_ENDPOINT_COMMENT_ID: `PENDING_POST_COMMENT_SYNC`  
-ISSUE_HANDOVER_SYNC_STATUS: `PENDING`  
-PREVIOUS_SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0002.md`
+ISSUE_LATEST_ENDPOINT_COMMENT_ID: `5513953782`  
+ISSUE_HANDOVER_SYNC_STATUS: `IN_SYNC`  
+SYNC_RECEIPT: `agents/chains/IOQM-G9-COMB-04-ISSUE-89/sync/SYNC-0003.md`
 
-Wave 2 is accepted in repository custody; issue projection is the only remaining step for this progression.
+Wave 2 is durably recoverable from repository custody and the synchronized issue projection.
