@@ -1,9 +1,9 @@
 # ALG-03 PDF custody
 
-The rendered student and teacher PDFs are produced from the canonical topic sources and validated by `../QA.md`.
+The rendered student and teacher PDFs are produced from the canonical topic sources by the durable deterministic renderer at `../Authoring/render_alg03_pdfs.py` and validated by `../QA.md`.
 
-Repository artifacts:
-- `ALG03_Student_Pack_v1.pdf` — 10 A4 pages; SHA-256 `34a0ff155c3c3132aecd858145d70c3a2d72eb756bc99912b67892f1602c0713`.
-- `ALG03_Teacher_Key_v1.pdf` — 3 A4 pages; SHA-256 `784a283037ef0c96ec12a6c9674693706bd2ee26fb64939482112537b87fbe52`.
+Current repository artifacts:
+- `ALG03_Student_Pack_v1.pdf` - 11 A4 pages; 64,444 bytes; Git blob `5f5f785e680baf6c3254a035ff19207d54074b33`; SHA-256 `ca44ee9ff29dce5fd4c9228172d4563062dc48d81a12a08c2b0ca04aa0c05d7e`.
+- `ALG03_Teacher_Key_v1.pdf` - 3 A4 pages; 48,751 bytes; Git blob `4b8b02fb13981ea1f4bc5d9df355ef547294cae5`; SHA-256 `34e75aad9a7b9fa6ea7c89851aaecb80216b5bfd190f42417f214d2bdb3c2bbf`.
 
-Rebuild both artifacts with `python ../Authoring/render_alg03_pdfs.py`. The previously recorded hashes described unattached local files; they are superseded by these reproducible, committed-source renders.
+The current student artifact passes learner-control scanning, Practice 1-30 and Independent Mastery 1-16 inventory checks, structural preflight and 11-page raster-bounds QA. The teacher artifact passes structural preflight and 3-page raster-bounds QA.
