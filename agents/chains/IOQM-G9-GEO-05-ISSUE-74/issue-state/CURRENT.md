@@ -1,7 +1,7 @@
 # GEO-05 Issue Current State
 
 ISSUE_CURRENT_STATE_BASIS: IB-0001
-ISSUE_CURRENT_STATE_ENDPOINT: EP-0007
+ISSUE_CURRENT_STATE_ENDPOINT: EP-0008
 WORK_ITEM_KEY: github:reallaksh19/Common#74
 
 ### Original task / acceptance ledger
@@ -16,13 +16,15 @@ TASK-007 | One Draft PR; never merge/ready without explicit Owner authorization.
 ### Input ledger
 INPUT-001 | Issue #74 + Owner assignment. | AVAILABLE | GitHub
 INPUT-002 | Production architecture/control authorities at bc4a26aa17d9117f8e8ef57459a3414fcec7a156. | AVAILABLE | repository
-INPUT-003 | Exact canonical 24-file GEO-05 package. | UNRESOLVED | runtime, server-visible GitHub and connected Google Drive recovery exhausted; faithful/full local-object scan remains unavailable in this runtime; external exact-byte recovery required
+INPUT-003 | Exact canonical 24-file GEO-05 package. | UNRESOLVED | runtime, server-visible GitHub, connected Google Drive, conversation-file and mounted-runtime recovery exhausted; external exact-byte recovery/user upload required
 INPUT-004 | Static GEO-05 custody verifier. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_verify.py
 INPUT-005 | Exact-byte intake helper. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_intake.py
 INPUT-006 | GEO-05-only overlay guard. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_overlay_guard.py
 INPUT-007 | Full-checkout Git/reflog/unreachable-object recovery scanner. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_recovery_scan.py
 INPUT-008 | Atomic exact-byte restoration contract. | AVAILABLE | agents/chains/IOQM-G9-GEO-05-ISSUE-74/tools/geo05_restore_contract.py
 INPUT-009 | Connected Google Drive recovery source. | EXHAUSTED | no accessible filename/package/hash/GEO05 match
+INPUT-010 | Conversation-file + mounted-runtime recovery source. | EXHAUSTED | no accessible conversation-file lead; mounted candidates are synthetic fixtures and fail frozen verifier/hash gates
+INPUT-011 | Gmail recovery source. | PROHIBITED_BY_OWNER | do not connect/search Gmail
 
 ### Benchmark / oracle ledger
 BM-001 | IOQM-2025-Q10 = 54. | READY | independent handover evidence
@@ -42,28 +44,14 @@ RM-002 | IOQM_G9_Canonical_Overlap_Ownership_v1.md@0538869a50aea8d4f4ee479e607f6
 OWNER_QUALIFICATION_BASELINE_SOURCE: conversation:2026-09-02T17:25:50Z
 OWNER_QUALIFICATION_BASELINE_STATUS: SATISFIED
 
-### EP-0005 recovery evidence
-- Runtime mirror-clone attempt: `NOT_EXECUTABLE_IN_THIS_RUNTIME` because `github.com` DNS resolution failed; not evidence that unreachable objects are absent.
-- GitHub tag refs: none; no GEO-05 PR/publication path; no `GEO-05` commit-search result.
-- Runtime filesystem had no canonical package/PDF payload.
-- Material branch remained identical to production at `bc4a26aa17d9117f8e8ef57459a3414fcec7a156`.
+### EP-0008 non-Gmail recovery evidence
+- Owner explicitly prohibited Gmail connection/search for this task; no Gmail message or attachment content was searched/read.
+- Current-conversation file search: no exact filename/package/hash hit and no simpler GEO05 fallback lead.
+- Mounted-runtime scan found only existing custody scripts and synthetic/test fixtures.
+- `/mnt/data/geo05_test/GEO-05_Coordinate_Vector_Mensuration_Representations`: real verifier FAIL, 29 failed checks.
+- `/mnt/data/geo05_restore_test/GEO-05_Coordinate_Vector_Mensuration_Representations`: real verifier FAIL, 30 failed checks.
+- Synthetic named student PDF is 5 bytes, SHA-256 `b5a2c96250612366ea272ffac6d9744aaf4b45aacd96aa7cfcb931ee3b558259`, not frozen canonical hash.
 
-### EP-0006 restoration contract evidence
-- `geo05_restore_contract.py` makes external exact-byte recovery executable without broadening authority.
-- Exact package-name check, symlink rejection, verifier-backed 24-file intake, atomic staging and source/staged per-file byte identity are mandatory.
-- No regeneration, normalization, repair or material Git mutation is performed by the contract.
-- Negative fail-closed fixture PASS; fake package rejected.
-- Tool SHA-256: `e704f4524dc79f7cc7a95231f936ca85f9ecfcc37d39e05257e76c603fdd77c3`.
-
-### EP-0007 connected Drive recovery evidence
-- `GEO05_Student_Pack_v1.pdf`: no accessible Drive result.
-- `GEO05_Teacher_Key_v1.pdf`: no accessible Drive result.
-- `GEO-05_Coordinate_Vector_Mensuration_Representations`: no accessible Drive result.
-- `GEO-05 Coordinate Vector Mensuration`: no accessible Drive result.
-- student SHA-256 `45468a443e8e150110299117d2f033e0ae8be111e747492b6ce490e80f8c5247`: no accessible Drive result.
-- teacher SHA-256 `54ba2add1bbdbdc4e18df11fac55dab3e739ba60f5cb8459e825bcbbeca94115`: no accessible Drive result.
-- broad `GEO05`: no accessible Drive result.
-
-Current blocker: exact canonical 24-file GEO-05 package unavailable after all recovery surfaces accessible in this environment were exhausted.
-Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__RESTORATION_CONTRACT_READY__RUNTIME_GITHUB_DRIVE_RECOVERY_EXHAUSTED__EXTERNAL_CANONICAL_BYTES_REQUIRED
-Exact next action: admit externally recovered package bytes through `geo05_restore_contract.py`; only `PASS_ADMITTED_AND_STAGED` may clear INPUT-003, after which verifier-backed remaining PDF visual QA and the single material overlay commit may proceed.
+Current blocker: exact canonical 24-file GEO-05 package unavailable after all recovery surfaces currently allowed/accessible in this environment were exhausted.
+Leg diagnosis: QUALIFIED_SAFE_CONTROL_PLANE__GMAIL_PROHIBITED__NON_GMAIL_RECOVERY_EXHAUSTED__EXTERNAL_CANONICAL_BYTES_REQUIRED
+Exact next action: admit externally recovered/user-provided package bytes through `geo05_restore_contract.py`; only `PASS_ADMITTED_AND_STAGED` may clear INPUT-003, after which remaining PDF visual QA and the single material overlay commit may proceed.
