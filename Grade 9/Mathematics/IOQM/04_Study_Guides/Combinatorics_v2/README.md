@@ -5,7 +5,7 @@ This is the canonical student-facing combinatorics study guide built after a ful
 ## Read in this order
 
 1. [`Combinatorics_Study_Guide_v2.md`](Combinatorics_Study_Guide_v2.md)
-2. [`Appendix_A_Q1_Q56.md`](Appendix_A_Q1_Q56.md)
+2. [`Appendix A — supplied Q1–Q56`](../Appendix_A_Q1-Q56.md)
 3. [`Appendix_B_20_IOQM_Style_Mock.md`](Appendix_B_20_IOQM_Style_Mock.md)
 4. [`Quick_Reference_2pp.md`](Quick_Reference_2pp.md)
 
