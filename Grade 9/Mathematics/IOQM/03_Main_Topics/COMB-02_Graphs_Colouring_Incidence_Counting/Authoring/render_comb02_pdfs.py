@@ -90,10 +90,10 @@ def _cover(title: str, subtitle: str, audience: str, footer: str) -> str:
 '''
 
 
-def _combine(files, title, subtitle, audience, footer):
+def _combine(files, title, subtitle, audience, footer, force_file_break=True):
     parts = [_cover(title, subtitle, audience, footer)]
     for i, name in enumerate(files):
-        if i:
+        if i and force_file_break:
             parts.append(r"\newpage")
         parts.append(_preprocess((ROOT / name).read_text(encoding="utf-8")))
     return "\n\n".join(parts)
@@ -164,6 +164,7 @@ def main():
         "Diagnostic and benchmark teacher companion",
         "Teacher-only companion · independent answer and misconception diagnostics",
         "Grade 9 IOQM learning pack",
+        force_file_break=False,
     )
     _render(student, PDF_DIR / "COMB02_Student_Pack_v1.pdf", "IOQM Grade 9 · Mathematics")
     _render(teacher, PDF_DIR / "COMB02_Teacher_Key_v1.pdf", "IOQM Grade 9 · COMB-02")
