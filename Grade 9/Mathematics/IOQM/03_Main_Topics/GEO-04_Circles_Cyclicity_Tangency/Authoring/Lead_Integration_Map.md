@@ -1,6 +1,6 @@
 # GEO-04 Topic-Lead Integration Map
 
-Status: `INTERFACES_COMPLETE_READY_FOR_INTEGRATED_PROSE_PAGE_IMAGE_CUSTODY_PENDING`
+Status: `INTERFACES_AND_SOURCE_CUSTODY_COMPLETE_READY_FOR_INTEGRATED_PROSE`
 
 ## Learner promise
 The learner should stop choosing a theorem from the picture and instead run:
@@ -45,7 +45,7 @@ Mixed circle-metric anchor after recognition basics. Circle condition plus right
 Cyclicity anchor. Preserve the source’s non-degenerate interpretation. Use cyclicity as the decisive extra constraint rather than treating the rectangle algebra independently.
 
 ### IOQM-2025-Q30 = 10
-Late tangency/power transfer. Common chord/radical-axis geometry plus internal tangency gives the radius-sum invariant. Do not overbuild radical-axis theory for Grade 9; teach the perpendicular-common-chord behavior first.
+Late tangency/power transfer. Common chord/line-of-centres geometry plus internal tangency gives the radius-sum invariant. Do not overbuild radical-axis theory for Grade 9; teach the perpendicular-common-chord behavior first.
 
 ### IOQM-2023-Q15 = 03
 Transfer anchor for circumcentres and coordinates. The goal is representation choice, not a long synthetic chase.
@@ -95,4 +95,6 @@ First attempt unlabelled/unhinted. Include:
 - `COORDINATE_OVERKILL`
 
 ## Source and publication gates
-Historical mathematics: 5/5 PASS. All seven A–P interfaces are complete. Exact HBCSE page-image/figure custody remains `PENDING` for 2025-Q19,Q23,Q30 and 2024-Q17; this blocks final historical-figure promotion/rendering but not integrated prose authoring. Before ready-for-review: authored-key verification, frozen metadata, integrated learner materials, teacher key, canonical PDFs, hash/blob/page count and page-by-page visual/figure QA. Classroom timing/retention/psychometrics remain `NOT_RUN`.
+Historical mathematics: 5/5 PASS. Exact source/page visual custody: 5/5 PASS. Exact page inspection confirms no official problem diagram is printed for any of the five anchors, so any learner diagrams are author-created teaching aids rather than source reproductions. All seven A–P interfaces are complete.
+
+Before ready-for-review: integrated learner materials, authored-key verification, frozen metadata, teacher key, canonical PDFs, hash/blob/page count and page-by-page visual QA. Classroom timing/readability, retention, psychometrics, qualification/pass-mark calibration and publication approval remain `NOT_RUN`.
