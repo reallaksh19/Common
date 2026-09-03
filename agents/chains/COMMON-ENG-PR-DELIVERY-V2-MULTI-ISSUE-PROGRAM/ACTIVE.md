@@ -1,19 +1,19 @@
 CHAIN_STATE_VERSION: 3
 CHAIN_ID: COMMON-ENG-PR-DELIVERY-V2-MULTI-ISSUE-PROGRAM
-MISSION: Extend engineering-pr-delivery-v2 for parent program issues with exclusive child/revision issue chains and inherited common custody
-ACTIVE_ENDPOINT: EP-0001
-ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-MULTI-ISSUE-PROGRAM/endpoints/EP-0001.md
+MISSION: Extend engineering-pr-delivery-v2 for parent program issues with exclusive child/revision issue chains, inherited common custody and fail-closed sibling overlap
+ACTIVE_ENDPOINT: EP-0002
+ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-MULTI-ISSUE-PROGRAM/endpoints/EP-0002.md
 MATERIAL_HISTORY_ROOT_BASE: 293a3db7993a6945c01adc592a7ff14a339c504a
 MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENG-PR-DELIVERY-V2-MULTI-ISSUE-PROGRAM/endpoints/EP-0001.md
 PR: 127
 BRANCH: engineering-github-issue-authoring-skill
-HEAD: 98cd3e4e7fa47a212161030c68db3cd08fc41888
-STATE: ACTIVE
-ENGINEERING_STATE: READY
+HEAD: e8f286a6cbb25199fb24e237c1bc4465bcc7274e
+STATE: BLOCKED
+ENGINEERING_STATE: BLOCKED
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: NOT_REQUIRED
-WRITE_AUTHORITY: WRITE_ALLOWED
-AUTO_STATE: NOT_APPLICABLE
+WRITE_AUTHORITY: READ_ONLY
+AUTO_STATE: BLOCKED
 MERGE_AUTHORITY: OWNER_ONLY
 AUTHORITY_DOMAIN: engineering-pr-delivery-v2 GitHub-Issue hierarchy/interoperability only
 ACTIVE_CUSTODIAN: ChatGPT relay multi-issue program governance agent
@@ -23,9 +23,9 @@ WORK_ITEM_KEY: common:engineering-pr-delivery-v2:multi-issue-program-custody
 WORK_ITEM_MODE: EXCLUSIVE
 WORK_ITEM_PARTITION: NONE
 WORK_ITEM_PARTITION_AUTHORITY: NONE
-CUSTODY_EPOCH: 1
+CUSTODY_EPOCH: 2
 COORDINATION_STATE: SAFE
-DEPENDENCIES: engineering-github-issue-authoring skill defines authoring topology; relay enforces runtime custody
+DEPENDENCIES: engineering-github-issue-authoring skill defines authoring topology; focused/aggregate execution remains NOT_RUN
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: 293a3db7993a6945c01adc592a7ff14a339c504a
 COMMON_PROTOCOL_STATUS: CURRENT
@@ -34,7 +34,7 @@ ROADMAP_REVIEW_STATUS: NOT_APPLICABLE
 HANDOVER_PROTOCOL_VERSION: 2
 HANDOVER_CONTENT_READY: TRUE
 HANDOVER_VALIDATION_STATUS: NOT_RUN
-HANDOVER_VALIDATION_EVIDENCE: NONE — prework baton
+HANDOVER_VALIDATION_EVIDENCE: NONE — faithful checkout unavailable
 CHAIN_HANDOVER_READY: TRUE
 TAKEOVER_QUALIFICATION_READY: TRUE
 HANDOVER_READY: FALSE
