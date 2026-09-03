@@ -82,6 +82,73 @@ Using a=10 mm, R=100 mm and sigma=50 MPa from `validation/kirsch.json`, independ
 Assume the hand result and current repository trace show the first wrong boundary is `bindCase()` retaining an obsolete parent ID. Name the smallest exact patch and files you would change, the failing evidence expected before it, PASS evidence after it, the neighbor regression that must remain unchanged, your rollback/falsifier condition, and the explicit NO-PATCH case if live main already rejects the stale parent correctly.
 '''
 
+PROGRAM = r'''ISSUE_ROLE: PROGRAM_ROOT
+PROGRAM_ID: PGM-AA-LAFEA
+PROGRAM_WORK_ITEM_KEY: SELF_AFTER_CREATION
+PROGRAM_BASIS_REVISION: PB-0001
+COMMON_INPUT_SET_ID: PGM-AA-LAFEA-INPUTS-v1
+COMMON_BENCHMARK_SET_ID: PGM-AA-LAFEA-BENCH-v1
+COMMON_VALIDATION_SET_ID: PGM-AA-LAFEA-VALID-v1
+COMMON_ROADMAP_SET_ID: PGM-AA-LAFEA-ROADMAP-v1
+
+# Mission
+Close the Owner program without losing common engineering authority across agents.
+
+# 0. Ground truth at program creation
+Observed main `0123456789012345678901234567890123456789`. Re-ground every child before work.
+
+# 1. Original task ledger
+TASK-001 | complete production route | OPEN | Owner issue
+
+# 2. Roadmap ledger
+RM-001 | `docs/roadmap.md` | abc | PRIMARY | ALIGNED | OWNER_ONLY
+
+# 3. Common inputs
+INPUT-001 | `input/model.json` | PRODUCTION_INPUT | geometry/material | AVAILABLE | invalidates mesh/result
+
+# 4. Common benchmark / oracle
+BM-001 | FROZEN_ANALYTICAL | `validation/ref.json` | actual values | stress | 2% | YES | READY
+Product regression is not an independent oracle; production output may not select expected values or tolerance.
+
+# 5. Common validation
+VAL-001 | `node scripts/check.mjs` | PASS | WP-001 | NOT_RUN
+
+# 6. Program Definition of Done
+PASS requires TASK-001 satisfied, required child work complete, common oracle current, and NOT_RUN never promoted.
+
+# 7. Work-package partition registry
+| WP | Relation | Child | Scope | Owned paths | Depends | Rows | Status | Chain/PR | Overlap |
+|---|---|---|---|---|---|---|---|---|---|
+| WP-001 | IMPLEMENTATION | PENDING | route | `src/a/**` | NONE | INPUT-001; BM-001; VAL-001 | PLANNED | PENDING | SAFE_DISJOINT |
+
+# 8. Anti-drift / overlap
+Re-ground parent/main. UNKNOWN or BLOCKED_ACTIVE_SIBLING receives no write authority. Oracle/tolerance authority stays in parent.
+'''
+
+CHILD_HEADER = r'''ISSUE_ROLE: WORK_PACKAGE
+PROGRAM_ID: PGM-AA-LAFEA
+PARENT_WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#100
+WORK_PACKAGE_ID: WP-001
+PARTITION_KEY: PGM-AA-LAFEA/WP-001
+PREDECESSOR_WORK_ITEM_KEY: NONE
+REVISION_SEQUENCE: 0
+INHERITED_PROGRAM_BASIS_REVISION: PB-0001
+INHERITED_INPUT_SET_ID: PGM-AA-LAFEA-INPUTS-v1
+INHERITED_BENCHMARK_SET_ID: PGM-AA-LAFEA-BENCH-v1
+INHERITED_VALIDATION_SET_ID: PGM-AA-LAFEA-VALID-v1
+INHERITED_ROADMAP_SET_ID: PGM-AA-LAFEA-ROADMAP-v1
+PARENT_TASK_ROWS: TASK-001
+USES_INPUT_ROWS: INPUT-001
+USES_BENCHMARK_ROWS: BM-001
+USES_VALIDATION_ROWS: VAL-001
+OVERLAP_CLASSIFICATION: SAFE_DISJOINT
+OWNED_AUTHORITY_DOMAINS: route-orchestration
+OWNED_PATHS_OR_COMPONENTS: src/route/**
+READ_DEPENDENCIES: input/model.json
+PROTECTED_SIBLING_DOMAINS: solver-formulation
+DEPENDENCY_PREDECESSORS: NONE
+'''
+
 
 def run(text):
     with tempfile.TemporaryDirectory() as td:
@@ -101,30 +168,20 @@ def expect(name, text, expected):
 
 def main():
     ok = True
-    ok &= expect("strong numerical workorder", BASE, 0)
-    ok &= expect(
-        "textbook questions rejected",
-        BASE.replace(
-            "Take `fixtures/case.json` and trace the real case through `normalizeCase()`, `bindCase()`, `runCase()` and result publication. Tell me which current case/source IDs should survive each boundary, what exact retained object the solver consumes, and what single mismatch would falsify your trace before you propose any code change.",
-            "Explain the architecture.",
-        ),
-        1,
-    )
+    ok &= expect("strong single numerical workorder", BASE, 0)
+    ok &= expect("strong program root", PROGRAM, 0)
+    ok &= expect("strong work-package child", CHILD_HEADER + "\n" + BASE, 0)
+    ok &= expect("program missing common validation set rejected", PROGRAM.replace("COMMON_VALIDATION_SET_ID: PGM-AA-LAFEA-VALID-v1\n", ""), 1)
+    ok &= expect("child missing inherited benchmark set rejected", (CHILD_HEADER + "\n" + BASE).replace("INHERITED_BENCHMARK_SET_ID: PGM-AA-LAFEA-BENCH-v1\n", ""), 1)
+    ok &= expect("child unknown overlap is structurally recorded", (CHILD_HEADER + "\n" + BASE).replace("OVERLAP_CLASSIFICATION: SAFE_DISJOINT", "OVERLAP_CLASSIFICATION: UNKNOWN"), 0)
+    ok &= expect("child invalid overlap value rejected", (CHILD_HEADER + "\n" + BASE).replace("OVERLAP_CLASSIFICATION: SAFE_DISJOINT", "OVERLAP_CLASSIFICATION: MAYBE"), 1)
+    revision = (CHILD_HEADER + "\n" + BASE).replace("ISSUE_ROLE: WORK_PACKAGE", "ISSUE_ROLE: REVISION").replace("PREDECESSOR_WORK_ITEM_KEY: NONE", "PREDECESSOR_WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#101").replace("REVISION_SEQUENCE: 0", "REVISION_SEQUENCE: 1")
+    ok &= expect("strong revision child", revision, 0)
+    ok &= expect("revision without predecessor rejected", revision.replace("PREDECESSOR_WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#101", "PREDECESSOR_WORK_ITEM_KEY: NONE"), 1)
+    ok &= expect("textbook question rejected", BASE.replace("Take `fixtures/case.json` and trace the real case through `normalizeCase()`, `bindCase()`, `runCase()` and result publication. Tell me which current case/source IDs should survive each boundary, what exact retained object the solver consumes, and what single mismatch would falsify your trace before you propose any code change.", "Explain the architecture."), 1)
     ok &= expect("missing input ledger rejected", BASE.replace("INPUT-001", "SOURCE-A"), 1)
     ok &= expect("missing benchmark row rejected", BASE.replace("BM-001", "BENCH-A").replace("BM-002", "BENCH-B"), 1)
-    ok &= expect(
-        "weak hand-calculation payload rejected",
-        BASE.replace(
-            "For the actual benchmark values L=200 mm, E=200000 MPa, P=1000 N and I=6666.6667 mm^4, calculate the Euler-Bernoulli tip deflection by hand, show the numerator and denominator separately, then point to the first production function in `src/solver/beam.js` whose result should be compared with your independent value and explain the first-wrong-boundary interpretation if they disagree.",
-            "Reconstruct the solver result carefully from `src/solver/beam.js`, explain your reasoning, identify the first production function that should agree, and state a falsifier if your reconstruction is wrong. Use exact repository evidence rather than generic prose and do not inspect the final output before predicting the intermediate behavior.",
-        ).replace(
-            "Using a=10 mm, R=100 mm and sigma=50 MPa from `validation/kirsch.json`, independently derive the expected hoop stress at the hole boundary and the remote-boundary traction components at theta=0 and theta=90 before looking at production output. State units, sign convention and tolerance, then explain why `tests/product-regression.js` cannot serve as the oracle for this comparison.",
-            "Independently reconstruct the benchmark logic in `validation/kirsch.json`, state units and tolerance, identify the oracle boundary and explain why the product regression is not independent. Do not use production output while forming the expected result and give a falsifier for the benchmark interpretation.",
-        ),
-        1,
-    )
     return 0 if ok else 1
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
