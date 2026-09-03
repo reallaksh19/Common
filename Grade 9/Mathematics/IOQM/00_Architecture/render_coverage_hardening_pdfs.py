@@ -97,13 +97,22 @@ def _power_towers(s: str) -> str:
     return s
 
 
+def _bare_exponents(s: str) -> str:
+    # TeX applies ^ to one token only. Group transport-safe Markdown forms such as
+    # 3^100 and a^phi(n), while leaving already-grouped ^{...} untouched.
+    pat = re.compile(r"\^(?!\{)([A-Za-z]+(?:\([^()]*\))?|\d+)")
+    return pat.sub(lambda m: "^{" + m.group(1) + "}", s)
+
+
 def _texify(s: str) -> str:
     t = _sqrt_convert(s)
     t = _power_towers(t)
     t = _group_convert(_group_convert(t, "^"), "_")
+    t = _bare_exponents(t)
     t = t.replace("²", "^2").replace("³", "^3")
     t = t.replace("≡", r"\equiv ").replace("∤", r"\nmid ").replace("|", r"\mid ")
     t = t.replace("φ", r"\varphi ").replace("·", r"\cdot ")
+    t = re.sub(r"\bphi\b", lambda _: r"\varphi", t)
     t = t.replace("≠", r"\ne ").replace("!=", r"\ne ")
     t = t.replace(">=", r"\ge ").replace("<=", r"\le ")
     t = t.replace("⇔", r"\Longleftrightarrow ").replace("⇒", r"\Rightarrow ").replace("=>", r"\Rightarrow ")
