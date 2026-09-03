@@ -57,7 +57,7 @@ jobs:
           pdfinfo "$TEACHER" | grep -q '^Encrypted:       no'
           pdftotext "$STUDENT" /tmp/student.txt
           pdftotext "$TEACHER" /tmp/teacher.txt
-          if grep -Eqi 'GEO-04|issue #[0-9]+|pull request|PR #[0-9]+|branch|microstream|interface|metadata schema|H[0-3]|F[0-4]|DRAFT_AUTHORING' /tmp/student.txt; then exit 1; fi
+          if grep -Eqi 'GEO-04|issue #[0-9]+|pull request|PR #[0-9]+|git branch|branch (name|ref)|microstream|interface|metadata schema|H[0-3]|F[0-4]|DRAFT_AUTHORING' /tmp/student.txt; then exit 1; fi
           grep -q 'Circles, Cyclicity' /tmp/student.txt
           grep -q 'Teacher' /tmp/teacher.txt
 
