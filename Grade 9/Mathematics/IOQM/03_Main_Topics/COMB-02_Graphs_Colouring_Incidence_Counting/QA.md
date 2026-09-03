@@ -1,30 +1,33 @@
 # COMB-02 — Production QA
 
-Status: `INTEGRATED_CONTENT_STATIC_QA_PASS_SOURCE_VISUAL_METADATA_PDF_PENDING`
+Status: `BENCHMARK_PEDAGOGY_MATH_PASS_SOURCE_VISUAL_METADATA_PDF_PENDING`
 
 | Gate | State | Evidence |
 |---|---|---|
 | issue #85 scope | PASS | graph modelling, degree/handshaking, colouring constraints, incidence double counting, grid/knight graphs and Ramsey-style inevitability retained |
-| production-head compatibility | PASS | `ioqm-g9-comb02-graphs-colouring` is 18 commits ahead / 0 behind `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c`; exactly 18 COMB-02 topic files changed |
+| production-head compatibility | PASS | branch remains topic-only and based on `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c` |
 | COMB-01 provider | PASS_ACCEPTED | exact `COMB01_Stable_Counting_Model_Interface_v1.md` consumed |
 | provider boundary | PASS | generic P&C, unrestricted counting, complement and inclusion-exclusion are retrieved only where needed; no duplicate counting chapter |
 | source anchors | PASS_6 | `IOQM-2025-Q08,Q29`; `IOQM-2024-Q09,Q19`; `IOQM-2023-Q16,Q22` |
 | historical answers | PASS | `48,19,48,12,94,77` independently re-derived in `Authoring/Independent_Math_and_Source_Audit.md` |
-| source/figure custody | PARTIAL | exact page/figure custody still pending for geometric-surface promotion; text-structure anchors can be integrated, but final historical figure publication remains fail-closed |
+| source/figure custody | PARTIAL_FAIL_CLOSED | exact page/figure custody still pending for geometric-surface promotion; final historical figure publication remains fail-closed |
 | microstream interfaces | PASS_7 | modelling; degree/handshaking; colouring; incidence; grid/knight; Ramsey; source audit |
 | topic-lead integration | PASS | `Authoring/Lead_Integration_Map.md` |
 | integrated Assimilation Book | PASS | modelling precedes terminology; degree, proper colouring, cyclic closure, knight graphs, incidence and Ramsey forcing integrated in one journey |
-| First-Step Reference | PASS | compact modelling/degree/colour/incidence/Ramsey router |
+| First-Step Reference | PASS | compact modelling/degree/colour/incidence/Ramsey router authored as compression after understanding |
 | Recognition/First-Line Lab | PASS_16 | first-move recognition without long solution demand |
-| practice ladder | PASS_22 | five-stage fade; four source-safe historical anchors plus authored forbidden-subgraph/incidence transfers |
-| deferred source anchors | PASS_FAIL_CLOSED | `IOQM-2023-Q16,Q22` remain teacher/source-map controlled until exact page/figure custody closes; their structures are represented by authored transfer items instead of verbatim promotion |
+| practice ladder | PASS_22 | five-stage fade; source-safe historical anchors plus authored forbidden-subgraph/incidence transfers |
+| deferred source anchors | PASS_FAIL_CLOSED | `IOQM-2023-Q16,Q22` remain teacher/source-map controlled until exact page/figure custody closes |
 | first mastery attempt | PASS | `06_H0_Mastery_Test.md` is unlabelled/unhinted |
 | mastery items | PASS_12 | degree parity, path/cycle colouring, near-complete graph, knight graph, incidence, Ramsey proof and game-boundary items |
-| teacher key synchronization | PASS | Recognition 16, Practice 22 and Mastery 12 independently solved and synchronized |
+| benchmark assimilation lab | PASS | `07_Benchmark_Assimilation_Lab.md` adds explicit RECONNECT diagnostic, error laboratory, ADOPT first-move check, changed-surface transfer and six-question assimilation test |
+| Quadratics-v2 pedagogy comparison | PASS_ARCHITECTURE | `Authoring/Quadratics_v2_Benchmark_Comparison.md`; learner model, missing-link repair, contrast, attempt, fading, first move, transfer and independent-math gates pass |
+| benchmark final artifact equivalence | PENDING | source-visual custody and rendered/preflighted artifact quality remain incomplete |
+| teacher key synchronization | PASS_CORE | Recognition 16, Practice 22 and Mastery 12 independently solved; benchmark-lab companion key is the next synchronization step |
 | required contrasts | PASS | unrestricted vs proper colouring; direct edge count vs degree sum; ordered moves vs unordered pairs; linear vs cyclic; graph state vs game state |
 | learner control-plane scrub | PASS_STATIC | no learner-facing issue/PR/wave/agent/H-level control labels; F labels remain comments only |
 | metadata schema | PENDING | frozen 31-column `Item_Metadata.csv` not yet committed |
-| answer verification flag | PENDING_METADATA | authored answers are independently checked in teacher key, but metadata rows are not yet frozen |
+| answer verification flag | PENDING_METADATA | authored core answers are independently checked, but metadata rows are not yet frozen |
 | canonical renderer | NOT_RUN | rendering script/package not yet created |
 | student PDF preflight | NOT_RUN | no PDF rendered yet |
 | student PDF visual inspection | NOT_RUN | no PDF rendered yet |
@@ -54,8 +57,18 @@ Status: `INTEGRATED_CONTENT_STATIC_QA_PASS_SOURCE_VISUAL_METADATA_PDF_PENDING`
 - Ramsey proofs use local forcing, not hidden brute force;
 - H0 cycle counts independently checked: `C4` with three colours = 18; `C7` with three colours = 126.
 
+## Quadratics-v2 benchmark judgment
+
+The canonical Grade 9 Quadratics benchmark was inspected as an internal comparator. Its pedagogy contract is now represented explicitly in COMB-02: partial-knowledge reconnection, missing-link repair, decision contrasts, attempt-before-hint, fading, first-move independence, changed-surface transfer, error diagnosis and the six-question assimilation test.
+
+Therefore:
+
+`BENCHMARK_PEDAGOGY_AND_MATH_ARCHITECTURE = PASS`.
+
+The stronger benchmark-ready state is withheld because exact source-visual custody, metadata and full PDF render/preflight inspection are incomplete.
+
 ## Static disposition
 
-`CONTENT_STATIC_QA_PASS_SOURCE_VISUAL_METADATA_AND_RENDER_PENDING`
+`BENCHMARK_PEDAGOGY_MATH_PASS_SOURCE_VISUAL_METADATA_AND_RENDER_PENDING`
 
 This is not a claim of classroom effectiveness, retention, psychometric calibration, qualification probability or publication readiness.
