@@ -5,7 +5,7 @@ Status: `INTEGRATED_CONTENT_STATIC_QA_PASS_METADATA_PDF_PENDING`
 | Gate | State | Evidence |
 |---|---|---|
 | issue #82 scope | PASS | exponent normalization, radicals/principal roots, conjugates, nested radicals, reversible transformations, logs as exponents and integer/domain filters retained |
-| production-head compatibility | PASS | branch remains based on `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c` with no unrelated subtree changes |
+| production-head compatibility | PASS | `ioqm-g9-alg06-radicals-logs` is 18 commits ahead / 0 behind `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c`; exactly 18 ALG-06 topic files changed |
 | ALG-01 provider | PASS_ACCEPTED | exact `ALG01_Stable_Prerequisite_Interface_v1.md` consumed; ALG-06 owns the radical/log domain doctrine that ALG-01 explicitly does not export |
 | provider boundary | PASS | retrieves target-led transformation/equivalence discipline only; principal-root/log domain doctrine is taught here |
 | source anchors | PASS_2 | `IOQM-2025-Q28`, `IOQM-2023-Q02` |
