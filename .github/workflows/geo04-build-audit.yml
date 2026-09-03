@@ -1,0 +1,82 @@
+name: GEO-04 Build Audit
+
+on:
+  push:
+    branches: [ioqm-g9-geo04-circles-tangency]
+    paths:
+      - '.github/workflows/geo04-build-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ioqm-g9-geo04-circles-tangency
+          fetch-depth: 0
+
+      - name: Install render dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex texlive-latex-extra fonts-dejavu-core fonts-dejavu-extra poppler-utils
+
+      - name: Validate canonical metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency'
+          export TOPIC
+          python - <<'PY'
+          import csv, os
+          from pathlib import Path
+          p=Path(os.environ['TOPIC'])/'Item_Metadata.csv'
+          with p.open(encoding='utf-8') as f:
+              rows=list(csv.reader(f))
+          assert len(rows)==85, len(rows)
+          assert all(len(r)==31 for r in rows), {i:len(r) for i,r in enumerate(rows) if len(r)!=31}
+          assert all(r[27]=='true' for r in rows[1:])
+          assert rows[0][0]=='item_id' and rows[0][-1]=='notes'
+          PY
+
+      - name: Render candidate PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency'
+          python "$TOPIC/Authoring/render_geo04_pdfs.py"
+          test -s "$TOPIC/PDFs/GEO04_Student_Pack_v1.pdf"
+          test -s "$TOPIC/PDFs/GEO04_Teacher_Key_v1.pdf"
+
+      - name: Structural preflight and learner scrub
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency'
+          STUDENT="$TOPIC/PDFs/GEO04_Student_Pack_v1.pdf"; TEACHER="$TOPIC/PDFs/GEO04_Teacher_Key_v1.pdf"
+          S_PAGES=$(pdfinfo "$STUDENT" | awk '/^Pages:/ {print $2}'); T_PAGES=$(pdfinfo "$TEACHER" | awk '/^Pages:/ {print $2}')
+          test "$S_PAGES" -ge 12; test "$S_PAGES" -le 22
+          test "$T_PAGES" -ge 4; test "$T_PAGES" -le 9
+          pdfinfo "$STUDENT" | grep -q '^Encrypted:       no'; pdfinfo "$TEACHER" | grep -q '^Encrypted:       no'
+          pdftotext "$STUDENT" /tmp/student.txt; pdftotext "$TEACHER" /tmp/teacher.txt
+          ! grep -Eqi 'GEO-04|issue #[0-9]+|pull request|PR #[0-9]+|branch|microstream|interface|metadata schema|H[0-3]|F[0-4]|DRAFT_AUTHORING' /tmp/student.txt
+          grep -q 'Circles, Cyclicity' /tmp/student.txt
+          grep -q 'Teacher' /tmp/teacher.txt
+          printf 'student_pages=%s\nteacher_pages=%s\n' "$S_PAGES" "$T_PAGES" > /tmp/page_counts.txt
+
+      - name: Upload candidate audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: geo04-build-audit
+          path: |
+            Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency/PDFs/GEO04_Student_Pack_v1.pdf
+            Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency/PDFs/GEO04_Teacher_Key_v1.pdf
+            Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency/Item_Metadata.csv
+            /tmp/page_counts.txt
+          if-no-files-found: error
+          retention-days: 30
