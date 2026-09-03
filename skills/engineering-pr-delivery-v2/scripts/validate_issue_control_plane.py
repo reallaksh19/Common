@@ -17,6 +17,14 @@ ROW_PATTERNS = {
     "BM": r"(?m)^\s*(BM-[A-Za-z0-9_.-]+)\b",
     "RM": r"(?m)^\s*(RM-[A-Za-z0-9_.-]+)\b",
 }
+PROGRAM_CHILD_FIELDS = [
+    "PROGRAM_ID", "PROGRAM_WORK_ITEM_KEY", "ISSUE_ROLE", "WORK_PACKAGE_ID", "PARTITION_KEY",
+    "PREDECESSOR_WORK_ITEM_KEY", "REVISION_SEQUENCE", "INHERITED_PROGRAM_BASIS_REVISION",
+    "INHERITED_INPUT_SET_ID", "INHERITED_BENCHMARK_SET_ID", "INHERITED_VALIDATION_SET_ID",
+    "INHERITED_ROADMAP_SET_ID", "PARENT_TASK_ROWS", "USES_INPUT_ROWS", "USES_BENCHMARK_ROWS",
+    "USES_VALIDATION_ROWS", "PROGRAM_OVERLAP_CLASSIFICATION",
+]
+OVERLAP = {"SAFE_DISJOINT", "SAFE_SERIALIZED", "COORDINATION_REQUIRED", "BLOCKED_ACTIVE_SIBLING", "UNKNOWN"}
 
 
 def field(text, name):
@@ -34,6 +42,48 @@ def comment_id_ok(value):
 
 def row_ids(text, kind):
     return set(re.findall(ROW_PATTERNS[kind], text or ""))
+
+
+def validate_program_child(chain, at, basis_text, errors):
+    role = field(at, "ISSUE_ROLE") or field(basis_text, "ISSUE_ROLE")
+    if role not in {"WORK_PACKAGE", "REVISION"}:
+        return
+    for name in PROGRAM_CHILD_FIELDS:
+        av = field(at, name)
+        bv = field(basis_text, name)
+        if not av:
+            errors.append(f"{chain}: program child ACTIVE missing {name}")
+        if not bv:
+            errors.append(f"{chain}: program child Issue Basis missing {name}")
+        if av and bv and av != bv:
+            errors.append(f"{chain}: program child {name} mismatch ACTIVE={av} basis={bv}")
+
+    parent = field(at, "PROGRAM_WORK_ITEM_KEY")
+    if parent and not re.fullmatch(r"github:[^/\s]+/[^#\s]+#[1-9][0-9]*", parent):
+        errors.append(f"{chain}: invalid PROGRAM_WORK_ITEM_KEY {parent}")
+
+    overlap = field(at, "PROGRAM_OVERLAP_CLASSIFICATION")
+    if overlap not in OVERLAP:
+        errors.append(f"{chain}: invalid PROGRAM_OVERLAP_CLASSIFICATION={overlap}")
+    write = field(at, "WRITE_AUTHORITY")
+    auto = field(at, "AUTO_STATE")
+    if overlap in {"COORDINATION_REQUIRED", "BLOCKED_ACTIVE_SIBLING", "UNKNOWN"}:
+        if write == "WRITE_ALLOWED":
+            errors.append(f"{chain}: overlap={overlap} cannot retain WRITE_ALLOWED")
+        if auto == "RUNNING":
+            errors.append(f"{chain}: overlap={overlap} cannot retain AUTO RUNNING")
+    if overlap == "SAFE_SERIALIZED":
+        evidence = field(at, "PROGRAM_SERIALIZATION_EVIDENCE")
+        if write == "WRITE_ALLOWED" and (not evidence or evidence.upper() in {"NONE", "NOT_RUN", "UNKNOWN"}):
+            errors.append(f"{chain}: SAFE_SERIALIZED WRITE_ALLOWED requires PROGRAM_SERIALIZATION_EVIDENCE")
+
+    if role == "REVISION":
+        pred = field(at, "PREDECESSOR_WORK_ITEM_KEY")
+        seq = field(at, "REVISION_SEQUENCE")
+        if not pred or pred == "NONE":
+            errors.append(f"{chain}: REVISION requires PREDECESSOR_WORK_ITEM_KEY")
+        if not seq or not seq.isdigit() or int(seq) <= 0:
+            errors.append(f"{chain}: REVISION_SEQUENCE must be >0")
 
 
 def validate_issue_chain(root: Path, chain_dir: Path):
@@ -112,6 +162,8 @@ def validate_issue_chain(root: Path, chain_dir: Path):
             if missing:
                 errors.append(f"{chain}: {kind} rows diluted/missing from CURRENT.md: {missing}")
 
+    validate_program_child(chain, at, basis_text, errors)
+
     ep_rel = field(at, "ACTIVE_ENDPOINT_FILE")
     ep_path = root / ep_rel if ep_rel else None
     ep_text = ep_path.read_text(encoding="utf-8") if ep_path and ep_path.is_file() else ""
@@ -157,7 +209,6 @@ def main():
         return 1
     print(f"PASS: GitHub-Issue control-plane custody ({checked} issue chain(s))")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
