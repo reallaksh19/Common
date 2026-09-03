@@ -52,15 +52,41 @@ Equivalent form:
 
 ### Why powers of 2 fail
 
-If `n=2^m`, then `2n` has no odd factor greater than `1`. In the factorization `2n=r(2a+r-1)`, exactly one factor is odd. The only available positive odd factor is `1`, which forces the other structural parameter into the trivial one-term case rather than `r>=2`.
+If `n=2^m`, then `2n` has no odd factor greater than `1`. In the factorization `2n=r(2a+r-1)`, exactly one factor is odd. The only available positive odd factor is `1`, which forces the trivial one-term situation rather than a legal `r>=2` representation.
 
-### Why an odd divisor gives a representation
+### Why an odd divisor gives a positive representation
 
-If `n` has an odd divisor `d>1`, then the factorization of `2n` supplies a pair of opposite-parity factors. One can choose the factor order so that the resulting
+Suppose `d>1` is an odd divisor of `n`. Put
 
-`a = ((2n/r)-r+1)/2`
+`q = 2n/d`.
 
-is integral; if a direct choice gives nonpositive `a`, swap to the complementary factor where appropriate. NT-04 owns the detailed reconstruction, positivity and length filtering.
+Then `d*q=2n`, with `d` odd and `q` even. Choose
+
+`r = min(d,q)`
+
+and let
+
+`s = max(d,q)`.
+
+Thus `r>=2`, `s>r`, and `r,s` have opposite parity. Define
+
+`a = (s-r+1)/2`.
+
+Because `s-r` is odd, `a` is an integer; because `s>r`, `a>=1`. Also
+
+`2a+r-1 = s`,
+
+so
+
+`r(2a+r-1)=rs=dq=2n`.
+
+Hence
+
+`n=a+(a+1)+...+(a+r-1)`
+
+is a legal representation by at least two consecutive positive integers.
+
+This proves the existence direction without trial-and-error. NT-04 owns the detailed reconstruction of **all** possible lengths/start values and any extra bounds.
 
 ### Decision boundary
 
