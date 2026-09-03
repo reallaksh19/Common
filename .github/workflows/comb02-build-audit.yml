@@ -1,6 +1,6 @@
 name: COMB-02 Build Audit
 
-# audit revision 2: workflow-text code spans remain text, not math
+# audit revision 3: corrected workflow-code typography and compact teacher pagination
 on:
   push:
     branches: [ioqm-g9-comb02-graphs-colouring]
