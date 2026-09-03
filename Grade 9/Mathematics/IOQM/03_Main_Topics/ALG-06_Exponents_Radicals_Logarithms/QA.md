@@ -1,6 +1,6 @@
 # ALG-06 — Production QA
 
-Status: `BENCHMARK_PEDAGOGY_MATH_METADATA_PASS_PDF_PENDING`
+Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
 | Gate | State | Evidence |
 |---|---|---|
@@ -23,16 +23,18 @@ Status: `BENCHMARK_PEDAGOGY_MATH_METADATA_PASS_PDF_PENDING`
 | benchmark assimilation lab | PASS | explicit RECONNECT diagnostic, error laboratory, ADOPT first-move check, changed-surface transfer and six-question assimilation test |
 | benchmark lab teacher key | PASS | `Teacher_Benchmark_Assimilation_Key.md`; deterministic answers/routes independently recomputed |
 | Quadratics-v2 pedagogy comparison | PASS_ARCHITECTURE | `Authoring/Quadratics_v2_Benchmark_Comparison.md` |
-| benchmark final artifact equivalence | PENDING | benchmark requires rendered/preflighted artifact quality; PDFs not yet produced |
+| benchmark final artifact equivalence | PASS_STATIC_ARTIFACT | learner/teacher PDFs are canonically rendered, structurally preflighted, repository-custodied and page-by-page visually inspected |
 | teacher key synchronization | PASS | core Teacher Diagnostic Key plus separate benchmark-lab key |
 | required contrasts | PASS | common base vs log; simple vs nested radical; conjugate vs square; reversible vs implication-only square; domain-first vs manipulation-first |
-| learner control-plane scrub | PASS_STATIC | no learner-facing issue/PR/wave/agent/H-level control labels in student documents; F labels remain comments only |
+| learner control-plane scrub | PASS_STATIC_RENDERED | exact rendered student PDF contains no issue/PR/branch/wave/agent/H-level/F-level/metadata/interface workflow labels |
 | metadata schema | PASS_79 | `Item_Metadata.csv`: canonical 31-column schema; 79 rows = 2 historical + 48 core learner + 28 benchmark diagnostic + 1 six-question rubric |
 | answer verification flag | PASS | every promoted metadata row records `answer_verified_independently=true` |
-| canonical renderer | NOT_RUN | rendering script/package not yet created |
-| student PDF preflight | NOT_RUN | no PDF rendered yet |
-| student PDF visual inspection | NOT_RUN | no PDF rendered yet |
-| teacher PDF custody | NOT_RUN | no teacher companion rendered yet |
+| canonical renderer | PASS | `Authoring/render_alg06_pdfs.py`; GitHub Actions canonical execution passed |
+| student PDF preflight | PASS_14 | `PDFs/ALG06_Student_Pack_v1.pdf`; 14 A4 pages, text-based/openable, unencrypted |
+| student PDF visual inspection | PASS_14 | exact repository-custody binary inspected at 200 dpi; no clipping, overlap, broken glyphs or accidental blank pages |
+| teacher PDF custody | PASS_5 | `PDFs/ALG06_Teacher_Key_v1.pdf`; 5 A4 pages, preflighted and visually inspected |
+| repository PDF custody | PASS | custody commit `2b15b1cec36c5ac10234e4045215f1003fee3cd1`; blob/hash/page-count record in `PDF_Custody.md` |
+| exact-binary render regression | PASS_ZERO_DIFF | GitHub-run custody binaries have 0 changed pages versus the already-approved local render at 120 dpi: student 0/14, teacher 0/5 |
 | classroom timing/readability | NOT_RUN | evidence-dependent classroom gate |
 | longitudinal retention | NOT_RUN | evidence-dependent |
 | psychometric calibration | NOT_RUN | evidence-dependent |
@@ -49,12 +51,16 @@ For `a,b>=2`, set `t=log_a b>0`; then `log_b a=1/t`. The equation gives `t=2` or
 
 ## Quadratics-v2 benchmark judgment
 
-The Grade 9 Quadratics benchmark is now matched on the static **pedagogy/math/metadata architecture**: partial-knowledge reconnection, missing-link repair, contrast/decision boundaries, attempt-before-hint, fading, first-move independence, changed-surface transfer, error diagnosis, six-question assimilation, source custody, independent mathematics and item metadata are all explicit.
+ALG-06 now matches the Grade 9 Quadratics v2 benchmark on the complete **static artifact class**: partial-knowledge reconnection, missing-link repair, contrast/decision boundaries, attempt-before-hint, fading, first-move independence, changed-surface transfer, error diagnosis, six-question assimilation, source custody, independent mathematics, item metadata, canonical rendering, structural PDF preflight, learner-control scrub, exact-binary repository custody and page-by-page render inspection are all closed.
 
-The benchmark's stronger `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED` label is still withheld because it also requires completed PDF render/preflight/page inspection. That gate remains genuinely `NOT_RUN` here.
+Therefore the justified static disposition is:
+
+`BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
+
+This is deliberately narrower than a claim of instructional effectiveness. Classroom timing/readability, longitudinal retention, psychometric calibration, qualification/pass-mark probability and publication approval remain `NOT_RUN`.
 
 ## Static disposition
 
-`BENCHMARK_PEDAGOGY_MATH_METADATA_PASS_RENDER_PENDING`
+`BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
-This is not a claim of classroom effectiveness, retention, psychometric calibration, qualification probability or publication readiness.
+The PR must remain Draft until explicit authorization to mark ready or merge is given.
