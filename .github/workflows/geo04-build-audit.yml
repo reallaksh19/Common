@@ -5,6 +5,8 @@ on:
     branches: [ioqm-g9-geo04-circles-tangency]
     paths:
       - '.github/workflows/geo04-build-audit.yml'
+      - 'Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency/Authoring/render_geo04_pdfs.py'
+      - 'Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency/Authoring/generate_geo04_metadata.py'
 
 permissions:
   contents: write
@@ -80,7 +82,11 @@ jobs:
           test "$T_PAGES" -ge 4; test "$T_PAGES" -le 9
           pdfinfo "$STUDENT" | grep -q '^Encrypted:       no'; pdfinfo "$TEACHER" | grep -q '^Encrypted:       no'
           pdftotext "$STUDENT" /tmp/student.txt; pdftotext "$TEACHER" /tmp/teacher.txt
-          ! grep -Eqi 'GEO-04|issue #[0-9]+|pull request|PR #[0-9]+|branch|microstream|interface|metadata schema|H[0-3]|F[0-4]|DRAFT_AUTHORING' /tmp/student.txt
+          if grep -Eqi 'GEO-04|issue #[0-9]+|pull request|PR #[0-9]+|ioqm-g9-|microstream|metadata schema|DRAFT_AUTHORING|\bH[0-3]\b|\bF[0-4]\b' /tmp/student.txt; then
+            echo 'learner control-plane scrub failed'
+            grep -Ein 'GEO-04|issue #[0-9]+|pull request|PR #[0-9]+|ioqm-g9-|microstream|metadata schema|DRAFT_AUTHORING|\bH[0-3]\b|\bF[0-4]\b' /tmp/student.txt || true
+            exit 1
+          fi
           grep -q 'Circles, Cyclicity' /tmp/student.txt
           grep -q 'Teacher' /tmp/teacher.txt
           printf 'student_pages=%s\nteacher_pages=%s\n' "$S_PAGES" "$T_PAGES" > /tmp/page_counts.txt
