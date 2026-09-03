@@ -4,6 +4,8 @@ Status: `V1_FROZEN_FOR_PRODUCTION_WAVES`
 
 Purpose: prevent prerequisite inversion and make the learner journey explicit before topic prose exists.
 
+Coverage-hardening overlays are recorded in `IOQM_G9_Coverage_Hardening_Overlay_v1.md`; cross-topic proof modes are defined in `IOQM_G9_Proof_Strategy_Toolkit_v1.md`.
+
 ## 1. Dependency semantics
 
 Use these edge labels:
@@ -39,7 +41,8 @@ Use these edge labels:
 - variable/domain restrictions;
 - finite case completeness;
 - exact vs approximate reasoning;
-- proof/check discipline.
+- proof/check discipline;
+- direct proof, contradiction, contrapositive where useful, construction/obstruction, extremal choice, invariant/monovariant and equality-condition closure through `IOQM_G9_Proof_Strategy_Toolkit_v1.md`.
 
 All four domains `REQUIRE F0` and `BRIDGE_REQUIRE F1`.
 
@@ -49,12 +52,14 @@ All four domains `REQUIRE F0` and `BRIDGE_REQUIRE F1`.
 F0/F1
   |
   +--> NT-01 Divisibility/GCD/LCM
+  |       |    exports Euclid's Lemma
   |       |
-  |       +--> NT-02 Modular Arithmetic/Cycles
+  |       +--> NT-02 Modular Arithmetic/Cycles/Euler bridge
   |       |       |
   |       |       +--> NT-05 Digit/Base Structure
   |       |
   |       +--> NT-03 Prime Factorisation/Divisors/Perfect Powers
+  |               |    retrieves Euclid's Lemma
   |               |
   |               +--> NT-04 Diophantine/Integer Restrictions
   |
@@ -63,6 +68,8 @@ F0/F1
 
 Notes:
 - NT-01 is the main structural prerequisite for NT-02 and NT-03.
+- NT-01 canonically owns Euclid's Lemma: prime `p|ab` implies `p|a` or `p|b`; NT-03 retrieves it when prime divisibility must split across a product.
+- NT-02 canonically owns the bounded Euler theorem bridge and optional prime-modulus Fermat companion, with explicit coprimality checks and a cycle-vs-theorem decision boundary.
 - NT-04 depends jointly on factorisation/algebra and number-theoretic restrictions.
 - NT-05 can begin early with place value, but advanced divisibility/cycle work follows NT-02.
 
@@ -98,6 +105,7 @@ Important ownership rule:
 - Other topics may retrieve/use Vieta but must not create an independent canonical derivation.
 - AM-GM/equality is canonically taught in ALG-02.
 - Other topics may apply it but should link back rather than reteach from scratch.
+- Generic proof modes are retrieved from the proof toolkit; specialized algebraic legality remains owned by the relevant algebra topic.
 
 ## 5. Geometry dependency graph
 
@@ -121,6 +129,7 @@ Notes:
 - GEO-01 and GEO-04 can be authored in parallel after their prerequisite interfaces are frozen.
 - Coordinate/vector methods are alternate representations, not mandatory first methods for every geometry problem.
 - exact figure custody belongs to source provenance, not mathematical dependency.
+- contradiction, construction/obstruction and proof-hypothesis checks retrieve the shared proof toolkit rather than forming a separate geometry proof chapter.
 
 ## 6. Combinatorics dependency graph
 
@@ -141,7 +150,7 @@ F0 arithmetic + F1 proof/model habits
           BRIDGE_REQUIRES parity/residue ideas from NT-01/NT-02 for many applications
 ```
 
-COMB-04 and COMB-05 do not require advanced permutation formulas; they require modelling and proof discipline.
+COMB-04 and COMB-05 do not require advanced permutation formulas; they require modelling and proof discipline. Their invariant/monovariant, contradiction, extremal and construction/obstruction proof modes retrieve the shared proof toolkit.
 
 ## 7. Cross-domain prerequisite edges
 
@@ -203,12 +212,15 @@ Allowed sequence:
 3. downstream prose gives only a short retrieval cue;
 4. learner is routed to ALG-03 for reconstruction if diagnostic shows the prerequisite is missing.
 
+The same rule applies to the named coverage bridges: NT-03 retrieves Euclid's Lemma from NT-01; downstream modular applications retrieve Euler/Fermat legality from NT-02.
+
 ## 11. Main-topic dependency checklist
 
 Before Wave 0 closes, answer:
 - Which concepts are `REQUIRES` prerequisites?
 - Which are only `BRIDGE_REQUIRES`?
 - Which overlap concepts have another canonical owner?
+- Which generic proof modes should be retrieved from `IOQM_G9_Proof_Strategy_Toolkit_v1.md`?
 - Could a Grade-9 learner enter this topic with the stated prerequisites?
 - Does any planned section use a concept whose canonical teaching appears later?
 - Are any two parallel microstreams mutually dependent?
@@ -218,4 +230,4 @@ Any unresolved prerequisite inversion blocks integrated prose.
 
 ## Change-control rule
 
-The dependency graph is frozen for v1 production. A new hard dependency must be recorded explicitly with its effect on production wave, overlap ownership and issue registry. Do not silently serialize the program.
+The dependency graph is frozen for v1 production. A new hard dependency must be recorded explicitly with its effect on production wave, overlap ownership and issue registry. The issue-#132 coverage hardening adds named content within existing ownership and does not alter the production wave graph. Do not silently serialize the program.
