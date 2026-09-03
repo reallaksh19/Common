@@ -86,6 +86,9 @@ def _texify(s: str) -> str:
 def _looks_math(s: str) -> bool:
     if "IOQM-" in s or "BENCHMARK_" in s:
         return False
+    # Repository paths and filenames are prose/code identifiers even when underscores occur.
+    if "/" in s or re.search(r"\.(md|csv|py|pdf)$", s, flags=re.I):
+        return False
     if s in {
         "recognition", "representation", "execution", "checking", "transfer",
         "CYCLICITY_ASSUMED_FROM_PICTURE", "GENERIC_QUAD_RULE_USED",
