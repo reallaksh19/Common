@@ -1,6 +1,6 @@
 # GEO-04 — Circles, Cyclicity & Tangency
 
-Status: `DRAFT_AUTHORING_STARTED`
+Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 Issue: `#84`
 Production base at kickoff: `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c`
 
@@ -23,7 +23,7 @@ Retrieve without reteaching:
 - proved-symmetry-only discipline;
 - coordinate/vector route only as an alternate representation.
 
-GEO-04 must add the circle-specific canon rather than rebuilding basic angle teaching.
+GEO-04 adds the circle-specific canon rather than rebuilding basic angle teaching.
 
 ## Canonical ownership
 GEO-04 owns:
@@ -43,7 +43,7 @@ GEO-04 owns:
 4. a visually plausible circle relation vs a relation justified by stated incidence/tangency hypotheses.
 
 ## Microstreams
-Each will receive one separate full A–P authoring interface:
+Seven full A–P authoring interfaces are complete:
 1. centre / inscribed angles;
 2. cyclicity;
 3. tangent-radius and equal tangents;
@@ -52,33 +52,37 @@ Each will receive one separate full A–P authoring interface:
 6. intersecting chords / secants;
 7. source / figure audit.
 
-## Historical anchors to audit independently
+## Historical anchors
 `IOQM-2025-Q19,Q23,Q30`; `IOQM-2024-Q17`; `IOQM-2023-Q15`.
 
-Historical figures must be kept under exact source custody. No redraw may alter incidence, tangency, ordering, labels or geometric meaning. Figure-required flags and provenance will be recorded explicitly before promotion.
+All five historical answers are independently closed and all five exact historical problem pages have been visually inspected. The statements are text-only; no printed historical problem figure requires redraw custody. The canonical non-degenerate interpretation of `IOQM-2025-Q23` is preserved.
 
-## Production gates
-Before readiness can be considered:
-- independent solutions for all five anchors from exact source/figure custody;
-- exact GEO-02 provider citation retained in authoring records;
+## Static production closure
+Closed:
+- independent solutions for all five historical anchors;
+- exact GEO-02 provider citation and retrieval boundary;
 - independent verification of all authored item keys;
-- frozen 31-column metadata only;
-- no learner-facing H/T/topic/wave labels;
-- first mastery attempt unlabelled and unhinted;
+- canonical 31-column metadata with 84 controlled rows;
+- learner control-plane scrub;
+- unlabelled/unhinted first mastery attempt;
 - source-marker / metadata / teacher-key closure;
-- canonical student and teacher PDFs with hash, blob, page count, structural preflight and independent page-by-page visual/figure QA.
+- canonical student and teacher PDFs;
+- SHA-256, Git blob and page-count custody;
+- structural preflight and page-by-page 200-dpi visual QA;
+- exact repository render regression against the approved corrected candidate.
 
-Classroom timing/readability, retention, psychometric calibration, qualification probability and publication approval remain `NOT_RUN` until real evidence exists.
+Evidence-dependent classroom timing/readability, retention, psychometric calibration, qualification probability and publication approval remain `NOT_RUN`.
 
-## Planned integrated learner package
+## Integrated learner package
 1. Concept and Dependency Map
 2. Source Coverage / PYQ Map
 3. Assimilation Book
 4. First-Step Reference
 5. Recognition and First-Line Lab
-6. Practice / Transfer Bank with visible F0→F4 support fading
-7. Mixed H0 Mastery Test with no method labels or hints
-8. Teacher Diagnostic Key
-9. Metadata / QA / PDF custody
+6. Practice / Transfer Bank with visible support fading
+7. Mixed unhinted Mastery Test
+8. Benchmark Assimilation Lab
+9. Teacher Diagnostic and Benchmark Keys
+10. Metadata / QA / PDF custody
 
-This file establishes the production boundary only; it does not claim the source or figure audit is complete.
+Static disposition: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`.
