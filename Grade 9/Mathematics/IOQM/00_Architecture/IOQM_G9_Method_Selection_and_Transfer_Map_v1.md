@@ -4,7 +4,7 @@ Status: `DRAFT_PROGRAM_ROUTER`
 
 Purpose: stop the curriculum from becoming a formula catalogue. The learner must learn to choose among methods, not merely recognize isolated chapter labels.
 
-Generic proof-mode selection is governed by `IOQM_G9_Proof_Strategy_Toolkit_v1.md`; named syllabus hardening is governed by `IOQM_G9_Coverage_Hardening_Overlay_v1.md`.
+Generic proof-mode selection is governed by `IOQM_G9_Proof_Strategy_Toolkit_v1.md`; named syllabus/comparison hardening is governed by `IOQM_G9_Coverage_Hardening_Overlay_v1.md`.
 
 ## 1. Universal IOQM problem router
 
@@ -28,15 +28,19 @@ Compressed:
 | Surface | Decision A | Decision B | Boundary question |
 |---|---|---|---|
 | prime divides a product | Euclid's Lemma | ordinary divisibility/factor work | Is the divisor actually prime, so divisibility may legally split across factors? |
+| linear integer equation `ax+by=c` | Bézout/extended Euclid | search/factor casework | Does `gcd(a,b)` divide `c`, and do we need existence only or the full solution family? |
+| closest rational / determinant `|qb-pa|` | Bézout lower numerator | bounded exact comparison | Does a determinant-1 candidate exist **within the stated bounds**, or must admissible denominators still be compared? |
 | repeated remainder | LCM / congruence construction | GCD of differences | Are we constructing numbers satisfying common congruences, or extracting a divisor from differences? |
 | huge exponent | short cycle/order | Euler/Fermat compression | Is the base coprime to the modulus, and is a named theorem cheaper than the visible cycle? |
 | divisibility equation | factorisation | modular obstruction | Does factorisation make finitely many integer cases, or does a residue eliminate cases faster? |
 | perfect square/cube | exponent parity/multiplicity | numerical search | Can prime exponents decide the condition before testing values? |
+| consecutive positive sum | odd-divisor/power-of-two structure | direct sequence search | Is only existence asked, or must NT-04 reconstruct all admissible start/length pairs? |
 | integer equation | parity/gcd/divisibility | quadratic/discriminant filter | Which restriction collapses the search space first? |
 | digit problem | place value | permutation counting | Is arithmetic structure or arrangement the dominant constraint? |
 
 Number-theory theorem legality:
 - Euclid's Lemma requires a **prime** divisor;
+- Bézout gives integer linear combinations of `gcd(a,b)`; `ax+by=c` is solvable iff `gcd(a,b)|c`;
 - Euler's theorem requires `gcd(a,n)=1`;
 - Fermat's little theorem requires prime modulus `p` and `p` not dividing the base;
 - a short residue cycle should be preferred when it is more transparent than theorem machinery.
@@ -45,13 +49,18 @@ Transfer endpoints:
 
 - modular cycles / bounded Euler-Fermat bridge -> last digits -> digit divisibility -> invariant games;
 - Euclid's Lemma -> prime factor structure -> perfect powers -> Diophantine filters;
+- Bézout/extended Euclid -> linear Diophantine solvability -> bounded/positive reconstruction in NT-04;
 - prime exponent parity -> perfect powers -> divisor-count parity -> Diophantine filters;
+- odd divisors / power-of-two obstruction -> consecutive-sum existence -> NT-04 sequence reconstruction;
 - gcd of differences -> same-remainder problems -> geometric spacing/pigeonhole bridges.
 
 ## 3. Algebra decision boundaries
 
 | Surface | Decision A | Decision B | Boundary question |
 |---|---|---|---|
+| absolute-value inequality | distance/interval translation | optimization theorem | Is the task to solve a set of `x` values rather than optimize an expression? |
+| nested absolute value | remove outer absolute value first | case-splitting inner expression immediately | Can the outer distance condition first be converted into a condition on `|x|`? |
+| integer count after inequality | solve real interval/union first | count by inspection from the original formula | Have strict/closed endpoints and zero/sign symmetry been settled before counting? |
 | quadratic | solve roots | use root invariants/representation | Are individual roots actually requested? |
 | root condition | discriminant | vertex/whole-graph reasoning | Is the target root existence/count or an extremum/sign for all x? |
 | symmetric root target | Vieta | explicit roots | Does swapping roots leave the target unchanged? |
@@ -63,6 +72,7 @@ Transfer endpoints:
 
 Transfer endpoints:
 
+- absolute-value interval -> integer counting -> floor/ceiling/discrete filters;
 - Vieta -> rectangle dimensions -> geometry root encodings;
 - discriminant -> parameter feasibility -> geometry tangency;
 - recurrence -> combinatorial state evolution;
@@ -125,7 +135,29 @@ Retrieve the detailed proof obligations from `IOQM_G9_Proof_Strategy_Toolkit_v1.
 
 A cross-domain bridge is valid only if it reduces the problem rather than creating a second full chapter inside the first.
 
-Examples:
+### NT-01 -> NT-04: Bézout to Diophantine reconstruction
+
+Route:
+
+`GCD DIVISIBILITY -> ONE BEZOUT SOLUTION -> PARAMETER FAMILY -> POSITIVITY/BOUND FILTER`
+
+NT-01 owns the first two structural facts; NT-04 owns the full family and problem-specific admissibility.
+
+### NT-03 -> NT-04: consecutive sums
+
+Route:
+
+`ODD DIVISOR / NOT POWER OF 2 -> 2n=r(2a+r-1) -> RECOVER a,r -> CHECK POSITIVITY/COMPLETENESS`
+
+NT-03 answers existence; NT-04 answers reconstruction/enumeration.
+
+### ALG-02 -> ALG-07: absolute-value interval to discrete count
+
+Route:
+
+`DISTANCE CONDITION -> REAL INTERVAL/UNION -> ENDPOINT CHECK -> INTEGER/FLOOR/CEILING FILTER`
+
+ALG-02 owns the absolute-value inequality translation. ALG-07 owns later floor/ceiling machinery when that becomes primary.
 
 ### Geometry -> Algebra
 
@@ -225,7 +257,9 @@ Create deliberate cross-domain decision collisions, e.g.:
 - recurrence: algebraic sequence vs combinatorial state count;
 - colouring: geometric region colouring vs graph colouring vs modular invariant;
 - quadratic: explicit roots vs integer-root Diophantine filter vs geometry tangency;
-- inequality: real optimum vs integer optimum vs geometric feasibility;
+- inequality: absolute-value interval vs real optimum vs integer optimum vs geometric feasibility;
+- linear integer equation: Bézout solvability vs full bounded Diophantine reconstruction;
+- consecutive-sum question: power-of-two obstruction vs actual sequence enumeration;
 - huge modular exponent: visible cycle vs Euler/Fermat theorem with legality check;
 - product divisibility: prime Euclid-lemma split vs invalid composite imitation.
 
