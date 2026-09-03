@@ -1,38 +1,41 @@
 # COMB-02 — Production QA
 
-Status: `BENCHMARK_PEDAGOGY_MATH_PASS_SOURCE_VISUAL_METADATA_PDF_PENDING`
+Status: `BENCHMARK_STATIC_ARTIFACT_PASS_ONE_SOURCE_PAGE_VISUAL_GATE_PENDING`
 
 | Gate | State | Evidence |
 |---|---|---|
 | issue #85 scope | PASS | graph modelling, degree/handshaking, colouring constraints, incidence double counting, grid/knight graphs and Ramsey-style inevitability retained |
-| production-head compatibility | PASS | branch remains topic-only and based on `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c` |
+| production-head compatibility | PASS | branch remains topic-only from `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c` before merge |
 | COMB-01 provider | PASS_ACCEPTED | exact `COMB01_Stable_Counting_Model_Interface_v1.md` consumed |
-| provider boundary | PASS | generic P&C, unrestricted counting, complement and inclusion-exclusion are retrieved only where needed; no duplicate counting chapter |
+| provider boundary | PASS | generic P&C, complement and inclusion-exclusion are retrieved rather than duplicated |
 | source anchors | PASS_6 | `IOQM-2025-Q08,Q29`; `IOQM-2024-Q09,Q19`; `IOQM-2023-Q16,Q22` |
-| historical answers | PASS | `48,19,48,12,94,77` independently re-derived |
-| source/figure custody | PARTIAL_FAIL_CLOSED | exact page/figure custody still pending for geometric-surface promotion; final historical figure publication remains fail-closed |
+| exact source stems | PASS_6 | all six controlled stems checked against organizer/controlled paper sources |
+| historical answers | PASS_6 | `48,19,48,12,94,77` independently re-derived |
+| source/figure custody | PASS_5_PLUS_1_FAIL_CLOSED | Q08 page visual closed and text-only; Q16 page visual closed and text-only; Q22 exact stem/key/math closed but organizer page-image confirmation remains pending |
+| Q22 learner promotion | PASS_FAIL_CLOSED | `IOQM-2023-Q22` remains source-map/teacher controlled and is not promoted verbatim into the student bank |
 | microstream interfaces | PASS_7 | modelling; degree/handshaking; colouring; incidence; grid/knight; Ramsey; source audit |
 | topic-lead integration | PASS | `Authoring/Lead_Integration_Map.md` |
-| integrated Assimilation Book | PASS | modelling precedes terminology; degree, proper colouring, cyclic closure, knight graphs, incidence and Ramsey forcing integrated in one journey |
-| First-Step Reference | PASS | compact modelling/degree/colour/incidence/Ramsey router authored as compression after understanding |
-| Recognition/First-Line Lab | PASS_16 | first-move recognition without long solution demand |
-| practice ladder | PASS_22 | five-stage fade; source-safe historical anchors plus authored forbidden-subgraph/incidence transfers |
-| deferred source anchors | PASS_FAIL_CLOSED | `IOQM-2023-Q16,Q22` remain teacher/source-map controlled until exact page/figure custody closes |
+| integrated Assimilation Book | PASS | modelling precedes terminology; graph/degree/colour/incidence/Ramsey journey is integrated |
+| First-Step Reference | PASS | compact modelling/degree/colour/incidence/Ramsey router |
+| Recognition/First-Line Lab | PASS_16 | recognition and first mathematical line only |
+| practice ladder | PASS_22 | F0→F4 support fading with source-safe historical transfer |
 | first mastery attempt | PASS | `06_H0_Mastery_Test.md` is unlabelled/unhinted |
-| mastery items | PASS_12 | degree parity, path/cycle colouring, near-complete graph, knight graph, incidence, Ramsey proof and game-boundary items |
-| benchmark assimilation lab | PASS | explicit RECONNECT diagnostic, error laboratory, ADOPT first-move check, changed-surface transfer and six-question assimilation test |
-| benchmark lab teacher key | PASS | `Teacher_Benchmark_Assimilation_Key.md`; deterministic counts/routes independently recomputed |
+| mastery items | PASS_12 | degree parity, colouring, knight graph, incidence, Ramsey and game-state boundaries |
+| benchmark assimilation lab | PASS | RECONNECT, error diagnosis, ADOPT first moves, changed-surface transfer and six-question assimilation |
+| benchmark lab teacher key | PASS | deterministic answers/routes independently recomputed |
 | Quadratics-v2 pedagogy comparison | PASS_ARCHITECTURE | `Authoring/Quadratics_v2_Benchmark_Comparison.md` |
-| benchmark final artifact equivalence | PENDING | source-visual custody and rendered/preflighted artifact quality remain incomplete |
 | teacher key synchronization | PASS | core Teacher Diagnostic Key plus benchmark-lab key |
-| required contrasts | PASS | unrestricted vs proper colouring; direct edge count vs degree sum; ordered moves vs unordered pairs; linear vs cyclic; graph state vs game state |
-| learner control-plane scrub | PASS_STATIC | no learner-facing issue/PR/wave/agent/H-level control labels; F labels remain comments only |
-| metadata schema | PENDING | frozen 31-column `Item_Metadata.csv` not yet committed |
-| answer verification flag | PENDING_METADATA | authored answers are independently checked, but metadata rows are not yet frozen |
-| canonical renderer | NOT_RUN | rendering script/package not yet created |
-| student PDF preflight | NOT_RUN | no PDF rendered yet |
-| student PDF visual inspection | NOT_RUN | no PDF rendered yet |
-| teacher PDF custody | NOT_RUN | no teacher companion rendered yet |
+| required contrasts | PASS | unrestricted vs proper colouring; direct edge count vs degree sum; ordered vs unordered; linear vs cyclic; static graph vs game state |
+| metadata schema | PASS_85 | canonical 31-column `Item_Metadata.csv`, 85 promoted/control rows |
+| answer verification flag | PASS | every metadata row has `answer_verified_independently=true` |
+| canonical renderer | PASS | `Authoring/render_comb02_pdfs.py`; canonical GitHub Actions execution passed |
+| student PDF preflight | PASS_14 | 14 A4 pages, text-based/openable, unencrypted |
+| student PDF visual inspection | PASS_14 | exact repository binary inspected at 200 dpi; no clipping, overlap, broken glyphs or accidental blank pages |
+| teacher PDF custody | PASS_6 | 6 A4 pages, preflighted and visually inspected |
+| repository PDF custody | PASS | custody commit `adee63ac889e9ba02377ab965f6292f26fbcd21c`; hashes/blob IDs in `PDF_Custody.md` |
+| exact-binary render regression | PASS_ZERO_DIFF | repository custody pages are pixel-identical at 200 dpi to the approved final audit candidate: student 0/14 changed; teacher 0/6 changed |
+| learner control-plane scrub | PASS_STATIC_RENDERED | no learner-facing issue/PR/branch/wave/agent/H/F/metadata/interface workflow labels |
+| Quadratics-v2 final static equivalence | QUALIFIED_PASS | pedagogy/math/metadata/rendered-artifact class matches benchmark; one non-promoted historical source page visual gate remains explicitly open |
 | classroom timing/readability | NOT_RUN | evidence-dependent classroom gate |
 | longitudinal retention | NOT_RUN | evidence-dependent |
 | psychometric calibration | NOT_RUN | evidence-dependent |
@@ -41,12 +44,12 @@ Status: `BENCHMARK_PEDAGOGY_MATH_PASS_SOURCE_VISUAL_METADATA_PDF_PENDING`
 
 ## Benchmark judgment
 
-COMB-02 now matches the canonical Grade 9 Quadratics benchmark on static pedagogy/math architecture: partial-knowledge diagnosis, missing-link repair, contrast, attempt-before-hint, fading, independent first moves, changed-surface transfer, error diagnosis, six-question assimilation, source discipline and independent mathematics.
+COMB-02 matches the Grade 9 Quadratics v2 benchmark on the learner-facing static artifact class: partial-knowledge diagnosis, missing-link repair, contrast/decision boundaries, attempt-before-hint, fading, first-move independence, changed-surface transfer, error diagnosis, six-question assimilation, independent mathematics, canonical metadata, canonical rendering, structural preflight, learner scrub, exact-binary repository custody and page-by-page visual inspection are all closed.
 
-The stronger benchmark-ready label remains withheld until source-visual custody, metadata and rendered artifact QA pass.
+The stronger unqualified `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED` label is withheld because `IOQM-2023-Q22` still lacks exact organizer page-image confirmation. That item remains fail-closed outside the promoted student historical bank, so this debt does not contaminate the rendered student package.
 
 ## Static disposition
 
-`BENCHMARK_PEDAGOGY_MATH_PASS_SOURCE_VISUAL_METADATA_AND_RENDER_PENDING`
+`BENCHMARK_STATIC_ARTIFACT_PASS_ONE_SOURCE_PAGE_VISUAL_GATE_PENDING`
 
-This is not a claim of classroom effectiveness, retention, psychometric calibration, qualification probability or publication readiness.
+The user explicitly authorized merging this qualified state on 2026-09-03. This merge authorization does not convert the Q22 source-page gate, classroom timing/readability, retention, psychometric calibration, qualification/pass-mark calibration or publication approval into PASS states.
