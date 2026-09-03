@@ -1,34 +1,51 @@
 # QA - Diophantine Equations & Integer Restrictions
 
-State: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`.
+State: `CONTENT_ENRICHED_RENDER_RECERTIFICATION_PENDING`.
+Issue: `#134`
+
+The learner First-Step Reference and teacher diagnostic surface changed to consume the new Bézout/extended-Euclid and consecutive-sum bridges. The earlier `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED` PDF certification remains historical evidence for its prior commit, but it no longer certifies the current source state.
 
 ## Static gates
 - G0 source authority: PASS
-- G1 dependency: PASS
-- G2 governing model: PASS
-- G3 ownership/overlap: PASS
+- G1 dependency: PASS_UPDATED — retrieve Bézout/linear-solvability from NT-01 and consecutive-sum existence structure from NT-03
+- G2 governing model: PASS_UPDATED
+- G3 ownership/overlap: PASS_UPDATED — NT-01 owns Euclidean/Bézout theorem machinery; NT-03 owns odd-divisor existence criterion; NT-04 owns solution-family/reconstruction/filtering
 - G4 separate A-P microstream interfaces: PASS
 - G5 integrated lead-authored student journey: PASS
-- G6 deduplication: PASS
-- G7 cross-boundary contrasts: PASS
+- G6 deduplication: PASS_UPDATED
+- G7 cross-boundary contrasts: PASS_UPDATED
 - G8 attempt-before-help/fading architecture: PASS
-- G9 integrated First-Step: PASS
-- G10 unlabelled first-attempt mastery: PASS
-- G11 independent mathematics: PASS
+- G9 integrated First-Step: PASS_ENRICHED
+- G10 unlabelled first-attempt mastery: PASS_UNCHANGED
+- G11 independent mathematics: PASS_STATIC for existing scored items; enrichment derivations independently checked
 - G12 source custody: PASS
-- G13 student-export hygiene: PASS
-- G14 one render authority: PASS
-- G15 render/preflight and page-by-page visual inspection: PASS
-- G16 transfer quality: PASS_STATIC
+- G13 student-export hygiene: PASS_SOURCE
+- G14 previous render authority: HISTORICAL_ONLY
+- G15 current-source render/preflight/page-by-page visual inspection: PENDING
+- G16 transfer quality: PASS_STATIC_UPDATED
 - G17 six-question ownership: PASS_STATIC
 
-## Exact rendered artifact custody
-- `NT04_Student_Pack_v1.pdf`: SHA-256 `b8aafba8ff139be07fc1c9739094cda02e7ba713b03b48da38c615b6be51dc45`; Git blob `44a5f7481821753e203d2bede342072ca88f6b0d`; 16819 bytes; 7 pages; 612x792 pt (US Letter); exact final raster inspection PASS.
-- `NT04_Teacher_Key_v1.pdf`: SHA-256 `12d8ad86835b2ee42037729f234401e37b64043004896ced793ea5997a33a1ae`; Git blob `7aae1dad12e3073a47eb617bc798f670d8ab0556`; 5172 bytes; 3 pages; 612x792 pt (US Letter); exact final raster inspection PASS.
+## Enrichment mathematics
 
-PDF transport note: the standard four-byte binary marker in the PDF header comment was replaced one-for-one by ASCII `####` solely to preserve exact-byte transport through the repository connector; xref offsets and page content are unchanged. Structural preflight and a fresh page-by-page raster inspection were rerun on these exact sanitized artifacts.
-Learner-facing control scan: PASS; no H0/H1/H2/H3, T2/T3/T4, dependency-topic codes, wave labels, or authoring/control-plane terminology in the learner PDFs.
-Teacher-answer alignment: PASS against the final learner item numbering and frozen metadata.
+### Bézout retrieval -> NT-04 reconstruction
+If `g=gcd(a,b)` and `(x0,y0)` solves `ax+by=c`, then all integer solutions are
+
+`x=x0+(b/g)t`, `y=y0-(a/g)t`, `t in Z`.
+
+The gcd-divisibility existence test is retrieved from NT-01; positivity/bounds/completeness are NT-04-owned.
+
+### Consecutive-sum reconstruction
+Retrieve from NT-03 that a positive integer is representable as at least two consecutive positive integers iff it is not a power of 2. NT-04 reconstructs via
+
+`2n=r(2a+r-1)`, `a=((2n/r)-r+1)/2`,
+
+then checks integrality, `a>=1`, `r>=2`, bounds and duplicates.
+
+## Historical rendered artifact custody — no longer current-source certification
+- prior `NT04_Student_Pack_v1.pdf`: Git blob `44a5f7481821753e203d2bede342072ca88f6b0d`
+- prior `NT04_Teacher_Key_v1.pdf`: Git blob `7aae1dad12e3073a47eb617bc798f670d8ab0556`
+
+These artifacts remain valid for the earlier source snapshot only. A fresh manual render/preflight/page inspection is required after this patch. No workflow is authorized.
 
 ## Evidence-dependent gates
 Classroom timing/readability: NOT_RUN
