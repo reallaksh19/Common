@@ -1,19 +1,19 @@
 CHAIN_STATE_VERSION: 3
 CHAIN_ID: COMMON-ENGINEERING-GITHUB-ISSUE-AUTHORING-SKILL
-MISSION: Create a reusable engineering GitHub issue authoring skill with code-ready work orders, source/benchmark custody, anti-drift gates, expert implementation questions, and multi-agent parent/child/revision topology
-ACTIVE_ENDPOINT: EP-0003
-ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENGINEERING-GITHUB-ISSUE-AUTHORING-SKILL/endpoints/EP-0003.md
+MISSION: Create reusable engineering GitHub issue authoring with single/program topology, durable parent common custody, child/revision partitions, anti-overlap, code-ready work orders and expert implementation questions
+ACTIVE_ENDPOINT: EP-0004
+ACTIVE_ENDPOINT_FILE: agents/chains/COMMON-ENGINEERING-GITHUB-ISSUE-AUTHORING-SKILL/endpoints/EP-0004.md
 MATERIAL_HISTORY_ROOT_BASE: 293a3db7993a6945c01adc592a7ff14a339c504a
 MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/COMMON-ENGINEERING-GITHUB-ISSUE-AUTHORING-SKILL/endpoints/EP-0003.md
 PR: 127
 BRANCH: engineering-github-issue-authoring-skill
-HEAD: 25c9138b9d0013803e3bb92f5b5b14dadf854cfa
-STATE: ACTIVE
-ENGINEERING_STATE: READY
+HEAD: e8f286a6cbb25199fb24e237c1bc4465bcc7274e
+STATE: BLOCKED
+ENGINEERING_STATE: BLOCKED
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: NOT_REQUIRED
-WRITE_AUTHORITY: WRITE_ALLOWED
-AUTO_STATE: NOT_APPLICABLE
+WRITE_AUTHORITY: READ_ONLY
+AUTO_STATE: BLOCKED
 MERGE_AUTHORITY: OWNER_ONLY
 AUTHORITY_DOMAIN: Common reusable engineering GitHub issue authoring skill only
 ACTIVE_CUSTODIAN: ChatGPT engineering GitHub issue authoring skill agent
@@ -23,9 +23,9 @@ WORK_ITEM_KEY: common:skill:engineering-github-issue-authoring
 WORK_ITEM_MODE: EXCLUSIVE
 WORK_ITEM_PARTITION: NONE
 WORK_ITEM_PARTITION_AUTHORITY: NONE
-CUSTODY_EPOCH: 3
+CUSTODY_EPOCH: 4
 COORDINATION_STATE: SAFE
-DEPENDENCIES: tandem relay integration is separately preworked under COMMON-ENG-PR-DELIVERY-V2-MULTI-ISSUE-PROGRAM; prior executable validation debt remains NOT_RUN
+DEPENDENCIES: tandem relay integration frozen in COMMON-ENG-PR-DELIVERY-V2-MULTI-ISSUE-PROGRAM; focused/aggregate execution remains NOT_RUN
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: 293a3db7993a6945c01adc592a7ff14a339c504a
 COMMON_PROTOCOL_STATUS: CURRENT
@@ -34,7 +34,7 @@ ROADMAP_REVIEW_STATUS: NOT_APPLICABLE
 HANDOVER_PROTOCOL_VERSION: 2
 HANDOVER_CONTENT_READY: TRUE
 HANDOVER_VALIDATION_STATUS: NOT_RUN
-HANDOVER_VALIDATION_EVIDENCE: NONE — prework baton
+HANDOVER_VALIDATION_EVIDENCE: NONE — faithful checkout unavailable
 CHAIN_HANDOVER_READY: TRUE
 TAKEOVER_QUALIFICATION_READY: TRUE
 HANDOVER_READY: FALSE
