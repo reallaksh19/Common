@@ -1,6 +1,6 @@
 # GEO-04 Topic-Lead Integration Map
 
-Status: `INTERFACES_AND_SOURCE_CUSTODY_COMPLETE_READY_FOR_INTEGRATED_PROSE`
+Status: `INTEGRATED_PACKAGE_COMPLETE_BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
 
 ## Learner promise
 The learner should stop choosing a theorem from the picture and instead run:
@@ -45,7 +45,7 @@ Mixed circle-metric anchor after recognition basics. Circle condition plus right
 Cyclicity anchor. Preserve the source’s non-degenerate interpretation. Use cyclicity as the decisive extra constraint rather than treating the rectangle algebra independently.
 
 ### IOQM-2025-Q30 = 10
-Late tangency/power transfer. Common chord/line-of-centres geometry plus internal tangency gives the radius-sum invariant. Do not overbuild radical-axis theory for Grade 9; teach the perpendicular-common-chord behavior first.
+Late tangency/power transfer. Common chord/radical-axis geometry plus internal tangency gives the radius-sum invariant. Do not overbuild radical-axis theory for Grade 9; teach the perpendicular-common-chord behavior first.
 
 ### IOQM-2023-Q15 = 03
 Transfer anchor for circumcentres and coordinates. The goal is representation choice, not a long synthetic chase.
@@ -95,6 +95,8 @@ First attempt unlabelled/unhinted. Include:
 - `COORDINATE_OVERKILL`
 
 ## Source and publication gates
-Historical mathematics: 5/5 PASS. Exact source/page visual custody: 5/5 PASS. Exact page inspection confirms no official problem diagram is printed for any of the five anchors, so any learner diagrams are author-created teaching aids rather than source reproductions. All seven A–P interfaces are complete.
+Historical mathematics: 5/5 PASS. All seven A–P interfaces are complete. Exact historical source-page visual custody is 5/5 PASS; all five inspected problem statements are text-only, so no printed historical figure requires redraw custody. Authored-key verification, canonical 84-row/31-column metadata, integrated learner materials, teacher keys, canonical PDFs, hash/blob/page-count custody, structural preflight and 23-page visual QA are closed.
 
-Before ready-for-review: integrated learner materials, authored-key verification, frozen metadata, teacher key, canonical PDFs, hash/blob/page count and page-by-page visual QA. Classroom timing/readability, retention, psychometrics, qualification/pass-mark calibration and publication approval remain `NOT_RUN`.
+Classroom timing/readability, retention, psychometrics, qualification/pass-mark calibration and publication approval remain `NOT_RUN`.
+
+Static disposition: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`.
