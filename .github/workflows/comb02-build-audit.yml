@@ -1,6 +1,5 @@
-name: COMB-02 Build Audit
+name: COMB-02 PDF Custody
 
-# audit revision 3: corrected workflow-code typography and compact teacher pagination
 on:
   push:
     branches: [ioqm-g9-comb02-graphs-colouring]
@@ -11,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  build-audit:
+  render-and-custody:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR branch
@@ -27,48 +26,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc texlive-xetex texlive-latex-extra fonts-dejavu-core fonts-dejavu-extra poppler-utils
 
-      - name: Generate canonical metadata
-        shell: bash
-        run: |
-          set -euo pipefail
-          TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting'
-          export TOPIC
-          python - <<'PY'
-          import csv, os
-          from pathlib import Path
-          p=Path(os.environ['TOPIC'])/'Item_Metadata.csv'
-          cols='item_id,source_year,source_question_number,source_paper_url,source_key_url,source_authority,key_status,question_mark_value,official_answer,primary_domain,main_topic_id,secondary_domains,mechanisms,visible_clues,hidden_invariant,first_move,prerequisites,decision_boundaries,figure_required,source_integrity_status,provenance,student_use_disposition,teacher_use_disposition,recognition_difficulty,representation_difficulty,execution_difficulty,transfer_difficulty,answer_verified_independently,classification_review_status,classification_confidence,notes'.split(',')
-          rows=[]
-          def hist(item,year,q,paper,key,auth,key_status,marks,ans,sec,mech,clues,inv,first,bound,status,student,notes,rd='MEDIUM',rep='MEDIUM',exe='MEDIUM',tr='HIGH'):
-              rows.append(dict(item_id=item,source_year=year,source_question_number=q,source_paper_url=paper,source_key_url=key,source_authority=auth,key_status=key_status,question_mark_value=marks,official_answer=ans,primary_domain='COMB',main_topic_id='IOQM-G9-COMB-02',secondary_domains=sec,mechanisms=mech,visible_clues=clues,hidden_invariant=inv,first_move=first,prerequisites='COMB01 counting model',decision_boundaries=bound,figure_required='false',source_integrity_status=status,provenance='HISTORICAL_VALIDATED_PYQ',student_use_disposition=student,teacher_use_disposition='PYQ_ANCHOR',recognition_difficulty=rd,representation_difficulty=rep,execution_difficulty=exe,transfer_difficulty=tr,answer_verified_independently='true',classification_review_status='INDEPENDENT_STATIC_REVIEWED',classification_confidence='HIGH',notes=notes))
-          p25='https://drive.google.com/file/d/13_o0QUmfqZJxc7IWrz6yqKivuyVC-wku/view'; k25='https://drive.google.com/file/d/18jKJ_2rUxgOlbg-2If_-oHzcH8JxzwT5/view'
-          p24='https://drive.google.com/file/d/1z7-3fJuk5BW9zx9SUEumcnuuE080pQJq/view'; k24='https://drive.google.com/file/d/1Li9nwrQ5to5OEkyEbCL9Q1AM2oa5rYsm/view'
-          p23='https://www.mtai.org.in/wp-content/uploads/2023/09/IOQM_Sep_2023_Question-paper-with-answer-key.pdf'
-          hist('IOQM-2025-Q08',2025,8,p25,k25,'MTAI_OFFICIAL_SHARED_DRIVE','FINAL_OFFICIAL',2,48,'GEO','proper_vertex_colouring;graph_modelling','quadrilateral boundary plus AC; four named colours','conflict graph is K4 minus BD','define vertices/edges; count proper colourings','proper vs unrestricted colouring','CLEAN_OFFICIAL_VISUAL_CLOSED','PYQ_ANCHOR','Official M1 page 3 rendered at 200 dpi; text-only, no printed figure; audit PASS.','LOW','MEDIUM','LOW','MEDIUM')
-          hist('IOQM-2025-Q29',2025,29,p25,k25,'MTAI_OFFICIAL_SHARED_DRIVE','FINAL_OFFICIAL',5,19,'','cycle_power_colouring;cyclic_closure;pigeonhole','regular polygon; any five consecutive vertices distinct; at most six colours','equal colours cyclically separated by at least five positions','model C_n^4; bound colour-class size','linear local rule vs cyclic closure','CLEAN_OFFICIAL','PYQ_ANCHOR','Exact official M1 stem and final key checked; audit PASS.','HIGH','HIGH','MEDIUM','HIGH')
-          hist('IOQM-2024-Q09',2024,9,p24,k24,'MTAI_OFFICIAL_SHARED_DRIVE','FINAL_OFFICIAL',2,48,'','knight_graph;edge_count;double_count','5x5 grid; textual knight-pair definition','each edge is one legal knight-move pair','count bounding rectangles or sum degrees/2','ordered moves vs unordered pairs','CLEAN_OFFICIAL','PYQ_ANCHOR','Exact official English stem checked; audit PASS.','LOW','MEDIUM','LOW','MEDIUM')
-          hist('IOQM-2024-Q19',2024,19,p24,k24,'MTAI_OFFICIAL_SHARED_DRIVE','FINAL_OFFICIAL',3,12,'GEO','ramsey_forcing;edge_colouring;cycle_structure','five points; every pair joined; red/blue; no monochromatic triangle','each vertex has two red and two blue incident edges','fix a vertex and force local degree pattern','raw 2^10 enumeration vs Ramsey structure','CLEAN_OFFICIAL','PYQ_ANCHOR','Exact official English stem checked; audit PASS.','MEDIUM','HIGH','MEDIUM','HIGH')
-          hist('IOQM-2023-Q16',2023,16,p23,p23,'HBCSE_LINKED_MTAI','HBCSE_LINKED_MTAI_EMBEDDED_KEY',3,94,'GEO','forbidden_subgraph;inclusion_exclusion;edge_colouring','convex hexagon; red boundary; red/blue diagonals','only alternating triples can be all-diagonal triangles','identify forbidden all-blue triangles before counting','independent choices vs forbidden subgraph','CLEAN_VALIDATED_VISUAL_CLOSED','SOURCE_PATTERN_ANCHOR','Official page 5 screenshot inspected; text-only, no printed figure; audit PASS.','MEDIUM','HIGH','MEDIUM','HIGH')
-          hist('IOQM-2023-Q22',2023,22,p23,p23,'HBCSE_LINKED_MTAI','HBCSE_LINKED_MTAI_EMBEDDED_KEY',5,77,'GEO','incidence_counting;region_count;concurrency;ceva','equilateral triangle; side pegs; four cevians; nine regions','region count depends on intersection multiplicities','classify cevian-family distributions; count intersections/concurrencies','metric drawing vs incidence structure','CLEAN_VALIDATED_PAGE_VISUAL_PENDING','SOURCE_MAP_ONLY_UNTIL_VISUAL_CUSTODY','Exact controlled text and embedded key checked; independent audit PASS; exact page-image confirmation still pending.','HIGH','HIGH','HIGH','HIGH')
-          def authored(prefix,n,prov,student,teacher,label,mech):
-              for i in range(1,n+1):
-                  rows.append(dict(item_id=f'COMB02-{prefix}{i:02d}',primary_domain='COMB',main_topic_id='IOQM-G9-COMB-02',mechanisms=mech,figure_required='false',source_integrity_status='CLEAN_VALIDATED',provenance=prov,student_use_disposition=student,teacher_use_disposition=teacher,answer_verified_independently='true',classification_review_status='INDEPENDENT_STATIC_REVIEWED',classification_confidence='HIGH',notes=f'{label} {i}; synchronized teacher key.'))
-          authored('R',16,'AUTHOR_CREATED_FOUNDATION','RECOGNITION_FIRST_LINE','DIAGNOSTIC','04 Lab item','recognition;representation')
-          authored('P',22,'AUTHOR_CREATED_PRACTICE_TRANSFER','PRACTICE_TRANSFER','DIAGNOSTIC','05 Practice/Transfer item','graph_modelling;practice;transfer')
-          authored('M',12,'AUTHOR_CREATED_MASTERY','H0_MASTERY','MASTERY_KEY','06 Mixed Mastery item','mixed_mastery;graph_modelling')
-          for pref,n,label in [('BA',8,'07 Benchmark RECONNECT item'),('BB',6,'07 Benchmark Error Lab item'),('BC',8,'07 Benchmark ADOPT item'),('BD',6,'07 Benchmark TRANSFER item')]:
-              authored(pref,n,'AUTHOR_CREATED_BENCHMARK_DIAGNOSTIC','BENCHMARK_ASSIMILATION','DIAGNOSTIC',label,'benchmark_assimilation;diagnosis;transfer')
-          rows.append(dict(item_id='COMB02-BRUBRIC',primary_domain='COMB',main_topic_id='IOQM-G9-COMB-02',mechanisms='six_question_assimilation;metacognition;transfer',figure_required='false',source_integrity_status='CLEAN_VALIDATED',provenance='AUTHOR_CREATED_BENCHMARK_RUBRIC',student_use_disposition='BENCHMARK_ASSIMILATION',teacher_use_disposition='DIAGNOSTIC_RUBRIC',answer_verified_independently='true',classification_review_status='INDEPENDENT_STATIC_REVIEWED',classification_confidence='HIGH',notes='07 six-question assimilation rubric; teacher rubric independently synchronized.'))
-          with p.open('w',newline='',encoding='utf-8') as f:
-              w=csv.DictWriter(f,fieldnames=cols); w.writeheader(); w.writerows(rows)
-          assert len(rows)==85
-          with p.open(encoding='utf-8') as f:
-              rr=list(csv.reader(f))
-          assert len(rr)==86 and all(len(r)==31 for r in rr)
-          assert all(r[27]=='true' for r in rr[1:])
-          PY
-
-      - name: Render candidate PDFs
+      - name: Render canonical PDFs
         shell: bash
         run: |
           set -euo pipefail
@@ -83,34 +41,63 @@ jobs:
           set -euo pipefail
           TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting'
           STUDENT="$TOPIC/PDFs/COMB02_Student_Pack_v1.pdf"; TEACHER="$TOPIC/PDFs/COMB02_Teacher_Key_v1.pdf"
-          S_PAGES=$(pdfinfo "$STUDENT" | awk '/^Pages:/ {print $2}'); T_PAGES=$(pdfinfo "$TEACHER" | awk '/^Pages:/ {print $2}')
-          test "$S_PAGES" -ge 10; test "$S_PAGES" -le 18; test "$T_PAGES" -ge 4; test "$T_PAGES" -le 8
+          test "$(pdfinfo "$STUDENT" | awk '/^Pages:/ {print $2}')" = '14'
+          test "$(pdfinfo "$TEACHER" | awk '/^Pages:/ {print $2}')" = '6'
           pdfinfo "$STUDENT" | grep -q '^Encrypted:       no'; pdfinfo "$TEACHER" | grep -q '^Encrypted:       no'
           pdftotext "$STUDENT" /tmp/student.txt; pdftotext "$TEACHER" /tmp/teacher.txt
           ! grep -Eqi 'COMB-02|issue #[0-9]+|pull request|PR #[0-9]+|branch|microstream|interface|metadata schema|H[0-3]|F[0-4]|DRAFT_AUTHORING' /tmp/student.txt
           grep -q 'Graphs, Colouring' /tmp/student.txt; grep -q 'Teacher' /tmp/teacher.txt
-          printf 'student_pages=%s\nteacher_pages=%s\n' "$S_PAGES" "$T_PAGES" > /tmp/page_counts.txt
 
-      - name: Commit frozen metadata only
+      - name: Write custody manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting'
+          STUDENT="$TOPIC/PDFs/COMB02_Student_Pack_v1.pdf"; TEACHER="$TOPIC/PDFs/COMB02_Teacher_Key_v1.pdf"
+          S_SHA=$(sha256sum "$STUDENT" | awk '{print $1}'); T_SHA=$(sha256sum "$TEACHER" | awk '{print $1}')
+          S_SIZE=$(stat -c '%s' "$STUDENT"); T_SIZE=$(stat -c '%s' "$TEACHER")
+          cat > "$TOPIC/PDF_Custody.md" <<EOF
+          # COMB-02 PDF Custody
+
+          Status: \`RENDERED_PREFLIGHTED_REPOSITORY_CUSTODY_PENDING_EXACT_BINARY_VISUAL_CONFIRMATION\`
+
+          Canonical renderer: \`Authoring/render_comb02_pdfs.py\`
+          Source render commit: \`${GITHUB_SHA}\`
+
+          | Artifact | Pages | Bytes | SHA-256 |
+          |---|---:|---:|---|
+          | \`PDFs/COMB02_Student_Pack_v1.pdf\` | 14 | ${S_SIZE} | \`${S_SHA}\` |
+          | \`PDFs/COMB02_Teacher_Key_v1.pdf\` | 6 | ${T_SIZE} | \`${T_SHA}\` |
+
+          Automated checks in this run:
+          - A4 page-count contract: PASS (student 14, teacher 6)
+          - open/text extraction: PASS via \`pdfinfo\` and \`pdftotext\`
+          - encryption: PASS_NONE
+          - learner control-plane scrub: PASS_STATIC
+          - exact repository binary visual inspection: PENDING until artifact retrieval and page-render inspection
+
+          Independent source note: exact stems are closed 6/6; exact page-image confirmation for \`IOQM-2023-Q22\` remains a separate fail-closed source gate.
+
+          Classroom timing/readability, retention, psychometrics, qualification/pass-mark calibration, and publication approval remain \`NOT_RUN\`.
+          EOF
+
+      - name: Commit binary custody artifacts
         shell: bash
         run: |
           set -euo pipefail
           TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting'
           git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$TOPIC/Item_Metadata.csv"
-          if ! git diff --cached --quiet; then
-            git commit -m 'COMB-02: freeze canonical 85-row metadata'
-            git push origin HEAD:ioqm-g9-comb02-graphs-colouring
-          fi
+          git add "$TOPIC/PDFs/COMB02_Student_Pack_v1.pdf" "$TOPIC/PDFs/COMB02_Teacher_Key_v1.pdf" "$TOPIC/PDF_Custody.md"
+          git commit -m 'COMB-02: add benchmark PDF custody artifacts'
+          git push origin HEAD:ioqm-g9-comb02-graphs-colouring
 
-      - name: Upload candidate audit artifact
+      - name: Upload exact custody artifact
         uses: actions/upload-artifact@v4
         with:
-          name: comb02-build-audit
+          name: comb02-pdf-custody
           path: |
             Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting/PDFs/COMB02_Student_Pack_v1.pdf
             Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting/PDFs/COMB02_Teacher_Key_v1.pdf
-            Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting/Item_Metadata.csv
-            /tmp/page_counts.txt
+            Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting/PDF_Custody.md
           if-no-files-found: error
           retention-days: 30
