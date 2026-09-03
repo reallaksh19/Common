@@ -57,9 +57,21 @@ jobs:
 
       - name: Inventory theorem bridges
         run: |
-          pdftotext "Grade 9/Mathematics/IOQM/03_Main_Topics/NT-01_Divisibility_GCD_LCM/PDFs/NT01_Student_Pack_v1.pdf" - | grep -F "Euclid's Lemma"
-          pdftotext "Grade 9/Mathematics/IOQM/03_Main_Topics/NT-02_Modular_Arithmetic_Residues/PDFs/NT02_Student_Pack_v1.pdf" - | grep -F "Euler's theorem"
-          pdftotext "Grade 9/Mathematics/IOQM/03_Main_Topics/NT-02_Modular_Arithmetic_Residues/PDFs/NT02_Student_Pack_v1.pdf" - | grep -F "Fermat's little theorem"
+          python3 - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader
+
+          checks = [
+              (Path("Grade 9/Mathematics/IOQM/03_Main_Topics/NT-01_Divisibility_GCD_LCM/PDFs/NT01_Student_Pack_v1.pdf"), ["Euclid", "Lemma"]),
+              (Path("Grade 9/Mathematics/IOQM/03_Main_Topics/NT-02_Modular_Arithmetic_Residues/PDFs/NT02_Student_Pack_v1.pdf"), ["Euler", "theorem", "Fermat"]),
+          ]
+          for path, needles in checks:
+              text = "\n".join((p.extract_text() or "") for p in PdfReader(str(path)).pages)
+              folded = text.casefold()
+              missing = [n for n in needles if n.casefold() not in folded]
+              assert not missing, (path, missing)
+              print(path.name, "theorem-bridge inventory PASS:", ", ".join(needles))
+          PY
 
       - name: Write candidate manifest
         run: |
