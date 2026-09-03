@@ -5,7 +5,7 @@ Status: `INTEGRATED_CONTENT_STATIC_QA_PASS_SOURCE_VISUAL_METADATA_PDF_PENDING`
 | Gate | State | Evidence |
 |---|---|---|
 | issue #85 scope | PASS | graph modelling, degree/handshaking, colouring constraints, incidence double counting, grid/knight graphs and Ramsey-style inevitability retained |
-| production-head compatibility | PASS | branch remains based on `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c` with no unrelated subtree changes |
+| production-head compatibility | PASS | `ioqm-g9-comb02-graphs-colouring` is 18 commits ahead / 0 behind `grade9-ioqm-90q-corpus-v1@4b30638f984076d41998dcd2c68f4b3830a7d59c`; exactly 18 COMB-02 topic files changed |
 | COMB-01 provider | PASS_ACCEPTED | exact `COMB01_Stable_Counting_Model_Interface_v1.md` consumed |
 | provider boundary | PASS | generic P&C, unrestricted counting, complement and inclusion-exclusion are retrieved only where needed; no duplicate counting chapter |
 | source anchors | PASS_6 | `IOQM-2025-Q08,Q29`; `IOQM-2024-Q09,Q19`; `IOQM-2023-Q16,Q22` |
