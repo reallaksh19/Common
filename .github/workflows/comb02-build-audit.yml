@@ -1,5 +1,6 @@
 name: COMB-02 Build Audit
 
+# audit revision 2: workflow-text code spans remain text, not math
 on:
   push:
     branches: [ioqm-g9-comb02-graphs-colouring]
@@ -97,8 +98,10 @@ jobs:
           TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/COMB-02_Graphs_Colouring_Incidence_Counting'
           git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add "$TOPIC/Item_Metadata.csv"
-          git commit -m 'COMB-02: freeze canonical 85-row metadata'
-          git push origin HEAD:ioqm-g9-comb02-graphs-colouring
+          if ! git diff --cached --quiet; then
+            git commit -m 'COMB-02: freeze canonical 85-row metadata'
+            git push origin HEAD:ioqm-g9-comb02-graphs-colouring
+          fi
 
       - name: Upload candidate audit artifact
         uses: actions/upload-artifact@v4
