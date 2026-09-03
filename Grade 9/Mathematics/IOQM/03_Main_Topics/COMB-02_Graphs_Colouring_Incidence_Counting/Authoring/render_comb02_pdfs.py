@@ -52,6 +52,8 @@ def _texify(s: str) -> str:
 def _looks_math(s: str) -> bool:
     if "IOQM-" in s or "BENCHMARK_" in s:
         return False
+    if "->" in s or "→" in s:
+        return False
     if s in {"recognition", "representation", "execution", "checking", "transfer"}:
         return False
     if re.fullmatch(r"[A-Z][A-Z _\-→>]+", s):
