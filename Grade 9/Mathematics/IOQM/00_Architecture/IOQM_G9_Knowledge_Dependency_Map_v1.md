@@ -53,6 +53,7 @@ F0/F1
   |
   +--> NT-01 Divisibility/GCD/LCM
   |       |    exports Euclid's Lemma
+  |       |    exports Bezout / extended-Euclid solvability
   |       |
   |       +--> NT-02 Modular Arithmetic/Cycles/Euler bridge
   |       |       |
@@ -60,16 +61,21 @@ F0/F1
   |       |
   |       +--> NT-03 Prime Factorisation/Divisors/Perfect Powers
   |               |    retrieves Euclid's Lemma
+  |               |    exports consecutive-sum odd-divisor existence criterion
   |               |
   |               +--> NT-04 Diophantine/Integer Restrictions
+  |                         ^
+  |                         |
+  +-------------------------+  retrieves Bezout solvability from NT-01
   |
   +--> ALG-01 factorisation/substitution --BRIDGE_REQUIRES--> NT-04
 ```
 
 Notes:
 - NT-01 is the main structural prerequisite for NT-02 and NT-03.
-- NT-01 canonically owns Euclid's Lemma: prime `p|ab` implies `p|a` or `p|b`; NT-03 retrieves it when prime divisibility must split across a product.
+- NT-01 canonically owns Euclid's Lemma and the Bézout / extended-Euclid bridge. NT-04 may retrieve the solvability criterion `ax+by=c` iff `gcd(a,b)|c`, but owns full parameterization and filtering.
 - NT-02 canonically owns the bounded Euler theorem bridge and optional prime-modulus Fermat companion, with explicit coprimality checks and a cycle-vs-theorem decision boundary.
+- NT-03 canonically owns the odd-divisor / power-of-two **existence criterion** for sums of at least two consecutive positive integers. NT-04 consumes it for actual start/length reconstruction, positivity and all-representation questions.
 - NT-04 depends jointly on factorisation/algebra and number-theoretic restrictions.
 - NT-05 can begin early with place value, but advanced divisibility/cycle work follows NT-02.
 
@@ -85,8 +91,10 @@ F0/F1
   |       |       +--> transformed-root / polynomial-reduction ceiling work
   |       |
   |       +--> ALG-02 Inequalities/Bounds/Equality
+  |       |       |    owns absolute-value / nested absolute-value inequality translation
   |       |       |
   |       |       +--> integer/discrete extremal bridges
+  |       |       +--APPLICATION_OF--> ALG-07 when a solved interval feeds floor/ceiling counting
   |       |
   |       +--> ALG-06 Exponents/Radicals/Logs
   |
@@ -103,8 +111,8 @@ F0/F1
 Important ownership rule:
 - Vieta is canonically taught in ALG-03.
 - Other topics may retrieve/use Vieta but must not create an independent canonical derivation.
-- AM-GM/equality is canonically taught in ALG-02.
-- Other topics may apply it but should link back rather than reteach from scratch.
+- AM-GM/equality and absolute-value inequality interval translation are canonically taught in ALG-02.
+- ALG-07 may retrieve a solved real interval/union and then own floor/ceiling/discrete-function processing; it should not create a second absolute-value inequality chapter.
 - Generic proof modes are retrieved from the proof toolkit; specialized algebraic legality remains owned by the relevant algebra topic.
 
 ## 5. Geometry dependency graph
@@ -212,7 +220,11 @@ Allowed sequence:
 3. downstream prose gives only a short retrieval cue;
 4. learner is routed to ALG-03 for reconstruction if diagnostic shows the prerequisite is missing.
 
-The same rule applies to the named coverage bridges: NT-03 retrieves Euclid's Lemma from NT-01; downstream modular applications retrieve Euler/Fermat legality from NT-02.
+The same rule applies to the coverage bridges:
+- NT-03 retrieves Euclid's Lemma from NT-01;
+- NT-04 retrieves Bézout solvability from NT-01 and consecutive-sum existence structure from NT-03;
+- ALG-07 may retrieve solved absolute-value intervals from ALG-02;
+- downstream modular applications retrieve Euler/Fermat legality from NT-02.
 
 ## 11. Main-topic dependency checklist
 
@@ -230,4 +242,4 @@ Any unresolved prerequisite inversion blocks integrated prose.
 
 ## Change-control rule
 
-The dependency graph is frozen for v1 production. A new hard dependency must be recorded explicitly with its effect on production wave, overlap ownership and issue registry. The issue-#132 coverage hardening adds named content within existing ownership and does not alter the production wave graph. Do not silently serialize the program.
+The dependency graph is frozen for v1 production. A new hard dependency must be recorded explicitly with its effect on production wave, overlap ownership and issue registry. Issues #132 and #134 add named content within existing ownership and do not alter the production wave graph. Do not silently serialize the program.
