@@ -3,13 +3,13 @@
 **Source video:** https://www.youtube.com/live/0j8W6Q8lD8A  
 **Canonical extraction repository:** https://github.com/reallaksh19/Study-Hub  
 **Recovered coverage:** Q1–Q83  
-**Unassigned:** Q84–Q90 — no verified continuation source currently supports these numbers.
+**Student-study-guide completion:** Q84–Q90 are author-created syllabus-completion items, not claimed as video questions.
 
 ## Purpose
 
-This package registers the ALLEN Number Theory marathon extraction inside the IOQM Grade 9 workspace without treating it as publication-ready student material.
+This package registers the ALLEN Number Theory marathon extraction inside the IOQM Grade 9 workspace without treating source-inferred lecture numbering as official historical provenance.
 
-The extraction was produced lot-by-lot. Every question has, where recoverable, a statement, answer, short solution, reusable IOQM technique, and verification-status note.
+The extraction was produced lot-by-lot. Every recovered question has, where possible, a statement, answer, short solution, reusable IOQM technique, and verification-status note.
 
 ## Verification policy
 
@@ -22,7 +22,7 @@ The extraction deliberately separates:
 - **Continuation-source inferred** numbering in the later IOQM PYQ block;
 - **Partial / unverified wording** where the source is insufficient.
 
-No missing statement is silently invented. In particular, Q1 and Q18 remain explicitly flagged as weak-source reconstructions.
+No missing lecture statement is silently invented. Q1 and Q18 remain weak-source reconstructions in this source manifest.
 
 ## Important sequence anchors
 
@@ -30,7 +30,11 @@ No missing statement is silently invented. In particular, Q1 and Q18 remain expl
 - Video Q11 was matched to an associated ALLEN module question, establishing the initial source-sequence offset used for the next block.
 - **Video Q22 is directly screen-confirmed at approximately 2:33:52** in the marathon.
 - Later numbering is explicitly labelled source-inferred where direct slide confirmation is unavailable.
-- The verified continuation source ends at **Q83**. Q84–Q90 remain unassigned pending a new direct video/source anchor.
+- The verified continuation source ends at **Q83**.
+
+## Q84–Q90 student-guide boundary
+
+The study-guide PDF requested by the owner contains a 90-question Appendix A. Because verified lecture/source recovery reaches Q83, Q84–Q90 in that student appendix are **author-created syllabus-completion items** covering declared Number Theory gaps. They are not represented as ALLEN video questions. A future direct Q84 anchor can replace them in a revision.
 
 ## Canonical Markdown lots
 
@@ -55,41 +59,12 @@ No missing statement is silently invented. In particular, Q1 and Q18 remain expl
 | Q77–Q81 | https://github.com/reallaksh19/Study-Hub/blob/main/public/IOQM_Number_Theory_Lot16_Q77-Q81.md |
 | Q82–Q83 | https://github.com/reallaksh19/Study-Hub/blob/main/public/IOQM_Number_Theory_Final_Q82-Q83.md |
 
-## Answer key snapshot
-
-| Q | Ans | Q | Ans | Q | Ans | Q | Ans |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | 20* | 22 | 17 | 43 | 136 | 64 | 95 |
-| 2 | 97 | 23 | 2345 | 44 | 42 | 65 | 43 |
-| 3 | 14 | 24 | set `{1,2,4,6,10}` | 45 | 10745 | 66 | 35 |
-| 4 | 27 | 25 | 931 | 46 | 360 | 67 | 70 |
-| 5 | 20 | 26 | 4 | 47 | 22 | 68 | 22 |
-| 6 | 90 | 27 | 416 | 48 | 45 | 69 | 17 |
-| 7 | 7 | 28 | 389 | 49 | 401 | 70 | 95 |
-| 8 | 13 | 29 | 151 | 50 | 295 | 71 | 11 |
-| 9 | 97 | 30 | 21 | 51 | 6 | 72 | 25 |
-| 10 | 37 | 31 | 13 | 52 | 112 | 73 | 6 |
-| 11 | 75 | 32 | 307 | 53 | 137 | 74 | 49 |
-| 12 | 40 | 33 | 695 | 54 | 170 | 75 | 13 |
-| 13 | 1 | 34 | 34 | 55 | 12 | 76 | 91 |
-| 14 | 31 | 35 | 117 | 56 | 11 | 77 | 31 |
-| 15 | 100 | 36 | 725 | 57 | 315 | 78 | 20 |
-| 16 | 749 | 37 | 632 | 58 | 43 | 79 | 45 |
-| 17 | 937 | 38 | 9 | 59 | 19 | 80 | 33 |
-| 18 | 373** | 39 | 1360 | 60 | `(3+sqrt(41)+2sqrt(11))/4` | 81 | 40 |
-| 19 | 408 | 40 | 43 | 61 | 50 | 82 | 42 |
-| 20 | 181 | 41 | 222 | 62 | 24 | 83 | 40 |
-| 21 | 227 | 42 | 336 | 63 | 10 |  |  |
-
-`*` Q1 answer is lecture-stated; exact wording remains unverified.  
-`**` Q18 answer is ALLEN-listed; the indexed expression typography is corrupted, so its exact operand list is not asserted.
-
 ## Review / integration guidance
 
-This manifest should be treated as **source evidence**, not as an integrated chapter. Before reusing questions in student-facing IOQM material:
+This manifest is **source evidence**, not an integrated chapter. Before reusing a recovered question in student-facing IOQM material:
 
-1. map each usable problem to the repository topic taxonomy;
+1. map it to the repository topic taxonomy;
 2. retain original contest/year provenance where identified;
 3. preserve reconstruction-confidence metadata;
 4. independently re-audit any problem marked partial, corrected, or source-sequence inferred;
-5. avoid treating inferred video numbering as official contest provenance.
+5. do not treat inferred video numbering as official contest provenance.
