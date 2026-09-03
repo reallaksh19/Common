@@ -6,7 +6,7 @@ This taxonomy is an operational Grade-9 curriculum map. It is not an official Gr
 
 It has now been reconciled against the validated 2023–2025 90-question corpus, answer-verification authority and canonical overlap-owner rules. Primary historical ownership may still be changed through explicit second-route change control, but the **22 main-topic unit boundaries are frozen for production**.
 
-Coverage hardening for named preparation topics is controlled by `IOQM_G9_Coverage_Hardening_Overlay_v1.md`; generic proof modes are shared through `IOQM_G9_Proof_Strategy_Toolkit_v1.md`. Neither asset creates an additional main topic.
+Coverage hardening for named preparation/comparison topics is controlled by `IOQM_G9_Coverage_Hardening_Overlay_v1.md`; generic proof modes are shared through `IOQM_G9_Proof_Strategy_Toolkit_v1.md`. Neither asset creates an additional main topic.
 
 ## Domain NT — Number Theory
 
@@ -16,6 +16,7 @@ Core scope:
 - divisibility as structural relation;
 - Euclidean algorithm;
 - **Euclid’s Lemma**: if prime `p | ab`, then `p | a` or `p | b`, with primality/hypothesis check and composite countercontrast;
+- **Bézout / extended-Euclid bridge**: `ax+by=gcd(a,b)` for suitable integers `x,y`, with linear-Diophantine solvability exported to NT-04;
 - gcd/lcm identities;
 - same-remainder structure;
 - gcd of differences;
@@ -23,7 +24,7 @@ Core scope:
 - divisibility chains;
 - basic valuation awareness where useful.
 
-Likely microstreams: divisibility meaning/algebra; Euclidean algorithm and Euclid’s Lemma bridge; gcd/lcm reconstruction; same remainder/differences; divisibility chains; source/PYQ interface.
+Likely microstreams: divisibility meaning/algebra; Euclidean algorithm, Euclid’s Lemma and Bézout bridge; gcd/lcm reconstruction; same remainder/differences; divisibility chains; source/PYQ interface.
 
 ### IOQM-G9-NT-02 — Modular Arithmetic, Residues & Power Cycles
 
@@ -49,16 +50,19 @@ Core scope:
 - perfect squares/cubes/powers;
 - squarefree structure;
 - exponent patterns in factorisation;
-- factor-pair optimization and restrictions.
+- factor-pair optimization and restrictions;
+- **consecutive-sum structural bridge**: odd divisors/powers of two characterize representability as a sum of at least two consecutive positive integers; reconstruction is delegated to NT-04.
 
 ### IOQM-G9-NT-04 — Diophantine Equations & Integer Restrictions
 
 Core scope:
 - factorisation into integer cases;
 - parity and gcd constraints;
+- retrieve **Bézout / extended-Euclid solvability** from NT-01 for linear Diophantine equations rather than reteaching Euclidean canon;
 - bounding;
 - discriminant/perfect-square filters;
 - sum/product substitutions;
+- consecutive-sum reconstruction from the NT-03 odd-divisor structure, including positivity and length constraints;
 - integer reconstruction;
 - finite admissible case analysis.
 
@@ -90,6 +94,8 @@ Core scope:
 Core scope:
 - boundedness before optimization;
 - direction of inequality;
+- absolute value as distance and **absolute-value / nested absolute-value inequalities**;
+- interval/union translation and integer-solution counting after the real solution set is established;
 - AM-GM and equality;
 - Cauchy/Engel where appropriate;
 - completing squares;

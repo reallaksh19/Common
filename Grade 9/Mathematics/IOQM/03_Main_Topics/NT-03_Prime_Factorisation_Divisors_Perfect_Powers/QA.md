@@ -1,74 +1,41 @@
 # NT-03 - QA
 
-Status: `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED`
+Status: `CONTENT_ENRICHED_RENDER_RECERTIFICATION_PENDING`
+Issue: `#134`
+
+The current learner source now includes a consecutive-sum / odd-divisor transfer. The previous `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED` render certification remains historical evidence for its prior commit, but it does not certify the enriched current source state.
 
 ## Static gate table
 
 | Gate | State | Evidence |
 |---|---|---|
-| G0 source authority | PASS_STATIC | 8 stable anchors retain validated paper/key custody and independent answer agreement. |
-| G1 dependency | PASS_STATIC | NT-01 retrieved; no NT-04/NT-02 canon required for learner progression. |
-| G2 governing model | PASS_STATIC | `INTEGER -> PRIME EXPONENT VECTOR -> EXPONENT RESTRICTION -> COUNT / RECONSTRUCT -> CHECK`. |
-| G3 ownership/overlap | PASS_STATIC | FTA/exponents/divisors/perfect powers/squarefree/valuations/factor-pair restrictions are NT-03-owned; gcd/lcm remains NT-01. |
-| G4 research-interface discipline | PASS_STATIC | 7 separate A-P microstream interface files; consolidated interface is index-only. |
-| G5 lead integration | PASS_STATIC | one integrated learner book and one vocabulary/router. |
-| G6 deduplication | PASS_STATIC | prerequisite retrieval used instead of a second gcd/lcm chapter. |
-| G7 cross-boundary contrasts | PASS_STATIC | more than 8 explicit mechanism contrasts. |
-| G8 fading | PASS_STATIC | internal fading plan present; later learner items remove support. |
-| G9 First-Step | PASS_STATIC | one integrated First-Step Reference follows the Assimilation Book. |
-| G10 independent mastery | PASS_STATIC | learner title is `Independent Mastery Check`; no method labels in first attempt. |
-| G11 mathematics | PASS_STATIC | 8 historical anchors and all authored numerical items independently recomputed; high-risk items brute-forced. |
-| G12 source custody | PASS_STATIC | historical IDs preserved; author-created items have no fake historical attribution. |
-| G13 student hygiene | PASS_STATIC | forbidden control-label scan returned no matches on learner sources. |
-| G14 render authority | PASS_STATIC | one fixed PDF generation path for the full student pack. |
-| G15 render/preflight | PASS_CURRENT_BLOB_8_OF_8 | structural preflight PASS; every rendered page visually inspected. |
-| G16 transfer quality | PASS_STATIC | representation, context, discrete/extremal and cross-domain transfer included. |
-| G17 ownership completeness | PASS_STATIC | recognition, derivation, boundary, first move, independent solve and transfer all covered. |
-| G18 evidence-dependent | NOT_RUN | classroom timing/readability, retention, psychometrics, qualification probability, percentile/pass-mark calibration. |
+| G0 source authority | PASS_STATIC | 8 stable anchors unchanged and independently verified |
+| G1 dependency | PASS_STATIC_UPDATED | NT-01 remains prerequisite; NT-04 consumes the new reconstruction bridge downstream |
+| G2 governing model | PASS_STATIC_UPDATED | prime/divisor structure now also routes consecutive-sum existence through odd divisors |
+| G3 ownership/overlap | PASS_STATIC_UPDATED | NT-03 owns odd-divisor/power-of-two existence criterion; NT-04 owns actual consecutive-sum reconstruction |
+| G4-G12 prior static content gates | PASS_STATIC | microstreams, historical mathematics, metadata and source custody unchanged |
+| consecutive-sum enrichment mathematics | PASS_STATIC | `2n=r(2a+r-1)` derivation, opposite-parity factors and power-of-two obstruction checked |
+| teacher diagnostic synchronization | PASS_STATIC | `Teacher_Coverage_Enrichment_Addendum.md` added |
+| previous student PDF | INVALIDATED_FOR_CURRENT_SOURCE | First-Step learner source changed |
+| current render/preflight/page QA | PENDING | must be regenerated and inspected manually; no workflow is authorized |
+| classroom timing/readability | NOT_RUN | evidence-dependent |
+| retention / psychometrics / qualification calibration | NOT_RUN | evidence-dependent |
 
-## Historical anchor verification
+## Enrichment closure
 
-- `IOQM-2025-Q06` -> 15: PASS.
-- `IOQM-2024-Q01` -> 11: PASS.
-- `IOQM-2024-Q25` -> 22: PASS.
-- `IOQM-2024-Q28` -> 20: PASS.
-- `IOQM-2024-Q29` -> 28: PASS.
-- `IOQM-2023-Q01` -> 22: PASS.
-- `IOQM-2023-Q09` -> 17: PASS.
-- `IOQM-2023-Q30` -> 18: PASS.
+The learner can now decide existence without brute force:
 
-## Render evidence
+> A positive integer is a sum of at least two consecutive positive integers iff it has an odd divisor greater than 1, equivalently iff it is not a power of 2.
 
-Canonical learner inputs:
-- `02_Assimilation_Book.md`
-- `03_First_Step_Reference.md`
-- `04_Recognition_and_First_Line_Lab.md`
-- `05_Practice_and_Transfer_Bank.md`
-- `06_H0_Mastery_Test.md`
+The learner is also told when to stop: if the question asks for actual lengths/start values/all representations, route to NT-04 rather than expanding NT-03 into a full Diophantine reconstruction chapter.
 
-Artifact: `PDFs/NT03_Student_Pack_v1.pdf`
+## Historical PDF custody retained but not current
 
-- expected Git blob SHA: `7047d67be42f63fb9643f09188457f288fbffadb`
-- SHA-256: `41ad7011b9068fd66a62fd97262a1c70b4d0e6ee41c13095e3a51b38db6baef1`
-- byte size: `13737`
-- PDF version: `1.4`
-- page size: US Letter, `612 x 792 pt`
-- page count: `8`
-- encrypted: no
-- forms/attachments/annotations: none
-- learner control-label scan: PASS
-- page-by-page visual inspection: PASS `8/8`
-- clipping/overlap/broken-glyph/overflow check: PASS
+The previously certified student PDF blob `7047d67be42f63fb9643f09188457f288fbffadb` remains in Git history. It must not be cited as current-source certification after the First-Step enrichment.
 
-The Git blob identity is the SHA-1 over the exact final inspected PDF bytes and is re-read after branch commit.
+## Stable downstream interface
 
-## Frozen downstream interface
-
-`Authoring/NT03_Stable_Divisor_PerfectPower_Interface_v1.md`
-
-State: `FROZEN_FOR_DOWNSTREAM_CONSUMPTION`.
-
-NT-04 may retrieve this interface after NT-03 is merged to the production base.
+`Authoring/NT03_Stable_Divisor_PerfectPower_Interface_v1.md` now exports the consecutive-sum existence criterion while keeping reconstruction in NT-04.
 
 ## Promotion state
 
@@ -76,11 +43,11 @@ NT-04 may retrieve this interface after NT-03 is merged to the production base.
 WAVE0_ARCHITECTURE_FROZEN
 WAVE1_INTERFACES_COMPLETE
 WAVE2_INTEGRATED_ASSIMILATION_PASS
-WAVE3_FIRST_STEP_PASS
-WAVE4_H0_MASTERY_PASS
-WAVE5_INDEPENDENT_QA_PASS
-WAVE6_STATIC_RENDER_QA_PASS
-BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED
+WAVE3_FIRST_STEP_ENRICHED_PASS
+WAVE4_MASTERY_UNCHANGED_PASS
+WAVE5_STATIC_CONTENT_QA_PASS
+WAVE6_CURRENT_RENDER_QA_PENDING
+CONTENT_ENRICHED_RENDER_RECERTIFICATION_PENDING
 ```
 
 No classroom, retention, psychometric, qualification-probability, percentile or publication-readiness claim is made.
