@@ -1,6 +1,6 @@
 # ALG-06 — Production QA
 
-Status: `BENCHMARK_PEDAGOGY_MATH_PASS_METADATA_PDF_PENDING`
+Status: `BENCHMARK_PEDAGOGY_MATH_METADATA_PASS_PDF_PENDING`
 
 | Gate | State | Evidence |
 |---|---|---|
@@ -17,17 +17,18 @@ Status: `BENCHMARK_PEDAGOGY_MATH_PASS_METADATA_PDF_PENDING`
 | integrated Assimilation Book | PASS | domain/sign first; common-base routing; principal roots; conjugates; nested radicals; reversibility; logs as exponents; historical patterns |
 | First-Step Reference | PASS | compact common-base/conjugate/squaring/log/domain router authored as compression after understanding |
 | Recognition/First-Line Lab | PASS_16 | recognition and first mathematical line only |
-| practice ladder | PASS_20 | learner-visible five-stage fade using internal F0→F4 comments; two validated historical anchors included |
+| practice ladder | PASS_20 | five-stage fade with two validated historical anchors |
 | first mastery attempt | PASS | `06_H0_Mastery_Test.md` is unlabelled/unhinted |
 | mastery items | PASS_12 | exponent, principal-root, conjugate, nested radical, reversible square, logarithm and integer-domain transfer |
-| benchmark assimilation lab | PASS | `07_Benchmark_Assimilation_Lab.md` adds explicit RECONNECT diagnostic, error laboratory, ADOPT first-move check, changed-surface transfer and six-question assimilation test |
-| Quadratics-v2 pedagogy comparison | PASS_ARCHITECTURE | `Authoring/Quadratics_v2_Benchmark_Comparison.md`; concept map, missing-link repair, contrast, attempt, fading, first move, transfer, source and independent-math gates pass |
-| benchmark final artifact equivalence | PENDING | Quadratics benchmark requires rendered/preflighted artifact quality; ALG-06 PDFs are not yet produced |
-| teacher key synchronization | PASS | Recognition 16, Practice 20 and Mastery 12 independently solved and synchronized |
+| benchmark assimilation lab | PASS | explicit RECONNECT diagnostic, error laboratory, ADOPT first-move check, changed-surface transfer and six-question assimilation test |
+| benchmark lab teacher key | PASS | `Teacher_Benchmark_Assimilation_Key.md`; deterministic answers/routes independently recomputed |
+| Quadratics-v2 pedagogy comparison | PASS_ARCHITECTURE | `Authoring/Quadratics_v2_Benchmark_Comparison.md` |
+| benchmark final artifact equivalence | PENDING | benchmark requires rendered/preflighted artifact quality; PDFs not yet produced |
+| teacher key synchronization | PASS | core Teacher Diagnostic Key plus separate benchmark-lab key |
 | required contrasts | PASS | common base vs log; simple vs nested radical; conjugate vs square; reversible vs implication-only square; domain-first vs manipulation-first |
 | learner control-plane scrub | PASS_STATIC | no learner-facing issue/PR/wave/agent/H-level control labels in student documents; F labels remain comments only |
-| metadata schema | PENDING | frozen 31-column `Item_Metadata.csv` not yet committed for this package |
-| answer verification flag | PENDING_METADATA | authored answers are independently checked in teacher key, but metadata rows are not yet frozen |
+| metadata schema | PASS_79 | `Item_Metadata.csv`: canonical 31-column schema; 79 rows = 2 historical + 48 core learner + 28 benchmark diagnostic + 1 six-question rubric |
+| answer verification flag | PASS | every promoted metadata row records `answer_verified_independently=true` |
 | canonical renderer | NOT_RUN | rendering script/package not yet created |
 | student PDF preflight | NOT_RUN | no PDF rendered yet |
 | student PDF visual inspection | NOT_RUN | no PDF rendered yet |
@@ -46,28 +47,14 @@ The exact controlled stem is nested. Principal-root signs are recorded before sq
 ### `IOQM-2023-Q02 = 54`
 For `a,b>=2`, set `t=log_a b>0`; then `log_b a=1/t`. The equation gives `t=2` or `3`, so `b=a^2` or `a^3`. Bounds give 43 square pairs and 11 cube pairs, total 54.
 
-## Authored-item static checks
-
-- every radical equation in the key records sign/domain before accepting squared candidates;
-- every logarithm item checks base/argument legality;
-- common-base items do not introduce unnecessary logarithms;
-- nested radical items preserve the nesting;
-- H0 item answers independently checked, including `108` ordered pairs in M11 and maximal `a=45` in M12.
-
 ## Quadratics-v2 benchmark judgment
 
-The canonical Grade 9 Quadratics benchmark was inspected as an internal comparator. Its required pedagogy features are now represented explicitly in ALG-06: partial-knowledge reconnection, missing-link repair, contrast/decision boundaries, attempt-before-hint, fading, first-move independence, changed-surface transfer, error diagnosis and the six-question assimilation test.
+The Grade 9 Quadratics benchmark is now matched on the static **pedagogy/math/metadata architecture**: partial-knowledge reconnection, missing-link repair, contrast/decision boundaries, attempt-before-hint, fading, first-move independence, changed-surface transfer, error diagnosis, six-question assimilation, source custody, independent mathematics and item metadata are all explicit.
 
-Therefore:
-
-`BENCHMARK_PEDAGOGY_AND_MATH_ARCHITECTURE = PASS`.
-
-However the benchmark's stronger static-readiness state also requires completed source/artifact custody and rendered PDF inspection. ALG-06 has not yet run those gates, so:
-
-`BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED = NOT_YET`.
+The benchmark's stronger `BENCHMARK_READY_NOT_CLASSROOM_CALIBRATED` label is still withheld because it also requires completed PDF render/preflight/page inspection. That gate remains genuinely `NOT_RUN` here.
 
 ## Static disposition
 
-`BENCHMARK_PEDAGOGY_MATH_PASS_METADATA_AND_RENDER_PENDING`
+`BENCHMARK_PEDAGOGY_MATH_METADATA_PASS_RENDER_PENDING`
 
 This is not a claim of classroom effectiveness, retention, psychometric calibration, qualification probability or publication readiness.
