@@ -7,7 +7,7 @@ on:
       - '.github/workflows/geo04-build-audit.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-audit:
@@ -26,23 +26,39 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc texlive-xetex texlive-latex-extra fonts-dejavu-core fonts-dejavu-extra poppler-utils
 
-      - name: Validate canonical metadata
+      - name: Regenerate and validate canonical metadata
         shell: bash
         run: |
           set -euo pipefail
           TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency'
+          python "$TOPIC/Authoring/generate_geo04_metadata.py"
           export TOPIC
           python - <<'PY'
           import csv, os
           from pathlib import Path
           p=Path(os.environ['TOPIC'])/'Item_Metadata.csv'
-          with p.open(encoding='utf-8') as f:
+          with p.open(encoding='utf-8', newline='') as f:
               rows=list(csv.reader(f))
           assert len(rows)==85, len(rows)
           assert all(len(r)==31 for r in rows), {i:len(r) for i,r in enumerate(rows) if len(r)!=31}
           assert all(r[27]=='true' for r in rows[1:])
           assert rows[0][0]=='item_id' and rows[0][-1]=='notes'
           PY
+
+      - name: Freeze corrected metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOPIC='Grade 9/Mathematics/IOQM/03_Main_Topics/GEO-04_Circles_Cyclicity_Tangency'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$TOPIC/Item_Metadata.csv"
+          if git diff --cached --quiet; then
+            echo 'metadata already canonical'
+          else
+            git commit -m 'GEO-04: repair and freeze canonical 84-row metadata'
+            git push origin HEAD:ioqm-g9-geo04-circles-tangency
+          fi
 
       - name: Render candidate PDFs
         shell: bash
