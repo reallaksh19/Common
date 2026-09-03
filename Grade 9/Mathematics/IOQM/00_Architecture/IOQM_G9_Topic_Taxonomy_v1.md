@@ -6,6 +6,8 @@ This taxonomy is an operational Grade-9 curriculum map. It is not an official Gr
 
 It has now been reconciled against the validated 2023–2025 90-question corpus, answer-verification authority and canonical overlap-owner rules. Primary historical ownership may still be changed through explicit second-route change control, but the **22 main-topic unit boundaries are frozen for production**.
 
+Coverage hardening for named preparation topics is controlled by `IOQM_G9_Coverage_Hardening_Overlay_v1.md`; generic proof modes are shared through `IOQM_G9_Proof_Strategy_Toolkit_v1.md`. Neither asset creates an additional main topic.
+
 ## Domain NT — Number Theory
 
 ### IOQM-G9-NT-01 — Divisibility, GCD, LCM & Euclidean Structure
@@ -13,6 +15,7 @@ It has now been reconciled against the validated 2023–2025 90-question corpus,
 Core scope:
 - divisibility as structural relation;
 - Euclidean algorithm;
+- **Euclid’s Lemma**: if prime `p | ab`, then `p | a` or `p | b`, with primality/hypothesis check and composite countercontrast;
 - gcd/lcm identities;
 - same-remainder structure;
 - gcd of differences;
@@ -20,7 +23,7 @@ Core scope:
 - divisibility chains;
 - basic valuation awareness where useful.
 
-Likely microstreams: divisibility meaning/algebra; Euclidean algorithm; gcd/lcm reconstruction; same remainder/differences; divisibility chains; source/PYQ interface.
+Likely microstreams: divisibility meaning/algebra; Euclidean algorithm and Euclid’s Lemma bridge; gcd/lcm reconstruction; same remainder/differences; divisibility chains; source/PYQ interface.
 
 ### IOQM-G9-NT-02 — Modular Arithmetic, Residues & Power Cycles
 
@@ -31,12 +34,16 @@ Core scope:
 - last digits;
 - cycles and multiplicative-order intuition;
 - inverses/cancellation legality;
+- **Euler’s theorem at bounded Grade-9 depth**, with explicit coprimality check and minimal totient definition;
+- Fermat’s little theorem as an optional prime-modulus curriculum-design companion/corollary, not as a substitute for checking hypotheses;
+- decision boundary: use a short visible residue cycle/order before theorem machinery when cheaper;
 - simultaneous congruences at Grade-9-appropriate depth.
 
 ### IOQM-G9-NT-03 — Prime Factorisation, Divisors & Perfect Powers
 
 Core scope:
 - Fundamental Theorem of Arithmetic;
+- retrieve Euclid’s Lemma from NT-01 when prime divisibility must split across a product rather than reteaching it canonically;
 - divisor counting;
 - parity of divisor count;
 - perfect squares/cubes/powers;
@@ -262,7 +269,9 @@ Core scope:
 
 The architecture may create prerequisite repair assets for ratio/proportion/percentage; fractions/rational manipulation; algebraic expansion/factorisation; elementary coordinate geometry; basic probability vocabulary only when a counting problem uses it; and notation literacy.
 
-These are `FOUNDATION_OVERLAY` assets. Their presence does not create a fifth official domain.
+Generic proof strategy is handled by the cross-topic `IOQM_G9_Proof_Strategy_Toolkit_v1.md`: direct implication, equivalence discipline, contradiction, contrapositive where useful, counterexample, exhaustive finite cases, extremal choice, invariant/monovariant, construction/obstruction and equality-condition closure. Topics retrieve these proof modes instead of creating a 23rd proof topic.
+
+These are `FOUNDATION_OVERLAY` / cross-topic bridge assets. Their presence does not create a fifth official domain.
 
 ## Main-topic issue rule
 
