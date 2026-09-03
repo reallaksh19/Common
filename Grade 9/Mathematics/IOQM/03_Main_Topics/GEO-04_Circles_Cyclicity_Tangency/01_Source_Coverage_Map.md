@@ -1,8 +1,8 @@
 # GEO-04 Source Coverage Map
 
-Status: `EXACT_SOURCE_AND_PAGE_VISUAL_CUSTODY_CLOSED`
+Status: `EXACT_SOURCE_PAGE_CUSTODY_CLOSED_5_OF_5`
 
-This map separates exact historical source custody, independent-answer authority, and GEO-04 teaching classification. Historical circle figures would be source-controlled mathematical data; for these five anchors, exact page inspection confirms that the official paper presents the geometry textually and prints no problem diagram.
+This map separates exact historical source custody, independent-answer authority, and GEO-04 teaching classification. Circle figures are source-controlled mathematical data; no historical item is promoted from a reconstructed or approximate diagram.
 
 ## Authorities
 
@@ -10,31 +10,32 @@ This map separates exact historical source custody, independent-answer authority
 - independent-answer authority: `Verification/IOQM_2023_2025_Answer_Verification_Ledger_v1.csv`.
 - prompt authority: `02_Production/IOQM_G9_Main_Topic_Prompt_Pack_v1.md`.
 - prerequisite provider: corrected merged `GEO02_Stable_Angle_Polygon_Interface_v1.md`.
-- 2025 official paper: organizer M1 English paper `en.M1.pdf`; exact pages rendered at 200 dpi.
-- 2025 final key: organizer final key dated 2025-10-02; Q23 non-degenerate committee interpretation preserved.
-- 2024 official English paper: organizer `english.pdf`; exact page rendered at 200 dpi.
-- 2023 controlled paper/key: HBCSE-linked MTA(I) `IOQM_Sep_2023_Question-paper-with-answer-key.pdf`; exact page screenshot inspected.
 
-The verification ledger records independent PASS verification for all five anchors, and `Authoring/Independent_Math_and_Source_Audit.md` independently re-derives all five answers.
+The verification ledger records independent PASS verification for all five anchors.
 
 ## Historical anchors
 
-| ID | verified answer | mechanism / first move | exact source/page custody | printed figure |
+| ID | verified answer | mechanism / first move | GEO-02 retrieval | exact-paper custody |
 |---|---:|---|---|---|
-| `IOQM-2025-Q19` | `29` | circle centered at `A` plus square/right-triangle metric condition; impose the circle equality before choosing coordinates | `PASS_OFFICIAL_M1_PAGE_7_200DPI` | `NONE` |
-| `IOQM-2025-Q23` | `03` | rectangle with `C,D,M,N` concyclic and equal-length constraints; cyclicity supplies the decisive extra relation | `PASS_OFFICIAL_M1_PAGE_8_200DPI_AND_FINAL_KEY_INTERPRETATION` | `NONE` |
-| `IOQM-2025-Q30` | `10` | two internally tangent circles; common chord/line-of-centres geometry plus `∠OAB=90°` constrains the radii | `PASS_OFFICIAL_M1_PAGE_10_200DPI` | `NONE` |
-| `IOQM-2024-Q17` | `25` | isosceles triangle, circumcircle and a chord through a midpoint parallel to the base; symmetry/metric circle geometry | `PASS_OFFICIAL_ENGLISH_PRINTED_PAGE_6_200DPI` | `NONE` |
-| `IOQM-2023-Q15` | `03` | unit square with two circumcentres; perpendicular-bisector/circle geometry plus perimeter constraint | `PASS_HBCSE_LINKED_MTAI_PRINTED_PAGE_5_SCREENSHOT` | `NONE` |
+| `IOQM-2025-Q19` | `29` | circle centered at `A` plus embedded square/right-triangle metric condition; impose the circle equality before choosing a coordinate or synthetic route | retrieve local angle closure only if needed | `PASS_EXACT_STEM_PAGE_VISUAL_TEXT_ONLY_NO_PRINTED_FIGURE` |
+| `IOQM-2025-Q23` | `03` | rectangle with `C,D,M,N` concyclic and equal-length constraints; cyclicity converts the metric data into a short circle condition | retrieve generic quadrilateral facts only to contrast with cyclic structure | `PASS_EXACT_STEM_PAGE_VISUAL_TEXT_ONLY_NONDEGENERATE_CANON` |
+| `IOQM-2025-Q30` | `10` | two internally tangent circles; common chord/radical-axis geometry plus `∠OAB=90°` constrains centers/radii | retrieve proved perpendicular/angle basics, not circle canon | `PASS_EXACT_STEM_PAGE_VISUAL_TEXT_ONLY_NO_PRINTED_FIGURE` |
+| `IOQM-2024-Q17` | `25` | isosceles triangle, circumcircle and a chord through a midpoint parallel to the base; exploit symmetry/metric circle geometry | retrieve parallel-line angle facts; GEO-04 owns circumcircle/chord relation | `PASS_EXACT_STEM_PAGE_VISUAL_TEXT_ONLY_NO_PRINTED_FIGURE` |
+| `IOQM-2023-Q15` | `03` | square with points `M,N`; circumcentres determined by perpendicular-bisector/circle geometry | retrieve only basic angle/perpendicular facts | `PASS_EXACT_STEM_PAGE_VISUAL_TEXT_ONLY_NO_PRINTED_FIGURE` |
 
-## Q23 interpretation custody
+Special note for `IOQM-2025-Q23`: the final-key committee rejected a degenerate alternate interpretation because that branch makes an explicit concyclicity condition vacuous. GEO-04 preserves the canonical non-degenerate reading.
 
-The exact 2025 final key records and rejects the degenerate interpretation in which `C` coincides with `N`, because that makes the stated concyclicity condition vacuous. GEO-04 therefore preserves the canonical non-degenerate branch `N != C` throughout source audit, teacher key and any learner-facing historical use.
+## Independent-answer closure
+
+- `2025-Q19 = 29` — PASS, independently verified.
+- `2025-Q23 = 03` — PASS, independently verified.
+- `2025-Q30 = 10` — PASS, independently verified.
+- `2024-Q17 = 25` — PASS, independently verified.
+- `2023-Q15 = 03` — PASS, independently verified.
 
 ## GEO-02 retrieval boundary
 
 Retrieve, do not reteach:
-
 - straight-line/point/triangle local angle closure;
 - theorem/converse discipline for parallel lines;
 - generic quadrilateral `360°` closure;
@@ -43,8 +44,8 @@ Retrieve, do not reteach:
 
 GEO-04 owns centre/inscribed-angle relations, cyclic quadrilaterals, tangent-radius/equal tangents, alternate segment, power of a point, intersecting chords/secants and short synthetic circle-recognition chains.
 
-## Historical-figure custody disposition
+## Figure custody disposition
 
-Exact historical page inspection is complete 5/5. Since no anchor prints a problem diagram, there is no historical figure to reproduce or redraw. Any diagrams created for the learner package are therefore explicitly **author-created teaching diagrams**, not source reproductions, and must be checked against the textual incidence/tangency/cyclicity conditions rather than described as official figures.
+All five exact historical problem pages were inspected. Each anchor statement is text-only; no printed historical problem diagram exists to redraw or preserve. Therefore historical figure custody is `PASS_NONE_REQUIRED`, not `PENDING`.
 
-Current disposition: `SOURCE_STEMS_CLOSED_5_OF_5; PAGE_VISUAL_CLOSED_5_OF_5; PRINTED_FIGURE_NONE_5_OF_5`.
+Current disposition: `SOURCE_STEMS_5_OF_5_PASS; PAGE_VISUAL_5_OF_5_PASS; PRINTED_HISTORICAL_FIGURES_NONE; ANSWERS_5_OF_5_PASS`.
