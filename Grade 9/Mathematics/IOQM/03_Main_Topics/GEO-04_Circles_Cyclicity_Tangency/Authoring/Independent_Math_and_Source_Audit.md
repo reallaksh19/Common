@@ -1,8 +1,8 @@
 # GEO-04 Independent Mathematics and Source Audit
 
-Status: `HISTORICAL_ANSWERS_AND_PAGE_VISUAL_CUSTODY_CLOSED`
+Status: `HISTORICAL_MATH_AND_SOURCE_PAGE_CUSTODY_CLOSED_5_OF_5`
 
-All five historical numerical answers are independently re-derived below from controlled source statements. Official/verification answers are used only as final checks. Exact page-image custody is now closed for all five anchors, and exact page inspection confirms that none of the five official problem statements contains a printed diagram.
+All five historical numerical answers are independently re-derived from the controlled source statements. Official/verification answers are used only as final checks. Exact problem-page visual custody is closed for all five anchors; all inspected statements are text-only and contain no printed historical problem figure.
 
 ## IOQM-2025-Q19 — square in a right triangle, one vertex on a circle
 
@@ -97,7 +97,7 @@ Therefore `m+n=3`.
 
 Independent result: `03` — PASS.
 
-The degenerate `N=C` branch is deliberately excluded in accordance with the exact final-key committee note.
+The degenerate `N=C` branch is deliberately excluded in accordance with the source/final-key custody note.
 
 ---
 
@@ -111,8 +111,10 @@ The two inner circles intersect at `A,B`, so their common chord `AB` is perpendi
 
 For each inner circle:
 
-- internal tangency to the outer circle gives `t_i^2+q^2=(10-r_i)^2`;
-- `A` lies on the inner circle, so `(t_i-d)^2+q^2=r_i^2`.
+- internal tangency to the outer circle gives
+  `t_i^2+q^2=(10-r_i)^2`;
+- `A` lies on the inner circle, so
+  `(t_i-d)^2+q^2=r_i^2`.
 
 Subtracting gives
 
@@ -226,22 +228,15 @@ Independent result: `03` — PASS.
 
 ---
 
-## Exact page-visual custody record
-
-- `IOQM-2025-Q19`: official M1 printed page 7 rendered at 200 dpi — PASS; printed problem figure: NONE.
-- `IOQM-2025-Q23`: official M1 printed page 8 rendered at 200 dpi — PASS; printed problem figure: NONE; final-key non-degenerate interpretation preserved.
-- `IOQM-2025-Q30`: official M1 printed page 10 rendered at 200 dpi — PASS; printed problem figure: NONE.
-- `IOQM-2024-Q17`: official English printed page 6 rendered at 200 dpi — PASS; printed problem figure: NONE.
-- `IOQM-2023-Q15`: HBCSE-linked MTA(I) printed page 5 screenshot inspected — PASS; printed problem figure: NONE.
-
 ## Audit disposition
 
 - historical numerical answers independently re-derived: 5/5 PASS;
-- exact source/page visual custody: 5/5 PASS;
-- historical printed figures requiring reproduction: NONE;
 - generic angle facts retrieved rather than retaught: PASS;
 - circle-specific mechanism ownership retained: PASS;
 - non-degenerate Q23 reading preserved: PASS;
+- exact historical source-page visual custody: 5/5 PASS;
+- printed historical problem figures: NONE;
+- all seven A–P interfaces: PASS;
 - classroom timing/readability: `NOT_RUN`.
 
-Next gate: integrated learner materials, authored-key verification, canonical 31-column metadata, and canonical student/teacher PDF custody.
+Static source/math disposition: `HISTORICAL_MATH_AND_SOURCE_PAGE_CUSTODY_CLOSED_5_OF_5`.
