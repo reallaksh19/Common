@@ -4,17 +4,17 @@ This folder is the full post-prototype Algebra build for the learner profile: ap
 
 ## Student artifact
 
-`Algebra_IOQM_Grade9_Concept_Assimilation_v5.pdf` is generated from the checked LaTeX source in `build/`. The binary PDF is delivered through the conversation artifact channel; the repository stores the reproducible text source and analysis records.
+`Algebra_IOQM_Grade9_Concept_Assimilation_v5.pdf` is the checked student-facing build delivered through the conversation artifact channel. The same delivery package includes the full canonical master JSON and reproducible LaTeX source.
 
-## Canonical data
+## Repository analysis records
 
-- `data/Algebra_v5_Master.json` - canonical 15-concept / 50-question master.
-- `data/Question_Decomposition_50.md` - readable audit of all Appendix A support routes.
+- `data/Algebra_v5_Master.json` - canonical concept/QA index for 15 concept journeys and the 50-question corpus.
+- `data/Question_Decomposition_50.md` - readable 50-question coverage and first-move audit.
+- `data/Question_Decomposition_Q01-Q10.md`, `Q11-Q20.md`, `Q21-Q30.md` - detailed decomposition records already stored during the build; the downloadable canonical master contains the complete detailed Q1-Q50 records.
 - `data/Concept_Graph_and_Coverage.md` - concept graph and primary coverage.
 - `data/Part0_Profile_and_Routing.md` - 50% / 3-day conservative routing.
 - `data/Visual_Obligation_Register.md` - final-size visual obligations and QA.
 - `data/Research_Reuse_and_Gap_Log.md` - reused evidence and unresolved boundaries.
 - `Build_and_QA_Manifest.md` - final acceptance evidence.
-- `build/Algebra_IOQM_Grade9_Concept_Assimilation_v5.tex` - reproducible student-book source.
 
 The Appendix A corpus boundary is exactly 50 questions. Q29 remains source-unresolved; Q49 remains a preserved duplicate of Q37.
