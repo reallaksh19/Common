@@ -1,0 +1,19 @@
+page,visual,purpose,status
+17,Blocks and gaps; bounded multiplicity; conservation; exact-two adjacency,Core counting representations,PASS
+24,Round table vs numbered seats; circular gaps; necklace/bracelet; empty chairs,Circular identity and symmetry,PASS
+27,2x2 conflict graph; C5 colouring; perfect matching; cycle decomposition,Graph modelling and colouring,PASS
+30,Change encoding; minimal state; stable prefix; recurrence checklist,State/recurrence representations,PASS
+33,Pigeonhole boxes; losing positions; exponent grid; method boundary,Pigeonhole/games/number theory,PASS
+41,Q4 leading-digit strip; Q6 conservation,Appendix A visual hints Q1-Q7,PASS
+43,Q8 conflict graph; Q9 derangement map; Q12 encoding; Q13 arrows,Appendix A visual hints Q8-Q13,PASS
+45,Q14 stable prefix; Q17 pair symmetry,Appendix A visual hints Q14-Q17,PASS
+47,Q18 case split; Q20 circular gaps; Q22 bounded multiplicity,Appendix A visual hints Q18-Q26,PASS
+49,Q29 exponent boundary; Q31 chain blocks; Q33 matching; Q34 cycles,Appendix A visual hints Q27-Q34,PASS
+51,Q35 gaps; Q41 exactly-two adjacency,Appendix A visual hints Q35-Q41,PASS
+53,Q42 seat pattern; Q46 numbered seats; Q48 forced circular block,Appendix A visual hints Q42-Q48,PASS
+55,Q49 cycle; Q51 symmetry; Q52 empty-chair; Q53 cube,Appendix A visual hints Q49-Q55,PASS
+57,Q56 independent colour classes,Appendix A visual hint Q56,PASS
+64,B19 pigeonhole boxes; B20 losing positions,Appendix B visual transfer,PASS
+66,Gaps; block merge; circle identity; graph; state; pigeonhole,Appendix C visual router,PASS
+68,Circle identity; graph/colouring; symmetry; state,Appendix C visual models,PASS
+69,Exponent grid; pigeonhole; game positions,Appendix C visual models,PASS
