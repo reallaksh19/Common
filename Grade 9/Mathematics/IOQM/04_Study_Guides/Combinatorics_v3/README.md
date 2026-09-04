@@ -1,108 +1,40 @@
-# Combinatorics Study Guide v3 — 72-Hour Rescue Layer
+# Combinatorics v3 — IOQM Grade 9 Study Guide Package
 
-## Status
+This folder contains the canonical Combinatorics v3 source and learner-routing data for the Grade 9 IOQM study-guide builder.
 
-This package upgrades the existing `Combinatorics_v2` reference book for a specific learner state:
+## Core source files
 
-- Grade 9;
-- roughly 30–50% prior knowledge;
-- exam in about three days;
-- formulas may be partly remembered;
-- the main bottleneck is recognizing which method/model applies and writing the first useful line.
+- `Part_0_72_Hour_Exam_Navigator.md` — short-horizon recognition and repair route.
+- `Question_to_Method_Priority_Matrix.md` — Q1–Q56 method map, stable skills, 72-hour priority, hint depth, failure stage and visual obligations.
+- `Appendix_A_Local_Hints.md` — answer-free Notice / Recall / Start overlay for Q1–Q56.
+- `QA.md` — consolidated evidence ledger.
 
-The v2 teaching core is **not discarded**. Its static self-sufficiency audit already maps all supplied Q1–Q56 to explicitly taught methods. v3 adds the missing exam-time orchestration and local retrieval support.
+## v3.1 Visual Edition records
 
-## Architecture
+- `README_v3_1.md` — final architecture and artifact metadata.
+- `Visual_Manifest_v3_1.csv` — visual placement manifest.
+- `Visual_Pedagogy_Audit_v3_1.md` — final visual coverage audit.
+- `Final_PDF_Artifact_v3_1.md` — exact final-PDF identity and SHA-256.
+- `SAVED_PACKAGE_INDEX.md` — canonical package index.
 
-```text
-Part 0 — 72-Hour Exam Navigator
-    diagnose recognition separately from execution
-    build Green / Yellow / Red map
-    assign R/M/S/E/C failure code
-    combine global priority with personal deficit
-    bound the three-day route
+Final generated artifact:
 
-Existing v2 Core Reference Book
-    durable teaching and worked explanations
+`Combinatorics_IOQM_Grade9_Complete_Study_Guide_v3_1_Visual.pdf`
 
-Advanced Worked Bridges
-    execution repair for non-routine methods
+SHA-256:
 
-Appendix A
-    Q1–Q56 + local Notice / Recall / Start strips
+`5d3516228ba631d2d07c3b0f6a7f6e1ccecf9de429414129e6230040b9b0fda4`
 
-Appendix B
-    transfer / wider-curriculum probes
+## Design intent
 
-Quick Reference
-    rapid recall, not teaching
-```
+The package is for a learner with roughly 30–50% prior knowledge who can often execute familiar procedures but may fail to recognize the hidden method, remember the relevant representation, or write the first useful line.
 
-## Files in this v3 package
+The durable core and the short-horizon layer have different jobs:
 
-- `Part_0_72_Hour_Exam_Navigator.md` — student-facing three-day routing layer.
-- `Question_to_Method_Priority_Matrix.md` — reviewer matrix for all Q1–Q56: stable skill, priority, hint depth, likely failure point and useful visual.
-- `Appendix_A_Local_Hints.md` — complete answer-free local hint overlay for Q1–Q56.
-- `QA.md` — data sources, counts, gates and remaining work.
+> Navigator = where to go. Core = how to do it.
 
-The reusable builder profile is stored at:
+Visuals are teaching obligations when they reveal hidden structure; decorative figures do not count toward visual coverage.
 
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/combinatorics-question-driven-profile-v2.md`
+## Evidence boundary
 
-## Data used
-
-This revision was not designed from the attached 56-question set alone. It also consumes existing repository evidence:
-
-1. `Combinatorics_v2/Self_Sufficiency_Audit.md` — exact Q1–Q56 method obligations and known v1 orphan-method repairs.
-2. Validated 2023–2025 90-question IOQM taxonomy reconciliation — primary-domain/topic signal for global priority; these counts are explicitly **not official weightage**.
-3. `COMB-01` First-Step Reference and Recognition/First-Line Lab.
-4. `COMB-02` Graphs/Colouring First-Step Reference and Recognition/First-Line Lab.
-5. `COMB-03` State/Recurrence First-Step Reference and Recognition Lab.
-6. `COMB-05` Pigeonhole/Extremal First-Step Reference and Recognition/First-Line Lab.
-7. Existing v2 main guide, Advanced Worked Bridges, Quick Reference and Appendix B.
-
-## Key design decisions
-
-### Recognition is tested before full solving
-
-The entry diagnostic uses 12 short `notice -> method -> first useful line` items. No hint is shown before the unaided response is scored.
-
-### Priority is not difficulty
-
-The three-day core contains 22 Appendix A items plus Appendix B B19/B20 for wider canonical Pigeonhole/Games coverage, giving a maximum 24-item route **before removing skills already Green**.
-
-### Workload is bounded
-
-```text
-MAX_ACTIVE_RED_FAMILIES_PER_DAY = 4
-MAX_NEW_CORE_SKILLS_DAY3 = 0
-MAX_MUST_PRACTICE_ITEMS = 24
-MAX_INITIAL_FULL_EXECUTION_PROBES = 6
-```
-
-### Errors route to different repairs
-
-```text
-R Recognize -> router / Notice
-M Remember  -> Recall / skill card
-S Start     -> first-line model
-E Execute   -> worked bridge
-C Check     -> identity / overlap / symmetry / exact-once checklist
-```
-
-### Hints fade across non-identical problems
-
-```text
-Learn: Notice + Recall + Start
--> Retrieve: max Recall
--> Transfer: max Notice
--> Exam: no hint
-```
-
-## Scope boundary
-
-This package makes document-design claims only. It does **not** claim measured classroom timing, retention, fresh-paper solve rate, calibrated difficulty, psychometric discrimination, or probability of qualifying IOQM.
-
-## Next production step
-
-Integrate Part 0 and the local hint overlay into the v2 source, add the selected structural visuals from the matrix, run the PR-140 visual/orphan/hint gates, then generate and inspect the v3 PDF at 200 dpi.
+All PASS statements in this folder are static document/production claims unless explicitly marked as learner observations. The package does not claim calibrated difficulty, classroom timing, retention, qualification probability or psychometric validity.
