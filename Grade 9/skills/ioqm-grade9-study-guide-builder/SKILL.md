@@ -1,6 +1,6 @@
 ---
 name: ioqm-grade9-study-guide-builder
-description: Build or revise a Grade 9 IOQM study guide from existing repository material plus user-supplied questions/notes, with a 50%-prior-knowledge self-sufficiency audit, benchmark comparison, clean question appendices, decision-first quick reference, source/citation ledger, domain-specific authoring profiles, and traceable visual-pedagogy obligations.
+description: Build or revise a Grade 9 IOQM study guide from existing repository material plus user-supplied questions/notes, with a configurable learner-knowledge profile (default partial knowledge), self-sufficiency audit, benchmark comparison, clean question appendices, decision-first quick reference, source/citation ledger, domain-specific authoring profiles, flexible T1-to-Tx short-horizon readiness checks, and traceable visual-pedagogy obligations.
 ---
 
 # IOQM Grade 9 Study Guide Builder
@@ -19,13 +19,19 @@ Before authoring or revising a production study guide, read:
 
 That reference is the detailed production contract for question-to-method matrices, stable skill IDs, orphan-method repair, progressive local hints, Visual Bridges, self-sufficiency gates, optional short-horizon navigation, and inspected PDF delivery.
 
+When the user provides learner-specific topic/subtopic/skill knowledge, or when short-horizon readiness routing is requested, also read:
+
+`Grade 9/skills/ioqm-grade9-study-guide-builder/references/learner-knowledge-profile-and-readiness-addendum.md`
+
+That addendum defines optional learner-knowledge input, specificity precedence, personalization without pruning the durable core, and flexible `T1 ... Tx` Quick Check selection. It overrides older fixed prior-knowledge percentages and fixed Quick Check counts for those fields only.
+
 If **any** question, chapter, Worked Bridge, Appendix A/B item, Appendix C method family, or Navigator element has a visual requirement other than `VISUAL_NONE`, also read and apply:
 
 `Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md`
 
 The visual addendum is mandatory when triggered. A required visual is a teaching obligation, not optional polish.
 
-When a domain profile exists, read it after the generalized contract. A domain profile specializes the generalized rules; it does not weaken them.
+When a domain profile exists, read it after the generalized contract. A domain profile specializes the generalized rules; it does not weaken them. Learner-profile/readiness overrides may then specialize only learner knowledge and Quick Check selection.
 
 Current profile example:
 
@@ -33,13 +39,27 @@ Current profile example:
 
 ## Core student standard
 
-Assume the learner knows roughly 30–50% of the school-level background:
+If no learner-specific knowledge is supplied, assume the learner knows roughly 30–50% of the school-level background:
 
 - familiar formulas may be remembered;
 - routine exercises may be solvable;
 - method recognition is inconsistent;
 - nearby methods are confused;
 - advanced Olympiad moves cannot be assumed.
+
+If the user provides topic/subtopic/skill-wise knowledge, **do not flatten it into one global percentage**. Use the most specific relevant information for routing. Accept categorical, approximate-percentage, or natural-language input. Treat stated percentages as planning estimates unless they come from measured evidence.
+
+Examples:
+
+```text
+Quadratics = strong
+Polynomials / Vieta = strong
+Polynomials / repeated roots = weak
+Recurrences = 20%
+ALG-EQ-04 = unknown
+```
+
+The durable guide should still remain self-sufficient for a partial-knowledge learner unless the user explicitly requests a personally pruned edition. Personalization changes the Navigator route, Quick Check selection, practice priority, and starting support level; it does not silently delete core teaching.
 
 The guide must therefore teach **enough to recognize, start, execute, and check**, not merely name methods.
 
@@ -105,6 +125,8 @@ For every supplied question record at minimum:
 - initial hint depth where hints are allowed;
 - visual requirement.
 
+When learner-specific input exists, also maintain enough internal mapping to know which topic/subtopic/skill is `UNKNOWN`, `NONE`, `WEAK`, `PARTIAL`, `STRONG`, or `SECURE`, and what evidence/source produced that state.
+
 ### Visual requirement fields
 
 When a visual may matter, do not use only a loose note such as “diagram useful.” Apply the visual addendum and record:
@@ -136,7 +158,7 @@ Examples:
 
 No supplied question may retain an orphan method.
 
-## 50%-knowledge self-sufficiency gate
+## Static self-sufficiency gate
 
 A question passes only if the guide contains all required support:
 
@@ -153,6 +175,8 @@ Record:
 `STATIC_CONTENT_SELF_SUFFICIENCY = PASS_n_OF_n`
 
 only when every supplied question passes.
+
+This gate evaluates the durable document, not the learner's stated percentage. A personalized route may skip secure topics in short-horizon mode without weakening the underlying core.
 
 This is not classroom evidence. Keep actual learner success, timing, retention and psychometrics unclaimed unless observed.
 
@@ -309,15 +333,18 @@ Do not put full worked solutions in the handout.
 
 ## Optional short-horizon Navigator
 
-When the learner has only a few days, apply the detailed v2 Navigator rules.
+When the learner has only a few days, apply the detailed v2 Navigator rules and the learner-profile/readiness addendum when applicable.
 
 The student-facing interface should remain simple:
 
-- Quick Check uses `T1`, `T2`, ... rather than colliding with corpus `Q1`, `Q2`, ...;
+- Quick Check uses `T1`, `T2`, ... `Tx` rather than colliding with corpus `Q1`, `Q2`, ...;
+- `x` is derived from the learner profile, high-value unknown/weak/partial families, time budget, page fit, and any explicit user count;
+- if no learner profile is supplied, use the domain's default Quick Check bank/count;
 - score recognition before exposing method cues or visual routers;
-- use readable `DO FIRST / DO NEXT / ONLY IF TIME` routing;
+- use readable `DO FIRST / DO NEXT / QUICK RETEST / ONLY IF TIME` routing;
 - use plain-language `Notice / Recall / Start` repair;
 - keep internal diagnostic codes and priority equations out of the child-facing pages;
+- do not waste T-slots repeatedly testing explicitly secure families unless a mixed spot-check is useful;
 - no major new core skill on Day 3;
 - protect normal sleep rather than prescribing late-night new theory.
 
@@ -353,7 +380,9 @@ Before finalizing:
 9. broader canonical curriculum gaps exposed by the source set are repaired or explicitly listed;
 10. citations/source roles are recorded;
 11. quick-reference content matches the main guide and carries micro-models for visually driven core families where appropriate;
-12. no unsupported classroom-effectiveness claim is made.
+12. no unsupported classroom-effectiveness claim is made;
+13. when learner knowledge is supplied, the most specific topic/subtopic/skill evidence controls routing without pruning the durable core;
+14. when a short-horizon Quick Check is used, its `T1 ... Tx` count and family coverage are justified by the selected scope/profile rather than copied blindly from a default edition.
 
 ## Hard visual gate
 
@@ -413,6 +442,7 @@ For reusable agent operation create or maintain:
 ```text
 Grade 9/skills/ioqm-grade9-study-guide-builder/SKILL.md
 Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2.md
+Grade 9/skills/ioqm-grade9-study-guide-builder/references/learner-knowledge-profile-and-readiness-addendum.md
 Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md
 Grade 9/skills/ioqm-grade9-study-guide-builder/references/domain-prompt-examples.md
 Grade 9/skills/ioqm-grade9-study-guide-builder/references/self-sufficiency-audit-template.md
@@ -445,10 +475,12 @@ Keep these separate unless measured:
 
 A guide is not self-sufficient because it lists every formula, contains many pages, or looks professional.
 
-It is self-sufficient only when a half-prepared student can move from:
+It is self-sufficient only when the target learner can move from:
 
 **problem wording → recognized structure → legal first step → executable method → correct check**
 
 without needing an unnamed trick that exists only in the teacher's head.
+
+If learner-specific knowledge is unavailable, use the partial-knowledge baseline. If it is available, personalize the route rather than pretending one global “50%” describes every topic.
 
 When a representation is part of the method, the learner must also be able to **see the representation at the point of need**.
