@@ -1,0 +1,92 @@
+{
+  "GEO-RIGHT-01": {
+    "remember": "Pythagoras. If altitude h splits hypotenuse c into p,q: h²=pq, a²=cp, b²=cq, ab=ch. Hypotenuse twice a leg -> 30° opposite that leg.",
+    "link": "Right-triangle structure is often shorter than Stewart, coordinates, or trig.",
+    "why": "The altitude to the hypotenuse creates two smaller triangles similar to the original, generating the projection identities.",
+    "notice": "Diameter, explicit 90°, altitude to hypotenuse, or hypotenuse = 2×leg.",
+    "try": "Mark every right angle and ask whether similarity or a special triangle closes the problem.",
+    "contrast": "Do not use a general formula before exploiting the special right-triangle theorem already present.",
+    "example": "If h=6 is the altitude to the hypotenuse, c≥12 because h²=pq≤((p+q)/2)²=(c/2)²."
+  },
+  "GEO-MEDIAN-01": {
+    "remember": "Centroid G divides each median 2:1 from the vertex. Apollonius: m_a²=(2b²+2c²-a²)/4.",
+    "link": "Classify a vertex-to-side segment before choosing Stewart. Median -> Apollonius first.",
+    "why": "The midpoint condition fixes the split of the opposite side, allowing a strong squared-length identity and a simple centroid vector relation.",
+    "notice": "Midpoint on the opposite side, “median”, centroid, perpendicular medians.",
+    "try": "Mark the midpoint and the centroid 2:1 ratio before introducing coordinates.",
+    "contrast": "A generic cevian is not a median unless the opposite side is actually bisected.",
+    "example": "If median AM=9, then AG=6 and GM=3."
+  },
+  "GEO-CEVIAN-01": {
+    "remember": "For D on BC with BD=m, DC=n, AD=d, AC=b, AB=c: b²m+c²n=(m+n)(d²+mn).",
+    "link": "Stewart is for an arbitrary cevian when the side split is known and no more special theorem applies.",
+    "why": "It is a metric balance obtained by eliminating the altitude after applying cosine/Pythagorean relations to the two sub-triangles.",
+    "notice": "A vertex-to-side segment with a known non-midpoint split.",
+    "try": "Name m,n,d,b,c carefully before substituting.",
+    "contrast": "If the cevian is a median, angle bisector, or altitude, try the special theorem first.",
+    "example": "If BD=DC, Stewart reduces to Apollonius."
+  },
+  "GEO-ABIS-01": {
+    "remember": "If AD bisects ∠A, then BD/DC=AB/AC.",
+    "link": "Arc midpoints and equal-angle constructions can create an angle bisector indirectly.",
+    "why": "Triangles ABD and ACD share the same altitude to BC; their area ratio equals BD/DC. Using 1/2 ab sin C and equal split angles also gives AB/AC.",
+    "notice": "Equal angles at a vertex, arc midpoint symmetry, or a side-ratio target.",
+    "try": "Confirm AD really bisects the full angle, then write the side ratio.",
+    "contrast": "Do not use the theorem for an exterior angle or approximate visual bisector without proof.",
+    "example": "If AB:AC=3:5, then an internal angle bisector divides BC in ratio 3:5."
+  },
+  "GEO-CENTER-01": {
+    "remember": "Incenter = angle bisectors, equidistant from sides; circumcenter = perpendicular bisectors, equidistant from vertices; orthocenter = altitudes. ∠BHC=180°-A, ∠BIC=90°+A/2.",
+    "link": "“Midpoint + perpendicular” should trigger circumcenter; “equal distances to sides” should trigger incenter.",
+    "why": "Each center is defined by a locus intersection, so one construction fact often identifies the center immediately.",
+    "notice": "Perpendicular bisectors, altitudes, angle bisectors, or named H/I/O.",
+    "try": "Write the defining lines of the named center before using any derived angle formula.",
+    "contrast": "A point drawn near the middle is not automatically a center.",
+    "example": "A point on the perpendicular bisectors of AB and AC satisfies OA=OB=OC."
+  },
+  "GEO-CEVA-01": {
+    "remember": "For D∈BC, E∈CA, F∈AB, AD,BE,CF are concurrent iff (BD/DC)(CE/EA)(AF/FB)=1.",
+    "link": "The product comes from area ratios; those same ratios can encode area weights around the concurrency point.",
+    "why": "Each side ratio can be expressed as a ratio of two small triangle areas sharing an altitude. Multiplying cancels all intermediate areas.",
+    "notice": "Three cevians + side-division ratios + concurrency target.",
+    "try": "Write the three side ratios in cyclic order and check whether two already determine the third.",
+    "contrast": "Use Menelaus, not Ceva, when the target is collinearity of three side-line points.",
+    "example": "If BD/DC=2/3 and CE/EA=3/4, concurrency forces AF/FB=2."
+  },
+  "GEO-MENELAUS-01": {
+    "remember": "For a line through D∈BC, E∈CA, F on AB or its extension, directed ratios satisfy (BD/DC)(CE/EA)(AF/FB)=-1.",
+    "link": "The formula resembles Ceva, but the geometry is different: one line across the three side-lines.",
+    "why": "Directed segment ratios preserve the sign change caused by an external division point.",
+    "notice": "Three collinear points on the side-lines of one triangle.",
+    "try": "Draw the point order and choose one signed-segment convention before calculating.",
+    "contrast": "Do not drop the sign until the end if an extension point is involved.",
+    "example": "If two positive internal ratios multiply to 6, the directed third ratio must be -1/6."
+  },
+  "GEO-CIRCLE-01": {
+    "remember": "Central angle = 2×inscribed angle on the same arc. Diameter subtends 90°. Cyclic quadrilateral opposite angles sum to 180°. Equal chords subtend equal angles.",
+    "link": "Always name the chord/arc being subtended; that prevents many wrong-angle transfers.",
+    "why": "Inscribed angles measuring the same arc are locked to the same half-central angle.",
+    "notice": "Four concyclic points, diameter, equal chords/arcs, or repeated angles subtending the same segment.",
+    "try": "Circle the relevant chord and mark which two angles see it.",
+    "contrast": "Prove cyclicity before using cyclic properties.",
+    "example": "If ∠ACB=37° in a circle, then the central angle ∠AOB on the same minor arc is 74°."
+  },
+  "GEO-POWER-01": {
+    "remember": "Interior chords: PA·PB=PC·PD. Tangent-secant: PT²=PA·PB, where PB is the whole secant distance.",
+    "link": "Power is a product invariant. The picture decides which product form is legal.",
+    "why": "Similar triangles formed by the intersecting chords/secant geometry produce the product equality.",
+    "notice": "Two chords through one point, two secants from one external point, or a tangent plus secant.",
+    "try": "Label near and far secant endpoints so “whole secant” cannot be confused with the inside piece.",
+    "contrast": "The most common error is using only the inside part of a secant.",
+    "example": "If PT=6 and PA=4, then PB=9 because 36=4·PB."
+  },
+  "GEO-PTOLEMY-01": {
+    "remember": "For cyclic ABCD in order: AC·BD=AB·CD+BC·AD.",
+    "link": "It is especially strong in a square or regular pentagon because several side/diagonal lengths repeat.",
+    "why": "Ptolemy converts a cyclic quadrilateral into one exact length equation without introducing angles.",
+    "notice": "Cyclic quadrilateral + many known/equal chord lengths + a diagonal/side expression.",
+    "try": "Write the vertices in cyclic order and identify both diagonals before substituting.",
+    "contrast": "Do not use Ptolemy on an arbitrary quadrilateral.",
+    "example": "For a rectangle with sides 5 and 12, Ptolemy gives d²=25+144, so d=13."
+  }
+}
