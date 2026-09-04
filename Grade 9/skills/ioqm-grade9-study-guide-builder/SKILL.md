@@ -1,582 +1,356 @@
 ---
 name: ioqm-grade9-study-guide-builder
-description: Build or revise a Grade 9 competitive-exam study guide from supplied questions and repository material using a two-layer Analysis Engine -> Student Book Generator architecture, stable skills, dependency graphs, transfer-gap bridges, progressive hints, difficulty/source metadata, visual obligations, and rendered PDF QA.
+description: Build or revise Grade 9 competitive-exam study guides from supplied corpora using a two-layer Analysis Engine -> Student Book Generator process, stable skills, dependency graphs, loss-preserving compression, concept assimilation, transfer labs, progressive practice, visual obligations, and rendered PDF QA.
 ---
 
 # IOQM Grade 9 Study Guide Builder
 
 ## Purpose
 
-Use this skill when the goal is to turn a supplied competitive-exam question corpus into a **self-sufficient, student-friendly study guide** for a Grade 9 learner with partial prior knowledge.
+Turn a supplied competitive-exam corpus into a student-friendly guide without losing the recognition, representation, execution, legality, transfer, or visual support needed by the target questions.
 
-The builder must solve two different problems:
+The builder has two layers:
 
-1. **Analysis Engine** - determine what the corpus actually requires the learner to recognize and execute.
-2. **Student Book Generator** - present that internal model through a simple, readable learner interface.
-
-The student should not see most of the production machinery.
+1. **Analysis Engine** - determine what the corpus actually requires.
+2. **Student Book Generator** - turn that model into a readable learner interface.
 
 Core principle:
 
 ```text
-powerful internal analysis
-        ->
-simple student surface
+rich internal analysis
+-> simple student surface
+-> no silent loss of executable support
 ```
-
----
 
 ## Mandatory references and precedence
 
-Before a production build, read in this order:
+Read in this order for every production build:
 
-### 1. v3 organizing contract - always
+1. `references/analysis-engine-student-book-generator-contract-v3.md`
+   - corpus decomposition, opening signatures, stable skills, prerequisite DAG, orphan methods, transfer gaps, student/reviewer separation.
 
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/analysis-engine-student-book-generator-contract-v3.md`
+2. `references/compression-loss-preservation-and-concept-assimilation-addendum-v1.md`
+   - packaging mode, compression/loss ledger, concept assimilation, adaptive page depth, concrete FIRST MOVE/WATCH OUT/CHECK, variants, readable transfer maps, prototype and final-size legibility gates.
 
-This is the organizing contract for:
+3. `references/question-driven-self-sufficient-study-guide-skill-v2.md`
+   - detailed question-to-method support, stable IDs, Appendix A/B/C behavior, progressive hints, custody and integrated self-sufficiency.
 
-- corpus decomposition;
-- concept/method graph;
-- opening-signature skill splitting;
-- prerequisite DAG;
-- transfer-gap analysis;
-- evidence-driven Worked Bridges;
-- Analysis Engine -> Student Book Generator hard gate;
-- simplified student-surface grammar;
-- student edition vs reviewer/build dossier separation.
+4. `references/difficulty-badges-portability-and-challenge-ladders-addendum.md`
+   - difficulty/source badges and Challenge Ladders.
 
-### 2. v2 detailed self-sufficiency contract - always
+5. `references/learner-knowledge-profile-and-readiness-addendum.md` when learner-specific routing is required.
 
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2.md`
+6. `references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md` whenever any visual obligation is not NONE.
 
-Use it for detailed question-to-method support, stable IDs, orphan-method repair, Appendix A/B/C behavior, progressive local hints, self-sufficiency audit, short-horizon routing, and inspected PDF delivery.
+7. Read the relevant domain profile after the generalized contracts. Current profiles include Algebra and Number Theory.
 
-Where the v3 contract and v2 contract organize the same workflow differently, **v3 controls pipeline order, concept splitting, bridge triggering, and student-surface presentation**. The v2 contract remains authoritative for detailed custody/support/QA requirements not replaced by v3.
+Precedence:
 
-### 3. difficulty / provenance / progression - always
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/difficulty-badges-portability-and-challenge-ladders-addendum.md`
-
-Keep separate:
-
-```text
-DIFFICULTY != PRIORITY
-DIFFICULTY != LEARNER_MASTERY
-DIFFICULTY != FREQUENCY
-DIFFICULTY != EMPIRICAL_ITEM_DIFFICULTY
-```
-
-### 4. learner-specific routing - when applicable
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/learner-knowledge-profile-and-readiness-addendum.md`
-
-Use the most specific evidence available. Do not flatten topic/subtopic/skill knowledge into one global percentage.
-
-### 5. visual-production contract - whenever any visual is not NONE
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md`
-
-A required visual is a teaching obligation, not optional polish.
-
-### 6. domain profile - when available
-
-Read the domain profile after the generalized contracts.
-
-Current profiles include:
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/algebra-question-driven-profile-v2.md`
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/number-theory-question-driven-profile-v1.md`
-
-A domain profile specializes representations, legality, visuals, skill families, difficulty anchors and method-selection boundaries. It may not weaken generalized custody, self-sufficiency or QA gates.
-
-### User overrides
-
-Explicit user requirements remain binding. For example, a request for **strict questions-only** overrides the default local-hint display in the appendix.
-
----
+- v3 controls architecture, concept splitting, dependency order and transfer-gap triggering;
+- compression/assimilation addendum controls compact packaging, student teaching depth, readable navigation and prototype/legibility gates;
+- v2 remains authoritative for detailed custody, question support and appendix behavior not replaced above;
+- domain profiles specialize, but may not weaken generalized gates;
+- explicit user requirements override defaults.
 
 # Layer A - Analysis Engine
 
-Do not draft chapters first.
-
 ## A1. Freeze the corpus
 
-Inventory every supplied question/source before teaching design.
+Inventory and preserve:
 
-Preserve:
-
-- stems;
-- source/provenance status;
-- corrections/repairs;
-- stable local IDs;
+- target stems / custody IDs;
+- provenance and corrections;
+- answers when supplied;
 - source-required figures;
-- answer custody when available.
+- stable local IDs.
 
 Source order does not determine teaching order.
 
 ## A2. Decompose every question
 
-For every question record:
-
-- topic;
-- subtopic;
-- concept;
-- candidate method/stable skill;
-- decisive recognition cue;
-- representation/compression move;
-- first executable move;
-- execution requirements;
-- legality/reversibility/admissibility;
-- prerequisites;
-- misconception risk;
-- difficulty;
-- priority;
-- learner mastery/risk when known;
-- visual requirement;
-- hint depth when allowed;
-- provenance;
-- transfer-gap status;
-- final support status.
-
-Canonical route:
+Record at minimum:
 
 ```text
-question
--> concept
--> stable skill
--> recognition
--> representation
--> first move
--> execution
--> check
+question ID
+-> topic / subtopic / concept
+-> candidate stable skill
+-> recognition cue
+-> representation/compression
+-> first executable move
+-> execution requirements
+-> legality/check
+-> prerequisites
+-> misconception risk
+-> difficulty / priority / mastery separately
+-> visual obligation
+-> transfer-gap status
+-> provenance
+-> final support status
 ```
 
 ## A3. Build the concept/method graph
 
-For large corpora, explicitly construct:
+For large corpora construct an auditable graph before chapter writing.
 
-```text
-DOMAIN
-`-- TOPIC
-    `-- SUBTOPIC
-        `-- CONCEPT
-            `-- STABLE SKILL / METHOD
-                |-- recognition
-                |-- representation
-                |-- first move
-                |-- legality
-                |-- question IDs
-                `-- bridge IDs
-```
-
-The graph may be CSV/YAML/Markdown, but it must be auditable.
-
-## A4. Split broad concepts by Opening Signature
-
-Define:
+## A4. Split by Opening Signature
 
 ```text
 Opening Signature
-= recognition cue
-+ representation
-+ first executable move
-+ legality/check
+= recognition + representation + first move + legality/check
 ```
 
-Split whenever question families materially differ in any of those components.
-
-Hard rule:
-
-```text
-SPLIT if recognition differs materially
-OR representation differs materially
-OR first move differs materially
-OR legality differs materially.
-```
-
-Umbrella labels may remain for navigation but may not hide distinct executable engines.
+Split an umbrella concept when any of these materially differs.
 
 ## A5. Assign stable skills
 
 Each stable skill needs:
 
-- stable ID;
-- readable name;
+- stable ID and readable learner name;
 - prerequisites;
-- recognition signature;
-- representation;
-- first move;
-- normal execution closure;
+- recognition/representation/first move;
+- execution closure;
 - legality/check;
 - close contrast;
-- worked example when non-routine;
 - question links;
-- bridge links;
-- visual obligation when required.
+- transfer links;
+- visual obligation when needed.
 
-## A6. Build the prerequisite DAG
+Readable names lead in the student artifact; internal IDs are secondary anchors.
+
+## A6. Build prerequisite DAG
 
 Teaching order comes from dependencies, not question numbering.
 
-Reject unjustified cycles.
+## A7. Orphan-method audit
 
-Short-horizon personalization may skip secure skills for one learner, but the durable core keeps the real dependency order.
-
-## A7. Run orphan-method analysis
-
-A question is orphaned if the guide still expects an unnamed trick.
-
-Required route:
+Every question needs a route:
 
 ```text
 recognition
 -> retrieval
--> first executable move
+-> first move
 -> executable continuation
 -> legality/check
 ```
 
-Required gate:
-
 `ORPHAN_METHODS = 0`
 
-## A8. Audit transfer gaps
+## A8. Transfer-gap audit
 
-A Worked Bridge exists to close a real graph jump:
+Classify question-to-skill edges as NONE / MODERATE / HARD.
 
-```text
-taught skill
--> normal example
--> transfer gap
--> target family
-```
+Every HARD gap requires a student-usable transfer lab/bridge.
 
-Classify:
+## A9. Visual audit
 
-```text
-NONE / MODERATE / HARD
-```
+Choose VISUAL_NONE / OPTIONAL / REQUIRED / SOURCE_REQUIRED. Required visuals enter the visual-production lifecycle and final-size QA.
 
-Every HARD gap requires a bridge.
+## A10. Packaging and loss analysis
 
-Bridge count is evidence-driven, not a fixed quota.
-
-## A9. Audit visuals
-
-Choose explicitly:
+Before compact generation choose:
 
 ```text
-VISUAL_NONE
-VISUAL_OPTIONAL
-VISUAL_REQUIRED
-VISUAL_SOURCE_REQUIRED
+SELF_CONTAINED_EDITION
+or
+REFERENCE_PLUS_PRACTICE_BOOK
 ```
 
-A required visual must have a stated teaching job and must flow through the visual-production addendum to final-size rendered QA.
+If condensing an existing richer build, create the compression/loss ledger before generation.
 
-## A10. Qualify the Analysis Engine
+A reference-plus-practice package may omit target stems from the reference, but may not drop required mechanisms, variants, transfer edges, visuals, or question routing.
 
-Minimum hard gates:
+## A11. Analysis hard gate
+
+At minimum:
 
 ```text
 CORPUS_FROZEN = PASS_n_OF_n
 QUESTION_DECOMPOSITION = PASS_n_OF_n
 QUESTION_TO_CONCEPT_BINDING = PASS_n_OF_n
 CONCEPT_SPLIT_AUDIT = PASS
-STABLE_SKILL_OPENING_SIGNATURE = PASS_n_OF_n
 PREREQUISITE_GRAPH = PASS
 UNJUSTIFIED_PREREQUISITE_CYCLES = 0
 ORPHAN_METHODS = 0
 TRANSFER_GAP_AUDIT = PASS_n_OF_n
 HARD_TRANSFER_GAPS_WITHOUT_BRIDGE = 0
 VISUAL_OBLIGATIONS = PASS_n_OF_n
+PACKAGING_MODE_DECLARED = PASS
+COMPRESSION_LOSS_LEDGER = PASS_IF_COMPACTED
+ASSIMILATION_CRITICAL_LOSSES_UNRESOLVED = 0
+TRANSFER_CRITICAL_LOSSES_UNRESOLVED = 0
 ```
 
 Until these pass:
 
 `STUDENT_BOOK_GENERATION_ALLOWED = FALSE`
 
----
-
 # Layer B - Student Book Generator
-
-The book must be easier to navigate than the analysis that produced it.
 
 ## B1. Derive teaching order from the graph
 
 Do not recreate source order.
 
-A strong generic progression is:
+## B2. Adaptive concept-assimilation grammar
+
+Student pages are not required to use a fixed stack of equal-weight cards.
+
+Available teaching roles:
 
 ```text
-foundations
--> direct methods
--> conditional/legal variants
--> representation changes
--> advanced transfer
--> mixed method selection
-```
-
-Domain profiles provide the concrete order.
-
-## B2. Stable-skill page grammar
-
-Default student surface:
-
-```text
-REMEMBER
-What you already know.
-
-SEE THE IDEA
-The upgrade and mechanism.
-
-TRY IT
-A non-identical worked example.
-
+WHAT IS THIS?
+TINY EXAMPLE
+THE EXAM / OLYMPIAD LINK
+WHY IT WORKS
+WORKED EXAMPLE
 FIRST MOVE
-The legal opening to write/draw now.
-
+VARIANTS AND CLOSE CONTRASTS
 WATCH OUT
-Close contrast + common mistake + legality/check.
-
-PRACTISE
-Quiet pointers to relevant questions/ladder rungs.
+CHECK
+GUIDED PRACTICE
+PRACTISE NEXT
 ```
 
-Exact page layout may vary by domain, but these semantic anchors must remain easy to scan.
+Use the smallest set that achieves assimilation for that skill.
 
-### FIRST MOVE is special
+A direct/familiar skill may be compact. A transfer-heavy or unfamiliar skill must include enough mechanism, variants, checking, and guided practice to become executable.
 
-The learner should be able to locate it without reading the surrounding paragraph.
+## B3. Concrete retrieval objects
 
-Required gates:
+FIRST MOVE is visually prominent and should show an actual miniature mathematical opening whenever practical.
+
+WATCH OUT should demonstrate a real wrong/illegal route for subtle skills.
+
+CHECK should execute a verification rather than merely tell the learner to check.
+
+## B4. Readable-name-first navigation
+
+Primary learner navigation uses readable concept names.
+
+Internal IDs may appear in small secondary type or in reviewer artifacts, but must not dominate:
 
 ```text
-FIRST_MOVE_PRESENT = PASS_n_OF_n
-FIRST_MOVE_VISUAL_PROMINENCE = PASS_n_OF_n
-FIRST_MOVE_FINDABLE_WITHOUT_PARAGRAPH_SCAN = PASS_n_OF_n
+RAW_SKILL_ID_PRIMARY_NAVIGATION = 0
+RAW_TRANSFER_IDS_AS_PRIMARY_NAVIGATION = 0
 ```
 
-## B3. Learner-facing language
+## B5. Practice Map and Transfer Map
 
-Write like a strong teacher, not a production system.
-
-Prefer:
-
-- Notice;
-- Recall;
-- Start;
-- Check;
-- Why this works;
-- Try it;
-- Watch out;
-- First move.
-
-Internal QA may use H0/H1/H2/H3, RMSEC, transfer-gap states, graph IDs or gates.
-
-Do not make opaque production codes the main student language.
-
-`ANALYSIS_JARGON_LEAKAGE = 0`
-
-## B4. Progressive help
-
-When local hints are allowed:
+Practice Map means:
 
 ```text
-NOTICE - recognition only
-RECALL - readable prior skill; stable ID may appear secondarily
-START - first executable setup only
+readable stable skill -> target question IDs
 ```
 
-Fade help across attempts:
+For questions that require more than the core skill, use a separate readable transfer route:
 
 ```text
-first similar problem: Notice / Recall / Start if needed
-next: maximum Recall
-then: Notice only
-mixed transfer: no hints
+question ID -> readable transfer-lab name -> readable core concepts to review
 ```
 
-Do not reveal an answer or complete the decisive execution unless the user asks for solutions.
+Do not expose the raw reviewer matrix as learner UI.
 
-## B5. Worked Bridges
+## B6. Progressive help
 
-A bridge must expose enough intermediate reasoning to imitate and must remain non-identical to the target problem.
+When hints are allowed:
 
-Minimum bridge anatomy:
+- Notice = recognition only;
+- Recall = readable prior skill;
+- Start = first executable setup only.
 
-1. recognition cue;
-2. why the representation fits;
-3. first move;
-4. intermediate execution;
-5. closure;
-6. legality/equality;
-7. nearby wrong route;
-8. transfer prompt.
+Fade support over later attempts. Strict user-requested questions-only mode overrides this display.
 
-## B6. Short-horizon Navigator
+## B7. Transfer labs
 
-When only a few days are available:
+A transfer lab exists only because a target question needs an extra jump.
 
-```text
-Quick Check
--> identify weak/high-value skills
--> route to stable skill
--> practise with fading help
--> mixed retest without topic labels
-```
+It should contain recognition, concrete first move, executable core route, legality/wrong route, and a non-identical guided transfer prompt.
 
-Keep the visible routing simple:
+## B8. Challenge Ladders vs mixed transfer
 
 ```text
-DO FIRST
-DO NEXT
-QUICK RETEST
-ONLY IF TIME
-```
-
-Do not expose a method-revealing router before the unaided diagnostic.
-
-Difficulty badges support orientation; they do not create a hardest-first route.
-
-## B7. Difficulty / source badges
-
-Use the difficulty addendum.
-
-Typical learner-facing practice header:
-
-```text
-Q17                         [D4 ADVANCED] [SRC 7]
-```
-
-Broad topics should normally show ranges rather than one misleading difficulty number.
-
-Source badges are shortcuts to provenance, not substitutes for the full ledger.
-
-## B8. Appendix A - deliberate practice
-
-If the user requests strict questions-only, obey that request.
-
-Otherwise, for a partial-knowledge learner, local support may use Notice / Recall / Start at the assigned depth.
-
-Every question must still map to a taught stable skill/bridge.
-
-Answer key only after the final Appendix A question.
-
-## B9. Appendix B - mixed independent transfer
-
-Appendix B tests transfer; it is not another teaching chapter.
-
-Rules include:
-
-- verified source identity or clear author-created status;
-- mixed method balance;
-- topic labels hidden when transfer is being tested;
-- adaptive rescue support only when specified;
-- answers after the final item;
-- every answer independently recomputed;
-- problem-essential visuals preserved.
-
-Keep role separation:
-
-```text
-APPENDIX_B = TEST_TRANSFER
 CHALLENGE_LADDER = TRAIN_PROGRESSION
+APPENDIX_B = TEST_INDEPENDENT_TRANSFER
 ```
 
-## B10. Appendix C - decision-first memory helper
+Do not merge their roles.
 
-Start with:
+## B9. Navigator
 
-```text
-What do I see?
--> What should I write/draw first?
--> What must I check?
-```
+A short-horizon Navigator is a routing layer, not the knowledge architecture. Run the unaided recognition check before exposing method-revealing routing.
 
-Include triggers, first moves, high-value formulas, legality conditions and a final check list.
+## B10. Prototype gate before bulk generation
 
-Prefer micro-models over extra prose when a visual representation carries the method.
+Render and inspect at least:
 
-## B11. Student edition vs reviewer/build dossier
+- one transfer-heavy concept page;
+- one navigation/router page;
+- one practice/transfer-map page;
+- one required-visual page when applicable.
 
-Preferred publication split:
+Do not generate the long book until prototypes pass.
 
-```text
-STUDENT EDITION
-- Navigator when needed
-- teaching core
-- Worked Bridges
-- support map
-- Appendix A
-- Appendix B
-- Appendix C
+## B11. Final student/reviewer split
 
-REVIEWER / BUILD DOSSIER
-- corpus registry
-- concept/method graph
-- question-to-method matrix
-- orphan-method audit
-- transfer-gap audit
-- visual manifest/audit
-- provenance/custody ledger
-- static self-sufficiency gates
-- final QA record
-```
+Normal learner artifact may contain Navigator, teaching core, transfer labs, Practice Map, target practice if self-contained, mixed challenge set and quick reference.
 
-Do not put PR numbers, production-state labels, or gate tables in the normal student page header.
+Reviewer/build dossier contains graph/matrices, loss ledger, custody/provenance, visual audit, static gates and final QA evidence.
 
 ## B12. Final integrated gates
 
 At minimum:
 
 ```text
+QUESTION_SUPPORT_PACKAGE = PASS_n_OF_n
 STUDENT_SURFACE_SEMANTIC_GRAMMAR = PASS
-FIRST_MOVE_PROMINENCE = PASS_n_OF_n
+FIRST_MOVE_PRESENT = PASS_n_OF_n
+FIRST_MOVE_VISUAL_PROMINENCE = PASS_n_OF_n
+FIRST_MOVE_CONCRETE_INSTANCE = PASS_n_OF_n
+SUBTLE_SKILLS_WITH_VARIANT_OR_CLOSE_CONTRAST = PASS_n_OF_n
+CORE_CHECKS_WITH_EXECUTED_VERIFICATION = PASS_n_OF_n
+TRANSFER_EDGE_MANIFEST = PASS_n_OF_n
+TRANSFER_MAP_READABLE_NAME_FIRST = PASS
 ANALYSIS_JARGON_LEAKAGE = 0
-LOCAL_HINT_AUDIT = PASS_n_OF_n
-QUESTION_CUSTODY = PASS_n_OF_n
-STATIC_CONTENT_SELF_SUFFICIENCY = PASS_n_OF_n
 DIFFICULTY_PRIORITY_MASTERY_CONFLATION = 0
 ```
 
-Then apply all triggered visual, provenance, answer and final-PDF gates from the existing references.
+Then apply the visual, provenance, answer and appendix gates from the referenced contracts.
 
----
+# PDF rule
 
-## PDF rule
+The rendered page is authoritative.
 
-For a final PDF:
+Reject clipping, overlap, broken glyphs, black squares, missing figures, low-contrast or broken heading colors, off-page tables, tiny learner navigation, unreadable badges, raw-ID dominance, and card-reader layouts without teaching flow.
 
-- render the complete artifact;
-- inspect representative and critical pages at final reading size;
-- inspect every required visual at final size;
-- reject clipping, overlaps, broken glyphs, black squares, off-page tables, unreadable badges, and solution-leaking visuals;
-- keep reviewer evidence separate from the student reading path unless the user explicitly requests one combined artifact.
-
----
-
-## Evidence boundary
-
-Static production gates demonstrate document coverage only.
-
-Do not claim learner success, retention, contest score, classroom timing or psychometric calibration without observed learner evidence.
-
----
-
-## Final rule
-
-A guide is successful when the target learner can answer:
+Required final-size gates include:
 
 ```text
-What am I seeing?
-What representation should I use?
-What is the first legal move?
-How do I continue?
-What can make this route wrong or illegal?
-Where should I practise it again?
+LOW_CONTRAST_HEADINGS = 0
+BROKEN_HEADING_COLORS = 0
+TINY_NAVIGATION_TABLES = 0
+OFF_PAGE_TABLES = 0
+CARD_READER_PAGE_FAILURES = 0
 ```
 
-without relying on an unnamed trick that exists only in the teacher's head.
+Render the complete artifact and inspect critical pages at final reading size.
+
+# Evidence boundary
+
+Static document gates do not prove retention, classroom timing, psychometric difficulty, contest score, or learner success. Those require observed learner evidence.
+
+# Final rule
+
+A strong student guide should let the learner answer:
+
+```text
+What is this idea?
+What should make me notice it?
+Why does the representation work?
+What do I write or draw first?
+How do I continue?
+What nearby variant changes the route?
+What can make the move illegal or wrong?
+How do I check it?
+Where do I practise core and transfer versions?
+```
+
+without exposing the complexity of the production machinery.
