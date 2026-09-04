@@ -2,7 +2,7 @@
   "project": {
     "id": "IOQM-G9-ALG-V5-ASSIMILATION",
     "title": "IOQM Grade 9 Algebra - Concept Assimilation Guide",
-    "branch": "ioqm-g9-algebra-full-assimILation-guide",
+    "branch": "ioqm-g9-algebra-full-assimilation-guide",
     "build_date": "2026-09-04",
     "student_profile": {
       "self_reported_knowledge": "approximately 50%",
@@ -51,11 +51,10 @@
     {"id":"C15","name":"Binomial theorem and coefficient bridge","difficulty_range_badge":"CORE D2 | TRANSFER D4","skills":["ALG-BIN-01","ALG-BIN-02"],"primary_appendix_a_questions":[],"prerequisites":["C01"],"representation":"Read coefficients structurally from (x+y)^n; use symmetry and adjacent-binomial identities instead of expansion."}
   ],
   "question_detail_files": [
+    "Question_Decomposition_50.md",
     "Question_Decomposition_Q01-Q10.md",
     "Question_Decomposition_Q11-Q20.md",
-    "Question_Decomposition_Q21-Q30.md",
-    "Question_Decomposition_Q31-Q40.md",
-    "Question_Decomposition_Q41-Q50.md"
+    "Question_Decomposition_Q21-Q30.md"
   ],
   "qa": {
     "syllabus_complete": true,
