@@ -1,175 +1,353 @@
 ---
 name: ioqm-grade9-study-guide-builder
-description: Build or revise a Grade 9 competitive-exam study guide from repository material plus user-supplied questions/notes, with configurable learner knowledge, portable domain profiles, difficulty badges, challenge ladders, flexible T1-to-Tx readiness checks, source/citation badges, self-sufficiency audits, decision-first quick reference, and traceable visual/PDF QA.
+description: Build or revise a Grade 9 competitive-exam study guide from large or small question corpora using a qualified analysis engine, opening-signature skill decomposition, prerequisite and transfer-gap graphs, configurable learner knowledge, portable domain profiles, difficulty/source badges, challenge ladders, student-friendly teaching pages, and traceable visual/PDF QA.
 ---
 
 # IOQM Grade 9 Study Guide Builder
 
 ## Purpose
 
-Use this skill when the goal is not merely to collect solved questions, but to produce a **teacher-style study guide** that lets a Grade 9 learner with partial prior knowledge recognize and execute the methods needed for a supplied problem set.
+Use this skill to turn a supplied competitive-exam corpus into a **teacher-style, student-friendly study guide**.
 
-This skill is deliberately different from a main-topic production package. It may synthesize several existing main topics into one revision/study guide, but it must preserve canonical topic ownership and must not silently create a new official syllabus.
-
-The orchestration rules should remain portable enough that future domain profiles can specialize the same builder for Mathematics, Physics, or Chemistry without importing Mathematics-only method language into those domains.
-
-## Mandatory v2 references
-
-Before authoring or revising a production study guide, read:
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2.md`
-
-That reference is the detailed production contract for question-to-method matrices, stable skill IDs, orphan-method repair, progressive local hints, Visual Bridges, self-sufficiency gates, optional short-horizon navigation, and inspected PDF delivery.
-
-Also read:
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/difficulty-badges-portability-and-challenge-ladders-addendum.md`
-
-That addendum defines the portable difficulty contract, learner-facing `D1-D5` question badges, topic/concept difficulty bands, compact citation/source badges, separation of authored difficulty from learner mastery/priority/empirical difficulty, and Challenge Ladders that train progression without duplicating Appendix B.
-
-When the user provides learner-specific topic/subtopic/skill knowledge, or when short-horizon readiness routing is requested, also read:
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/learner-knowledge-profile-and-readiness-addendum.md`
-
-That addendum defines optional learner-knowledge input, specificity precedence, personalization without pruning the durable core, and flexible `T1 ... Tx` Quick Check selection. It overrides older fixed prior-knowledge percentages and fixed Quick Check counts for those fields only.
-
-If **any** question, chapter, Worked Bridge, Appendix A/B item, Appendix C method family, Challenge Ladder, badge/icon system, or Navigator element has a visual requirement other than `VISUAL_NONE`, also read and apply:
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md`
-
-The visual addendum is mandatory when triggered. A required visual is a teaching obligation, not optional polish.
-
-When a domain profile exists, read it after the generalized contracts. A domain profile specializes the generalized rules; it does not weaken them. Learner-profile/readiness overrides may then specialize only learner knowledge and Quick Check selection.
-
-Current profile example:
-
-`Grade 9/skills/ioqm-grade9-study-guide-builder/references/algebra-question-driven-profile-v2.md`
-
-## Portable module architecture
-
-Think of the reusable system as one orchestrator plus domain-neutral contracts and domain profiles:
+The core problem is not merely solving questions. It is discovering the correct teachable structure hidden inside them:
 
 ```text
-STUDY-GUIDE ORCHESTRATOR
-|
-|-- source / corpus custody
-|-- learner knowledge profile
-|-- difficulty calibration + badges
-|-- question -> concept -> method map
-|-- concept dependency / progression map
-|-- challenge-ladder generator
-|-- short-horizon readiness/router
-|-- practice + assessment design
-|-- visual-production contract
-|-- document / PDF QA
-|
-`-- domain profiles
-    |-- mathematics
-    |   |-- algebra
-    |   |-- geometry
-    |   |-- number theory
-    |   `-- combinatorics
-    |-- physics
-    `-- chemistry
+questions
+→ decomposition
+→ concepts / methods
+→ stable skills
+→ prerequisite order
+→ transfer gaps
+→ teaching pages
+→ guided + independent practice
 ```
 
-Keep orchestration generic. Put domain reasoning, representations, legality checks, and concrete difficulty anchors in domain profiles.
+The analysis may be technically rich. The learner interface must remain simple.
 
-## Core student standard
+This builder is an orchestrator. Domain-specific reasoning belongs in domain profiles so the same architecture can later support Mathematics, Physics, and Chemistry.
 
-If no learner-specific knowledge is supplied, assume the learner knows roughly 30–50% of the school-level background:
+---
 
-- familiar formulas may be remembered;
-- routine exercises may be solvable;
-- method recognition is inconsistent;
-- nearby methods are confused;
-- advanced Olympiad moves cannot be assumed.
+## Mandatory references
 
-If the user provides topic/subtopic/skill-wise knowledge, **do not flatten it into one global percentage**. Use the most specific relevant information for routing. Accept categorical, approximate-percentage, or natural-language input. Treat stated percentages as planning estimates unless they come from measured evidence.
+Before production, read:
 
-Examples:
+1. `references/question-driven-self-sufficient-study-guide-skill-v2.md`
+   - detailed self-sufficiency, hints, Appendix A/B/C, bridge, audit, and PDF contract.
+
+2. `references/analysis-engine-opening-signatures-and-student-surface-addendum.md`
+   - **organizing architecture for corpus decomposition, concept splitting, concept/method graphs, prerequisite DAGs, transfer gaps, and the student surface.**
+   - this addendum takes precedence over older linear-pipeline wording for those fields.
+
+3. `references/difficulty-badges-portability-and-challenge-ladders-addendum.md`
+   - portable difficulty model, learner-facing `D1-D5` badges, topic/concept bands, source mini-badges, and Challenge Ladders.
+
+When learner knowledge or short-horizon routing is involved, also read:
+
+4. `references/learner-knowledge-profile-and-readiness-addendum.md`
+   - optional subject/topic/subtopic/skill knowledge;
+   - specificity precedence;
+   - flexible `T1 ... Tx` Quick Check selection.
+
+If any pedagogical visual is `OPTIONAL`, `REQUIRED`, or `SOURCE_REQUIRED`, also read:
+
+5. `references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md`
+
+When a domain profile exists, read it **after** the generalized contracts. Domain profiles specialize the generic system; they do not weaken its gates.
+
+Current example:
+
+`references/algebra-question-driven-profile-v2.md`
+
+---
+
+# ORGANIZING BACKBONE
+
+Production has two literal layers.
 
 ```text
-Quadratics = strong
-Polynomials / Vieta = strong
-Polynomials / repeated roots = weak
-Recurrences = 20%
-ALG-EQ-04 = unknown
+LAYER A — ANALYSIS ENGINE
+
+1. Freeze corpus
+2. Decompose every question
+3. Build Topic → Subtopic → Concept → Method graph
+4. Run Opening-Signature / concept-splitting audit
+5. Assign stable skills
+6. Build prerequisite DAG
+7. Run orphan-method audit
+8. Assign difficulty + source + visual metadata
+9. Audit transfer gaps
+10. Create only required Worked Bridges
+11. Qualify analysis package
+
+================ HARD GATE ================
+
+LAYER B — STUDENT BOOK GENERATOR
+
+12. Derive learner/chapter order
+13. Render student-facing teaching units
+14. Integrate required visuals
+15. Build Appendix A
+16. Build Appendix B
+17. Build Appendix C
+18. Build / integrate Challenge Ladders
+19. Add optional short-horizon Navigator
+20. Run integrated question-level audits
+21. Generate PDF
+22. Preflight, render at 200 dpi, inspect, close QA
 ```
 
-The durable guide should still remain self-sufficient for a partial-knowledge learner unless the user explicitly requests a personally pruned edition. Personalization changes the Navigator route, Quick Check selection, practice priority, challenge-ladder starting rung, and starting support level; it does not silently delete core teaching.
+Do not begin final student-book production from attractive chapter headings alone.
 
-The guide must therefore teach **enough to recognize, start, execute, and check**, not merely name methods.
+```text
+STUDENT_BOOK_GENERATION_ALLOWED = FALSE
+```
 
-The learner path is:
+until the Analysis Engine is qualified.
 
-**problem wording → recognized structure → legal method choice → first useful line → execution → checking.**
+---
 
-## Source roles
+# LAYER A — ANALYSIS ENGINE
 
-Classify every input before authoring.
+## 1. Freeze and classify the corpus
 
-### Authority source
+Inventory every target question/source before authoring.
 
-Official/validated contest papers, frozen repository source maps, correction overlays, stable interfaces.
+Preserve:
 
-Use these for exact historical claims, answer custody and official-source statements.
+- stable question ID;
+- mathematical/scientific stem;
+- source status;
+- source/provenance ledger entry;
+- source-required figures;
+- corrections/uncertainty;
+- duplicate relationships;
+- stem hash/custody reference where repository workflow uses hashes.
 
-### Comparison/practice source
+Do not silently upgrade a weak/practice source to official authority.
 
-User notes, coaching handouts, videos, DPP compilations, preparation routines, external question lists.
+### Source roles
 
-Use these to discover methods, teaching cues and practice coverage. Do not upgrade them to official authority.
+**Authority source** — official/validated contest papers, repository source maps, correction overlays.
 
-### Internal quality benchmark
+**Comparison/practice source** — notes, coaching material, videos, DPPs, external problem lists.
 
-For Grade 9 mathematics, inspect:
+**Internal quality benchmark** — a comparator for pedagogy/layout/QA, never a template to copy.
 
-`Grade 9/Mathematics/benchmarks/Quadratics_Assimilation_v2/README.md`
+---
 
-Use it as a quality comparator for:
+## 2. Decompose every target question
 
-- explanation completeness;
-- missing-link repair;
-- method contrast;
-- attempt before answers;
-- independence in starting unfamiliar problems;
-- source/citation discipline;
-- visual pedagogy;
-- cover/index usability;
-- final PDF quality.
+Minimum decomposition:
 
-Do not copy its wording, layout, exercises, typography, or diagrams.
+```text
+question
+→ topic
+→ subtopic
+→ concept
+→ stable method / skill
+→ recognition cue
+→ representation
+→ first executable move
+→ execution path
+→ legality / check
+→ prerequisites
+→ difficulty
+→ provenance
+→ visual requirement
+```
 
-## Required pre-authoring audit
+The question matrix must record enough information to answer:
 
-Before writing the guide, create a question inventory / question-to-method matrix.
+> What must the learner notice, represent, write first, execute, and check?
 
-For every supplied question record at minimum:
+Recommended fields include:
 
-- stable local question number;
-- mathematical surface;
-- primary method;
-- secondary prerequisite;
+- question ID;
+- surface/topic/subtopic/concept;
+- candidate stable skill;
 - recognition cue;
-- first useful line;
-- enough execution detail to finish;
-- likely half-knowledge misconception;
-- legality/reversibility/admissibility checks where relevant;
-- whether the current guide explicitly teaches the method;
-- whether the current guide gives enough execution detail;
-- planned teaching location;
-- initial hint depth where hints are allowed;
-- visual requirement;
+- representation;
+- first move;
+- execution bridge requirement;
+- legality/boundary check;
+- prerequisite skill IDs;
 - authored difficulty `D1-D5`;
-- internal difficulty profile `K/R/M/E/I/B/T` and confidence;
-- learner-relative risk when a learner profile exists;
-- educational priority as a **separate** field;
-- source/provenance ledger reference and source-status class.
+- learner-relative risk when a profile exists;
+- educational priority as a separate field;
+- source ledger ID/status;
+- visual level/job/asset ID;
+- planned teaching/bridge location.
 
-Do not use one vague `difficulty` column without the anchored difficulty contract.
+---
 
-Keep these separate:
+## 3. Opening Signature and concept splitting
+
+Define each stable skill by an **Opening Signature**:
+
+```text
+Opening Signature =
+(recognition, representation, first executable move, legality/check)
+```
+
+Split a broad concept when question families differ materially in any of those components.
+
+```text
+SPLIT if recognition cue differs materially
+OR representation differs materially
+OR first executable move differs materially
+OR legality/check logic differs materially.
+```
+
+Do not assume one textbook heading equals one teachable skill.
+
+Examples of broad labels that may need splitting:
+
+```text
+Factorisation
+Digit sum
+Recurrence
+Counting
+Root problems
+Forces
+Stoichiometry
+```
+
+The test is operational:
+
+> Can a Grade 9 learner be taught one recognizable situation, one useful representation, one first-move family, and the relevant legality check in this unit?
+
+If not, split it.
+
+---
+
+## 4. Build the Concept / Method Graph
+
+For large or heterogeneous builds, create a persistent graph artifact.
+
+```text
+DOMAIN
+└── TOPIC
+    └── SUBTOPIC
+        └── CONCEPT
+            └── STABLE SKILL / METHOD FAMILY
+                ├── recognition signature
+                ├── representation
+                ├── first move
+                ├── legality
+                ├── prerequisites
+                ├── difficulty range
+                ├── question IDs
+                ├── bridge IDs
+                └── visual IDs
+```
+
+Preferred artifact:
+
+```text
+Concept_Method_Graph.csv
+```
+
+or YAML equivalent.
+
+Normally require it when:
+
+- target corpus is roughly 30+ questions; or
+- there are roughly 12+ candidate skills; or
+- textbook/source headings conceal materially different openings.
+
+These are operational defaults, not scientific thresholds.
+
+For smaller guides, the main question matrix may carry the same information if it remains auditable.
+
+---
+
+## 5. Build the prerequisite DAG
+
+Teaching order is derived from dependencies, not source order.
+
+For every stable skill:
+
+- list prerequisite skill IDs;
+- eliminate unjustified cycles;
+- explicitly justify co-taught clusters if a cycle is unavoidable;
+- place school-level refreshers immediately before the competitive-exam upgrade they enable.
+
+Then derive chapter/section sequence from the DAG plus learner usability.
+
+---
+
+## 6. Orphan-method audit
+
+A method is orphaned if the guide merely names the trick and assumes the learner already knows how to perform it.
+
+Every question needs a route:
+
+```text
+recognize
+→ choose representation
+→ write first useful move
+→ execute
+→ check
+```
+
+Examples of failures:
+
+- “use Vieta” without reconstructing the requested expression;
+- “apply CRT” without compatibility/substitution/merge logic;
+- “use conservation of energy” without defining system and terms;
+- “use limiting reagent” without teaching the mole-ratio setup.
+
+Hard gate:
+
+```text
+ORPHAN_METHODS = 0
+```
+
+---
+
+## 7. Transfer-gap audit and Worked Bridges
+
+Worked Bridges exist to close unsupported transfer edges, not to add generic enrichment.
+
+```text
+taught skill
+    ↓
+normal worked example
+    ↓
+TRANSFER GAP
+    ↓
+target question
+```
+
+Classify important edges:
+
+```text
+TRANSFER_GAP = NONE
+TRANSFER_GAP = MODERATE
+TRANSFER_GAP = HARD
+```
+
+Rules:
+
+- `NONE` → ordinary practice is enough;
+- `MODERATE` → use contrast/reduced support; repeated moderate gaps may justify a bridge;
+- `HARD` → non-identical Worked Bridge required;
+- bridge content must expose recognition, representation, first move, execution, and check;
+- create bridges because the matrix/graph shows a gap, not because an “advanced” section looks desirable.
+
+Gates:
+
+```text
+TRANSFER_GAP_AUDIT = PASS_n_OF_n
+HARD_TRANSFER_GAPS_WITHOUT_BRIDGE = 0
+```
+
+---
+
+## 8. Difficulty, priority, learner mastery, and provenance
+
+Keep distinct:
 
 ```text
 DIFFICULTY != PRIORITY
@@ -178,467 +356,456 @@ DIFFICULTY != FREQUENCY
 DIFFICULTY != EMPIRICAL_ITEM_DIFFICULTY
 ```
 
-When learner-specific input exists, also maintain enough internal mapping to know which topic/subtopic/skill is `UNKNOWN`, `NONE`, `WEAK`, `PARTIAL`, `STRONG`, or `SECURE`, and what evidence/source produced that state.
+Use the difficulty addendum for full calibration.
 
-### Visual requirement fields
+Student-facing question badge:
 
-When a visual may matter, do not use only a loose note such as “diagram useful.” Apply the visual addendum and record:
+```text
+[D3 STRATEGIC]
+```
 
-- `visual_level = NONE / OPTIONAL / REQUIRED / SOURCE_REQUIRED`;
-- visual teaching job;
-- stable visual asset ID;
-- visual form;
-- what the learner should notice;
-- placement layer(s);
-- leakage risk;
-- visual status.
+Broad topics use a range/band, not one misleading number.
 
-A `REQUIRED` or `SOURCE_REQUIRED` visual must be traceable through:
+Source mini-badge example:
 
-**question/skill → visual obligation → asset → placement → rendered page → QA pass.**
+```text
+[SRC 12]
+```
 
-### Orphan-method test
+The full source ledger remains authoritative.
 
-A method is **orphaned** if a student must already know a trick that the guide only names.
+---
+
+## 9. Visual obligations
+
+Use visuals only when they materially expose structure or reduce cognitive load.
+
+If a visual is triggered, apply the visual-production addendum.
+
+A required visual must be traceable:
+
+```text
+question/skill
+→ visual obligation
+→ asset brief
+→ asset
+→ placement
+→ rendered page
+→ final-size QA
+```
+
+Do not count decorative imagery as pedagogy.
+
+---
+
+## 10. Qualify the Analysis Engine
+
+For large builds, the package should contain or explicitly derive:
+
+```text
+Frozen_Corpus_Registry
+Source_Provenance_Ledger
+Question_Decomposition_Matrix
+Concept_Method_Graph
+Stable_Skill_Registry
+Prerequisite_DAG
+Orphan_Method_Audit
+Difficulty_Map
+Visual_Obligation_Register
+Transfer_Gap_Map
+Worked_Bridge_Obligations
+```
+
+Minimum gates:
+
+```text
+CORPUS_FROZEN = PASS_n_OF_n
+QUESTION_DECOMPOSITION = PASS_n_OF_n
+QUESTION_TO_CONCEPT_BINDING = PASS_n_OF_n
+CONCEPT_SPLIT_AUDIT = PASS
+STABLE_SKILL_OPENING_SIGNATURE = PASS_n_OF_n
+PREREQUISITE_GRAPH = PASS
+PREREQUISITE_CYCLES_UNJUSTIFIED = 0
+ORPHAN_METHODS = 0
+TRANSFER_GAP_AUDIT = PASS_n_OF_n
+HARD_TRANSFER_GAPS_WITHOUT_BRIDGE = 0
+VISUAL_OBLIGATIONS_ANALYZED = PASS_n_OF_n
+DIFFICULTY_ANALYZED = PASS_n_OF_n
+```
+
+Only then:
+
+```text
+ANALYSIS_ENGINE_QUALIFIED = PASS
+STUDENT_BOOK_GENERATION_ALLOWED = TRUE
+```
+
+---
+
+# LAYER B — STUDENT BOOK GENERATOR
+
+## 11. Student-facing complexity boundary
+
+The analysis model is not the student page design.
+
+The learner normally sees:
+
+- readable topic/concept names;
+- compact difficulty/source badges;
+- clear explanations;
+- a very visible FIRST MOVE;
+- worked examples;
+- practice pointers;
+- Notice / Recall / Start hints where appropriate.
+
+The learner normally does **not** see:
+
+- concept-graph IDs;
+- Opening-Signature tuples;
+- transfer-gap classifications;
+- prerequisite-edge IDs;
+- K/R/M/E/I/B/T vectors;
+- internal pass/fail statuses;
+- raw routing equations;
+- build-dossier terminology.
+
+Hard principle:
+
+```text
+COMPLEXITY_BELONGS_IN_THE_ENGINE = PASS
+ANALYSIS_JARGON_LEAKAGE = 0
+```
+
+---
+
+## 12. Student semantic grammar
+
+Default reference-page roles:
+
+```text
+REMEMBER
+SEE THE IDEA
+TRY IT
+FIRST MOVE
+WATCH OUT
+PRACTISE
+```
+
+These are semantic roles, not mandatory identical layouts.
+
+Map internal richness to a simpler surface:
+
+| Internal authoring role | Student surface |
+|---|---|
+| prerequisite refresh | **REMEMBER** |
+| missing competitive-exam link + mechanism | **SEE THE IDEA** |
+| worked example + execution | **TRY IT** |
+| executable opening | **FIRST MOVE** |
+| close contrast + misconception + legality | **WATCH OUT** |
+| stable skill/question pointers | **PRACTISE** |
+
+Do not expose a long stack of machine-like headings such as separate “missing link”, “why this works”, “close contrast”, and “legality” strips when those can be combined into a clearer student section.
+
+---
+
+## 13. FIRST MOVE must be visually dominant
+
+The first move is a retrieval object, not a footnote.
 
 Examples:
 
-- “use derangements” without defining/counting derangements;
-- “use Burnside” without a small-symmetry path or Burnside explanation;
-- “degree 2 means cycles” without the labeled cycle-count formula;
-- “use generating functions” without explaining coefficient extraction;
-- “alternate inequalities” without showing how to count a small alternating pattern.
-
-No supplied question may retain an orphan method.
-
-## Static self-sufficiency gate
-
-A question passes only if the guide contains all required support:
-
-1. **Prerequisite refresh** — the minimum background is stated or recalled.
-2. **Recognition cue** — what in the wording/structure should trigger the method.
-3. **First useful step** — an executable first mathematical line, construction, or representation.
-4. **Execution bridge** — enough explanation to finish the method without an unnamed trick.
-5. **Legality/common-error check** — the nearby wrong move is identified where relevant.
-6. **Practice isolation** — the question itself does not leak the method or answer beyond the requested support level.
-7. **Required visual support** — if `visual_level` is `REQUIRED` or `SOURCE_REQUIRED`, the visual must exist, be correctly placed, and pass final-size rendered QA.
-8. **Difficulty metadata** — the authored `D1-D5` level is assigned consistently and is not confused with priority or learner mastery.
-9. **Provenance metadata** — source status and ledger mapping are preserved even if only a mini source badge is shown to the learner.
-
-Record:
-
-`STATIC_CONTENT_SELF_SUFFICIENCY = PASS_n_OF_n`
-
-only when every supplied question passes.
-
-This gate evaluates the durable document, not the learner's stated percentage. A personalized route may skip secure topics in short-horizon mode without weakening the underlying core.
-
-This is not classroom evidence. Keep actual learner success, timing, retention and psychometrics unclaimed unless observed.
-
-## Subtopic grouping rule
-
-Do not group by the source document's lot/order unless that order is pedagogically strong.
-
-Group by dependency:
-
-1. fundamentals;
-2. direct applications;
-3. restricted/conditional variants;
-4. representation changes;
-5. advanced structures;
-6. mixed method selection.
-
-For combinatorics, a strong default progression is:
-
-- counting foundations;
-- selections and logical restrictions;
-- distributions/multisets;
-- linear arrangements;
-- relative order/rank;
-- circular symmetry;
-- graphs/matchings/colorings;
-- recurrence/state;
-- number-theoretic counting;
-- pigeonhole/extremal;
-- invariants/games.
-
-For other domains, derive a comparable dependency order from the repository topic map and the domain profile.
-
-## Learner-facing difficulty and source badges
-
-Difficulty should be visible as a compact badge, not buried in reviewer metadata.
-
-Question example:
-
 ```text
-Q17                         [D4 ADVANCED] [SRC 7]
+FIRST MOVE
+Set p = xyz.
 ```
 
-Topic example:
-
 ```text
-POLYNOMIALS                         [D2 -> D5]
+FIRST MOVE
+Draw the free-body diagram and choose the system.
 ```
 
-Narrow concept example:
-
 ```text
-Repeated roots                      [D2 core | D4 transfer]
+FIRST MOVE
+Convert all given quantities to moles.
 ```
 
-Rules:
+Required gates:
 
-- every ordinary learner-facing practice question receives a `D1-D5` badge unless a clean exam simulation/facsimile intentionally hides it;
-- broad topics use a range/band rather than one misleading difficulty value;
-- narrow concepts may show core-to-transfer range;
-- the difficulty badge is a small pill/stamp in the header and is never part of the mathematical statement;
-- do not rely on color alone; always print the D-code;
-- do not use star ratings;
-- a source badge such as `[SRC 12]` may point to the source/provenance ledger instead of printing a long citation beside the problem;
-- in a digital PDF, source badges should hyperlink to the ledger when practical;
-- use a vector icon or text fallback, never an emoji-only icon dependency;
-- keep badge density low: question ID + difficulty + source is normally enough.
+```text
+FIRST_MOVE_PRESENT = PASS_n_OF_n
+FIRST_MOVE_VISUAL_PROMINENCE = PASS_n_OF_n
+FIRST_MOVE_FINDABLE_WITHOUT_READING_PARAGRAPH = PASS_n_OF_n
+LOW_CONTRAST_CRITICAL_HEADINGS = 0
+```
 
-The source badge is a shortcut to provenance, not a substitute for the full ledger.
+A student should be able to flip to the skill and find the first move immediately.
 
-## Learner-facing style
+Difficulty/source badges remain secondary and must never dominate the mathematics.
 
-Write like a strong teacher, not like an internal production system.
+---
 
-Prefer:
+## 14. Learner knowledge
 
-- “What should I notice?”
-- “Why this works”
-- “Try this first”
-- “Common mistake”
-- “When this method is not appropriate”
-- “Check”
-- short worked examples
+If no learner-specific profile exists, use the partial-knowledge baseline from the detailed contract.
 
-For progressive hints, learner-facing labels may be:
+If the user supplies subject/topic/subtopic/skill knowledge, do not flatten it into one global percentage.
 
-- **Notice**;
-- **Recall**;
-- **Start**.
+Use the learner-profile addendum precedence:
 
-Internal QA may call these H1/H2/H3, but do not make opaque `H1/H2/H3` codes the main learner-facing language.
+```text
+diagnostic evidence
+> stable skill / method
+> subtopic
+> topic
+> subject
+> default partial baseline
+```
 
-Avoid learner-facing internal terms such as:
+Personalization changes:
 
-- wave;
-- microstream;
-- RMSEC;
-- transfer gate;
-- control plane;
-- interface owner;
-- raw priority equations;
-- psychometric-sounding readiness percentages unless actually measured.
+- Navigator routing;
+- Quick Check selection;
+- practice priority;
+- Challenge Ladder entry;
+- starting hint/support level.
 
-Internal QA documents may use technical production terminology when necessary.
+It does not silently delete the durable core unless the user explicitly asks for a pruned personal edition.
 
-## Worked-example rule
+---
 
-For every non-routine method needed by the supplied questions, include at least one **non-identical worked example**.
+## 15. Appendix roles
 
-The example should reveal the mechanism without becoming a disguised copy of the appendix question.
+Keep roles distinct.
 
-If the representation itself is the hidden method, the worked example must include the corresponding required visual at the point where the representation is introduced.
+### Appendix A — supplied corpus
 
-## Visual pedagogy rule
+- preserve every target question exactly subject to documented source corrections;
+- use Notice / Recall / Start support when allowed;
+- answer key after the final question;
+- source-required figures preserved;
+- difficulty/source badges compact and non-spoiling.
 
-Figures are teaching tools, not decoration.
+If the user requests strict questions-only, remove local hints/commentary and preserve only problem-essential figures.
 
-Use visuals when they materially reduce cognitive load or expose a structure that prose hides: graphs, constructions, blocks/gaps, state diagrams, number lines, exponent grids, symmetry/orbit models, case-overlap schematics, tables, or other exact mathematical representations.
+### Appendix B — independent mixed transfer / exam audit
 
-When visuals are triggered:
+- mixed/unlabelled where transfer is being tested;
+- answers only after the final item;
+- independently recompute answers;
+- no redundant second “hard mixed problem” appendix.
 
-1. create a Visual Obligation Register before final layout;
-2. write an asset brief for every required visual;
-3. prefer deterministic/vector/programmatic construction when exact mathematical relationships matter;
-4. do not use generative illustration as authority for exact geometry, graph topology, coordinate intersections, mathematical labels/equations, or source-required contest figures;
-5. place the first useful visual where the representation is first taught, not only in a later gallery;
-6. use quieter variants in Appendix A when they help recognition without leaking the solution;
-7. preserve transfer integrity in Appendix B — method-revealing visuals normally belong after the attempt unless the problem itself requires the figure;
-8. use retrieval micro-models in Appendix C for high-value visually driven method families;
-9. do not show method-revealing routers before an unaided short-horizon diagnostic;
-10. render and inspect every required visual and badge/icon system at final size.
+### Appendix C — decision-first rapid recall
 
-A decorative image never satisfies a required visual obligation.
+Usually 1–3 pages:
 
-## Appendix contract
+```text
+What do I see?
+→ What should I draw/write first?
+→ What must I check?
+```
 
-### Appendix A — supplied questions
+Use compact formulas/tools only after method choice.
 
-If the user explicitly asks for **strict questions-only**, that instruction overrides the default local-hint presentation:
-
-- reproduce every supplied question;
-- remove solutions, tips, source commentary, local hints, and module-position notes from the appendix;
-- preserve all mathematical conditions and source-required figures needed to solve the question;
-- place the answer key only after the final question.
-
-Otherwise, for the partial-knowledge learner profile, use the detailed v2 contract's adaptive local hint model where appropriate:
-
-- **Notice** — recognition clue;
-- **Recall** — readable prior skill + stable ID;
-- **Start** — first executable move without solution leakage.
-
-Required local visuals may sit with the question/Notice strip when they reduce recognition load, but must not reveal more than the assigned support depth.
-
-Maintain source/provenance in a separate citation ledger; use a compact source badge on a question when useful.
-
-### Appendix B — audit / mixed transfer
-
-Create a fresh mixed mock set when requested or required by the domain profile.
-
-Rules:
-
-- label author-created items clearly;
-- model method balance on verified historical repository patterns;
-- do not claim an official Grade-9-only IOQM paper exists;
-- include methods underrepresented by the supplied attachment but present in the canonical curriculum;
-- hide topic labels where transfer is being tested;
-- answers only after the final mock question;
-- independently recompute every answer;
-- include a problem-essential figure with the problem when necessary;
-- keep method-revealing rescue visuals out of the pre-attempt page unless explicitly requested.
-
-Appendix B is the **mixed independent transfer/audit set**. Do not create another large “hard mixed problem appendix” with the same job.
-
-### Appendix C — decision-first quick reference
-
-Create a compact decision-first memory helper, usually 1–3 pages depending on the domain.
-
-Start with:
-
-**What do I see? → What should I draw/write first? → What must I check?**
-
-Then include only material worth recalling quickly:
-
-- compact method triggers;
-- core formulas after method choice;
-- common legality/equality conditions;
-- high-value transforms;
-- final pre-submit checklist;
-- stable IDs in secondary type where useful.
-
-If the domain contains high-value visually driven method families, Appendix C must include small retrieval micro-models where they beat another sentence: gaps, blocks, circle identity, graph, state arrows, residue cycle, exponent grid, root/tangency sketch, similarity/cyclicity configuration, etc.
-
-Do not put full worked solutions in the handout.
-
-### Challenge Ladders — progression, not another problem bank
+### Challenge Ladders — train progression
 
 Challenge Ladders answer:
 
-> **What should I try next for this concept?**
+> What should I try next for this concept?
 
-They are concept-specific progression maps and should mostly reuse existing Worked Bridges, Appendix A questions, Appendix B questions, and verified practice.
-
-Typical progression:
-
-```text
-D1/D2 ENTRY -> D2 CORE -> D3 STRATEGIC -> D4 TRANSFER -> optional D5 CHALLENGE
-```
-
-Add a new problem only when an educationally important difficulty rung is missing.
-
-Keep roles distinct:
+They should mostly reuse Worked Bridges, Appendix A, Appendix B, and verified practice by difficulty rung.
 
 ```text
 APPENDIX_B = TEST_TRANSFER
 CHALLENGE_LADDER = TRAIN_PROGRESSION
 ```
 
-A Challenge Ladder may be an appendix, a route table, or part of Contents/Study Route. It does not need to be called Appendix D.
+---
 
-When learner knowledge exists, start the learner at the lowest rung that is still informative rather than forcing every learner through D1.
+## 16. Optional short-horizon Navigator
 
-## Optional short-horizon Navigator
+When the learner has only a few days, keep Part 0 simple.
 
-When the learner has only a few days, apply the detailed v2 Navigator rules, the difficulty addendum, and the learner-profile/readiness addendum when applicable.
+Default student interface:
 
-The student-facing interface should remain simple:
+1. Start Here;
+2. Quick Check `T1 ... Tx`;
+3. What should I study?;
+4. When stuck.
 
-- Quick Check uses `T1`, `T2`, ... `Tx` rather than colliding with corpus `Q1`, `Q2`, ...;
-- `x` is derived from the learner profile, high-value unknown/weak/partial families, time budget, page fit, and any explicit user count;
-- if no learner profile is supplied, use the domain's default Quick Check bank/count;
-- score recognition before exposing method cues or visual routers;
-- use readable `DO FIRST / DO NEXT / QUICK RETEST / ONLY IF TIME` routing;
-- use plain-language `Notice / Recall / Start` repair;
-- keep internal diagnostic codes and priority equations out of the child-facing pages;
-- do not waste T-slots repeatedly testing explicitly secure families unless a mixed spot-check is useful;
-- use difficulty badges as supporting metadata only; never route by “hardest first”;
+Rules:
+
+- initial Quick Check is unaided;
+- use `T` labels, never collide with corpus `Q` labels;
+- `x` is derived from learner knowledge, scope, important weak/unknown/partial families, time/page fit, and explicit requested count;
+- route with plain `DO FIRST / DO NEXT / QUICK RETEST / ONLY IF TIME` language;
+- Notice / Recall / Start support appears only after the initial diagnostic attempt;
+- internal metrics/priority equations stay hidden;
+- difficulty badge is supporting metadata, not a “hardest first” router;
 - no major new core skill on Day 3;
-- protect normal sleep rather than prescribing late-night new theory.
+- protect normal sleep.
 
-The governing architecture remains:
-
-**Navigator = where to go. Core = how to do it.**
-
-## Citation and provenance rule
-
-Provide citations wherever useful, but do not contaminate a strict questions-only appendix with long source prose.
-
-Preferred full-provenance locations:
-
-- source/citation ledger;
-- chapter endnotes;
-- teacher/reviewer manifest;
-- stable historical ID references.
-
-At point of use, a compact source mini-badge such as `[SRC 12]` may link/jump to the ledger entry. For author-created items use a compact `AC` marker only when the distinction matters to the learner; otherwise preserve author-created status in the ledger.
-
-For a comparison source, preserve its uncertainty. Never turn “identified practice problem” into “confirmed official lecture question.”
-
-## Independent cross-check
-
-Before finalizing:
-
-1. every supplied question appears exactly once in Appendix A;
-2. no inline answers appear before the Appendix A answer key;
-3. every Appendix A question maps to a taught method;
-4. every non-routine method has an execution bridge;
-5. every `REQUIRED`/`SOURCE_REQUIRED` visual has an asset, placement, and rendered QA pass;
-6. no decorative figure is counted as pedagogical visual coverage;
-7. Appendix B answer count matches question count;
-8. every Appendix B answer is independently recomputed;
-9. broader canonical curriculum gaps exposed by the source set are repaired or explicitly listed;
-10. citations/source roles are recorded and every rendered source badge resolves to the correct ledger entry;
-11. quick-reference content matches the main guide and carries micro-models for visually driven core families where appropriate;
-12. no unsupported classroom-effectiveness claim is made;
-13. when learner knowledge is supplied, the most specific topic/subtopic/skill evidence controls routing without pruning the durable core;
-14. when a short-horizon Quick Check is used, its `T1 ... Tx` count and family coverage are justified by the selected scope/profile rather than copied blindly from a default edition;
-15. every ordinary learner-facing practice question has an authored `D1-D5` difficulty badge unless a clean exam simulation intentionally hides it;
-16. broad topics use difficulty ranges/bands rather than misleading single-number labels;
-17. authored difficulty is not confused with priority, learner mastery, frequency, or empirical item difficulty;
-18. Challenge Ladders do not duplicate Appendix B as another mixed hard set.
-
-## Difficulty and badge gates
-
-Recommended gates:
+Architecture:
 
 ```text
-QUESTION_DIFFICULTY_ASSIGNED = PASS_n_OF_n
-QUESTION_DIFFICULTY_BADGES_RENDERED = PASS_n_OF_n
-TOPIC_DIFFICULTY_BANDS_PRESENT = PASS_n_OF_n
-CONCEPT_DIFFICULTY_PROGRESSION = PASS_n_OF_n
-DIFFICULTY_PRIORITY_CONFLATION = 0
-DIFFICULTY_MASTERY_CONFLATION = 0
-UNSUPPORTED_EMPIRICAL_DIFFICULTY_CLAIMS = 0
-APPENDIX_B_CHALLENGE_LADDER_ROLE_COLLISION = 0
-BADGE_TEXT_LEGIBLE_AT_FINAL_SIZE = PASS
-BADGE_COLOR_ONLY_ENCODING = 0
+Navigator = where to go.
+Core = how to do it.
 ```
 
-When source badges are used:
+---
+
+## 17. Domain portability
+
+The orchestration stays generic.
+
+### Mathematics
 
 ```text
-SOURCE_BADGE_TO_LEDGER_LINK = PASS_n_OF_n
-SOURCE_BADGE_BROKEN_GLYPHS = 0
-SOURCE_BADGE_CUSTODY_MISMATCH = 0
+recognize structure
+→ choose representation
+→ first mathematical line/construction
+→ execute
+→ check domain/equality/cases
 ```
 
-## Hard visual gate
-
-If any required visual remains only `PLANNED`, missing, broken, misplaced, unreadable at final size, mathematically incorrect, or too solution-revealing:
-
-`PDF_GENERATION_ALLOWED = FALSE`
-
-for a first final build, or:
-
-`STATUS = VISUAL_REBUILD_REQUIRED`
-
-for a rendered draft.
-
-Use contact sheets for whole-book scanning, but inspect every critical required visual on its actual rendered page at final reading size.
-
-Recommended visual gates when triggered:
+### Physics
 
 ```text
-VISUAL_OBLIGATION_REGISTER = COMPLETE
-VISUAL_OBLIGATIONS = PASS_n_OF_n
-VISUAL_REQUIRED_ASSETS = PASS_n_OF_n
-VISUAL_PLACEMENT = PASS_n_OF_n
-CRITICAL_VISUAL_FINAL_SIZE_QA = PASS_n_OF_n
-SOURCE_REQUIRED_FIGURE_CUSTODY = PASS_n_OF_n
-ANSWER_FREE_VISUAL_LEAKAGE = 0
-BROKEN_OR_MISSING_FIGURES = 0
-VISUAL_ASSET_ORPHANS = 0
-DECORATIVE_FIGURES_COUNTED_AS_COVERAGE = 0
+recognize physical situation
+→ choose system + representation
+→ first diagram/law/equation
+→ model + calculate
+→ units/sign/assumption check
 ```
 
-## Required output set
+### Chemistry
 
-A practical study-guide package should contain:
+```text
+recognize process
+→ choose chemical representation
+→ first balancing/mole/structure step
+→ calculate/reason
+→ conservation/units/conditions check
+```
+
+Domain profiles own concrete Opening Signatures, legality rules, visuals, and difficulty anchors.
+
+---
+
+# INTEGRATED QA
+
+## 18. Question-level self-sufficiency
+
+A target question passes only when the durable guide supplies:
+
+1. prerequisite refresh;
+2. recognition cue;
+3. usable representation where needed;
+4. first useful move;
+5. execution bridge;
+6. legality/common-error check;
+7. required visual support;
+8. difficulty metadata;
+9. provenance metadata;
+10. non-spoiling practice presentation.
+
+Record only when all target rows pass:
+
+```text
+STATIC_CONTENT_SELF_SUFFICIENCY = PASS_n_OF_n
+```
+
+This is a document-coverage claim, not evidence of learner solve rate or psychometric calibration.
+
+---
+
+## 19. Student-surface QA
+
+Required:
+
+```text
+STUDENT_SURFACE_SEMANTIC_GRAMMAR = PASS
+FIRST_MOVE_PRESENT = PASS_n_OF_n
+FIRST_MOVE_VISUAL_PROMINENCE = PASS_n_OF_n
+FIRST_MOVE_FINDABLE_WITHOUT_READING_PARAGRAPH = PASS_n_OF_n
+ANALYSIS_JARGON_LEAKAGE = 0
+LOW_CONTRAST_CRITICAL_HEADINGS = 0
+BADGES_DOMINATING_MATHEMATICS = 0
+```
+
+Headings such as FIRST MOVE and WATCH OUT must remain legible at final reading size and in grayscale.
+
+---
+
+## 20. Final PDF / visual QA
+
+Apply the detailed and visual-production contracts.
+
+Minimum final workflow:
+
+```text
+content gates pass
+→ build PDF
+→ preflight
+→ render every page at 200 dpi
+→ inspect every page
+→ repair
+→ rerender changed pages / full final as needed
+→ record page count + SHA-256
+```
+
+A required visual that is missing, mathematically wrong, clipped, unreadable, or too solution-revealing blocks final visual completion.
+
+Do not call representative-page inspection a full final QA pass.
+
+---
+
+# Required reusable artifacts
+
+For a substantial build, create or maintain as appropriate:
 
 ```text
 README.md
+Frozen_Corpus_Registry.md/.csv
+Source_Provenance_Ledger.md
+Question_Decomposition_Matrix.md/.csv
+Concept_Method_Graph.csv/.yaml
+Stable_Skill_Registry.md
+Prerequisite_DAG.md/.csv
+Transfer_Gap_Map.md/.csv
+Worked_Bridge_Obligations.md
+Difficulty_Map.md/.csv
+Visual_Obligation_Register.md/.csv
 <Subject>_Study_Guide_vN.md
-Quick_Reference_or_Appendix_C.md
-Appendix_A_<supplied-question-set>.md
-Appendix_B_<mixed-transfer-set>.md
-Challenge_Ladders.md or integrated challenge-ladder route table
-Difficulty_Map.md or equivalent difficulty fields in the question matrix
+Appendix_A_*.md
+Appendix_B_*.md
+Appendix_C_*.md
+Challenge_Ladders.md or integrated route table
 Self_Sufficiency_Audit.md
-Sources_and_Citations.md
 QA.md
 ```
 
-When meaningful visual obligations exist, also create:
+For small builds, artifacts may be consolidated if all required fields remain traceable.
+
+---
+
+# Final rule
+
+A scalable study guide is not created by mapping many questions directly into many chapters.
+
+It is created by:
 
 ```text
-Visual_Obligation_Register.md or .csv
-Visual_Manifest.md or .csv
-Visual_Pedagogy_Audit.md
-visuals/
+many questions
+→ decompose
+→ discover Opening Signatures
+→ split concepts correctly
+→ build prerequisite graph
+→ find unsupported transfer edges
+→ create only required bridges
+→ qualify the analysis
+→ render a simple student book
+→ audit every target question
+→ inspect the final PDF
 ```
 
-For reusable agent operation create or maintain:
-
-```text
-Grade 9/skills/ioqm-grade9-study-guide-builder/SKILL.md
-Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2.md
-Grade 9/skills/ioqm-grade9-study-guide-builder/references/learner-knowledge-profile-and-readiness-addendum.md
-Grade 9/skills/ioqm-grade9-study-guide-builder/references/difficulty-badges-portability-and-challenge-ladders-addendum.md
-Grade 9/skills/ioqm-grade9-study-guide-builder/references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md
-Grade 9/skills/ioqm-grade9-study-guide-builder/references/domain-prompt-examples.md
-Grade 9/skills/ioqm-grade9-study-guide-builder/references/self-sufficiency-audit-template.md
-```
-
-Read any available domain profile as part of the reusable authoring context.
-
-## Completion language
-
-Use:
-
-`STATIC_CONTENT_SELF_SUFFICIENCY = PASS`
-
-only for document-level coverage.
-
-When visual obligations exist, do not call the final PDF visually complete until the visual addendum gates pass.
-
-Keep these separate unless measured:
-
-- classroom readability/timing;
-- learner solve rate;
-- retention;
-- recognition accuracy;
-- hint dependency;
-- transfer success;
-- psychometric calibration;
-- qualification/pass-mark prediction.
-
-## Final rule
-
-A guide is not self-sufficient because it lists every formula, contains many pages, or looks professional.
-
-It is self-sufficient only when the target learner can move from:
-
-**problem wording → recognized structure → legal first step → executable method → correct check**
-
-without needing an unnamed trick that exists only in the teacher's head.
-
-If learner-specific knowledge is unavailable, use the partial-knowledge baseline. If it is available, personalize the route rather than pretending one global “50%” describes every topic.
-
-Difficulty should be simple and visible to the learner but richer internally; provenance should be one badge/tap away rather than a paragraph beside every problem; Challenge Ladders should train progression without duplicating Appendix B.
-
-When a representation is part of the method, the learner must also be able to **see the representation at the point of need**.
+The richer the engine becomes, the simpler and more readable the learner surface must become.
