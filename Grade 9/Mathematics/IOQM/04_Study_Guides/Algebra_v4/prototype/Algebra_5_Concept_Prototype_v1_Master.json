@@ -1,0 +1,116 @@
+{
+  "project": {
+    "grade": 9,
+    "subject": "Mathematics",
+    "chapter": "IOQM Algebra",
+    "target_level": "Grade 9 IOQM partial-knowledge concept assimilation",
+    "version": "algebra-five-concept-prototype-v1",
+    "package_stage": "prototype_before_full_generation",
+    "appendix_a_count_declared": 50,
+    "new_web_research": "none"
+  },
+  "sources": [
+    {
+      "id": "ALG-V4-REF",
+      "type": "existing_repository_and_uploaded_reference",
+      "path": "Grade 9/Mathematics/IOQM/04_Study_Guides/Algebra_v4/",
+      "status": "REUSED_EXISTING_BASE"
+    },
+    {
+      "id": "ALG-QMM-V2",
+      "type": "question_to_method_matrix",
+      "path": "Grade 9/Mathematics/IOQM/04_Study_Guides/Algebra_v4/data/Question_to_Method_Matrix_v2.md",
+      "status": "REUSED_EXISTING_BASE"
+    }
+  ],
+  "concepts": [
+    {
+      "concept_id": "ALG-PROTO-C01",
+      "title": "Sum-product compression in two variables",
+      "stable_skill_ids": ["ALG-SYM2-01", "ALG-SYM2-02", "ALG-SYM2-04"],
+      "badges": ["CORE D2", "TRANSFER D4", "HIGH-YIELD"],
+      "primary_anchor_ids": ["Q1", "Q8", "Q9", "Q13"],
+      "opening_signature": {
+        "recognition_cue": "A symmetric target or condition uses x+y, xy, a shifted product, or reciprocal pair structure.",
+        "representation": "Set s=x+y and p=xy; rebuild target from s,p.",
+        "first_move": "Write s=x+y, p=xy before solving for x,y.",
+        "legality_check": "If real x,y are required, check s^2-4p >= 0; preserve all branches."
+      }
+    },
+    {
+      "concept_id": "ALG-PROTO-C02",
+      "title": "Three-variable symmetry and cyclic method selection",
+      "stable_skill_ids": ["ALG-SYM3-01", "ALG-CYC-02", "ALG-CYC-04"],
+      "badges": ["CORE D3", "TRANSFER D5", "HIGH-YIELD"],
+      "primary_anchor_ids": ["Q10", "Q12", "Q14", "Q16", "Q18", "Q25", "Q27", "Q33", "Q35"],
+      "opening_signature": {
+        "recognition_cue": "Three variables appear symmetrically, cyclically, or through repeated xyz.",
+        "representation": "Choose among s,q,r; p=xyz; or cyclic orientation comparison.",
+        "first_move": "If xyz repeats in all equations, set p=xyz and rewrite each equation.",
+        "legality_check": "Record nonzero assumptions for reciprocals; do not treat cyclic expressions as symmetric."
+      }
+    },
+    {
+      "concept_id": "ALG-PROTO-C03",
+      "title": "Quadratic root classification and repeated-root geometry",
+      "stable_skill_ids": ["ALG-QUAD-01", "ALG-QUAD-02", "ALG-POLY-04"],
+      "badges": ["CORE D2", "TRANSFER D4", "VISUAL"],
+      "primary_anchor_ids": ["Q7", "Q11", "Q42", "Q44"],
+      "opening_signature": {
+        "recognition_cue": "The statement classifies root count: no two distinct real roots, one root, double root, or tangency.",
+        "representation": "Use discriminant/root geometry and repeated-root conditions.",
+        "first_move": "For x^2+ux+v not having two distinct real roots, write u^2-4v <= 0.",
+        "legality_check": "Include Delta=0 in not-two-distinct; for cubic/quartic repeated roots use f(r)=f'(r)=0 and global count checks."
+      }
+    },
+    {
+      "concept_id": "ALG-PROTO-C04",
+      "title": "Polynomial difference, Vieta, and preimage thinking",
+      "stable_skill_ids": ["ALG-POLY-01", "ALG-POLY-03", "ALG-POLY-05", "ALG-ROOTSUM-01"],
+      "badges": ["CORE D3", "TRANSFER D5", "HIGH-YIELD"],
+      "primary_anchor_ids": ["Q15", "Q26", "Q29", "Q34", "Q36", "Q44"],
+      "opening_signature": {
+        "recognition_cue": "Equal polynomial outputs, roots used through symmetric sums, or roots of a composition.",
+        "representation": "Factor P(x)-P(k), use Vieta, or map preimages under Q.",
+        "first_move": "For P(m)=P(k), write P(m)-P(k)=(m-k)Q(m).",
+        "legality_check": "Track integer-root restrictions, multiplicities, and source-QC unresolved items separately."
+      }
+    },
+    {
+      "concept_id": "ALG-PROTO-C05",
+      "title": "Symmetric poles and midpoint shifts",
+      "stable_skill_ids": ["ALG-EQ-02", "ALG-EQ-04"],
+      "badges": ["CORE D3", "TRANSFER D4", "DOMAIN"],
+      "primary_anchor_ids": ["Q28"],
+      "opening_signature": {
+        "recognition_cue": "Denominator/pole locations are symmetric around one midpoint.",
+        "representation": "Set t=x-c and pair 1/(t+a)+1/(t-a).",
+        "first_move": "Write the excluded poles, find midpoint c, then set t=x-c.",
+        "legality_check": "Before clearing denominators exclude poles; if u=t^2, require u>=0 and excluded u-values."
+      }
+    }
+  ],
+  "visual_obligations": [
+    {"id": "ALG-PROTO-VIS-01", "concept_id": "overview", "visual_level": "REQUIRED", "visual_job": "PREREQUISITE_LINK", "status": "RENDERED_QA_PASS"},
+    {"id": "ALG-PROTO-VIS-02", "concept_id": "ALG-PROTO-C01", "visual_level": "REQUIRED", "visual_job": "REPRESENTATION_UNLOCK", "status": "RENDERED_QA_PASS"},
+    {"id": "ALG-PROTO-VIS-03", "concept_id": "ALG-PROTO-C02", "visual_level": "REQUIRED", "visual_job": "CONTRAST_OR_ANTITRIGGER", "status": "RENDERED_QA_PASS"},
+    {"id": "ALG-PROTO-VIS-04", "concept_id": "ALG-PROTO-C03", "visual_level": "REQUIRED", "visual_job": "REPRESENTATION_UNLOCK", "status": "RENDERED_QA_PASS"},
+    {"id": "ALG-PROTO-VIS-05", "concept_id": "ALG-PROTO-C04", "visual_level": "REQUIRED", "visual_job": "REPRESENTATION_UNLOCK", "status": "RENDERED_QA_PASS"},
+    {"id": "ALG-PROTO-VIS-06", "concept_id": "ALG-PROTO-C05", "visual_level": "REQUIRED", "visual_job": "DOMAIN_STRUCTURE", "status": "RENDERED_QA_PASS"}
+  ],
+  "questions": {
+    "anchors": [],
+    "core_calibrated": [],
+    "challenges": []
+  },
+  "qa": {
+    "source_qc_complete": true,
+    "answers_verified": true,
+    "concept_links_verified": true,
+    "difficulty_checked": true,
+    "pdf_render_checked": true,
+    "pdf_links_checked": false,
+    "full_package_generated": false,
+    "prototype_stop_for_approval": true
+  }
+}
