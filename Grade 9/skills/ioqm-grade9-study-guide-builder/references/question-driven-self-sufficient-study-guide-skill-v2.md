@@ -6,7 +6,7 @@ This document is a generalized production contract that supplements `../SKILL.md
 
 It captures the workflow required to turn a supplied Olympiad-style problem corpus into a self-sufficient Grade 9 study guide:
 
-> corpus custody -> question-to-method matrix -> prerequisite regrouping -> Draft 1 -> orphan-method audit -> visual-pedagogy audit -> worked-bridge repair -> progressive local hints -> self-sufficiency audit -> appendices -> inspected PDF.
+> corpus custody -> question-to-method matrix -> prerequisite regrouping -> Draft 1 -> orphan-method audit -> visual-pedagogy audit -> worked-bridge repair -> progressive local hints -> self-sufficiency audit -> optional exam navigator -> inspected PDF.
 
 Use this contract for Algebra, Number Theory, Geometry, Combinatorics, or another Grade 9 IOQM domain.
 
@@ -98,6 +98,7 @@ INGEST SOURCES
 -> RUN CITATION / PROVENANCE AUDIT
 -> RUN QUESTION-BY-QUESTION SELF-SUFFICIENCY AUDIT
 -> REQUIRE PASS_n_OF_n
+-> IF SHORT-HORIZON MODE IS NEEDED, BUILD PART 0 EXAM NAVIGATOR
 -> GENERATE PDF
 -> PREFLIGHT
 -> RENDER EVERY PAGE AT 200 DPI
@@ -106,6 +107,8 @@ INGEST SOURCES
 ```
 
 PDF generation is downstream of content qualification.
+
+The optional Exam Navigator is downstream of the qualified core: it routes into the core and must not become a second textbook.
 
 ---
 
@@ -127,6 +130,7 @@ Required columns:
 - planned teaching location;
 - required visual, if any;
 - hint depth: `NONE`, `H1`, `H1-H2`, or `H1-H3`;
+- global study priority inputs where short-horizon mode is needed;
 - current support status: `PASS`, `PARTIAL`, or `FAIL`.
 
 ### Teaching-obligation rule
@@ -177,6 +181,7 @@ Stable IDs allow:
 - audit rows to verify real coverage;
 - quick-reference links back to teaching;
 - future chapter reordering without breaking references;
+- short-horizon diagnostics to route directly to the right skill;
 - difficult questions to receive help without printing a disguised solution.
 
 ---
@@ -449,11 +454,6 @@ Example:
 
 > **H1 · Notice** Both `x+y` and `xy` appear. This is a symmetric two-variable structure.
 
-H1 should answer:
-
-- What should I notice?
-- Which family is relevant?
-
 ### H2 — retrieve prior learning
 
 Purpose: make the student reopen a previously learned skill instead of depending on a more explicit hint.
@@ -558,7 +558,284 @@ A topic appearing only in Appendix C does not count as fully taught.
 
 ---
 
-## 15. Citation and provenance audit
+## 15. Optional Part 0 — 72-Hour Exam Navigator
+
+### Purpose
+
+When a student has only a short horizon such as three days before an exam, keep the qualified reference-book core intact and add a compact front-end orchestration layer immediately after the contents.
+
+Student-facing title:
+
+> **Part 0 — 72-Hour Exam Navigator**
+
+Do not call it an appendix if it appears before Chapter 1; students commonly treat appendices as optional end matter.
+
+The governing distinction is:
+
+> **Part 0 tells the student where to go; the core teaches how to do it.**
+
+The Navigator must diagnose, prioritize, route, repair, and schedule. It must not reteach the theory already in the core.
+
+Target size: roughly **6–8 pages**, with first useful practice reached within about 10 minutes of opening the PDF.
+
+### 15.1 Recognition-first diagnostic
+
+Do not begin with a long full-solution test.
+
+Use two layers:
+
+| Layer | Default size | Time | Primary question |
+|---|---:|---:|---|
+| Recognition scan | 10–14 items; default 12 | 15–20 min | “Which method would I try?” |
+| Execution probe | 4–6 items selected from weak families | 20–30 min | “Can I actually execute it?” |
+
+For each recognition item, ask the learner to record only:
+
+1. what structure they notice;
+2. which skill/method family they would try;
+3. the first useful mathematical line or construction.
+
+Full execution is reserved for families identified as weak or uncertain.
+
+### 15.2 Traffic-light skill status
+
+Traffic-light status belongs to **skills**, not merely individual questions.
+
+Use two internal dimensions: recognition and execution.
+
+| Recognition | Execution | Internal status | Student-facing |
+|---|---|---|---|
+| independent | correct/reasonable | `GREEN` | 🟢 GREEN |
+| independent | weak/stuck | `YELLOW-E` | 🟡 YELLOW |
+| hint needed | eventually executes | `YELLOW-R` | 🟡 YELLOW |
+| no family recognition | not yet tested | `RED` | 🔴 RED |
+
+The student may see only GREEN/YELLOW/RED if suffixes create clutter. The routing logic should preserve the recognition-versus-execution distinction.
+
+### 15.3 Error localization: R / M / S / E / C
+
+Every failed or assisted attempt should be classifiable:
+
+- `R` — Recognize: could not identify the family;
+- `M` — Remember: identified the family but could not retrieve the method;
+- `S` — Start: remembered the method but could not write the first line;
+- `E` — Execute: started correctly but broke down during execution;
+- `C` — Check: reached an answer but failed legality, branch, equality, arithmetic, or final-target checking.
+
+Repair map:
+
+| Error | Repair |
+|---|---|
+| R | recognition trigger + close contrast + method router |
+| M | H2 Recall + stable skill card / prior bridge |
+| S | H3 Start + first-line example |
+| E | redo a full non-identical worked bridge |
+| C | legality / equality / candidate checklist |
+
+Recommended visual decision tree:
+
+```text
+Can I identify the family?
+  NO -> R
+  YES
+Can I remember the method?
+  NO -> M
+  YES
+Can I write the first useful line?
+  NO -> S
+  YES
+Started correctly but got stuck?
+  YES -> E
+  NO
+Wrong final answer / failed check?
+  YES -> C
+```
+
+### 15.4 Global study priority: MUST / SHOULD / IF TIME
+
+Hint depth and study priority are orthogonal.
+
+- hint depth answers: “How much scaffolding does this problem need?”
+- priority answers: “How much scarce exam-prep time should this mechanism receive?”
+
+Generate priority from educational value rather than difficulty.
+
+A useful internal score is:
+
+```text
+PriorityScore = 3T + 2F + 2D + R
+```
+
+where each input is scored `0–2`:
+
+- `T` — transfer value across many problems;
+- `F` — frequency/coverage value across **distinct mechanisms** in the supplied corpus plus canonical syllabus relevance;
+- `D` — dependency value as prerequisite to later skills;
+- `R` — repair value for common 30–50% learner misconceptions.
+
+Initial bands may be:
+
+- `12–16` -> candidate `MUST`;
+- `7–11` -> candidate `SHOULD`;
+- `0–6` -> candidate `IF_TIME`.
+
+Do not let arithmetic replace curriculum judgment.
+
+Apply two review overrides:
+
+- **foundational override:** a prerequisite may be promoted to MUST even with low raw frequency;
+- **niche override:** a rare, disproportionately advanced mechanism may remain IF TIME despite difficulty/repair value.
+
+Deduplicate repeated source questions before using frequency.
+
+A hard question is not automatically MUST.
+
+### 15.5 Personal priority = global value + personal deficit
+
+Do not give every student the same three-day path.
+
+Use global priority together with the diagnostic:
+
+| Global priority | Student status | Default action |
+|---|---|---|
+| MUST | RED | do now |
+| MUST | YELLOW | do today |
+| MUST | GREEN | quick retrieval only |
+| SHOULD | RED | after MUST-red |
+| SHOULD | YELLOW | if schedule permits |
+| IF TIME | RED | usually skip in 72-hour mode |
+| IF TIME | GREEN | no study needed |
+
+The learner-facing plan should be simpler than the internal scoring machinery.
+
+Include a writable “My 3-day personal plan” area for:
+
+- RED MUST skills;
+- YELLOW MUST skills;
+- SHOULD skills if time remains;
+- explicit skip list for IF TIME / unstable-source material.
+
+### 15.6 Hint fading protocol
+
+Use the local H1/H2/H3 system progressively:
+
+```text
+Attempt 1 — LEARN
+H1 Notice -> H2 Recall -> H3 Start as needed
+
+Attempt 2 — RETRIEVE
+maximum H2
+
+Attempt 3 — TRANSFER
+maximum H1
+
+Attempt 4 — EXAM
+no hints
+```
+
+Attempt 2/3 should preferably use a nearby **non-identical** problem so success measures method retrieval rather than memory of the previous numerical solution.
+
+### 15.7 Three-day curriculum
+
+Keep the verbs stable:
+
+- **Day 1 — Recognize**
+- **Day 2 — Execute**
+- **Day 3 — Retrieve**
+
+#### Day 1 — Recognize
+
+- complete recognition scan;
+- build GREEN/YELLOW/RED map;
+- study RED MUST skills first;
+- practice representative MUST questions with H1/H2 available;
+- finish with a short mixed recognition rescan.
+
+Suggested readiness target: on 12–15 mixed items, identify the correct family and a plausible first line on roughly 75% or more.
+
+If the target is missed, do not add advanced material; repair recognition and rescan.
+
+#### Day 2 — Execute
+
+- prioritize YELLOW-E and remaining RED MUST skills;
+- use Advanced Worked Bridges for recurring E/S failures;
+- solve harder MUST and selected SHOULD items;
+- fade H3 substantially.
+
+Suggested readiness target: independent execution on roughly 65–70% of representative core-MUST problems.
+
+If execution remains weak, repair the top recurring S/E families instead of reading new chapters.
+
+#### Day 3 — Retrieve
+
+- use mixed, unlabeled problems;
+- begin with hints unused;
+- run a timed mixed set or two shorter timed sets;
+- repair only recurring R/M/S/E/C patterns;
+- finish with quick-reference and legality checks rather than new advanced theory.
+
+Suggested readiness target: method recognition around 80% on a mixed unlabeled set, with most hints unused.
+
+These are instructional targets, not predictions of exam score or qualification.
+
+### 15.8 Source-stability rule for short-horizon mode
+
+Preserve uncertain/reconstructed items in the durable corpus when source custody requires them, but do not spend scarce 72-hour study time on unresolved wording or unstable answer-key items.
+
+Mark such items:
+
+```text
+SOURCE_STATUS = UNRESOLVED
+72_HOUR_CORE = NO
+PRIORITY = IF_TIME
+```
+
+Likewise, duplicated questions should not consume a separate diagnostic or priority slot unless deliberate spaced retrieval is intended.
+
+### 15.9 Navigator page architecture
+
+A strong default allocation is:
+
+| Page | Purpose |
+|---:|---|
+| 1 | Start here + 3-day workflow |
+| 2 | “When you see -> think -> try” method router |
+| 3–4 | recognition diagnostic |
+| 5 | targeted execution instructions + traffic-light map |
+| 6 | MUST / SHOULD / IF TIME + personal plan |
+| 7 | R/M/S/E/C repair tree + hint fading |
+| 8 | Day 1/2/3 plan + night-before checklist |
+
+Adjust layout without allowing the Navigator to become a second guide.
+
+### 15.10 Exam Navigator acceptance
+
+When Part 0 is requested, require:
+
+```text
+EXAM_NAVIGATOR_PRESENT = PASS
+DIAGNOSTIC_RECOGNITION_ITEMS = 10_TO_14
+DIAGNOSTIC_EXECUTION_IS_ADAPTIVE = PASS
+TRAFFIC_LIGHT_ROUTE = PASS
+CORE_PRIORITY_MAP = PASS
+MUST_SELECTION_RATIONALE = PASS
+ERROR_REPAIR_MAP_RMSEC = PASS
+HINT_FADING_PROTOCOL = PASS
+PERSONAL_PRIORITY_ROUTING = PASS
+DAY1_RECOGNITION_GATE = PASS
+DAY2_EXECUTION_GATE = PASS
+DAY3_TRANSFER_GATE = PASS
+UNSTABLE_SOURCE_SKIP_RULE = PASS
+NAVIGATOR_THEORY_DUPLICATION = 0
+```
+
+The last condition is a hard design rule:
+
+> **Navigator should point, diagnose, prioritize, and repair — not reteach.**
+
+---
+
+## 16. Citation and provenance audit
 
 Keep provenance separate from clean question presentation.
 
@@ -579,7 +856,7 @@ Never convert:
 
 ---
 
-## 16. Final self-sufficiency audit
+## 17. Final self-sufficiency audit
 
 Create one row for every Appendix A question.
 
@@ -621,7 +898,7 @@ Keep these separate unless measured:
 
 ---
 
-## 17. Hard PDF gate
+## 18. Hard PDF gate
 
 PDF generation is allowed only when:
 
@@ -635,7 +912,9 @@ APPENDIX_A_HINT_AUDIT = PASS_n_OF_n
 STATIC_CONTENT_SELF_SUFFICIENCY = PASS_n_OF_n
 ```
 
-If even one question remains `PARTIAL` or `FAIL`:
+If short-horizon mode is requested, additionally require the relevant Part 0 acceptance checks.
+
+If even one required question remains `PARTIAL` or `FAIL`:
 
 ```text
 PDF_GENERATION_ALLOWED = FALSE
@@ -646,7 +925,7 @@ Do not override this gate because the current draft looks polished.
 
 ---
 
-## 18. PDF production and QA
+## 19. PDF production and QA
 
 Before PDF work, read the environment's required PDF-production skill.
 
@@ -659,6 +938,7 @@ Mandatory final QA:
 - visually inspect every page;
 - inspect every mathematical figure at final size;
 - verify H1/H2/H3 strips remain readable but visually quiet;
+- inspect the Exam Navigator decision tree/router if present;
 - check clipping, overlap, broken glyphs, malformed math, missing figures, tiny labels, illegible captions, and page-break damage;
 - record SHA-256 of the exact delivered PDF.
 
@@ -666,7 +946,7 @@ If a figure is essential to a proof or question, a missing/broken figure is a co
 
 ---
 
-## 19. Recommended output package
+## 20. Recommended output package
 
 ```text
 README.md
@@ -682,11 +962,13 @@ QA.md
 PDFs/<Subject>_IOQM_Grade9_Study_Guide_vN.pdf
 ```
 
-Domain-specific profiles may add figure manifests, diagram sources, or specialized method maps.
+When 72-hour mode is requested, Part 0 may remain integrated in the primary study-guide source rather than becoming a separate theory document.
+
+Domain-specific profiles may add figure manifests, diagram sources, specialized method maps, or a domain-specific Exam Navigator plan.
 
 ---
 
-## 20. Acceptance principle
+## 21. Acceptance principle
 
 A guide is not self-sufficient because it lists every formula, mentions every syllabus heading, contains many solved examples, has a large Appendix A, or looks professional as a PDF.
 
@@ -695,3 +977,9 @@ It is self-sufficient only when a half-prepared learner can move from:
 **problem wording -> recognized structure -> legal first step -> executable method -> correct check**
 
 without relying on an unnamed trick that exists only in the teacher's head.
+
+For short-horizon use, one additional principle applies:
+
+> **Coverage per hour matters more than coverage per page.**
+
+The durable core remains complete; the Navigator simply tells this learner what to retrieve first.
