@@ -1,16 +1,18 @@
 # IOQM Grade 9 - Combinatorics Complete Study Guide v3.1 Visual Edition
 
-This package rebuilds the complete Combinatorics study guide after the visual-pedagogy gap analysis.
+This folder is the canonical repository location for the Combinatorics v3 study-guide source, routing data, visual QA, and final-PDF metadata.
 
-## Main deliverable
+## Final generated deliverable
 
-- `PDFs/Combinatorics_IOQM_Grade9_Complete_Study_Guide_v3_1_Visual.pdf`
+- artifact name: `Combinatorics_IOQM_Grade9_Complete_Study_Guide_v3_1_Visual.pdf`
 - 74 pages
 - Letter size
 - searchable / not scanned
 - unencrypted
 - 16 outline entries
 - SHA-256: `5d3516228ba631d2d07c3b0f6a7f6e1ccecf9de429414129e6230040b9b0fda4`
+
+The exact generated PDF binary is part of the delivered conversation artifact package. Repository-native source/data and the exact binary checksum are stored here; `QA.md` is the authoritative production ledger.
 
 ## Architecture
 
@@ -25,13 +27,15 @@ This package rebuilds the complete Combinatorics study guide after the visual-pe
 9. Appendix C - five-page Decision-First Visual Quick Reference
 10. Sources and provenance
 
-## Data and QA
+## Repository data in this folder
 
-- `Visual_Manifest_v3_1.csv` records the rendered-page visual placements.
-- `Visual_Pedagogy_Audit_v3_1.md` records the visual coverage and render-inspection gates.
-- `Question_to_Method_Priority_Matrix.md` is the Q1-Q56 method / priority / hint-depth data.
-- `Appendix_A_Local_Hints.md` is the answer-free local support overlay.
-- `QA.md` is the consolidated evidence ledger.
+- `Part_0_72_Hour_Exam_Navigator.md` — short-horizon routing source.
+- `Question_to_Method_Priority_Matrix.md` — Q1-Q56 stable skill / method / priority / hint-depth data.
+- `Appendix_A_Local_Hints.md` — answer-free Notice / Recall / Start support overlay.
+- `Visual_Manifest_v3_1.csv` — rendered-page visual placements.
+- `Visual_Pedagogy_Audit_v3_1.md` — visual coverage and render-inspection gates.
+- `QA.md` — consolidated evidence and final-PDF metadata.
+- `README.md` — original v3 source-package overview.
 
 ## Important educational design rule
 
