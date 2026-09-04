@@ -1,356 +1,637 @@
 ---
 name: ioqm-grade9-study-guide-builder
-description: Build or revise Grade 9 competitive-exam study guides from supplied corpora using a two-layer Analysis Engine -> Student Book Generator process, stable skills, dependency graphs, loss-preserving compression, concept assimilation, transfer labs, progressive practice, visual obligations, and rendered PDF QA.
+description: Build or revise Grade 9 IOQM/competitive study guides as a specialization of the Grade 9 learning platform, using source-grounded canonical master data plus corpus decomposition, opening signatures, concept assimilation, learner routing, transfer-gap analysis, visual obligations, progressive hints, badges, and rendered PDF QA.
 ---
 
 # IOQM Grade 9 Study Guide Builder
 
 ## Purpose
 
-Turn a supplied competitive-exam corpus into a student-friendly guide without losing the recognition, representation, execution, legality, transfer, or visual support needed by the target questions.
+Use this skill when a Grade 9 learner must turn a syllabus plus a supplied contest corpus into a concept-assimilation study guide that is both source-grounded and executable.
 
-The builder has two layers:
-
-1. **Analysis Engine** - determine what the corpus actually requires.
-2. **Student Book Generator** - turn that model into a readable learner interface.
+This skill is **not a parallel replacement** for the generic Grade 9 system. It specializes the existing Grade 9 source, concept, difficulty, question-bank, enrichment, master-data, and publishing contracts for IOQM-style contest preparation.
 
 Core principle:
 
 ```text
-rich internal analysis
--> simple student surface
--> no silent loss of executable support
+Grade 9 platform infrastructure
++
+IOQM contest-corpus assimilation engine
+->
+student can recognize, start, execute, transfer and check
 ```
 
-## Mandatory references and precedence
+The student should see a simple teaching journey. The build system may remain complex underneath.
 
-Read in this order for every production build:
+---
 
-1. `references/analysis-engine-student-book-generator-contract-v3.md`
-   - corpus decomposition, opening signatures, stable skills, prerequisite DAG, orphan methods, transfer gaps, student/reviewer separation.
+# 0. Mandatory inherited Grade 9 contracts
 
-2. `references/compression-loss-preservation-and-concept-assimilation-addendum-v1.md`
-   - packaging mode, compression/loss ledger, concept assimilation, adaptive page depth, concrete FIRST MOVE/WATCH OUT/CHECK, variants, readable transfer maps, prototype and final-size legibility gates.
+Before a production build, reuse these existing Grade 9 skills/contracts:
 
-3. `references/question-driven-self-sufficient-study-guide-skill-v2.md`
-   - detailed question-to-method support, stable IDs, Appendix A/B/C behavior, progressive hints, custody and integrated self-sufficiency.
+1. `Grade 9/skills/grade9-source-grounding/SKILL.md`
+   - source fidelity, QC statuses, provenance classes.
 
-4. `references/difficulty-badges-portability-and-challenge-ladders-addendum.md`
-   - difficulty/source badges and Challenge Ladders.
+2. `Grade 9/skills/grade9-concept-architect/SKILL.md`
+   - stable concept IDs, prerequisite graph, one primary concept ID per scored question.
 
-5. `references/learner-knowledge-profile-and-readiness-addendum.md` when learner-specific routing is required.
+3. `Grade 9/skills/grade9-math/SKILL.md` for Mathematics
+   - partial-knowledge assimilation, representation switching, competing-method contrasts, difficulty vector, attempt-before-hint, hint fading and transfer.
 
-6. `references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md` whenever any visual obligation is not NONE.
+4. `Grade 9/skills/grade9-question-bank/SKILL.md` when creating calibrated original practice, Challenge Ladders, Appendix B originals, or mixed mastery sets.
 
-7. Read the relevant domain profile after the generalized contracts. Current profiles include Algebra and Number Theory.
+5. `Grade 9/skills/grade9-learning-enrichment/SKILL.md`
+   - causal misconception/repair objects, diagnostics, progressive support and transfer checks.
 
-Precedence:
+6. `Grade 9/skills/grade9-textbook-publisher/SKILL.md`
+   - canonical-master-first publishing, linked products, render/link QA.
 
-- v3 controls architecture, concept splitting, dependency order and transfer-gap triggering;
-- compression/assimilation addendum controls compact packaging, student teaching depth, readable navigation and prototype/legibility gates;
-- v2 remains authoritative for detailed custody, question support and appendix behavior not replaced above;
-- domain profiles specialize, but may not weaken generalized gates;
-- explicit user requirements override defaults.
+7. `Grade 9/skills/grade9/references/grade9-master.schema.json`
+   - canonical reusable master-data base schema.
 
-# Layer A - Analysis Engine
+8. `Grade 9/skills/grade9/references/grade9-workflow.md`
+   - generic Grade 9 multi-stage workflow.
 
-## A1. Freeze the corpus
+Then read IOQM-specific references:
 
-Inventory and preserve:
+9. `references/grade9-platform-integration-addendum-v1.md`
+10. `references/analysis-engine-student-book-generator-contract-v3.md`
+11. `references/compression-loss-preservation-and-concept-assimilation-addendum-v1.md`
+12. `references/question-driven-self-sufficient-study-guide-skill-v2.md`
+13. `references/difficulty-badges-portability-and-challenge-ladders-addendum.md`
+14. `references/learner-knowledge-profile-and-readiness-addendum.md` when learner-specific routing is required.
+15. `references/question-driven-self-sufficient-study-guide-skill-v2-visual-production-addendum.md` whenever any visual obligation is not NONE.
+16. Relevant domain profile, e.g. Algebra or Number Theory.
 
-- target stems / custody IDs;
-- provenance and corrections;
-- answers when supplied;
-- source-required figures;
-- stable local IDs.
+### Precedence
 
-Source order does not determine teaching order.
+- Grade 9 source-grounding controls source status/provenance vocabulary and no-silent-repair policy.
+- Grade 9 master schema is the canonical base structured-data contract.
+- Grade 9 subject skill controls subject-specific reasoning/difficulty foundations.
+- IOQM v3 controls contest-corpus decomposition, opening signatures, transfer gaps and self-sufficiency.
+- Compression/assimilation addendum controls learner-facing teaching depth, variants, readable maps and prototype gates.
+- v2 remains authoritative for detailed Appendix A/B/C behavior, custody, hints and integrated support requirements not replaced above.
+- Grade 9 publisher controls master-data-first artifact generation and publication QA.
+- Explicit user requirements override defaults.
 
-## A2. Decompose every question
+---
 
-Record at minimum:
+# 1. Canonical workflow
+
+Use this sequence for a full build.
+
+## Step 1 - Identify and freeze syllabus/scope
+
+Establish the syllabus boundary before allowing the question corpus to define the curriculum.
+
+Create:
+
+```text
+DOMAIN
+-> TOPIC
+-> SUBTOPIC
+-> preliminary concepts
+```
+
+Mark material as appropriate to the project, for example:
+
+```text
+CORE
+EXTENSION
+OUTSIDE_SCOPE
+```
+
+Do not silently widen scope because an interesting source exists.
+
+## Step 2 - Research and source-ground the domain
+
+When web/repository research is requested or needed, prefer the source hierarchy from `grade9-source-grounding`.
+
+Collect reusable material such as:
+
+- definitions/theorems;
+- conceptual explanations;
+- worked-example candidates;
+- variants and close contrasts;
+- common misconceptions;
+- legality/boundary conditions;
+- visual-helper ideas;
+- official/verified contest questions and provenance.
+
+Store research as reusable `.md` source notes in the appropriate domain folder. Keep raw research separate from final student prose.
+
+## Step 3 - Freeze Appendix A corpus and custody
+
+The corpus may contain 20, 50, 90, 200, or any other number of items. The count is not a design target.
+
+For every item preserve:
+
+- exact/custody-preserved stem;
+- stable local question ID;
+- source page/question identifier;
+- source-required figure;
+- answer when supplied;
+- source QC status;
+- provenance class;
+- correction/reconstruction record if needed.
+
+Reuse Grade 9 statuses:
+
+```text
+VERIFIED_TRANSCRIPTION
+RECONSTRUCTED
+QC_ALERT
+SOURCE_UNRESOLVED
+```
+
+A `SOURCE_UNRESOLVED` item must not silently become a scored clean item.
+
+## Step 4 - Decompose every question
+
+This happens **before final teaching-unit design**.
+
+Every target question needs at minimum:
 
 ```text
 question ID
--> topic / subtopic / concept
--> candidate stable skill
--> recognition cue
--> representation/compression
--> first executable move
--> execution requirements
--> legality/check
--> prerequisites
--> misconception risk
--> difficulty / priority / mastery separately
--> visual obligation
--> transfer-gap status
--> provenance
--> final support status
+syllabus topic/subtopic
+primary concept ID
+secondary concept IDs
+recognition cue
+representation/compression
+first executable move
+execution route
+legality/check
+prerequisites
+likely misconception
+variant requirement
+transfer-gap status
+visual obligation
+difficulty vector
+simple difficulty badge
+source/provenance
+hint route
+support status
 ```
 
-## A3. Build the concept/method graph
-
-For large corpora construct an auditable graph before chapter writing.
-
-## A4. Split by Opening Signature
+Canonical executable route:
 
 ```text
-Opening Signature
-= recognition + representation + first move + legality/check
+surface wording
+-> recognition
+-> representation
+-> first move
+-> execution
+-> legality/check
+-> variant/transfer when needed
 ```
 
-Split an umbrella concept when any of these materially differs.
+A primary concept ID is necessary for navigation and analytics but does **not** by itself prove support sufficiency.
 
-## A5. Assign stable skills
+## Step 5 - Build concept graph and teaching-unit architecture
 
-Each stable skill needs:
+Use stable concepts/prerequisites from the Grade 9 concept architect.
 
-- stable ID and readable learner name;
-- prerequisites;
-- recognition/representation/first move;
-- execution closure;
-- legality/check;
-- close contrast;
-- question links;
-- transfer links;
-- visual obligation when needed.
-
-Readable names lead in the student artifact; internal IDs are secondary anchors.
-
-## A6. Build prerequisite DAG
-
-Teaching order comes from dependencies, not question numbering.
-
-## A7. Orphan-method audit
-
-Every question needs a route:
+For contest support, additionally use the IOQM **Opening Signature**:
 
 ```text
 recognition
--> retrieval
--> first move
--> executable continuation
--> legality/check
++ representation
++ first move
++ legality/check
 ```
+
+Split internal support nodes when materially different openings are required.
+
+But do **not** impose:
+
+```text
+one internal skill = one student page
+one concept ID = one teaching unit
+one analysis count = one chapter count
+```
+
+Student teaching units may merge, split, nest, or expand internal concepts whenever concept assimilation demands it.
+
+### Design rule
+
+```text
+CONCEPT_ASSIMILATION determines book structure.
+QUESTION COVERAGE audits the structure.
+```
+
+No predetermined number of concepts, skills, chapters, or pages is a success criterion.
+
+## Step 6 - Build prerequisite and transfer graph
+
+Teaching order comes from conceptual dependency, not corpus numbering.
+
+Run:
+
+- prerequisite-cycle audit;
+- orphan-method audit;
+- variant audit;
+- transfer-gap audit;
+- visual-obligation audit.
+
+Every HARD transfer gap requires a learner-usable Variant / Transfer Lab / Worked Bridge.
 
 `ORPHAN_METHODS = 0`
 
-## A8. Transfer-gap audit
+## Step 7 - Assign difficulty and learner-facing badges
 
-Classify question-to-skill edges as NONE / MODERATE / HARD.
-
-Every HARD gap requires a student-usable transfer lab/bridge.
-
-## A9. Visual audit
-
-Choose VISUAL_NONE / OPTIONAL / REQUIRED / SOURCE_REQUIRED. Required visuals enter the visual-production lifecycle and final-size QA.
-
-## A10. Packaging and loss analysis
-
-Before compact generation choose:
+Use the Grade 9 Mathematics difficulty vector underneath:
 
 ```text
-SELF_CONTAINED_EDITION
-or
-REFERENCE_PLUS_PRACTICE_BOOK
+conceptual
+recognition
+reasoning_steps
+algebra
+hidden_structure
+constraints_cases
+calculation_burden
+trap_density
 ```
 
-If condensing an existing richer build, create the compression/loss ledger before generation.
+Simple student badges summarize rather than replace this model.
 
-A reference-plus-practice package may omit target stems from the reference, but may not drop required mechanisms, variants, transfer edges, visuals, or question routing.
-
-## A11. Analysis hard gate
-
-At minimum:
+Keep separate:
 
 ```text
-CORPUS_FROZEN = PASS_n_OF_n
-QUESTION_DECOMPOSITION = PASS_n_OF_n
-QUESTION_TO_CONCEPT_BINDING = PASS_n_OF_n
-CONCEPT_SPLIT_AUDIT = PASS
-PREREQUISITE_GRAPH = PASS
-UNJUSTIFIED_PREREQUISITE_CYCLES = 0
-ORPHAN_METHODS = 0
-TRANSFER_GAP_AUDIT = PASS_n_OF_n
-HARD_TRANSFER_GAPS_WITHOUT_BRIDGE = 0
-VISUAL_OBLIGATIONS = PASS_n_OF_n
-PACKAGING_MODE_DECLARED = PASS
-COMPRESSION_LOSS_LEDGER = PASS_IF_COMPACTED
-ASSIMILATION_CRITICAL_LOSSES_UNRESOLVED = 0
-TRANSFER_CRITICAL_LOSSES_UNRESOLVED = 0
+DIFFICULTY != PRIORITY
+DIFFICULTY != LEARNER_MASTERY
+DIFFICULTY != SOURCE_STATUS
+DIFFICULTY != FREQUENCY
 ```
 
-Until these pass:
+### Concept badge example
 
-`STUDENT_BOOK_GENERATION_ALLOWED = FALSE`
+```text
+Chinese Remainder Theorem
+[CORE D3] [TRANSFER D5] [HIGH-YIELD]
+```
 
-# Layer B - Student Book Generator
+### Question badge example
 
-## B1. Derive teaching order from the graph
+```text
+Q17 [D4 ADVANCED] [TRANSFER] [OFFICIAL PYQ]
+```
 
-Do not recreate source order.
+After learner diagnosis, separate personalization badges may appear:
 
-## B2. Adaptive concept-assimilation grammar
+```text
+[YOUR STATUS: DEVELOPING] [DO FIRST]
+```
 
-Student pages are not required to use a fixed stack of equal-weight cards.
+## Step 8 - Ask learner knowledge, then verify with an unaided diagnostic
 
-Available teaching roles:
+A learner may report `30%`, `60%`, etc. Treat this as context, not as the full model.
+
+Use:
+
+```text
+self-report
++
+short unaided recognition/first-move diagnostic
+```
+
+The diagnostic should usually ask:
+
+- What do you notice?
+- Which representation/method family fits?
+- What is the first useful line/drawing?
+
+Do not reveal method-revealing routing before scoring the unaided attempt.
+
+## Step 9 - Create Part 0 / T1...Tx learner route
+
+Part 0 is learner-specific orchestration, not the durable knowledge architecture.
+
+Route using:
+
+```text
+syllabus value
++ prerequisite value
++ learner weakness
++ transfer value
++ time available
+```
+
+Visible route labels should remain simple:
+
+```text
+DO FIRST
+DO NEXT
+QUICK RETEST
+ONLY IF TIME
+```
+
+A concept may show authored difficulty, learner status and priority as separate badges.
+
+## Step 10 - Prototype the student surface before bulk generation
+
+Before creating the full book, render and inspect at least:
+
+- one substantial concept-assimilation journey;
+- one Appendix A question/practice page with badges and hints;
+- one Part 0/navigation page;
+- one required-visual page when applicable.
+
+Do not scale until the prototype is approved.
+
+Reject prototypes with:
+
+- card-reader teaching flow;
+- low-contrast/broken heading colors;
+- raw-ID dominance;
+- tiny badges/navigation;
+- insufficient mechanism explanation;
+- vague FIRST MOVE/WATCH OUT/CHECK;
+- missing variants where nearby methods are easily confused.
+
+## Step 11 - Expand all required teaching units
+
+Expand based on assimilation and corpus support, not target page count.
+
+A teaching unit may use roles such as:
 
 ```text
 WHAT IS THIS?
-TINY EXAMPLE
-THE EXAM / OLYMPIAD LINK
-WHY IT WORKS
-WORKED EXAMPLE
+TINY CONCRETE EXAMPLE
+CONNECTS TO...
+WHY / MECHANISM
+COMPLETE WORKED EXAMPLE
 FIRST MOVE
-VARIANTS AND CLOSE CONTRASTS
+VARIANT
+SUBTLE VARIANT / CLOSE CONTRAST
 WATCH OUT
 CHECK
+VISUAL HELPER
 GUIDED PRACTICE
-PRACTISE NEXT
+NOTICE / RECALL / START
+INDEPENDENT PRACTICE
 ```
 
-Use the smallest set that achieves assimilation for that skill.
+These are teaching roles, not compulsory equal-weight boxes.
 
-A direct/familiar skill may be compact. A transfer-heavy or unfamiliar skill must include enough mechanism, variants, checking, and guided practice to become executable.
+For unfamiliar/strategic concepts, establish the idea before presenting the shortcut.
 
-## B3. Concrete retrieval objects
+## Step 12 - Generate extra practice only when needed
 
-FIRST MOVE is visually prominent and should show an actual miniature mathematical opening whenever practical.
+The frozen Appendix A corpus remains source-grounded.
 
-WATCH OUT should demonstrate a real wrong/illegal route for subtle skills.
+When additional same-level/challenge questions are needed, use `grade9-question-bank` and preserve its difficulty-vector and relationship checks.
 
-CHECK should execute a verification rather than merely tell the learner to check.
+Use calibrated originals for:
 
-## B4. Readable-name-first navigation
+- same-level reinforcement;
+- structural analogues;
+- advanced transfer;
+- Appendix B author-created mixed transfer;
+- mastery retests.
 
-Primary learner navigation uses readable concept names.
+## Step 13 - Build progressive help
 
-Internal IDs may appear in small secondary type or in reviewer artifacts, but must not dominate:
+For normal IOQM learner-facing support:
 
 ```text
-RAW_SKILL_ID_PRIMARY_NAVIGATION = 0
-RAW_TRANSFER_IDS_AS_PRIMARY_NAVIGATION = 0
+NOTICE - recognition clue only
+RECALL - readable concept / representation
+START - first executable setup only
 ```
 
-## B5. Practice Map and Transfer Map
+Use H0/unaided attempt before support in diagnostic/testing contexts.
 
-Practice Map means:
+Fade support across later problems.
+
+Use causal misconception repair from the Grade 9 enrichment skill:
 
 ```text
-readable stable skill -> target question IDs
+wrong response
+-> likely misconception
+-> diagnostic probe
+-> targeted repair
+-> retry / transfer
 ```
 
-For questions that require more than the core skill, use a separate readable transfer route:
+## Step 14 - Generate student package
+
+Typical full student package:
 
 ```text
-question ID -> readable transfer-lab name -> readable core concepts to review
+PART 0
+learner-specific Navigator / T1...Tx
+
+CORE
+concept-assimilation teaching journeys
+
+APPENDIX A
+frozen deliberate-practice corpus
+question difficulty/source/role badges
+progressive local hints when allowed
+answers only after the final question
+
+APPENDIX B
+independent mixed transfer / challenge set
+
+APPENDIX C
+decision-first rapid reference
+What do I see? -> What do I write/draw first? -> What do I check?
+
+APPENDIX D
+when requested/used: answers + concise student-readable provenance/source notes
 ```
 
-Do not expose the raw reviewer matrix as learner UI.
+Reviewer/build dossier stays separate and may include:
 
-## B6. Progressive help
+- corpus registry;
+- master-data export;
+- concept/method graph;
+- question decomposition matrix;
+- orphan/transfer audits;
+- visual manifest;
+- custody/provenance ledger;
+- static gates;
+- final QA evidence.
 
-When hints are allowed:
+## Step 15 - Publish from canonical master data
 
-- Notice = recognition only;
-- Recall = readable prior skill;
-- Start = first executable setup only.
+Use `grade9-master.schema.json` as the base source of truth and extend it with IOQM-specific fields; do not create a competing canonical schema.
 
-Fade support over later attempts. Strict user-requested questions-only mode overrides this display.
+Every scored question keeps exactly one `primary_concept_id` and may have secondary concepts.
 
-## B7. Transfer labs
-
-A transfer lab exists only because a target question needs an extra jump.
-
-It should contain recognition, concrete first move, executable core route, legality/wrong route, and a non-identical guided transfer prompt.
-
-## B8. Challenge Ladders vs mixed transfer
+Store IOQM extensions such as:
 
 ```text
-CHALLENGE_LADDER = TRAIN_PROGRESSION
-APPENDIX_B = TEST_INDEPENDENT_TRANSFER
+recognition_cue
+representation
+first_move
+execution_route
+legality_check
+variant_ids
+transfer_lab_ids
+visual_obligation
+hint_route
+support_status
 ```
 
-Do not merge their roles.
+PDF pages are render outputs, not source-of-truth objects.
 
-## B9. Navigator
-
-A short-horizon Navigator is a routing layer, not the knowledge architecture. Run the unaided recognition check before exposing method-revealing routing.
-
-## B10. Prototype gate before bulk generation
-
-Render and inspect at least:
-
-- one transfer-heavy concept page;
-- one navigation/router page;
-- one practice/transfer-map page;
-- one required-visual page when applicable.
-
-Do not generate the long book until prototypes pass.
-
-## B11. Final student/reviewer split
-
-Normal learner artifact may contain Navigator, teaching core, transfer labs, Practice Map, target practice if self-contained, mixed challenge set and quick reference.
-
-Reviewer/build dossier contains graph/matrices, loss ledger, custody/provenance, visual audit, static gates and final QA evidence.
-
-## B12. Final integrated gates
-
-At minimum:
+Use the Grade 9 publisher's linked architecture:
 
 ```text
-QUESTION_SUPPORT_PACKAGE = PASS_n_OF_n
-STUDENT_SURFACE_SEMANTIC_GRAMMAR = PASS
-FIRST_MOVE_PRESENT = PASS_n_OF_n
-FIRST_MOVE_VISUAL_PROMINENCE = PASS_n_OF_n
-FIRST_MOVE_CONCRETE_INSTANCE = PASS_n_OF_n
-SUBTLE_SKILLS_WITH_VARIANT_OR_CLOSE_CONTRAST = PASS_n_OF_n
-CORE_CHECKS_WITH_EXECUTED_VERIFICATION = PASS_n_OF_n
-TRANSFER_EDGE_MANIFEST = PASS_n_OF_n
-TRANSFER_MAP_READABLE_NAME_FIRST = PASS
-ANALYSIS_JARGON_LEAKAGE = 0
+Concept
+<-> Core practice
+<-> Challenge / transfer
+<-> Helper / hint
+<-> Solution / answer
+<-> Misconception diagnosis
+<-> Mixed-test diagnosis
+```
+
+## Step 16 - Final integrated QA
+
+Minimum gates:
+
+```text
+SYLLABUS_SCOPE_FROZEN = PASS
+SOURCE_GROUNDING = PASS_n_OF_n
+CORPUS_CUSTODY = PASS_n_OF_n
+QUESTION_DECOMPOSITION = PASS_n_OF_n
+PRIMARY_CONCEPT_ID = PASS_n_OF_n
+QUESTION_EXECUTABLE_ROUTE = PASS_n_OF_n
+PREREQUISITE_GRAPH = PASS
+ORPHAN_METHODS = 0
+UNTAUGHT_REQUIRED_VARIANTS = 0
+HARD_TRANSFER_GAPS_WITHOUT_SUPPORT = 0
+REQUIRED_VISUALS_MISSING = 0
+HINT_LEAKAGE = 0
+
+GRADE9_DIFFICULTY_VECTOR = PASS_n_OF_n_WHERE_SCORED
+CONCEPT_DIFFICULTY_BADGES = PASS_n_OF_n_WHERE_DISPLAYED
+QUESTION_DIFFICULTY_BADGES = PASS_n_OF_n_WHERE_DISPLAYED
 DIFFICULTY_PRIORITY_MASTERY_CONFLATION = 0
-```
 
-Then apply the visual, provenance, answer and appendix gates from the referenced contracts.
+FIRST_MOVE_CONCRETE = PASS
+WATCH_OUT_CONCRETE_FOR_RISKY_METHODS = PASS
+CHECK_EXECUTED_FOR_RISKY_METHODS = PASS
+GUIDED_PRACTICE_FOR_TRANSFER_HEAVY_UNITS = PASS
+CONCEPT_LINKS_VISIBLE = PASS
 
-# PDF rule
-
-The rendered page is authoritative.
-
-Reject clipping, overlap, broken glyphs, black squares, missing figures, low-contrast or broken heading colors, off-page tables, tiny learner navigation, unreadable badges, raw-ID dominance, and card-reader layouts without teaching flow.
-
-Required final-size gates include:
-
-```text
+STUDENT_SURFACE_PROTOTYPE = PASS
 LOW_CONTRAST_HEADINGS = 0
 BROKEN_HEADING_COLORS = 0
-TINY_NAVIGATION_TABLES = 0
-OFF_PAGE_TABLES = 0
+TINY_NAVIGATION_OR_BADGES = 0
+RAW_INTERNAL_ID_DOMINANCE = 0
 CARD_READER_PAGE_FAILURES = 0
+
+GRADE9_MASTER_SCHEMA_IS_CANONICAL = PASS
+MASTER_LINKS = PASS
+ANSWER_QA = PASS
+FINAL_RENDER_QA = PASS
 ```
 
-Render the complete artifact and inspect critical pages at final reading size.
+Apply all additional triggered gates from the referenced IOQM and Grade 9 contracts.
+
+---
+
+# Student-surface principles
+
+## Teacher-like flow, not a card stack
+
+A concept page should teach the idea before compressing it into retrieval aids.
+
+For a difficult unfamiliar concept, a strong sequence is often:
+
+```text
+plain definition
+-> tiny numerical/visual example
+-> why this matters in IOQM
+-> mechanism
+-> complete worked example
+-> concrete FIRST MOVE
+-> variants and subtle contrast
+-> concrete WATCH OUT
+-> executed CHECK
+-> guided practice
+-> fading hints
+-> independent transfer
+```
+
+Not every concept needs every stage.
+
+## FIRST MOVE
+
+Make it prominent and concrete.
+
+Bad:
+
+> Compute the gcd first.
+
+Better:
+
+```text
+84x + 126y = 30
+
+gcd(84,126)=42
+42 does not divide 30
+STOP: no integer solutions.
+```
+
+## WATCH OUT
+
+Show actual mathematics/counterexample when possible, not generic warnings.
+
+## CHECK
+
+Execute the check with numbers/symbols when possible.
+
+## Visual helper
+
+Use a visual when it externalizes structure the learner would otherwise need to hold mentally.
+
+A visual requirement is an analysis obligation and must reach final-size rendered QA.
+
+## Concept links
+
+Show readable concept relationships when they help assimilation, for example:
+
+```text
+GCD -> Bezout -> modular inverse -> CRT
+```
+
+or:
+
+```text
+prime factorisation -> exponent vectors -> divisor count -> perfect powers -> valuations
+```
+
+Internal IDs remain secondary.
+
+---
 
 # Evidence boundary
 
-Static document gates do not prove retention, classroom timing, psychometric difficulty, contest score, or learner success. Those require observed learner evidence.
+Static build gates prove document/package coverage only.
+
+Do not claim measured retention, contest score, solve rate, psychometric calibration, classroom timing or guaranteed performance without learner evidence.
+
+---
 
 # Final rule
 
-A strong student guide should let the learner answer:
+The internal machinery may contain syllabus graphs, stable IDs, source states, difficulty vectors, transfer edges, visual obligations and QA ledgers.
+
+The learner should experience a coherent book that helps answer:
 
 ```text
 What is this idea?
-What should make me notice it?
-Why does the representation work?
+How is it connected to what I already know?
+What clue should make me notice it?
+What representation should I use?
 What do I write or draw first?
-How do I continue?
-What nearby variant changes the route?
+Which nearby variant changes the method?
 What can make the move illegal or wrong?
 How do I check it?
-Where do I practise core and transfer versions?
+Where do I practise it with less help next time?
 ```
-
-without exposing the complexity of the production machinery.
