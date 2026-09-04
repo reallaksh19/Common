@@ -4,7 +4,7 @@ This is the domain workspace for the PR #140 question-driven rebuild of the Grad
 
 ## Current build
 
-`v5 / phased rebuild — Phase 2 complete; Phase 3 next`
+`v5 / phased rebuild — Phase 3A student-experience prototype complete; Phase 3B scale-up next`
 
 The project is deliberately separated from `01_Source_Extracts/`: source recovery remains evidence; this folder owns the integrated Number Theory learner product and its build data.
 
@@ -12,6 +12,7 @@ The project is deliberately separated from `01_Source_Extracts/`: source recover
 
 - `Phase_1/` — frozen architecture, PR140 profile, phase plan, and Phase 1 foundation/custody review.
 - `Phase_2/` — rebuilt teaching architecture, mixed method-selection layer, Advanced Worked Bridges, and Phase 2 review.
+- `Phase_3/` — student-experience prototype and subsequent Appendix A/B/C repackaging work.
 - `corpus/` — frozen reusable Appendix A/B corpus artifacts. Mathematical stems are not rewritten except for separately documented source corrections.
 - `data/` — Appendix A/B registries, badge/hint metadata, custody hashes, question-to-method matrices, orphan-method audits, and visual-pedagogy manifests.
 - `../01_Source_Extracts/ALLEN_Number_Theory_Marathon_2026/` — recovered marathon/source evidence.
@@ -45,17 +46,38 @@ The project is deliberately separated from `01_Source_Extracts/`: source recover
 - Teaching-layer structural visual specifications: **16/16**.
 - `ORPHAN_METHODS_PHASE2 = 0`.
 
-Phase 2 does **not** constitute the final self-sufficiency PASS. Phase 3 must audit the actual student-facing badges, H1/H2/H3 hints and figures; Phase 4 must rerun the integrated PR140 gates.
+Phase 2 does **not** constitute the final self-sufficiency PASS.
 
-## Phase 3 next
+## Phase 3A saved state
 
-Reuse the frozen Appendix A/B stems and:
+The student-facing design was prototyped against the supplied Algebra reference before scaling the full book.
 
-1. add non-spoiling badges;
-2. manually audit/rewrite every local H1/H2/H3 strip;
-3. create/reuse the approved structural figures;
-4. preserve 2–3-question page rhythm where practical;
-5. reverify all 20 Appendix B answers and method coverage.
+The 16-page prototype contains:
+
+1. a four-page Number Theory 3-Day Simple Navigator;
+2. a 10-item first-move Quick Check;
+3. a weak-topic -> stable-skill -> practice routing map;
+4. three representative rich reference-core chapters:
+   - prime exponents / divisors / gcd-lcm;
+   - congruence legality / inverses / CRT;
+   - valuations / factorials / trailing-zero and zero-stripped methods;
+5. a simple student support map;
+6. five redesigned Appendix A pages covering frozen stems `NT-Q001`–`NT-Q012` with compact badges and adaptive H1/H2/H3.
+
+The PDF was rendered at 200 dpi and all 16 pages were visually inspected. Two table-flow defects found during rendering were repaired before the Phase 3A review state.
+
+The accepted page grammar is:
+
+`Navigator -> rich reference core -> expanded Advanced Bridges -> student support map -> Appendix A -> Appendix B -> Appendix C -> reviewer dossier`
+
+## Phase 3B next
+
+1. expand Advanced Worked Bridges beyond the initial 16 where the 90-row matrix shows difficult/mixed transfer obligations;
+2. scale the approved rich-core page grammar across the complete teaching layer;
+3. reuse all frozen Appendix A stems and apply badges + manually audited H1/H2/H3 to `NT-Q001`–`NT-Q090`;
+4. reuse all frozen Appendix B stems and add `[PYQ]` + difficulty/family badges + adaptive hints to `B01`–`B20`;
+5. produce the two-page Appendix C memory helper in the same visual language;
+6. only then run Phase 4 integrated PR140 gates.
 
 ## Final PDF requirement
 
