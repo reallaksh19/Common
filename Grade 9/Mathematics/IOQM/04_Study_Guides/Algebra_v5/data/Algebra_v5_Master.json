@@ -1,0 +1,93 @@
+{
+  "project": {
+    "id": "IOQM-G9-ALG-V5-ASSIMILATION",
+    "title": "IOQM Grade 9 Algebra - Concept Assimilation Guide",
+    "branch": "ioqm-g9-algebra-full-assimILation-guide",
+    "build_date": "2026-09-04",
+    "student_profile": {
+      "self_reported_knowledge": "approximately 50%",
+      "time_before_exam": "3 days",
+      "known_weak_areas": "not sure",
+      "diagnostic_status": "SKIPPED_BY_LEARNER_REQUEST"
+    },
+    "routing_policy": "Because the diagnostic was explicitly skipped, Part 0 uses conservative profile-only routing and never labels any concept mastered from the 50% self-report.",
+    "appendix_a_count": 50,
+    "new_web_research": "NONE"
+  },
+  "scope": {
+    "syllabus_items": [
+      "Inequalities",
+      "Arithmetic Progressions",
+      "Geometric Progressions",
+      "Harmonic Progression bridge",
+      "Theory of indices",
+      "Systems of linear equations",
+      "Theory of equations",
+      "Binomial theorem and coefficients",
+      "Complex-number bridge",
+      "Polynomials in one variable",
+      "Polynomials in two variables via symmetric/cyclic compression",
+      "Functional equations / polynomial identities",
+      "Sequences and recurrences",
+      "Integer and discrete filters"
+    ],
+    "teaching_order_basis": "concept prerequisites and recognition/representation/first-move signatures, not Appendix A order"
+  },
+  "concepts": [
+    {"id":"C01","name":"Identities and manufactured factorisation","difficulty_range_badge":"CORE D2 | TRANSFER D4","skills":["ALG-FAC-01","ALG-ID-01"],"primary_appendix_a_questions":["Q6"],"prerequisites":[],"representation":"Manufacture a factorization whose factors expose divisibility, sign or squares."},
+    {"id":"C02","name":"Equation legality and engineered rational simplification","difficulty_range_badge":"CORE D2 | TRANSFER D4","skills":["ALG-EQ-01","ALG-EQ-02","ALG-EQ-03"],"primary_appendix_a_questions":["Q43"],"prerequisites":["C01"],"representation":"Track excluded values first; replace full denominator clearing by a common numerator/factor when the expression is engineered."},
+    {"id":"C03","name":"Linear totals, averages and consecutive-block translation","difficulty_range_badge":"CORE D2 | TRANSFER D4","skills":["ALG-LIN-01","ALG-LIN-02","ALG-LIN-03"],"primary_appendix_a_questions":["Q4","Q39"],"prerequisites":[],"representation":"Replace raw lists by count, total, extremes and consecutive-block sums."},
+    {"id":"C04","name":"Sum-product compression in two variables","difficulty_range_badge":"CORE D2 | TRANSFER D4","skills":["ALG-SYM2-01","ALG-SYM2-02","ALG-SYM2-03","ALG-SYM2-04"],"primary_appendix_a_questions":["Q1","Q8","Q9","Q13"],"prerequisites":["C01"],"representation":"Compress a symmetric pair to s=x+y and p=xy; rebuild targets from s,p."},
+    {"id":"C05","name":"Three-variable symmetry and cyclic method selection","difficulty_range_badge":"CORE D3 | TRANSFER D5","skills":["ALG-SYM3-01","ALG-SYM3-02","ALG-CYC-01","ALG-CYC-02","ALG-CYC-03","ALG-CYC-04"],"primary_appendix_a_questions":["Q2","Q10","Q12","Q14","Q16","Q18","Q25","Q27","Q33","Q35"],"prerequisites":["C01","C02","C04"],"representation":"Choose among s,q,r; a common value k; p=xyz; or cyclic orientation before algebra."},
+    {"id":"C06","name":"Quadratic root classification and repeated-root geometry","difficulty_range_badge":"CORE D2 | TRANSFER D5","skills":["ALG-QUAD-01","ALG-QUAD-02","ALG-QUAD-03","ALG-POLY-04"],"primary_appendix_a_questions":["Q7","Q11","Q42"],"prerequisites":["C01"],"representation":"Translate root-language to discriminant or repeated-root equations, then use geometry/global shape when degree >2."},
+    {"id":"C07","name":"Polynomial difference, Vieta, root sums and preimage thinking","difficulty_range_badge":"CORE D3 | TRANSFER D5","skills":["ALG-POLY-01","ALG-POLY-03","ALG-POLY-05","ALG-ROOTSUM-01","ALG-ROOTSUM-02","ALG-ROOTSUM-03","ALG-ROOTSUM-04"],"primary_appendix_a_questions":["Q15","Q26","Q29","Q34","Q36","Q44"],"prerequisites":["C01","C04","C06"],"representation":"Use P(x)-P(a), Vieta/root sums, P'/P, multiplicity counting, or quadratic preimage pairing according to the output/root surface."},
+    {"id":"C08","name":"Symmetric poles and midpoint shifts","difficulty_range_badge":"CORE D3 | TRANSFER D4","skills":["ALG-EQ-02","ALG-EQ-04"],"primary_appendix_a_questions":["Q28"],"prerequisites":["C02"],"representation":"Center symmetric poles with t=x-c; pair reciprocals; if even in t, use u=t^2."},
+    {"id":"C09","name":"Inequalities, smoothing and ordered-mass bounds","difficulty_range_badge":"CORE D3 | TRANSFER D5","skills":["ALG-INEQ-01","ALG-INEQ-02","ALG-INEQ-04","ALG-INEQ-05"],"primary_appendix_a_questions":["Q17","Q40","Q45"],"prerequisites":["C01","C04","C05"],"representation":"Freeze one variable or one mass budget, reduce to a one-variable/boundary problem, and prove equality is attainable."},
+    {"id":"C10","name":"AP, GP, HP and mixed progression structure","difficulty_range_badge":"CORE D2 | TRANSFER D5","skills":["ALG-AP-01","ALG-GP-01","ALG-GP-02","ALG-MIXSEQ-01","ALG-MIXSEQ-03","ALG-HP-01"],"primary_appendix_a_questions":["Q5","Q19","Q21","Q22","Q23","Q37","Q38","Q47","Q49"],"prerequisites":[],"representation":"Parameterize AP/GP structure with the minimum variables; use convergence and divisibility before enumeration; HP is reciprocal-AP."},
+    {"id":"C11","name":"Finite differences and recurrence structure","difficulty_range_badge":"CORE D2 | TRANSFER D5","skills":["ALG-REC-01","ALG-REC-02","ALG-REC-04"],"primary_appendix_a_questions":["Q20","Q24","Q50"],"prerequisites":["C10"],"representation":"Look for degree via differences or a shift/period identity before computing many terms."},
+    {"id":"C12","name":"Exponent substitutions, radicals and algebraic irrational bases","difficulty_range_badge":"CORE D3 | TRANSFER D4","skills":["ALG-EXP-01","ALG-ALGNUM-01"],"primary_appendix_a_questions":["Q3","Q31"],"prerequisites":["C06","C07"],"representation":"Replace common exponential blocks by a positive variable; compare irrational basis components exactly rather than numerically."},
+    {"id":"C13","name":"Polynomial functional identities","difficulty_range_badge":"CORE D3 | TRANSFER D4","skills":["ALG-FE-01","ALG-FE-02"],"primary_appendix_a_questions":["Q32"],"prerequisites":["C07"],"representation":"Exploit an identity holding for every input to determine degree and coefficients; enforce nested-value self-consistency."},
+    {"id":"C14","name":"Integer and discrete filters","difficulty_range_badge":"CORE D3 | TRANSFER D5","skills":["ALG-INT-02","ALG-DISC-01","ALG-POLY-02","ALG-POLY-06"],"primary_appendix_a_questions":["Q30","Q41","Q46","Q48"],"prerequisites":["C01","C03","C07","C10"],"representation":"Replace ordered integers by gaps or roots, then use divisibility/bounds/inclusion-exclusion to make the search finite."},
+    {"id":"C15","name":"Binomial theorem and coefficient bridge","difficulty_range_badge":"CORE D2 | TRANSFER D4","skills":["ALG-BIN-01","ALG-BIN-02"],"primary_appendix_a_questions":[],"prerequisites":["C01"],"representation":"Read coefficients structurally from (x+y)^n; use symmetry and adjacent-binomial identities instead of expansion."}
+  ],
+  "question_detail_files": [
+    "Question_Decomposition_Q01-Q10.md",
+    "Question_Decomposition_Q11-Q20.md",
+    "Question_Decomposition_Q21-Q30.md",
+    "Question_Decomposition_Q31-Q40.md",
+    "Question_Decomposition_Q41-Q50.md"
+  ],
+  "qa": {
+    "syllabus_complete": true,
+    "appendix_a_corpus_count": 50,
+    "appendix_a_preserved_as_pdf_pages": true,
+    "question_decompositions": 50,
+    "primary_concept_assignment_count": 50,
+    "orphan_methods": 0,
+    "difficulty_badges_present": true,
+    "difficulty_priority_mastery_source_separated": true,
+    "diagnostic_score_fabricated": false,
+    "diagnostic_skip_honored": true,
+    "source_unresolved_items": ["Q29"],
+    "duplicate_source_items": ["Q49"],
+    "hard_transfer_gaps_open": 0,
+    "answer_leakage_policy": "Answers only in Appendix D; Core worked examples are author-created teaching examples.",
+    "required_visuals_missing": 0,
+    "visual_register_items": 11,
+    "variants_missing": 0,
+    "first_move_watch_out_check_contract": "PASS_CORE_15_OF_15",
+    "pdf_page_count": 53,
+    "pdf_sha256": "5c7ce9bbdced2005f409057530bf5cba37160016a79994c259ffc18344461f92",
+    "pdf_preflight": "PASS_OPENABLE_A4_TEXT_BASED_NOT_ENCRYPTED",
+    "pdf_render_qa": "PASS_53_OF_53_PAGES_RENDERED_200DPI_AND_VISUALLY_INSPECTED_AFTER_LAST_FIX",
+    "pdf_internal_links": "PASS_23_TOC_LINKS_TARGET_VALID_PAGES",
+    "pdf_outline": "PASS_23_OUTLINE_ENTRIES_ALL_TARGET_VALID_PAGES",
+    "pdf_page_size": "A4_ALL_53_PAGES_595.28x841.89_PT",
+    "pdf_latex_warnings": "PASS_NO_OVERFULL_UNDEFINED_LATEX_ERROR_OR_MISSING_CHARACTER",
+    "metadata_decomposition_required_fields": "PASS_50_OF_50_NONEMPTY",
+    "difficulty_vector_required_dimensions": "PASS_50_OF_50_EIGHT_DIMENSIONS_PRESENT",
+    "primary_concept_uniqueness": "PASS_50_OF_50_EXACTLY_ONE",
+    "visual_final_fix": "VIS-07_ORDERED_MASS_OVERLAP_CORRECTED_AND_RERENDERED",
+    "final_acceptance": "PASS_STATIC_STUDENT_BUILD"
+  }
+}
