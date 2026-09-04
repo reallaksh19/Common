@@ -9,9 +9,11 @@ Use it with:
 - `../SKILL.md`
 - `question-driven-self-sufficient-study-guide-skill-v2.md`
 
-The generalized contract owns production mechanics. This profile owns Algebra-specific method families, recognition cues, legality checks, visual use, likely orphan methods, and Appendix A hint behavior.
+The generalized contract owns production mechanics. This profile owns Algebra-specific method families, recognition cues, legality checks, visual use, likely orphan methods, Appendix A hint behavior, and the optional 72-hour Algebra Navigator.
 
 It incorporates the lessons from the 50-question Algebra rebuild where a polished first PDF failed a benchmark/self-sufficiency audit.
+
+The durable core remains a reference book. Short-horizon exam behavior belongs in **Part 0 — 72-Hour Algebra Exam Navigator**, which routes into the core without replacing it.
 
 ---
 
@@ -39,7 +41,7 @@ The guide must teach why and when those representation choices close the problem
 
 ## 2. Stable Algebra skill families
 
-Use stable IDs so hints can retrieve previously taught methods.
+Use stable IDs so hints and the Exam Navigator can retrieve previously taught methods.
 
 ### Foundations and factorization
 
@@ -156,7 +158,34 @@ Use stable IDs so hints can retrieve previously taught methods.
 
 ---
 
-## 3. Recommended chapter order
+## 3. Kid-facing aliases for stable skill IDs
+
+Student-facing navigation should pair the stable ID with plain language.
+
+Examples:
+
+| Stable ID | Kid-facing name |
+|---|---|
+| `ALG-SYM2-01` | **Sum–Product Trick** |
+| `ALG-SYM3-01` | **Three-Variable Symmetry** |
+| `ALG-CYC-02` | **Common Product Trick** |
+| `ALG-CYC-01` | **Common-Value Method** |
+| `ALG-QUAD-01` | **Quadratic Root Test** |
+| `ALG-POLY-04` | **Touching / Repeated Root Method** |
+| `ALG-POLY-01` | **Polynomial Difference Trick** |
+| `ALG-POLY-03` | **Vieta / Root-Sum Method** |
+| `ALG-ROOTSUM-03` | **Reciprocal Root Tool** |
+| `ALG-MIXSEQ-01` | **Mixed Progressions** |
+| `ALG-REC-01` | **Recurrence Shortcut** |
+| `ALG-INEQ-02` | **Fixed-Sum Extremum / Smoothing** |
+| `ALG-EQ-04` | **Midpoint Shift for Symmetric Poles** |
+| `ALG-GP-02` | **Integer GP Denominator Test** |
+
+The stable ID is for durable reference and audit. The readable name is for retrieval under pressure.
+
+---
+
+## 4. Recommended chapter order
 
 A strong default order for a 50%-prepared learner is:
 
@@ -182,11 +211,11 @@ A strong default order for a 50%-prepared learner is:
 20. Appendix B
 21. Appendix C / quick reference
 
-Regroup if the actual supplied corpus demands a different dependency order.
+When a learner has approximately 72 hours before the exam, insert **Part 0 — 72-Hour Algebra Exam Navigator immediately after the contents**, but do not reorder or weaken the durable core.
 
 ---
 
-## 4. Algebra-specific orphan-method traps
+## 5. Algebra-specific orphan-method traps
 
 ### “Vieta is taught” is not enough
 
@@ -230,7 +259,7 @@ Teach how positivity, integrality, divisibility, ordering, bounded coefficients,
 
 ---
 
-## 5. Algebra visual-pedagogy profile
+## 6. Algebra visual-pedagogy profile
 
 Algebra should not be made artificially pictorial. Add visuals only when they reveal structure better than symbols.
 
@@ -249,12 +278,7 @@ These reinforce `ALG-QUAD-01`, `ALG-QUAD-02`, and `ALG-POLY-04`.
 
 #### Domain / sign structure
 
-Use number lines for:
-
-- rational inequalities;
-- excluded denominator values;
-- radical domains;
-- sign changes between roots.
+Use number lines for rational inequalities, denominator exclusions, radical domains, and sign changes between roots.
 
 #### Function composition
 
@@ -262,34 +286,33 @@ Use a small mapping diagram for `ALG-POLY-05` to show that roots of `P(Q(x))` ar
 
 #### Sequence evolution
 
-Use compact tables or arrow diagrams for:
-
-- finite differences;
-- shift identities;
-- periodicity;
-- alternating AP/GP recurrences.
+Use compact tables or arrow diagrams for finite differences, shift identities, periodicity, and alternating AP/GP recurrences.
 
 #### Smoothing / optimization
 
-Use a one-variable or feasible-interval schematic when it makes the boundary/interior choice easier to see.
+Use a one-variable or branch schematic when it makes the boundary/interior choice easier to see.
 
-### Avoid low-value visuals
+### Particularly useful conceptual visuals for the 50-question corpus
 
-Do not add decorative grids, stock math imagery, or generic parabola sketches that do not teach the method.
+Where page space permits, consider:
 
-### Figure integrity
+- Q17-style order-statistic positive/negative mass bar;
+- Q20-style finite-difference table;
+- Q24-style `a_n -> -a_{n-5} -> a_{n-10}` recurrence arrow;
+- Q28-style number line showing poles symmetric about 11;
+- Q36-style repeated-root-copy schematic to explain multiplicity pairs;
+- Q40-style smoothing branch diagram based on the sign of the coefficient of `xy`;
+- Q42-style quartic touching the axis at a global minimum;
+- Q44-style quadratic preimage mapping diagram;
+- Q50-style alternating GP/AP overlap diagram.
 
-Every Algebra figure should:
+Do not add decorative grids, stock imagery, or generic parabola sketches that do not teach the method.
 
-- use the same variables as nearby text;
-- be mathematically correct;
-- have labels readable at final PDF size;
-- state `not to scale` where relevant;
-- survive 200-dpi visual inspection.
+Every Algebra figure should use the same variables as nearby text, be mathematically correct, have readable labels at final size, and survive 200-dpi inspection.
 
 ---
 
-## 6. Appendix A local hint architecture
+## 7. Appendix A local hint architecture
 
 For Algebra, the default student-facing layout is compact question-local hints, not a separate Hint Bank.
 
@@ -325,25 +348,19 @@ If a hint needs a paragraph, it belongs in the teaching section or an Advanced W
 
 Recognition only.
 
-Example:
-
 > **H1 👀 Notice** Both `x+y` and `xy` appear; this is a symmetric two-variable structure.
 
 ### H2 — Recall previous learning
 
 H2 should normally contain a stable ID and readable skill name.
 
-Example:
+> **H2 ↩ Recall `ALG-SYM2-01 · Sum–Product Trick`** Use the same compression idea as in the earlier worked example.
 
-> **H2 ↩ Recall `ALG-SYM2-01 · Sum-product substitution`** Use the same compression idea as in the earlier worked example.
-
-This is especially important on tough problems because it trains retrieval rather than dependence on explicit hints.
+H2 is especially important on tough problems because it trains retrieval rather than dependence on explicit hints.
 
 ### H3 — Start
 
 Give the first executable mathematical move but not the final result.
-
-Example:
 
 > **H3 ✏ Start** Set `s=x+y`, `p=xy`; rewrite both conditions in `s,p`.
 
@@ -355,13 +372,11 @@ At the beginning of Appendix A include:
 
 Because a PDF cannot truly hide later hints, make H1 visually strongest, H2 quieter, H3 quietest.
 
-### Fallback Hint Bank
-
 Use a separate Hint Bank only when local hints overcrowd a page, interfere with a large figure, or reveal too much by proximity.
 
 ---
 
-## 7. Suggested hint depth for the 50-question Algebra corpus
+## 8. Suggested hint depth for the 50-question Algebra corpus
 
 This is a support profile, not source-order authority.
 
@@ -428,13 +443,13 @@ Adjust only if actual learner/teacher evidence becomes available.
 
 ---
 
-## 8. Example H1-H3 ladders
+## 9. Example H1-H3 ladders
 
 ### Cyclic reciprocal system
 
 > **H1 👀 Notice** The three cyclic expressions simplify together under `xyz=1`.
 
-> **H2 ↩ Recall `ALG-CYC-01 · Common-value cyclic systems`** Try combining the expressions before solving for individual variables.
+> **H2 ↩ Recall `ALG-CYC-01 · Common-Value Method`** Try combining the expressions before solving for individual variables.
 
 > **H3 ✏ Start** Name the requested cyclic quantity `t` and multiply the three given sums; simplify using `xyz=1`.
 
@@ -472,7 +487,7 @@ Adjust only if actual learner/teacher evidence becomes available.
 
 ---
 
-## 9. High-value Advanced Worked Bridge obligations
+## 10. High-value Advanced Worked Bridge obligations
 
 When required by the supplied corpus, provide non-identical bridges for methods such as:
 
@@ -501,11 +516,11 @@ When required by the supplied corpus, provide non-identical bridges for methods 
 - bounded stars-and-bars;
 - alternating AP/GP symbolic pattern proof.
 
-These are not universal requirements; they become obligations when the corpus requires them.
+A bridge must be imitation-level, not only a method summary: it should contain enough intermediate algebra that H2 can point to it and a half-prepared learner can reproduce the mechanism on a nearby problem.
 
 ---
 
-## 10. Algebra legality checklist
+## 11. Algebra legality checklist
 
 ### Rational expressions
 
@@ -557,7 +572,7 @@ These are not universal requirements; they become obligations when the corpus re
 
 ---
 
-## 11. Appendix B Algebra audit set
+## 12. Appendix B Algebra audit set
 
 Appendix B should contain approximately 20 reliable-source or clearly labeled author-created questions sampling the revised guide.
 
@@ -574,13 +589,13 @@ A useful spread is approximately:
 - 1 complex-number bridge
 - 2 integer/discrete-filter
 
-Use the same local adaptive hint system only on the harder questions.
+Use lighter scaffolding than Appendix A so Appendix B acts as a transfer test. A useful default is: many items with no hint, some with H1, a few hard items with H1-H2, and only exceptional items with H1-H3.
 
 Independently recompute every answer.
 
 ---
 
-## 12. Appendix C Algebra memory helper
+## 13. Appendix C Algebra memory helper
 
 Keep Appendix C to approximately 1–2 pages.
 
@@ -600,13 +615,307 @@ High-value items include:
 - binomial identities if genuinely taught;
 - `P'(t)/P(t)` if genuinely taught;
 - candidate-check checklist;
-- stable skill IDs for deeper review.
+- stable skill IDs and kid-facing names for deeper review.
 
 Do not put full worked solutions in Appendix C.
 
 ---
 
-## 13. Algebra acceptance gate
+## 14. Part 0 — 72-Hour Algebra Exam Navigator
+
+### Role
+
+Part 0 is an optional front-end for a student who has only a few days before the exam.
+
+It appears immediately after the contents and before Chapter 1.
+
+The core remains the durable reference book.
+
+> **Part 0 tells the student where to go; the core teaches how to do it.**
+
+Target length: roughly 6–8 pages. Do not duplicate chapter theory.
+
+### 14.1 Kid-friendly “When you see -> think -> try” router
+
+A compact front-page router should use plain language first and stable IDs second.
+
+| When you see… | Think… | Recall |
+|---|---|---|
+| `x+y`, `xy`, `x^2+y^2`, shifted symmetric product | compress two variables | `ALG-SYM2-01 · Sum–Product Trick` |
+| symmetric `x,y,z` | use `s,q,r` | `ALG-SYM3-01 · Three-Variable Symmetry` |
+| same `xyz` in several equations | name it `p` | `ALG-CYC-02 · Common Product Trick` |
+| several expressions are equal | call them `k` | `ALG-CYC-01 · Common-Value Method` |
+| quadratic root condition | discriminant/root signs | `ALG-QUAD-01 · Quadratic Root Test` |
+| cubic has exactly two distinct roots | repeated root | `ALG-POLY-04 · Touching Root Method` |
+| `P(m)=P(k)` | factor the difference | `ALG-POLY-01 · Polynomial Difference Trick` |
+| many roots, symmetric target | do not solve roots | `ALG-POLY-03 · Vieta / Root-Sum Method` |
+| reciprocal sum over polynomial roots | use `P'/P` | `ALG-ROOTSUM-03 · Reciprocal Root Tool` |
+| AP and GP overlap | parameterize shared terms | `ALG-MIXSEQ-01 · Mixed Progressions` |
+| very large recurrence index | derive shift/period | `ALG-REC-01 · Recurrence Shortcut` |
+| fixed sum + max/min | smoothing/equality | `ALG-INEQ-02 · Fixed-Sum Extremum` |
+| symmetric rational poles around a center | shift the midpoint | `ALG-EQ-04 · Midpoint Shift` |
+| integer-valued GP with rational ratio | denominator divisibility | `ALG-GP-02 · Integer GP Denominator Test` |
+
+This router should be visible before the diagnostic.
+
+### 14.2 Recognition diagnostic: default 12 items
+
+Do not make the student solve 12 long problems in full.
+
+Use 12 short recognition/start probes sampling high-value families:
+
+1. identities/factorization or legal manipulation;
+2. `s,p` symmetric pair;
+3. `s,q,r` / cyclic three-variable structure;
+4. quadratic root condition;
+5. Vieta / polynomial roots;
+6. factor/remainder or strategic polynomial evaluation;
+7. inequality/extremum/equality;
+8. AP/GP/mixed progression;
+9. recurrence/finite-difference recognition;
+10. exponent/radical normalization;
+11. integer/discrete filter;
+12. mixed unlabeled method selection.
+
+For each item ask only:
+
+```text
+What do I notice?
+Which skill would I try?
+What is my first useful line?
+```
+
+Target: roughly 15–20 minutes.
+
+### 14.3 Targeted execution probe
+
+After the recognition scan, choose only 4–6 RED/YELLOW families for full execution probes.
+
+This separates:
+
+- “I cannot see the method” from
+- “I see the method but cannot finish it.”
+
+Target: roughly 20–30 minutes.
+
+### 14.4 GREEN / YELLOW / RED Algebra skill map
+
+Internally distinguish recognition from execution:
+
+| Recognition | Execution | Internal status | Student-facing |
+|---|---|---|---|
+| independent | independent | `GREEN` | 🟢 GREEN |
+| independent | weak/stuck | `YELLOW-E` | 🟡 YELLOW |
+| hint needed | eventually works | `YELLOW-R` | 🟡 YELLOW |
+| no family recognition | not tested | `RED` | 🔴 RED |
+
+Student-facing definitions:
+
+- **GREEN:** “I can recognize and execute this without help.”
+- **YELLOW:** “I partly know it, but I am slow, need a hint, or break down in execution.”
+- **RED:** “I do not reliably know what to do.”
+
+### 14.5 R / M / S / E / C repair system
+
+Every failed or assisted problem should receive one code:
+
+- `R` — Recognize: did not identify the family;
+- `M` — Remember: knew the family but could not retrieve the method;
+- `S` — Start: remembered the method but could not write the first line;
+- `E` — Execute: started correctly but got stuck;
+- `C` — Check: reached an answer but failed legality, branch, equality, arithmetic, or final-target checking.
+
+Algebra repair map:
+
+| Error | Correct repair |
+|---|---|
+| R | revisit the router + “Notice” cue + close contrast |
+| M | H2 Recall + skill card / named bridge |
+| S | H3 Start + first-line example |
+| E | redo a full non-identical Advanced Worked Bridge |
+| C | Algebra legality checklist + candidate/equality check |
+
+Include a simple decision tree visual.
+
+### 14.6 Global priority: MUST / SHOULD / IF TIME
+
+Do not equate difficulty with importance.
+
+Generate priority using the general skill formula:
+
+```text
+PriorityScore = 3T + 2F + 2D + R
+```
+
+with `T,F,D,R` in `0–2` for transfer, distinct-mechanism frequency/canonical relevance, dependency value, and common-learner repair value.
+
+Use the score only as a proposal; curriculum review confirms the final label.
+
+Important Algebra-specific rules:
+
+- foundational compression skills such as `ALG-SYM2-01`, core root reasoning, Vieta/factor theorem, AP/GP, legal equation manipulation, and common recurrence recognition are strong candidates for MUST;
+- a rare highly advanced mechanism is often SHOULD or IF TIME even if difficult;
+- deduplicate Q37/Q49 before counting frequency;
+- Q29 has unresolved source wording and should be `72_HOUR_CORE = NO` / `IF_TIME` even though its root-sum method is taught elsewhere through stable examples.
+
+The final exact Q1–Q50 MUST/SHOULD/IF TIME labels should be generated from the question-to-method matrix rather than hand-guessed.
+
+### 14.7 Personal priority routing
+
+Combine global educational value with the student's diagnostic status.
+
+| Global priority | Student status | Action |
+|---|---|---|
+| MUST | RED | **Do now** |
+| MUST | YELLOW | **Do today** |
+| MUST | GREEN | quick retrieval only |
+| SHOULD | RED | after MUST-red |
+| SHOULD | YELLOW | if schedule permits |
+| IF TIME | RED | usually skip |
+| IF TIME | GREEN | no study needed |
+
+Include a writable section:
+
+```text
+MY RED MUST SKILLS
+1. __________________
+2. __________________
+3. __________________
+4. __________________
+
+MY YELLOW MUST SKILLS
+1. __________________
+2. __________________
+3. __________________
+
+SKIP UNLESS TIME REMAINS
+1. __________________
+2. __________________
+3. __________________
+```
+
+### 14.8 Progressive hint fading
+
+Use:
+
+```text
+Attempt 1 — LEARN
+H1 -> H2 -> H3 as needed
+
+Attempt 2 — RETRIEVE
+maximum H2
+
+Attempt 3 — TRANSFER
+maximum H1
+
+Attempt 4 — EXAM
+no hints
+```
+
+Attempts 2/3 should preferably use a nearby non-identical Appendix B or author-created transfer problem rather than simply repeating the same numbers.
+
+### 14.9 Day 1 / Day 2 / Day 3 route
+
+Keep the verbs exactly:
+
+#### Day 1 — Recognize
+
+Goal: “When I see a question, I can identify the family.”
+
+- do the 12-item recognition scan;
+- build the skill traffic-light map;
+- study RED MUST skills first;
+- solve representative MUST items with H1/H2 available;
+- finish with a short recognition rescan.
+
+Suggested readiness target: correct family + plausible first line on roughly 75% of mixed recognition items.
+
+If missed, repair recognition rather than opening rarer advanced topics.
+
+#### Day 2 — Execute
+
+Goal: “Once I choose the method, I can finish it.”
+
+- prioritize YELLOW-E and remaining RED MUST skills;
+- use Advanced Worked Bridges for S/E failures;
+- solve harder MUST and selected SHOULD questions;
+- reduce H3 use substantially;
+- record R/M/S/E/C after every failed attempt.
+
+Suggested readiness target: independent execution on roughly 65–70% of representative core-MUST problems.
+
+If missed, repair the top recurring S/E errors rather than reading new theory.
+
+#### Day 3 — Retrieve
+
+Goal: “I can recognize and execute without chapter labels.”
+
+- use mixed unlabeled questions;
+- start with hints unused;
+- complete a timed mixed set or two shorter timed sets;
+- repair only recurring error classes;
+- finish with Appendix C, method router, and legality checks;
+- do not learn a large new advanced topic late in the day.
+
+Suggested readiness target: method recognition around 80% on mixed unlabeled items, with most hints unused.
+
+These are instructional readiness targets, not exam-score predictions.
+
+### 14.10 Night-before 30-minute page
+
+Use one compact page.
+
+High-value triggers:
+
+- symmetric pair -> `s,p`;
+- symmetric triple -> `s,q,r`;
+- repeated `xyz` -> `p=xyz`;
+- equal expressions -> common value `k`;
+- quadratic root condition -> discriminant;
+- repeated root -> `f=f'=0`;
+- `P(m)=P(k)` -> factor the difference;
+- many roots + symmetric target -> Vieta / power sums;
+- large recurrence index -> shift / period;
+- fixed-sum extremum -> smoothing + equality.
+
+Final check prompts:
+
+- denominator zero?
+- extraneous root?
+- wrong branch?
+- positivity/convergence condition?
+- equality actually attainable?
+- integer restriction?
+- asked quantity or its square/absolute value?
+
+### 14.11 Algebra Navigator acceptance
+
+When 72-hour mode is requested, require:
+
+```text
+ALGEBRA_EXAM_NAVIGATOR_PRESENT = PASS
+ALGEBRA_RECOGNITION_DIAGNOSTIC = 12_ITEMS
+ALGEBRA_EXECUTION_DIAGNOSTIC_IS_ADAPTIVE = PASS
+ALGEBRA_TRAFFIC_LIGHT_ROUTE = PASS
+ALGEBRA_PRIORITY_MAP = PASS
+ALGEBRA_PRIORITY_RATIONALE = PASS
+ALGEBRA_PERSONAL_ROUTE = PASS
+ALGEBRA_RMSEC_REPAIR_MAP = PASS
+ALGEBRA_HINT_FADING_PROTOCOL = PASS
+ALGEBRA_DAY1_RECOGNITION_GATE = PASS
+ALGEBRA_DAY2_EXECUTION_GATE = PASS
+ALGEBRA_DAY3_RETRIEVAL_GATE = PASS
+ALGEBRA_UNRESOLVED_SOURCE_SKIP = PASS
+ALGEBRA_NAVIGATOR_THEORY_DUPLICATION = 0
+```
+
+The key separation remains:
+
+> **Navigator = where to go. Core = how to do it.**
+
+---
+
+## 15. Algebra acceptance gate
 
 For a corpus of `n` questions require:
 
@@ -630,23 +939,24 @@ This does not imply classroom solve rate, timing, retention, psychometrics, or q
 
 ---
 
-## 14. Algebra PDF acceptance
+## 16. Algebra PDF acceptance
 
-Do not generate the final PDF while any question is `PARTIAL` or `FAIL`.
+Do not generate the final PDF while any required question is `PARTIAL` or `FAIL`.
 
 After content qualification:
 
 - integrate the study guide, worked bridges, Appendix A, local hints, Appendix B, Appendix C, and student-appropriate source notes;
+- if 72-hour mode is requested, insert Part 0 after the contents without duplicating core theory;
 - render every page at 200 dpi;
 - visually inspect every page;
-- inspect all graphs and diagrams at final size;
+- inspect all graphs, diagrams, router tables, and decision trees at final size;
 - verify H1/H2/H3 strips are compact, readable, and subordinate to the question;
 - ensure the answer key does not visually leak into unsolved questions;
 - record exact page count and SHA-256.
 
 ---
 
-## 15. Final Algebra principle
+## 17. Final Algebra principle
 
 A strong Algebra guide should train the learner to ask:
 
@@ -658,4 +968,8 @@ A strong Algebra guide should train the learner to ask:
 6. Can I prove the extremum or integer restriction is attainable?
 7. Which previously learned Algebra skill ID does this resemble?
 
-The main guide, visuals, worked bridges, and compact H1-H3 strips should all reinforce that behavior.
+The main guide, visuals, worked bridges, compact H1-H3 strips, and optional Exam Navigator should all reinforce that behavior.
+
+For a three-day learner, one additional principle applies:
+
+> **Do not read the whole reference book in order. Diagnose, route, repair, retest, and retrieve.**
