@@ -11,9 +11,10 @@ Use it with:
 
 - `../SKILL.md`;
 - `question-driven-self-sufficient-study-guide-skill-v2.md`;
+- `difficulty-badges-portability-and-challenge-ladders-addendum.md`;
 - the applicable domain profile, if one exists.
 
-This addendum changes only learner-profile defaults and short-horizon diagnostic selection. It does **not** weaken source custody, self-sufficiency, visual, worked-bridge, hint, provenance, or PDF-QA requirements.
+This addendum changes learner-profile defaults and short-horizon diagnostic selection. It does **not** weaken source custody, self-sufficiency, difficulty, visual, worked-bridge, hint, provenance, or PDF-QA requirements.
 
 When this addendum conflicts with a fixed prior-knowledge percentage or a fixed Quick Check item count in an older generalized/domain profile, this addendum takes precedence for those two fields only.
 
@@ -174,6 +175,7 @@ A personalized learner profile changes:
 - practice priority;
 - starting scaffold/hint level;
 - which Worked Bridges are emphasized;
+- Challenge Ladder starting rung;
 - what is retested versus skipped in the 3-day plan.
 
 It does **not** automatically remove teaching from the durable reference core.
@@ -189,7 +191,51 @@ CORE_SELF_SUFFICIENCY = PRESERVED
 
 ---
 
-## 7. Flexible Quick Check: `T1 ... Tx`
+## 7. Interaction with difficulty badges
+
+Learner knowledge and authored difficulty are separate.
+
+Do not change a question's `D1-D5` badge merely because this learner is strong or weak at the required concept.
+
+Example:
+
+```text
+QUESTION = D4 ADVANCED
+Vieta = STRONG
+Repeated roots = WEAK
+```
+
+Keep the learner-facing question badge:
+
+```text
+[D4 ADVANCED]
+```
+
+Then route personally:
+
+```text
+PERSONAL_RISK
+Vieta = LOW
+Repeated roots = HIGH
+```
+
+Difficulty answers:
+
+> How demanding is this task for a suitably prepared learner?
+
+Learner knowledge answers:
+
+> Which parts of this task are risky for this learner?
+
+Priority answers:
+
+> How important is this skill for the current syllabus/horizon?
+
+Keep all three separate.
+
+---
+
+## 8. Flexible Quick Check: `T1 ... Tx`
 
 The short-horizon Quick Check must not assume that every learner needs the same number of probes.
 
@@ -212,7 +258,7 @@ where `x` is selected from:
 
 ---
 
-## 8. How to choose `x`
+## 9. How to choose `x`
 
 ### Step 1 — build the candidate family set
 
@@ -226,11 +272,23 @@ Start from high-transfer / prerequisite / canonical families in the question-to-
 - `WEAK` / `NONE`: include if the family matters to the 3-day route.
 - `UNKNOWN`: include when the family is high-value enough that its status affects routing.
 
-### Step 3 — deduplicate mechanisms
+### Step 3 — use difficulty intelligently
+
+Difficulty is supporting metadata, not the Quick Check selection rule.
+
+Prefer probes that discriminate important decisions.
+
+Examples:
+
+- a weak D2 prerequisite may deserve a T slot before a niche D5 concept;
+- a D3 recognition probe can be more useful than a long D4 execution item;
+- do not select T items merely to create one item from every D-level.
+
+### Step 4 — deduplicate mechanisms
 
 Do not spend two Quick Check slots on duplicate source questions or two surfaces that test the same decision unless contrast/discrimination is the explicit teaching goal.
 
-### Step 4 — fit the time budget
+### Step 5 — fit the time budget
 
 Each T item should normally take about 1–2 minutes and should ask for recognition / first move rather than full solution.
 
@@ -240,7 +298,7 @@ Typical `x` may therefore be around **6–10**, but this is a design default, no
 
 A domain or user may legitimately use a smaller or larger `x` when coverage and page design justify it.
 
-### Step 5 — preserve a simple interface
+### Step 6 — preserve a simple interface
 
 Do not increase `x` merely because many deficits exist.
 
@@ -248,7 +306,7 @@ The Quick Check samples the decisions that change the 3-day route. It is not a m
 
 ---
 
-## 9. Explicit user override for Quick Check count
+## 10. Explicit user override for Quick Check count
 
 If the user supplies a desired count, for example:
 
@@ -273,7 +331,7 @@ Do not pretend an intentionally short Quick Check sampled every family.
 
 ---
 
-## 10. Topic/subtopic-specific readiness mode
+## 11. Topic/subtopic-specific readiness mode
 
 The 3-day readiness check may target the whole subject or only a supplied scope.
 
@@ -309,7 +367,7 @@ Example for a polynomial-only readiness check:
 
 ---
 
-## 11. Probe identity versus printed T number
+## 12. Probe identity versus printed T number
 
 For reusable authoring, a domain may keep stable internal probe IDs, for example:
 
@@ -329,7 +387,7 @@ This allows the probe bank to evolve without making `T7` itself a stable curricu
 
 ---
 
-## 12. Algebra interpretation
+## 13. Algebra interpretation
 
 In the Algebra profile, the existing ten prompts should be treated as the **default no-profile probe bank**, not as a permanently mandatory printed set.
 
@@ -366,7 +424,7 @@ The existing `T1–T10` wording remains a valid default edition when no learner-
 
 ---
 
-## 13. Student-facing Quick Check instruction
+## 14. Student-facing Quick Check instruction
 
 Use a stable simple instruction regardless of `x`:
 
@@ -379,7 +437,7 @@ After marking, route the learner to readable skill names and the relevant core s
 
 ---
 
-## 14. Readiness output
+## 15. Readiness output
 
 A personalized short-horizon route should be able to say, in learner-facing language:
 
@@ -390,9 +448,34 @@ A personalized short-horizon route should be able to say, in learner-facing lang
 
 The internal system may keep richer diagnostic states, but the child interface remains simple.
 
+Difficulty badges may remain visible on linked questions, but do not turn the route into `do hardest first`.
+
 ---
 
-## 15. Acceptance gates
+## 16. Challenge Ladder starting point
+
+When Challenge Ladders exist, learner knowledge determines where to enter the ladder.
+
+Example:
+
+```text
+Repeated roots ladder: D1 -> D2 -> D3 -> D4 -> D5
+learner state: PARTIAL
+```
+
+Default action:
+
+- skip D1 if evidence shows the prerequisite is secure;
+- start around D2/D3;
+- move up one rung after independent success;
+- move down or open the Worked Bridge when recognition/execution breaks;
+- use a non-identical later rung for transfer rather than immediately repeating the same item.
+
+The D-level itself does not diagnose mastery; it only describes authored task demand.
+
+---
+
+## 17. Acceptance gates
 
 When no learner-specific knowledge is supplied:
 
@@ -408,6 +491,7 @@ KNOWLEDGE_SCOPE_RESOLUTION = PASS
 MOST_SPECIFIC_KNOWLEDGE_WINS = PASS
 UNSUPPORTED_PRECISION_INTRODUCED = 0
 CORE_SELF_SUFFICIENCY_PRESERVED = PASS
+DIFFICULTY_MASTERY_CONFLATION = 0
 ```
 
 For a flexible Quick Check:
@@ -426,7 +510,7 @@ If a domain profile contains a fixed gate such as `QUICK_CHECK_ITEMS = 10`, inte
 
 ---
 
-## 16. Final principle
+## 18. Final principle
 
 Do not ask:
 
@@ -436,6 +520,6 @@ when more useful information is available.
 
 Ask:
 
-> “Which important skills are secure, partial, weak, or unknown — and what is the smallest readiness check that changes what they should do over the next three days?”
+> “Which important skills are secure, partial, weak, or unknown — what difficulty rung is informative next — and what is the smallest readiness check that changes what they should do over the next three days?”
 
 The durable guide stays complete. The personal route becomes specific.
