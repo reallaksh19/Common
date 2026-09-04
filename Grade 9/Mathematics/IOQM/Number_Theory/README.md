@@ -4,7 +4,7 @@ This is the domain workspace for the PR #140 question-driven rebuild of the Grad
 
 ## Current build
 
-`v5 / phased rebuild — Phase 3A student-experience prototype complete; Phase 3B scale-up next`
+`v5 / phased rebuild — Phase 3B full student-book scale-up complete; Phase 4 integrated audit next`
 
 The project is deliberately separated from `01_Source_Extracts/`: source recovery remains evidence; this folder owns the integrated Number Theory learner product and its build data.
 
@@ -12,7 +12,7 @@ The project is deliberately separated from `01_Source_Extracts/`: source recover
 
 - `Phase_1/` — frozen architecture, PR140 profile, phase plan, and Phase 1 foundation/custody review.
 - `Phase_2/` — rebuilt teaching architecture, mixed method-selection layer, Advanced Worked Bridges, and Phase 2 review.
-- `Phase_3/` — student-experience prototype and subsequent Appendix A/B/C repackaging work.
+- `Phase_3/` — student-experience prototype plus full student-book scale-up and Appendix A/B/C repackaging work.
 - `corpus/` — frozen reusable Appendix A/B corpus artifacts. Mathematical stems are not rewritten except for separately documented source corrections.
 - `data/` — Appendix A/B registries, badge/hint metadata, custody hashes, question-to-method matrices, orphan-method audits, and visual-pedagogy manifests.
 - `../01_Source_Extracts/ALLEN_Number_Theory_Marathon_2026/` — recovered marathon/source evidence.
@@ -57,27 +57,49 @@ The 16-page prototype contains:
 1. a four-page Number Theory 3-Day Simple Navigator;
 2. a 10-item first-move Quick Check;
 3. a weak-topic -> stable-skill -> practice routing map;
-4. three representative rich reference-core chapters:
-   - prime exponents / divisors / gcd-lcm;
-   - congruence legality / inverses / CRT;
-   - valuations / factorials / trailing-zero and zero-stripped methods;
+4. three representative rich reference-core chapters;
 5. a simple student support map;
-6. five redesigned Appendix A pages covering frozen stems `NT-Q001`–`NT-Q012` with compact badges and adaptive H1/H2/H3.
+6. five redesigned Appendix A pages covering frozen stems `NT-Q001`–`NT-Q012`.
 
 The PDF was rendered at 200 dpi and all 16 pages were visually inspected. Two table-flow defects found during rendering were repaired before the Phase 3A review state.
 
-The accepted page grammar is:
+## Phase 3B saved state
 
-`Navigator -> rich reference core -> expanded Advanced Bridges -> student support map -> Appendix A -> Appendix B -> Appendix C -> reviewer dossier`
+The accepted Phase 3A grammar has now been applied to the complete student-facing book.
 
-## Phase 3B next
+Current Phase 3B student-book draft contains:
 
-1. expand Advanced Worked Bridges beyond the initial 16 where the 90-row matrix shows difficult/mixed transfer obligations;
-2. scale the approved rich-core page grammar across the complete teaching layer;
-3. reuse all frozen Appendix A stems and apply badges + manually audited H1/H2/H3 to `NT-Q001`–`NT-Q090`;
-4. reuse all frozen Appendix B stems and add `[PYQ]` + difficulty/family badges + adaptive hints to `B01`–`B20`;
-5. produce the two-page Appendix C memory helper in the same visual language;
-6. only then run Phase 4 integrated PR140 gates.
+- **4-page Navigator** with first-move diagnostic routing and fading-hint protocol;
+- **36 stable core skills** in the rich semantic page grammar;
+- **30 Advanced Worked Bridges** (`NT-A01`–`NT-A30`), expanded from the initial 16 to close specific difficult/mixed transfer gaps;
+- **90-question student support map**;
+- **Appendix A: all 90 frozen questions**, with difficulty/family badges, adaptive H1/H2/H3, structural visuals where helpful, and answer key;
+- **Appendix B: all 20 reliable-source questions**, with PYQ/difficulty/family badges, adaptive hints, and answer key;
+- **Appendix C: exactly 2 pages**, containing formulas, theorem hypotheses, first-line router, and final legality checklist.
+
+Phase 3B PDF preflight:
+
+- 90 A4 pages;
+- openable, unencrypted;
+- fonts embedded;
+- PDF outline present;
+- SHA-256 `93e0eb483da389f73053b27993eb2328a4ecff1235b91f690bc266dbbc8a4f82`.
+
+The reviewer-style Appendix B method-coverage table is deliberately **not** in the student section; it moves to the Reviewer / Build Dossier in Phase 4.
+
+Phase 3B does **not** yet claim final PR140 self-sufficiency PASS.
+
+## Phase 4 next
+
+Run the integrated PR140 gates against the actual Phase 3B student book and build the Reviewer / Build Dossier for inclusion in the final PDF:
+
+1. Appendix A question-to-method / orphan-method audit: 90/90;
+2. Appendix A hint audit: 90/90;
+3. Appendix A visual-pedagogy audit against rendered figures: 90/90;
+4. Appendix A custody: 90/90;
+5. Appendix B source custody / method coverage / hint audit / independent answer recomputation: 20/20;
+6. source ledger, matrices, visual manifest and self-sufficiency report inside the final PDF;
+7. no final PASS declaration if any row remains PARTIAL/FAIL.
 
 ## Final PDF requirement
 
