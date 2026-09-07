@@ -1,6 +1,6 @@
 ---
 name: grade9
-description: Route Grade 9 learning-material tasks to the correct source-grounding, concept architecture, question-bank, enrichment, subtopic-completeness audit, transfer-coverage audit, subject, concept-book, and publishing workflows. Use for Grade 9 source analysis, textbook creation, concept books, difficulty-matched question banks, HOTS/competitive-foundation practice, diagnostics, mixed mastery, challenge appendices, external-PYQ coverage audits, and linked student/teacher PDF production in Mathematics, Physics, or Chemistry.
+description: Route Grade 9 learning-material tasks to the correct source-grounding, concept architecture, question-bank, enrichment, subtopic-completeness audit, transfer-coverage audit, subject, concept-book, Redox subtopic-book, and publishing workflows. Use for Grade 9 source analysis, textbook creation, concept books, difficulty-matched question banks, HOTS/competitive-foundation practice, diagnostics, mixed mastery, challenge appendices, external-PYQ coverage audits, and linked student/teacher PDF production in Mathematics, Physics, or Chemistry.
 ---
 
 # Grade 9 Router Skill
@@ -13,6 +13,7 @@ Use this skill as the entry point for Grade 9 educational-content work.
 SOURCE / USER REQUEST
   -> grade9-source-grounding
   -> relevant subject skill
+  -> specialist builder when applicable (for Redox: grade9-redox-subtopic-book-builder)
   -> grade9-concept-architect
   -> grade9-question-bank
   -> grade9-learning-enrichment
@@ -29,12 +30,25 @@ SOURCE / USER REQUEST
 - Mathematics -> `../grade9-math/SKILL.md`.
 - Physics -> `../grade9-physics/SKILL.md`.
 - Chemistry -> `../grade9-chemistry/SKILL.md`.
+- Source-grounded Redox Study Guide + ExamSIDE subtopic build -> `../grade9-redox-subtopic-book-builder/SKILL.md` together with the completeness and transfer auditors.
 - Concept IDs, prerequisites, dependency maps, textbook-to-bank links -> `../grade9-concept-architect/SKILL.md`.
 - Similar questions, same-level practice, Core N, HOTS, challenge appendix, mixed tests -> `../grade9-question-bank/SKILL.md`.
 - Helpers, progressive hints, misconceptions, diagnostics, transfer questions -> `../grade9-learning-enrichment/SKILL.md`.
 - Whole-subtopic audit for source completeness, explanatory structure, real-life/context bridges, concept helpers, misconception repair, scaffold coverage, chemistry typography, and rendered layout -> `../grade9-subtopic-completeness-auditor/SKILL.md`.
 - Subtopic-by-subtopic external/PYQ accounting, required-question self-checks, duplicate/missing placement, concept-link/hint/solution/source-link coverage -> `../grade9-transfer-coverage-auditor/SKILL.md`.
 - Student textbook, question bank, integrated edition, PDF layout, internal links, render/preflight -> `../grade9-textbook-publisher/SKILL.md`.
+
+## Redox subtopic-book routing
+
+When the task is the continuing Redox project:
+
+1. read the supplied Redox source boundary first;
+2. use `grade9-redox-subtopic-book-builder` for one focused subtopic at a time;
+3. keep source-derived content separate from external ExamSIDE evidence;
+4. freeze the canonical direct-primary ExamSIDE set before publication;
+5. require the approved learning grammar, Redox-specific concept helpers, misconception repair, chemistry-safe typography, H1-H3 support and Appendix A;
+6. run both `grade9-subtopic-completeness-auditor` and `grade9-transfer-coverage-auditor`;
+7. render every page, repair clipping/overlap/glyph issues, and re-render before declaring PASS.
 
 ## Mathematics concept-book routing
 
