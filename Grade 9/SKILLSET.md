@@ -13,6 +13,7 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 | `grade9-learning-enrichment` | Helpers, hints, misconceptions, diagnostics, transfer |
 | `grade9-subtopic-completeness-auditor` | Whole-subtopic audit: source, instructional grammar, familiar/real-life bridges, helpers, misconceptions, practice, chemistry typography and layout |
 | `grade9-transfer-coverage-auditor` | Subtopic-wise external/PYQ accounting; missing/duplicate placement; concept, hint, solution and source-link coverage |
+| `grade9-redox-subtopic-book-builder` | Source-grounded Redox Study Guide + ExamSIDE transfer-book builder with approved textbook rhythm, Redox-specific helpers/misconceptions, chemistry typography, H1-H3 support, Appendix A, transfer audit and render-first QA |
 | `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA |
 | `grade9-math` | Mathematics reasoning/difficulty profile plus SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book mode |
 | `grade9-physics` | Physics model/representation/validation profile plus SEE -> REALIZE -> UNDERSTAND concept-book mode |
@@ -25,6 +26,20 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 - Repository root `Grade9schema.md` — fuller human specification and implementation history.
 - `skills/grade9-math/references/concept-book-see-realize-understand-adopt.md` — reusable Mathematics Concept Book protocol.
 - `skills/grade9-physics/references/concept-book-see-realize-understand.md` — reusable Physics Concept Book protocol.
+
+## Redox subtopic-book mode
+
+For the source-grounded Redox project, invoke `$grade9-redox-subtopic-book-builder` one subtopic at a time. It requires:
+
+- a source-obligation ledger before drafting;
+- the approved instructional grammar: orient/context -> explain -> visual/symbolic meaning -> key rule -> worked reasoning -> helper -> misconception repair -> guided/faded/independent practice -> transfer;
+- Redox-specific reasoning patterns such as oxidation-number lanes, SELF vs OTHER for agents, the redox fingerprint, and split/converge topology;
+- chemistry-safe subscripts/superscripts and `e⁻` notation;
+- a frozen canonical ExamSIDE required set with exactly one primary subtopic per eligible question;
+- difficulty-based H1-H3 support, Appendix A solutions, source links and bidirectional transfer coverage;
+- render-first QA with repair/re-render before publication.
+
+Run it together with `$grade9-subtopic-completeness-auditor` and `$grade9-transfer-coverage-auditor`.
 
 ## Subtopic completeness audit mode
 
@@ -101,6 +116,7 @@ Start with `$grade9` for multi-stage work. Invoke a specialist directly for narr
 
 ```text
 Use $grade9-question-bank to build 30 same-level questions from these anchors.
+Use $grade9-redox-subtopic-book-builder to build the next Redox subtopic with Study Guide + ExamSIDE transfer audit.
 Use $grade9-subtopic-completeness-auditor to audit a drafted subtopic before publication.
 Use $grade9-transfer-coverage-auditor to prove every eligible PYQ is covered against exactly one subtopic.
 Use $grade9-math in Concept Book mode using SEE -> REALIZE -> UNDERSTAND -> ADOPT.
