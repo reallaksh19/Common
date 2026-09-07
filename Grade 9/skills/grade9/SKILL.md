@@ -28,11 +28,12 @@ SOURCE / USER REQUEST
 - Source PDF, images, notes, worksheet, PYQ, or pasted notes -> `../grade9-source-grounding/SKILL.md` first.
 - Mathematics -> `../grade9-math/SKILL.md`.
 - Physics -> `../grade9-physics/SKILL.md`.
+- Physics subtopic-wise paired **Study Guide + ExamSIDE/PYQ Transfer Book** production -> `../grade9-physics-subtopic-book-builder/SKILL.md` after `grade9-physics`.
 - Chemistry -> `../grade9-chemistry/SKILL.md`.
 - Concept IDs, prerequisites, dependency maps, textbook-to-bank links -> `../grade9-concept-architect/SKILL.md`.
 - Similar questions, same-level practice, Core N, HOTS, challenge appendix, mixed tests -> `../grade9-question-bank/SKILL.md`.
 - Helpers, progressive hints, misconceptions, diagnostics, transfer questions -> `../grade9-learning-enrichment/SKILL.md`.
-- Whole-subtopic audit for source completeness, explanatory structure, real-life/context bridges, concept helpers, misconception repair, scaffold coverage, chemistry typography, and rendered layout -> `../grade9-subtopic-completeness-auditor/SKILL.md`.
+- Whole-subtopic audit for source completeness, explanatory structure, real-life/context bridges, concept helpers, misconception repair, scaffold coverage, typography, and rendered layout -> `../grade9-subtopic-completeness-auditor/SKILL.md`.
 - Subtopic-by-subtopic external/PYQ accounting, required-question self-checks, duplicate/missing placement, concept-link/hint/solution/source-link coverage -> `../grade9-transfer-coverage-auditor/SKILL.md`.
 - Student textbook, question bank, integrated edition, PDF layout, internal links, render/preflight -> `../grade9-textbook-publisher/SKILL.md`.
 
@@ -49,9 +50,23 @@ When the user asks for a Grade 9 Mathematics **Concept Book**, chalkboard-style 
 
 For Sequence & Series, the Mathematics specialist includes the worked exemplar and summation/hidden-series bridge rules.
 
-## Physics concept-book routing
+## Physics routing
 
 When the user asks for a Grade 9 Physics Concept Book, route through `grade9-physics` and use `SEE THE EQUATION -> REALIZE -> UNDERSTAND`, retaining CONNECT as source traceability/navigation.
+
+When the user instead asks to build Physics **subtopic-wise**, requests the school-reference-book-style information structure, or requests paired **Study Guide + ExamSIDE/PYQ question book** outputs, route:
+
+```text
+grade9-source-grounding
+-> grade9-physics
+-> grade9-physics-subtopic-book-builder
+-> grade9-learning-enrichment
+-> grade9-subtopic-completeness-auditor
+-> grade9-transfer-coverage-auditor when external/PYQ is present
+-> grade9-textbook-publisher
+```
+
+The Physics subtopic builder owns the paired-product information architecture and incremental build contract; `grade9-physics` remains authoritative for subject correctness.
 
 ## Non-negotiable rules
 
@@ -68,6 +83,7 @@ When the user asks for a Grade 9 Physics Concept Book, route through `grade9-phy
 11. When an external/PYQ corpus is part of the brief, do not declare a subtopic or chapter complete until the transfer-coverage audit proves all eligible questions are uniquely placed or explicitly deferred to named future subtopics; final chapter acceptance requires zero missing and zero deferred eligible questions.
 12. Do not declare a subtopic complete merely because all source facts appear. The subtopic-completeness audit must also pass explanation order, context/bridge, helper, misconception, scaffold, typography, and layout checks.
 13. For chemistry PDFs, formula subscripts/superscripts, ionic charges, oxidation-number notation, and equation glyphs must be visually unambiguous at 100% zoom.
+14. For Physics paired subtopic books, do not advance to the next subtopic until both Study Guide and transfer book pass the specialist's source/content/visual/font/layout/render and coverage gates.
 
 ## Completion gates
 
