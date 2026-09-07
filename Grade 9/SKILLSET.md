@@ -11,6 +11,7 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 | `grade9-concept-architect` | Stable concept IDs, prerequisites, learning graph, links |
 | `grade9-question-bank` | Core N, same-level calibration, Level-Up challenges, mixed tests |
 | `grade9-learning-enrichment` | Helpers, hints, misconceptions, diagnostics, transfer |
+| `grade9-subtopic-completeness-auditor` | Whole-subtopic audit: source, instructional grammar, familiar/real-life bridges, helpers, misconceptions, practice, chemistry typography and layout |
 | `grade9-transfer-coverage-auditor` | Subtopic-wise external/PYQ accounting; missing/duplicate placement; concept, hint, solution and source-link coverage |
 | `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA |
 | `grade9-math` | Mathematics reasoning/difficulty profile plus SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book mode |
@@ -24,6 +25,38 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 - Repository root `Grade9schema.md` — fuller human specification and implementation history.
 - `skills/grade9-math/references/concept-book-see-realize-understand-adopt.md` — reusable Mathematics Concept Book protocol.
 - `skills/grade9-physics/references/concept-book-see-realize-understand.md` — reusable Physics Concept Book protocol.
+
+## Subtopic completeness audit mode
+
+Run `$grade9-subtopic-completeness-auditor` after a Study Guide / transfer-book draft exists and before publication.
+
+The auditor requires the subtopic to prove:
+
+- every assigned source obligation is taught;
+- concept meaning appears before a procedure where the concept is new;
+- at least one familiar/real-life bridge is used when safe, or `NOT_APPLICABLE` is recorded;
+- reusable concept helpers exist for recognition-heavy concepts;
+- high-risk misconceptions have explicit repair objects and retry checks;
+- worked, guided, faded and independent practice are present as appropriate;
+- chemistry formulas, subscripts, superscripts and ionic charges render correctly;
+- titles/subtitles do not collide or clip;
+- rendered pages read as coherent learning spreads rather than disconnected card dashboards;
+- transfer coverage passes whenever an external corpus is part of the brief.
+
+## Transfer coverage audit mode
+
+When an external question corpus (for example ExamSIDE or another PYQ index) is part of the brief, run `$grade9-transfer-coverage-auditor` before declaring a subtopic complete.
+
+The auditor requires:
+
+- one scope status for every corpus item;
+- exactly one primary subtopic for every eligible item;
+- all required questions placed in the correct transfer book or explicitly deferred to a named future subtopic during incremental builds;
+- stable concept links;
+- difficulty-appropriate H1-H3 support;
+- Appendix A solution coverage;
+- original source-link validation;
+- zero missing/duplicate primary placements and zero scope leaks at final acceptance.
 
 ## Mathematics Concept Book mode
 
@@ -56,21 +89,6 @@ The first worked Physics chapter exemplar is under:
 - `Physics/Motion/`
 - `skills/grade9-physics/references/motion-concept-book-example.md`
 
-## Transfer coverage audit mode
-
-When an external question corpus (for example ExamSIDE or another PYQ index) is part of the brief, run `$grade9-transfer-coverage-auditor` before declaring a subtopic complete.
-
-The auditor requires:
-
-- one scope status for every corpus item;
-- exactly one primary subtopic for every eligible item;
-- all required questions placed in the correct transfer book or explicitly deferred to a named future subtopic during incremental builds;
-- stable concept links;
-- difficulty-appropriate H1-H3 support;
-- Appendix A solution coverage;
-- original source-link validation;
-- zero missing/duplicate primary placements and zero scope leaks at final acceptance.
-
 ## Deterministic checks
 
 - `skills/grade9-question-bank/scripts/difficulty_check.py`
@@ -83,6 +101,7 @@ Start with `$grade9` for multi-stage work. Invoke a specialist directly for narr
 
 ```text
 Use $grade9-question-bank to build 30 same-level questions from these anchors.
+Use $grade9-subtopic-completeness-auditor to audit a drafted subtopic before publication.
 Use $grade9-transfer-coverage-auditor to prove every eligible PYQ is covered against exactly one subtopic.
 Use $grade9-math in Concept Book mode using SEE -> REALIZE -> UNDERSTAND -> ADOPT.
 Use $grade9-physics in Concept Book mode using SEE -> REALIZE -> UNDERSTAND.
