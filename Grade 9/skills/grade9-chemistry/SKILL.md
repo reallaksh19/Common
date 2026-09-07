@@ -94,4 +94,13 @@ Maintain causal misconception families such as:
 - coefficients change chemical formulas;
 - any visible change proves chemical reaction.
 
+## Redox subtopic-book routing
+
+When the task is the source-grounded Redox Study Guide + ExamSIDE transfer-book workflow, invoke `grade9-redox-subtopic-book-builder` together with:
+
+- `grade9-subtopic-completeness-auditor` for source/pedagogy/typography/layout gates;
+- `grade9-transfer-coverage-auditor` for canonical external-question accounting.
+
+The dedicated Redox builder carries the approved instructional grammar, chemistry typography rules, misconception patterns, concept helpers, difficulty-based H1-H3 support, Appendix A contract, and render-first QA loop learned from Redox Subtopics 01-04.
+
 Use the shared question-bank and learning-enrichment skills for bank construction and diagnostics.
