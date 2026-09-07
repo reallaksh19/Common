@@ -1,6 +1,6 @@
 ---
 name: grade9-subtopic-completeness-auditor
-description: Audit one Grade 9 learning subtopic before publication for source coverage, instructional completeness, textbook-reference learning rhythm, context bridges, concept helpers, misconception repair, scaffolded practice, external/PYQ transfer coverage, chemistry typography, and rendered layout quality. Use after a subtopic draft exists and before declaring its Study Guide or transfer book complete.
+description: Audit one Grade 9 learning subtopic before publication for source coverage, instructional completeness, textbook-reference learning rhythm, familiar/context bridges, concept helpers, misconception repair, scaffolded practice, external/PYQ transfer coverage, chemistry typography, and rendered layout quality. Use after a subtopic draft exists and before declaring its Study Guide or transfer book complete.
 ---
 
 # Grade 9 Subtopic Completeness Auditor
@@ -95,17 +95,7 @@ Do not lead with a long algorithm before the learner knows what the algorithm is
 
 ### Connected-spread rule
 
-A learning spread should read as one teacher explanation, not a dashboard of independent cards.
-
-Use boxes only when they perform a teaching job such as:
-
-- definition;
-- key rule;
-- contrast;
-- helper;
-- misconception repair;
-- worked example;
-- knowledge check.
+A learning spread should read as one teacher explanation, not a dashboard of independent cards. Use boxes only when they perform a teaching job: definition, key rule, contrast, helper, misconception repair, worked example, or knowledge check.
 
 If several boxes can be removed without changing the reasoning sequence, the page is likely over-fragmented.
 
@@ -122,13 +112,11 @@ PEDAGOGICAL_BRIDGE
 ```
 
 Examples:
-
 - an everyday formula label used only to make a formula familiar;
 - an ordinary material/reaction already supported by source scope used to motivate a symbolic idea;
 - a visible macroscopic situation used only as a recognition hook.
 
 Checklist:
-
 - [ ] Accurate.
 - [ ] Understandable at target level.
 - [ ] Clarifies the source concept.
@@ -154,11 +142,12 @@ What representation makes this easier?
 High-recognition-load concepts require at least one reusable helper.
 
 Useful helper types include:
-
 - formula anatomy;
 - rule-priority ladder;
 - charge-balance visual;
 - before -> after oxidation-state lane;
+- electron-loss / oxidation-number-rise paired lane;
+- electron-gain / oxidation-number-fall paired lane;
 - SELF vs OTHER agent frame;
 - Redox Decision Strip;
 - split/converge topology;
@@ -166,7 +155,6 @@ Useful helper types include:
 - per-atom electron-change lane.
 
 Checklist:
-
 - [ ] Reveals the representation, not the final answer.
 - [ ] Uses the same reasoning language as examples/hints.
 - [ ] Reusable across several questions.
@@ -194,13 +182,22 @@ Each misconception should contain:
 ```
 
 Checklist:
-
 - [ ] Names a specific wrong mental model.
 - [ ] Uses a close contrast or micro-example.
 - [ ] Explains why the wrong model fails.
 - [ ] Includes a retry/transfer check where appropriate.
 
 Generic `be careful` warnings do not count.
+
+For oxidation/reduction specifically, explicitly repair these high-risk models where relevant:
+
+```text
+"oxidation means adding oxygen only"
+"reduction means removing oxygen only"
+"electron loss means oxidation number falls because electrons are negative"
+"electron gain means oxidation number rises"
+"e- written as ordinary baseline text is visually equivalent to e⁻"
+```
 
 ---
 
@@ -218,9 +215,9 @@ READ THE GIVEN
 ```
 
 For chemistry formulas, explicitly distinguish:
-
 - subscripts = atom counts;
 - superscripts = ionic charge;
+- electron symbols = `e⁻`, not baseline `e-`;
 - oxidation numbers = separate assigned values.
 
 A worked example that only presents algebra and an answer is incomplete.
@@ -230,7 +227,6 @@ A worked example that only presents algebra and an answer is incomplete.
 ## 7. Practice and scaffold audit
 
 For each CORE concept require, where applicable:
-
 - one worked example;
 - one `TRY WITH ME` item;
 - one faded-scaffold item;
@@ -267,41 +263,63 @@ SUBTOPIC_SCOPE_LEAKS = 0
 
 At final chapter acceptance, `DEFERRED_VALID = 0`.
 
-A Study Guide supports a transfer question only when it teaches the question's:
-
-- recognition cue;
-- first move;
-- representation;
-- misconception repair when high-risk;
-- prerequisite concepts.
-
-A topic-label match is not sufficient.
+A Study Guide supports a transfer question only when it teaches the question's recognition cue, first move, representation, misconception repair when high-risk, and prerequisite concepts. A topic-label match is not sufficient.
 
 ---
 
-## 9. Chemistry typography audit
+## 9. Chemistry typography audit - blocking
 
 Chemistry notation is a blocking publication requirement.
 
-Required checks:
+### Font contract
+
+For chemistry-heavy programmatic PDFs, use a tested Unicode-complete font family such as **Noto Sans** consistently across body text, headings, callouts and formula labels. Do not allow formulas to silently fall back to another font.
+
+Do not ship font files; use/embed them only inside the artifact.
+
+### Electron / charge contract learned from Redox Subtopic 02
+
+Learner-facing notation must use real raised chemistry glyphs or equivalent superscript markup:
+
+```text
+e⁻          NOT e-
+2e⁻         NOT 2e-
+Fe³⁺        NOT Fe3+
+Fe²⁺        NOT Fe2+
+Cl⁻         NOT Cl-
+S²⁻         NOT S2-
+I⁻          NOT I-
+Cr₂O₇²⁻     NOT Cr2O7^2- in display text
+```
+
+ASCII notation may exist internally in code/data, but must be converted before rendering.
+
+### Required checks
 
 - [ ] Formula indices are true/clear subscripts, e.g. `H₂O₂`, `K₂Cr₂O₇`.
 - [ ] Ionic charges are true/clear superscripts, e.g. `Fe³⁺`, `Cr₂O₇²⁻`.
-- [ ] Oxidation numbers above atoms are visually distinct from formula subscripts and ionic charge.
+- [ ] Electron symbols render as `e⁻` and coefficients as `2e⁻`, `3e⁻`.
+- [ ] Oxidation numbers above/beside atoms are visually distinct from formula subscripts and ionic charge.
 - [ ] No ambiguous plain text such as `VO2+` when `VO²⁺` or `VO₂⁺` is intended.
 - [ ] Equation arrows, plus/minus signs, fractions and parentheses render cleanly.
 - [ ] Formula typography is readable at 100% PDF zoom.
 - [ ] Body font supports all chemistry glyphs used; no fallback squares or missing characters.
+- [ ] The same chemical species is formatted consistently everywhere, including hints, answer strips and Appendix solutions.
 
-### Font rule learned from approved redox build
+Emit:
 
-For programmatic chemistry PDFs, prefer a tested Unicode-complete text font such as **Noto Sans** over default Helvetica when formulas rely on Unicode subscripts/superscripts.
+```text
+CHEMISTRY_ASCII_LEAKS = 0
+SUPERSCRIPT_FAILURES = 0
+SUBSCRIPT_FAILURES = 0
+FONT_FALLBACK_FAILURES = 0
+```
 
-Do not ship font files; embed/use them only in the generated artifact.
+Any non-zero value blocks publication.
 
 ---
 
-## 10. Header and layout audit
+## 10. Header and layout audit - blocking
 
 ### Separate title/subtitle zones
 
@@ -316,6 +334,10 @@ HEADER_COLLISION = 0
 ```
 
 If a title can exceed its zone, wrap or shrink it deterministically.
+
+### Specific failure learned from Redox Subtopic 02
+
+A long chapter heading such as `OXIDATION AND REDUCTION ARE TWO WAYS TO DESCRIBE ELECTRON CHANGE` must not be allowed to run underneath the subtitle. The title zone and subtitle zone must be independent; title wrapping/shrinking occurs before render.
 
 ### Page layout blocking failures
 
@@ -346,16 +368,6 @@ MEANINGFUL_OCCUPANCY = PASS
 
 For H1-H3 transfer pages, use deterministic non-overlapping slots. Do not calculate hint positions only from approximate text length and then place a helper underneath without checking remaining vertical space.
 
-Hard questions should normally use:
-
-```text
-H1 slot
-H2 slot
-H3 slot
-```
-
-with concept helper / misconception content in a separate column or reserved region.
-
 ---
 
 ## 11. Render-first QA loop
@@ -373,29 +385,26 @@ GENERATE
 -> PASS
 ```
 
-For PDF work follow the repository/environment PDF workflow and verify in at least one renderer.
-
 Visual inspection must explicitly sample:
-
-- the longest title page;
+- the longest-title page;
 - the densest worked-example page;
-- the page with the most chemistry notation;
-- the page with the deepest H1-H3 ladder;
+- the page with the most chemistry notation/electron symbols;
+- the deepest H1-H3 page;
 - the final audit/check page.
+
+For electron-transfer subtopics, zoom-check at least one page containing `e⁻`, `2e⁻`, cation charge and anion charge simultaneously.
 
 ---
 
 ## 12. Required subtopic self-checklist
 
 ### Source and concept
-
 - [ ] All assigned source obligations are taught.
 - [ ] No source obligation disappears through concept merging.
 - [ ] Source-QC corrections are explicit.
 - [ ] No outside-scope chemistry leaks into Core.
 
 ### Pedagogy
-
 - [ ] Meaning precedes procedure for new concepts.
 - [ ] Familiar/real-life bridge exists or is explicitly not applicable.
 - [ ] Reusable concept helpers exist for high-recognition-load concepts.
@@ -406,7 +415,6 @@ Visual inspection must explicitly sample:
 - [ ] Page reads as a connected teaching sequence rather than a dashboard.
 
 ### Transfer
-
 - [ ] Required external/PYQ set is frozen.
 - [ ] Every required question has one primary subtopic and primary concept.
 - [ ] Every required question is placed or validly deferred during incremental build.
@@ -416,8 +424,8 @@ Visual inspection must explicitly sample:
 - [ ] Source link exists and resolves correctly.
 
 ### Publication
-
 - [ ] Formula subscripts/superscripts render correctly.
+- [ ] Electron symbols render as `e⁻`, never baseline `e-`.
 - [ ] Title and subtitle fit without collision.
 - [ ] No clipping/overflow/overlap.
 - [ ] Body/formula sizes are readable at 100% zoom.
@@ -449,6 +457,10 @@ INDEPENDENT_CHECK_PRESENT = n
 EXTERNAL_REQUIRED = n
 EXTERNAL_PLACED_OR_VALIDLY_DEFERRED = n
 EXTERNAL_MISSING = 0
+CHEMISTRY_ASCII_LEAKS = 0
+SUPERSCRIPT_FAILURES = 0
+SUBSCRIPT_FAILURES = 0
+FONT_FALLBACK_FAILURES = 0
 TYPOGRAPHY_FAILURES = 0
 HEADER_FAILURES = 0
 LAYOUT_FAILURES = 0
@@ -474,7 +486,6 @@ blocking? YES/NO
 ```
 
 Failure classes:
-
 - `SOURCE_GAP`
 - `EXPLANATION_ORDER_GAP`
 - `FAMILIAR_CONTEXT_GAP`
@@ -499,17 +510,18 @@ Failure classes:
 7. Run familiar-context, concept-helper and misconception audits.
 8. Run worked-example and scaffold audit.
 9. Invoke transfer-coverage auditor when an external corpus exists.
-10. Run chemistry typography checks.
+10. Run chemistry typography checks, including an ASCII-leak scan for `e-`, baseline charges and malformed species.
 11. Render every page and run header/layout checks.
 12. Emit gap table, counters and exact repairs.
 13. Rebuild.
 14. Re-render and rerun the full checklist.
 15. Mark `PASS` only when all five top-level gates pass.
 
-## Approved-pattern note from Redox Subtopic 01 v4
+## Approved-pattern notes from Redox
 
-The user-approved Redox oxidation-number build established these reusable patterns:
+### Subtopic 01 v4 baseline
 
+The user-approved Oxidation Number build established:
 - Noto Sans for chemistry-heavy programmatic PDFs;
 - separate title/subtitle header zones;
 - familiar formula context before rules;
@@ -521,4 +533,13 @@ The user-approved Redox oxidation-number build established these reusable patter
 - transfer-book concept links + H1-H3 + misconception/helper + Appendix A;
 - end-of-subtopic completeness audit and separate transfer-coverage audit.
 
-Treat these as a reusable baseline for later Redox subtopics unless the concept requires a different representation.
+### Subtopic 02 typography/layout lesson
+
+The first Oxidation & Reduction draft exposed two blocking problems visible at ordinary PDF zoom:
+
+1. electron/charge notation such as `e-`, `Mg2+`, `Fe3+` was rendered as baseline ASCII instead of chemistry notation;
+2. a long title collided with the right-aligned subtitle.
+
+Therefore later Redox builds must convert chemistry strings to final learner notation **before rendering**, use Noto Sans consistently, and treat title/subtitle region fitting as a hard gate rather than a cosmetic check.
+
+Treat these approved patterns as the reusable baseline for later Redox subtopics unless the concept requires a different representation.
