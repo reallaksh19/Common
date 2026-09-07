@@ -1,0 +1,89 @@
+## Chapter 15
+
+### What and How Children and
+
+### Adolescents Eat
+
+The leprechaun is right—Lucky Charms are “magically delicious.” Yellow stars, green clovers, orange moons, pink hearts. Why are there marshmallows in the box? Because kids love them? Sure, but they also love Honey Bunches of Oats, Cracklin’ Oat Bran, and Cap’n Crunch. Because they’re colorful? Trix, Froot Loops, and Fruity Pebbles are also colorful. The real reason is because oats cost more than marshmallows. The marshmallows take up room in the box, which decreases the cost of ingredients per box, yet the company gets to charge more per unit. A great business strategy.
+
+As a pediatric endocrinologist over forty years, I watched children grow —vertically at first, but now horizontally. My clinical practice started in 1980, so I saw the natural histories of the obesity and metabolic syndrome epidemics in real time. The only thing that changed faster than kids’ waistlines was their diets. Bananas were replaced as the snack of choice by Gatorade, Go-Gurt, and granola bars.
+
+#### Breakfast Is a Dangerous Meal
+
+Breakfast is considered by most nutrition experts to be the most important meal of the day (this is arguably just a holdover from the AND’s Lenna Cooper channeling John Harvey Kellogg (see Chapter 4). To its credit, breakfast does get your kid’s brain going in the morning. It increases the thermic effect of food, which is worth about 10 percent of your energy
+
+expenditure, and it suppresses ghrelin (the hunger hormone) so you won’t overeat at lunch. But for children, it’s easy to turn to what is fast and cheap, and what they can pour themselves. Cold cereal. Instant oatmeal. Granola bars. Protein bars. Yogurt smoothies. All marketed to kids and their parents and all laden with sugar. Consider Raisin Bran. Just raisins and bran, right? There are 16 grams of sugar in a serving, but the raisins only account for 8. That’s because the raisins are all dipped in a sugar solution (they’re white, not purple—see the book jacket cover!) to make them much sweeter. And if you think Cracklin’ Oat Bran or Honey Bunches of Oats are any healthier, think again. The food industry knows how to market to kids—sports figures, celebrities, characters and mascots, cartoons, premiums, cross-promotion toys, collectibles, kids’ clubs, internet games, and contests.
+
+Sadly, as the National Diet and Nutrition Survey found, what you’re really doing is giving your children a huge sugar load, half of their daily intake on average. Breakfast cereal averages a whopping 12 grams of added sugar in a typical serving. In 2011, the Environmental Working Group (EWG) identified 17 breakfast cereals marketed to children in which added sugar constituted more than 50 percent of calories, and 177 with 40 percent or more. Top of the list—Kellogg’s Honey Smacks, at 56 percent sugar. Despite the notoriety of that disclosure, the EWG follow-up study in 2014 noted that not one of these breakfast cereals had reduced its sugar content. In 2018, the industry revised its 2011 thresholds for added sugar, but amazingly, the upper limit for breakfast *increased* from less than 10 grams to less than 12 grams. How did companies pull that off? Because the kids wouldn’t like it as much and they’d sell less product.
+
+Yogurt is another example of a corporate ploy to ply our kids with sugar. Plain yogurt has 7 grams of sugar, all lactose (milk sugar), which isn’t a problem, although not much help. Consider a carton of pomegranate yogurt, which has 19 grams of total sugar. Thus, each pomegranate yogurt has 12 grams of added sugar. Plus, the industry hides these facts well; there are 262 different names for sugar. By choosing different sugars as the fifth, sixth, seventh, and eighth ingredients, it can rapidly add up to be the dominant ingredient.
+
+The American Heart Association recommends limiting kids to 3 to 4 teaspoons of added sugar per day. Yet a typical school breakfast consists of a bowl of Froot Loops and a glass of orange juice; that’s already 11 teaspoons of sugar. Dr. Terence Kealey, dean of the University of Buckingham in the
+
+UK, penned a book in 2018 called *Breakfast Is a Dangerous Meal*. I had the opportunity to corner him at a meeting, and I got this modification: “Our kids’ *current* breakfast is a dangerous meal.” To that I can agree wholeheartedly.
+
+Any food is a dessert if any form of sugar is one of the first three ingredients. Trader Joe’s Beef and Broccoli (32 grams of sugar) is a dessert. Chinese chicken salad is a dessert. We, and especially our kids, are eating and drinking dessert all day long. It captivates our brain’s reward center (see Chapter 21), similar to drugs, so kids get hooked on sugar early. This creates a tidal wave of chronic diseases so nefarious and insidious that our healthcare system isn’t prepared for the flood of children with type 2 diabetes and liver disease who will be sick for decades. Tell a cocaine addict to lay off their drug of choice—see how far that gets you. About as far as telling a kid to cut the cookies.
+
+Don’t get me wrong. We all love dessert. How could you not? Sweet was the signal to our ancestors that a foodstuff was safe to eat, because there are no foods that are both sweet and acutely poisonous. But dessert should be safe, and rare. Just like Halloween, overdoing it also has a predictable output—a huge tummy ache.
+
+#### Got Milk? Good, Now Let It Go . . .
+
+So what about milk? Kids drink low-fat chocolate (and strawberry) milk at school. Why? Because we took the fat out in the 1980s to conform to the Dietary Guidelines and the kids no longer drank it. They needed to add sugar to make it palatable, though in doing so they’re increasing risk of metabolic syndrome. But do we need milk at all, and how much?
+
+For decades, we’ve been praising the benefits of dairy, in terms of growth, strong muscles, bones, and teeth. But these recommendations have recently come under increased scrutiny. We thought that everything in cow’s milk was good for growing kids—calcium, vitamin D, protein, phosphorus— except for the saturated fat, and so we made non-fat and low-fat options. But the saturated fat in whole milk, due to its odd-chain fatty acids and phospholipid content, is actually protective in preventing diabetes and heart disease. Furthermore, milk is one of the products we definitely want to be processed. Pasteurization of milk is what kills the tuberculosis bacteria; irradiation of milk is what converts the 7-dehydrocholesterol in milk to vitamin D. You do need all of these things, but you don’t necessarily need
+
+cow’s milk to get them (though milk does increase kids’ height and bone density). You could just as easily get your vitamin D from playing outside, and calcium from fish, leafy greens, and almonds.
+
+No wonder people are rethinking the role of dairy in nutrition, suggesting that it not be its own dietary food group anymore. The USDA’s insistence upon drinking milk is to support the dairy farmers, not you and your kids. Milk doesn’t necessarily deserve the health halo the dairy industry bestowed upon it, but it doesn’t deserve the pitchfork either. Cow’s milk has been vilified for everything from eczema to type 1 diabetes to autism, but there are no cause-and-effect studies to prove it.
+
+What about cancer? T. Colin Campbell’s voluminous tome *The China* *Study* (2006) attempted to look epidemiologically at the difference between Chinese and American health, and determined that milk is a primary driver of chronic disease (especially cancer). In fact, this book isolated the bovine milk protein casein as the toxic factor.
+
+There are a number of reasons to be skeptical of this view, including the types of statistical analyses that were performed to prove it. In fact, the stronger associations with cancer were sugar and alcohol—but these were ignored. Having said that, a meta-analysis does seem to support a slight positive correlation between whole milk consumption and prostate cancer in men, but cause and effect cannot be established. Nonetheless, as dairy saturated fat appears to be protective against cardiovascular disease and diabetes, it would seem to me either promotion or demonization of cow’s milk (excluding the additives) seems quite inappropriate. Like a relationship on Facebook, it’s complicated.
+
+#### Lunch Is No Better
+
+The Healthy, Hunger-Free Kids Act passed by Congress in 2010 raised the national per-pupil lunch expenditure from $2.80 to $2.86—not enough to even cover the cost of a carrot. Instead of upping the dollar amount, Representative Robert Aderholt (R-AL) and the House Committee on Appropriations in 2014 decided to gut the ridiculously low bar they themselves had previously set, by allowing schools to opt out of the federal nutrition standards. But in 2017, USDA Secretary Sonny Perdue, viewing discarded vegetables as waste, diluted these standards down even further. “Schools need flexibility in menu planning . . . it’s clear that many still face
+
+challenges incorporating some of the meal pattern requirements. Schools want to offer food that students actually want to eat. It doesn’t do any good to serve nutritious meals if they wind up in the trash can.” Guess what kids find most appetizing?
+
+A recent article in the *New York Times *highlighted the angst that parents currently feel about feeding their children. In response to both the obesity and eating disorders epidemics that have targeted children, the* intuitive eating *movement was born, embraced by culturists and some nutritionists as a healthier way of eating. Intuitive eating allows kids to eat whatever they want whenever they want. If obesity were about hunger, then this might be a rational modality. But eating is sometimes done in response to reward or stress, and kids often turn to sugar. As I said in Chapter 2, weight and BMI are often irrelevant to health, and there’s no place for fat-shaming in our society. But these intuitive eaters have taken the issue too far the other way, by refusing to demonize any food or ingredient—they still fallaciously believe* a calorie is a calorie.*
+
+#### No Wonder Kids Can’t Function in School
+
+The National School Breakfast Program has 25 percent of America’s children enrolled, and the National School Lunch Program has 39 percent of children enrolled. The federal government caps the amount of fat and salt in breakfasts and lunches, setting the minimum standards for servings of fruit, vegetables, grains, milk, and meat. However, they’ve also designated pizza as a vegetable and hash browns as a fruit (see Chapter 24). And there’s no official limit for sugar.
+
+The brain is the biggest utilizer of energy, consuming 20 percent of all the glucose in your bloodstream at any given moment. Considering your brain weighs just three pounds, or 2 percent of your body weight, that’s a very big draw. But what does the brain do with fructose? Remember, the intestine and liver will clear the majority of fructose, but if you overwhelm their capacities with a 20-ounce soft drink, a sizeable portion gets into the brain. Fructose alters brain metabolism in fundamental ways—not in neurons *per* *se*, but in *astrocytes* (the cells that nourish the neurons). And it’s not feeding those cells, but rather driving two of the eight subcellular pathologies (glycation and oxidative stress). However, some of the ill effects of fructose in the brain can be counteracted by consuming more omega-3s.
+
+Furthermore, fructose scrambles two trophic (growth) factors that help the brain develop and organize connections. Leptin is a fat-derived hormone that does a couple of different things. In Chapter 7, I discussed the impact of leptin on metabolic syndrome, but it also has a direct impact on brain development and cognition. Fructose, by inducing insulin resistance and hyperinsulinemia, blocks leptin’s actions to permit neurons to branch and connect, leading to numerous cognitive deficits. Furthermore, fructose inhibits the functioning of a second protein, brain-derived neurotrophic factor (BDNF; the protein induced by exercise, see Chapter 10), which helps lay down new connections in the hippocampus (the memory center). Fructose is the proof in the pudding—*you can’t outrun a bad diet*.
+
+#### Three Impacts of Sugar on Your Kid’s Brain
+
+At school, every day is some kid’s birthday; and unfortunately, that means that every day is a birthday party (PARENTS—PLEASE DON’T CONTRIBUTE TO THIS PRACTICE BY BRINGING CUPCAKES TO SCHOOL!). Teachers know that once the sugar flows, the education stops, so the cupcakes are reserved for the end of the day. Sugar alters kids’ brain function in three ways—behavior, cognition, and affect.
+
+***Behavior***
+
+Sugared beverages are clearly linked to behavioral problems in children, to irritability in preschoolers, and to violent behavior in middle-schoolers. However, thus far this remains correlation, not causation, and it’s clear that not every kid who eats a Snickers bar turns into the Tasmanian devil. Sugar can run the gamut of irritability, from anxiety to sloth.
+
+If you give a normal-weight five-year-old kid a cookie, what happens? He bounces off walls. Parents recognize this as the “sugar high,” but it’s actually the negative feedback system of energy balance at work. The cookie stimulated insulin release, which drove energy into fat tissue, which released leptin, which reached the hypothalamus, which activated the sympathetic nervous system, which led to increased energy expenditure, including involuntary contraction of muscles, aka fidgeting—all to maintain energy neutrality. But, the strange thing is, if you give an *obese* five-year-old kid a cookie, he’s in the pantry looking for more cookies, and then back on the couch—because this kid’s brain is leptin resistant. There is no sugar high.
+
+Any study that looks at sugar and acute behavioral change has to look at leptin and insulin levels, too—but none of them have. Likely, it’s processed food in general, the combination of sugar plus artificial flavors and colors to enhance sugar’s effects.
+
+***Cognition***
+
+More and more young people are developing metabolic syndrome earlier. Adolescents with metabolic syndrome demonstrate cognitive decline and greater impulsivity. When you scan them, they exhibit white matter lesions, smaller hippocampi (the memory center), and reduced prefrontal cortex mass (the executive function center). While not proven, such brain changes in the prefrontal cortex may be the underlying cause of distractibility and the development of attention deficit disorder in children.
+
+It won’t be a shock to you that kids who eat processed food do less well in school. But is that correlation or causation? Is it the food, or could it just as easily be neglect, family stress, poverty, or genetics? One UK study changed the food in primary school in one county, using other neighboring counties as the control. The investigators found significant improvements in English and science, and the added bonus of a 14 percent reduction in school absences. It’s a pretty good bet that changing the school food didn’t change the home environment—but also a pretty good indication that the change in the food made a difference.
+
+***Affect***
+
+There’s a reason that the WHO and the USDA have provided upper limits of sugar—because dietary sugar fries your kids’ liver and brain, just like alcohol. Alcohol provides calories (7 kcal/gram), but it’s not nutrition. There’s no biochemical reaction that requires it. When consumed chronically and in high doses, alcohol is toxic, unrelated to its calories or effects on weight. Not everyone who is exposed gets addicted, but enough do to warrant taxation and restriction of access, especially to children. Clearly, alcohol isn’t food—but it’s dangerous, because it’s both toxic and abused.
+
+Dietary sugar is composed of two molecules: glucose and fructose. Fructose, while an energy source (4 kcal/gram), is otherwise vestigial to humans; again, there’s no biochemical reaction that requires it. However, fructose is metabolized in the liver in exactly the same way as alcohol. That’s why, when consumed chronically and in high doses, fructose is
+
+similarly toxic and abused, unrelated to its calories or effects on weight. That’s why our children now get the diseases of alcohol (type 2 diabetes, fatty liver disease), without ever taking a drink.
+
+So which comes first? The diet, the biochemistry, or the behavior? This isn’t an academic exercise—identifying the initial lesion between diet and brain function has enormous implications for both prevention and treatment. And it’s true, we only have snapshots in time; we don’t have the longitudinal or imaging studies to answer this question directly. But if our animal models are any indication, we should recognize that it’s a two-way effect. Diet can alter biochemistry, which can alter behavior; but biochemistry can also alter behavior, which can also alter diet. The moral of the story is: when you see a change in behavior, think of the change in biochemistry, and then fix the diet accordingly.
+
+I remember in the late 1960s when the first McDonald’s was built in my neighborhood. I couldn’t wait for it to open. Now I take singular delight in watching them close. In fact, in April 2013, I debated Jim Skinner, former CEO of McDonald’s, who had moved on to become chairman of the board of Walgreens. He started out espousing “personal choice”; by the end, he was all about “public health.” Even he couldn’t deny the obvious.
+
+It’s a minefield out there; step in the wrong place, and you blow up (figuratively and literally). Our fast food society has placed undue stress on kids today, and it’s taking its toll physically, mentally, and behaviorally. But teach the children, and someday they’ll vote—with their dollars, with their ballots, and with their forks.

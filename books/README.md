@@ -1,6 +1,6 @@
 # Books Library: Fasting, Nutrition, Longevity & Metabolic Health
 
-This directory contains complete, chapterwise Markdown editions of foundational books on fasting, cellular rejuvenation, oncology nutrition, longevity science, and low-carb metabolic health.
+This directory contains complete, chapterwise Markdown editions of foundational books on fasting, cellular rejuvenation, oncology nutrition, longevity science, insulin resistance, processed food epidemiology, and low-carb metabolic health.
 
 Each book includes individual chapter files formatted for clean readability, complete consolidated single-file editions, structured tables of contents, scientific figures, and references.
 
@@ -34,13 +34,32 @@ Each book includes individual chapter files formatted for clean readability, com
   - [Consolidated Edition](Eat_Rich_Live_Long/Eat_Rich_Live_Long_Complete_Chapterwise.md) (791k characters)
   - [Figures & Photography](Eat_Rich_Live_Long/images/) (161 high-resolution scientific diagrams and recipe photos)
 
+### 4. [Why We Get Sick: The Hidden Epidemic at the Root of Most Chronic Disease—and How to Fight It](Why_We_Get_Sick/README.md)
+- **Author:** Benjamin Bikman, PhD
+- **Foreword by:** Dr. Jason Fung, MD
+- **Publisher:** BenBella Books (2020)
+- **Scope:** 31 chapters / sections identifying insulin resistance as the underlying root cause of cardiovascular disease, neurological disorders, reproductive dysfunctions (PCOS, erectile dysfunction), cancer, gastrointestinal / kidney diseases, and metabolic syndrome. Outlines causes (genetics, hormones, inflammation, lifestyle) and evidence-based solutions (physical activity, macronutrient science, fasting, and daily implementation plans).
+- **Formats:**
+  - [Chapterwise Directory](Why_We_Get_Sick/) (31 individual chapter files)
+  - [Consolidated Edition](Why_We_Get_Sick/Why_We_Get_Sick_Complete_Chapterwise.md) (542k characters)
+  - [Illustrations & Charts](Why_We_Get_Sick/images/) (24 high-resolution scientific figures)
+
+### 5. [Metabolical: The Lure and the Lies of Processed Food, Nutrition, and Modern Medicine](Metabolical/README.md)
+- **Author:** Robert H. Lustig, MD, MSL
+- **Publisher:** Harper Wave / HarperCollins (2021)
+- **Scope:** 40 chapters / sections exposing the systematic failure of modern medicine to treat noncommunicable chronic diseases by treating symptoms rather than underlying cellular pathology (mitochondrial dysfunction, gut dysbiosis, oxidative stress, glycation). Analyzes the economics and toxicology of ultra-processed food, food classifications, industry adulteration, food addiction, regulatory capture by the USDA/FDA, and actionable protocols for real-food recovery.
+- **Formats:**
+  - [Chapterwise Directory](Metabolical/) (40 individual chapter files)
+  - [Consolidated Edition](Metabolical/Metabolical_Complete_Chapterwise.md) (753k characters)
+  - [Figures & Diagrams](Metabolical/images/) (16 high-resolution figures and data charts)
+
 ---
 
 ## Directory Layout
 
 ```text
 books/
-├── README.md (This catalog index)
+├── README.md (Master catalog index)
 ├── Fasting_Cancer/
 │   ├── README.md
 │   ├── 00_Front_Matter.md ... 22_About_the_Author.md
@@ -50,9 +69,19 @@ books/
 │   ├── 00_Front_Matter.md ... 19_Notes.md
 │   ├── AUDIT_DIFF_REPORT.md
 │   └── The_Longevity_Diet_Complete_Chapterwise.md
-└── Eat_Rich_Live_Long/
+├── Eat_Rich_Live_Long/
+│   ├── README.md
+│   ├── 00_Front_Matter.md ... 30_Notes.md
+│   ├── Eat_Rich_Live_Long_Complete_Chapterwise.md
+│   └── images/ (161 diagrams, charts, and recipe photos)
+├── Why_We_Get_Sick/
+│   ├── README.md
+│   ├── 00_Front_Matter.md ... 30_About_the_Author.md
+│   ├── Why_We_Get_Sick_Complete_Chapterwise.md
+│   └── images/ (24 scientific diagrams and charts)
+└── Metabolical/
     ├── README.md
-    ├── 00_Front_Matter.md ... 30_Notes.md
-    ├── Eat_Rich_Live_Long_Complete_Chapterwise.md
-    └── images/ (161 diagrams, charts, and recipe photos)
+    ├── 00_Front_Matter.md ... 39_Back_Matter.md
+    ├── Metabolical_Complete_Chapterwise.md
+    └── images/ (16 scientific diagrams and charts)
 ```
