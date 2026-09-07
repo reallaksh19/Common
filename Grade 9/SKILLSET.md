@@ -11,6 +11,7 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 | `grade9-concept-architect` | Stable concept IDs, prerequisites, learning graph, links |
 | `grade9-question-bank` | Core N, same-level calibration, Level-Up challenges, mixed tests |
 | `grade9-learning-enrichment` | Helpers, hints, misconceptions, diagnostics, transfer |
+| `grade9-transfer-coverage-auditor` | Subtopic-wise external/PYQ accounting; missing/duplicate placement; concept, hint, solution and source-link coverage |
 | `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA |
 | `grade9-math` | Mathematics reasoning/difficulty profile plus SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book mode |
 | `grade9-physics` | Physics model/representation/validation profile plus SEE -> REALIZE -> UNDERSTAND concept-book mode |
@@ -55,6 +56,21 @@ The first worked Physics chapter exemplar is under:
 - `Physics/Motion/`
 - `skills/grade9-physics/references/motion-concept-book-example.md`
 
+## Transfer coverage audit mode
+
+When an external question corpus (for example ExamSIDE or another PYQ index) is part of the brief, run `$grade9-transfer-coverage-auditor` before declaring a subtopic complete.
+
+The auditor requires:
+
+- one scope status for every corpus item;
+- exactly one primary subtopic for every eligible item;
+- all required questions placed in the correct transfer book or explicitly deferred to a named future subtopic during incremental builds;
+- stable concept links;
+- difficulty-appropriate H1-H3 support;
+- Appendix A solution coverage;
+- original source-link validation;
+- zero missing/duplicate primary placements and zero scope leaks at final acceptance.
+
 ## Deterministic checks
 
 - `skills/grade9-question-bank/scripts/difficulty_check.py`
@@ -67,6 +83,7 @@ Start with `$grade9` for multi-stage work. Invoke a specialist directly for narr
 
 ```text
 Use $grade9-question-bank to build 30 same-level questions from these anchors.
+Use $grade9-transfer-coverage-auditor to prove every eligible PYQ is covered against exactly one subtopic.
 Use $grade9-math in Concept Book mode using SEE -> REALIZE -> UNDERSTAND -> ADOPT.
 Use $grade9-physics in Concept Book mode using SEE -> REALIZE -> UNDERSTAND.
 Use $grade9-textbook-publisher to publish this validated master JSON.
