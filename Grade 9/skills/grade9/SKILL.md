@@ -27,6 +27,7 @@ SOURCE / USER REQUEST
 - Source PDF, images, notes, worksheet, PYQ, or pasted notes -> `../grade9-source-grounding/SKILL.md` first.
 - Mathematics -> `../grade9-math/SKILL.md`.
 - Physics -> `../grade9-physics/SKILL.md`.
+- Physics subtopic-wise paired **Study Guide + ExamSIDE/PYQ Transfer Book** production -> `../grade9-physics-subtopic-book-builder/SKILL.md` after `grade9-physics`.
 - Chemistry -> `../grade9-chemistry/SKILL.md`.
 - Concept IDs, prerequisites, dependency maps, textbook-to-bank links -> `../grade9-concept-architect/SKILL.md`.
 - Similar questions, same-level practice, Core N, HOTS, challenge appendix, mixed tests -> `../grade9-question-bank/SKILL.md`.
@@ -51,6 +52,19 @@ For Sequence & Series, the Mathematics specialist includes the worked exemplar a
 
 When the user asks for a Grade 9 Physics Concept Book, route through `grade9-physics` and use `SEE THE EQUATION -> REALIZE -> UNDERSTAND`, retaining CONNECT as source traceability/navigation.
 
+When the user instead asks to build Physics **subtopic-wise**, requests the reference-book-style learning structure, or requests paired **Study Guide + ExamSIDE/PYQ question book** outputs, route:
+
+```text
+grade9-source-grounding
+-> grade9-physics
+-> grade9-physics-subtopic-book-builder
+-> grade9-learning-enrichment
+-> grade9-transfer-coverage-auditor
+-> grade9-textbook-publisher
+```
+
+The subtopic builder owns information architecture and paired-product completeness; `grade9-physics` remains authoritative for subject correctness.
+
 ## Non-negotiable rules
 
 1. Treat user-supplied sources as the primary authority when the request is source-grounded.
@@ -64,6 +78,7 @@ When the user asks for a Grade 9 Physics Concept Book, route through `grade9-phy
 9. Keep source-derived, externally verified, and newly authored content distinguishable.
 10. Do not declare a rendered product complete until page rendering, link validation, and content QA pass.
 11. When an external/PYQ corpus is part of the brief, do not declare a subtopic or chapter complete until the transfer-coverage audit proves all eligible questions are uniquely placed or explicitly deferred to named future subtopics; final chapter acceptance requires zero missing and zero deferred eligible questions.
+12. For Physics paired subtopic books, do not advance to the next subtopic until the current Study Guide and transfer book both pass the specialist's source/content/visual/font/layout/render and coverage gates.
 
 ## Completion gates
 
