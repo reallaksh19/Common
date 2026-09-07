@@ -1,32 +1,41 @@
 ---
 name: grade9-subtopic-completeness-auditor
-description: Audit one Grade 9 learning subtopic before publication for source coverage, instructional completeness, real-life/context bridges, concept helpers, misconception repair, practice/scaffold coverage, external/PYQ transfer coverage, and rendered typography/layout quality. Use after a subtopic draft exists and before declaring its Study Guide or transfer book complete.
+description: Audit one Grade 9 learning subtopic before publication for source coverage, instructional completeness, textbook-reference learning rhythm, context bridges, concept helpers, misconception repair, scaffolded practice, external/PYQ transfer coverage, chemistry typography, and rendered layout quality. Use after a subtopic draft exists and before declaring its Study Guide or transfer book complete.
 ---
 
 # Grade 9 Subtopic Completeness Auditor
 
-Audit the **whole learning experience**, not only whether content exists somewhere.
+Audit the **whole learning experience**, not only whether the right facts appear somewhere.
 
-This skill wraps the source, pedagogy, transfer, and publication gates for a single subtopic. It should normally run together with `grade9-transfer-coverage-auditor` whenever an external question corpus such as ExamSIDE is part of the brief.
+Run this skill together with `grade9-transfer-coverage-auditor` whenever an external corpus such as ExamSIDE is part of the brief.
 
-## Core principle
+## Core completion rule
 
-A subtopic is complete only when all four directions agree:
+A subtopic is complete only when all five directions agree:
 
 ```text
 SOURCE -> STUDY GUIDE
 STUDY GUIDE -> LEARNER REASONING
+LEARNER REASONING -> PRACTICE / TRANSFER
 ELIGIBLE TRANSFER QUESTIONS -> STUDY SUPPORT
 RENDERED PDF -> INTENDED LEARNING EXPERIENCE
 ```
 
-A page containing the right facts can still fail if the explanation order, misconception repair, helper, practice, formula typography, or layout is poor.
+A generated PDF is not evidence of completion.
+
+Final gate:
+
+```text
+SOURCE = PASS
+PEDAGOGY = PASS
+TRANSFER = PASS       # when applicable
+TYPOGRAPHY = PASS
+LAYOUT = PASS
+```
 
 ---
 
-## 1. Required subtopic contract
-
-Before publication, every subtopic must have a record like:
+## 1. Required subtopic record
 
 ```json
 {
@@ -35,11 +44,12 @@ Before publication, every subtopic must have a record like:
   "source_obligation_ids": [],
   "concept_ids": [],
   "instructional_weight": "CORE",
-  "real_life_context_ids": [],
+  "familiar_context_ids": [],
   "concept_helper_ids": [],
   "misconception_ids": [],
   "worked_example_ids": [],
   "guided_practice_ids": [],
+  "faded_practice_ids": [],
   "independent_check_ids": [],
   "required_external_question_ids": [],
   "render_artifact_ids": [],
@@ -47,18 +57,20 @@ Before publication, every subtopic must have a record like:
 }
 ```
 
-Do not use page numbers as authoritative IDs. Page numbers are render outputs.
+Stable IDs are authoritative. Rendered page numbers are derived metadata only.
 
 ---
 
-## 2. Instructional grammar audit
+## 2. Reference-book instructional grammar
 
-Use the user's textbook-reference grammar as the default structure:
+When the user provides textbook/reference snapshots, imitate the **learning grammar**, not decorative boxes or fonts.
+
+Default sequence:
 
 ```text
-ORIENT / REAL-LIFE OR FAMILIAR CONTEXT
+ORIENT / FAMILIAR CONTEXT
 -> EXPLAIN THE IDEA IN ORDINARY LANGUAGE
--> SHOW WHAT THE IDEA MEANS SYMBOLICALLY / VISUALLY
+-> SHOW WHAT IT MEANS VISUALLY / SYMBOLICALLY
 -> THINGS TO KNOW / KEY RULE
 -> WORKED EXAMPLE WITH REASONING STORY
 -> CONCEPT HELPER / REPRESENTATION
@@ -69,81 +81,97 @@ ORIENT / REAL-LIFE OR FAMILIAR CONTEXT
 -> TRANSFER LINK
 ```
 
-Not every page must contain every module, but the **subtopic as a whole** must contain the required learning functions.
+Not every page needs every module. The **subtopic as a whole** must provide the required learning functions.
 
-### Narrative-before-procedure rule
+### Narrative-before-procedure
 
-Do not open a subtopic with a long algorithm unless the learner already understands the idea the algorithm operates on.
-
-Required order for a new concept:
+For a genuinely new concept:
 
 ```text
 meaning -> interpretation -> example -> rule/procedure
 ```
 
-Use procedure-first only for a later consolidation page.
+Do not lead with a long algorithm before the learner knows what the algorithm is doing.
+
+### Connected-spread rule
+
+A learning spread should read as one teacher explanation, not a dashboard of independent cards.
+
+Use boxes only when they perform a teaching job such as:
+
+- definition;
+- key rule;
+- contrast;
+- helper;
+- misconception repair;
+- worked example;
+- knowledge check.
+
+If several boxes can be removed without changing the reasoning sequence, the page is likely over-fragmented.
 
 ---
 
-## 3. Real-life / familiar-context bridge
+## 3. Familiar / real-life bridge
 
-For each CORE subtopic, include at least one context bridge when a truthful, age-appropriate example is available without introducing new chemistry.
+For each `CORE` subtopic, include at least one truthful familiar-context bridge when one is available without introducing new chemistry.
 
-Allowed bridge status:
+Status:
 
 ```text
 PEDAGOGICAL_BRIDGE
 ```
 
-The bridge may make the formula or idea familiar, but it may not create a new factual dependency outside the source boundary.
+Examples:
 
-Examples of acceptable patterns:
-
-- a familiar product formula used only to notice an oxidation-number exception;
-- a corrosion/burning visual used only to motivate oxidation-state tracking when those reaction facts are already source-supported;
-- an everyday label/formula used as a recognition hook without teaching a new application chapter.
+- an everyday formula label used only to make a formula familiar;
+- an ordinary material/reaction already supported by source scope used to motivate a symbolic idea;
+- a visible macroscopic situation used only as a recognition hook.
 
 Checklist:
 
-- [ ] Context is accurate.
-- [ ] Context is understandable at target level.
-- [ ] Context clarifies the source concept.
-- [ ] Context introduces no untaught chemistry dependency.
-- [ ] Context is labelled/treated as a bridge, not source authority.
+- [ ] Accurate.
+- [ ] Understandable at target level.
+- [ ] Clarifies the source concept.
+- [ ] Introduces no new chapter dependency.
+- [ ] Treated as a bridge, not as source authority.
 
-If no safe context exists, record `REAL_LIFE_CONTEXT_NOT_APPLICABLE` with a reason rather than inventing one.
+If no safe bridge exists, record `FAMILIAR_CONTEXT_NOT_APPLICABLE` with a reason. Never invent an application merely to satisfy the checklist.
 
 ---
 
 ## 4. Concept-helper audit
 
-A concept helper answers one of:
+A helper answers one of:
 
 ```text
 What should I notice?
-What should I draw / mark?
+What should I mark?
+What should I draw?
 What should I think about first?
 What representation makes this easier?
 ```
 
-For every high-recognition-load concept require at least one helper.
+High-recognition-load concepts require at least one reusable helper.
 
-Typical helper types:
+Useful helper types include:
 
+- formula anatomy;
 - rule-priority ladder;
 - charge-balance visual;
 - before -> after oxidation-state lane;
 - SELF vs OTHER agent frame;
-- decision strip;
+- Redox Decision Strip;
 - split/converge topology;
-- average-vs-actual site diagram.
+- average-vs-actual site diagram;
+- per-atom electron-change lane.
 
 Checklist:
 
-- [ ] Helper reveals the representation, not the final answer.
-- [ ] Helper uses the same language as worked examples and hints.
-- [ ] Helper is reusable across several questions.
-- [ ] Helper does not become decorative clutter.
+- [ ] Reveals the representation, not the final answer.
+- [ ] Uses the same reasoning language as examples/hints.
+- [ ] Reusable across several questions.
+- [ ] Visually distinguishable from decoration.
+- [ ] Placed near the point where the learner needs it.
 
 ---
 
@@ -151,7 +179,7 @@ Checklist:
 
 High-risk concepts require explicit misconception repair.
 
-Each misconception record should include:
+Each misconception should contain:
 
 ```json
 {
@@ -167,50 +195,55 @@ Each misconception record should include:
 
 Checklist:
 
-- [ ] Specific wrong mental model is named.
-- [ ] A close contrast or micro-example exposes it.
-- [ ] Repair explains why the wrong model fails.
-- [ ] A retry/transfer item checks the repair.
+- [ ] Names a specific wrong mental model.
+- [ ] Uses a close contrast or micro-example.
+- [ ] Explains why the wrong model fails.
+- [ ] Includes a retry/transfer check where appropriate.
 
-Do not use generic warnings such as `be careful` as a misconception treatment.
+Generic `be careful` warnings do not count.
 
 ---
 
 ## 6. Worked-example quality
 
-A worked example must tell a reasoning story, not only show algebra.
-
-Required stages where applicable:
+A worked example must tell a reasoning story:
 
 ```text
 READ THE GIVEN
 -> IDENTIFY WHAT IS ALREADY KNOWN
--> CHOOSE / BUILD THE REPRESENTATION
+-> BUILD / CHOOSE THE REPRESENTATION
 -> EXECUTE THE RULE
 -> STATE THE RESULT
 -> CHECK / INTERPRET
 ```
 
-For chemistry formulas, explicitly read subscripts and overall charge before solving when those are common failure points.
+For chemistry formulas, explicitly distinguish:
+
+- subscripts = atom counts;
+- superscripts = ionic charge;
+- oxidation numbers = separate assigned values.
+
+A worked example that only presents algebra and an answer is incomplete.
 
 ---
 
 ## 7. Practice and scaffold audit
 
-For each CORE concept require:
+For each CORE concept require, where applicable:
 
-- at least one worked example;
-- at least one guided `TRY WITH ME` item;
-- at least one faded/independent item;
-- at least one `CHECK YOUR KNOWLEDGE` item.
+- one worked example;
+- one `TRY WITH ME` item;
+- one faded-scaffold item;
+- one independent item;
+- one `CHECK YOUR KNOWLEDGE` item.
 
-Where transfer difficulty is high, use:
+Preferred progression:
 
 ```text
 FULL SCAFFOLD -> FADED SCAFFOLD -> TRANSFER
 ```
 
-Do not let the final check merely repeat the exact worked example surface form.
+The independent check must not merely repeat the exact surface form of the worked example.
 
 ---
 
@@ -218,7 +251,7 @@ Do not let the final check merely repeat the exact worked example surface form.
 
 When an external corpus is part of the project, invoke `grade9-transfer-coverage-auditor`.
 
-The subtopic is blocked unless:
+Block the subtopic unless:
 
 ```text
 SUBTOPIC_REQUIRED = n
@@ -234,48 +267,73 @@ SUBTOPIC_SCOPE_LEAKS = 0
 
 At final chapter acceptance, `DEFERRED_VALID = 0`.
 
-The Study Guide must teach the recognition cue, first move, and representation needed by every required question; a topic-label match alone is insufficient.
+A Study Guide supports a transfer question only when it teaches the question's:
+
+- recognition cue;
+- first move;
+- representation;
+- misconception repair when high-risk;
+- prerequisite concepts.
+
+A topic-label match is not sufficient.
 
 ---
 
 ## 9. Chemistry typography audit
 
-For chemistry publication, formulas and ions must be visually correct.
+Chemistry notation is a blocking publication requirement.
 
 Required checks:
 
-- [ ] Numeric formula indices are rendered as subscripts, e.g. `H₂O₂`, `K₂Cr₂O₇`.
-- [ ] Ionic charges are rendered as superscripts, e.g. `Fe³⁺`, `Cr₂O₇²⁻`.
-- [ ] Oxidation numbers placed above atoms are visually distinct from stoichiometric subscripts and ionic charge.
-- [ ] No plain-text ambiguity such as `VO2+` when the intended form is `VO²⁺` or `VO₂⁺`.
-- [ ] Equation arrows, plus/minus signs, fractions and parentheses render without missing glyphs.
-- [ ] Formula typography remains legible at 100% PDF zoom.
+- [ ] Formula indices are true/clear subscripts, e.g. `H₂O₂`, `K₂Cr₂O₇`.
+- [ ] Ionic charges are true/clear superscripts, e.g. `Fe³⁺`, `Cr₂O₇²⁻`.
+- [ ] Oxidation numbers above atoms are visually distinct from formula subscripts and ionic charge.
+- [ ] No ambiguous plain text such as `VO2+` when `VO²⁺` or `VO₂⁺` is intended.
+- [ ] Equation arrows, plus/minus signs, fractions and parentheses render cleanly.
+- [ ] Formula typography is readable at 100% PDF zoom.
+- [ ] Body font supports all chemistry glyphs used; no fallback squares or missing characters.
 
-Use a font with complete chemistry-relevant Unicode coverage or a tested superscript/subscript rendering method. Never accept black squares, fallback glyphs, or visually ambiguous charge placement.
+### Font rule learned from approved redox build
+
+For programmatic chemistry PDFs, prefer a tested Unicode-complete text font such as **Noto Sans** over default Helvetica when formulas rely on Unicode subscripts/superscripts.
+
+Do not ship font files; embed/use them only in the generated artifact.
 
 ---
 
-## 10. Layout audit
+## 10. Header and layout audit
 
-Compare the rendered pages against the intended textbook rhythm.
+### Separate title/subtitle zones
 
-Blocking failures:
+Never draw a long title and subtitle into one unrestricted line. Reserve independent bounding regions.
 
-- clipped title or subtitle;
-- title/subtitle collision;
-- text outside boxes;
-- overlapping cards;
-- unreadably small body text;
-- formulas too small to parse;
-- accidental half-page voids;
-- an explanation broken across pages before its worked example without a pedagogical reason;
-- excessive card fragmentation that destroys narrative flow.
-
-Recommended checks:
+Required header checks:
 
 ```text
 HEADER_TITLE_FITS = PASS
 HEADER_SUBTITLE_FITS = PASS
+HEADER_COLLISION = 0
+```
+
+If a title can exceed its zone, wrap or shrink it deterministically.
+
+### Page layout blocking failures
+
+- clipped title/subtitle;
+- title/subtitle collision;
+- body text outside a box;
+- overlapping cards;
+- helper/hint collision;
+- unreadably small body text;
+- formulas too small to parse;
+- accidental half-page voids;
+- a reasoning sequence broken across pages for no pedagogical reason;
+- excessive card fragmentation;
+- answer strips clipped at page bottom.
+
+Recommended render checks:
+
+```text
 BODY_MIN_SIZE = PASS
 FORMULA_MIN_SIZE = PASS
 NO_OVERLAP = PASS
@@ -284,51 +342,91 @@ PAGE_RHYTHM = PASS
 MEANINGFUL_OCCUPANCY = PASS
 ```
 
-For two-column textbook-style spreads, reserve separate title and subtitle regions rather than drawing both into the same unrestricted line.
+### Hint-layout rule
+
+For H1-H3 transfer pages, use deterministic non-overlapping slots. Do not calculate hint positions only from approximate text length and then place a helper underneath without checking remaining vertical space.
+
+Hard questions should normally use:
+
+```text
+H1 slot
+H2 slot
+H3 slot
+```
+
+with concept helper / misconception content in a separate column or reserved region.
 
 ---
 
-## 11. Required subtopic self-checklist
+## 11. Render-first QA loop
 
-Before a subtopic can be marked complete, emit a checklist with all applicable items:
+A PDF cannot pass from source code inspection alone.
+
+Required loop:
+
+```text
+GENERATE
+-> RENDER EVERY PAGE TO PNG
+-> INSPECT TITLES / FORMULAS / BOX BOUNDS / PAGE RHYTHM
+-> REPAIR
+-> RE-RENDER
+-> PASS
+```
+
+For PDF work follow the repository/environment PDF workflow and verify in at least one renderer.
+
+Visual inspection must explicitly sample:
+
+- the longest title page;
+- the densest worked-example page;
+- the page with the most chemistry notation;
+- the page with the deepest H1-H3 ladder;
+- the final audit/check page.
+
+---
+
+## 12. Required subtopic self-checklist
 
 ### Source and concept
 
-- [ ] All source obligations assigned to this subtopic are taught.
-- [ ] No source obligation is hidden by a merged learner concept.
+- [ ] All assigned source obligations are taught.
+- [ ] No source obligation disappears through concept merging.
 - [ ] Source-QC corrections are explicit.
-- [ ] No outside-scope chemistry has leaked into Core.
+- [ ] No outside-scope chemistry leaks into Core.
 
-### Explanation quality
+### Pedagogy
 
-- [ ] Concept meaning is explained before the procedure.
-- [ ] At least one familiar/real-life bridge exists or is explicitly `NOT_APPLICABLE`.
-- [ ] At least one reusable concept helper exists for high-recognition-load concepts.
+- [ ] Meaning precedes procedure for new concepts.
+- [ ] Familiar/real-life bridge exists or is explicitly not applicable.
+- [ ] Reusable concept helpers exist for high-recognition-load concepts.
 - [ ] High-risk misconceptions have explicit repair objects.
-- [ ] Worked examples include reasoning, not only answers.
-- [ ] Guided, faded, and independent practice are present.
-- [ ] Check Your Knowledge tests understanding after explanation.
+- [ ] Worked examples show reasoning, not just answers.
+- [ ] Guided, faded and independent practice are present.
+- [ ] Check Your Knowledge follows explanation.
+- [ ] Page reads as a connected teaching sequence rather than a dashboard.
 
 ### Transfer
 
-- [ ] Required external/PYQ set is frozen for the subtopic.
+- [ ] Required external/PYQ set is frozen.
 - [ ] Every required question has one primary subtopic and primary concept.
 - [ ] Every required question is placed or validly deferred during incremental build.
 - [ ] Difficulty-appropriate H1-H3 support exists.
+- [ ] Required helper/misconception support exists.
 - [ ] Appendix solution exists.
-- [ ] Source link exists and is valid.
+- [ ] Source link exists and resolves correctly.
 
 ### Publication
 
 - [ ] Formula subscripts/superscripts render correctly.
 - [ ] Title and subtitle fit without collision.
-- [ ] No text clipping/overflow/overlap.
-- [ ] Body and formula sizes are readable at 100% zoom.
-- [ ] Rendered page rhythm resembles a learning spread, not a dashboard of disconnected cards.
+- [ ] No clipping/overflow/overlap.
+- [ ] Body/formula sizes are readable at 100% zoom.
+- [ ] Densest pages have been rendered and inspected.
+- [ ] Final page rhythm resembles a textbook learning spread.
 
 ---
 
-## 12. Deterministic counters
+## 13. Deterministic counters
 
 Emit at least:
 
@@ -336,31 +434,34 @@ Emit at least:
 SOURCE_OBLIGATIONS_REQUIRED = n
 SOURCE_OBLIGATIONS_TAUGHT = n
 SOURCE_OBLIGATIONS_MISSING = 0
-REAL_LIFE_BRIDGE_REQUIRED = 0|1
-REAL_LIFE_BRIDGE_PRESENT = 0|1
+FAMILIAR_CONTEXT_REQUIRED = 0|1
+FAMILIAR_CONTEXT_PRESENT = 0|1
 CONCEPT_HELPERS_REQUIRED = n
 CONCEPT_HELPERS_PRESENT = n
 MISCONCEPTION_REPAIRS_REQUIRED = n
 MISCONCEPTION_REPAIRS_PRESENT = n
 GUIDED_PRACTICE_REQUIRED = n
 GUIDED_PRACTICE_PRESENT = n
+FADED_PRACTICE_REQUIRED = n
+FADED_PRACTICE_PRESENT = n
 INDEPENDENT_CHECK_REQUIRED = n
 INDEPENDENT_CHECK_PRESENT = n
 EXTERNAL_REQUIRED = n
 EXTERNAL_PLACED_OR_VALIDLY_DEFERRED = n
 EXTERNAL_MISSING = 0
 TYPOGRAPHY_FAILURES = 0
+HEADER_FAILURES = 0
 LAYOUT_FAILURES = 0
 SUBTOPIC_COMPLETENESS_STATUS = PASS
 ```
 
-Any non-zero blocking failure produces `FAIL` and an exact repair list.
+Any blocking non-zero failure produces `FAIL` with an exact repair list.
 
 ---
 
-## 13. Gap-analysis output
+## 14. Gap-analysis output
 
-When a draft already exists, report gaps by function rather than by page aesthetics alone:
+When a draft exists, report gaps by learning function rather than page aesthetics alone:
 
 ```text
 GAP ID
@@ -372,46 +473,52 @@ smallest repair
 blocking? YES/NO
 ```
 
-Recommended failure classes:
+Failure classes:
 
 - `SOURCE_GAP`
 - `EXPLANATION_ORDER_GAP`
-- `REAL_LIFE_BRIDGE_GAP`
+- `FAMILIAR_CONTEXT_GAP`
 - `CONCEPT_HELPER_GAP`
 - `MISCONCEPTION_GAP`
 - `PRACTICE_GAP`
 - `TRANSFER_GAP`
 - `TYPOGRAPHY_GAP`
+- `HEADER_GAP`
 - `LAYOUT_GAP`
 
 ---
 
-## 14. Workflow
+## 15. Workflow
 
 1. Read source-grounding ledger.
-2. Read learner concept/subtopic architecture.
-3. Inspect the draft Study Guide and transfer book as rendered pages.
-4. Run source/concept completeness.
-5. Run instructional-grammar audit.
-6. Run real-life/context, helper and misconception audits.
-7. Run worked-example and scaffold audit.
-8. Invoke transfer-coverage auditor when an external corpus is present.
-9. Run chemistry typography checks.
-10. Render every page and run layout checks.
-11. Emit gap table, deterministic counters and exact repairs.
-12. Rebuild.
-13. Re-render and rerun the full checklist before `PASS`.
+2. Read subtopic/concept architecture.
+3. Inspect reference-book snapshots when provided and extract their instructional grammar.
+4. Inspect the draft Study Guide and transfer book as rendered pages.
+5. Run source/concept completeness.
+6. Run instructional-grammar and connected-spread audit.
+7. Run familiar-context, concept-helper and misconception audits.
+8. Run worked-example and scaffold audit.
+9. Invoke transfer-coverage auditor when an external corpus exists.
+10. Run chemistry typography checks.
+11. Render every page and run header/layout checks.
+12. Emit gap table, counters and exact repairs.
+13. Rebuild.
+14. Re-render and rerun the full checklist.
+15. Mark `PASS` only when all five top-level gates pass.
 
-## Completion rule
+## Approved-pattern note from Redox Subtopic 01 v4
 
-Do not declare a subtopic finished because the PDF was generated successfully.
+The user-approved Redox oxidation-number build established these reusable patterns:
 
-Declare it complete only when:
+- Noto Sans for chemistry-heavy programmatic PDFs;
+- separate title/subtitle header zones;
+- familiar formula context before rules;
+- formula-anatomy helper for subscript vs charge;
+- rule-priority ladder before algebra;
+- charge-balance visual for sum rule;
+- explicit wrong-model -> repair misconception boxes;
+- worked -> guided -> faded -> independent progression;
+- transfer-book concept links + H1-H3 + misconception/helper + Appendix A;
+- end-of-subtopic completeness audit and separate transfer-coverage audit.
 
-```text
-SOURCE = PASS
-PEDAGOGY = PASS
-TRANSFER = PASS (when applicable)
-TYPOGRAPHY = PASS
-LAYOUT = PASS
-```
+Treat these as a reusable baseline for later Redox subtopics unless the concept requires a different representation.
