@@ -1,6 +1,6 @@
 ---
 name: grade9
-description: Route Grade 9 learning-material tasks to the correct source-grounding, concept architecture, question-bank, enrichment, subject, concept-book, and publishing workflows. Use for Grade 9 source analysis, textbook creation, concept books, difficulty-matched question banks, HOTS/competitive-foundation practice, diagnostics, mixed mastery, challenge appendices, and linked student/teacher PDF production in Mathematics, Physics, or Chemistry.
+description: Route Grade 9 learning-material tasks to the correct source-grounding, concept architecture, question-bank, enrichment, transfer-coverage audit, subject, concept-book, and publishing workflows. Use for Grade 9 source analysis, textbook creation, concept books, difficulty-matched question banks, HOTS/competitive-foundation practice, diagnostics, mixed mastery, challenge appendices, external-PYQ coverage audits, and linked student/teacher PDF production in Mathematics, Physics, or Chemistry.
 ---
 
 # Grade 9 Router Skill
@@ -16,6 +16,7 @@ SOURCE / USER REQUEST
   -> grade9-concept-architect
   -> grade9-question-bank
   -> grade9-learning-enrichment
+  -> grade9-transfer-coverage-auditor when external/PYQ transfer coverage is required
   -> canonical master data
   -> grade9-textbook-publisher when a rendered artifact is requested
   -> QA
@@ -30,6 +31,7 @@ SOURCE / USER REQUEST
 - Concept IDs, prerequisites, dependency maps, textbook-to-bank links -> `../grade9-concept-architect/SKILL.md`.
 - Similar questions, same-level practice, Core N, HOTS, challenge appendix, mixed tests -> `../grade9-question-bank/SKILL.md`.
 - Helpers, progressive hints, misconceptions, diagnostics, transfer questions -> `../grade9-learning-enrichment/SKILL.md`.
+- Subtopic-by-subtopic external/PYQ accounting, required-question self-checks, duplicate/missing placement, concept-link/hint/solution/source-link coverage -> `../grade9-transfer-coverage-auditor/SKILL.md`.
 - Student textbook, question bank, integrated edition, PDF layout, internal links, render/preflight -> `../grade9-textbook-publisher/SKILL.md`.
 
 ## Mathematics concept-book routing
@@ -61,6 +63,7 @@ When the user asks for a Grade 9 Physics Concept Book, route through `grade9-phy
 8. Generate textbook/question-bank artifacts from canonical structured master data, not from previously laid-out PDF pages.
 9. Keep source-derived, externally verified, and newly authored content distinguishable.
 10. Do not declare a rendered product complete until page rendering, link validation, and content QA pass.
+11. When an external/PYQ corpus is part of the brief, do not declare a subtopic or chapter complete until the transfer-coverage audit proves all eligible questions are uniquely placed or explicitly deferred to named future subtopics; final chapter acceptance requires zero missing and zero deferred eligible questions.
 
 ## Completion gates
 
@@ -76,5 +79,6 @@ Apply the relevant gates:
 - `QG8 DIAGNOSTICS_AND_MASTERY`
 - `QG9 PROVENANCE`
 - `QG10 PUBLICATION_QA`
+- `QG11 TRANSFER_COVERAGE`
 
 Read `references/grade9-workflow.md` when a full multi-stage build is requested. Use `references/grade9-master.schema.json` as the unchanged canonical structured-data contract when producing reusable master data.
