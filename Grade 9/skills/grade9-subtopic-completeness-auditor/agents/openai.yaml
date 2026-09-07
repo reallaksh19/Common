@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Subtopic Completeness Auditor"
+  short_description: "Audit source, pedagogy, PYQ coverage, typography and layout"
+  default_prompt: "Use $grade9-subtopic-completeness-auditor to inspect this Grade 9 subtopic, report exact gaps, verify required external-question coverage, and block publication until source, pedagogy, typography and layout checks pass."
