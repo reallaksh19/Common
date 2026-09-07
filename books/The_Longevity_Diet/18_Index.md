@@ -1,0 +1,997 @@
+# Index
+
+> *The page numbers in this index refer to the printed version of this book. Italicized page numbers indicate locations of illustrations, charts, and tables.*
+
+---
+
+    - age, aging, xvii, 4, 6, 12–14, 16–29, 31–34, 53–55, 70, 156, 162–63, 212–13
+    - acceleration of, 27, 33, 57–58, 66–67, 83–84, 118, 125, 179
+    - in baker’s yeast, 17, 24–28, 31, 66
+    - calorie restriction and, 24, 57–58
+    - cancer and, *33*, 71*,* 79, 118–19, 127, *128*, 135*
+    - causes of, 13–14, 17–21
+    - CVD and, 165–66, 183
+    - delaying of, xiv, xviii–xix, 8, 13, 55, *55*,* 79, 96
+    - exercise and, 87–90, 92–94, 190–91
+    - FMD and, xviii–xix, *99*, 100*,* 102, *103*,* 108, 110–11, *123*,* 152, 181–82, 190, 216
+    - genes and, 10, 17–18, 24–28, 31, 33, 36, 45, 47, 57, 118, 179, 212
+    - immune system and, 194–95, 206
+    - link between diet and, 10, 43, 69, 84
+    - Longevity Diet and, 59–60, 63–64, 71–86, 145, *164*,* 214, 220
+    - Longo’s fascination with, xi, xiii
+    - neurodegenerative diseases and, 176–79, 181–82, 186–88, 190, 192–93
+    - and Pillars of Longevity, 21–22, 43–45, 47–48, 57, 66–67, 69, *70*
+    - programmed, 17–18
+    - programmed longevity and, 19–23, 31
+    - Prolon and, 98–99
+    - protecting against, xiv, 17, 19–22, 26–27, 31–32
+    - risk and, 25, 32, 69, *103*, 109*,* 152, 170
+    - slowing it down, 16, 22, 24
+    - in worms, 26–28
+    - *see also* centenarians
+    - alcohol, 29, 55–56, 115, 137, 155
+    - almonds, 5, 60, 70, 76, 83, 146, 165, 174, 214, 233, 242, *259*, 263*, 265*
+    - milk and, 4, 223, 225, 231, 234–35, 237, 243, 246, 249, *254*, 256*, 262*, 266*
+    - altruistic death program, 18–19
+    - Alzheimer’s disease (AD), xvii, 116, 156, 175–93
+    - diet and, 177–82, 184–89, 191–93
+    - FMD and, *109*,* 177–79, 181–82, 190, 192
+    - prevention of, 179, 181–84, 186, 189, 191
+    - risk and, 32, *109*,* 116, 178, 182, 185–87, 189–92
+    - treatment of, 177–81, 185, 188, 192–93
+    - Ames, Bruce, 53
+    - amino acids, 50–51, 112
+    - aging and, 28, 33, 57, 66
+    - neurodegenerative diseases and, 179, 189, 192
+    - anchovies, 5, 84, 136, *257*, 263*
+    - pizza with vegetables, anchovies, and sardines, 250–51
+    - animal rights activists, 120–21
+    - Army, U.S., 7–9
+    - autoimmune diseases, xii, xvi, 62, 195–210
+    - diet and, 35, *109*,* 111, 197–98, 200–206, *203*,* 208–10
+    - prevention of, 197–200, 210
+    - risk and, 68, *109*,* 197–98
+    - treatment of, 34–36, 200–210
+    - autophagy, 102, 105–6, 152
+    - bacteria, 12, 61, 195, 197, 203
+    - baker’s yeast (*Saccharomyces cerevisiae*), 96, *256*
+    - aging in, 17, 24–28, 31, 66
+    - longevity and, 28–29, *28*
+    - and Pillars of Longevity, 44–45
+    - Barcelona study, 165, 174–75, 183
+    - barley, 219, 222
+    - barley salad with broccoli, feta, and tomatoes, 249–50
+    - barley salad with olives and nuts, 229–30
+    - basic research, *see* juventology/basic research
+    - bicycling, 90–91, *93*,* 191
+    - Biosphere 2, 24, *25*,* 58, 96, 166–67, *167*
+    - blood, blood pressure, 14–15, 68, 80, 97, 108, 125–26, 155, 195, 202
+    - cancer and, 132, 135
+    - CVD and, 160, *167*,* 171, *173*
+    - diabetes and, 139, 148–49, 152, 158
+    - FMD and, *103*,* 104–5, *105*,* 109, 112, 133–34, 152, 157–58, 171–72, *173*,* 175
+    - and food we eat, 50–52
+    - body mass index (BMI), 134, 136, 168, 187–88, 222*n,* 220
+    - CVD and, *167*,* 174
+    - diabetes and, 139, *140*, 150*
+    - bones, xiv, 53, 98, *99*,* 206
+    - brains, brain, 49, 98, 152
+    - aging and, 73, 181, 186
+    - Laron syndrome and, 29–30
+    - Longevity Diet and, 63, 144
+    - neurodegenerative diseases and, 176–78, 181, 183–84, 186–87, 191
+    - breads, 4, 6, 24, 40, 51–52, *114*,* 133, 135
+    - CVD and, 170, 174
+    - garbanzo bean bread with raw vegetables, 228
+    - garbanzo bean salad and vegetables with garbanzo bean bread, 238–39
+    - Longevity Diet and, 60–62, 76, 81–82, 145, 214–15, 220, 223, 226–29, 232–35, 238–43, 247–51
+    - minerals in, *257*-59, 266*
+    - vitamins in, *255*
+    - whole-grain, 51, 82, 223, 226–27, 233, 242–43, 247, 249, *258*-59, 266*
+    - breakfasts, 6, 85, *114*
+    - Longevity Diet and, 62–64, 142, 145, 215, 220, 222–23, 225, 227, 229, 231, 233, 235, 237, 239, 241,
+    - 243, 245, 247, 249
+    - minerals in, *256*, 258*, 266*
+    - vitamins in, *253*-55, 260*, 263*
+    - broccoli, 85, *114*,* 136, *255*, 258*-61, 263*, 267*
+    - barley salad with broccoli, feta, and tomatoes, 249–50
+    - broccoli soup, 239
+    - cream of garbanzo beans + steamed broccoli, 248–49
+    - pasta with broccoli and black beans, 224
+    - brussels sprouts, *255*, 261*
+    - brussels sprouts with garlic, pine nuts, and Parmesan cheese, 235–36
+    - Buchinger Wilhelmi clinics, 102
+    - Buettner, Dan, 42, 81, 88
+    - Calabria, xii, xv–xvi, 1, 169
+    - centenarian studies in, 72–73, 88, 211
+    - diet in, 3–6
+    - calcium, 53, 220, 223, *256*-58, 262*
+    - Calment, Jeanne, 75
+    - calories, 6, 40, 43, 46, 56, 93
+    - autoimmune diseases and, 204, 208–9
+    - CVD and, 161–62, 167–68, 174
+    - diabetes and, 141, 148, 207
+    - FMD and, 100, 102, *114*,* 115, 131, 133, 149, 151, 158, 181, 204, 209, 216
+    - Longevity Diet and, 62–63, 71–72, 85, 143–44, *143*,* 215, 220–21, 223, 226, 230, 232, 234, 236, 238,
+    - 240, 242, 244, 246, 248, 250
+    - neurodegenerative diseases and, 181–82, 192
+    - restriction of, 24, 38, 57–59, 96–97, 141, 148, 161–63, 167–68, 170, 181–82
+    - Campbell, T. Colin, 67
+    - cancer, xi–xii, xvi–xix, 2, 37, 40, 57, *74*,* 80, 156, 161, 211, 217
+    - aging and, *33*, 71*,* 79, 118–19, 127, *128*, 135*
+    - diet and, xviii–xix, 53, 100, *103*, 109*,* 111, 113, 120, 122, *123*,* 124–34, *128*,* 132–37, *135*,* 146, 171, 180,
+    - 184, 188, 212
+    - fasting and, 36, 97, 122–24, *123*,* 126–34, *128*, 130*,* 207, 212
+    - and guidelines for patients and doctors, 132–33
+    - Laron syndrome people and, 29, *31*
+    - Longevity Diet and, 73, 134–35
+    - in Okinawans vs. Americans, 73, *73*
+    - and Pillars of Longevity, 45, 67–68, 70, *70*
+    - Prolon and, 97–98
+    - protein and, *33*,* 38, 67, 70, *70*, 71*,* 79, 134–35, 146
+    - risk and, 32–33, 67–68, 71, *71*,* 73, *73*, 103*,* 108, *109*,* 113, 116, 132, 134, *135*,* 136, 171, 184, 195
+    - starving patients with, 119–20, 122–24, *123*,* 126–34, *128*, 130*
+    - treatment of, xviii–xix, 34–36, 45, *55*,* 67, 96–98, 100, 106, 118–37, *123*,* 188, 206–7, 212
+    - *see also under* clinical studies
+    - carbohydrates, 7, 42, 133, 166, 189, 204
+    - complex, 4, 51, 58, 60–61, 67, 71–72, 85, *114*,* 143, 145, 214, 220
+    - diet and, 47–48, 60–61, 65–68, *69*,* 71–72, 84–85, 143, 145–46, 204, 214–15, 220
+    - exercise and, 94–95
+    - food sources of, 51–52, 60, *114*
+    - and Pillars of Longevity, 47–48, 66–68
+    - cardiovascular disease (CVD), xii–xiii, xvii, 33, 37, 40, *74*,* 80, 156, 159–62, 165–75
+    - diet and, 64–65, 70, 73, *103*, 109*,* 111, 113, 161–62, 165–69, 171–75, *173*,* 183, 185–86, 188, 192, 197
+    - and Pillars of Longevity, 46, 68, 170, 173
+    - prevention of, 167, 172–73
+    - risk and, 32, 64–65, 68, 70, *103*,* 113, 116, 142, 149, 159, 165–68, *167*,* 171–73, *173*,* 183–84, 186, 192,
+    - 195
+    - treatment of, 36, *55*,* 107, 160–61, 168–70, 173–75, 188
+    - carrots, 41, 85, *114*,* 136, 226, 228–30, 232–36, 240, 243–45, 247–50, *260*, 267*
+    - fennel salad with tomatoes, carrots, onions, and olives, 243
+    - Caruso, Salvatore, 2, 38, 76, *77*,* 88, 193, 218
+    - cells, 14, 24, 34, 91, 118–25, 211
+    - aging and, 20, 22, 44, 47
+    - autoimmune diseases and, 196–97, 201–2
+    - cancer and, 96, 118–20, 122–25, 133, 195, 207
+    - diabetes and, 139, 197
+    - fasting and, 99–100, 124
+    - FMD and, 102–3, 105–6, 108–9, 152, 202–4
+    - and food we eat, 50–52
+    - immune system and, 98–99, 194–97, 201–3, *201*, 203*
+    - Longevity Diet and, 61, 215
+    - muscles and, 8, 11–12
+    - and Pillars of Longevity, 44, 47
+    - progenitor, 203–4
+    - programmed longevity and, 20–21
+    - regeneration, protection, and repair of, xii, xiv, 20, 22, 36, 44, 152, 156, 171, *201*,* 203, *203*
+    - sperm, 19, 104, *104*
+    - *see also* stem cells
+    - centenarians, 35, 54
+    - CVD and, 73, *74*,* 169–70
+    - diets of, 2–6, 64, 71–83, *72*,* 163, 169, 217–18
+    - exercise and, 73, 87–88
+    - hot spots for, 42, 81–82
+    - studies on, xi–xii, xv–xvi, 2, 42, *44*,* 46, 71–83, *72*, 73*, 74*,* 87–88, 163, 170, 211, 217
+    - cereals, *114*
+    - Longevity Diet and, *164*,* 225, 235, 247
+    - minerals in, *256*, 258*, 266*
+    - vitamins in, *253*-55, 260*, 263*
+    - cheeses, xiii, 6, 15, 40–41, 56, *114*,* 143–45, *143*,* 186, 188–89, 192
+    - barley salad with broccoli, feta, and tomatoes, 249–50
+    - brussels sprouts with garlic, pine nuts, and Parmesan cheese, 235–36
+    - Greek salad with feta, olives, onion, and peppers, 237–38
+    - grilled eggplant with feta cheese and tomatoes, 233–34
+    - Longevity Diet and, 59–60, 79, 82, 85, 145, *164*,* 214, 224, 228–29, 233–38, 241, 244, 249–50
+    - Chemolieve, xviii–xix, 132
+    - chemotherapy, 34–36, 67, 97, 119–34, 136, *201*,* 206–7
+    - clinical trials on, 129–32, *130*
+    - side effects of, 126, *128*,* 129–32, *130*,* 207
+    - starving cancer patients and, 119–20, 122–24, *123*,* 126–34, *128*, 130*
+    - Chicago, xiii, 3, 5–7
+    - chicory, 225, 242–43
+    - China Study, The, 67
+    - chocolate, 188, 217–18, *262*
+    - Longevity Diet and, 223, 226, 230, 232, 234, 236–38, 240, 242, 244–46, 248, 250
+    - cholesterol, 15, 39, 65, 182
+    - CVD and, *167*,* 169–71, *173*
+    - FMD and, *103*,* 109, *150*,* 171–72
+    - and Pillars of Longevity, 46–47
+    - treatments for, 107–8
+    - clams, 84, *253*
+    - spaghetti with clams and mussels, 236–37
+    - clinical studies, xii, xiv–xv, xvii–xix, 4, 40–42, *44*,* 45–48, 118, 121, 148, 163, 170, 175, 181, 185, 189–91,
+    - 211, 217
+    - on cancer, xviii, *103*,* 118, 120, 125–32, *128*, 130*,* 137, 156
+    - on FMD, xiv, xviii–xix, 42, *103*,* 105, 108, 110–12, 127–29, *128*, 130*,* 131–32, 134, 137, 149–50, *150*,*
+    - 152, 158–59, 171–72, 177, 179, 190, 200–202, 204–5, 208–10
+    - on Longevity Diet, 68–71, 173, 177, 210
+    - coconuts
+    - milk and, 223, 230, 242, 250, *256*, 262*
+    - neurodegenerative diseases and, 185–86, 188–89, 191–92
+    - coffee, 4, 42, 56, 115
+    - Longevity Diet and, 222, 224*n,* 227, 229, 231, 233, 237, 239, 241, 243, 247, 249
+    - neurodegenerative diseases and, 184–85, 191
+    - colitis, xvii, 62, 208
+    - complex systems, studies of, xv, *44*,* 46–47
+    - exercise and, 89, 91
+    - Longevity Diet and, 83–84
+    - corn, 5, 52, 162, 229–30, 235, *258*, 263*
+    - corticosteroids, 125
+    - Costa Rica, 72, 88, 163
+    - C–reactive protein (CRP), *103*, 150*,* 158, 167, 171–72, *173*,* 195, 209
+    - Crohn’s disease, xvii, 62, 195–96, 208–9
+    - Darwin, Charles, 17
+    - deaths, death, 10, 13, 27, 35, 37, 53, 67, 108, 125, 178, 187
+    - aging and, 17–20, 24
+    - animal testing and, 120–21
+    - calorie restriction and, 58, 161–62
+    - cancer and, *31*, 71*,* 146, 207
+    - CVD and, 160, 165–66
+    - and dangers of fasting, 153–54
+    - exercise and, 92–93
+    - Longevity Diet and, 66, 70
+    - in Molochio, 1–2, 79
+    - proteins and, 38, *71*
+    - risk and, 32, 71, *71*,* 93
+    - de Cabo, Rafael, 162
+    - Deiana, Luca, 81
+    - dementias, 73, 175
+    - diet and, 177, 184–88, 191–92
+    - exercise and, 190–91
+    - desserts, 5–6, 115
+    - Longevity Diet and, 224, 226, 229, 231, 233, 235, 237, 239, 241–42, 244, 247, 249, 251
+    - diabetes, xii–xiii, *33*,* 40, 57, 80, 137–59, 211
+    - cautionary tale on, 154–55
+    - diagnosis of, 138–39, 149
+    - diet and, 62, 65, *103*,* 109, *109*,* 111–13, 134, 141–58, *150*, 153*,* 171, 184, 188, 207
+    - Laron syndrome people and, 29, *31*,* 146–47
+    - monkeys and, 141, 161–62
+    - obesity and, 139, 146–48, 157–58
+    - and Pillars of Longevity, 45–46, 68
+    - prevention of, 141–48, 151–53, 156, 159, 184
+    - reversal of, 141, 149–53, *153*
+    - risk and, 32, 45, 65, 68, *103*, 109*,* 113, 116, 138–40, *140*,* 146–52, *150*,* 157–58, 171, 197
+    - treatment of, 36, *55*,* 109, 142, 147–51, 155–56, 159, 188, 207
+    - type 1, xvii, 62, 109, 153, *153*,* 195–97
+    - type 2, xvii, 109, 138–40, 149, 153, *153*,* 184
+    - diets, dieting, xii–xv, 29, 50–53, 63, 208–12
+    - aging and, *55*,* 66, 163
+    - in Army, 7–8
+    - autoimmune diseases and, 35, *109*,* 111, 197–98, 200, 202–6, *203*,* 208–10
+    - calorie restriction (CR), 24, 38, 57–59, 96–97, 141, 148, 161–63, 167–68, 170, 181–82
+    - cancer and, xviii–xix, 53, 100, *103*, 109*,* 111, 113, 120, 122, *123*,* 124–34, *128*,* 132–37, *135*,* 146, 171,
+    - 180, 184, 188, 212
+    - of centenarians, 2–6, 64, 71–83, *72*,* 163, 169, 217–18
+    - chemotherapy and, 133, *201*
+    - in Chicago, xiii, 6–7
+    - CVD and, 64–65, 70, 73, *103*, 109*,* 111, 113, 161–62, 165–69, 171–75, *173*,* 183 185–86, 188, 192, 197
+    - diabetes and, 62, 65, *103*,* 109, *109*,* 111–13, 134, 141–58, *150*, 153*,* 171, 184, 188, 207
+    - and eating at table of your ancestors, 198–200, 210
+    - and eating in moderation, 40–41, 101
+    - exercise and, 87–88, 112–13, 216
+    - genes and, 31–32, 38, 80, 103, 110–12, 134, 153, 181
+    - high–fat, 6, 67–68, 145–46
+    - high–protein, 47–48, 58, 66–68, *69*,* 146, 189
+    - high–sugar, 6, 58, 162–63
+    - inflammatory diseases and, 195–97
+    - link between aging, longevity, disease and, xiii, 4, 10, 37–38, 43, 58, 66–67, 69, 75–76, 83–84, 116, 163
+    - listening to right people on, 39–42, 47
+    - longevity and, xiii, 2–6, 24, 37–44, 47–48, 58, 64, 66–67, 69, *69*,* 71–83, *72*,* 161, 163, 169, 181, 217–18
+    - low–carb, 47–48, 65–68, *69*,* 71, 145–46, 204
+    - low–protein, 2, 8, 66–67, 69, *69*,* 79, 147, 189
+    - low–sugar, 8, 46
+    - neurodegenerative diseases and, 177–93
+    - obesity and, 113, 133, 152, 157–58
+    - and Pillars of Longevity, 43–48, 57, 66–86, *69*
+    - *see also specific diets*
+    - differential stress resistance, 36, 45, 119
+    - dinners, 4, 6, 85, *114*,* 155
+    - Longevity Diet and, 63–64, 82, 85, 145, 215, 220–21, 223, 226, 228–42, 244, 246–51
+    - disposable soma theory, 19
+    - DNA, 12, 61, 88, 103, 182
+    - aging and, 17, 19–20
+    - autoimmune diseases and, 197–98
+    - cancer and, 118, 124
+    - drugs, 11, 15, 34–36, 80, 106–9, 154, 161, 169, 180
+    - autoimmune diseases and, 206–7
+    - diabetes and, 148–51, 155–56
+    - FMD and, 108–9, 111–12, 134, 158, 175
+    - side effects of, 41, 107
+    - *see also* chemotherapy
+    - Ecuador, xv, 38, 46, 57
+    - Laron syndrome in, 29–31, *30*, 31*,* 77–78, 80, 146–47, 211
+    - eggplant, 246
+    - grilled eggplant with feta cheese and tomatoes, 233–34
+    - eggs, 6, 39, 41–42, *72*,* 75, 167, 188–89, 198, *259*
+    - Longevity Diet and, 59, 72, 79–81, 85, *164*,* 214
+    - vitamins in, *254*, 256*, 260*, 262*
+    - environment, 12, 18, 24, 62, 84, 124, 166–67, 196
+    - epidemiology, xi–xii, xv, 4, 41, *44*,* 45–48, 163, 170, 173, 211–12, 217
+    - exercise and, 91–92
+    - Longevity Diet and, 67–68, 75
+    - escarole, olives, tomatoes, and basil, 231–32
+    - Esselstyn diet, 169–70, 173, 175
+    - evolution, 10–12, 31, 34, 62, 84, 91, 101, 107, 109, 122–24
+    - aging and, 17–18, 20
+    - longevity and, 20, 45
+    - exercise, xv, 7–8, 32, 82, 87–95, *93*,* 102
+    - cancer and, 136, 217
+    - centenarians and, 73, 87–88
+    - CVD and, 168, 172, 174
+    - diet and, 87–88, 112–13, 216
+    - neurodegenerative diseases and, 188, 190–91
+    - optimizing of, 89–92
+    - Fabrizio, Paola, 118
+    - fasting, 12, 99–102, 121, 181, 185
+    - autoimmune diseases and, *203*,* 206–8
+    - cancer and, 36, 97, 122–24, 126–34, *128*, 130*,* 207, 212
+    - dangers of, 153–54
+    - diabetes and, 139, 141, 147–49
+    - intermittent, 101–2
+    - Longevity Diet and, 64–65
+    - periodic, prolonged, 100–102
+    - and Pillars of Longevity, 42, 67
+    - side effects of, *128*,* 129
+    - water–only, xix, 26, 120, 129, 153–54
+    - fasting–mimicking diets (FMDs), xiv, 32, 35–36, 42, 45, 97–115, *105*, 151*,* 154, 163–64, 175–79, 201
+    - aging and, xviii–xix, *99*, 100*,* 102, *103*,* 108, 110–11, *123*,* 152, 181–82, 190, 216
+    - autoimmune diseases and, 35, *109*,* 111, 200–206, *203*,* 208–10
+    - cancer and, xviii–xix, 100, *103*, 109*,* 111, 113, *123*,* 124–34, *135*,* 136, 171
+    - CVD and, *103*, 109*,* 111, 113, 161, 171–73, *173*,* 175
+    - diabetes and, *103*,* 109, *109*,* 111–13, 134, 141, 147–53, *150*, 153*,* 156–58, 171
+    - effects on humans of, 102–5, 109
+    - and guidelines for patients and doctors, 132–34
+    - Longevity Diet and, 64–65, 86, 102, 114, 171, 204–5, 210, 216
+    - neurodegenerative diseases and, *109*,* 111, 113, 177–79, *180*,* 181–83, 190–92
+    - obesity and, 113, 133, 152, 157–59
+    - preparation for, 114, *114*
+    - Prolon and, xix–xx, 97–99, 104, 110, 157, 159
+    - regenerative self–healing process and, 105–6, 108–9, *109*
+    - risk and, *103*,* 104, 108–9, *109*,* 112–13, 115, 133, 182, 190
+    - side effects of, xix, 114–15, 126, 133, 158, 201, 204–5
+    - when to start it, 113
+    - who may do it, 110–11
+    - who may not do it, 111–12
+    - *see also under* clinical studies
+    - fats, fat, 42, 133, 162
+    - abdominal, xiv, 45, 65, 85–86, 98, 103–4, 115, 139–42, 145, 148, 151, 157–58, 171–72, 187, 196, 210,
+    - 215–16, 222*n*
+    - autoimmune diseases and, 196, 204, 210
+    - bad, 58, 60, 144–45, 186, 214
+    - CVD and, 165–66, 169–70, 174–75
+    - diabetes and, 139–40, 148
+    - diet and, 6, 8, 47–48, 58, 60, 63, 65, 67–68, *69*,* 70–72, 84–86, 97, 103–4, *114*,* 115, 142–46, 151–52,
+    - 158, 171–72, 186, 210, 214–16, 220–21
+    - fasting and, 97, 101
+    - food sources of, 52, *114*
+    - good, 58, 60, 71, 85, 97, 137, 143–44, 146, 189, 214, 221
+    - hydrogenated, 60, 214
+    - monounsaturated, 52, 144, 165, 186
+    - neurodegenerative diseases and, 185–88, 192
+    - obesity and, 145, 157–58
+    - and Pillars of Longevity, 45–47, 68
+    - polyunsaturated, 52, 165
+    - saturated, 48, 52, 56, 60, 68, 72, 84–85, *114*,* 137, 144, 165, 185–86, 192, 214
+    - trans, 60, 72, 165, 186, 214
+    - unsaturated, 52, 60, 214, 221
+    - fennel salad with tomatoes, carrots, onions, and olives, 243
+    - Finch, Caleb, 23, 177
+    - fish and seafood, 4, 52–53, *72*,* 162, 188–89, 192, 198
+    - black/venus rice with zucchini and shrimp, 244
+    - and cancer, 135–37
+    - and CVD, 165, 167, 169–70, 174
+    - and FMD, 114, *114*
+    - and Longevity Diet, 5, 59–60, 63, 67, 72, 76, 84–85, 114, 214, 221, 226, 232–33, 236–37, 240, 244, 250–
+    - 51
+    - minerals in, *256*-59, 267*
+    - octopus with potato, 232–33
+    - omega–3 in, 84, *264*-66*
+    - pasta with tuna, olives, capers, and tomato, 240
+    - pizza with vegetables, anchovies, and sardines, 250–51
+    - salmon fillet with asparagus, 226
+    - spaghetti with clams and mussels, 236–37
+    - vitamins in, *253*-54, 256*, 260*, 262*-63*
+    - Five Pillars of Longevity, xv, 21–22, 38, 41–48, *55*, 70*,* 163–64, 213
+    - applications of, 43, 47–48, 50
+    - components of, 44–47, *44*
+    - and CVD, 46, 68, 170, 173
+    - and diet, 43–48, 57, 66–86, *69*
+    - exercise and, 89, 91–92
+    - 5:2 diet, 147–49
+    - Fraser, Gary, 82
+    - free radicals, 10, 19, 22, 26
+    - fruit flies, 28–29, *28*,* 66
+    - fruits, 5–6, 51, *72*, 114*,* 133, 188, 204
+    - CVD and, 167–69, 174
+    - juices and, 6, 10, 51, 61, 111, 224*n, 255*, 257*, 261*-62*
+    - Longevity Diet and, 60–61, 72, 81, *164*,* 220, 223–24, 226–29, 231, 233, 235, 237, 239, 241–45, 247,
+    - 249, 251
+    - minerals in, *257*-59, 267*
+    - spinach with pine nuts and raisins, 223
+    - vitamins in, *255*-56, 260*-63*
+    - garbanzo beans, 4–5, 40, 85, 136, 143–44, 174, 198, *256*, 259*
+    - cream of garbanzo beans + steamed broccoli, 248–49
+    - garbanzo bean bread with raw vegetables, 228
+    - garbanzo bean minestrone with pasta, 228–29
+    - garbanzo bean salad and vegetables with garbanzo bean bread, 238–39
+    - genes, genetics, xiv, 23–34, 41, 62, 87–88, 146–47, 211–12
+    - aging and, 10, 17–18, 24–28, 31, 33, 36, 45, 47, 57, 118, 179, 212
+    - baker’s yeast and, 25–26
+    - cancer and, 118, 134
+    - diet and, 31–32, 38, 48, 80, 103, 110–12, 134, 153, 181
+    - growth, 28–32, *28*, 31*
+    - longevity and, 23, 27–29, *28*,* 31, 33–34, 38
+    - neurodegenerative diseases and, 178–82
+    - and Pillars of Longevity, 45, 47–48
+    - Genoa, 13, 39, 90, 120
+    - diet in, 3–5
+    - Longo’s background in, xii, xv–xvi
+    - Germany, xv, 102, 198, 200
+    - Gilbert, Daniel, 56
+    - glucose, 11, 46, 49, 51, 97, 108, 125–26, *167*,* 185
+    - diabetes and, 139, 141, 147–49, 152, 154, 158
+    - FMD and, *103*,* 104, 109, 112, 133, 152–53, 158, 172
+    - glycemic index, 51–52
+    - glycemic load, 51–52
+    - Gracy, Robert, 14–15
+    - grains, *72*, 114*,* 133, 162, 204
+    - barley salad with broccoli, feta, and tomatoes, 249–50
+    - barley salad with olives and nuts, 229–30
+    - black/venus rice with zucchini and shrimp, 244
+    - CVD and, 167–69, 174
+    - Longevity Diet and, 60, 66, 72, 80, 82, 85, 145, 214–15, 219–20, 222–23, 225, 227, 229–32, 234–38,
+    - 240–50
+    - Mediterranean spelt salad with artichokes and mushrooms, 245–46
+    - minerals in, *258*-59, 266*-67*
+    - rice with zucchini and peas, 241
+    - spelt and zucchini with garlic, olives, and parsley, 227
+    - vitamins in, *254*-55, 262*-63*
+    - whole, 51, 53, 82, 145, 174, 219, 223, 226–27, 232–34, 236, 238, 240, 242–50, *258*-59, 266*
+    - wild rice and green beans with garlic and fresh tomato, 225
+    - Gralla, Edith, 24
+    - Greece, 72, *73*,* 169
+    - Greek salad with feta, olives, onion, and peppers, 237–38
+    - growth hormone (GH), 14–15
+    - growth hormone receptor (GHR) genes and, 31, 57, 146
+    - growth hormone receptors (GHRs), 29, *31*,* 38, 57, 147
+    - Guevara–Aguirre, Jaime, 29, 31
+    - Hall, Stephen, 78
+    - Harvie, Michelle, 148
+    - hazelnuts, 5, 70, 146, 165, 174, 235, 241, *257*, 263*
+    - milks and, 223, 226, 228, 232, 238–40, 247–48
+    - hyperglycemia, 47, *130*
+    - hypoglycemia, hypoglycemic shock, 154–56
+    - immune system
+    - aging and, 194–95, 206
+    - autoimmune diseases and, 196–97
+    - cancer and, 124–25, 136, 195
+    - cells and, 98–99, 194–97, 201–3, *201*, 203*
+    - diet and, 61, 79, 96–97, *100*,* 181–82, 197, 200, 202, *203*,* 206
+    - fasting and, 99, *201*, 203*,* 206
+    - neurodegenerative diseases and, 181–82
+    - immunotherapy, 124–25
+    - inflammation, inflammatory diseases, 98, 171–72
+    - autoimmune diseases and, 34, 196–97, 208–9
+    - immune system and, 194–96
+    - insulin, 51, 57
+    - and dangers of fasting, 153–54
+    - diabetes and, 139, 147–48, *153*,* 155–56, 197
+    - FMD and, 109, 112, 134, 152–53, *153*
+    - Longevity Diet and, 144, 154
+    - and Pillars of Longevity, 45, 47
+    - resistance to, 11, 45, 47, 139, 147, 152
+    - insulin–like growth factor 1 (IGF–1), 57, *203*
+    - aging and, 66–67, 70, *70*,* 79, *135*
+    - cancer and, 68, *70*,* 97, *103*, 135*,* 180
+    - diabetes and, 147, *150*
+    - FMD and, 97, *103*,* 104
+    - Italians, Italy, xi–xiii, xviii, 1–6, 35, 38, 46, 90, 169, 213
+    - centenarian studies in, xvi, 2, 72–73, *73*,* 75–82, 88
+    - and eating at table of your ancestors, 198–99
+    - Longo’s background in, xii, xv–xvi, 1–4, 6, 13, 75, 198
+    - Japan, xv, 2, 88, 169
+    - centenarian studies in, 71, *73*, 74*
+    - and eating at table of your ancestors, 198–99
+    - Johnson, Thomas, 26–27
+    - juices, 204
+    - fruit, 6, 10, 61, 111, 224*n*
+    - orange, 10, 51, *255*, 257*, 261*-62*
+    - tomato, *255*, 260*-61*
+    - juventology/basic research, xii, xv, xvii–xviii, 21–23, 41, 44–46, *44*,* 57, 177, 217
+    - Longevity Diet and, 66–67
+    - kale, 62, 199–200, 225, *257*
+    - Kenyon, Cynthia, 26
+    - ketogenic diet, 176, 204
+    - ketones, 49, 97, 185
+    - Kirkwood, Tom, 19
+    - lactose intolerance, 62, 198
+    - Laron syndrome, 29–31, *30*, 31*,* 77–78, 80, 146–47, 211
+    - Lee, Changhan, 120
+    - legumes, 4–5, 40, 56, 136, 189, 198, *265*
+    - cream of garbanzo beans + steamed broccoli, 248–49
+    - CVD and, 166–69, 174
+    - garbanzo bean bread with raw vegetables, 228
+    - garbanzo bean minestrone with pasta, 228–29
+    - garbanzo bean salad and vegetables with garbanzo bean bread, 238–39
+    - Longevity Diet and, 5, 60–61, 63, 72, 76–77, 81–83, 85, 143–45, *164*,* 224–25, 228–31, 234–35, 238–39,
+    - 241–42, 246, 248–49
+    - minerals in, *256*-59, 266*-67*
+    - pasta and lentil soup, 230–31
+    - pasta e vaianeia, 4, 76, 234–35
+    - pasta with broccoli and black beans, 224
+    - rice with zucchini and peas, 241
+    - vitamins in, *255*, 260*-61*
+    - white bean salad with onion, rosemary, and chicory, 242
+    - wild rice and green beans with garlic and fresh tomato, 225
+    - lifespan, *see* longevity
+    - liver, 98, 145, 184, 195, 205
+    - diabetes and, 139, 155
+    - FMD and, 111, 133, 151–52
+    - L–Nutra, xviii–xx, 110, 156
+    - Loma Linda, Calif., 71–73, 82–83, 88, 163, 169
+    - longevity, xi–xv, 33–49, 98, 184, 199
+    - aging and, 17–23, 28–29, 31
+    - diet and, xiii, 2–6, 24, 37–44, 47–48, 58, 64, 66–67, 69, *69*,* 71–83, *72*,* 161, 163, 169, 181, 217–18
+    - exercise and, 73, 87–92, 216
+    - extension of, 10, 18, 21–22, 36–38, 41, *55*,* 67
+    - genes and, 23, 27–29, *28*,* 31, 33–34, 38
+    - healthy, xii, xiv–xv, 18, 22–23, 35–39, 41, 44, 47, 49, 54, 56, 59, 63, 65, 73, 146, 211–13, 217
+    - programmed, 19–23, 31, 33, 35
+    - social aspects of, 217–18
+    - solving medical problems and, 34–35
+    - *see also* centenarians
+    - Longevity Diet, 5, 52–53, 59–86, *69*,* 108, 115, 161–65, 177, 199
+    - autoimmune diseases and, 204–5, 209–10
+    - cancer and, 73, *74*,* 134–35
+    - cautionary tale on, 154–55
+    - comparisons between Mediterranean and, 163–65, *164*
+    - CVD and, 161, 165, 172–73
+    - diabetes and, 62, 65, 141–47, 154–56
+    - eating foods from your ancestry in, 61–62, 85, 215
+    - eating more, not less, but better in, 143–47, *143*
+    - eating twice a day plus snack in, 62–64, 85, 144–45, 215
+    - FMD and, 64–65, 86, 102, 114, 171, 204–5, 210, 216
+    - negative reactions to, 55–56
+    - neurodegenerative diseases and, 183–84, 186, 188–89, 191, 193
+    - nourishment in, 61, 63, 68
+    - recipes for, 222–51
+    - summaries on, 84–86, 214–16
+    - time–restricted eating in, 64, 70–72, 83, 86, 142, *164*,* 215–16, 221
+    - two–week meal plan for, 219–51
+    - lunches, 4, 6, 85, *114*,* 155
+    - Longevity Diet and, 63–64, 145, 220–21, 223, 225, 227, 229–41, 243, 245–50
+    - mackerel, 59, *253*, 264*
+    - magnesium, 53, 220, *266*-67*
+    - meats, xiii, 4, 6–8, 15, 50, *72*,* 189, 198
+    - CVD and, 166–67, 169, 174
+    - diabetes and, 154–55
+    - Longevity Diet and, 60, 72, 77, 79–80, 85, *164*
+    - red, 42–43, 56, 60, 166, 174, 186
+    - white, 60, 85
+    - Mediterranean diet, 101
+    - autoimmune diseases and, 204, 209
+    - comparisons between Longevity and, 163–65, *164*
+    - CVD and, 70, 165, 183
+    - inflammatory diseases and, 195–96
+    - Mediterranean spelt salad with artichokes and mushrooms, 245–46
+    - medium–chain fatty acids (MCFA), 185–86
+    - metabolic equivalent tasks (METs), 92–93, *93*
+    - metabolic syndrome, 149, *150*
+    - metformin, 112, 134, 155
+    - mice, 10, 30, 35, 48, 106, 211
+    - aging in, 24–26, 28, 57–58, 66
+    - autoimmune diseases and, 200–203, 206, 208
+    - calorie restriction and, 24, 58, 96–97
+    - cancer and, 33, 120–21, *123*,* 125–27, 136, 180
+    - diabetes and, 147, 149, 153, *153*
+    - fasting and, 97, 99–100, 206
+    - FMD and, *99*,* 100, *100*,* 105, 109, *123*,* 151–53, *153*, 180*,* 190, 202–5
+    - longevity diets for, 37–38, 66, *69*
+    - longevity in, 21, 28–29, *28*
+    - neurodegenerative diseases and, 178–81, 183, 188–90
+    - and Pillars of Longevity, 44–45, 66–67, *69*
+    - Prolon and, 98–99
+    - micronutrients, 52–53, 219
+    - Milan, xi–xii, xviii, 39, 212
+    - mild cognitive impairment, 188
+    - milks, 4–6, 41, *114*,* 162, 186
+    - almond, 4, 223, 225, 231, 234–35, 237, 243, 246, 249, *254*, 256*, 262*, 266*
+    - autoimmune diseases and, 197–98
+    - coconut, 223, 230, 242, 250, *256*, 262*
+    - diabetes and, 154–55
+    - and eating at table of your ancestors, 198–99
+    - of goats, 4–5, 59, 82, 167, 192, 199, 214, 236, 244
+    - hazelnut, 223, 226, 228, 232, 238–40, 247–48
+    - Longevity Diet and, 59, 62, 79, 82, *164*,* 214, 223, 226, 228, 230, 232, 234, 236–40, 242, 244, 246–50
+    - neurodegenerative diseases and, 189, 192
+    - soy, *256*, 262*, 266*
+    - minerals, 133, 136, 162, 192
+    - FMD and, 100, *114*
+    - food sources of, 53–54, *256*-59, 266*-67*
+    - Longevity Diet and, 61, 85, 143–44, 215, 219–20, 224, 231, 237, 244, 251
+    - minestrone, 4, 80
+    - garbanzo bean minestrone with pasta, 228–29
+    - Ligurian minestrone, 246–47
+    - Mirisola, Mario, 118
+    - moderation, eating in, 40–41, 101, 188
+    - Molochio, 1–5, 75–79, 234
+    - centenarian studies in, 2, 76, 78, 81
+    - fountain plaza of, 1–2, *3*
+    - monkeys, 21, 141
+    - diets and, 37–38, 58, 96–97, 161–63, 167
+    - exercise and, 87–88
+    - Morano, Emma, 38, *78*,* 79–81, 193
+    - Mosley, Michael, 148
+    - multiple sclerosis (MS), xvii, 195–96, 211
+    - symptoms of, 202–3, 208
+    - treatment of, 34, 200–205, 208–9
+    - multivitamins, 53, 61, 85, 114, *114*,* 192, 215, 220, 224, 231, 237, 244, 251
+    - muscles, xiv, 11–12, 98, 139, 141, 146
+    - exercise and, 8, 91–95, 216
+    - FMD and, *103*,* 152, 182
+    - and food we eat, 50–51, 59–60
+    - Longevity Diet and, 59–60, 62–63, 71, 79, 85, 214–15, 220–21
+    - neurodegenerative diseases and, 182, 188–89
+    - mushrooms, *114*,* 229–30, 236, 250, *262*-63*
+    - Mediterranean spelt salad with artichokes and mushrooms, 245–46
+    - music
+    - comparisons between science and, 9–11
+    - Longo’s education and career in, xi, xiii, 5–7, 9–12, 23
+    - mussels, 5, *253*, 258*, 264*
+    - spaghetti with clams and mussels, 236–37
+    - mutations, 80, 87, 134
+    - cancer and, 118, 124
+    - FMD and, 110–12
+    - growth genes and, 28–31, *28*, 30*, 31*
+    - Laron syndrome and, 30, *30*, 31*,* 146, 211
+    - neurodegenerative diseases and, 178–79
+    - neurodegenerative diseases, xii, xvi, 36, 175–93
+    - diet and, 177–93
+    - exercise and, 188, 190–91
+    - FMD and, *109*,* 111, 113, 177–79, *180*,* 181–83, 190–92
+    - risk and, 32, *109*,* 113, 116, 178, 182–87, 189–92
+    - nutraceuticals, 180–81
+    - nutritechnologies, 8, 50, 97, 180–81
+    - nuts, 4–5, 53, 56, *114*,* 137, *265*
+    - barley salad with olives and nuts, 229–30
+    - brussels sprouts with garlic, pine nuts, and Parmesan cheese, 235–36
+    - CVD and, 165–67, 169–70, 174–75, 183
+    - Longevity Diet and, 60, 67, 70, 72, 76, 82–83, 85, 146, 165, 214, 223, 225–44, 246–51
+    - minerals in, *256*-59, 266*
+    - neurodegenerative diseases and, 183–84, 191
+    - spinach with pine nuts and raisins, 223
+    - vitamins in, *254*-55, 260*, 262*-63*
+    - oats, oatmeal, 231, 237, *266*-67*
+    - obesity, 6, *31*,* 32, 41, 80, 145, 156–59, 195–96
+    - case studies on, 157–59
+    - diabetes and, 139, 146–48, 157–58
+    - diet and, 63, 113, 133, 152, 157–59
+    - octopus, *264*
+    - octopus with potato, 232–33
+    - oils, 232, *263*
+    - coconut, 185–86, 188–89, 191–92
+    - CVD and, 165, 169
+    - omega–3 in, *265*-66*
+    - Okinawans, Okinawa, xv, 169
+    - cancer and, 73, *73*, 74*
+    - centenarian studies in, 2, 42, 71–74, *72*, 73*, 74*,* 88, 211
+    - diet in, 71–73, *72*,* 163
+    - exercise and, 73, 88
+    - spirituality of, 74–75
+    - olive oil, 4–5, 52, 56, *114*,* 137, *143*,* 198
+    - CVD and, 165, 169–70, 174–75, 183
+    - Longevity Diet and, 5, 60, 67, 70, 76, 85, 143–44, 146, *164*,* 165, 223–51
+    - neurodegenerative diseases and, 183–84, 186, 188, 191
+    - olives, 4
+    - barley salad with olives and nuts, 229–30
+    - escarole, olives, tomatoes, and basil, 231–32
+    - fennel salad with tomatoes, carrots, onions, and olives, 243
+    - Greek salad with feta, olives, onion, and peppers, 237–38
+    - Longevity Diet and, 76, 227, 229–33, 237–38, 240, 243, 245, 251
+    - pasta with tuna, olives, capers, and tomato, 240
+    - spelt and zucchini with garlic, olives, and parsley, 227
+    - omega–3 fatty acid, 52, 61, 82, 114, *114*,* 136, 170, 204, 215, 220, 223, 231, 237, 244, 251
+    - food sources of, *72*,* 84, *264*-66*
+    - neurodegenerative diseases and, 186, 189, 192
+    - omega–6 fatty acid, 52, 61, 84, *114*,* 136, 215
+    - oocytes, 19, 104, *104*
+    - oranges, 174
+    - juice and, 10, 51, *255*, 257*, 261*-62*
+    - Ornish diet, 168–70, 173–75
+    - overweight, 6, 80, 136
+    - diabetes and, 139, 147–48
+    - FMD and, 113, 152, 172–73
+    - Longevity Diet and, 63, 85
+    - oxygen, oxidation, 19, 22, 27, 61
+    - oysters, *253*, 258*, 264*
+    - pancreas, 51–52, 99, 131
+    - diabetes and, 109, 139, 149, *153*,* 197
+    - FMD and, 152–53, *153*
+    - Panda, Satchidananda, 70–71
+    - Parkinson’s disease, xvii, 176–77, 184
+    - Passarino, Giuseppe, 78
+    - pasta, 6, 39, 41, 56, *114*,* 133, 135, *143*
+    - CVD and, 170, 174
+    - garbanzo bean minestrone with pasta, 228–29
+    - Longevity Diet and, 60–62, 66, 76, 143, 145, 214, 219–20, 224, 228–31, 234–37, 240, 246–47
+    - pasta and lentil soup, 230–31
+    - pasta e vaianeia, 4, 76, 234–35
+    - pasta with broccoli and black beans, 224
+    - pasta with tuna, olives, capers, and tomato, 240
+    - spaghetti with clams and mussels, 236–37
+    - peanuts, 5, 167, 255, 257–59, 263, 266
+    - peas, 136, 167, 174, 224*n,* 246, *260*, 265*
+    - green, 85, *255*, 259*, 261*
+    - rice with zucchini and peas, 241
+    - pecans, 229–30, 239, *265*
+    - peppers, *143*,* 224, 229–30, 235–38, 250
+    - Greek salad with feta, olives, onion, and peppers, 237–38
+    - green, 4, 136, 226, 229, 238, *261*
+    - red, 236, 238, *260*, 261*
+    - Pes, Gianni, 42, 81
+    - pescetarian diets, 3, 59
+    - physical activity levels (PALs), 42, 221
+    - pistachios, 251, *257*, 259*, 260*
+    - pizza, 6, 143
+    - pizza with vegetables, anchovies, and sardines, 250–51
+    - potatoes, 66, 72, 167, 204, 230, 232–34, 246–48, *259*, 261*, 266*
+    - octopus with potato, 232–33
+    - Poulain, Michel, 42, 81
+    - pregnancy, 49, 111
+    - ProLon, Prolon, xviii–xx, 159
+    - FMD and, xix–xx, 97–99, 104, 110, 157, 159
+    - proteins, protein, 40, 133, 162–63, 200, 204
+    - age and, 14, 28, 33, *33*,* 44, 48, 57–58, 66–67, 70, *70*, 71*
+    - cancer and, *33*,* 38, 67, 70, *70*, 71*,* 79, 134–35, 146
+    - CVD and, 68, 166, 170, 174
+    - damaging of, 14–15
+    - diabetes and, *33*,* 68, 146–48
+    - diet and, 2, 7–8, 47–48, 57–60, 66–69, *69*,* 71–72, 79, 83–85, 114, 135, 143–44, 146–47, *164*,* 189, 214–
+    - 15, 220–21
+    - exercise and, 91, 94–95, 216
+    - FMD and, 97, 103, 105, 114, *114*
+    - food sources of, 50–51, 60, 114, *114*
+    - as good and bad, 42–43
+    - neurodegenerative diseases and, 177–78, 180, 188–90, 192
+    - and Pillars of Longevity, 44, 47–48, 66–69
+    - pumpkins, *114*, 260*, 265*
+    - pumpkin soup with croutons, 239–40
+    - Quinn, Nora, 126
+    - quinoa, 62, 199–200
+    - Raffaghello, Lizzia, 35, 120
+    - reproduction, 19–20
+    - rheumatoid arthritis (RA), 196, 200, 208–9
+    - rice, *114*,* 133, 204
+    - black/venus rice with zucchini and shrimp, 244
+    - Longevity Diet and, 60–61, 66, 80, 145, 214–15, 219, 225, 244
+    - minerals in, *259*, 266*-67*
+    - rice with zucchini and peas, 241
+    - vitamins in, *254*-55, 262*
+    - wild rice and green beans with garlic and fresh tomato, 225
+    - risk, risk factors, xiv, 18, 43, 125
+    - aging and, 25, 32, 69, *103*, 109*,* 152, 170
+    - autoimmune diseases and, 68, *109*,* 197–98
+    - calorie restriction and, 58, 96–97
+    - cancer and, 32–33, 67–68, 71, *71*,* 73, *73*, 103*,* 108, *109*,* 113, 116, 132, 134, *135*,* 136, 171, 184, 195
+    - CVD and, 32, 64–65, 68, 70, *103*,* 113, 116, 142, 149, 159, 165–68, *167*,* 171–73, *173*,* 183–84, 186, 192,
+    - 195
+    - death and, 32, 71, *71*,* 93
+    - diabetes and, 32, 45, 65, 68, *103*, 109*,* 113, 116, 138–40, *140*,* 146–52, *150*,* 157–58, 171, 197
+    - exercise and, 32, 89–90, 93
+    - FMD and, *103*,* 104, 108–9, 112–13, 115, 133, 182, 190
+    - Longevity Diet and, 64–65, 67, 70, 108
+    - neurodegenerative diseases and, 32, *109*,* 113, 116, 178, 182–87, 189–92
+    - and Pillars of Longevity, 45–46, 68–70
+    - running, 7, 89–91, *93*,* 102, 155, 190–91
+    - Russell, Jenni, 205–7
+    - Ruvkun, Gary, 28
+    - salads, 41, 146, 226, 229–33, 235–40, 242–50
+    - barley salad with broccoli, feta, and tomatoes, 249–50
+    - barley salad with olives and nuts, 229–30
+    - escarole, olives, tomatoes, and basil, 231–32
+    - fennel salad with tomatoes, carrots, onions, and olives, 243
+    - garbanzo bean salad and vegetables with garbanzo bean bread, 238–39
+    - Greek salad with feta, olives, onion, and peppers, 237–38
+    - Mediterranean spelt salad with artichokes and mushrooms, 245–46
+    - white bean salad with onion, rosemary, and chicory, 242
+    - Salazar Aguilar, Freddi, *30*
+    - salmon, 52, 60, 84, 136, 170, 189, 214, *254*, 257*, 260*, 262*, 264*, 266*-67*
+    - salmon fillet with asparagus, 226
+    - salt, 4, *258*, 264*
+    - autoimmune diseases and, 197, 210
+    - Longevity Diet and, 223–30, 232–51
+    - Sanchez Romero, Luis, *30*
+    - sardines, 84, *253*, 256*, 259*, 262*, 264*, 266*
+    - pizza with vegetables, anchovies, and sardines, 250–51
+    - Sardinia, 72–73, 81–82, 88, 169
+    - seafood, *see* fish and seafood
+    - seaweeds, *72*,* 198, *258*
+    - sensitization, 36, 45, 155
+    - Seventh–day Adventists, 82, 88, 169
+    - sex, 55–56, 76
+    - shrimp, 84, *264*
+    - black/venus rice with zucchini and shrimp, 244
+    - sleep, 49, 64, 70, 142, 148, 206
+    - smoking, 29, 75–76
+    - smoothies, 5, 228, 240
+    - snacks, xiii, 5, *114*,* 174
+    - Longevity Diet and, 62–64, 85, 142, 144–45, 215, 220, 223, 226, 228, 230, 232, 234, 236, 238, 240, 242,
+    - 244, 246, 248, 250
+    - soft drinks, 6–7, 41, 51, 145
+    - soups, 4, 80–81
+    - broccoli soup, 239
+    - garbanzo bean minestrone with pasta, 228–29
+    - Ligurian minestrone, 246–47
+    - pasta and lentil soup, 230–31
+    - pumpkin soup with croutons, 239–40
+    - tomato soup with basil, pesto, and croutons, 247–48
+    - soy products, *72*,* 162, 168, *254*, 265*
+    - milk and, *256*, 262*, 266*
+    - vitamins in, *262*-63*
+    - spaghetti, *255*, 259*
+    - spaghetti with clams and mussels, 236–37
+    - spelt, 223
+    - Mediterranean spelt salad with artichokes and mushrooms, 245–46
+    - spelt and zucchini with garlic, olives, and parsley, 227
+    - spinach, 238–39, *250*, 255*, 259*-61, 263*, 266*
+    - spinach with pine nuts and raisins, 223
+    - spirituality, 74–75, 217
+    - statins, 15, 107, 109
+    - steaks, 4, 41, 50
+    - stem cells, xiv, 98
+    - autoimmune diseases and, 202–3, *203*
+    - fasting and, 99–100, 206
+    - FMD and, 103, 105–6, *105*,* 115, 152, 202, *203*
+    - therapies based on, 106–8
+    - sugars, xiii, 5–8, 56, 158
+    - aging and, 27–28, 33, *33*,* 44, 57–58, 67
+    - cancer and, 134–35
+    - CVD and, 168, 174
+    - diet and, 7–8, 46, 51–52, 57–58, 60–62, 72, 84–86, 96–97, 112, 115, 144–45, 155, 162–63, 214–15, 220,
+    - 223, 224*n,* 226–27, 229–30, 232, 234, 236, 238–40, 242, 244, 246, 248, 250
+    - and Pillars of Longevity, 44–47, 67
+    - supplements, 10, 53–54, 136, *265*-66*
+    - FMD and, 114, *114*,* 204
+    - Longevity Diet and, 61, 85, 114, 215, 220, 223–24, 231, 237, 244, 251
+    - neurodegenerative diseases and, 186–87, 192
+    - sweet potatoes, 198, *258*, 260*
+    - swimming, 91, 191
+    - tea, 4, *114*,* 204, 207
+    - Longevity Diet and, 224*n,* 225, 227, 229, 232, 237, 239, 241, 245, 247, 249
+    - Tex–Mex, 15
+    - tomatoes, 4, 76, 85, *114*,* 136, *143*,* 198, 225–27, 229–36, *253*, 259*, 263*
+    - barley salad with broccoli, feta, and tomatoes, 249–50
+    - cherry, 227, 232–33, 238, 242–45, 249–50
+    - escarole, olives, tomatoes, and basil, 231–32
+    - fennel salad with tomatoes, carrots, onions, and olives, 243
+    - grilled eggplant with feta cheese and tomatoes, 233–34
+    - juice and, *255*, 260*-61*
+    - pasta with tuna, olives, capers, and tomato, 240
+    - tomato soup with basil, pesto, and croutons, 247–48
+    - wild rice and green beans with garlic and fresh tomato, 225
+    - triglycerides, 52, *167*
+    - FMD and, *103*, 150*,* 171–72
+    - Trochon, Jean–Jacques, 126–27
+    - trout, 84, *254*, 257*, 262*, 265*
+    - tuna, 59, *253*-54, 259*-60, 262*, 265*
+    - pasta with tuna, olives, capers, and tomato, 240
+    - Valentine, Joan, 24
+    - vegans, veganism, 53, 84, 214
+    - vegetables, 4–5, 51, 53, 56, 133
+    - barley salad with broccoli, feta, and tomatoes, 249–50
+    - barley salad with olives and nuts, 229–30
+    - black/venus rice with zucchini and shrimp, 244
+    - broccoli soup, 239
+    - brussels sprouts with garlic, pine nuts, and Parmesan cheese, 235–36
+    - cancer and, 136–37
+    - cream of garbanzo beans + steamed broccoli, 248–49
+    - CVD and, 165–69, 174
+    - escarole, olives, tomatoes, and basil, 231–32
+    - fennel salad with tomatoes, carrots, onions, and olives, 243
+    - FMD and, 114, *114*,* 204
+    - garbanzo bean bread with raw vegetables, 228
+    - garbanzo bean salad and vegetables with garbanzo bean bread, 238–39
+    - Greek salad with feta, olives, onion, and peppers, 237–38
+    - grilled eggplant with feta cheese and tomatoes, 233–34
+    - Longevity Diet and, 5, 59–61, 63, 67, 72, *72*,* 76, 79, 82–85, 114, 143–45, 214–15, 220, 223–51
+    - Mediterranean spelt salad with artichokes and mushrooms, 245–46
+    - minerals in, *256*-59, 266*
+    - octopus with potato, 232–33
+    - pasta with broccoli and black beans, 224
+    - pasta with tuna, olives, capers, and tomato, 240
+    - pizza with vegetables, anchovies, and sardines, 250–51
+    - pumpkin soup with croutons, 239–40
+    - rice with zucchini and peas, 241
+    - salmon fillet with asparagus, 226
+    - spelt and zucchini with garlic, olives, and parsley, 227
+    - spinach with pine nuts and raisins, 223
+    - tomato soup with basil, pesto, and croutons, 247–48
+    - vitamins in, *255*, 260*-61, 263*
+    - white bean salad with onion, rosemary, and chicory, 242
+    - wild rice and green beans with garlic and fresh tomato, 225
+    - vegetarianism, 82, 167, 208, *254*, 260*
+    - viruses, 61, 195, 203
+    - vitamins, 162, 200
+    - A, 53, 187, 220, *260*, 262*
+    - B, 53, 84, 186–87, 192, 198, 220, 223, *253*-56, 262*
+    - C, 10, 22, 136, 181, 186–87, 192, 220, *261*
+    - D, 53, 68, 186, 192, 220, 223, *256*, 262*
+    - E (alpha–tocopherol), 53, 186–87, 192, 220, *256*, 263*–64*
+    - FMD and, 100, 114, *114*, 133*
+    - food sources of, 53–54, 84, *253*-56, 260*-63*
+    - Longevity Diet and, 61, 84–85, 143–44, 215, 219–20, 223–24, 231, 237, 244, 251
+    - neurodegenerative diseases and, 186–87, 192
+    - Walford, Roy, xiii–xiv, 15, 23–24, *25*,* 34, 44–45, 58, 96, 166–67, 173
+    - walking, 88–91, *93*,* 94, 102, 112, 154–55, 177, 216–17
+    - Wallace, Alfred, 17
+    - walnuts, 4–5, 60, 70, 76, 83, 146, 165, 174, 214, 224, 231, 237, 239, 243–44, *265*
+    - weight, 40, 97, 162, 174
+    - cancer and, 135–36
+    - diabetes and, 141–42
+    - FMD and, *103*,* 110–11, 113, 171, 173, 182, 190
+    - Longevity Diet and, 62–63, 65, 71, 79, 82, 84–86, 135, 142, 145, 210, 214–16, 220–21, 222*n*
+    - neurodegenerative diseases and, 182, 187, 189–90
+    - *see also* obesity; overweight
+    - weight gain, 43, 49, 158–59, 163
+    - diabetes and, 154–55
+    - Longevity Diet and, 220–21, 222*n*
+    - weight loss, 41, 90, 98, 146, 148, 168, 190, 207
+    - cancer and, 120, 134, 212, 217
+    - FMD and, *103*,* 133, 151, *151*,* 157–59
+    - Longevity Diet and, 59, 63–64, 142, 144–45, 214, 222*n*
+    - obesity and, 157–58
+    - and Pillars of Longevity, 47–48
+    - weight training, 94–95, 216
+    - Weindruch, Richard, 161
+    - Wilcox, Craig, 42, 72–74
+    - wine, 4, 57, 75–76, *164*,* 236
+    - Wisconsin, University of, 161–63
+    - worms, 26–28
+    - yogurts, 157, 167, 188, 236, 244, *260*
+    - Longevity Diet and, 59, *164*,* 214
+    - zucchini, 39, 234, 246
+    - black/venus rice with zucchini and shrimp, 244
+    - rice with zucchini and peas, 241
+    - spelt and zucchini with garlic, olives, and parsley, 227
+    - About the Author
+    - *Valter Longo*is the director of the Longevity Institute at the University of
+    - Southern California in Los Angeles, and of the Program on Longevity and
+    - Cancer at IFOM (Molecular Oncology FIRC Institute) in Milan. His studies
+    - focus on the fundamental mechanisms of aging in simple organisms and mice,
+    - and on translating the results to benefit humans. Dr. Longo received the 2010
+    - Nathan Shock Lecture Award from the National Institute on Aging (NIA/NIH),
+    - the 2013 Vincent Cristofalo “Rising Star” Award in Aging Research from the
+    - American Federation for Aging Research (AFAR), and the 2016 Glenn Award
+    - for Research in Biological Mechanisms of Aging from the Glenn Foundation for
+    - Medical Research. Coincidentally, Longo is from a town in Italy that is home to
+    - some of the longest-lived people in the world.
+    - What’s next on
+    - your reading list?
+    - Discover your next
+    - great read!
+    - Get personalized book picks and up-to-date news about this
+    - author.
+    - Sign up now.
+    - * The contents of this chapter must not be used in self-diagnosis or the self-administration of therapies. This
+    - information is intended for medical professionals following your disease.
+    - * The contents of this chapter must not be used in self-diagnosis or the self-administration of therapies. This
+    - information is intended for medical professionals following your disease.
+    - * The contents of this chapter must not be used in self-diagnosis or the self-administration of therapies. This
+    - information is intended for medical professionals following your disease.
+    - * The contents of this chapter must not be used in self-diagnosis or the self-administration of therapies. This
+    - information is intended for medical professionals following your disease.
+    - * The contents of this chapter must not be used in self-diagnosis or the self-administration of therapies. This
+    - information is intended for medical professionals following your disease.
+    - * This section was written in collaboration with nutritionist Noemi Renzetti and dietitians Mahshid Shelechi
+    - and Susan Kim.
+    - * Portions are calculated for a woman of average weight, of average height, and with a BMI of 21.5. Men of
+    - normal weight and height may increase portions by 20 percent. Portions should be based on your ability to
+    - reach and maintain a normal weight and BMI, and on your desire to either lose or gain weight. I recommend
+    - daily weight and abdominal-circumference measurements (see chapter 4) until the ideal weight is reached
+    - and stabilized.
+    - * US Dietary Guidelines recommend limiting sodium to less than 2.3 grams a day.
+    - * Throughout these recipes, when possible use fresh and seasonal vegetables, and dried legumes (beans,
+    - lentils, peas) that have been soaked overnight.
+    - * Sugar is naturally present in fruits and dried fruits. In the following daily meal plans, limit added sugar (to
+    - sweeten coffee or tea) and sugar naturally present in fruit juices, honey, and syrups to less than 8 to 10
+    - grams a day (2 teaspoons).

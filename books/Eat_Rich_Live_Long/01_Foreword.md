@@ -1,0 +1,31 @@
+## FOREWORD
+
+You may wonder how it came about that a third of us are outright obese, half of us are overweight, diabetes is at epidemic proportions, and many of us are taking statins. Strangely enough, this sorry state we find ourselves in came about as a consequence of intense focus on a single molecule: cholesterol.
+
+Everyone has heard of cholesterol, but what really is it? Cholesterol is a waxy molecule essential for life. So important, in fact, that virtually every cell can make it. It is the main structural component for all the cells and tissues in the human body. Without it, the body would, in the words of Shakespeare, “melt, thaw and resolve itself into a dew.” It plays a major role in bone building, is the main building block for adrenal and reproductive hormones, and is needed to synthesize the bile salts required for proper digestion, and the brain and nervous system are both highly dependent upon it for optimal function. The list of cholesterol’s virtues goes on and on. Because it is necessary for life, the body itself manufactures around 80–85 percent of the cholesterol it requires, with the other 15–20 percent coming from the diet.
+
+Given the enormous importance of this single molecule, it beggars belief that it is also the most maligned molecule in the body, accused of causing heart disease, stroke, and a host of other problems. How did an indispensable molecule, made by the body itself, get such an horrific reputation? More importantly, how did fear of cholesterol lead to the epidemics of obesity and diabetes we’re in the midst of today?
+
+Largely thanks to the efforts of just one man.
+
+More than a half century ago a research scientist named Ancel Keys concluded that heart disease was caused by elevated cholesterol in the blood. It wasn’t such a far-fetched notion, because the plaque in diseased coronary arteries contains a fair amount of cholesterol, so it was a reasonable hypothesis that cholesterol in the diet would end up in the blood and could then find its way into the lining of arteries. But after careful study, Keys concluded the fat in the diet, not cholesterol, was the real culprit. Keys dominated the field of nutritional research, especially where dietary fat, cholesterol, and heart disease were concerned. It is impossible to overestimate the influence his theories exert on us still today. His influence was such that Keys appeared on the cover of *Time* magazine in 1961. By this time, the battle against saturated fat was fully engaged, and “heart-healthy” polyunsaturated fats were the new darlings of the nutritional world. Fifteen years later, the McGovern Committee formulated the first Dietary Goals of the United States, which hewed closely to the ideas put forth by Ancel Keys: keep the fat low and keep it polyunsaturated. “Saturated fat” became a dirty word. In fact, it became not just a dirty word but a dirty word grouping. It was almost never written as “saturated fat” but instead as “artery-clogging saturated fat.”
+
+So how did all this create the obesity and diabetes epidemics now flourishing?
+
+It did so by completely changing the dietary patterns people had followed for generations. At the time the first nutritional guidelines came out, people in the United States had been following the same diet for decades with fairly stable levels of obesity and diabetes. The new standards exhorted people to reduce fat intake to 30 percent of calories and bump carbohydrates to between 50 and 60 percent. The assumption was that reducing fat, especially saturated fat, would reduce the incidence of heart disease.
+
+But heart disease didn’t really go down. What happened instead is that body weight went up and people started developing obesity and diabetes at epidemic rates.
+
+Despite the epidemic burgeoning before their eyes, most physicians and dietitians still focus on cholesterol levels. And in their misguided way—thanks to the legacy of Ancel Keys—they encourage their patients to cut the fat, especially saturated fat, and increase the carbohydrates to try to drive their cholesterol levels ever lower. The sad, but predictable, result is an inexorable increase in weight and perhaps the onset of diabetes.
+
+But though most medical and nutritional practitioners continue these ineffectual and counterproductive practices, there are a growing number who have veered from the crowd-think majority and are actually turning their patients’ lives around.
+
+The two authors of this book, both amateur athletes, initially fell victim to the antifat fervor but were ultimately able to break through the bias, see through the fallacies, and regain their health. Dr. Jeffry Gerber, a practicing physician in Denver, Colorado, who struggled with his weight, finally immersed himself in the science of weight gain and loss, and now he has a practice devoted to helping others achieve the success he himself found. Ivor Cummins, an engineer from Dublin, Ireland, decided to take a systems-based approach to figuring out his own cholesterol issues after his doctor couldn’t explain them.
+
+Jeff now shares his experience treating thousands of patients with other physicians, spreading the knowledge he’s gained in treating lipids and other metabolic illnesses with a low-carb diet, and Ivor’s in-depth analysis of every aspect of the lipid hypothesis has become an online legend in his Fat Emperor series of YouTube lectures. Both of them now lecture internationally on low-carb nutrition and its impact on lipids and the constellation of disorders related to insulin resistance and inflammation.
+
+The book you hold is the outgrowth of their diverse experience. It contains an enormous amount of priceless information that is truly life changing. You will learn everything from a simple test for diabetes to an inexpensive procedure that actually visualizes the degree of any plaque you might have in your coronary arteries. And with the nutritional advice provided, you will be given a road map to ditch your excess weight, reverse your diabetes, and clean your coronary arteries—all while following a diet rich in all the foods you probably thought you could never eat again. You’ll end up smarter, thinner, and with vastly improved health to carry you through a long and productive life.
+
+Michael R. Eades, M.D.
+
+Incline Village, Nevada
