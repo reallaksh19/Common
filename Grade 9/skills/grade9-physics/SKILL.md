@@ -1,6 +1,6 @@
 ---
 name: grade9-physics
-description: Apply Grade 9 Physics model selection, representation translation, graph/vector reasoning, units, assumptions, experimental interpretation, physical validation, difficulty calibration, and concept-book pedagogy to textbooks and question banks. Use for motion, force, work/energy, gravitation, pressure, sound/waves, light, electricity, measurements, experiments, HOTS, competitive-foundation physics, and SEE -> REALIZE -> UNDERSTAND concept-book work within the Grade 9 learning workflow.
+description: Apply Grade 9 Physics model selection, representation translation, graph/vector reasoning, units, assumptions, experimental interpretation, physical validation, difficulty calibration, and concept-book pedagogy to textbooks and question banks. Use for motion, force, work/energy, gravitation, pressure, sound/waves, light, electricity, measurements, experiments, HOTS, competitive-foundation physics, and concept-book work within the Grade 9 learning workflow.
 ---
 
 # Grade 9 Physics
@@ -117,11 +117,32 @@ Required behavior:
 
 For Motion, read `references/motion-concept-book-example.md` as the worked exemplar. The chapter-specific authority is under `Grade 9/Physics/Motion/`.
 
+## Physics subtopic pair mode
+
+When the user requests a subtopic-by-subtopic Physics build, especially a paired **Study Guide + ExamSIDE/PYQ transfer book**, route production through:
+
+`../grade9-physics-subtopic-book-builder/SKILL.md`
+
+The specialist enforces:
+
+- subtopic-first production to prevent drift;
+- real-life physical anchors and functional concept helpers;
+- concept/application separation;
+- representation translation and visual memory anchors;
+- causal misconception repair;
+- `H1 NOTICE -> H2 MODEL -> H3 START` with visual fading;
+- Study Guide + transfer-question paired outputs;
+- per-subtopic source and external-question self-audits;
+- Appendix A solutions;
+- readable A4 typography, equation fit, gutter/layout and 200-dpi render QA.
+
+Retain this Physics skill as the authority for scientific correctness, model validity, sign/frame reasoning and difficulty calibration.
+
 ## Publication handoff
 
 When concept content is sent to the textbook publisher:
 
-- preserve the SEE -> REALIZE -> UNDERSTAND sequence visually;
+- preserve the intended concept-assimilation sequence visually;
 - use math-capable fonts with complete glyph coverage for superscripts, subscripts, arrows, Greek letters, and operators;
 - reject missing-glyph boxes, substituted symbols, clipped equations, or rasterized low-resolution mathematics;
 - verify equation legibility at normal A4 reading size;
