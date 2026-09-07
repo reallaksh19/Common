@@ -117,12 +117,28 @@ Required behavior:
 
 For Motion, read `references/motion-concept-book-example.md` as the worked exemplar. The chapter-specific authority is under `Grade 9/Physics/Motion/`.
 
+## Subtopic Study Guide + transfer-book mode
+
+When the user asks to build Physics **subtopic-wise**, requests a paired **Study Guide + ExamSIDE/PYQ question book**, or asks for a kid-friendly application-first subtopic package, read:
+
+`../grade9-physics-subtopic-book-builder/SKILL.md`
+
+That specialist is mandatory for the production architecture. Keep this subject skill authoritative for Physics correctness, model validity, representation semantics and difficulty.
+
+The specialist must also invoke the shared transfer-coverage auditor when external/PYQ coverage is required:
+
+`../grade9-transfer-coverage-auditor/SKILL.md`
+
+Do not declare a subtopic transfer-complete from a curated sample. Coverage must be proven against the frozen required-question set for that subtopic.
+
 ## Publication handoff
 
 When concept content is sent to the textbook publisher:
 
-- preserve the SEE -> REALIZE -> UNDERSTAND sequence visually;
+- preserve the SEE -> REALIZE -> UNDERSTAND sequence visually where Concept Book mode is used;
+- for subtopic Study Guide mode, preserve the specialist's real-life anchor -> visual/helper -> explanation/reconstruction -> application -> misconception repair -> guided fading -> transfer sequence;
 - use math-capable fonts with complete glyph coverage for superscripts, subscripts, arrows, Greek letters, and operators;
-- reject missing-glyph boxes, substituted symbols, clipped equations, or rasterized low-resolution mathematics;
+- reject missing-glyph boxes, substituted symbols, clipped equations, overlapping labels, gutter collisions, or rasterized low-resolution mathematics;
 - verify equation legibility at normal A4 reading size;
+- render every page and visually inspect high-risk equation/diagram pages at full size;
 - retain source-question traceability in authoring metadata even if some links are hidden from the student-facing layout.
