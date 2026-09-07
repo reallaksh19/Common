@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Transfer Coverage Auditor"
+  short_description: "Audit external PYQ coverage subtopic by subtopic"
+  default_prompt: "Use $grade9-transfer-coverage-auditor to verify that every eligible external question is assigned to exactly one subtopic, linked to a taught concept, placed in the transfer book, supported by the required H1-H3 hints, and solved in Appendix A."
