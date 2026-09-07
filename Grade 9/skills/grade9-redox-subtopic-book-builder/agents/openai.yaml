@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Redox Subtopic Book Builder"
+  short_description: "Build source-grounded Redox Study Guides and ExamSIDE transfer books"
+  default_prompt: "Use $grade9-redox-subtopic-book-builder to build one Redox subtopic from the supplied source, preserve the approved textbook-style learning rhythm, apply chemistry-safe typography, add concept helpers and misconception repair, link the canonical ExamSIDE set with H1-H3 support and Appendix A solutions, run transfer coverage, render every page, and repair all layout failures before publication."
