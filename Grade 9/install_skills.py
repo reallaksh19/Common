@@ -21,6 +21,7 @@ SKILLS = [
     "grade9-concept-architect",
     "grade9-question-bank",
     "grade9-learning-enrichment",
+    "grade9-publication",
     "grade9-textbook-publisher",
     "grade9-math",
     "grade9-physics",
