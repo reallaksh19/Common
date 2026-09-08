@@ -1,601 +1,722 @@
 ---
 name: grade9-math-corpus-coverage-auditor
-version: 1
-description: Mathematics-specific extension of grade9-corpus-coverage-auditor. Audits external math question banks against subtopic study guides and practice books, with mathematical ownership, solution verification, representation quality, misconception tagging, helper depth, notation, difficulty, and mixed-problem transfer checks. Suitable for ExamSIDE/JEE-style corpora and other mathematics sources.
-extends: grade9-corpus-coverage-auditor
+version: 2
+description: Unified mathematics corpus-coverage and publication-readiness auditor. Use when an external mathematics corpus (ExamSIDE, past papers, worksheets, textbook exercises, databases, URLs, or source PDFs) must be exhaustively reconciled against subtopic study guides, practice books, helpers, solutions, and final publication artifacts. Combines general source-corpus traceability with mathematics-specific ownership, solution verification, representation quality, misconception handling, helper depth, notation, difficulty, and mixed-problem transfer checks.
 ---
 
-# Grade 9 Mathematics Corpus Coverage Auditor v1
+# Grade 9 Mathematics Corpus Coverage Auditor v2
 
-## Use with the general auditor
-Run this skill **after or together with** `grade9-corpus-coverage-auditor`.
+## Purpose
+Audit the complete chain from **source corpus -> mathematical ownership -> teaching support -> practice coverage -> verified solution -> readable publication**.
 
-The general skill proves source-row coverage and artifact traceability. This mathematics extension adds the checks that matter specifically in mathematics:
+This skill replaces the former split between a general corpus auditor and a mathematics extension for math projects. It contains the generic corpus-control rules plus the mathematics-specific checks needed for rigorous release.
+
+A finished-looking PDF is not evidence of completion.
+
+## Final release principle
+A mathematics subtopic or chapter is releasable only when all applicable gates pass:
 
 ```text
-QUESTION STRUCTURE -> PRIMARY MATHEMATICAL ENGINE
-PRIMARY ENGINE -> SUBTOPIC OWNER
-SUBTOPIC OWNER -> REPRESENTATION / CONCEPT SUPPORT
-SUPPORT -> SOLUTION METHOD
-SOLUTION METHOD -> VERIFIED ANSWER
-ANSWER -> STUDENT-READABLE MATHEMATICAL PUBLICATION
+SOURCE CORPUS = PASS
+OWNERSHIP / TAXONOMY = PASS
+MATHEMATICAL CORRECTNESS = PASS
+PEDAGOGY = PASS
+PRACTICE TRACEABILITY = PASS
+HELPER POLICY = PASS
+MISCONCEPTION COVERAGE = PASS
+REPRESENTATION QUALITY = PASS
+TYPOGRAPHY / LAYOUT = PASS
+UNRESOLVED SOURCE REVIEW = 0
 ```
 
-A math question is not covered merely because it appears in a practice PDF. It must be assigned to the right mathematical engine, supported by the right representation, and solved correctly under all stated constraints.
+Release states:
+
+- `PROVISIONAL` - corpus still has GAP / REVIEW / UNCLASSIFIED rows.
+- `LOCALLY_COMPLETE` - one subtopic has no local gaps, but chapter corpus is not fully frozen.
+- `COMPLETE` - every source row has a final disposition and every REQUIRED math owner passes all gates.
 
 ---
 
-# 1. Mathematics question fingerprint
-For every eligible source row, record a **structure fingerprint** rather than only a prose summary.
+# 1. Freeze the source corpus before auditing
 
-Required fields:
+A bounded source must be snapshotted before coverage claims are made.
 
-```yaml
-source_id:
-mathematical_object:
-target_quantity_or_claim:
-constraint_signature:
-primary_engine:
-secondary_engines:
-representation_trigger:
-answer_type:
-source_difficulty:
-recognition_difficulty:
-setup_difficulty:
-execution_difficulty:
-casework_difficulty:
+Record:
+
+- corpus name
+- source URL / file / repository / database
+- retrieval date
+- visible total row/question count
+- sections/types (e.g. MCQ, Numerical)
+- source ordering
+- duplicate identifiers where known
+- source version/hash when available
+
+For dynamic websites, freeze a source index such as:
+
+```text
+MCQ-001 ... MCQ-127
+NUM-001 ... NUM-093
 ```
 
-Examples of `mathematical_object`:
-- integer / digit string
-- word / multiset
-- ordered tuple
-- function / mapping
-- permutation
-- graph / coordinate object
-- triangle / circle / polygon
-- algebraic expression
-- sequence / series
-- probability space
+Do not claim chapter completeness from a partial screen scrape, sampled search results, or hand-picked owner list.
 
-Examples of `primary_engine`:
-- direct counting / product rule
+---
+
+# 2. Master corpus ledger: one row per source item
+
+Every source row must exist in the master ledger, including items later excluded.
+
+Minimum general fields:
+
+- `source_id`
+- `source_section`
+- `source_number`
+- `exam_year / date / shift` when applicable
+- `source_url`
+- `short_question_fingerprint`
+- `source_snapshot_id`
+- `primary_subtopic`
+- `secondary_subtopics`
+- `disposition`
+- `disposition_reason`
+- `current_artifact`
+- `practice_question_id`
+- `practice_page`
+- `concept_code`
+- `study_guide_page`
+- `source_link_present`
+- `concept_backlink_present`
+- `appendix_solution_present`
+- `answer_verified`
+- `audit_status`
+
+Mathematics-specific fields:
+
+- `math_relevance`: `PURE / HYBRID / EXCLUDE`
+- `primary_mathematical_engine`
+- `secondary_engines`
+- `archetype`
+- `difficulty_D1_D5`
+- `recognition_load_R1_R5`
+- `model_load_M1_M5`
+- `calculation_load_C1_C5`
+- `error_risk_E1_E5`
+- `visual_need_V0_V3`
+- `helper_policy_H0_H3`
+- `misconception_tags`
+- `required_representation`
+- `solution_method`
+- `independent_verification_method`
+- `boundary_or_domain_check`
+- `source_solution_status`
+
+Stable source IDs are authoritative. Rendered page numbers are derived metadata.
+
+---
+
+# 3. Disposition model
+
+Every row must have exactly one primary disposition:
+
+- `REQUIRED` - belongs in the current mathematics project.
+- `DEFER` - belongs to a named later subtopic or different book.
+- `EXCLUDE` - outside declared scope; reason mandatory.
+- `REVIEW` - cannot yet be frozen because source, figure, interpretation, overlap, or solution requires verification.
+- `DUPLICATE` - same mathematical fingerprint as another source row; duplicate target required.
+
+Never use `REVIEW` as a permanent parking state.
+
+## Corpus invariants
+
+- Every frozen row has exactly one primary disposition.
+- Every REQUIRED row has exactly one primary subtopic owner.
+- Every DEFER row names its destination.
+- Every EXCLUDE row has a defensible scope reason.
+- Every DUPLICATE row names the canonical source row.
+- No REQUIRED row may disappear from all practice artifacts.
+- Chapter-wide `COMPLETE` requires `UNCLASSIFIED = 0`, `GAP = 0`, and `REVIEW = 0`.
+
+---
+
+# 4. Mathematics ownership: identify the primary engine
+
+Do not classify by surface nouns such as “digits”, “students”, “letters”, “books”, or “functions”. Classify by the mathematical engine that carries the solution.
+
+For each question ask:
+
+1. What decision creates the main count?
+2. Which restriction changes the base universe?
+3. What must the learner recognize before any arithmetic begins?
+4. Which method would fail if that recognition were missed?
+5. If multiple methods appear, which one is pedagogically primary?
+
+Examples of permutation ownership engines:
+
+- sequential ordered slots / product rule
 - multiset permutation
-- position restriction
-- block method
-- complement
-- gap method
-- lexicographic counting
+- positional restriction
+- block / together
+- complement / not-all-together
+- gap / separation
+- digit-number formation
+- lexicographic rank
 - circular symmetry
-- inclusion-exclusion
-- recurrence
-- factorization
-- substitution
-- congruence
-- inequality transformation
-- coordinate geometry
-- similarity
-- invariant
+- derangement / forbidden positions
+- forbidden string / inclusion-exclusion
+- hybrid choose -> assign -> arrange
 
-The fingerprint must be specific enough that two superficially different questions with the same engine can be recognized as the same archetype.
+A hybrid may reference several concepts, but it still has one primary owner unless the project explicitly permits a tagged capstone revisit.
 
 ---
 
-# 2. Mathematics ownership test
-The primary subtopic owner is determined by the **dominant mathematical move**, not by nouns in the question.
+# 5. Structural fingerprinting
 
-Use this decision sequence:
+Each source question gets a short structural fingerprint that survives wording changes.
 
-1. What must the student recognize before any calculation can start?
-2. Which transformation/model makes the problem tractable?
-3. Which concept accounts for most of the non-routine reasoning?
-4. If that concept were removed, would the question collapse into routine execution?
+Good fingerprints describe:
 
-That concept is the primary owner.
-
-## Hybrid questions
-For hybrid questions record:
-
-```yaml
-primary_engine:
-secondary_engines:
-engine_order:
-```
+- object inventory
+- ordered/unordered outcome
+- repetition state
+- restriction type
+- symmetry/equivalence
+- requested statistic/count
 
 Example:
+
 ```text
-choose categories -> assign positions -> arrange selected objects
+7 distinct people around a table; no two of 3 girls adjacent; cyclic gaps
 ```
 
-Only the primary engine owns mandatory coverage. Later capstone units may revisit the same question as `HYBRID_REVISIT` without double-counting.
+Avoid fingerprints that merely restate the full source wording.
+
+Use fingerprints to detect:
+
+- duplicates
+- near-duplicates
+- recurring archetypes
+- owner drift
+- missing practice variants
+- coverage inflation
 
 ---
 
-# 3. Mathematics difficulty model
-Do not assign difficulty from answer length alone.
+# 6. Archetype coverage is separate from question coverage
 
-Score five dimensions from 0-2:
+A chapter may include every known question but still teach an archetype poorly.
 
-- **R Recognition** - identifying the governing concept.
-- **M Modelling** - translating words/diagram into mathematical structure.
-- **C Casework** - partitioning cases without omission/overlap.
-- **E Execution** - algebra/arithmetic/symbol manipulation.
-- **V Verification** - checking boundary cases, double counting, domain, or interpretation.
+For each primary engine, track:
 
-Suggested conversion:
+- number of REQUIRED source rows
+- number included in practice
+- number with worked teaching support
+- number with transfer support
+- difficulty spread
+- representation spread
+- repeated surface forms vs genuinely different structures
 
-```text
-0-2  -> D1
-3-4  -> D2
-5-6  -> D3
-7-8  -> D4
-9-10 -> D5
-```
-
-Override is allowed when a single recognition barrier is unusually severe; document the reason.
-
-Difficulty drives helper depth, not prestige or exam year.
+Release should fail if a high-frequency archetype is represented only by one narrow surface form even when row-level coverage numerically passes.
 
 ---
 
-# 4. Math-specific H1-H3 helper policy
+# 7. Difficulty model for mathematics
+
+Do not assign D1-D5 using arithmetic length alone.
+
+Audit five dimensions:
+
+- `R` Recognition load - how hard is it to identify the method?
+- `M` Model load - how hard is it to translate wording into a mathematical structure?
+- `C` Calculation load - algebra/arithmetic burden.
+- `E` Error risk - number of plausible wrong paths.
+- `V` Visual need - benefit from a structural representation.
+
+Suggested interpretation:
+
+- D1: direct recognition, one-step model.
+- D2: familiar engine with one modest restriction.
+- D3: non-obvious model, hybrid cue, or meaningful case split.
+- D4: multiple interacting restrictions / inclusion-exclusion / inverse rank / nontrivial symmetry.
+- D5: deep structure, several interacting models, source ambiguity, or high proof/verification burden.
+
+Record the reason, not only the grade.
+
+---
+
+# 8. H1-H3 helper policy
+
+Difficulty determines the maximum scaffolding; actual helper need depends on the recognition barrier.
+
+Default:
+
+- D1: H0; H1 optional.
+- D2: H1 when recognition is not obvious; H2 optional.
+- D3: H1 + H2 required.
+- D4-D5: H1 + H2 + H3 required.
 
 ## H1 - Recognition cue
-Purpose: restore the correct mathematical lens.
+Changes what the learner notices without setting up the full computation.
 
 Examples:
-- "Which positions are actually labelled?"
-- "Can two different construction orders produce the same final object?"
-- "Count the forbidden set first."
-- "What remains fixed when the figure is rotated?"
+- “Which position is restricted first?”
+- “Can two selected objects exchange positions and create a new outcome?”
+- “Count the bad set before trying to count the good set directly.”
 
-H1 must not contain the numerical setup or final formula when recognition itself is the learning target.
+## H2 - Visual / concept helper
+Must be a genuine mathematical representation, not longer prose.
 
-## H2 - Structural / visual helper
-H2 must change representation.
+Possible forms:
 
-Allowed forms include:
 - slots
-- tree diagram
+- tree
 - mapping diagram
-- table of cases
-- number line
-- coordinate sketch
+- block/super-object
+- linear gaps
+- circular gaps
+- case table
+- prefix-bucket table
+- forbidden-position grid
 - Venn/event diagram
-- block/super-object picture
-- gap skeleton
-- circular anchor diagram
-- lexicographic prefix table
-- sign chart
-- factorization tree
-- graph / transformation sketch
-- invariant tracker
+- symmetry orbit sketch
+- state diagram / recurrence state
 
-H2 should reveal the **structure**, not merely restate the prose in a colored box.
-
-## H3 - Mathematical skeleton
-H3 supplies the setup but stops before routine completion.
+## H3 - Structural skeleton
+May expose the major count structure but must stop before final arithmetic or answer.
 
 Examples:
-```text
-Total - Bad = ...
-```
 
 ```text
-Arrange anchors -> identify gaps -> choose gaps -> arrange restricted objects
+Total - Bad = ____ - (outer arrangements x inner arrangements)
 ```
+
+or
 
 ```text
 prefixes before target = bucket_1 + bucket_2 + ...
 ```
 
-```text
-Let x = ... ; target equation becomes ...
-```
+## Helper anti-leak rule
+The question page must not reveal the final answer through:
 
-H3 must not reveal the final answer.
-
----
-
-# 5. Representation audit
-Every core math concept must have a representation appropriate to its recognition barrier.
-
-## Representation rules
-- Meaning before symbolic compression for new concepts.
-- Formula should be shown as a compressed form of a model when feasible.
-- Use two representations when students commonly fail to recognize equivalence between forms.
-- Diagrams must encode mathematical relationships, not decorate the page.
-- A helper diagram must be consistent with the exact constraints of the question.
-
-## Representation mismatch failures
-Mark FAIL when:
-- a diagram implies repetition when repetition is forbidden;
-- a circular diagram is treated as a linear row;
-- a case table overlaps cases;
-- an algebraic diagram suppresses a domain restriction;
-- a graph suggests monotonicity or intersections inaccurately;
-- an H2 visual is generic and does not illuminate the actual obstruction.
+- a completed formula with evaluated arithmetic
+- a helper whose last blank is trivial copying
+- diagram labels that display final counts
+- a source answer visible in the question crop
 
 ---
 
-# 6. Mathematics misconception taxonomy
-Use stable tags where applicable.
+# 9. Representation-quality gate
 
-## General counting / combinatorics
-- ORDER_IGNORED
-- ORDER_INVENTED
-- REPETITION_ACCIDENTALLY_ALLOWED
-- REPETITION_ACCIDENTALLY_FORBIDDEN
-- DOUBLE_COUNT
-- MISSING_CASE
-- OVERLAPPING_CASES
-- ADD_INSTEAD_OF_MULTIPLY
-- MULTIPLY_INSTEAD_OF_ADD
-- COMPLEMENT_UNIVERSE_WRONG
-- INCLUSION_EXCLUSION_OVERLAP_MISSED
-- LABELLED_UNLABELLED_CONFUSION
+A mathematical diagram must encode the mathematics faithfully.
 
-## Permutation-specific
-- ZERO_LEADING
-- BLOCK_OVERCOUNT
-- BLOCK_INTERNAL_ORDER_MISSED
-- GAP_OFF_BY_ONE
-- GAP_CAPACITY_IGNORED
-- CIRCULAR_ROTATION_OVERCOUNT
-- CIRCULAR_REFLECTION_CONFUSION
-- DICTIONARY_PREFIX_MISCOUNT
-- DICTIONARY_OFF_BY_ONE
-- FIXED_POINT_DERANGEMENT_CONFUSION
+Audit questions:
 
-## Algebra / number / functions
-- DOMAIN_RESTRICTION_MISSED
-- EXTRANEOUS_ROOT_ACCEPTED
-- SIGN_ERROR
-- ZERO_CASE_MISSED
-- DIVIDE_BY_ZERO_CASE_LOST
-- MODULAR_CONDITION_MISREAD
-- FUNCTION_DOMAIN_RANGE_CONFUSION
+- Does the visual preserve labels/distinguishability correctly?
+- Does it show whether order matters?
+- Does it distinguish identical from distinct objects?
+- Does a circular diagram avoid implying a fixed origin when rotations are equivalent?
+- Does a gap diagram show end gaps when applicable?
+- Does a block diagram expose internal permutations?
+- Does a lexicographic table display prefix buckets in the correct order?
+- Does a forbidden-position grid distinguish allowed vs forbidden cells?
+- Does an inclusion-exclusion visual show overlaps that actually exist?
 
-## Geometry
-- DIAGRAM_ASSUMED_TO_SCALE
-- ORIENTATION_CASE_MISSED
-- CONGRUENCE_SIMILARITY_CONFUSION
-- DIRECTED_ANGLE_SIGN_CONFUSION
-- LENGTH_AREA_SCALE_CONFUSION
-
-For D2+ items, attach at least one tag when a plausible wrong path exists.
-
-A misconception card must answer all three:
-1. Why is the wrong method tempting?
-2. Exactly which mathematical assumption fails?
-3. What repair question/habit prevents recurrence?
+A decorative illustration does not satisfy H2.
 
 ---
 
-# 7. Mathematical solution verification gate
-Every REQUIRED math source row must be independently verified before release.
+# 10. Solution verification gate
 
-## 7.1 Re-solve from the statement
-Do not verify a solution merely by comparing with the source answer.
+Do not copy a source solution merely because the source is established.
 
-Reconstruct the solution from the actual source constraints.
+For every REQUIRED question:
 
-## 7.2 Mandatory checks
-Depending on the problem, verify:
-- domain and range;
-- leading-zero restrictions;
-- repetition permissions;
-- labelled vs unlabelled objects;
-- mutually exclusive / exhaustive cases;
-- overlap in inclusion-exclusion;
-- boundary values;
-- parity/divisibility constraints;
-- symmetry quotienting;
-- repeated-object factorial division;
-- exact vs at-least vs at-most wording;
-- whether the source asks for count, sum, probability, rank, or object itself.
+1. solve independently;
+2. verify interpretation and domain;
+3. check boundary cases;
+4. verify multiplicities / symmetry factors;
+5. compare against source answer when available;
+6. record discrepancies explicitly.
 
-## 7.3 Independent-method check
-For D4-D5, or whenever the source solution is suspicious, use a second verification route when feasible:
-- direct enumeration for a smaller analogous case;
-- complementary count;
-- recurrence vs closed form;
-- algebraic vs combinatorial derivation;
-- computational sanity check;
-- invariant or symmetry check.
+Preferred verification methods:
 
-Record:
-```yaml
-answer_verified: YES / REVIEW
-verification_method:
-second_method_used: YES / NO
-source_answer_agrees: YES / NO / UNKNOWN
-```
+- second combinatorial derivation
+- small-case brute-force enumeration
+- algebraic identity check
+- complement/direct cross-check
+- recurrence/base-case verification
+- lexicographic reconstruction
+- parity/divisibility sanity check
+- symbolic or computational enumeration for a reduced case
 
-## 7.4 Source solution issue
-If a published source appears wrong or incomplete:
-- do not copy it silently;
-- move the row to REVIEW;
-- state the suspected failure (double count, omitted case, ambiguous wording, etc.);
-- resolve before counting it as covered if the issue changes the required solution/help.
+Mark:
+
+- `VERIFIED_MATCH`
+- `VERIFIED_SOURCE_ERROR`
+- `SOURCE_AMBIGUOUS`
+- `NEEDS_REVIEW`
+
+Never silently repair a questionable source in the student-facing book without an audit note.
 
 ---
 
-# 8. Formula and notation quality gate
-Mathematics must be typeset as mathematics.
+# 11. Boundary / double-counting audit
 
-## Required
-- use proper superscripts/subscripts;
-- use true fractions, roots, factorials, summation/product notation where appropriate;
-- distinguish `nPr` from `nCr` visually and semantically;
-- define symbols before first use;
-- align multi-line derivations when alignment aids comprehension;
-- retain equality/implication logic accurately;
-- keep mathematical expressions together rather than breaking them awkwardly across lines.
+Mathematics failures frequently arise from set boundaries rather than arithmetic.
 
-## Avoid
-- ASCII approximations when proper math notation is available;
-- cramped formulas constructed as body text;
-- unexplained variable changes;
-- mixing different notations for the same object without reason;
-- decorative equations without interpretation.
+Mandatory checks when applicable:
 
-For permutation/counting material, prefer canonical notation such as:
+- leading zero
+- inclusive/exclusive range endpoints
+- repeated vs distinct objects
+- labelled vs unlabelled destinations
+- linear vs circular equivalence
+- mirror/reflection equivalence
+- overlapping bad events
+- mutually exclusive vs overlapping cases
+- multiple occurrences of the same forbidden pattern
+- “not all together” vs “no two together”
+- “only” vs “exactly”
+- at least / at most / exactly
+- duplicate words caused by repeated letters
+- whether one final object can be generated by multiple case constructions
 
-```text
-n!,  P(n,r) / nPr,  C(n,r) / nCr
-```
-
-but choose one primary notation and explain alternatives.
+If a source solution uses a window/start-position multiplier, explicitly test whether one output can satisfy multiple windows and be double-counted.
 
 ---
 
-# 9. Real-life / intuitive bridge gate for mathematics
-A context is useful only if it preserves the mathematical structure.
+# 12. Misconception taxonomy
 
-Good contexts:
-- medals for labelled rank positions;
-- access codes for ordered symbol strings;
-- lift exits for assignments;
-- seating for adjacency/gaps;
-- dictionary ordering for lexicographic rank;
-- passwords for repetition/required-symbol constraints.
+Use stable misconception tags so coverage can be audited.
 
-Reject contexts that:
-- introduce irrelevant realism;
-- require assumptions not in the mathematical model;
-- obscure rather than reveal the structure;
-- imply a different probability/counting universe.
+Core permutation tags:
 
-For each CORE concept, ask:
-> Does the context make the structural distinction easier to see?
+- `ORDER_IGNORED`
+- `REPETITION_ACCIDENTALLY_ALLOWED`
+- `REPETITION_ACCIDENTALLY_FORBIDDEN`
+- `MISSING_ASSIGNMENT_STAGE`
+- `ADD_INSTEAD_OF_MULTIPLY`
+- `FORMULA_FIRST_RESTRICTION_HIDDEN`
+- `ZERO_LEADING`
+- `BLOCK_OVERCOUNT`
+- `BLOCK_INTERNAL_ORDER_MISSED`
+- `GAP_OFF_BY_ONE`
+- `GAP_CAPACITY_IGNORED`
+- `COMPLEMENT_UNIVERSE_WRONG`
+- `NOT_ALL_VS_NO_TWO_CONFUSED`
+- `CIRCULAR_ROTATION_OVERCOUNT`
+- `REFLECTION_CONFUSED_WITH_ROTATION`
+- `DICTIONARY_PREFIX_MISCOUNT`
+- `DICTIONARY_OFF_BY_ONE`
+- `IE_OVERLAP_MISSED`
+- `DERANGEMENT_FIXED_POINT_MISREAD`
+- `CASE_OVERLAP_DOUBLE_COUNT`
+- `IDENTICAL_OBJECT_OVERCOUNT`
 
-If no, remove it.
+For D2+ questions, attach at least one misconception tag whenever a plausible wrong model exists.
 
----
-
-# 10. Math Study Guide completeness gate
-For each core concept verify all applicable layers:
-
-1. intuitive/real-life entry;
-2. meaning before notation;
-3. faithful mathematical representation;
-4. worked teacher model exposing decisions;
-5. guided completion;
-6. misconception + repair;
-7. exam/trigger language;
-8. disguised transfer;
-9. retrieval/explanation check;
-10. representative source/PYQ link;
-11. boundary/special-case note where relevant;
-12. notation/formula summary only after meaning is established.
-
-Do not compress away items 1, 3, 6, 8, or 9 to reduce page count.
+The Study Guide must repair high-frequency misconceptions close to the concept, not only in a final error list.
 
 ---
 
-# 11. Math Practice Book integrity gate
-Every REQUIRED row must satisfy:
+# 13. Pedagogy completeness gate
 
-```text
-[ ] source row correctly owned
-[ ] source URL/file reference present
-[ ] question paraphrase preserves all constraints
-[ ] concept backlink resolves
-[ ] D-level recorded
-[ ] misconception tag recorded when applicable
-[ ] helper depth satisfies D-level
-[ ] H2 is genuinely structural/visual when required
-[ ] H3 stops before final answer
-[ ] adequate working space provided
-[ ] final answer not exposed on question page
-[ ] Appendix solution complete
-[ ] answer independently verified
-[ ] notation readable
-[ ] rendered question/helper/solution pages pass QA
-```
+For every core mathematics concept, require all applicable layers:
 
----
+1. **Familiar / real-life or intuitive entry**
+   - Context must illuminate the mathematical structure, not decorate the page.
 
-# 12. Math-specific duplicate and archetype audit
-Two questions may be duplicates even when surface wording differs.
+2. **Meaning before notation**
+   - Student first sees what makes outcomes equivalent/different.
 
-Create an `archetype_signature` from:
+3. **Concept representation**
+   - At least one faithful visual or symbolic model; two when recognition commonly fails.
 
-```text
-mathematical object
-+ constraint pattern
-+ primary engine
-+ target quantity
-```
+4. **Worked teacher model**
+   - Expose the expert decision sequence, not only algebra.
 
-Examples:
-- `WORD + repeated letters + all vowels together + count`
-- `DIGITS + no repetition + > bound + divisible by 5 + count`
-- `CIRCLE + two categories + no adjacent restricted category + count`
+5. **Guided completion**
+   - Some structure is supplied; learner completes missing choices/counts/reasoning.
 
-Use this signature to detect:
-- true duplicates;
-- near-duplicates useful as transfer;
-- repeated years testing the same engine;
-- gaps where an archetype has no supported representative example.
+6. **Misconception + repair**
+   - Tempting wrong model, why it seems plausible, exact failure, repair habit.
 
-Do not remove useful near-duplicates merely because the final formula is similar; preserve variations that change recognition or casework.
+7. **Exam trigger language**
+   - Teach the wording that should activate the engine.
+
+8. **Disguised transfer**
+   - Same engine in a different surface form.
+
+9. **Retrieval / explanation check**
+   - Learner classifies, predicts, diagnoses, explains, or constructs the model.
+
+10. **Representative source link**
+   - At least one source fingerprint when directly representative.
+
+### Anti-drift rule
+Do not compress away real-life entry, visual concept helpers, misconception repair, transfer, or retrieval simply to reduce page count. If the page becomes dense, split it.
 
 ---
 
-# 13. Coverage depth audit
-A subtopic may have 100% row coverage but poor instructional depth.
+# 14. Practice-book integrity gate
 
-For each subtopic compute:
+A REQUIRED row passes only if:
 
-```text
-required_rows
-covered_rows
-unique_archetypes
-archetypes_with_model_example
-archetypes_with_guided_example
-archetypes_with_independent_PYQ
-D3plus_rows_with_H2
-D4plus_rows_with_H3
-misconception_tags_covered
-```
+- included in the intended practice artifact;
+- original source link present;
+- linked back to an existing Study Guide concept;
+- difficulty recorded;
+- helper depth satisfies policy;
+- H2 is genuinely structural when required;
+- misconception tag attached where appropriate;
+- final answer is hidden on the question page;
+- Appendix solution is complete;
+- solution has been independently verified;
+- source discrepancy is disclosed when relevant;
+- question/helper/solution text passes readability rules.
 
-Recommended release rule:
-- every REQUIRED row covered;
-- every major archetype taught at least once;
-- every major archetype represented in independent practice;
-- every D3+ row has the required helper support;
-- no known high-frequency misconception is completely untreated.
+No duplicate question may inflate the coverage numerator unless explicitly marked as a separate hybrid revisit.
 
 ---
 
-# 14. Mixed/capstone transfer gate
-When the project contains a final mixed-mathematics or hybrid-permutation unit, ensure the learner must **choose the engine**, not just execute it.
+# 15. Readability and mathematical typography gate
 
-Capstone set should include:
-- unlabeled-method questions;
-- superficially similar questions requiring different engines;
-- two-stage or three-stage hybrids;
-- at least one question where a tempting familiar method is wrong;
-- at least one question requiring a classification decision before calculation.
+For landscape A4 instructional PDFs, target:
 
-Audit whether the solution begins with the recognition decision, not only the arithmetic.
+- page title: 18-24 pt+
+- section heading: 13-16 pt
+- body/question text: 11-12 pt
+- helper/card prose: 10.5-11.5 pt
+- solution prose: >=11 pt
+- micro-labels/chips: 8-9 pt only when non-instructional
 
----
+Mathematical notation rules:
 
-# 15. Mathematics readability/render gate
-In addition to the general readability rules:
+- use real superscripts/subscripts where possible;
+- distinguish `nPr`, `nCr`, factorial, powers, and indices clearly;
+- align multi-line derivations;
+- do not use tiny inline formulas to rescue dense layouts;
+- preserve minus signs, inequality symbols, set notation, and combinatorial symbols;
+- ensure repeated-object denominators and inclusion-exclusion signs are visually unambiguous.
 
-- mathematical symbols must render cleanly at normal zoom and print scale;
-- exponents, subscripts, radicals, and combinatorial notation must remain legible;
-- diagrams must not collide with labels;
-- coordinate axes/table boundaries/tree branches must remain visible;
-- equation lines must not clip at card boundaries;
-- answer-choice/math alignment must not suggest false grouping;
-- a page failing mathematical legibility must be rebuilt, never rescued by shrinking notation.
+Card/page rules:
 
-Dense proof/solution pages should be inspected individually after export.
+- one dominant idea per card;
+- avoid >4 dense instructional boxes per landscape page;
+- misconception clinic: 2-3 cards/page;
+- real-life entry: ~2 major examples/page plus synthesis;
+- one dominant page role;
+- whitespace must be intentional response space or breathing room.
 
----
+If readability fails, repair in this order:
 
-# 16. Required math audit outputs
-Extend the general audit workbook/report with:
+1. shorten wording;
+2. remove duplication;
+3. restructure/enlarge card;
+4. split page;
+5. only then make minor type adjustments within the typography floor.
 
-## Master ledger additional columns
-```text
-Mathematical Object
-Constraint Signature
-Primary Engine
-Secondary Engines
-Archetype Signature
-R/M/C/E/V difficulty components
-D-level
-Required Representation
-Misconception Tag
-Independent Answer Verification
-Source Answer Agreement
-```
-
-## Subtopic math summary
-```text
-Subtopic
-Required
-Covered
-Unique Archetypes
-Archetypes Taught
-D3+ H2 Pass
-D4+ H3 Pass
-Answer Verified
-Notation Failures
-Release Gate
-```
-
-## Review queue reasons
-Priority order:
-1. suspected incorrect source answer/solution;
-2. ambiguous source statement/figure;
-3. ownership conflict;
-4. uncovered REQUIRED row;
-5. missing concept support;
-6. helper-policy failure;
-7. notation/render failure;
-8. duplicate metadata cleanup.
+Never solve a density failure by shrinking instructional prose below readable print size.
 
 ---
 
-# 17. Permutation-project extension
-For permutation/combinatorics projects, use these canonical engine owners when they fit the actual corpus:
+# 16. Render and link QA
+
+Before release:
+
+- render every page at roughly 150-200 dpi;
+- inspect contact sheets;
+- inspect all dense concept, misconception, helper, and solution pages individually;
+- check clipping, overlap, broken glyphs, formula corruption, and boundary crossing;
+- verify source URLs;
+- verify cross-PDF concept backlinks;
+- verify Appendix anchors when used;
+- re-render after every material change.
+
+Rendered PDF evidence is required; source-code inspection alone does not pass layout QA.
+
+---
+
+# 17. Owner-drift audit
+
+After new subtopics are created, re-check earlier ownership decisions.
+
+Flag `DRIFT` when:
+
+- a question was placed in a broad early subtopic but now has a more precise owner;
+- a hybrid was used to inflate two subtopic counts;
+- a later concept explains the actual difficulty better;
+- the source question requires machinery intentionally deferred by the Study Guide.
+
+A chapter closeout must rerun ownership across the entire corpus, not simply aggregate local PASS stamps.
+
+---
+
+# 18. Source-quality review queue
+
+Some source rows should not be frozen immediately.
+
+Use `REVIEW` when:
+
+- essential information is figure-dependent and the figure is not yet verified;
+- displayed source solution appears to double-count;
+- source wording is ambiguous;
+- answer/options conflict with independent derivation;
+- a dynamic webpage is missing part of the question;
+- apparent duplicate status is uncertain.
+
+For each REVIEW row record:
+
+- issue type
+- suspected owner
+- independent analysis
+- what evidence is missing
+- resolution action
+- reviewer/date
+
+Chapter release fails while unresolved REVIEW rows remain in scope.
+
+---
+
+# 19. Mathematics subtopic reconciliation report
+
+Publish for every subtopic:
+
+- frozen source rows considered
+- REQUIRED
+- COVERED
+- GAPS
+- REVIEW
+- DUPLICATES
+- DEFERRED + destinations
+- EXCLUDED + reasons
+- source links: X/X
+- concept backlinks: X/X
+- Appendix solutions: X/X
+- independently verified answers: X/X
+- misconception tags for D2+: X/X
+- H-policy failures
+- pedagogy-layer failures
+- representation failures
+- readability failures
+- notation failures
+- owner-drift flags
+- local status
+- chapter status
+
+Example release stamp:
 
 ```text
-ST01 product rule / ordered slots / nPr
-ST02 repeated objects / multiset permutations
-ST03 positional restrictions
-ST04 together / block method
-ST05 not-all-together / complement
-ST06 no-two-together / gap method
-ST07 number formation
-ST08 dictionary / lexicographic rank
-ST09 circular permutations
-ST10 derangements / forbidden positions
-ST11 forbidden strings / inclusion-exclusion
-ST12 hybrid permutation structures
+ST07 Number Formation
+Required: 31
+Covered: 31/31
+Review: 0
+Source links: 31/31
+Concept links: 31/31
+Verified solutions: 31/31
+H-policy failures: 0
+Representation failures: 0
+Readability failures: 0
+Local status: PASS
+Chapter status: PROVISIONAL
 ```
-
-Ownership is still determined by primary engine, not by this list mechanically.
-
-For each permutation row also consider:
-- repeated-object signature;
-- zero-leading condition;
-- adjacency/together condition;
-- gap capacity;
-- circular equivalence;
-- lexicographic prefix structure;
-- fixed-point/forbidden-position structure;
-- inclusion-exclusion overlap;
-- choose-then-arrange hybrid stages.
 
 ---
 
-# 18. Final math release stamp
-Do not declare a mathematics subtopic complete unless:
+# 20. Chapter closeout procedure
 
-```text
-CORPUS COVERAGE = PASS
-OWNERSHIP = PASS
-ARCHETYPE COVERAGE = PASS
-PEDAGOGY SUPPORT = PASS
-H-POLICY = PASS
-SOLUTION VERIFICATION = PASS
-SOURCE-ISSUE QUEUE = CLEAR OR NON-BLOCKING
-MATH NOTATION = PASS
-READABILITY / RENDER = PASS
-```
+Run in this order:
 
-Final status:
-- FAIL
-- PROVISIONAL
-- LOCALLY_COMPLETE
-- COMPLETE
+1. Freeze corpus totals.
+2. Ensure every source row exists in ledger.
+3. Resolve UNCLASSIFIED.
+4. Resolve REVIEW.
+5. Re-run primary-engine ownership.
+6. Detect duplicates and owner drift.
+7. Convert every REQUIRED GAP to COVERED.
+8. Verify every required solution independently.
+9. Audit archetype breadth and difficulty spread.
+10. Audit Study Guide concept support against required rows.
+11. Audit helper and misconception coverage.
+12. Audit math notation and rendered layout.
+13. Verify all links/backlinks.
+14. Generate per-subtopic reconciliation.
+15. Generate chapter reconciliation.
+16. Only then mark `COMPLETE`.
 
-`COMPLETE` requires the general corpus auditor and this mathematics extension to agree.
+---
+
+# 21. Anti-patterns
+
+Fail the audit when any of these occur:
+
+- sampling the source instead of freezing all rows;
+- claiming coverage from a curated subset;
+- classifying by surface nouns rather than mathematical engine;
+- silently trusting source answers;
+- counting duplicates twice;
+- letting hybrids inflate multiple owner counts;
+- using H2 as prose instead of a mathematical model;
+- giving the answer away in H3;
+- using formulas before explaining the mathematical meaning;
+- shrinking fonts to fit a dense page;
+- ornamental “real-life” examples unrelated to the engine;
+- vague EXCLUDE reasons such as “not needed”;
+- unresolved REVIEW rows at chapter release;
+- declaring COMPLETE while GAP > 0;
+- aggregating local PASS stamps without a chapter-level ownership rerun.
+
+---
+
+# 22. Recommended audit artifacts
+
+For a substantial mathematics project, maintain:
+
+1. **Master Coverage Ledger** (`.xlsx`)
+   - one source row per ledger row
+   - filters by owner/status/year/archetype/difficulty
+   - conditional formatting for GAP/REVIEW
+
+2. **Gap + Review Queue**
+   - only unresolved rows
+   - sorted by owner and severity
+
+3. **Subtopic Reconciliation Sheet**
+   - required / covered / gap / review / duplicates / release gate
+
+4. **Source-quality Log**
+   - source errors, ambiguity, figure issues, overlap concerns
+
+5. **Publication QA Log**
+   - page rendering, link verification, typography failures
+
+6. **Chapter Closeout Report**
+   - final totals and unresolved count = 0
+
+---
+
+# 23. Current permutation project owner taxonomy
+
+When auditing the current JEE permutation corpus, use the present owner map unless a later ownership review justifies a change:
+
+- ST01 Counting engine / ordered slots / product rule
+- ST02 Repeated objects / multiset permutations
+- ST03 Positional restrictions
+- ST04 Together / block method
+- ST05 Not together / complement
+- ST06 No two together / gap method
+- ST07 Number formation
+- ST08 Dictionary / lexicographic rank
+- ST09 Circular permutations
+- ST10 Derangements / forbidden positions
+- ST11 Forbidden strings / inclusion-exclusion
+- ST12 Hybrid permutation structures
+
+This taxonomy is project metadata, not a universal mathematics taxonomy.
+
+---
+
+## Final principle
+
+A mathematics corpus is complete only when **every source item is accounted for, every eligible item has the correct mathematical owner, every owner has sufficient teaching support, every solution is verified, every helper teaches rather than leaks, every representation is mathematically faithful, and the rendered publication remains readable.**
