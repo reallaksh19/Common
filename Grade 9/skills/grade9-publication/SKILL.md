@@ -114,6 +114,12 @@ A serious reconstruction should produce at least:
 
 For large books, also produce a page/section migration map.
 
+When the project separates learner and publisher functions, treat these as distinct outputs:
+
+- **Student Core PDF** - teaching, equations, representations, worked/guided practice and independent transfer;
+- **Self-Check PDF** - retrieval and self-check items;
+- **Audit PDF / manifest** - provenance, source-focus records, mapping, QA counters and exceptions.
+
 ## End-to-end methodology
 
 ### Phase 0 — Freeze the brief
@@ -491,6 +497,65 @@ Check:
 
 Run a contact-sheet/montage scan for global rhythm, then inspect dense/problem pages individually.
 
+### Phase 13 — Student-page QA and artifact separation
+
+Read `references/student-page-qa.md` and apply the following hard gates to every student-facing batch.
+
+**AD11 — ARTIFACT SEPARATION**
+
+Keep Student Core, Self-Check, and Audit/provenance functions in separate outputs when that is the project contract. Student Core must not carry publisher/audit notices merely to prove completeness.
+
+**AD12 — SCAFFOLD FIDELITY**
+
+The visual support must fade with the learning stage:
+
+- concept/worked/full-support guided -> operative relation + representation visible;
+- faded guided -> partial scaffold, not a complete solution;
+- independent transfer -> no formula prompt when the source intentionally withholds it; give only task-shaped neutral workspace.
+
+**AD13 — MODEL VISIBILITY**
+
+On a quantitative worked or full-support guided page, the operative relation must be visible on that page or on an intentionally simultaneous facing spread. Prose/hints must not substitute for the equation.
+
+**AD14 — STUDENT-AUDIENCE PURITY**
+
+Student Core must contain zero process language such as `source mapping`, `audit`, `publication`, `reconstruction`, `QA`, `provenance`, or `moved to another PDF`. Put those in the Audit PDF.
+
+**AD15 — TASK-SPECIFIC WORKSPACE**
+
+A work zone must match the actual cognitive task. Prefer prompts such as `mark start and finish`, `separate distance and displacement`, `fill the two numerators`, `draw velocity arrows`, or `inspect the final partial cycle` over generic `facts / reasoning / answer` boxes.
+
+**AD16 — ZERO TEXT COLLISION**
+
+Run `scripts/check_text_overlaps.py` on every final PDF. Material cross-line text overlaps must be zero before release. Re-render after every collision repair.
+
+**AD17 — COMPONENT BOUNDS CONTRACT**
+
+Every reusable diagram/card/component must have declared width and height and render all labels, arrows, equations, captions and notes inside that rectangle. Use `reserve -> draw -> advance`; never continue text from a guessed y-coordinate after a fixed-height component.
+
+**AD18 — COMPONENT CONTENT BUDGET**
+
+Before drawing a bounded component, calculate whether its text/equations fit. Wrap text, fit equation size to available width, reserve vertical lines, and repaginate when necessary. Never truncate a core equation or sentence to make it fit.
+
+**AD19 — FORMULA LINE COMPLETENESS**
+
+Every displayed equation and calculation line must be complete and readable as one mathematical statement. Fail if the right-hand side is clipped, a numerator/denominator separates incorrectly, sub/superscripts collide, or an expression ends as an incomplete fragment such as `use 2v1...`.
+
+**AD20 — NORMAL-VIEW READABILITY**
+
+Inspect renders at normal student viewing size and at 100% zoom. Main question, operative equation and essential diagram must remain identifiable without zoom. Large blank areas must be purposeful work space, not accidental voids.
+
+### Required render/preflight sequence for every batch
+
+1. Render every page to images.
+2. Run `scripts/check_text_overlaps.py`.
+3. Verify component bounds/content budgets.
+4. Scan a contact sheet for page rhythm and density.
+5. Inspect every quantitative page for complete formula lines.
+6. Inspect every guided/independent page for scaffold fidelity.
+7. Confirm Student Core/Self-Check/Audit separation.
+8. Repair, re-render and repeat until all gates pass.
+
 ## Grade-band layout calibration
 
 Do not use identical density for Grades 9, 10, and 11.
@@ -524,7 +589,10 @@ A final report should account for at least:
 - internal references resolved;
 - external source links preserved;
 - editorial exceptions;
-- clipping/overflow/hidden-content findings.
+- clipping/overflow/hidden-content findings;
+- text-overlap findings;
+- component-bounds escapes;
+- incomplete or clipped formula lines.
 
 Release requires:
 
@@ -534,6 +602,9 @@ unapproved_editorial_changes = 0
 broken_internal_references = 0
 unresolved_source_links = 0
 hidden_or_clipped_core_content = 0
+text_overlap_findings = 0
+component_bounds_escape_findings = 0
+critical_equation_collision_findings = 0
 ```
 
 If any counter is non-zero, report `NOT READY FOR PUBLICATION`.
@@ -554,6 +625,10 @@ Run this short checklist after every major batch (normally every 5-10 pages or o
 10. **Readability:** Is body text comfortably readable without zoom?
 11. **Benchmark:** Does the page meet the approved prototype standard?
 12. **Render check:** Did I inspect the actual rendered PDF, not only source code/layout objects?
+13. **Artifact separation:** Is publisher/audit language absent from Student Core?
+14. **Scaffold fidelity:** Does support visibly fade from guided to independent work?
+15. **Formula completeness:** Are all displayed relations complete and unclipped?
+16. **Collision gate:** Are automated overlap and component-bounds counters zero?
 
 Any `NO` answer stops the batch until repaired.
 
@@ -570,6 +645,8 @@ Any `NO` answer stops the batch until repaired.
 - “I reduced text to 7 pt to avoid another page.”
 - “The link text is visible, so the hyperlink must be fine.”
 - “A professional benchmark means visually cloning that publisher.”
+- “The formula begins in the box, so it must fit.”
+- “The PDF opens, so overlapping text is acceptable.”
 
 ## Deterministic manifest check
 
@@ -577,9 +654,10 @@ When a JSON publication manifest is available, run:
 
 ```text
 python scripts/check_publication_manifest.py manifest.json
+python scripts/check_text_overlaps.py final.pdf
 ```
 
-Read `references/publication-playbook.md` for the novice-agent operational playbook and `references/audit-manifest-spec.md` for the recommended audit schema.
+Read `references/publication-playbook.md` for the novice-agent operational playbook, `references/student-page-qa.md` for student-facing page gates, and `references/audit-manifest-spec.md` for the recommended audit schema.
 
 ## Completion statement
 
