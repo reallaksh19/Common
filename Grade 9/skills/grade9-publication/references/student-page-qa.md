@@ -92,6 +92,28 @@ Pass only if:
 - large blank areas are purposeful work space rather than accidental layout voids;
 - page furniture does not dominate the physics/mathematics.
 
+## AD-21 ANSWER-CHOICE INTEGRITY
+
+A student must never be asked to select an option that is not visible or otherwise recoverable in the student artifact.
+
+For any multiple-choice, graph-choice, statement-set, matching, or `choose the correct curve` item, one of these must be true:
+
+- all source-supported answer choices/graphs/statements are reproduced faithfully on the question page; or
+- the student-facing task is transparently adapted into a standalone `sketch`, `describe`, `calculate`, or `state the criterion` task because the audited source does not preserve the choices; and the audit records that presentation adaptation; or
+- the missing choices are reconstructed from approved source evidence and marked `RECONSTRUCT` with a semantic figure/choice audit.
+
+The method/answer section must never stop at an orphan label such as `Option D`, `Graph 3`, or `(B), (C), (E)` when the choices are not visible there. It must include the semantic answer as well, for example:
+
+`Option D - a straight a-x line with positive slope and negative intercept.`
+
+Fail if:
+
+- the question says `choose A-D` but A-D are not visible;
+- the answer says only an option letter/number whose meaning the learner cannot see;
+- the option label is clipped or truncated;
+- a reconstructed option set is invented without source evidence;
+- the publication silently converts an option-selection task without recording the adaptation.
+
 ## Recommended pre-release sequence
 
 1. render every page;
@@ -100,7 +122,8 @@ Pass only if:
 4. inspect all pages in a contact sheet for rhythm and density;
 5. inspect every quantitative page at 100% for complete formulas;
 6. inspect every guided/independent page for scaffold fidelity;
-7. verify Student Core, Self-Check and Audit separation;
-8. only then certify the batch.
+7. verify every choice-based question against AD-21;
+8. verify Student Core, Self-Check and Audit separation;
+9. only then certify the batch.
 
 Any failed checkpoint blocks the batch until repaired and re-rendered.
