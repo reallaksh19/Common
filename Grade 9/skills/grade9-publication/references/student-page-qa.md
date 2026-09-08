@@ -2,6 +2,8 @@
 
 Use this checklist on every student-facing batch after source mapping and before release. These checks are additive to source-fidelity and link audits.
 
+For long question banks, also read `question-bank-assimilation-integrity.md` and `student-first-question-bank-layout.md`.
+
 ## Artifact separation
 
 Student materials and publisher/audit materials are different products.
@@ -99,7 +101,7 @@ A student must never be asked to select an option that is not visible or otherwi
 For any multiple-choice, graph-choice, statement-set, matching, or `choose the correct curve` item, one of these must be true:
 
 - all source-supported answer choices/graphs/statements are reproduced faithfully on the question page; or
-- the student-facing task is transparently adapted into a standalone `sketch`, `describe`, `calculate`, or `state the criterion` task because the audited source does not preserve the choices; and the audit records that presentation adaptation; or
+- the student-facing task is transparently adapted into a standalone `sketch`, `describe`, `calculate`, or `state the criterion` task because the audited source does not preserve the choices, and the audit records that presentation adaptation; or
 - the missing choices are reconstructed from approved source evidence and marked `RECONSTRUCT` with a semantic figure/choice audit.
 
 The method/answer section must never stop at an orphan label such as `Option D`, `Graph 3`, or `(B), (C), (E)` when the choices are not visible there. It must include the semantic answer as well, for example:
@@ -121,24 +123,163 @@ Student-facing mathematical notation must be typeset as mathematics rather than 
 Fail if student pages visibly contain source-style tokens such as:
 
 - `x_f`, `v_i`, `a_avg`, `s_(n+2)`;
+- `v1`, `v2`, `t1`, `t2` when those digits are mathematical indices;
 - `sqrt(...)` instead of a radical;
 - unintentional caret notation such as `t^2` when a true superscript is expected;
+- `m/s2` when `m/s²` is intended;
 - baseline ionic charges, chemical subscripts, or scientific exponents that should be raised/lowered;
 - ambiguous unit notation caused by missing superscripts.
 
-The raw/source token remains preserved in the audit model; only the student rendering is normalized typographically. Run `scripts/check_math_typography.py` as a deterministic baseline, then visually inspect equations because a text scan cannot verify glyph placement.
+The raw/source token remains preserved in the audit model; only the student rendering is normalized typographically. Do not guess index versus exponent semantics from the token alone; resolve it from the source relation.
 
-## Recommended pre-release sequence
+Run `scripts/check_math_typography.py` as a deterministic baseline, then visually inspect equations because a text scan cannot verify glyph placement.
 
-1. render every page;
-2. run text-overlap preflight;
-3. run math-typography preflight;
-4. run bounds/content-budget checks for reusable components;
-5. inspect all pages in a contact sheet for rhythm and density;
-6. inspect every quantitative page at 100% for complete formulas;
-7. inspect every guided/independent page for scaffold fidelity;
-8. verify every choice-based question against AD-21;
-9. verify Student Core, Self-Check and Audit separation;
-10. only then certify the batch.
+## AD-23 REPRESENTATION-DEPENDENCY CLOSURE
+
+If a question depends on a graph, diagram, table, timeline, number line, option figure, apparatus, geometry, or statement set, that representation is core content.
+
+Pass only when:
+
+```text
+representation required by source = identified
+representation present on student question = true
+representation legible at normal view = true
+critical labels/data preserved = true
+```
+
+If the solution/method section is intended to be standalone, also require:
+
+```text
+representation present in solution recap = true
+```
+
+Fail if the recap says `from the graph` while the graph is absent.
+
+For source crops, include all axes/scales/labels/data used by the reasoning and exclude unrelated solution/hint text where practical. A tiny or over-cropped figure counts as missing.
+
+## AD-24 SOLUTION SELF-CONTAINMENT
+
+A learner opening a standalone solution must be able to identify the problem without returning to the source PDF.
+
+Use this default structure for question banks:
+
+```text
+QUESTION RECAP
+QUESTION FIGURE / OPTIONS / TABLE when required
+WHY THIS WORKS
+METHOD
+ANSWER / CHECK
+CONCEPT TO KEEP
+RETURN TO QUESTION
+```
+
+The recap may be shortened only if target, data, units, conditions, sign/frame information and representation dependency remain unambiguous.
+
+Fail if the solution depends on context not visible in the solution artifact.
+
+## AD-25 METHOD ASSIMILATION: METHOD MUST NOT EQUAL ANSWER
+
+The solution must teach a reusable reasoning move, not merely restate the result.
+
+Fail if:
+
+- `METHOD` is identical or near-identical to `ANSWER`;
+- `METHOD` is only a memorized formula with no reason it applies;
+- the decisive model/representation step is absent;
+- the method skips directly to substitution/result;
+- generic boilerplate is copied across questions whose reasoning differs;
+- a method cannot be understood without a missing graph/table/options.
+
+For a quantitative or model-based problem, require as applicable:
+
+```text
+WHY THIS WORKS = physical/mathematical/chemical reason
+METHOD = question-specific executable route
+ANSWER / CHECK = explicit result with units/sign/semantic option meaning
+CONCEPT TO KEEP = transferable principle
+```
+
+Short conceptual questions may use concise versions, but `METHOD` and `ANSWER` must remain pedagogically distinct.
+
+## AD-26 H1-H3 PROGRESSIVE REVEAL
+
+For question-bank practice pages the default eye path is:
+
+```text
+QUESTION
+-> WORK HERE
+-> STOP / optional hint boundary
+-> H1 NOTICE
+-> H2 MODEL
+-> H3 START
+```
+
+H1-H3 must become progressively more concrete. Numerical intermediate detail is allowed when it is the useful next step.
+
+Fail if:
+
+- hints are above/beside the work zone and read accidentally;
+- H1 reveals the final answer;
+- H1-H3 repeat essentially the same sentence;
+- H3 is still generic rather than executable;
+- hint equations collide or clip.
+
+## AD-27 QUESTION-LEVEL CERTIFICATION
+
+For a question bank, page-level or PDF-level completeness is not enough. Every question must close individually.
+
+Required per-question state:
+
+```text
+source question mapped = true
+question attemptable = true
+representation dependency closed = true
+answer-choice dependency closed = true
+hints progressive = true
+solution self-contained = true
+method distinct from answer = true
+method teaches transferable reasoning = true
+answer explicit = true
+math/science typography ok = true
+question->solution link ok = true
+solution->question link ok = true
+render readable = true
+```
+
+Any failed question blocks the batch.
+
+## AD-28 COPY-PASTE / TEMPLATE DRIFT
+
+Repeated visual structure is allowed; repeated reasoning that does not fit the question is not.
+
+Inspect each batch for:
+
+- identical `WHY THIS WORKS` text across different concept families;
+- identical `METHOD` text where numbers/conditions/representations differ materially;
+- stray production tokens such as `SUBTOPIC`, placeholder text, truncated labels, or inherited answer fragments;
+- figures copied to questions that do not semantically match them;
+- a solution answer pulled from a neighboring question.
+
+If found, stop generation and re-audit the affected batch from the source pages.
+
+## Required pre-release sequence
+
+1. freeze the question/source denominator;
+2. classify representation and answer-choice dependencies for every question;
+3. render every page;
+4. run text-overlap preflight;
+5. run math-typography preflight;
+6. run bounds/content-budget checks for reusable components;
+7. inspect all pages in a contact sheet for rhythm and density;
+8. inspect every quantitative page at 100% for complete formulas;
+9. inspect every guided/independent page for scaffold fidelity;
+10. verify every choice-based question against AD-21;
+11. verify every representation-dependent question against AD-23;
+12. verify every standalone solution against AD-24 and AD-25;
+13. verify H1-H3 progression against AD-26;
+14. verify every question reaches AD-27 closed state;
+15. inspect batch for AD-28 copy-paste/template drift;
+16. verify Student Core, Self-Check and Audit separation;
+17. repair, re-render and repeat until all blocking counters are zero.
 
 Any failed checkpoint blocks the batch until repaired and re-rendered.
