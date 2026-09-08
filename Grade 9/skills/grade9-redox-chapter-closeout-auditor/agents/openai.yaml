@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Redox Chapter Closeout Auditor"
+  short_description: "Audit the full Redox source and ExamSIDE corpus before chapter acceptance"
+  default_prompt: "Use $grade9-redox-chapter-closeout-auditor after the Redox subtopics are built. Freeze the full ExamSIDE corpus, classify every candidate by scope, assign one canonical primary subtopic to every eligible item, backfill missed eligible PYQs even when they are duplicate reasoning variants, audit source obligations, render all final PDFs, and block chapter closeout unless missing and duplicate-primary counts are zero."
