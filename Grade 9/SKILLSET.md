@@ -14,6 +14,7 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 | `grade9-subtopic-completeness-auditor` | Whole-subtopic audit: source, instructional grammar, familiar/real-life bridges, helpers, misconceptions, practice, chemistry typography and layout |
 | `grade9-transfer-coverage-auditor` | Subtopic-wise external/PYQ accounting; missing/duplicate placement; concept, hint, solution and source-link coverage |
 | `grade9-redox-subtopic-book-builder` | Source-grounded Redox Study Guide + ExamSIDE transfer-book builder with approved textbook rhythm, Redox-specific helpers/misconceptions, chemistry typography, H1-H3 support, Appendix A, transfer audit and render-first QA |
+| `grade9-redox-chapter-closeout-auditor` | Final Redox chapter gate: enumerate the full frozen ExamSIDE corpus, classify every candidate, backfill missed eligible PYQs, preserve unique primary homes, audit source obligations and block closeout until chapter counters pass |
 | `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA |
 | `grade9-math` | Mathematics reasoning/difficulty profile plus SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book mode |
 | `grade9-physics` | Physics model/representation/validation profile plus SEE -> REALIZE -> UNDERSTAND concept-book mode |
@@ -73,6 +74,21 @@ The auditor requires:
 - original source-link validation;
 - zero missing/duplicate primary placements and zero scope leaks at final acceptance.
 
+## Redox chapter closeout mode
+
+After all Redox subtopics are individually built, run `$grade9-redox-chapter-closeout-auditor` before declaring the chapter final.
+
+The closeout auditor requires:
+
+- a frozen full ExamSIDE index/candidate ledger rather than a denominator inferred from incremental subtopic counts;
+- an explicit scope status for every candidate;
+- exactly one canonical primary home for every eligible item;
+- reverse comparison of the full eligible ledger against actual transfer-book placement;
+- backfill of missed eligible PYQs even when they are duplicate/known reasoning variants;
+- source-obligation closeout with explicit prerequisite exceptions rather than silent scope expansion;
+- zero chapter missing items and zero duplicate primary placements;
+- render-first QA of master books, dense ledger pages, backfill pages and final audit pages.
+
 ## Mathematics Concept Book mode
 
 For a Mathematics concept/reference book use:
@@ -102,7 +118,7 @@ and retain `CONNECT` as the source-traceability/navigation layer.
 The first worked Physics chapter exemplar is under:
 
 - `Physics/Motion/`
-- `skills/grade9-physics/references/motion-concept-book-example.md`
+- `skills/grade9-physics/references/concept-book-see-realize-understand.md`
 
 ## Deterministic checks
 
@@ -119,6 +135,7 @@ Use $grade9-question-bank to build 30 same-level questions from these anchors.
 Use $grade9-redox-subtopic-book-builder to build the next Redox subtopic with Study Guide + ExamSIDE transfer audit.
 Use $grade9-subtopic-completeness-auditor to audit a drafted subtopic before publication.
 Use $grade9-transfer-coverage-auditor to prove every eligible PYQ is covered against exactly one subtopic.
+Use $grade9-redox-chapter-closeout-auditor to run the full-corpus Redox audit and backfill before merging final chapter books.
 Use $grade9-math in Concept Book mode using SEE -> REALIZE -> UNDERSTAND -> ADOPT.
 Use $grade9-physics in Concept Book mode using SEE -> REALIZE -> UNDERSTAND.
 Use $grade9-textbook-publisher to publish this validated master JSON.
