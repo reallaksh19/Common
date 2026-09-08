@@ -114,16 +114,31 @@ Fail if:
 - a reconstructed option set is invented without source evidence;
 - the publication silently converts an option-selection task without recording the adaptation.
 
+## AD-22 TRUE MATH / SCIENCE TYPOGRAPHY
+
+Student-facing mathematical notation must be typeset as mathematics rather than leaking source-authoring syntax.
+
+Fail if student pages visibly contain source-style tokens such as:
+
+- `x_f`, `v_i`, `a_avg`, `s_(n+2)`;
+- `sqrt(...)` instead of a radical;
+- unintentional caret notation such as `t^2` when a true superscript is expected;
+- baseline ionic charges, chemical subscripts, or scientific exponents that should be raised/lowered;
+- ambiguous unit notation caused by missing superscripts.
+
+The raw/source token remains preserved in the audit model; only the student rendering is normalized typographically. Run `scripts/check_math_typography.py` as a deterministic baseline, then visually inspect equations because a text scan cannot verify glyph placement.
+
 ## Recommended pre-release sequence
 
 1. render every page;
 2. run text-overlap preflight;
-3. run bounds/content-budget checks for reusable components;
-4. inspect all pages in a contact sheet for rhythm and density;
-5. inspect every quantitative page at 100% for complete formulas;
-6. inspect every guided/independent page for scaffold fidelity;
-7. verify every choice-based question against AD-21;
-8. verify Student Core, Self-Check and Audit separation;
-9. only then certify the batch.
+3. run math-typography preflight;
+4. run bounds/content-budget checks for reusable components;
+5. inspect all pages in a contact sheet for rhythm and density;
+6. inspect every quantitative page at 100% for complete formulas;
+7. inspect every guided/independent page for scaffold fidelity;
+8. verify every choice-based question against AD-21;
+9. verify Student Core, Self-Check and Audit separation;
+10. only then certify the batch.
 
 Any failed checkpoint blocks the batch until repaired and re-rendered.
