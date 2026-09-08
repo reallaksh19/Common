@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """Deterministic baseline check for a Grade 9 Publication audit manifest.
 
-This script verifies structural zero-loss and anti-drift conditions. It does not
-replace teacher/subject review or visual inspection of rendered PDF pages.
+This script verifies structural zero-loss and anti-drift conditions. For
+question-bank products it also verifies per-question attemptability,
+representation closure, answer-choice integrity, progressive hints, solution
+self-containment, method/answer distinctness, math typography, and link closure.
+
+It does not replace teacher/subject review or visual inspection.
 
 Usage:
     python check_publication_manifest.py manifest.json
@@ -44,6 +48,45 @@ VALUE_PURPOSES = {
 
 EDITORIAL_STATUSES = {"APPROVED", "REVIEW_REQUIRED", "REJECTED"}
 
+QUESTION_PRODUCT_TYPES = {
+    "question_bank",
+    "transfer_book",
+    "worksheet_collection",
+    "question_plus_solution",
+}
+
+REPRESENTATION_DEPENDENCIES = {
+    "NONE",
+    "GRAPH",
+    "DIAGRAM",
+    "TABLE",
+    "TIMELINE",
+    "NUMBER_LINE",
+    "OPTION_FIGURES",
+    "STATEMENT_SET",
+    "MIXED",
+}
+
+REPRESENTATION_SOURCE_STATUSES = {
+    "PRESENT_SOURCE",
+    "INTENTIONALLY_ABSENT",
+    "SOURCE_CORRUPT",
+    "SOURCE_INCOMPLETE",
+    "RECONSTRUCT_APPROVED",
+    "REVIEW_REQUIRED",
+}
+
+ANSWER_CHOICE_STATUSES = {
+    "NOT_APPLICABLE",
+    "VISIBLE_SOURCE",
+    "VISIBLE_PUBLISHED",
+    "TRANSPARENTLY_ADAPTED",
+    "RECONSTRUCT_APPROVED",
+    "REVIEW_REQUIRED",
+}
+
+QUESTION_STATUSES = {"PASS", "REVIEW_REQUIRED"}
+
 RENDER_ZERO_FIELDS = (
     "clipped_core_objects",
     "hidden_core_objects",
@@ -55,6 +98,20 @@ RENDER_ZERO_FIELDS = (
     "math_glyph_errors",
     "broken_internal_links",
     "unresolved_external_source_links",
+)
+
+QUESTION_BANK_ZERO_FIELDS = (
+    "unattemptable_questions",
+    "representation_dependency_failures",
+    "invisible_choice_failures",
+    "question_recap_failures",
+    "hint_progression_failures",
+    "method_answer_duplication_failures",
+    "method_reasoning_failures",
+    "solution_self_containment_failures",
+    "math_typography_failures",
+    "question_solution_link_failures",
+    "copy_paste_drift_failures",
 )
 
 
@@ -76,6 +133,11 @@ def require_list(data: dict[str, Any], key: str, errors: list[str]) -> list[Any]
         fail(errors, f"top-level {key!r} must be an array")
         return []
     return value
+
+
+def require_true(item: dict[str, Any], key: str, prefix: str, errors: list[str]) -> None:
+    if item.get(key) is not True:
+        fail(errors, f"{prefix}.{key} must be true")
 
 
 def main() -> int:
@@ -105,9 +167,33 @@ def main() -> int:
     render_qa = require_dict(data, "render_qa", errors)
     editorial_exceptions = require_list(data, "editorial_exceptions", errors)
 
+    product_type = publication.get("product_type")
+    is_question_product = product_type in QUESTION_PRODUCT_TYPES
+
+    question_records_raw = data.get("question_records")
+    question_bank_qa_raw = data.get("question_bank_qa")
+
+    if is_question_product:
+        if not isinstance(question_records_raw, list):
+            fail(errors, "top-level 'question_records' must be an array for question-bank products")
+            question_records: list[Any] = []
+        else:
+            question_records = question_records_raw
+        if not isinstance(question_bank_qa_raw, dict):
+            fail(errors, "top-level 'question_bank_qa' must be an object for question-bank products")
+            question_bank_qa: dict[str, Any] = {}
+        else:
+            question_bank_qa = question_bank_qa_raw
+    else:
+        question_records = question_records_raw if isinstance(question_records_raw, list) else []
+        question_bank_qa = question_bank_qa_raw if isinstance(question_bank_qa_raw, dict) else {}
+
     for key in ("source_file", "source_pages", "published_pages"):
         if key not in publication:
             fail(errors, f"publication.{key} is required")
+
+    if "product_type" not in publication:
+        warnings.append("publication.product_type is missing; question-bank gates cannot be inferred")
 
     if publication.get("core_preservation_required") is not True:
         warnings.append("publication.core_preservation_required is not true")
@@ -164,10 +250,7 @@ def main() -> int:
     if core_count == 0:
         fail(errors, "no core source units found")
     if core_count != mapped_core_count:
-        fail(
-            errors,
-            f"core mapping mismatch: core={core_count}, mapped/intentional={mapped_core_count}",
-        )
+        fail(errors, f"core mapping mismatch: core={core_count}, mapped/intentional={mapped_core_count}")
 
     # ---- Value additions -------------------------------------------------
     value_ids: set[str] = set()
@@ -249,6 +332,105 @@ def main() -> int:
         if status == "INTENTIONALLY_ABSENT" and item.get("intentional_absence") is not True:
             fail(errors, f"{figure_id}: intentional_absence must be true")
 
+    # ---- Question records ------------------------------------------------
+    question_ids: set[str] = set()
+    question_pass_count = 0
+    representation_required_count = 0
+
+    for idx, item in enumerate(question_records):
+        prefix = f"question_records[{idx}]"
+        if not isinstance(item, dict):
+            fail(errors, f"{prefix} must be an object")
+            continue
+
+        question_id = item.get("question_id")
+        if not isinstance(question_id, str) or not question_id.strip():
+            fail(errors, f"{prefix}.question_id is required")
+            continue
+        if question_id in question_ids:
+            fail(errors, f"duplicate question_id: {question_id}")
+        question_ids.add(question_id)
+
+        dep = item.get("representation_dependency")
+        if dep not in REPRESENTATION_DEPENDENCIES:
+            fail(errors, f"{question_id}: invalid representation_dependency {dep!r}")
+            dep = "NONE"
+
+        rep_status = item.get("representation_source_status")
+        if rep_status not in REPRESENTATION_SOURCE_STATUSES:
+            fail(errors, f"{question_id}: invalid representation_source_status {rep_status!r}")
+        elif rep_status == "REVIEW_REQUIRED":
+            fail(errors, f"{question_id}: representation REVIEW_REQUIRED blocks publication")
+
+        choice_status = item.get("answer_choice_status")
+        if choice_status not in ANSWER_CHOICE_STATUSES:
+            fail(errors, f"{question_id}: invalid answer_choice_status {choice_status!r}")
+        elif choice_status == "REVIEW_REQUIRED":
+            fail(errors, f"{question_id}: answer-choice REVIEW_REQUIRED blocks publication")
+
+        status = item.get("status")
+        if status not in QUESTION_STATUSES:
+            fail(errors, f"{question_id}: invalid status {status!r}")
+        elif status == "REVIEW_REQUIRED":
+            fail(errors, f"{question_id}: REVIEW_REQUIRED blocks publication")
+        elif status == "PASS":
+            question_pass_count += 1
+
+        require_true(item, "question_recap_complete", question_id, errors)
+        require_true(item, "method_distinct_from_answer", question_id, errors)
+        require_true(item, "answer_present", question_id, errors)
+        require_true(item, "math_typography_ok", question_id, errors)
+        require_true(item, "question_to_solution_link_ok", question_id, errors)
+        require_true(item, "solution_to_question_link_ok", question_id, errors)
+        require_true(item, "source_link_ok", question_id, errors)
+        require_true(item, "copy_paste_drift_check", question_id, errors)
+
+        if item.get("h1_present") or item.get("h2_present") or item.get("h3_present"):
+            require_true(item, "hint_progression_ok", question_id, errors)
+
+        if dep != "NONE":
+            representation_required_count += 1
+            require_true(item, "representation_present_student", question_id, errors)
+            require_true(item, "representation_legible", question_id, errors)
+            # For question-bank products the solution artifact is expected to be standalone.
+            if is_question_product:
+                require_true(item, "representation_present_solution", question_id, errors)
+
+        # A solution must contain an executable route. For question-bank products
+        # it should also explain why the model/relation applies.
+        if is_question_product:
+            require_true(item, "method_has_executable_route", question_id, errors)
+            require_true(item, "method_has_why", question_id, errors)
+            require_true(item, "concept_to_keep_present", question_id, errors)
+
+        if choice_status not in {None, "NOT_APPLICABLE"}:
+            require_true(item, "answer_semantic_if_choice", question_id, errors)
+
+    if is_question_product and not question_records:
+        fail(errors, "question_records must not be empty for question-bank products")
+
+    # ---- Question-bank summary ------------------------------------------
+    if is_question_product:
+        frozen = question_bank_qa.get("questions_frozen")
+        published = question_bank_qa.get("questions_published")
+        if not isinstance(frozen, int):
+            fail(errors, "question_bank_qa.questions_frozen must be an integer")
+        if not isinstance(published, int):
+            fail(errors, "question_bank_qa.questions_published must be an integer")
+        if isinstance(frozen, int) and isinstance(published, int) and frozen != published:
+            fail(errors, f"question count mismatch: frozen={frozen}, published={published}")
+        if isinstance(published, int) and published != len(question_records):
+            fail(errors, f"question_records mismatch: published={published}, records={len(question_records)}")
+
+        for field in QUESTION_BANK_ZERO_FIELDS:
+            value = question_bank_qa.get(field)
+            if value is None:
+                fail(errors, f"question_bank_qa.{field} is required")
+            elif not isinstance(value, int):
+                fail(errors, f"question_bank_qa.{field} must be an integer")
+            elif value != 0:
+                fail(errors, f"question_bank_qa.{field} must be 0, got {value}")
+
     # ---- Render QA -------------------------------------------------------
     for field in RENDER_ZERO_FIELDS:
         value = render_qa.get(field)
@@ -272,6 +454,7 @@ def main() -> int:
             fail(errors, f"{prefix}: editorial REVIEW_REQUIRED blocks publication")
 
     print("PUBLICATION MANIFEST SUMMARY")
+    print(f"- product type: {product_type or 'unspecified'}")
     print(f"- source units: {len(source_units)}")
     print(f"- core units: {core_count}")
     print(f"- mapped/intentional core units: {mapped_core_count}")
@@ -280,6 +463,10 @@ def main() -> int:
     print(f"- figures: {len(figures)}")
     print(f"- unresolved references: {unresolved_refs}")
     print(f"- source review-required: {review_source_count}")
+    if is_question_product:
+        print(f"- question records: {len(question_records)}")
+        print(f"- question PASS: {question_pass_count}")
+        print(f"- representation-dependent questions: {representation_required_count}")
 
     if warnings:
         print("WARNINGS")
