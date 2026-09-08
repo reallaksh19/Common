@@ -13,10 +13,14 @@ The recommended manifest format is JSON.
   "value_additions": [],
   "references": [],
   "figures": [],
+  "question_records": [],
+  "question_bank_qa": {},
   "render_qa": {},
   "editorial_exceptions": []
 }
 ```
+
+`question_records` and `question_bank_qa` are required when `publication.product_type` is a question bank, transfer book, worksheet collection, or question-plus-solution publication.
 
 ## `publication`
 
@@ -29,10 +33,21 @@ Required fields:
   "published_pages": 180,
   "grade_band": "9",
   "subject": "Physics",
+  "product_type": "question_bank",
   "core_preservation_required": true,
   "benchmark_status": "APPROVED_PROTOTYPE"
 }
 ```
+
+Recommended `product_type` values:
+
+- `textbook`
+- `study_guide`
+- `question_bank`
+- `transfer_book`
+- `worksheet_collection`
+- `question_plus_solution`
+- `mixed`
 
 `published_pages` may differ from `source_pages`.
 
@@ -148,6 +163,114 @@ Rules:
 - `SUPPORT_ADD` is additive and must not reveal an answer intentionally withheld by the source.
 - `REVIEW_REQUIRED` blocks final certification.
 
+## `question_records` — required for question-bank products
+
+Every frozen question must have one record. The unit of certification is the question, not merely the page.
+
+```json
+{
+  "question_id": "EX-M10B-02",
+  "source_page": 50,
+  "set_id": "SET-7",
+  "question_recap_complete": true,
+  "representation_dependency": "GRAPH",
+  "representation_source_status": "PRESENT_SOURCE",
+  "representation_present_student": true,
+  "representation_present_solution": true,
+  "representation_legible": true,
+  "answer_choice_status": "NOT_APPLICABLE",
+  "h1_present": true,
+  "h2_present": true,
+  "h3_present": true,
+  "hint_progression_ok": true,
+  "method_has_why": true,
+  "method_has_executable_route": true,
+  "method_distinct_from_answer": true,
+  "answer_present": true,
+  "answer_semantic_if_choice": true,
+  "concept_to_keep_present": true,
+  "math_typography_ok": true,
+  "question_to_solution_link_ok": true,
+  "solution_to_question_link_ok": true,
+  "source_link_ok": true,
+  "copy_paste_drift_check": true,
+  "status": "PASS"
+}
+```
+
+Allowed `representation_dependency` values:
+
+- `NONE`
+- `GRAPH`
+- `DIAGRAM`
+- `TABLE`
+- `TIMELINE`
+- `NUMBER_LINE`
+- `OPTION_FIGURES`
+- `STATEMENT_SET`
+- `MIXED`
+
+Allowed `representation_source_status` values:
+
+- `PRESENT_SOURCE`
+- `INTENTIONALLY_ABSENT`
+- `SOURCE_CORRUPT`
+- `SOURCE_INCOMPLETE`
+- `RECONSTRUCT_APPROVED`
+- `REVIEW_REQUIRED`
+
+Allowed `answer_choice_status` values:
+
+- `NOT_APPLICABLE`
+- `VISIBLE_SOURCE`
+- `VISIBLE_PUBLISHED`
+- `TRANSPARENTLY_ADAPTED`
+- `RECONSTRUCT_APPROVED`
+- `REVIEW_REQUIRED`
+
+Allowed `status` values:
+
+- `PASS`
+- `REVIEW_REQUIRED`
+
+Rules:
+
+- `question_id` must be unique.
+- Every question must have `question_recap_complete=true` in a standalone solution artifact.
+- If `representation_dependency != NONE`, `representation_present_student`, `representation_legible`, and — for standalone solutions — `representation_present_solution` must be true.
+- `answer_choice_status=REVIEW_REQUIRED` blocks release.
+- `hint_progression_ok` must be true when H1-H3 are used.
+- `method_distinct_from_answer` must be true.
+- A quantitative/model-based solution should normally have both `method_has_why=true` and `method_has_executable_route=true`.
+- `answer_present`, `math_typography_ok`, link checks, source-link check and `copy_paste_drift_check` must be true.
+- `status=REVIEW_REQUIRED` blocks release.
+
+## `question_bank_qa` — required for question-bank products
+
+```json
+{
+  "questions_frozen": 61,
+  "questions_published": 61,
+  "unattemptable_questions": 0,
+  "representation_dependency_failures": 0,
+  "invisible_choice_failures": 0,
+  "question_recap_failures": 0,
+  "hint_progression_failures": 0,
+  "method_answer_duplication_failures": 0,
+  "method_reasoning_failures": 0,
+  "solution_self_containment_failures": 0,
+  "math_typography_failures": 0,
+  "question_solution_link_failures": 0,
+  "copy_paste_drift_failures": 0
+}
+```
+
+Rules:
+
+- `questions_frozen` must equal `questions_published`.
+- Every defect counter must be zero.
+- These counters summarize the per-question records; they do not replace them.
+
 ## `render_qa`
 
 ```json
@@ -203,6 +326,9 @@ source-unit REVIEW_REQUIRED = 0
 value additions replacing source = 0
 unresolved references = 0
 figure REVIEW_REQUIRED = 0
+all question records PASS when product is a question bank
+questions_frozen = questions_published
+question-bank defect counters = 0
 render QA defect counters = 0
 text overlap findings = 0
 component bounds escapes = 0
@@ -210,4 +336,4 @@ critical equation collisions = 0
 editorial REVIEW_REQUIRED = 0
 ```
 
-Use `scripts/check_publication_manifest.py` for a deterministic baseline manifest check and `scripts/check_text_overlaps.py` for layout collision preflight. Neither script replaces visual/subject-matter QA.
+Use `scripts/check_publication_manifest.py` for a deterministic baseline manifest check, `scripts/check_text_overlaps.py` for layout collision preflight, and `scripts/check_math_typography.py` for source-notation leak preflight. None replaces visual or subject-matter QA.
