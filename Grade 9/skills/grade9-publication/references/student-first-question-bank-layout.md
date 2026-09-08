@@ -213,3 +213,27 @@ Before full reconstruction, the approved prototype should include at least:
 7. rendered proof that no text overlaps or clips.
 
 Once the user approves this pattern, scale the system while preserving source obligations and running the normal anti-drift and render-first audits.
+
+## 13. Answer-choice integrity for incomplete source options
+
+A choice-based question is not student-usable when its choices are missing. Do not preserve an unusable instruction such as `Choose option A-D` while omitting A-D.
+
+For multiple-choice, graph-choice, statement-set, matching, or `identify the correct curve` items:
+
+- reproduce the source-supported options when they are actually present and legible in the source;
+- if options are missing from the audited source, do not invent them from general knowledge;
+- transparently adapt the student task into a standalone `sketch`, `describe`, `calculate`, or `state the criterion` task using only source-supported semantics;
+- record that as a presentation adaptation in the audit model;
+- in the method section, give both the source option label and its semantic meaning when the option artwork/text is absent.
+
+Preferred answer style:
+
+`Option D - the a-x graph is a straight line with positive slope and negative intercept.`
+
+Reject:
+
+`Answer: D`
+
+when the learner cannot see what D represents.
+
+The same rule applies to answers such as `Graph 3`, `A, B and D only`, or `(B), (C), (E)`: either show the referenced choices or explain the substantive answer so the student can understand the check without reconstructing missing context.
