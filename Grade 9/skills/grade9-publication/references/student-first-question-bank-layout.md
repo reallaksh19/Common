@@ -2,6 +2,8 @@
 
 Use this reference whenever a source-grounded educational PDF is primarily a long question bank, transfer-practice book, exam-practice book, worksheet collection, or question-plus-solution publication.
 
+Also read `question-bank-assimilation-integrity.md` and `student-page-qa.md` before scaling a full book.
+
 The governing learner rule is:
 
 > **The student should experience one bounded study set at a time, not the total page count of the book.**
@@ -111,7 +113,7 @@ A visually elegant hint block that cannot safely hold real mathematical content 
 
 Avoid an isolated heading such as `METHOD CHECK - SET 1` followed by solutions that require the learner to remember which problem they refer to.
 
-Use a question-aware structure:
+Default structure:
 
 ```text
 CHECK YOUR METHOD - SET n
@@ -120,11 +122,20 @@ EX-... / Qn
 QUESTION RECAP
 <short but unambiguous question wording>
 
-METHOD
-<source-grounded worked route>
+QUESTION FIGURE / OPTIONS / TABLE
+<when required by the problem>
 
-ANSWER
+WHY THIS WORKS
+<concept/model reason>
+
+METHOD
+<question-specific worked route>
+
+ANSWER / CHECK
 <final answer>
+
+CONCEPT TO KEEP
+<transferable idea>
 
 <- Return to question
 ```
@@ -182,11 +193,13 @@ numeric/math detail wraps without collision = true
 question text overlaps = 0
 hint text overlaps = 0
 solution cards include question recap = true
+representation dependencies visible = true
+method distinct from answer = true
 solution-to-question return links resolve = true
 question-to-solution links resolve = true
 ```
 
-For long books, inspect representative short, medium, long, graph-heavy, and equation-heavy questions at normal reading size before scaling the template.
+For long books, inspect representative short, medium, long, graph-heavy, equation-heavy and choice-based questions at normal reading size before scaling the template.
 
 ## 11. Anti-patterns to reject
 
@@ -197,6 +210,9 @@ For long books, inspect representative short, medium, long, graph-heavy, and equ
 - hiding all numerical detail from hints even when an intermediate calculation is exactly what the learner needs;
 - putting the final answer in H1;
 - a solution page that says only `METHOD CHECK` without repeating the problem context;
+- `METHOD` that is merely the answer/formula repeated;
+- graph-dependent recap without the graph;
+- invisible answer choices referenced by option letter;
 - compressing a long question bank by shrinking typography rather than improving composition;
 - large global page-count emphasis that makes the learner feel they must confront the whole book at once.
 
@@ -208,9 +224,10 @@ Before full reconstruction, the approved prototype should include at least:
 2. one D3 question with meaningful work space;
 3. one D4/graph-heavy full-page question;
 4. stacked H1-H3 containing real numerical/mathematical detail;
-5. one solution page containing question recaps, methods, answers, and return links;
-6. a set-progress/navigation page or header;
-7. rendered proof that no text overlaps or clips.
+5. one solution page containing question recap, required representation, why-this-works, method, answer, concept-to-keep and return link;
+6. one answer-choice or statement-set case if present in the source;
+7. a set-progress/navigation page or header;
+8. rendered proof that no text overlaps or clips.
 
 Once the user approves this pattern, scale the system while preserving source obligations and running the normal anti-drift and render-first audits.
 
@@ -237,3 +254,74 @@ Reject:
 when the learner cannot see what D represents.
 
 The same rule applies to answers such as `Graph 3`, `A, B and D only`, or `(B), (C), (E)`: either show the referenced choices or explain the substantive answer so the student can understand the check without reconstructing missing context.
+
+## 14. Representation dependency must travel with the question
+
+Before layout, classify each question as:
+
+```text
+NONE | GRAPH | DIAGRAM | TABLE | TIMELINE | NUMBER_LINE | OPTION_FIGURES | STATEMENT_SET | MIXED
+```
+
+If a question depends on a representation, the student page must show it. If the method/solution book is intended to be standalone, the solution recap must show it again.
+
+A sentence such as `Find distance from t=0 to 4 s from a v-t graph` is not enough without the v-t graph.
+
+When cropping a source figure:
+
+- preserve all labels/data needed for reasoning;
+- avoid cropping away axes, zero lines, negative regions, units or option labels;
+- avoid importing surrounding solution text into the crop;
+- allocate enough size for normal-view readability.
+
+## 15. Method must teach assimilation, not duplicate the answer
+
+The answer is the destination. The method explains why the route works and how to reuse it.
+
+Reject:
+
+```text
+METHOD
+Equal distances -> 2v1v2/(v1+v2)
+
+ANSWER
+2v1v2/(v1+v2)
+```
+
+Prefer the reasoning chain:
+
+```text
+WHY THIS WORKS
+Average speed = total distance / total time. Equal-distance legs generally take unequal times, so the arithmetic mean of speeds is not valid.
+
+METHOD
+Let each leg be x. Total distance = 2x; total time = x/v1 + x/v2. Simplify the ratio.
+
+ANSWER / CHECK
+2v1v2/(v1+v2)
+
+CONCEPT TO KEEP
+Equal-distance average speed is time-weighted.
+```
+
+A short conceptual solution may be concise, but `METHOD` must remain pedagogically distinct from `ANSWER`.
+
+## 16. Question-level batch closure
+
+After every 5-10 questions or one set, stop and certify each question individually:
+
+```text
+attemptable without source PDF = true
+representation dependency closed = true
+answer-choice dependency closed = true
+H1-H3 progressive = true
+solution self-contained = true
+method distinct from answer = true
+method teaches transferable reasoning = true
+answer explicit = true
+notation correct = true
+links resolve = true
+render readable = true
+```
+
+Do not continue generating the next batch while any question in the current batch fails.
