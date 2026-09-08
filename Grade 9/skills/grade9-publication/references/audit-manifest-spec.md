@@ -156,6 +156,9 @@ Rules:
   "clipped_core_objects": 0,
   "hidden_core_objects": 0,
   "overflow_findings": 0,
+  "text_overlap_findings": 0,
+  "component_bounds_escape_findings": 0,
+  "critical_equation_collision_findings": 0,
   "unreadable_critical_labels": 0,
   "math_glyph_errors": 0,
   "broken_internal_links": 0,
@@ -164,6 +167,10 @@ Rules:
 ```
 
 All numeric defect counters must be zero for final certification.
+
+The overlap counters are mandatory because a PDF can contain every required source token yet still be unusable when one component draws over another. Run `scripts/check_text_overlaps.py` on every generated PDF, then visually inspect the rendered pages. The deterministic script is a baseline gate, not a substitute for human inspection.
+
+See `references/layout-collision-gate.md` for the reusable-component bounds contract and the reserve -> draw -> advance composition rule.
 
 ## `editorial_exceptions`
 
@@ -197,7 +204,10 @@ value additions replacing source = 0
 unresolved references = 0
 figure REVIEW_REQUIRED = 0
 render QA defect counters = 0
+text overlap findings = 0
+component bounds escapes = 0
+critical equation collisions = 0
 editorial REVIEW_REQUIRED = 0
 ```
 
-Use `scripts/check_publication_manifest.py` for a deterministic baseline check. The script does not replace visual/subject-matter QA.
+Use `scripts/check_publication_manifest.py` for a deterministic baseline manifest check and `scripts/check_text_overlaps.py` for layout collision preflight. Neither script replaces visual/subject-matter QA.
