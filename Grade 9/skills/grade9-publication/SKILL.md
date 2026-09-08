@@ -1,54 +1,64 @@
 ---
 name: grade9-publication
-description: Reconstruct and publish source-grounded Grade 9-11 educational PDFs without replacing core source content. Use for publisher-grade layout revamps, zero-loss reconstruction, teacher-value additions, missing-figure recovery, math/science typography, automatic renumbering and cross-reference preservation, benchmarked page design, render-first QA, and anti-drift audits.
+description: Reconstruct and publish source-grounded Grade 9-11 educational PDFs without replacing core source content. Use for publisher-grade redesign, zero-loss source reconciliation, question-bank reconstruction, figure/option preservation, concept-assimilation solutions, math/science typography, automatic renumbering/linking, render-first QA, and deterministic anti-drift audits.
 ---
 
 # Grade 9 Publication
 
-Use this skill when a source PDF or existing educational book must be **reconstructed as a stronger publication while preserving its core content**.
+Use this skill when an existing educational PDF or book is the source of truth and must be reconstructed as a stronger publication.
 
 The governing rule is:
 
 > **Add value around the source. Do not replace the source.**
 
-A publication rebuild may change orientation, page count, page breaks, grids, typography, diagrams, figure placement, exercise grouping, navigation, and visible numbering. It must not silently delete, rewrite, simplify away, correct, or substitute the source's core instructional data.
+A rebuild may change page count, page breaks, orientation, grids, typography, figure placement, exercise grouping, navigation, and visible numbering. It must not silently delete, rewrite, simplify away, correct, or substitute the source's core instructional data.
 
-This skill is deliberately stricter than ordinary PDF cleanup. It combines source preservation, teacher judgement, editorial design, diagram reconstruction, stable-link architecture, benchmarked layout, and release auditing.
+This is a **control skill**. It exists to stop drift while layout, pedagogy, figures, solutions, and navigation are improved.
 
-## When to use this skill
+## Mandatory routing before work begins
 
-Use `$grade9-publication` when the user asks to:
+Choose the product mode first.
 
-- rebuild or republish a supplied PDF;
-- make a book look like a professional Grade 9-11 textbook;
-- preserve 100% of core source data while redesigning layout;
-- add diagrams, concept summaries, teacher prompts, misconceptions, or visual bridges without replacing original content;
-- reduce accidental whitespace or dense auto-flow;
-- repair mathematical subscripts, superscripts, fractions, symbols, units, graph labels, or science notation;
-- renumber lessons/figures/questions after repagination while keeping every citation and internal relationship correct;
-- benchmark a layout against reputable educational publishers/sites without copying them;
-- certify source-to-publication completeness.
+### Source-PDF textbook / study-guide reconstruction
 
-Use `grade9-textbook-publisher` instead when the source of truth is already canonical structured master data and the task is mainly product generation. Use `grade9-publication` when the **existing publication/source PDF itself must be reconstructed and reconciled**.
+Read:
 
-## Non-negotiable publication contract
+- `references/publication-playbook.md`
+- `references/student-page-qa.md`
+- `references/layout-collision-gate.md`
+- `references/audit-manifest-spec.md`
 
-1. **The original source is immutable.** Never overwrite the only source copy.
-2. **Core data is preserved before layout begins.** Extraction and mapping precede redesign.
-3. **Value-add is additive.** Added teaching aids must be distinguishable from source-derived content in the audit model.
-4. **No silent editorial correction.** Suspected source errors are flagged, not quietly changed.
-5. **Stable IDs survive repagination.** Visible section/page/figure numbers are generated labels, never canonical identity.
-6. **Intentional absence is data.** If the source deliberately withholds a diagram so the learner must draw it, preserve that instructional choice.
-7. **A technically present but hidden item counts as lost.** Covered, clipped, off-page, microscopic, or unreadable content fails preservation.
-8. **Professional layout is not auto-flow.** Do not pour extracted text into generic columns and call it reconstruction.
-9. **Benchmark principles, do not clone copyrighted designs.** Learn hierarchy, density, pacing, figure integration, practice rhythm, and accessibility from reputable references.
-10. **Do not declare success from page count or visual resemblance alone.** Release requires deterministic source, linkage, rendering, and pedagogical audits.
+### Question bank / PYQ / transfer book / worksheet collection / question-plus-solution book
 
-## Content classes
+Read all of the above **plus**:
+
+- `references/student-first-question-bank-layout.md`
+- `references/question-bank-assimilation-integrity.md`
+
+For Physics concept-assimilation/transfer work, also use `../grade9-physics-subtopic-book-builder/SKILL.md` and the relevant Physics skill. For Chemistry, use the relevant Chemistry skill and preserve the chemistry typography contract.
+
+Do not scale a full book before these references have been applied to a representative prototype.
+
+# 1. Non-negotiable publication contract
+
+1. **Source is immutable.** Never overwrite the only source copy.
+2. **Source is authority.** General knowledge may not silently fill gaps, fix answers, invent figures, or replace missing options.
+3. **Core mapping precedes design.** Extract and classify obligations before layout.
+4. **No silent editorial correction.** Suspected source errors become `REVIEW_REQUIRED` unless explicitly approved.
+5. **Stable IDs survive repagination.** Page numbers and visible labels are derived data, never canonical identity.
+6. **Intentional absence is data.** If the learner is meant to draw/construct something, preserve that instructional choice.
+7. **Hidden = lost.** Covered, clipped, off-page, microscopic, unreadable, or missing-context content fails preservation.
+8. **Professional layout is not auto-flow.** Recomposition must follow learning function, not merely extracted text order.
+9. **Benchmark principles, never clone copyrighted publisher designs.**
+10. **The unit of certification is the learner obligation.** For question banks, that unit is the individual question.
+11. **Do not claim publisher-ready from page count or visual resemblance.** Release requires source, dependency, pedagogy, link, typography, and render closure.
+
+# 2. Content classes
 
 Classify every item before redesign.
 
-### CORE_SOURCE
+## CORE_SOURCE
+
 Must survive semantically and, where wording matters, textually.
 
 Examples:
@@ -59,286 +69,383 @@ Examples:
 - numerical values and units;
 - question wording;
 - hints and worked solutions;
-- concept IDs, question IDs, difficulty/source tags;
-- graph data, labels, relationships, arrows, table values;
+- concept/question/difficulty/source IDs;
+- graph/table/diagram data and labels;
+- option figures and statement sets;
 - source citations and hyperlinks;
-- pedagogical instructions such as `NO DIAGRAM PROVIDED`;
-- stated misconceptions and model limits.
+- model limits and stated misconceptions;
+- learner instructions such as `NO DIAGRAM PROVIDED`.
 
-### PRESENTATION_SOURCE
+## PRESENTATION_SOURCE
+
 May be redesigned while preserving function and meaning.
 
 Examples:
 
-- exact coordinates;
-- landscape versus portrait;
-- box dimensions;
-- colors that do not encode meaning;
-- page breaks;
-- decorative rules;
+- coordinates and box dimensions;
+- landscape vs portrait;
+- decorative colors/rules;
 - card shapes;
+- page breaks;
 - visible numbering.
 
-### VALUE_ADD
-New instructional support that does not replace core source data.
+## VALUE_ADD
 
-Examples:
+New instructional support that does not replace source content.
 
-- concept synthesis map;
-- carefully reconstructed missing/explanatory figure;
-- representation bridge;
-- prediction prompt;
-- compact prerequisite reminder;
-- teacher note;
-- retrieval check;
-- glossary cue;
-- visual comparison table.
+Allowed reasons:
 
-Every value addition must have a reason: `clarify`, `connect`, `diagnose`, `practice`, `navigate`, or `reduce_cognitive_load`.
+```text
+clarify
+connect
+diagnose
+practice
+navigate
+reduce_cognitive_load
+```
 
-### EDITORIAL_CHANGE
-A change to source meaning, wording, data, answer, scope, or scientific claim.
+Examples: concept helper, representation bridge, misconception contrast, retrieval cue, glossary cue, teacher note, synthesis map.
+
+## EDITORIAL_CHANGE
+
+Any change to source meaning, wording, numerical data, answer, scope, or scientific claim.
 
 Do not perform silently. Record as `REVIEW_REQUIRED` unless the user explicitly approves it.
 
-## Required output artifacts
+# 3. Anti-drift state machine
 
-A serious reconstruction should produce at least:
+An agent must follow these phases in order. A failed gate stops the build.
 
-1. rebuilt publication PDF;
-2. source-to-publication audit manifest (CSV or JSON);
-3. cross-reference/link audit;
-4. figure/diagram inventory;
-5. render QA report or contact sheet;
-6. exception log for any unresolved source ambiguity or editorial change.
+## Phase A — BRIEF LOCK
 
-For large books, also produce a page/section migration map.
+Record:
 
-When the project separates learner and publisher functions, treat these as distinct outputs:
-
-- **Student Core PDF** - teaching, equations, representations, worked/guided practice and independent transfer;
-- **Self-Check PDF** - retrieval and self-check items;
-- **Audit PDF / manifest** - provenance, source-focus records, mapping, QA counters and exceptions.
-
-## End-to-end methodology
-
-### Phase 0 — Freeze the brief
-
-Write a one-paragraph publication contract before editing:
-
-- audience and grade band;
+- audience/grade band;
 - source authority;
-- allowed value-add;
+- product type;
+- allowed additions;
 - forbidden changes;
-- benchmark references;
-- output format;
-- required preservation level;
-- whether page count may change.
+- output artifacts;
+- whether page count may change;
+- whether student and solution PDFs are separate;
+- required preservation level.
 
-**Anti-drift checkpoint AD0 — Brief lock**
+**AD0 BRIEF LOCK:** if the agent cannot state what may change and what may not, stop.
 
-Before proceeding, answer:
+## Phase B — SOURCE FREEZE
 
-- Am I reconstructing or rewriting?
-- Is the source still the authority?
-- What exactly may I add?
-- What exactly may I not change?
+Record:
 
-If these answers cannot be stated clearly, stop and clarify.
-
-### Phase 1 — Source preflight
-
-Create an immutable source copy and record:
-
-- filename and checksum if available;
-- page count and page dimensions;
-- text/image/vector availability;
-- embedded fonts and likely substitutions;
-- hyperlinks, bookmarks, annotations;
-- scan/image pages versus searchable pages;
+- filename/checksum where available;
+- page count and dimensions;
+- searchable vs scan pages;
+- fonts;
+- links/bookmarks;
+- embedded figures/images;
 - obvious clipping/collision/glyph defects.
 
-Render representative pages before redesign. For long books, sample every template family plus known problem pages.
+Render representative source pages, including every template family and known high-risk page.
 
-**AD1 — Source freeze**
+**AD1 SOURCE FREEZE:** no layout work before the source is preserved separately and page count is known.
 
-No layout work starts until the source is separately preserved and its page count is known.
+## Phase C — SOURCE OBLIGATION LEDGER
 
-### Phase 2 — Build the source obligation ledger
+Prefer existing IDs such as `EX-M10B-02`, `M4A-C5`, etc. Otherwise assign immutable IDs.
 
-Segment the source into stable units. Prefer existing IDs such as `M4A-C5`, `EX-M4A-01`, question IDs, lesson IDs, or figure IDs. If none exist, assign immutable source IDs such as:
-
-- `SRC-P012-TXT-003`
-- `SRC-P012-EQN-001`
-- `SRC-P012-FIG-002`
-- `SRC-P012-LINK-001`
-
-For each unit record:
-
-- source ID;
-- source page/range;
-- type;
-- exact/raw content or locator;
-- semantic summary;
-- numbers/units;
-- source relationships;
-- intended learner function;
-- preservation class;
-- reconstruction target(s);
-- status.
-
-Recommended source status values:
-
-- `PRESERVED`
-- `RECOMPOSED`
-- `MERGED`
-- `SPLIT`
-- `INTENTIONALLY_ABSENT`
-- `REVIEW_REQUIRED`
-
-Do not use `OMITTED` for a core item in a zero-loss build.
-
-**AD2 — Coverage denominator lock**
-
-Freeze the number of core source units before design. The denominator must not shrink later because an item became inconvenient to place.
-
-### Phase 3 — Build the relationship graph
-
-Create links using stable source IDs, not page numbers.
-
-Examples:
+For every source obligation record:
 
 ```text
-QUESTION EX-M4A-01
-  -> concept M4A-C5
-  -> hint H1
-  -> solution SOL-M4A-01
-  -> source URL
+source_id
+source_page/range
+type
+raw locator/content
+semantic summary
+numbers/units
+relationships
+learner function
+preservation class
+mapped target(s)
+status
 ```
 
-Track:
+Allowed source status:
 
-- section-to-section citations;
-- concept links;
-- question-to-solution links;
+```text
+PRESERVED
+RECOMPOSED
+MERGED
+SPLIT
+INTENTIONALLY_ABSENT
+REVIEW_REQUIRED
+```
+
+There is no `OMITTED` status in a zero-loss build.
+
+**AD2 DENOMINATOR LOCK:** freeze the core-unit denominator before design. It may not shrink because an item is difficult to place.
+
+## Phase D — QUESTION / DEPENDENCY LEDGER
+
+Required for question-bank products.
+
+Create one record per question before layout. Use the schema in `references/question-bank-assimilation-integrity.md` and `references/audit-manifest-spec.md`.
+
+At minimum classify:
+
+```text
+question_id
+source_page
+set_id
+question_family
+question_recap_complete
+representation_dependency
+representation_source_status
+representation_present_student
+representation_present_solution
+answer_choice_status
+h1/h2/h3 status
+hint_progression_ok
+method_has_why
+method_has_executable_route
+method_distinct_from_answer
+answer_present
+concept_to_keep_present
+math_typography_ok
+question<->solution links
+source_link_ok
+copy_paste_drift_check
+status
+```
+
+**AD3 QUESTION DENOMINATOR:** frozen question count must equal published question count.
+
+## Phase E — RELATIONSHIP GRAPH
+
+Create stable-ID links for:
+
+- question -> concept;
+- question -> hints;
+- question -> solution;
+- solution -> question;
 - figure callouts;
 - appendix references;
 - source URLs;
-- prerequisite references;
-- return links.
+- prerequisite references.
 
-Visible labels such as `Section 4.2`, `Figure 6`, or `p. 37` are generated only after pagination.
+Never hard-code a page number when a stable target ID can be resolved later.
 
-**AD3 — Identity check**
+**AD4 IDENTITY CHECK:** references use stable IDs; visible labels/page numbers are generated after pagination.
 
-If a cross-reference points to a visible page number instead of a stable target ID, redesign the reference before continuing.
+## Phase F — TEACHER / CONCEPT ANALYSIS
 
-### Phase 4 — Teacher-value analysis
-
-Review each subtopic as a teacher, not just a designer.
-
-Ask:
+For every subtopic/question family ask:
 
 1. What is the big idea?
-2. Which representation best explains it: words, motion strip, graph, equation, table, timeline, particle model, geometry, or worked example?
+2. What representation exposes it best?
 3. What misconception is likely?
-4. Where does the learner need prediction before calculation?
-5. Which source ideas are currently separated but should be visually connected?
-6. Which blank area is intentional working space and which is accidental whitespace?
-7. Is a missing figure genuinely missing, or intentionally omitted?
+4. What must the learner notice before calculating?
+5. What source ideas should be visually connected?
+6. Which blank area is purposeful work space vs accidental whitespace?
+7. Does the question depend on a source graph/table/options/diagram?
+8. What concept should the learner retain after checking the solution?
 
-Add only support that improves comprehension or navigation without displacing source meaning.
+**AD5 ADDITIVE VALUE:** each new object must help the learner while leaving source content present and identifiable.
 
-**AD4 — Additive-value test**
+## Phase G — PROTOTYPE GATE
 
-For every new object, complete the sentence:
+Before scaling, build 6-8 representative pages or equivalent coverage of template families.
 
-> “This is added because it helps the learner ________, while the original source content remains ________.”
+For question banks the prototype must include:
 
-If the addition replaces, paraphrases away, or hides the source, reject it.
+- compact D1/D2 page;
+- D3 page with real work space;
+- D4/graph-heavy page;
+- stacked H1-H3 with real numerical/math detail;
+- answer-choice/statement-set case if present;
+- representation-dependent solution recap;
+- solution with `WHY THIS WORKS -> METHOD -> ANSWER -> CONCEPT TO KEEP`;
+- set-level navigation;
+- proof of zero overlap/clipping.
 
-### Phase 5 — Benchmark before designing
+Do not generate dozens of pages until this passes.
 
-Benchmark patterns from reputable Grade 9-11 learning systems. Suitable categories include:
+# 4. Student-first question-bank contract
 
-- professional textbook page hierarchy and exercise rhythm;
-- worked-example anatomy;
-- concept-to-practice progression;
-- misconception handling;
-- learning objectives and retrieval checks;
-- diagram integration;
-- density and reading comfort.
+For question-bank products, learner experience takes priority over old page boundaries.
 
-Benchmark **principles**, not exact visual assets.
+## Bounded study sets
 
-Score the intended design out of 100:
+Prefer 6-10 mixed-difficulty questions per set, fewer for graph-heavy/multi-step sets.
 
-- conceptual clarity — 15;
-- figure/diagram quality — 15;
-- learning sequence — 10;
-- worked-example quality — 10;
-- practice progression — 15;
-- misconception treatment — 8;
-- mathematical/scientific typography — 8;
-- page hierarchy/readability — 8;
-- retrieval/assessment — 6;
-- cross-link/revision value — 5.
+Use `SET n / N` and set-level progress. Do not make the total page count the dominant learner signal.
 
-Target at least 85 before scaling the style to a full book.
+## Density by difficulty
 
-**AD5 — Prototype gate**
+Default:
 
-Do not redesign dozens of pages before 6-8 representative pages prove the visual system. A prototype should include at least a lesson opener, concept/figure page, derivation or explanation page, worked example, misconception page, and practice/review page.
+```text
+D1: 2-3 short questions/page when safe
+D2: usually 2/page
+D3: 1-2/page
+D4/D5 or graph/diagram heavy: generous half-page or full page
+```
 
-### Phase 6 — Design the publication system
+Do not shrink typography/work space merely to reduce page count.
 
-Define before page production:
+## Mandatory eye path
 
-- trim/page size and orientation;
-- margins and safe zones;
-- baseline grid;
-- column families (single, asymmetric, practice columns, full-width figure);
-- type families and exact hierarchy;
-- equation style;
-- figure label style;
-- callout vocabulary;
-- header/footer and navigation system;
-- page-density target;
-- accessibility/readability minimums.
+Unless source pedagogy explicitly requires otherwise:
 
-For ordinary learning pages, aim for roughly 70-85% **meaningful occupancy**, where meaningful occupancy includes diagrams, working space, retrieval prompts, and annotation zones. Do not fill space merely to hit a percentage.
+```text
+QUESTION
+-> WORK HERE / representation area
+-> STOP / optional hint boundary
+-> H1 NOTICE
+-> H2 MODEL
+-> H3 START
+-> method-check link
+```
 
-Avoid:
+Hints belong **below** the work area so the learner does not read them accidentally.
 
-- repeated 50/50 columns regardless of content;
-- giant decorative headers;
-- tiny body text used to save pages;
-- large empty lower halves caused by forced breaks;
-- a separate rounded card for every idea;
-- visually equal emphasis for primary and secondary content;
-- decorative graphics that teach nothing.
+## H1-H3 semantics
 
-**AD6 — Layout-system check**
+```text
+H1 NOTICE  decisive clue/data interpretation
+H2 MODEL   representation/model/intermediate quantities
+H3 START   first executable equation/substitution/calculation
+```
 
-Before adding more pages, verify that at least three different content types can be composed successfully with the same design system without forcing them into identical geometry.
+Numerical intermediate detail is allowed and often desirable.
 
-### Phase 7 — Reconstruct mathematics and science notation
+Fail if H1 gives the final answer, H1-H3 repeat each other, or H3 remains generic.
 
-Treat equations as semantic objects, not plain text strings.
+# 5. Representation-dependency integrity
 
-Preserve raw source representation separately from published notation.
+If a question says or implies `from the graph`, `as shown`, `use the table`, `choose the curve`, `which diagram`, or otherwise depends on a representation, that representation is CORE_SOURCE.
+
+Classify:
+
+```text
+NONE
+GRAPH
+DIAGRAM
+TABLE
+TIMELINE
+NUMBER_LINE
+OPTION_FIGURES
+STATEMENT_SET
+MIXED
+```
+
+For every non-`NONE` question require:
+
+```text
+representation_present_student = true
+representation_legible = true
+critical_labels/data preserved = true
+```
+
+If the solution/method artifact is standalone, also require:
+
+```text
+representation_present_solution = true
+```
+
+A recap such as `Find distance from a v-t graph` without the graph fails.
+
+## Source crop/redraw rules
+
+When preserving a source figure:
+
+- include all axes, scales, units, labels, dimensions, legends, zero lines, negative regions, option letters, arrows, and values used by reasoning;
+- avoid importing unrelated hint/solution text into the crop;
+- inspect at normal learner size;
+- if unreadable, redraw semantically or allocate more space;
+- do not invent missing semantics.
+
+A technically present but unreadable crop counts as missing.
+
+# 6. Answer-choice integrity
+
+Never ask the student to choose an invisible option.
+
+For MCQ, graph-choice, matching, statement-set, or option-figure items, one of these must be true:
+
+1. all source-supported choices are visible;
+2. the task is transparently adapted to a standalone `calculate`, `describe`, `sketch`, or `state the criterion` task using only source-supported semantics;
+3. missing choices are reconstructed from approved source evidence and audited.
+
+Never invent options from general knowledge.
+
+If the method says `Option D` but choices are not visible there, include semantic meaning:
+
+```text
+Option D — straight a-x line with positive slope and negative intercept.
+```
+
+Orphan labels such as `D`, `Graph 3`, `A/B/D only`, or `(B),(C),(E)` fail when the choices are absent.
+
+# 7. Solution assimilation contract
+
+A solution is not an answer key with extra words. It must teach the reusable concept.
+
+Default question-bank solution structure:
+
+```text
+QUESTION RECAP
+<enough wording to identify the task>
+
+QUESTION FIGURE / OPTIONS / TABLE
+<when representation-dependent>
+
+WHY THIS WORKS
+<physical/mathematical/chemical/conceptual reason>
+
+METHOD
+<question-specific executable reasoning route>
+
+ANSWER / CHECK
+<explicit result, units/sign/semantic choice meaning>
+
+CONCEPT TO KEEP
+<one transferable idea>
+
+RETURN TO QUESTION
+```
+
+Short conceptual questions may use concise versions, but the method must remain pedagogically distinct from the answer.
+
+## Blocking method failures
+
+Fail when:
+
+- `METHOD` is identical or near-identical to `ANSWER`;
+- `METHOD` only states a formula with no reason it applies;
+- the decisive modeling/representation step is absent;
+- the route jumps directly to final substitution/result;
+- generic boilerplate is copied across questions whose reasoning differs;
+- the method depends on a missing graph/table/options;
+- stray neighboring-question or template text appears.
+
+The answer is the destination. The method explains **why this route works and how to reuse it**.
+
+# 8. Mathematics and science typography
+
+Treat equations as semantic objects, not plain strings.
+
+Preserve the raw/source representation in the audit model, but publish true notation.
 
 Examples:
 
 ```text
-source: s_(n+2) - s_n = 2a
-published: s_{n+2} - s_n = 2a
+v1 -> v₁
+v2 -> v₂
+s_(n+2) -> properly typeset subscript expression
+sqrt(t1 t2) -> √(t₁t₂)
+m/s2 -> m/s²
 ```
 
-```text
-source: t0 = sqrt(t1 t2)
-published: t_0 = √(t_1 t_2)
-```
+Do not guess index vs exponent semantics from typography alone. Resolve meaning from the source relation.
 
 Audit:
 
@@ -350,77 +457,92 @@ Audit:
 - vectors;
 - signs;
 - units;
-- chemical formulae/charges where relevant;
-- equation alignment;
-- graph axis notation.
+- chemistry charges/formulae where relevant;
+- graph-axis notation.
 
-Do not treat a typographic normalization as permission to alter the underlying formula.
+Run:
 
-### Phase 8 — Figure policy and reconstruction
+```text
+python scripts/check_math_typography.py student.pdf
+```
 
-Classify each figure need:
+Then visually inspect equations because text scanning cannot verify glyph placement.
 
-- `PRESERVE` — source figure is correct and usable;
-- `REDRAW` — same information, cleaner vector execution;
-- `RECONSTRUCT` — figure is absent/corrupt but evidence is sufficient;
-- `SUPPORT_ADD` — new explanatory figure that adds value;
-- `INTENTIONALLY_ABSENT` — learner is expected to construct it.
+# 9. Layout and component contract
+
+Define before scaling:
+
+- page size/orientation;
+- margins/safe zones;
+- baseline grid;
+- content-column families;
+- type hierarchy;
+- equation style;
+- figure-label style;
+- callout vocabulary;
+- header/footer/navigation;
+- page-density target;
+- accessibility/readability floors.
+
+Aim for roughly 70-85% meaningful occupancy on ordinary learning pages. Working space counts as meaningful occupancy.
+
+Avoid:
+
+- repeated 50/50 layouts regardless of content;
+- giant decorative headers;
+- tiny body text to save pages;
+- large accidental lower-page voids;
+- equal visual emphasis for all objects;
+- one card for every idea;
+- decorative graphics that teach nothing.
+
+## Reserve -> draw -> advance
+
+Every reusable component must declare its bounds. Wrap content before rendering, reserve vertical space, draw, then advance.
+
+Never continue from a guessed y-coordinate after a fixed-height component.
+
+Run:
+
+```text
+python scripts/check_text_overlaps.py final.pdf
+```
+
+Known real overlap, clipping, bounds escape, or incomplete equation line blocks release.
+
+# 10. Figure policy
+
+Classify each figure:
+
+```text
+PRESERVE
+REDRAW
+RECONSTRUCT
+SUPPORT_ADD
+INTENTIONALLY_ABSENT
+REVIEW_REQUIRED
+```
 
 For `RECONSTRUCT`, use evidence in this order:
 
 1. source page text;
 2. source solution/answer;
-3. neighbouring source concept pages;
-4. established visual grammar elsewhere in the same book;
-5. outside verification only when the user allows it.
+3. neighboring source concept pages;
+4. established visual grammar in the same source;
+5. outside verification only when user allows it.
 
-Record a figure semantic manifest, e.g. axes, values, arrows, regions, labels, and relationships. A pretty redraw that changes these fails.
+Record semantic data: axes, values, arrows, labels, regions, relationships.
 
-**AD7 — Figure evidence gate**
+Never invent a figure because a page looks empty.
 
-Never invent a source figure because a page “looks empty.” If evidence is insufficient, mark `REVIEW_REQUIRED`.
-
-### Phase 9 — Compose by learning sequence, not old coordinates
-
-Zero loss does **not** mean preserving old coordinates or old page boundaries.
-
-Use the source learning sequence and relationships to compose coherent spreads. Keep core wording/data present, but allow related units to merge onto a page or split across pages.
-
-A strong sequence often resembles:
-
-```text
-orient/context
--> core idea
--> representation
--> derivation/explanation
--> worked reasoning
--> misconception/model limit
--> guided practice
--> independent/transfer practice
--> retrieval/review
-```
-
-Do not compress away source content to achieve this sequence.
-
-**AD8 — No-rewrite check**
-
-At the end of each subtopic, compare the publication against the source ledger. Every core unit must have a target. Teacher-added synthesis may sit between source units but cannot stand in for them.
-
-### Phase 10 — Automatic renumbering and link resolution
+# 11. Automatic numbering and links
 
 Keep two identities:
 
 - immutable source ID;
 - generated publication label.
 
-Example:
-
-```text
-source target: M4B-C8
-publication label after layout: Section 4.2.7, page 19
-```
-
-When pagination changes, regenerate:
+After pagination regenerate:
 
 - section numbers;
 - figure/table numbers;
@@ -429,13 +551,11 @@ When pagination changes, regenerate:
 - TOC;
 - bookmarks;
 - page references;
-- internal links and return links.
+- question -> solution links;
+- solution -> question links;
+- external source links.
 
-Never manually hard-code a page number into source linkage when a target ID can be used.
-
-**AD9 — Link closure gate**
-
-Required counters:
+Required closure:
 
 ```text
 references_discovered = references_resolved
@@ -445,156 +565,122 @@ orphan_targets = 0
 duplicate_publication_ids = 0
 ```
 
-### Phase 11 — Four-way reconciliation
+# 12. Four-way reconciliation
 
-Audit four layers:
+Audit separately:
 
 ```text
 SOURCE PDF
-  -> EXTRACTED SOURCE MODEL
-  -> PUBLICATION MODEL
-  -> FINAL PDF
+-> EXTRACTED SOURCE MODEL
+-> PUBLICATION MODEL
+-> FINAL PDF
 ```
 
-Check each transition separately.
+Ask at each transition:
 
-#### Source PDF -> extracted model
-Did extraction miss text, numbers, equations, graphics, links, or instructions?
+- extraction missed anything?
+- reorganization altered/deleted anything?
+- rendering hid/clipped/substituted anything?
+- final learner artifact still carries every obligation and dependency?
 
-#### Extracted model -> publication model
-Did reorganization delete, replace, or alter core content?
+**AD DENOMINATOR RECONCILIATION:** frozen counts must equal mapped/published counts with zero unexplained omissions.
 
-#### Publication model -> final PDF
-Did rendering hide, clip, shrink, substitute, or overflow anything?
+# 13. Per-batch anti-drift gate
 
-#### Source PDF -> final PDF
-Does the finished artifact still carry the complete source obligation set?
+After every 5-10 pages, 5-10 questions, or one complete subtopic/set, stop and run the gate before continuing.
 
-**AD10 — Denominator reconciliation**
+General:
 
-The frozen core-source count from AD2 must equal the mapped/preserved count, with zero unexplained omissions.
+```text
+core denominator unchanged
+unmapped core units = 0
+unapproved editorial changes = 0
+broken stable-ID links = 0
+figure evidence failures = 0
+math/science typography failures = 0
+text overlaps = 0
+component bounds escapes = 0
+```
 
-### Phase 12 — Render-first visual QA
+Question-bank additions:
 
-Render every final page to images. Inspect at normal reading size and at 100% zoom.
+```text
+question count frozen = published count
+unattemptable questions = 0
+representation dependency failures = 0
+invisible choice failures = 0
+question recap failures = 0
+hint progression failures = 0
+METHOD≈ANSWER failures = 0
+method reasoning failures = 0
+solution self-containment failures = 0
+copy-paste/template drift failures = 0
+question<->solution link failures = 0
+```
 
-Check:
+Any non-zero count stops generation. Repair the current batch before producing more pages.
 
-- clipping and overlap;
-- equation glyphs;
-- figure labels;
-- line lengths and leading;
-- page rhythm;
+# 14. Render-first QA
+
+Render every final page to images.
+
+Inspect:
+
+- clipping/overlap;
+- formulas and glyphs;
+- graph/figure labels;
+- source crops;
+- page rhythm/density;
 - accidental whitespace;
 - crowded regions;
-- visible hierarchy;
-- repeated templates becoming monotonous;
 - orphan headings;
 - awkward page breaks;
-- unreadably small metadata;
 - hidden answer/result lines;
-- blank areas that are neither pedagogical nor compositional.
+- answer-choice visibility;
+- representation-dependent questions;
+- standalone solution self-containment;
+- repeated boilerplate/copy-paste leakage.
 
-Run a contact-sheet/montage scan for global rhythm, then inspect dense/problem pages individually.
+Scan a contact sheet for global rhythm, then inspect high-risk pages at full size.
 
-### Phase 13 — Student-page QA and artifact separation
+# 15. Required audit artifacts
 
-Read `references/student-page-qa.md` and apply the following hard gates to every student-facing batch.
+A serious reconstruction should produce:
 
-**AD11 — ARTIFACT SEPARATION**
+1. rebuilt publication PDF(s);
+2. source-to-publication manifest;
+3. question-level records for question-bank products;
+4. cross-reference/link audit;
+5. figure/diagram inventory;
+6. render QA/contact sheet;
+7. exception log;
+8. page/section migration map for large books.
 
-Keep Student Core, Self-Check, and Audit/provenance functions in separate outputs when that is the project contract. Student Core must not carry publisher/audit notices merely to prove completeness.
+For separated products:
 
-**AD12 — SCAFFOLD FIDELITY**
+- **Student Core / Practice PDF** — learner content only;
+- **Check Your Method / Solution PDF** — self-contained solutions;
+- **Audit manifest/report** — provenance, QA counters, mappings, exceptions.
 
-The visual support must fade with the learning stage:
+Do not leak publisher-process language into the student artifact merely to prove completeness.
 
-- concept/worked/full-support guided -> operative relation + representation visible;
-- faded guided -> partial scaffold, not a complete solution;
-- independent transfer -> no formula prompt when the source intentionally withholds it; give only task-shaped neutral workspace.
+# 16. Deterministic checks
 
-**AD13 — MODEL VISIBILITY**
+Use the manifest schema in `references/audit-manifest-spec.md`.
 
-On a quantitative worked or full-support guided page, the operative relation must be visible on that page or on an intentionally simultaneous facing spread. Prose/hints must not substitute for the equation.
+Run as applicable:
 
-**AD14 — STUDENT-AUDIENCE PURITY**
+```text
+python scripts/check_publication_manifest.py manifest.json
+python scripts/check_text_overlaps.py final.pdf
+python scripts/check_math_typography.py student.pdf
+```
 
-Student Core must contain zero process language such as `source mapping`, `audit`, `publication`, `reconstruction`, `QA`, `provenance`, or `moved to another PDF`. Put those in the Audit PDF.
+These are baseline gates, not substitutes for subject-matter or visual review.
 
-**AD15 — TASK-SPECIFIC WORKSPACE**
+# 17. Required release counters
 
-A work zone must match the actual cognitive task. Prefer prompts such as `mark start and finish`, `separate distance and displacement`, `fill the two numerators`, `draw velocity arrows`, or `inspect the final partial cycle` over generic `facts / reasoning / answer` boxes.
-
-**AD16 — ZERO TEXT COLLISION**
-
-Run `scripts/check_text_overlaps.py` on every final PDF. Material cross-line text overlaps must be zero before release. Re-render after every collision repair.
-
-**AD17 — COMPONENT BOUNDS CONTRACT**
-
-Every reusable diagram/card/component must have declared width and height and render all labels, arrows, equations, captions and notes inside that rectangle. Use `reserve -> draw -> advance`; never continue text from a guessed y-coordinate after a fixed-height component.
-
-**AD18 — COMPONENT CONTENT BUDGET**
-
-Before drawing a bounded component, calculate whether its text/equations fit. Wrap text, fit equation size to available width, reserve vertical lines, and repaginate when necessary. Never truncate a core equation or sentence to make it fit.
-
-**AD19 — FORMULA LINE COMPLETENESS**
-
-Every displayed equation and calculation line must be complete and readable as one mathematical statement. Fail if the right-hand side is clipped, a numerator/denominator separates incorrectly, sub/superscripts collide, or an expression ends as an incomplete fragment such as `use 2v1...`.
-
-**AD20 — NORMAL-VIEW READABILITY**
-
-Inspect renders at normal student viewing size and at 100% zoom. Main question, operative equation and essential diagram must remain identifiable without zoom. Large blank areas must be purposeful work space, not accidental voids.
-
-### Required render/preflight sequence for every batch
-
-1. Render every page to images.
-2. Run `scripts/check_text_overlaps.py`.
-3. Verify component bounds/content budgets.
-4. Scan a contact sheet for page rhythm and density.
-5. Inspect every quantitative page for complete formula lines.
-6. Inspect every guided/independent page for scaffold fidelity.
-7. Confirm Student Core/Self-Check/Audit separation.
-8. Repair, re-render and repeat until all gates pass.
-
-## Grade-band layout calibration
-
-Do not use identical density for Grades 9, 10, and 11.
-
-### Grade 9
-
-Prefer more concrete representation, larger diagrams, shorter explanatory chunks, explicit vocabulary, prediction prompts, and guided representation.
-
-### Grade 10
-
-Balance visual and algebraic reasoning, representation conversion, graph interpretation, and more independent application.
-
-### Grade 11
-
-Allow denser formal notation, derivations, model assumptions, compact diagrams, and more independent multi-step problems while retaining readable hierarchy.
-
-These are calibration principles, not quotas.
-
-## Required zero-loss audit
-
-A final report should account for at least:
-
-- source pages;
-- source core units;
-- mapped core units;
-- unmapped units;
-- equations detected/matched;
-- numerical/unit tokens matched;
-- figures preserved/redrawn/reconstructed;
-- intentional figure omissions preserved;
-- internal references resolved;
-- external source links preserved;
-- editorial exceptions;
-- clipping/overflow/hidden-content findings;
-- text-overlap findings;
-- component-bounds escapes;
-- incomplete or clipped formula lines.
-
-Release requires:
+General release requires:
 
 ```text
 unmapped_core_units = 0
@@ -605,65 +691,64 @@ hidden_or_clipped_core_content = 0
 text_overlap_findings = 0
 component_bounds_escape_findings = 0
 critical_equation_collision_findings = 0
+math_typography_failures = 0
 ```
 
-If any counter is non-zero, report `NOT READY FOR PUBLICATION`.
-
-## Anti-drift checklist
-
-Run this short checklist after every major batch (normally every 5-10 pages or one subtopic):
-
-1. **Source authority:** Am I still reconstructing the supplied source rather than writing my own book?
-2. **Core denominator:** Has any core item disappeared from the ledger?
-3. **Value-add boundary:** Are new teaching objects clearly additive?
-4. **No silent correction:** Did I change any fact, number, answer, or claim without approval?
-5. **Stable linkage:** Are references still target-ID based rather than page-number based?
-6. **Figure evidence:** Did I invent any diagram unsupported by source or approved research?
-7. **Typography:** Are equations/units/symbols semantically unchanged and visually correct?
-8. **Layout quality:** Am I designing pages, or merely auto-flowing extracted text?
-9. **Density:** Are white spaces intentional and useful rather than accidental?
-10. **Readability:** Is body text comfortably readable without zoom?
-11. **Benchmark:** Does the page meet the approved prototype standard?
-12. **Render check:** Did I inspect the actual rendered PDF, not only source code/layout objects?
-13. **Artifact separation:** Is publisher/audit language absent from Student Core?
-14. **Scaffold fidelity:** Does support visibly fade from guided to independent work?
-15. **Formula completeness:** Are all displayed relations complete and unclipped?
-16. **Collision gate:** Are automated overlap and component-bounds counters zero?
-
-Any `NO` answer stops the batch until repaired.
-
-## Common drift patterns to reject
-
-- “It contains all the text, so it is complete.”
-- “The page count matches, so nothing was lost.”
-- “I fixed the font and collisions, so it is reconstructed.”
-- “I copied the old layout because preserving content means preserving coordinates.”
-- “I condensed three source explanations into my own summary.”
-- “The blank area looked ugly, so I inserted a diagram.”
-- “The equation is probably wrong, so I corrected it silently.”
-- “The source says draw your own diagram, but I added the answer diagram.”
-- “I reduced text to 7 pt to avoid another page.”
-- “The link text is visible, so the hyperlink must be fine.”
-- “A professional benchmark means visually cloning that publisher.”
-- “The formula begins in the box, so it must fit.”
-- “The PDF opens, so overlapping text is acceptable.”
-
-## Deterministic manifest check
-
-When a JSON publication manifest is available, run:
+Question-bank release additionally requires:
 
 ```text
-python scripts/check_publication_manifest.py manifest.json
-python scripts/check_text_overlaps.py final.pdf
+questions_frozen = questions_published
+unattemptable_questions = 0
+representation_dependency_failures = 0
+invisible_choice_failures = 0
+question_recap_failures = 0
+hint_progression_failures = 0
+method_answer_duplication_failures = 0
+method_reasoning_failures = 0
+solution_self_containment_failures = 0
+question_solution_link_failures = 0
+copy_paste_drift_failures = 0
+all question_records = PASS
 ```
 
-Read `references/publication-playbook.md` for the novice-agent operational playbook, `references/student-page-qa.md` for student-facing page gates, and `references/audit-manifest-spec.md` for the recommended audit schema.
+If any blocking counter is non-zero, status is:
 
-## Completion statement
+`NOT READY FOR PUBLICATION`.
 
-Do not say “publisher-ready” or “100% reconstructed” unless the deterministic and visual gates pass. Prefer precise status language such as:
+# 18. Common drift patterns to reject
 
-- `SOURCE MAPPING COMPLETE; VISUAL QA PENDING`
-- `LAYOUT PROTOTYPE APPROVED; FULL RECONSTRUCTION NOT YET CERTIFIED`
+- “All text is present, so the book is complete.”
+- “Page count matches, so nothing was lost.”
+- “The PDF opens, so overlap is acceptable.”
+- “I fixed the font, so reconstruction is done.”
+- “The source graph was decorative.” without dependency audit.
+- “The question says choose D, so answer D is enough.” when choices are absent.
+- “The method can be the formula because the answer is correct.”
+- “The recap says from the graph, so the graph need not be repeated.”
+- “I can infer the missing option/figure from general knowledge.”
+- “v2 is readable enough.” when the intended notation is v₂.
+- “H1-H3 can share one generic sentence.”
+- “One question per page is safer.” regardless of difficulty/workload.
+- “I can shrink to 7 pt to avoid another page.”
+- “The source equation is probably wrong, so I corrected it.”
+- “The blank space looked ugly, so I inserted an unsupported diagram.”
+- “A generic method paragraph can be reused for the whole set.”
+- “I will audit the figures after the book is generated.”
+
+# 19. Completion statement
+
+Do not say `publisher-ready`, `100% reconstructed`, or equivalent unless deterministic and visual gates pass.
+
+Use precise status language such as:
+
+- `SOURCE MAPPING COMPLETE; QUESTION DEPENDENCY AUDIT PENDING`
+- `PROTOTYPE APPROVED; FULL RECONSTRUCTION NOT YET CERTIFIED`
+- `QUESTION RECORDS 61/61 PASS; LINK/RENDER QA PENDING`
 - `CORE DATA RECONCILIATION 100%; LINK/RENDER QA PASS`
-- `NOT READY: 3 UNMAPPED SOURCE UNITS`
+- `NOT READY: 3 REPRESENTATION-DEPENDENCY FAILURES`
+
+The final question to ask before release is:
+
+> **Can a student attempt and learn from every published question using only the published artifact, with no missing representation, invisible choice, broken notation, or answer-only solution?**
+
+If the answer is not demonstrably yes, the build is not finished.
