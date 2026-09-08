@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publication"
+  short_description: "Rebuild source PDFs without losing core content"
+  default_prompt: "Use $grade9-publication to reconstruct this Grade 9-11 educational PDF as a publisher-grade, source-faithful edition with teacher-value additions, stable cross-links, anti-drift checkpoints, and zero-loss audit."
