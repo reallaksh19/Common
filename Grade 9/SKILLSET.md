@@ -11,11 +11,12 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 | `grade9-concept-architect` | Stable concept IDs, prerequisites, learning graph, links |
 | `grade9-question-bank` | Core N, same-level calibration, Level-Up challenges, mixed tests |
 | `grade9-learning-enrichment` | Helpers, hints, misconceptions, diagnostics, transfer |
+| `grade9-publication` | Source-faithful Grade 9-11 PDF reconstruction: zero-loss core mapping, teacher-value additions, benchmarked layout, stable renumbering/cross-links, figure recovery, anti-drift checkpoints and render-first certification |
 | `grade9-subtopic-completeness-auditor` | Whole-subtopic audit: source, instructional grammar, familiar/real-life bridges, helpers, misconceptions, practice, chemistry typography and layout |
 | `grade9-transfer-coverage-auditor` | Subtopic-wise external/PYQ accounting; missing/duplicate placement; concept, hint, solution and source-link coverage |
 | `grade9-redox-subtopic-book-builder` | Source-grounded Redox Study Guide + ExamSIDE transfer-book builder with approved textbook rhythm, Redox-specific helpers/misconceptions, chemistry typography, H1-H3 support, Appendix A, transfer audit and render-first QA |
 | `grade9-redox-chapter-closeout-auditor` | Final Redox chapter gate: enumerate the full frozen ExamSIDE corpus, classify every candidate, backfill missed eligible PYQs, preserve unique primary homes, audit source obligations and block closeout until chapter counters pass |
-| `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA |
+| `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA from validated canonical master data |
 | `grade9-math` | Mathematics reasoning/difficulty profile plus SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book mode |
 | `grade9-physics` | Physics model/representation/validation profile plus SEE -> REALIZE -> UNDERSTAND concept-book mode |
 | `grade9-chemistry` | Chemistry macro-particle-symbolic/evidence profile |
@@ -27,6 +28,28 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 - Repository root `Grade9schema.md` — fuller human specification and implementation history.
 - `skills/grade9-math/references/concept-book-see-realize-understand-adopt.md` — reusable Mathematics Concept Book protocol.
 - `skills/grade9-physics/references/concept-book-see-realize-understand.md` — reusable Physics Concept Book protocol.
+- `skills/grade9-publication/references/publication-playbook.md` — novice-agent operating manual for source-faithful publication reconstruction.
+- `skills/grade9-publication/references/audit-manifest-spec.md` — deterministic zero-loss/link/render audit schema.
+
+## Publication reconstruction mode
+
+Use `$grade9-publication` when the supplied educational PDF/book itself is the reconstruction source and the user wants a professional revamp without replacing core content.
+
+The publication workflow requires:
+
+- an immutable original source;
+- a frozen source-obligation ledger with stable IDs before layout;
+- separation of `CORE_SOURCE`, `PRESENTATION_SOURCE`, `VALUE_ADD`, and `EDITORIAL_CHANGE` objects;
+- stable target-based cross-references so visible section/page/figure numbering may be regenerated safely after repagination;
+- teacher-value additions that support named source IDs rather than substitute for them;
+- evidence-gated figure preservation/redraw/reconstruction and protection of intentional diagram omissions;
+- semantic math/science notation reconciliation rather than plain-string comparison;
+- a 6-8 page representative prototype before scaling;
+- anti-drift checkpoints every subtopic or 5-10 pages;
+- render-first QA and a source-to-final four-way reconciliation;
+- zero unmapped core units, zero unapproved editorial changes, zero broken source relationships/links, and zero clipped/hidden core content before claiming 100% reconstruction.
+
+`grade9-publication` complements rather than replaces `grade9-textbook-publisher`: use the former for **source-PDF reconstruction and reconciliation**, and the latter when publishing from already validated canonical structured master data.
 
 ## Redox subtopic-book mode
 
@@ -125,6 +148,7 @@ The first worked Physics chapter exemplar is under:
 - `skills/grade9-question-bank/scripts/difficulty_check.py`
 - `skills/grade9-question-bank/scripts/validate_bank.py`
 - `skills/grade9-textbook-publisher/scripts/check_master_links.py`
+- `skills/grade9-publication/scripts/check_publication_manifest.py`
 
 ## Recommended invocation
 
@@ -138,6 +162,7 @@ Use $grade9-transfer-coverage-auditor to prove every eligible PYQ is covered aga
 Use $grade9-redox-chapter-closeout-auditor to run the full-corpus Redox audit and backfill before merging final chapter books.
 Use $grade9-math in Concept Book mode using SEE -> REALIZE -> UNDERSTAND -> ADOPT.
 Use $grade9-physics in Concept Book mode using SEE -> REALIZE -> UNDERSTAND.
+Use $grade9-publication to reconstruct this source PDF with zero-loss core mapping, additive teacher value, benchmarked layout and anti-drift checkpoints.
 Use $grade9-textbook-publisher to publish this validated master JSON.
 ```
 
@@ -145,4 +170,4 @@ Each skill follows the Agent Skills folder structure with required `SKILL.md` an
 
 ## Schema status
 
-This concept-book expansion does **not** migrate or redesign the Grade 9 master schema. It is a subject-specific authoring/pedagogy layer within the existing workflow.
+This publication-reconstruction expansion does **not** migrate or redesign the Grade 9 master schema. It adds a source-PDF reconstruction and certification workflow beside the existing canonical master-data publishing workflow.
