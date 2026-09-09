@@ -5,9 +5,9 @@
 | Read | Purpose |
 |---|---|
 | [Review guide](REVIEW_GUIDE.md) | Page-indexed routes, reviewer roles and comment format |
-| [B30 learner book](Motion_B30_Rebuilt.pdf) | 21 pages: pictures, prerequisite repair, guided work and independent practice |
-| [B80 learner book](Motion_B80_Rebuilt.pdf) | 16 pages: explanatory depictions, model comparison and transfer |
-| [Optional-hint practice](Motion_Optional_Hint_Practice.pdf) | 10-page original-question layout demonstration |
+| [B30 learner book](Motion_B30_Rebuilt.pdf) | 27 pages: pictures, prerequisite repair, guided work, independent practice and concept-hidden mixed transfer |
+| [B80 learner book](Motion_B80_Rebuilt.pdf) | 22 pages: explanatory depictions, model comparison, transfer and post-marking diagnosis |
+| [Optional-hint practice](Motion_Optional_Hint_Practice.pdf) | 16-page original-question layout demonstration with mixed-transfer surface |
 | [Review and adaptation record](Physics_Rebuild_Review.md) | Reference comparison, retained/rejected skill rules, findings and repairs |
 | [Concept map](CONCEPT_REVIEW_MAP.md) | Same four concept claims across both support profiles |
 | [Reproduction instructions](REPRODUCE.md) | Build, schema, model, numerical and PDF checks |
@@ -33,6 +33,6 @@ The new skills adapt existing Physics/publication authorities. They do not repla
 - [Historical architecture note](sources/Original_Architecture_Concept_Note.docx), [extracted text](sources/Original_Architecture_Concept_Note_text.md) and [original archive](sources/Original_Architecture_Concept_Note.zip)
 - [Before-rebuild backup](Physics_Before_Rebuild_Backup.zip), including prior approval drafts and a hash manifest
 
-Historical files are comparison evidence, not active instructions for the new renderer. [FILE_MANIFEST.json](FILE_MANIFEST.json) records SHA-256 hashes for this package and its two skills; it excludes itself and the delivery record to avoid self-reference.
+Historical files are comparison evidence, not active instructions for the new renderer. [FILE_MANIFEST.json](FILE_MANIFEST.json) records SHA-256 hashes for the declared review scope; it excludes itself and the historical delivery record to avoid self-reference. `verify_review_package.py` recomputes the model/PDF/audit/summary/manifest chain.
 
 Related work: [PR #151](https://github.com/reallaksh19/Common/pull/151) carries four encoded Motion publication chunks. This package does not modify those files or claim their source coverage. Reconcile the two efforts before merging them into one publication workflow.

@@ -1,5 +1,7 @@
 # Physics review delivery record
 
+> Historical PR #155 packaging record. It is intentionally excluded from the live content-addressed manifest. For PR #156 current evidence, use `Packaging_Validation.json`, `Physics_Rebuild_Audit.json`, `FILE_MANIFEST.json`, and `verify_review_package.py`; the counts and commit observations below are not current.
+
 ## Mission and authority
 
 - Work intent: IMPLEMENT — package the completed Physics teaching rebuild for collaborative review.

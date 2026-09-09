@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Executable Pydantic schema plus physics/relationship checks. No self-attested PASS."""
-import json,math,re,sys
+import hashlib,json,math,re,sys
 from pathlib import Path
 from typing import Literal,Optional
 from pydantic import BaseModel,ConfigDict,Field,model_validator
@@ -65,6 +65,16 @@ class Citation(Strict):
     url:str
     locator:str=Field(min_length=1)
     verification:Literal['VERIFIED']
+    source_document:str=Field(min_length=1)
+    source_sha256:str=Field(pattern=r'^[0-9a-f]{64}$')
+    source_page:int=Field(ge=1)
+    raw_stem:str=Field(min_length=1)
+    raw_answer:str=Field(min_length=1)
+    values_units:list[str]
+    options:list[str]
+    figure_locator:Optional[str]=None
+    figure_semantics:list[str]
+    target_ids:list[str]=Field(min_length=1)
     adaptation_note:Optional[str]=None
 # `difficulty` is the cognitive-profile vector (grade9 router rule 3 / grade9-physics difficulty vector),
 # named to match question.difficulty in ../../../shared/grade9-master.schema.json (deliberately generic
@@ -81,20 +91,23 @@ class Difficulty(Strict):
         for k,v in self.__dict__.items():
             assert v is None or 0<=v<=10,f'{k} out of 0-10 range'
         return self
-# source_status is the finer Physics/ExamSIDE-specific state already used across check_ledger.py and
-# question-contract.md; provenance_class is the coarser grade9-master.schema.json enum every subject's
-# tooling already reads. Kept in lockstep (not independently authorable) so they cannot drift.
-_PROVENANCE_MAP={'ORIGINAL':'ORIGINAL_CALIBRATED','SOURCE_VERIFIED':'SECONDARY_VERIFIED_PYQ','ADAPTED':'RECONSTRUCTED_FROM_SCAN'}
+_EXTERNAL_PROVENANCE={'USER_UPLOADED_ANCHOR','OFFICIAL_PYQ','SECONDARY_VERIFIED_PYQ','PUBLISHED_REFERENCE','RECONSTRUCTED_FROM_SCAN'}
+class RepairReference(Strict):
+    title:str=Field(min_length=1);url:str;locator:str=Field(min_length=1)
 class Question(Strict):
     id:str;label:str
     question:str=Field(min_length=15)  # named to match grade9-master.schema.json's question.question
     primary_concept_id:str;secondary_concept_ids:list[str]
-    recap:str;solution:Solution;hints:list[HintStep]=Field(min_length=3,max_length=3);repair_target:str
+    recap:str;solution:Solution;hints:list[HintStep]=Field(min_length=3,max_length=3)
+    repair_mode:Literal['LOCAL_LESSON','EXTERNAL_COMPANION','SELF_CONTAINED'];repair_target:str
+    repair_reference:Optional[RepairReference]=None
     figure:Optional[Figure]
     task_type:Literal['Apply','Explain','Connect','Transfer','Compare']
     difficulty:Optional[Difficulty]=None
+    difficulty_source:Literal['AUTHOR_HEURISTIC','SOURCE_ANALYSIS','EXPERT_CALIBRATED','EMPIRICAL']
     workspace:str
     source_status:Literal['ORIGINAL','SOURCE_VERIFIED','ADAPTED']
+    transcription_status:Optional[Literal['VERIFIED_TRANSCRIPTION','RECONSTRUCTED','QC_ALERT','SOURCE_UNRESOLVED']]=None
     provenance_class:Literal['USER_UPLOADED_ANCHOR','OFFICIAL_PYQ','SECONDARY_VERIFIED_PYQ','PUBLISHED_REFERENCE','ORIGINAL_CALIBRATED','RECONSTRUCTED_FROM_SCAN']
     answer:str=Field(min_length=3)  # mirrors solution.answer; validated equal below, not independently authored
     source_refs:list[str];numeric_check:Optional[dict]
@@ -102,7 +115,12 @@ class Question(Strict):
     solution_figure:Optional[Figure]=None
     @model_validator(mode='after')
     def master_schema_conformance(self):
-        assert self.provenance_class==_PROVENANCE_MAP[self.source_status],'provenance_class must match source_status (grade9-master.schema.json conformance)'
+        if self.source_status=='ORIGINAL':
+            assert self.provenance_class=='ORIGINAL_CALIBRATED','original questions require ORIGINAL_CALIBRATED provenance'
+            assert self.transcription_status is None,'original questions have no transcription state'
+        else:
+            assert self.provenance_class in _EXTERNAL_PROVENANCE,'external questions require independently grounded provenance'
+            assert self.transcription_status in ('VERIFIED_TRANSCRIPTION','RECONSTRUCTED'),'published external questions require resolved transcription'
         assert self.answer==self.solution.answer,'top-level answer must mirror solution.answer, not diverge from it'
         assert [h.tier for h in self.hints]==['H1','H2','H3'],'hints must progress H1 (Notice) -> H2 (Model) -> H3 (Start), by tier not just position'
         return self
@@ -163,6 +181,18 @@ class QA(Strict):
     source_qc_complete:bool;answers_verified:bool;concept_links_verified:bool
     difficulty_checked:Optional[bool]=None;pdf_render_checked:Optional[bool]=None
     pdf_links_checked:Optional[bool]=None;notes:list[str]=Field(default_factory=list)
+class CanonicalConceptRegistry(Strict):
+    registry_id:str=Field(min_length=1);source_locator:str=Field(min_length=1)
+    source_sha256:str=Field(pattern=r'^[0-9a-f]{64}$')
+    allowed_ids:list[str]=Field(min_length=1)
+class MixedTest(Strict):
+    test_id:str=Field(min_length=1);set_id:str=Field(min_length=1)
+    study_mode:Literal['MIXED_TRANSFER'];concept_hidden:Literal[True]
+    question_ids:list[str]=Field(min_length=2);diagnosis_map:dict[str,str]
+    @model_validator(mode='after')
+    def stable_identity(self):
+        assert self.test_id==self.set_id,'mixed test test_id/set_id identity drift'
+        return self
 # Bucketed exactly like grade9-master.schema.json's questions object (anchors/core_calibrated/challenges)
 # instead of a flat array, so a generic Grade 9 tool reading `model.questions.core_calibrated` etc. works
 # unmodified across subjects. This pilot has no external anchors and no next-level appendix yet, so those
@@ -178,10 +208,11 @@ class Questions(Strict):
 class Model(Strict):
     schema_version:Literal['2.0'];edition:str;title:str;band:Literal['B30','B80','B90'];learner_label:str
     product:Literal['core','question_bank','study_guide','transfer_book'];status:Literal['FOR_USER_REVIEW','RELEASE_CANDIDATE']
-    project:Project;grade_scope:dict;placement:dict;concepts:list[Concept];topic_ids:list[str];frozen_questions:int
+    project:Project;grade_scope:dict;placement:dict;concepts:list[Concept]
+    canonical_concept_registry:CanonicalConceptRegistry;topic_ids:list[str];frozen_questions:int
     lessons:list[Lesson];questions:Questions;lesson_ids:list[str];sources:list[Source]
     misconceptions:list[Misconception]=Field(default_factory=list)
-    mixed_tests:list[dict]=Field(default_factory=list)
+    mixed_tests:list[MixedTest]=Field(default_factory=list)
     handout:Optional[Handout]=None;source_claim:Optional[str]=None  # required only for core/study_guide, enforced in validate()
     guided_solutions:list[GuidedSolution]=Field(default_factory=list)
     qa:QA
@@ -198,13 +229,32 @@ def areas(segments):
 def validate(d):
     Model.model_validate(d)
     ids={c['concept_id'] for c in d['concepts']};sources={s['source_id'] for s in d['sources']}
+    canonical_ids=set(d['canonical_concept_registry']['allowed_ids'])
+    assert len(canonical_ids)==len(d['canonical_concept_registry']['allowed_ids']),'duplicate canonical concept IDs'
+    locator=d['canonical_concept_registry']['source_locator'].split('#',1)[0]
+    repository_root=Path(__file__).resolve().parents[4]
+    registry_path=(repository_root/locator).resolve()
+    assert registry_path.is_relative_to(repository_root) and registry_path.is_file(),'canonical concept authority is missing or outside the repository'
+    actual_registry_hash=hashlib.sha256(registry_path.read_bytes()).hexdigest()
+    assert actual_registry_hash==d['canonical_concept_registry']['source_sha256'],'canonical concept authority hash drifted'
+    source_text=registry_path.read_text(encoding='utf-8')
+    concept_block=source_text.split('\nconcepts:\n',1)[1].split('\nquestions:\n',1)[0]
+    authoritative_ids={match.group(1) for match in re.finditer(r'^  (CB\d+):',concept_block,re.MULTILINE)}
+    assert canonical_ids==authoritative_ids,'declared canonical IDs do not match the chapter authority'
     assert len(ids)==len(d['concepts']),'duplicate concept IDs'
     for c in d['concepts']:
         cc=c.get('canonical_concept_id')
-        assert cc and isinstance(cc,str),f"concept {c['concept_id']} missing canonical_concept_id crosswalk"
+        assert cc in canonical_ids,f"concept {c['concept_id']} has unknown canonical_concept_id {cc!r}"
         sru=c.get('sru')
         if sru and any(v is not None for k,v in sru.items() if k not in('reviewer','notes')):
             assert sru.get('reviewer'),f"concept {c['concept_id']} has SRU dimensions set without a reviewer - cannot self-attest pedagogical acceptance"
+    if d['status']=='RELEASE_CANDIDATE':
+        required_qa=('source_qc_complete','answers_verified','concept_links_verified','difficulty_checked','pdf_render_checked','pdf_links_checked')
+        assert all(d['qa'].get(k) is True for k in required_qa),'RELEASE_CANDIDATE requires every QA gate to PASS'
+        for c in d['concepts']:
+            sru=c.get('sru') or {}
+            dimensions=[v for k,v in sru.items() if k not in ('reviewer','notes')]
+            assert sru.get('reviewer') and len(dimensions)==15 and all(v is True for v in dimensions),f"concept {c['concept_id']} lacks complete independent SRU acceptance"
     # Product profile: 'core' keeps both components; 'study_guide'/'question_bank'/'transfer_book' select
     # one, so audit/self-check content can live in a separate document without being "lost" (finding E).
     has_lessons_component=d['product'] in ('core','study_guide')
@@ -217,14 +267,14 @@ def validate(d):
     for mt in d['mixed_tests']:
         # Concept-hidden mixed test (finding J / grade9-textbook-publisher's "learning mode vs testing
         # mode": mixed tests hide concept labels, then route errors back to exact concept IDs).
-        assert set(mt['question_ids'])<=all_qids,f"mixed test {mt['test_id']} references an unknown question"
-        assert len(mt['question_ids'])==len(set(mt['question_ids'])),f"mixed test {mt['test_id']} repeats a question"
+        assert set(mt['question_ids'])<=all_qids,f"mixed test {mt['set_id']} references an unknown question"
+        assert len(mt['question_ids'])==len(set(mt['question_ids'])),f"mixed test {mt['set_id']} repeats a question"
         dm=mt.get('diagnosis_map') or {}
-        assert set(dm.keys())==set(mt['question_ids']),f"mixed test {mt['test_id']} diagnosis_map must cover exactly its question_ids"
-        assert set(dm.values())<=ids,f"mixed test {mt['test_id']} diagnosis_map points at an unknown concept"
+        assert set(dm.keys())==set(mt['question_ids']),f"mixed test {mt['set_id']} diagnosis_map must cover exactly its question_ids"
+        assert set(dm.values())<=ids,f"mixed test {mt['set_id']} diagnosis_map points at an unknown concept"
         by_q={q['id']:q for q in all_qs}
         mismatched=[qid for qid in mt['question_ids'] if by_q[qid]['primary_concept_id']!=dm[qid]]
-        assert not mismatched,f"mixed test {mt['test_id']} diagnosis_map disagrees with the question's actual primary_concept_id: {mismatched}"
+        assert not mismatched,f"mixed test {mt['set_id']} diagnosis_map disagrees with the question's actual primary_concept_id: {mismatched}"
     assert d['lesson_ids']==[p['id'] for p in d['lessons']],'lesson identity mismatch'
     if has_lessons_component:
         assert d['lessons'] and d.get('handout'),'core/study_guide requires lessons and Appendix B'
@@ -247,8 +297,20 @@ def validate(d):
             cite=q.get('source_citation');assert cite and cite['verification']=='VERIFIED','external source unresolved'
             from urllib.parse import urlparse
             u=urlparse(cite['url']);assert u.scheme=='https' and u.netloc and not any(c.isspace() for c in cite['url']),'invalid source URL'
+            assert q['id'] in cite['target_ids'],'source citation target_ids must include the published question'
+            if q['source_status']=='SOURCE_VERIFIED':
+                assert cite['raw_stem']==q['question'] and cite['raw_answer']==q['answer'],'verified source text/answer must be published without adaptation'
             if q['source_status']=='ADAPTED':assert cite.get('adaptation_note'),'adaptation must be explicit'
-        if has_lessons_component:assert q['repair_target'] in d['lesson_ids'],'unresolved repair'
+        else:
+            assert not q.get('source_citation'),'original questions must not carry an external source citation'
+        if q['repair_mode']=='LOCAL_LESSON':
+            assert q['repair_target'] in d['lesson_ids'],'local repair target does not resolve'
+        elif q['repair_mode']=='EXTERNAL_COMPANION':
+            ref=q.get('repair_reference');assert ref,'external repair target requires a companion reference'
+            from urllib.parse import urlparse
+            u=urlparse(ref['url']);assert u.scheme=='https' and u.netloc,'invalid companion repair URL'
+        else:
+            assert q['repair_target']=='SELF_CONTAINED_SOLUTION','self-contained repair must use the canonical target'
         assert len({h['text'] for h in q['hints']})==3,'repeated hints'
         # Finding I: `method != answer` alone passes near-duplicates, formula-only routes and answer-copy-
         # with-a-word-changed. Require real word-overlap distance, a minimum route length, and at least
@@ -269,5 +331,8 @@ def validate(d):
             assert math.isclose(distance,n['distance']) and math.isclose(disp,n['displacement']),'numeric answer mismatch'
     return {'schema':'Pydantic Model, extra fields forbidden','questions':len(all_qs),'numerically_recomputed':sum(bool(q['numeric_check']) for q in all_qs),'pedagogy':'MANUAL_REVIEW_REQUIRED'}
 if __name__=='__main__':
-    if sys.argv[1]=='--schema':print(json.dumps(Model.model_json_schema(),indent=2))
-    else:print(json.dumps(validate(json.loads(Path(sys.argv[1]).read_text())),indent=2))
+    if sys.argv[1]=='--schema':
+        schema=json.dumps(Model.model_json_schema(),indent=2)+'\n'
+        if len(sys.argv)==3:Path(sys.argv[2]).write_text(schema,encoding='utf-8',newline='\n')
+        else:print(schema,end='')
+    else:print(json.dumps(validate(json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))),indent=2))

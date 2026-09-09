@@ -25,6 +25,42 @@
       "title": "Block",
       "type": "object"
     },
+    "CanonicalConceptRegistry": {
+      "additionalProperties": false,
+      "properties": {
+        "registry_id": {
+          "minLength": 1,
+          "title": "Registry Id",
+          "type": "string"
+        },
+        "source_locator": {
+          "minLength": 1,
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "allowed_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "registry_id",
+        "source_locator",
+        "source_sha256",
+        "allowed_ids"
+      ],
+      "title": "CanonicalConceptRegistry",
+      "type": "object"
+    },
     "Citation": {
       "additionalProperties": false,
       "properties": {
@@ -48,6 +84,72 @@
           "title": "Verification",
           "type": "string"
         },
+        "source_document": {
+          "minLength": 1,
+          "title": "Source Document",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "source_page": {
+          "minimum": 1,
+          "title": "Source Page",
+          "type": "integer"
+        },
+        "raw_stem": {
+          "minLength": 1,
+          "title": "Raw Stem",
+          "type": "string"
+        },
+        "raw_answer": {
+          "minLength": 1,
+          "title": "Raw Answer",
+          "type": "string"
+        },
+        "values_units": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Values Units",
+          "type": "array"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Options",
+          "type": "array"
+        },
+        "figure_locator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Figure Locator"
+        },
+        "figure_semantics": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Figure Semantics",
+          "type": "array"
+        },
+        "target_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target Ids",
+          "type": "array"
+        },
         "adaptation_note": {
           "anyOf": [
             {
@@ -65,7 +167,16 @@
         "title",
         "url",
         "locator",
-        "verification"
+        "verification",
+        "source_document",
+        "source_sha256",
+        "source_page",
+        "raw_stem",
+        "raw_answer",
+        "values_units",
+        "options",
+        "figure_semantics",
+        "target_ids"
       ],
       "title": "Citation",
       "type": "object"
@@ -735,6 +846,56 @@
       "title": "Misconception",
       "type": "object"
     },
+    "MixedTest": {
+      "additionalProperties": false,
+      "properties": {
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "set_id": {
+          "minLength": 1,
+          "title": "Set Id",
+          "type": "string"
+        },
+        "study_mode": {
+          "const": "MIXED_TRANSFER",
+          "title": "Study Mode",
+          "type": "string"
+        },
+        "concept_hidden": {
+          "const": true,
+          "title": "Concept Hidden",
+          "type": "boolean"
+        },
+        "question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Question Ids",
+          "type": "array"
+        },
+        "diagnosis_map": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Diagnosis Map",
+          "type": "object"
+        }
+      },
+      "required": [
+        "test_id",
+        "set_id",
+        "study_mode",
+        "concept_hidden",
+        "question_ids",
+        "diagnosis_map"
+      ],
+      "title": "MixedTest",
+      "type": "object"
+    },
     "Project": {
       "additionalProperties": false,
       "properties": {
@@ -918,9 +1079,29 @@
           "title": "Hints",
           "type": "array"
         },
+        "repair_mode": {
+          "enum": [
+            "LOCAL_LESSON",
+            "EXTERNAL_COMPANION",
+            "SELF_CONTAINED"
+          ],
+          "title": "Repair Mode",
+          "type": "string"
+        },
         "repair_target": {
           "title": "Repair Target",
           "type": "string"
+        },
+        "repair_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RepairReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "figure": {
           "anyOf": [
@@ -954,6 +1135,16 @@
           ],
           "default": null
         },
+        "difficulty_source": {
+          "enum": [
+            "AUTHOR_HEURISTIC",
+            "SOURCE_ANALYSIS",
+            "EXPERT_CALIBRATED",
+            "EMPIRICAL"
+          ],
+          "title": "Difficulty Source",
+          "type": "string"
+        },
         "workspace": {
           "title": "Workspace",
           "type": "string"
@@ -966,6 +1157,24 @@
           ],
           "title": "Source Status",
           "type": "string"
+        },
+        "transcription_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "VERIFIED_TRANSCRIPTION",
+                "RECONSTRUCTED",
+                "QC_ALERT",
+                "SOURCE_UNRESOLVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transcription Status"
         },
         "provenance_class": {
           "enum": [
@@ -1035,9 +1244,11 @@
         "recap",
         "solution",
         "hints",
+        "repair_mode",
         "repair_target",
         "figure",
         "task_type",
+        "difficulty_source",
         "workspace",
         "source_status",
         "provenance_class",
@@ -1079,6 +1290,32 @@
         "challenges"
       ],
       "title": "Questions",
+      "type": "object"
+    },
+    "RepairReference": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "title": "Locator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "locator"
+      ],
+      "title": "RepairReference",
       "type": "object"
     },
     "SRUAcceptance": {
@@ -1448,6 +1685,9 @@
       "title": "Concepts",
       "type": "array"
     },
+    "canonical_concept_registry": {
+      "$ref": "#/$defs/CanonicalConceptRegistry"
+    },
     "topic_ids": {
       "items": {
         "type": "string"
@@ -1492,8 +1732,7 @@
     },
     "mixed_tests": {
       "items": {
-        "additionalProperties": true,
-        "type": "object"
+        "$ref": "#/$defs/MixedTest"
       },
       "title": "Mixed Tests",
       "type": "array"
@@ -1544,6 +1783,7 @@
     "grade_scope",
     "placement",
     "concepts",
+    "canonical_concept_registry",
     "topic_ids",
     "frozen_questions",
     "lessons",

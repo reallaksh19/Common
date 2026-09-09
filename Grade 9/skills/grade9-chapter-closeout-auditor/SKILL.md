@@ -124,7 +124,26 @@ Produce, when requested:
 4. merged master Study Guide / Concept Book;
 5. merged master transfer book with the corpus audit appended or linked.
 
-## 8. Render-first final QA
+## 8. Chapter publication and batch contract
+
+Before producing or merging chapter-scale artifacts, read and execute
+[`grade9-publication/references/batch-production.md`](../grade9-publication/references/batch-production.md).
+`grade9-publication` owns the AD-22 through AD-29 batch mechanics; this closeout skill verifies
+their evidence at final acceptance. Do not replace those mechanics with an item-count scale test.
+
+Closeout requires durable evidence for:
+
+- contiguous source-page and stable-ID batch boundaries;
+- unchanged hashes for previously approved pages, except recorded regression repairs;
+- frozen batch and cumulative source denominators with zero unmapped core units;
+- cross-batch question, solution, figure, TOC and bookmark link closure;
+- batch-only and cumulative render regression, including boundary pages;
+- deterministic final TOC, bookmarks, global numbering and release-pack artifacts.
+
+If the chapter was not built in batches, record the batch checks as `NOT_APPLICABLE` with the
+single-build evidence that replaces them. A synthetic item-count render is capacity evidence only.
+
+## 9. Render-first final QA
 
 Render every final PDF. Inspect at minimum:
 
@@ -138,7 +157,7 @@ Render every final PDF. Inspect at minimum:
 
 The rendered pages are authoritative. Repair clipping, hidden rows, title collisions, footer overlap, or missing/incorrect subject-specific glyphs before declaring PASS.
 
-## 9. Final invariant
+## 10. Final invariant
 
 > A chapter is not complete because each subtopic individually passed. It is complete only after a full frozen-corpus audit proves that every eligible item is uniquely placed and every source obligation is taught without scope leakage.
 
@@ -147,7 +166,7 @@ The rendered pages are authoritative. Repair clipping, hidden rows, title collis
 A subject profile is a short document that:
 
 1. names its explicit outside-dependency list for eligibility judgments (§2) - e.g. Redox's titration/normality/full-balancing/coordination-chemistry list, or a Physics profile's list of out-of-scope mechanics (e.g. rotational dynamics, relativistic effects) for a given chapter's stated scope;
-2. names its subject-specific render-QA checks to add to §8 (chemistry subscript/superscript/ionic-charge/`e⁻` legibility; Physics vector-arrow, unit and sign-convention legibility; math equation/proof-step legibility);
+2. names its subject-specific render-QA checks to add to §9 (chemistry subscript/superscript/ionic-charge/`e⁻` legibility; Physics vector-arrow, unit and sign-convention legibility; math equation/proof-step legibility);
 3. points at its own `grade9-transfer-coverage-auditor`-driven subtopic builds as the input this skill closes out.
 
 `grade9-redox-chapter-closeout-auditor` is the first such profile (Chemistry/Redox). Do not duplicate this skill's counters, statuses or workflow inside a new subject profile - reference this skill and add only what is genuinely subject-specific.

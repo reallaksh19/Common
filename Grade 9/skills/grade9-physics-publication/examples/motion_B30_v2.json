@@ -82,6 +82,26 @@
       ]
     }
   ],
+  "canonical_concept_registry": {
+    "registry_id": "MOTION-CB-V1",
+    "source_locator": "Grade 9/Physics/Motion/motion_source_map.yaml#concepts",
+    "source_sha256": "7e67b862407d8e09f75c5dfd8d771a753c7e63347903892b04beaa881c312645",
+    "allowed_ids": [
+      "CB0",
+      "CB1",
+      "CB2",
+      "CB3",
+      "CB4",
+      "CB5",
+      "CB6",
+      "CB7",
+      "CB8",
+      "CB9",
+      "CB10",
+      "CB11",
+      "CB12"
+    ]
+  },
   "topic_ids": [
     "PHY-MOT-M01",
     "PHY-MOT-M02"
@@ -771,18 +791,11 @@
             "text": "The turning point is at +1 − 5 m. Find the finish next."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L3",
         "figure": null,
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 0,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 1,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Start → turning point → finish\nFinal position: ____\nDistance: ____   Displacement: ____",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -856,18 +869,11 @@
             "text": "The first part of the path, from −2 m to 0 m, is 2 m."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L1",
         "figure": null,
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 0,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 1,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Sketch the line and explain why crossing zero is not a turn.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -939,18 +945,11 @@
             "text": "For the turning route, choose a turning point beyond +4 m."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L2",
         "figure": null,
         "task_type": "Explain",
-        "difficulty": {
-          "physical_model_selection": 3,
-          "conceptual_reasoning": 4,
-          "representation_translation": 1,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 3,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 4
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Draw and label two routes. Keep the endpoints the same.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -989,18 +988,11 @@
             "text": "Add 7 m and 3 m to begin the distance calculation."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L2",
         "figure": null,
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 0,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 1,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -1048,18 +1040,11 @@
             "text": "The first signed area is (+5 m/s) × (3 s)."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L6",
         "figure": null,
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 0,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 3,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -1116,6 +1101,7 @@
             "text": "For the first region, write (+4) × (2 − 0)."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L6",
         "figure": {
           "id": "B30-A6-F",
@@ -1157,15 +1143,7 @@
           "shade": false
         },
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 4,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 3,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -1222,18 +1200,11 @@
             "text": "Write area = (+2.5 m/s) × (8 s)."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L5",
         "figure": null,
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 0,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 3,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -1284,6 +1255,7 @@
             "text": "The rectangle would have area (6 s) × (6 m/s); use the fraction actually occupied."
           }
         ],
+        "repair_mode": "LOCAL_LESSON",
         "repair_target": "B30-L7",
         "figure": {
           "id": "B30-A8-F",
@@ -1317,15 +1289,7 @@
           "shade": false
         },
         "task_type": "Connect",
-        "difficulty": {
-          "physical_model_selection": 4,
-          "conceptual_reasoning": 5,
-          "representation_translation": 7,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 6,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 5
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -1391,6 +1355,9 @@
   "mixed_tests": [
     {
       "test_id": "B30-MIXED-01",
+      "set_id": "B30-MIXED-01",
+      "study_mode": "MIXED_TRANSFER",
+      "concept_hidden": true,
       "question_ids": [
         "B30-A1",
         "B30-A2",
@@ -1409,6 +1376,7 @@
     "source_qc_complete": true,
     "answers_verified": false,
     "concept_links_verified": true,
+    "difficulty_checked": false,
     "notes": [
       "Numeric answers are independently recomputed by validate_v2.py (see numerically_recomputed count); qualitative-only answers rely on author review, not independent recomputation.",
       "pdf_render_checked/pdf_links_checked should be filled from audit_v2.py output against the actually rendered PDF, not hand-set here.",

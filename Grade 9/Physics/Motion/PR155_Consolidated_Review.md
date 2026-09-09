@@ -1,188 +1,89 @@
-# PR #155 — Consolidated Review
+# PR #156 review consolidation and structural gap analysis
 
-Source: [PR #155](https://github.com/reallaksh19/Common/pull/155) ("Physics: rebuild Motion B30/B80 teaching, skills and PDF schema for review"), 4 review passes, 20 inline comments, all self-authored on `2026-09-09`. This document does two things:
+## Scope
 
-1. **Consolidates** the 20 inline comments + 4 review summaries into one deduplicated, prioritized list, checked against the canonical Grade 9 architecture actually present on `main` (not just against the reviews' own prose).
-2. **Adds a lens the four reviews never asked for**: read as a teacher preparing students for competitive exams, where the schema's job is to find out *which specific topics* a given student is weak in and route them to material that closes exactly that gap — not just to publish a uniform book.
+This document consolidates five submitted reviews and 32 inline threads on PR #156 into 14 unique findings. Repeated comments are grouped by failure boundary, not counted as separate defects.
 
-The second lens changes the priority order of the first list more than it adds new items: most of what "weak-topic remediation" needs turns out to already exist somewhere in the canonical `Grade 9/skills/` family and simply isn't wired into PR #155's new schema.
+The PR is a two-topic Motion publication pilot. It is not a completed 68-question chapter, a verified ExamSIDE corpus, an adaptive student-remediation system, or a classroom-validated release.
 
-## 1. What's already true on `main` that the reviews under-cite
+## Structural diagnosis
 
-The four reviews correctly diagnose symptoms ("not discoverable," "second ontology," "difficulty is really task-type") but mostly argue from first principles. Checking against `main` directly:
+The recurring failure was promotion of component checks into end-to-end claims:
 
-- `Grade 9/install_skills.py` `SKILLS` list (lines 18–29) does **not** contain `grade9-physics-publication` or `grade9-physics-examside`. Confirmed, not just claimed.
-- `Grade 9/skills/grade9/SKILL.md` (the router) never mentions either new skill, and its "Route by task" section already sends *any* "subtopic-by-subtopic Physics build... Study Guide + ExamSIDE/PYQ transfer book" to `grade9-physics-subtopic-book-builder` (see `grade9-physics/SKILL.md:120-139`). PR #155 ships a second, overlapping route for the same job.
-- `Grade 9/Physics/Motion/Motion_Source_Coverage_Map.md` already defines the concept taxonomy `CB1..CB12` over `Q1..Q68` with a `SEE -> REALIZE -> UNDERSTAND` focus column per question. PR #155's `CONCEPT_REVIEW_MAP.md` introduces `PHY-MOT-DIST-01` / `PHY-MOT-DISP-01` / `PHY-MOT-VTAREA-01` / `PHY-MOT-VTDIST-01` with zero crosswalk field to `CB1`/`CB12`.
-- `Grade 9/skills/grade9-concept-architect/SKILL.md` already types the canonical concept object with `prerequisites`, `same_level_question_ids`, `challenge_question_ids`, `misconception_ids`, and **`mastery_path`**. PR #155's `validate_v2.py` `Model.concepts` is `list[dict]` — open, untyped, and does not populate any of these.
-- `Grade 9/skills/grade9-learning-enrichment/SKILL.md` already specifies a 4–5 level percentage-scored hint ladder (H1 ~10% ... H5 ~90%) and an explicit **"Mastery evidence"** concept: *"Hint use can reduce strength of mastery evidence... keep this as analytics metadata."* PR #155's `validate_v2.py` hard-codes exactly 3 hints (`Field(min_length=3, max_length=3)`) and records no mastery-evidence field at all.
-- `Grade 9/skills/grade9-question-bank/SKILL.md` already specifies "Mixed mastery": *"Reuse validated Core questions in mixed tests that hide concept labels before the attempt. After marking, map each error back to an exact concept and recommended retake."* PR #155's `render_v2.py` paginates with a hard-coded `range(..., 2)` and no `set_id`/`study_mode`/concept-visibility metadata (matches inline finding on `render_v2.py:238`).
-- `Grade 9/skills/grade9/SKILL.md` non-negotiable rule #3: *"Treat difficulty as a cognitive profile, not an Easy/Medium/Hard label."* `Grade 9/skills/grade9-physics/SKILL.md` defines a 7-dimension 0–10 difficulty vector (`physical_model_selection`, `conceptual_reasoning`, `representation_translation`, `vector_spatial_reasoning`, `equation_construction`, `experimental_data_reasoning`, `constraints_cases`) plus separately tracked algebra/arithmetic/unit-conversion burden. PR #155's `validate_v2.py` field named `difficulty` is `Literal['Apply','Explain','Connect','Transfer','Compare']` — a task-type badge wearing the difficulty field's name (matches inline finding on `validate_v2.py:57`).
-- A `grade9-math-assimilation` skill already exists as a sibling of `grade9-math` — a plausible reuse target for the weak method-assimilation gate finding below, parallel to how `grade9-physics-examside` should sit under the canonical corpus/coverage auditors instead of re-owning that responsibility.
-
-None of this makes the four reviews wrong. It means the fix in most cases is **"route to / type against the existing canonical shape,"** not **"design a new mechanism."**
-
-## 2. Consolidated findings (deduplicated)
-
-Severity as marked by the reviews (Blocker / Major); grouped by root cause, not by which of the 4 passes raised it.
-
-| # | Theme | Raised | Grounding | Requested fix |
-|---|---|---|---|---|
-| A | **Routing/install invisible.** `grade9-physics-publication` / `grade9-physics-examside` are unreachable from `$grade9`. | 3× (`SKILL.md:14` ×2, `SKILL.md:14` again) | Confirmed: absent from `install_skills.py` and `grade9/SKILL.md`. Also overlaps `grade9-physics-subtopic-book-builder`, already routed for this exact job. | Add routing entries + install-list membership, **and** state precedence vs. `grade9-physics-subtopic-book-builder`/`grade9-publication` — or mark the new skills experimental/chapter-local in their own frontmatter. |
-| B | **Second concept ontology.** `PHY-MOT-*` has no crosswalk to `CB1..CB12`/`Q1-Q68`. | 2× (`CONCEPT_REVIEW_MAP.md:7` ×2) | Confirmed against `Motion_Source_Coverage_Map.md`. `CB1` = Position/Distance/Displacement, `CB12` = graphs — so `PHY-MOT-DIST-01`/`DISP-01` → `CB1`, `PHY-MOT-VTAREA-01`/`VTDIST-01` → `CB12` is the natural mapping, as reviewers proposed. | Add `canonical_concept_id` (parent) field; also conform `concepts:list[dict]` to `grade9-concept-architect`'s typed object instead of an open dict. |
-| C | **`difficulty` stores task type, not difficulty.** | Blocker | Confirmed in code (`validate_v2.py:57`). Conflicts with router rule #3 and `grade9-physics`'s difficulty vector. | Rename to `task_type`; add typed `source_difficulty` (physics vector) and derived `learner_badge` (Easy/Medium/Hard/Challenge). |
-| D | **Zero-loss claim unverifiable.** `frozen_questions:int` freezes a count, not a source-obligation ledger; `check_ledger.py` proves only `expected_ids == ledger_ids`; ledger and publication JSON can each pass while drifting apart from each other. | Blocker ×2 (`validate_v2.py:68`, `check_ledger.py:8`) + reproducibility gap (`REPRODUCE.md:38`) | Confirmed: `question-contract.md` defines a rich extraction record (source hash/page, raw stem, values/units, options, dependency class, adaptation state, target IDs) that the ledger shape doesn't carry through. | Add source-obligation ledger with preservation class/status; one reconciliation command binding frozen ledger ⇄ publication model ⇄ render manifest on exact ID + concept + source-status + dependency + hint + solution + target closure, not ID-set equality alone. |
-| E | **Rigid product profile.** Appendix A/B, hints, and end solutions are mandatory inside every Core book. | Major | Conflicts with `grade9/SKILL.md`: *"keep Concept Book, First-Step Reference, and Question Bank as distinct companion products,"* and `grade9-publication`'s `CORE_SOURCE`/`PRESENTATION_SOURCE`/`VALUE_ADD`/`EDITORIAL_CHANGE` separation. | Make `core_with_appendices` a selectable product profile; allow audit/self-check content to live outside the learner Core. |
-| F | **Corpus/coverage re-owned.** `grade9-physics-examside` independently owns corpus freezing, concept mapping, hints, solutions, completeness. | Major | `grade9-corpus-coverage-auditor` and `grade9-transfer-coverage-auditor` already exist as the canonical engines. | Express as a Physics profile consuming the canonical coverage authority — "one denominator/ownership contract across subjects," as the reviewer put it. |
-| G | **No chapter-scale batch protocol.** Two-topic pilot has no path to the 68-question chapter. | Blocker | — | Contiguous source batches, approved-page immutability, cumulative denominator reconciliation, cross-batch links, cumulative render regression, final TOC/bookmarks/global numbering. |
-| H | **Figure types too narrow.** `Figure.kind` supports only `numberline\|vt\|tiles\|compare\|blank`. | Major | Confirmed against `question-contract.md`'s dependency classes: `NONE, GRAPH, DIAGRAM, TABLE, TIMELINE, NUMBER_LINE, OPTION_FIGURES, STATEMENT_SET, MIXED`. | Typed support (incl. source-image/crop) for the declared classes, or hard-route unsupported ones to the generic publication engine. |
-| I | **Method-assimilation gate too weak.** | Major | Confirmed: the only check is `method != answer` plus `min_length=10` — passes near-duplicates and formula-only routes. | Reuse/port the canonical assimilation check (cf. `grade9-math-assimilation`) or add near-duplicate/terse/formula-only gates with per-question failure counters. |
-| J | **No study-mode/mixed-transfer metadata; pagination hard-coded to 2/page.** | Blocker | Confirmed (`render_v2.py:238`). Directly duplicates `grade9-question-bank`'s already-specified "Mixed mastery" behavior. | Model `set_id`, `study_mode` (`ASSIMILATION`/`MIXED_TRANSFER`), concept visibility; paginate from item demand. |
-| K | **SRU concept-book contract not executable.** `concepts`, `grade_scope`, `placement` are open dicts; no SEE/REALIZE/UNDERSTAND acceptance fields. | Major | Confirmed against `grade9-physics/references/concept-book-see-realize-understand.md`'s `SRU-01` ("No Naked Equation") through `SRU-09` ("Source Traceability") and beyond. | Type/validate the critical fields, or explicitly delegate pedagogical certification to the canonical SRU audit and say so in the schema doc. |
-| L | **B80-L2 drops an idealisation note that B30-L4 states for the same instantaneous velocity jump.** | Physics/model-condition | `motion_B80_v2.json:147` | Retain the idealisation note (also check B80-L4's vertical jumps) or render a finite transition. |
-| M | **Color-only semantic distinction (`blue return arrow` / `red arrow`) fails the review guide's own grayscale requirement.** | Publication/accessibility | `motion_B30_v2.json:210` | Make the distinction redundant via shape/label ("journey/return leg" vs. "start-to-finish displacement arrow"). |
-| N | **Missing First-Step Reference product.** B30 fading + H1-H3 is not a substitute for "how do I start?" as its own product. | Raised in review #3 | `grade9/SKILL.md` and the IOQM builder's Wave 3 ("Integrated First-Step Reference": recognition atlas, decision router, first-step cards) both treat this as a distinct, required layer. | Name it as an explicit product/profile or explicit delegation, not folded into Core. |
-| O | **No cold-start reproducibility reviewer role.** | 2× (`REVIEW_GUIDE.md:16`, review summaries) | — | Add the role/test: can a fresh agent, from brief + source authority + repo only, reproduce the same obligations/artifacts/audit without chat history? |
-
-## 3. The competitive-exam-teacher lens
-
-Read the schema as the tool a teacher uses to get students ready for a competitive exam (the repo's own `ioqm-grade9-*` skills and `grade9-physics-examside`'s ExamSIDE/PYQ framing confirm this is already the intended use case elsewhere in the repo, not a reframing being imposed from outside it). That teacher's actual job is never "publish a book" — it's:
-
-1. find out **which specific concepts** a given student is weak in (not "which subject," not "which band");
-2. put that student in front of material that closes **exactly that gap**, at the depth they need, without re-teaching what they already have;
-3. verify the gap actually closed before moving on;
-4. build genuine exam readiness — which means the student can solve the concept when it's *not* labeled, mixed in with others, under the representation variety a real paper uses.
-
-Checked against that job, four things in the current schema block it — three of them are re-statements of findings above once you ask "does this support diagnosis-and-remediation," and one is new:
-
-**3.1 Band is book-level, not concept-level (extends Finding B/E).** `Model.band: Literal['B30','B80','B90']` is one value for the *whole book*. A real student is rarely uniformly weak — they might need B30-depth support on `CB1` (distance/displacement) and be solidly B80 on `CB12` (graphs). Today the only way to serve that is to hand them two entire separate books and have a human decide which one to assign, cover to cover. The schema has no unit smaller than "book" that carries a support level. This is the single highest-leverage gap for the stated goal: **move support level onto the concept, not the book** — e.g. a per-`(cohort_or_student, concept_id)` `mastery_state` that reuses `grade9-concept-architect`'s existing `mastery_path` field, so B30-depth and B80-depth material for the *same* concept pool can be assembled per student instead of shipped as two static products.
-
-**3.2 No diagnostic signal, no mastery evidence (extends Finding C/J).** `grade9-learning-enrichment` already defines a "Diagnostic / repair" stage and treats hint depth as mastery evidence ("a learner solving without hints or after H1 demonstrates stronger independent recognition than one requiring H4/H5... keep this as analytics metadata"). PR #155's schema has no diagnostic question type and no mastery-evidence field — the fixed 3-hint ladder (H1 Notice → H2 Model → H3 Start) records *that* a hint was shown, in the PDF, to every reader; it doesn't record *which* hint depth a specific student actually needed, so there's no data path from "student attempted this" to "student is weak here." Without this, the tool can publish material but can't detect who needs it.
-
-**3.3 `repair_target` doesn't close the loop.** Today a wrong answer routes to exactly one lesson ID — "if wrong, re-read this." There's no retry question at the same concept, no promotion rule (repair → retry → correct → advance; retry → still wrong → escalate support), and no logged outcome. A gap-closing tool needs the loop to close, not just point back at the material that (by definition) didn't land the first time.
-
-**3.4 Mixed/concept-hidden transfer is absent (Finding J), and this is the actual definition of exam readiness.** `grade9-question-bank`'s "Mixed mastery" section is explicit that concept-grouped practice "can leak the intended method" and that real assessment requires hiding concept labels and mapping errors back after marking. A student is not exam-ready on a concept until they can recognize it unlabeled, mixed with others, in whatever representation a real paper throws at it (`GRAPH`/`DIAGRAM`/`TABLE`/etc. — Finding H). `render_v2.py`'s hard-coded 2-per-page pagination with no `study_mode` makes this structurally impossible to build today, not just unbuilt.
-
-**Sketch of the field additions this implies** (illustrative shape, not a final schema — for the next drafting pass to formalize):
-
-```jsonc
-// On the concept object (conform to grade9-concept-architect's typed shape):
-{
-  "concept_id": "PHY-MOT-DIST-01",
-  "canonical_concept_id": "CB1",              // Finding B
-  "mastery_path": []                           // already canonical, currently unused here
-}
-
-// On Question, replacing the misnamed `difficulty`:
-{
-  "task_type": "Apply",                        // was `difficulty`      — Finding C
-  "source_difficulty": { "conceptual_reasoning": 6, "representation_translation": 7, "..." : "..." },
-  "learner_badge": "Medium",
-  "diagnostic": false,                         // true = pre-instruction weak-topic probe
-  "mastery_evidence": { "hint_depth_used": null, "attempts": 0, "outcome": null },
-  "set_id": "CB1-MIXED-03",                     // Finding J
-  "study_mode": "MIXED_TRANSFER",
-  "concept_hidden": true
-}
-
-// Closing the repair loop:
-{
-  "repair_target": "B30-L2",     // existing: points at the lesson
-  "retry_question_id": "C-CB1-014",             // new: same-concept retry, not just re-teaching
-  "on_retry_pass": "PROMOTE_TO_MIXED_TRANSFER",
-  "on_retry_fail": "ESCALATE_SUPPORT_BAND"
-}
+```text
+chapter authority
+  → raw source extraction
+  → immutable source ledger
+  → publication model
+  → learner render
+  → PDF audit
+  → package summaries and manifest
+  → release claim
 ```
 
-## 4. Prioritized action plan
+Before this repair, several stages passed independently while adjacent stages were not bound to each other. Examples included a ledger that checked its own IDs but not raw source identity, mixed-test metadata that was never rendered, a study-guide profile that rendered but crashed in audit, and package summaries that retained old model/PDF hashes while still reporting PASS.
 
-**P0 — blocks any reuse of this as infrastructure (do first, small/mechanical):**
-- A (routing/install wiring + state precedence), C (rename `difficulty` → `task_type`, add `source_difficulty`), B (concept-ID crosswalk to `CB1..CB12`).
+The repair principle is therefore: a stage may report only what it directly proves, and a final package PASS requires every machine-checkable boundary in the chain to agree.
 
-**P1 — blocks the weak-topic/remediation claim (the competitive-exam lens):**
-- 3.1 concept-level `mastery_state` (not book-level band), 3.2 diagnostic question type + mastery-evidence field (reuse `grade9-learning-enrichment`), 3.3 repair-loop closure (retry + promotion rule), D (ledger ⇄ publication ⇄ render reconciliation).
+## Consolidated findings and disposition
 
-**P2 — blocks scaling past the 2-topic pilot / blocks real competitive-readiness depth:**
-- J (mixed/concept-hidden transfer sets — reuse `grade9-question-bank`'s "Mixed mastery"), I (assimilation gate), G (chapter-scale batch protocol), E (selectable product profile), H (wider figure/representation types), F (corpus-ownership consolidation onto canonical auditors).
+| # | Consolidated finding | Structural cause | Implemented disposition |
+|---|---|---|---|
+| 1 | Installed skill family failed its own package validator; the inventory was stale. | Install-copy success was treated as package conformance. | Added missing `agents/openai.yaml` files, corrected interface prompts/frontmatter, updated `SKILLSET.md`, and retained install and family validation as separate checks. |
+| 2 | Motion canonical crosswalk was presence-checked rather than authority-checked. | A local string was accepted without binding it to the chapter map. | Added a canonical registry with the source-map SHA-256 and exact allowed IDs; validation checks the current map hash, derives its `CB0..CB12` keys, requires exact set equality, and rejects unknown concept parents. |
+| 3 | Source status, provenance, transcription, and adaptation were conflated. | One editorial state was used to infer unrelated source authority. | Kept each axis independent. Original and external combinations are typed, but no one-to-one provenance map exists. |
+| 4 | Ledger reconciliation could false-pass and did not bind the rendered artifact. | Non-original states were collapsed to one bit and the ledger carried too little source identity. | Expanded the ledger contract to raw document/hash/page/stem/answer/options/figure semantics/URL/locator/adaptation/targets. `reconcile.py` compares exact state axes and source identity and optionally requires the audit to name the exact model hash and a concrete PDF hash. Eleven induced drift cases cover the boundary. |
+| 5 | `mixed_tests[]` existed only as metadata. | The renderer consumed the ordinary question list only. | Mixed sets now carry stable `test_id`/`set_id`, `study_mode=MIXED_TRANSFER`, and `concept_hidden=true`; the renderer uses set order, hides task/concept cues on attempt pages, uses item-demand pagination, and reveals diagnosis only after solutions. |
+| 6 | `study_guide` and `transfer_book` were not end-to-end product profiles. | Validation rules, render ownership, audit assumptions, and repair navigation disagreed. | Both profiles pass validate → render → audit. Transfer books require a working external companion reference or self-contained repair; assessment-free study guides no longer trigger empty-sequence audit failures. |
+| 7 | Chapter-scale closure was claimed from a 72-item clone. | Item-count capacity was confused with batch consolidation semantics. | The generic closeout skill now delegates AD-22..AD-29 mechanics to `grade9-publication/references/batch-production.md` and verifies their evidence. The 72-item test is described only as renderer capacity. A complete 68-question Motion chapter remains not authored. |
+| 8 | The Redox closeout profile still duplicated the generic workflow. | Declared ownership changed but the old copied sections remained. | Reduced Redox to a thin chemistry-specific dependency and typography profile over the generic closeout owner. |
+| 9 | Difficulty vectors were mechanically derived from task type. | A renamed heuristic was presented as multidimensional calibration. | Removed ungrounded numeric vectors from the pilot. `task_type` remains descriptive; `difficulty_source=AUTHOR_HEURISTIC` and `qa.difficulty_checked=false` remain explicit until source analysis, expert calibration, or empirical data exists. |
+| 10 | Committed PDFs, audits, summaries, and manifest disagreed. | Artifact generation had no package-level identity gate. | All three model/PDF/layout/audit pairs are regenerated together. `verify_review_package.py` checks model/PDF hashes, exact summary copies, render blockers, complete manifest scope, byte counts, and hashes. |
+| 11 | B80-L4 omitted the instantaneous-transition modelling condition. | Support compression removed a physical idealisation note while preserving the discontinuous graph. | Added the zero-duration idealisation cue; no numerical method or answer changed. |
+| 12 | Transfer-book repair targets were dead semantic references. | Local lesson validation was disabled without defining an external route. | Added typed `LOCAL_LESSON`, `EXTERNAL_COMPANION`, and `SELF_CONTAINED` repair modes. External repair requires a valid companion title, URL, and locator and is rendered as a working link. |
+| 13 | Master-schema conformance was a one-off command. | Compatibility evidence lived outside the normal test chain. | `test_v2.py` validates all three committed models against `grade9-master.schema.json` on every run. |
+| 14 | “A–O closed” was blurred with completion of weak-topic remediation. | Review-finding closure and product-capability closure were treated as the same status. | The claim is narrowed: the reviewed publication/packaging gaps are repaired, while per-student concept mastery, diagnostic event capture, retry/promotion logic, and learner-outcome storage remain explicitly outside this PR. |
 
-**P3 — content-level and process fixes (independent of the above, safe to do anytime):**
-- L (B80-L2/L4 idealisation note), M (B30-L2 grayscale redundancy), K (type the SRU fields or explicitly delegate), N (name the First-Step Reference product), O (cold-start reproducibility reviewer role).
+## Additional checks retained from the earlier review
 
-Note for whoever picks this up: P0 and P1 share a root cause — both are "use the concept/mastery infrastructure that `grade9-concept-architect` and `grade9-learning-enrichment` already define, instead of the parallel simplified version this PR built." Doing P0's crosswalk and rename first makes P1's concept-level mastery state a natural extension rather than a second migration.
+- Solution methods reject terse, formula-only, and near-answer copies.
+- Figure dependency classes are validated and reconciled across the ledger/publication boundary; the drawing implementations themselves remain Motion-specific.
+- SRU-01..15 fields are typed and release-gated, but no authored concept receives self-attested pedagogical acceptance.
+- The B30 grayscale route uses redundant line styling, not colour alone.
+- The cold-start reviewer role remains in the review guide.
+- The First-Step Reference remains a named shared learning-enrichment product; it is not duplicated into another Physics-only skill.
 
-## 5. Status and revised plan for the remaining findings (max-reuse)
+## Truthful validation boundary
 
-**All 15 findings (A-O) are now closed and pushed**, each verified against the real pipeline, not just documented: A (routing/install), B (concept-ID crosswalk, machine-checked), C (`difficulty`→`task_type` + `source_difficulty` vector — a derived `learner_badge` was drafted and then removed, since `core-teaching.md:60` explicitly forbids inventing exam-difficulty badges without empirical calibration), L (B80-L2 idealisation note), M (B30-L2 grayscale fix, backed by an actual dashed-arrow render change) closed first; D+F, E, J, K, I, N, G, O, H closed in the second pass documented in §6 below, plus a `Model`-master-schema-conformance refactor that wasn't one of the original 20 review comments but was necessary to do the rest generically. One cross-cutting drift was caught and fixed along the way: finding I's content edit to `motion_question_bank_v2.json` was never propagated to the D+F ledger fixture, and `reconcile.py` — built for D+F — correctly caught it on a later full-suite run. That is the reconciliation working as designed, not a separate bug.
+The committed package may report automated PASS only for:
 
-Before planning the second pass, two things surfaced by re-reading the actual canonical skill files (not just their names) materially changed the plan below from a naive "port each subject-specific skill into a Physics copy":
+- skill-family metadata and scratch installation;
+- publication schema and shared master-schema conformance;
+- model invariants and numerical recomputation covered by the executable checks;
+- supported product-profile rendering and PDF link/layout checks;
+- ledger/model reconciliation for the original-question pilot;
+- exact model/PDF/audit/summary/manifest identity.
 
-1. `grade9-corpus-coverage-auditor` is now a **deprecated redirect** to `grade9-math-corpus-coverage-auditor` ("do not maintain a second independent set of corpus-audit rules") — it is Math/JEE-specific, not the subject-agnostic engine Finding F assumed.
-2. `grade9-physics-subtopic-book-builder` — already installed and routed, unlike PR #155's two new skills — already specifies almost everything findings D, E, G, I, J and N ask for: a D1-D5 anchor-difficulty → H1-H3 support mapping, a paired `STUDY_GUIDE` + `TRANSFER_BOOK` product split (not one mandatory merged "core"), a full external/ExamSIDE audit with an exact per-question field list and a **View A / View B** reconciliation (subtopic→questions, and question→full support chain: scope → primary subtopic → concept taught → representation taught → first move taught → hints present → visual QA → solution present → source link valid → `COMPLETE`), blocking counters (`SUBTOPIC_MISSING=0`, `SUBTOPIC_DUPLICATE_PRIMARY=0`, ...), and a complete per-subtopic build sequence (§14).
+The following remain `NOT_RUN`, `PENDING`, or out of scope and must not be promoted by those automated results:
 
-So `grade9-physics-publication`/`grade9-physics-examside` did not need to invent most of this — they need to become the **typed-schema/renderer layer executing `grade9-physics-subtopic-book-builder`'s already-correct contract**, not a second, weaker pedagogy system beside it.
+- real external ExamSIDE/PYQ source-page fidelity: `NOT_RUN` because no qualified external-corpus fixture is included;
+- complete 68-question Motion chapter authorship and chapter-closeout execution: `NOT_RUN`;
+- per-student weak-topic diagnosis → repair → retry → promotion workflow: out of scope;
+- independent SRU/pedagogy review: `PENDING`;
+- classroom and psychometric testing: `NOT_RUN`;
+- accessible tagged-PDF conformance and syllabus approval: `NOT_RUN`.
 
-| Finding | What actually shipped | Reused |
-|---|---|---|
-| D + F | `grade9-physics-examside/scripts/reconcile.py`: View A/View B + blocking counters, checking the frozen ledger against the actually-published model (concept, hints, solution, source-status match) — `check_ledger.py` alone only proved the ledger internally consistent | subtopic-book-builder §11-13 (exact field list), `grade9-transfer-coverage-auditor` (not the deprecated corpus auditor) |
-| E | `product` widened to `core`/`study_guide`/`question_bank`/`transfer_book`, each independently valid; caught and fixed 3 real render_v2.py bugs only findable by actually rendering the new profiles, not just validating them | subtopic-book-builder's existing `STUDY_GUIDE`/`TRANSFER_BOOK` pair |
-| G | New **subject-agnostic** `grade9-chapter-closeout-auditor` (not a Physics-specific copy) — extracted the ~90% generic core from the Redox auditor; `grade9-redox-chapter-closeout-auditor` now points at it as its Chemistry profile | `grade9-redox-chapter-closeout-auditor`'s pattern, generalized rather than copied a third time |
-| I | `validate_v2.py`: real near-duplicate/terse/formula-only checks on `solution.method`, replacing the `method != answer` string check. Not synthetic — immediately caught 3 genuinely weak methods in the real content and forced fixing them | — |
-| N | Extended `grade9-learning-enrichment` (already shared across Math/Physics/Chemistry) with partial-knowledge learner mode, First-Step Reference as a named companion product, and the six-question assimilation test — **not** a new `grade9-physics-assimilation` skill; that would have repeated `grade9-math-assimilation`'s own mistake of duplicating shared capability per subject | `grade9-math-assimilation`'s genuinely generic parts only |
-| J | `mixed_tests[]` populated with one real concept-hidden mixed test per band, machine-validated (question IDs exist, `diagnosis_map` agrees with each question's actual concept) | `grade9-textbook-publisher`'s "learning mode vs testing mode" spec |
-| K | `Concept.sru: Optional[SRUAcceptance]`, all 15 SRU dimensions — deliberately left unpopulated in the actual data with a guard requiring a named `reviewer` before any dimension can be set, since several (prediction/reconstruction/transfer quality) are genuine pedagogical judgment calls this project's own no-self-attested-PASS convention says shouldn't be self-certified by whoever authored the content | `grade9-physics/references/concept-book-see-realize-understand.md` (`SRU-01..15`, read in full — not just the header names) |
-| O | Cold-start reproducibility reviewer added to `REVIEW_GUIDE.md`'s role table and approval checklist | IOQM builder's Wave 5 + final rule, reused verbatim |
-| H | `Figure.dependency_class`, crosswalked to `kind` and enforced by a validator — classifies every figure against the generic vocabulary without rewriting the renderer's actual (still Motion-specific) drawing geometry, which would have been much higher-risk for the payoff | `question-contract.md`'s already-generic dependency classes |
+## Reproduction order
 
-Aside (not a finding, flagged for later, not acted on): three different hint-numbering conventions coexist in the repo — `grade9-learning-enrichment` (H1=10%→H5=90%), `grade9-physics-subtopic-book-builder` (H1 NOTICE→H3 START), `grade9-math-assimilation` (H3 EXECUTION→H0 INDEPENDENT, reversed). Worth a unification pass outside this PR.
+Run the package in this order:
 
-## 6. Master-schema conformance (done, ahead of D/E/F/I/J)
+1. validate and scratch-install the Grade 9 skill family;
+2. regenerate the three models and exported schema;
+3. run publication and reconciliation tests;
+4. render and audit all three PDFs;
+5. reconcile the question-bank ledger with the final audit;
+6. render every PDF page for visual inspection;
+7. refresh package summaries and `FILE_MANIFEST.json`;
+8. run `verify_review_package.py`.
 
-A cross-cutting instruction — build this generically for any Physics topic and reusably across subjects, not just for Motion — surfaced a root cause bigger than any single finding above: `validate_v2.py`'s `Model` was never a compatible extension of `../../../shared/grade9-master.schema.json`, despite `grade9-workflow.md` S12 requiring exactly that ("generated from ... grade9-master.schema.json or a compatible extension"). It had its own incompatible field names throughout (`Question.prompt` vs the master's `question`, `source_status` vs `provenance_class`, concept `id` vs `concept_id`, a flat `questions` array vs the master's `{anchors, core_calibrated, challenges}`), and was missing objects the master schema already defines generically (`project`, `qa`, `misconceptions`, `mixed_tests`).
-
-Fixed, and **empirically verified** — not just asserted — by validating the regenerated `motion_B30_v2.json`/`motion_B80_v2.json`/`motion_question_bank_v2.json` against `grade9-master.schema.json` directly with `jsonschema.Draft202012Validator`: **0 errors on all three.**
-
-What changed in `validate_v2.py`/`make_motion_models.py`/`render_v2.py`:
-- `Question.prompt` → `question` (matches master field name); `Question.difficulty` is now the cognitive-profile vector itself (previously misnamed `source_difficulty` after the P0 rename — see S2 finding C), matching master's deliberately-open `question.difficulty: {type: object}`.
-- Added `Question.provenance_class`, kept in lockstep with the existing Physics-specific `source_status` by a model validator (`_PROVENANCE_MAP`) so the two cannot drift.
-- Added top-level `Question.answer`, validated equal to `solution.answer` (mirrored, not independently authored, for the same reason).
-- `concepts[].id` → `concept_id`, added required `title`, populated real `prerequisites` (VTAREA/VTDIST depend on DIST/DISP) and `misconception_ids`.
-- `sources[].id` → `source_id`, added `title`/`provenance_class`.
-- Added `project` (grade/subject/chapter) and `qa` (source_qc_complete/answers_verified/concept_links_verified/notes) objects — both required by the master schema, both absent before. `qa.answers_verified` is honestly `false` with a note: numeric answers are independently recomputed by `validate_v2.py`, qualitative ones are not, so a blanket `true` would overclaim.
-- Added `misconceptions[]`, populated with 2 real, grounded Motion misconceptions (distance≠displacement, graph-height≠distance — both already named in `grade9-physics-subtopic-book-builder`'s own misconception list), in the exact object shape `grade9-learning-enrichment` already uses.
-- `questions` restructured from a flat list into the master's `{anchors, core_calibrated, challenges}` buckets. This pilot has no external anchors and no next-level appendix, so those two are honestly empty lists (not omitted — the master schema requires the keys present); all 8 questions per book are `core_calibrated`. `render_v2.py`/`audit_v2.py`/`test_v2.py` updated to flatten the buckets where they page/paginate/mutate.
-- Re-ran the full verification chain after every change: `validate_v2.py` on all 3 models, `render_v2.py` (21p/16p unchanged), `audit_v2.py` (zero broken links/overlaps/outside-page on both — one intermediate label-collision regression was caught by `audit_v2.py` itself and fixed), `test_v2.py` (13/13 negative cases, 3 boundary cases, citation fixture), and finally the direct `grade9-master.schema.json` validation above.
-
-`Figure`/`band`/`lessons`/`handout`/`guided_solutions` remain Physics-Core-specific extensions with no master-schema equivalent (a "lesson" with a figure/caption/takeaway isn't a concept in a question-bank schema) — riding alongside the conformant core via the master schema's `additionalProperties: true`, not forced into a shape that doesn't fit. `Figure.kind` (`numberline`/`vt`/`tiles`) is still Motion-flavored at the rendering level; it is now crosswalked to the generic dependency-class vocabulary (§5's finding H row) without rewriting the renderer itself.
-
-## 7. What's genuinely still open
-
-Everything from the original 20 review comments (A-O) is closed. One follow-up round (below) closed three of the four items previously listed here as open; the remaining one is a deliberate scope decision, not a blocker.
-
-- **Full chapter-scale Motion build — explicitly out of scope.** The deliverable for this PR is schema + skill + sample, not a full ~68-question chapter's worth of authored content. What *is* in scope, and now done (§8), is proving the schema/renderer has no hidden ceiling that would block that build later. Actually authoring the full chapter is a separate, much larger content-production task and stays deferred until requested.
-- **SRU acceptance data — mechanism finalized, judgment data still correctly withheld.** `SRUAcceptance` (finding K) now cross-references its 15 fields to the SRU-01..15 rubric by name, in both directions (`validate_v2.py`'s field-order comment and a new table in `concept-book-see-realize-understand.md` §6). The actual pedagogical judgment calls for B30/B80's 4 concepts × 15 dimensions remain unfilled on purpose: I authored this content in this session, and the `reviewer`-gating validator exists specifically so the same actor can't also self-certify it (`core-teaching.md`'s no-self-attested-PASS rule). This isn't a gap to close by writing more code — it needs an actual independent reviewer.
-- **Hint-numbering convention — unified where it was actually the same convention, left alone where it correctly isn't.** Re-checked against real code, not just the earlier finding's description: `grade9-physics-publication`, `grade9-physics-subtopic-book-builder` and `grade9-physics-examside` all already document the *same* 3-level Physics scheme (H1 Notice → H2 Model → H3 Start), but nothing enforced it — `grade9-physics-publication`'s `Question.hints` was a bare positional array (the H1/H2/H3 label existed only in `render_v2.py`'s renderer code), while the ExamSIDE ledger stored it as an explicit `{h1,h2,h3}` dict, and nothing cross-checked that array position 0 actually meant the ledger's `h1`. Fixed: `hints` is now `list[HintStep]` with an explicit `tier` field (`validate_v2.py`), order-enforced H1→H2→H3 by a model validator; `render_v2.py` labels by `tier`, not position; `reconcile.py` matches ledger↔published by `tier`, not position (verified: 0 failures against the real ledger, 6/6 synthetic drift cases still caught). By contrast, `grade9-learning-enrichment` (a 4-5 level percentage-reveal ladder: ~10%/25%/45%/70%/90%) and `grade9-math-assimilation` (an H0-H3 *cross-problem scaffold-fade* level, semantically inverted from Physics's within-question reveal order) are genuinely different pedagogical mechanisms, not the same convention that drifted — forcing them into Physics's 3-level shape would overwrite deliberate subject-specific design, against `grade9-workflow.md` S6's own "subject skills define the most useful dimensions." Correcting my own earlier framing: that part of the finding doesn't hold up on inspection, so it's closed as *not a bug*, not left undone.
-- **Figure-rendering genericity beyond the classification layer — the classification layer now has a real consumer.** `render_v2.py`'s `vt`/`numberline`/`tiles`/`compare` renderers stay Motion/Physics-specific by design (no chemistry/math figure content exists yet to build a parametric renderer against — that would be speculative work, not a fix). What was a real gap: `Figure.dependency_class` (finding H's subject-agnostic NONE/GRAPH/DIAGRAM/TABLE/TIMELINE/NUMBER_LINE/OPTION_FIGURES/STATEMENT_SET/MIXED vocabulary, shared with `grade9-physics-examside`'s `question-contract.md`) had no actual consumer outside the renderer that declared it — `grade9-transfer-coverage-auditor`/`grade9-chapter-closeout-auditor`/`grade9-subtopic-completeness-auditor` never read it. Fixed: `reconcile.py` now cross-checks each ledger record's `dependency` against the *published* `figure.dependency_class` (0 failures against the real B80 ledger/model pair; a new `wrong_dependency` drift case is caught). The classification layer's value is now demonstrated, generically, across the ledger/publication boundary — not just declared.
-
-## 8. Schema scale-readiness (item 1, follow-up round)
-
-Proves the schema/renderer has no hidden ceiling around the pilot's 8-questions-per-band size, without authoring the full chapter's content (explicitly out of scope, see §7):
-
-- [x] Audited `validate_v2.py`/`render_v2.py`/`make_motion_models.py` for hardcoded per-band counts — none found (`frozen_questions` has no upper bound; pagination in `render_v2.py` uses `k // page_size` grouping, not a fixed table size).
-- [x] Built a synthetic 72-question `question_bank` model (9x the real B30/B80 question set, cloned with fresh IDs — real content, no fabricated pedagogy, id-relabeled only) and ran it through the **actual** pipeline, not just Pydantic: `validate()` (0 errors) then `Book(...).render()` (completes, all destinations resolve). Added as a permanent regression test (`test_v2.py`'s scale-readiness block) so this stays proven, not just asserted once.
-- [x] Re-verified `grade9-master.schema.json` conformance (`jsonschema`, 0 errors) still holds on all 3 regenerated example models after the hint-tier shape change (§7) — the master schema's `question.hints: {"type":"array"}` doesn't constrain item shape, so `list[HintStep]` stays conformant.
-
-## 9. Rebuilt samples (B30 + B80 only, per explicit scope)
-
-Both rebuilt from the post-§7/§8 schema (hint tiers + dependency cross-check), identical page/link/figure counts to the pre-change audit — confirming the hint-tier refactor is a pure internal-representation change with no visible regression:
-
-| | B30 | B80 |
-|---|---|---|
-| Pages | 21 (unchanged) | 16 (unchanged) |
-| Links | 47 (unchanged) | 42 (unchanged) |
-| Broken links / overlap / outside-page | 0 / 0 / 0 | 0 / 0 / 0 |
-| New `pdf_sha256` | `f2171c394cc5...` | `1c167a3bd2e4...` |
-
-`Motion_Optional_Hint_Practice.pdf` (the `question_bank` product profile) was deliberately **not** rebuilt — the user's ask for this round was scoped to "the 16 questions (B30+B80)". Its underlying source model (`motion_question_bank_v2.json`) *was* regenerated with the new hint-tier shape as a side effect of re-running `make_motion_models.py` (all three example files come from one script), so that PDF's hash record is now stale relative to its own source JSON until it's rebuilt too — flagged here rather than silently left inconsistent, same as `FILE_MANIFEST.json`/`DELIVERY_RECORD.md` in §7's predecessor round.
-
----
-*This document started as a review consolidation and became a live-updated record of both the review and the fixes made in response to it, each verified against the real pipeline rather than asserted. It is intended to be read alongside PR #155.*
+This ordering prevents stale component evidence from being mistaken for a coherent release package.

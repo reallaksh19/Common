@@ -82,6 +82,26 @@
       ]
     }
   ],
+  "canonical_concept_registry": {
+    "registry_id": "MOTION-CB-V1",
+    "source_locator": "Grade 9/Physics/Motion/motion_source_map.yaml#concepts",
+    "source_sha256": "7e67b862407d8e09f75c5dfd8d771a753c7e63347903892b04beaa881c312645",
+    "allowed_ids": [
+      "CB0",
+      "CB1",
+      "CB2",
+      "CB3",
+      "CB4",
+      "CB5",
+      "CB6",
+      "CB7",
+      "CB8",
+      "CB9",
+      "CB10",
+      "CB11",
+      "CB12"
+    ]
+  },
   "topic_ids": [
     "PHY-MOT-M01",
     "PHY-MOT-M02"
@@ -121,18 +141,11 @@
             "text": "The turning point is at +1 − 5 m. Find the finish next."
           }
         ],
-        "repair_target": "B80-L1",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": null,
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 0,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 1,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Start → turning point → finish\nFinal position: ____\nDistance: ____   Displacement: ____",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -180,18 +193,11 @@
             "text": "The first part of the path, from −2 m to 0 m, is 2 m."
           }
         ],
-        "repair_target": "B80-L1",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": null,
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 0,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 1,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Sketch the line and explain why crossing zero is not a turn.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -238,18 +244,11 @@
             "text": "For the turning route, choose a turning point beyond +4 m."
           }
         ],
-        "repair_target": "B80-L1",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": null,
         "task_type": "Explain",
-        "difficulty": {
-          "physical_model_selection": 3,
-          "conceptual_reasoning": 4,
-          "representation_translation": 1,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 3,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 4
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Draw and label two routes. Keep the endpoints the same.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -288,18 +287,11 @@
             "text": "Compare (1 + 10) − (−3 + 10) with 1 − (−3)."
           }
         ],
-        "repair_target": "B80-L1",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": null,
         "task_type": "Transfer",
-        "difficulty": {
-          "physical_model_selection": 6,
-          "conceptual_reasoning": 7,
-          "representation_translation": 4,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 6,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 7
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -347,18 +339,11 @@
             "text": "Calculate the common first area: (+3 m/s) × (4 s)."
           }
         ],
-        "repair_target": "B80-L2",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": null,
         "task_type": "Compare",
-        "difficulty": {
-          "physical_model_selection": 5,
-          "conceptual_reasoning": 6,
-          "representation_translation": 3,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 5,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 6
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -397,7 +382,8 @@
             "text": "For the first region, write (+4) × (2 − 0)."
           }
         ],
-        "repair_target": "B80-L2",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": {
           "id": "B80-A6-F",
           "kind": "vt",
@@ -438,15 +424,7 @@
           "shade": false
         },
         "task_type": "Apply",
-        "difficulty": {
-          "physical_model_selection": 1,
-          "conceptual_reasoning": 2,
-          "representation_translation": 4,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 3,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 2
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -503,7 +481,8 @@
             "text": "The final region has duration 7 − 3 s."
           }
         ],
-        "repair_target": "B80-L4",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": {
           "id": "B80-A7-F",
           "kind": "vt",
@@ -551,15 +530,7 @@
           "shade": false
         },
         "task_type": "Transfer",
-        "difficulty": {
-          "physical_model_selection": 6,
-          "conceptual_reasoning": 7,
-          "representation_translation": 9,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 8,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 7
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -622,7 +593,8 @@
             "text": "The velocity decreases by 8 ÷ 4 m/s each second."
           }
         ],
-        "repair_target": "B80-L3",
+        "repair_mode": "SELF_CONTAINED",
+        "repair_target": "SELF_CONTAINED_SOLUTION",
         "figure": {
           "id": "B80-A8-F",
           "kind": "vt",
@@ -663,15 +635,7 @@
           "shade": false
         },
         "task_type": "Transfer",
-        "difficulty": {
-          "physical_model_selection": 6,
-          "conceptual_reasoning": 7,
-          "representation_translation": 9,
-          "vector_spatial_reasoning": 0,
-          "equation_construction": 8,
-          "experimental_data_reasoning": 0,
-          "constraints_cases": 7
-        },
+        "difficulty_source": "AUTHOR_HEURISTIC",
         "workspace": "Show the route or working that makes your answer clear.",
         "source_status": "ORIGINAL",
         "provenance_class": "ORIGINAL_CALIBRATED",
@@ -733,6 +697,9 @@
   "mixed_tests": [
     {
       "test_id": "B80-MIXED-01",
+      "set_id": "B80-MIXED-01",
+      "study_mode": "MIXED_TRANSFER",
+      "concept_hidden": true,
       "question_ids": [
         "B80-A1",
         "B80-A2",
@@ -751,6 +718,7 @@
     "source_qc_complete": true,
     "answers_verified": false,
     "concept_links_verified": true,
+    "difficulty_checked": false,
     "notes": [
       "Numeric answers are independently recomputed by validate_v2.py (see numerically_recomputed count); qualitative-only answers rely on author review, not independent recomputation.",
       "pdf_render_checked/pdf_links_checked should be filled from audit_v2.py output against the actually rendered PDF, not hand-set here.",

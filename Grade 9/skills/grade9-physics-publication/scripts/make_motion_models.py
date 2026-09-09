@@ -19,29 +19,16 @@ def graph(id,segments,trange=None,vrange=None,shade=False):
 def B(role,text):return dict(role=role,text=text)
 def lesson(id,title,kicker,intro,fig,caption,blocks,takeaway,concepts):
  return dict(id=id,title=title,kicker=kicker,intro=intro,figure=fig,caption=caption,blocks=blocks,takeaway=takeaway,concept_ids=concepts,source_refs=['AUTHOR-MOTION-V2'])
-# provenance_class is the coarse grade9-master.schema.json enum every subject's tooling reads; kept in
-# lockstep with source_status by validate_v2.py's Question.master_schema_conformance validator.
-_PROVENANCE={'ORIGINAL':'ORIGINAL_CALIBRATED','SOURCE_VERIFIED':'SECONDARY_VERIFIED_PYQ','ADAPTED':'RECONSTRUCTED_FROM_SCAN'}
 def Q(n,band,question,primary,recap,why,method,answer,keep,hints,repair,fig=None,task_type='Apply',workspace='Show the route or working that makes your answer clear.',numeric=None):
  # task_type is the cognitive-task badge (what the learner must DO), not difficulty (grade9 router rule 3).
- # difficulty is the multidimensional cognitive-profile vector (grade9-physics difficulty vector, named to
- # match question.difficulty in grade9-master.schema.json), derived here from task_type/figure/graph presence
- # as a starting point for expert calibration (per core-teaching.md), not a substitute for it. No derived
- # Easy/Medium/Hard badge is produced: core-teaching.md explicitly forbids inventing mastery or
- # exam-difficulty badges without empirical calibration.
- # vector_spatial_reasoning and experimental_data_reasoning are 0 throughout: this pilot is 1-D straight-line
- # motion with no lab data (see grade_scope.exclusions in base()).
- is_vt=bool(numeric and numeric.get('kind')=='vt')
- base_score={'Apply':2,'Explain':4,'Connect':5,'Compare':6,'Transfer':7}[task_type]
- difficulty=dict(physical_model_selection=max(base_score-1,0),conceptual_reasoning=base_score,
-  representation_translation=min(base_score+2,10) if fig else max(base_score-3,0),vector_spatial_reasoning=0,
-  equation_construction=min(base_score+1,10) if is_vt else max(base_score-1,0),experimental_data_reasoning=0,
-  constraints_cases=base_score)
+ # The pilot has no source analysis, independent expert calibration, or learner-performance data, so it
+ # deliberately publishes no numeric difficulty vector. Inferring the vector from task_type would merely
+ # relabel the same heuristic. A later qualified review may populate it and update difficulty_source/QA.
  # Callers keep writing hints as a plain 3-string [H1,H2,H3] list in reading order; tagging happens
  # once here so the published shape (list[HintStep], tier explicit) never depends on callers getting
  # the order right by convention alone (hint-numbering-unification).
  tagged_hints=[dict(tier=t,text=h) for t,h in zip(['H1','H2','H3'],hints)]
- return dict(id=f'{band}-A{n}',label=f'A{n}',question=question,primary_concept_id=C[primary],secondary_concept_ids=[c for c in C[:2 if primary<2 else 4] if c!=C[primary]] if primary<2 else [C[5-primary]],recap=recap,solution=dict(why=why,method=method,answer=answer,keep=keep),answer=answer,hints=tagged_hints,repair_target=repair,figure=fig,task_type=task_type,difficulty=difficulty,workspace=workspace,source_status='ORIGINAL',provenance_class=_PROVENANCE['ORIGINAL'],source_refs=['AUTHOR-MOTION-V2'],numeric_check=numeric)
+ return dict(id=f'{band}-A{n}',label=f'A{n}',question=question,primary_concept_id=C[primary],secondary_concept_ids=[c for c in C[:2 if primary<2 else 4] if c!=C[primary]] if primary<2 else [C[5-primary]],recap=recap,solution=dict(why=why,method=method,answer=answer,keep=keep),answer=answer,hints=tagged_hints,repair_mode='LOCAL_LESSON',repair_target=repair,figure=fig,task_type=task_type,difficulty_source='AUTHOR_HEURISTIC',workspace=workspace,source_status='ORIGINAL',provenance_class='ORIGINAL_CALIBRATED',source_refs=['AUTHOR-MOTION-V2'],numeric_check=numeric)
 
 # Concept/source/misconception field names below match ../../../shared/grade9-master.schema.json exactly
 # (concept_id/title/prerequisites/mastery_path, source_id/title/provenance_class, the misconception object
@@ -72,13 +59,14 @@ def base(band):
   project=dict(grade=9,subject='Physics',chapter='Motion',target_level=band,core_question_count=8,challenge_question_count=0,version='2.0.0'),
   grade_scope={'intended_grade':9,'supported_authoring_grades':[9,10,11],'syllabus_status':'SELECTED_FOUNDATION_TOPICS_NOT_BOARD_CERTIFIED','exclusions':['full Motion chapter','acceleration calculations','vertical motion','calculus']},placement={'basis':'user-requested provisional support profile','measured':False},
   concepts=[{'concept_id':c,'title':TITLES[c],'claim':s,'canonical_concept_id':CANON[c],'prerequisites':PREREQ[c],'misconception_ids':['M-MOT-01'] if c in ('PHY-MOT-DIST-01','PHY-MOT-DISP-01') else ['M-MOT-02']} for c,s in zip(C,['Distance adds all path lengths and is non-negative.','In one dimension, displacement is final minus initial position in a declared positive direction.','Signed area between velocity–time graph and time axis gives displacement over the interval.','Distance is the sum of positive area magnitudes, splitting at every sign change.'])],
+  canonical_concept_registry={'registry_id':'MOTION-CB-V1','source_locator':'Grade 9/Physics/Motion/motion_source_map.yaml#concepts','source_sha256':'7e67b862407d8e09f75c5dfd8d771a753c7e63347903892b04beaa881c312645','allowed_ids':['CB'+str(i) for i in range(13)]},
   topic_ids=['PHY-MOT-M01','PHY-MOT-M02'],frozen_questions=8,lessons=[],questions=[],lesson_ids=[],
   sources=[{'source_id':'AUTHOR-MOTION-V2','title':'Original Motion pilot examples','provenance_class':'ORIGINAL_CALIBRATED','notes':'Original examples and diagrams authored for this two-topic pilot. Not PYQs.'}],
   misconceptions=copy.deepcopy(MISCONCEPTIONS),mixed_tests=[],
   # pdf_render_checked/pdf_links_checked are intentionally omitted here (not set to null - the master
   # schema types them strictly boolean when present): unknown at authoring time, before render_v2.py/
   # audit_v2.py run against this exact JSON. Fill them from audit_v2.py's actual output, not by hand.
-  qa=dict(source_qc_complete=True,answers_verified=False,concept_links_verified=True,
+  qa=dict(source_qc_complete=True,answers_verified=False,concept_links_verified=True,difficulty_checked=False,
    notes=['Numeric answers are independently recomputed by validate_v2.py (see numerically_recomputed count); qualitative-only answers rely on author review, not independent recomputation.',
     'pdf_render_checked/pdf_links_checked should be filled from audit_v2.py output against the actually rendered PDF, not hand-set here.',
     'Classroom/psychometric calibration NOT_RUN.']))
@@ -131,7 +119,7 @@ lesson('B80-L3','A straight segment can cross zero','2 · Split where the direct
 B('heading','Predict before calculating'),B('body','The two equal area sizes cancel in displacement. Both still count as movement.'),B('equation','Δx = +½(2)(4) − ½(2)(4)'),B('equation','= 0 m'),B('equation','Distance = 4 + 4 = 8 m'),B('body','The ½ comes from triangular geometry. Straight graph segments let us calculate these areas exactly.'),B('body','A zero average velocity can hide substantial movement. Zero displacement does not imply continuous rest.')],
 'A zero value at an instant is not sufficient to prove a reversal. Check whether velocity actually changes sign on the two sides of that instant.',C[2:]),
 lesson('B80-L4','A stopped interval changes time, not path length','2 · Translate the graph into a journey','A sensor records +6 m/s for 2 s, rest for 1 s, then −3 m/s for 4 s.',graph('80-F4',[[0,6,2,6],[2,0,3,0],[3,-3,7,-3]],shade=True),'Movement: 12 m right, no movement for 1 s, then 12 m left. The return ends at the start.',[
-B('heading','Treat each interval honestly'),B('body','The changes are +12 m, 0 m and −12 m. Rest contributes zero area, even though time passes.'),B('equation','Δx = +12 + 0 − 12 = 0 m'),B('equation','Distance = 12 + 0 + 12 = 24 m'),B('heading','Change the starting position'),B('body','Start at +9 m and finish at +9 m. The same areas still give zero displacement and 24 m distance.')],
+B('heading','Treat each interval honestly'),B('body','The changes are +12 m, 0 m and −12 m. Rest contributes zero area, even though time passes.'),B('body','The vertical jumps at 2 s and 3 s idealise changes that take no time, so they add no area or distance.'),B('equation','Δx = +12 + 0 − 12 = 0 m'),B('equation','Distance = 12 + 0 + 12 = 24 m'),B('heading','Change the starting position'),B('body','Start at +9 m and finish at +9 m. The same areas still give zero displacement and 24 m distance.')],
 'Check a solution using both representations: a signed-area calculation and a right–stop–left motion sketch must tell the same story.',C[2:]),
 lesson('B80-L5','Why the final height can mislead you','2 · Choose a model, then test it','Velocity rises linearly from 0 to +6 m/s over 6 s.',graph('80-F5',[[0,0,6,6]],shade=True),'The actual area is half the rectangle formed by the final velocity and the full duration.',[
 B('heading','Test the tempting shortcut'),B('body','Using 6 × 6 assumes the object travels at +6 m/s throughout. That contradicts the graph.'),B('equation','Δx = ½ × 6 × 6 = +18 m'),B('body','Distance is 18 m because there is no negative-velocity interval.'),B('heading','What if the line is curved?'),B('body','Do not force it into a triangle. Signed area still represents displacement, but its numerical evaluation needs more information or an approximation.')],
@@ -181,19 +169,21 @@ handout['right'][-1]['text']='<b>Check:</b> (m/s) × s = m. Use a rectangle for 
 handout['left']=[B('body','<b>Distance:</b> add every path length.<br/><b>Displacement:</b> the signed endpoint change.'),B('equation','Δx = x<sub>f</sub> − x<sub>i</sub>'),B('body','Δx: displacement; x<sub>i</sub>: initial position;<br/>x<sub>f</sub>: final position. Here, distance is 8 m and Δx is +4 m.'),B('body','<b>Check:</b> distance ≥ |Δx|. Bars mean size.<br/><b>Rebuild:</b> trace the path, then compare its endpoints.')]
 b30['guided_solutions'][0]['figure']['show_endpoints']=False
 b30['guided_solutions'][0]['figure']['leg_labels']=['(b) +1 to −2','(c) −2 to +3']
-# Concept-hidden mixed test (finding J): one question per concept, drawn from the shared common_questions
-# so it stays valid whether or not a band overrides A4/A5/A7/A8. Neither render_v2.py's Appendix A page nor
-# this list exposes the concept ID on the question itself - task_type only names the cognitive operation -
-# so no separate rendering change is needed to keep the label hidden during the attempt.
+# Concept-hidden mixed test (finding J): one question per concept, drawn from the shared common_questions.
+# render_v2.py publishes this order on a separate attempt surface without task/concept labels, then places
+# the diagnosis map after the solutions so it is unavailable during the first attempt.
 def mixed_test(band):
  ids=[f'{band}-A1',f'{band}-A2',f'{band}-A5',f'{band}-A6']
  concepts=[C[1],C[0],C[2],C[3]]
- return dict(test_id=f'{band}-MIXED-01',question_ids=ids,diagnosis_map=dict(zip(ids,concepts)))
+ set_id=f'{band}-MIXED-01'
+ return dict(test_id=set_id,set_id=set_id,study_mode='MIXED_TRANSFER',concept_hidden=True,question_ids=ids,diagnosis_map=dict(zip(ids,concepts)))
 for b in [b30,b80]:
  b['handout']=copy.deepcopy(handout);b['lesson_ids']=[p['id'] for p in b['lessons']]
  b['mixed_tests']=[mixed_test(b['band'])]
- (ROOT/'examples'/('motion_'+b['band']+'_v2.json')).write_text(json.dumps(b,ensure_ascii=False,indent=2))
+ (ROOT/'examples'/('motion_'+b['band']+'_v2.json')).write_text(json.dumps(b,ensure_ascii=False,indent=2),encoding='utf-8',newline='\n')
 bank=copy.deepcopy(b80);bank.update(product='question_bank',title='Motion · Optional-hint practice',learner_label='Optional-hint practice',band='B80',lessons=[],lesson_ids=[])
+for q in bank['questions']['core_calibrated']:
+ q['repair_mode']='SELF_CONTAINED';q['repair_target']='SELF_CONTAINED_SOLUTION'
 bank['source_claim']='Original-question demonstration of the Examside workflow. No exam attribution or external-corpus completeness claimed.'
-(ROOT/'examples/motion_question_bank_v2.json').write_text(json.dumps(bank,ensure_ascii=False,indent=2))
+(ROOT/'examples/motion_question_bank_v2.json').write_text(json.dumps(bank,ensure_ascii=False,indent=2),encoding='utf-8',newline='\n')
 print('Wrote two Core models and original-question bank model.')
