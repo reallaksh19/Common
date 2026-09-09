@@ -3,7 +3,7 @@
 import copy,json
 from pathlib import Path
 from jsonschema import Draft202012Validator
-from validate_v2 import validate,areas
+from validate_v2 import Model,validate,areas
 SKILL_ROOT=Path(__file__).resolve().parents[1]
 d=json.loads((SKILL_ROOT/'examples/motion_B30_v2.json').read_text(encoding='utf-8'))
 def drop_diagram(x):del x['lessons'][0]['figure']
@@ -59,6 +59,11 @@ for model_path in sorted((SKILL_ROOT/'examples').glob('motion_*_v2.json')):
     errors=list(master_validator.iter_errors(json.loads(model_path.read_text(encoding='utf-8'))))
     assert not errors,f'{model_path.name}: master-schema drift: {errors[0].message}'
 print('All three example models conform to grade9-master.schema.json.')
+# The committed adapter schema is a generated contract, not an independent authority. Keep it byte-level
+# semantically equal to the live Pydantic model so a schema edit cannot drift while all example models pass.
+exported=json.loads((SKILL_ROOT/'references/physics-publication-v2.schema.json').read_text(encoding='utf-8'))
+assert exported==Model.model_json_schema(),'physics-publication-v2.schema.json drifted; regenerate it with validate_v2.py --schema'
+print('Exported Physics publication schema matches the live Pydantic model.')
 # Synthetic source-link fixture tests plumbing, not attribution or an actual exam.
 import tempfile
 from render_v2 import Book
