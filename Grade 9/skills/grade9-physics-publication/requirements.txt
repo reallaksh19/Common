@@ -1,0 +1,5 @@
+# Runtime used for the reviewed Motion pilot.
+reportlab==4.4.9
+pydantic==2.13.5
+PyMuPDF==1.26.6
+pypdf==6.10.0

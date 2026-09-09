@@ -1,0 +1,96 @@
+{
+  "status": "FOR_USER_REVIEW",
+  "date": "2026-09-09",
+  "repository_review_commit": "af4c5c73b87b26187aa6c930b60172cbb1f0f3e2",
+  "sources": [
+    {
+      "file": "files (5).zip",
+      "sha256": "df58ef2e5fccd485e0920565d3394a25829215b33117e81cf5e6f74bab3f4812"
+    },
+    {
+      "file": "Grade9_Skill_Architecture_Concept_Note_for_Approval.zip",
+      "sha256": "b8aeaba4b7eff444dabcc7595974ade0c9b37a9b2a7c9d918455f3ed7e61d21c"
+    },
+    {
+      "file": "Motion_Unit9_Full_Batch_FINAL(1).pdf",
+      "sha256": "38204a13ffa49d46e271b8324208badde2c9cbdb55a53c7256b42fc124048cde"
+    }
+  ],
+  "artifacts": {
+    "Motion_B30_Rebuilt": {
+      "schema": "Pydantic Model, extra fields forbidden",
+      "questions": 8,
+      "numerically_recomputed": 7,
+      "pedagogy": "MANUAL_REVIEW_REQUIRED",
+      "pages": 21,
+      "links": 47,
+      "broken_links": [],
+      "text_overlap_findings": [],
+      "outside_page": [],
+      "minimum_text_role_size": 10.5,
+      "figure_occurrences": 19,
+      "pdf_sha256": "3996bef9966f84f2c70f0b9f74b088a95efe8862e9cf810946bb12b05dbfab92",
+      "model_sha256": "0a558372c448e969e1c344324d3f8f7b6856e43774fca76f6c87fa019760d8f7",
+      "visual_review": "SEPARATE_REVIEW_REQUIRED"
+    },
+    "Motion_B80_Rebuilt": {
+      "schema": "Pydantic Model, extra fields forbidden",
+      "questions": 8,
+      "numerically_recomputed": 6,
+      "pedagogy": "MANUAL_REVIEW_REQUIRED",
+      "pages": 16,
+      "links": 42,
+      "broken_links": [],
+      "text_overlap_findings": [],
+      "outside_page": [],
+      "minimum_text_role_size": 10.5,
+      "figure_occurrences": 15,
+      "pdf_sha256": "8cf0c49d457135a8f41f47061e60d5f30a0932507d48aa32b2ad00f054ba371c",
+      "model_sha256": "06acec3f7181a8fc622f35626c4a09506f1364b10dbc8d22d833db7ae9b02a70",
+      "visual_review": "SEPARATE_REVIEW_REQUIRED"
+    },
+    "Motion_Optional_Hint_Practice": {
+      "schema": "Pydantic Model, extra fields forbidden",
+      "questions": 8,
+      "numerically_recomputed": 6,
+      "pedagogy": "MANUAL_REVIEW_REQUIRED",
+      "pages": 10,
+      "links": 32,
+      "broken_links": [],
+      "text_overlap_findings": [],
+      "outside_page": [],
+      "minimum_text_role_size": 10.5,
+      "figure_occurrences": 6,
+      "pdf_sha256": "c8bda27aee48752bc069eb7857c3977df672184dc6022505023da3b14fec90a5",
+      "model_sha256": "1c94256aff1b6fbcd172e4f352758e9120967f07604b7bdef3c0965ee63a4ca8",
+      "visual_review": "SEPARATE_REVIEW_REQUIRED"
+    }
+  },
+  "manual_review": {
+    "kind": "academic artifact review and simulated learner walkthroughs",
+    "classroom_testing": "NOT_PERFORMED",
+    "user_approval": "PENDING",
+    "passes": [
+      "source_and_scope",
+      "physics_teacher",
+      "B30_walkthrough",
+      "B80_walkthrough",
+      "independent_artifact_review",
+      "revision_recheck",
+      "publication_render_review"
+    ],
+    "specific_finding_and_repair_evidence": "Physics_Rebuild_Review.md",
+    "pages_rendered_at_200dpi": 47,
+    "known_blocking_findings_remaining": 0
+  },
+  "tests": {
+    "invalid_models_rejected": 13,
+    "physics_boundary_cases_passed": 3,
+    "synthetic_source_links_verified": 2,
+    "synthetic_source_fixture_is_real_exam": false
+  },
+  "backup": {
+    "file": "Physics_Before_Rebuild_Backup.zip",
+    "sha256": "cd041a90d21c2d9254b19f736076b0ec49eb8889b6ccdf5a8c124c4c70d72b7f"
+  }
+}
