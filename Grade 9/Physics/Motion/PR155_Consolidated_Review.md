@@ -136,5 +136,24 @@ Aside (not a new finding, flagged for later): three different hint-numbering con
 
 Suggested next sequence: **D+F → E → J → K** (schema/mechanical, same shape as the closed batch) **→ I+N → G** (two new sibling skills, larger) **→ O** (doc-only) **→ H stays deferred.**
 
+## 6. Master-schema conformance (done, ahead of D/E/F/I/J)
+
+A cross-cutting instruction — build this generically for any Physics topic and reusably across subjects, not just for Motion — surfaced a root cause bigger than any single finding above: `validate_v2.py`'s `Model` was never a compatible extension of `../../../shared/grade9-master.schema.json`, despite `grade9-workflow.md` S12 requiring exactly that ("generated from ... grade9-master.schema.json or a compatible extension"). It had its own incompatible field names throughout (`Question.prompt` vs the master's `question`, `source_status` vs `provenance_class`, concept `id` vs `concept_id`, a flat `questions` array vs the master's `{anchors, core_calibrated, challenges}`), and was missing objects the master schema already defines generically (`project`, `qa`, `misconceptions`, `mixed_tests`).
+
+Fixed, and **empirically verified** — not just asserted — by validating the regenerated `motion_B30_v2.json`/`motion_B80_v2.json`/`motion_question_bank_v2.json` against `grade9-master.schema.json` directly with `jsonschema.Draft202012Validator`: **0 errors on all three.**
+
+What changed in `validate_v2.py`/`make_motion_models.py`/`render_v2.py`:
+- `Question.prompt` → `question` (matches master field name); `Question.difficulty` is now the cognitive-profile vector itself (previously misnamed `source_difficulty` after the P0 rename — see S2 finding C), matching master's deliberately-open `question.difficulty: {type: object}`.
+- Added `Question.provenance_class`, kept in lockstep with the existing Physics-specific `source_status` by a model validator (`_PROVENANCE_MAP`) so the two cannot drift.
+- Added top-level `Question.answer`, validated equal to `solution.answer` (mirrored, not independently authored, for the same reason).
+- `concepts[].id` → `concept_id`, added required `title`, populated real `prerequisites` (VTAREA/VTDIST depend on DIST/DISP) and `misconception_ids`.
+- `sources[].id` → `source_id`, added `title`/`provenance_class`.
+- Added `project` (grade/subject/chapter) and `qa` (source_qc_complete/answers_verified/concept_links_verified/notes) objects — both required by the master schema, both absent before. `qa.answers_verified` is honestly `false` with a note: numeric answers are independently recomputed by `validate_v2.py`, qualitative ones are not, so a blanket `true` would overclaim.
+- Added `misconceptions[]`, populated with 2 real, grounded Motion misconceptions (distance≠displacement, graph-height≠distance — both already named in `grade9-physics-subtopic-book-builder`'s own misconception list), in the exact object shape `grade9-learning-enrichment` already uses.
+- `questions` restructured from a flat list into the master's `{anchors, core_calibrated, challenges}` buckets. This pilot has no external anchors and no next-level appendix, so those two are honestly empty lists (not omitted — the master schema requires the keys present); all 8 questions per book are `core_calibrated`. `render_v2.py`/`audit_v2.py`/`test_v2.py` updated to flatten the buckets where they page/paginate/mutate.
+- Re-ran the full verification chain after every change: `validate_v2.py` on all 3 models, `render_v2.py` (21p/16p unchanged), `audit_v2.py` (zero broken links/overlaps/outside-page on both — one intermediate label-collision regression was caught by `audit_v2.py` itself and fixed), `test_v2.py` (13/13 negative cases, 3 boundary cases, citation fixture), and finally the direct `grade9-master.schema.json` validation above.
+
+`Figure`/`band`/`lessons`/`handout`/`guided_solutions` remain Physics-Core-specific extensions with no master-schema equivalent (a "lesson" with a figure/caption/takeaway isn't a concept in a question-bank schema) — riding alongside the conformant core via the master schema's `additionalProperties: true`, not forced into a shape that doesn't fit. `Figure.kind` (`numberline`/`vt`/`tiles`) is still Motion-flavored; broadening it to the already-generic dependency-class vocabulary (`GRAPH`/`DIAGRAM`/`TABLE`/...) is finding H, still queued next.
+
 ---
 *This document is a review consolidation only — no code or schema changes are made here. It is intended to be read alongside PR #155 by whoever drives its next revision.*

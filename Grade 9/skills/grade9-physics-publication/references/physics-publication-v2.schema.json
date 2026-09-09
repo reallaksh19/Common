@@ -70,6 +70,175 @@
       "title": "Citation",
       "type": "object"
     },
+    "Concept": {
+      "additionalProperties": false,
+      "properties": {
+        "concept_id": {
+          "title": "Concept Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "claim": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Claim"
+        },
+        "canonical_concept_id": {
+          "title": "Canonical Concept Id",
+          "type": "string"
+        },
+        "primary_anchor_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Primary Anchor Ids",
+          "type": "array"
+        },
+        "prerequisites": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prerequisites",
+          "type": "array"
+        },
+        "same_level_question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Same Level Question Ids",
+          "type": "array"
+        },
+        "challenge_question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Challenge Question Ids",
+          "type": "array"
+        },
+        "misconception_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Misconception Ids",
+          "type": "array"
+        },
+        "mastery_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Mastery Path",
+          "type": "array"
+        }
+      },
+      "required": [
+        "concept_id",
+        "title",
+        "canonical_concept_id"
+      ],
+      "title": "Concept",
+      "type": "object"
+    },
+    "Difficulty": {
+      "additionalProperties": false,
+      "properties": {
+        "physical_model_selection": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Physical Model Selection"
+        },
+        "conceptual_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conceptual Reasoning"
+        },
+        "representation_translation": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Representation Translation"
+        },
+        "vector_spatial_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vector Spatial Reasoning"
+        },
+        "equation_construction": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Equation Construction"
+        },
+        "experimental_data_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experimental Data Reasoning"
+        },
+        "constraints_cases": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Constraints Cases"
+        }
+      },
+      "title": "Difficulty",
+      "type": "object"
+    },
     "Figure": {
       "additionalProperties": false,
       "properties": {
@@ -470,6 +639,190 @@
       "title": "Lesson",
       "type": "object"
     },
+    "Misconception": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "wrong_model": {
+          "title": "Wrong Model",
+          "type": "string"
+        },
+        "observable_error": {
+          "title": "Observable Error",
+          "type": "string"
+        },
+        "diagnostic_question": {
+          "title": "Diagnostic Question",
+          "type": "string"
+        },
+        "repair_explanation": {
+          "title": "Repair Explanation",
+          "type": "string"
+        },
+        "micro_example": {
+          "title": "Micro Example",
+          "type": "string"
+        },
+        "transfer_check": {
+          "title": "Transfer Check",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "wrong_model",
+        "observable_error",
+        "diagnostic_question",
+        "repair_explanation",
+        "micro_example",
+        "transfer_check"
+      ],
+      "title": "Misconception",
+      "type": "object"
+    },
+    "Project": {
+      "additionalProperties": false,
+      "properties": {
+        "grade": {
+          "const": 9,
+          "default": 9,
+          "title": "Grade",
+          "type": "integer"
+        },
+        "subject": {
+          "title": "Subject",
+          "type": "string"
+        },
+        "chapter": {
+          "title": "Chapter",
+          "type": "string"
+        },
+        "target_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Level"
+        },
+        "core_question_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Core Question Count"
+        },
+        "challenge_question_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Challenge Question Count"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "subject",
+        "chapter"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "QA": {
+      "additionalProperties": false,
+      "properties": {
+        "source_qc_complete": {
+          "title": "Source Qc Complete",
+          "type": "boolean"
+        },
+        "answers_verified": {
+          "title": "Answers Verified",
+          "type": "boolean"
+        },
+        "concept_links_verified": {
+          "title": "Concept Links Verified",
+          "type": "boolean"
+        },
+        "difficulty_checked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Difficulty Checked"
+        },
+        "pdf_render_checked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Render Checked"
+        },
+        "pdf_links_checked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Links Checked"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_qc_complete",
+        "answers_verified",
+        "concept_links_verified"
+      ],
+      "title": "QA",
+      "type": "object"
+    },
     "Question": {
       "additionalProperties": false,
       "properties": {
@@ -481,9 +834,9 @@
           "title": "Label",
           "type": "string"
         },
-        "prompt": {
+        "question": {
           "minLength": 15,
-          "title": "Prompt",
+          "title": "Question",
           "type": "string"
         },
         "primary_concept_id": {
@@ -538,10 +891,10 @@
           "title": "Task Type",
           "type": "string"
         },
-        "source_difficulty": {
+        "difficulty": {
           "anyOf": [
             {
-              "$ref": "#/$defs/SourceDifficulty"
+              "$ref": "#/$defs/Difficulty"
             },
             {
               "type": "null"
@@ -560,6 +913,23 @@
             "ADAPTED"
           ],
           "title": "Source Status",
+          "type": "string"
+        },
+        "provenance_class": {
+          "enum": [
+            "USER_UPLOADED_ANCHOR",
+            "OFFICIAL_PYQ",
+            "SECONDARY_VERIFIED_PYQ",
+            "PUBLISHED_REFERENCE",
+            "ORIGINAL_CALIBRATED",
+            "RECONSTRUCTED_FROM_SCAN"
+          ],
+          "title": "Provenance Class",
+          "type": "string"
+        },
+        "answer": {
+          "minLength": 3,
+          "title": "Answer",
           "type": "string"
         },
         "source_refs": {
@@ -607,7 +977,7 @@
       "required": [
         "id",
         "label",
-        "prompt",
+        "question",
         "primary_concept_id",
         "secondary_concept_ids",
         "recap",
@@ -618,10 +988,45 @@
         "task_type",
         "workspace",
         "source_status",
+        "provenance_class",
+        "answer",
         "source_refs",
         "numeric_check"
       ],
       "title": "Question",
+      "type": "object"
+    },
+    "Questions": {
+      "additionalProperties": false,
+      "properties": {
+        "anchors": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Anchors",
+          "type": "array"
+        },
+        "core_calibrated": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Core Calibrated",
+          "type": "array"
+        },
+        "challenges": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Challenges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "anchors",
+        "core_calibrated",
+        "challenges"
+      ],
+      "title": "Questions",
       "type": "object"
     },
     "Solution": {
@@ -657,95 +1062,60 @@
       "title": "Solution",
       "type": "object"
     },
-    "SourceDifficulty": {
+    "Source": {
       "additionalProperties": false,
       "properties": {
-        "physical_model_selection": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Physical Model Selection"
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
         },
-        "conceptual_reasoning": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Conceptual Reasoning"
+        "title": {
+          "title": "Title",
+          "type": "string"
         },
-        "representation_translation": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
+        "provenance_class": {
+          "enum": [
+            "USER_UPLOADED_ANCHOR",
+            "OFFICIAL_PYQ",
+            "SECONDARY_VERIFIED_PYQ",
+            "PUBLISHED_REFERENCE",
+            "ORIGINAL_CALIBRATED",
+            "RECONSTRUCTED_FROM_SCAN"
           ],
-          "default": null,
-          "title": "Representation Translation"
+          "title": "Provenance Class",
+          "type": "string"
         },
-        "vector_spatial_reasoning": {
+        "location": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
             }
           ],
           "default": null,
-          "title": "Vector Spatial Reasoning"
+          "title": "Location"
         },
-        "equation_construction": {
+        "notes": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
             }
           ],
           "default": null,
-          "title": "Equation Construction"
-        },
-        "experimental_data_reasoning": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Experimental Data Reasoning"
-        },
-        "constraints_cases": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Constraints Cases"
+          "title": "Notes"
         }
       },
-      "title": "SourceDifficulty",
+      "required": [
+        "source_id",
+        "title",
+        "provenance_class"
+      ],
+      "title": "Source",
       "type": "object"
     }
   },
@@ -793,6 +1163,9 @@
       "title": "Status",
       "type": "string"
     },
+    "project": {
+      "$ref": "#/$defs/Project"
+    },
     "grade_scope": {
       "additionalProperties": true,
       "title": "Grade Scope",
@@ -805,8 +1178,7 @@
     },
     "concepts": {
       "items": {
-        "additionalProperties": true,
-        "type": "object"
+        "$ref": "#/$defs/Concept"
       },
       "title": "Concepts",
       "type": "array"
@@ -830,11 +1202,7 @@
       "type": "array"
     },
     "questions": {
-      "items": {
-        "$ref": "#/$defs/Question"
-      },
-      "title": "Questions",
-      "type": "array"
+      "$ref": "#/$defs/Questions"
     },
     "lesson_ids": {
       "items": {
@@ -845,10 +1213,24 @@
     },
     "sources": {
       "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "misconceptions": {
+      "items": {
+        "$ref": "#/$defs/Misconception"
+      },
+      "title": "Misconceptions",
+      "type": "array"
+    },
+    "mixed_tests": {
+      "items": {
         "additionalProperties": true,
         "type": "object"
       },
-      "title": "Sources",
+      "title": "Mixed Tests",
       "type": "array"
     },
     "handout": {
@@ -872,6 +1254,9 @@
       },
       "title": "Guided Solutions",
       "type": "array"
+    },
+    "qa": {
+      "$ref": "#/$defs/QA"
     }
   },
   "required": [
@@ -882,6 +1267,7 @@
     "learner_label",
     "product",
     "status",
+    "project",
     "grade_scope",
     "placement",
     "concepts",
@@ -891,7 +1277,8 @@
     "questions",
     "lesson_ids",
     "sources",
-    "handout"
+    "handout",
+    "qa"
   ],
   "title": "Model",
   "type": "object"

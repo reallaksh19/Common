@@ -34,10 +34,11 @@ def audit(model,pdf):
         uris=[a['/A']['/URI'] for a in annots if '/A' in a and a['/A'].get('/S')=='/URI']
         assert uris==[r['url'] for r in layout.get('external_links',[]) if r['page']==pn],'source URI lost or changed'
     alltext='\n'.join(p.get_text() for p in doc)
-    for q in d['questions']:
+    qb=d['questions'];all_qs=qb['anchors']+qb['core_calibrated']+qb['challenges']
+    for q in all_qs:
         for prefix in ['', 'hint-', 'solution-']:assert prefix+q['id'] in layout['destinations'],'missing question/hint/solution'
     solution_pages=[v for k,v in layout['destinations'].items() if k.startswith('solution-')]
-    last_question=max(layout['destinations'][q['id']] for q in d['questions'])
+    last_question=max(layout['destinations'][q['id']] for q in all_qs)
     assert min(solution_pages)>last_question,'answers before questions finish'
     if d['product']=='core':
         assert 'Appendix A' in alltext and 'Appendix B' in alltext,'missing appendix heading'

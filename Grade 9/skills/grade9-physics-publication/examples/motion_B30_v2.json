@@ -6,6 +6,15 @@
   "learner_label": "Build the picture",
   "product": "core",
   "status": "FOR_USER_REVIEW",
+  "project": {
+    "grade": 9,
+    "subject": "Physics",
+    "chapter": "Motion",
+    "target_level": "B30",
+    "core_question_count": 8,
+    "challenge_question_count": 0,
+    "version": "2.0.0"
+  },
   "grade_scope": {
     "intended_grade": 9,
     "supported_authoring_grades": [
@@ -27,24 +36,50 @@
   },
   "concepts": [
     {
-      "id": "PHY-MOT-DIST-01",
+      "concept_id": "PHY-MOT-DIST-01",
+      "title": "Distance",
       "claim": "Distance adds all path lengths and is non-negative.",
-      "canonical_concept_id": "CB1"
+      "canonical_concept_id": "CB1",
+      "prerequisites": [],
+      "misconception_ids": [
+        "M-MOT-01"
+      ]
     },
     {
-      "id": "PHY-MOT-DISP-01",
+      "concept_id": "PHY-MOT-DISP-01",
+      "title": "Displacement",
       "claim": "In one dimension, displacement is final minus initial position in a declared positive direction.",
-      "canonical_concept_id": "CB1"
+      "canonical_concept_id": "CB1",
+      "prerequisites": [],
+      "misconception_ids": [
+        "M-MOT-01"
+      ]
     },
     {
-      "id": "PHY-MOT-VTAREA-01",
+      "concept_id": "PHY-MOT-VTAREA-01",
+      "title": "Signed v-t Area (Displacement)",
       "claim": "Signed area between velocity–time graph and time axis gives displacement over the interval.",
-      "canonical_concept_id": "CB12"
+      "canonical_concept_id": "CB12",
+      "prerequisites": [
+        "PHY-MOT-DIST-01",
+        "PHY-MOT-DISP-01"
+      ],
+      "misconception_ids": [
+        "M-MOT-02"
+      ]
     },
     {
-      "id": "PHY-MOT-VTDIST-01",
+      "concept_id": "PHY-MOT-VTDIST-01",
+      "title": "v-t Area Magnitudes (Distance)",
       "claim": "Distance is the sum of positive area magnitudes, splitting at every sign change.",
-      "canonical_concept_id": "CB12"
+      "canonical_concept_id": "CB12",
+      "prerequisites": [
+        "PHY-MOT-DIST-01",
+        "PHY-MOT-DISP-01"
+      ],
+      "misconception_ids": [
+        "M-MOT-02"
+      ]
     }
   ],
   "topic_ids": [
@@ -694,521 +729,541 @@
       ]
     }
   ],
-  "questions": [
-    {
-      "id": "B30-A1",
-      "label": "A1",
-      "prompt": "Start at +1 m. Walk 5 m left, then 3 m right. Find the final position, distance and displacement.",
-      "primary_concept_id": "PHY-MOT-DISP-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-DIST-01"
-      ],
-      "recap": "Start +1 m; 5 m left, then 3 m right.",
-      "solution": {
-        "why": "Position changes carry direction; path lengths do not.",
-        "method": "Start +1 m → turn −4 m → finish −1 m. Distance = 5 + 3 = 8 m. Displacement = −1 − (+1) = −2 m.",
+  "questions": {
+    "anchors": [],
+    "core_calibrated": [
+      {
+        "id": "B30-A1",
+        "label": "A1",
+        "question": "Start at +1 m. Walk 5 m left, then 3 m right. Find the final position, distance and displacement.",
+        "primary_concept_id": "PHY-MOT-DISP-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-DIST-01"
+        ],
+        "recap": "Start +1 m; 5 m left, then 3 m right.",
+        "solution": {
+          "why": "Position changes carry direction; path lengths do not.",
+          "method": "Start +1 m → turn −4 m → finish −1 m. Distance = 5 + 3 = 8 m. Displacement = −1 − (+1) = −2 m.",
+          "answer": "Final position −1 m; distance 8 m; displacement −2 m (left).",
+          "keep": "The final coordinate is not automatically the displacement."
+        },
         "answer": "Final position −1 m; distance 8 m; displacement −2 m (left).",
-        "keep": "The final coordinate is not automatically the displacement."
-      },
-      "hints": [
-        "Keep the starting coordinate separate from the lengths walked.",
-        "Mark the start, the turning point and the finish on a number line.",
-        "The turning point is at +1 − 5 m. Find the finish next."
-      ],
-      "repair_target": "B30-L3",
-      "figure": null,
-      "task_type": "Apply",
-      "source_difficulty": {
-        "physical_model_selection": 1,
-        "conceptual_reasoning": 2,
-        "representation_translation": 0,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 1,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 2
-      },
-      "workspace": "Start → turning point → finish\nFinal position: ____\nDistance: ____   Displacement: ____",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": {
-        "kind": "route",
-        "positions": [
-          1,
-          -4,
-          -1
+        "hints": [
+          "Keep the starting coordinate separate from the lengths walked.",
+          "Mark the start, the turning point and the finish on a number line.",
+          "The turning point is at +1 − 5 m. Find the finish next."
         ],
-        "distance": 8,
-        "displacement": -2
-      },
-      "solution_figure": {
-        "id": "B30-A1-SOL-F",
-        "kind": "numberline",
-        "status": "FINAL",
-        "range": [
-          -4,
-          6
+        "repair_target": "B30-L3",
+        "figure": null,
+        "task_type": "Apply",
+        "difficulty": {
+          "physical_model_selection": 1,
+          "conceptual_reasoning": 2,
+          "representation_translation": 0,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 1,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 2
+        },
+        "workspace": "Start → turning point → finish\nFinal position: ____\nDistance: ____   Displacement: ____",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
         ],
-        "positions": [
-          1,
-          -4,
-          -1
-        ],
-        "displacement": false,
-        "ticks": [
-          -4,
-          -2,
-          -1,
-          0,
-          1,
-          3,
-          5,
-          6
-        ]
-      }
-    },
-    {
-      "id": "B30-A2",
-      "label": "A2",
-      "prompt": "An object moves from −2 m to +5 m without reversing. Find its distance and displacement. Explain the signs.",
-      "primary_concept_id": "PHY-MOT-DIST-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-DISP-01"
-      ],
-      "recap": "Move from −2 m to +5 m with no reversal.",
-      "solution": {
-        "why": "The route goes 2 m to zero and another 5 m right.",
-        "method": "From −2 m to zero is 2 m; then 5 m more to +5 m. Total change is 7 m right. This explains +5 − (−2) = +7 m.",
-        "answer": "Distance 7 m; displacement +7 m (right).",
-        "keep": "Equal distance and displacement size require no reversal in this straight-line journey."
-      },
-      "hints": [
-        "Crossing the origin does not mean reversing direction.",
-        "Draw −2, 0 and +5 in order along the line.",
-        "The first part of the path, from −2 m to 0 m, is 2 m."
-      ],
-      "repair_target": "B30-L1",
-      "figure": null,
-      "task_type": "Apply",
-      "source_difficulty": {
-        "physical_model_selection": 1,
-        "conceptual_reasoning": 2,
-        "representation_translation": 0,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 1,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 2
-      },
-      "workspace": "Sketch the line and explain why crossing zero is not a turn.",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": {
-        "kind": "route",
-        "positions": [
-          -2,
-          5
-        ],
-        "distance": 7,
-        "displacement": 7
-      },
-      "solution_figure": {
-        "id": "B30-A2-SOL-F",
-        "kind": "numberline",
-        "status": "FINAL",
-        "range": [
-          -4,
-          6
-        ],
-        "positions": [
-          -2,
-          5
-        ],
-        "displacement": false,
-        "ticks": [
-          -4,
-          -2,
-          -1,
-          0,
-          1,
-          3,
-          5,
-          6
-        ]
-      }
-    },
-    {
-      "id": "B30-A3",
-      "label": "A3",
-      "prompt": "Two students start at 0 m and finish at +4 m. Must they have travelled the same distance? Draw two journeys to support your answer.",
-      "primary_concept_id": "PHY-MOT-DIST-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-DISP-01"
-      ],
-      "recap": "Same start 0 m and finish +4 m; compare possible distances.",
-      "solution": {
-        "why": "Endpoints fix displacement but leave the path undecided.",
-        "method": "One can go directly 0 → +4. Another can go 0 → +7 → +4. Their paths are 4 m and 7 + 3 m.",
-        "answer": "No. These distances are 4 m and 10 m; both displacements are +4 m.",
-        "keep": "A drawing can disprove an “always” claim."
-      },
-      "hints": [
-        "The question fixes the endpoints, not the route.",
-        "Draw one direct route and one route with a turn.",
-        "For the turning route, choose a turning point beyond +4 m."
-      ],
-      "repair_target": "B30-L2",
-      "figure": null,
-      "task_type": "Explain",
-      "source_difficulty": {
-        "physical_model_selection": 3,
-        "conceptual_reasoning": 4,
-        "representation_translation": 1,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 3,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 4
-      },
-      "workspace": "Draw and label two routes. Keep the endpoints the same.",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": null
-    },
-    {
-      "id": "B30-A4",
-      "label": "A4",
-      "prompt": "A student walks 7 m right and then 3 m left. Find distance and displacement, taking right as positive.",
-      "primary_concept_id": "PHY-MOT-DISP-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-DIST-01"
-      ],
-      "recap": "Walk 7 m right, then 3 m left.",
-      "solution": {
-        "why": "Both legs count towards distance, while leftward motion reduces the rightward change.",
-        "method": "Distance = 7 + 3. Displacement = +7 + (−3).",
-        "answer": "Distance 10 m; displacement +4 m (right).",
-        "keep": "Separate total path from net change."
-      },
-      "hints": [
-        "The student reverses direction after the first leg.",
-        "Use a path line and a separate start-to-finish arrow.",
-        "Add 7 m and 3 m to begin the distance calculation."
-      ],
-      "repair_target": "B30-L2",
-      "figure": null,
-      "task_type": "Apply",
-      "source_difficulty": {
-        "physical_model_selection": 1,
-        "conceptual_reasoning": 2,
-        "representation_translation": 0,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 1,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 2
-      },
-      "workspace": "Show the route or working that makes your answer clear.",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": {
-        "kind": "route",
-        "positions": [
-          0,
-          7,
-          4
-        ],
-        "distance": 10,
-        "displacement": 4
-      }
-    },
-    {
-      "id": "B30-A5",
-      "label": "A5",
-      "prompt": "An object moves at +5 m/s for 3 s, then at −2 m/s for 2 s. Find displacement and distance for the whole journey.",
-      "primary_concept_id": "PHY-MOT-VTAREA-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-VTDIST-01"
-      ],
-      "recap": "Velocity +5 m/s for 3 s, then −2 m/s for 2 s.",
-      "solution": {
-        "why": "Each interval has constant velocity, so its signed area is velocity × duration.",
-        "method": "The changes are +5 × 3 = +15 m and −2 × 2 = −4 m. Add with signs for displacement; add sizes for distance.",
-        "answer": "Displacement +11 m; distance 19 m. Check: 19 ≥ 11.",
-        "keep": "Negative velocity gives negative displacement, not negative distance."
-      },
-      "hints": [
-        "One interval is rightward and one is leftward.",
-        "Draw two velocity–time rectangles on opposite sides of zero.",
-        "The first signed area is (+5 m/s) × (3 s)."
-      ],
-      "repair_target": "B30-L6",
-      "figure": null,
-      "task_type": "Apply",
-      "source_difficulty": {
-        "physical_model_selection": 1,
-        "conceptual_reasoning": 2,
-        "representation_translation": 0,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 3,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 2
-      },
-      "workspace": "Show the route or working that makes your answer clear.",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": {
-        "kind": "vt",
-        "segments": [
-          [
+        "numeric_check": {
+          "kind": "route",
+          "positions": [
+            1,
+            -4,
+            -1
+          ],
+          "distance": 8,
+          "displacement": -2
+        },
+        "solution_figure": {
+          "id": "B30-A1-SOL-F",
+          "kind": "numberline",
+          "status": "FINAL",
+          "range": [
+            -4,
+            6
+          ],
+          "positions": [
+            1,
+            -4,
+            -1
+          ],
+          "displacement": false,
+          "ticks": [
+            -4,
+            -2,
+            -1,
             0,
-            5,
+            1,
             3,
+            5,
+            6
+          ]
+        }
+      },
+      {
+        "id": "B30-A2",
+        "label": "A2",
+        "question": "An object moves from −2 m to +5 m without reversing. Find its distance and displacement. Explain the signs.",
+        "primary_concept_id": "PHY-MOT-DIST-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-DISP-01"
+        ],
+        "recap": "Move from −2 m to +5 m with no reversal.",
+        "solution": {
+          "why": "The route goes 2 m to zero and another 5 m right.",
+          "method": "From −2 m to zero is 2 m; then 5 m more to +5 m. Total change is 7 m right. This explains +5 − (−2) = +7 m.",
+          "answer": "Distance 7 m; displacement +7 m (right).",
+          "keep": "Equal distance and displacement size require no reversal in this straight-line journey."
+        },
+        "answer": "Distance 7 m; displacement +7 m (right).",
+        "hints": [
+          "Crossing the origin does not mean reversing direction.",
+          "Draw −2, 0 and +5 in order along the line.",
+          "The first part of the path, from −2 m to 0 m, is 2 m."
+        ],
+        "repair_target": "B30-L1",
+        "figure": null,
+        "task_type": "Apply",
+        "difficulty": {
+          "physical_model_selection": 1,
+          "conceptual_reasoning": 2,
+          "representation_translation": 0,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 1,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 2
+        },
+        "workspace": "Sketch the line and explain why crossing zero is not a turn.",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
+        ],
+        "numeric_check": {
+          "kind": "route",
+          "positions": [
+            -2,
             5
           ],
-          [
+          "distance": 7,
+          "displacement": 7
+        },
+        "solution_figure": {
+          "id": "B30-A2-SOL-F",
+          "kind": "numberline",
+          "status": "FINAL",
+          "range": [
+            -4,
+            6
+          ],
+          "positions": [
+            -2,
+            5
+          ],
+          "displacement": false,
+          "ticks": [
+            -4,
+            -2,
+            -1,
+            0,
+            1,
             3,
-            -2,
             5,
-            -2
+            6
           ]
+        }
+      },
+      {
+        "id": "B30-A3",
+        "label": "A3",
+        "question": "Two students start at 0 m and finish at +4 m. Must they have travelled the same distance? Draw two journeys to support your answer.",
+        "primary_concept_id": "PHY-MOT-DIST-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-DISP-01"
         ],
-        "distance": 19,
-        "displacement": 11
-      }
-    },
-    {
-      "id": "B30-A6",
-      "label": "A6",
-      "prompt": "Use the graph to find displacement and distance from 0 s to 5 s. Give a physical meaning for each area.",
-      "primary_concept_id": "PHY-MOT-VTDIST-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-VTAREA-01"
-      ],
-      "recap": "Graph: +4 m/s from 0–2 s, then −2 m/s from 2–5 s.",
-      "solution": {
-        "why": "Graph widths are durations. The second width is 5 − 2 = 3 s.",
-        "method": "Signed areas are +4 × 2 = +8 m and −2 × 3 = −6 m. For distance count both path lengths.",
+        "recap": "Same start 0 m and finish +4 m; compare possible distances.",
+        "solution": {
+          "why": "Endpoints fix displacement but leave the path undecided.",
+          "method": "One can go directly 0 → +4. Another can go 0 → +7 → +4. Their paths are 4 m and 7 + 3 m.",
+          "answer": "No. These distances are 4 m and 10 m; both displacements are +4 m.",
+          "keep": "A drawing can disprove an “always” claim."
+        },
+        "answer": "No. These distances are 4 m and 10 m; both displacements are +4 m.",
+        "hints": [
+          "The question fixes the endpoints, not the route.",
+          "Draw one direct route and one route with a turn.",
+          "For the turning route, choose a turning point beyond +4 m."
+        ],
+        "repair_target": "B30-L2",
+        "figure": null,
+        "task_type": "Explain",
+        "difficulty": {
+          "physical_model_selection": 3,
+          "conceptual_reasoning": 4,
+          "representation_translation": 1,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 3,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 4
+        },
+        "workspace": "Draw and label two routes. Keep the endpoints the same.",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
+        ],
+        "numeric_check": null
+      },
+      {
+        "id": "B30-A4",
+        "label": "A4",
+        "question": "A student walks 7 m right and then 3 m left. Find distance and displacement, taking right as positive.",
+        "primary_concept_id": "PHY-MOT-DISP-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-DIST-01"
+        ],
+        "recap": "Walk 7 m right, then 3 m left.",
+        "solution": {
+          "why": "Both legs count towards distance, while leftward motion reduces the rightward change.",
+          "method": "Distance = 7 + 3. Displacement = +7 + (−3).",
+          "answer": "Distance 10 m; displacement +4 m (right).",
+          "keep": "Separate total path from net change."
+        },
+        "answer": "Distance 10 m; displacement +4 m (right).",
+        "hints": [
+          "The student reverses direction after the first leg.",
+          "Use a path line and a separate start-to-finish arrow.",
+          "Add 7 m and 3 m to begin the distance calculation."
+        ],
+        "repair_target": "B30-L2",
+        "figure": null,
+        "task_type": "Apply",
+        "difficulty": {
+          "physical_model_selection": 1,
+          "conceptual_reasoning": 2,
+          "representation_translation": 0,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 1,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 2
+        },
+        "workspace": "Show the route or working that makes your answer clear.",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
+        ],
+        "numeric_check": {
+          "kind": "route",
+          "positions": [
+            0,
+            7,
+            4
+          ],
+          "distance": 10,
+          "displacement": 4
+        }
+      },
+      {
+        "id": "B30-A5",
+        "label": "A5",
+        "question": "An object moves at +5 m/s for 3 s, then at −2 m/s for 2 s. Find displacement and distance for the whole journey.",
+        "primary_concept_id": "PHY-MOT-VTAREA-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-VTDIST-01"
+        ],
+        "recap": "Velocity +5 m/s for 3 s, then −2 m/s for 2 s.",
+        "solution": {
+          "why": "Each interval has constant velocity, so its signed area is velocity × duration.",
+          "method": "The changes are +5 × 3 = +15 m and −2 × 2 = −4 m. Add with signs for displacement; add sizes for distance.",
+          "answer": "Displacement +11 m; distance 19 m. Check: 19 ≥ 11.",
+          "keep": "Negative velocity gives negative displacement, not negative distance."
+        },
+        "answer": "Displacement +11 m; distance 19 m. Check: 19 ≥ 11.",
+        "hints": [
+          "One interval is rightward and one is leftward.",
+          "Draw two velocity–time rectangles on opposite sides of zero.",
+          "The first signed area is (+5 m/s) × (3 s)."
+        ],
+        "repair_target": "B30-L6",
+        "figure": null,
+        "task_type": "Apply",
+        "difficulty": {
+          "physical_model_selection": 1,
+          "conceptual_reasoning": 2,
+          "representation_translation": 0,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 3,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 2
+        },
+        "workspace": "Show the route or working that makes your answer clear.",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
+        ],
+        "numeric_check": {
+          "kind": "vt",
+          "segments": [
+            [
+              0,
+              5,
+              3,
+              5
+            ],
+            [
+              3,
+              -2,
+              5,
+              -2
+            ]
+          ],
+          "distance": 19,
+          "displacement": 11
+        }
+      },
+      {
+        "id": "B30-A6",
+        "label": "A6",
+        "question": "Use the graph to find displacement and distance from 0 s to 5 s. Give a physical meaning for each area.",
+        "primary_concept_id": "PHY-MOT-VTDIST-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-VTAREA-01"
+        ],
+        "recap": "Graph: +4 m/s from 0–2 s, then −2 m/s from 2–5 s.",
+        "solution": {
+          "why": "Graph widths are durations. The second width is 5 − 2 = 3 s.",
+          "method": "Signed areas are +4 × 2 = +8 m and −2 × 3 = −6 m. For distance count both path lengths.",
+          "answer": "Displacement +2 m; distance 14 m. The parts mean 8 m right and 6 m left.",
+          "keep": "Read each width from its endpoints before multiplying."
+        },
         "answer": "Displacement +2 m; distance 14 m. The parts mean 8 m right and 6 m left.",
-        "keep": "Read each width from its endpoints before multiplying."
-      },
-      "hints": [
-        "Read the duration of each horizontal segment.",
-        "Separate the two rectangular regions at t = 2 s.",
-        "For the first region, write (+4) × (2 − 0)."
-      ],
-      "repair_target": "B30-L6",
-      "figure": {
-        "id": "B30-A6-F",
-        "kind": "vt",
-        "status": "FINAL",
-        "segments": [
-          [
+        "hints": [
+          "Read the duration of each horizontal segment.",
+          "Separate the two rectangular regions at t = 2 s.",
+          "For the first region, write (+4) × (2 − 0)."
+        ],
+        "repair_target": "B30-L6",
+        "figure": {
+          "id": "B30-A6-F",
+          "kind": "vt",
+          "status": "FINAL",
+          "segments": [
+            [
+              0,
+              4,
+              2,
+              4
+            ],
+            [
+              2,
+              -2,
+              5,
+              -2
+            ]
+          ],
+          "trange": [
             0,
-            4,
+            5
+          ],
+          "vrange": [
+            -3,
+            5
+          ],
+          "tticks": [
+            0,
             2,
+            5
+          ],
+          "vticks": [
+            -2,
+            0,
             4
           ],
-          [
-            2,
-            -2,
-            5,
-            -2
-          ]
+          "shade": false
+        },
+        "task_type": "Apply",
+        "difficulty": {
+          "physical_model_selection": 1,
+          "conceptual_reasoning": 2,
+          "representation_translation": 4,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 3,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 2
+        },
+        "workspace": "Show the route or working that makes your answer clear.",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
         ],
-        "trange": [
-          0,
-          5
-        ],
-        "vrange": [
-          -3,
-          5
-        ],
-        "tticks": [
-          0,
-          2,
-          5
-        ],
-        "vticks": [
-          -2,
-          0,
-          4
-        ],
-        "shade": false
-      },
-      "task_type": "Apply",
-      "source_difficulty": {
-        "physical_model_selection": 1,
-        "conceptual_reasoning": 2,
-        "representation_translation": 4,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 3,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 2
-      },
-      "workspace": "Show the route or working that makes your answer clear.",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": {
-        "kind": "vt",
-        "segments": [
-          [
-            0,
-            4,
-            2,
-            4
+        "numeric_check": {
+          "kind": "vt",
+          "segments": [
+            [
+              0,
+              4,
+              2,
+              4
+            ],
+            [
+              2,
+              -2,
+              5,
+              -2
+            ]
           ],
-          [
-            2,
-            -2,
-            5,
-            -2
-          ]
+          "distance": 14,
+          "displacement": 2
+        }
+      },
+      {
+        "id": "B30-A7",
+        "label": "A7",
+        "question": "A constant velocity of +2.5 m/s is shown from 0 s to 8 s. Find displacement and distance. Why do their sizes agree?",
+        "primary_concept_id": "PHY-MOT-VTAREA-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-VTDIST-01"
         ],
-        "distance": 14,
-        "displacement": 2
-      }
-    },
-    {
-      "id": "B30-A7",
-      "label": "A7",
-      "prompt": "A constant velocity of +2.5 m/s is shown from 0 s to 8 s. Find displacement and distance. Why do their sizes agree?",
-      "primary_concept_id": "PHY-MOT-VTAREA-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-VTDIST-01"
-      ],
-      "recap": "Constant velocity +2.5 m/s from 0–8 s.",
-      "solution": {
-        "why": "The graph is one positive rectangle; there is no reverse motion.",
-        "method": "Signed area = (+2.5 m/s) × (8 s) = +20 m. The same area size is the path length.",
+        "recap": "Constant velocity +2.5 m/s from 0–8 s.",
+        "solution": {
+          "why": "The graph is one positive rectangle; there is no reverse motion.",
+          "method": "Signed area = (+2.5 m/s) × (8 s) = +20 m. The same area size is the path length.",
+          "answer": "Displacement +20 m; distance 20 m. Their sizes agree because direction does not reverse.",
+          "keep": "A constant positive velocity produces steadily increasing position."
+        },
         "answer": "Displacement +20 m; distance 20 m. Their sizes agree because direction does not reverse.",
-        "keep": "A constant positive velocity produces steadily increasing position."
-      },
-      "hints": [
-        "The velocity stays on one side of zero.",
-        "Draw the rectangle and label height and width with units.",
-        "Write area = (+2.5 m/s) × (8 s)."
-      ],
-      "repair_target": "B30-L5",
-      "figure": null,
-      "task_type": "Apply",
-      "source_difficulty": {
-        "physical_model_selection": 1,
-        "conceptual_reasoning": 2,
-        "representation_translation": 0,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 3,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 2
-      },
-      "workspace": "Show the route or working that makes your answer clear.",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": {
-        "kind": "vt",
-        "segments": [
-          [
-            0,
-            2.5,
-            8,
-            2.5
-          ]
+        "hints": [
+          "The velocity stays on one side of zero.",
+          "Draw the rectangle and label height and width with units.",
+          "Write area = (+2.5 m/s) × (8 s)."
         ],
-        "distance": 20,
-        "displacement": 20
-      }
-    },
-    {
-      "id": "B30-A8",
-      "label": "A8",
-      "prompt": "A trolley has the velocity–time graph shown. Find displacement and distance from 0 s to 6 s. Explain why 6 × 6 is unsuitable.",
-      "primary_concept_id": "PHY-MOT-VTDIST-01",
-      "secondary_concept_ids": [
-        "PHY-MOT-VTAREA-01"
-      ],
-      "recap": "Velocity increases linearly from 0 to +6 m/s in 6 s.",
-      "solution": {
-        "why": "The graph forms a triangle. The trolley does not spend all 6 s at its final velocity.",
-        "method": "The triangle is half of a 6 s by 6 m/s rectangle: ½ × 6 × 6 = 18 m.",
+        "repair_target": "B30-L5",
+        "figure": null,
+        "task_type": "Apply",
+        "difficulty": {
+          "physical_model_selection": 1,
+          "conceptual_reasoning": 2,
+          "representation_translation": 0,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 3,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 2
+        },
+        "workspace": "Show the route or working that makes your answer clear.",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
+        ],
+        "numeric_check": {
+          "kind": "vt",
+          "segments": [
+            [
+              0,
+              2.5,
+              8,
+              2.5
+            ]
+          ],
+          "distance": 20,
+          "displacement": 20
+        }
+      },
+      {
+        "id": "B30-A8",
+        "label": "A8",
+        "question": "A trolley has the velocity–time graph shown. Find displacement and distance from 0 s to 6 s. Explain why 6 × 6 is unsuitable.",
+        "primary_concept_id": "PHY-MOT-VTDIST-01",
+        "secondary_concept_ids": [
+          "PHY-MOT-VTAREA-01"
+        ],
+        "recap": "Velocity increases linearly from 0 to +6 m/s in 6 s.",
+        "solution": {
+          "why": "The graph forms a triangle. The trolley does not spend all 6 s at its final velocity.",
+          "method": "The triangle is half of a 6 s by 6 m/s rectangle: ½ × 6 × 6 = 18 m.",
+          "answer": "Displacement +18 m; distance 18 m. The graph never goes below zero.",
+          "keep": "Choose the shape from the actual graph, not just its final height."
+        },
         "answer": "Displacement +18 m; distance 18 m. The graph never goes below zero.",
-        "keep": "Choose the shape from the actual graph, not just its final height."
-      },
-      "hints": [
-        "The height grows during the interval.",
-        "Compare the region with the complete enclosing rectangle.",
-        "The rectangle would have area (6 s) × (6 m/s); use the fraction actually occupied."
-      ],
-      "repair_target": "B30-L7",
-      "figure": {
-        "id": "B30-A8-F",
-        "kind": "vt",
-        "status": "FINAL",
-        "segments": [
-          [
+        "hints": [
+          "The height grows during the interval.",
+          "Compare the region with the complete enclosing rectangle.",
+          "The rectangle would have area (6 s) × (6 m/s); use the fraction actually occupied."
+        ],
+        "repair_target": "B30-L7",
+        "figure": {
+          "id": "B30-A8-F",
+          "kind": "vt",
+          "status": "FINAL",
+          "segments": [
+            [
+              0,
+              0,
+              6,
+              6
+            ]
+          ],
+          "trange": [
             0,
-            0,
-            6,
             6
-          ]
-        ],
-        "trange": [
-          0,
-          6
-        ],
-        "vrange": [
-          -1,
-          7
-        ],
-        "tticks": [
-          0,
-          6
-        ],
-        "vticks": [
-          0,
-          6
-        ],
-        "shade": false
-      },
-      "task_type": "Connect",
-      "source_difficulty": {
-        "physical_model_selection": 4,
-        "conceptual_reasoning": 5,
-        "representation_translation": 7,
-        "vector_spatial_reasoning": 0,
-        "equation_construction": 6,
-        "experimental_data_reasoning": 0,
-        "constraints_cases": 5
-      },
-      "workspace": "Show the route or working that makes your answer clear.",
-      "source_status": "ORIGINAL",
-      "source_refs": [
-        "AUTHOR-MOTION-V2"
-      ],
-      "numeric_check": {
-        "kind": "vt",
-        "segments": [
-          [
+          ],
+          "vrange": [
+            -1,
+            7
+          ],
+          "tticks": [
             0,
-            0,
-            6,
             6
-          ]
+          ],
+          "vticks": [
+            0,
+            6
+          ],
+          "shade": false
+        },
+        "task_type": "Connect",
+        "difficulty": {
+          "physical_model_selection": 4,
+          "conceptual_reasoning": 5,
+          "representation_translation": 7,
+          "vector_spatial_reasoning": 0,
+          "equation_construction": 6,
+          "experimental_data_reasoning": 0,
+          "constraints_cases": 5
+        },
+        "workspace": "Show the route or working that makes your answer clear.",
+        "source_status": "ORIGINAL",
+        "provenance_class": "ORIGINAL_CALIBRATED",
+        "source_refs": [
+          "AUTHOR-MOTION-V2"
         ],
-        "distance": 18,
-        "displacement": 18
+        "numeric_check": {
+          "kind": "vt",
+          "segments": [
+            [
+              0,
+              0,
+              6,
+              6
+            ]
+          ],
+          "distance": 18,
+          "displacement": 18
+        }
       }
-    }
-  ],
+    ],
+    "challenges": []
+  },
   "lesson_ids": [
     "B30-L1",
     "B30-G1",
@@ -1222,11 +1277,43 @@
   ],
   "sources": [
     {
-      "id": "AUTHOR-MOTION-V2",
-      "kind": "original",
-      "description": "Original examples and diagrams authored for this two-topic pilot. Not PYQs."
+      "source_id": "AUTHOR-MOTION-V2",
+      "title": "Original Motion pilot examples",
+      "provenance_class": "ORIGINAL_CALIBRATED",
+      "notes": "Original examples and diagrams authored for this two-topic pilot. Not PYQs."
     }
   ],
+  "misconceptions": [
+    {
+      "id": "M-MOT-01",
+      "wrong_model": "Distance and displacement are the same quantity.",
+      "observable_error": "A learner reports total path length for a 'find the displacement' question, or vice versa.",
+      "diagnostic_question": "A student walks 6 m right then 2 m left. Ask separately: how much ground did they cover, and how far are they from the start?",
+      "repair_explanation": "Distance adds every path length walked, with no direction; displacement is only the change from initial to final position. They agree only when the motion never reverses direction.",
+      "micro_example": "0 m to 6 m to 4 m: distance is 6+2=8 m, but displacement is only 4-0=+4 m.",
+      "transfer_check": "Give a return journey with a different turning point and ask for both quantities separately."
+    },
+    {
+      "id": "M-MOT-02",
+      "wrong_model": "The height of a velocity-time graph directly gives distance travelled.",
+      "observable_error": "A learner reads off the peak/final velocity value and reports it as the distance, instead of computing the area under the graph.",
+      "diagnostic_question": "Show a v-t graph with a changing velocity and ask what the height of the line represents versus what the shaded region represents.",
+      "repair_explanation": "Graph height is velocity, not distance. Distance/displacement is the area enclosed between the line and the time axis, split at every sign change for distance.",
+      "micro_example": "A constant +3 m/s line for 4 s has height 3 m/s, but the enclosed area (and the actual displacement) is 12 m.",
+      "transfer_check": "Give a triangular (accelerating) v-t graph and ask the learner to justify why the answer is not simply the final velocity."
+    }
+  ],
+  "mixed_tests": [],
+  "qa": {
+    "source_qc_complete": true,
+    "answers_verified": false,
+    "concept_links_verified": true,
+    "notes": [
+      "Numeric answers are independently recomputed by validate_v2.py (see numerically_recomputed count); qualitative-only answers rely on author review, not independent recomputation.",
+      "pdf_render_checked/pdf_links_checked should be filled from audit_v2.py output against the actually rendered PDF, not hand-set here.",
+      "Classroom/psychometric calibration NOT_RUN."
+    ]
+  },
   "guided_solutions": [
     {
       "id": "B30-G1",

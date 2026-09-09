@@ -19,7 +19,11 @@ pdfmetrics.registerFontFamily('Body',normal='Body',bold='Bold',italic='Italic',b
 
 class Book:
     def __init__(self, data, output):
-        self.d=data; self.c=canvas.Canvas(str(output),pagesize=(W,H),pageCompression=1)
+        self.d=data
+        # questions is bucketed anchors/core_calibrated/challenges (grade9-master.schema.json shape);
+        # flatten once here since pagination/layout render them in one sequence regardless of bucket.
+        qb=data['questions'];self.all_questions=qb['anchors']+qb['core_calibrated']+qb['challenges']
+        self.c=canvas.Canvas(str(output),pagesize=(W,H),pageCompression=1)
         self.c.setTitle(data['title']);self.c.setAuthor('Physics learning materials')
         self.regions=[]; self.dest={}; self.links=[];self.external_links=[];self.page=0;self.planned={}
         self.c.setSubject(data['band']+' | '+data['edition']+' | original teaching examples')
@@ -156,13 +160,13 @@ class Book:
             self.link(('Check ' if target.startswith('solution-') else 'Try ')+target.split('-')[-1],target,40+i*180,539,170)
     def question_page(self,qs,idx,bank=False):
         title='Try these before looking at the hints' if bank else 'Appendix A · Questions'
-        original=all(q['source_status']=='ORIGINAL' for q in self.d['questions'])
+        original=all(q['source_status']=='ORIGINAL' for q in self.all_questions)
         subtitle=('Original questions · ' if original else 'Source-linked practice · ')+'Use diagrams and explain your reasoning.' if bank else 'Use the diagrams you need. A correct number needs a physical explanation.'
-        self.start(title,f'Practice set {idx} / {math.ceil(len(self.d["questions"])/2)}',subtitle,f'questions-{idx}')
+        self.start(title,f'Practice set {idx} / {math.ceil(len(self.all_questions)/2)}',subtitle,f'questions-{idx}')
         for j,q in enumerate(qs):
             y=134+j*200;self.anchor(q['id'],y)
             self.text(f"{q['label']}  ·  {q['task_type']}",40,y,730,13,bold=True,color=TEAL)
-            self.text(q['prompt'],40,y+25,410,12,maxh=100)
+            self.text(q['question'],40,y+25,410,12,maxh=100)
             if q.get('figure'):self.figure(q['figure'],476,y+12,320,155,assessment=True)
             else:
                 self.text(q['workspace'].replace('\n','<br/>'),486,y+24,297,10.5,color=GREY,maxh=58)
@@ -180,9 +184,9 @@ class Book:
         self.paragraphs(self.d['handout']['left'],40,330,360,bottom=528)
         self.paragraphs(self.d['handout']['right'],445,330,353,bottom=528)
     def hint_pages(self):
-        for k in range(0,len(self.d['questions']),4):
+        for k in range(0,len(self.all_questions),4):
             self.start('Hints · Read one step, then try again','Optional help','Cover the rows below the hint you are reading.',f'hints-{k//4+1}')
-            for i,q in enumerate(self.d['questions'][k:k+4]):
+            for i,q in enumerate(self.all_questions[k:k+4]):
                 y=133+i*99;self.anchor('hint-'+q['id'],y)
                 self.text(q['label'],40,y,48,12,bold=True,color=TEAL)
                 for j,(tag,hint) in enumerate(zip(['H1 Notice','H2 Model','H3 Start'],q['hints'])):
@@ -190,9 +194,9 @@ class Book:
                 self.link('Return →',q['id'],687,y+73,106)
                 if i<3:self.line(40,y+94,W-40,y+94)
     def solution_pages(self):
-        for k in range(0,len(self.d['questions']),2):
+        for k in range(0,len(self.all_questions),2):
             self.start('Solutions · Compare the reasoning, not just the number','Answers at the end','If a step surprised you, revisit the linked lesson and explain its picture.',f'solutions-{k//2+1}')
-            for i,q in enumerate(self.d['questions'][k:k+2]):
+            for i,q in enumerate(self.all_questions[k:k+2]):
                 y=132+i*201;self.anchor('solution-'+q['id'],y)
                 self.text(q['label']+'  '+q['recap'],40,y,751,11.5,bold=True,maxh=32)
                 blocks=[{'role':'body','text':'<b>Why.</b> '+q['solution']['why']},{'role':'body','text':'<b>Method.</b> '+q['solution']['method']},{'role':'body','text':'<b>Answer / check.</b> '+q['solution']['answer']},{'role':'body','text':'<b>Keep.</b> '+q['solution']['keep']}]
@@ -221,21 +225,21 @@ class Book:
         # Derive printable page references from the same deterministic pagination plan.
         n=0
         for p in self.d.get('lessons',[]):n+=1;self.planned[p['id']]=n
-        for k in range(0,len(self.d['questions']),2):
+        for k in range(0,len(self.all_questions),2):
             n+=1
-            for q in self.d['questions'][k:k+2]:self.planned[q['id']]=n
+            for q in self.all_questions[k:k+2]:self.planned[q['id']]=n
         if self.d['product']=='core':n+=1;self.planned['handout']=n
-        for k in range(0,len(self.d['questions']),4):
+        for k in range(0,len(self.all_questions),4):
             n+=1
-            for q in self.d['questions'][k:k+4]:self.planned['hint-'+q['id']]=n
+            for q in self.all_questions[k:k+4]:self.planned['hint-'+q['id']]=n
         if self.d.get('guided_solutions'):
             n+=1
             for g in self.d['guided_solutions']:self.planned['solution-'+g['id']]=n
-        for k in range(0,len(self.d['questions']),2):
+        for k in range(0,len(self.all_questions),2):
             n+=1
-            for q in self.d['questions'][k:k+2]:self.planned['solution-'+q['id']]=n
+            for q in self.all_questions[k:k+2]:self.planned['solution-'+q['id']]=n
         for p in self.d.get('lessons',[]):self.lesson(p)
-        for k in range(0,len(self.d['questions']),2):self.question_page(self.d['questions'][k:k+2],k//2+1,self.d['product']=='question_bank')
+        for k in range(0,len(self.all_questions),2):self.question_page(self.all_questions[k:k+2],k//2+1,self.d['product']=='question_bank')
         if self.d['product']=='core':self.handout()
         self.hint_pages()
         self.guided_solutions()
