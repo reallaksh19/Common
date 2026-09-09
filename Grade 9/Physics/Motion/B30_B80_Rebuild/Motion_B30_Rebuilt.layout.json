@@ -5931,9 +5931,9 @@
         40,
         388.3,
         752,
-        14.3
+        28.6
       ],
-      "text": "<b>Method.</b> Distance = 7 + 3. Displacement = +7 + (\u22123).",
+      "text": "<b>Method.</b> Both legs of the walk add to the total distance regardless of direction: 7 + 3. For displacement, keep the sign of each leg since right is positive; the rightward leg contributes +7 m and the leftward leg contributes \u22123 m, so add the signed changes.",
       "size": 11.5
     },
     {
@@ -5941,7 +5941,7 @@
       "kind": "text",
       "box": [
         40,
-        406.6,
+        420.90000000000003,
         752,
         14.3
       ],
@@ -5953,7 +5953,7 @@
       "kind": "text",
       "box": [
         40,
-        424.90000000000003,
+        439.20000000000005,
         752,
         14.3
       ],

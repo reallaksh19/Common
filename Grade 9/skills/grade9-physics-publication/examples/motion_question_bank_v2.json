@@ -102,7 +102,7 @@
         "recap": "Start +1 m; 5 m left, then 3 m right.",
         "solution": {
           "why": "Position changes carry direction; path lengths do not.",
-          "method": "Final position = 1 − 5 + 3 = −1 m. Distance = 5 + 3 = 8 m. Displacement = −1 − (+1).",
+          "method": "Track the walk step by step: start at +1 m, walk 5 m left to reach 1 − 5, then walk 3 m right to reach the final position, 1 − 5 + 3. Distance simply adds both leg lengths, 5 + 3, while displacement compares only the final position to the start, −1 − (+1).",
           "answer": "Final position −1 m; distance 8 m; displacement −2 m (left).",
           "keep": "The final coordinate is not automatically the displacement."
         },
@@ -152,7 +152,7 @@
         "recap": "Move from −2 m to +5 m with no reversal.",
         "solution": {
           "why": "The route goes 2 m to zero and another 5 m right.",
-          "method": "Distance = 2 + 5. Displacement = +5 − (−2).",
+          "method": "Distance adds the two legs of the actual path travelled: 2 m to reach zero, then 5 m more to +5 m, giving 2 + 5. Displacement instead compares only the two endpoints, final position minus initial position: +5 − (−2).",
           "answer": "Distance 7 m; displacement +7 m (right).",
           "keep": "Equal distance and displacement size require no reversal in this straight-line journey."
         },

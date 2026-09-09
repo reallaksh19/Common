@@ -20,7 +20,12 @@ def missingcitation(x):x['questions']['core_calibrated'][0]['source_status']='SO
 def sruselfattest(x):x['concepts'][0]['sru']={'no_naked_equation':True}  # no reviewer set: must be rejected
 def mixedtestbadconcept(x):x['mixed_tests'][0]['diagnosis_map'][x['mixed_tests'][0]['question_ids'][0]]=x['concepts'][0]['concept_id']
 def mixedtestunknownq(x):x['mixed_tests'][0]['question_ids'].append('B30-A99')
-for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq]:
+def methodterse(x):x['questions']['core_calibrated'][0]['solution']['method']='Distance 8 m displacement −2.'
+def methodformulaonly(x):
+    q=x['questions']['core_calibrated'][0];parts=q['solution']['answer'].split()
+    q['solution']['method']=' '.join(parts[:max(1,len(parts)//2)])  # a truncated prefix: no vocabulary beyond the answer
+def methodneardup(x):q=x['questions']['core_calibrated'][0];q['solution']['method']=q['solution']['answer']+' so.'
+for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq,methodterse,methodformulaonly,methodneardup]:
     v=copy.deepcopy(d);fn(v)
     try:validate(v)
     except (AssertionError,ValueError):print('REJECTED',fn.__name__)
@@ -29,7 +34,7 @@ assert areas([[0,6,4,-2]])==(10,8),'crossing inside unsplit segment'
 assert areas([[0,-3,2,-3]])==(6,-6),'negative rectangle'
 assert areas([[0,0,3,0]])==(0,0),'rest'
 validate(d)
-print('16 negative cases rejected; three physics boundary cases and positive model passed.')
+print('19 negative cases rejected; three physics boundary cases and positive model passed.')
 # Synthetic source-link fixture tests plumbing, not attribution or an actual exam.
 import tempfile
 from render_v2 import Book

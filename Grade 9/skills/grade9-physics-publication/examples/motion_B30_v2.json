@@ -932,7 +932,7 @@
         "recap": "Walk 7 m right, then 3 m left.",
         "solution": {
           "why": "Both legs count towards distance, while leftward motion reduces the rightward change.",
-          "method": "Distance = 7 + 3. Displacement = +7 + (−3).",
+          "method": "Both legs of the walk add to the total distance regardless of direction: 7 + 3. For displacement, keep the sign of each leg since right is positive; the rightward leg contributes +7 m and the leftward leg contributes −3 m, so add the signed changes.",
           "answer": "Distance 10 m; displacement +4 m (right).",
           "keep": "Separate total path from net change."
         },

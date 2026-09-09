@@ -10,7 +10,7 @@
   "outside_page": [],
   "minimum_text_role_size": 10.5,
   "figure_occurrences": 15,
-  "pdf_sha256": "f399cbaa4ce1f26bb641f833a5e04a05ad408ecc39cc9bfda051e6242324e8f9",
-  "model_sha256": "0e8b522817deabbb32d7ade71bad4afbff0f8748443d4cb0286ad0fee62beda6",
+  "pdf_sha256": "6d4e11ffbb2454e4b602b262085dca953ae06f6acd9a45e3d054df2d9acb8fbb",
+  "model_sha256": "84e0921ca4e6a9765559dc9eee5fe6979413b820ee90710fd528f319ab7241b5",
   "visual_review": "SEPARATE_REVIEW_REQUIRED"
 }

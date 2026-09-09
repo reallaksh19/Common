@@ -29,8 +29,8 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 19,
-      "pdf_sha256": "156eea31818d19899faa0a2bf85be86416c1f36108272989fc7dda4663c7331c",
-      "model_sha256": "d97f6c8127f830d44eefa9c67ddbe89c78f488741a356b78705fc5536d8492b2",
+      "pdf_sha256": "354139413d50c436a077ba14b76b4cf8f5e6fc18b48ea8476ce567ac73af9aac",
+      "model_sha256": "eaac06a888e1846f45b1d2914c66e727264e0c27f5b394b4cd2ee6393b18ea3a",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
     "Motion_B80_Rebuilt": {
@@ -45,8 +45,8 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 15,
-      "pdf_sha256": "f399cbaa4ce1f26bb641f833a5e04a05ad408ecc39cc9bfda051e6242324e8f9",
-      "model_sha256": "0e8b522817deabbb32d7ade71bad4afbff0f8748443d4cb0286ad0fee62beda6",
+      "pdf_sha256": "6d4e11ffbb2454e4b602b262085dca953ae06f6acd9a45e3d054df2d9acb8fbb",
+      "model_sha256": "84e0921ca4e6a9765559dc9eee5fe6979413b820ee90710fd528f319ab7241b5",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
     "Motion_Optional_Hint_Practice": {

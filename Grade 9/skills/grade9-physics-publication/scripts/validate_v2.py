@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Executable Pydantic schema plus physics/relationship checks. No self-attested PASS."""
-import json,math,sys
+import json,math,re,sys
 from pathlib import Path
 from typing import Literal,Optional
 from pydantic import BaseModel,ConfigDict,Field,model_validator
+def _words(s):return set(re.findall(r"[a-zA-Z]+",s.lower()))
 class Strict(BaseModel):
     model_config=ConfigDict(extra='forbid')
 class Block(Strict):
@@ -228,7 +229,14 @@ def validate(d):
             if q['source_status']=='ADAPTED':assert cite.get('adaptation_note'),'adaptation must be explicit'
         if has_lessons_component:assert q['repair_target'] in d['lesson_ids'],'unresolved repair'
         assert len(set(q['hints']))==3,'repeated hints'
-        assert q['solution']['method']!=q['solution']['answer'],'method duplicates answer'
+        # Finding I: `method != answer` alone passes near-duplicates, formula-only routes and answer-copy-
+        # with-a-word-changed. Require real word-overlap distance, a minimum route length, and at least
+        # some vocabulary the answer doesn't already have (the method must teach the route, not restate it).
+        mwords,awords=_words(q['solution']['method']),_words(q['solution']['answer'])
+        overlap=len(mwords&awords)/max(1,len(mwords|awords))
+        assert overlap<0.85,f"method near-duplicates answer (word overlap {overlap:.2f} >= 0.85)"
+        assert len(mwords)>=6,'method too terse to teach a route, not just state the result'
+        assert mwords-awords,'method contributes no vocabulary beyond the answer - looks formula-only/answer-copy'
         if 'graph shown' in q['question'] or 'Use the graph' in q['question']:assert q['figure'],'missing dependent graph'
         n=q.get('numeric_check')
         if n:

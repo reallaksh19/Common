@@ -3821,9 +3821,9 @@
         40,
         187.3,
         752,
-        14.3
+        42.900000000000006
       ],
-      "text": "<b>Method.</b> Final position = 1 \u2212 5 + 3 = \u22121 m. Distance = 5 + 3 = 8 m. Displacement = \u22121 \u2212 (+1).",
+      "text": "<b>Method.</b> Track the walk step by step: start at +1 m, walk 5 m left to reach 1 \u2212 5, then walk 3 m right to reach the final position, 1 \u2212 5 + 3. Distance simply adds both leg lengths, 5 + 3, while displacement compares only the final position to the start, \u22121 \u2212 (+1).",
       "size": 11.5
     },
     {
@@ -3831,7 +3831,7 @@
       "kind": "text",
       "box": [
         40,
-        205.60000000000002,
+        234.20000000000002,
         752,
         14.3
       ],
@@ -3843,7 +3843,7 @@
       "kind": "text",
       "box": [
         40,
-        223.90000000000003,
+        252.50000000000003,
         752,
         14.3
       ],
@@ -3905,9 +3905,9 @@
         40,
         388.3,
         752,
-        14.3
+        28.6
       ],
-      "text": "<b>Method.</b> Distance = 2 + 5. Displacement = +5 \u2212 (\u22122).",
+      "text": "<b>Method.</b> Distance adds the two legs of the actual path travelled: 2 m to reach zero, then 5 m more to +5 m, giving 2 + 5. Displacement instead compares only the two endpoints, final position minus initial position: +5 \u2212 (\u22122).",
       "size": 11.5
     },
     {
@@ -3915,7 +3915,7 @@
       "kind": "text",
       "box": [
         40,
-        406.6,
+        420.90000000000003,
         752,
         14.3
       ],
@@ -3927,7 +3927,7 @@
       "kind": "text",
       "box": [
         40,
-        424.90000000000003,
+        439.20000000000005,
         752,
         14.3
       ],
