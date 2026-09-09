@@ -273,6 +273,21 @@
           "title": "Status",
           "type": "string"
         },
+        "dependency_class": {
+          "enum": [
+            "NONE",
+            "GRAPH",
+            "DIAGRAM",
+            "TABLE",
+            "TIMELINE",
+            "NUMBER_LINE",
+            "OPTION_FIGURES",
+            "STATEMENT_SET",
+            "MIXED"
+          ],
+          "title": "Dependency Class",
+          "type": "string"
+        },
         "range": {
           "anyOf": [
             {
@@ -509,7 +524,8 @@
       "required": [
         "id",
         "kind",
-        "status"
+        "status",
+        "dependency_class"
       ],
       "title": "Figure",
       "type": "object"

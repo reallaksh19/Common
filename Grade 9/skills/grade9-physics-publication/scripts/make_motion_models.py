@@ -8,13 +8,13 @@ C=['PHY-MOT-DIST-01','PHY-MOT-DISP-01','PHY-MOT-VTAREA-01','PHY-MOT-VTDIST-01']
 # Distance and Displacement; CB12 = graphs. Required by validate_v2.py's concept crosswalk check.
 CANON={'PHY-MOT-DIST-01':'CB1','PHY-MOT-DISP-01':'CB1','PHY-MOT-VTAREA-01':'CB12','PHY-MOT-VTDIST-01':'CB12'}
 def route(id,positions,lo=-2,hi=8,labels=None,disp=False,ticks=None):
- d=dict(id=id,kind='numberline',status='FINAL',range=[lo,hi],positions=positions,displacement=disp)
+ d=dict(id=id,kind='numberline',dependency_class='NUMBER_LINE',status='FINAL',range=[lo,hi],positions=positions,displacement=disp)
  if labels:d['leg_labels']=labels
  if ticks:d['ticks']=ticks
  return d
 def graph(id,segments,trange=None,vrange=None,shade=False):
  tmax=max(s[2] for s in segments);mn=min(0,min(min(s[1],s[3]) for s in segments));mx=max(1,max(max(s[1],s[3]) for s in segments))
- d=dict(id=id,kind='vt',status='FINAL',segments=segments,trange=trange or [0,tmax],vrange=vrange or [mn-1,mx+1],tticks=sorted(set([0]+[s[0] for s in segments]+[s[2] for s in segments])),vticks=sorted(set([0]+[s[1] for s in segments]+[s[3] for s in segments])),shade=shade)
+ d=dict(id=id,kind='vt',dependency_class='GRAPH',status='FINAL',segments=segments,trange=trange or [0,tmax],vrange=vrange or [mn-1,mx+1],tticks=sorted(set([0]+[s[0] for s in segments]+[s[2] for s in segments])),vticks=sorted(set([0]+[s[1] for s in segments]+[s[3] for s in segments])),shade=shade)
  return d
 def B(role,text):return dict(role=role,text=text)
 def lesson(id,title,kicker,intro,fig,caption,blocks,takeaway,concepts):
@@ -93,7 +93,7 @@ B('heading','Read the path first'),B('equation','Distance = 5 + 3 = 8 m'),B('hea
 lesson('B30-L4','A velocity–time graph tells a story','2 · Read the axes before calculating','Choose right as positive. Read the graph from left to right as time passes.',graph('30-F4',[[0,3,4,3],[4,-1,6,-1]]),'The horizontal coordinate is time, not position. The line is not the shape of a road.',[
 B('heading','First four seconds'),B('body','The line stays at +3 m/s. This means the object moves 3 m right in each second.'),B('heading','Next two seconds'),B('body','The line is at −1 m/s. The object now moves 1 m left in each second. Its speed is 1 m/s.'),B('body','This interval lasts 6 − 4 = 2 s. Always subtract the two time readings.'),B('body','The abrupt switch is an idealisation. It contributes no extra time or distance.')],
 'A horizontal line above zero means steady motion. A line on v = 0 means rest. Below zero means motion in the chosen negative direction.',C[2:]),
-lesson('B30-L5','Why does graph area give a change in position?','2 · Build the rectangle, then the rule','At +3 m/s, each second adds another 3 m of rightward movement.',dict(id='30-F5',kind='tiles',status='FINAL',cols=4,rows=3),'Four one-second columns make 12 m. This is the +3 m/s part of the previous graph.',[
+lesson('B30-L5','Why does graph area give a change in position?','2 · Build the rectangle, then the rule','At +3 m/s, each second adds another 3 m of rightward movement.',dict(id='30-F5',kind='tiles',dependency_class='DIAGRAM',status='FINAL',cols=4,rows=3),'Four one-second columns make 12 m. This is the +3 m/s part of the previous graph.',[
 B('heading','Count what happens each second'),B('equation','3 + 3 + 3 + 3 = 12 m'),B('body','Adding the same change four times is multiplication.'),B('equation','Change = velocity × duration'),B('body','On a v–t graph, height is velocity and width is duration. Their product is the rectangle area.'),B('equation','(+3 m/s) × (4 s) = +12 m'),B('body','The seconds cancel, leaving metres. This rectangle rule requires constant velocity on the interval.')],
 'Do not use the final velocity for an entire interval when velocity changes. In that case, use the actual area under the graph.',C[2:]),
 lesson('B30-L6','A return journey counts in two different ways','2 · Give area its physical meaning','Use the same graph: +3 m/s for 4 s, then −1 m/s for 2 s.',graph('30-F6',[[0,3,4,3],[4,-1,6,-1]],shade=True),'Above zero adds rightward change. Below zero adds leftward change. Neither part is “negative walking”.',[
@@ -117,7 +117,7 @@ b30['questions']=dict(anchors=[],core_calibrated=common_questions('B30'),challen
 
 b80=base('B80')
 b80['lessons']=[
-lesson('B80-L1','The same path length can end in different places','1 · Distance and displacement','Both journeys start at 0 m and cover 8 m. Compare what changes.',dict(id='80-F1',kind='compare',status='FINAL',figures=[dict(route('80-F1a',[0,6,4],0,8,ticks=[0,2,4,6,8]),title='A: 6 m right, then 2 m left'),dict(route('80-F1b',[0,6,8],0,8,ticks=[0,2,4,6,8]),title='B: 6 m right, then 2 m right')]),'In A, part of the route is retraced. In B, every part contributes to the same rightward change.',[
+lesson('B80-L1','The same path length can end in different places','1 · Distance and displacement','Both journeys start at 0 m and cover 8 m. Compare what changes.',dict(id='80-F1',kind='compare',dependency_class='MIXED',status='FINAL',figures=[dict(route('80-F1a',[0,6,4],0,8,ticks=[0,2,4,6,8]),title='A: 6 m right, then 2 m left'),dict(route('80-F1b',[0,6,8],0,8,ticks=[0,2,4,6,8]),title='B: 6 m right, then 2 m right')]),'In A, part of the route is retraced. In B, every part contributes to the same rightward change.',[
 B('heading','Compare the two totals'),B('body','Both distances: 6 + 2 = 8 m.<br/>Displacement A: +6 − 2 = +4 m.<br/>Displacement B: +6 + 2 = +8 m.'),B('heading','Reconstruct the rule'),B('equation','Δx = x<sub>f</sub> − x<sub>i</sub>'),B('body','Δx means change in position; x<sub>i</sub> is the initial position and x<sub>f</sub> the final position.'),B('body','Distance adds path lengths. In one dimension, the size |Δx| cannot exceed that sum. Equality holds if there is no reversal.')],
 'Changing the origin changes both coordinates equally, so their difference is unchanged. Reversing the positive axis changes the sign of Δx, but not the distance.',C[:2]),
 lesson('B80-L2','Read a graph as accumulated movement','2 · Signed area and total distance','Take right as positive. A constant velocity gives one rectangle of movement.',graph('80-F2',[[0,3,4,3],[4,-1,6,-1]],shade=True),'Areas are +12 m and −2 m. The second width is 6 − 4 = 2 s, not 6 s.',[

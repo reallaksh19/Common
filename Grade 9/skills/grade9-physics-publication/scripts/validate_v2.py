@@ -9,8 +9,15 @@ class Strict(BaseModel):
     model_config=ConfigDict(extra='forbid')
 class Block(Strict):
     role:Literal['heading','body','equation'];text:str=Field(min_length=1)
+# `kind` selects this renderer's specific drawing implementation (still Motion-flavored: only 5 kinds have
+# a working renderer). `dependency_class` classifies the SAME figure against question-contract.md's already
+# subject-agnostic vocabulary, so a coverage auditor or another subject can reason about "does this need a
+# GRAPH/DIAGRAM/TABLE" without knowing this renderer's specific kind names (finding H). Adding a new
+# dependency_class value here does not add renderer support for it - see SKILL.md's crosswalk note.
+_DEP_CLASS_FOR_KIND={'numberline':'NUMBER_LINE','vt':'GRAPH','tiles':'DIAGRAM','compare':'MIXED','blank':'NONE'}
 class Figure(Strict):
     id:str;kind:Literal['numberline','vt','tiles','compare','blank'];status:Literal['FINAL']
+    dependency_class:Literal['NONE','GRAPH','DIAGRAM','TABLE','TIMELINE','NUMBER_LINE','OPTION_FIGURES','STATEMENT_SET','MIXED']
     range:Optional[list[float]]=None;positions:Optional[list[float]]=None;displacement:bool=False
     leg_labels:Optional[list[str]]=None;ticks:Optional[list[float]]=None
     show_endpoints:bool=True
@@ -20,6 +27,7 @@ class Figure(Strict):
     figures:Optional[list['Figure']]=None;title:Optional[str]=None;instruction:Optional[str]=None
     @model_validator(mode='after')
     def data_complete(self):
+        assert self.dependency_class==_DEP_CLASS_FOR_KIND[self.kind],f"dependency_class must be {_DEP_CLASS_FOR_KIND[self.kind]} for kind={self.kind}"
         if self.kind=='numberline':
             assert self.range and len(self.range)==2 and self.range[0]<self.range[1],'numberline range'
             assert self.positions is not None,'numberline positions required'

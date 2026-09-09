@@ -347,6 +347,7 @@
         "figure": {
           "id": "B80-A6-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -443,6 +444,7 @@
         "figure": {
           "id": "B80-A7-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -552,6 +554,7 @@
         "figure": {
           "id": "B80-A8-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -686,6 +689,7 @@
     "route": {
       "id": "HAND-ROUTE",
       "kind": "numberline",
+      "dependency_class": "NUMBER_LINE",
       "status": "FINAL",
       "range": [
         0,
@@ -708,6 +712,7 @@
     "graph": {
       "id": "HAND-GRAPH",
       "kind": "vt",
+      "dependency_class": "GRAPH",
       "status": "FINAL",
       "segments": [
         [

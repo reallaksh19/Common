@@ -96,11 +96,13 @@
       "figure": {
         "id": "80-F1",
         "kind": "compare",
+        "dependency_class": "MIXED",
         "status": "FINAL",
         "figures": [
           {
             "id": "80-F1a",
             "kind": "numberline",
+            "dependency_class": "NUMBER_LINE",
             "status": "FINAL",
             "range": [
               0,
@@ -124,6 +126,7 @@
           {
             "id": "80-F1b",
             "kind": "numberline",
+            "dependency_class": "NUMBER_LINE",
             "status": "FINAL",
             "range": [
               0,
@@ -190,6 +193,7 @@
       "figure": {
         "id": "80-F2",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -277,6 +281,7 @@
       "figure": {
         "id": "80-F3",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -360,6 +365,7 @@
       "figure": {
         "id": "80-F4",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -446,6 +452,7 @@
       "figure": {
         "id": "80-F5",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -773,6 +780,7 @@
         "figure": {
           "id": "B80-A6-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -869,6 +877,7 @@
         "figure": {
           "id": "B80-A7-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -978,6 +987,7 @@
         "figure": {
           "id": "B80-A8-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -1118,6 +1128,7 @@
     "route": {
       "id": "HAND-ROUTE",
       "kind": "numberline",
+      "dependency_class": "NUMBER_LINE",
       "status": "FINAL",
       "range": [
         0,
@@ -1140,6 +1151,7 @@
     "graph": {
       "id": "HAND-GRAPH",
       "kind": "vt",
+      "dependency_class": "GRAPH",
       "status": "FINAL",
       "segments": [
         [

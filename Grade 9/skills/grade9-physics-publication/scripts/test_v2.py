@@ -25,7 +25,8 @@ def methodformulaonly(x):
     q=x['questions']['core_calibrated'][0];parts=q['solution']['answer'].split()
     q['solution']['method']=' '.join(parts[:max(1,len(parts)//2)])  # a truncated prefix: no vocabulary beyond the answer
 def methodneardup(x):q=x['questions']['core_calibrated'][0];q['solution']['method']=q['solution']['answer']+' so.'
-for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq,methodterse,methodformulaonly,methodneardup]:
+def depclassmismatch(x):x['lessons'][0]['figure']['dependency_class']='TABLE'  # a numberline is NUMBER_LINE, not TABLE
+for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq,methodterse,methodformulaonly,methodneardup,depclassmismatch]:
     v=copy.deepcopy(d);fn(v)
     try:validate(v)
     except (AssertionError,ValueError):print('REJECTED',fn.__name__)
@@ -34,7 +35,7 @@ assert areas([[0,6,4,-2]])==(10,8),'crossing inside unsplit segment'
 assert areas([[0,-3,2,-3]])==(6,-6),'negative rectangle'
 assert areas([[0,0,3,0]])==(0,0),'rest'
 validate(d)
-print('19 negative cases rejected; three physics boundary cases and positive model passed.')
+print('20 negative cases rejected; three physics boundary cases and positive model passed.')
 # Synthetic source-link fixture tests plumbing, not attribution or an actual exam.
 import tempfile
 from render_v2 import Book

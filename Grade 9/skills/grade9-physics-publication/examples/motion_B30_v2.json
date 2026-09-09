@@ -96,6 +96,7 @@
       "figure": {
         "id": "30-F1",
         "kind": "numberline",
+        "dependency_class": "NUMBER_LINE",
         "status": "FINAL",
         "range": [
           -3,
@@ -162,6 +163,7 @@
       "figure": {
         "id": "30-G1-F",
         "kind": "numberline",
+        "dependency_class": "NUMBER_LINE",
         "status": "FINAL",
         "range": [
           -4,
@@ -230,6 +232,7 @@
       "figure": {
         "id": "30-F2",
         "kind": "numberline",
+        "dependency_class": "NUMBER_LINE",
         "status": "FINAL",
         "range": [
           0,
@@ -294,6 +297,7 @@
       "figure": {
         "id": "30-F3",
         "kind": "numberline",
+        "dependency_class": "NUMBER_LINE",
         "status": "FINAL",
         "range": [
           0,
@@ -362,6 +366,7 @@
       "figure": {
         "id": "30-F4",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -441,6 +446,7 @@
       "figure": {
         "id": "30-F5",
         "kind": "tiles",
+        "dependency_class": "DIAGRAM",
         "status": "FINAL",
         "cols": 4,
         "rows": 3
@@ -493,6 +499,7 @@
       "figure": {
         "id": "30-F6",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -576,6 +583,7 @@
       "figure": {
         "id": "30-G2-F",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -658,6 +666,7 @@
       "figure": {
         "id": "30-F7",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -784,6 +793,7 @@
         "solution_figure": {
           "id": "B30-A1-SOL-F",
           "kind": "numberline",
+          "dependency_class": "NUMBER_LINE",
           "status": "FINAL",
           "range": [
             -4,
@@ -858,6 +868,7 @@
         "solution_figure": {
           "id": "B30-A2-SOL-F",
           "kind": "numberline",
+          "dependency_class": "NUMBER_LINE",
           "status": "FINAL",
           "range": [
             -4,
@@ -1055,6 +1066,7 @@
         "figure": {
           "id": "B30-A6-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -1204,6 +1216,7 @@
         "figure": {
           "id": "B30-A8-F",
           "kind": "vt",
+          "dependency_class": "GRAPH",
           "status": "FINAL",
           "segments": [
             [
@@ -1338,6 +1351,7 @@
       "figure": {
         "id": "G1-SOL-F",
         "kind": "numberline",
+        "dependency_class": "NUMBER_LINE",
         "status": "FINAL",
         "range": [
           -4,
@@ -1371,6 +1385,7 @@
       "figure": {
         "id": "G2-SOL-F",
         "kind": "vt",
+        "dependency_class": "GRAPH",
         "status": "FINAL",
         "segments": [
           [
@@ -1412,6 +1427,7 @@
     "route": {
       "id": "HAND-ROUTE",
       "kind": "numberline",
+      "dependency_class": "NUMBER_LINE",
       "status": "FINAL",
       "range": [
         0,
@@ -1434,6 +1450,7 @@
     "graph": {
       "id": "HAND-GRAPH",
       "kind": "vt",
+      "dependency_class": "GRAPH",
       "status": "FINAL",
       "segments": [
         [
