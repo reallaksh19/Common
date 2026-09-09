@@ -37,14 +37,26 @@ Repository packaging adds portable navigation and runtime documentation. The thr
 | Copied models and final PDFs | PASS | 21/16/10 pages; 47/42/32 links; no detected cross-line overlaps or off-page words | Schema, numerical recomputation and PDF annotations; not pedagogical proof |
 | Artifact/model preservation | PASS | SHA-256 equality with prior audited copies | Frozen artifact identity |
 | Cross-band concept claims | PASS | Exact comparison of four concept records | Shared instructional scope |
-| Previous teaching/render passes | RECORDED | See `Physics_Rebuild_Review.md` | Academic artifact review and simulated learner walkthroughs; not classroom testing |
+| Previous teaching/render passes | NOT_RUN in this packaging leg | See `Physics_Rebuild_Review.md` | Academic artifact review and simulated learner walkthroughs; not classroom testing |
 | Independent multiple-person approval | NOT_RUN | Review roles/checklists prepared | Actual reviewers must supply decisions |
 | Classroom outcomes / board-wide syllabus certification | NOT_RUN | Outside completed pilot evidence | Do not infer effectiveness or full coverage |
 | Full repository test suite / external ExamSIDE corpus | NOT_RUN | Focused package only; original-question demo | No claim of source-complete external assimilation |
-| GitHub Actions | NOT_RUN | Local pre-publication checkpoint | Remote state will be checked after PR creation |
+| GitHub checks/statuses | NOT_RUN | No check runs or status contexts reported on the initial publication head | Empty check lists are not CI PASS |
 
 Detailed observed output: `Packaging_Validation.json`. Technical audit statuses are separate from teaching acceptance. Current publication status: FOR_USER_REVIEW. Owner approval: PENDING.
 
+## Published draft and remote verification
+
+- Draft PR: [#155](https://github.com/reallaksh19/Common/pull/155), OPEN / DRAFT / UNMERGED.
+- Branch: `physics/motion-b30-b80-review-20260909`; target: `main`.
+- REPORT_BASIS_HEAD for this delivery-note update: `2bf3790926bbedcffd07a952c3d7becf5eaad0a1` (the complete, verified publication commit). This note does not name its own containing commit.
+- All 56 changed paths were reconciled with the PR file list. All 56 remote blob hashes matched the prepared local files. No deletions or unrelated changed paths.
+- GitHub reported mergeable / clean at this checkpoint. No merge is authorized or performed.
+- Reviews: 0; inline review comments: 0; no reviewers requested. These counts do not constitute approval.
+- Check runs: 0; status contexts: 0. GitHub's combined status was pending with no contexts, so CI is NOT_RUN, not passed.
+- The follow-up commit changes only this delivery record. PDF/model hashes and focused validation evidence remain unchanged.
+- Agent packaging leg: COMPLETE. Educational approval / PR completion: PENDING independent review and owner decision.
+
 ## Next action
 
-Publish this exact file set on a new branch and create a draft PR. Verify remote changed paths and blob hashes, draft state, base/head, and available checks. Then collect the independent reviews described in `REVIEW_GUIDE.md`; resolve findings before marking ready for formal approval. Mathematics and Chemistry remain later approval batches.
+Collect the independent reviews described in `REVIEW_GUIDE.md`. Use file-level comments for source changes and page/question-specific feedback for PDFs. Resolve and recheck findings before marking ready for formal approval. Reconcile related PR #151 before combining publication workflows. Mathematics and Chemistry remain later approval batches.
