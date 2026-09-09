@@ -54,6 +54,12 @@ class Lesson(Strict):
     practice_ids:list[str]=Field(default_factory=list)
 class Solution(Strict):
     why:str=Field(min_length=10);method:str=Field(min_length=10);answer:str=Field(min_length=3);keep:str=Field(min_length=10)
+# tier is explicit data, not array position: render_v2.py keys its H1/H2/H3 label off tier, and
+# grade9-physics-examside's reconcile.py matches ledger h1/h2/h3 by tier, not by list index (finding
+# hint-numbering-unification). Still `"type":"array"` at the top level, so grade9-master.schema.json's
+# question.hints={"type":"array"} conformance is unaffected - only the item shape gets richer.
+class HintStep(Strict):
+    tier:Literal['H1','H2','H3'];text:str=Field(min_length=1)
 class Citation(Strict):
     title:str=Field(min_length=1,max_length=65)
     url:str
@@ -83,7 +89,7 @@ class Question(Strict):
     id:str;label:str
     question:str=Field(min_length=15)  # named to match grade9-master.schema.json's question.question
     primary_concept_id:str;secondary_concept_ids:list[str]
-    recap:str;solution:Solution;hints:list[str]=Field(min_length=3,max_length=3);repair_target:str
+    recap:str;solution:Solution;hints:list[HintStep]=Field(min_length=3,max_length=3);repair_target:str
     figure:Optional[Figure]
     task_type:Literal['Apply','Explain','Connect','Transfer','Compare']
     difficulty:Optional[Difficulty]=None
@@ -98,6 +104,7 @@ class Question(Strict):
     def master_schema_conformance(self):
         assert self.provenance_class==_PROVENANCE_MAP[self.source_status],'provenance_class must match source_status (grade9-master.schema.json conformance)'
         assert self.answer==self.solution.answer,'top-level answer must mirror solution.answer, not diverge from it'
+        assert [h.tier for h in self.hints]==['H1','H2','H3'],'hints must progress H1 (Notice) -> H2 (Model) -> H3 (Start), by tier not just position'
         return self
 class GuidedSolution(Strict):
     id:str;title:str;text:str;figure:Figure
@@ -115,6 +122,12 @@ class Handout(Strict):
 # (validate_v2.py's docstring), this type makes the gate machine-checkable and ready to record an
 # independent reviewer's finding; it must not be pre-filled by whoever authored the content being judged.
 # validate() below enforces that: any populated dimension requires `reviewer` to be set.
+# Field -> rubric code (concept-book-see-realize-understand.md, which also carries the reverse mapping):
+# SRU-01 no_naked_equation, SRU-02 every_symbol_speaks, SRU-03 every_term_has_origin,
+# SRU-04 explains_unusual_mathematics, SRU-05 verbalize_before_calculating, SRU-06 prediction_required,
+# SRU-07 misconception_confrontation, SRU-08 reconstruction_test, SRU-09 source_traceability,
+# SRU-10 no_silent_source_repair, SRU-11 symbolic_depth, SRU-12 assumptions_stated,
+# SRU-13 representation_translation, SRU-14 scaling_reasoning, SRU-15 transfer_required.
 class SRUAcceptance(Strict):
     no_naked_equation:Optional[bool]=None;every_symbol_speaks:Optional[bool]=None
     every_term_has_origin:Optional[bool]=None;explains_unusual_mathematics:Optional[bool]=None
@@ -236,7 +249,7 @@ def validate(d):
             u=urlparse(cite['url']);assert u.scheme=='https' and u.netloc and not any(c.isspace() for c in cite['url']),'invalid source URL'
             if q['source_status']=='ADAPTED':assert cite.get('adaptation_note'),'adaptation must be explicit'
         if has_lessons_component:assert q['repair_target'] in d['lesson_ids'],'unresolved repair'
-        assert len(set(q['hints']))==3,'repeated hints'
+        assert len({h['text'] for h in q['hints']})==3,'repeated hints'
         # Finding I: `method != answer` alone passes near-duplicates, formula-only routes and answer-copy-
         # with-a-word-changed. Require real word-overlap distance, a minimum route length, and at least
         # some vocabulary the answer doesn't already have (the method must teach the route, not restate it).

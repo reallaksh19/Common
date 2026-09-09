@@ -12,12 +12,24 @@
     "REJECTED mismatch",
     "REJECTED duplicate",
     "REJECTED repeatedhint",
+    "REJECTED hinttierbroken",
     "REJECTED denominator",
     "REJECTED unknown",
     "REJECTED missingregion",
     "REJECTED missingcitation",
-    "13 negative cases rejected; three physics boundary cases and positive model passed.",
-    "Synthetic citation fixture: question and solution URI links verified in actual PDF."
+    "REJECTED sruselfattest",
+    "REJECTED mixedtestbadconcept",
+    "REJECTED mixedtestunknownq",
+    "REJECTED methodterse",
+    "REJECTED methodformulaonly",
+    "REJECTED methodneardup",
+    "REJECTED depclassmismatch",
+    "21 negative cases rejected; three physics boundary cases and positive model passed.",
+    "Synthetic citation fixture: question and solution URI links verified in actual PDF.",
+    "Product profile: transfer_book (no lessons) and study_guide (no questions) both validate independently.",
+    "Product profile: transfer_book and study_guide both render without crashing, with the right pages present/absent.",
+    "Scale readiness: a synthetic 72-question question_bank (> 68-question chapter target) validates and renders with no structural ceiling.",
+    "grade9-physics-examside reconcile.py: 6 drift cases detected; unmodified ledger/model reconciles cleanly (LEDGER_DEPENDENCY_FAILURES=0)."
   ],
   "exported_schema_matches_executable_model": true,
   "pdf_audits": {
@@ -33,8 +45,8 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 19,
-      "pdf_sha256": "e6505e1f0ea0bfe147babfce8d7f65dfbe994457f8edd6f88600c1ae9fea5d22",
-      "model_sha256": "30c25efc8c1ff93837fb71e4d24429ec58aa03520075ad0c2c857dd1c4f382b0",
+      "pdf_sha256": "f2171c394cc5dc53cf95453509523a65a6b090da9e4a0840e459d689056bb101",
+      "model_sha256": "03cc7fbf1eaa9974480bba5008b5b80e3415a505f31e6035fbf6ce0229269630",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
     "Motion_B80_Rebuilt": {
@@ -49,8 +61,8 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 15,
-      "pdf_sha256": "cfad8b9734528236ebca904a24386cca659dbf301bf1762fc3e20f7230c0559a",
-      "model_sha256": "0c33e054f565114a198657252b1b7f720eb3ff82d81badd1fcc1e18da11a2124",
+      "pdf_sha256": "1c167a3bd2e4dc80840a74bdaf1a5e1d77fc2d959f6aa32da3669772e091289a",
+      "model_sha256": "d15738a08f7ee111c784196c8c5b2850b6b0beaf556389eef7ff90897c4f7eeb",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
     "Motion_Optional_Hint_Practice": {

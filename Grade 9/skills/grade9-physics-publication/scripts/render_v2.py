@@ -13,6 +13,9 @@ from reportlab.lib.styles import ParagraphStyle
 ROOT = Path(__file__).resolve().parents[1]
 W,H = landscape(A4)
 NAVY='#17384E'; TEAL='#087E83'; BLUE='#276FA1'; RED='#AF4E36'; INK='#233743'; GREY='#546975'; PALE='#EAF5F3'
+# Keyed off each hint's own tier (validate_v2.py enforces H1/H2/H3 order), not array position - see
+# grade9-physics-publication/SKILL.md's hint-numbering note.
+_HINT_LABEL={'H1':'H1 Notice','H2':'H2 Model','H3':'H3 Start'}
 for name,file in [('Body','DejaVuSans.ttf'),('Bold','DejaVuSans-Bold.ttf'),('Italic','DejaVuSans-Oblique.ttf')]:
     pdfmetrics.registerFont(TTFont(name,str(ROOT/'assets/fonts'/file)))
 pdfmetrics.registerFontFamily('Body',normal='Body',bold='Bold',italic='Italic',boldItalic='Bold')
@@ -189,8 +192,9 @@ class Book:
             for i,q in enumerate(self.all_questions[k:k+4]):
                 y=133+i*99;self.anchor('hint-'+q['id'],y)
                 self.text(q['label'],40,y,48,12,bold=True,color=TEAL)
-                for j,(tag,hint) in enumerate(zip(['H1 Notice','H2 Model','H3 Start'],q['hints'])):
-                    self.text('<b>'+tag+'</b>  '+hint,98,y+j*24,640,11.5,maxh=23)
+                for j,hint in enumerate(q['hints']):
+                    tag=_HINT_LABEL[hint['tier']]
+                    self.text('<b>'+tag+'</b>  '+hint['text'],98,y+j*24,640,11.5,maxh=23)
                 self.link('Return →',q['id'],687,y+73,106)
                 if i<3:self.line(40,y+94,W-40,y+94)
     def solution_pages(self):

@@ -758,9 +758,18 @@
         },
         "answer": "Final position −1 m; distance 8 m; displacement −2 m (left).",
         "hints": [
-          "Keep the starting coordinate separate from the lengths walked.",
-          "Mark the start, the turning point and the finish on a number line.",
-          "The turning point is at +1 − 5 m. Find the finish next."
+          {
+            "tier": "H1",
+            "text": "Keep the starting coordinate separate from the lengths walked."
+          },
+          {
+            "tier": "H2",
+            "text": "Mark the start, the turning point and the finish on a number line."
+          },
+          {
+            "tier": "H3",
+            "text": "The turning point is at +1 − 5 m. Find the finish next."
+          }
         ],
         "repair_target": "B30-L3",
         "figure": null,
@@ -834,9 +843,18 @@
         },
         "answer": "Distance 7 m; displacement +7 m (right).",
         "hints": [
-          "Crossing the origin does not mean reversing direction.",
-          "Draw −2, 0 and +5 in order along the line.",
-          "The first part of the path, from −2 m to 0 m, is 2 m."
+          {
+            "tier": "H1",
+            "text": "Crossing the origin does not mean reversing direction."
+          },
+          {
+            "tier": "H2",
+            "text": "Draw −2, 0 and +5 in order along the line."
+          },
+          {
+            "tier": "H3",
+            "text": "The first part of the path, from −2 m to 0 m, is 2 m."
+          }
         ],
         "repair_target": "B30-L1",
         "figure": null,
@@ -908,9 +926,18 @@
         },
         "answer": "No. These distances are 4 m and 10 m; both displacements are +4 m.",
         "hints": [
-          "The question fixes the endpoints, not the route.",
-          "Draw one direct route and one route with a turn.",
-          "For the turning route, choose a turning point beyond +4 m."
+          {
+            "tier": "H1",
+            "text": "The question fixes the endpoints, not the route."
+          },
+          {
+            "tier": "H2",
+            "text": "Draw one direct route and one route with a turn."
+          },
+          {
+            "tier": "H3",
+            "text": "For the turning route, choose a turning point beyond +4 m."
+          }
         ],
         "repair_target": "B30-L2",
         "figure": null,
@@ -949,9 +976,18 @@
         },
         "answer": "Distance 10 m; displacement +4 m (right).",
         "hints": [
-          "The student reverses direction after the first leg.",
-          "Use a path line and a separate start-to-finish arrow.",
-          "Add 7 m and 3 m to begin the distance calculation."
+          {
+            "tier": "H1",
+            "text": "The student reverses direction after the first leg."
+          },
+          {
+            "tier": "H2",
+            "text": "Use a path line and a separate start-to-finish arrow."
+          },
+          {
+            "tier": "H3",
+            "text": "Add 7 m and 3 m to begin the distance calculation."
+          }
         ],
         "repair_target": "B30-L2",
         "figure": null,
@@ -999,9 +1035,18 @@
         },
         "answer": "Displacement +11 m; distance 19 m. Check: 19 ≥ 11.",
         "hints": [
-          "One interval is rightward and one is leftward.",
-          "Draw two velocity–time rectangles on opposite sides of zero.",
-          "The first signed area is (+5 m/s) × (3 s)."
+          {
+            "tier": "H1",
+            "text": "One interval is rightward and one is leftward."
+          },
+          {
+            "tier": "H2",
+            "text": "Draw two velocity–time rectangles on opposite sides of zero."
+          },
+          {
+            "tier": "H3",
+            "text": "The first signed area is (+5 m/s) × (3 s)."
+          }
         ],
         "repair_target": "B30-L6",
         "figure": null,
@@ -1058,9 +1103,18 @@
         },
         "answer": "Displacement +2 m; distance 14 m. The parts mean 8 m right and 6 m left.",
         "hints": [
-          "Read the duration of each horizontal segment.",
-          "Separate the two rectangular regions at t = 2 s.",
-          "For the first region, write (+4) × (2 − 0)."
+          {
+            "tier": "H1",
+            "text": "Read the duration of each horizontal segment."
+          },
+          {
+            "tier": "H2",
+            "text": "Separate the two rectangular regions at t = 2 s."
+          },
+          {
+            "tier": "H3",
+            "text": "For the first region, write (+4) × (2 − 0)."
+          }
         ],
         "repair_target": "B30-L6",
         "figure": {
@@ -1155,9 +1209,18 @@
         },
         "answer": "Displacement +20 m; distance 20 m. Their sizes agree because direction does not reverse.",
         "hints": [
-          "The velocity stays on one side of zero.",
-          "Draw the rectangle and label height and width with units.",
-          "Write area = (+2.5 m/s) × (8 s)."
+          {
+            "tier": "H1",
+            "text": "The velocity stays on one side of zero."
+          },
+          {
+            "tier": "H2",
+            "text": "Draw the rectangle and label height and width with units."
+          },
+          {
+            "tier": "H3",
+            "text": "Write area = (+2.5 m/s) × (8 s)."
+          }
         ],
         "repair_target": "B30-L5",
         "figure": null,
@@ -1208,9 +1271,18 @@
         },
         "answer": "Displacement +18 m; distance 18 m. The graph never goes below zero.",
         "hints": [
-          "The height grows during the interval.",
-          "Compare the region with the complete enclosing rectangle.",
-          "The rectangle would have area (6 s) × (6 m/s); use the fraction actually occupied."
+          {
+            "tier": "H1",
+            "text": "The height grows during the interval."
+          },
+          {
+            "tier": "H2",
+            "text": "Compare the region with the complete enclosing rectangle."
+          },
+          {
+            "tier": "H3",
+            "text": "The rectangle would have area (6 s) × (6 m/s); use the fraction actually occupied."
+          }
         ],
         "repair_target": "B30-L7",
         "figure": {

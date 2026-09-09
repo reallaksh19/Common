@@ -12,11 +12,13 @@ model=json.loads((PUBROOT/'examples/motion_question_bank_v2.json').read_text())
 def drop_from_model(m):m['questions']['core_calibrated']=[q for q in m['questions']['core_calibrated'] if q['id']!='B80-A1']
 def drop_from_ledger(l):l['expected_ids'].remove('B80-A1');l['records']=[r for r in l['records'] if r['id']!='B80-A1']
 def wrong_concept(m):m['questions']['core_calibrated'][0]['primary_concept_id']='PHY-MOT-VTAREA-01'
-def wrong_hint(m):m['questions']['core_calibrated'][0]['hints'][0]='A drifted hint not in the frozen ledger.'
+def wrong_hint(m):m['questions']['core_calibrated'][0]['hints'][0]['text']='A drifted hint not in the frozen ledger.'
 def wrong_answer(m):m['questions']['core_calibrated'][0]['solution']['answer']='A drifted answer.'
+def wrong_dependency(m):m['questions']['core_calibrated'][5]['figure']['dependency_class']='DIAGRAM'  # B80-A6 is ledgered GRAPH
 
 for name,mutate,target in [('drop_from_model',drop_from_model,'model'),('drop_from_ledger',drop_from_ledger,'ledger'),
-        ('wrong_concept',wrong_concept,'model'),('wrong_hint',wrong_hint,'model'),('wrong_answer',wrong_answer,'model')]:
+        ('wrong_concept',wrong_concept,'model'),('wrong_hint',wrong_hint,'model'),('wrong_answer',wrong_answer,'model'),
+        ('wrong_dependency',wrong_dependency,'model')]:
     l,m=copy.deepcopy(ledger),copy.deepcopy(model)
     mutate(l if target=='ledger' else m)
     out=reconcile(l,m)
@@ -24,4 +26,4 @@ for name,mutate,target in [('drop_from_model',drop_from_model,'model'),('drop_fr
     print('DETECTED',name)
 out=reconcile(ledger,model)
 assert out['counters']['LEDGER_STATUS']=='PASS','unmodified ledger/model must reconcile cleanly'
-print('5 drift cases detected; unmodified ledger/model reconciles cleanly.')
+print('6 drift cases detected; unmodified ledger/model reconciles cleanly.')

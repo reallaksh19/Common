@@ -12,7 +12,8 @@ def brokenrepair(x):x['questions']['core_calibrated'][0]['repair_target']='missi
 def nographtask(x):x['questions']['core_calibrated'][5]['figure']=None
 def mismatch(x):x['questions']['core_calibrated'][5]['figure']['segments'][0][1]=3
 def duplicate(x):x['questions']['core_calibrated'][1]['id']=x['questions']['core_calibrated'][0]['id']
-def repeatedhint(x):x['questions']['core_calibrated'][0]['hints'][1]=x['questions']['core_calibrated'][0]['hints'][0]
+def repeatedhint(x):x['questions']['core_calibrated'][0]['hints'][1]['text']=x['questions']['core_calibrated'][0]['hints'][0]['text']
+def hinttierbroken(x):x['questions']['core_calibrated'][0]['hints'][0]['tier']='H2'  # H2,H2,H3: not the required H1->H2->H3 progression
 def denominator(x):x['questions']['core_calibrated'].pop()
 def unknown(x):x['unrendered_hidden_field']='must fail'
 def missingregion(x):x['questions']['core_calibrated'][5]['figure']['segments'].pop()
@@ -26,7 +27,7 @@ def methodformulaonly(x):
     q['solution']['method']=' '.join(parts[:max(1,len(parts)//2)])  # a truncated prefix: no vocabulary beyond the answer
 def methodneardup(x):q=x['questions']['core_calibrated'][0];q['solution']['method']=q['solution']['answer']+' so.'
 def depclassmismatch(x):x['lessons'][0]['figure']['dependency_class']='TABLE'  # a numberline is NUMBER_LINE, not TABLE
-for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq,methodterse,methodformulaonly,methodneardup,depclassmismatch]:
+for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,hinttierbroken,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq,methodterse,methodformulaonly,methodneardup,depclassmismatch]:
     v=copy.deepcopy(d);fn(v)
     try:validate(v)
     except (AssertionError,ValueError):print('REJECTED',fn.__name__)
@@ -35,7 +36,7 @@ assert areas([[0,6,4,-2]])==(10,8),'crossing inside unsplit segment'
 assert areas([[0,-3,2,-3]])==(6,-6),'negative rectangle'
 assert areas([[0,0,3,0]])==(0,0),'rest'
 validate(d)
-print('20 negative cases rejected; three physics boundary cases and positive model passed.')
+print('21 negative cases rejected; three physics boundary cases and positive model passed.')
 # Synthetic source-link fixture tests plumbing, not attribution or an actual exam.
 import tempfile
 from render_v2 import Book
@@ -67,3 +68,20 @@ with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
     sg_out=Book(sg,p/'sg.pdf').render()
     assert 'handout' in sg_out['destinations'] and not any(k.startswith('questions-') for k in sg_out['destinations']),'study_guide must render Appendix B and no question pages'
 print('Product profile: transfer_book and study_guide both render without crashing, with the right pages present/absent.')
+# PR #155 follow-up item 1: prove the schema/renderer has no hidden ceiling around the pilot's
+# 8-questions-per-band size before a full ~68-question chapter is authored. This is a structural
+# readiness proof, not a claim that a full chapter has been authored - that content-authorship task
+# stays explicitly out of scope for a schema+skill+sample deliverable.
+scale=copy.deepcopy(d)
+scale.update(product='question_bank',lessons=[],lesson_ids=[],handout=None,guided_solutions=[],mixed_tests=[])
+grown=[]
+for rep in range(9):  # 8 questions * 9 = 72, comfortably over the real 68-question chapter target
+    for q in scale['questions']['core_calibrated']:
+        nq=copy.deepcopy(q);nq['id']=f"{q['id']}-S{rep}";nq['label']=f"{q['label']}-S{rep}";grown.append(nq)
+scale['questions']['core_calibrated']=grown;scale['frozen_questions']=len(grown)
+validate(scale)
+with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
+    p=Path(td)
+    scale_out=Book(scale,p/'scale.pdf').render()
+    assert scale_out['pages']>0 and len(scale_out['destinations'])>=len(grown)
+print(f'Scale readiness: a synthetic {len(grown)}-question question_bank (> 68-question chapter target) validates and renders with no structural ceiling.')

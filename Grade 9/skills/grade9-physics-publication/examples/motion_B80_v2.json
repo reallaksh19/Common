@@ -541,9 +541,18 @@
         },
         "answer": "Final position −1 m; distance 8 m; displacement −2 m (left).",
         "hints": [
-          "Keep the starting coordinate separate from the lengths walked.",
-          "Mark the start, the turning point and the finish on a number line.",
-          "The turning point is at +1 − 5 m. Find the finish next."
+          {
+            "tier": "H1",
+            "text": "Keep the starting coordinate separate from the lengths walked."
+          },
+          {
+            "tier": "H2",
+            "text": "Mark the start, the turning point and the finish on a number line."
+          },
+          {
+            "tier": "H3",
+            "text": "The turning point is at +1 − 5 m. Find the finish next."
+          }
         ],
         "repair_target": "B80-L1",
         "figure": null,
@@ -591,9 +600,18 @@
         },
         "answer": "Distance 7 m; displacement +7 m (right).",
         "hints": [
-          "Crossing the origin does not mean reversing direction.",
-          "Draw −2, 0 and +5 in order along the line.",
-          "The first part of the path, from −2 m to 0 m, is 2 m."
+          {
+            "tier": "H1",
+            "text": "Crossing the origin does not mean reversing direction."
+          },
+          {
+            "tier": "H2",
+            "text": "Draw −2, 0 and +5 in order along the line."
+          },
+          {
+            "tier": "H3",
+            "text": "The first part of the path, from −2 m to 0 m, is 2 m."
+          }
         ],
         "repair_target": "B80-L1",
         "figure": null,
@@ -640,9 +658,18 @@
         },
         "answer": "No. These distances are 4 m and 10 m; both displacements are +4 m.",
         "hints": [
-          "The question fixes the endpoints, not the route.",
-          "Draw one direct route and one route with a turn.",
-          "For the turning route, choose a turning point beyond +4 m."
+          {
+            "tier": "H1",
+            "text": "The question fixes the endpoints, not the route."
+          },
+          {
+            "tier": "H2",
+            "text": "Draw one direct route and one route with a turn."
+          },
+          {
+            "tier": "H3",
+            "text": "For the turning route, choose a turning point beyond +4 m."
+          }
         ],
         "repair_target": "B80-L1",
         "figure": null,
@@ -681,9 +708,18 @@
         },
         "answer": "Distance 12 m and displacement +4 m for both origins. Positions change.",
         "hints": [
-          "The second observer changes the labels, not the physical journey.",
-          "Draw the three positions, then label each with 10 m added.",
-          "Compare (1 + 10) − (−3 + 10) with 1 − (−3)."
+          {
+            "tier": "H1",
+            "text": "The second observer changes the labels, not the physical journey."
+          },
+          {
+            "tier": "H2",
+            "text": "Draw the three positions, then label each with 10 m added."
+          },
+          {
+            "tier": "H3",
+            "text": "Compare (1 + 10) − (−3 + 10) with 1 − (−3)."
+          }
         ],
         "repair_target": "B80-L1",
         "figure": null,
@@ -731,9 +767,18 @@
         },
         "answer": "A: Δx = +16 m, distance 16 m. B: Δx = +8 m, distance 16 m.",
         "hints": [
-          "Only the direction of the last interval changes.",
-          "Sketch the two graphs with the same scales.",
-          "Calculate the common first area: (+3 m/s) × (4 s)."
+          {
+            "tier": "H1",
+            "text": "Only the direction of the last interval changes."
+          },
+          {
+            "tier": "H2",
+            "text": "Sketch the two graphs with the same scales."
+          },
+          {
+            "tier": "H3",
+            "text": "Calculate the common first area: (+3 m/s) × (4 s)."
+          }
         ],
         "repair_target": "B80-L2",
         "figure": null,
@@ -772,9 +817,18 @@
         },
         "answer": "Displacement +2 m; distance 14 m. The parts mean 8 m right and 6 m left.",
         "hints": [
-          "Read the duration of each horizontal segment.",
-          "Separate the two rectangular regions at t = 2 s.",
-          "For the first region, write (+4) × (2 − 0)."
+          {
+            "tier": "H1",
+            "text": "Read the duration of each horizontal segment."
+          },
+          {
+            "tier": "H2",
+            "text": "Separate the two rectangular regions at t = 2 s."
+          },
+          {
+            "tier": "H3",
+            "text": "For the first region, write (+4) × (2 − 0)."
+          }
         ],
         "repair_target": "B80-L2",
         "figure": {
@@ -869,9 +923,18 @@
         },
         "answer": "Distance 12 m; displacement +4 m; final position −1 m.",
         "hints": [
-          "The starting coordinate is separate from the displacement.",
-          "Pair the graph regions with right, stopped and left motion arrows.",
-          "The final region has duration 7 − 3 s."
+          {
+            "tier": "H1",
+            "text": "The starting coordinate is separate from the displacement."
+          },
+          {
+            "tier": "H2",
+            "text": "Pair the graph regions with right, stopped and left motion arrows."
+          },
+          {
+            "tier": "H3",
+            "text": "The final region has duration 7 − 3 s."
+          }
         ],
         "repair_target": "B80-L4",
         "figure": {
@@ -979,9 +1042,18 @@
         },
         "answer": "Displacement +8 m; distance 10 m; reversal at 3 s.",
         "hints": [
-          "Locate the zero crossing before calculating areas.",
-          "Use the straight-line change to split the graph into two triangles.",
-          "The velocity decreases by 8 ÷ 4 m/s each second."
+          {
+            "tier": "H1",
+            "text": "Locate the zero crossing before calculating areas."
+          },
+          {
+            "tier": "H2",
+            "text": "Use the straight-line change to split the graph into two triangles."
+          },
+          {
+            "tier": "H3",
+            "text": "The velocity decreases by 8 ÷ 4 m/s each second."
+          }
         ],
         "repair_target": "B80-L3",
         "figure": {

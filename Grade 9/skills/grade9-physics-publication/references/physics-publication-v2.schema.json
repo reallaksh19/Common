@@ -591,6 +591,31 @@
       "title": "Handout",
       "type": "object"
     },
+    "HintStep": {
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "enum": [
+            "H1",
+            "H2",
+            "H3"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tier",
+        "text"
+      ],
+      "title": "HintStep",
+      "type": "object"
+    },
     "Lesson": {
       "additionalProperties": false,
       "properties": {
@@ -886,7 +911,7 @@
         },
         "hints": {
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/HintStep"
           },
           "maxItems": 3,
           "minItems": 3,

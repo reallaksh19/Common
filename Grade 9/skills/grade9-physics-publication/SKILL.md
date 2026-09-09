@@ -27,7 +27,7 @@ Every Core book contains:
 - Teaching pages with real concept depictions, including for B80/B90.
 - **Appendix A — Questions:** bounded sets, purposeful drawing/working space, optional hints. Test explanation, reconstruction, representation translation and transfer as well as calculation.
 - **Appendix B — Handout:** a self-contained, separately printable visual summary with symbol meanings, model conditions and a worked memory anchor.
-- Optional hints after the handout: H1 Notice → H2 Model → H3 Start. Keep hints away from the first attempt.
+- Optional hints after the handout: H1 Notice → H2 Model → H3 Start. Keep hints away from the first attempt. Each hint's `tier` field (`H1`/`H2`/`H3`, `scripts/validate_v2.py`'s `HintStep`) is what `render_v2.py`'s label and `grade9-physics-examside`'s `reconcile.py` match against — not the hint's position in the array. Author hints in H1→H2→H3 order; `validate()` enforces the progression by tier.
 - **Solutions at the very end:** recap, required graph/table, why, executable method, explicit answer/check, transferable idea and return link.
 
 Teaching worked examples may show their answers; unanswered practice must not leak its own result earlier. The handout must not become an answer key. A separate question bank does not replace Core appendices.

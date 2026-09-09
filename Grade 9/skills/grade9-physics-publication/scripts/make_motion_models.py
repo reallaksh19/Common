@@ -37,7 +37,11 @@ def Q(n,band,question,primary,recap,why,method,answer,keep,hints,repair,fig=None
   representation_translation=min(base_score+2,10) if fig else max(base_score-3,0),vector_spatial_reasoning=0,
   equation_construction=min(base_score+1,10) if is_vt else max(base_score-1,0),experimental_data_reasoning=0,
   constraints_cases=base_score)
- return dict(id=f'{band}-A{n}',label=f'A{n}',question=question,primary_concept_id=C[primary],secondary_concept_ids=[c for c in C[:2 if primary<2 else 4] if c!=C[primary]] if primary<2 else [C[5-primary]],recap=recap,solution=dict(why=why,method=method,answer=answer,keep=keep),answer=answer,hints=hints,repair_target=repair,figure=fig,task_type=task_type,difficulty=difficulty,workspace=workspace,source_status='ORIGINAL',provenance_class=_PROVENANCE['ORIGINAL'],source_refs=['AUTHOR-MOTION-V2'],numeric_check=numeric)
+ # Callers keep writing hints as a plain 3-string [H1,H2,H3] list in reading order; tagging happens
+ # once here so the published shape (list[HintStep], tier explicit) never depends on callers getting
+ # the order right by convention alone (hint-numbering-unification).
+ tagged_hints=[dict(tier=t,text=h) for t,h in zip(['H1','H2','H3'],hints)]
+ return dict(id=f'{band}-A{n}',label=f'A{n}',question=question,primary_concept_id=C[primary],secondary_concept_ids=[c for c in C[:2 if primary<2 else 4] if c!=C[primary]] if primary<2 else [C[5-primary]],recap=recap,solution=dict(why=why,method=method,answer=answer,keep=keep),answer=answer,hints=tagged_hints,repair_target=repair,figure=fig,task_type=task_type,difficulty=difficulty,workspace=workspace,source_status='ORIGINAL',provenance_class=_PROVENANCE['ORIGINAL'],source_refs=['AUTHOR-MOTION-V2'],numeric_check=numeric)
 
 # Concept/source/misconception field names below match ../../../shared/grade9-master.schema.json exactly
 # (concept_id/title/prerequisites/mastery_path, source_id/title/provenance_class, the misconception object
