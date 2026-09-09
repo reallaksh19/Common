@@ -12,6 +12,8 @@
 | [Concept map](CONCEPT_REVIEW_MAP.md) | Same four concept claims across both support profiles |
 | [Reproduction instructions](REPRODUCE.md) | Build, schema, model, numerical and PDF checks |
 | [Audit](Physics_Rebuild_Audit.json) | Frozen PDF/model hashes and prior review evidence |
+| [Machine evidence](review_evidence.json) | Real command results bound to exact dependency and artifact hashes |
+| [Visual evidence](visual_review_evidence.json) | Reviewer attestation bound to exact PDF hashes, page counts and render DPI |
 | [Delivery record](DELIVERY_RECORD.md) | Repository basis, packaging checks, scope and next action |
 
 ## Skills and PDF schema
@@ -33,6 +35,6 @@ The new skills adapt existing Physics/publication authorities. They do not repla
 - [Historical architecture note](sources/Original_Architecture_Concept_Note.docx), [extracted text](sources/Original_Architecture_Concept_Note_text.md) and [original archive](sources/Original_Architecture_Concept_Note.zip)
 - [Before-rebuild backup](Physics_Before_Rebuild_Backup.zip), including prior approval drafts and a hash manifest
 
-Historical files are comparison evidence, not active instructions for the new renderer. [FILE_MANIFEST.json](FILE_MANIFEST.json) records SHA-256 hashes for the declared review scope; it excludes itself and the historical delivery record to avoid self-reference. `verify_review_package.py` recomputes the model/PDF/audit/summary/manifest chain.
+Historical files are comparison evidence, not active instructions for the new renderer. [FILE_MANIFEST.json](FILE_MANIFEST.json) records SHA-256 hashes for the live skill tree, shared contracts, router/install validators, and the complete Motion package; it excludes itself and the historical delivery record to avoid self-reference. `run_review_checks.py` captures the focused test executions, `record_visual_review.py` binds human inspection to exact PDFs, and `verify_review_package.py` recomputes the dependency/evidence/model/PDF/audit/summary/manifest chain.
 
 Related work: [PR #151](https://github.com/reallaksh19/Common/pull/151) carries four encoded Motion publication chunks. This package does not modify those files or claim their source coverage. Reconcile the two efforts before merging them into one publication workflow.

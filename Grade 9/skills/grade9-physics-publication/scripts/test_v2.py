@@ -35,7 +35,14 @@ def depclassmismatch(x):x['lessons'][0]['figure']['dependency_class']='TABLE'  #
 def unknowncanonical(x):x['concepts'][0]['canonical_concept_id']='CB99'
 def registrysetdrift(x):x['canonical_concept_registry']['allowed_ids'].append('CB99')
 def releasewithoutqa(x):x['status']='RELEASE_CANDIDATE'
-for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,hinttierbroken,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq,mixedtestexposescues,methodterse,methodformulaonly,methodneardup,depclassmismatch,unknowncanonical,registrysetdrift,releasewithoutqa]:
+def externalchoices(x):
+    q=x['questions']['core_calibrated'][0]
+    q.update(source_status='SOURCE_VERIFIED',provenance_class='OFFICIAL_PYQ',transcription_status='VERIFIED_TRANSCRIPTION')
+    q['source_citation']={'title':'Synthetic MCQ fixture','url':'https://example.org/physics-test-fixture','locator':'synthetic test only','verification':'VERIFIED','source_document':'synthetic-fixture.pdf','source_sha256':'0'*64,'source_page':1,'raw_stem':q['question'],'raw_answer':q['answer'],'values_units':['synthetic'],'options':['A. one','B. two'],'figure_locator':None,'figure_semantics':[],'target_ids':[q['id']],'adaptation_note':None}
+def externaldependency(x):
+    externalchoices(x);q=x['questions']['core_calibrated'][0];q['source_citation']['options']=[]
+    q['figure']={'id':'synthetic-table','kind':'tiles','status':'FINAL','dependency_class':'DIAGRAM','cols':2,'rows':2}
+for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,hinttierbroken,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq,mixedtestexposescues,methodterse,methodformulaonly,methodneardup,depclassmismatch,unknowncanonical,registrysetdrift,releasewithoutqa,externalchoices,externaldependency]:
     v=copy.deepcopy(d);fn(v)
     try:validate(v)
     except (AssertionError,ValueError):print('REJECTED',fn.__name__)
@@ -44,7 +51,7 @@ assert areas([[0,6,4,-2]])==(10,8),'crossing inside unsplit segment'
 assert areas([[0,-3,2,-3]])==(6,-6),'negative rectangle'
 assert areas([[0,0,3,0]])==(0,0),'rest'
 validate(d)
-print('25 negative cases rejected; three physics boundary cases and positive model passed.')
+print('27 negative cases rejected; three physics boundary cases and positive model passed.')
 # Master-schema compatibility is part of the normal committed test chain, not a one-off command.
 master=json.loads((SKILL_ROOT.parents[1]/'shared/grade9-master.schema.json').read_text(encoding='utf-8'))
 master_validator=Draft202012Validator(master)
@@ -93,6 +100,17 @@ with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
     assert any(k.startswith('mixed-'+set_id+'-') for k in out['destinations']),'mixed attempt pages missing'
     assert out['destinations']['diagnosis-'+set_id]>max(out['destinations']['solution-'+q['id']] for q in d['questions']['core_calibrated']),'diagnosis must follow solutions'
 print('Mixed-transfer attempt and post-marking diagnosis pages render in the correct order.')
+expanded=copy.deepcopy(d)
+expanded_ids=[q['id'] for q in expanded['questions']['core_calibrated']]
+expanded['mixed_tests'][0]['question_ids']=expanded_ids
+expanded['mixed_tests'][0]['diagnosis_map']={q['id']:q['primary_concept_id'] for q in expanded['questions']['core_calibrated']}
+validate(expanded)
+with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
+    p=Path(td);out=Book(expanded,p/'mixed-expanded.pdf').render();base='diagnosis-'+expanded['mixed_tests'][0]['set_id']
+    diagnosis_pages=sorted(page for anchor,page in out['destinations'].items() if anchor==base or anchor.startswith(base+'-'))
+    assert len(diagnosis_pages)==2,'eight-item diagnosis must paginate across two pages'
+    assert min(diagnosis_pages)>max(out['destinations']['solution-'+q['id']] for q in expanded['questions']['core_calibrated']),'all diagnosis pages must follow solutions'
+print('Mixed-transfer diagnosis pagination supports an eight-item set without a page ceiling.')
 # PR #155 follow-up item 1: prove the schema/renderer has no hidden ceiling around the pilot's
 # 8-questions-per-band size before a full ~68-question chapter is authored. This is a structural
 # readiness proof, not a claim that a full chapter has been authored - that content-authorship task

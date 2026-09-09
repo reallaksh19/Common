@@ -29,7 +29,7 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 20,
-      "pdf_sha256": "7e5d01d50f6a8e830e98400ad83fa51d3f58e60e5dc091f0c3ada37a1f778d0b",
+      "pdf_sha256": "05b40e60117c7782467d2670257d5086658eb8026ef4b48c976954bf2759842a",
       "model_sha256": "08c30e682d1c8256af965468686d5cab207260a531560ac45ba4cf0fad75b7cd",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
@@ -45,7 +45,7 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 16,
-      "pdf_sha256": "0e579dfc480c78abc7578d824837f4fe3c590b5211ff69b3bafa1241849cecc8",
+      "pdf_sha256": "cb332e7d95ecdfebf94eba634506fd50552b70ec8c5c7f51732dd1834ac1b498",
       "model_sha256": "6c27ed73f33befe3f9d577f9222e311a4e555e7789557c45300168029f4e8b80",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
@@ -61,31 +61,133 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 7,
-      "pdf_sha256": "acf39a761fbdbd0763d6d1a045fe2f5baa89d1ae8a813c85bef98c14f192ab5a",
+      "pdf_sha256": "e798cbae5fb7c0a539fb48df849d1b348f0aaf8e058dbb692c176abc30b84c0a",
       "model_sha256": "51a505c465845cabe27c82b999b8fe387dbb4b4b116e6b2a269d65ee59a3d6ee",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     }
   },
+  "machine_evidence": {
+    "file": "review_evidence.json",
+    "sha256": "f18309ad96d36aee933f6ff702dae8c9f9de0994703163c2c9f82b2177b44213",
+    "generated_at_utc": "2026-09-09T19:27:03.327368+00:00",
+    "status": "PASS"
+  },
   "manual_review": {
-    "codex_visual_review": "PASS: all 65 pages rendered at 200 DPI and inspected for clipping, collisions, graph labels, mixed-test cue hiding, solution ordering, and B80-L4 idealisation text on 2026-09-09",
+    "codex_visual_review": {
+      "status": "PASS",
+      "reviewer": "Codex",
+      "reviewed_at_utc": "2026-09-09T19:23:08.057134+00:00",
+      "dpi": 200,
+      "pages_reviewed": 65,
+      "pdf_hashes": {
+        "Motion_B30_Rebuilt": "05b40e60117c7782467d2670257d5086658eb8026ef4b48c976954bf2759842a",
+        "Motion_B80_Rebuilt": "cb332e7d95ecdfebf94eba634506fd50552b70ec8c5c7f51732dd1834ac1b498",
+        "Motion_Optional_Hint_Practice": "e798cbae5fb7c0a539fb48df849d1b348f0aaf8e058dbb692c176abc30b84c0a"
+      },
+      "notes": "All 65 latest page renders inspected: no clipping, collisions, illegible labels, answer-cue leakage, broken section transitions, or diagnosis overflow observed.",
+      "evidence_file": "visual_review_evidence.json",
+      "evidence_sha256": "2ddc4ae5b20ea2c22dc1fa8c32bffe87226d7df5eb8ad25429f87957eb4cb95f"
+    },
     "independent_pedagogy_review": "PENDING",
     "classroom_testing": "NOT_RUN",
     "known_package_integrity_blockers_remaining": 0,
-    "weak_topic_diagnosis_and_retry_workflow": "OUT_OF_SCOPE"
+    "weak_topic_diagnosis_and_retry_workflow": "OUT_OF_SCOPE",
+    "source_owned_difficulty_mapping": "NOT_RUN"
   },
   "tests": {
-    "grade9_skill_family_validation": "PASS (23 skills)",
-    "scratch_skill_installation": "PASS (16 routed skills)",
-    "publication_negative_cases": "PASS (25 rejected)",
-    "physics_boundary_cases": "PASS (3)",
-    "master_schema_models": "PASS (3)",
-    "shared_question_bank_and_link_checks": "PASS (3 models)",
-    "shared_assimilation_typography_and_layout_preflights": "PASS (3 PDFs)",
-    "product_profiles_end_to_end": "PASS (transfer_book and assessment-free study_guide)",
-    "mixed_transfer_rendering": "PASS (attempt cues hidden; diagnosis after solutions)",
-    "ledger_drift_cases": "PASS (11 detected)",
-    "question_bank_artifact_reconciliation": "PASS",
-    "scale_capacity": "PASS [SIMULATED] (72 ID-relabeled questions; content/chapter closure not claimed)"
+    "skill_family_validation": {
+      "status": "PASS",
+      "evidence_ids": [
+        "skill-family"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "skill_installation": {
+      "status": "PASS",
+      "evidence_ids": [
+        "scratch-install"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "publication_contract": {
+      "status": "PASS",
+      "evidence_ids": [
+        "publication-suite"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "evidence_integrity": {
+      "status": "PASS",
+      "evidence_ids": [
+        "review-evidence-contract"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "source_reconciliation": {
+      "status": "PASS",
+      "evidence_ids": [
+        "source-ledger",
+        "reconciliation-suite",
+        "artifact-reconciliation"
+      ],
+      "exit_codes": [
+        0,
+        0,
+        0
+      ]
+    },
+    "shared_model_contracts": {
+      "status": "PASS",
+      "evidence_ids": [
+        "bank-motion_B30_v2",
+        "links-motion_B30_v2",
+        "bank-motion_B80_v2",
+        "links-motion_B80_v2",
+        "bank-motion_question_bank_v2",
+        "links-motion_question_bank_v2"
+      ],
+      "exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pdf_preflights": {
+      "status": "PASS",
+      "evidence_ids": [
+        "assimilation-motion-b30-rebuilt",
+        "typography-motion-b30-rebuilt",
+        "overlap-motion-b30-rebuilt",
+        "assimilation-motion-b80-rebuilt",
+        "typography-motion-b80-rebuilt",
+        "overlap-motion-b80-rebuilt",
+        "assimilation-motion-optional-hint-practice",
+        "typography-motion-optional-hint-practice",
+        "overlap-motion-optional-hint-practice"
+      ],
+      "exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
   },
   "backup": {
     "file": "Physics_Before_Rebuild_Backup.zip",

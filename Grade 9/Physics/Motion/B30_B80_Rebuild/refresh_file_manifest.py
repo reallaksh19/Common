@@ -15,20 +15,18 @@ SCOPES = (
     'Grade 9/install_skills.py',
     'Grade 9/validate_skills.py',
     'Grade 9/Physics/Motion',
-    'Grade 9/skills/grade9-chapter-closeout-auditor',
-    'Grade 9/skills/grade9-corpus-coverage-auditor',
-    'Grade 9/skills/grade9-math-assimilation',
-    'Grade 9/skills/grade9-math-corpus-coverage-auditor',
-    'Grade 9/skills/grade9-physics-examside',
-    'Grade 9/skills/grade9-physics-publication',
-    'Grade 9/skills/grade9-physics-subtopic-book-builder',
-    'Grade 9/skills/grade9-redox-chapter-closeout-auditor',
-    'Grade 9/skills/ioqm-grade9-main-topic-builder',
-    'Grade 9/skills/ioqm-grade9-model-exam-builder',
+    'Grade 9/shared',
+    'Grade 9/skills',
 )
 EXCLUDED = {
     'Grade 9/Physics/Motion/B30_B80_Rebuild/FILE_MANIFEST.json',
     'Grade 9/Physics/Motion/B30_B80_Rebuild/DELIVERY_RECORD.md',
+}
+GENERATED_EVIDENCE_PATHS = EXCLUDED | {
+    'Grade 9/Physics/Motion/B30_B80_Rebuild/Packaging_Validation.json',
+    'Grade 9/Physics/Motion/B30_B80_Rebuild/Physics_Rebuild_Audit.json',
+    'Grade 9/Physics/Motion/B30_B80_Rebuild/review_evidence.json',
+    'Grade 9/Physics/Motion/B30_B80_Rebuild/visual_review_evidence.json',
 }
 
 
@@ -42,6 +40,11 @@ def tracked_paths() -> list[str]:
         if line.strip() and '__pycache__' not in line and not line.endswith('.pyc')
     }
     return sorted(paths - EXCLUDED)
+
+
+def evidence_basis_paths() -> list[str]:
+    """Return the non-generated files whose exact bytes underpin test evidence."""
+    return sorted(set(tracked_paths()) - GENERATED_EVIDENCE_PATHS)
 
 
 def file_record(relative_path: str) -> dict[str, str | int]:

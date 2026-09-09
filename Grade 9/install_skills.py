@@ -26,6 +26,8 @@ SKILLS = [
     "grade9-subtopic-completeness-auditor",
     "grade9-transfer-coverage-auditor",
     "grade9-chapter-closeout-auditor",
+    "grade9-redox-subtopic-book-builder",
+    "grade9-redox-chapter-closeout-auditor",
     "grade9-math",
     "grade9-physics",
     "grade9-physics-subtopic-book-builder",

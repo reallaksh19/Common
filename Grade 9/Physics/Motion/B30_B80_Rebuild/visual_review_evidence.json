@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-09-09T19:23:08.057134+00:00",
+  "reviewer": "Codex",
+  "result": "PASS",
+  "dpi": 200,
+  "pages_reviewed": 65,
+  "expected_pages": 65,
+  "notes": "All 65 latest page renders inspected: no clipping, collisions, illegible labels, answer-cue leakage, broken section transitions, or diagnosis overflow observed.",
+  "pdfs": [
+    {
+      "stem": "Motion_B30_Rebuilt",
+      "path": "Motion_B30_Rebuilt.pdf",
+      "sha256": "05b40e60117c7782467d2670257d5086658eb8026ef4b48c976954bf2759842a",
+      "pages": 27
+    },
+    {
+      "stem": "Motion_B80_Rebuilt",
+      "path": "Motion_B80_Rebuilt.pdf",
+      "sha256": "cb332e7d95ecdfebf94eba634506fd50552b70ec8c5c7f51732dd1834ac1b498",
+      "pages": 22
+    },
+    {
+      "stem": "Motion_Optional_Hint_Practice",
+      "path": "Motion_Optional_Hint_Practice.pdf",
+      "sha256": "e798cbae5fb7c0a539fb48df849d1b348f0aaf8e058dbb692c176abc30b84c0a",
+      "pages": 16
+    }
+  ]
+}

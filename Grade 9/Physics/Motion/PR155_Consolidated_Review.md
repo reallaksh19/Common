@@ -2,7 +2,7 @@
 
 ## Scope
 
-This document consolidates five submitted reviews and 32 inline threads on PR #156 into 14 unique findings. Repeated comments are grouped by failure boundary, not counted as separate defects.
+This document consolidates seven submitted reviews and 43 inline threads on PR #156 into 21 unique findings. Repeated comments are grouped by failure boundary, not counted as separate defects.
 
 The PR is a two-topic Motion publication pilot. It is not a completed 68-question chapter, a verified ExamSIDE corpus, an adaptive student-remediation system, or a classroom-validated release.
 
@@ -43,6 +43,13 @@ The repair principle is therefore: a stage may report only what it directly prov
 | 12 | Transfer-book repair targets were dead semantic references. | Local lesson validation was disabled without defining an external route. | Added typed `LOCAL_LESSON`, `EXTERNAL_COMPANION`, and `SELF_CONTAINED` repair modes. External repair requires a valid companion title, URL, and locator and is rendered as a working link. |
 | 13 | Master-schema conformance was a one-off command. | Compatibility evidence lived outside the normal test chain. | `test_v2.py` validates all three committed models against `grade9-master.schema.json` on every run. |
 | 14 | “A–O closed” was blurred with completion of weak-topic remediation. | Review-finding closure and product-capability closure were treated as the same status. | The claim is narrowed: the reviewed publication/packaging gaps are repaired, while per-student concept mastery, diagnostic event capture, retry/promotion logic, and learner-outcome storage remain explicitly outside this PR. |
+| 15 | The installed `$grade9` router advertised Redox builders that the default installer omitted. | Router capability and installer closure were maintained independently. | Added both routed Redox skills to the installer and made `validate_skills.py` derive advertised live-skill dependencies from the router, rejecting any future omission. |
+| 16 | Package summaries hard-coded PASS and fixed test counts. | Narrative summaries were treated as evidence producers. | Added `run_review_checks.py`; summaries now project statuses only from captured real commands, exit codes, output hashes, dependency hashes, and artifact hashes. |
+| 17 | A visual PASS survived changes to the PDFs. | Human review text had no artifact identity. | Added `visual_review_evidence.json` and `record_visual_review.py`; PASS requires at least 200 DPI, every audited page, and exact hashes for all three PDFs. Stale evidence projects as `PENDING`. |
+| 18 | The cold-start sequence skipped summary refresh. | Regeneration order did not model evidence dependencies. | `REPRODUCE.md` now orders render/audit/reconcile → machine evidence → visual evidence → summaries → manifest → package verification. |
+| 19 | Manifest scope omitted live router, shared, schema, and publication dependencies. | A hand-picked producer list stood in for dependency closure. | Manifest scope now covers the live `Grade 9/skills` tree, `Grade 9/shared`, router/install validators, and the complete Motion package. |
+| 20 | Mixed-test diagnosis rows still had a one-page ceiling. | Attempt pagination and diagnosis pagination used different layout models. | Diagnosis rows now paginate four per page with stable destinations and global question numbering; an eight-item executable case requires two diagnosis pages after all solutions. |
+| 21 | External MCQ options and unsupported statement-like dependencies could exist only in citation metadata. | Source capture capability was mistaken for learner-render capability. | The Motion validator now hard-routes external items with choices, or dependency classes outside `NONE`, `GRAPH`, and `NUMBER_LINE`, to `grade9-publication` instead of silently producing incomplete learner pages. |
 
 ## Additional checks retained from the earlier review
 
@@ -72,6 +79,7 @@ The following remain `NOT_RUN`, `PENDING`, or out of scope and must not be promo
 - independent SRU/pedagogy review: `PENDING`;
 - classroom and psychometric testing: `NOT_RUN`;
 - accessible tagged-PDF conformance and syllabus approval: `NOT_RUN`.
+- source-owned difficulty-code normalization and learner-badge mapping: `NOT_RUN`; no qualified source difficulty data exists in this original-question pilot, so a `D1`–`D4` mapping is not guessed.
 
 ## Reproduction order
 
@@ -82,8 +90,9 @@ Run the package in this order:
 3. run publication and reconciliation tests;
 4. render and audit all three PDFs;
 5. reconcile the question-bank ledger with the final audit;
-6. render every PDF page for visual inspection;
-7. refresh package summaries and `FILE_MANIFEST.json`;
-8. run `verify_review_package.py`.
+6. run `run_review_checks.py` to bind real command outputs to current dependency/artifact hashes;
+7. render every PDF page for visual inspection and record `visual_review_evidence.json` against the exact PDF hashes;
+8. refresh package summaries and `FILE_MANIFEST.json`;
+9. run `verify_review_package.py`.
 
 This ordering prevents stale component evidence from being mistaken for a coherent release package.

@@ -16,6 +16,7 @@ NAVY='#17384E'; TEAL='#087E83'; BLUE='#276FA1'; RED='#AF4E36'; INK='#233743'; GR
 # Keyed off each hint's own tier (validate_v2.py enforces H1/H2/H3 order), not array position - see
 # grade9-physics-publication/SKILL.md's hint-numbering note.
 _HINT_LABEL={'H1':'H1 Notice','H2':'H2 Model','H3':'H3 Start'}
+DIAGNOSIS_ROWS_PER_PAGE=4
 for name,file in [('Body','DejaVuSans.ttf'),('Bold','DejaVuSans-Bold.ttf'),('Italic','DejaVuSans-Oblique.ttf')]:
     pdfmetrics.registerFont(TTFont(name,str(ROOT/'assets/fonts'/file)))
 pdfmetrics.registerFontFamily('Body',normal='Body',bold='Bold',italic='Italic',boldItalic='Bold')
@@ -29,6 +30,10 @@ class Book:
         self.question_batches=self.batch_questions(self.all_questions)
         by_id={q['id']:q for q in self.all_questions}
         self.mixed_batches=[(test,self.batch_questions([by_id[qid] for qid in test['question_ids']])) for test in data.get('mixed_tests',[])]
+        self.mixed_diagnosis_batches=[
+            (test,[test['question_ids'][index:index+DIAGNOSIS_ROWS_PER_PAGE] for index in range(0,len(test['question_ids']),DIAGNOSIS_ROWS_PER_PAGE)])
+            for test in data.get('mixed_tests',[])
+        ]
         self.concept_titles={c['concept_id']:c['title'] for c in data['concepts']}
         self.c=canvas.Canvas(str(output),pagesize=(W,H),pageCompression=1)
         self.c.setTitle(data['title']);self.c.setAuthor('Physics learning materials')
@@ -251,13 +256,18 @@ class Book:
                 if i==0:self.line(40,y+197,W-40,y+197)
     def mixed_diagnosis_pages(self):
         by_id={q['id']:q for q in self.all_questions}
-        for test,_ in self.mixed_batches:
-            self.start('Mixed transfer · Mark and diagnose',test['set_id'],'Reveal this page only after completing the mixed set.',f"diagnosis-{test['set_id']}")
-            for index,qid in enumerate(test['question_ids']):
-                q=by_id[qid];concept=self.concept_titles[test['diagnosis_map'][qid]];y=135+index*86
-                self.text(f"Question {index+1} · {concept}",40,y,500,12,bold=True,color=TEAL)
-                self.text('If this answer was weak, use the linked solution and its repair route before retrying.',40,y+24,610,11.5,maxh=34)
-                self.link('Solution →','solution-'+qid,650,y+18,140)
+        for test,batches in self.mixed_diagnosis_batches:
+            positions={qid:index+1 for index,qid in enumerate(test['question_ids'])}
+            for page_index,question_ids in enumerate(batches,1):
+                base=f"diagnosis-{test['set_id']}"
+                anchor=base if page_index==1 else f"{base}-{page_index}"
+                kicker=test['set_id'] if len(batches)==1 else f"{test['set_id']} · review {page_index} / {len(batches)}"
+                self.start('Mixed transfer · Mark and diagnose',kicker,'Reveal these pages only after completing the mixed set.',anchor)
+                for row,qid in enumerate(question_ids):
+                    q=by_id[qid];concept=self.concept_titles[test['diagnosis_map'][qid]];y=135+row*86
+                    self.text(f"Question {positions[qid]} · {concept}",40,y,500,12,bold=True,color=TEAL)
+                    self.text('If this answer was weak, use the linked solution and its repair route before retrying.',40,y+24,610,11.5,maxh=34)
+                    self.link('Solution →','solution-'+qid,650,y+18,140)
     def guided_solutions(self):
         if not self.d.get('guided_solutions'):return
         self.start('Check the small steps','Solutions begin here','Use these pictures to repair a step before trying the complete problems.','guided-solutions')
@@ -288,7 +298,11 @@ class Book:
         for k in range(0,len(self.all_questions),2):
             n+=1
             for q in self.all_questions[k:k+2]:self.planned['solution-'+q['id']]=n
-        for test,_ in self.mixed_batches:n+=1;self.planned[f"diagnosis-{test['set_id']}"]=n
+        for test,batches in self.mixed_diagnosis_batches:
+            for page_index,_ in enumerate(batches,1):
+                n+=1
+                base=f"diagnosis-{test['set_id']}"
+                self.planned[base if page_index==1 else f"{base}-{page_index}"]=n
         for p in self.d.get('lessons',[]):self.lesson(p)
         for index,batch in enumerate(self.question_batches,1):self.question_page(batch,index,self.d['product'] in ('question_bank','transfer_book'))
         self.mixed_test_pages()

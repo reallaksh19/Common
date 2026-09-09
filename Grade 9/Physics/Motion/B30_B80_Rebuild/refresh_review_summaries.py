@@ -1,64 +1,67 @@
 #!/usr/bin/env python3
-"""Refresh package summaries from the three executable artifact audits."""
+"""Project current machine and visual evidence into package review summaries."""
 from __future__ import annotations
 
-import hashlib
 import json
 from datetime import date
 from pathlib import Path
 from typing import Any
 
+from review_evidence import (
+    ARTIFACT_MODELS,
+    EVIDENCE_PATH,
+    PACKAGE_ROOT,
+    VISUAL_EVIDENCE_PATH,
+    focused_checks,
+    load_json,
+    machine_evidence_failures,
+    sha256,
+    visual_evidence_failures,
+    visual_projection,
+)
+
 JsonObject = dict[str, Any]
-PACKAGE_ROOT = Path(__file__).resolve().parent
-ARTIFACT_STEMS = ('Motion_B30_Rebuilt', 'Motion_B80_Rebuilt', 'Motion_Optional_Hint_Practice')
-
-
-def _load(path: Path) -> JsonObject:
-    """Load one UTF-8 JSON object."""
-    return json.loads(path.read_text(encoding='utf-8'))
-
-
-def _sha256(path: Path) -> str:
-    """Return the SHA-256 of one evidence file."""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _write(path: Path, value: JsonObject) -> None:
-    """Write stable, reviewable UTF-8 JSON."""
+    """Write stable, reviewable UTF-8 JSON to ``path``."""
     path.write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8', newline='\n')
 
 
 def main() -> None:
-    """Copy current audit evidence into both package-level summaries."""
-    audits = {stem: _load(PACKAGE_ROOT / f'{stem}.audit.json') for stem in ARTIFACT_STEMS}
-    rebuild_path = PACKAGE_ROOT / 'Physics_Rebuild_Audit.json'
-    previous = _load(rebuild_path) if rebuild_path.is_file() else {}
-    previous_review = previous.get('manual_review', {})
-    codex_visual_review = previous_review.get('codex_visual_review', 'PENDING')
+    """Require current machine evidence, then refresh both derived summaries."""
+    evidence = load_json(EVIDENCE_PATH)
+    machine_failures = machine_evidence_failures(evidence)
+    if machine_failures:
+        raise RuntimeError('cannot refresh summaries: ' + '; '.join(machine_failures))
+    audits = {
+        stem: load_json(PACKAGE_ROOT / f'{stem}.audit.json')
+        for stem in ARTIFACT_MODELS
+    }
+    visual = load_json(VISUAL_EVIDENCE_PATH) if VISUAL_EVIDENCE_PATH.is_file() else {}
+    visual_failures = visual_evidence_failures(visual, audits)
+    visual_summary = visual_projection(visual, visual_failures)
+    package_status = 'PASS' if not visual_failures else 'PENDING_VISUAL_REVIEW'
+    checks = focused_checks(evidence)
+    evidence_identity = {
+        'file': EVIDENCE_PATH.name,
+        'sha256': sha256(EVIDENCE_PATH),
+        'generated_at_utc': evidence['generated_at_utc'],
+        'status': evidence['status'],
+    }
 
     packaging: JsonObject = {
-        'status': 'PASS',
-        'scope': 'Automated package integrity and focused executable checks; independent pedagogy, classroom testing, and real external-source fidelity are excluded.',
-        'focused_checks': {
-            'grade9_skill_family_validation': 'PASS (23 skills)',
-            'scratch_skill_installation': 'PASS (16 routed skills)',
-            'publication_negative_cases': 'PASS (25 rejected)',
-            'physics_boundary_cases': 'PASS (3)',
-            'master_schema_models': 'PASS (3)',
-            'shared_question_bank_and_link_checks': 'PASS (3 models)',
-            'shared_assimilation_typography_and_layout_preflights': 'PASS (3 PDFs)',
-            'product_profiles_end_to_end': 'PASS (transfer_book and assessment-free study_guide)',
-            'mixed_transfer_rendering': 'PASS (attempt cues hidden; diagnosis after solutions)',
-            'ledger_drift_cases': 'PASS (11 detected)',
-            'question_bank_artifact_reconciliation': 'PASS',
-            'scale_capacity': 'PASS [SIMULATED] (72 ID-relabeled questions; content/chapter closure not claimed)',
-        },
+        'status': package_status,
+        'scope': 'Machine-produced package checks plus a separately attested hash-bound visual review; independent pedagogy, classroom testing, and real external-source fidelity are excluded.',
+        'machine_evidence': evidence_identity,
+        'focused_checks': checks,
         'pdf_audits': audits,
-        'codex_visual_review': codex_visual_review,
+        'codex_visual_review': visual_summary,
         'independent_pedagogy_review': 'PENDING',
         'classroom_testing': 'NOT_RUN',
         'real_external_source_cold_start': 'NOT_RUN; no qualified external ExamSIDE/PYQ corpus fixture is included',
         'full_chapter_closeout': 'NOT_RUN; the 68-question Motion chapter was not authored in this PR',
+        'source_owned_difficulty_mapping': 'NOT_RUN; preserve source codes separately when a qualified source corpus supplies them',
     }
     _write(PACKAGE_ROOT / 'Packaging_Validation.json', packaging)
 
@@ -70,7 +73,7 @@ def main() -> None:
     sources = [
         {
             'file': f'sources/{name}',
-            'sha256': _sha256(PACKAGE_ROOT / 'sources' / name),
+            'sha256': sha256(PACKAGE_ROOT / 'sources' / name),
         }
         for name in source_names
     ]
@@ -80,21 +83,23 @@ def main() -> None:
         'scope': 'Two-topic original-question Motion publication pilot; not a full chapter or verified external corpus.',
         'sources': sources,
         'artifacts': audits,
+        'machine_evidence': evidence_identity,
         'manual_review': {
-            'codex_visual_review': codex_visual_review,
+            'codex_visual_review': visual_summary,
             'independent_pedagogy_review': 'PENDING',
             'classroom_testing': 'NOT_RUN',
-            'known_package_integrity_blockers_remaining': 0,
+            'known_package_integrity_blockers_remaining': len(visual_failures),
             'weak_topic_diagnosis_and_retry_workflow': 'OUT_OF_SCOPE',
+            'source_owned_difficulty_mapping': 'NOT_RUN',
         },
-        'tests': packaging['focused_checks'],
+        'tests': checks,
         'backup': {
             'file': 'Physics_Before_Rebuild_Backup.zip',
-            'sha256': _sha256(PACKAGE_ROOT / 'Physics_Before_Rebuild_Backup.zip'),
+            'sha256': sha256(PACKAGE_ROOT / 'Physics_Before_Rebuild_Backup.zip'),
         },
     }
-    _write(rebuild_path, rebuild)
-    print('Refreshed Packaging_Validation.json and Physics_Rebuild_Audit.json from current audits.')
+    _write(PACKAGE_ROOT / 'Physics_Rebuild_Audit.json', rebuild)
+    print(f'Refreshed package summaries from {len(evidence["checks"])} command results; status={package_status}.')
 
 
 if __name__ == '__main__':

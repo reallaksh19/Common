@@ -69,15 +69,41 @@ Then bind the original-question ledger to the exact final question-bank model an
   "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_Optional_Hint_Practice.audit.json"
 ```
 
-## 5. Visual and package closure
+## 5. Capture machine evidence for the exact current files
+
+After model generation, rendering, audits, and ledger reconciliation are complete, run the evidence driver. It repeats the focused checks and records each real command, exit code, stdout/stderr hash, dependency hash, and artifact hash:
+
+```bash
+.venv/Scripts/python "Grade 9/Physics/Motion/B30_B80_Rebuild/run_review_checks.py"
+```
+
+Do not edit dependency or artifact files after this step without rerunning the evidence driver. `verify_review_package.py` rejects stale evidence even when its recorded status says `PASS`.
+
+## 6. Visual and package closure
 
 Render every page at 200 DPI and inspect text, equations, labels, diagrams, answer leakage, navigation, and the mixed-test cue boundary. Automated checks do not establish student understanding or source truth.
 
-After the three audits and visual review are current, refresh and verify the content-addressed package:
+Record that review against the exact PDF hashes. Replace the reviewer and notes with the actual reviewer and observations; the page count must equal the current audited total:
 
 ```bash
+.venv/Scripts/python "Grade 9/Physics/Motion/B30_B80_Rebuild/record_visual_review.py" \
+  --reviewer "Reviewer name" \
+  --result PASS \
+  --dpi 200 \
+  --pages-reviewed 65 \
+  --notes "All rendered pages inspected; no clipping, collisions, cue leakage, or illegible labels found."
+```
+
+After machine and visual evidence are current, derive the review summaries, refresh the content-addressed manifest, and verify the whole chain in this exact order:
+
+```bash
+.venv/Scripts/python "Grade 9/Physics/Motion/B30_B80_Rebuild/refresh_review_summaries.py"
 .venv/Scripts/python "Grade 9/Physics/Motion/B30_B80_Rebuild/refresh_file_manifest.py"
 .venv/Scripts/python "Grade 9/Physics/Motion/B30_B80_Rebuild/verify_review_package.py"
 ```
 
+The manifest covers the live `Grade 9/skills` tree, shared contracts, router/install validators, and the complete Motion review package. It excludes only itself and the historical delivery record. The summaries never carry a prior visual PASS forward: a PDF hash or page-count change resets the projected result until a new visual attestation is recorded.
+
 For a real ExamSIDE/PYQ corpus, replace the pilot ledger with source-page records carrying exact hashes, pages, raw text/options/figures, URLs, provenance, transcription state, and adaptation notes. This repository includes no qualified external-corpus fixture, so real-source cold-start fidelity remains `NOT_RUN`.
+
+When such a source supplies its own difficulty code (for example `D1`–`D4`), retain that raw code separately from any normalized internal band and learner-facing badge. This original-question pilot has no source-owned difficulty data, so no mapping is inferred here.

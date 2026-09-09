@@ -92,6 +92,7 @@ class Difficulty(Strict):
             assert v is None or 0<=v<=10,f'{k} out of 0-10 range'
         return self
 _EXTERNAL_PROVENANCE={'USER_UPLOADED_ANCHOR','OFFICIAL_PYQ','SECONDARY_VERIFIED_PYQ','PUBLISHED_REFERENCE','RECONSTRUCTED_FROM_SCAN'}
+_SUPPORTED_EXTERNAL_DEPENDENCIES={'NONE','GRAPH','NUMBER_LINE'}
 class RepairReference(Strict):
     title:str=Field(min_length=1);url:str;locator:str=Field(min_length=1)
 class Question(Strict):
@@ -298,6 +299,9 @@ def validate(d):
             from urllib.parse import urlparse
             u=urlparse(cite['url']);assert u.scheme=='https' and u.netloc and not any(c.isspace() for c in cite['url']),'invalid source URL'
             assert q['id'] in cite['target_ids'],'source citation target_ids must include the published question'
+            dependency=(q.get('figure') or {}).get('dependency_class','NONE')
+            assert not cite['options'],'external answer choices are not learner-facing in this renderer; route the item to grade9-publication'
+            assert dependency in _SUPPORTED_EXTERNAL_DEPENDENCIES,f'external dependency {dependency} is unsupported by this Motion renderer; route the item to grade9-publication'
             if q['source_status']=='SOURCE_VERIFIED':
                 assert cite['raw_stem']==q['question'] and cite['raw_answer']==q['answer'],'verified source text/answer must be published without adaptation'
             if q['source_status']=='ADAPTED':assert cite.get('adaptation_note'),'adaptation must be explicit'
