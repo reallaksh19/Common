@@ -45,6 +45,8 @@ Product profile is selectable (`core` / `study_guide` / `question_bank` / `trans
 
 The bundled profile covers distance/displacement and signed velocity–time area. It is not the complete Grade 9–11 syllabus or a renderer for every Physics representation. Confirm board/year/source before asserting syllabus coverage. Add typed figure support and checks before publishing other representations.
 
+Scaling this pilot to the full Motion chapter (or any chapter-scale Physics build) is a `grade9-physics-subtopic-book-builder` build, one subtopic at a time per its own build sequence, followed by `../grade9-chapter-closeout-auditor/SKILL.md` once every subtopic is drafted and individually passes `grade9-transfer-coverage-auditor`. Do not attempt chapter-scale batch/consolidation (contiguous source coverage, approved-page immutability, cumulative denominator reconciliation, final TOC/bookmarks/global numbering) inside this skill — it is the closeout auditor's job, not this pilot renderer's.
+
 With Python containing ReportLab, Pydantic 2 and PyMuPDF:
 
 ```bash

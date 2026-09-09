@@ -5,6 +5,8 @@ description: Audit the completed Redox chapter against the full frozen ExamSIDE 
 
 # Grade 9 Redox Chapter Closeout Auditor
 
+This is the Chemistry/Redox subject profile of `../grade9-chapter-closeout-auditor/SKILL.md`. That skill owns the subject-agnostic workflow, statuses, counters and invariant (§1-9 there); this file is now the Redox-specific delta: the titration/normality/full-balancing/coordination-chemistry outside-dependency list in §2 below, and the chemistry typography/glyph checks in §8's render QA. For a non-Redox chapter (Physics, Mathematics, or a future Chemistry chapter beyond Redox), use the generic skill directly with a new subject profile rather than copying this file.
+
 Use this skill only after the individual Redox subtopics have been drafted.
 
 ## 1. Full corpus before chapter acceptance
