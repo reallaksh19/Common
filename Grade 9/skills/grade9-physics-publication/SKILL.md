@@ -32,6 +32,8 @@ Every Core book contains:
 
 Teaching worked examples may show their answers; unanswered practice must not leak its own result earlier. The handout must not become an answer key. A separate question bank does not replace Core appendices.
 
+Product profile is selectable (`core` / `study_guide` / `question_bank` / `transfer_book` — see `scripts/validate_v2.py`): audit/self-check content can live in a separate document without being considered lost. If a standalone First-Step Reference (recognition atlas, decision router, first-step cards) is needed for a subtopic, build it as `grade9-learning-enrichment`'s First-Step Reference companion product, not as a fourth purpose folded into Core.
+
 ## Differentiate teaching, not just arithmetic
 
 - **B30:** repair prerequisites in the lesson; use a stable story; explain axes/signs/units and first-use words; count or depict before operating. Show a full model, then let the learner complete one step, then a whole task. Supply completed visual repairs in solutions.

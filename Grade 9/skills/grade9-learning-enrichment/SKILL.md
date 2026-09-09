@@ -92,3 +92,38 @@ Separate:
 Hint use can reduce strength of mastery evidence. A learner solving without hints or after H1 demonstrates stronger independent recognition than one requiring H4/H5.
 
 Keep this as analytics metadata; do not shame the learner for using hints.
+
+## Partial-knowledge learner mode
+
+Some learners already know roughly half of a concept: formulas or definitions may be remembered, but connections, decision boundaries, first moves and transfer are unstable. For this learner:
+
+- do not reteach from zero unless a diagnostic shows a genuine prerequisite gap;
+- use a diagnostic to choose which bridge to teach, never as a pass/fail label;
+- distinguish, for a wrong response: missing prerequisite, remembered-but-hollow formula, correct concept with a weak representation choice, recognition failure, and execution/calculation failure. These need different repairs, not the same reteach.
+
+## First-Step Reference (companion product)
+
+A First-Step Reference is a compression/revision product, built only after concept teaching is complete — it is not the teaching product and must not substitute for it. Keep it a distinct, named companion to the Concept Book/Study Guide and the Question Bank in each subject's own product architecture, rather than folding its role into either.
+
+It should contain, as applicable to the subject:
+
+- a recognition atlas: what should the learner notice first?
+- a phrase/structure decoder: what wording maps to which concept/model?
+- a decision router: given the recognition, which method/relation applies?
+- first-step cards: the first executable line for each recognized pattern, not the full worked solution;
+- contrast pairs: near-miss situations that require a different first step;
+- a recognition-only drill: practice noticing and choosing, not solving to the end;
+- a concise source-to-first-step map when a source corpus is in scope.
+
+## Six-question assimilation test
+
+For a concept a learner is expected to have fully assimilated, all six should be answerable without hints:
+
+1. What did you notice?
+2. Why does the method work?
+3. What clue would make you think of it?
+4. What similar-looking situation needs a different method?
+5. Can you write the first useful line without help?
+6. Can you solve a disguised (non-identical transfer) version?
+
+Use this as a generic mastery/diagnostic template across subjects. A subject skill may extend it with subject-specific probes but should not replace its structure with a parallel one.
