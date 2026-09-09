@@ -14,6 +14,7 @@ These are proposed roles, not assigned people or completed approvals. Seek at le
 | Assessment reviewer | Appendix A → hints → solutions | Are questions attemptable, hints progressive, answers withheld and repairs complete? |
 | Publication reviewer | PDFs at normal size; printed handouts | Do placement, labels, whitespace and wording support explanation? Are navigation and grayscale distinctions usable? |
 | Schema/tooling reviewer | Skills, JSON, validator, renderer and auditor | Does the executable contract prevent the stated failures and reproduce the supplied structure? |
+| Cold-start reproducibility reviewer | Task brief, source authority and this repository only — no prior chat or unpublished context | Starting fresh, can the canonical skills be identified, the same source denominator frozen, artifacts routed correctly, the build reproduced, and the same audit/release evidence produced? If another agent cannot continue from the repository alone without reading chat history, the handoff is incomplete (this is IOQM's own final rule — reuse it here rather than a separate test). |
 
 ## Page-indexed route
 
@@ -60,6 +61,7 @@ Use one finding per thread. Reply with fixing commit/page; close after recheck. 
 - [ ] Sources, original-item labels, badges and scope claims checked.
 - [ ] Human layout/print review complete.
 - [ ] Schema/tooling review complete with technical evidence.
+- [ ] Cold-start reproducibility check complete: a fresh agent, given only the brief/source/repository, can find the canonical skills and reproduce the build and audit evidence.
 - [ ] Blocking findings repaired and rechecked.
 - [ ] Owner approves this Physics pilot before expansion.
 
