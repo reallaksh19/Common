@@ -1,0 +1,18 @@
+{
+  "status": "PREPARED_NOT_COMMITTED_IN_AUTOMATED_DRAFT",
+  "artifacts": {
+    "Redox_Core_Study_Guide.pdf": {
+      "pages": 68,
+      "embedded_link_annotations": 0,
+      "bytes": 515756,
+      "sha256": "e96e53d5066feaa7c3705ec79d846cd83f7183dd2018d1d18aef4d3c03340756"
+    },
+    "Redox_ExamSIDE_Transfer_Book.pdf": {
+      "pages": 85,
+      "embedded_link_annotations": 30,
+      "bytes": 617552,
+      "sha256": "8101baff5e247180fdf277fef5dbc007551fcf8b96c00201c6ed37487fc5cb58"
+    }
+  },
+  "note": "The exact reviewed PDF snapshots were prepared and validated locally. The GitHub connector available in this automated session accepts text content but has no local binary-file upload parameter, so this draft PR commits their fingerprints/review maps rather than claiming the PDF bytes are present. This is a blocking publication gap before the PR is marked ready."
+}

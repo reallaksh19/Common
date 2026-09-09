@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Chemistry Publication Review"
+  short_description: "Package completed Chemistry chapters for learner-first draft PR review with validation and explicit limits."
+  default_prompt: "Package this completed Grade 9 Chemistry chapter for draft-PR review. Freeze learner artifacts, source/corpus evidence, review maps, validation, hashes and reproducibility limits; do not overclaim human or classroom validation."
