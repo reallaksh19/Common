@@ -110,5 +110,31 @@ Checked against that job, four things in the current schema block it — three o
 
 Note for whoever picks this up: P0 and P1 share a root cause — both are "use the concept/mastery infrastructure that `grade9-concept-architect` and `grade9-learning-enrichment` already define, instead of the parallel simplified version this PR built." Doing P0's crosswalk and rename first makes P1's concept-level mastery state a natural extension rather than a second migration.
 
+## 5. Status and revised plan for the remaining findings (max-reuse)
+
+**Closed and pushed** (verified against the real pipeline, not just documented): A (routing/install), B (concept-ID crosswalk, machine-checked), C (`difficulty`→`task_type` + `source_difficulty` vector — a derived `learner_badge` was drafted and then removed, since `core-teaching.md:60` explicitly forbids inventing exam-difficulty badges without empirical calibration), L (B80-L2 idealisation note), M (B30-L2 grayscale fix, backed by an actual dashed-arrow render change).
+
+**Still open:** D, E, F, G, H, I, J, K, N, O. Before planning these, two things surfaced by re-reading the actual canonical skill files (not just their names) materially change the P1-P3 order above:
+
+1. `grade9-corpus-coverage-auditor` is now a **deprecated redirect** to `grade9-math-corpus-coverage-auditor` ("do not maintain a second independent set of corpus-audit rules") — it is Math/JEE-specific, not the subject-agnostic engine Finding F assumed.
+2. `grade9-physics-subtopic-book-builder` — already installed and routed, unlike PR #155's two new skills — already specifies almost everything findings D, E, G, I, J and N ask for: a D1-D5 anchor-difficulty → H1-H3 support mapping, a paired `STUDY_GUIDE` + `TRANSFER_BOOK` product split (not one mandatory merged "core"), a full external/ExamSIDE audit with an exact per-question field list and a **View A / View B** reconciliation (subtopic→questions, and question→full support chain: scope → primary subtopic → concept taught → representation taught → first move taught → hints present → visual QA → solution present → source link valid → `COMPLETE`), blocking counters (`SUBTOPIC_MISSING=0`, `SUBTOPIC_DUPLICATE_PRIMARY=0`, ...), and a complete per-subtopic build sequence (§14).
+
+So `grade9-physics-publication`/`grade9-physics-examside` did not need to invent most of this — they need to become the **typed-schema/renderer layer executing `grade9-physics-subtopic-book-builder`'s already-correct contract**, not a second, weaker pedagogy system beside it.
+
+| Finding | Revised plan | Reuses |
+|---|---|---|
+| D + F | Merge into one fix: implement `check_ledger.py`'s reconciliation as View A/View B + the blocking counters, backed by `grade9-transfer-coverage-auditor` (not the deprecated corpus auditor) | subtopic-book-builder §11-13 (exact field list), `grade9-transfer-coverage-auditor` |
+| E | Split `product` into `STUDY_GUIDE`/`TRANSFER_BOOK` instead of one mandatory `core` object with baked-in Appendix A/B | subtopic-book-builder's existing paired product |
+| G | Subtopic-level batch protocol already exists (§14). The real gap is chapter closeout — add a new `grade9-physics-chapter-closeout-auditor` | `grade9-redox-chapter-closeout-auditor` (direct template: freeze corpus, backfill, `CHAPTER_DUPLICATE_PRIMARY_PLACEMENTS=0`) |
+| I + N | New sibling skill `grade9-physics-assimilation`; its independent-audit step grounds in `grade9-physics`'s own 10-step solution structure instead of Math's algebra checks | `grade9-math-assimilation`, ported almost directly — it already targets the "~50%-knowledge weak learner," including a First-Step Reference (its step 9) that resolves N |
+| J | Implement verbatim: concept-hidden mixed tests, errors routed back to concept IDs after marking | `grade9-textbook-publisher`'s existing "Learning mode vs testing mode" spec (written, just unused here) |
+| K | Type `concepts`/`grade_scope`/lesson blocks against the named tests | `grade9-physics/references/concept-book-see-realize-understand.md` (`SRU-01`..) |
+| O | Reuse the exact wording/test | IOQM builder's Wave 5 + "if another agent cannot continue without chat history, the handoff is incomplete" |
+| H | No existing richer figure/diagram engine to delegate to (checked `grade9-textbook-publisher` — no typed figure system there either). Stays local; defer until a real multi-representation need arises from an actual chapter-scale build | — |
+
+Aside (not a new finding, flagged for later): three different hint-numbering conventions coexist in the repo — `grade9-learning-enrichment` (H1=10%→H5=90%), `grade9-physics-subtopic-book-builder` (H1 NOTICE→H3 START), `grade9-math-assimilation` (H3 EXECUTION→H0 INDEPENDENT, reversed). Worth a unification pass outside this batch.
+
+Suggested next sequence: **D+F → E → J → K** (schema/mechanical, same shape as the closed batch) **→ I+N → G** (two new sibling skills, larger) **→ O** (doc-only) **→ H stays deferred.**
+
 ---
 *This document is a review consolidation only — no code or schema changes are made here. It is intended to be read alongside PR #155 by whoever drives its next revision.*
