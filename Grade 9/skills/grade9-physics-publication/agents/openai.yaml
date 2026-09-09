@@ -1,0 +1,14 @@
+interface:
+  display_name: Physics Publication
+  short_description: Visual Physics books with practice and handouts
+  default_prompt: Build a Physics learner book with concept diagrams, optional hints,
+    end solutions and a printable handout.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

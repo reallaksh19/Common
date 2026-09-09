@@ -1,0 +1,796 @@
+{
+  "$defs": {
+    "Block": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "heading",
+            "body",
+            "equation"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "text"
+      ],
+      "title": "Block",
+      "type": "object"
+    },
+    "Citation": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 65,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "title": "Locator",
+          "type": "string"
+        },
+        "verification": {
+          "const": "VERIFIED",
+          "title": "Verification",
+          "type": "string"
+        },
+        "adaptation_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adaptation Note"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "locator",
+        "verification"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "Figure": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "numberline",
+            "vt",
+            "tiles",
+            "compare",
+            "blank"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "const": "FINAL",
+          "title": "Status",
+          "type": "string"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Range"
+        },
+        "positions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Positions"
+        },
+        "displacement": {
+          "default": false,
+          "title": "Displacement",
+          "type": "boolean"
+        },
+        "leg_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leg Labels"
+        },
+        "ticks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ticks"
+        },
+        "show_endpoints": {
+          "default": true,
+          "title": "Show Endpoints",
+          "type": "boolean"
+        },
+        "trange": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trange"
+        },
+        "vrange": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vrange"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        },
+        "tticks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tticks"
+        },
+        "vticks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vticks"
+        },
+        "shade": {
+          "default": false,
+          "title": "Shade",
+          "type": "boolean"
+        },
+        "annotations": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {},
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotations"
+        },
+        "cols": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cols"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rows"
+        },
+        "figures": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Figure"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Figures"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "instruction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instruction"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "status"
+      ],
+      "title": "Figure",
+      "type": "object"
+    },
+    "GuidedSolution": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "figure": {
+          "$ref": "#/$defs/Figure"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "text",
+        "figure"
+      ],
+      "title": "GuidedSolution",
+      "type": "object"
+    },
+    "Handout": {
+      "additionalProperties": false,
+      "properties": {
+        "route": {
+          "$ref": "#/$defs/Figure"
+        },
+        "graph": {
+          "$ref": "#/$defs/Figure"
+        },
+        "left": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "title": "Left",
+          "type": "array"
+        },
+        "right": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "title": "Right",
+          "type": "array"
+        }
+      },
+      "required": [
+        "route",
+        "graph",
+        "left",
+        "right"
+      ],
+      "title": "Handout",
+      "type": "object"
+    },
+    "Lesson": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "kicker": {
+          "title": "Kicker",
+          "type": "string"
+        },
+        "intro": {
+          "title": "Intro",
+          "type": "string"
+        },
+        "figure": {
+          "$ref": "#/$defs/Figure"
+        },
+        "caption": {
+          "title": "Caption",
+          "type": "string"
+        },
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "minItems": 2,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "takeaway": {
+          "title": "Takeaway",
+          "type": "string"
+        },
+        "concept_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Concept Ids",
+          "type": "array"
+        },
+        "source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "practice_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Practice Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "kicker",
+        "intro",
+        "figure",
+        "caption",
+        "blocks",
+        "takeaway",
+        "concept_ids",
+        "source_refs"
+      ],
+      "title": "Lesson",
+      "type": "object"
+    },
+    "Question": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 15,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "primary_concept_id": {
+          "title": "Primary Concept Id",
+          "type": "string"
+        },
+        "secondary_concept_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Secondary Concept Ids",
+          "type": "array"
+        },
+        "recap": {
+          "title": "Recap",
+          "type": "string"
+        },
+        "solution": {
+          "$ref": "#/$defs/Solution"
+        },
+        "hints": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Hints",
+          "type": "array"
+        },
+        "repair_target": {
+          "title": "Repair Target",
+          "type": "string"
+        },
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "difficulty": {
+          "enum": [
+            "Apply",
+            "Explain",
+            "Connect",
+            "Transfer",
+            "Compare"
+          ],
+          "title": "Difficulty",
+          "type": "string"
+        },
+        "workspace": {
+          "title": "Workspace",
+          "type": "string"
+        },
+        "source_status": {
+          "enum": [
+            "ORIGINAL",
+            "SOURCE_VERIFIED",
+            "ADAPTED"
+          ],
+          "title": "Source Status",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "numeric_check": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Numeric Check"
+        },
+        "source_citation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Citation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "solution_figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "prompt",
+        "primary_concept_id",
+        "secondary_concept_ids",
+        "recap",
+        "solution",
+        "hints",
+        "repair_target",
+        "figure",
+        "difficulty",
+        "workspace",
+        "source_status",
+        "source_refs",
+        "numeric_check"
+      ],
+      "title": "Question",
+      "type": "object"
+    },
+    "Solution": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "minLength": 10,
+          "title": "Why",
+          "type": "string"
+        },
+        "method": {
+          "minLength": 10,
+          "title": "Method",
+          "type": "string"
+        },
+        "answer": {
+          "minLength": 3,
+          "title": "Answer",
+          "type": "string"
+        },
+        "keep": {
+          "minLength": 10,
+          "title": "Keep",
+          "type": "string"
+        }
+      },
+      "required": [
+        "why",
+        "method",
+        "answer",
+        "keep"
+      ],
+      "title": "Solution",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "edition": {
+      "title": "Edition",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "band": {
+      "enum": [
+        "B30",
+        "B80",
+        "B90"
+      ],
+      "title": "Band",
+      "type": "string"
+    },
+    "learner_label": {
+      "title": "Learner Label",
+      "type": "string"
+    },
+    "product": {
+      "enum": [
+        "core",
+        "question_bank"
+      ],
+      "title": "Product",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "FOR_USER_REVIEW",
+        "RELEASE_CANDIDATE"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "grade_scope": {
+      "additionalProperties": true,
+      "title": "Grade Scope",
+      "type": "object"
+    },
+    "placement": {
+      "additionalProperties": true,
+      "title": "Placement",
+      "type": "object"
+    },
+    "concepts": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Concepts",
+      "type": "array"
+    },
+    "topic_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Topic Ids",
+      "type": "array"
+    },
+    "frozen_questions": {
+      "title": "Frozen Questions",
+      "type": "integer"
+    },
+    "lessons": {
+      "items": {
+        "$ref": "#/$defs/Lesson"
+      },
+      "title": "Lessons",
+      "type": "array"
+    },
+    "questions": {
+      "items": {
+        "$ref": "#/$defs/Question"
+      },
+      "title": "Questions",
+      "type": "array"
+    },
+    "lesson_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Lesson Ids",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "handout": {
+      "$ref": "#/$defs/Handout"
+    },
+    "source_claim": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Claim"
+    },
+    "guided_solutions": {
+      "items": {
+        "$ref": "#/$defs/GuidedSolution"
+      },
+      "title": "Guided Solutions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "edition",
+    "title",
+    "band",
+    "learner_label",
+    "product",
+    "status",
+    "grade_scope",
+    "placement",
+    "concepts",
+    "topic_ids",
+    "frozen_questions",
+    "lessons",
+    "questions",
+    "lesson_ids",
+    "sources",
+    "handout"
+  ],
+  "title": "Model",
+  "type": "object"
+}

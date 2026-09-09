@@ -1,0 +1,14 @@
+interface:
+  display_name: Physics ExamSIDE Practice
+  short_description: Source-grounded Physics practice with staged hints
+  default_prompt: Build a source-grounded Physics question bank with staged hints,
+    complete representations and teaching solutions.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
