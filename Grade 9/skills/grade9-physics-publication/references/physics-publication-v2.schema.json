@@ -138,6 +138,17 @@
           },
           "title": "Mastery Path",
           "type": "array"
+        },
+        "sru": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SRUAcceptance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1029,6 +1040,217 @@
       "title": "Questions",
       "type": "object"
     },
+    "SRUAcceptance": {
+      "additionalProperties": false,
+      "properties": {
+        "no_naked_equation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "No Naked Equation"
+        },
+        "every_symbol_speaks": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Every Symbol Speaks"
+        },
+        "every_term_has_origin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Every Term Has Origin"
+        },
+        "explains_unusual_mathematics": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Explains Unusual Mathematics"
+        },
+        "verbalize_before_calculating": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verbalize Before Calculating"
+        },
+        "prediction_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prediction Required"
+        },
+        "misconception_confrontation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Misconception Confrontation"
+        },
+        "reconstruction_test": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reconstruction Test"
+        },
+        "source_traceability": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Traceability"
+        },
+        "no_silent_source_repair": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "No Silent Source Repair"
+        },
+        "symbolic_depth": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbolic Depth"
+        },
+        "assumptions_stated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assumptions Stated"
+        },
+        "representation_translation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Representation Translation"
+        },
+        "scaling_reasoning": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scaling Reasoning"
+        },
+        "transfer_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transfer Required"
+        },
+        "reviewer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "title": "SRUAcceptance",
+      "type": "object"
+    },
     "Solution": {
       "additionalProperties": false,
       "properties": {
@@ -1150,7 +1372,9 @@
     "product": {
       "enum": [
         "core",
-        "question_bank"
+        "question_bank",
+        "study_guide",
+        "transfer_book"
       ],
       "title": "Product",
       "type": "string"
@@ -1234,7 +1458,15 @@
       "type": "array"
     },
     "handout": {
-      "$ref": "#/$defs/Handout"
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Handout"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "source_claim": {
       "anyOf": [
@@ -1277,7 +1509,6 @@
     "questions",
     "lesson_ids",
     "sources",
-    "handout",
     "qa"
   ],
   "title": "Model",

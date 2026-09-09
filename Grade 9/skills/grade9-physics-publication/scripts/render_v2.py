@@ -228,7 +228,7 @@ class Book:
         for k in range(0,len(self.all_questions),2):
             n+=1
             for q in self.all_questions[k:k+2]:self.planned[q['id']]=n
-        if self.d['product']=='core':n+=1;self.planned['handout']=n
+        if self.d['product'] in ('core','study_guide'):n+=1;self.planned['handout']=n
         for k in range(0,len(self.all_questions),4):
             n+=1
             for q in self.all_questions[k:k+4]:self.planned['hint-'+q['id']]=n
@@ -239,8 +239,8 @@ class Book:
             n+=1
             for q in self.all_questions[k:k+2]:self.planned['solution-'+q['id']]=n
         for p in self.d.get('lessons',[]):self.lesson(p)
-        for k in range(0,len(self.all_questions),2):self.question_page(self.all_questions[k:k+2],k//2+1,self.d['product']=='question_bank')
-        if self.d['product']=='core':self.handout()
+        for k in range(0,len(self.all_questions),2):self.question_page(self.all_questions[k:k+2],k//2+1,self.d['product'] in ('question_bank','transfer_book'))
+        if self.d['product'] in ('core','study_guide'):self.handout()
         self.hint_pages()
         self.guided_solutions()
         self.solution_pages()

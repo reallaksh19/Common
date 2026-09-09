@@ -177,8 +177,17 @@ handout['right'][-1]['text']='<b>Check:</b> (m/s) × s = m. Use a rectangle for 
 handout['left']=[B('body','<b>Distance:</b> add every path length.<br/><b>Displacement:</b> the signed endpoint change.'),B('equation','Δx = x<sub>f</sub> − x<sub>i</sub>'),B('body','Δx: displacement; x<sub>i</sub>: initial position;<br/>x<sub>f</sub>: final position. Here, distance is 8 m and Δx is +4 m.'),B('body','<b>Check:</b> distance ≥ |Δx|. Bars mean size.<br/><b>Rebuild:</b> trace the path, then compare its endpoints.')]
 b30['guided_solutions'][0]['figure']['show_endpoints']=False
 b30['guided_solutions'][0]['figure']['leg_labels']=['(b) +1 to −2','(c) −2 to +3']
+# Concept-hidden mixed test (finding J): one question per concept, drawn from the shared common_questions
+# so it stays valid whether or not a band overrides A4/A5/A7/A8. Neither render_v2.py's Appendix A page nor
+# this list exposes the concept ID on the question itself - task_type only names the cognitive operation -
+# so no separate rendering change is needed to keep the label hidden during the attempt.
+def mixed_test(band):
+ ids=[f'{band}-A1',f'{band}-A2',f'{band}-A5',f'{band}-A6']
+ concepts=[C[1],C[0],C[2],C[3]]
+ return dict(test_id=f'{band}-MIXED-01',question_ids=ids,diagnosis_map=dict(zip(ids,concepts)))
 for b in [b30,b80]:
  b['handout']=copy.deepcopy(handout);b['lesson_ids']=[p['id'] for p in b['lessons']]
+ b['mixed_tests']=[mixed_test(b['band'])]
  (ROOT/'examples'/('motion_'+b['band']+'_v2.json')).write_text(json.dumps(b,ensure_ascii=False,indent=2))
 bank=copy.deepcopy(b80);bank.update(product='question_bank',title='Motion · Optional-hint practice',learner_label='Optional-hint practice',band='B80',lessons=[],lesson_ids=[])
 bank['source_claim']='Original-question demonstration of the Examside workflow. No exam attribution or external-corpus completeness claimed.'

@@ -1303,7 +1303,23 @@
       "transfer_check": "Give a triangular (accelerating) v-t graph and ask the learner to justify why the answer is not simply the final velocity."
     }
   ],
-  "mixed_tests": [],
+  "mixed_tests": [
+    {
+      "test_id": "B30-MIXED-01",
+      "question_ids": [
+        "B30-A1",
+        "B30-A2",
+        "B30-A5",
+        "B30-A6"
+      ],
+      "diagnosis_map": {
+        "B30-A1": "PHY-MOT-DISP-01",
+        "B30-A2": "PHY-MOT-DIST-01",
+        "B30-A5": "PHY-MOT-VTAREA-01",
+        "B30-A6": "PHY-MOT-VTDIST-01"
+      }
+    }
+  ],
   "qa": {
     "source_qc_complete": true,
     "answers_verified": false,

@@ -100,6 +100,22 @@ class Handout(Strict):
 # generic Grade 9 tool reading concepts[]/sources[]/misconceptions[]/project/qa works unmodified across
 # subjects, per grade9-workflow.md S12: "generated from ... grade9-master.schema.json or a compatible
 # extension."
+# SRU-01..15 (grade9-physics/references/concept-book-see-realize-understand.md). Several dimensions -
+# prediction_required, reconstruction_test, transfer_required - are genuine pedagogical judgment calls,
+# not structural facts a schema can compute. Per this project's own no-self-attested-PASS convention
+# (validate_v2.py's docstring), this type makes the gate machine-checkable and ready to record an
+# independent reviewer's finding; it must not be pre-filled by whoever authored the content being judged.
+# validate() below enforces that: any populated dimension requires `reviewer` to be set.
+class SRUAcceptance(Strict):
+    no_naked_equation:Optional[bool]=None;every_symbol_speaks:Optional[bool]=None
+    every_term_has_origin:Optional[bool]=None;explains_unusual_mathematics:Optional[bool]=None
+    verbalize_before_calculating:Optional[bool]=None;prediction_required:Optional[bool]=None
+    misconception_confrontation:Optional[bool]=None;reconstruction_test:Optional[bool]=None
+    source_traceability:Optional[bool]=None;no_silent_source_repair:Optional[bool]=None
+    symbolic_depth:Optional[bool]=None;assumptions_stated:Optional[bool]=None
+    representation_translation:Optional[bool]=None;scaling_reasoning:Optional[bool]=None
+    transfer_required:Optional[bool]=None
+    reviewer:Optional[str]=None;notes:Optional[str]=None
 class Concept(Strict):
     concept_id:str;title:str;claim:Optional[str]=None
     canonical_concept_id:str  # crosswalk to the chapter source authority (CB1..CB12 for Motion), checked below
@@ -109,6 +125,7 @@ class Concept(Strict):
     challenge_question_ids:list[str]=Field(default_factory=list)
     misconception_ids:list[str]=Field(default_factory=list)
     mastery_path:list[str]=Field(default_factory=list)
+    sru:Optional[SRUAcceptance]=None
 class Source(Strict):
     source_id:str;title:str
     provenance_class:Literal['USER_UPLOADED_ANCHOR','OFFICIAL_PYQ','SECONDARY_VERIFIED_PYQ','PUBLISHED_REFERENCE','ORIGINAL_CALIBRATED','RECONSTRUCTED_FROM_SCAN']
@@ -131,14 +148,19 @@ class QA(Strict):
 class Questions(Strict):
     anchors:list[Question];core_calibrated:list[Question];challenges:list[Question]
     def all(self):return self.anchors+self.core_calibrated+self.challenges
+# 'core' keeps the original merged Student-Core-with-Appendices shape (still valid: this is a profile
+# choice, not a deprecation). 'study_guide'/'transfer_book' are the selectable split matching
+# grade9-physics-subtopic-book-builder's STUDY_GUIDE + TRANSFER_BOOK product pair (finding E: Appendix
+# A/B, hints and solutions were mandatory inside every Core book; audit/self-check content must be able
+# to live outside the learner Core without being considered lost).
 class Model(Strict):
     schema_version:Literal['2.0'];edition:str;title:str;band:Literal['B30','B80','B90'];learner_label:str
-    product:Literal['core','question_bank'];status:Literal['FOR_USER_REVIEW','RELEASE_CANDIDATE']
+    product:Literal['core','question_bank','study_guide','transfer_book'];status:Literal['FOR_USER_REVIEW','RELEASE_CANDIDATE']
     project:Project;grade_scope:dict;placement:dict;concepts:list[Concept];topic_ids:list[str];frozen_questions:int
     lessons:list[Lesson];questions:Questions;lesson_ids:list[str];sources:list[Source]
     misconceptions:list[Misconception]=Field(default_factory=list)
     mixed_tests:list[dict]=Field(default_factory=list)
-    handout:Handout;source_claim:Optional[str]=None
+    handout:Optional[Handout]=None;source_claim:Optional[str]=None  # required only for core/study_guide, enforced in validate()
     guided_solutions:list[GuidedSolution]=Field(default_factory=list)
     qa:QA
 
@@ -158,16 +180,44 @@ def validate(d):
     for c in d['concepts']:
         cc=c.get('canonical_concept_id')
         assert cc and isinstance(cc,str),f"concept {c['concept_id']} missing canonical_concept_id crosswalk"
+        sru=c.get('sru')
+        if sru and any(v is not None for k,v in sru.items() if k not in('reviewer','notes')):
+            assert sru.get('reviewer'),f"concept {c['concept_id']} has SRU dimensions set without a reviewer - cannot self-attest pedagogical acceptance"
+    # Product profile: 'core' keeps both components; 'study_guide'/'question_bank'/'transfer_book' select
+    # one, so audit/self-check content can live in a separate document without being "lost" (finding E).
+    has_lessons_component=d['product'] in ('core','study_guide')
+    has_assessment_component=d['product'] in ('core','question_bank','transfer_book')
     qbuckets=d['questions'];all_qs=qbuckets['anchors']+qbuckets['core_calibrated']+qbuckets['challenges']
-    assert len(all_qs)==d['frozen_questions'] and len(all_qs)>=4,'question denominator changed'
+    assert len(all_qs)==d['frozen_questions'],'question denominator changed'
+    assert not has_assessment_component or len(all_qs)>=4,'question_bank/transfer_book/core requires at least 4 questions'
     assert len({q['id'] for q in all_qs})==len(all_qs),'duplicate question IDs'
+    all_qids={q['id'] for q in all_qs}
+    for mt in d['mixed_tests']:
+        # Concept-hidden mixed test (finding J / grade9-textbook-publisher's "learning mode vs testing
+        # mode": mixed tests hide concept labels, then route errors back to exact concept IDs).
+        assert set(mt['question_ids'])<=all_qids,f"mixed test {mt['test_id']} references an unknown question"
+        assert len(mt['question_ids'])==len(set(mt['question_ids'])),f"mixed test {mt['test_id']} repeats a question"
+        dm=mt.get('diagnosis_map') or {}
+        assert set(dm.keys())==set(mt['question_ids']),f"mixed test {mt['test_id']} diagnosis_map must cover exactly its question_ids"
+        assert set(dm.values())<=ids,f"mixed test {mt['test_id']} diagnosis_map points at an unknown concept"
+        by_q={q['id']:q for q in all_qs}
+        mismatched=[qid for qid in mt['question_ids'] if by_q[qid]['primary_concept_id']!=dm[qid]]
+        assert not mismatched,f"mixed test {mt['test_id']} diagnosis_map disagrees with the question's actual primary_concept_id: {mismatched}"
     assert d['lesson_ids']==[p['id'] for p in d['lessons']],'lesson identity mismatch'
-    if d['product']=='core':
-        assert d['lessons'] and d['handout'],'core requires lessons and Appendix B'
+    if has_lessons_component:
+        assert d['lessons'] and d.get('handout'),'core/study_guide requires lessons and Appendix B'
         assert {c for p in d['lessons'] for c in p['concept_ids']}==ids,'concept coverage'
+        practice_targets=all_qids|{'solution-'+g['id'] for g in d.get('guided_solutions',[])}
         for p in d['lessons']:
             assert set(p['source_refs'])<=sources,'unknown lesson source'
-    assert {q['primary_concept_id'] for q in all_qs}==ids,'assessment leaves primary concept untested'
+            assert set(p.get('practice_ids',[]))<=practice_targets,f"lesson {p['id']} links a practice_id that resolves to no question or guided solution"
+        for g in d.get('guided_solutions',[]):
+            assert g['id'] in d['lesson_ids'],f"guided_solutions[{g['id']}] returns to a lesson this document doesn't own"
+    else:
+        assert not d['lessons'],'question_bank/transfer_book must not also carry lessons - keep the Core as the single lesson owner'
+        assert not d.get('guided_solutions'),'question_bank/transfer_book must not carry guided_solutions - they return to lesson pages this document does not own'
+    if has_assessment_component and all_qs:
+        assert {q['primary_concept_id'] for q in all_qs}==ids,'assessment leaves primary concept untested'
     for q in all_qs:
         assert q['primary_concept_id'] in ids and set(q['secondary_concept_ids'])<=ids,'unknown concept'
         assert set(q['source_refs'])<=sources,'unknown question source'
@@ -176,7 +226,7 @@ def validate(d):
             from urllib.parse import urlparse
             u=urlparse(cite['url']);assert u.scheme=='https' and u.netloc and not any(c.isspace() for c in cite['url']),'invalid source URL'
             if q['source_status']=='ADAPTED':assert cite.get('adaptation_note'),'adaptation must be explicit'
-        if d['product']=='core':assert q['repair_target'] in d['lesson_ids'],'unresolved repair'
+        if has_lessons_component:assert q['repair_target'] in d['lesson_ids'],'unresolved repair'
         assert len(set(q['hints']))==3,'repeated hints'
         assert q['solution']['method']!=q['solution']['answer'],'method duplicates answer'
         if 'graph shown' in q['question'] or 'Use the graph' in q['question']:assert q['figure'],'missing dependent graph'

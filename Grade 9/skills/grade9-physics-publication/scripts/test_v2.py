@@ -17,7 +17,10 @@ def denominator(x):x['questions']['core_calibrated'].pop()
 def unknown(x):x['unrendered_hidden_field']='must fail'
 def missingregion(x):x['questions']['core_calibrated'][5]['figure']['segments'].pop()
 def missingcitation(x):x['questions']['core_calibrated'][0]['source_status']='SOURCE_VERIFIED'
-for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,denominator,unknown,missingregion,missingcitation]:
+def sruselfattest(x):x['concepts'][0]['sru']={'no_naked_equation':True}  # no reviewer set: must be rejected
+def mixedtestbadconcept(x):x['mixed_tests'][0]['diagnosis_map'][x['mixed_tests'][0]['question_ids'][0]]=x['concepts'][0]['concept_id']
+def mixedtestunknownq(x):x['mixed_tests'][0]['question_ids'].append('B30-A99')
+for fn in [drop_diagram,placeholder,nohandout,wrongnumber,brokenrepair,nographtask,mismatch,duplicate,repeatedhint,denominator,unknown,missingregion,missingcitation,sruselfattest,mixedtestbadconcept,mixedtestunknownq]:
     v=copy.deepcopy(d);fn(v)
     try:validate(v)
     except (AssertionError,ValueError):print('REJECTED',fn.__name__)
@@ -26,7 +29,7 @@ assert areas([[0,6,4,-2]])==(10,8),'crossing inside unsplit segment'
 assert areas([[0,-3,2,-3]])==(6,-6),'negative rectangle'
 assert areas([[0,0,3,0]])==(0,0),'rest'
 validate(d)
-print('13 negative cases rejected; three physics boundary cases and positive model passed.')
+print('16 negative cases rejected; three physics boundary cases and positive model passed.')
 # Synthetic source-link fixture tests plumbing, not attribution or an actual exam.
 import tempfile
 from render_v2 import Book
@@ -40,3 +43,21 @@ with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
     result=audit(p/'model.json',p/'book.pdf')
     assert len(out['external_links'])==2 and not result['text_overlap_findings'],'external citation rendering'
 print('Synthetic citation fixture: question and solution URI links verified in actual PDF.')
+# Finding E: product profile must be genuinely selectable, not just typed. A transfer_book with no
+# lessons/handout, and a study_guide with no questions, must both validate on their own.
+tb=copy.deepcopy(d);tb.update(product='transfer_book',lessons=[],lesson_ids=[],handout=None,guided_solutions=[])
+for q in tb['questions']['core_calibrated']:q['repair_target']='EXTERNAL-CORE-LESSON'
+validate(tb)
+sg=copy.deepcopy(d);sg.update(product='study_guide',questions={'anchors':[],'core_calibrated':[],'challenges':[]},frozen_questions=0,mixed_tests=[])
+for p in sg['lessons']:p['practice_ids']=[]  # a zero-question study_guide cannot link practice questions it doesn't carry
+validate(sg)
+print('Product profile: transfer_book (no lessons) and study_guide (no questions) both validate independently.')
+# Validating is not rendering: prove both profiles actually render without crashing (this is exactly how
+# the product=='core'-only gates in render_v2.py's handout/question_page logic were caught and fixed).
+with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
+    p=Path(td)
+    tb_out=Book(tb,p/'tb.pdf').render()
+    assert 'handout' not in tb_out['destinations'],'transfer_book must not render Appendix B'
+    sg_out=Book(sg,p/'sg.pdf').render()
+    assert 'handout' in sg_out['destinations'] and not any(k.startswith('questions-') for k in sg_out['destinations']),'study_guide must render Appendix B and no question pages'
+print('Product profile: transfer_book and study_guide both render without crashing, with the right pages present/absent.')
