@@ -28,19 +28,23 @@
   "concepts": [
     {
       "id": "PHY-MOT-DIST-01",
-      "claim": "Distance adds all path lengths and is non-negative."
+      "claim": "Distance adds all path lengths and is non-negative.",
+      "canonical_concept_id": "CB1"
     },
     {
       "id": "PHY-MOT-DISP-01",
-      "claim": "In one dimension, displacement is final minus initial position in a declared positive direction."
+      "claim": "In one dimension, displacement is final minus initial position in a declared positive direction.",
+      "canonical_concept_id": "CB1"
     },
     {
       "id": "PHY-MOT-VTAREA-01",
-      "claim": "Signed area between velocity–time graph and time axis gives displacement over the interval."
+      "claim": "Signed area between velocity–time graph and time axis gives displacement over the interval.",
+      "canonical_concept_id": "CB12"
     },
     {
       "id": "PHY-MOT-VTDIST-01",
-      "claim": "Distance is the sum of positive area magnitudes, splitting at every sign change."
+      "claim": "Distance is the sum of positive area magnitudes, splitting at every sign change.",
+      "canonical_concept_id": "CB12"
     }
   ],
   "topic_ids": [
@@ -203,6 +207,10 @@
         {
           "role": "body",
           "text": "Thus graph height × width gives displacement. Units: (m/s) × s = m."
+        },
+        {
+          "role": "body",
+          "text": "The abrupt switch at t = 4 s is an idealisation. It contributes no extra time or distance."
         },
         {
           "role": "equation",
@@ -494,7 +502,16 @@
       ],
       "repair_target": "B80-L1",
       "figure": null,
-      "difficulty": "Apply",
+      "task_type": "Apply",
+      "source_difficulty": {
+        "physical_model_selection": 1,
+        "conceptual_reasoning": 2,
+        "representation_translation": 0,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 1,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 2
+      },
       "workspace": "Start → turning point → finish\nFinal position: ____\nDistance: ____   Displacement: ____",
       "source_status": "ORIGINAL",
       "source_refs": [
@@ -533,7 +550,16 @@
       ],
       "repair_target": "B80-L1",
       "figure": null,
-      "difficulty": "Apply",
+      "task_type": "Apply",
+      "source_difficulty": {
+        "physical_model_selection": 1,
+        "conceptual_reasoning": 2,
+        "representation_translation": 0,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 1,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 2
+      },
       "workspace": "Sketch the line and explain why crossing zero is not a turn.",
       "source_status": "ORIGINAL",
       "source_refs": [
@@ -571,7 +597,16 @@
       ],
       "repair_target": "B80-L1",
       "figure": null,
-      "difficulty": "Explain",
+      "task_type": "Explain",
+      "source_difficulty": {
+        "physical_model_selection": 3,
+        "conceptual_reasoning": 4,
+        "representation_translation": 1,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 3,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 4
+      },
       "workspace": "Draw and label two routes. Keep the endpoints the same.",
       "source_status": "ORIGINAL",
       "source_refs": [
@@ -601,7 +636,16 @@
       ],
       "repair_target": "B80-L1",
       "figure": null,
-      "difficulty": "Transfer",
+      "task_type": "Transfer",
+      "source_difficulty": {
+        "physical_model_selection": 6,
+        "conceptual_reasoning": 7,
+        "representation_translation": 4,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 6,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 7
+      },
       "workspace": "Show the route or working that makes your answer clear.",
       "source_status": "ORIGINAL",
       "source_refs": [
@@ -640,7 +684,16 @@
       ],
       "repair_target": "B80-L2",
       "figure": null,
-      "difficulty": "Compare",
+      "task_type": "Compare",
+      "source_difficulty": {
+        "physical_model_selection": 5,
+        "conceptual_reasoning": 6,
+        "representation_translation": 3,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 5,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 6
+      },
       "workspace": "Show the route or working that makes your answer clear.",
       "source_status": "ORIGINAL",
       "source_refs": [
@@ -707,7 +760,16 @@
         ],
         "shade": false
       },
-      "difficulty": "Apply",
+      "task_type": "Apply",
+      "source_difficulty": {
+        "physical_model_selection": 1,
+        "conceptual_reasoning": 2,
+        "representation_translation": 4,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 3,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 2
+      },
       "workspace": "Show the route or working that makes your answer clear.",
       "source_status": "ORIGINAL",
       "source_refs": [
@@ -799,7 +861,16 @@
         ],
         "shade": false
       },
-      "difficulty": "Transfer",
+      "task_type": "Transfer",
+      "source_difficulty": {
+        "physical_model_selection": 6,
+        "conceptual_reasoning": 7,
+        "representation_translation": 9,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 8,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 7
+      },
       "workspace": "Show the route or working that makes your answer clear.",
       "source_status": "ORIGINAL",
       "source_refs": [
@@ -890,7 +961,16 @@
         ],
         "shade": false
       },
-      "difficulty": "Transfer",
+      "task_type": "Transfer",
+      "source_difficulty": {
+        "physical_model_selection": 6,
+        "conceptual_reasoning": 7,
+        "representation_translation": 9,
+        "vector_spatial_reasoning": 0,
+        "equation_construction": 8,
+        "experimental_data_reasoning": 0,
+        "constraints_cases": 7
+      },
       "workspace": "Show the route or working that makes your answer clear.",
       "source_status": "ORIGINAL",
       "source_refs": [

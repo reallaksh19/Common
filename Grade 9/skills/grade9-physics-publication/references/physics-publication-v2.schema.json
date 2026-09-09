@@ -527,7 +527,7 @@
             }
           ]
         },
-        "difficulty": {
+        "task_type": {
           "enum": [
             "Apply",
             "Explain",
@@ -535,8 +535,19 @@
             "Transfer",
             "Compare"
           ],
-          "title": "Difficulty",
+          "title": "Task Type",
           "type": "string"
+        },
+        "source_difficulty": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceDifficulty"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "workspace": {
           "title": "Workspace",
@@ -604,7 +615,7 @@
         "hints",
         "repair_target",
         "figure",
-        "difficulty",
+        "task_type",
         "workspace",
         "source_status",
         "source_refs",
@@ -644,6 +655,97 @@
         "keep"
       ],
       "title": "Solution",
+      "type": "object"
+    },
+    "SourceDifficulty": {
+      "additionalProperties": false,
+      "properties": {
+        "physical_model_selection": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Physical Model Selection"
+        },
+        "conceptual_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conceptual Reasoning"
+        },
+        "representation_translation": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Representation Translation"
+        },
+        "vector_spatial_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vector Spatial Reasoning"
+        },
+        "equation_construction": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Equation Construction"
+        },
+        "experimental_data_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experimental Data Reasoning"
+        },
+        "constraints_cases": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Constraints Cases"
+        }
+      },
+      "title": "SourceDifficulty",
       "type": "object"
     }
   },

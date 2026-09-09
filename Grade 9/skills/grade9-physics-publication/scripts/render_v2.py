@@ -38,8 +38,8 @@ class Book:
         c.line(x1,H-y1,x2,H-y2);c.setDash([])
     def rect(self,x,y,w,h,fill,stroke=None):
         c=self.c;c.setFillColor(colors.HexColor(fill));c.setStrokeColor(colors.HexColor(stroke or fill));c.rect(x,H-y-h,w,h,fill=1,stroke=bool(stroke))
-    def arrow(self,x1,y1,x2,y2,color=TEAL,width=2.3):
-        self.line(x1,y1,x2,y2,color,width);a=math.atan2(y2-y1,x2-x1)
+    def arrow(self,x1,y1,x2,y2,color=TEAL,width=2.3,dash=None):
+        self.line(x1,y1,x2,y2,color,width,dash);a=math.atan2(y2-y1,x2-x1)
         for turn in [-0.45,0.45]:self.line(x2,y2,x2-8*math.cos(a+turn),y2-8*math.sin(a+turn),color,width)
     def anchor(self,id,y=100):
         if id in self.dest:raise ValueError('Duplicate anchor '+id)
@@ -102,8 +102,8 @@ class Book:
                     self.line(px(a),yy-12,px(a),yy+5,INK,1.5)
                     self.label(s,px(a)-14,yy+26+dy,10.5)
             if f.get('displacement') and len(positions)>1 and positions[0]!=positions[-1]:
-                ay=yy-24;self.arrow(px(positions[0]),ay,px(positions[-1]),ay,RED,2.1)
-                self.label('change from start to finish',x+30,y+h-39,10.5,RED)
+                ay=yy-24;self.arrow(px(positions[0]),ay,px(positions[-1]),ay,RED,2.4,dash=[6,3])
+                self.label('displacement arrow (dashed)',x+30,y+h-39,10.5,RED)
         elif kind=='vt':
             tmin,tmax=f['trange'];vmin,vmax=f['vrange'];l=x+44;r=x+w-26;top=y+31;bot=y+h-39
             px=lambda t:l+(t-tmin)/(tmax-tmin)*(r-l)
@@ -161,7 +161,7 @@ class Book:
         self.start(title,f'Practice set {idx} / {math.ceil(len(self.d["questions"])/2)}',subtitle,f'questions-{idx}')
         for j,q in enumerate(qs):
             y=134+j*200;self.anchor(q['id'],y)
-            self.text(f"{q['label']}  ·  {q['difficulty']}",40,y,730,13,bold=True,color=TEAL)
+            self.text(f"{q['label']}  ·  {q['task_type']}",40,y,730,13,bold=True,color=TEAL)
             self.text(q['prompt'],40,y+25,410,12,maxh=100)
             if q.get('figure'):self.figure(q['figure'],476,y+12,320,155,assessment=True)
             else:

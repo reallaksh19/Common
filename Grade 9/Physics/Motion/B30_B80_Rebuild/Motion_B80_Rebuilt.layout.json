@@ -853,6 +853,18 @@
         502,
         294.12,
         300,
+        31.68
+      ],
+      "text": "The abrupt switch at t = 4 s is an idealisation. It contributes no extra time or distance.",
+      "size": 12
+    },
+    {
+      "page": 2,
+      "kind": "text",
+      "box": [
+        502,
+        335.8,
+        300,
         22.44
       ],
       "text": "\u0394x = +12 \u2212 2 = +10 m",
@@ -863,7 +875,7 @@
       "kind": "text",
       "box": [
         502,
-        326.56,
+        368.24,
         300,
         22.44
       ],
@@ -875,7 +887,7 @@
       "kind": "text",
       "box": [
         502,
-        359.0,
+        400.68,
         300,
         31.68
       ],

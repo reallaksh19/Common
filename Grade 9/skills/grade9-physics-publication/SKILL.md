@@ -12,6 +12,7 @@ Teach the physical idea before compressing it into notation. A diagram placehold
 1. Read the attached skills, books and specified repository first. Back up originals and previous outputs with hashes.
 2. Lock the product: source-preserving reconstruction, original teaching, or explicitly authorised rewrite. A design benchmark on different subtopics does not become the content source. Do not call a new replacement a zero-loss reconstruction.
 3. Use canonical `grade9-physics`, `grade9-physics-subtopic-book-builder` and `grade9-publication` when available. This skill is their executable Core/publication adapter. Keep subject authority and source IDs; layout must not change physics.
+   **Precedence:** installed via `Grade 9/install_skills.py` and routed from `../grade9/SKILL.md`. Choose `grade9-physics-subtopic-book-builder` when the deliverable is the paired Study Guide + ExamSIDE transfer book; choose this skill when the deliverable is a typed, schema-validated, render-audited B30/B80/B90 Core PDF for a bounded pilot subtopic. They are not interchangeable defaults for the same request — pick by deliverable shape, not by which skill is read first.
 4. Read [core-teaching.md](references/core-teaching.md) before authoring; [schema-and-layout.md](references/schema-and-layout.md) before rendering; [review-and-anti-drift.md](references/review-and-anti-drift.md) before certifying.
 5. Use `grade9-physics-examside` for external ExamSIDE/PYQ collections. Original examples must not acquire an exam badge or a claim of complete external coverage.
 

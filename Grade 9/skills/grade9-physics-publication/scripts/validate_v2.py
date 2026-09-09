@@ -51,10 +51,26 @@ class Citation(Strict):
     locator:str=Field(min_length=1)
     verification:Literal['VERIFIED']
     adaptation_note:Optional[str]=None
+class SourceDifficulty(Strict):
+    physical_model_selection:Optional[int]=None;conceptual_reasoning:Optional[int]=None
+    representation_translation:Optional[int]=None;vector_spatial_reasoning:Optional[int]=None
+    equation_construction:Optional[int]=None;experimental_data_reasoning:Optional[int]=None
+    constraints_cases:Optional[int]=None
+    @model_validator(mode='after')
+    def dims_in_range(self):
+        for k,v in self.__dict__.items():
+            assert v is None or 0<=v<=10,f'{k} out of 0-10 range'
+        return self
 class Question(Strict):
     id:str;label:str;prompt:str=Field(min_length=15);primary_concept_id:str;secondary_concept_ids:list[str]
     recap:str;solution:Solution;hints:list[str]=Field(min_length=3,max_length=3);repair_target:str
-    figure:Optional[Figure];difficulty:Literal['Apply','Explain','Connect','Transfer','Compare'];workspace:str
+    figure:Optional[Figure]
+    task_type:Literal['Apply','Explain','Connect','Transfer','Compare']
+    # source_difficulty is the cognitive-profile vector (grade9 router rule 3 / grade9-physics difficulty
+    # vector). No derived Easy/Medium/Hard badge: core-teaching.md explicitly forbids inventing mastery or
+    # exam-difficulty badges without empirical calibration.
+    source_difficulty:Optional[SourceDifficulty]=None
+    workspace:str
     source_status:Literal['ORIGINAL','SOURCE_VERIFIED','ADAPTED'];source_refs:list[str];numeric_check:Optional[dict]
     source_citation:Optional[Citation]=None
     solution_figure:Optional[Figure]=None
@@ -83,6 +99,9 @@ def validate(d):
     Model.model_validate(d)
     ids={c['id'] for c in d['concepts']};sources={s['id'] for s in d['sources']}
     assert len(ids)==len(d['concepts']),'duplicate concept IDs'
+    for c in d['concepts']:
+        cc=c.get('canonical_concept_id')
+        assert cc and isinstance(cc,str),f"concept {c['id']} missing canonical_concept_id crosswalk"
     assert len(d['questions'])==d['frozen_questions'] and len(d['questions'])>=4,'question denominator changed'
     assert len({q['id'] for q in d['questions']})==len(d['questions']),'duplicate question IDs'
     assert d['lesson_ids']==[p['id'] for p in d['lessons']],'lesson identity mismatch'

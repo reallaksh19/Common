@@ -1168,10 +1168,10 @@
       "box": [
         70,
         353,
-        139.9658203125,
+        154.059814453125,
         12.075
       ],
-      "text": "change from start to finish",
+      "text": "displacement arrow (dashed)",
       "size": 10.5
     },
     {
@@ -1183,7 +1183,7 @@
         414,
         30.360000000000003
       ],
-      "text": "The blue return arrow is still part of the journey. The red arrow joins only start and finish.",
+      "text": "The solid return leg is still part of the path. The dashed arrow joins only start and finish.",
       "size": 11.5
     },
     {
@@ -1539,10 +1539,10 @@
       "box": [
         70,
         353,
-        139.9658203125,
+        154.059814453125,
         12.075
       ],
-      "text": "change from start to finish",
+      "text": "displacement arrow (dashed)",
       "size": 10.5
     },
     {

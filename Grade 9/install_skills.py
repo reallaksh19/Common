@@ -25,6 +25,9 @@ SKILLS = [
     "grade9-textbook-publisher",
     "grade9-math",
     "grade9-physics",
+    "grade9-physics-subtopic-book-builder",
+    "grade9-physics-publication",
+    "grade9-physics-examside",
     "grade9-chemistry",
 ]
 
