@@ -7,7 +7,7 @@ description: Build source-grounded Grade 9–11 Physics ExamSIDE/PYQ transfer qu
 
 Build a question bank, not a second concept textbook. Use Physics teaching authority for modelling and `grade9-physics-publication` for rendering/audience rules. Keep it linked to the Core book; it does not replace Core Appendix A or Appendix B.
 
-Read [question-contract.md](references/question-contract.md) before extracting or authoring. Read [source-ledger.example.json](references/source-ledger.example.json) for the ledger shape. Run `scripts/check_ledger.py` before declaring source completeness.
+Read [question-contract.md](references/question-contract.md) before extracting or authoring. Read [source-ledger.example.json](references/source-ledger.example.json) for the ledger shape. Run `scripts/check_ledger.py` before declaring source completeness, then `scripts/reconcile.py <ledger.json> <published_model.json>` before declaring the ledger reconciled: `check_ledger.py` only proves the ledger is internally consistent, `reconcile.py` proves it matches what was actually published (concept, hints, solution, source status), using `grade9-transfer-coverage-auditor`'s View 1/View 2 dual-audit and blocking-counter contract rather than a bespoke scheme.
 
 ## Freeze the external corpus
 
@@ -47,4 +47,4 @@ For real external records, close the ledger here and populate the publication mo
 
 Close every individual question: source mapped, attemptable, dependency visible, options complete, progressive optional hints, complete conceptual method, explicit answer, correct typography, resolved links and readable render. Aggregate counts do not substitute for this check.
 
-Separate `PILOT_ORIGINAL`, `SOURCE_REVIEW_REQUIRED`, `SOURCE_RECONCILED`, `FOR_USER_REVIEW` and user approval. Reconcile frozen IDs with observed and published IDs; any unexplained loss blocks source-complete status. State unresolved sourcing honestly. Render every page and repair all labels/collisions before presenting for approval.
+Separate `PILOT_ORIGINAL`, `SOURCE_REVIEW_REQUIRED`, `SOURCE_RECONCILED`, `FOR_USER_REVIEW` and user approval. Run `scripts/reconcile.py` to reconcile frozen IDs with observed and published IDs; any unexplained loss, or any concept/hint/solution/source-status drift between the ledger and the published model, blocks source-complete status. State unresolved sourcing honestly. Render every page and repair all labels/collisions before presenting for approval.
