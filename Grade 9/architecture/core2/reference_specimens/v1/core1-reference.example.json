@@ -72,8 +72,8 @@
   "manifest": {
     "manifest_id": "RBM-REF-PHY-MOTION-V3",
     "research_bundle_id": "RB-REF-PHY-MOTION-V3",
-    "semantic_digest": "e0a224b1a7568aec58ea23f3891cdd8e2982638cfdbab08ecee46a0dd02b2f86",
-    "package_digest": "ade8b034cbef96a2d76b521cb355d9447eaf08421cda6cbca6e3a6b5d27d522e",
+    "semantic_digest": "04b9e27db844bf3d35586aa08278ca86ab936d70ac51294abefc6adef09af89f",
+    "package_digest": "82f00e72c2c8b08316e50b12c4fd4cec9bee7b97ee537a59633d78345f700e68",
     "specimen_state": "REFERENCE_EXAMPLE"
   },
   "not_exercised": [
