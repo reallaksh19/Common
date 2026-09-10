@@ -21,7 +21,7 @@ from pathlib import Path
 
 import learner_layout
 import mature_product as mature
-import physical_page_runtime as physical
+import physical_release
 import run_core2_patch4 as publisher
 
 
@@ -176,14 +176,9 @@ def main() -> int:
     if rc != 0:
         return rc
 
-    errors = physical.finalize_page_map(
-        original_argv,
-        publisher.impl.legacy,
-        contracts,
-    )
-    if errors:
-        return mature.print_errors("CORE2_PHYSICAL_PAGE_MAP_PACKAGE", errors)
-
+    # Bind authored LearningDesign first so physical release finalization writes
+    # the final audit against the complete artifact set and then recomputes the
+    # authoritative manifest/package digest.
     if design is not None:
         errors = mature.finalize_learning_design(
             original_argv,
@@ -193,6 +188,14 @@ def main() -> int:
         )
         if errors:
             return mature.print_errors("CORE2_LEARNING_DESIGN_PACKAGE", errors)
+
+    errors = physical_release.finalize(
+        original_argv,
+        publisher.impl.legacy,
+        contracts,
+    )
+    if errors:
+        return mature.print_errors("CORE2_PHYSICAL_PAGE_RELEASE", errors)
 
     if mature_mode:
         print("CORE2_MATURE_PRODUCT = PASS")
