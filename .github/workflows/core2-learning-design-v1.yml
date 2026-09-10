@@ -30,5 +30,7 @@ jobs:
         run: python "Grade 9/architecture/core2/tests/test_material_custody.py"
       - name: Freeze physical page custody regression contract
         run: python "Grade 9/architecture/core2/tests/test_physical_page_custody.py"
+      - name: Freeze mature-product fail-closed gate
+        run: python "Grade 9/architecture/core2/tests/test_mature_product_gate.py"
       - name: Surface PR156/PR157 conformance and retirement state
         run: python "Grade 9/architecture/core2/conformance/validate_conformance.py"
