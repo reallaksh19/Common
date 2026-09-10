@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-publication-audit.schema.json",
+  "title": "Core2 PublicationAudit v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["audit_id", "schema_version", "publication_plan_id", "status", "gates", "warnings"],
+  "properties": {
+    "audit_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "publication_plan_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PASS", "FAIL", "PASS_WITH_WARNINGS"]},
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core2_preflight",
+        "research_package_digest_binding",
+        "material_traceability",
+        "representation_closure",
+        "appendix_A_B_C",
+        "answer_separation",
+        "render_bounds",
+        "grayscale_information",
+        "publication_manifest_hash_binding"
+      ],
+      "properties": {
+        "core2_preflight": {"type": "boolean"},
+        "research_package_digest_binding": {"type": "boolean"},
+        "material_traceability": {"type": "boolean"},
+        "representation_closure": {"type": "boolean"},
+        "badge_mapping": {"type": "boolean"},
+        "appendix_A_B_C": {"type": "boolean"},
+        "answer_separation": {"type": "boolean"},
+        "internal_links": {"type": "boolean"},
+        "typography": {"type": "boolean"},
+        "render_bounds": {"type": "boolean"},
+        "grayscale_information": {"type": "boolean"},
+        "publication_manifest_hash_binding": {"type": "boolean"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}}
+  }
+}
