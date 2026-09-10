@@ -19,6 +19,7 @@ import re
 import sys
 from pathlib import Path
 
+import learner_layout
 import mature_product as mature
 import physical_page_runtime as physical
 import run_core2_patch4 as publisher
@@ -151,7 +152,7 @@ def main() -> int:
                 publisher.impl.legacy,
             )
 
-    publisher.impl.render_study_pdf = physical.make_study_renderer(publisher.impl)
+    publisher.impl.render_study_pdf = learner_layout.make_study_renderer(publisher.impl)
     publisher.impl.legacy.inspect_pdf = _learner_surface_inspector(original_pdf_inspector, target)
 
     # run_core2_patch3.main() installs its own module-global morphology_evidence
