@@ -1,0 +1,116 @@
+{
+  "publication_id": "TB-FIXTURE-001",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-FIXTURE-001",
+  "product_identity": {
+    "product_id": "TB-FIXTURE-001",
+    "delivery_contract": "FULL_TOPIC_PAIR",
+    "role": "EXAMSIDE_SOLUTION_TRANSFER",
+    "pair_id": "PAIR-FIXTURE-001",
+    "companion_product_id": "SG-FIXTURE-001"
+  },
+  "title": "Transfer Book Contract Fixture",
+  "question_evidence_ledger_id": "QEL-FIXTURE-001",
+  "sets": [
+    {
+      "set_id": "SET-ASSIM-001",
+      "mode": "ASSIMILATION",
+      "question_ids": ["Q-FIXTURE-001"],
+      "concept_hidden_on_attempt": false,
+      "task_hidden_on_attempt": false,
+      "difficulty_hidden_on_attempt": false
+    },
+    {
+      "set_id": "SET-MIXED-001",
+      "mode": "MIXED_TRANSFER",
+      "question_ids": ["Q-FIXTURE-002"],
+      "concept_hidden_on_attempt": true,
+      "task_hidden_on_attempt": true,
+      "difficulty_hidden_on_attempt": true,
+      "diagnosis": {
+        "reveal_after_solutions": true,
+        "rows": [
+          {
+            "question_id": "Q-FIXTURE-002",
+            "primary_concept_id": "CONCEPT-FIXTURE-001",
+            "recognition_route": "Identify the governing invariant before selecting a method.",
+            "repair_target": "Core Study Guide · CONCEPT-FIXTURE-001"
+          }
+        ]
+      }
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "Q-FIXTURE-001",
+      "occurrence_id": "QO-FIXTURE-001",
+      "question_content_id": "QC-FIXTURE-001",
+      "research_refs": ["R-FIXTURE-001"],
+      "primary_concept_id": "CONCEPT-FIXTURE-001",
+      "supporting_concept_ids": [],
+      "concept_labels": {"primary": "PRIMARY · Fixture concept", "supports": []},
+      "stem": "Use the stated invariant to determine the required result.",
+      "dependency_class": "NONE",
+      "task": {"machine_value": "APPLY", "label": "Apply"},
+      "difficulty": {"source_code": null, "normalized_band": "D2", "learner_label": "MEDIUM", "basis": "EDITORIAL_TASK_DEMAND"},
+      "transfer": {"class": "DIRECT", "label": "Direct"},
+      "source": {"source_id": "SRC-FIXTURE", "source_label": "Internal contract fixture", "source_link": "https://example.invalid/fixture", "locator_label": "fixture item 1"},
+      "attempt": {"mode": "H0", "workspace": "Show your reasoning."},
+      "required_hint_depth": "H3",
+      "hints": [
+        {"tier": "H1", "role": "NOTICE", "content": "Notice the quantity that stays invariant.", "research_refs": ["R-FIXTURE-001"]},
+        {"tier": "H2", "role": "MODEL", "content": "Represent the known and target quantities using that invariant.", "research_refs": ["R-FIXTURE-001"]},
+        {"tier": "H3", "role": "START", "content": "Write the invariant before substituting values.", "research_refs": ["R-FIXTURE-001"]}
+      ],
+      "repair": {"mode": "LOCAL_LESSON", "target": "Core Study Guide · CONCEPT-FIXTURE-001"},
+      "solution_id": "SOL-FIXTURE-001"
+    },
+    {
+      "question_id": "Q-FIXTURE-002",
+      "occurrence_id": "QO-FIXTURE-002",
+      "question_content_id": "QC-FIXTURE-002",
+      "research_refs": ["R-FIXTURE-001"],
+      "primary_concept_id": "CONCEPT-FIXTURE-001",
+      "supporting_concept_ids": ["CONCEPT-FIXTURE-002"],
+      "concept_labels": {"primary": "PRIMARY · Fixture concept", "supports": ["SUPPORTS · Fixture prerequisite"]},
+      "stem": "Choose and justify the correct model without a concept cue.",
+      "dependency_class": "NONE",
+      "task": {"machine_value": "TRANSFER", "label": "Transfer"},
+      "difficulty": {"source_code": null, "normalized_band": "D3", "learner_label": "HARD", "basis": "EDITORIAL_TASK_DEMAND"},
+      "transfer": {"class": "MULTI_CONCEPT", "label": "Multi-concept"},
+      "source": {"source_id": "SRC-FIXTURE", "source_label": "Internal contract fixture", "source_link": "https://example.invalid/fixture", "locator_label": "fixture item 2"},
+      "attempt": {"mode": "H0", "workspace": "Identify the model first, then solve."},
+      "required_hint_depth": "H2",
+      "hints": [
+        {"tier": "H1", "role": "NOTICE", "content": "Look for the condition that selects the model.", "research_refs": ["R-FIXTURE-001"]},
+        {"tier": "H2", "role": "MODEL", "content": "Separate the primary concept from the supporting prerequisite.", "research_refs": ["R-FIXTURE-001"]}
+      ],
+      "repair": {"mode": "SELF_CONTAINED", "target": "Re-read the solution's model-selection step."},
+      "solution_id": "SOL-FIXTURE-002"
+    }
+  ],
+  "solutions": [
+    {
+      "solution_id": "SOL-FIXTURE-001",
+      "question_id": "Q-FIXTURE-001",
+      "recap": "The task asks for a result determined by the stated invariant.",
+      "why": "The verified condition makes this invariant the governing relation.",
+      "method": "Name the invariant, map each known quantity to it, substitute only after the model is fixed, and simplify while preserving the condition.",
+      "answer_check": "The result is consistent with the invariant and the stated condition.",
+      "concept_to_keep": "Model choice precedes substitution.",
+      "return_target": "Q-FIXTURE-001",
+      "research_refs": ["R-FIXTURE-001"]
+    },
+    {
+      "solution_id": "SOL-FIXTURE-002",
+      "question_id": "Q-FIXTURE-002",
+      "recap": "The task hides the concept cue and asks for model selection.",
+      "why": "The decisive condition identifies the primary concept; the second concept only supports execution.",
+      "method": "Identify the condition, select the governing model, state why the supporting idea is secondary, then complete the reasoning.",
+      "answer_check": "The selected model satisfies the condition and the reasoning does not rely on the hidden cue.",
+      "concept_to_keep": "Primary concept and prerequisite support are not the same role.",
+      "return_target": "Q-FIXTURE-002",
+      "research_refs": ["R-FIXTURE-001"]
+    }
+  ]
+}
