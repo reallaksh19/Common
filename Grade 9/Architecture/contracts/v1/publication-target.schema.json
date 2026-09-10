@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "publication-target.schema.json",
+  "title": "PublicationTarget v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publication_target_id",
+    "schema_version",
+    "research_bundle_id",
+    "research_package_digest",
+    "learner_profile_id",
+    "purpose",
+    "requested_products"
+  ],
+  "properties": {
+    "publication_target_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "research_bundle_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "research_package_digest": {
+      "$ref": "common.schema.json#/$defs/sha256",
+      "description": "Must equal ResearchBundleManifest.package_digest. This binds Core (2) to the frozen released research package without introducing a manifest self-hash."
+    },
+    "learner_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "purpose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {"$ref": "common.schema.json#/$defs/purpose_type"},
+        "exam_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+        "curriculum_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {"enum": ["COMPETITIVE_FOUNDATION", "COMPETITIVE_EXAM", "MOCK_EXAM_PREPARATION"]}
+            },
+            "required": ["type"]
+          },
+          "then": {"required": ["exam_profile_id"]}
+        }
+      ]
+    },
+    "requested_products": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["study_guide", "transfer_book"],
+      "properties": {
+        "study_guide": {"type": "boolean"},
+        "transfer_book": {"type": "boolean"}
+      },
+      "anyOf": [
+        {"properties": {"study_guide": {"const": true}}},
+        {"properties": {"transfer_book": {"const": true}}}
+      ]
+    },
+    "publication_profile": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "delivery_contract": {"enum": ["STUDY_GUIDE_ONLY", "FULL_TOPIC_PAIR", "TRANSFER_ONLY"]},
+        "subject_profile": {"type": "string", "minLength": 1},
+        "orientation": {"enum": ["AUTO", "PORTRAIT", "LANDSCAPE"]},
+        "answer_separation": {"type": "boolean"},
+        "grayscale_safe": {"type": "boolean"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"publication_profile": {"properties": {"delivery_contract": {"const": "FULL_TOPIC_PAIR"}}, "required": ["delivery_contract"]}},
+        "required": ["publication_profile"]
+      },
+      "then": {
+        "properties": {"requested_products": {"properties": {"study_guide": {"const": true}, "transfer_book": {"const": true}}}}
+      }
+    },
+    {
+      "if": {
+        "properties": {"publication_profile": {"properties": {"delivery_contract": {"const": "STUDY_GUIDE_ONLY"}}, "required": ["delivery_contract"]}},
+        "required": ["publication_profile"]
+      },
+      "then": {"properties": {"requested_products": {"properties": {"study_guide": {"const": true}}}}}
+    },
+    {
+      "if": {
+        "properties": {"publication_profile": {"properties": {"delivery_contract": {"const": "TRANSFER_ONLY"}}, "required": ["delivery_contract"]}},
+        "required": ["publication_profile"]
+      },
+      "then": {"properties": {"requested_products": {"properties": {"transfer_book": {"const": true}}}}}
+    }
+  ]
+}

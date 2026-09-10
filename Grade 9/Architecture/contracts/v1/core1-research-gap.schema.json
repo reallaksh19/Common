@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core1-research-gap.schema.json",
+  "title": "Core1ResearchGap v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "gap_id", "research_bundle_id", "evidence_version", "gap_type", "blocking", "reason", "reported_by"],
+  "properties": {
+    "status": {"const": "CORE1_RESEARCH_GAP"},
+    "gap_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "research_bundle_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "evidence_version": {"$ref": "common.schema.json#/$defs/semver"},
+    "gap_type": {"enum": ["SOURCE", "CONCEPT", "REPRESENTATION", "EQUATION", "QUESTION_FAMILY", "EXAM_DEMAND", "ASSET", "RIGHTS_USE", "OTHER"]},
+    "object_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "blocking": {"type": "boolean"},
+    "reason": {"type": "string", "minLength": 1},
+    "reported_by": {"const": "CORE2"},
+    "suggested_change_class": {"$ref": "common.schema.json#/$defs/change_class"},
+    "publication_target_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "reported_at": {"$ref": "common.schema.json#/$defs/iso_datetime"}
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "artifact_prefix": "Grade10_Redox_Routine",
+  "research_bundle_id": "RB-G10-CHEM-REDOX-ROUTINE-2026",
+  "evidence_version": "1.0.0",
+  "status": "READY_FOR_PUBLISH",
+  "change_class": "SEMANTIC",
+  "project": {
+    "grade": 10,
+    "subject": "CHEMISTRY",
+    "topic_id": "CHEM-G10-REDOX-FOUNDATION",
+    "title": "Oxidation and Reduction in Chemical Reactions"
+  },
+  "scope_graph": {
+    "scope_graph_id": "SG-G10-CHEM-REDOX-2026",
+    "schema_version": "1.0.0",
+    "canonical_registry_versions": [
+      {
+        "registry_id": "REG-G9-CHEMISTRY-SKILL",
+        "version": "679ba5cc35d54dca59851177a4551c0ce3ed8877"
+      },
+      {
+        "registry_id": "REG-REDOX-BUILDER-SKILL",
+        "version": "3c1f0e89dce17e4ec01168f98eacaaa6e072005e"
+      }
+    ],
+    "included_nodes": [
+      "CHEM-G10-OXIDATION",
+      "CHEM-G10-REDUCTION",
+      "CHEM-G10-OXYGEN-TRANSFER",
+      "CHEM-G10-REACTION-CLASSIFICATION",
+      "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION"
+    ],
+    "excluded_nodes": [
+      "CHEM-REDOX-OXIDATION-NUMBER",
+      "CHEM-REDOX-ELECTRON-BALANCING",
+      "CHEM-REDOX-ELECTROCHEMISTRY",
+      "CHEM-REDOX-EQUIVALENT-WEIGHT"
+    ],
+    "included_edges": [
+      {
+        "from": "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION",
+        "relation": "SUPPORTS_REASONING_FOR",
+        "to": "CHEM-G10-REACTION-CLASSIFICATION"
+      },
+      {
+        "from": "CHEM-G10-OXYGEN-TRANSFER",
+        "relation": "SUPPORTS_REASONING_FOR",
+        "to": "CHEM-G10-OXIDATION"
+      },
+      {
+        "from": "CHEM-G10-OXYGEN-TRANSFER",
+        "relation": "SUPPORTS_REASONING_FOR",
+        "to": "CHEM-G10-REDUCTION"
+      }
+    ],
+    "project_candidates": []
+  },
+  "research_context": {
+    "curriculum_profile_ids": [
+      "CBSE-SCIENCE-X-CHEMICAL-REACTIONS"
+    ],
+    "supported_exam_demand_profile_ids": [],
+    "research_intent": "Routine-study Core (1) replay for Grade 10 oxidation/reduction. The scope deliberately excludes oxidation-number/electron-balancing extensions because the verified Class X sources used here do not establish them as required scope."
+  },
+  "concept_ids": [
+    "CHEM-G10-OXIDATION",
+    "CHEM-G10-REDUCTION",
+    "CHEM-G10-OXYGEN-TRANSFER",
+    "CHEM-G10-REACTION-CLASSIFICATION",
+    "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION"
+  ],
+  "prerequisite_edges": [
+    {
+      "prerequisite_id": "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION",
+      "target_id": "CHEM-G10-REACTION-CLASSIFICATION"
+    }
+  ],
+  "misconception_ids": [
+    "MIS-CHEM-ALL-REACTIONS-ARE-REDOX",
+    "MIS-CHEM-VISIBLE-CHANGE-PROVES-REDOX"
+  ],
+  "research_claims": [
+    {
+      "claim_id": "R-CHEM-REDOX-001",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "CANONICAL_FACT",
+      "statement": "In Class X Chemical Reactions and Equations, oxidation and reduction are included among the reaction concepts to be differentiated.",
+      "concept_ids": [
+        "CHEM-G10-OXIDATION",
+        "CHEM-G10-REDUCTION",
+        "CHEM-G10-REACTION-CLASSIFICATION"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-CBSE-X-SCIENCE-LEARNING-STANDARDS"
+      ],
+      "conditions": [],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    },
+    {
+      "claim_id": "R-CHEM-REDOX-002",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "CANONICAL_FACT",
+      "statement": "The Class X learning indicator includes separating oxidation from reduction using loss and gain of oxygen as the school-level recognition route.",
+      "concept_ids": [
+        "CHEM-G10-OXIDATION",
+        "CHEM-G10-REDUCTION",
+        "CHEM-G10-OXYGEN-TRANSFER"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-CBSE-X-SCIENCE-LEARNING-STANDARDS"
+      ],
+      "conditions": [
+        "This is the verified Class X school-level route used for this replay; broader electron/oxidation-number treatments require separate researched scope."
+      ],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    },
+    {
+      "claim_id": "R-CHEM-REDOX-003",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "METHOD",
+      "statement": "The repository Chemistry authority treats chemistry understanding as translation among macroscopic evidence, particulate models and symbolic formula/equation representations, with conservation tracked where applicable.",
+      "concept_ids": [
+        "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION",
+        "CHEM-G10-REACTION-CLASSIFICATION"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-REPO-G9-CHEMISTRY-SKILL"
+      ],
+      "conditions": [],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    },
+    {
+      "claim_id": "R-CHEM-REDOX-004",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "METHOD",
+      "statement": "The repository Redox workflow requires reaction type and redox status to be evaluated separately rather than assuming that a combination or decomposition reaction is automatically redox.",
+      "concept_ids": [
+        "CHEM-G10-REACTION-CLASSIFICATION",
+        "CHEM-G10-OXIDATION",
+        "CHEM-G10-REDUCTION"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-REPO-REDOX-BUILDER"
+      ],
+      "conditions": [],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    },
+    {
+      "claim_id": "R-CHEM-REDOX-005",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "EDITORIAL_ANALYSIS",
+      "statement": "The repository Redox workflow treats 'all chemical reactions are redox' and 'a visible change proves redox' as misconceptions requiring explicit repair.",
+      "concept_ids": [
+        "CHEM-G10-REACTION-CLASSIFICATION",
+        "CHEM-G10-OXIDATION",
+        "CHEM-G10-REDUCTION"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-REPO-REDOX-BUILDER"
+      ],
+      "conditions": [],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    },
+    {
+      "claim_id": "R-CHEM-REDOX-006",
+      "traceability_class": "MATERIAL_CONDITION",
+      "claim_type": "CONDITION",
+      "statement": "For source-grounded Redox work, content absent from the verified source scope must not be silently introduced; extensions such as electron-balancing or electrochemistry require explicit research/scope authorization.",
+      "concept_ids": [
+        "CHEM-G10-OXIDATION",
+        "CHEM-G10-REDUCTION"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-REPO-REDOX-BUILDER"
+      ],
+      "conditions": [],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    }
+  ],
+  "representation_requirements": [
+    {
+      "representation_requirement_id": "RREP-CHEM-REDOX-MACRO-SYMBOLIC-001",
+      "subject": "CHEMISTRY",
+      "representation_type": "MACRO_SYMBOLIC_REACTION_LINK",
+      "concept_ids": [
+        "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION",
+        "CHEM-G10-OXIDATION",
+        "CHEM-G10-REDUCTION"
+      ],
+      "research_refs": [
+        "R-CHEM-REDOX-002",
+        "R-CHEM-REDOX-003"
+      ],
+      "semantic_requirements": {
+        "show_observation_or_process_when_source_supplies_it": true,
+        "show_symbolic_reaction_or_formula_relation": true,
+        "make_oxidation_and_reduction_labels_explicit": true,
+        "do_not_infer_redox_from_visual_change_alone": true
+      },
+      "required_labels": [
+        "oxidation",
+        "reduction"
+      ],
+      "approved_asset_ids": [],
+      "traceability_class": "MATERIAL_REPRESENTATION",
+      "blocking_if_unsupported": true
+    }
+  ],
+  "equation_or_reaction_objects": [],
+  "worked_reasoning": [
+    {
+      "worked_reasoning_id": "WR-CHEM-REDOX-001",
+      "concept_ids": [
+        "CHEM-G10-OXIDATION",
+        "CHEM-G10-REDUCTION",
+        "CHEM-G10-REACTION-CLASSIFICATION",
+        "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION"
+      ],
+      "research_refs": [
+        "R-CHEM-REDOX-002",
+        "R-CHEM-REDOX-003",
+        "R-CHEM-REDOX-004",
+        "R-CHEM-REDOX-005"
+      ],
+      "summary": "Read the reaction evidence and symbolic form; identify the Class X oxygen-transfer change; distinguish oxidation from reduction; then separately identify the reaction type and reject appearance-only redox shortcuts."
+    }
+  ],
+  "source_ledger": {
+    "source_ledger_id": "SL-G10-CHEM-REDOX-2026",
+    "schema_version": "1.0.0",
+    "sources": [
+      {
+        "source_id": "SRC-CBSE-X-SCIENCE-LEARNING-STANDARDS",
+        "provider": "CBSE Academic",
+        "source_type": "OFFICIAL_LEARNING_STANDARDS_PDF",
+        "url": "https://www.cbseacademic.nic.in/cbe/documents/Learning_Standards_Science.pdf",
+        "retrieved_at": "2026-09-10T07:00:00Z",
+        "authority_level": "OFFICIAL",
+        "verification_status": "VERIFIED",
+        "scope_role": "Class X Chemical Reactions and Equations learning outcomes including oxidation/reduction",
+        "rights": {
+          "status": "REFERENCE_ONLY",
+          "basis": "Official learning-standard source used for factual scope extraction.",
+          "allowed_uses": [
+            "EXTRACT_FACTS",
+            "CITE_SOURCE",
+            "MAP_SCOPE"
+          ],
+          "prohibited_uses": [
+            "REPRODUCE_FULL_CONTENT"
+          ]
+        }
+      },
+      {
+        "source_id": "SRC-NCERT-X-SCIENCE-2026",
+        "provider": "NCERT",
+        "source_type": "OFFICIAL_TEXTBOOK_PDF",
+        "url": "https://www.ncert.nic.in/textbook/pdf/jesc1ps.pdf",
+        "retrieved_at": "2026-09-10T07:00:00Z",
+        "authority_level": "OFFICIAL",
+        "verification_status": "VERIFIED",
+        "scope_role": "Current Class X Science textbook context: Chemical Reactions and Equations",
+        "rights": {
+          "status": "REFERENCE_ONLY",
+          "basis": "Official textbook used as context/reference; full-text reproduction is not part of this replay.",
+          "allowed_uses": [
+            "EXTRACT_FACTS",
+            "CITE_SOURCE",
+            "MAP_SCOPE"
+          ],
+          "prohibited_uses": [
+            "REPRODUCE_FULL_CONTENT"
+          ]
+        }
+      },
+      {
+        "source_id": "SRC-REPO-G9-CHEMISTRY-SKILL",
+        "provider": "Common repository",
+        "source_type": "REPOSITORY_SUBJECT_AUTHORITY",
+        "repo_path": "Grade 9/skills/grade9-chemistry/SKILL.md",
+        "retrieved_at": "2026-09-10T07:00:00Z",
+        "authority_level": "VERIFIED_SECONDARY",
+        "verification_status": "VERIFIED",
+        "scope_role": "Chemistry representation/conservation reasoning authority",
+        "rights": {
+          "status": "REPRODUCTION_ALLOWED",
+          "basis": "Repository-owned architecture source used by the same project.",
+          "allowed_uses": [
+            "EXTRACT_FACTS",
+            "CITE_SOURCE",
+            "REUSE_INTERNAL_CONTRACT"
+          ],
+          "prohibited_uses": []
+        }
+      },
+      {
+        "source_id": "SRC-REPO-REDOX-BUILDER",
+        "provider": "Common repository",
+        "source_type": "REPOSITORY_REDOX_WORKFLOW",
+        "repo_path": "Grade 9/skills/grade9-redox-subtopic-book-builder/SKILL.md",
+        "retrieved_at": "2026-09-10T07:00:00Z",
+        "authority_level": "VERIFIED_SECONDARY",
+        "verification_status": "VERIFIED",
+        "scope_role": "Redox-specific anti-drift, misconception and reasoning workflow",
+        "rights": {
+          "status": "REPRODUCTION_ALLOWED",
+          "basis": "Repository-owned architecture source used by the same project.",
+          "allowed_uses": [
+            "EXTRACT_FACTS",
+            "CITE_SOURCE",
+            "REUSE_INTERNAL_CONTRACT"
+          ],
+          "prohibited_uses": []
+        }
+      }
+    ]
+  },
+  "exam_demand_profiles": [],
+  "unresolved_items": [],
+  "release_note": "Cold-start routine-study replay for Grade 10 oxidation/reduction. It demonstrates source-bounded Core (1) packaging and deliberately excludes broader Redox mechanisms not established by the verified Class X scope used here."
+}
