@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "publication-target.schema.json",
+  "title": "PublicationTarget v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["publication_target_id", "schema_version", "research_bundle_id", "research_bundle_manifest_digest", "learner_profile_id", "purpose", "requested_products"],
+  "properties": {
+    "publication_target_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "research_bundle_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "research_bundle_manifest_digest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "learner_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "purpose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {"$ref": "common.schema.json#/$defs/purpose_type"},
+        "exam_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+        "curriculum_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"}
+      }
+    },
+    "requested_products": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["study_guide", "transfer_book"],
+      "properties": {
+        "study_guide": {"type": "boolean"},
+        "transfer_book": {"type": "boolean"}
+      }
+    },
+    "publication_profile": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "orientation": {"enum": ["AUTO", "PORTRAIT", "LANDSCAPE"]},
+        "answer_separation": {"type": "boolean"},
+        "grayscale_safe": {"type": "boolean"}
+      }
+    }
+  }
+}
