@@ -10,6 +10,13 @@ description: Create and analyze Grade 4 English learning content using language-
 Always load and follow:
 
 - `../../Grade4EnglishSchema.md`
+- `../../Primary/Architecture/PRIMARY_INTEGRATED_ARCHITECTURE.md`
+- `../../Primary/Architecture/SEMANTIC_OWNERSHIP.md`
+
+For interactive tutoring, adaptive teaching, diagnostic repair, repeated learner clarification, scaffold selection/fading, or learner-state interpretation also load:
+
+- `../primary-teacher-runtime/SKILL.md`
+- `../../Primary/Architecture/PRIMARY_TEACHER_RUNTIME.md`
 
 For PDF/book production also load:
 
@@ -26,6 +33,19 @@ TEXT / LANGUAGE FEATURE
   -> DIAGNOSIS
   -> TRANSFER
 ```
+
+For tutoring, the subject model runs inside the Primary Teacher Runtime:
+
+```text
+OBSERVATION
+  -> RESPONSE DIAGNOSIS
+  -> TEACHER DECISION
+  -> TEACHER MOVE
+  -> CHILD ACTION
+  -> NEW EVIDENCE
+```
+
+Keep raw evidence separate from judgement, `SkillState` separate from `CurrentLearningState`, conceptual support separate from access/load adjustments, and acquisition/independent-use/delayed-retention/transfer evidence separate from one another.
 
 ## Domains
 
@@ -98,6 +118,22 @@ When source material is supplied, inspect and preserve:
 - assessment/question formats.
 
 Do not silently rewrite a source text if the task is to study or build from it.
+
+#### Simplified source taxonomy boundary
+
+When a Grade 4 source teaches a simplified grammar taxonomy, preserve that model exactly. If an example does not fit cleanly, do **not** invent a new source category or silently switch to a fuller linguistic model.
+
+Use the Primary source-boundary semantics:
+
+```text
+SOURCE MODEL
+  -> attempt classification
+  -> if no clean match: SOURCE_BOUNDARY / AMBIGUOUS
+  -> child-friendly boundary explanation
+  -> fuller canonical analysis kept separate
+```
+
+For example, if a workbook teaches adjective order only as `number -> opinion -> size -> age -> shape -> colour -> origin -> material -> purpose`, do not silently add `quality`, `condition`, or `quality/type` to force-fit words such as `heavy`, `broken`, or `handmade`.
 
 ### Stage 4 — Build language-skill architecture
 
@@ -241,6 +277,8 @@ A Learning Cell should define, as relevant:
 - repair path;
 - mastery evidence;
 - transfer.
+
+For tutoring, do not expose a Learning Cell as one long explanation. Instantiate it through the Primary Teacher Runtime as a learner-facing `LearningEpisode` with child actions, diagnostic evidence, repair, retry, and support fading.
 
 ### Stage 8 — Task archetypes
 
@@ -404,6 +442,8 @@ EDIT
 
 Hints should preserve productive struggle and avoid revealing the final response too early.
 
+In interactive tutoring, record conceptual hint/support separately from access adjustments such as reduced language, one-step-at-a-time directions, read-aloud support, reduced writing, or oral response.
+
 ### Stage 13 — Diagnostics
 
 Use domain-specific error classes such as:
@@ -423,6 +463,8 @@ WRITING_IDEA_ERROR
 WRITING_ORGANIZATION_ERROR
 SENTENCE_CONTROL_ERROR
 EDITING_ERROR
+SOURCE_MODEL_BOUNDARY
+INSUFFICIENT_EVIDENCE
 ```
 
 Use the causal loop:
@@ -438,6 +480,10 @@ OBSERVED RESPONSE
 ```
 
 Example: a plausible inference with no supporting sentence may be an `EVIDENCE_ERROR`, not necessarily an `INFERENCE_ERROR`.
+
+A short clarification such as `Large?` is evidence that category recognition may not yet be secure. Do not only return the label. Give the recognition cue and one tiny check-for-understanding item when in tutor mode.
+
+After two unsuccessful attempts using substantially the same route, change a meaningful teaching dimension instead of repeating the same explanation at greater length.
 
 ### Stage 14 — Practice sequencing
 
@@ -496,6 +542,18 @@ Grammar mastery should move from recognition to correction, explanation, and ind
 
 Writing mastery should consider ideas, organization, development, language, sentence control, conventions, revision, and independence.
 
+For Primary runtime state, do not collapse evidence into one mastery label. Track relevant evidence separately for:
+
+```text
+ACQUISITION
+INDEPENDENT_USE
+DELAYED_RETENTION
+TRANSFER
+STRETCH (optional)
+```
+
+Same-session correctness cannot establish delayed retention.
+
 ### Stage 16 — Transfer
 
 Reading transfer may progress:
@@ -542,7 +600,9 @@ For source-grounded tasks:
 - distinguish source questions from authored questions;
 - do not silently simplify/rewrite passages;
 - mark reconstructed or ambiguous source content;
-- keep outside research visibly separate from source-derived content.
+- keep outside research visibly separate from source-derived content;
+- do not silently introduce a grammar category absent from a simplified source taxonomy;
+- use `SOURCE_BOUNDARY`/`AMBIGUOUS` when the source model cannot classify an example cleanly.
 
 ## English quality gates
 
@@ -560,6 +620,8 @@ A deliverable is incomplete until applicable checks pass:
 - `E-QG10 MASTERY_EVIDENCE`
 - `E-QG11 TRANSFER_COVERAGE`
 - `E-QG12 ANSWER_OR_RUBRIC_VALIDITY`
+- `E-QG13 SOURCE_MODEL_BOUNDARY`
+- `E-QG14 PRIMARY_RUNTIME_ALIGNMENT` when tutoring/adaptation is used
 
 ## Publishing handoff
 
