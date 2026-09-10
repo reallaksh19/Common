@@ -34,5 +34,24 @@ jobs:
         run: python "Grade 9/architecture/core2/tests/test_physical_release_gate.py"
       - name: Freeze mature-product fail-closed gate
         run: python "Grade 9/architecture/core2/tests/test_mature_product_gate.py"
+      - name: Validate scoped Physics golden Core1 handoff
+        run: |
+          GOLD="Grade 9/architecture/core2/golden_specimens/v1/physics_newton2_bridge"
+          OUT=/tmp/physics-newton2-golden-core1
+          python "Grade 9/Architecture/core1/build_research_package.py" --input "$GOLD/research_input.json" --out "$OUT"
+          python "Grade 9/architecture/core2/bind_publication_target.py" \
+            --manifest "$OUT/Physics_Newton2_Bridge_Golden_Research_Bundle_Manifest.json" \
+            --learner "$GOLD/learner_profile.json" \
+            --request "$GOLD/publication_target.request.json" \
+            --out /tmp/physics-newton2-golden-target.json
+          EXAM=$(ls "$OUT"/*_Exam_Demand_*.json | head -1)
+          python "Grade 9/Architecture/contracts/v1/validate_handoff.py" \
+            --bundle "$OUT/Physics_Newton2_Bridge_Golden_Research_Bundle.json" \
+            --manifest "$OUT/Physics_Newton2_Bridge_Golden_Research_Bundle_Manifest.json" \
+            --learner "$GOLD/learner_profile.json" \
+            --target /tmp/physics-newton2-golden-target.json \
+            --source-ledger "$OUT/Physics_Newton2_Bridge_Golden_Source_Ledger.json" \
+            --exam-demand "$EXAM" \
+            --verify-artifact-bytes
       - name: Surface PR156/PR157 conformance and retirement state
         run: python "Grade 9/architecture/core2/conformance/validate_conformance.py"
