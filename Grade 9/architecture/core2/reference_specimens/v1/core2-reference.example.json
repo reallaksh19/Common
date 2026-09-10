@@ -1,0 +1,82 @@
+{
+  "specimen_metadata": {
+    "specimen_id": "REF-CORE2-MOTION-V3",
+    "artifact_class": "REFERENCE_EXAMPLE",
+    "placeholder_policy": "NO_PLACEHOLDERS_IN_MATERIAL_FIELDS",
+    "authority_status": "ILLUSTRATIVE_REFERENCE_ONLY",
+    "normative_contract": false,
+    "research_bundle_id": "RB-REF-PHY-MOTION-V3",
+    "research_package_digest": "ade8b034cbef96a2d76b521cb355d9447eaf08421cda6cbca6e3a6b5d27d522e",
+    "packaging_note": "Composite onboarding specimen only. Production FULL_TOPIC_PAIR remains two reciprocal learner PDFs.",
+    "field_state_legend": {
+      "REFERENCE_EXAMPLE": "Concrete internally coherent example used to demonstrate the contract.",
+      "NOT_EXERCISED": "Supported feature intentionally omitted from this miniature; not equivalent to PASS.",
+      "PARTIAL": "Part of the invariant is demonstrated, but full production closure is not proven.",
+      "PLACEHOLDER": "Forbidden for material truth/evidence fields."
+    }
+  },
+  "b40_structure": {
+    "learner_profile_id": "LP-REF-MOTION-B40",
+    "instructional_profile": "BRIDGE",
+    "same_research_package": true,
+    "learning_units": [
+      {
+        "unit_id": "U1-DISPLACEMENT",
+        "cognitive_job": "Separate position, path length and endpoint change before building the relation.",
+        "arc_roles": ["PHYSICAL_SITUATION", "DEPICTION", "NOTICE", "SAY_IN_WORDS", "GUIDED_1", "VARIANT_CONTRAST", "BUILD_RELATION", "WORKED_EXAMPLE", "GUIDED_2_FADED", "INDEPENDENT_TRANSFER", "RETRIEVAL_CHECK"],
+        "support_progression": {"worked_example": "PRESENT", "guided_1": "PRESENT", "guided_2_faded": "PRESENT", "independent_transfer": "PRESENT"}
+      },
+      {
+        "unit_id": "U2-VT-AREA",
+        "cognitive_job": "Read graph meaning before using area as a calculation rule.",
+        "arc_roles": ["DEPICTION", "NOTICE", "SAY_IN_WORDS", "BUILD_RELATION", "WHY_THIS_WORKS", "WORKED_EXAMPLE", "GUIDED_1", "GUIDED_2_FADED", "MODEL_BOUNDARY", "INDEPENDENT_TRANSFER", "RETRIEVAL_CHECK"],
+        "support_progression": {"worked_example": "PRESENT", "guided_1": "PRESENT", "guided_2_faded": "PRESENT", "independent_transfer": "PRESENT"}
+      }
+    ]
+  },
+  "b90_structure": {
+    "learner_profile_id": "LP-REF-MOTION-B90",
+    "instructional_profile": "REFERENCE",
+    "same_research_package": true,
+    "learning_units": [
+      {
+        "unit_id": "U1-DISPLACEMENT",
+        "cognitive_job": "Reconstruct displacement from a contrast between equal endpoints and different paths.",
+        "arc_roles": ["VARIANT_CONTRAST", "NOTICE", "BUILD_RELATION", "MODEL_BOUNDARY", "INDEPENDENT_TRANSFER", "RETRIEVAL_CHECK"],
+        "support_progression": {"worked_example": "NOT_REQUIRED_WITH_REASON", "guided_1": "NOT_REQUIRED_WITH_REASON", "guided_2_faded": "NOT_REQUIRED_WITH_REASON", "independent_transfer": "PRESENT"}
+      },
+      {
+        "unit_id": "U2-VT-AREA",
+        "cognitive_job": "Use signed area and test the model at reversal and on a tempting shortcut.",
+        "arc_roles": ["DEPICTION", "NOTICE", "BUILD_RELATION", "VARIANT_CONTRAST", "MODEL_BOUNDARY", "INDEPENDENT_TRANSFER", "RETRIEVAL_CHECK"],
+        "support_progression": {"worked_example": "NOT_REQUIRED_WITH_REASON", "guided_1": "NOT_REQUIRED_WITH_REASON", "guided_2_faded": "NOT_REQUIRED_WITH_REASON", "independent_transfer": "PRESENT"}
+      }
+    ]
+  },
+  "study_guide_topology": {
+    "learner_appendix_order": ["A_CORE_PRACTICE", "B_CORE_SOLUTIONS", "C_PRINTABLE_HANDOUT"],
+    "attempt_before_help": true,
+    "static_hint_delivery": "SEPARATE_HELP_SECTION",
+    "solutions_after_attempts": true
+  },
+  "transfer_book_excerpt": {
+    "state": "REFERENCE_EXAMPLE",
+    "section_order": ["ATTEMPTS", "OPTIONAL_HELP", "COMPLETE_SOLUTIONS", "MIXED_DIAGNOSIS"],
+    "mixed_attempt_concealment": {"concept_hidden": true, "task_hidden": true, "difficulty_hidden": true},
+    "hint_tiers": ["H1_NOTICE", "H2_MODEL", "H3_START"],
+    "solution_grammar": ["QUESTION_RECAP", "REPRESENTATION", "WHY_THIS_WORKS", "METHOD", "ANSWER_CHECK", "CONCEPT_TO_KEEP", "RETURN_TARGET"],
+    "navigation": {"question_to_hint": true, "question_to_solution": true, "solution_to_question": true, "solution_to_lesson": true}
+  },
+  "appendix_C": {
+    "title": "Printable Handout",
+    "state": "REFERENCE_EXAMPLE",
+    "standalone_usable": true,
+    "introduces_new_subject_content": false,
+    "answer_leakage_detected": false
+  },
+  "not_exercised": [
+    {"feature": "EXTERNAL_SOURCE_YEAR_SHIFT_BADGES", "state": "NOT_EXERCISED", "reason": "Reference questions are not PYQs."},
+    {"feature": "SOURCE_CROP_RENDERING", "state": "NOT_EXERCISED", "reason": "No third-party visual dependency is used."},
+    {"feature": "HUMAN_SME_APPROVAL", "state": "NOT_EXERCISED", "reason": "Architecture specimen only; no production certification claim."}
+  ]
+}
