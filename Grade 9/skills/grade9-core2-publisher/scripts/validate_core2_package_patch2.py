@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Whitespace-stable independent structure-order validation for Core (2).
 
-This validator proves declared structure binding and global reopened-PDF ordering.
-It deliberately does not call that result exact physical-page morphology: page-intent
--> physical-page custody is a separate contract still to be implemented.
+This validator proves declared structure binding, main-section MATERIAL custody,
+and global reopened-PDF ordering. It deliberately does not call that result
+exact physical-page morphology: page-intent -> physical-page custody is a
+separate contract still to be implemented.
 """
 from __future__ import annotations
 
@@ -18,6 +19,15 @@ import validate_core2_package_structured_impl as impl
 
 def _norm(text: str) -> str:
     return re.sub(r"\s+", " ", str(text)).strip()
+
+
+def _main_material_ids(study: dict) -> set[str]:
+    return {
+        item["item_id"]
+        for section in study.get("main_sections", [])
+        for item in section.get("items", [])
+        if item.get("traceability_class") == "MATERIAL"
+    }
 
 
 def validate_structure_package(argv: list[str]) -> int:
@@ -48,22 +58,31 @@ def validate_structure_package(argv: list[str]) -> int:
         elif roles[0].get("path") != structure_path.name or roles[0].get("sha256") != impl.legacy.sha256(structure_path):
             errors.append("manifest hash/path mismatch for PUBLICATION_STRUCTURE")
 
+        arc_refs: list[str] = []
+        ref_role: dict[str, str] = {}
+        for unit in structure["study_guide"]["learning_units"]:
+            for step in unit["arc_steps"]:
+                for ref in step["content_refs"]:
+                    arc_refs.append(ref)
+                    ref_role[ref] = step["role"].replace("_", " ")
+        page_refs = [ref for page in structure["study_guide"]["page_intents"] for ref in page["content_refs"]]
+        if page_refs != arc_refs:
+            errors.append("PublicationStructure page intents do not reconcile exactly to arc-step content order")
+
+        study_model_path = d / f"{prefix}_Core2_Study_Guide.json"
+        if study_model_path.exists():
+            study = impl.load(study_model_path)
+            material_ids = _main_material_ids(study)
+            missing_material = sorted(material_ids - set(arc_refs))
+            for content_ref in missing_material:
+                errors.append(f"{content_ref}: MATERIAL item disappears between StudyGuide model and PublicationStructure")
+
         sg_pdf = d / f"{prefix}_Core2_Study_Guide.pdf"
         if sg_pdf.exists():
             doc = fitz.open(sg_pdf)
             raw_text = "\n".join(p.get_text() for p in doc)
             doc.close()
             text = _norm(raw_text)
-            arc_refs: list[str] = []
-            ref_role: dict[str, str] = {}
-            for unit in structure["study_guide"]["learning_units"]:
-                for step in unit["arc_steps"]:
-                    for ref in step["content_refs"]:
-                        arc_refs.append(ref)
-                        ref_role[ref] = step["role"].replace("_", " ")
-            page_refs = [ref for page in structure["study_guide"]["page_intents"] for ref in page["content_refs"]]
-            if page_refs != arc_refs:
-                errors.append("PublicationStructure page intents do not reconcile exactly to arc-step content order")
             role_markers = [ref_role[ref] for ref in page_refs]
             if not impl._ordered(text, role_markers):
                 errors.append("Study Guide PDF arc-step order does not reconcile")
@@ -104,6 +123,7 @@ def validate_structure_package(argv: list[str]) -> int:
         return 1
     print("CORE2_STRUCTURE_PACKAGE = PASS")
     print("PUBLICATION_STRUCTURE_BINDING = PASS")
+    print("MODEL_TO_STRUCTURE_MATERIAL_CUSTODY = PASS")
     print("PDF_GLOBAL_STRUCTURE_ORDER = PASS")
     print("PHYSICAL_PAGE_MORPHOLOGY = PENDING")
     return 0
