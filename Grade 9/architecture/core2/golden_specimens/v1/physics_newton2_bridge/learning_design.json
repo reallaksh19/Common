@@ -1,0 +1,453 @@
+{
+  "learning_design_id": "LD-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026-LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "research_bundle_id": "RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026",
+  "research_package_digest": "b782a93427cb9a971c1889def2aa9653b7a20072943e9bb4426e67a80d052dc9",
+  "learner_profile_id": "LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "publication_target_id": "PT-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "mode": "MATURE_LEARNER_PRODUCT",
+  "subject": "PHYSICS",
+  "topic_id": "PHY-G9-NEWTON2-SYSTEM-GOLDEN",
+  "purpose_type": "COMPETITIVE_FOUNDATION",
+  "learning_units": [
+    {
+      "unit_id": "LU-PHY-N2-SYSTEM-01",
+      "concept_ids": [
+        "PHY-G9-SYSTEM-REPRESENTATION"
+      ],
+      "instructional_profile": "FOUNDATION",
+      "research_refs": [
+        "R-PHY-LM-005"
+      ],
+      "learner_capabilities": [
+        {
+          "capability_id": "LC-PHY-N2-SYS-RECOGNIZE",
+          "type": "RECOGNIZE",
+          "required": true,
+          "success_statement": "Identify the body or collection of bodies whose acceleration is being analysed before naming forces or choosing an equation."
+        },
+        {
+          "capability_id": "LC-PHY-N2-SYS-EXPLAIN",
+          "type": "EXPLAIN",
+          "required": true,
+          "success_statement": "Explain that a force diagram for Newton-II reasoning contains forces acting on the selected system, not every force mentioned in the story."
+        },
+        {
+          "capability_id": "LC-PHY-N2-SYS-REPRESENT",
+          "type": "REPRESENTATION_TRANSLATE",
+          "required": true,
+          "success_statement": "Translate an everyday push-and-friction situation into a force diagram with an explicit selected system and force directions."
+        },
+        {
+          "capability_id": "LC-PHY-N2-SYS-MODEL",
+          "type": "MODEL_SELECT",
+          "required": true,
+          "success_statement": "Choose net force on the selected system, rather than one visually prominent force, as the force quantity that will connect to acceleration."
+        },
+        {
+          "capability_id": "LC-PHY-N2-SYS-TRANSFER",
+          "type": "TRANSFER",
+          "required": true,
+          "success_statement": "Select and represent the system correctly when the context changes and the opposing force is described indirectly."
+        }
+      ],
+      "prerequisite_decisions": [
+        {
+          "prerequisite_id": "PHY-G9-FORCE-DIRECTION-LANGUAGE",
+          "state": "REPAIR_IN_UNIT",
+          "repair_target": "ITEM-PHY-N2-SYS-WORDS"
+        }
+      ],
+      "concept_anchor": {
+        "kind": "PHYSICAL_SITUATION",
+        "description": "A student pushes a trolley to the right while friction acts to the left. The trolley speeds up to the right.",
+        "learner_job": "Circle the trolley as the system, then decide which arrows belong on the trolley before doing any calculation."
+      },
+      "ordinary_language_target": "First choose what object you are explaining. Then include the forces acting on that object with directions. The acceleration responds to the combined, or net, effect of those forces on that selected system.",
+      "formal_understanding": {
+        "state": "NOT_APPLICABLE_WITH_REASON",
+        "reason": "This prerequisite unit establishes system selection and force ownership before the Newton-II symbolic relation is introduced in the next unit."
+      },
+      "representation_transitions": [
+        {
+          "transition_id": "RT-PHY-N2-STORY-TO-SYSTEM",
+          "from": "EVERYDAY_FORCE_STORY",
+          "to": "SELECTED_SYSTEM",
+          "learner_job": "Mark the object whose acceleration is being explained and ignore forces that act on other bodies."
+        },
+        {
+          "transition_id": "RT-PHY-N2-SYSTEM-TO-FBD",
+          "from": "SELECTED_SYSTEM",
+          "to": "FORCE_DIAGRAM",
+          "learner_job": "Replace each relevant interaction by a directional force arrow acting on the selected system.",
+          "representation_requirement_refs": [
+            "RREP-PHY-GOLDEN-N2-SYSTEM-001"
+          ]
+        }
+      ],
+      "misconceptions": [
+        {
+          "misconception_id": "MIS-PHY-N2-PROMINENT-FORCE-IS-NET",
+          "wrong_model": "Treat the named push as the force in Newton's second law even when another horizontal force opposes it.",
+          "why_tempting": "The push is usually the most visible force in the wording, so it is easy to ignore a less prominent opposing interaction.",
+          "decisive_discriminator": "Ask whether every horizontal force acting on the selected system has been represented before deciding what the net force is.",
+          "diagnostic_probe_id": "PROBE-PHY-N2-SYS-MIS-01",
+          "repair_strategy": "REPRESENTATION_CONTRAST"
+        }
+      ],
+      "contrasts": [
+        {
+          "contrast_id": "CONTRAST-PHY-N2-SYSTEM-VS-OTHER-BODY",
+          "case_a": "A hand pushes the trolley: force of the hand on the trolley.",
+          "case_b": "The trolley pushes back on the hand: force of the trolley on the hand.",
+          "decisive_difference": "Only case A belongs on a force diagram whose selected system is the trolley; case B acts on a different body."
+        }
+      ],
+      "support_progression": {
+        "worked": {
+          "state": "PRESENT",
+          "support_features": [
+            "MODEL_SELECTED",
+            "REPRESENTATION_PROVIDED",
+            "FIRST_STEP_PROVIDED",
+            "INTERMEDIATE_STEPS_PROVIDED",
+            "CONDITION_CUE",
+            "ERROR_CHECK_CUE"
+          ],
+          "removed_since_previous": []
+        },
+        "guided_1": {
+          "state": "PRESENT",
+          "support_features": [
+            "REPRESENTATION_PROVIDED",
+            "FIRST_STEP_PROVIDED",
+            "CONDITION_CUE",
+            "ERROR_CHECK_CUE"
+          ],
+          "removed_since_previous": [
+            "MODEL_SELECTED",
+            "INTERMEDIATE_STEPS_PROVIDED"
+          ]
+        },
+        "guided_2": {
+          "state": "PRESENT",
+          "support_features": [
+            "REPRESENTATION_PROVIDED",
+            "ERROR_CHECK_CUE"
+          ],
+          "removed_since_previous": [
+            "FIRST_STEP_PROVIDED",
+            "CONDITION_CUE"
+          ]
+        },
+        "independent": {
+          "state": "PRESENT",
+          "support_features": [],
+          "removed_since_previous": [
+            "REPRESENTATION_PROVIDED",
+            "ERROR_CHECK_CUE"
+          ]
+        }
+      },
+      "practice_progression": {
+        "worked_example_id": "ITEM-PHY-N2-SYS-WORKED",
+        "guided_1_id": "ITEM-PHY-N2-SYS-G1",
+        "guided_2_id": "ITEM-PHY-N2-SYS-G2",
+        "independent_id": "ITEM-PHY-N2-SYS-IND"
+      },
+      "transfer_design": {
+        "required": true,
+        "source_learning_example_id": "ITEM-PHY-N2-SYS-WORKED",
+        "transfer_type": "MODEL_SELECTION",
+        "changed_dimensions": [
+          "CONTEXT_CHANGE",
+          "MODEL_SELECTION",
+          "HIDDEN_PREREQUISITE"
+        ],
+        "non_isomorphic_to_worked": true,
+        "question_family_refs": []
+      },
+      "completion_probes": [
+        {
+          "probe_id": "PROBE-PHY-N2-SYS-EXPLAIN-01",
+          "capability_refs": [
+            "LC-PHY-N2-SYS-RECOGNIZE",
+            "LC-PHY-N2-SYS-EXPLAIN"
+          ],
+          "prompt_intent": "Give a two-body interaction and ask the learner to name the selected system and reject one force that acts on the other body.",
+          "success_evidence": "The learner explicitly names the system and justifies force inclusion by the body on which each force acts."
+        },
+        {
+          "probe_id": "PROBE-PHY-N2-SYS-MIS-01",
+          "capability_refs": [
+            "LC-PHY-N2-SYS-REPRESENT",
+            "LC-PHY-N2-SYS-MODEL"
+          ],
+          "prompt_intent": "Give a push plus friction and ask whether the push magnitude alone can be used as the Newton-II force.",
+          "success_evidence": "The learner draws both horizontal force directions and identifies their combined effect as the relevant net force."
+        },
+        {
+          "probe_id": "PROBE-PHY-N2-SYS-TRANSFER-01",
+          "capability_refs": [
+            "LC-PHY-N2-SYS-TRANSFER"
+          ],
+          "prompt_intent": "Change to a crate pulled right while floor resistance is described indirectly and require an unprompted system/force representation.",
+          "success_evidence": "The learner selects the crate, represents the rightward pull and leftward resistance, and states that both contribute to net force."
+        }
+      ]
+    },
+    {
+      "unit_id": "LU-PHY-N2-RELATION-02",
+      "concept_ids": [
+        "PHY-G9-NEWTON-LAW-2"
+      ],
+      "instructional_profile": "BRIDGE",
+      "research_refs": [
+        "R-PHY-LM-003",
+        "R-PHY-LM-005",
+        "R-PHY-LM-007-GOLDEN"
+      ],
+      "exam_demand_refs": [
+        "EDP-SOF-ISO-G9-NEWTON2-GOLDEN-2026-27"
+      ],
+      "learner_capabilities": [
+        {
+          "capability_id": "LC-PHY-N2-REL-EXPLAIN",
+          "type": "EXPLAIN",
+          "required": true,
+          "success_statement": "Explain in ordinary language that acceleration increases with net force for the same mass and decreases with mass for the same net force."
+        },
+        {
+          "capability_id": "LC-PHY-N2-REL-RECONSTRUCT",
+          "type": "RECONSTRUCT",
+          "required": true,
+          "success_statement": "Reconstruct the meaning of F_net = m a by naming the selected-system force, mass and acceleration, including their units and direction/sign meaning."
+        },
+        {
+          "capability_id": "LC-PHY-N2-REL-APPLY",
+          "type": "APPLY",
+          "required": true,
+          "success_statement": "Calculate an unknown net force, mass or acceleration from the Grade-9 Newton-II relation with consistent units."
+        },
+        {
+          "capability_id": "LC-PHY-N2-REL-CHECK",
+          "type": "CONDITION_CHECK",
+          "required": true,
+          "success_statement": "Check that the force used is the net force on the selected system and that the acceleration direction is consistent with that net force."
+        },
+        {
+          "capability_id": "LC-PHY-N2-REL-PREDICT",
+          "type": "PREDICT",
+          "required": true,
+          "success_statement": "Predict qualitatively how acceleration changes when net force or mass changes before substituting numbers."
+        },
+        {
+          "capability_id": "LC-PHY-N2-REL-TRANSFER",
+          "type": "TRANSFER",
+          "required": true,
+          "success_statement": "Use a force diagram plus measured acceleration to infer an unknown opposing force rather than merely repeating a direct F = ma substitution."
+        }
+      ],
+      "prerequisite_decisions": [
+        {
+          "prerequisite_id": "PHY-G9-SYSTEM-REPRESENTATION",
+          "state": "REPAIR_BEFORE_UNIT",
+          "repair_target": "LU-PHY-N2-SYSTEM-01"
+        }
+      ],
+      "concept_anchor": {
+        "kind": "PHYSICAL_SITUATION",
+        "description": "The same trolley can accelerate differently if the combined horizontal force changes, and a heavier trolley needs a larger net force for the same acceleration.",
+        "learner_job": "Predict the direction and relative size of acceleration before using F_net = m a."
+      },
+      "ordinary_language_target": "For the object you selected, the acceleration points with the net force. More net force gives more acceleration when mass is unchanged; more mass gives less acceleration when net force is unchanged.",
+      "formal_understanding": {
+        "state": "REQUIRED",
+        "relation_or_object": "F_net = m a",
+        "term_origins": [
+          "F_net means the combined force on the selected system, after directional forces are combined.",
+          "m is the mass of that same selected system.",
+          "a is the acceleration of that same selected system and carries the direction/sign of the net-force effect.",
+          "The equality connects the selected-system net force to mass times acceleration; it is not permission to substitute one arbitrary force from the story for F_net."
+        ],
+        "conditions": [
+          "Use the Grade 9 school-level Newton-II model within the researched scope.",
+          "Select one physical system and keep F_net, m and a attached to that same system.",
+          "Use consistent SI units when calculating force."
+        ],
+        "reconstruction_route": "Select the system; draw or state all relevant force directions; combine them to identify F_net; state mass and acceleration for that same system; only then write F_net = m a and solve for the requested quantity.",
+        "checks": [
+          "Net force and acceleration must have consistent direction/sign.",
+          "At fixed mass, increasing net force must increase acceleration.",
+          "At fixed net force, increasing mass must decrease acceleration.",
+          "Force units from kg multiplied by m/s^2 are newtons."
+        ]
+      },
+      "representation_transitions": [
+        {
+          "transition_id": "RT-PHY-N2-FBD-TO-NET",
+          "from": "FORCE_DIAGRAM",
+          "to": "SIGNED_NET_FORCE",
+          "learner_job": "Choose a positive direction and combine force arrows with signs to obtain the net force on the selected system.",
+          "representation_requirement_refs": [
+            "RREP-PHY-GOLDEN-N2-SYSTEM-001"
+          ]
+        },
+        {
+          "transition_id": "RT-PHY-N2-NET-TO-EQUATION",
+          "from": "SIGNED_NET_FORCE",
+          "to": "F_NET_EQUALS_M_A",
+          "learner_job": "Replace the physical net-force statement by F_net only after the system and direction have been made explicit."
+        },
+        {
+          "transition_id": "RT-PHY-N2-EQUATION-TO-PREDICTION",
+          "from": "F_NET_EQUALS_M_A",
+          "to": "QUALITATIVE_SCALING",
+          "learner_job": "Use the relation to predict how acceleration responds to a force or mass change before calculating."
+        }
+      ],
+      "misconceptions": [
+        {
+          "misconception_id": "MIS-PHY-N2-APPLIED-EQUALS-NET",
+          "wrong_model": "Substitute the applied push directly for F_net even when friction or another opposing force is present.",
+          "why_tempting": "The equation is short and the applied force is often the most obvious number in the problem statement.",
+          "decisive_discriminator": "Compare the acceleration predicted from the applied force alone with the force diagram; if another horizontal force acts, first combine forces to obtain F_net.",
+          "diagnostic_probe_id": "PROBE-PHY-N2-REL-MIS-01",
+          "repair_strategy": "REPRESENTATION_CONTRAST"
+        }
+      ],
+      "contrasts": [
+        {
+          "contrast_id": "CONTRAST-PHY-N2-SAME-MASS-DIFF-FORCE",
+          "case_a": "A 2 kg trolley has 2 N net force to the right.",
+          "case_b": "The same 2 kg trolley has 6 N net force to the right.",
+          "decisive_difference": "Mass is fixed, so the larger net force must produce the larger acceleration."
+        },
+        {
+          "contrast_id": "CONTRAST-PHY-N2-SAME-FORCE-DIFF-MASS",
+          "case_a": "A 2 kg trolley has 6 N net force to the right.",
+          "case_b": "A 6 kg trolley has the same 6 N net force to the right.",
+          "decisive_difference": "Net force is fixed, so the larger mass must have the smaller acceleration."
+        }
+      ],
+      "support_progression": {
+        "worked": {
+          "state": "PRESENT",
+          "support_features": [
+            "MODEL_SELECTED",
+            "REPRESENTATION_PROVIDED",
+            "FIRST_STEP_PROVIDED",
+            "INTERMEDIATE_STEPS_PROVIDED",
+            "CONDITION_CUE",
+            "ERROR_CHECK_CUE"
+          ],
+          "removed_since_previous": []
+        },
+        "guided_1": {
+          "state": "PRESENT",
+          "support_features": [
+            "REPRESENTATION_PROVIDED",
+            "FIRST_STEP_PROVIDED",
+            "CONDITION_CUE",
+            "ERROR_CHECK_CUE"
+          ],
+          "removed_since_previous": [
+            "MODEL_SELECTED",
+            "INTERMEDIATE_STEPS_PROVIDED"
+          ]
+        },
+        "guided_2": {
+          "state": "PRESENT",
+          "support_features": [
+            "REPRESENTATION_PROVIDED",
+            "ERROR_CHECK_CUE"
+          ],
+          "removed_since_previous": [
+            "FIRST_STEP_PROVIDED",
+            "CONDITION_CUE"
+          ]
+        },
+        "independent": {
+          "state": "PRESENT",
+          "support_features": [],
+          "removed_since_previous": [
+            "REPRESENTATION_PROVIDED",
+            "ERROR_CHECK_CUE"
+          ]
+        }
+      },
+      "practice_progression": {
+        "worked_example_id": "ITEM-PHY-N2-REL-WORKED",
+        "guided_1_id": "ITEM-PHY-N2-REL-G1",
+        "guided_2_id": "ITEM-PHY-N2-REL-G2",
+        "independent_id": "ITEM-PHY-N2-REL-IND"
+      },
+      "transfer_design": {
+        "required": true,
+        "source_learning_example_id": "ITEM-PHY-N2-REL-WORKED",
+        "transfer_type": "REVERSE_REASONING",
+        "changed_dimensions": [
+          "REPRESENTATION_SHIFT",
+          "REVERSE_REASONING",
+          "MODEL_SELECTION"
+        ],
+        "non_isomorphic_to_worked": true,
+        "question_family_refs": []
+      },
+      "completion_probes": [
+        {
+          "probe_id": "PROBE-PHY-N2-REL-EXPLAIN-01",
+          "capability_refs": [
+            "LC-PHY-N2-REL-EXPLAIN",
+            "LC-PHY-N2-REL-PREDICT"
+          ],
+          "prompt_intent": "Before calculation, compare two same-mass cases with different net forces and two same-force cases with different masses.",
+          "success_evidence": "The learner predicts both trends correctly and explains them without treating the equation as an unexplained formula."
+        },
+        {
+          "probe_id": "PROBE-PHY-N2-REL-RECONSTRUCT-01",
+          "capability_refs": [
+            "LC-PHY-N2-REL-RECONSTRUCT",
+            "LC-PHY-N2-REL-CHECK"
+          ],
+          "prompt_intent": "Hide the equation and ask the learner to rebuild what each term must mean after selecting a trolley system and combining force directions.",
+          "success_evidence": "The learner states that F_net, m and a refer to the same system, gives the net-force direction, and restores F_net = m a with consistent units."
+        },
+        {
+          "probe_id": "PROBE-PHY-N2-REL-APPLY-01",
+          "capability_refs": [
+            "LC-PHY-N2-REL-APPLY"
+          ],
+          "prompt_intent": "Give mass and two opposing horizontal forces, require net force first, then calculate acceleration.",
+          "success_evidence": "The learner combines the forces with direction before substitution and obtains acceleration with direction and units."
+        },
+        {
+          "probe_id": "PROBE-PHY-N2-REL-TRANSFER-01",
+          "capability_refs": [
+            "LC-PHY-N2-REL-TRANSFER"
+          ],
+          "prompt_intent": "Provide mass, measured acceleration and an applied force plus a force diagram; ask for the unknown opposing force.",
+          "success_evidence": "The learner infers F_net from m a, then reasons backward through the signed force balance to determine the opposing force."
+        },
+        {
+          "probe_id": "PROBE-PHY-N2-REL-MIS-01",
+          "capability_refs": [
+            "LC-PHY-N2-REL-CHECK"
+          ],
+          "prompt_intent": "Present the incorrect solution 'F = 10 N, m = 2 kg, so a = 5 m/s^2' while a 4 N friction force is shown, and ask what is wrong before fixing it.",
+          "success_evidence": "The learner identifies that 10 N is the applied force rather than the net force, computes the net force first, and then applies Newton II."
+        }
+      ]
+    }
+  ],
+  "exam_bridge": {
+    "exam_demand_profile_id": "EDP-SOF-ISO-G9-NEWTON2-GOLDEN-2026-27",
+    "question_families": []
+  },
+  "review_requirements": {
+    "pedagogy_review_required": true,
+    "subject_review_required": true,
+    "exact_artifact_binding_required": true
+  }
+}
