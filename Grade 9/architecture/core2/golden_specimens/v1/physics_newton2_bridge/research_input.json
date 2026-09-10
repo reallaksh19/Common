@@ -1,0 +1,257 @@
+{
+  "artifact_prefix": "Physics_Newton2_Bridge_Golden",
+  "research_bundle_id": "RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026",
+  "evidence_version": "1.0.0",
+  "status": "READY_FOR_PUBLISH",
+  "change_class": "SEMANTIC",
+  "project": {
+    "grade": 9,
+    "subject": "PHYSICS",
+    "topic_id": "PHY-G9-NEWTON2-SYSTEM-GOLDEN",
+    "title": "Newton's Second Law: System, Net Force and Acceleration"
+  },
+  "scope_graph": {
+    "scope_graph_id": "SG-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026",
+    "schema_version": "1.0.0",
+    "canonical_registry_versions": [
+      {
+        "registry_id": "REG-G9-PHYSICS-SKILL",
+        "version": "b9c704b2c9d231be23a37b53b083f8b5a8c410da"
+      }
+    ],
+    "included_nodes": [
+      "PHY-G9-SYSTEM-REPRESENTATION",
+      "PHY-G9-NEWTON-LAW-2"
+    ],
+    "excluded_nodes": [
+      "PHY-G9-NEWTON-LAW-1",
+      "PHY-G9-NEWTON-LAW-3",
+      "PHY-G11-CIRCULAR-DYNAMICS"
+    ],
+    "included_edges": [
+      {
+        "from": "PHY-G9-SYSTEM-REPRESENTATION",
+        "relation": "SUPPORTS_REASONING_FOR",
+        "to": "PHY-G9-NEWTON-LAW-2"
+      }
+    ],
+    "project_candidates": []
+  },
+  "research_context": {
+    "curriculum_profile_ids": [
+      "NCERT-G9-SECONDARY-PHASE1-2026"
+    ],
+    "supported_exam_demand_profile_ids": [
+      "EDP-SOF-ISO-G9-NEWTON2-GOLDEN-2026-27"
+    ],
+    "research_intent": "Scoped mature-product golden fixture using the already verified Laws of Motion evidence for system reasoning and Newton's second law. No new source claim, PYQ frequency claim or question-family denominator is introduced."
+  },
+  "concept_ids": [
+    "PHY-G9-SYSTEM-REPRESENTATION",
+    "PHY-G9-NEWTON-LAW-2"
+  ],
+  "prerequisite_edges": [
+    {
+      "prerequisite_id": "PHY-G9-SYSTEM-REPRESENTATION",
+      "target_id": "PHY-G9-NEWTON-LAW-2"
+    }
+  ],
+  "misconception_ids": [],
+  "research_claims": [
+    {
+      "claim_id": "R-PHY-LM-003",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "CANONICAL_FACT",
+      "statement": "Newton's second law is taught at Grade 9 in terms of mass and acceleration, including calculation of force using its mathematical expression and the SI unit of force.",
+      "concept_ids": [
+        "PHY-G9-NEWTON-LAW-2"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-NCERT-G9-SYLLABUS-FORCE"
+      ],
+      "conditions": [
+        "Keep the published treatment within the confirmed Grade 9 scope unless a separate extension is researched."
+      ],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    },
+    {
+      "claim_id": "R-PHY-LM-005",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "METHOD",
+      "statement": "The repository Physics authority requires problem reasoning to identify the physical system, frame where relevant, governing model, representations, units, expert solution path and validation checks.",
+      "concept_ids": [
+        "PHY-G9-SYSTEM-REPRESENTATION",
+        "PHY-G9-NEWTON-LAW-2"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-REPO-G9-PHYSICS-SKILL"
+      ],
+      "conditions": [],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    },
+    {
+      "claim_id": "R-PHY-LM-007-GOLDEN",
+      "traceability_class": "MATERIAL_EXAM_FACT",
+      "claim_type": "EXAM_FACT",
+      "statement": "The current SOF Class 9 International Science Olympiad syllabus includes Force and Laws of Motion in Section 2 and includes a higher-order-thinking Section 3 based on Section 2.",
+      "concept_ids": [
+        "PHY-G9-NEWTON-LAW-2"
+      ],
+      "verification_status": "VERIFIED",
+      "source_refs": [
+        "SRC-SOF-ISO-G9-SYLLABUS-2026"
+      ],
+      "conditions": [
+        "This establishes current syllabus and section-level demand only; no question-family frequency or PYQ denominator is claimed."
+      ],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    }
+  ],
+  "representation_requirements": [
+    {
+      "representation_requirement_id": "RREP-PHY-GOLDEN-N2-SYSTEM-001",
+      "subject": "PHYSICS",
+      "representation_type": "FORCE_DIAGRAM",
+      "concept_ids": [
+        "PHY-G9-SYSTEM-REPRESENTATION",
+        "PHY-G9-NEWTON-LAW-2"
+      ],
+      "research_refs": [
+        "R-PHY-LM-003",
+        "R-PHY-LM-005"
+      ],
+      "semantic_requirements": {
+        "selected_system_must_be_explicit": true,
+        "forces_must_show_direction": true,
+        "net_force_must_refer_to_selected_system": true,
+        "decorative_force_arrows_without_system_ownership_are_not_sufficient": true
+      },
+      "required_labels": [
+        "selected system",
+        "force direction"
+      ],
+      "approved_asset_ids": [],
+      "traceability_class": "MATERIAL_REPRESENTATION",
+      "blocking_if_unsupported": true
+    }
+  ],
+  "equation_or_reaction_objects": [
+    {
+      "id": "EQ-PHY-LM-NEWTON2-001",
+      "kind": "EQUATION",
+      "semantic_expression": "F_net = m a",
+      "research_refs": [
+        "R-PHY-LM-003",
+        "R-PHY-LM-005"
+      ],
+      "symbol_definitions": {
+        "F_net": "net force on the selected system",
+        "m": "mass",
+        "a": "acceleration"
+      },
+      "conditions": [
+        "Use the Grade 9 school-level model and preserve the selected-system meaning of net force."
+      ]
+    }
+  ],
+  "worked_reasoning": [
+    {
+      "worked_reasoning_id": "WR-PHY-LM-001",
+      "concept_ids": [
+        "PHY-G9-SYSTEM-REPRESENTATION",
+        "PHY-G9-NEWTON-LAW-2"
+      ],
+      "research_refs": [
+        "R-PHY-LM-005",
+        "R-PHY-LM-003"
+      ],
+      "summary": "Identify the physical system; state assumptions and frame where relevant; represent the situation; identify knowns and target; choose the governing law; solve with units; check consistency; interpret physically."
+    }
+  ],
+  "source_ledger": {
+    "source_ledger_id": "SL-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026",
+    "schema_version": "1.0.0",
+    "sources": [
+      {
+        "source_id": "SRC-NCERT-G9-SYLLABUS-FORCE",
+        "provider": "NCERT",
+        "source_type": "OFFICIAL_CURRICULUM_PDF",
+        "url": "https://ncert.nic.in/pdf/announcement/Syllabus_Secondary_Stage_Phase_I_Grade_9_Part_2.pdf",
+        "retrieved_at": "2026-09-10T06:45:00Z",
+        "authority_level": "OFFICIAL",
+        "verification_status": "VERIFIED",
+        "scope_role": "Grade 9 Force and Laws of Motion scope and learning outcomes",
+        "rights": {
+          "status": "REFERENCE_ONLY",
+          "basis": "Official curriculum source used for scope/factual extraction; golden fixture does not reproduce the source document.",
+          "allowed_uses": ["EXTRACT_FACTS", "CITE_SOURCE", "MAP_SCOPE"],
+          "prohibited_uses": ["REPRODUCE_FULL_CONTENT"]
+        }
+      },
+      {
+        "source_id": "SRC-SOF-ISO-G9-SYLLABUS-2026",
+        "provider": "Science Olympiad Foundation",
+        "source_type": "OFFICIAL_EXAM_SYLLABUS_PAGE",
+        "url": "https://sofworld.org/nso/class-9/nso-syllabus/nso-syllabus-class-9",
+        "retrieved_at": "2026-09-10T06:45:00Z",
+        "authority_level": "OFFICIAL",
+        "verification_status": "VERIFIED",
+        "scope_role": "Current Class 9 ISO exam pattern and topic inclusion",
+        "rights": {
+          "status": "REFERENCE_ONLY",
+          "basis": "Official exam page used for current pattern/syllabus facts only.",
+          "allowed_uses": ["EXTRACT_FACTS", "CITE_SOURCE", "MAP_EXAM_DEMAND"],
+          "prohibited_uses": ["REPRODUCE_FULL_CONTENT"]
+        },
+        "fresh_until": "2027-06-30"
+      },
+      {
+        "source_id": "SRC-REPO-G9-PHYSICS-SKILL",
+        "provider": "Common repository",
+        "source_type": "REPOSITORY_SUBJECT_AUTHORITY",
+        "repo_path": "Grade 9/skills/grade9-physics/SKILL.md",
+        "retrieved_at": "2026-09-10T06:45:00Z",
+        "authority_level": "VERIFIED_SECONDARY",
+        "verification_status": "VERIFIED",
+        "scope_role": "Physics reasoning/process authority for system, representation and validation",
+        "rights": {
+          "status": "REPRODUCTION_ALLOWED",
+          "basis": "Repository-owned architecture source used by the same project.",
+          "allowed_uses": ["EXTRACT_FACTS", "CITE_SOURCE", "REUSE_INTERNAL_CONTRACT"],
+          "prohibited_uses": []
+        }
+      }
+    ]
+  },
+  "exam_demand_profiles": [
+    {
+      "exam_demand_profile_id": "EDP-SOF-ISO-G9-NEWTON2-GOLDEN-2026-27",
+      "schema_version": "1.0.0",
+      "exam_id": "SOF_ISO_L1",
+      "cycle": "2026-27",
+      "stage": "LEVEL1",
+      "grade": 9,
+      "response_contract": {"type": "OBJECTIVE"},
+      "evidence_source_refs": ["SRC-SOF-ISO-G9-SYLLABUS-2026"],
+      "representative_occurrence_ids": [],
+      "concept_ids": ["PHY-G9-NEWTON-LAW-2"],
+      "question_family_ids": [],
+      "representation_types": [],
+      "hidden_prerequisite_ids": [],
+      "common_distractors_or_failure_models": [],
+      "demand_dimensions": {
+        "section_2_contains_force_and_laws_of_motion": true,
+        "section_3_higher_order_thinking_based_on_section_2": true
+      },
+      "confidence": "HIGH",
+      "fresh_until": "2027-06-30"
+    }
+  ],
+  "unresolved_items": [],
+  "release_note": "Scoped mature-golden replay derived from already verified Laws of Motion evidence. It does not claim a frozen PYQ corpus, question-family frequencies, classroom effectiveness or psychometric validation."
+}
