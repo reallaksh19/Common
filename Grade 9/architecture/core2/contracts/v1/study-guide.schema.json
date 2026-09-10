@@ -43,7 +43,12 @@
         "traceability_class": {"enum": ["MATERIAL", "PEDAGOGICAL_CONNECTIVE", "PRESENTATION_ONLY"]},
         "research_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
         "learning_design_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-        "representation_instance_id": {"type": "string"}
+        "representation_instance_id": {"type": "string"},
+        "representation_payload": {
+          "type": "object",
+          "description": "Core (2)-owned learner-use instantiation of a frozen Core (1) representation requirement. It may choose scenario labels, example values and presentation semantics for this learner item, but may not contradict or weaken the Core (1) semantic requirement.",
+          "additionalProperties": true
+        }
       }
     },
     "appendix": {
