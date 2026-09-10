@@ -34,7 +34,7 @@
         "additionalProperties": false,
         "required": ["role", "path", "sha256"],
         "properties": {
-          "role": {"enum": ["PUBLICATION_PLAN", "PUBLICATION_STRUCTURE", "STUDY_GUIDE_MODEL", "STUDY_GUIDE_MD", "STUDY_GUIDE_PDF", "TRANSFER_BOOK_MODEL", "TRANSFER_BOOK_MD", "TRANSFER_BOOK_PDF", "PUBLICATION_AUDIT", "OTHER"]},
+          "role": {"enum": ["PUBLICATION_PLAN", "LEARNING_DESIGN", "PUBLICATION_STRUCTURE", "STUDY_GUIDE_MODEL", "STUDY_GUIDE_MD", "STUDY_GUIDE_PDF", "TRANSFER_BOOK_MODEL", "TRANSFER_BOOK_MD", "TRANSFER_BOOK_PDF", "PUBLICATION_AUDIT", "OTHER"]},
           "path": {"type": "string", "minLength": 1},
           "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "media_type": {"type": "string"},
