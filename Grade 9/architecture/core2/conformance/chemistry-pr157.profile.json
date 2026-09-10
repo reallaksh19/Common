@@ -1,0 +1,51 @@
+{
+  "profile_id": "CORE2-CHEMISTRY-PR157-V1",
+  "subject": "CHEMISTRY",
+  "inherits_from": "PR157",
+  "delivery_contract": "FULL_TOPIC_PAIR",
+  "required_products": ["CORE_STUDY_GUIDE", "EXAMSIDE_SOLUTION_TRANSFER"],
+  "required_appendices": {
+    "A": "CORE_PRACTICE",
+    "B": "CORE_SOLUTIONS",
+    "C": "PRINTABLE_HANDOUT"
+  },
+  "appendix_C_policy": {
+    "standalone_usable": true,
+    "introduces_new_subject_content": false,
+    "answer_leakage_forbidden": true
+  },
+  "transfer_question_requirements": [
+    "H0_ATTEMPT_FIRST",
+    "H1_NOTICE",
+    "H2_MODEL",
+    "H3_START_BY_REQUIRED_DEPTH",
+    "PRIMARY_SUPPORTS_HIERARCHY",
+    "SOURCE_YEAR_SHIFT_WHEN_AVAILABLE",
+    "SOURCE_LINK_AND_CORE_RESEARCH_REFS",
+    "DIFFICULTY_PROVENANCE",
+    "TRANSFER_SEPARATE_FROM_DIFFICULTY",
+    "COMPLETE_ASSIMILATION_SOLUTION",
+    "CONCEPT_HELPER_AND_MISCONCEPTION_SUPPORT_WHEN_NEEDED"
+  ],
+  "representation_policy": {
+    "macro_particulate_symbolic_semantics": true,
+    "unsupported_blocking_requirement": "BLOCK",
+    "required_label_closure": true,
+    "source_crop_or_asset_fidelity": true
+  },
+  "automated_pdf_gates": {
+    "min_font_pt": 7.5,
+    "bounds": true,
+    "internal_links": true,
+    "external_link_structure": true,
+    "answer_separation": true,
+    "grayscale_information": true,
+    "notation_probes": true
+  },
+  "human_review": {
+    "required": true,
+    "minimum_render_dpi": 200,
+    "all_pages": true,
+    "bind_exact_pdf_hashes": true
+  }
+}
