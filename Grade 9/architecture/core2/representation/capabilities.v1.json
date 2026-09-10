@@ -12,7 +12,7 @@
     {"capability_id":"REP-MATH-STAGE-TABLE","representation_type":"STAGE_DECISION_TABLE","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
     {"capability_id":"REP-PHY-FORCE-DIAGRAM","representation_type":"FORCE_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
     {"capability_id":"REP-CHEM-MACRO-SYMBOLIC","representation_type":"MACRO_SYMBOLIC_REACTION_LINK","subjects":["CHEMISTRY"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
-    {"capability_id":"REP-GENERIC-XY-GRAPH","representation_type":"XY_GRAPH","subjects":["MATHEMATICS","PHYSICS","CHEMISTRY"],"renderer_id":"xy_graph_v1","status":"PLANNED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-GENERIC-XY-GRAPH","representation_type":"XY_GRAPH","subjects":["MATHEMATICS","PHYSICS","CHEMISTRY"],"renderer_id":"xy_graph_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
     {"capability_id":"REP-PHY-RAY","representation_type":"RAY_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"ray_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
     {"capability_id":"REP-PHY-CIRCUIT","representation_type":"CIRCUIT_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"circuit_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
     {"capability_id":"REP-PHY-WAVE","representation_type":"WAVE_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"wave_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
