@@ -4,12 +4,23 @@
   "title": "PublicationTarget v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["publication_target_id", "schema_version", "research_bundle_id", "research_bundle_manifest_digest", "learner_profile_id", "purpose", "requested_products"],
+  "required": [
+    "publication_target_id",
+    "schema_version",
+    "research_bundle_id",
+    "research_package_digest",
+    "learner_profile_id",
+    "purpose",
+    "requested_products"
+  ],
   "properties": {
     "publication_target_id": {"$ref": "common.schema.json#/$defs/stable_id"},
     "schema_version": {"const": "1.0.0"},
     "research_bundle_id": {"$ref": "common.schema.json#/$defs/stable_id"},
-    "research_bundle_manifest_digest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "research_package_digest": {
+      "$ref": "common.schema.json#/$defs/sha256",
+      "description": "Must equal ResearchBundleManifest.package_digest. This binds Core (2) to the frozen released research package without introducing a manifest self-hash."
+    },
     "learner_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"},
     "purpose": {
       "type": "object",
@@ -19,7 +30,18 @@
         "type": {"$ref": "common.schema.json#/$defs/purpose_type"},
         "exam_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"},
         "curriculum_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {"enum": ["COMPETITIVE_FOUNDATION", "COMPETITIVE_EXAM", "MOCK_EXAM_PREPARATION"]}
+            },
+            "required": ["type"]
+          },
+          "then": {"required": ["exam_profile_id"]}
+        }
+      ]
     },
     "requested_products": {
       "type": "object",
@@ -28,7 +50,11 @@
       "properties": {
         "study_guide": {"type": "boolean"},
         "transfer_book": {"type": "boolean"}
-      }
+      },
+      "anyOf": [
+        {"properties": {"study_guide": {"const": true}}},
+        {"properties": {"transfer_book": {"const": true}}}
+      ]
     },
     "publication_profile": {
       "type": "object",
