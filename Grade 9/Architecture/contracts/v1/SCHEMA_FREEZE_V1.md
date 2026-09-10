@@ -1,9 +1,10 @@
 # Two-Core Contract Schema Freeze v1
 
-**Status:** DRAFT FREEZE FOR CROSS-PR REVIEW  
+**Status:** JOINT V1 CONTRACT FROZEN — implementation pending  
 **Schema family:** `Grade 9/Architecture/contracts/v1/`  
 **Applies to:** Core (1) Research in PR #160 and Core (2) Publisher in PR #161  
-**JSON Schema dialect:** Draft 2020-12
+**JSON Schema dialect:** Draft 2020-12  
+**Freeze evidence:** GitHub Actions run `34447311075`
 
 ## Freeze objective
 
@@ -36,9 +37,10 @@ Learner Bxx is not part of `ResearchBundle` identity. A learner/publication chan
 | Contract | Owner | Purpose |
 |---|---|---|
 | `common.schema.json` | shared | IDs, digests and frozen enums |
+| `project-manifest.schema.json` | intake/router | project routing and Core state |
 | `scope-graph.schema.json` | Core (1) | project selection of canonical concepts plus research candidates |
 | `learner-profile.schema.json` | intake/student state | Bxx by subtopic, basis and confidence |
-| `publication-target.schema.json` | intake/Core (2) | learner/purpose/products requested from one ResearchBundle |
+| `publication-target.schema.json` | intake/Core (2) | learner/purpose/products requested from one frozen research package |
 | `research-claim.schema.json` | Core (1) | verified material claims with source lineage |
 | `representation-requirement.schema.json` | Core (1) | semantic figure/representation obligations; no geometry ownership |
 | `source-ledger.schema.json` | Core (1)/source authority | provenance, verification and structured rights/use state |
@@ -47,6 +49,53 @@ Learner Bxx is not part of `ResearchBundle` identity. A learner/publication chan
 | `research-bundle.schema.json` | Core (1) | canonical machine hand-off; excludes learner Bxx |
 | `research-bundle-manifest.schema.json` | Core (1) release | external artifact hashes, semantic/package digests and change class |
 | `core1-research-gap.schema.json` | Core (2) → Core (1) | fail-back for missing research/evidence |
+
+## Executable gates
+
+The v1 contract family is checked by:
+
+```text
+validate_contracts.py
+validate_handoff.py
+```
+
+`validate_contracts.py` checks Draft 2020-12 schema validity, example fixtures and frozen architecture invariants.
+
+`validate_handoff.py` checks cross-object closure that JSON Schema alone cannot prove, including:
+
+```text
+ResearchBundle ↔ ResearchBundleManifest identity/version binding
+PublicationTarget ↔ ResearchPackage digest binding
+PublicationTarget ↔ LearnerProfile binding
+ResearchClaim ↔ SourceLedger closure
+Representation/equation/worked-reasoning ↔ ResearchClaim closure
+ResearchBundle source/exam/question artifact refs ↔ manifest artifact binding
+Research Core MD/PDF material-view reconciliation
+QuestionEvidence candidate denominator and REVIEW closure
+competitive PublicationTarget ↔ ExamDemand support
+```
+
+## Joint CI evidence
+
+GitHub Actions run `34447311075` completed successfully with:
+
+```text
+CONTRACT_SCHEMA_FREEZE_V1 = PASS (13 schemas)
+BXX_OUTSIDE_RESEARCH_BUNDLE = PASS
+MANIFEST_NO_SELF_HASH = PASS
+CHANGE_CLASS_ENUM = PASS
+RIGHTS_USE_ENUM = PASS
+QUESTION_DISPOSITION_ENUM = PASS
+CORE1_CORE2_HANDOFF_V1 = PASS
+BUNDLE_MANIFEST_BINDING = PASS
+LEARNER_TARGET_BINDING = PASS
+MATERIAL_VIEW_RECONCILIATION = PASS
+RESEARCH_REFERENCE_CLOSURE = PASS
+QUESTION_DENOMINATOR_CLOSURE = PASS
+COMPETITIVE_EXAM_DEMAND_BINDING = PASS
+```
+
+This is a contract/interface PASS. It does **not** establish source truth, learner pedagogy, renderer breadth, classroom effectiveness or psychometric calibration.
 
 ## Normative identity and hashing rules
 
@@ -63,6 +112,20 @@ The `package_digest` is SHA-256 over the canonicalized ordered list of release a
 sorted lexicographically by `role`, then `path`. The manifest itself is not included in that list, avoiding self-reference.
 
 The manifest separately binds each released artifact including Research Core Markdown/PDF, Source Ledger, ExamDemand/QuestionEvidence when applicable, and approved assets.
+
+`PublicationTarget` binds Core (2) to the released package through:
+
+```text
+research_package_digest
+```
+
+which MUST equal:
+
+```text
+ResearchBundleManifest.package_digest
+```
+
+Do not introduce a manifest self-hash or restore the superseded `research_bundle_manifest_digest` wording.
 
 ## Canonical knowledge vs project scope
 
@@ -89,7 +152,7 @@ Shared/public research storage must not contain personally identifying learner s
 
 `Research_Core.md` and `Research_Core.pdf` are derived review surfaces, not parallel authorities. They must be generated from or reconciled against the ResearchBundle semantic model.
 
-Release gates outside JSON Schema must enforce:
+Release gates enforce:
 
 ```text
 BUNDLE_TO_MD_MATERIAL_COVERAGE = 100%
@@ -152,6 +215,8 @@ REQUIRED | DEFER | EXCLUDE | REVIEW | DUPLICATE
 
 `REVIEW` blocks closeout. `DUPLICATE` requires a canonical duplicate link. `EXCLUDE` and `DEFER` require a reason. Every non-duplicate row has one primary owner.
 
+The executable hand-off validator additionally requires `candidate_denominator == len(rows)` and reconciles the optional summary to row dispositions.
+
 ## Source rights/use
 
 Discovery/evidence validity is separate from reproduction permission. Frozen rights states are:
@@ -185,12 +250,27 @@ EMPIRICAL
 
 ## Freeze discipline
 
-Until both PR #160 and PR #161 agree on these interfaces:
+The v1 hand-off is now jointly frozen across PR #160 and PR #161.
 
-- do not migrate stable skill IDs broadly;
+Until a new contract version is approved:
+
+- do not migrate stable skill IDs broadly before cold-start replay;
 - do not make topic-specific schemas the new platform authority;
 - do not put learner Bxx back into ResearchBundle;
 - do not add hidden Core (2) web research paths;
-- do not fork external-corpus denominator semantics.
+- do not fork external-corpus denominator semantics;
+- do not rename or repurpose frozen fields/enums in place.
 
-A schema-breaking change after this freeze requires a new contract version directory (`v2/`) or an explicitly approved pre-implementation reset of v1.
+A breaking interface change requires a new contract version directory (`v2/`) unless the user explicitly reopens the pre-implementation v1 freeze.
+
+## Next implementation gate
+
+Proceed in this order:
+
+```text
+1. Core (1) package generation
+2. Core (2) hand-off validation
+3. cold-start Laws of Motion replay
+4. cold-start Redox replay
+5. only then broad skill/router migration
+```
