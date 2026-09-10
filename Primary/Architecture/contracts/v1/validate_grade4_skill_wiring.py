@@ -40,7 +40,7 @@ def main() -> None:
         "CHILD_SELECTED",
         "CHILD_PRODUCED",
         "PRIMARY_RUNTIME_ALIGNMENT",
-        "PERFORMANCE_LAPSE",
+        "transient performance lapse",
         "DELAYED_RETENTION",
     ])
 
