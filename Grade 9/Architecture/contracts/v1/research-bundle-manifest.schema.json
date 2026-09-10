@@ -13,7 +13,8 @@
     "canonicalization",
     "semantic_digest",
     "package_digest",
-    "artifacts"
+    "artifacts",
+    "material_view_reconciliation"
   ],
   "properties": {
     "manifest_id": {"$ref": "common.schema.json#/$defs/stable_id"},
@@ -58,7 +59,13 @@
           "media_type": {"type": "string"},
           "bytes": {"type": "integer", "minimum": 0}
         }
-      }
+      },
+      "allOf": [
+        {"contains": {"properties": {"role": {"const": "RESEARCH_BUNDLE"}}, "required": ["role"]}, "minContains": 1},
+        {"contains": {"properties": {"role": {"const": "RESEARCH_CORE_MD"}}, "required": ["role"]}, "minContains": 1},
+        {"contains": {"properties": {"role": {"const": "RESEARCH_CORE_PDF"}}, "required": ["role"]}, "minContains": 1},
+        {"contains": {"properties": {"role": {"const": "SOURCE_LEDGER"}}, "required": ["role"]}, "minContains": 1}
+      ]
     },
     "material_view_reconciliation": {
       "type": "object",
