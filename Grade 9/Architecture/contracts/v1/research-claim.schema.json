@@ -20,6 +20,11 @@
       "type": "array",
       "items": {"$ref": "common.schema.json#/$defs/stable_id"}
     },
+    "evidence_refs": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/evidence_ref"},
+      "default": []
+    },
     "conditions": {"type": "array", "items": {"type": "string"}, "default": []},
     "edge_cases": {"type": "array", "items": {"type": "string"}, "default": []},
     "confidence": {"$ref": "common.schema.json#/$defs/confidence"}
