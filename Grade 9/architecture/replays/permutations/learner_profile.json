@@ -1,0 +1,21 @@
+{
+  "learner_profile_id": "LP-G11-MATH-PERMUTATIONS-BMIX-001",
+  "schema_version": "1.0.0",
+  "privacy_class": "PUBLIC_SYNTHETIC",
+  "grade": 11,
+  "baselines": [
+    {"subtopic_id":"PERM-ST01","value":80,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST02","value":70,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST03","value":55,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST04","value":45,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST05","value":65,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST06","value":30,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST07","value":40,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST08","value":25,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST09","value":75,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST10","value":30,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST11","value":35,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]},
+    {"subtopic_id":"PERM-ST12","value":20,"basis":"EVIDENCE_ESTIMATED","confidence":"LOW","evidence_refs":[]}
+  ],
+  "notes": "Synthetic Core (2) falsifier only. Values are not psychometric mastery estimates and must not be reused for a real learner."
+}
