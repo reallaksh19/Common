@@ -29,6 +29,8 @@ jobs:
         run: python "Grade 9/Architecture/contracts/v1/validate_contracts.py"
       - name: Validate Core 2 downstream contracts
         run: python "Grade 9/architecture/core2/contracts/v1/validate_core2_contracts.py"
+      - name: Validate agent golden reference specimen
+        run: python "Grade 9/architecture/core2/reference_specimens/v1/validate_reference_specimen.py"
 
       - name: Build Laws of Motion Core 1 replay
         run: python "Grade 9/Architecture/core1/build_research_package.py" --input "Grade 9/Architecture/replays/laws_of_motion/research_input.json" --out /tmp/laws-core1
