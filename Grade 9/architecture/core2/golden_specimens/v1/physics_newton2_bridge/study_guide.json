@@ -1,0 +1,367 @@
+{
+  "publication_id": "SG-RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026-LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026-LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "product_identity": {
+    "product_id": "SG-RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026-LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+    "delivery_contract": "STUDY_GUIDE_ONLY",
+    "role": "CORE_STUDY_GUIDE"
+  },
+  "title": "Newton's Second Law — Build the Force Model First",
+  "subtitle": "Choose the system, combine forces, predict the motion, then calculate.",
+  "main_sections": [
+    {
+      "section_id": "SEC-01",
+      "concept_id": "PHY-G9-SYSTEM-REPRESENTATION",
+      "instructional_profile": "FOUNDATION",
+      "items": [
+        {
+          "item_id": "ITEM-PHY-N2-SYS-SITUATION",
+          "type": "CONNECTIVE",
+          "content": "A student pushes a trolley to the right while floor friction acts to the left. The trolley speeds up to the right. Before using any equation, decide whose motion you are explaining: circle the trolley. That trolley is the selected system.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-RECOGNIZE"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-REP",
+          "type": "REPRESENTATION",
+          "content": "A force diagram is a model of forces acting on the selected system. For the trolley, show the rightward push and the leftward friction as forces on the trolley; do not add a force merely because it appears somewhere in the story.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-EXPLAIN"],
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001"
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-NOTICE",
+          "type": "PRACTICE_PROMPT",
+          "content": "NOTICE — Ask of every arrow: ‘Does this force act on the trolley?’ The force of the hand on the trolley belongs. The force of the trolley on the hand does not, because it acts on the hand.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-RECOGNIZE", "LC-PHY-N2-SYS-MODEL"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-WORDS",
+          "type": "CLAIM",
+          "content": "Say it before calculating: choose the object first; keep only forces acting on that object; keep their directions; then combine their effects. The force relevant to acceleration is the net effect on that same selected system.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-EXPLAIN", "LC-PHY-N2-SYS-MODEL"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-CONTRAST",
+          "type": "PRACTICE_PROMPT",
+          "content": "CONTRAST — Hand pushes trolley versus trolley pushes hand. These are two different interactions on two different bodies. If the selected system is the trolley, only the force on the trolley belongs on its force diagram. Name the body receiving each force before accepting an arrow.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-EXPLAIN", "LC-PHY-N2-SYS-MODEL"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-WORKED",
+          "type": "WORKED_REASONING",
+          "content": "WORKED — A trolley is pushed 10 N right while friction is 4 N left. System: trolley. Choose right as positive. Forces on the trolley: +10 N and −4 N. Their horizontal net effect is +6 N, so the net force is 6 N to the right. The important move was not subtraction itself; it was deciding which forces act on the selected trolley and preserving direction.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-MODEL"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-G1",
+          "type": "PRACTICE_PROMPT",
+          "content": "GUIDED 1 — A cart is pulled right while resistance acts left. A force sketch is provided. First write ‘system = cart’. Then label which horizontal arrow is positive and combine the two directions. Do not use a Newton-II equation yet.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-MODEL"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-G2",
+          "type": "PRACTICE_PROMPT",
+          "content": "GUIDED 2 — A box is pulled to the right and the floor exerts an opposing force. Use the provided force diagram to decide the net-force direction. Explain which body is the selected system and why no force acting on the person belongs on this diagram.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-EXPLAIN"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-IND",
+          "type": "PRACTICE_PROMPT",
+          "content": "INDEPENDENT TRANSFER — A suitcase is pulled across a rough floor. The pull is described as forward; the floor resistance is described only as ‘opposing the motion’. Without a supplied diagram, choose the suitcase as the system, draw the horizontal force arrows, and state which combined force would control its acceleration.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-TRANSFER", "LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-MODEL"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-SYS-RETRIEVE",
+          "type": "PRACTICE_PROMPT",
+          "content": "RETRIEVAL CHECK — In one sentence, complete: ‘Before I use a force equation, I first ______ because ______.’ Then name one force that must be rejected from a trolley-system diagram because it acts on another body.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-SYS-RECOGNIZE", "LC-PHY-N2-SYS-EXPLAIN"]
+        }
+      ]
+    },
+    {
+      "section_id": "SEC-02",
+      "concept_id": "PHY-G9-NEWTON-LAW-2",
+      "instructional_profile": "BRIDGE",
+      "items": [
+        {
+          "item_id": "ITEM-PHY-N2-REL-SITUATION",
+          "type": "CONNECTIVE",
+          "content": "Return to the trolley. If its mass stays the same, a larger net force produces a larger change in motion. If the same net force acts on a heavier trolley, the acceleration is smaller. Predict these trends before writing symbols.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-EXPLAIN", "LC-PHY-N2-REL-PREDICT"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-NOTICE",
+          "type": "PRACTICE_PROMPT",
+          "content": "NOTICE — Same mass: compare 2 N and 6 N net force. Which case must accelerate more? Same 6 N net force: compare 2 kg and 6 kg. Which case must accelerate less? Answer in words first.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003"],
+          "learning_design_refs": ["LC-PHY-N2-REL-EXPLAIN", "LC-PHY-N2-REL-PREDICT"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-WORDS",
+          "type": "CLAIM",
+          "content": "For one selected system, acceleration points with the net force. At fixed mass, more net force means more acceleration. At fixed net force, more mass means less acceleration.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003"],
+          "learning_design_refs": ["LC-PHY-N2-REL-EXPLAIN", "LC-PHY-N2-REL-PREDICT"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-FORMAL",
+          "type": "FORMAL_OBJECT",
+          "content": "Now compress the idea: F_net = m a. F_net is the net force on the selected system, m is the mass of that same system, and a is its acceleration. In SI units, kg × m/s² gives newtons. The symbols are shorthand for the physical model you already built, not a substitute for selecting the system.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-RECONSTRUCT", "LC-PHY-N2-REL-CHECK"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-BOUNDARY",
+          "type": "CONDITION",
+          "content": "MODEL BOUNDARY — Keep F_net, m and a attached to the same selected system. If several forces act along the chosen direction, combine them first; do not replace F_net with one convenient applied-force number. Keep the treatment within the Grade-9 Newton-II model and use consistent SI units.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-CHECK", "LC-PHY-N2-REL-RECONSTRUCT"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-MIS",
+          "type": "PRACTICE_PROMPT",
+          "content": "MISCONCEPTION REPAIR — A 2 kg trolley is pushed 10 N right while friction is 4 N left. A student writes ‘a = 10/2 = 5 m/s²’. Diagnose the model error before calculating. The 10 N is an applied force, not the net force. The trolley’s horizontal net force is 10 − 4 = 6 N right, so its acceleration is 6/2 = 3 m/s² right.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-CHECK", "LC-PHY-N2-REL-APPLY"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-WORKED",
+          "type": "WORKED_REASONING",
+          "content": "WORKED — A 3 kg cart is pulled 15 N right while resistance is 6 N left. Predict first: acceleration must be right because the larger horizontal force is rightward. System = cart; right positive. F_net = +15 − 6 = +9 N. Then F_net = m a gives 9 = 3a, so a = 3 m/s² right. Check: the sign matches the net-force direction, and kg × m/s² is N.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK", "LC-PHY-N2-REL-PREDICT"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-G1",
+          "type": "PRACTICE_PROMPT",
+          "content": "GUIDED 1 — A 4 kg cart has 18 N right and 6 N left on the supplied force diagram. First step is supplied: take right as positive and write F_net = +18 − 6. Complete the net-force and acceleration calculation, then check whether your acceleration direction agrees with the diagram.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-G2",
+          "type": "PRACTICE_PROMPT",
+          "content": "GUIDED 2 — A 5 kg cart is shown with 20 N right and 5 N left. The force diagram is supplied, but no equation or first step is given. Find the acceleration with direction and show the force quantity you used.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-IND",
+          "type": "PRACTICE_PROMPT",
+          "content": "INDEPENDENT TRANSFER — A 2 kg crate accelerates at 3 m/s² to the right while a rope pulls it with 10 N to the right. A resisting force acts to the left but its magnitude is unknown. Without a supplied force diagram or first-step cue, determine the resisting force and justify the direction/sign reasoning.",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-TRANSFER", "LC-PHY-N2-REL-RECONSTRUCT", "LC-PHY-N2-REL-CHECK"]
+        },
+        {
+          "item_id": "ITEM-PHY-N2-REL-RETRIEVE",
+          "type": "PRACTICE_PROMPT",
+          "content": "RETRIEVAL CHECK — Without looking back: (1) What does the subscript ‘net’ protect you from forgetting? (2) If mass doubles while net force is unchanged, what happens to acceleration? (3) What direction check should your final acceleration pass?",
+          "traceability_class": "MATERIAL",
+          "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+          "learning_design_refs": ["LC-PHY-N2-REL-RECONSTRUCT", "LC-PHY-N2-REL-PREDICT", "LC-PHY-N2-REL-CHECK"]
+        }
+      ]
+    }
+  ],
+  "appendix_A": {
+    "title": "Appendix A — Core Practice",
+    "items": [
+      {
+        "item_id": "A-PHY-N2-Q1",
+        "type": "PRACTICE_PROMPT",
+        "content": "Q1 · A 2 kg cart is pushed 12 N right while friction is 4 N left. Before calculating, state the selected system and predict the acceleration direction. Then find the net force and acceleration with units.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-SYS-RECOGNIZE", "LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-PREDICT", "LC-PHY-N2-REL-CHECK"]
+      },
+      {
+        "item_id": "A-PHY-N2-Q2",
+        "type": "PRACTICE_PROMPT",
+        "content": "Q2 · A 3 kg box is pulled 10 N right while floor resistance is 3 N left. A student substitutes 10 N directly into F = ma. Explain what is wrong with the model and write the correct first two reasoning steps. Do not skip the force diagram/system decision.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-SYS-MODEL", "LC-PHY-N2-REL-RECONSTRUCT", "LC-PHY-N2-REL-CHECK"]
+      },
+      {
+        "item_id": "A-PHY-N2-Q3",
+        "type": "PRACTICE_PROMPT",
+        "content": "Q3 · A 5 kg crate accelerates at 2 m/s² right. A rope pulls 14 N right and an unknown resistance acts left. Draw the horizontal force model and determine the resistance. Explain why this is reverse reasoning rather than direct substitution.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-SYS-TRANSFER", "LC-PHY-N2-REL-TRANSFER", "LC-PHY-N2-REL-CHECK"]
+      }
+    ]
+  },
+  "appendix_B": {
+    "title": "Appendix B — Optional Hints and Complete Solutions",
+    "items": [
+      {
+        "item_id": "B-PHY-N2-Q1-H1",
+        "type": "CONNECTIVE",
+        "content": "Q1 H1 — Notice: two horizontal forces act on the cart, so the 12 N push is not automatically F_net.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q1-H2",
+        "type": "CONNECTIVE",
+        "content": "Q1 H2 — Model: sketch the cart with a rightward 12 N arrow and a leftward 4 N arrow; take right as positive.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q1-H3",
+        "type": "CONNECTIVE",
+        "content": "Q1 H3 — Start: write F_net = +12 N − 4 N. Stop there and finish the calculation yourself.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q1-SOL",
+        "type": "SOLUTION",
+        "content": "Q1 solution — System = cart; right positive. Predict rightward acceleration. Net force = 12 − 4 = 8 N right. Using F_net = ma, 8 = 2a, so a = 4 m/s² right. Check: the acceleration direction agrees with the positive net force. Keep: identify F_net before using Newton II.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK", "LC-PHY-N2-REL-PREDICT"]
+      },
+      {
+        "item_id": "B-PHY-N2-Q2-H1",
+        "type": "CONNECTIVE",
+        "content": "Q2 H1 — Notice: ask whether 10 N is the only horizontal force on the box.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q2-H2",
+        "type": "CONNECTIVE",
+        "content": "Q2 H2 — Model: select the box and put the 10 N pull and 3 N resistance on the same horizontal force diagram.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q2-H3",
+        "type": "CONNECTIVE",
+        "content": "Q2 H3 — Start: combine the signed horizontal forces before writing the Newton-II substitution.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q2-SOL",
+        "type": "SOLUTION",
+        "content": "Q2 solution — The model error is using an applied force as though it were the net force. System = box; right positive. First combine forces: F_net = +10 − 3 = +7 N. Only then use F_net = ma: 7 = 3a, so a = 7/3 m/s² right. Keep: ‘given force’ and ‘net force’ are not synonyms.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-SYS-MODEL", "LC-PHY-N2-REL-RECONSTRUCT", "LC-PHY-N2-REL-CHECK"]
+      },
+      {
+        "item_id": "B-PHY-N2-Q3-H1",
+        "type": "CONNECTIVE",
+        "content": "Q3 H1 — Notice: acceleration and mass tell you the net force even though one individual force is unknown.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q3-H2",
+        "type": "CONNECTIVE",
+        "content": "Q3 H2 — Model: draw 14 N right and an unknown resistance left on the crate; acceleration is right.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q3-H3",
+        "type": "CONNECTIVE",
+        "content": "Q3 H3 — Start: compute F_net from m a first; then compare that net result with +14 N − resistance.",
+        "traceability_class": "PEDAGOGICAL_CONNECTIVE",
+        "research_refs": []
+      },
+      {
+        "item_id": "B-PHY-N2-Q3-SOL",
+        "type": "SOLUTION",
+        "content": "Q3 solution — System = crate; right positive. From the measured motion, F_net = ma = 5 × 2 = 10 N right. The force balance is +14 − R = +10, so R = 4 N left. This is reverse reasoning because Newton II first gives the required net force; the individual opposing force is then inferred from the force model.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-SYS-TRANSFER", "LC-PHY-N2-REL-TRANSFER", "LC-PHY-N2-REL-CHECK"]
+      }
+    ]
+  },
+  "appendix_C": {
+    "title": "Appendix C — Printable First-Step Reference",
+    "items": [
+      {
+        "item_id": "C-PHY-N2-SYSTEM",
+        "type": "CLAIM",
+        "content": "FIRST STEP — Name the selected system. A force belongs on its diagram only if that force acts on that system. Keep force directions visible.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-SYS-RECOGNIZE", "LC-PHY-N2-SYS-EXPLAIN", "LC-PHY-N2-SYS-REPRESENT"]
+      },
+      {
+        "item_id": "C-PHY-N2-FORMAL",
+        "type": "FORMAL_OBJECT",
+        "content": "RELATION — F_net = m a. F_net: combined force on the selected system. m: mass of that system. a: acceleration of that system. In SI, kg × m/s² = N.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-REL-RECONSTRUCT", "LC-PHY-N2-REL-APPLY"]
+      },
+      {
+        "item_id": "C-PHY-N2-CONDITIONS",
+        "type": "CONDITION",
+        "content": "CHECK BEFORE SUBSTITUTION — Did you combine all relevant directed forces into F_net? Do F_net, m and a refer to the same system? Does the acceleration direction agree with net force? Are the units consistent?",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-REL-CHECK"]
+      },
+      {
+        "item_id": "C-PHY-N2-SCALING",
+        "type": "CLAIM",
+        "content": "PREDICT — Same mass: more net force → more acceleration. Same net force: more mass → less acceleration. Make this prediction before arithmetic whenever the comparison is visible.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003"],
+        "learning_design_refs": ["LC-PHY-N2-REL-EXPLAIN", "LC-PHY-N2-REL-PREDICT"]
+      },
+      {
+        "item_id": "C-PHY-N2-REPAIR",
+        "type": "WORKED_REASONING",
+        "content": "COMMON REPAIR — If you catch yourself writing F = ma using the first force number you see, stop. Return to the selected system, redraw the directed forces, find F_net, then resume Newton-II reasoning.",
+        "traceability_class": "MATERIAL",
+        "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+        "learning_design_refs": ["LC-PHY-N2-SYS-MODEL", "LC-PHY-N2-REL-CHECK"]
+      }
+    ],
+    "standalone_usable": true,
+    "introduces_new_subject_content": false,
+    "answer_leakage_detected": false,
+    "modules": ["first_step_reference", "formal_reference", "model_boundary", "misconception_repair"]
+  }
+}
