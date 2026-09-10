@@ -2,14 +2,13 @@
 """Regression falsifiers for release-blocking PhysicalPageMap finalization."""
 from __future__ import annotations
 
-import copy
 import hashlib
 import json
 import sys
 import tempfile
 from pathlib import Path
 
-GRADE9 = Path(__file__).resolve().parents[2]
+GRADE9 = Path(__file__).resolve().parents[3]
 SCRIPTS = GRADE9 / "skills" / "grade9-core2-publisher" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
