@@ -4,11 +4,12 @@
   "title": "Core2 StudyGuidePublicationModel v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["publication_id", "schema_version", "publication_plan_id", "title", "main_sections", "appendix_A", "appendix_B", "appendix_C"],
+  "required": ["publication_id", "schema_version", "publication_plan_id", "product_identity", "title", "main_sections", "appendix_A", "appendix_B", "appendix_C"],
   "properties": {
     "publication_id": {"type": "string", "minLength": 1},
     "schema_version": {"const": "1.0.0"},
     "publication_plan_id": {"type": "string", "minLength": 1},
+    "product_identity": {"$ref": "product-identity.schema.json"},
     "title": {"type": "string", "minLength": 1},
     "subtitle": {"type": "string"},
     "main_sections": {
@@ -28,7 +29,7 @@
     },
     "appendix_A": {"$ref": "#/$defs/appendix"},
     "appendix_B": {"$ref": "#/$defs/appendix"},
-    "appendix_C": {"$ref": "#/$defs/appendix"}
+    "appendix_C": {"$ref": "#/$defs/appendix_c"}
   },
   "$defs": {
     "material_item": {
@@ -51,6 +52,19 @@
       "properties": {
         "title": {"type": "string", "minLength": 1},
         "items": {"type": "array", "items": {"$ref": "#/$defs/material_item"}}
+      }
+    },
+    "appendix_c": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "items", "standalone_usable", "introduces_new_subject_content", "answer_leakage_detected"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "items": {"type": "array", "items": {"$ref": "#/$defs/material_item"}},
+        "standalone_usable": {"const": true},
+        "introduces_new_subject_content": {"const": false},
+        "answer_leakage_detected": {"const": false},
+        "modules": {"type": "array", "items": {"type": "string"}, "default": []}
       }
     }
   }
