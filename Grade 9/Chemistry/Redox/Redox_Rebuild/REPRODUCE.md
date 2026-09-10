@@ -1,32 +1,50 @@
 # Reproduction and rebuild route
 
-## Current reproducibility boundary
+## Current status
 
-This review branch packages frozen source/corpus evidence, reviewed learner-PDF fingerprints, hashes and reusable skills. The exact learner PDF bytes are prepared locally but are not committed by this automated draft. The exact one-shot ReportLab generation scripts used during the interactive build are **not** yet committed as a deterministic build system, so byte-identical regeneration from repository files alone is **NOT_RUN**.
+This Redox review folder is the first validation instance for the subject-wide Chemistry schema. Its existing learner PDFs predate the final two-file Appendix A/B/C contract and therefore require migration/regeneration before publication readiness.
 
-Do not interpret the file manifest as proof of deterministic regeneration.
+The governing Chemistry contract is:
+
+```text
+1. Core Study Guide
+   Appendix A — Core Practice
+   Appendix B — Core Solutions
+   Appendix C — Printable Handout
+
+2. ExamSIDE Solution & Transfer Book
+   concept segregation + badges + H0/H1-H3 + transfer + Core/source links + complete solutions
+```
 
 ## Supported rebuild workflow
 
-Use the existing Grade 9 skills in this order:
+Use the Grade 9 skills in this order:
 
 1. `grade9-source-grounding`
 2. `grade9-chemistry`
-3. `grade9-redox-subtopic-book-builder`
-4. `grade9-subtopic-completeness-auditor`
-5. `grade9-transfer-coverage-auditor`
-6. `grade9-redox-chapter-closeout-auditor`
-7. `grade9-chemistry-publication-review` for review packaging and release-claim limits
+3. `grade9-chemistry-topic-builder`
+4. `grade9-redox-subtopic-book-builder` for Redox-specific reasoning
+5. `grade9-subtopic-completeness-auditor`
+6. `grade9-transfer-coverage-auditor`
+7. `grade9-redox-chapter-closeout-auditor` when doing Redox chapter closeout
+8. `grade9-chemistry-publication-review` for generic Chemistry publication/review gating
 
-The supplied source authority is fingerprinted in `Source/Source_Fingerprint.json`; the original source PDF is not committed in this draft. The frozen external-corpus result is `Redox_ExamSIDE_Ledger.json`.
+The supplied source authority is fingerprinted in `Source/Source_Fingerprint.json`; the frozen Redox external-corpus evidence is `Redox_ExamSIDE_Ledger.json`.
 
-## Package validation
+## Generic Chemistry package validation
 
-Run:
+Once a conforming `Chemistry_Publication_Package.json` and topic-delivery records have been generated, run:
 
 ```bash
-python "Grade 9/skills/grade9-chemistry-publication-review/scripts/validate_redox_review_package.py" \
-  "Grade 9/Chemistry/Redox/Redox_Rebuild"
+python "Grade 9/skills/grade9-chemistry-publication-review/scripts/validate_chemistry_review_package.py" \
+  "Grade 9/Chemistry/Redox/Redox_Rebuild" \
+  "Chemistry_Publication_Package.json"
 ```
 
-The validator checks required files, PDF readability/page counts, embedded link counts, ledger totals and file hashes. It does not prove pedagogical effectiveness, source-page transcription fidelity beyond the stored audit, or external URL availability at the time of review.
+The validator is chapter-agnostic. It derives topic/artifact and external-corpus state from records and fails closed if the two-file contract, Appendix A/B/C, Appendix C handout, ExamSIDE support metadata, artifact identity or final eligible-placement evidence is incomplete.
+
+## Reproducibility boundary
+
+Do not treat fingerprints or review mirrors as repository artifact custody. Publication PASS still requires exact learner artifact bytes to be recoverable from repository/CI state or deterministically rebuilt by a committed model/renderer.
+
+Technical PASS does not imply independent teacher approval, classroom effectiveness or psychometric validation.
