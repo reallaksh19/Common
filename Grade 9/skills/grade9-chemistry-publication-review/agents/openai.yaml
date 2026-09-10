@@ -1,4 +1,4 @@
 interface:
   display_name: "Grade 9 Chemistry Publication Review"
-  short_description: "Package completed Chemistry chapters for learner-first draft PR review with validation and explicit limits."
-  default_prompt: "Package this completed Grade 9 Chemistry chapter for draft-PR review. Freeze learner artifacts, source/corpus evidence, review maps, validation, hashes and reproducibility limits; do not overclaim human or classroom validation."
+  short_description: "Review Chemistry topic packages with two-file delivery, Appendices A-C, ExamSIDE support, custody and fail-closed QA."
+  default_prompt: "Use $grade9-chemistry-publication-review to review this completed Chemistry topic/chapter package. Verify exactly two learner-facing files per topic; Core Appendix A Core Practice, Appendix B Core Solutions and Appendix C Printable Handout; ExamSIDE concept segregation labels, source/difficulty/transfer badges, H0/H1-H3 support, Core/source links and complete solutions; then run source/corpus, artifact-custody, chemistry-render and fail-closed publication checks without overclaiming human or classroom validation."
