@@ -1,280 +1,197 @@
 # Mathematics Two-Core Specialization
 
-**Companion concept note for PR #160 review**  
-**Applies to:** the shared Two-Core Research → Publish operating contract  
-**Scope:** Mathematics across Grades 9–11, school/foundation/Olympiad-style use cases  
-**Status:** DRAFT / FOR REVIEW  
-**Date:** 2026-09-10
+**Status:** Adopted for architecture design; implementation pending  
+**Unified architecture:** [`UNIFIED_TWO_CORE_ARCHITECTURE.md`](UNIFIED_TWO_CORE_ARCHITECTURE.md)  
+**Core (1):** [`CORE1_RESEARCH_CONCEPT_NOTE.md`](CORE1_RESEARCH_CONCEPT_NOTE.md)  
+**Core (2):** [Draft PR #161](https://github.com/reallaksh19/Common/pull/161)
+
+Mathematics uses the same two-core boundary as Physics and Chemistry, with a stricter distinction between **mathematical authority** and **learner-assimilation execution**.
+
+> **Core (1) answers: What mathematics is true, in scope, structurally important and supported by evidence?**  
+> **Core (2) answers: How should this learner be taught that mathematics for this purpose/exam?**
 
 ---
 
-## 1. Why Mathematics needs an explicit specialization
-
-The shared two-core architecture already separates Research Core from Publish Core. Mathematics should adopt the same boundary, but with a stronger distinction between **mathematical authority** and **learner-assimilation execution**.
-
-The current Grade 9 Mathematics family still couples these concerns:
-
-- `grade9-math` contains subject reasoning, concept mapping, difficulty analysis and a default roughly-50%-known learner model, plus substantial concept-book pedagogy;
-- `grade9-math-assimilation` then operationalizes the same partial-knowledge model from source grounding through concept map, assimilation sequence, first-step reference, transfer/mastery and publication-oriented outputs.
-
-The two-core design should remove that coupling without discarding the strong existing pedagogy.
-
-> **Core 1 answers: What mathematics should be taught, what structure makes it true/useful, and what evidence supports that scope?**
->
-> **Core 2 answers: How should this learner be taught that mathematics for this purpose and target exam?**
-
-Core 2 must not silently research or redefine Mathematics when a valid Core 1 exists.
-
----
-
-## 2. Target Mathematics workflow
+## 1. Target workflow
 
 ```text
 USER REQUEST
-    │
-    ▼
-MATH INTAKE / ORCHESTRATOR
-    │
-    ├─ repository search first
-    ├─ identify topic/subtopics
-    ├─ identify purpose
-    ├─ identify learner baseline by subtopic
-    ├─ identify target exam/response contract when applicable
-    └─ identify supplied sources / external corpus
-    │
-    ▼
-CORE 1 — MATH RESEARCH CORE
-    │
+    ↓
+MATH INTAKE / ROUTER
+    ├─ repo search first
+    ├─ topic/subtopics
+    ├─ purpose/exam
+    ├─ Bxx by subtopic
+    └─ supplied sources/corpus
+    ↓
+CORE (1) — MATH RESEARCH
     ├─ source custody
-    ├─ repo/web research
-    ├─ exam reverse engineering
-    ├─ concept architecture
     ├─ mathematical verification
+    ├─ concept architecture
+    ├─ invariants / bridges / decision boundaries
     ├─ question-family analysis
-    └─ learner-neutral canonical manuscript
-    │
-    ├── 01_Research_Core.md
-    ├── 01_Research_Core.pdf
-    ├── 01_Research_Core.manifest.json
-    └── 01_Research_Ledger.json
-            │
-            │ frozen machine handoff
-            ▼
-CORE 2 — MATH PUBLISH CORE
-    │
-    ├─ consumes Core 1 as authority
-    ├─ applies Bxx by subtopic
-    ├─ applies purpose/exam profile
-    ├─ chooses scaffolding and fading
-    ├─ creates learner sequence
-    ├─ creates Appendix A/B/C
-    └─ links every published object to Core 1 IDs
-    │
-    ├── 02_Publish_Core.md
-    ├── 02_Publish_Core.pdf
-    └── 02_Publish_Core.manifest.json
+    └─ competitive-exam reverse engineering when applicable
+    ↓
+VERSIONED RESEARCH BUNDLE
+    ↓
+CORE (2) — MATH PUBLISH (PR #161)
+    ├─ Bxx adaptation
+    ├─ purpose/exam adaptation
+    ├─ assimilation / fading
+    ├─ Appendix A/B/C
+    └─ learner publication + QA
 ```
 
-The architectural invariant is:
-
-> **Research once; publish many. Mathematical truth/evidence is frozen once; Bxx/purpose/exam adaptation is a reproducible downstream projection.**
+> **Research once; publish many.**
 
 ---
 
-## 3. Intake: remove the implicit B50 assumption
+## 2. Remove implicit B50 as the normal default
 
-The current Mathematics authority uses a roughly 50%-known learner as its default model for difficult concepts. Under the two-core architecture, that should no longer be the default authoring assumption.
+The current Math authority's roughly-50%-known learner assumption should not remain the default control surface.
 
-The orchestrator should ask only for missing inputs and should prefer a **subtopic baseline matrix**.
-
-Example:
+Prefer a subtopic matrix:
 
 ```text
-Grade 9 Mathematics — Polynomials
-
-Subtopic                         Baseline
+Polynomials
 algebraic identities             B85
 factorisation                    B70
 factor theorem                   B55
 remainder theorem                B30
 transformed-polynomial problems  B15
-
-Purpose: COMPETITIVE_PREPARATION
-Target: IOQM / Olympiad foundation
 ```
 
-`Bxx` means estimated usable prior ownership of that subtopic. It is not intelligence, exam difficulty or a permanent student label.
+`Bxx` is estimated prior working knowledge, not intelligence, task difficulty or permanent mastery.
 
-If the user declines calibration, a fallback baseline may be used, but it must be recorded explicitly:
+If the user declines calibration, any fallback must be explicit:
 
 ```yaml
 baseline:
-  value: 50
+  band: B50
   basis: FALLBACK_USER_DECLINED_CALIBRATION
   confidence: LOW
 ```
 
-Do not silently treat all Mathematics requests as B50.
+Core (1) records Bxx but does not simplify mathematical truth. Core (2) uses it to determine scaffolding and depth.
 
 ---
 
-## 4. Competitive and generic intake should not have identical ordering
+## 3. Competitive vs generic intake
 
-### 4.1 Competitive Mathematics
-
-For a request such as:
-
-> Prepare combinatorics for IOQM.
-
-Use:
+### Competitive Mathematics
 
 ```text
 repo search
 → resolve exam/cycle/profile
-→ inspect representative verified sample/PYQ evidence
-→ reverse engineer mechanisms and hidden prerequisites
-→ propose subtopic architecture
-→ ask user for Bxx by proposed subtopic
-→ freeze Research Brief
-→ Core 1
-→ Core 2
+→ inspect verified samples/PYQs
+→ reverse engineer mechanisms + hidden prerequisites
+→ propose subtopics
+→ ask/confirm Bxx
+→ freeze Core (1)
 ```
 
-This prevents asking the learner to enumerate an exam-specific topic map before the system understands the actual assessment demand.
+Do not ask the learner to define an IOQM/RMO topic map before the system understands the exam demand.
 
-### 4.2 Generic Mathematics
-
-For a request such as:
-
-> Teach me quadratic equations.
-
-Use:
+### Generic Mathematics
 
 ```text
 repo search
-→ propose/confirm topic and subtopics
-→ ask Bxx by subtopic
-→ ask purpose
+→ propose/confirm topic/subtopics
+→ ask/confirm Bxx + purpose
 → research only missing evidence
-→ Core 1
-→ Core 2
+→ freeze Core (1)
 ```
 
-Do not trigger broad Olympiad/PYQ research for routine study unless requested.
+Routine study does not trigger broad Olympiad research by default.
 
 ---
 
-## 5. Core 1 — Mathematics Research Core
+## 4. Core (1) Mathematics responsibilities
 
-Core 1 is the Mathematics source-of-truth package for the project. It ends before learner-level rewriting.
-
-### 5.1 Repository-first discovery
-
-Always inspect:
+Core (1) owns:
 
 ```text
-existing Math authority
-existing concept registry
-source/corpus ledgers
-prior Research Core packs
-benchmarks
+scope
+source/corpus custody
+canonical concepts
+prerequisites and missing bridges
+invariants / hidden structure
+mathematical claims and derivations
+conditions and edge cases
+representations
+expert noticing / first moves
+decision boundaries / competing methods
+misconceptions
 question families
-exam profiles
-existing publications
-open/unresolved audits
+exam-demand interpretation
+verification status and evidence
 ```
 
-If a valid Research Core already covers the requested mathematical scope and exam evidence is fresh, reuse it. Extend only missing scope or version it when the authority/exam target changes.
-
-### 5.2 Research mode by purpose
-
-`ROUTINE_STUDY`
-
-- syllabus/textbook authority;
-- repo concept architecture;
-- supplied sources;
-- reputable mathematical references only where needed;
-- goal: complete conceptual progression.
-
-`CONCEPT_CLARIFICATION`
-
-Research narrowly around:
+A major concept should support:
 
 ```text
-prerequisite
-→ missing bridge
-→ invariant
-→ representation
-→ nearest competing method
-→ misconception
-→ transfer boundary
+PRIOR
+→ BRIDGE
+→ INVARIANT
+→ REPRESENTATION
+→ DERIVATION / RECONSTRUCTION
+→ DECISION BOUNDARY
+→ WRONG MODEL
+→ EXPERT FIRST MOVE
+→ EDGE CASES
+→ TRANSFER
 ```
 
-`COMPETITIVE_PREPARATION`
-
-Reverse engineer the exam before publication:
-
-```text
-target exam
-→ verified sample/PYQ evidence
-→ question fingerprints
-→ recurring mathematical mechanisms
-→ hidden prerequisites
-→ expected response compression/proof depth
-→ traps and transfer demands
-→ concept architecture
-```
-
-Do not begin from a school chapter list and merely make the questions harder.
-
-`EXAM_MOCK`
-
-The corpus/demand profile is a major authority:
-
-```text
-frozen evidence set
-→ question engines/families
-→ concept ownership
-→ response format
-→ difficulty/demand evidence
-→ representation/proof dependencies
-→ timing characteristics
-→ mock blueprint
-```
-
-Use the canonical corpus-coverage machinery rather than creating a Mathematics-only competing denominator engine.
+This is the mathematical source-of-truth layer.
 
 ---
 
-## 6. Mathematics-specific Research Package objects
+## 5. Core (1) canonical outputs
 
-The generic Research Core manifest should be extended for Mathematics with explicit mathematical structure.
+Use the shared names aligned to PR #161:
 
-Illustrative logical model:
+```text
+<Topic>_Research_Core.md
+<Topic>_Research_Core.pdf
+<Topic>_Research_Bundle.json
+<Topic>_Source_Ledger.json
+```
+
+Competitive/external work also uses:
+
+```text
+<Topic>_Exam_Demand_Profile.json
+<Topic>_Question_Evidence_Ledger.json
+```
+
+Math-specific verification may be a referenced bundle object/file such as:
+
+```text
+Math_Verification.json
+```
+
+but `Research_Bundle.json` remains the canonical machine hand-off.
+
+---
+
+## 6. Mathematics Research Bundle extension
+
+Illustrative extension:
 
 ```yaml
-research_core_id: RC-G9-MATH-POLY-001
-subject: MATHEMATICS
-status: READY_FOR_PUBLISH
+research_bundle_id: RC-G9-MATH-POLY-001
+research_bundle_version: 1.0
 
-target:
+project:
   grade: 9
-  purpose: COMPETITIVE_PREPARATION
-  exam_profile_id: HBCSE_IOQM_CURRENT
+  subject: MATHEMATICS
+  topic: Polynomials
 
-scope:
-  topic_ids: [MATH-POLY]
-  subtopic_ids:
-    - MATH-POLY-IDENTITY
-    - MATH-POLY-FACTOR
-    - MATH-POLY-REMAINDER
+baseline_profile:
+  factor_theorem: B55
+  remainder_theorem: B30
 
-baseline_map:
-  MATH-POLY-IDENTITY: 85
-  MATH-POLY-FACTOR: 55
-  MATH-POLY-REMAINDER: 30
-
-concept_registry:
+concepts:
   - concept_id: MATH-POLY-C03
     prerequisite_ids: [...]
     bridge_ids: [...]
@@ -286,8 +203,8 @@ concept_registry:
     misconception_ids: [...]
     transfer_endpoint_ids: [...]
 
-mathematical_claims:
-  - claim_id: MCL-017
+research_claims:
+  - claim_id: R-MATH-POLY-017
     concept_id: MATH-POLY-C03
     statement: ...
     derivation: ...
@@ -296,211 +213,74 @@ mathematical_claims:
     verification_status: VERIFIED
     source_refs: [...]
 
-examples:
+worked_reasoning:
   - example_id: MEX-009
     concept_id: MATH-POLY-C03
-    purpose: NEUTRAL_EXEMPLAR
-    prompt: ...
-    solution_path: [...]
     expert_noticing: ...
-    representation_ids: [...]
+    minimum_solution_path: [...]
 
 question_family_ids: [...]
-exam_demand_ids: [...]
-source_snapshot_ids: [...]
-research_gaps: []
+exam_demand_profile: ...
+unresolved_items: []
 ```
 
-The `.md` and `.pdf` are human views of this frozen package, not independent authorities.
+The Markdown/PDF is a learner-neutral human view of the same verified package.
 
 ---
 
-## 7. Core 1 Mathematics PDF should be learner-neutral
+## 7. Learner-neutral Math Research Core PDF
 
-The Research Core PDF should not be labelled B30/B80. It should be mathematically complete and pedagogically intelligent without choosing one learner's scaffold depth.
+The Research Core PDF should not be labelled B30/B80.
 
-For each major concept use a structure such as:
+For each concept:
 
 ```text
 WHY THIS CONCEPT EXISTS
-↓
-PREREQUISITES
-↓
-CONCRETE / INTUITIVE ENTRY
-↓
-INVARIANT / HIDDEN STRUCTURE
-↓
-MULTIPLE REPRESENTATIONS
-↓
-DERIVATION / RECONSTRUCTION
-↓
-DECISION BOUNDARY
-↓
-COMMON WRONG MODEL
-↓
-EXPERT FIRST MOVE
-↓
-EDGE / SPECIAL CASES
-↓
-TRANSFER ENDPOINTS
-↓
-SOURCE / EVIDENCE
+→ PREREQUISITES
+→ INTUITIVE ENTRY
+→ INVARIANT / HIDDEN STRUCTURE
+→ REPRESENTATIONS
+→ DERIVATION / RECONSTRUCTION
+→ DECISION BOUNDARY
+→ COMMON WRONG MODEL
+→ EXPERT FIRST MOVE
+→ EDGE / SPECIAL CASES
+→ TRANSFER ENDPOINTS
+→ SOURCE / EVIDENCE
 ```
 
-This is the canonical mathematical manuscript that permits many different learner publications later.
+That allows the same verified mathematics to support several downstream learner publications.
 
 ---
 
-## 8. Competitive-exam reverse engineering belongs only in Core 1
+## 8. Competitive reverse engineering belongs in Core (1)
 
-For example, a coordinate-geometry question may have a surface appearance such as coordinates + an integer condition, while the actual mechanism is:
+For IOQM/RMO/Olympiad-style work, Core (1) extracts the actual mathematical engine rather than simply tagging school questions as “hard”.
 
-```text
-distance constraint
-+ parity / divisibility
-+ integer lattice interpretation
-```
-
-Core 1 should store:
+For each representative item record, as applicable:
 
 ```text
 surface form
-actual mathematical engine
+primary mechanism
 hidden prerequisites
+recognition trigger
+representation/proof dependency
 expert noticing
-nearest wrong approach
+nearest tempting wrong method
 response-format demand
 transfer family
+time/efficiency demand where evidenced
 ```
 
-Core 2 consumes those objects. It must not independently browse/search merely to rediscover why the exam tests that structure.
+Core (2) consumes these objects; it does not independently browse to rediscover them.
 
 ---
 
-## 9. Core 2 — Mathematics Publish Core
+## 9. Core (2) Mathematics adaptation
 
-Core 2 transforms a valid Research Core for one learner/purpose profile.
+Core (2), under PR #161, applies learner/purpose transformation.
 
-Required inputs:
-
-```text
-01_Research_Core.md / PDF
-01_Research_Core.manifest.json
-01_Research_Ledger.json
-Bxx matrix
-purpose
-exam/profile when applicable
-publication preferences
-```
-
-No original Core 1 chat session is required.
-
----
-
-## 10. Mathematics Bxx adaptation profile
-
-The generic Bxx model should have a Mathematics-specific execution profile.
-
-### B81–B100
-
-- compressed reconnect;
-- minimal derivation where already owned;
-- decision boundaries and competing methods;
-- harder disguised transfer;
-- early H0;
-- proof/efficiency critique where the exam requires it.
-
-### B61–B80
-
-- reconnect diagnostic;
-- one complete conceptual reconstruction;
-- representation switching;
-- limited guided support;
-- misconception contrast;
-- fade H2 → H1 → H0.
-
-### B41–B60
-
-- reconnect + explicit missing bridge;
-- multiple representations;
-- one complete worked model;
-- guided first move;
-- decision-boundary contrast;
-- fade H3/H2 → H1 → H0.
-
-### B21–B40
-
-- prerequisite reconstruction;
-- concrete examples before symbols;
-- explicit bridge node;
-- representation choice made visible;
-- worked model + guided completion;
-- H3 → H2 → H1 → H0.
-
-### B0–B20
-
-- near-first-exposure treatment;
-- prerequisite mini-lessons;
-- meaning before notation;
-- narrow cognitive load;
-- repeated retrieval;
-- gradual independence.
-
-These are publishing transformations, not different versions of mathematical truth.
-
----
-
-## 11. Purpose and baseline are independent axes
-
-A B40 learner may need very different publications depending on purpose.
-
-`ROUTINE_STUDY`
-
-- conceptual continuity;
-- standard applications;
-- retrieval;
-- moderate transfer.
-
-`CONCEPT_CLARIFICATION`
-
-- missing bridge first;
-- contrast pairs;
-- wrong-model diagnosis;
-- reconstruction;
-- first-move ownership.
-
-`COMPETITIVE_PREPARATION`
-
-- recognition speed;
-- hidden structure;
-- method selection;
-- alternate solution routes;
-- traps;
-- efficient first move;
-- mixed transfer.
-
-`EXAM_MOCK`
-
-- exam-faithful response format;
-- concept-hidden attempts;
-- question-family/demand distribution;
-- timed structure;
-- post-attempt diagnosis;
-- source/occurrence traceability where external evidence is used.
-
-Therefore:
-
-```text
-RESEARCH CORE × Bxx × PURPOSE × EXAM DEMAND
-                     ↓
-               PUBLISH CORE
-```
-
----
-
-## 12. Mathematics Publish sequence
-
-The existing assimilation choreography remains valuable, but its execution belongs in Core 2:
+Useful Math choreography retained from the existing assimilation work:
 
 ```text
 RECONNECT
@@ -513,15 +293,13 @@ RECONNECT
 → TRANSFER
 ```
 
-Use the macro ownership sequence where useful:
+Macro ownership sequence:
 
 ```text
 SEE → REALIZE → UNDERSTAND → ADOPT
 ```
 
-`CONNECT` remains source/navigation traceability, not an additional cognitive stage.
-
-### Hint semantics
+Math hint semantics:
 
 ```text
 H0 INDEPENDENT
@@ -530,162 +308,149 @@ H2 STRUCTURE / REPRESENTATION
 H3 FIRST EXECUTABLE STEP
 ```
 
-Support must fade; permanent H3 scaffolding is a Publish failure.
+Support must fade. H3 is not permanent teaching furniture.
 
 ---
 
-## 13. Appendix A–C for Mathematics
+## 10. Bxx Math publishing profile
 
-Use the shared publication base.
+### B81–B100
 
-### Appendix A — Practice / Transfer
+Compressed reconnect; decision boundaries; competing methods; early transfer; H0 early; proof/efficiency critique when relevant.
 
-Include a deliberate mix of:
+### B61–B80
 
-- routine application;
-- recognition;
-- representation change;
-- compare/contrast;
-- error diagnosis;
-- reconstruction/proof where relevant;
-- disguised transfer;
-- exam-format items when applicable.
+One complete reconstruction; representation switching; limited guided support; misconception contrast; H2 → H1 → H0.
 
-No answer leakage on attempt surfaces.
+### B41–B60
 
-### Appendix B — Hints and Solutions
+Explicit missing bridge; multiple representations; complete worked model; guided first move; H3/H2 → H1 → H0.
 
-For each relevant item:
+### B21–B40
+
+Prerequisite rebuilding; concrete-before-symbolic entry; explicit bridge node; worked model; guided completion; H3 → H2 → H1 → H0.
+
+### B0–B20
+
+Near-first-exposure treatment; prerequisite mini-lessons; meaning before notation; narrow cognitive load; frequent retrieval; gradual independence.
+
+These are different learner transformations of one mathematical truth.
+
+---
+
+## 11. Purpose is independent of Bxx
+
+For the same B40 learner:
 
 ```text
-H0 independent attempt
-H1 recognition clue
-H2 structure / representation
-H3 first executable line
-full conceptual solution
-check / edge-condition verification
-transferable takeaway
+ROUTINE_STUDY
+  continuity + standard applications + retrieval
+
+CONCEPT_CLARIFICATION
+  missing bridge + contrast + diagnosis + reconstruction
+
+COMPETITIVE_PREPARATION
+  recognition + hidden structure + method selection + mixed transfer
+
+MOCK_EXAM_PREPARATION
+  exam-faithful response contract + timed distribution + post-attempt diagnosis
 ```
 
-The full solution must be independently verified, not merely copied from the drafted answer.
+So:
 
-### Appendix C — First-Step / Revision Handout
-
-Include:
-
-- concept map;
-- visible trigger phrases/structures;
-- invariants;
-- formulas/theorems with conditions;
-- decision router;
-- visual/structural memory anchors;
-- common traps;
-- first moves;
-- short self-check.
-
-It is a compression product, not the teaching product and not an answer sheet.
+```text
+RESEARCH BUNDLE × Bxx × PURPOSE × EXAM DEMAND
+                         ↓
+                    PUBLISH CORE
+```
 
 ---
 
-## 14. Core 2 → Core 1 traceability for Mathematics
+## 12. Appendix A/B/C aligned to PR #161
 
-Every published concept block, worked example and practice object should retain structured lineage.
+The shared Study Guide contract is:
 
-Example:
+### Appendix A — Core Practice
+
+Include routine application, recognition, representation change, compare/contrast, error diagnosis, reconstruction/proof where relevant, disguised transfer and exam-format items when applicable. No answer leakage.
+
+### Appendix B — Core Solutions
+
+This is the canonical meaning of Appendix B.
+
+Solutions should include, where applicable:
+
+```text
+QUESTION RECAP
+WHY THIS METHOD FITS
+REPRESENTATION / FIRST MOVE
+METHOD
+ANSWER / CHECK
+EDGE-CONDITION / COUNTEREXAMPLE CHECK
+CONCEPT TO KEEP
+RESEARCH LINK
+```
+
+Hints may support attempts but do not redefine Appendix B as a “Hints appendix”.
+
+### Appendix C — First-Step Reference / Printable Handout
+
+Concept map, trigger structures, invariants, formulas/theorems with conditions, decision router, first moves, common traps and short self-check. It is not an answer sheet.
+
+---
+
+## 13. Math traceability
+
+Every published object retains Research Bundle lineage:
 
 ```yaml
 publish_object_id: PUB-POLY-C03
-
-derived_from:
-  research_concepts:
-    - MATH-POLY-C03
-  research_claims:
-    - MCL-017
-    - MCL-021
-  research_examples:
-    - MEX-009
-  question_families:
-    - QF-POLY-FACTOR-02
+research_refs:
+  - R-MATH-POLY-017
+  - R-MATH-POLY-021
+concept_refs:
+  - MATH-POLY-C03
+question_family_refs:
+  - QF-POLY-FACTOR-02
 ```
 
 Reviewer chain:
 
 ```text
 Published explanation/question
-→ Research concept / claim / example / question family
+→ Research Claim / concept / question family
 → SourceSnapshot / QuestionOccurrence
 ```
 
-The learner PDF may render only unobtrusive research anchors; the manifest retains the full chain.
-
 ---
 
-## 15. Research-backfill rule is mandatory
+## 14. Gap protocol aligned to PR #161
 
-If Core 2 discovers missing Mathematics, it must not patch locally.
-
-Return:
+If Core (2) finds missing mathematics, return:
 
 ```yaml
-status: RESEARCH_BACKFILL_REQUIRED
-research_core_id: ...
+status: CORE1_RESEARCH_GAP
+research_bundle_id: ...
 gap_type: CONCEPT | CLAIM | CONDITION | EDGE_CASE | REPRESENTATION | EXAM_DEMAND | QUESTION_FAMILY
 object_id: ...
+blocking: true
 reason: ...
 ```
 
-Core 1 is revised and re-frozen. Core 2 then resumes from the new Research Core version.
+Core (1) resolves the gap, increments the Research Bundle version and re-hands off.
 
-This is the decisive anti-drift rule.
-
----
-
-## 16. Suggested Mathematics project structure
-
-```text
-Mathematics/
-  <project>/
-    00_intake/
-      Request.json
-      Baseline_Map.json
-
-    01_research_core/
-      01_Research_Core.md
-      01_Research_Core.pdf
-      01_Research_Core.manifest.json
-      01_Research_Ledger.json
-      Concept_Registry.json
-      Math_Verification.json
-      External_Corpus.json               # when applicable
-      Corpus_Classification.json         # when applicable
-
-    02_publish_core/
-      Publication_Request.json
-      Publication_Model.json
-      02_Publish_Core.md
-      02_Publish_Core.pdf
-      02_Publish_Core.manifest.json
-      Publication_Audit.json
-
-    03_review/
-      Research_to_Publish_Reconciliation.json
-      Render_Audit.json
-      Review_Record.md
-```
-
-External-question ownership belongs in Research Core because it is evidence/scope, not presentation.
+Core (2) may not patch missing mathematics locally.
 
 ---
 
-## 17. Mathematics-specific gates
+## 15. Mathematics release gates
 
-### Core 1 cannot be `READY_FOR_PUBLISH` unless
+### Core (1)
 
 ```text
 REPO_DISCOVERY_RECORDED = PASS
 SCOPE_FROZEN = PASS
-BASELINE_MATRIX_RECORDED = PASS
-PURPOSE_RECORDED = PASS
+BASELINE_PROFILE_RECORDED = PASS
 SOURCE_CUSTODY = PASS
 CONCEPT_MAP_COMPLETE = PASS
 PREREQUISITES_AND_BRIDGES_COMPLETE = PASS
@@ -695,94 +460,70 @@ REPRESENTATIONS_RESOLVED = PASS
 DECISION_BOUNDARIES_RESOLVED = PASS
 EXAM_REVERSE_ENGINEERING = PASS | NOT_APPLICABLE
 QUESTION_FAMILY_EVIDENCE = PASS | NOT_APPLICABLE
-RESEARCH_MD_PDF_MATCH_MANIFEST = PASS
-BLOCKING_RESEARCH_GAPS = 0
+BLOCKING_UNRESOLVED_ITEMS = 0
+RESEARCH_BUNDLE_SCHEMA_VALID = PASS
+RESEARCH_BUNDLE_HASHED = PASS
 ```
 
-### Core 2 cannot pass unless
+### Core (2), in addition to PR #161 gates
 
 ```text
 PUBLISH_TO_RESEARCH_LINK_COVERAGE = 100%
 BASELINE_PROFILE_APPLIED_TO_EVERY_SUBTOPIC = PASS
-PURPOSE_PROFILE_APPLIED = PASS
-EXAM_PROFILE_APPLIED = PASS | NOT_APPLICABLE
 UNSUPPORTED_NEW_MATHEMATICAL_CLAIMS = 0
-APPENDIX_A = PASS
-APPENDIX_B = PASS
-APPENDIX_C = PASS
+APPENDIX_A_CORE_PRACTICE = PASS
+APPENDIX_B_CORE_SOLUTIONS = PASS
+APPENDIX_C_FIRST_STEP_REFERENCE = PASS
 ATTEMPT_BEFORE_HINT = PASS
 HINT_FADING = PASS
 MATHEMATICAL_ANSWERS_INDEPENDENTLY_VERIFIED = PASS
 RESEARCH_TO_PUBLISH_RECONCILIATION = PASS
-RENDER_QA = PASS
 ```
 
 ---
 
-## 18. Implication for the existing Math skill family
+## 16. Existing Math skill implications
 
-Long-term ownership should become:
+Long-term ownership:
 
 ```text
 grade9-math
-    = Mathematics subject reasoning authority
-      invariants / correctness / solution-path semantics /
-      representations / misconceptions / decision boundaries
+  = Mathematics subject authority
+    correctness / invariants / representations / misconceptions /
+    solution-path semantics / decision boundaries
 
-        │
-        ├───────────────┐
-        ▼               ▼
-MATH RESEARCH CORE      canonical corpus/coverage authority
-workflow                + Math-specific extension/profile
-        │
-        ▼
-MATH RESEARCH PACKAGE
-        │
-        ▼
-MATH PUBLISH CORE
-workflow
-        │
-        ▼
-learner publication + QA
+CORE (1) Math Research
+  = project research workflow
+
+shared corpus authority + Math profile
+  = source/question accounting
+
+CORE (2) Math Publish — PR #161 profile
+  = learner assimilation / fading / publication
 ```
 
-The current `grade9-math-assimilation` contains valuable pedagogy, but under this architecture it should not remain a second independent end-to-end authority. Its reusable teaching choreography should be migrated/delegated into the Mathematics Publish Core profile.
+`grade9-math-assimilation` contains valuable choreography but should not remain a second end-to-end mathematical authority after migration. Its reusable pedagogy should move/delegate into the downstream Math Publish profile.
 
-Likewise, low-level rendering/schema/audit code should remain a dependency of Publish Core rather than becoming the user-facing knowledge/research authority.
-
-Do **not** change or delete current skill IDs until migration/compatibility is separately approved.
+Do not delete or rename existing skill IDs until compatibility migration is separately approved.
 
 ---
 
-## 19. Cold-start Mathematics acceptance test
+## 17. Cold-start test
 
-### Research agent
-
-Given only:
+A clean Core (2) Math agent receives only:
 
 ```text
-user request
-repo
-supplied files/links
-web access when policy permits
-```
-
-can it produce a complete, verified, reusable Mathematics Research Core?
-
-### Publish agent
-
-Given only:
-
-```text
-01_Research_Core.md
-01_Research_Core.manifest.json
-01_Research_Ledger.json
-explicit Bxx matrix
-purpose/exam profile
+Research_Core.md
+Research_Core.pdf
+Research_Bundle.json
+Source_Ledger.json
+Exam_Demand_Profile.json when applicable
+Question_Evidence_Ledger.json when applicable
+publication request
 canonical schemas/skills
 ```
 
-and no original chat/browser state, can it produce the learner publication with complete traceability?
+and no prior chat/browser state.
 
 Required:
 
@@ -792,44 +533,26 @@ PUBLISH_AGENT_NO_HIDDEN_CONTEXT = PASS
 PUBLISH_AGENT_UNDECLARED_WEB_SEARCHES = 0
 PUBLISH_TO_RESEARCH_LINK_COVERAGE = 100%
 UNSUPPORTED_NEW_MATH_CLAIMS = 0
+HANDOFF_HASH_MATCH = 1
 ```
 
 ---
 
-## 20. Reuse example
-
-One canonical Research Core for Quadratics should support multiple Publish Cores:
+## 18. Reuse example
 
 ```text
-Quadratics Research Core
-    ├─ B30 routine-study publication
-    ├─ B80 routine-study publication
-    ├─ B50 school-exam publication
-    ├─ B70 Olympiad-foundation publication
-    └─ B40 concept-repair publication
+Quadratics Research Bundle
+    ├─ B30 routine-study Publish Core
+    ├─ B80 routine-study Publish Core
+    ├─ B50 school-exam Publish Core
+    ├─ B70 Olympiad-foundation Publish Core
+    └─ B40 concept-repair Publish Core
 ```
 
-The source custody, concept registry, derivations, conditions, misconceptions and question-family evidence are not re-researched for each learner profile.
+The source custody, derivations, conditions, concept graph, misconceptions and question-family evidence are not re-researched for each learner profile.
 
 ---
 
-## 21. Approval decisions requested
+## 19. Central Mathematics invariant
 
-| ID | Decision | Recommendation |
-|---|---|---|
-| M1 | Adopt Mathematics Research Core + Publish Core as the Math specialization of the shared two-core model | APPROVE |
-| M2 | Remove implicit B50 as the normal default; require subtopic Bxx or an explicit fallback record | APPROVE |
-| M3 | Keep Core 1 learner-neutral even when Bxx is known | APPROVE |
-| M4 | Put mathematical verification, invariants, bridges, decision boundaries and exam reverse engineering in Core 1 | APPROVE |
-| M5 | Put partial-knowledge assimilation choreography, hint fading and learner sequencing in Core 2 | APPROVE |
-| M6 | Require independent mathematical answer verification before Core 2 PASS | APPROVE |
-| M7 | Make competitive Mathematics discover/reverse-engineer exam demand before asking final Bxx subtopic mapping | APPROVE |
-| M8 | Require ResearchBackfillRequest rather than local Publish patches for missing Mathematics | APPROVE |
-| M9 | Reuse the shared corpus authority rather than create a second Math-only denominator engine | APPROVE |
-| M10 | Preserve existing skill IDs until a separate compatibility/migration change is approved | APPROVE |
-
----
-
-## 22. Central Mathematics invariant
-
-> **Mathematics is researched and verified once. Learner level, purpose and exam demand determine how that Mathematics is taught, not what the Mathematics is. A Publish agent may transform a frozen Research Core, but may not silently become a second Mathematics researcher.**
+> **Mathematics is researched and verified once in Core (1). Learner baseline, purpose and exam demand determine how that mathematics is taught in Core (2), not what the mathematics is. A Publisher may transform a frozen Research Bundle but may not silently become a second Mathematics researcher.**
