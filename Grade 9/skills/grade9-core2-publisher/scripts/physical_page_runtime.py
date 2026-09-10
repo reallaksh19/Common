@@ -7,11 +7,10 @@ associated with the same content_ref, producing one fragment record per actual
 physical page on which the semantic item is drawn.
 
 Learner PDFs deliberately do not print internal section IDs, layout-relation
-metadata, or Core (1) research IDs after every block. Those remain available in
-the semantic models, PublicationStructure, LearningDesign and PhysicalPageMap.
-Keeping machine custody out of the learner surface prevents traceability
-metadata from creating artificial pagination and makes the rendered product
-closer to the mature PR156/PR157 learner-first morphology.
+metadata, Core (1) research IDs, or generated representation requirement IDs.
+Those remain available in semantic models, PublicationStructure,
+LearningDesign and PhysicalPageMap. Machine custody must not inflate or pollute
+the learner surface.
 """
 from __future__ import annotations
 
@@ -295,24 +294,33 @@ def _arc_metadata(structure: dict) -> dict[str, dict]:
 _SELF_LABELED_PROMPT_PREFIX = {
     "NOTICE": "NOTICE",
     "GUIDED_1": "GUIDED 1",
+    "GUIDED_2_FADED": "GUIDED 2",
     "INDEPENDENT_TRANSFER": "INDEPENDENT TRANSFER",
     "RETRIEVAL_CHECK": "RETRIEVAL CHECK",
 }
 
 
 def _content_carries_role_cue(meta: dict, item: dict) -> bool:
-    """Return true when the learner prompt already prints its semantic role.
-
-    This is intentionally narrow. We only suppress a separate H2 for generic
-    pedagogical connectives whose text begins with the same learner-visible cue.
-    Content/provenance is unchanged and the role remains explicit in structure.
-    """
+    """True when a generic learner prompt already prints its semantic role."""
     if item.get("type") != "CONNECTIVE":
         return False
     prefix = _SELF_LABELED_PROMPT_PREFIX.get(meta.get("role"))
     if not prefix:
         return False
     return str(item.get("content", "")).strip().upper().startswith(prefix)
+
+
+def _generated_representation_metadata(item: dict) -> bool:
+    """Detect replay-only representation metadata already expressed by the diagram.
+
+    A mature authored REPRESENTATION item may contain real learner explanation;
+    that must remain visible. Only the deterministic replay string containing an
+    internal requirement identifier is suppressed.
+    """
+    if item.get("type") != "REPRESENTATION" or not item.get("representation_instance_id"):
+        return False
+    text = str(item.get("content", "")).lower()
+    return " · requirement: " in text and " · required labels: " in text
 
 
 def make_study_renderer(impl):
@@ -367,7 +375,12 @@ def make_study_renderer(impl):
                         heading = f"{role} · {support}" if support else role
                         story.append(Paragraph(impl.legacy.safe(heading), st["h2"]))
                     previous_heading = heading_key
-                story.append(_tracked(Paragraph(impl.legacy.safe(item["content"]), st["body"]), tracker, iid, item))
+
+                # A generated representation's structured flowable is itself the
+                # learner-visible realization and carries the content_ref. Do not
+                # print its internal requirement-id summary immediately above it.
+                if not _generated_representation_metadata(item):
+                    story.append(_tracked(Paragraph(impl.legacy.safe(item["content"]), st["body"]), tracker, iid, item))
                 if item.get("representation_instance_id"):
                     rep = reps[item["representation_instance_id"]]
                     story.append(_tracked(impl.StructuredRepresentationFlowable(rep), tracker, iid, item))
