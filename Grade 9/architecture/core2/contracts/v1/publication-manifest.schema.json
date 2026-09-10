@@ -12,6 +12,7 @@
     "research_package_digest",
     "learner_profile_id",
     "publication_target_id",
+    "delivery_contract",
     "artifacts",
     "package_digest"
   ],
@@ -23,6 +24,8 @@
     "research_package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "learner_profile_id": {"type": "string", "minLength": 1},
     "publication_target_id": {"type": "string", "minLength": 1},
+    "delivery_contract": {"enum": ["STUDY_GUIDE_ONLY", "FULL_TOPIC_PAIR", "TRANSFER_ONLY"]},
+    "pair_id": {"type": "string", "minLength": 1},
     "artifacts": {
       "type": "array",
       "minItems": 4,
@@ -31,7 +34,7 @@
         "additionalProperties": false,
         "required": ["role", "path", "sha256"],
         "properties": {
-          "role": {"enum": ["PUBLICATION_PLAN", "STUDY_GUIDE_MODEL", "STUDY_GUIDE_MD", "STUDY_GUIDE_PDF", "TRANSFER_BOOK_MODEL", "TRANSFER_BOOK_PDF", "PUBLICATION_AUDIT", "OTHER"]},
+          "role": {"enum": ["PUBLICATION_PLAN", "STUDY_GUIDE_MODEL", "STUDY_GUIDE_MD", "STUDY_GUIDE_PDF", "TRANSFER_BOOK_MODEL", "TRANSFER_BOOK_MD", "TRANSFER_BOOK_PDF", "PUBLICATION_AUDIT", "OTHER"]},
           "path": {"type": "string", "minLength": 1},
           "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "media_type": {"type": "string"},
@@ -41,5 +44,11 @@
     },
     "package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "release_note": {"type": "string"}
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"delivery_contract": {"const": "FULL_TOPIC_PAIR"}}, "required": ["delivery_contract"]},
+      "then": {"required": ["pair_id"]}
+    }
+  ]
 }
