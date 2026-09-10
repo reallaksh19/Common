@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-publication-plan.schema.json",
+  "title": "Core2 PublicationPlan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publication_plan_id",
+    "schema_version",
+    "research_bundle_id",
+    "research_package_digest",
+    "learner_profile_id",
+    "publication_target_id",
+    "subject",
+    "topic_id",
+    "requested_products",
+    "sections",
+    "representation_instances",
+    "appendices"
+  ],
+  "properties": {
+    "publication_plan_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "research_bundle_id": {"type": "string", "minLength": 1},
+    "research_package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "learner_profile_id": {"type": "string", "minLength": 1},
+    "publication_target_id": {"type": "string", "minLength": 1},
+    "subject": {"enum": ["MATHEMATICS", "PHYSICS", "CHEMISTRY"]},
+    "topic_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string"},
+    "purpose_type": {"type": "string", "minLength": 1},
+    "requested_products": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["study_guide", "transfer_book"],
+      "properties": {
+        "study_guide": {"type": "boolean"},
+        "transfer_book": {"type": "boolean"}
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["section_id", "concept_id", "baseline_value", "baseline_resolution", "instructional_profile", "research_refs", "representation_requirement_ids"],
+        "properties": {
+          "section_id": {"type": "string", "minLength": 1},
+          "concept_id": {"type": "string", "minLength": 1},
+          "baseline_value": {"type": "integer", "minimum": 0, "maximum": 100},
+          "baseline_resolution": {"enum": ["DIRECT", "PROFILE_MEDIAN_FALLBACK"]},
+          "instructional_profile": {"enum": ["FOUNDATION", "BRIDGE", "COMPRESSED", "REFERENCE"]},
+          "research_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "representation_requirement_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "formal_object_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "default": []},
+          "worked_reasoning_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "default": []}
+        }
+      }
+    },
+    "representation_instances": {
+      "type": "array",
+      "items": {"$ref": "representation-instance.schema.json"}
+    },
+    "appendices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A_core_practice", "B_core_solutions", "C_printable_handout"],
+      "properties": {
+        "A_core_practice": {"const": true},
+        "B_core_solutions": {"const": true},
+        "C_printable_handout": {"const": true},
+        "C_modules": {"type": "array", "items": {"type": "string"}, "default": []}
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}, "default": []}
+  }
+}
