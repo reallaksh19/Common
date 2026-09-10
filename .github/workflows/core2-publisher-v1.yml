@@ -6,6 +6,7 @@ on:
       - "Grade 9/architecture/core2/**"
       - "Grade 9/architecture/replays/**"
       - "Grade 9/skills/grade9-core2-publisher/**"
+      - "Grade 9/install_skills.py"
       - ".github/workflows/core2-publisher-v1.yml"
   workflow_dispatch:
 
@@ -19,6 +20,11 @@ jobs:
           python-version: "3.12"
       - name: Install Core 2 dependencies
         run: python -m pip install -r "Grade 9/skills/grade9-core2-publisher/requirements.txt"
+      - name: Smoke-test Grade 9 Core 2 installer entry
+        run: |
+          python "Grade 9/install_skills.py" --dest /tmp/grade9-skills
+          test -f /tmp/grade9-skills/grade9-core2-publisher/SKILL.md
+          test -f /tmp/grade9-skills/grade9-math-core1/SKILL.md
       - name: Validate frozen PR160 upstream contracts
         run: python "Grade 9/Architecture/contracts/v1/validate_contracts.py"
       - name: Validate Core 2 downstream contracts
