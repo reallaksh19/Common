@@ -1,0 +1,98 @@
+{
+  "publication_structure_id": "PS-REF-PHY-MOTION-B40",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-REF-PHY-MOTION-B40",
+  "research_bundle_id": "RB-REF-PHY-MOTION-001",
+  "research_package_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "learner_profile_id": "LP-REF-PHY-MOTION-B40",
+  "structure_profile": "PHYSICS_PR156",
+  "study_guide": {
+    "product_id": "SG-REF-PHY-MOTION-B40",
+    "product_first": true,
+    "learning_units": [
+      {
+        "unit_id": "U1-DISPLACEMENT",
+        "concept_ids": ["PHY-MOTION-DISPLACEMENT"],
+        "instructional_profile": "BRIDGE",
+        "cognitive_job": "Separate position, path length and endpoint change before compressing them into a relation.",
+        "arc_steps": [
+          {"step_id":"U1-S1","role":"PHYSICAL_SITUATION","content_refs":["C-U1-SITUATION"],"support_state":"FULL"},
+          {"step_id":"U1-S2","role":"DEPICTION","content_refs":["C-U1-NUMBERLINE"],"representation_instance_ids":["RI-U1-NUMBERLINE"],"support_state":"FULL"},
+          {"step_id":"U1-S3","role":"NOTICE","content_refs":["C-U1-NOTICE"],"support_state":"FULL"},
+          {"step_id":"U1-S4","role":"SAY_IN_WORDS","content_refs":["C-U1-WORDS"],"support_state":"FULL"},
+          {"step_id":"U1-S5","role":"GUIDED_1","content_refs":["Q-U1-G1"],"support_state":"GUIDED"},
+          {"step_id":"U1-S6","role":"VARIANT_CONTRAST","content_refs":["C-U1-PATH-ENDPOINT"],"support_state":"GUIDED"},
+          {"step_id":"U1-S7","role":"BUILD_RELATION","content_refs":["F-U1-DX"],"support_state":"GUIDED"},
+          {"step_id":"U1-S8","role":"WORKED_EXAMPLE","content_refs":["W-U1-EXAMPLE"],"support_state":"FULL"},
+          {"step_id":"U1-S9","role":"GUIDED_2_FADED","content_refs":["Q-U1-G2"],"support_state":"FADED"},
+          {"step_id":"U1-S10","role":"INDEPENDENT_TRANSFER","content_refs":["Q-U1-T1"],"support_state":"INDEPENDENT"},
+          {"step_id":"U1-S11","role":"RETRIEVAL_CHECK","content_refs":["Q-U1-CHECK"],"support_state":"INDEPENDENT"}
+        ],
+        "support_progression": {
+          "worked_example": {"state":"PRESENT"},
+          "guided_1": {"state":"PRESENT"},
+          "guided_2_faded": {"state":"PRESENT"},
+          "independent_transfer": {"state":"PRESENT"}
+        }
+      },
+      {
+        "unit_id": "U2-VT-AREA",
+        "concept_ids": ["PHY-MOTION-VT-AREA"],
+        "instructional_profile": "BRIDGE",
+        "cognitive_job": "Read a velocity-time graph as movement before using area as a calculation rule.",
+        "arc_steps": [
+          {"step_id":"U2-S1","role":"DEPICTION","content_refs":["C-U2-GRAPH"],"representation_instance_ids":["RI-U2-VT-GRAPH"],"support_state":"FULL"},
+          {"step_id":"U2-S2","role":"NOTICE","content_refs":["C-U2-AXES"],"support_state":"FULL"},
+          {"step_id":"U2-S3","role":"SAY_IN_WORDS","content_refs":["C-U2-STORY"],"support_state":"FULL"},
+          {"step_id":"U2-S4","role":"BUILD_RELATION","content_refs":["F-U2-AREA"],"support_state":"GUIDED"},
+          {"step_id":"U2-S5","role":"WHY_THIS_WORKS","content_refs":["C-U2-WHY"],"support_state":"FULL"},
+          {"step_id":"U2-S6","role":"WORKED_EXAMPLE","content_refs":["W-U2-EXAMPLE"],"support_state":"FULL"},
+          {"step_id":"U2-S7","role":"GUIDED_1","content_refs":["Q-U2-G1"],"support_state":"GUIDED"},
+          {"step_id":"U2-S8","role":"GUIDED_2_FADED","content_refs":["Q-U2-G2"],"support_state":"FADED"},
+          {"step_id":"U2-S9","role":"MODEL_BOUNDARY","content_refs":["C-U2-BOUNDARY"],"support_state":"REFERENCE"},
+          {"step_id":"U2-S10","role":"INDEPENDENT_TRANSFER","content_refs":["Q-U2-T1"],"support_state":"INDEPENDENT"},
+          {"step_id":"U2-S11","role":"RETRIEVAL_CHECK","content_refs":["Q-U2-CHECK"],"support_state":"INDEPENDENT"}
+        ],
+        "support_progression": {
+          "worked_example": {"state":"PRESENT"},
+          "guided_1": {"state":"PRESENT"},
+          "guided_2_faded": {"state":"PRESENT"},
+          "independent_transfer": {"state":"PRESENT"}
+        }
+      }
+    ],
+    "practice_topology": {
+      "attempt_before_help": true,
+      "progressive_hints": true,
+      "solutions_after_attempts": true,
+      "hint_delivery": "SEPARATE_HELP_SECTION"
+    },
+    "appendix_order": ["A", "B", "C"],
+    "appendix_B_sections": ["OPTIONAL_HINTS", "GUIDED_STEP_SOLUTIONS", "FULL_SOLUTIONS"],
+    "page_intents": [
+      {"page_intent_id":"P1","cognitive_job":"Locate position and direction","content_refs":["C-U1-SITUATION","C-U1-NUMBERLINE"],"layout_relation":"STORY_VS_MODEL"},
+      {"page_intent_id":"P2","cognitive_job":"Make one guided movement","content_refs":["Q-U1-G1"],"layout_relation":"QUESTION_VS_WORKSPACE"},
+      {"page_intent_id":"P3","cognitive_job":"Separate path from endpoint change","content_refs":["C-U1-PATH-ENDPOINT","W-U1-EXAMPLE"],"layout_relation":"EXAMPLE_VS_RULE"},
+      {"page_intent_id":"P4","cognitive_job":"Read graph axes as a motion story","content_refs":["C-U2-GRAPH","C-U2-AXES","C-U2-STORY"],"layout_relation":"REPRESENTATION_VS_REASONING"},
+      {"page_intent_id":"P5","cognitive_job":"Build and apply signed area","content_refs":["F-U2-AREA","W-U2-EXAMPLE","Q-U2-G1"],"layout_relation":"EXAMPLE_VS_RULE"}
+    ],
+    "navigation": {
+      "question_to_hint": true,
+      "question_to_solution": true,
+      "solution_to_question": true,
+      "solution_to_lesson": true
+    }
+  },
+  "transfer_book": {
+    "product_id": "TB-REF-PHY-MOTION-B40",
+    "section_order": ["ATTEMPTS", "OPTIONAL_HELP", "COMPLETE_SOLUTIONS", "MIXED_DIAGNOSIS"],
+    "attempt_before_hints": true,
+    "solutions_after_attempts": true,
+    "hint_delivery": "SEPARATE_HELP_SECTION",
+    "mixed_diagnosis_after_solutions": true,
+    "question_navigation": [
+      {"question_id":"Q1","hint_target":"H-Q1","solution_target":"S-Q1","return_to_question":"Q1","lesson_target":"U1-DISPLACEMENT"},
+      {"question_id":"Q2","hint_target":"H-Q2","solution_target":"S-Q2","return_to_question":"Q2","lesson_target":"U2-VT-AREA"}
+    ]
+  }
+}
