@@ -73,6 +73,18 @@
       "type": "string",
       "enum": ["REQUIRED", "DEFER", "EXCLUDE", "REVIEW", "DUPLICATE"]
     },
+    "dependency_class": {
+      "type": "string",
+      "enum": ["NONE", "GRAPH", "DIAGRAM", "TABLE", "TIMELINE", "NUMBER_LINE", "OPTION_FIGURES", "STATEMENT_SET", "MIXED"]
+    },
+    "question_content_origin": {
+      "type": "string",
+      "enum": ["SOURCE_DERIVED", "ORIGINAL_EXAM_ALIGNED", "ORIGINAL_EDITORIAL_PROFILED"]
+    },
+    "question_storage_mode": {
+      "type": "string",
+      "enum": ["FULL_TEXT", "HASH_ONLY", "LOCATOR_ONLY"]
+    },
     "verification_state": {
       "type": "string",
       "enum": ["UNVERIFIED", "PARTIAL", "VERIFIED", "CONFLICT_REVIEW_REQUIRED"]
@@ -84,6 +96,29 @@
     "research_status": {
       "type": "string",
       "enum": ["RESEARCH_IN_PROGRESS", "READY_WITH_NONBLOCKING_GAPS", "READY_FOR_PUBLISH", "BLOCKED_RESEARCH_GAP"]
+    },
+    "source_locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "page": {"type": "integer", "minimum": 1},
+        "page_end": {"type": "integer", "minimum": 1},
+        "section": {"type": "string", "minLength": 1},
+        "region": {"type": "string", "minLength": 1},
+        "anchor": {"type": "string", "minLength": 1},
+        "source_question_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "locator"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/stable_id"},
+        "locator": {"$ref": "#/$defs/source_locator"},
+        "evidence_note": {"type": "string"}
+      }
     },
     "artifact_ref": {
       "type": "object",

@@ -49,6 +49,8 @@
               "RESEARCH_CORE_PDF",
               "SOURCE_LEDGER",
               "EXAM_DEMAND_PROFILE",
+              "QUESTION_CONTENT_LEDGER",
+              "QUESTION_OCCURRENCE_LEDGER",
               "QUESTION_EVIDENCE_LEDGER",
               "APPROVED_ASSET",
               "OTHER_RESEARCH_ARTIFACT"

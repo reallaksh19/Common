@@ -1,0 +1,38 @@
+{
+  "question_occurrence_ledger_id": "QOL-G9-PHY-NLM-001",
+  "schema_version": "1.0.0",
+  "records": [
+    {
+      "occurrence_id": "QO-SOF-ISO-DEMO-001",
+      "question_content_id": "QC-PHY-NLM-001",
+      "source_id": "SRC-OFFICIAL-PHY-NLM-001",
+      "source_locator": {"page": 1, "source_question_id": "DEMO-001"},
+      "source_fingerprint_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "storage_mode": "FULL_TEXT",
+      "raw_stem": "A body is acted on by several forces. Which representation correctly isolates the forces acting on the selected body?",
+      "raw_options": ["A", "B", "C", "D"],
+      "raw_answer": "D",
+      "figure_locator": "option figures A-D",
+      "figure_semantics": ["selected body", "force directions", "option geometry"],
+      "external_dependency": "OPTION_FIGURES",
+      "transcription_state": "VERIFIED",
+      "answer_state": "VERIFIED",
+      "rights_status_at_freeze": "REFERENCE_ONLY",
+      "exam_metadata": {"exam_id": "SOF_ISO_L1", "year": 2026, "source_question_id": "DEMO-001"}
+    },
+    {
+      "occurrence_id": "QO-SOF-ISO-DEMO-002",
+      "question_content_id": "QC-PHY-NLM-001",
+      "source_id": "SRC-OFFICIAL-PHY-NLM-001",
+      "source_locator": {"page": 2, "source_question_id": "DEMO-002"},
+      "source_fingerprint_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "storage_mode": "HASH_ONLY",
+      "raw_content_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "external_dependency": "OPTION_FIGURES",
+      "transcription_state": "VERIFIED",
+      "answer_state": "VERIFIED",
+      "rights_status_at_freeze": "REFERENCE_ONLY",
+      "exam_metadata": {"exam_id": "SOF_ISO_L1", "year": 2026, "source_question_id": "DEMO-002"}
+    }
+  ]
+}

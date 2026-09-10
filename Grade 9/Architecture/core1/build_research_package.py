@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Build a frozen Core (1) ResearchPackage from a structured research input.
+"""Build a frozen Core (1) ResearchPackage from structured research input.
 
 The input is already-researched data. This tool does not browse, infer new subject
 truth, or alter learner Bxx. It packages verified Core (1) objects into the v1
-ResearchBundle/Manifest contract and derives the human MD/PDF review surfaces.
+ResearchBundle/Manifest contract and derives human MD/PDF review surfaces.
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
-from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
 
 def read_json(path: Path):
@@ -59,7 +59,20 @@ def artifact_ref(path: Path, media_type: str) -> dict:
     return {"path": path.name, "sha256": sha256_file(path), "media_type": media_type}
 
 
-def build_markdown(bundle: dict, source_ledger: dict, exam_profiles: list[dict], question_ledger: dict | None) -> str:
+def format_locator(locator: dict) -> str:
+    if not locator:
+        return "N/A"
+    return ", ".join(f"{k}={v}" for k, v in locator.items())
+
+
+def build_markdown(
+    bundle: dict,
+    source_ledger: dict,
+    exam_profiles: list[dict],
+    question_content_ledger: dict | None,
+    question_occurrence_ledger: dict | None,
+    question_evidence_ledger: dict | None,
+) -> str:
     p = bundle["project"]
     lines = [
         f"# {p['title']} - Research Core",
@@ -72,9 +85,17 @@ def build_markdown(bundle: dict, source_ledger: dict, exam_profiles: list[dict],
         "",
         "## Scope",
         "",
-        "Included canonical nodes:",
+        "Canonical registry releases:",
         "",
     ]
+    for reg in bundle["scope_graph"].get("canonical_registry_versions", []):
+        line = f"- `{reg['registry_id']}` @ `{reg['version']}`"
+        if reg.get("registry_sha256"):
+            line += f" sha256=`{reg['registry_sha256']}`"
+        if reg.get("registry_locator"):
+            line += f" locator={reg['registry_locator']}"
+        lines.append(line)
+    lines += ["", "Included canonical nodes:", ""]
     for node in bundle["scope_graph"].get("included_nodes", []):
         lines.append(f"- `{node}`")
     if bundle["scope_graph"].get("excluded_nodes"):
@@ -94,6 +115,8 @@ def build_markdown(bundle: dict, source_ledger: dict, exam_profiles: list[dict],
             f"- Concepts: {', '.join('`'+x+'`' for x in c.get('concept_ids', [])) or 'N/A'}",
             f"- Sources: {', '.join('`'+x+'`' for x in c.get('source_refs', [])) or 'N/A'}",
         ]
+        for ev in c.get("evidence_refs", []):
+            lines.append(f"- Evidence locator: `{ev['source_id']}` [{format_locator(ev.get('locator', {}))}]")
         if c.get("conditions"):
             lines.append(f"- Conditions: {'; '.join(c['conditions'])}")
         if c.get("edge_cases"):
@@ -165,15 +188,36 @@ def build_markdown(bundle: dict, source_ledger: dict, exam_profiles: list[dict],
                 "",
             ]
 
-    if question_ledger is not None:
+    if question_content_ledger is not None:
+        lines += ["## Question content records", "", f"- Ledger: `{question_content_ledger['question_content_ledger_id']}`", ""]
+        for row in question_content_ledger.get("records", []):
+            lines += [
+                f"### {row['question_content_id']}",
+                "",
+                f"- Primary concept: `{row['primary_concept_id']}`",
+                f"- Dependency: `{row['dependency_class']}`",
+                f"- Origin: `{row['content_origin']}`",
+                f"- Research refs: {', '.join('`'+x+'`' for x in row.get('research_refs', []))}",
+                "",
+            ]
+
+    if question_occurrence_ledger is not None:
+        lines += ["## Question occurrence custody", "", f"- Ledger: `{question_occurrence_ledger['question_occurrence_ledger_id']}`", ""]
+        for row in question_occurrence_ledger.get("records", []):
+            lines.append(
+                f"- `{row['occurrence_id']}` -> `{row['question_content_id']}` -> `{row['source_id']}` [{format_locator(row.get('source_locator', {}))}] storage=`{row['storage_mode']}`"
+            )
+        lines.append("")
+
+    if question_evidence_ledger is not None:
         lines += [
             "## External-question evidence closure",
             "",
-            f"- Ledger: `{question_ledger['question_evidence_ledger_id']}`",
-            f"- Candidate denominator: {question_ledger['candidate_denominator']}",
+            f"- Ledger: `{question_evidence_ledger['question_evidence_ledger_id']}`",
+            f"- Candidate denominator: {question_evidence_ledger['candidate_denominator']}",
             "",
         ]
-        for row in question_ledger.get("rows", []):
+        for row in question_evidence_ledger.get("rows", []):
             lines.append(f"- `{row['occurrence_id']}` -> `{row['disposition']}` -> `{row.get('primary_owner', 'N/A')}`")
         lines.append("")
 
@@ -195,30 +239,12 @@ def build_markdown(bundle: dict, source_ledger: dict, exam_profiles: list[dict],
 
 def render_pdf(markdown: str, path: Path) -> None:
     styles = getSampleStyleSheet()
-    body = ParagraphStyle(
-        "CoreBody",
-        parent=styles["BodyText"],
-        fontName="Helvetica",
-        fontSize=9.5,
-        leading=13,
-        alignment=TA_LEFT,
-        spaceAfter=4,
-    )
+    body = ParagraphStyle("CoreBody", parent=styles["BodyText"], fontName="Helvetica", fontSize=9.5, leading=13, alignment=TA_LEFT, spaceAfter=4)
     h1 = ParagraphStyle("CoreH1", parent=styles["Heading1"], fontName="Helvetica-Bold", fontSize=17, leading=21, spaceAfter=8)
     h2 = ParagraphStyle("CoreH2", parent=styles["Heading2"], fontName="Helvetica-Bold", fontSize=13, leading=16, spaceBefore=8, spaceAfter=5)
     h3 = ParagraphStyle("CoreH3", parent=styles["Heading3"], fontName="Helvetica-Bold", fontSize=10.5, leading=13, spaceBefore=6, spaceAfter=3)
     mono = ParagraphStyle("CoreMono", parent=body, fontName="Courier", fontSize=8.5, leading=11)
-
-    doc = SimpleDocTemplate(
-        str(path),
-        pagesize=A4,
-        rightMargin=18 * mm,
-        leftMargin=18 * mm,
-        topMargin=16 * mm,
-        bottomMargin=16 * mm,
-        title="Core (1) Research Core",
-        author="Grade 9 two-core architecture",
-    )
+    doc = SimpleDocTemplate(str(path), pagesize=A4, rightMargin=18 * mm, leftMargin=18 * mm, topMargin=16 * mm, bottomMargin=16 * mm, title="Core (1) Research Core", author="Grade 9 two-core architecture")
     story = []
     for raw in markdown.splitlines():
         line = raw.strip()
@@ -254,6 +280,10 @@ def material_ids(bundle: dict) -> list[str]:
     return ids
 
 
+def make_json_artifact(role: str, path: Path) -> dict:
+    return {"role": role, "path": path.name, "sha256": sha256_file(path), "media_type": "application/json", "bytes": path.stat().st_size}
+
+
 def build(input_path: Path, out_dir: Path) -> dict:
     data = read_json(input_path)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -270,11 +300,23 @@ def build(input_path: Path, out_dir: Path) -> dict:
         write_json(p, profile)
         exam_paths.append(p)
 
-    question_ledger = data.get("question_evidence_ledger")
-    question_path: Path | None = None
-    if question_ledger is not None:
-        question_path = out_dir / f"{prefix}_Question_Evidence_Ledger.json"
-        write_json(question_path, question_ledger)
+    question_content_ledger = data.get("question_content_ledger")
+    question_content_path: Path | None = None
+    if question_content_ledger is not None:
+        question_content_path = out_dir / f"{prefix}_Question_Content_Ledger.json"
+        write_json(question_content_path, question_content_ledger)
+
+    question_occurrence_ledger = data.get("question_occurrence_ledger")
+    question_occurrence_path: Path | None = None
+    if question_occurrence_ledger is not None:
+        question_occurrence_path = out_dir / f"{prefix}_Question_Occurrence_Ledger.json"
+        write_json(question_occurrence_path, question_occurrence_ledger)
+
+    question_evidence_ledger = data.get("question_evidence_ledger")
+    question_evidence_path: Path | None = None
+    if question_evidence_ledger is not None:
+        question_evidence_path = out_dir / f"{prefix}_Question_Evidence_Ledger.json"
+        write_json(question_evidence_path, question_evidence_ledger)
 
     bundle = {
         "research_bundle_id": data["research_bundle_id"],
@@ -293,19 +335,22 @@ def build(input_path: Path, out_dir: Path) -> dict:
         "worked_reasoning": data.get("worked_reasoning", []),
         "source_ledger_ref": artifact_ref(source_ledger_path, "application/json"),
         "exam_demand_profile_refs": [artifact_ref(p, "application/json") for p in exam_paths],
-        "approved_assets": [],
+        "approved_assets": data.get("approved_assets", []),
         "unresolved_items": data.get("unresolved_items", []),
     }
-    if question_path is not None:
-        bundle["question_evidence_ledger_ref"] = artifact_ref(question_path, "application/json")
+    if question_content_path is not None:
+        bundle["question_content_ledger_ref"] = artifact_ref(question_content_path, "application/json")
+    if question_occurrence_path is not None:
+        bundle["question_occurrence_ledger_ref"] = artifact_ref(question_occurrence_path, "application/json")
+    if question_evidence_path is not None:
+        bundle["question_evidence_ledger_ref"] = artifact_ref(question_evidence_path, "application/json")
 
     bundle_path = out_dir / f"{prefix}_Research_Bundle.json"
     write_json(bundle_path, bundle)
 
-    markdown = build_markdown(bundle, data["source_ledger"], exam_profiles, question_ledger)
+    markdown = build_markdown(bundle, data["source_ledger"], exam_profiles, question_content_ledger, question_occurrence_ledger, question_evidence_ledger)
     md_path = out_dir / f"{prefix}_Research_Core.md"
     md_path.write_text(markdown, encoding="utf-8", newline="\n")
-
     missing_material = [mid for mid in material_ids(bundle) if mid not in markdown]
     if missing_material:
         raise SystemExit(f"Research Core MD missing material IDs: {missing_material}")
@@ -317,12 +362,16 @@ def build(input_path: Path, out_dir: Path) -> dict:
         {"role": "RESEARCH_BUNDLE", "path": bundle_path.name, "sha256": sha256_file(bundle_path), "media_type": "application/json", "bytes": bundle_path.stat().st_size},
         {"role": "RESEARCH_CORE_MD", "path": md_path.name, "sha256": sha256_file(md_path), "media_type": "text/markdown", "bytes": md_path.stat().st_size},
         {"role": "RESEARCH_CORE_PDF", "path": pdf_path.name, "sha256": sha256_file(pdf_path), "media_type": "application/pdf", "bytes": pdf_path.stat().st_size},
-        {"role": "SOURCE_LEDGER", "path": source_ledger_path.name, "sha256": sha256_file(source_ledger_path), "media_type": "application/json", "bytes": source_ledger_path.stat().st_size},
+        make_json_artifact("SOURCE_LEDGER", source_ledger_path),
     ]
     for p in exam_paths:
-        artifacts.append({"role": "EXAM_DEMAND_PROFILE", "path": p.name, "sha256": sha256_file(p), "media_type": "application/json", "bytes": p.stat().st_size})
-    if question_path is not None:
-        artifacts.append({"role": "QUESTION_EVIDENCE_LEDGER", "path": question_path.name, "sha256": sha256_file(question_path), "media_type": "application/json", "bytes": question_path.stat().st_size})
+        artifacts.append(make_json_artifact("EXAM_DEMAND_PROFILE", p))
+    if question_content_path is not None:
+        artifacts.append(make_json_artifact("QUESTION_CONTENT_LEDGER", question_content_path))
+    if question_occurrence_path is not None:
+        artifacts.append(make_json_artifact("QUESTION_OCCURRENCE_LEDGER", question_occurrence_path))
+    if question_evidence_path is not None:
+        artifacts.append(make_json_artifact("QUESTION_EVIDENCE_LEDGER", question_evidence_path))
 
     tuples = [[a["role"], a["path"], a["sha256"]] for a in sorted(artifacts, key=lambda x: (x["role"], x["path"]))]
     manifest = {
@@ -331,10 +380,7 @@ def build(input_path: Path, out_dir: Path) -> dict:
         "research_bundle_id": data["research_bundle_id"],
         "evidence_version": data["evidence_version"],
         "change_class": data.get("change_class", "SEMANTIC"),
-        "canonicalization": {
-            "semantic_json": "RFC8785_JCS",
-            "package_tuple_sort": "ROLE_THEN_PATH_LEXICOGRAPHIC",
-        },
+        "canonicalization": {"semantic_json": "RFC8785_JCS", "package_tuple_sort": "ROLE_THEN_PATH_LEXICOGRAPHIC"},
         "semantic_digest": sha256_bytes(canonical_bytes(bundle)),
         "package_digest": sha256_bytes(canonical_bytes(tuples)),
         "artifacts": artifacts,
@@ -356,7 +402,9 @@ def build(input_path: Path, out_dir: Path) -> dict:
         "research_core_pdf": str(pdf_path),
         "source_ledger": str(source_ledger_path),
         "exam_demand_profiles": [str(p) for p in exam_paths],
-        "question_evidence_ledger": str(question_path) if question_path else None,
+        "question_content_ledger": str(question_content_path) if question_content_path else None,
+        "question_occurrence_ledger": str(question_occurrence_path) if question_occurrence_path else None,
+        "question_evidence_ledger": str(question_evidence_path) if question_evidence_path else None,
         "package_digest": manifest["package_digest"],
     }
     print(json.dumps(result, indent=2))

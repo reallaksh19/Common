@@ -46,6 +46,26 @@
           {
             "if": {"properties": {"disposition": {"enum": ["REQUIRED", "DEFER", "EXCLUDE", "REVIEW"]}}, "required": ["disposition"]},
             "then": {"required": ["primary_owner"]}
+          },
+          {
+            "if": {"properties": {"disposition": {"const": "REQUIRED"}}, "required": ["disposition"]},
+            "then": {
+              "properties": {
+                "source_state": {"const": "VERIFIED"},
+                "transcription_state": {"const": "VERIFIED"},
+                "answer_state": {"const": "VERIFIED"}
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "disposition": {"const": "REQUIRED"},
+                "publication_targets": {"contains": {"const": "TRANSFER_BOOK"}}
+              },
+              "required": ["disposition", "publication_targets"]
+            },
+            "then": {"required": ["question_content_id"]}
           }
         ]
       }
