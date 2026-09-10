@@ -6,7 +6,8 @@ import copy
 import sys
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[3] / "skills" / "grade9-core2-publisher" / "scripts"
+GRADE9 = Path(__file__).resolve().parents[3]
+SCRIPTS = GRADE9 / "skills" / "grade9-core2-publisher" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import mature_product as mature  # noqa: E402
@@ -80,6 +81,10 @@ def fixture():
 
 def main() -> int:
     plan, design, study, target = fixture()
+
+    reference_path = GRADE9 / "architecture" / "core2" / "contracts" / "v1" / "examples" / "learning-design.permutations-bridge.example.json"
+    reference = mature.load(reference_path)
+    assert mature.validate_learning_design_contract(reference) == []
 
     missing_design = mature.preflight_errors(
         ["run_core2.py", "--mature-product", "--target", "target.json"],
