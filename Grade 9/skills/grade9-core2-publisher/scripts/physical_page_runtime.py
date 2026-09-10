@@ -292,6 +292,29 @@ def _arc_metadata(structure: dict) -> dict[str, dict]:
     return out
 
 
+_SELF_LABELED_PROMPT_PREFIX = {
+    "NOTICE": "NOTICE",
+    "GUIDED_1": "GUIDED 1",
+    "INDEPENDENT_TRANSFER": "INDEPENDENT TRANSFER",
+    "RETRIEVAL_CHECK": "RETRIEVAL CHECK",
+}
+
+
+def _content_carries_role_cue(meta: dict, item: dict) -> bool:
+    """Return true when the learner prompt already prints its semantic role.
+
+    This is intentionally narrow. We only suppress a separate H2 for generic
+    pedagogical connectives whose text begins with the same learner-visible cue.
+    Content/provenance is unchanged and the role remains explicit in structure.
+    """
+    if item.get("type") != "CONNECTIVE":
+        return False
+    prefix = _SELF_LABELED_PROMPT_PREFIX.get(meta.get("role"))
+    if not prefix:
+        return False
+    return str(item.get("content", "")).strip().upper().startswith(prefix)
+
+
 def make_study_renderer(impl):
     """Return a drop-in tracked, learner-first Study Guide renderer."""
 
@@ -324,8 +347,6 @@ def make_study_renderer(impl):
 
         for page_intent in structure["study_guide"]["page_intents"]:
             iid = page_intent["page_intent_id"]
-            # The cognitive job is learner-facing intent; do not prefix it with
-            # an internal architecture label.
             story.append(
                 TrackedFlowable(
                     Paragraph(impl.legacy.safe(page_intent["cognitive_job"]), st["h1"]),
@@ -342,8 +363,9 @@ def make_study_renderer(impl):
                 support = meta.get("support_state", "")
                 heading_key = (role, support)
                 if heading_key != previous_heading:
-                    heading = f"{role} · {support}" if support else role
-                    story.append(Paragraph(impl.legacy.safe(heading), st["h2"]))
+                    if not _content_carries_role_cue(meta, item):
+                        heading = f"{role} · {support}" if support else role
+                        story.append(Paragraph(impl.legacy.safe(heading), st["h2"]))
                     previous_heading = heading_key
                 story.append(_tracked(Paragraph(impl.legacy.safe(item["content"]), st["body"]), tracker, iid, item))
                 if item.get("representation_instance_id"):
