@@ -18,6 +18,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from install_skills import SKILLS
+
 NAME_RE = re.compile(r"^[a-z0-9-]{1,64}$")
 
 
@@ -75,6 +77,26 @@ def main() -> int:
                     errors.append(f"{folder.name}: openai.yaml missing {key[:-1]}")
             if f"${name}" not in ui_text:
                 errors.append(f"{folder.name}: default_prompt should mention ${name}")
+
+    installed = set(SKILLS)
+    if len(installed) != len(SKILLS):
+        errors.append("install_skills.py contains duplicate skill names")
+    available = {folder.name for folder in skills}
+    missing_sources = sorted(installed - available)
+    if missing_sources:
+        errors.append(f"install_skills.py references missing skills: {missing_sources}")
+    router_text = (root / "grade9" / "SKILL.md").read_text(encoding="utf-8")
+    advertised = {
+        name
+        for name in available
+        if re.search(rf"(?<![a-z0-9-]){re.escape(name)}(?![a-z0-9-])", router_text)
+    }
+    missing_router_dependencies = sorted(advertised - installed)
+    if missing_router_dependencies:
+        errors.append(
+            "installed grade9 router has unresolved skill dependencies: "
+            f"{missing_router_dependencies}"
+        )
 
     if errors:
         print("GRADE 9 SKILL VALIDATION: FAIL")

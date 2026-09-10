@@ -2,7 +2,7 @@
 
 ## Separate B30/B80 teaching pilot
 
-See [B30_B80_Rebuild](B30_B80_Rebuild/README.md) for the 21-page B30 Core, 16-page B80 Core and 10-page original optional-hint practice PDF, with [hashes and audit evidence](B30_B80_Rebuild/Physics_Rebuild_Audit.json). These two-topic pilot artifacts are separate from the source-complete publications listed below.
+See [B30_B80_Rebuild](B30_B80_Rebuild/README.md) for the 27-page B30 Core, 22-page B80 Core and 16-page original optional-hint practice PDF, with [hashes and audit evidence](B30_B80_Rebuild/Physics_Rebuild_Audit.json). These two-topic pilot artifacts are separate from the source-complete publications listed below.
 
 The Markdown/YAML specifications in this folder are the reproducible authoring authority. Generated PDFs are publication artifacts and must remain traceable to the specification and source map.
 

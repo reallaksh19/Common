@@ -1,8 +1,7 @@
 interface:
   display_name: Physics Publication
-  short_description: Visual Physics books with practice and handouts
-  default_prompt: Build a Physics learner book with concept diagrams, optional hints,
-    end solutions and a printable handout.
+  short_description: Typed Core A-C and ExamSIDE publication
+  default_prompt: Use $grade9-physics-publication to validate, render, pair, and audit a Core Study Guide with Appendices A-C and its reciprocal ExamSIDE Solution Book.
   icon_small: assets/icon.svg
   icon_large: assets/icon.svg
 policy:

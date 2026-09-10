@@ -1,69 +1,74 @@
 {
-  "basis": "af4c5c73b87b26187aa6c930b60172cbb1f0f3e2",
+  "basis": "Content-addressed files in the declared review-package scope; recompute with refresh_file_manifest.py.",
   "excluded": [
-    "FILE_MANIFEST.json",
-    "DELIVERY_RECORD.md"
+    "Grade 9/Physics/Motion/B30_B80_Rebuild/DELIVERY_RECORD.md",
+    "Grade 9/Physics/Motion/B30_B80_Rebuild/FILE_MANIFEST.json"
   ],
   "files": [
     {
       "path": "Grade 9/Physics/Motion/ARTIFACTS.md",
       "bytes": 2320,
-      "sha256": "dbd02b2f0e3a0dbc36e8e46701ef767dbdb71d3772717adaa06faca6b512f507"
+      "sha256": "42de4bb5d088a1feef8fe12d788d2dc7f1996fea024b16202a41c5cb883d1ff4"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/.gitattributes",
+      "bytes": 13,
+      "sha256": "547f59603028195ff9f8a87d04c4651551e8bd0d68f075257dfd549cd846b25b"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/CONCEPT_REVIEW_MAP.md",
-      "bytes": 2698,
-      "sha256": "078d2e942db21926552f79c4a719a57ab78cdfa6c645b04e1a8d84f73eae3267"
+      "bytes": 3230,
+      "sha256": "5ac16c0f3842877d63a2713542a29c3c3c499818473afc535dae2ec626b946a0"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_B30_Rebuilt.audit.json",
       "bytes": 529,
-      "sha256": "3533f0ab2ad37aac929d9dea6e80b73d8a37956a0d72d0772d325941c406251a"
+      "sha256": "8ed9dd6692f95bddf2c12a5da3972df817d1b3fdbd1dba7ef4b9f4f784216e52"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_B30_Rebuilt.layout.json",
-      "bytes": 119668,
-      "sha256": "bf11c72434da7a3e4d16e754b8d9f73c98a91dd1de6168396dff068d18f83cae"
+      "bytes": 135303,
+      "sha256": "792393aadec2b07961e5c70355fe0c4652e724fc55dcaebb071480602a463f7b"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_B30_Rebuilt.pdf",
-      "bytes": 118667,
-      "sha256": "3996bef9966f84f2c70f0b9f74b088a95efe8862e9cf810946bb12b05dbfab92"
+      "bytes": 128608,
+      "sha256": "ab74610eadbdad2de4d27ea7732ed6a03069d78f36b3b306b5b7f622705d13f2"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_B80_Rebuilt.audit.json",
       "bytes": 529,
-      "sha256": "5a4a354cbeb928ea83f7409807dfec79ecbc6b1985f799e007b29c98cc238d42"
+      "sha256": "dcf24e59d9567a29be18da024477bd89cdf35ac2d630ca9dfb7d7ccd75a5b05f"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_B80_Rebuilt.layout.json",
-      "bytes": 89800,
-      "sha256": "5200b95ad73e20b05253f37394aa721857a275320be8d4070a724e9ad5163778"
+      "bytes": 106206,
+      "sha256": "c2c39569dbd74cefb90b116bf8a26d8e7710c74041dbc80e7435ec4c266d44b3"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_B80_Rebuilt.pdf",
-      "bytes": 84662,
-      "sha256": "8cf0c49d457135a8f41f47061e60d5f30a0932507d48aa32b2ad00f054ba371c"
+      "bytes": 94989,
+      "sha256": "ee093618259ed1e559b45a566e434e90d16d4ba22d9fb26eb3e8d624a7f3b330"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_Optional_Hint_Practice.audit.json",
       "bytes": 528,
-      "sha256": "86aa61d1353bece1e59fc7ebc002d37dcc64d2c004ee655c05d259840ab84192"
+      "sha256": "8f35acd53bbabb9201a1371c8ba5e89cb246507291c8de947c0d4ae8bcb299b9"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_Optional_Hint_Practice.layout.json",
-      "bytes": 53401,
-      "sha256": "39cc60b6dcab2dc0216adcb83bc0dd7608ee27cc70432babb1959b5e0b7e8bac"
+      "bytes": 69808,
+      "sha256": "2eb153528f0c7a44b8caa63a0bb1e5c23b22aa2c57183296d0f56035d1a7dde3"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Motion_Optional_Hint_Practice.pdf",
-      "bytes": 68717,
-      "sha256": "c8bda27aee48752bc069eb7857c3977df672184dc6022505023da3b14fec90a5"
+      "bytes": 79238,
+      "sha256": "7290c579abef28c938461c7de5143b30fa6fac422af1958afadc00074a61e8ce"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Packaging_Validation.json",
-      "bytes": 2949,
-      "sha256": "b3e9d97b2c33904bc2a9644877b31b141a71621210ca3fdefa5c7b1e2fbdbf90"
+      "bytes": 5551,
+      "sha256": "9acf2159e64cc6b7ac1884cda14ca26e2d2501075cb8bdedf0f4eb1fecb76d9c"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Physics_Before_Rebuild_Backup.zip",
@@ -72,28 +77,58 @@
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Physics_Rebuild_Audit.json",
-      "bytes": 3361,
-      "sha256": "caf4c4b6cc615dc3bf49ded1f68cb9e808109dca1017164a71c599bfe234497f"
+      "bytes": 6039,
+      "sha256": "9d6f4f7afa9664a2f157905624940662c2b3b5e44e53d1e5a25d7a376b47ad2f"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/Physics_Rebuild_Review.md",
-      "bytes": 12536,
-      "sha256": "8aab53acd47f7b1cbfa2f56620d7a0dcfc9e85d4fa599081d38af116d0172e6c"
+      "bytes": 12830,
+      "sha256": "5730d077c8e14a0405a1cd3007f442294b46dec71ed5d3a40e218333729c65f1"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/README.md",
-      "bytes": 3635,
-      "sha256": "845ece0757d41c997f02c03b0dcc3184b1360d897c91430b9c51680c878df5ef"
+      "bytes": 4688,
+      "sha256": "73338509b716e2b6c59608523f8ea7f8b36668fd1937919730baee4cb8e412f5"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/REPRODUCE.md",
-      "bytes": 2458,
-      "sha256": "774635a56aaa3c421fc3bbbaff4c170c1112d842c313febba12eaa6329fee58a"
+      "bytes": 6397,
+      "sha256": "42a58d49b997579df60373209f60965b530cd610354b7d5e096067a5bd583fb6"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/REVIEW_GUIDE.md",
-      "bytes": 4824,
-      "sha256": "26bb8ec05cada16d62f69690e3171f7729cd9613cd35633f03215241655104f8"
+      "bytes": 5767,
+      "sha256": "d0b8dd3b12d13b82c73194a7ae0ddb2497acff1f5771e0fa48ea02c36f1d5eae"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/record_visual_review.py",
+      "bytes": 2541,
+      "sha256": "3dfc09da10624229b34185d28b1021720cb06da3bcd5031096efabb79595e574"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/refresh_file_manifest.py",
+      "bytes": 2632,
+      "sha256": "a81d3db42d87fcf27a5ae13f1122cb5f4b6526cc1048c20a266820e4ef2e1649"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/refresh_review_summaries.py",
+      "bytes": 4108,
+      "sha256": "4e9f0d118ffbbf733ef984a1f1badfcfd77ee6dd038b727663d66d0fe5e0c58b"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/review_evidence.json",
+      "bytes": 47238,
+      "sha256": "f851b7c6a4c77a99596bdf8b97371b26cc9680161e3b5beacfb5e73976315736"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/review_evidence.py",
+      "bytes": 6533,
+      "sha256": "fbda5dc5460d6b902c70ebb8c4827b6df59cbc753e40fd059796f35bd9e6f5d2"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/run_review_checks.py",
+      "bytes": 7891,
+      "sha256": "50d7551313587d94567de6d2456754707ab1b31a5fdeee4aea1c2ae5dc9c95d3"
     },
     {
       "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/sources/Original_Architecture_Concept_Note.docx",
@@ -136,19 +171,179 @@
       "sha256": "38204a13ffa49d46e271b8324208badde2c9cbdb55a53c7256b42fc124048cde"
     },
     {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/test_review_evidence.py",
+      "bytes": 2766,
+      "sha256": "2c230cb269f9821c57639ab32d6ed25ca2c6e4854d4716f716816dddda0e8439"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/verify_review_package.py",
+      "bytes": 6471,
+      "sha256": "60420d34d5f5ad719f852dfb185845a826391aa1a322a8dc0b461031eaaa6c16"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/B30_B80_Rebuild/visual_review_evidence.json",
+      "bytes": 1037,
+      "sha256": "9fd430db2b8c8bee016bf8cd684e148649d18c5868852307ec92b6a735d42141"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/Motion_Concept_Book_Spec.md",
+      "bytes": 11153,
+      "sha256": "56b75311a12be6c6a86fb3f2377365c4268b5f740420913f1ce100e13815df7b"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/Motion_Source_Coverage_Map.md",
+      "bytes": 13449,
+      "sha256": "db76fcfce232b4f4d04c6ef0ff0bd0367254acd2e2acf4acac07f359398f2365"
+    },
+    {
+      "path": "Grade 9/Physics/Motion/PR155_Consolidated_Review.md",
+      "bytes": 11227,
+      "sha256": "384d07806764f5d0cab771ff6539bd4c158276505eaa99e4df5234a61e5f4a71"
+    },
+    {
       "path": "Grade 9/Physics/Motion/README.md",
       "bytes": 2565,
       "sha256": "9b233139fdb4a0916be15ab9d68166c8e500bce9c26a37435e4ff67292a270ac"
     },
     {
+      "path": "Grade 9/Physics/Motion/motion_source_map.yaml",
+      "bytes": 6826,
+      "sha256": "7e67b862407d8e09f75c5dfd8d771a753c7e63347903892b04beaa881c312645"
+    },
+    {
+      "path": "Grade 9/SKILLSET.md",
+      "bytes": 11620,
+      "sha256": "57c646f79371b5c43de47be5822d678f7fbe11f6e38e1987ffa0b9f0661ef808"
+    },
+    {
+      "path": "Grade 9/install_skills.py",
+      "bytes": 2097,
+      "sha256": "8d902a40ebb417135bd201857f3e1d9d30a8a45f33291d1b90f646c4d5a44e08"
+    },
+    {
+      "path": "Grade 9/shared/grade9-master.schema.json",
+      "bytes": 6008,
+      "sha256": "e91317d5534cf505807366ed2f550330a43e7d8e6af0edb9aced81359b2efbe1"
+    },
+    {
+      "path": "Grade 9/shared/grade9-workflow.md",
+      "bytes": 4485,
+      "sha256": "c07ad0dc4b012390ced2655397bd21d18fb3e8075da51a6a633c29e382e60511"
+    },
+    {
+      "path": "Grade 9/skills/grade9-chapter-closeout-auditor/SKILL.md",
+      "bytes": 7271,
+      "sha256": "0f3d376803c2ee6025d2814ae591fedd274c0b602f26d4fb20037a9b72a49cb0"
+    },
+    {
+      "path": "Grade 9/skills/grade9-chapter-closeout-auditor/agents/openai.yaml",
+      "bytes": 287,
+      "sha256": "4c013f21084f283d9761b37af2f0a06aae2b9d0600388f00a06704a50208de24"
+    },
+    {
+      "path": "Grade 9/skills/grade9-chemistry/SKILL.md",
+      "bytes": 3657,
+      "sha256": "2ecc82560c720cf2dc4cf021307426464c3bb84fe879abd739a5449709539af9"
+    },
+    {
+      "path": "Grade 9/skills/grade9-chemistry/agents/openai.yaml",
+      "bytes": 268,
+      "sha256": "617be9e5b310528fc9cd435c9e3fb191993305e4d7521f90a7d280824b2781af"
+    },
+    {
+      "path": "Grade 9/skills/grade9-concept-architect/SKILL.md",
+      "bytes": 2531,
+      "sha256": "c8147d37679689ded5725e0a8f10dde71fc37380b8d819b57f5f03d60d435ec0"
+    },
+    {
+      "path": "Grade 9/skills/grade9-concept-architect/agents/openai.yaml",
+      "bytes": 265,
+      "sha256": "1e63e58f5fcd84217a85f9e50a34d80f7c6f077546c37702e3d930fd2de2bd29"
+    },
+    {
+      "path": "Grade 9/skills/grade9-corpus-coverage-auditor/SKILL.md",
+      "bytes": 980,
+      "sha256": "1a0f1d96ddefd4485838b3a50897db84b5c8756a1c7bd8e05a2cca7fd01ccd0c"
+    },
+    {
+      "path": "Grade 9/skills/grade9-corpus-coverage-auditor/agents/openai.yaml",
+      "bytes": 265,
+      "sha256": "1ea317a1809d2500afcaee36c2de2aa8e1c74fa68e9291d6665a6e48672a3995"
+    },
+    {
+      "path": "Grade 9/skills/grade9-learning-enrichment/SKILL.md",
+      "bytes": 4887,
+      "sha256": "adeb8babca84edf0b340a870d18eae203ccf8b9e3240c794a3ac1dc5faa815f4"
+    },
+    {
+      "path": "Grade 9/skills/grade9-learning-enrichment/agents/openai.yaml",
+      "bytes": 291,
+      "sha256": "4f4ada17f7c83c56f90c5aaaa91bb782b5c9ac6b731d7175173d7276e4d6360d"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math-assimilation/SKILL.md",
+      "bytes": 9331,
+      "sha256": "6ca61139bc75926db851ff40eeb30f674404797af35f3002b3551943a6969827"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math-assimilation/agents/openai.yaml",
+      "bytes": 253,
+      "sha256": "e048e429115da4ca8f819fecf172693b434953358c41370d312db8a2129a4759"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math-assimilation/references/quadratics-subtopic-prompt-pack.md",
+      "bytes": 6752,
+      "sha256": "f5cc209e21c71777ebea15dec21aabab87126288471fc192583225544ea82e6b"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math-assimilation/references/quadratics-v2-retrace-runbook.md",
+      "bytes": 10106,
+      "sha256": "5dd67588a3d65cdf2e63887379b8c3ebb0e903d5212f29b014bc70bb17d56826"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math-corpus-coverage-auditor/SKILL.md",
+      "bytes": 21603,
+      "sha256": "2eeb9dd5a23a20a584034d97c0788c75dd8c5401952ff58a95aff8f9c3730504"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math-corpus-coverage-auditor/agents/openai.yaml",
+      "bytes": 282,
+      "sha256": "a5d19e37bf9222784d0f20f2c657fcf96dd9cc23c4de0719fa04291a3e37eb4d"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math/SKILL.md",
+      "bytes": 8950,
+      "sha256": "6e3c19b3b542b3dad8ac40a0d8017d97ce410d36cc38139ae0b5427c5891d318"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math/agents/openai.yaml",
+      "bytes": 311,
+      "sha256": "9ab4a60c0e426ffe5bbbae7d5fa911af7913c3c9f0d5a47ef0e66e37a1d73851"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math/references/concept-book-see-realize-understand-adopt.md",
+      "bytes": 10618,
+      "sha256": "f1be74d13f24294727198106f745c97fdffd147cebe3a18dadacac4a5d14fcb9"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math/references/partial-knowledge-assimilation-concept-map.md",
+      "bytes": 6073,
+      "sha256": "1e035df647f4fd905f87954ad256458a55d403c73e3b6ee9886494a7f36e8de0"
+    },
+    {
+      "path": "Grade 9/skills/grade9-math/references/sequence-series-concept-book-example.md",
+      "bytes": 3771,
+      "sha256": "df1028cddee1b0611ff72d35752f6c312c80a4c2ab443ba1140bea35e21348b4"
+    },
+    {
       "path": "Grade 9/skills/grade9-physics-examside/SKILL.md",
-      "bytes": 4916,
-      "sha256": "115e0dd9139dedb50840bb7be09208fbcc3a241c3a0c9046f8ad71359bdc1b1c"
+      "bytes": 6597,
+      "sha256": "b3da5ff2134082834e236601100357d1e1be866ba6ef02299c8152e6564af0c7"
     },
     {
       "path": "Grade 9/skills/grade9-physics-examside/agents/openai.yaml",
-      "bytes": 415,
-      "sha256": "a441b8334f0eab806f8081c63be203f4f898f385abf73a68c5a0f5d9c764d19c"
+      "bytes": 504,
+      "sha256": "73ce00a30dfdc6a72272b443ab0a2dea945378fdf6b25c5ba76889f53bcbe132"
     },
     {
       "path": "Grade 9/skills/grade9-physics-examside/assets/icon.svg",
@@ -157,28 +352,38 @@
     },
     {
       "path": "Grade 9/skills/grade9-physics-examside/references/question-contract.md",
-      "bytes": 2922,
-      "sha256": "30eb1d21d902239fba64fc227c1040003ea92751b335b5fb9e46d520ac3c9670"
+      "bytes": 4224,
+      "sha256": "1d86b3565ae69463d91baf8df5a78663dea02f30f76fce88eaeb3c8a7cfe0472"
     },
     {
       "path": "Grade 9/skills/grade9-physics-examside/references/source-ledger.example.json",
-      "bytes": 8324,
-      "sha256": "85e05f6d1372c2201a160bde4187b5f1d9846d796d4a94d6ea441a2fda0eb682"
+      "bytes": 14880,
+      "sha256": "ce1e2a1debddbcd28c7cef6ab9c5a02dc502e4ee729bfd7d4dd032dda9c1aa68"
     },
     {
       "path": "Grade 9/skills/grade9-physics-examside/scripts/check_ledger.py",
-      "bytes": 1575,
-      "sha256": "8049f16bf0b9bf3f496e94dfb6e08de01dee006d27125a13f29ae1523c549749"
+      "bytes": 5908,
+      "sha256": "6b84ad69cfdd448bd23dfd097e1a0e7fbcde28d70cc030d96631292cd10bc9d5"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics-examside/scripts/reconcile.py",
+      "bytes": 11271,
+      "sha256": "51e6b5ccbeda94aea91d8e63e29308f6f39a6e2a802a15baf148ded5afaf38b5"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics-examside/scripts/test_reconcile.py",
+      "bytes": 6860,
+      "sha256": "fe74b13b30300e20060a1bba81a4effe7fbb2b157152ec954bbbb3d9d6990820"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/SKILL.md",
-      "bytes": 5556,
-      "sha256": "17d80988373c5fe7f349e8290c07593e4701cc616c24d5c6e96d4c984cd76351"
+      "bytes": 9390,
+      "sha256": "e9397d1416fed0e48b60d1b30b6a7e3f98d6f2605f82f31819eaf962c4e182c2"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/agents/openai.yaml",
-      "bytes": 399,
-      "sha256": "d5b4e3036cea47f50af83a0b5483f7c11105121adc0d655d8116891c25a08d05"
+      "bytes": 431,
+      "sha256": "0060debff180e51efab5136d48f768dd907c517f356291395c594e03ce845154"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/assets/fonts/DEJAVU-LICENSE.txt",
@@ -212,68 +417,358 @@
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/examples/motion_B30_v2.json",
-      "bytes": 35979,
-      "sha256": "0a558372c448e969e1c344324d3f8f7b6856e43774fca76f6c87fa019760d8f7"
+      "bytes": 45337,
+      "sha256": "08c30e682d1c8256af965468686d5cab207260a531560ac45ba4cf0fad75b7cd"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/examples/motion_B80_v2.json",
-      "bytes": 28275,
-      "sha256": "06acec3f7181a8fc622f35626c4a09506f1364b10dbc8d22d833db7ae9b02a70"
+      "bytes": 37885,
+      "sha256": "6c27ed73f33befe3f9d577f9222e311a4e555e7789557c45300168029f4e8b80"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/examples/motion_question_bank_v2.json",
-      "bytes": 17444,
-      "sha256": "1c94256aff1b6fbcd172e4f352758e9120967f07604b7bdef3c0965ee63a4ca8"
+      "bytes": 24415,
+      "sha256": "d275acfdfe09818c5f41ab22dc63538311f156377a4976e9dd8af3de3ad30a93"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/references/core-teaching.md",
-      "bytes": 8010,
-      "sha256": "2c078f67d7abc0120512098f0e8d4164dced45d7b44e4952f9b1e11bd0644184"
+      "bytes": 8344,
+      "sha256": "f191e3503cbba853c92bf1558555fa38fbb17452dc242c822e0331cdedecd26c"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/references/physics-publication-v2.schema.json",
-      "bytes": 16371,
-      "sha256": "b4429563b89aba5228919edd8722b9609e58d40b576045cba7d2506ca0ee7629"
+      "bytes": 41325,
+      "sha256": "1e481911bd7e5108b9701484da1f75ae8ae32e16b97e09a01d8699c51a8d32d5"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/references/review-and-anti-drift.md",
-      "bytes": 2592,
-      "sha256": "ace060dcb6709376f1605b327372fde6080118745ce14e2d4f7efc10e116c21a"
+      "bytes": 2919,
+      "sha256": "bd08a59f3f5e43dcd66e016745d6cdf9fdaa4251cbfe855848927829d5eaf0a5"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/references/schema-and-layout.md",
-      "bytes": 4601,
-      "sha256": "a269edec37ed3fbcd8f97f17d5d2e6de96f6f3a94b27b2f083f74995475f8aea"
+      "bytes": 5917,
+      "sha256": "2347e8446a7c5ec4e5ab97b233525fcf4c330346fe1dfa2b7e39ba2365dc3738"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/requirements.txt",
-      "bytes": 110,
-      "sha256": "99dbed514a7e5d1efeff37c98b992ef5e69a63e76de05299471617703b2ef021"
+      "bytes": 143,
+      "sha256": "8edec91cc9cb9d9701367ecc1830989bd3b17d1606f1be6c4f56387d0a84cf5e"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/scripts/audit_v2.py",
-      "bytes": 3942,
-      "sha256": "60742fbc55f74985f4dceeb4c7d8c5e72d7f2c303db70dde4c8e516c55eba93a"
+      "bytes": 4739,
+      "sha256": "897d6ee886830bf5d1371e1c55b0b45b51a0d194f8d28b562544bc4053b2f8c5"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/scripts/make_motion_models.py",
-      "bytes": 31816,
-      "sha256": "e94aeb419aaed9316286492ea9b6ab1c0d7f6a3042448c25ba903b5070be3eb3"
+      "bytes": 39330,
+      "sha256": "4cc56918f6a025f348b396028f76f4fab841db5ab327991cc8b8d37f919bf266"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/scripts/render_v2.py",
-      "bytes": 16866,
-      "sha256": "ed6847dde794c21aaeeb4592e7243bd6495c31cd66ac71bd0d1e4dca2f053ad8"
+      "bytes": 22585,
+      "sha256": "3d5ce456de3cfd8650e51183a71ca1db60687928e7cdcecc9fc726520fdaf6d4"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/scripts/test_v2.py",
-      "bytes": 2626,
-      "sha256": "964c9cb81bbede4fb49d42da33234a30d2e10a07c6547189ee1bd4ff028f5f66"
+      "bytes": 13216,
+      "sha256": "1bc987f61a6be5b63a6ee68c8a5970479b50721bb8060e8c00d9492f98ae6338"
     },
     {
       "path": "Grade 9/skills/grade9-physics-publication/scripts/validate_v2.py",
-      "bytes": 7789,
-      "sha256": "6fdcb85a45cfe58791ad44f7934637440de5a75182fae24881f6a0d102931dfd"
+      "bytes": 29627,
+      "sha256": "16f330e43968cc028d7813427af2248aaa2faee6d8f7688731eceb7565609f0a"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics-subtopic-book-builder/SKILL.md",
+      "bytes": 17891,
+      "sha256": "9d4ff163396e65db4a54587870d208d2cddc09677f5dadfe49de11cded26b50e"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics-subtopic-book-builder/agents/openai.yaml",
+      "bytes": 420,
+      "sha256": "4b3ac2ce1ce832e3fe50b26d7fc38683b9440e6b8a22cec71741ab8cb28d3e1b"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics/SKILL.md",
+      "bytes": 6273,
+      "sha256": "dac6624c1388f348db29c7eb4e8f58000bd3fe52bcc0ac9caac991c7a18f7a99"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics/agents/openai.yaml",
+      "bytes": 247,
+      "sha256": "26b5e1e3eb9609ab3bd51b1839088bdb3f7ee0469a8ec0482d9df53169dd4926"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics/references/concept-book-see-realize-understand.md",
+      "bytes": 10881,
+      "sha256": "a71278678b9f64dba3455de8e5231176535d2174963d6bf49d68ea7d274aafca"
+    },
+    {
+      "path": "Grade 9/skills/grade9-physics/references/motion-concept-book-example.md",
+      "bytes": 7315,
+      "sha256": "3bf71c1492eca700d239db5ce1c04033d0b0a20892116550f2ac94d192e601cf"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/SKILL.md",
+      "bytes": 21500,
+      "sha256": "887a2e6b1125134126454594c4c14c9ca453a589b6fce448e1c6bf414a95a221"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/agents/openai.yaml",
+      "bytes": 4376,
+      "sha256": "1aeb1c3bf80d6deaeaf59993d4d93491838ffc788e8eb08bb72c9c4c8985c152"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/artifact-audience-qa.md",
+      "bytes": 1854,
+      "sha256": "6f97aac2da0ae1bc7935dedda6e9a396f7303c51478104cabde149499f301e05"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/audit-manifest-spec.md",
+      "bytes": 8664,
+      "sha256": "9585e888f41e005dec74f99180f7cf2358997320362eca80b3f3300848b3accf"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/batch-production.md",
+      "bytes": 4735,
+      "sha256": "98812f1263b983291f350965feeec0a9281c225ab1d4a406f0c2a265edd64dbe"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/derivation-coefficient-qa.md",
+      "bytes": 3737,
+      "sha256": "fb80d521c1ebf20fca5a35c178a6ed63ddb246b7845ec511b66134a0b2d1e3b3"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/difficulty-concept-bucketing.md",
+      "bytes": 6789,
+      "sha256": "ff87298c7a600e4a187cdf64b151dac535e1a8f2622d6dcad9889e0c451642a4"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/fraction-environment-relative-release-qa.md",
+      "bytes": 5409,
+      "sha256": "f0456b8c8e5e63b37cf7c9b70bd0797c300dacac2db996c44460d03ab229b1e1"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/free-fall-interval-qa.md",
+      "bytes": 4952,
+      "sha256": "6b0607bfe94a67abbdf5b6f2cd7ee4b8ee19c26205fd7a309ad934c3d8e1714d"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/graph-semantic-qa.md",
+      "bytes": 2901,
+      "sha256": "2548fb2fcad8b71c9f35c7ace2f9a907fb764e25334a7e0316b1f62d45ea5433"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/gravity-freefall-interval-qa.md",
+      "bytes": 3865,
+      "sha256": "0591884c1b3f74e7a39516e8d6e85f09fbe2e6c83bd6deef65765b91c6491b4e"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/interval-pattern-qa.md",
+      "bytes": 3605,
+      "sha256": "baccfabb1d9ce3f6215132ca2ea66e8046374e5c9d305aed3c8932adc02aa657"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/layout-collision-gate.md",
+      "bytes": 5200,
+      "sha256": "e1a7a71843b2d6d09ffaa7ec700e5db514c87d87288495d8dccc2fc1c1739ee5"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/multi-object-time-geometry-qa.md",
+      "bytes": 3702,
+      "sha256": "85b61270dd4addd172124cc24596237e0255172463e88b11079263f684736ab9"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/paired-launch-endpoint-qa.md",
+      "bytes": 3776,
+      "sha256": "dd3f61e1633b0364a01ec951e384ef33dff06bc1f5d4bfb2b4d28552d0a67a5a"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/publication-playbook.md",
+      "bytes": 21730,
+      "sha256": "eb28b344effba098c1a9044a05acc7b6788d3e4caaa2bc1fe6a18d76f0616b34"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/question-bank-assimilation-integrity.md",
+      "bytes": 8966,
+      "sha256": "c69d47df8141a23e57b84f76c3fb764ab7e5fe0e1a96adca36c9c559e8b4220f"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/short-route-gravity-sign-qa.md",
+      "bytes": 4535,
+      "sha256": "d73435e99d981b9f2d1dc755cae029e8faa9be5c2dd2845df2276d47b5c7a920"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/student-first-question-bank-layout.md",
+      "bytes": 12419,
+      "sha256": "ffb812fcc83b773285e2a7cd6e803c3131b7505bef9b0503d0ea5145be4e7e46"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/student-page-qa.md",
+      "bytes": 12312,
+      "sha256": "9e4e8b5514917ee51c196cbbff7a8c7f3608cf49386a044084b53203a39d1f55"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/vertical-stage-turning-symmetry-qa.md",
+      "bytes": 5864,
+      "sha256": "168400f49ae75d7f6195208753809ab814d3b10d9d93c32ceedfb7cdeeb7707f"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/references/xt-graph-slope-qa.md",
+      "bytes": 1654,
+      "sha256": "1ac65e571b2b66ce77987eb8f0acb2c6b2cefb0cb8107edeafffc3a15277a724"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/scripts/check_math_typography.py",
+      "bytes": 2432,
+      "sha256": "2beec524ea59952617107735b4912e27bd54d30280624e6eba96531e4b0dfc4d"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/scripts/check_publication_manifest.py",
+      "bytes": 18979,
+      "sha256": "65e7724353920e6da6225c575dcb3a22fa0378130a69eb1f8b09709b4d5ef47e"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/scripts/check_question_bank_assimilation.py",
+      "bytes": 3590,
+      "sha256": "edf0ab3cc16ef82829e8f31de39ae505fe7ec2ed928eeadb714ad136dbd315b3"
+    },
+    {
+      "path": "Grade 9/skills/grade9-publication/scripts/check_text_overlaps.py",
+      "bytes": 5697,
+      "sha256": "8ecbe97e854fd250c1dae651f35d5b43c58c03c67e579d807f433e2c0d7295fb"
+    },
+    {
+      "path": "Grade 9/skills/grade9-question-bank/SKILL.md",
+      "bytes": 3558,
+      "sha256": "56dc9604bd1faaeab8111efc4d714adca64a77479a902f10e925e0a763324a74"
+    },
+    {
+      "path": "Grade 9/skills/grade9-question-bank/agents/openai.yaml",
+      "bytes": 265,
+      "sha256": "6f33d6b049613d72f42db673eb8d7b35c93c9dbddcf8285b8545eb37b1d0e0fd"
+    },
+    {
+      "path": "Grade 9/skills/grade9-question-bank/scripts/difficulty_check.py",
+      "bytes": 2403,
+      "sha256": "690bd73271890e4fb9516fe10057c401a391f76272e3f276b89a6c03add94ad1"
+    },
+    {
+      "path": "Grade 9/skills/grade9-question-bank/scripts/validate_bank.py",
+      "bytes": 3283,
+      "sha256": "f36fbdf21f02550b771e23a13b389899546fe1c4a7f176cfc3ee596151b4de8e"
+    },
+    {
+      "path": "Grade 9/skills/grade9-redox-chapter-closeout-auditor/SKILL.md",
+      "bytes": 1913,
+      "sha256": "42d1cdfc95c2abd46f2858c492ec1c34ed4c618b10c966f866264915b9a6f07d"
+    },
+    {
+      "path": "Grade 9/skills/grade9-redox-chapter-closeout-auditor/agents/openai.yaml",
+      "bytes": 604,
+      "sha256": "b9b9571d7529a89ca98eb0c12fa4709a89a358ff9d361351b984c5c59748a540"
+    },
+    {
+      "path": "Grade 9/skills/grade9-redox-subtopic-book-builder/SKILL.md",
+      "bytes": 8680,
+      "sha256": "b91f85e110e18c9f76aab1e9e7ad93e10aaaf69af19c705c7d401d9576039a8a"
+    },
+    {
+      "path": "Grade 9/skills/grade9-redox-subtopic-book-builder/agents/openai.yaml",
+      "bytes": 574,
+      "sha256": "ecb2aa1d9199272cbde49806b77f395b064091d241cfd1519948173d2734d82c"
+    },
+    {
+      "path": "Grade 9/skills/grade9-source-grounding/SKILL.md",
+      "bytes": 2921,
+      "sha256": "869e54319b9eefa9d0c3b0fc027a569403b505e1ae9ff1bac1a26486e5d8c77b"
+    },
+    {
+      "path": "Grade 9/skills/grade9-source-grounding/agents/openai.yaml",
+      "bytes": 238,
+      "sha256": "990b45661c69b84c86f8497cc8887716dddd44cfd2e2cf18fb544e8cd3dfb02e"
+    },
+    {
+      "path": "Grade 9/skills/grade9-subtopic-completeness-auditor/SKILL.md",
+      "bytes": 16450,
+      "sha256": "d8e12098cc4398a69937672435f40ba1442dfa7c6ea2e8220cbe31e192348e20"
+    },
+    {
+      "path": "Grade 9/skills/grade9-subtopic-completeness-auditor/agents/openai.yaml",
+      "bytes": 390,
+      "sha256": "6a60c5c6128e94ea0ac5fc180e8b616811e3311f494e9c29013b8e09fabe5fea"
+    },
+    {
+      "path": "Grade 9/skills/grade9-textbook-publisher/SKILL.md",
+      "bytes": 3153,
+      "sha256": "1736559370fce111404244d81d26385ae94a095201044cc5fd73f9af2d14fd6e"
+    },
+    {
+      "path": "Grade 9/skills/grade9-textbook-publisher/agents/openai.yaml",
+      "bytes": 269,
+      "sha256": "082d1a4024205a107708a15ba8afdda2e7794fe104544bbd837da3bebc0cbd66"
+    },
+    {
+      "path": "Grade 9/skills/grade9-textbook-publisher/scripts/check_master_links.py",
+      "bytes": 2089,
+      "sha256": "a48d8aacccb99ed1d83028dc8931a32c9817dfd99fb60bd959b470442aaab9e9"
+    },
+    {
+      "path": "Grade 9/skills/grade9-transfer-coverage-auditor/SKILL.md",
+      "bytes": 10092,
+      "sha256": "99272c2c2759a8d77c952ebee640e730052023fe2cc921b78ad1354014e8a7e7"
+    },
+    {
+      "path": "Grade 9/skills/grade9-transfer-coverage-auditor/agents/openai.yaml",
+      "bytes": 400,
+      "sha256": "3a4dbe4eedb3dce9d187ff274aa2a9be06d9421d0e562dfaa58519ab8465e239"
+    },
+    {
+      "path": "Grade 9/skills/grade9/SKILL.md",
+      "bytes": 9659,
+      "sha256": "9460036822b762687afed92a27ca61d8c6f9cf6dffde721d580f684c18173729"
+    },
+    {
+      "path": "Grade 9/skills/grade9/agents/openai.yaml",
+      "bytes": 255,
+      "sha256": "520800aa135076647f18626b68df32067bf92263623297d3903b2192bc96112a"
+    },
+    {
+      "path": "Grade 9/skills/grade9/references/grade9-master.schema.json",
+      "bytes": 3096,
+      "sha256": "f908d91ecd2d886145ca4dfac6df61801804dab2b63617a18a16c5dcd4ec235e"
+    },
+    {
+      "path": "Grade 9/skills/grade9/references/grade9-workflow.md",
+      "bytes": 2040,
+      "sha256": "b80a865da1bce9df359e28ef156b6a5de3f13150cd1a27607f61c4b8c11782dd"
+    },
+    {
+      "path": "Grade 9/skills/ioqm-grade9-main-topic-builder/SKILL.md",
+      "bytes": 6893,
+      "sha256": "ab4ed5fa01e49022e792e0a4fdaa1631a978a37842c7e1d8ab2f7e0ff03f95c5"
+    },
+    {
+      "path": "Grade 9/skills/ioqm-grade9-main-topic-builder/agents/openai.yaml",
+      "bytes": 257,
+      "sha256": "569d0cc97440809a5abf6fe468783e3a7651797a69070ed9193e1961d021acb9"
+    },
+    {
+      "path": "Grade 9/skills/ioqm-grade9-model-exam-builder/SKILL.md",
+      "bytes": 13699,
+      "sha256": "880766a80169d426f3267c444eeabddc36ebc6f06dade0dfcacfa87c1160b378"
+    },
+    {
+      "path": "Grade 9/skills/ioqm-grade9-model-exam-builder/agents/openai.yaml",
+      "bytes": 250,
+      "sha256": "a21499199fded6a9082c1a146083f0d9790f5d8cde700cd3d8175ec969d7a190"
+    },
+    {
+      "path": "Grade 9/validate_skills.py",
+      "bytes": 3917,
+      "sha256": "8055a2ffc66bef3bac61251df4b9526452739a83e1e70fdcbb0c52c23ccfd8c6"
     }
   ]
 }

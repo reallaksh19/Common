@@ -13,16 +13,42 @@ from reportlab.lib.styles import ParagraphStyle
 ROOT = Path(__file__).resolve().parents[1]
 W,H = landscape(A4)
 NAVY='#17384E'; TEAL='#087E83'; BLUE='#276FA1'; RED='#AF4E36'; INK='#233743'; GREY='#546975'; PALE='#EAF5F3'
+# Keyed off each hint's own tier (validate_v2.py enforces H1/H2/H3 order), not array position - see
+# grade9-physics-publication/SKILL.md's hint-numbering note.
+_HINT_LABEL={'H1':'H1 Notice','H2':'H2 Model','H3':'H3 Start'}
+DIAGNOSIS_ROWS_PER_PAGE=4
 for name,file in [('Body','DejaVuSans.ttf'),('Bold','DejaVuSans-Bold.ttf'),('Italic','DejaVuSans-Oblique.ttf')]:
     pdfmetrics.registerFont(TTFont(name,str(ROOT/'assets/fonts'/file)))
 pdfmetrics.registerFontFamily('Body',normal='Body',bold='Bold',italic='Italic',boldItalic='Bold')
 
 class Book:
     def __init__(self, data, output):
-        self.d=data; self.c=canvas.Canvas(str(output),pagesize=(W,H),pageCompression=1)
+        self.d=data
+        # questions is bucketed anchors/core_calibrated/challenges (grade9-master.schema.json shape);
+        # flatten once here since pagination/layout render them in one sequence regardless of bucket.
+        qb=data['questions'];self.all_questions=qb['anchors']+qb['core_calibrated']+qb['challenges']
+        self.question_batches=self.batch_questions(self.all_questions)
+        by_id={q['id']:q for q in self.all_questions}
+        self.mixed_batches=[(test,self.batch_questions([by_id[qid] for qid in test['question_ids']])) for test in data.get('mixed_tests',[])]
+        self.mixed_diagnosis_batches=[
+            (test,[test['question_ids'][index:index+DIAGNOSIS_ROWS_PER_PAGE] for index in range(0,len(test['question_ids']),DIAGNOSIS_ROWS_PER_PAGE)])
+            for test in data.get('mixed_tests',[])
+        ]
+        self.concept_titles={c['concept_id']:c['title'] for c in data['concepts']}
+        self.c=canvas.Canvas(str(output),pagesize=(W,H),pageCompression=1)
         self.c.setTitle(data['title']);self.c.setAuthor('Physics learning materials')
         self.regions=[]; self.dest={}; self.links=[];self.external_links=[];self.page=0;self.planned={}
         self.c.setSubject(data['band']+' | '+data['edition']+' | original teaching examples')
+    @staticmethod
+    def batch_questions(questions):
+        batches=[];current=[];used=0
+        for q in questions:
+            demand=2 if q.get('figure') or len(q['question'])>170 else 1
+            if current and used+demand>2:batches.append(current);current=[];used=0
+            current.append(q);used+=demand
+            if used==2:batches.append(current);current=[];used=0
+        if current:batches.append(current)
+        return batches
     def text(self,text,x,y,w,size=12.0,leading=None,bold=False,color=INK,maxh=None):
         p=Paragraph(text,ParagraphStyle('p',fontName='Bold' if bold else 'Body',fontSize=size,leading=leading or size*1.32,textColor=colors.HexColor(color),spaceAfter=0))
         pw,ph=p.wrap(w,H)
@@ -38,8 +64,8 @@ class Book:
         c.line(x1,H-y1,x2,H-y2);c.setDash([])
     def rect(self,x,y,w,h,fill,stroke=None):
         c=self.c;c.setFillColor(colors.HexColor(fill));c.setStrokeColor(colors.HexColor(stroke or fill));c.rect(x,H-y-h,w,h,fill=1,stroke=bool(stroke))
-    def arrow(self,x1,y1,x2,y2,color=TEAL,width=2.3):
-        self.line(x1,y1,x2,y2,color,width);a=math.atan2(y2-y1,x2-x1)
+    def arrow(self,x1,y1,x2,y2,color=TEAL,width=2.3,dash=None):
+        self.line(x1,y1,x2,y2,color,width,dash);a=math.atan2(y2-y1,x2-x1)
         for turn in [-0.45,0.45]:self.line(x2,y2,x2-8*math.cos(a+turn),y2-8*math.sin(a+turn),color,width)
     def anchor(self,id,y=100):
         if id in self.dest:raise ValueError('Duplicate anchor '+id)
@@ -49,6 +75,10 @@ class Book:
         self.text(label,x,y,w,10.5,color=TEAL,maxh=15)
         self.c.linkAbsolute(label,target,Rect=(x,H-y-16,x+w,H-y),thickness=0)
         self.links.append({'page':self.page,'target':target})
+    def external_link(self,label,url,x,y,w,kind,object_id):
+        self.text(label,x,y,w,10.5,color=TEAL,maxh=16)
+        self.c.linkURL(url,(x,H-y-16,x+w,H-y),relative=0,thickness=0)
+        self.external_links.append({'page':self.page,'url':url,'kind':kind,'object_id':object_id})
     def start(self,title,kicker,subtitle='',id=None):
         if self.page:self.c.showPage()
         self.page+=1
@@ -64,9 +94,7 @@ class Book:
         cite=q.get('source_citation')
         if not cite:return
         label='Source' if short else ('Adapted: ' if q['source_status']=='ADAPTED' else 'Source: ')+cite['title']
-        self.text(label,x,y,w,10.5,color=TEAL,maxh=16)
-        self.c.linkURL(cite['url'],(x,H-y-16,x+w,H-y),relative=0,thickness=0)
-        self.external_links.append({'page':self.page,'url':cite['url'],'question_id':q['id']})
+        self.external_link(label,cite['url'],x,y,w,'source',q['id'])
     def paragraphs(self,blocks,x,y,w,bottom=429):
         for b in blocks:
             role=b['role'];s=b['text']
@@ -102,8 +130,8 @@ class Book:
                     self.line(px(a),yy-12,px(a),yy+5,INK,1.5)
                     self.label(s,px(a)-14,yy+26+dy,10.5)
             if f.get('displacement') and len(positions)>1 and positions[0]!=positions[-1]:
-                ay=yy-24;self.arrow(px(positions[0]),ay,px(positions[-1]),ay,RED,2.1)
-                self.label('change from start to finish',x+30,y+h-39,10.5,RED)
+                ay=yy-24;self.arrow(px(positions[0]),ay,px(positions[-1]),ay,RED,2.4,dash=[6,3])
+                self.label('displacement arrow (dashed)',x+30,y+h-39,10.5,RED)
         elif kind=='vt':
             tmin,tmax=f['trange'];vmin,vmax=f['vrange'];l=x+44;r=x+w-26;top=y+31;bot=y+h-39
             px=lambda t:l+(t-tmin)/(tmax-tmin)*(r-l)
@@ -155,14 +183,19 @@ class Book:
         for i,target in enumerate(p.get('practice_ids',[])):
             self.link(('Check ' if target.startswith('solution-') else 'Try ')+target.split('-')[-1],target,40+i*180,539,170)
     def question_page(self,qs,idx,bank=False):
-        title='Try these before looking at the hints' if bank else 'Appendix A · Questions'
-        original=all(q['source_status']=='ORIGINAL' for q in self.d['questions'])
+        if self.d['product']=='transfer_book':title='ExamSIDE · Questions'
+        elif bank:title='Try these before looking at the hints'
+        else:title='Appendix A · Core practice'
+        original=all(q['source_status']=='ORIGINAL' for q in self.all_questions)
         subtitle=('Original questions · ' if original else 'Source-linked practice · ')+'Use diagrams and explain your reasoning.' if bank else 'Use the diagrams you need. A correct number needs a physical explanation.'
-        self.start(title,f'Practice set {idx} / {math.ceil(len(self.d["questions"])/2)}',subtitle,f'questions-{idx}')
+        self.start(title,f'Practice set {idx} / {len(self.question_batches)}',subtitle,f'questions-{idx}')
         for j,q in enumerate(qs):
             y=134+j*200;self.anchor(q['id'],y)
-            self.text(f"{q['label']}  ·  {q['difficulty']}",40,y,730,13,bold=True,color=TEAL)
-            self.text(q['prompt'],40,y+25,410,12,maxh=100)
+            badges=[q['task_type']]
+            if bank:badges.insert(0,'CONCEPT · '+self.concept_titles[q['primary_concept_id']])
+            if q.get('difficulty_badge'):badges.append(q['difficulty_badge']['learner_label'])
+            self.text(f"{q['label']}  ·  "+'  ·  '.join(badges),40,y,730,13,bold=True,color=TEAL)
+            self.text(q['question'],40,y+25,410,12,maxh=100)
             if q.get('figure'):self.figure(q['figure'],476,y+12,320,155,assessment=True)
             else:
                 self.text(q['workspace'].replace('\n','<br/>'),486,y+24,297,10.5,color=GREY,maxh=58)
@@ -171,8 +204,24 @@ class Book:
             self.link('Solution →','solution-'+q['id'],191,y+167,170)
             self.citation(q,40,y+143,410)
             if j==0:self.line(40,y+192,W-40,y+192)
+    def mixed_test_pages(self):
+        for test,batches in self.mixed_batches:
+            for page_index,questions in enumerate(batches,1):
+                anchor=f"mixed-{test['set_id']}-{page_index}"
+                self.start('Mixed transfer · Concepts hidden',f"{test['set_id']} · set {page_index} / {len(batches)}",'Work from the physical situation. Concept and task labels appear only after marking.',anchor)
+                positions={qid:i+1 for i,qid in enumerate(test['question_ids'])}
+                for row,q in enumerate(questions):
+                    y=134+row*200
+                    self.text(f"Question {positions[q['id']]}",40,y,730,13,bold=True,color=TEAL)
+                    self.text(q['question'],40,y+25,410,12,maxh=100)
+                    if q.get('figure'):self.figure(q['figure'],476,y+12,320,155,assessment=True)
+                    else:
+                        self.text(q['workspace'].replace('\n','<br/>'),486,y+24,297,10.5,color=GREY,maxh=58)
+                        for z in range(3):self.line(486,y+87+25*z,791,y+87+25*z,'#CBDADD',.7)
+                    self.link('Check later →','solution-'+q['id'],40,y+167,150)
+                    if row==0:self.line(40,y+192,W-40,y+192)
     def handout(self):
-        self.start('Appendix B · Keep the picture, rebuild the rule','One-page handout','Right is positive. Cover the words and explain each diagram aloud.', 'handout')
+        self.start('Appendix C · Keep the picture, rebuild the rule','Printable handout','Right is positive. Cover the words and explain each diagram aloud.', 'handout')
         self.text('1  Distance and displacement',40,132,365,15,bold=True,color=TEAL)
         self.text('2  Reading a velocity–time graph',445,132,355,15,bold=True,color=TEAL)
         self.figure(self.d['handout']['route'],40,163,360,150)
@@ -180,22 +229,27 @@ class Book:
         self.paragraphs(self.d['handout']['left'],40,330,360,bottom=528)
         self.paragraphs(self.d['handout']['right'],445,330,353,bottom=528)
     def hint_pages(self):
-        for k in range(0,len(self.d['questions']),4):
-            self.start('Hints · Read one step, then try again','Optional help','Cover the rows below the hint you are reading.',f'hints-{k//4+1}')
-            for i,q in enumerate(self.d['questions'][k:k+4]):
+        for k in range(0,len(self.all_questions),4):
+            title='Appendix B · Optional hints' if self.d['product'] in ('core','study_guide') else 'Hints · Read one step, then try again'
+            self.start(title,'Optional help','Cover the rows below the hint you are reading.',f'hints-{k//4+1}')
+            for i,q in enumerate(self.all_questions[k:k+4]):
                 y=133+i*99;self.anchor('hint-'+q['id'],y)
                 self.text(q['label'],40,y,48,12,bold=True,color=TEAL)
-                for j,(tag,hint) in enumerate(zip(['H1 Notice','H2 Model','H3 Start'],q['hints'])):
-                    self.text('<b>'+tag+'</b>  '+hint,98,y+j*24,640,11.5,maxh=23)
+                for j,hint in enumerate(q['hints']):
+                    tag=_HINT_LABEL[hint['tier']]
+                    self.text('<b>'+tag+'</b>  '+hint['text'],98,y+j*24,640,11.5,maxh=23)
                 self.link('Return →',q['id'],687,y+73,106)
                 if i<3:self.line(40,y+94,W-40,y+94)
     def solution_pages(self):
-        for k in range(0,len(self.d['questions']),2):
-            self.start('Solutions · Compare the reasoning, not just the number','Answers at the end','If a step surprised you, revisit the linked lesson and explain its picture.',f'solutions-{k//2+1}')
-            for i,q in enumerate(self.d['questions'][k:k+2]):
+        for k in range(0,len(self.all_questions),2):
+            if self.d['product'] in ('core','study_guide'):title='Appendix B · Full solutions'
+            elif self.d['product']=='transfer_book':title='Appendix A · Full ExamSIDE solutions'
+            else:title='Solutions · Compare the reasoning, not just the number'
+            self.start(title,'Answers after all attempts','If a step surprised you, revisit the linked lesson and explain its picture.',f'solutions-{k//2+1}')
+            for i,q in enumerate(self.all_questions[k:k+2]):
                 y=132+i*201;self.anchor('solution-'+q['id'],y)
-                self.text(q['label']+'  '+q['recap'],40,y,751,11.5,bold=True,maxh=32)
-                blocks=[{'role':'body','text':'<b>Why.</b> '+q['solution']['why']},{'role':'body','text':'<b>Method.</b> '+q['solution']['method']},{'role':'body','text':'<b>Answer / check.</b> '+q['solution']['answer']},{'role':'body','text':'<b>Keep.</b> '+q['solution']['keep']}]
+                self.text('QUESTION RECAP · '+q['label']+'  '+q['recap'],40,y,751,11.5,bold=True,maxh=32)
+                blocks=[{'role':'body','text':'<b>WHY THIS WORKS.</b> '+q['solution']['why']},{'role':'body','text':'<b>METHOD.</b> '+q['solution']['method']},{'role':'body','text':'<b>ANSWER / CHECK.</b> '+q['solution']['answer']},{'role':'body','text':'<b>CONCEPT TO KEEP.</b> '+q['solution']['keep']}]
                 sf=q.get('solution_figure') or q.get('figure')
                 width=438 if sf else 752
                 # Solutions have a distinct measured, compact rhythm; body remains 11.5 pt.
@@ -204,12 +258,29 @@ class Book:
                     h=self.text(b['text'],40,yy,width,11.5,leading=14.3,maxh=y+173-yy);yy+=h+4
                 if sf:self.figure(sf,511,y+36,280,155,assessment=True)
                 self.link('Return to '+q['label'],q['id'],40,y+176,135)
-                if q['repair_target'] in self.d.get('lesson_ids',[]):self.link('Lesson →',q['repair_target'],200,y+176,167)
+                if q['repair_mode']=='LOCAL_LESSON':self.link('Lesson →',q['repair_target'],200,y+176,167)
+                elif q['repair_mode']=='EXTERNAL_COMPANION':
+                    ref=q['repair_reference'];self.external_link('Core repair · '+ref['locator'],ref['url'],200,y+176,190,'repair',q['id'])
                 self.citation(q,405,y+176,78,short=True)
                 if i==0:self.line(40,y+197,W-40,y+197)
+    def mixed_diagnosis_pages(self):
+        by_id={q['id']:q for q in self.all_questions}
+        for test,batches in self.mixed_diagnosis_batches:
+            positions={qid:index+1 for index,qid in enumerate(test['question_ids'])}
+            for page_index,question_ids in enumerate(batches,1):
+                base=f"diagnosis-{test['set_id']}"
+                anchor=base if page_index==1 else f"{base}-{page_index}"
+                kicker=test['set_id'] if len(batches)==1 else f"{test['set_id']} · review {page_index} / {len(batches)}"
+                self.start('Mixed transfer · Mark and diagnose',kicker,'Reveal these pages only after completing the mixed set.',anchor)
+                for row,qid in enumerate(question_ids):
+                    q=by_id[qid];concept=self.concept_titles[test['diagnosis_map'][qid]];y=135+row*86
+                    self.text(f"Question {positions[qid]} · {concept}",40,y,500,12,bold=True,color=TEAL)
+                    self.text('If this answer was weak, use the linked solution and its repair route before retrying.',40,y+24,610,11.5,maxh=34)
+                    self.link('Solution →','solution-'+qid,650,y+18,140)
     def guided_solutions(self):
         if not self.d.get('guided_solutions'):return
-        self.start('Check the small steps','Solutions begin here','Use these pictures to repair a step before trying the complete problems.','guided-solutions')
+        title='Appendix B · Guided-step solutions' if self.d['product'] in ('core','study_guide') else 'Check the small steps'
+        self.start(title,'Solutions begin here','Use these pictures to repair a step before trying the complete problems.','guided-solutions')
         for i,g in enumerate(self.d['guided_solutions']):
             y=134+i*200;self.anchor('solution-'+g['id'])
             self.text(g['title'],40,y,750,14,bold=True,color=TEAL)
@@ -221,25 +292,35 @@ class Book:
         # Derive printable page references from the same deterministic pagination plan.
         n=0
         for p in self.d.get('lessons',[]):n+=1;self.planned[p['id']]=n
-        for k in range(0,len(self.d['questions']),2):
+        for batch in self.question_batches:
             n+=1
-            for q in self.d['questions'][k:k+2]:self.planned[q['id']]=n
-        if self.d['product']=='core':n+=1;self.planned['handout']=n
-        for k in range(0,len(self.d['questions']),4):
+            for q in batch:self.planned[q['id']]=n
+        for test,batches in self.mixed_batches:
+            for page_index,_ in enumerate(batches,1):
+                n+=1;self.planned[f"mixed-{test['set_id']}-{page_index}"]=n
+        for k in range(0,len(self.all_questions),4):
             n+=1
-            for q in self.d['questions'][k:k+4]:self.planned['hint-'+q['id']]=n
+            for q in self.all_questions[k:k+4]:self.planned['hint-'+q['id']]=n
         if self.d.get('guided_solutions'):
             n+=1
             for g in self.d['guided_solutions']:self.planned['solution-'+g['id']]=n
-        for k in range(0,len(self.d['questions']),2):
+        for k in range(0,len(self.all_questions),2):
             n+=1
-            for q in self.d['questions'][k:k+2]:self.planned['solution-'+q['id']]=n
+            for q in self.all_questions[k:k+2]:self.planned['solution-'+q['id']]=n
+        for test,batches in self.mixed_diagnosis_batches:
+            for page_index,_ in enumerate(batches,1):
+                n+=1
+                base=f"diagnosis-{test['set_id']}"
+                self.planned[base if page_index==1 else f"{base}-{page_index}"]=n
+        if self.d['product'] in ('core','study_guide'):n+=1;self.planned['handout']=n
         for p in self.d.get('lessons',[]):self.lesson(p)
-        for k in range(0,len(self.d['questions']),2):self.question_page(self.d['questions'][k:k+2],k//2+1,self.d['product']=='question_bank')
-        if self.d['product']=='core':self.handout()
+        for index,batch in enumerate(self.question_batches,1):self.question_page(batch,index,self.d['product'] in ('question_bank','transfer_book'))
+        self.mixed_test_pages()
         self.hint_pages()
         self.guided_solutions()
         self.solution_pages()
+        self.mixed_diagnosis_pages()
+        if self.d['product'] in ('core','study_guide'):self.handout()
         missing=[r for r in self.links if r['target'] not in self.dest]
         if missing:raise ValueError(missing)
         assert all(self.dest[k]==v for k,v in self.planned.items()),'Printed page reference drift'
@@ -248,7 +329,7 @@ class Book:
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('model');p.add_argument('output');a=p.parse_args()
-    data=json.loads(Path(a.model).read_text());from validate_v2 import validate;validate(data)
-    result=Book(data,Path(a.output)).render();Path(a.output).with_suffix('.layout.json').write_text(json.dumps(result,indent=2))
+    data=json.loads(Path(a.model).read_text(encoding='utf-8'));from validate_v2 import validate;validate(data)
+    result=Book(data,Path(a.output)).render();Path(a.output).with_suffix('.layout.json').write_text(json.dumps(result,indent=2),encoding='utf-8',newline='\n')
     print(f"Rendered {result['pages']} pages: {a.output}")
 if __name__=='__main__':main()

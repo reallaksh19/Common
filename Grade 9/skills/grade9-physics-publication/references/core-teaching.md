@@ -59,11 +59,13 @@ For the two-topic pilot include direct application, nonzero origin, misconceptio
 
 Separate arithmetic demand from model-selection demand. Use learner task badges Apply, Explain, Compare, Connect and Transfer. Do not invent mastery or exam-difficulty badges.
 
-Appendix A is independently attemptable. Reproduce all data, graphs/tables/options the prompt depends on. Leave a drawing absent only when constructing it is the deliberate task. Give usable space.
+Every Core Study Guide carries all three appendices in order. Appendix A is independently attemptable Core practice. Reproduce all data, graphs/tables/options the prompt depends on. Leave a drawing absent only when constructing it is the deliberate task. Give usable space.
 
-Appendix B is a printable one-page handout with topic names, essential diagrams, plain-language meaning, symbols, units, conditions and a worked memory anchor. Do not include unique answers to independent questions. All practice solutions follow it at the very end.
+Appendix B contains optional H1/H2/H3 support and complete Core solutions after every first-attempt surface. Keep answer-bearing content out of Appendix A. Each solution must recap the question and route an error back to the exact lesson/concept.
 
-H1 identifies the decisive clue, H2 proposes a representation/model, H3 gives the first executable line. They must be different, optional and free of final-answer leakage. Solutions repeat enough data and representations to be self-contained, explain why, show a usable method, state the answer/check and the transferable idea, then return to the question.
+Appendix C is a printable handout with topic names, essential diagrams, plain-language meaning, symbols, units, conditions and a worked memory anchor. It comes after Appendix B, is usable independently, and must not include unique answers to independent questions.
+
+H1 identifies the decisive clue, H2 proposes a representation/model, H3 gives the first executable line. They must be different, optional and free of final-answer leakage. Appendix B solutions repeat enough data and representations to be self-contained, explain why, show a usable method, state the answer/check and the transferable idea, then return to the question.
 
 ## Multiple review passes
 

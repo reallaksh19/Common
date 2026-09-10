@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Physics Subtopic Book Builder"
+  short_description: "Build Core A-C plus ExamSIDE pairs"
+  default_prompt: "Use $grade9-physics-subtopic-book-builder to build one source-grounded Physics subtopic as exactly two reciprocal files: a Core Study Guide with Appendices A-C and an ExamSIDE Solution Book with concept/difficulty badges, H1-H3 hints, transfer diagnosis, and full solutions."

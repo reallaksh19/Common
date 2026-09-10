@@ -1,6 +1,6 @@
 ---
 name: grade9-physics-publication
-description: Create and rebuild visual Physics Core books for Grades 9–11 with differentiated B30/B80/B90 teaching, Appendix A questions, Appendix B printable handouts, optional hints and complete solutions at the end. Use for Physics concept review, learner PDF generation, publication schemas and anti-drift audits.
+description: Create and rebuild paired Physics learning products for Grades 9–11: a differentiated Core Study Guide with Appendices A–C, plus an ExamSIDE Solution Book with source-grounded questions, concept and difficulty badges, H1–H3 hints, mixed transfer and complete solutions. Use for Physics concept review, learner PDF generation, publication schemas and anti-drift audits.
 ---
 
 # Physics Core and publication
@@ -12,24 +12,33 @@ Teach the physical idea before compressing it into notation. A diagram placehold
 1. Read the attached skills, books and specified repository first. Back up originals and previous outputs with hashes.
 2. Lock the product: source-preserving reconstruction, original teaching, or explicitly authorised rewrite. A design benchmark on different subtopics does not become the content source. Do not call a new replacement a zero-loss reconstruction.
 3. Use canonical `grade9-physics`, `grade9-physics-subtopic-book-builder` and `grade9-publication` when available. This skill is their executable Core/publication adapter. Keep subject authority and source IDs; layout must not change physics.
+   **Precedence:** installed via `Grade 9/install_skills.py` and routed from `../grade9/SKILL.md`. Choose `grade9-physics-subtopic-book-builder` to author one complete Core Study Guide + ExamSIDE Solution Book pair; use this skill as the executable schema/render/audit adapter. Legacy `core`/`question_bank` models remain valid only for bounded pilots and cannot claim the canonical two-file contract.
 4. Read [core-teaching.md](references/core-teaching.md) before authoring; [schema-and-layout.md](references/schema-and-layout.md) before rendering; [review-and-anti-drift.md](references/review-and-anti-drift.md) before certifying.
 5. Use `grade9-physics-examside` for external ExamSIDE/PYQ collections. Original examples must not acquire an exam badge or a claim of complete external coverage.
 
-## Mandatory Core structure
+## Mandatory per-topic product pair
 
-For each subtopic build:
+For each subtopic build exactly two learner files with one reciprocal `pair_id`:
+
+1. **Core Study Guide** (`product=study_guide`, `role=CORE_STUDY_GUIDE`) — concept assimilation, application and guided fading, followed by all three Core appendices.
+2. **ExamSIDE Solution Book** (`product=transfer_book`, `role=EXAMSIDE_SOLUTION_BOOK`) — the frozen eligible external set, visible concept-segregation labels, task and grounded difficulty badges, H1–H3 support, mixed transfer/diagnosis, and Appendix A full solutions.
+
+The two models must name each other through `product_identity`, share exact topic/project/concept authority, and pass `python scripts/validate_v2.py --pair <core.json> <examside.json>`. A subtopic is incomplete when either file is absent or the pair does not reconcile.
+
+Within the Core Study Guide, build:
 
 `physical situation → depiction → notice → say in words → build relation → worked reasoning → faded attempt → independent transfer → repair`
 
-Every Core book contains:
+Every Core Study Guide contains:
 
 - Teaching pages with real concept depictions, including for B80/B90.
-- **Appendix A — Questions:** bounded sets, purposeful drawing/working space, optional hints. Test explanation, reconstruction, representation translation and transfer as well as calculation.
-- **Appendix B — Handout:** a self-contained, separately printable visual summary with symbol meanings, model conditions and a worked memory anchor.
-- Optional hints after the handout: H1 Notice → H2 Model → H3 Start. Keep hints away from the first attempt.
-- **Solutions at the very end:** recap, required graph/table, why, executable method, explicit answer/check, transferable idea and return link.
+- **Appendix A — Core practice:** independently attemptable application, explanation, reconstruction, representation-translation and transfer questions with purposeful work space.
+- **Appendix B — Hints and solutions:** optional H1 Notice → H2 Model → H3 Start, followed by recap, required representation, why, executable method, explicit answer/check, transferable idea and return link. Keep every hint and answer after the first-attempt surfaces. Each hint's `tier` field is the authority matched by the renderer and reconciliation—not array position alone.
+- **Appendix C — Printable handout:** a self-contained visual summary with topic names, symbol meanings, model conditions and a worked memory anchor. It is the final appendix and must not expose unique answers from Appendix A.
 
-Teaching worked examples may show their answers; unanswered practice must not leak its own result earlier. The handout must not become an answer key. A separate question bank does not replace Core appendices.
+Teaching worked examples may show their answers; unanswered practice must not leak its own result earlier. The Appendix C handout must not become an answer key. The ExamSIDE file does not replace any Core appendix.
+
+Product profile is selectable (`core` / `study_guide` / `question_bank` / `transfer_book` — see `scripts/validate_v2.py`), but only the `study_guide` + `transfer_book` pair is the canonical per-topic output. If a standalone First-Step Reference (recognition atlas, decision router, first-step cards) is needed, build it as `grade9-learning-enrichment`'s distinct optional companion; it does not change the required two-file learner contract.
 
 ## Differentiate teaching, not just arithmetic
 
@@ -41,6 +50,10 @@ Teaching worked examples may show their answers; unanswered practice must not le
 ## Execute the two-topic Motion profile
 
 The bundled profile covers distance/displacement and signed velocity–time area. It is not the complete Grade 9–11 syllabus or a renderer for every Physics representation. Confirm board/year/source before asserting syllabus coverage. Add typed figure support and checks before publishing other representations.
+
+This Motion renderer does not publish learner-facing multiple-choice options, statement sets, option figures, tables or timelines. External items with answer choices, or with dependency classes outside `NONE`, `GRAPH` and `NUMBER_LINE`, must be routed to `grade9-publication`; `validate_v2.py` blocks them here so citation metadata cannot be mistaken for an attemptable source-complete learner page.
+
+Scaling this pilot to the full Motion chapter (or any chapter-scale Physics build) is a `grade9-physics-subtopic-book-builder` build, one subtopic at a time per its own build sequence, followed by `../grade9-chapter-closeout-auditor/SKILL.md` once every subtopic is drafted and individually passes `grade9-transfer-coverage-auditor`. The batch and consolidation mechanics are owned by `../grade9-publication/references/batch-production.md`; the closeout auditor verifies their evidence. This pilot renderer does not claim chapter-scale closure.
 
 With Python containing ReportLab, Pydantic 2 and PyMuPDF:
 
@@ -56,6 +69,8 @@ python scripts/test_v2.py
 Edit canonical JSON for a new book, or edit `make_motion_models.py` and regenerate this pilot. The generator overwrites its three named example files. Do not edit both and assume they stay aligned.
 
 The Pydantic validator actually runs before rendering. Its exported [JSON Schema](references/physics-publication-v2.schema.json) is generated from the same classes. The renderer fails if content exceeds its reserved height. Figure primitives draw exact number lines, piecewise-linear v–t graphs, countable tiles and paired comparisons from data. Required final concept figures cannot be placeholders.
+
+Every `Figure.kind` also carries a `dependency_class` classifying it against `grade9-physics-examside/references/question-contract.md`'s already subject-agnostic vocabulary (`NONE`/`GRAPH`/`DIAGRAM`/`TABLE`/`TIMELINE`/`NUMBER_LINE`/`OPTION_FIGURES`/`STATEMENT_SET`/`MIXED`), so a coverage auditor can reason about what a question needs without knowing this renderer's specific kind names: `numberline`→`NUMBER_LINE`, `vt`→`GRAPH`, `tiles`→`DIAGRAM`, `compare`→`MIXED`, `blank`→`NONE`. This crosswalk is enforced by `validate_v2.py`, not just documented. It does not add renderer support for the classes with no `kind` yet (`TABLE`, `TIMELINE`, `OPTION_FIGURES`, `STATEMENT_SET`, or a `DIAGRAM` other than tiles): a question genuinely needing one of those must be hard-routed through the generic publication engine, or wait for a new typed `kind` with matching renderer support — never silently downgraded to the nearest existing kind.
 
 ## Review and approve
 

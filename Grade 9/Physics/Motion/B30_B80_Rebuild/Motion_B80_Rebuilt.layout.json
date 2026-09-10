@@ -1,5 +1,5 @@
 {
-  "pages": 16,
+  "pages": 22,
   "destinations": {
     "B80-L1": 1,
     "B80-L2": 2,
@@ -14,33 +14,39 @@
     "B80-A4": 7,
     "questions-3": 8,
     "B80-A5": 8,
-    "B80-A6": 8,
     "questions-4": 9,
-    "B80-A7": 9,
-    "B80-A8": 9,
-    "handout": 10,
-    "hints-1": 11,
-    "hint-B80-A1": 11,
-    "hint-B80-A2": 11,
-    "hint-B80-A3": 11,
-    "hint-B80-A4": 11,
-    "hints-2": 12,
-    "hint-B80-A5": 12,
-    "hint-B80-A6": 12,
-    "hint-B80-A7": 12,
-    "hint-B80-A8": 12,
-    "solutions-1": 13,
-    "solution-B80-A1": 13,
-    "solution-B80-A2": 13,
-    "solutions-2": 14,
-    "solution-B80-A3": 14,
-    "solution-B80-A4": 14,
-    "solutions-3": 15,
-    "solution-B80-A5": 15,
-    "solution-B80-A6": 15,
-    "solutions-4": 16,
-    "solution-B80-A7": 16,
-    "solution-B80-A8": 16
+    "B80-A6": 9,
+    "questions-5": 10,
+    "B80-A7": 10,
+    "questions-6": 11,
+    "B80-A8": 11,
+    "mixed-B80-MIXED-01-1": 12,
+    "mixed-B80-MIXED-01-2": 13,
+    "mixed-B80-MIXED-01-3": 14,
+    "hints-1": 15,
+    "hint-B80-A1": 15,
+    "hint-B80-A2": 15,
+    "hint-B80-A3": 15,
+    "hint-B80-A4": 15,
+    "hints-2": 16,
+    "hint-B80-A5": 16,
+    "hint-B80-A6": 16,
+    "hint-B80-A7": 16,
+    "hint-B80-A8": 16,
+    "solutions-1": 17,
+    "solution-B80-A1": 17,
+    "solution-B80-A2": 17,
+    "solutions-2": 18,
+    "solution-B80-A3": 18,
+    "solution-B80-A4": 18,
+    "solutions-3": 19,
+    "solution-B80-A5": 19,
+    "solution-B80-A6": 19,
+    "solutions-4": 20,
+    "solution-B80-A7": 20,
+    "solution-B80-A8": 20,
+    "diagnosis-B80-MIXED-01": 21,
+    "handout": 22
   },
   "links": [
     {
@@ -92,124 +98,156 @@
       "target": "solution-B80-A5"
     },
     {
-      "page": 8,
+      "page": 9,
       "target": "hint-B80-A6"
     },
     {
-      "page": 8,
+      "page": 9,
       "target": "solution-B80-A6"
     },
     {
-      "page": 9,
+      "page": 10,
       "target": "hint-B80-A7"
     },
     {
-      "page": 9,
+      "page": 10,
       "target": "solution-B80-A7"
     },
     {
-      "page": 9,
+      "page": 11,
       "target": "hint-B80-A8"
     },
     {
-      "page": 9,
+      "page": 11,
       "target": "solution-B80-A8"
     },
     {
-      "page": 11,
+      "page": 12,
+      "target": "solution-B80-A1"
+    },
+    {
+      "page": 12,
+      "target": "solution-B80-A2"
+    },
+    {
+      "page": 13,
+      "target": "solution-B80-A5"
+    },
+    {
+      "page": 14,
+      "target": "solution-B80-A6"
+    },
+    {
+      "page": 15,
       "target": "B80-A1"
     },
     {
-      "page": 11,
+      "page": 15,
       "target": "B80-A2"
     },
     {
-      "page": 11,
+      "page": 15,
       "target": "B80-A3"
     },
     {
-      "page": 11,
+      "page": 15,
       "target": "B80-A4"
     },
     {
-      "page": 12,
+      "page": 16,
       "target": "B80-A5"
     },
     {
-      "page": 12,
+      "page": 16,
       "target": "B80-A6"
     },
     {
-      "page": 12,
+      "page": 16,
       "target": "B80-A7"
     },
     {
-      "page": 12,
+      "page": 16,
       "target": "B80-A8"
     },
     {
-      "page": 13,
+      "page": 17,
       "target": "B80-A1"
     },
     {
-      "page": 13,
+      "page": 17,
       "target": "B80-L1"
     },
     {
-      "page": 13,
+      "page": 17,
       "target": "B80-A2"
     },
     {
-      "page": 13,
+      "page": 17,
       "target": "B80-L1"
     },
     {
-      "page": 14,
+      "page": 18,
       "target": "B80-A3"
     },
     {
-      "page": 14,
+      "page": 18,
       "target": "B80-L1"
     },
     {
-      "page": 14,
+      "page": 18,
       "target": "B80-A4"
     },
     {
-      "page": 14,
+      "page": 18,
       "target": "B80-L1"
     },
     {
-      "page": 15,
+      "page": 19,
       "target": "B80-A5"
     },
     {
-      "page": 15,
+      "page": 19,
       "target": "B80-L2"
     },
     {
-      "page": 15,
+      "page": 19,
       "target": "B80-A6"
     },
     {
-      "page": 15,
+      "page": 19,
       "target": "B80-L2"
     },
     {
-      "page": 16,
+      "page": 20,
       "target": "B80-A7"
     },
     {
-      "page": 16,
+      "page": 20,
       "target": "B80-L4"
     },
     {
-      "page": 16,
+      "page": 20,
       "target": "B80-A8"
     },
     {
-      "page": 16,
+      "page": 20,
       "target": "B80-L3"
+    },
+    {
+      "page": 21,
+      "target": "solution-B80-A1"
+    },
+    {
+      "page": 21,
+      "target": "solution-B80-A2"
+    },
+    {
+      "page": 21,
+      "target": "solution-B80-A5"
+    },
+    {
+      "page": 21,
+      "target": "solution-B80-A6"
     }
   ],
   "external_links": [],
@@ -853,6 +891,18 @@
         502,
         294.12,
         300,
+        31.68
+      ],
+      "text": "The abrupt switch at t = 4 s is an idealisation. It contributes no extra time or distance.",
+      "size": 12
+    },
+    {
+      "page": 2,
+      "kind": "text",
+      "box": [
+        502,
+        335.8,
+        300,
         22.44
       ],
       "text": "\u0394x = +12 \u2212 2 = +10 m",
@@ -863,7 +913,7 @@
       "kind": "text",
       "box": [
         502,
-        326.56,
+        368.24,
         300,
         22.44
       ],
@@ -875,7 +925,7 @@
       "kind": "text",
       "box": [
         502,
-        359.0,
+        400.68,
         300,
         31.68
       ],
@@ -1391,6 +1441,18 @@
         502,
         204.16,
         300,
+        47.519999999999996
+      ],
+      "text": "The vertical jumps at 2 s and 3 s idealise changes that take no time, so they add no area or distance.",
+      "size": 12
+    },
+    {
+      "page": 4,
+      "kind": "text",
+      "box": [
+        502,
+        261.68,
+        300,
         22.44
       ],
       "text": "\u0394x = +12 + 0 \u2212 12 = 0 m",
@@ -1401,7 +1463,7 @@
       "kind": "text",
       "box": [
         502,
-        236.6,
+        294.12,
         300,
         22.44
       ],
@@ -1413,7 +1475,7 @@
       "kind": "text",
       "box": [
         502,
-        269.03999999999996,
+        326.56,
         300,
         18.48
       ],
@@ -1425,7 +1487,7 @@
       "kind": "text",
       "box": [
         502,
-        293.52,
+        351.04,
         300,
         31.68
       ],
@@ -1692,7 +1754,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Try A7 \u00b7 p. 9",
+      "text": "Try A7 \u00b7 p. 10",
       "size": 10.5
     },
     {
@@ -1704,7 +1766,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Try A8 \u00b7 p. 9",
+      "text": "Try A8 \u00b7 p. 11",
       "size": 10.5
     },
     {
@@ -1716,7 +1778,7 @@
         750,
         13.860000000000001
       ],
-      "text": "PRACTICE SET 1 / 4",
+      "text": "PRACTICE SET 1 / 6",
       "size": 10.5
     },
     {
@@ -1728,7 +1790,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Appendix A \u00b7 Questions",
+      "text": "Appendix A \u00b7 Core practice",
       "size": 23
     },
     {
@@ -1812,7 +1874,7 @@
         130,
         13.860000000000001
       ],
-      "text": "Hints \u00b7 p. 11",
+      "text": "Hints \u00b7 p. 15",
       "size": 10.5
     },
     {
@@ -1824,7 +1886,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Solution \u00b7 p. 13",
+      "text": "Solution \u00b7 p. 17",
       "size": 10.5
     },
     {
@@ -1872,7 +1934,7 @@
         130,
         13.860000000000001
       ],
-      "text": "Hints \u00b7 p. 11",
+      "text": "Hints \u00b7 p. 15",
       "size": 10.5
     },
     {
@@ -1884,7 +1946,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Solution \u00b7 p. 13",
+      "text": "Solution \u00b7 p. 17",
       "size": 10.5
     },
     {
@@ -1896,7 +1958,7 @@
         750,
         13.860000000000001
       ],
-      "text": "PRACTICE SET 2 / 4",
+      "text": "PRACTICE SET 2 / 6",
       "size": 10.5
     },
     {
@@ -1908,7 +1970,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Appendix A \u00b7 Questions",
+      "text": "Appendix A \u00b7 Core practice",
       "size": 23
     },
     {
@@ -1992,7 +2054,7 @@
         130,
         13.860000000000001
       ],
-      "text": "Hints \u00b7 p. 11",
+      "text": "Hints \u00b7 p. 15",
       "size": 10.5
     },
     {
@@ -2004,7 +2066,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Solution \u00b7 p. 14",
+      "text": "Solution \u00b7 p. 18",
       "size": 10.5
     },
     {
@@ -2052,7 +2114,7 @@
         130,
         13.860000000000001
       ],
-      "text": "Hints \u00b7 p. 11",
+      "text": "Hints \u00b7 p. 15",
       "size": 10.5
     },
     {
@@ -2064,7 +2126,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Solution \u00b7 p. 14",
+      "text": "Solution \u00b7 p. 18",
       "size": 10.5
     },
     {
@@ -2076,7 +2138,7 @@
         750,
         13.860000000000001
       ],
-      "text": "PRACTICE SET 3 / 4",
+      "text": "PRACTICE SET 3 / 6",
       "size": 10.5
     },
     {
@@ -2088,7 +2150,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Appendix A \u00b7 Questions",
+      "text": "Appendix A \u00b7 Core practice",
       "size": 23
     },
     {
@@ -2172,7 +2234,7 @@
         130,
         13.860000000000001
       ],
-      "text": "Hints \u00b7 p. 12",
+      "text": "Hints \u00b7 p. 16",
       "size": 10.5
     },
     {
@@ -2184,162 +2246,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Solution \u00b7 p. 15",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "text",
-      "box": [
-        40,
-        334,
-        730,
-        17.16
-      ],
-      "text": "A6  \u00b7  Apply",
-      "size": 13
-    },
-    {
-      "page": 8,
-      "kind": "text",
-      "box": [
-        40,
-        359,
-        410,
-        31.68
-      ],
-      "text": "Use the graph to find displacement and distance from 0 s to 5 s. Give a physical meaning for each area.",
-      "size": 12
-    },
-    {
-      "page": 8,
-      "kind": "figure",
-      "id": "B80-A6-F",
-      "box": [
-        476,
-        346,
-        320,
-        155
-      ]
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        517.0,
-        470,
-        6.680419921875,
-        12.075
-      ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        617.0,
-        470,
-        6.680419921875,
-        12.075
-      ],
-      "text": "2",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        767.0,
-        470,
-        6.680419921875,
-        12.075
-      ],
-      "text": "5",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        489,
-        445.375,
-        10.46923828125,
-        12.075
-      ],
-      "text": "-2",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        489,
-        424.125,
-        6.680419921875,
-        12.075
-      ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        489,
-        381.625,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+4",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        492,
-        348,
-        85.228515625,
-        12.649999999999999
-      ],
-      "text": "velocity v (m/s)",
-      "size": 11
-    },
-    {
-      "page": 8,
-      "kind": "label",
-      "box": [
-        702,
-        487,
-        50.47216796875,
-        12.649999999999999
-      ],
-      "text": "time t (s)",
-      "size": 11
-    },
-    {
-      "page": 8,
-      "kind": "text",
-      "box": [
-        40,
-        501,
-        130,
-        13.860000000000001
-      ],
-      "text": "Hints \u00b7 p. 12",
-      "size": 10.5
-    },
-    {
-      "page": 8,
-      "kind": "text",
-      "box": [
-        191,
-        501,
-        170,
-        13.860000000000001
-      ],
-      "text": "Solution \u00b7 p. 15",
+      "text": "Solution \u00b7 p. 19",
       "size": 10.5
     },
     {
@@ -2351,7 +2258,7 @@
         750,
         13.860000000000001
       ],
-      "text": "PRACTICE SET 4 / 4",
+      "text": "PRACTICE SET 4 / 6",
       "size": 10.5
     },
     {
@@ -2363,7 +2270,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Appendix A \u00b7 Questions",
+      "text": "Appendix A \u00b7 Core practice",
       "size": 23
     },
     {
@@ -2411,7 +2318,7 @@
         730,
         17.16
       ],
-      "text": "A7  \u00b7  Transfer",
+      "text": "A6  \u00b7  Apply",
       "size": 13
     },
     {
@@ -2423,13 +2330,13 @@
         410,
         31.68
       ],
-      "text": "A robot has the graph shown and starts at x = \u22125 m. Find its distance, displacement and final position after 7 s.",
+      "text": "Use the graph to find displacement and distance from 0 s to 5 s. Give a physical meaning for each area.",
       "size": 12
     },
     {
       "page": 9,
       "kind": "figure",
-      "id": "B80-A7-F",
+      "id": "B80-A6-F",
       "box": [
         476,
         146,
@@ -2453,7 +2360,7 @@
       "page": 9,
       "kind": "label",
       "box": [
-        588.4285714285714,
+        617.0,
         270,
         6.680419921875,
         12.075
@@ -2465,24 +2372,12 @@
       "page": 9,
       "kind": "label",
       "box": [
-        624.1428571428571,
-        270,
-        6.680419921875,
-        12.075
-      ],
-      "text": "3",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
         767.0,
         270,
         6.680419921875,
         12.075
       ],
-      "text": "7",
+      "text": "5",
       "size": 10.5
     },
     {
@@ -2490,11 +2385,11 @@
       "kind": "label",
       "box": [
         489,
-        243.85714285714286,
+        245.375,
         10.46923828125,
         12.075
       ],
-      "text": "-1",
+      "text": "-2",
       "size": 10.5
     },
     {
@@ -2502,7 +2397,7 @@
       "kind": "label",
       "box": [
         489,
-        231.71428571428572,
+        224.125,
         6.680419921875,
         12.075
       ],
@@ -2514,7 +2409,7 @@
       "kind": "label",
       "box": [
         489,
-        183.14285714285717,
+        181.625,
         15.478271484375002,
         12.075
       ],
@@ -2554,7 +2449,7 @@
         130,
         13.860000000000001
       ],
-      "text": "Hints \u00b7 p. 12",
+      "text": "Hints \u00b7 p. 16",
       "size": 10.5
     },
     {
@@ -2566,162 +2461,7 @@
         170,
         13.860000000000001
       ],
-      "text": "Solution \u00b7 p. 16",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "text",
-      "box": [
-        40,
-        334,
-        730,
-        17.16
-      ],
-      "text": "A8  \u00b7  Transfer",
-      "size": 13
-    },
-    {
-      "page": 9,
-      "kind": "text",
-      "box": [
-        40,
-        359,
-        410,
-        47.519999999999996
-      ],
-      "text": "The velocity follows the straight graph shown. Find distance and displacement over 4 s. At what time does the particle reverse direction? Justify this from the graph.",
-      "size": 12
-    },
-    {
-      "page": 9,
-      "kind": "figure",
-      "id": "B80-A8-F",
-      "box": [
-        476,
-        346,
-        320,
-        155
-      ]
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        517.0,
-        470,
-        6.680419921875,
-        12.075
-      ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        704.5,
-        470,
-        6.680419921875,
-        12.075
-      ],
-      "text": "3",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        767.0,
-        470,
-        6.680419921875,
-        12.075
-      ],
-      "text": "4",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        489,
-        447.5,
-        10.46923828125,
-        12.075
-      ],
-      "text": "-2",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        489,
-        430.5,
-        6.680419921875,
-        12.075
-      ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        489,
-        379.5,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+6",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        492,
-        348,
-        85.228515625,
-        12.649999999999999
-      ],
-      "text": "velocity v (m/s)",
-      "size": 11
-    },
-    {
-      "page": 9,
-      "kind": "label",
-      "box": [
-        702,
-        487,
-        50.47216796875,
-        12.649999999999999
-      ],
-      "text": "time t (s)",
-      "size": 11
-    },
-    {
-      "page": 9,
-      "kind": "text",
-      "box": [
-        40,
-        501,
-        130,
-        13.860000000000001
-      ],
-      "text": "Hints \u00b7 p. 12",
-      "size": 10.5
-    },
-    {
-      "page": 9,
-      "kind": "text",
-      "box": [
-        191,
-        501,
-        170,
-        13.860000000000001
-      ],
-      "text": "Solution \u00b7 p. 16",
+      "text": "Solution \u00b7 p. 19",
       "size": 10.5
     },
     {
@@ -2733,7 +2473,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ONE-PAGE HANDOUT",
+      "text": "PRACTICE SET 5 / 6",
       "size": 10.5
     },
     {
@@ -2745,7 +2485,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Appendix B \u00b7 Keep the picture, rebuild the rule",
+      "text": "Appendix A \u00b7 Core practice",
       "size": 23
     },
     {
@@ -2757,7 +2497,7 @@
         760,
         15.180000000000001
       ],
-      "text": "Right is positive. Cover the words and explain each diagram aloud.",
+      "text": "Use the diagrams you need. A correct number needs a physical explanation.",
       "size": 11.5
     },
     {
@@ -2789,149 +2529,42 @@
       "kind": "text",
       "box": [
         40,
-        132,
-        365,
-        19.8
+        134,
+        730,
+        17.16
       ],
-      "text": "1  Distance and displacement",
-      "size": 15
+      "text": "A7  \u00b7  Transfer",
+      "size": 13
     },
     {
       "page": 10,
       "kind": "text",
       "box": [
-        445,
-        132,
-        355,
-        19.8
-      ],
-      "text": "2  Reading a velocity\u2013time graph",
-      "size": 15
-    },
-    {
-      "page": 10,
-      "kind": "figure",
-      "id": "HAND-ROUTE",
-      "box": [
         40,
-        163,
-        360,
-        150
-      ]
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        61.6597900390625,
-        253.5,
-        6.680419921875,
-        12.075
+        159,
+        410,
+        31.68
       ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        133.5108642578125,
-        253.5,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+2",
-      "size": 10.5
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        209.7608642578125,
-        253.5,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+4",
-      "size": 10.5
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        286.0108642578125,
-        253.5,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+6",
-      "size": 10.5
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        362.2608642578125,
-        253.5,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+8",
-      "size": 10.5
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        58,
-        301,
-        72.900146484375,
-        12.075
-      ],
-      "text": "position x (m)",
-      "size": 10.5
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        51.0,
-        271.5,
-        24.45556640625,
-        12.075
-      ],
-      "text": "start",
-      "size": 10.5
-    },
-    {
-      "page": 10,
-      "kind": "label",
-      "box": [
-        203.5,
-        271.5,
-        28.31103515625,
-        12.075
-      ],
-      "text": "finish",
-      "size": 10.5
+      "text": "A robot has the graph shown and starts at x = \u22125 m. Find its distance, displacement and final position after 7 s.",
+      "size": 12
     },
     {
       "page": 10,
       "kind": "figure",
-      "id": "HAND-GRAPH",
+      "id": "B80-A7-F",
       "box": [
-        438,
-        163,
-        360,
-        150
+        476,
+        146,
+        320,
+        155
       ]
     },
     {
       "page": 10,
       "kind": "label",
       "box": [
-        479.0,
-        282,
+        517.0,
+        270,
         6.680419921875,
         12.075
       ],
@@ -2942,32 +2575,44 @@
       "page": 10,
       "kind": "label",
       "box": [
-        672.3333333333333,
-        282,
+        588.4285714285714,
+        270,
         6.680419921875,
         12.075
       ],
-      "text": "4",
+      "text": "2",
       "size": 10.5
     },
     {
       "page": 10,
       "kind": "label",
       "box": [
-        769.0,
-        282,
+        624.1428571428571,
+        270,
         6.680419921875,
         12.075
       ],
-      "text": "6",
+      "text": "3",
       "size": 10.5
     },
     {
       "page": 10,
       "kind": "label",
       "box": [
-        451,
-        254.66666666666669,
+        767.0,
+        270,
+        6.680419921875,
+        12.075
+      ],
+      "text": "7",
+      "size": 10.5
+    },
+    {
+      "page": 10,
+      "kind": "label",
+      "box": [
+        489,
+        243.85714285714286,
         10.46923828125,
         12.075
       ],
@@ -2978,8 +2623,8 @@
       "page": 10,
       "kind": "label",
       "box": [
-        451,
-        241.33333333333334,
+        489,
+        231.71428571428572,
         6.680419921875,
         12.075
       ],
@@ -2990,20 +2635,20 @@
       "page": 10,
       "kind": "label",
       "box": [
-        451,
-        201.33333333333331,
+        489,
+        183.14285714285717,
         15.478271484375002,
         12.075
       ],
-      "text": "+3",
+      "text": "+4",
       "size": 10.5
     },
     {
       "page": 10,
       "kind": "label",
       "box": [
-        454,
-        165,
+        492,
+        148,
         85.228515625,
         12.649999999999999
       ],
@@ -3014,8 +2659,8 @@
       "page": 10,
       "kind": "label",
       "box": [
-        704,
-        299,
+        702,
+        287,
         50.47216796875,
         12.649999999999999
       ],
@@ -3027,96 +2672,24 @@
       "kind": "text",
       "box": [
         40,
-        330,
-        360,
-        31.68
+        301,
+        130,
+        13.860000000000001
       ],
-      "text": "<b>Distance:</b> add every path length.<br/><b>Displacement:</b> the signed endpoint change.",
-      "size": 12
+      "text": "Hints \u00b7 p. 16",
+      "size": 10.5
     },
     {
       "page": 10,
       "kind": "text",
       "box": [
-        40,
-        371.68,
-        360,
-        22.44
+        191,
+        301,
+        170,
+        13.860000000000001
       ],
-      "text": "\u0394x = x<sub>f</sub> \u2212 x<sub>i</sub>",
-      "size": 17
-    },
-    {
-      "page": 10,
-      "kind": "text",
-      "box": [
-        40,
-        404.12,
-        360,
-        31.68
-      ],
-      "text": "\u0394x: displacement; x<sub>i</sub>: initial position;<br/>x<sub>f</sub>: final position. Here, distance is 8 m and \u0394x is +4 m.",
-      "size": 12
-    },
-    {
-      "page": 10,
-      "kind": "text",
-      "box": [
-        40,
-        445.8,
-        360,
-        31.68
-      ],
-      "text": "<b>Check:</b> distance \u2265 |\u0394x|. Bars mean size.<br/><b>Rebuild:</b> trace the path, then compare its endpoints.",
-      "size": 12
-    },
-    {
-      "page": 10,
-      "kind": "text",
-      "box": [
-        445,
-        330,
-        353,
-        31.68
-      ],
-      "text": "<b>Displacement:</b> add signed areas.<br/><b>Distance:</b> add all the area sizes. Split at zero crossings.",
-      "size": 12
-    },
-    {
-      "page": 10,
-      "kind": "text",
-      "box": [
-        445,
-        371.68,
-        353,
-        22.44
-      ],
-      "text": "Rectangle: v \u00d7 duration",
-      "size": 17
-    },
-    {
-      "page": 10,
-      "kind": "text",
-      "box": [
-        445,
-        404.12,
-        353,
-        31.68
-      ],
-      "text": "Triangle size: \u00bd \u00d7 base \u00d7 height.<br/>Graph above: \u0394x = +10 m; distance 14 m.",
-      "size": 12
-    },
-    {
-      "page": 10,
-      "kind": "text",
-      "box": [
-        445,
-        445.8,
-        353,
-        63.36
-      ],
-      "text": "<b>Check:</b> (m/s) \u00d7 s = m. Use a rectangle for constant velocity. Use \u00bd \u00d7 base \u00d7 height only for a triangular region; other straight segments may need rectangle + triangle.",
-      "size": 12
+      "text": "Solution \u00b7 p. 20",
+      "size": 10.5
     },
     {
       "page": 11,
@@ -3127,7 +2700,7 @@
         750,
         13.860000000000001
       ],
-      "text": "OPTIONAL HELP",
+      "text": "PRACTICE SET 6 / 6",
       "size": 10.5
     },
     {
@@ -3139,7 +2712,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Hints \u00b7 Read one step, then try again",
+      "text": "Appendix A \u00b7 Core practice",
       "size": 23
     },
     {
@@ -3151,7 +2724,7 @@
         760,
         15.180000000000001
       ],
-      "text": "Cover the rows below the hint you are reading.",
+      "text": "Use the diagrams you need. A correct number needs a physical explanation.",
       "size": 11.5
     },
     {
@@ -3183,239 +2756,154 @@
       "kind": "text",
       "box": [
         40,
-        133,
-        48,
-        15.84
+        134,
+        730,
+        17.16
       ],
-      "text": "A1",
-      "size": 12
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        133,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H1 Notice</b>  Keep the starting coordinate separate from the lengths walked.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        157,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H2 Model</b>  Mark the start, the turning point and the finish on a number line.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        181,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  The turning point is at +1 \u2212 5 m. Find the finish next.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        687,
-        206,
-        106,
-        13.860000000000001
-      ],
-      "text": "Return \u00b7 p. 6",
-      "size": 10.5
+      "text": "A8  \u00b7  Transfer",
+      "size": 13
     },
     {
       "page": 11,
       "kind": "text",
       "box": [
         40,
-        232,
-        48,
-        15.84
+        159,
+        410,
+        47.519999999999996
       ],
-      "text": "A2",
+      "text": "The velocity follows the straight graph shown. Find distance and displacement over 4 s. At what time does the particle reverse direction? Justify this from the graph.",
       "size": 12
     },
     {
       "page": 11,
-      "kind": "text",
+      "kind": "figure",
+      "id": "B80-A8-F",
       "box": [
-        98,
-        232,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H1 Notice</b>  Crossing the origin does not mean reversing direction.",
-      "size": 11.5
+        476,
+        146,
+        320,
+        155
+      ]
     },
     {
       "page": 11,
-      "kind": "text",
+      "kind": "label",
       "box": [
-        98,
-        256,
-        640,
-        15.180000000000001
+        517.0,
+        270,
+        6.680419921875,
+        12.075
       ],
-      "text": "<b>H2 Model</b>  Draw \u22122, 0 and +5 in order along the line.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        280,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  The first part of the path, from \u22122 m to 0 m, is 2 m.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        687,
-        305,
-        106,
-        13.860000000000001
-      ],
-      "text": "Return \u00b7 p. 6",
+      "text": "0",
       "size": 10.5
+    },
+    {
+      "page": 11,
+      "kind": "label",
+      "box": [
+        704.5,
+        270,
+        6.680419921875,
+        12.075
+      ],
+      "text": "3",
+      "size": 10.5
+    },
+    {
+      "page": 11,
+      "kind": "label",
+      "box": [
+        767.0,
+        270,
+        6.680419921875,
+        12.075
+      ],
+      "text": "4",
+      "size": 10.5
+    },
+    {
+      "page": 11,
+      "kind": "label",
+      "box": [
+        489,
+        247.5,
+        10.46923828125,
+        12.075
+      ],
+      "text": "-2",
+      "size": 10.5
+    },
+    {
+      "page": 11,
+      "kind": "label",
+      "box": [
+        489,
+        230.5,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 11,
+      "kind": "label",
+      "box": [
+        489,
+        179.5,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+6",
+      "size": 10.5
+    },
+    {
+      "page": 11,
+      "kind": "label",
+      "box": [
+        492,
+        148,
+        85.228515625,
+        12.649999999999999
+      ],
+      "text": "velocity v (m/s)",
+      "size": 11
+    },
+    {
+      "page": 11,
+      "kind": "label",
+      "box": [
+        702,
+        287,
+        50.47216796875,
+        12.649999999999999
+      ],
+      "text": "time t (s)",
+      "size": 11
     },
     {
       "page": 11,
       "kind": "text",
       "box": [
         40,
-        331,
-        48,
-        15.84
-      ],
-      "text": "A3",
-      "size": 12
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        331,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H1 Notice</b>  The question fixes the endpoints, not the route.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        355,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H2 Model</b>  Draw one direct route and one route with a turn.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        379,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  For the turning route, choose a turning point beyond +4 m.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        687,
-        404,
-        106,
+        301,
+        130,
         13.860000000000001
       ],
-      "text": "Return \u00b7 p. 7",
+      "text": "Hints \u00b7 p. 16",
       "size": 10.5
     },
     {
       "page": 11,
       "kind": "text",
       "box": [
-        40,
-        430,
-        48,
-        15.84
-      ],
-      "text": "A4",
-      "size": 12
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        430,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H1 Notice</b>  The second observer changes the labels, not the physical journey.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        454,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H2 Model</b>  Draw the three positions, then label each with 10 m added.",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        98,
-        478,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  Compare (1 + 10) \u2212 (\u22123 + 10) with 1 \u2212 (\u22123).",
-      "size": 11.5
-    },
-    {
-      "page": 11,
-      "kind": "text",
-      "box": [
-        687,
-        503,
-        106,
+        191,
+        301,
+        170,
         13.860000000000001
       ],
-      "text": "Return \u00b7 p. 7",
+      "text": "Solution \u00b7 p. 20",
       "size": 10.5
     },
     {
@@ -3427,7 +2915,7 @@
         750,
         13.860000000000001
       ],
-      "text": "OPTIONAL HELP",
+      "text": "B80-MIXED-01 \u00b7 SET 1 / 3",
       "size": 10.5
     },
     {
@@ -3439,7 +2927,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Hints \u00b7 Read one step, then try again",
+      "text": "Mixed transfer \u00b7 Concepts hidden",
       "size": 23
     },
     {
@@ -3451,7 +2939,7 @@
         760,
         15.180000000000001
       ],
-      "text": "Cover the rows below the hint you are reading.",
+      "text": "Work from the physical situation. Concept and task labels appear only after marking.",
       "size": 11.5
     },
     {
@@ -3483,59 +2971,35 @@
       "kind": "text",
       "box": [
         40,
-        133,
-        48,
-        15.84
+        134,
+        730,
+        17.16
       ],
-      "text": "A5",
+      "text": "Question 1",
+      "size": 13
+    },
+    {
+      "page": 12,
+      "kind": "text",
+      "box": [
+        40,
+        159,
+        410,
+        31.68
+      ],
+      "text": "Start at +1 m. Walk 5 m left, then 3 m right. Find the final position, distance and displacement.",
       "size": 12
     },
     {
       "page": 12,
       "kind": "text",
       "box": [
-        98,
-        133,
-        640,
-        15.180000000000001
+        486,
+        158,
+        297,
+        41.580000000000005
       ],
-      "text": "<b>H1 Notice</b>  Only the direction of the last interval changes.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        157,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H2 Model</b>  Sketch the two graphs with the same scales.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        181,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  Calculate the common first area: (+3 m/s) \u00d7 (4 s).",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        687,
-        206,
-        106,
-        13.860000000000001
-      ],
-      "text": "Return \u00b7 p. 8",
+      "text": "Start \u2192 turning point \u2192 finish<br/>Final position: ____<br/>Distance: ____   Displacement: ____",
       "size": 10.5
     },
     {
@@ -3543,59 +3007,11 @@
       "kind": "text",
       "box": [
         40,
-        232,
-        48,
-        15.84
-      ],
-      "text": "A6",
-      "size": 12
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        232,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H1 Notice</b>  Read the duration of each horizontal segment.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        256,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H2 Model</b>  Separate the two rectangular regions at t = 2 s.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        280,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  For the first region, write (+4) \u00d7 (2 \u2212 0).",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        687,
-        305,
-        106,
+        301,
+        150,
         13.860000000000001
       ],
-      "text": "Return \u00b7 p. 8",
+      "text": "Check later \u00b7 p. 17",
       "size": 10.5
     },
     {
@@ -3603,59 +3019,35 @@
       "kind": "text",
       "box": [
         40,
-        331,
-        48,
-        15.84
+        334,
+        730,
+        17.16
       ],
-      "text": "A7",
+      "text": "Question 2",
+      "size": 13
+    },
+    {
+      "page": 12,
+      "kind": "text",
+      "box": [
+        40,
+        359,
+        410,
+        31.68
+      ],
+      "text": "An object moves from \u22122 m to +5 m without reversing. Find its distance and displacement. Explain the signs.",
       "size": 12
     },
     {
       "page": 12,
       "kind": "text",
       "box": [
-        98,
-        331,
-        640,
-        15.180000000000001
+        486,
+        358,
+        297,
+        27.720000000000002
       ],
-      "text": "<b>H1 Notice</b>  The starting coordinate is separate from the displacement.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        355,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H2 Model</b>  Pair the graph regions with right, stopped and left motion arrows.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        379,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  The final region has duration 7 \u2212 3 s.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        687,
-        404,
-        106,
-        13.860000000000001
-      ],
-      "text": "Return \u00b7 p. 9",
+      "text": "Sketch the line and explain why crossing zero is not a turn.",
       "size": 10.5
     },
     {
@@ -3663,59 +3055,11 @@
       "kind": "text",
       "box": [
         40,
-        430,
-        48,
-        15.84
-      ],
-      "text": "A8",
-      "size": 12
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        430,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H1 Notice</b>  Locate the zero crossing before calculating areas.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        454,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H2 Model</b>  Use the straight-line change to split the graph into two triangles.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        98,
-        478,
-        640,
-        15.180000000000001
-      ],
-      "text": "<b>H3 Start</b>  The velocity decreases by 8 \u00f7 4 m/s each second.",
-      "size": 11.5
-    },
-    {
-      "page": 12,
-      "kind": "text",
-      "box": [
-        687,
-        503,
-        106,
+        501,
+        150,
         13.860000000000001
       ],
-      "text": "Return \u00b7 p. 9",
+      "text": "Check later \u00b7 p. 17",
       "size": 10.5
     },
     {
@@ -3727,7 +3071,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "B80-MIXED-01 \u00b7 SET 2 / 3",
       "size": 10.5
     },
     {
@@ -3739,7 +3083,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Solutions \u00b7 Compare the reasoning, not just the number",
+      "text": "Mixed transfer \u00b7 Concepts hidden",
       "size": 23
     },
     {
@@ -3751,7 +3095,7 @@
         760,
         15.180000000000001
       ],
-      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "text": "Work from the physical situation. Concept and task labels appear only after marking.",
       "size": 11.5
     },
     {
@@ -3783,83 +3127,35 @@
       "kind": "text",
       "box": [
         40,
-        132,
-        751,
-        15.180000000000001
+        134,
+        730,
+        17.16
       ],
-      "text": "A1  Start +1 m; 5 m left, then 3 m right.",
-      "size": 11.5
+      "text": "Question 3",
+      "size": 13
     },
     {
       "page": 13,
       "kind": "text",
       "box": [
         40,
-        169,
-        752,
-        14.3
+        159,
+        410,
+        47.519999999999996
       ],
-      "text": "<b>Why.</b> Position changes carry direction; path lengths do not.",
-      "size": 11.5
+      "text": "Journey A: +3 m/s for 4 s, then +2 m/s for 2 s. Journey B changes only the last velocity to \u22122 m/s. Find both distances and displacements. Explain what stays the same.",
+      "size": 12
     },
     {
       "page": 13,
       "kind": "text",
       "box": [
-        40,
-        187.3,
-        752,
-        14.3
+        486,
+        158,
+        297,
+        27.720000000000002
       ],
-      "text": "<b>Method.</b> Final position = 1 \u2212 5 + 3 = \u22121 m. Distance = 5 + 3 = 8 m. Displacement = \u22121 \u2212 (+1).",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        205.60000000000002,
-        752,
-        14.3
-      ],
-      "text": "<b>Answer / check.</b> Final position \u22121 m; distance 8 m; displacement \u22122 m (left).",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        223.90000000000003,
-        752,
-        14.3
-      ],
-      "text": "<b>Keep.</b> The final coordinate is not automatically the displacement.",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        308,
-        135,
-        13.860000000000001
-      ],
-      "text": "Return to A1 \u00b7 p. 6",
-      "size": 10.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        200,
-        308,
-        167,
-        13.860000000000001
-      ],
-      "text": "Lesson \u00b7 p. 1",
+      "text": "Show the route or working that makes your answer clear.",
       "size": 10.5
     },
     {
@@ -3867,83 +3163,11 @@
       "kind": "text",
       "box": [
         40,
-        333,
-        751,
-        15.180000000000001
-      ],
-      "text": "A2  Move from \u22122 m to +5 m with no reversal.",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        370,
-        752,
-        14.3
-      ],
-      "text": "<b>Why.</b> The route goes 2 m to zero and another 5 m right.",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        388.3,
-        752,
-        14.3
-      ],
-      "text": "<b>Method.</b> Distance = 2 + 5. Displacement = +5 \u2212 (\u22122).",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        406.6,
-        752,
-        14.3
-      ],
-      "text": "<b>Answer / check.</b> Distance 7 m; displacement +7 m (right).",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        424.90000000000003,
-        752,
-        14.3
-      ],
-      "text": "<b>Keep.</b> Equal distance and displacement size require no reversal in this straight-line journey.",
-      "size": 11.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        40,
-        509,
-        135,
+        301,
+        150,
         13.860000000000001
       ],
-      "text": "Return to A2 \u00b7 p. 6",
-      "size": 10.5
-    },
-    {
-      "page": 13,
-      "kind": "text",
-      "box": [
-        200,
-        509,
-        167,
-        13.860000000000001
-      ],
-      "text": "Lesson \u00b7 p. 1",
+      "text": "Check later \u00b7 p. 19",
       "size": 10.5
     },
     {
@@ -3955,7 +3179,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "B80-MIXED-01 \u00b7 SET 3 / 3",
       "size": 10.5
     },
     {
@@ -3967,7 +3191,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Solutions \u00b7 Compare the reasoning, not just the number",
+      "text": "Mixed transfer \u00b7 Concepts hidden",
       "size": 23
     },
     {
@@ -3979,7 +3203,7 @@
         760,
         15.180000000000001
       ],
-      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "text": "Work from the physical situation. Concept and task labels appear only after marking.",
       "size": 11.5
     },
     {
@@ -4011,167 +3235,142 @@
       "kind": "text",
       "box": [
         40,
-        132,
-        751,
-        15.180000000000001
+        134,
+        730,
+        17.16
       ],
-      "text": "A3  Same start 0 m and finish +4 m; compare possible distances.",
-      "size": 11.5
+      "text": "Question 4",
+      "size": 13
     },
     {
       "page": 14,
       "kind": "text",
       "box": [
         40,
-        169,
-        752,
-        14.3
+        159,
+        410,
+        31.68
       ],
-      "text": "<b>Why.</b> Endpoints fix displacement but leave the path undecided.",
-      "size": 11.5
+      "text": "Use the graph to find displacement and distance from 0 s to 5 s. Give a physical meaning for each area.",
+      "size": 12
     },
     {
       "page": 14,
-      "kind": "text",
+      "kind": "figure",
+      "id": "B80-A6-F",
       "box": [
-        40,
-        187.3,
-        752,
-        14.3
-      ],
-      "text": "<b>Method.</b> One can go directly 0 \u2192 +4. Another can go 0 \u2192 +7 \u2192 +4. Their paths are 4 m and 7 + 3 m.",
-      "size": 11.5
+        476,
+        146,
+        320,
+        155
+      ]
     },
     {
       "page": 14,
-      "kind": "text",
+      "kind": "label",
       "box": [
-        40,
-        205.60000000000002,
-        752,
-        14.3
+        517.0,
+        270,
+        6.680419921875,
+        12.075
       ],
-      "text": "<b>Answer / check.</b> No. These distances are 4 m and 10 m; both displacements are +4 m.",
-      "size": 11.5
-    },
-    {
-      "page": 14,
-      "kind": "text",
-      "box": [
-        40,
-        223.90000000000003,
-        752,
-        14.3
-      ],
-      "text": "<b>Keep.</b> A drawing can disprove an \u201calways\u201d claim.",
-      "size": 11.5
-    },
-    {
-      "page": 14,
-      "kind": "text",
-      "box": [
-        40,
-        308,
-        135,
-        13.860000000000001
-      ],
-      "text": "Return to A3 \u00b7 p. 7",
+      "text": "0",
       "size": 10.5
     },
     {
       "page": 14,
-      "kind": "text",
+      "kind": "label",
       "box": [
-        200,
-        308,
-        167,
-        13.860000000000001
+        617.0,
+        270,
+        6.680419921875,
+        12.075
       ],
-      "text": "Lesson \u00b7 p. 1",
+      "text": "2",
       "size": 10.5
     },
     {
       "page": 14,
-      "kind": "text",
+      "kind": "label",
       "box": [
-        40,
-        333,
-        751,
-        15.180000000000001
+        767.0,
+        270,
+        6.680419921875,
+        12.075
       ],
-      "text": "A4  Route \u22123 \u2192 +5 \u2192 +1 m; then shift every coordinate by +10 m.",
-      "size": 11.5
-    },
-    {
-      "page": 14,
-      "kind": "text",
-      "box": [
-        40,
-        370,
-        752,
-        14.3
-      ],
-      "text": "<b>Why.</b> Displacement is a coordinate difference, so a common shift cancels.",
-      "size": 11.5
-    },
-    {
-      "page": 14,
-      "kind": "text",
-      "box": [
-        40,
-        388.3,
-        752,
-        14.3
-      ],
-      "text": "<b>Method.</b> Path lengths: 5 \u2212 (\u22123) = 8 m and 5 \u2212 1 = 4 m. \u0394x = 1 \u2212 (\u22123) = +4 m. Shifted endpoints are +7 m and +11 m.",
-      "size": 11.5
-    },
-    {
-      "page": 14,
-      "kind": "text",
-      "box": [
-        40,
-        406.6,
-        752,
-        14.3
-      ],
-      "text": "<b>Answer / check.</b> Distance 12 m and displacement +4 m for both origins. Positions change.",
-      "size": 11.5
-    },
-    {
-      "page": 14,
-      "kind": "text",
-      "box": [
-        40,
-        424.90000000000003,
-        752,
-        14.3
-      ],
-      "text": "<b>Keep.</b> A reference origin changes position values, not a fixed journey.",
-      "size": 11.5
-    },
-    {
-      "page": 14,
-      "kind": "text",
-      "box": [
-        40,
-        509,
-        135,
-        13.860000000000001
-      ],
-      "text": "Return to A4 \u00b7 p. 7",
+      "text": "5",
       "size": 10.5
     },
     {
       "page": 14,
+      "kind": "label",
+      "box": [
+        489,
+        245.375,
+        10.46923828125,
+        12.075
+      ],
+      "text": "-2",
+      "size": 10.5
+    },
+    {
+      "page": 14,
+      "kind": "label",
+      "box": [
+        489,
+        224.125,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 14,
+      "kind": "label",
+      "box": [
+        489,
+        181.625,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+4",
+      "size": 10.5
+    },
+    {
+      "page": 14,
+      "kind": "label",
+      "box": [
+        492,
+        148,
+        85.228515625,
+        12.649999999999999
+      ],
+      "text": "velocity v (m/s)",
+      "size": 11
+    },
+    {
+      "page": 14,
+      "kind": "label",
+      "box": [
+        702,
+        287,
+        50.47216796875,
+        12.649999999999999
+      ],
+      "text": "time t (s)",
+      "size": 11
+    },
+    {
+      "page": 14,
       "kind": "text",
       "box": [
-        200,
-        509,
-        167,
+        40,
+        301,
+        150,
         13.860000000000001
       ],
-      "text": "Lesson \u00b7 p. 1",
+      "text": "Check later \u00b7 p. 19",
       "size": 10.5
     },
     {
@@ -4183,7 +3382,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "OPTIONAL HELP",
       "size": 10.5
     },
     {
@@ -4195,7 +3394,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Solutions \u00b7 Compare the reasoning, not just the number",
+      "text": "Appendix B \u00b7 Optional hints",
       "size": 23
     },
     {
@@ -4207,7 +3406,7 @@
         760,
         15.180000000000001
       ],
-      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "text": "Cover the rows below the hint you are reading.",
       "size": 11.5
     },
     {
@@ -4239,83 +3438,59 @@
       "kind": "text",
       "box": [
         40,
-        132,
-        751,
+        133,
+        48,
+        15.84
+      ],
+      "text": "A1",
+      "size": 12
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        133,
+        640,
         15.180000000000001
       ],
-      "text": "A5  A: +3 for 4 s, then +2 for 2 s. B: last velocity becomes \u22122 m/s.",
+      "text": "<b>H1 Notice</b>  Keep the starting coordinate separate from the lengths walked.",
       "size": 11.5
     },
     {
       "page": 15,
       "kind": "text",
       "box": [
-        40,
-        169,
-        752,
-        14.3
+        98,
+        157,
+        640,
+        15.180000000000001
       ],
-      "text": "<b>Why.</b> Reversing the second velocity changes the area sign, not its size.",
+      "text": "<b>H2 Model</b>  Mark the start, the turning point and the finish on a number line.",
       "size": 11.5
     },
     {
       "page": 15,
       "kind": "text",
       "box": [
-        40,
-        187.3,
-        752,
-        14.3
+        98,
+        181,
+        640,
+        15.180000000000001
       ],
-      "text": "<b>Method.</b> First area is +12 m in both. The last area is +4 m in A and \u22124 m in B. Add signs for displacement and sizes for distance.",
+      "text": "<b>H3 Start</b>  The turning point is at +1 \u2212 5 m. Find the finish next.",
       "size": 11.5
     },
     {
       "page": 15,
       "kind": "text",
       "box": [
-        40,
-        205.60000000000002,
-        752,
-        14.3
-      ],
-      "text": "<b>Answer / check.</b> A: \u0394x = +16 m, distance 16 m. B: \u0394x = +8 m, distance 16 m.",
-      "size": 11.5
-    },
-    {
-      "page": 15,
-      "kind": "text",
-      "box": [
-        40,
-        223.90000000000003,
-        752,
-        14.3
-      ],
-      "text": "<b>Keep.</b> A sign change can alter the endpoint without altering total path.",
-      "size": 11.5
-    },
-    {
-      "page": 15,
-      "kind": "text",
-      "box": [
-        40,
-        308,
-        135,
+        687,
+        206,
+        106,
         13.860000000000001
       ],
-      "text": "Return to A5 \u00b7 p. 8",
-      "size": 10.5
-    },
-    {
-      "page": 15,
-      "kind": "text",
-      "box": [
-        200,
-        308,
-        167,
-        13.860000000000001
-      ],
-      "text": "Lesson \u00b7 p. 2",
+      "text": "Return \u00b7 p. 6",
       "size": 10.5
     },
     {
@@ -4323,190 +3498,179 @@
       "kind": "text",
       "box": [
         40,
-        333,
-        751,
+        232,
+        48,
+        15.84
+      ],
+      "text": "A2",
+      "size": 12
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        232,
+        640,
         15.180000000000001
       ],
-      "text": "A6  Graph: +4 m/s from 0\u20132 s, then \u22122 m/s from 2\u20135 s.",
+      "text": "<b>H1 Notice</b>  Crossing the origin does not mean reversing direction.",
       "size": 11.5
     },
     {
       "page": 15,
       "kind": "text",
       "box": [
-        40,
-        370,
-        438,
-        14.3
+        98,
+        256,
+        640,
+        15.180000000000001
       ],
-      "text": "<b>Why.</b> Graph widths are durations. The second width is 5 \u2212 2 = 3 s.",
+      "text": "<b>H2 Model</b>  Draw \u22122, 0 and +5 in order along the line.",
       "size": 11.5
     },
     {
       "page": 15,
       "kind": "text",
       "box": [
-        40,
-        388.3,
-        438,
-        28.6
-      ],
-      "text": "<b>Method.</b> Signed areas are +4 \u00d7 2 = +8 m and \u22122 \u00d7 3 = \u22126 m. For distance count both path lengths.",
-      "size": 11.5
-    },
-    {
-      "page": 15,
-      "kind": "text",
-      "box": [
-        40,
-        420.90000000000003,
-        438,
-        28.6
-      ],
-      "text": "<b>Answer / check.</b> Displacement +2 m; distance 14 m. The parts mean 8 m right and 6 m left.",
-      "size": 11.5
-    },
-    {
-      "page": 15,
-      "kind": "text",
-      "box": [
-        40,
-        453.50000000000006,
-        438,
-        14.3
-      ],
-      "text": "<b>Keep.</b> Read each width from its endpoints before multiplying.",
-      "size": 11.5
-    },
-    {
-      "page": 15,
-      "kind": "figure",
-      "id": "B80-A6-F",
-      "box": [
-        511,
-        369,
+        98,
         280,
-        155
-      ]
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H3 Start</b>  The first part of the path, from \u22122 m to 0 m, is 2 m.",
+      "size": 11.5
     },
     {
       "page": 15,
-      "kind": "label",
+      "kind": "text",
       "box": [
-        552.0,
-        493,
-        6.680419921875,
-        12.075
+        687,
+        305,
+        106,
+        13.860000000000001
       ],
-      "text": "0",
+      "text": "Return \u00b7 p. 6",
       "size": 10.5
-    },
-    {
-      "page": 15,
-      "kind": "label",
-      "box": [
-        636.0,
-        493,
-        6.680419921875,
-        12.075
-      ],
-      "text": "2",
-      "size": 10.5
-    },
-    {
-      "page": 15,
-      "kind": "label",
-      "box": [
-        762.0,
-        493,
-        6.680419921875,
-        12.075
-      ],
-      "text": "5",
-      "size": 10.5
-    },
-    {
-      "page": 15,
-      "kind": "label",
-      "box": [
-        524,
-        468.375,
-        10.46923828125,
-        12.075
-      ],
-      "text": "-2",
-      "size": 10.5
-    },
-    {
-      "page": 15,
-      "kind": "label",
-      "box": [
-        524,
-        447.125,
-        6.680419921875,
-        12.075
-      ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 15,
-      "kind": "label",
-      "box": [
-        524,
-        404.625,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+4",
-      "size": 10.5
-    },
-    {
-      "page": 15,
-      "kind": "label",
-      "box": [
-        527,
-        371,
-        85.228515625,
-        12.649999999999999
-      ],
-      "text": "velocity v (m/s)",
-      "size": 11
-    },
-    {
-      "page": 15,
-      "kind": "label",
-      "box": [
-        697,
-        510,
-        50.47216796875,
-        12.649999999999999
-      ],
-      "text": "time t (s)",
-      "size": 11
     },
     {
       "page": 15,
       "kind": "text",
       "box": [
         40,
-        509,
-        135,
+        331,
+        48,
+        15.84
+      ],
+      "text": "A3",
+      "size": 12
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        331,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H1 Notice</b>  The question fixes the endpoints, not the route.",
+      "size": 11.5
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        355,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H2 Model</b>  Draw one direct route and one route with a turn.",
+      "size": 11.5
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        379,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H3 Start</b>  For the turning route, choose a turning point beyond +4 m.",
+      "size": 11.5
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        687,
+        404,
+        106,
         13.860000000000001
       ],
-      "text": "Return to A6 \u00b7 p. 8",
+      "text": "Return \u00b7 p. 7",
       "size": 10.5
     },
     {
       "page": 15,
       "kind": "text",
       "box": [
-        200,
-        509,
-        167,
+        40,
+        430,
+        48,
+        15.84
+      ],
+      "text": "A4",
+      "size": 12
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        430,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H1 Notice</b>  The second observer changes the labels, not the physical journey.",
+      "size": 11.5
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        454,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H2 Model</b>  Draw the three positions, then label each with 10 m added.",
+      "size": 11.5
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        98,
+        478,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H3 Start</b>  Compare (1 + 10) \u2212 (\u22123 + 10) with 1 \u2212 (\u22123).",
+      "size": 11.5
+    },
+    {
+      "page": 15,
+      "kind": "text",
+      "box": [
+        687,
+        503,
+        106,
         13.860000000000001
       ],
-      "text": "Lesson \u00b7 p. 2",
+      "text": "Return \u00b7 p. 7",
       "size": 10.5
     },
     {
@@ -4518,7 +3682,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "OPTIONAL HELP",
       "size": 10.5
     },
     {
@@ -4530,7 +3694,7 @@
         760,
         30.360000000000003
       ],
-      "text": "Solutions \u00b7 Compare the reasoning, not just the number",
+      "text": "Appendix B \u00b7 Optional hints",
       "size": 23
     },
     {
@@ -4542,7 +3706,7 @@
         760,
         15.180000000000001
       ],
-      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "text": "Cover the rows below the hint you are reading.",
       "size": 11.5
     },
     {
@@ -4574,182 +3738,363 @@
       "kind": "text",
       "box": [
         40,
+        133,
+        48,
+        15.84
+      ],
+      "text": "A5",
+      "size": 12
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        133,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H1 Notice</b>  Only the direction of the last interval changes.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        157,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H2 Model</b>  Sketch the two graphs with the same scales.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        181,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H3 Start</b>  Calculate the common first area: (+3 m/s) \u00d7 (4 s).",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        687,
+        206,
+        106,
+        13.860000000000001
+      ],
+      "text": "Return \u00b7 p. 8",
+      "size": 10.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        40,
+        232,
+        48,
+        15.84
+      ],
+      "text": "A6",
+      "size": 12
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        232,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H1 Notice</b>  Read the duration of each horizontal segment.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        256,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H2 Model</b>  Separate the two rectangular regions at t = 2 s.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        280,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H3 Start</b>  For the first region, write (+4) \u00d7 (2 \u2212 0).",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        687,
+        305,
+        106,
+        13.860000000000001
+      ],
+      "text": "Return \u00b7 p. 9",
+      "size": 10.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        40,
+        331,
+        48,
+        15.84
+      ],
+      "text": "A7",
+      "size": 12
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        331,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H1 Notice</b>  The starting coordinate is separate from the displacement.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        355,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H2 Model</b>  Pair the graph regions with right, stopped and left motion arrows.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        379,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H3 Start</b>  The final region has duration 7 \u2212 3 s.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        687,
+        404,
+        106,
+        13.860000000000001
+      ],
+      "text": "Return \u00b7 p. 10",
+      "size": 10.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        40,
+        430,
+        48,
+        15.84
+      ],
+      "text": "A8",
+      "size": 12
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        430,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H1 Notice</b>  Locate the zero crossing before calculating areas.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        454,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H2 Model</b>  Use the straight-line change to split the graph into two triangles.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        98,
+        478,
+        640,
+        15.180000000000001
+      ],
+      "text": "<b>H3 Start</b>  The velocity decreases by 8 \u00f7 4 m/s each second.",
+      "size": 11.5
+    },
+    {
+      "page": 16,
+      "kind": "text",
+      "box": [
+        687,
+        503,
+        106,
+        13.860000000000001
+      ],
+      "text": "Return \u00b7 p. 11",
+      "size": 10.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        26,
+        750,
+        13.860000000000001
+      ],
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
+      "size": 10.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        49,
+        760,
+        30.360000000000003
+      ],
+      "text": "Appendix B \u00b7 Full solutions",
+      "size": 23
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        85,
+        760,
+        15.180000000000001
+      ],
+      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "size": 11.5
+    },
+    {
+      "page": 17,
+      "kind": "label",
+      "box": [
+        40,
+        568.2755905511812,
+        153.025146484375,
+        10.924999999999999
+      ],
+      "text": "MOTION  \u2022  Reason and transfer",
+      "size": 9.5
+    },
+    {
+      "page": 17,
+      "kind": "label",
+      "box": [
+        781.8897637795277,
+        568.2755905511812,
+        12.08837890625,
+        10.924999999999999
+      ],
+      "text": "17",
+      "size": 9.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
         132,
         751,
         15.180000000000001
       ],
-      "text": "A7  Graph +4 m/s for 2 s, rest 1 s, then \u22121 m/s for 4 s; start \u22125 m.",
+      "text": "QUESTION RECAP \u00b7 A1  Start +1 m; 5 m left, then 3 m right.",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 17,
       "kind": "text",
       "box": [
         40,
         169,
-        438,
+        752,
         14.3
       ],
-      "text": "<b>Why.</b> Rest adds no displacement. Final position is start plus signed change.",
+      "text": "<b>WHY THIS WORKS.</b> Position changes carry direction; path lengths do not.",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 17,
       "kind": "text",
       "box": [
         40,
         187.3,
-        438,
-        28.6
+        752,
+        42.900000000000006
       ],
-      "text": "<b>Method.</b> Areas are +8 m, 0 m and \u22124 m. Add their sizes for distance and their signed values for displacement. Then add the change to \u22125 m.",
+      "text": "<b>METHOD.</b> Track the walk step by step: start at +1 m, walk 5 m left to reach 1 \u2212 5, then walk 3 m right to reach the final position, 1 \u2212 5 + 3. Distance simply adds both leg lengths, 5 + 3, while displacement compares only the final position to the start, \u22121 \u2212 (+1).",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 17,
       "kind": "text",
       "box": [
         40,
-        219.9,
-        438,
+        234.20000000000002,
+        752,
         14.3
       ],
-      "text": "<b>Answer / check.</b> Distance 12 m; displacement +4 m; final position \u22121 m.",
+      "text": "<b>ANSWER / CHECK.</b> Final position \u22121 m; distance 8 m; displacement \u22122 m (left).",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 17,
       "kind": "text",
       "box": [
         40,
-        238.20000000000002,
-        438,
+        252.50000000000003,
+        752,
         14.3
       ],
-      "text": "<b>Keep.</b> A positive displacement can finish at a negative coordinate.",
+      "text": "<b>CONCEPT TO KEEP.</b> The final coordinate is not automatically the displacement.",
       "size": 11.5
     },
     {
-      "page": 16,
-      "kind": "figure",
-      "id": "B80-A7-F",
-      "box": [
-        511,
-        168,
-        280,
-        155
-      ]
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        552.0,
-        292,
-        6.680419921875,
-        12.075
-      ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        612.0,
-        292,
-        6.680419921875,
-        12.075
-      ],
-      "text": "2",
-      "size": 10.5
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        642.0,
-        292,
-        6.680419921875,
-        12.075
-      ],
-      "text": "3",
-      "size": 10.5
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        762.0,
-        292,
-        6.680419921875,
-        12.075
-      ],
-      "text": "7",
-      "size": 10.5
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        524,
-        265.85714285714283,
-        10.46923828125,
-        12.075
-      ],
-      "text": "-1",
-      "size": 10.5
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        524,
-        253.71428571428572,
-        6.680419921875,
-        12.075
-      ],
-      "text": "0",
-      "size": 10.5
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        524,
-        205.14285714285717,
-        15.478271484375002,
-        12.075
-      ],
-      "text": "+4",
-      "size": 10.5
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        527,
-        170,
-        85.228515625,
-        12.649999999999999
-      ],
-      "text": "velocity v (m/s)",
-      "size": 11
-    },
-    {
-      "page": 16,
-      "kind": "label",
-      "box": [
-        697,
-        309,
-        50.47216796875,
-        12.649999999999999
-      ],
-      "text": "time t (s)",
-      "size": 11
-    },
-    {
-      "page": 16,
+      "page": 17,
       "kind": "text",
       "box": [
         40,
@@ -4757,11 +4102,11 @@
         135,
         13.860000000000001
       ],
-      "text": "Return to A7 \u00b7 p. 9",
+      "text": "Return to A1 \u00b7 p. 6",
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 17,
       "kind": "text",
       "box": [
         200,
@@ -4769,11 +4114,11 @@
         167,
         13.860000000000001
       ],
-      "text": "Lesson \u00b7 p. 4",
+      "text": "Lesson \u00b7 p. 1",
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 17,
       "kind": "text",
       "box": [
         40,
@@ -4781,11 +4126,467 @@
         751,
         15.180000000000001
       ],
-      "text": "A8  Velocity falls linearly from +6 to \u22122 m/s over 4 s.",
+      "text": "QUESTION RECAP \u00b7 A2  Move from \u22122 m to +5 m with no reversal.",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        370,
+        752,
+        14.3
+      ],
+      "text": "<b>WHY THIS WORKS.</b> The route goes 2 m to zero and another 5 m right.",
+      "size": 11.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        388.3,
+        752,
+        28.6
+      ],
+      "text": "<b>METHOD.</b> Distance adds the two legs of the actual path travelled: 2 m to reach zero, then 5 m more to +5 m, giving 2 + 5. Displacement instead compares only the two endpoints, final position minus initial position: +5 \u2212 (\u22122).",
+      "size": 11.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        420.90000000000003,
+        752,
+        14.3
+      ],
+      "text": "<b>ANSWER / CHECK.</b> Distance 7 m; displacement +7 m (right).",
+      "size": 11.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        439.20000000000005,
+        752,
+        14.3
+      ],
+      "text": "<b>CONCEPT TO KEEP.</b> Equal distance and displacement size require no reversal in this straight-line journey.",
+      "size": 11.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        40,
+        509,
+        135,
+        13.860000000000001
+      ],
+      "text": "Return to A2 \u00b7 p. 6",
+      "size": 10.5
+    },
+    {
+      "page": 17,
+      "kind": "text",
+      "box": [
+        200,
+        509,
+        167,
+        13.860000000000001
+      ],
+      "text": "Lesson \u00b7 p. 1",
+      "size": 10.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        26,
+        750,
+        13.860000000000001
+      ],
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
+      "size": 10.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        49,
+        760,
+        30.360000000000003
+      ],
+      "text": "Appendix B \u00b7 Full solutions",
+      "size": 23
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        85,
+        760,
+        15.180000000000001
+      ],
+      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "label",
+      "box": [
+        40,
+        568.2755905511812,
+        153.025146484375,
+        10.924999999999999
+      ],
+      "text": "MOTION  \u2022  Reason and transfer",
+      "size": 9.5
+    },
+    {
+      "page": 18,
+      "kind": "label",
+      "box": [
+        781.8897637795277,
+        568.2755905511812,
+        12.08837890625,
+        10.924999999999999
+      ],
+      "text": "18",
+      "size": 9.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        132,
+        751,
+        15.180000000000001
+      ],
+      "text": "QUESTION RECAP \u00b7 A3  Same start 0 m and finish +4 m; compare possible distances.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        169,
+        752,
+        14.3
+      ],
+      "text": "<b>WHY THIS WORKS.</b> Endpoints fix displacement but leave the path undecided.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        187.3,
+        752,
+        14.3
+      ],
+      "text": "<b>METHOD.</b> One can go directly 0 \u2192 +4. Another can go 0 \u2192 +7 \u2192 +4. Their paths are 4 m and 7 + 3 m.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        205.60000000000002,
+        752,
+        14.3
+      ],
+      "text": "<b>ANSWER / CHECK.</b> No. These distances are 4 m and 10 m; both displacements are +4 m.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        223.90000000000003,
+        752,
+        14.3
+      ],
+      "text": "<b>CONCEPT TO KEEP.</b> A drawing can disprove an \u201calways\u201d claim.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        308,
+        135,
+        13.860000000000001
+      ],
+      "text": "Return to A3 \u00b7 p. 7",
+      "size": 10.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        200,
+        308,
+        167,
+        13.860000000000001
+      ],
+      "text": "Lesson \u00b7 p. 1",
+      "size": 10.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        333,
+        751,
+        15.180000000000001
+      ],
+      "text": "QUESTION RECAP \u00b7 A4  Route \u22123 \u2192 +5 \u2192 +1 m; then shift every coordinate by +10 m.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        370,
+        752,
+        14.3
+      ],
+      "text": "<b>WHY THIS WORKS.</b> Displacement is a coordinate difference, so a common shift cancels.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        388.3,
+        752,
+        14.3
+      ],
+      "text": "<b>METHOD.</b> Path lengths: 5 \u2212 (\u22123) = 8 m and 5 \u2212 1 = 4 m. \u0394x = 1 \u2212 (\u22123) = +4 m. Shifted endpoints are +7 m and +11 m.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        406.6,
+        752,
+        14.3
+      ],
+      "text": "<b>ANSWER / CHECK.</b> Distance 12 m and displacement +4 m for both origins. Positions change.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        424.90000000000003,
+        752,
+        14.3
+      ],
+      "text": "<b>CONCEPT TO KEEP.</b> A reference origin changes position values, not a fixed journey.",
+      "size": 11.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        40,
+        509,
+        135,
+        13.860000000000001
+      ],
+      "text": "Return to A4 \u00b7 p. 7",
+      "size": 10.5
+    },
+    {
+      "page": 18,
+      "kind": "text",
+      "box": [
+        200,
+        509,
+        167,
+        13.860000000000001
+      ],
+      "text": "Lesson \u00b7 p. 1",
+      "size": 10.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        26,
+        750,
+        13.860000000000001
+      ],
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
+      "size": 10.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        49,
+        760,
+        30.360000000000003
+      ],
+      "text": "Appendix B \u00b7 Full solutions",
+      "size": 23
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        85,
+        760,
+        15.180000000000001
+      ],
+      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "size": 11.5
+    },
+    {
+      "page": 19,
+      "kind": "label",
+      "box": [
+        40,
+        568.2755905511812,
+        153.025146484375,
+        10.924999999999999
+      ],
+      "text": "MOTION  \u2022  Reason and transfer",
+      "size": 9.5
+    },
+    {
+      "page": 19,
+      "kind": "label",
+      "box": [
+        781.8897637795277,
+        568.2755905511812,
+        12.08837890625,
+        10.924999999999999
+      ],
+      "text": "19",
+      "size": 9.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        132,
+        751,
+        15.180000000000001
+      ],
+      "text": "QUESTION RECAP \u00b7 A5  A: +3 for 4 s, then +2 for 2 s. B: last velocity becomes \u22122 m/s.",
+      "size": 11.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        169,
+        752,
+        14.3
+      ],
+      "text": "<b>WHY THIS WORKS.</b> Reversing the second velocity changes the area sign, not its size.",
+      "size": 11.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        187.3,
+        752,
+        28.6
+      ],
+      "text": "<b>METHOD.</b> First area is +12 m in both. The last area is +4 m in A and \u22124 m in B. Add signs for displacement and sizes for distance.",
+      "size": 11.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        219.9,
+        752,
+        14.3
+      ],
+      "text": "<b>ANSWER / CHECK.</b> A: \u0394x = +16 m, distance 16 m. B: \u0394x = +8 m, distance 16 m.",
+      "size": 11.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        238.20000000000002,
+        752,
+        14.3
+      ],
+      "text": "<b>CONCEPT TO KEEP.</b> A sign change can alter the endpoint without altering total path.",
+      "size": 11.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        308,
+        135,
+        13.860000000000001
+      ],
+      "text": "Return to A5 \u00b7 p. 8",
+      "size": 10.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        200,
+        308,
+        167,
+        13.860000000000001
+      ],
+      "text": "Lesson \u00b7 p. 2",
+      "size": 10.5
+    },
+    {
+      "page": 19,
+      "kind": "text",
+      "box": [
+        40,
+        333,
+        751,
+        15.180000000000001
+      ],
+      "text": "QUESTION RECAP \u00b7 A6  Graph: +4 m/s from 0\u20132 s, then \u22122 m/s from 2\u20135 s.",
+      "size": 11.5
+    },
+    {
+      "page": 19,
       "kind": "text",
       "box": [
         40,
@@ -4793,11 +4594,11 @@
         438,
         28.6
       ],
-      "text": "<b>Why.</b> Reversal occurs where velocity changes sign; split the signed area there.",
+      "text": "<b>WHY THIS WORKS.</b> Graph widths are durations. The second width is 5 \u2212 2 = 3 s.",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "text",
       "box": [
         40,
@@ -4805,37 +4606,37 @@
         438,
         28.6
       ],
-      "text": "<b>Method.</b> Velocity falls 8 m/s in 4 s. It reaches zero after 6 \u00f7 2 = 3 s. Areas: +\u00bd \u00d7 3 \u00d7 6 = +9 m; \u2212\u00bd \u00d7 1 \u00d7 2 = \u22121 m.",
+      "text": "<b>METHOD.</b> Signed areas are +4 \u00d7 2 = +8 m and \u22122 \u00d7 3 = \u22126 m. For distance count both path lengths.",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "text",
       "box": [
         40,
         435.20000000000005,
         438,
-        14.3
+        28.6
       ],
-      "text": "<b>Answer / check.</b> Displacement +8 m; distance 10 m; reversal at 3 s.",
+      "text": "<b>ANSWER / CHECK.</b> Displacement +2 m; distance 14 m. The parts mean 8 m right and 6 m left.",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "text",
       "box": [
         40,
-        453.50000000000006,
+        467.80000000000007,
         438,
         28.6
       ],
-      "text": "<b>Keep.</b> Equal endpoint signs are not the test; inspect the sign throughout the interval.",
+      "text": "<b>CONCEPT TO KEEP.</b> Read each width from its endpoints before multiplying.",
       "size": 11.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "figure",
-      "id": "B80-A8-F",
+      "id": "B80-A6-F",
       "box": [
         511,
         369,
@@ -4844,7 +4645,7 @@
       ]
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
         552.0,
@@ -4856,19 +4657,19 @@
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
-        709.5,
+        636.0,
         493,
         6.680419921875,
         12.075
       ],
-      "text": "3",
+      "text": "2",
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
         762.0,
@@ -4876,15 +4677,15 @@
         6.680419921875,
         12.075
       ],
-      "text": "4",
+      "text": "5",
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
         524,
-        470.5,
+        468.375,
         10.46923828125,
         12.075
       ],
@@ -4892,11 +4693,11 @@
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
         524,
-        453.5,
+        447.125,
         6.680419921875,
         12.075
       ],
@@ -4904,19 +4705,19 @@
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
         524,
-        402.5,
+        404.625,
         15.478271484375002,
         12.075
       ],
-      "text": "+6",
+      "text": "+4",
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
         527,
@@ -4928,7 +4729,7 @@
       "size": 11
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "label",
       "box": [
         697,
@@ -4940,7 +4741,7 @@
       "size": 11
     },
     {
-      "page": 16,
+      "page": 19,
       "kind": "text",
       "box": [
         40,
@@ -4948,11 +4749,465 @@
         135,
         13.860000000000001
       ],
-      "text": "Return to A8 \u00b7 p. 9",
+      "text": "Return to A6 \u00b7 p. 9",
       "size": 10.5
     },
     {
-      "page": 16,
+      "page": 19,
+      "kind": "text",
+      "box": [
+        200,
+        509,
+        167,
+        13.860000000000001
+      ],
+      "text": "Lesson \u00b7 p. 2",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        26,
+        750,
+        13.860000000000001
+      ],
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        49,
+        760,
+        30.360000000000003
+      ],
+      "text": "Appendix B \u00b7 Full solutions",
+      "size": 23
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        85,
+        760,
+        15.180000000000001
+      ],
+      "text": "If a step surprised you, revisit the linked lesson and explain its picture.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        40,
+        568.2755905511812,
+        153.025146484375,
+        10.924999999999999
+      ],
+      "text": "MOTION  \u2022  Reason and transfer",
+      "size": 9.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        781.8897637795277,
+        568.2755905511812,
+        12.08837890625,
+        10.924999999999999
+      ],
+      "text": "20",
+      "size": 9.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        132,
+        751,
+        15.180000000000001
+      ],
+      "text": "QUESTION RECAP \u00b7 A7  Graph +4 m/s for 2 s, rest 1 s, then \u22121 m/s for 4 s; start \u22125 m.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        169,
+        438,
+        28.6
+      ],
+      "text": "<b>WHY THIS WORKS.</b> Rest adds no displacement. Final position is start plus signed change.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        201.6,
+        438,
+        28.6
+      ],
+      "text": "<b>METHOD.</b> Areas are +8 m, 0 m and \u22124 m. Add their sizes for distance and their signed values for displacement. Then add the change to \u22125 m.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        234.2,
+        438,
+        28.6
+      ],
+      "text": "<b>ANSWER / CHECK.</b> Distance 12 m; displacement +4 m; final position \u22121 m.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        266.8,
+        438,
+        28.6
+      ],
+      "text": "<b>CONCEPT TO KEEP.</b> A positive displacement can finish at a negative coordinate.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "figure",
+      "id": "B80-A7-F",
+      "box": [
+        511,
+        168,
+        280,
+        155
+      ]
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        552.0,
+        292,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        612.0,
+        292,
+        6.680419921875,
+        12.075
+      ],
+      "text": "2",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        642.0,
+        292,
+        6.680419921875,
+        12.075
+      ],
+      "text": "3",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        762.0,
+        292,
+        6.680419921875,
+        12.075
+      ],
+      "text": "7",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        524,
+        265.85714285714283,
+        10.46923828125,
+        12.075
+      ],
+      "text": "-1",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        524,
+        253.71428571428572,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        524,
+        205.14285714285717,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+4",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        527,
+        170,
+        85.228515625,
+        12.649999999999999
+      ],
+      "text": "velocity v (m/s)",
+      "size": 11
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        697,
+        309,
+        50.47216796875,
+        12.649999999999999
+      ],
+      "text": "time t (s)",
+      "size": 11
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        308,
+        135,
+        13.860000000000001
+      ],
+      "text": "Return to A7 \u00b7 p. 10",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        200,
+        308,
+        167,
+        13.860000000000001
+      ],
+      "text": "Lesson \u00b7 p. 4",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        333,
+        751,
+        15.180000000000001
+      ],
+      "text": "QUESTION RECAP \u00b7 A8  Velocity falls linearly from +6 to \u22122 m/s over 4 s.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        370,
+        438,
+        28.6
+      ],
+      "text": "<b>WHY THIS WORKS.</b> Reversal occurs where velocity changes sign; split the signed area there.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        402.6,
+        438,
+        28.6
+      ],
+      "text": "<b>METHOD.</b> Velocity falls 8 m/s in 4 s. It reaches zero after 6 \u00f7 2 = 3 s. Areas: +\u00bd \u00d7 3 \u00d7 6 = +9 m; \u2212\u00bd \u00d7 1 \u00d7 2 = \u22121 m.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        435.20000000000005,
+        438,
+        14.3
+      ],
+      "text": "<b>ANSWER / CHECK.</b> Displacement +8 m; distance 10 m; reversal at 3 s.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        453.50000000000006,
+        438,
+        28.6
+      ],
+      "text": "<b>CONCEPT TO KEEP.</b> Equal endpoint signs are not the test; inspect the sign throughout the interval.",
+      "size": 11.5
+    },
+    {
+      "page": 20,
+      "kind": "figure",
+      "id": "B80-A8-F",
+      "box": [
+        511,
+        369,
+        280,
+        155
+      ]
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        552.0,
+        493,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        709.5,
+        493,
+        6.680419921875,
+        12.075
+      ],
+      "text": "3",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        762.0,
+        493,
+        6.680419921875,
+        12.075
+      ],
+      "text": "4",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        524,
+        470.5,
+        10.46923828125,
+        12.075
+      ],
+      "text": "-2",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        524,
+        453.5,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        524,
+        402.5,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+6",
+      "size": 10.5
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        527,
+        371,
+        85.228515625,
+        12.649999999999999
+      ],
+      "text": "velocity v (m/s)",
+      "size": 11
+    },
+    {
+      "page": 20,
+      "kind": "label",
+      "box": [
+        697,
+        510,
+        50.47216796875,
+        12.649999999999999
+      ],
+      "text": "time t (s)",
+      "size": 11
+    },
+    {
+      "page": 20,
+      "kind": "text",
+      "box": [
+        40,
+        509,
+        135,
+        13.860000000000001
+      ],
+      "text": "Return to A8 \u00b7 p. 11",
+      "size": 10.5
+    },
+    {
+      "page": 20,
       "kind": "text",
       "box": [
         200,
@@ -4962,6 +5217,604 @@
       ],
       "text": "Lesson \u00b7 p. 3",
       "size": 10.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        26,
+        750,
+        13.860000000000001
+      ],
+      "text": "B80-MIXED-01",
+      "size": 10.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        49,
+        760,
+        30.360000000000003
+      ],
+      "text": "Mixed transfer \u00b7 Mark and diagnose",
+      "size": 23
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        85,
+        760,
+        15.180000000000001
+      ],
+      "text": "Reveal these pages only after completing the mixed set.",
+      "size": 11.5
+    },
+    {
+      "page": 21,
+      "kind": "label",
+      "box": [
+        40,
+        568.2755905511812,
+        153.025146484375,
+        10.924999999999999
+      ],
+      "text": "MOTION  \u2022  Reason and transfer",
+      "size": 9.5
+    },
+    {
+      "page": 21,
+      "kind": "label",
+      "box": [
+        781.8897637795277,
+        568.2755905511812,
+        12.08837890625,
+        10.924999999999999
+      ],
+      "text": "21",
+      "size": 9.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        135,
+        500,
+        15.84
+      ],
+      "text": "Question 1 \u00b7 Displacement",
+      "size": 12
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        159,
+        610,
+        15.180000000000001
+      ],
+      "text": "If this answer was weak, use the linked solution and its repair route before retrying.",
+      "size": 11.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        650,
+        153,
+        140,
+        13.860000000000001
+      ],
+      "text": "Solution \u00b7 p. 17",
+      "size": 10.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        221,
+        500,
+        15.84
+      ],
+      "text": "Question 2 \u00b7 Distance",
+      "size": 12
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        245,
+        610,
+        15.180000000000001
+      ],
+      "text": "If this answer was weak, use the linked solution and its repair route before retrying.",
+      "size": 11.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        650,
+        239,
+        140,
+        13.860000000000001
+      ],
+      "text": "Solution \u00b7 p. 17",
+      "size": 10.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        307,
+        500,
+        15.84
+      ],
+      "text": "Question 3 \u00b7 Signed v-t Area (Displacement)",
+      "size": 12
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        331,
+        610,
+        15.180000000000001
+      ],
+      "text": "If this answer was weak, use the linked solution and its repair route before retrying.",
+      "size": 11.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        650,
+        325,
+        140,
+        13.860000000000001
+      ],
+      "text": "Solution \u00b7 p. 19",
+      "size": 10.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        393,
+        500,
+        15.84
+      ],
+      "text": "Question 4 \u00b7 v-t Area Magnitudes (Distance)",
+      "size": 12
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        40,
+        417,
+        610,
+        15.180000000000001
+      ],
+      "text": "If this answer was weak, use the linked solution and its repair route before retrying.",
+      "size": 11.5
+    },
+    {
+      "page": 21,
+      "kind": "text",
+      "box": [
+        650,
+        411,
+        140,
+        13.860000000000001
+      ],
+      "text": "Solution \u00b7 p. 19",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        26,
+        750,
+        13.860000000000001
+      ],
+      "text": "PRINTABLE HANDOUT",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        49,
+        760,
+        30.360000000000003
+      ],
+      "text": "Appendix C \u00b7 Keep the picture, rebuild the rule",
+      "size": 23
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        85,
+        760,
+        15.180000000000001
+      ],
+      "text": "Right is positive. Cover the words and explain each diagram aloud.",
+      "size": 11.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        40,
+        568.2755905511812,
+        153.025146484375,
+        10.924999999999999
+      ],
+      "text": "MOTION  \u2022  Reason and transfer",
+      "size": 9.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        781.8897637795277,
+        568.2755905511812,
+        12.08837890625,
+        10.924999999999999
+      ],
+      "text": "22",
+      "size": 9.5
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        132,
+        365,
+        19.8
+      ],
+      "text": "1  Distance and displacement",
+      "size": 15
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        445,
+        132,
+        355,
+        19.8
+      ],
+      "text": "2  Reading a velocity\u2013time graph",
+      "size": 15
+    },
+    {
+      "page": 22,
+      "kind": "figure",
+      "id": "HAND-ROUTE",
+      "box": [
+        40,
+        163,
+        360,
+        150
+      ]
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        61.6597900390625,
+        253.5,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        133.5108642578125,
+        253.5,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+2",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        209.7608642578125,
+        253.5,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+4",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        286.0108642578125,
+        253.5,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+6",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        362.2608642578125,
+        253.5,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+8",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        58,
+        301,
+        72.900146484375,
+        12.075
+      ],
+      "text": "position x (m)",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        51.0,
+        271.5,
+        24.45556640625,
+        12.075
+      ],
+      "text": "start",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        203.5,
+        271.5,
+        28.31103515625,
+        12.075
+      ],
+      "text": "finish",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "figure",
+      "id": "HAND-GRAPH",
+      "box": [
+        438,
+        163,
+        360,
+        150
+      ]
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        479.0,
+        282,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        672.3333333333333,
+        282,
+        6.680419921875,
+        12.075
+      ],
+      "text": "4",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        769.0,
+        282,
+        6.680419921875,
+        12.075
+      ],
+      "text": "6",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        451,
+        254.66666666666669,
+        10.46923828125,
+        12.075
+      ],
+      "text": "-1",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        451,
+        241.33333333333334,
+        6.680419921875,
+        12.075
+      ],
+      "text": "0",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        451,
+        201.33333333333331,
+        15.478271484375002,
+        12.075
+      ],
+      "text": "+3",
+      "size": 10.5
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        454,
+        165,
+        85.228515625,
+        12.649999999999999
+      ],
+      "text": "velocity v (m/s)",
+      "size": 11
+    },
+    {
+      "page": 22,
+      "kind": "label",
+      "box": [
+        704,
+        299,
+        50.47216796875,
+        12.649999999999999
+      ],
+      "text": "time t (s)",
+      "size": 11
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        330,
+        360,
+        31.68
+      ],
+      "text": "<b>Distance:</b> add every path length.<br/><b>Displacement:</b> the signed endpoint change.",
+      "size": 12
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        371.68,
+        360,
+        22.44
+      ],
+      "text": "\u0394x = x<sub>f</sub> \u2212 x<sub>i</sub>",
+      "size": 17
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        404.12,
+        360,
+        31.68
+      ],
+      "text": "\u0394x: displacement; x<sub>i</sub>: initial position;<br/>x<sub>f</sub>: final position. Here, distance is 8 m and \u0394x is +4 m.",
+      "size": 12
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        40,
+        445.8,
+        360,
+        31.68
+      ],
+      "text": "<b>Check:</b> distance \u2265 |\u0394x|. Bars mean size.<br/><b>Rebuild:</b> trace the path, then compare its endpoints.",
+      "size": 12
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        445,
+        330,
+        353,
+        31.68
+      ],
+      "text": "<b>Displacement:</b> add signed areas.<br/><b>Distance:</b> add all the area sizes. Split at zero crossings.",
+      "size": 12
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        445,
+        371.68,
+        353,
+        22.44
+      ],
+      "text": "Rectangle: v \u00d7 duration",
+      "size": 17
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        445,
+        404.12,
+        353,
+        31.68
+      ],
+      "text": "Triangle size: \u00bd \u00d7 base \u00d7 height.<br/>Graph above: \u0394x = +10 m; distance 14 m.",
+      "size": 12
+    },
+    {
+      "page": 22,
+      "kind": "text",
+      "box": [
+        445,
+        445.8,
+        353,
+        63.36
+      ],
+      "text": "<b>Check:</b> (m/s) \u00d7 s = m. Use a rectangle for constant velocity. Use \u00bd \u00d7 base \u00d7 height only for a triangular region; other straight segments may need rectangle + triangle.",
+      "size": 12
     }
   ]
 }

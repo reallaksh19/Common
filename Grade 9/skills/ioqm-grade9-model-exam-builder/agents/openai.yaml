@@ -1,0 +1,4 @@
+interface:
+  display_name: "IOQM Grade 9 Model Exam Builder"
+  short_description: "Build reproducible IOQM-style model examinations"
+  default_prompt: "Use $ioqm-grade9-model-exam-builder to build and verify an IOQM-style Grade 9 model examination."

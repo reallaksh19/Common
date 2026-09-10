@@ -5,13 +5,15 @@
 | Read | Purpose |
 |---|---|
 | [Review guide](REVIEW_GUIDE.md) | Page-indexed routes, reviewer roles and comment format |
-| [B30 learner book](Motion_B30_Rebuilt.pdf) | 21 pages: pictures, prerequisite repair, guided work and independent practice |
-| [B80 learner book](Motion_B80_Rebuilt.pdf) | 16 pages: explanatory depictions, model comparison and transfer |
-| [Optional-hint practice](Motion_Optional_Hint_Practice.pdf) | 10-page original-question layout demonstration |
+| [B30 learner book](Motion_B30_Rebuilt.pdf) | 27 pages: pictures, prerequisite repair, guided work, independent practice and concept-hidden mixed transfer |
+| [B80 learner book](Motion_B80_Rebuilt.pdf) | 22 pages: explanatory depictions, model comparison, transfer and post-marking diagnosis |
+| [Optional-hint practice](Motion_Optional_Hint_Practice.pdf) | 16-page original-question layout demonstration with mixed-transfer surface |
 | [Review and adaptation record](Physics_Rebuild_Review.md) | Reference comparison, retained/rejected skill rules, findings and repairs |
 | [Concept map](CONCEPT_REVIEW_MAP.md) | Same four concept claims across both support profiles |
 | [Reproduction instructions](REPRODUCE.md) | Build, schema, model, numerical and PDF checks |
 | [Audit](Physics_Rebuild_Audit.json) | Frozen PDF/model hashes and prior review evidence |
+| [Machine evidence](review_evidence.json) | Real command results bound to exact dependency and artifact hashes |
+| [Visual evidence](visual_review_evidence.json) | Reviewer attestation bound to exact PDF hashes, page counts and render DPI |
 | [Delivery record](DELIVERY_RECORD.md) | Repository basis, packaging checks, scope and next action |
 
 ## Skills and PDF schema
@@ -25,6 +27,8 @@
 
 The new skills adapt existing Physics/publication authorities. They do not replace the chapter's 68-question source map. This pilot covers **distance/displacement** and **signed velocity–time area** with authored examples. The practice PDF is not an assimilated ExamSIDE/PYQ corpus. B30/B80 denote provisional support profiles, not measured mastery. The skill specifies B90 depiction requirements; this batch contains no B90 PDF. Board-specific Grade 9–11 coverage and classroom effectiveness remain unverified. Mathematics and Chemistry await separate approval.
 
+The rebuilt Core PDFs now execute the complete appendix order: Appendix A Core practice, Appendix B optional hints/full solutions, and Appendix C printable handout. Production topic builds must go further and emit exactly two reciprocal files—a `CORE_STUDY_GUIDE` and source-grounded `EXAMSIDE_SOLUTION_BOOK`. This bounded original-question pilot demonstrates the renderer but does not claim that real ExamSIDE pair.
+
 ## Originals and backup
 
 - [Reference Unit 9 PDF](sources/Reference_Motion_Unit9_Full_Batch.pdf)
@@ -33,6 +37,6 @@ The new skills adapt existing Physics/publication authorities. They do not repla
 - [Historical architecture note](sources/Original_Architecture_Concept_Note.docx), [extracted text](sources/Original_Architecture_Concept_Note_text.md) and [original archive](sources/Original_Architecture_Concept_Note.zip)
 - [Before-rebuild backup](Physics_Before_Rebuild_Backup.zip), including prior approval drafts and a hash manifest
 
-Historical files are comparison evidence, not active instructions for the new renderer. [FILE_MANIFEST.json](FILE_MANIFEST.json) records SHA-256 hashes for this package and its two skills; it excludes itself and the delivery record to avoid self-reference.
+Historical files are comparison evidence, not active instructions for the new renderer. [FILE_MANIFEST.json](FILE_MANIFEST.json) records SHA-256 hashes for the live skill tree, shared contracts, router/install validators, and the complete Motion package; it excludes itself and the historical delivery record to avoid self-reference. `run_review_checks.py` captures the focused test executions, `record_visual_review.py` binds human inspection to exact PDFs, and `verify_review_package.py` recomputes the dependency/evidence/model/PDF/audit/summary/manifest chain.
 
 Related work: [PR #151](https://github.com/reallaksh19/Common/pull/151) carries four encoded Motion publication chunks. This package does not modify those files or claim their source coverage. Reconcile the two efforts before merging them into one publication workflow.

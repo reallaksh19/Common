@@ -6,8 +6,8 @@ import fitz
 from pypdf import PdfReader
 from validate_v2 import validate
 def audit(model,pdf):
-    d=json.loads(Path(model).read_text());out=validate(d);doc=fitz.open(pdf)
-    layout=json.loads(Path(pdf).with_suffix('.layout.json').read_text());badlinks=[];overlap=[];outside=[]
+    d=json.loads(Path(model).read_text(encoding='utf-8'));out=validate(d);doc=fitz.open(pdf)
+    layout=json.loads(Path(pdf).with_suffix('.layout.json').read_text(encoding='utf-8'));badlinks=[];overlap=[];outside=[]
     for pn,p in enumerate(doc,1):
         for link in p.get_links():
             if link['kind']==fitz.LINK_GOTO and not 0<=link['page']<len(doc):badlinks.append([pn,link])
@@ -34,20 +34,31 @@ def audit(model,pdf):
         uris=[a['/A']['/URI'] for a in annots if '/A' in a and a['/A'].get('/S')=='/URI']
         assert uris==[r['url'] for r in layout.get('external_links',[]) if r['page']==pn],'source URI lost or changed'
     alltext='\n'.join(p.get_text() for p in doc)
-    for q in d['questions']:
+    qb=d['questions'];all_qs=qb['anchors']+qb['core_calibrated']+qb['challenges']
+    for q in all_qs:
         for prefix in ['', 'hint-', 'solution-']:assert prefix+q['id'] in layout['destinations'],'missing question/hint/solution'
-    solution_pages=[v for k,v in layout['destinations'].items() if k.startswith('solution-')]
-    last_question=max(layout['destinations'][q['id']] for q in d['questions'])
-    assert min(solution_pages)>last_question,'answers before questions finish'
-    if d['product']=='core':
-        assert 'Appendix A' in alltext and 'Appendix B' in alltext,'missing appendix heading'
-        assert min(solution_pages)>layout['destinations']['handout'],'solutions must follow handout'
+    for test in d.get('mixed_tests',[]):
+        prefix='mixed-'+test['set_id']+'-'
+        assert any(k.startswith(prefix) for k in layout['destinations']),'mixed test not rendered'
+        assert 'diagnosis-'+test['set_id'] in layout['destinations'],'mixed diagnosis not rendered'
+    solution_pages=[layout['destinations']['solution-'+q['id']] for q in all_qs]
+    if all_qs:
+        last_question=max(layout['destinations'][q['id']] for q in all_qs)
+        assert solution_pages and min(solution_pages)>last_question,'answers before questions finish'
+    else:
+        assert not solution_pages,'assessment-free product rendered solution pages'
+    if d['product'] in ('core','study_guide'):
+        assert all(heading in alltext for heading in ('Appendix A','Appendix B','Appendix C')),'Core Study Guide must render Appendices A-C'
+        assert solution_pages and layout['destinations']['handout']>max(solution_pages),'Appendix C handout must follow Appendix B solutions'
+    if d['product']=='transfer_book':
+        assert 'Appendix A · Full ExamSIDE solutions' in alltext,'ExamSIDE solution appendix missing'
     assert 'PLACEHOLDER' not in alltext and 'Planned figure' not in alltext,'placeholder leak'
     regionfonts=[r['size'] for r in layout['regions'] if r['kind']=='text']
     out.update(pages=len(doc),links=actual_links,broken_links=badlinks,text_overlap_findings=overlap,outside_page=outside,minimum_text_role_size=min(regionfonts),figure_occurrences=sum(r['kind']=='figure' for r in layout['regions']),pdf_sha256=hashlib.sha256(Path(pdf).read_bytes()).hexdigest(),model_sha256=hashlib.sha256(Path(model).read_bytes()).hexdigest(),visual_review='SEPARATE_REVIEW_REQUIRED')
+    doc.close()
     assert not outside,'words outside PDF bounds'
     # Report overlap findings for inspection; a real collision blocks release.
     return out
 if __name__=='__main__':
-    out=audit(sys.argv[1],sys.argv[2]);target=Path(sys.argv[2]).with_suffix('.audit.json');target.write_text(json.dumps(out,indent=2));print(json.dumps(out,indent=2))
+    out=audit(sys.argv[1],sys.argv[2]);target=Path(sys.argv[2]).with_suffix('.audit.json');target.write_text(json.dumps(out,indent=2),encoding='utf-8',newline='\n');print(json.dumps(out,indent=2))
     sys.exit(bool(out['text_overlap_findings']))
