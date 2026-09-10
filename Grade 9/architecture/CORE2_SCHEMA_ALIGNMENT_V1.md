@@ -1,35 +1,37 @@
-# Core (2) Publisher — v1 Contract Alignment Addendum
+# Core (2) Publisher — v1 Frozen Upstream Interface
 
-**Status:** JOINT V1 CONTRACT FREEZE — implementation pending  
+**Status:** JOINT V1 CONTRACT FREEZE — Core (2) implementation pending  
 **Normative schema source:** PR #160 `Grade 9/Architecture/contracts/v1/`  
-**Applies to:** `CORE2_PUBLISHER_CONCEPT_NOTE.md`  
-**Validated by:** `validate_contracts.py` + `validate_handoff.py` in PR #160  
+**Core (2) architecture:** `CORE2_PUBLISHER_CONCEPT_NOTE.md`  
+**Validated upstream by:** `validate_contracts.py` + `validate_handoff.py` in PR #160
 
-Where the earlier Core (2) concept note conflicts with this addendum, this addendum controls for the v1 hand-off.
+This file records the frozen Core (1) → Core (2) interface. The main Core (2) concept note has been normalized to this interface; this document is no longer an override for stale terminology.
 
-## 1. Core (2) canonical input
+---
 
-Core (2) receives the frozen research package plus two downstream targeting inputs:
+## 1. Canonical Core (2) input
 
 ```text
 ResearchBundle + ResearchBundleManifest
-LearnerProfile
-PublicationTarget
++ referenced Source / ExamDemand / QuestionEvidence artifacts
++ approved assets when applicable
++ LearnerProfile
++ PublicationTarget
 ```
 
-Learner Bxx is **not** part of ResearchBundle identity.
-
-Core (2) therefore implements:
+Equivalent formulation:
 
 ```text
 CORE2 = ResearchPackage × LearnerProfile × PublicationTarget
 ```
 
-Changing Bxx or publication purpose normally rebuilds Core (2) only. Changing truth, scope, evidence or supported exam demand versions Core (1).
+Learner Bxx is not part of ResearchBundle identity.
 
-## 2. Frozen upstream package
+---
 
-Core (1) release contains:
+## 2. Frozen package binding
+
+Core (1) release contains, as applicable:
 
 ```text
 <Topic>_Research_Bundle.json
@@ -37,12 +39,12 @@ Core (1) release contains:
 <Topic>_Research_Core.md
 <Topic>_Research_Core.pdf
 <Topic>_Source_Ledger.json
-<Topic>_Exam_Demand_Profile.json          # when applicable
-<Topic>_Question_Evidence_Ledger.json     # when applicable
-approved assets                           # when applicable
+<Topic>_Exam_Demand_Profile.json
+<Topic>_Question_Evidence_Ledger.json
+approved assets
 ```
 
-`ResearchBundle` does not hash itself. `ResearchBundleManifest` binds the released artifacts and contains:
+`ResearchBundleManifest` carries:
 
 ```text
 research_bundle_id
@@ -54,25 +56,64 @@ artifact hashes
 material-view reconciliation
 ```
 
-Core (2) validates the manifest/package binding before publication.
-
-## 3. PublicationTarget package binding
-
-The frozen v1 field is:
+The frozen `PublicationTarget` field is:
 
 ```text
 research_package_digest
 ```
 
-It MUST equal:
+and it MUST equal:
 
 ```text
 ResearchBundleManifest.package_digest
 ```
 
-Do not use the earlier `research_bundle_manifest_digest` wording. The manifest intentionally does not self-hash; the publication target binds to the released research package digest instead.
+The manifest does not self-hash.
 
-## 4. Change-class aware invalidation
+---
+
+## 3. LearnerProfile and PublicationTarget
+
+`LearnerProfile` owns per-subtopic baseline:
+
+```text
+value 0–100
+basis
+confidence
+evidence refs when applicable
+```
+
+`PublicationTarget` owns:
+
+```text
+ResearchBundle ID
+ResearchPackage digest
+LearnerProfile ID
+purpose
+exam/curriculum target when applicable
+requested Study Guide / Transfer Book
+publication profile
+```
+
+Changing Bxx or ordinary publication purpose normally rebuilds Core (2) only.
+
+---
+
+## 4. Scope and canonical knowledge boundary
+
+Core (2) consumes `ScopeGraph` and stable canonical IDs.
+
+It does not promote project research candidates. Promotion remains upstream:
+
+```text
+RESEARCH_CANDIDATE
+→ SUBJECT_AUTHORITY_REVIEW
+→ CANONICAL_PROMOTION_APPROVED
+```
+
+---
+
+## 5. Change-class handling
 
 Core (2) recognizes:
 
@@ -96,54 +137,13 @@ SCOPE        → scope reconciliation; broad/full rebuild by default
 EXAM_DEMAND  → rebuild/revalidate competitive products
 ```
 
-If impact cannot be safely localized, fail closed and require broader revalidation.
+If impact cannot be localized safely, fail closed.
 
-## 5. Scope and canonical-registry boundary
+---
 
-Core (2) consumes project scope from `ScopeGraph` and stable canonical IDs. It must not promote project research candidates into global canonical knowledge.
+## 6. Appendix semantics
 
-Promotion remains outside Core (2):
-
-```text
-RESEARCH_CANDIDATE
-→ SUBJECT_AUTHORITY_REVIEW
-→ CANONICAL_PROMOTION
-```
-
-## 6. LearnerProfile
-
-Bxx belongs to `LearnerProfile`, with per-subtopic:
-
-```text
-value 0–100
-basis
-confidence
-evidence refs when applicable
-```
-
-Core (2) applies Bxx to scaffolding, exposition density, prerequisite repair, worked-example depth and transfer timing. It must not reinterpret Bxx as exam difficulty, intelligence or psychometric mastery.
-
-## 7. PublicationTarget
-
-`PublicationTarget` binds:
-
-```text
-ResearchBundle ID
-ResearchPackage digest
-LearnerProfile ID
-purpose
-exam/curriculum target when applicable
-requested Study Guide / Transfer Book
-publication profile
-```
-
-A competitive publication request is valid only when the requested exam demand is supported by the ResearchBundle/ExamDemand evidence. Otherwise return `CORE1_RESEARCH_GAP`.
-
-The v1 schema also requires at least one learner product and requires an exam profile for competitive/foundation/mock purposes.
-
-## 8. Appendix semantics
-
-Freeze the shared Study Guide semantics as:
+Frozen shared Study Guide semantics:
 
 ```text
 Appendix A — Core Practice
@@ -151,21 +151,17 @@ Appendix B — Core Solutions
 Appendix C — Printable Handout
 ```
 
-`first_step_reference` is a module/profile inside Appendix C, not the identity of Appendix C itself.
+`first_step_reference` is a module/profile inside Appendix C.
 
-Subject profiles may require different handout modules, for example:
+---
 
-```text
-Mathematics: first moves / invariants / decision router
-Physics: first moves / models / diagram cues / equation conditions
-Chemistry: process cues / representation links / conditions / common traps
-```
+## 7. Shared Representation Layer
 
-## 9. Shared Representation Layer
+The cross-subject rendering subsystem is named:
 
-Rename the cross-subject rendering subsystem from **Scientific Representation Core** to **Shared Representation Layer**.
+> **Shared Representation Layer**
 
-Core (1) owns `RepresentationRequirement` semantics:
+Core (1) `RepresentationRequirement` owns semantic obligations:
 
 ```text
 what must be shown
@@ -188,11 +184,13 @@ grayscale behavior
 render QA
 ```
 
-The layer must support Mathematics as well as Physics/Chemistry, including proof/construction/graph/case structures where implemented.
+An upstream representation type does not imply renderer support. Unsupported required representations fail closed.
 
-## 10. Material traceability
+---
 
-100% research linkage applies to material semantic objects:
+## 8. Material traceability
+
+100% research linkage applies to:
 
 ```text
 MATERIAL_CLAIM
@@ -211,32 +209,54 @@ PEDAGOGICAL_CONNECTIVE
 PRESENTATION_ONLY
 ```
 
-Core (2)'s release gate measures material-object traceability, not sentence-level citation density.
+Core (2) measures material-object traceability, not sentence-level citation density.
 
-## 11. External-question closure
+---
 
-Core (2) consumes the frozen `QuestionEvidenceLedger`; it does not re-own corpus denominator mechanics.
+## 9. Core (2) publisher readiness gate
 
-Per-row dispositions are:
+The upstream hand-off validator establishes contract closure. Core (2) adds a publication-readiness gate.
+
+Before learner-content planning:
+
+```text
+RESEARCH_BUNDLE_STATUS = READY_FOR_PUBLISH
+BLOCKING_UNRESOLVED_ITEMS = 0
+MATERIAL_RESEARCH_CLAIMS_VERIFIED = PASS
+RESEARCH_PACKAGE_DIGEST_BINDING = PASS
+LEARNER_TARGET_BINDING = PASS
+```
+
+For v1, a material Research Claim must be `VERIFIED` before Core (2) can publish it as settled learner content.
+
+This rule is intentionally publisher-side: a schema-valid or research-in-progress bundle is not automatically publishable.
+
+---
+
+## 10. External-question closure
+
+Core (2) consumes the frozen `QuestionEvidenceLedger`; it does not re-own corpus-denominator mechanics.
+
+Dispositions:
 
 ```text
 REQUIRED | DEFER | EXCLUDE | REVIEW | DUPLICATE
 ```
 
-Core (2) may publish only rows authorized for its publication target. `REVIEW` remains blocking. Source/transcription/answer state and one primary owner remain upstream evidence obligations.
+`REVIEW` remains blocking. Core (2) publishes only records authorized for its target and preserves source/transcription/answer/primary-owner state.
 
-The executable v1 hand-off validator also checks that the candidate denominator equals the frozen row count and that an optional ledger summary reconciles to row dispositions.
+---
 
-## 12. Original-question provenance
+## 11. Original-question provenance
 
-Replace unconditional `ORIGINAL_CALIBRATED` terminology with:
+Default original-question states are:
 
 ```text
 ORIGINAL_EXAM_ALIGNED
 ORIGINAL_EDITORIAL_PROFILED
 ```
 
-unless an explicit calibration basis is present:
+A stronger calibration claim requires an explicit basis such as:
 
 ```text
 SOURCE_MAPPING
@@ -244,13 +264,11 @@ EXPERT_REVIEW
 EMPIRICAL
 ```
 
-Core (2) may display difficulty/editorial labels only with provenance preserved.
+---
 
-## 13. Rights/use enforcement
+## 12. Rights/use enforcement
 
-Source evidence validity does not imply reproduction permission.
-
-Core (2) consumes structured rights states:
+Core (2) consumes:
 
 ```text
 REPRODUCTION_ALLOWED
@@ -260,37 +278,29 @@ DISCOVERY_ONLY
 UNKNOWN_REVIEW_REQUIRED
 ```
 
-The publisher must refuse learner-facing reproduction when the relevant source/asset rights state does not permit it. It may still use permitted factual/structural evidence according to the recorded rights contract.
+Source validity does not imply reproduction permission. Learner-facing reproduction must comply with the recorded rights contract.
 
-## 14. Core (1) gap protocol
+---
 
-Core (2) continues to return:
+## 13. Gap protocol
+
+Missing material truth, representation semantics, exam evidence, asset evidence or rights returns:
 
 ```text
 CORE1_RESEARCH_GAP
 ```
 
-using the frozen `core1-research-gap.schema.json` contract when required evidence/semantics/rights are missing.
+using PR #160's frozen `core1-research-gap.schema.json`.
 
-Core (2) must not silently browse, invent or locally patch material truth.
+Core (2) does not silently browse, invent or locally patch material truth.
 
-## 15. Cold-start acceptance
+---
 
-A clean Core (2) agent receives only:
+## 14. Cold-start acceptance
 
-```text
-ResearchBundle
-ResearchBundleManifest
-Source/ExamDemand/QuestionEvidence artifacts referenced by the manifest
-approved assets
-LearnerProfile
-PublicationTarget
-canonical schemas/skills
-```
+A clean Publisher receives only the frozen research package, `LearnerProfile`, `PublicationTarget` and canonical schemas/skills.
 
-and no prior chat/researcher state.
-
-Required v1 hand-off outcomes:
+Required hand-off outcomes include:
 
 ```text
 HANDOFF_SCHEMA_VALID = PASS
@@ -305,11 +315,15 @@ BLOCKING_RESEARCH_GAPS = 0
 UNDECLARED_CORE2_RESEARCH = 0
 ```
 
-## 16. Joint freeze evidence
+Core (2) then applies its additional publisher readiness gate from §9.
 
-The v1 schema family in PR #160 has been executed in GitHub Actions against Python 3.11 / `jsonschema` Draft 2020-12 validation.
+---
 
-The joint contract run passed:
+## 15. Joint freeze evidence
+
+PR #160's v1 schema family has been executed in GitHub Actions using Python 3.11 and JSON Schema Draft 2020-12 validation.
+
+Recorded joint run:
 
 ```text
 CONTRACT_SCHEMA_FREEZE_V1 = PASS (13 schemas)
@@ -329,8 +343,26 @@ COMPETITIVE_EXAM_DEMAND_BINDING = PASS
 
 GitHub Actions run: `34447311075`.
 
-This is a contract/interface PASS only. It does not establish pedagogy quality, source truth, classroom effectiveness, renderer coverage or psychometric calibration.
+This establishes interface/contract closure only. It does not establish pedagogy quality, source truth, renderer breadth, classroom effectiveness or psychometric calibration.
 
-## 17. Cross-PR freeze rule
+---
 
-PR #161 must not fork its implementation schema independently of PR #160's v1 contract directory. Breaking interface changes require joint review and a new contract version directory (`v2/`) unless the user explicitly reopens the pre-implementation v1 freeze.
+## 16. Upstream freeze vs downstream implementation
+
+The frozen PR #160 objects are **upstream hand-off contracts**.
+
+Core (2) should next define its own downstream objects:
+
+```text
+PublicationPlan
+StudyGuidePublicationModel
+TransferBookPublicationModel
+RepresentationInstance
+Badge
+PublicationAudit
+PublicationManifest
+```
+
+These may evolve inside Core (2) without altering PR #160 v1, provided the frozen input contract is preserved.
+
+Breaking changes to the Core (1) → Core (2) interface require joint review and a new `v2/` contract unless the user explicitly reopens v1.
