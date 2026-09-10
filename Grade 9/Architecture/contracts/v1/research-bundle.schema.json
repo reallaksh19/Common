@@ -119,6 +119,8 @@
       "items": {"$ref": "common.schema.json#/$defs/artifact_ref"},
       "default": []
     },
+    "question_content_ledger_ref": {"$ref": "common.schema.json#/$defs/artifact_ref"},
+    "question_occurrence_ledger_ref": {"$ref": "common.schema.json#/$defs/artifact_ref"},
     "question_evidence_ledger_ref": {"$ref": "common.schema.json#/$defs/artifact_ref"},
     "approved_assets": {
       "type": "array",
