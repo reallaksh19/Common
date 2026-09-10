@@ -1,0 +1,726 @@
+{
+  "approved_assets": [],
+  "concept_ids": [
+    "PERM-ST01",
+    "PERM-ST02",
+    "PERM-ST03",
+    "PERM-ST04",
+    "PERM-ST05",
+    "PERM-ST06",
+    "PERM-ST07",
+    "PERM-ST08",
+    "PERM-ST09",
+    "PERM-ST10",
+    "PERM-ST11",
+    "PERM-ST12"
+  ],
+  "equation_or_reaction_objects": [
+    {
+      "conditions": [
+        "0 <= r <= n; objects distinct; ordered selection; no repetition."
+      ],
+      "id": "ID-PERM-NPR-001",
+      "kind": "IDENTITY",
+      "research_refs": [
+        "R-MATH-PERM-002"
+      ],
+      "semantic_expression": "nPr = n!/(n-r)!"
+    },
+    {
+      "conditions": [
+        "m1+...+mk=n; copies within each multiplicity class are indistinguishable."
+      ],
+      "id": "ID-PERM-MULTISET-001",
+      "kind": "IDENTITY",
+      "research_refs": [
+        "R-MATH-PERM-003"
+      ],
+      "semantic_expression": "distinct arrangements = n!/(m1! m2! ... mk!)"
+    },
+    {
+      "conditions": [
+        "rotations equivalent; reflections distinct."
+      ],
+      "id": "ID-PERM-CIRCLE-001",
+      "kind": "IDENTITY",
+      "research_refs": [
+        "R-MATH-PERM-010"
+      ],
+      "semantic_expression": "circular arrangements of n distinct objects = (n-1)!"
+    },
+    {
+      "conditions": [
+        "n >= 2; !0=1 and !1=0."
+      ],
+      "id": "ID-PERM-DERANGE-001",
+      "kind": "IDENTITY",
+      "research_refs": [
+        "R-MATH-PERM-011"
+      ],
+      "semantic_expression": "!n = (n-1)(!(n-1)+!(n-2))"
+    },
+    {
+      "conditions": [
+        "A and B are events/subsets of the same finite universe."
+      ],
+      "id": "ID-PERM-IE-001",
+      "kind": "IDENTITY",
+      "research_refs": [
+        "R-MATH-PERM-012"
+      ],
+      "semantic_expression": "|A union B| = |A| + |B| - |A intersection B|"
+    }
+  ],
+  "evidence_version": "1.0.0",
+  "exam_demand_profile_refs": [],
+  "misconception_ids": [
+    "MIS-PERM-ORDER-IGNORED",
+    "MIS-PERM-REPETITION-STATE",
+    "MIS-PERM-IDENTICAL-SWAP-OVERCOUNT",
+    "MIS-PERM-ZERO-LEADING",
+    "MIS-PERM-BLOCK-INTERNAL-ORDER",
+    "MIS-PERM-COMPLEMENT-UNIVERSE",
+    "MIS-PERM-GAP-OFF-BY-ONE",
+    "MIS-PERM-DICTIONARY-OFF-BY-ONE",
+    "MIS-PERM-CIRCULAR-ROTATION",
+    "MIS-PERM-CIRCULAR-REFLECTION",
+    "MIS-PERM-FIXED-POINT-DERANGEMENT",
+    "MIS-PERM-IE-OVERLAP",
+    "MIS-PERM-HYBRID-DOUBLE-COUNT"
+  ],
+  "prerequisite_edges": [
+    {
+      "prerequisite_id": "PERM-ST01",
+      "target_id": "PERM-ST03"
+    },
+    {
+      "prerequisite_id": "PERM-ST01",
+      "target_id": "PERM-ST07"
+    },
+    {
+      "prerequisite_id": "PERM-ST02",
+      "target_id": "PERM-ST08"
+    }
+  ],
+  "project": {
+    "grade": 11,
+    "subject": "MATHEMATICS",
+    "title": "Permutations - Core (1) Research",
+    "topic_id": "MATH-PERMUTATIONS"
+  },
+  "representation_requirements": [
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST01",
+        "PERM-ST03",
+        "PERM-ST07"
+      ],
+      "representation_requirement_id": "RREP-PERM-SLOTS-001",
+      "representation_type": "ORDERED_SLOTS",
+      "required_labels": [
+        "slot role",
+        "legal choices"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-002",
+        "R-MATH-PERM-004",
+        "R-MATH-PERM-008"
+      ],
+      "semantic_requirements": {
+        "mark_illegal_leading_zero_when_relevant": true,
+        "show_choice_pool_change": true,
+        "show_slot_roles": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    },
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST02",
+        "PERM-ST08"
+      ],
+      "representation_requirement_id": "RREP-PERM-MULTISET-001",
+      "representation_type": "MULTISET_INVENTORY",
+      "required_labels": [
+        "multiplicity",
+        "distinct arrangements"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-003",
+        "R-MATH-PERM-009"
+      ],
+      "semantic_requirements": {
+        "show_identical_swap_equivalence": true,
+        "show_symbol_multiplicities": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    },
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST04",
+        "PERM-ST05"
+      ],
+      "representation_requirement_id": "RREP-PERM-BLOCK-001",
+      "representation_type": "BLOCK_MODEL",
+      "required_labels": [
+        "block",
+        "internal order"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-005",
+        "R-MATH-PERM-006"
+      ],
+      "semantic_requirements": {
+        "preserve_same_outcome_universe_for_complement": true,
+        "separate_external_block_order_from_internal_order": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    },
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST06",
+        "PERM-ST09"
+      ],
+      "representation_requirement_id": "RREP-PERM-GAPS-001",
+      "representation_type": "GAP_MODEL",
+      "required_labels": [
+        "anchors",
+        "gaps"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-007",
+        "R-MATH-PERM-010"
+      ],
+      "semantic_requirements": {
+        "distinguish_linear_and_circular_gap_count": true,
+        "show_anchor_objects": true,
+        "show_legal_gaps": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    },
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST08"
+      ],
+      "representation_requirement_id": "RREP-PERM-PREFIX-001",
+      "representation_type": "PREFIX_BUCKETS",
+      "required_labels": [
+        "prefix",
+        "bucket size"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-009"
+      ],
+      "semantic_requirements": {
+        "show_complete_buckets_before_target": true,
+        "show_prefix_decision": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    },
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST09"
+      ],
+      "representation_requirement_id": "RREP-PERM-CIRCLE-001",
+      "representation_type": "CIRCULAR_ANCHOR",
+      "required_labels": [
+        "anchor",
+        "rotation equivalence"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-010"
+      ],
+      "semantic_requirements": {
+        "show_fixed_anchor": true,
+        "state_reflection_policy": true,
+        "state_rotation_equivalence": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    },
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST10",
+        "PERM-ST11"
+      ],
+      "representation_requirement_id": "RREP-PERM-FORBIDDEN-001",
+      "representation_type": "FORBIDDEN_POSITION_EVENT_GRID",
+      "required_labels": [
+        "bad event",
+        "intersection"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-011",
+        "R-MATH-PERM-012"
+      ],
+      "semantic_requirements": {
+        "distinguish_fixed_position_from_forbidden_substring": true,
+        "show_bad_events": true,
+        "show_intersections_when_present": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    },
+    {
+      "approved_asset_ids": [],
+      "blocking_if_unsupported": true,
+      "concept_ids": [
+        "PERM-ST12"
+      ],
+      "representation_requirement_id": "RREP-PERM-HYBRID-001",
+      "representation_type": "STAGE_DECISION_TABLE",
+      "required_labels": [
+        "stage",
+        "decision",
+        "overcount check"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-013"
+      ],
+      "semantic_requirements": {
+        "include_overcount_check": true,
+        "separate_choose_assign_arrange_stages": true
+      },
+      "subject": "MATHEMATICS",
+      "traceability_class": "MATERIAL_REPRESENTATION"
+    }
+  ],
+  "research_bundle_id": "RB-MATH-PERMUTATIONS-CORE1-2026",
+  "research_claims": [
+    {
+      "claim_id": "R-MATH-PERM-001",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST01",
+        "PERM-ST02",
+        "PERM-ST03",
+        "PERM-ST04",
+        "PERM-ST05",
+        "PERM-ST06",
+        "PERM-ST07",
+        "PERM-ST08",
+        "PERM-ST09",
+        "PERM-ST10",
+        "PERM-ST11",
+        "PERM-ST12"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "A permutation count is valid only after one outcome is defined and the counting procedure is checked to count every valid outcome exactly once.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-002",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST01"
+      ],
+      "conditions": [
+        "Order or role must distinguish outcomes.",
+        "No repetition in the nPr compression."
+      ],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "For sequential ordered choices, multiply the number of legal choices at each stage; when r distinct positions are filled from n distinct objects without repetition, this compresses to nPr = n!/(n-r)!.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-003",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST02"
+      ],
+      "conditions": [
+        "Repeated copies are indistinguishable for outcome identity."
+      ],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "For a multiset of n objects with repeated multiplicities m1,m2,..., distinct linear arrangements are n! divided by m1!m2!... because swapping identical copies does not create a new outcome.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-004",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST03"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "Positional restrictions should be applied to the restricted positions or value classes before using an unrestricted permutation count; otherwise the base sample space is wrong.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-005",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST04"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "When specified objects must stay together, a block representation preserves the external order of the block and the internal order within it; both levels must be counted exactly once.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-006",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST05"
+      ],
+      "conditions": [
+        "The complement event must be exact, not a stronger or weaker restriction."
+      ],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "For a condition such as not all specified objects together, total minus the all-together complement is valid when the total universe and the forbidden event are defined on the same outcome space.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-007",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST06"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "For no-two-together restrictions, arrange the anchor objects first and count legal gaps for the restricted objects; the number and capacity of gaps are part of the model.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-008",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST07"
+      ],
+      "conditions": [
+        "Leading zero is not a legal first digit in an ordinary multi-digit integer."
+      ],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "Number-formation problems are positional permutation problems in which leading zero, controlling terminal digits, prefix/range conditions, repetition, and divisibility restrictions alter the legal slot choices before counting.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-009",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST08"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "Lexicographic rank is obtained by counting complete admissible prefix buckets before the target prefix; with repeated symbols, each bucket uses multiset counts rather than ordinary factorial counts.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-010",
+      "claim_type": "CANONICAL_FACT",
+      "concept_ids": [
+        "PERM-ST09"
+      ],
+      "conditions": [
+        "Rotations are considered identical.",
+        "Reflections are not identified unless the problem explicitly says so."
+      ],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "For n distinct objects arranged around a circle when rotations are equivalent and reflections remain distinct, fixing one anchor removes rotational overcount and gives (n-1)! arrangements.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-011",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST10"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "A derangement is a permutation with no fixed point; forbidden-position counting requires inclusion-exclusion or an equivalent derangement recurrence rather than an unrestricted factorial count.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-012",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST11"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "Forbidden-string problems should be modeled by bad events for the forbidden patterns; inclusion-exclusion must account for intersections when forbidden patterns can coexist or overlap.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-013",
+      "claim_type": "METHOD",
+      "concept_ids": [
+        "PERM-ST12"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-COMB-CONCEPT-MAP-V2",
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "Hybrid permutation problems should expose each distinct decision stage - such as choose, assign, then arrange - and verify that no stage re-counts symmetry already handled by another stage.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "claim_id": "R-MATH-PERM-014",
+      "claim_type": "EDITORIAL_ANALYSIS",
+      "concept_ids": [
+        "PERM-ST01",
+        "PERM-ST02",
+        "PERM-ST03",
+        "PERM-ST04",
+        "PERM-ST05",
+        "PERM-ST06",
+        "PERM-ST07",
+        "PERM-ST08",
+        "PERM-ST09",
+        "PERM-ST10",
+        "PERM-ST11",
+        "PERM-ST12"
+      ],
+      "conditions": [],
+      "confidence": "HIGH",
+      "edge_cases": [],
+      "source_refs": [
+        "SRC-REPO-MATH-CORPUS-AUDITOR"
+      ],
+      "statement": "Across permutation families, the primary mathematical engine should be assigned by the decision that carries the solution rather than by surface nouns such as digits, books, students, letters, or functions.",
+      "traceability_class": "MATERIAL_CLAIM",
+      "verification_status": "VERIFIED"
+    }
+  ],
+  "research_context": {
+    "curriculum_profile_ids": [],
+    "research_intent": "Learner-neutral Mathematics Core (1) for permutation reasoning. Reuse existing repository combinatorics authority; retain ExamSIDE only as external evidence discovery. No Bxx, learner profile, or publication target belongs in this bundle.",
+    "supported_exam_demand_profile_ids": []
+  },
+  "schema_version": "1.0.0",
+  "scope_graph": {
+    "canonical_registry_versions": [
+      {
+        "registry_id": "REG-MATH-PERM-TAXONOMY",
+        "version": "ec4e35b51a7c1c9a6740cebc75700c02e11e306b"
+      }
+    ],
+    "excluded_nodes": [],
+    "included_edges": [
+      {
+        "from": "PERM-ST01",
+        "relation": "PREREQUISITE_FOR",
+        "to": "PERM-ST03"
+      },
+      {
+        "from": "PERM-ST01",
+        "relation": "PREREQUISITE_FOR",
+        "to": "PERM-ST07"
+      },
+      {
+        "from": "PERM-ST02",
+        "relation": "SUPPORTS",
+        "to": "PERM-ST08"
+      },
+      {
+        "from": "PERM-ST04",
+        "relation": "CONTRASTS_WITH",
+        "to": "PERM-ST06"
+      },
+      {
+        "from": "PERM-ST05",
+        "relation": "USES_COMPLEMENT_OF",
+        "to": "PERM-ST04"
+      },
+      {
+        "from": "PERM-ST11",
+        "relation": "EXTENDS",
+        "to": "PERM-ST10"
+      }
+    ],
+    "included_nodes": [
+      "PERM-ST01",
+      "PERM-ST02",
+      "PERM-ST03",
+      "PERM-ST04",
+      "PERM-ST05",
+      "PERM-ST06",
+      "PERM-ST07",
+      "PERM-ST08",
+      "PERM-ST09",
+      "PERM-ST10",
+      "PERM-ST11",
+      "PERM-ST12"
+    ],
+    "project_candidates": [],
+    "schema_version": "1.0.0",
+    "scope_graph_id": "SG-MATH-PERM-CORE1-2026"
+  },
+  "source_ledger_ref": {
+    "media_type": "application/json",
+    "path": "Permutations_Core1_Source_Ledger.json",
+    "sha256": "94c0641c515ebd122cefe92f5d2614b6f5997b127a8b0abf515bc439e7c7555d"
+  },
+  "status": "READY_FOR_PUBLISH",
+  "unresolved_items": [],
+  "worked_reasoning": [
+    {
+      "concept_ids": [
+        "PERM-ST01",
+        "PERM-ST02",
+        "PERM-ST12"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-001",
+        "R-MATH-PERM-002",
+        "R-MATH-PERM-003",
+        "R-MATH-PERM-013"
+      ],
+      "summary": "Define one outcome, decide whether order/roles distinguish it, decide repetition/identity, expose sequential stages, count, then run omission/overcount checks.",
+      "worked_reasoning_id": "WR-PERM-OUTCOME-001"
+    },
+    {
+      "concept_ids": [
+        "PERM-ST03",
+        "PERM-ST07"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-004",
+        "R-MATH-PERM-008"
+      ],
+      "summary": "Identify the controlling position or value restriction first, reserve or branch on it, then count the remaining slots under the reduced legal choice pool.",
+      "worked_reasoning_id": "WR-PERM-RESTRICT-001"
+    },
+    {
+      "concept_ids": [
+        "PERM-ST04",
+        "PERM-ST05",
+        "PERM-ST06"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-005",
+        "R-MATH-PERM-006",
+        "R-MATH-PERM-007"
+      ],
+      "summary": "Translate together to a block, not-all-together to a complement over the same universe, and no-two-together to an anchor-plus-gap capacity model.",
+      "worked_reasoning_id": "WR-PERM-ADJACENCY-001"
+    },
+    {
+      "concept_ids": [
+        "PERM-ST08"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-009"
+      ],
+      "summary": "At each position, count all admissible smaller next symbols and the complete suffix arrangements they permit; then continue with the target prefix.",
+      "worked_reasoning_id": "WR-PERM-RANK-001"
+    },
+    {
+      "concept_ids": [
+        "PERM-ST09"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-010"
+      ],
+      "summary": "State the equivalence relation first. If only rotations are identical, fix one anchor and linearly arrange the remaining objects; do not divide by reflection unless specified.",
+      "worked_reasoning_id": "WR-PERM-SYMMETRY-001"
+    },
+    {
+      "concept_ids": [
+        "PERM-ST10",
+        "PERM-ST11"
+      ],
+      "research_refs": [
+        "R-MATH-PERM-011",
+        "R-MATH-PERM-012"
+      ],
+      "summary": "Define one bad event per forbidden fixed position or pattern, compute intersections, and use inclusion-exclusion or a validated derangement recurrence.",
+      "worked_reasoning_id": "WR-PERM-FORBIDDEN-001"
+    }
+  ]
+}

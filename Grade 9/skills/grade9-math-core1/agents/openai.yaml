@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mathematics Core (1)"
+  short_description: "Research and freeze Math topics for Core (2)"
+  default_prompt: "Use $grade9-math-core1 to search existing repository authority first, research only unresolved Mathematics evidence, freeze a learner-neutral Core (1) ResearchBundle under the PR #160 v1 contracts, and keep Bxx/purpose publication overlays separate for Core (2)."
