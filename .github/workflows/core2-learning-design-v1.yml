@@ -74,6 +74,10 @@ jobs:
           python "Grade 9/skills/grade9-core2-publisher/scripts/validate_core2_package.py" \
             --dir "$C2" \
             --prefix Physics_Newton2_Bridge_Golden
+          python "$GOLD/validate_rendered_golden.py" \
+            --dir "$C2" \
+            --prefix Physics_Newton2_Bridge_Golden \
+            --golden "$GOLD"
           python - <<'PY'
           import json
           from pathlib import Path
