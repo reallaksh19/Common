@@ -1,0 +1,29 @@
+name: Stress Test 1 Preflight Source Export
+
+on:
+  push:
+    branches:
+      - stress/grade9-linear-equations-two-vars-st1-20260910
+
+permissions:
+  contents: read
+
+jobs:
+  export-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch state
+        uses: actions/checkout@v4
+      - name: Record checkout identity
+        run: |
+          git rev-parse HEAD > STRESS1_CHECKOUT_SHA.txt
+          python --version > STRESS1_PYTHON_VERSION.txt
+      - name: Upload runnable source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: stress1-runnable-source
+          path: |
+            .
+            !.git
+          include-hidden-files: true
+          if-no-files-found: error
