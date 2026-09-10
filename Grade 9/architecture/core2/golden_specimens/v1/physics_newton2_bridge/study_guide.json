@@ -30,7 +30,15 @@
           "traceability_class": "MATERIAL",
           "research_refs": ["R-PHY-LM-005"],
           "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-EXPLAIN"],
-          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001"
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001",
+          "representation_payload": {
+            "selected_system_label": "trolley",
+            "positive_direction": "RIGHT",
+            "forces": [
+              {"label": "push by hand", "direction": "RIGHT"},
+              {"label": "floor friction", "direction": "LEFT"}
+            ]
+          }
         },
         {
           "item_id": "ITEM-PHY-N2-SYS-NOTICE",
@@ -62,7 +70,16 @@
           "content": "WORKED — A trolley is pushed 10 N right while friction is 4 N left. System: trolley. Choose right as positive. Forces on the trolley: +10 N and −4 N. Their horizontal net effect is +6 N, so the net force is 6 N to the right. The important move was not subtraction itself; it was deciding which forces act on the selected trolley and preserving direction.",
           "traceability_class": "MATERIAL",
           "research_refs": ["R-PHY-LM-005"],
-          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-MODEL"]
+          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-MODEL"],
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001",
+          "representation_payload": {
+            "selected_system_label": "trolley",
+            "positive_direction": "RIGHT",
+            "forces": [
+              {"label": "push", "direction": "RIGHT", "magnitude_text": "10 N"},
+              {"label": "friction", "direction": "LEFT", "magnitude_text": "4 N"}
+            ]
+          }
         },
         {
           "item_id": "ITEM-PHY-N2-SYS-G1",
@@ -70,7 +87,16 @@
           "content": "GUIDED 1 — A cart is pulled right while resistance acts left. A force sketch is provided. First write ‘system = cart’. Then label which horizontal arrow is positive and combine the two directions. Do not use a Newton-II equation yet.",
           "traceability_class": "MATERIAL",
           "research_refs": ["R-PHY-LM-005"],
-          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-MODEL"]
+          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-MODEL"],
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001",
+          "representation_payload": {
+            "selected_system_label": "cart",
+            "positive_direction": "RIGHT",
+            "forces": [
+              {"label": "pull", "direction": "RIGHT"},
+              {"label": "resistance", "direction": "LEFT"}
+            ]
+          }
         },
         {
           "item_id": "ITEM-PHY-N2-SYS-G2",
@@ -78,7 +104,16 @@
           "content": "GUIDED 2 — A box is pulled to the right and the floor exerts an opposing force. Use the provided force diagram to decide the net-force direction. Explain which body is the selected system and why no force acting on the person belongs on this diagram.",
           "traceability_class": "MATERIAL",
           "research_refs": ["R-PHY-LM-005"],
-          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-EXPLAIN"]
+          "learning_design_refs": ["LC-PHY-N2-SYS-REPRESENT", "LC-PHY-N2-SYS-EXPLAIN"],
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001",
+          "representation_payload": {
+            "selected_system_label": "box",
+            "positive_direction": "RIGHT",
+            "forces": [
+              {"label": "pull", "direction": "RIGHT"},
+              {"label": "floor resistance", "direction": "LEFT"}
+            ]
+          }
         },
         {
           "item_id": "ITEM-PHY-N2-SYS-IND",
@@ -157,7 +192,16 @@
           "content": "WORKED — A 3 kg cart is pulled 15 N right while resistance is 6 N left. Predict first: acceleration must be right because the larger horizontal force is rightward. System = cart; right positive. F_net = +15 − 6 = +9 N. Then F_net = m a gives 9 = 3a, so a = 3 m/s² right. Check: the sign matches the net-force direction, and kg × m/s² is N.",
           "traceability_class": "MATERIAL",
           "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
-          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK", "LC-PHY-N2-REL-PREDICT"]
+          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK", "LC-PHY-N2-REL-PREDICT"],
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001",
+          "representation_payload": {
+            "selected_system_label": "cart",
+            "positive_direction": "RIGHT",
+            "forces": [
+              {"label": "pull", "direction": "RIGHT", "magnitude_text": "15 N"},
+              {"label": "resistance", "direction": "LEFT", "magnitude_text": "6 N"}
+            ]
+          }
         },
         {
           "item_id": "ITEM-PHY-N2-REL-G1",
@@ -165,7 +209,16 @@
           "content": "GUIDED 1 — A 4 kg cart has 18 N right and 6 N left on the supplied force diagram. First step is supplied: take right as positive and write F_net = +18 − 6. Complete the net-force and acceleration calculation, then check whether your acceleration direction agrees with the diagram.",
           "traceability_class": "MATERIAL",
           "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
-          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK"]
+          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK"],
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001",
+          "representation_payload": {
+            "selected_system_label": "cart",
+            "positive_direction": "RIGHT",
+            "forces": [
+              {"label": "applied force", "direction": "RIGHT", "magnitude_text": "18 N"},
+              {"label": "resistance", "direction": "LEFT", "magnitude_text": "6 N"}
+            ]
+          }
         },
         {
           "item_id": "ITEM-PHY-N2-REL-G2",
@@ -173,7 +226,16 @@
           "content": "GUIDED 2 — A 5 kg cart is shown with 20 N right and 5 N left. The force diagram is supplied, but no equation or first step is given. Find the acceleration with direction and show the force quantity you used.",
           "traceability_class": "MATERIAL",
           "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
-          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK"]
+          "learning_design_refs": ["LC-PHY-N2-REL-APPLY", "LC-PHY-N2-REL-CHECK"],
+          "representation_instance_id": "RI-RREP-PHY-GOLDEN-N2-SYSTEM-001",
+          "representation_payload": {
+            "selected_system_label": "cart",
+            "positive_direction": "RIGHT",
+            "forces": [
+              {"label": "applied force", "direction": "RIGHT", "magnitude_text": "20 N"},
+              {"label": "resistance", "direction": "LEFT", "magnitude_text": "5 N"}
+            ]
+          }
         },
         {
           "item_id": "ITEM-PHY-N2-REL-IND",
