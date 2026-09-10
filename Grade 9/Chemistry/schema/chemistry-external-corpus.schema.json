@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/reallaksh19/Common/Grade%209/Chemistry/schema/chemistry-external-corpus.schema.json",
+  "title":"Chemistry External Question Corpus Ledger","type":"object",
+  "required":["schema_version","corpus_id","subject","chapter_id","snapshot"],
+  "properties":{
+    "subject":{"const":"Chemistry"},"corpus_id":{"type":"string"},"chapter_id":{"type":"string"},
+    "snapshot":{"type":"object","required":["provider","index_url","retrieved_at","candidate_count_declared"]},
+    "classification_record_shards":{"type":"array","items":{"type":"string"}},
+    "source_record_shards":{"type":"array","items":{"type":"string"}},
+    "records":{"type":"array"}
+  },
+  "description":"Supports monolithic or sharded ledgers. Validator derives all counters and requires immutable source/placement/support evidence for eligible candidates.",
+  "additionalProperties":true
+}
