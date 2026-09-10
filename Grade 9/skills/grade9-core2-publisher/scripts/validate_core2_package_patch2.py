@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Whitespace-stable independent structure-order validation for Core (2).
+"""Independent structure and physical-page custody validation for Core (2).
 
-This validator proves declared structure binding, main-section MATERIAL custody,
-and global reopened-PDF ordering. It deliberately does not call that result
-exact physical-page morphology: page-intent -> physical-page custody is a
-separate contract still to be implemented.
+Hard gates prove declared structure binding, main-section MATERIAL custody,
+ReportLab-emitted page placement, exact PDF hash binding, and global reopened-PDF
+ordering. Orphan/underfill morphology remains a separately reported release
+finding until pagination policy is tuned against the cross-subject replays.
 """
 from __future__ import annotations
 
@@ -13,6 +13,10 @@ import sys
 from pathlib import Path
 
 import pymupdf as fitz
+
+CORE2_ROOT = Path(__file__).resolve().parents[3] / "architecture" / "core2"
+sys.path.insert(0, str(CORE2_ROOT))
+from physical_page_custody import custody_errors, morphology_errors  # noqa: E402
 
 import validate_core2_package_structured_impl as impl
 
@@ -41,12 +45,17 @@ def validate_structure_package(argv: list[str]) -> int:
         return 0
 
     structure_path = d / f"{prefix}_Core2_Publication_Structure.json"
+    study_model_path = d / f"{prefix}_Core2_Study_Guide.json"
+    sg_pdf = d / f"{prefix}_Core2_Study_Guide.pdf"
+    page_map_path = d / f"{prefix}_Core2_Physical_Page_Map.json"
     errors: list[str] = []
+    morphology_findings: list[str] = []
+    contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
+
     if not structure_path.exists():
         errors.append("missing PUBLICATION_STRUCTURE artifact")
     else:
         structure = impl.load(structure_path)
-        contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
         errors.extend("publication-structure.schema.json:" + e for e in impl.schema_errors(structure, contracts / "publication-structure.schema.json"))
         for key in ("publication_plan_id", "research_bundle_id", "research_package_digest", "learner_profile_id"):
             if structure.get(key) != plan.get(key):
@@ -69,7 +78,7 @@ def validate_structure_package(argv: list[str]) -> int:
         if page_refs != arc_refs:
             errors.append("PublicationStructure page intents do not reconcile exactly to arc-step content order")
 
-        study_model_path = d / f"{prefix}_Core2_Study_Guide.json"
+        study = None
         if study_model_path.exists():
             study = impl.load(study_model_path)
             material_ids = _main_material_ids(study)
@@ -77,7 +86,6 @@ def validate_structure_package(argv: list[str]) -> int:
             for content_ref in missing_material:
                 errors.append(f"{content_ref}: MATERIAL item disappears between StudyGuide model and PublicationStructure")
 
-        sg_pdf = d / f"{prefix}_Core2_Study_Guide.pdf"
         if sg_pdf.exists():
             doc = fitz.open(sg_pdf)
             raw_text = "\n".join(p.get_text() for p in doc)
@@ -91,6 +99,26 @@ def validate_structure_package(argv: list[str]) -> int:
                     errors.append(f"{page['page_intent_id']}: cognitive job missing from PDF")
             if not impl._ordered(text, ["Appendix A", "Appendix B", "Appendix C"]):
                 errors.append("Study Guide PDF appendix order does not reconcile")
+
+            if not page_map_path.exists():
+                errors.append("missing PHYSICAL_PAGE_MAP for Study Guide PDF")
+            else:
+                page_map = impl.load(page_map_path)
+                errors.extend("physical-page-map.schema.json:" + e for e in impl.schema_errors(page_map, contracts / "physical-page-map.schema.json"))
+                if page_map.get("publication_structure_id") != structure.get("publication_structure_id"):
+                    errors.append("PhysicalPageMap publication_structure_id binding drift")
+                if study is not None and page_map.get("publication_id") != study.get("publication_id"):
+                    errors.append("PhysicalPageMap publication_id binding drift")
+                if page_map.get("pdf_sha256") != impl.legacy.sha256(sg_pdf):
+                    errors.append("PhysicalPageMap pdf_sha256 does not bind exact Study Guide PDF")
+                errors.extend("PhysicalPageMap: " + e for e in custody_errors(page_map))
+                morphology_findings.extend(morphology_errors(page_map))
+
+                map_roles = [x for x in manifest.get("artifacts", []) if x.get("role") == "PHYSICAL_PAGE_MAP"]
+                if len(map_roles) != 1:
+                    errors.append(f"manifest must contain exactly one PHYSICAL_PAGE_MAP; found {len(map_roles)}")
+                elif map_roles[0].get("path") != page_map_path.name or map_roles[0].get("sha256") != impl.legacy.sha256(page_map_path):
+                    errors.append("manifest hash/path mismatch for PHYSICAL_PAGE_MAP")
 
         tb_pdf = d / f"{prefix}_Core2_Transfer_Book.pdf"
         if tb_pdf.exists() and structure.get("transfer_book"):
@@ -114,7 +142,7 @@ def validate_structure_package(argv: list[str]) -> int:
         if audit.get("gates", {}).get(gate) is not True:
             errors.append(f"missing/failed morphology audit gate: {gate}")
     if manifest.get("package_digest") != impl.legacy.package_digest(manifest.get("artifacts", [])):
-        errors.append("publication package_digest mismatch after PublicationStructure binding")
+        errors.append("publication package_digest mismatch after PublicationStructure/PhysicalPageMap binding")
 
     if errors:
         print("CORE2_STRUCTURE_PACKAGE = FAIL")
@@ -124,8 +152,15 @@ def validate_structure_package(argv: list[str]) -> int:
     print("CORE2_STRUCTURE_PACKAGE = PASS")
     print("PUBLICATION_STRUCTURE_BINDING = PASS")
     print("MODEL_TO_STRUCTURE_MATERIAL_CUSTODY = PASS")
+    print("PHYSICAL_PAGE_MAP_BINDING = PASS")
+    print("STRUCTURE_TO_PHYSICAL_PAGE_CUSTODY = PASS")
     print("PDF_GLOBAL_STRUCTURE_ORDER = PASS")
-    print("PHYSICAL_PAGE_MORPHOLOGY = PENDING")
+    if morphology_findings:
+        print(f"PHYSICAL_PAGE_MORPHOLOGY = PENDING ({len(morphology_findings)} findings)")
+        for finding in morphology_findings:
+            print("- " + finding)
+    else:
+        print("PHYSICAL_PAGE_MORPHOLOGY = PASS")
     return 0
 
 
