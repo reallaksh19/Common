@@ -1,15 +1,108 @@
 {
-  "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://github.com/reallaksh19/Common/Grade%209/Chemistry/schema/chemistry-external-corpus.schema.json",
-  "title":"Chemistry External Question Corpus Ledger","type":"object",
-  "required":["schema_version","corpus_id","subject","chapter_id","snapshot"],
-  "properties":{
-    "subject":{"const":"Chemistry"},"corpus_id":{"type":"string"},"chapter_id":{"type":"string"},
-    "snapshot":{"type":"object","required":["provider","index_url","retrieved_at","candidate_count_declared"]},
-    "classification_record_shards":{"type":"array","items":{"type":"string"}},
-    "source_record_shards":{"type":"array","items":{"type":"string"}},
-    "records":{"type":"array"}
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/reallaksh19/Common/Grade%209/Chemistry/schema/chemistry-external-corpus.schema.json",
+  "title": "Chemistry External Question Corpus Ledger",
+  "type": "object",
+  "required": ["schema_version", "corpus_id", "subject", "chapter_id", "snapshot"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "subject": {"const": "Chemistry"},
+    "corpus_id": {"type": "string"},
+    "chapter_id": {"type": "string"},
+    "snapshot": {
+      "type": "object",
+      "required": ["provider", "index_url", "retrieved_at", "candidate_count_declared"],
+      "properties": {
+        "provider": {"type": "string"},
+        "index_url": {"type": "string"},
+        "retrieved_at": {"type": "string"},
+        "candidate_count_declared": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "classification_record_shards": {"type": "array", "items": {"type": "string"}},
+    "source_record_shards": {"type": "array", "items": {"type": "string"}},
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["candidate_id", "scope_status", "source_identity", "scope_reason"],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "scope_status": {"enum": ["ELIGIBLE_IN_SCOPE", "PARTIAL_SCOPE", "OUT_OF_SCOPE", "SOURCE_UNRESOLVED"]},
+          "scope_reason": {"type": "string"},
+          "source_identity": {
+            "type": "object",
+            "required": ["provider", "source_url_or_locator"],
+            "properties": {
+              "provider": {"type": "string"},
+              "source_url_or_locator": {"type": "string"},
+              "year": {"type": ["string", "integer", "null"]},
+              "date": {"type": ["string", "null"]},
+              "shift": {"type": ["string", "null"]},
+              "source_question_id": {"type": ["string", "null"]}
+            },
+            "additionalProperties": true
+          },
+          "stem": {"type": ["string", "null"]},
+          "options": {"type": ["array", "null"], "items": {"type": "string"}},
+          "answer": {"type": ["string", "number", "array", "null"]},
+          "external_dependency": {"type": ["string", "null"]},
+          "publication_support": {
+            "type": ["object", "null"],
+            "properties": {
+              "primary_unit_id": {"type": "string"},
+              "primary_concept_id": {"type": "string"},
+              "concept_segregation_label": {"type": "string"},
+              "secondary_concept_ids": {"type": "array", "items": {"type": "string"}},
+              "difficulty_badge": {"type": "string"},
+              "transfer_badge": {"type": "string"},
+              "source_badge": {"type": "string"},
+              "scope_or_placement_badge": {"type": ["string", "null"]},
+              "transfer_book_id": {"type": "string"},
+              "question_id": {"type": "string"},
+              "page": {"type": ["integer", "null"], "minimum": 1},
+              "h0_attempt_first": {"const": true},
+              "required_hint_depth": {"enum": ["H0", "H1", "H2", "H3"]},
+              "core_cross_link_status": {"enum": ["PASS", "PENDING", "FAIL"]},
+              "full_solution_status": {"enum": ["PASS", "PENDING", "FAIL"]},
+              "source_link_status": {"enum": ["PASS", "PENDING", "FAIL"]},
+              "placement_status": {"enum": ["PLACED", "DEFERRED_VALID", "MISSING", "UNRESOLVED"]}
+            },
+            "required": [
+              "primary_unit_id",
+              "primary_concept_id",
+              "concept_segregation_label",
+              "difficulty_badge",
+              "transfer_badge",
+              "source_badge",
+              "transfer_book_id",
+              "question_id",
+              "h0_attempt_first",
+              "required_hint_depth",
+              "core_cross_link_status",
+              "full_solution_status",
+              "source_link_status",
+              "placement_status"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"scope_status": {"const": "ELIGIBLE_IN_SCOPE"}}, "required": ["scope_status"]},
+            "then": {
+              "required": ["stem", "answer", "publication_support"],
+              "properties": {
+                "publication_support": {"type": "object"}
+              }
+            }
+          }
+        ],
+        "additionalProperties": true
+      }
+    }
   },
-  "description":"Supports monolithic or sharded ledgers. Validator derives all counters and requires immutable source/placement/support evidence for eligible candidates.",
-  "additionalProperties":true
+  "description": "Supports monolithic or sharded ledgers. Validators derive all counters and require immutable source, primary-concept, concept-segregation, badge, hint-depth, Core-link, solution and placement evidence for every eligible candidate.",
+  "additionalProperties": true
 }
