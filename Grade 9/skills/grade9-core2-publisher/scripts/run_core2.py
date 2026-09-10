@@ -9,8 +9,9 @@ Two execution modes are intentionally supported:
   content and PublicationStructure, and binds LearningDesign into the exact
   publication package.
 
-The mature path fails closed rather than silently falling back to generic
-connective prose.
+Both modes now emit a PhysicalPageMap for Study Guides from ReportLab placement
+evidence. The mature path fails closed rather than silently falling back to
+generic connective prose.
 """
 from __future__ import annotations
 
@@ -18,6 +19,7 @@ import sys
 from pathlib import Path
 
 import mature_product as mature
+import physical_page_runtime as physical
 import run_core2_patch4 as publisher
 
 
@@ -40,6 +42,7 @@ def main() -> int:
     mature_mode = mature.mature_requested(original_argv, design)
     authored_study = None
     original_study_builder = publisher.impl._ORIG_BUILD_STUDY_MODEL
+    original_study_renderer = publisher.impl.render_study_pdf
     contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
 
     if mature_mode:
@@ -53,14 +56,24 @@ def main() -> int:
                 publisher.impl.legacy,
             )
 
+    publisher.impl.render_study_pdf = physical.make_study_renderer(publisher.impl)
     sys.argv = mature.cleaned_publisher_argv(original_argv)
     try:
         rc = publisher.main()
     finally:
         sys.argv = original_argv
         publisher.impl._ORIG_BUILD_STUDY_MODEL = original_study_builder
+        publisher.impl.render_study_pdf = original_study_renderer
     if rc != 0:
         return rc
+
+    errors = physical.finalize_page_map(
+        original_argv,
+        publisher.impl.legacy,
+        contracts,
+    )
+    if errors:
+        return mature.print_errors("CORE2_PHYSICAL_PAGE_MAP_PACKAGE", errors)
 
     if design is not None:
         errors = mature.finalize_learning_design(
