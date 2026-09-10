@@ -1,0 +1,242 @@
+{
+  "publication_structure_id": "PS-PP-RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026-LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026-LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "research_bundle_id": "RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026",
+  "research_package_digest": "b782a93427cb9a971c1889def2aa9653b7a20072943e9bb4426e67a80d052dc9",
+  "learner_profile_id": "LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "structure_profile": "PHYSICS_PR156",
+  "study_guide": {
+    "product_id": "SG-RB-G9-PHY-NEWTON2-BRIDGE-GOLDEN-2026-LP-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+    "product_first": true,
+    "learning_units": [
+      {
+        "unit_id": "LU-PHY-N2-SYSTEM-01",
+        "concept_ids": ["PHY-G9-SYSTEM-REPRESENTATION"],
+        "instructional_profile": "FOUNDATION",
+        "cognitive_job": "Choose the physical system and decide which directed forces belong to it before using Newton's second law.",
+        "arc_steps": [
+          {
+            "step_id": "SYS-01-SITUATION",
+            "role": "PHYSICAL_SITUATION",
+            "content_refs": ["ITEM-PHY-N2-SYS-SITUATION"],
+            "support_state": "FULL",
+            "learner_visible_heading": "Start with the trolley"
+          },
+          {
+            "step_id": "SYS-02-DEPICTION",
+            "role": "DEPICTION",
+            "content_refs": ["ITEM-PHY-N2-SYS-REP"],
+            "representation_instance_ids": ["RI-RREP-PHY-GOLDEN-N2-SYSTEM-001"],
+            "support_state": "FULL",
+            "learner_visible_heading": "Put forces on the selected system"
+          },
+          {
+            "step_id": "SYS-03-NOTICE",
+            "role": "NOTICE",
+            "content_refs": ["ITEM-PHY-N2-SYS-NOTICE"],
+            "support_state": "FULL"
+          },
+          {
+            "step_id": "SYS-04-WORDS",
+            "role": "SAY_IN_WORDS",
+            "content_refs": ["ITEM-PHY-N2-SYS-WORDS"],
+            "support_state": "FULL",
+            "learner_visible_heading": "Say the model in words"
+          },
+          {
+            "step_id": "SYS-05-REPAIR",
+            "role": "MISCONCEPTION_REPAIR",
+            "content_refs": ["ITEM-PHY-N2-SYS-CONTRAST"],
+            "support_state": "FULL",
+            "learner_visible_heading": "Which body receives the force?"
+          },
+          {
+            "step_id": "SYS-06-WORKED",
+            "role": "WORKED_EXAMPLE",
+            "content_refs": ["ITEM-PHY-N2-SYS-WORKED"],
+            "support_state": "FULL"
+          },
+          {
+            "step_id": "SYS-07-G1",
+            "role": "GUIDED_1",
+            "content_refs": ["ITEM-PHY-N2-SYS-G1"],
+            "support_state": "GUIDED"
+          },
+          {
+            "step_id": "SYS-08-G2",
+            "role": "GUIDED_2_FADED",
+            "content_refs": ["ITEM-PHY-N2-SYS-G2"],
+            "support_state": "FADED"
+          },
+          {
+            "step_id": "SYS-09-TRANSFER",
+            "role": "INDEPENDENT_TRANSFER",
+            "content_refs": ["ITEM-PHY-N2-SYS-IND"],
+            "support_state": "INDEPENDENT"
+          },
+          {
+            "step_id": "SYS-10-RETRIEVE",
+            "role": "RETRIEVAL_CHECK",
+            "content_refs": ["ITEM-PHY-N2-SYS-RETRIEVE"],
+            "support_state": "INDEPENDENT"
+          }
+        ],
+        "support_progression": {
+          "worked_example": {"state": "PRESENT"},
+          "guided_1": {"state": "PRESENT"},
+          "guided_2_faded": {"state": "PRESENT"},
+          "independent_transfer": {"state": "PRESENT"}
+        }
+      },
+      {
+        "unit_id": "LU-PHY-N2-RELATION-02",
+        "concept_ids": ["PHY-G9-NEWTON-LAW-2"],
+        "instructional_profile": "BRIDGE",
+        "cognitive_job": "Build F_net = m a from the selected-system force model, predict its consequences, diagnose misuse, then transfer by reasoning backward.",
+        "arc_steps": [
+          {
+            "step_id": "REL-01-SITUATION",
+            "role": "PHYSICAL_SITUATION",
+            "content_refs": ["ITEM-PHY-N2-REL-SITUATION"],
+            "support_state": "FULL",
+            "learner_visible_heading": "Predict before symbols"
+          },
+          {
+            "step_id": "REL-02-NOTICE",
+            "role": "NOTICE",
+            "content_refs": ["ITEM-PHY-N2-REL-NOTICE"],
+            "support_state": "FULL"
+          },
+          {
+            "step_id": "REL-03-WORDS",
+            "role": "SAY_IN_WORDS",
+            "content_refs": ["ITEM-PHY-N2-REL-WORDS"],
+            "support_state": "FULL",
+            "learner_visible_heading": "Say the relationship in words"
+          },
+          {
+            "step_id": "REL-04-BUILD",
+            "role": "BUILD_RELATION",
+            "content_refs": ["ITEM-PHY-N2-REL-FORMAL"],
+            "support_state": "GUIDED",
+            "learner_visible_heading": "Compress the model into symbols"
+          },
+          {
+            "step_id": "REL-05-BOUNDARY",
+            "role": "MODEL_BOUNDARY",
+            "content_refs": ["ITEM-PHY-N2-REL-BOUNDARY"],
+            "support_state": "REFERENCE"
+          },
+          {
+            "step_id": "REL-06-REPAIR",
+            "role": "MISCONCEPTION_REPAIR",
+            "content_refs": ["ITEM-PHY-N2-REL-MIS"],
+            "support_state": "FULL"
+          },
+          {
+            "step_id": "REL-07-WORKED",
+            "role": "WORKED_EXAMPLE",
+            "content_refs": ["ITEM-PHY-N2-REL-WORKED"],
+            "support_state": "FULL"
+          },
+          {
+            "step_id": "REL-08-G1",
+            "role": "GUIDED_1",
+            "content_refs": ["ITEM-PHY-N2-REL-G1"],
+            "support_state": "GUIDED"
+          },
+          {
+            "step_id": "REL-09-G2",
+            "role": "GUIDED_2_FADED",
+            "content_refs": ["ITEM-PHY-N2-REL-G2"],
+            "support_state": "FADED"
+          },
+          {
+            "step_id": "REL-10-TRANSFER",
+            "role": "INDEPENDENT_TRANSFER",
+            "content_refs": ["ITEM-PHY-N2-REL-IND"],
+            "support_state": "INDEPENDENT"
+          },
+          {
+            "step_id": "REL-11-RETRIEVE",
+            "role": "RETRIEVAL_CHECK",
+            "content_refs": ["ITEM-PHY-N2-REL-RETRIEVE"],
+            "support_state": "INDEPENDENT"
+          }
+        ],
+        "support_progression": {
+          "worked_example": {"state": "PRESENT"},
+          "guided_1": {"state": "PRESENT"},
+          "guided_2_faded": {"state": "PRESENT"},
+          "independent_transfer": {"state": "PRESENT"}
+        }
+      }
+    ],
+    "practice_topology": {
+      "attempt_before_help": true,
+      "progressive_hints": true,
+      "solutions_after_attempts": true,
+      "hint_delivery": "SEPARATE_HELP_SECTION"
+    },
+    "appendix_order": ["A", "B", "C"],
+    "appendix_B_sections": ["OPTIONAL_HINTS", "FULL_SOLUTIONS"],
+    "page_intents": [
+      {
+        "page_intent_id": "PI-PHY-N2-SYS-MODEL",
+        "cognitive_job": "Decide what the system is, what forces act on it, and why force ownership matters.",
+        "content_refs": [
+          "ITEM-PHY-N2-SYS-SITUATION",
+          "ITEM-PHY-N2-SYS-REP",
+          "ITEM-PHY-N2-SYS-NOTICE",
+          "ITEM-PHY-N2-SYS-WORDS",
+          "ITEM-PHY-N2-SYS-CONTRAST"
+        ],
+        "layout_relation": "STORY_VS_MODEL"
+      },
+      {
+        "page_intent_id": "PI-PHY-N2-SYS-PRACTICE",
+        "cognitive_job": "Use the selected-system model with progressively less support, then retrieve the first-step rule.",
+        "content_refs": [
+          "ITEM-PHY-N2-SYS-WORKED",
+          "ITEM-PHY-N2-SYS-G1",
+          "ITEM-PHY-N2-SYS-G2",
+          "ITEM-PHY-N2-SYS-IND",
+          "ITEM-PHY-N2-SYS-RETRIEVE"
+        ],
+        "layout_relation": "QUESTION_VS_WORKSPACE"
+      },
+      {
+        "page_intent_id": "PI-PHY-N2-REL-MODEL",
+        "cognitive_job": "Predict the force-mass-acceleration relationship in words, build the symbolic relation, and diagnose the applied-force-is-net-force error.",
+        "content_refs": [
+          "ITEM-PHY-N2-REL-SITUATION",
+          "ITEM-PHY-N2-REL-NOTICE",
+          "ITEM-PHY-N2-REL-WORDS",
+          "ITEM-PHY-N2-REL-FORMAL",
+          "ITEM-PHY-N2-REL-BOUNDARY",
+          "ITEM-PHY-N2-REL-MIS"
+        ],
+        "layout_relation": "EXAMPLE_VS_RULE"
+      },
+      {
+        "page_intent_id": "PI-PHY-N2-REL-PRACTICE",
+        "cognitive_job": "Apply Newton II with fading support, then reverse the reasoning to infer an unknown opposing force.",
+        "content_refs": [
+          "ITEM-PHY-N2-REL-WORKED",
+          "ITEM-PHY-N2-REL-G1",
+          "ITEM-PHY-N2-REL-G2",
+          "ITEM-PHY-N2-REL-IND",
+          "ITEM-PHY-N2-REL-RETRIEVE"
+        ],
+        "layout_relation": "QUESTION_VS_WORKSPACE"
+      }
+    ],
+    "navigation": {
+      "question_to_hint": true,
+      "question_to_solution": true,
+      "solution_to_question": true,
+      "solution_to_lesson": true
+    }
+  }
+}
