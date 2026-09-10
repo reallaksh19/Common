@@ -28,6 +28,15 @@ def _artifact(legacy, role: str, path: Path) -> dict:
     return legacy.artifact(role, path, "application/json")
 
 
+def _sha256(legacy, path: Path) -> str:
+    """Use the publisher's canonical file-hash API across implementation layers."""
+    if hasattr(legacy, "sha256_file"):
+        return legacy.sha256_file(path)
+    if hasattr(legacy, "sha256"):
+        return legacy.sha256(path)
+    raise AttributeError("publisher legacy module exposes neither sha256_file nor sha256")
+
+
 def finalize(original_argv: list[str], legacy, contracts: Path) -> list[str]:
     """Write release-blocking physical-page gates and refresh package custody.
 
@@ -58,7 +67,7 @@ def finalize(original_argv: list[str], legacy, contracts: Path) -> list[str]:
     legacy.validate_schema("physical-page-map.schema.json", page_map, contracts)
 
     custody = custody_errors(page_map)
-    expected_pdf_sha = legacy.sha256(study_pdf_path)
+    expected_pdf_sha = _sha256(legacy, study_pdf_path)
     if page_map.get("pdf_sha256") != expected_pdf_sha:
         custody.append("PhysicalPageMap pdf_sha256 does not bind exact Study Guide PDF")
     morphology = morphology_errors(page_map)
