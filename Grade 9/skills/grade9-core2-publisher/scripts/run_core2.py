@@ -58,10 +58,11 @@ def _ordered(text: str, markers: list[str]) -> bool:
     haystack = _norm(text)
     cursor = 0
     for marker in markers:
-        pos = haystack.find(_norm(marker), cursor)
+        normalized = _norm(marker)
+        pos = haystack.find(normalized, cursor)
         if pos < 0:
             return False
-        cursor = pos + len(_norm(marker))
+        cursor = pos + len(normalized)
     return True
 
 
@@ -74,19 +75,19 @@ def _learner_step_marker(step: dict) -> str:
 
 
 def _learner_surface_morphology(original):
-    """Adapt legacy morphology checks to the learner-visible presentation.
+    """Adapt structure morphology checks to learner-visible presentation.
 
     PublicationStructure retains exact machine roles/support states. The PDF is
     allowed to use the concise learner cue "GUIDED 2" rather than printing the
-    internal composite label "GUIDED 2 FADED". This wrapper changes only the
-    two text-marker checks affected by that presentation distinction.
+    internal composite label "GUIDED 2 FADED". Only learner-text marker checks
+    are recomputed; all other morphology evidence remains delegated unchanged.
     """
 
     def morphology(structure, study_pdf, transfer_pdf):
         out = original(structure, study_pdf, transfer_pdf)
         if study_pdf and study_pdf.exists():
             doc = publisher.impl.legacy.fitz.open(study_pdf)
-            text = "\n".join(page.get_text() for page in doc)
+            text = _norm("\n".join(page.get_text() for page in doc))
             doc.close()
 
             arc_ok = True
@@ -104,7 +105,7 @@ def _learner_surface_morphology(original):
                     "independent_transfer": "INDEPENDENT TRANSFER",
                 }
                 for key, marker in present_to_marker.items():
-                    if progression[key]["state"] == "PRESENT" and marker not in _norm(text):
+                    if progression[key]["state"] == "PRESENT" and marker not in text:
                         support_ok = False
 
             out["arc_step_order_reconciliation"] = arc_ok
@@ -135,7 +136,8 @@ def main() -> int:
     original_study_builder = publisher.impl._ORIG_BUILD_STUDY_MODEL
     original_study_renderer = publisher.impl.render_study_pdf
     original_pdf_inspector = publisher.impl.legacy.inspect_pdf
-    original_morphology = publisher.impl.morphology_evidence
+    original_impl_morphology = publisher.impl.morphology_evidence
+    original_patch3_morphology = publisher.patch3.morphology_evidence
     contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
 
     if mature_mode:
@@ -151,7 +153,15 @@ def main() -> int:
 
     publisher.impl.render_study_pdf = physical.make_study_renderer(publisher.impl)
     publisher.impl.legacy.inspect_pdf = _learner_surface_inspector(original_pdf_inspector, target)
-    publisher.impl.morphology_evidence = _learner_surface_morphology(original_morphology)
+
+    # run_core2_patch3.main() installs its own module-global morphology_evidence
+    # into the structured implementation immediately before delegation. Patch
+    # that owning module-global function, not only impl.morphology_evidence, or
+    # the learner-aware checker is overwritten during startup.
+    learner_morphology = _learner_surface_morphology(original_patch3_morphology)
+    publisher.patch3.morphology_evidence = learner_morphology
+    publisher.impl.morphology_evidence = learner_morphology
+
     sys.argv = mature.cleaned_publisher_argv(original_argv)
     try:
         rc = publisher.main()
@@ -160,7 +170,8 @@ def main() -> int:
         publisher.impl._ORIG_BUILD_STUDY_MODEL = original_study_builder
         publisher.impl.render_study_pdf = original_study_renderer
         publisher.impl.legacy.inspect_pdf = original_pdf_inspector
-        publisher.impl.morphology_evidence = original_morphology
+        publisher.patch3.morphology_evidence = original_patch3_morphology
+        publisher.impl.morphology_evidence = original_impl_morphology
     if rc != 0:
         return rc
 
