@@ -1,12 +1,83 @@
 #!/usr/bin/env python3
 """Core (2) Publisher entrypoint.
 
-The executable PublicationStructure layer lives in run_core2_structured_impl.py.
-Compatibility projections preserve existing replays, route every selected
-representation through the executable structure, and keep morphology/XY graph
-rendering fail-closed and independently auditable.
+Two execution modes are intentionally supported:
+
+* ENGINEERING_REPLAY keeps the deterministic cold-start projection used to
+  falsify contracts and renderer mechanics.
+* MATURE_LEARNER_PRODUCT requires authored LearningDesign, StudyGuide semantic
+  content and PublicationStructure, and binds LearningDesign into the exact
+  publication package.
+
+The mature path fails closed rather than silently falling back to generic
+connective prose.
 """
-from run_core2_patch4 import main
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import mature_product as mature
+import run_core2_patch4 as publisher
+
+
+def main() -> int:
+    original_argv = list(sys.argv)
+    target_value = mature.arg_value(original_argv, "--target")
+    target = mature.load(Path(target_value)) if target_value else {}
+    design_value = mature.arg_value(original_argv, "--learning-design")
+    design = mature.load(Path(design_value)) if design_value else None
+
+    errors = mature.preflight_errors(original_argv, target, design)
+    if errors:
+        return mature.print_errors("CORE2_MATURE_PRODUCT_PREFLIGHT", errors)
+
+    if design is not None:
+        errors = mature.validate_learning_design_contract(design)
+        if errors:
+            return mature.print_errors("CORE2_LEARNING_DESIGN_CONTRACT", errors)
+
+    mature_mode = mature.mature_requested(original_argv, design)
+    authored_study = None
+    original_study_builder = publisher.impl._ORIG_BUILD_STUDY_MODEL
+    contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
+
+    if mature_mode:
+        study_value = mature.arg_value(original_argv, "--study-model")
+        if study_value:
+            authored_study = mature.load(Path(study_value))
+            publisher.impl._ORIG_BUILD_STUDY_MODEL = mature.make_study_builder(
+                authored_study,
+                design,
+                contracts,
+                publisher.impl.legacy,
+            )
+
+    sys.argv = mature.cleaned_publisher_argv(original_argv)
+    try:
+        rc = publisher.main()
+    finally:
+        sys.argv = original_argv
+        publisher.impl._ORIG_BUILD_STUDY_MODEL = original_study_builder
+    if rc != 0:
+        return rc
+
+    if design is not None:
+        errors = mature.finalize_learning_design(
+            original_argv,
+            design,
+            contracts,
+            publisher.impl.legacy,
+        )
+        if errors:
+            return mature.print_errors("CORE2_LEARNING_DESIGN_PACKAGE", errors)
+
+    if mature_mode:
+        print("CORE2_MATURE_PRODUCT = PASS")
+    else:
+        print("CORE2_EXECUTION_MODE = ENGINEERING_REPLAY")
+    return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
