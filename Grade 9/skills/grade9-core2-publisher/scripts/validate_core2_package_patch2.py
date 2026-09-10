@@ -68,12 +68,13 @@ def validate_structure_package(argv: list[str]) -> int:
             errors.append("manifest hash/path mismatch for PUBLICATION_STRUCTURE")
 
         arc_refs: list[str] = []
-        ref_role: dict[str, str] = {}
+        arc_role_markers: list[str] = []
         for unit in structure["study_guide"]["learning_units"]:
             for step in unit["arc_steps"]:
-                for ref in step["content_refs"]:
-                    arc_refs.append(ref)
-                    ref_role[ref] = step["role"].replace("_", " ")
+                arc_role_markers.append(
+                    step.get("learner_visible_heading") or step["role"].replace("_", " ")
+                )
+                arc_refs.extend(step["content_refs"])
         page_refs = [ref for page in structure["study_guide"]["page_intents"] for ref in page["content_refs"]]
         if page_refs != arc_refs:
             errors.append("PublicationStructure page intents do not reconcile exactly to arc-step content order")
@@ -91,8 +92,7 @@ def validate_structure_package(argv: list[str]) -> int:
             raw_text = "\n".join(p.get_text() for p in doc)
             doc.close()
             text = _norm(raw_text)
-            role_markers = [ref_role[ref] for ref in page_refs]
-            if not impl._ordered(text, role_markers):
+            if not impl._ordered(text, arc_role_markers):
                 errors.append("Study Guide PDF arc-step order does not reconcile")
             for page in structure["study_guide"]["page_intents"]:
                 if _norm(page["cognitive_job"]) not in text:
