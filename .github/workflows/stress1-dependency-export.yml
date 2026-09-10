@@ -14,7 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download declared Core1 dependency
-        run: python -m pip download --only-binary=:all: --dest wheels 'rfc8785>=0.1.2,<1'
+        run: |
+          python -m pip download --only-binary=:all: --dest wheels 'rfc8785>=0.1.2,<1'
       - uses: actions/upload-artifact@v4
         with:
           name: stress1-rfc8785-wheel
