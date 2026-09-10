@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-publication-structure.schema.json",
+  "title": "Core2 PublicationStructure v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publication_structure_id",
+    "schema_version",
+    "publication_plan_id",
+    "research_bundle_id",
+    "research_package_digest",
+    "learner_profile_id",
+    "structure_profile",
+    "study_guide"
+  ],
+  "properties": {
+    "publication_structure_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "publication_plan_id": {"type": "string", "minLength": 1},
+    "research_bundle_id": {"type": "string", "minLength": 1},
+    "research_package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "learner_profile_id": {"type": "string", "minLength": 1},
+    "structure_profile": {"enum": ["PRODUCT_FIRST", "PHYSICS_PR156", "CHEMISTRY_PR157"]},
+    "study_guide": {"$ref": "core2-publication-structure.schema.json#/$defs/study_guide_structure"},
+    "transfer_book": {"$ref": "core2-publication-structure.schema.json#/$defs/transfer_book_structure"}
+  },
+  "$defs": {
+    "study_guide_structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "product_id",
+        "product_first",
+        "learning_units",
+        "practice_topology",
+        "appendix_order",
+        "appendix_B_sections",
+        "page_intents",
+        "navigation"
+      ],
+      "properties": {
+        "product_id": {"type": "string", "minLength": 1},
+        "product_first": {"const": true},
+        "learning_units": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "core2-publication-structure.schema.json#/$defs/learning_unit"}
+        },
+        "practice_topology": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["attempt_before_help", "progressive_hints", "solutions_after_attempts", "hint_delivery"],
+          "properties": {
+            "attempt_before_help": {"const": true},
+            "progressive_hints": {"const": true},
+            "solutions_after_attempts": {"const": true},
+            "hint_delivery": {"enum": ["SEPARATE_HELP_SECTION", "COVERABLE_REGION", "INTERACTIVE_PROGRESSIVE"]}
+          }
+        },
+        "appendix_order": {
+          "type": "array",
+          "prefixItems": [{"const": "A"}, {"const": "B"}, {"const": "C"}],
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "appendix_B_sections": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["OPTIONAL_HINTS", "GUIDED_STEP_SOLUTIONS", "FULL_SOLUTIONS"]}
+        },
+        "page_intents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "core2-publication-structure.schema.json#/$defs/page_intent"}
+        },
+        "navigation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["question_to_hint", "question_to_solution", "solution_to_question", "solution_to_lesson"],
+          "properties": {
+            "question_to_hint": {"type": "boolean"},
+            "question_to_solution": {"type": "boolean"},
+            "solution_to_question": {"type": "boolean"},
+            "solution_to_lesson": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    "learning_unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "concept_ids", "instructional_profile", "cognitive_job", "arc_steps", "support_progression"],
+      "properties": {
+        "unit_id": {"type": "string", "minLength": 1},
+        "concept_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "instructional_profile": {"enum": ["FOUNDATION", "BRIDGE", "COMPRESSED", "REFERENCE"]},
+        "cognitive_job": {"type": "string", "minLength": 1},
+        "arc_steps": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "core2-publication-structure.schema.json#/$defs/arc_step"}
+        },
+        "support_progression": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["worked_example", "guided_1", "guided_2_faded", "independent_transfer"],
+          "properties": {
+            "worked_example": {"$ref": "core2-publication-structure.schema.json#/$defs/support_status"},
+            "guided_1": {"$ref": "core2-publication-structure.schema.json#/$defs/support_status"},
+            "guided_2_faded": {"$ref": "core2-publication-structure.schema.json#/$defs/support_status"},
+            "independent_transfer": {"$ref": "core2-publication-structure.schema.json#/$defs/support_status"}
+          }
+        }
+      }
+    },
+    "arc_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "role", "content_refs"],
+      "properties": {
+        "step_id": {"type": "string", "minLength": 1},
+        "role": {
+          "enum": [
+            "PHYSICAL_SITUATION",
+            "DEPICTION",
+            "NOTICE",
+            "SAY_IN_WORDS",
+            "CONCEPT_INVARIANT",
+            "MEMORY_ANCHOR",
+            "CONCEPT_HELPER",
+            "BUILD_RELATION",
+            "WHY_THIS_WORKS",
+            "WORKED_EXAMPLE",
+            "APPLICATION",
+            "VARIANT_CONTRAST",
+            "MISCONCEPTION_REPAIR",
+            "MODEL_BOUNDARY",
+            "GUIDED_1",
+            "GUIDED_2_FADED",
+            "INDEPENDENT_TRANSFER",
+            "RETRIEVAL_CHECK",
+            "SELF_CHECK",
+            "NEXT_STEP"
+          ]
+        },
+        "content_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "representation_instance_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "support_state": {"enum": ["FULL", "GUIDED", "FADED", "INDEPENDENT", "REFERENCE"]},
+        "learner_visible_heading": {"type": "string"}
+      }
+    },
+    "support_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": {"enum": ["PRESENT", "NOT_REQUIRED_WITH_REASON"]},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"state": {"const": "NOT_REQUIRED_WITH_REASON"}}, "required": ["state"]},
+          "then": {"required": ["reason"]}
+        }
+      ]
+    },
+    "page_intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_intent_id", "cognitive_job", "content_refs", "layout_relation"],
+      "properties": {
+        "page_intent_id": {"type": "string", "minLength": 1},
+        "cognitive_job": {"type": "string", "minLength": 1},
+        "content_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "layout_relation": {"enum": ["SINGLE_FLOW", "STORY_VS_MODEL", "EXAMPLE_VS_RULE", "CASE_A_VS_B", "REPRESENTATION_VS_REASONING", "QUESTION_VS_WORKSPACE", "REFERENCE_COMPRESSION"]}
+      }
+    },
+    "transfer_book_structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "product_id",
+        "section_order",
+        "attempt_before_hints",
+        "solutions_after_attempts",
+        "hint_delivery",
+        "mixed_diagnosis_after_solutions",
+        "question_navigation"
+      ],
+      "properties": {
+        "product_id": {"type": "string", "minLength": 1},
+        "section_order": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {"enum": ["ATTEMPTS", "OPTIONAL_HELP", "COMPLETE_SOLUTIONS", "MIXED_DIAGNOSIS"]}
+        },
+        "attempt_before_hints": {"const": true},
+        "solutions_after_attempts": {"const": true},
+        "hint_delivery": {"enum": ["SEPARATE_HELP_SECTION", "COVERABLE_REGION", "INTERACTIVE_PROGRESSIVE"]},
+        "mixed_diagnosis_after_solutions": {"type": "boolean"},
+        "question_navigation": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["question_id", "hint_target", "solution_target", "return_to_question"],
+            "properties": {
+              "question_id": {"type": "string", "minLength": 1},
+              "hint_target": {"type": "string", "minLength": 1},
+              "solution_target": {"type": "string", "minLength": 1},
+              "return_to_question": {"type": "string", "minLength": 1},
+              "lesson_target": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    }
+  }
+}
