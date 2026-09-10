@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research-bundle-manifest.schema.json",
+  "title": "ResearchBundleManifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "schema_version",
+    "research_bundle_id",
+    "evidence_version",
+    "change_class",
+    "canonicalization",
+    "semantic_digest",
+    "package_digest",
+    "artifacts"
+  ],
+  "properties": {
+    "manifest_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "research_bundle_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "evidence_version": {"$ref": "common.schema.json#/$defs/semver"},
+    "change_class": {"$ref": "common.schema.json#/$defs/change_class"},
+    "previous_manifest_digest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "canonicalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semantic_json", "package_tuple_sort"],
+      "properties": {
+        "semantic_json": {"const": "RFC8785_JCS"},
+        "package_tuple_sort": {"const": "ROLE_THEN_PATH_LEXICOGRAPHIC"}
+      }
+    },
+    "semantic_digest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "package_digest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "path", "sha256"],
+        "properties": {
+          "role": {
+            "enum": [
+              "RESEARCH_BUNDLE",
+              "RESEARCH_CORE_MD",
+              "RESEARCH_CORE_PDF",
+              "SOURCE_LEDGER",
+              "EXAM_DEMAND_PROFILE",
+              "QUESTION_EVIDENCE_LEDGER",
+              "APPROVED_ASSET",
+              "OTHER_RESEARCH_ARTIFACT"
+            ]
+          },
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "media_type": {"type": "string"},
+          "bytes": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "material_view_reconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_to_md_coverage", "bundle_to_pdf_coverage", "unmapped_md_material_claims", "unmapped_pdf_material_claims"],
+      "properties": {
+        "bundle_to_md_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "bundle_to_pdf_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "unmapped_md_material_claims": {"type": "integer", "minimum": 0},
+        "unmapped_pdf_material_claims": {"type": "integer", "minimum": 0}
+      }
+    },
+    "release_note": {"type": "string"}
+  }
+}
