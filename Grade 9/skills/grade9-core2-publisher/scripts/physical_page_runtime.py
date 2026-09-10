@@ -334,13 +334,17 @@ def make_study_renderer(impl):
                     intent_heading=True,
                 )
             )
+            previous_heading: tuple[str, str] | None = None
             for ref in page_intent["content_refs"]:
                 meta = arc[ref]
                 item = items[ref]
                 role = meta.get("learner_visible_heading") or meta["role"].replace("_", " ")
                 support = meta.get("support_state", "")
-                heading = f"{role} · {support}" if support else role
-                story.append(_tracked(Paragraph(impl.legacy.safe(heading), st["h2"]), tracker, iid, item))
+                heading_key = (role, support)
+                if heading_key != previous_heading:
+                    heading = f"{role} · {support}" if support else role
+                    story.append(Paragraph(impl.legacy.safe(heading), st["h2"]))
+                    previous_heading = heading_key
                 story.append(_tracked(Paragraph(impl.legacy.safe(item["content"]), st["body"]), tracker, iid, item))
                 if item.get("representation_instance_id"):
                     rep = reps[item["representation_instance_id"]]
