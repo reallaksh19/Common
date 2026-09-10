@@ -85,6 +85,12 @@ def load_ref(bundle_path: Path, ref: dict | None, label: str, errors: list[str])
 
 
 def validate_manifest_artifact_bytes(manifest: dict, manifest_path: Path, errors: list[str]):
+    """Verify manifest paths/hashes against actual released bytes.
+
+    This is intentionally opt-in for abstract schema fixtures, whose manifest rows
+    may use illustrative hashes/paths. Real package handoffs should pass
+    --verify-artifact-bytes.
+    """
     base = manifest_path.resolve().parent
     for art in manifest.get("artifacts", []):
         path = base / art["path"]
@@ -296,6 +302,7 @@ def parse_args():
     p.add_argument("--question-content-ledger", type=Path, default=None)
     p.add_argument("--question-occurrence-ledger", type=Path, default=None)
     p.add_argument("--question-ledger", type=Path, default=None)
+    p.add_argument("--verify-artifact-bytes", action="store_true", help="Require every manifest artifact to exist and match its recorded hash")
     return p.parse_args()
 
 
@@ -336,7 +343,8 @@ def main() -> int:
     if not errors:
         validate_refs(bundle, source_ledger, strict_production, errors)
         validate_manifest_binding(bundle, manifest, errors)
-        validate_manifest_artifact_bytes(manifest, args.manifest, errors)
+        if args.verify_artifact_bytes:
+            validate_manifest_artifact_bytes(manifest, args.manifest, errors)
         validate_publication_target(bundle, manifest, learner, target, exam_profiles, errors)
         validate_question_custody(bundle, source_ledger, qcontent, qocc, qledger, strict_transfer, errors)
 
@@ -348,7 +356,7 @@ def main() -> int:
 
     print("CORE1_CORE2_HANDOFF_V1 = PASS")
     print("BUNDLE_MANIFEST_BINDING = PASS")
-    print("MANIFEST_ARTIFACT_HASH_BINDING = PASS")
+    print(f"MANIFEST_ARTIFACT_HASH_BINDING = {'PASS' if args.verify_artifact_bytes else 'NOT_REQUESTED'}")
     print("LEARNER_TARGET_BINDING = PASS")
     print("MATERIAL_VIEW_RECONCILIATION = PASS")
     print("RESEARCH_REFERENCE_CLOSURE = PASS")
