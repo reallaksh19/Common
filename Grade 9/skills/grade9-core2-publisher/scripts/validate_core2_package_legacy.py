@@ -4,6 +4,10 @@
 The validator re-opens the final PDF bytes and does not trust audit booleans as
 proof. It also validates product-pair identity, Transfer Book semantic closure,
 artifact hashes, package digest and hash-bound human-review state.
+
+Learner-facing Markdown is validated from the authored StudyGuide contract.
+Machine identifiers such as representation requirement IDs are proven through
+plan -> learner-model custody instead of being required as printed learner text.
 """
 from __future__ import annotations
 
@@ -206,9 +210,17 @@ def main() -> int:
         if not c.get("standalone_usable") or c.get("introduces_new_subject_content") or c.get("answer_leakage_detected"):
             errors.append("Appendix C blocking semantics failed")
         md = study_files["md"].read_text(encoding="utf-8")
-        for title in ("Appendix A — Core Practice", "Appendix B — Core Solutions", "Appendix C — Printable Handout"):
-            if title not in md:
-                errors.append(f"Study Guide MD missing {title}")
+        appendix_contract = (
+            ("appendix_A", "Appendix A"),
+            ("appendix_B", "Appendix B"),
+            ("appendix_C", "Appendix C"),
+        )
+        for key, prefix in appendix_contract:
+            title = study.get(key, {}).get("title", "")
+            if not title.startswith(prefix):
+                errors.append(f"Study Guide {key} title must begin with {prefix}")
+            elif title not in md:
+                errors.append(f"Study Guide MD missing authored appendix title: {title}")
         for sec in study.get("main_sections", []):
             for item in sec.get("items", []):
                 if item.get("traceability_class") == "MATERIAL" and not item.get("research_refs"):
@@ -217,13 +229,22 @@ def main() -> int:
             for item in study.get(key, {}).get("items", []):
                 if item.get("traceability_class") == "MATERIAL" and not item.get("research_refs"):
                     errors.append(f"appendix material item lacks research refs: {item.get('item_id')}")
+        rendered_rep_ids = {
+            item.get("representation_instance_id")
+            for sec in study.get("main_sections", [])
+            for item in sec.get("items", [])
+            if item.get("representation_instance_id")
+        }
         for rep in plan.get("representation_instances", []):
             if rep.get("status") != "RENDERED":
                 errors.append(f"representation not rendered: {rep.get('representation_instance_id')}")
             if not set(rep.get("required_labels", [])) <= set(rep.get("rendered_labels", [])):
                 errors.append(f"representation label closure failed: {rep.get('representation_instance_id')}")
-            if rep.get("requirement_id") not in md:
-                errors.append(f"Study Guide MD missing representation requirement id: {rep.get('requirement_id')}")
+            if rep.get("representation_instance_id") not in rendered_rep_ids:
+                errors.append(
+                    "Study Guide model does not bind rendered representation instance: "
+                    + str(rep.get("representation_instance_id"))
+                )
 
     if want_transfer and all(x.exists() for x in transfer_files.values()):
         transfer = load(transfer_files["model"])
