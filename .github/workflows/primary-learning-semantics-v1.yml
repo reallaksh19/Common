@@ -1,0 +1,32 @@
+name: Primary learning semantics v1
+
+on:
+  pull_request:
+    paths:
+      - 'Primary/Architecture/**'
+      - 'skills/primary-teacher-runtime/**'
+      - '.github/workflows/primary-learning-semantics-v1.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Primary/Architecture/**'
+      - 'skills/primary-teacher-runtime/**'
+      - '.github/workflows/primary-learning-semantics-v1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-primary-semantics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate canonical Primary semantic fixture
+        run: python Primary/Architecture/contracts/v1/validate_semantics.py
