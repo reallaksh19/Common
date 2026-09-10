@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-product-identity.schema.json",
+  "title": "Core2 ProductIdentity v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["product_id", "delivery_contract", "role"],
+  "properties": {
+    "product_id": {"type": "string", "minLength": 1},
+    "delivery_contract": {"enum": ["STUDY_GUIDE_ONLY", "FULL_TOPIC_PAIR", "TRANSFER_ONLY"]},
+    "role": {"enum": ["CORE_STUDY_GUIDE", "EXAMSIDE_SOLUTION_TRANSFER"]},
+    "pair_id": {"type": "string", "minLength": 1},
+    "companion_product_id": {"type": "string", "minLength": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"delivery_contract": {"const": "FULL_TOPIC_PAIR"}}, "required": ["delivery_contract"]},
+      "then": {"required": ["pair_id", "companion_product_id"]}
+    }
+  ]
+}
