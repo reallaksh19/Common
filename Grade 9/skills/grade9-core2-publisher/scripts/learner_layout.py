@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """Learner-first Study Guide layout policy layered over physical-page custody.
 
-This module owns presentation-only composition decisions. It deliberately does
-not alter StudyGuide semantics, PublicationStructure, LearningDesign, or
-PhysicalPageMap custody.
+This module owns presentation decisions without weakening semantic custody.
+Support states remain in PublicationStructure/LearningDesign; learner pages show
+instructional cues rather than machine authoring-state labels.
 
-For deterministic engineering replays, adjacent generated representation items
-whose text is only machine requirement metadata are rendered side by side. Each
-representation retains its own content_ref and physical bounding box. Mature
-authored representation prose is never collapsed by this rule.
+A StudyGuide representation item may carry a Core2-owned per-use
+``representation_payload``.  The payload instantiates the frozen Core1
+representation requirement for the particular learner example (for example,
+trolley + push right + friction left) without changing Core1 subject truth.
 """
 from __future__ import annotations
 
+import math
+import re
 from pathlib import Path
 
 from reportlab.lib.pagesizes import A4
@@ -22,7 +24,7 @@ import physical_page_runtime as base
 
 
 class GeneratedRepresentationRow(Flowable):
-    """Two generated schematics in one row with independent custody records."""
+    """Two generated replay schematics in one row with independent custody."""
 
     def __init__(
         self,
@@ -45,16 +47,12 @@ class GeneratedRepresentationRow(Flowable):
 
     def wrap(self, avail_width, avail_height):
         column_width = max(1.0, (avail_width - self.gap) / 2.0)
-        self._child_sizes = [
-            child.wrap(column_width, avail_height)
-            for child, _item in self.entries
-        ]
+        self._child_sizes = [child.wrap(column_width, avail_height) for child, _item in self.entries]
         self.width = avail_width
         self.height = max(height for _width, height in self._child_sizes)
         return self.width, self.height
 
     def drawOn(self, canv, x, y, _sW=0):
-        """Draw children at absolute page coordinates and record those boxes."""
         page = canv.getPageNumber()
         child_x = x
         for index, ((child, item), (width, height)) in enumerate(zip(self.entries, self._child_sizes)):
@@ -72,16 +70,139 @@ class GeneratedRepresentationRow(Flowable):
             child_x += width + (self.gap if index == 0 else 0.0)
 
     def draw(self):
-        # drawOn owns both composition and absolute custody instrumentation.
         return None
 
 
+class LearnerForceDiagram(Flowable):
+    """Concrete monochrome force diagram instantiated by a StudyGuide item."""
+
+    DIRECTIONS = {"LEFT", "RIGHT", "UP", "DOWN"}
+
+    def __init__(self, payload: dict, width: float = 170 * mm, height: float = 46 * mm):
+        super().__init__()
+        self.payload = payload
+        self.width = width
+        self.height = height
+        self._validate()
+
+    def _validate(self) -> None:
+        system = self.payload.get("selected_system_label")
+        forces = self.payload.get("forces")
+        errors = []
+        if not isinstance(system, str) or not system.strip():
+            errors.append("selected_system_label is required")
+        if not isinstance(forces, list) or not forces:
+            errors.append("at least one force is required")
+        else:
+            for index, force in enumerate(forces, 1):
+                if not isinstance(force.get("label"), str) or not force["label"].strip():
+                    errors.append(f"force {index} requires a label")
+                if force.get("direction") not in self.DIRECTIONS:
+                    errors.append(f"force {index} direction must be one of {sorted(self.DIRECTIONS)}")
+        if errors:
+            print("CORE2_LEARNER_REPRESENTATION_PAYLOAD = FAIL")
+            for error in errors:
+                print("- " + error)
+            raise SystemExit(2)
+
+    def wrap(self, avail_width, avail_height):
+        self.width = min(self.width, avail_width)
+        return self.width, self.height
+
+    @staticmethod
+    def _arrow(c, x1, y1, x2, y2):
+        c.line(x1, y1, x2, y2)
+        angle = math.atan2(y2 - y1, x2 - x1)
+        for delta in (2.55, -2.55):
+            c.line(x2, y2, x2 + 5 * math.cos(angle + delta), y2 + 5 * math.sin(angle + delta))
+
+    def draw(self):
+        c, w, h = self.canv, self.width, self.height
+        c.saveState()
+        c.setLineWidth(0.9)
+        c.setFont("Helvetica-Bold", 8.5)
+        system = self.payload["selected_system_label"].strip()
+        c.drawString(4, h - 10, f"FORCE DIAGRAM · system: {system}")
+
+        cx, cy = w / 2, h / 2 - 5
+        box_w, box_h = min(90, w * 0.22), 32
+        c.rect(cx - box_w / 2, cy - box_h / 2, box_w, box_h)
+        c.setFont("Helvetica-Bold", 8)
+        c.drawCentredString(cx, cy - 3, system)
+
+        positive = str(self.payload.get("positive_direction", "")).upper()
+        c.setFont("Helvetica", 7.5)
+        if positive in {"LEFT", "RIGHT"}:
+            label = "+ direction: right" if positive == "RIGHT" else "+ direction: left"
+            c.drawString(6, h - 25, label)
+        elif positive in {"UP", "DOWN"}:
+            label = "+ direction: up" if positive == "UP" else "+ direction: down"
+            c.drawString(6, h - 25, label)
+
+        for force in self.payload["forces"]:
+            direction = force["direction"]
+            label = force["label"].strip()
+            magnitude = str(force.get("magnitude_text", "")).strip()
+            shown = f"{label} · {magnitude}" if magnitude else label
+            if direction == "RIGHT":
+                x1, y1, x2, y2 = cx + box_w / 2, cy, min(w - 80, cx + box_w / 2 + 92), cy
+                self._arrow(c, x1, y1, x2, y2)
+                c.drawString(x1 + 8, y1 + 8, shown)
+            elif direction == "LEFT":
+                x1, y1, x2, y2 = cx - box_w / 2, cy, max(80, cx - box_w / 2 - 92), cy
+                self._arrow(c, x1, y1, x2, y2)
+                text_w = c.stringWidth(shown, "Helvetica", 7.5)
+                c.drawString(max(4, x2 - text_w), y1 + 8, shown)
+            elif direction == "UP":
+                x1, y1, x2, y2 = cx, cy + box_h / 2, cx, min(h - 28, cy + box_h / 2 + 38)
+                self._arrow(c, x1, y1, x2, y2)
+                c.drawString(x1 + 7, y2 - 2, shown)
+            elif direction == "DOWN":
+                x1, y1, x2, y2 = cx, cy - box_h / 2, cx, max(10, cy - box_h / 2 - 38)
+                self._arrow(c, x1, y1, x2, y2)
+                c.drawString(x1 + 7, y2, shown)
+
+        c.restoreState()
+
+
 def _pairable_generated_representation(item: dict) -> bool:
-    return bool(item.get("representation_instance_id") and base._generated_representation_metadata(item))
+    return bool(
+        item.get("representation_instance_id")
+        and not item.get("representation_payload")
+        and base._generated_representation_metadata(item)
+    )
+
+
+def _representation_flowable(impl, rep: dict, item: dict):
+    payload = item.get("representation_payload")
+    if rep.get("representation_type") == "FORCE_DIAGRAM" and payload:
+        return LearnerForceDiagram(payload)
+    return impl.StructuredRepresentationFlowable(rep)
+
+
+def _content_carries_visible_role(meta: dict, item: dict) -> bool:
+    if base._content_carries_role_cue(meta, item):
+        return True
+    if meta.get("learner_visible_heading"):
+        return False
+    role = meta.get("role", "")
+    cues = {
+        "NOTICE": ("NOTICE",),
+        "WORKED_EXAMPLE": ("WORKED", "WORKED EXAMPLE"),
+        "GUIDED_1": ("GUIDED 1",),
+        "GUIDED_2_FADED": ("GUIDED 2",),
+        "INDEPENDENT_TRANSFER": ("INDEPENDENT TRANSFER",),
+        "RETRIEVAL_CHECK": ("RETRIEVAL CHECK",),
+        "MISCONCEPTION_REPAIR": ("MISCONCEPTION REPAIR",),
+        "MODEL_BOUNDARY": ("MODEL BOUNDARY",),
+        "VARIANT_CONTRAST": ("CONTRAST", "VARIANT CONTRAST"),
+    }.get(role, ())
+    text = re.sub(r"\s+", " ", str(item.get("content", ""))).strip().upper()
+    return any(text.startswith(cue) for cue in cues)
 
 
 def make_study_renderer(impl):
-    """Return tracked Study Guide renderer with learner-first representation composition."""
+    """Return tracked Study Guide renderer with learner-first presentation."""
 
     def render(model: dict, plan: dict, path: Path):
         structure = impl._CURRENT_STRUCTURE
@@ -121,7 +242,7 @@ def make_study_renderer(impl):
                 )
             )
 
-            previous_heading: tuple[str, str] | None = None
+            previous_heading: str | None = None
             refs = page_intent["content_refs"]
             index = 0
             while index < len(refs):
@@ -130,12 +251,10 @@ def make_study_renderer(impl):
                 item = items[ref]
                 role = meta.get("learner_visible_heading") or meta["role"].replace("_", " ")
                 support = meta.get("support_state", "")
-                heading_key = (role, support)
-                if heading_key != previous_heading:
-                    if not base._content_carries_role_cue(meta, item):
-                        heading = f"{role} · {support}" if support else role
-                        story.append(Paragraph(impl.legacy.safe(heading), st["h2"]))
-                    previous_heading = heading_key
+                if role != previous_heading:
+                    if not _content_carries_visible_role(meta, item):
+                        story.append(Paragraph(impl.legacy.safe(role), st["h2"]))
+                    previous_heading = role
 
                 if _pairable_generated_representation(item) and index + 1 < len(refs):
                     next_ref = refs[index + 1]
@@ -146,8 +265,8 @@ def make_study_renderer(impl):
                         and next_meta.get("support_state", "") == support
                     )
                     if same_step_surface and _pairable_generated_representation(next_item):
-                        left = impl.StructuredRepresentationFlowable(reps[item["representation_instance_id"]])
-                        right = impl.StructuredRepresentationFlowable(reps[next_item["representation_instance_id"]])
+                        left = _representation_flowable(impl, reps[item["representation_instance_id"]], item)
+                        right = _representation_flowable(impl, reps[next_item["representation_instance_id"]], next_item)
                         story.append(
                             GeneratedRepresentationRow(
                                 left,
@@ -173,7 +292,7 @@ def make_study_renderer(impl):
                     )
                 if item.get("representation_instance_id"):
                     rep = reps[item["representation_instance_id"]]
-                    story.append(base._tracked(impl.StructuredRepresentationFlowable(rep), tracker, iid, item))
+                    story.append(base._tracked(_representation_flowable(impl, rep, item), tracker, iid, item))
                     story.append(Spacer(1, 3 * mm))
                 index += 1
 
