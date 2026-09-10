@@ -14,6 +14,19 @@
     "introduces_new_subject_content": false,
     "answer_leakage_forbidden": true
   },
+  "study_guide_structure_requirements": {
+    "publication_structure_required": true,
+    "product_first": true,
+    "one_cognitive_job_per_page_intent": true,
+    "new_relation_requires_model_or_notice_before_build": true,
+    "macro_particulate_symbolic_sequence_when_material": true,
+    "bridge_foundation_support_progression": ["WORKED_EXAMPLE", "GUIDED_1", "GUIDED_2_FADED", "INDEPENDENT_TRANSFER"],
+    "high_baseline_may_compress_support_with_reason": true,
+    "retrieval_check_required": true,
+    "attempt_before_help": true,
+    "static_hint_delivery": "SEPARATE_HELP_SECTION",
+    "bidirectional_navigation": true
+  },
   "transfer_question_requirements": [
     "H0_ATTEMPT_FIRST",
     "H1_NOTICE",
@@ -25,7 +38,10 @@
     "DIFFICULTY_PROVENANCE",
     "TRANSFER_SEPARATE_FROM_DIFFICULTY",
     "COMPLETE_ASSIMILATION_SOLUTION",
-    "CONCEPT_HELPER_AND_MISCONCEPTION_SUPPORT_WHEN_NEEDED"
+    "CONCEPT_HELPER_AND_MISCONCEPTION_SUPPORT_WHEN_NEEDED",
+    "ATTEMPTS_BEFORE_OPTIONAL_HELP",
+    "OPTIONAL_HELP_SEPARATE_IN_STATIC_PDF",
+    "QUESTION_HINT_SOLUTION_RETURN_NAVIGATION"
   ],
   "representation_policy": {
     "macro_particulate_symbolic_semantics": true,
