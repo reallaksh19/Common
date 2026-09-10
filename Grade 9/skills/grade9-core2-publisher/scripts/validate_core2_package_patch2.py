@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Whitespace-stable independent morphology validation for Core (2)."""
+"""Whitespace-stable independent structure-order validation for Core (2).
+
+This validator proves declared structure binding and global reopened-PDF ordering.
+It deliberately does not call that result exact physical-page morphology: page-intent
+-> physical-page custody is a separate contract still to be implemented.
+"""
 from __future__ import annotations
 
 import re
@@ -99,7 +104,8 @@ def validate_structure_package(argv: list[str]) -> int:
         return 1
     print("CORE2_STRUCTURE_PACKAGE = PASS")
     print("PUBLICATION_STRUCTURE_BINDING = PASS")
-    print("EXACT_PDF_MORPHOLOGY = PASS")
+    print("PDF_GLOBAL_STRUCTURE_ORDER = PASS")
+    print("PHYSICAL_PAGE_MORPHOLOGY = PENDING")
     return 0
 
 
