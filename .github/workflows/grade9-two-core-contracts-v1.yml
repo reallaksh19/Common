@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - 'Grade 9/Architecture/contracts/v1/**'
+      - 'Grade 9/Architecture/core1/**'
       - '.github/workflows/grade9-two-core-contracts-v1.yml'
   pull_request:
     paths:
       - 'Grade 9/Architecture/contracts/v1/**'
+      - 'Grade 9/Architecture/core1/**'
       - '.github/workflows/grade9-two-core-contracts-v1.yml'
   workflow_dispatch:
 
@@ -29,4 +31,6 @@ jobs:
         run: >-
           python 'Grade 9/Architecture/contracts/v1/validate_handoff.py'
           --exam-demand 'Grade 9/Architecture/contracts/v1/examples/exam-demand-profile.example.json'
+          --question-content-ledger 'Grade 9/Architecture/contracts/v1/examples/question-content-ledger.example.json'
+          --question-occurrence-ledger 'Grade 9/Architecture/contracts/v1/examples/question-occurrence-ledger.example.json'
           --question-ledger 'Grade 9/Architecture/contracts/v1/examples/question-evidence-ledger.example.json'
