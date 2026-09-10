@@ -9,12 +9,13 @@ Two execution modes are intentionally supported:
   content and PublicationStructure, and binds LearningDesign into the exact
   publication package.
 
-Both modes now emit a PhysicalPageMap for Study Guides from ReportLab placement
+Both modes emit a PhysicalPageMap for Study Guides from ReportLab placement
 evidence. The mature path fails closed rather than silently falling back to
 generic connective prose.
 """
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -49,6 +50,70 @@ def _learner_surface_inspector(original, target: dict):
     return inspect
 
 
+def _norm(text: object) -> str:
+    return re.sub(r"\s+", " ", str(text)).strip()
+
+
+def _ordered(text: str, markers: list[str]) -> bool:
+    haystack = _norm(text)
+    cursor = 0
+    for marker in markers:
+        pos = haystack.find(_norm(marker), cursor)
+        if pos < 0:
+            return False
+        cursor = pos + len(_norm(marker))
+    return True
+
+
+def _learner_step_marker(step: dict) -> str:
+    if step.get("learner_visible_heading"):
+        return step["learner_visible_heading"]
+    if step.get("role") == "GUIDED_2_FADED":
+        return "GUIDED 2"
+    return step["role"].replace("_", " ")
+
+
+def _learner_surface_morphology(original):
+    """Adapt legacy morphology checks to the learner-visible presentation.
+
+    PublicationStructure retains exact machine roles/support states. The PDF is
+    allowed to use the concise learner cue "GUIDED 2" rather than printing the
+    internal composite label "GUIDED 2 FADED". This wrapper changes only the
+    two text-marker checks affected by that presentation distinction.
+    """
+
+    def morphology(structure, study_pdf, transfer_pdf):
+        out = original(structure, study_pdf, transfer_pdf)
+        if study_pdf and study_pdf.exists():
+            doc = publisher.impl.legacy.fitz.open(study_pdf)
+            text = "\n".join(page.get_text() for page in doc)
+            doc.close()
+
+            arc_ok = True
+            support_ok = True
+            for unit in structure["study_guide"]["learning_units"]:
+                markers = [_learner_step_marker(step) for step in unit["arc_steps"]]
+                if not _ordered(text, markers):
+                    arc_ok = False
+
+                progression = unit["support_progression"]
+                present_to_marker = {
+                    "worked_example": "WORKED EXAMPLE",
+                    "guided_1": "GUIDED 1",
+                    "guided_2_faded": "GUIDED 2",
+                    "independent_transfer": "INDEPENDENT TRANSFER",
+                }
+                for key, marker in present_to_marker.items():
+                    if progression[key]["state"] == "PRESENT" and marker not in _norm(text):
+                        support_ok = False
+
+            out["arc_step_order_reconciliation"] = arc_ok
+            out["support_progression_reconciliation"] = support_ok
+        return out
+
+    return morphology
+
+
 def main() -> int:
     original_argv = list(sys.argv)
     target_value = mature.arg_value(original_argv, "--target")
@@ -70,6 +135,7 @@ def main() -> int:
     original_study_builder = publisher.impl._ORIG_BUILD_STUDY_MODEL
     original_study_renderer = publisher.impl.render_study_pdf
     original_pdf_inspector = publisher.impl.legacy.inspect_pdf
+    original_morphology = publisher.impl.morphology_evidence
     contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
 
     if mature_mode:
@@ -85,6 +151,7 @@ def main() -> int:
 
     publisher.impl.render_study_pdf = physical.make_study_renderer(publisher.impl)
     publisher.impl.legacy.inspect_pdf = _learner_surface_inspector(original_pdf_inspector, target)
+    publisher.impl.morphology_evidence = _learner_surface_morphology(original_morphology)
     sys.argv = mature.cleaned_publisher_argv(original_argv)
     try:
         rc = publisher.main()
@@ -93,6 +160,7 @@ def main() -> int:
         publisher.impl._ORIG_BUILD_STUDY_MODEL = original_study_builder
         publisher.impl.render_study_pdf = original_study_renderer
         publisher.impl.legacy.inspect_pdf = original_pdf_inspector
+        publisher.impl.morphology_evidence = original_morphology
     if rc != 0:
         return rc
 
