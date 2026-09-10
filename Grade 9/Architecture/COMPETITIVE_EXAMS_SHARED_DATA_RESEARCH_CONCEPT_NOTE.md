@@ -5,6 +5,8 @@
 **Status:** DRAFT / FOR REVIEW  
 **Date:** 2026-09-10
 
+> **Operational addendum:** The default study-material workflow proposed in this concept now uses two separate outputs: **(1) Research Core** and **(2) Publish Core**. The detailed handoff, Bxx intake, repository-first research, competitive-exam reverse engineering, Appendix A–C publication contract, and independent-agent replay requirements are defined in [`TWO_CORE_RESEARCH_PUBLISH_OPERATING_CONTRACT.md`](TWO_CORE_RESEARCH_PUBLISH_OPERATING_CONTRACT.md). This addendum is intended to refine—not replace—the canonical-knowledge / exam-demand / student-state architecture below.
+
 ---
 
 ## 1. Purpose
@@ -65,7 +67,7 @@ Architectural implication: historical records must retain the name valid for the
 
 ### 2.4 Domain-completeness implication
 
-A science Olympiad can require a broader science domain than Physics + Chemistry alone. The exam registry must therefore declare all required domains and must return `PARTIAL_COVERAGE` when an installed subject authority does not cover one of them. The platform must never infer complete-exam readiness merely because two subject packs are strong.
+A science olympiad can require a broader science domain than Physics + Chemistry alone. The exam registry must therefore declare all required domains and must return `PARTIAL_COVERAGE` when an installed subject authority does not cover one of them. The platform must never infer complete-exam readiness merely because two subject packs are strong.
 
 ---
 
@@ -81,7 +83,7 @@ The system should not create separate knowledge bases for:
 - Physics school exams;
 - Physics Olympiad/foundation practice;
 - Chemistry school exams;
-- Chemistry science Olympiads.
+- Chemistry science olympiads.
 
 Instead:
 
@@ -1236,15 +1238,16 @@ This concept note does not yet propose:
 | A11 | Keep vector/search indexes non-canonical | APPROVE |
 | A12 | Build shared representation and product-pair base contracts before adding many exam-specific workflows | APPROVE |
 | A13 | Pilot IOQM + RMO + SOF IMO + SOF science olympiad + school profile before broader expansion | APPROVE |
+| A14 | Adopt the separate Research Core → Publish Core operating contract in the linked addendum | APPROVE |
 
 ---
 
 ## 39. Recommended approval statement
 
-> Approved in principle to develop a shared Grades 9–11 learning architecture in which canonical concepts, methods, representations, questions and sources are stored once; curricula and competitive examinations are versioned demand overlays; student mastery is a private evidence overlay; and web research is invoked only for missing/stale evidence, with verified findings fingerprinted, deduplicated, stored and reused. Implementation should begin with shared IDs/schemas and a deliberately diverse exam pilot before any large-scale migration or new exam-specific skill proliferation.
+> Approved in principle to develop a shared Grades 9–11 learning architecture in which canonical concepts, methods, representations, questions and sources are stored once; curricula and competitive examinations are versioned demand overlays; student mastery is a private evidence overlay; and web research is invoked only for missing/stale evidence, with verified findings fingerprinted, deduplicated, stored and reused. Study-material generation should use the linked two-core operating contract so source/research truth is frozen independently before learner adaptation and publication. Implementation should begin with shared IDs/schemas and a deliberately diverse exam pilot before any large-scale migration or new exam-specific skill proliferation.
 
 ---
 
 ## 40. Central invariant
 
-> **Knowledge is stored once. Sources are stored once. Question content is stored once. Exams, curricula and students are overlays expressed through stable links. Web research fills missing or stale evidence; it must not create an unmanaged second knowledge base.**
+> **Knowledge is stored once. Sources are stored once. Question content is stored once. Exams, curricula and students are overlays expressed through stable links. Web research fills missing or stale evidence; it must not create an unmanaged second knowledge base. Research Core freezes that evidence; Publish Core adapts it for the learner without redefining it.**
