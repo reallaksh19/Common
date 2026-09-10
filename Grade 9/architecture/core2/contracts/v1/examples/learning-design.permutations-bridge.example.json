@@ -1,0 +1,204 @@
+{
+  "learning_design_id": "LD-PERMUTATIONS-B40-REFERENCE",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-RB-G11-MATH-PERMUTATIONS-LP-B40",
+  "research_bundle_id": "RB-G11-MATH-PERMUTATIONS",
+  "research_package_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "learner_profile_id": "LP-G11-MATH-PERMUTATIONS-B40",
+  "publication_target_id": "PT-G11-MATH-PERMUTATIONS-COMP-FOUNDATION",
+  "mode": "MATURE_LEARNER_PRODUCT",
+  "subject": "MATHEMATICS",
+  "topic_id": "MATH-PERMUTATIONS",
+  "purpose_type": "COMPETITIVE_FOUNDATION",
+  "learning_units": [
+    {
+      "unit_id": "LU-PERM-COUNTING-01",
+      "concept_ids": ["MATH-PERM-MULTIPLICATION-PRINCIPLE", "MATH-PERM-NPR"],
+      "instructional_profile": "BRIDGE",
+      "research_refs": ["R-MATH-PERM-002"],
+      "exam_demand_refs": ["EDP-PERM-FOUNDATION"],
+      "learner_capabilities": [
+        {
+          "capability_id": "LC-PERM-01-RECOGNIZE",
+          "type": "RECOGNIZE",
+          "required": true,
+          "success_statement": "Recognize a sequential-choice problem in which later legal choices depend on earlier selections."
+        },
+        {
+          "capability_id": "LC-PERM-01-EXPLAIN",
+          "type": "EXPLAIN",
+          "required": true,
+          "success_statement": "Explain in words why legal sequential choice counts multiply."
+        },
+        {
+          "capability_id": "LC-PERM-01-RECONSTRUCT",
+          "type": "RECONSTRUCT",
+          "required": true,
+          "success_statement": "Reconstruct nPr from the shrinking sequence n, n-1, ..., n-r+1 instead of recalling it as an isolated formula."
+        },
+        {
+          "capability_id": "LC-PERM-01-MODEL",
+          "type": "MODEL_SELECT",
+          "required": true,
+          "success_statement": "Distinguish without-replacement ordered selection from repeated-choice and unordered-selection models."
+        },
+        {
+          "capability_id": "LC-PERM-01-TRANSFER",
+          "type": "TRANSFER",
+          "required": true,
+          "success_statement": "Select and execute the counting model when the slots are disguised as roles or constrained positions."
+        }
+      ],
+      "prerequisite_decisions": [
+        {
+          "prerequisite_id": "MATH-GENERAL-MULTIPLICATION",
+          "state": "READY"
+        },
+        {
+          "prerequisite_id": "MATH-PERM-ORDER-MATTERS",
+          "state": "REPAIR_IN_UNIT",
+          "repair_target": "CONTRAST-PERM-ORDER-VS-CHOICE"
+        }
+      ],
+      "concept_anchor": {
+        "kind": "STRUCTURAL_MODEL",
+        "description": "Fill three distinct labelled roles from a pool without reusing a person; show the legal choice count shrinking after each assignment.",
+        "learner_job": "Predict the number of legal choices for the next slot before multiplying anything."
+      },
+      "ordinary_language_target": "For an ordered sequence of choices, count the legal options for each next step and multiply those step counts; when reuse is forbidden, the available pool shrinks.",
+      "formal_understanding": {
+        "state": "REQUIRED",
+        "relation_or_object": "nPr = n(n-1)...(n-r+1) = n!/(n-r)!",
+        "term_origins": [
+          "n is the number of legal choices for the first ordered slot.",
+          "Each subsequent factor decreases by one because an already used object cannot be selected again.",
+          "There are r factors because exactly r ordered slots are filled.",
+          "The factorial quotient is a compression of the same finite product, not a new counting rule."
+        ],
+        "conditions": [
+          "The r positions or selections are ordered or otherwise distinguishable.",
+          "An object cannot be reused unless the problem explicitly permits repetition.",
+          "0 <= r <= n for the without-replacement nPr form."
+        ],
+        "reconstruction_route": "Draw r ordered slots, write the number of legal choices above each slot, multiply the shrinking counts, then compress the product into factorial notation.",
+        "checks": [
+          "For r=1 the count reduces to n.",
+          "For r=n the count becomes n!.",
+          "Changing only the names of the slots must not change the count."
+        ]
+      },
+      "representation_transitions": [
+        {
+          "transition_id": "RT-PERM-SLOTS-TO-PRODUCT",
+          "from": "ORDERED_SLOT_MODEL",
+          "to": "PRODUCT_OF_LEGAL_CHOICES",
+          "learner_job": "Translate each slot into the number of choices still legal at that stage."
+        },
+        {
+          "transition_id": "RT-PERM-PRODUCT-TO-NPR",
+          "from": "PRODUCT_OF_LEGAL_CHOICES",
+          "to": "NPR_SYMBOLIC_FORM",
+          "learner_job": "Compress the shrinking product without losing the meaning of its factors."
+        }
+      ],
+      "misconceptions": [
+        {
+          "misconception_id": "MIS-PERM-REUSE-01",
+          "wrong_model": "Use n choices at every ordered position even when selections cannot be repeated.",
+          "why_tempting": "The first slot has n choices, so repeating the same visible count for all later slots looks superficially symmetric.",
+          "decisive_discriminator": "Ask whether an object selected earlier remains legal for the next slot; if not, the choice count must shrink.",
+          "diagnostic_probe_id": "PROBE-PERM-MIS-01",
+          "repair_strategy": "CASE_COMPARISON"
+        }
+      ],
+      "contrasts": [
+        {
+          "contrast_id": "CONTRAST-PERM-ORDER-VS-CHOICE",
+          "case_a": "Choose a president and secretary from five students.",
+          "case_b": "Choose two students to form an unlabeled pair from five students.",
+          "decisive_difference": "In case A, swapping the two students changes who holds each role; in case B, the same two-person set is unchanged."
+        }
+      ],
+      "support_progression": {
+        "worked": {
+          "state": "PRESENT",
+          "support_features": ["MODEL_SELECTED", "REPRESENTATION_PROVIDED", "FIRST_STEP_PROVIDED", "INTERMEDIATE_STEPS_PROVIDED", "CONDITION_CUE", "ERROR_CHECK_CUE"],
+          "removed_since_previous": []
+        },
+        "guided_1": {
+          "state": "PRESENT",
+          "support_features": ["REPRESENTATION_PROVIDED", "FIRST_STEP_PROVIDED", "CONDITION_CUE", "ERROR_CHECK_CUE"],
+          "removed_since_previous": ["MODEL_SELECTED", "INTERMEDIATE_STEPS_PROVIDED"]
+        },
+        "guided_2": {
+          "state": "PRESENT",
+          "support_features": ["REPRESENTATION_PROVIDED", "ERROR_CHECK_CUE"],
+          "removed_since_previous": ["FIRST_STEP_PROVIDED", "CONDITION_CUE"]
+        },
+        "independent": {
+          "state": "PRESENT",
+          "support_features": [],
+          "removed_since_previous": ["REPRESENTATION_PROVIDED", "ERROR_CHECK_CUE"]
+        }
+      },
+      "practice_progression": {
+        "worked_example_id": "ITEM-PERM-WORKED-01",
+        "guided_1_id": "ITEM-PERM-G1-01",
+        "guided_2_id": "ITEM-PERM-G2-01",
+        "independent_id": "ITEM-PERM-IND-01"
+      },
+      "transfer_design": {
+        "required": true,
+        "source_learning_example_id": "ITEM-PERM-WORKED-01",
+        "transfer_type": "MODEL_SELECTION",
+        "changed_dimensions": ["CONTEXT_CHANGE", "MODEL_SELECTION", "NOVEL_CONSTRAINT"],
+        "non_isomorphic_to_worked": true,
+        "question_family_refs": ["QF-PERM-CONSTRAINED-ORDERED-SELECTION"]
+      },
+      "completion_probes": [
+        {
+          "probe_id": "PROBE-PERM-RECONSTRUCT-01",
+          "capability_refs": ["LC-PERM-01-RECOGNIZE", "LC-PERM-01-EXPLAIN", "LC-PERM-01-RECONSTRUCT"],
+          "prompt_intent": "Hide nPr and ask the learner to rebuild the count for r ordered slots from the shrinking legal choices.",
+          "success_evidence": "The learner states why each factor appears and gives the condition under which the factors shrink."
+        },
+        {
+          "probe_id": "PROBE-PERM-MIS-01",
+          "capability_refs": ["LC-PERM-01-MODEL"],
+          "prompt_intent": "Contrast an ordered role-assignment problem with an unordered pair-selection problem and ask why the counts differ.",
+          "success_evidence": "The learner identifies order/role identity as the decisive modelling difference rather than selecting a formula by keyword."
+        },
+        {
+          "probe_id": "PROBE-PERM-TRANSFER-01",
+          "capability_refs": ["LC-PERM-01-TRANSFER"],
+          "prompt_intent": "Use a constrained seating or code-position problem where the ordered slots are not named as permutations and require the learner to choose the model.",
+          "success_evidence": "The learner identifies the legal-choice sequence, handles the new constraint, and justifies the multiplication before simplifying."
+        }
+      ]
+    }
+  ],
+  "exam_bridge": {
+    "exam_demand_profile_id": "EDP-PERM-FOUNDATION",
+    "question_families": [
+      {
+        "question_family_id": "QF-PERM-CONSTRAINED-ORDERED-SELECTION",
+        "recognition_requirements": [
+          "Identify which positions are distinguishable.",
+          "Determine whether earlier choices remove later legal choices.",
+          "Separate the model-selection step from arithmetic execution."
+        ],
+        "hidden_prerequisite_ids": ["MATH-PERM-ORDER-MATTERS"],
+        "failure_models": [
+          "Use a constant n choices at every stage.",
+          "Treat an ordered role assignment as an unordered selection."
+        ],
+        "learning_unit_refs": ["LU-PERM-COUNTING-01"]
+      }
+    ]
+  },
+  "review_requirements": {
+    "pedagogy_review_required": true,
+    "subject_review_required": true,
+    "exact_artifact_binding_required": true
+  }
+}
