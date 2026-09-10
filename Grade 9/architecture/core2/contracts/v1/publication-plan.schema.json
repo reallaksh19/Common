@@ -13,6 +13,7 @@
     "publication_target_id",
     "subject",
     "topic_id",
+    "delivery_contract",
     "requested_products",
     "sections",
     "representation_instances",
@@ -30,6 +31,9 @@
     "topic_id": {"type": "string", "minLength": 1},
     "title": {"type": "string"},
     "purpose_type": {"type": "string", "minLength": 1},
+    "subject_profile": {"type": "string"},
+    "delivery_contract": {"enum": ["STUDY_GUIDE_ONLY", "FULL_TOPIC_PAIR", "TRANSFER_ONLY"]},
+    "pair_id": {"type": "string", "minLength": 1},
     "requested_products": {
       "type": "object",
       "additionalProperties": false,
@@ -75,9 +79,29 @@
         "A_core_practice": {"const": true},
         "B_core_solutions": {"const": true},
         "C_printable_handout": {"const": true},
+        "C_standalone_usable_required": {"type": "boolean", "default": true},
+        "C_answer_leakage_forbidden": {"type": "boolean", "default": true},
+        "C_new_subject_content_forbidden": {"type": "boolean", "default": true},
         "C_modules": {"type": "array", "items": {"type": "string"}, "default": []}
       }
     },
     "warnings": {"type": "array", "items": {"type": "string"}, "default": []}
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"delivery_contract": {"const": "FULL_TOPIC_PAIR"}}, "required": ["delivery_contract"]},
+      "then": {
+        "required": ["pair_id"],
+        "properties": {"requested_products": {"properties": {"study_guide": {"const": true}, "transfer_book": {"const": true}}}}
+      }
+    },
+    {
+      "if": {"properties": {"delivery_contract": {"const": "STUDY_GUIDE_ONLY"}}, "required": ["delivery_contract"]},
+      "then": {"properties": {"requested_products": {"properties": {"study_guide": {"const": true}}}}}
+    },
+    {
+      "if": {"properties": {"delivery_contract": {"const": "TRANSFER_ONLY"}}, "required": ["delivery_contract"]},
+      "then": {"properties": {"requested_products": {"properties": {"transfer_book": {"const": true}}}}}
+    }
+  ]
 }
