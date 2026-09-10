@@ -6,7 +6,7 @@ import copy
 import sys
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[2] / "skills" / "grade9-core2-publisher" / "scripts"
+SCRIPTS = Path(__file__).resolve().parents[3] / "skills" / "grade9-core2-publisher" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import mature_product as mature  # noqa: E402
@@ -127,6 +127,10 @@ def main() -> int:
     engineering_argv = ["run_core2.py", "--target", "target.json"]
     assert mature.preflight_errors(engineering_argv, target, None) == []
     assert mature.mature_requested(engineering_argv, None) is False
+
+    accidental_authored = ["run_core2.py", "--target", "target.json", "--study-model", "study.json"]
+    errors = mature.preflight_errors(accidental_authored, target, None)
+    assert any("only valid for MATURE_LEARNER_PRODUCT" in e for e in errors), errors
 
     print("CORE2_MATURE_PRODUCT_GATE_REGRESSION = PASS")
     print("MATURE_REQUIRES_LEARNING_DESIGN = PASS")
