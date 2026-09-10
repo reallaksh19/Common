@@ -13,7 +13,6 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
-import sys
 from pathlib import Path
 from typing import Callable
 
@@ -70,6 +69,8 @@ def preflight_errors(argv: list[str], target: dict, design: dict | None) -> list
         errors.append("--mature-product requires LearningDesign.mode=MATURE_LEARNER_PRODUCT")
 
     if not mature:
+        if arg_value(argv, "--study-model"):
+            errors.append("authored --study-model is only valid for MATURE_LEARNER_PRODUCT")
         return errors
 
     if design is None:
@@ -88,7 +89,7 @@ def preflight_errors(argv: list[str], target: dict, design: dict | None) -> list
 
 
 def _learning_checker() -> object:
-    contracts = Path(__file__).resolve().parents[2] / "architecture" / "core2" / "contracts" / "v1"
+    contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
     path = contracts / "check_learning_design.py"
     spec = importlib.util.spec_from_file_location("core2_check_learning_design", path)
     if spec is None or spec.loader is None:
@@ -117,7 +118,6 @@ def _design_unit_map(design: dict) -> dict[str, dict]:
     for unit in design.get("learning_units", []):
         for cid in unit.get("concept_ids", []):
             if cid in out:
-                # Duplicate ownership is surfaced later by binding_errors.
                 continue
             out[cid] = unit
     return out
