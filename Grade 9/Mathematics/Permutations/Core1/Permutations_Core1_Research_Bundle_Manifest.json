@@ -19,7 +19,7 @@
       "media_type": "application/pdf",
       "path": "Permutations_Core1_Research_Core.pdf",
       "role": "RESEARCH_CORE_PDF",
-      "sha256": "f0706d1331a369d1ddb0a3d37b7d165c2cc95c5722292f85ecc7cb24f4f37e0a"
+      "sha256": "42e8387a898cc8828aff8c09164bb70405661a28912463bd56fec39a9786a969"
     },
     {
       "bytes": 3559,
@@ -42,7 +42,7 @@
     "unmapped_md_material_claims": 0,
     "unmapped_pdf_material_claims": 0
   },
-  "package_digest": "cd97d624c92ddeb514cc427a84680708243afe0038c1f0eed8a47dba4b38ff34",
+  "package_digest": "5a462cf03699066cbfd05075de9f6c233dc92f9434f8265d1a56a9e15003d7a7",
   "release_note": "Mathematics Core (1) permutation research package. It is learner-neutral and purpose-neutral. External ExamSIDE question-denominator closure is deliberately not claimed in this generic Core (1) fixture.",
   "research_bundle_id": "RB-MATH-PERMUTATIONS-CORE1-2026",
   "schema_version": "1.0.0",
