@@ -8,7 +8,11 @@
       "repo_path": "Grade 9/Mathematics/NMTC Preliminary/03_Concept_Books/Combinatorics/Counting_Permutations_Pigeonhole_IE/Combinatorics_Assimilation_Concept_Map_v2.md",
       "retrieved_at": "2026-09-10T07:50:00Z",
       "rights": {
-        "allowed_uses": ["EXTRACT_FACTS", "CITE_SOURCE", "REUSE_INTERNAL_CONTRACT"],
+        "allowed_uses": [
+          "EXTRACT_FACTS",
+          "CITE_SOURCE",
+          "REUSE_INTERNAL_CONTRACT"
+        ],
         "basis": "Repository-owned source used by the same project.",
         "prohibited_uses": [],
         "status": "REPRODUCTION_ALLOWED"
@@ -24,7 +28,11 @@
       "repo_path": "Grade 9/Mathematics/NMTC Preliminary/03_Concept_Books/Combinatorics/Counting_Permutations_Pigeonhole_IE/Combinatorics_Assimilation_Book_v2.md",
       "retrieved_at": "2026-09-10T07:50:00Z",
       "rights": {
-        "allowed_uses": ["EXTRACT_FACTS", "CITE_SOURCE", "REUSE_INTERNAL_CONTRACT"],
+        "allowed_uses": [
+          "EXTRACT_FACTS",
+          "CITE_SOURCE",
+          "REUSE_INTERNAL_CONTRACT"
+        ],
         "basis": "Repository-owned source used by the same project.",
         "prohibited_uses": [],
         "status": "REPRODUCTION_ALLOWED"
@@ -40,7 +48,11 @@
       "repo_path": "Grade 9/skills/grade9-math-corpus-coverage-auditor/SKILL.md",
       "retrieved_at": "2026-09-10T07:50:00Z",
       "rights": {
-        "allowed_uses": ["EXTRACT_FACTS", "CITE_SOURCE", "REUSE_INTERNAL_CONTRACT"],
+        "allowed_uses": [
+          "EXTRACT_FACTS",
+          "CITE_SOURCE",
+          "REUSE_INTERNAL_CONTRACT"
+        ],
         "basis": "Repository-owned skill contract.",
         "prohibited_uses": [],
         "status": "REPRODUCTION_ALLOWED"
@@ -55,9 +67,14 @@
       "provider": "ExamSIDE",
       "retrieved_at": "2026-09-10T07:50:00Z",
       "rights": {
-        "allowed_uses": ["CITE_SOURCE", "MAP_QUESTION_OCCURRENCES"],
+        "allowed_uses": [
+          "CITE_SOURCE",
+          "MAP_QUESTION_OCCURRENCES"
+        ],
         "basis": "External question index retained for citation/provenance; discovery does not imply reproduction permission.",
-        "prohibited_uses": ["REPRODUCE_FULL_CONTENT"],
+        "prohibited_uses": [
+          "REPRODUCE_FULL_CONTENT"
+        ],
         "status": "REFERENCE_ONLY"
       },
       "scope_role": "External question-evidence discovery only. This Core 1 fixture does not claim full external-corpus closure.",

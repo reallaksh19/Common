@@ -1,0 +1,50 @@
+{
+  "artifacts": [
+    {
+      "bytes": 22200,
+      "media_type": "application/json",
+      "path": "Permutations_Core1_Research_Bundle.json",
+      "role": "RESEARCH_BUNDLE",
+      "sha256": "3c1cb6b6aa6aa54c9ac6b09258793fcc74563d96813cedb8278a674e694019d7"
+    },
+    {
+      "bytes": 12519,
+      "media_type": "text/markdown",
+      "path": "Permutations_Core1_Research_Core.md",
+      "role": "RESEARCH_CORE_MD",
+      "sha256": "6010872774aabf20f1b06da3b436a194e01aa2862e2e5c8e7143ff61e2065913"
+    },
+    {
+      "bytes": 15323,
+      "media_type": "application/pdf",
+      "path": "Permutations_Core1_Research_Core.pdf",
+      "role": "RESEARCH_CORE_PDF",
+      "sha256": "80159ecdf208355f5d2182c19d419a36cd2d0c5ad322038222b2ad21192831c3"
+    },
+    {
+      "bytes": 3559,
+      "media_type": "application/json",
+      "path": "Permutations_Core1_Source_Ledger.json",
+      "role": "SOURCE_LEDGER",
+      "sha256": "94c0641c515ebd122cefe92f5d2614b6f5997b127a8b0abf515bc439e7c7555d"
+    }
+  ],
+  "canonicalization": {
+    "package_tuple_sort": "ROLE_THEN_PATH_LEXICOGRAPHIC",
+    "semantic_json": "RFC8785_JCS"
+  },
+  "change_class": "SEMANTIC",
+  "evidence_version": "1.0.0",
+  "manifest_id": "RBM-RB-MATH-PERMUTATIONS-CORE1-2026",
+  "material_view_reconciliation": {
+    "bundle_to_md_coverage": 1.0,
+    "bundle_to_pdf_coverage": 1.0,
+    "unmapped_md_material_claims": 0,
+    "unmapped_pdf_material_claims": 0
+  },
+  "package_digest": "afe10577b6981354db19cacec35ef6c6fbfb3e438a7a8fc87c37be34af4bd4d6",
+  "release_note": "Mathematics Core (1) permutation research package. It is learner-neutral and purpose-neutral. External ExamSIDE question-denominator closure is deliberately not claimed in this generic Core (1) fixture.",
+  "research_bundle_id": "RB-MATH-PERMUTATIONS-CORE1-2026",
+  "schema_version": "1.0.0",
+  "semantic_digest": "6c9f072fce4f10197e1007ca5a48958f3fe3563686c0dcaebafdcef818e6c572"
+}
