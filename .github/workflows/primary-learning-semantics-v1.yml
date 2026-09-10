@@ -5,12 +5,16 @@ on:
     paths:
       - 'Primary/Architecture/**'
       - 'skills/primary-teacher-runtime/**'
+      - 'skills/grade4-english/**'
+      - 'skills/grade4-math/**'
       - '.github/workflows/primary-learning-semantics-v1.yml'
   push:
     branches: [main]
     paths:
       - 'Primary/Architecture/**'
       - 'skills/primary-teacher-runtime/**'
+      - 'skills/grade4-english/**'
+      - 'skills/grade4-math/**'
       - '.github/workflows/primary-learning-semantics-v1.yml'
 
 permissions:
@@ -30,3 +34,6 @@ jobs:
 
       - name: Validate canonical Primary semantic fixture
         run: python Primary/Architecture/contracts/v1/validate_semantics.py
+
+      - name: Validate Grade 4 subject skill wiring
+        run: python Primary/Architecture/contracts/v1/validate_grade4_skill_wiring.py
