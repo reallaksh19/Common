@@ -1,0 +1,26 @@
+name: Core2 XY + Structure Hardening
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/architecture/core2/**"
+      - "Grade 9/skills/grade9-core2-publisher/**"
+      - ".github/workflows/core2-xy-structure-hardening.yml"
+  workflow_dispatch:
+
+jobs:
+  hardening:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Core 2 dependencies
+        run: python -m pip install -r "Grade 9/skills/grade9-core2-publisher/requirements.txt"
+      - name: Validate Core 2 contracts
+        run: python "Grade 9/architecture/core2/contracts/v1/validate_core2_contracts.py"
+      - name: Falsify generic XY graph and executable structure layer
+        run: python "Grade 9/architecture/core2/tests/test_xy_graph_and_structure.py"
+      - name: Run full-pair and B40/B90 regression falsifiers
+        run: python "Grade 9/architecture/core2/tests/run_final_falsifiers.py" --out /tmp/core2-hardening
