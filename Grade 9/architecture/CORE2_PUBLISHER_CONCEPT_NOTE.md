@@ -1,172 +1,324 @@
 # Concept Note — Core (2) Publisher
 
-**Status:** Draft for architecture approval  
-**Scope:** Grade 9–11 learning-publication pipeline  
-**Primary role:** Core (2) — learner adaptation, scientific representation, composition, rendering and publication QA  
-**Depends on:** a completed, versioned Core (1) Research Package  
-**Related pilots:** Physics PR #155 and Chemistry PR #157 are reference implementations, not normative dependencies of this note.
+**Status:** Draft / v1 hand-off frozen; Core (2) implementation contract  
+**Scope:** Grades 9–11 learning-publication pipeline  
+**Primary role:** Core (2) — learner adaptation, representation rendering, scaffolding, composition, learner-product generation and publication QA  
+**Normative upstream contract:** PR #160, `Grade 9/Architecture/contracts/v1/`  
+**Reference implementations:** Physics PR #155 and Chemistry PR #157 are mature implementation references, not normative schemas.
 
 ---
 
-## 1. Decision summary
+## 1. Architecture decision
 
-Adopt a two-core production architecture for every substantial study-material request:
+Adopt two independent cores:
 
 ```text
-USER PROMPT
-   ↓
-INTAKE / ROUTER
-   ↓
-CORE (1) · RESEARCH
-truth · scope · evidence · concept structure · exam-demand analysis
-   ↓
-VERSIONED RESEARCH PACKAGE
-   ↓
-CORE (2) · PUBLISH
-learner adaptation · representations · scaffolding · page composition · QA
-   ↓
-LEARNER PUBLICATION
+USER PROMPT / SUPPLIED SOURCES
+            │
+            ▼
+      INTAKE / ROUTER
+            │
+            ▼
+       CORE (1) RESEARCH
+ truth · scope · evidence · concepts
+ representation semantics · exam demand
+            │
+            ▼
+      FROZEN RESEARCH PACKAGE
+            │
+            ├──────── LearnerProfile
+            └──────── PublicationTarget
+                         │
+                         ▼
+                   CORE (2) PUBLISH
+ learner adaptation · representations · scaffolding
+ practice · appendices · composition · render QA
+                         │
+                         ▼
+                  LEARNER PRODUCTS
 ```
 
-The governing separation is:
+The governing boundary is:
 
-> **Core (1) decides what must be taught, what is supported by evidence, and what the target assessment demands. Core (2) decides how that verified material should be experienced by this learner for this purpose.**
+> **Core (1) owns what is true, in scope, evidenced and semantically required. Core (2) owns how the frozen material is transformed into a learner experience for a declared learner profile and purpose.**
 
-Core (2) must be executable by an independent cold-start agent once Core (1) has passed its hand-off gate. Core (2) must not depend on the prior chat, the original researcher agent, or undocumented research decisions.
-
----
-
-## 2. Why two cores
-
-The current Grade 9 repository already contains strong but partially overlapping concerns: source grounding, subject reasoning, concept architecture, question generation, enrichment, publication, subtopic builders and corpus audits. Physics PR #155 demonstrates an executable publication model with typed figures, mixed-transfer behavior, hints, solutions and render QA. Chemistry PR #157 demonstrates a subject-wide two-file publication contract, Appendix A/B/C discipline, concept segregation, corpus support and artifact custody.
-
-The next scaling risk is not lack of functionality. It is loss of responsibility boundaries when these patterns are multiplied across topics.
-
-Without a hard two-core boundary, a publishing agent can accidentally:
-
-- research new claims while laying out pages;
-- repair gaps from general knowledge without recording provenance;
-- reinterpret exam demand during question selection;
-- mix learner baseline with question difficulty;
-- create topic-specific renderers instead of reusable scientific representation primitives;
-- produce a visually polished artifact that cannot be traced back to the verified research state.
-
-The two-core architecture prevents these failures by making the research-to-publication boundary explicit and machine-checkable.
+Core (2) must be executable by a cold-start agent with no access to the Core (1) conversation or hidden researcher state.
 
 ---
 
-## 3. Non-goals
+## 2. Frozen Core (2) input formula
 
-This proposal does **not**:
-
-- merge research and publication into one large skill;
-- replace subject authorities such as Physics or Chemistry;
-- require one global learner baseline for a whole topic;
-- treat B30/B80 as psychometric mastery measurements;
-- require all projects to include an external competitive-exam corpus;
-- force a single page orientation or decorative design;
-- require Core (2) to browse the web to complete missing science;
-- assume every figure must be generated programmatically;
-- supersede the existing source-reconstruction publication skill where an existing PDF itself is the immutable source authority.
-
----
-
-## 4. Intake / router contract
-
-Before either core starts, the router resolves four dimensions:
+The v1 input is:
 
 ```text
-SUBJECT + GRADE
-TOPIC / SUBTOPICS
-LEARNER BASELINE BY SUBTOPIC
-PURPOSE / TARGET ASSESSMENT
+CORE2 = ResearchPackage × LearnerProfile × PublicationTarget
 ```
 
-The router asks only for information not already supplied.
-
-### Example
-
-Prompt:
-
-> Prepare study material for Grade 9 Physics, Laws of Motion for NSO.
-
-Already known:
+where:
 
 ```text
-grade = 9
-subject = Physics
-topic = Laws of Motion
-purpose = competitive exam
-exam_target = NSO
+ResearchPackage
+  = ResearchBundle
+  + ResearchBundleManifest
+  + referenced SourceLedger
+  + referenced ExamDemandProfile(s), when applicable
+  + referenced QuestionEvidenceLedger, when applicable
+  + approved assets, when applicable
 ```
 
-The router should not ask these again. It should search the repository first, infer candidate subtopics from existing authority where possible, then ask for unresolved scope and learner baseline, for example:
+`LearnerProfile` and `PublicationTarget` are downstream inputs. They are **not** part of `ResearchBundle` identity.
 
-> Please confirm the Laws of Motion subtopics and learner baseline. You can use B30/B50/B80 per subtopic, e.g. Newton's laws B80, free-body diagrams B50, friction B30.
+Therefore:
 
-For a generic request such as:
+```text
+change Bxx / learner profile       → rebuild Core (2)
+change publication purpose         → rebuild Core (2)
+change presentation profile        → rebuild/re-render Core (2)
 
-> Prepare Grade 10 Chemistry study material on Redox.
+change evidence / truth / scope    → version Core (1)
+change supported exam demand       → version Core (1)
+change approved source asset       → version/release Core (1) package
+```
 
-The router should ask only for missing subtopics, baseline and purpose.
+This is the operational meaning of:
+
+> **Research once per evidence version → publish many.**
 
 ---
 
-## 5. Learner baseline model
+## 3. Normative v1 upstream objects
 
-Baseline belongs to the learner/topic relationship, not to the publication as a single global label.
-
-Store baseline per subtopic:
-
-```yaml
-baseline_profile:
-  newtons_laws:
-    band: B80
-    basis: USER_DECLARED
-  free_body_diagrams:
-    band: B50
-    basis: USER_DECLARED
-  friction:
-    band: B30
-    basis: USER_DECLARED
-```
-
-### B-band semantics
-
-B-bands are **instructional support profiles**, not mastery scores.
+Core (2) consumes the schemas frozen in PR #160:
 
 ```text
-B20–B30  LOW PRIOR WORKING KNOWLEDGE
-         build almost from first principles
-
-B40–B60  PARTIAL KNOWLEDGE
-         reconnect, diagnose, model and repair
-
-B70–B80  STRONG PRIOR KNOWLEDGE
-         compress routine basics; emphasize distinctions and application
-
-B90+     VERY STRONG PRIOR KNOWLEDGE
-         reference-first, transfer-heavy, minimal exposition
+ProjectManifest
+ScopeGraph
+LearnerProfile
+PublicationTarget
+ResearchClaim
+RepresentationRequirement
+SourceLedger
+ExamDemandProfile
+QuestionEvidenceLedger
+ResearchBundle
+ResearchBundleManifest
+Core1ResearchGap
+common ChangeClass / TraceabilityClass / rights / disposition enums
 ```
 
-Every baseline value records its basis:
+Core (2) must not define a parallel version of these v1 objects.
 
-```text
-USER_DECLARED
-DIAGNOSTIC_DERIVED
-TEACHER_DECLARED
-EVIDENCE_ESTIMATED
-```
-
-Do not present a user-entered B80 as empirically measured mastery.
+A breaking hand-off change requires a jointly reviewed `v2/` contract rather than a silent local extension.
 
 ---
 
-## 6. Purpose is independent of baseline
+## 4. Research Package identity and reproducibility
 
-The same B80 learner may need very different publications for routine study and a competitive exam.
+Core (2) binds to:
 
-Canonical purpose profiles should include at least:
+```text
+research_bundle_id
+research_package_digest
+```
+
+`research_package_digest` MUST equal:
+
+```text
+ResearchBundleManifest.package_digest
+```
+
+The package manifest also carries:
+
+```text
+evidence_version
+change_class
+semantic_digest
+artifact hashes
+material-view reconciliation
+```
+
+Core (2) must never treat one JSON-file hash as sufficient package identity when the research release includes separate ledgers, human views or assets.
+
+Every Core (2) canonical publication model must record at minimum:
+
+```text
+publication_target_id
+learner_profile_id
+research_bundle_id
+evidence_version
+research_package_digest
+core2_schema_version
+```
+
+A learner PDF without this machine lineage is not a reproducible Core (2) product.
+
+---
+
+## 5. Core (2) preflight is stricter than schema validity
+
+Passing the cross-core schema/handoff validator is necessary but not sufficient for publication.
+
+Before planning learner content, Core (2) requires:
+
+```text
+UPSTREAM_HANDOFF_SCHEMA_VALID = PASS
+RESEARCH_BUNDLE_STATUS = READY_FOR_PUBLISH
+RESEARCH_PACKAGE_DIGEST_BINDING = PASS
+BUNDLE_MANIFEST_BINDING = PASS
+LEARNER_TARGET_BINDING = PASS
+MATERIAL_VIEW_RECONCILIATION = PASS
+BLOCKING_RESEARCH_GAPS = 0
+MATERIAL_RESEARCH_CLAIMS_VERIFIED = PASS
+COMPETITIVE_EXAM_DEMAND_BINDING = PASS | NOT_APPLICABLE
+QUESTION_DENOMINATOR_CLOSURE = PASS | NOT_APPLICABLE
+```
+
+### 5.1 Publisher verification rule
+
+For v1, every Research Claim that enters a learner product as one of these material classes must be `VERIFIED`:
+
+```text
+MATERIAL_CLAIM
+MATERIAL_CONDITION
+MATERIAL_EXAMPLE
+MATERIAL_REPRESENTATION
+MATERIAL_QUESTION
+MATERIAL_SOLUTION_METHOD
+MATERIAL_EXAM_FACT
+```
+
+`PEDAGOGICAL_CONNECTIVE` and `PRESENTATION_ONLY` do not require artificial research-claim verification.
+
+A `PARTIAL`, `UNVERIFIED` or `CONFLICT_REVIEW_REQUIRED` material claim must not be published as settled learner content.
+
+---
+
+## 6. Research embargo and fail-back
+
+Core (2) is not a second researcher.
+
+It may:
+
+- simplify verified wording;
+- reorganize verified material;
+- choose learner sequencing;
+- generate layout geometry;
+- typeset an approved semantic equation;
+- select a compliant renderer for a verified representation requirement;
+- create pedagogical connective prose that introduces no new material claim;
+- create original practice only from supported concepts/question families and within declared provenance rules.
+
+It may not silently:
+
+- add a scientific/mathematical claim;
+- repair a missing condition;
+- invent a missing diagram meaning;
+- infer a new exam pattern;
+- recreate missing options from general knowledge;
+- reinterpret a source answer;
+- promote a project research candidate into canonical knowledge.
+
+If required material is missing, Core (2) returns the v1 object:
+
+```text
+CORE1_RESEARCH_GAP
+```
+
+with a gap type such as:
+
+```text
+SOURCE
+CONCEPT
+REPRESENTATION
+EQUATION
+QUESTION_FAMILY
+EXAM_DEMAND
+ASSET
+RIGHTS_USE
+OTHER
+```
+
+Core (1) resolves the gap and releases a new evidence version/package. Core (2) resumes only from that released package.
+
+---
+
+## 7. Scope and canonical knowledge boundary
+
+Core (2) consumes project scope through `ScopeGraph` and canonical IDs.
+
+It may not perform ontology promotion. The promotion path remains upstream:
+
+```text
+RESEARCH_CANDIDATE
+→ SUBJECT_AUTHORITY_REVIEW
+→ CANONICAL_PROMOTION_APPROVED
+```
+
+If Core (2) encounters a project candidate that is necessary to teach a required learner object but is not publication-ready, it must fail back rather than silently normalize it into the canonical graph.
+
+---
+
+## 8. LearnerProfile: Bxx is downstream adaptation state
+
+`LearnerProfile` stores baseline by subtopic as a numeric value from 0–100, with basis and confidence.
+
+Examples:
+
+```text
+Newton's laws            80
+free-body diagrams       45
+friction                 30
+connected systems        25
+```
+
+The familiar labels `B30`, `B50`, `B80` are display shorthand for this downstream baseline state.
+
+Baseline means:
+
+> **estimated prior working knowledge for that subtopic**
+
+It does not mean:
+
+```text
+intelligence
+psychometric mastery
+question difficulty
+exam difficulty
+transfer distance
+```
+
+Core (2) applies Bxx to:
+
+- exposition density;
+- prerequisite repair;
+- number of explicit bridges;
+- worked-example depth;
+- representation support;
+- hint availability;
+- fading rate;
+- timing of mixed transfer;
+- recap compression.
+
+Core (2) must preserve the recorded baseline basis and confidence. A user-declared B80 must not be presented as empirically measured mastery.
+
+---
+
+## 9. PublicationTarget: purpose is orthogonal to Bxx
+
+`PublicationTarget` binds:
+
+```text
+research_bundle_id
+research_package_digest
+learner_profile_id
+purpose
+exam_profile_id, when required
+curriculum_profile_id, when applicable
+requested_products
+publication_profile
+```
+
+Canonical v1 purpose types are:
 
 ```text
 ROUTINE_STUDY
@@ -178,467 +330,176 @@ MOCK_EXAM_PREPARATION
 REVISION
 ```
 
-Purpose may carry an assessment target:
+The two core adaptation questions are therefore independent:
 
-```yaml
-purpose:
-  type: COMPETITIVE_EXAM
-  target:
-    name: NSO
-    level: Grade 9
-```
+> **What does this learner already know?**  
+> **What must this learner be able to do for this purpose?**
 
-Core (2) therefore receives two independent adaptation axes:
-
-> **How much does the learner already know?**  
-> **What must the learner be able to do?**
-
-Do not collapse either axis into a single difficulty field.
+Do not collapse either into a generic `level` or `difficulty` field.
 
 ---
 
-## 7. Repository-first discovery
+## 10. Core (2) mission
 
-Before Core (1) performs new research, the workflow must search the repository for reusable evidence and artifacts:
+After preflight, Core (2) performs:
 
-- topic/chapter authority documents;
-- source maps and source-obligation ledgers;
-- concept maps and stable IDs;
-- prior study material;
-- question banks and external-corpus ledgers;
-- previous exam-demand profiles;
-- approved figures, diagrams and visual assets;
-- prior publication models;
-- prior audits and review notes.
+```text
+P0  HAND-OFF + PUBLISHER PREFLIGHT
+P1  LEARNER PROFILE INTERPRETATION
+P2  PURPOSE / EXAM PROFILE INTERPRETATION
+P3  CONTENT-DEPTH PLAN
+P4  REPRESENTATION PLAN
+P5  LEARNING-SEQUENCE PLAN
+P6  PRACTICE / TRANSFER PLAN
+P7  PUBLICATION MODEL
+P8  REPRESENTATIVE PROTOTYPE
+P9  PROTOTYPE RENDER + QA
+P10 FULL BUILD
+P11 MATERIAL / REPRESENTATION / QUESTION CLOSURE
+P12 FINAL RENDER QA
+P13 PUBLICATION PACKAGE CERTIFICATION
+```
 
-The search result becomes part of the project manifest so that future agents can see what was reused versus newly researched.
-
-External research fills demonstrated gaps; it does not replace existing repository authority silently.
+No full-book scale-up before the representative prototype passes the actual risk surface of the topic.
 
 ---
 
-## 8. Competitive-exam research behavior belongs to Core (1)
+## 11. Core (2) canonical output models
 
-When the purpose is competitive, Core (1) should reverse-engineer the target demand from representative questions supplied by the user, available in the repository, or found from appropriate public sources.
+The v1 upstream hand-off is frozen. The next Core (2) implementation should define downstream publication objects without changing upstream schemas.
 
-The purpose is not to imitate questions. It is to extract the assessment demand:
+Recommended Core (2)-owned models:
 
 ```text
-representative questions
-  ↓
-reasoning mechanisms
-  ↓
-representation demands
-  ↓
-prerequisite combinations
-  ↓
-common distractors / failure models
-  ↓
-transfer depth
-  ↓
-EXAM DEMAND PROFILE
+PublicationPlan
+StudyGuidePublicationModel
+TransferBookPublicationModel
+RepresentationInstance
+Badge
+PublicationAudit
+PublicationManifest
 ```
 
-Typical output:
+### 11.1 PublicationPlan
 
-```yaml
-exam_demand_profile:
-  target: NSO Grade 9
-  dominant_demands:
-    - identify interacting bodies
-    - distinguish action-reaction pairs
-    - choose the correct free-body diagram
-    - combine F=ma with friction
-  common_representations:
-    - force diagrams
-    - blocks
-    - pulleys
-    - option figures
-  common_distractors:
-    - action-reaction pair placed on one body
-    - friction always equals muN
-    - normal force always equals mg
-  transfer_depth:
-    typical: MULTI_STEP
+Owns the learner transformation plan:
+
+```text
+publication_target_id
+learner_profile_id
+research_package_digest
+subtopic adaptation decisions
+sequence
+page/template families
+representation plan
+practice plan
+transfer plan
+appendix plan
+rights-use plan
+prototype obligations
 ```
 
-Core (2) consumes this object; it does not independently reverse-engineer the exam again.
+### 11.2 StudyGuidePublicationModel
+
+Owns the full learner-facing Study Guide semantic content and layout-ready object tree.
+
+### 11.3 TransferBookPublicationModel
+
+Owns external/competitive attempt pages, supports, mixed-transfer sets, solutions and diagnosis.
+
+### 11.4 RepresentationInstance
+
+Binds one upstream `RepresentationRequirement` to one concrete rendering route and learner placement.
+
+### 11.5 Badge
+
+Owns learner-facing metadata presentation without redefining the underlying evidence.
+
+### 11.6 PublicationAudit
+
+Records semantic, representation, typography, links, bounds, answer-leakage and obligation-level results.
+
+### 11.7 PublicationManifest
+
+Binds the exact output model(s), rendered PDFs and audit artifacts by hash.
 
 ---
 
-## 9. Core (1) required outputs
+## 12. Study Guide product contract
 
-Markdown alone is not an adequate hand-off.
-
-Core (1) should produce at least:
-
-```text
-<Topic>_Research_Core.md
-<Topic>_Research_Core.pdf
-<Topic>_Research_Bundle.json
-<Topic>_Source_Ledger.json
-```
-
-For competitive work also produce:
-
-```text
-<Topic>_Exam_Demand_Profile.json
-<Topic>_Question_Evidence_Ledger.json
-```
-
-Optional approved assets live under a stable asset directory.
-
-The JSON bundle is the canonical machine hand-off. The MD/PDF are human-review surfaces.
-
----
-
-## 10. Research Bundle contract
-
-The Research Bundle is the immutable interface between Core (1) and Core (2).
-
-Minimum conceptual shape:
-
-```yaml
-research_bundle_version: 1.0
-research_bundle_id: G9-PHY-NLM-NSO-001
-
-project:
-  grade: 9
-  subject: Physics
-  topic: Laws of Motion
-
-purpose:
-  type: COMPETITIVE_EXAM
-  target: NSO
-
-scope:
-  included_subtopics: []
-  excluded_subtopics: []
-
-baseline_profile: {}
-
-concepts: []
-prerequisites: []
-misconceptions: []
-representations_required: []
-equations: []
-worked_reasoning: []
-research_claims: []
-source_registry: []
-assets: []
-
-exam_demand_profile: null
-
-unresolved_items: []
-```
-
-Core (2) must not begin final publication if a blocking `unresolved_item` affects a required learner claim, representation or answer.
-
----
-
-## 11. Stable research claims and traceability
-
-Every Core (1) statement that can materially affect Core (2) should have a stable research claim ID.
-
-Example:
-
-```yaml
-claim_id: R-PHY-NLM-014
-concept_id: PHY-NLM-FBD-01
-claim: A free-body diagram contains only forces acting on the selected body.
-sources:
-  - SRC-NCERT-11-042
-  - SRC-NSO-2024-Q18
-```
-
-Core (2) may simplify language for the learner, but its publication model records:
-
-```yaml
-research_refs:
-  - R-PHY-NLM-014
-```
-
-The trace becomes:
-
-```text
-SOURCE
-  ↓
-CORE (1) RESEARCH CLAIM
-  ↓
-CORE (2) LEARNER EXPLANATION
-```
-
-This is the required citation lineage. Core (2) should never become the hidden origin of scientific claims.
-
----
-
-## 12. Core (2) mission
-
-Core (2) receives:
-
-```text
-Research Bundle
-+ learner baseline profile
-+ purpose / exam-demand profile
-+ publication specification
-```
-
-and performs:
-
-```text
-SELECT DEPTH
-→ SELECT REPRESENTATIONS
-→ ADAPT LANGUAGE
-→ ORDER LEARNING
-→ ADD SCAFFOLDING
-→ BUILD / PLACE PRACTICE
-→ APPLY BADGES
-→ BUILD APPENDICES
-→ LINK TO CORE (1)
-→ RENDER
-→ AUDIT
-```
-
-Core (2) owns learner experience, not scientific truth discovery.
-
----
-
-## 13. Core (2) research embargo
-
-Core (2) must not silently browse or use general knowledge to fill missing research.
-
-If publication encounters a missing requirement such as:
-
-```text
-"show the molecular geometry"
-```
-
-but the Research Bundle contains no verified geometry or approved asset, Core (2) returns:
-
-```text
-CORE1_RESEARCH_GAP
-```
-
-If further research is authorized, control returns to Core (1). Core (1) updates and versions the Research Bundle, then Core (2) resumes from the new version.
-
-Exception: non-semantic production work such as checking font support or converting an already approved equation to vector form may remain within Core (2).
-
----
-
-## 14. Versioned hand-off
-
-Every Core (2) publication model records:
-
-```yaml
-research_bundle_id: G9-PHY-NLM-NSO-001
-research_bundle_version: 1.3
-research_bundle_sha256: <hash>
-```
-
-If the bundle changes from `1.3` to `1.4`, the learner publication becomes stale until revalidated.
-
-This makes the Research Package a real build dependency rather than a loose citation.
-
----
-
-## 15. Core (2) input contract
-
-Canonical input should resemble:
-
-```yaml
-publication_request:
-  research_bundle:
-    path: Laws_of_Motion_NSO_Research_Bundle.json
-
-  learner:
-    grade: 9
-    baseline_profile:
-      default: B50
-      overrides:
-        friction: B30
-        free_body_diagrams: B80
-
-  purpose:
-    type: COMPETITIVE_EXAM
-    exam_target: NSO
-
-  requested_products:
-    study_guide: true
-    transfer_book: true
-
-  publication_profile:
-    orientation: AUTO
-    color_mode: COLOR_AND_GRAYSCALE_SAFE
-    answer_separation: true
-```
-
-If this object is complete, Core (2) proceeds without asking the user again.
-
----
-
-## 16. Complete project output contract
-
-A full project produces two separate cores plus learner artifacts.
-
-### Core (1) Research product
-
-```text
-<Topic>_Research_Core.md
-<Topic>_Research_Core.pdf
-<Topic>_Research_Bundle.json
-```
-
-### Core (2) publication products
-
-At minimum:
-
-```text
-<Topic>_<BaselineProfile>_<Purpose>_Study_Guide.pdf
-<Topic>_Study_Guide.publication.json
-```
-
-When transfer/exam practice is in scope:
-
-```text
-<Topic>_<BaselineProfile>_<Exam>_Transfer_Book.pdf
-<Topic>_Transfer_Book.publication.json
-```
-
-Core (1) and Core (2) are separate reviewable products. The learner-facing PDFs are Core (2) outputs.
-
----
-
-## 17. Core (2) Study Guide contract
-
-Default learner structure:
+Default learner product:
 
 ```text
 MAIN LEARNING SECTION
 
 Appendix A — Core Practice
 Appendix B — Core Solutions
-Appendix C — First-Step Reference / Printable Handout
+Appendix C — Printable Handout
 ```
 
-The appendix semantics should remain stable across Physics and Chemistry, while subject-specific content and representation needs vary.
+These names are frozen for the shared v1 publication semantics.
 
 ### Appendix A — Core Practice
 
+Purpose:
+
 - independent and faded practice;
 - stable concept linkage;
-- sufficient variety to test recognition, representation and reasoning;
-- no answer leakage from Appendix B.
+- recognition, representation and reasoning coverage;
+- no answer leakage;
+- baseline-sensitive question mix.
 
 ### Appendix B — Core Solutions
 
-Default structure:
+Default solution grammar:
 
 ```text
 QUESTION RECAP
-REQUIRED REPRESENTATION
+REQUIRED REPRESENTATION, when needed
 WHY THIS WORKS
 METHOD
 ANSWER / CHECK
 CONCEPT TO KEEP
-RESEARCH LINK
+RESEARCH TRACE
 ```
 
-### Appendix C — First-Step Reference / Printable Handout
+A method is not an expanded answer key. It must explain the reusable route and decisive model/representation choice.
 
-Function:
+### Appendix C — Printable Handout
+
+Appendix C is a printable, standalone learner reference.
+
+`first_step_reference` is a **module/profile inside Appendix C**, not Appendix C's canonical identity.
+
+Subject profiles may include:
 
 ```text
-SEE THIS
-→ THINK THIS
-→ START HERE
+Mathematics
+  first moves · invariants · decision router · conditions
+
+Physics
+  first moves · model cues · diagram cues · sign/frame checks · equation conditions
+
+Chemistry
+  process cues · macro/particle/symbolic bridges · conditions · common traps
 ```
 
-It should be detachable, concise, standalone-usable, source-bounded and free of independent-practice answer leakage.
+Appendix C must not become a compressed answer sheet.
 
 ---
 
-## 18. Baseline-sensitive publishing
+## 13. Optional Transfer Book contract
 
-Core (2) does not merely change the label B30/B80. It changes instructional density, prerequisite repair, worked-example depth and transfer mix.
+A Transfer Book is appropriate for competitive/external/PYQ-style practice when requested by `PublicationTarget`.
 
-### B30-style treatment
+Use bounded learning sets rather than treating total page count as learner progress.
 
-```text
-FAMILIAR SITUATION
-↓
-PICTURE / MODEL
-↓
-WHAT TO NOTICE
-↓
-ORDINARY LANGUAGE
-↓
-SUBJECT MEANING
-↓
-EQUATION / SYMBOLIC FORM
-↓
-WHY EACH TERM EXISTS
-↓
-WORKED EXAMPLE
-↓
-GUIDED TRY
-↓
-FADED TRY
-↓
-INDEPENDENT TRY
-```
+### 13.1 Assimilation mode
 
-### B80-style treatment
+Before attempt, a question may expose:
 
 ```text
-QUICK RECALL
-↓
-DECISION BOUNDARY
-↓
-HIGH-VALUE CONTRAST
-↓
-MODEL / EQUATION
-↓
-NON-ROUTINE APPLICATION
-↓
-TRANSFER
-```
-
-Mixed baseline inside one topic is expected. One learner book may contain compressed B80 sections and more extensive B30 sections without splitting into multiple books.
-
----
-
-## 19. Purpose-sensitive publishing
-
-Baseline and purpose are orthogonal.
-
-### Routine study
-
-Prefer explanatory continuity, examples, retrieval and synthesis.
-
-### Concept clarification
-
-Prefer contrasts, misconception diagnosis, visual explanation and small conceptual probes.
-
-### Competitive exam
-
-Prefer disguised recognition, multi-concept combinations, option analysis, representation shifts, mixed transfer and exam-demand alignment.
-
-### ExamSIDE-type transfer
-
-Prefer source-linked question records, primary concept ownership, difficulty/transfer metadata, H0 attempt-first support, H1/H2/H3 hints, full solution and Core cross-link.
-
----
-
-## 20. Transfer Book contract
-
-For competitive or external-question work, use bounded study sets rather than page-count-oriented learner progress.
-
-### Assimilation mode
-
-Before attempt, questions may show:
-
-```text
-SOURCE
+SOURCE / EXAM
 DIFFICULTY
 TRANSFER
 PRIMARY CONCEPT
@@ -649,56 +510,153 @@ Student eye path:
 
 ```text
 QUESTION
-→ WORK
-→ STOP
+→ WORK HERE
+→ STOP / OPTIONAL HELP BOUNDARY
 → H1 NOTICE
-→ H2 MODEL
+→ H2 MODEL / STRUCTURE
 → H3 START
 ```
 
-### Mixed transfer mode
+### 13.2 Mixed-transfer mode
 
-Before attempt show:
+Before attempt:
 
 ```text
 CONCEPT · IDENTIFY FIRST
 ```
 
-Hide the primary concept and method family. Reveal them in diagnosis/solution after marking.
+Hide the actual primary concept/method family. Reveal them during diagnosis/solution.
 
-Difficulty remains visible unless the publication profile deliberately suppresses it.
+### 13.3 External-question denominator
+
+Core (2) consumes the frozen `QuestionEvidenceLedger`; it does not re-own corpus accounting.
+
+Dispositions are:
+
+```text
+REQUIRED | DEFER | EXCLUDE | REVIEW | DUPLICATE
+```
+
+`REVIEW` is blocking. Core (2) publishes only records authorized for the requested publication target and preserves source/transcription/answer/ownership state.
 
 ---
 
-## 21. Difficulty, baseline and transfer must remain separate
+## 14. Baseline-sensitive publishing profiles
 
-Store three different concepts:
+The learner baseline changes the amount of teaching, not the underlying truth.
+
+### Low prior knowledge — approximately B0–B30
+
+```text
+FAMILIAR SITUATION
+→ PICTURE / MODEL
+→ WHAT TO NOTICE
+→ ORDINARY LANGUAGE
+→ SUBJECT MEANING
+→ EQUATION / SYMBOLIC FORM
+→ WHY EACH TERM / STEP EXISTS
+→ WORKED MODEL
+→ GUIDED TRY
+→ FADED TRY
+→ INDEPENDENT TRY
+```
+
+### Partial working knowledge — approximately B31–B60
+
+```text
+RECONNECT
+→ EXPOSE MISSING BRIDGE
+→ MODEL / REPRESENTATION
+→ CONTRAST WRONG MODEL
+→ GUIDED FIRST MOVE
+→ FADE SUPPORT
+→ INDEPENDENT APPLICATION
+```
+
+### Strong prior knowledge — approximately B61–B85
+
+```text
+QUICK RECALL
+→ DECISION BOUNDARY
+→ HIGH-VALUE CONTRAST
+→ MODEL / CONDITION
+→ NON-ROUTINE APPLICATION
+→ TRANSFER
+```
+
+### Very strong prior knowledge — approximately B86–B100
+
+```text
+REFERENCE RECAP
+→ CONDITIONS / EXCEPTIONS
+→ METHOD SELECTION
+→ REPRESENTATION SHIFT
+→ MIXED / FAR TRANSFER
+```
+
+One learner publication may legitimately contain different support densities by subtopic.
+
+---
+
+## 15. Purpose-sensitive publishing
+
+For the same baseline:
+
+### Routine study
+
+Emphasize continuity, worked examples, retrieval and coherent topic synthesis.
+
+### Concept clarification
+
+Emphasize missing bridges, competing models, misconceptions, representation switching and small diagnostic probes.
+
+### School exam
+
+Emphasize syllabus-aligned response forms, standard application, marking-relevant completeness and revision.
+
+### Competitive foundation / competitive exam
+
+Emphasize recognition under disguised wording, method selection, representation shifts, multi-concept combinations, distractor analysis and mixed transfer consistent with the frozen ExamDemand profile.
+
+### Mock exam preparation
+
+Use an upstream evidence-backed exam blueprint. Core (2) formats and publishes the mock; it does not invent the exam contract.
+
+### Revision
+
+Compress exposition into retrieval, conditions, first moves, misconception checks and mixed practice.
+
+---
+
+## 16. Baseline, difficulty and transfer are separate
+
+A Core (2) question may have all three:
 
 ```yaml
-baseline:
-  band: B30
+learner_baseline: 30
 
 difficulty:
-  source_code: D3
+  normalized_band: D3
   learner_label: HARD
+  basis: SOURCE_MAPPING
 
 transfer:
   type: REPRESENTATION_SHIFT
 ```
 
-- **Baseline** describes the learner's prior working knowledge.
-- **Difficulty** describes task demand.
-- **Transfer** describes distance from familiar form/context/representation.
+- baseline = learner prior working knowledge;
+- difficulty = task demand;
+- transfer = distance from familiar form/context/representation.
 
-A direct problem can be computationally hard. A far-transfer conceptual problem can be numerically easy.
+A direct question can be difficult. A far-transfer question can be computationally simple.
 
 ---
 
-## 22. Badge architecture belongs to Core (2)
+## 17. Badge system belongs to Core (2)
 
-Badges are publication components, not scientific facts.
+Badges are publication components, not research facts.
 
-Canonical badge families may include:
+Typed badge families may include:
 
 ```text
 SOURCE
@@ -710,33 +668,105 @@ TASK
 STATUS
 ```
 
-Primary/support concept hierarchy should normally use stronger semantic text hierarchy instead of reducing every field to an equal visual pill.
-
 A badge object should carry at least:
 
-```yaml
-type: DIFFICULTY
-machine_value: D3
-label: HARD
-visual_token: difficulty-hard
-student_visible: true
+```text
+badge_type
+machine_value
+learner_label
+visual_token
+priority
+student_visible
+grayscale_fallback
 ```
 
-Badge semantics must survive grayscale and cannot depend on color alone.
+Rules:
+
+- words are mandatory; color is secondary;
+- grayscale must preserve meaning;
+- source-owned values must retain provenance;
+- editorial difficulty labels must state their basis;
+- do not turn all metadata into equal visual pills;
+- `PRIMARY` concept vs supporting concepts should normally use semantic hierarchy, not merely color.
 
 ---
 
-## 23. Scientific Representation Core
+## 18. Shared Representation Layer
 
-Before scaling Core (2) across many Physics and Chemistry topics, create one reusable **Scientific Representation Core**.
+The cross-subject rendering subsystem is named:
 
-Core (2) should consume or own these representation families:
+> **Shared Representation Layer**
+
+Core (1) owns the semantic requirement:
 
 ```text
-XY GRAPH
+what must be shown
+relationships
+required labels
+conditions
+approved assets
+research refs
+```
+
+Core (2) owns:
+
+```text
+renderer selection
+geometry
+layout
+asset placement
+legibility
+grayscale behavior
+render QA
+```
+
+A required unsupported representation fails closed rather than degrading into a decorative approximation.
+
+---
+
+## 19. Representation routes
+
+Core (2) must support three legitimate production routes:
+
+```text
+1. STRUCTURED SEMANTIC DATA
+   → generated vector representation
+
+2. APPROVED SVG / VECTOR / TRUSTED ASSET
+   → placed learner representation
+
+3. SOURCE IMAGE / CROP
+   → fidelity-controlled learner representation
+```
+
+Do not force every laboratory apparatus, molecular structure, source option figure or historical diagram into a procedural drawing API.
+
+All three routes must pass the same:
+
+```text
+research linkage
+rights/use check
+required-label check
+bounds check
+legibility check
+print/grayscale check
+student/solution dependency check
+```
+
+---
+
+## 20. Representation families to support at platform level
+
+The layer should be extensible across Mathematics, Physics and Chemistry rather than hard-coded per chapter.
+
+Target families include:
+
+```text
+GENERIC XY GRAPH
 NUMBER LINE / TIMELINE
+GEOMETRIC / CONSTRUCTION DIAGRAM
 VECTOR / FORCE DIAGRAM
-GEOMETRIC / PATH DIAGRAM
+PATH / TRAJECTORY DIAGRAM
 RAY DIAGRAM
 CIRCUIT DIAGRAM
 WAVE DIAGRAM
@@ -746,493 +776,577 @@ PARTICLE DIAGRAM
 ATOMIC / SHELL DIAGRAM
 LEWIS / BONDING DIAGRAM
 MOLECULAR STRUCTURE
-ENERGY-LEVEL DIAGRAM
-REACTION SCHEME
+ENERGY-LEVEL / ORBITAL DIAGRAM
+REACTION / MECHANISM SCHEME
 TABLE / GRID
+PROOF / CASE / DEPENDENCY STRUCTURE
 EQUATION
 CHEMICAL EQUATION
 TRUSTED VECTOR ASSET
 SOURCE CROP
 ```
 
-The existing Physics pilot principle should remain: **data drives geometry; unsupported required representations fail rather than degrade silently.**
-
-Do not scale by adding a topic-specific `elif` branch for every new diagram type.
+Implementation support should be explicit. A semantic `representation_type` existing upstream does not imply that Core (2) can render it.
 
 ---
 
-## 24. Representation object
+## 21. General graph primitive
 
-Every learner-visible scientific figure should have a semantic object independent of its final geometry.
+Do not create separate renderers for `vt`, `xt`, `pv`, `stress_strain`, `concentration_time`, etc.
 
-Example:
+A generic graph primitive should support, as needed:
 
-```yaml
-representation:
-  id: FIG-NLM-004
-  type: FORCE_DIAGRAM
-  purpose: CONCEPT_EXPLANATION
-  research_refs:
-    - R-PHY-NLM-014
-  objects:
-    - block
-    - surface
-  vectors:
-    - {label: W, direction: down}
-    - {label: N, direction: up}
-    - {label: f, direction: left}
-  required_labels:
-    - W
-    - N
-    - f
-  student_visibility: VISIBLE
-  solution_visibility: VISIBLE
-  status: FINAL
-```
-
-Content semantics belong to the model. Geometry belongs to the renderer.
-
----
-
-## 25. Three legitimate figure routes
-
-A scalable publisher must support all three:
-
-```text
-STRUCTURED DATA
-→ generated vector figure
-
-APPROVED SVG / VECTOR ASSET
-→ placed learner figure
-
-SOURCE IMAGE / CROP
-→ fidelity-controlled learner figure
-```
-
-Do not force every apparatus, molecule or source option figure into a procedural drawing API.
-
-All routes must pass the same provenance, legibility, bounds and required-label QA.
-
----
-
-## 26. General graph component
-
-Do not create one renderer per graph meaning (`vt`, `xt`, `pv`, `stress_strain`, etc.).
-
-Use a generic scientific graph object with:
-
-- arbitrary x/y variable names and units;
-- linear or selected non-linear axis scales as required;
+- arbitrary x/y variables and units;
 - multiple series;
 - points, segments and smooth curves;
-- ticks and scientific notation;
+- scientific notation;
 - zero/reference lines;
-- regions/area shading;
 - legends;
 - annotations;
-- error bars where appropriate;
-- discontinuities/asymptotes when needed;
+- shaded regions;
+- error bars;
+- discontinuities/asymptotes;
+- linear/log scales where supported;
 - grayscale-safe series differentiation.
 
-The graph's scientific meaning remains in Core (1) research refs and subject semantics; Core (2) controls visual grammar.
+Graph semantics and required values remain traceable to Core (1). Core (2) controls visual grammar.
 
 ---
 
-## 27. Equations are semantic publication objects
+## 22. Equations and chemistry notation are semantic objects
 
-Do not treat scientific equations as arbitrary plain strings only.
+Core (2) should not reduce equations to arbitrary body-text strings.
 
-Example:
-
-```yaml
-equation:
-  id: EQ-NLM-02
-  display_math: "\\vec F_{net}=m\\vec a"
-  research_refs:
-    - R-PHY-NLM-022
-  symbol_definitions:
-    F_net: net external force
-    m: mass
-    a: acceleration
-```
-
-Core (2) may use a specialist math-to-vector renderer while retaining the exact semantic source expression in the publication model.
-
-Chemistry should similarly support formulae, ionic charges, reversible equations, structural notation and reaction schemes through specialist scientific typesetting rather than forcing all notation through ordinary body-text rendering.
-
----
-
-## 28. Core (1) citations inside Core (2)
-
-Student pages may show a light-touch research link where useful, for example:
+Upstream semantic objects provide meaning, conditions and research refs. Core (2) adds publication representation such as:
 
 ```text
-Research basis · R-PHY-NLM-014
+display source
+inline/display mode
+line breaking
+alignment
+vector/scalar typography
+unit styling
+chemical charge/state styling
+accessibility text
 ```
 
-The publication model always retains the exact `research_refs` even when student-facing citations are visually suppressed.
+A specialist math/chemistry typesetter may generate vector output while the publication model retains the upstream semantic expression and IDs.
 
-Core (1) MD/PDF contains the full source evidence behind those IDs.
-
-The learner publication therefore remains traceable without becoming visually cluttered by production metadata.
+Core (2) must never infer missing index/exponent/charge semantics from typography alone.
 
 ---
 
-## 29. Core (2) state machine
+## 23. Material traceability
 
-Core (2) should execute in this order:
+Core (2) requires 100% research linkage for material semantic objects:
 
 ```text
-P0  HAND-OFF VALIDATE
-P1  LEARNER PROFILE
-P2  PURPOSE PROFILE
-P3  CONTENT DEPTH PLAN
-P4  REPRESENTATION PLAN
-P5  LEARNING SEQUENCE
-P6  PUBLICATION MODEL
-P7  REPRESENTATIVE PROTOTYPE
-P8  PROTOTYPE RENDER + REVIEW
-P9  FULL BUILD
-P10 CONTENT / REPRESENTATION QA
-P11 QUESTION-LEVEL CLOSURE
-P12 PACKAGE CERTIFICATION
+MATERIAL_CLAIM
+MATERIAL_CONDITION
+MATERIAL_EXAMPLE
+MATERIAL_REPRESENTATION
+MATERIAL_QUESTION
+MATERIAL_SOLUTION_METHOD
+MATERIAL_EXAM_FACT
 ```
 
-Do not scale a full book until the representative prototype covers the required template families and passes.
+The trace is:
+
+```text
+SOURCE / QUESTION OCCURRENCE
+        ↓
+CORE (1) RESEARCH CLAIM / CONCEPT / REPRESENTATION
+        ↓
+CORE (2) SECTION / FIGURE / QUESTION / SOLUTION
+```
+
+Pedagogical connective prose and presentation-only objects do not require artificial research claim IDs.
+
+Student-facing citation density is a design decision; machine traceability is mandatory.
 
 ---
 
-## 30. Prototype requirements
+## 24. Rights/use enforcement
 
-A representative Core (2) prototype should exercise the actual risk surface of the topic, not just easy pages.
+Evidence validity does not imply reproduction permission.
+
+Core (2) consumes upstream rights states:
+
+```text
+REPRODUCTION_ALLOWED
+REFERENCE_ONLY
+USER_SUPPLIED_LIMITED
+DISCOVERY_ONLY
+UNKNOWN_REVIEW_REQUIRED
+```
+
+The publication plan must record every direct source/asset reproduction use.
+
+Rules:
+
+- `REPRODUCTION_ALLOWED`: may reproduce within recorded conditions;
+- `REFERENCE_ONLY`: may support research/traceability but not learner-facing verbatim/asset reproduction unless another permission applies;
+- `USER_SUPPLIED_LIMITED`: obey recorded allowed/prohibited uses;
+- `DISCOVERY_ONLY`: no learner-facing reproduction;
+- `UNKNOWN_REVIEW_REQUIRED`: block reproduction pending resolution.
+
+Core (2) may still express independently verified factual structure in original wording when permitted by the research/rights contract; it must not copy restricted source content merely because the source was useful evidence.
+
+---
+
+## 25. Original-question provenance
+
+Do not use `ORIGINAL_CALIBRATED` by default.
+
+Use:
+
+```text
+ORIGINAL_EXAM_ALIGNED
+ORIGINAL_EDITORIAL_PROFILED
+```
+
+unless an explicit calibration basis exists:
+
+```text
+SOURCE_MAPPING
+EXPERT_REVIEW
+EMPIRICAL
+```
+
+Core (2) may create original practice from supported concepts/question families, but it must retain provenance and must not falsely imply it is a past-paper question.
+
+---
+
+## 26. Change-class aware invalidation
+
+Core (2) recognizes upstream release changes:
+
+```text
+EDITORIAL
+EVIDENCE
+SEMANTIC
+SCOPE
+EXAM_DEMAND
+ASSET
+```
+
+Default impact:
+
+```text
+EDITORIAL
+  → metadata/view revalidation
+
+EVIDENCE
+  → provenance/traceability revalidation
+
+ASSET
+  → affected representation rerender/revalidation
+
+SEMANTIC
+  → rebuild affected learner objects and dependent practice/solutions
+
+SCOPE
+  → scope reconciliation; broad/full rebuild by default
+
+EXAM_DEMAND
+  → rebuild/revalidate competitive products and mock blueprints
+```
+
+If impact cannot be localized safely, fail closed and rebuild more broadly.
+
+---
+
+## 27. Representative prototype gate
+
+Before full scale, prototype the actual risk surface.
 
 Where applicable include:
 
-- B30 explanatory concept page;
-- B80 compressed concept page;
+- low-baseline explanatory page;
+- high-baseline compressed page;
 - equation-heavy page;
-- graph page;
+- general graph page;
 - non-graph diagram page;
-- source-crop or trusted-vector figure page;
+- source-crop/trusted-vector page;
 - ordinary practice page;
-- graph/diagram-heavy practice page;
+- graph/diagram-heavy question page;
 - H1/H2/H3 page;
 - full assimilating solution;
 - Appendix C sample;
 - mixed-transfer page with concept hidden;
-- badge-dense external-question example.
+- badge-dense external-question page.
 
-If the topic needs a representation class that the prototype cannot render correctly, stop before scale.
+If a required representation family cannot pass the prototype, stop before topic-scale generation.
+
+---
+
+## 28. Page-density and student-eye-path contract
+
+Core (2) owns pedagogically appropriate density, not fixed question counts per page.
+
+Default question-bank density guidance:
+
+```text
+D1: 2–3 short questions/page when safe
+D2: usually 2/page
+D3: 1–2/page
+D4/D5 or graph/diagram heavy: generous half/full page
+```
+
+Attempt pages should normally follow:
+
+```text
+QUESTION
+→ WORK / REPRESENTATION AREA
+→ STOP / OPTIONAL HELP BOUNDARY
+→ H1 NOTICE
+→ H2 MODEL / STRUCTURE
+→ H3 START
+→ METHOD-CHECK LINK
+```
+
+Hints belong below the work area unless a subject/profile explicitly requires another interaction.
+
+---
+
+## 29. Representation dependency closure
+
+For every question with a non-`NONE` representation dependency require:
+
+```text
+representation present on attempt page
+critical labels/data preserved
+representation legible at learner size
+representation present again in standalone solution when needed
+```
+
+A solution recap such as “from the graph” without the graph fails.
+
+Option figures, statement sets and answer choices are learner obligations. Never ask the learner to choose an invisible option.
+
+---
+
+## 30. Solution assimilation contract
+
+Default Core (2) solution structure:
+
+```text
+QUESTION RECAP
+REQUIRED REPRESENTATION / OPTIONS
+WHY THIS WORKS
+METHOD
+ANSWER / CHECK
+CONCEPT TO KEEP
+RETURN / REPAIR LINK
+```
+
+Blocking failures include:
+
+- method identical/near-identical to answer;
+- formula-only method with no model reason;
+- decisive representation/model choice omitted;
+- final substitution presented as the entire route;
+- generic boilerplate copied across different reasoning families;
+- missing required graph/table/options;
+- answer without units/sign/semantic option meaning where required.
+
+The answer is the destination. The method teaches the route.
 
 ---
 
 ## 31. Core (2) publication QA
 
-Final certification is per learner obligation, not merely per PDF.
+Certification is obligation-level, not “PDF opened successfully”.
 
-At minimum validate:
+Minimum gates:
 
 ```text
-HANDOFF_HASH_MATCH = 1
-BLOCKING_RESEARCH_GAPS = 0
-RESEARCH_REFS_RESOLVED = 1
-REQUIRED_REPRESENTATIONS_PRESENT = 1
-REQUIRED_REPRESENTATIONS_LEGIBLE = 1
-QUESTION_DENOMINATOR_RECONCILED = 1
-SOLUTION_DENOMINATOR_RECONCILED = 1
+CORE2_PREFLIGHT = PASS
+RESEARCH_PACKAGE_DIGEST_BINDING = PASS
+MATERIAL_TRACEABILITY_COVERAGE = 100%
+UNSUPPORTED_NEW_MATERIAL_CLAIMS = 0
+REQUIRED_REPRESENTATIONS_PRESENT = PASS
+REQUIRED_REPRESENTATIONS_LEGIBLE = PASS
+REPRESENTATION_BOUNDS_FAILURES = 0
+QUESTION_DENOMINATOR_RECONCILED = PASS | NOT_APPLICABLE
+SOLUTION_DENOMINATOR_RECONCILED = PASS
 HINT_PROGRESSION_FAILURES = 0
 METHOD_ASSIMILATION_FAILURES = 0
 BADGE_MAPPING_FAILURES = 0
+RIGHTS_USE_VIOLATIONS = 0
 BROKEN_INTERNAL_LINKS = 0
 BROKEN_SOURCE_LINKS = 0
 MATH_SCIENCE_TYPOGRAPHY_FAILURES = 0
 TEXT_OVERLAP_OR_CLIPPING = 0
-FIGURE_BOUNDS_FAILURES = 0
 ANSWER_LEAKAGE_FAILURES = 0
 GRAYSCALE_INFORMATION_LOSS = 0
+PUBLICATION_ARTIFACT_HASHES_BOUND = PASS
 ```
 
-Human subject review, classroom effectiveness and psychometric calibration remain separate review states.
+Independent subject review, pedagogy review, classroom effectiveness and psychometric calibration remain separate states.
 
 ---
 
-## 32. Project manifest
+## 32. Core (2) output package
 
-The router should create the project manifest before Core (1) starts.
-
-Example:
-
-```yaml
-project_id: G9-PHY-NLM-NSO-001
-
-grade: 9
-subject: Physics
-
-topic:
-  id: laws_of_motion
-  title: Laws of Motion
-
-subtopics:
-  - id: friction
-    baseline: B30
-
-purpose:
-  type: COMPETITIVE_EXAM
-  target: NSO
-
-requested_products:
-  core1_research: true
-  core2_study_guide: true
-  core2_transfer_book: true
-
-status:
-  core1: PENDING
-  core2: BLOCKED_ON_CORE1
-```
-
-When Core (1) passes:
+A complete Core (2) release should contain, at minimum:
 
 ```text
-core1 = PASS
-core2 = READY
+PublicationTarget.json
+LearnerProfile reference / resolved learner projection
+PublicationPlan.json
+Study_Guide.publication.json
+<Topic>_<Profile>_Study_Guide.pdf
+PublicationAudit.json
+PublicationManifest.json
 ```
 
-This creates an explicit two-agent workflow rather than relying on conversational memory.
+When requested:
+
+```text
+Transfer_Book.publication.json
+<Topic>_<Profile>_Transfer_Book.pdf
+```
+
+Recommended review artifacts include:
+
+```text
+representative page renders/contact sheet
+representation inventory
+link audit
+font/typography audit
+question/solution reconciliation
+rights-use reconciliation
+research-to-publication trace map
+```
 
 ---
 
-## 33. Example A — Grade 9 Physics / Laws of Motion / NSO
+## 33. Cold-start acceptance test
 
-Prompt:
-
-> Prepare study material for Grade 9 Physics, Laws of Motion for NSO.
-
-### Intake
-
-Known automatically:
+A clean Core (2) agent receives only:
 
 ```text
-Grade 9
-Physics
-Laws of Motion
-Competitive exam
-NSO
+ResearchBundle
+ResearchBundleManifest
+referenced Source / ExamDemand / QuestionEvidence artifacts
+approved assets
+LearnerProfile
+PublicationTarget
+canonical schemas/skills
 ```
 
-Repository search runs first.
+No prior chat, browser history or researcher scratchpad is available.
 
-Then ask only for unresolved subtopic scope and baseline, for example:
+The agent must determine:
+
+1. exact project scope;
+2. released evidence version/package identity;
+3. learner baseline by subtopic;
+4. publication purpose and requested products;
+5. verified material claims and conditions;
+6. required representations and approved assets;
+7. supported exam demand, when applicable;
+8. question denominator and authorized publication rows, when applicable;
+9. source rights relevant to reproduction;
+10. any blocking gap;
+11. what may be adapted versus what must remain semantically fixed.
+
+Required result:
 
 ```text
-Newton's laws      B80
-FBDs               B50
-Friction           B30
-Connected systems  B30
+CORE2_COLD_START_SUFFICIENT = PASS
+UNDECLARED_CORE2_RESEARCH = 0
 ```
-
-### Core (1)
-
-Reuse repository authority, research gaps, inspect representative NSO-style questions, derive exam-demand profile and produce:
-
-```text
-Laws_of_Motion_NSO_Research_Core.md
-Laws_of_Motion_NSO_Research_Core.pdf
-Laws_of_Motion_NSO_Research_Bundle.json
-Laws_of_Motion_NSO_Exam_Demand_Profile.json
-```
-
-### Core (2)
-
-Read only the completed research package and publication request.
-
-Produce:
-
-```text
-Laws_of_Motion_B30-B80_NSO_Study_Guide.pdf
-Laws_of_Motion_B30-B80_NSO_Transfer_Book.pdf
-```
-
-The Study Guide contains main teaching + Appendix A/B/C. The Transfer Book contains assimilation sets, mixed transfer, optional H1/H2/H3, source/difficulty/transfer metadata and complete solutions with Core (1) traceability.
 
 ---
 
-## 34. Example B — Grade 10 Chemistry / Redox
+## 34. Falsifier pilots
 
-Prompt:
+Do not validate Core (2) only with Motion/Redox-like pages.
 
-> Prepare study material for Grade 10 Chemistry on Redox.
+### Pilot A — Physics Laws of Motion / competitive
 
-### Intake
-
-Known:
+Must exercise:
 
 ```text
-Grade 10
-Chemistry
-Redox
+mixed Bxx
+free-body/vector diagrams
+friction/connected-system representations
+competitive ExamDemand binding
+external or original exam-aligned practice
+mixed transfer
 ```
 
-Ask only for missing subtopics, baseline and purpose.
+### Pilot B — Chemistry Redox / routine study
 
-Example profile:
+Must exercise:
 
 ```text
-oxidation/reduction meaning       B80
-oxidation numbers                 B30
-oxidising/reducing agents         B30
-electron transfer                 B50
-purpose = routine study + competitive foundation
+mixed Bxx
+macro/particle/symbolic links
+chemical notation
+before/after/process representations
+Appendix C printable handout
+routine-study purpose without unnecessary competitive crawl
 ```
 
-### Core (1)
+### Representation golden fixtures before broad scale
 
-Search and reuse existing Redox repository material first. Research only uncovered claims, source obligations or assessment demand. Produce the Redox Research Package.
+Physics/Math/Chemistry coverage should include representative examples of:
 
-### Core (2)
+```text
+generic scientific graph
+force/vector diagram
+geometry/construction diagram
+ray/circuit/wave or field diagram
+apparatus/process diagram
+particle/atomic/bonding representation
+molecular/energy-level representation
+reaction scheme
+complex equation/chemical equation
+trusted vector asset/source crop
+```
 
-Compress B80 sections, expand B30 oxidation-number sections, choose before/after lanes and symbolic representations where supported, then publish the Study Guide with Appendix A/B/C. If external competitive questions are included, publish the separate Transfer Book from the verified corpus/evidence profile.
+The goal is to falsify the assumption that one topic renderer can scale to all Grades 9–11 content.
 
 ---
 
-## 35. Relationship to Physics PR #155
+## 35. Relationship to PR #155 Physics
 
-PR #155 should be treated as a high-value implementation reference for Core (2), especially for:
+Mine PR #155 for mature behavior:
 
-- schema-before-render discipline;
+- schema-before-render;
+- data-driven figures;
 - fail-closed unsupported representations;
-- stable links and destinations;
+- stable links/destinations;
 - representation-dependent solution duplication;
-- H1/H2/H3 rendering;
+- H1/H2/H3 support;
 - mixed-transfer concept hiding;
-- learner-facing difficulty badges;
-- deterministic page planning;
-- visual review bound to exact artifact hashes.
+- difficulty badges with explicit basis;
+- deterministic pagination planning;
+- artifact-bound render QA.
 
-However, its current drawing implementations are Motion-oriented. Core (2) should extract reusable publication behavior and scientific primitives rather than make the Motion renderer the universal Grade 9–11 renderer.
+Do **not** promote the Motion-specific figure dispatcher into the universal renderer.
 
 ---
 
-## 36. Relationship to Chemistry PR #157
+## 36. Relationship to PR #157 Chemistry
 
-PR #157 should be treated as a high-value reference for:
+Mine PR #157 for mature behavior:
 
-- subject-wide two-file topic delivery;
-- mandatory Appendix A/B/C semantics;
-- ExamSIDE concept segregation;
+- exactly paired learner products where transfer work is in scope;
+- Core Study Guide Appendix A/B/C discipline;
+- concept segregation;
 - source/difficulty/transfer support metadata;
-- artifact-custody rules;
-- fail-closed package status;
-- chapter-agnostic publication contracts.
+- exact artifact custody;
+- fail-closed package states;
+- chapter-agnostic publication review.
 
-Core (2) should generalize these useful publication rules while allowing subject-specific representations and typography. Chemistry-specific reasoning remains with Chemistry authority/Core (1); Core (2) owns the reusable publication machinery.
+Do **not** make Redox-specific representations or terminology the generic Chemistry renderer.
 
 ---
 
-## 37. Proposed repository placement
+## 37. Existing source-PDF reconstruction remains separate
 
-Conceptually:
+Core (2) does not supersede the existing source-PDF reconstruction workflow where an existing PDF/book itself is the immutable publication authority.
+
+Routing distinction:
 
 ```text
-Grade 9/
-├── core1-research/
-│   ├── SKILL.md
-│   ├── schemas/
-│   ├── references/
-│   └── scripts/
-│
-├── core2-publication/
-│   ├── SKILL.md
-│   ├── schemas/
-│   ├── renderers/
-│   ├── references/
-│   └── scripts/
-│
-├── shared/
-│   ├── contracts/
-│   └── scientific-representation/
-│
-└── projects/
+validated ResearchPackage → new learner publication
+  = Core (2)
+
+existing source PDF/book → reconstruct/preserve source obligations
+  = grade9-publication source-reconstruction route
 ```
 
-This is a logical target, not a requirement to move existing stable skill IDs immediately. Current repository compatibility should be preserved while the new core contracts are introduced.
+The two routes may share representation, typography, link and render-QA components, but they do not share the same input authority.
 
 ---
 
-## 38. Implementation phases after approval
+## 38. Implementation sequence
 
-### Phase 1 — contracts only
+### Phase 1 — frozen hand-off consumption
 
-Create:
+- keep PR #160 v1 schemas normative;
+- add Core (2) publisher preflight;
+- bind PublicationTarget to manifest + LearnerProfile;
+- make failures fail closed.
 
-- project manifest schema;
-- Research Bundle hand-off schema;
-- Core (2) publication-request schema;
-- Research Claim / citation-link contract;
-- baseline and purpose enumerations;
-- Core (2) state machine and release gates.
+### Phase 2 — Core (2) output schemas
 
-No full renderer rewrite yet.
-
-### Phase 2 — shared publication objects
-
-Extract reusable components from mature pilots:
-
-- badge object;
-- question/solution object;
-- appendix contract;
-- link/destination system;
-- generic representation envelope;
-- equation object;
-- generic XY graph.
-
-### Phase 3 — scientific representation fixtures
-
-Build golden fixtures across Physics and Chemistry, including graph, force diagram, ray/circuit/wave example, particle/bonding/energy-level example, equation-heavy page and trusted external vector asset.
-
-### Phase 4 — independent-agent hand-off test
-
-Run a cold-start Core (2) agent using only a completed Research Package. It must produce a faithful learner prototype without consulting the Core (1) conversation.
-
-### Phase 5 — topic-scale pilot
-
-Use one Physics topic and one Chemistry topic beyond the current Motion/Redox examples to prove that Core (2) is not topic-hardcoded.
-
----
-
-## 39. Approval criteria for this concept
-
-Approve the architecture if the following principles are accepted:
-
-- [ ] Every substantial project has a separate Core (1) Research product and Core (2) Publication product.
-- [ ] The router asks only for missing topic/subtopic, baseline and purpose information.
-- [ ] Baseline is stored by subtopic and is separate from task difficulty and transfer distance.
-- [ ] Repository search precedes new research.
-- [ ] Competitive exam demand is reverse-engineered in Core (1), not rediscovered in Core (2).
-- [ ] Core (1) produces a versioned structured Research Bundle, not only prose notes.
-- [ ] Core (2) can operate cold from the completed Research Package.
-- [ ] Core (2) may not silently repair research gaps.
-- [ ] Every learner claim can trace to stable Core (1) research IDs.
-- [ ] Study Guide uses stable Appendix A Core Practice / B Core Solutions / C First-Step Reference semantics.
-- [ ] Transfer Book supports attempt-first H0/H1-H3, concept ownership, difficulty, transfer and mixed-transfer behavior.
-- [ ] Scientific representation becomes a reusable cross-subject publication layer rather than a set of topic-specific renderers.
-- [ ] Physics PR #155 and Chemistry PR #157 are mined for mature patterns without making either pilot the universal implementation.
-- [ ] Final certification remains obligation-level and fail-closed.
-
----
-
-## 40. Architectural invariant
-
-The final invariant is:
-
-> **Core (1) owns truth, scope and evidence. Core (2) owns learner adaptation, representation, scaffolding, page composition and publication QA. Core (2) may simplify presentation, but it may never silently change Core (1)'s scientific meaning.**
-
-And operationally:
+Define downstream-only schemas for:
 
 ```text
-ONE RESEARCH PACKAGE
-      ↓
-MANY VALID LEARNER PUBLICATIONS
-(B30 / B80 / routine / clarification / competitive)
+PublicationPlan
+StudyGuidePublicationModel
+TransferBookPublicationModel
+RepresentationInstance
+Badge
+PublicationAudit
+PublicationManifest
 ```
 
-A change in learner baseline or purpose should normally require a Core (2) rebuild, not a new research exercise. A change in scientific scope, evidence or exam-demand authority requires a new Core (1) version and invalidates dependent Core (2) artifacts until revalidated.
+Do not alter upstream v1 objects to fit renderer convenience.
+
+### Phase 3 — Shared Representation Layer
+
+Extract generic graph/geometry/annotation/equation/asset primitives from mature pilots and add renderer capability registry + golden fixtures.
+
+### Phase 4 — cold-start replays
+
+Run Laws of Motion and Redox from frozen Core (1) packages with no chat history.
+
+### Phase 5 — subject stress
+
+Add Math/proof, broader Physics diagrams and broader Chemistry representations before topic multiplication.
+
+### Phase 6 — compatibility migration
+
+Only after replay succeeds, map existing Physics/Chemistry/Math builders and publication skills into Core (2) profiles without breaking stable IDs.
+
+---
+
+## 39. Approval / implementation invariants
+
+Core (2) is ready to implement only if these remain true:
+
+```text
+ResearchBundle is learner-neutral
+Bxx lives in LearnerProfile
+purpose/products live in PublicationTarget
+Core (2) binds to ResearchBundleManifest.package_digest
+Core (2) requires READY_FOR_PUBLISH
+material learner claims are verified and traceable
+Core (2) does not silently research
+rights/use is enforced at publication
+Appendix A = Core Practice
+Appendix B = Core Solutions
+Appendix C = Printable Handout
+first_step_reference is an Appendix C module
+Shared Representation Layer owns geometry/rendering, not semantic truth
+question denominator remains upstream-owned
+breaking hand-off changes require v2
+cold-start replay is the decisive acceptance test
+```
+
+---
+
+## 40. Central invariant
+
+> **Core (1) owns truth, scope, evidence, canonical references, representation semantics and supported assessment demand. Core (2) binds to that released package, applies a separate LearnerProfile and PublicationTarget, and owns learner adaptation, scaffolding, representations, practice organization, composition, rendering and publication QA. Core (2) may transform presentation aggressively, but it may never silently create or change material truth.**
+
+Operationally:
+
+```text
+ONE FROZEN RESEARCH PACKAGE
+          │
+          ├── B30 routine-study publication
+          ├── B80 routine-study publication
+          ├── B50 concept-repair publication
+          ├── competitive Study Guide
+          └── competitive Transfer Book
+```
+
+That is the reusable Core (2) publishing architecture for Grades 9–11.
