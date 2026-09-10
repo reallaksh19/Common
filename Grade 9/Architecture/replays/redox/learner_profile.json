@@ -1,0 +1,37 @@
+{
+  "learner_profile_id": "LP-G10-CHEM-REDOX-BMIX-001",
+  "schema_version": "1.0.0",
+  "privacy_class": "PUBLIC_SYNTHETIC",
+  "grade": 10,
+  "baselines": [
+    {
+      "subtopic_id": "CHEM-G10-OXIDATION",
+      "value": 60,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    },
+    {
+      "subtopic_id": "CHEM-G10-REDUCTION",
+      "value": 55,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    },
+    {
+      "subtopic_id": "CHEM-G10-REACTION-CLASSIFICATION",
+      "value": 70,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    },
+    {
+      "subtopic_id": "CHEM-CROSS-MACRO-SYMBOLIC-TRANSLATION",
+      "value": 30,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    }
+  ],
+  "notes": "Synthetic cold-start routine-study profile only; learner needs stronger macro-to-symbolic linking than basic reaction classification."
+}
