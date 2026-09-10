@@ -281,7 +281,7 @@ def finalize_learning_design(
     legacy.write_json(design_path, design)
     manifest = load(manifest_path)
     artifacts = [x for x in manifest.get("artifacts", []) if x.get("role") != "LEARNING_DESIGN"]
-    artifacts.append(legacy.artifact("LEARNING_DESIGN", design_path))
+    artifacts.append(legacy.artifact("LEARNING_DESIGN", design_path, "application/json"))
     manifest["artifacts"] = artifacts
     manifest["package_digest"] = legacy.package_digest(artifacts)
     legacy.validate_schema("publication-manifest.schema.json", manifest, contracts)
