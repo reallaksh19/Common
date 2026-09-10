@@ -5,11 +5,15 @@
 **Core (1):** [`CORE1_RESEARCH_CONCEPT_NOTE.md`](CORE1_RESEARCH_CONCEPT_NOTE.md)  
 **Core (2):** [Draft PR #161](https://github.com/reallaksh19/Common/pull/161)
 
-This document is the concise operating contract. Where an older draft differs, the Unified Architecture + Core (1) note + PR #161 Core (2) contract take precedence.
+This is the concise operating contract. Where older concept drafts differ, the Unified Architecture + Core (1) note + aligned PR #161 interface take precedence.
 
 ---
 
-## 1. Default workflow
+## 1. Operating invariant
+
+> **Research once per evidence version → reuse many → publish many → refresh when evidence/authority changes.**
+
+Default flow:
 
 ```text
 PROMPT / SOURCES
@@ -22,32 +26,32 @@ CONDITIONAL EXAM / WEB RESEARCH
       ↓
 PROPOSE / CONFIRM TOPIC + SUBTOPIC MAP
       ↓
-ASK / CONFIRM Bxx MATRIX + PURPOSE
+ASK / CONFIRM Bxx + PURPOSE
       ↓
-FREEZE RESEARCH BRIEF
+FREEZE PROJECT SCOPE GRAPH
       ↓
 CORE (1) RESEARCH
       ↓
-VERSIONED RESEARCH BUNDLE
+RESEARCH BUNDLE + MANIFEST
       ↓
+                 LearnerProfile + PublicationTarget
+                              ↓
 CORE (2) PUBLISH — PR #161
       ↓
-LEARNER STUDY GUIDE / OPTIONAL TRANSFER BOOK
+STUDY GUIDE / OPTIONAL TRANSFER BOOK
 ```
-
-The default is two cores unless the user explicitly asks for `research-only` or `publish-from-existing-research`.
 
 ---
 
 ## 2. Core boundary
 
-> **Core (1) owns truth, scope, source evidence, concept structure and exam-demand interpretation. Core (2) owns learner adaptation, representations, scaffolding, composition, rendering and publication QA.**
+> **Core (1) owns project scope, source/evidence verification, research claims, semantic representation requirements and exam-demand interpretation. Core (2) owns learner adaptation, rendering, scaffolding, composition and publication QA.**
 
-Core (2) must be runnable by a clean agent from the completed Core (1) package plus the publication request. No chat history or hidden researcher state is permitted.
+Global concept identity belongs to the shared canonical registry, not to a project Core (1).
 
 ---
 
-## 3. Intake contract
+## 3. Intake and Bxx
 
 Ask only for missing information:
 
@@ -55,23 +59,23 @@ Ask only for missing information:
 grade
 subject
 topic / subtopics
-Bxx baseline by subtopic
+Bxx by subtopic
 purpose
-exam / stage / cycle when applicable
+exam/stage/cycle when applicable
 user-supplied sources
 ```
 
-### Bxx
+`Bxx` is estimated prior working knowledge. Store it in a separate `LearnerProfile` with provenance/confidence.
 
-`Bxx` is estimated prior working knowledge for a subtopic.
-
-```text
-B30 ≈ substantial rebuilding needed
-B50 ≈ partial working knowledge
-B80 ≈ strong working knowledge; more compression/transfer
+```yaml
+baseline:
+  PHY-NLM-FBD:
+    band: B30
+    basis: USER_DECLARED
+    confidence: MEDIUM
 ```
 
-It is not a task-difficulty or ability score. Preserve the basis (`USER_DECLARED`, `DIAGNOSTIC_DERIVED`, `TEACHER_DECLARED`, `EVIDENCE_ESTIMATED`).
+Bxx may inform Core (1) research priority, but it does **not** enter Research Bundle identity/hash.
 
 ---
 
@@ -86,7 +90,8 @@ repo discovery
 → research missing demand evidence
 → reverse engineer mechanisms/question families
 → propose subtopics
-→ confirm Bxx
+→ confirm Bxx/purpose
+→ freeze ScopeGraph
 → Core (1)
 ```
 
@@ -97,26 +102,42 @@ repo discovery
 → propose/confirm subtopics
 → confirm Bxx + purpose
 → use supplied/curriculum authority
-→ research missing evidence only
+→ research missing/stale evidence only
+→ freeze ScopeGraph
 → Core (1)
 ```
 
-A mock requires an evidence-grounded exam blueprint; “make hard questions” is not an exam model.
+A mock must be driven by an evidence-grounded exam blueprint, not generic difficulty.
 
 ---
 
-## 5. Repository-first and web-research rule
+## 5. Canonical registry vs ScopeGraph
 
-Before network research, Core (1) checks:
+Core (1) references canonical concepts through `ScopeGraph`.
+
+If research discovers a new/changed concept:
 
 ```text
-existing Research Bundles
-concept IDs/maps
+RESEARCH_CANDIDATE
+→ SUBJECT AUTHORITY REVIEW
+→ CANONICAL REGISTRY VERSION
+```
+
+Core (1) must not silently mutate the shared ontology.
+
+---
+
+## 6. Repository-first and web research
+
+Before network research Core (1) checks:
+
+```text
+prior Research Bundles
+canonical concepts
 source snapshots/ledgers
-question content/occurrences
-question families
+question content/occurrences/families
 exam profiles/cycles
-representations
+representation definitions
 misconceptions
 audits/review records
 ```
@@ -125,18 +146,19 @@ Only missing/stale evidence is searched.
 
 > **Search → verify → fingerprint → deduplicate → map → store → reuse.**
 
-Core (2) does not normally browse for scientific/mathematical content.
+Core (2) does not normally browse for mathematical/scientific content.
 
 ---
 
-## 6. Core (1) outputs
+## 7. Core (1) outputs
 
-Canonical names aligned to PR #161:
+Mandatory:
 
 ```text
+<Topic>_Research_Bundle.json
+<Topic>_Research_Bundle_Manifest.json
 <Topic>_Research_Core.md
 <Topic>_Research_Core.pdf
-<Topic>_Research_Bundle.json
 <Topic>_Source_Ledger.json
 ```
 
@@ -147,145 +169,221 @@ Competitive/external-question additions:
 <Topic>_Question_Evidence_Ledger.json
 ```
 
-`Research_Bundle.json` is the machine hand-off.
-
-Core (1) contains canonical claims, concepts, prerequisites, misconceptions, semantic representation requirements, equations/reactions, expert reasoning, stable research IDs, sources/assets, exam-demand evidence and explicit unresolved items.
+`Research_Bundle.json` is the canonical semantic machine hand-off. MD/PDF are derived human review surfaces. The manifest binds hashes/version/change class.
 
 ---
 
-## 7. Versioned hand-off
+## 8. Versioning and hashing
 
-Core (2) records:
+Do not hash the bundle into itself.
 
-```text
-research_bundle_id
-research_bundle_version
-research_bundle_sha256
-```
-
-A new Research Bundle version makes dependent publications stale until revalidated.
-
-Core (2) must not silently patch research gaps. It returns:
+`Research_Bundle_Manifest.json` stores:
 
 ```text
-CORE1_RESEARCH_GAP
+bundle_id
+version
+change_class
+artifact hashes
+semantic_digest
+package_digest
 ```
 
-with a structured object containing `gap_type`, `object_id`, `reason` and `blocking`.
+Allowed primary change classes:
+
+```text
+EDITORIAL
+EVIDENCE
+SEMANTIC
+SCOPE
+EXAM_DEMAND
+ASSET
+```
+
+Core (2) uses the class for selective revalidation/rebuild; unknown impact fails closed.
 
 ---
 
-## 8. Core (2) output contract
+## 9. Core (1) human-view zero drift
 
-Aligned to PR #161, the default Study Guide is:
+Required generation/reconciliation direction:
+
+```text
+ResearchBundle
+→ Research Core view model
+→ Markdown + PDF
+```
+
+Required material coverage:
+
+```text
+BUNDLE_TO_MD_MATERIAL_COVERAGE = 100%
+BUNDLE_TO_PDF_MATERIAL_COVERAGE = 100%
+UNMAPPED_MD_MATERIAL_CLAIMS = 0
+UNMAPPED_PDF_MATERIAL_CLAIMS = 0
+```
+
+---
+
+## 10. External-question closure
+
+`Question_Evidence_Ledger.json` freezes the result of the canonical corpus-coverage service.
+
+Each candidate occurrence must have:
+
+```text
+REQUIRED | DEFER | EXCLUDE | REVIEW | DUPLICATE
+primary owner
+source/transcription/answer states
+QuestionContent / QuestionFamily links
+publication target
+reason/duplicate link where applicable
+```
+
+`REVIEW` blocks closeout. Subject-specific auditors extend the generic denominator mechanics; they do not redefine them.
+
+---
+
+## 11. Source rights/use
+
+Source records must distinguish evidence availability from reproduction rights using structured status such as:
+
+```text
+REPRODUCTION_ALLOWED
+REFERENCE_ONLY
+USER_SUPPLIED_LIMITED
+DISCOVERY_ONLY
+UNKNOWN_REVIEW_REQUIRED
+```
+
+This applies especially to mirrors, indexes, ExamSIDE/Scribd-style discovery and third-party archives.
+
+---
+
+## 12. Core (2) canonical input
+
+Core (2) receives:
+
+```text
+ResearchBundle
++ ResearchBundleManifest
++ LearnerProfile
++ PublicationTarget
++ PublicationProfile
+```
+
+If the target asks for exam demand not supported by Core (1), Core (2) returns `CORE1_RESEARCH_GAP`.
+
+---
+
+## 13. Core (2) output contract
+
+Aligned shared Study Guide base:
 
 ```text
 MAIN LEARNING SECTION
 
 Appendix A — Core Practice
 Appendix B — Core Solutions
-Appendix C — First-Step Reference / Printable Handout
+Appendix C — Printable Handout
 ```
 
-This replaces earlier wording that treated Appendix B primarily as “Hints”. Hints remain optional support mechanics; Appendix B's canonical purpose is complete Core Solutions.
+`first_step_reference` is a module inside Appendix C when required by subject/purpose; it is not the Appendix identity itself.
 
-When external/competitive practice is in scope, Core (2) may also produce a separate Transfer Book containing attempt-first H0/H1-H3 support, source/exam/difficulty/transfer metadata, primary/support concept ownership, mixed-transfer behavior and complete solutions.
+Hints remain support mechanics:
+
+```text
+H0 independent
+H1 recognition/notice
+H2 structure/model
+H3 first executable step
+```
+
+Competitive/external work may additionally produce a Transfer Book.
 
 ---
 
-## 9. Research → Publish traceability
+## 14. Shared Representation Layer
 
-Every Core (2) material object must be traceable:
+Use the cross-subject name **Shared Representation Layer**, not “Scientific Representation Core”.
 
-```text
-SOURCE / QUESTION OCCURRENCE
-      ↓
-CORE (1) RESEARCH CLAIM / CONCEPT / REPRESENTATION
-      ↓
-CORE (2) SECTION / FIGURE / QUESTION / SOLUTION
-```
+Core (1) specifies semantic obligations. The shared layer provides typed representation/rendering capabilities for Math, Physics and Chemistry. Core (2) selects, places and audits them.
 
-Core (2) may show light research anchors to students while retaining full machine linkage in publication metadata.
+Unsupported required representation semantics fail closed.
 
 ---
 
-## 10. Representation responsibility
+## 15. Material traceability
 
-Core (1) specifies **semantic representation requirements**:
+Traceability applies to semantic/material objects, not connective prose.
 
-```text
-what must be shown
-scientific/mathematical relationships
-required labels
-conditions/meaning
-approved assets/source crops
-supporting research claims
-```
-
-Core (2), per PR #161, owns the shared Scientific Representation Core and rendering routes:
+Material classes include:
 
 ```text
-structured generated vector
-approved SVG/vector asset
-source crop / fidelity-controlled image
+MATERIAL_CLAIM
+MATERIAL_CONDITION
+MATERIAL_EXAMPLE
+MATERIAL_REPRESENTATION
+MATERIAL_QUESTION
+MATERIAL_SOLUTION_METHOD
+MATERIAL_EXAM_FACT
 ```
 
-Core (2) may choose geometry; it may not invent missing semantics.
+Every material Core (2) object must resolve to Core (1) IDs and source/question evidence where applicable.
 
 ---
 
-## 11. Shared question/source data
+## 16. Gap protocol
 
-Maintain separate identities:
+Core (2) must not silently repair missing research.
 
-```text
-QuestionContent
-QuestionOccurrence
-QuestionFamily
-QuestionAdaptation
+```yaml
+status: CORE1_RESEARCH_GAP
+research_bundle_id: ...
+gap_type: SOURCE | CONCEPT | REPRESENTATION | EQUATION | QUESTION_FAMILY | EXAM_DEMAND | ASSET
+object_id: ...
+blocking: true
+reason: ...
 ```
 
-Maintain source snapshots separately from project Research Bundles.
-
-Projects reference shared objects instead of copying canonical data. One Research Bundle can therefore support multiple Bxx/purpose publications without repeating source research.
+Core (1) resolves, versions, remanifests and re-hands off.
 
 ---
 
-## 12. Cold-start acceptance
+## 17. Original-question claims
 
-### Core (1)
+Default authored mock/practice status should be:
 
-A clean Core (2) agent must be able to identify exact scope, baseline, purpose, verified claims, required representations, exam demand, question evidence and unresolved items without the original chat.
+```text
+ORIGINAL_EXAM_ALIGNED
+ORIGINAL_EDITORIAL_PROFILED
+```
 
-### Core (2)
+Use a “calibrated” claim only when a calibration basis is explicitly recorded:
 
-A clean Publisher receives only the frozen Research package, explicit publication request and canonical schemas/skills. It performs no undeclared research.
+```text
+SOURCE_MAPPING
+EXPERT_REVIEW
+EMPIRICAL
+```
 
-Required cross-core counters include:
+---
+
+## 18. Cold-start acceptance
+
+A clean Core (2) agent must be able to publish using only the released Core (1) package plus LearnerProfile/PublicationTarget and canonical schemas/skills.
+
+Required:
 
 ```text
 CORE1_COLD_START_SUFFICIENT = PASS
-CORE2_UNDECLARED_RESEARCH_REQUIRED = 0
-PUBLISH_TO_RESEARCH_LINK_COVERAGE = 100%
-UNSUPPORTED_PUBLISH_CLAIMS = 0
-HANDOFF_HASH_MATCH = 1
-BLOCKING_RESEARCH_GAPS = 0
+PUBLISH_AGENT_NO_HIDDEN_CONTEXT = PASS
+PUBLISH_AGENT_UNDECLARED_WEB_SEARCHES = 0
+MATERIAL_TRACEABILITY_COVERAGE = 100%
+BLOCKING_UNRESOLVED_ITEMS = 0
 ```
 
 ---
 
-## 13. Examples
+## 19. Central contract
 
-### Grade 9 Physics — Laws of Motion — competitive
-
-Core (1) resolves exam identity, studies verified sample demand, freezes concepts/FBD semantics/misconceptions/question families and produces the Research Bundle. Core (2) expands B30 FBD sections, compresses B80 Newton-law recap, publishes Appendix A/B/C and an optional exam-aligned Transfer Book.
-
-### Grade 10 Chemistry — Redox — routine study
-
-Core (1) reuses existing Redox authority/source data, confirms subtopics/Bxx/purpose, researches only gaps, and freezes canonical macro/particle/symbolic/redox claims. Core (2) performs the Bxx-sensitive learner transformation and publishes Appendix A/B/C. No competitive crawl is required unless requested.
-
----
-
-## 14. Central invariant
-
-> **Research once; publish many. Core (1) is the only project research/evidence authority. Core (2), as specified by PR #161, is the learner/publication authority. A change in learner baseline or purpose normally rebuilds Core (2); a change in scope, scientific/mathematical truth, source evidence or exam-demand authority versions Core (1) and invalidates dependent publications until revalidated.**
+> **Shared canonical knowledge is governed once. Core (1) freezes a project ScopeGraph and evidence package for one evidence version. Learner Bxx is downstream state, not Research Bundle truth. Core (2) combines the Research Bundle with LearnerProfile and PublicationTarget, and no agent may silently create a second ontology, corpus or research authority.**
