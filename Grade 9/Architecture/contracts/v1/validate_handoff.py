@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 """Validate a Core (1) -> Core (2) package hand-off across v1 contracts.
 
-This is intentionally a cross-object validator. JSON Schema validates shape; this
-script validates relationships that span ResearchBundle, manifest, learner,
-publication target and optional exam/question evidence artifacts.
+JSON Schema validates shape. This script validates relationships that span
+ResearchBundle, manifest, learner, publication target and optional exam/question
+evidence artifacts. It performs no subject research.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
 from jsonschema import Draft202012Validator, RefResolver
@@ -87,7 +86,7 @@ def validate_manifest_binding(bundle, manifest, errors: list[str]):
     if manifest["evidence_version"] != bundle["evidence_version"]:
         errors.append("manifest evidence_version does not match ResearchBundle")
 
-    bundle_art = require_one_artifact(manifest, "RESEARCH_BUNDLE", errors)
+    require_one_artifact(manifest, "RESEARCH_BUNDLE", errors)
     source_art = require_one_artifact(manifest, "SOURCE_LEDGER", errors)
     require_one_artifact(manifest, "RESEARCH_CORE_MD", errors)
     require_one_artifact(manifest, "RESEARCH_CORE_PDF", errors)
@@ -103,6 +102,8 @@ def validate_manifest_binding(bundle, manifest, errors: list[str]):
             ref = bundle["question_evidence_ledger_ref"]
             if q_art["path"] != ref["path"] or q_art["sha256"] != ref["sha256"]:
                 errors.append("ResearchBundle question_evidence_ledger_ref does not match manifest QUESTION_EVIDENCE_LEDGER artifact")
+    elif artifact_by_role(manifest, "QUESTION_EVIDENCE_LEDGER"):
+        errors.append("manifest contains QUESTION_EVIDENCE_LEDGER but ResearchBundle has no question_evidence_ledger_ref")
 
     exam_refs = bundle.get("exam_demand_profile_refs", [])
     exam_arts = artifact_by_role(manifest, "EXAM_DEMAND_PROFILE")
@@ -120,9 +121,6 @@ def validate_manifest_binding(bundle, manifest, errors: list[str]):
             errors.append("READY_FOR_PUBLISH requires 100% ResearchBundle -> MD/PDF material coverage")
         if rec.get("unmapped_md_material_claims") != 0 or rec.get("unmapped_pdf_material_claims") != 0:
             errors.append("READY_FOR_PUBLISH requires zero unmapped MD/PDF material claims")
-
-    if bundle_art is None:
-        return
 
 
 def validate_publication_target(bundle, manifest, learner, target, exam_profiles, errors: list[str]):
@@ -175,8 +173,8 @@ def parse_args():
     p.add_argument("--learner", type=Path, default=EXAMPLE_DIR / "learner-profile.example.json")
     p.add_argument("--target", type=Path, default=EXAMPLE_DIR / "publication-target.example.json")
     p.add_argument("--source-ledger", type=Path, default=EXAMPLE_DIR / "source-ledger.example.json")
-    p.add_argument("--exam-demand", type=Path, action="append", default=None)
-    p.add_argument("--question-ledger", type=Path, default=EXAMPLE_DIR / "question-evidence-ledger.example.json")
+    p.add_argument("--exam-demand", type=Path, action="append", default=[])
+    p.add_argument("--question-ledger", type=Path, default=None)
     return p.parse_args()
 
 
@@ -191,8 +189,7 @@ def main() -> int:
     target = load(args.target)
     source_ledger = load(args.source_ledger)
     question_ledger = load(args.question_ledger) if args.question_ledger and args.question_ledger.exists() else None
-    exam_paths = args.exam_demand or [EXAMPLE_DIR / "exam-demand-profile.example.json"]
-    exam_profiles = [load(p) for p in exam_paths if p.exists()]
+    exam_profiles = [load(p) for p in args.exam_demand if p.exists()]
 
     schema_validate("research-bundle.schema.json", bundle, schemas, base_uri, store, errors)
     schema_validate("research-bundle-manifest.schema.json", manifest, schemas, base_uri, store, errors)
@@ -221,8 +218,9 @@ def main() -> int:
     print("LEARNER_TARGET_BINDING = PASS")
     print("MATERIAL_VIEW_RECONCILIATION = PASS")
     print("RESEARCH_REFERENCE_CLOSURE = PASS")
-    print("QUESTION_DENOMINATOR_CLOSURE = PASS")
-    print("COMPETITIVE_EXAM_DEMAND_BINDING = PASS")
+    print(f"QUESTION_DENOMINATOR_CLOSURE = {'PASS' if question_ledger is not None else 'NOT_APPLICABLE'}")
+    competitive = target.get('purpose', {}).get('type') in {"COMPETITIVE_FOUNDATION", "COMPETITIVE_EXAM", "MOCK_EXAM_PREPARATION"}
+    print(f"COMPETITIVE_EXAM_DEMAND_BINDING = {'PASS' if competitive else 'NOT_APPLICABLE'}")
     return 0
 
 
