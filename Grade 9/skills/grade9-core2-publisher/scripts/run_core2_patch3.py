@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Final hardening patch for executable Core (2) morphology.
 
-Two measured-render details are normalized here:
+Measured-render compatibility is normalized here:
 1. PDF text extraction can insert line breaks inside a cognitive-job sentence;
    morphology reconciliation therefore compares normalized whitespace.
 2. The generic XY_GRAPH renderer must respect the publication typography floor;
    all graph text is clamped to at least 7.5 pt during rendering.
+3. The Transfer Book Markdown retains the mature human-facing heading
+   ``Complete Solutions`` while the PDF/structure contract uses the canonical
+   COMPLETE_SOLUTIONS section token.
 """
 from __future__ import annotations
 
@@ -16,6 +19,7 @@ import run_core2_patch2 as patch2
 impl = patch2.impl
 _ORIG_MORPHOLOGY = impl.morphology_evidence
 _ORIG_FLOWABLE = impl.StructuredRepresentationFlowable
+_ORIG_TRANSFER_MD = impl.build_transfer_markdown
 
 
 def _norm(text: str) -> str:
@@ -50,9 +54,15 @@ def morphology_evidence(structure: dict, study_pdf, transfer_pdf):
     return out
 
 
+def build_transfer_markdown(model: dict, plan: dict) -> str:
+    text = _ORIG_TRANSFER_MD(model, plan)
+    return text.replace("# COMPLETE SOLUTIONS", "# Complete Solutions")
+
+
 def main() -> int:
     impl.StructuredRepresentationFlowable = TypographySafeRepresentationFlowable
     impl.morphology_evidence = morphology_evidence
+    impl.build_transfer_markdown = build_transfer_markdown
     return patch2.main()
 
 
