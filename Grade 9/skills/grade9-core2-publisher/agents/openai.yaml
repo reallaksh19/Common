@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9–11 Core (2) Publisher"
+  short_description: "Turns a frozen Core (1) research package into learner-facing study and transfer publications with traceable representations and QA."
+  default_prompt: "Use $grade9-core2-publisher to validate the frozen Core (1) hand-off, adapt it to the supplied LearnerProfile and PublicationTarget, render the requested learner products, and fail back with CORE1_RESEARCH_GAP instead of inventing missing subject truth."
