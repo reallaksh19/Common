@@ -42,6 +42,7 @@
         "content": {"type": "string"},
         "traceability_class": {"enum": ["MATERIAL", "PEDAGOGICAL_CONNECTIVE", "PRESENTATION_ONLY"]},
         "research_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "learning_design_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "representation_instance_id": {"type": "string"}
       }
     },
