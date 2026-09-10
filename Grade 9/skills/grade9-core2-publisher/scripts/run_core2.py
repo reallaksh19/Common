@@ -370,7 +370,7 @@ def build_study_model(bundle, plan):
                 items.append({
                     "item_id": "REP-" + inst["representation_instance_id"] + "-" + sec["section_id"],
                     "type": "REPRESENTATION",
-                    "content": f"{inst['representation_type']} · required labels: {', '.join(inst['required_labels'])}",
+                    "content": f"{inst['representation_type']} · requirement: {inst['requirement_id']} · required labels: {', '.join(inst['required_labels'])}",
                     "traceability_class": "MATERIAL",
                     "research_refs": inst["research_refs"],
                     "representation_instance_id": inst["representation_instance_id"],
