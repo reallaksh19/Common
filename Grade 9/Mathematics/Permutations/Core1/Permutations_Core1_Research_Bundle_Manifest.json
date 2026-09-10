@@ -8,18 +8,18 @@
       "sha256": "3c1cb6b6aa6aa54c9ac6b09258793fcc74563d96813cedb8278a674e694019d7"
     },
     {
-      "bytes": 12519,
+      "bytes": 12622,
       "media_type": "text/markdown",
       "path": "Permutations_Core1_Research_Core.md",
       "role": "RESEARCH_CORE_MD",
-      "sha256": "6010872774aabf20f1b06da3b436a194e01aa2862e2e5c8e7143ff61e2065913"
+      "sha256": "b2cee76b0d1cfecee28ac9fc72ed7c988647e6bf2defff68d363473996e4d588"
     },
     {
-      "bytes": 15323,
+      "bytes": 15409,
       "media_type": "application/pdf",
       "path": "Permutations_Core1_Research_Core.pdf",
       "role": "RESEARCH_CORE_PDF",
-      "sha256": "80159ecdf208355f5d2182c19d419a36cd2d0c5ad322038222b2ad21192831c3"
+      "sha256": "f0706d1331a369d1ddb0a3d37b7d165c2cc95c5722292f85ecc7cb24f4f37e0a"
     },
     {
       "bytes": 3559,
@@ -42,7 +42,7 @@
     "unmapped_md_material_claims": 0,
     "unmapped_pdf_material_claims": 0
   },
-  "package_digest": "afe10577b6981354db19cacec35ef6c6fbfb3e438a7a8fc87c37be34af4bd4d6",
+  "package_digest": "cd97d624c92ddeb514cc427a84680708243afe0038c1f0eed8a47dba4b38ff34",
   "release_note": "Mathematics Core (1) permutation research package. It is learner-neutral and purpose-neutral. External ExamSIDE question-denominator closure is deliberately not claimed in this generic Core (1) fixture.",
   "research_bundle_id": "RB-MATH-PERMUTATIONS-CORE1-2026",
   "schema_version": "1.0.0",

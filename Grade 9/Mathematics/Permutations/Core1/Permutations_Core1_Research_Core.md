@@ -8,6 +8,10 @@
 
 ## Scope
 
+Canonical registry releases:
+
+- `REG-MATH-PERM-TAXONOMY` @ `ec4e35b51a7c1c9a6740cebc75700c02e11e306b`
+
 Included canonical nodes:
 
 - `PERM-ST01`
