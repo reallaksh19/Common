@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "teachingTarget": {
+    "targetId": "TT-G4-FRAC-EQUIV-001",
+    "learningObjectIds": ["MATH-FRAC-EQUIVALENCE"],
+    "purpose": "ACQUIRE",
+    "desiredEvidence": ["recognise_equivalent_fractions", "justify_with_visual_model"],
+    "sourceScopeRef": "SCHOOL-G4-FRACTIONS-UNIT"
+  },
+  "skillState": {
+    "learningObjectId": "MATH-FRAC-EQUIVALENCE",
+    "learningEvidence": {
+      "acquisition": "EMERGING",
+      "independentUse": "NOT_YET_TESTED",
+      "delayedRetention": "NOT_YET_TESTED",
+      "transfer": "NOT_YET_TESTED",
+      "stretch": "NOT_APPLICABLE"
+    },
+    "evidenceRefs": ["OBS-FRAC-0001"],
+    "confidence": "MEDIUM"
+  },
+  "currentLearningState": {
+    "sessionId": "SESSION-EXAMPLE-001",
+    "learningObjectIds": ["MATH-FRAC-EQUIVALENCE"],
+    "conceptualSupport": {
+      "level": "H1",
+      "type": "PROMPT"
+    },
+    "accessAdjustments": [],
+    "representation": {
+      "type": "FRACTION_MODEL",
+      "role": "PROVIDED"
+    },
+    "recentObservationRefs": ["OBS-FRAC-0001"],
+    "sessionSignals": []
+  },
+  "learningEpisode": {
+    "episodeId": "EP-G4-FRAC-EQUIV-001",
+    "teachingTargetId": "TT-G4-FRAC-EQUIV-001",
+    "learningObjectIds": ["MATH-FRAC-EQUIVALENCE"],
+    "sourceStatus": "VERIFIED",
+    "steps": [
+      {
+        "stepId": "STEP-1",
+        "role": "TEACH",
+        "expectedChildAction": "Compare two shaded fraction models and say what is the same.",
+        "teacherMoveType": "ASK_TO_NOTICE"
+      },
+      {
+        "stepId": "STEP-2",
+        "role": "GUIDED_PRACTICE",
+        "expectedChildAction": "Choose which model shows the same amount as one half.",
+        "teacherMoveType": "PROMPT"
+      },
+      {
+        "stepId": "STEP-3",
+        "role": "REPRESENTATION_SHIFT",
+        "expectedChildAction": "Select or draw a fraction model for a new pair.",
+        "teacherMoveType": "ASK_CHILD_TO_CHOOSE_REPRESENTATION"
+      },
+      {
+        "stepId": "STEP-4",
+        "role": "INDEPENDENT_CHECK",
+        "expectedChildAction": "Solve a new equivalent-fraction item without conceptual help and explain why.",
+        "teacherMoveType": "GIVE_INDEPENDENT_TURN"
+      },
+      {
+        "stepId": "STEP-5",
+        "role": "RETRIEVAL",
+        "expectedChildAction": "Return after several days and solve a fresh equivalent-fraction item.",
+        "teacherMoveType": "SCHEDULE_RETRIEVAL"
+      }
+    ],
+    "independentCheckRequired": true,
+    "delayedRetrieval": {
+      "required": true,
+      "earliestDays": 3,
+      "latestDays": 7
+    }
+  },
+  "runtimeTrace": [
+    {
+      "type": "OBSERVATION",
+      "observation": {
+        "observationId": "OBS-FRAC-0001",
+        "learningObjectIds": ["MATH-FRAC-EQUIVALENCE"],
+        "kind": "INCORRECT_SELECTION",
+        "value": "selected 2/3 as equivalent to 1/2",
+        "observedAt": "2026-09-10T18:45:00Z",
+        "conceptualSupport": {
+          "level": "H0",
+          "type": "NONE"
+        },
+        "accessAdjustments": [],
+        "sourceStatus": "VERIFIED"
+      }
+    },
+    {
+      "type": "DIAGNOSIS",
+      "diagnosis": {
+        "diagnosisId": "DX-FRAC-0001",
+        "code": "INSUFFICIENT_EVIDENCE",
+        "confidence": "MEDIUM",
+        "evidenceRefs": ["OBS-FRAC-0001"],
+        "informationNeeded": ["Can the child compare the shaded quantities using a visual model?"],
+        "competingHypotheses": ["CONCEPTUAL_MISCONCEPTION", "TASK_INTERPRETATION_ERROR"]
+      }
+    },
+    {
+      "type": "DECISION",
+      "decision": {
+        "decisionId": "DEC-FRAC-0001",
+        "strategy": "DIAGNOSE_BEFORE_RETEACH",
+        "reasonEvidenceRefs": ["OBS-FRAC-0001"]
+      }
+    },
+    {
+      "type": "MOVE",
+      "move": {
+        "moveId": "MOVE-FRAC-0001",
+        "type": "ASK_TO_SHOW",
+        "expectedChildAction": "Point to or shade one half, then show another fraction model with the same amount.",
+        "conceptualSupport": {
+          "level": "H1",
+          "type": "PROMPT"
+        },
+        "accessAdjustments": []
+      }
+    }
+  ]
+}
