@@ -37,6 +37,16 @@ Use an empty scratch destination. Installation success proves copying; `validate
 
 The 72-question check is a synthetic structural-capacity test. It is not evidence that the 68-question Motion chapter was authored or reviewed.
 
+For a production subtopic, validate its two files together after both models exist:
+
+```bash
+.venv/Scripts/python "Grade 9/skills/grade9-physics-publication/scripts/validate_v2.py" --pair \
+  "path/to/topic_core_study_guide.json" \
+  "path/to/topic_examside_solution.json"
+```
+
+This gate requires one topic, reciprocal model/pair IDs, identical project and canonical concept authority, matching concept segregation, a Core Study Guide with Appendices A–C, and an externally grounded ExamSIDE Solution Book with difficulty badges. The bundled Motion models are legacy two-topic pilot profiles, so they intentionally do not claim this pair gate.
+
 ## 4. Render and audit all committed learner artifacts
 
 Render each model into `Grade 9/Physics/Motion/B30_B80_Rebuild`:

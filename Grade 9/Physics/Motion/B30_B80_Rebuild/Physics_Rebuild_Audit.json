@@ -1,6 +1,6 @@
 {
   "status": "FOR_USER_REVIEW",
-  "date": "2026-09-09",
+  "date": "2026-09-10",
   "scope": "Two-topic original-question Motion publication pilot; not a full chapter or verified external corpus.",
   "sources": [
     {
@@ -29,7 +29,7 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 20,
-      "pdf_sha256": "05b40e60117c7782467d2670257d5086658eb8026ef4b48c976954bf2759842a",
+      "pdf_sha256": "ab74610eadbdad2de4d27ea7732ed6a03069d78f36b3b306b5b7f622705d13f2",
       "model_sha256": "08c30e682d1c8256af965468686d5cab207260a531560ac45ba4cf0fad75b7cd",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
@@ -45,7 +45,7 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 16,
-      "pdf_sha256": "cb332e7d95ecdfebf94eba634506fd50552b70ec8c5c7f51732dd1834ac1b498",
+      "pdf_sha256": "ee093618259ed1e559b45a566e434e90d16d4ba22d9fb26eb3e8d624a7f3b330",
       "model_sha256": "6c27ed73f33befe3f9d577f9222e311a4e555e7789557c45300168029f4e8b80",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     },
@@ -61,32 +61,32 @@
       "outside_page": [],
       "minimum_text_role_size": 10.5,
       "figure_occurrences": 7,
-      "pdf_sha256": "e798cbae5fb7c0a539fb48df849d1b348f0aaf8e058dbb692c176abc30b84c0a",
-      "model_sha256": "51a505c465845cabe27c82b999b8fe387dbb4b4b116e6b2a269d65ee59a3d6ee",
+      "pdf_sha256": "7290c579abef28c938461c7de5143b30fa6fac422af1958afadc00074a61e8ce",
+      "model_sha256": "d275acfdfe09818c5f41ab22dc63538311f156377a4976e9dd8af3de3ad30a93",
       "visual_review": "SEPARATE_REVIEW_REQUIRED"
     }
   },
   "machine_evidence": {
     "file": "review_evidence.json",
-    "sha256": "f18309ad96d36aee933f6ff702dae8c9f9de0994703163c2c9f82b2177b44213",
-    "generated_at_utc": "2026-09-09T19:27:03.327368+00:00",
+    "sha256": "f851b7c6a4c77a99596bdf8b97371b26cc9680161e3b5beacfb5e73976315736",
+    "generated_at_utc": "2026-09-10T02:41:18.616888+00:00",
     "status": "PASS"
   },
   "manual_review": {
     "codex_visual_review": {
       "status": "PASS",
       "reviewer": "Codex",
-      "reviewed_at_utc": "2026-09-09T19:23:08.057134+00:00",
+      "reviewed_at_utc": "2026-09-10T02:40:12.526479+00:00",
       "dpi": 200,
       "pages_reviewed": 65,
       "pdf_hashes": {
-        "Motion_B30_Rebuilt": "05b40e60117c7782467d2670257d5086658eb8026ef4b48c976954bf2759842a",
-        "Motion_B80_Rebuilt": "cb332e7d95ecdfebf94eba634506fd50552b70ec8c5c7f51732dd1834ac1b498",
-        "Motion_Optional_Hint_Practice": "e798cbae5fb7c0a539fb48df849d1b348f0aaf8e058dbb692c176abc30b84c0a"
+        "Motion_B30_Rebuilt": "ab74610eadbdad2de4d27ea7732ed6a03069d78f36b3b306b5b7f622705d13f2",
+        "Motion_B80_Rebuilt": "ee093618259ed1e559b45a566e434e90d16d4ba22d9fb26eb3e8d624a7f3b330",
+        "Motion_Optional_Hint_Practice": "7290c579abef28c938461c7de5143b30fa6fac422af1958afadc00074a61e8ce"
       },
-      "notes": "All 65 latest page renders inspected: no clipping, collisions, illegible labels, answer-cue leakage, broken section transitions, or diagnosis overflow observed.",
+      "notes": "All 65 final pages inspected from 200 DPI renders; full-book contact sheets and Appendix A/B/C high-risk pages showed no clipping, collision, illegible label, broken hierarchy, or answer leakage before the attempt surfaces.",
       "evidence_file": "visual_review_evidence.json",
-      "evidence_sha256": "2ddc4ae5b20ea2c22dc1fa8c32bffe87226d7df5eb8ad25429f87957eb4cb95f"
+      "evidence_sha256": "9fd430db2b8c8bee016bf8cd684e148649d18c5868852307ec92b6a735d42141"
     },
     "independent_pedagogy_review": "PENDING",
     "classroom_testing": "NOT_RUN",

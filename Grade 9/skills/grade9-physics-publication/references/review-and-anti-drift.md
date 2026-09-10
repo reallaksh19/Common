@@ -11,7 +11,8 @@ Freeze source role, allowed rewrites, band profiles, same-topic requirement and 
 | Depiction | Required placeholder; unreadable labels; diagram contradicting its story |
 | B30 | First-use language/operation unexplained; no one-step/faded bridge; visual repair only described, never shown |
 | B80/B90 | No physical depiction; only larger arithmetic; allegedly independent task duplicates the worked answer |
-| Appendices | Missing A or B; practice answers before the final solution section |
+| Product pair | A subtopic lacks either the Core Study Guide or ExamSIDE Solution Book; pair IDs/companion IDs/topic scope/concept authority do not reconcile |
+| Appendices | Core missing A, B or C; answer-bearing content appears before the first-attempt surfaces; ExamSIDE missing its full-solution Appendix A |
 | Questions | Missing data/options/graph, no primary concept, mismatched solution, unusable workspace |
 | Hints | H1 leaks answer; H1–H3 repeat; H3 has no executable start; help precedes attempt |
 | Solutions | Formula/answer only; decisive model omitted; incomplete recap/representation |
@@ -19,7 +20,7 @@ Freeze source role, allowed rewrites, band profiles, same-topic requirement and 
 | Layout | Collision, clipping, broken glyph, label outside bounds, unreadable size |
 | Evidence | Unperformed check marked PASS or simulated learners described as real students |
 
-Test missing figure, graph/data mismatch, wrong numerical result, absent handout, unknown repair target, missing dependent graph, duplicate IDs, repeated hints and changed denominator. Check the produced PDF too: all questions and destinations, solutions-last order, font floors, actual link ranges. Render every page at 200 dpi; inspect diagrams, equations and dense pages at full size after the contact-sheet review.
+Test missing figure, graph/data mismatch, wrong numerical result, absent Appendix C handout, unknown repair target, missing dependent graph, duplicate IDs, repeated hints, changed denominator, missing difficulty badges and broken product-pair reciprocity. Check the produced PDF too: all questions and destinations, Appendix A→B→C order, answer separation, font floors and actual link ranges. Render every page at 200 dpi; inspect diagrams, equations and dense pages at full size after the contact-sheet review.
 
 Record each review as location → observation → learner consequence → revision → recheck. A PASS based only on counts is not a pedagogical verdict. Distinguish technical checks, user approval and actual classroom evaluation.
 

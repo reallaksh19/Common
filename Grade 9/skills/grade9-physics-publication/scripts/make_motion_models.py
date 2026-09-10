@@ -181,7 +181,7 @@ for b in [b30,b80]:
  b['handout']=copy.deepcopy(handout);b['lesson_ids']=[p['id'] for p in b['lessons']]
  b['mixed_tests']=[mixed_test(b['band'])]
  (ROOT/'examples'/('motion_'+b['band']+'_v2.json')).write_text(json.dumps(b,ensure_ascii=False,indent=2),encoding='utf-8',newline='\n')
-bank=copy.deepcopy(b80);bank.update(product='question_bank',title='Motion · Optional-hint practice',learner_label='Optional-hint practice',band='B80',lessons=[],lesson_ids=[])
+bank=copy.deepcopy(b80);bank.update(product='question_bank',title='Motion · Optional-hint practice',learner_label='Optional-hint practice',band='B80',lessons=[],lesson_ids=[],handout=None)
 for q in bank['questions']['core_calibrated']:
  q['repair_mode']='SELF_CONTAINED';q['repair_target']='SELF_CONTAINED_SOLUTION'
 bank['source_claim']='Original-question demonstration of the Examside workflow. No exam attribution or external-corpus completeness claimed.'

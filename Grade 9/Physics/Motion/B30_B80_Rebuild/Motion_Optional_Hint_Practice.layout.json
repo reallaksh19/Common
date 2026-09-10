@@ -275,7 +275,7 @@
         730,
         17.16
       ],
-      "text": "A1  \u00b7  Apply",
+      "text": "A1  \u00b7  CONCEPT \u00b7 Displacement  \u00b7  Apply",
       "size": 13
     },
     {
@@ -335,7 +335,7 @@
         730,
         17.16
       ],
-      "text": "A2  \u00b7  Apply",
+      "text": "A2  \u00b7  CONCEPT \u00b7 Distance  \u00b7  Apply",
       "size": 13
     },
     {
@@ -455,7 +455,7 @@
         730,
         17.16
       ],
-      "text": "A3  \u00b7  Explain",
+      "text": "A3  \u00b7  CONCEPT \u00b7 Distance  \u00b7  Explain",
       "size": 13
     },
     {
@@ -515,7 +515,7 @@
         730,
         17.16
       ],
-      "text": "A4  \u00b7  Transfer",
+      "text": "A4  \u00b7  CONCEPT \u00b7 Displacement  \u00b7  Transfer",
       "size": 13
     },
     {
@@ -635,7 +635,7 @@
         730,
         17.16
       ],
-      "text": "A5  \u00b7  Compare",
+      "text": "A5  \u00b7  CONCEPT \u00b7 Signed v-t Area (Displacement)  \u00b7  Compare",
       "size": 13
     },
     {
@@ -755,7 +755,7 @@
         730,
         17.16
       ],
-      "text": "A6  \u00b7  Apply",
+      "text": "A6  \u00b7  CONCEPT \u00b7 v-t Area Magnitudes (Distance)  \u00b7  Apply",
       "size": 13
     },
     {
@@ -970,7 +970,7 @@
         730,
         17.16
       ],
-      "text": "A7  \u00b7  Transfer",
+      "text": "A7  \u00b7  CONCEPT \u00b7 v-t Area Magnitudes (Distance)  \u00b7  Transfer",
       "size": 13
     },
     {
@@ -1197,7 +1197,7 @@
         730,
         17.16
       ],
-      "text": "A8  \u00b7  Transfer",
+      "text": "A8  \u00b7  CONCEPT \u00b7 v-t Area Magnitudes (Distance)  \u00b7  Transfer",
       "size": 13
     },
     {
@@ -2419,7 +2419,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
       "size": 10.5
     },
     {
@@ -2623,7 +2623,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
       "size": 10.5
     },
     {
@@ -2827,7 +2827,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
       "size": 10.5
     },
     {
@@ -3138,7 +3138,7 @@
         750,
         13.860000000000001
       ],
-      "text": "ANSWERS AT THE END",
+      "text": "ANSWERS AFTER ALL ATTEMPTS",
       "size": 10.5
     },
     {

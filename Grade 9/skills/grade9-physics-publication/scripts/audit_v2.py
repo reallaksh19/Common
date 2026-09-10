@@ -47,9 +47,11 @@ def audit(model,pdf):
         assert solution_pages and min(solution_pages)>last_question,'answers before questions finish'
     else:
         assert not solution_pages,'assessment-free product rendered solution pages'
-    if d['product']=='core':
-        assert 'Appendix A' in alltext and 'Appendix B' in alltext,'missing appendix heading'
-        assert min(solution_pages)>layout['destinations']['handout'],'solutions must follow handout'
+    if d['product'] in ('core','study_guide'):
+        assert all(heading in alltext for heading in ('Appendix A','Appendix B','Appendix C')),'Core Study Guide must render Appendices A-C'
+        assert solution_pages and layout['destinations']['handout']>max(solution_pages),'Appendix C handout must follow Appendix B solutions'
+    if d['product']=='transfer_book':
+        assert 'Appendix A · Full ExamSIDE solutions' in alltext,'ExamSIDE solution appendix missing'
     assert 'PLACEHOLDER' not in alltext and 'Planned figure' not in alltext,'placeholder leak'
     regionfonts=[r['size'] for r in layout['regions'] if r['kind']=='text']
     out.update(pages=len(doc),links=actual_links,broken_links=badlinks,text_overlap_findings=overlap,outside_page=outside,minimum_text_role_size=min(regionfonts),figure_occurrences=sum(r['kind']=='figure' for r in layout['regions']),pdf_sha256=hashlib.sha256(Path(pdf).read_bytes()).hexdigest(),model_sha256=hashlib.sha256(Path(model).read_bytes()).hexdigest(),visual_review='SEPARATE_REVIEW_REQUIRED')

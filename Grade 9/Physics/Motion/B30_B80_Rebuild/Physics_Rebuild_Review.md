@@ -27,7 +27,7 @@ Page references in this table mean PDF page numbers, including the attachment's 
 | Layout | Repeated cards, small type, production metadata and unfinished figures | Diagrams occupy meaningful space; related explanation sits nearby | Use large functional diagrams, nearby prose, a quiet task badge and a single takeaway |
 | Practice and hints | Sparse practice; weak distinction between assistance and independent evidence | Separate transfer pages are useful, but p23 combines H1/H2/H3 and reveals the 50 m result | Separate the attempt, three distinct optional hints, and full solution; keep final answers out of hints |
 | Derivation | Some rules were stated without sufficient construction | The paired-time result on pp18–20/34 is stated without enough reconstruction for a weak learner | Build each demonstrated relation from its picture; explain the rectangle and triangular-area factors |
-| Core appendices | Appendix A questions and Appendix B handout were missing | The attachment's transfer books do not supply these two Core appendices | Include both in each Core PDF; put all practice solutions after them at the end |
+| Core appendices | The earlier contract stopped at Appendix B and misclassified the handout | The attachment's transfer books do not supply the Core appendices | Require Appendix A practice, Appendix B hints/solutions and Appendix C printable handout in every Core Study Guide |
 | Provenance | Audit labels could suggest stronger evidence than actually existed | Source/exam links are useful but their presence alone does not verify a claim | Keep original examples clearly identified; verify any actual exam citation separately |
 
 ## What was adapted from the attached Physics skill — and what was rejected
@@ -51,10 +51,11 @@ The new implementation does not invoke the superseded placeholder-era renderer o
 | Component | B30 — Build the picture | B80 — Reason and transfer |
 |---|---|---|
 | Teaching | Pp1–9: locate position, perform one step, distinguish route/endpoints, handle a nonzero start, read graph axes/duration, count movement, combine signed areas, complete a faded area task, justify a triangular region | Pp1–5: compare journeys, reconstruct signed area, split a zero crossing, interpret rest and initial position, reject the final-height shortcut |
-| Appendix A | Pp10–13: 8 questions | Pp6–9: 8 questions |
-| Appendix B | P14: printable visual handout | P10: printable visual handout |
-| Optional H1/H2/H3 | Pp15–16 | Pp11–12 |
-| Solutions at the end | P17: guided-step feedback; pp18–21: A1–A8 | Pp13–16: A1–A8 |
+| Appendix A · Core practice | Pp10–15: 8 questions | Pp6–11: 8 questions |
+| Mixed attempt | Pp16–18: concepts hidden | Pp12–14: concepts hidden |
+| Appendix B · Hints/solutions | Pp19–20 hints; p21 guided feedback; pp22–25 full solutions | Pp15–16 hints; pp17–20 full solutions |
+| Post-marking diagnosis | P26 | P21 |
+| Appendix C · Handout | P27: printable visual handout | P22: printable visual handout |
 | Visual repair | Completed number lines for the vulnerable negative-coordinate and endpoint-change steps | Compact model explanations; graph-dependent solutions repeat the graph |
 
 Shared A1, A2, A3 and A6 provide common comparison points. They are not a validated diagnostic test. B80 additionally changes the origin, contrasts the sign of one interval, interprets a new robot journey and solves an unequal zero-crossing case.
@@ -89,11 +90,11 @@ The publication model supports verified source citations and explicit adaptation
 
 ## Verification and limits
 
-- All 47 pages across the three final PDFs rendered at 200 dpi; full-book page rhythm and high-risk diagrams, handouts, equations and solutions inspected.
+- All 65 pages across the three final PDFs rendered at 200 dpi; full-book page rhythm and high-risk diagrams, handouts, equations and solutions inspected.
 - Zero detected cross-line text collisions and zero words outside page bounds in the final PDFs.
 - 47 internal links in B30, 42 in B80 and 32 in the standalone practice book checked against actual PDF destinations; printed page references derive from the same pagination plan.
-- Eight Appendix A questions per Core book; primary coverage of all four selected concept claims; question/hint/solution destinations and solutions-last order checked.
-- Thirteen targeted invalid-model cases rejected, including missing figures, missing handout, missing graph, bad answer data, broken repair links, changed question count and missing external citation. Boundary calculations cover a crossing inside one segment, a negative rectangle and rest.
+- Eight Appendix A questions per Core book; primary coverage of all four selected concept claims; question/hint/solution destinations and Appendix A→B→C order checked.
+- Twenty-seven targeted invalid-model cases plus pair-identity/difficulty mutations are rejected, including missing figures, missing Appendix C, missing graph, bad answer data, broken repair links, changed question count, missing external citation, missing difficulty badge and broken companion reciprocity. Boundary calculations cover a crossing inside one segment, a negative rectangle and rest.
 - Independent recomputation covers seven B30 and six B80 numerical question records; the remaining conceptual/comparison cases and teaching calculations were reviewed directly.
 - Both reusable skills have executable code, a detailed teaching contract, examples and validation. Technical checks remain distinct from user approval and classroom evaluation.
 
@@ -101,4 +102,4 @@ The broader Grade 9–11 board-specific syllabus has not been certified here. Th
 
 ## Approval requested
 
-Please judge **the explanation and depiction first**: B30 pp1–9, especially the one-step tasks on pp2/8; B80 pp1–5; then each handout and one question-to-hint-to-solution route. Approval should cover the teaching approach, band differentiation, appendix structure and publication grammar before this is scaled to further Physics subtopics or the next subject.
+Please judge **the explanation and depiction first**: B30 pp1–9, especially the one-step tasks on pp2/8; B80 pp1–5; then Appendix C and one Appendix A→B repair route. Approval should cover the teaching approach, band differentiation, appendix structure and publication grammar before this is scaled to further Physics subtopics or the next subject.

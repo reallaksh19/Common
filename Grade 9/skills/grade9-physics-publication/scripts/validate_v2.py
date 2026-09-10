@@ -91,6 +91,18 @@ class Difficulty(Strict):
         for k,v in self.__dict__.items():
             assert v is None or 0<=v<=10,f'{k} out of 0-10 range'
         return self
+class DifficultyBadge(Strict):
+    normalized_band:Literal['D1','D2','D3','D4','D5']
+    learner_label:Literal['Easy','Medium','Hard','Challenge']
+    basis:Literal['SOURCE_MAPPING','EDITORIAL_TASK_DEMAND','EXPERT_CALIBRATED']
+    source_code:Optional[str]=None
+    @model_validator(mode='after')
+    def source_ownership_is_explicit(self):
+        if self.basis=='SOURCE_MAPPING':assert self.source_code,'source-mapped difficulty requires the untouched source code'
+        else:assert self.source_code is None,'only SOURCE_MAPPING may carry a source-owned difficulty code'
+        expected={'D1':'Easy','D2':'Medium','D3':'Hard','D4':'Challenge','D5':'Challenge'}
+        assert self.learner_label==expected[self.normalized_band],'learner difficulty label does not match the normalized band'
+        return self
 _EXTERNAL_PROVENANCE={'USER_UPLOADED_ANCHOR','OFFICIAL_PYQ','SECONDARY_VERIFIED_PYQ','PUBLISHED_REFERENCE','RECONSTRUCTED_FROM_SCAN'}
 _SUPPORTED_EXTERNAL_DEPENDENCIES={'NONE','GRAPH','NUMBER_LINE'}
 class RepairReference(Strict):
@@ -105,6 +117,7 @@ class Question(Strict):
     figure:Optional[Figure]
     task_type:Literal['Apply','Explain','Connect','Transfer','Compare']
     difficulty:Optional[Difficulty]=None
+    difficulty_badge:Optional[DifficultyBadge]=None
     difficulty_source:Literal['AUTHOR_HEURISTIC','SOURCE_ANALYSIS','EXPERT_CALIBRATED','EMPIRICAL']
     workspace:str
     source_status:Literal['ORIGINAL','SOURCE_VERIFIED','ADAPTED']
@@ -124,6 +137,9 @@ class Question(Strict):
             assert self.transcription_status in ('VERIFIED_TRANSCRIPTION','RECONSTRUCTED'),'published external questions require resolved transcription'
         assert self.answer==self.solution.answer,'top-level answer must mirror solution.answer, not diverge from it'
         assert [h.tier for h in self.hints]==['H1','H2','H3'],'hints must progress H1 (Notice) -> H2 (Model) -> H3 (Start), by tier not just position'
+        if self.difficulty_badge:
+            expected_source={'SOURCE_MAPPING':'SOURCE_ANALYSIS','EDITORIAL_TASK_DEMAND':'AUTHOR_HEURISTIC','EXPERT_CALIBRATED':'EXPERT_CALIBRATED'}
+            assert self.difficulty_source==expected_source[self.difficulty_badge.basis],'difficulty badge basis and difficulty_source disagree'
         return self
 class GuidedSolution(Strict):
     id:str;title:str;text:str;figure:Figure
@@ -201,11 +217,13 @@ class MixedTest(Strict):
 class Questions(Strict):
     anchors:list[Question];core_calibrated:list[Question];challenges:list[Question]
     def all(self):return self.anchors+self.core_calibrated+self.challenges
-# 'core' keeps the original merged Student-Core-with-Appendices shape (still valid: this is a profile
-# choice, not a deprecation). 'study_guide'/'transfer_book' are the selectable split matching
-# grade9-physics-subtopic-book-builder's STUDY_GUIDE + TRANSFER_BOOK product pair (finding E: Appendix
-# A/B, hints and solutions were mandatory inside every Core book; audit/self-check content must be able
-# to live outside the learner Core without being considered lost).
+class ProductIdentity(Strict):
+    model_id:str=Field(min_length=1)
+    pair_id:str=Field(min_length=1)
+    role:Literal['CORE_STUDY_GUIDE','EXAMSIDE_SOLUTION_BOOK']
+    companion_model_id:str=Field(min_length=1)
+# 'core'/'question_bank' preserve the bounded pilot profiles. The canonical per-topic production pair is
+# 'study_guide' + 'transfer_book', joined by ProductIdentity and verified together by validate_pair_models().
 class Model(Strict):
     schema_version:Literal['2.0'];edition:str;title:str;band:Literal['B30','B80','B90'];learner_label:str
     product:Literal['core','question_bank','study_guide','transfer_book'];status:Literal['FOR_USER_REVIEW','RELEASE_CANDIDATE']
@@ -216,6 +234,7 @@ class Model(Strict):
     mixed_tests:list[MixedTest]=Field(default_factory=list)
     handout:Optional[Handout]=None;source_claim:Optional[str]=None  # required only for core/study_guide, enforced in validate()
     guided_solutions:list[GuidedSolution]=Field(default_factory=list)
+    product_identity:Optional[ProductIdentity]=None
     qa:QA
 
 def areas(segments):
@@ -256,13 +275,13 @@ def validate(d):
             sru=c.get('sru') or {}
             dimensions=[v for k,v in sru.items() if k not in ('reviewer','notes')]
             assert sru.get('reviewer') and len(dimensions)==15 and all(v is True for v in dimensions),f"concept {c['concept_id']} lacks complete independent SRU acceptance"
-    # Product profile: 'core' keeps both components; 'study_guide'/'question_bank'/'transfer_book' select
-    # one, so audit/self-check content can live in a separate document without being "lost" (finding E).
+    # A canonical study guide owns teaching plus Core practice; its paired ExamSIDE book owns external
+    # transfer questions. Legacy pilot profiles remain independently valid but cannot claim pair closure.
     has_lessons_component=d['product'] in ('core','study_guide')
-    has_assessment_component=d['product'] in ('core','question_bank','transfer_book')
+    has_assessment_component=d['product'] in ('core','question_bank','study_guide','transfer_book')
     qbuckets=d['questions'];all_qs=qbuckets['anchors']+qbuckets['core_calibrated']+qbuckets['challenges']
     assert len(all_qs)==d['frozen_questions'],'question denominator changed'
-    assert not has_assessment_component or len(all_qs)>=4,'question_bank/transfer_book/core requires at least 4 questions'
+    assert not has_assessment_component or len(all_qs)>=4,'assessment-bearing products require at least 4 questions'
     assert len({q['id'] for q in all_qs})==len(all_qs),'duplicate question IDs'
     all_qids={q['id'] for q in all_qs}
     for mt in d['mixed_tests']:
@@ -277,8 +296,17 @@ def validate(d):
         mismatched=[qid for qid in mt['question_ids'] if by_q[qid]['primary_concept_id']!=dm[qid]]
         assert not mismatched,f"mixed test {mt['set_id']} diagnosis_map disagrees with the question's actual primary_concept_id: {mismatched}"
     assert d['lesson_ids']==[p['id'] for p in d['lessons']],'lesson identity mismatch'
+    identity=d.get('product_identity')
+    if d['product'] in ('study_guide','transfer_book'):
+        assert identity,'study_guide/transfer_book requires product_identity so the two-file topic pair can be reconciled'
+        assert len(d['topic_ids'])==1,'canonical production models must own exactly one topic/subtopic'
+        expected_role='CORE_STUDY_GUIDE' if d['product']=='study_guide' else 'EXAMSIDE_SOLUTION_BOOK'
+        assert identity['role']==expected_role,f"{d['product']} requires role={expected_role}"
+        assert identity['model_id']!=identity['companion_model_id'],'a product cannot name itself as its companion'
+    else:
+        assert not identity,'legacy core/question_bank profiles cannot claim canonical two-file pair identity'
     if has_lessons_component:
-        assert d['lessons'] and d.get('handout'),'core/study_guide requires lessons and Appendix B'
+        assert d['lessons'] and d.get('handout'),'core/study_guide requires lessons and Appendix C handout'
         assert {c for p in d['lessons'] for c in p['concept_ids']}==ids,'concept coverage'
         practice_targets=all_qids|{'solution-'+g['id'] for g in d.get('guided_solutions',[])}
         for p in d['lessons']:
@@ -289,11 +317,14 @@ def validate(d):
     else:
         assert not d['lessons'],'question_bank/transfer_book must not also carry lessons - keep the Core as the single lesson owner'
         assert not d.get('guided_solutions'),'question_bank/transfer_book must not carry guided_solutions - they return to lesson pages this document does not own'
+        assert not d.get('handout'),'question_bank/transfer_book must not carry an unrendered Core Appendix C handout'
     if has_assessment_component and all_qs:
         assert {q['primary_concept_id'] for q in all_qs}==ids,'assessment leaves primary concept untested'
     for q in all_qs:
         assert q['primary_concept_id'] in ids and set(q['secondary_concept_ids'])<=ids,'unknown concept'
         assert set(q['source_refs'])<=sources,'unknown question source'
+        if d['product']=='transfer_book':
+            assert q.get('difficulty_badge'),'every ExamSIDE question requires a learner-facing difficulty badge with an explicit basis'
         if q['source_status']!='ORIGINAL':
             cite=q.get('source_citation');assert cite and cite['verification']=='VERIFIED','external source unresolved'
             from urllib.parse import urlparse
@@ -334,9 +365,31 @@ def validate(d):
                 if q['figure'] and q['figure']['kind']=='vt':assert q['figure']['segments']==n['segments'],'graph/answer data mismatch'
             assert math.isclose(distance,n['distance']) and math.isclose(disp,n['displacement']),'numeric answer mismatch'
     return {'schema':'Pydantic Model, extra fields forbidden','questions':len(all_qs),'numerically_recomputed':sum(bool(q['numeric_check']) for q in all_qs),'pedagogy':'MANUAL_REVIEW_REQUIRED'}
+def validate_pair_models(core,examside):
+    """Validate one complete Core Study Guide + ExamSIDE Solution Book pair."""
+    validate(core);validate(examside)
+    assert core['product']=='study_guide' and examside['product']=='transfer_book','pair requires study_guide then transfer_book'
+    core_id=core['product_identity'];exam_id=examside['product_identity']
+    assert core_id['pair_id']==exam_id['pair_id'],'pair_id mismatch'
+    assert core_id['companion_model_id']==exam_id['model_id'] and exam_id['companion_model_id']==core_id['model_id'],'companion identities are not reciprocal'
+    assert core['topic_ids']==examside['topic_ids'],'topic scope mismatch between paired files'
+    assert len(core['topic_ids'])==1,'a canonical pair must own exactly one topic/subtopic'
+    project_keys=('grade','subject','chapter')
+    assert all(core['project'][key]==examside['project'][key] for key in project_keys),'project identity mismatch between paired files'
+    assert core['canonical_concept_registry']==examside['canonical_concept_registry'],'canonical concept authority mismatch between paired files'
+    core_concepts={(c['concept_id'],c['canonical_concept_id']) for c in core['concepts']}
+    exam_concepts={(c['concept_id'],c['canonical_concept_id']) for c in examside['concepts']}
+    assert core_concepts==exam_concepts,'concept segregation differs between paired files'
+    exam_questions=examside['questions']['anchors']+examside['questions']['core_calibrated']+examside['questions']['challenges']
+    assert all(q['source_status']!='ORIGINAL' for q in exam_questions),'canonical ExamSIDE pair requires externally grounded questions; original demos use question_bank'
+    return {'pair_id':core_id['pair_id'],'topic_ids':core['topic_ids'],'products':['CORE_STUDY_GUIDE','EXAMSIDE_SOLUTION_BOOK'],'status':'STRUCTURALLY_RECONCILED'}
 if __name__=='__main__':
     if sys.argv[1]=='--schema':
         schema=json.dumps(Model.model_json_schema(),indent=2)+'\n'
         if len(sys.argv)==3:Path(sys.argv[2]).write_text(schema,encoding='utf-8',newline='\n')
         else:print(schema,end='')
+    elif sys.argv[1]=='--pair':
+        core=json.loads(Path(sys.argv[2]).read_text(encoding='utf-8'))
+        examside=json.loads(Path(sys.argv[3]).read_text(encoding='utf-8'))
+        print(json.dumps(validate_pair_models(core,examside),indent=2))
     else:print(json.dumps(validate(json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))),indent=2))

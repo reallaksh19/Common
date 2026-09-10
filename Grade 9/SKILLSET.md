@@ -20,9 +20,9 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 | `grade9-math-corpus-coverage-auditor` | Unified Mathematics corpus and publication-readiness audit |
 | `grade9-redox-subtopic-book-builder` | Source-grounded Redox Study Guide + ExamSIDE transfer-book builder with approved textbook rhythm, Redox-specific helpers/misconceptions, chemistry typography, H1-H3 support, Appendix A, transfer audit and render-first QA |
 | `grade9-redox-chapter-closeout-auditor` | Final Redox chapter gate: enumerate the full frozen ExamSIDE corpus, classify every candidate, backfill missed eligible PYQs, preserve unique primary homes, audit source obligations and block closeout until chapter counters pass |
-| `grade9-physics-subtopic-book-builder` | Source-grounded paired Physics Study Guide and external-transfer book builder |
-| `grade9-physics-publication` | Typed B30/B80/B90 Physics pilot model, renderer and audit adapter |
-| `grade9-physics-examside` | Source-ledger and reconciliation workflow for Physics external-question practice |
+| `grade9-physics-subtopic-book-builder` | Per-topic exact two-file builder: Core Study Guide with Appendices A–C + ExamSIDE Solution Book |
+| `grade9-physics-publication` | Typed B30/B80/B90 product-pair model, renderer, pair reconciliation and audit adapter |
+| `grade9-physics-examside` | Source-ledger/reconciliation workflow for the ExamSIDE Solution Book, including concept/difficulty badges, H1–H3 and transfer diagnosis |
 | `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA from validated canonical master data |
 | `grade9-math` | Mathematics reasoning/difficulty profile plus SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book mode |
 | `grade9-physics` | Physics model/representation/validation profile plus SEE -> REALIZE -> UNDERSTAND concept-book mode |

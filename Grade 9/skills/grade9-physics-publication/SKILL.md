@@ -1,6 +1,6 @@
 ---
 name: grade9-physics-publication
-description: Create and rebuild visual Physics Core books for Grades 9–11 with differentiated B30/B80/B90 teaching, Appendix A questions, Appendix B printable handouts, optional hints and complete solutions at the end. Use for Physics concept review, learner PDF generation, publication schemas and anti-drift audits.
+description: Create and rebuild paired Physics learning products for Grades 9–11: a differentiated Core Study Guide with Appendices A–C, plus an ExamSIDE Solution Book with source-grounded questions, concept and difficulty badges, H1–H3 hints, mixed transfer and complete solutions. Use for Physics concept review, learner PDF generation, publication schemas and anti-drift audits.
 ---
 
 # Physics Core and publication
@@ -12,27 +12,33 @@ Teach the physical idea before compressing it into notation. A diagram placehold
 1. Read the attached skills, books and specified repository first. Back up originals and previous outputs with hashes.
 2. Lock the product: source-preserving reconstruction, original teaching, or explicitly authorised rewrite. A design benchmark on different subtopics does not become the content source. Do not call a new replacement a zero-loss reconstruction.
 3. Use canonical `grade9-physics`, `grade9-physics-subtopic-book-builder` and `grade9-publication` when available. This skill is their executable Core/publication adapter. Keep subject authority and source IDs; layout must not change physics.
-   **Precedence:** installed via `Grade 9/install_skills.py` and routed from `../grade9/SKILL.md`. Choose `grade9-physics-subtopic-book-builder` when the deliverable is the paired Study Guide + ExamSIDE transfer book; choose this skill when the deliverable is a typed, schema-validated, render-audited B30/B80/B90 Core PDF for a bounded pilot subtopic. They are not interchangeable defaults for the same request — pick by deliverable shape, not by which skill is read first.
+   **Precedence:** installed via `Grade 9/install_skills.py` and routed from `../grade9/SKILL.md`. Choose `grade9-physics-subtopic-book-builder` to author one complete Core Study Guide + ExamSIDE Solution Book pair; use this skill as the executable schema/render/audit adapter. Legacy `core`/`question_bank` models remain valid only for bounded pilots and cannot claim the canonical two-file contract.
 4. Read [core-teaching.md](references/core-teaching.md) before authoring; [schema-and-layout.md](references/schema-and-layout.md) before rendering; [review-and-anti-drift.md](references/review-and-anti-drift.md) before certifying.
 5. Use `grade9-physics-examside` for external ExamSIDE/PYQ collections. Original examples must not acquire an exam badge or a claim of complete external coverage.
 
-## Mandatory Core structure
+## Mandatory per-topic product pair
 
-For each subtopic build:
+For each subtopic build exactly two learner files with one reciprocal `pair_id`:
+
+1. **Core Study Guide** (`product=study_guide`, `role=CORE_STUDY_GUIDE`) — concept assimilation, application and guided fading, followed by all three Core appendices.
+2. **ExamSIDE Solution Book** (`product=transfer_book`, `role=EXAMSIDE_SOLUTION_BOOK`) — the frozen eligible external set, visible concept-segregation labels, task and grounded difficulty badges, H1–H3 support, mixed transfer/diagnosis, and Appendix A full solutions.
+
+The two models must name each other through `product_identity`, share exact topic/project/concept authority, and pass `python scripts/validate_v2.py --pair <core.json> <examside.json>`. A subtopic is incomplete when either file is absent or the pair does not reconcile.
+
+Within the Core Study Guide, build:
 
 `physical situation → depiction → notice → say in words → build relation → worked reasoning → faded attempt → independent transfer → repair`
 
-Every Core book contains:
+Every Core Study Guide contains:
 
 - Teaching pages with real concept depictions, including for B80/B90.
-- **Appendix A — Questions:** bounded sets, purposeful drawing/working space, optional hints. Test explanation, reconstruction, representation translation and transfer as well as calculation.
-- **Appendix B — Handout:** a self-contained, separately printable visual summary with symbol meanings, model conditions and a worked memory anchor.
-- Optional hints after the handout: H1 Notice → H2 Model → H3 Start. Keep hints away from the first attempt. Each hint's `tier` field (`H1`/`H2`/`H3`, `scripts/validate_v2.py`'s `HintStep`) is what `render_v2.py`'s label and `grade9-physics-examside`'s `reconcile.py` match against — not the hint's position in the array. Author hints in H1→H2→H3 order; `validate()` enforces the progression by tier.
-- **Solutions at the very end:** recap, required graph/table, why, executable method, explicit answer/check, transferable idea and return link.
+- **Appendix A — Core practice:** independently attemptable application, explanation, reconstruction, representation-translation and transfer questions with purposeful work space.
+- **Appendix B — Hints and solutions:** optional H1 Notice → H2 Model → H3 Start, followed by recap, required representation, why, executable method, explicit answer/check, transferable idea and return link. Keep every hint and answer after the first-attempt surfaces. Each hint's `tier` field is the authority matched by the renderer and reconciliation—not array position alone.
+- **Appendix C — Printable handout:** a self-contained visual summary with topic names, symbol meanings, model conditions and a worked memory anchor. It is the final appendix and must not expose unique answers from Appendix A.
 
-Teaching worked examples may show their answers; unanswered practice must not leak its own result earlier. The handout must not become an answer key. A separate question bank does not replace Core appendices.
+Teaching worked examples may show their answers; unanswered practice must not leak its own result earlier. The Appendix C handout must not become an answer key. The ExamSIDE file does not replace any Core appendix.
 
-Product profile is selectable (`core` / `study_guide` / `question_bank` / `transfer_book` — see `scripts/validate_v2.py`): audit/self-check content can live in a separate document without being considered lost. If a standalone First-Step Reference (recognition atlas, decision router, first-step cards) is needed for a subtopic, build it as `grade9-learning-enrichment`'s First-Step Reference companion product, not as a fourth purpose folded into Core.
+Product profile is selectable (`core` / `study_guide` / `question_bank` / `transfer_book` — see `scripts/validate_v2.py`), but only the `study_guide` + `transfer_book` pair is the canonical per-topic output. If a standalone First-Step Reference (recognition atlas, decision router, first-step cards) is needed, build it as `grade9-learning-enrichment`'s distinct optional companion; it does not change the required two-file learner contract.
 
 ## Differentiate teaching, not just arithmetic
 

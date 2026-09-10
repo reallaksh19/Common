@@ -1,11 +1,11 @@
 ---
 name: grade9-physics-examside
-description: Build source-grounded Grade 9–11 Physics ExamSIDE/PYQ transfer question banks with complete question representations, verified exam metadata, staged H1/H2/H3 hints, conceptual solutions, Core links and frozen-corpus audits. Use when a Physics question-bank skill or external-exam assimilation workflow is requested.
+description: Build the source-grounded ExamSIDE Solution Book in each Grade 9–11 Physics topic pair, with complete question representations, verified exam metadata, concept-segregation labels, task/difficulty badges, staged H1/H2/H3 hints, mixed transfer, conceptual solutions, Core links and frozen-corpus audits.
 ---
 
-# Physics ExamSIDE transfer practice
+# Physics ExamSIDE Solution Book
 
-Build a question bank, not a second concept textbook. Use Physics teaching authority for modelling and `grade9-physics-publication` for rendering/audience rules. Keep it linked to the Core book; it does not replace Core Appendix A or Appendix B.
+Build the second file in the mandatory per-topic pair, not a second concept textbook. Use Physics teaching authority for modelling and `grade9-physics-publication` for rendering/audience rules. The first file is the Core Study Guide with Appendices A–C; this ExamSIDE Solution Book has reciprocal pair identity and does not replace any Core appendix.
 
 Read [question-contract.md](references/question-contract.md) before extracting or authoring. Read [source-ledger.example.json](references/source-ledger.example.json) for the ledger shape. Run `scripts/check_ledger.py` before declaring source completeness, then `scripts/reconcile.py <ledger.json> <published_model.json> <artifact.audit.json>` before declaring the final artifact reconciled. `check_ledger.py` proves internal ledger consistency. `reconcile.py` compares the exact source fingerprint, independent workflow/source/provenance/transcription/difficulty axes, concept, hints, solution, dependency classification, and the audit's model/PDF identity across the ledger → publication model → rendered-artifact chain. The two-view report and blocking counters follow `grade9-transfer-coverage-auditor`'s contract. The audit argument may be omitted only during a pre-render model check.
 
@@ -16,6 +16,8 @@ Read [question-contract.md](references/question-contract.md) before extracting o
 3. Keep raw source stem/options/figure locator/answer separate from adaptations and original support. Record every editorial change. Source ambiguity or corruption becomes REVIEW_REQUIRED.
 4. Map each eligible question to one primary Physics concept and optional prerequisites. Record recognition/model choice separately from algebraic demand.
 5. Do not shrink the expected question set because an item is awkward. Partition items with explicit reasons; a selected pilot must not claim the whole chapter or full ExamSIDE corpus.
+
+On ordinary question pages, print the primary concept as a concept-segregation label alongside the task badge and grounded learner difficulty badge. Keep the source-owned difficulty code, normalized band and learner label as separate values. On mixed-transfer attempt pages hide concept/task/difficulty cues, then reveal the exact concept route only in post-marking diagnosis.
 
 ## Teach through optional help
 
@@ -31,11 +33,11 @@ Keep the three hints distinct and spatially separated from the first attempt. Se
 
 ## Solution and linkage contract
 
-Every solution contains a sufficient question recap, all necessary graph/table/option data, WHY the model applies, an executable METHOD, explicit ANSWER/CHECK, a CONCEPT TO KEEP and a return link. For B30, depict the completed model in the repair; for B80/B90, keep the decisive depiction even when arithmetic is compressed.
+Appendix A contains one full solution for every included ExamSIDE question. Every solution contains a sufficient question recap, all necessary graph/table/option data, WHY the model applies, an executable METHOD, explicit ANSWER/CHECK, a CONCEPT TO KEEP and a return link. For B30, depict the completed model in the repair; for B80/B90, keep the decisive depiction even when arithmetic is compressed.
 
 Link question↔solution, question↔hints and solution→Core concept. In a standalone PDF reproduce minimal concept help or provide a working companion-Core link plus printable title/section/page. Do not ship a dangling cross-file link. A generic “see concept book” is inadequate.
 
-Use source-supported difficulty or clearly labelled editorial task-demand badges. Keep exam badges separate from learning-demand badges. Never display an exam badge for an original item.
+Use source-supported difficulty or clearly labelled editorial task-demand badges. Keep the untouched source code separate from the normalized band and learner label. Keep exam badges separate from learning-demand badges. Never display an exam badge for an original item. A canonical ExamSIDE pair cannot use original questions; original demonstrations remain `question_bank` pilots.
 
 ## Executable demonstration
 
@@ -47,4 +49,4 @@ For real external records, close the ledger here and populate the publication mo
 
 Close every individual question: source mapped, attemptable, dependency visible, options complete, progressive optional hints, complete conceptual method, explicit answer, correct typography, resolved links and readable render. Aggregate counts do not substitute for this check.
 
-Separate `PILOT_ORIGINAL`, `SOURCE_REVIEW_REQUIRED`, `SOURCE_RECONCILED`, `FOR_USER_REVIEW` and user approval. Run `scripts/reconcile.py` to reconcile frozen IDs with observed and published IDs; any unexplained loss, or any concept/hint/solution/source-status drift between the ledger and the published model, blocks source-complete status. State unresolved sourcing honestly. Render every page and repair all labels/collisions before presenting for approval.
+Separate `PILOT_ORIGINAL`, `SOURCE_REVIEW_REQUIRED`, `SOURCE_RECONCILED`, `FOR_USER_REVIEW` and user approval. Run `scripts/reconcile.py` to reconcile frozen IDs with observed and published IDs; any unexplained loss, or any concept/hint/solution/source-status drift between the ledger and the published model, blocks source-complete status. Then run the publication adapter's `validate_v2.py --pair` gate against the Core model; mismatched pair IDs, topic scope, concept authority or companion identity block completion. State unresolved sourcing honestly. Render every page and repair all labels/collisions before presenting for approval.

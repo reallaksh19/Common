@@ -9,9 +9,9 @@ These are proposed roles, not assigned people or completed approvals. Seek at le
 | Role | First reading | Decision to record |
 |---|---|---|
 | Physics teacher | Concept map, both teaching sections and quantitative solutions | Are models, signs, units, graph meanings and limits correct? |
-| Teacher supporting a struggling learner | B30 pp1–9, handout p14, guided feedback p17 | Can the learner explain the picture and complete a faded step? Identify the first unsupported word or operation. |
+| Teacher supporting a struggling learner | B30 pp1–9, Appendix B pp19–25, Appendix C p27 | Can the learner explain the picture and complete a faded step? Identify the first unsupported word or operation. |
 | Teacher of stronger learners | B80 pp1–5, A7/A8 and solutions | Is depiction sufficient? Does challenge require model choice and transfer? |
-| Assessment reviewer | Appendix A → hints → solutions | Are questions attemptable, hints progressive, answers withheld and repairs complete? |
+| Assessment reviewer | Appendix A → Appendix B → Appendix C | Are questions attemptable, hints progressive, answers withheld, repairs complete and the final handout independently useful? |
 | Publication reviewer | PDFs at normal size; printed handouts | Do placement, labels, whitespace and wording support explanation? Are navigation and grayscale distinctions usable? |
 | Schema/tooling reviewer | Skills, JSON, validator, renderer and auditor | Does the executable contract prevent the stated failures and reproduce the supplied structure? |
 | Cold-start reproducibility reviewer | Task brief, source authority and this repository only — no prior chat or unpublished context | Starting fresh, can the canonical skills be identified, the same source denominator frozen, artifacts routed correctly, the build reproduced, and the same audit/release evidence produced? If another agent cannot continue from the repository alone without reading chat history, the handoff is incomplete (this is IOQM's own final rule — reuse it here rather than a separate test). |
@@ -21,10 +21,11 @@ These are proposed roles, not assigned people or completed approvals. Seek at le
 | Target | B30 PDF pages | B80 PDF pages | Comment surface |
 |---|---|---|---|
 | Teaching and depiction | 1–9; especially guided tasks on 2 and 8 | 1–5 | Model `lessons` |
-| Appendix A | 10–13, A1–A8 | 6–9, A1–A8 | Model `questions` |
-| Printable Appendix B | 14 | 10 | Model `handout`; PDF screenshot |
-| Optional H1/H2/H3 | 15–16 | 11–12 | Question `hints` |
-| End solutions | 17 guided feedback; 18–21 A1–A8 | 13–16 A1–A8 | `guided_solutions` or question solution fields |
+| Appendix A · Core practice | 10–15, A1–A8 | 6–11, A1–A8 | Model `questions` |
+| Concept-hidden mixed attempt | 16–18 | 12–14 | Model `mixed_tests` |
+| Appendix B · Hints and solutions | 19–20 hints; 21 guided feedback; 22–25 full solutions | 15–16 hints; 17–20 full solutions | Question `hints` / `solution`; `guided_solutions` |
+| Post-marking diagnosis | 26 | 21 | Model `mixed_tests.diagnosis_map` |
+| Appendix C · Printable handout | 27 | 22 | Model `handout`; PDF screenshot |
 | Reference benchmark | Reference pp2, 9, 18–20, 23, 34 | Same reference | Adaptation table in `Physics_Rebuild_Review.md` |
 
 Models live in `../../../skills/grade9-physics-publication/examples/`. The reference PDF covers different later Motion ideas: compare teaching/layout, not a common question denominator. Use `*.layout.json` for ID-to-page destinations. Shared A1, A2, A3 and A6 enable comparison but are not a validated diagnostic test.
@@ -33,7 +34,7 @@ Models live in `../../../skills/grade9-physics-publication/examples/`. The refer
 
 1. Read Core teaching independently before the previous review's conclusions. Record a successful explanation and a learning obstacle with locations.
 2. Work questions without hints; then inspect H1/H2/H3 separately. Check ambiguity, missing representations and correctness.
-3. Follow repair/return links, inspect Appendix B alone, and check necessary graphs/data recur in solutions.
+3. Follow repair/return links, inspect Appendix C alone, and check necessary graphs/data recur in Appendix B solutions.
 4. Compare the old drafts and reference PDF. State what improved and what still needs revision.
 5. Recheck repairs at the new commit and give a scoped decision. Technical checks are not educational approval.
 

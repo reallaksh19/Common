@@ -361,6 +361,60 @@
       "title": "Difficulty",
       "type": "object"
     },
+    "DifficultyBadge": {
+      "additionalProperties": false,
+      "properties": {
+        "normalized_band": {
+          "enum": [
+            "D1",
+            "D2",
+            "D3",
+            "D4",
+            "D5"
+          ],
+          "title": "Normalized Band",
+          "type": "string"
+        },
+        "learner_label": {
+          "enum": [
+            "Easy",
+            "Medium",
+            "Hard",
+            "Challenge"
+          ],
+          "title": "Learner Label",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "SOURCE_MAPPING",
+            "EDITORIAL_TASK_DEMAND",
+            "EXPERT_CALIBRATED"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "source_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Code"
+        }
+      },
+      "required": [
+        "normalized_band",
+        "learner_label",
+        "basis"
+      ],
+      "title": "DifficultyBadge",
+      "type": "object"
+    },
     "Figure": {
       "additionalProperties": false,
       "properties": {
@@ -896,6 +950,42 @@
       "title": "MixedTest",
       "type": "object"
     },
+    "ProductIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "pair_id": {
+          "minLength": 1,
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "CORE_STUDY_GUIDE",
+            "EXAMSIDE_SOLUTION_BOOK"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "companion_model_id": {
+          "minLength": 1,
+          "title": "Companion Model Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "pair_id",
+        "role",
+        "companion_model_id"
+      ],
+      "title": "ProductIdentity",
+      "type": "object"
+    },
     "Project": {
       "additionalProperties": false,
       "properties": {
@@ -1128,6 +1218,17 @@
           "anyOf": [
             {
               "$ref": "#/$defs/Difficulty"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "difficulty_badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DifficultyBadge"
             },
             {
               "type": "null"
@@ -1766,6 +1867,17 @@
       },
       "title": "Guided Solutions",
       "type": "array"
+    },
+    "product_identity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProductIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "qa": {
       "$ref": "#/$defs/QA"

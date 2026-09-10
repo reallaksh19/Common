@@ -3,7 +3,7 @@
 import copy,json
 from pathlib import Path
 from jsonschema import Draft202012Validator
-from validate_v2 import validate,areas
+from validate_v2 import validate,validate_pair_models,areas
 SKILL_ROOT=Path(__file__).resolve().parents[1]
 d=json.loads((SKILL_ROOT/'examples/motion_B30_v2.json').read_text(encoding='utf-8'))
 def drop_diagram(x):del x['lessons'][0]['figure']
@@ -72,27 +72,42 @@ with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
     result=audit(p/'model.json',p/'book.pdf')
     assert len(out['external_links'])==2 and not result['text_overlap_findings'],'external citation rendering'
 print('Synthetic citation fixture: question and solution URI links verified in actual PDF.')
-# Product profiles must survive validate, render and audit with their repair routes intact.
-tb=copy.deepcopy(d);tb.update(product='transfer_book',lessons=[],lesson_ids=[],handout=None,guided_solutions=[])
+# The canonical per-topic products must validate both independently and as one reciprocal pair.
+pair_id='TEST-MOTION-PAIR';core_model_id='TEST-MOTION-CORE';exam_model_id='TEST-MOTION-EXAMSIDE'
+sg=copy.deepcopy(d);sg.update(product='study_guide',topic_ids=['PHY-MOT-PAIR-FIXTURE'],product_identity={'model_id':core_model_id,'pair_id':pair_id,'role':'CORE_STUDY_GUIDE','companion_model_id':exam_model_id})
+tb=copy.deepcopy(d);tb.update(product='transfer_book',topic_ids=['PHY-MOT-PAIR-FIXTURE'],lessons=[],lesson_ids=[],handout=None,guided_solutions=[],product_identity={'model_id':exam_model_id,'pair_id':pair_id,'role':'EXAMSIDE_SOLUTION_BOOK','companion_model_id':core_model_id})
+tb['sources'][0]['provenance_class']='PUBLISHED_REFERENCE'
 for q in tb['questions']['core_calibrated']:
     q.update(repair_mode='EXTERNAL_COMPANION',repair_target='EXTERNAL-CORE-LESSON',repair_reference={'title':'Companion Motion Core','url':'https://example.org/motion-core','locator':'Lesson 1'})
+    q.update(source_status='SOURCE_VERIFIED',provenance_class='PUBLISHED_REFERENCE',transcription_status='VERIFIED_TRANSCRIPTION')
+    q['difficulty_badge']={'normalized_band':'D2','learner_label':'Medium','basis':'EDITORIAL_TASK_DEMAND','source_code':None}
+    q['source_citation']={'title':'Synthetic pair fixture','url':'https://example.org/physics-pair-fixture','locator':q['id'],'verification':'VERIFIED','source_document':'synthetic-pair-fixture.pdf','source_sha256':'0'*64,'source_page':1,'raw_stem':q['question'],'raw_answer':q['answer'],'values_units':['synthetic'],'options':[],'figure_locator':None,'figure_semantics':[],'target_ids':[q['id']],'adaptation_note':None}
 validate(tb)
-sg=copy.deepcopy(d);sg.update(product='study_guide',questions={'anchors':[],'core_calibrated':[],'challenges':[]},frozen_questions=0,mixed_tests=[])
-for p in sg['lessons']:p['practice_ids']=[]  # a zero-question study_guide cannot link practice questions it doesn't carry
 validate(sg)
-print('Product profile: transfer_book (no lessons) and study_guide (no questions) both validate independently.')
+pair_result=validate_pair_models(sg,tb)
+assert pair_result['status']=='STRUCTURALLY_RECONCILED'
+for malformed in ('difficulty','reciprocal','multi_topic'):
+    bad=copy.deepcopy(tb)
+    if malformed=='difficulty':bad['questions']['core_calibrated'][0]['difficulty_badge']=None
+    elif malformed=='reciprocal':bad['product_identity']['companion_model_id']='WRONG-CORE'
+    else:bad['topic_ids'].append('SECOND-TOPIC')
+    try:
+        validate_pair_models(sg,bad)
+    except (AssertionError,ValueError):print('REJECTED pair_'+malformed)
+    else:raise AssertionError('Unexpected pair acceptance: '+malformed)
+print('Canonical product pair: Core Study Guide + ExamSIDE Solution Book validates with reciprocal identity and shared concept scope.')
 # Validating is not rendering: prove both profiles actually render without crashing (this is exactly how
 # the product=='core'-only gates in render_v2.py's handout/question_page logic were caught and fixed).
 with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
     p=Path(td)
     (p/'tb.json').write_text(json.dumps(tb),encoding='utf-8');tb_out=Book(tb,p/'tb.pdf').render();(p/'tb.layout.json').write_text(json.dumps(tb_out),encoding='utf-8')
-    assert 'handout' not in tb_out['destinations'],'transfer_book must not render Appendix B'
+    assert 'handout' not in tb_out['destinations'],'ExamSIDE Solution Book must not render the Core Appendix C handout'
     assert len([r for r in tb_out['external_links'] if r['kind']=='repair'])==len(tb['questions']['core_calibrated']),'external repair links missing'
     assert not audit(p/'tb.json',p/'tb.pdf')['text_overlap_findings'],'transfer_book audit failed'
     (p/'sg.json').write_text(json.dumps(sg),encoding='utf-8');sg_out=Book(sg,p/'sg.pdf').render();(p/'sg.layout.json').write_text(json.dumps(sg_out),encoding='utf-8')
-    assert 'handout' in sg_out['destinations'] and not any(k.startswith('questions-') for k in sg_out['destinations']),'study_guide must render Appendix B and no question pages'
+    assert 'handout' in sg_out['destinations'] and any(k.startswith('questions-') for k in sg_out['destinations']),'Core Study Guide must render practice plus Appendix C'
     assert not audit(p/'sg.json',p/'sg.pdf')['text_overlap_findings'],'study_guide audit failed'
-print('Product profile: transfer_book and study_guide pass validate, render and audit.')
+print('Product pair: both files pass validate, render and audit with Core Appendices A-C and ExamSIDE Appendix A solutions.')
 # Mixed tests must be learner-facing, with diagnosis withheld until after the solutions.
 with tempfile.TemporaryDirectory(dir=Path.cwd()) as td:
     p=Path(td);out=Book(d,p/'mixed.pdf').render()

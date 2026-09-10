@@ -27,6 +27,8 @@
 
 The new skills adapt existing Physics/publication authorities. They do not replace the chapter's 68-question source map. This pilot covers **distance/displacement** and **signed velocity–time area** with authored examples. The practice PDF is not an assimilated ExamSIDE/PYQ corpus. B30/B80 denote provisional support profiles, not measured mastery. The skill specifies B90 depiction requirements; this batch contains no B90 PDF. Board-specific Grade 9–11 coverage and classroom effectiveness remain unverified. Mathematics and Chemistry await separate approval.
 
+The rebuilt Core PDFs now execute the complete appendix order: Appendix A Core practice, Appendix B optional hints/full solutions, and Appendix C printable handout. Production topic builds must go further and emit exactly two reciprocal files—a `CORE_STUDY_GUIDE` and source-grounded `EXAMSIDE_SOLUTION_BOOK`. This bounded original-question pilot demonstrates the renderer but does not claim that real ExamSIDE pair.
+
 ## Originals and backup
 
 - [Reference Unit 9 PDF](sources/Reference_Motion_Unit9_Full_Batch.pdf)
