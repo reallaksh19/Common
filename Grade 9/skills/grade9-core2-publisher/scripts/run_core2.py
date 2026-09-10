@@ -23,6 +23,32 @@ import physical_page_runtime as physical
 import run_core2_patch4 as publisher
 
 
+def _learner_surface_inspector(original, target: dict):
+    """Keep reopened-PDF QA focused on learner-visible contract markers.
+
+    Research/package/learner/publication identifiers are machine-custody data.
+    They are validated through the target, semantic models, manifest hashes and
+    PhysicalPageMap and therefore must not be required as printed learner text.
+    """
+    internal_ids = {
+        value
+        for value in (
+            target.get("research_bundle_id"),
+            target.get("research_package_digest"),
+            target.get("learner_profile_id"),
+            target.get("publication_target_id"),
+        )
+        if value
+    }
+
+    def inspect(path, role, required_text, notation_probes, check_answer_separation=False):
+        if role == "STUDY_GUIDE_PDF":
+            required_text = [text for text in required_text if text not in internal_ids]
+        return original(path, role, required_text, notation_probes, check_answer_separation)
+
+    return inspect
+
+
 def main() -> int:
     original_argv = list(sys.argv)
     target_value = mature.arg_value(original_argv, "--target")
@@ -43,6 +69,7 @@ def main() -> int:
     authored_study = None
     original_study_builder = publisher.impl._ORIG_BUILD_STUDY_MODEL
     original_study_renderer = publisher.impl.render_study_pdf
+    original_pdf_inspector = publisher.impl.legacy.inspect_pdf
     contracts = Path(__file__).resolve().parents[3] / "architecture" / "core2" / "contracts" / "v1"
 
     if mature_mode:
@@ -57,6 +84,7 @@ def main() -> int:
             )
 
     publisher.impl.render_study_pdf = physical.make_study_renderer(publisher.impl)
+    publisher.impl.legacy.inspect_pdf = _learner_surface_inspector(original_pdf_inspector, target)
     sys.argv = mature.cleaned_publisher_argv(original_argv)
     try:
         rc = publisher.main()
@@ -64,6 +92,7 @@ def main() -> int:
         sys.argv = original_argv
         publisher.impl._ORIG_BUILD_STUDY_MODEL = original_study_builder
         publisher.impl.render_study_pdf = original_study_renderer
+        publisher.impl.legacy.inspect_pdf = original_pdf_inspector
     if rc != 0:
         return rc
 
