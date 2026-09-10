@@ -24,7 +24,11 @@ jobs:
         run: python "Grade 9/architecture/core2/contracts/v1/validate_core2_contracts.py"
       - name: Validate Core 2 LearningDesign contract
         run: python "Grade 9/architecture/core2/contracts/v1/check_learning_design.py"
+      - name: Validate PhysicalPageMap schema
+        run: python "Grade 9/architecture/core2/contracts/v1/check_physical_page_contract.py"
       - name: Freeze material custody regression contract
         run: python "Grade 9/architecture/core2/tests/test_material_custody.py"
+      - name: Freeze physical page custody regression contract
+        run: python "Grade 9/architecture/core2/tests/test_physical_page_custody.py"
       - name: Surface PR156/PR157 conformance and retirement state
         run: python "Grade 9/architecture/core2/conformance/validate_conformance.py"
