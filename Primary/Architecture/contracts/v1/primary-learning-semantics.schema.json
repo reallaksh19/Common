@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/Architecture/contracts/v1/primary-learning-semantics.schema.json",
+  "title": "Primary Grades 4-5 Learning Semantics v1",
+  "type": "object",
+  "required": ["schemaVersion", "teachingTarget", "skillState", "currentLearningState", "learningEpisode"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "teachingTarget": { "$ref": "#/$defs/teachingTarget" },
+    "skillState": { "$ref": "#/$defs/skillState" },
+    "currentLearningState": { "$ref": "#/$defs/currentLearningState" },
+    "learningEpisode": { "$ref": "#/$defs/learningEpisode" },
+    "runtimeTrace": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/runtimeEvent" }
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "evidenceStatus": {
+      "enum": ["NOT_OBSERVED", "NOT_YET_TESTED", "EMERGING", "DEVELOPING", "SECURE", "REASSESS_LATER", "NOT_APPLICABLE"]
+    },
+    "confidence": { "enum": ["LOW", "MEDIUM", "HIGH"] },
+    "teachingPurpose": { "enum": ["ACQUIRE", "REPAIR", "INDEPENDENT", "RETAIN", "TRANSFER", "STRETCH"] },
+    "conceptualSupportLevel": { "enum": ["H0", "H1", "H2", "H3", "H4", "H5"] },
+    "conceptualSupportType": { "enum": ["NONE", "PROMPT", "HINT", "MODEL", "THINK_ALOUD", "WORKED_EXAMPLE"] },
+    "accessAdjustment": {
+      "enum": ["REDUCED_LANGUAGE", "ONE_STEP_AT_A_TIME", "ORAL_RESPONSE_ALLOWED", "REDUCED_WRITING", "READ_ALOUD", "EXTRA_VISUAL_SPACING"]
+    },
+    "representationRole": { "enum": ["PROVIDED", "CHILD_SELECTED", "CHILD_PRODUCED"] },
+    "sourceStatus": {
+      "enum": ["VERIFIED", "SOURCE_BOUNDARY", "AMBIGUOUS", "SOURCE_NOT_PROVIDED", "TEACHER_JUDGMENT"]
+    },
+    "learningEvidenceDimensions": {
+      "type": "object",
+      "required": ["acquisition", "independentUse", "delayedRetention", "transfer", "stretch"],
+      "properties": {
+        "acquisition": { "$ref": "#/$defs/evidenceStatus" },
+        "independentUse": { "$ref": "#/$defs/evidenceStatus" },
+        "delayedRetention": { "$ref": "#/$defs/evidenceStatus" },
+        "transfer": { "$ref": "#/$defs/evidenceStatus" },
+        "stretch": { "$ref": "#/$defs/evidenceStatus" }
+      },
+      "additionalProperties": false
+    },
+    "teachingTarget": {
+      "type": "object",
+      "required": ["targetId", "learningObjectIds", "purpose", "desiredEvidence"],
+      "properties": {
+        "targetId": { "$ref": "#/$defs/nonEmptyString" },
+        "learningObjectIds": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "purpose": { "$ref": "#/$defs/teachingPurpose" },
+        "desiredEvidence": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "sourceScopeRef": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": true
+    },
+    "skillState": {
+      "type": "object",
+      "required": ["learningObjectId", "learningEvidence", "evidenceRefs", "confidence"],
+      "properties": {
+        "learningObjectId": { "$ref": "#/$defs/nonEmptyString" },
+        "learningEvidence": { "$ref": "#/$defs/learningEvidenceDimensions" },
+        "evidenceRefs": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "confidence": { "$ref": "#/$defs/confidence" }
+      },
+      "additionalProperties": true
+    },
+    "conceptualSupport": {
+      "type": "object",
+      "required": ["level", "type"],
+      "properties": {
+        "level": { "$ref": "#/$defs/conceptualSupportLevel" },
+        "type": { "$ref": "#/$defs/conceptualSupportType" }
+      },
+      "additionalProperties": true
+    },
+    "representationEvidence": {
+      "type": "object",
+      "required": ["type", "role"],
+      "properties": {
+        "type": { "$ref": "#/$defs/nonEmptyString" },
+        "role": { "$ref": "#/$defs/representationRole" }
+      },
+      "additionalProperties": true
+    },
+    "currentLearningState": {
+      "type": "object",
+      "required": ["sessionId", "learningObjectIds", "conceptualSupport", "accessAdjustments", "recentObservationRefs"],
+      "properties": {
+        "sessionId": { "$ref": "#/$defs/nonEmptyString" },
+        "learningObjectIds": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "conceptualSupport": { "$ref": "#/$defs/conceptualSupport" },
+        "accessAdjustments": { "type": "array", "items": { "$ref": "#/$defs/accessAdjustment" } },
+        "representation": { "$ref": "#/$defs/representationEvidence" },
+        "recentObservationRefs": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "sessionSignals": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } }
+      },
+      "additionalProperties": true
+    },
+    "observation": {
+      "type": "object",
+      "required": ["observationId", "learningObjectIds", "kind", "observedAt"],
+      "properties": {
+        "observationId": { "$ref": "#/$defs/nonEmptyString" },
+        "learningObjectIds": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "kind": { "$ref": "#/$defs/nonEmptyString" },
+        "value": {},
+        "observedAt": { "type": "string", "format": "date-time" },
+        "conceptualSupport": { "$ref": "#/$defs/conceptualSupport" },
+        "accessAdjustments": { "type": "array", "items": { "$ref": "#/$defs/accessAdjustment" } },
+        "representation": { "$ref": "#/$defs/representationEvidence" },
+        "sourceStatus": { "$ref": "#/$defs/sourceStatus" }
+      },
+      "additionalProperties": true
+    },
+    "diagnosis": {
+      "type": "object",
+      "required": ["diagnosisId", "code", "confidence", "evidenceRefs"],
+      "properties": {
+        "diagnosisId": { "$ref": "#/$defs/nonEmptyString" },
+        "code": {
+          "enum": ["CONCEPTUAL_MISCONCEPTION", "PREREQUISITE_GAP", "PROCEDURAL_ERROR", "LANGUAGE_COMPREHENSION_ERROR", "REPRESENTATION_ERROR", "TASK_INTERPRETATION_ERROR", "MEMORY_RETRIEVAL_FAILURE", "PERFORMANCE_LAPSE", "ATTENTION_OR_RUSHING_CANDIDATE", "RESPONSE_FORM_ERROR", "SOURCE_MODEL_BOUNDARY", "INSUFFICIENT_EVIDENCE"]
+        },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "evidenceRefs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "informationNeeded": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "competingHypotheses": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } }
+      },
+      "additionalProperties": true
+    },
+    "teacherDecision": {
+      "type": "object",
+      "required": ["decisionId", "strategy", "reasonEvidenceRefs"],
+      "properties": {
+        "decisionId": { "$ref": "#/$defs/nonEmptyString" },
+        "strategy": {
+          "enum": ["DIAGNOSE_BEFORE_RETEACH", "REPAIR_PREREQUISITE", "REDUCE_ACCESS_LOAD", "CHANGE_REPRESENTATION", "MODEL_ONE_STEP", "ASK_FOR_EXPLANATION", "GIVE_INDEPENDENT_RETRY", "FADE_SUPPORT", "EXTEND_TO_TRANSFER", "SCHEDULE_RETRIEVAL", "END_EPISODE"]
+        },
+        "reasonEvidenceRefs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } }
+      },
+      "additionalProperties": true
+    },
+    "teacherMove": {
+      "type": "object",
+      "required": ["moveId", "type", "expectedChildAction"],
+      "properties": {
+        "moveId": { "$ref": "#/$defs/nonEmptyString" },
+        "type": {
+          "enum": ["MODEL", "THINK_ALOUD", "ASK_TO_NOTICE", "ASK_TO_SHOW", "ASK_TO_EXPLAIN", "RETRIEVE_PRIOR_KNOWLEDGE", "BREAK_INTO_STEPS", "REDUCE_LANGUAGE", "CHANGE_REPRESENTATION", "PROMPT", "HINT", "COMPARE", "GIVE_INDEPENDENT_TURN", "FADE_SUPPORT", "EXTEND", "CHANGE_ACTIVITY", "OFFER_BOUNDED_CHOICE", "ASK_TO_REFLECT", "ASK_CHILD_TO_CHOOSE_REPRESENTATION", "ASK_CHILD_TO_CREATE_EXAMPLE", "END_SESSION", "SCHEDULE_RETRIEVAL"]
+        },
+        "expectedChildAction": { "$ref": "#/$defs/nonEmptyString" },
+        "conceptualSupport": { "$ref": "#/$defs/conceptualSupport" },
+        "accessAdjustments": { "type": "array", "items": { "$ref": "#/$defs/accessAdjustment" } }
+      },
+      "additionalProperties": true
+    },
+    "episodeStep": {
+      "type": "object",
+      "required": ["stepId", "role", "expectedChildAction"],
+      "properties": {
+        "stepId": { "$ref": "#/$defs/nonEmptyString" },
+        "role": { "enum": ["CONNECT", "TEACH", "GUIDED_PRACTICE", "DIAGNOSTIC_PROBE", "REPRESENTATION_SHIFT", "INDEPENDENT_CHECK", "TRANSFER", "REFLECTION", "RETRIEVAL"] },
+        "expectedChildAction": { "$ref": "#/$defs/nonEmptyString" },
+        "teacherMoveType": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": true
+    },
+    "learningEpisode": {
+      "type": "object",
+      "required": ["episodeId", "teachingTargetId", "learningObjectIds", "steps", "independentCheckRequired"],
+      "properties": {
+        "episodeId": { "$ref": "#/$defs/nonEmptyString" },
+        "teachingTargetId": { "$ref": "#/$defs/nonEmptyString" },
+        "learningObjectIds": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "steps": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/episodeStep" } },
+        "independentCheckRequired": { "const": true },
+        "delayedRetrieval": {
+          "type": "object",
+          "properties": {
+            "required": { "type": "boolean" },
+            "earliestDays": { "type": "integer", "minimum": 0 },
+            "latestDays": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": true
+        },
+        "sourceStatus": { "$ref": "#/$defs/sourceStatus" }
+      },
+      "additionalProperties": true
+    },
+    "runtimeEvent": {
+      "oneOf": [
+        { "type": "object", "required": ["type", "observation"], "properties": { "type": { "const": "OBSERVATION" }, "observation": { "$ref": "#/$defs/observation" } }, "additionalProperties": true },
+        { "type": "object", "required": ["type", "diagnosis"], "properties": { "type": { "const": "DIAGNOSIS" }, "diagnosis": { "$ref": "#/$defs/diagnosis" } }, "additionalProperties": true },
+        { "type": "object", "required": ["type", "decision"], "properties": { "type": { "const": "DECISION" }, "decision": { "$ref": "#/$defs/teacherDecision" } }, "additionalProperties": true },
+        { "type": "object", "required": ["type", "move"], "properties": { "type": { "const": "MOVE" }, "move": { "$ref": "#/$defs/teacherMove" } }, "additionalProperties": true }
+      ]
+    }
+  }
+}
