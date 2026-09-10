@@ -75,6 +75,26 @@ def check_architecture_invariants(schemas: dict[str, dict]) -> list[str]:
     if actual_dispositions != expected_dispositions:
         errors.append(f"question_disposition enum drift: {sorted(actual_dispositions)}")
 
+    expected_dependencies = {"NONE", "GRAPH", "DIAGRAM", "TABLE", "TIMELINE", "NUMBER_LINE", "OPTION_FIGURES", "STATEMENT_SET", "MIXED"}
+    actual_dependencies = set(common_defs.get("dependency_class", {}).get("enum", []))
+    if actual_dependencies != expected_dependencies:
+        errors.append(f"dependency_class enum drift: {sorted(actual_dependencies)}")
+
+    evidence_ref = common_defs.get("evidence_ref", {})
+    if not {"source_id", "locator"} <= set(evidence_ref.get("required", [])):
+        errors.append("evidence_ref must require source_id and locator")
+
+    qcontent = schemas["question-content-ledger.schema.json"]
+    qrecord = qcontent["properties"]["records"]["items"]
+    if "research_refs" not in set(qrecord.get("required", [])):
+        errors.append("QuestionContent record must require research_refs")
+
+    qocc = schemas["question-occurrence-ledger.schema.json"]
+    orecord = qocc["properties"]["records"]["items"]
+    for key in {"source_id", "source_locator", "source_fingerprint_sha256", "storage_mode", "transcription_state", "answer_state", "rights_status_at_freeze"}:
+        if key not in set(orecord.get("required", [])):
+            errors.append(f"QuestionOccurrence record must require {key}")
+
     learner = schemas["learner-profile.schema.json"]
     if "baselines" not in set(learner.get("required", [])):
         errors.append("LearnerProfile must require per-subtopic baselines")
@@ -97,6 +117,8 @@ def validate_examples(schemas: dict[str, dict], base_uri: str, store: dict[str, 
         "publication-target.example.json": "publication-target.schema.json",
         "source-ledger.example.json": "source-ledger.schema.json",
         "exam-demand-profile.example.json": "exam-demand-profile.schema.json",
+        "question-content-ledger.example.json": "question-content-ledger.schema.json",
+        "question-occurrence-ledger.example.json": "question-occurrence-ledger.schema.json",
         "question-evidence-ledger.example.json": "question-evidence-ledger.schema.json",
         "research-bundle.example.json": "research-bundle.schema.json",
         "research-bundle-manifest.example.json": "research-bundle-manifest.schema.json",
@@ -130,7 +152,7 @@ def main() -> int:
             schema = load_json(path)
             Draft202012Validator.check_schema(schema)
             schemas[path.name] = schema
-        except Exception as exc:  # schema/meta-schema error should be blocking
+        except Exception as exc:
             errors.append(f"{path.name}: {exc}")
 
     required_names = {
@@ -142,6 +164,8 @@ def main() -> int:
         "representation-requirement.schema.json",
         "source-ledger.schema.json",
         "exam-demand-profile.schema.json",
+        "question-content-ledger.schema.json",
+        "question-occurrence-ledger.schema.json",
         "question-evidence-ledger.schema.json",
         "research-bundle.schema.json",
         "research-bundle-manifest.schema.json",
@@ -168,6 +192,8 @@ def main() -> int:
     print("CHANGE_CLASS_ENUM = PASS")
     print("RIGHTS_USE_ENUM = PASS")
     print("QUESTION_DISPOSITION_ENUM = PASS")
+    print("QUESTION_CONTENT_OCCURRENCE_CONTRACTS = PASS")
+    print("CLAIM_EVIDENCE_LOCATOR_TYPE = PASS")
     return 0
 
 
