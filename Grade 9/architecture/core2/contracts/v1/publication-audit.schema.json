@@ -53,6 +53,8 @@
         "attempt_help_solution_order": {"type": "boolean"},
         "appendix_order_reconciliation": {"type": "boolean"},
         "navigation_topology": {"type": "boolean"},
+        "physical_page_custody": {"type": "boolean"},
+        "physical_page_morphology": {"type": "boolean"},
         "badge_mapping": {"type": "boolean"},
         "appendix_A_B_C": {"type": "boolean"},
         "answer_separation": {"type": "boolean"},
