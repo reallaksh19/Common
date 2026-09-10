@@ -69,6 +69,9 @@ jobs:
       - name: Validate Permutations Core 2 package
         run: python "Grade 9/skills/grade9-core2-publisher/scripts/validate_core2_package.py" --dir /tmp/core2-permutations --prefix Permutations
 
+      - name: Run full-pair and B40/B90 final falsifiers
+        run: python "Grade 9/architecture/core2/tests/run_final_falsifiers.py" --out /tmp/core2-final-falsifiers
+
       - name: Upload Core 2 cold-start review products
         uses: actions/upload-artifact@v4
         with:
@@ -77,4 +80,5 @@ jobs:
             /tmp/core2-laws/**
             /tmp/core2-redox/**
             /tmp/core2-permutations/**
+            /tmp/core2-final-falsifiers/**
           if-no-files-found: error
