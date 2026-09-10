@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Physical page custody checks for Core (2) learner PDFs."""
+"""Physical page custody and morphology checks for Core (2) learner PDFs."""
 from __future__ import annotations
 
 
-def reconciliation_errors(page_map: dict) -> list[str]:
+def custody_errors(page_map: dict) -> list[str]:
+    """Hard reconciliation failures: logical content cannot be lost or mis-bound."""
     errors: list[str] = []
     count = page_map.get("physical_page_count", 0)
     intents = page_map.get("page_intents", [])
@@ -57,11 +58,20 @@ def reconciliation_errors(page_map: dict) -> list[str]:
     metric_pages = [m.get("page") for m in metrics]
     if metric_pages != list(range(1, count + 1)):
         errors.append("page_metrics must cover physical pages exactly once in order")
-    for metric in metrics:
+    return errors
+
+
+def morphology_errors(page_map: dict) -> list[str]:
+    """Layout-quality findings. These are independently promotable release gates."""
+    errors: list[str] = []
+    for metric in page_map.get("page_metrics", []):
         page = metric.get("page")
         if metric.get("orphan_continuation") is True:
             errors.append(f"page {page}: orphan continuation")
         if metric.get("underfill_disposition") == "PATHOLOGICAL":
             errors.append(f"page {page}: pathological underfill")
-
     return errors
+
+
+def reconciliation_errors(page_map: dict) -> list[str]:
+    return custody_errors(page_map) + morphology_errors(page_map)
