@@ -24,9 +24,18 @@ import physical_page_runtime as base
 class GeneratedRepresentationRow(Flowable):
     """Two generated schematics in one row with independent custody records."""
 
-    def __init__(self, left, right, tracker: base.PlacementTracker, page_intent_id: str, gap: float = 6 * mm):
+    def __init__(
+        self,
+        left_child,
+        left_item: dict,
+        right_child,
+        right_item: dict,
+        tracker: base.PlacementTracker,
+        page_intent_id: str,
+        gap: float = 6 * mm,
+    ):
         super().__init__()
-        self.entries = [left, right]
+        self.entries = [(left_child, left_item), (right_child, right_item)]
         self.tracker = tracker
         self.page_intent_id = page_intent_id
         self.gap = gap
@@ -36,30 +45,35 @@ class GeneratedRepresentationRow(Flowable):
 
     def wrap(self, avail_width, avail_height):
         column_width = max(1.0, (avail_width - self.gap) / 2.0)
-        sizes = []
-        for child, _item in self.entries:
-            sizes.append(child.wrap(column_width, avail_height))
-        self._child_sizes = sizes
+        self._child_sizes = [
+            child.wrap(column_width, avail_height)
+            for child, _item in self.entries
+        ]
         self.width = avail_width
-        self.height = max(height for _width, height in sizes)
+        self.height = max(height for _width, height in self._child_sizes)
         return self.width, self.height
 
-    def draw(self):
-        x = 0.0
-        page = self.canv.getPageNumber()
+    def drawOn(self, canv, x, y, _sW=0):
+        """Draw children at absolute page coordinates and record those boxes."""
+        page = canv.getPageNumber()
+        child_x = x
         for index, ((child, item), (width, height)) in enumerate(zip(self.entries, self._child_sizes)):
             self.tracker.add_content(
                 self.page_intent_id,
                 item["item_id"],
                 item.get("learning_design_refs", []),
                 page,
-                x,
-                0.0,
+                child_x,
+                y,
                 width,
                 height,
             )
-            child.drawOn(self.canv, x, 0.0)
-            x += width + (self.gap if index == 0 else 0.0)
+            child.drawOn(canv, child_x, y)
+            child_x += width + (self.gap if index == 0 else 0.0)
+
+    def draw(self):
+        # drawOn owns both composition and absolute custody instrumentation.
+        return None
 
 
 def _pairable_generated_representation(item: dict) -> bool:
@@ -134,7 +148,16 @@ def make_study_renderer(impl):
                     if same_step_surface and _pairable_generated_representation(next_item):
                         left = impl.StructuredRepresentationFlowable(reps[item["representation_instance_id"]])
                         right = impl.StructuredRepresentationFlowable(reps[next_item["representation_instance_id"]])
-                        story.append(GeneratedRepresentationRow(left, right, tracker, iid))
+                        story.append(
+                            GeneratedRepresentationRow(
+                                left,
+                                item,
+                                right,
+                                next_item,
+                                tracker,
+                                iid,
+                            )
+                        )
                         story.append(Spacer(1, 3 * mm))
                         index += 2
                         continue
