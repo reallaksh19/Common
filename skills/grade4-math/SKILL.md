@@ -10,6 +10,13 @@ description: Create and analyze Grade 4 Mathematics learning content using conce
 Always load and follow:
 
 - `../../Grade4MathSchema.md`
+- `../../Primary/Architecture/PRIMARY_INTEGRATED_ARCHITECTURE.md`
+- `../../Primary/Architecture/SEMANTIC_OWNERSHIP.md`
+
+For interactive tutoring, adaptive teaching, diagnostic repair, scaffold selection/fading, repeated learner difficulty, or learner-state interpretation also load:
+
+- `../primary-teacher-runtime/SKILL.md`
+- `../../Primary/Architecture/PRIMARY_TEACHER_RUNTIME.md`
 
 When a chapter-specific schema exists, load it in addition to the core schema.
 
@@ -41,7 +48,20 @@ CHAPTER
   -> QUESTION INSTANCE
 ```
 
-The Learning Cell is the primary instructional object. Questions are evidence/practice instances beneath it.
+The Learning Cell is the primary reusable instructional object. In interactive tutoring, the child experiences a learner-specific `LearningEpisode` produced through the Primary Teacher Runtime rather than receiving the Learning Cell as one long explanation.
+
+For tutoring, use:
+
+```text
+OBSERVATION
+  -> RESPONSE DIAGNOSIS
+  -> TEACHER DECISION
+  -> TEACHER MOVE
+  -> CHILD ACTION
+  -> NEW EVIDENCE
+```
+
+Keep raw evidence separate from judgement, `SkillState` separate from `CurrentLearningState`, conceptual support separate from access/load adjustments, and acquisition/independent-use/delayed-retention/transfer evidence separate from one another.
 
 ## Supported modes
 
@@ -104,6 +124,8 @@ When source material is supplied, inspect:
 
 Preserve source terminology and progression unless explicitly asked to redesign.
 
+If a source is simplified, ambiguous, or apparently inconsistent with canonical mathematics, preserve source provenance and use the Primary source-boundary states rather than silently inventing or changing the source rule.
+
 ### Stage 4 — Build concept architecture
 
 Create or validate:
@@ -134,6 +156,16 @@ Record input representation, expected working representation, and answer represe
 
 Representation translation is itself a learning target.
 
+For learner evidence, distinguish where observable:
+
+```text
+PROVIDED
+CHILD_SELECTED
+CHILD_PRODUCED
+```
+
+Being shown a bar model is not the same independence evidence as choosing or drawing one without help.
+
 ### Stage 6 — Build Learning Cells
 
 Each important microconcept should define:
@@ -162,6 +194,8 @@ Each important microconcept should define:
 - repair paths;
 - mastery evidence;
 - transfer tasks.
+
+For tutoring, instantiate Learning Cells through the Primary Teacher Runtime. Teaching chunks should normally be followed by observable child action. Repair should normally be followed by an independent isomorphic or appropriately varied retry.
 
 ### Stage 7 — Question design
 
@@ -232,6 +266,8 @@ Consider:
 - context/remainder interpretation where relevant;
 - transfer distance.
 
+Do not confuse high language/working-memory load with weak mathematical understanding. In tutoring, record access adjustments separately from conceptual support.
+
 ### Stage 9 — Helpers and hints
 
 Helpers are teacher-like questions, not mini-solutions.
@@ -247,6 +283,8 @@ H5 DO
 ```
 
 Hints must attach to distinct reasoning states. Avoid five paraphrases of the same clue.
+
+Conceptual support may use the H-levels above. Access/load adjustments such as reduced language, one-step-at-a-time directions, oral response, read-aloud support, reduced writing, or extra visual spacing must be recorded separately.
 
 ### Stage 10 — Diagnostics
 
@@ -264,6 +302,10 @@ OBSERVED RESPONSE
 ```
 
 Do not label a learner simply `weak in <topic>`.
+
+Wrong answers do not automatically mean reteach. Consider whether the evidence better supports a conceptual misconception, prerequisite gap, procedural error, language/task-interpretation problem, representation error, memory-retrieval failure, or transient performance lapse.
+
+After two unsuccessful attempts using substantially the same teaching route, change a meaningful dimension such as representation, language load, concrete context, task size, response mode, problem structure, or prerequisite probe. Do not merely repeat a longer version of the same explanation.
 
 ### Stage 11 — Practice sequencing
 
@@ -302,6 +344,18 @@ Require evidence across relevant dimensions:
 - reasoning;
 - transfer.
 
+For Primary runtime state, do not collapse these into one learner mastery score/state. Track longitudinal evidence separately for:
+
+```text
+ACQUISITION
+INDEPENDENT_USE
+DELAYED_RETENTION
+TRANSFER
+STRETCH (optional)
+```
+
+Same-session or same-game correctness cannot establish delayed retention. Worked-example success cannot establish independent use. Olympiad stretch is not required for ordinary curriculum mastery.
+
 Mastery thresholds belong to learner-state logic, not immutable question content.
 
 ### Stage 13 — Transfer
@@ -331,7 +385,8 @@ For source-grounded work:
 - preserve source assets/models when mathematically meaningful;
 - keep `VERIFIED_TRANSCRIPTION`, `RECONSTRUCTED`, `QC_ALERT`, or `SOURCE_UNRESOLVED` status;
 - keep source-derived and newly authored questions separate;
-- clearly mark extension/Olympiad content.
+- clearly mark extension/Olympiad content;
+- use Primary source-boundary semantics when a source simplification/ambiguity cannot be reconciled cleanly.
 
 ## Math quality gates
 
@@ -349,6 +404,7 @@ A mathematics deliverable is incomplete until applicable checks pass:
 - `M-QG10 SOURCE_FIDELITY`
 - `M-QG11 MATHEMATICAL_CORRECTNESS`
 - `M-QG12 GRADE4_LANGUAGE_AND_SCOPE`
+- `M-QG13 PRIMARY_RUNTIME_ALIGNMENT` when tutoring/adaptation is used
 
 ## Publishing handoff
 
