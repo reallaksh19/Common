@@ -1,0 +1,22 @@
+name: Stress Test 1 Dependency Export
+
+on:
+  push:
+    branches:
+      - stress/grade9-linear-equations-two-vars-st1-20260910
+
+permissions:
+  contents: read
+
+jobs:
+  export-dependency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download declared Core1 dependency
+        run: python -m pip download --only-binary=:all: --dest wheels 'rfc8785>=0.1.2,<1'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stress1-rfc8785-wheel
+          path: wheels/
+          if-no-files-found: error
