@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
-"""Physical-page instrumentation for Core (2) Study Guide rendering.
+"""Physical-page instrumentation and semantic-block pagination for Core (2).
 
-The tracker records placement while ReportLab lays out the document.  It does
-not infer content custody from concatenated PDF text.  Split Paragraphs remain
+The tracker records placement while ReportLab lays out the document. It does
+not infer content custody from concatenated PDF text. Split Paragraphs remain
 associated with the same content_ref, producing one fragment record per actual
 physical page on which the semantic item is drawn.
+
+Oversized logical page intents are partitioned at semantic content-ref
+boundaries before ReportLab pagination. This avoids the previous morphology of
+one almost-full page followed by a tiny orphan continuation page while
+preserving one cognitive job across the resulting physical-page range.
 """
 from __future__ import annotations
 
 import hashlib
+import math
 from collections import defaultdict
 from pathlib import Path
 
@@ -19,6 +25,7 @@ from reportlab.platypus import Flowable, PageBreak, Paragraph, SimpleDocTemplate
 
 
 DEFAULT_FINAL_PAGE_FILL = 0.18
+LAYOUT_TARGET_FRACTION = 0.86
 
 
 def sha256_file(path: Path) -> str:
@@ -63,7 +70,7 @@ class PlacementTracker:
 
 
 class TrackedFlowable(Flowable):
-    """Transparent wrapper that preserves ReportLab split behavior and records draw boxes."""
+    """Transparent wrapper preserving ReportLab split behavior and draw boxes."""
 
     def __init__(
         self,
@@ -130,12 +137,7 @@ class TrackedFlowable(Flowable):
         return self.child.drawOn(canv, x, y, _sW)
 
 
-def _tracked(
-    child: Flowable,
-    tracker: PlacementTracker,
-    page_intent_id: str,
-    item: dict,
-) -> TrackedFlowable:
+def _tracked(child: Flowable, tracker: PlacementTracker, page_intent_id: str, item: dict) -> TrackedFlowable:
     return TrackedFlowable(
         child,
         tracker,
@@ -143,6 +145,82 @@ def _tracked(
         content_ref=item["item_id"],
         learning_design_refs=item.get("learning_design_refs", []),
     )
+
+
+def _flow_height(flowable: Flowable, width: float, height: float) -> float:
+    try:
+        _, h = flowable.wrap(width, height)
+    except Exception:
+        return 0.0
+    before = flowable.getSpaceBefore() if hasattr(flowable, "getSpaceBefore") else 0.0
+    after = flowable.getSpaceAfter() if hasattr(flowable, "getSpaceAfter") else 0.0
+    return max(0.0, float(h)) + max(0.0, float(before)) + max(0.0, float(after))
+
+
+def _block_height(block: list[Flowable], width: float, height: float) -> float:
+    return sum(_flow_height(flowable, width, height) for flowable in block)
+
+
+def _partition_blocks(
+    blocks: list[list[Flowable]],
+    first_header_height: float,
+    continuation_header_height: float,
+    width: float,
+    page_height: float,
+) -> list[list[list[Flowable]]]:
+    """Balance semantic blocks across the smallest safe physical-page count."""
+    if not blocks:
+        return [[]]
+    heights = [_block_height(block, width, page_height) for block in blocks]
+    total = sum(heights)
+    target_surface = page_height * LAYOUT_TARGET_FRACTION
+    first_capacity = max(page_height * 0.35, target_surface - first_header_height)
+    continuation_capacity = max(page_height * 0.35, target_surface - continuation_header_height)
+    if total <= first_capacity:
+        return [blocks]
+
+    pages = 2
+    while total > first_capacity + (pages - 1) * continuation_capacity:
+        pages += 1
+    pages = min(pages, len(blocks))
+
+    chunks: list[list[list[Flowable]]] = []
+    index = 0
+    remaining_total = total
+    for page_index in range(pages):
+        pages_left = pages - page_index
+        blocks_left = len(blocks) - index
+        if page_index == pages - 1:
+            chunks.append(blocks[index:])
+            break
+
+        capacity = first_capacity if page_index == 0 else continuation_capacity
+        target = min(capacity, remaining_total / pages_left)
+        chunk: list[list[Flowable]] = []
+        chunk_height = 0.0
+        while index < len(blocks):
+            blocks_after = len(blocks) - (index + 1)
+            pages_after = pages_left - 1
+            h = heights[index]
+            if chunk and blocks_after < pages_after:
+                break
+            if chunk and chunk_height + h > capacity:
+                break
+            if chunk and chunk_height + h > target and chunk_height >= target * 0.65:
+                break
+            chunk.append(blocks[index])
+            chunk_height += h
+            index += 1
+        if not chunk and index < len(blocks):
+            chunk.append(blocks[index])
+            chunk_height = heights[index]
+            index += 1
+        chunks.append(chunk)
+        remaining_total -= chunk_height
+
+    if index < len(blocks):
+        chunks[-1].extend(blocks[index:])
+    return chunks
 
 
 def _page_draw_fill(page) -> float:
@@ -279,8 +357,66 @@ def page_map_path_for(study_pdf: Path) -> Path:
     return study_pdf.with_suffix(".physical-pages.json")
 
 
+def _intent_headers(impl, st, tracker: PlacementTracker, page_intent: dict, continuation: bool) -> list[Flowable]:
+    iid = page_intent["page_intent_id"]
+    if continuation:
+        heading = Paragraph(
+            "<b>COGNITIVE JOB · CONTINUED</b> · " + impl.legacy.safe(page_intent["cognitive_job"]),
+            st["h2"],
+        )
+    else:
+        heading = Paragraph("<b>COGNITIVE JOB</b> · " + impl.legacy.safe(page_intent["cognitive_job"]), st["h1"])
+    return [
+        TrackedFlowable(heading, tracker, iid, intent_heading=True),
+        Paragraph(impl.legacy.safe("Layout relation · " + page_intent["layout_relation"].replace("_", " ")), st["small"]),
+    ]
+
+
+def _content_blocks(impl, model: dict, plan: dict, page_intent: dict, tracker: PlacementTracker) -> list[list[Flowable]]:
+    iid = page_intent["page_intent_id"]
+    items = impl._content_map(model)
+    reps = impl._rep_map(plan)
+    arc = impl._arc_ref_map(impl._CURRENT_STRUCTURE)
+    blocks: list[list[Flowable]] = []
+    current_unit = None
+    for ref in page_intent["content_refs"]:
+        meta = arc[ref]
+        item = items[ref]
+        block: list[Flowable] = []
+        if meta["unit_id"] != current_unit:
+            current_unit = meta["unit_id"]
+            block.append(Paragraph(impl.legacy.safe(current_unit), impl.legacy._styles("SG")["small"]))
+        role = meta["role"].replace("_", " ")
+        support = meta.get("support_state", "")
+        st = impl.legacy._styles("SG")
+        block.append(
+            _tracked(
+                Paragraph(impl.legacy.safe(f"{role} · {support}") if support else impl.legacy.safe(role), st["h2"]),
+                tracker,
+                iid,
+                item,
+            )
+        )
+        block.append(_tracked(Paragraph(impl.legacy.safe(item["content"]), st["body"]), tracker, iid, item))
+        if item.get("representation_instance_id"):
+            rep = reps[item["representation_instance_id"]]
+            block.append(_tracked(impl.StructuredRepresentationFlowable(rep), tracker, iid, item))
+            block.append(Spacer(1, 3 * mm))
+        if item.get("research_refs"):
+            block.append(
+                _tracked(
+                    Paragraph(impl.legacy.safe("Research: " + ", ".join(item["research_refs"])), st["small"]),
+                    tracker,
+                    iid,
+                    item,
+                )
+            )
+        blocks.append(block)
+    return blocks
+
+
 def make_study_renderer(impl):
-    """Return a drop-in replacement for run_core2_structured_impl.render_study_pdf."""
+    """Return a drop-in tracked/rebalanced Study Guide renderer."""
 
     def render(model: dict, plan: dict, path: Path):
         structure = impl._CURRENT_STRUCTURE
@@ -300,10 +436,7 @@ def make_study_renderer(impl):
             title=model["title"],
             author="Grade 9–11 Core (2) Publisher",
         )
-        items = impl._content_map(model)
-        reps = impl._rep_map(plan)
-        arc = impl._arc_ref_map(structure)
-        story = [
+        story: list[Flowable] = [
             Paragraph(impl.legacy.safe(model["title"]), st["h1"]),
             Paragraph(impl.legacy.safe(model.get("subtitle", "")), st["body"]),
             Paragraph(
@@ -314,48 +447,19 @@ def make_study_renderer(impl):
         ]
 
         for page_intent in structure["study_guide"]["page_intents"]:
-            iid = page_intent["page_intent_id"]
-            story.append(
-                TrackedFlowable(
-                    Paragraph("<b>COGNITIVE JOB</b> · " + impl.legacy.safe(page_intent["cognitive_job"]), st["h1"]),
-                    tracker,
-                    iid,
-                    intent_heading=True,
-                )
-            )
-            story.append(Paragraph(impl.legacy.safe("Layout relation · " + page_intent["layout_relation"].replace("_", " ")), st["small"]))
-            current_unit = None
-            for ref in page_intent["content_refs"]:
-                meta = arc[ref]
-                if meta["unit_id"] != current_unit:
-                    current_unit = meta["unit_id"]
-                    story.append(Paragraph(impl.legacy.safe(current_unit), st["small"]))
-                role = meta["role"].replace("_", " ")
-                support = meta.get("support_state", "")
-                item = items[ref]
-                story.append(
-                    _tracked(
-                        Paragraph(impl.legacy.safe(f"{role} · {support}") if support else impl.legacy.safe(role), st["h2"]),
-                        tracker,
-                        iid,
-                        item,
-                    )
-                )
-                story.append(_tracked(Paragraph(impl.legacy.safe(item["content"]), st["body"]), tracker, iid, item))
-                if item.get("representation_instance_id"):
-                    rep = reps[item["representation_instance_id"]]
-                    story.append(_tracked(impl.StructuredRepresentationFlowable(rep), tracker, iid, item))
-                    story.append(Spacer(1, 3 * mm))
-                if item.get("research_refs"):
-                    story.append(
-                        _tracked(
-                            Paragraph(impl.legacy.safe("Research: " + ", ".join(item["research_refs"])), st["small"]),
-                            tracker,
-                            iid,
-                            item,
-                        )
-                    )
-            story.append(PageBreak())
+            first_headers = _intent_headers(impl, st, tracker, page_intent, continuation=False)
+            continuation_headers = _intent_headers(impl, st, tracker, page_intent, continuation=True)
+            blocks = _content_blocks(impl, model, plan, page_intent, tracker)
+            first_h = _block_height(first_headers, doc.width, doc.height)
+            continuation_h = _block_height(continuation_headers, doc.width, doc.height)
+            chunks = _partition_blocks(blocks, first_h, continuation_h, doc.width, doc.height)
+
+            for chunk_index, chunk in enumerate(chunks):
+                headers = first_headers if chunk_index == 0 else _intent_headers(impl, st, tracker, page_intent, continuation=True)
+                story.extend(headers)
+                for block in chunk:
+                    story.extend(block)
+                story.append(PageBreak())
 
         app_by_letter = {"A": "appendix_A", "B": "appendix_B", "C": "appendix_C"}
         for letter in structure["study_guide"]["appendix_order"]:
@@ -392,7 +496,6 @@ def finalize_page_map(original_argv: list[str], legacy, contracts: Path) -> list
     out = Path(out_value)
     map_path = out / f"{prefix}_Core2_Physical_Page_Map.json"
     if not map_path.exists():
-        # Transfer-only publication has no Study Guide PhysicalPageMap yet.
         return []
     manifest_path = out / f"{prefix}_Core2_Publication_Manifest.json"
     if not manifest_path.exists():
