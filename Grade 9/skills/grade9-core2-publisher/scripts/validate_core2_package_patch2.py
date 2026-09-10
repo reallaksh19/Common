@@ -34,6 +34,21 @@ def _main_material_ids(study: dict) -> set[str]:
     }
 
 
+def _learner_step_marker(step: dict) -> str:
+    """Return the learner-visible cue that proves an arc step is rendered.
+
+    Support-state detail remains machine-visible in PublicationStructure. The
+    deterministic faded-practice prompt itself says "GUIDED 2", so requiring
+    the internal label "GUIDED 2 FADED" in learner text would recreate the
+    presentation duplication that the renderer intentionally removes.
+    """
+    if step.get("learner_visible_heading"):
+        return step["learner_visible_heading"]
+    if step.get("role") == "GUIDED_2_FADED":
+        return "GUIDED 2"
+    return step["role"].replace("_", " ")
+
+
 def validate_structure_package(argv: list[str]) -> int:
     d = Path(impl._arg_value(argv, "--dir"))
     prefix = impl._arg_value(argv, "--prefix")
@@ -71,9 +86,7 @@ def validate_structure_package(argv: list[str]) -> int:
         arc_role_markers: list[str] = []
         for unit in structure["study_guide"]["learning_units"]:
             for step in unit["arc_steps"]:
-                arc_role_markers.append(
-                    step.get("learner_visible_heading") or step["role"].replace("_", " ")
-                )
+                arc_role_markers.append(_learner_step_marker(step))
                 arc_refs.extend(step["content_refs"])
         page_refs = [ref for page in structure["study_guide"]["page_intents"] for ref in page["content_refs"]]
         if page_refs != arc_refs:
