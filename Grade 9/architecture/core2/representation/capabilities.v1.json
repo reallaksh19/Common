@@ -1,0 +1,24 @@
+{
+  "registry_id": "CORE2-SHARED-REPRESENTATION-V1",
+  "schema_version": "1.0.0",
+  "capabilities": [
+    {"capability_id":"REP-MATH-ORDERED-SLOTS","representation_type":"ORDERED_SLOTS","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-MATH-MULTISET-INVENTORY","representation_type":"MULTISET_INVENTORY","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-MATH-BLOCK-MODEL","representation_type":"BLOCK_MODEL","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-MATH-GAP-MODEL","representation_type":"GAP_MODEL","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-MATH-PREFIX-BUCKETS","representation_type":"PREFIX_BUCKETS","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-MATH-CIRCULAR-ANCHOR","representation_type":"CIRCULAR_ANCHOR","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-MATH-FORBIDDEN-GRID","representation_type":"FORBIDDEN_POSITION_EVENT_GRID","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-MATH-STAGE-TABLE","representation_type":"STAGE_DECISION_TABLE","subjects":["MATHEMATICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-PHY-FORCE-DIAGRAM","representation_type":"FORCE_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-CHEM-MACRO-SYMBOLIC","representation_type":"MACRO_SYMBOLIC_REACTION_LINK","subjects":["CHEMISTRY"],"renderer_id":"schematic_v1","status":"IMPLEMENTED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-GENERIC-XY-GRAPH","representation_type":"XY_GRAPH","subjects":["MATHEMATICS","PHYSICS","CHEMISTRY"],"renderer_id":"xy_graph_v1","status":"PLANNED","routes":["GENERATED_VECTOR"]},
+    {"capability_id":"REP-PHY-RAY","representation_type":"RAY_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"ray_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-PHY-CIRCUIT","representation_type":"CIRCUIT_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"circuit_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-PHY-WAVE","representation_type":"WAVE_DIAGRAM","subjects":["PHYSICS"],"renderer_id":"wave_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-CHEM-PARTICLE","representation_type":"PARTICLE_DIAGRAM","subjects":["CHEMISTRY"],"renderer_id":"particle_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-CHEM-LEWIS","representation_type":"LEWIS_STRUCTURE","subjects":["CHEMISTRY"],"renderer_id":"chem_structure_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-CHEM-ENERGY","representation_type":"ENERGY_LEVEL_DIAGRAM","subjects":["CHEMISTRY"],"renderer_id":"energy_levels_v1","status":"PLANNED","routes":["GENERATED_VECTOR","APPROVED_VECTOR_ASSET","SOURCE_CROP"]},
+    {"capability_id":"REP-GENERIC-APPARATUS","representation_type":"APPARATUS_PROCESS_DIAGRAM","subjects":["PHYSICS","CHEMISTRY"],"renderer_id":"asset_or_schematic_v1","status":"PLANNED","routes":["APPROVED_VECTOR_ASSET","SOURCE_CROP"]}
+  ]
+}
