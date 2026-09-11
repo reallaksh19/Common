@@ -23,7 +23,8 @@ semantics=build_semantics(copy.deepcopy(source_ledger),copy.deepcopy(qbindings),
 registry=load(E/'registry'/'chemistry-observation-code-registry.json'); policy=load(E/'registry'/'chemistry-diagnostic-policy.json'); attempts=load(E/'fixtures'/'chemistry-diagnostic-attempt-set.fixture.json'); ledger=load(E/'fixtures'/'chemistry-learner-evidence-ledger.fixture.json')
 
 # Branch A: no AttemptSet
-no_attempt=build_snapshot(copy.deepcopy(scope_bundle),copy.deepcopy(review),copy.deepcopy(semantics),copy.deepcopy(questions),copy.deepcopy(registry),copy.deepcopy(policy))
+no_attempt_bundle=build_snapshot(copy.deepcopy(scope_bundle),copy.deepcopy(review),copy.deepcopy(semantics),copy.deepcopy(questions),copy.deepcopy(registry),copy.deepcopy(policy))
+no_attempt=no_attempt_bundle['snapshot']
 assert no_attempt['attempt_mode']=='ABSENT'
 assert no_attempt['support_policy']=='NEUTRAL_CONSERVATIVE'
 assert not no_attempt['diagnostic_cases']
@@ -34,7 +35,6 @@ assert all(not x['negative_evidence_refs'] for x in no_attempt['capability_state
 with_attempt=build_snapshot(copy.deepcopy(scope_bundle),copy.deepcopy(review),copy.deepcopy(semantics),copy.deepcopy(questions),copy.deepcopy(registry),copy.deepcopy(policy),copy.deepcopy(attempts),copy.deepcopy(ledger))
 snap=with_attempt['snapshot']
 assert snap['attempt_mode']=='PRESENT' and snap['support_policy']=='EVIDENCE_CONDITIONED'
-# scope authority is byte-for-byte the same boundary between branches
 assert no_attempt['assessment_scope_ref']==snap['assessment_scope_ref']
 assert no_attempt['assessment_scope_digest']==snap['assessment_scope_digest']
 assert no_attempt['scope_unchanged'] is True and snap['scope_unchanged'] is True
@@ -44,7 +44,6 @@ assert no_attempt['scope_unchanged'] is True and snap['scope_unchanged'] is True
 assert cap(snap,'CAP-READ-FORMULA')['state']=='DEMONSTRATED'
 assert disposition(with_attempt,'O02')=='SHARED_EXECUTION_ERROR_LOCALIZED'
 # 2 CORRECT_OXIDATION_STATES + AGENT_INVERSION != OXIDATION_NUMBER_FAILURE
-# Synthetic semantic control: same eligible item exposes the two independent capabilities.
 sem2=copy.deepcopy(semantics); rec=next(x for x in sem2['question_semantics'] if x['target_ref']=='CQ12')
 for step in rec['reasoning_route']['steps']:
     if 'CAP-TRACK-OXIDATION-STATE' not in step['capability_refs']: step['capability_refs'].append('CAP-TRACK-OXIDATION-STATE')
@@ -78,13 +77,12 @@ assert cap(snap,'CAP-VERIFY-CHEMICAL-REPRESENTATION')['state']!='EVIDENCE_OF_DIF
 # 10 SHARED_ARITHMETIC_FAILURE_ERASES_CHEMISTRY_REASONING
 assert cap(snap,'CAP-READ-FORMULA')['state']=='DEMONSTRATED'
 
-# independent repeated evidence is required before CONFIRMED
+# Two independent high-confidence negatives are required before CONFIRMED.
 led3=copy.deepcopy(ledger); a2={'attempt_id':'DA08','question_ref':'CQ12','part_ref':None,'binding_method':'EXPLICIT_ID','response':'Agent role inverted again.'}; at3=copy.deepcopy(attempts); at3['attempts'].append(a2); at3['attempt_set_digest']=''; at3['attempt_set_digest']=digest(at3,'attempt_set_digest','attempts','attempt_id')
 extra=copy.deepcopy(next(x for x in led3['observations'] if x['observation_id']=='O04')); extra.update({'observation_id':'O13','attempt_ref':'DA08'}); led3['attempt_set_ref']=at3['attempt_set_id']; led3['observations'].append(extra); led3['ledger_digest']=''; led3['ledger_digest']=digest(led3,'ledger_digest','observations','observation_id')
 s3=build_snapshot(copy.deepcopy(scope_bundle),copy.deepcopy(review),copy.deepcopy(semantics),copy.deepcopy(questions),copy.deepcopy(registry),copy.deepcopy(policy),at3,led3)['snapshot']
 assert case(s3,'AGENT_ROLE_INVERSION')['status']=='CONFIRMED'
 
-# deterministic inference
 again=build_snapshot(copy.deepcopy(scope_bundle),copy.deepcopy(review),copy.deepcopy(semantics),copy.deepcopy(questions),copy.deepcopy(registry),copy.deepcopy(policy),copy.deepcopy(attempts),copy.deepcopy(ledger))
 assert json.dumps(with_attempt,sort_keys=True,separators=(',',':'),ensure_ascii=False)==json.dumps(again,sort_keys=True,separators=(',',':'),ensure_ascii=False)
 print('CHEMISTRY C-E required falsifiers = 10 PASS')
