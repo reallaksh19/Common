@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-physical-page-map.schema.json",
+  "title": "Core2 PhysicalPageMap v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "physical_page_map_id",
+    "schema_version",
+    "publication_structure_id",
+    "publication_id",
+    "pdf_role",
+    "pdf_sha256",
+    "physical_page_count",
+    "page_intents",
+    "content_placements",
+    "page_metrics"
+  ],
+  "properties": {
+    "physical_page_map_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "publication_structure_id": {"type": "string", "minLength": 1},
+    "publication_id": {"type": "string", "minLength": 1},
+    "pdf_role": {"enum": ["STUDY_GUIDE_PDF", "TRANSFER_BOOK_PDF"]},
+    "pdf_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "physical_page_count": {"type": "integer", "minimum": 1},
+    "page_intents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "core2-physical-page-map.schema.json#/$defs/page_intent_mapping"}
+    },
+    "content_placements": {
+      "type": "array",
+      "items": {"$ref": "core2-physical-page-map.schema.json#/$defs/content_placement"}
+    },
+    "page_metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "core2-physical-page-map.schema.json#/$defs/page_metric"}
+    }
+  },
+  "$defs": {
+    "page_intent_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "page_intent_id",
+        "physical_pages",
+        "content_refs",
+        "pagination_policy",
+        "split",
+        "continuation_pages",
+        "whitespace_role"
+      ],
+      "properties": {
+        "page_intent_id": {"type": "string", "minLength": 1},
+        "physical_pages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        },
+        "content_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "pagination_policy": {"enum": ["FORCE_SINGLE_PAGE", "PREFER_SINGLE_PAGE", "ALLOW_SPLIT", "DELIBERATE_MULTI_PAGE"]},
+        "max_physical_pages": {"type": "integer", "minimum": 1},
+        "minimum_final_page_fill": {"type": "number", "minimum": 0, "maximum": 1},
+        "split": {"type": "boolean"},
+        "continuation_pages": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        },
+        "whitespace_role": {"enum": ["NONE", "LEARNER_WORKSPACE", "DRAWING_WORKSPACE", "VISUAL_SEPARATION"]}
+      }
+    },
+    "content_placement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_ref", "page_intent_id", "physical_pages", "fragments"],
+      "properties": {
+        "content_ref": {"type": "string", "minLength": 1},
+        "page_intent_id": {"type": "string", "minLength": 1},
+        "learning_design_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "physical_pages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        },
+        "fragments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "core2-physical-page-map.schema.json#/$defs/fragment"}
+        }
+      }
+    },
+    "fragment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page", "x0", "y0", "x1", "y1"],
+      "properties": {
+        "page": {"type": "integer", "minimum": 1},
+        "x0": {"type": "number"},
+        "y0": {"type": "number"},
+        "x1": {"type": "number"},
+        "y1": {"type": "number"}
+      }
+    },
+    "page_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "page",
+        "semantic_fill_ratio",
+        "starts_page_intent_ids",
+        "continues_page_intent_ids",
+        "semantic_content_refs",
+        "orphan_continuation",
+        "underfill_disposition"
+      ],
+      "properties": {
+        "page": {"type": "integer", "minimum": 1},
+        "semantic_fill_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "starts_page_intent_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "continues_page_intent_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "semantic_content_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "orphan_continuation": {"type": "boolean"},
+        "underfill_disposition": {"enum": ["ACCEPTABLE", "LEARNER_WORKSPACE", "DRAWING_WORKSPACE", "VISUAL_SEPARATION", "PATHOLOGICAL"]},
+        "reason": {"type": "string"}
+      }
+    }
+  }
+}

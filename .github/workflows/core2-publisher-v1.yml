@@ -1,0 +1,86 @@
+name: Core 2 Publisher v1
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/architecture/core2/**"
+      - "Grade 9/architecture/replays/**"
+      - "Grade 9/skills/grade9-core2-publisher/**"
+      - "Grade 9/install_skills.py"
+      - ".github/workflows/core2-publisher-v1.yml"
+  workflow_dispatch:
+
+jobs:
+  core2-publisher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Core 2 dependencies
+        run: python -m pip install -r "Grade 9/skills/grade9-core2-publisher/requirements.txt"
+      - name: Smoke-test Grade 9 Core 2 installer entry
+        run: |
+          python "Grade 9/install_skills.py" --dest /tmp/grade9-skills
+          test -f /tmp/grade9-skills/grade9-core2-publisher/SKILL.md
+          test -f /tmp/grade9-skills/grade9-math-core1/SKILL.md
+      - name: Validate frozen PR160 upstream contracts
+        run: python "Grade 9/Architecture/contracts/v1/validate_contracts.py"
+      - name: Validate Core 2 downstream contracts
+        run: python "Grade 9/architecture/core2/contracts/v1/validate_core2_contracts.py"
+      - name: Validate agent golden reference specimen
+        run: python "Grade 9/architecture/core2/reference_specimens/v1/validate_reference_specimen.py"
+
+      - name: Build Laws of Motion Core 1 replay
+        run: python "Grade 9/Architecture/core1/build_research_package.py" --input "Grade 9/Architecture/replays/laws_of_motion/research_input.json" --out /tmp/laws-core1
+      - name: Bind Laws of Motion publication target
+        run: python "Grade 9/architecture/core2/bind_publication_target.py" --manifest /tmp/laws-core1/Laws_of_Motion_ISO_Research_Bundle_Manifest.json --learner "Grade 9/Architecture/replays/laws_of_motion/learner_profile.json" --request "Grade 9/architecture/replays/laws_of_motion/publication_target.request.json" --out /tmp/laws-target.json
+      - name: Validate Laws of Motion handoff
+        run: |
+          EXAM=$(ls /tmp/laws-core1/*_Exam_Demand_*.json | head -1)
+          python "Grade 9/Architecture/contracts/v1/validate_handoff.py" \
+            --bundle /tmp/laws-core1/Laws_of_Motion_ISO_Research_Bundle.json \
+            --manifest /tmp/laws-core1/Laws_of_Motion_ISO_Research_Bundle_Manifest.json \
+            --learner "Grade 9/Architecture/replays/laws_of_motion/learner_profile.json" \
+            --target /tmp/laws-target.json \
+            --source-ledger /tmp/laws-core1/Laws_of_Motion_ISO_Source_Ledger.json \
+            --exam-demand "$EXAM"
+      - name: Publish Laws of Motion cold-start Study Guide
+        run: python "Grade 9/skills/grade9-core2-publisher/scripts/run_core2.py" --bundle /tmp/laws-core1/Laws_of_Motion_ISO_Research_Bundle.json --manifest /tmp/laws-core1/Laws_of_Motion_ISO_Research_Bundle_Manifest.json --learner "Grade 9/Architecture/replays/laws_of_motion/learner_profile.json" --target /tmp/laws-target.json --out /tmp/core2-laws --prefix Laws_of_Motion
+      - name: Validate Laws of Motion Core 2 package
+        run: python "Grade 9/skills/grade9-core2-publisher/scripts/validate_core2_package.py" --dir /tmp/core2-laws --prefix Laws_of_Motion
+
+      - name: Build Redox Core 1 replay
+        run: python "Grade 9/Architecture/core1/build_research_package.py" --input "Grade 9/Architecture/replays/redox/research_input.json" --out /tmp/redox-core1
+      - name: Bind Redox publication target
+        run: python "Grade 9/architecture/core2/bind_publication_target.py" --manifest /tmp/redox-core1/Grade10_Redox_Routine_Research_Bundle_Manifest.json --learner "Grade 9/Architecture/replays/redox/learner_profile.json" --request "Grade 9/architecture/replays/redox/publication_target.request.json" --out /tmp/redox-target.json
+      - name: Validate Redox handoff
+        run: python "Grade 9/Architecture/contracts/v1/validate_handoff.py" --bundle /tmp/redox-core1/Grade10_Redox_Routine_Research_Bundle.json --manifest /tmp/redox-core1/Grade10_Redox_Routine_Research_Bundle_Manifest.json --learner "Grade 9/Architecture/replays/redox/learner_profile.json" --target /tmp/redox-target.json --source-ledger /tmp/redox-core1/Grade10_Redox_Routine_Source_Ledger.json
+      - name: Publish Redox cold-start Study Guide
+        run: python "Grade 9/skills/grade9-core2-publisher/scripts/run_core2.py" --bundle /tmp/redox-core1/Grade10_Redox_Routine_Research_Bundle.json --manifest /tmp/redox-core1/Grade10_Redox_Routine_Research_Bundle_Manifest.json --learner "Grade 9/Architecture/replays/redox/learner_profile.json" --target /tmp/redox-target.json --out /tmp/core2-redox --prefix Redox
+      - name: Validate Redox Core 2 package
+        run: python "Grade 9/skills/grade9-core2-publisher/scripts/validate_core2_package.py" --dir /tmp/core2-redox --prefix Redox
+
+      - name: Bind Permutations publication target
+        run: python "Grade 9/architecture/core2/bind_publication_target.py" --manifest "Grade 9/Mathematics/Permutations/Core1/Permutations_Core1_Research_Bundle_Manifest.json" --learner "Grade 9/architecture/replays/permutations/learner_profile.json" --request "Grade 9/architecture/replays/permutations/publication_target.request.json" --out /tmp/permutations-target.json
+      - name: Validate Permutations handoff
+        run: python "Grade 9/Architecture/contracts/v1/validate_handoff.py" --bundle "Grade 9/Mathematics/Permutations/Core1/Permutations_Core1_Research_Bundle.json" --manifest "Grade 9/Mathematics/Permutations/Core1/Permutations_Core1_Research_Bundle_Manifest.json" --learner "Grade 9/architecture/replays/permutations/learner_profile.json" --target /tmp/permutations-target.json --source-ledger "Grade 9/Mathematics/Permutations/Core1/Permutations_Core1_Source_Ledger.json"
+      - name: Publish Permutations cold-start Study Guide
+        run: python "Grade 9/skills/grade9-core2-publisher/scripts/run_core2.py" --bundle "Grade 9/Mathematics/Permutations/Core1/Permutations_Core1_Research_Bundle.json" --manifest "Grade 9/Mathematics/Permutations/Core1/Permutations_Core1_Research_Bundle_Manifest.json" --learner "Grade 9/architecture/replays/permutations/learner_profile.json" --target /tmp/permutations-target.json --out /tmp/core2-permutations --prefix Permutations
+      - name: Validate Permutations Core 2 package
+        run: python "Grade 9/skills/grade9-core2-publisher/scripts/validate_core2_package.py" --dir /tmp/core2-permutations --prefix Permutations
+
+      - name: Run full-pair and B40/B90 final falsifiers
+        run: python "Grade 9/architecture/core2/tests/run_final_falsifiers.py" --out /tmp/core2-final-falsifiers
+
+      - name: Upload Core 2 cold-start review products
+        uses: actions/upload-artifact@v4
+        with:
+          name: core2-v1-cross-subject-replays
+          path: |
+            /tmp/core2-laws/**
+            /tmp/core2-redox/**
+            /tmp/core2-permutations/**
+            /tmp/core2-final-falsifiers/**
+          if-no-files-found: error

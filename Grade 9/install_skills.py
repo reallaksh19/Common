@@ -27,6 +27,7 @@ SKILLS = [
     "grade9-math-core1",
     "grade9-physics",
     "grade9-chemistry",
+    "grade9-core2-publisher",
 ]
 
 

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-publication-manifest.schema.json",
+  "title": "Core2 PublicationManifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "schema_version",
+    "publication_plan_id",
+    "research_bundle_id",
+    "research_package_digest",
+    "learner_profile_id",
+    "publication_target_id",
+    "delivery_contract",
+    "artifacts",
+    "package_digest"
+  ],
+  "properties": {
+    "manifest_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "publication_plan_id": {"type": "string", "minLength": 1},
+    "research_bundle_id": {"type": "string", "minLength": 1},
+    "research_package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "learner_profile_id": {"type": "string", "minLength": 1},
+    "publication_target_id": {"type": "string", "minLength": 1},
+    "delivery_contract": {"enum": ["STUDY_GUIDE_ONLY", "FULL_TOPIC_PAIR", "TRANSFER_ONLY"]},
+    "pair_id": {"type": "string", "minLength": 1},
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "path", "sha256"],
+        "properties": {
+          "role": {"enum": ["PUBLICATION_PLAN", "LEARNING_DESIGN", "PUBLICATION_STRUCTURE", "PHYSICAL_PAGE_MAP", "STUDY_GUIDE_MODEL", "STUDY_GUIDE_MD", "STUDY_GUIDE_PDF", "TRANSFER_BOOK_MODEL", "TRANSFER_BOOK_MD", "TRANSFER_BOOK_PDF", "PUBLICATION_AUDIT", "OTHER"]},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "media_type": {"type": "string"},
+          "bytes": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "release_note": {"type": "string"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"delivery_contract": {"const": "FULL_TOPIC_PAIR"}}, "required": ["delivery_contract"]},
+      "then": {"required": ["pair_id"]}
+    }
+  ]
+}

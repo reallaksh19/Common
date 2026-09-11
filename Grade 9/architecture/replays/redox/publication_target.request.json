@@ -1,0 +1,16 @@
+{
+  "publication_target_id": "PT-G10-CHEM-REDOX-ROUTINE-BMIX-001",
+  "purpose": {
+    "type": "ROUTINE_STUDY",
+    "curriculum_profile_id": "CBSE-SCIENCE-X-CHEMICAL-REACTIONS"
+  },
+  "requested_products": {
+    "study_guide": true,
+    "transfer_book": false
+  },
+  "publication_profile": {
+    "orientation": "AUTO",
+    "answer_separation": true,
+    "grayscale_safe": true
+  }
+}

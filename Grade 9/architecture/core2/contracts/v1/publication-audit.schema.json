@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-publication-audit.schema.json",
+  "title": "Core2 PublicationAudit v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "audit_id",
+    "schema_version",
+    "publication_plan_id",
+    "status",
+    "gates",
+    "pdf_evidence",
+    "command_evidence",
+    "human_visual_review",
+    "warnings"
+  ],
+  "properties": {
+    "audit_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "publication_plan_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PASS", "FAIL", "BLOCKED", "PASS_WITH_WARNINGS"]},
+    "release_state": {"enum": ["AUTOMATED_PASS_HUMAN_REVIEW_PENDING", "AUTOMATED_FAIL", "BLOCKED", "HUMAN_REVIEW_PASS", "HUMAN_REVIEW_FAIL"]},
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core2_preflight",
+        "research_package_digest_binding",
+        "material_traceability",
+        "representation_closure",
+        "product_pair_identity",
+        "appendix_A_B_C",
+        "answer_separation",
+        "internal_links",
+        "external_link_structure",
+        "typography",
+        "notation_probes",
+        "render_bounds",
+        "grayscale_information",
+        "publication_manifest_hash_binding"
+      ],
+      "properties": {
+        "core2_preflight": {"type": "boolean"},
+        "research_package_digest_binding": {"type": "boolean"},
+        "material_traceability": {"type": "boolean"},
+        "representation_closure": {"type": "boolean"},
+        "product_pair_identity": {"type": "boolean"},
+        "product_structure": {"type": "boolean"},
+        "arc_step_order_reconciliation": {"type": "boolean"},
+        "page_intent_reconciliation": {"type": "boolean"},
+        "support_progression_reconciliation": {"type": "boolean"},
+        "attempt_help_solution_order": {"type": "boolean"},
+        "appendix_order_reconciliation": {"type": "boolean"},
+        "navigation_topology": {"type": "boolean"},
+        "physical_page_custody": {"type": "boolean"},
+        "physical_page_morphology": {"type": "boolean"},
+        "badge_mapping": {"type": "boolean"},
+        "appendix_A_B_C": {"type": "boolean"},
+        "answer_separation": {"type": "boolean"},
+        "internal_links": {"type": "boolean"},
+        "external_link_structure": {"type": "boolean"},
+        "typography": {"type": "boolean"},
+        "notation_probes": {"type": "boolean"},
+        "render_bounds": {"type": "boolean"},
+        "grayscale_information": {"type": "boolean"},
+        "publication_manifest_hash_binding": {"type": "boolean"}
+      }
+    },
+    "pdf_evidence": {
+      "type": "array",
+      "items": {"$ref": "core2-publication-audit.schema.json#/$defs/pdf_evidence"}
+    },
+    "command_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runner_sha256", "requirements_sha256", "python_major_minor"],
+      "properties": {
+        "runner_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "requirements_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "python_major_minor": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"},
+        "dependency_versions": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
+    "human_visual_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "minimum_render_dpi", "pdf_sha256s", "all_pages_reviewed"],
+      "properties": {
+        "status": {"enum": ["PENDING", "PASS", "FAIL", "STALE"]},
+        "minimum_render_dpi": {"type": "integer", "minimum": 200},
+        "pdf_sha256s": {"type": "array", "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "uniqueItems": true},
+        "all_pages_reviewed": {"type": "boolean"},
+        "pages_reviewed": {"type": "integer", "minimum": 0},
+        "reviewer": {"type": "string"},
+        "reviewed_at": {"type": "string", "format": "date-time"},
+        "notes": {"type": "string"}
+      }
+    },
+    "counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "warnings": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "pdf_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "path",
+        "sha256",
+        "pages",
+        "min_font_pt",
+        "text_bounds_violations",
+        "internal_links_checked",
+        "broken_internal_links",
+        "external_links_checked",
+        "invalid_external_links",
+        "grayscale_nonneutral_drawings",
+        "missing_required_text",
+        "notation_probes_required",
+        "notation_probes_missing",
+        "answer_leakage_detected"
+      ],
+      "properties": {
+        "role": {"enum": ["STUDY_GUIDE_PDF", "TRANSFER_BOOK_PDF"]},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "pages": {"type": "integer", "minimum": 1},
+        "min_font_pt": {"type": "number", "minimum": 0},
+        "text_bounds_violations": {"type": "integer", "minimum": 0},
+        "internal_links_checked": {"type": "integer", "minimum": 0},
+        "required_internal_links": {"type": "integer", "minimum": 0},
+        "missing_internal_navigation": {"type": "array", "items": {"type": "string"}},
+        "broken_internal_links": {"type": "integer", "minimum": 0},
+        "external_links_checked": {"type": "integer", "minimum": 0},
+        "invalid_external_links": {"type": "integer", "minimum": 0},
+        "grayscale_nonneutral_drawings": {"type": "integer", "minimum": 0},
+        "missing_required_text": {"type": "array", "items": {"type": "string"}},
+        "notation_probes_required": {"type": "array", "items": {"type": "string"}},
+        "notation_probes_missing": {"type": "array", "items": {"type": "string"}},
+        "answer_leakage_detected": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-learning-design.schema.json",
+  "title": "Core2 LearningDesignPlan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "learning_design_id",
+    "schema_version",
+    "publication_plan_id",
+    "research_bundle_id",
+    "research_package_digest",
+    "learner_profile_id",
+    "publication_target_id",
+    "mode",
+    "subject",
+    "topic_id",
+    "purpose_type",
+    "learning_units",
+    "review_requirements"
+  ],
+  "properties": {
+    "learning_design_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "publication_plan_id": {"type": "string", "minLength": 1},
+    "research_bundle_id": {"type": "string", "minLength": 1},
+    "research_package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "learner_profile_id": {"type": "string", "minLength": 1},
+    "publication_target_id": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["ENGINEERING_REPLAY", "MATURE_LEARNER_PRODUCT"]},
+    "subject": {"enum": ["MATHEMATICS", "PHYSICS", "CHEMISTRY"]},
+    "topic_id": {"type": "string", "minLength": 1},
+    "purpose_type": {"type": "string", "minLength": 1},
+    "learning_units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "core2-learning-design.schema.json#/$defs/learning_unit"}
+    },
+    "exam_bridge": {"$ref": "core2-learning-design.schema.json#/$defs/exam_bridge"},
+    "review_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pedagogy_review_required", "subject_review_required", "exact_artifact_binding_required"],
+      "properties": {
+        "pedagogy_review_required": {"type": "boolean"},
+        "subject_review_required": {"type": "boolean"},
+        "exact_artifact_binding_required": {"type": "boolean"}
+      }
+    }
+  },
+  "$defs": {
+    "learning_unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit_id",
+        "concept_ids",
+        "instructional_profile",
+        "research_refs",
+        "learner_capabilities",
+        "prerequisite_decisions",
+        "concept_anchor",
+        "ordinary_language_target",
+        "formal_understanding",
+        "representation_transitions",
+        "misconceptions",
+        "contrasts",
+        "support_progression",
+        "practice_progression",
+        "transfer_design",
+        "completion_probes"
+      ],
+      "properties": {
+        "unit_id": {"type": "string", "minLength": 1},
+        "concept_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "instructional_profile": {"enum": ["FOUNDATION", "BRIDGE", "COMPRESSED", "REFERENCE"]},
+        "research_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "exam_demand_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}, "default": []},
+        "learner_capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "core2-learning-design.schema.json#/$defs/learner_capability"}
+        },
+        "prerequisite_decisions": {
+          "type": "array",
+          "items": {"$ref": "core2-learning-design.schema.json#/$defs/prerequisite_decision"}
+        },
+        "concept_anchor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "description", "learner_job"],
+          "properties": {
+            "kind": {"enum": ["PHYSICAL_SITUATION", "STRUCTURAL_MODEL", "PATTERN", "REPRESENTATION", "CONTRAST", "SYMBOLIC_INSTANCE", "PROCESS"]},
+            "description": {"type": "string", "minLength": 1},
+            "learner_job": {"type": "string", "minLength": 1}
+          }
+        },
+        "ordinary_language_target": {"type": "string", "minLength": 1},
+        "formal_understanding": {"$ref": "core2-learning-design.schema.json#/$defs/formal_understanding"},
+        "representation_transitions": {
+          "type": "array",
+          "items": {"$ref": "core2-learning-design.schema.json#/$defs/representation_transition"}
+        },
+        "misconceptions": {
+          "type": "array",
+          "items": {"$ref": "core2-learning-design.schema.json#/$defs/misconception"}
+        },
+        "contrasts": {
+          "type": "array",
+          "items": {"$ref": "core2-learning-design.schema.json#/$defs/contrast"}
+        },
+        "support_progression": {"$ref": "core2-learning-design.schema.json#/$defs/support_progression"},
+        "practice_progression": {"$ref": "core2-learning-design.schema.json#/$defs/practice_progression"},
+        "transfer_design": {"$ref": "core2-learning-design.schema.json#/$defs/transfer_design"},
+        "completion_probes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "core2-learning-design.schema.json#/$defs/completion_probe"}
+        }
+      }
+    },
+    "learner_capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "type", "required", "success_statement"],
+      "properties": {
+        "capability_id": {"type": "string", "minLength": 1},
+        "type": {"enum": ["RECOGNIZE", "EXPLAIN", "RECONSTRUCT", "APPLY", "MODEL_SELECT", "CONDITION_CHECK", "PREDICT", "REPRESENTATION_TRANSLATE", "MISCONCEPTION_DISCRIMINATE", "COMPARE", "RETRIEVE", "TRANSFER", "DIAGNOSE"]},
+        "required": {"type": "boolean"},
+        "success_statement": {"type": "string", "minLength": 1}
+      }
+    },
+    "prerequisite_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prerequisite_id", "state"],
+      "properties": {
+        "prerequisite_id": {"type": "string", "minLength": 1},
+        "state": {"enum": ["READY", "REPAIR_IN_UNIT", "REPAIR_BEFORE_UNIT", "DEFER_WITH_REASON"]},
+        "repair_target": {"type": "string"},
+        "reason": {"type": "string"}
+      }
+    },
+    "formal_understanding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": {"enum": ["REQUIRED", "NOT_APPLICABLE_WITH_REASON"]},
+        "relation_or_object": {"type": "string", "minLength": 1},
+        "term_origins": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "conditions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "reconstruction_route": {"type": "string", "minLength": 1},
+        "checks": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"state": {"const": "REQUIRED"}}, "required": ["state"]},
+          "then": {"required": ["relation_or_object", "term_origins", "conditions", "reconstruction_route"]}
+        },
+        {
+          "if": {"properties": {"state": {"const": "NOT_APPLICABLE_WITH_REASON"}}, "required": ["state"]},
+          "then": {"required": ["reason"]}
+        }
+      ]
+    },
+    "representation_transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transition_id", "from", "to", "learner_job"],
+      "properties": {
+        "transition_id": {"type": "string", "minLength": 1},
+        "from": {"type": "string", "minLength": 1},
+        "to": {"type": "string", "minLength": 1},
+        "learner_job": {"type": "string", "minLength": 1},
+        "representation_requirement_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "misconception": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["misconception_id", "wrong_model", "why_tempting", "decisive_discriminator", "diagnostic_probe_id", "repair_strategy"],
+      "properties": {
+        "misconception_id": {"type": "string", "minLength": 1},
+        "wrong_model": {"type": "string", "minLength": 1},
+        "why_tempting": {"type": "string", "minLength": 1},
+        "decisive_discriminator": {"type": "string", "minLength": 1},
+        "diagnostic_probe_id": {"type": "string", "minLength": 1},
+        "repair_strategy": {"enum": ["REPRESENTATION_CONTRAST", "COUNTEREXAMPLE", "PREREQUISITE_REPAIR", "RECONSTRUCTION", "CASE_COMPARISON", "EXPLICIT_MODEL_BOUNDARY"]}
+      }
+    },
+    "contrast": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contrast_id", "case_a", "case_b", "decisive_difference"],
+      "properties": {
+        "contrast_id": {"type": "string", "minLength": 1},
+        "case_a": {"type": "string", "minLength": 1},
+        "case_b": {"type": "string", "minLength": 1},
+        "decisive_difference": {"type": "string", "minLength": 1}
+      }
+    },
+    "support_stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "support_features", "removed_since_previous"],
+      "properties": {
+        "state": {"enum": ["PRESENT", "NOT_REQUIRED_WITH_REASON"]},
+        "support_features": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["MODEL_SELECTED", "REPRESENTATION_PROVIDED", "FIRST_STEP_PROVIDED", "INTERMEDIATE_STEPS_PROVIDED", "CONDITION_CUE", "ERROR_CHECK_CUE", "METHOD_MENU", "PARTIAL_WORKSPACE_STRUCTURE"]}
+        },
+        "removed_since_previous": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["MODEL_SELECTED", "REPRESENTATION_PROVIDED", "FIRST_STEP_PROVIDED", "INTERMEDIATE_STEPS_PROVIDED", "CONDITION_CUE", "ERROR_CHECK_CUE", "METHOD_MENU", "PARTIAL_WORKSPACE_STRUCTURE"]}
+        },
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"state": {"const": "NOT_REQUIRED_WITH_REASON"}}, "required": ["state"]},
+          "then": {"required": ["reason"]}
+        }
+      ]
+    },
+    "support_progression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["worked", "guided_1", "guided_2", "independent"],
+      "properties": {
+        "worked": {"$ref": "core2-learning-design.schema.json#/$defs/support_stage"},
+        "guided_1": {"$ref": "core2-learning-design.schema.json#/$defs/support_stage"},
+        "guided_2": {"$ref": "core2-learning-design.schema.json#/$defs/support_stage"},
+        "independent": {"$ref": "core2-learning-design.schema.json#/$defs/support_stage"}
+      }
+    },
+    "practice_progression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["worked_example_id", "guided_1_id", "guided_2_id", "independent_id"],
+      "properties": {
+        "worked_example_id": {"type": "string", "minLength": 1},
+        "guided_1_id": {"type": "string", "minLength": 1},
+        "guided_2_id": {"type": "string", "minLength": 1},
+        "independent_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "transfer_design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "changed_dimensions", "non_isomorphic_to_worked"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "source_learning_example_id": {"type": "string", "minLength": 1},
+        "transfer_type": {"enum": ["NEAR_TRANSFER", "REPRESENTATION_SHIFT", "REVERSE_REASONING", "MODEL_SELECTION", "CONDITION_CHANGE", "MULTI_CONCEPT", "HIDDEN_PREREQUISITE", "NOVEL_CONSTRAINT", "COUNTEREXAMPLE", "FAR_CONTEXT"]},
+        "changed_dimensions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["NUMBER_CHANGE", "CONTEXT_CHANGE", "REPRESENTATION_SHIFT", "REVERSE_REASONING", "MODEL_SELECTION", "CONDITION_CHANGE", "MULTI_CONCEPT", "HIDDEN_PREREQUISITE", "NOVEL_CONSTRAINT", "COUNTEREXAMPLE", "FAR_CONTEXT"]}
+        },
+        "non_isomorphic_to_worked": {"type": "boolean"},
+        "question_family_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"required": {"const": true}}, "required": ["required"]},
+          "then": {
+            "required": ["source_learning_example_id", "transfer_type", "question_family_refs"],
+            "properties": {
+              "changed_dimensions": {"minItems": 1},
+              "non_isomorphic_to_worked": {"const": true}
+            }
+          }
+        }
+      ]
+    },
+    "completion_probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["probe_id", "capability_refs", "prompt_intent", "success_evidence"],
+      "properties": {
+        "probe_id": {"type": "string", "minLength": 1},
+        "capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "prompt_intent": {"type": "string", "minLength": 1},
+        "success_evidence": {"type": "string", "minLength": 1}
+      }
+    },
+    "exam_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exam_demand_profile_id", "question_families"],
+      "properties": {
+        "exam_demand_profile_id": {"type": "string", "minLength": 1},
+        "question_families": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["question_family_id", "recognition_requirements", "hidden_prerequisite_ids", "failure_models", "learning_unit_refs"],
+            "properties": {
+              "question_family_id": {"type": "string", "minLength": 1},
+              "recognition_requirements": {"type": "array", "items": {"type": "string", "minLength": 1}},
+              "hidden_prerequisite_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+              "failure_models": {"type": "array", "items": {"type": "string", "minLength": 1}},
+              "learning_unit_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-transfer-book.schema.json",
+  "title": "Core2 TransferBookPublicationModel v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publication_id",
+    "schema_version",
+    "publication_plan_id",
+    "product_identity",
+    "title",
+    "question_evidence_ledger_id",
+    "sets",
+    "questions",
+    "solutions"
+  ],
+  "properties": {
+    "publication_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "publication_plan_id": {"type": "string", "minLength": 1},
+    "product_identity": {"$ref": "product-identity.schema.json"},
+    "title": {"type": "string", "minLength": 1},
+    "subtitle": {"type": "string"},
+    "question_evidence_ledger_id": {"type": "string", "minLength": 1},
+    "sets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "core2-transfer-book.schema.json#/$defs/set"}
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "core2-transfer-book.schema.json#/$defs/question"}
+    },
+    "solutions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "core2-transfer-book.schema.json#/$defs/solution"}
+    },
+    "solution_section_title": {"type": "string", "default": "Complete Solutions"}
+  },
+  "$defs": {
+    "set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["set_id", "mode", "question_ids", "concept_hidden_on_attempt", "task_hidden_on_attempt", "difficulty_hidden_on_attempt"],
+      "properties": {
+        "set_id": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["ASSIMILATION", "MIXED_TRANSFER"]},
+        "question_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "concept_hidden_on_attempt": {"type": "boolean"},
+        "task_hidden_on_attempt": {"type": "boolean"},
+        "difficulty_hidden_on_attempt": {"type": "boolean"},
+        "diagnosis": {"$ref": "core2-transfer-book.schema.json#/$defs/diagnosis"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"mode": {"const": "MIXED_TRANSFER"}}, "required": ["mode"]},
+          "then": {
+            "required": ["diagnosis"],
+            "properties": {
+              "concept_hidden_on_attempt": {"const": true},
+              "task_hidden_on_attempt": {"const": true},
+              "difficulty_hidden_on_attempt": {"const": true}
+            }
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reveal_after_solutions", "rows"],
+      "properties": {
+        "reveal_after_solutions": {"const": true},
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["question_id", "primary_concept_id", "recognition_route", "repair_target"],
+            "properties": {
+              "question_id": {"type": "string", "minLength": 1},
+              "primary_concept_id": {"type": "string", "minLength": 1},
+              "recognition_route": {"type": "string", "minLength": 1},
+              "repair_target": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question_id",
+        "occurrence_id",
+        "question_content_id",
+        "research_refs",
+        "primary_concept_id",
+        "supporting_concept_ids",
+        "concept_labels",
+        "stem",
+        "dependency_class",
+        "task",
+        "difficulty",
+        "transfer",
+        "source",
+        "attempt",
+        "required_hint_depth",
+        "hints",
+        "solution_id"
+      ],
+      "properties": {
+        "question_id": {"type": "string", "minLength": 1},
+        "occurrence_id": {"type": "string", "minLength": 1},
+        "question_content_id": {"type": "string", "minLength": 1},
+        "research_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "primary_concept_id": {"type": "string", "minLength": 1},
+        "supporting_concept_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "concept_labels": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["primary", "supports"],
+          "properties": {
+            "primary": {"type": "string", "minLength": 1},
+            "supports": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          }
+        },
+        "stem": {"type": "string", "minLength": 1},
+        "options": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "dependency_class": {"enum": ["NONE", "GRAPH", "DIAGRAM", "TABLE", "TIMELINE", "NUMBER_LINE", "OPTION_FIGURES", "STATEMENT_SET", "MIXED"]},
+        "representation_instance_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "task": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["machine_value", "label"],
+          "properties": {
+            "machine_value": {"type": "string", "minLength": 1},
+            "label": {"type": "string", "minLength": 1},
+            "badge_id": {"type": "string", "minLength": 1}
+          }
+        },
+        "difficulty": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["normalized_band", "learner_label", "basis"],
+          "properties": {
+            "source_code": {"type": ["string", "null"]},
+            "normalized_band": {"enum": ["D1", "D2", "D3", "D4", "D5"]},
+            "learner_label": {"enum": ["EASY", "MEDIUM", "HARD", "CHALLENGE"]},
+            "basis": {"enum": ["SOURCE_MAPPING", "EDITORIAL_TASK_DEMAND", "EXPERT_CALIBRATED", "EMPIRICAL"]},
+            "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+            "badge_id": {"type": "string", "minLength": 1}
+          },
+          "allOf": [
+            {
+              "if": {"properties": {"basis": {"const": "SOURCE_MAPPING"}}, "required": ["basis"]},
+              "then": {"required": ["source_code"]}
+            }
+          ]
+        },
+        "transfer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["class", "label"],
+          "properties": {
+            "class": {"enum": ["DIRECT", "REPRESENTATION_SHIFT", "MULTI_CONCEPT", "FAR_TRANSFER", "CUMULATIVE"]},
+            "label": {"type": "string", "minLength": 1},
+            "badge_id": {"type": "string", "minLength": 1}
+          }
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_id", "source_label", "source_link", "locator_label"],
+          "properties": {
+            "source_id": {"type": "string", "minLength": 1},
+            "source_label": {"type": "string", "minLength": 1},
+            "source_link": {"type": "string", "format": "uri"},
+            "locator_label": {"type": "string", "minLength": 1},
+            "exam_label": {"type": "string"},
+            "year": {"type": ["string", "integer", "null"]},
+            "shift": {"type": ["string", "null"]},
+            "source_badge_id": {"type": "string", "minLength": 1}
+          }
+        },
+        "attempt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "workspace"],
+          "properties": {
+            "mode": {"const": "H0"},
+            "workspace": {"type": "string", "minLength": 1},
+            "representation_instance_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          }
+        },
+        "required_hint_depth": {"enum": ["H0", "H1", "H2", "H3"]},
+        "hints": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {"$ref": "core2-transfer-book.schema.json#/$defs/hint"}
+        },
+        "concept_helper": {"type": "string", "minLength": 1},
+        "misconception_watch": {"type": "string", "minLength": 1},
+        "repair": {"$ref": "core2-transfer-book.schema.json#/$defs/repair"},
+        "solution_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier", "role", "content", "research_refs"],
+      "properties": {
+        "tier": {"enum": ["H1", "H2", "H3"]},
+        "role": {"enum": ["NOTICE", "MODEL", "START"]},
+        "content": {"type": "string", "minLength": 1},
+        "research_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "target"],
+      "properties": {
+        "mode": {"enum": ["LOCAL_LESSON", "EXTERNAL_COMPANION", "SELF_CONTAINED"]},
+        "target": {"type": "string", "minLength": 1},
+        "companion_link": {"type": "string", "format": "uri"},
+        "companion_locator": {"type": "string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"mode": {"const": "EXTERNAL_COMPANION"}}, "required": ["mode"]},
+          "then": {"required": ["companion_link", "companion_locator"]}
+        }
+      ]
+    },
+    "solution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "solution_id",
+        "question_id",
+        "recap",
+        "why",
+        "method",
+        "answer_check",
+        "concept_to_keep",
+        "return_target",
+        "research_refs"
+      ],
+      "properties": {
+        "solution_id": {"type": "string", "minLength": 1},
+        "question_id": {"type": "string", "minLength": 1},
+        "recap": {"type": "string", "minLength": 1},
+        "representation_instance_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "why": {"type": "string", "minLength": 1},
+        "method": {"type": "string", "minLength": 1},
+        "answer_check": {"type": "string", "minLength": 1},
+        "concept_to_keep": {"type": "string", "minLength": 1},
+        "return_target": {"type": "string", "minLength": 1},
+        "research_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  }
+}

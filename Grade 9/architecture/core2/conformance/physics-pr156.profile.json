@@ -1,0 +1,61 @@
+{
+  "profile_id": "CORE2-PHYSICS-PR156-V1",
+  "subject": "PHYSICS",
+  "inherits_from": "PR156",
+  "delivery_contract": "FULL_TOPIC_PAIR",
+  "required_products": ["CORE_STUDY_GUIDE", "EXAMSIDE_SOLUTION_TRANSFER"],
+  "required_appendices": {
+    "A": "CORE_PRACTICE",
+    "B": "CORE_SOLUTIONS",
+    "C": "PRINTABLE_HANDOUT"
+  },
+  "study_guide_structure_requirements": {
+    "publication_structure_required": true,
+    "product_first": true,
+    "one_cognitive_job_per_page_intent": true,
+    "new_relation_requires_model_or_notice_before_build": true,
+    "bridge_foundation_support_progression": ["WORKED_EXAMPLE", "GUIDED_1", "GUIDED_2_FADED", "INDEPENDENT_TRANSFER"],
+    "high_baseline_may_compress_support_with_reason": true,
+    "retrieval_check_required": true,
+    "attempt_before_help": true,
+    "static_hint_delivery": "SEPARATE_HELP_SECTION",
+    "bidirectional_navigation": true
+  },
+  "transfer_question_requirements": [
+    "H0_ATTEMPT_FIRST",
+    "H1_NOTICE",
+    "H2_MODEL",
+    "H3_START_BY_REQUIRED_DEPTH",
+    "PRIMARY_SUPPORTS_HIERARCHY",
+    "SOURCE_LINK_AND_LOCATOR",
+    "DIFFICULTY_PROVENANCE",
+    "TRANSFER_SEPARATE_FROM_DIFFICULTY",
+    "COMPLETE_ASSIMILATION_SOLUTION",
+    "MIXED_TRANSFER_CONCEALMENT_AND_DIAGNOSIS",
+    "REPAIR_ROUTE",
+    "ATTEMPTS_BEFORE_OPTIONAL_HELP",
+    "OPTIONAL_HELP_SEPARATE_IN_STATIC_PDF",
+    "QUESTION_HINT_SOLUTION_RETURN_NAVIGATION"
+  ],
+  "representation_policy": {
+    "upstream_semantic_requirement_required": true,
+    "unsupported_blocking_requirement": "BLOCK",
+    "required_label_closure": true,
+    "source_dependent_options_figures_tables_must_travel": true
+  },
+  "automated_pdf_gates": {
+    "min_font_pt": 7.5,
+    "bounds": true,
+    "internal_links": true,
+    "external_link_structure": true,
+    "answer_separation": true,
+    "grayscale_information": true,
+    "notation_probes": true
+  },
+  "human_review": {
+    "required": true,
+    "minimum_render_dpi": 200,
+    "all_pages": true,
+    "bind_exact_pdf_hashes": true
+  }
+}

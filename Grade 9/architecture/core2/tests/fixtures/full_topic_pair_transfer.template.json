@@ -1,0 +1,133 @@
+{
+  "publication_id": "TB-FULLPAIR-TEMPLATE",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-FULLPAIR-TEMPLATE",
+  "product_identity": {
+    "product_id": "TB-FULLPAIR-TEMPLATE",
+    "delivery_contract": "FULL_TOPIC_PAIR",
+    "role": "EXAMSIDE_SOLUTION_TRANSFER",
+    "pair_id": "PAIR-FULLPAIR-TEMPLATE",
+    "companion_product_id": "SG-FULLPAIR-TEMPLATE"
+  },
+  "title": "Force and Laws of Motion · Solution & Transfer Book",
+  "subtitle": "Repository-owned full-pair integration falsifier",
+  "question_evidence_ledger_id": "QEL-G9-PHY-FULLPAIR-001",
+  "sets": [
+    {
+      "set_id": "SET-FULLPAIR-ASSIM-001",
+      "mode": "ASSIMILATION",
+      "question_ids": ["Q-G9-PHY-FULLPAIR-001"],
+      "concept_hidden_on_attempt": false,
+      "task_hidden_on_attempt": false,
+      "difficulty_hidden_on_attempt": false
+    },
+    {
+      "set_id": "SET-FULLPAIR-MIXED-001",
+      "mode": "MIXED_TRANSFER",
+      "question_ids": ["Q-G9-PHY-FULLPAIR-002"],
+      "concept_hidden_on_attempt": true,
+      "task_hidden_on_attempt": true,
+      "difficulty_hidden_on_attempt": true,
+      "diagnosis": {
+        "reveal_after_solutions": true,
+        "rows": [
+          {
+            "question_id": "Q-G9-PHY-FULLPAIR-002",
+            "primary_concept_id": "PHY-G9-NEWTON-LAW-2",
+            "recognition_route": "Combine the horizontal forces into the net force on the selected object before applying Newton's second law.",
+            "repair_target": "Core Study Guide · PHY-G9-NEWTON-LAW-2"
+          }
+        ]
+      }
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "Q-G9-PHY-FULLPAIR-001",
+      "occurrence_id": "QO-G9-PHY-FULLPAIR-001",
+      "question_content_id": "QC-G9-PHY-FULLPAIR-001",
+      "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"],
+      "primary_concept_id": "PHY-G9-NEWTON-LAW-2",
+      "supporting_concept_ids": ["PHY-G9-SYSTEM-REPRESENTATION"],
+      "concept_labels": {
+        "primary": "PRIMARY · Newton's second law",
+        "supports": ["SUPPORTS · selected-system representation"]
+      },
+      "stem": "A 2 kg block on a frictionless horizontal surface has a 6 N horizontal force to the right. What is its acceleration?",
+      "dependency_class": "NONE",
+      "task": {"machine_value": "APPLY", "label": "Apply"},
+      "difficulty": {"source_code": null, "normalized_band": "D2", "learner_label": "MEDIUM", "basis": "EDITORIAL_TASK_DEMAND", "evidence_refs": ["R-PHY-LM-003", "R-PHY-LM-005"]},
+      "transfer": {"class": "DIRECT", "label": "Direct"},
+      "source": {
+        "source_id": "SRC-REPO-CORE2-FULLPAIR-QUESTIONS",
+        "source_label": "Repository-owned integration fixture",
+        "source_link": "https://github.com/reallaksh19/Common/blob/architecture/core2-publisher-concept-note-20260910/Grade%209/architecture/core2/tests/fixtures/full_topic_pair_questions.md",
+        "locator_label": "Q1"
+      },
+      "attempt": {"mode": "H0", "workspace": "Identify the selected system, write the governing relation, then solve with direction and units."},
+      "required_hint_depth": "H3",
+      "hints": [
+        {"tier": "H1", "role": "NOTICE", "content": "Notice that the given horizontal force is the net horizontal force on the selected block.", "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"]},
+        {"tier": "H2", "role": "MODEL", "content": "Use the Grade 9 Newton's-second-law model F_net = m a for the selected block.", "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"]},
+        {"tier": "H3", "role": "START", "content": "Start from a = F_net / m, then substitute 6 N and 2 kg.", "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"]}
+      ],
+      "repair": {"mode": "LOCAL_LESSON", "target": "Core Study Guide · PHY-G9-NEWTON-LAW-2"},
+      "solution_id": "SOL-G9-PHY-FULLPAIR-001"
+    },
+    {
+      "question_id": "Q-G9-PHY-FULLPAIR-002",
+      "occurrence_id": "QO-G9-PHY-FULLPAIR-002",
+      "question_content_id": "QC-G9-PHY-FULLPAIR-002",
+      "research_refs": ["R-PHY-LM-001", "R-PHY-LM-003", "R-PHY-LM-005"],
+      "primary_concept_id": "PHY-G9-NEWTON-LAW-2",
+      "supporting_concept_ids": ["PHY-G9-FORCE-VECTOR", "PHY-G9-SYSTEM-REPRESENTATION"],
+      "concept_labels": {
+        "primary": "PRIMARY · Newton's second law",
+        "supports": ["SUPPORTS · force direction", "SUPPORTS · selected-system representation"]
+      },
+      "stem": "Two horizontal forces, 10 N right and 4 N left, act on a 2 kg object. Determine the acceleration and direction.",
+      "dependency_class": "NONE",
+      "task": {"machine_value": "TRANSFER", "label": "Transfer"},
+      "difficulty": {"source_code": null, "normalized_band": "D3", "learner_label": "HARD", "basis": "EDITORIAL_TASK_DEMAND", "evidence_refs": ["R-PHY-LM-001", "R-PHY-LM-003", "R-PHY-LM-005"]},
+      "transfer": {"class": "MULTI_CONCEPT", "label": "Multi-concept"},
+      "source": {
+        "source_id": "SRC-REPO-CORE2-FULLPAIR-QUESTIONS",
+        "source_label": "Repository-owned integration fixture",
+        "source_link": "https://github.com/reallaksh19/Common/blob/architecture/core2-publisher-concept-note-20260910/Grade%209/architecture/core2/tests/fixtures/full_topic_pair_questions.md",
+        "locator_label": "Q2"
+      },
+      "attempt": {"mode": "H0", "workspace": "Identify the governing model without a concept cue. Resolve direction before calculating acceleration."},
+      "required_hint_depth": "H2",
+      "hints": [
+        {"tier": "H1", "role": "NOTICE", "content": "The two horizontal forces oppose each other, so direction matters before magnitudes are combined.", "research_refs": ["R-PHY-LM-001", "R-PHY-LM-005"]},
+        {"tier": "H2", "role": "MODEL", "content": "Find the net force on the selected object, then apply F_net = m a.", "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"]}
+      ],
+      "repair": {"mode": "SELF_CONTAINED", "target": "Re-read the solution's force-direction and model-selection steps."},
+      "solution_id": "SOL-G9-PHY-FULLPAIR-002"
+    }
+  ],
+  "solutions": [
+    {
+      "solution_id": "SOL-G9-PHY-FULLPAIR-001",
+      "question_id": "Q-G9-PHY-FULLPAIR-001",
+      "recap": "The selected block has mass 2 kg and a net horizontal force of 6 N to the right.",
+      "why": "Newton's second law connects the net force on the selected system to its mass and acceleration.",
+      "method": "Use F_net = m a. Rearrange to a = F_net / m and substitute 6 N / 2 kg = 3 m/s^2.",
+      "answer_check": "The acceleration is 3 m/s^2 to the right. Its direction matches the net force, and the units reduce to m/s^2.",
+      "concept_to_keep": "Fix the selected system and the net force before substituting into Newton's second law.",
+      "return_target": "Q-G9-PHY-FULLPAIR-001",
+      "research_refs": ["R-PHY-LM-003", "R-PHY-LM-005"]
+    },
+    {
+      "solution_id": "SOL-G9-PHY-FULLPAIR-002",
+      "question_id": "Q-G9-PHY-FULLPAIR-002",
+      "recap": "The selected object has 10 N to the right and 4 N to the left, with mass 2 kg.",
+      "why": "The opposing forces must first be combined as directed quantities; Newton's second law then uses that net force.",
+      "method": "Take right as positive. The net force is 10 N - 4 N = 6 N to the right. Then a = F_net / m = 6 N / 2 kg = 3 m/s^2.",
+      "answer_check": "The acceleration is 3 m/s^2 to the right. The direction agrees with the larger force and the net-force calculation.",
+      "concept_to_keep": "Direction is part of the force model; combine forces before applying the acceleration relation.",
+      "return_target": "Q-G9-PHY-FULLPAIR-002",
+      "research_refs": ["R-PHY-LM-001", "R-PHY-LM-003", "R-PHY-LM-005"]
+    }
+  ]
+}

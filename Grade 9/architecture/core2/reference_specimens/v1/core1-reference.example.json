@@ -1,0 +1,84 @@
+{
+  "specimen_metadata": {
+    "specimen_id": "REF-CORE1-MOTION-V3",
+    "artifact_class": "REFERENCE_EXAMPLE",
+    "placeholder_policy": "NO_PLACEHOLDERS_IN_MATERIAL_FIELDS",
+    "authority_status": "ILLUSTRATIVE_REFERENCE_ONLY",
+    "normative_contract": false,
+    "field_state_legend": {
+      "REFERENCE_EXAMPLE": "Concrete internally coherent example used to demonstrate the contract.",
+      "NOT_EXERCISED": "Supported feature intentionally omitted from this miniature; not equivalent to PASS.",
+      "PARTIAL": "Part of the invariant is demonstrated, but full production closure is not proven.",
+      "PLACEHOLDER": "Forbidden for material truth/evidence fields."
+    }
+  },
+  "research_bundle": {
+    "research_bundle_id": "RB-REF-PHY-MOTION-V3",
+    "project": {"grade": 9, "subject": "PHYSICS", "topic": "Motion reference miniature"},
+    "scope_graph": {
+      "included_concepts": ["PHY-REF-POSITION", "PHY-REF-DISPLACEMENT", "PHY-REF-VT-SIGNED-AREA"],
+      "excluded_concepts": ["PHY-REF-CALCULUS-KINEMATICS"],
+      "prerequisite_edges": [
+        {"from": "PHY-REF-SIGNED-DIRECTION", "to": "PHY-REF-DISPLACEMENT"},
+        {"from": "PHY-REF-GRAPH-AXES", "to": "PHY-REF-VT-SIGNED-AREA"}
+      ]
+    },
+    "research_claims": [
+      {
+        "claim_id": "R-MOT-001",
+        "statement": "Displacement is final position minus initial position on a declared one-dimensional axis.",
+        "conditions": ["A common frame and axis convention are declared."],
+        "edge_cases": ["Different paths may have the same displacement if endpoints match."],
+        "evidence_refs": [{"source_id": "SRC-REF-MOTION-001", "locator": {"section": "Claim A"}}]
+      },
+      {
+        "claim_id": "R-MOT-002",
+        "statement": "For a velocity-time graph, signed area over a time interval represents displacement over that interval.",
+        "conditions": ["Velocity and time axes are identified and the velocity sign convention is preserved."],
+        "edge_cases": ["Area below the time axis contributes negative displacement."],
+        "evidence_refs": [{"source_id": "SRC-REF-MOTION-001", "locator": {"section": "Claim B"}}]
+      }
+    ],
+    "representation_requirements": [
+      {
+        "representation_requirement_id": "REP-MOT-NUMBERLINE-001",
+        "representation_type": "NUMBER_LINE",
+        "required_labels": ["start", "finish", "positive direction"],
+        "semantic_requirements": ["initial/final identity preserved", "endpoint-change sign preserved"],
+        "research_refs": ["R-MOT-001"]
+      },
+      {
+        "representation_requirement_id": "REP-MOT-VT-001",
+        "representation_type": "XY_GRAPH",
+        "required_labels": ["time", "velocity", "zero"],
+        "semantic_requirements": ["axis identity preserved", "positive/negative area sign preserved"],
+        "research_refs": ["R-MOT-002"]
+      }
+    ],
+    "formal_objects": [{"formal_object_id": "F-MOT-DX-001", "kind": "EQUATION", "expression": "displacement = final position - initial position", "research_refs": ["R-MOT-001"]}],
+    "worked_reasoning": [
+      {"worked_reasoning_id": "WR-MOT-001", "summary": "Start at -2 m and finish at +7 m: displacement = 7 - (-2) = +9 m.", "research_refs": ["R-MOT-001"]},
+      {"worked_reasoning_id": "WR-MOT-002", "summary": "A velocity-time graph with +12 m signed area and -5 m signed area has net displacement +7 m.", "research_refs": ["R-MOT-002"]}
+    ],
+    "misconceptions": [
+      {"misconception_id": "MIS-MOT-001", "wrong_model": "distance and displacement are always equal", "repair_logic": "compare two different paths with identical endpoints"},
+      {"misconception_id": "MIS-MOT-002", "wrong_model": "final graph height equals displacement", "repair_logic": "distinguish instantaneous velocity from accumulated signed area"}
+    ]
+  },
+  "source_ledger": {
+    "source_ledger_id": "SL-REF-MOTION-V3",
+    "sources": [{"source_id": "SRC-REF-MOTION-001", "provider": "Reference specimen", "source_type": "REPOSITORY_OWNED_REFERENCE", "authority_level": "REFERENCE_SPECIMEN_ONLY", "verification_status": "VERIFIED_FOR_SPECIMEN", "rights": {"status": "REPRODUCTION_ALLOWED", "basis": "Reference specimen content created for architecture demonstration."}}]
+  },
+  "manifest": {
+    "manifest_id": "RBM-REF-PHY-MOTION-V3",
+    "research_bundle_id": "RB-REF-PHY-MOTION-V3",
+    "semantic_digest": "04b9e27db844bf3d35586aa08278ca86ab936d70ac51294abefc6adef09af89f",
+    "package_digest": "82f00e72c2c8b08316e50b12c4fd4cec9bee7b97ee537a59633d78345f700e68",
+    "specimen_state": "REFERENCE_EXAMPLE"
+  },
+  "not_exercised": [
+    {"feature": "EXTERNAL_QUESTION_CORPUS", "state": "NOT_EXERCISED", "reason": "This miniature uses repository-owned reference questions only."},
+    {"feature": "EXAM_DEMAND_PROFILE", "state": "NOT_EXERCISED", "reason": "No exam-completeness claim is made."},
+    {"feature": "SOURCE_CROP_RIGHTS_ROUTE", "state": "NOT_EXERCISED", "reason": "No third-party source crop is used."}
+  ]
+}

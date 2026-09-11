@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9–11 Core (2) Publisher"
+  short_description: "Turns a frozen Core (1) research package into learner-facing study and transfer publications with explicit learning design, traceable representations and QA."
+  default_prompt: "Use $grade9-core2-publisher to validate the frozen Core (1) hand-off. Read references/learning-design-contract.md before authoring. For MATURE_LEARNER_PRODUCT, author and validate a LearningDesignPlan before learner semantic models or PublicationStructure; prove required learner-capability coverage, real support fading, meaningful transfer and any ExamDemand learning bridge. Generic auto-generated connective prose is engineering-replay evidence only, not mature pedagogy. Preserve the Core (1) evidence boundary and fail back with CORE1_RESEARCH_GAP instead of inventing missing subject truth."

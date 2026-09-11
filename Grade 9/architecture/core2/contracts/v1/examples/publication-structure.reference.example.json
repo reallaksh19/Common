@@ -1,0 +1,87 @@
+{
+  "publication_structure_id": "PS-REF-PHY-MOTION-B90",
+  "schema_version": "1.0.0",
+  "publication_plan_id": "PP-REF-PHY-MOTION-B90",
+  "research_bundle_id": "RB-REF-PHY-MOTION-001",
+  "research_package_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "learner_profile_id": "LP-REF-PHY-MOTION-B90",
+  "structure_profile": "PHYSICS_PR156",
+  "study_guide": {
+    "product_id": "SG-REF-PHY-MOTION-B90",
+    "product_first": true,
+    "learning_units": [
+      {
+        "unit_id": "U1-DISPLACEMENT",
+        "concept_ids": ["PHY-MOTION-DISPLACEMENT"],
+        "instructional_profile": "REFERENCE",
+        "cognitive_job": "Reconstruct displacement from a contrast between equal path lengths and different endpoint changes.",
+        "arc_steps": [
+          {"step_id":"U1-S1","role":"VARIANT_CONTRAST","content_refs":["C-U1-TWO-JOURNEYS"],"representation_instance_ids":["RI-U1-NUMBERLINE"],"support_state":"REFERENCE"},
+          {"step_id":"U1-S2","role":"NOTICE","content_refs":["C-U1-NOTICE"],"support_state":"REFERENCE"},
+          {"step_id":"U1-S3","role":"BUILD_RELATION","content_refs":["F-U1-DX"],"support_state":"REFERENCE"},
+          {"step_id":"U1-S4","role":"MODEL_BOUNDARY","content_refs":["C-U1-ORIGIN-AXIS"],"support_state":"REFERENCE"},
+          {"step_id":"U1-S5","role":"INDEPENDENT_TRANSFER","content_refs":["Q-U1-T1"],"support_state":"INDEPENDENT"},
+          {"step_id":"U1-S6","role":"RETRIEVAL_CHECK","content_refs":["Q-U1-CHECK"],"support_state":"INDEPENDENT"}
+        ],
+        "support_progression": {
+          "worked_example": {"state":"NOT_REQUIRED_WITH_REASON","reason":"REFERENCE profile begins from a contrast and asks the learner to reconstruct the rule."},
+          "guided_1": {"state":"NOT_REQUIRED_WITH_REASON","reason":"High-baseline learner does not need a fully guided attempt for this micro-unit."},
+          "guided_2_faded": {"state":"NOT_REQUIRED_WITH_REASON","reason":"Independent contrast and transfer replace staged fading for this micro-unit."},
+          "independent_transfer": {"state":"PRESENT"}
+        }
+      },
+      {
+        "unit_id": "U2-VT-AREA",
+        "concept_ids": ["PHY-MOTION-VT-AREA"],
+        "instructional_profile": "REFERENCE",
+        "cognitive_job": "Use signed graph area as accumulated movement, then test the model at a zero crossing and on a tempting shortcut.",
+        "arc_steps": [
+          {"step_id":"U2-S1","role":"DEPICTION","content_refs":["C-U2-GRAPH"],"representation_instance_ids":["RI-U2-VT-GRAPH"],"support_state":"REFERENCE"},
+          {"step_id":"U2-S2","role":"NOTICE","content_refs":["C-U2-AREA-SIGN"],"support_state":"REFERENCE"},
+          {"step_id":"U2-S3","role":"BUILD_RELATION","content_refs":["F-U2-AREA"],"support_state":"REFERENCE"},
+          {"step_id":"U2-S4","role":"VARIANT_CONTRAST","content_refs":["C-U2-ZERO-CROSSING"],"support_state":"REFERENCE"},
+          {"step_id":"U2-S5","role":"MODEL_BOUNDARY","content_refs":["C-U2-FINAL-HEIGHT-TRAP"],"support_state":"REFERENCE"},
+          {"step_id":"U2-S6","role":"INDEPENDENT_TRANSFER","content_refs":["Q-U2-T1"],"support_state":"INDEPENDENT"},
+          {"step_id":"U2-S7","role":"RETRIEVAL_CHECK","content_refs":["Q-U2-CHECK"],"support_state":"INDEPENDENT"}
+        ],
+        "support_progression": {
+          "worked_example": {"state":"NOT_REQUIRED_WITH_REASON","reason":"REFERENCE profile uses a compact model reconstruction instead of a fully worked routine example."},
+          "guided_1": {"state":"NOT_REQUIRED_WITH_REASON","reason":"The learner is expected to choose the area decomposition independently."},
+          "guided_2_faded": {"state":"NOT_REQUIRED_WITH_REASON","reason":"No staged worksheet is required for this high-baseline micro-unit."},
+          "independent_transfer": {"state":"PRESENT"}
+        }
+      }
+    ],
+    "practice_topology": {
+      "attempt_before_help": true,
+      "progressive_hints": true,
+      "solutions_after_attempts": true,
+      "hint_delivery": "SEPARATE_HELP_SECTION"
+    },
+    "appendix_order": ["A", "B", "C"],
+    "appendix_B_sections": ["OPTIONAL_HINTS", "FULL_SOLUTIONS"],
+    "page_intents": [
+      {"page_intent_id":"P1","cognitive_job":"Compare equal path lengths with different endpoint changes","content_refs":["C-U1-TWO-JOURNEYS","F-U1-DX"],"layout_relation":"CASE_A_VS_B"},
+      {"page_intent_id":"P2","cognitive_job":"Read signed graph area as accumulated movement","content_refs":["C-U2-GRAPH","F-U2-AREA"],"layout_relation":"REPRESENTATION_VS_REASONING"},
+      {"page_intent_id":"P3","cognitive_job":"Test sign change and reject a final-height shortcut","content_refs":["C-U2-ZERO-CROSSING","C-U2-FINAL-HEIGHT-TRAP","Q-U2-T1"],"layout_relation":"EXAMPLE_VS_RULE"}
+    ],
+    "navigation": {
+      "question_to_hint": true,
+      "question_to_solution": true,
+      "solution_to_question": true,
+      "solution_to_lesson": true
+    }
+  },
+  "transfer_book": {
+    "product_id": "TB-REF-PHY-MOTION-B90",
+    "section_order": ["ATTEMPTS", "OPTIONAL_HELP", "COMPLETE_SOLUTIONS", "MIXED_DIAGNOSIS"],
+    "attempt_before_hints": true,
+    "solutions_after_attempts": true,
+    "hint_delivery": "SEPARATE_HELP_SECTION",
+    "mixed_diagnosis_after_solutions": true,
+    "question_navigation": [
+      {"question_id":"Q1","hint_target":"H-Q1","solution_target":"S-Q1","return_to_question":"Q1","lesson_target":"U1-DISPLACEMENT"},
+      {"question_id":"Q2","hint_target":"H-Q2","solution_target":"S-Q2","return_to_question":"Q2","lesson_target":"U2-VT-AREA"}
+    ]
+  }
+}

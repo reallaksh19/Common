@@ -1,0 +1,19 @@
+{
+  "publication_target_id": "PT-G9-PHY-NEWTON2-BRIDGE-GOLDEN-001",
+  "purpose": {
+    "type": "COMPETITIVE_FOUNDATION",
+    "exam_profile_id": "SOF_ISO_L1",
+    "curriculum_profile_id": "NCERT-G9-SECONDARY-PHASE1-2026"
+  },
+  "requested_products": {
+    "study_guide": true,
+    "transfer_book": false
+  },
+  "publication_profile": {
+    "delivery_contract": "STUDY_GUIDE_ONLY",
+    "subject_profile": "PHYSICS_PR156",
+    "orientation": "PORTRAIT",
+    "answer_separation": true,
+    "grayscale_safe": true
+  }
+}
