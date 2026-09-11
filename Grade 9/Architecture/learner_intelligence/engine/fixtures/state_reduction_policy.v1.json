@@ -1,0 +1,14 @@
+{
+  "policy_id": "LI-STATE-REDUCTION-POLICY-V1",
+  "version": "1.0.0",
+  "single_failure_state": "UNKNOWN",
+  "single_success_state": "DEVELOPING",
+  "ready_independent_success_min": 2,
+  "repair_independent_failure_min": 2,
+  "robust_independent_success_min": 3,
+  "robust_requires_transfer_or_delayed": true,
+  "ambiguity_action": "DIAGNOSTIC_PROBE_REQUIRED",
+  "cross_subject_candidate_min_subjects": 2,
+  "cross_subject_candidate_min_failures": 2,
+  "psychological_cause_inference_allowed": false
+}

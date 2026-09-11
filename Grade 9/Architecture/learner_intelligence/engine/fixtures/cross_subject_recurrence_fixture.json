@@ -1,0 +1,31 @@
+{
+  "fixture_id": "LI-CROSS-SUBJECT-RECURRENCE-001",
+  "privacy_class": "PUBLIC_SYNTHETIC",
+  "note": "Synthetic recurrence fixture used only to prove cross-subject aggregation semantics.",
+  "cases": [
+    {
+      "case_id": "MATH-SIGNED-01",
+      "subject": "MATHEMATICS",
+      "observations": [{"checkpoint":"SIGNED_EXECUTION","result":"CALCULATION_ERROR"}],
+      "must_preserve": [],
+      "candidate_failure_capabilities": ["SHARED-SIGNED-EXECUTION"]
+    },
+    {
+      "case_id": "PHYS-SIGNED-01",
+      "subject": "PHYSICS",
+      "observations": [{"checkpoint":"SIGNED_EXECUTION","result":"CALCULATION_ERROR"}],
+      "must_preserve": [],
+      "candidate_failure_capabilities": ["SHARED-SIGNED-EXECUTION"]
+    },
+    {
+      "case_id": "CHEM-SIGNED-01",
+      "subject": "CHEMISTRY",
+      "observations": [{"checkpoint":"SIGNED_EXECUTION","result":"CALCULATION_ERROR"}],
+      "must_preserve": [],
+      "candidate_failure_capabilities": ["SHARED-SIGNED-EXECUTION"]
+    }
+  ],
+  "global_falsifiers": [
+    "CROSS_SUBJECT_RECURRENCE_PROVES_PSYCHOLOGICAL_CAUSE"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "state-reduction-policy.schema.json",
+  "title": "Learner Intelligence StateReductionPolicy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "policy_id",
+    "version",
+    "single_failure_state",
+    "single_success_state",
+    "ready_independent_success_min",
+    "repair_independent_failure_min",
+    "robust_independent_success_min",
+    "robust_requires_transfer_or_delayed",
+    "ambiguity_action",
+    "cross_subject_candidate_min_subjects",
+    "cross_subject_candidate_min_failures",
+    "psychological_cause_inference_allowed"
+  ],
+  "properties": {
+    "policy_id": {"type":"string","minLength":1},
+    "version": {"const":"1.0.0"},
+    "single_failure_state": {"enum":["UNKNOWN","DEVELOPING"]},
+    "single_success_state": {"enum":["DEVELOPING"]},
+    "ready_independent_success_min": {"type":"integer","minimum":2},
+    "repair_independent_failure_min": {"type":"integer","minimum":2},
+    "robust_independent_success_min": {"type":"integer","minimum":3},
+    "robust_requires_transfer_or_delayed": {"type":"boolean"},
+    "ambiguity_action": {"const":"DIAGNOSTIC_PROBE_REQUIRED"},
+    "cross_subject_candidate_min_subjects": {"type":"integer","minimum":2},
+    "cross_subject_candidate_min_failures": {"type":"integer","minimum":2},
+    "psychological_cause_inference_allowed": {"const":false}
+  }
+}
