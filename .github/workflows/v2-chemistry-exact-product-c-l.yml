@@ -25,8 +25,17 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_product.py'
       - name: Realize and validate exact Core1/Core2 PDFs
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_realization.py'
+      - name: Run exact-candidate AI pre-review firewall
+        run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_ai_prereview.py'
       - name: Freeze exact CI candidate
         run: python 'Grade 9/V2/Chemistry/ExactProduct/engine/realize_chemistry_exact_product.py' --out /tmp/chemistry-c-l-exact
+      - name: Bind AI pre-review to frozen exact bytes
+        run: >-
+          python 'Grade 9/V2/Chemistry/ExactProduct/engine/audit_chemistry_exact_candidate.py'
+          --candidate /tmp/chemistry-c-l-exact/exact-product-candidate.json
+          --core1 /tmp/chemistry-c-l-exact/core-study-guide.pdf
+          --core2 /tmp/chemistry-c-l-exact/examside-solution-transfer-book.pdf
+          --out-review /tmp/chemistry-c-l-exact/ai-pre-review.json
       - name: Upload exact Chemistry candidate
         uses: actions/upload-artifact@v4
         with:
