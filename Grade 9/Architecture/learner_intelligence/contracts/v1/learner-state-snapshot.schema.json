@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learner-state-snapshot.schema.json",
+  "title": "LearnerStateSnapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["snapshot_id", "schema_version", "learner_ref", "inputs", "capability_states"],
+  "properties": {
+    "snapshot_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "learner_ref": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "as_of": {"type": "string"},
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_digest", "registry_version", "diagnostic_policy_version"],
+      "properties": {
+        "evidence_digest": {"$ref": "learner-intelligence-common.schema.json#/$defs/sha256"},
+        "registry_version": {"type": "string", "minLength": 1},
+        "diagnostic_policy_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "capability_states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_ref", "state", "confidence", "evidence_summary"],
+        "properties": {
+          "capability_ref": {"type": "string", "minLength": 1},
+          "state": {"$ref": "learner-intelligence-common.schema.json#/$defs/capability_state"},
+          "confidence": {"$ref": "learner-intelligence-common.schema.json#/$defs/confidence"},
+          "evidence_summary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["independent_success", "independent_failure", "guided_success", "transfer_success", "delayed_success"],
+            "properties": {
+              "independent_success": {"type": "integer", "minimum": 0},
+              "independent_failure": {"type": "integer", "minimum": 0},
+              "guided_success": {"type": "integer", "minimum": 0},
+              "transfer_success": {"type": "integer", "minimum": 0},
+              "delayed_success": {"type": "integer", "minimum": 0}
+            }
+          },
+          "diagnostic_case_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    },
+    "output_digest": {"$ref": "learner-intelligence-common.schema.json#/$defs/sha256"}
+  }
+}
