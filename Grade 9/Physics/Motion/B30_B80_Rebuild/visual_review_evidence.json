@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-09-10T02:40:12.526479+00:00",
+  "reviewer": "Codex",
+  "result": "PASS",
+  "dpi": 200,
+  "pages_reviewed": 65,
+  "expected_pages": 65,
+  "notes": "All 65 final pages inspected from 200 DPI renders; full-book contact sheets and Appendix A/B/C high-risk pages showed no clipping, collision, illegible label, broken hierarchy, or answer leakage before the attempt surfaces.",
+  "pdfs": [
+    {
+      "stem": "Motion_B30_Rebuilt",
+      "path": "Motion_B30_Rebuilt.pdf",
+      "sha256": "ab74610eadbdad2de4d27ea7732ed6a03069d78f36b3b306b5b7f622705d13f2",
+      "pages": 27
+    },
+    {
+      "stem": "Motion_B80_Rebuilt",
+      "path": "Motion_B80_Rebuilt.pdf",
+      "sha256": "ee093618259ed1e559b45a566e434e90d16d4ba22d9fb26eb3e8d624a7f3b330",
+      "pages": 22
+    },
+    {
+      "stem": "Motion_Optional_Hint_Practice",
+      "path": "Motion_Optional_Hint_Practice.pdf",
+      "sha256": "7290c579abef28c938461c7de5143b30fa6fac422af1958afadc00074a61e8ce",
+      "pages": 16
+    }
+  ]
+}

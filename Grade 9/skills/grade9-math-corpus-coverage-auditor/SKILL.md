@@ -1,6 +1,5 @@
 ---
 name: grade9-math-corpus-coverage-auditor
-version: 2
 description: Unified mathematics corpus-coverage and publication-readiness auditor. Use when an external mathematics corpus (ExamSIDE, past papers, worksheets, textbook exercises, databases, URLs, or source PDFs) must be exhaustively reconciled against subtopic study guides, practice books, helpers, solutions, and final publication artifacts. Combines general source-corpus traceability with mathematics-specific ownership, solution verification, representation quality, misconception handling, helper depth, notation, difficulty, and mixed-problem transfer checks.
 ---
 

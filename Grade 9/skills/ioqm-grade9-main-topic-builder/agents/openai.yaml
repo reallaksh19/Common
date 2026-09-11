@@ -1,0 +1,4 @@
+interface:
+  display_name: "IOQM Grade 9 Main Topic Builder"
+  short_description: "Build integrated IOQM main-topic learning packs"
+  default_prompt: "Use $ioqm-grade9-main-topic-builder to build a source-grounded IOQM Grade 9 main-topic learning package."

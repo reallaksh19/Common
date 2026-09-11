@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Math Assimilation"
+  short_description: "Build partial-knowledge mathematics learning packs"
+  default_prompt: "Use $grade9-math-assimilation to build a source-grounded mathematics assimilation and transfer package."

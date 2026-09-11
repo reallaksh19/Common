@@ -1,0 +1,13 @@
+interface:
+  display_name: Physics ExamSIDE Solution Book
+  short_description: Grounded transfer, hints, badges, solutions
+  default_prompt: Use $grade9-physics-examside to build the source-grounded ExamSIDE Solution Book paired to one Core Study Guide, with concept/difficulty labels, staged hints, mixed transfer and complete Appendix A solutions.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
