@@ -1,0 +1,29 @@
+name: V2 Mathematics Cold Start M-K
+
+on:
+  push:
+    paths:
+      - 'Grade 9/V2/Mathematics/ColdStart/**'
+      - 'Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md'
+      - 'Grade 9/V2/Mathematics/GENERATION_AUTHORITY_MANIFEST.json'
+      - '.github/workflows/v2-math-cold-start.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/ColdStart/**'
+      - 'Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md'
+      - 'Grade 9/V2/Mathematics/GENERATION_AUTHORITY_MANIFEST.json'
+      - '.github/workflows/v2-math-cold-start.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install jsonschema
+      - name: Validate M-K manifest and contracts
+        run: python 'Grade 9/V2/Mathematics/ColdStart/contracts/validate_contracts.py'
+      - name: Run M-K repository-only Run A/B falsifiers
+        run: python 'Grade 9/V2/Mathematics/ColdStart/tests/test_math_cold_start.py'
