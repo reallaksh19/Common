@@ -1,0 +1,38 @@
+name: Fix Physics P-C binding authority digest
+on:
+  push:
+    branches:
+      - v2/physics-p-c-scope-reconciliation-20260911
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Refresh binding authority custody and registry digest
+        run: |
+          python - <<'PY'
+          import copy, hashlib, json
+          from pathlib import Path
+          a=Path('Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json')
+          b=Path('Grade 9/V2/Physics/AssessmentScope/registry/motion-question-scope-bindings.json')
+          authority=json.loads(a.read_text(encoding='utf-8'))
+          x=json.loads(b.read_text(encoding='utf-8'))
+          x['authority_digest']=authority['authority_digest']
+          y=copy.deepcopy(x); y.pop('binding_registry_digest',None)
+          raw=json.dumps(y,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8')
+          x['binding_registry_digest']=hashlib.sha256(raw).hexdigest()
+          b.write_text(json.dumps(x,indent=2,sort_keys=True,ensure_ascii=False)+'\n',encoding='utf-8')
+          PY
+          rm -f .github/workflows/fix-physics-pc-binding.yml
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'PHY P-C: refresh binding authority digest'
+          git push origin HEAD:${GITHUB_REF_NAME}
