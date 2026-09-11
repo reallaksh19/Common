@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-reasoning-contract.schema.json",
+  "title": "MathReasoningContract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reasoning_contract_id", "question_family_ref", "concept_refs", "checkpoints"],
+  "properties": {
+    "reasoning_contract_id": {"type": "string", "minLength": 1},
+    "subject": {"const": "MATHEMATICS"},
+    "question_family_ref": {"type": "string", "minLength": 1},
+    "concept_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "prerequisite_capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "checkpoints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkpoint_id", "stage", "required_capability_refs"],
+        "properties": {
+          "checkpoint_id": {"type": "string", "minLength": 1},
+          "stage": {"enum": ["UNDERSTAND_OBJECT", "SELECT_REPRESENTATION", "RECOGNIZE_STRUCTURE", "SELECT_METHOD", "TRANSFORM", "PRESERVE_INVARIANT", "CHECK_CONDITIONS", "VERIFY_RESULT"]},
+          "input_object": {"type": "string"},
+          "operation_or_theorem": {"type": "string"},
+          "output_object": {"type": "string"},
+          "invariant": {"enum": ["EQUALITY", "EQUIVALENCE", "ORDER", "RATIO", "ROOT_SET", "AREA", "CONGRUENCE", "SIMILARITY", "LOGICAL_IMPLICATION", "OTHER"]},
+          "conditions": {"type": "array", "items": {"type": "string"}},
+          "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "error_signature_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}
