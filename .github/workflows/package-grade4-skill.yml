@@ -6,6 +6,10 @@ on:
     paths:
       - 'installable/grade4/**'
       - '.github/workflows/package-grade4-skill.yml'
+  pull_request:
+    paths:
+      - 'installable/grade4/**'
+      - '.github/workflows/package-grade4-skill.yml'
   workflow_dispatch:
 
 permissions:
@@ -25,8 +29,17 @@ jobs:
           test -f installable/grade4/SKILL.md
           test -d installable/grade4/references/workflows
           test -d installable/grade4/references/schemas
+          test -f installable/grade4/references/workflows/grade4-publishing.md
+          test -f installable/grade4/references/schemas/Grade4PublishingSchema.md
+          test -f installable/grade4/references/schemas/Grade4VisualPublishingAcceptance.md
           grep -q '^name: grade4$' installable/grade4/SKILL.md
           grep -q '^description:' installable/grade4/SKILL.md
+          grep -q 'Grade4VisualPublishingAcceptance.md' installable/grade4/SKILL.md
+          grep -q 'P-QG13 CHILD_FACING_VISUAL_FIRST' installable/grade4/references/workflows/grade4-publishing.md
+          grep -q 'H1 NOTICE' installable/grade4/references/schemas/Grade4VisualPublishingAcceptance.md
+          grep -q 'H2 REMEMBER' installable/grade4/references/schemas/Grade4VisualPublishingAcceptance.md
+          grep -q 'H3 REPRESENT' installable/grade4/references/schemas/Grade4VisualPublishingAcceptance.md
+          grep -q 'PAGE_IMAGE_CHILD_USABILITY_PASS' installable/grade4/references/schemas/Grade4VisualPublishingAcceptance.md
 
       - name: Build uploadable ZIP
         shell: bash
