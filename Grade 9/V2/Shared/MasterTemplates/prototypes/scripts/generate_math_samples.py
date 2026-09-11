@@ -11,15 +11,15 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 
-# Add scripts directory to path for visual primitives
-sys.path.append(str(Path(__file__).resolve().parent))
-from visual_primitives import (
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+from primitives import (
     FONT_NAME,
     FONT_BOLD,
     FONT_OBLIQUE,
     draw_pill_badge,
-    draw_coordinate_grid_2d,
-    draw_combinatorial_slots
+    CartesianPlotter2D,
+    CombinatorialSlotDiagram,
+    VisualSemanticValidator
 )
 
 PAGE_W, PAGE_H = landscape(A4) # 841.89 x 595.28 pt
@@ -112,8 +112,12 @@ def render_math_core1(output_path):
         c.drawString(col1_x + 14, ty, line)
         ty -= 12
         
-    # 3. Visual Representation Primitive (2D Coordinate Grid with Slope)
-    draw_coordinate_grid_2d(c, col1_x, content_top - 425, col_w, 180, "{{ VISUAL_PRIMITIVE: 2D Cartesian Frame & Slope-Distance Bridge }}")
+    # Visual Primitive: 2D Coordinate Grid with Slope Triangle
+    CartesianPlotter2D.draw_slope_bridge(
+        c, col1_x, content_top - 425, col_w, 180,
+        title="{{ VISUAL_PRIMITIVE: 2D Cartesian Frame & Slope-Distance Bridge }}",
+        p1=(1, 2), p2=(4, 6)
+    )
     
     # ------------------ COLUMN 2: Worked Example & Faded Practice ------------
     # 1. Worked Example with Reasoning Story
@@ -215,7 +219,8 @@ def render_math_core1(output_path):
     c.drawString(MARGIN, PAGE_H - 86, "{{ LESSON_TITLE: The Multiplication Principle as Independent Decision Slots }}")
     
     # Left Column: Combinatorial Slots Primitive & Rules
-    draw_combinatorial_slots(c, col1_x, content_top - 180, col_w, 180, "{{ VISUAL_PRIMITIVE: 4-Digit Number Formation Slot Model }}")
+    CombinatorialSlotDiagram.draw_slots(c, col1_x, content_top - 180, col_w, 180,
+                                        title="{{ VISUAL_PRIMITIVE: 4-Digit Number Formation Slot Model }}")
     
     c.setFillColor(colors.HexColor("#EFF6FF"))
     c.setStrokeColor(colors.HexColor("#93C5FD"))
@@ -399,7 +404,9 @@ def render_math_core2(output_path):
         ty -= 13
         
     # Visual Vector Figure in Left Column
-    draw_coordinate_grid_2d(c, col1_x, content_top - 280, col_w, 150, "{{ RECONSTRUCTED_SOURCE_FIGURE: 2D Line L on Cartesian Grid }}")
+    CartesianPlotter2D.draw_slope_bridge(c, col1_x, content_top - 280, col_w, 150,
+                                         title="{{ RECONSTRUCTED_SOURCE_FIGURE: 2D Line L on Cartesian Grid }}",
+                                         p1=(1, 2), p2=(4, 6))
     
     # Student Attempt Workspace
     c.setFillColor(colors.HexColor("#F8FAFC"))

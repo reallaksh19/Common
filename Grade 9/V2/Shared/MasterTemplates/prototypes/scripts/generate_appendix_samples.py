@@ -11,8 +11,8 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.pdfgen import canvas
 
-sys.path.append(str(Path(__file__).resolve().parent))
-from visual_primitives import (
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+from primitives import (
     draw_pill_badge,
     FONT_NAME,
     FONT_BOLD

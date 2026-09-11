@@ -10,15 +10,16 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.pdfgen import canvas
 
-sys.path.append(str(Path(__file__).resolve().parent))
-from visual_primitives import (
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+from primitives import (
     FONT_NAME,
     FONT_BOLD,
     FONT_OBLIQUE,
     draw_pill_badge,
-    draw_particle_model,
-    draw_formula_anatomy,
-    draw_oxidation_state_lane
+    ParticleLatticeDiagram,
+    FormulaAnatomyEngine,
+    OxidationLaneDiagram,
+    VisualSemanticValidator
 )
 
 PAGE_W, PAGE_H = landscape(A4)
@@ -86,10 +87,14 @@ def render_chemistry_core1(output_path):
         ty -= 13.0
         
     # 2. Particulate Model Primitive
-    draw_particle_model(c, col1_x, content_top - 265, col_w, 135, "{{ VISUAL_PRIMITIVE: Particulate View of Atom & Charge Conservation }}")
+    part_spec = {"reactants": {"H": 4, "O": 2}, "products": {"H": 4, "O": 2}}
+    VisualSemanticValidator.validate("PARTICULATE_MODEL", {}, part_spec)
+    ParticleLatticeDiagram.draw_reaction_chamber(c, col1_x, content_top - 265, col_w, 135,
+                                                 title="{{ VISUAL_PRIMITIVE: Particulate View of Atom & Charge Conservation }}")
     
     # 3. Formula Anatomy Strip Primitive
-    draw_formula_anatomy(c, col1_x, content_top - 425, col_w, 150, "{{ VISUAL_PRIMITIVE: Notation Anatomy - Distinguishing Position Meaning }}")
+    FormulaAnatomyEngine.draw_formula_anatomy(c, col1_x, content_top - 425, col_w, 150,
+                                              title="{{ VISUAL_PRIMITIVE: Notation Anatomy - Distinguishing Position Meaning }}")
     
     # ------------------ COLUMN 2: Misconception Clinic & Worked Example ------
     # Misconception Clinic (Height = 140 pt)
@@ -199,11 +204,23 @@ def render_chemistry_core1(output_path):
     c.drawString(MARGIN, PAGE_H - 86, "{{ LESSON_TITLE: Oxidation, Reduction & the SELF vs OTHER Agent Attachment Frame }}")
     
     # Left Column: Oxidation State Lane Primitive & Rule Ladder
-    draw_oxidation_state_lane(
+    item_sample5 = {
+        "chemical_entities": ["Fe^2+", "Fe^3+"],
+        "oxidation_numbers": {"reactant": 2.0, "product": 3.0}
+    }
+    spec_sample5 = {
+        "reactant_species": "Fe^2+ (aq)",
+        "reactant_on": "+2",
+        "product_species": "Fe^3+ (aq)",
+        "product_on": "+3",
+        "assigned_role": "REDUCING_AGENT"
+    }
+    VisualSemanticValidator.validate("OXIDATION_LANE", item_sample5, spec_sample5)
+    OxidationLaneDiagram.draw_lane(
         c, col1_x, content_top - 120, col_w, 120,
         title="{{ VISUAL_PRIMITIVE: Electron Transfer & Oxidation State Progression }}",
-        reactant_label="Fe^2+ (aq)", reactant_on="+2",
-        product_label="Fe^3+ (aq)", product_on="+3",
+        reactant_label=spec_sample5["reactant_species"], reactant_on=spec_sample5["reactant_on"],
+        product_label=spec_sample5["product_species"], product_on=spec_sample5["product_on"],
         delta_text="Delta ON = +1 (Oxidation)",
         electron_text="Loss of 1e- --> Fe^2+ is REDUCING AGENT"
     )
@@ -406,11 +423,23 @@ def render_chemistry_core2(output_path):
         ty -= 9.8
         
     # Visual Vector Primitive: Oxidation State Lane (Oxalate to CO2)
-    draw_oxidation_state_lane(
+    item_sample6 = {
+        "chemical_entities": ["C2O4^2-", "CO2", "MnO4^-", "Mn^2+"],
+        "oxidation_numbers": {"reactant": 3.0, "product": 4.0}
+    }
+    spec_sample6 = {
+        "reactant_species": "C2O4^2- (aq)",
+        "reactant_on": "+3",
+        "product_species": "2 CO2 (g)",
+        "product_on": "+4",
+        "assigned_role": "REDUCING_AGENT"
+    }
+    VisualSemanticValidator.validate("OXIDATION_LANE", item_sample6, spec_sample6)
+    OxidationLaneDiagram.draw_lane(
         c, col1_x, content_top - 258, col_w, 110,
         title="{{ VISUAL_PRIMITIVE: Carbon Oxidation & Role Assignment Lane }}",
-        reactant_label="C2O4^2- (aq)", reactant_on="+3",
-        product_label="2 CO2 (g)", product_on="+4",
+        reactant_label=spec_sample6["reactant_species"], reactant_on=spec_sample6["reactant_on"],
+        product_label=spec_sample6["product_species"], product_on=spec_sample6["product_on"],
         delta_text="Delta ON = +1 per C (Oxidation)",
         electron_text="Loss of 2e- per unit --> C2O4^2- is REDUCING AGENT"
     )

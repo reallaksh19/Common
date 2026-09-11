@@ -10,14 +10,15 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.pdfgen import canvas
 
-sys.path.append(str(Path(__file__).resolve().parent))
-from visual_primitives import (
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+from primitives import (
     FONT_NAME,
     FONT_BOLD,
     FONT_OBLIQUE,
     draw_pill_badge,
-    draw_number_line_1d,
-    draw_vt_graph
+    Vector1DDiagram,
+    KinematicGraphRenderer,
+    VisualSemanticValidator
 )
 
 PAGE_W, PAGE_H = landscape(A4)
@@ -84,7 +85,18 @@ def render_physics_core1(output_path):
         ty -= 14
         
     # Visual Primitive: 1D Number Line & Displacement Vector
-    draw_number_line_1d(c, col1_x, content_top - 275, col_w, 140, "{{ VISUAL_PRIMITIVE: 1D Coordinate Line & Return-Path Vectors }}")
+    vec_spec = {
+        "legs": [
+            {"start": 0, "end": 5, "label": "Leg 1: +5 m (East)", "color": "#2563EB", "y_off": 16},
+            {"start": 5, "end": 2, "label": "Leg 2: -3 m (West)", "color": "#DC2626", "y_off": 26}
+        ],
+        "resultant_start": 0,
+        "resultant_end": 2
+    }
+    VisualSemanticValidator.validate("VECTOR_1D", {"displacement": 2.0}, vec_spec)
+    Vector1DDiagram.draw(c, col1_x, content_top - 275, col_w, 140, "{{ VISUAL_PRIMITIVE: 1D Coordinate Line & Return-Path Vectors }}",
+                         origin_val=0, ticks=(-3, -2, -1, 0, 1, 2, 3, 4, 5),
+                         legs=vec_spec["legs"], resultant_start=0, resultant_end=2)
     
     # Invariant Rule Box: Distance vs Displacement
     c.setFillColor(colors.HexColor("#EFF6FF"))
@@ -205,7 +217,11 @@ def render_physics_core1(output_path):
     c.drawString(MARGIN, PAGE_H - 86, "{{ LESSON_TITLE: Velocity-Time Area as Accumulated Movement & Kinematic Derivations }}")
     
     # Left Column: v-t Graph Primitive & Derivation
-    draw_vt_graph(c, col1_x, content_top - 200, col_w, 200, "{{ VISUAL_PRIMITIVE: Constant Acceleration v-t Area Decomposition }}")
+    vt_spec = {"u": 0.0, "v": 20.0, "t_accel": 5.0}
+    VisualSemanticValidator.validate("KINEMATIC_GRAPH", {"u": 0.0, "v": 20.0, "t": 5.0, "displacement": 50.0}, vt_spec)
+    KinematicGraphRenderer.draw_vt_graph(c, col1_x, content_top - 200, col_w, 200,
+                                         title="{{ VISUAL_PRIMITIVE: Constant Acceleration v-t Area Decomposition }}",
+                                         u=0.0, v=20.0, t_accel=5.0)
     
     c.setFillColor(colors.HexColor("#F0FDFA"))
     c.setStrokeColor(colors.HexColor("#99F6E4"))
