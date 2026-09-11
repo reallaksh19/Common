@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reasoning-observation.schema.json",
+  "title": "ReasoningObservation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observation_id", "attempt_id", "observation_type", "evidence_step_refs", "verification", "confidence"],
+  "properties": {
+    "observation_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "attempt_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "reasoning_contract_ref": {"type": "string"},
+    "checkpoint_ref": {"type": "string"},
+    "observation_type": {"$ref": "learner-intelligence-common.schema.json#/$defs/observation_type"},
+    "evidence_step_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"}},
+    "expected": {"type": "string"},
+    "observed": {"type": "string"},
+    "candidate_capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "candidate_error_signature_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "result"],
+      "properties": {
+        "method": {"enum": ["DETERMINISTIC", "SUBJECT_RULE", "HUMAN_REVIEW", "MODEL_ASSISTED", "NOT_COMPUTABLE"]},
+        "result": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
+        "details": {"type": "string"}
+      }
+    },
+    "confidence": {"$ref": "learner-intelligence-common.schema.json#/$defs/confidence"}
+  }
+}
