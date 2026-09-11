@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"chemistry-exact-product-release.schema.json",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["decision_id","schema_version","subject","candidate_ref","package_digest","machine_gate","quality_states","learning_effectiveness","reference_comparison","classification","exit_code","blocking_reasons","decision_digest"],
+  "properties":{
+    "decision_id":{"type":"string"},
+    "schema_version":{"type":"string"},
+    "subject":{"const":"CHEMISTRY"},
+    "candidate_ref":{"type":"string"},
+    "package_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "machine_gate":{"type":"object","required":["status","failures"],"properties":{"status":{"enum":["PASS","FAIL"]},"failures":{"type":"array","items":{"type":"string"}}}},
+    "quality_states":{"type":"object","required":["PUBLICATION_ENGINEERING","SUBJECT_CORRECTNESS","PEDAGOGICAL_DESIGN","ASSESSMENT_DESIGN","VISUAL_USABILITY","MATURE_DESIGN_QUALITY","REFERENCE_COMPARABILITY"],"additionalProperties":false,"properties":{"PUBLICATION_ENGINEERING":{"enum":["PASS","FAIL","PENDING","BLOCKED"]},"SUBJECT_CORRECTNESS":{"enum":["PASS","FAIL","PENDING","BLOCKED"]},"PEDAGOGICAL_DESIGN":{"enum":["PASS","FAIL","PENDING","BLOCKED"]},"ASSESSMENT_DESIGN":{"enum":["PASS","FAIL","PENDING","BLOCKED"]},"VISUAL_USABILITY":{"enum":["PASS","FAIL","PENDING","BLOCKED"]},"MATURE_DESIGN_QUALITY":{"enum":["PASS","FAIL","PENDING","BLOCKED"]},"REFERENCE_COMPARABILITY":{"enum":["PASS","FAIL","NOT_RUN","BLOCKED"]}}},
+    "learning_effectiveness":{"type":"object","required":["state","study_evidence_ref"],"properties":{"state":{"enum":["NOT_RUN","PILOT_EVIDENCE","STUDY_REQUIRED","VALIDATED"]},"study_evidence_ref":{"type":["string","null"]}}},
+    "reference_comparison":{"type":"object","required":["comparator_id","state","run_after_human_gates","raw_reference_used_as_runtime_input"],"properties":{"comparator_id":{"type":"string"},"state":{"enum":["PASS","FAIL","NOT_RUN"]},"run_after_human_gates":{"type":"boolean"},"raw_reference_used_as_runtime_input":{"type":"boolean"}}},
+    "classification":{"enum":["V2_MATURE_INSTRUCTIONAL_PRODUCT","BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT","VALIDATION_FAIL"]},
+    "exit_code":{"enum":[0,1,2]},
+    "blocking_reasons":{"type":"array","items":{"type":"string"}},
+    "decision_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
