@@ -1,0 +1,14 @@
+{
+  "cases": [
+    {"case_id":"P01","case_type":"CLEAN","diagnostic_use":"FULL","notes":"ordinary clean item","source_integrity_state":"CLEAN","validity_state":"VALID"},
+    {"case_id":"P02","case_type":"SOURCE_INTERNAL_TYPO","diagnostic_use":"PARTIAL","notes":"printed source says CH₄ carbon = +4; canonical in-source repair is -4 via explicit QC event","source_integrity_state":"SOURCE_INTERNAL_TYPO","validity_state":"KEY_ERROR"},
+    {"case_id":"P03","case_type":"FORMULA_OR_CHARGE_OCR_AMBIGUITY","diagnostic_use":"EXCLUDE_FROM_NEGATIVE_INFERENCE","notes":"charge placement unresolved pending rendered-source inspection","source_integrity_state":"FORMULA_OR_CHARGE_AMBIGUITY","validity_state":"REVIEW_REQUIRED"},
+    {"case_id":"P04","case_type":"UNDERDETERMINED","diagnostic_use":"POSITIVE_EVIDENCE_ONLY","notes":"insufficient data prevents unique chemical conclusion","source_integrity_state":"CLEAN","validity_state":"UNDERDETERMINED"},
+    {"case_id":"P05","case_type":"CONDITION_SENSITIVE","diagnostic_use":"FULL","notes":"required condition must remain attached to the item","source_integrity_state":"CLEAN","validity_state":"VALID_CONDITION_SENSITIVE"},
+    {"case_id":"P06","case_type":"MISSING_STRUCTURE_OR_FIGURE","diagnostic_use":"EXCLUDE_FROM_NEGATIVE_INFERENCE","notes":"required structure/figure is missing; no invented replacement","source_integrity_state":"TRUNCATED_OR_MISSING_STRUCTURE_OR_FIGURE","validity_state":"REVIEW_REQUIRED"},
+    {"case_id":"P07","case_type":"EXTERNAL_CLEAN","diagnostic_use":"FULL","notes":"ordinary external question with complete source custody","source_integrity_state":"CLEAN","validity_state":"VALID"}
+  ],
+  "fixture_id":"CHEM-CB-PILOT-CASES-v1",
+  "schema_version":"1.0.0",
+  "subject":"CHEMISTRY"
+}

@@ -1,0 +1,30 @@
+{
+  "registry_id": "CHEM-FIX-ITEM-VALIDITY-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "source_set_ref": "CHEM-FIX-SOURCE-01",
+  "question_set_ref": "CHEM-FIX-QSET-01",
+  "review_policy_version": "1.0.0",
+  "qc_registry_ref": "CHEMISTRY-QC-EVENTS-v1",
+  "source_review_shards": [
+    {
+      "path": "reviews/source-reviews-v1.json",
+      "shard_digest": "15ea0c9d2d390f491fe3afc91c85c84f5d6fd9052413d242145599e9c3deaee8",
+      "record_count": 12
+    }
+  ],
+  "question_review_shards": [
+    {
+      "path": "reviews/question-reviews-01-v1.json",
+      "shard_digest": "a0aaa12ff23f688d92826d2f5d2e506df9ff9031bfaef52298bc2e9eb2ef888d",
+      "record_count": 9
+    },
+    {
+      "path": "reviews/question-reviews-02-v1.json",
+      "shard_digest": "df2da09d6c153c602b1a30ee90105d7dedd6f3b88374dc72be604c2addf7b37d",
+      "record_count": 8
+    }
+  ],
+  "registry_digest": "f18673cd4e6e21b61c8e80a158481f47b6409e7027cdc9c7497b91934f6023fa",
+  "expanded_registry_digest": "1d858fa27aecf957f64ad999f4301cb7b4db05bd9721c8a39ad92dcf633f8afd"
+}
