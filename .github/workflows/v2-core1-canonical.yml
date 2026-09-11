@@ -1,0 +1,38 @@
+name: V2 Core1 Canonical
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Core1/**"
+      - ".github/workflows/v2-core1-canonical.yml"
+  push:
+    branches:
+      - "v2/**"
+    paths:
+      - "Grade 9/V2/Core1/**"
+      - ".github/workflows/v2-core1-canonical.yml"
+
+jobs:
+  canonical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Parse contracts and fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in "Grade 9/V2/Core1/contracts/"*.json "Grade 9/V2/Core1/fixtures/valid/"*.json "Grade 9/V2/Core1/fixtures/invalid/"*.json; do
+            python -m json.tool "$f" >/dev/null
+          done
+      - name: Run Core1 resolver falsifiers
+        run: python "Grade 9/V2/Core1/test_resolve_canonical.py"
+      - name: Prove byte-stable resolver output
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "Grade 9/V2/Core1/resolve_canonical.py" --registry "Grade 9/V2/Core1/fixtures/valid/registry.json" --request "Grade 9/V2/Core1/fixtures/valid/request.json" --out /tmp/cks1.json
+          python "Grade 9/V2/Core1/resolve_canonical.py" --registry "Grade 9/V2/Core1/fixtures/valid/registry.json" --request "Grade 9/V2/Core1/fixtures/valid/request.json" --out /tmp/cks2.json
+          cmp /tmp/cks1.json /tmp/cks2.json

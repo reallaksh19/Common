@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"canonical-gap.schema.json",
+  "title":"V2 Canonical Gap Candidate",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["gap_id","requested_canonical_id","requested_by","reason","registry_version","resolution_failure","status"],
+  "properties":{
+    "gap_id":{"type":"string","pattern":"^GAP-[0-9a-f]{16}$"},
+    "requested_canonical_id":{"type":"string","minLength":2},
+    "requested_by":{"type":"string","minLength":1},
+    "reason":{"type":"string","minLength":3},
+    "registry_version":{"type":"string","minLength":3},
+    "resolution_failure":{"enum":["MISSING_ASSET","NOT_PROMOTED"]},
+    "status":{"const":"OPEN"}
+  }
+}
