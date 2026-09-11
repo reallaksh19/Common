@@ -1,0 +1,72 @@
+{
+  "fixture_id": "LI-G9-CROSS-SUBJECT-ANSWER-SHEET-001",
+  "privacy_class": "PUBLIC_SYNTHETIC",
+  "note": "Anonymized synthetic reconstruction of reasoning patterns; contains no learner identity or raw artifact.",
+  "cases": [
+    {
+      "case_id": "MATH-COORD-ALG-01",
+      "subject": "MATHEMATICS",
+      "observations": [
+        {"checkpoint": "GEOMETRIC_MODEL", "result": "SUCCESS"},
+        {"checkpoint": "DISTANCE_EQUATION_CONSTRUCTION", "result": "SUCCESS"},
+        {"checkpoint": "BINOMIAL_EXPANSION", "result": "INVALID_TRANSFORMATION"}
+      ],
+      "must_preserve": ["MATH-COORD-GEOMETRIC-MODELLING"],
+      "candidate_failure_capabilities": ["MATH-ALG-EXPAND-BINOMIAL-SQUARE"],
+      "must_not_conclude": ["MATHEMATICS_COORDINATE_GEOMETRY_GLOBALLY_WEAK"]
+    },
+    {
+      "case_id": "MATH-WORD-EQUATION-01",
+      "subject": "MATHEMATICS",
+      "observations": [
+        {"checkpoint": "WORD_TO_EQUATION", "result": "SUCCESS"},
+        {"checkpoint": "COMPOUND_EXPRESSION_MEANING", "result": "INVALID_TRANSFORMATION"}
+      ],
+      "must_preserve": ["MATH-WORD-MODELLING"],
+      "candidate_failure_capabilities": ["SHARED-SYMBOLIC-PRESERVE-MEANING"],
+      "must_not_conclude": ["MATHEMATICS_WORD_PROBLEM_MODELLING_WEAK"]
+    },
+    {
+      "case_id": "PHYSICS-MULTIPHASE-01",
+      "subject": "PHYSICS",
+      "observations": [
+        {"checkpoint": "KINEMATIC_MODEL_SELECTION", "result": "SUCCESS"},
+        {"checkpoint": "PHASE1_EXECUTION", "result": "SUCCESS"},
+        {"checkpoint": "PHASE1_TO_PHASE2_STATE_CONTINUITY", "result": "INCONSISTENT_STATE"}
+      ],
+      "must_preserve": ["PHY-KIN-SELECT-EQUATION"],
+      "candidate_failure_capabilities": ["PHY-KIN-PROPAGATE-STATE"],
+      "must_not_conclude": ["PHYSICS_KINEMATIC_FORMULA_KNOWLEDGE_ABSENT"]
+    },
+    {
+      "case_id": "PHYSICS-PROJECTILE-01",
+      "subject": "PHYSICS",
+      "observations": [
+        {"checkpoint": "VECTOR_COMPONENT_DECOMPOSITION", "result": "SUCCESS"},
+        {"checkpoint": "ELIMINATE_TIME", "result": "SUCCESS"},
+        {"checkpoint": "DIAGRAM_STATE_INTERPRETATION", "result": "AMBIGUOUS"}
+      ],
+      "must_preserve": ["PHY-PROJ-DECOMPOSE-VECTOR", "PHY-PROJ-ELIMINATE-TIME"],
+      "candidate_failure_capabilities": ["PHY-PROJ-DIAGRAM-STATE-TRANSLATION"],
+      "required_action": "DIAGNOSTIC_PROBE_REQUIRED"
+    },
+    {
+      "case_id": "CHEM-GAS-PROP-01",
+      "subject": "CHEMISTRY",
+      "observations": [
+        {"checkpoint": "IDEAL_GAS_RELATION_SELECTION", "result": "SUCCESS"},
+        {"checkpoint": "DENSITY_RELATION_RECONSTRUCTION", "result": "SUCCESS"},
+        {"checkpoint": "EQUALITY_TO_PROPORTIONALITY", "result": "INVALID_TRANSFORMATION"}
+      ],
+      "must_preserve": ["CHEM-GAS-RELATIONSHIP", "CHEM-GAS-CONDITIONS"],
+      "candidate_failure_capabilities": ["SHARED-PROPORTIONAL-REASONING"],
+      "must_not_conclude": ["CHEMISTRY_GAS_LAW_CONCEPT_ABSENT"]
+    }
+  ],
+  "global_falsifiers": [
+    "ONE_WRONG_RESPONSE_CONFIRMS_MISCONCEPTION",
+    "FAILED_FINAL_ANSWER_ERASES_UPSTREAM_SUCCESS",
+    "SHARED_ALGEBRA_ERROR_AUTOMATICALLY_BECOMES_SUBJECT_CONCEPT_FAILURE",
+    "ANSWER_SHEET_ALONE_PROVES_WORKING_MEMORY_OR_ATTENTION_CAUSE"
+  ]
+}
