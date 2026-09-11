@@ -45,6 +45,13 @@ def mutate_file(path,fn):
 def main():
     d=fake_design(); original=copy.deepcopy(d); product=buildmod.build(d,PROBES)
     assert d==original and len(product['content_items'])==15
+    items={x['content_id']:x for x in product['content_items']}
+    assert len(items['PC05']['metadata']['table_headers'])==4 and len(items['PC05']['metadata']['table_rows'])>=2
+    assert items['PC08']['metadata']['state_handoff_explicit'] is True and len(items['PC08']['metadata']['worked_trace_values'])>=3
+    assert [items[x]['metadata']['support_level'] for x in ('PC09','PC10','PC11')]==[2,1,0]
+    assert items['PC11']['metadata']['conceptual_hints']==[] and items['PC11']['metadata']['preselected_next_state'] is False
+    assert items['PC13']['metadata']['numbers_only_change'] is False and len(items['PC13']['metadata']['structural_changes'])>=3
+    assert items['PC14']['metadata']['fresh_task'] is True and len(items['PC14']['body'])>=3
     bad=copy.deepcopy(d); next(b for b in bad['blocks'] if b['role']=='REPRESENTATION')['payload']['semantic_payload']=['phase_boundary']; expect_fail(lambda: buildmod.build(bad,PROBES))
     bad=copy.deepcopy(d); next(b for b in bad['blocks'] if b['role']=='WORKED_REASONING')['payload']['reasoning_steps'].remove('carry continuous velocity into phase-2 initial state'); expect_fail(lambda: buildmod.build(bad,PROBES))
     bad=copy.deepcopy(d); next(b for b in bad['blocks'] if b['role']=='FADED_ATTEMPT')['support_level']=2; expect_fail(lambda: buildmod.build(bad,PROBES))
@@ -75,5 +82,5 @@ def main():
         au_orig=(c/'publication_audit.json').read_text()
         mutate_file(c/'publication_audit.json',lambda o:o.update({'artifact_sha256':'0'*64})); expect_fail(lambda: valmod.run(a)); (c/'publication_audit.json').write_text(au_orig)
         pdf=Path(c/'candidate.pdf'); pb=pdf.read_bytes(); pdf.write_bytes(pb+b'\nDRIFT'); expect_fail(lambda: valmod.run(a)); pdf.write_bytes(pb)
-    print('20 PHY-V2-05 publication falsifiers = PASS')
+    print('20 PHY-V2-06 publication falsifiers = PASS')
 if __name__=='__main__': main()

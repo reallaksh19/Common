@@ -3,7 +3,41 @@
   "additionalProperties": false,
   "properties": {
     "authority": {"const": "LEARNER_SEMANTIC_PRODUCT"},
-    "content_items": {"items": {"additionalProperties": false, "properties": {"body": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array"}, "canonical_refs": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true}, "content_id": {"pattern": "^PC[0-9]{2}$", "type": "string"}, "learner_job": {"minLength": 1, "type": "string"}, "materiality": {"const": "MATERIAL"}, "metadata": {"type": "object"}, "primitive": {"minLength": 1, "type": "string"}, "source_design_block_ids": {"items": {"pattern": "^PHY-LD-B-", "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true}, "support_level": {"maximum": 2, "minimum": 0, "type": "integer"}, "title": {"minLength": 1, "type": "string"}}, "required": ["content_id", "materiality", "primitive", "source_design_block_ids", "canonical_refs", "title", "body", "learner_job", "support_level", "metadata"], "type": "object"}, "minItems": 1, "type": "array"},
+    "content_items": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array"},
+          "canonical_refs": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+          "content_id": {"pattern": "^PC[0-9]{2}$", "type": "string"},
+          "learner_job": {"minLength": 1, "type": "string"},
+          "materiality": {"const": "MATERIAL"},
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "table_headers": {"type": "array", "items": {"type": "string"}, "minItems": 2},
+              "table_rows": {"type": "array", "items": {"type": "array", "items": {"type": "string"}, "minItems": 2}, "minItems": 1},
+              "support_level": {"type": "integer", "minimum": 0, "maximum": 2},
+              "worked_trace_values": {"type": "array", "items": {"type": "string"}},
+              "state_handoff_explicit": {"type": "boolean"},
+              "numbers_only_change": {"type": "boolean"},
+              "fresh_task": {"type": "boolean"},
+              "conceptual_hints": {"type": "array", "items": {"type": "string"}},
+              "preselected_next_state": {"type": "boolean"}
+            },
+            "additionalProperties": true
+          },
+          "primitive": {"minLength": 1, "type": "string"},
+          "source_design_block_ids": {"items": {"pattern": "^PHY-LD-B-", "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+          "support_level": {"maximum": 2, "minimum": 0, "type": "integer"},
+          "title": {"minLength": 1, "type": "string"}
+        },
+        "required": ["content_id", "materiality", "primitive", "source_design_block_ids", "canonical_refs", "title", "body", "learner_job", "support_level", "metadata"],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
     "fixture_class": {"const": "PUBLIC_SYNTHETIC"},
     "learning_design_digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
     "learning_design_id": {"pattern": "^PHY-LD-", "type": "string"},

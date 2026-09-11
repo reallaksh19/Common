@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "Grade 9/V2/Physics/Publication/**"
+      - "Grade 9/V2/Physics/Review/**"
       - "Grade 9/V2/Physics/LearningDesign/**"
       - "Grade 9/V2/Physics/StudySynthesis/**"
       - ".github/workflows/v2-physics-publication.yml"
@@ -19,9 +20,9 @@ jobs:
           python-version: "3.12"
       - name: Install validators and PDF tooling
         run: python -m pip install "jsonschema>=4.20,<5" "reportlab>=4,<5" "pypdf>=5,<6" "pypdfium2>=4.30,<5"
-      - name: Validate PHY-V2-05 contracts and fixtures
+      - name: Validate PHY-V2-06 publication contracts and fixtures
         run: python "Grade 9/V2/Physics/Publication/contracts/validate_contracts.py"
-      - name: Run PHY-V2-05 publication falsifiers
+      - name: Run PHY-V2-06 publication falsifiers
         run: python "Grade 9/V2/Physics/Publication/tests/test_physics_publication.py"
       - name: Regenerate merged learner state, StudyModel, and LearningDesign
         run: |
@@ -29,42 +30,29 @@ jobs:
           python "$L/engine/derive_physics_state.py" --evidence "$L/fixtures/evidence.synthetic.json" --policy "$L/fixtures/inference_policy.synthetic.json" --interface "$L/fixtures/learner_intelligence_interface.synthetic.json" --out /tmp/phy-state.json
           python "$S/engine/synthesize_physics_study_model.py" --goal "$S/fixtures/goal_scope.synthetic.json" --cks "$S/fixtures/canonical_knowledge_set.synthetic.json" --learner-state /tmp/phy-state.json --policy "$S/fixtures/study_policy.synthetic.json" --out /tmp/phy-study.json
           python "$D/engine/design_physics_learning.py" --study-result /tmp/phy-study.json --policy "$D/fixtures/design_policy.synthetic.json" --out /tmp/phy-design.json
-      - name: Freeze Physics learner semantic product
+      - name: Freeze revised Physics learner semantic product
         run: |
           PUB="Grade 9/V2/Physics/Publication"
-          python "$PUB/engine/build_semantic_product.py" \
-            --design-plan /tmp/phy-design.json \
-            --canonical-probes "Grade 9/V2/Physics/Canonical/registry/diagnostic_probes.json" \
-            --out /tmp/phy-semantic-product.json
-      - name: Render exact candidate and seal custody package
+          python "$PUB/engine/build_semantic_product.py" --design-plan /tmp/phy-design.json --canonical-probes "Grade 9/V2/Physics/Canonical/registry/diagnostic_probes.json" --out /tmp/phy-semantic-product.json
+      - name: Render revised exact candidate and seal custody package
         run: |
           PUB="Grade 9/V2/Physics/Publication"
-          python "$PUB/engine/realize_physics_publication.py" \
-            --product /tmp/phy-semantic-product.json \
-            --target "$PUB/fixtures/publication_target.synthetic.json" \
-            --policy "$PUB/fixtures/publication_policy.synthetic.json" \
-            --design-plan /tmp/phy-design.json \
-            --out /tmp/physics-v2-05-candidate
+          python "$PUB/engine/realize_physics_publication.py" --product /tmp/phy-semantic-product.json --target "$PUB/fixtures/publication_target.synthetic.json" --policy "$PUB/fixtures/publication_policy.synthetic.json" --design-plan /tmp/phy-design.json --out /tmp/physics-v2-06-candidate
       - name: Independently validate exact bytes and material custody
-        run: python "Grade 9/V2/Physics/Publication/validator/validate_candidate.py" --out /tmp/physics-v2-05-candidate
+        run: python "Grade 9/V2/Physics/Publication/validator/validate_candidate.py" --out /tmp/physics-v2-06-candidate
       - name: Render-preflight all pages
-        run: python "Grade 9/V2/Physics/Publication/validator/render_preflight.py" --pdf /tmp/physics-v2-05-candidate/candidate.pdf --out-dir /tmp/physics-v2-05-renders --expected-pages 4
+        run: python "Grade 9/V2/Physics/Publication/validator/render_preflight.py" --pdf /tmp/physics-v2-06-candidate/candidate.pdf --out-dir /tmp/physics-v2-06-renders --expected-pages 4
       - name: Prove deterministic exact PDF and manifest replay
         run: |
           PUB="Grade 9/V2/Physics/Publication"
-          python "$PUB/engine/realize_physics_publication.py" \
-            --product /tmp/phy-semantic-product.json \
-            --target "$PUB/fixtures/publication_target.synthetic.json" \
-            --policy "$PUB/fixtures/publication_policy.synthetic.json" \
-            --design-plan /tmp/phy-design.json \
-            --out /tmp/physics-v2-05-replay
-          cmp /tmp/physics-v2-05-candidate/candidate.pdf /tmp/physics-v2-05-replay/candidate.pdf
-          cmp /tmp/physics-v2-05-candidate/publication_manifest.json /tmp/physics-v2-05-replay/publication_manifest.json
-      - name: Upload exact candidate custody proof
+          python "$PUB/engine/realize_physics_publication.py" --product /tmp/phy-semantic-product.json --target "$PUB/fixtures/publication_target.synthetic.json" --policy "$PUB/fixtures/publication_policy.synthetic.json" --design-plan /tmp/phy-design.json --out /tmp/physics-v2-06-replay
+          cmp /tmp/physics-v2-06-candidate/candidate.pdf /tmp/physics-v2-06-replay/candidate.pdf
+          cmp /tmp/physics-v2-06-candidate/publication_manifest.json /tmp/physics-v2-06-replay/publication_manifest.json
+      - name: Upload revised exact candidate custody proof
         uses: actions/upload-artifact@v4
         with:
-          name: physics-v2-05-candidate-custody-proof
+          name: physics-v2-06-revised-candidate-custody-proof
           path: |
-            /tmp/physics-v2-05-candidate/**
-            /tmp/physics-v2-05-renders/**
+            /tmp/physics-v2-06-candidate/**
+            /tmp/physics-v2-06-renders/**
           if-no-files-found: error
