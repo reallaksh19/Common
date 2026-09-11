@@ -1,0 +1,105 @@
+{
+  "context": {
+    "surface_role": "CORE2_TRANSFER",
+    "lesson_or_transfer_ref": "MATH-CORE2-EUCLID-TRANSFER-FIXTURE",
+    "capability_ref": "MATH-EUCLID-PARALLEL-CONDITION",
+    "problem_family_refs": [
+      "MATH-PF-EUCLID-PARALLEL-EXPLANATION"
+    ],
+    "representation_requirements": [
+      "NATURAL_LANGUAGE_STATEMENT",
+      "ANGLE_RELATION"
+    ],
+    "required_pck_jobs": []
+  },
+  "representations": [
+    {
+      "representation_id": "MATH-RSPEC-EUCLID-STATEMENT",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE2_TRANSFER",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "NATURAL_LANGUAGE_STATEMENT",
+      "primitive_id": "MATH-TP-INVARIANT_HIGHLIGHT-v1",
+      "capability_ref": "MATH-EUCLID-PARALLEL-CONDITION",
+      "problem_family_ref": "MATH-PF-EUCLID-PARALLEL-EXPLANATION",
+      "instructional_job": "EXPLAIN_INVARIANT",
+      "attention_target": "The decisive feature is the same-side interior-angle sum relative to 180 degrees.",
+      "translation_obligation": "Translate wording into the invariant boundary: less than 180 means meeting on that side; 180 is the parallel boundary.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate wording into the invariant boundary: less than 180 means meeting on that side; 180 is the parallel boundary."
+        ],
+        "payload": {
+          "mathematical_object": "Euclid fifth-postulate condition",
+          "invariant": "comparison of same-side interior-angle sum with 180 degrees",
+          "changing_features": [
+            "angle labels",
+            "individual angle values",
+            "line names"
+          ]
+        }
+      },
+      "learner_action_expected": "Underline the condition that decides meeting versus parallel behavior.",
+      "misconception_or_contrast_ref": null,
+      "accessibility_text": "Text highlight emphasizes that the angle-sum comparison to 180 degrees, not the line drawing, determines the conclusion.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "ff67a743d6cb99e0ec30d9a2e44488dc59aacec253ca6523b29301fada7acffe"
+    },
+    {
+      "representation_id": "MATH-RSPEC-EUCLID-CONTRAST",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE2_TRANSFER",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "ANGLE_RELATION",
+      "primitive_id": "MATH-TP-PARALLEL_MEET_CONTRAST-v1",
+      "capability_ref": "MATH-EUCLID-PARALLEL-CONDITION",
+      "problem_family_ref": "MATH-PF-EUCLID-PARALLEL-EXPLANATION",
+      "instructional_job": "DISCRIMINATE_CASES",
+      "attention_target": "Compare a same-side sum below 180 degrees with the 180-degree boundary.",
+      "translation_obligation": "Translate each angle-sum case into the corresponding meet or parallel conclusion.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate each angle-sum case into the corresponding meet or parallel conclusion."
+        ],
+        "payload": {
+          "angle_sum_cases": [
+            {
+              "sum_degrees": 110
+            },
+            {
+              "sum_degrees": 180
+            }
+          ],
+          "boundary": "180 degrees",
+          "outcomes": [
+            "110<180: lines meet on that side",
+            "180: parallel boundary"
+          ]
+        }
+      },
+      "learner_action_expected": "Classify each case and state the decisive inequality or equality.",
+      "misconception_or_contrast_ref": "MATH-INV-EUCLID-LT180-PARALLEL",
+      "accessibility_text": "Contrast shows one transversal case with angle sum 110 degrees leading to meeting and one with 180 degrees marking the parallel boundary.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "774ae09ed2c53f69fba2d89e525cfec6a8e4573a45f7e728e163c02cf5f9f676"
+    }
+  ]
+}

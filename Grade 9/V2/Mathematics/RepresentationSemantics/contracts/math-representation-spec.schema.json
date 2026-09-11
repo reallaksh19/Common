@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-representation-spec.schema.json",
+  "title": "Mathematics Representation Specification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "representation_id",
+    "schema_version",
+    "subject",
+    "surface_role",
+    "semantic_role",
+    "semantic_requirement_ref",
+    "primitive_id",
+    "capability_ref",
+    "instructional_job",
+    "attention_target",
+    "translation_obligation",
+    "source_semantic_data",
+    "learner_action_expected",
+    "accessibility_text",
+    "renderer_constraints",
+    "spec_digest"
+  ],
+  "properties": {
+    "representation_id": {
+      "type": "string",
+      "pattern": "^MATH-RSPEC-[A-Z0-9-]+$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "surface_role": {
+      "enum": [
+        "CORE1_LESSON",
+        "CORE2_TRANSFER"
+      ]
+    },
+    "semantic_role": {
+      "const": "INSTRUCTIONAL"
+    },
+    "semantic_requirement_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "primitive_id": {
+      "type": "string",
+      "pattern": "^MATH-TP-[A-Z0-9_]+-v[0-9]+$"
+    },
+    "capability_ref": {
+      "type": "string",
+      "pattern": "^MATH-"
+    },
+    "problem_family_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^MATH-PF-"
+    },
+    "instructional_job": {
+      "enum": [
+        "EXPOSE_TRANSFORMATION",
+        "EXPLAIN_INVARIANT",
+        "SHOW_STRUCTURE",
+        "CONNECT_REPRESENTATIONS",
+        "DISCRIMINATE_CASES",
+        "COMPARE_METHODS",
+        "VERIFY_REASONING",
+        "SHOW_MULTIPLE_VALID_SOLUTIONS"
+      ]
+    },
+    "attention_target": {
+      "type": "string",
+      "minLength": 12
+    },
+    "translation_obligation": {
+      "type": "string",
+      "minLength": 12
+    },
+    "source_semantic_data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "declared_claims",
+        "payload"
+      ],
+      "properties": {
+        "declared_claims": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 5
+          }
+        },
+        "payload": {
+          "type": "object",
+          "minProperties": 1
+        }
+      }
+    },
+    "learner_action_expected": {
+      "type": "string",
+      "minLength": 12
+    },
+    "misconception_or_contrast_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "accessibility_text": {
+      "type": "string",
+      "minLength": 20
+    },
+    "renderer_constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "must_not_infer_mathematical_content",
+        "must_render_from_source_semantic_data",
+        "layout_constraints"
+      ],
+      "properties": {
+        "must_not_infer_mathematical_content": {
+          "const": true
+        },
+        "must_render_from_source_semantic_data": {
+          "const": true
+        },
+        "layout_constraints": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      }
+    },
+    "spec_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

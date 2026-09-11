@@ -1,0 +1,42 @@
+name: V2 Mathematics M-H Representation Semantics
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/RepresentationSemantics/**'
+      - 'Grade 9/V2/Mathematics/ProblemSemantics/**'
+      - 'Grade 9/V2/Mathematics/Core1Authoring/**'
+      - '.github/workflows/v2-math-representation-semantics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-representation-semantics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate M-H contracts and current representation vocabulary closure
+        run: python 'Grade 9/V2/Mathematics/RepresentationSemantics/contracts/validate_contracts.py'
+      - name: Run M-H representation falsifiers
+        run: python 'Grade 9/V2/Mathematics/RepresentationSemantics/tests/test_math_representation_semantics.py'
+      - name: Deterministic semantic replay
+        run: |
+          R='Grade 9/V2/Mathematics/RepresentationSemantics'
+          run_mh() {
+            python "$R/engine/build_math_representation_plan.py" \
+              --input "$R/fixtures/core1-equality.fixture.json" \
+              --primitive-registry "$R/registry/math-teaching-primitive-registry.json" \
+              --page-intent-profile "$R/policies/math-page-intent-profile.json" \
+              --out "$1"
+          }
+          run_mh /tmp/mh-a.json
+          run_mh /tmp/mh-b.json
+          cmp /tmp/mh-a.json /tmp/mh-b.json
+          echo 'MATH M-H deterministic replay PASS'

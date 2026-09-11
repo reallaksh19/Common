@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-teaching-primitive.schema.json",
+  "title": "Mathematics Teaching Primitive",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "primitive_id",
+    "schema_version",
+    "subject",
+    "canonical_name",
+    "semantic_class",
+    "supported_instructional_jobs",
+    "required_source_fields",
+    "supports_contrast",
+    "contrast_source_fields",
+    "renderer_constraints",
+    "primitive_digest"
+  ],
+  "properties": {
+    "primitive_id": {
+      "type": "string",
+      "pattern": "^MATH-TP-[A-Z0-9_]+-v[0-9]+$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "canonical_name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "semantic_class": {
+      "enum": [
+        "SYMBOLIC",
+        "SPATIAL",
+        "CONTRAST",
+        "COMPARISON",
+        "SEMANTIC",
+        "VERIFICATION"
+      ]
+    },
+    "supported_instructional_jobs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "EXPOSE_TRANSFORMATION",
+          "EXPLAIN_INVARIANT",
+          "SHOW_STRUCTURE",
+          "CONNECT_REPRESENTATIONS",
+          "DISCRIMINATE_CASES",
+          "COMPARE_METHODS",
+          "VERIFY_REASONING",
+          "SHOW_MULTIPLE_VALID_SOLUTIONS"
+        ]
+      }
+    },
+    "required_source_fields": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 2
+      }
+    },
+    "supports_contrast": {
+      "type": "boolean"
+    },
+    "contrast_source_fields": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 2
+      }
+    },
+    "renderer_constraints": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    },
+    "primitive_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

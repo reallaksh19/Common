@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-representation-plan.schema.json",
+  "title": "Mathematics Representation Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "representation_plan_id",
+    "schema_version",
+    "subject",
+    "surface_role",
+    "lesson_or_transfer_ref",
+    "capability_ref",
+    "required_representation_refs",
+    "coverage",
+    "representations",
+    "input_digest",
+    "plan_digest"
+  ],
+  "properties": {
+    "representation_plan_id": {
+      "type": "string",
+      "pattern": "^MATH-RPLAN-[0-9a-f]{16}$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "surface_role": {
+      "enum": [
+        "CORE1_LESSON",
+        "CORE2_TRANSFER"
+      ]
+    },
+    "lesson_or_transfer_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "capability_ref": {
+      "type": "string",
+      "pattern": "^MATH-"
+    },
+    "required_representation_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "semantic_requirement_ref",
+          "representation_ids"
+        ],
+        "properties": {
+          "semantic_requirement_ref": {
+            "type": "string"
+          },
+          "representation_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "representations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "math-representation-spec.schema.json"
+      }
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}
