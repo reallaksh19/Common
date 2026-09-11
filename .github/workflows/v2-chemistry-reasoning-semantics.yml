@@ -1,0 +1,32 @@
+name: V2 Chemistry Reasoning Semantics C-D
+on:
+  push:
+    paths:
+      - 'Grade 9/V2/Chemistry/ReasoningSemantics/**'
+      - 'Grade 9/V2/Chemistry/AssessmentScope/**'
+      - '.github/workflows/v2-chemistry-reasoning-semantics.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/ReasoningSemantics/**'
+      - 'Grade 9/V2/Chemistry/AssessmentScope/**'
+      - '.github/workflows/v2-chemistry-reasoning-semantics.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install jsonschema
+      - name: Validate C-D registries
+        run: python "Grade 9/V2/Chemistry/ReasoningSemantics/contracts/validate_contracts.py"
+      - name: Run C-D falsifiers
+        run: python "Grade 9/V2/Chemistry/ReasoningSemantics/tests/test_chemistry_reasoning_semantics.py"
+      - name: Generate C-D semantics twice
+        run: |
+          python "Grade 9/V2/Chemistry/ReasoningSemantics/engine/build_chemistry_reasoning_semantics.py" --source-ledger "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-source-obligation-ledger.json" --question-bindings "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-question-capability-bindings.json" --family-registry "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json" --role-registry "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-reasoning-role-registry.json" --badge-policy "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json" --out /tmp/cd1.json
+          python "Grade 9/V2/Chemistry/ReasoningSemantics/engine/build_chemistry_reasoning_semantics.py" --source-ledger "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-source-obligation-ledger.json" --question-bindings "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-question-capability-bindings.json" --family-registry "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json" --role-registry "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-reasoning-role-registry.json" --badge-policy "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json" --out /tmp/cd2.json
+          cmp /tmp/cd1.json /tmp/cd2.json
+      - name: Validate generated C-D semantics
+        run: python "Grade 9/V2/Chemistry/ReasoningSemantics/contracts/validate_generated.py" /tmp/cd1.json

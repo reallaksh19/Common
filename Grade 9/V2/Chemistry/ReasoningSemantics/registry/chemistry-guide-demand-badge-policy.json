@@ -1,0 +1,1 @@
+{"policy_id":"CHEM-C-D-DEMAND-BADGE-v1","version":"1.0.0","thresholds":[{"badge":"FOUNDATION","max_score":10},{"badge":"STANDARD","max_score":20},{"badge":"DEEP","max_score":30},{"badge":"VERY_DEEP","max_score":999}],"prohibited_bases":["SOURCE_DIFFICULTY_ONLY","KEYWORD_ONLY"]}
