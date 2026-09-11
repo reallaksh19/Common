@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-publication-structure.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["structure_id", "schema_version", "semantic_product_ref", "page_intents"],
+  "properties": {
+    "structure_id": {"type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "semantic_product_ref": {"type": "string"},
+    "page_intents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page_intent_id", "page_number", "title", "content_refs"],
+        "properties": {
+          "page_intent_id": {"type": "string"},
+          "page_number": {"type": "integer", "minimum": 1},
+          "title": {"type": "string"},
+          "content_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

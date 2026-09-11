@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-physical-page-map.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["page_map_id", "schema_version", "artifact_path", "artifact_sha256", "page_count", "actual_placement_evidence", "content_placements"],
+  "properties": {
+    "page_map_id": {"type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "artifact_path": {"const": "candidate.pdf"},
+    "artifact_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "page_count": {"type": "integer", "minimum": 1},
+    "actual_placement_evidence": {"const": true},
+    "content_placements": {
+      "type": "array",
+      "minItems": 14,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["content_ref", "page_intent_id", "page", "primitive", "x0", "y0", "x1", "y1", "fragment_kind"],
+        "properties": {
+          "content_ref": {"type": "string"},
+          "page_intent_id": {"type": "string"},
+          "page": {"type": "integer", "minimum": 1},
+          "primitive": {"type": "string"},
+          "x0": {"type": "number"},
+          "y0": {"type": "number"},
+          "x1": {"type": "number"},
+          "y1": {"type": "number"},
+          "fragment_kind": {"const": "START"}
+        }
+      }
+    }
+  }
+}

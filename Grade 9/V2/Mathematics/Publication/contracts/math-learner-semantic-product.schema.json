@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learner-semantic-product.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["semantic_product_id", "schema_version", "subject", "learning_design_id", "learning_design_digest", "fixture_class", "authority", "content_items"],
+  "properties": {
+    "semantic_product_id": {"type": "string", "minLength": 3},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "learning_design_id": {"type": "string", "minLength": 3},
+    "learning_design_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "fixture_class": {"const": "PUBLIC_SYNTHETIC"},
+    "authority": {"const": "LEARNER_SEMANTIC_PRODUCT"},
+    "content_items": {
+      "type": "array",
+      "minItems": 14,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["content_id", "materiality", "primitive", "learning_design_refs", "title", "body", "learner_job", "support_level", "metadata"],
+        "properties": {
+          "content_id": {"type": "string", "minLength": 3},
+          "materiality": {"enum": ["MATERIAL", "DECORATIVE"]},
+          "primitive": {"enum": ["ENTRY_ANCHOR_PANEL", "PREDICT_BOX", "RECONSTRUCTION_LADDER", "MINIMAL_CONTRAST_PANEL", "WORKED_REASONING_STACK", "GUIDED_WORKSPACE", "FADED_WORKSPACE", "INDEPENDENT_WORKSPACE", "SELF_CHECK_STRIP", "DIAGNOSTIC_PROBE_PANEL", "TRANSFER_CHALLENGE", "COMPLETION_EVIDENCE_PANEL", "REPRESENTATION_PANEL"]},
+          "learning_design_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+          "title": {"type": "string", "minLength": 3},
+          "body": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "learner_job": {"type": "string", "minLength": 3},
+          "support_level": {"type": ["integer", "null"], "minimum": 0},
+          "metadata": {"type": "object"}
+        }
+      }
+    }
+  }
+}
