@@ -119,14 +119,63 @@ def validate_policy(p):
     if p["badge_class"]!="GUIDE_ASSIGNED_REASONING_DEMAND" or p["psychometric_claim"] is not False: fail("GUIDE_BADGE_PSYCHOMETRIC_CLAIM")
     if set(p["dimension_catalog"])!=DIMENSIONS: fail("GUIDE_DEMAND_POLICY_DIMENSION_COVERAGE")
 
+def _part_variant_index(cov):
+    part=cov.get("part_ref")
+    if not part or "." not in part: return 0
+    suffix=part.rsplit(".",1)[-1].lower()
+    if len(suffix)==1 and "a"<=suffix<="z": return ord(suffix)-ord("a")
+    return 0
+
+def _source_score(source,cov,role):
+    caps=set(source.get("capability_refs",[])); reps=set(source.get("representation_refs",[]))
+    wanted_caps=set(cov.get("canonical_capability_refs",[])); wanted_reps=set(cov.get("representation_demands",[]))
+    return (4*len(caps&wanted_caps)+2*len(reps&wanted_reps)+(1 if source.get("role")==role else 0))
+
+def _project_step(item,n,role,source,cov):
+    source_role=source["role"]
+    reps=list(source.get("representation_refs",[]))
+    if source_role!=role and role=="REPRESENT":
+        wanted=[r for r in cov.get("representation_demands",[]) if r in reps]
+        if not wanted: wanted=list(cov.get("representation_demands",[]))[:1]
+        label=" / ".join(wanted) if wanted else "required mathematical"
+        semantic_job=f"make the required {label} representation explicit while preserving variable meaning"
+        transition=f"given item state -> {label} representation"
+        reps=wanted or reps
+    else:
+        semantic_job=source["semantic_job"]
+        transition=source["mathematical_transition"]
+    return {"step_id":f"{item}-R{n:02d}","role":role,"semantic_job":semantic_job,"mathematical_transition":transition,"capability_refs":source["capability_refs"],"representation_refs":reps,"verification_checkpoint_refs":source.get("verification_checkpoint_refs",[])}
+
 def instantiate_route(item,cov,profile,family):
-    buckets=defaultdict(list)
-    for s in family["reasoning_route_template"]: buckets[s["role"]].append(s)
+    template=family["reasoning_route_template"]
+    wanted_caps=set(cov.get("canonical_capability_refs",[]))
+    wanted_reps=set(cov.get("representation_demands",[]))
+    variant=_part_variant_index(cov)
     used=Counter(); steps=[]
     for n,role in enumerate(cov["reasoning_role_expectations"],1):
-        if role not in buckets: fail("PROBLEM_FAMILY_ROUTE_ROLE_GAP",f"{item}:{role}")
-        i=used[role]; used[role]+=1; source=buckets[role][min(i,len(buckets[role])-1)]
-        steps.append({"step_id":f"{item}-R{n:02d}","role":role,"semantic_job":source["semantic_job"],"mathematical_transition":source["mathematical_transition"],"capability_refs":source["capability_refs"],"representation_refs":source["representation_refs"],"verification_checkpoint_refs":source.get("verification_checkpoint_refs",[])})
+        exact=[s for s in template if s["role"]==role]
+        if wanted_caps:
+            exact_cap=[s for s in exact if set(s.get("capability_refs",[]))&wanted_caps]
+            family_cap=[s for s in template if set(s.get("capability_refs",[]))&wanted_caps]
+            if exact_cap:
+                exact=exact_cap
+            elif family_cap:
+                exact=[]
+        if exact:
+            i=used[role]; used[role]+=1
+            source=exact[min(i+variant,len(exact)-1)]
+        else:
+            candidates=[s for s in template if (not wanted_caps or set(s.get("capability_refs",[]))&wanted_caps)]
+            if wanted_reps:
+                rep_candidates=[s for s in candidates if set(s.get("representation_refs",[]))&wanted_reps]
+                if rep_candidates: candidates=rep_candidates
+            if role!="VERIFY":
+                non_verify=[s for s in candidates if s.get("role")!="VERIFY"]
+                if non_verify: candidates=non_verify
+            if not candidates: fail("PROBLEM_FAMILY_ROUTE_ROLE_GAP",f"{item}:{role}")
+            source=max(enumerate(candidates),key=lambda pair:(_source_score(pair[1],cov,role),-pair[0]))[1]
+        steps.append(_project_step(item,n,role,source,cov))
+    if [s["role"] for s in steps]!=cov["reasoning_role_expectations"]: fail("PROBLEM_FAMILY_ROUTE_ROLE_DRIFT",item)
     route={"route_id":f"MATH-RR-{item.replace('.','-')}","schema_version":"1.0.0","subject":"MATHEMATICS","item_ref":item,"family_refs":profile["family_refs"],"primary_family_ref":profile["primary_family_ref"],"mapping_state":cov["mapping_state"],"learner_support_independent":True,"variant_context":profile["variant_context"],"steps":steps,"route_digest":""}
     no_forbidden_route_payload(route["steps"],route["route_id"]); route["route_digest"]=dwo(route,"route_digest"); return route
 
