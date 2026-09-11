@@ -1,0 +1,15 @@
+{
+  "capabilities": [
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-SYSTEM-IDENTIFICATION","description":"Identify the physical system whose state is being modeled.","external_dependencies":[],"name":"System identification","reasoning_family":"SYSTEM_MODEL"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-REFERENCE-FRAME","description":"Define origin, axes, positive direction, and frame before interpreting signed quantities.","external_dependencies":[],"name":"Reference frame","reasoning_family":"FRAME_SEMANTICS"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-STATE-VARIABLE-MEANING","description":"Interpret position, displacement, velocity, acceleration, and time as state quantities in a frame.","external_dependencies":[],"name":"State-variable meaning","reasoning_family":"STATE_SEMANTICS"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-MODEL-SELECTION","description":"Select a physical motion model only when its conditions of validity are satisfied.","external_dependencies":["SHARED-ALGEBRAIC-SUBSTITUTION"],"name":"Model selection","reasoning_family":"MODEL_VALIDITY"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-PROJECTILE-COMPONENT-DECOMPOSITION","description":"Decompose projectile motion into frame-consistent horizontal and vertical components.","external_dependencies":["SHARED-ARITHMETIC-EXECUTION"],"name":"Projectile component decomposition","reasoning_family":"REPRESENTATION_REASONING"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-REPRESENTATION-TRANSLATION","description":"Translate consistently among physical scene, vector/state representation, graph, and equation.","external_dependencies":[],"name":"Representation translation","reasoning_family":"REPRESENTATION_REASONING"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-MOTION-PROPAGATE-STATE","description":"Carry physically continuous state variables across modeled phase boundaries.","external_dependencies":["SHARED-ARITHMETIC-EXECUTION","SHARED-ALGEBRAIC-SUBSTITUTION"],"name":"Motion state propagation","reasoning_family":"STATE_TRANSITION"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-SIGNED-DISPLACEMENT-INTERPRETATION","description":"Interpret displacement sign as frame-relative direction and state change, not arithmetic decoration.","external_dependencies":["SHARED-ARITHMETIC-EXECUTION"],"name":"Signed displacement interpretation","reasoning_family":"FRAME_SEMANTICS"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-PHYSICAL-VALIDATION","description":"Check dimensions, direction, continuity, limiting behavior, and plausibility against the physical model.","external_dependencies":[],"name":"Physical validation","reasoning_family":"VALIDATION"},
+    {"authority":"PHYSICS_CANONICAL","capability_id":"PHY-SOLUTION-VERIFICATION","description":"Verify a candidate result against governing relations, conditions, and physical constraints.","external_dependencies":["SHARED-ARITHMETIC-EXECUTION"],"name":"Solution verification","reasoning_family":"VERIFICATION"}
+  ],
+  "schema_version": "1.0.0"
+}

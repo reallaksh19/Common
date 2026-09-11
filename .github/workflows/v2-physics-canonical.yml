@@ -1,0 +1,45 @@
+name: V2 Physics Canonical
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Physics/Canonical/**"
+      - ".github/workflows/v2-physics-canonical.yml"
+  workflow_dispatch:
+
+jobs:
+  physics-canonical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator
+        run: python -m pip install "jsonschema>=4.20,<5"
+      - name: Validate PHY-V2-01 contracts and semantic package
+        run: python "Grade 9/V2/Physics/Canonical/contracts/validate_contracts.py"
+      - name: Run PHY-V2-01 canonical falsifiers
+        run: python "Grade 9/V2/Physics/Canonical/tests/test_physics_canonical.py"
+      - name: Build deterministic canonical package twice
+        run: |
+          C="Grade 9/V2/Physics/Canonical"
+          python "$C/engine/build_canonical_package.py" --out /tmp/physics-a
+          python "$C/engine/build_canonical_package.py" --out /tmp/physics-b
+          cmp /tmp/physics-a/canonical_package.json /tmp/physics-b/canonical_package.json
+          cmp /tmp/physics-a/canonical_package_manifest.json /tmp/physics-b/canonical_package_manifest.json
+      - name: Prove package boundary
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('/tmp/physics-a/canonical_package_manifest.json'))
+          assert p['benchmark_producer_inputs']==0
+          assert p['real_learner_data']==0
+          print('PHY-V2-01 package boundary = PASS')
+          PY
+      - name: Upload canonical proof package
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-v2-01-canonical-proof
+          path: /tmp/physics-a/**
+          if-no-files-found: error

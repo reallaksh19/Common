@@ -1,0 +1,51 @@
+{
+  "reasoning_contracts":[
+    {
+      "authority":"PHYSICS_CANONICAL",
+      "checkpoints":[
+        {"capability_ref":"PHY-SYSTEM-IDENTIFICATION","checkpoint_id":"PHY-SP-01","ordinal":1,"semantic_role":"Identify the system and current motion phase."},
+        {"capability_ref":"PHY-STATE-VARIABLE-MEANING","checkpoint_id":"PHY-SP-02","ordinal":2,"semantic_role":"Identify the initial state for the phase."},
+        {"capability_ref":"PHY-MODEL-SELECTION","checkpoint_id":"PHY-SP-03","ordinal":3,"semantic_role":"Apply a model valid for the phase conditions."},
+        {"capability_ref":"PHY-STATE-VARIABLE-MEANING","checkpoint_id":"PHY-SP-04","ordinal":4,"semantic_role":"Determine the terminal state of the phase."},
+        {"capability_ref":"PHY-MOTION-PROPAGATE-STATE","checkpoint_id":"PHY-SP-05","ordinal":5,"semantic_role":"Identify the physical boundary between phases."},
+        {"capability_ref":"PHY-MOTION-PROPAGATE-STATE","checkpoint_id":"PHY-SP-06","ordinal":6,"semantic_role":"Carry continuous terminal-state variables into the next phase initial state."},
+        {"capability_ref":"PHY-MODEL-SELECTION","checkpoint_id":"PHY-SP-07","ordinal":7,"semantic_role":"Apply changed conditions and the valid next-phase model."},
+        {"capability_ref":"PHY-SIGNED-DISPLACEMENT-INTERPRETATION","checkpoint_id":"PHY-SP-08","ordinal":8,"semantic_role":"Interpret sign and direction physically in the fixed frame."},
+        {"capability_ref":"PHY-PHYSICAL-VALIDATION","checkpoint_id":"PHY-SP-09","ordinal":9,"semantic_role":"Verify continuity, conditions, dimensions, and plausibility."}
+      ],
+      "contract_id":"PHY-RC-MULTI-PHASE-STATE-PROPAGATION",
+      "invariants":[{"discontinuity_exception":true,"invariant_id":"PHY-INV-PHASE-HANDOFF","statement":"For each state variable continuous across a phase boundary, terminal state of phase n is the initial state of phase n+1 unless an explicitly modeled discontinuity or impulse changes that variable.","terminal_to_next_initial":true}],
+      "name":"Multi-phase state propagation",
+      "primary_capability_ref":"PHY-MOTION-PROPAGATE-STATE"
+    },
+    {
+      "authority":"PHYSICS_CANONICAL","contract_id":"PHY-RC-PROJECTILE-DECOMPOSITION","name":"Projectile component reasoning","primary_capability_ref":"PHY-PROJECTILE-COMPONENT-DECOMPOSITION",
+      "checkpoints":[
+        {"capability_ref":"PHY-REFERENCE-FRAME","checkpoint_id":"PHY-PJ-01","ordinal":1,"semantic_role":"Fix axes and sign convention."},
+        {"capability_ref":"PHY-PROJECTILE-COMPONENT-DECOMPOSITION","checkpoint_id":"PHY-PJ-02","ordinal":2,"semantic_role":"Resolve velocity into horizontal and vertical components."},
+        {"capability_ref":"PHY-MODEL-SELECTION","checkpoint_id":"PHY-PJ-03","ordinal":3,"semantic_role":"Apply component-specific ideal projectile models."},
+        {"capability_ref":"PHY-PHYSICAL-VALIDATION","checkpoint_id":"PHY-PJ-04","ordinal":4,"semantic_role":"Check component meaning and physical plausibility."}
+      ],
+      "invariants":[{"discontinuity_exception":false,"invariant_id":"PHY-INV-COMPONENT-INDEPENDENCE","statement":"In ideal projectile motion, horizontal and vertical component models share time but retain distinct component state meanings.","terminal_to_next_initial":false}]
+    },
+    {
+      "authority":"PHYSICS_CANONICAL","contract_id":"PHY-RC-SIGNED-DISPLACEMENT","name":"Signed displacement meaning","primary_capability_ref":"PHY-SIGNED-DISPLACEMENT-INTERPRETATION",
+      "checkpoints":[
+        {"capability_ref":"PHY-REFERENCE-FRAME","checkpoint_id":"PHY-SD-01","ordinal":1,"semantic_role":"Fix origin and positive direction."},
+        {"capability_ref":"PHY-STATE-VARIABLE-MEANING","checkpoint_id":"PHY-SD-02","ordinal":2,"semantic_role":"Identify initial and final position."},
+        {"capability_ref":"PHY-SIGNED-DISPLACEMENT-INTERPRETATION","checkpoint_id":"PHY-SD-03","ordinal":3,"semantic_role":"Interpret displacement sign as directed position change."},
+        {"capability_ref":"PHY-PHYSICAL-VALIDATION","checkpoint_id":"PHY-SD-04","ordinal":4,"semantic_role":"Check direction against the physical scene."}
+      ],
+      "invariants":[{"discontinuity_exception":false,"invariant_id":"PHY-INV-SIGN-FRAME","statement":"The sign of a displacement is meaningful only relative to the declared frame and positive direction.","terminal_to_next_initial":false}]
+    },
+    {
+      "authority":"PHYSICS_CANONICAL","contract_id":"PHY-RC-SOLUTION-VERIFICATION","name":"Physics solution verification","primary_capability_ref":"PHY-SOLUTION-VERIFICATION",
+      "checkpoints":[
+        {"capability_ref":"PHY-SOLUTION-VERIFICATION","checkpoint_id":"PHY-VF-01","ordinal":1,"semantic_role":"Recheck governing relation and model conditions."},
+        {"capability_ref":"PHY-PHYSICAL-VALIDATION","checkpoint_id":"PHY-VF-02","ordinal":2,"semantic_role":"Check units, sign/direction, continuity, and magnitude plausibility."}
+      ],
+      "invariants":[{"discontinuity_exception":false,"invariant_id":"PHY-INV-VERIFY-PHYSICAL","statement":"A numerically obtained result is not validated until it is consistent with the governing model and physical constraints.","terminal_to_next_initial":false}]
+    }
+  ],
+  "schema_version":"1.0.0"
+}
