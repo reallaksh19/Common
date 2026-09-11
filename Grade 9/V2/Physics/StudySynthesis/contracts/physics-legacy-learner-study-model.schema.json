@@ -1,0 +1,48 @@
+{
+  "$id": "physics-legacy-learner-study-model.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_knowledge_set_id": {"type": "string"},
+    "external_dependency_decisions": {
+      "items": {"additionalProperties": false, "properties": {
+        "canonical_refs": {"items": {"pattern": "^SHARED-", "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "dependency_ref": {"pattern": "^SHARED-", "type": "string"},
+        "engagement_mode": {"const": "ACTIVE_STUDY"},
+        "learner_state_reason_refs": {"items": {"type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "readiness_mode": {"const": "REPAIR_IN_UNIT"},
+        "semantics_owner": {"const": "EXTERNAL_CANONICAL_DEPENDENCY"}
+      }, "required": ["dependency_ref", "engagement_mode", "readiness_mode", "canonical_refs", "learner_state_reason_refs", "semantics_owner"], "type": "object"},
+      "type": "array"
+    },
+    "goal_id": {"type": "string"},
+    "learner_state_snapshot_id": {"type": "string"},
+    "policy_version": {"type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "study_model_id": {"type": "string"},
+    "target_decisions": {
+      "items": {"additionalProperties": false, "properties": {
+        "canonical_refs": {"items": {"type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "engagement_mode": {"enum": ["VERIFY_ONLY", "COMPRESS", "USE_AS_ENTRY_POINT", "ACTIVE_STUDY"]},
+        "learner_state_reason_refs": {"items": {"type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "probe_refs": {"items": {"pattern": "^PHY-PROBE-", "type": "string"}, "type": "array", "uniqueItems": true},
+        "readiness_mode": {"enum": ["READY", "REPAIR_BEFORE", "REPAIR_IN_UNIT", "PROBE_FIRST"]},
+        "source_capability_state": {"enum": ["UNKNOWN", "DEVELOPING", "READY", "REPAIR_REQUIRED"]},
+        "study_requirements": {
+          "items": {"additionalProperties": false, "properties": {
+            "canonical_refs": {"items": {"type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+            "kind": {"enum": ["DIAGNOSTIC_PROBE", "CONCEPTUAL_BRIDGE", "RECONSTRUCTION", "REPRESENTATION_MEANING", "MISCONCEPTION_CONTRAST", "WORKED_REASONING", "VERIFICATION", "TRANSFER", "COMPLETION_EVIDENCE"]},
+            "learner_state_reason_refs": {"items": {"type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+            "requirement_id": {"type": "string"}
+          }, "required": ["requirement_id", "kind", "canonical_refs", "learner_state_reason_refs"], "type": "object"},
+          "type": "array"
+        },
+        "target_id": {"pattern": "^PHY-", "type": "string"}
+      }, "required": ["target_id", "engagement_mode", "readiness_mode", "canonical_refs", "learner_state_reason_refs", "source_capability_state", "probe_refs", "study_requirements"], "type": "object"},
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": ["schema_version", "study_model_id", "goal_id", "policy_version", "canonical_knowledge_set_id", "learner_state_snapshot_id", "target_decisions", "external_dependency_decisions"],
+  "type": "object"
+}
