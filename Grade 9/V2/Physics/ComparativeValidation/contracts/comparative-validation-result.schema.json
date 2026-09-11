@@ -1,0 +1,122 @@
+{
+  "$id": "https://common.local/physics/v2/comparative-validation-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "BLOCKED_HUMAN_QUALITY_GATES"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reference_access_status": {
+            "const": "NOT_ATTEMPTED"
+          },
+          "reference_sha256": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "READY_FOR_REFERENCE_COMPARISON"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "human_gate_authority": {
+            "const": "AUTHORIZED_HUMAN_REVIEW"
+          },
+          "reference_access_status": {
+            "const": "ACCESSED_AFTER_HUMAN_GATES"
+          },
+          "reference_sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "unmet_gates": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "candidate_artifact_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "comparative_validation_status": {
+      "const": "NOT_RUN"
+    },
+    "human_gate_authority": {
+      "enum": [
+        "NO_AUTHORIZED_HUMAN_EVIDENCE",
+        "UNAUTHORIZED_HUMAN_GATE_EVIDENCE",
+        "AUTHORIZED_HUMAN_REVIEW"
+      ]
+    },
+    "reference_access_status": {
+      "enum": [
+        "NOT_ATTEMPTED",
+        "ACCESSED_AFTER_HUMAN_GATES"
+      ]
+    },
+    "reference_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "release_evidence_eligible": {
+      "const": false
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "BLOCKED_HUMAN_QUALITY_GATES",
+        "READY_FOR_REFERENCE_COMPARISON"
+      ]
+    },
+    "unmet_gates": {
+      "items": {
+        "enum": [
+          "SUBJECT_CORRECTNESS",
+          "PEDAGOGY_USABILITY",
+          "VISUAL_USABILITY"
+        ]
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "validation_id": {
+      "pattern": "^PHY-COMP-[A-F0-9]{14}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "validation_id",
+    "candidate_artifact_sha256",
+    "status",
+    "human_gate_authority",
+    "unmet_gates",
+    "reference_access_status",
+    "reference_sha256",
+    "comparative_validation_status",
+    "release_evidence_eligible"
+  ],
+  "title": "Physics ComparativeValidationResult",
+  "type": "object"
+}

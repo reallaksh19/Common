@@ -1,0 +1,65 @@
+name: V2 Physics Comparative Validation Gate
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Physics/ComparativeValidation/**"
+      - "Grade 9/V2/Physics/Publication/**"
+      - "Grade 9/V2/Physics/Review/**"
+      - ".github/workflows/v2-physics-comparative-validation.yml"
+  workflow_dispatch:
+jobs:
+  physics-comparative-validation-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validators and PDF tooling
+        run: python -m pip install "jsonschema>=4.20,<5" "reportlab>=4.0,<5" "pypdf>=5,<6" "pypdfium2>=4.30,<5"
+      - name: Validate PHY-V2-07 contracts and fixtures
+        run: python "Grade 9/V2/Physics/ComparativeValidation/contracts/validate_contracts.py"
+      - name: Run PHY-V2-07 fail-closed falsifiers
+        run: python "Grade 9/V2/Physics/ComparativeValidation/tests/test_comparative_validation.py"
+      - name: Regenerate exact merged Physics candidate and review package
+        run: |
+          P="Grade 9/V2/Physics"; L="$P/LearnerIntelligence"; S="$P/StudySynthesis"; D="$P/LearningDesign"; PUB="$P/Publication"; R="$P/Review"
+          python "$L/engine/derive_physics_state.py" --evidence "$L/fixtures/evidence.synthetic.json" --policy "$L/fixtures/inference_policy.synthetic.json" --interface "$L/fixtures/learner_intelligence_interface.synthetic.json" --out /tmp/phy-state.json
+          python "$S/engine/synthesize_physics_study_model.py" --goal "$S/fixtures/goal_scope.synthetic.json" --cks "$S/fixtures/canonical_knowledge_set.synthetic.json" --learner-state /tmp/phy-state.json --policy "$S/fixtures/study_policy.synthetic.json" --out /tmp/phy-study.json
+          python "$D/engine/design_physics_learning.py" --study-result /tmp/phy-study.json --policy "$D/fixtures/design_policy.synthetic.json" --out /tmp/phy-design.json
+          python "$PUB/engine/build_semantic_product.py" --design-plan /tmp/phy-design.json --canonical-probes "$P/Canonical/registry/diagnostic_probes.json" --out /tmp/phy-product.json
+          python "$PUB/engine/realize_physics_publication.py" --product /tmp/phy-product.json --target "$PUB/fixtures/publication_target.synthetic.json" --policy "$PUB/fixtures/publication_policy.synthetic.json" --design-plan /tmp/phy-design.json --out /tmp/phy-v207
+          python "$PUB/validator/validate_candidate.py" --out /tmp/phy-v207
+          python "$R/engine/build_review_package.py" --baseline "$R/fixtures/baseline_candidate.synthetic.json" --findings "$R/fixtures/ai_pre_review_findings.synthetic.json" --revised-manifest /tmp/phy-v207/publication_manifest.json --revised-product /tmp/phy-v207/learner_semantic_product.json --out /tmp/phy-v207/review_package.json
+      - name: Prove current real candidate blocks before any PR156/reference access
+        run: |
+          CV="Grade 9/V2/Physics/ComparativeValidation"
+          test ! -e /tmp/PR156-MUST-NOT-BE-READ.json
+          python "$CV/engine/run_comparative_validation_gate.py" --manifest /tmp/phy-v207/publication_manifest.json --review-package /tmp/phy-v207/review_package.json --reference /tmp/PR156-MUST-NOT-BE-READ.json --out /tmp/phy-v207/comparative_validation_result.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/phy-v207/comparative_validation_result.json'))
+          assert r['candidate_artifact_sha256']=='9e5ef00e6a7049e076b56d58a7ce71460e7a8f632a9e42b9ec27e256af4847f8'
+          assert r['status']=='BLOCKED_HUMAN_QUALITY_GATES'
+          assert r['human_gate_authority']=='NO_AUTHORIZED_HUMAN_EVIDENCE'
+          assert r['unmet_gates']==['SUBJECT_CORRECTNESS','PEDAGOGY_USABILITY','VISUAL_USABILITY']
+          assert r['reference_access_status']=='NOT_ATTEMPTED'
+          assert r['reference_sha256'] is None
+          assert r['comparative_validation_status']=='NOT_RUN'
+          assert r['release_evidence_eligible'] is False
+          print('PHY-V2-07 real candidate fail-closed gate = PASS')
+          PY
+      - name: Prove deterministic blocked replay
+        run: |
+          CV="Grade 9/V2/Physics/ComparativeValidation"
+          python "$CV/engine/run_comparative_validation_gate.py" --manifest /tmp/phy-v207/publication_manifest.json --review-package /tmp/phy-v207/review_package.json --reference /tmp/DIFFERENT-NONEXISTENT-REFERENCE.json --out /tmp/replay.json
+          cmp /tmp/phy-v207/comparative_validation_result.json /tmp/replay.json
+      - name: Upload blocked validation proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-v2-07-blocked-comparative-validation-proof
+          path: |
+            /tmp/phy-v207/publication_manifest.json
+            /tmp/phy-v207/review_package.json
+            /tmp/phy-v207/comparative_validation_result.json
+          if-no-files-found: error
