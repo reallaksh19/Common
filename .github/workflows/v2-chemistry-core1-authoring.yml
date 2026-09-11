@@ -1,0 +1,30 @@
+name: V2 Chemistry Core1 Authoring C-G
+
+on:
+  push:
+    branches:
+      - chemistry-v2-c-g-core1-authoring
+    paths:
+      - 'Grade 9/V2/Chemistry/CoreAuthoring/**'
+      - '.github/workflows/v2-chemistry-core1-authoring.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/CoreAuthoring/**'
+      - 'Grade 9/V2/Chemistry/LearnerStudy/**'
+      - 'Grade 9/V2/Chemistry/LearnerEvidence/**'
+      - 'Grade 9/V2/Chemistry/ReasoningSemantics/**'
+      - '.github/workflows/v2-chemistry-core1-authoring.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install jsonschema
+      - name: Validate C-G contracts, PCK and profiles
+        run: python 'Grade 9/V2/Chemistry/CoreAuthoring/contracts/validate_contracts.py'
+      - name: Run C-G Core1 and Appendix falsifiers
+        run: python 'Grade 9/V2/Chemistry/CoreAuthoring/tests/test_chemistry_core1.py'
