@@ -1,0 +1,670 @@
+{
+  "authority_class": "PHYSICS_ASSESSMENT_SCOPE_AUTHORITY",
+  "authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
+  "authority_id": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
+  "authority_scope": "CONCEPT_CAPABILITY_SYSTEM_FRAME_STATE_PHASE_MODEL_PROBLEM_FAMILY_IDENTITY",
+  "canonical_capability_registry_digest": "2c0908eac7409c5087f1a1225eee3f66cfc01d1819f40801554549ef390e1bdb",
+  "canonical_capability_registry_ref": "Grade 9/V2/Physics/Canonical/registry/capabilities.json",
+  "capabilities": [
+    {
+      "canonical_foundation_refs": [
+        "PHY-REFERENCE-FRAME",
+        "PHY-STATE-VARIABLE-MEANING"
+      ],
+      "capability_id": "PHY-CAP-FRAME-SIGN-SETUP",
+      "concept_refs": [
+        "PHY-CONCEPT-FRAME-SIGN"
+      ],
+      "declared_topic_refs": [],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [],
+      "requires_model_validity": false,
+      "requires_reference_frame": true,
+      "title": "Bind frame, axes and sign convention"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MODEL-SELECTION"
+      ],
+      "capability_id": "PHY-CAP-MODEL-VALIDITY-CHECK",
+      "concept_refs": [
+        "PHY-CONCEPT-MODEL-VALIDITY"
+      ],
+      "declared_topic_refs": [],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [],
+      "requires_model_validity": true,
+      "requires_reference_frame": false,
+      "title": "State and check model validity conditions"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-REPRESENTATION-TRANSLATION"
+      ],
+      "capability_id": "PHY-CAP-REPRESENTATION-TRANSLATE",
+      "concept_refs": [
+        "PHY-CONCEPT-REPRESENTATION-TRANSLATION"
+      ],
+      "declared_topic_refs": [],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [],
+      "requires_model_validity": false,
+      "requires_reference_frame": false,
+      "title": "Translate scene/state/graph/equation consistently"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MOTION-PROPAGATE-STATE"
+      ],
+      "capability_id": "PHY-CAP-STATE-PROPAGATE",
+      "concept_refs": [
+        "PHY-CONCEPT-STATE-CONTINUITY"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE"
+      ],
+      "multi_phase_required": true,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP"
+      ],
+      "requires_model_validity": false,
+      "requires_reference_frame": true,
+      "title": "Carry state through a phase boundary"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-STATE-VARIABLE-MEANING"
+      ],
+      "capability_id": "PHY-CAP-DISTANCE-DISPLACEMENT",
+      "concept_refs": [
+        "PHY-MOTION-DISTANCE-DISPLACEMENT"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-DIST-DISP"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP"
+      ],
+      "requires_model_validity": false,
+      "requires_reference_frame": true,
+      "title": "Distinguish path length from displacement"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-PHYSICAL-VALIDATION"
+      ],
+      "capability_id": "PHY-CAP-AVERAGE-SPEED-EQUAL-DISTANCE",
+      "concept_refs": [
+        "PHY-MOTION-AVERAGE-SPEED"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-SPEED-VEL"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [],
+      "requires_model_validity": false,
+      "requires_reference_frame": false,
+      "title": "Compute average speed for equal-distance legs from total time"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MODEL-SELECTION",
+        "PHY-STATE-VARIABLE-MEANING"
+      ],
+      "capability_id": "PHY-CAP-UNIFORM-ACCELERATION",
+      "concept_refs": [
+        "PHY-MOTION-ACCELERATION",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Use acceleration consistently in a constant-acceleration model"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MOTION-PROPAGATE-STATE"
+      ],
+      "capability_id": "PHY-CAP-NTH-SECOND-INTERVAL",
+      "concept_refs": [
+        "PHY-MOTION-NTH-SECOND"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Resolve nth-second displacement as an interval difference"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MOTION-PROPAGATE-STATE"
+      ],
+      "capability_id": "PHY-CAP-FIRST-EQUATION",
+      "concept_refs": [
+        "PHY-MOTION-FIRST-EQUATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Propagate velocity with v=u+at under constant acceleration"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MODEL-SELECTION",
+        "PHY-MOTION-PROPAGATE-STATE"
+      ],
+      "capability_id": "PHY-CAP-FREE-FALL-CONSTANT-G",
+      "concept_refs": [
+        "PHY-GRAVITY-FREE-FALL"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Model one-dimensional free fall with constant g"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MODEL-SELECTION",
+        "PHY-MOTION-PROPAGATE-STATE"
+      ],
+      "capability_id": "PHY-CAP-VERTICAL-PROJECTION",
+      "concept_refs": [
+        "PHY-GRAVITY-VERTICAL-PROJECTION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FREE-FALL-CONSTANT-G"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Resolve vertical projection using a fixed vertical sign convention"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-SIGNED-DISPLACEMENT-INTERPRETATION",
+        "PHY-REPRESENTATION-TRANSLATION"
+      ],
+      "capability_id": "PHY-CAP-VT-SIGNED-AREA",
+      "concept_refs": [
+        "PHY-GRAPHS-VELOCITY-TIME-AREA"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-REPRESENTATION-TRANSLATE",
+        "PHY-CAP-FRAME-SIGN-SETUP"
+      ],
+      "requires_model_validity": false,
+      "requires_reference_frame": true,
+      "title": "Interpret signed area under a velocity-time graph as displacement"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MOTION-PROPAGATE-STATE",
+        "PHY-MODEL-SELECTION"
+      ],
+      "capability_id": "PHY-CAP-MOVING-RELEASE",
+      "concept_refs": [
+        "PHY-MOTION-MOVING-RELEASE"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY",
+        "PHY-MOTION-MULTIPHASE"
+      ],
+      "multi_phase_required": true,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FREE-FALL-CONSTANT-G",
+        "PHY-CAP-STATE-PROPAGATE"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Preserve carrier velocity at release then propagate under gravity"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-MOTION-PROPAGATE-STATE",
+        "PHY-MODEL-SELECTION"
+      ],
+      "capability_id": "PHY-CAP-MULTIPHASE-KINEMATICS",
+      "concept_refs": [
+        "PHY-MOTION-MULTI-PHASE"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE",
+        "PHY-MOTION-ACCEL"
+      ],
+      "multi_phase_required": true,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION",
+        "PHY-CAP-STATE-PROPAGATE"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Resolve piecewise constant-acceleration motion with state handoff"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-STATE-VARIABLE-MEANING",
+        "PHY-MODEL-SELECTION"
+      ],
+      "capability_id": "PHY-CAP-RELATIVE-ACCELERATION-SAME-G",
+      "concept_refs": [
+        "PHY-GRAVITY-RELATIVE-MOTION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Construct relative acceleration when both bodies share g"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-REPRESENTATION-TRANSLATION"
+      ],
+      "capability_id": "PHY-CAP-XT-SLOPE-VELOCITY",
+      "concept_refs": [
+        "PHY-GRAPHS-POSITION-TIME-SLOPE"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-REPRESENTATION-TRANSLATE",
+        "PHY-CAP-FRAME-SIGN-SETUP"
+      ],
+      "requires_model_validity": false,
+      "requires_reference_frame": true,
+      "title": "Interpret x-t slope as velocity"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-REPRESENTATION-TRANSLATION",
+        "PHY-STATE-VARIABLE-MEANING"
+      ],
+      "capability_id": "PHY-CAP-GRAPH-ACCELERATION",
+      "concept_refs": [
+        "PHY-GRAPHS-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-REPRESENTATION-TRANSLATE",
+        "PHY-CAP-FRAME-SIGN-SETUP"
+      ],
+      "requires_model_validity": false,
+      "requires_reference_frame": true,
+      "title": "Interpret graph change in terms of acceleration"
+    },
+    {
+      "canonical_foundation_refs": [
+        "PHY-PROJECTILE-COMPONENT-DECOMPOSITION"
+      ],
+      "capability_id": "PHY-CAP-PROJECTILE-COMPONENTS",
+      "concept_refs": [
+        "PHY-PROJECTILE-COMPONENTS"
+      ],
+      "declared_topic_refs": [
+        "PHY-PROJECTILE"
+      ],
+      "multi_phase_required": false,
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-REPRESENTATION-TRANSLATE"
+      ],
+      "requires_model_validity": true,
+      "requires_reference_frame": true,
+      "title": "Resolve projectile motion by orthogonal components"
+    }
+  ],
+  "concepts": [
+    {
+      "concept_id": "PHY-MOTION-DISTANCE-DISPLACEMENT",
+      "declared_topic_refs": [
+        "PHY-MOTION-DIST-DISP"
+      ],
+      "title": "Distance and displacement as distinct path/state quantities"
+    },
+    {
+      "concept_id": "PHY-MOTION-AVERAGE-SPEED",
+      "declared_topic_refs": [
+        "PHY-MOTION-SPEED-VEL"
+      ],
+      "title": "Average speed as total distance over total time"
+    },
+    {
+      "concept_id": "PHY-MOTION-ACCELERATION",
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "title": "Acceleration as rate of velocity change"
+    },
+    {
+      "concept_id": "PHY-MOTION-UNIFORM-ACCELERATION",
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "title": "Constant-acceleration motion model"
+    },
+    {
+      "concept_id": "PHY-MOTION-NTH-SECOND",
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "title": "Interval displacement versus cumulative displacement"
+    },
+    {
+      "concept_id": "PHY-MOTION-FIRST-EQUATION",
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "title": "Velocity-state propagation under constant acceleration"
+    },
+    {
+      "concept_id": "PHY-GRAVITY-FREE-FALL",
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "title": "One-dimensional free fall under constant g"
+    },
+    {
+      "concept_id": "PHY-GRAVITY-VERTICAL-PROJECTION",
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "title": "Vertical projection under constant downward g"
+    },
+    {
+      "concept_id": "PHY-GRAPHS-VELOCITY-TIME-AREA",
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "title": "Signed displacement from velocity-time area"
+    },
+    {
+      "concept_id": "PHY-MOTION-MOVING-RELEASE",
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY",
+        "PHY-MOTION-MULTIPHASE"
+      ],
+      "title": "Release from a moving carrier preserves instantaneous velocity"
+    },
+    {
+      "concept_id": "PHY-MOTION-MULTI-PHASE",
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE",
+        "PHY-MOTION-ACCEL"
+      ],
+      "title": "Piecewise motion with state handoff across phase boundaries"
+    },
+    {
+      "concept_id": "PHY-GRAVITY-RELATIVE-MOTION",
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "title": "Relative motion under common gravitational acceleration"
+    },
+    {
+      "concept_id": "PHY-GRAPHS-POSITION-TIME-SLOPE",
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "title": "Position-time slope as velocity"
+    },
+    {
+      "concept_id": "PHY-GRAPHS-ACCELERATION",
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "title": "Acceleration encoded in motion-graph change"
+    },
+    {
+      "concept_id": "PHY-CONCEPT-FRAME-SIGN",
+      "declared_topic_refs": [],
+      "title": "Reference frame and sign convention"
+    },
+    {
+      "concept_id": "PHY-CONCEPT-MODEL-VALIDITY",
+      "declared_topic_refs": [],
+      "title": "Physical-model validity conditions"
+    },
+    {
+      "concept_id": "PHY-CONCEPT-REPRESENTATION-TRANSLATION",
+      "declared_topic_refs": [],
+      "title": "Translation among scene, graph, vector/state and equation"
+    },
+    {
+      "concept_id": "PHY-CONCEPT-STATE-CONTINUITY",
+      "declared_topic_refs": [],
+      "title": "State continuity at phase boundaries"
+    },
+    {
+      "concept_id": "PHY-PROJECTILE-COMPONENTS",
+      "declared_topic_refs": [
+        "PHY-PROJECTILE"
+      ],
+      "title": "Projectile component decomposition"
+    }
+  ],
+  "does_not_own": [
+    "LEARNER_STATE",
+    "DIAGNOSIS",
+    "PROBLEM_FAMILY_SEMANTICS",
+    "REASONING_ROUTE_SEMANTICS",
+    "DEMAND_DIFFICULTY",
+    "TEACHING_CHOREOGRAPHY",
+    "HINTS",
+    "SOLUTIONS",
+    "PUBLICATION_LAYOUT"
+  ],
+  "law_identities": [
+    "PHY-LAW-DISPLACEMENT-DEFINITION",
+    "PHY-LAW-AVERAGE-SPEED",
+    "PHY-LAW-A-DELTA-V-BY-DELTA-T",
+    "PHY-LAW-S-UT-HALF-AT2",
+    "PHY-LAW-V-U-AT",
+    "PHY-LAW-V2-U2-2AS",
+    "PHY-LAW-VT-AREA-DISPLACEMENT",
+    "PHY-LAW-XT-SLOPE-VELOCITY",
+    "PHY-LAW-RELATIVE-ACCELERATION-DIFFERENCE",
+    "PHY-LAW-STATE-CONTINUITY",
+    "PHY-LAW-PROJECTILE-COMPONENT-INDEPENDENCE"
+  ],
+  "owns": [
+    "CONCEPT_IDENTITY",
+    "CAPABILITY_IDENTITY",
+    "PREREQUISITE_DEPENDENCY",
+    "SYSTEM_FRAME_STATE_PHASE_BINDING_SHAPE",
+    "PHYSICAL_MODEL_IDENTITY",
+    "LAW_IDENTITY",
+    "PROBLEM_FAMILY_IDENTITY",
+    "REPRESENTATION_IDENTITY",
+    "VERIFICATION_OBLIGATION_IDENTITY",
+    "REASONING_ROLE_EXPECTATION_IDENTITY"
+  ],
+  "physical_model_identities": [
+    "PHY-MODEL-PARTICLE-PATH-GEOMETRY",
+    "PHY-MODEL-AVERAGE-SPEED",
+    "PHY-MODEL-UNIFORM-ACCELERATION",
+    "PHY-MODEL-CONSTANT-G-1D",
+    "PHY-MODEL-GRAPH-KINEMATICS",
+    "PHY-MODEL-MOVING-RELEASE",
+    "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION",
+    "PHY-MODEL-RELATIVE-MOTION-SAME-G",
+    "PHY-MODEL-PROJECTILE-2D"
+  ],
+  "problem_families": [
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-PATH-VS-CHORD",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-NTH-SECOND",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-FIRST-EQUATION",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-FREE-FALL",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-VERTICAL-MAX-HEIGHT",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-VT-SIGNED-AREA",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-MOVING-RELEASE",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-RELATIVE-G-CANCELLATION",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-XT-SLOPE",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-GRAPH-ACCELERATION",
+      "semantic_owner_phase": "P-D"
+    },
+    {
+      "identity_status": "BOUND_IDENTITY",
+      "problem_family_id": "PHY-PF-PROJECTILE-COMPONENTS",
+      "semantic_owner_phase": "P-D"
+    }
+  ],
+  "reasoning_role_expectations": [
+    "IDENTIFY_SYSTEM",
+    "SET_FRAME",
+    "INTERPRET",
+    "REPRESENT",
+    "SELECT_MODEL",
+    "SELECT_RELATION",
+    "PROPAGATE_STATE",
+    "EXECUTE",
+    "CHECK_CONDITION",
+    "COMPARE",
+    "VERIFY",
+    "INTERPRET_RESULT"
+  ],
+  "representation_identities": [
+    "MOTION_PATH_DIAGRAM",
+    "RATE_TABLE",
+    "STATE_TABLE",
+    "SIGNED_AXIS",
+    "TIMELINE_INTERVAL",
+    "EQUATION_STATE_RELATION",
+    "VELOCITY_TIME_GRAPH",
+    "SIGNED_AREA_VIEW",
+    "MOTION_VECTOR_DIAGRAM",
+    "PHASE_STRIP",
+    "RELATIVE_STATE_DIAGRAM",
+    "POSITION_TIME_GRAPH",
+    "OPTION_GRAPH_SET",
+    "SOURCE_GRAPH",
+    "PROJECTILE_COMPONENT_DIAGRAM"
+  ],
+  "schema_version": "1.0.0",
+  "state_variable_identities": [
+    "POSITION",
+    "DISPLACEMENT",
+    "DISTANCE",
+    "SPEED",
+    "VELOCITY",
+    "ACCELERATION",
+    "TIME",
+    "HEIGHT",
+    "RELATIVE_POSITION",
+    "RELATIVE_VELOCITY",
+    "RELATIVE_ACCELERATION"
+  ],
+  "subject": "PHYSICS",
+  "verification_obligation_identities": [
+    "VERIFY_PATH_VS_DISPLACEMENT",
+    "VERIFY_TOTAL_DISTANCE_TOTAL_TIME",
+    "VERIFY_ACCELERATION_SIGN_UNITS",
+    "VERIFY_INTERVAL_NOT_CUMULATIVE",
+    "VERIFY_VELOCITY_ENDPOINT",
+    "VERIFY_CONSTANT_G_ASSUMPTIONS",
+    "VERIFY_MAXIMUM_HEIGHT_ENDPOINT",
+    "VERIFY_SIGNED_GRAPH_AREA",
+    "VERIFY_RELEASE_STATE_CONTINUITY",
+    "VERIFY_PHASE_STATE_CONTINUITY",
+    "VERIFY_RELATIVE_ACCELERATION_CANCELLATION",
+    "VERIFY_GRAPH_SLOPE_SIGN",
+    "VERIFY_SOURCE_REPRESENTATION_PRESENT",
+    "VERIFY_MODEL_VALIDITY",
+    "VERIFY_DIMENSIONS",
+    "VERIFY_PROJECTILE_COMPONENTS"
+  ]
+}
