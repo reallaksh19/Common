@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-publication-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_id", "schema_version", "artifact_sha256", "semantic_product_sha256", "publication_structure_sha256", "physical_page_map_sha256", "publication_audit_sha256", "package_digest", "quality_states"],
+  "properties": {
+    "manifest_id": {"type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "artifact_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "semantic_product_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "publication_structure_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "physical_page_map_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "publication_audit_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "package_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "quality_states": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["PUBLICATION_ENGINEERING", "SUBJECT_CORRECTNESS", "PEDAGOGY_USABILITY", "VISUAL_USABILITY", "BENCHMARK_COMPARATIVE_VALIDATION"],
+      "properties": {
+        "PUBLICATION_ENGINEERING": {"const": "PASS"},
+        "SUBJECT_CORRECTNESS": {"const": "PENDING"},
+        "PEDAGOGY_USABILITY": {"const": "PENDING"},
+        "VISUAL_USABILITY": {"const": "PENDING"},
+        "BENCHMARK_COMPARATIVE_VALIDATION": {"const": "NOT_RUN"}
+      }
+    }
+  }
+}

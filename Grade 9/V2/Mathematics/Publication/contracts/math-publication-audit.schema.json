@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-publication-audit.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["audit_id", "schema_version", "artifact_sha256", "checks", "publication_engineering"],
+  "properties": {
+    "audit_id": {"type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "artifact_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "checks": {"type": "object", "additionalProperties": {"enum": ["PASS", "FAIL"]}},
+    "publication_engineering": {"enum": ["PASS", "FAIL"]}
+  }
+}
