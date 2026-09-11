@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observation_id", "evidence_ref", "checkpoint_ref", "capability_ref", "evidence_class", "independent"],
+  "properties": {
+    "observation_id": {"type": "string"},
+    "evidence_ref": {"type": "string"},
+    "checkpoint_ref": {"type": "string"},
+    "capability_ref": {"type": "string"},
+    "evidence_class": {"type": "string"},
+    "independent": {"type": "boolean"}
+  }
+}

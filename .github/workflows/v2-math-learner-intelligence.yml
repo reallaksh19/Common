@@ -1,0 +1,32 @@
+name: V2 Mathematics Learner Intelligence
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Mathematics/LearnerIntelligence/**"
+      - ".github/workflows/v2-math-learner-intelligence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-learner-intelligence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install schema validator
+        run: python -m pip install jsonschema
+      - name: Validate MATH-V2-02 contracts
+        run: python "Grade 9/V2/Mathematics/LearnerIntelligence/contracts/validate_contracts.py"
+      - name: Run Mathematics learner-intelligence falsifiers
+        run: python "Grade 9/V2/Mathematics/LearnerIntelligence/tests/test_math_learner_intelligence.py"
+      - name: Deterministic learner-state replay
+        run: |
+          ROOT="Grade 9/V2/Mathematics/LearnerIntelligence"
+          python "$ROOT/engine/derive_math_learner_state.py" "$ROOT/fixtures/canonical_interface.synthetic.json" "$ROOT/fixtures/learner_evidence.synthetic.json" /tmp/state1.json
+          python "$ROOT/engine/derive_math_learner_state.py" "$ROOT/fixtures/canonical_interface.synthetic.json" "$ROOT/fixtures/learner_evidence.synthetic.json" /tmp/state2.json
+          cmp /tmp/state1.json /tmp/state2.json

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["state_id", "privacy_class", "as_of", "capability_states", "verification_behavior", "semantic_digest"],
+  "properties": {
+    "state_id": {"type": "string"},
+    "privacy_class": {"const": "PUBLIC_SYNTHETIC"},
+    "as_of": {"type": "string"},
+    "capability_states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_ref", "state", "evidence_refs"],
+        "properties": {
+          "capability_ref": {"type": "string"},
+          "state": {"enum": ["UNKNOWN", "DEVELOPING", "READY", "ROBUST", "REPAIR_REQUIRED"]},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "verification_behavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["can_verify_when_prompted", "self_initiated_verification", "evidence_refs"],
+      "properties": {
+        "can_verify_when_prompted": {"type": "boolean"},
+        "self_initiated_verification": {"type": "boolean"},
+        "evidence_refs": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "semantic_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

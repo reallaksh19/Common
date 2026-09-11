@@ -1,0 +1,20 @@
+{
+  "fixture_id": "MATH-V2-02-LEARNER-EVIDENCE-SYNTHETIC",
+  "privacy_class": "PUBLIC_SYNTHETIC",
+  "learner_ref": "SYNTHETIC-G9-MATH-001",
+  "as_of": "2026-09-11T06:00:00Z",
+  "records": [
+    {"evidence_id":"E-W1","attempt_id":"A-WORD-01","case_id":"WORD_SYSTEM","checkpoint_ref":"WORD_TO_EQUATION","capability_ref":"MATH-WORD-MODELLING","evidence_class":"INDEPENDENT_SUCCESS","candidate_capability_refs":[]},
+    {"evidence_id":"E-W2","attempt_id":"A-WORD-01","case_id":"WORD_SYSTEM","checkpoint_ref":"SYSTEM_SETUP","capability_ref":"MATH-LINEAR-SYSTEM-SETUP","evidence_class":"INDEPENDENT_SUCCESS","candidate_capability_refs":[]},
+    {"evidence_id":"E-W3","attempt_id":"A-WORD-01","case_id":"WORD_SYSTEM","checkpoint_ref":"EQUALITY_TRANSFORMATION","capability_ref":"MATH-EQUALITY-PRESERVATION","evidence_class":"INDEPENDENT_FAILURE","candidate_capability_refs":["MATH-EQUALITY-PRESERVATION","MATH-VARIABLE-SEMANTICS","MATH-SIGN-PROPAGATION"],"probe_ref":"MATH-PROBE-EQUALITY-LEGAL-OP"},
+    {"evidence_id":"E-W4","attempt_id":"A-WORD-01","case_id":"WORD_SYSTEM","checkpoint_ref":"FINAL_ANSWER","capability_ref":"MATH-SOLUTION-VERIFICATION","evidence_class":"VERIFICATION_NOT_INITIATED","candidate_capability_refs":["MATH-SOLUTION-VERIFICATION"],"probe_ref":"MATH-PROBE-VERIFY-SUBSTITUTION"},
+    {"evidence_id":"E-G1","attempt_id":"A-GEO-01","case_id":"GEOMETRY_ALGEBRA","checkpoint_ref":"GEOMETRIC_RELATION","capability_ref":"MATH-GEOMETRIC-MODELLING","evidence_class":"INDEPENDENT_SUCCESS","candidate_capability_refs":[]},
+    {"evidence_id":"E-G2","attempt_id":"A-GEO-01","case_id":"GEOMETRY_ALGEBRA","checkpoint_ref":"DISTANCE_RELATION_SETUP","capability_ref":"MATH-REPRESENTATION-TRANSLATION","evidence_class":"INDEPENDENT_SUCCESS","candidate_capability_refs":[]},
+    {"evidence_id":"E-G3","attempt_id":"A-GEO-01","case_id":"GEOMETRY_ALGEBRA","checkpoint_ref":"BINOMIAL_EXPANSION","capability_ref":"MATH-BINOMIAL-SQUARE-EXPANSION","evidence_class":"INDEPENDENT_FAILURE","candidate_capability_refs":["MATH-BINOMIAL-SQUARE-EXPANSION","MATH-EQUALITY-PRESERVATION"],"probe_ref":"MATH-PROBE-BINOMIAL-SQUARE"},
+    {"evidence_id":"E-C1","attempt_id":"A-SLOPE-01","case_id":"COORDINATE_SLOPE","checkpoint_ref":"POINT_RECOGNITION","capability_ref":"MATH-REPRESENTATION-TRANSLATION","evidence_class":"INDEPENDENT_SUCCESS","candidate_capability_refs":[]},
+    {"evidence_id":"E-C2","attempt_id":"A-SLOPE-01","case_id":"COORDINATE_SLOPE","checkpoint_ref":"ORDERED_PAIR_SEMANTICS","capability_ref":"MATH-ORDERED-PAIR-SEMANTICS","evidence_class":"AMBIGUOUS","candidate_capability_refs":["MATH-ORDERED-PAIR-SEMANTICS","MATH-SIGN-PROPAGATION"],"probe_ref":"MATH-PROBE-ORDERED-PAIR-SLOPE"},
+    {"evidence_id":"E-V1","attempt_id":"A-VERIFY-01","case_id":"VERIFICATION","checkpoint_ref":"VERIFY_BY_SUBSTITUTION","capability_ref":"MATH-SOLUTION-VERIFICATION","evidence_class":"VERIFICATION_PROMPTED_SUCCESS","candidate_capability_refs":[]},
+    {"evidence_id":"E-V2","attempt_id":"A-VERIFY-01","case_id":"VERIFICATION","checkpoint_ref":"VERIFY_INITIATION","capability_ref":"MATH-SOLUTION-VERIFICATION","evidence_class":"VERIFICATION_NOT_INITIATED","candidate_capability_refs":["MATH-SOLUTION-VERIFICATION"]},
+    {"evidence_id":"E-EQG","attempt_id":"A-EQUALITY-GUIDED-01","case_id":"GUIDED_EQUALITY","checkpoint_ref":"EQUALITY_TRANSFORMATION","capability_ref":"MATH-EQUALITY-PRESERVATION","evidence_class":"GUIDED_SUCCESS","candidate_capability_refs":[]}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["view_id", "privacy_class", "state_digest", "capability_states", "diagnostic_cases", "verification_behavior"],
+  "properties": {
+    "view_id": {"type": "string"},
+    "privacy_class": {"const": "PUBLIC_SYNTHETIC"},
+    "state_digest": {"type": "string"},
+    "capability_states": {"type": "array"},
+    "diagnostic_cases": {"type": "array"},
+    "verification_behavior": {"type": "object"}
+  }
+}

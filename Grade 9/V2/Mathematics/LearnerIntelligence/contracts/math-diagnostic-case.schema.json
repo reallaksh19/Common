@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["diagnostic_case_id", "evidence_refs", "candidate_capability_refs", "hypothesis_status", "probe_required"],
+  "properties": {
+    "diagnostic_case_id": {"type": "string"},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "candidate_capability_refs": {"type": "array", "items": {"type": "string"}},
+    "hypothesis_status": {"enum": ["SUSPECTED", "UNRESOLVED"]},
+    "probe_required": {"type": "boolean"},
+    "probe_ref": {"type": ["string", "null"]}
+  }
+}

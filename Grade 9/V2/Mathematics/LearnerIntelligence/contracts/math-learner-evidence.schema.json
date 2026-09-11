@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixture_id", "privacy_class", "learner_ref", "as_of", "records"],
+  "properties": {
+    "fixture_id": {"type": "string"},
+    "privacy_class": {"const": "PUBLIC_SYNTHETIC"},
+    "learner_ref": {"type": "string", "pattern": "^SYNTHETIC-"},
+    "as_of": {"type": "string"},
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "attempt_id", "case_id", "checkpoint_ref", "capability_ref", "evidence_class", "candidate_capability_refs"],
+        "properties": {
+          "evidence_id": {"type": "string"},
+          "attempt_id": {"type": "string"},
+          "case_id": {"type": "string"},
+          "checkpoint_ref": {"type": "string"},
+          "capability_ref": {"type": "string"},
+          "evidence_class": {"enum": ["INDEPENDENT_SUCCESS", "INDEPENDENT_FAILURE", "GUIDED_SUCCESS", "GUIDED_FAILURE", "AMBIGUOUS", "VERIFICATION_PROMPTED_SUCCESS", "VERIFICATION_NOT_INITIATED"]},
+          "candidate_capability_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "probe_ref": {"type": "string"}
+        }
+      }
+    }
+  }
+}
