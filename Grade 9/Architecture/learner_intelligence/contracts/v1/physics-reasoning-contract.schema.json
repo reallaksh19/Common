@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-reasoning-contract.schema.json",
+  "title": "PhysicsReasoningContract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reasoning_contract_id", "question_family_ref", "concept_refs", "checkpoints"],
+  "properties": {
+    "reasoning_contract_id": {"type": "string", "minLength": 1},
+    "subject": {"const": "PHYSICS"},
+    "question_family_ref": {"type": "string", "minLength": 1},
+    "concept_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "prerequisite_capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "checkpoints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkpoint_id", "stage", "required_capability_refs"],
+        "properties": {
+          "checkpoint_id": {"type": "string", "minLength": 1},
+          "stage": {"enum": ["DEFINE_SYSTEM", "CHOOSE_FRAME", "IDENTIFY_STATE", "SELECT_MODEL", "REPRESENT", "PREDICT", "EXECUTE_MATH", "STATE_TRANSITION", "VALIDATE_PHYSICALLY"]},
+          "system": {"type": "string"},
+          "frame_or_sign": {"type": "string"},
+          "initial_state": {"type": "object", "additionalProperties": {"type": ["string", "number", "null"]}},
+          "model_or_law": {"type": "string"},
+          "assumptions": {"type": "array", "items": {"type": "string"}},
+          "representation": {"type": "string"},
+          "terminal_state": {"type": "object", "additionalProperties": {"type": ["string", "number", "null"]}},
+          "continuity_rules": {"type": "array", "items": {"type": "string"}},
+          "validation_checks": {"type": "array", "items": {"enum": ["UNITS", "DIMENSIONS", "SIGN", "BOUNDARY", "CONTINUITY", "MAGNITUDE", "LIMITING_CASE", "PHYSICAL_PLAUSIBILITY"]}},
+          "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "error_signature_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}
