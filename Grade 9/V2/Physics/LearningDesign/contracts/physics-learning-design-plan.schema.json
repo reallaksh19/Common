@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-learning-design-plan.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","design_id","source_study_model_id","source_study_input_digest","policy_version","target_bindings","blocks","obligation_coverage","external_dependency_support","support_assets","static_design_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},"design_id":{"type":"string"},"source_study_model_id":{"type":"string"},"source_study_input_digest":{"pattern":"^[0-9a-f]{64}$","type":"string"},"policy_version":{"type":"string"},"static_design_digest":{"pattern":"^[0-9a-f]{64}$","type":"string"},
+    "target_bindings":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["target_id","engagement_mode","readiness_mode","source_capability_state","probe_refs"],"properties":{"target_id":{"type":"string"},"engagement_mode":{"enum":["VERIFY_ONLY","COMPRESS","USE_AS_ENTRY_POINT","ACTIVE_STUDY"]},"readiness_mode":{"enum":["READY","REPAIR_BEFORE","REPAIR_IN_UNIT","PROBE_FIRST"]},"source_capability_state":{"enum":["UNKNOWN","DEVELOPING","READY","REPAIR_REQUIRED"]},"probe_refs":{"type":"array","items":{"type":"string"},"uniqueItems":true}}}},
+    "blocks":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["block_id","order","target_id","role","canonical_refs","obligation_refs","support_level","payload"],"properties":{"block_id":{"type":"string"},"order":{"type":"integer","minimum":1},"target_id":{"type":"string"},"role":{"enum":["ENTRY_POINT","DIAGNOSTIC_PROBE","PREDICT","REPRESENTATION","RECONSTRUCTION","MINIMAL_CONTRAST","WORKED_REASONING","GUIDED_ATTEMPT","FADED_ATTEMPT","INDEPENDENT_ATTEMPT","VERIFICATION","TRANSFER","COMPLETION_EVIDENCE","ACCESS_SUPPORT"]},"canonical_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}},"obligation_refs":{"type":"array","uniqueItems":true,"items":{"type":"string"}},"support_level":{"type":"integer","minimum":0,"maximum":3},"payload":{"type":"object"}}}},
+    "obligation_coverage":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["requirement_id","block_ids"],"properties":{"requirement_id":{"type":"string"},"block_ids":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}}}}},
+    "external_dependency_support":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["dependency_ref","readiness_mode","semantics_owner","block_id"],"properties":{"dependency_ref":{"pattern":"^SHARED-","type":"string"},"readiness_mode":{"const":"REPAIR_IN_UNIT"},"semantics_owner":{"const":"EXTERNAL_CANONICAL_DEPENDENCY"},"block_id":{"type":"string"}}}},
+    "support_assets":{"type":"array","minItems":3,"items":{"type":"object"}}
+  }
+}

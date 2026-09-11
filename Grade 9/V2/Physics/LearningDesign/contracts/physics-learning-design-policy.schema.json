@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-learning-design-policy.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","policy_id","version","benchmark_inputs","support_assets"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "policy_id":{"const":"PHY-LD-POLICY-1"},
+    "version":{"type":"string"},
+    "benchmark_inputs":{"type":"array","maxItems":0},
+    "support_assets":{"type":"array","minItems":3,"items":{"type":"object","additionalProperties":false,"required":["support_id","support_type","route","payload"],"properties":{"support_id":{"pattern":"^H[0-9]+$","type":"string"},"support_type":{"enum":["ACCESS","CONCEPTUAL"]},"route":{"enum":["SAME_ROUTE","ROUTE_CHANGE"]},"payload":{"type":"string","minLength":1}}}}
+  }
+}

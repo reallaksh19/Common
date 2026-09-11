@@ -1,0 +1,7 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"interaction-support-state.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","design_id","same_route_failures"],
+  "properties":{"schema_version":{"const":"1.0.0"},"design_id":{"type":"string"},"same_route_failures":{"type":"integer","minimum":0}}
+}
