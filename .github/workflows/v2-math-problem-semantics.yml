@@ -26,9 +26,23 @@ jobs:
         run: |
           D='Grade 9/V2/Mathematics/ProblemSemantics'
           M='Grade 9/V2/Mathematics'
-          ARGS="--questions $M/AssessmentIntake/fixtures/mixed-grade9-question-set.fixture.json --topic-scope $M/AssessmentIntake/fixtures/mixed-grade9-topic-scope.fixture.json --review-registry $M/AssessmentReview/registry/assessment-item-validity-registry.json --review-policy $M/AssessmentReview/policies/diagnostic-use-policy.json --scope-authority $M/AssessmentScope/authority/math-assessment-scope-authority.json --scope-bindings $M/AssessmentScope/registry/mixed-grade9-question-scope-bindings.json --role-registry $D/registry/math-reasoning-role-registry.json --family-registry $D/registry/math-problem-family-registry.json --verification-registry $D/registry/math-verification-route-registry.json --item-registry $D/registry/mixed-grade9-item-semantics.json --badge-policy $D/registry/guide-demand-badge-policy.json"
-          python $D/engine/build_math_problem_semantics.py $ARGS --out /tmp/md-a.json
-          python $D/engine/build_math_problem_semantics.py $ARGS --out /tmp/md-b.json
+          build() {
+            python "$D/engine/build_math_problem_semantics.py" \
+              --questions "$M/AssessmentIntake/fixtures/mixed-grade9-question-set.fixture.json" \
+              --topic-scope "$M/AssessmentIntake/fixtures/mixed-grade9-topic-scope.fixture.json" \
+              --review-registry "$M/AssessmentReview/registry/assessment-item-validity-registry.json" \
+              --review-policy "$M/AssessmentReview/policies/diagnostic-use-policy.json" \
+              --scope-authority "$M/AssessmentScope/authority/math-assessment-scope-authority.json" \
+              --scope-bindings "$M/AssessmentScope/registry/mixed-grade9-question-scope-bindings.json" \
+              --role-registry "$D/registry/math-reasoning-role-registry.json" \
+              --family-registry "$D/registry/math-problem-family-registry.json" \
+              --verification-registry "$D/registry/math-verification-route-registry.json" \
+              --item-registry "$D/registry/mixed-grade9-item-semantics.json" \
+              --badge-policy "$D/registry/guide-demand-badge-policy.json" \
+              --out "$1"
+          }
+          build /tmp/md-a.json
+          build /tmp/md-b.json
           cmp /tmp/md-a.json /tmp/md-b.json
       - name: Prove M-D pilot states
         run: |
