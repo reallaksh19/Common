@@ -1,0 +1,49 @@
+name: V2 Chemistry Assessment Scope C-C
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/AssessmentScope/**'
+      - 'Grade 9/V2/Chemistry/AssessmentReview/**'
+      - 'Grade 9/V2/Chemistry/AssessmentIntake/**'
+      - '.github/workflows/v2-chemistry-assessment-scope.yml'
+  push:
+    branches:
+      - chemistry-v2-c-c-assessment-scope
+
+jobs:
+  chemistry-assessment-scope:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate C-C contracts and registries
+        run: python 'Grade 9/V2/Chemistry/AssessmentScope/contracts/validate_contracts.py'
+      - name: Run Chemistry C-C scope falsifiers
+        run: python 'Grade 9/V2/Chemistry/AssessmentScope/tests/test_chemistry_scope.py'
+      - name: Build deterministic Chemistry scope bundle
+        run: |
+          A='Grade 9/V2/Chemistry/AssessmentIntake'
+          B='Grade 9/V2/Chemistry/AssessmentReview'
+          C='Grade 9/V2/Chemistry/AssessmentScope'
+          python "$C/engine/build_chemistry_scope.py" --sources "$A/fixtures/mixed-chemistry-source.fixture.json" --questions "$A/fixtures/mixed-chemistry-question-set.fixture.json" --corpus "$A/fixtures/mixed-chemistry-external-corpus.fixture.json" --topic-scope "$A/fixtures/mixed-chemistry-topic-scope.fixture.json" --review-registry "$B/registry/chemistry-item-validity-registry.json" --review-policy "$B/policies/chemistry-diagnostic-use-policy.json" --qc-events "$B/registry/chemistry-qc-events.json" --source-obligations "$C/registry/chemistry-source-obligation-ledger.json" --question-bindings "$C/registry/chemistry-question-capability-bindings.json" --external-classifications "$C/registry/chemistry-external-corpus-classification.json" --authority "$C/authority/chemistry-canonical-authority.json" --out /tmp/chem-scope-a.json
+          python "$C/engine/build_chemistry_scope.py" --sources "$A/fixtures/mixed-chemistry-source.fixture.json" --questions "$A/fixtures/mixed-chemistry-question-set.fixture.json" --corpus "$A/fixtures/mixed-chemistry-external-corpus.fixture.json" --topic-scope "$A/fixtures/mixed-chemistry-topic-scope.fixture.json" --review-registry "$B/registry/chemistry-item-validity-registry.json" --review-policy "$B/policies/chemistry-diagnostic-use-policy.json" --qc-events "$B/registry/chemistry-qc-events.json" --source-obligations "$C/registry/chemistry-source-obligation-ledger.json" --question-bindings "$C/registry/chemistry-question-capability-bindings.json" --external-classifications "$C/registry/chemistry-external-corpus-classification.json" --authority "$C/authority/chemistry-canonical-authority.json" --out /tmp/chem-scope-b.json
+          cmp /tmp/chem-scope-a.json /tmp/chem-scope-b.json
+      - name: Validate generated scope contracts
+        run: python 'Grade 9/V2/Chemistry/AssessmentScope/contracts/validate_generated.py' /tmp/chem-scope-a.json
+      - name: Prove record-derived external denominator
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/chem-scope-a.json'))
+          s=x['assessment_coverage_matrix']['summary']
+          assert s['external_candidate_total']==6
+          assert s['external_eligible_total']==5
+          assert s['external_source_unresolved_total']==1
+          assert x['summary']['counters_derived_from_records'] is True
+          print('C-C external denominator = 6 record-derived PASS')
+          PY
