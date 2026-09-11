@@ -121,8 +121,12 @@ expect("SOURCE_SHAPE_DRIFT",lambda:validate_plan(bad,*ARGS))
 bad=copy.deepcopy(PLAN); bad["pages"]=[x for x in bad["pages"] if x["question_ref"]!="Q3"]; reseal_plan(bad)
 expect("MISSING_TRANSFER_QUESTION",lambda:validate_plan(bad,*ARGS))
 # 15 GUIDE_BADGE_PRESENTED_AS_PSYCHOMETRIC
-bad=copy.deepcopy(PLAN); x=page(bad,"Q10"); x["guide_demand_badge"]["psychometric_claim"]=True; reseal_page(x); reseal_plan(bad)
-expect("GUIDE_BADGE_PRESENTED_AS_PSYCHOMETRIC",lambda:validate_plan(bad,*ARGS))
+bad=copy.deepcopy(PLAN); badps=copy.deepcopy(PS); x=page(bad,"Q10")
+s10=next(r for r in badps["assessment_item_semantics"] if r["item_ref"]=="Q10")
+x["guide_demand_badge"]["psychometric_claim"]=True; s10["guide_demand_badge"]["psychometric_claim"]=True
+reseal_page(x); reseal_plan(bad)
+BADARGS=(Q,RR,RP,B,A,badps,VER,PRIM,PINT,PROF,None)
+expect("GUIDE_BADGE_PRESENTED_AS_PSYCHOMETRIC",lambda:validate_plan(bad,*BADARGS))
 # 16 UNPROMOTED_CORE1_LINK_PUBLISHED
 bad=copy.deepcopy(PLAN); bad["release_class"]="PRODUCTION_READY"; bad["summary"]["publication_ready"]=True; reseal_plan(bad)
 expect("UNPROMOTED_CORE1_LINK_PUBLISHED",lambda:validate_plan(bad,*ARGS))
