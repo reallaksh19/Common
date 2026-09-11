@@ -1,0 +1,39 @@
+name: Fix Physics P-C reasoning-role authority
+on:
+  push:
+    branches:
+      - v2/physics-p-c-scope-reconciliation-20260911
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Add COMPARE as a scope-level reasoning-role identity and refresh digest
+        run: |
+          python - <<'PY'
+          import copy, hashlib, json
+          from pathlib import Path
+          p=Path('Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json')
+          x=json.loads(p.read_text(encoding='utf-8'))
+          roles=x['reasoning_role_expectations']
+          if 'COMPARE' not in roles:
+              i=roles.index('VERIFY') if 'VERIFY' in roles else len(roles)
+              roles.insert(i,'COMPARE')
+          y=copy.deepcopy(x); y.pop('authority_digest',None)
+          raw=json.dumps(y,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8')
+          x['authority_digest']=hashlib.sha256(raw).hexdigest()
+          p.write_text(json.dumps(x,indent=2,sort_keys=True,ensure_ascii=False)+'\n',encoding='utf-8')
+          PY
+          rm -f .github/workflows/fix-physics-pc.yml
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'PHY P-C: register graph-option comparison reasoning role'
+          git push origin HEAD:${GITHUB_REF_NAME}
