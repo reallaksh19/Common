@@ -54,7 +54,10 @@ expect("QUESTION_WITHOUT_EXPLICIT_MAPPING_STATE",lambda:run(b))
 b=copy.deepcopy(B); row(b,"Q1")["declared_topic_refs"].append("PHY-NOT-DECLARED"); redigest(b,"binding_registry_digest")
 expect("QUESTION_EVIDENCE_SILENTLY_EXPANDS_DECLARED_BOUNDARY",lambda:run(b))
 
-b=copy.deepcopy(B); q1=row(b,"Q1"); q1["canonical_concept_refs"]=["PHY-PROJECTILE-COMPONENTS"]; q1["canonical_capability_refs"]=["PHY-CAP-PROJECTILE-COMPONENTS"]; q1["prerequisite_capability_refs"]=["PHY-CAP-FRAME-SIGN-SETUP","PHY-CAP-REPRESENTATION-TRANSLATE"]; q1["physical_model_refs"]=["PHY-MODEL-PROJECTILE-IDEAL"]; q1["law_refs"]=["PHY-LAW-COMPONENT-INDEPENDENCE"]; q1["model_validity_conditions"]=["air resistance neglected","constant gravitational field"]; q1["problem_family_refs"]=["PHY-PF-PROJECTILE-COMPONENTS"]; q1["reference_frame"]={"required":True,"frame_text":"ground frame"}; q1["sign_convention"]={"positive_direction":"right/up as defined","status":"EXPLICIT"}; q1["state_variable_refs"]=["POSITION","VELOCITY","ACCELERATION","TIME"]; q1["representation_demands"]=["COMPONENT_VECTOR_VIEW"]; q1["verification_obligations"]=["VERIFY_COMPONENT_CONSISTENCY"]; q1["reasoning_role_expectations"]=["INTERPRET","REPRESENT","MODEL","VERIFY"]; redigest(b,"binding_registry_digest")
+# Swap only the concept/capability identity to a repository-valid projectile capability
+# whose declared topic lies outside this Motion scope. Keep every unrelated Q1 field valid
+# so the intended authority-boundary falsifier fires before any orthogonal identity error.
+b=copy.deepcopy(B); q1=row(b,"Q1"); q1["canonical_concept_refs"]=["PHY-PROJECTILE-COMPONENTS"]; q1["canonical_capability_refs"]=["PHY-CAP-PROJECTILE-COMPONENTS"]; q1["prerequisite_capability_refs"]=["PHY-CAP-FRAME-SIGN-SETUP","PHY-CAP-REPRESENTATION-TRANSLATE"]; redigest(b,"binding_registry_digest")
 expect("TOPIC_LIST_SILENTLY_OVERRIDES_QUESTION_EVIDENCE",lambda:run(b))
 
 b=copy.deepcopy(B); row(b,"Q7")["prerequisite_capability_refs"]=[]; redigest(b,"binding_registry_digest")
@@ -69,7 +72,7 @@ expect("REFERENCE_FRAME_REQUIRED_BUT_UNBOUND",lambda:run(b))
 b=copy.deepcopy(B); row(b,"Q8")["source_representation_refs"]=[]; redigest(b,"binding_registry_digest")
 expect("REPRESENTATION_DEPENDENCY_DROPPED",lambda:run(b))
 
-b=copy.deepcopy(B); r=row(b,"Q10"); r["phase_structure"]={"kind":"SINGLE_PHASE","phases":["phase"],"boundary_state_variables":[],"justification":""}; redigest(b,"binding_registry_digest")
+b=copy.deepcopy(B); r=row(b,"Q10"); r["phase_structure"]={"kind":"SINGLE_PHASE","phases":["phase"],"continuity_state_refs":[],"justification":""}; redigest(b,"binding_registry_digest")
 expect("MULTIPHASE_ITEM_MAPPED_AS_SINGLE_PHASE_WITHOUT_JUSTIFICATION",lambda:run(b))
 
 b=copy.deepcopy(B); b["learner_state"]="WEAK"; redigest(b,"binding_registry_digest")
