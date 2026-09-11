@@ -20,12 +20,12 @@ def page_evidence(pdf):
 def audit(candidate_path,core1_pdf,core2_pdf,out_review):
     candidate=load(candidate_path); core1=page_evidence(core1_pdf); core2=page_evidence(core2_pdf)
     full='\n'.join(x['text'] for x in core1+core2)
-    internal_tokens=['CAP-','OBLIGATION_LEVEL:','OBLIGATION_REP:','CHECK_SPECIES_IDENTITY','VERIFY_RESULT','CORE1-']
+    internal_tokens=['CAP-','CORE1-','A-CAP-','B-SOL-','CHEM-CONCEPT-','OBLIGATION_LEVEL:','OBLIGATION_REP:','CHECK_SPECIES_IDENTITY','CHECK_ATOMS','CHECK_CHARGE','CHECK_CONDITIONS','VERIFY_RESULT','ACTIVE_STUDY','FULL_LEARNING','READ_GIVEN','IDENTIFY_CHEMICAL_ENTITIES','TRANSLATE_REPRESENTATION']
     leaked=sorted({t for t in internal_tokens if t in full})
-    translation=[x for x in core1 if 'CAP-TRANSLATE-PARTICLE-SYMBOL' in x['text']]
-    particle_q=[x for x in core2 if 'EXT02' in x['text'] and 'Source figure semantics' in x['text']]
+    translation=[x for x in core1 if 'Translate between particles and symbols' in x['text']]
+    particle_q=[x for x in core2 if 'A particle diagram shows two separate H₂O particles.' in x['text']]
     realized=bool(translation and any(x['image_count']+x['drawing_count']>0 for x in translation) and particle_q and any(x['image_count']+x['drawing_count']>0 for x in particle_q))
-    json_source_figure=any('Source figure semantics' in x['text'] and 'PARTICLE_COUNT' in x['text'] for x in core2)
+    json_source_figure=any(('Source figure semantics' in x['text']) or ('"model": "PARTICLE_COUNT"' in x['text']) or ('"particles":' in x['text']) for x in core2)
     findings=[]
     if leaked: findings.append('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK: '+', '.join(leaked))
     if not realized: findings.append('MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED')
