@@ -56,9 +56,9 @@ for q in ("Q10","Q12","Q14"):
 assert "m_AB = ____" in page(PLAN,"Q7")["workspace_spec"]["fields"]
 assert "downstream equation = ____" in page(PLAN,"Q14")["workspace_spec"]["fields"]
 assert all(p["core1_lesson_refs"] and all(x["learner_title"] and not x["source_question_reuse"] for x in p["core1_lesson_refs"]) for p in PLAN["pages"])
-BMAP={x["item_ref"]:x for x in B["bindings"]}
-assert all(set(p["representation_plan"]["required_representation_refs"])==set(BMAP[p["question_ref"]]["representation_demands"]) for p in PLAN["pages"])
+assert all(set(p["representation_plan"]["required_representation_refs"])==set(B["bindings"][[x["item_ref"] for x in B["bindings"]].index(p["question_ref"])]["representation_demands"]) for p in PLAN["pages"])
 
+# Validate actual semantic product against M-I contracts.
 store={}
 for sp in (D/"contracts").glob("*.schema.json"):
     doc=L(sp); store[doc["$id"]]=doc
@@ -72,38 +72,58 @@ for p in PLAN["pages"]:
     for l in p["core1_lesson_refs"]:
         Draft202012Validator(store["math-core1-core2-linkage.schema.json"],resolver=resolver).validate(l)
 
+# 1 HINT_EQUALS_SOLUTION
 bad=copy.deepcopy(PLAN); x=page(bad,"Q5"); x["hint_ladder"]["H2"]["text"]=x["solution_route"]["steps"][0]; reseal_page(x); reseal_plan(bad)
 expect("HINT_EQUALS_SOLUTION",lambda:validate_plan(bad,*ARGS))
+# 2 H1_DISCLOSES_H3
 bad=copy.deepcopy(PLAN); x=page(bad,"Q7"); x["hint_ladder"]["H1"]["text"]=x["hint_ladder"]["H3"]["text"]; reseal_page(x); reseal_plan(bad)
 expect("H1_DISCLOSES_H3",lambda:validate_plan(bad,*ARGS))
+# 3 REASONING_ROUTE_EQUALS_HINT_COPY
 bad=copy.deepcopy(PLAN); x=page(bad,"Q8"); hs=[x["hint_ladder"][k]["text"] for k in ("H1","H2","H3")]
 for i,s in enumerate(x["reasoning_route"]["steps"]): s["mathematical_transition"]=hs[i%3]
 reseal_page(x); reseal_plan(bad)
 expect("REASONING_ROUTE_EQUALS_HINT_COPY",lambda:validate_plan(bad,*ARGS))
+# 4 SOURCE_MC_OPTIONS_MISSING
 bad=copy.deepcopy(PLAN); x=page(bad,"Q5"); x["source_options"]=x["source_options"][:-1]; reseal_page(x); reseal_plan(bad)
 expect("SOURCE_MC_OPTIONS_MISSING",lambda:validate_plan(bad,*ARGS))
+# 5 GENERIC_WORKSPACE_IGNORES_RESPONSE_SHAPE
 bad=copy.deepcopy(PLAN); x=page(bad,"Q14"); x["workspace_spec"]={"workspace_type":x["problem_family_ref"],"fields":["blank 1","blank 2"]}; reseal_page(x); reseal_plan(bad)
 expect("GENERIC_WORKSPACE_IGNORES_RESPONSE_SHAPE",lambda:validate_plan(bad,*ARGS))
+# 6 OPAQUE_CORE1_LINK_ONLY
 bad=copy.deepcopy(PLAN); x=page(bad,"Q10"); x["core1_lesson_refs"][0]["learner_title"]=x["core1_lesson_refs"][0]["stable_id"]; reseal_page(x); reseal_plan(bad)
 expect("OPAQUE_CORE1_LINK_ONLY",lambda:validate_plan(bad,*ARGS))
-bad=copy.deepcopy(PLAN); x=page(bad,"Q10"); x["reasoning_route"]["steps"]=x["reasoning_route"]["steps"][:2]; reseal_page(x); reseal_plan(bad)
-expect("HARD_BADGE_WITHOUT_DEEP_REASONING_STRUCTURE",lambda:validate_plan(bad,*ARGS))
+# 7 HARD_BADGE_WITHOUT_DEEP_REASONING_STRUCTURE
+bad=copy.deepcopy(PLAN); badps=copy.deepcopy(PS); x=page(bad,"Q10")
+s10=next(r for r in badps["assessment_item_semantics"] if r["item_ref"]=="Q10")
+s10["reasoning_route"]["steps"]=s10["reasoning_route"]["steps"][:2]
+x["reasoning_route"]=copy.deepcopy(s10["reasoning_route"]); reseal_page(x); reseal_plan(bad)
+BADARGS=(Q,RR,RP,B,A,badps,VER,PRIM,PINT,PROF,None)
+expect("HARD_BADGE_WITHOUT_DEEP_REASONING_STRUCTURE",lambda:validate_plan(bad,*BADARGS))
+# 8 ORIGINAL_TRANSFER_LEAKED_INTO_CORE1_WORKED_EXAMPLE
 bad=copy.deepcopy(PLAN); x=page(bad,"Q12"); x["core1_lesson_refs"][0]["source_question_reuse"]=True; reseal_page(x); reseal_plan(bad)
 expect("ORIGINAL_TRANSFER_LEAKED_INTO_CORE1_WORKED_EXAMPLE",lambda:validate_plan(bad,*ARGS))
+# 9 SOLUTION_IS_ANSWER_ONLY
 bad=copy.deepcopy(PLAN); x=page(bad,"Q11"); x["solution_route"]["steps"]=[]; reseal_page(x); reseal_plan(bad)
 expect("SOLUTION_IS_ANSWER_ONLY",lambda:validate_plan(bad,*ARGS))
+# 10 UNDERDETERMINED_POLICY_LOST
 bad=copy.deepcopy(PLAN); x=page(bad,"Q9"); x["assessment_safety"]["negative_inference_allowed"]=True; reseal_page(x); reseal_plan(bad)
 expect("ASSESSMENT_SAFETY_POLICY_LOST",lambda:validate_plan(bad,*ARGS))
+# 11 MULTI_SOLUTION_COLLAPSED
 bad=copy.deepcopy(PLAN); x=page(bad,"Q12"); x["solution_route"]["final_answer"]["accepted_answers"]=["(0,2sqrt(3))"]; x["solution_route"]["final_answer"]["uniqueness_status"]="SINGLE"; reseal_page(x); reseal_plan(bad)
 expect("MULTI_SOLUTION_COLLAPSED",lambda:validate_plan(bad,*ARGS))
+# 12 REPRESENTATION_PLAN_DRIFT
 bad=copy.deepcopy(PLAN); x=page(bad,"Q7"); x["representation_plan"]["required_representation_refs"]=x["representation_plan"]["required_representation_refs"][:-1]; reseal_page(x); reseal_plan(bad)
 expect("REPRESENTATION_PLAN_DRIFT",lambda:validate_plan(bad,*ARGS))
+# 13 SOURCE_SHAPE_DRIFT
 bad=copy.deepcopy(PLAN); x=page(bad,"Q7"); x["source_stem"]="changed source"; reseal_page(x); reseal_plan(bad)
 expect("SOURCE_SHAPE_DRIFT",lambda:validate_plan(bad,*ARGS))
+# 14 MISSING_TRANSFER_QUESTION
 bad=copy.deepcopy(PLAN); bad["pages"]=[x for x in bad["pages"] if x["question_ref"]!="Q3"]; reseal_plan(bad)
 expect("MISSING_TRANSFER_QUESTION",lambda:validate_plan(bad,*ARGS))
+# 15 GUIDE_BADGE_PRESENTED_AS_PSYCHOMETRIC
 bad=copy.deepcopy(PLAN); x=page(bad,"Q10"); x["guide_demand_badge"]["psychometric_claim"]=True; reseal_page(x); reseal_plan(bad)
 expect("GUIDE_BADGE_PRESENTED_AS_PSYCHOMETRIC",lambda:validate_plan(bad,*ARGS))
+# 16 UNPROMOTED_CORE1_LINK_PUBLISHED
 bad=copy.deepcopy(PLAN); bad["release_class"]="PRODUCTION_READY"; bad["summary"]["publication_ready"]=True; reseal_plan(bad)
 expect("UNPROMOTED_CORE1_LINK_PUBLISHED",lambda:validate_plan(bad,*ARGS))
 
