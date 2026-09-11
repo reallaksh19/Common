@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "diagnostic-use-policy.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "policy_id",
+    "schema_version",
+    "policy_version",
+    "subject",
+    "validity_rules",
+    "source_integrity_rules",
+    "policy_digest"
+  ],
+  "properties": {
+    "policy_id": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "policy_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "validity_rules": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "validity_state",
+          "default_diagnostic_use",
+          "allowed_diagnostic_use",
+          "positive_inference_allowed",
+          "negative_inference_allowed",
+          "confident_diagnosis_allowed"
+        ],
+        "properties": {
+          "validity_state": {
+            "enum": [
+              "CLEAN",
+              "VALID_ASSUMPTION_SENSITIVE",
+              "VALID_MULTIPLE_MODELS_OR_INTERPRETATIONS",
+              "UNDERDETERMINED",
+              "MATHEMATICAL_OR_DOMAIN_ISSUE",
+              "KEY_ERROR",
+              "DATA_ERROR",
+              "TRUNCATED_OR_MISSING_FIGURE",
+              "REVIEW_REQUIRED"
+            ]
+          },
+          "default_diagnostic_use": {
+            "enum": [
+              "FULL",
+              "PARTIAL",
+              "POSITIVE_EVIDENCE_ONLY",
+              "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+            ]
+          },
+          "allowed_diagnostic_use": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "FULL",
+                "PARTIAL",
+                "POSITIVE_EVIDENCE_ONLY",
+                "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+              ]
+            }
+          },
+          "positive_inference_allowed": {
+            "type": "boolean"
+          },
+          "negative_inference_allowed": {
+            "type": "boolean"
+          },
+          "confident_diagnosis_allowed": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "source_integrity_rules": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_integrity_state",
+          "requires_rendered_source_inspection_or_unresolved",
+          "unresolved_allowed_diagnostic_use",
+          "synthetic_reconstruction_allowed"
+        ],
+        "properties": {
+          "source_integrity_state": {
+            "enum": [
+              "CLEAN",
+              "TYPOGRAPHIC_OR_OCR_AMBIGUITY",
+              "DATA_ERROR",
+              "TRUNCATED_OR_MISSING_FIGURE",
+              "REVIEW_REQUIRED"
+            ]
+          },
+          "requires_rendered_source_inspection_or_unresolved": {
+            "type": "boolean"
+          },
+          "unresolved_allowed_diagnostic_use": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "FULL",
+                "PARTIAL",
+                "POSITIVE_EVIDENCE_ONLY",
+                "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+              ]
+            }
+          },
+          "synthetic_reconstruction_allowed": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "policy_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}
