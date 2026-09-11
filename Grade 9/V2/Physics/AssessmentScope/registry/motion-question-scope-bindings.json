@@ -1,7 +1,7 @@
 {
-  "authority_digest": "f84d2c63c6a46cfb6e4ba147d641476da5dc6000ae2983c00327fee48f6eac8d",
+  "authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
   "authority_ref": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
-  "binding_registry_digest": "5af3bc011a762edc01fcc5de039a3b231eb498d2e56629293228ce05197305f7",
+  "binding_registry_digest": "fceae39ad325ce33c064995d53e3871b6408a9c293999912eeb49cf71e13794a",
   "binding_registry_id": "PHY-G9-MOTION-QUESTION-SCOPE-BINDINGS-v1",
   "bindings": [
     {
