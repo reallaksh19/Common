@@ -1,0 +1,31 @@
+name: V2 Mathematics Assessment Intake M-A
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/AssessmentIntake/**'
+      - '.github/workflows/v2-math-assessment-intake.yml'
+jobs:
+  math-assessment-intake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate M-A contracts and fixtures
+        run: python 'Grade 9/V2/Mathematics/AssessmentIntake/contracts/validate_contracts.py'
+      - name: Run M-A source-fidelity falsifiers
+        run: python 'Grade 9/V2/Mathematics/AssessmentIntake/tests/test_math_assessment_intake.py'
+      - name: Deterministic intake replay
+        run: |
+          D='Grade 9/V2/Mathematics/AssessmentIntake'
+          python "$D/engine/build_math_assessment_intake.py" --questions "$D/fixtures/mixed-grade9-question-set.fixture.json" --topic-scope "$D/fixtures/mixed-grade9-topic-scope.fixture.json" --attempts "$D/fixtures/mixed-grade9-attempt-set.fixture.json" --out /tmp/a.json --intake-id DET
+          python "$D/engine/build_math_assessment_intake.py" --questions "$D/fixtures/mixed-grade9-question-set.fixture.json" --topic-scope "$D/fixtures/mixed-grade9-topic-scope.fixture.json" --attempts "$D/fixtures/mixed-grade9-attempt-set.fixture.json" --out /tmp/b.json --intake-id DET
+          cmp /tmp/a.json /tmp/b.json
+      - name: Prove AttemptSet is optional
+        run: |
+          D='Grade 9/V2/Mathematics/AssessmentIntake'
+          python "$D/engine/build_math_assessment_intake.py" --questions "$D/fixtures/mixed-grade9-question-set.fixture.json" --topic-scope "$D/fixtures/mixed-grade9-topic-scope.fixture.json" --out /tmp/no-attempt.json --intake-id NO-ATTEMPT
+          grep -q '"attempt_mode": "ABSENT"' /tmp/no-attempt.json
