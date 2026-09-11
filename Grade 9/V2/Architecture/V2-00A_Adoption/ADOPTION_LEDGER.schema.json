@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/reallaksh19/Common/Grade%209/V2/Architecture/V2-00A_Adoption/ADOPTION_LEDGER.schema.json",
+  "title": "V2 Adoption Ledger",
+  "type": "object",
+  "required": ["schema_version", "programme_issue", "implementation_issue", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "programme_issue": {"const": 175},
+    "implementation_issue": {"const": 178},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/entry"}
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_pr_or_issue",
+        "source_path_or_artifact",
+        "source_commit_or_identity",
+        "source_authority_class",
+        "behavior_or_invariant",
+        "v2_action",
+        "v2_owner",
+        "v2_destination",
+        "semantic_differences",
+        "old_validation",
+        "new_validation_required",
+        "runtime_dependency_allowed",
+        "benchmark_derived",
+        "status"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^A-[A-Z0-9-]+$"},
+        "source_pr_or_issue": {"type": "string", "minLength": 2},
+        "source_path_or_artifact": {"type": "string", "minLength": 2},
+        "source_commit_or_identity": {"type": "string", "minLength": 2},
+        "source_authority_class": {
+          "enum": ["CANONICAL", "EVIDENCE", "INFERENCE", "DECISION", "REALIZATION", "VALIDATION"]
+        },
+        "behavior_or_invariant": {"type": "string", "minLength": 8},
+        "v2_action": {
+          "enum": ["COPY", "ADAPT", "REWRITE", "REJECT", "TEST_FIXTURE_ONLY", "REFERENCE_ONLY"]
+        },
+        "v2_owner": {
+          "enum": [
+            "ARCHITECTURE_GOVERNANCE",
+            "CORE1_CANONICAL_AUTHORITY",
+            "CORE1_EVIDENCE_CUSTODY",
+            "LEARNER_INTELLIGENCE",
+            "CORE2A_STUDY_SYNTHESIS",
+            "CORE2B_LEARNING_DESIGN",
+            "CORE2C_PUBLICATION_REALIZATION",
+            "TEST_CONFORMANCE",
+            "RELEASE_VALIDATION"
+          ]
+        },
+        "v2_destination": {"type": "string", "minLength": 2},
+        "semantic_differences": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 2}
+        },
+        "old_validation": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 2}
+        },
+        "new_validation_required": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 2}
+        },
+        "runtime_dependency_allowed": {"const": false},
+        "benchmark_derived": {"type": "boolean"},
+        "status": {
+          "enum": ["PLANNED", "ADOPTED", "REJECTED", "TEST_ONLY", "REFERENCE_ONLY"]
+        },
+        "copy_equivalence_evidence": {"type": "string", "minLength": 8},
+        "independent_justification": {"type": "string", "minLength": 8}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"v2_action": {"const": "COPY"}}, "required": ["v2_action"]},
+          "then": {"required": ["copy_equivalence_evidence"]}
+        },
+        {
+          "if": {"properties": {"v2_action": {"const": "TEST_FIXTURE_ONLY"}}, "required": ["v2_action"]},
+          "then": {"properties": {"status": {"const": "TEST_ONLY"}}}
+        },
+        {
+          "if": {"properties": {"v2_action": {"const": "REFERENCE_ONLY"}}, "required": ["v2_action"]},
+          "then": {"properties": {"status": {"const": "REFERENCE_ONLY"}}}
+        }
+      ]
+    }
+  }
+}
