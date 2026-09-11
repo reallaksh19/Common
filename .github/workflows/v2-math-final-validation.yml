@@ -1,0 +1,52 @@
+name: V2 Mathematics Final Validation Gate
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Mathematics/Validation/**"
+      - ".github/workflows/v2-math-final-validation.yml"
+  workflow_dispatch:
+
+jobs:
+  math-final-validation-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator
+        run: python -m pip install "jsonschema>=4.20,<5"
+      - name: Validate MATH-V2-07 contracts
+        run: python "Grade 9/V2/Mathematics/Validation/contracts/validate_contracts.py"
+      - name: Run validation-gate falsifiers
+        run: python "Grade 9/V2/Mathematics/Validation/tests/test_validation_gate.py"
+      - name: Prove current candidate blocks before reference read
+        run: |
+          V="Grade 9/V2/Mathematics/Validation"
+          rm -f /tmp/REFERENCE_MUST_NOT_BE_READ.json
+          python "$V/engine/check_eligibility.py" \
+            --binding "$V/fixtures/current_candidate_binding.json" \
+            --quality-summary "$V/fixtures/quality_review_summary.pending.json" \
+            --reference-registry /tmp/REFERENCE_MUST_NOT_BE_READ.json \
+            --out /tmp/current-eligibility.json
+          grep -q '"status": "BLOCKED_HUMAN_QUALITY_GATES"' /tmp/current-eligibility.json
+          grep -q '"reference_read_attempted": false' /tmp/current-eligibility.json
+          test ! -e /tmp/REFERENCE_MUST_NOT_BE_READ.json
+      - name: Exercise TEST_ONLY comparator and explicit VALIDATION_GAP
+        run: |
+          V="Grade 9/V2/Mathematics/Validation"
+          python "$V/engine/compare_synthetic.py" --binding "$V/fixtures/candidate_binding.test-only.json" --quality-summary "$V/fixtures/quality_review_summary.test-only-pass.json" --reference "$V/fixtures/synthetic_reference.test-only.json" --rubric "$V/fixtures/validation_rubric.json" --out /tmp/validation-a.json
+          python "$V/engine/compare_synthetic.py" --binding "$V/fixtures/candidate_binding.test-only.json" --quality-summary "$V/fixtures/quality_review_summary.test-only-pass.json" --reference "$V/fixtures/synthetic_reference.test-only.json" --rubric "$V/fixtures/validation_rubric.json" --out /tmp/validation-b.json
+          cmp /tmp/validation-a.json /tmp/validation-b.json
+          grep -q '"status": "VALIDATION_GAP"' /tmp/validation-a.json
+          grep -q '"release_evidence_eligible": false' /tmp/validation-a.json
+          grep -q '"real_benchmark_comparison": "NOT_RUN"' /tmp/validation-a.json
+      - name: Upload validation-gate proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-v2-07-validation-gate-proof
+          path: |
+            /tmp/current-eligibility.json
+            /tmp/validation-a.json
+          if-no-files-found: error

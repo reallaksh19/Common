@@ -1,0 +1,12 @@
+{
+  "schema_version":"1.0.0",
+  "candidate_id":"MATH-V2-06-CANDIDATE-001",
+  "binding_class":"EXACT_CANDIDATE_BINDING",
+  "artifact_sha256":"ca77eb7220e3857b2a6e9877de4358903b8b2aa0623208c0a527d059a6c4c70d",
+  "source_stage":"MATH-V2-06",
+  "source_commit":"65ce4de8f82685c463c2973e283e48f77df67531",
+  "source_workflow_run":34577155085,
+  "source_artifact_id":10190086310,
+  "publication_engineering":"PASS",
+  "release_evidence_eligible":true
+}

@@ -1,0 +1,12 @@
+{
+  "fixture_class":"TEST_ONLY_SYNTHETIC",
+  "quality_review_summary":{
+    "ai_pre_review_status":"TEST_ONLY_SYNTHETIC_HUMAN_GATES",
+    "baseline_artifact_sha256":"0000000000000000000000000000000000000000000000000000000000000000",
+    "human_review_evidence":{"PEDAGOGY":1,"SUBJECT":1,"VISUAL":1},
+    "quality_states":{"BENCHMARK_COMPARATIVE_VALIDATION":"NOT_RUN","PEDAGOGY_USABILITY":"PASS","PUBLICATION_ENGINEERING":"PASS","SUBJECT_CORRECTNESS":"PASS","VISUAL_USABILITY":"PASS"},
+    "revised_artifact_sha256":"1111111111111111111111111111111111111111111111111111111111111111",
+    "schema_version":"1.0.0",
+    "unresolved_major_count":0
+  }
+}

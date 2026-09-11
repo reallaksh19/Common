@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"candidate-validation-binding.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","candidate_id","binding_class","artifact_sha256","source_stage","source_commit","publication_engineering","release_evidence_eligible"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "candidate_id":{"type":"string","minLength":1},
+    "binding_class":{"enum":["EXACT_CANDIDATE_BINDING","TEST_ONLY_SYNTHETIC_BINDING"]},
+    "artifact_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "source_stage":{"enum":["MATH-V2-06","TEST_ONLY"]},
+    "source_commit":{"type":"string","minLength":1},
+    "source_workflow_run":{"type":"integer","minimum":1},
+    "source_artifact_id":{"type":"integer","minimum":1},
+    "publication_engineering":{"enum":["PASS","FAIL"]},
+    "release_evidence_eligible":{"type":"boolean"}
+  }
+}

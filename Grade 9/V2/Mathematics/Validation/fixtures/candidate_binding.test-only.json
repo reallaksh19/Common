@@ -1,0 +1,10 @@
+{
+  "schema_version":"1.0.0",
+  "candidate_id":"TEST-ONLY-CANDIDATE-001",
+  "binding_class":"TEST_ONLY_SYNTHETIC_BINDING",
+  "artifact_sha256":"1111111111111111111111111111111111111111111111111111111111111111",
+  "source_stage":"TEST_ONLY",
+  "source_commit":"TEST_ONLY",
+  "publication_engineering":"PASS",
+  "release_evidence_eligible":false
+}

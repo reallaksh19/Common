@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"comparative-validation-result.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","validation_id","status","candidate_sha256","reference_read_attempted","reference_ids","reference_sha256s","dimension_results","validation_gaps","test_only","release_evidence_eligible","upstream_mutation","real_benchmark_comparison","result_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "validation_id":{"type":"string"},
+    "status":{"enum":["BLOCKED","PASS","VALIDATION_GAP"]},
+    "candidate_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "reference_read_attempted":{"type":"boolean"},
+    "reference_ids":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "reference_sha256s":{"type":"array","uniqueItems":true,"items":{"type":"string","pattern":"^[0-9a-f]{64}$"}},
+    "dimension_results":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["dimension","status","evidence"],"properties":{"dimension":{"type":"string"},"status":{"enum":["MEETS_REFERENCE","GAP","NOT_EVALUATED"]},"evidence":{"type":"string"}}}},
+    "validation_gaps":{"type":"array","items":{"$ref":"validation-gap.schema.json"}},
+    "test_only":{"type":"boolean"},
+    "release_evidence_eligible":{"type":"boolean"},
+    "upstream_mutation":{"const":false},
+    "real_benchmark_comparison":{"enum":["NOT_RUN","RUN"]},
+    "result_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
