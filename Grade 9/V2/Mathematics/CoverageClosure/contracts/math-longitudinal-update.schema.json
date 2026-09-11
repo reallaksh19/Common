@@ -15,7 +15,7 @@
         "required":["dimension","prior_status","resulting_status","evidence_needed","owner_capability_ref","closed_by_event"],
         "properties":{"dimension":{"enum":["acquisition","independent_reconstruction","delayed_retention","near_transfer","far_transfer","mixed_discrimination","fluency","timed_performance"]},"prior_status":{"type":"string"},"resulting_status":{"enum":["NOT_EVIDENCED","PARTIAL_CURRENT_EVIDENCE","CURRENT_EVIDENCE","OPEN_FUTURE_EVIDENCE"]},"evidence_needed":{"type":"string","minLength":8},"owner_capability_ref":{"type":"string","pattern":"^MATH-"},"closed_by_event":{"type":"boolean"}}
       }}}}
-    }},
+    },
     "invariant":{"const":"CURRENT_SUCCESS_DOES_NOT_CLOSE_DELAYED_OR_TRANSFER_OBLIGATIONS"},
     "update_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
   }
