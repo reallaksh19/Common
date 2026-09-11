@@ -1,0 +1,129 @@
+{
+  "$id": "physics-assessment-scope-model.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assessed_capability_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "assessed_concept_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "assessed_declared_topic_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "assessment_review_bundle_ref": {
+      "type": "string"
+    },
+    "attempt_data_consumed": {
+      "const": false
+    },
+    "authority_ref": {
+      "type": "string"
+    },
+    "binding_registry_ref": {
+      "type": "string"
+    },
+    "declared_topic_scope_ref": {
+      "type": "string"
+    },
+    "law_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "mapping_state_counts": {
+      "type": "object"
+    },
+    "physical_model_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "problem_family_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "question_set_ref": {
+      "type": "string"
+    },
+    "reasoning_role_expectations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "representation_demands": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "required_prerequisite_capability_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "resolution_status_counts": {
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_model_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "scope_model_id": {
+      "type": "string"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "verification_obligations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "scope_model_id",
+    "schema_version",
+    "subject",
+    "question_set_ref",
+    "declared_topic_scope_ref",
+    "authority_ref",
+    "assessment_review_bundle_ref",
+    "binding_registry_ref",
+    "attempt_data_consumed",
+    "assessed_declared_topic_refs",
+    "assessed_concept_refs",
+    "assessed_capability_refs",
+    "required_prerequisite_capability_refs",
+    "physical_model_refs",
+    "law_refs",
+    "problem_family_refs",
+    "representation_demands",
+    "verification_obligations",
+    "reasoning_role_expectations",
+    "mapping_state_counts",
+    "resolution_status_counts",
+    "scope_model_digest"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,1514 @@
+{
+  "authority_digest": "f84d2c63c6a46cfb6e4ba147d641476da5dc6000ae2983c00327fee48f6eac8d",
+  "authority_ref": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
+  "binding_registry_digest": "5af3bc011a762edc01fcc5de039a3b231eb498d2e56629293228ce05197305f7",
+  "binding_registry_id": "PHY-G9-MOTION-QUESTION-SCOPE-BINDINGS-v1",
+  "bindings": [
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-DISTANCE-DISPLACEMENT"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-DISTANCE-DISPLACEMENT"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-DIST-DISP"
+      ],
+      "item_ref": "Q1",
+      "law_refs": [
+        "PHY-LAW-DISPLACEMENT-DEFINITION"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_APPLICABLE",
+      "model_validity_conditions": [],
+      "object_roles": [
+        "MOVING_PARTICLE"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-PARTICLE-PATH-GEOMETRY"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-PATH-VS-CHORD"
+      ],
+      "question_ref": "Q1",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "INTERPRET",
+        "REPRESENT",
+        "SELECT_RELATION",
+        "VERIFY",
+        "INTERPRET_RESULT"
+      ],
+      "reference_frame": {
+        "frame_text": "path-fixed spatial frame",
+        "required": true,
+        "source": "CANONICAL_RESOLUTION"
+      },
+      "representation_demands": [
+        "MOTION_PATH_DIAGRAM"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": null,
+        "required": false,
+        "source": "NOT_REQUIRED"
+      },
+      "source_question_digest": "ff2e58866a5a07032bc025945fc62f1d1fcc67f97c4080edb211a0f0305bc0aa",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "DISTANCE",
+        "DISPLACEMENT"
+      ],
+      "system_refs": [
+        "SYS-Q1-PARTICLE"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_PATH_VS_DISPLACEMENT",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-AVERAGE-SPEED-EQUAL-DISTANCE"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-AVERAGE-SPEED"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-SPEED-VEL"
+      ],
+      "item_ref": "Q2",
+      "law_refs": [
+        "PHY-LAW-AVERAGE-SPEED"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_APPLICABLE",
+      "model_validity_conditions": [],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-AVERAGE-SPEED"
+      ],
+      "prerequisite_capability_refs": [],
+      "problem_family_refs": [
+        "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED"
+      ],
+      "question_ref": "Q2",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "INTERPRET",
+        "REPRESENT",
+        "SELECT_RELATION",
+        "EXECUTE",
+        "VERIFY",
+        "INTERPRET_RESULT"
+      ],
+      "reference_frame": {
+        "frame_text": null,
+        "required": false,
+        "source": "NOT_REQUIRED"
+      },
+      "representation_demands": [
+        "RATE_TABLE"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": null,
+        "required": false,
+        "source": "NOT_REQUIRED"
+      },
+      "source_question_digest": "020a22855e48bb45df7723d6d461b21dd09ced7e2652d20050e3543b3508b993",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "DISTANCE",
+        "SPEED",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q2-TRAVELLER"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_TOTAL_DISTANCE_TOTAL_TIME",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-ACCELERATION",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q3",
+      "law_refs": [
+        "PHY-LAW-A-DELTA-V-BY-DELTA-T"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "acceleration is uniform over the 5 s interval, or the requested quantity is explicitly average acceleration"
+      ],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-UNIFORM-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE"
+      ],
+      "question_ref": "Q3",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "SELECT_RELATION",
+        "EXECUTE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "1D frame aligned with initial velocity",
+        "required": true,
+        "source": "CANONICAL_RESOLUTION"
+      },
+      "representation_demands": [
+        "STATE_TABLE",
+        "SIGNED_AXIS",
+        "EQUATION_STATE_RELATION"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": "initial-velocity direction is positive",
+        "required": true,
+        "source": "ASSESSMENT_REVIEW"
+      },
+      "source_question_digest": "f8fc94b2a9fcf3c9407d4efed5524b46753fc16a16d78e312acc2b273bd653df",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q3-BODY"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_ACCELERATION_SIGN_UNITS",
+        "VERIFY_MODEL_VALIDITY",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-NTH-SECOND-INTERVAL"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-NTH-SECOND",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q4",
+      "law_refs": [
+        "PHY-LAW-S-UT-HALF-AT2"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "the stated acceleration is constant over the interval"
+      ],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-UNIFORM-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-NTH-SECOND"
+      ],
+      "question_ref": "Q4",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "REPRESENT",
+        "SELECT_MODEL",
+        "SELECT_RELATION",
+        "EXECUTE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "1D source-sign frame",
+        "required": true,
+        "source": "CANONICAL_RESOLUTION"
+      },
+      "representation_demands": [
+        "TIMELINE_INTERVAL",
+        "STATE_TABLE",
+        "EQUATION_STATE_RELATION"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": "positive source components define positive direction",
+        "required": true,
+        "source": "CANONICAL_RESOLUTION"
+      },
+      "source_question_digest": "220bc66b14d48b23a29f2a844b76753dceae2a75197676a5b49914e9a7403f93",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q4-BODY"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_INTERVAL_NOT_CUMULATIVE",
+        "VERIFY_MODEL_VALIDITY",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-FIRST-EQUATION"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-FIRST-EQUATION",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q5",
+      "law_refs": [
+        "PHY-LAW-V-U-AT"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "acceleration is constant over the interval"
+      ],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-UNIFORM-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-FIRST-EQUATION"
+      ],
+      "question_ref": "Q5",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "SELECT_RELATION",
+        "EXECUTE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "1D frame with positive acceleration direction",
+        "required": true,
+        "source": "CANONICAL_RESOLUTION"
+      },
+      "representation_demands": [
+        "STATE_TABLE",
+        "SIGNED_AXIS",
+        "EQUATION_STATE_RELATION"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": "direction of stated positive acceleration is positive",
+        "required": true,
+        "source": "CANONICAL_RESOLUTION"
+      },
+      "source_question_digest": "bc3dea0903f75fba3788982c184b657d20072401c8c4cb8eef030d71beb0283a",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q5-BODY"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_VELOCITY_ENDPOINT",
+        "VERIFY_MODEL_VALIDITY",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-FREE-FALL-CONSTANT-G"
+      ],
+      "canonical_concept_refs": [
+        "PHY-GRAVITY-FREE-FALL"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "item_ref": "Q6",
+      "law_refs": [
+        "PHY-LAW-S-UT-HALF-AT2"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "air resistance neglected",
+        "g constant"
+      ],
+      "object_roles": [
+        "FALLING_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-CONSTANT-G-1D"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-FREE-FALL"
+      ],
+      "question_ref": "Q6",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "SELECT_RELATION",
+        "EXECUTE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "SIGNED_AXIS",
+        "STATE_TABLE",
+        "EQUATION_STATE_RELATION"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": "upward positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "e7ed29325e5124febf041eb38ae62a5fcccaee1ab9b8a4e1100432a163c8c7f5",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "HEIGHT",
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q6-STONE"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_CONSTANT_G_ASSUMPTIONS",
+        "VERIFY_MODEL_VALIDITY",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-VERTICAL-PROJECTION"
+      ],
+      "canonical_concept_refs": [
+        "PHY-GRAVITY-VERTICAL-PROJECTION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "item_ref": "Q7",
+      "law_refs": [
+        "PHY-LAW-V2-U2-2AS"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "air resistance neglected",
+        "g constant"
+      ],
+      "object_roles": [
+        "PROJECTED_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-CONSTANT-G-1D"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-FREE-FALL-CONSTANT-G",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-VERTICAL-MAX-HEIGHT"
+      ],
+      "question_ref": "Q7",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "SELECT_RELATION",
+        "EXECUTE",
+        "VERIFY",
+        "INTERPRET_RESULT"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "SIGNED_AXIS",
+        "STATE_TABLE",
+        "EQUATION_STATE_RELATION"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": "upward positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "00a246e06335f9d5f188b57d8edd7a80d11fb1dea299b672a23dd9f9c5e73592",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "HEIGHT",
+        "VELOCITY",
+        "ACCELERATION"
+      ],
+      "system_refs": [
+        "SYS-Q7-BALL"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_MAXIMUM_HEIGHT_ENDPOINT",
+        "VERIFY_CONSTANT_G_ASSUMPTIONS",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-VT-SIGNED-AREA"
+      ],
+      "canonical_concept_refs": [
+        "PHY-GRAPHS-VELOCITY-TIME-AREA"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "item_ref": "Q8",
+      "law_refs": [
+        "PHY-LAW-VT-AREA-DISPLACEMENT"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_APPLICABLE",
+      "model_validity_conditions": [],
+      "object_roles": [
+        "GRAPHED_PARTICLE"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-GRAPH-KINEMATICS"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-REPRESENTATION-TRANSLATE"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-VT-SIGNED-AREA"
+      ],
+      "question_ref": "Q8",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "REPRESENT",
+        "SELECT_RELATION",
+        "EXECUTE",
+        "VERIFY",
+        "INTERPRET_RESULT"
+      ],
+      "reference_frame": {
+        "frame_text": "graph-defined 1D frame",
+        "required": true,
+        "source": "GRAPH_DEFINED"
+      },
+      "representation_demands": [
+        "VELOCITY_TIME_GRAPH",
+        "SIGNED_AREA_VIEW"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": "positive velocity-axis direction is positive",
+        "required": true,
+        "source": "GRAPH_DEFINED"
+      },
+      "source_question_digest": "49578bf68e84c7e94a957b923f5ec8bd49742adce825a6d0fec123c12ea90d1d",
+      "source_representation_refs": [
+        "FIG-Q8-VT"
+      ],
+      "state_variable_refs": [
+        "VELOCITY",
+        "DISPLACEMENT",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q8-PARTICLE"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_SIGNED_GRAPH_AREA",
+        "VERIFY_SOURCE_REPRESENTATION_PRESENT",
+        "VERIFY_DIMENSIONS"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-MOVING-RELEASE"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-MOVING-RELEASE"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY",
+        "PHY-MOTION-MULTIPHASE"
+      ],
+      "item_ref": "Q9",
+      "law_refs": [
+        "PHY-LAW-STATE-CONTINUITY",
+        "PHY-LAW-V-U-AT"
+      ],
+      "mapping_state": "PARTIAL_SCOPE_MATCH",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "released body inherits carrier velocity at release",
+        "air resistance neglected",
+        "g constant after release"
+      ],
+      "object_roles": [
+        "CARRIER",
+        "RELEASED_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [
+          "POSITION",
+          "VELOCITY"
+        ],
+        "justification": "source describes a release transition",
+        "kind": "MULTI_PHASE",
+        "phases": [
+          "CARRIER_BEFORE_RELEASE",
+          "STONE_AFTER_RELEASE"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-MOVING-RELEASE",
+        "PHY-MODEL-CONSTANT-G-1D"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-FREE-FALL-CONSTANT-G",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-STATE-PROPAGATE",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-MOVING-RELEASE"
+      ],
+      "question_ref": "Q9",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "REPRESENT",
+        "SELECT_MODEL",
+        "PROPAGATE_STATE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "MOTION_VECTOR_DIAGRAM",
+        "PHASE_STRIP",
+        "STATE_TABLE"
+      ],
+      "resolution_status": "PARTIAL",
+      "scope_notes": "The source item is incomplete as an assessment question, but its visible physical structure supports only partial scope evidence.",
+      "sign_convention": {
+        "positive_direction": "upward positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "ab5f6cc416f8288c240cd4dbd05b7b7afb4307d3fc20eed9710c3d5b73599909",
+      "source_representation_refs": [
+        "FIG-Q9-MOTION"
+      ],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME",
+        "POSITION"
+      ],
+      "system_refs": [
+        "SYS-Q9-BALLOON-STONE"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_RELEASE_STATE_CONTINUITY",
+        "VERIFY_MODEL_VALIDITY",
+        "VERIFY_SOURCE_REPRESENTATION_PRESENT"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-MULTIPHASE-KINEMATICS"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-MULTI-PHASE",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE",
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q10",
+      "law_refs": [
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-STATE-CONTINUITY"
+      ],
+      "mapping_state": "PARTIAL_SCOPE_MATCH",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "acceleration is constant within each stated phase",
+        "velocity and position are continuous at the phase boundary"
+      ],
+      "object_roles": [
+        "MOVING_CART"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [
+          "VELOCITY",
+          "POSITION"
+        ],
+        "justification": "source gives a phase boundary at 4 s",
+        "kind": "MULTI_PHASE",
+        "phases": [
+          "PHASE_1",
+          "PHASE_2"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-STATE-PROPAGATE",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "question_ref": "Q10",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "REPRESENT",
+        "SELECT_MODEL",
+        "PROPAGATE_STATE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "PHASE_STRIP",
+        "STATE_TABLE",
+        "SIGNED_AXIS"
+      ],
+      "resolution_status": "PARTIAL",
+      "scope_notes": "No target quantity/end condition is stated; the item provides only partial evidence of assessed demand.",
+      "sign_convention": {
+        "positive_direction": "right positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "6a36f2fd22903209a7485ad4786801a77269d8081d1d6babe927df96e3d09d11",
+      "source_representation_refs": [
+        "FIG-Q10-PHASE"
+      ],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME",
+        "DISPLACEMENT"
+      ],
+      "system_refs": [
+        "SYS-Q10-CART"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_PHASE_STATE_CONTINUITY",
+        "VERIFY_MODEL_VALIDITY",
+        "VERIFY_SOURCE_REPRESENTATION_PRESENT"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-RELATIVE-ACCELERATION-SAME-G"
+      ],
+      "canonical_concept_refs": [
+        "PHY-GRAVITY-RELATIVE-MOTION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAVITY"
+      ],
+      "item_ref": "Q11",
+      "law_refs": [
+        "PHY-LAW-RELATIVE-ACCELERATION-DIFFERENCE"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "same uniform gravitational field"
+      ],
+      "object_roles": [
+        "BODY_A",
+        "BODY_B"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-RELATIVE-MOTION-SAME-G"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-RELATIVE-G-CANCELLATION"
+      ],
+      "question_ref": "Q11",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "REPRESENT",
+        "SELECT_MODEL",
+        "SELECT_RELATION",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "common ground frame",
+        "required": true,
+        "source": "ASSESSMENT_REVIEW"
+      },
+      "representation_demands": [
+        "RELATIVE_STATE_DIAGRAM"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": null,
+        "required": false,
+        "source": "NOT_REQUIRED"
+      },
+      "source_question_digest": "301e29a1fa72c63a1874cebc0bc8f7e85b7ca48bc41e837154550aab8e86c803",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "ACCELERATION",
+        "RELATIVE_ACCELERATION"
+      ],
+      "system_refs": [
+        "SYS-Q11-STONES"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_RELATIVE_ACCELERATION_CANCELLATION",
+        "VERIFY_MODEL_VALIDITY"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-XT-SLOPE-VELOCITY"
+      ],
+      "canonical_concept_refs": [
+        "PHY-GRAPHS-POSITION-TIME-SLOPE"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "item_ref": "Q12",
+      "law_refs": [
+        "PHY-LAW-XT-SLOPE-VELOCITY"
+      ],
+      "mapping_state": "MAPPED",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "constant positive velocity corresponds to constant positive x-t slope"
+      ],
+      "object_roles": [
+        "GRAPHED_PARTICLE"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-GRAPH-KINEMATICS"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-REPRESENTATION-TRANSLATE"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-XT-SLOPE"
+      ],
+      "question_ref": "Q12",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "REPRESENT",
+        "COMPARE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "graph-defined 1D position frame",
+        "required": true,
+        "source": "GRAPH_DEFINED"
+      },
+      "representation_demands": [
+        "POSITION_TIME_GRAPH",
+        "OPTION_GRAPH_SET"
+      ],
+      "resolution_status": "CLOSED",
+      "scope_notes": "",
+      "sign_convention": {
+        "positive_direction": "positive position-axis direction is positive",
+        "required": true,
+        "source": "GRAPH_DEFINED"
+      },
+      "source_question_digest": "5817f65890ce1c2368647bc8ff2ca8a68afde749324555f23c560f88b5514a80",
+      "source_representation_refs": [
+        "FIG-Q12-A",
+        "FIG-Q12-B",
+        "FIG-Q12-C",
+        "FIG-Q12-D"
+      ],
+      "state_variable_refs": [
+        "POSITION",
+        "VELOCITY",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q12-PARTICLE"
+      ],
+      "unresolved_requirements": [],
+      "verification_obligations": [
+        "VERIFY_GRAPH_SLOPE_SIGN",
+        "VERIFY_SOURCE_REPRESENTATION_PRESENT"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-GRAPH-ACCELERATION"
+      ],
+      "canonical_concept_refs": [
+        "PHY-GRAPHS-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-GRAPHS"
+      ],
+      "item_ref": "Q13",
+      "law_refs": [],
+      "mapping_state": "PARTIAL_SCOPE_MATCH",
+      "model_assumption_scope_status": "NOT_APPLICABLE",
+      "model_validity_conditions": [],
+      "object_roles": [
+        "GRAPHED_PARTICLE"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [],
+        "justification": "",
+        "kind": "SINGLE_PHASE",
+        "phases": [
+          "P1"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-GRAPH-KINEMATICS"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-REPRESENTATION-TRANSLATE"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-GRAPH-ACCELERATION"
+      ],
+      "question_ref": "Q13",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "INTERPRET",
+        "REPRESENT",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": null,
+        "required": true,
+        "source": "UNRESOLVED"
+      },
+      "representation_demands": [
+        "SOURCE_GRAPH"
+      ],
+      "resolution_status": "BLOCKED",
+      "scope_notes": "The required graph is missing/truncated; scope is limited to graph-based acceleration intent and cannot resolve the exact graph operation.",
+      "sign_convention": {
+        "positive_direction": null,
+        "required": true,
+        "source": "UNRESOLVED"
+      },
+      "source_question_digest": "655498a86feaf2de6b8831b082f85e83909e2c649a06ec66f83fd0e752a0f5c5",
+      "source_representation_refs": [
+        "FIG-Q13-MISSING"
+      ],
+      "state_variable_refs": [
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q13-PARTICLE"
+      ],
+      "unresolved_requirements": [
+        "REPRESENTATION",
+        "REFERENCE_FRAME",
+        "SIGN_CONVENTION"
+      ],
+      "verification_obligations": [
+        "VERIFY_SOURCE_REPRESENTATION_PRESENT"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-MULTIPHASE-KINEMATICS"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-MULTI-PHASE",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE",
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q14",
+      "law_refs": [
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-STATE-CONTINUITY"
+      ],
+      "mapping_state": "PARTIAL_SCOPE_MATCH",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "acceleration is constant within each phase",
+        "phase-boundary state is propagated continuously"
+      ],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": null,
+      "phase_structure": {
+        "continuity_state_refs": [
+          "VELOCITY",
+          "POSITION"
+        ],
+        "justification": "source visibly marks a two-phase transition",
+        "kind": "MULTI_PHASE",
+        "phases": [
+          "PHASE_1",
+          "PHASE_2"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-STATE-PROPAGATE",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "question_ref": "Q14",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "PROPAGATE_STATE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "PHASE_STRIP",
+        "STATE_TABLE"
+      ],
+      "resolution_status": "BLOCKED",
+      "scope_notes": "Parent multi-phase item remains blocked until low-confidence source text is checked against rendered source.",
+      "sign_convention": {
+        "positive_direction": "forward positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "c264c372c43951d20f9e0e563317fd98b468e4bfb6e45dcec7056fdf189a835a",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q14-BODY"
+      ],
+      "unresolved_requirements": [
+        "SOURCE_FIDELITY"
+      ],
+      "verification_obligations": [
+        "VERIFY_PHASE_STATE_CONTINUITY",
+        "VERIFY_MODEL_VALIDITY"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-MULTIPHASE-KINEMATICS"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-MULTI-PHASE",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE",
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q14.a",
+      "law_refs": [
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-STATE-CONTINUITY"
+      ],
+      "mapping_state": "PARTIAL_SCOPE_MATCH",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "acceleration is constant within each phase",
+        "phase-boundary state is propagated continuously"
+      ],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": "Q14.a",
+      "phase_structure": {
+        "continuity_state_refs": [
+          "VELOCITY",
+          "POSITION"
+        ],
+        "justification": "source visibly marks a two-phase transition",
+        "kind": "MULTI_PHASE",
+        "phases": [
+          "PHASE_1",
+          "PHASE_2"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-STATE-PROPAGATE",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "question_ref": "Q14",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "PROPAGATE_STATE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "PHASE_STRIP",
+        "STATE_TABLE"
+      ],
+      "resolution_status": "BLOCKED",
+      "scope_notes": "Phase-1 endpoint demand inferred provisionally from the visible subpart label/stem.",
+      "sign_convention": {
+        "positive_direction": "forward positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "c264c372c43951d20f9e0e563317fd98b468e4bfb6e45dcec7056fdf189a835a",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q14-BODY"
+      ],
+      "unresolved_requirements": [
+        "SOURCE_FIDELITY"
+      ],
+      "verification_obligations": [
+        "VERIFY_PHASE_STATE_CONTINUITY",
+        "VERIFY_MODEL_VALIDITY"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-MULTIPHASE-KINEMATICS"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-MULTI-PHASE",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE",
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q14.b",
+      "law_refs": [
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-STATE-CONTINUITY"
+      ],
+      "mapping_state": "PARTIAL_SCOPE_MATCH",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "acceleration is constant within each phase",
+        "phase-boundary state is propagated continuously"
+      ],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": "Q14.b",
+      "phase_structure": {
+        "continuity_state_refs": [
+          "VELOCITY",
+          "POSITION"
+        ],
+        "justification": "source visibly marks a two-phase transition",
+        "kind": "MULTI_PHASE",
+        "phases": [
+          "PHASE_1",
+          "PHASE_2"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-STATE-PROPAGATE",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "question_ref": "Q14",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "PROPAGATE_STATE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "PHASE_STRIP",
+        "STATE_TABLE"
+      ],
+      "resolution_status": "BLOCKED",
+      "scope_notes": "Phase-boundary state-handoff demand inferred provisionally from the visible subpart label/stem.",
+      "sign_convention": {
+        "positive_direction": "forward positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "c264c372c43951d20f9e0e563317fd98b468e4bfb6e45dcec7056fdf189a835a",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q14-BODY"
+      ],
+      "unresolved_requirements": [
+        "SOURCE_FIDELITY"
+      ],
+      "verification_obligations": [
+        "VERIFY_PHASE_STATE_CONTINUITY",
+        "VERIFY_MODEL_VALIDITY"
+      ]
+    },
+    {
+      "canonical_capability_refs": [
+        "PHY-CAP-MULTIPHASE-KINEMATICS"
+      ],
+      "canonical_concept_refs": [
+        "PHY-MOTION-MULTI-PHASE",
+        "PHY-MOTION-UNIFORM-ACCELERATION"
+      ],
+      "declared_topic_refs": [
+        "PHY-MOTION-MULTIPHASE",
+        "PHY-MOTION-ACCEL"
+      ],
+      "item_ref": "Q14.c",
+      "law_refs": [
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-STATE-CONTINUITY"
+      ],
+      "mapping_state": "PARTIAL_SCOPE_MATCH",
+      "model_assumption_scope_status": "NOT_EXPLICITLY_DECLARED",
+      "model_validity_conditions": [
+        "acceleration is constant within each phase",
+        "phase-boundary state is propagated continuously"
+      ],
+      "object_roles": [
+        "MOVING_BODY"
+      ],
+      "part_ref": "Q14.c",
+      "phase_structure": {
+        "continuity_state_refs": [
+          "VELOCITY",
+          "POSITION"
+        ],
+        "justification": "source visibly marks a two-phase transition",
+        "kind": "MULTI_PHASE",
+        "phases": [
+          "PHASE_1",
+          "PHASE_2"
+        ]
+      },
+      "physical_model_refs": [
+        "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION"
+      ],
+      "prerequisite_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-MODEL-VALIDITY-CHECK",
+        "PHY-CAP-STATE-PROPAGATE",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "problem_family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "question_ref": "Q14",
+      "reasoning_role_expectations": [
+        "IDENTIFY_SYSTEM",
+        "SET_FRAME",
+        "INTERPRET",
+        "SELECT_MODEL",
+        "PROPAGATE_STATE",
+        "VERIFY"
+      ],
+      "reference_frame": {
+        "frame_text": "ground frame",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "representation_demands": [
+        "PHASE_STRIP",
+        "STATE_TABLE"
+      ],
+      "resolution_status": "BLOCKED",
+      "scope_notes": "Stopping-time demand inferred provisionally from the visible subpart label/stem.",
+      "sign_convention": {
+        "positive_direction": "forward positive",
+        "required": true,
+        "source": "SOURCE"
+      },
+      "source_question_digest": "c264c372c43951d20f9e0e563317fd98b468e4bfb6e45dcec7056fdf189a835a",
+      "source_representation_refs": [],
+      "state_variable_refs": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_refs": [
+        "SYS-Q14-BODY"
+      ],
+      "unresolved_requirements": [
+        "SOURCE_FIDELITY"
+      ],
+      "verification_obligations": [
+        "VERIFY_PHASE_STATE_CONTINUITY",
+        "VERIFY_MODEL_VALIDITY"
+      ]
+    }
+  ],
+  "declared_topic_scope_ref": "PHY-G9-MOTION-SCOPE-V1",
+  "question_set_ref": "PHY-G9-MOTION-MIXED-V1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}

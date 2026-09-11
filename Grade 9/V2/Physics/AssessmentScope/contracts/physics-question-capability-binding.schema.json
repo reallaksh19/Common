@@ -1,0 +1,271 @@
+{
+  "$id": "physics-question-capability-binding.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_capability_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "canonical_concept_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "declared_topic_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "item_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "law_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "mapping_state": {
+      "enum": [
+        "MAPPED",
+        "PARTIAL_SCOPE_MATCH",
+        "OUTSIDE_DECLARED_SCOPE",
+        "UNMAPPED"
+      ]
+    },
+    "model_assumption_scope_status": {
+      "enum": [
+        "DECLARED_OR_INTRINSIC",
+        "NOT_EXPLICITLY_DECLARED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "model_validity_conditions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "object_roles": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "part_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "phase_structure": {
+      "additionalProperties": false,
+      "properties": {
+        "continuity_state_refs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "justification": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "SINGLE_PHASE",
+            "MULTI_PHASE",
+            "NOT_APPLICABLE",
+            "UNKNOWN"
+          ]
+        },
+        "phases": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "phases",
+        "continuity_state_refs",
+        "justification"
+      ],
+      "type": "object"
+    },
+    "physical_model_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "prerequisite_capability_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "problem_family_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "question_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "reasoning_role_expectations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "reference_frame": {
+      "additionalProperties": false,
+      "properties": {
+        "frame_text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "SOURCE",
+            "ASSESSMENT_REVIEW",
+            "CANONICAL_RESOLUTION",
+            "GRAPH_DEFINED",
+            "NOT_REQUIRED",
+            "UNRESOLVED"
+          ]
+        }
+      },
+      "required": [
+        "required",
+        "frame_text",
+        "source"
+      ],
+      "type": "object"
+    },
+    "representation_demands": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "resolution_status": {
+      "enum": [
+        "CLOSED",
+        "PARTIAL",
+        "BLOCKED"
+      ]
+    },
+    "scope_notes": {
+      "type": "string"
+    },
+    "sign_convention": {
+      "additionalProperties": false,
+      "properties": {
+        "positive_direction": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "SOURCE",
+            "ASSESSMENT_REVIEW",
+            "CANONICAL_RESOLUTION",
+            "GRAPH_DEFINED",
+            "NOT_REQUIRED",
+            "UNRESOLVED"
+          ]
+        }
+      },
+      "required": [
+        "required",
+        "positive_direction",
+        "source"
+      ],
+      "type": "object"
+    },
+    "source_question_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "source_representation_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "state_variable_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "system_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "unresolved_requirements": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "verification_obligations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "item_ref",
+    "question_ref",
+    "part_ref",
+    "source_question_digest",
+    "mapping_state",
+    "resolution_status",
+    "declared_topic_refs",
+    "canonical_concept_refs",
+    "canonical_capability_refs",
+    "prerequisite_capability_refs",
+    "system_refs",
+    "object_roles",
+    "reference_frame",
+    "sign_convention",
+    "state_variable_refs",
+    "phase_structure",
+    "physical_model_refs",
+    "law_refs",
+    "model_validity_conditions",
+    "model_assumption_scope_status",
+    "problem_family_refs",
+    "representation_demands",
+    "source_representation_refs",
+    "verification_obligations",
+    "reasoning_role_expectations",
+    "unresolved_requirements",
+    "scope_notes"
+  ],
+  "type": "object"
+}

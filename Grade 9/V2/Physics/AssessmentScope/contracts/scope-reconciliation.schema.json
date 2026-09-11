@@ -1,0 +1,159 @@
+{
+  "$id": "scope-reconciliation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_review_bundle_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "attempt_data_consumed": {
+      "const": false
+    },
+    "authority_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "authority_ref": {
+      "type": "string"
+    },
+    "binding_registry_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "binding_registry_ref": {
+      "type": "string"
+    },
+    "declared_topic_scope_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "declared_topic_scope_ref": {
+      "type": "string"
+    },
+    "findings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "capability_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "code": {
+            "enum": [
+              "QUESTION_OUTSIDE_DECLARED_SCOPE",
+              "DECLARED_TOPIC_NOT_ASSESSED",
+              "UNMAPPED_QUESTION",
+              "PARTIAL_SCOPE_MATCH",
+              "QUESTION_REQUIRES_UNDECLARED_PREREQUISITE",
+              "MODEL_ASSUMPTION_NOT_IN_DECLARED_SCOPE",
+              "REPRESENTATION_DEPENDENCY_UNRESOLVED"
+            ]
+          },
+          "declared_topic_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "detail": {
+            "type": "string"
+          },
+          "finding_id": {
+            "type": "string"
+          },
+          "item_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "severity": {
+            "enum": [
+              "INFO",
+              "WARNING",
+              "BLOCKING"
+            ]
+          }
+        },
+        "required": [
+          "finding_id",
+          "code",
+          "severity",
+          "item_ref",
+          "declared_topic_ref",
+          "capability_ref",
+          "detail"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "question_set_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "question_set_ref": {
+      "type": "string"
+    },
+    "reconciliation_id": {
+      "type": "string"
+    },
+    "report_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "finding_code_counts": {
+          "type": "object"
+        },
+        "item_count": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "mapping_state_counts": {
+          "type": "object"
+        },
+        "resolution_status_counts": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "item_count",
+        "mapping_state_counts",
+        "resolution_status_counts",
+        "finding_code_counts"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "reconciliation_id",
+    "schema_version",
+    "subject",
+    "question_set_ref",
+    "question_set_digest",
+    "declared_topic_scope_ref",
+    "declared_topic_scope_digest",
+    "assessment_review_bundle_digest",
+    "authority_ref",
+    "authority_digest",
+    "binding_registry_ref",
+    "binding_registry_digest",
+    "attempt_data_consumed",
+    "findings",
+    "summary",
+    "report_digest"
+  ],
+  "type": "object"
+}

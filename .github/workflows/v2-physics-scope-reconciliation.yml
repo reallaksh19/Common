@@ -1,0 +1,73 @@
+name: V2 Physics Scope Reconciliation P-C
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/AssessmentIntake/**'
+      - 'Grade 9/V2/Physics/AssessmentReview/**'
+      - 'Grade 9/V2/Physics/AssessmentScope/**'
+      - 'Grade 9/V2/Physics/Canonical/registry/capabilities.json'
+      - '.github/workflows/v2-physics-scope-reconciliation.yml'
+jobs:
+  physics-scope-reconciliation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Re-prove P-A source / representation fidelity
+        run: |
+          python 'Grade 9/V2/Physics/AssessmentIntake/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Physics/AssessmentIntake/tests/test_physics_assessment_intake.py'
+      - name: Re-prove P-B assessment safety
+        run: |
+          python 'Grade 9/V2/Physics/AssessmentReview/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Physics/AssessmentReview/tests/test_physics_assessment_review.py'
+      - name: Validate PHYSICS P-C contracts
+        run: python 'Grade 9/V2/Physics/AssessmentScope/contracts/validate_contracts.py'
+      - name: Run PHYSICS P-C scope falsifiers
+        run: python 'Grade 9/V2/Physics/AssessmentScope/tests/test_physics_scope_reconciliation.py'
+      - name: Deterministic P-C replay
+        run: |
+          D='Grade 9/V2/Physics/AssessmentScope'
+          P='Grade 9/V2/Physics'
+          python "$D/engine/reconcile_physics_assessment_scope.py" \
+            --questions "$P/AssessmentIntake/fixtures/motion-question-set.fixture.json" \
+            --topic-scope "$P/AssessmentIntake/fixtures/motion-topic-scope.fixture.json" \
+            --review-registry "$P/AssessmentReview/registry/physics-item-validity-registry.json" \
+            --review-policy "$P/AssessmentReview/policies/diagnostic-use-policy.json" \
+            --canonical-capabilities "$P/Canonical/registry/capabilities.json" \
+            --authority "$D/authority/physics-assessment-scope-authority.json" \
+            --bindings "$D/registry/motion-question-scope-bindings.json" \
+            --scope-model-out /tmp/m1.json --coverage-out /tmp/c1.json --reconciliation-out /tmp/r1.json --prerequisite-out /tmp/p1.json
+          python "$D/engine/reconcile_physics_assessment_scope.py" \
+            --questions "$P/AssessmentIntake/fixtures/motion-question-set.fixture.json" \
+            --topic-scope "$P/AssessmentIntake/fixtures/motion-topic-scope.fixture.json" \
+            --review-registry "$P/AssessmentReview/registry/physics-item-validity-registry.json" \
+            --review-policy "$P/AssessmentReview/policies/diagnostic-use-policy.json" \
+            --canonical-capabilities "$P/Canonical/registry/capabilities.json" \
+            --authority "$D/authority/physics-assessment-scope-authority.json" \
+            --bindings "$D/registry/motion-question-scope-bindings.json" \
+            --scope-model-out /tmp/m2.json --coverage-out /tmp/c2.json --reconciliation-out /tmp/r2.json --prerequisite-out /tmp/p2.json
+          cmp /tmp/m1.json /tmp/m2.json
+          cmp /tmp/c1.json /tmp/c2.json
+          cmp /tmp/r1.json /tmp/r2.json
+          cmp /tmp/p1.json /tmp/p2.json
+      - name: Prove P-C pilot closure states
+        run: |
+          python - <<'PY'
+          import json
+          c=json.load(open('/tmp/c1.json')); r=json.load(open('/tmp/r1.json')); m=json.load(open('/tmp/m1.json'))
+          rows={x['item_ref']:x for x in c['rows']}
+          assert len(rows)==17 and c['coverage_complete'] is True
+          assert rows['Q9']['mapping_state']=='PARTIAL_SCOPE_MATCH'
+          assert rows['Q10']['mapping_state']=='PARTIAL_SCOPE_MATCH'
+          assert rows['Q13']['resolution_status']=='BLOCKED'
+          assert 'REPRESENTATION' in rows['Q13']['unresolved_requirements']
+          assert rows['Q14']['validity_state']=='REVIEW_REQUIRED' and rows['Q14']['resolution_status']=='BLOCKED'
+          assert any(x['code']=='REPRESENTATION_DEPENDENCY_UNRESOLVED' and x['item_ref']=='Q13' for x in r['findings'])
+          assert m['attempt_data_consumed'] is False and r['attempt_data_consumed'] is False
+          print('PHYSICS P-C coverage / fail-closed pilot PASS')
+          PY
