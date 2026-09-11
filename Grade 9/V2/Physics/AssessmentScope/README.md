@@ -44,6 +44,8 @@ A formula name alone is never sufficient scope metadata.
 
 `physics-assessment-scope-authority.json` is digest-bound to `Canonical/registry/capabilities.json`. P-C scope capabilities may refine assessment-specific identity, but every one must point to one or more established Physics Canonical capability foundations.
 
+The question-binding registry is itself digest-bound to the exact scope-authority digest, so extending a registered reasoning-role identity cannot silently leave stale Question→Physics custody behind.
+
 ## Pilot behavior
 
 The P-A/P-B Motion fixture yields **17 zero-loss coverage rows**: Q1–Q14 plus Q14.a/b/c.
