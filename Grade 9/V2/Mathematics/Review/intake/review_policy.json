@@ -1,0 +1,12 @@
+{
+  "benchmark_comparative_validation_state": "NOT_RUN",
+  "policy_id": "MATH-HUMAN-REVIEW-POLICY-1",
+  "reject_on_invalid_submission": true,
+  "required_pass_submissions": {
+    "PEDAGOGY": 1,
+    "SUBJECT": 1,
+    "VISUAL": 1
+  },
+  "schema_version": "1.0.0",
+  "version": "1.0.0"
+}

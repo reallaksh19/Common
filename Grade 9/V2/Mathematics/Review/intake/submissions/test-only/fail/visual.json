@@ -1,0 +1,27 @@
+{
+  "attestation": {"affirmed": true, "statement": "TEST_ONLY synthetic reviewer attestation; not release evidence."},
+  "candidate_artifact_sha256": "ca77eb7220e3857b2a6e9877de4358903b8b2aa0623208c0a527d059a6c4c70d",
+  "evidence_refs": ["TEST_ONLY:synthetic"],
+  "findings": [{"finding_id": "TEST-FIND-VISUAL-001", "severity": "BLOCKING", "statement": "TEST_ONLY blocking finding for PAGE_DENSITY", "status": "OPEN"}],
+  "review_dimension": "VISUAL",
+  "review_status": "FAIL",
+  "reviewer_authorization_version": "TEST-1",
+  "reviewer_class": "HUMAN_VISUAL",
+  "reviewer_id": "test-visual-001",
+  "rubric_id": "MATH-VISUAL-RUBRIC-1",
+  "rubric_results": [
+    {"criterion_id": "LEGIBILITY", "disposition": "PASS", "evidence": "TEST_ONLY evidence for LEGIBILITY"},
+    {"criterion_id": "HIERARCHY", "disposition": "PASS", "evidence": "TEST_ONLY evidence for HIERARCHY"},
+    {"criterion_id": "WORKSPACE", "disposition": "PASS", "evidence": "TEST_ONLY evidence for WORKSPACE"},
+    {"criterion_id": "PAGE_DENSITY", "disposition": "FAIL", "evidence": "TEST_ONLY evidence for PAGE_DENSITY"},
+    {"criterion_id": "CONTRAST_COMPARABILITY", "disposition": "PASS", "evidence": "TEST_ONLY evidence for CONTRAST_COMPARABILITY"},
+    {"criterion_id": "PROBE_SEPARATION", "disposition": "PASS", "evidence": "TEST_ONLY evidence for PROBE_SEPARATION"},
+    {"criterion_id": "SEQUENCE", "disposition": "PASS", "evidence": "TEST_ONLY evidence for SEQUENCE"},
+    {"criterion_id": "CLIPPING_GLYPHS", "disposition": "PASS", "evidence": "TEST_ONLY evidence for CLIPPING_GLYPHS"}
+  ],
+  "schema_version": "1.0.0",
+  "source": "HUMAN_SUBMISSION",
+  "submission_id": "TEST-VISUAL-FAIL-001",
+  "submitted_at": "2026-09-11T08:30:00Z",
+  "test_only": true
+}

@@ -1,0 +1,15 @@
+{
+  "$id": "human-review-policy.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_comparative_validation_state": {"const": "NOT_RUN"},
+    "policy_id": {"minLength": 1, "type": "string"},
+    "reject_on_invalid_submission": {"const": true},
+    "required_pass_submissions": {"additionalProperties": false, "properties": {"PEDAGOGY": {"minimum": 1, "type": "integer"}, "SUBJECT": {"minimum": 1, "type": "integer"}, "VISUAL": {"minimum": 1, "type": "integer"}}, "required": ["SUBJECT", "PEDAGOGY", "VISUAL"], "type": "object"},
+    "schema_version": {"const": "1.0.0"},
+    "version": {"minLength": 1, "type": "string"}
+  },
+  "required": ["schema_version", "policy_id", "version", "required_pass_submissions", "reject_on_invalid_submission", "benchmark_comparative_validation_state"],
+  "type": "object"
+}

@@ -1,0 +1,26 @@
+{
+  "attestation": {"affirmed": true, "statement": "TEST_ONLY synthetic reviewer attestation; not release evidence."},
+  "candidate_artifact_sha256": "ca77eb7220e3857b2a6e9877de4358903b8b2aa0623208c0a527d059a6c4c70d",
+  "evidence_refs": ["TEST_ONLY:synthetic"],
+  "findings": [],
+  "review_dimension": "SUBJECT",
+  "review_status": "PASS",
+  "reviewer_authorization_version": "TEST-1",
+  "reviewer_class": "HUMAN_SUBJECT",
+  "reviewer_id": "test-subject-001",
+  "rubric_id": "MATH-SUBJECT-RUBRIC-1",
+  "rubric_results": [
+    {"criterion_id": "EQ_EQUIVALENCE", "disposition": "PASS", "evidence": "TEST_ONLY evidence for EQ_EQUIVALENCE"},
+    {"criterion_id": "ARITHMETIC", "disposition": "PASS", "evidence": "TEST_ONLY evidence for ARITHMETIC"},
+    {"criterion_id": "ONE_OPERATION", "disposition": "PASS", "evidence": "TEST_ONLY evidence for ONE_OPERATION"},
+    {"criterion_id": "BINOMIAL_IDENTITY", "disposition": "PASS", "evidence": "TEST_ONLY evidence for BINOMIAL_IDENTITY"},
+    {"criterion_id": "SLOPE_SEMANTICS", "disposition": "PASS", "evidence": "TEST_ONLY evidence for SLOPE_SEMANTICS"},
+    {"criterion_id": "VERIFICATION_VALIDITY", "disposition": "PASS", "evidence": "TEST_ONLY evidence for VERIFICATION_VALIDITY"},
+    {"criterion_id": "NOTATION", "disposition": "PASS", "evidence": "TEST_ONLY evidence for NOTATION"}
+  ],
+  "schema_version": "1.0.0",
+  "source": "HUMAN_SUBMISSION",
+  "submission_id": "TEST-SUBJECT-PASS-001",
+  "submitted_at": "2026-09-11T08:30:00Z",
+  "test_only": true
+}

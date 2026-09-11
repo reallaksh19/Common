@@ -1,0 +1,17 @@
+{
+  "$id": "candidate-review-binding.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ai_pre_review_status": {"minLength": 1, "type": "string"},
+    "artifact_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "baseline_artifact_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "candidate_id": {"minLength": 1, "type": "string"},
+    "publication_engineering": {"enum": ["PASS", "FAIL"]},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"minLength": 1, "type": "string"},
+    "unresolved_major_count": {"minimum": 0, "type": "integer"}
+  },
+  "required": ["schema_version", "candidate_id", "subject", "artifact_sha256", "baseline_artifact_sha256", "publication_engineering", "unresolved_major_count", "ai_pre_review_status"],
+  "type": "object"
+}

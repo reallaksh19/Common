@@ -1,0 +1,14 @@
+{
+  "$id": "reviewer-authorization-registry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authorized_reviewers": {"additionalProperties": false, "properties": {"HUMAN_PEDAGOGY": {"items": {"minLength": 1, "type": "string"}, "type": "array", "uniqueItems": true}, "HUMAN_SUBJECT": {"items": {"minLength": 1, "type": "string"}, "type": "array", "uniqueItems": true}, "HUMAN_VISUAL": {"items": {"minLength": 1, "type": "string"}, "type": "array", "uniqueItems": true}}, "required": ["HUMAN_SUBJECT", "HUMAN_PEDAGOGY", "HUMAN_VISUAL"], "type": "object"},
+    "registry_class": {"enum": ["REAL", "TEST_ONLY"]},
+    "registry_id": {"minLength": 1, "type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "version": {"minLength": 1, "type": "string"}
+  },
+  "required": ["schema_version", "registry_id", "registry_class", "version", "authorized_reviewers"],
+  "type": "object"
+}

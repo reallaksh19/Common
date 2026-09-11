@@ -1,0 +1,23 @@
+{
+  "$id": "human-review-intake-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_submission_ids": {"items": {"minLength": 1, "type": "string"}, "type": "array"},
+    "candidate_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "fixture_class": {"enum": ["REAL", "TEST_ONLY_SYNTHETIC"]},
+    "input_digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "intake_id": {"minLength": 1, "type": "string"},
+    "intake_status": {"enum": ["READY", "EVIDENCE_REJECTED"]},
+    "mode": {"enum": ["REAL_RELEASE", "TEST_ONLY"]},
+    "policy_id": {"minLength": 1, "type": "string"},
+    "quality_review_summary": {"type": "object"},
+    "registry_id": {"minLength": 1, "type": "string"},
+    "registry_version": {"minLength": 1, "type": "string"},
+    "rejected_submissions": {"items": {"additionalProperties": false, "properties": {"reasons": {"items": {"type": "string"}, "minItems": 1, "type": "array"}, "submission_id": {"type": "string"}}, "required": ["submission_id", "reasons"], "type": "object"}, "type": "array"},
+    "release_evidence_eligible": {"type": "boolean"},
+    "schema_version": {"const": "1.0.0"}
+  },
+  "required": ["schema_version", "intake_id", "fixture_class", "candidate_sha256", "registry_id", "registry_version", "policy_id", "mode", "intake_status", "accepted_submission_ids", "rejected_submissions", "quality_review_summary", "release_evidence_eligible", "input_digest"],
+  "type": "object"
+}
