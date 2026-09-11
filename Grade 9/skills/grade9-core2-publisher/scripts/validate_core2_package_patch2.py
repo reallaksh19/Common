@@ -2,9 +2,9 @@
 """Independent structure and physical-page custody validation for Core (2).
 
 Hard gates prove declared structure binding, main-section MATERIAL custody,
-ReportLab-emitted page placement, exact PDF hash binding, and global reopened-PDF
-ordering. Orphan/underfill morphology remains a separately reported release
-finding until pagination policy is tuned against the cross-subject replays.
+ReportLab-emitted page placement, exact PDF hash binding, and physical content
+ordering. Learner-visible text is not used as a proxy for figures or machine
+role/support-state tokens.
 """
 from __future__ import annotations
 
@@ -34,19 +34,37 @@ def _main_material_ids(study: dict) -> set[str]:
     }
 
 
-def _learner_step_marker(step: dict) -> str:
-    """Return the learner-visible cue that proves an arc step is rendered.
+def _physical_content_order(page_map: dict) -> list[str]:
+    """Return semantic refs in first-placement reading order.
 
-    Support-state detail remains machine-visible in PublicationStructure. The
-    deterministic faded-practice prompt itself says "GUIDED 2", so requiring
-    the internal label "GUIDED 2 FADED" in learner text would recreate the
-    presentation duplication that the renderer intentionally removes.
+    ReportLab coordinates use a bottom-left origin. Reading order therefore
+    sorts by physical page ascending, then vertical position descending, then
+    horizontal position ascending. Split fragments keep one semantic ref and
+    contribute only their earliest visible fragment to the order check.
     """
-    if step.get("learner_visible_heading"):
-        return step["learner_visible_heading"]
-    if step.get("role") == "GUIDED_2_FADED":
-        return "GUIDED 2"
-    return step["role"].replace("_", " ")
+    rows = []
+    for placement in page_map.get("content_placements", []):
+        fragments = placement.get("fragments", [])
+        if not fragments:
+            continue
+        first = min(
+            fragments,
+            key=lambda f: (
+                int(f.get("page", 10**9)),
+                -float(f.get("y1", f.get("y0", 0.0))),
+                float(f.get("x0", 0.0)),
+            ),
+        )
+        rows.append(
+            (
+                int(first.get("page", 10**9)),
+                -float(first.get("y1", first.get("y0", 0.0))),
+                float(first.get("x0", 0.0)),
+                placement.get("content_ref"),
+            )
+        )
+    rows.sort()
+    return [ref for _page, _neg_y, _x, ref in rows if ref]
 
 
 def validate_structure_package(argv: list[str]) -> int:
@@ -83,10 +101,8 @@ def validate_structure_package(argv: list[str]) -> int:
             errors.append("manifest hash/path mismatch for PUBLICATION_STRUCTURE")
 
         arc_refs: list[str] = []
-        arc_role_markers: list[str] = []
         for unit in structure["study_guide"]["learning_units"]:
             for step in unit["arc_steps"]:
-                arc_role_markers.append(_learner_step_marker(step))
                 arc_refs.extend(step["content_refs"])
         page_refs = [ref for page in structure["study_guide"]["page_intents"] for ref in page["content_refs"]]
         if page_refs != arc_refs:
@@ -105,8 +121,6 @@ def validate_structure_package(argv: list[str]) -> int:
             raw_text = "\n".join(p.get_text() for p in doc)
             doc.close()
             text = _norm(raw_text)
-            if not impl._ordered(text, arc_role_markers):
-                errors.append("Study Guide PDF arc-step order does not reconcile")
             for page in structure["study_guide"]["page_intents"]:
                 if _norm(page["cognitive_job"]) not in text:
                     errors.append(f"{page['page_intent_id']}: cognitive job missing from PDF")
@@ -126,6 +140,11 @@ def validate_structure_package(argv: list[str]) -> int:
                     errors.append("PhysicalPageMap pdf_sha256 does not bind exact Study Guide PDF")
                 errors.extend("PhysicalPageMap: " + e for e in custody_errors(page_map))
                 morphology_findings.extend(morphology_errors(page_map))
+
+                actual_order = _physical_content_order(page_map)
+                actual_arc_order = [ref for ref in actual_order if ref in set(arc_refs)]
+                if actual_arc_order != arc_refs:
+                    errors.append("Study Guide physical content placement order does not reconcile to arc-step content order")
 
                 map_roles = [x for x in manifest.get("artifacts", []) if x.get("role") == "PHYSICAL_PAGE_MAP"]
                 if len(map_roles) != 1:
@@ -167,7 +186,7 @@ def validate_structure_package(argv: list[str]) -> int:
     print("MODEL_TO_STRUCTURE_MATERIAL_CUSTODY = PASS")
     print("PHYSICAL_PAGE_MAP_BINDING = PASS")
     print("STRUCTURE_TO_PHYSICAL_PAGE_CUSTODY = PASS")
-    print("PDF_GLOBAL_STRUCTURE_ORDER = PASS")
+    print("PDF_PHYSICAL_CONTENT_ORDER = PASS")
     if morphology_findings:
         print(f"PHYSICAL_PAGE_MORPHOLOGY = PENDING ({len(morphology_findings)} findings)")
         for finding in morphology_findings:
