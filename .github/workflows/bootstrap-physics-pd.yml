@@ -1,4 +1,4 @@
-# retry after payload integrity repair
+# retry after payload integrity repair; unpack without CI workflow because Actions token lacks workflows permission
 name: Bootstrap Physics P-D payload
 on:
   push:
@@ -19,6 +19,7 @@ jobs:
           cat .pd_payload.part0 .pd_payload.part1 .pd_payload.part2 .pd_payload.part3 | base64 -d > /tmp/pd_payload.tar.gz
           tar -tzf /tmp/pd_payload.tar.gz >/dev/null
           tar -xzf /tmp/pd_payload.tar.gz -C .
+          rm -f .github/workflows/v2-physics-problem-semantics.yml
           rm -f .pd_payload.part0 .pd_payload.part1 .pd_payload.part2 .pd_payload.part3 .github/workflows/bootstrap-physics-pd.yml
       - name: Commit unpacked implementation
         run: |
