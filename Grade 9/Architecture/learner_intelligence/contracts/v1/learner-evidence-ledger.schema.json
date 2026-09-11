@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learner-evidence-ledger.schema.json",
+  "title": "LearnerEvidenceLedger v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ledger_id", "schema_version", "privacy_class", "learner_ref", "sessions"],
+  "properties": {
+    "ledger_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "privacy_class": {"enum": ["PRIVATE", "ANONYMIZED", "PUBLIC_SYNTHETIC"]},
+    "learner_ref": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["session_id", "evidence_kind", "attempts"],
+        "properties": {
+          "session_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+          "evidence_kind": {"$ref": "learner-intelligence-common.schema.json#/$defs/evidence_kind"},
+          "occurred_at": {"type": "string"},
+          "source_artifact_refs": {"type": "array", "uniqueItems": true, "items": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"}},
+          "attempts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["attempt_id", "question_ref", "work_steps", "assistance"],
+              "properties": {
+                "attempt_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+                "question_ref": {"type": "string", "minLength": 1},
+                "correctness": {"enum": ["CORRECT", "INCORRECT", "PARTIAL", "UNKNOWN"]},
+                "awarded_marks": {"type": "number", "minimum": 0},
+                "work_steps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["step_id", "observed"],
+                    "properties": {
+                      "step_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+                      "observed": {"type": "string"},
+                      "normalized": {"type": "string"},
+                      "artifact_ref": {"type": "string"},
+                      "extraction_method": {"enum": ["HUMAN", "MODEL", "SYSTEM_NATIVE", "IMPORTED"]},
+                      "extraction_confidence": {"$ref": "learner-intelligence-common.schema.json#/$defs/confidence"}
+                    }
+                  }
+                },
+                "assistance": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["level"],
+                  "properties": {
+                    "level": {"$ref": "learner-intelligence-common.schema.json#/$defs/assistance_level"},
+                    "refs": {"type": "array", "items": {"type": "string"}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

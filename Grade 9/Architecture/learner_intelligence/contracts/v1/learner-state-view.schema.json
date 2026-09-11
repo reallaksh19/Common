@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learner-state-view.schema.json",
+  "title": "LearnerStateView v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["view_id", "schema_version", "snapshot_ref", "scope_graph_id", "publication_target_id", "capability_states", "diagnostic_cases"],
+  "properties": {
+    "view_id": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "snapshot_ref": {"$ref": "learner-intelligence-common.schema.json#/$defs/stable_id"},
+    "snapshot_digest": {"$ref": "learner-intelligence-common.schema.json#/$defs/sha256"},
+    "scope_graph_id": {"type": "string", "minLength": 1},
+    "publication_target_id": {"type": "string", "minLength": 1},
+    "capability_states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_ref", "state", "confidence"],
+        "properties": {
+          "capability_ref": {"type": "string", "minLength": 1},
+          "state": {"$ref": "learner-intelligence-common.schema.json#/$defs/capability_state"},
+          "confidence": {"$ref": "learner-intelligence-common.schema.json#/$defs/confidence"}
+        }
+      }
+    },
+    "diagnostic_cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["diagnostic_case_ref", "status", "probe_required"],
+        "properties": {
+          "diagnostic_case_ref": {"type": "string", "minLength": 1},
+          "status": {"$ref": "learner-intelligence-common.schema.json#/$defs/diagnostic_status"},
+          "probe_required": {"type": "boolean"},
+          "recommended_probe_refs": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "bxx_projection": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["subtopic_id", "value", "basis", "confidence"],
+        "properties": {
+          "subtopic_id": {"type": "string", "minLength": 1},
+          "value": {"type": "integer", "minimum": 0, "maximum": 100},
+          "basis": {"enum": ["USER_DECLARED", "DIAGNOSTIC_DERIVED", "FALLBACK"]},
+          "confidence": {"$ref": "learner-intelligence-common.schema.json#/$defs/confidence"},
+          "projection_policy_ref": {"type": "string"}
+        }
+      }
+    }
+  }
+}
