@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-page-intent-profile.schema.json",
+  "title": "Mathematics Page Intent Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_id",
+    "schema_version",
+    "subject",
+    "coverage_policy",
+    "requirement_bindings",
+    "cross_cutting_rules",
+    "profile_digest"
+  ],
+  "properties": {
+    "profile_id": {
+      "const": "MATH-PAGE-INTENT-v1"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "coverage_policy": {
+      "type": "string",
+      "minLength": 20
+    },
+    "requirement_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "representation_requirement_ref",
+          "allowed_primitive_refs"
+        ],
+        "properties": {
+          "representation_requirement_ref": {
+            "type": "string",
+            "minLength": 3
+          },
+          "allowed_primitive_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^MATH-TP-"
+            }
+          }
+        }
+      }
+    },
+    "cross_cutting_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error_contrast_job_ref",
+        "verification_job_refs",
+        "contrast_instructional_job",
+        "verification_instructional_job",
+        "renderer_non_invention_constraint"
+      ],
+      "properties": {
+        "error_contrast_job_ref": {
+          "type": "string"
+        },
+        "verification_job_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "contrast_instructional_job": {
+          "const": "DISCRIMINATE_CASES"
+        },
+        "verification_instructional_job": {
+          "const": "VERIFY_REASONING"
+        },
+        "renderer_non_invention_constraint": {
+          "const": "NO_UNDECLARED_MATHEMATICAL_INFERENCE"
+        }
+      }
+    },
+    "profile_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

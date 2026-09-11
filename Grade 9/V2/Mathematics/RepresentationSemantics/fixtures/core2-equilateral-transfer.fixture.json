@@ -1,0 +1,128 @@
+{
+  "context": {
+    "surface_role": "CORE2_TRANSFER",
+    "lesson_or_transfer_ref": "MATH-CORE2-EQUILATERAL-TRANSFER-FIXTURE",
+    "capability_ref": "MATH-EQUIDISTANCE-COORDINATE-MODEL",
+    "problem_family_refs": [
+      "MATH-PF-EQUILATERAL-COORDINATE"
+    ],
+    "representation_requirements": [
+      "ORDERED_PAIR",
+      "GEOMETRIC_DISTANCE_RELATION"
+    ],
+    "required_pck_jobs": []
+  },
+  "representations": [
+    {
+      "representation_id": "MATH-RSPEC-EQUILATERAL-PLANE",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE2_TRANSFER",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "ORDERED_PAIR",
+      "primitive_id": "MATH-TP-COORDINATE_PLANE-v1",
+      "capability_ref": "MATH-EQUIDISTANCE-COORDINATE-MODEL",
+      "problem_family_ref": "MATH-PF-EQUILATERAL-COORDINATE",
+      "instructional_job": "CONNECT_REPRESENTATIONS",
+      "attention_target": "Ordered pairs preserve horizontal x and vertical y roles for all vertices.",
+      "translation_obligation": "Translate plotted points back to ordered pairs without swapping coordinate roles.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate plotted points back to ordered pairs without swapping coordinate roles."
+        ],
+        "payload": {
+          "points": {
+            "A": [
+              0,
+              0
+            ],
+            "B": [
+              3,
+              1.732
+            ]
+          },
+          "axes": {
+            "x": "horizontal",
+            "y": "vertical"
+          },
+          "relations": [
+            "A and B define the fixed base"
+          ]
+        }
+      },
+      "learner_action_expected": "Read each plotted point aloud as x-coordinate then y-coordinate.",
+      "misconception_or_contrast_ref": null,
+      "accessibility_text": "Coordinate plane displays base vertices A at zero zero and B at three square-root-three with labeled x and y axes.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "3d329634653a9723fb1bbdae984e737bab5c5a1e881dd25dc0f916f1b652d8e8"
+    },
+    {
+      "representation_id": "MATH-RSPEC-EQUILATERAL-MIRROR",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE2_TRANSFER",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "GEOMETRIC_DISTANCE_RELATION",
+      "primitive_id": "MATH-TP-MIRROR_SOLUTION_VIEW-v1",
+      "capability_ref": "MATH-EQUIDISTANCE-COORDINATE-MODEL",
+      "problem_family_ref": "MATH-PF-EQUILATERAL-COORDINATE",
+      "instructional_job": "SHOW_MULTIPLE_VALID_SOLUTIONS",
+      "attention_target": "An unconstrained base admits two mirror third vertices with the same three side lengths.",
+      "translation_obligation": "Translate both plotted branches back to candidate coordinates and verify all three equal distances.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate both plotted branches back to candidate coordinates and verify all three equal distances."
+        ],
+        "payload": {
+          "base_points": {
+            "A": [
+              0,
+              0
+            ],
+            "B": [
+              3,
+              1.732
+            ]
+          },
+          "branch_a": {
+            "C": [
+              0,
+              3.464
+            ]
+          },
+          "branch_b": {
+            "C": [
+              3,
+              -1.732
+            ]
+          },
+          "invariants": [
+            "AB=BC=CA",
+            "both branches satisfy the original equilateral condition"
+          ]
+        }
+      },
+      "learner_action_expected": "Keep both candidates until an explicit condition rules one out.",
+      "misconception_or_contrast_ref": "MATH-INV-EQUILATERAL-SINGLE-BRANCH",
+      "accessibility_text": "Mirror-solution view shows the same base with one valid equilateral third vertex on each side; both satisfy equal side lengths.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "77494face53a2d840121ee063c1361396aa08f64ccfb910eb1cf35ab3df22d5e"
+    }
+  ]
+}

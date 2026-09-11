@@ -1,0 +1,117 @@
+{
+  "context": {
+    "surface_role": "CORE1_LESSON",
+    "lesson_or_transfer_ref": "MATH-C1L-COLLINEARITY-FIXTURE",
+    "capability_ref": "MATH-COLLINEARITY-BY-SLOPE",
+    "problem_family_refs": [
+      "MATH-PF-COLLINEARITY-SLOPE"
+    ],
+    "representation_requirements": [
+      "ORDERED_PAIR",
+      "SLOPE_RATIO"
+    ],
+    "required_pck_jobs": []
+  },
+  "representations": [
+    {
+      "representation_id": "MATH-RSPEC-SLOPE-PLANE",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE1_LESSON",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "ORDERED_PAIR",
+      "primitive_id": "MATH-TP-COORDINATE_PLANE-v1",
+      "capability_ref": "MATH-COLLINEARITY-BY-SLOPE",
+      "problem_family_ref": "MATH-PF-COLLINEARITY-SLOPE",
+      "instructional_job": "CONNECT_REPRESENTATIONS",
+      "attention_target": "Coordinate roles must remain fixed before any slope ratio is formed.",
+      "translation_obligation": "Translate every plotted point to the same x-then-y ordered-pair convention.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate every plotted point to the same x-then-y ordered-pair convention."
+        ],
+        "payload": {
+          "points": {
+            "A": [
+              -2,
+              -2
+            ],
+            "B": [
+              3,
+              2
+            ],
+            "C": [
+              3,
+              0
+            ]
+          },
+          "axes": {
+            "x": "horizontal",
+            "y": "vertical"
+          },
+          "relations": [
+            "compare directions AB and AC from common point A"
+          ]
+        }
+      },
+      "learner_action_expected": "Identify x and y changes from A to each other point.",
+      "misconception_or_contrast_ref": null,
+      "accessibility_text": "Coordinate plane shows A, B and C and highlights the two directed segments from common point A.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "83c38079f6febb84057e3dc54ec006395cc3f81e50944da2657e7ba2e2a4ae97"
+    },
+    {
+      "representation_id": "MATH-RSPEC-SLOPE-TRIANGLE",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE1_LESSON",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "SLOPE_RATIO",
+      "primitive_id": "MATH-TP-SLOPE_TRIANGLE_VIEW-v1",
+      "capability_ref": "MATH-COLLINEARITY-BY-SLOPE",
+      "problem_family_ref": "MATH-PF-COLLINEARITY-SLOPE",
+      "instructional_job": "SHOW_STRUCTURE",
+      "attention_target": "Slope is vertical change divided by horizontal change with consistent point order.",
+      "translation_obligation": "Translate the rise and run labels into delta-y over delta-x before computing.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate the rise and run labels into delta-y over delta-x before computing."
+        ],
+        "payload": {
+          "point_a": [
+            -2,
+            -2
+          ],
+          "point_b": [
+            3,
+            2
+          ],
+          "delta_x": 5,
+          "delta_y": 4,
+          "ratio": "4/5"
+        }
+      },
+      "learner_action_expected": "Write delta-y over delta-x from the labeled triangle, then compare with the second direction.",
+      "misconception_or_contrast_ref": null,
+      "accessibility_text": "Slope triangle from A to B labels run five and rise four, making the ratio four-fifths explicit.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "e622db63279bd0611d3d4f82cfeddbad78c1e450f1a4155c964c617b9c86a899"
+    }
+  ]
+}

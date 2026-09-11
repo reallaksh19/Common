@@ -1,0 +1,147 @@
+{
+  "context": {
+    "surface_role": "CORE1_LESSON",
+    "lesson_or_transfer_ref": "MATH-C1L-EQUALITY-FIXTURE",
+    "capability_ref": "MATH-EQUALITY-PRESERVATION",
+    "problem_family_refs": [
+      "MATH-PF-INTERSECTION-THEN-LINE"
+    ],
+    "representation_requirements": [
+      "SYMBOLIC_LINEAR_EQUATION"
+    ],
+    "required_pck_jobs": [
+      "ERROR_CONTRAST",
+      "VERIFICATION_HABIT"
+    ]
+  },
+  "representations": [
+    {
+      "representation_id": "MATH-RSPEC-EQUALITY-BALANCE",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE1_LESSON",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "SYMBOLIC_LINEAR_EQUATION",
+      "primitive_id": "MATH-TP-EQUIVALENCE_BALANCE_VIEW-v1",
+      "capability_ref": "MATH-EQUALITY-PRESERVATION",
+      "problem_family_ref": "MATH-PF-INTERSECTION-THEN-LINE",
+      "instructional_job": "EXPLAIN_INVARIANT",
+      "attention_target": "The same legal operation must act on both sides of an equality.",
+      "translation_obligation": "Translate the balance action back to an equivalent symbolic equation.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate the balance action back to an equivalent symbolic equation."
+        ],
+        "payload": {
+          "left_state": "3x-y=8",
+          "operation": "add y to both sides",
+          "right_state": "3x=8+y",
+          "invariant": "both equations have the same solution set"
+        }
+      },
+      "learner_action_expected": "Name the operation and explain why the solution set is preserved.",
+      "misconception_or_contrast_ref": null,
+      "accessibility_text": "Balance view showing 3x minus y equals 8, then adding y to both sides to obtain 3x equals 8 plus y.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "6eb673e39c78b2cc6daafcbfffb964730e51cbf778f9d6b803363f8481cacef5"
+    },
+    {
+      "representation_id": "MATH-RSPEC-EQUALITY-CONTRAST",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE1_LESSON",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "SYMBOLIC_LINEAR_EQUATION",
+      "primitive_id": "MATH-TP-CORRECT_WRONG_TRANSFORMATION_CONTRAST-v1",
+      "capability_ref": "MATH-EQUALITY-PRESERVATION",
+      "problem_family_ref": "MATH-PF-INTERSECTION-THEN-LINE",
+      "instructional_job": "DISCRIMINATE_CASES",
+      "attention_target": "Compare an equality-preserving transformation with illegal term deletion.",
+      "translation_obligation": "State the discriminator: an operation must preserve every solution of the original equation.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "State the discriminator: an operation must preserve every solution of the original equation."
+        ],
+        "payload": {
+          "correct_case": {
+            "from": "3x-y=8",
+            "to": "3x=8+y"
+          },
+          "wrong_case": {
+            "from": "3x-y=8",
+            "to": "3x=8"
+          },
+          "discriminator": "the -y term cannot disappear without an equivalent operation"
+        }
+      },
+      "learner_action_expected": "Point to the first invalid transition and repair it.",
+      "misconception_or_contrast_ref": "MATH-INV-SYSTEM-TERM-DELETION",
+      "accessibility_text": "Side-by-side contrast of a valid move adding y to both sides and an invalid move deleting negative y.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "c42f854489bc80c86b51185da8c6733d5980b6c1845aba65a04de1f8ced6f1cc"
+    },
+    {
+      "representation_id": "MATH-RSPEC-EQUALITY-VERIFY",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "surface_role": "CORE1_LESSON",
+      "semantic_role": "INSTRUCTIONAL",
+      "semantic_requirement_ref": "SYMBOLIC_LINEAR_EQUATION",
+      "primitive_id": "MATH-TP-SUBSTITUTION_CHECK_VIEW-v1",
+      "capability_ref": "MATH-EQUALITY-PRESERVATION",
+      "problem_family_ref": "MATH-PF-INTERSECTION-THEN-LINE",
+      "instructional_job": "VERIFY_REASONING",
+      "attention_target": "Verification is an independent check against the original relation.",
+      "translation_obligation": "Translate the candidate solution into substitution in each original equation before accepting it.",
+      "source_semantic_data": {
+        "declared_claims": [
+          "Translate the candidate solution into substitution in each original equation before accepting it."
+        ],
+        "payload": {
+          "original_relation": [
+            "x+y+4=0",
+            "3x-y-8=0"
+          ],
+          "candidate": {
+            "x": 1,
+            "y": -5
+          },
+          "substitution": [
+            "1-5+4=0",
+            "3(1)-(-5)-8=0"
+          ],
+          "result": "both original equations are satisfied"
+        }
+      },
+      "learner_action_expected": "Substitute the candidate into both original equations and decide whether it is valid.",
+      "misconception_or_contrast_ref": null,
+      "accessibility_text": "Verification view substitutes x equals 1 and y equals negative 5 into both original equations; both simplify to zero.",
+      "renderer_constraints": {
+        "must_not_infer_mathematical_content": true,
+        "must_render_from_source_semantic_data": true,
+        "layout_constraints": [
+          "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+          "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+          "PRESERVE_ACCESSIBILITY_TEXT"
+        ]
+      },
+      "spec_digest": "8826397df00c8304b7c80280b2f9d5445e22fdf750b08697935b71356e52778b"
+    }
+  ]
+}

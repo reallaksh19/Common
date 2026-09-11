@@ -1,0 +1,317 @@
+{
+  "registry_id": "MATH-TEACHING-PRIMITIVES-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "primitives": [
+    {
+      "primitive_id": "MATH-TP-ALIGNED_TRANSFORMATION_STACK-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "ALIGNED_TRANSFORMATION_STACK",
+      "semantic_class": "SYMBOLIC",
+      "supported_instructional_jobs": [
+        "EXPOSE_TRANSFORMATION",
+        "EXPLAIN_INVARIANT"
+      ],
+      "required_source_fields": [
+        "states",
+        "operations",
+        "invariant"
+      ],
+      "supports_contrast": false,
+      "contrast_source_fields": [],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "763dfd3345fdd60aab73e799c956cf3c459327adc0d9f867dcfcd4e8995640d2"
+    },
+    {
+      "primitive_id": "MATH-TP-TERM_HIGHLIGHT_VIEW-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "TERM_HIGHLIGHT_VIEW",
+      "semantic_class": "SYMBOLIC",
+      "supported_instructional_jobs": [
+        "SHOW_STRUCTURE",
+        "EXPOSE_TRANSFORMATION"
+      ],
+      "required_source_fields": [
+        "expression",
+        "highlighted_terms",
+        "rationale"
+      ],
+      "supports_contrast": false,
+      "contrast_source_fields": [],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "991b599bd87bc6e37e58e4e6343a2dce5eb942a37ef9a569fac2e225755e23ce"
+    },
+    {
+      "primitive_id": "MATH-TP-EQUIVALENCE_BALANCE_VIEW-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "EQUIVALENCE_BALANCE_VIEW",
+      "semantic_class": "SYMBOLIC",
+      "supported_instructional_jobs": [
+        "EXPLAIN_INVARIANT",
+        "EXPOSE_TRANSFORMATION"
+      ],
+      "required_source_fields": [
+        "left_state",
+        "operation",
+        "right_state",
+        "invariant"
+      ],
+      "supports_contrast": false,
+      "contrast_source_fields": [],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "3d9e07baa852cc4b7d57fefacf4e761581b7db88190a359a7a920f5aade88b65"
+    },
+    {
+      "primitive_id": "MATH-TP-COORDINATE_PLANE-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "COORDINATE_PLANE",
+      "semantic_class": "SPATIAL",
+      "supported_instructional_jobs": [
+        "CONNECT_REPRESENTATIONS",
+        "SHOW_STRUCTURE"
+      ],
+      "required_source_fields": [
+        "points",
+        "axes",
+        "relations"
+      ],
+      "supports_contrast": false,
+      "contrast_source_fields": [],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "a7e44d4ff92bdead36ab50ace5fcb5102fe3a5774e76698a9de125338211cf18"
+    },
+    {
+      "primitive_id": "MATH-TP-SLOPE_TRIANGLE_VIEW-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "SLOPE_TRIANGLE_VIEW",
+      "semantic_class": "SPATIAL",
+      "supported_instructional_jobs": [
+        "CONNECT_REPRESENTATIONS",
+        "EXPLAIN_INVARIANT",
+        "SHOW_STRUCTURE"
+      ],
+      "required_source_fields": [
+        "point_a",
+        "point_b",
+        "delta_x",
+        "delta_y",
+        "ratio"
+      ],
+      "supports_contrast": false,
+      "contrast_source_fields": [],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "7c879e8e924c2254cd0e4f8b2535cd25a3f8aea2d6c8528f3a209ad14b32e746"
+    },
+    {
+      "primitive_id": "MATH-TP-CORRECT_WRONG_TRANSFORMATION_CONTRAST-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "CORRECT_WRONG_TRANSFORMATION_CONTRAST",
+      "semantic_class": "CONTRAST",
+      "supported_instructional_jobs": [
+        "DISCRIMINATE_CASES"
+      ],
+      "required_source_fields": [
+        "correct_case",
+        "wrong_case",
+        "discriminator"
+      ],
+      "supports_contrast": true,
+      "contrast_source_fields": [
+        "correct_case",
+        "wrong_case"
+      ],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "914ae6369f865eae7dc8a846badf5b3b1257fb7c1987e5e081faf8517321948d"
+    },
+    {
+      "primitive_id": "MATH-TP-SIDE_BY_SIDE_METHOD_VIEW-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "SIDE_BY_SIDE_METHOD_VIEW",
+      "semantic_class": "COMPARISON",
+      "supported_instructional_jobs": [
+        "COMPARE_METHODS",
+        "CONNECT_REPRESENTATIONS"
+      ],
+      "required_source_fields": [
+        "left_method",
+        "right_method",
+        "comparison_invariant"
+      ],
+      "supports_contrast": true,
+      "contrast_source_fields": [
+        "left_method",
+        "right_method"
+      ],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "96463295a2c8d584df59daa0e7cefe75efdcfd61d7c1154864be8910db04d543"
+    },
+    {
+      "primitive_id": "MATH-TP-ANNOTATED_DERIVATION-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "ANNOTATED_DERIVATION",
+      "semantic_class": "SYMBOLIC",
+      "supported_instructional_jobs": [
+        "EXPOSE_TRANSFORMATION",
+        "CONNECT_REPRESENTATIONS",
+        "SHOW_STRUCTURE"
+      ],
+      "required_source_fields": [
+        "steps",
+        "annotations",
+        "conclusion"
+      ],
+      "supports_contrast": false,
+      "contrast_source_fields": [],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "09fd77271311a257967136a347b7bb9b521865168d1370f98f2e959d2dcf8169"
+    },
+    {
+      "primitive_id": "MATH-TP-INVARIANT_HIGHLIGHT-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "INVARIANT_HIGHLIGHT",
+      "semantic_class": "SEMANTIC",
+      "supported_instructional_jobs": [
+        "EXPLAIN_INVARIANT",
+        "SHOW_STRUCTURE",
+        "DISCRIMINATE_CASES"
+      ],
+      "required_source_fields": [
+        "mathematical_object",
+        "invariant",
+        "changing_features"
+      ],
+      "supports_contrast": true,
+      "contrast_source_fields": [
+        "invariant",
+        "changing_features"
+      ],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "5f67388d9e36d536c2e714c52cca50843f710914468a750feaf9413691818e88"
+    },
+    {
+      "primitive_id": "MATH-TP-SUBSTITUTION_CHECK_VIEW-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "SUBSTITUTION_CHECK_VIEW",
+      "semantic_class": "VERIFICATION",
+      "supported_instructional_jobs": [
+        "VERIFY_REASONING"
+      ],
+      "required_source_fields": [
+        "original_relation",
+        "candidate",
+        "substitution",
+        "result"
+      ],
+      "supports_contrast": false,
+      "contrast_source_fields": [],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "b89696e6af109b870424cff476a85deb85cb7962c93d220b84b021e01a9049fd"
+    },
+    {
+      "primitive_id": "MATH-TP-PARALLEL_MEET_CONTRAST-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "PARALLEL_MEET_CONTRAST",
+      "semantic_class": "CONTRAST",
+      "supported_instructional_jobs": [
+        "DISCRIMINATE_CASES",
+        "EXPLAIN_INVARIANT"
+      ],
+      "required_source_fields": [
+        "angle_sum_cases",
+        "boundary",
+        "outcomes"
+      ],
+      "supports_contrast": true,
+      "contrast_source_fields": [
+        "angle_sum_cases",
+        "outcomes"
+      ],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "984e3d86ba56be5f190ba26456cb37d851777261450f37d7749d1a3e85362068"
+    },
+    {
+      "primitive_id": "MATH-TP-MIRROR_SOLUTION_VIEW-v1",
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "canonical_name": "MIRROR_SOLUTION_VIEW",
+      "semantic_class": "SPATIAL",
+      "supported_instructional_jobs": [
+        "DISCRIMINATE_CASES",
+        "SHOW_MULTIPLE_VALID_SOLUTIONS"
+      ],
+      "required_source_fields": [
+        "base_points",
+        "branch_a",
+        "branch_b",
+        "invariants"
+      ],
+      "supports_contrast": true,
+      "contrast_source_fields": [
+        "branch_a",
+        "branch_b"
+      ],
+      "renderer_constraints": [
+        "NO_UNDECLARED_MATHEMATICAL_INFERENCE",
+        "RENDER_FROM_DECLARED_SOURCE_SEMANTIC_DATA",
+        "PRESERVE_ACCESSIBILITY_TEXT"
+      ],
+      "primitive_digest": "0014cc9988626b868b30054ae67a05a22a4c19f136946b833a0637f8e1cfd908"
+    }
+  ],
+  "registry_digest": "fa15fcfe3ebf08efcbc28697c561e4082d079deadf9d4524f4ad01592893416d"
+}

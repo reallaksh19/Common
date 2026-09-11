@@ -1,0 +1,113 @@
+{
+  "profile_id": "MATH-PAGE-INTENT-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "coverage_policy": "EVERY_CORE1_OR_CORE2_REQUIRED_REPRESENTATION_MUST_BIND_AT_LEAST_ONE_INSTRUCTIONAL_PRIMITIVE",
+  "requirement_bindings": [
+    {
+      "representation_requirement_ref": "NATURAL_LANGUAGE_STATEMENT",
+      "allowed_primitive_refs": [
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1",
+        "MATH-TP-TERM_HIGHLIGHT_VIEW-v1",
+        "MATH-TP-SIDE_BY_SIDE_METHOD_VIEW-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "ORDERED_PAIR",
+      "allowed_primitive_refs": [
+        "MATH-TP-COORDINATE_PLANE-v1",
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "GEOMETRIC_DISTANCE_RELATION",
+      "allowed_primitive_refs": [
+        "MATH-TP-COORDINATE_PLANE-v1",
+        "MATH-TP-ANNOTATED_DERIVATION-v1",
+        "MATH-TP-MIRROR_SOLUTION_VIEW-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "SYMBOLIC_LINEAR_EQUATION",
+      "allowed_primitive_refs": [
+        "MATH-TP-ALIGNED_TRANSFORMATION_STACK-v1",
+        "MATH-TP-EQUIVALENCE_BALANCE_VIEW-v1",
+        "MATH-TP-TERM_HIGHLIGHT_VIEW-v1",
+        "MATH-TP-CORRECT_WRONG_TRANSFORMATION_CONTRAST-v1",
+        "MATH-TP-SUBSTITUTION_CHECK_VIEW-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "UNORDERED_PAIR_MODEL",
+      "allowed_primitive_refs": [
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1",
+        "MATH-TP-SIDE_BY_SIDE_METHOD_VIEW-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "SLOPE_RATIO",
+      "allowed_primitive_refs": [
+        "MATH-TP-SLOPE_TRIANGLE_VIEW-v1",
+        "MATH-TP-COORDINATE_PLANE-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "ANGLE_RELATION",
+      "allowed_primitive_refs": [
+        "MATH-TP-PARALLEL_MEET_CONTRAST-v1",
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "PARAMETER_CONDITION",
+      "allowed_primitive_refs": [
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1",
+        "MATH-TP-CORRECT_WRONG_TRANSFORMATION_CONTRAST-v1",
+        "MATH-TP-ANNOTATED_DERIVATION-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "SYSTEM_OF_LINEAR_EQUATIONS",
+      "allowed_primitive_refs": [
+        "MATH-TP-ALIGNED_TRANSFORMATION_STACK-v1",
+        "MATH-TP-EQUIVALENCE_BALANCE_VIEW-v1",
+        "MATH-TP-SUBSTITUTION_CHECK_VIEW-v1",
+        "MATH-TP-CORRECT_WRONG_TRANSFORMATION_CONTRAST-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "CARTESIAN_AXIS_CONSTRAINT",
+      "allowed_primitive_refs": [
+        "MATH-TP-COORDINATE_PLANE-v1",
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "UNIT_RATE",
+      "allowed_primitive_refs": [
+        "MATH-TP-SLOPE_TRIANGLE_VIEW-v1",
+        "MATH-TP-ANNOTATED_DERIVATION-v1",
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1"
+      ]
+    },
+    {
+      "representation_requirement_ref": "RATE_CONTEXT_MODEL",
+      "allowed_primitive_refs": [
+        "MATH-TP-SIDE_BY_SIDE_METHOD_VIEW-v1",
+        "MATH-TP-ANNOTATED_DERIVATION-v1",
+        "MATH-TP-INVARIANT_HIGHLIGHT-v1"
+      ]
+    }
+  ],
+  "cross_cutting_rules": {
+    "error_contrast_job_ref": "ERROR_CONTRAST",
+    "verification_job_refs": [
+      "VERIFICATION_LOOP",
+      "VERIFICATION_HABIT"
+    ],
+    "contrast_instructional_job": "DISCRIMINATE_CASES",
+    "verification_instructional_job": "VERIFY_REASONING",
+    "renderer_non_invention_constraint": "NO_UNDECLARED_MATHEMATICAL_INFERENCE"
+  },
+  "profile_digest": "98e4dce27572d55be428caf4c932bdf365b8232f412df273b1ccdbffad0c9adf"
+}
