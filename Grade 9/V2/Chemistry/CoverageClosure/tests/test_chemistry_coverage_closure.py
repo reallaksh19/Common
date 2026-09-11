@@ -49,7 +49,7 @@ representations=build_representations(copy.deepcopy(core1),copy.deepcopy(model),
 bodies=load(C2/'fixtures'/'chemistry-external-transfer-source.fixture.json'); transfer=load(C2/'registry'/'chemistry-transfer-badge-policy.json'); concepts=load(C2/'registry'/'chemistry-concept-segregation.json'); c2profile=load(C2/'registry'/'chemistry-core2-authoring-profile.json')
 core2=build_core2(copy.deepcopy(corpus),copy.deepcopy(external),copy.deepcopy(bodies),copy.deepcopy(core1),copy.deepcopy(model),copy.deepcopy(families),copy.deepcopy(guide),copy.deepcopy(transfer),copy.deepcopy(concepts),copy.deepcopy(c2profile),copy.deepcopy(primitives),copy.deepcopy(notation),'CHEM-C-J-CORE2')
 fixture=load(D/'fixtures'/'chemistry-transfer-evidence.fixture.json'); events=fixture['events']; policy=load(D/'registry'/'chemistry-transfer-evidence-policy.json')
-args=(source_ledger,corpus,external,model,core1,representations,core2,families,events,policy)
+args=(source_ledger,qbindings,corpus,external,model,core1,representations,core2,families,events,policy)
 closure=build_closure(*copy.deepcopy(args))
 
 assert closure['summary']['source_obligations_required']==10
