@@ -1,0 +1,40 @@
+name: V2 Physics Study Synthesis
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Physics/StudySynthesis/**"
+      - "Grade 9/V2/Physics/LearnerIntelligence/**"
+      - "Grade 9/V2/Physics/Canonical/**"
+      - ".github/workflows/v2-physics-study-synthesis.yml"
+  workflow_dispatch:
+
+jobs:
+  physics-study-synthesis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator
+        run: python -m pip install "jsonschema>=4.20,<5"
+      - name: Validate PHY-V2-03 contracts and reference StudyModel
+        run: python "Grade 9/V2/Physics/StudySynthesis/contracts/validate_contracts.py"
+      - name: Run PHY-V2-03 StudyModel falsifiers
+        run: python "Grade 9/V2/Physics/StudySynthesis/tests/test_physics_study_model.py"
+      - name: Generate merged learner state then StudyModel twice
+        run: |
+          P="Grade 9/V2/Physics"
+          L="$P/LearnerIntelligence"
+          S="$P/StudySynthesis"
+          python "$L/engine/derive_physics_state.py" --evidence "$L/fixtures/evidence.synthetic.json" --policy "$L/fixtures/inference_policy.synthetic.json" --interface "$L/fixtures/learner_intelligence_interface.synthetic.json" --out /tmp/phy-state.json
+          python "$S/engine/synthesize_physics_study_model.py" --goal "$S/fixtures/goal_scope.synthetic.json" --cks "$S/fixtures/canonical_knowledge_set.synthetic.json" --learner-state /tmp/phy-state.json --policy "$S/fixtures/study_policy.synthetic.json" --out /tmp/phy-study-a.json
+          python "$S/engine/synthesize_physics_study_model.py" --goal "$S/fixtures/goal_scope.synthetic.json" --cks "$S/fixtures/canonical_knowledge_set.synthetic.json" --learner-state /tmp/phy-state.json --policy "$S/fixtures/study_policy.synthetic.json" --out /tmp/phy-study-b.json
+          cmp /tmp/phy-study-a.json /tmp/phy-study-b.json
+      - name: Upload StudyModel proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-v2-03-study-model-proof
+          path: /tmp/phy-study-a.json
+          if-no-files-found: error
