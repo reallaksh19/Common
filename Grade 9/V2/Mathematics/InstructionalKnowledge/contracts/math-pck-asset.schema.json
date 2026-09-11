@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-pck-asset.schema.json",
+  "title": "Mathematics PCK Asset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "asset_id",
+    "schema_version",
+    "subject",
+    "lifecycle_status",
+    "capability_refs",
+    "applicability_conditions",
+    "anchor",
+    "representation_path",
+    "ordinary_language_bridge",
+    "reconstruction_route",
+    "minimal_contrast",
+    "worked_example_family",
+    "misconception_discriminator",
+    "repair_route",
+    "verification_method",
+    "fading_dimensions",
+    "transfer_family",
+    "known_limitations",
+    "provenance",
+    "review",
+    "asset_digest"
+  ],
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "pattern": "^MATH-PCK-[A-Z0-9-]+-v[0-9]+$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "lifecycle_status": {
+      "enum": [
+        "CANDIDATE",
+        "PROMOTED",
+        "RETIRED"
+      ]
+    },
+    "capability_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^MATH-"
+      }
+    },
+    "applicability_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 12
+      }
+    },
+    "anchor": {
+      "type": "string",
+      "minLength": 20
+    },
+    "representation_path": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "ordinary_language_bridge": {
+      "type": "string",
+      "minLength": 20
+    },
+    "reconstruction_route": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 8
+      }
+    },
+    "minimal_contrast": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shared_structure",
+        "focal_distinction",
+        "prediction_prompt",
+        "decisive_feature"
+      ],
+      "properties": {
+        "shared_structure": {
+          "type": "string",
+          "minLength": 8
+        },
+        "focal_distinction": {
+          "type": "string",
+          "minLength": 8
+        },
+        "prediction_prompt": {
+          "type": "string",
+          "minLength": 8
+        },
+        "decisive_feature": {
+          "type": "string",
+          "minLength": 8
+        }
+      }
+    },
+    "worked_example_family": {
+      "type": "string",
+      "pattern": "^MATH-PF-"
+    },
+    "misconception_discriminator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_wrong_model",
+        "probe",
+        "decisive_response"
+      ],
+      "properties": {
+        "candidate_wrong_model": {
+          "type": "string",
+          "minLength": 8
+        },
+        "probe": {
+          "type": "string",
+          "minLength": 8
+        },
+        "decisive_response": {
+          "type": "string",
+          "minLength": 8
+        }
+      }
+    },
+    "repair_route": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 8
+      }
+    },
+    "verification_method": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 8
+      }
+    },
+    "fading_dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "transfer_family": {
+      "type": "string",
+      "pattern": "^MATH-PF-"
+    },
+    "known_limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 8
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_class",
+        "source_refs",
+        "authoring_origin"
+      ],
+      "properties": {
+        "evidence_class": {
+          "enum": [
+            "REPOSITORY_AUTHORITY_PLUS_AI_ASSISTED_DRAFT",
+            "HUMAN_REVIEWED_SUBJECT_PCK"
+          ]
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "authoring_origin": {
+          "enum": [
+            "AI_ASSISTED_DRAFT",
+            "HUMAN_AUTHORED",
+            "HUMAN_REVISED"
+          ]
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_dimensions",
+        "status",
+        "human_review_evidence_refs"
+      ],
+      "properties": {
+        "required_dimensions": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "SUBJECT",
+              "PEDAGOGY"
+            ]
+          }
+        },
+        "status": {
+          "enum": [
+            "PENDING_HUMAN_REVIEW",
+            "HUMAN_REVIEWED",
+            "REJECTED"
+          ]
+        },
+        "human_review_evidence_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      }
+    },
+    "asset_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

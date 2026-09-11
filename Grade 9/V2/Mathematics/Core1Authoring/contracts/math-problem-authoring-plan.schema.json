@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-problem-authoring-plan.schema.json",
+  "title": "Mathematics Problem Authoring Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_id",
+    "capability_ref",
+    "problem_family_ref",
+    "instance_role",
+    "must_be_new_instance",
+    "source_question_reuse",
+    "source_question_refs",
+    "variation_requirements",
+    "verification_obligations"
+  ],
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "pattern": "^MATH-PAP-[0-9a-f]{16}$"
+    },
+    "capability_ref": {
+      "type": "string",
+      "pattern": "^MATH-"
+    },
+    "problem_family_ref": {
+      "type": "string",
+      "pattern": "^MATH-PF-"
+    },
+    "instance_role": {
+      "enum": [
+        "WORKED",
+        "GUIDED",
+        "FADED",
+        "INDEPENDENT",
+        "TRANSFER",
+        "VERIFY"
+      ]
+    },
+    "must_be_new_instance": {
+      "const": true
+    },
+    "source_question_reuse": {
+      "const": false
+    },
+    "source_question_refs": {
+      "type": "array",
+      "maxItems": 0,
+      "items": {
+        "type": "string"
+      }
+    },
+    "variation_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 8
+      }
+    },
+    "verification_obligations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    }
+  }
+}

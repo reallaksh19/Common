@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-pck-promotion-registry.schema.json",
+  "title": "Mathematics PCK Promotion Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "registry_id",
+    "schema_version",
+    "subject",
+    "registry_class",
+    "promotions",
+    "registry_digest"
+  ],
+  "properties": {
+    "registry_id": {
+      "type": "string",
+      "pattern": "^MATH-PCK-PROMOTION-REGISTRY-v[0-9]+$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "registry_class": {
+      "enum": [
+        "PRODUCTION",
+        "TEST_ONLY"
+      ]
+    },
+    "promotions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asset_id",
+          "asset_digest",
+          "promotion_status",
+          "review_dimensions",
+          "review_evidence_refs",
+          "review_source",
+          "review_registry_class",
+          "producer_legal",
+          "promoted_version",
+          "promotion_digest"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "pattern": "^MATH-PCK-"
+          },
+          "asset_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "promotion_status": {
+            "enum": [
+              "PROMOTED",
+              "TEST_PROMOTED"
+            ]
+          },
+          "review_dimensions": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "SUBJECT",
+                "PEDAGOGY"
+              ]
+            }
+          },
+          "review_evidence_refs": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 3
+            }
+          },
+          "review_source": {
+            "const": "HUMAN_REVIEW_INTAKE_RESULT"
+          },
+          "review_registry_class": {
+            "enum": [
+              "REAL",
+              "TEST_ONLY"
+            ]
+          },
+          "producer_legal": {
+            "type": "boolean"
+          },
+          "promoted_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "promotion_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "registry_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}
