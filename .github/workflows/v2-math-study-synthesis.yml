@@ -1,0 +1,27 @@
+name: V2 Mathematics Study Synthesis
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/StudySynthesis/**'
+      - '.github/workflows/v2-math-study-synthesis.yml'
+
+jobs:
+  math-study-synthesis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install jsonschema
+      - name: Validate MATH-V2-03 contracts
+        run: python "Grade 9/V2/Mathematics/StudySynthesis/contracts/validate_contracts.py"
+      - name: Run Mathematics Study Synthesis falsifiers
+        run: python "Grade 9/V2/Mathematics/StudySynthesis/tests/test_math_study_synthesis.py"
+      - name: Deterministic StudyModel replay
+        run: |
+          python "Grade 9/V2/Mathematics/StudySynthesis/engine/synthesize_math_study_model.py" --fixture-root "Grade 9/V2/Mathematics/StudySynthesis/fixtures" > /tmp/a.json
+          python "Grade 9/V2/Mathematics/StudySynthesis/engine/synthesize_math_study_model.py" --fixture-root "Grade 9/V2/Mathematics/StudySynthesis/fixtures" > /tmp/b.json
+          cmp /tmp/a.json /tmp/b.json

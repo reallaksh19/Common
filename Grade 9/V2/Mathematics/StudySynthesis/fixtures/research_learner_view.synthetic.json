@@ -1,0 +1,19 @@
+{
+  "fixture_class":"PUBLIC_SYNTHETIC",
+  "interface_role":"DESCRIPTIVE_VIEW_FIXTURE_ONLY",
+  "research_learner_view_ref":"MATH-RLV-SYNTH-001",
+  "capability_states":[
+    {"capability_ref":"MATH-WORD-MODELLING","state":"READY","reason_refs":["RSN-WORD-SUCCESS"]},
+    {"capability_ref":"MATH-LINEAR-SYSTEM-SETUP","state":"READY","reason_refs":["RSN-SYSTEM-SUCCESS"]},
+    {"capability_ref":"MATH-GEOMETRIC-MODELLING","state":"READY","reason_refs":["RSN-GEOM-SUCCESS"]},
+    {"capability_ref":"MATH-REPRESENTATION-TRANSLATION","state":"READY","reason_refs":["RSN-REP-SUCCESS"]},
+    {"capability_ref":"MATH-EQUALITY-PRESERVATION","state":"DEVELOPING","reason_refs":["RSN-EQ-INDEPENDENT-FAIL","RSN-EQ-GUIDED-SUCCESS"]},
+    {"capability_ref":"MATH-BINOMIAL-SQUARE-EXPANSION","state":"DEVELOPING","reason_refs":["RSN-BINOM-FAIL"]},
+    {"capability_ref":"MATH-ORDERED-PAIR-SEMANTICS","state":"UNKNOWN","reason_refs":["RSN-SLOPE-AMBIGUOUS"],"probe_required":true,"probe_ref":"MATH-PROBE-ORDERED-PAIR-SLOPE"},
+    {"capability_ref":"MATH-SOLUTION-VERIFICATION","state":"DEVELOPING","reason_refs":["RSN-VERIFY-PROMPTED-SUCCESS","RSN-VERIFY-NOT-INITIATED"]}
+  ],
+  "verification_behavior":{"can_verify_when_prompted":true,"self_initiated_verification":false,"reason_refs":["RSN-VERIFY-PROMPTED-SUCCESS","RSN-VERIFY-NOT-INITIATED"]},
+  "contains_raw_attempts":false,
+  "contains_study_decisions":false,
+  "contains_teaching_decisions":false
+}

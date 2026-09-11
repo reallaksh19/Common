@@ -1,0 +1,20 @@
+{
+  "fixture_class":"PUBLIC_SYNTHETIC",
+  "interface_role":"INTERFACE_FIXTURE_ONLY",
+  "canonical_knowledge_set_ref":"MATH-CKS-INTERFACE-001",
+  "capability_refs":["MATH-WORD-MODELLING","MATH-LINEAR-SYSTEM-SETUP","MATH-GEOMETRIC-MODELLING","MATH-REPRESENTATION-TRANSLATION","MATH-EQUALITY-PRESERVATION","MATH-BINOMIAL-SQUARE-EXPANSION","MATH-ORDERED-PAIR-SEMANTICS","MATH-SOLUTION-VERIFICATION"],
+  "probe_refs":["MATH-PROBE-ORDERED-PAIR-SLOPE"],
+  "requirement_catalog":{
+    "MATH-WORD-MODELLING":[{"requirement_id":"REQ-WORD-VERIFY","requirement_type":"VERIFY_STRENGTH","canonical_refs":["MATH-WORD-MODELLING"],"completion_evidence":"independent word-to-equation reconstruction remains correct"}],
+    "MATH-LINEAR-SYSTEM-SETUP":[{"requirement_id":"REQ-SYSTEM-ENTRY","requirement_type":"ENTRY_POINT","canonical_refs":["MATH-LINEAR-SYSTEM-SETUP","MATH-EQUALITY-PRESERVATION"],"completion_evidence":"correct system setup is preserved while entering equality repair"}],
+    "MATH-GEOMETRIC-MODELLING":[{"requirement_id":"REQ-GEOM-VERIFY","requirement_type":"VERIFY_STRENGTH","canonical_refs":["MATH-GEOMETRIC-MODELLING"],"completion_evidence":"independent geometric relation setup remains correct"}],
+    "MATH-REPRESENTATION-TRANSLATION":[{"requirement_id":"REQ-REP-ENTRY","requirement_type":"ENTRY_POINT","canonical_refs":["MATH-REPRESENTATION-TRANSLATION","MATH-BINOMIAL-SQUARE-EXPANSION"],"completion_evidence":"correct representation translation survives later symbolic execution"}],
+    "MATH-EQUALITY-PRESERVATION":[{"requirement_id":"REQ-EQ-RECONSTRUCT","requirement_type":"RECONSTRUCTION","canonical_refs":["MATH-EQUALITY-PRESERVATION"],"completion_evidence":"independently performs one legal equality-preserving transformation per step"},{"requirement_id":"REQ-EQ-TRANSFER","requirement_type":"TRANSFER","canonical_refs":["MATH-EQUALITY-PRESERVATION","MATH-REPRESENTATION-TRANSLATION"],"completion_evidence":"preserves equality in a non-isomorphic symbolic context"}],
+    "MATH-BINOMIAL-SQUARE-EXPANSION":[{"requirement_id":"REQ-BINOM-RECONSTRUCT","requirement_type":"RECONSTRUCTION","canonical_refs":["MATH-BINOMIAL-SQUARE-EXPANSION"],"completion_evidence":"reconstructs square structure and constant term independently"}],
+    "MATH-ORDERED-PAIR-SEMANTICS":[{"requirement_id":"REQ-SLOPE-PROBE","requirement_type":"DIAGNOSTIC_PROBE","canonical_refs":["MATH-ORDERED-PAIR-SEMANTICS","MATH-PROBE-ORDERED-PAIR-SLOPE"],"required_probe_ref":"MATH-PROBE-ORDERED-PAIR-SLOPE","completion_evidence":"probe distinguishes coordinate-role semantics from execution slip"},{"requirement_id":"REQ-SLOPE-MEANING","requirement_type":"REPRESENTATION_MEANING","canonical_refs":["MATH-ORDERED-PAIR-SEMANTICS","MATH-REPRESENTATION-TRANSLATION"],"completion_evidence":"maps ordered-pair roles to slope relation without coordinate swapping"}],
+    "MATH-SOLUTION-VERIFICATION":[{"requirement_id":"REQ-VERIFY-INDEPENDENT","requirement_type":"VERIFICATION","canonical_refs":["MATH-SOLUTION-VERIFICATION"],"completion_evidence":"initiates and completes an appropriate substitution/equivalence/domain check without prompt"},{"requirement_id":"REQ-VERIFY-TRANSFER","requirement_type":"TRANSFER","canonical_refs":["MATH-SOLUTION-VERIFICATION"],"completion_evidence":"selects an appropriate check in a non-isomorphic Math context"}]
+  },
+  "contains_definitions":false,
+  "contains_formulas":false,
+  "contains_learner_state":false
+}

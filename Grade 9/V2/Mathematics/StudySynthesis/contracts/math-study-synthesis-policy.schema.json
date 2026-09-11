@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"math-study-synthesis-policy.schema.json",
+  "title":"Math Study Synthesis Policy",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["policy_id","version","entry_point_targets","repair_before_targets","unknown_with_probe_action","developing_default_readiness"],
+  "properties":{
+    "policy_id":{"type":"string","minLength":3},
+    "version":{"type":"string","minLength":1},
+    "entry_point_targets":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":3}},
+    "repair_before_targets":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":3}},
+    "unknown_with_probe_action":{"const":"PROBE_FIRST"},
+    "developing_default_readiness":{"const":"REPAIR_IN_UNIT"},
+    "ready_default_engagement":{"const":"VERIFY_ONLY"},
+    "allow_raw_evidence":{"const":false},
+    "allow_teaching_choreography":{"const":false},
+    "allow_scheduling":{"const":false},
+    "benchmark_inputs":{"type":"array","maxItems":0}
+  }
+}

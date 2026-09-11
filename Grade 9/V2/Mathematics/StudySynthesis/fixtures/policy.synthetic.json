@@ -1,0 +1,13 @@
+{
+  "policy_id":"MATH-STUDY-SYNTHESIS-POLICY",
+  "version":"1.0.0",
+  "entry_point_targets":["MATH-LINEAR-SYSTEM-SETUP","MATH-REPRESENTATION-TRANSLATION"],
+  "repair_before_targets":["MATH-EQUALITY-PRESERVATION"],
+  "unknown_with_probe_action":"PROBE_FIRST",
+  "developing_default_readiness":"REPAIR_IN_UNIT",
+  "ready_default_engagement":"VERIFY_ONLY",
+  "allow_raw_evidence":false,
+  "allow_teaching_choreography":false,
+  "allow_scheduling":false,
+  "benchmark_inputs":[]
+}
