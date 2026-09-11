@@ -1,0 +1,36 @@
+name: V2 Physics Learner Evidence P-E
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Physics/AssessmentIntake/**"
+      - "Grade 9/V2/Physics/AssessmentReview/**"
+      - "Grade 9/V2/Physics/AssessmentScope/**"
+      - "Grade 9/V2/Physics/ProblemSemantics/**"
+      - "Grade 9/V2/Physics/LearnerEvidence/**"
+      - "Grade 9/V2/Shared/LearnerIntelligence/**"
+      - ".github/workflows/v2-physics-learner-evidence.yml"
+  workflow_dispatch:
+
+jobs:
+  physics-learner-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validators
+        run: python -m pip install "jsonschema>=4.20,<5"
+      - name: Re-prove P-A source and attempt intake
+        run: python "Grade 9/V2/Physics/AssessmentIntake/tests/test_physics_assessment_intake.py"
+      - name: Re-prove P-B assessment review
+        run: python "Grade 9/V2/Physics/AssessmentReview/tests/test_physics_assessment_review.py"
+      - name: Re-prove P-C assessment scope
+        run: python "Grade 9/V2/Physics/AssessmentScope/tests/test_physics_scope_reconciliation.py"
+      - name: Re-prove P-D problem semantics
+        run: python "Grade 9/V2/Physics/ProblemSemantics/tests/test_physics_problem_semantics.py"
+      - name: Validate P-E shared and Physics contracts
+        run: python "Grade 9/V2/Physics/LearnerEvidence/contracts/validate_contracts.py"
+      - name: Run P-E optional-evidence and diagnostic falsifiers
+        run: python "Grade 9/V2/Physics/LearnerEvidence/tests/test_physics_learner_evidence.py"

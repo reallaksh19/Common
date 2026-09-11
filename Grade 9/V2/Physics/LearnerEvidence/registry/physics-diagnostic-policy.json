@@ -1,0 +1,20 @@
+{
+  "attempt_support_policy": "EVIDENCE_CONDITIONED",
+  "benchmark_inputs": [],
+  "confirmed_misconception_min_independent_negative_evidence": 2,
+  "forbidden_inferences": [
+    "NO_ATTEMPT_IMPLIES_PHYSICS_WEAK",
+    "ONE_ERROR_IMPLIES_CONFIRMED_MISCONCEPTION",
+    "SHARED_ARITHMETIC_ERROR_IMPLIES_PHYSICS_MODEL_FAILURE",
+    "BLOCKED_OR_INVALID_ITEM_IMPLIES_NEGATIVE_LEARNER_STATE",
+    "ANSWER_SHEET_IMPLIES_ATTENTION_WORKING_MEMORY_OR_OTHER_PSYCHOLOGICAL_CAUSE",
+    "LEARNER_EVIDENCE_MUTATES_CANONICAL_OR_ASSESSMENT_SCOPE"
+  ],
+  "minimum_confidence_for_state": 0.9,
+  "no_attempt_probe_requirement": "PROBE_FIRST_IF_TREATMENT_DEPENDS_ON_STATE",
+  "no_attempt_support_policy": "NEUTRAL_CONSERVATIVE",
+  "policy_digest": "2fd8a33a199f42b5af6f8a5217a4dc9d0915c64d18c41517afcee215a751c517",
+  "policy_id": "PHY-P-E-DIAGNOSTIC-POLICY-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}
