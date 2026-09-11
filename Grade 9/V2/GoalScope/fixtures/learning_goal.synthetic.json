@@ -1,0 +1,12 @@
+{
+  "goal_request_id":"goal.synthetic.chem-gas-law",
+  "schema_version":"2.0.0",
+  "requested_by":"TEACHER",
+  "subject":"CHEMISTRY",
+  "intent":"COMPETITIVE_EXAM_PREPARATION",
+  "target_ids":["chem.gas-law.relationship","math.coordinate-slope"],
+  "mandatory_target_ids":["chem.gas-law.relationship"],
+  "optional_target_ids":["math.coordinate-slope"],
+  "grade":9,
+  "request_notes":"Synthetic scope fixture only."
+}

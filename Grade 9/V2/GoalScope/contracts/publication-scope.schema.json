@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PublicationScope V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["publication_scope_id","schema_version","learner_study_scope_id","realization_mode","selected_target_ids","omitted_active_targets"],
+  "properties": {
+    "publication_scope_id": {"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+    "schema_version": {"const":"2.0.0"},
+    "learner_study_scope_id": {"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+    "realization_mode": {"enum":["STATIC_ARTIFACT","INTERACTIVE_SESSION"]},
+    "selected_target_ids": {"type":"array","uniqueItems":true,"items":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"}},
+    "omitted_active_targets": {"type":"array","items":{"type":"object","additionalProperties":false,"required":["canonical_id","reason_code"],"properties":{"canonical_id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},"reason_code":{"enum":["OUTSIDE_THIS_REALIZATION","SPACE_LIMIT","SESSION_LIMIT","SEQUENCED_TO_LATER_REALIZATION"]}}}}
+  }
+}

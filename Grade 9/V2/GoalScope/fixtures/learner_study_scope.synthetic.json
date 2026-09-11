@@ -1,0 +1,10 @@
+{
+  "learner_study_scope_id":"study-scope.synthetic.001",
+  "schema_version":"2.0.0",
+  "canonical_target_scope_id":"scope.synthetic.chem-gas-law",
+  "learner_state_snapshot_ref":"learner-state.synthetic.001",
+  "inherited_required_target_ids":["chem.gas-law.relationship"],
+  "active_target_ids":["chem.gas-law.relationship"],
+  "deferred_required_targets":[],
+  "added_dependency_target_ids":["chem.variable-entity.meaning","math.proportional-reasoning","math.equality-transform"]
+}
