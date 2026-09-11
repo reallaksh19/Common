@@ -27,9 +27,11 @@ The files in this directory define educational semantics. They deliberately do n
 
 - `PRIMARY_INTEGRATED_ARCHITECTURE.md` — system-level Primary educational architecture.
 - `PRIMARY_TEACHER_RUNTIME.md` — runtime loop, learner/session state, diagnosis, teacher moves, support, evidence and mastery dimensions.
+- `PRIMARY_MATH_WORK_EVIDENCE.md` — canonical math work-trace, quantity/unit structure, child-generated strategy evidence, error-signature and contrast-diagnostic semantics.
 - `SEMANTIC_OWNERSHIP.md` — repository and object ownership rules.
 - `contracts/v1/primary-learning-semantics.schema.json` — machine-readable v1 semantic vocabulary and core records.
 - `contracts/v1/examples/fractions-learning-episode.example.json` — Grade 4 Math example used as the first cross-app contract fixture.
+- `contracts/v1/examples/division-notebook-work-replay.example.json` — notebook/classwork regression fixture proving that intermediate work, quantity structure, strengths and contrasting evidence survive before diagnosis.
 
 ## Existing subject specializations
 
@@ -44,4 +46,6 @@ They specialize this Primary architecture rather than being replaced by it. Grad
 
 `LearningEpisode`, `TeachingTarget`, `SkillState`, `CurrentLearningState`, `TeacherDecision`, `TeacherMove`, multidimensional learning evidence, source-boundary semantics, conceptual support and access-adjustment semantics are defined here.
 
-Study-Hub may serialize/instantiate them. Kani may observe evidence about them. Neither application may redefine their educational meaning.
+For Primary Math, `MathematicalWorkEvidence`, `QuantityStructure`, child-generated strategy-support roles, and math error-signature semantics are also defined in Common. Study-Hub or Kani may transport/observe them only when the evidence actually exists; they must not manufacture work steps or promote error signatures directly into durable learner traits.
+
+Study-Hub may serialize/instantiate Common semantics. Kani may observe evidence about them. Neither application may redefine their educational meaning.

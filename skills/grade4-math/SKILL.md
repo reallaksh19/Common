@@ -18,6 +18,10 @@ For interactive tutoring, adaptive teaching, diagnostic repair, scaffold selecti
 - `../primary-teacher-runtime/SKILL.md`
 - `../../Primary/Architecture/PRIMARY_TEACHER_RUNTIME.md`
 
+For photographed notebooks/classwork, handwritten working, multi-step arithmetic traces, operation-selection errors, unit/rate problems, or any task where intermediate work materially affects diagnosis also load:
+
+- `../../Primary/Architecture/PRIMARY_MATH_WORK_EVIDENCE.md`
+
 When a chapter-specific schema exists, load it in addition to the core schema.
 
 Naming convention:
@@ -59,6 +63,17 @@ OBSERVATION
   -> TEACHER MOVE
   -> CHILD ACTION
   -> NEW EVIDENCE
+```
+
+When intermediate mathematical work exists, preserve it before diagnosis:
+
+```text
+CHILD WORK / SOURCE ARTIFACT
+  -> MATHEMATICAL WORK EVIDENCE
+  -> ERROR SIGNATURE / STRUCTURAL PATTERN
+  -> BOUNDED DIAGNOSIS
+  -> SMALLEST DISCRIMINATING PROBE
+  -> REPAIR / RETRY
 ```
 
 Keep raw evidence separate from judgement, `SkillState` separate from `CurrentLearningState`, conceptual support separate from access/load adjustments, and acquisition/independent-use/delayed-retention/transfer evidence separate from one another.
@@ -104,6 +119,7 @@ Do not silently extend beyond the source/curriculum.
 2. Resolve chapter-specific schema by naming convention.
 3. If found, treat it as the authoritative chapter blueprint.
 4. If absent, derive a temporary chapter blueprint from the core schema + supplied source. Do not invent a permanent repository schema unless the user asks to create one.
+5. If learner work or classwork is supplied, load `PRIMARY_MATH_WORK_EVIDENCE.md` before making diagnostic claims from the work.
 
 ### Stage 3 — Reverse-engineer source
 
@@ -125,6 +141,8 @@ When source material is supplied, inspect:
 Preserve source terminology and progression unless explicitly asked to redesign.
 
 If a source is simplified, ambiguous, or apparently inconsistent with canonical mathematics, preserve source provenance and use the Primary source-boundary states rather than silently inventing or changing the source rule.
+
+For photographed learner work, keep child writing, teacher annotations, and uncertain/ambiguous marks distinct. Do not silently convert teacher corrections into child evidence.
 
 ### Stage 4 — Build concept architecture
 
@@ -165,6 +183,8 @@ CHILD_PRODUCED
 ```
 
 Being shown a bar model is not the same independence evidence as choosing or drawing one without help.
+
+The same role distinction applies to strategy supports such as multiplication tables, fact-family notes, place-value tables, or self-drawn models. A child-produced support is not teacher hint dependence.
 
 ### Stage 6 — Build Learning Cells
 
@@ -246,6 +266,14 @@ Each question should carry the fields required by the core/chapter schema, inclu
 - mastery evidence tags;
 - transfer/analogue links.
 
+For word problems involving grouped units, rates, money, measurement, or conversion, represent the quantity structure where it affects reasoning:
+
+```text
+QUANTITY -> UNIT -> ROLE -> RELATIONSHIP -> UNKNOWN -> OPERATION(S)
+```
+
+Do not select operations from keywords alone.
+
 ### Stage 8 — Difficulty
 
 Use a cognitive profile, not just `easy/medium/hard`.
@@ -292,7 +320,8 @@ Use causal diagnosis:
 
 ```text
 OBSERVED RESPONSE
-  -> ERROR SIGNATURE
+  -> WORK TRACE when available
+  -> ERROR SIGNATURE / STRUCTURAL PATTERN
   -> POSSIBLE CAUSES
   -> DIAGNOSTIC PROBE
   -> EVIDENCE
@@ -304,6 +333,10 @@ OBSERVED RESPONSE
 Do not label a learner simply `weak in <topic>`.
 
 Wrong answers do not automatically mean reteach. Consider whether the evidence better supports a conceptual misconception, prerequisite gap, procedural error, language/task-interpretation problem, representation error, memory-retrieval failure, or transient performance lapse.
+
+When multiple worked examples are available, compare structurally related items before forming a broad diagnosis. Preserve successful substeps and successful contrasting items as evidence. A failed final answer does not erase correct operation selection, fact retrieval, place-value steps, estimation, or strategy generation.
+
+For example, if two division items requiring an internal zero in the quotient break at that position while a comparable item without the zero is substantially stronger, treat `DIV_QUOTIENT_ZERO_PLACE_VALUE` as a bounded error signature and use a small discriminating probe. Do not reteach all of division from the final answers alone.
 
 After two unsuccessful attempts using substantially the same teaching route, change a meaningful dimension such as representation, language load, concrete context, task size, response mode, problem structure, or prerequisite probe. Do not merely repeat a longer version of the same explanation.
 
@@ -386,7 +419,9 @@ For source-grounded work:
 - keep `VERIFIED_TRANSCRIPTION`, `RECONSTRUCTED`, `QC_ALERT`, or `SOURCE_UNRESOLVED` status;
 - keep source-derived and newly authored questions separate;
 - clearly mark extension/Olympiad content;
-- use Primary source-boundary semantics when a source simplification/ambiguity cannot be reconciled cleanly.
+- use Primary source-boundary semantics when a source simplification/ambiguity cannot be reconciled cleanly;
+- for notebook/classwork, preserve child work and teacher annotations with separate provenance;
+- record `AMBIGUOUS`/`NOT_OBSERVED` when a handwritten step cannot be read reliably instead of reconstructing it as fact.
 
 ## Math quality gates
 
@@ -405,6 +440,9 @@ A mathematics deliverable is incomplete until applicable checks pass:
 - `M-QG11 MATHEMATICAL_CORRECTNESS`
 - `M-QG12 GRADE4_LANGUAGE_AND_SCOPE`
 - `M-QG13 PRIMARY_RUNTIME_ALIGNMENT` when tutoring/adaptation is used
+- `M-QG14 WORK_TRACE_PRESERVATION` when intermediate learner work exists
+- `M-QG15 QUANTITY_UNIT_STRUCTURE` for word problems where units/rates/grouped quantities affect the operation chain
+- `M-QG16 CONTRAST_DIAGNOSTIC_EVIDENCE` when multiple structurally related attempts are available
 
 ## Publishing handoff
 

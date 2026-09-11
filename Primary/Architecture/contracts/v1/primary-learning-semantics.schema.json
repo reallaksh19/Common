@@ -10,6 +10,10 @@
     "skillState": { "$ref": "#/$defs/skillState" },
     "currentLearningState": { "$ref": "#/$defs/currentLearningState" },
     "learningEpisode": { "$ref": "#/$defs/learningEpisode" },
+    "workEvidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/mathematicalWorkEvidence" }
+    },
     "runtimeTrace": {
       "type": "array",
       "items": { "$ref": "#/$defs/runtimeEvent" }
@@ -85,6 +89,106 @@
       },
       "additionalProperties": true
     },
+    "workStepStatus": {
+      "enum": ["CORRECT", "INCORRECT", "PARTIAL", "AMBIGUOUS", "NOT_SCORED", "NOT_OBSERVED"]
+    },
+    "workStep": {
+      "type": "object",
+      "required": ["stepId", "sequence", "kind", "status"],
+      "properties": {
+        "stepId": { "$ref": "#/$defs/nonEmptyString" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "kind": {
+          "enum": ["OPERATION_SELECTION", "FACT_RETRIEVAL", "PARTIAL_PRODUCT", "PARTIAL_QUOTIENT", "SUBTRACTION", "BRING_DOWN", "PLACE_VALUE_WRITE", "UNIT_CONVERSION", "REPRESENTATION", "ESTIMATE", "CHECK", "OTHER"]
+        },
+        "observedValue": {},
+        "status": { "$ref": "#/$defs/workStepStatus" },
+        "sourceRegionRef": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": true
+    },
+    "quantity": {
+      "type": "object",
+      "required": ["quantityId", "unit", "role"],
+      "properties": {
+        "quantityId": { "$ref": "#/$defs/nonEmptyString" },
+        "value": {},
+        "unit": { "$ref": "#/$defs/nonEmptyString" },
+        "role": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": true
+    },
+    "quantityStructure": {
+      "type": "object",
+      "required": ["quantities", "unknown", "requiredRelationships"],
+      "properties": {
+        "quantities": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/quantity" } },
+        "unknown": {
+          "type": "object",
+          "required": ["unit"],
+          "properties": {
+            "unit": { "$ref": "#/$defs/nonEmptyString" },
+            "role": { "$ref": "#/$defs/nonEmptyString" }
+          },
+          "additionalProperties": true
+        },
+        "requiredRelationships": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "strategySupportEvidence": {
+      "type": "object",
+      "required": ["type", "role"],
+      "properties": {
+        "type": { "$ref": "#/$defs/nonEmptyString" },
+        "role": { "$ref": "#/$defs/representationRole" },
+        "value": {}
+      },
+      "additionalProperties": true
+    },
+    "teacherAnnotation": {
+      "type": "object",
+      "required": ["annotationId", "kind", "provenance"],
+      "properties": {
+        "annotationId": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "$ref": "#/$defs/nonEmptyString" },
+        "value": {},
+        "provenance": { "const": "TEACHER" }
+      },
+      "additionalProperties": true
+    },
+    "mathematicalWorkEvidence": {
+      "type": "object",
+      "required": ["workEvidenceId", "learningObjectIds", "provenance"],
+      "properties": {
+        "workEvidenceId": { "$ref": "#/$defs/nonEmptyString" },
+        "learningObjectIds": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "sourceRef": { "$ref": "#/$defs/nonEmptyString" },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "provenance": { "enum": ["CHILD_WORK", "TEACHER_TRANSCRIPTION", "SYSTEM_OBSERVED", "SOURCE_RECONSTRUCTED"] },
+        "finalResponse": {
+          "type": "object",
+          "properties": {
+            "value": {},
+            "correctness": { "enum": ["CORRECT", "INCORRECT", "PARTIAL", "NOT_SCORED", "AMBIGUOUS"] }
+          },
+          "additionalProperties": true
+        },
+        "selectedOperation": { "enum": ["DIVISION", "MULTIPLICATION", "ADDITION", "SUBTRACTION", "MIXED", "NOT_OBSERVED"] },
+        "workSteps": { "type": "array", "items": { "$ref": "#/$defs/workStep" } },
+        "quantityStructure": { "$ref": "#/$defs/quantityStructure" },
+        "representations": { "type": "array", "items": { "$ref": "#/$defs/representationEvidence" } },
+        "strategySupports": { "type": "array", "items": { "$ref": "#/$defs/strategySupportEvidence" } },
+        "selfCorrections": { "type": "array", "items": {} },
+        "teacherAnnotations": { "type": "array", "items": { "$ref": "#/$defs/teacherAnnotation" } },
+        "candidateErrorSignatures": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } }
+      },
+      "additionalProperties": true
+    },
     "currentLearningState": {
       "type": "object",
       "required": ["sessionId", "learningObjectIds", "conceptualSupport", "accessAdjustments", "recentObservationRefs"],
@@ -111,6 +215,7 @@
         "conceptualSupport": { "$ref": "#/$defs/conceptualSupport" },
         "accessAdjustments": { "type": "array", "items": { "$ref": "#/$defs/accessAdjustment" } },
         "representation": { "$ref": "#/$defs/representationEvidence" },
+        "mathematicalWorkEvidence": { "$ref": "#/$defs/mathematicalWorkEvidence" },
         "sourceStatus": { "$ref": "#/$defs/sourceStatus" }
       },
       "additionalProperties": true
@@ -125,6 +230,7 @@
         },
         "confidence": { "$ref": "#/$defs/confidence" },
         "evidenceRefs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "errorSignature": { "$ref": "#/$defs/nonEmptyString" },
         "informationNeeded": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
         "competingHypotheses": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } }
       },
