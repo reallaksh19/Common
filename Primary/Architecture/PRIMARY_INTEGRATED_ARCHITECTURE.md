@@ -29,6 +29,28 @@ NEW EVIDENCE
     ↺
 ```
 
+When learner work contains meaningful intermediate reasoning, the evidence path expands before diagnosis:
+
+```text
+CHILD WORK / SOURCE ARTIFACT
+        ↓
+OBSERVABLE WORK EVIDENCE
+  answer / operation / intermediate steps
+  quantity-unit relationships
+  representations / child-created strategies
+  self-corrections / teacher annotations with provenance
+        ↓
+ERROR SIGNATURE / STRUCTURAL PATTERN
+        ↓
+BOUNDED DIAGNOSIS
+        ↓
+SMALLEST DISCRIMINATING PROBE
+        ↓
+TEACHER DECISION / MOVE
+        ↓
+INDEPENDENT RETRY
+```
+
 Core 1/Core 2 research and publication architecture remains useful implementation infrastructure, but Primary learning decisions are governed by the runtime above.
 
 ## 2. Canonical ownership boundary
@@ -56,6 +78,7 @@ Common owns the semantics of:
 - multidimensional longitudinal learning evidence;
 - source-model boundary and ambiguity states;
 - Grade 4–5 Math/English pedagogical rules;
+- Primary Math `MathematicalWorkEvidence`, `QuantityStructure`, strategy-support roles and error-signature semantics;
 - curriculum mapping semantics and future stretch/competition seams.
 
 Study-Hub owns app-facing orchestration and transport. Kani owns game runtime, stable learner identity, immutable attempts, and deterministic recent-evidence summaries.
@@ -79,6 +102,7 @@ Strategy
 Misconception
 QuestionFamily
 Text / LanguageFeature
+MathematicalRelation / QuantityStructure where subject-relevant
 ```
 
 Math and English extend this plane differently. They do not share a forced ontology.
@@ -144,21 +168,23 @@ A diagnosis is a hypothesis with confidence and evidence, not a permanent label.
 Represents what the child actually encounters and what observable evidence results.
 
 ```text
-Study-Hub / Print / Kani / Oral / other renderer
+Study-Hub / Print / Kani / Oral / notebook / other renderer
               ↓
-Attempt / response / representation use
+Attempt / response / work trace / representation use
               ↓
 Observable evidence
               ↓
 Teacher Runtime interpretation
 ```
 
+For mathematics, the observable evidence layer may include ordered `WorkStep` records, quantity/unit structure, child-generated strategy supports and teacher annotations with separate provenance. See `PRIMARY_MATH_WORK_EVIDENCE.md`.
+
 ## 4. Evidence is not judgement
 
 Freeze this dependency:
 
 ```text
-RAW OBSERVATION / ATTEMPT
+RAW OBSERVATION / ATTEMPT / WORK TRACE
         ↓
 RECENT DETERMINISTIC EVIDENCE SUMMARY
         ↓
@@ -180,10 +206,15 @@ response time
 hints used
 self-corrected
 response mode
+operation selected
+intermediate mathematical steps
+quantity/unit roles where observable
 representation used
 representation role
+child-created strategy/support
 access adjustment used
 conceptual support used
+teacher annotation with separate provenance
 ```
 
 Examples of Teacher Runtime interpretation:
@@ -191,7 +222,9 @@ Examples of Teacher Runtime interpretation:
 ```text
 possible misconception
 possible prerequisite gap
+possible procedural mechanism
 possible language bottleneck
+possible task/quantity-structure misunderstanding
 possible performance lapse
 support dependency
 ready for independent retry
@@ -250,6 +283,21 @@ EXTRA_VISUAL_SPACING
 
 A learner who succeeds after a reading-load adjustment has not necessarily required a mathematical hint.
 
+### 6.3 Child-generated strategy support
+
+A self-created mathematical support is not teacher-provided conceptual help.
+
+Examples:
+
+```text
+child writes a multiplication/multiples table
+child draws a bar model
+child creates a place-value table
+child chooses a number line
+```
+
+Where observable, record the support role as `PROVIDED`, `CHILD_SELECTED`, or `CHILD_PRODUCED`. A `CHILD_PRODUCED` support may be positive strategic independence evidence even when the final answer is incorrect.
+
 ## 7. Representation evidence includes role
 
 Where observable, represent at least:
@@ -261,6 +309,8 @@ CHILD_PRODUCED
 ```
 
 Being shown a number line is weaker independence evidence than selecting or constructing the number line unaided.
+
+The same role vocabulary may be used for subject-specific strategy supports when the distinction is educationally meaningful.
 
 ## 8. LearningCell vs LearningEpisode
 
@@ -313,6 +363,18 @@ When evidence permits, the system should reduce conceptual support and/or access
 
 The system must be able to stop a learning episode when continued work would add little educational value, when the target evidence has been obtained, or when session state indicates that continuation is inappropriate. Stopping is a teacher move, not failure.
 
+### 9.6 Work-trace preservation before diagnosis
+
+When intermediate mathematical work exists, the runtime must preserve successful and unsuccessful substeps before forming a broad diagnosis.
+
+A final incorrect answer must not erase evidence that the child selected the correct operation, generated useful facts, used a valid representation, or completed earlier place-value steps correctly.
+
+### 9.7 Contrast before broad reteach
+
+When structurally related attempts are available, the runtime should compare them before concluding that the whole concept is weak.
+
+A repeated failure at one mechanism combined with stronger performance on a close contrast may justify a narrow error signature and a small diagnostic probe rather than whole-topic reteaching.
+
 ## 10. Source-model boundary
 
 Primary sources often teach simplified models. The platform must distinguish:
@@ -363,11 +425,27 @@ PROCEDURE
 REPRESENTATION
 MATHEMATICAL_LANGUAGE
 PROBLEM_STRUCTURE
+QUANTITY_STRUCTURE
 INVARIANT
 MISCONCEPTION
 ```
 
 Math keeps its concrete/pictorial/structural/symbolic progression and concept-to-transfer pedagogy.
+
+When learner work is available, `PRIMARY_MATH_WORK_EVIDENCE.md` defines how to preserve `MathematicalWorkEvidence`, ordered work steps, quantity/unit structure, strategy-support roles, teacher annotations, math error signatures and contrast-based diagnostic evidence.
+
+For word problems with grouped units, rates, money or conversion, the preferred reasoning model is:
+
+```text
+QUANTITY
+→ UNIT
+→ ROLE
+→ RELATIONSHIP
+→ UNKNOWN
+→ OPERATION / OPERATIONS
+```
+
+Keywords such as `each`, `shared`, `per` or `altogether` are clues, not operation rules.
 
 ### 11.2 English
 
@@ -426,6 +504,8 @@ Curriculum overlays may change sequencing emphasis or required evidence, but may
 
 PYP developmental phases must not be hard-coded as grade equivalents.
 
+Classroom evidence may refine a school/source scope overlay without silently widening universal Grade 4 scope. For example, repeated classwork using two-digit divisors may establish `OBSERVED_IN_SCHOOL_CLASSWORK` for that school scope while the generic Grade 4 schema remains source-dependent.
+
 ## 14. Kani boundary
 
 Kani is a learning-experience renderer and attempt-evidence runtime.
@@ -439,6 +519,7 @@ stars/streaks/scores
 mission runtime
 immutable attempts
 recent deterministic evidence summaries
+observable work steps that its UI genuinely captures
 ```
 
 It may not independently own:
@@ -449,6 +530,7 @@ durable mastery
 misconception diagnosis as fact
 TeacherDecision
 NextLearningAction
+reconstructed notebook work it did not observe
 ```
 
 Game completion means `ACTIVITY_COMPLETED`, not `SKILL_MASTERED`.
@@ -464,6 +546,7 @@ print/PDF publication
 QR / mission routing
 cross-app versioned transport contracts
 contract registry / compatibility locks
+source/notebook ingestion transport
 ```
 
 Study-Hub must consume Common semantics instead of becoming their source of truth.
@@ -487,6 +570,12 @@ The architecture fails review if it cannot demonstrate all of the following:
 - evidence separated from judgement;
 - conceptual support separated from access/load support;
 - representation role distinguishable where observable;
+- child-generated strategy support distinguishable from teacher-provided conceptual help;
+- intermediate mathematical work preserved when available;
+- successful substeps preserved alongside an incorrect final answer;
+- quantity/unit/relationship structure representable for relevant word problems;
+- teacher annotations kept separate from child independent work;
+- structurally contrasting attempts can inform a bounded diagnosis;
 - repeated same-route failure causes a meaningful teaching change;
 - child receives an independent retry after repair;
 - support can fade;
@@ -509,3 +598,23 @@ Do not build into v1:
 - IMO/IOM or Spell Bee competition engines.
 
 Competition remains a later `STRETCH`/assessment-demand extension over shared canonical knowledge.
+
+## 19. Notebook/classwork regression gate
+
+Before the Primary Teacher Runtime v1 is considered validated for Math, run at least one notebook/classwork replay where final-answer correctness is insufficient to explain the learner's pattern.
+
+The replay must prove that the runtime can preserve and use:
+
+```text
+operation selection
+intermediate work steps
+quantity/unit structure
+child-generated strategy supports
+successful contrasting items
+teacher annotations with separate provenance
+bounded error signatures
+```
+
+The canonical fixture is `contracts/v1/examples/division-notebook-work-replay.example.json`.
+
+The replay fails if the runtime reduces the evidence to `weak in division`, reteaches the whole algorithm from final answers alone, ignores child-created strategy evidence, ignores a necessary unit conversion, or counts teacher correction as independent child success.
