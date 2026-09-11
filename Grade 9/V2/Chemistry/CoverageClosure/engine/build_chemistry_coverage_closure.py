@@ -119,11 +119,14 @@ def build_external_matrix(corpus,classifications,core2_plan,matrix_id='CHEM-C-J-
     out={'matrix_id':matrix_id,'schema_version':'1.0.0','subject':'CHEMISTRY','corpus_ref':corpus['corpus_id'],'classification_ref':classifications['classification_id'],'records':records,'summary':{'candidate_total':len(records),'scope_status_counts':dict(sorted(status_counts.items())),'eligible_total':len(eligible),'eligible_by_primary_unit':dict(sorted(units.items())),'placed_unique_total':sum(r['placement_status']=='PLACED' for r in eligible),'missing_total':sum(r['placement_status']=='MISSING' for r in eligible),'duplicate_primary_total':sum(r['placement_status']=='DUPLICATE' for r in eligible),'source_link_failures':sum(r['source_link_status']!='PASS' for r in eligible),'hint_support_failures':sum(r['hint_support_status']!='PASS' for r in eligible),'solution_failures':sum(r['solution_status']!='PASS' for r in eligible)},'matrix_digest':''}
     out['matrix_digest']=digest(out,'matrix_digest'); return out
 
-def build_capability_records(source_ledger,study_model,core1_plan,representation_bundle,core2_plan,longitudinal):
+def build_capability_records(source_ledger,qbindings,study_model,core1_plan,representation_bundle,core2_plan,longitudinal):
     source_concepts=defaultdict(set)
     for o in source_ledger['obligations']:
         if o['scope_status']==ELIGIBLE:
             for cap in o['canonical_capability_refs']: source_concepts[cap].update(o['canonical_concept_refs'])
+    for q in qbindings['bindings']:
+        if q['scope_status']==ELIGIBLE:
+            for cap in q['canonical_capability_refs']: source_concepts[cap].update(q['canonical_concept_refs'])
     lessons={l['capability_ref']:l for l in core1_plan['lessons']}; a_by=_by(core1_plan['appendices']['appendix_a']['items'],'primary_capability_ref'); b_by={x['item_ref']:x for x in core1_plan['appendices']['appendix_b']['solutions']}; hand=set(core1_plan['appendices']['appendix_c']['supported_capability_refs']); reps=_by(representation_bundle['representations'],'capability_ref'); pages=core2_plan['pages']; long={x['capability_ref']:x for x in longitudinal['records']}
     records=[]
     for r in study_model['capability_records']:
@@ -132,12 +135,12 @@ def build_capability_records(source_ledger,study_model,core1_plan,representation
         if a and not source_concepts.get(cap): fail('APPENDIX_A_WITHOUT_PRIMARY_CONCEPT',cap)
     return records
 
-def build_closure(source_ledger,corpus,classifications,study_model,core1_plan,representation_bundle,core2_plan,problem_families,events,policy,closure_id='CHEM-C-J-PUBLICATION-CLOSURE-v1'):
-    updates=build_learner_updates(events,core2_plan,policy); longitudinal=build_longitudinal(study_model,updates,policy); sm=build_source_matrix(source_ledger,study_model,core1_plan,representation_bundle); em=build_external_matrix(corpus,classifications,core2_plan); caps=build_capability_records(source_ledger,study_model,core1_plan,representation_bundle,core2_plan,longitudinal)
+def build_closure(source_ledger,qbindings,corpus,classifications,study_model,core1_plan,representation_bundle,core2_plan,problem_families,events,policy,closure_id='CHEM-C-J-PUBLICATION-CLOSURE-v1'):
+    updates=build_learner_updates(events,core2_plan,policy); longitudinal=build_longitudinal(study_model,updates,policy); sm=build_source_matrix(source_ledger,study_model,core1_plan,representation_bundle); em=build_external_matrix(corpus,classifications,core2_plan); caps=build_capability_records(source_ledger,qbindings,study_model,core1_plan,representation_bundle,core2_plan,longitudinal)
     out={'closure_id':closure_id,'schema_version':'1.0.0','subject':'CHEMISTRY','source_matrix_ref':sm['matrix_id'],'external_matrix_ref':em['matrix_id'],'source_matrix':sm,'external_matrix':em,'capability_records':caps,'learner_state_updates':updates,'longitudinal_update':longitudinal,'summary':{'required_capability_count':len(caps),'source_obligations_required':sm['summary']['required_total'],'source_obligations_closed':sm['summary']['closed_required_total'],'external_candidates_total':em['summary']['candidate_total'],'eligible_external_total':em['summary']['eligible_total'],'eligible_external_placed_unique':em['summary']['placed_unique_total'],'transfer_event_count':len(events),'learner_state_update_count':len(updates),'longitudinal_capability_count':len(longitudinal['records']),'blocking_failures':0,'status':'PASS'},'closure_digest':''}
-    out['closure_digest']=digest(out,'closure_digest'); validate_closure(out,source_ledger,corpus,classifications,study_model,core1_plan,representation_bundle,core2_plan,problem_families,events,policy); return out
+    out['closure_digest']=digest(out,'closure_digest'); validate_closure(out,source_ledger,qbindings,corpus,classifications,study_model,core1_plan,representation_bundle,core2_plan,problem_families,events,policy); return out
 
-def validate_closure(cl,source_ledger,corpus,classifications,study_model,core1_plan,representation_bundle,core2_plan,problem_families,events,policy):
+def validate_closure(cl,source_ledger,qbindings,corpus,classifications,study_model,core1_plan,representation_bundle,core2_plan,problem_families,events,policy):
     if cl['closure_digest']!=digest(cl,'closure_digest'): fail('SUMMARY_COUNTERS_NOT_DERIVED_FROM_RECORDS','closure digest')
     sm=cl['source_matrix']; em=cl['external_matrix']
     if sm['matrix_digest']!=digest(sm,'matrix_digest') or em['matrix_digest']!=digest(em,'matrix_digest'): fail('SUMMARY_COUNTERS_NOT_DERIVED_FROM_RECORDS','matrix digest')
@@ -203,6 +206,6 @@ def validate_closure(cl,source_ledger,corpus,classifications,study_model,core1_p
 
 def main():
     ap=argparse.ArgumentParser()
-    for x in ['source-ledger','corpus','external-classifications','study-model','core1-plan','representation-bundle','core2-plan','problem-families','events','policy','out']: ap.add_argument('--'+x,required=True)
-    a=ap.parse_args(); ev=load(a.events); out=build_closure(load(a.source_ledger),load(a.corpus),load(a.external_classifications),load(a.study_model),load(a.core1_plan),load(a.representation_bundle),load(a.core2_plan),load(a.problem_families),ev['events'],load(a.policy)); Path(a.out).write_text(json.dumps(out,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+    for x in ['source-ledger','question-bindings','corpus','external-classifications','study-model','core1-plan','representation-bundle','core2-plan','problem-families','events','policy','out']: ap.add_argument('--'+x,required=True)
+    a=ap.parse_args(); ev=load(a.events); out=build_closure(load(a.source_ledger),load(a.question_bindings),load(a.corpus),load(a.external_classifications),load(a.study_model),load(a.core1_plan),load(a.representation_bundle),load(a.core2_plan),load(a.problem_families),ev['events'],load(a.policy)); Path(a.out).write_text(json.dumps(out,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
 if __name__=='__main__': main()
