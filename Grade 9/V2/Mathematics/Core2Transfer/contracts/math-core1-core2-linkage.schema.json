@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core1-core2-linkage.schema.json",
+  "title": "Mathematics Core1/Core2 Link",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["stable_id", "learner_title", "capability_ref", "linkage_state", "materialized_lesson_id", "source_question_reuse"],
+  "properties": {
+    "stable_id": {"type": "string", "pattern": "^(MATH-C1-PLANNED-[0-9a-f]{8}|MATH-C1L-[0-9a-f]{16})$"},
+    "learner_title": {"type": "string", "minLength": 5},
+    "capability_ref": {"type": "string", "pattern": "^MATH-"},
+    "linkage_state": {"enum": ["PLANNED_UNTIL_PCK_PROMOTED", "MATERIALIZED"]},
+    "materialized_lesson_id": {"type": ["string", "null"], "pattern": "^MATH-C1L-[0-9a-f]{16}$"},
+    "source_question_reuse": {"const": false}
+  }
+}
