@@ -1,0 +1,88 @@
+{
+  "$id": "physics-reasoning-observation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "capability_refs": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "evidence_fragment": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "extraction_confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "item_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "observation_code": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "observation_confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "observation_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "polarity": {
+      "enum": [
+        "POSITIVE",
+        "NEGATIVE",
+        "NEUTRAL"
+      ]
+    },
+    "representation_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "route_role": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "route_step_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "transcription_confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    }
+  },
+  "required": [
+    "observation_id",
+    "attempt_ref",
+    "item_ref",
+    "route_step_ref",
+    "route_role",
+    "representation_ref",
+    "observation_code",
+    "polarity",
+    "capability_refs",
+    "evidence_fragment",
+    "observation_confidence",
+    "extraction_confidence",
+    "transcription_confidence"
+  ],
+  "title": "PhysicsReasoningObservation",
+  "type": "object"
+}

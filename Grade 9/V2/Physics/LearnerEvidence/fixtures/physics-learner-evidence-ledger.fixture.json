@@ -1,0 +1,58 @@
+{
+  "attempt_set_ref": "PHY-G9-MOTION-ATTEMPTS-V1",
+  "ledger_digest": "e461b5da77deb4b826d1b5ab07969a3dd4f7f27fb8fa6f1bb48c2601e4125a6e",
+  "ledger_id": "PHY-P-E-EVIDENCE-SYN-001",
+  "observations": [
+    {
+      "attempt_ref": "A3",
+      "capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "evidence_fragment": "The work selects a constant-acceleration model before using a kinematic relation.",
+      "extraction_confidence": 0.99,
+      "item_ref": "Q3",
+      "observation_code": "CORRECT_MODEL_SELECTION",
+      "observation_confidence": 0.99,
+      "observation_id": "PHE-O01",
+      "polarity": "POSITIVE",
+      "representation_ref": null,
+      "route_role": "SELECT_MODEL",
+      "route_step_ref": "Q3-R06",
+      "transcription_confidence": 0.99
+    },
+    {
+      "attempt_ref": "A3",
+      "capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "evidence_fragment": "The work uses v=u+at consistently with the knowns and target.",
+      "extraction_confidence": 0.99,
+      "item_ref": "Q3",
+      "observation_code": "CORRECT_RELATION_SELECTION",
+      "observation_confidence": 0.99,
+      "observation_id": "PHE-O02",
+      "polarity": "POSITIVE",
+      "representation_ref": null,
+      "route_role": "CHOOSE_RELATION",
+      "route_step_ref": "Q3-R08",
+      "transcription_confidence": 0.99
+    },
+    {
+      "attempt_ref": "A3",
+      "capability_refs": [],
+      "evidence_fragment": "A later arithmetic execution step is wrong after the Physics model and relation were selected correctly.",
+      "extraction_confidence": 0.99,
+      "item_ref": "Q3",
+      "observation_code": "ARITHMETIC_EXECUTION_ERROR",
+      "observation_confidence": 0.98,
+      "observation_id": "PHE-O03",
+      "polarity": "NEGATIVE",
+      "representation_ref": null,
+      "route_role": "SOLVE",
+      "route_step_ref": "Q3-R09",
+      "transcription_confidence": 0.99
+    }
+  ],
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}

@@ -1,0 +1,184 @@
+{
+  "codes": [
+    {
+      "allowed_roles": [
+        "DEFINE_SYSTEM"
+      ],
+      "code": "CORRECT_SYSTEM_SELECTION",
+      "description": "Learner selects the intended physical system/body.",
+      "polarity": "POSITIVE",
+      "probe_family": null,
+      "state_effect": "POSITIVE"
+    },
+    {
+      "allowed_roles": [
+        "CHOOSE_FRAME"
+      ],
+      "code": "CORRECT_REFERENCE_FRAME",
+      "description": "Learner binds the intended frame/axis/sign convention.",
+      "polarity": "POSITIVE",
+      "probe_family": null,
+      "state_effect": "POSITIVE"
+    },
+    {
+      "allowed_roles": [
+        "SELECT_MODEL"
+      ],
+      "code": "CORRECT_MODEL_SELECTION",
+      "description": "Learner selects the physically licensed model.",
+      "polarity": "POSITIVE",
+      "probe_family": null,
+      "state_effect": "POSITIVE"
+    },
+    {
+      "allowed_roles": [
+        "CHOOSE_RELATION"
+      ],
+      "code": "CORRECT_RELATION_SELECTION",
+      "description": "Learner selects a relation from knowns, target and model rather than formula matching.",
+      "polarity": "POSITIVE",
+      "probe_family": null,
+      "state_effect": "POSITIVE"
+    },
+    {
+      "allowed_roles": [
+        "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+        "PROPAGATE_STATE"
+      ],
+      "code": "CORRECT_STATE_EXTRACTION",
+      "description": "Learner extracts or propagates the relevant state correctly.",
+      "polarity": "POSITIVE",
+      "probe_family": null,
+      "state_effect": "POSITIVE"
+    },
+    {
+      "allowed_roles": [
+        "REPRESENT",
+        "INTERPRET_RESULT"
+      ],
+      "code": "CORRECT_REPRESENTATION_TRANSLATION",
+      "description": "Learner translates a scene/state/graph/equation representation correctly.",
+      "polarity": "POSITIVE",
+      "probe_family": null,
+      "state_effect": "POSITIVE"
+    },
+    {
+      "allowed_roles": [
+        "PROPAGATE_STATE",
+        "EXTRACT_KNOWNS_AND_HIDDEN_FACTS"
+      ],
+      "code": "INVALID_STATE_RESET",
+      "description": "Learner discards or reinitializes a state that should carry forward.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PROBE_STATE_RESET",
+      "state_effect": "NEGATIVE"
+    },
+    {
+      "allowed_roles": [
+        "PROPAGATE_STATE",
+        "CHECK_CONTINUITY_OR_BOUNDARY"
+      ],
+      "code": "OMITTED_PHASE_HANDOFF",
+      "description": "Learner omits the terminal-state to next-initial-state handoff.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PROBE_PHASE_HANDOFF",
+      "state_effect": "NEGATIVE"
+    },
+    {
+      "allowed_roles": [
+        "CHOOSE_FRAME",
+        "INTERPRET_SIGN_DIRECTION",
+        "SOLVE"
+      ],
+      "code": "SIGN_DIRECTION_MISMATCH",
+      "description": "Learner uses a sign/direction inconsistent with the bound frame.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PROBE_FRAME_SIGN",
+      "state_effect": "NEGATIVE"
+    },
+    {
+      "allowed_roles": [
+        "CHOOSE_RELATION",
+        "INTERPRET_RESULT"
+      ],
+      "code": "DISTANCE_DISPLACEMENT_CONFUSION",
+      "description": "Learner conflates path length and displacement.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PHY-PROBE-SIGNED-DISPLACEMENT",
+      "state_effect": "NEGATIVE"
+    },
+    {
+      "allowed_roles": [
+        "REPRESENT",
+        "CHOOSE_RELATION",
+        "INTERPRET_RESULT"
+      ],
+      "code": "GRAPH_HEIGHT_SLOPE_AREA_CONFUSION",
+      "description": "Learner confuses graph height, slope, signed area or area magnitude.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PROBE_GRAPH_HEIGHT_SLOPE_AREA",
+      "state_effect": "NEGATIVE"
+    },
+    {
+      "allowed_roles": [
+        "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+        "INTERPRET_RESULT"
+      ],
+      "code": "APEX_COMPONENT_AMBIGUITY",
+      "description": "Evidence does not distinguish vertical-component zero from total-velocity zero at an apex.",
+      "polarity": "NEUTRAL",
+      "probe_family": "PHY-PROBE-APEX-COMPONENTS",
+      "state_effect": "AMBIGUITY_ONLY"
+    },
+    {
+      "allowed_roles": [
+        "SOLVE",
+        "CHECK_UNITS"
+      ],
+      "code": "ARITHMETIC_EXECUTION_ERROR",
+      "description": "Arithmetic/algebra execution fails after a valid Physics setup.",
+      "polarity": "NEGATIVE",
+      "probe_family": null,
+      "state_effect": "SHARED_EXTERNAL"
+    },
+    {
+      "allowed_roles": [
+        "CHECK_MODEL_VALIDITY",
+        "SELECT_MODEL"
+      ],
+      "code": "MODEL_VALIDITY_IGNORED",
+      "description": "Learner applies a model without checking its validity conditions.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PROBE_MODEL_VALIDITY",
+      "state_effect": "NEGATIVE"
+    },
+    {
+      "allowed_roles": [
+        "CHECK_UNITS",
+        "CHECK_CONTINUITY_OR_BOUNDARY",
+        "VERIFY_PHYSICAL_PLAUSIBILITY"
+      ],
+      "code": "VERIFICATION_NOT_PERFORMED",
+      "description": "Required verification checkpoint is omitted.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PROBE_VERIFICATION",
+      "state_effect": "NEGATIVE"
+    },
+    {
+      "allowed_roles": [
+        "CHECK_UNITS",
+        "CHECK_CONTINUITY_OR_BOUNDARY",
+        "VERIFY_PHYSICAL_PLAUSIBILITY"
+      ],
+      "code": "VERIFICATION_FAILED",
+      "description": "Learner performs a check but the check is invalid or inconsistent.",
+      "polarity": "NEGATIVE",
+      "probe_family": "PROBE_VERIFICATION",
+      "state_effect": "NEGATIVE"
+    }
+  ],
+  "registry_digest": "6789f026f09d4f25d9202c057aea44a5a73a92b59fd1ba3dfd655ce64c739e44",
+  "registry_id": "PHY-P-E-OBSERVATION-CODES-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}
