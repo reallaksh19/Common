@@ -1,6 +1,6 @@
 ---
 name: grade9
-description: Route Grade 9 learning-material tasks to the correct source-grounding, concept architecture, question-bank, enrichment, publication-reconstruction, subtopic-completeness audit, transfer-coverage audit, subject, concept-book, Redox subtopic-book, and publishing workflows. Use for Grade 9 source analysis, source-faithful PDF reconstruction, textbook creation, concept books, difficulty-matched question banks, HOTS/competitive-foundation practice, diagnostics, mixed mastery, challenge appendices, external-PYQ coverage audits, and linked student/teacher PDF production in Mathematics, Physics, or Chemistry.
+description: Route Grade 9 learning-material tasks to source grounding, subject reasoning, concept architecture, question-bank/enrichment, subject-specific topic builders, completeness/transfer audits, publication reconstruction, publication review and final publishing workflows for Mathematics, Physics and Chemistry.
 ---
 
 # Grade 9 Router Skill
@@ -13,97 +13,85 @@ Use this skill as the entry point for Grade 9 educational-content work.
 SOURCE / USER REQUEST
   -> grade9-source-grounding
   -> relevant subject skill
-  -> specialist builder when applicable (for Redox: grade9-redox-subtopic-book-builder)
+  -> subject-specific topic builder when applicable
   -> grade9-concept-architect
   -> grade9-question-bank
   -> grade9-learning-enrichment
-  -> grade9-publication when an existing source PDF/book must be reconstructed without losing core content
-  -> grade9-subtopic-completeness-auditor for each drafted subtopic
-  -> grade9-transfer-coverage-auditor when external/PYQ transfer coverage is required
-  -> canonical master data
-  -> grade9-textbook-publisher when a validated master-data product is rendered
+  -> grade9-subtopic-completeness-auditor
+  -> grade9-transfer-coverage-auditor when external/PYQ transfer is in scope
+  -> publication / review gate
   -> final QA
 ```
 
 ## Route by task
 
-- Source PDF, images, notes, worksheet, PYQ, or pasted notes -> `../grade9-source-grounding/SKILL.md` first.
+- Source PDF/images/notes/PYQs -> `../grade9-source-grounding/SKILL.md` first.
 - Mathematics -> `../grade9-math/SKILL.md`.
 - Physics -> `../grade9-physics/SKILL.md`.
-- Chemistry -> `../grade9-chemistry/SKILL.md`.
-- Source-grounded Redox Study Guide + ExamSIDE subtopic build -> `../grade9-redox-subtopic-book-builder/SKILL.md` together with the completeness and transfer auditors.
-- Concept IDs, prerequisites, dependency maps, textbook-to-bank links -> `../grade9-concept-architect/SKILL.md`.
-- Similar questions, same-level practice, Core N, HOTS, challenge appendix, mixed tests -> `../grade9-question-bank/SKILL.md`.
-- Helpers, progressive hints, misconceptions, diagnostics, transfer questions -> `../grade9-learning-enrichment/SKILL.md`.
-- Reconstruct an existing educational PDF/book with zero-loss source mapping, teacher-value additions, benchmarked layout, stable renumbering/cross-links, missing-figure evidence rules, and anti-drift checkpoints -> `../grade9-publication/SKILL.md`.
-- Whole-subtopic audit for source completeness, explanatory structure, real-life/context bridges, concept helpers, misconception repair, scaffold coverage, chemistry typography, and rendered layout -> `../grade9-subtopic-completeness-auditor/SKILL.md`.
-- Subtopic-by-subtopic external/PYQ accounting, required-question self-checks, duplicate/missing placement, concept-link/hint/solution/source-link coverage -> `../grade9-transfer-coverage-auditor/SKILL.md`.
-- Student textbook, question bank, integrated edition, PDF layout, internal links, render/preflight from validated canonical master data -> `../grade9-textbook-publisher/SKILL.md`.
+- Chemistry subject reasoning -> `../grade9-chemistry/SKILL.md`.
+- **Any Chemistry topic learner build** -> `../grade9-chemistry-topic-builder/SKILL.md`.
+- **Chemistry publication/review package** -> `../grade9-chemistry-publication-review/SKILL.md`.
+- Redox-specific reasoning -> `../grade9-redox-subtopic-book-builder/SKILL.md` under the generic Chemistry topic-builder contract.
+- Concept IDs/dependencies -> `../grade9-concept-architect/SKILL.md`.
+- Question banks -> `../grade9-question-bank/SKILL.md`.
+- Helpers/hints/misconceptions/diagnostics -> `../grade9-learning-enrichment/SKILL.md`.
+- Source-PDF reconstruction -> `../grade9-publication/SKILL.md`.
+- Whole-subtopic completeness -> `../grade9-subtopic-completeness-auditor/SKILL.md`.
+- External/PYQ accounting -> `../grade9-transfer-coverage-auditor/SKILL.md`.
+- Canonical master-data PDF publication -> `../grade9-textbook-publisher/SKILL.md`.
+
+## Chemistry topic-production routing — mandatory
+
+When a Chemistry topic is taken up, the generic Chemistry contract requires exactly two learner-facing PDFs:
+
+```text
+1. CORE STUDY GUIDE
+   Appendix A = Core Practice
+   Appendix B = Core Solutions
+   Appendix C = Printable Handout
+
+2. EXAMSIDE SOLUTION & TRANSFER
+   source/difficulty/transfer/concept badges
+   PRIMARY vs SUPPORT concept segregation label
+   H0 attempt-first + optional H1/H2/H3
+   Core/source links
+   complete solution
+```
+
+Appendix C is mandatory and lives inside the Core Study Guide; do not create a third handout PDF.
+
+For Redox, use both `$grade9-chemistry-topic-builder` and `$grade9-redox-subtopic-book-builder`. The Redox skill may specialize chemistry reasoning but cannot change the two-file/Appendix A-B-C contract.
 
 ## Publication reconstruction routing
 
-When the user supplies an existing PDF/book and asks to rebuild, revamp, benchmark, repaginate, add teacher value, or preserve 100% core content while changing the design:
+When the user supplies an existing educational PDF/book and asks to rebuild/revamp it while preserving core content:
 
-1. run `grade9-source-grounding` first;
-2. use the relevant subject skill to protect subject-specific meaning and representation;
+1. run `grade9-source-grounding`;
+2. use the relevant subject skill;
 3. invoke `grade9-publication` before large-scale layout work;
-4. freeze the source-unit denominator and stable source IDs before redesign;
-5. separate `CORE_SOURCE`, `PRESENTATION_SOURCE`, `VALUE_ADD`, and `EDITORIAL_CHANGE` objects;
-6. prototype only 6-8 representative pages before scaling;
-7. run anti-drift checkpoints every subtopic or 5-10 pages;
-8. generate visible numbering/page references from stable targets after pagination;
-9. require zero unmapped core units, zero unapproved editorial changes, zero broken links, and zero hidden/clipped core content before claiming 100% reconstruction;
-10. use `grade9-textbook-publisher` only when the project transitions to canonical master-data-driven publication rather than source-PDF reconstruction.
-
-## Redox subtopic-book routing
-
-When the task is the continuing Redox project:
-
-1. read the supplied Redox source boundary first;
-2. use `grade9-redox-subtopic-book-builder` for one focused subtopic at a time;
-3. keep source-derived content separate from external ExamSIDE evidence;
-4. freeze the canonical direct-primary ExamSIDE set before publication;
-5. require the approved learning grammar, Redox-specific concept helpers, misconception repair, chemistry-safe typography, H1-H3 support and Appendix A;
-6. run both `grade9-subtopic-completeness-auditor` and `grade9-transfer-coverage-auditor`;
-7. render every page, repair clipping/overlap/glyph issues, and re-render before declaring PASS.
-
-## Mathematics concept-book routing
-
-When the user asks for a Grade 9 Mathematics **Concept Book**, chalkboard-style explanation, formula-understanding book, or asks to make mathematics structurally understandable rather than formula-first:
-
-1. route through `grade9-math` Concept Book mode;
-2. preserve source/anchor coverage authority;
-3. use `SEE -> REALIZE -> UNDERSTAND -> ADOPT` as the cognitive sequence;
-4. treat `CONNECT` as traceability/navigation rather than a learning stage;
-5. require pattern/invariant/representation/reconstruction/transfer before publication;
-6. keep Concept Book, First-Step Reference, and Question Bank as distinct companion products.
-
-For Sequence & Series, the Mathematics specialist includes the worked exemplar and summation/hidden-series bridge rules.
-
-## Physics concept-book routing
-
-When the user asks for a Grade 9 Physics Concept Book, route through `grade9-physics` and use `SEE THE EQUATION -> REALIZE -> UNDERSTAND`, retaining CONNECT as source traceability/navigation.
+4. freeze source obligations with stable IDs;
+5. separate source content from value-add/editorial change;
+6. run anti-drift and render-first QA;
+7. require zero unmapped core units, unapproved changes, broken links, or clipped core content before claiming completeness.
 
 ## Non-negotiable rules
 
-1. Treat user-supplied sources as the primary authority when the request is source-grounded.
-2. Never silently repair or replace defective source content. Record QC status and preserve provenance.
-3. Treat difficulty as a cognitive profile, not an Easy/Medium/Hard label.
-4. Preserve the uploaded anchor difficulty distribution unless the user asks for a different level.
-5. Default Core bank size is 30 only when the user does not specify a count.
-6. Default next-level appendix is 20 only when the user does not specify a count.
-7. Every scored question must have one `primary_concept_id` and may have secondary concepts.
-8. Generate textbook/question-bank artifacts from canonical structured master data, not from previously laid-out PDF pages, unless `grade9-publication` is explicitly reconstructing the supplied PDF as a source obligation set.
-9. Keep source-derived, externally verified, and newly authored content distinguishable.
-10. Do not declare a rendered product complete until page rendering, link validation, and content QA pass.
-11. When an external/PYQ corpus is part of the brief, do not declare a subtopic or chapter complete until the transfer-coverage audit proves all eligible questions are uniquely placed or explicitly deferred to named future subtopics; final chapter acceptance requires zero missing and zero deferred eligible questions.
-12. Do not declare a subtopic complete merely because all source facts appear. The subtopic-completeness audit must also pass explanation order, context/bridge, helper, misconception, scaffold, typography, and layout checks.
-13. For chemistry PDFs, formula subscripts/superscripts, ionic charges, oxidation-number notation, and equation glyphs must be visually unambiguous at 100% zoom.
-14. For source-PDF reconstruction, zero-loss means zero unmapped core source units, zero unapproved editorial changes, zero broken source relationships/links, and zero core items hidden or clipped in the rendered artifact; identical page count or coordinates are not required.
+1. User-supplied sources are the primary authority for source-grounded work.
+2. Never silently repair/replace defective source content; record QC/provenance.
+3. Treat difficulty as a cognitive profile, not only a label.
+4. Every scored question has exactly one `primary_concept_id`; secondary concepts may be recorded separately.
+5. Keep source-derived, externally verified and newly authored content distinguishable.
+6. Do not declare a rendered product complete until page rendering, link validation and content QA pass.
+7. When an external/PYQ corpus is in scope, every eligible question needs exactly one canonical primary home; final chapter acceptance requires zero missing/deferred eligible questions.
+8. A subtopic/topic cannot pass merely because facts are present: explanation order, helper, misconception repair, practice, typography and layout must pass.
+9. For Chemistry, every topic build must satisfy the two-file contract and Core Appendix A/B/C, with Appendix C as a printable standalone handout.
+10. For Chemistry ExamSIDE products, required questions must carry visible concept segregation, source/difficulty/transfer badges, progressive hints as required, Core/source links and complete solutions.
+11. Chemistry notation must be visually unambiguous at 100% zoom.
+12. Technical publication PASS does not imply independent pedagogy/classroom validation.
 
 ## Completion gates
 
-Apply the relevant gates:
+Apply relevant gates:
 
 - `QG1 SOURCE_FIDELITY`
 - `QG2 SOURCE_QC`
@@ -118,5 +106,8 @@ Apply the relevant gates:
 - `QG11 TRANSFER_COVERAGE`
 - `QG12 SUBTOPIC_COMPLETENESS`
 - `QG13 PUBLICATION_RECONSTRUCTION_INTEGRITY`
+- `QG14 CHEMISTRY_TOPIC_TWO_FILE_DELIVERY`
+- `QG15 CHEMISTRY_APPENDIX_A_B_C`
+- `QG16 CHEMISTRY_EXAMSIDE_SUPPORT`
 
-Read `references/grade9-workflow.md` when a full multi-stage build is requested. Use `references/grade9-master.schema.json` as the unchanged canonical structured-data contract when producing reusable master data.
+Read `references/grade9-workflow.md` for full multi-stage builds.

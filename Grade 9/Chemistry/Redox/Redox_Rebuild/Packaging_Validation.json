@@ -1,0 +1,68 @@
+{
+  "status": "DRAFT_BLOCKED_BINARY_ARTIFACT_UPLOAD",
+  "package": "Grade 9 Chemistry / Redox review pilot",
+  "validated_at": "2026-09-09",
+  "checks": {
+    "required_artifacts": "PASS",
+    "pdf_parse_and_page_counts": "PASS",
+    "embedded_link_annotation_counts": "PASS",
+    "embedded_cumulative_and_corpus_audit_sections": "PASS",
+    "source_fingerprint_present": "PASS",
+    "ledger_candidate_total": "PASS",
+    "ledger_scope_counts": "PASS",
+    "canonical_primary_placement_totals": "PASS",
+    "sha256_manifest_generation": "PASS",
+    "independent_human_pedagogy_review": "PENDING",
+    "classroom_or_psychometric_validation": "NOT_RUN",
+    "board_wide_syllabus_certification": "NOT_RUN",
+    "byte_identical_regeneration_from_committed_renderer": "NOT_RUN",
+    "full_repository_test_suite": "NOT_RUN",
+    "fresh_external_url_crawl_at_packaging_time": "NOT_RUN",
+    "reviewed_pdf_snapshots_committed_to_branch": "BLOCKING_PENDING"
+  },
+  "pdf_observations": {
+    "Redox_Core_Study_Guide.pdf": {
+      "pages": 68,
+      "embedded_link_annotations": 0,
+      "bytes": 515756,
+      "sha256": "e96e53d5066feaa7c3705ec79d846cd83f7183dd2018d1d18aef4d3c03340756"
+    },
+    "Redox_ExamSIDE_Transfer_Book.pdf": {
+      "pages": 85,
+      "embedded_link_annotations": 30,
+      "bytes": 617552,
+      "sha256": "8101baff5e247180fdf277fef5dbc007551fcf8b96c00201c6ed37487fc5cb58"
+    }
+  },
+  "source_fingerprint": {
+    "source_name": "Redox reaction.pdf",
+    "role": "immutable supplied source authority",
+    "pages": 9,
+    "bytes": 8421985,
+    "sha256": "908f31e343d8515377a50701b28d6fa8a4ca9eaf55131217d177f44c3cd6b1b3",
+    "committed_in_this_draft": false,
+    "note": "The original supplied image-only source PDF is not copied into this draft package. Source-derived obligation mapping, QC notes and its content fingerprint are included; add the exact source file later only if repository policy permits storing it."
+  },
+  "embedded_sections": {
+    "ExamSIDE cumulative challenge": "pp61-73",
+    "full corpus audit": "pp74-85"
+  },
+  "ledger": {
+    "candidate_count": 74,
+    "numerical_count": 29,
+    "mcq_count": 45,
+    "status_counts": {
+      "OUT_OF_SCOPE": 42,
+      "ELIGIBLE_IN_SCOPE": 24,
+      "PARTIAL_SCOPE": 8
+    },
+    "eligible_by_primary_subtopic": {
+      "RX-ST02": 2,
+      "RX-ST01": 7,
+      "RX-ST05": 8,
+      "RX-ST03": 4,
+      "RX-ST04": 3
+    }
+  },
+  "claim_boundary": "Technical/content audit PASS does not imply independent pedagogy approval, classroom effectiveness, full syllabus certification, or deterministic rebuild capability. Draft publication is additionally blocked until the reviewed PDF bytes are committed or deterministically rebuilt in-repo."
+}

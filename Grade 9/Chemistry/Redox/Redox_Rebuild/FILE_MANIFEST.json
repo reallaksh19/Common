@@ -1,0 +1,56 @@
+{
+  "manifest_version": 1,
+  "root": "Grade 9/Chemistry/Redox/Redox_Rebuild",
+  "generated_at": "2026-09-09",
+  "scope": "files committed by automated draft; learner PDF bytes excluded and fingerprinted separately",
+  "files": {
+    "CHEMISTRY_REBUILD_REVIEW.md": {
+      "bytes": 2096,
+      "sha256": "965996d594f92204c7fbae006b3736fa83679b7031c5590f0cce3351f468537a"
+    },
+    "CONCEPT_REVIEW_MAP.md": {
+      "bytes": 1988,
+      "sha256": "c9a5ee68bc5e314d5afc39b2f953571c68a5a5132da5c0bab3fea264f446c690"
+    },
+    "DELIVERY_RECORD.md": {
+      "bytes": 2734,
+      "sha256": "f6178add0ea853bdea8ed59c07ac4664587a2bc7e37e55b0038686347baf6941"
+    },
+    "EXAMSIDE_COVERAGE_MAP.md": {
+      "bytes": 1594,
+      "sha256": "b132d2249a238069f85762ba3785b1b8ca2328f2fc84d707d0bb523d1e488303"
+    },
+    "Packaging_Validation.json": {
+      "bytes": 2717,
+      "sha256": "654c68f122dbd75d3b3dba333ab076433bcc521db11171ee50ba3959c856886b"
+    },
+    "Prepared_Artifact_Fingerprints.json": {
+      "bytes": 878,
+      "sha256": "741735f02e072c76a0313125eab4fcbfa273bebbf54b22e10862266a01cd60e6"
+    },
+    "README.md": {
+      "bytes": 2666,
+      "sha256": "efa30b003ee11b4ac7b7730ebb080d6fe80acc4fe1a018d619f6521c3e4f878e"
+    },
+    "REPRODUCE.md": {
+      "bytes": 1634,
+      "sha256": "82027d4b3882a11177262b2c7d779016f88f317942c5fd191baebb1605ec8dce"
+    },
+    "REVIEW_GUIDE.md": {
+      "bytes": 2933,
+      "sha256": "ac942ac9b97a4df984bf1317d5e337c43a090ba67aa703d5d81e2eacf8580fab"
+    },
+    "Redox_ExamSIDE_Ledger.json": {
+      "bytes": 18447,
+      "sha256": "407f3978fee701cc189f141e0a3926e0525c629d7dfebda737803b7035a090a5"
+    },
+    "SOURCE_COVERAGE_MAP.md": {
+      "bytes": 2180,
+      "sha256": "945b46e48c773160b8630f96c099678306cdcb4489b2a4574e74cf1d48848527"
+    },
+    "Source/Source_Fingerprint.json": {
+      "bytes": 501,
+      "sha256": "bbf86becf6bd4eaf360bb20aa16be895bc46aa18d7cad2d95285ebd71d3d906b"
+    }
+  }
+}

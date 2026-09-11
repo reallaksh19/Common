@@ -1,21 +1,40 @@
 ---
 name: grade9-redox-subtopic-book-builder
-description: Build source-grounded Grade 9/JEE-foundation Redox subtopic Study Guides and ExamSIDE transfer books using the approved textbook-style instructional grammar, chemistry-safe typography, misconception repair, concept helpers, difficulty-based hints, Appendix A solutions, and bidirectional transfer-coverage audits. Use when producing or rebuilding Redox subtopics from a supplied source PDF and linked ExamSIDE questions.
+description: Apply the Redox-specific reasoning layer inside the Grade 9 Chemistry topic-builder contract. Build each Redox topic as exactly two learner-facing PDFs: a Core Study Guide with Appendix A Core Practice, Appendix B Core Solutions and Appendix C Printable Handout, plus an ExamSIDE Solution & Transfer book with Redox concept segregation, badges, progressive hints, transfer support, source links and complete solutions.
 ---
 
 # Grade 9 Redox Subtopic Book Builder
 
-Use this skill for the Redox project when the user wants one focused subtopic at a time.
+Use this skill as the **Redox-specific adapter** under `$grade9-chemistry-topic-builder`.
+
+The Chemistry-wide delivery contract is authoritative. For every Redox topic create exactly:
+
+```text
+1. Core Study Guide
+   + Appendix A Core Practice
+   + Appendix B Core Solutions
+   + Appendix C Printable Handout
+
+2. ExamSIDE Solution & Transfer Book
+   + attempt-first question pages
+   + concept segregation labels
+   + source/difficulty/transfer badges
+   + H1/H2/H3 optional hints as required
+   + Core/source links
+   + complete solutions
+```
+
+Do not emit a separate handout PDF. Appendix C is mandatory inside the Core Study Guide.
 
 ## 1. Source boundary first
 
 Treat the supplied Redox source as authoritative for scope and terminology.
 
-For each subtopic create a source-obligation ledger before writing:
+For each topic create a source-obligation ledger before writing:
 
 ```text
 SOURCE_OBLIGATION_ID
-source page / line
+source page / locator
 required concept
 required example(s)
 required exception(s)
@@ -27,7 +46,7 @@ Do not silently introduce balancing, equivalent weight, titration, electrochemis
 
 ## 2. Approved instructional grammar
 
-The learner-facing Study Guide should follow the approved textbook rhythm:
+The teaching body of the Core Study Guide should follow:
 
 ```text
 ORIENT / FAMILIAR CONTEXT
@@ -49,17 +68,13 @@ The page should read like a teacher explanation, not a dashboard of independent 
 
 ### Oxidation number
 
-Use:
-
 ```text
 read formula -> apply fixed rules -> check H/O exceptions -> sum = 0 or ion charge -> solve -> check
 ```
 
-Explicitly distinguish subscripts, ionic charge, assigned oxidation numbers, average oxidation number, and actual non-equivalent sites.
+Distinguish subscripts, ionic charge, assigned oxidation numbers, average oxidation number, and actual non-equivalent sites.
 
 ### Oxidation / reduction
-
-Use both equivalent languages:
 
 ```text
 LOSE e⁻ -> oxidation -> oxidation number UP
@@ -77,11 +92,9 @@ oxidised species = reducing agent
 reduced species = oxidising agent
 ```
 
-Agent name describes what the species causes in the other reactant. Attach the role to the reactant species, not only to the tracked atom. Identify spectators explicitly where useful.
+Attach the role to the reactant species and identify spectators where useful.
 
 ### Redox vs non-redox
-
-Use the fingerprint:
 
 ```text
 no oxidation-number change -> non-redox
@@ -94,79 +107,60 @@ Reaction appearance, oxygen presence, gas formation, combination, or decompositi
 
 Keep reaction type and redox status separate.
 
-Use topology helpers:
-
 ```text
 combination: many reactants -> one product
-
 decomposition: one reactant -> many products
-
 displacement: element displaces another element from a compound
-
-disproportionation: same element, one initial oxidation state -> lower + higher states
-
-comproportionation: same element, lower + higher states -> one intermediate state
-
-intermolecular redox: oxidation and reduction occur in different reactant molecules/species
-
-intramolecular redox: oxidation and reduction occur within the same reactant molecule/species
+disproportionation: one initial ON -> lower + higher
+comproportionation: lower + higher -> one intermediate ON
+intermolecular: oxidation/reduction in different reactant species
+intramolecular: oxidation/reduction within the same reactant species
 ```
 
-Do not classify combination/decomposition as redox without first proving oxidation-number change.
+## 4. Familiar bridge, helpers and misconception repair
 
-## 4. Familiar / real-life bridge
+For each core topic include one safe familiar bridge when useful. If none is safe, record `FAMILIAR_CONTEXT_NOT_APPLICABLE`.
 
-For each core subtopic include one safe familiar bridge when it clarifies the source concept without adding a new chemistry dependency. Examples can include a familiar formula label, burning carbon, a visible metal-displacement reaction, or another source-compatible situation.
+Preferred Redox helpers include formula anatomy, rule-priority ladders, charge-balance visuals, before/after ON lanes, electron-token models, SELF vs OTHER, redox fingerprint trees and split/converge topology.
 
-If no safe bridge exists, mark `FAMILIAR_CONTEXT_NOT_APPLICABLE` rather than inventing one.
+Use explicit `wrong model -> why it fails -> repair -> retry` treatment for high-risk misconceptions.
 
-## 5. Concept helpers
+## 5. Core Study Guide appendices — blocking
 
-High-recognition-load Redox concepts require a reusable helper. Preferred helpers include:
+### Appendix A — Core Practice
 
-- formula anatomy;
-- rule-priority ladder;
-- charge-balance visual;
-- before -> after oxidation-state lane;
-- negative-electron token model;
-- SELF vs OTHER frame;
-- six-move agent decision strip;
-- redox fingerprint decision tree;
-- split/converge topology for disproportionation/comproportionation;
-- inter vs intra molecule map.
+Include independent/faded Redox practice tied to stable concept IDs. Use varied equations/formulas so learners must recognise the method, not copy surface features.
 
-A helper should reveal the reasoning representation, not give away the answer.
+### Appendix B — Core Solutions
 
-## 6. Misconception repair
+Provide a complete reasoning solution for every Appendix A item. Show the minimum justified Redox path and the final check. Do not leak Appendix B answers onto Appendix A attempt pages.
 
-Use explicit `wrong model -> why it fails -> repair -> retry` treatment.
+### Appendix C — Printable Handout
 
-High-priority Redox misconceptions include:
+Appendix C is mandatory. It must be a standalone printable Redox handout for that topic containing only the minimum high-value revision layer, for example:
+
+- first-move decision strip;
+- key oxidation-number/agent/type rules relevant to the topic;
+- essential exception reminder;
+- one reusable representation/helper;
+- common trap list;
+- short retrieval/self-check prompts.
+
+It must not introduce new chemistry and must not become a compressed answer key.
+
+Required counters:
 
 ```text
-oxygen is always -2
-hydrogen is always +1
-sum of oxidation numbers is always 0
-average oxidation number means every atom has that value
-oxidation means adding oxygen only
-reduction means removing oxygen only
-losing electrons should make oxidation number fall
-oxidising agent is itself oxidised
-reducing agent is itself reduced
-all chemical reactions are redox
-contains oxygen / gas forms / visible change -> redox
-combination -> redox
-decomposition -> redox
-same reagent always has same OA/RA role
+APPENDIX_A_PRESENT = 1
+APPENDIX_B_PRESENT = 1
+APPENDIX_C_HANDOUT_PRESENT = 1
+HANDOUT_STANDALONE_USABLE = 1
+HANDOUT_SCOPE_LEAKS = 0
 ```
 
-Generic warnings do not count as misconception repair.
+## 6. Chemistry typography contract — blocking
 
-## 7. Chemistry typography contract - blocking
-
-Use a Unicode-complete tested font family such as Noto Sans throughout chemistry-heavy programmatic PDFs.
-
-Learner-facing chemistry must use proper notation:
+Use tested Unicode-complete fonts. Learner-facing chemistry must use proper notation such as:
 
 ```text
 e⁻, 2e⁻
@@ -175,8 +169,6 @@ H₂O₂, K₂Cr₂O₇, Cr₂O₇²⁻
 ```
 
 Do not publish baseline ASCII chemistry such as `e-`, `Fe3+`, `Cr2O7^2-` in display text.
-
-If the chosen font does not support a required reaction arrow or chemistry glyph, use a tested fallback only for that formula/equation block or draw the symbol programmatically. Never allow missing-glyph squares.
 
 Emit:
 
@@ -187,57 +179,26 @@ SUBSCRIPT_FAILURES = 0
 FONT_FALLBACK_FAILURES = 0
 ```
 
-Any non-zero count blocks publication.
+## 7. ExamSIDE Solution & Transfer contract
 
-## 8. Layout contract - blocking
+Before publication, freeze the canonical required set for the topic. Each eligible external question has exactly one primary topic/concept home.
 
-Use independent title and subtitle zones. Long headings must wrap or shrink deterministically before render.
-
-Block publication for:
-
-- clipped title/subtitle;
-- title/subtitle collision;
-- body text outside boxes;
-- overlapping cards;
-- helper/hint collision;
-- answer strip clipping;
-- unreadably small chemistry;
-- accidental large voids with no pedagogical purpose;
-- broken left-to-right reasoning flow.
-
-For H1-H3 pages use deterministic fixed slots rather than estimating positions from text length.
-
-## 9. Study Guide practice progression
-
-For each core reasoning skill, include where applicable:
+Each question must contain:
 
 ```text
-worked example
--> TRY WITH ME
--> faded scaffold
--> independent check
--> CHECK YOUR KNOWLEDGE
-```
-
-Do not make the independent question an exact surface copy of the worked example.
-
-## 10. ExamSIDE transfer-book contract
-
-Before publication, freeze the canonical required set for the subtopic.
-
-Each eligible external question must receive exactly one primary subtopic. Secondary prerequisite concepts may be linked, but they do not create duplicate primary placement.
-
-Each placed question must contain:
-
-```text
-question ID + source/date
-original source link
-primary concept link to Study Guide
-difficulty level
+question ID + source/date/shift
+source badge + original source link
+PRIMARY concept label
+SUPPORTS prerequisite/secondary concept label(s) when needed
+concept segregation label
+question-family / difficulty badge
+transfer badge
+Core Study Guide cross-link
+H0 independent attempt
 H1 / H2 / H3 according to difficulty
-question-specific concept helper
-misconception watch when high-risk
-Appendix A full solution
+question-specific helper when needed
+misconception watch when relevant
+complete solution in the same ExamSIDE PDF
 ```
 
 Difficulty support:
@@ -245,12 +206,14 @@ Difficulty support:
 ```text
 1/3 -> H1
 2/3 -> H1-H2
-3/3 -> H1-H3 + stronger visual/concept helper
+3/3 -> H1-H3 + stronger representation/helper
 ```
 
-Hints must progressively reveal the route, not repeat the full solution.
+Hints progressively reveal the route; they do not repeat the full solution.
 
-## 11. Transfer-coverage audit
+The existing Redox ExamSIDE convention of placing full solutions in an end solution section may be retained, but Core Appendix A/B/C labels are reserved for the Core Study Guide contract.
+
+## 8. Transfer-coverage audit
 
 Run together with `grade9-transfer-coverage-auditor`.
 
@@ -270,41 +233,47 @@ SCOPE_LEAKS = 0
 COVERAGE = 1.00
 ```
 
-Also provide reverse evidence:
+Reverse evidence:
 
 ```text
-question -> primary subtopic -> Study Guide concept -> hint support -> Appendix A -> source link -> COMPLETE
+question -> primary topic/concept -> Core link -> badges -> hint support -> complete solution -> source link -> COMPLETE
 ```
 
-## 12. Render-first QA
+## 9. Render-first QA
 
-For every generated PDF:
+For both PDFs:
 
 ```text
 GENERATE
 -> RENDER EVERY PAGE
 -> INSPECT LONGEST TITLE
 -> INSPECT DENSEST CHEMISTRY PAGE
+-> INSPECT APPENDIX A
+-> INSPECT APPENDIX B
+-> INSPECT APPENDIX C HANDOUT
 -> INSPECT H1-H3 PAGE
--> INSPECT APPENDIX PAGE
+-> INSPECT COMPLETE SOLUTION PAGE
 -> INSPECT FINAL AUDIT PAGE
 -> REPAIR
 -> RE-RENDER
 -> PASS
 ```
 
-The rendered page is authoritative, not the source code.
+The rendered page is authoritative.
 
-## 13. Final subtopic gate
+## 10. Final topic gate
 
-Do not declare a subtopic final until all are PASS:
+Do not declare a Redox topic final until all are PASS:
 
 ```text
 SOURCE = PASS
 PEDAGOGY = PASS
+APPENDIX_A = PASS
+APPENDIX_B = PASS
+APPENDIX_C_HANDOUT = PASS
 TRANSFER = PASS
+CONCEPT_SEGREGATION = PASS
+BADGES = PASS
 TYPOGRAPHY = PASS
 LAYOUT = PASS
 ```
-
-If any fail, report the exact learner consequence and smallest repair before proceeding to the next subtopic.

@@ -1,11 +1,11 @@
 ---
 name: grade9-chemistry
-description: Apply Grade 9 Chemistry macroscopic-particle-symbolic reasoning, substance classification, conservation, reaction/process reasoning, experimental evidence, representation translation, misconception analysis, and difficulty calibration to textbooks and question banks. Use for matter, mixtures, atomic structure, periodicity, chemical reactions, formulas/equations, separation, acids/bases, practical work, HOTS, and competitive-foundation chemistry within the Grade 9 learning workflow.
+description: Apply Grade 9 Chemistry macroscopic-particle-symbolic reasoning, conservation, reaction/process reasoning, experimental evidence, misconception analysis, difficulty calibration, topic-level two-file publication, and Chemistry review contracts. Use for matter, mixtures, atomic structure, periodicity, chemical reactions, formulas/equations, separation, acids/bases, practical work, HOTS, competitive-foundation chemistry, and source-grounded Chemistry topic production.
 ---
 
 # Grade 9 Chemistry
 
-Provide the subject-specific chemistry reasoning layer for the shared Grade 9 workflow.
+Provide the subject-specific Chemistry reasoning layer for the shared Grade 9 workflow.
 
 ## Core representation model
 
@@ -13,7 +13,7 @@ Treat chemistry learning as movement among:
 
 `MACROSCOPIC <-> PARTICULATE <-> SYMBOLIC`
 
-For each question identify which level is given and which level(s) the learner must infer or construct.
+For each topic/question identify which level is given and which level(s) the learner must infer or construct.
 
 ## Chemistry fingerprint
 
@@ -94,13 +94,52 @@ Maintain causal misconception families such as:
 - coefficients change chemical formulas;
 - any visible change proves chemical reaction.
 
-## Redox subtopic-book routing
+## Mandatory Chemistry topic-production routing
 
-When the task is the source-grounded Redox Study Guide + ExamSIDE transfer-book workflow, invoke `grade9-redox-subtopic-book-builder` together with:
+When **any Chemistry topic** is taken up for learner-facing production, route through `$grade9-chemistry-topic-builder`.
+
+The subject-wide topic contract is:
+
+```text
+TWO FILES ONLY PER TOPIC
+
+1. CORE STUDY GUIDE
+   -> teaching narrative
+   -> Appendix A: Core Practice
+   -> Appendix B: Core Solutions
+   -> Appendix C: Printable Handout
+
+2. EXAMSIDE SOLUTION & TRANSFER
+   -> attempt-first question
+   -> source/difficulty/transfer/concept badges
+   -> primary-vs-support concept segregation label
+   -> H1/H2/H3 optional hints as required
+   -> concept helper / misconception watch when needed
+   -> Core cross-link + source link
+   -> complete solution
+```
+
+Appendix C is mandatory. Do not emit a separate handout PDF; the handout lives inside the Core Study Guide.
+
+The generic contracts live at:
+
+- `Grade 9/Chemistry/CHEMISTRY_PUBLICATION_SCHEMA.md`
+- `Grade 9/Chemistry/schema/chemistry-topic-delivery.schema.json`
+- `Grade 9/skills/grade9-chemistry-topic-builder/SKILL.md`
+
+## Chemistry publication/review routing
+
+After a topic/chapter has passed content/source/corpus audits and needs repository packaging, exact artifact custody, source/corpus reconciliation, PDF/link/notation/appendix QA or a draft PR review package, invoke `$grade9-chemistry-publication-review`.
+
+Technical publication PASS must verify the two-file topic contract and Core Appendix A/B/C presence, including Appendix C handout, in addition to source/corpus and artifact QA.
+
+## Redox authoring routing
+
+When the topic is Redox, invoke `$grade9-chemistry-topic-builder` as the generic contract and `grade9-redox-subtopic-book-builder` as the Redox-specific reasoning adapter, together with:
 
 - `grade9-subtopic-completeness-auditor` for source/pedagogy/typography/layout gates;
 - `grade9-transfer-coverage-auditor` for canonical external-question accounting.
 
-The dedicated Redox builder carries the approved instructional grammar, chemistry typography rules, misconception patterns, concept helpers, difficulty-based H1-H3 support, Appendix A contract, and render-first QA loop learned from Redox Subtopics 01-04.
+The Redox adapter may specialize concept helpers and misconception patterns, but it may not change the Chemistry-wide two-file or Appendix A/B/C contract.
 
 Use the shared question-bank and learning-enrichment skills for bank construction and diagnostics.

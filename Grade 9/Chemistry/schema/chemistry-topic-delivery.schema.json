@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/reallaksh19/Common/Grade%209/Chemistry/schema/chemistry-topic-delivery.schema.json",
+  "title": "Grade 9 Chemistry Topic Delivery",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "subject",
+    "topic_id",
+    "core_study_guide",
+    "examside_solution_transfer"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "subject": {"const": "Chemistry"},
+    "topic_id": {"type": "string", "minLength": 1},
+    "topic_title": {"type": "string", "minLength": 1},
+    "core_study_guide": {
+      "type": "object",
+      "required": ["artifact_id", "filename", "appendices"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "filename": {"type": "string", "pattern": "\\.pdf$"},
+        "artifact_role": {"const": "CORE_STUDY_GUIDE"},
+        "appendices": {
+          "type": "object",
+          "required": ["A", "B", "C"],
+          "properties": {
+            "A": {
+              "type": "object",
+              "required": ["role", "present"],
+              "properties": {
+                "role": {"const": "CORE_PRACTICE"},
+                "present": {"const": true},
+                "page_start": {"type": "integer", "minimum": 1},
+                "page_end": {"type": "integer", "minimum": 1}
+              },
+              "additionalProperties": true
+            },
+            "B": {
+              "type": "object",
+              "required": ["role", "present"],
+              "properties": {
+                "role": {"const": "CORE_SOLUTIONS"},
+                "present": {"const": true},
+                "page_start": {"type": "integer", "minimum": 1},
+                "page_end": {"type": "integer", "minimum": 1}
+              },
+              "additionalProperties": true
+            },
+            "C": {
+              "type": "object",
+              "required": ["role", "present", "printable_handout"],
+              "properties": {
+                "role": {"const": "PRINTABLE_HANDOUT"},
+                "present": {"const": true},
+                "printable_handout": {"const": true},
+                "page_start": {"type": "integer", "minimum": 1},
+                "page_end": {"type": "integer", "minimum": 1},
+                "standalone_usable": {"type": "boolean"},
+                "introduces_new_chemistry": {"const": false}
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "examside_solution_transfer": {
+      "type": "object",
+      "required": ["artifact_id", "filename", "question_contract"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "filename": {"type": "string", "pattern": "\\.pdf$"},
+        "artifact_role": {"const": "EXAMSIDE_SOLUTION_TRANSFER"},
+        "question_contract": {
+          "type": "object",
+          "required": [
+            "source_badge",
+            "difficulty_badge",
+            "transfer_badge",
+            "primary_concept_label",
+            "concept_segregation_label",
+            "core_cross_link",
+            "h0_attempt_first",
+            "progressive_hints",
+            "complete_solution",
+            "source_link"
+          ],
+          "properties": {
+            "source_badge": {"const": true},
+            "difficulty_badge": {"const": true},
+            "transfer_badge": {"const": true},
+            "scope_or_placement_badge": {"type": "boolean"},
+            "primary_concept_label": {"const": true},
+            "concept_segregation_label": {"const": true},
+            "secondary_concept_labels": {"type": "boolean"},
+            "core_cross_link": {"const": true},
+            "h0_attempt_first": {"const": true},
+            "progressive_hints": {"const": true},
+            "complete_solution": {"const": true},
+            "concept_helper_when_needed": {"type": "boolean"},
+            "misconception_watch_when_needed": {"type": "boolean"},
+            "source_link": {"const": true}
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
