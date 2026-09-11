@@ -1,0 +1,15 @@
+{
+  "criteria": [
+    {"criterion_id": "LEGIBILITY", "description": "Mathematical typography is readable at normal print/view scale.", "required": true},
+    {"criterion_id": "HIERARCHY", "description": "Visual hierarchy and grouping are clear.", "required": true},
+    {"criterion_id": "WORKSPACE", "description": "Answer/workspace allocation is sufficient.", "required": true},
+    {"criterion_id": "PAGE_DENSITY", "description": "Page density is intentional rather than sparse or crowded.", "required": true},
+    {"criterion_id": "CONTRAST_COMPARABILITY", "description": "Contrast alternatives are visually comparable.", "required": true},
+    {"criterion_id": "PROBE_SEPARATION", "description": "Probe and preserved-strength sections are visually distinguished.", "required": true},
+    {"criterion_id": "SEQUENCE", "description": "Sequence across pages is legible without internal IDs.", "required": true},
+    {"criterion_id": "CLIPPING_GLYPHS", "description": "No clipping, overlap, broken glyphs, or malformed mathematical rendering.", "required": true}
+  ],
+  "review_dimension": "VISUAL",
+  "rubric_id": "MATH-VISUAL-RUBRIC-1",
+  "schema_version": "1.0.0"
+}

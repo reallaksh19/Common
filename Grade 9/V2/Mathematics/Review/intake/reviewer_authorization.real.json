@@ -1,0 +1,11 @@
+{
+  "authorized_reviewers": {
+    "HUMAN_PEDAGOGY": [],
+    "HUMAN_SUBJECT": [],
+    "HUMAN_VISUAL": []
+  },
+  "registry_class": "REAL",
+  "registry_id": "MATH-HUMAN-REVIEWERS-REAL",
+  "schema_version": "1.0.0",
+  "version": "REAL-UNCONFIGURED-1"
+}

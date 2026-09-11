@@ -1,0 +1,14 @@
+{
+  "criteria": [
+    {"criterion_id": "EQ_EQUIVALENCE", "description": "Equality transformations preserve equivalence.", "required": true},
+    {"criterion_id": "ARITHMETIC", "description": "Worked arithmetic is mathematically correct.", "required": true},
+    {"criterion_id": "ONE_OPERATION", "description": "One-operation-per-line reasoning is valid.", "required": true},
+    {"criterion_id": "BINOMIAL_IDENTITY", "description": "Binomial-square identity and examples are correct.", "required": true},
+    {"criterion_id": "SLOPE_SEMANTICS", "description": "Ordered-pair and slope semantics are valid.", "required": true},
+    {"criterion_id": "VERIFICATION_VALIDITY", "description": "Verification methods are valid for the tasks.", "required": true},
+    {"criterion_id": "NOTATION", "description": "Notation and mathematical language are not misleading.", "required": true}
+  ],
+  "review_dimension": "SUBJECT",
+  "rubric_id": "MATH-SUBJECT-RUBRIC-1",
+  "schema_version": "1.0.0"
+}

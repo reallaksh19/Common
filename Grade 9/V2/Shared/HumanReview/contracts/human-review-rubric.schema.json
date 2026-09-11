@@ -1,0 +1,13 @@
+{
+  "$id": "human-review-rubric.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "criteria": {"items": {"additionalProperties": false, "properties": {"criterion_id": {"minLength": 1, "type": "string"}, "description": {"minLength": 1, "type": "string"}, "required": {"type": "boolean"}}, "required": ["criterion_id", "required", "description"], "type": "object"}, "minItems": 1, "type": "array"},
+    "review_dimension": {"enum": ["SUBJECT", "PEDAGOGY", "VISUAL"]},
+    "rubric_id": {"minLength": 1, "type": "string"},
+    "schema_version": {"const": "1.0.0"}
+  },
+  "required": ["schema_version", "rubric_id", "review_dimension", "criteria"],
+  "type": "object"
+}

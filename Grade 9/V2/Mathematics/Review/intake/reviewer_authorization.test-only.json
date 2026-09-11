@@ -1,0 +1,11 @@
+{
+  "authorized_reviewers": {
+    "HUMAN_PEDAGOGY": ["test-pedagogy-001"],
+    "HUMAN_SUBJECT": ["test-subject-001"],
+    "HUMAN_VISUAL": ["test-visual-001"]
+  },
+  "registry_class": "TEST_ONLY",
+  "registry_id": "MATH-HUMAN-REVIEWERS-TEST",
+  "schema_version": "1.0.0",
+  "version": "TEST-1"
+}

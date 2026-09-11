@@ -1,0 +1,28 @@
+{
+  "attestation": {"affirmed": true, "statement": "TEST_ONLY synthetic reviewer attestation; not release evidence."},
+  "candidate_artifact_sha256": "ca77eb7220e3857b2a6e9877de4358903b8b2aa0623208c0a527d059a6c4c70d",
+  "evidence_refs": ["TEST_ONLY:synthetic"],
+  "findings": [],
+  "review_dimension": "PEDAGOGY",
+  "review_status": "PASS",
+  "reviewer_authorization_version": "TEST-1",
+  "reviewer_class": "HUMAN_PEDAGOGY",
+  "reviewer_id": "test-pedagogy-001",
+  "rubric_id": "MATH-PEDAGOGY-RUBRIC-1",
+  "rubric_results": [
+    {"criterion_id": "STRENGTH_ENTRY", "disposition": "PASS", "evidence": "TEST_ONLY evidence for STRENGTH_ENTRY"},
+    {"criterion_id": "PREDICTION_ANSWERABLE", "disposition": "PASS", "evidence": "TEST_ONLY evidence for PREDICTION_ANSWERABLE"},
+    {"criterion_id": "MINIMAL_CONTRAST", "disposition": "PASS", "evidence": "TEST_ONLY evidence for MINIMAL_CONTRAST"},
+    {"criterion_id": "FADING", "disposition": "PASS", "evidence": "TEST_ONLY evidence for FADING"},
+    {"criterion_id": "PROBE_FIRST", "disposition": "PASS", "evidence": "TEST_ONLY evidence for PROBE_FIRST"},
+    {"criterion_id": "VERIFICATION_ACTION", "disposition": "PASS", "evidence": "TEST_ONLY evidence for VERIFICATION_ACTION"},
+    {"criterion_id": "TRANSFER", "disposition": "PASS", "evidence": "TEST_ONLY evidence for TRANSFER"},
+    {"criterion_id": "COMPLETION_EVIDENCE", "disposition": "PASS", "evidence": "TEST_ONLY evidence for COMPLETION_EVIDENCE"},
+    {"criterion_id": "WORKSPACE", "disposition": "PASS", "evidence": "TEST_ONLY evidence for WORKSPACE"}
+  ],
+  "schema_version": "1.0.0",
+  "source": "HUMAN_SUBMISSION",
+  "submission_id": "TEST-PEDAGOGY-PASS-001",
+  "submitted_at": "2026-09-11T08:30:00Z",
+  "test_only": true
+}

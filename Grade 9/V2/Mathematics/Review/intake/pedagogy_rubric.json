@@ -1,0 +1,16 @@
+{
+  "criteria": [
+    {"criterion_id": "STRENGTH_ENTRY", "description": "Demonstrated strengths remain entry points rather than unnecessary reteach.", "required": true},
+    {"criterion_id": "PREDICTION_ANSWERABLE", "description": "Prediction is answerable before explanation.", "required": true},
+    {"criterion_id": "MINIMAL_CONTRAST", "description": "Minimal contrasts are concrete and discriminable.", "required": true},
+    {"criterion_id": "FADING", "description": "Worked to guided to faded to independent support genuinely decreases.", "required": true},
+    {"criterion_id": "PROBE_FIRST", "description": "Ambiguous slope semantics remain probe-first.", "required": true},
+    {"criterion_id": "VERIFICATION_ACTION", "description": "Verification is a learner action rather than decorative text.", "required": true},
+    {"criterion_id": "TRANSFER", "description": "Transfer is structurally non-isomorphic.", "required": true},
+    {"criterion_id": "COMPLETION_EVIDENCE", "description": "Completion task can evidence independent performance.", "required": true},
+    {"criterion_id": "WORKSPACE", "description": "Workspace is sufficient for requested learner actions.", "required": true}
+  ],
+  "review_dimension": "PEDAGOGY",
+  "rubric_id": "MATH-PEDAGOGY-RUBRIC-1",
+  "schema_version": "1.0.0"
+}

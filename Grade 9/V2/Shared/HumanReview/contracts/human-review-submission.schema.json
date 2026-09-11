@@ -1,0 +1,25 @@
+{
+  "$id": "human-review-submission.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attestation": {"additionalProperties": false, "properties": {"affirmed": {"const": true}, "statement": {"minLength": 1, "type": "string"}}, "required": ["affirmed", "statement"], "type": "object"},
+    "candidate_artifact_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "evidence_refs": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array"},
+    "findings": {"items": {"additionalProperties": false, "properties": {"finding_id": {"minLength": 1, "type": "string"}, "severity": {"enum": ["BLOCKING", "NON_BLOCKING"]}, "statement": {"minLength": 1, "type": "string"}, "status": {"enum": ["OPEN", "CLOSED"]}}, "required": ["finding_id", "severity", "status", "statement"], "type": "object"}, "type": "array"},
+    "review_dimension": {"enum": ["SUBJECT", "PEDAGOGY", "VISUAL"]},
+    "review_status": {"enum": ["PASS", "FAIL"]},
+    "reviewer_authorization_version": {"minLength": 1, "type": "string"},
+    "reviewer_class": {"enum": ["HUMAN_SUBJECT", "HUMAN_PEDAGOGY", "HUMAN_VISUAL"]},
+    "reviewer_id": {"minLength": 1, "type": "string"},
+    "rubric_id": {"minLength": 1, "type": "string"},
+    "rubric_results": {"items": {"additionalProperties": false, "properties": {"criterion_id": {"minLength": 1, "type": "string"}, "disposition": {"enum": ["PASS", "FAIL"]}, "evidence": {"minLength": 1, "type": "string"}}, "required": ["criterion_id", "disposition", "evidence"], "type": "object"}, "minItems": 1, "type": "array"},
+    "schema_version": {"const": "1.0.0"},
+    "source": {"const": "HUMAN_SUBMISSION"},
+    "submission_id": {"minLength": 1, "type": "string"},
+    "submitted_at": {"format": "date-time", "type": "string"},
+    "test_only": {"type": "boolean"}
+  },
+  "required": ["submission_id", "schema_version", "candidate_artifact_sha256", "review_dimension", "reviewer_class", "reviewer_id", "reviewer_authorization_version", "review_status", "rubric_id", "rubric_results", "findings", "evidence_refs", "attestation", "submitted_at", "source", "test_only"],
+  "type": "object"
+}

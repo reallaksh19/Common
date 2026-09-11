@@ -1,0 +1,75 @@
+name: V2 Human Review Intake
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Shared/HumanReview/**"
+      - "Grade 9/V2/Mathematics/Review/intake/**"
+      - "Grade 9/V2/Mathematics/Validation/**"
+      - ".github/workflows/v2-human-review-intake.yml"
+  workflow_dispatch:
+
+jobs:
+  human-review-intake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator
+        run: python -m pip install "jsonschema>=4.20,<5"
+      - name: Validate shared human-review contracts
+        run: python "Grade 9/V2/Shared/HumanReview/contracts/validate_contracts.py"
+      - name: Run human-review intake falsifiers
+        run: python "Grade 9/V2/Shared/HumanReview/tests/test_human_review_intake.py"
+      - name: Project current real Math review state
+        run: |
+          SHARED="Grade 9/V2/Shared/HumanReview"
+          MATH="Grade 9/V2/Mathematics/Review/intake"
+          python "$SHARED/engine/ingest_human_reviews.py" --candidate "$MATH/candidate_binding.json" --registry "$MATH/reviewer_authorization.real.json" --policy "$MATH/review_policy.json" --rubric-dir "$MATH" --submissions-dir "$MATH/submissions/real" --mode REAL_RELEASE --out /tmp/math-human-review-real.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/math-human-review-real.json')); q=r['quality_review_summary']['quality_states']
+          assert [q['SUBJECT_CORRECTNESS'],q['PEDAGOGY_USABILITY'],q['VISUAL_USABILITY']]==['PENDING','PENDING','PENDING']
+          assert r['accepted_submission_ids']==[] and r['release_evidence_eligible'] is False
+          print('real Math human review projection = PENDING/PENDING/PENDING')
+          PY
+      - name: Prove MATH-V2-07 remains blocked by real intake output
+        run: |
+          VAL="Grade 9/V2/Mathematics/Validation"
+          rm -f /tmp/SHOULD_NOT_BE_READ.json
+          python "$VAL/engine/check_eligibility.py" --binding "$VAL/fixtures/current_candidate_binding.json" --quality-summary /tmp/math-human-review-real.json --reference-registry /tmp/SHOULD_NOT_BE_READ.json --out /tmp/math-final-eligibility.json
+          python - <<'PY'
+          import json, pathlib
+          r=json.load(open('/tmp/math-final-eligibility.json'))
+          assert r['status']=='BLOCKED_HUMAN_QUALITY_GATES' and r['reference_read_attempted'] is False
+          assert not pathlib.Path('/tmp/SHOULD_NOT_BE_READ.json').exists()
+          print('MATH-V2-07 remains blocked before reference read = PASS')
+          PY
+      - name: Exercise TEST_ONLY pass and fail projections
+        run: |
+          SHARED="Grade 9/V2/Shared/HumanReview"
+          MATH="Grade 9/V2/Mathematics/Review/intake"
+          for CASE in pass fail; do
+            python "$SHARED/engine/ingest_human_reviews.py" --candidate "$MATH/candidate_binding.json" --registry "$MATH/reviewer_authorization.test-only.json" --policy "$MATH/review_policy.json" --rubric-dir "$MATH" --submissions-dir "$MATH/submissions/test-only/$CASE" --mode TEST_ONLY --out "/tmp/$CASE.json"
+          done
+          python - <<'PY'
+          import json
+          p=json.load(open('/tmp/pass.json')); f=json.load(open('/tmp/fail.json'))
+          qp=p['quality_review_summary']['quality_states']; qf=f['quality_review_summary']['quality_states']
+          assert [qp['SUBJECT_CORRECTNESS'],qp['PEDAGOGY_USABILITY'],qp['VISUAL_USABILITY']]==['PASS','PASS','PASS']
+          assert qf['VISUAL_USABILITY']=='FAIL'
+          assert p['release_evidence_eligible'] is False and f['release_evidence_eligible'] is False
+          print('TEST_ONLY human review projections = PASS')
+          PY
+      - name: Upload human-review intake proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2-human-review-intake-proof
+          path: |
+            /tmp/math-human-review-real.json
+            /tmp/math-final-eligibility.json
+            /tmp/pass.json
+            /tmp/fail.json
+          if-no-files-found: error
