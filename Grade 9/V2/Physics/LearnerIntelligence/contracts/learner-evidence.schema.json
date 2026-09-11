@@ -1,0 +1,27 @@
+{
+  "$id": "learner-evidence.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {"minLength": 1, "type": "string"},
+          "checkpoint_observations": {"items": {"additionalProperties": false, "properties": {"checkpoint_ref": {"pattern": "^PHY-[A-Z0-9-]+$", "type": "string"}, "evidence_note": {"minLength": 1, "type": "string"}, "status": {"enum": ["VALID", "INVALID", "AMBIGUOUS"]}}, "required": ["checkpoint_ref", "status", "evidence_note"], "type": "object"}, "type": "array"},
+          "external_dependency_observations": {"items": {"additionalProperties": false, "properties": {"dependency_ref": {"pattern": "^SHARED-[A-Z0-9-]+$", "type": "string"}, "evidence_note": {"minLength": 1, "type": "string"}, "status": {"enum": ["VALID", "INVALID", "AMBIGUOUS"]}}, "required": ["dependency_ref", "status", "evidence_note"], "type": "object"}, "type": "array"},
+          "independent_attempt": {"const": true}
+        },
+        "required": ["attempt_id", "independent_attempt", "checkpoint_observations", "external_dependency_observations"],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "fixture_class": {"const": "PUBLIC_SYNTHETIC"},
+    "schema_version": {"const": "1.0.0"},
+    "synthetic_learner_id": {"pattern": "^SYNTHETIC-", "type": "string"}
+  },
+  "required": ["schema_version", "fixture_class", "synthetic_learner_id", "attempts"],
+  "type": "object"
+}
