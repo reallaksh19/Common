@@ -52,12 +52,20 @@ def _ordered(text: str, markers: list[str]) -> bool:
     return True
 
 
-def _learner_step_marker(step: dict) -> str:
+def _learner_step_marker(step: dict) -> str | None:
+    """Return a required learner-visible cue for a semantic step.
+
+    DEPICTION deliberately returns no text marker unless the structure declares
+    an explicit learner-visible heading. A rendered representation is proved by
+    content_ref custody and PhysicalPageMap placement; requiring the literal
+    word ``DEPICTION`` would leak authoring metadata into learner pages.
+    """
     if step.get("learner_visible_heading"):
         return step["learner_visible_heading"]
+    if step.get("role") == "DEPICTION":
+        return None
     return {
         "PHYSICAL_SITUATION": "PHYSICAL SITUATION",
-        "DEPICTION": "DEPICTION",
         "NOTICE": "NOTICE",
         "SAY_IN_WORDS": "SAY IN WORDS",
         "CONCEPT_INVARIANT": "CONCEPT INVARIANT",
@@ -111,7 +119,9 @@ def validate_structure_package(argv: list[str]) -> int:
             step_markers = []
             for unit in structure["study_guide"]["learning_units"]:
                 for step in unit["arc_steps"]:
-                    step_markers.append(_learner_step_marker(step))
+                    marker = _learner_step_marker(step)
+                    if marker:
+                        step_markers.append(marker)
                     arc_refs.extend(step["content_refs"])
             page_refs = [ref for page in structure["study_guide"]["page_intents"] for ref in page["content_refs"]]
             if page_refs != arc_refs:
