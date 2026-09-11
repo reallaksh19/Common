@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"canonical-knowledge-set.schema.json",
+  "title":"V2 CanonicalKnowledgeSet",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","status","request_id","canonical_registry_version","resolver_policy_version","primary_assets","dependency_assets","dependency_edges","resolution_records","knowledge_set_digest"],
+  "properties":{
+    "schema_version":{"const":"0.1.0"},
+    "status":{"const":"SUCCESS"},
+    "request_id":{"type":"string","minLength":1},
+    "canonical_registry_version":{"type":"string","minLength":3},
+    "resolver_policy_version":{"type":"string","minLength":3},
+    "primary_assets":{"type":"array","items":{"$ref":"#/$defs/resolved_asset"}},
+    "dependency_assets":{"type":"array","items":{"$ref":"#/$defs/resolved_asset"}},
+    "dependency_edges":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["from","to","relation","reason"],"properties":{"from":{"type":"string"},"to":{"type":"string"},"relation":{"type":"string"},"reason":{"type":"string"}}}},
+    "resolution_records":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["canonical_id","role","action"],"properties":{"canonical_id":{"type":"string"},"role":{"enum":["PRIMARY","DEPENDENCY"]},"action":{"enum":["REUSE_EXISTING","COMPOSE_DEPENDENCY","REVALIDATE"]}}}},
+    "knowledge_set_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  },
+  "$defs":{"resolved_asset":{"type":"object","additionalProperties":false,"required":["canonical_id","asset_version","subject_domain","semantic_kind","semantic_digest"],"properties":{"canonical_id":{"type":"string"},"asset_version":{"type":"string"},"subject_domain":{"type":"string"},"semantic_kind":{"type":"string"},"semantic_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}}
+}

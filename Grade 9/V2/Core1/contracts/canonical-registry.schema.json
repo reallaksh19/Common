@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "canonical-registry.schema.json",
+  "title": "V2 Canonical Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","registry_version","resolver_policy_version","assets"],
+  "properties": {
+    "schema_version": {"const":"0.1.0"},
+    "registry_version": {"type":"string","minLength":3},
+    "resolver_policy_version": {"type":"string","minLength":3},
+    "assets": {"type":"array","items":{"$ref":"canonical-asset.schema.json"}}
+  }
+}
