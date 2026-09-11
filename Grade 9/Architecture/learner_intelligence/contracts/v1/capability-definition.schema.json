@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capability-definition.schema.json",
+  "title": "CapabilityDefinition v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["capability_id", "scope", "reasoning_stage", "description", "success_criteria"],
+  "properties": {
+    "capability_id": {"type": "string", "minLength": 1},
+    "scope": {"enum": ["SHARED", "MATHEMATICS", "PHYSICS", "CHEMISTRY"]},
+    "domain": {"type": "string"},
+    "reasoning_stage": {"type": "string", "minLength": 1},
+    "capability_class": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["CONCEPTUAL", "REPRESENTATIONAL", "MODEL_SELECTION", "PROCEDURAL", "SYMBOLIC", "QUANTITATIVE", "STATE_TRACKING", "VALIDATION", "EXPERIMENTAL", "TRANSFER"]}},
+    "description": {"type": "string", "minLength": 1},
+    "concept_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "prerequisite_capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "success_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "error_signature_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "diagnostic_probe_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+  }
+}
