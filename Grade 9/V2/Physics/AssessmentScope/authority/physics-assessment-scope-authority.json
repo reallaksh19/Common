@@ -1,6 +1,6 @@
 {
   "authority_class": "PHYSICS_ASSESSMENT_SCOPE_AUTHORITY",
-  "authority_digest": "f84d2c63c6a46cfb6e4ba147d641476da5dc6000ae2983c00327fee48f6eac8d",
+  "authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
   "authority_id": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
   "authority_scope": "CONCEPT_CAPABILITY_SYSTEM_FRAME_STATE_PHASE_MODEL_PROBLEM_FAMILY_IDENTITY",
   "canonical_capability_registry_digest": "2c0908eac7409c5087f1a1225eee3f66cfc01d1819f40801554549ef390e1bdb",
@@ -613,6 +613,7 @@
     "PROPAGATE_STATE",
     "EXECUTE",
     "CHECK_CONDITION",
+    "COMPARE",
     "VERIFY",
     "INTERPRET_RESULT"
   ],
