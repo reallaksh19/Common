@@ -79,6 +79,9 @@ EXACT_TEXT_REPLACEMENTS={
     'Provide no procedural cue beyond the task and source-authorized representation.':'Try it independently using only the information in the task.',
     'Use explicit first-move and representation cues.':'Use the first-move and representation cues shown here.',
     'Remove one supplied cue and require the learner to choose the next move.':'One cue has been removed; choose the next move yourself.',
+    'No additional condition/exception is required by this capability record.':'No additional condition or exception is required for this task.',
+    'Preserve and apply: EXPLICIT_EXCEPTION, explicit exception supplied by source':'Preserve the explicit exception supplied with the task.',
+    'EXPLICIT_EXCEPTION':'explicit exception',
 }
 
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
