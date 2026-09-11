@@ -40,3 +40,6 @@ jobs:
 
       - name: Validate Grade 4 subject skill wiring
         run: python Primary/Architecture/contracts/v1/validate_grade4_skill_wiring.py
+
+      - name: Validate Grade 4 English Phase-5 fixtures
+        run: python Primary/Architecture/contracts/v1/validate_grade4_english_phase5.py
