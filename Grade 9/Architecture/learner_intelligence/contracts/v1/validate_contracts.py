@@ -7,7 +7,7 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parent
 SCHEMAS = [
-    "common.schema.json",
+    "learner-intelligence-common.schema.json",
     "learner-evidence-ledger.schema.json",
     "reasoning-observation.schema.json",
     "diagnostic-case.schema.json",
