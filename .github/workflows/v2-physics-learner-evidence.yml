@@ -34,3 +34,7 @@ jobs:
         run: python "Grade 9/V2/Physics/LearnerEvidence/contracts/validate_contracts.py"
       - name: Run P-E optional-evidence and diagnostic falsifiers
         run: python "Grade 9/V2/Physics/LearnerEvidence/tests/test_physics_learner_evidence.py"
+      - name: Re-prove pre-P-F StudySynthesis compatibility
+        run: |
+          python "Grade 9/V2/Physics/StudySynthesis/contracts/validate_contracts.py"
+          python "Grade 9/V2/Physics/StudySynthesis/tests/test_physics_study_model.py"

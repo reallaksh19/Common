@@ -1,0 +1,19 @@
+{
+  "$id": "learner-state-snapshot.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_semantic_digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "capability_states": {"type": "array"},
+    "diagnostic_cases": {"type": "array"},
+    "external_dependency_observations": {"type": "array"},
+    "fixture_class": {"const": "PUBLIC_SYNTHETIC"},
+    "forbidden_inferences": {"items": {"type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+    "policy_id": {"type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "semantic_digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "snapshot_id": {"const": "PHY-V2-02-STATE-SYN-001"}
+  },
+  "required": ["schema_version", "snapshot_id", "fixture_class", "canonical_semantic_digest", "policy_id", "capability_states", "diagnostic_cases", "external_dependency_observations", "forbidden_inferences", "semantic_digest"],
+  "type": "object"
+}

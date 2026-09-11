@@ -41,7 +41,7 @@ Physics adds only:
 - a Physics diagnostic inference policy
 - the deterministic P-E inference engine and falsifiers
 
-The superseded Physics-only `LearnerIntelligence` interface scaffold is removed by this phase so shared contracts remain the single cross-subject contract family.
+The earlier Physics-only `LearnerIntelligence` proof remains temporarily in the repository as a **compatibility-only legacy surface for the pre-P-F StudySynthesis implementation**. It is not P-E authority and P-E does not consume it. P-F / #254 owns migration of Study Synthesis to the new assessment-scope-complete P-E interface; deleting the legacy proof before that migration would break an existing downstream CI contract.
 
 ## Required invariants
 
@@ -102,6 +102,7 @@ CI reconstructs and re-proves P-A, P-B, P-C and P-D before P-E tests. It then pr
 4. one error remains probe-required rather than confirmed;
 5. invalid/blocked source items cannot create negative diagnosis;
 6. two independent high-confidence negative observations are required before `CONFIRMED`;
-7. deterministic replay is byte-stable.
+7. deterministic replay is byte-stable;
+8. the pre-P-F StudySynthesis compatibility proof remains green until #254 migrates that consumer.
 
 No StudyModel treatment, Core1 authoring, H1/H2/H3 wording, longitudinal promotion or publication layout is implemented here.
