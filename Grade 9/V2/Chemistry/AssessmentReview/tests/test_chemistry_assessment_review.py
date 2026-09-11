@@ -112,7 +112,7 @@ expect_error('SOURCE_REVIEW_SOURCE_DRIFT',lambda:build_review(copy.deepcopy(sour
 bad=copy.deepcopy(registry); r=review_q(bad,'CQ05'); r['validity_state']='VALID_MULTIPLE_INTERPRETATIONS'; r['diagnostic_use']='PARTIAL'; r['canonical_interpretations']=['only one interpretation retained']; redigest_registry(bad)
 expect_error('MULTIPLE_INTERPRETATIONS_FORCED_TO_ONE',lambda:build_review(copy.deepcopy(sources),copy.deepcopy(questions),bad,copy.deepcopy(policy),copy.deepcopy(qc)))
 
-again=build_review(copy.deepcopy(sources),copy.deepcopy(questions),copy.deepcopy(registry),copy.deepcopy(policy),copy.deepcopy(qc))
+again=build_review(copy.deepcopy(sources),copy.deepcopy(questions),copy.deepcopy(registry),copy.deepcopy(policy),copy.deepcopy(qc),registry_manifest_digest=registry_manifest_digest)
 assert json.dumps(bundle,sort_keys=True,separators=(',',':'),ensure_ascii=False)==json.dumps(again,sort_keys=True,separators=(',',':'),ensure_ascii=False)
 print('CHEMISTRY C-B required falsifiers = 11 PASS')
 print('CHEMISTRY C-B extra coverage/provenance falsifiers = 3 PASS')
