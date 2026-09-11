@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research-claim.schema.json",
+  "title": "ResearchClaim v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claim_id", "traceability_class", "claim_type", "statement", "verification_status", "source_refs"],
+  "properties": {
+    "claim_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "traceability_class": {"$ref": "common.schema.json#/$defs/traceability_class"},
+    "claim_type": {"enum": ["CANONICAL_FACT", "CONDITION", "DERIVATION", "MODEL", "METHOD", "EXAM_FACT", "EDITORIAL_ANALYSIS"]},
+    "statement": {"type": "string", "minLength": 1},
+    "concept_ids": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+      "default": []
+    },
+    "verification_status": {"$ref": "common.schema.json#/$defs/verification_state"},
+    "source_refs": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/stable_id"}
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/evidence_ref"},
+      "default": []
+    },
+    "conditions": {"type": "array", "items": {"type": "string"}, "default": []},
+    "edge_cases": {"type": "array", "items": {"type": "string"}, "default": []},
+    "confidence": {"$ref": "common.schema.json#/$defs/confidence"}
+  }
+}

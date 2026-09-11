@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source-ledger.schema.json",
+  "title": "SourceLedger v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_ledger_id", "schema_version", "sources"],
+  "properties": {
+    "source_ledger_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "provider", "source_type", "retrieved_at", "authority_level", "verification_status", "rights"],
+        "properties": {
+          "source_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "provider": {"type": "string", "minLength": 1},
+          "source_type": {"type": "string", "minLength": 1},
+          "url": {"type": "string", "format": "uri"},
+          "repo_path": {"type": "string", "minLength": 1},
+          "retrieved_at": {"$ref": "common.schema.json#/$defs/iso_datetime"},
+          "content_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "authority_level": {"$ref": "common.schema.json#/$defs/authority_level"},
+          "verification_status": {"$ref": "common.schema.json#/$defs/verification_state"},
+          "scope_role": {"type": "string"},
+          "rights": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status"],
+            "properties": {
+              "status": {"$ref": "common.schema.json#/$defs/rights_status"},
+              "basis": {"type": "string"},
+              "allowed_uses": {"type": "array", "items": {"type": "string"}, "default": []},
+              "prohibited_uses": {"type": "array", "items": {"type": "string"}, "default": []},
+              "review_note": {"type": "string"}
+            }
+          },
+          "fresh_until": {"type": "string", "format": "date"},
+          "notes": {"type": "string"}
+        },
+        "anyOf": [
+          {"required": ["url"]},
+          {"required": ["repo_path"]}
+        ]
+      }
+    }
+  }
+}

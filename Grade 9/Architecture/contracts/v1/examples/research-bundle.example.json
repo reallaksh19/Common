@@ -1,0 +1,102 @@
+{
+  "research_bundle_id": "RB-G9-PHY-NLM-001",
+  "schema_version": "1.0.0",
+  "evidence_version": "1.0.0",
+  "status": "READY_FOR_PUBLISH",
+  "project": {
+    "grade": 9,
+    "subject": "PHYSICS",
+    "topic_id": "PHY-NLM",
+    "title": "Laws of Motion"
+  },
+  "scope_graph": {
+    "scope_graph_id": "SG-G9-PHY-NLM-001",
+    "schema_version": "1.0.0",
+    "canonical_registry_versions": [
+      {"registry_id": "REG-PHYSICS", "version": "2026.09"}
+    ],
+    "included_nodes": ["PHY-NLM-LAW1", "PHY-NLM-LAW2", "PHY-NLM-FBD", "PHY-NLM-FRICTION"],
+    "excluded_nodes": ["PHY-NLM-CIRCULAR"],
+    "included_edges": [
+      {"from": "PHY-NLM-FBD", "relation": "PREREQUISITE_FOR", "to": "PHY-NLM-LAW2"}
+    ],
+    "project_candidates": []
+  },
+  "research_context": {
+    "curriculum_profile_ids": ["CURR-CBSE-G9-2026"],
+    "supported_exam_demand_profile_ids": ["EDP-SOF-ISO-G9-NLM-2026"],
+    "research_intent": "competitive preparation"
+  },
+  "concept_ids": ["PHY-NLM-LAW1", "PHY-NLM-LAW2", "PHY-NLM-FBD", "PHY-NLM-FRICTION"],
+  "prerequisite_edges": [
+    {"prerequisite_id": "PHY-NLM-FBD", "target_id": "PHY-NLM-LAW2"}
+  ],
+  "misconception_ids": ["MIS-PHY-NLM-ACTIONREACTION-01"],
+  "research_claims": [
+    {
+      "claim_id": "R-PHY-NLM-014",
+      "traceability_class": "MATERIAL_CLAIM",
+      "claim_type": "CANONICAL_FACT",
+      "statement": "A free-body diagram contains only forces acting on the selected body.",
+      "concept_ids": ["PHY-NLM-FBD"],
+      "verification_status": "VERIFIED",
+      "source_refs": ["SRC-OFFICIAL-PHY-NLM-001"],
+      "conditions": [],
+      "edge_cases": [],
+      "confidence": "HIGH"
+    }
+  ],
+  "representation_requirements": [
+    {
+      "representation_requirement_id": "RREP-NLM-004",
+      "subject": "PHYSICS",
+      "representation_type": "FORCE_DIAGRAM",
+      "concept_ids": ["PHY-NLM-FBD"],
+      "research_refs": ["R-PHY-NLM-014"],
+      "semantic_requirements": {
+        "selected_body": "block",
+        "forces": ["weight", "normal", "friction"]
+      },
+      "required_labels": ["W", "N", "f"],
+      "approved_asset_ids": [],
+      "traceability_class": "MATERIAL_REPRESENTATION",
+      "blocking_if_unsupported": true
+    }
+  ],
+  "equation_or_reaction_objects": [
+    {
+      "id": "EQ-NLM-02",
+      "kind": "EQUATION",
+      "semantic_expression": "F_net = m a",
+      "research_refs": ["R-PHY-NLM-014"],
+      "symbol_definitions": {"F_net": "net force", "m": "mass", "a": "acceleration"}
+    }
+  ],
+  "worked_reasoning": [
+    {
+      "worked_reasoning_id": "WR-NLM-001",
+      "concept_ids": ["PHY-NLM-FBD", "PHY-NLM-LAW2"],
+      "research_refs": ["R-PHY-NLM-014"],
+      "summary": "Select body, draw external forces, choose axis, then apply net force equals mass times acceleration."
+    }
+  ],
+  "source_ledger_ref": {
+    "path": "Laws_of_Motion_Source_Ledger.json",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "media_type": "application/json"
+  },
+  "exam_demand_profile_refs": [
+    {
+      "path": "Laws_of_Motion_Exam_Demand_Profile.json",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "media_type": "application/json"
+    }
+  ],
+  "question_evidence_ledger_ref": {
+    "path": "Laws_of_Motion_Question_Evidence_Ledger.json",
+    "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "media_type": "application/json"
+  },
+  "approved_assets": [],
+  "unresolved_items": []
+}

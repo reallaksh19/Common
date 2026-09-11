@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question-evidence-ledger.schema.json",
+  "title": "QuestionEvidenceLedger v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["question_evidence_ledger_id", "schema_version", "corpus_authority_id", "candidate_denominator", "rows"],
+  "properties": {
+    "question_evidence_ledger_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "corpus_authority_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "candidate_denominator": {"type": "integer", "minimum": 0},
+    "frozen_at": {"$ref": "common.schema.json#/$defs/iso_datetime"},
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["occurrence_id", "disposition", "source_state", "transcription_state", "answer_state"],
+        "properties": {
+          "occurrence_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "question_content_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "question_family_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "disposition": {"$ref": "common.schema.json#/$defs/question_disposition"},
+          "primary_owner": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "source_state": {"$ref": "common.schema.json#/$defs/verification_state"},
+          "transcription_state": {"$ref": "common.schema.json#/$defs/verification_state"},
+          "answer_state": {"$ref": "common.schema.json#/$defs/verification_state"},
+          "publication_targets": {
+            "type": "array",
+            "items": {"enum": ["STUDY_GUIDE", "TRANSFER_BOOK", "MOCK_BLUEPRINT", "RESEARCH_ONLY"]},
+            "default": []
+          },
+          "duplicate_of_occurrence_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "reason": {"type": "string", "minLength": 1}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"disposition": {"const": "DUPLICATE"}}, "required": ["disposition"]},
+            "then": {"required": ["duplicate_of_occurrence_id"]}
+          },
+          {
+            "if": {"properties": {"disposition": {"enum": ["EXCLUDE", "DEFER"]}}, "required": ["disposition"]},
+            "then": {"required": ["reason"]}
+          },
+          {
+            "if": {"properties": {"disposition": {"enum": ["REQUIRED", "DEFER", "EXCLUDE", "REVIEW"]}}, "required": ["disposition"]},
+            "then": {"required": ["primary_owner"]}
+          },
+          {
+            "if": {"properties": {"disposition": {"const": "REQUIRED"}}, "required": ["disposition"]},
+            "then": {
+              "properties": {
+                "source_state": {"const": "VERIFIED"},
+                "transcription_state": {"const": "VERIFIED"},
+                "answer_state": {"const": "VERIFIED"}
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "disposition": {"const": "REQUIRED"},
+                "publication_targets": {"contains": {"const": "TRANSFER_BOOK"}}
+              },
+              "required": ["disposition", "publication_targets"]
+            },
+            "then": {"required": ["question_content_id"]}
+          }
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {"type": "integer", "minimum": 0},
+        "defer": {"type": "integer", "minimum": 0},
+        "exclude": {"type": "integer", "minimum": 0},
+        "review": {"type": "integer", "minimum": 0},
+        "duplicate": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

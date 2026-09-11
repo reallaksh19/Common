@@ -1,0 +1,14 @@
+{
+  "status": "CORE1_RESEARCH_GAP",
+  "gap_id": "GAP-G9-PHY-NLM-001",
+  "research_bundle_id": "RB-G9-PHY-NLM-001",
+  "evidence_version": "1.0.0",
+  "gap_type": "REPRESENTATION",
+  "object_id": "RREP-NLM-004",
+  "blocking": true,
+  "reason": "Requested publication requires an unsupported force-diagram semantic variant not present in the frozen ResearchBundle.",
+  "reported_by": "CORE2",
+  "suggested_change_class": "SEMANTIC",
+  "publication_target_id": "PT-G9-PHY-NLM-ISO-DEMO",
+  "reported_at": "2026-09-10T00:00:00Z"
+}

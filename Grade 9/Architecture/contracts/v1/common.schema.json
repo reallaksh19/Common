@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "common.schema.json",
+  "title": "Two-Core Common Contract Types v1",
+  "$defs": {
+    "stable_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "iso_datetime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "change_class": {
+      "type": "string",
+      "enum": ["EDITORIAL", "EVIDENCE", "SEMANTIC", "SCOPE", "EXAM_DEMAND", "ASSET"]
+    },
+    "traceability_class": {
+      "type": "string",
+      "enum": [
+        "MATERIAL_CLAIM",
+        "MATERIAL_CONDITION",
+        "MATERIAL_EXAMPLE",
+        "MATERIAL_REPRESENTATION",
+        "MATERIAL_QUESTION",
+        "MATERIAL_SOLUTION_METHOD",
+        "MATERIAL_EXAM_FACT",
+        "PEDAGOGICAL_CONNECTIVE",
+        "PRESENTATION_ONLY"
+      ]
+    },
+    "rights_status": {
+      "type": "string",
+      "enum": [
+        "REPRODUCTION_ALLOWED",
+        "REFERENCE_ONLY",
+        "USER_SUPPLIED_LIMITED",
+        "DISCOVERY_ONLY",
+        "UNKNOWN_REVIEW_REQUIRED"
+      ]
+    },
+    "baseline_basis": {
+      "type": "string",
+      "enum": ["USER_DECLARED", "DIAGNOSTIC_DERIVED", "TEACHER_DECLARED", "EVIDENCE_ESTIMATED", "FALLBACK_USER_DECLINED_CALIBRATION"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH"]
+    },
+    "purpose_type": {
+      "type": "string",
+      "enum": [
+        "ROUTINE_STUDY",
+        "CONCEPT_CLARIFICATION",
+        "SCHOOL_EXAM",
+        "COMPETITIVE_FOUNDATION",
+        "COMPETITIVE_EXAM",
+        "MOCK_EXAM_PREPARATION",
+        "REVISION"
+      ]
+    },
+    "question_disposition": {
+      "type": "string",
+      "enum": ["REQUIRED", "DEFER", "EXCLUDE", "REVIEW", "DUPLICATE"]
+    },
+    "dependency_class": {
+      "type": "string",
+      "enum": ["NONE", "GRAPH", "DIAGRAM", "TABLE", "TIMELINE", "NUMBER_LINE", "OPTION_FIGURES", "STATEMENT_SET", "MIXED"]
+    },
+    "question_content_origin": {
+      "type": "string",
+      "enum": ["SOURCE_DERIVED", "ORIGINAL_EXAM_ALIGNED", "ORIGINAL_EDITORIAL_PROFILED"]
+    },
+    "question_storage_mode": {
+      "type": "string",
+      "enum": ["FULL_TEXT", "HASH_ONLY", "LOCATOR_ONLY"]
+    },
+    "verification_state": {
+      "type": "string",
+      "enum": ["UNVERIFIED", "PARTIAL", "VERIFIED", "CONFLICT_REVIEW_REQUIRED"]
+    },
+    "authority_level": {
+      "type": "string",
+      "enum": ["OFFICIAL", "USER_SUPPLIED", "VERIFIED_SECONDARY", "DISCOVERY_ONLY"]
+    },
+    "research_status": {
+      "type": "string",
+      "enum": ["RESEARCH_IN_PROGRESS", "READY_WITH_NONBLOCKING_GAPS", "READY_FOR_PUBLISH", "BLOCKED_RESEARCH_GAP"]
+    },
+    "source_locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "page": {"type": "integer", "minimum": 1},
+        "page_end": {"type": "integer", "minimum": 1},
+        "section": {"type": "string", "minLength": 1},
+        "region": {"type": "string", "minLength": 1},
+        "anchor": {"type": "string", "minLength": 1},
+        "source_question_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "locator"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/stable_id"},
+        "locator": {"$ref": "#/$defs/source_locator"},
+        "evidence_note": {"type": "string"}
+      }
+    },
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "media_type": {"type": "string", "minLength": 1}
+      }
+    },
+    "calibration_basis": {
+      "type": "string",
+      "enum": ["SOURCE_MAPPING", "EXPERT_REVIEW", "EMPIRICAL"]
+    }
+  }
+}

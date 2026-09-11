@@ -1,0 +1,20 @@
+{
+  "question_content_ledger_id": "QCL-G9-PHY-NLM-001",
+  "schema_version": "1.0.0",
+  "records": [
+    {
+      "question_content_id": "QC-PHY-NLM-001",
+      "content_origin": "SOURCE_DERIVED",
+      "question_family_id": "QF-PHY-NLM-FBD-01",
+      "primary_concept_id": "PHY-NLM-FBD",
+      "supporting_concept_ids": ["PHY-NLM-LAW2"],
+      "stem": "A body is acted on by several forces. Which representation correctly isolates the forces acting on the selected body?",
+      "options": ["A", "B", "C", "D"],
+      "answer": "D",
+      "dependency_class": "OPTION_FIGURES",
+      "representation_semantics": ["selected body is explicit", "all force directions are preserved", "option figure semantics are required"],
+      "occurrence_ids": ["QO-SOF-ISO-DEMO-001", "QO-SOF-ISO-DEMO-002"],
+      "research_refs": ["R-PHY-NLM-014"]
+    }
+  ]
+}
