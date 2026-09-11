@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-reasoning-contract.schema.json",
+  "title": "ChemistryReasoningContract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reasoning_contract_id", "question_family_ref", "concept_refs", "checkpoints"],
+  "properties": {
+    "reasoning_contract_id": {"type": "string", "minLength": 1},
+    "subject": {"const": "CHEMISTRY"},
+    "question_family_ref": {"type": "string", "minLength": 1},
+    "concept_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "prerequisite_capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "checkpoints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkpoint_id", "stage", "required_capability_refs"],
+        "properties": {
+          "checkpoint_id": {"type": "string", "minLength": 1},
+          "stage": {"enum": ["IDENTIFY_PHENOMENON", "IDENTIFY_ENTITIES", "SELECT_REPRESENTATION", "SELECT_RELATIONSHIP", "TRACK_CONSERVATION", "TRANSLATE_REPRESENTATION", "EXECUTE_QUANTITATIVE", "EVIDENCE_TO_CLAIM", "VALIDATE_CONDITIONS"]},
+          "representation_level": {"enum": ["MACROSCOPIC", "PARTICULATE", "SYMBOLIC", "QUANTITATIVE", "MIXED"]},
+          "entities": {"type": "array", "items": {"type": "string"}},
+          "process_or_transformation": {"type": "string"},
+          "governing_relationship": {"type": "string"},
+          "fixed_conditions": {"type": "array", "items": {"type": "string"}},
+          "conserved_quantities": {"type": "array", "items": {"type": "string"}},
+          "source_representation": {"type": "string"},
+          "target_representation": {"type": "string"},
+          "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "error_signature_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}
