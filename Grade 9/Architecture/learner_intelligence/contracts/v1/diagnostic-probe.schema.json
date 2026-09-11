@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "diagnostic-probe.schema.json",
+  "title": "DiagnosticProbe v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["probe_id", "scope", "target_capability_ref", "hypotheses_distinguished", "prompt_intent", "success_evidence", "assistance_level"],
+  "properties": {
+    "probe_id": {"type": "string", "minLength": 1},
+    "scope": {"enum": ["SHARED", "MATHEMATICS", "PHYSICS", "CHEMISTRY"]},
+    "target_capability_ref": {"type": "string", "minLength": 1},
+    "hypotheses_distinguished": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "prompt_intent": {"type": "string", "minLength": 1},
+    "success_evidence": {"type": "string", "minLength": 1},
+    "failure_evidence": {"type": "string"},
+    "assistance_level": {"enum": ["NONE", "RECOGNITION_CUE", "REPRESENTATION_CUE"]},
+    "confounds_to_avoid": {"type": "array", "items": {"type": "string"}}
+  }
+}
