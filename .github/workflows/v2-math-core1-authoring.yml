@@ -28,6 +28,8 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/Core1Authoring/contracts/validate_contracts.py'
       - name: Run M-G authoring falsifiers
         run: python 'Grade 9/V2/Mathematics/Core1Authoring/tests/test_math_core1_authoring.py'
+      - name: Require PCK candidate coverage for the full current assessment scope
+        run: python 'Grade 9/V2/Mathematics/Core1Authoring/tests/test_math_pck_scope_coverage.py'
       - name: Deterministic test-only authoring replay
         run: |
           C='Grade 9/V2/Mathematics/Core1Authoring'
