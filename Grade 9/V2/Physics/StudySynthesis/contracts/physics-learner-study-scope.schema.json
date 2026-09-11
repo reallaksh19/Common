@@ -1,0 +1,406 @@
+{
+  "$id": "physics-learner-study-scope.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capability_scope_records": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "assessment_question_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "capability_ref": {
+            "pattern": "^PHY-CAP-",
+            "type": "string"
+          },
+          "dependent_assessed_capability_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "law_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "model_validity_obligations": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "item_ref": {
+                  "type": "string"
+                },
+                "law_refs": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "model_assumption_scope_status": {
+                  "type": "string"
+                },
+                "physical_model_refs": {
+                  "items": {
+                    "type": "strring"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "validity_conditions": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "item_ref",
+                "required",
+                "physical_model_refs",
+                "law_refs",
+                "validity_conditions",
+                "model_assumption_scope_status"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "physical_model_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "prerequisite_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "problem_family_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "reasoning_route_roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "representation_requirements": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "scope_role": {
+            "enum": [
+              "DIRECT_ASSESSED",
+              "DIRECT_AND_PREREQUISITE",
+              "PREREQUISITE_SUPPORT"
+            ]
+          },
+          "source_scope_trace_item_refs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "state_phase_obligations": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "continuity_state_refs": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "item_ref": {
+                  "type": "string"
+                },
+                "phase_kind": {
+                  "type": "string"
+                },
+                "phases": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "state_variable_refs": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "item_ref",
+                "state_variable_refs",
+                "phase_kind",
+                "phases",
+                "continuity_state_refs"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "supporting_assessed_question_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "system_frame_obligations": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "item_ref": {
+                  "type": "string"
+                },
+                "object_roles": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "reference_frame": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "frame_text": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "required": {
+                      "type": "boolean"
+                    },
+                    "source": {
+                      "type": "strring"
+                    }
+                  },
+                  "required": [
+                    "frame_text",
+                    "required",
+                    "source"
+                  ],
+                  "type": "object"
+                },
+                "sign_convention": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "positive_direction": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "required": {
+                      "type": "boolean"
+                    },
+                    "source": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "positive_direction",
+                    "required",
+                    "source"
+                  ],
+                  "type": "object"
+                },
+                "system_refs": {
+                  "items": {
+                    "type": "strring"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "item_ref",
+                "system_refs",
+                "object_roles",
+                "reference_frame",
+                "sign_convention"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "verification_requirements": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "verification_route_refs": {
+            "items": {
+              "type": "strring"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "capability_ref",
+          "scope_role",
+          "assessment_question_refs",
+          "supporting_assessed_question_refs",
+          "source_scope_trace_item_refs",
+          "dependent_assessed_capability_refs",
+          "prerequisite_refs",
+          "system_frame_obligations",
+          "state_phase_obligations",
+          "model_validity_obligations",
+          "representation_requirements",
+          "physical_model_refs",
+          "law_refs",
+          "problem_family_refs",
+          "reasoning_route_roles",
+          "verification_requirements",
+          "verification_route_refs"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "direct_assessed_capability_refs": {
+      "items": {
+        "type": "strring"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "learner_evidence_scope_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "learner_evidence_scope_ref": {
+      "type": "string"
+    },
+    "prerequisite_support_capability_refs": {
+      "items": {
+        "type": "strring"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "problem_semantics_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "problem_semantics_ref": {
+      "type": "strring"
+    },
+    "question_set_ref": {
+      "type": "string"
+    },
+    "required_item_refs": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_authority_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "scope_authority_ref": {
+      "type": "strring"
+    },
+    "scope_binding_registry_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "scope_binding_registry_ref": {
+      "type": "string"
+    },
+    "scope_exception_item_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "scope_invariant": {
+      "const": true
+    },
+    "study_scope_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "study_scope_id": {
+      "pattern": "^PHY-P-F-LSS-",
+      "type": "string"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    }
+  },
+  "required": [
+    "study_scope_id",
+    "schema_version",
+    "subject",
+    "question_set_ref",
+    "scope_binding_registry_ref",
+    "scope_binding_registry_digest",
+    "scope_authority_ref",
+    "scope_authority_digest",
+    "problem_semantics_ref",
+    "problem_semantics_digest",
+    "learner_evidence_scope_ref",
+    "learner_evidence_scope_digest",
+    "required_item_refs",
+    "scope_exception_item_refs",
+    "direct_assessed_capability_refs",
+    "prerequisite_support_capability_refs",
+    "capability_scope_records",
+    "scope_invariant",
+    "study_scope_digest"
+  ],
+  "type": "object"
+}

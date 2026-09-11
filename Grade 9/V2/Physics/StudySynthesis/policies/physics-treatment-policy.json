@@ -1,0 +1,85 @@
+{
+  "benchmark_inputs": [],
+  "current_success_may_close_future_obligations": false,
+  "governing_invariant": "ASSESSMENT_SCOPE_DECIDES_WHAT_LEARNER_EVIDENCE_DECIDES_ORDER_DEPTH_BRIDGE_TREATMENT_SUPPORT",
+  "longitudinal_dimensions": [
+    "acquisition",
+    "independent_reconstruction",
+    "delayed_retention",
+    "near_transfer",
+    "far_transfer",
+    "mixed_model_discrimination",
+    "representation_translation",
+    "fluency",
+    "timed_performance"
+  ],
+  "mandatory_jobs": {
+    "frame_or_sign": "FRAME_SIGN_BINDING",
+    "model_validity": "MODEL_VALIDITY_CHECK",
+    "verification": "PHYSICAL_VERIFICATION"
+  },
+  "no_attempt_forbidden_treatments": [
+    "REPAIR_BEFORE",
+    "REPAIR_IN_UNIT"
+  ],
+  "policy_digest": "bbfef94afac33db07fef3ed7f43350632c301b431e75a1989791b23297176a3b",
+  "policy_id": "PHY-P-F-TREATMENT-v1",
+  "prerequisite_difficulty_treatment": "REPAIR_BEFORE",
+  "priority_by_treatment": {
+    "ACTIVE_STUDY": "CORE_STUDY",
+    "PROBE_FIRST": "EARLY_PROBE",
+    "READY_VERIFY_ONLY": "VERIFY_AND_MOVE_ON",
+    "REPAIR_BEFORE": "EARLY_REPAIR",
+    "REPAIR_IN_UNIT": "EMBEDDED_REPAIR"
+  },
+  "ready_forbidden_full_reteach_jobs": [
+    "PHYSICAL_ANCHOR",
+    "SYSTEM_FRAME_SETUP",
+    "MODEL_RECONSTRUCTION",
+    "REPRESENTATION_TRANSLATION",
+    "WORKED_REASONING_SEQUENCE",
+    "GUIDED_TO_INDEPENDENT_PROGRESSION",
+    "TRANSFER_VARIATION",
+    "PREREQUISITE_RECONSTRUCTION",
+    "EMBEDDED_REPAIR"
+  ],
+  "required_pck_jobs_by_treatment": {
+    "ACTIVE_STUDY": [
+      "PHYSICAL_ANCHOR",
+      "SYSTEM_FRAME_SETUP",
+      "MODEL_RECONSTRUCTION",
+      "REPRESENTATION_TRANSLATION",
+      "WORKED_REASONING_SEQUENCE",
+      "GUIDED_TO_INDEPENDENT_PROGRESSION",
+      "TRANSFER_VARIATION"
+    ],
+    "PROBE_FIRST": [
+      "DECISIVE_DIAGNOSTIC_PROBE",
+      "BRANCH_AFTER_PROBE"
+    ],
+    "READY_VERIFY_ONLY": [
+      "ACTIVATE_PHYSICAL_MEANING",
+      "INDEPENDENT_PHYSICAL_CHECK"
+    ],
+    "REPAIR_BEFORE": [
+      "PREREQUISITE_RECONSTRUCTION",
+      "MINIMAL_CONTRAST",
+      "ERROR_CONTRAST",
+      "RECONSTRUCTION_CHECK"
+    ],
+    "REPAIR_IN_UNIT": [
+      "EMBEDDED_REPAIR",
+      "ERROR_CONTRAST",
+      "GUIDED_TO_INDEPENDENT_PROGRESSION"
+    ]
+  },
+  "schema_version": "1.0.0",
+  "state_to_treatment": {
+    "DEMONSTRATED": "READY_VERIFY_ONLY",
+    "EVIDENCE_OF_DIFFICULTY": "REPAIR_IN_UNIT",
+    "MIXED": "PROBE_FIRST",
+    "UNKNOWN": "ACTIVE_STUDY"
+  },
+  "subject": "PHYSICS",
+  "version": "1.0.0"
+}

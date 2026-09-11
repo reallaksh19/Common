@@ -1,13 +1,24 @@
-# Methodology
+# P-F methodology
 
-1. Preserve merged learner-state strengths; Study Synthesis may change treatment, not rewrite the descriptive state.
-2. `REPAIR_REQUIRED` maps to targeted repair, never broad topic weakness.
-3. Any unresolved canonical probe request maps to `PROBE_FIRST`, even if the capability also has demonstrated evidence.
-4. Demonstrated dependencies of a repair target may be `USE_AS_ENTRY_POINT`.
-5. Every decision and material requirement binds exact canonical refs plus learner-state reason refs.
-6. Shared arithmetic execution remains an external dependency decision; Physics Study Synthesis cannot define arithmetic truth.
-7. Missing canonical refs fail as `CANONICAL_KNOWLEDGE_GAP`; missing learner reasons fail as `LEARNER_STATE_REASON_GAP`.
-8. Raw attempts and new diagnosis are forbidden.
-9. Lesson order, hints, fading, counts, pages, schedules, and renderer fields are forbidden.
-10. Benchmark/reference inputs are forbidden.
-11. Fixed inputs yield deterministic bytes and do not mutate canonical or learner-state inputs.
+P-F has two sequential authority layers.
+
+1. **Derive `PhysicsLearnerStudyScope` without learner state.** Use P-C question/capability bindings and P-D problem semantics to close prerequisite capability dependencies and preserve item trace, system/frame/sign, state/phase, model-validity, representation, problem-family and verification obligations.
+2. **Apply P-E learner state only to treatment.** Map evidence state to READY/ACTIVE/REPAIR/PROBE treatment without modifying the frozen scope structure.
+
+The critical safety check is structural equality: every capability record in `PhysicsLearnerStudyModel` must retain the exact scope-owned structural fields from `PhysicsLearnerStudyScope`. Any deletion or mutation is a release-blocking error.
+
+## Learner-state interpretation
+
+```text
+DEMONSTRATED           -> READY_VERIFY_ONLY
+UNKNOWN                -> ACTIVE_STUDY
+EVIDENCE_OF_DIFFICULTY -> REPAIR_IN_UNIT
+EVIDENCE_OF_DIFFICULTY + prerequisite dependency -> REPAIR_BEFORE
+MIXED / unresolved diagnostic evidence -> PROBE_FIRST
+```
+
+A `PROBE_FIRST` decision must carry the P-E probe requirement. No P-F rule may invent a diagnosis.
+
+## Longitudinal rule
+
+Current evidence is episode-local. Delayed retention, transfer, mixed discrimination, fluency and timed performance remain future evidence obligations even after a current success. P-F initializes those obligations; later longitudinal phases own closure or promotion.
