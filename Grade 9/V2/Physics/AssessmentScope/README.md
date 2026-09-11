@@ -53,6 +53,7 @@ Reference cases:
 - Q8 keeps its exact `FIG-Q8-VT` dependency and identifies signed-area graph demand.
 - Q9 is only `PARTIAL_SCOPE_MATCH`: moving-release Physics is identifiable, but the source item itself is incomplete.
 - Q10 is `PARTIAL_SCOPE_MATCH`: multi-phase structure is identifiable, but P-B already proved the assessment target is underdetermined.
+- Q12 preserves option-graph discrimination explicitly: `COMPARE` is a registered scope-level reasoning-role identity rather than an unbound prose label.
 - Q13 stays `BLOCKED` because the required graph is missing/truncated; frame/sign and graph demand are not invented.
 - Q14 and Q14.a/b/c stay `BLOCKED` because P-B requires rendered-source inspection before source fidelity can be certified.
 
