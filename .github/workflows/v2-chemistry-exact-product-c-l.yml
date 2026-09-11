@@ -1,0 +1,25 @@
+name: V2 Chemistry Exact Product C-L
+
+on:
+  push:
+    paths:
+      - 'Grade 9/V2/Chemistry/ExactProduct/**'
+      - '.github/workflows/v2-chemistry-exact-product-c-l.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/ExactProduct/**'
+      - '.github/workflows/v2-chemistry-exact-product-c-l.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install jsonschema
+      - name: Validate C-L contracts
+        run: python 'Grade 9/V2/Chemistry/ExactProduct/contracts/validate_contracts.py'
+      - name: Run C-L exact-product falsifiers
+        run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_product.py'
