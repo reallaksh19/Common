@@ -1,0 +1,25 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"math-learner-state-update.schema.json",
+  "title":"MathLearnerStateUpdate",
+  "type":"object","additionalProperties":false,
+  "required":["update_id","schema_version","subject","event_ref","prior_snapshot_ref","capability_updates","verification_evidence","update_digest"],
+  "properties":{
+    "update_id":{"type":"string","pattern":"^MATH-LSU-[0-9a-f]{16}$"},
+    "schema_version":{"const":"1.0.0"},"subject":{"const":"MATHEMATICS"},
+    "event_ref":{"type":"string","pattern":"^MATH-TEV-"},"prior_snapshot_ref":{"type":"string"},
+    "capability_updates":{"type":"array","minItems":1,"items":{
+      "type":"object","additionalProperties":false,
+      "required":["capability_ref","prior_readiness","resulting_readiness","evidence_class","independent_success_increment","assisted_success_increment","negative_evidence_increment","state_changed","rationale"],
+      "properties":{
+        "capability_ref":{"type":"string","pattern":"^MATH-"},
+        "prior_readiness":{"enum":["UNKNOWN","DEVELOPING","READY"]},"resulting_readiness":{"enum":["UNKNOWN","DEVELOPING","READY"]},
+        "evidence_class":{"enum":["POSITIVE_INDEPENDENT","POSITIVE_ASSISTED_H1","POSITIVE_ASSISTED_H2","POSITIVE_ASSISTED_H3","LIMITED_POSITIVE_INVALID_REASONING","NEGATIVE_ASSISTED","NON_DIAGNOSTIC","NO_EVIDENCE"]},
+        "independent_success_increment":{"enum":[0,1]},"assisted_success_increment":{"enum":[0,1]},"negative_evidence_increment":{"enum":[0,1]},
+        "state_changed":{"type":"boolean"},"rationale":{"type":"string","minLength":12}
+      }
+    }},
+    "verification_evidence":{"type":"object","additionalProperties":false,"required":["state","evidence_class","independent"],"properties":{"state":{"type":"string"},"evidence_class":{"enum":["POSITIVE","NEGATIVE","NONE"]},"independent":{"type":"boolean"}}},
+    "update_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

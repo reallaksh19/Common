@@ -1,0 +1,33 @@
+name: V2 Mathematics M-J Coverage Closure
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/CoverageClosure/**'
+      - 'Grade 9/V2/Mathematics/Core2Transfer/**'
+      - 'Grade 9/V2/Mathematics/StudySynthesis/**'
+      - 'Grade 9/V2/Mathematics/LearnerIntelligence/**'
+      - 'Grade 9/V2/Mathematics/ProblemSemantics/**'
+      - 'Grade 9/V2/Mathematics/AssessmentScope/**'
+      - 'Grade 9/V2/Mathematics/AssessmentReview/**'
+      - 'Grade 9/V2/Mathematics/AssessmentIntake/**'
+      - '.github/workflows/v2-math-coverage-closure.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-coverage-closure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate M-J contracts
+        run: python 'Grade 9/V2/Mathematics/CoverageClosure/contracts/validate_contracts.py'
+      - name: Run M-J coverage, evidence and longitudinal falsifiers
+        run: python 'Grade 9/V2/Mathematics/CoverageClosure/tests/test_math_coverage_closure.py'

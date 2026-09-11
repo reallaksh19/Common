@@ -1,0 +1,17 @@
+{
+  "policy_id":"MATH-TRANSFER-EVIDENCE-v1",
+  "schema_version":"1.0.0",
+  "subject":"MATHEMATICS",
+  "support_semantics":{
+    "NONE":{"success_state":"INDEPENDENT_SUCCESS","evidence_class":"POSITIVE_INDEPENDENT","independent":true},
+    "H1":{"success_state":"H1_SUCCESS","evidence_class":"POSITIVE_ASSISTED_H1","independent":false},
+    "H2":{"success_state":"H2_SUCCESS","evidence_class":"POSITIVE_ASSISTED_H2","independent":false},
+    "H3":{"success_state":"H3_SUCCESS","evidence_class":"POSITIVE_ASSISTED_H3","independent":false},
+    "SOLUTION":{"success_state":"SOLUTION_EXPOSED","evidence_class":"NON_DIAGNOSTIC","independent":false}
+  },
+  "future_dimensions_never_closed_by_current_transfer":["delayed_retention","near_transfer","far_transfer","mixed_discrimination","fluency","timed_performance"],
+  "independent_reconstruction_requires":"INDEPENDENT_SUCCESS",
+  "solution_exposure_mastery_evidence":false,
+  "correct_answer_invalid_reasoning_full_success":false,
+  "verification_is_separate_evidence_dimension":true
+}

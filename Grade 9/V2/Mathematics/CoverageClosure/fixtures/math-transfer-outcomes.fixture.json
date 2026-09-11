@@ -1,0 +1,16 @@
+{
+  "fixture_id":"MATH-MJ-TRANSFER-OUTCOMES-v1",
+  "schema_version":"1.0.0",
+  "subject":"MATHEMATICS",
+  "outcomes":[
+    {"outcome_id":"OUT-Q7","question_ref":"Q7","support_consumed":"NONE","response_correctness":"CORRECT","reasoning_validity":"VALID","verification":"SUCCESS"},
+    {"outcome_id":"OUT-Q10","question_ref":"Q10","support_consumed":"H1","response_correctness":"CORRECT","reasoning_validity":"VALID","verification":"SUCCESS"},
+    {"outcome_id":"OUT-Q11","question_ref":"Q11","support_consumed":"H2","response_correctness":"CORRECT","reasoning_validity":"VALID","verification":"NOT_ATTEMPTED"},
+    {"outcome_id":"OUT-Q12","question_ref":"Q12","support_consumed":"H3","response_correctness":"CORRECT","reasoning_validity":"VALID","verification":"SUCCESS"},
+    {"outcome_id":"OUT-Q14","question_ref":"Q14","support_consumed":"SOLUTION","response_correctness":"CORRECT","reasoning_validity":"NOT_REVIEWED","verification":"NOT_ATTEMPTED"},
+    {"outcome_id":"OUT-Q5","question_ref":"Q5","support_consumed":"H3","response_correctness":"INCORRECT","reasoning_validity":"INVALID","verification":"FAILURE"},
+    {"outcome_id":"OUT-Q4","question_ref":"Q4","support_consumed":"NONE","response_correctness":"NO_RESPONSE","reasoning_validity":"NO_REASONING","verification":"NOT_ATTEMPTED"},
+    {"outcome_id":"OUT-Q8","question_ref":"Q8","support_consumed":"NONE","response_correctness":"CORRECT","reasoning_validity":"VALID","verification":"FAILURE"},
+    {"outcome_id":"OUT-Q9","question_ref":"Q9","support_consumed":"H2","response_correctness":"INCORRECT","reasoning_validity":"INVALID","verification":"NOT_ATTEMPTED"}
+  ]
+}
