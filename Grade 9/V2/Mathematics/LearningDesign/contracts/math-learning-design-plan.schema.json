@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learning-design-plan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["learning_design_id", "schema_version", "study_model_ref", "policy_ref", "target_preservation", "obligation_coverage", "steps", "support_ladder", "design_digest"],
+  "properties": {
+    "learning_design_id": {"type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "study_model_ref": {"type": "string"},
+    "policy_ref": {"type": "string"},
+    "target_preservation": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["target_id", "engagement_mode", "readiness_mode"], "properties": {"target_id": {"type": "string"}, "engagement_mode": {"enum": ["VERIFY_ONLY", "USE_AS_ENTRY_POINT", "ACTIVE_STUDY", "COMPRESS"]}, "readiness_mode": {"enum": ["READY", "REPAIR_BEFORE", "REPAIR_IN_UNIT", "PROBE_FIRST"]}}}},
+    "obligation_coverage": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["obligation_id", "step_ids"], "properties": {"obligation_id": {"type": "string"}, "step_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}}}},
+    "steps": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["step_id", "target_id", "role", "learner_action", "payload"], "properties": {"step_id": {"type": "string"}, "target_id": {"type": "string"}, "role": {"enum": ["ENTRY_POINT_ANCHOR", "PREDICT_LEGALITY", "RECONSTRUCT", "REPRESENTATION_TRANSLATE", "MINIMAL_CONTRAST", "WORKED_REASONING", "GUIDED_ATTEMPT", "FADED_ATTEMPT", "INDEPENDENT_ATTEMPT", "VERIFY", "TRANSFER", "COMPLETION_EVIDENCE", "DIAGNOSTIC_PROBE"]}, "learner_action": {"type": "boolean"}, "payload": {"type": "object"}}}},
+    "support_ladder": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["rung_id", "support_class", "route", "payload"], "properties": {"rung_id": {"type": "string"}, "support_class": {"enum": ["CONCEPTUAL", "ACCESS"]}, "route": {"enum": ["SAME_ROUTE", "ROUTE_CHANGE"]}, "payload": {"type": "string"}}}},
+    "design_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

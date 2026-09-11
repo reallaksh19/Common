@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "support-selection.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["learning_design_id", "state_id", "rung_id", "support_class", "route", "plan_digest"],
+  "properties": {
+    "learning_design_id": {"type": "string"},
+    "state_id": {"type": "string"},
+    "rung_id": {"type": "string"},
+    "support_class": {"enum": ["CONCEPTUAL", "ACCESS"]},
+    "route": {"enum": ["SAME_ROUTE", "ROUTE_CHANGE"]},
+    "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

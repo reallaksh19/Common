@@ -1,0 +1,37 @@
+name: V2 Mathematics Learning Design
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/LearningDesign/**'
+      - '.github/workflows/v2-math-learning-design.yml'
+jobs:
+  math-learning-design:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate MATH-V2-04 contracts and expected design
+        run: python 'Grade 9/V2/Mathematics/LearningDesign/contracts/validate_contracts.py'
+      - name: Run Mathematics Learning Design falsifiers
+        run: python 'Grade 9/V2/Mathematics/LearningDesign/tests/test_math_learning_design.py'
+      - name: Deterministic design replay
+        run: |
+          D='Grade 9/V2/Mathematics/LearningDesign'
+          python "$D/engine/design_math_learning.py" --study-model "$D/fixtures/learner_study_model.synthetic.json" --publication-view "$D/fixtures/publication_planning_view.synthetic.json" --publication-target "$D/fixtures/publication_target.synthetic.json" --policy "$D/fixtures/policy.synthetic.json" --out /tmp/a.json
+          python "$D/engine/design_math_learning.py" --study-model "$D/fixtures/learner_study_model.synthetic.json" --publication-view "$D/fixtures/publication_planning_view.synthetic.json" --publication-target "$D/fixtures/publication_target.synthetic.json" --policy "$D/fixtures/policy.synthetic.json" --out /tmp/b.json
+          cmp /tmp/a.json /tmp/b.json
+      - name: Runtime route-change replay
+        run: |
+          D='Grade 9/V2/Mathematics/LearningDesign'
+          python "$D/engine/design_math_learning.py" --study-model "$D/fixtures/learner_study_model.synthetic.json" --publication-view "$D/fixtures/publication_planning_view.synthetic.json" --publication-target "$D/fixtures/publication_target.synthetic.json" --policy "$D/fixtures/policy.synthetic.json" --out /tmp/result.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/result.json'))
+          json.dump(r['learning_design_plan'],open('/tmp/plan.json','w'))
+          PY
+          python "$D/runtime/select_math_support.py" --plan /tmp/plan.json --state "$D/fixtures/interaction_support_state.synthetic.json" > /tmp/support.json
+          grep -q '"rung_id": "H3"' /tmp/support.json

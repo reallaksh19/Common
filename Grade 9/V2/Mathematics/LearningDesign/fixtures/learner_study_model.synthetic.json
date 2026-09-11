@@ -1,0 +1,16 @@
+{
+  "fixture_class": "PUBLIC_SYNTHETIC",
+  "authority": "INTERFACE_FIXTURE_ONLY",
+  "study_model_id": "MATH-LSM-SYN-001",
+  "schema_version": "1.0.0",
+  "targets": [
+    {"target_id": "MATH-WORD-MODELLING", "engagement_mode": "VERIFY_ONLY", "readiness_mode": "READY", "canonical_refs": ["MATH-WORD-MODELLING"], "learner_reason_refs": ["LR-WORD-READY"], "study_obligations": ["OBL-MODELLING-VERIFY"]},
+    {"target_id": "MATH-LINEAR-SYSTEM-SETUP", "engagement_mode": "USE_AS_ENTRY_POINT", "readiness_mode": "READY", "canonical_refs": ["MATH-LINEAR-SYSTEM-SETUP"], "learner_reason_refs": ["LR-SYSTEM-READY"], "study_obligations": ["OBL-SYSTEM-ENTRY"]},
+    {"target_id": "MATH-GEOMETRIC-MODELLING", "engagement_mode": "VERIFY_ONLY", "readiness_mode": "READY", "canonical_refs": ["MATH-GEOMETRIC-MODELLING"], "learner_reason_refs": ["LR-GEOM-READY"], "study_obligations": ["OBL-GEOM-VERIFY"]},
+    {"target_id": "MATH-REPRESENTATION-TRANSLATION", "engagement_mode": "USE_AS_ENTRY_POINT", "readiness_mode": "READY", "canonical_refs": ["MATH-REPRESENTATION-TRANSLATION"], "learner_reason_refs": ["LR-REP-READY"], "study_obligations": ["OBL-REP-ENTRY"]},
+    {"target_id": "MATH-EQUALITY-PRESERVATION", "engagement_mode": "ACTIVE_STUDY", "readiness_mode": "REPAIR_BEFORE", "canonical_refs": ["MATH-EQUALITY-PRESERVATION"], "learner_reason_refs": ["LR-EQ-DEVELOPING"], "study_obligations": ["OBL-EQ-RECONSTRUCT", "OBL-EQ-CONTRAST", "OBL-EQ-WORKED", "OBL-EQ-FADE", "OBL-EQ-VERIFY", "OBL-EQ-TRANSFER", "OBL-EQ-COMPLETE"]},
+    {"target_id": "MATH-BINOMIAL-SQUARE-EXPANSION", "engagement_mode": "ACTIVE_STUDY", "readiness_mode": "REPAIR_IN_UNIT", "canonical_refs": ["MATH-BINOMIAL-SQUARE-EXPANSION"], "learner_reason_refs": ["LR-BINOMIAL-DEVELOPING"], "study_obligations": ["OBL-BINOMIAL-RECONSTRUCT", "OBL-BINOMIAL-CONTRAST", "OBL-BINOMIAL-FADE", "OBL-BINOMIAL-TRANSFER"]},
+    {"target_id": "MATH-ORDERED-PAIR-SEMANTICS", "engagement_mode": "ACTIVE_STUDY", "readiness_mode": "PROBE_FIRST", "canonical_refs": ["MATH-ORDERED-PAIR-SEMANTICS", "MATH-PROBE-ORDERED-PAIR-SLOPE"], "learner_reason_refs": ["LR-SLOPE-UNKNOWN"], "study_obligations": ["OBL-SLOPE-PROBE"], "required_probe_ref": "MATH-PROBE-ORDERED-PAIR-SLOPE"},
+    {"target_id": "MATH-SOLUTION-VERIFICATION", "engagement_mode": "ACTIVE_STUDY", "readiness_mode": "REPAIR_IN_UNIT", "canonical_refs": ["MATH-SOLUTION-VERIFICATION"], "learner_reason_refs": ["LR-VERIFY-DEVELOPING"], "study_obligations": ["OBL-VERIFY-INDEPENDENT-INITIATION"]}
+  ]
+}

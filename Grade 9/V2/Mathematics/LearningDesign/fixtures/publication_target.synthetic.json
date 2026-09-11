@@ -1,0 +1,7 @@
+{
+  "fixture_class": "PUBLIC_SYNTHETIC",
+  "authority": "INTERFACE_FIXTURE_ONLY",
+  "target_id": "PUB-TARGET-SYN-001",
+  "delivery_mode": "STATIC_WITH_OPTIONAL_RUNTIME_SUPPORT",
+  "benchmark_inputs": []
+}

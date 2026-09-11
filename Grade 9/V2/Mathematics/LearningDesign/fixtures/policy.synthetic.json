@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "MATH-LD-POLICY-1",
+  "fixture_class": "PUBLIC_SYNTHETIC",
+  "required_primitives": ["ENTRY_POINT_ANCHOR", "PREDICT_LEGALITY", "RECONSTRUCT", "REPRESENTATION_TRANSLATE", "MINIMAL_CONTRAST", "WORKED_REASONING", "GUIDED_ATTEMPT", "FADED_ATTEMPT", "INDEPENDENT_ATTEMPT", "VERIFY", "TRANSFER", "COMPLETION_EVIDENCE", "DIAGNOSTIC_PROBE"],
+  "support_rungs": [
+    {"rung_id": "H1", "support_class": "CONCEPTUAL", "route": "SAME_ROUTE", "payload": "Ask which operation preserves equality without naming it."},
+    {"rung_id": "H2", "support_class": "CONCEPTUAL", "route": "SAME_ROUTE", "payload": "Cue the first legal transformation and require learner completion."},
+    {"rung_id": "H3", "support_class": "CONCEPTUAL", "route": "ROUTE_CHANGE", "payload": "Switch from symbolic manipulation to equivalence/balance representation plus a minimal legal-vs-illegal contrast."},
+    {"rung_id": "A1", "support_class": "ACCESS", "route": "SAME_ROUTE", "payload": "Chunk text and read aloud without supplying a mathematical operation."}
+  ],
+  "route_change_after_unsuccessful_attempts": 2
+}
