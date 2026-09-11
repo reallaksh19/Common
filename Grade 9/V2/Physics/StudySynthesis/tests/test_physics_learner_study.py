@@ -128,7 +128,7 @@ assert_fails("LEARNER_WEAKNESS_SHRINKS_ASSESSMENT_SCOPE",bad)
 
 bad=copy.deepcopy(attempt_model)
 r=rec(bad,"PHY-CAP-UNIFORM-ACCELERATION")
-r["required_pck_jobs"].append("WORKED_REASONING")
+r["required_pck_jobs"].append("WORKED_REASONING_SEQUENCE")
 assert_fails("READY_CAPABILITY_FULLY_RETAUGHT_FOR_PAGE_DENSITY",bad)
 
 bad=copy.deepcopy(no_model)
