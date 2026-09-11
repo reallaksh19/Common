@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1-study-plan.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["plan_id","schema_version","subject","source_study_model_ref","source_study_model_digest","generation_mode","release_status","candidate_registry_ref","promotion_registry_ref","lessons","scope_complete","original_assessment_unspoiled","summary","plan_digest"],
+  "properties":{
+    "plan_id":{"type":"string","pattern":"^PHY-P-G-CORE1-"},
+    "schema_version":{"const":"1.0.0"},
+    "subject":{"const":"PHYSICS"},
+    "source_study_model_ref":{"type":"string"},
+    "source_study_model_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "generation_mode":{"enum":["PRE_REVIEW","PRODUCTION"]},
+    "release_status":{"enum":["PRE_REVIEW_ONLY","PRODUCER_LEGAL"]},
+    "candidate_registry_ref":{"type":"string"},
+    "promotion_registry_ref":{"type":"string"},
+    "lessons":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"object"}},
+    "scope_complete":{"const":true},
+    "original_assessment_unspoiled":{"const":true},
+    "summary":{"type":"object","additionalProperties":false,"required":["lesson_count","treatment_counts","full_learning_lesson_count","promoted_pck_required_count"],"properties":{"lesson_count":{"type":"integer","minimum":1},"treatment_counts":{"type":"object","additionalProperties":{"type":"integer","minimum":0}},"full_learning_lesson_count":{"type":"integer","minimum":0},"promoted_pck_required_count":{"type":"integer","minimum":0}}},
+    "plan_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
