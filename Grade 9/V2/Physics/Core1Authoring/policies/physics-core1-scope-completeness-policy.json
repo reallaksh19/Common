@@ -1,0 +1,16 @@
+{
+  "policy_id": "PHY-P-G-CORE1-SCOPE-COMPLETENESS-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "one_lesson_per_study_capability": true,
+  "preserve_source_scope_trace": true,
+  "preserve_problem_family_semantics": true,
+  "preserve_model_validity_obligations": true,
+  "preserve_system_frame_obligations": true,
+  "preserve_state_phase_obligations": true,
+  "preserve_representation_requirements": true,
+  "preserve_verification_requirements": true,
+  "learner_evidence_may_change": ["ORDER","DEPTH","EMPHASIS","SUPPORT"],
+  "learner_evidence_may_not_change": ["CANONICAL_PHYSICS_TRUTH","ASSESSMENT_SCOPE"],
+  "policy_digest": "0809eecca77fd5144cfed770da050f60c76e08cbdfcbf3bfa8f88158e04bf9c1"
+}
