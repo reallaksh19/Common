@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-pck-candidate-registry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_id","schema_version","subject","registry_class","asset_documents","registry_digest"],
+  "properties": {
+    "registry_id": {"const":"PHY-PCK-CANDIDATE-REGISTRY-v1"},
+    "schema_version": {"const":"1.0.0"},
+    "subject": {"const":"PHYSICS"},
+    "registry_class": {"const":"CANDIDATE"},
+    "asset_documents": {"type":"array","minItems":17,"uniqueItems":true,"items":{"type":"object"}},
+    "registry_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
