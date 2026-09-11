@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_inputs": {"maxItems": 0, "type": "array"},
+    "page_groups": {"items": {"additionalProperties": false, "properties": {"content_refs": {"items": {"pattern": "^PC[0-9]{2}$", "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true}, "title": {"minLength": 1, "type": "string"}}, "required": ["title", "content_refs"], "type": "object"}, "minItems": 1, "type": "array"},
+    "schema_version": {"const": "1.0.0"},
+    "version": {"const": "PHY-PUB-POLICY-1.0.0"}
+  },
+  "required": ["schema_version", "version", "benchmark_inputs", "page_groups"],
+  "type": "object"
+}

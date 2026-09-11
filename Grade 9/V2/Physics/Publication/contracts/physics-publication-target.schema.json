@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_inputs": {"maxItems": 0, "type": "array"},
+    "format": {"const": "PDF"},
+    "page_size": {"const": "A4"},
+    "schema_version": {"const": "1.0.0"},
+    "target_id": {"const": "PHY-PUB-TARGET-SYN-001"}
+  },
+  "required": ["schema_version", "target_id", "format", "page_size", "benchmark_inputs"],
+  "type": "object"
+}

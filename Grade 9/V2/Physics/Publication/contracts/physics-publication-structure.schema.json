@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "page_intents": {"items": {"additionalProperties": false, "properties": {"content_refs": {"items": {"type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true}, "page_intent_id": {"pattern": "^PAGE-[0-9]{2}$", "type": "string"}, "page_number": {"minimum": 1, "type": "integer"}, "title": {"minLength": 1, "type": "string"}}, "required": ["page_intent_id", "page_number", "title", "content_refs"], "type": "object"}, "minItems": 1, "type": "array"},
+    "schema_version": {"const": "1.0.0"},
+    "semantic_product_ref": {"type": "string"},
+    "structure_id": {"pattern": "^PHY-PUB-STRUCTURE-", "type": "string"}
+  },
+  "required": ["schema_version", "structure_id", "semantic_product_ref", "page_intents"],
+  "type": "object"
+}
