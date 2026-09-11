@@ -1,0 +1,31 @@
+name: V2 Chemistry Learner Evidence C-E
+on:
+  push:
+    paths:
+      - 'Grade 9/V2/Shared/LearnerIntelligence/**'
+      - 'Grade 9/V2/Chemistry/LearnerEvidence/**'
+      - 'Grade 9/V2/Chemistry/ReasoningSemantics/**'
+      - 'Grade 9/V2/Chemistry/AssessmentScope/**'
+      - 'Grade 9/V2/Chemistry/AssessmentReview/**'
+      - '.github/workflows/v2-chemistry-learner-evidence.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Shared/LearnerIntelligence/**'
+      - 'Grade 9/V2/Chemistry/LearnerEvidence/**'
+      - 'Grade 9/V2/Chemistry/ReasoningSemantics/**'
+      - 'Grade 9/V2/Chemistry/AssessmentScope/**'
+      - 'Grade 9/V2/Chemistry/AssessmentReview/**'
+      - '.github/workflows/v2-chemistry-learner-evidence.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install jsonschema
+      - name: Validate C-E contracts and fixtures
+        run: python "Grade 9/V2/Chemistry/LearnerEvidence/contracts/validate_contracts.py"
+      - name: Run C-E optional-attempt and diagnostic falsifiers
+        run: python "Grade 9/V2/Chemistry/LearnerEvidence/tests/test_chemistry_learner_evidence.py"
