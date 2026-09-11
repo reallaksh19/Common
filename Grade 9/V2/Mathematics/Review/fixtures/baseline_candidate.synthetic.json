@@ -1,0 +1,9 @@
+{
+  "candidate_id":"MATH-V2-05-CANDIDATE-001",
+  "artifact_sha256":"f65262e34d9e4f5fa926d119be225125bb515b340e16349f0e9c872d24696fd2",
+  "source_pr":213,
+  "source_head_sha":"86c8a239e8b0a667a5de50aadd69db72814cb369",
+  "workflow_run_id":34575355050,
+  "artifact_id":10189392109,
+  "page_count":6
+}

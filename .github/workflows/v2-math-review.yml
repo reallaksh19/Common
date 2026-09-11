@@ -1,0 +1,66 @@
+name: V2 Mathematics Review and Revision
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Mathematics/Review/**"
+      - "Grade 9/V2/Mathematics/Publication/**"
+      - ".github/workflows/v2-math-review.yml"
+  workflow_dispatch:
+
+jobs:
+  math-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install review and publication dependencies
+        run: python -m pip install "jsonschema>=4.20,<5" "reportlab>=4.2,<5" "pypdfium2>=4.30,<5" "Pillow>=10,<12"
+      - name: Validate review contracts
+        run: python "Grade 9/V2/Mathematics/Review/contracts/validate_contracts.py"
+      - name: Generate merged LearningDesign result
+        run: |
+          LD="Grade 9/V2/Mathematics/LearningDesign"
+          python "$LD/engine/design_math_learning.py" --study-model "$LD/fixtures/learner_study_model.synthetic.json" --publication-view "$LD/fixtures/publication_planning_view.synthetic.json" --publication-target "$LD/fixtures/publication_target.synthetic.json" --policy "$LD/fixtures/policy.synthetic.json" --out /tmp/math-learning-design.json
+      - name: Build revised semantic product and candidate
+        run: |
+          PUB="Grade 9/V2/Mathematics/Publication"
+          python "$PUB/engine/build_semantic_product.py" --design-result /tmp/math-learning-design.json --out /tmp/math-semantic-product.json
+          python "$PUB/engine/realize_math_publication.py" --product /tmp/math-semantic-product.json --target "$PUB/fixtures/publication_target.synthetic.json" --policy "$PUB/fixtures/publication_policy.synthetic.json" --out /tmp/math-v2-06-candidate
+          python "$PUB/validator/validate_candidate.py" --out /tmp/math-v2-06-candidate
+          python "$PUB/validator/render_preflight.py" --pdf /tmp/math-v2-06-candidate/candidate.pdf --out-dir /tmp/math-v2-06-renders --expected-pages 5
+      - name: Build evidence-bound review package
+        run: |
+          REV="Grade 9/V2/Mathematics/Review"
+          python "$REV/engine/build_review_package.py" \
+            --baseline "$REV/fixtures/baseline_candidate.synthetic.json" \
+            --findings "$REV/fixtures/ai_pre_review_findings.synthetic.json" \
+            --revision-plan "$REV/fixtures/revision_plan.synthetic.json" \
+            --policy "$REV/fixtures/review_policy.synthetic.json" \
+            --revised-manifest /tmp/math-v2-06-candidate/publication_manifest.json \
+            --revised-product /tmp/math-v2-06-candidate/learner_semantic_product.json \
+            --revised-page-map /tmp/math-v2-06-candidate/physical_page_map.json \
+            --out /tmp/math-v2-06-review
+      - name: Validate generated review package
+        run: python "Grade 9/V2/Mathematics/Review/contracts/validate_review_output.py" --out /tmp/math-v2-06-review
+      - name: Run review falsifiers against revised product
+        run: |
+          cp /tmp/math-v2-06-candidate/learner_semantic_product.json /tmp/revised_product.json
+          python "Grade 9/V2/Mathematics/Review/tests/test_math_review.py"
+      - name: Deterministic review-package replay
+        run: |
+          REV="Grade 9/V2/Mathematics/Review"
+          python "$REV/engine/build_review_package.py" --baseline "$REV/fixtures/baseline_candidate.synthetic.json" --findings "$REV/fixtures/ai_pre_review_findings.synthetic.json" --revision-plan "$REV/fixtures/revision_plan.synthetic.json" --policy "$REV/fixtures/review_policy.synthetic.json" --revised-manifest /tmp/math-v2-06-candidate/publication_manifest.json --revised-product /tmp/math-v2-06-candidate/learner_semantic_product.json --revised-page-map /tmp/math-v2-06-candidate/physical_page_map.json --out /tmp/math-v2-06-review-replay
+          cmp /tmp/math-v2-06-review/review_package.json /tmp/math-v2-06-review-replay/review_package.json
+          cmp /tmp/math-v2-06-review/quality_review_summary.json /tmp/math-v2-06-review-replay/quality_review_summary.json
+      - name: Upload revised candidate and review evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-v2-06-review-revision-proof
+          path: |
+            /tmp/math-v2-06-candidate/**
+            /tmp/math-v2-06-renders/**
+            /tmp/math-v2-06-review/**
+          if-no-files-found: error

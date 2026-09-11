@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"revision-decision.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["decision_id","finding_id","disposition","affected_content_refs","action","revision_ref"],
+  "properties":{
+    "decision_id":{"type":"string"},"finding_id":{"type":"string"},
+    "disposition":{"enum":["FIX","WAIVE","NO_ACTION"]},
+    "affected_content_refs":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "action":{"type":"string","minLength":1},"revision_ref":{"type":"string","minLength":1},
+    "revised_artifact_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

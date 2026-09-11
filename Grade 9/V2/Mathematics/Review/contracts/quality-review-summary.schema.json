@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"quality-review-summary.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","baseline_artifact_sha256","revised_artifact_sha256","ai_pre_review_status","unresolved_major_count","human_review_evidence","quality_states"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "baseline_artifact_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "revised_artifact_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "ai_pre_review_status":{"enum":["REVISIONS_VERIFIED_HUMAN_REVIEW_PENDING","OPEN_FINDINGS"]},
+    "unresolved_major_count":{"type":"integer","minimum":0},
+    "human_review_evidence":{"type":"object","additionalProperties":false,"required":["SUBJECT","PEDAGOGY","VISUAL"],"properties":{"SUBJECT":{"type":"integer","minimum":0},"PEDAGOGY":{"type":"integer","minimum":0},"VISUAL":{"type":"integer","minimum":0}}},
+    "quality_states":{"type":"object","additionalProperties":false,"required":["PUBLICATION_ENGINEERING","SUBJECT_CORRECTNESS","PEDAGOGY_USABILITY","VISUAL_USABILITY","BENCHMARK_COMPARATIVE_VALIDATION"],"properties":{"PUBLICATION_ENGINEERING":{"enum":["PASS","FAIL"]},"SUBJECT_CORRECTNESS":{"enum":["PENDING","PASS","FAIL"]},"PEDAGOGY_USABILITY":{"enum":["PENDING","PASS","FAIL"]},"VISUAL_USABILITY":{"enum":["PENDING","PASS","FAIL"]},"BENCHMARK_COMPARATIVE_VALIDATION":{"enum":["NOT_RUN","PASS","FAIL"]}}}
+  }
+}
