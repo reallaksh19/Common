@@ -1,0 +1,8 @@
+{
+  "fixture_class": "PUBLIC_SYNTHETIC",
+  "authority": "INTERFACE_FIXTURE_ONLY",
+  "view_id": "PPV-SYN-001",
+  "learner_language": "EN",
+  "workspace_need": "SHOW_INTERMEDIATE_STEPS",
+  "static_only": true
+}

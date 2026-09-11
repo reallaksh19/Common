@@ -1,0 +1,12 @@
+{
+  "state_id": "ISS-SYN-001",
+  "schema_version": "1.0.0",
+  "learning_design_id": "MATH-LD-SYN-001",
+  "unit_id": "UNIT-EQUALITY",
+  "attempt_id": "ATT-003",
+  "observed_at": "2026-09-11T07:00:00Z",
+  "response_status": "UNSUCCESSFUL",
+  "consecutive_unsuccessful_attempts": 2,
+  "rungs_used": ["H1", "H2"],
+  "access_request": false
+}

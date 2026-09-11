@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learning-design-policy.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "fixture_class", "required_primitives", "support_rungs", "route_change_after_unsuccessful_attempts"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "policy_id": {"type": "string"},
+    "fixture_class": {"const": "PUBLIC_SYNTHETIC"},
+    "required_primitives": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "support_rungs": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["rung_id", "support_class", "route", "payload"], "properties": {"rung_id": {"type": "string"}, "support_class": {"enum": ["CONCEPTUAL", "ACCESS"]}, "route": {"enum": ["SAME_ROUTE", "ROUTE_CHANGE"]}, "payload": {"type": "string"}}, "additionalProperties": false}},
+    "route_change_after_unsuccessful_attempts": {"type": "integer", "minimum": 1}
+  }
+}
