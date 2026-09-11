@@ -107,6 +107,18 @@ def public_text(text):
     if s in CHECK_TITLES: return CHECK_TITLES[s]
     if s in ROUTE_TITLES: return ROUTE_TITLES[s]
     if s in REPRESENTATION_TITLES: return REPRESENTATION_TITLES[s]
+    if s.startswith('OBLIGATION_LEVEL:'):
+        label=s.split(':',1)[1].replace('_',' ').lower()
+        return f'Use the {label} representation level.'
+    if s.startswith('OBLIGATION_REP:'):
+        label=s.split(':',1)[1].replace('_',' ').lower()
+        return f'Use the {label} representation.'
+    if s.startswith('CHECK_'):
+        label=s.replace('CHECK_','').replace('_',' ').lower()
+        return f'Check {label}.'
+    if '_' in s and s.replace('_','').isalnum() and s.upper()==s:
+        label=s.replace('_',' ').lower()
+        return label[:1].upper()+label[1:]+'.'
     return s
 
 def public_list(items): return [public_text(x) for x in (items or [])]
