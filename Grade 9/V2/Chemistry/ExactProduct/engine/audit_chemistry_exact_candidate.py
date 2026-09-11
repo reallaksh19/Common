@@ -20,7 +20,7 @@ def page_evidence(pdf):
 def audit(candidate_path,core1_pdf,core2_pdf,out_review):
     candidate=load(candidate_path); core1=page_evidence(core1_pdf); core2=page_evidence(core2_pdf)
     full='\n'.join(x['text'] for x in core1+core2)
-    internal_tokens=['CAP-','CORE1-','A-CAP-','B-SOL-','CHEM-CONCEPT-','OBLIGATION_LEVEL:','OBLIGATION_REP:','CHECK_SPECIES_IDENTITY','CHECK_ATOMS','CHECK_CHARGE','CHECK_CONDITIONS','VERIFY_RESULT','ACTIVE_STUDY','FULL_LEARNING','READ_GIVEN','IDENTIFY_CHEMICAL_ENTITIES','TRANSLATE_REPRESENTATION']
+    internal_tokens=['CAP-','CORE1-','A-CAP-','B-SOL-','CHEM-CONCEPT-','OBLIGATION_LEVEL:','OBLIGATION_REP:','CHECK_SPECIES_IDENTITY','CHECK_ATOMS','CHECK_CHARGE','CHECK_CONDITIONS','VERIFY_RESULT','ACTIVE_STUDY','FULL_LEARNING','READ_GIVEN','IDENTIFY_CHEMICAL_ENTITIES','TRANSLATE_REPRESENTATION','EXPLICIT_EXCEPTION','capability record']
     leaked=sorted({t for t in internal_tokens if t in full})
     translation=[x for x in core1 if 'Translate between particles and symbols' in x['text']]
     particle_q=[x for x in core2 if 'A particle diagram shows two separate H₂O particles.' in x['text']]
