@@ -24,13 +24,17 @@ Read before work:
 3. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Topic_Taxonomy_v1.md`
 4. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Knowledge_Dependency_Map_v1.md`
 5. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Method_Selection_and_Transfer_Map_v1.md`
-6. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Source_Provenance_Contract_v1.md`
-7. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Microstream_Interface_Schema_v1.md`
-8. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Production_Gates_v1.md`
-9. `../grade9-math/SKILL.md`
-10. `../grade9-math-assimilation/SKILL.md`
+6. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Coverage_Hardening_Overlay_v1.md`
+7. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Proof_Strategy_Toolkit_v1.md`
+8. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Source_Provenance_Contract_v1.md`
+9. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Microstream_Interface_Schema_v1.md`
+10. `../../Mathematics/IOQM/00_Architecture/IOQM_G9_Production_Gates_v1.md`
+11. `../grade9-math/SKILL.md`
+12. `../grade9-math-assimilation/SKILL.md`
 
 Then read all main-topic-specific source coverage and prerequisite-owner interfaces.
+
+The coverage overlay is binding within existing topic ownership. It does not create a new main topic. Generic proof modes are retrieved from the proof toolkit rather than recreated independently inside each topic.
 
 ## Learner model
 
@@ -57,6 +61,8 @@ The main-topic lead must freeze before prose:
 - Knowledge Dependency Map;
 - Method Selection Map;
 - Transfer Map;
+- coverage-hardening obligations that fall inside this topic's canonical ownership;
+- proof modes to retrieve from the shared Proof Strategy Toolkit;
 - canonical overlap owners;
 - governing invariant/router;
 - internal microstream split.
@@ -100,6 +106,8 @@ Requirements:
 - cross microstream boundaries through explicit contrasts;
 - preserve one vocabulary/notation system;
 - make the governing router visible repeatedly;
+- where a named theorem/bridge is owned under the coverage overlay, teach its hypotheses, meaning, decision boundary and diagnostic contrast rather than only naming it;
+- retrieve generic proof modes from the shared toolkit and specialize only the mathematics owned by this topic;
 - remove agent boundaries from the learner experience.
 
 ### Wave 3 — Integrated First-Step Reference
@@ -112,6 +120,7 @@ Must cover the whole main topic:
 - phrase/structure decoder;
 - decision router;
 - first-step cards;
+- theorem-hypothesis / proof-mode checks where natural;
 - contrast strip;
 - traps/checks;
 - recognition-only drill;
@@ -132,12 +141,15 @@ Required sections:
 - changed-surface transfer;
 - WHY-NOT/verification.
 
+Where appropriate, mastery must distinguish theorem legality from theorem-name recall and examples/conjectures from completed proof.
+
 ### Wave 5 — Independent audit
 
 A fresh reviewer independently checks:
 
 - every promoted answer;
 - proofs/derivations;
+- theorem hypotheses and proof-mode legality;
 - endpoints/domains/parity/integrality/degeneracy;
 - source IDs and key status;
 - dependency order;
@@ -156,6 +168,8 @@ Record:
 - SHA-256;
 - preflight result;
 - student/teacher leakage result.
+
+If a previously certified learner source changes, its old PDF hashes/custody are stale until a fresh render/preflight/page inspection closes again.
 
 ## Historical source contract
 
@@ -192,6 +206,8 @@ The issue contains:
 
 Do not create child issues for every microstream unless a specific operational blocker requires it.
 
+Cross-topic architecture hardening that deliberately leaves the 22 main-topic boundaries unchanged may use one architecture/change-control issue rather than inventing a pseudo-topic issue.
+
 ## Mandatory RCA-derived gates
 
 Before promotion require:
@@ -199,17 +215,19 @@ Before promotion require:
 1. no dependency inversion;
 2. one governing topic model;
 3. canonical overlap owner matrix;
-4. no direct concatenation of agent prose;
-5. deduplicated student teaching;
-6. cross-microstream contrast pairs;
-7. attempt before hints;
-8. real H3->H0 fading;
-9. one integrated First-Step layer;
-10. H0 mixed mastery;
-11. independent math/source audit;
-12. student-export workflow scrub;
-13. unified render authority;
-14. final PDF preflight/render QA.
+4. coverage-hardening obligations inside the topic are satisfied;
+5. generic proof strategy is retrieved, not duplicated as a second chapter;
+6. no direct concatenation of agent prose;
+7. deduplicated student teaching;
+8. cross-microstream contrast pairs;
+9. attempt before hints;
+10. real H3->H0 fading;
+11. one integrated First-Step layer;
+12. H0 mixed mastery;
+13. independent math/source/theorem-hypothesis audit;
+14. student-export workflow scrub;
+15. unified render authority;
+16. final PDF preflight/render QA.
 
 ## Required output set
 

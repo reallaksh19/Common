@@ -1,0 +1,92 @@
+{
+  "GEO-ANGLE-01": {
+    "remember": "Straight line 180°, around a point 360°, triangle 180°, quadrilateral 360°, vertically opposite angles equal.",
+    "link": "Olympiad questions often ask for a sum of many marked angles. Group them into closed shapes before solving individual angles.",
+    "why": "Angle sums are global constraints. When the requested expression already contains every angle from several triangles or straight lines, adding the closures makes intermediate variables cancel.",
+    "notice": "Many marked angles; repeated straight lines; the question asks for a total rather than each angle.",
+    "try": "Circle the smallest closed shapes whose complete angle sets appear in the target. Add those totals first.",
+    "contrast": "Do not invent equality because two angles look similar. A sketch is not a hypothesis.",
+    "example": "If six marked angles are exactly the angles of two triangles, their total is 360° without finding any one angle."
+  },
+  "GEO-PAR-01": {
+    "remember": "Parallel lines give corresponding and alternate angle equalities. Conversely, the right angle equality can prove lines parallel.",
+    "link": "In parallelogram and angle-bisector problems, a half-angle often repeats across the figure because of parallel sides.",
+    "why": "Parallelism fixes line directions, so an angle measured from one transversal can be transferred to another location without changing its size.",
+    "notice": "Parallel arrows, a parallelogram, or a target asking you to prove lines parallel.",
+    "try": "Write one half-angle variable only after marking which angles are guaranteed equal by the parallels.",
+    "contrast": "“They look parallel” is never enough. State the theorem direction you are using.",
+    "example": "If AB∥CD and a transversal makes 37° with AB, the corresponding acute angle with CD is also 37°."
+  },
+  "GEO-POLY-01": {
+    "remember": "For a regular n-gon: exterior turn = 360°/n; interior angle = 180° - 360°/n.",
+    "link": "Extended side-line problems are about directions. Undirected lines repeat after 180°, not 360°.",
+    "why": "Walking around a regular polygon accumulates equal turns to one full 360° rotation. Side-line directions therefore form an arithmetic progression modulo 180°.",
+    "notice": "Regular polygon + extended sides/diagonals + angle between lines.",
+    "try": "Let the exterior turn be t=360°/n. Express the line-direction difference as k t modulo 180°.",
+    "contrast": "Do not use a giant interior-angle sum when only one line direction is needed.",
+    "example": "For a regular octagon, t=45°. Two adjacent side-lines differ by 45° as lines."
+  },
+  "GEO-ISO-01": {
+    "remember": "Equal sides give equal opposite angles. An equilateral triangle gives three 60° angles.",
+    "link": "Equal-length conditions are often meant to become angle information immediately.",
+    "why": "The base-angle theorem converts metric data into angular data, which can then combine with straight lines, right angles, or cyclic angles.",
+    "notice": "Two equal segments, repeated equal cuts, or an equilateral construction.",
+    "try": "Mark the isosceles triangle and its equal base angles before writing any formula.",
+    "contrast": "Do not carry equal lengths as unused metric facts while doing a long angle chase.",
+    "example": "If AB=AC and ∠A=74°, then the base angles are each 53°."
+  },
+  "GEO-CONG-01": {
+    "remember": "Valid criteria: SSS, SAS, ASA/AAS, RHS. Match vertices in the same order.",
+    "link": "Sometimes the triangles you ultimately want are not the first pair to prove congruent. A larger pair can reveal the missing equal angles.",
+    "why": "Congruence is a legal way to transfer every corresponding side and angle once one accepted criterion is established.",
+    "notice": "Crossed equal sides, shared side, right triangles, or a request to prove equal lengths/angles.",
+    "try": "Write the candidate correspondence, then list exactly which criterion facts you have.",
+    "contrast": "For SAS the known angle must be the included angle between the two known sides.",
+    "example": "If AB=DE, AC=DF, and ∠A=∠D, then △ABC and △DEF are congruent by SAS only when those are the included angles."
+  },
+  "GEO-TRANS-01": {
+    "remember": "Reflection preserves distances and angles. A 180° rotation about a midpoint swaps the segment endpoints.",
+    "link": "Use a transformation when it manufactures a standard angle or equality that is not visible in the original picture.",
+    "why": "A transformation creates a second copy of the geometry with guaranteed equal lengths/angles, letting a hidden equilateral, isosceles, or symmetric configuration appear.",
+    "notice": "Midpoint symmetry, a stubborn 60°/90° difference, or equal distances to a line through a midpoint.",
+    "try": "Name what the transformation must create before drawing it.",
+    "contrast": "Do not reflect because the picture “looks symmetric”; say which equality the reflection will produce.",
+    "example": "A half-turn about midpoint M sends A to B and any line through M to itself, so perpendicular distances from A and B to that line are equal."
+  },
+  "GEO-SIM-01": {
+    "remember": "Similarity criteria: AA, SAS, SSS. A mid-segment is parallel to the third side and half its length. Areas scale as the square of the length scale.",
+    "link": "Similarity is useful only after the correspondence is proved. In many area problems, same-base or same-altitude ratios are even shorter.",
+    "why": "Parallel lines and equal angles make triangles share shape, so all corresponding lengths scale by one factor.",
+    "notice": "Parallel segment inside a triangle, repeated angles, or ratios of cuts from intersecting lines.",
+    "try": "Write the triangles in matching order and prove AA before writing a proportion.",
+    "contrast": "Do not use a ratio merely because the picture contains two triangles.",
+    "example": "A line through the midpoint of AB parallel to BC meets AC at E; then E is the midpoint of AC and DE=BC/2."
+  },
+  "GEO-PGRAM-01": {
+    "remember": "A quadrilateral is a parallelogram if opposite sides are both parallel, both equal, one pair is equal and parallel, or diagonals bisect each other.",
+    "link": "If diagonals also meet at right angles, a parallelogram is a rhombus.",
+    "why": "Diagonal bisection creates pairs of congruent triangles, forcing opposite sides to match.",
+    "notice": "Bisecting diagonals, repeated parallelogram constructions, or a target of opposite sides parallel/equal.",
+    "try": "Check whether a one-line parallelogram test finishes the structure before angle chasing.",
+    "contrast": "Perpendicular diagonals alone do not imply a rhombus; bisection is the missing condition.",
+    "example": "If AC and BD bisect each other at O, then ABCD is a parallelogram."
+  },
+  "GEO-AREA-01": {
+    "remember": "Triangle area = 1/2 bh. Same altitude -> area ratio = base ratio. Same base -> area ratio = height ratio.",
+    "link": "When a rectangle/polygon is cut into pieces, solve for the whole area T before solving every cut length.",
+    "why": "Corner triangle areas give products such as height × horizontal cut. Eliminating the cuts can leave one equation only in the total area.",
+    "notice": "Several known sub-areas and one unknown central region.",
+    "try": "Name the total area T and express each known piece as a product involving a side or cut.",
+    "contrast": "Reject algebraic roots that make the whole smaller than the sum of known disjoint pieces.",
+    "example": "If three disjoint pieces total 42, no algebraic root T<42 can represent the whole figure."
+  },
+  "GEO-TRI-01": {
+    "remember": "For sides a≤b≤c, require a+b>c. Then compare c² with a²+b² for acute/right/obtuse.",
+    "link": "Feasibility should be checked before Pythagoras, coordinates, or optimization.",
+    "why": "A proposed metric solution is meaningless if the side lengths do not form a non-degenerate triangle.",
+    "notice": "Integer sides, a variable third side, or a “for every chosen triple” condition.",
+    "try": "Sort the sides and test the largest side against the other two.",
+    "contrast": "Triangle inequalities are strict; equality gives a flat triangle.",
+    "example": "Sides 5,7,12 are degenerate because 5+7=12."
+  }
+}
