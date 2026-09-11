@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-pck-promotion-registry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_id","schema_version","subject","promotions","promotion_rule","registry_digest"],
+  "properties": {
+    "registry_id": {"const":"PHY-PCK-PROMOTION-REGISTRY-v1"},
+    "schema_version": {"const":"1.0.0"},
+    "subject": {"const":"PHYSICS"},
+    "promotion_rule": {"type":"string","minLength":1},
+    "promotions": {
+      "type":"array","uniqueItems":true,
+      "items": {
+        "type":"object","additionalProperties":false,
+        "required":["asset_id","asset_digest","status","subject_review_status","pedagogy_review_status","human_review_evidence_refs","promotion_digest"],
+        "properties": {
+          "asset_id":{"type":"string","pattern":"^PHY-PCK-"},
+          "asset_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+          "status":{"const":"PROMOTED"},
+          "subject_review_status":{"const":"APPROVED_BY_HUMAN"},
+          "pedagogy_review_status":{"const":"APPROVED_BY_HUMAN"},
+          "human_review_evidence_refs":{"type":"array","minItems":2,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+          "promotion_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "registry_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
