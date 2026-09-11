@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/Architecture/contracts/v1/primary-diagnostic-reasoning.schema.json",
+  "title": "Primary Diagnostic Reasoning v1 Companion",
+  "type": "object",
+  "properties": {
+    "strategySupportEvidence": { "$ref": "#/$defs/strategySupportEvidence" },
+    "workStepProvenance": { "$ref": "#/$defs/workStepProvenance" },
+    "contrastSet": { "$ref": "#/$defs/contrastSet" },
+    "competingHypotheses": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/competingHypothesis" }
+    },
+    "diagnosticProbe": { "$ref": "#/$defs/diagnosticProbe" }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "confidence": { "enum": ["LOW", "MEDIUM", "HIGH"] },
+    "conceptualSupport": {
+      "type": "object",
+      "required": ["level", "type"],
+      "properties": {
+        "level": { "enum": ["H0", "H1", "H2", "H3", "H4", "H5"] },
+        "type": { "enum": ["NONE", "PROMPT", "HINT", "MODEL", "THINK_ALOUD", "WORKED_EXAMPLE"] }
+      },
+      "additionalProperties": false
+    },
+    "initiation": {
+      "type": "object",
+      "required": ["actor", "mode"],
+      "properties": {
+        "actor": { "enum": ["CHILD", "TEACHER", "SYSTEM", "UNKNOWN"] },
+        "mode": { "enum": ["SPONTANEOUS", "GENERAL_PROMPT", "STRATEGY_PROMPT", "EXPLICIT_DIRECTION", "UNKNOWN"] }
+      },
+      "additionalProperties": false
+    },
+    "strategySupportEvidence": {
+      "type": "object",
+      "required": ["strategyType", "producedBy", "initiation", "conceptualSupport"],
+      "properties": {
+        "strategyType": { "$ref": "#/$defs/nonEmptyString" },
+        "producedBy": { "enum": ["CHILD", "TEACHER", "SYSTEM", "UNKNOWN"] },
+        "initiation": { "$ref": "#/$defs/initiation" },
+        "conceptualSupport": { "$ref": "#/$defs/conceptualSupport" },
+        "value": {}
+      },
+      "additionalProperties": false
+    },
+    "workStepProvenance": {
+      "type": "object",
+      "required": ["actor", "productionState", "supportState", "transcriptionCertainty"],
+      "properties": {
+        "actor": { "enum": ["CHILD", "TEACHER", "SYSTEM", "UNKNOWN"] },
+        "productionState": { "enum": ["ORIGINAL", "SELF_CORRECTED", "CORRECTED_BY_OTHER", "UNKNOWN"] },
+        "supportState": { "enum": ["INDEPENDENT", "AFTER_GENERAL_PROMPT", "AFTER_STRATEGY_PROMPT", "AFTER_EXPLICIT_DIRECTION", "UNKNOWN"] },
+        "transcriptionCertainty": { "enum": ["HIGH", "MEDIUM", "LOW"] }
+      },
+      "additionalProperties": false
+    },
+    "contrastFeature": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "description": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": false
+    },
+    "contrastCase": {
+      "type": "object",
+      "required": ["evidenceRef", "focalFeatureValue"],
+      "properties": {
+        "evidenceRef": { "$ref": "#/$defs/nonEmptyString" },
+        "focalFeatureValue": {}
+      },
+      "additionalProperties": false
+    },
+    "contrastSet": {
+      "type": "object",
+      "required": ["contrastSetId", "targetLearningObjectIds", "focalFeature", "controlledSharedFeatures", "cases"],
+      "properties": {
+        "contrastSetId": { "$ref": "#/$defs/nonEmptyString" },
+        "targetLearningObjectIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "focalFeature": { "$ref": "#/$defs/contrastFeature" },
+        "controlledSharedFeatures": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/contrastCase" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "competingHypothesis": {
+      "type": "object",
+      "required": ["hypothesisId", "diagnosisCode", "confidence", "evidenceRefs"],
+      "properties": {
+        "hypothesisId": { "$ref": "#/$defs/nonEmptyString" },
+        "diagnosisCode": { "$ref": "#/$defs/nonEmptyString" },
+        "errorSignature": { "$ref": "#/$defs/nonEmptyString" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "evidenceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "controlledLoad": {
+      "type": "object",
+      "required": ["language", "representationNovelty", "factRetrievalDemand", "stepCount"],
+      "properties": {
+        "language": { "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "representationNovelty": { "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "factRetrievalDemand": { "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "stepCount": { "enum": ["SMALL", "MEDIUM", "LARGE"] }
+      },
+      "additionalProperties": false
+    },
+    "probeItem": {
+      "type": "object",
+      "required": ["itemId", "featureValue"],
+      "properties": {
+        "itemId": { "$ref": "#/$defs/nonEmptyString" },
+        "featureValue": {},
+        "prompt": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": false
+    },
+    "outcomeRule": {
+      "type": "object",
+      "required": ["when"],
+      "properties": {
+        "when": { "type": "object", "minProperties": 1 },
+        "increasesHypothesis": { "$ref": "#/$defs/nonEmptyString" },
+        "decreasesHypothesis": { "$ref": "#/$defs/nonEmptyString" },
+        "keepOpen": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "consider": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "informationNeeded": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      },
+      "anyOf": [
+        { "required": ["increasesHypothesis"] },
+        { "required": ["decreasesHypothesis"] },
+        { "required": ["keepOpen"] },
+        { "required": ["consider"] },
+        { "required": ["informationNeeded"] }
+      ],
+      "additionalProperties": false
+    },
+    "diagnosticProbe": {
+      "type": "object",
+      "required": ["probeId", "hypothesisIds", "manipulatedFeature", "controlledLoad", "items", "outcomeRules"],
+      "properties": {
+        "probeId": { "$ref": "#/$defs/nonEmptyString" },
+        "hypothesisIds": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "manipulatedFeature": { "$ref": "#/$defs/contrastFeature" },
+        "controlledLoad": { "$ref": "#/$defs/controlledLoad" },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/probeItem" }
+        },
+        "outcomeRules": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/outcomeRule" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
