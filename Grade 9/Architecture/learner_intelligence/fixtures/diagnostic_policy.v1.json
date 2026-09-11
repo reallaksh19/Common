@@ -1,0 +1,15 @@
+{
+  "policy_id": "LI-DIAGNOSTIC-POLICY-V1",
+  "version": "1.0.0",
+  "single_error_rule": "CANNOT_CONFIRM_MISCONCEPTION",
+  "supported_hypothesis_rules": [
+    "RECURRENCE_ACROSS_INDEPENDENT_ATTEMPTS",
+    "ERROR_SIGNATURE_PLUS_TARGETED_PROBE",
+    "SUBJECT_AUTHORIZED_DETERMINISTIC_DISCRIMINATOR"
+  ],
+  "ambiguity_action": "DIAGNOSTIC_PROBE_REQUIRED",
+  "preserve_upstream_success": true,
+  "hinted_success_counts_as_independent": false,
+  "allow_unobserved_psychological_cause_inference": false,
+  "state_labels": ["UNKNOWN", "REPAIR_REQUIRED", "DEVELOPING", "READY", "ROBUST"]
+}
