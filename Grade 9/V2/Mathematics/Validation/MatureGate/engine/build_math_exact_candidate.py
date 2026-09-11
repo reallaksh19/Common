@@ -2,9 +2,8 @@
 import argparse, copy, hashlib, json, sys
 from pathlib import Path
 
-D=Path(__file__).resolve().parents[1]
-MG=D.parent
-MATH=MG.parents[1]
+ROOT=Path(__file__).resolve().parents[1]
+MATH=ROOT.parents[1]
 REPO=MATH.parents[2]
 sys.path.insert(0,str(MATH/"ColdStart"/"engine"))
 from math_cold_start_runner import run_cold_start, compare_runs, load
