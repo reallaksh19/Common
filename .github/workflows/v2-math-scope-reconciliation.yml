@@ -1,0 +1,67 @@
+name: V2 Mathematics Scope Reconciliation M-C
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/AssessmentScope/**'
+      - 'Grade 9/V2/Mathematics/AssessmentReview/**'
+      - 'Grade 9/V2/Mathematics/AssessmentIntake/**'
+      - '.github/workflows/v2-math-scope-reconciliation.yml'
+
+jobs:
+  math-scope-reconciliation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate MATH M-C contracts
+        run: python 'Grade 9/V2/Mathematics/AssessmentScope/contracts/validate_contracts.py'
+      - name: Run MATH M-C scope-reconciliation falsifiers
+        run: python 'Grade 9/V2/Mathematics/AssessmentScope/tests/test_math_scope_reconciliation.py'
+      - name: Deterministic scope-reconciliation replay
+        run: |
+          S='Grade 9/V2/Mathematics/AssessmentScope'
+          I='Grade 9/V2/Mathematics/AssessmentIntake'
+          R='Grade 9/V2/Mathematics/AssessmentReview'
+          for N in a b; do
+            mkdir -p "/tmp/$N"
+            python "$S/engine/reconcile_math_assessment_scope.py" \
+              --questions "$I/fixtures/mixed-grade9-question-set.fixture.json" \
+              --topic-scope "$I/fixtures/mixed-grade9-topic-scope.fixture.json" \
+              --review-registry "$R/registry/assessment-item-validity-registry.json" \
+              --review-policy "$R/policies/diagnostic-use-policy.json" \
+              --authority "$S/authority/math-assessment-scope-authority.json" \
+              --bindings "$S/registry/mixed-grade9-question-scope-bindings.json" \
+              --scope-model-out "/tmp/$N/scope.json" \
+              --coverage-out "/tmp/$N/coverage.json" \
+              --reconciliation-out "/tmp/$N/reconciliation.json" \
+              --prerequisite-out "/tmp/$N/prerequisites.json"
+          done
+          cmp /tmp/a/scope.json /tmp/b/scope.json
+          cmp /tmp/a/coverage.json /tmp/b/coverage.json
+          cmp /tmp/a/reconciliation.json /tmp/b/reconciliation.json
+          cmp /tmp/a/prerequisites.json /tmp/b/prerequisites.json
+      - name: Prove assessment-scope pilot states
+        run: |
+          python - <<'PY'
+          import json
+          c=json.load(open('/tmp/a/coverage.json'))
+          r=json.load(open('/tmp/a/reconciliation.json'))
+          s=json.load(open('/tmp/a/scope.json'))
+          rows={x['item_ref']:x for x in c['rows']}
+          assert len(rows)==17
+          assert rows['Q6']['mapping_state']=='OUTSIDE_DECLARED_SCOPE'
+          assert rows['Q9']['validity_state']=='UNDERDETERMINED'
+          assert rows['Q9']['mapping_state']=='PARTIAL_SCOPE_MATCH'
+          assert rows['Q12']['validity_state']=='VALID_MULTIPLE_SOLUTIONS'
+          codes={x['code'] for x in r['findings']}
+          assert {'QUESTION_OUTSIDE_DECLARED_SCOPE','PARTIAL_SCOPE_MATCH',
+                  'QUESTION_MAPS_TO_UNDECLARED_PREREQUISITE',
+                  'DECLARED_TOPIC_NOT_ASSESSED'} <= codes
+          assert s['attempt_data_consumed'] is False
+          assert r['attempt_data_consumed'] is False
+          print('MATH M-C assessment scope reconciliation PASS')
+          PY
