@@ -1,0 +1,25 @@
+name: V2 Chemistry Coverage Closure C-J
+
+on:
+  push:
+    paths:
+      - 'Grade 9/V2/Chemistry/CoverageClosure/**'
+      - '.github/workflows/v2-chemistry-coverage-closure.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/CoverageClosure/**'
+      - '.github/workflows/v2-chemistry-coverage-closure.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install jsonschema
+      - name: Validate C-J contracts and policy
+        run: python 'Grade 9/V2/Chemistry/CoverageClosure/contracts/validate_contracts.py'
+      - name: Run C-J closure falsifiers
+        run: python 'Grade 9/V2/Chemistry/CoverageClosure/tests/test_chemistry_coverage_closure.py'
