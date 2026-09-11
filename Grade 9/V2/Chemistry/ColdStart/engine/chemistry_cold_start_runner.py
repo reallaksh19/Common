@@ -153,18 +153,25 @@ def derive_question_bindings(question_set,scope,review,authority,policy):
 
 def body_map(source_bodies): return {x['candidate_id']:x for x in source_bodies['records']}
 
+def external_representation_demands(fams,body):
+    by_family={'QF-FORMULA-PARSING':['FORMULA','IONIC_CHARGE'],'QF-PARTICLE-SYMBOLIC-TRANSLATION':['FIGURE','FORMULA'],'QF-CONSERVATION-CHECK':['FORMULA'],'QF-CONDITION-PRESERVATION':['CONDITION'],'QF-SPECIES-ROLE':['FORMULA']}
+    out=uniq([x for f in fams for x in by_family.get(f,[])])
+    if body.get('figure_required') and 'FIGURE' not in out: out.append('FIGURE')
+    if body.get('condition_text') and 'CONDITION' not in out: out.append('CONDITION')
+    return out
+
 def derive_external_classification(corpus,scope,authority,policy,source_bodies):
     bodies=body_map(source_bodies); rows=[]
     for c in sorted(corpus['candidates'],key=lambda x:x['source_order']):
         body=bodies.get(c['candidate_id']); text=c['source_title']+' '+(body['stem'] if body else '')
         rules=match_rules(text,policy['external_rules'])
         if not body or not rules or c['extraction_confidence']<policy['low_confidence_threshold']:
-            rows.append({'candidate_id':c['candidate_id'],'scope_status':UNRESOLVED,'scope_reason':'External candidate body or extraction confidence is insufficient for source-grounded classification.','declared_topic_refs':[],'primary_learner_unit':None,'canonical_concept_refs':[],'canonical_capability_refs':[],'prerequisite_capability_refs':[],'problem_family_refs':[],'representation_levels':[],'eligibility_basis':policy['eligibility_basis']}); continue
+            rows.append({'candidate_id':c['candidate_id'],'scope_status':UNRESOLVED,'scope_reason':'External candidate body or extraction confidence is insufficient for source-grounded classification.','declared_topic_refs':[],'primary_learner_unit':None,'canonical_concept_refs':[],'canonical_capability_refs':[],'prerequisite_capability_refs':[],'problem_family_refs':[],'representation_levels':[],'representation_demands':[],'eligibility_basis':policy['eligibility_basis']}); continue
         caps=uniq([x for r in rules for x in r['capability_refs']]); concepts=uniq([x for r in rules for x in r['concept_refs']]); fams=uniq([r['problem_family_ref'] for r in rules]); topics=uniq([r['topic_hint'] for r in rules if r['topic_hint'] and topic_valid(r['topic_hint'],r['capability_refs'],r['concept_refs'],authority,scope)])
         if topics: status=ELIGIBLE; primary=topics[0]; reason='Eligibility derived from resolved source body plus canonical declared-topic authority; provider topic label is not authority.'
         else: status=OUT; primary=None; reason='Resolved external question requires Chemistry capability outside declared scope.'
         levels=['PARTICULATE','SYMBOLIC'] if body.get('figure_required') and body.get('figure_semantic',{}).get('model')=='PARTICLE_COUNT' else ['SYMBOLIC']
-        rows.append({'candidate_id':c['candidate_id'],'scope_status':status,'scope_reason':reason,'declared_topic_refs':topics if status==ELIGIBLE else [],'primary_learner_unit':primary,'canonical_concept_refs':concepts,'canonical_capability_refs':caps,'prerequisite_capability_refs':prereqs(caps,authority),'problem_family_refs':fams,'representation_levels':levels,'eligibility_basis':policy['eligibility_basis']})
+        rows.append({'candidate_id':c['candidate_id'],'scope_status':status,'scope_reason':reason,'declared_topic_refs':topics if status==ELIGIBLE else [],'primary_learner_unit':primary,'canonical_concept_refs':concepts,'canonical_capability_refs':caps,'prerequisite_capability_refs':prereqs(caps,authority),'problem_family_refs':fams,'representation_levels':levels,'representation_demands':external_representation_demands(fams,body),'eligibility_basis':policy['eligibility_basis']})
     return {'classification_id':'CHEM-C-K-DERIVED-EXTERNAL-'+corpus['corpus_id'],'schema_version':'1.0.0','subject':'CHEMISTRY','corpus_ref':corpus['corpus_id'],'classifications':rows}
 
 def validate_source_correction_custody(source_set,qc_registry):
