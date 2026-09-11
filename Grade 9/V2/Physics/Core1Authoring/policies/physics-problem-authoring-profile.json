@@ -1,0 +1,13 @@
+{
+  "profile_id": "PHY-P-G-PROBLEM-AUTHORING-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "roles": ["WORKED","GUIDED","FADED","INDEPENDENT","TRANSFER"],
+  "must_be_new_instance": true,
+  "source_question_reuse": false,
+  "source_question_refs_must_be_empty": true,
+  "minimum_surface_changes": 2,
+  "default_surface_changes": ["NEW_PHYSICAL_STORY","DIFFERENT_NUMERICAL_VALUES","DIFFERENT_REPRESENTATION_OR_PHASE_FRAMING"],
+  "must_inherit": ["PROBLEM_FAMILY","MODEL_VALIDITY","VERIFICATION"],
+  "profile_digest": "524db4696ac94d37a471e9499794db7032b7343bb2b7bac95ae4be2176b61c73"
+}
