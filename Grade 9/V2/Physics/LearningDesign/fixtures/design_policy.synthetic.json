@@ -1,0 +1,8 @@
+{
+  "schema_version":"1.0.0","policy_id":"PHY-LD-POLICY-1","version":"1.0.0","benchmark_inputs":[],
+  "support_assets":[
+    {"support_id":"H1","support_type":"ACCESS","route":"SAME_ROUTE","payload":"Mark the phase boundary and copy the known terminal-state symbols beside it."},
+    {"support_id":"H2","support_type":"CONCEPTUAL","route":"SAME_ROUTE","payload":"State which variables are continuous at the boundary and write terminal state = next initial state before selecting the next model."},
+    {"support_id":"H3","support_type":"CONCEPTUAL","route":"ROUTE_CHANGE","payload":"Switch representation: build a boundary-state table with Phase 1 terminal and Phase 2 initial columns, then connect equal continuous variables with arrows."}
+  ]
+}

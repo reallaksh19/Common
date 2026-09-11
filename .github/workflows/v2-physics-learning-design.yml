@@ -1,0 +1,51 @@
+name: V2 Physics Learning Design
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/Physics/LearningDesign/**"
+      - "Grade 9/V2/Physics/StudySynthesis/**"
+      - ".github/workflows/v2-physics-learning-design.yml"
+  workflow_dispatch:
+
+jobs:
+  physics-learning-design:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator
+        run: python -m pip install "jsonschema>=4.20,<5"
+      - name: Validate PHY-V2-04 contracts and reference design
+        run: python "Grade 9/V2/Physics/LearningDesign/contracts/validate_contracts.py"
+      - name: Run PHY-V2-04 design falsifiers
+        run: python "Grade 9/V2/Physics/LearningDesign/tests/test_physics_learning_design.py"
+      - name: Generate merged StudyModel and deterministic LearningDesign twice
+        run: |
+          P="Grade 9/V2/Physics"; L="$P/LearnerIntelligence"; S="$P/StudySynthesis"; D="$P/LearningDesign"
+          python "$L/engine/derive_physics_state.py" --evidence "$L/fixtures/evidence.synthetic.json" --policy "$L/fixtures/inference_policy.synthetic.json" --interface "$L/fixtures/learner_intelligence_interface.synthetic.json" --out /tmp/phy-state.json
+          python "$S/engine/synthesize_physics_study_model.py" --goal "$S/fixtures/goal_scope.synthetic.json" --cks "$S/fixtures/canonical_knowledge_set.synthetic.json" --learner-state /tmp/phy-state.json --policy "$S/fixtures/study_policy.synthetic.json" --out /tmp/phy-study.json
+          python "$D/engine/design_physics_learning.py" --study-result /tmp/phy-study.json --policy "$D/fixtures/design_policy.synthetic.json" --out /tmp/phy-design-a.json
+          python "$D/engine/design_physics_learning.py" --study-result /tmp/phy-study.json --policy "$D/fixtures/design_policy.synthetic.json" --out /tmp/phy-design-b.json
+          cmp /tmp/phy-design-a.json /tmp/phy-design-b.json
+      - name: Prove runtime route change
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('/tmp/phy-design-a.json'))
+          s={'schema_version':'1.0.0','design_id':p['design_id'],'same_route_failures':2}
+          json.dump(s,open('/tmp/interaction.json','w'))
+          PY
+          python "Grade 9/V2/Physics/LearningDesign/engine/select_runtime_support.py" --design /tmp/phy-design-a.json --state /tmp/interaction.json --out /tmp/support.json
+          grep -q '"support_id": "H3"' /tmp/support.json
+          grep -q '"route": "ROUTE_CHANGE"' /tmp/support.json
+      - name: Upload design proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-v2-04-learning-design-proof
+          path: |
+            /tmp/phy-design-a.json
+            /tmp/support.json
+          if-no-files-found: error

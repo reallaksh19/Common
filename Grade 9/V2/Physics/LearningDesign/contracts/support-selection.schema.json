@@ -1,0 +1,7 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"support-selection.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","design_id","support_id","support_type","route","runtime_mutated_design"],
+  "properties":{"schema_version":{"const":"1.0.0"},"design_id":{"type":"string"},"support_id":{"pattern":"^H[0-9]+$","type":"string"},"support_type":{"enum":["ACCESS","CONCEPTUAL"]},"route":{"enum":["SAME_ROUTE","ROUTE_CHANGE"]},"runtime_mutated_design":{"const":false}}
+}
