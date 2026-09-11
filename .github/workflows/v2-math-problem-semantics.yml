@@ -1,0 +1,62 @@
+name: V2 Mathematics Problem Semantics M-D
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/ProblemSemantics/**'
+      - 'Grade 9/V2/Mathematics/AssessmentScope/**'
+      - 'Grade 9/V2/Mathematics/AssessmentReview/**'
+      - 'Grade 9/V2/Mathematics/AssessmentIntake/**'
+      - '.github/workflows/v2-math-problem-semantics.yml'
+
+jobs:
+  math-problem-semantics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate MATH M-D static contracts
+        run: python 'Grade 9/V2/Mathematics/ProblemSemantics/contracts/validate_contracts.py'
+      - name: Run MATH M-D problem-semantics falsifiers
+        run: python 'Grade 9/V2/Mathematics/ProblemSemantics/tests/test_math_problem_semantics.py'
+      - name: Deterministic M-D replay
+        run: |
+          D='Grade 9/V2/Mathematics/ProblemSemantics'
+          M='Grade 9/V2/Mathematics'
+          build() {
+            python "$D/engine/build_math_problem_semantics.py" \
+              --questions "$M/AssessmentIntake/fixtures/mixed-grade9-question-set.fixture.json" \
+              --topic-scope "$M/AssessmentIntake/fixtures/mixed-grade9-topic-scope.fixture.json" \
+              --review-registry "$M/AssessmentReview/registry/assessment-item-validity-registry.json" \
+              --review-policy "$M/AssessmentReview/policies/diagnostic-use-policy.json" \
+              --scope-authority "$M/AssessmentScope/authority/math-assessment-scope-authority.json" \
+              --scope-bindings "$M/AssessmentScope/registry/mixed-grade9-question-scope-bindings.json" \
+              --role-registry "$D/registry/math-reasoning-role-registry.json" \
+              --family-registry "$D/registry/math-problem-family-registry.json" \
+              --verification-registry "$D/registry/math-verification-route-registry.json" \
+              --item-registry "$D/registry/mixed-grade9-item-semantics.json" \
+              --badge-policy "$D/registry/guide-demand-badge-policy.json" \
+              --out "$1"
+          }
+          build /tmp/md-a.json
+          build /tmp/md-b.json
+          cmp /tmp/md-a.json /tmp/md-b.json
+      - name: Prove M-D pilot states
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/md-a.json'))
+          r={i['item_ref']:i for i in x['assessment_item_semantics']}
+          assert len(r)==17
+          assert r['Q9']['validity_state']=='UNDERDETERMINED'
+          assert r['Q9']['diagnostic_use']=='POSITIVE_EVIDENCE_ONLY'
+          assert r['Q10']['guide_demand_badge']['label']=='HARD'
+          assert r['Q12']['guide_demand_badge']['label']=='HARD'
+          assert r['Q14']['guide_demand_badge']['label']=='HARD'
+          assert all(i['reasoning_route']['learner_support_independent'] for i in r.values())
+          assert all(i['guide_demand_badge']['psychometric_claim'] is False for i in r.values())
+          print('MATH M-D problem semantics PASS')
+          PY
