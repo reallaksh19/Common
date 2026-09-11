@@ -15,6 +15,10 @@ Always load and follow:
 
 Then load the relevant subject schema/skill. This skill does not replace Math or English pedagogy.
 
+When the task includes Grade 4–5 mathematical notebook/classwork, handwritten intermediate work, operation-selection evidence, grouped units/rates, or multi-step working that can change the diagnosis, also load:
+
+- `../../Primary/Architecture/PRIMARY_MATH_WORK_EVIDENCE.md`
+
 ## When to use
 
 Use for interactive Grade 4–5 teaching, adaptive tutoring, diagnostic repair, learner-response analysis, scaffold selection/fading, or when a child is repeatedly asking for clarification.
@@ -33,6 +37,18 @@ OBSERVATION
 ↺
 ```
 
+When intermediate mathematical work is available, preserve it before diagnosis:
+
+```text
+CHILD WORK
+→ MATHEMATICAL WORK EVIDENCE
+→ ERROR SIGNATURE / STRUCTURAL PATTERN
+→ BOUNDED RESPONSE DIAGNOSIS
+→ SMALLEST DISCRIMINATING PROBE
+→ TEACHER MOVE
+→ INDEPENDENT RETRY
+```
+
 A diagnosis is a hypothesis, not a child label.
 
 ## Required distinctions
@@ -44,6 +60,9 @@ long-lived SkillState ≠ CurrentLearningState
 raw evidence ≠ pedagogical judgement
 conceptual support ≠ access/load adjustment
 provided representation ≠ child-selected ≠ child-produced
+child-produced strategy support ≠ teacher-provided hint
+child work ≠ teacher annotation/correction
+error signature ≠ durable learner trait
 acquisition ≠ independent use ≠ delayed retention ≠ transfer ≠ stretch
 ```
 
@@ -91,6 +110,35 @@ Access adjustments may include reduced language, one-step-at-a-time instructions
 
 Do not record an access adjustment as conceptual hint dependence.
 
+## Mathematical work evidence
+
+When intermediate Math work exists, do not reduce it to final correctness.
+
+Preserve where observable:
+
+```text
+operation selected
+ordered work steps
+successful substeps
+incorrect substeps
+quantity/unit relationships
+representations
+child-generated strategy supports
+self-corrections
+teacher annotations with separate provenance
+```
+
+Use `PRIMARY_MATH_WORK_EVIDENCE.md` for canonical semantics.
+
+Important rules:
+
+- an incorrect final answer does not erase correct intermediate reasoning;
+- a child-produced multiplication/multiples table can be positive strategic evidence;
+- teacher-written corrections are not independent child evidence;
+- ambiguous handwriting remains `AMBIGUOUS`/`NOT_OBSERVED` rather than being invented;
+- if several structurally related items exist, compare them before concluding the whole topic is weak;
+- for word problems with grouped units, rates, money or conversion, inspect `QUANTITY → UNIT → ROLE → RELATIONSHIP → UNKNOWN → OPERATION(S)` before teaching from keywords.
+
 ## Error handling
 
 Wrong answer does not automatically mean reteach.
@@ -111,6 +159,16 @@ RESPONSE_FORM_ERROR
 SOURCE_MODEL_BOUNDARY
 INSUFFICIENT_EVIDENCE
 ```
+
+Subject-specific error signatures may narrow a generic diagnosis, but remain evidence patterns rather than durable learner traits.
+
+For example:
+
+```text
+PROCEDURAL_ERROR + DIV_QUOTIENT_ZERO_PLACE_VALUE
+```
+
+may be a better bounded hypothesis than `weak in division` when contrasting work supports it.
 
 When multiple explanations are plausible, ask the smallest diagnostic question that separates them.
 
