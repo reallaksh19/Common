@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"chemistry-exact-product-review.schema.json",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["review_id","schema_version","subject","review_kind","reviewer_role","candidate_ref","package_digest","core1_pdf_sha256","core2_pdf_sha256","state","findings","production_claim"],
+  "properties":{
+    "review_id":{"type":"string"},
+    "schema_version":{"type":"string"},
+    "subject":{"const":"CHEMISTRY"},
+    "review_kind":{"enum":["AI_PRE_REVIEW","AUTHORIZED_HUMAN_REVIEW"]},
+    "reviewer_role":{"enum":["AI_PRE_REVIEW","AUTHORIZED_CHEMISTRY_SUBJECT","AUTHORIZED_PEDAGOGY","AUTHORIZED_ASSESSMENT","AUTHORIZED_VISUAL_USABILITY"]},
+    "candidate_ref":{"type":"string"},
+    "package_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "core1_pdf_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "core2_pdf_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "state":{"enum":["PASS","FAIL","PENDING"]},
+    "findings":{"type":"array","items":{"type":"string"}},
+    "production_claim":{"type":"boolean"}
+  }
+}
