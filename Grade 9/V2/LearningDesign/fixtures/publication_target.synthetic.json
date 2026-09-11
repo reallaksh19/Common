@@ -1,0 +1,13 @@
+{
+  "publication_target_id": "PT-SYN-MATH-001",
+  "delivery_mode": "INTERACTIVE_CAPABLE",
+  "purpose": "COMPETITIVE_FOUNDATION",
+  "allowed_modalities": [
+    "TEXT",
+    "DIAGRAM",
+    "WORKSPACE"
+  ],
+  "constraints": {
+    "max_units": 6
+  }
+}

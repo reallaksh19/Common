@@ -1,0 +1,51 @@
+{
+  "learner_study_model_id": "LSM-SYN-MATH-001",
+  "schema_version": "1.0.0",
+  "study_synthesis_policy_version": "SSP-SYN-1",
+  "targets": [
+    {
+      "target_id": "MATH-SYSTEM-SETUP",
+      "study_treatment": "USE_AS_ENTRY_POINT",
+      "readiness": "READY",
+      "canonical_refs": ["CAN-MATH-SYSTEM-SETUP@1#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "learner_state_reason_refs": ["LSR-SETUP-DEMONSTRATED"],
+      "obligations": [{"obligation_id":"OB-SETUP-ENTRY","kind":"CONCEPTUAL_BRIDGE","description":"Use demonstrated equation-system setup as the entry point to equality execution repair.","canonical_refs":["CAN-MATH-SYSTEM-SETUP@1#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],"learner_state_reason_refs":["LSR-SETUP-DEMONSTRATED"],"semantic_payload":{"learner_job":"State what remains correct in the existing setup before transforming either equation.","anchor_statement":"Preserve the correctly modelled equations as the starting object."}}]
+    },
+    {
+      "target_id": "MATH-EQUALITY-EXECUTION",
+      "study_treatment": "ACTIVE_STUDY",
+      "readiness": "REPAIR_BEFORE",
+      "canonical_refs": ["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],
+      "learner_state_reason_refs": ["LSR-EQUALITY-REPAIR"],
+      "entry_point_ref": "MATH-SYSTEM-SETUP",
+      "obligations": [
+        {"obligation_id":"OB-EQ-RECON","kind":"RECONSTRUCTION","description":"Reconstruct legal equality-preserving transformations.","canonical_refs":["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"learner_state_reason_refs":["LSR-EQUALITY-REPAIR"],"semantic_payload":{"learner_job":"Explain why each algebraic move preserves the solution set.","relation_or_object":"equivalent equations","term_origins":["both sides represent equal quantities","the same legal operation is applied to both sides"],"conditions":["operation remains defined","transformation is applied consistently"],"reconstruction_route":["name the equality","choose one legal operation","apply it to both sides","state the equivalent equation"]}},
+        {"obligation_id":"OB-EQ-REP","kind":"REPRESENTATION_TRANSLATION","description":"Translate between the original equation system and an explicit elimination trace while preserving the solution set.","canonical_refs":["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"learner_state_reason_refs":["LSR-EQUALITY-REPAIR"],"semantic_payload":{"learner_job":"Translate the system into an elimination trace without changing its solutions.","from":"EQUATION_SYSTEM","to":"ELIMINATION_TRACE","translation_job":"show which legal operation produced each equivalent equation","invariant_to_preserve":"solution set"}},
+        {"obligation_id":"OB-EQ-WORK","kind":"WORKED_REASONING","description":"Require one legal transformation per line with explicit reasoning.","canonical_refs":["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"learner_state_reason_refs":["LSR-EQUALITY-REPAIR"],"semantic_payload":{"learner_job":"Track one legal mathematical operation per line.","reasoning_moves":["STATE_CURRENT_EQUALITY","CHOOSE_LEGAL_OPERATION","APPLY_TO_BOTH_SIDES","CHECK_EQUIVALENCE"],"self_check":"Substitute the resulting values back into the original equations."}},
+        {"obligation_id":"OB-EQ-CONTRAST","kind":"MISCONCEPTION_CONTRAST","description":"Contrast equality-preserving and non-preserving transformations.","canonical_refs":["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"learner_state_reason_refs":["LSR-EQUALITY-REPAIR"],"semantic_payload":{"learner_job":"Predict which transformation preserves equality before evaluating it.","controlled_shared_features":["same starting equation","same target variable"],"focal_difference":"operation applied to both sides versus only one side","prediction_required":true}},
+        {"obligation_id":"OB-EQ-VERIFY","kind":"VERIFICATION","description":"Verify solved values against original equations.","canonical_refs":["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"learner_state_reason_refs":["LSR-EQUALITY-REPAIR"],"semantic_payload":{"learner_job":"Check the result in the original representation.","check_route":"substitute candidate values into both original equations"}},
+        {"obligation_id":"OB-EQ-TRANSFER","kind":"TRANSFER","description":"Transfer equality preservation to a changed representation or reverse-reasoning task.","canonical_refs":["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"learner_state_reason_refs":["LSR-EQUALITY-REPAIR"],"semantic_payload":{"learner_job":"Use equality preservation when the task is represented differently.","changed_dimensions":["REPRESENTATION_SHIFT","REVERSE_REASONING"],"non_isomorphic":true}},
+        {"obligation_id":"OB-EQ-COMPLETE","kind":"COMPLETION_EVIDENCE","description":"Require independent evidence of stable execution and checking.","canonical_refs":["CAN-MATH-EQUALITY@2#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"learner_state_reason_refs":["LSR-EQUALITY-REPAIR"],"semantic_payload":{"learner_job":"Complete an independent item and self-check without supplied conceptual hints.","success_evidence":"independent legal transformations plus correct verification against the original equations"}}
+      ]
+    },
+    {
+      "target_id": "MATH-SLOPE-SEMANTICS",
+      "study_treatment": "ACTIVE_STUDY",
+      "readiness": "PROBE_FIRST",
+      "canonical_refs": ["CAN-MATH-SLOPE@1#cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"],
+      "learner_state_reason_refs": ["LSR-SLOPE-AMBIGUOUS"],
+      "obligations": [{"obligation_id":"OB-SLOPE-PROBE","kind":"DIAGNOSTIC_PROBE","description":"Probe x/y coordinate-role meaning before reteaching slope.","canonical_refs":["CAN-MATH-SLOPE@1#cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"],"learner_state_reason_refs":["LSR-SLOPE-AMBIGUOUS"],"semantic_payload":{"learner_job":"Distinguish horizontal and vertical coordinate change with minimal unrelated load.","probe_intent":"compare two coordinate-change statements without requiring full slope calculation"}}]
+    },
+    {
+      "target_id": "MATH-VERIFICATION",
+      "study_treatment": "ACTIVE_STUDY",
+      "readiness": "REPAIR_IN_UNIT",
+      "canonical_refs": ["CAN-MATH-VERIFY@1#dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],
+      "learner_state_reason_refs": ["LSR-VERIFY-DEVELOPING"],
+      "obligations": [
+        {"obligation_id":"OB-VERIFY-INTEGRATE","kind":"VERIFICATION","description":"Integrate checking into multi-step work.","canonical_refs":["CAN-MATH-VERIFY@1#dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],"learner_state_reason_refs":["LSR-VERIFY-DEVELOPING"],"semantic_payload":{"learner_job":"Choose and execute an appropriate check before finalizing.","check_route":"substitute or compare an equivalent representation"}},
+        {"obligation_id":"OB-VERIFY-COMPLETE","kind":"COMPLETION_EVIDENCE","description":"Require self-initiated verification evidence.","canonical_refs":["CAN-MATH-VERIFY@1#dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],"learner_state_reason_refs":["LSR-VERIFY-DEVELOPING"],"semantic_payload":{"learner_job":"Initiate a valid check without being told which check to use.","success_evidence":"self-initiated verification appropriate to the representation"}}
+      ]
+    }
+  ]
+}

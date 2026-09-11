@@ -1,0 +1,76 @@
+{
+  "policy_version": "LDP-SYN-1",
+  "max_same_route_failures": 2,
+  "approved_support_rungs": [
+    {
+      "rung_id": "H1",
+      "support_class": "CONCEPTUAL",
+      "route_mode": "SAME_ROUTE",
+      "support_features": [
+        "ERROR_CHECK_CUE"
+      ],
+      "disclosure": "PROMPT"
+    },
+    {
+      "rung_id": "H2",
+      "support_class": "CONCEPTUAL",
+      "route_mode": "SAME_ROUTE",
+      "support_features": [
+        "FIRST_STEP_CUE"
+      ],
+      "disclosure": "HINT"
+    },
+    {
+      "rung_id": "H3",
+      "support_class": "CONCEPTUAL",
+      "route_mode": "ROUTE_CHANGE",
+      "support_features": [
+        "ALTERNATE_REPRESENTATION",
+        "EXPLICIT_CONTRAST"
+      ],
+      "disclosure": "MODEL"
+    },
+    {
+      "rung_id": "A1",
+      "support_class": "ACCESS",
+      "route_mode": "SAME_ROUTE",
+      "support_features": [
+        "CHUNKED_TEXT",
+        "READ_ALOUD"
+      ],
+      "disclosure": "ACCESS_ONLY"
+    }
+  ],
+  "forbidden_input_keys": [
+    "attempts",
+    "benchmark_ref",
+    "calendar",
+    "golden_ref",
+    "hint_ladder",
+    "interaction_support_state",
+    "page_layout",
+    "pr156",
+    "pr157",
+    "practice_count",
+    "raw_evidence",
+    "reference_artifact",
+    "repair_before",
+    "spacing_interval",
+    "study_priority",
+    "support_progression",
+    "teaching_sequence",
+    "weekly_minutes"
+  ],
+  "forbidden_design_keys": [
+    "page_number",
+    "page_layout",
+    "font_size",
+    "renderer",
+    "weekly_minutes",
+    "calendar",
+    "spacing_interval",
+    "benchmark_ref",
+    "reference_artifact",
+    "golden_ref"
+  ]
+}
