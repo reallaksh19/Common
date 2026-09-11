@@ -1,0 +1,29 @@
+name: V2 Chemistry Cold Start C-K
+
+on:
+  push:
+    paths:
+      - 'Grade 9/V2/Chemistry/ColdStart/**'
+      - 'Grade 9/V2/Chemistry/CHEMISTRY_V2_GENERATION_ENTRYPOINT.md'
+      - 'Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json'
+      - '.github/workflows/v2-chemistry-cold-start.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/ColdStart/**'
+      - 'Grade 9/V2/Chemistry/CHEMISTRY_V2_GENERATION_ENTRYPOINT.md'
+      - 'Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json'
+      - '.github/workflows/v2-chemistry-cold-start.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install jsonschema
+      - name: Validate C-K contracts, manifest and derivation policy
+        run: python 'Grade 9/V2/Chemistry/ColdStart/contracts/validate_contracts.py'
+      - name: Run C-K cold-start Run A/B falsifiers
+        run: python 'Grade 9/V2/Chemistry/ColdStart/tests/test_chemistry_cold_start.py'
