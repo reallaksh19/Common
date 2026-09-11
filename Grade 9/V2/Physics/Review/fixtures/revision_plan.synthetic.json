@@ -1,0 +1,6 @@
+{"schema_version":"1.0.0","review_class":"AI_PRE_REVIEW","actions":[
+{"finding_id":"PHY-R01","expected_evidence":"PC05 table_headers + at least two table_rows"},
+{"finding_id":"PHY-R02","expected_evidence":"PC08 explicit state handoff + at least three concrete state/model values"},
+{"finding_id":"PHY-R03","expected_evidence":"PC09/10/11 support levels 2/1/0 + independent no conceptual hints"},
+{"finding_id":"PHY-R04","expected_evidence":"PC13 structural changes not number-only + PC14 fresh executable task"},
+{"finding_id":"PHY-R05","expected_evidence":"authorized human visual review remains required"}]}
