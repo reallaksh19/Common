@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core2-learner-input.schema.json",
+  "title": "Core2 LearnerInput v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "learner_profile_ref"],
+      "properties": {
+        "mode": {"const": "LEGACY_BASELINE"},
+        "learner_profile_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "learner_state_view_ref", "learner_state_view_digest"],
+      "properties": {
+        "mode": {"const": "EVIDENCE_BACKED"},
+        "learner_state_view_ref": {"type": "string", "minLength": 1},
+        "learner_state_view_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    }
+  ]
+}
