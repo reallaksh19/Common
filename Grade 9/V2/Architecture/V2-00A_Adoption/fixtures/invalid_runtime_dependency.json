@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "programme_issue": 175,
+  "implementation_issue": 178,
+  "entries": [
+    {
+      "id": "A-INVALID-RUNTIME-DEPENDENCY",
+      "source_pr_or_issue": "PR #161",
+      "source_path_or_artifact": "publication validator",
+      "source_commit_or_identity": "old-branch-example",
+      "source_authority_class": "REALIZATION",
+      "behavior_or_invariant": "Invalid fixture deliberately keeps an old branch as a runtime dependency.",
+      "v2_action": "ADAPT",
+      "v2_owner": "CORE2C_PUBLICATION_REALIZATION",
+      "v2_destination": "refs/heads/architecture/core2-publisher-concept-note-20260910",
+      "semantic_differences": ["Invalid fixture intentionally violates fresh lineage."],
+      "old_validation": ["historical publication validation"],
+      "new_validation_required": ["should fail before migration"],
+      "runtime_dependency_allowed": true,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    }
+  ]
+}
