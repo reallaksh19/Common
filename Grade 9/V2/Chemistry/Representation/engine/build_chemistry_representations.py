@@ -4,6 +4,7 @@ from collections import Counter
 from pathlib import Path
 
 D=Path(__file__).resolve().parents[1]
+GENERIC_INSTANCE_PRIMITIVES={'MINIMAL_CHEMISTRY_CONTRAST','FORMULA_EQUATION_CHECK_STRIP'}
 def canonical(o): return json.dumps(o,ensure_ascii=False,sort_keys=True,separators=(',',':'))
 def digest(o,field=None):
     x=copy.deepcopy(o)
@@ -12,6 +13,7 @@ def digest(o,field=None):
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 def fail(code,detail=''): raise ValueError(f'{code}: {detail}' if detail else code)
 def uniq(xs): return sorted(set(xs))
+def primitive_supports_capability(p,cap): return cap in p['capability_refs'] or p['primitive_id'] in GENERIC_INSTANCE_PRIMITIVES
 
 def validate_registry(reg):
     if reg.get('subject')!='CHEMISTRY': fail('VISUAL_WITHOUT_CAPABILITY_BINDING','registry subject')
@@ -69,7 +71,7 @@ def build_bundle(core1_plan,study_model,registry,profile,notation,bundle_id='CHE
         for i,pid in enumerate(primitive_ids_for(lesson,r,profile),1):
             if pid not in by: fail('VISUAL_WITHOUT_INSTRUCTIONAL_JOB',pid)
             p=by[pid]
-            if lesson['capability_ref'] not in p['capability_refs']: fail('VISUAL_WITHOUT_CAPABILITY_BINDING',pid+':'+lesson['capability_ref'])
+            if not primitive_supports_capability(p,lesson['capability_ref']): fail('VISUAL_WITHOUT_CAPABILITY_BINDING',pid+':'+lesson['capability_ref'])
             if p['topic_scope_refs'] and not any(x in lesson['pck_asset_refs'] for x in []):
                 # Topic-scoped primitives are selected only through an explicit page-intent mapping for a topic capability.
                 if lesson['capability_ref'] not in {'CAP-TRACK-OXIDATION-STATE'} and pid not in {'SELF_OTHER_AGENT_FRAME','SPLIT_CONVERGE_TOPOLOGY'}: fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',pid)
@@ -89,7 +91,7 @@ def validate_bundle(bundle,core1_plan,study_model,registry,profile,notation):
         cap=s.get('capability_ref')
         if cap not in recs: fail('VISUAL_WITHOUT_CAPABILITY_BINDING',s.get('representation_id','unknown'))
         grouped[cap].append(s); p=by.get(s['primitive_id'])
-        if not p or cap not in p['capability_refs']: fail('VISUAL_WITHOUT_CAPABILITY_BINDING',s['primitive_id'])
+        if not p or not primitive_supports_capability(p,cap): fail('VISUAL_WITHOUT_CAPABILITY_BINDING',s['primitive_id'])
         if s['instructional_job']!=p['instructional_job'] or s['attention_target']!=p['attention_target']: fail('VISUAL_WITHOUT_INSTRUCTIONAL_JOB',s['representation_id'])
         r=recs[cap]
         if set(s['chemical_entities'])!=set(r['chemical_entity_species_obligations']) or set(s['source_semantic_data']['chemical_entities'])!=set(r['chemical_entity_species_obligations']): fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id'])
