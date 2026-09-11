@@ -1,0 +1,16 @@
+{
+  "artifact_filename": "candidate.pdf",
+  "margins_pt": {
+    "bottom": 55,
+    "left": 50,
+    "right": 50,
+    "top": 55
+  },
+  "paper": {
+    "height_pt": 842,
+    "width_pt": 595
+  },
+  "publication_id": "PUB-SYN-V2-06-001",
+  "publication_target_id": "PT-SYN-V2-06-001",
+  "schema_version": "1.0.0"
+}
