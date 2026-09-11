@@ -1,0 +1,88 @@
+{
+  "profile_id": "MATH-MG-INSTRUCTIONAL-AUTHORING-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "pck_gate": {
+    "production_requires_registry_class": "PRODUCTION",
+    "production_requires_promotion_status": "PROMOTED",
+    "production_requires_review_registry_class": "REAL",
+    "production_requires_review_dimensions": [
+      "SUBJECT",
+      "PEDAGOGY"
+    ],
+    "production_requires_producer_legal": true,
+    "teaching_treatments_requiring_promoted_pck": [
+      "ACTIVE_STUDY",
+      "REPAIR_BEFORE",
+      "REPAIR_IN_UNIT"
+    ]
+  },
+  "treatment_sequences": {
+    "VERIFY_ONLY": [
+      "ACTIVATE",
+      "VERIFY"
+    ],
+    "PROBE_FIRST": [
+      "PROBE"
+    ],
+    "ACTIVE_STUDY": [
+      "ANCHOR",
+      "REPRESENT",
+      "EXPLAIN",
+      "RECONSTRUCT",
+      "CONTRAST",
+      "WORKED",
+      "GUIDED",
+      "FADED",
+      "INDEPENDENT",
+      "VERIFY",
+      "TRANSFER"
+    ],
+    "REPAIR_BEFORE": [
+      "ANCHOR",
+      "REPRESENT",
+      "EXPLAIN",
+      "RECONSTRUCT",
+      "CONTRAST",
+      "WORKED",
+      "GUIDED",
+      "FADED",
+      "INDEPENDENT",
+      "VERIFY",
+      "TRANSFER"
+    ],
+    "REPAIR_IN_UNIT": [
+      "ANCHOR",
+      "REPRESENT",
+      "EXPLAIN",
+      "RECONSTRUCT",
+      "CONTRAST",
+      "WORKED",
+      "GUIDED",
+      "FADED",
+      "INDEPENDENT",
+      "VERIFY",
+      "TRANSFER"
+    ]
+  },
+  "problem_authoring": {
+    "original_assessment_question_role": "CORE2_TRANSFER_ASSET_ONLY",
+    "core1_problem_instances_must_be_new": true,
+    "required_instance_roles_for_full_teaching": [
+      "WORKED",
+      "GUIDED",
+      "FADED",
+      "INDEPENDENT",
+      "TRANSFER"
+    ],
+    "inherit_problem_family_semantics": true,
+    "inherit_verification_obligations": true
+  },
+  "invariants": [
+    "PCK_DOES_NOT_DECIDE_TREATMENT",
+    "ASSESSMENT_SCOPE_DECIDES_WHAT_MUST_BE_TEACHABLE",
+    "LEARNER_STATE_CHANGES_DEPTH_ORDER_SUPPORT_NOT_MATH_TRUTH",
+    "CORE1_DOES_NOT_REUSE_ORIGINAL_ASSESSMENT_QUESTION_AS_WORKED_EXAMPLE",
+    "READY_VERIFY_ONLY_IS_NOT_PADDED_INTO_FULL_RETEACH"
+  ]
+}

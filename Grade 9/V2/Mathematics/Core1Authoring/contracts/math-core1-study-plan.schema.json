@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core1-study-plan.schema.json",
+  "title": "Mathematics Core1 Study Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "core1_study_plan_id",
+    "schema_version",
+    "subject",
+    "release_class",
+    "study_model_ref",
+    "study_model_digest",
+    "pck_candidate_registry_ref",
+    "pck_promotion_registry_ref",
+    "lessons",
+    "scope_completeness",
+    "input_digest",
+    "plan_digest"
+  ],
+  "properties": {
+    "core1_study_plan_id": {
+      "type": "string",
+      "pattern": "^MATH-C1SP-[0-9a-f]{16}$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "release_class": {
+      "enum": [
+        "PRODUCTION",
+        "TEST_ONLY"
+      ]
+    },
+    "study_model_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "study_model_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pck_candidate_registry_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "pck_promotion_registry_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "lessons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "math-core1-lesson.schema.json"
+      }
+    },
+    "scope_completeness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_capability_refs",
+        "covered_capability_refs",
+        "omitted_capability_refs",
+        "status"
+      ],
+      "properties": {
+        "required_capability_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^MATH-"
+          }
+        },
+        "covered_capability_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^MATH-"
+          }
+        },
+        "omitted_capability_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^MATH-"
+          }
+        },
+        "status": {
+          "const": "PASS"
+        }
+      }
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

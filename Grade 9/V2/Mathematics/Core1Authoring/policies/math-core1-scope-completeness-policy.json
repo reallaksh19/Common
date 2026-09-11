@@ -1,0 +1,79 @@
+{
+  "policy_id": "MATH-MG-SCOPE-COMPLETENESS-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "required_capability_rule": "EVERY_LEARNER_STUDY_MODEL_CAPABILITY_PLAN_HAS_EXACTLY_ONE_CORE1_LESSON",
+  "allowed_omissions": [],
+  "treatment_rules": {
+    "VERIFY_ONLY": {
+      "required_sequence": [
+        "ACTIVATE",
+        "VERIFY"
+      ],
+      "promoted_pck_required": false
+    },
+    "PROBE_FIRST": {
+      "required_sequence": [
+        "PROBE"
+      ],
+      "promoted_pck_required": false
+    },
+    "ACTIVE_STUDY": {
+      "required_sequence": [
+        "ANCHOR",
+        "REPRESENT",
+        "EXPLAIN",
+        "RECONSTRUCT",
+        "CONTRAST",
+        "WORKED",
+        "GUIDED",
+        "FADED",
+        "INDEPENDENT",
+        "VERIFY",
+        "TRANSFER"
+      ],
+      "promoted_pck_required": true
+    },
+    "REPAIR_BEFORE": {
+      "required_sequence": [
+        "ANCHOR",
+        "REPRESENT",
+        "EXPLAIN",
+        "RECONSTRUCT",
+        "CONTRAST",
+        "WORKED",
+        "GUIDED",
+        "FADED",
+        "INDEPENDENT",
+        "VERIFY",
+        "TRANSFER"
+      ],
+      "promoted_pck_required": true
+    },
+    "REPAIR_IN_UNIT": {
+      "required_sequence": [
+        "ANCHOR",
+        "REPRESENT",
+        "EXPLAIN",
+        "RECONSTRUCT",
+        "CONTRAST",
+        "WORKED",
+        "GUIDED",
+        "FADED",
+        "INDEPENDENT",
+        "VERIFY",
+        "TRANSFER"
+      ],
+      "promoted_pck_required": true
+    }
+  },
+  "fail_closed_codes": [
+    "PCK_PROMOTION_REQUIRED",
+    "PCK_COVERAGE_GAP",
+    "PCK_DIGEST_MISMATCH",
+    "PCK_REVIEW_AUTHORITY_INVALID",
+    "SOURCE_QUESTION_REUSE_FORBIDDEN",
+    "PROBLEM_FAMILY_REQUIRED",
+    "CORE1_SCOPE_GAP"
+  ]
+}

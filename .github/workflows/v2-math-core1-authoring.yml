@@ -1,0 +1,66 @@
+name: V2 Mathematics M-G PCK and Core1 Authoring
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/InstructionalKnowledge/**'
+      - 'Grade 9/V2/Mathematics/Core1Authoring/**'
+      - 'Grade 9/V2/Mathematics/StudySynthesis/**'
+      - 'Grade 9/V2/Mathematics/AssessmentScope/**'
+      - 'Grade 9/V2/Shared/HumanReview/**'
+      - '.github/workflows/v2-math-core1-authoring.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-core1-authoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate M-G contracts, PCK custody and human-review boundary
+        run: python 'Grade 9/V2/Mathematics/Core1Authoring/contracts/validate_contracts.py'
+      - name: Run M-G authoring falsifiers
+        run: python 'Grade 9/V2/Mathematics/Core1Authoring/tests/test_math_core1_authoring.py'
+      - name: Deterministic test-only authoring replay
+        run: |
+          C='Grade 9/V2/Mathematics/Core1Authoring'
+          P='Grade 9/V2/Mathematics/InstructionalKnowledge'
+          run_mg() {
+            python "$C/engine/author_math_core1.py" \
+              --study-model "$C/fixtures/study-model-two-capabilities.fixture.json" \
+              --pck-candidates "$P/registry/math-pck-candidates.json" \
+              --pck-promotions "$C/fixtures/test-only-pck-promotion-registry.fixture.json" \
+              --profile "$C/policies/math-instructional-authoring-profile.json" \
+              --scope-policy "$C/policies/math-core1-scope-completeness-policy.json" \
+              --test-mode \
+              --out "$1"
+          }
+          run_mg /tmp/mg-a.json
+          run_mg /tmp/mg-b.json
+          cmp /tmp/mg-a.json /tmp/mg-b.json
+      - name: Prove production fails closed without human PCK promotion
+        run: |
+          C='Grade 9/V2/Mathematics/Core1Authoring'
+          P='Grade 9/V2/Mathematics/InstructionalKnowledge'
+          set +e
+          python "$C/engine/author_math_core1.py" \
+            --study-model "$C/fixtures/study-model-two-capabilities.fixture.json" \
+            --pck-candidates "$P/registry/math-pck-candidates.json" \
+            --pck-promotions "$P/registry/math-pck-promotion-registry.json" \
+            --profile "$C/policies/math-instructional-authoring-profile.json" \
+            --scope-policy "$C/policies/math-core1-scope-completeness-policy.json" \
+            --out /tmp/should-not-exist.json \
+            2>/tmp/mg-prod.err
+          code=$?
+          set -e
+          test "$code" -ne 0
+          grep -q 'PCK_PROMOTION_REQUIRED:MATH-EQUALITY-PRESERVATION' /tmp/mg-prod.err
+          test ! -f /tmp/should-not-exist.json
+          echo 'MATH M-G production promotion gate PASS'
