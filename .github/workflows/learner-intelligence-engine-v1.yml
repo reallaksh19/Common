@@ -1,0 +1,39 @@
+name: Learner Intelligence Engine v1
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/Architecture/learner_intelligence/**"
+      - ".github/workflows/learner-intelligence-engine-v1.yml"
+  workflow_dispatch:
+
+jobs:
+  learner-intelligence-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator dependency
+        run: python -m pip install jsonschema
+      - name: Validate Phase 1 shared contracts
+        run: python "Grade 9/Architecture/learner_intelligence/contracts/v1/validate_contracts.py"
+      - name: Validate Phase 2 subject contracts
+        run: python "Grade 9/Architecture/learner_intelligence/contracts/v1/validate_subject_contracts.py"
+      - name: Validate Phase 3 answer-sheet falsifiers
+        run: python "Grade 9/Architecture/learner_intelligence/fixtures/validate_answer_sheet_falsifiers.py"
+      - name: Validate Phase 4 integration contracts
+        run: python "Grade 9/Architecture/learner_intelligence/contracts/v1/validate_integration_contracts.py"
+      - name: Validate Phase 5 engine contracts
+        run: python "Grade 9/Architecture/learner_intelligence/engine/validate_engine_contracts.py"
+      - name: Run deterministic semantic falsifiers
+        run: python "Grade 9/Architecture/learner_intelligence/engine/tests/test_engine_semantics.py"
+      - name: Produce answer-sheet diagnostic smoke output
+        run: |
+          python "Grade 9/Architecture/learner_intelligence/engine/derive_state.py" \
+            --fixture "Grade 9/Architecture/learner_intelligence/fixtures/cross_subject_answer_sheet_acceptance.json" \
+            --registry "Grade 9/Architecture/learner_intelligence/engine/fixtures/capability_registry.v1.json" \
+            --policy "Grade 9/Architecture/learner_intelligence/engine/fixtures/state_reduction_policy.v1.json" \
+            --out /tmp/learner-intelligence-answer-sheet-output.json
+          test -s /tmp/learner-intelligence-answer-sheet-output.json
