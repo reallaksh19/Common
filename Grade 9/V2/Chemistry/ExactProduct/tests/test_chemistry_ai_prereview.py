@@ -12,15 +12,14 @@ policy=load(D/'registry'/'chemistry-exact-product-quality-policy.json')
 with tempfile.TemporaryDirectory() as td:
     out=Path(td); candidate,cold=realization(REPO,out)
     candidate,review=audit(out/'exact-product-candidate.json',out/'core-study-guide.pdf',out/'examside-solution-transfer-book.pdf',out/'ai-pre-review.json')
-    assert review['state']=='FAIL'
-    assert not candidate['machine_evidence']['macro_particle_symbolic_realized']
-    assert any('MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED' in x for x in review['findings'])
-    assert any('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK' in x for x in review['findings'])
+    assert review['state']=='PASS',review
+    assert candidate['machine_evidence']['macro_particle_symbolic_realized']
+    assert review['findings']==[]
     gate=machine_validate(candidate,cold,policy,out,candidate['source_qc_event_refs'])
     assert gate['status']=='PASS',gate
     rc={'comparator_id':policy['reference_comparator_id'],'state':'NOT_RUN','run_after_human_gates':False,'raw_reference_used_as_runtime_input':False}
     decision=build_release_decision(candidate,gate,[review],rc,policy)
     assert decision['classification']==policy['blocked_classification'] and decision['exit_code']==2
     validate_release_decision(decision,candidate,[review],policy)
-print('CHEMISTRY C-L AI pre-review = FAIL as expected for current exact candidate')
-print('Machine publication engineering remains PASS; mature release remains BLOCKED/2')
+print('CHEMISTRY C-L AI pre-review = PASS for remediated exact candidate')
+print('Machine publication engineering remains PASS; mature release remains BLOCKED/2 pending authorized reviews')
