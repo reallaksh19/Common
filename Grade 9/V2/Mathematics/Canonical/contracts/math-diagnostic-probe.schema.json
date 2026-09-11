@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-diagnostic-probe.schema.json",
+  "title": "MathDiagnosticProbe V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["probe_id","subject","target_capability_ref","hypotheses_distinguished","prompt_intent","success_evidence","assistance_level","confounds_to_avoid"],
+  "properties": {
+    "probe_id": {"type":"string","pattern":"^MATH-PROBE-[A-Z0-9-]+$"},
+    "subject": {"const":"MATHEMATICS"},
+    "target_capability_ref": {"type":"string","pattern":"^MATH-[A-Z0-9-]+$"},
+    "hypotheses_distinguished": {"type":"array","minItems":2,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "prompt_intent": {"type":"string","minLength":1},
+    "success_evidence": {"type":"string","minLength":1},
+    "failure_evidence": {"type":"string"},
+    "assistance_level": {"enum":["NONE","RECOGNITION_CUE","REPRESENTATION_CUE"]},
+    "confounds_to_avoid": {"type":"array","minItems":1,"items":{"type":"string","minLength":1}}
+  }
+}

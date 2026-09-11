@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-canonical-package.schema.json",
+  "title": "MathCanonicalPackage V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["package_id","schema_version","subject","registry_version","source_artifacts","capability_ids","error_signature_ids","diagnostic_probe_ids","reasoning_contract_ids","reasoning_family_refs","benchmark_inputs","package_digest"],
+  "properties": {
+    "package_id": {"const":"MATH-V2-CANONICAL-FOUNDATIONS-001"},
+    "schema_version": {"const":"1.0.0"},
+    "subject": {"const":"MATHEMATICS"},
+    "registry_version": {"const":"MATH-V2-FOUNDATIONS-1.0.0"},
+    "source_artifacts": {"type":"array","minItems":4,"items":{"type":"object","additionalProperties":false,"required":["path","sha256"],"properties":{"path":{"type":"string","minLength":1},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
+    "capability_ids": {"type":"array","minItems":8,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9-]+$"}},
+    "error_signature_ids": {"type":"array","minItems":4,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-ERR-[A-Z0-9-]+$"}},
+    "diagnostic_probe_ids": {"type":"array","minItems":4,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-PROBE-[A-Z0-9-]+$"}},
+    "reasoning_contract_ids": {"type":"array","minItems":3,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-RC-[A-Z0-9-]+$"}},
+    "reasoning_family_refs": {"type":"array","uniqueItems":true,"items":{"enum":["INVARIANT_TRACKING","REPRESENTATION_SEMANTICS","VERIFICATION"]}},
+    "benchmark_inputs": {"type":"array","maxItems":0},
+    "package_digest": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

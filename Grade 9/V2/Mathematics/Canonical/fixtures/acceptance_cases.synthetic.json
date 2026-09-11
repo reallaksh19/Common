@@ -1,0 +1,63 @@
+{
+  "fixture_id": "MATH-V2-CANONICAL-ACCEPTANCE-001",
+  "privacy_class": "PUBLIC_SYNTHETIC",
+  "note": "Synthetic checkpoint patterns only. No learner identity or raw learner artifact.",
+  "cases": [
+    {
+      "case_id": "MATH-LINEAR-SYSTEM-01",
+      "reasoning_contract_ref": "MATH-RC-LINEAR-SYSTEM-WORD",
+      "observations": [
+        {"checkpoint_id": "LS-WORD-TO-EQ", "result": "SUCCESS"},
+        {"checkpoint_id": "LS-SYSTEM-SETUP", "result": "SUCCESS"},
+        {"checkpoint_id": "LS-TRANSFORM", "result": "INVALID"},
+        {"checkpoint_id": "LS-VERIFY", "result": "FAILURE"}
+      ],
+      "must_preserve": ["MATH-WORD-MODELLING", "MATH-LINEAR-SYSTEM-SETUP"],
+      "candidate_failure_capabilities": ["MATH-EQUALITY-PRESERVATION", "MATH-VARIABLE-SEMANTICS"],
+      "must_not_conclude": ["MATH-WORD-MODELLING-FAILURE", "MATHEMATICS-GLOBALLY-WEAK"]
+    },
+    {
+      "case_id": "MATH-GEOMETRY-ALGEBRA-01",
+      "reasoning_contract_ref": "MATH-RC-GEOMETRY-ALGEBRA-BRIDGE",
+      "observations": [
+        {"checkpoint_id": "GA-GEOMETRIC-RELATION", "result": "SUCCESS"},
+        {"checkpoint_id": "GA-ALGEBRAIC-RELATION", "result": "SUCCESS"},
+        {"checkpoint_id": "GA-EXPAND", "result": "INVALID"},
+        {"checkpoint_id": "GA-VERIFY", "result": "FAILURE"}
+      ],
+      "must_preserve": ["MATH-GEOMETRIC-MODELLING", "MATH-REPRESENTATION-TRANSLATION"],
+      "candidate_failure_capabilities": ["MATH-BINOMIAL-SQUARE-EXPANSION", "MATH-SIGN-PROPAGATION"],
+      "must_not_conclude": ["MATH-GEOMETRIC-MODELLING-FAILURE", "COORDINATE-GEOMETRY-GLOBALLY-WEAK"]
+    },
+    {
+      "case_id": "MATH-COORDINATE-SLOPE-01",
+      "reasoning_contract_ref": "MATH-RC-COORDINATE-SLOPE",
+      "observations": [
+        {"checkpoint_id": "SL-PAIR-SEMANTICS", "result": "AMBIGUOUS"},
+        {"checkpoint_id": "SL-TRANSLATE", "result": "INVALID"}
+      ],
+      "required_probe_ref": "MATH-PROBE-ORDERED-PAIR-SLOPE",
+      "candidate_failure_capabilities": ["MATH-ORDERED-PAIR-SEMANTICS", "MATH-REPRESENTATION-TRANSLATION"],
+      "must_not_conclude": ["COORDINATE-GEOMETRY-GLOBALLY-WEAK"]
+    },
+    {
+      "case_id": "MATH-VERIFY-01",
+      "reasoning_contract_ref": "MATH-RC-LINEAR-SYSTEM-WORD",
+      "observations": [
+        {"checkpoint_id": "LS-WORD-TO-EQ", "result": "SUCCESS"},
+        {"checkpoint_id": "LS-SYSTEM-SETUP", "result": "SUCCESS"},
+        {"checkpoint_id": "LS-VERIFY", "result": "FAILURE"}
+      ],
+      "required_probe_ref": "MATH-PROBE-VERIFY-SUBSTITUTION",
+      "must_preserve": ["MATH-WORD-MODELLING", "MATH-LINEAR-SYSTEM-SETUP"],
+      "candidate_failure_capabilities": ["MATH-SOLUTION-VERIFICATION"],
+      "must_not_conclude": ["ORIGINAL-MODELLING-FAILURE"]
+    }
+  ],
+  "global_falsifiers": [
+    "FAILED_FINAL_ANSWER_ERASES_UPSTREAM_MODELLING",
+    "ALGEBRA_ERROR_BECOMES_BLANKET_MATH_FAILURE",
+    "AMBIGUOUS_COORDINATE_SEMANTICS_BECOMES_CONFIRMED_TOPIC_WEAKNESS",
+    "VERIFICATION_FAILURE_BECOMES_SOLVING_FAILURE"
+  ]
+}
