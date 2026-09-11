@@ -1,0 +1,8 @@
+{
+  "authority":"EXTERNAL_SHARED_INTERFACE",
+  "dependencies":[
+    {"dependency_id":"SHARED-ARITHMETIC-EXECUTION","description":"Accurate arithmetic/sign execution consumed by Physics but not redefined as Physics truth."},
+    {"dependency_id":"SHARED-ALGEBRAIC-SUBSTITUTION","description":"Algebraic substitution/manipulation consumed by Physics but not redefined as Physics truth."}
+  ],
+  "schema_version":"1.0.0"
+}

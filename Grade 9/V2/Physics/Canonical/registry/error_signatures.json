@@ -1,0 +1,11 @@
+{
+  "error_signatures":[
+    {"authority":"PHYSICS_CANONICAL","capability_refs":["PHY-MOTION-PROPAGATE-STATE"],"checkpoint_refs":["PHY-SP-06"],"error_signature_id":"PHY-ERR-PHASE-STATE-RESET","evidence_pattern":"A later phase is initialized from an unrelated/default state despite a continuous boundary.","hypothesis_only":true},
+    {"authority":"PHYSICS_CANONICAL","capability_refs":["PHY-MOTION-PROPAGATE-STATE"],"checkpoint_refs":["PHY-SP-05","PHY-SP-06"],"error_signature_id":"PHY-ERR-BOUNDARY-HANDOFF-OMITTED","evidence_pattern":"A phase boundary is present but the terminal-to-next-initial state relation is not represented.","hypothesis_only":true},
+    {"authority":"PHYSICS_CANONICAL","capability_refs":["PHY-REFERENCE-FRAME","PHY-SIGNED-DISPLACEMENT-INTERPRETATION"],"checkpoint_refs":["PHY-SP-08","PHY-SD-01"],"error_signature_id":"PHY-ERR-FRAME-SIGN-SWITCH","evidence_pattern":"Sign convention changes during reasoning without an explicit frame redefinition.","hypothesis_only":true},
+    {"authority":"PHYSICS_CANONICAL","capability_refs":["PHY-PROJECTILE-COMPONENT-DECOMPOSITION"],"checkpoint_refs":["PHY-PJ-02"],"error_signature_id":"PHY-ERR-APEX-TOTAL-VELOCITY-ZERO","evidence_pattern":"At projectile apex, vertical velocity zero is treated as total velocity zero despite nonzero horizontal component.","hypothesis_only":true},
+    {"authority":"PHYSICS_CANONICAL","capability_refs":["PHY-SIGNED-DISPLACEMENT-INTERPRETATION"],"checkpoint_refs":["PHY-SD-03"],"error_signature_id":"PHY-ERR-DISTANCE-DISPLACEMENT-CONFLATION","evidence_pattern":"Path length/distance is used as though it were signed displacement.","hypothesis_only":true},
+    {"authority":"PHYSICS_CANONICAL","capability_refs":["PHY-SIGNED-DISPLACEMENT-INTERPRETATION","PHY-PHYSICAL-VALIDATION"],"checkpoint_refs":["PHY-SP-08","PHY-SD-04"],"error_signature_id":"PHY-ERR-SIGN-DIRECTION-DECOUPLED","evidence_pattern":"A signed result is manipulated arithmetically without interpreting its physical direction in the declared frame.","hypothesis_only":true}
+  ],
+  "schema_version":"1.0.0"
+}
