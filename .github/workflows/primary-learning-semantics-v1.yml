@@ -35,5 +35,8 @@ jobs:
       - name: Validate canonical Primary semantic fixture
         run: python Primary/Architecture/contracts/v1/validate_semantics.py
 
+      - name: Validate diagnostic reasoning companion
+        run: python Primary/Architecture/contracts/v1/validate_diagnostic_reasoning.py
+
       - name: Validate Grade 4 subject skill wiring
         run: python Primary/Architecture/contracts/v1/validate_grade4_skill_wiring.py
