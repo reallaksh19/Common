@@ -1,0 +1,30 @@
+name: V2 Chemistry Assessment Intake C-A
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/AssessmentIntake/**'
+      - '.github/workflows/v2-chemistry-assessment-intake.yml'
+jobs:
+  chemistry-assessment-intake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate contracts and fixtures
+        run: python 'Grade 9/V2/Chemistry/AssessmentIntake/contracts/validate_contracts.py'
+      - name: Run source-fidelity falsifiers
+        run: python 'Grade 9/V2/Chemistry/AssessmentIntake/tests/test_chemistry_assessment_intake.py'
+      - name: Deterministic replay
+        run: |
+          D='Grade 9/V2/Chemistry/AssessmentIntake'
+          python "$D/engine/build_chemistry_assessment_intake.py" --sources "$D/fixtures/mixed-chemistry-source.fixture.json" --questions "$D/fixtures/mixed-chemistry-question-set.fixture.json" --corpus "$D/fixtures/mixed-chemistry-external-corpus.fixture.json" --topic-scope "$D/fixtures/mixed-chemistry-topic-scope.fixture.json" --attempts "$D/fixtures/mixed-chemistry-attempt-set.fixture.json" --out /tmp/a.json --intake-id DET
+          python "$D/engine/build_chemistry_assessment_intake.py" --sources "$D/fixtures/mixed-chemistry-source.fixture.json" --questions "$D/fixtures/mixed-chemistry-question-set.fixture.json" --corpus "$D/fixtures/mixed-chemistry-external-corpus.fixture.json" --topic-scope "$D/fixtures/mixed-chemistry-topic-scope.fixture.json" --attempts "$D/fixtures/mixed-chemistry-attempt-set.fixture.json" --out /tmp/b.json --intake-id DET
+          cmp /tmp/a.json /tmp/b.json
+      - name: Prove AttemptSet optional
+        run: |
+          D='Grade 9/V2/Chemistry/AssessmentIntake'
+          python "$D/engine/build_chemistry_assessment_intake.py" --sources "$D/fixtures/mixed-chemistry-source.fixture.json" --questions "$D/fixtures/mixed-chemistry-question-set.fixture.json" --corpus "$D/fixtures/mixed-chemistry-external-corpus.fixture.json" --topic-scope "$D/fixtures/mixed-chemistry-topic-scope.fixture.json" --out /tmp/noatt.json --intake-id NOATT
+          grep -q '"attempt_mode": "ABSENT"' /tmp/noatt.json
