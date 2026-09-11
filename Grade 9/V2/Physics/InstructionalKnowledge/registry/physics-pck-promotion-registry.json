@@ -1,0 +1,8 @@
+{
+  "registry_id": "PHY-PCK-PROMOTION-REGISTRY-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "promotions": [],
+  "promotion_rule": "Only explicit human SUBJECT and PEDAGOGY review evidence may promote a candidate for producer-legal Core1 use.",
+  "registry_digest": "8d1eb960a8cbd247e22ad5e648a84252813fb6e268397a8a63d4344e10fb587f"
+}
