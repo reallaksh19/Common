@@ -1,0 +1,26 @@
+{
+  "allowed_primitives": [
+    "TEXT_BLOCK",
+    "ANNOTATED_REPRESENTATION",
+    "PREDICT_BOX",
+    "RECONSTRUCTION_LADDER",
+    "WORKED_REASONING_STACK",
+    "MINIMAL_CONTRAST_PANEL",
+    "GUIDED_WORKSPACE",
+    "SELF_CHECK_STRIP",
+    "TRANSFER_CHALLENGE"
+  ],
+  "font_size_pt": 10,
+  "line_height_pt": 16,
+  "max_material_items_per_page": 3,
+  "policy_id": "PRP-V2-06-SYN-001",
+  "quality_boundary": {
+    "benchmark_comparative_validation": "NOT_RUN",
+    "pedagogy_usability": "PENDING",
+    "subject_correctness": "PENDING",
+    "visual_usability": "PENDING"
+  },
+  "require_actual_placement_evidence": true,
+  "require_exact_hash_binding": true,
+  "schema_version": "1.0.0"
+}
