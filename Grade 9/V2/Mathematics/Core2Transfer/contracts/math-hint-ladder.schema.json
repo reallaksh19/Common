@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-hint-ladder.schema.json",
+  "title": "Mathematics Core2 Hint Ladder",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["support_revealed_initially", "H1", "H2", "H3"],
+  "properties": {
+    "support_revealed_initially": {"const": false},
+    "H1": {"$ref": "#/$defs/hint"},
+    "H2": {"$ref": "#/$defs/hint"},
+    "H3": {"$ref": "#/$defs/hint"}
+  },
+  "$defs": {
+    "hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "job", "text"],
+      "properties": {
+        "level": {"enum": ["H1", "H2", "H3"]},
+        "job": {"enum": ["NOTICE_STRUCTURE", "CHOOSE_METHOD_OR_REPRESENTATION", "FIRST_EXECUTABLE_STEP"]},
+        "text": {"type": "string", "minLength": 12}
+      }
+    }
+  }
+}

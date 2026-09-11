@@ -1,0 +1,32 @@
+name: V2 Mathematics M-I Core2 Transfer
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/Core2Transfer/**'
+      - 'Grade 9/V2/Mathematics/AssessmentIntake/**'
+      - 'Grade 9/V2/Mathematics/AssessmentReview/**'
+      - 'Grade 9/V2/Mathematics/AssessmentScope/**'
+      - 'Grade 9/V2/Mathematics/ProblemSemantics/**'
+      - 'Grade 9/V2/Mathematics/RepresentationSemantics/**'
+      - 'Grade 9/V2/Mathematics/Core1Authoring/**'
+      - '.github/workflows/v2-math-core2-transfer.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-core2-transfer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate M-I contracts
+        run: python 'Grade 9/V2/Mathematics/Core2Transfer/contracts/validate_contracts.py'
+      - name: Run M-I source, support, reasoning, solution, linkage and representation falsifiers
+        run: python 'Grade 9/V2/Mathematics/Core2Transfer/tests/test_math_core2_transfer.py'
