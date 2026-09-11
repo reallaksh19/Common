@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "audit_id": {"pattern": "^PHY-PUB-AUDIT-", "type": "string"},
+    "checks": {"additionalProperties": {"const": "PASS"}, "minProperties": 1, "type": "object"},
+    "publication_engineering": {"const": "PASS"},
+    "schema_version": {"const": "1.0.0"}
+  },
+  "required": ["schema_version", "audit_id", "artifact_sha256", "checks", "publication_engineering"],
+  "type": "object"
+}

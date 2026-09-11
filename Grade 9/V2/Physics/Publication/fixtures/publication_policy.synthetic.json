@@ -1,0 +1,42 @@
+{
+  "benchmark_inputs": [],
+  "page_groups": [
+    {
+      "content_refs": [
+        "PC01",
+        "PC02",
+        "PC03"
+      ],
+      "title": "Probe first: resolve the ambiguities"
+    },
+    {
+      "content_refs": [
+        "PC04",
+        "PC05",
+        "PC06",
+        "PC07"
+      ],
+      "title": "Carry state across the boundary"
+    },
+    {
+      "content_refs": [
+        "PC08",
+        "PC09",
+        "PC10",
+        "PC11",
+        "PC12"
+      ],
+      "title": "Reason, fade support, then verify"
+    },
+    {
+      "content_refs": [
+        "PC13",
+        "PC14",
+        "PC15"
+      ],
+      "title": "Transfer and prove independence"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "version": "PHY-PUB-POLICY-1.0.0"
+}

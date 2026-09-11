@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "manifest_id": {"pattern": "^PHY-PUB-MANIFEST-", "type": "string"},
+    "package_digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "physical_page_map_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "publication_audit_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "publication_structure_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "quality_states": {"additionalProperties": false, "properties": {"BENCHMARK_COMPARATIVE_VALIDATION": {"const": "NOT_RUN"}, "PEDAGOGY_USABILITY": {"const": "PENDING"}, "PUBLICATION_ENGINEERING": {"const": "PASS"}, "SUBJECT_CORRECTNESS": {"const": "PENDING"}, "VISUAL_USABILITY": {"const": "PENDING"}}, "required": ["PUBLICATION_ENGINEERING", "SUBJECT_CORRECTNESS", "PEDAGOGY_USABILITY", "VISUAL_USABILITY", "BENCHMARK_COMPARATIVE_VALIDATION"], "type": "object"},
+    "schema_version": {"const": "1.0.0"},
+    "semantic_product_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "source_learning_design_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}
+  },
+  "required": ["schema_version", "manifest_id", "artifact_sha256", "semantic_product_sha256", "publication_structure_sha256", "physical_page_map_sha256", "publication_audit_sha256", "source_learning_design_sha256", "package_digest", "quality_states"],
+  "type": "object"
+}

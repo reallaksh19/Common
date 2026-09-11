@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actual_placement_evidence": {"const": true},
+    "artifact_path": {"const": "candidate.pdf"},
+    "artifact_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "content_placements": {"items": {"additionalProperties": false, "properties": {"content_ref": {"type": "string"}, "fragment_kind": {"const": "START"}, "page": {"minimum": 1, "type": "integer"}, "page_intent_id": {"type": "string"}, "primitive": {"type": "string"}, "renderer_emitted": {"const": true}, "x0": {"type": "number"}, "x1": {"type": "number"}, "y0": {"type": "number"}, "y1": {"type": "number"}}, "required": ["content_ref", "page_intent_id", "primitive", "page", "x0", "y0", "x1", "y1", "fragment_kind", "renderer_emitted"], "type": "object"}, "minItems": 1, "type": "array"},
+    "page_count": {"minimum": 1, "type": "integer"},
+    "page_map_id": {"pattern": "^PHY-PHYSICAL-PAGE-MAP-", "type": "string"},
+    "schema_version": {"const": "1.0.0"}
+  },
+  "required": ["schema_version", "page_map_id", "artifact_path", "artifact_sha256", "page_count", "actual_placement_evidence", "content_placements"],
+  "type": "object"
+}
