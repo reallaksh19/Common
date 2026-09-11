@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-problem-authoring-plan.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["plan_id","role","capability_ref","problem_family_ref","must_be_new_instance","source_question_reuse","source_question_refs","surface_changes","inherited_model_validity_obligations","inherited_verification_requirements","pck_asset_refs","plan_digest"],
+  "properties":{
+    "plan_id":{"type":"string","pattern":"^PHY-P-G-PROB-"},
+    "role":{"enum":["WORKED","GUIDED","FADED","INDEPENDENT","TRANSFER"]},
+    "capability_ref":{"type":"string","pattern":"^PHY-CAP-"},
+    "problem_family_ref":{"type":"string","pattern":"^PHY-PF-"},
+    "must_be_new_instance":{"const":true},
+    "source_question_reuse":{"const":false},
+    "source_question_refs":{"type":"array","maxItems":0},
+    "surface_changes":{"type":"array","minItems":2,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "inherited_model_validity_obligations":{"type":"array","items":{"type":"object"}},
+    "inherited_verification_requirements":{"type":"array","items":{"type":"string"}},
+    "pck_asset_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^PHY-PCK-"}},
+    "plan_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
