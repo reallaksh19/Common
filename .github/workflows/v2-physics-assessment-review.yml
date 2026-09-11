@@ -1,0 +1,52 @@
+name: V2 Physics Assessment Review P-B
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/AssessmentReview/**'
+      - 'Grade 9/V2/Physics/AssessmentIntake/**'
+      - '.github/workflows/v2-physics-assessment-review.yml'
+
+jobs:
+  physics-assessment-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Re-prove P-A source / representation fidelity first
+        run: |
+          python 'Grade 9/V2/Physics/AssessmentIntake/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Physics/AssessmentIntake/tests/test_physics_assessment_intake.py'
+      - name: Validate PHYSICS P-B contracts
+        run: python 'Grade 9/V2/Physics/AssessmentReview/contracts/validate_contracts.py'
+      - name: Run PHYSICS P-B assessment-safety falsifiers
+        run: python 'Grade 9/V2/Physics/AssessmentReview/tests/test_physics_assessment_review.py'
+      - name: Deterministic assessment-review replay
+        run: |
+          D='Grade 9/V2/Physics/AssessmentReview'
+          Q='Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-question-set.fixture.json'
+          python "$D/engine/review_physics_assessment.py" --questions "$Q" --registry "$D/registry/physics-item-validity-registry.json" --policy "$D/policies/diagnostic-use-policy.json" --out /tmp/a.json
+          python "$D/engine/review_physics_assessment.py" --questions "$Q" --registry "$D/registry/physics-item-validity-registry.json" --policy "$D/policies/diagnostic-use-policy.json" --out /tmp/b.json
+          cmp /tmp/a.json /tmp/b.json
+      - name: Prove P-B pilot safety states
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/a.json'))
+          r={i['item_ref']:i for i in x['item_reviews']}
+          assert r['Q3']['validity_state']=='VALID_ASSUMPTION_SENSITIVE'
+          assert r['Q3']['required_model_assumptions']
+          assert r['Q8']['source_integrity_review']['representation_bindings'][0]['representation_ref']=='FIG-Q8-VT'
+          assert r['Q10']['validity_state']=='UNDERDETERMINED'
+          assert r['Q10']['diagnostic_constraints']['negative_inference_allowed'] is False
+          assert r['Q13']['source_integrity_state']=='TRUNCATED_OR_MISSING_FIGURE'
+          assert r['Q13']['source_integrity_review']['reconstruction_performed'] is False
+          assert r['Q14']['source_integrity_state']=='TYPOGRAPHIC_OR_OCR_AMBIGUITY'
+          assert r['Q14']['source_integrity_review']['ambiguity_resolution_state']=='UNRESOLVED'
+          assert x['attempt_data_consumed'] is False
+          assert x['review_precedes_attempt_interpretation'] is True
+          print('PHYSICS P-B assessment safety gate PASS')
+          PY

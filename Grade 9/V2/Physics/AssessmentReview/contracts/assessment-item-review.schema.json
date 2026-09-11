@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment-item-review.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "item_ref",
+    "question_ref",
+    "part_ref",
+    "item_kind",
+    "source_question_digest",
+    "source_integrity_state",
+    "validity_state",
+    "source_asserted_answer",
+    "canonical_answer",
+    "required_model_assumptions",
+    "frame_sign_assumptions",
+    "source_integrity_review",
+    "review_rationale",
+    "canonical_physics_refs",
+    "diagnostic_use",
+    "confidence",
+    "review_policy_version",
+    "review_provenance"
+  ],
+  "properties": {
+    "review_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "item_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "part_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "item_kind": {
+      "enum": [
+        "QUESTION",
+        "SUBPART"
+      ]
+    },
+    "source_question_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_integrity_state": {
+      "enum": [
+        "CLEAN",
+        "TYPOGRAPHIC_OR_OCR_AMBIGUITY",
+        "DATA_ERROR",
+        "TRUNCATED_OR_MISSING_FIGURE",
+        "REVIEW_REQUIRED"
+      ]
+    },
+    "validity_state": {
+      "enum": [
+        "CLEAN",
+        "VALID_ASSUMPTION_SENSITIVE",
+        "VALID_MULTIPLE_MODELS_OR_INTERPRETATIONS",
+        "UNDERDETERMINED",
+        "MATHEMATICAL_OR_DOMAIN_ISSUE",
+        "KEY_ERROR",
+        "DATA_ERROR",
+        "TRUNCATED_OR_MISSING_FIGURE",
+        "REVIEW_REQUIRED"
+      ]
+    },
+    "source_asserted_answer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "canonical_answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "answer_type",
+        "accepted_answers",
+        "accepted_option_labels",
+        "answer_conditions",
+        "uniqueness_status"
+      ],
+      "properties": {
+        "answer_type": {
+          "enum": [
+            "OPTION_SET",
+            "EXACT_SET",
+            "CONDITION_SET",
+            "EXPLANATION_CRITERIA",
+            "COMPOSITE",
+            "NOT_RESOLVABLE"
+          ]
+        },
+        "accepted_answers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accepted_option_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "answer_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "uniqueness_status": {
+          "enum": [
+            "SINGLE",
+            "MULTIPLE",
+            "NON_UNIQUE",
+            "CRITERIA",
+            "COMPOSITE",
+            "UNRESOLVED"
+          ]
+        }
+      }
+    },
+    "required_model_assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "frame_sign_assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_integrity_review": {
+      "$ref": "physics-source-integrity-review.schema.json"
+    },
+    "review_rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_physics_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "diagnostic_use": {
+      "enum": [
+        "FULL",
+        "PARTIAL",
+        "POSITIVE_EVIDENCE_ONLY",
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "review_policy_version": {
+      "const": "1.0.0"
+    },
+    "review_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "review_class",
+        "human_assessment_expert_review"
+      ],
+      "properties": {
+        "review_class": {
+          "const": "AI_ASSISTED_REFERENCE_REVIEW"
+        },
+        "human_assessment_expert_review": {
+          "const": false
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-source-integrity-review.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "rendered_source_inspected",
+    "ambiguity_resolution_state",
+    "ambiguity_details",
+    "missing_or_damaged_representation",
+    "reconstruction_performed",
+    "representation_bindings"
+  ],
+  "properties": {
+    "rendered_source_inspected": {
+      "type": "boolean"
+    },
+    "ambiguity_resolution_state": {
+      "enum": [
+        "NOT_APPLICABLE",
+        "RESOLVED",
+        "UNRESOLVED"
+      ]
+    },
+    "ambiguity_details": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_or_damaged_representation": {
+      "type": "boolean"
+    },
+    "reconstruction_performed": {
+      "type": "boolean"
+    },
+    "representation_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "representation_ref",
+          "representation_digest",
+          "status",
+          "kind"
+        ],
+        "properties": {
+          "representation_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "representation_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "status": {
+            "enum": [
+              "PRESENT",
+              "MISSING_OR_TRUNCATED"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "GRAPH",
+              "OPTION_FIGURE",
+              "MOTION_DIAGRAM",
+              "VECTOR_DIAGRAM",
+              "OTHER"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

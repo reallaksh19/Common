@@ -1,0 +1,145 @@
+{
+  "policy_digest": "967292bf951b9336e43a95678ca0f0eef5886fe17134e7ec5236217f86708d6f",
+  "policy_id": "PHYSICS-ASSESSMENT-DIAGNOSTIC-USE-v1",
+  "policy_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "source_integrity_rules": [
+    {
+      "requires_rendered_source_inspection_or_unresolved": false,
+      "source_integrity_state": "CLEAN",
+      "synthetic_reconstruction_allowed": false,
+      "unresolved_allowed_diagnostic_use": [
+        "FULL",
+        "PARTIAL",
+        "POSITIVE_EVIDENCE_ONLY",
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ]
+    },
+    {
+      "requires_rendered_source_inspection_or_unresolved": true,
+      "source_integrity_state": "TYPOGRAPHIC_OR_OCR_AMBIGUITY",
+      "synthetic_reconstruction_allowed": false,
+      "unresolved_allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ]
+    },
+    {
+      "requires_rendered_source_inspection_or_unresolved": false,
+      "source_integrity_state": "DATA_ERROR",
+      "synthetic_reconstruction_allowed": false,
+      "unresolved_allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ]
+    },
+    {
+      "requires_rendered_source_inspection_or_unresolved": false,
+      "source_integrity_state": "TRUNCATED_OR_MISSING_FIGURE",
+      "synthetic_reconstruction_allowed": false,
+      "unresolved_allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ]
+    },
+    {
+      "requires_rendered_source_inspection_or_unresolved": true,
+      "source_integrity_state": "REVIEW_REQUIRED",
+      "synthetic_reconstruction_allowed": false,
+      "unresolved_allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ]
+    }
+  ],
+  "subject": "PHYSICS",
+  "validity_rules": [
+    {
+      "allowed_diagnostic_use": [
+        "FULL",
+        "PARTIAL"
+      ],
+      "confident_diagnosis_allowed": true,
+      "default_diagnostic_use": "FULL",
+      "negative_inference_allowed": true,
+      "positive_inference_allowed": true,
+      "validity_state": "CLEAN"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "PARTIAL"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "PARTIAL",
+      "negative_inference_allowed": true,
+      "positive_inference_allowed": true,
+      "validity_state": "VALID_ASSUMPTION_SENSITIVE"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "POSITIVE_EVIDENCE_ONLY"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "POSITIVE_EVIDENCE_ONLY",
+      "negative_inference_allowed": false,
+      "positive_inference_allowed": true,
+      "validity_state": "VALID_MULTIPLE_MODELS_OR_INTERPRETATIONS"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "POSITIVE_EVIDENCE_ONLY"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "POSITIVE_EVIDENCE_ONLY",
+      "negative_inference_allowed": false,
+      "positive_inference_allowed": true,
+      "validity_state": "UNDERDETERMINED"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "EXCLUDE_FROM_NEGATIVE_INFERENCE",
+      "negative_inference_allowed": false,
+      "positive_inference_allowed": false,
+      "validity_state": "MATHEMATICAL_OR_DOMAIN_ISSUE"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "PARTIAL"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "PARTIAL",
+      "negative_inference_allowed": false,
+      "positive_inference_allowed": true,
+      "validity_state": "KEY_ERROR"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "EXCLUDE_FROM_NEGATIVE_INFERENCE",
+      "negative_inference_allowed": false,
+      "positive_inference_allowed": false,
+      "validity_state": "DATA_ERROR"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "EXCLUDE_FROM_NEGATIVE_INFERENCE",
+      "negative_inference_allowed": false,
+      "positive_inference_allowed": false,
+      "validity_state": "TRUNCATED_OR_MISSING_FIGURE"
+    },
+    {
+      "allowed_diagnostic_use": [
+        "EXCLUDE_FROM_NEGATIVE_INFERENCE"
+      ],
+      "confident_diagnosis_allowed": false,
+      "default_diagnostic_use": "EXCLUDE_FROM_NEGATIVE_INFERENCE",
+      "negative_inference_allowed": false,
+      "positive_inference_allowed": false,
+      "validity_state": "REVIEW_REQUIRED"
+    }
+  ]
+}
