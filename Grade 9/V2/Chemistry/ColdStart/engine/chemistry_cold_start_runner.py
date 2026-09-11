@@ -122,7 +122,9 @@ def verification_for(fams):
     if 'QF-FORMULA-PARSING' in fams:return ['CHECK_SPECIES_IDENTITY']
     return ['VERIFY_RESULT']
 
-def reasoning_roles_for(fams):
+def reasoning_roles_for(fams,item_text=''):
+    if fams==['QF-PARTICLE-SYMBOLIC-TRANSLATION'] and 'representation level' in item_text.lower() and 'particle picture' not in item_text.lower():
+        return ['IDENTIFY_REPRESENTATION_LEVEL']
     m={'QF-FORMULA-PARSING':['PARSE_FORMULA_OR_EQUATION','CLASSIFY'],'QF-PARTICLE-SYMBOLIC-TRANSLATION':['IDENTIFY_REPRESENTATION_LEVEL','TRANSLATE_REPRESENTATION','VERIFY_RESULT'],'QF-CONSERVATION-CHECK':['PARSE_FORMULA_OR_EQUATION','APPLY_CONSERVATION','CHECK_ATOMS'],'QF-CHANGE-EVIDENCE-CLASSIFICATION':['READ_GIVEN','COMPARE','CLASSIFY'],'QF-RULE-EXCEPTION-GATE':['SELECT_RULE_OR_MODEL','CHECK_CONDITION_OR_EXCEPTION'],'QF-CONDITION-PRESERVATION':['READ_GIVEN','CHECK_CONDITION_OR_EXCEPTION','INTERPRET_CHEMICAL_MEANING'],'QF-OBSERVATION-INFERENCE':['READ_GIVEN','INFER_FROM_OBSERVATION','VERIFY_RESULT'],'QF-APPARATUS-METHOD':['IDENTIFY_REPRESENTATION_LEVEL','SELECT_RULE_OR_MODEL'],'QF-STRUCTURE-SITE-READING':['IDENTIFY_CHEMICAL_ENTITIES','PARSE_FORMULA_OR_EQUATION'],'QF-OXIDATION-STATE-TRACKING':['PARSE_FORMULA_OR_EQUATION','TRACK_SPECIES_OR_STATE_CHANGE'],'QF-SPECIES-ROLE':['IDENTIFY_CHEMICAL_ENTITIES','TRACK_SPECIES_OR_STATE_CHANGE','CLASSIFY'],'QF-VERIFICATION':['VERIFY_RESULT']}
     return uniq([x for f in fams for x in m.get(f,[])])
 
@@ -146,7 +148,7 @@ def derive_question_bindings(question_set,scope,review,authority,policy):
             cond=list(q['representation'].get('conditions',[]))
             if 'QF-RULE-EXCEPTION-GATE' in fams and not cond: cond=['EXPLICIT_EXCEPTION']
             entities=uniq(list(q['representation'].get('formulas',[]))+list(q['representation'].get('structures',[])))
-            bindings.append({'item_ref':item_ref,'question_ref':q['question_id'],'part_ref':part_ref,'scope_status':status,'scope_reason':reason,'declared_topic_refs':topic_hints if status==ELIGIBLE else [],'primary_learner_unit':primary,'canonical_concept_refs':concepts,'canonical_capability_refs':caps,'prerequisite_capability_refs':prereqs(caps,authority),'problem_family_refs':fams,'reasoning_role_expectations':reasoning_roles_for(fams),'representation_levels':rep_levels(q['representation']),'representation_demands':rep_requirements(q['representation'],policy),'chemical_entity_refs':entities,'conditions_exceptions':cond,'conservation_obligations':['ATOM_COUNT'] if 'QF-CONSERVATION-CHECK' in fams else [],'process_reaction_property_refs':[],'verification_obligations':verification_for(fams)})
+            bindings.append({'item_ref':item_ref,'question_ref':q['question_id'],'part_ref':part_ref,'scope_status':status,'scope_reason':reason,'declared_topic_refs':topic_hints if status==ELIGIBLE else [],'primary_learner_unit':primary,'canonical_concept_refs':concepts,'canonical_capability_refs':caps,'prerequisite_capability_refs':prereqs(caps,authority),'problem_family_refs':fams,'reasoning_role_expectations':reasoning_roles_for(fams,item_text),'representation_levels':rep_levels(q['representation']),'representation_demands':rep_requirements(q['representation'],policy),'chemical_entity_refs':entities,'conditions_exceptions':cond,'conservation_obligations':['ATOM_COUNT'] if 'QF-CONSERVATION-CHECK' in fams else [],'process_reaction_property_refs':[],'verification_obligations':verification_for(fams)})
     return {'binding_registry_id':'CHEM-C-K-DERIVED-QUESTION-BINDINGS-'+question_set['question_set_id'],'schema_version':'1.0.0','subject':'CHEMISTRY','question_set_ref':question_set['question_set_id'],'bindings':bindings}
 
 def body_map(source_bodies): return {x['candidate_id']:x for x in source_bodies['records']}
