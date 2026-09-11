@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "binding_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "binding_id": {
+      "type": "string"
+    },
+    "conditions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "item_ref": {
+      "type": "string"
+    },
+    "physical_model_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "route_step_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "SATISFIED",
+        "NOT_REQUIRED",
+        "BLOCKED_UPSTREAM"
+      ]
+    }
+  },
+  "required": [
+    "binding_id",
+    "item_ref",
+    "required",
+    "physical_model_refs",
+    "conditions",
+    "route_step_refs",
+    "status",
+    "binding_digest"
+  ],
+  "title": "PhysicsModelValidityBinding",
+  "type": "object"
+}

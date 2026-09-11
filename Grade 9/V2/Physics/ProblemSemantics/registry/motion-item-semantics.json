@@ -1,0 +1,976 @@
+{
+  "profiles": [
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 1,
+          "rationale": "PHY-PF-PATH-VS-CHORD requires reference frame sign load at level 1."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 2,
+          "rationale": "PHY-PF-PATH-VS-CHORD requires representation translation at level 2."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 1,
+          "rationale": "PHY-PF-PATH-VS-CHORD requires hidden condition load at level 1."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 2,
+          "rationale": "PHY-PF-PATH-VS-CHORD requires reasoning chain length at level 2."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 1,
+          "rationale": "PHY-PF-PATH-VS-CHORD requires verification demand at level 1."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 1,
+          "rationale": "PHY-PF-PATH-VS-CHORD requires numerical execution load at level 1."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-PATH-VS-CHORD"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q1",
+      "primary_family_ref": "PHY-PF-PATH-VS-CHORD",
+      "profile_digest": "aa212cd4e80d80f43570d324854132bb5053586ec9b5fbe106b3095f4a870e70"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 1,
+          "rationale": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED requires physical model selection at level 1."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 2,
+          "rationale": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED requires representation translation at level 2."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 3,
+          "rationale": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED requires reasoning chain length at level 3."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 2,
+          "rationale": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED requires verification demand at level 2."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q2",
+      "primary_family_ref": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "profile_digest": "bd2b9d952d178272c30351c07af1e1506207c630f35f64143b92a33e6c648d69"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 3,
+          "rationale": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE requires physical model selection at level 3."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 2,
+          "rationale": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE requires reference frame sign load at level 2."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 2,
+          "rationale": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE requires state tracking load at level 2."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 2,
+          "rationale": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE requires equation construction or elimination at level 2."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 4,
+          "rationale": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE requires reasoning chain length at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 2,
+          "rationale": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE requires verification demand at level 2."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q3",
+      "primary_family_ref": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE",
+      "profile_digest": "f099f53c1d7c0b8bfb53a286c0b05f4b20d0b634e043e74c351fd8396560952b"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 2,
+          "rationale": "PHY-PF-NTH-SECOND requires physical model selection at level 2."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 2,
+          "rationale": "PHY-PF-NTH-SECOND requires reference frame sign load at level 2."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 2,
+          "rationale": "PHY-PF-NTH-SECOND requires representation translation at level 2."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 3,
+          "rationale": "PHY-PF-NTH-SECOND requires state tracking load at level 3."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-NTH-SECOND requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 4,
+          "rationale": "PHY-PF-NTH-SECOND requires reasoning chain length at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 3,
+          "rationale": "PHY-PF-NTH-SECOND requires verification demand at level 3."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-NTH-SECOND requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-NTH-SECOND"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q4",
+      "primary_family_ref": "PHY-PF-NTH-SECOND",
+      "profile_digest": "2c611fa8c14d9b341ac8c363dee2271f30d81cf4387acba57caef317fe6ba2ae"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 2,
+          "rationale": "PHY-PF-FIRST-EQUATION requires physical model selection at level 2."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 2,
+          "rationale": "PHY-PF-FIRST-EQUATION requires reference frame sign load at level 2."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 2,
+          "rationale": "PHY-PF-FIRST-EQUATION requires state tracking load at level 2."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 1,
+          "rationale": "PHY-PF-FIRST-EQUATION requires equation construction or elimination at level 1."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 3,
+          "rationale": "PHY-PF-FIRST-EQUATION requires reasoning chain length at level 3."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 2,
+          "rationale": "PHY-PF-FIRST-EQUATION requires verification demand at level 2."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-FIRST-EQUATION requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-FIRST-EQUATION"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q5",
+      "primary_family_ref": "PHY-PF-FIRST-EQUATION",
+      "profile_digest": "674a8f532873fe88de5d03abfc48073531001821ceeed94270a78590fb04d444"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 3,
+          "rationale": "PHY-PF-FREE-FALL requires physical model selection at level 3."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-FREE-FALL requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 2,
+          "rationale": "PHY-PF-FREE-FALL requires state tracking load at level 2."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 2,
+          "rationale": "PHY-PF-FREE-FALL requires equation construction or elimination at level 2."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 1,
+          "rationale": "PHY-PF-FREE-FALL requires hidden condition load at level 1."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 4,
+          "rationale": "PHY-PF-FREE-FALL requires reasoning chain length at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 3,
+          "rationale": "PHY-PF-FREE-FALL requires verification demand at level 3."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-FREE-FALL requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-FREE-FALL"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q6",
+      "primary_family_ref": "PHY-PF-FREE-FALL",
+      "profile_digest": "37269300f637305e36ff35feb9720d3c821d108c9a457bbf64f0f6bd76eb09d5"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 3,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires physical model selection at level 3."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 3,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires state tracking load at level 3."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 2,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires equation construction or elimination at level 2."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 5,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires reasoning chain length at level 5."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 3,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires verification demand at level 3."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-VERTICAL-MAX-HEIGHT requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-VERTICAL-MAX-HEIGHT"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q7",
+      "primary_family_ref": "PHY-PF-VERTICAL-MAX-HEIGHT",
+      "profile_digest": "ebc85080759091e24585c5ac58e94e09213ceefec3e25bb01b9e12fbcbb0d35a"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 2,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires reference frame sign load at level 2."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 4,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires representation translation at level 4."
+        },
+        {
+          "dimension": "graph_interpretation_load",
+          "level": 4,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires graph interpretation load at level 4."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 2,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires state tracking load at level 2."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 2,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires hidden condition load at level 2."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 4,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires reasoning chain length at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 3,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires verification demand at level 3."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-VT-SIGNED-AREA requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-VT-SIGNED-AREA"
+      ],
+      "graph_operations": [
+        "SIGNED_AREA"
+      ],
+      "item_ref": "Q8",
+      "primary_family_ref": "PHY-PF-VT-SIGNED-AREA",
+      "profile_digest": "58f6ed2ec8edb6f714d35b8837a48892754afb11cc7807f399ea8d525aadf16f"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 4,
+          "rationale": "PHY-PF-MOVING-RELEASE requires physical model selection at level 4."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-MOVING-RELEASE requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 3,
+          "rationale": "PHY-PF-MOVING-RELEASE requires representation translation at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 4,
+          "rationale": "PHY-PF-MOVING-RELEASE requires state tracking load at level 4."
+        },
+        {
+          "dimension": "phase_count",
+          "level": 2,
+          "rationale": "PHY-PF-MOVING-RELEASE requires phase count at level 2."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 4,
+          "rationale": "PHY-PF-MOVING-RELEASE requires hidden condition load at level 4."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 7,
+          "rationale": "PHY-PF-MOVING-RELEASE requires reasoning chain length at level 7."
+        },
+        {
+          "dimension": "constraint_density",
+          "level": 3,
+          "rationale": "PHY-PF-MOVING-RELEASE requires constraint density at level 3."
+        },
+        {
+          "dimension": "concept_combination",
+          "level": 3,
+          "rationale": "PHY-PF-MOVING-RELEASE requires concept combination at level 3."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 4,
+          "rationale": "PHY-PF-MOVING-RELEASE requires verification demand at level 4."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 2,
+          "rationale": "PHY-PF-MOVING-RELEASE requires numerical execution load at level 2."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-MOVING-RELEASE"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q9",
+      "primary_family_ref": "PHY-PF-MOVING-RELEASE",
+      "profile_digest": "f94d262bd2a542297e289afa051e8e5ca692c925db0e6efdf0fb46330294c762"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires physical model selection at level 4."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires representation translation at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires state tracking load at level 4."
+        },
+        {
+          "dimension": "phase_count",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires phase count at level 4."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires equation construction or elimination at level 3."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 8,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reasoning chain length at level 8."
+        },
+        {
+          "dimension": "constraint_density",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires constraint density at level 4."
+        },
+        {
+          "dimension": "concept_combination",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires concept combination at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires verification demand at level 4."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires numerical execution load at level 3."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q10",
+      "primary_family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "profile_digest": "77139bae1134ae73b74bf1445b262985900019b04a0b36282cc9d4c38cbcd4d7"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 3,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires physical model selection at level 3."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 4,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires reference frame sign load at level 4."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 3,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires representation translation at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 3,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires state tracking load at level 3."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 4,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires hidden condition load at level 4."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 5,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires reasoning chain length at level 5."
+        },
+        {
+          "dimension": "concept_combination",
+          "level": 3,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires concept combination at level 3."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 3,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires verification demand at level 3."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 1,
+          "rationale": "PHY-PF-RELATIVE-G-CANCELLATION requires numerical execution load at level 1."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-RELATIVE-G-CANCELLATION"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q11",
+      "primary_family_ref": "PHY-PF-RELATIVE-G-CANCELLATION",
+      "profile_digest": "03c82cfa32bfa91723f6ac96fc4fcdcf925bf122eb45c383d10727ca30bd86aa"
+    },
+    {
+      "blocked_behavior": "NORMAL",
+      "demand_dimensions": [
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 2,
+          "rationale": "PHY-PF-XT-SLOPE requires reference frame sign load at level 2."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 4,
+          "rationale": "PHY-PF-XT-SLOPE requires representation translation at level 4."
+        },
+        {
+          "dimension": "graph_interpretation_load",
+          "level": 4,
+          "rationale": "PHY-PF-XT-SLOPE requires graph interpretation load at level 4."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 2,
+          "rationale": "PHY-PF-XT-SLOPE requires hidden condition load at level 2."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 4,
+          "rationale": "PHY-PF-XT-SLOPE requires reasoning chain length at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 3,
+          "rationale": "PHY-PF-XT-SLOPE requires verification demand at level 3."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 1,
+          "rationale": "PHY-PF-XT-SLOPE requires numerical execution load at level 1."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-XT-SLOPE"
+      ],
+      "graph_operations": [
+        "SLOPE",
+        "OPTION_DISCRIMINATION"
+      ],
+      "item_ref": "Q12",
+      "primary_family_ref": "PHY-PF-XT-SLOPE",
+      "profile_digest": "2d57c4a6eb7ee71935a3d98bb69affff8f78021ed81afb77678a9e6e181dca8b"
+    },
+    {
+      "blocked_behavior": "PRESERVE_UPSTREAM_BLOCK",
+      "demand_dimensions": [
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-GRAPH-ACCELERATION requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 4,
+          "rationale": "PHY-PF-GRAPH-ACCELERATION requires representation translation at level 4."
+        },
+        {
+          "dimension": "graph_interpretation_load",
+          "level": 4,
+          "rationale": "PHY-PF-GRAPH-ACCELERATION requires graph interpretation load at level 4."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 4,
+          "rationale": "PHY-PF-GRAPH-ACCELERATION requires hidden condition load at level 4."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 5,
+          "rationale": "PHY-PF-GRAPH-ACCELERATION requires reasoning chain length at level 5."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 4,
+          "rationale": "PHY-PF-GRAPH-ACCELERATION requires verification demand at level 4."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-GRAPH-ACCELERATION"
+      ],
+      "graph_operations": [
+        "UNRESOLVED_DUE_SOURCE"
+      ],
+      "item_ref": "Q13",
+      "primary_family_ref": "PHY-PF-GRAPH-ACCELERATION",
+      "profile_digest": "a94fd4f3c1969bba419ed4ec5158ed1ad85514b4314f3cb2f5b2a495857ca0e5"
+    },
+    {
+      "blocked_behavior": "PRESERVE_UPSTREAM_BLOCK",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires physical model selection at level 4."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires representation translation at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires state tracking load at level 4."
+        },
+        {
+          "dimension": "phase_count",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires phase count at level 4."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires equation construction or elimination at level 3."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 8,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reasoning chain length at level 8."
+        },
+        {
+          "dimension": "constraint_density",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires constraint density at level 4."
+        },
+        {
+          "dimension": "concept_combination",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires concept combination at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires verification demand at level 4."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires numerical execution load at level 3."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q14",
+      "primary_family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "profile_digest": "f63d37e57e8e62988483cc280d63e25629ae00e0d4c17c75d6ff125532ec0a34"
+    },
+    {
+      "blocked_behavior": "PRESERVE_UPSTREAM_BLOCK",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires physical model selection at level 4."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires representation translation at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires state tracking load at level 4."
+        },
+        {
+          "dimension": "phase_count",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires phase count at level 4."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires equation construction or elimination at level 3."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 8,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reasoning chain length at level 8."
+        },
+        {
+          "dimension": "constraint_density",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires constraint density at level 4."
+        },
+        {
+          "dimension": "concept_combination",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires concept combination at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires verification demand at level 4."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires numerical execution load at level 3."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q14.a",
+      "primary_family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "profile_digest": "286324e88e694707de86cf2800a173d9ea5f825d2449f8df552656304af71d0e"
+    },
+    {
+      "blocked_behavior": "PRESERVE_UPSTREAM_BLOCK",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires physical model selection at level 4."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires representation translation at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires state tracking load at level 4."
+        },
+        {
+          "dimension": "phase_count",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires phase count at level 4."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires equation construction or elimination at level 3."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 8,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reasoning chain length at level 8."
+        },
+        {
+          "dimension": "constraint_density",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires constraint density at level 4."
+        },
+        {
+          "dimension": "concept_combination",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires concept combination at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires verification demand at level 4."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires numerical execution load at level 3."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q14.b",
+      "primary_family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "profile_digest": "ca2cc35f9a5a5cf69ae13c175437ccbfb98937b4471abf72f871abbeeda4b96c"
+    },
+    {
+      "blocked_behavior": "PRESERVE_UPSTREAM_BLOCK",
+      "demand_dimensions": [
+        {
+          "dimension": "physical_model_selection",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires physical model selection at level 4."
+        },
+        {
+          "dimension": "reference_frame_sign_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reference frame sign load at level 3."
+        },
+        {
+          "dimension": "representation_translation",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires representation translation at level 3."
+        },
+        {
+          "dimension": "state_tracking_load",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires state tracking load at level 4."
+        },
+        {
+          "dimension": "phase_count",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires phase count at level 4."
+        },
+        {
+          "dimension": "equation_construction_or_elimination",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires equation construction or elimination at level 3."
+        },
+        {
+          "dimension": "hidden_condition_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires hidden condition load at level 3."
+        },
+        {
+          "dimension": "reasoning_chain_length",
+          "level": 8,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires reasoning chain length at level 8."
+        },
+        {
+          "dimension": "constraint_density",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires constraint density at level 4."
+        },
+        {
+          "dimension": "concept_combination",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires concept combination at level 4."
+        },
+        {
+          "dimension": "verification_demand",
+          "level": 4,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires verification demand at level 4."
+        },
+        {
+          "dimension": "numerical_execution_load",
+          "level": 3,
+          "rationale": "PHY-PF-MULTIPHASE-KINEMATICS requires numerical execution load at level 3."
+        }
+      ],
+      "family_refs": [
+        "PHY-PF-MULTIPHASE-KINEMATICS"
+      ],
+      "graph_operations": [],
+      "item_ref": "Q14.c",
+      "primary_family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "profile_digest": "f8e7a413b8f2a849a07363673b5304e10f386d45300e135163a8e6c68f218144"
+    }
+  ],
+  "registry_digest": "42e1be09b6ab8075a838d48bd1ad1e6e5b90168b07df15fe1dc54644822cc7a8",
+  "registry_id": "PHY-G9-MOTION-PD-ITEM-SEMANTICS-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "upstream_question_set_ref": "PHY-G9-MOTION-MIXED-V1",
+  "upstream_scope_binding_registry_ref": "PHY-G9-MOTION-QUESTION-SCOPE-BINDINGS-v1"
+}

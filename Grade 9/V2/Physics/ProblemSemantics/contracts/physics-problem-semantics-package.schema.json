@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_data_consumed": {
+      "const": false
+    },
+    "badge_policy_ref": {
+      "type": "string"
+    },
+    "family_registry_ref": {
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {},
+        "required": [
+          "item_ref",
+          "question_ref",
+          "part_ref",
+          "mapping_state",
+          "resolution_status",
+          "source_integrity_state",
+          "validity_state",
+          "diagnostic_use",
+          "family_refs",
+          "primary_family_ref",
+          "graph_operations",
+          "reference_frame",
+          "phase_structure",
+          "reasoning_route",
+          "model_validity_binding",
+          "verification_route_refs",
+          "demand_vector",
+          "guide_demand_badge"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "learner_support_independent": {
+      "const": true
+    },
+    "package_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "package_id": {
+      "type": "string"
+    },
+    "question_set_ref": {
+      "type": "string"
+    },
+    "role_registry_ref": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "scope_coverage_ref": {
+      "type": "string"
+    },
+    "scope_model_ref": {
+      "type": "string"
+    },
+    "scope_reconciliation_ref": {
+      "type": "string"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "verification_registry_ref": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "package_id",
+    "schema_version",
+    "subject",
+    "question_set_ref",
+    "scope_model_ref",
+    "scope_coverage_ref",
+    "scope_reconciliation_ref",
+    "role_registry_ref",
+    "family_registry_ref",
+    "verification_registry_ref",
+    "badge_policy_ref",
+    "learner_support_independent",
+    "attempt_data_consumed",
+    "items",
+    "summary",
+    "package_digest"
+  ],
+  "title": "PhysicsProblemSemanticsPackage",
+  "type": "object"
+}

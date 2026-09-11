@@ -1,0 +1,55 @@
+{
+  "badge_class": "GUIDE_ASSIGNED_REASONING_DEMAND",
+  "dimension_catalog": [
+    "physical_model_selection",
+    "reference_frame_sign_load",
+    "representation_translation",
+    "state_tracking_load",
+    "phase_count",
+    "vector_spatial_reasoning",
+    "graph_interpretation_load",
+    "equation_construction_or_elimination",
+    "hidden_condition_load",
+    "reasoning_chain_length",
+    "constraint_density",
+    "concept_combination",
+    "verification_demand",
+    "numerical_execution_load",
+    "time_pressure"
+  ],
+  "policy_digest": "c6a66bd1c9016f27957254412f81d436730ad448e911ec29bd7e7ce63b1375bd",
+  "policy_id": "PHY-GUIDE-DEMAND-POLICY-v1",
+  "psychometric_claim": false,
+  "rules": {
+    "easy_max_score": 16,
+    "hard_min_distinct_roles": 8,
+    "hard_min_route_steps": 10,
+    "hard_min_verification_checks": 2,
+    "hard_requires_any_role": [
+      "SELECT_MODEL",
+      "IDENTIFY_PHASES",
+      "CHOOSE_RELATION",
+      "REPRESENT"
+    ],
+    "medium_max_score": 34
+  },
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "weights": {
+    "concept_combination": 2,
+    "constraint_density": 1,
+    "equation_construction_or_elimination": 1,
+    "graph_interpretation_load": 2,
+    "hidden_condition_load": 2,
+    "numerical_execution_load": 1,
+    "phase_count": 1,
+    "physical_model_selection": 2,
+    "reasoning_chain_length": 2,
+    "reference_frame_sign_load": 1,
+    "representation_translation": 1,
+    "state_tracking_load": 2,
+    "time_pressure": 1,
+    "vector_spatial_reasoning": 1,
+    "verification_demand": 2
+  }
+}

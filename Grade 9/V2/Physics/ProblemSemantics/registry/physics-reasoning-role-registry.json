@@ -1,0 +1,180 @@
+{
+  "registry_digest": "5c0d56d900a2a05a88abc46dbabafea3a34e4ff853946af0335b812f81d97edc",
+  "registry_id": "PHY-G9-PD-REASONING-ROLE-REGISTRY-v1",
+  "roles": [
+    {
+      "learner_support_owner": false,
+      "purpose": "Identify the physical event, target, and source constraints before equation choice.",
+      "role_id": "READ_PHENOMENON",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "State which object or interacting set is being modeled and its role.",
+      "role_id": "DEFINE_SYSTEM",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Bind origin/frame/axes and positive direction before reading signed quantities.",
+      "role_id": "CHOOSE_FRAME",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Translate the scene into a state table, graph, vector, phase strip, or other explicit representation.",
+      "role_id": "REPRESENT",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Partition the motion only where the governing model or state rule changes.",
+      "role_id": "IDENTIFY_PHASES",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "List explicit givens and physically forced facts without inventing source data.",
+      "role_id": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Choose the physical model from the phenomenon and stated conditions.",
+      "role_id": "SELECT_MODEL",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Make the conditions that license the model explicit before using its equations.",
+      "role_id": "CHECK_MODEL_VALIDITY",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Carry continuous terminal state into the next phase or release event.",
+      "role_id": "PROPAGATE_STATE",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Select a relation because its variables and model match the knowns and target.",
+      "role_id": "CHOOSE_RELATION",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Execute the minimum mathematical transformation required by the chosen relation.",
+      "role_id": "SOLVE",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Translate signs and vector directions back into the chosen frame.",
+      "role_id": "INTERPRET_SIGN_DIRECTION",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Check dimensional and unit consistency of the result or graph operation.",
+      "role_id": "CHECK_UNITS",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Check state continuity, endpoint, interval, or phase-boundary constraints.",
+      "role_id": "CHECK_CONTINUITY_OR_BOUNDARY",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "Check the result against governing physics, limiting behavior, and representation semantics.",
+      "role_id": "VERIFY_PHYSICAL_PLAUSIBILITY",
+      "solution_owner": false
+    },
+    {
+      "learner_support_owner": false,
+      "purpose": "State what the result means physically without adding unsupported source claims.",
+      "role_id": "INTERPRET_RESULT",
+      "solution_owner": false
+    }
+  ],
+  "schema_version": "1.0.0",
+  "scope_role_aliases": {
+    "CHECK_CONDITION": {
+      "canonical_roles": [
+        "CHECK_MODEL_VALIDITY"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "COMPARE": {
+      "canonical_roles": [
+        "REPRESENT",
+        "INTERPRET_RESULT"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "EXECUTE": {
+      "canonical_roles": [
+        "SOLVE"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "IDENTIFY_SYSTEM": {
+      "canonical_roles": [
+        "DEFINE_SYSTEM"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "INTERPRET": {
+      "canonical_roles": [
+        "READ_PHENOMENON"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "INTERPRET_RESULT": {
+      "canonical_roles": [
+        "INTERPRET_RESULT"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "PROPAGATE_STATE": {
+      "canonical_roles": [
+        "PROPAGATE_STATE"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "REPRESENT": {
+      "canonical_roles": [
+        "REPRESENT"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "SELECT_MODEL": {
+      "canonical_roles": [
+        "SELECT_MODEL"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "SELECT_RELATION": {
+      "canonical_roles": [
+        "CHOOSE_RELATION"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "SET_FRAME": {
+      "canonical_roles": [
+        "CHOOSE_FRAME"
+      ],
+      "coverage_mode": "ALL"
+    },
+    "VERIFY": {
+      "canonical_roles": [
+        "VERIFY_PHYSICAL_PLAUSIBILITY"
+      ],
+      "coverage_mode": "ALL"
+    }
+  },
+  "semantic_owner_phase": "P-D",
+  "subject": "PHYSICS"
+}

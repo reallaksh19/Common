@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "obligation_ref": {
+            "type": "string"
+          },
+          "physical_check": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "check_id",
+          "obligation_ref",
+          "physical_check"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "family_ref": {
+      "type": "string"
+    },
+    "route_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "verification_route_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "verification_route_id",
+    "schema_version",
+    "subject",
+    "family_ref",
+    "checks",
+    "route_digest"
+  ],
+  "title": "PhysicsVerificationRoute",
+  "type": "object"
+}

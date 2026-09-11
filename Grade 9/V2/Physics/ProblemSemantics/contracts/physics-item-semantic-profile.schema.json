@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "blocked_behavior": {
+      "enum": [
+        "NORMAL",
+        "PRESERVE_UPSTREAM_BLOCK"
+      ]
+    },
+    "demand_dimensions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "level": {
+            "maximum": 4,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dimension",
+          "level",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "family_refs": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "graph_operations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "item_ref": {
+      "type": "string"
+    },
+    "primary_family_ref": {
+      "type": "string"
+    },
+    "profile_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "item_ref",
+    "primary_family_ref",
+    "family_refs",
+    "graph_operations",
+    "demand_dimensions",
+    "blocked_behavior",
+    "profile_digest"
+  ],
+  "title": "PhysicsItemSemanticProfile",
+  "type": "object"
+}
