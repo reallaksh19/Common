@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"mature-math-reference.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","reference_id","reference_class","subject","allowed_use","producer_input","artifact_sha256","provenance","source_pr","freeze_review_status","release_evidence_eligible","synthetic_dimension_outcomes"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "reference_id":{"type":"string","minLength":1},
+    "reference_class":{"enum":["FROZEN_MATURE_MATH_REFERENCE","TEST_ONLY_SYNTHETIC_REFERENCE"]},
+    "subject":{"const":"MATHEMATICS"},
+    "allowed_use":{"const":"COMPARATIVE_VALIDATION_ONLY"},
+    "producer_input":{"const":false},
+    "artifact_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "provenance":{"type":"string","minLength":1},
+    "source_pr":{"type":["integer","null"]},
+    "freeze_review_status":{"enum":["APPROVED_FOR_COMPARATIVE_VALIDATION","TEST_ONLY"]},
+    "release_evidence_eligible":{"type":"boolean"},
+    "synthetic_dimension_outcomes":{"type":"object","additionalProperties":{"enum":["MEETS_REFERENCE","GAP"]}}
+  }
+}

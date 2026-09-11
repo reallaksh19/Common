@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"comparative-validation-eligibility.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","eligibility_id","candidate_sha256","status","blocking_reasons","reference_read_attempted","test_only","release_evidence_eligible","input_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "eligibility_id":{"type":"string"},
+    "candidate_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "status":{"enum":["BLOCKED_HUMAN_QUALITY_GATES","READY_FOR_REFERENCE_SELECTION"]},
+    "blocking_reasons":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "reference_read_attempted":{"type":"boolean"},
+    "test_only":{"type":"boolean"},
+    "release_evidence_eligible":{"type":"boolean"},
+    "input_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

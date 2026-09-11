@@ -1,0 +1,9 @@
+{
+  "ai_pre_review_status":"REVISIONS_VERIFIED_HUMAN_REVIEW_PENDING",
+  "baseline_artifact_sha256":"f65262e34d9e4f5fa926d119be225125bb515b340e16349f0e9c872d24696fd2",
+  "human_review_evidence":{"PEDAGOGY":0,"SUBJECT":0,"VISUAL":0},
+  "quality_states":{"BENCHMARK_COMPARATIVE_VALIDATION":"NOT_RUN","PEDAGOGY_USABILITY":"PENDING","PUBLICATION_ENGINEERING":"PASS","SUBJECT_CORRECTNESS":"PENDING","VISUAL_USABILITY":"PENDING"},
+  "revised_artifact_sha256":"ca77eb7220e3857b2a6e9877de4358903b8b2aa0623208c0a527d059a6c4c70d",
+  "schema_version":"1.0.0",
+  "unresolved_major_count":0
+}
