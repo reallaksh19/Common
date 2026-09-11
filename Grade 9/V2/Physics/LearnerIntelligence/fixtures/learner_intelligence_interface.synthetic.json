@@ -1,0 +1,1 @@
+{"schema_version":"1.0.0","fixture_class":"LEARNER_INTELLIGENCE_INTERFACE_FIXTURE","interface_name":"V2_LEARNER_INTELLIGENCE_MINIMAL","descriptive_only":true,"allowed_state_values":["UNKNOWN","DEVELOPING","READY","REPAIR_REQUIRED"],"forbidden_owned_decisions":["STUDY_TREATMENT","TEACHING_CHOREOGRAPHY","SCHEDULING","PUBLICATION","BENCHMARK_VALIDATION"]}
