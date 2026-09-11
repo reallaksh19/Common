@@ -25,3 +25,11 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_product.py'
       - name: Realize and validate exact Core1/Core2 PDFs
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_realization.py'
+      - name: Freeze exact CI candidate
+        run: python 'Grade 9/V2/Chemistry/ExactProduct/engine/realize_chemistry_exact_product.py' --out /tmp/chemistry-c-l-exact
+      - name: Upload exact Chemistry candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-c-l-exact-candidate-${{ github.sha }}
+          path: /tmp/chemistry-c-l-exact/
+          if-no-files-found: error
