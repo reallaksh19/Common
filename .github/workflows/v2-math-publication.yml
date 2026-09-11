@@ -18,9 +18,9 @@ jobs:
           python-version: "3.12"
       - name: Install publication dependencies
         run: python -m pip install "jsonschema>=4.20,<5" "reportlab>=4.2,<5" "pypdfium2>=4.30,<5" "Pillow>=10,<12"
-      - name: Validate MATH-V2-05 contracts
+      - name: Validate publication contracts
         run: python "Grade 9/V2/Mathematics/Publication/contracts/validate_contracts.py"
-      - name: Run MATH-V2-05 publication falsifiers
+      - name: Run revised publication falsifiers
         run: python "Grade 9/V2/Mathematics/Publication/tests/test_math_publication.py"
       - name: Generate merged MATH-V2-04 design result
         run: |
@@ -31,33 +31,33 @@ jobs:
             --publication-target "$LD/fixtures/publication_target.synthetic.json" \
             --policy "$LD/fixtures/policy.synthetic.json" \
             --out /tmp/math-learning-design.json
-      - name: Freeze learner semantic product from merged design
+      - name: Freeze revised learner semantic product
         run: |
           PUB="Grade 9/V2/Mathematics/Publication"
           python "$PUB/engine/build_semantic_product.py" --design-result /tmp/math-learning-design.json --out /tmp/math-semantic-product.json
-      - name: Render exact learner candidate
+      - name: Render revised exact learner candidate
         run: |
           PUB="Grade 9/V2/Mathematics/Publication"
           python "$PUB/engine/realize_math_publication.py" \
             --product /tmp/math-semantic-product.json \
             --target "$PUB/fixtures/publication_target.synthetic.json" \
             --policy "$PUB/fixtures/publication_policy.synthetic.json" \
-            --out /tmp/math-v2-05-candidate
-      - name: Independently audit exact candidate bytes
-        run: python "Grade 9/V2/Mathematics/Publication/validator/validate_candidate.py" --out /tmp/math-v2-05-candidate
-      - name: Render visual engineering preflight
-        run: python "Grade 9/V2/Mathematics/Publication/validator/render_preflight.py" --pdf /tmp/math-v2-05-candidate/candidate.pdf --out-dir /tmp/math-v2-05-renders --expected-pages 6
-      - name: Deterministic exact-artifact replay
+            --out /tmp/math-v2-06-candidate
+      - name: Independently audit revised exact bytes
+        run: python "Grade 9/V2/Mathematics/Publication/validator/validate_candidate.py" --out /tmp/math-v2-06-candidate
+      - name: Render revised visual engineering preflight
+        run: python "Grade 9/V2/Mathematics/Publication/validator/render_preflight.py" --pdf /tmp/math-v2-06-candidate/candidate.pdf --out-dir /tmp/math-v2-06-renders --expected-pages 5
+      - name: Deterministic revised-artifact replay
         run: |
           PUB="Grade 9/V2/Mathematics/Publication"
-          python "$PUB/engine/realize_math_publication.py" --product /tmp/math-semantic-product.json --target "$PUB/fixtures/publication_target.synthetic.json" --policy "$PUB/fixtures/publication_policy.synthetic.json" --out /tmp/math-v2-05-replay
-          cmp /tmp/math-v2-05-candidate/candidate.pdf /tmp/math-v2-05-replay/candidate.pdf
-          cmp /tmp/math-v2-05-candidate/publication_manifest.json /tmp/math-v2-05-replay/publication_manifest.json
-      - name: Upload candidate custody proof
+          python "$PUB/engine/realize_math_publication.py" --product /tmp/math-semantic-product.json --target "$PUB/fixtures/publication_target.synthetic.json" --policy "$PUB/fixtures/publication_policy.synthetic.json" --out /tmp/math-v2-06-replay
+          cmp /tmp/math-v2-06-candidate/candidate.pdf /tmp/math-v2-06-replay/candidate.pdf
+          cmp /tmp/math-v2-06-candidate/publication_manifest.json /tmp/math-v2-06-replay/publication_manifest.json
+      - name: Upload revised candidate custody proof
         uses: actions/upload-artifact@v4
         with:
-          name: math-v2-05-candidate-custody-proof
+          name: math-v2-06-revised-candidate-custody-proof
           path: |
-            /tmp/math-v2-05-candidate/**
-            /tmp/math-v2-05-renders/**
+            /tmp/math-v2-06-candidate/**
+            /tmp/math-v2-06-renders/**
           if-no-files-found: error

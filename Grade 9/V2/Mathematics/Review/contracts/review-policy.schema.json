@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"review-policy.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","policy_id","authorized_pass_reviewers","major_requires_disposition","benchmark_inputs"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},"policy_id":{"type":"string"},
+    "authorized_pass_reviewers":{"type":"object","additionalProperties":false,"required":["SUBJECT_CORRECTNESS","PEDAGOGY_USABILITY","VISUAL_USABILITY"],"properties":{"SUBJECT_CORRECTNESS":{"const":"HUMAN_SUBJECT"},"PEDAGOGY_USABILITY":{"const":"HUMAN_PEDAGOGY"},"VISUAL_USABILITY":{"const":"HUMAN_VISUAL"}}},
+    "major_requires_disposition":{"const":true},
+    "benchmark_inputs":{"type":"array","maxItems":0}
+  }
+}

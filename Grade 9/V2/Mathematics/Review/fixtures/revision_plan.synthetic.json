@@ -1,0 +1,11 @@
+{
+  "revision_ref":"MATH-V2-06-REVISION-001",
+  "decisions":[
+    {"decision_id":"MATH-RD-001","finding_id":"MATH-RF-001","disposition":"FIX","affected_content_refs":["C02"],"action":"Add explicit equation and proposed move before prediction.","revision_ref":"MATH-V2-06-REVISION-001"},
+    {"decision_id":"MATH-RD-002","finding_id":"MATH-RF-002","disposition":"FIX","affected_content_refs":["C04"],"action":"Render concrete legal/illegal move pair with prediction-before-resolution.","revision_ref":"MATH-V2-06-REVISION-001"},
+    {"decision_id":"MATH-RD-003","finding_id":"MATH-RF-003","disposition":"FIX","affected_content_refs":["C11"],"action":"Render explicit correct and structure-losing binomial expansions.","revision_ref":"MATH-V2-06-REVISION-001"},
+    {"decision_id":"MATH-RD-004","finding_id":"MATH-RF-004","disposition":"FIX","affected_content_refs":["C17"],"action":"Add a fresh independent equation with no checking cue in learner-facing text.","revision_ref":"MATH-V2-06-REVISION-001"},
+    {"decision_id":"MATH-RD-005","finding_id":"MATH-RF-005","disposition":"FIX","affected_content_refs":[],"action":"Increase body/title scale, enlarge workspace and consolidate six pages to five.","revision_ref":"MATH-V2-06-REVISION-001"},
+    {"decision_id":"MATH-RD-006","finding_id":"MATH-RF-006","disposition":"FIX","affected_content_refs":["C14","C15"],"action":"Label representation work as a separate strength check and place it away from the diagnostic probe.","revision_ref":"MATH-V2-06-REVISION-001"}
+  ]
+}

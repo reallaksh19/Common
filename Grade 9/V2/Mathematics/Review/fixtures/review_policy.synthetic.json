@@ -1,0 +1,11 @@
+{
+  "schema_version":"1.0.0",
+  "policy_id":"MATH-REVIEW-POLICY-1",
+  "authorized_pass_reviewers":{
+    "SUBJECT_CORRECTNESS":"HUMAN_SUBJECT",
+    "PEDAGOGY_USABILITY":"HUMAN_PEDAGOGY",
+    "VISUAL_USABILITY":"HUMAN_VISUAL"
+  },
+  "major_requires_disposition":true,
+  "benchmark_inputs":[]
+}
