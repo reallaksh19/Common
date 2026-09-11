@@ -1,0 +1,35 @@
+name: V2 Learner Intelligence
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/LearnerIntelligence/**"
+      - ".github/workflows/v2-learner-intelligence.yml"
+  workflow_dispatch:
+
+jobs:
+  learner-intelligence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install schema validator
+        run: python -m pip install jsonschema
+      - name: Validate V2 contracts
+        run: python "Grade 9/V2/LearnerIntelligence/contracts/validate_contracts.py"
+      - name: Run semantic temporal authority and privacy falsifiers
+        run: python "Grade 9/V2/LearnerIntelligence/tests/test_semantics.py"
+      - name: Deterministic smoke replay
+        run: |
+          python "Grade 9/V2/LearnerIntelligence/engine/derive_state.py" \
+            --ledger "Grade 9/V2/LearnerIntelligence/fixtures/learner_evidence.synthetic.json" \
+            --observations "Grade 9/V2/LearnerIntelligence/fixtures/observations.synthetic.json" \
+            --registry "Grade 9/V2/LearnerIntelligence/fixtures/canonical_refs.synthetic.json" \
+            --diagnostic-policy "Grade 9/V2/LearnerIntelligence/fixtures/diagnostic_policy.synthetic.json" \
+            --state-policy "Grade 9/V2/LearnerIntelligence/fixtures/state_policy.synthetic.json" \
+            --temporal-policy "Grade 9/V2/LearnerIntelligence/fixtures/temporal_policy.synthetic.json" \
+            --as-of "2026-09-11T00:00:00+00:00" \
+            --out /tmp/v2-li.json
+          test -s /tmp/v2-li.json

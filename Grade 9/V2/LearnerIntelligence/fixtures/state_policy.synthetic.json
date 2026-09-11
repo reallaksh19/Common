@@ -1,0 +1,1 @@
+{"policy_id":"V2-STATE-SYN","version":"2.0.0","single_failure_state":"DEVELOPING","single_success_state":"DEVELOPING","ready_independent_success_min":2,"repair_independent_failure_min":2,"robust_independent_success_min":3,"robust_requires_transfer_or_delayed":true,"cross_subject_candidate_min_subjects":2,"cross_subject_candidate_min_failures":2}

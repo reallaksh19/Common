@@ -1,0 +1,1 @@
+{"policy_id":"V2-DIAG-SYN","version":"2.0.0","single_error_rule":"CANNOT_CONFIRM_MISCONCEPTION","ambiguity_action":"DIAGNOSTIC_PROBE_REQUIRED","preserve_upstream_success":true,"guided_success_counts_as_independent":false,"allow_unobserved_psychological_cause_inference":false}
