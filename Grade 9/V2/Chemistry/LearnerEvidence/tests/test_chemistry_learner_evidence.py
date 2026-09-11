@@ -41,7 +41,7 @@ assert no_attempt['scope_unchanged'] is True and snap['scope_unchanged'] is True
 
 # Required Chemistry falsifiers
 # 1 CORRECT_FORMULA_PARSE + BAD_ARITHMETIC != FORMULA_FAILURE
-assert cap(snap,'CAP-READ-FORMULA')['state']=='DEMONSTRATED'
+assert cap(snap,'CAP-PARSE-ION-CHARGE')['state']=='DEMONSTRATED'
 assert disposition(with_attempt,'O02')=='SHARED_EXECUTION_ERROR_LOCALIZED'
 # 2 CORRECT_OXIDATION_STATES + AGENT_INVERSION != OXIDATION_NUMBER_FAILURE
 sem2=copy.deepcopy(semantics); rec=next(x for x in sem2['question_semantics'] if x['target_ref']=='CQ12')
@@ -75,7 +75,7 @@ assert cap(snap,'CAP-PARSE-ION-CHARGE')['state']!='EVIDENCE_OF_DIFFICULTY'
 assert disposition(with_attempt,'O12')=='LOW_CONFIDENCE_PROBE_REQUIRED'
 assert cap(snap,'CAP-VERIFY-CHEMICAL-REPRESENTATION')['state']!='EVIDENCE_OF_DIFFICULTY'
 # 10 SHARED_ARITHMETIC_FAILURE_ERASES_CHEMISTRY_REASONING
-assert cap(snap,'CAP-READ-FORMULA')['state']=='DEMONSTRATED'
+assert cap(snap,'CAP-PARSE-ION-CHARGE')['state']=='DEMONSTRATED'
 
 # Two independent high-confidence negatives are required before CONFIRMED.
 led3=copy.deepcopy(ledger); a2={'attempt_id':'DA08','question_ref':'CQ12','part_ref':None,'binding_method':'EXPLICIT_ID','response':'Agent role inverted again.'}; at3=copy.deepcopy(attempts); at3['attempts'].append(a2); at3['attempt_set_digest']=''; at3['attempt_set_digest']=digest(at3,'attempt_set_digest','attempts','attempt_id')
