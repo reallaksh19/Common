@@ -70,9 +70,9 @@ def main() -> None:
     manipulated = probe.get("manipulatedFeature") or {}
     if manipulated.get("id") != focal.get("id"):
         fail("DiagnosticProbe should manipulate the same focal feature as the ContrastSet")
-    load = probe.get("controlledLoad") or {}
+    probe_load = probe.get("controlledLoad") or {}
     for key in ("language", "representationNovelty", "factRetrievalDemand"):
-        if load.get(key) == "HIGH":
+        if probe_load.get(key) == "HIGH":
             fail(f"diagnostic probe unnecessarily raises {key} in the regression fixture")
     if not probe.get("items"):
         fail("DiagnosticProbe requires at least one item")
