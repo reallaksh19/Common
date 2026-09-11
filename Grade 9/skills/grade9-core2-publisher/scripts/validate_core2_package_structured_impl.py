@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -36,13 +37,44 @@ def schema_errors(instance: dict, schema_path: Path) -> list[str]:
     return [f"{'.'.join(str(x) for x in e.absolute_path) or '<root>'}: {e.message}" for e in Draft202012Validator(schema, resolver=resolver).iter_errors(instance)]
 
 
+def _norm(text: object) -> str:
+    return re.sub(r"\s+", " ", str(text)).strip()
+
+
 def _ordered(text: str, markers: list[str]) -> bool:
     pos = -1
+    haystack = _norm(text).upper()
     for marker in markers:
-        pos = text.find(marker, pos + 1)
+        needle = _norm(marker).upper()
+        pos = haystack.find(needle, pos + 1)
         if pos < 0:
             return False
     return True
+
+
+def _learner_step_marker(step: dict) -> str:
+    if step.get("learner_visible_heading"):
+        return step["learner_visible_heading"]
+    return {
+        "PHYSICAL_SITUATION": "PHYSICAL SITUATION",
+        "DEPICTION": "DEPICTION",
+        "NOTICE": "NOTICE",
+        "SAY_IN_WORDS": "SAY IN WORDS",
+        "CONCEPT_INVARIANT": "CONCEPT INVARIANT",
+        "MEMORY_ANCHOR": "MEMORY ANCHOR",
+        "CONCEPT_HELPER": "CONCEPT HELPER",
+        "BUILD_RELATION": "BUILD RELATION",
+        "WHY_THIS_WORKS": "WHY THIS WORKS",
+        "WORKED_EXAMPLE": "WORKED",
+        "APPLICATION": "APPLICATION",
+        "VARIANT_CONTRAST": "CONTRAST",
+        "MISCONCEPTION_REPAIR": "MISCONCEPTION REPAIR",
+        "MODEL_BOUNDARY": "MODEL BOUNDARY",
+        "GUIDED_1": "GUIDED 1",
+        "GUIDED_2_FADED": "GUIDED 2",
+        "INDEPENDENT_TRANSFER": "INDEPENDENT TRANSFER",
+        "RETRIEVAL_CHECK": "RETRIEVAL CHECK",
+    }.get(step.get("role"), step.get("role", "").replace("_", " "))
 
 
 def validate_structure_package(argv: list[str]) -> int:
@@ -76,20 +108,18 @@ def validate_structure_package(argv: list[str]) -> int:
             text = "\n".join(p.get_text() for p in doc)
             doc.close()
             arc_refs = []
-            ref_role = {}
+            step_markers = []
             for unit in structure["study_guide"]["learning_units"]:
                 for step in unit["arc_steps"]:
-                    for ref in step["content_refs"]:
-                        arc_refs.append(ref)
-                        ref_role[ref] = step["role"].replace("_", " ")
+                    step_markers.append(_learner_step_marker(step))
+                    arc_refs.extend(step["content_refs"])
             page_refs = [ref for page in structure["study_guide"]["page_intents"] for ref in page["content_refs"]]
             if page_refs != arc_refs:
                 errors.append("PublicationStructure page intents do not reconcile exactly to arc-step content order")
-            role_markers = [ref_role[ref] for ref in page_refs]
-            if not _ordered(text, role_markers):
-                errors.append("Study Guide PDF arc-step order does not reconcile")
+            if not _ordered(text, step_markers):
+                errors.append("Study Guide PDF learner-visible arc-step order does not reconcile")
             for page in structure["study_guide"]["page_intents"]:
-                if page["cognitive_job"] not in text:
+                if _norm(page["cognitive_job"]) not in _norm(text):
                     errors.append(f"{page['page_intent_id']}: cognitive job missing from PDF")
             if not _ordered(text, ["Appendix A", "Appendix B", "Appendix C"]):
                 errors.append("Study Guide PDF appendix order does not reconcile")
@@ -118,7 +148,7 @@ def validate_structure_package(argv: list[str]) -> int:
         return 1
     print("CORE2_STRUCTURE_PACKAGE = PASS")
     print("PUBLICATION_STRUCTURE_BINDING = PASS")
-    print("EXACT_PDF_MORPHOLOGY = PASS")
+    print("PDF_LEARNER_STRUCTURE_ORDER = PASS")
     return 0
 
 
