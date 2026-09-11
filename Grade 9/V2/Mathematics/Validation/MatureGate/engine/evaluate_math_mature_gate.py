@@ -3,9 +3,8 @@ import argparse, copy, hashlib, json
 from pathlib import Path
 from jsonschema import Draft202012Validator
 
-D=Path(__file__).resolve().parents[1]
-MG=D.parent
-MATH=MG.parents[1]
+ROOT=Path(__file__).resolve().parents[1]
+MATH=ROOT.parents[1]
 
 
 def load(path): return json.loads(Path(path).read_text(encoding="utf-8"))
@@ -15,7 +14,7 @@ def digest(value,omit=None):
     if omit and isinstance(x,dict): x.pop(omit,None)
     return hashlib.sha256(canon(x).encode("utf-8")).hexdigest()
 def fail(code,detail=""): raise ValueError(f"{code}:{detail}" if detail else code)
-def schema(name): return load(MG/"contracts"/name)
+def schema(name): return load(ROOT/"contracts"/name)
 def check_schema(name,obj): Draft202012Validator(schema(name)).validate(obj)
 
 QUALITY_KEYS=["PUBLICATION_ENGINEERING","SUBJECT_CORRECTNESS","PEDAGOGICAL_DESIGN","ASSESSMENT_DESIGN","VISUAL_USABILITY","MATURE_DESIGN_QUALITY","REFERENCE_COMPARABILITY"]
@@ -219,7 +218,7 @@ def validate_decision(decision,candidate,review_receipts,policy):
 
 def main():
     ap=argparse.ArgumentParser()
-    ap.add_argument("--candidate",required=True); ap.add_argument("--policy",default=str(MG/"registry"/"math-mature-quality-policy.json")); ap.add_argument("--out",required=True)
+    ap.add_argument("--candidate",required=True); ap.add_argument("--policy",default=str(ROOT/"registry"/"math-mature-quality-policy.json")); ap.add_argument("--out",required=True)
     ap.add_argument("--gate-mode",choices=["REAL_RELEASE","TEST_ONLY"],default="REAL_RELEASE")
     args=ap.parse_args()
     result=evaluate(load(args.candidate),load(args.policy),gate_mode=args.gate_mode)
