@@ -1,0 +1,73 @@
+name: V2 Physics Problem Semantics P-D
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/AssessmentIntake/**'
+      - 'Grade 9/V2/Physics/AssessmentReview/**'
+      - 'Grade 9/V2/Physics/AssessmentScope/**'
+      - 'Grade 9/V2/Physics/Canonical/**'
+      - 'Grade 9/V2/Physics/ProblemSemantics/**'
+      - '.github/workflows/v2-physics-problem-semantics.yml'
+jobs:
+  physics-problem-semantics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Re-prove P-A source fidelity
+        run: |
+          python 'Grade 9/V2/Physics/AssessmentIntake/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Physics/AssessmentIntake/tests/test_physics_assessment_intake.py'
+      - name: Re-prove P-B assessment safety
+        run: |
+          python 'Grade 9/V2/Physics/AssessmentReview/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Physics/AssessmentReview/tests/test_physics_assessment_review.py'
+      - name: Re-prove P-C Question-to-Physics authority
+        run: |
+          python 'Grade 9/V2/Physics/AssessmentScope/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Physics/AssessmentScope/tests/test_physics_scope_reconciliation.py'
+      - name: Validate PHYSICS P-D contracts
+        run: python 'Grade 9/V2/Physics/ProblemSemantics/contracts/validate_contracts.py'
+      - name: Run PHYSICS P-D semantic falsifiers
+        run: python 'Grade 9/V2/Physics/ProblemSemantics/tests/test_physics_problem_semantics.py'
+      - name: Deterministic P-D replay
+        run: |
+          D='Grade 9/V2/Physics/ProblemSemantics'
+          P='Grade 9/V2/Physics'
+          CMD=(
+            python "$D/engine/build_physics_problem_semantics.py"
+            --questions "$P/AssessmentIntake/fixtures/motion-question-set.fixture.json"
+            --topic-scope "$P/AssessmentIntake/fixtures/motion-topic-scope.fixture.json"
+            --review-registry "$P/AssessmentReview/registry/physics-item-validity-registry.json"
+            --review-policy "$P/AssessmentReview/policies/diagnostic-use-policy.json"
+            --canonical-capabilities "$P/Canonical/registry/capabilities.json"
+            --scope-authority "$P/AssessmentScope/authority/physics-assessment-scope-authority.json"
+            --scope-bindings "$P/AssessmentScope/registry/motion-question-scope-bindings.json"
+            --role-registry "$D/registry/physics-reasoning-role-registry.json"
+            --family-registry "$D/registry/physics-problem-family-registry.json"
+            --verification-registry "$D/registry/physics-verification-route-registry.json"
+            --item-registry "$D/registry/motion-item-semantics.json"
+            --badge-policy "$D/registry/guide-demand-badge-policy.json"
+          )
+          "${CMD[@]}" --out /tmp/pd1.json
+          "${CMD[@]}" --out /tmp/pd2.json
+          cmp /tmp/pd1.json /tmp/pd2.json
+      - name: Prove P-D pilot invariants
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/pd1.json')); by={i['item_ref']:i for i in x['items']}
+          assert len(by)==17 and x['summary']['family_count']==14
+          assert by['Q8']['graph_operations']==['SIGNED_AREA']
+          assert {'IDENTIFY_PHASES','PROPAGATE_STATE','CHECK_CONTINUITY_OR_BOUNDARY'} <= {s['role'] for s in by['Q10']['reasoning_route']['steps']}
+          assert by['Q11']['reference_frame']['frame_text']=='common ground frame'
+          assert by['Q13']['resolution_status']=='BLOCKED' and by['Q13']['guide_demand_badge']['status']=='WITHHELD_UPSTREAM_BLOCK'
+          assert by['Q14']['validity_state']=='REVIEW_REQUIRED' and by['Q14']['resolution_status']=='BLOCKED'
+          assert all(i['demand_vector']['psychometric_claim'] is False and i['guide_demand_badge']['psychometric_claim'] is False for i in by.values())
+          assert x['attempt_data_consumed'] is False and x['learner_support_independent'] is True
+          print('PHYSICS P-D pilot closure PASS')
+          PY

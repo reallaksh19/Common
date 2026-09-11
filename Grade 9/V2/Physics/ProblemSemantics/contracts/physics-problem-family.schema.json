@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_variations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "canonical_capability_refs": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "common_sign_or_state_errors": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "common_wrong_models": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "family_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "family_id": {
+      "type": "string"
+    },
+    "invariants": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "law_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "model_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "model_selection_criteria": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "model_validity_conditions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "phase_topology": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "minimum_phases": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "state_handoff_required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "minimum_phases",
+        "state_handoff_required"
+      ],
+      "type": "object"
+    },
+    "physical_signature": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "reasoning_route_template": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "capability_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "law_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "model_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "relation_selection_basis": {
+            "type": "string"
+          },
+          "representation_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "role": {
+            "type": "string"
+          },
+          "semantic_job": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "state_transition": {
+            "type": "string"
+          },
+          "template_step_id": {
+            "type": "string"
+          },
+          "verification_checkpoint_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "template_step_id",
+          "role",
+          "semantic_job",
+          "capability_refs",
+          "representation_refs",
+          "model_refs",
+          "law_refs",
+          "verification_checkpoint_refs",
+          "state_transition",
+          "relation_selection_basis"
+        ],
+        "type": "object"
+      },
+      "minItems": 5,
+      "type": "array"
+    },
+    "reference_frame_requirements": {
+      "additionalProperties": false,
+      "properties": {
+        "frame_kind": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "sign_convention_required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "required",
+        "sign_convention_required",
+        "frame_kind"
+      ],
+      "type": "object"
+    },
+    "relation_selection_rule": {
+      "type": "string"
+    },
+    "representation_requirements": {
+      "additionalProperties": false,
+      "properties": {
+        "graph_operation_kinds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "optional_refs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "required_refs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "required_refs",
+        "optional_refs",
+        "graph_operation_kinds"
+      ],
+      "type": "object"
+    },
+    "semantic_owner_phase": {
+      "const": "P-D"
+    },
+    "state_variables": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "system_roles": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "transfer_boundaries": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "verification_route_ref": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "family_id",
+    "canonical_capability_refs",
+    "physical_signature",
+    "system_roles",
+    "reference_frame_requirements",
+    "phase_topology",
+    "state_variables",
+    "model_selection_criteria",
+    "model_validity_conditions",
+    "allowed_variations",
+    "invariants",
+    "reasoning_route_template",
+    "representation_requirements",
+    "verification_route_ref",
+    "common_wrong_models",
+    "common_sign_or_state_errors",
+    "transfer_boundaries",
+    "family_digest"
+  ],
+  "title": "PhysicsProblemFamilyDefinition",
+  "type": "object"
+}

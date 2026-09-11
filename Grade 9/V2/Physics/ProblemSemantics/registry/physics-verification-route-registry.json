@@ -1,0 +1,321 @@
+{
+  "registry_digest": "beadd67eb11d7f87c76fdbb9d825ba1dbe8f019dfcd762e594dfd55866ad3900",
+  "registry_id": "PHY-G9-PD-VERIFICATION-ROUTE-REGISTRY-v1",
+  "routes": [
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-PATH-VS-CHORD-C01",
+          "obligation_ref": "VERIFY_PATH_VS_DISPLACEMENT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_PATH_VS_DISPLACEMENT without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-PATH-VS-CHORD-C02",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-PATH-VS-CHORD",
+      "route_digest": "80b538d543000455c9eafce410544a6728e072dfe14d22c5795af96fc10b943a",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-PATH-VS-CHORD"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-EQUAL-DISTANCE-AVERAGE-SPEED-C01",
+          "obligation_ref": "VERIFY_TOTAL_DISTANCE_TOTAL_TIME",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_TOTAL_DISTANCE_TOTAL_TIME without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-EQUAL-DISTANCE-AVERAGE-SPEED-C02",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "route_digest": "d4106c74bb89826b7186ba486913ee4b9c60dc9dccd44299775d657e86f1cc68",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-EQUAL-DISTANCE-AVERAGE-SPEED"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-UNIFORM-ACCELERATION-STATE-CHANGE-C01",
+          "obligation_ref": "VERIFY_ACCELERATION_SIGN_UNITS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_ACCELERATION_SIGN_UNITS without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-UNIFORM-ACCELERATION-STATE-CHANGE-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-UNIFORM-ACCELERATION-STATE-CHANGE-C03",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE",
+      "route_digest": "53ac5f8cfebafedb7a4b51402cfd9f9758aa576ee1c0d9d2618dec97092f47ad",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-UNIFORM-ACCELERATION-STATE-CHANGE"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-NTH-SECOND-C01",
+          "obligation_ref": "VERIFY_INTERVAL_NOT_CUMULATIVE",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_INTERVAL_NOT_CUMULATIVE without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-NTH-SECOND-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-NTH-SECOND-C03",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-NTH-SECOND",
+      "route_digest": "dbf1293c640a62651ad70be9a2dd405929e0e724af1f4d5c239311c57a91301b",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-NTH-SECOND"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-FIRST-EQUATION-C01",
+          "obligation_ref": "VERIFY_VELOCITY_ENDPOINT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_VELOCITY_ENDPOINT without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-FIRST-EQUATION-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-FIRST-EQUATION-C03",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-FIRST-EQUATION",
+      "route_digest": "17dd709c0a9bd7e54d41fbbe2aa365a79d06e34975ade41d0337864eef23e7e7",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-FIRST-EQUATION"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-FREE-FALL-C01",
+          "obligation_ref": "VERIFY_CONSTANT_G_ASSUMPTIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_CONSTANT_G_ASSUMPTIONS without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-FREE-FALL-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-FREE-FALL-C03",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-FREE-FALL",
+      "route_digest": "2b9536db3a410e4f009514f52e21d6d278eca52285cb7b9d2f369ac32888774f",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-FREE-FALL"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-VERTICAL-MAX-HEIGHT-C01",
+          "obligation_ref": "VERIFY_MAXIMUM_HEIGHT_ENDPOINT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MAXIMUM_HEIGHT_ENDPOINT without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-VERTICAL-MAX-HEIGHT-C02",
+          "obligation_ref": "VERIFY_CONSTANT_G_ASSUMPTIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_CONSTANT_G_ASSUMPTIONS without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-VERTICAL-MAX-HEIGHT-C03",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-VERTICAL-MAX-HEIGHT-C04",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-VERTICAL-MAX-HEIGHT",
+      "route_digest": "d8dc670ceb54f67187f39ec062a1693f945e36a5e3b9543a617e5440dc9dea7e",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-VERTICAL-MAX-HEIGHT"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-VT-SIGNED-AREA-C01",
+          "obligation_ref": "VERIFY_SIGNED_GRAPH_AREA",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_SIGNED_GRAPH_AREA without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-VT-SIGNED-AREA-C02",
+          "obligation_ref": "VERIFY_SOURCE_REPRESENTATION_PRESENT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_SOURCE_REPRESENTATION_PRESENT without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-VT-SIGNED-AREA-C03",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-VT-SIGNED-AREA",
+      "route_digest": "93f9fbc385f1dc26d3c6067309c9eefd8fda519fb7cf41ae4aa71d90819a4e71",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-VT-SIGNED-AREA"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-MOVING-RELEASE-C01",
+          "obligation_ref": "VERIFY_RELEASE_STATE_CONTINUITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_RELEASE_STATE_CONTINUITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-MOVING-RELEASE-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-MOVING-RELEASE-C03",
+          "obligation_ref": "VERIFY_SOURCE_REPRESENTATION_PRESENT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_SOURCE_REPRESENTATION_PRESENT without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-MOVING-RELEASE",
+      "route_digest": "025831913f3d844326daa9d872d3bca0317e2f11037124e10375f8c97c15c8fa",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-MOVING-RELEASE"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-MULTIPHASE-KINEMATICS-C01",
+          "obligation_ref": "VERIFY_PHASE_STATE_CONTINUITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_PHASE_STATE_CONTINUITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-MULTIPHASE-KINEMATICS-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-MULTIPHASE-KINEMATICS-C03",
+          "obligation_ref": "VERIFY_SOURCE_REPRESENTATION_PRESENT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_SOURCE_REPRESENTATION_PRESENT without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "route_digest": "5dc6d0a85a27e2e35334bbfa6e602c15594866d26f77e545432a8d4c5039e924",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-MULTIPHASE-KINEMATICS"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-RELATIVE-G-CANCELLATION-C01",
+          "obligation_ref": "VERIFY_RELATIVE_ACCELERATION_CANCELLATION",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_RELATIVE_ACCELERATION_CANCELLATION without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-RELATIVE-G-CANCELLATION-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-RELATIVE-G-CANCELLATION",
+      "route_digest": "31f67ca70bcd7d1d3aa3f97867ae65acea926bf466149f7462ad7f5da497a8de",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-RELATIVE-G-CANCELLATION"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-XT-SLOPE-C01",
+          "obligation_ref": "VERIFY_GRAPH_SLOPE_SIGN",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_GRAPH_SLOPE_SIGN without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-XT-SLOPE-C02",
+          "obligation_ref": "VERIFY_SOURCE_REPRESENTATION_PRESENT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_SOURCE_REPRESENTATION_PRESENT without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-XT-SLOPE",
+      "route_digest": "c693824a46084211835d5f2d1867848086cac4f360ea916152724abacf985a20",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-XT-SLOPE"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-GRAPH-ACCELERATION-C01",
+          "obligation_ref": "VERIFY_SOURCE_REPRESENTATION_PRESENT",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_SOURCE_REPRESENTATION_PRESENT without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-GRAPH-ACCELERATION",
+      "route_digest": "ff38246c45c93fc1d1d5443bc072ad0ead2a101ea8823e5fdc319297cb65453b",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-GRAPH-ACCELERATION"
+    },
+    {
+      "checks": [
+        {
+          "check_id": "PHY-PD-VR-PROJECTILE-COMPONENTS-C01",
+          "obligation_ref": "VERIFY_PROJECTILE_COMPONENTS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_PROJECTILE_COMPONENTS without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-PROJECTILE-COMPONENTS-C02",
+          "obligation_ref": "VERIFY_MODEL_VALIDITY",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model."
+        },
+        {
+          "check_id": "PHY-PD-VR-PROJECTILE-COMPONENTS-C03",
+          "obligation_ref": "VERIFY_DIMENSIONS",
+          "physical_check": "Satisfy upstream verification obligation VERIFY_DIMENSIONS without changing the physical model."
+        }
+      ],
+      "family_ref": "PHY-PF-PROJECTILE-COMPONENTS",
+      "route_digest": "4fc29537b3877a3395644fff17bd411fb71eea84f4cd73b88af48f05c2ccffcf",
+      "schema_version": "1.0.0",
+      "subject": "PHYSICS",
+      "verification_route_id": "PHY-PD-VR-PROJECTILE-COMPONENTS"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "upstream_scope_authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
+  "upstream_scope_authority_ref": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1"
+}
