@@ -1,0 +1,32 @@
+{
+  "example_id": "PHY-P-F-LONGITUDINAL-BINDING-EXAMPLE-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "fixture_class": "PUBLIC_SYNTHETIC",
+  "capability_ref": "PHY-CAP-MULTIPHASE-KINEMATICS",
+  "source_study_model_field": "longitudinal_initializations[]",
+  "dimensions": {
+    "acquisition": "OPEN",
+    "independent_reconstruction": "OPEN",
+    "delayed_retention": "OPEN",
+    "near_transfer": "OPEN",
+    "far_transfer": "OPEN",
+    "mixed_model_discrimination": "OPEN",
+    "representation_translation": "OPEN",
+    "fluency": "OPEN",
+    "timed_performance": "OPEN"
+  },
+  "future_evidence_obligations": [
+    "DELAYED_INDEPENDENT_RECONSTRUCTION",
+    "FAR_TRANSFER_NEW_CONTEXT",
+    "MIXED_MODEL_DISCRIMINATION",
+    "MULTIPHASE_STATE_PROPAGATION_AFTER_DELAY",
+    "PHYSICAL_VERIFICATION_WITHOUT_PROMPTING",
+    "SAME_CONCEPT_NEW_REPRESENTATION",
+    "SAME_MODEL_DIFFERENT_STORY",
+    "SIGN_FRAME_DISCRIMINATION",
+    "TIMED_MULTI_STAGE_PROBLEM"
+  ],
+  "owner": "FUTURE_LONGITUDINAL_PROGRESSION",
+  "invariant": "CURRENT_SUCCESS_DOES_NOT_CLOSE_DELAYED_OR_TRANSFER_OBLIGATIONS"
+}
