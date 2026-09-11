@@ -1,0 +1,32 @@
+name: V2 Chemistry Core2 Transfer C-I
+
+on:
+  push:
+    branches:
+      - chemistry-v2-c-i-core2-transfer
+    paths:
+      - 'Grade 9/V2/Chemistry/Core2Transfer/**'
+      - '.github/workflows/v2-chemistry-core2-transfer.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/Core2Transfer/**'
+      - 'Grade 9/V2/Chemistry/AssessmentIntake/**'
+      - 'Grade 9/V2/Chemistry/AssessmentScope/**'
+      - 'Grade 9/V2/Chemistry/ReasoningSemantics/**'
+      - 'Grade 9/V2/Chemistry/CoreAuthoring/**'
+      - 'Grade 9/V2/Chemistry/Representation/**'
+      - '.github/workflows/v2-chemistry-core2-transfer.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install jsonschema
+      - name: Validate C-I contracts and policies
+        run: python 'Grade 9/V2/Chemistry/Core2Transfer/contracts/validate_contracts.py'
+      - name: Run C-I Core2 transfer falsifiers
+        run: python 'Grade 9/V2/Chemistry/Core2Transfer/tests/test_chemistry_core2_transfer.py'
