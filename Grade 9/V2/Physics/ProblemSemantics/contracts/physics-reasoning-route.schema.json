@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "family_refs": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "item_ref": {
+      "type": "string"
+    },
+    "learner_support_independent": {
+      "const": true
+    },
+    "mapping_state": {
+      "type": "string"
+    },
+    "primary_family_ref": {
+      "type": "string"
+    },
+    "resolution_status": {
+      "type": "string"
+    },
+    "route_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "route_id": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "scope_role_alias_coverage": {
+      "type": "object"
+    },
+    "scope_role_expectations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "capability_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "law_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "model_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "model_validity_condition_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "relation_selection_basis": {
+            "type": "string"
+          },
+          "representation_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "role": {
+            "type": "string"
+          },
+          "semantic_job": {
+            "type": "string"
+          },
+          "state_transition": {
+            "type": "string"
+          },
+          "state_variable_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "step_id": {
+            "type": "string"
+          },
+          "system_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "verification_checkpoint_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "step_id",
+          "role",
+          "semantic_job",
+          "capability_refs",
+          "system_refs",
+          "state_variable_refs",
+          "representation_refs",
+          "model_refs",
+          "law_refs",
+          "model_validity_condition_refs",
+          "state_transition",
+          "relation_selection_basis",
+          "verification_checkpoint_refs"
+        ],
+        "type": "object"
+      },
+      "minItems": 5,
+      "type": "array"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    }
+  },
+  "required": [
+    "route_id",
+    "schema_version",
+    "subject",
+    "item_ref",
+    "family_refs",
+    "primary_family_ref",
+    "mapping_state",
+    "resolution_status",
+    "learner_support_independent",
+    "scope_role_expectations",
+    "scope_role_alias_coverage",
+    "steps",
+    "route_digest"
+  ],
+  "title": "PhysicsReasoningRoute",
+  "type": "object"
+}

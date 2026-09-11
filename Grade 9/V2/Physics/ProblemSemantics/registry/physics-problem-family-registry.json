@@ -1,0 +1,3355 @@
+{
+  "families": [
+    {
+      "allowed_variations": [
+        "open or closed paths",
+        "curved or piecewise paths",
+        "one-dimensional return motion"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-DISTANCE-DISPLACEMENT"
+      ],
+      "common_sign_or_state_errors": [
+        "assigning a negative distance"
+      ],
+      "common_wrong_models": [
+        "treating distance and displacement as synonyms",
+        "using the chord as path length"
+      ],
+      "family_digest": "39acf810ec6bec23c1083642712daacd52569cf5fd8fde201427ba6a6abf45ce",
+      "family_id": "PHY-PF-PATH-VS-CHORD",
+      "invariants": [
+        "distance is non-negative path length",
+        "displacement depends only on endpoints",
+        "distance >= |displacement|"
+      ],
+      "law_refs": [
+        "PHY-LAW-DISPLACEMENT-DEFINITION"
+      ],
+      "model_refs": [
+        "PHY-MODEL-PARTICLE-PATH-GEOMETRY"
+      ],
+      "model_selection_criteria": [
+        "Use path geometry for distance and endpoint state change for displacement."
+      ],
+      "model_validity_conditions": [],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "Path length and endpoint displacement must be separated for the same motion.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "separate the travelled path from the initial and final positions",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the moving particle and its initial/final state",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "bind the coordinate direction used for displacement",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "MOTION_PATH_DIAGRAM"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "draw or encode the path and endpoint chord",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "distinguish path segments from endpoint separation",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-DISTANCE-DISPLACEMENT"
+          ],
+          "law_refs": [
+            "PHY-LAW-DISPLACEMENT-DEFINITION"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "use path length for distance and endpoint difference for displacement",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "evaluate only the required geometric/path quantities",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "confirm both quantities carry length units",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check distance is at least the displacement magnitude",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": [
+            "VERIFY_PATH_VS_DISPLACEMENT"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state path travelled versus net positional change",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose geometry/state definitions; no kinematic equation is licensed merely by motion wording.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "SIGNED_AXIS"
+        ],
+        "required_refs": [
+          "MOTION_PATH_DIAGRAM"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "POSITION",
+        "DISPLACEMENT",
+        "DISTANCE"
+      ],
+      "system_roles": [
+        "MOVING_PARTICLE"
+      ],
+      "transfer_boundaries": [
+        "applies while path and endpoints are defined; not a substitute for velocity-time analysis"
+      ],
+      "verification_route_ref": "PHY-PD-VR-PATH-VS-CHORD"
+    },
+    {
+      "allowed_variations": [
+        "two or more equal-distance legs",
+        "symbolic or numerical speeds"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-AVERAGE-SPEED-EQUAL-DISTANCE"
+      ],
+      "common_sign_or_state_errors": [
+        "treating equal distance as equal time"
+      ],
+      "common_wrong_models": [
+        "using the arithmetic mean of speeds",
+        "averaging leg speeds without time weighting"
+      ],
+      "family_digest": "12b33ac5f758040bac8d4f2f0bb04865d14f2f0b7478274da7e0ed446f9225aa",
+      "family_id": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "invariants": [
+        "average speed = total distance / total time",
+        "slow leg contributes more time"
+      ],
+      "law_refs": [
+        "PHY-LAW-AVERAGE-SPEED"
+      ],
+      "model_refs": [
+        "PHY-MODEL-AVERAGE-SPEED"
+      ],
+      "model_selection_criteria": [
+        "Average speed is total distance divided by total time; equal distances do not imply equal time."
+      ],
+      "model_validity_conditions": [],
+      "phase_topology": {
+        "kind": "MULTI_LEG",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "Two or more legs have equal distances but unequal speeds, so time weights are unequal.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify that the legs have equal distance rather than equal time",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the traveller over all legs",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "RATE_TABLE"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "organize leg distances, speeds and times",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "derive each leg time from distance/speed",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-AVERAGE-SPEED-EQUAL-DISTANCE"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-AVERAGE-SPEED"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "use the average-speed definition over the complete journey",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-AVERAGE-SPEED"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "select total distance divided by total time",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "combine leg times before forming the ratio",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "check speed units",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check the slower leg lowers the average appropriately",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": [
+            "VERIFY_TOTAL_DISTANCE_TOTAL_TIME"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "explain why an unweighted arithmetic mean is not generally valid",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "NOT_REQUIRED",
+        "required": false,
+        "sign_convention_required": false
+      },
+      "relation_selection_rule": "Choose total-distance/total-time because the journey is composed of unequal-duration legs.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [],
+        "required_refs": [
+          "RATE_TABLE"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "DISTANCE",
+        "SPEED",
+        "TIME"
+      ],
+      "system_roles": [
+        "TRAVELLER"
+      ],
+      "transfer_boundaries": [
+        "equal-time legs use a different weighting rule"
+      ],
+      "verification_route_ref": "PHY-PD-VR-EQUAL-DISTANCE-AVERAGE-SPEED"
+    },
+    {
+      "allowed_variations": [
+        "stopping or speeding cases",
+        "unknown time or displacement",
+        "positive or negative acceleration"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ],
+      "common_sign_or_state_errors": [
+        "dropping velocity or acceleration signs"
+      ],
+      "common_wrong_models": [
+        "choosing a kinematic equation without checking constant acceleration",
+        "treating negative acceleration as automatically slowing"
+      ],
+      "family_digest": "cf5ba52a158fcf89e1d8b3afeb8dff238e4d9084b7adf84e0953e61b944f62b8",
+      "family_id": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE",
+      "invariants": [
+        "signs are frame-relative",
+        "constant acceleration is a model condition, not a formula cue"
+      ],
+      "law_refs": [
+        "PHY-LAW-A-DELTA-V-BY-DELTA-T",
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-S-UT-HALF-AT2",
+        "PHY-LAW-V2-U2-2AS"
+      ],
+      "model_refs": [
+        "PHY-MODEL-UNIFORM-ACCELERATION"
+      ],
+      "model_selection_criteria": [
+        "The interval must support a constant-acceleration model before kinematic relations are used."
+      ],
+      "model_validity_conditions": [
+        "acceleration constant over the modeled interval"
+      ],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "Initial/final one-dimensional states are linked by constant acceleration over a stated interval.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify the state change and requested quantity",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the moving body",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "define positive direction before assigning velocity/acceleration signs",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "STATE_TABLE"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "write initial/final state variables",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "record knowns and target without assigning unused formulas",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-UNIFORM-ACCELERATION"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-UNIFORM-ACCELERATION"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select constant acceleration only if the interval supports it",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-UNIFORM-ACCELERATION"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "state the constant-acceleration condition explicitly",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": [
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-A-DELTA-V-BY-DELTA-T",
+            "PHY-LAW-V-U-AT",
+            "PHY-LAW-S-UT-HALF-AT2",
+            "PHY-LAW-V2-U2-2AS"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "choose the kinematic relation that contains the knowns and target",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "solve with the bound signs and selected relation",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret acceleration/velocity sign in the chosen frame",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify dimensions and units",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": [
+            "VERIFY_DIMENSIONS"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check endpoint and sign behavior",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": [
+            "VERIFY_ACCELERATION_SIGN_UNITS"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state the physical state change",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose among constant-acceleration relations by known/target variable coverage after model validity is established.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "EQUATION_STATE_RELATION"
+        ],
+        "required_refs": [
+          "STATE_TABLE",
+          "SIGNED_AXIS"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "POSITION",
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "MOVING_BODY"
+      ],
+      "transfer_boundaries": [
+        "piecewise acceleration requires a multiphase family"
+      ],
+      "verification_route_ref": "PHY-PD-VR-UNIFORM-ACCELERATION-STATE-CHANGE"
+    },
+    {
+      "allowed_variations": [
+        "different n values",
+        "nonzero initial velocity",
+        "gravity as a special constant acceleration"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-NTH-SECOND-INTERVAL"
+      ],
+      "common_sign_or_state_errors": [
+        "off-by-one interval endpoints"
+      ],
+      "common_wrong_models": [
+        "using S(n) as the nth-second distance",
+        "memorizing an nth-second shortcut without interval meaning"
+      ],
+      "family_digest": "77a773ea610db8bc20124e98b0b9c7947442c7754191cdd5cfef7493b7892746",
+      "family_id": "PHY-PF-NTH-SECOND",
+      "invariants": [
+        "nth-second displacement is an interval difference",
+        "time endpoints are n-1 and n"
+      ],
+      "law_refs": [
+        "PHY-LAW-S-UT-HALF-AT2"
+      ],
+      "model_refs": [
+        "PHY-MODEL-UNIFORM-ACCELERATION"
+      ],
+      "model_selection_criteria": [
+        "Use constant acceleration and compute interval displacement as S(n)-S(n-1)."
+      ],
+      "model_validity_conditions": [
+        "constant acceleration over the interval"
+      ],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "The target is displacement during a named one-second interval, not total displacement up to that time.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "recognize an interval target rather than a cumulative target",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the moving body",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "bind signs for velocity and acceleration",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "TIMELINE_INTERVAL"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "mark the interval (n-1,n] on a timeline",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "write the two cumulative-time endpoints",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-NTH-SECOND-INTERVAL"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-UNIFORM-ACCELERATION"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select constant acceleration",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "confirm acceleration is constant across both endpoint calculations",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": [
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-S-UT-HALF-AT2"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "compute S(n)-S(n-1) from the displacement law",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "subtract cumulative displacements to isolate the interval",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_CONTINUITY_OR_BOUNDARY",
+          "semantic_job": "check the interval endpoints are n-1 and n",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify length units",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "confirm interval and cumulative quantities were not confused",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": [
+            "VERIFY_INTERVAL_NOT_CUMULATIVE"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state displacement during the named second",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose cumulative displacement at the two interval endpoints, then subtract.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "STATE_TABLE",
+          "SIGNED_AXIS"
+        ],
+        "required_refs": [
+          "TIMELINE_INTERVAL"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "MOVING_BODY"
+      ],
+      "transfer_boundaries": [
+        "for nonuniform acceleration the constant-acceleration shortcut is invalid"
+      ],
+      "verification_route_ref": "PHY-PD-VR-NTH-SECOND"
+    },
+    {
+      "allowed_variations": [
+        "start from rest",
+        "deceleration to rest",
+        "unknown time/velocity/acceleration"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-FIRST-EQUATION"
+      ],
+      "common_sign_or_state_errors": [
+        "sign mismatch between u and a"
+      ],
+      "common_wrong_models": [
+        "using v=u+at when acceleration is not constant",
+        "forcing displacement into a velocity-time target"
+      ],
+      "family_digest": "6842797c3753add6353e705417e02823aa2fc19a7beaa7d86933db974b6c62cf",
+      "family_id": "PHY-PF-FIRST-EQUATION",
+      "invariants": [
+        "velocity change equals accumulated acceleration times time"
+      ],
+      "law_refs": [
+        "PHY-LAW-V-U-AT"
+      ],
+      "model_refs": [
+        "PHY-MODEL-UNIFORM-ACCELERATION"
+      ],
+      "model_selection_criteria": [
+        "Use v=u+at only under constant acceleration with frame-consistent signs."
+      ],
+      "model_validity_conditions": [
+        "acceleration constant"
+      ],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "Velocity changes linearly in time under constant acceleration.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify initial velocity, final velocity, acceleration and time roles",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the moving body",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "bind the sign convention",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "STATE_TABLE"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "write the velocity state transition",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "record u, v, a, t and target",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-FIRST-EQUATION"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-UNIFORM-ACCELERATION"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select uniform acceleration",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "confirm acceleration is constant",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": [
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-V-U-AT"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "choose v=u+at because displacement is unnecessary",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "isolate the requested variable",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret the sign of velocity/acceleration",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "check velocity units",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check the endpoint velocity matches the motion description",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": [
+            "VERIFY_VELOCITY_ENDPOINT"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state the velocity-state change",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Use v=u+at when constant acceleration is valid and the target is resolved by u,v,a,t without displacement.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "SIGNED_AXIS",
+          "EQUATION_STATE_RELATION"
+        ],
+        "required_refs": [
+          "STATE_TABLE"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "MOVING_BODY"
+      ],
+      "transfer_boundaries": [
+        "if acceleration varies, use a different model"
+      ],
+      "verification_route_ref": "PHY-PD-VR-FIRST-EQUATION"
+    },
+    {
+      "allowed_variations": [
+        "drop from rest",
+        "downward or upward signed coordinates",
+        "different heights/times"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-FREE-FALL-CONSTANT-G"
+      ],
+      "common_sign_or_state_errors": [
+        "changing sign convention mid-solution"
+      ],
+      "common_wrong_models": [
+        "treating g as positive without a frame",
+        "setting acceleration to zero at a turning point"
+      ],
+      "family_digest": "6acacfd4d82a954a9ae5a75093750bdc5f3ec4f73e0923fffedd8086599dab62",
+      "family_id": "PHY-PF-FREE-FALL",
+      "invariants": [
+        "g points downward regardless of velocity direction",
+        "frame determines the sign of g"
+      ],
+      "law_refs": [
+        "PHY-LAW-S-UT-HALF-AT2",
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-V2-U2-2AS"
+      ],
+      "model_refs": [
+        "PHY-MODEL-CONSTANT-G-1D"
+      ],
+      "model_selection_criteria": [
+        "Use constant-g 1D only when air resistance is neglected/irrelevant and g is treated constant."
+      ],
+      "model_validity_conditions": [
+        "uniform gravitational field over the motion",
+        "air resistance neglected unless explicitly modeled"
+      ],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "One-dimensional vertical motion is governed by approximately constant downward gravitational acceleration.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify free-fall interval and target",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the falling body",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "choose vertical origin and positive direction before assigning g",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "STATE_TABLE"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "write vertical state variables",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "record initial vertical velocity and height/displacement",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-FREE-FALL-CONSTANT-G"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-CONSTANT-G-1D"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select constant-g one-dimensional motion",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "confirm constant g and no-air-resistance assumptions",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": [
+            "VERIFY_CONSTANT_G_ASSUMPTIONS",
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-S-UT-HALF-AT2",
+            "PHY-LAW-V-U-AT",
+            "PHY-LAW-V2-U2-2AS"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "choose the constant-acceleration relation matching knowns and target",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "solve with signed vertical quantities",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret vertical sign and direction",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify units",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check time/height/direction under gravity",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state the physical vertical motion result",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Use a constant-acceleration relation only after the vertical frame and constant-g validity are explicit.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "EQUATION_STATE_RELATION"
+        ],
+        "required_refs": [
+          "SIGNED_AXIS",
+          "STATE_TABLE"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "HEIGHT",
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "FALLING_BODY"
+      ],
+      "transfer_boundaries": [
+        "large-height variable-g or drag-dominated motion is outside this model"
+      ],
+      "verification_route_ref": "PHY-PD-VR-FREE-FALL"
+    },
+    {
+      "allowed_variations": [
+        "maximum height",
+        "same-height return",
+        "different launch speeds"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-VERTICAL-PROJECTION"
+      ],
+      "common_sign_or_state_errors": [
+        "forgetting that g remains downward at the top"
+      ],
+      "common_wrong_models": [
+        "setting acceleration to zero at maximum height",
+        "using time symmetry without same-level conditions"
+      ],
+      "family_digest": "b431af322908aa91517f678364cfc4e9b313bfae4d472d88432b4e1e850ffd47",
+      "family_id": "PHY-PF-VERTICAL-MAX-HEIGHT",
+      "invariants": [
+        "v=0 at the top does not imply a=0",
+        "height scaling follows the chosen relation and model"
+      ],
+      "law_refs": [
+        "PHY-LAW-V2-U2-2AS",
+        "PHY-LAW-V-U-AT"
+      ],
+      "model_refs": [
+        "PHY-MODEL-CONSTANT-G-1D"
+      ],
+      "model_selection_criteria": [
+        "Use constant-g vertical projection with v=0 only as the top-point boundary condition."
+      ],
+      "model_validity_conditions": [
+        "uniform gravitational field",
+        "air resistance neglected"
+      ],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "An upward-launched body reaches a top point with zero instantaneous velocity while acceleration remains downward.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify the ascent interval and top-point target/boundary",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the projected body",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "choose vertical positive direction",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "STATE_TABLE"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "write launch and top states",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "use v_top=0 as an endpoint fact while keeping a=-g in the chosen frame",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-VERTICAL-PROJECTION"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-CONSTANT-G-1D"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select constant-g vertical projection",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "state constant-g/no-drag conditions",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": [
+            "VERIFY_CONSTANT_G_ASSUMPTIONS",
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-V2-U2-2AS"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "choose the no-time relation when maximum height is targeted directly",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "solve for height or launch state",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret upward velocity and downward acceleration signs",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_CONTINUITY_OR_BOUNDARY",
+          "semantic_job": "enforce the top-point velocity boundary",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify length/velocity units",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check the maximum-height endpoint and scaling",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": [
+            "VERIFY_MAXIMUM_HEIGHT_ENDPOINT"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state the top-point or return-height meaning",
+          "state_transition": "",
+          "template_step_id": "T14",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose a relation using the top-point boundary and knowns, never by the phrase maximum height alone.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "EQUATION_STATE_RELATION"
+        ],
+        "required_refs": [
+          "SIGNED_AXIS",
+          "STATE_TABLE"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "HEIGHT",
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "PROJECTED_BODY"
+      ],
+      "transfer_boundaries": [
+        "same-height symmetry needs the same gravitational model and no drag"
+      ],
+      "verification_route_ref": "PHY-PD-VR-VERTICAL-MAX-HEIGHT"
+    },
+    {
+      "allowed_variations": [
+        "piecewise linear or curved v-t graphs",
+        "positive and negative velocity regions"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-VT-SIGNED-AREA"
+      ],
+      "common_sign_or_state_errors": [
+        "ignoring velocity sign"
+      ],
+      "common_wrong_models": [
+        "using graph height as displacement",
+        "adding negative area as positive when displacement is requested"
+      ],
+      "family_digest": "09bd402ed9aff0d69b9c970a05971e8ffb69e30dd4e0d456f0654177cfa31736",
+      "family_id": "PHY-PF-VT-SIGNED-AREA",
+      "invariants": [
+        "signed area gives displacement",
+        "sum of area magnitudes gives distance",
+        "graph height is velocity, not displacement"
+      ],
+      "law_refs": [
+        "PHY-LAW-VT-AREA-DISPLACEMENT"
+      ],
+      "model_refs": [
+        "PHY-MODEL-GRAPH-KINEMATICS"
+      ],
+      "model_selection_criteria": [
+        "Use graph axes/units/sign regions; no constant-acceleration assumption is required for area semantics."
+      ],
+      "model_validity_conditions": [],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "A velocity-time graph encodes displacement by signed area; total distance requires area magnitude by sign regions.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify the graph axes, interval and whether displacement or distance is targeted",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the graph-represented particle",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "VELOCITY_TIME_GRAPH"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "bind the velocity sign convention from the graph",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AREA_VIEW"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "partition positive and negative velocity regions",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "read time bounds and velocity sign changes without inventing missing values",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-VT-AREA-DISPLACEMENT"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "use signed area for displacement or area magnitudes for distance",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "evaluate the required geometric/integral areas only",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret negative signed area as displacement opposite the positive direction",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "check graph area units are length",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "distinguish signed displacement from total distance",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": [
+            "VERIFY_SIGNED_GRAPH_AREA"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state the graph-derived motion quantity",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose signed area versus area magnitude from the requested physical quantity, not from graph appearance.",
+      "representation_requirements": {
+        "graph_operation_kinds": [
+          "SIGNED_AREA",
+          "AREA_MAGNITUDE",
+          "ZERO_CROSSING"
+        ],
+        "optional_refs": [
+          "SIGNED_AREA_VIEW"
+        ],
+        "required_refs": [
+          "VELOCITY_TIME_GRAPH"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "VELOCITY",
+        "DISPLACEMENT",
+        "DISTANCE",
+        "TIME"
+      ],
+      "system_roles": [
+        "GRAPHED_PARTICLE"
+      ],
+      "transfer_boundaries": [
+        "x-t graphs use slope rather than area"
+      ],
+      "verification_route_ref": "PHY-PD-VR-VT-SIGNED-AREA"
+    },
+    {
+      "allowed_variations": [
+        "ascending or descending carrier",
+        "release from balloon/elevator/vehicle"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-MOVING-RELEASE"
+      ],
+      "common_sign_or_state_errors": [
+        "resetting velocity at release"
+      ],
+      "common_wrong_models": [
+        "setting released-body initial velocity to zero",
+        "continuing carrier acceleration after release without force justification"
+      ],
+      "family_digest": "9849f9cb0748fbdd58b2774372dce982edb5edba8ac37f5bb26c2a553036325b",
+      "family_id": "PHY-PF-MOVING-RELEASE",
+      "invariants": [
+        "released body inherits carrier instantaneous velocity",
+        "state changes model at release without arbitrary reset"
+      ],
+      "law_refs": [
+        "PHY-LAW-STATE-CONTINUITY",
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-S-UT-HALF-AT2"
+      ],
+      "model_refs": [
+        "PHY-MODEL-MOVING-RELEASE",
+        "PHY-MODEL-CONSTANT-G-1D"
+      ],
+      "model_selection_criteria": [
+        "At release, position and velocity state are continuous; after release use the new force/model conditions."
+      ],
+      "model_validity_conditions": [
+        "release does not impart an unmentioned impulse",
+        "post-release gravity approximated constant when used"
+      ],
+      "phase_topology": {
+        "kind": "RELEASE_TRANSITION",
+        "minimum_phases": 2,
+        "state_handoff_required": true
+      },
+      "physical_signature": "A body released from a moving carrier inherits the carrier instantaneous velocity, then follows its post-release model.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify pre-release carrier motion, release event and post-release target",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "distinguish carrier and released body roles",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "use one frame across the release unless explicitly changed",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "MOTION_VECTOR_DIAGRAM",
+            "STATE_TABLE"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "show velocity/state at the release event",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "IDENTIFY_PHASES",
+          "semantic_job": "separate carrier-attached and released phases",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "record the carrier state at release as the released body initial state",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-MOVING-RELEASE"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-MOVING-RELEASE",
+            "PHY-MODEL-CONSTANT-G-1D"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select the post-release constant-g model only after the release state is bound",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "state release/no-impulse and gravity-model conditions",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": [
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "PROPAGATE_STATE",
+          "semantic_job": "carry position and velocity continuously across release",
+          "state_transition": "carrier terminal state -> released-body initial state",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": [
+            "VERIFY_RELEASE_STATE_CONTINUITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-STATE-CONTINUITY",
+            "PHY-LAW-V-U-AT",
+            "PHY-LAW-S-UT-HALF-AT2"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "choose the post-release relation from inherited state and target",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "solve only after state handoff",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret inherited velocity and gravity direction",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_CONTINUITY_OR_BOUNDARY",
+          "semantic_job": "verify no arbitrary velocity reset at release",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": [
+            "VERIFY_RELEASE_STATE_CONTINUITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify units",
+          "state_transition": "",
+          "template_step_id": "T14",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check the first instant after release matches the carrier state",
+          "state_transition": "",
+          "template_step_id": "T15",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state post-release behavior without adding an impulse",
+          "state_transition": "",
+          "template_step_id": "T16",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "The release-state continuity determines initial conditions; only then choose the post-release relation.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "SIGNED_AXIS",
+          "PHASE_STRIP"
+        ],
+        "required_refs": [
+          "MOTION_VECTOR_DIAGRAM",
+          "STATE_TABLE"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "POSITION",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "CARRIER",
+        "RELEASED_BODY"
+      ],
+      "transfer_boundaries": [
+        "impulsive launch/separation requires an explicit impulse model"
+      ],
+      "verification_route_ref": "PHY-PD-VR-MOVING-RELEASE"
+    },
+    {
+      "allowed_variations": [
+        "accelerate then brake",
+        "delayed-start/chase segments when represented as phases",
+        "different constant accelerations"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-MULTIPHASE-KINEMATICS"
+      ],
+      "common_sign_or_state_errors": [
+        "resetting time or velocity without explicit boundary semantics"
+      ],
+      "common_wrong_models": [
+        "solving each phase independently with reset state",
+        "using one constant acceleration across all phases"
+      ],
+      "family_digest": "f9105cdb1bf495be479689ceaa2847091d8657548ad3129692de726ed1187fad",
+      "family_id": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "invariants": [
+        "terminal velocity/position of one phase seed the next when continuous",
+        "phase clocks and global clocks must not be conflated"
+      ],
+      "law_refs": [
+        "PHY-LAW-STATE-CONTINUITY",
+        "PHY-LAW-V-U-AT",
+        "PHY-LAW-S-UT-HALF-AT2",
+        "PHY-LAW-V2-U2-2AS"
+      ],
+      "model_refs": [
+        "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION"
+      ],
+      "model_selection_criteria": [
+        "Resolve each phase under its own valid model and pass continuous state to the next phase."
+      ],
+      "model_validity_conditions": [
+        "constant acceleration within each modeled phase",
+        "explicit phase boundaries"
+      ],
+      "phase_topology": {
+        "kind": "MULTI_PHASE",
+        "minimum_phases": 2,
+        "state_handoff_required": true
+      },
+      "physical_signature": "Motion is piecewise: model parameters or acceleration change at explicit phase boundaries while physical state continuity constrains handoff.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify where the motion rule changes and what the final target is",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the moving body/bodies",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SIGNED_AXIS"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "bind one frame and sign convention across phases unless explicitly changed",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "PHASE_STRIP",
+            "STATE_TABLE"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "lay out phase boundaries and state variables",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "IDENTIFY_PHASES",
+          "semantic_job": "name each phase and its local time interval",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "separate phase-local givens from inherited boundary state",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-MULTIPHASE-KINEMATICS"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select the model independently for each phase",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "state validity conditions for every phase",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": [
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "PROPAGATE_STATE",
+          "semantic_job": "hand terminal position/velocity into the next phase where continuity requires",
+          "state_transition": "phase k terminal state -> phase k+1 initial state",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": [
+            "VERIFY_PHASE_STATE_CONTINUITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-STATE-CONTINUITY",
+            "PHY-LAW-V-U-AT",
+            "PHY-LAW-S-UT-HALF-AT2",
+            "PHY-LAW-V2-U2-2AS"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "choose a relation per phase from that phase knowns/target",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "solve phases in dependency order",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "retain frame-consistent signs through every handoff",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_CONTINUITY_OR_BOUNDARY",
+          "semantic_job": "verify boundary state and clocks",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": [
+            "VERIFY_PHASE_STATE_CONTINUITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify unit consistency across phases",
+          "state_transition": "",
+          "template_step_id": "T14",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check no phase begins with an invented state",
+          "state_transition": "",
+          "template_step_id": "T15",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state the final multi-phase motion result",
+          "state_transition": "",
+          "template_step_id": "T16",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Select and solve a relation inside each valid phase; boundary state, not formula pattern, links phases.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [
+          "SIGNED_AXIS"
+        ],
+        "required_refs": [
+          "PHASE_STRIP",
+          "STATE_TABLE"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "POSITION",
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "MOVING_BODY"
+      ],
+      "transfer_boundaries": [
+        "continuous-force changes can require non-piecewise models"
+      ],
+      "verification_route_ref": "PHY-PD-VR-MULTIPHASE-KINEMATICS"
+    },
+    {
+      "allowed_variations": [
+        "different release times after common interval is defined",
+        "different initial velocities"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-RELATIVE-ACCELERATION-SAME-G"
+      ],
+      "common_sign_or_state_errors": [
+        "reversing A-B sign halfway"
+      ],
+      "common_wrong_models": [
+        "subtracting quantities from different frames",
+        "assuming equal g without the same-field model"
+      ],
+      "family_digest": "7b79129d4c31d5eb09e6e32d2a6dbe21795abb81b6e316db2df74cc1003dd097",
+      "family_id": "PHY-PF-RELATIVE-G-CANCELLATION",
+      "invariants": [
+        "a_rel = a_A - a_B in one common frame",
+        "equal g cancels from relative acceleration"
+      ],
+      "law_refs": [
+        "PHY-LAW-RELATIVE-ACCELERATION-DIFFERENCE"
+      ],
+      "model_refs": [
+        "PHY-MODEL-RELATIVE-MOTION-SAME-G"
+      ],
+      "model_selection_criteria": [
+        "Form relative quantities only after both bodies are expressed in the same frame and share the same g model."
+      ],
+      "model_validity_conditions": [
+        "same uniform gravitational field",
+        "common reference frame"
+      ],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "Two bodies in the same uniform gravitational field have equal acceleration, so their relative acceleration cancels in a common frame.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify the two bodies and requested relative quantity",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "define both body states and the relative-state construction",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "RELATIVE_STATE_DIAGRAM"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "express both bodies in one common frame",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "REPRESENT",
+          "semantic_job": "write absolute and relative acceleration states",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "record that both bodies experience the same g under the stated model",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-RELATIVE-ACCELERATION-SAME-G"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-RELATIVE-MOTION-SAME-G"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select common-g relative motion",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "confirm common frame and same uniform g",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": [
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-RELATIVE-ACCELERATION-DIFFERENCE"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "form relative acceleration as the difference",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "cancel equal accelerations algebraically",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret the relative sign in the common frame",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "check acceleration units",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check equal common acceleration cancels",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": [
+            "VERIFY_RELATIVE_ACCELERATION_CANCELLATION"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state what zero/nonzero relative acceleration means",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Construct relative state in one frame, then subtract corresponding absolute accelerations.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [],
+        "required_refs": [
+          "RELATIVE_STATE_DIAGRAM"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "POSITION",
+        "VELOCITY",
+        "ACCELERATION",
+        "RELATIVE_POSITION",
+        "RELATIVE_VELOCITY",
+        "RELATIVE_ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "BODY_A",
+        "BODY_B"
+      ],
+      "transfer_boundaries": [
+        "nonuniform fields or drag can make accelerations differ"
+      ],
+      "verification_route_ref": "PHY-PD-VR-RELATIVE-G-CANCELLATION"
+    },
+    {
+      "allowed_variations": [
+        "positive/negative/zero slope",
+        "constant or changing slope",
+        "multiple option graphs"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-XT-SLOPE-VELOCITY"
+      ],
+      "common_sign_or_state_errors": [
+        "confusing negative position with negative velocity"
+      ],
+      "common_wrong_models": [
+        "reading graph height as velocity",
+        "choosing by visual steepness without axis meaning"
+      ],
+      "family_digest": "6818806b3b0867973256ca6c4071e53d368e744566b7eb5236e7dbb0828f9cb3",
+      "family_id": "PHY-PF-XT-SLOPE",
+      "invariants": [
+        "x-t slope is velocity",
+        "graph height is position",
+        "option comparison must preserve axis semantics"
+      ],
+      "law_refs": [
+        "PHY-LAW-XT-SLOPE-VELOCITY"
+      ],
+      "model_refs": [
+        "PHY-MODEL-GRAPH-KINEMATICS"
+      ],
+      "model_selection_criteria": [
+        "Use graph-defined frame and slope; do not interpret graph height as velocity."
+      ],
+      "model_validity_conditions": [],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "A position-time graph encodes velocity in its slope; option selection depends on slope sign and constancy.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify x-t axes and the motion statement to be matched",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the graph-represented particle",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "POSITION_TIME_GRAPH"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "bind the graph position-axis positive direction",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "OPTION_GRAPH_SET"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "translate motion statements into slope constraints and compare graph options",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "read slope sign/constancy without using graph height as velocity",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-XT-SLOPE-VELOCITY"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "use x-t slope as velocity",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "discriminate the option whose slope behavior matches",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret slope sign as velocity direction",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "check slope units are velocity",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "verify the selected graph slope matches the stated motion",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": [
+            "VERIFY_GRAPH_SLOPE_SIGN",
+            "VERIFY_SOURCE_REPRESENTATION_PRESENT"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state the graph-motion correspondence",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose slope analysis because velocity is encoded by dx/dt on an x-t graph.",
+      "representation_requirements": {
+        "graph_operation_kinds": [
+          "SLOPE",
+          "OPTION_DISCRIMINATION"
+        ],
+        "optional_refs": [
+          "OPTION_GRAPH_SET"
+        ],
+        "required_refs": [
+          "POSITION_TIME_GRAPH"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "POSITION",
+        "VELOCITY",
+        "TIME"
+      ],
+      "system_roles": [
+        "GRAPHED_PARTICLE"
+      ],
+      "transfer_boundaries": [
+        "v-t graphs use height as velocity and area as displacement"
+      ],
+      "verification_route_ref": "PHY-PD-VR-XT-SLOPE"
+    },
+    {
+      "allowed_variations": [
+        "v-t slope acceleration",
+        "a-t height acceleration",
+        "x-t curvature qualitative acceleration",
+        "source-missing graph"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-GRAPH-ACCELERATION"
+      ],
+      "common_sign_or_state_errors": [
+        "assigning sign without graph/frame evidence"
+      ],
+      "common_wrong_models": [
+        "assuming every graph question uses slope",
+        "inventing axes or points for a missing graph"
+      ],
+      "family_digest": "d7b2be5035b1c0b77eb70646d402ae6b45bdf328e920fa77c4d8e49284911f2c",
+      "family_id": "PHY-PF-GRAPH-ACCELERATION",
+      "invariants": [
+        "graph operation depends on axes",
+        "missing/truncated representation cannot be reconstructed"
+      ],
+      "law_refs": [],
+      "model_refs": [
+        "PHY-MODEL-GRAPH-KINEMATICS"
+      ],
+      "model_selection_criteria": [
+        "First identify the graph type; acceleration may be slope of v-t, second-order change of x-t, or directly plotted."
+      ],
+      "model_validity_conditions": [],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "Acceleration must be inferred from the actual graph quantities and axes; missing graph data must remain unresolved.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify the requested acceleration and inspect the actual graph axes",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the graph-represented particle",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SOURCE_GRAPH"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "bind sign direction only if the graph/source supplies it",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "SOURCE_GRAPH"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "classify the graph operation as slope, height, curvature, or unresolved source dependency",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "read only visible source quantities; keep missing axes/points unresolved",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "select a graph relation only after graph type is known",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "perform the graph operation only when the source representation is complete",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret acceleration sign from the bound graph/frame",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify graph-derived acceleration units",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "require the source representation before certifying an answer",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": [
+            "VERIFY_SOURCE_REPRESENTATION_PRESENT"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "state acceleration meaning or explicitly preserve unresolved status",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose the graph operation from axis quantities; if the graph is missing, no operation is certified.",
+      "representation_requirements": {
+        "graph_operation_kinds": [
+          "SLOPE",
+          "HEIGHT",
+          "CURVATURE",
+          "UNRESOLVED_DUE_SOURCE"
+        ],
+        "optional_refs": [],
+        "required_refs": [
+          "SOURCE_GRAPH"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "ACCELERATION",
+        "VELOCITY",
+        "TIME",
+        "POSITION"
+      ],
+      "system_roles": [
+        "GRAPHED_PARTICLE"
+      ],
+      "transfer_boundaries": [
+        "operation cannot be fixed when the source representation is missing"
+      ],
+      "verification_route_ref": "PHY-PD-VR-GRAPH-ACCELERATION"
+    },
+    {
+      "allowed_variations": [
+        "different launch angles/speeds",
+        "component target quantities"
+      ],
+      "canonical_capability_refs": [
+        "PHY-CAP-PROJECTILE-COMPONENTS"
+      ],
+      "common_sign_or_state_errors": [
+        "changing axes between component equations"
+      ],
+      "common_wrong_models": [
+        "using one scalar kinematic equation for 2D motion",
+        "mixing horizontal and vertical signs"
+      ],
+      "family_digest": "3a469eac18ccc224f385d9813f6955143d889adef02d5b2d9239cf7085508c17",
+      "family_id": "PHY-PF-PROJECTILE-COMPONENTS",
+      "invariants": [
+        "horizontal acceleration is zero in the ideal model",
+        "vertical acceleration is downward g",
+        "component motions share time"
+      ],
+      "law_refs": [
+        "PHY-LAW-PROJECTILE-COMPONENT-INDEPENDENCE"
+      ],
+      "model_refs": [
+        "PHY-MODEL-PROJECTILE-2D"
+      ],
+      "model_selection_criteria": [
+        "Use independent horizontal/vertical component equations only under the ideal projectile model."
+      ],
+      "model_validity_conditions": [
+        "uniform gravitational field",
+        "air resistance neglected",
+        "one inertial ground frame"
+      ],
+      "phase_topology": {
+        "kind": "SINGLE_PHASE",
+        "minimum_phases": 1,
+        "state_handoff_required": false
+      },
+      "physical_signature": "Two-dimensional projectile motion is decomposed into orthogonal component states sharing a common time.",
+      "reasoning_route_template": [
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "READ_PHENOMENON",
+          "semantic_job": "identify launch state, target and 2D geometry",
+          "state_transition": "",
+          "template_step_id": "T01",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "DEFINE_SYSTEM",
+          "semantic_job": "identify the projectile",
+          "state_transition": "",
+          "template_step_id": "T02",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "PROJECTILE_COMPONENT_DIAGRAM"
+          ],
+          "role": "CHOOSE_FRAME",
+          "semantic_job": "choose horizontal and vertical axes",
+          "state_transition": "",
+          "template_step_id": "T03",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [
+            "PROJECTILE_COMPONENT_DIAGRAM"
+          ],
+          "role": "REPRESENT",
+          "semantic_job": "resolve initial velocity and displacement into components",
+          "state_transition": "",
+          "template_step_id": "T04",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+          "semantic_job": "separate horizontal and vertical knowns while preserving shared time",
+          "state_transition": "",
+          "template_step_id": "T05",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [
+            "PHY-CAP-PROJECTILE-COMPONENTS"
+          ],
+          "law_refs": [],
+          "model_refs": [
+            "PHY-MODEL-PROJECTILE-2D"
+          ],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SELECT_MODEL",
+          "semantic_job": "select the ideal projectile model",
+          "state_transition": "",
+          "template_step_id": "T06",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_MODEL_VALIDITY",
+          "semantic_job": "state constant-g/no-drag/inertial-frame conditions",
+          "state_transition": "",
+          "template_step_id": "T07",
+          "verification_checkpoint_refs": [
+            "VERIFY_MODEL_VALIDITY"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [
+            "PHY-LAW-PROJECTILE-COMPONENT-INDEPENDENCE"
+          ],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHOOSE_RELATION",
+          "semantic_job": "choose component relations with shared time",
+          "state_transition": "",
+          "template_step_id": "T08",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "SOLVE",
+          "semantic_job": "solve component equations without mixing axes",
+          "state_transition": "",
+          "template_step_id": "T09",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_SIGN_DIRECTION",
+          "semantic_job": "interpret component signs and resultant direction",
+          "state_transition": "",
+          "template_step_id": "T10",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "CHECK_UNITS",
+          "semantic_job": "verify units",
+          "state_transition": "",
+          "template_step_id": "T11",
+          "verification_checkpoint_refs": []
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "VERIFY_PHYSICAL_PLAUSIBILITY",
+          "semantic_job": "check component consistency and shared time",
+          "state_transition": "",
+          "template_step_id": "T12",
+          "verification_checkpoint_refs": [
+            "VERIFY_PROJECTILE_COMPONENTS"
+          ]
+        },
+        {
+          "capability_refs": [],
+          "law_refs": [],
+          "model_refs": [],
+          "relation_selection_basis": "",
+          "representation_refs": [],
+          "role": "INTERPRET_RESULT",
+          "semantic_job": "recombine component meaning when required",
+          "state_transition": "",
+          "template_step_id": "T13",
+          "verification_checkpoint_refs": []
+        }
+      ],
+      "reference_frame_requirements": {
+        "frame_kind": "EXPLICIT_OR_GRAPH_DEFINED",
+        "required": true,
+        "sign_convention_required": true
+      },
+      "relation_selection_rule": "Choose component equations because the ideal model separates orthogonal dynamics while sharing time.",
+      "representation_requirements": {
+        "graph_operation_kinds": [],
+        "optional_refs": [],
+        "required_refs": [
+          "PROJECTILE_COMPONENT_DIAGRAM"
+        ]
+      },
+      "semantic_owner_phase": "P-D",
+      "state_variables": [
+        "POSITION",
+        "DISPLACEMENT",
+        "VELOCITY",
+        "ACCELERATION",
+        "TIME"
+      ],
+      "system_roles": [
+        "PROJECTILE"
+      ],
+      "transfer_boundaries": [
+        "drag, curved frames, or nonuniform gravity require different models"
+      ],
+      "verification_route_ref": "PHY-PD-VR-PROJECTILE-COMPONENTS"
+    }
+  ],
+  "registry_digest": "1b52807a18011940851096b3b94b25efa2c3ccc9462ab9999092c2cac370f4cd",
+  "registry_id": "PHY-G9-PD-PROBLEM-FAMILY-REGISTRY-v1",
+  "schema_version": "1.0.0",
+  "semantic_owner_phase": "P-D",
+  "subject": "PHYSICS",
+  "upstream_scope_authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
+  "upstream_scope_authority_ref": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1"
+}
