@@ -56,10 +56,10 @@ def _norm(text: object) -> str:
 
 
 def _ordered(text: str, markers: list[str]) -> bool:
-    haystack = _norm(text)
+    haystack = _norm(text).upper()
     cursor = 0
     for marker in markers:
-        normalized = _norm(marker)
+        normalized = _norm(marker).upper()
         pos = haystack.find(normalized, cursor)
         if pos < 0:
             return False
@@ -68,20 +68,39 @@ def _ordered(text: str, markers: list[str]) -> bool:
 
 
 def _learner_step_marker(step: dict) -> str:
+    """Return the cue that should be visible, not the machine-only role token."""
     if step.get("learner_visible_heading"):
         return step["learner_visible_heading"]
-    if step.get("role") == "GUIDED_2_FADED":
-        return "GUIDED 2"
-    return step["role"].replace("_", " ")
+    return {
+        "PHYSICAL_SITUATION": "PHYSICAL SITUATION",
+        "DEPICTION": "DEPICTION",
+        "NOTICE": "NOTICE",
+        "SAY_IN_WORDS": "SAY IN WORDS",
+        "CONCEPT_INVARIANT": "CONCEPT INVARIANT",
+        "MEMORY_ANCHOR": "MEMORY ANCHOR",
+        "CONCEPT_HELPER": "CONCEPT HELPER",
+        "BUILD_RELATION": "BUILD RELATION",
+        "WHY_THIS_WORKS": "WHY THIS WORKS",
+        "WORKED_EXAMPLE": "WORKED",
+        "APPLICATION": "APPLICATION",
+        "VARIANT_CONTRAST": "CONTRAST",
+        "MISCONCEPTION_REPAIR": "MISCONCEPTION REPAIR",
+        "MODEL_BOUNDARY": "MODEL BOUNDARY",
+        "GUIDED_1": "GUIDED 1",
+        "GUIDED_2_FADED": "GUIDED 2",
+        "INDEPENDENT_TRANSFER": "INDEPENDENT TRANSFER",
+        "RETRIEVAL_CHECK": "RETRIEVAL CHECK",
+    }.get(step.get("role"), step.get("role", "").replace("_", " "))
 
 
 def _learner_surface_morphology(original):
     """Adapt structure morphology checks to learner-visible presentation.
 
     PublicationStructure retains exact machine roles/support states. The PDF is
-    allowed to use the concise learner cue "GUIDED 2" rather than printing the
-    internal composite label "GUIDED 2 FADED". Only learner-text marker checks
-    are recomputed; all other morphology evidence remains delegated unchanged.
+    allowed to use concise learner cues such as ``WORKED`` and ``GUIDED 2``
+    rather than printing internal tokens such as ``WORKED EXAMPLE`` or
+    ``GUIDED 2 FADED``. Only learner-text marker checks are recomputed; all
+    other morphology evidence remains delegated unchanged.
     """
 
     def morphology(structure, study_pdf, transfer_pdf):
@@ -100,13 +119,14 @@ def _learner_surface_morphology(original):
 
                 progression = unit["support_progression"]
                 present_to_marker = {
-                    "worked_example": "WORKED EXAMPLE",
+                    "worked_example": "WORKED",
                     "guided_1": "GUIDED 1",
                     "guided_2_faded": "GUIDED 2",
                     "independent_transfer": "INDEPENDENT TRANSFER",
                 }
+                upper_text = text.upper()
                 for key, marker in present_to_marker.items():
-                    if progression[key]["state"] == "PRESENT" and marker not in text:
+                    if progression[key]["state"] == "PRESENT" and marker.upper() not in upper_text:
                         support_ok = False
 
             out["arc_step_order_reconciliation"] = arc_ok
