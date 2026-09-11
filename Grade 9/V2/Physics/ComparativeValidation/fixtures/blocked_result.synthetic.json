@@ -1,0 +1,16 @@
+{
+  "candidate_artifact_sha256": "9e5ef00e6a7049e076b56d58a7ce71460e7a8f632a9e42b9ec27e256af4847f8",
+  "comparative_validation_status": "NOT_RUN",
+  "human_gate_authority": "NO_AUTHORIZED_HUMAN_EVIDENCE",
+  "reference_access_status": "NOT_ATTEMPTED",
+  "reference_sha256": null,
+  "release_evidence_eligible": false,
+  "schema_version": "1.0.0",
+  "status": "BLOCKED_HUMAN_QUALITY_GATES",
+  "unmet_gates": [
+    "SUBJECT_CORRECTNESS",
+    "PEDAGOGY_USABILITY",
+    "VISUAL_USABILITY"
+  ],
+  "validation_id": "PHY-COMP-BE94DC51C52973"
+}

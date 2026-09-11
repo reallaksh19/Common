@@ -1,0 +1,12 @@
+{
+  "authority_class": "NO_AUTHORIZED_HUMAN_EVIDENCE",
+  "candidate_artifact_sha256": "9e5ef00e6a7049e076b56d58a7ce71460e7a8f632a9e42b9ec27e256af4847f8",
+  "evidence_refs": [],
+  "quality_states": {
+    "PEDAGOGY_USABILITY": "PENDING",
+    "SUBJECT_CORRECTNESS": "PENDING",
+    "VISUAL_USABILITY": "PENDING"
+  },
+  "reviewer_authority_refs": [],
+  "schema_version": "1.0.0"
+}
