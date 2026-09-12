@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-generation-contract.schema.json",
+  "title": "ChemistryGenerationContract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "schema_version",
+    "subject",
+    "purpose",
+    "entrypoint_md",
+    "authority_manifest",
+    "legacy_entrypoint",
+    "required_phase_order",
+    "phases",
+    "contract_falsifiers",
+    "cold_start_refusal_policy",
+    "renderer_invention_allowed",
+    "renderer_selection_forbidden",
+    "human_gate_states",
+    "contract_digest"
+  ],
+  "properties": {
+    "contract_id": {"type": "string", "minLength": 1},
+    "schema_version": {"type": "string", "minLength": 1},
+    "subject": {"const": "CHEMISTRY"},
+    "purpose": {"type": "string", "minLength": 1},
+    "entrypoint_md": {"type": "string", "minLength": 1},
+    "authority_manifest": {"type": "string", "minLength": 1},
+    "legacy_entrypoint": {"type": "string", "minLength": 1},
+    "required_phase_order": {
+      "type": "array",
+      "minItems": 13,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 13,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "phase_id",
+          "ordinal",
+          "legacy_stage_refs",
+          "obligation",
+          "depends_on",
+          "required_registry_paths",
+          "required_engine_paths",
+          "produces",
+          "falsifiers"
+        ],
+        "properties": {
+          "phase_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+          "ordinal": {"type": "integer", "minimum": 1},
+          "legacy_stage_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "obligation": {"type": "string", "minLength": 20},
+          "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "required_registry_paths": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "required_engine_paths": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "produces": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "falsifiers": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}}
+        }
+      }
+    },
+    "contract_falsifiers": {
+      "type": "array",
+      "minItems": 9,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+    },
+    "cold_start_refusal_policy": {"const": "REFUSE_TO_PROCEED_IF_ANY_REQUIRED_CONTRACT_MISSING_OR_UNEXECUTED"},
+    "renderer_invention_allowed": {"const": false},
+    "renderer_selection_forbidden": {"const": true},
+    "human_gate_states": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "PUBLICATION_ENGINEERING",
+        "SUBJECT_CORRECTNESS",
+        "PEDAGOGICAL_DESIGN",
+        "ASSESSMENT_DESIGN",
+        "VISUAL_USABILITY"
+      ],
+      "properties": {
+        "PUBLICATION_ENGINEERING": {"const": "MACHINE_MOVABLE"},
+        "SUBJECT_CORRECTNESS": {"const": "PENDING_AUTHORIZED_HUMAN_ONLY"},
+        "PEDAGOGICAL_DESIGN": {"const": "PENDING_AUTHORIZED_HUMAN_ONLY"},
+        "ASSESSMENT_DESIGN": {"const": "PENDING_AUTHORIZED_HUMAN_ONLY"},
+        "VISUAL_USABILITY": {"const": "PENDING_AUTHORIZED_HUMAN_ONLY"}
+      }
+    },
+    "contract_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,389 @@
+{
+  "contract_id": "CHEM-GENERATION-CONTRACT-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Single machine-readable orchestration entry point for a cold-start Chemistry V2 producer. A producer MUST NOT discover its upstream obligations by repository archaeology: every phase, its required registries, its required engines and its dependency order are declared here and are fail-closed.",
+  "entrypoint_md": "Grade 9/V2/Chemistry/GENERATION_CONTRACT.md",
+  "authority_manifest": "Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json",
+  "legacy_entrypoint": "Grade 9/V2/Chemistry/CHEMISTRY_V2_GENERATION_ENTRYPOINT.md",
+  "required_phase_order": [
+    "SOURCE_INGESTION",
+    "SOURCE_SCOPE_CLASSIFICATION",
+    "CAPABILITY_DERIVATION",
+    "CORE1_STUDY_MODEL",
+    "INSTRUCTIONAL_AUTHORING",
+    "PROBLEM_AUTHORING",
+    "PCK_BINDING",
+    "VISUAL_OBLIGATION_BINDING",
+    "CORE2_PRIMARY_OWNERSHIP",
+    "REALIZATION",
+    "VISUAL_AND_LEGIBILITY_PREFLIGHT",
+    "COVERAGE_CLOSURE",
+    "CUSTODY_FREEZE"
+  ],
+  "phases": [
+    {
+      "phase_id": "SOURCE_INGESTION",
+      "ordinal": 1,
+      "legacy_stage_refs": [
+        "C-A",
+        "C-B"
+      ],
+      "obligation": "Scan the complete supplied source corpus and freeze the question denominator BEFORE any authoring begins. Nothing downstream may change TOTAL_SCANNED / ELIGIBLE_IN_SCOPE / PLACED_UNIQUE / EXCLUDED_WITH_REASON / MISSING / DUPLICATE_PRIMARY without an explicit ledger revision.",
+      "depends_on": [],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/AssessmentReview/registry/chemistry-item-validity-registry.json",
+        "Grade 9/V2/Chemistry/AssessmentReview/policies/chemistry-diagnostic-use-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/AssessmentIntake/engine/build_chemistry_assessment_intake.py",
+        "Grade 9/V2/Chemistry/AssessmentReview/engine/review_chemistry_assessment.py"
+      ],
+      "produces": [
+        "ChemistryAssessmentIntake",
+        "ChemistryAssessmentReview",
+        "ChemistrySourceIngestionProfile"
+      ],
+      "falsifiers": [
+        "AUTHORING_BEFORE_DENOMINATOR_FREEZE",
+        "SOURCE_DENOMINATOR_NOT_FROZEN"
+      ]
+    },
+    {
+      "phase_id": "SOURCE_SCOPE_CLASSIFICATION",
+      "ordinal": 2,
+      "legacy_stage_refs": [
+        "C-C"
+      ],
+      "obligation": "Classify every scanned item as in-scope or out-of-scope against the declared topic scope, with an explicit reason for every exclusion, and reconcile the frozen denominator.",
+      "depends_on": [
+        "SOURCE_INGESTION"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/AssessmentScope/engine/build_chemistry_scope.py"
+      ],
+      "produces": [
+        "ChemistryAssessmentScope",
+        "ChemistryExternalCorpusClassification"
+      ],
+      "falsifiers": [
+        "EXCLUSION_WITHOUT_REASON",
+        "SOURCE_OBLIGATION_RECONCILIATION_FAILURE"
+      ]
+    },
+    {
+      "phase_id": "CAPABILITY_DERIVATION",
+      "ordinal": 3,
+      "legacy_stage_refs": [
+        "C-D"
+      ],
+      "obligation": "Derive what the learner actually has to do from the retained questions. Capabilities are subject-wide and chapter-generic; a topic name is never a capability.",
+      "depends_on": [
+        "SOURCE_SCOPE_CLASSIFICATION"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-reasoning-role-registry.json",
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/engine/build_chemistry_reasoning_semantics.py"
+      ],
+      "produces": [
+        "ChemistryReasoningSemantics",
+        "ChemistryCapabilityTaxonomyBinding"
+      ],
+      "falsifiers": [
+        "TOPIC_NAMED_CAPABILITY",
+        "CAPABILITY_WITHOUT_SOURCE_EVIDENCE"
+      ]
+    },
+    {
+      "phase_id": "CORE1_STUDY_MODEL",
+      "ordinal": 4,
+      "legacy_stage_refs": [
+        "C-E",
+        "C-F"
+      ],
+      "obligation": "Resolve learner scope and treatment. No learner weakness may be invented where no authorized attempt evidence exists.",
+      "depends_on": [
+        "CAPABILITY_DERIVATION"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/LearnerEvidence/registry/chemistry-observation-code-registry.json",
+        "Grade 9/V2/Chemistry/LearnerEvidence/registry/chemistry-diagnostic-policy.json",
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/LearnerEvidence/engine/infer_chemistry_learner_evidence.py",
+        "Grade 9/V2/Chemistry/LearnerStudy/engine/build_chemistry_learner_study_model.py"
+      ],
+      "produces": [
+        "LearnerStudyScope",
+        "LearnerStudyModel"
+      ],
+      "falsifiers": [
+        "INVENTED_LEARNER_WEAKNESS"
+      ]
+    },
+    {
+      "phase_id": "INSTRUCTIONAL_AUTHORING",
+      "ordinal": 5,
+      "legacy_stage_refs": [
+        "C-G"
+      ],
+      "obligation": "Author the Core 1 teaching spine at competitive-study depth for every full-learning capability, not an NCERT summary.",
+      "depends_on": [
+        "CORE1_STUDY_MODEL"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-instructional-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py"
+      ],
+      "produces": [
+        "Core1Plan"
+      ],
+      "falsifiers": [
+        "CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE",
+        "INSTRUCTIONAL_SPINE_INCOMPLETE"
+      ]
+    },
+    {
+      "phase_id": "PROBLEM_AUTHORING",
+      "ordinal": 6,
+      "legacy_stage_refs": [
+        "C-G"
+      ],
+      "obligation": "Author Core 1 practice and its answer custody. Every learner-facing question resolves to an immediate answer check AND a full worked solution, or to an explicit expected-response rubric when genuinely open-ended.",
+      "depends_on": [
+        "INSTRUCTIONAL_AUTHORING"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py"
+      ],
+      "produces": [
+        "AppendixACorePractice",
+        "AppendixBCoreSolutions"
+      ],
+      "falsifiers": [
+        "QUESTION_WITHOUT_ANSWER_PATH",
+        "ANSWER_COUNT_RECONCILIATION_FAILURE"
+      ]
+    },
+    {
+      "phase_id": "PCK_BINDING",
+      "ordinal": 7,
+      "legacy_stage_refs": [
+        "C-G"
+      ],
+      "obligation": "Bind every capability to its promoted pedagogical-content-knowledge assets and to actionable helper microcopy. A hint that only names a method is invalid.",
+      "depends_on": [
+        "PROBLEM_AUTHORING"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py"
+      ],
+      "produces": [
+        "PromotedPCKBinding"
+      ],
+      "falsifiers": [
+        "NON_ACTIONABLE_HINT"
+      ]
+    },
+    {
+      "phase_id": "VISUAL_OBLIGATION_BINDING",
+      "ordinal": 8,
+      "legacy_stage_refs": [
+        "C-H"
+      ],
+      "obligation": "Upstream chooses the teaching primitive for every visually obligated capability and question before any prose is written. The renderer places, it never selects and never invents.",
+      "depends_on": [
+        "PCK_BINDING"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-notation-render-contract.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/Representation/engine/build_chemistry_representations.py"
+      ],
+      "produces": [
+        "RepresentationBundle",
+        "VisualObligationLedger"
+      ],
+      "falsifiers": [
+        "VISUAL_OBLIGATION_MISSING",
+        "WRONG_VISUAL_FAMILY",
+        "TEXT_ONLY_WHEN_VISUAL_REQUIRED"
+      ]
+    },
+    {
+      "phase_id": "CORE2_PRIMARY_OWNERSHIP",
+      "ordinal": 9,
+      "legacy_stage_refs": [
+        "C-I"
+      ],
+      "obligation": "Every eligible source item gets exactly one canonical primary Core 2 page with hint ladder, reasoning route, solution and verification.",
+      "depends_on": [
+        "VISUAL_OBLIGATION_BINDING"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/Core2Transfer/engine/build_chemistry_core2_transfer.py"
+      ],
+      "produces": [
+        "Core2Plan"
+      ],
+      "falsifiers": [
+        "DUPLICATE_PRIMARY_PLACEMENT",
+        "ELIGIBLE_ITEM_MISSING_CORE2"
+      ]
+    },
+    {
+      "phase_id": "REALIZATION",
+      "ordinal": 10,
+      "legacy_stage_refs": [
+        "C-L"
+      ],
+      "obligation": "Draw the two learner products deterministically. Every selected teaching primitive is realized as real vector graphics or recorded as unrealized; no invented value ever reaches a page.",
+      "depends_on": [
+        "CORE2_PRIMARY_OWNERSHIP"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/ExactProduct/engine/realize_chemistry_exact_product.py",
+        "Grade 9/V2/Chemistry/ExactProduct/engine/chemistry_visual_primitives.py",
+        "Grade 9/V2/Chemistry/ExactProduct/engine/learner_surface_guard.py"
+      ],
+      "produces": [
+        "CoreStudyGuidePDF",
+        "ExamSIDESolutionTransferBookPDF",
+        "PhysicalPageMap"
+      ],
+      "falsifiers": [
+        "TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED",
+        "LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK",
+        "INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE"
+      ]
+    },
+    {
+      "phase_id": "VISUAL_AND_LEGIBILITY_PREFLIGHT",
+      "ordinal": 11,
+      "legacy_stage_refs": [
+        "C-L"
+      ],
+      "obligation": "Inspect the rendered bytes at actual output size. The absolute font floor is an engineering minimum, not the learner target.",
+      "depends_on": [
+        "REALIZATION"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/ExactProduct/engine/audit_chemistry_exact_candidate.py"
+      ],
+      "produces": [
+        "RenderAudit",
+        "AIPreReview"
+      ],
+      "falsifiers": [
+        "MIN_FONT_SIZE_FAILURE",
+        "LEARNER_BODY_TOO_SMALL",
+        "PAGE_DENSITY_EXCEEDS_POLICY",
+        "OFF_PAGE_TEXT",
+        "TEXT_OR_CARD_COLLISION"
+      ]
+    },
+    {
+      "phase_id": "COVERAGE_CLOSURE",
+      "ordinal": 12,
+      "legacy_stage_refs": [
+        "C-J"
+      ],
+      "obligation": "Reconcile the frozen denominator against what was actually placed, taught, answered and verified.",
+      "depends_on": [
+        "VISUAL_AND_LEGIBILITY_PREFLIGHT"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/build_chemistry_coverage_closure.py"
+      ],
+      "produces": [
+        "PublicationCoverageClosure"
+      ],
+      "falsifiers": [
+        "SOURCE_OBLIGATION_WITHOUT_CORE1_COVERAGE",
+        "ELIGIBLE_EXTERNAL_QUESTION_WITHOUT_CORE2_TRANSFER"
+      ]
+    },
+    {
+      "phase_id": "CUSTODY_FREEZE",
+      "ordinal": 13,
+      "legacy_stage_refs": [
+        "C-K",
+        "C-L"
+      ],
+      "obligation": "Freeze the exact bytes and their semantic custody durably in the repository. Machine closure is PUBLICATION_ENGINEERING only; the authorized human gates stay PENDING.",
+      "depends_on": [
+        "COVERAGE_CLOSURE"
+      ],
+      "required_registry_paths": [
+        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json"
+      ],
+      "required_engine_paths": [
+        "Grade 9/V2/Chemistry/ExactProduct/engine/freeze_chemistry_candidate.py",
+        "Grade 9/V2/Chemistry/ExactProduct/validator/validate_chemistry_custody.py"
+      ],
+      "produces": [
+        "FrozenExactCandidate"
+      ],
+      "falsifiers": [
+        "FROZEN_CANDIDATE_ONLY_IN_EXPIRING_CI_ARTIFACT",
+        "MACHINE_GREEN_CLAIMED_AS_PEDAGOGY_PASS"
+      ]
+    }
+  ],
+  "contract_falsifiers": [
+    "REQUIRED_PHASE_MISSING",
+    "PHASE_ORDER_VIOLATION",
+    "REQUIRED_REGISTRY_MISSING",
+    "REQUIRED_ENGINE_MISSING",
+    "PHASE_NOT_EXECUTED",
+    "UPSTREAM_PHASE_UNEXECUTED",
+    "PHASE_EXECUTED_OUT_OF_ORDER",
+    "UNDECLARED_PHASE_EXECUTED",
+    "GENERATION_CONTRACT_DIGEST_DRIFT"
+  ],
+  "cold_start_refusal_policy": "REFUSE_TO_PROCEED_IF_ANY_REQUIRED_CONTRACT_MISSING_OR_UNEXECUTED",
+  "renderer_invention_allowed": false,
+  "renderer_selection_forbidden": true,
+  "human_gate_states": {
+    "PUBLICATION_ENGINEERING": "MACHINE_MOVABLE",
+    "SUBJECT_CORRECTNESS": "PENDING_AUTHORIZED_HUMAN_ONLY",
+    "PEDAGOGICAL_DESIGN": "PENDING_AUTHORIZED_HUMAN_ONLY",
+    "ASSESSMENT_DESIGN": "PENDING_AUTHORIZED_HUMAN_ONLY",
+    "VISUAL_USABILITY": "PENDING_AUTHORIZED_HUMAN_ONLY"
+  },
+  "contract_digest": "8bad3d97b4f7de8bfce1d12eb8c0c47a9bbaa339e38a8c9a55f9514380c1e3d2"
+}

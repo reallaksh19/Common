@@ -1,0 +1,31 @@
+name: V2 Chemistry Generation Contract
+
+on:
+  push:
+    paths:
+      - 'Grade 9/V2/Chemistry/GENERATION_CONTRACT.json'
+      - 'Grade 9/V2/Chemistry/GENERATION_CONTRACT.md'
+      - 'Grade 9/V2/Chemistry/GenerationContract/**'
+      - '.github/workflows/v2-chemistry-generation-contract.yml'
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/GENERATION_CONTRACT.json'
+      - 'Grade 9/V2/Chemistry/GENERATION_CONTRACT.md'
+      - 'Grade 9/V2/Chemistry/GenerationContract/**'
+      - '.github/workflows/v2-chemistry-generation-contract.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install jsonschema
+      - name: Validate the generation contract schema and declared upstream paths
+        run: python 'Grade 9/V2/Chemistry/GenerationContract/contracts/validate_contracts.py'
+      - name: Run generation-contract orchestration falsifiers
+        run: python 'Grade 9/V2/Chemistry/GenerationContract/tests/test_chemistry_generation_contract.py'
+      - name: Prove the cold-start gate resolves against this checkout
+        run: python 'Grade 9/V2/Chemistry/GenerationContract/engine/validate_chemistry_generation_contract.py'
