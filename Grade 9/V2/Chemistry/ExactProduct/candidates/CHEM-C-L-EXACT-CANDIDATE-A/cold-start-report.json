@@ -1,0 +1,1555 @@
+{
+  "authority_trace": [
+    {
+      "authority_refs": [
+        "fixture:p1:CS01",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS01",
+      "trace_id": "TR-SRC-CO-CS01"
+    },
+    {
+      "authority_refs": [
+        "fixture:p1:CS02",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS02",
+      "trace_id": "TR-SRC-CO-CS02"
+    },
+    {
+      "authority_refs": [
+        "fixture:p2:CS03",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS03",
+      "trace_id": "TR-SRC-CO-CS03"
+    },
+    {
+      "authority_refs": [
+        "fixture:p2:CS04",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS04",
+      "trace_id": "TR-SRC-CO-CS04"
+    },
+    {
+      "authority_refs": [
+        "fixture:p3:CS05",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS05",
+      "trace_id": "TR-SRC-CO-CS05"
+    },
+    {
+      "authority_refs": [
+        "fixture:p3:CS06",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS06",
+      "trace_id": "TR-SRC-CO-CS06"
+    },
+    {
+      "authority_refs": [
+        "fixture:p4:CS07",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS07",
+      "trace_id": "TR-SRC-CO-CS07"
+    },
+    {
+      "authority_refs": [
+        "fixture:p4:CS08",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "OUT_OF_SCOPE: Source concept is present, but its canonical capability is outside the declared topic boundary.",
+      "subject_ref": "CO-CS08",
+      "trace_id": "TR-SRC-CO-CS08"
+    },
+    {
+      "authority_refs": [
+        "fixture:p5:CS09",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS09",
+      "trace_id": "TR-SRC-CO-CS09"
+    },
+    {
+      "authority_refs": [
+        "fixture:p5:CS10",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS10",
+      "trace_id": "TR-SRC-CO-CS10"
+    },
+    {
+      "authority_refs": [
+        "fixture:p6:CS11",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "OUT_OF_SCOPE: Source concept is present, but its canonical capability is outside the declared topic boundary.",
+      "subject_ref": "CO-CS11",
+      "trace_id": "TR-SRC-CO-CS11"
+    },
+    {
+      "authority_refs": [
+        "fixture:p6:CS12",
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "CONCEPT_SOURCE_INCLUSION",
+      "resolution": "ELIGIBLE_IN_SCOPE: Derived from raw source wording/representation and canonical declared-topic authority.",
+      "subject_ref": "CO-CS12",
+      "trace_id": "TR-SRC-CO-CS12"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/fixtures/chemistry-external-transfer-source.fixture.json"
+      ],
+      "decision_class": "EXTERNAL_ELIGIBILITY",
+      "resolution": "ELIGIBLE_IN_SCOPE: Eligibility derived from resolved source body plus canonical declared-topic authority; provider topic label is not authority.",
+      "subject_ref": "EXT01",
+      "trace_id": "TR-EXT-EXT01"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/fixtures/chemistry-external-transfer-source.fixture.json"
+      ],
+      "decision_class": "EXTERNAL_ELIGIBILITY",
+      "resolution": "ELIGIBLE_IN_SCOPE: Eligibility derived from resolved source body plus canonical declared-topic authority; provider topic label is not authority.",
+      "subject_ref": "EXT02",
+      "trace_id": "TR-EXT-EXT02"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/fixtures/chemistry-external-transfer-source.fixture.json"
+      ],
+      "decision_class": "EXTERNAL_ELIGIBILITY",
+      "resolution": "ELIGIBLE_IN_SCOPE: Eligibility derived from resolved source body plus canonical declared-topic authority; provider topic label is not authority.",
+      "subject_ref": "EXT03",
+      "trace_id": "TR-EXT-EXT03"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/fixtures/chemistry-external-transfer-source.fixture.json"
+      ],
+      "decision_class": "EXTERNAL_ELIGIBILITY",
+      "resolution": "ELIGIBLE_IN_SCOPE: Eligibility derived from resolved source body plus canonical declared-topic authority; provider topic label is not authority.",
+      "subject_ref": "EXT04",
+      "trace_id": "TR-EXT-EXT04"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/fixtures/chemistry-external-transfer-source.fixture.json"
+      ],
+      "decision_class": "EXTERNAL_ELIGIBILITY",
+      "resolution": "ELIGIBLE_IN_SCOPE: Eligibility derived from resolved source body plus canonical declared-topic authority; provider topic label is not authority.",
+      "subject_ref": "EXT05",
+      "trace_id": "TR-EXT-EXT05"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/fixtures/chemistry-external-transfer-source.fixture.json"
+      ],
+      "decision_class": "EXTERNAL_ELIGIBILITY",
+      "resolution": "SOURCE_UNRESOLVED: External candidate body or extraction confidence is insufficient for source-grounded classification.",
+      "subject_ref": "EXT06",
+      "trace_id": "TR-EXT-EXT06"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "trace_id": "TR-TREAT-CAP-ATTACH-SPECIES-ROLE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-ATTACH-SPECIES-ROLE-01-REACTION_BEFORE_AFTER_MAP",
+        "REP-CAP-ATTACH-SPECIES-ROLE-02-SPECIES_ROLE_MAP",
+        "REP-CAP-ATTACH-SPECIES-ROLE-03-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-ATTACH-SPECIES-ROLE-04-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "trace_id": "TR-REP-CAP-ATTACH-SPECIES-ROLE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "trace_id": "TR-COND-CAP-ATTACH-SPECIES-ROLE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-ATTACH-SPECIES-ROLE"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "trace_id": "TR-WORK-CAP-ATTACH-SPECIES-ROLE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "trace_id": "TR-APPA-CAP-ATTACH-SPECIES-ROLE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "trace_id": "TR-APPC-CAP-ATTACH-SPECIES-ROLE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, NEW_EQUATION_SPECIES_ROLE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "trace_id": "TR-LONG-CAP-ATTACH-SPECIES-ROLE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "trace_id": "TR-TREAT-CAP-CHECK-ATOM-CONSERVATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-CHECK-ATOM-CONSERVATION-01-CONSERVATION_LEDGER",
+        "REP-CAP-CHECK-ATOM-CONSERVATION-02-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-CHECK-ATOM-CONSERVATION-03-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "trace_id": "TR-REP-CAP-CHECK-ATOM-CONSERVATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "trace_id": "TR-COND-CAP-CHECK-ATOM-CONSERVATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-CHECK-ATOM-CONSERVATION"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "trace_id": "TR-WORK-CAP-CHECK-ATOM-CONSERVATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "trace_id": "TR-APPA-CAP-CHECK-ATOM-CONSERVATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "trace_id": "TR-APPC-CAP-CHECK-ATOM-CONSERVATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK, UNPROMPTED_CONSERVATION_VERIFICATION",
+      "subject_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "trace_id": "TR-LONG-CAP-CHECK-ATOM-CONSERVATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "trace_id": "TR-TREAT-CAP-CHECK-RULE-EXCEPTION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-CHECK-RULE-EXCEPTION-01-RULE_PRIORITY_LADDER",
+        "REP-CAP-CHECK-RULE-EXCEPTION-02-CONDITION_EXCEPTION_GATE",
+        "REP-CAP-CHECK-RULE-EXCEPTION-03-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-CHECK-RULE-EXCEPTION-04-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "trace_id": "TR-REP-CAP-CHECK-RULE-EXCEPTION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "trace_id": "TR-COND-CAP-CHECK-RULE-EXCEPTION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-CHECK-RULE-EXCEPTION"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "trace_id": "TR-WORK-CAP-CHECK-RULE-EXCEPTION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "trace_id": "TR-APPA-CAP-CHECK-RULE-EXCEPTION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "trace_id": "TR-APPC-CAP-CHECK-RULE-EXCEPTION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, HIDDEN_CONDITION_OR_EXCEPTION, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "trace_id": "TR-LONG-CAP-CHECK-RULE-EXCEPTION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "trace_id": "TR-TREAT-CAP-CLASSIFY-CHANGE-EVIDENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-CLASSIFY-CHANGE-EVIDENCE-01-MACRO_OBSERVATION_VIEW",
+        "REP-CAP-CLASSIFY-CHANGE-EVIDENCE-02-EVIDENCE_CLAIM_REASONING_CHAIN",
+        "REP-CAP-CLASSIFY-CHANGE-EVIDENCE-03-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-CLASSIFY-CHANGE-EVIDENCE-04-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "trace_id": "TR-REP-CAP-CLASSIFY-CHANGE-EVIDENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "trace_id": "TR-COND-CAP-CLASSIFY-CHANGE-EVIDENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-CLASSIFY-CHANGE-EVIDENCE"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "trace_id": "TR-WORK-CAP-CLASSIFY-CHANGE-EVIDENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "trace_id": "TR-APPA-CAP-CLASSIFY-CHANGE-EVIDENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "trace_id": "TR-APPC-CAP-CLASSIFY-CHANGE-EVIDENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: CROSS_REPRESENTATION_TRANSLATION, DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "trace_id": "TR-LONG-CAP-CLASSIFY-CHANGE-EVIDENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-PARSE-ION-CHARGE",
+      "trace_id": "TR-TREAT-CAP-PARSE-ION-CHARGE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-PARSE-ION-CHARGE-01-FORMULA_ANATOMY_VIEW",
+        "REP-CAP-PARSE-ION-CHARGE-02-CHARGE_SUBSCRIPT_CONTRAST",
+        "REP-CAP-PARSE-ION-CHARGE-03-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-PARSE-ION-CHARGE-04-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-PARSE-ION-CHARGE",
+      "trace_id": "TR-REP-CAP-PARSE-ION-CHARGE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-PARSE-ION-CHARGE",
+      "trace_id": "TR-COND-CAP-PARSE-ION-CHARGE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-PARSE-ION-CHARGE"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-PARSE-ION-CHARGE",
+      "trace_id": "TR-WORK-CAP-PARSE-ION-CHARGE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-PARSE-ION-CHARGE",
+      "trace_id": "TR-APPA-CAP-PARSE-ION-CHARGE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-PARSE-ION-CHARGE",
+      "trace_id": "TR-APPC-CAP-PARSE-ION-CHARGE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-PARSE-ION-CHARGE",
+      "trace_id": "TR-LONG-CAP-PARSE-ION-CHARGE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "trace_id": "TR-TREAT-CAP-PRESERVE-REACTION-CONDITION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-PRESERVE-REACTION-CONDITION-01-CONDITION_EXCEPTION_GATE",
+        "REP-CAP-PRESERVE-REACTION-CONDITION-02-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-PRESERVE-REACTION-CONDITION-03-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "trace_id": "TR-REP-CAP-PRESERVE-REACTION-CONDITION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "trace_id": "TR-COND-CAP-PRESERVE-REACTION-CONDITION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-PRESERVE-REACTION-CONDITION"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "trace_id": "TR-WORK-CAP-PRESERVE-REACTION-CONDITION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "trace_id": "TR-APPA-CAP-PRESERVE-REACTION-CONDITION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "trace_id": "TR-APPC-CAP-PRESERVE-REACTION-CONDITION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, HIDDEN_CONDITION_OR_EXCEPTION, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "trace_id": "TR-LONG-CAP-PRESERVE-REACTION-CONDITION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-READ-APPARATUS-METHOD",
+      "trace_id": "TR-TREAT-CAP-READ-APPARATUS-METHOD"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-READ-APPARATUS-METHOD-01-APPARATUS_METHOD_FLOW",
+        "REP-CAP-READ-APPARATUS-METHOD-02-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-READ-APPARATUS-METHOD-03-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-READ-APPARATUS-METHOD",
+      "trace_id": "TR-REP-CAP-READ-APPARATUS-METHOD"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-READ-APPARATUS-METHOD",
+      "trace_id": "TR-COND-CAP-READ-APPARATUS-METHOD"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-READ-APPARATUS-METHOD"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-READ-APPARATUS-METHOD",
+      "trace_id": "TR-WORK-CAP-READ-APPARATUS-METHOD"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-READ-APPARATUS-METHOD",
+      "trace_id": "TR-APPA-CAP-READ-APPARATUS-METHOD"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-READ-APPARATUS-METHOD",
+      "trace_id": "TR-APPC-CAP-READ-APPARATUS-METHOD"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-READ-APPARATUS-METHOD",
+      "trace_id": "TR-LONG-CAP-READ-APPARATUS-METHOD"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-READ-FORMULA",
+      "trace_id": "TR-TREAT-CAP-READ-FORMULA"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-READ-FORMULA-01-FORMULA_ANATOMY_VIEW",
+        "REP-CAP-READ-FORMULA-02-COEFFICIENT_SUBSCRIPT_CONTRAST",
+        "REP-CAP-READ-FORMULA-03-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-READ-FORMULA-04-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-READ-FORMULA",
+      "trace_id": "TR-REP-CAP-READ-FORMULA"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-READ-FORMULA",
+      "trace_id": "TR-COND-CAP-READ-FORMULA"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-READ-FORMULA"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-READ-FORMULA",
+      "trace_id": "TR-WORK-CAP-READ-FORMULA"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-READ-FORMULA",
+      "trace_id": "TR-APPA-CAP-READ-FORMULA"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-READ-FORMULA",
+      "trace_id": "TR-APPC-CAP-READ-FORMULA"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-READ-FORMULA",
+      "trace_id": "TR-LONG-CAP-READ-FORMULA"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "trace_id": "TR-TREAT-CAP-SEPARATE-OBSERVATION-INFERENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-SEPARATE-OBSERVATION-INFERENCE-01-MACRO_OBSERVATION_VIEW",
+        "REP-CAP-SEPARATE-OBSERVATION-INFERENCE-02-OBSERVATION_INFERENCE_TABLE",
+        "REP-CAP-SEPARATE-OBSERVATION-INFERENCE-03-EVIDENCE_CLAIM_REASONING_CHAIN",
+        "REP-CAP-SEPARATE-OBSERVATION-INFERENCE-04-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-SEPARATE-OBSERVATION-INFERENCE-05-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "trace_id": "TR-REP-CAP-SEPARATE-OBSERVATION-INFERENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "trace_id": "TR-COND-CAP-SEPARATE-OBSERVATION-INFERENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-SEPARATE-OBSERVATION-INFERENCE"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "trace_id": "TR-WORK-CAP-SEPARATE-OBSERVATION-INFERENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "trace_id": "TR-APPA-CAP-SEPARATE-OBSERVATION-INFERENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "trace_id": "TR-APPC-CAP-SEPARATE-OBSERVATION-INFERENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "trace_id": "TR-LONG-CAP-SEPARATE-OBSERVATION-INFERENCE"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-TRACK-REACTING-SPECIES",
+      "trace_id": "TR-TREAT-CAP-TRACK-REACTING-SPECIES"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-TRACK-REACTING-SPECIES-01-REACTION_BEFORE_AFTER_MAP",
+        "REP-CAP-TRACK-REACTING-SPECIES-02-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-TRACK-REACTING-SPECIES-03-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-TRACK-REACTING-SPECIES",
+      "trace_id": "TR-REP-CAP-TRACK-REACTING-SPECIES"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-TRACK-REACTING-SPECIES",
+      "trace_id": "TR-COND-CAP-TRACK-REACTING-SPECIES"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-TRACK-REACTING-SPECIES"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-TRACK-REACTING-SPECIES",
+      "trace_id": "TR-WORK-CAP-TRACK-REACTING-SPECIES"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-TRACK-REACTING-SPECIES",
+      "trace_id": "TR-APPA-CAP-TRACK-REACTING-SPECIES"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-TRACK-REACTING-SPECIES",
+      "trace_id": "TR-APPC-CAP-TRACK-REACTING-SPECIES"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, NEW_EQUATION_SPECIES_ROLE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-TRACK-REACTING-SPECIES",
+      "trace_id": "TR-LONG-CAP-TRACK-REACTING-SPECIES"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "trace_id": "TR-TREAT-CAP-TRANSLATE-PARTICLE-SYMBOL"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-TRANSLATE-PARTICLE-SYMBOL-01-PARTICLE_MODEL_VIEW",
+        "REP-CAP-TRANSLATE-PARTICLE-SYMBOL-02-MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "REP-CAP-TRANSLATE-PARTICLE-SYMBOL-03-MINIMAL_CHEMISTRY_CONTRAST",
+        "REP-CAP-TRANSLATE-PARTICLE-SYMBOL-04-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "trace_id": "TR-REP-CAP-TRANSLATE-PARTICLE-SYMBOL"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "trace_id": "TR-COND-CAP-TRANSLATE-PARTICLE-SYMBOL"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-TRANSLATE-PARTICLE-SYMBOL"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "trace_id": "TR-WORK-CAP-TRANSLATE-PARTICLE-SYMBOL"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "trace_id": "TR-APPA-CAP-TRANSLATE-PARTICLE-SYMBOL"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "trace_id": "TR-APPC-CAP-TRANSLATE-PARTICLE-SYMBOL"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: CROSS_REPRESENTATION_TRANSLATION, DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "trace_id": "TR-LONG-CAP-TRANSLATE-PARTICLE-SYMBOL"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "TREATMENT_DEPTH",
+      "resolution": "UNKNOWN -> ACTIVE_STUDY -> FULL_LEARNING",
+      "subject_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "trace_id": "TR-TREAT-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+        "REP-CAP-VERIFY-CHEMICAL-REPRESENTATION-01-FORMULA_EQUATION_CHECK_STRIP",
+        "REP-CAP-VERIFY-CHEMICAL-REPRESENTATION-02-MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "decision_class": "REPRESENTATION_CHOICE",
+      "resolution": "Semantic primitives selected from capability, learner treatment and representation obligations.",
+      "subject_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "trace_id": "TR-REP-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+        "STUDY-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CONDITION_EXCEPTION_EXPLANATION",
+      "resolution": "Condition/exception obligations preserved from the study model; empty means no additional condition is authorized.",
+      "subject_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "trace_id": "TR-COND-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "CORE1-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+      ],
+      "decision_class": "WORKED_EXAMPLE",
+      "resolution": "Core1 uses a new authored problem-family instance and does not leak the original external transfer item.",
+      "subject_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "trace_id": "TR-WORK-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_A_ITEM",
+      "resolution": "Appendix A item is generated from the required capability and authorized problem family.",
+      "subject_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "trace_id": "TR-APPA-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "CORE1-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "APPENDIX_C_ELEMENT",
+      "resolution": "Appendix C support is a compact answer-free first-move/rule/verification cue for an already authorized capability.",
+      "subject_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "trace_id": "TR-APPC-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "CLOSURE-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "LONGITUDINAL_REVISIT",
+      "resolution": "Future evidence obligations remain assigned after the current episode: DELAYED_INDEPENDENT_RECONSTRUCTION, FAR_TRANSFER_NEW_CONTEXT, FLUENCY_CHECK, INDEPENDENT_CHEMICAL_VERIFICATION, MIXED_DISCRIMINATION, NEAR_TRANSFER_NEW_INSTANCE, TIMED_PERFORMANCE_CHECK",
+      "subject_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "trace_id": "TR-LONG-CAP-VERIFY-CHEMICAL-REPRESENTATION"
+    },
+    {
+      "authority_refs": [
+        "CHEM-C-K-DERIVED-EXTERNAL-CHEM-FIX-CORPUS-01",
+        "CORE2-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CORE2_PLACEMENT",
+      "resolution": "Eligible original external question placed once in its canonical primary home.",
+      "subject_ref": "EXT01",
+      "trace_id": "TR-PLACE-EXT01"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "PRIMARY_SUPPORTS",
+      "resolution": "PRIMARY and SUPPORTS are taken from the concept-segregation authority and canonical capability bindings.",
+      "subject_ref": "EXT01",
+      "trace_id": "TR-CONCEPT-EXT01"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json"
+      ],
+      "decision_class": "BADGE",
+      "resolution": "Guide reasoning-demand and transfer/source badges use versioned policy; guide demand is not psychometric difficulty.",
+      "subject_ref": "EXT01",
+      "trace_id": "TR-BADGE-EXT01"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
+        "PF-FORMULA_CHARGE_PARSE"
+      ],
+      "decision_class": "HINTS",
+      "resolution": "H1 notice, H2 rule/model/representation and H3 first executable step are generated under the Core2 support contract.",
+      "subject_ref": "EXT01",
+      "trace_id": "TR-HINT-EXT01"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "CHEM-C-D-PF-FORMULA_CHARGE_PARSE-EXT01"
+      ],
+      "decision_class": "REASONING_ROUTE",
+      "resolution": "ChemistryReasoningRoute comes from problem-family semantics and remains distinct from the hint ladder.",
+      "subject_ref": "EXT01",
+      "trace_id": "TR-ROUTE-EXT01"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "EXT01"
+      ],
+      "decision_class": "VERIFICATION",
+      "resolution": "Verification is taken from the authorized problem-family/solution route and preserves chemical checks.",
+      "subject_ref": "EXT01",
+      "trace_id": "TR-VERIFY-EXT01"
+    },
+    {
+      "authority_refs": [
+        "CHEM-C-K-DERIVED-EXTERNAL-CHEM-FIX-CORPUS-01",
+        "CORE2-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CORE2_PLACEMENT",
+      "resolution": "Eligible original external question placed once in its canonical primary home.",
+      "subject_ref": "EXT02",
+      "trace_id": "TR-PLACE-EXT02"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "PRIMARY_SUPPORTS",
+      "resolution": "PRIMARY and SUPPORTS are taken from the concept-segregation authority and canonical capability bindings.",
+      "subject_ref": "EXT02",
+      "trace_id": "TR-CONCEPT-EXT02"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json"
+      ],
+      "decision_class": "BADGE",
+      "resolution": "Guide reasoning-demand and transfer/source badges use versioned policy; guide demand is not psychometric difficulty.",
+      "subject_ref": "EXT02",
+      "trace_id": "TR-BADGE-EXT02"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
+        "PF-MACRO_PARTICLE_SYMBOL_TRANSLATION"
+      ],
+      "decision_class": "HINTS",
+      "resolution": "H1 notice, H2 rule/model/representation and H3 first executable step are generated under the Core2 support contract.",
+      "subject_ref": "EXT02",
+      "trace_id": "TR-HINT-EXT02"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "CHEM-C-D-PF-MACRO_PARTICLE_SYMBOL_TRANSLATION-EXT02"
+      ],
+      "decision_class": "REASONING_ROUTE",
+      "resolution": "ChemistryReasoningRoute comes from problem-family semantics and remains distinct from the hint ladder.",
+      "subject_ref": "EXT02",
+      "trace_id": "TR-ROUTE-EXT02"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "EXT02"
+      ],
+      "decision_class": "VERIFICATION",
+      "resolution": "Verification is taken from the authorized problem-family/solution route and preserves chemical checks.",
+      "subject_ref": "EXT02",
+      "trace_id": "TR-VERIFY-EXT02"
+    },
+    {
+      "authority_refs": [
+        "CHEM-C-K-DERIVED-EXTERNAL-CHEM-FIX-CORPUS-01",
+        "CORE2-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CORE2_PLACEMENT",
+      "resolution": "Eligible original external question placed once in its canonical primary home.",
+      "subject_ref": "EXT03",
+      "trace_id": "TR-PLACE-EXT03"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "PRIMARY_SUPPORTS",
+      "resolution": "PRIMARY and SUPPORTS are taken from the concept-segregation authority and canonical capability bindings.",
+      "subject_ref": "EXT03",
+      "trace_id": "TR-CONCEPT-EXT03"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json"
+      ],
+      "decision_class": "BADGE",
+      "resolution": "Guide reasoning-demand and transfer/source badges use versioned policy; guide demand is not psychometric difficulty.",
+      "subject_ref": "EXT03",
+      "trace_id": "TR-BADGE-EXT03"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
+        "PF-CONSERVATION_LEDGER"
+      ],
+      "decision_class": "HINTS",
+      "resolution": "H1 notice, H2 rule/model/representation and H3 first executable step are generated under the Core2 support contract.",
+      "subject_ref": "EXT03",
+      "trace_id": "TR-HINT-EXT03"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "CHEM-C-D-PF-CONSERVATION_LEDGER-EXT03"
+      ],
+      "decision_class": "REASONING_ROUTE",
+      "resolution": "ChemistryReasoningRoute comes from problem-family semantics and remains distinct from the hint ladder.",
+      "subject_ref": "EXT03",
+      "trace_id": "TR-ROUTE-EXT03"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "EXT03"
+      ],
+      "decision_class": "VERIFICATION",
+      "resolution": "Verification is taken from the authorized problem-family/solution route and preserves chemical checks.",
+      "subject_ref": "EXT03",
+      "trace_id": "TR-VERIFY-EXT03"
+    },
+    {
+      "authority_refs": [
+        "CHEM-C-K-DERIVED-EXTERNAL-CHEM-FIX-CORPUS-01",
+        "CORE2-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CORE2_PLACEMENT",
+      "resolution": "Eligible original external question placed once in its canonical primary home.",
+      "subject_ref": "EXT04",
+      "trace_id": "TR-PLACE-EXT04"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "PRIMARY_SUPPORTS",
+      "resolution": "PRIMARY and SUPPORTS are taken from the concept-segregation authority and canonical capability bindings.",
+      "subject_ref": "EXT04",
+      "trace_id": "TR-CONCEPT-EXT04"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json"
+      ],
+      "decision_class": "BADGE",
+      "resolution": "Guide reasoning-demand and transfer/source badges use versioned policy; guide demand is not psychometric difficulty.",
+      "subject_ref": "EXT04",
+      "trace_id": "TR-BADGE-EXT04"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
+        "PF-CONDITION_VALIDITY"
+      ],
+      "decision_class": "HINTS",
+      "resolution": "H1 notice, H2 rule/model/representation and H3 first executable step are generated under the Core2 support contract.",
+      "subject_ref": "EXT04",
+      "trace_id": "TR-HINT-EXT04"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "CHEM-C-D-PF-CONDITION_VALIDITY-EXT04"
+      ],
+      "decision_class": "REASONING_ROUTE",
+      "resolution": "ChemistryReasoningRoute comes from problem-family semantics and remains distinct from the hint ladder.",
+      "subject_ref": "EXT04",
+      "trace_id": "TR-ROUTE-EXT04"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "EXT04"
+      ],
+      "decision_class": "VERIFICATION",
+      "resolution": "Verification is taken from the authorized problem-family/solution route and preserves chemical checks.",
+      "subject_ref": "EXT04",
+      "trace_id": "TR-VERIFY-EXT04"
+    },
+    {
+      "authority_refs": [
+        "CHEM-C-K-DERIVED-EXTERNAL-CHEM-FIX-CORPUS-01",
+        "CORE2-CHEM-C-L-EXACT-RUN-A"
+      ],
+      "decision_class": "CORE2_PLACEMENT",
+      "resolution": "Eligible original external question placed once in its canonical primary home.",
+      "subject_ref": "EXT05",
+      "trace_id": "TR-PLACE-EXT05"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json"
+      ],
+      "decision_class": "PRIMARY_SUPPORTS",
+      "resolution": "PRIMARY and SUPPORTS are taken from the concept-segregation authority and canonical capability bindings.",
+      "subject_ref": "EXT05",
+      "trace_id": "TR-CONCEPT-EXT05"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json",
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json"
+      ],
+      "decision_class": "BADGE",
+      "resolution": "Guide reasoning-demand and transfer/source badges use versioned policy; guide demand is not psychometric difficulty.",
+      "subject_ref": "EXT05",
+      "trace_id": "TR-BADGE-EXT05"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
+        "PF-AGENT_ROLE_ASSIGNMENT"
+      ],
+      "decision_class": "HINTS",
+      "resolution": "H1 notice, H2 rule/model/representation and H3 first executable step are generated under the Core2 support contract.",
+      "subject_ref": "EXT05",
+      "trace_id": "TR-HINT-EXT05"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "CHEM-C-D-PF-AGENT_ROLE_ASSIGNMENT-EXT05"
+      ],
+      "decision_class": "REASONING_ROUTE",
+      "resolution": "ChemistryReasoningRoute comes from problem-family semantics and remains distinct from the hint ladder.",
+      "subject_ref": "EXT05",
+      "trace_id": "TR-ROUTE-EXT05"
+    },
+    {
+      "authority_refs": [
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+        "EXT05"
+      ],
+      "decision_class": "VERIFICATION",
+      "resolution": "Verification is taken from the authorized problem-family/solution route and preserves chemical checks.",
+      "subject_ref": "EXT05",
+      "trace_id": "TR-VERIFY-EXT05"
+    }
+  ],
+  "derived_authority": {
+    "derivation_policy_ref": "CHEM-C-K-DERIVATION-POLICY-v1",
+    "external_classification_digest": "adae40783e8cb001da0592fba7e83a133d4df88f7ee284b6789c3499ff7ebbec",
+    "question_bindings_digest": "edcdf09619b8872f4684de24b17171156ffbf4df34dbf36978883a3de7c756a4",
+    "source_ledger_digest": "8f98461e5ee43b753762d0b6aea96f6434fe14c8a20003ac6285a30509e9f364"
+  },
+  "input_custody": {
+    "attempt_set_digest": null,
+    "corpus_digest": "dea4da5ef0a10dcb214d5b1eef4cd71aa0ba2e6794ef1296ca831e4bcd94060d",
+    "declared_topic_scope_digest": "38e1d24007bfe288357a3eb3bfb03cc92d82799c02c52470a123cd55fcbe6caa",
+    "question_set_digest": "69df4edd4e94fb8278c4fd45e6b0ce0518532fefc814746298b1221f875a4ab3",
+    "source_set_digest": "907687990360db251187a82486c59b7664361133c76ac418f849ef6efe36d119"
+  },
+  "manifest_digest": "659cc55f5895cb0a0d5a3bc53d8c8b9f4234abfc41416bd689d9a3dd3ff1e8dd",
+  "manifest_ref": "CHEM-C-K-AUTHORITY-MANIFEST-v1",
+  "report_digest": "5ddcc6f3f5cc110a39d327432d771eb6c2e6f7e558214e4c2284f25d14e4f3e2",
+  "run_id": "CHEM-C-L-EXACT-RUN-A",
+  "run_mode": "NO_ATTEMPT",
+  "runtime_dependency_audit": {
+    "chat_or_issue_history_used": false,
+    "forbidden_reads": [],
+    "manual_precomputed_inputs_used": [],
+    "raw_pr157_used": false,
+    "runtime_reads": [
+      "INPUT:ChemistrySourceSet",
+      "INPUT:QuestionSetOrCorpusSet",
+      "INPUT:DeclaredTopicScope",
+      "Grade 9/V2/Chemistry/AssessmentScope/authority/chemistry-canonical-authority.json",
+      "Grade 9/V2/Chemistry/ColdStart/registry/chemistry-cold-start-derivation-policy.json",
+      "Grade 9/V2/Chemistry/AssessmentReview/registry/chemistry-item-validity-registry.json",
+      "Grade 9/V2/Chemistry/AssessmentReview/policies/chemistry-diagnostic-use-policy.json",
+      "Grade 9/V2/Chemistry/AssessmentReview/registry/chemistry-qc-events.json",
+      "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+      "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-reasoning-role-registry.json",
+      "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json",
+      "Grade 9/V2/Chemistry/LearnerEvidence/registry/chemistry-observation-code-registry.json",
+      "Grade 9/V2/Chemistry/LearnerEvidence/registry/chemistry-diagnostic-policy.json",
+      "Grade 9/V2/Chemistry/LearnerStudy/registry/chemistry-treatment-policy.json",
+      "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-instructional-authoring-profile.json",
+      "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+      "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+      "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+      "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
+      "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
+      "Grade 9/V2/Chemistry/Representation/registry/chemistry-notation-render-contract.json",
+      "Grade 9/V2/Chemistry/Core2Transfer/fixtures/chemistry-external-transfer-source.fixture.json",
+      "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json",
+      "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
+      "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
+      "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+      "Grade 9/V2/Chemistry/CoverageClosure/fixtures/chemistry-transfer-evidence.fixture.json"
+    ]
+  },
+  "schema_version": "1.0.0",
+  "stage_outputs": {
+    "canonical_binding_signature": "811b06bdebc4881ae730296d08cf91cb9467e7723ecd7d2bd61dc34937a9287c",
+    "canonical_chemistry_truth_signature": "f6807662754000692d07a6569cd7068c2e5583b4d74b5bd8968e4cbf10daf941",
+    "core1_plan_digest": "63d96f3630619534e0b786356fe91e1aa026a0c53fad4c2315d4487073103c33",
+    "core2_plan_digest": "b7dbbc8ec061341292e17477251eb92718a44e849f5445a62e213a8825c21036",
+    "coverage_closure_digest": "296148adb18c05c3672a10c1190a09ddd6836c8e13450c1b53a3d0c85ec8adbf",
+    "external_candidate_refs": [
+      "EXT01",
+      "EXT02",
+      "EXT03",
+      "EXT04",
+      "EXT05",
+      "EXT06"
+    ],
+    "intake_digest": "399ad93b41fe014a88ad87dceab332e6c527b332696ba656e3016e16206872f5",
+    "learner_state_signature": "7d0b1479591d553e635c74e93387bba457042b0eb2b706cda57698aeb0a07923",
+    "primary_external_ownership_signature": "0de2a2ba936f5faf47bd61a0a4b82132f84fff9a30d3b8511699774fcdafb9b3",
+    "problem_family_truth_signature": "e4f6aa5f653d057791dcb8a34a5f5d81b74c35bfaa817ef1c0d299f2491ead87",
+    "reasoning_semantics_digest": "581bc1dd55f9c0ded050a9e8cd21691c7a10134e9bf6051c800940ce63588dbb",
+    "representation_bundle_digest": "e221bdc1e33fe47dd50d0edc6857a2673b3fe4ebc69b53a79447fb9d8c30f08b",
+    "review_digest": "313f7433a586de3afcbd8e3ab6723d0c58485cdb844d0f235dab068b3042b98a",
+    "scope_bundle_digest": "911b328836ea075344ffa45e7479a7ca1126575958d98b5415c6c98c7d961f95",
+    "scope_classification_signature": "1993550608848119c2812de3ae1bcb2ad5fdb214cb68b24159994c3ee49c6441",
+    "source_obligation_refs": [
+      "CO-CS01",
+      "CO-CS02",
+      "CO-CS03",
+      "CO-CS04",
+      "CO-CS05",
+      "CO-CS06",
+      "CO-CS07",
+      "CO-CS08",
+      "CO-CS09",
+      "CO-CS10",
+      "CO-CS11",
+      "CO-CS12"
+    ],
+    "study_model_digest": "13ef84201a8043361f05c077109583e013f8fd73e9a9d1ab84c27ab370cb4b8d",
+    "study_scope_digest": "627660d880fb5a6acdf820ec0519a78047aa117f4498ebfd4b889ee18662058d",
+    "support_path_signature": "7d462c90c8f392eae8692ccaba247fd6951fb1806b5f02b8b1d5104f23109b09",
+    "treatment_signature": "d24310707dc61facbe87f5820baf6e0be47bbeeff6ec6400f187537fb6baac4b"
+  },
+  "subject": "CHEMISTRY",
+  "summary": {
+    "appendix_a_present": true,
+    "appendix_b_present": true,
+    "appendix_c_present": true,
+    "authority_trace_complete": true,
+    "cold_start_status": "PASS",
+    "core1_required_capability_count": 12,
+    "core2_page_count": 5,
+    "eligible_external_count": 5,
+    "external_candidate_count": 6,
+    "product_count": 2,
+    "question_count": 14,
+    "source_unit_count": 12
+  },
+  "two_product_package": {
+    "package_digest": "0c45d52871d772b8824a28bc45761430b6ab40c14d540f6fc028b769ea87ff46",
+    "package_id": "PKG-CHEM-C-L-EXACT-RUN-A",
+    "product_count": 2,
+    "products": [
+      {
+        "candidate_identity_sha256": "dc17f613087583f73fd6ac295a19a3ded2092b91a1a6e6e1274d2566f71d13d4",
+        "identity_class": "FROZEN_SEMANTIC_CANDIDATE",
+        "learner_title": "Core Study Guide",
+        "media_type": "application/pdf",
+        "product_id": "CORE_STUDY_GUIDE",
+        "render_state": "NOT_RENDERED_C_K_SEMANTIC_CANDIDATE",
+        "rendered_byte_sha256": null,
+        "required_sections": [
+          "MAIN_TEACHING",
+          "APPENDIX_A_CORE_PRACTICE",
+          "APPENDIX_B_CORE_SOLUTIONS",
+          "APPENDIX_C_PRINTABLE_HANDOUT"
+        ],
+        "semantic_source_digest": "63d96f3630619534e0b786356fe91e1aa026a0c53fad4c2315d4487073103c33",
+        "semantic_source_ref": "CORE1-CHEM-C-L-EXACT-RUN-A"
+      },
+      {
+        "candidate_identity_sha256": "78c857cf9a4c2d323a5cfe35f8d2327d2425d17ede45c9e3f4a704173912ebd3",
+        "identity_class": "FROZEN_SEMANTIC_CANDIDATE",
+        "learner_title": "ExamSIDE Solution & Transfer Book",
+        "media_type": "application/pdf",
+        "product_id": "EXAMSIDE_SOLUTION_TRANSFER_BOOK",
+        "render_state": "NOT_RENDERED_C_K_SEMANTIC_CANDIDATE",
+        "rendered_byte_sha256": null,
+        "required_sections": [
+          "H0_ATTEMPT_FIRST",
+          "BADGES",
+          "PRIMARY_SUPPORTS",
+          "CORE1_SOURCE_LINKS",
+          "H1_H2_H3",
+          "CHEMISTRY_REASONING_ROUTE",
+          "COMPLETE_SOLUTIONS_VERIFICATION"
+        ],
+        "semantic_source_digest": "b7dbbc8ec061341292e17477251eb92718a44e849f5445a62e213a8825c21036",
+        "semantic_source_ref": "CORE2-CHEM-C-L-EXACT-RUN-A"
+      }
+    ],
+    "schema_version": "1.0.0",
+    "subject": "CHEMISTRY",
+    "third_product_created": false
+  }
+}

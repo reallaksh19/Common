@@ -1,21 +1,399 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "chemistry-exact-product-candidate.schema.json",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["candidate_id","schema_version","subject","candidate_class","cold_start_report_ref","cold_start_report_digest","input_custody","semantic_custody","artifacts","machine_evidence","source_qc_event_refs","package_digest"],
-  "properties": {
-    "candidate_id": {"type":"string"},
-    "schema_version": {"type":"string"},
-    "subject": {"const":"CHEMISTRY"},
-    "candidate_class": {"enum":["CURRENT_COLD_START","LEGACY_NONCONFORMING_REDOX","KNOWN_THIN_SMOKE"]},
-    "cold_start_report_ref": {"type":"string"},
-    "cold_start_report_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
-    "input_custody": {"type":"object","additionalProperties":false,"required":["source_set_digest","question_set_digest","corpus_digest","declared_topic_scope_digest"],"properties":{"source_set_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"question_set_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"corpus_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"declared_topic_scope_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
-    "semantic_custody": {"type":"object","additionalProperties":false,"required":["source_obligation_ledger_digest","assessment_scope_digest","learner_study_model_digest","pck_authority_digest","problem_family_authority_digest","core1_semantic_digest","appendix_a_semantic_digest","appendix_b_semantic_digest","appendix_c_semantic_digest","core2_semantic_digest","coverage_closure_digest"],"properties":{"source_obligation_ledger_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"assessment_scope_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"learner_study_model_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"pck_authority_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"problem_family_authority_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"core1_semantic_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"appendix_a_semantic_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"appendix_b_semantic_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"appendix_c_semantic_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"core2_semantic_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"coverage_closure_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
-    "artifacts": {"type":"array","minItems":2,"maxItems":2,"items":{"type":"object","additionalProperties":false,"required":["product_id","path","sha256","page_count","required_sections","physical_page_map_digest","render_audit_digest"],"properties":{"product_id":{"enum":["CORE_STUDY_GUIDE","EXAMSIDE_SOLUTION_TRANSFER_BOOK"]},"path":{"type":"string"},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"page_count":{"type":"integer","minimum":1},"required_sections":{"type":"array","items":{"type":"string"}},"physical_page_map_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"render_audit_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}},
-    "machine_evidence": {"type":"object","additionalProperties":false,"required":["answer_separation_pass","handout_answer_leakage","handout_scope_leakage","formula_typography_pass","ionic_charge_unambiguous","reaction_notation_fidelity_pass","ascii_chemistry_leaks","off_page_text_count","collision_count","minimum_font_pt","broken_internal_links","wrong_external_source_uris","source_hash_match","source_obligations_required","source_obligations_closed","external_candidates_total","eligible_external_total","eligible_external_placed_unique","duplicate_primary_placements","eligible_missing_core2","hint_failures","solution_failures","primary_supports_correct","macro_particle_symbolic_realized","core1_instructional_depth","visual_usable_actual_size","source_structure_formula_fidelity","hints_distinct_from_solution"],"properties":{"answer_separation_pass":{"type":"boolean"},"handout_answer_leakage":{"type":"boolean"},"handout_scope_leakage":{"type":"boolean"},"formula_typography_pass":{"type":"boolean"},"ionic_charge_unambiguous":{"type":"boolean"},"reaction_notation_fidelity_pass":{"type":"boolean"},"ascii_chemistry_leaks":{"type":"integer","minimum":0},"off_page_text_count":{"type":"integer","minimum":0},"collision_count":{"type":"integer","minimum":0},"minimum_font_pt":{"type":"number","minimum":0},"broken_internal_links":{"type":"integer","minimum":0},"wrong_external_source_uris":{"type":"integer","minimum":0},"source_hash_match":{"type":"boolean"},"source_obligations_required":{"type":"integer","minimum":0},"source_obligations_closed":{"type":"integer","minimum":0},"external_candidates_total":{"type":"integer","minimum":0},"eligible_external_total":{"type":"integer","minimum":0},"eligible_external_placed_unique":{"type":"integer","minimum":0},"duplicate_primary_placements":{"type":"integer","minimum":0},"eligible_missing_core2":{"type":"integer","minimum":0},"hint_failures":{"type":"integer","minimum":0},"solution_failures":{"type":"integer","minimum":0},"primary_supports_correct":{"type":"boolean"},"macro_particle_symbolic_realized":{"type":"boolean"},"core1_instructional_depth":{"enum":["FULL_INSTRUCTIONAL","SUMMARY_LEVEL"]},"visual_usable_actual_size":{"type":"boolean"},"source_structure_formula_fidelity":{"type":"boolean"},"hints_distinct_from_solution":{"type":"boolean"}}},
-    "source_qc_event_refs": {"type":"array","items":{"type":"string"}},
-    "package_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"}
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "chemistry-exact-product-candidate.schema.json",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "candidate_id",
+  "schema_version",
+  "subject",
+  "candidate_class",
+  "cold_start_report_ref",
+  "cold_start_report_digest",
+  "input_custody",
+  "semantic_custody",
+  "artifacts",
+  "machine_evidence",
+  "source_qc_event_refs",
+  "package_digest"
+ ],
+ "properties": {
+  "candidate_id": {
+   "type": "string"
+  },
+  "schema_version": {
+   "type": "string"
+  },
+  "subject": {
+   "const": "CHEMISTRY"
+  },
+  "candidate_class": {
+   "enum": [
+    "CURRENT_COLD_START",
+    "LEGACY_NONCONFORMING_REDOX",
+    "KNOWN_THIN_SMOKE"
+   ]
+  },
+  "cold_start_report_ref": {
+   "type": "string"
+  },
+  "cold_start_report_digest": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "input_custody": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "source_set_digest",
+    "question_set_digest",
+    "corpus_digest",
+    "declared_topic_scope_digest"
+   ],
+   "properties": {
+    "source_set_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "question_set_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "corpus_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "declared_topic_scope_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    }
+   }
+  },
+  "semantic_custody": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "source_obligation_ledger_digest",
+    "assessment_scope_digest",
+    "learner_study_model_digest",
+    "pck_authority_digest",
+    "problem_family_authority_digest",
+    "core1_semantic_digest",
+    "appendix_a_semantic_digest",
+    "appendix_b_semantic_digest",
+    "appendix_c_semantic_digest",
+    "core2_semantic_digest",
+    "coverage_closure_digest",
+    "representation_bundle_digest",
+    "teaching_primitive_registry_digest"
+   ],
+   "properties": {
+    "source_obligation_ledger_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "assessment_scope_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "learner_study_model_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "pck_authority_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "problem_family_authority_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "core1_semantic_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "appendix_a_semantic_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "appendix_b_semantic_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "appendix_c_semantic_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "core2_semantic_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "coverage_closure_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "representation_bundle_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "teaching_primitive_registry_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    }
+   }
+  },
+  "artifacts": {
+   "type": "array",
+   "minItems": 2,
+   "maxItems": 2,
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "product_id",
+     "path",
+     "sha256",
+     "page_count",
+     "required_sections",
+     "physical_page_map_digest",
+     "render_audit_digest"
+    ],
+    "properties": {
+     "product_id": {
+      "enum": [
+       "CORE_STUDY_GUIDE",
+       "EXAMSIDE_SOLUTION_TRANSFER_BOOK"
+      ]
+     },
+     "path": {
+      "type": "string"
+     },
+     "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+     },
+     "page_count": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "required_sections": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "physical_page_map_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+     },
+     "render_audit_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+     }
+    }
+   }
+  },
+  "machine_evidence": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "answer_separation_pass",
+    "handout_answer_leakage",
+    "handout_scope_leakage",
+    "formula_typography_pass",
+    "ionic_charge_unambiguous",
+    "reaction_notation_fidelity_pass",
+    "ascii_chemistry_leaks",
+    "off_page_text_count",
+    "collision_count",
+    "minimum_font_pt",
+    "broken_internal_links",
+    "wrong_external_source_uris",
+    "source_hash_match",
+    "source_obligations_required",
+    "source_obligations_closed",
+    "external_candidates_total",
+    "eligible_external_total",
+    "eligible_external_placed_unique",
+    "duplicate_primary_placements",
+    "eligible_missing_core2",
+    "hint_failures",
+    "solution_failures",
+    "primary_supports_correct",
+    "macro_particle_symbolic_realized",
+    "core1_instructional_depth",
+    "visual_usable_actual_size",
+    "source_structure_formula_fidelity",
+    "hints_distinct_from_solution",
+    "actual_placement_evidence",
+    "learner_internal_identifier_leaks",
+    "orphan_continuations",
+    "placement_bounds_violations",
+    "registry_primitive_total",
+    "teaching_primitive_kinds_realized",
+    "teaching_primitive_kinds_selected",
+    "teaching_primitives_drawn",
+    "teaching_primitives_label_only",
+    "visual_semantic_validator_ref"
+   ],
+   "properties": {
+    "answer_separation_pass": {
+     "type": "boolean"
+    },
+    "handout_answer_leakage": {
+     "type": "boolean"
+    },
+    "handout_scope_leakage": {
+     "type": "boolean"
+    },
+    "formula_typography_pass": {
+     "type": "boolean"
+    },
+    "ionic_charge_unambiguous": {
+     "type": "boolean"
+    },
+    "reaction_notation_fidelity_pass": {
+     "type": "boolean"
+    },
+    "ascii_chemistry_leaks": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "off_page_text_count": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "collision_count": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "minimum_font_pt": {
+     "type": "number",
+     "minimum": 0
+    },
+    "broken_internal_links": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "wrong_external_source_uris": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "source_hash_match": {
+     "type": "boolean"
+    },
+    "source_obligations_required": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "source_obligations_closed": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "external_candidates_total": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "eligible_external_total": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "eligible_external_placed_unique": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "duplicate_primary_placements": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "eligible_missing_core2": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "hint_failures": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "solution_failures": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "primary_supports_correct": {
+     "type": "boolean"
+    },
+    "macro_particle_symbolic_realized": {
+     "type": "boolean"
+    },
+    "core1_instructional_depth": {
+     "enum": [
+      "FULL_INSTRUCTIONAL",
+      "SUMMARY_LEVEL"
+     ]
+    },
+    "visual_usable_actual_size": {
+     "type": "boolean"
+    },
+    "source_structure_formula_fidelity": {
+     "type": "boolean"
+    },
+    "hints_distinct_from_solution": {
+     "type": "boolean"
+    },
+    "teaching_primitive_kinds_selected": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "teaching_primitive_kinds_realized": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "teaching_primitives_drawn": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "teaching_primitives_label_only": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "registry_primitive_total": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "learner_internal_identifier_leaks": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "actual_placement_evidence": {
+     "type": "boolean"
+    },
+    "placement_bounds_violations": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "orphan_continuations": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "visual_semantic_validator_ref": {
+     "type": "string"
+    }
+   }
+  },
+  "source_qc_event_refs": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "package_digest": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
   }
+ }
 }

@@ -1,0 +1,46 @@
+{
+  "candidate_ref": "CHEM-C-L-EXACT-CANDIDATE-A",
+  "core1_pdf_sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
+  "core2_pdf_sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad",
+  "evidence": {
+    "label_only_primitive_kinds": [
+      "COEFFICIENT_SUBSCRIPT_CONTRAST"
+    ],
+    "pages_with_vector_graphics": 29,
+    "realized_primitive_kinds": [
+      "APPARATUS_METHOD_FLOW",
+      "CHARGE_SUBSCRIPT_CONTRAST",
+      "CONDITION_EXCEPTION_GATE",
+      "CONSERVATION_LEDGER",
+      "EVIDENCE_CLAIM_REASONING_CHAIN",
+      "FORMULA_ANATOMY_VIEW",
+      "FORMULA_EQUATION_CHECK_STRIP",
+      "MACRO_OBSERVATION_VIEW",
+      "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+      "MINIMAL_CHEMISTRY_CONTRAST",
+      "OBSERVATION_INFERENCE_TABLE",
+      "PARTICLE_MODEL_VIEW",
+      "REACTION_BEFORE_AFTER_MAP",
+      "RULE_PRIORITY_LADDER",
+      "SPECIES_ROLE_MAP"
+    ],
+    "total_pages": 49
+  },
+  "findings": [],
+  "not_established_by_this_review": [
+    "SUBJECT_CORRECTNESS",
+    "PEDAGOGICAL_DESIGN",
+    "ASSESSMENT_DESIGN",
+    "VISUAL_USABILITY",
+    "MATURE_DESIGN_QUALITY"
+  ],
+  "package_digest": "234060ba08215a3b3b845b47bf3ef501acfebfffd3452943c7b1e9fdf38c540c",
+  "production_claim": false,
+  "review_id": "CHEM-C-L-AI-PRE-REVIEW-v2",
+  "review_kind": "AI_PRE_REVIEW",
+  "reviewer_role": "AI_PRE_REVIEW",
+  "schema_version": "1.0.0",
+  "scope": "ENGINEERING_FALSIFIERS_ONLY",
+  "state": "PASS",
+  "subject": "CHEMISTRY"
+}

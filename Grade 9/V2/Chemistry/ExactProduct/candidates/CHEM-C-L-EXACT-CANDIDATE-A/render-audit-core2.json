@@ -1,0 +1,15 @@
+{
+  "artifact_sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad",
+  "audit_id": "CHEM-C-L-AUDIT-CORE2",
+  "checks": {
+    "ACTUAL_PLACEMENT_EVIDENCE": "PASS",
+    "LEARNER_IDENTIFIER_SCAN": "PASS",
+    "MIN_FONT": "PASS",
+    "OFF_PAGE_TEXT": "PASS",
+    "PDF_REOPEN": "PASS",
+    "RASTER_ALL_PAGES": "PASS",
+    "TEXT_COLLISION": "PASS"
+  },
+  "minimum_font_pt": 9.0,
+  "vector_pages": 6
+}

@@ -1,0 +1,81 @@
+{
+  "ai_pre_review_findings": [],
+  "ai_pre_review_state": "PASS",
+  "artifact_sha256": {
+    "CORE_STUDY_GUIDE": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
+    "EXAMSIDE_SOLUTION_TRANSFER_BOOK": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad"
+  },
+  "candidate_package_digest": "234060ba08215a3b3b845b47bf3ef501acfebfffd3452943c7b1e9fdf38c540c",
+  "candidate_ref": "CHEM-C-L-EXACT-CANDIDATE-A",
+  "cold_start_report_digest": "5ddcc6f3f5cc110a39d327432d771eb6c2e6f7e558214e4c2284f25d14e4f3e2",
+  "files": [
+    {
+      "bytes": 1475,
+      "path": "ai-pre-review.json",
+      "role": "AI_PRE_REVIEW",
+      "sha256": "50cd8a85591983f65f15a2f7be4a34bd0a870d9a1e3f5657b997f79fb46a72b6"
+    },
+    {
+      "bytes": 75621,
+      "path": "cold-start-report.json",
+      "role": "COLD_START_REPORT",
+      "sha256": "1cd96dfaa1a9803fef6fab1ca089e2562f49b7771e4adaed159b6c0a9960dba3"
+    },
+    {
+      "bytes": 133407,
+      "path": "core-study-guide.pdf",
+      "role": "CORE_STUDY_GUIDE_PDF",
+      "sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1"
+    },
+    {
+      "bytes": 5875,
+      "path": "exact-product-candidate.json",
+      "role": "EXACT_PRODUCT_CANDIDATE",
+      "sha256": "3665942fc247ed04713768241847cce4edf5a3e9fb569a5c0dd32b7069eeb342"
+    },
+    {
+      "bytes": 65704,
+      "path": "examside-solution-transfer-book.pdf",
+      "role": "EXAMSIDE_SOLUTION_TRANSFER_BOOK_PDF",
+      "sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad"
+    },
+    {
+      "bytes": 61388,
+      "path": "physical-page-map-core1.json",
+      "role": "PHYSICAL_PAGE_MAP_CORE1",
+      "sha256": "eddea37acea3a8436088c249a621f4406d767c0fbdeca69483a47d36e66dc6a9"
+    },
+    {
+      "bytes": 14227,
+      "path": "physical-page-map-core2.json",
+      "role": "PHYSICAL_PAGE_MAP_CORE2",
+      "sha256": "173e24d7e277f91983bc56900c33ca658f9d8d75e4cba6635c248680becda3f2"
+    },
+    {
+      "bytes": 417,
+      "path": "render-audit-core1.json",
+      "role": "RENDER_AUDIT_CORE1",
+      "sha256": "72e98916272ea095ce3ee04eead3351692b69b3458db086bf042af5c13e0f6b0"
+    },
+    {
+      "bytes": 416,
+      "path": "render-audit-core2.json",
+      "role": "RENDER_AUDIT_CORE2",
+      "sha256": "b1dcb5ee92f3059974a9867c66beef3653b9a737ac09f45f62379dcc43ade678"
+    }
+  ],
+  "manifest_id": "CHEM-C-L-FROZEN-CHEM-C-L-EXACT-CANDIDATE-A",
+  "note": "Durable copy of the exact reviewed bytes. Engineering custody only; no human review of any kind is recorded or implied by this manifest.",
+  "package_digest": "ab64a8b44c527e836f5abbed1c7e133f21f1ec0a4a7437861b4462efd7ed990b",
+  "pdfs_included": true,
+  "quality_states": {
+    "ASSESSMENT_DESIGN": "PENDING",
+    "MATURE_DESIGN_QUALITY": "PENDING",
+    "PEDAGOGICAL_DESIGN": "PENDING",
+    "PUBLICATION_ENGINEERING": "SEE_RELEASE_DECISION",
+    "SUBJECT_CORRECTNESS": "PENDING",
+    "VISUAL_USABILITY": "PENDING"
+  },
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY"
+}
