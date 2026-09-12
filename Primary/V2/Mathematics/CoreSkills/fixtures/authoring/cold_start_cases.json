@@ -1,0 +1,361 @@
+{
+  "version": "1.0.0",
+  "cases": [
+    {
+      "case_id": "QUESTION_ONLY",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "AUTH-QONLY-MUL-23X6",
+        "question_set": {
+          "source_ref": "fixture://question-only",
+          "questions": [
+            {
+              "question_ref": "Q-MUL-23X6",
+              "text": "Calculate 23 × 6 and explain your method.",
+              "evidence": {
+                "question_ref": "Q-MUL-23X6",
+                "concept_key": "multiplication_bridge",
+                "concept_title": "Multiplication bridge",
+                "scope_basis": "QUESTION_SET_OBSERVED",
+                "capability_refs": [
+                  "MULT_EQUAL_GROUPS",
+                  "MULT_ARRAY",
+                  "MULT_DISTRIBUTIVE",
+                  "MULT_AREA_MODEL",
+                  "MULT_PARTIAL_PRODUCTS",
+                  "MULT_WRITTEN_ALGORITHM",
+                  "MULT_ESTIMATE_CHECK"
+                ],
+                "problem_family_refs": ["PF_EQUAL_GROUPS", "PF_ARRAY_AREA", "PF_ESTIMATE_VERIFY"],
+                "translation_refs": [
+                  "RT_MULT_GROUPS_TO_ARRAY",
+                  "RT_MULT_ARRAY_TO_AREA",
+                  "RT_MULT_AREA_TO_PARTIAL_PRODUCTS",
+                  "RT_MULT_PARTIAL_TO_WRITTEN"
+                ],
+                "representation_requirements": [
+                  {
+                    "representation_id": "REP-MUL-EQUAL-GROUPS",
+                    "role": "PICTORIAL",
+                    "primitive_kind": "EQUAL_GROUPS",
+                    "semantic_params": {"group_count": 6, "items_per_group": 23},
+                    "validator_refs": ["EQUAL_GROUPS"],
+                    "fade_modes": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-MUL-ARRAY",
+                    "role": "STRUCTURAL",
+                    "primitive_kind": "ARRAY",
+                    "semantic_params": {"rows": 6, "columns": 23, "total": 138},
+                    "validator_refs": ["ARRAY_PRODUCT"],
+                    "fade_modes": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-MUL-AREA",
+                    "role": "STRUCTURAL",
+                    "primitive_kind": "AREA_DISTRIBUTIVE",
+                    "semantic_params": {"a": 23, "b": 6, "split": [20, 3], "partial_products": [120, 18], "product": 138},
+                    "validator_refs": ["MULTIPLICATION_PARTIAL_PRODUCTS"],
+                    "fade_modes": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-MUL-PARTIALS",
+                    "role": "STRATEGIC",
+                    "primitive_kind": "PARTIAL_PRODUCTS",
+                    "semantic_params": {"partial_products": [120, 18], "product": 138},
+                    "validator_refs": ["MULTIPLICATION_PARTIAL_PRODUCTS"],
+                    "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-MUL-WRITTEN",
+                    "role": "PROCEDURAL",
+                    "primitive_kind": "VERTICAL_MULTIPLICATION",
+                    "semantic_params": {"multiplicand": 23, "multiplier": 6, "product": 138},
+                    "validator_refs": ["WRITTEN_ALGORITHM_ARITHMETIC"],
+                    "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                    "provenance": "AUTHORED_NOTEBOOK_EXAMPLE"
+                  },
+                  {
+                    "representation_id": "REP-MUL-CHECK",
+                    "role": "ABSTRACT_REASONING",
+                    "primitive_kind": "INVERSE_CHECK",
+                    "semantic_params": {"expression": "138 ÷ 6 = 23"},
+                    "validator_refs": ["MULTIPLICATION_CHECK"],
+                    "fade_modes": ["NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  }
+                ],
+                "invariant_refs": ["MULT_PARTIALS_SUM_TO_PRODUCT"],
+                "transfer_dimension_refs": ["CONTEXT", "REPRESENTATION", "UNKNOWN_POSITION"],
+                "source_refs": ["fixture://question-only#Q-MUL-23X6"]
+              }
+            }
+          ]
+        },
+        "student_workout": null,
+        "topic_hints": null
+      },
+      "expect": {
+        "concept_mode": "CONNECT",
+        "work_evidence_count": 0,
+        "diagnostic_count": 0,
+        "capability": "MULT_WRITTEN_ALGORITHM"
+      }
+    },
+    {
+      "case_id": "QUESTION_PLUS_WORK",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "AUTH-WORK-DIV-ZERO",
+        "question_set": {
+          "source_ref": "fixture://division-zero",
+          "questions": [
+            {
+              "question_ref": "Q-DIV-366-12",
+              "text": "366 ÷ 12",
+              "evidence": {
+                "question_ref": "Q-DIV-366-12",
+                "concept_key": "division_zero_place",
+                "concept_title": "Keep the quotient zero place",
+                "scope_basis": "QUESTION_SET_OBSERVED",
+                "capability_refs": [
+                  "DIV_WRITTEN_MULTI_DIGIT_DIVISOR",
+                  "DIV_QUOTIENT_ZERO_PLACE",
+                  "DIV_ESTIMATE_CHECK"
+                ],
+                "problem_family_refs": ["PF_MEASUREMENT_GROUPING", "PF_ESTIMATE_VERIFY"],
+                "translation_refs": ["RT_DIV_ZERO_SLOT_TO_WRITTEN"],
+                "representation_requirements": [
+                  {
+                    "representation_id": "REP-DIV-WRITTEN-366-12",
+                    "role": "PROCEDURAL",
+                    "primitive_kind": "WRITTEN_DIVISION",
+                    "semantic_params": {"dividend": 366, "divisor": 12, "quotient": 30, "remainder": 6},
+                    "validator_refs": ["DIVISION_IDENTITY_AND_STEPS", "REMAINDER_RANGE"],
+                    "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                    "provenance": "STRUCTURED_REPLAY"
+                  },
+                  {
+                    "representation_id": "REP-DIV-QUOTIENT-SLOTS-366-12",
+                    "role": "STRUCTURAL",
+                    "primitive_kind": "QUOTIENT_PLACE_SLOTS",
+                    "semantic_params": {"quotient_digits": [3, 0], "zero_place_required": true},
+                    "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"],
+                    "fade_modes": ["FULL", "EMPTY_FRAME", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  }
+                ],
+                "invariant_refs": ["DIVISOR_X_QUOTIENT_PLUS_REMAINDER_EQUALS_DIVIDEND"],
+                "source_refs": ["fixture://division-zero#Q-DIV-366-12"]
+              }
+            }
+          ]
+        },
+        "student_workout": {
+          "work_evidence": [
+            {
+              "work_evidence_id": "MWE-DIV-ZERO-001",
+              "concept_key": "division_zero_place",
+              "final_status": "INCORRECT",
+              "support_level": "H0",
+              "correct_substeps": ["12 × 3 = 36"],
+              "correct_substeps_preserved": true,
+              "teacher_annotations": [{"actor": "TEACHER", "kind": "CORRECTION", "value": "keep the zero place"}],
+              "teacher_correction_as_child_original": false,
+              "ambiguity_observed": true,
+              "ambiguity_preserved": true,
+              "diagnostic": {
+                "diagnostic_id": "DIAG-DIV-ZERO-001",
+                "focal_feature": "QUOTIENT_ZERO_REQUIRED",
+                "competing_hypotheses": [
+                  {"hypothesis_id": "H-ZERO-PLACE", "error_signature": "DIV_QUOTIENT_ZERO_PLACE_VALUE", "durable_trait": false},
+                  {"hypothesis_id": "H-GENERAL-PROCEDURE", "error_signature": "DIV_GENERAL_LONG_DIVISION_PROCEDURE", "durable_trait": false}
+                ],
+                "probe": {
+                  "manipulated_feature": "QUOTIENT_ZERO_REQUIRED",
+                  "controlled_load": {"language": "LOW", "representation_novelty": "LOW", "fact_retrieval_demand": "LOW"},
+                  "outcome_rules": [
+                    {"when": "NOZERO_CORRECT_ZERO_INCORRECT", "increase": "H-ZERO-PLACE"},
+                    {"when": "BOTH_INCORRECT", "keep_open": ["H-ZERO-PLACE", "H-GENERAL-PROCEDURE"]}
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "topic_hints": null
+      },
+      "expect": {
+        "concept_mode": "PROBE",
+        "work_evidence_count": 1,
+        "diagnostic_count": 1,
+        "capability": "DIV_QUOTIENT_ZERO_PLACE"
+      }
+    },
+    {
+      "case_id": "QUESTION_PLUS_TOPIC_HINTS",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "AUTH-HINT-FRAC-EQUIV",
+        "question_set": {
+          "source_ref": "fixture://fraction-equivalence",
+          "questions": [
+            {
+              "question_ref": "Q-FRAC-EQ",
+              "text": "Show why 1/2 = 2/4 = 4/8.",
+              "evidence": {
+                "question_ref": "Q-FRAC-EQ",
+                "concept_key": "fraction_equivalence",
+                "concept_title": "Fraction equivalence",
+                "scope_basis": "COMMON_G4_5_CAPABILITY",
+                "capability_refs": ["FRAC_PART_WHOLE", "FRAC_NUMBER_LINE", "FRAC_EQUIVALENCE"],
+                "problem_family_refs": ["PF_FRACTION_PARTITION", "PF_FRACTION_EQUIVALENCE"],
+                "translation_refs": [
+                  "RT_FRAC_AREA_TO_STRIP",
+                  "RT_FRAC_STRIP_TO_NUMBER_LINE",
+                  "RT_FRAC_NUMBER_LINE_TO_SYMBOLIC_EQUIV"
+                ],
+                "representation_requirements": [
+                  {
+                    "representation_id": "REP-FRAC-AREA-EQ",
+                    "role": "PICTORIAL",
+                    "primitive_kind": "FRACTION_AREA",
+                    "semantic_params": {"fractions": [[1,2],[2,4],[4,8]], "equal_partitions": true},
+                    "validator_refs": ["FRACTION_PARTITION_AND_VALUE"],
+                    "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-FRAC-STRIP-EQ",
+                    "role": "STRUCTURAL",
+                    "primitive_kind": "FRACTION_STRIP",
+                    "semantic_params": {"fractions": [[1,2],[2,4],[4,8]]},
+                    "validator_refs": ["FRACTION_PARTITION_AND_VALUE"],
+                    "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-FRAC-LINE-EQ",
+                    "role": "STRUCTURAL",
+                    "primitive_kind": "FRACTION_NUMBER_LINE",
+                    "semantic_params": {"equivalent_points": [[1,2],[2,4],[4,8]]},
+                    "validator_refs": ["NUMBER_LINE_SCALE", "FRACTION_PARTITION_AND_VALUE"],
+                    "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-FRAC-SYMBOLIC-EQ",
+                    "role": "SYMBOLIC",
+                    "primitive_kind": "SYMBOLIC_EQUIVALENCE",
+                    "semantic_params": {"fractions": [[1,2],[2,4],[4,8]]},
+                    "validator_refs": ["FRACTION_PARTITION_AND_VALUE"],
+                    "fade_modes": ["NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  }
+                ],
+                "source_refs": ["fixture://fraction-equivalence#Q-FRAC-EQ"]
+              }
+            }
+          ]
+        },
+        "student_workout": null,
+        "topic_hints": ["Fraction equivalence"]
+      },
+      "expect": {
+        "concept_mode": "CONNECT",
+        "work_evidence_count": 0,
+        "diagnostic_count": 0,
+        "capability": "FRAC_EQUIVALENCE"
+      }
+    },
+    {
+      "case_id": "ALL_THREE",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "AUTH-ALL-UNIT-CHAIN",
+        "question_set": {
+          "source_ref": "fixture://dozen-money",
+          "questions": [
+            {
+              "question_ref": "Q-DOZEN-MONEY",
+              "text": "23 dozen eggs cost Rs 6 per egg. Find the total cost.",
+              "evidence": {
+                "question_ref": "Q-DOZEN-MONEY",
+                "concept_key": "dozen_and_rate_chain",
+                "concept_title": "Dozen and rate chain",
+                "scope_basis": "QUESTION_SET_OBSERVED",
+                "capability_refs": ["MEAS_MONEY", "MEAS_UNIT_CHAIN", "MODEL_QUANTITY_STRUCTURE", "MODEL_MULTI_STEP"],
+                "problem_family_refs": ["PF_RATE_UNIT_CHAIN", "PF_MULTI_STEP_COMPOSITION"],
+                "translation_refs": ["RT_QUANTITY_STRUCTURE_TO_EQUATION"],
+                "quantity_structure": {
+                  "quantities": [
+                    {"value": 23, "unit": "DOZEN", "role": "SOURCE_QUANTITY"},
+                    {"value": 12, "unit": "EGG_PER_DOZEN", "role": "CONVERSION_FACTOR"},
+                    {"value": 6, "unit": "CURRENCY_PER_EGG", "role": "RATE"}
+                  ],
+                  "unknown": "TOTAL_COST"
+                },
+                "representation_requirements": [
+                  {
+                    "representation_id": "REP-UNIT-QUANTITY-MAP",
+                    "role": "STRUCTURAL",
+                    "primitive_kind": "QUANTITY_STRUCTURE_MAP",
+                    "semantic_params": {"quantity": 23, "unit": "DOZEN", "conversion_factor": 12, "rate": 6, "result": 1656},
+                    "validator_refs": ["UNIT_CONVERSION", "QUANTITY_STRUCTURE"],
+                    "fade_modes": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-UNIT-CHAIN",
+                    "role": "STRATEGIC",
+                    "primitive_kind": "UNIT_CHAIN",
+                    "semantic_params": {"source_quantity": 23, "source_unit": "DOZEN", "conversion_factor": 12, "target_unit": "EGG", "converted_quantity": 276, "rate": 6, "result": 1656},
+                    "validator_refs": ["UNIT_CONVERSION"],
+                    "fade_modes": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  },
+                  {
+                    "representation_id": "REP-UNIT-EQUATION",
+                    "role": "SYMBOLIC",
+                    "primitive_kind": "EQUATION",
+                    "semantic_params": {"steps": ["23 × 12 = 276", "276 × 6 = 1656"]},
+                    "validator_refs": ["UNIT_CONVERSION"],
+                    "fade_modes": ["NONE"],
+                    "provenance": "ENGINE_AUTHORED_VISUAL"
+                  }
+                ],
+                "source_refs": ["fixture://dozen-money#Q-DOZEN-MONEY"]
+              }
+            }
+          ]
+        },
+        "student_workout": {
+          "work_evidence": [
+            {
+              "work_evidence_id": "MWE-DOZEN-001",
+              "concept_key": "dozen_and_rate_chain",
+              "final_status": "INCORRECT",
+              "support_level": "H0",
+              "correct_substeps": ["23 × 6 = 138"],
+              "correct_substeps_preserved": true,
+              "teacher_annotations": [],
+              "teacher_correction_as_child_original": false,
+              "bounded_error_signature": "UNIT_CHAIN_CONVERSION_SKIPPED"
+            }
+          ]
+        },
+        "topic_hints": ["Dozen and rate chain"]
+      },
+      "expect": {
+        "concept_mode": "REPAIR",
+        "work_evidence_count": 1,
+        "diagnostic_count": 0,
+        "capability": "MEAS_UNIT_CHAIN"
+      }
+    }
+  ]
+}
