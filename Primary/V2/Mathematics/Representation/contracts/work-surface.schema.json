@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/Representation/contracts/work-surface.schema.json",
+  "title": "PrimaryMathWorkSurface",
+  "type": "object",
+  "required": ["schema_version", "surface_id", "task_ref", "kind", "semantic_params", "validator_refs"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "surface_id": {"type": "string", "minLength": 1},
+    "task_ref": {"type": "string", "minLength": 1},
+    "kind": {
+      "enum": [
+        "LONG_DIVISION_WORK",
+        "SHORT_DIVISION_WORK",
+        "MULTIPLICATION_PARTIAL_PRODUCTS_WORK",
+        "VERTICAL_MULTIPLICATION_WORK",
+        "PLACE_VALUE_COLUMN_WORK",
+        "ADDITION_REGROUP_WORK",
+        "SUBTRACTION_REGROUP_WORK",
+        "FRACTION_REPARTITION_WORK",
+        "DECIMAL_ALIGNMENT_WORK",
+        "UNIT_CHAIN_WORK",
+        "ANGLE_DRAWING_WORKSPACE"
+      ]
+    },
+    "semantic_params": {"type": "object"},
+    "validator_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "provenance": {"enum": ["ENGINE_AUTHORED_VISUAL", "AUTHORED_NOTEBOOK_EXAMPLE", "STRUCTURED_REPLAY"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "LONG_DIVISION_WORK"}}},
+      "then": {
+        "properties": {
+          "semantic_params": {
+            "type": "object",
+            "required": ["dividend", "divisor", "quotient", "remainder", "quotient_places", "steps", "check"],
+            "properties": {
+              "dividend": {"type": "integer", "minimum": 0},
+              "divisor": {"type": "integer", "minimum": 1},
+              "quotient": {"type": "integer", "minimum": 0},
+              "remainder": {"type": "integer", "minimum": 0},
+              "quotient_places": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0, "maximum": 9}},
+              "steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["partial_dividend", "quotient_digit", "product", "subtraction_remainder"],
+                  "properties": {
+                    "partial_dividend": {"type": "integer", "minimum": 0},
+                    "quotient_digit": {"type": "integer", "minimum": 0, "maximum": 9},
+                    "product": {"type": "integer", "minimum": 0},
+                    "subtraction_remainder": {"type": "integer", "minimum": 0},
+                    "bring_down_digit": {"type": ["integer", "null"], "minimum": 0, "maximum": 9}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "check": {
+                "type": "object",
+                "required": ["identity_holds", "remainder_in_range"],
+                "properties": {
+                  "identity_holds": {"type": "boolean"},
+                  "remainder_in_range": {"type": "boolean"}
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}
