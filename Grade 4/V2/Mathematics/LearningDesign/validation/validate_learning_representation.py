@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Primary Math V2 learning-representation contracts and falsifiers."""
+"""Validate Grade 4 Math V2 learning-representation contracts and falsifiers."""
 from __future__ import annotations
 
 import copy
@@ -11,7 +11,7 @@ REPO_ROOT = Path(__file__).resolve().parents[5]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from Primary.V2.Mathematics.LearningDesign.engine.build_learning_representation import (
+from Grade4.V2.Mathematics.LearningDesign.engine.build_learning_representation import (
     LearningRepresentationError,
     PRIMARY_SUPPORT_G4_5,
     build_learning_representation,
@@ -23,7 +23,7 @@ EXTENDED_FIXTURE = ROOT / "fixtures" / "learning_representation" / "extended_cas
 
 
 def fail(message: str) -> None:
-    raise SystemExit(f"Primary Math V2 learning-representation validation failed: {message}")
+    raise SystemExit(f"Grade 4 Math V2 learning-representation validation failed: {message}")
 
 
 def expect_error(task, code: str) -> None:
@@ -68,6 +68,8 @@ def validate_positive_cases() -> None:
             fail(f"{case['case_id']}: thinking-path microvisuals missing")
         if result.get("fresh_retry_support_policy") != "NONE":
             fail(f"{case['case_id']}: fresh H0 inherited support")
+        if (result.get("solution_guard") or {}).get("policy") != "FORBID_DURING_HINTS_AND_THINKING_PATH":
+            fail(f"{case['case_id']}: solution guard policy missing")
 
     rem = results["REMAINDER_REPRESENTATIVE_SAMPLE"]["primary_visual"]
     if rem.get("fidelity") != "REPRESENTATIVE_SAMPLE" or not rem["semantic_params"].get("continuation_marker"):
@@ -100,6 +102,23 @@ def validate_falsifiers() -> None:
     answer_leak = copy.deepcopy(cases["MONEY_TWO_PART"])
     answer_leak["hint_ladder"]["steps"][2]["may_reveal_final_answer"] = True
     expect_error(answer_leak, "H3_REVEALS_COMPLETE_SOLUTION")
+
+    concrete_text_leak = copy.deepcopy(cases["MONEY_TWO_PART"])
+    concrete_text_leak["solution_tokens"] = ["520"]
+    concrete_text_leak["hint_ladder"]["steps"][2]["verbal_cue"] = "The total is 520."
+    expect_error(concrete_text_leak, "SOLUTION_TOKEN_VISIBLE_DURING_SUPPORT")
+
+    concrete_visual_leak = copy.deepcopy(cases["MONEY_TWO_PART"])
+    concrete_visual_leak["solution_tokens"] = ["520"]
+    h3_ref = concrete_visual_leak["hint_ladder"]["steps"][2]["visual_state_ref"]
+    h3_state = next(state for state in concrete_visual_leak["visual_states"] if state["visual_state_id"] == h3_ref)
+    h3_state["semantic_params"]["final_total"] = 520
+    expect_error(concrete_visual_leak, "SOLUTION_TOKEN_VISIBLE_DURING_SUPPORT")
+
+    allowed_operand = copy.deepcopy(cases["MONEY_TWO_PART"])
+    allowed_operand["solution_tokens"] = ["50"]
+    allowed_operand["allowed_support_solution_tokens"] = ["50"]
+    build_learning_representation(allowed_operand)
 
     no_fresh_retry = copy.deepcopy(cases["MONEY_TWO_PART"])
     no_fresh_retry["fresh_retry_ref"] = "DIFFERENT-FRESH-REF"
@@ -157,7 +176,7 @@ def main() -> None:
     validate_positive_cases()
     validate_falsifiers()
     validate_no_renderer_dependency()
-    print("Primary Math V2 learning representation: fixtures and falsifiers PASS")
+    print("Grade 4 Math V2 learning representation: fixtures and falsifiers PASS")
 
 
 if __name__ == "__main__":
