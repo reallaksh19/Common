@@ -15,9 +15,11 @@ def mod(name, path):
     return m
 
 
+copy_mod = mod("core1a_copy", D / "engine" / "physics_learner_copy.py")
 build = mod("core1a_build", D / "engine" / "build_physics_core1a.py")
 render = mod("core1a_render", D / "engine" / "render_physics_core1a.py")
 POLICY = json.loads((D / "registry" / "physics-core1a-publication-policy.json").read_text())
+COPY = json.loads((D / "registry" / "physics-learner-copy-titles.json").read_text())
 
 
 def attempt(stage, prompt):
@@ -162,6 +164,92 @@ class Core1ATests(unittest.TestCase):
             self.assertEqual(report["upstream_core1_digest"], c["plan_digest"])
             self.assertEqual(report["publication_plan_digest"], plan["plan_digest"])
             self.assertGreaterEqual(report["minimum_body_font_pt"], POLICY["page"]["body_font_minimum_pt"])
+
+
+class Core1AProductCustodyTests(unittest.TestCase):
+    """P-UPGRADE-2 item 1: Core (1A) is the P-K CORE_STUDY_GUIDE, so it owns page custody."""
+
+    def test_report_carries_a_physical_page_map_and_required_sections(self):
+        c = core1()
+        plan = build.build_publication_plan(c, POLICY)
+        with tempfile.TemporaryDirectory() as td:
+            pdf = Path(td) / "physics-core-study-guide.pdf"
+            report = render.render_core1a(c, plan, pdf, POLICY)
+            pm = report["physical_page_map"]
+            self.assertTrue(pm["actual_placement_evidence"])
+            self.assertEqual(pm["artifact_sha256"], report["artifact_sha256"])
+            self.assertEqual(pm["physical_page_count"], report["page_count"])
+            self.assertEqual([m["page"] for m in pm["page_metrics"]],
+                             list(range(1, pm["physical_page_count"] + 1)))
+            for section in ("MAIN_TEACHING", "APPENDIX_A_CORE_PRACTICE",
+                            "APPENDIX_B_CORE_SOLUTIONS", "APPENDIX_C_PRINTABLE_HANDOUT"):
+                self.assertIn(section, report["required_sections"])
+
+    def test_every_supplied_representation_is_physically_placed(self):
+        """Core (1A) may choose the spread, but it may not silently drop a P-H figure."""
+        c = core1()
+        plan = build.build_publication_plan(c, POLICY)
+        specs = []
+        for i, phase in enumerate(("SEE", "REALIZE", "UNDERSTAND", "UNDERSTAND", "SEE"), 1):
+            specs.append({
+                "representation_id": f"REP-{i}",
+                "capability_ref": "PHY-CAP-ACCELERATION-SIGN",
+                "primitive_id": "STATE_TABLE",
+                "page_intent_phase": phase,
+                "minimum_vector_ops": 1,
+                "quantitative_grounding": "SCHEMATIC_STRUCTURE_ONLY",
+                "render_params": {},
+                "accessibility_text": "A start and end state table.",
+            })
+        bundle = {"representations": specs}
+        with tempfile.TemporaryDirectory() as td:
+            pdf = Path(td) / "physics-core-study-guide.pdf"
+            report = render.render_core1a(c, plan, pdf, POLICY, bundle)
+            placed = {p["content_ref"] for p in report["physical_page_map"]["content_placements"]}
+            self.assertEqual(placed, {s["representation_id"] for s in specs})
+            self.assertEqual(report["figure_count"], len(specs))
+            self.assertGreater(report["total_vector_ops"], 0)
+            self.assertEqual(
+                report["physical_page_map"]["realization_summary"]["label_only_figure_count"], 0)
+
+
+class LearnerCopyTests(unittest.TestCase):
+    """P-UPGRADE-2 item 7: internal identifiers stay internal, learner pages stay plain."""
+
+    def test_internal_identifiers_are_unchanged_and_mapped(self):
+        for role in ("MISCONCEPTION_REPAIR", "WORKED", "GUIDED", "FADED", "INDEPENDENT",
+                     "TRANSFER", "VERIFY", "RECONSTRUCT", "ANCHOR", "MODEL", "EXECUTE",
+                     "INTERPRET", "READINESS_PROBE", "MODEL_CHECK", "PHYSICAL_CHECK"):
+            self.assertIn(role, COPY["titles"], role)
+            title = copy_mod.learner_title(role)
+            self.assertNotEqual(title, role)
+            self.assertEqual(copy_mod.learner_copy_violations(title), [])
+
+    def test_falsifier_fires_on_a_raw_internal_role_label(self):
+        self.assertIn("MISCONCEPTION_REPAIR",
+                      copy_mod.learner_copy_violations("Section: MISCONCEPTION_REPAIR"))
+        self.assertIn("misconception repair",
+                      copy_mod.learner_copy_violations("Misconception Repair"))
+        self.assertIn("readiness gate", copy_mod.learner_copy_violations("Readiness Gate"))
+        with self.assertRaises(ValueError) as ctx:
+            copy_mod.assert_learner_copy("Worked Example", where="page 3")
+        self.assertIn("INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE", str(ctx.exception))
+
+    def test_rendered_core1a_page_text_carries_no_internal_role_label(self):
+        c = core1()
+        plan = build.build_publication_plan(c, POLICY)
+        with tempfile.TemporaryDirectory() as td:
+            pdf = Path(td) / "physics-core-study-guide.pdf"
+            report = render.render_core1a(c, plan, pdf, POLICY)
+            self.assertEqual(report["learner_copy_violations"], [])
+            self.assertNotIn("INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE", report["machine_findings"])
+
+    def test_module_titles_come_from_the_governed_registry(self):
+        plan = build.build_publication_plan(core1(), POLICY)
+        for m in plan["lessons"][0]["modules"]:
+            self.assertEqual(copy_mod.learner_copy_violations(m["title"]), [], m["kind"])
+            if copy_mod.is_mapped(m["kind"]):
+                self.assertEqual(m["title"], copy_mod.learner_title(m["kind"]))
 
 
 if __name__ == "__main__":

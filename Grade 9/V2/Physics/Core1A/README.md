@@ -161,6 +161,8 @@ Core1A/
 │   ├── physics-core1a-sba-publication-index.schema.json
 │   └── physics-core1a-sba-build-manifest.schema.json
 ├── registry/
+│   ├── physics-core1a-learner-language.json
+│   ├── physics-core1a-publication-policy.json
 │   ├── physics-core1a-motion-in-a-plane-sba-v1.json
 │   ├── physics-core1a-motion-in-a-plane-sba-publication-index-v1.json
 │   ├── physics-core1a-motion-in-a-plane-build-state-v1.json
@@ -171,11 +173,80 @@ Core1A/
 │       ├── M2D-SBA-04-v1.json
 │       └── M2D-SBA-05-v1.json
 ├── engine/
-│   └── next_sba.py
+│   ├── build_physics_core1a.py
+│   ├── next_sba.py
+│   ├── physics_learner_copy.py
+│   └── render_physics_core1a.py
 └── tests/
     ├── test_physics_core1a_sba.py
     └── test_physics_core1a_agent_handoff.py
 ```
+
+## Wired into P-K
+
+Since P-UPGRADE-2 the P-K cold-start runner publishes the Core study guide **through**
+Core (1A): it compiles the P-G plan into a `PhysicsCore1APublicationPlan` and renders that,
+instead of calling the old direct product renderer. The artifact name
+(`physics-core-study-guide.pdf`), the product id (`CORE_STUDY_GUIDE`), the required
+sections and the two-product topology are unchanged.
+
+Because it is now the published product, Core (1A) carries the same custody obligations the
+P-K renderer carried:
+
+- every figure is drawn through the P-H `render_primitive` interface, and its **draw-time**
+  vector-operation count and ink box are recorded in a `PhysicalPageMap` returned as
+  `report["physical_page_map"]` — planned page numbers are never evidence;
+- every representation the P-H bundle declares for a capability is physically placed. The
+  designed spread takes the first figure of each phase; the rest are placed on balanced,
+  adaptively sized "different pictures of the same idea" pages rather than being silently
+  dropped;
+- `audit_product` (P-K) and the P-L custody gate run against that page map unchanged.
+
+## Learner-facing wording
+
+`registry/physics-core1a-learner-language.json` is the single governed learner vocabulary,
+and `engine/physics_learner_copy.py` is the only place that applies it. Both Core (1A) and
+the Core (2) transfer book import it, so the two products cannot drift into different
+dialects.
+
+The registry already governed the fourteen publication module kinds and a banned-word list.
+It now also reaches the roles that table did not: route states (`FRAME`, `REPRESENT`,
+`MODEL`, `EXECUTE`, `INTERPRET`, `VERIFY`), hint levels (`H1_NOTICE`, `H2_MODEL`,
+`H3_START`), Core (2) solution sections, support stages and readiness roles, plus the
+figure headings each teaching primitive is drawn with. Where the registry already defined a
+label, that label is kept: this extends the incumbent vocabulary rather than restyling it.
+
+Internal identifiers are **unchanged**. `MISCONCEPTION_REPAIR`, `WORKED`, `GUIDED`,
+`EXECUTE`, `H1_NOTICE` and the rest stay exactly as they are in schema fields, JSON enum
+values, falsifier names and test assertions. What the registry governs is what a
+14-year-old reads.
+
+Three parts, one falsifier:
+
+- `module_labels` / `module_helpers` supply headings and their one-line helpers;
+- `phrase_rewrites` supplies body copy, so open-ended upstream wording such as
+  `VERIFY_MODEL_VALIDITY` lands in learner words instead of curriculum-design words;
+- `learner_copy_violations()` re-scans everything that actually reached the page and raises
+  `INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE` if any internal identifier or banned/clinical
+  label survived. The rewrite table is a translation, not a repair: a missing entry is
+  reported, not hidden.
+
+The ban list is curriculum-design jargon — "misconception repair", "readiness gate", "model
+validity", "custody", "falsifier", "source-grounded" — not ordinary school vocabulary.
+"Worked example" and "guided practice" are words a student meets in any textbook and are
+deliberately allowed, because the governed labels themselves use them.
+
+## Standalone use
+
+```bash
+python "Grade 9/V2/Physics/Core1A/engine/build_physics_core1a.py" \
+  --core1 /path/to/physics-core1-study-plan.json \
+  --out-dir /tmp/core1a
+```
+
+The command writes `physics-core1a-publication-plan.json`, `physics-core-study-guide.pdf`
+and `physics-core1a-quality-report.json`. An optional representation bundle can be supplied
+with `--representations`.
 
 ## Release claim
 

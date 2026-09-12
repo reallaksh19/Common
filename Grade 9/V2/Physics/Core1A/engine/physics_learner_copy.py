@@ -48,10 +48,16 @@ def _normalise(role):
     return re.sub(r"[\s\-]+", "_", s).upper()
 
 
-def humanize_role(role):
-    """Last-resort wording for a role with no registry entry: plain, never SCREAMING_SNAKE."""
+def humanize_role(role, registry=None):
+    """Last-resort wording for a role with no registry entry: plain, never SCREAMING_SNAKE.
+
+    The governed phrase rewrites are applied to the humanized form too, so an open-ended
+    upstream identifier such as ``VERIFY_MODEL_VALIDITY`` still lands in learner words
+    rather than in curriculum-design words.
+    """
     s = _normalise(role).replace("_", " ").strip().lower()
-    return s[:1].upper() + s[1:] if s else ""
+    s = s[:1].upper() + s[1:] if s else ""
+    return apply_phrase_rewrites(s, registry)
 
 
 def learner_title(role, registry=None, default=None):
@@ -81,11 +87,43 @@ def unmapped_roles(roles, registry=None):
     return sorted({_normalise(r) for r in roles if _normalise(r) and _normalise(r) not in reg["titles"]})
 
 
+def _rewrite_pattern(phrase):
+    """Match the phrase however the pipeline spelled it: spaced, hyphenated or mixed case."""
+    parts = re.split(r"[\s\-]+", phrase.strip())
+    body = r"[\s\-]+".join(re.escape(part) for part in parts)
+    return re.compile(body, re.I)
+
+
+def _ordered_rewrites(registry):
+    key = ("rewrites", id(registry))
+    cached = _CACHE.get(key)
+    if cached is None:
+        # longest first, so a specific sentence is rewritten before the phrase inside it
+        cached = [
+            (_rewrite_pattern(old), new)
+            for old, new in sorted(registry["phrase_rewrites"], key=lambda pair: -len(pair[0]))
+        ]
+        _CACHE[key] = cached
+    return cached
+
+
+def _match_case(matched, replacement):
+    if matched[:1].isupper() and replacement[:1].islower():
+        return replacement[:1].upper() + replacement[1:]
+    return replacement
+
+
 def apply_phrase_rewrites(text, registry=None):
+    """Translate the pipeline's internal process wording into learner wording.
+
+    This is the governed body-copy half of the same table that supplies headings. It is a
+    translation, not a repair: ``learner_copy_violations`` still runs afterwards and fails
+    if anything clinical survived, so a missing rewrite is reported rather than hidden.
+    """
     reg = registry or load_registry()
     s = str(text or "")
-    for old, new in reg["phrase_rewrites"]:
-        s = s.replace(old, new)
+    for pattern, new in _ordered_rewrites(reg):
+        s = pattern.sub(lambda m: _match_case(m.group(0), new), s)
     return s
 
 
