@@ -3,10 +3,11 @@
   "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/BenchmarkAcceptance/candidate_export.schema.json",
   "title": "Primary Math V2 Benchmark Candidate Export",
   "type": "object",
-  "required": ["version", "candidate_id", "cases"],
+  "required": ["version", "candidate_id", "evidence_class", "cases"],
   "properties": {
     "version": {"const": "1.0.0"},
     "candidate_id": {"type": "string", "minLength": 1},
+    "evidence_class": {"enum": ["TEST_FIXTURE", "REAL_CANDIDATE"]},
     "producer": {"type": "string"},
     "artifacts": {
       "type": "object",
