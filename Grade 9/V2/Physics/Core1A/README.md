@@ -49,8 +49,9 @@ A `FULL_LEARNING` lesson is compiled into a mature cycle rather than a linear du
 ```text
 CONCEPT BADGE
 → REAL-WORLD / PHENOMENON ANCHOR
-→ SEE IT
-→ KEY IDEA / PHYSICS WORDS
+→ PLAIN-LANGUAGE EXPLANATION
+→ PHYSICS WORDS / MODEL / FRAME
+→ STAGED ILLUSTRATION
 → REPRESENTATION BRIDGE
 → MODEL CHECK
 → WORKED EXAMPLE
@@ -62,19 +63,59 @@ CONCEPT BADGE
 → TRANSFER BRIDGE
 ```
 
+The staged illustration is **support for the teaching, not a replacement for it**. A D2/D3 page that contains a diagram but drops the plain-language explanation, model/frame conditions, worked reasoning, or misconception repair is a publication defect.
+
 Not every module is forced onto every page. The compiler targets readable page rhythm rather than a card for every field.
 
 `CONCISE_VERIFY_ONLY` remains concise: activation → independent attempt → physical check.
 
 `PROBE` remains pre-explanatory: probe → work space → check. No explanatory reteach may appear before the decisive probe.
 
+## Difficulty-aware scaffolding
+
+Core (1A) uses learner-facing difficulty badges to control the amount of support:
+
+- `D1 FOUNDATION` — direct meaning / essential vocabulary; at least one explanatory visual or representation;
+- `D2 THINK CAREFULLY` — picture-to-equation, event-condition, or frame reasoning; at least two visual stages plus misconception/model support;
+- `D3 CHALLENGING` — inverse reasoning, hidden state, or multiple representations; at least three visual stages plus worked reasoning and guided application;
+- `D4 EXTENSION` — optional advanced/source-visible content that must be visibly marked as extension.
+
+The badge is not decorative. Missing required support produces a Core (1A) quality finding.
+
+## Core (1A) ↔ Core (2) learning links
+
+Core (1A) points forward to the Core (2) transfer item that demonstrates mastery; Core (2) must point back to the exact Core (1A) repair concept/stage.
+
+```text
+Core (1A) concept
+    ↓
+CHECK → APPLY → TRANSFER (Txx)
+                     ↓
+             Core (2) protected attempt
+                 ↙            ↘
+              success          stuck
+                                ↓
+                      exact repair target
+                                ↓
+                         Core (1A) stage
+```
+
+The learner surface uses a compact `CORE 2 → Txx` badge where a mapped transfer item exists, plus a three-part `CHECK / APPLY / TRANSFER` gateway at the end of the concept.
+
+See `CORE1A_UI_SPEC.md` for the normative learner UI contract.
+
 ## Publication quality
 
 Core (1A) has a stricter learner-surface policy than the existing P-L survival checks:
 
-- body text target 10.2 pt, hard floor 9.5 pt;
+- textbook body target 10.6 pt, hard floor 10.0 pt;
 - caption floor 8 pt;
+- diagram-label floor 8 pt;
+- badge floor 7.3 pt and badges must remain one readable line;
 - A4 page with 16 mm margins;
+- no heading/badge collision;
+- no text outside page bounds;
+- learner-facing mathematics uses real Greek symbols, subscripts, superscripts, fractions/radicals where appropriate; raw strings such as `sqrt(...)`, `theta`, `v_A/B`, or `u^2` are not acceptable;
 - 70–85% meaningful page occupancy target (working space counts as meaningful);
 - no orphan headings;
 - no accidental half-page voids;
@@ -93,6 +134,7 @@ This is a publication/content-maturity finding, not an authority to rewrite the 
 
 ```text
 Core1A/
+├── CORE1A_UI_SPEC.md
 ├── contracts/
 │   └── physics-core1a-publication-plan.schema.json
 ├── engine/
@@ -101,7 +143,8 @@ Core1A/
 ├── registry/
 │   └── physics-core1a-publication-policy.json
 └── tests/
-    └── test_physics_core1a.py
+    ├── test_physics_core1a.py
+    └── test_core1a_ui_policy.py
 ```
 
 ## Standalone use
