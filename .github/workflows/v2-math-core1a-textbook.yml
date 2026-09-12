@@ -99,9 +99,9 @@ jobs:
           }, indent=2))
           PY
 
-      - name: Upload Core1A textbook candidate
+      - name: Upload Core1A textbook candidate and exact Core1 input
         uses: actions/upload-artifact@v4
         with:
           name: math-core1a-textbook
-          path: /tmp/core1a/product
+          path: /tmp/core1a
           if-no-files-found: error
