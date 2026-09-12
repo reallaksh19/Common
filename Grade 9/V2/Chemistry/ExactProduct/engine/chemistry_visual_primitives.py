@@ -563,11 +563,10 @@ def _draw_formula_anatomy(c, x, y, w, h, params):
     off the item's own parsed token.
     """
     species = _pick_species(params, 'BOTH')
-    top = panel(c, x, y, w, h, params['title'])
-    label(c, x + 12, top, params['attention_target'] or 'Notation position and its meaning.',
-          size=6.8, color='muted', width=w - 24)
-
-    formula_y = y + (h - 26) / 2 + 2
+    # The top band is reserved for callouts, so the caption sits with the
+    # learner action at the foot rather than colliding with a leader line.
+    panel(c, x, y, w, h, params['title'])
+    formula_y = y + (h - 30) / 2
     size = 22
     formula_x = x + (w - species_width(c, species, size)) / 2
     marks = draw_species(c, formula_x, formula_y, species, size=size)
@@ -598,8 +597,8 @@ def _draw_formula_anatomy(c, x, y, w, h, params):
     col_w = 152.0
     left_x = x + 14
     right_x = x + w - 14 - col_w
-    top_row = formula_y + 34
-    bottom_row = formula_y - 30
+    top_row = formula_y + 31
+    bottom_row = formula_y - 28
     slots = [(left_x, top_row, 'left'), (right_x, top_row, 'right'),
              (left_x, bottom_row, 'left'), (right_x, bottom_row, 'right')]
     for index, (mark, color, head, note) in enumerate(roles[:4]):
@@ -619,7 +618,7 @@ def _draw_formula_anatomy(c, x, y, w, h, params):
         label(c, sx, sy, head, size=6.8, color=color, font=BOLD, width=col_w)
         label(c, sx, sy - 8.5, note, size=6.3, color='muted', width=col_w)
 
-    label(c, x + 12, y + 8, params['learner_action'] or 'Name each position before interpreting the formula.',
+    label(c, x + 12, y + 9, params['attention_target'] or 'Notation position and its meaning.',
           size=6.3, color='muted', width=w - 24)
 
 
