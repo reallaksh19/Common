@@ -225,9 +225,9 @@ def test_angle_workspace_is_typed_and_unsupported_surface_fails_closed():
 
 def test_unsupported_primary_visual_fails_closed():
     visual = {
-        "primitive_kind": "ANGLE_OBJECT_EXAMPLE",
-        "semantic_params": {"examples": ["scissors"]},
-        "validator_refs": ["ANGLE_GEOMETRY"],
+        "primitive_kind": "UNREALIZED_VISUAL",
+        "semantic_params": {"value": 1},
+        "validator_refs": ["TEST_VALIDATOR"],
     }
     with pytest.raises(Core1ComponentError) as exc:
         PrimaryVisualComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, 190), visual)
