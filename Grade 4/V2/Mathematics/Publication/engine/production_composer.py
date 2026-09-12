@@ -10,11 +10,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Mapping, Tuple
 
-from Primary.V2.Mathematics.Publication.engine.authoring_handoff_adapter import AuthoringHandoffAdapter
-from Primary.V2.Mathematics.Publication.engine.core1_direct_composer import (
+from Grade4.V2.Mathematics.Publication.engine.authoring_handoff_adapter import AuthoringHandoffAdapter
+from Grade4.V2.Mathematics.Publication.engine.core1_direct_composer import (
     render_core1_from_authoring_handoff as _render_core1_from_handoff,
 )
-from Primary.V2.Mathematics.Publication.engine.page_composer import PrimaryPageComposer
+from Grade4.V2.Mathematics.Publication.engine.page_composer import PrimaryPageComposer
 
 
 @dataclass
