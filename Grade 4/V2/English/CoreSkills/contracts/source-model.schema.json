@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/English/CoreSkills/contracts/source-model.schema.json",
+  "title": "PrimaryEnglishSourceModel",
+  "type": "object",
+  "required": ["source_model_id", "model_type", "assessment_authority", "categories", "boundary_policy"],
+  "properties": {
+    "source_model_id": {"type": "string", "minLength": 1},
+    "model_type": {"enum": ["TAXONOMY", "ORDERED_TAXONOMY", "RESPONSE_RUBRIC", "TEXT_EVIDENCE_MODEL", "OTHER"]},
+    "assessment_authority": {"enum": ["SOURCE_WORKSHEET", "TEXTBOOK", "TEACHER_PORTION", "CURRICULUM_DOCUMENT", "QUESTION_SET_OBSERVED", "OTHER"]},
+    "categories": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "ordering": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "classification_questions": {"type": "object", "additionalProperties": {"type": "string"}},
+    "clean_examples": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+    "boundary_examples": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "forbidden_invented_categories": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "boundary_policy": {
+      "type": "object",
+      "required": ["no_force_fit", "allowed_statuses"],
+      "properties": {
+        "no_force_fit": {"const": true},
+        "allowed_statuses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"enum": ["SOURCE_MODEL_BOUNDARY", "AMBIGUOUS", "TEACHER_JUDGMENT"]},
+          "uniqueItems": true
+        }
+      }
+    },
+    "source_refs": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
