@@ -151,12 +151,39 @@ class LearningSupportPrimitives:
 
     @staticmethod
     def draw_division_table_cell(backend: VectorRenderBackend, bbox: BoundingBox, params: Dict[str, Any]) -> None:
-        column = int(params["column"])
-        row = int(params["row"])
-        quotient = params.get("quotient")
+        """Render either an abstract table rule or one grounded table cell.
+
+        Abstract form is deliberately number-free and is used before a learner is
+        shown a specific cell: ``{"operation": "column/row"}``.
+
+        Exact form is used once a cell is selected:
+        ``{"column": 720, "row": 60, "quotient": 12?}``.
+        """
         backend.draw_rect(bbox.x, bbox.y, bbox.width, bbox.height, fill=PrimaryPalette.WHITE, stroke=PrimaryPalette.CARD_BORDER, corner_radius=6.0)
         cx = bbox.x + bbox.width * 0.52
         cy = bbox.y + bbox.height * 0.48
+
+        if "column" not in params or "row" not in params:
+            operation = str(params.get("operation") or "").strip()
+            if not operation:
+                raise ValueError("DIVISION_TABLE_CELL_MODEL requires either column+row or operation")
+            normalized = operation.replace("/", " ÷ ")
+            backend.draw_rect(cx - 92.0, cy + 16.0, 76.0, 34.0, fill=PrimaryPalette.LIGHT_BG, stroke=PrimaryPalette.ACCENT_BLUE, corner_radius=4.0)
+            backend.draw_rect(cx - 92.0, cy - 42.0, 76.0, 34.0, fill=PrimaryPalette.LIGHT_BG, stroke=PrimaryPalette.TEAL, corner_radius=4.0)
+            backend.draw_text("TOP", cx - 54.0, cy + 27.0, font_size=10.5, color=PrimaryPalette.ACCENT_BLUE, align="center")
+            backend.draw_text("SIDE", cx - 54.0, cy - 31.0, font_size=10.5, color=PrimaryPalette.TEAL, align="center")
+            backend.draw_arrow(cx - 8.0, cy + 32.0, cx + 26.0, cy + 10.0, stroke=PrimaryPalette.ACCENT_BLUE)
+            backend.draw_arrow(cx - 8.0, cy - 25.0, cx + 26.0, cy - 3.0, stroke=PrimaryPalette.TEAL)
+            backend.draw_text("÷", cx + 48.0, cy + 1.0, font_size=18.0, color=PrimaryPalette.NAVY, align="center")
+            backend.draw_text("?", cx + 86.0, cy + 1.0, font_size=17.0, color=PrimaryPalette.NAVY, align="center")
+            backend.draw_text(normalized, cx, bbox.y + 14.0, font_size=9.5, color=PrimaryPalette.SLATE, align="center")
+            labels = ["TOP", "SIDE", normalized, "?"]
+            backend.record_evidence("DIVISION_TABLE_CELL_MODEL", params, 10, labels)
+            return
+
+        column = int(params["column"])
+        row = int(params["row"])
+        quotient = params.get("quotient")
         backend.draw_text(str(column), cx, cy + 28.0, font_size=11.0, color=PrimaryPalette.ACCENT_BLUE, align="center")
         backend.draw_text(str(row), cx - 52.0, cy, font_size=11.0, color=PrimaryPalette.TEAL, align="center")
         backend.draw_arrow(cx, cy + 18.0, cx, cy + 4.0, stroke=PrimaryPalette.ACCENT_BLUE)
