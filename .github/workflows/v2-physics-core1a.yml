@@ -23,7 +23,13 @@ jobs:
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a.py'
       - name: Run Core1A learner UI policy checks
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_core1a_ui_policy.py'
+      - name: Run Core1A-Core2 linkage checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_linkage.py'
       - name: Validate publication policy JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-publication-policy.json' > /dev/null
+      - name: Validate Core1A-Core2 linkage JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-core2-linkage.json' > /dev/null
+      - name: Validate learner language JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-learner-language.json' > /dev/null
       - name: Validate publication schema JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-publication-plan.schema.json' > /dev/null
