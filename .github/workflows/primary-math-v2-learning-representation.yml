@@ -1,0 +1,26 @@
+name: Primary Math V2 learning representation
+
+on:
+  pull_request:
+    paths:
+      - 'Primary/V2/Mathematics/LearningDesign/**'
+      - 'Primary/V2/Mathematics/Representation/contracts/**'
+      - '.github/workflows/primary-math-v2-learning-representation.yml'
+  push:
+    branches:
+      - primary-math-v2-learning-representation-contract
+    paths:
+      - 'Primary/V2/Mathematics/LearningDesign/**'
+      - 'Primary/V2/Mathematics/Representation/contracts/**'
+      - '.github/workflows/primary-math-v2-learning-representation.yml'
+
+jobs:
+  validate-learning-representation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Primary Math V2 learning representation contracts
+        run: python Primary/V2/Mathematics/LearningDesign/validation/validate_learning_representation.py
