@@ -1,0 +1,539 @@
+{
+  "taxonomy_id": "CHEM-CAPABILITY-TAXONOMY-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Subject-wide, chapter-generic capability taxonomy. A capability names an operation the learner performs, never a chapter. Redox, Behaviour of Gases, Chemical Bonding and Some Basic Concepts are data instances of these capabilities, not separate schema shapes. Every capability must declare what the learner can do, what the source must supply before it may be instantiated, which PCK family teaches it, how it is checked, and which visual families are allowed to carry it.",
+  "naming_rule": "OPERATION_NOT_TOPIC",
+  "forbidden_capability_name_fragments": [
+    "REDOX",
+    "GASES",
+    "BONDING",
+    "BASIC-CONCEPTS",
+    "NCERT",
+    "CHAPTER",
+    "CLASS-IX",
+    "GRADE-9",
+    "UNIT-1",
+    "UNIT-2",
+    "UNIT-3",
+    "UNIT-4"
+  ],
+  "unresolved_semantic_input_policy": "FAIL_CLOSED_NEVER_RENDER_INVENTED_VALUE",
+  "falsifiers": [
+    "TOPIC_NAMED_CAPABILITY",
+    "CAPABILITY_WITHOUT_LEARNER_CAN_STATEMENT",
+    "CAPABILITY_WITHOUT_SOURCE_EVIDENCE",
+    "CAPABILITY_WITHOUT_PCK_FAMILY",
+    "CAPABILITY_WITHOUT_VERIFICATION_CHECK",
+    "CAPABILITY_WITHOUT_ALLOWED_VISUAL_FAMILY",
+    "CAPABILITY_TAXONOMY_DRIFT_FROM_CANONICAL_AUTHORITY",
+    "PCK_FAMILY_NOT_DECLARED",
+    "ALLOWED_VISUAL_FAMILY_NOT_IN_PRIMITIVE_REGISTRY",
+    "PAGE_INTENT_PRIMITIVE_NOT_ALLOWED_BY_TAXONOMY",
+    "UNRESOLVED_SEMANTIC_INPUT_RENDERED"
+  ],
+  "pck_families": {
+    "FORMULA_ANATOMY_AND_CHARGE": "Reading a formula as structured notation: symbol, coefficient, subscript, charge.",
+    "SUBSCRIPT_COEFFICIENT_CHARGE_DISCRIMINATION": "Telling apart the three numeral positions that mean different things.",
+    "MACRO_PARTICLE_SYMBOLIC_TRANSLATION": "Moving the same chemical fact between what you see, the particles and the symbols.",
+    "CONSERVATION_ATOM_CHARGE_SPECIES": "Bookkeeping what must stay the same across a process.",
+    "REACTION_PROCESS_CLASSIFICATION": "Classifying a change only after the decisive evidence is fixed.",
+    "RULE_PRIORITY_AND_EXCEPTION": "Consulting a default rule and its condition/exception gate in the right order.",
+    "OBSERVATION_EVIDENCE_CLAIM": "Keeping the recorded observation separate from the interpreted claim.",
+    "PRACTICAL_METHOD_PROPERTY_LINK": "Linking a method or apparatus choice to the property it exploits.",
+    "SPECIES_ROLE_AND_SPECTATOR": "Tracking species before attaching any role label.",
+    "CHEMICAL_VERIFICATION": "Running an independent check before accepting a result.",
+    "MATTER_COMPOSITION_CLASSIFICATION": "Sorting a sample by what it is made of rather than by what it looks like.",
+    "FIXED_COMPOSITION_EVIDENCE": "Deciding from composition data whether a substance keeps a fixed ratio.",
+    "UNIT_SCALE_AND_DIMENSIONAL_REASONING": "Changing units by multiplying by factors and cancelling, so the unit itself checks the work.",
+    "CHARGE_NEUTRALITY_FORMULA_CONSTRUCTION": "Building a formula by making the positive and negative charge cancel exactly.",
+    "ENTITY_COUNTING_AND_ATOMICITY": "Counting how many atoms or ions one entity actually contains.",
+    "RELATIVE_MASS_COMPOSITION": "Adding relative masses in the ratio the formula fixes.",
+    "MASS_MOLE_ENTITY_BRIDGE": "Crossing between a weighed mass, an amount in moles and a number of particles.",
+    "CONCENTRATION_PART_WHOLE": "Choosing the right denominator before dividing a part by a whole.",
+    "STOICHIOMETRIC_RATIO_ROUTE": "Using the equation's mole ratio as the only bridge between two substances."
+  },
+  "capabilities": [
+    {
+      "capability_id": "CAP-READ-FORMULA",
+      "learner_can_statement": "I can read a chemical formula and say what each symbol, coefficient, subscript and charge means before I calculate anything.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT"
+      ],
+      "primary_pck_family": "FORMULA_ANATOMY_AND_CHARGE",
+      "verification_checks": [
+        "CHECK_SPECIES_IDENTITY"
+      ],
+      "allowed_visual_families": [
+        "FORMULA_ANATOMY_VIEW",
+        "COEFFICIENT_SUBSCRIPT_CONTRAST",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-PARSE-ION-CHARGE",
+      "learner_can_statement": "I can find the ionic charge on a species and not mistake it for a subscript or a coefficient.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT",
+        "ION_CHARGE_NOTATION"
+      ],
+      "primary_pck_family": "SUBSCRIPT_COEFFICIENT_CHARGE_DISCRIMINATION",
+      "verification_checks": [
+        "CHECK_CHARGE",
+        "CHECK_SPECIES_IDENTITY"
+      ],
+      "allowed_visual_families": [
+        "FORMULA_ANATOMY_VIEW",
+        "CHARGE_SUBSCRIPT_CONTRAST",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "learner_can_statement": "I can turn a particle picture into symbols, and symbols back into a particle picture, without changing what is there or how many.",
+      "required_source_evidence": [
+        "PARTICLE_FIGURE_OR_COUNT",
+        "FORMULA_OR_EQUATION_TEXT"
+      ],
+      "primary_pck_family": "MACRO_PARTICLE_SYMBOLIC_TRANSLATION",
+      "verification_checks": [
+        "CHECK_SPECIES_IDENTITY",
+        "CHECK_ENTITY_COUNT"
+      ],
+      "allowed_visual_families": [
+        "PARTICLE_MODEL_VIEW",
+        "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-CHECK-ATOM-CONSERVATION",
+      "learner_can_statement": "I can count each kind of atom before and after a change and say where the first mismatch is.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT"
+      ],
+      "primary_pck_family": "CONSERVATION_ATOM_CHARGE_SPECIES",
+      "verification_checks": [
+        "CHECK_ATOMS",
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "CONSERVATION_LEDGER",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "learner_can_statement": "I can point at the one piece of recorded evidence that decides how a change is classified, and only then classify it.",
+      "required_source_evidence": [
+        "RECORDED_OBSERVATION_TEXT"
+      ],
+      "primary_pck_family": "REACTION_PROCESS_CLASSIFICATION",
+      "verification_checks": [
+        "CHECK_CLASSIFICATION_CRITERION",
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "MACRO_OBSERVATION_VIEW",
+        "EVIDENCE_CLAIM_REASONING_CHAIN",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-CHECK-RULE-EXCEPTION",
+      "learner_can_statement": "I can check the condition or exception first and say whether the usual rule still applies.",
+      "required_source_evidence": [
+        "RULE_STATEMENT_TEXT",
+        "CONDITION_OR_EXCEPTION_TEXT"
+      ],
+      "primary_pck_family": "RULE_PRIORITY_AND_EXCEPTION",
+      "verification_checks": [
+        "CHECK_CONDITIONS",
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "RULE_PRIORITY_LADDER",
+        "CONDITION_EXCEPTION_GATE",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-PRESERVE-REACTION-CONDITION",
+      "learner_can_statement": "I can keep the stated condition attached to a reaction when I read or rewrite it, and explain why dropping it changes the chemistry.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT",
+        "CONDITION_OR_EXCEPTION_TEXT"
+      ],
+      "primary_pck_family": "RULE_PRIORITY_AND_EXCEPTION",
+      "verification_checks": [
+        "CHECK_CONDITIONS"
+      ],
+      "allowed_visual_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "learner_can_statement": "I can write down what was observed and what it lets me claim in two separate places, and say how one supports the other.",
+      "required_source_evidence": [
+        "RECORDED_OBSERVATION_TEXT"
+      ],
+      "primary_pck_family": "OBSERVATION_EVIDENCE_CLAIM",
+      "verification_checks": [
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "MACRO_OBSERVATION_VIEW",
+        "OBSERVATION_INFERENCE_TABLE",
+        "EVIDENCE_CLAIM_REASONING_CHAIN",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-READ-APPARATUS-METHOD",
+      "learner_can_statement": "I can look at an apparatus or method and say which property it is using and what it is meant to show.",
+      "required_source_evidence": [
+        "APPARATUS_OR_METHOD_FIGURE"
+      ],
+      "primary_pck_family": "PRACTICAL_METHOD_PROPERTY_LINK",
+      "verification_checks": [
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "APPARATUS_METHOD_FLOW",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-READ-STRUCTURE-SITE",
+      "learner_can_statement": "I can find and keep track of the exact atom or site a rule applies to, instead of treating the whole formula as one blob.",
+      "required_source_evidence": [
+        "STRUCTURE_FIGURE_WITH_SITES"
+      ],
+      "primary_pck_family": "FORMULA_ANATOMY_AND_CHARGE",
+      "verification_checks": [
+        "CHECK_SPECIES_IDENTITY"
+      ],
+      "allowed_visual_families": [
+        "STRUCTURE_SITE_ANNOTATION"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-TRACK-OXIDATION-STATE",
+      "learner_can_statement": "I can write the oxidation number of the same element before and after a change and say whether it went up or down.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT",
+        "OXIDATION_STATE_VALUES"
+      ],
+      "primary_pck_family": "CONSERVATION_ATOM_CHARGE_SPECIES",
+      "verification_checks": [
+        "CHECK_CHARGE",
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "OXIDATION_STATE_LANE",
+        "REACTION_BEFORE_AFTER_MAP",
+        "SPLIT_CONVERGE_TOPOLOGY"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-TRACK-REACTING-SPECIES",
+      "learner_can_statement": "I can follow each species from the left-hand side to the right-hand side and mark what changed and what did not.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT"
+      ],
+      "primary_pck_family": "SPECIES_ROLE_AND_SPECTATOR",
+      "verification_checks": [
+        "CHECK_SPECIES_IDENTITY"
+      ],
+      "allowed_visual_families": [
+        "REACTION_BEFORE_AFTER_MAP",
+        "SPLIT_CONVERGE_TOPOLOGY",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-ATTACH-SPECIES-ROLE",
+      "learner_can_statement": "I can name which species did what only after I have tracked what actually changed.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT"
+      ],
+      "primary_pck_family": "SPECIES_ROLE_AND_SPECTATOR",
+      "verification_checks": [
+        "CHECK_SPECIES_IDENTITY",
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "REACTION_BEFORE_AFTER_MAP",
+        "SPECIES_ROLE_MAP",
+        "SELF_OTHER_AGENT_FRAME",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "learner_can_statement": "I can run the checks that actually apply to this question before I accept my answer.",
+      "required_source_evidence": [
+        "FORMULA_OR_EQUATION_TEXT"
+      ],
+      "primary_pck_family": "CHEMICAL_VERIFICATION",
+      "verification_checks": [
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-CLASSIFY-MATTER-COMPOSITION",
+      "learner_can_statement": "I can sort a sample into mixture, element or compound by asking what it is made of, not what it looks like.",
+      "required_source_evidence": [
+        "SAMPLE_OR_SUBSTANCE_LIST",
+        "COMPOSITION_STATEMENT"
+      ],
+      "primary_pck_family": "MATTER_COMPOSITION_CLASSIFICATION",
+      "verification_checks": [
+        "CHECK_CLASSIFICATION_CRITERION",
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "MATTER_CLASSIFICATION_TREE",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-TEST-FIXED-COMPOSITION",
+      "learner_can_statement": "I can use composition-by-mass data to decide whether a substance keeps the same ratio every time.",
+      "required_source_evidence": [
+        "COMPOSITION_BY_MASS_DATA"
+      ],
+      "primary_pck_family": "FIXED_COMPOSITION_EVIDENCE",
+      "verification_checks": [
+        "CHECK_FIXED_COMPOSITION_EVIDENCE",
+        "VERIFY_RESULT"
+      ],
+      "allowed_visual_families": [
+        "FIXED_COMPOSITION_TEST_TABLE",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-CONVERT-UNIT-SCALE",
+      "learner_can_statement": "I can change a quantity into another unit by multiplying by conversion factors, and I can see from the cancelled units that I did it the right way round.",
+      "required_source_evidence": [
+        "QUANTITY_WITH_UNIT",
+        "DECLARED_CONVERSION_FACTOR"
+      ],
+      "primary_pck_family": "UNIT_SCALE_AND_DIMENSIONAL_REASONING",
+      "verification_checks": [
+        "CHECK_UNIT_CANCELLATION",
+        "CHECK_MAGNITUDE_PLAUSIBLE"
+      ],
+      "allowed_visual_families": [
+        "DIMENSIONAL_ANALYSIS_LADDER",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-BUILD-IONIC-FORMULA",
+      "learner_can_statement": "I can build the formula of an ionic compound by making the positive and negative charges cancel exactly.",
+      "required_source_evidence": [
+        "ION_CHARGE_NOTATION",
+        "ION_CHARGE_TABLE"
+      ],
+      "primary_pck_family": "CHARGE_NEUTRALITY_FORMULA_CONSTRUCTION",
+      "verification_checks": [
+        "CHECK_CHARGE_NEUTRALITY",
+        "CHECK_SPECIES_IDENTITY"
+      ],
+      "allowed_visual_families": [
+        "CHARGE_BALANCE_BUILDER",
+        "FORMULA_ANATOMY_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-COUNT-ENTITY-ATOMICITY",
+      "learner_can_statement": "I can count how many atoms or ions one formula unit contains, including what a bracket multiplies.",
+      "required_source_evidence": [
+        "FORMULA_WITH_SUBSCRIPTS"
+      ],
+      "primary_pck_family": "ENTITY_COUNTING_AND_ATOMICITY",
+      "verification_checks": [
+        "CHECK_ENTITY_COUNT",
+        "CHECK_ATOMS"
+      ],
+      "allowed_visual_families": [
+        "ATOMICITY_COUNT_MODEL",
+        "FORMULA_ANATOMY_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-COMPUTE-RELATIVE-FORMULA-MASS",
+      "learner_can_statement": "I can add up the relative masses in the ratio the formula fixes and get the relative formula mass.",
+      "required_source_evidence": [
+        "FORMULA_WITH_SUBSCRIPTS",
+        "RELATIVE_ATOMIC_MASS_TABLE"
+      ],
+      "primary_pck_family": "RELATIVE_MASS_COMPOSITION",
+      "verification_checks": [
+        "CHECK_MASS_SUM",
+        "CHECK_ENTITY_COUNT",
+        "CHECK_MAGNITUDE_PLAUSIBLE"
+      ],
+      "allowed_visual_families": [
+        "MOLAR_MASS_BREAKDOWN",
+        "ATOMICITY_COUNT_MODEL",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-MASS-TO-MOLES",
+      "learner_can_statement": "I can go from a weighed mass to an amount in moles, and back, showing the units cancelling as I go.",
+      "required_source_evidence": [
+        "SAMPLE_MASS_VALUE",
+        "RELATIVE_ATOMIC_MASS_TABLE"
+      ],
+      "primary_pck_family": "MASS_MOLE_ENTITY_BRIDGE",
+      "verification_checks": [
+        "CHECK_UNIT_CANCELLATION",
+        "CHECK_MAGNITUDE_PLAUSIBLE",
+        "CHECK_MASS_SUM"
+      ],
+      "allowed_visual_families": [
+        "MASS_MOLE_PARTICLE_BRIDGE",
+        "MOLAR_MASS_BREAKDOWN",
+        "DIMENSIONAL_ANALYSIS_LADDER"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-MOLES-TO-ENTITIES",
+      "learner_can_statement": "I can go from an amount in moles to a number of particles, and back, using the constant the question gives me.",
+      "required_source_evidence": [
+        "AMOUNT_IN_MOLES_VALUE",
+        "DECLARED_AVOGADRO_CONSTANT"
+      ],
+      "primary_pck_family": "MASS_MOLE_ENTITY_BRIDGE",
+      "verification_checks": [
+        "CHECK_UNIT_CANCELLATION",
+        "CHECK_ENTITY_COUNT",
+        "CHECK_MAGNITUDE_PLAUSIBLE"
+      ],
+      "allowed_visual_families": [
+        "MASS_MOLE_PARTICLE_BRIDGE",
+        "ATOMICITY_COUNT_MODEL",
+        "DIMENSIONAL_ANALYSIS_LADDER"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-COMPUTE-CONCENTRATION",
+      "learner_can_statement": "I can work out a concentration after deciding whether the bottom of the fraction is the solution or just the solvent.",
+      "required_source_evidence": [
+        "SOLUTE_QUANTITY_VALUE",
+        "SOLUTION_OR_SOLVENT_QUANTITY_VALUE"
+      ],
+      "primary_pck_family": "CONCENTRATION_PART_WHOLE",
+      "verification_checks": [
+        "CHECK_DENOMINATOR_CHOICE",
+        "CHECK_UNIT_CANCELLATION",
+        "CHECK_MAGNITUDE_PLAUSIBLE"
+      ],
+      "allowed_visual_families": [
+        "PART_WHOLE_CONCENTRATION_MODEL",
+        "DIMENSIONAL_ANALYSIS_LADDER",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "visual_required": true
+    },
+    {
+      "capability_id": "CAP-USE-STOICHIOMETRIC-RATIO",
+      "learner_can_statement": "I can use the mole ratio in a balanced equation to get from what I am given to what I am asked for, in the right direction.",
+      "required_source_evidence": [
+        "BALANCED_EQUATION",
+        "GIVEN_AMOUNT_VALUE"
+      ],
+      "primary_pck_family": "STOICHIOMETRIC_RATIO_ROUTE",
+      "verification_checks": [
+        "CHECK_RATIO_DIRECTION",
+        "CHECK_ATOMS",
+        "CHECK_MAGNITUDE_PLAUSIBLE"
+      ],
+      "allowed_visual_families": [
+        "STOICHIOMETRIC_ROUTE_MAP",
+        "MASS_MOLE_PARTICLE_BRIDGE",
+        "CONSERVATION_LEDGER"
+      ],
+      "visual_required": true
+    }
+  ],
+  "baseline_coverage_evidence": {
+    "note": "Which of the four real PR #346 topic baselines each newly added capability was derived from. The capability names stay chapter-generic; these references only record where the need was observed.",
+    "CAP-CLASSIFY-MATTER-COMPOSITION": [
+      "some-basic-concepts"
+    ],
+    "CAP-TEST-FIXED-COMPOSITION": [
+      "some-basic-concepts"
+    ],
+    "CAP-CONVERT-UNIT-SCALE": [
+      "some-basic-concepts",
+      "behaviour-of-gases"
+    ],
+    "CAP-BUILD-IONIC-FORMULA": [
+      "chemical-bonding",
+      "some-basic-concepts"
+    ],
+    "CAP-COUNT-ENTITY-ATOMICITY": [
+      "some-basic-concepts",
+      "chemical-bonding"
+    ],
+    "CAP-COMPUTE-RELATIVE-FORMULA-MASS": [
+      "some-basic-concepts"
+    ],
+    "CAP-MASS-TO-MOLES": [
+      "some-basic-concepts"
+    ],
+    "CAP-MOLES-TO-ENTITIES": [
+      "some-basic-concepts"
+    ],
+    "CAP-COMPUTE-CONCENTRATION": [
+      "some-basic-concepts"
+    ],
+    "CAP-USE-STOICHIOMETRIC-RATIO": [
+      "some-basic-concepts",
+      "redox-reactions"
+    ]
+  },
+  "known_limitations": [
+    "The ten newly declared capabilities are not yet exercised end to end by the committed pipeline run: the committed fixture corpus contains formula/particle/conservation/condition/species-role items only, so no quantitative or classification item exists for the cold-start producer to bind them to. They are declared, cross-checked against the primitive registry and the PCK families, and their visual families are registered; instantiating them requires a source corpus that actually contains such items.",
+    "Their allowed visual families are registered as RENDERER_PENDING_FAIL_CLOSED in the C-H primitive registry. A page that needs one records it as unrealized; it is never substituted by an invented value or by a text-only paragraph that claims to be the visual."
+  ],
+  "taxonomy_digest": "daeffd8143b8fbf57fc2a0ac631de18f471fa97d10fc7057645bfd1ca128aa3f"
+}

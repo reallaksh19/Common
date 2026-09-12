@@ -35,7 +35,27 @@ for i, record in enumerate(load(R / "chemistry-question-capability-bindings.json
         raise SystemExit(1)
 validate("chemistry-external-corpus-classification.schema.json", load(R / "chemistry-external-corpus-classification.json"))
 
+# The capability taxonomy is the subject-wide, chapter-generic capability
+# contract. Its full cross-registry closure (PCK families, allowed visual
+# families, page-intent agreement) runs in the C-H validator, which is the phase
+# that owns the primitive registry. Here we only prove there is no drift from
+# the canonical authority and no topic-named capability.
+taxonomy = load(R / "chemistry-capability-taxonomy.json")
+authority = load(D / "authority" / "chemistry-canonical-authority.json")
+taxonomy_caps = {c["capability_id"]: c for c in taxonomy["capabilities"]}
+assert len(taxonomy_caps) == len(taxonomy["capabilities"]), "duplicate capability id"
+for record in authority["capabilities"]:
+    assert record["capability_id"] in taxonomy_caps, record["capability_id"]
+for capability_id, record in taxonomy_caps.items():
+    for fragment in taxonomy["forbidden_capability_name_fragments"]:
+        assert fragment.upper() not in capability_id.upper(), (capability_id, fragment)
+    assert record["learner_can_statement"].lower().startswith("i can"), capability_id
+    for key in ["required_source_evidence", "primary_pck_family", "verification_checks", "allowed_visual_families"]:
+        assert record[key], (capability_id, key)
+assert taxonomy["unresolved_semantic_input_policy"] == "FAIL_CLOSED_NEVER_RENDER_INVENTED_VALUE"
+
 print("CHEMISTRY C-C registry/schema validation = PASS")
 print("source obligations = 12")
 print("question/subpart bindings = 17")
 print("external candidate classifications = 6")
+print("capability taxonomy = %d chapter-generic capabilities" % len(taxonomy_caps))

@@ -1,0 +1,50 @@
+{
+  "profile_id": "CHEM-C-H-VISUAL-OBLIGATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Bind visual obligations at the level they are actually owed: the individual lesson and the individual question. A product that realizes fifteen primitive kinds somewhere is not compliant if one classification or mole question is still text-only, so obligations are counted per content reference and not globally.",
+  "obligation_rule": "EVERY_CONTENT_REFERENCE_WHOSE_CAPABILITY_REQUIRES_A_VISUAL_MUST_CARRY_ONE_OF_ITS_ALLOWED_FAMILIES",
+  "family_authority": "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-capability-taxonomy.json",
+  "selection_authority": "PCK_PLUS_STUDYMODEL_PLUS_REASONING_ROUTE",
+  "renderer_invention_allowed": false,
+  "renderer_selection_forbidden": true,
+  "global_realization_is_not_local_compliance": true,
+  "unrealized_policy": "RECORD_AS_UNREALIZED_NEVER_SUBSTITUTE_TEXT_OR_INVENTED_VALUE",
+  "obligation_scopes": [
+    "CORE1_LESSON",
+    "CORE2_QUESTION"
+  ],
+  "binding_states": [
+    "BOUND",
+    "MISSING",
+    "WRONG_FAMILY"
+  ],
+  "realization_states": [
+    "PENDING",
+    "REALIZED",
+    "UNREALIZED"
+  ],
+  "candidate_counters": [
+    "visual_obligations_required",
+    "visual_obligations_realized",
+    "questions_requiring_visual",
+    "questions_with_required_visual"
+  ],
+  "candidate_counter_invariants": [
+    "visual_obligations_realized <= visual_obligations_required",
+    "questions_with_required_visual <= questions_requiring_visual",
+    "questions_with_required_visual == questions_requiring_visual"
+  ],
+  "falsifiers": [
+    "VISUAL_OBLIGATION_MISSING",
+    "WRONG_VISUAL_FAMILY",
+    "TEXT_ONLY_WHEN_VISUAL_REQUIRED",
+    "GLOBAL_REALIZATION_CLAIMED_FOR_LOCAL_OBLIGATION",
+    "VISUAL_OBLIGATION_COUNTER_NOT_DERIVED_FROM_RECORDS",
+    "UNREALIZED_VISUAL_SUBSTITUTED_BY_TEXT"
+  ],
+  "known_limitations": [
+    "The nine quantitative and classification families added with this profile are registered as RENDERER_PENDING_FAIL_CLOSED in the C-H primitive registry. When a future corpus binds one of them, the obligation is recorded as UNREALIZED and the candidate counter drops below the required total; nothing is substituted. This mirrors how COEFFICIENT_SUBSCRIPT_CONTRAST already behaves in PR #322 when its capability supplies no notation tokens."
+  ],
+  "profile_digest": "41161c2d6f8f33fd611b9b884991567383b3ac251e35b56cef3d807182a5771a"
+}

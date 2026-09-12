@@ -89,10 +89,12 @@
       "required_registry_paths": [
         "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json",
         "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-reasoning-role-registry.json",
-        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json"
+        "Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-guide-demand-badge-policy.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-capability-taxonomy.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/ReasoningSemantics/engine/build_chemistry_reasoning_semantics.py"
+        "Grade 9/V2/Chemistry/ReasoningSemantics/engine/build_chemistry_reasoning_semantics.py",
+        "Grade 9/V2/Chemistry/Representation/engine/bind_chemistry_visual_obligations.py"
       ],
       "produces": [
         "ChemistryReasoningSemantics",
@@ -100,7 +102,8 @@
       ],
       "falsifiers": [
         "TOPIC_NAMED_CAPABILITY",
-        "CAPABILITY_WITHOUT_SOURCE_EVIDENCE"
+        "CAPABILITY_WITHOUT_SOURCE_EVIDENCE",
+        "CAPABILITY_TAXONOMY_DRIFT_FROM_CANONICAL_AUTHORITY"
       ]
     },
     {
@@ -217,10 +220,13 @@
       "required_registry_paths": [
         "Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json",
         "Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json",
-        "Grade 9/V2/Chemistry/Representation/registry/chemistry-notation-render-contract.json"
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-notation-render-contract.json",
+        "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-capability-taxonomy.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-visual-obligation-profile.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/Representation/engine/build_chemistry_representations.py"
+        "Grade 9/V2/Chemistry/Representation/engine/build_chemistry_representations.py",
+        "Grade 9/V2/Chemistry/Representation/engine/bind_chemistry_visual_obligations.py"
       ],
       "produces": [
         "RepresentationBundle",
@@ -229,7 +235,8 @@
       "falsifiers": [
         "VISUAL_OBLIGATION_MISSING",
         "WRONG_VISUAL_FAMILY",
-        "TEXT_ONLY_WHEN_VISUAL_REQUIRED"
+        "TEXT_ONLY_WHEN_VISUAL_REQUIRED",
+        "GLOBAL_REALIZATION_CLAIMED_FOR_LOCAL_OBLIGATION"
       ]
     },
     {
@@ -269,12 +276,15 @@
         "CORE2_PRIMARY_OWNERSHIP"
       ],
       "required_registry_paths": [
-        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json"
+        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-learner-copy-titles.json",
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-visual-obligation-profile.json"
       ],
       "required_engine_paths": [
         "Grade 9/V2/Chemistry/ExactProduct/engine/realize_chemistry_exact_product.py",
         "Grade 9/V2/Chemistry/ExactProduct/engine/chemistry_visual_primitives.py",
-        "Grade 9/V2/Chemistry/ExactProduct/engine/learner_surface_guard.py"
+        "Grade 9/V2/Chemistry/ExactProduct/engine/learner_surface_guard.py",
+        "Grade 9/V2/Chemistry/ExactProduct/engine/learner_copy_guard.py"
       ],
       "produces": [
         "CoreStudyGuidePDF",
@@ -284,7 +294,9 @@
       "falsifiers": [
         "TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED",
         "LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK",
-        "INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE"
+        "INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE",
+        "TEXT_ONLY_WHEN_VISUAL_REQUIRED",
+        "LEARNER_TITLE_MISSING_FOR_ROLE"
       ]
     },
     {
@@ -390,5 +402,5 @@
     "ASSESSMENT_DESIGN": "PENDING_AUTHORIZED_HUMAN_ONLY",
     "VISUAL_USABILITY": "PENDING_AUTHORIZED_HUMAN_ONLY"
   },
-  "contract_digest": "59cd0a1ee7c3f34fb8dc296e6196356a32b7b58914984a4288d8b2d1936e8b6e"
+  "contract_digest": "61099df8569e2af113b5bb28b8891b26cf0f7041baee75b3a1f081523c5edefd"
 }
