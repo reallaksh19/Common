@@ -19,6 +19,11 @@ def digest(value, omit=None):
     return hashlib.sha256(canon(x).encode("utf-8")).hexdigest()
 
 
+# Core1 states whose semantics are materialized enough to render an exact
+# product. PROVISIONAL_PLAN_READY renders, but is never release-legal.
+RENDERABLE_CORE1_STATES={"PRODUCTION_PLAN_READY","PROVISIONAL_PLAN_READY"}
+
+
 def fail(code,detail=""):
     raise ValueError(f"{code}:{detail}" if detail else code)
 
@@ -32,19 +37,25 @@ def seal(binding):
     return binding
 
 
-def build_fixture_binding(selected_run="A"):
+def build_fixture_binding(selected_run="A",return_internals=False):
     if selected_run not in {"A","B"}: fail("UNKNOWN_SELECTED_RUN",selected_run)
     A=MATH/"AssessmentIntake"/"fixtures"
     questions=load(A/"mixed-grade9-question-set.fixture.json")
     topic=load(A/"mixed-grade9-topic-scope.fixture.json")
     attempts=load(A/"mixed-grade9-attempt-set.fixture.json")
-    run_a,_=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),repo_root=REPO,run_id="MATH-M-K-RUN-A")
-    run_b,_=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),copy.deepcopy(attempts),repo_root=REPO,run_id="MATH-M-K-RUN-B",fixture_observation_oracle=True)
+    run_a,internals_a=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),repo_root=REPO,run_id="MATH-M-K-RUN-A")
+    run_b,internals_b=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),copy.deepcopy(attempts),repo_root=REPO,run_id="MATH-M-K-RUN-B",fixture_observation_oracle=True)
     comparison=compare_runs(run_a,run_b)
     if not all(comparison["invariants"].values()): fail("M_K_REPRODUCIBILITY_PROOF_NOT_CLOSED")
     selected=run_a if selected_run=="A" else run_b
-    blockers=sorted(set(selected["blockers"]+["M-L:RENDERED_EXACT_TWO_PRODUCT_NOT_BOUND"]))
-    material="BLOCKED_UPSTREAM_PCK" if selected["core1_authoring"]["status"]!="PRODUCTION_PLAN_READY" else "SEMANTIC_READY_RENDER_NOT_BOUND"
+    core1_status=selected["core1_authoring"]["status"]
+    renderable=core1_status in RENDERABLE_CORE1_STATES
+    # A PCK-expert-review blocker does not block publication engineering: the
+    # Core1/Core2 semantics are materialized. It blocks release legality, which
+    # is carried separately by pck_release_legal / pck_expert_review_state.
+    carried=[b for b in selected["blockers"] if not (renderable and b.endswith("PCK_EXPERT_REVIEW_PENDING"))]
+    blockers=sorted(set(carried+["M-L:RENDERED_EXACT_TWO_PRODUCT_NOT_BOUND"]))
+    material="SEMANTIC_READY_RENDER_NOT_BOUND" if renderable else "BLOCKED_UPSTREAM_PCK"
     binding={
       "candidate_id":"",
       "schema_version":"1.0.0",
@@ -64,7 +75,9 @@ def build_fixture_binding(selected_run="A"):
         "canonical_math_invariant":comparison["invariants"]["canonical_math_truth_identical"],
         "core2_semantics_invariant":comparison["invariants"]["core2_semantics_identical"],
       },
-      "core1_authoring_status":selected["core1_authoring"]["status"],
+      "core1_authoring_status":core1_status,
+      "pck_expert_review_state":selected["core1_authoring"]["pck_expert_review_state"],
+      "pck_release_legal":bool(selected["core1_authoring"]["release_legal"]),
       "core2_plan_ref":selected["stage_outputs"]["core2_plan_ref"],
       "core2_plan_digest":selected["stage_outputs"]["core2_plan_digest"],
       "coverage_package_ref":selected["stage_outputs"]["coverage_package_ref"],
@@ -76,12 +89,15 @@ def build_fixture_binding(selected_run="A"):
       "upstream_blockers":blockers,
       "binding_digest":"",
     }
-    return seal(binding)
+    sealed=seal(binding)
+    if return_internals:
+        return sealed,(internals_a if selected_run=="A" else internals_b)
+    return sealed
 
 
 def bind_rendered_artifacts(binding, artifacts, fixture_class=None):
     out=copy.deepcopy(binding)
-    if out["core1_authoring_status"]!="PRODUCTION_PLAN_READY":
+    if out["core1_authoring_status"] not in RENDERABLE_CORE1_STATES:
         fail("RENDERED_CANDIDATE_WITHOUT_PRODUCTION_CORE1")
     blocking=[x for x in out["upstream_blockers"] if x!="M-L:RENDERED_EXACT_TWO_PRODUCT_NOT_BOUND"]
     if blocking: fail("RENDERED_CANDIDATE_WITH_UPSTREAM_BLOCKER",blocking[0])
@@ -102,12 +118,39 @@ def bind_rendered_artifacts(binding, artifacts, fixture_class=None):
     return seal(out)
 
 
+def build_rendered_binding(out_dir,selected_run="A"):
+    """Render the real two-product package and bind it as an exact candidate.
+
+    This is the path that closes M-L's PUBLICATION_ENGINEERING gate with a real
+    artifact. It does not close, and cannot close, any human-review gate.
+    """
+    sys.path.insert(0,str(MATH/"Publication"/"engine"))
+    sys.path.insert(0,str(MATH/"Core1Authoring"/"engine"))
+    from realize_math_core_products import realize
+    from author_math_core1 import load_candidate_bundle
+
+    binding,internals=build_fixture_binding(selected_run,return_internals=True)
+    if internals["core1_plan"] is None:
+        fail("RENDERED_CANDIDATE_WITHOUT_PRODUCTION_CORE1")
+    _,assets=load_candidate_bundle(MATH/"InstructionalKnowledge"/"registry"/"math-pck-candidates.json")
+    primitives=load(MATH/"RepresentationSemantics"/"registry"/"math-teaching-primitive-registry.json")
+    result,_=realize(internals["core1_plan"],internals["core2"],internals["closure"],assets,primitives,out_dir)
+    if result["publication_engineering"]!="PASS":
+        fail("RENDERED_CANDIDATE_PUBLICATION_ENGINEERING_FAILED")
+    rendered=bind_rendered_artifacts(binding,result["artifacts"])
+    return rendered,result
+
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--selected-run",choices=["A","B"],default="A")
+    ap.add_argument("--render-to",help="render the real two-product package into this directory and bind it")
     ap.add_argument("--out",required=True)
     args=ap.parse_args()
-    result=build_fixture_binding(args.selected_run)
+    if args.render_to:
+        result,_=build_rendered_binding(args.render_to,args.selected_run)
+    else:
+        result=build_fixture_binding(args.selected_run)
     Path(args.out).write_text(json.dumps(result,indent=2,sort_keys=True,ensure_ascii=False)+"\n",encoding="utf-8")
 
 

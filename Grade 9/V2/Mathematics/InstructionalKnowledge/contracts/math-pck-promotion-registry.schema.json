@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "math-pck-promotion-registry.schema.json",
   "title": "Mathematics PCK Promotion Registry",
+  "description": "Subject-wide registry of Mathematics PCK assets that have been run through the generic promotion pipeline. Entries are expressed over capability_refs; topic instances are data carried by the bound asset, never separate schema.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -28,6 +29,10 @@
         "PRODUCTION",
         "TEST_ONLY"
       ]
+    },
+    "promotion_pipeline_ref": {
+      "type": "string",
+      "minLength": 3
     },
     "promotions": {
       "type": "array",
@@ -56,10 +61,163 @@
             "pattern": "^[0-9a-f]{64}$"
           },
           "promotion_status": {
+            "description": "PROMOTED requires real authorized expert review. PROVISIONAL_PROMOTED is authoring-legal only and can never become release-legal without expert review evidence.",
             "enum": [
               "PROMOTED",
+              "PROVISIONAL_PROMOTED",
               "TEST_PROMOTED"
             ]
+          },
+          "promotion_class": {
+            "enum": [
+              "HUMAN_REVIEWED_PRODUCTION",
+              "AI_ASSISTED_PROVISIONAL",
+              "TEST_ONLY"
+            ]
+          },
+          "lifecycle_state": {
+            "const": "PROMOTED_INSTRUCTIONAL_KNOWLEDGE"
+          },
+          "subject_scope": {
+            "type": "string",
+            "minLength": 3
+          },
+          "capability_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^MATH-"
+            }
+          },
+          "applicability_conditions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 12
+            }
+          },
+          "known_limitations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 8
+            }
+          },
+          "evidence_class": {
+            "enum": [
+              "REPOSITORY_AUTHORITY_PLUS_AI_ASSISTED_DRAFT",
+              "HUMAN_REVIEWED_SUBJECT_PCK"
+            ]
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidence_class",
+              "source_refs",
+              "authoring_origin"
+            ],
+            "properties": {
+              "evidence_class": {
+                "type": "string",
+                "minLength": 3
+              },
+              "source_refs": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 3
+                }
+              },
+              "authoring_origin": {
+                "type": "string",
+                "minLength": 3
+              }
+            }
+          },
+          "review_authority": {
+            "enum": [
+              "AI_ASSISTED_REFERENCE_REVIEW",
+              "AUTHORIZED_HUMAN_EXPERT_REVIEW"
+            ]
+          },
+          "review_pipeline": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "stage",
+                "record_id",
+                "review_authority",
+                "status",
+                "record_digest"
+              ],
+              "properties": {
+                "stage": {
+                  "enum": [
+                    "EVIDENCE_PROVENANCE_REVIEW",
+                    "PEDAGOGICAL_REVIEW",
+                    "SUBJECT_REVIEW",
+                    "SCOPE_REVIEW"
+                  ]
+                },
+                "record_id": {
+                  "type": "string",
+                  "minLength": 3
+                },
+                "review_authority": {
+                  "enum": [
+                    "AI_ASSISTED_REFERENCE_REVIEW",
+                    "REPOSITORY_SCOPE_AUTHORITY",
+                    "SUBJECT_EXPERT_PASS",
+                    "PEDAGOGY_EXPERT_PASS"
+                  ]
+                },
+                "status": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "PENDING"
+                  ]
+                },
+                "record_digest": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            }
+          },
+          "expert_review_state": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "SUBJECT_EXPERT_PASS",
+              "PEDAGOGY_EXPERT_PASS"
+            ],
+            "properties": {
+              "SUBJECT_EXPERT_PASS": {
+                "enum": [
+                  "PENDING",
+                  "PASS",
+                  "FAIL"
+                ]
+              },
+              "PEDAGOGY_EXPERT_PASS": {
+                "enum": [
+                  "PENDING",
+                  "PASS",
+                  "FAIL"
+                ]
+              }
+            }
           },
           "review_dimensions": {
             "type": "array",
@@ -82,15 +240,28 @@
             }
           },
           "review_source": {
-            "const": "HUMAN_REVIEW_INTAKE_RESULT"
+            "enum": [
+              "HUMAN_REVIEW_INTAKE_RESULT",
+              "AI_ASSISTED_REFERENCE_REVIEW"
+            ]
           },
           "review_registry_class": {
             "enum": [
               "REAL",
+              "AI_ASSISTED",
               "TEST_ONLY"
             ]
           },
+          "authoring_legal": {
+            "description": "May Core1 authoring bind this asset at all.",
+            "type": "boolean"
+          },
           "producer_legal": {
+            "description": "May this asset appear in a release-legal production product. Requires authorized human expert review.",
+            "type": "boolean"
+          },
+          "release_legal": {
+            "description": "May a mature-product claim rest on this asset. Requires authorized human expert review.",
             "type": "boolean"
           },
           "promoted_version": {

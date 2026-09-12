@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"engine"))
-from build_math_exact_candidate import build_fixture_binding, bind_rendered_artifacts, seal
+from build_math_exact_candidate import build_fixture_binding, build_rendered_binding, bind_rendered_artifacts, seal
 from evaluate_math_mature_gate import load, digest, evaluate, validate_candidate, validate_decision
 
 POLICY=load(ROOT/"registry"/"math-mature-quality-policy.json")
@@ -66,7 +66,9 @@ current=build_fixture_binding("A")
 validate_candidate(current)
 blocked=evaluate(current,POLICY,gate_mode="REAL_RELEASE")
 assert current["candidate_class"]=="SEMANTIC_COLD_START_EXACT_PACKAGE"
-assert current["core1_authoring_status"] in {"BLOCKED_PCK_CANDIDATE_COVERAGE","BLOCKED_PCK_PROMOTION"}
+assert current["core1_authoring_status"]=="PROVISIONAL_PLAN_READY"
+assert current["pck_expert_review_state"]=="PENDING"
+assert current["pck_release_legal"] is False
 assert current["artifact_set_digest"] is None
 assert blocked["quality_states"]["PUBLICATION_ENGINEERING"]=="BLOCKED"
 assert blocked["quality_states"]["SUBJECT_CORRECTNESS"]=="NOT_RUN"
@@ -139,6 +141,68 @@ expect("HUMAN_REVIEW_NOT_BOUND_TO_EXACT_ARTIFACT",lambda:evaluate(changed,POLICY
 # Deterministic exact semantic binding from the same M-K run.
 current2=build_fixture_binding("A")
 assert current==current2
+
+# --- real rendered two-product candidate (#319) ------------------------------
+# The renderer closes PUBLICATION_ENGINEERING with a real artifact. It closes
+# nothing else: every human gate stays NOT_RUN and the product class stays
+# NOT_ELIGIBLE. This is the state the repository is actually in.
+import shutil, tempfile  # noqa: E402
+
+work=Path(tempfile.mkdtemp(prefix="math-ml-rendered-"))
+try:
+    real_candidate,realization=build_rendered_binding(work,"A")
+    validate_candidate(real_candidate)
+    assert real_candidate["candidate_class"]=="RENDERED_TWO_PRODUCT_EXACT_CANDIDATE"
+    assert real_candidate["materialization_state"]=="RENDERED_EXACT"
+    assert real_candidate["core1_authoring_status"]=="PROVISIONAL_PLAN_READY"
+    assert real_candidate["pck_expert_review_state"]=="PENDING"
+    assert real_candidate["pck_release_legal"] is False
+    assert {a["artifact_role"] for a in real_candidate["artifacts"]}=={"CORE1_STUDY_GUIDE","CORE2_TRANSFER_BOOK"}
+    assert realization["release_legal"] is False
+
+    real_machine={
+      "evidence_id":"MATH-ML-MACHINE-RENDERED","candidate_digest":real_candidate["binding_digest"],
+      "artifact_set_digest":real_candidate["artifact_set_digest"],"machine_falsifiers":"PASS",
+      "publication_engineering":realization["publication_engineering"],"exact_artifact_custody":"PASS","failed_falsifiers":[],
+    }
+    rendered_decision=evaluate(real_candidate,POLICY,real_machine,None,[],None,gate_mode="REAL_RELEASE")
+    assert rendered_decision["quality_states"]["PUBLICATION_ENGINEERING"]=="PASS"
+    for gate in ("SUBJECT_CORRECTNESS","PEDAGOGICAL_DESIGN","ASSESSMENT_DESIGN","VISUAL_USABILITY"):
+        assert rendered_decision["quality_states"][gate]=="NOT_RUN",gate
+    assert rendered_decision["quality_states"]["MATURE_DESIGN_QUALITY"]=="BLOCKED"
+    assert rendered_decision["quality_states"]["REFERENCE_COMPARABILITY"]=="NOT_RUN"
+    assert rendered_decision["mature_product_class"]=="NOT_ELIGIBLE"
+    assert rendered_decision["release_evidence_eligible"] is False
+    assert "M-L:PCK_EXPERT_REVIEW_PENDING" in rendered_decision["blockers"]
+    assert "M-L:AI_PRE_REVIEW_NOT_RUN" in rendered_decision["blockers"]
+    assert "M-L:REAL_RUNTIME_CANDIDATE_REQUIRED" in rendered_decision["blockers"]
+
+    # PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL: a rendered candidate may not
+    # claim PCK release legality while expert review is PENDING.
+    lying=copy.deepcopy(real_candidate); lying["pck_release_legal"]=True; lying=seal(lying)
+    expect("PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL",lambda:validate_candidate(lying))
+
+    # PROVISIONAL_PCK_MARKED_MATURE: even with every other gate satisfied, a
+    # provisional-PCK candidate can never be classified mature.
+    mature_attempt=copy.deepcopy(real_candidate)
+    mature_attempt["fixture_class"]="REAL_RUNTIME"
+    mature_attempt["core1_authoring_status"]="PRODUCTION_PLAN_READY"
+    mature_attempt=seal(mature_attempt)
+    assert mature_attempt["pck_release_legal"] is False
+    full_reviews=[
+      dict(receipt(mature_attempt,d),review_mode="REAL_RELEASE",fixture_class="REAL",release_evidence_eligible=True)
+      for d in ["SUBJECT","PEDAGOGY","ASSESSMENT","VISUAL"]
+    ]
+    for r in full_reviews: r["receipt_digest"]=digest(r,"receipt_digest")
+    real_ref=dict(reference(mature_attempt),mode="REAL_RELEASE",fixture_class="REAL",release_evidence_eligible=True)
+    attempt=evaluate(
+        mature_attempt,POLICY,machine(mature_attempt),ai(mature_attempt),full_reviews,real_ref,gate_mode="REAL_RELEASE"
+    )
+    assert attempt["mature_product_class"]=="NOT_ELIGIBLE"
+    assert attempt["release_evidence_eligible"] is False
+    assert "M-L:PCK_EXPERT_REVIEW_PENDING" in attempt["blockers"]
+finally:
+    shutil.rmtree(work,ignore_errors=True)
 print("MATH M-L current semantic candidate remains correctly BLOCKED, not mature")
 print("MATH M-L exact candidate/hash custody PASS")
 print("MATH M-L machine vs human authority separation PASS")
@@ -146,3 +210,4 @@ print("MATH M-L subject/pedagogy/assessment/visual gate separation PASS")
 print("MATH M-L final-reference ordering firewall PASS")
 print("MATH M-L learning-effectiveness separation PASS")
 print("MATH M-L test-only positive state-machine proof PASS")
+print("MATH M-L real rendered two-product candidate: PUBLICATION_ENGINEERING PASS, all human gates NOT_RUN, class NOT_ELIGIBLE")

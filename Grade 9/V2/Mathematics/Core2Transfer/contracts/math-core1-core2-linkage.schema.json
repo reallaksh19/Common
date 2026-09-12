@@ -9,7 +9,7 @@
     "stable_id": {"type": "string", "pattern": "^(MATH-C1-PLANNED-[0-9a-f]{8}|MATH-C1L-[0-9a-f]{16})$"},
     "learner_title": {"type": "string", "minLength": 5},
     "capability_ref": {"type": "string", "pattern": "^MATH-"},
-    "linkage_state": {"enum": ["PLANNED_UNTIL_PCK_PROMOTED", "MATERIALIZED"]},
+    "linkage_state": {"enum": ["PLANNED_UNTIL_PCK_PROMOTED", "MATERIALIZED_PROVISIONAL", "MATERIALIZED"]},
     "materialized_lesson_id": {"type": ["string", "null"], "pattern": "^MATH-C1L-[0-9a-f]{16}$"},
     "source_question_reuse": {"const": false}
   }

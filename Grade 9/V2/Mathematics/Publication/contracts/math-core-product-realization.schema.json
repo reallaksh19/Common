@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core-product-realization.schema.json",
+  "title": "Mathematics Core Product Realization Result",
+  "description": "Result of rendering the exact two-product Mathematics learner package from M-chain JSON. Feeds the M-L exact-candidate binding.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "realization_id",
+    "schema_version",
+    "subject",
+    "status",
+    "upstream",
+    "artifacts",
+    "artifact_set_digest",
+    "publication_engineering",
+    "release_legal",
+    "human_review_states"
+  ],
+  "properties": {
+    "realization_id": {"type": "string", "pattern": "^MATH-CORE-REALIZATION-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "status": {"enum": ["READY", "BLOCKED"]},
+    "upstream": {"type": "object"},
+    "artifacts": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_role", "media_type", "artifact_sha256", "manifest_digest"],
+        "properties": {
+          "artifact_role": {"enum": ["CORE1_STUDY_GUIDE", "CORE2_TRANSFER_BOOK"]},
+          "media_type": {"const": "application/pdf"},
+          "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "artifact_set_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "publication_engineering": {"enum": ["PASS", "FAIL"]},
+    "release_legal": {"type": "boolean"},
+    "human_review_states": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["SUBJECT_CORRECTNESS", "PEDAGOGICAL_DESIGN", "ASSESSMENT_DESIGN", "VISUAL_USABILITY"],
+      "properties": {
+        "SUBJECT_CORRECTNESS": {"const": "PENDING"},
+        "PEDAGOGICAL_DESIGN": {"const": "PENDING"},
+        "ASSESSMENT_DESIGN": {"const": "PENDING"},
+        "VISUAL_USABILITY": {"const": "PENDING"}
+      }
+    }
+  }
+}

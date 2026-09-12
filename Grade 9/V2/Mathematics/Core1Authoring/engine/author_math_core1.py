@@ -7,6 +7,13 @@ from pathlib import Path
 
 FULL_TREATMENTS = {"ACTIVE_STUDY", "REPAIR_BEFORE", "REPAIR_IN_UNIT"}
 
+# Release classes. `PROVISIONAL_PENDING_EXPERT_REVIEW` means the plan is
+# authoring-legal (every full-teaching capability is bound to a PCK asset that
+# cleared the M-G promotion pipeline) but not release-legal, because at least
+# one bound asset carries only AI-assisted reference review and its
+# SUBJECT/PEDAGOGY expert review is still PENDING.
+RELEASE_CLASSES = ("PRODUCTION", "PROVISIONAL_PENDING_EXPERT_REVIEW", "TEST_ONLY")
+
 
 def load(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
@@ -60,6 +67,8 @@ def validated_promotions(candidate_registry, candidate_assets, promotion_registr
         raise ValueError("TEST_ONLY_PCK_REGISTRY_FORBIDDEN")
 
     by_capability = {}
+    provisional_asset_ids = set()
+    producer_legal_asset_ids = set()
     for rec in promotion_registry["promotions"]:
         verify_digest(rec, "promotion_digest", f"PCK_PROMOTION_DIGEST_MISMATCH:{rec['asset_id']}")
         if rec["asset_id"] not in candidates:
@@ -69,15 +78,39 @@ def validated_promotions(candidate_registry, candidate_assets, promotion_registr
             raise ValueError(f"PCK_DIGEST_MISMATCH:{rec['asset_id']}")
 
         if registry_class == "PRODUCTION":
-            good = (
-                rec["promotion_status"] == "PROMOTED"
-                and rec["review_source"] == "HUMAN_REVIEW_INTAKE_RESULT"
-                and rec["review_registry_class"] == "REAL"
-                and rec["producer_legal"] is True
-                and {"SUBJECT", "PEDAGOGY"}.issubset(set(rec["review_dimensions"]))
+            status = rec["promotion_status"]
+            shared = (
+                {"SUBJECT", "PEDAGOGY"}.issubset(set(rec["review_dimensions"]))
                 and len(rec["review_evidence_refs"]) >= 2
             )
-            if not good:
+            if status == "PROMOTED":
+                good = (
+                    shared
+                    and rec["review_source"] == "HUMAN_REVIEW_INTAKE_RESULT"
+                    and rec["review_registry_class"] == "REAL"
+                    and rec["producer_legal"] is True
+                    and rec.get("expert_review_state", {"SUBJECT_EXPERT_PASS": "PASS", "PEDAGOGY_EXPERT_PASS": "PASS"})
+                    == {"SUBJECT_EXPERT_PASS": "PASS", "PEDAGOGY_EXPERT_PASS": "PASS"}
+                )
+                if not good:
+                    raise ValueError(f"PCK_REVIEW_AUTHORITY_INVALID:{rec['asset_id']}")
+                producer_legal_asset_ids.add(rec["asset_id"])
+            elif status == "PROVISIONAL_PROMOTED":
+                if rec.get("producer_legal") or rec.get("release_legal"):
+                    raise ValueError(f"PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL:{rec['asset_id']}")
+                good = (
+                    shared
+                    and rec.get("promotion_class") == "AI_ASSISTED_PROVISIONAL"
+                    and rec["review_source"] == "AI_ASSISTED_REFERENCE_REVIEW"
+                    and rec["review_registry_class"] == "AI_ASSISTED"
+                    and rec.get("authoring_legal") is True
+                    and rec.get("lifecycle_state") == "PROMOTED_INSTRUCTIONAL_KNOWLEDGE"
+                    and len(rec.get("review_pipeline") or []) >= 4
+                )
+                if not good:
+                    raise ValueError(f"PCK_PROVISIONAL_PROMOTION_INVALID:{rec['asset_id']}")
+                provisional_asset_ids.add(rec["asset_id"])
+            else:
                 raise ValueError(f"PCK_REVIEW_AUTHORITY_INVALID:{rec['asset_id']}")
         else:
             good = (
@@ -93,7 +126,8 @@ def validated_promotions(candidate_registry, candidate_assets, promotion_registr
             by_capability.setdefault(capability, []).append(asset)
     for assets in by_capability.values():
         assets.sort(key=lambda x: x["asset_id"])
-    return candidates, by_capability
+    authority = {"provisional": provisional_asset_ids, "producer_legal": producer_legal_asset_ids}
+    return candidates, by_capability, authority
 
 
 def required_pck_for(plan):
@@ -170,7 +204,26 @@ def build_lesson(plan, study_model, assets, profile):
     }
 
 
+def assert_pck_authority_invariants(plan):
+    authority = plan.get("pck_authority")
+    if authority is None:
+        raise ValueError("PCK_AUTHORITY_BLOCK_MISSING")
+    provisional = authority["provisional_asset_refs"]
+    if plan["release_class"] == "PRODUCTION" and provisional:
+        raise ValueError("PRODUCTION_RELEASE_CLASS_WITH_PROVISIONAL_PCK:" + ",".join(provisional))
+    if provisional and authority["release_legal"]:
+        raise ValueError("PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL:" + ",".join(provisional))
+    if provisional and authority["expert_review_state"] != "PENDING":
+        raise ValueError("FABRICATED_EXPERT_REVIEW_AUTHORITY:" + ",".join(provisional))
+    if plan["release_class"] == "TEST_ONLY" and authority["release_legal"]:
+        raise ValueError("TEST_ONLY_PLAN_CLAIMED_RELEASE_LEGAL")
+    overlap = sorted(set(provisional) & set(authority["producer_legal_asset_refs"]))
+    if overlap:
+        raise ValueError("PCK_AUTHORITY_STATE_CONFLICT:" + ",".join(overlap))
+
+
 def assert_plan_invariants(plan, study_model, profile):
+    assert_pck_authority_invariants(plan)
     expected = [x["capability_ref"] for x in study_model["capability_plans"]]
     actual = [x["capability_ref"] for x in plan["lessons"]]
     if len(actual) != len(set(actual)):
@@ -210,10 +263,14 @@ def author(study_wrapper, candidate_registry, candidate_assets, promotion_regist
     if study_model.get("subject") != "MATHEMATICS":
         raise ValueError("NON_MATH_STUDY_MODEL")
 
-    candidates, promoted_by_capability = validated_promotions(candidate_registry, candidate_assets, promotion_registry, test_mode)
+    candidates, promoted_by_capability, pck_authority = validated_promotions(
+        candidate_registry, candidate_assets, promotion_registry, test_mode
+    )
     lessons = []
+    bound_asset_ids = set()
     for capability_plan in study_model["capability_plans"]:
         assets = choose_pck(capability_plan, candidates, promoted_by_capability)
+        bound_asset_ids.update(a["asset_id"] for a in assets)
         lessons.append(build_lesson(capability_plan, study_model, assets, profile))
 
     required = sorted(x["capability_ref"] for x in study_model["capability_plans"])
@@ -222,6 +279,15 @@ def author(study_wrapper, candidate_registry, candidate_assets, promotion_regist
     if omitted:
         raise ValueError("CORE1_SCOPE_GAP:" + ",".join(omitted))
 
+    bound_provisional = sorted(bound_asset_ids & pck_authority["provisional"])
+    bound_producer_legal = sorted(bound_asset_ids & pck_authority["producer_legal"])
+    if test_mode:
+        release_class = "TEST_ONLY"
+    elif bound_provisional:
+        release_class = "PROVISIONAL_PENDING_EXPERT_REVIEW"
+    else:
+        release_class = "PRODUCTION"
+
     input_payload = {
         "study_model_digest": study_model["study_model_digest"],
         "candidate_registry_digest": candidate_registry["registry_digest"],
@@ -229,12 +295,22 @@ def author(study_wrapper, candidate_registry, candidate_assets, promotion_regist
         "profile_digest": digest(profile),
         "scope_policy_digest": digest(scope_policy),
         "test_mode": bool(test_mode),
+        "release_class": release_class,
     }
     plan = {
         "core1_study_plan_id": "MATH-C1SP-" + digest(input_payload)[:16],
         "schema_version": "1.0.0",
         "subject": "MATHEMATICS",
-        "release_class": "TEST_ONLY" if test_mode else "PRODUCTION",
+        "release_class": release_class,
+        "pck_authority": {
+            "promotion_registry_ref": promotion_registry["registry_id"],
+            "promotion_registry_digest": promotion_registry["registry_digest"],
+            "bound_asset_refs": sorted(bound_asset_ids),
+            "provisional_asset_refs": bound_provisional,
+            "producer_legal_asset_refs": bound_producer_legal,
+            "expert_review_state": "PENDING" if bound_provisional else ("PASS" if bound_asset_ids else "NOT_REQUIRED"),
+            "release_legal": bool(bound_asset_ids) and not bound_provisional and not test_mode,
+        },
         "study_model_ref": study_model["study_model_id"],
         "study_model_digest": study_model["study_model_digest"],
         "pck_candidate_registry_ref": candidate_registry["registry_id"],
