@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "policy": "UPSTREAM_COPY_DO_NOT_EDIT",
+  "copies": [
+    {
+      "upstream_path": "Primary/V2/Mathematics/Architecture",
+      "upstream_sha": "333401731779991a5b5f7eb3aef00b6bc70b7a33",
+      "local_copy": "Grade 4/V2/Mathematics/CommonSnapshot/Architecture",
+      "owner": "PRIMARY_COMMON",
+      "copy_policy": "UPSTREAM_COPY_DO_NOT_EDIT",
+      "drift_check": true
+    },
+    {
+      "upstream_path": "Primary/V2/Mathematics/CoreSkills/registry",
+      "upstream_sha": "87d5ab869c745498eff8a973cc4077483aeb294d",
+      "local_copy": "Grade 4/V2/Mathematics/CommonSnapshot/CoreSkillsRegistry",
+      "owner": "PRIMARY_COMMON",
+      "copy_policy": "UPSTREAM_COPY_DO_NOT_EDIT",
+      "drift_check": true
+    },
+    {
+      "upstream_path": "Primary/V2/Mathematics/Representation/engine (source branch v2/primary-math-v2-core-skills-engine)",
+      "upstream_sha": "6242904bffb3888da562fa6e3df525c84c7d62ec",
+      "local_copy": "Grade 4/V2/Mathematics/CommonSnapshot/RepresentationRuntime",
+      "owner": "PRIMARY_COMMON",
+      "copy_policy": "UPSTREAM_COPY_DO_NOT_EDIT",
+      "drift_check": true
+    }
+  ]
+}

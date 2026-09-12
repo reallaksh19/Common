@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/Architecture/contracts/representation-plan.schema.json",
+  "title": "PrimaryMathRepresentationPlan",
+  "type": "object",
+  "required": ["schema_version", "plan_id", "skill_model_ref", "representations"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "plan_id": {"type": "string", "minLength": 1},
+    "skill_model_ref": {"type": "string", "minLength": 1},
+    "representations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["representation_id", "concept_ref", "role", "primitive_kind", "semantic_params", "validator_refs", "provenance"],
+        "properties": {
+          "representation_id": {"type": "string", "minLength": 1},
+          "concept_ref": {"type": "string", "minLength": 1},
+          "role": {"enum": ["CONCRETE", "PICTORIAL", "STRUCTURAL", "SYMBOLIC", "STRATEGIC", "PROCEDURAL", "ABSTRACT_REASONING"]},
+          "primitive_kind": {"type": "string", "minLength": 1},
+          "semantic_params": {"type": "object"},
+          "validator_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "fade_modes": {"type": "array", "items": {"enum": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"]}, "uniqueItems": true},
+          "provenance": {"enum": ["SOURCE_ASSET_EXACT", "SOURCE_ASSET_CROP", "SOURCE_ASSET_ANNOTATED", "RECONSTRUCTED_VISUAL", "ENGINE_AUTHORED_VISUAL", "AUTHORED_NOTEBOOK_EXAMPLE", "STRUCTURED_REPLAY", "FAITHFUL_TRANSCRIPTION", "ORIGINAL_SOURCE_IMAGE"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

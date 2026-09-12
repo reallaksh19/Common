@@ -1,0 +1,48 @@
+{
+  "registry_version": "1.0.0",
+  "translation_routes": [
+    {
+      "domain": "MULTIPLICATION",
+      "route": [
+        "EQUAL_GROUPS",
+        "ARRAY",
+        "AREA_PARTITION",
+        "PARTIAL_PRODUCTS",
+        "VERTICAL_ALGORITHM",
+        "ESTIMATE_CHECK"
+      ],
+      "description": "Multiplication bridge connecting discrete countable groups to vertical standard algorithm via area partition."
+    },
+    {
+      "domain": "DIVISION",
+      "route": [
+        "CONCRETE_SHARING_OR_GROUPING",
+        "AREA_REVERSE_ARRAY",
+        "PARTIAL_QUOTIENTS",
+        "LONG_DIVISION_VERTICAL",
+        "INVERSE_CHECK"
+      ],
+      "description": "Division bridge connecting physical partition to formal long division with explicit place value preservation."
+    },
+    {
+      "domain": "FRACTIONS",
+      "route": [
+        "EQUAL_PARTITION_STRIP",
+        "AREA_MODEL_FRACTION",
+        "CALIBRATED_NUMBER_LINE",
+        "SYMBOLIC_FRACTION_OPERATION"
+      ],
+      "description": "Fraction bridge connecting physical sharing/strips to number line measure and symbolic computation."
+    },
+    {
+      "domain": "DECIMALS",
+      "route": [
+        "HUNDRED_GRID_SHADING",
+        "PLACE_VALUE_CHART",
+        "DECIMAL_NUMBER_LINE",
+        "SYMBOLIC_DECIMAL"
+      ],
+      "description": "Decimal bridge connecting 10x10 hundredths grid to calibrated metric number lines."
+    }
+  ]
+}
