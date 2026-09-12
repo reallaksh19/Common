@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/English/CoreSkills/contracts/learner-evidence.schema.json",
+  "title": "PrimaryEnglishLearnerEvidence",
+  "type": "object",
+  "required": ["question_ref", "response_mode", "conceptual_support", "access_support", "provenance"],
+  "properties": {
+    "question_ref": {"type": "string", "minLength": 1},
+    "observed_response": {},
+    "response_mode": {"enum": ["WRITTEN", "ORAL", "SELECTED", "DRAWN", "UNDERLINED", "SORTED", "MIXED"]},
+    "conceptual_support": {"enum": ["H0", "H1", "H2", "H3", "H4", "H5"]},
+    "access_support": {
+      "type": "array",
+      "items": {"enum": ["NONE", "READ_ALOUD", "SIMPLER_WORDING", "ORAL_RESPONSE", "LARGER_PRINT", "SLOWER_PACING", "OTHER"]},
+      "uniqueItems": true
+    },
+    "error_signature": {"type": ["string", "null"]},
+    "evidence_parts": {"type": "object"},
+    "self_corrected": {"type": "boolean"},
+    "teacher_annotation": {"type": ["string", "null"]},
+    "provenance": {"enum": ["ORIGINAL_SOURCE_IMAGE", "FAITHFUL_TRANSCRIPTION", "SUPERVISED_OBSERVATION", "STRUCTURED_REPLAY", "TEACHER_RECORDED"]}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/English/CoreSkills/contracts/question-evidence.schema.json",
+  "title": "PrimaryEnglishQuestionEvidence",
+  "type": "object",
+  "required": [
+    "question_ref",
+    "domain",
+    "scope_basis",
+    "capability_refs",
+    "task_family_refs",
+    "response_demand",
+    "representation_requirements",
+    "learning_support_blueprint"
+  ],
+  "properties": {
+    "question_ref": {"type": "string", "minLength": 1},
+    "source_ref": {"type": ["string", "null"]},
+    "section_ref": {"type": ["string", "null"]},
+    "raw_text": {"type": ["string", "null"]},
+    "domain": {"enum": ["GRAMMAR", "WRITING", "READING", "POETRY", "VOCABULARY", "LANGUAGE", "MIXED"]},
+    "scope_basis": {
+      "enum": [
+        "CURRICULUM_CONFIRMED",
+        "QUESTION_SET_OBSERVED",
+        "SCHOOL_CLASSWORK_OBSERVED",
+        "COMMON_G4_5_CAPABILITY",
+        "CURRICULUM_OVERLAY",
+        "EXTENSION",
+        "STRETCH",
+        "MAPPING_PENDING",
+        "SOURCE_NOT_PROVIDED"
+      ]
+    },
+    "authority_ref": {"type": ["string", "null"]},
+    "source_model_ref": {"type": ["string", "null"]},
+    "source_boundary_required": {"type": "boolean"},
+    "capability_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+    "prerequisite_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "task_family_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+    "response_demand": {
+      "type": "object",
+      "required": ["response_structure_ref", "response_modes"],
+      "properties": {
+        "response_structure_ref": {"type": "string", "minLength": 1},
+        "response_modes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"enum": ["WRITTEN", "ORAL", "SELECTED", "DRAWN", "UNDERLINED", "SORTED"]},
+          "uniqueItems": true
+        },
+        "teacher_or_source_judgement_required": {"type": "boolean"},
+        "evidence_parts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "rubric_criteria": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      },
+      "additionalProperties": true
+    },
+    "representation_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["representation_id", "primitive_kind", "semantic_params", "provenance"],
+        "properties": {
+          "representation_id": {"type": "string", "minLength": 1},
+          "primitive_kind": {"type": "string", "minLength": 1},
+          "semantic_params": {"type": "object"},
+          "validator_refs": {"type": "array", "items": {"type": "string"}},
+          "fade_modes": {"type": "array", "items": {"enum": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"]}, "uniqueItems": true},
+          "provenance": {"enum": ["SOURCE_ASSET_EXACT", "SOURCE_ASSET_CROP", "SOURCE_ASSET_ANNOTATED", "RECONSTRUCTED_VISUAL", "ENGINE_AUTHORED_VISUAL", "FAITHFUL_TRANSCRIPTION", "ORIGINAL_SOURCE_IMAGE"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "learning_support_blueprint": {
+      "type": "object",
+      "required": ["H1", "H2", "H3", "fresh_retry", "coverage_obligations"],
+      "properties": {
+        "H1": {"type": "object"},
+        "H2": {"type": "object"},
+        "H3": {"type": "object"},
+        "fresh_retry": {"type": "object"},
+        "misconception_watches": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "coverage_obligations": {
+          "type": "object",
+          "required": ["teach", "model", "practice", "hints", "verify", "answer_or_rubric"],
+          "properties": {
+            "teach": {"const": true},
+            "model": {"const": true},
+            "practice": {"const": true},
+            "hints": {"const": true},
+            "verify": {"const": true},
+            "answer_or_rubric": {"const": true}
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "ambiguity": {"type": "array", "items": {"type": "string"}},
+    "source_issues": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

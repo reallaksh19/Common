@@ -1,0 +1,92 @@
+{
+  "source_id": "ENG-G4-WS09",
+  "source_type": "WORKSHEET_SCAN",
+  "grade": 4,
+  "title": "English Worksheet - 9",
+  "topic_printed": "Order of Adjectives and Poetry Comprehension",
+  "pii_redacted": true,
+  "provenance": "ORIGINAL_SOURCE_IMAGE_WITH_FAITHFUL_TRANSCRIPTION",
+  "source_issues": [
+    "DIRECT_CHILD_AND_SCHOOL_IDENTIFIERS_REDACTED_FROM_BENCHMARK",
+    "SECTION_III_CONTAINS_TRADITIONAL_BUT_THE_PRINTED_CLASSIFICATION_TABLE_DOES_NOT_SUPPLY_A_CLEAN_CATEGORY_FOR_IT"
+  ],
+  "sections": [
+    {
+      "section_ref": "I",
+      "instruction": "Identify and place each adjective in the correct category.",
+      "printed_categories": ["opinion", "size", "age", "shape", "colour", "origin", "material"],
+      "printed_words": [
+        "Japanese", "leather", "huge", "tasty", "pink", "fascinating", "plastic", "new", "round", "Spanish", "tiny", "sad", "wooden", "wide", "small", "grey", "wool", "Swedish", "metal", "square", "fantastic", "yellow", "old"
+      ]
+    },
+    {
+      "section_ref": "II",
+      "instruction": "Imagine you have discovered a mysterious object. Describe it using suitable adjectives and explain what it might be used for.",
+      "response_frame": [
+        "I found a ___, ___, ___ object.",
+        "It was made of ___ and came from ___.",
+        "I think it was used for ___."
+      ],
+      "drawing_box": true
+    },
+    {
+      "section_ref": "III",
+      "instruction": "The adjectives are in the wrong order. Rewrite the paragraph correctly.",
+      "printed_text": "I visited a stone ancient huge Indian temple. It had a wooden beautiful large door and colourful small traditional paintings.",
+      "source_boundary_words": ["traditional"]
+    },
+    {
+      "section_ref": "IV",
+      "instruction": "Imagine you are a travel blogger exploring a place you have never visited before. Choose one of the following destinations and write a short, interesting description using at least six adjectives. Underline the adjectives and review your description using the checklist.",
+      "destinations": ["Taj Mahal", "Marina Beach", "Malaysia", "A place of your choice"],
+      "printed_checklist": [
+        "At least six adjectives",
+        "An interesting opening sentence",
+        "Details about what I can see",
+        "Adjectives in the correct order"
+      ]
+    },
+    {
+      "section_ref": "V",
+      "title": "The Dodo's Story",
+      "text_type": "POEM",
+      "poem_lines": [
+        "Long ago, upon an island green,",
+        "Lived a bird unlike any ever seen.",
+        "The Dodo was gentle, large, and round,",
+        "With little wings and feet on the ground.",
+        "It could not fly across the sky,",
+        "Nor spread its wings and soar up high.",
+        "It ate fallen fruits beneath the trees,",
+        "And wandered freely in the gentle breeze.",
+        "Then sailors came across the sea,",
+        "And hunted the Dodo fearlessly.",
+        "Dogs, cats, and guns arrived one day,",
+        "While forests were cleared and taken away.",
+        "The last Dodo vanished in sixteen eighty-one,",
+        "And never again would it greet the morning sun.",
+        "Its story teaches us to care for every living thing,",
+        "And protect the precious life that nature brings."
+      ],
+      "author_printed": "Anonymous",
+      "questions": [
+        {
+          "question_ref": "ENG-G4-WS09-V-Q1",
+          "prompt": "The poem says, ‘forests were cleared and taken away.’ Why would this have been harmful to the Dodo?"
+        },
+        {
+          "question_ref": "ENG-G4-WS09-V-Q2",
+          "prompt": "Do you think the disappearance of the Dodo was only the result of hunting? What other human actions contributed to its extinction?"
+        },
+        {
+          "question_ref": "ENG-G4-WS09-V-Q3",
+          "prompt": "Can you think of a living species today that may face threats because of human activities? What could people do to protect it?"
+        },
+        {
+          "question_ref": "ENG-G4-WS09-V-Q4",
+          "prompt": "If you could change one event in the Dodo's story, what would you change and why?"
+        }
+      ]
+    }
+  ]
+}

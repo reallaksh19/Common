@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "representations": [
+    {"id": "ADJECTIVE_FAMILY_CARDS", "kind": "CATEGORY_CARDS"},
+    {"id": "CATEGORY_SORT_TABLE", "kind": "SORT_TABLE"},
+    {"id": "ADJECTIVE_ORDER_TRAIN", "kind": "ORDER_SEQUENCE"},
+    {"id": "CONTRAST_PAIR", "kind": "SIDE_BY_SIDE_CONTRAST"},
+    {"id": "NOUN_PHRASE_BUILDER", "kind": "PHRASE_FRAME"},
+    {"id": "MYSTERY_OBJECT_PLANNER", "kind": "WRITING_PLANNER"},
+    {"id": "TRAVEL_BLOGGER_PLANNER", "kind": "WRITING_PLANNER"},
+    {"id": "WRITING_CHECKLIST", "kind": "RUBRIC_CHECKLIST"},
+    {"id": "STANZA_MEANING_MAP", "kind": "TEXT_STRUCTURE_MAP"},
+    {"id": "ANSWER_CLUE_CONNECTION", "kind": "REASONING_FRAME"},
+    {"id": "CAUSE_EFFECT_CHAIN", "kind": "CAUSE_EFFECT_MAP"},
+    {"id": "MULTI_CLUE_TABLE", "kind": "EVIDENCE_TABLE"},
+    {"id": "TEXT_VS_MY_THINKING", "kind": "EVIDENCE_REASONING_SPLIT"},
+    {"id": "CHOICE_REASON_FRAME", "kind": "JUSTIFICATION_FRAME"},
+    {"id": "TRANSFER_THREAT_ACTION_TABLE", "kind": "TRANSFER_TABLE"}
+  ]
+}

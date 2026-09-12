@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "capabilities": [
+    {"id": "ENG-ADJ-IDENTIFY", "domain": "GRAMMAR", "title": "Identify adjectives and nouns"},
+    {"id": "ENG-ADJ-CLASSIFY-SOURCE-MODEL", "domain": "GRAMMAR", "title": "Classify adjectives using the supplied source model"},
+    {"id": "ENG-ADJ-ORDER", "domain": "GRAMMAR", "title": "Apply source-bound adjective order"},
+    {"id": "ENG-ADJ-SOURCE-BOUNDARY", "domain": "GRAMMAR", "title": "Recognise when a word does not cleanly fit the source taxonomy"},
+    {"id": "ENG-DESC-NOUN-PHRASE", "domain": "WRITING", "title": "Build a clear descriptive noun phrase"},
+    {"id": "ENG-DESC-OPENING", "domain": "WRITING", "title": "Write an engaging opening sentence"},
+    {"id": "ENG-DESC-VISUAL-DETAIL", "domain": "WRITING", "title": "Describe visible details precisely"},
+    {"id": "ENG-DESC-MATERIAL-ORIGIN", "domain": "WRITING", "title": "Describe material and origin accurately"},
+    {"id": "ENG-DESC-PURPOSE-INFERENCE", "domain": "WRITING", "title": "Suggest a plausible purpose with a reason"},
+    {"id": "ENG-DESC-REVISION", "domain": "WRITING", "title": "Review writing against explicit success criteria"},
+    {"id": "ENG-POEM-READ-FOR-MEANING", "domain": "POETRY", "title": "Read a poem for overall and stanza meaning"},
+    {"id": "ENG-TEXT-EVIDENCE", "domain": "READING", "title": "Use relevant textual evidence"},
+    {"id": "ENG-CAUSE-EFFECT", "domain": "READING", "title": "Explain cause and effect from a text"},
+    {"id": "ENG-INFERENCE", "domain": "READING", "title": "Make an inference from textual clues"},
+    {"id": "ENG-MULTI-CLUE-SYNTHESIS", "domain": "READING", "title": "Combine multiple clues into one explanation"},
+    {"id": "ENG-TRANSFER", "domain": "READING", "title": "Transfer a text idea to a new context"},
+    {"id": "ENG-JUSTIFICATION", "domain": "READING", "title": "Support a choice or opinion with a reason"}
+  ]
+}
