@@ -1,0 +1,80 @@
+{
+  "profile_id": "MATH-CORE1A-TEXTBOOK-QUALITY-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Convert MathCore1StudyPlan obligations into a learner-facing textbook manuscript and PDF. The learner artifact must teach the mathematics; it must not expose authoring, review, registry or pipeline language.",
+  "input_contract": {
+    "required": [
+      "MathCore1StudyPlan"
+    ],
+    "repository_authority": [
+      "Math PCK candidate registry",
+      "Math problem-family registry"
+    ],
+    "forbidden": [
+      "original assessment-question reuse as Core1 worked/practice instance"
+    ]
+  },
+  "full_teaching_requirements": {
+    "worked_examples_min": 2,
+    "practice_roles": [
+      "WORKED",
+      "GUIDED",
+      "FADED",
+      "INDEPENDENT",
+      "TRANSFER"
+    ],
+    "requires": [
+      "opening",
+      "concept_explanation",
+      "why_it_works",
+      "common_mistake",
+      "repair",
+      "verification"
+    ],
+    "hint_policy": "GUIDED exposes at most two hints, FADED at most one hint, INDEPENDENT and TRANSFER expose no hint in the main learner flow."
+  },
+  "learner_language": {
+    "forbid_internal_ids": true,
+    "forbid_authoring_meta": true,
+    "forbid_release_review_meta": true,
+    "preferred_sequence": [
+      "observation_or_question",
+      "plain_language_explanation",
+      "formal_method",
+      "worked_examples",
+      "misconception_repair",
+      "guided_practice",
+      "independent_practice",
+      "challenge",
+      "verification"
+    ],
+    "forbidden_phrases": [
+      "author a new instance",
+      "source reuse is forbidden",
+      "candidate learner product",
+      "publication engineering",
+      "reconstruction route",
+      "fading dimensions",
+      "promotion registry",
+      "release class"
+    ]
+  },
+  "publication": {
+    "body_font_min_pt": 9.5,
+    "content_driven_pagination": true,
+    "book_like_not_slide_like": true,
+    "answers_after_attempt": true,
+    "page_numbers": true
+  },
+  "falsifiers": [
+    "CORE1_AUTHORED_INSTANCE_NOT_MATERIALIZED",
+    "CORE1A_FAMILY_GENERATOR_MISSING",
+    "CORE1A_INTERNAL_JARGON_LEAK",
+    "CORE1A_INTERNAL_IDENTIFIER_LEAK",
+    "CORE1A_WORKED_EXAMPLE_DEPTH_MISSING",
+    "CORE1A_CONCEPT_EXPLANATION_UNDERREALIZED",
+    "CORE1_MISCONCEPTION_REPAIR_NOT_MATERIALIZED",
+    "CORE1A_QUALITY_GATE_FAILED"
+  ]
+}
