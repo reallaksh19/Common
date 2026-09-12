@@ -1,7 +1,7 @@
 """Primary Math V2 learning-design -> representation contract builder.
 
 This module deliberately does not render pages and does not infer pedagogy from raw
-question text.  It consumes an explicit, upstream-authored learning-support spec,
+question text. It consumes an explicit, upstream-authored learning-support spec,
 validates Primary #182/#164 support semantics, and emits a publisher-neutral
 LearningRepresentationPlan.
 """
@@ -147,11 +147,52 @@ def validate_long_division_surface(surface: Mapping[str, Any]) -> None:
         _require(0 <= rem < divisor, "PRIMARY_VISUAL_ALGORITHM_INVALID", f"step {index}: partial remainder out of range")
 
 
+def validate_division_table_surface(surface: Mapping[str, Any]) -> None:
+    params = surface.get("semantic_params") or {}
+    _require_keys(params, ["columns", "rows", "cells"], "DIVISION_TABLE_WORKSPACE_INVALID", "division table")
+    columns = [int(x) for x in params["columns"]]
+    rows = [int(x) for x in params["rows"]]
+    cells = list(params["cells"])
+    _require(all(row > 0 for row in rows), "DIVISION_TABLE_WORKSPACE_INVALID", "division-table divisors must be positive")
+    expected_pairs = {(column, row) for column in columns for row in rows}
+    actual_pairs = {(int(cell["column"]), int(cell["row"])) for cell in cells}
+    _require(actual_pairs == expected_pairs, "DIVISION_TABLE_COVERAGE_INVALID", "division table must contain exactly one semantic cell for each row/column pair")
+    for cell in cells:
+        column = int(cell["column"])
+        row = int(cell["row"])
+        quotient = int(cell["quotient"])
+        _require(column == row * quotient, "DIVISION_TABLE_ARITHMETIC_INVALID", f"{column}/{row} != {quotient}")
+
+
+def validate_same_rate_task(task: Mapping[str, Any]) -> None:
+    if str(task.get("task_kind")) != "SAME_RATE_SCALE":
+        return
+    primary = task.get("primary_visual") or {}
+    _require(primary.get("primitive_kind") in {"RATE_SCALE_MODEL", "SAME_RATE_SCALE"}, "SAME_RATE_VISUAL_REQUIRED", "same-rate task requires a rate/scale visual")
+    params = primary.get("semantic_params") or {}
+    _require_keys(params, ["base_amount", "target_amount", "base_count", "target_count", "scale_factor"], "SAME_RATE_SCALE_INVALID", "same-rate visual")
+    factor = float(params["scale_factor"])
+    _require(factor > 0, "SAME_RATE_SCALE_INVALID", "scale factor must be positive")
+    _require(float(params["base_amount"]) * factor == float(params["target_amount"]), "SAME_RATE_SCALE_INVALID", "money/quantity scale factor mismatch")
+    _require(float(params["base_count"]) * factor == float(params["target_count"]), "SAME_RATE_SCALE_INVALID", "object-count scale factor mismatch")
+
+
+def validate_division_table_task(task: Mapping[str, Any], surface: Mapping[str, Any] | None) -> None:
+    if str(task.get("task_kind")) != "DIVISION_TABLE":
+        return
+    primary = task.get("primary_visual") or {}
+    _require(primary.get("primitive_kind") == "DIVISION_TABLE_MODEL", "DIVISION_TABLE_VISUAL_REQUIRED", "division-table task requires DIVISION_TABLE_MODEL")
+    _require(surface is not None and surface.get("kind") == "DIVISION_TABLE_WORKSPACE", "DIVISION_TABLE_WITHOUT_WORKSPACE", "division-table task requires a table workspace")
+    validate_division_table_surface(surface)
+
+
 def validate_work_surface(surface: Mapping[str, Any] | None, task_kind: str) -> None:
     if task_kind == "MULTI_DIGIT_DIVISION":
         _require(surface is not None and surface.get("kind") == "LONG_DIVISION_WORK", "PROCEDURAL_DIVISION_WITHOUT_LONG_DIVISION_WORK_SURFACE", "multi-digit division requires LONG_DIVISION_WORK")
     if surface and surface.get("kind") == "LONG_DIVISION_WORK":
         validate_long_division_surface(surface)
+    if surface and surface.get("kind") == "DIVISION_TABLE_WORKSPACE":
+        validate_division_table_surface(surface)
     if task_kind.startswith("ANGLE_"):
         _require(surface is not None and surface.get("kind") == "ANGLE_DRAWING_WORKSPACE", "ANGLE_TASK_WITHOUT_RENDERED_RAYS", "angle task requires an angle drawing workspace")
 
@@ -174,6 +215,8 @@ def build_learning_representation(task: Mapping[str, Any]) -> Dict[str, Any]:
 
     work_surface = task.get("work_surface")
     validate_work_surface(work_surface, str(task["task_kind"]))
+    validate_same_rate_task(task)
+    validate_division_table_task(task, work_surface)
 
     if str(task["task_kind"]).startswith("ANGLE_"):
         primitive_kinds = {task["primary_visual"].get("primitive_kind")} | {x.get("primitive_kind") for x in states.values()}
