@@ -1,6 +1,6 @@
-# Motion in a Plane - Revised Core 1 and Core 2
+# Revised Core 1 and Core 2 - topic-by-topic Physics rebuild
 
-This folder is the current handoff target for the revised Physics learner-product format. The work is now proceeding **topic by topic**, completing Core 1 and Core 2 together before moving to the next chapter.
+This folder is the current handoff target for the revised Physics learner-product format. The work proceeds **topic by topic**, completing Core 1 and Core 2 together before moving to the next chapter.
 
 ## Frozen learner format
 
@@ -44,6 +44,7 @@ Step completeness is required: no algebraic, geometric, sign, unit-bearing, stat
 - proper mathematical symbols, subscripts, superscripts and Greek letters
 - content-height cards/ladder rows rather than large fixed empty rectangles
 - figures constrained to their semantic pane and large enough to teach
+- exact problem-state figures on Core 2; do not squeeze a generic/full figure into a compact solution pane
 - exactly two writing lines on Core 2 attempts
 - object/bbox QA plus full PDF re-render after the final edit
 - no learner-facing production/audit jargon
@@ -58,15 +59,26 @@ See `vectors/`.
 - Revised Core 2: 30 pages, 14 protected transfer attempts, compact answer key and 14 full worked solutions.
 - Core 2 uses the paired open-question/reveal hint mechanism.
 - Automated final scan: zero out-of-bounds text blocks and zero severe overlap flags.
-- Every final PDF page was re-rendered; representative concept, practice, attempt, key and solution pages were visually reviewed.
 
-### 2. Motion in 1D - NEXT
+### 2. Motion in 1D - COMPLETE REVISED PAIR
 
-The next topic should be rebuilt as a Core 1/Core 2 pair using the same frozen contracts. In particular, generic phase diagrams must be replaced by concrete event/state representations, delayed-start problems need dual-track timelines, graph reasoning must be explicit, and the Core 2 hints must use the paired open-question/reveal contract.
+See `motion-1d/`.
+
+- Revised Core 1: 25 pages, 11 competency families.
+- Revised Core 2: 30 pages, 14 protected transfer attempts, compact answer key and 14 full worked solutions.
+- Core 1 explicitly teaches equation reconstruction, sign/reversal logic, phase boundaries, vertical-motion states and graph operations before transfer.
+- Delayed-start/catch-up uses a concrete dual-track timeline rather than generic `phase 1 / boundary / phase 2` authoring labels.
+- Core 2 uses self-contained open-question/reveal hints and problem-specific compact representations.
+- Final automated scan: zero out-of-bounds text blocks and zero severe overlap flags in both PDFs.
+- All 55 pages were re-rendered after the final layout/figure fixes and representative pages were visually reviewed.
+
+### 3. Newton's Laws of Motion - NEXT
+
+Rebuild Core 1 and Core 2 together. Core 1 should teach the canonical reasoning chain `choose body -> identify interactions -> draw FBD -> choose axes -> resolve forces -> ΣF=ma -> interpret/check`. Core 2 hints must ask open-ended questions about body choice, force ownership, FBD/axes and the first force equation before revealing each rung.
 
 ## Existing Motion in 2D case study
 
-The Motion in 2D work remains the principal case study that established the revised Core 2 hint/solution architecture. Its previous PDFs are regression evidence; the topic-by-topic programme now applies the same standard consistently across the remaining completed Physics topics.
+The Motion in 2D work remains the principal case study that established the revised Core 2 hint/solution architecture. Its previous PDFs are regression evidence; the topic-by-topic programme applies the same standard consistently across the remaining completed Physics topics.
 
 ## Answer requirement
 
@@ -74,4 +86,4 @@ Every learner question must have an explicit answer artifact. Quick checks, veri
 
 ## Handoff rule
 
-Every completed topic must leave a README/build contract, QA audit, reproducible generator when available, and the final learner artifacts or a self-contained handoff bundle. A later agent should be able to continue from the topic folder without reconstructing the design history from chat.
+Every completed topic must leave a README/build contract, QA audit, reproducible generator when practical, and the final learner artifacts or a self-contained handoff bundle. A later agent should be able to continue from the topic folder without reconstructing the design history from chat.
