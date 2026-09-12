@@ -1,44 +1,34 @@
 # Motion in a Plane - Revised Core 1 and Core 2
 
-This folder is the current handoff target for the Motion in 2D / Motion in a Plane case study.
+This folder is the current handoff target for the revised Physics learner-product format. The work is now proceeding **topic by topic**, completing Core 1 and Core 2 together before moving to the next chapter.
 
 ## Frozen learner format
 
 ### Revised Core 1
 
-Each concept page follows this learner grammar:
+Each important competency must build the learner's reasoning machinery before transfer:
 
-`physical picture -> What is happening? -> Key idea -> How it works -> Worked example -> Watch out -> Quick check + answer`
+`physical picture -> What is happening? -> Key idea -> How it works -> Worked example -> Guided try -> Faded try -> Watch out / anti-trigger -> Quick check + answer`
 
-The chapter contains 22 concept families and an explicit Q1-Q59 review map. The concept surface covers the supplied theory plus the demands exposed by the complete numbered challenge bank.
+A competency is not considered taught merely because its formula is listed. Core 1 must establish recognition, representation, mechanism, relation construction/selection, validity, execution, interpretation and checking. Spatial competencies require concept-native diagrams.
 
 ### Revised Core 2 attempt pages
 
-`question -> physics picture -> Hint 1 -> Hint 2 -> Hint 3 -> exactly two writing lines`
+`question -> problem representation -> H1 -> H2 -> H3 -> exactly two writing lines`
 
-The hint system is now a **paired prompt + reveal contract**. Every hint must remain understandable even when revealed by itself.
+Hints use a **paired prompt + reveal contract**. Each rung contains an open-ended learner question followed by a directly related reveal:
 
-For each hint rung:
+1. **H1 - What is the key physics?** Ask about the decisive event/state/invariant/direction/frame. Reveal only the corresponding physical clarification.
+2. **H2 - How would you represent it?** Ask for the axes/components/diagram/graph/frame/geometry. Reveal the matching representation and governing relation/figure.
+3. **H3 - What would you write first?** Ask for the first executable mathematical constraint. Reveal that starting equation/construction only; do not solve it.
 
-1. **PROMPT** - an open-ended learner question that requires a cognitive action.
-2. **REVEAL** - a directly matched concept clarification, representation, equation, state diagram, or small figure that answers only that prompt.
-3. The reveal must not jump ahead to a later rung or resolve the final requested result.
-
-The three rungs are:
-
-- **Hint 1 - What is the key physics?** Ask about the decisive event, invariant, state, frame, direction, or physical condition. Reveal the physical interpretation/state only.
-- **Hint 2 - How would you represent it?** Ask for the diagram, components, axes, frame, graph, geometry, or mathematical representation. Reveal that representation and its governing relation/figure only.
-- **Hint 3 - What would you write first?** Ask for the first executable equation/constraint. Reveal that starting equation or construction only; do not solve it.
-
-Robustness rule: `hint_prompt_i` and `hint_reveal_i` are authored as one semantic pair and validated together. A reveal that does not answer its own prompt is a publication failure. Later-rung information appearing in an earlier reveal is also a failure.
-
-Attempt workspace is exactly two writing lines. Hint blocks are content-height; there are no large blank hint cards.
+Every hint must be self-contained when revealed. Prompt/reveal mismatch, later-rung leakage and final-answer leakage are publication failures.
 
 ### Revised Core 2 worked pages
 
-`question recap -> picture / known state -> reasoning ladder -> Answer -> Quick check -> Check it another way -> Watch out -> Review this idea`
+`question recap -> exact representation / known state -> reasoning ladder -> Answer -> Quick check -> Check it another way -> Watch out -> Review this idea`
 
-The full reasoning ladder is frozen as:
+The full reasoning ladder is:
 
 1. UNDERSTAND
 2. REPRESENT
@@ -46,32 +36,42 @@ The full reasoning ladder is frozen as:
 4. CALCULATE
 5. INTERPRET
 
-Every rung must contain the actual physics of the item. The solution is **step-complete**: no algebraic, geometric, state-transition, substitution, or unit-bearing step needed by a Grade 9 learner may be silently skipped. Compactness comes from tighter layout and typography, not from deleting reasoning steps.
+Step completeness is required: no algebraic, geometric, sign, unit-bearing, state-transition or direction step needed by the learner may be silently skipped. Compactness comes from typography and dynamic layout, not from deleting reasoning.
 
-### Solution layout rules
+## Layout and typography gates
 
-- Smaller title/header footprint than earlier prototypes.
-- Larger body mathematics and improved line spacing.
-- Row height is content-driven; no fixed empty ladder rows.
-- Representation figure and known-state panel must agree with the question.
-- `CALCULATE` may use multiple lines and intermediate equations when the problem needs them.
-- Answer block follows immediately after the ladder.
-- Quick check and `Check it another way` must test the actual result; they are not substitutes for the answer.
+- learner-readable font sizes; no microtype to rescue overflow
+- proper mathematical symbols, subscripts, superscripts and Greek letters
+- content-height cards/ladder rows rather than large fixed empty rectangles
+- figures constrained to their semantic pane and large enough to teach
+- exactly two writing lines on Core 2 attempts
+- object/bbox QA plus full PDF re-render after the final edit
+- no learner-facing production/audit jargon
+
+## Topic-by-topic status
+
+### 1. Vectors - COMPLETE REVISED PAIR
+
+See `vectors/`.
+
+- Revised Core 1: 25 pages, 11 competency families.
+- Revised Core 2: 30 pages, 14 protected transfer attempts, compact answer key and 14 full worked solutions.
+- Core 2 uses the paired open-question/reveal hint mechanism.
+- Automated final scan: zero out-of-bounds text blocks and zero severe overlap flags.
+- Every final PDF page was re-rendered; representative concept, practice, attempt, key and solution pages were visually reviewed.
+
+### 2. Motion in 1D - NEXT
+
+The next topic should be rebuilt as a Core 1/Core 2 pair using the same frozen contracts. In particular, generic phase diagrams must be replaced by concrete event/state representations, delayed-start problems need dual-track timelines, graph reasoning must be explicit, and the Core 2 hints must use the paired open-question/reveal contract.
+
+## Existing Motion in 2D case study
+
+The Motion in 2D work remains the principal case study that established the revised Core 2 hint/solution architecture. Its previous PDFs are regression evidence; the topic-by-topic programme now applies the same standard consistently across the remaining completed Physics topics.
 
 ## Answer requirement
 
-All 59 numbered questions must have an explicit answer mapping. Quick checks and verification do not substitute for an answer.
+Every learner question must have an explicit answer artifact. Quick checks, verification and rubrics supplement the answer; they do not substitute for it.
 
-## Source boundary
+## Handoff rule
 
-The rebuild uses the supplied `Motion in 2d(2).pdf` / `Motion in 2d.pdf`. The source scan is not redistributed in this handoff. Q49 and Q51 remain source-ambiguous because the supplied scan clips part of those items; missing wording must not be invented.
-
-## Current implementation target
-
-The next Core 2 revision must implement the paired prompt/reveal hint model across all 59 attempts and a step-complete solution ladder across all 59 solutions. The earlier Revised Core 2 PDF remains a regression fixture, not the final target.
-
-Expected revised output filename:
-
-- `physics-motion-2d-revised-core2-v2.pdf`
-
-The generator and QA audit must travel with the PDF so a future agent can reproduce and validate the build.
+Every completed topic must leave a README/build contract, QA audit, reproducible generator when available, and the final learner artifacts or a self-contained handoff bundle. A later agent should be able to continue from the topic folder without reconstructing the design history from chat.
