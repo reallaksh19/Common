@@ -55,6 +55,10 @@
         "additionalProperties": true
       }
     },
+    "learning_support_blueprint": {
+      "description": "Explicit LearningDesign blueprint consumed by the #336→#339 handoff. It is pedagogical input, not a renderer hint.",
+      "$ref": "../../LearningDesign/contracts/authoring-support-blueprint.schema.json"
+    },
     "ambiguity": {"type": "array", "items": {"type": "string"}},
     "source_refs": {"type": "array", "items": {"type": "string"}}
   },
