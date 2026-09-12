@@ -21,6 +21,8 @@ jobs:
         run: pip install reportlab jsonschema pypdf
       - name: Run Core1A falsifiers
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a.py'
+      - name: Run Core1A learner UI policy checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_core1a_ui_policy.py'
       - name: Validate publication policy JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-publication-policy.json' > /dev/null
       - name: Validate publication schema JSON
