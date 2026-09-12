@@ -1,0 +1,165 @@
+{
+  "version": "1.0.0",
+  "base_fixture": "fixtures/positive/semantic_cases.json",
+  "mutations": [
+    {
+      "mutation_id": "NEG-SCOPE-UNIVERSAL-PROMOTION",
+      "case_id": "PMV2-DIV-ZERO-7843-13",
+      "path": ["scope", "universal_grade_claim"],
+      "value": true,
+      "expected_falsifier": "QUESTION_OBSERVED_SKILL_PROMOTED_TO_UNIVERSAL_GRADE_SCOPE"
+    },
+    {
+      "mutation_id": "NEG-MUL-PARTIAL-PRODUCT",
+      "case_id": "PMV2-MUL-BRIDGE-23X6",
+      "path": ["math_evidence", "partial_products"],
+      "value": [120, 12],
+      "expected_falsifier": "MULTIPLICATION_PARTIAL_PRODUCTS_DO_NOT_SUM_TO_PRODUCT"
+    },
+    {
+      "mutation_id": "NEG-DIV-INTERNAL-ZERO-LOST",
+      "case_id": "PMV2-DIV-ZERO-7843-13",
+      "path": ["math_evidence", "zero_place_preserved"],
+      "value": false,
+      "expected_falsifier": "DIVISION_INTERNAL_ZERO_PLACE_LOST"
+    },
+    {
+      "mutation_id": "NEG-DIV-SHARE-GROUP-COLLAPSE",
+      "case_id": "PMV2-DIV-SHARE-GROUP-24-6",
+      "path": ["math_evidence", "grouping", "unknown_role"],
+      "value": "GROUP_SIZE",
+      "expected_falsifier": "SHARING_AND_GROUPING_QUANTITY_ROLES_COLLAPSED"
+    },
+    {
+      "mutation_id": "NEG-DIAG-NO-FOCAL-FEATURE",
+      "case_id": "PMV2-DIV-DIAGNOSTIC-ZERO-CONTRAST",
+      "path": ["diagnosis_evidence", "focal_feature"],
+      "value": null,
+      "expected_falsifier": "CONTRAST_SET_WITHOUT_FOCAL_FEATURE"
+    },
+    {
+      "mutation_id": "NEG-DIAG-UNBOUNDED-HYPOTHESES",
+      "case_id": "PMV2-DIV-DIAGNOSTIC-ZERO-CONTRAST",
+      "path": ["diagnosis_evidence", "competing_hypotheses"],
+      "value": [
+        {"hypothesis_id": "H1", "durable_trait": false},
+        {"hypothesis_id": "H2", "durable_trait": false},
+        {"hypothesis_id": "H3", "durable_trait": false},
+        {"hypothesis_id": "H4", "durable_trait": false}
+      ],
+      "expected_falsifier": "UNBOUNDED_COMPETING_HYPOTHESES"
+    },
+    {
+      "mutation_id": "NEG-DIAG-HIGH-UNRELATED-LOAD",
+      "case_id": "PMV2-DIV-DIAGNOSTIC-ZERO-CONTRAST",
+      "path": ["diagnosis_evidence", "probe", "controlled_load", "language"],
+      "value": "HIGH",
+      "expected_falsifier": "DIAGNOSTIC_PROBE_INCREASES_UNRELATED_LOAD"
+    },
+    {
+      "mutation_id": "NEG-REMAINDER-NO-CONTEXT-RULE",
+      "case_id": "PMV2-DIV-REMAINDER-CONTEXT",
+      "path": ["math_evidence", "context_rule_explicit"],
+      "value": false,
+      "expected_falsifier": "REMAINDER_CONTEXT_ANSWER_FORM_INVALID"
+    },
+    {
+      "mutation_id": "NEG-DOZEN-UNIT-STEP-DROPPED",
+      "case_id": "PMV2-UNIT-DOZEN-MONEY",
+      "path": ["math_evidence", "converted_quantity"],
+      "value": 23,
+      "expected_falsifier": "UNIT_CHAIN_STEP_DROPPED"
+    },
+    {
+      "mutation_id": "NEG-FRACTION-UNEQUAL-PARTITIONS",
+      "case_id": "PMV2-FRAC-EQUIV-1-2",
+      "path": ["math_evidence", "equal_partitions"],
+      "value": false,
+      "expected_falsifier": "FRACTION_PARTITIONS_NOT_EQUAL"
+    },
+    {
+      "mutation_id": "NEG-FRACTION-ADD-WRONG-RESULT",
+      "case_id": "PMV2-FRAC-ADD-1-2-1-4",
+      "path": ["math_evidence", "result"],
+      "value": [2, 4],
+      "expected_falsifier": "FRACTION_ADDITION_INVALID"
+    },
+    {
+      "mutation_id": "NEG-PLACE-VALUE-TENS-LOST",
+      "case_id": "PMV2-PLACEVALUE-5043",
+      "path": ["math_evidence", "digits", "TENS"],
+      "value": 0,
+      "expected_falsifier": "PLACE_VALUE_POSITION_MISMATCH"
+    },
+    {
+      "mutation_id": "NEG-DECIMAL-GRID-COUNT",
+      "case_id": "PMV2-DECIMAL-0-37",
+      "path": ["math_evidence", "shaded_hundredths"],
+      "value": 38,
+      "expected_falsifier": "DECIMAL_HUNDRED_GRID_COUNT_MISMATCH"
+    },
+    {
+      "mutation_id": "NEG-PERIMETER-AS-COVERING",
+      "case_id": "PMV2-PERIMETER-AREA-RECT-6X4",
+      "path": ["math_evidence", "perimeter_semantics"],
+      "value": "COVERING",
+      "expected_falsifier": "PERIMETER_AND_AREA_CONFLATED"
+    },
+    {
+      "mutation_id": "NEG-DATA-SCALE-RENDER",
+      "case_id": "PMV2-DATA-BAR-SCALE-5",
+      "path": ["math_evidence", "rendered_values", "B"],
+      "value": 20,
+      "expected_falsifier": "CHART_SCALE_DATA_MISMATCH"
+    },
+    {
+      "mutation_id": "NEG-WORK-CORRECT-SUBSTEP-ERASED",
+      "case_id": "PMV2-WORK-PROVENANCE-MIXED-SUCCESS",
+      "path": ["work_evidence", "steps", 0, "status"],
+      "value": "INCORRECT",
+      "expected_falsifier": "INCORRECT_FINAL_ANSWER_ERASES_CORRECT_SUBSTEPS"
+    },
+    {
+      "mutation_id": "NEG-WORK-TEACHER-MERGED",
+      "case_id": "PMV2-WORK-PROVENANCE-MIXED-SUCCESS",
+      "path": ["work_evidence", "teacher_annotations", 0, "actor"],
+      "value": "CHILD",
+      "expected_falsifier": "TEACHER_CORRECTION_RENDERED_AS_CHILD_ORIGINAL"
+    },
+    {
+      "mutation_id": "NEG-WORK-AMBIGUITY-SILENTLY-RESOLVED",
+      "case_id": "PMV2-WORK-PROVENANCE-MIXED-SUCCESS",
+      "path": ["work_evidence", "steps", 1, "status"],
+      "value": "CORRECT",
+      "expected_falsifier": "AMBIGUOUS_HANDWRITING_SILENTLY_RESOLVED"
+    },
+    {
+      "mutation_id": "NEG-HINT-NO-FRESH-RETRY",
+      "case_id": "PMV2-HINT-FADE-FRESH-RETRY",
+      "path": ["hint_evidence", "fresh_retry_item_id"],
+      "value": "SUP-01",
+      "expected_falsifier": "H3_WITHOUT_FRESH_INDEPENDENT_RETRY"
+    },
+    {
+      "mutation_id": "NEG-SUPPORTED-AS-INDEPENDENT",
+      "case_id": "PMV2-HINT-FADE-FRESH-RETRY",
+      "path": ["hint_evidence", "supported_success_is_independent"],
+      "value": true,
+      "expected_falsifier": "SUPPORTED_SUCCESS_COUNTED_AS_INDEPENDENT_USE"
+    },
+    {
+      "mutation_id": "NEG-NO-ROUTE-CHANGE",
+      "case_id": "PMV2-ROUTE-CHANGE-AFTER-REPEAT-FAILURE",
+      "path": ["runtime_evidence", "route_changed"],
+      "value": false,
+      "expected_falsifier": "SAME_ROUTE_REPEATED_AFTER_TWO_FAILURES"
+    },
+    {
+      "mutation_id": "NEG-CONCEPTUAL-ACCESS-CONFLATION",
+      "case_id": "PMV2-ROUTE-CHANGE-AFTER-REPEAT-FAILURE",
+      "path": ["runtime_evidence", "access_adjustment"],
+      "value": "H3_REPRESENT",
+      "expected_falsifier": "CONCEPTUAL_SUPPORT_CONFLATED_WITH_ACCESS_ADJUSTMENT"
+    }
+  ]
+}
