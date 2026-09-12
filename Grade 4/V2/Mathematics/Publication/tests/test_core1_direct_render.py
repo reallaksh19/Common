@@ -2,16 +2,17 @@ from pathlib import Path
 
 import pytest
 
-import Primary.V2.Mathematics.Publication.engine.core1_components as core1_components
-from Primary.V2.Mathematics.Publication.engine.core1_components import (
+import Grade4.V2.Mathematics.Publication.engine.core1_components as core1_components
+from Grade4.V2.Mathematics.Publication.engine.core1_components import (
     Core1ComponentError,
     PrimaryVisualComponent,
     WorkSurfaceComponent,
 )
-from Primary.V2.Mathematics.Publication.engine.core1_direct_composer import (
+from Grade4.V2.Mathematics.Publication.engine.core1_direct_composer import (
     render_core1_from_authoring_handoff,
 )
-from Primary.V2.Mathematics.Representation.engine.base import BoundingBox, MockVectorBackend
+from Grade4.V2.Mathematics.Publication.engine.layout_measure import paragraph_height
+from Grade4.V2.Mathematics.Representation.engine.base import BoundingBox, MockVectorBackend
 
 
 def _state(state_id, kind, params):
@@ -64,6 +65,8 @@ def _division_table_plan(module_id="C1-DIV-TABLE"):
         "task_ref": module_id,
         "learner_profile_ref": "PRIMARY_SUPPORT_G4_5",
         "representation_class": "STRUCTURAL",
+        "learner_prompt": "Complete the table. Use top number divided by side number.",
+        "solution_guard": {"policy": "FORBID_DURING_HINTS_AND_THINKING_PATH", "solution_tokens": [], "allowed_support_solution_tokens": []},
         "primary_visual": primary,
         "all_visual_states": [primary, h1, h2, h3, p1, p2, p3],
         "hint_visuals": {"H1": h1, "H2": h2, "H3": h3},
@@ -153,6 +156,7 @@ def test_core1_renders_directly_from_learning_representation_plan(tmp_path: Path
     assert "WS-DIV-TABLE" in semantic_ids
     assert custody["core1_handoff"]["planned_module_count"] == 1
     assert custody["core1_handoff"]["publisher_invention_allowed"] is False
+    assert custody["core1_handoff"]["legacy_sections_used"] is False
 
 
 def test_division_table_workspace_does_not_publish_answer_cells(monkeypatch):
@@ -164,7 +168,7 @@ def test_division_table_workspace_does_not_publish_answer_cells(monkeypatch):
 
     monkeypatch.setattr(core1_components, "render_primitive", fake_render)
     surface = _division_table_plan()["work_surface"]
-    WorkSurfaceComponent.render(MockVectorBackend(), BoundingBox(20, 20, 500, 180), surface)
+    WorkSurfaceComponent.render(MockVectorBackend(), BoundingBox(20, 20, 500, WorkSurfaceComponent.measure(surface, 500)), surface)
 
     assert captured["kind"] == "DIVISION_TABLE_MODEL"
     assert captured["params"]["columns"] == [720, 480]
@@ -172,8 +176,8 @@ def test_division_table_workspace_does_not_publish_answer_cells(monkeypatch):
     assert "cells" not in captured["params"]
 
 
-def test_long_division_surface_uses_canonical_semantic_steps():
-    surface = {
+def _long_division_surface():
+    return {
         "schema_version": "1.0.0",
         "surface_id": "WS-DIV-7048-24",
         "task_ref": "C1-DIV-7048-24",
@@ -194,14 +198,26 @@ def test_long_division_surface_uses_canonical_semantic_steps():
         "validator_refs": ["DIVISION_IDENTITY_AND_STEPS", "REMAINDER_RANGE"],
         "provenance": "AUTHORED_NOTEBOOK_EXAMPLE",
     }
+
+
+def test_long_division_surface_uses_canonical_semantics_but_hides_solution():
+    surface = _long_division_surface()
     backend = MockVectorBackend()
-    WorkSurfaceComponent.render(backend, BoundingBox(20, 20, 520, 255), surface)
+    height = WorkSurfaceComponent.measure(surface, 520)
+    WorkSurfaceComponent.render(backend, BoundingBox(20, 20, 520, height), surface)
+
+    labels = [str(op.get("text")) for op in backend.operations if op.get("op") == "text"]
+    assert "7048" not in labels  # dividend is rendered as aligned digits, not a leaked solution string
+    assert "24" in labels
+    assert "293" not in labels
+    assert "16" not in labels
+    assert all("293" not in label and "remainder = 16" not in label for label in labels)
 
     broken = dict(surface)
     broken["semantic_params"] = dict(surface["semantic_params"])
     broken["semantic_params"]["remainder"] = 17
     with pytest.raises(Core1ComponentError) as exc:
-        WorkSurfaceComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, 255), broken)
+        WorkSurfaceComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, height), broken)
     assert exc.value.code == "PRIMARY_VISUAL_ALGORITHM_INVALID"
 
 
@@ -211,7 +227,8 @@ def test_angle_workspace_is_typed_and_unsupported_surface_fails_closed():
         "semantic_params": {"slots": 3},
         "validator_refs": ["ANGLE_GEOMETRY"],
     }
-    WorkSurfaceComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, 175), angle)
+    height = WorkSurfaceComponent.measure(angle, 520)
+    WorkSurfaceComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, height), angle)
 
     unsupported = {
         "kind": "DECIMAL_ALIGNMENT_WORK",
@@ -223,12 +240,24 @@ def test_angle_workspace_is_typed_and_unsupported_surface_fails_closed():
     assert exc.value.code == "WORK_SURFACE_KIND_NOT_REALIZED"
 
 
+def test_intrinsic_measurement_grows_with_content():
+    short = _long_division_surface()
+    long = _long_division_surface()
+    long["semantic_params"] = dict(long["semantic_params"])
+    long["semantic_params"]["steps"] = list(long["semantic_params"]["steps"]) + [
+        {"partial_dividend": 20, "quotient_digit": 0, "product": 0, "subtraction_remainder": 20, "bring_down_digit": 0}
+    ]
+    assert WorkSurfaceComponent.measure(long, 520) > WorkSurfaceComponent.measure(short, 520)
+    assert paragraph_height("one line", 500) < paragraph_height("word " * 200, 500)
+
+
 def test_unsupported_primary_visual_fails_closed():
     visual = {
         "primitive_kind": "UNREALIZED_VISUAL",
         "semantic_params": {"value": 1},
         "validator_refs": ["TEST_VALIDATOR"],
     }
+    height = PrimaryVisualComponent.measure(visual, 520)
     with pytest.raises(Core1ComponentError) as exc:
-        PrimaryVisualComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, 190), visual)
+        PrimaryVisualComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, height), visual)
     assert exc.value.code == "CORE1_PRIMARY_VISUAL_NOT_REALIZED"
