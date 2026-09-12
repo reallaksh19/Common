@@ -1,0 +1,83 @@
+{
+  "registry_version": "1.0.0",
+  "problem_families": [
+    {
+      "family_id": "PF-MUL-MULTI-DIGIT",
+      "capability_id": "PM-NUM-MUL-01",
+      "title": "Multi-digit Multiplication via Area Model & Partial Products",
+      "canonical_examples": ["23 x 6", "45 x 12", "134 x 8"]
+    },
+    {
+      "family_id": "PF-DIV-SHARING-GROUPING",
+      "capability_id": "PM-NUM-DIV-01",
+      "title": "Division Meaning: Equal Sharing (Partitive) vs Grouping (Quotitive)",
+      "canonical_examples": ["24 / 6", "48 / 8"]
+    },
+    {
+      "family_id": "PF-DIV-INTERNAL-ZERO",
+      "capability_id": "PM-NUM-DIV-01",
+      "title": "Long Division with Internal Quotient Zero Place Preservation",
+      "canonical_examples": ["366 / 12", "7843 / 13", "3496 / 23 (contrast)"]
+    },
+    {
+      "family_id": "PF-DIV-REMAINDER-CONTEXT",
+      "capability_id": "PM-NUM-DIV-01",
+      "title": "Contextual Remainder Decisions (Round up, drop, fraction, remainder target)",
+      "canonical_examples": ["125 students / 40 per bus", "50 eggs / 12 per carton"]
+    },
+    {
+      "family_id": "PF-FRAC-EQUIV-STRIP",
+      "capability_id": "PM-FRAC-EQ-01",
+      "title": "Fraction Equivalence on Visual Strips & Number Lines",
+      "canonical_examples": ["1/2 = 2/4 = 4/8", "2/3 = 4/6"]
+    },
+    {
+      "family_id": "PF-FRAC-COMP-STRATEGY",
+      "capability_id": "PM-FRAC-COMP-01",
+      "title": "Fraction Comparison via Common Denominators or Benchmarks",
+      "canonical_examples": ["3/4 vs 2/3", "3/5 vs 5/8"]
+    },
+    {
+      "family_id": "PF-DEC-HUNDRED-GRID",
+      "capability_id": "PM-DEC-HUND-01",
+      "title": "Decimal Hundredths Visual Grid & Metric Number Line",
+      "canonical_examples": ["0.45", "0.08", "1.25"]
+    },
+    {
+      "family_id": "PF-MEAS-UNIT-CHAIN",
+      "capability_id": "PM-MEAS-CONV-01",
+      "title": "Multi-step Unit Chain Conversion & Cost Analysis",
+      "canonical_examples": ["23 dozen eggs at Rs 6 per egg"]
+    },
+    {
+      "family_id": "PF-GEOM-PERIM-AREA",
+      "capability_id": "PM-GEOM-PERIM-AREA-01",
+      "title": "Rectilinear Figure Perimeter and Area Contrast",
+      "canonical_examples": ["5cm by 3cm rectangle"]
+    },
+    {
+      "family_id": "PF-GEOM-VOLUME-LAYERS",
+      "capability_id": "PM-GEOM-VOL-01",
+      "title": "Volume of Rectangular Prism by Unit Cube Layers",
+      "canonical_examples": ["4 x 3 x 2 prism"]
+    },
+    {
+      "family_id": "PF-GEOM-ANGLE-MEASURE",
+      "capability_id": "PM-GEOM-ANG-01",
+      "title": "Angle Measurement and Geometric Classification",
+      "canonical_examples": ["120 degree obtuse angle", "90 degree right angle"]
+    },
+    {
+      "family_id": "PF-DATA-SCALED-BAR",
+      "capability_id": "PM-DATA-CHART-01",
+      "title": "Scaled Bar Graph with Explicit Scale Unit",
+      "canonical_examples": ["Fruit counts with scale 1 unit = 5 items"]
+    },
+    {
+      "family_id": "PF-NOTE-WORK-REPLAY",
+      "capability_id": "PM-NOTE-WORK-01",
+      "title": "Student Notebook Work Replay with Multiples Support and Provenance",
+      "canonical_examples": ["7843 / 13 student workout with multiples table of 13"]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "valid": {
+    "primary_input": {
+      "schema_version": "1.0.0",
+      "input_id": "EXTRACT-MUL-23X6",
+      "question_set": {
+        "source_ref": "fixture://semantic-extraction",
+        "questions": [
+          {
+            "question_ref": "Q-MUL-23X6",
+            "text": "Calculate 23 × 6 and explain your method."
+          }
+        ]
+      },
+      "student_workout": null,
+      "topic_hints": null
+    },
+    "extraction": {
+      "schema_version": "1.0.0",
+      "extraction_id": "EXT-MUL-23X6-001",
+      "extractor": {
+        "kind": "MODEL_ASSISTED",
+        "name": "primary-math-semantic-extractor-fixture",
+        "version": "1.0"
+      },
+      "questions": [
+        {
+          "question_ref": "Q-MUL-23X6",
+          "source_ref": "fixture://semantic-extraction#Q-MUL-23X6",
+          "source_text": "Calculate 23 × 6 and explain your method.",
+          "claims": {
+            "concept_key": "multiplication_bridge",
+            "concept_title": "Multiplication bridge",
+            "scope_basis": "QUESTION_SET_OBSERVED",
+            "universal_grade_claim": false,
+            "confidence": 0.98,
+            "capability_refs": [
+              "MULT_EQUAL_GROUPS",
+              "MULT_ARRAY",
+              "MULT_DISTRIBUTIVE",
+              "MULT_AREA_MODEL",
+              "MULT_PARTIAL_PRODUCTS",
+              "MULT_WRITTEN_ALGORITHM",
+              "MULT_ESTIMATE_CHECK"
+            ],
+            "problem_family_refs": ["PF_EQUAL_GROUPS", "PF_ARRAY_AREA", "PF_ESTIMATE_VERIFY"],
+            "translation_refs": [
+              "RT_MULT_GROUPS_TO_ARRAY",
+              "RT_MULT_ARRAY_TO_AREA",
+              "RT_MULT_AREA_TO_PARTIAL_PRODUCTS",
+              "RT_MULT_PARTIAL_TO_WRITTEN"
+            ],
+            "representation_requirements": [
+              {
+                "representation_id": "REP-MUL-EQUAL-GROUPS",
+                "role": "PICTORIAL",
+                "primitive_kind": "EQUAL_GROUPS",
+                "semantic_params": {"group_count": 6, "items_per_group": 23},
+                "validator_refs": ["EQUAL_GROUPS"],
+                "fade_modes": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"],
+                "provenance": "ENGINE_AUTHORED_VISUAL"
+              },
+              {
+                "representation_id": "REP-MUL-AREA",
+                "role": "STRUCTURAL",
+                "primitive_kind": "AREA_DISTRIBUTIVE",
+                "semantic_params": {"a": 23, "b": 6, "split": [20, 3], "partial_products": [120, 18], "product": 138},
+                "validator_refs": ["MULTIPLICATION_PARTIAL_PRODUCTS"],
+                "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                "provenance": "ENGINE_AUTHORED_VISUAL"
+              },
+              {
+                "representation_id": "REP-MUL-WRITTEN",
+                "role": "PROCEDURAL",
+                "primitive_kind": "VERTICAL_MULTIPLICATION",
+                "semantic_params": {"multiplicand": 23, "multiplier": 6, "product": 138},
+                "validator_refs": ["WRITTEN_ALGORITHM_ARITHMETIC"],
+                "fade_modes": ["FULL", "PARTIAL", "NONE"],
+                "provenance": "AUTHORED_NOTEBOOK_EXAMPLE"
+              }
+            ],
+            "invariant_refs": ["MULT_PARTIALS_SUM_TO_PRODUCT"],
+            "transfer_dimension_refs": ["CONTEXT", "REPRESENTATION", "UNKNOWN_POSITION"],
+            "ambiguity": []
+          }
+        }
+      ]
+    }
+  }
+}

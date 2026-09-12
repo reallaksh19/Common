@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0.0",
+  "issue": 340,
+  "canonical_root": "Grade 4/V2/Mathematics",
+  "source_heads": {
+    "learning_representation": "d15dcfa1d2c3ad1f1b8b7fe527a936e783d986d6",
+    "publisher": "701ba7efd6524321620c90574002f4fc68e56c1f"
+  },
+  "moves": [
+    {
+      "source_path": "Primary/V2/Mathematics/CoreSkills/{contracts,engine,fixtures,validation,grade4 overlay}",
+      "target_path": "Grade 4/V2/Mathematics/CoreSkills",
+      "ownership_class": "GRADE4_OWNED",
+      "action": "MOVE",
+      "source_pr_or_issue": "#336/#339/#327",
+      "migration_status": "MOVED_WITH_COMPATIBILITY_LINKS"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/LearningDesign",
+      "target_path": "Grade 4/V2/Mathematics/LearningDesign",
+      "ownership_class": "GRADE4_OWNED",
+      "action": "MOVE",
+      "source_pr_or_issue": "#338/#339",
+      "migration_status": "MOVED_WITH_COMPATIBILITY_LINK"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/Representation contracts + #327 representation implementation",
+      "target_path": "Grade 4/V2/Mathematics/Representation",
+      "ownership_class": "MIXED_GRADE4_AND_PRIMARY_COMMON",
+      "action": "MOVE_GRADE4_COPY_COMMON",
+      "source_pr_or_issue": "#324/#327/#338/#339",
+      "migration_status": "CANONICAL_GRADE4_COPY_CREATED_COMMON_SNAPSHOT_RETAINED"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/Publication (PR #327)",
+      "target_path": "Grade 4/V2/Mathematics/Publication",
+      "ownership_class": "GRADE4_OWNED",
+      "action": "MOVE",
+      "source_pr_or_issue": "#324/#327",
+      "migration_status": "MOVED_WITH_COMPATIBILITY_LINK"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/BenchmarkAcceptance (producer copy)",
+      "target_path": "Grade 4/V2/Mathematics/Acceptance/ProducerLegacy",
+      "ownership_class": "GRADE4_OWNED_LEGACY_PRODUCER",
+      "action": "MOVE",
+      "source_pr_or_issue": "#327/#333",
+      "migration_status": "MOVED_DEAUTHORIZED_AS_ORACLE"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/Golden",
+      "target_path": "Grade 4/V2/Mathematics/Benchmarks/Golden",
+      "ownership_class": "GRADE4_OWNED",
+      "action": "MOVE",
+      "source_pr_or_issue": "#327",
+      "migration_status": "MOVED"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/Validation",
+      "target_path": "Grade 4/V2/Mathematics/Acceptance/Validation",
+      "ownership_class": "GRADE4_OWNED",
+      "action": "MOVE",
+      "source_pr_or_issue": "#327",
+      "migration_status": "MOVED"
+    }
+  ],
+  "copies": [
+    {
+      "source_path": "Primary/V2/Mathematics/Architecture",
+      "target_path": "Grade 4/V2/Mathematics/CommonSnapshot/Architecture",
+      "ownership_class": "PRIMARY_COMMON",
+      "action": "COPY_COMMON",
+      "upstream_sha": "333401731779991a5b5f7eb3aef00b6bc70b7a33"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/CoreSkills/registry",
+      "target_path": "Grade 4/V2/Mathematics/CommonSnapshot/CoreSkillsRegistry",
+      "ownership_class": "PRIMARY_COMMON",
+      "action": "COPY_COMMON",
+      "upstream_sha": "87d5ab869c745498eff8a973cc4077483aeb294d"
+    },
+    {
+      "source_path": "Primary/V2/Mathematics/Representation/engine@#327",
+      "target_path": "Grade 4/V2/Mathematics/CommonSnapshot/RepresentationRuntime",
+      "ownership_class": "PRIMARY_COMMON",
+      "action": "COPY_COMMON",
+      "upstream_sha": "6242904bffb3888da562fa6e3df525c84c7d62ec"
+    },
+    {
+      "source_path": "Grade4MathSchema.md",
+      "target_path": "Grade 4/V2/Mathematics/Authority/Grade4MathSchema.md",
+      "ownership_class": "COPY_AUTHORITY",
+      "action": "COPY_AUTHORITY",
+      "upstream_sha": "a0fd7b827cee3225fbd4e2961c29f86526b2826f"
+    },
+    {
+      "source_path": "Grade4MathDivisionSchema.md",
+      "target_path": "Grade 4/V2/Mathematics/Authority/Grade4MathDivisionSchema.md",
+      "ownership_class": "COPY_AUTHORITY",
+      "action": "COPY_AUTHORITY",
+      "upstream_sha": "86cf504291da31562abadf952d50ab7083e49bab"
+    },
+    {
+      "source_path": "Grade4PublishingSchema.md",
+      "target_path": "Grade 4/V2/Mathematics/Authority/Grade4PublishingSchema.md",
+      "ownership_class": "COPY_AUTHORITY",
+      "action": "COPY_AUTHORITY",
+      "upstream_sha": "903d5e1d4fc47a9a1a180f11c3b2c5aef80bcd13"
+    }
+  ],
+  "invariants": {
+    "common_files_moved": false,
+    "publisher_invention_allowed": false,
+    "producer_benchmark_is_acceptance_oracle": false,
+    "canonical_grade4_namespace": true
+  }
+}

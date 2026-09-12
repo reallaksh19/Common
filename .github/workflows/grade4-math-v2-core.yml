@@ -1,0 +1,85 @@
+name: Grade 4 Math V2 core
+
+on:
+  push:
+    paths:
+      - 'Grade 4/V2/Mathematics/**'
+      - 'Primary/V2/Mathematics/**'
+      - '.github/workflows/grade4-math-v2-core.yml'
+  pull_request:
+    paths:
+      - 'Grade 4/V2/Mathematics/**'
+      - 'Primary/V2/Mathematics/**'
+      - '.github/workflows/grade4-math-v2-core.yml'
+
+jobs:
+  grade4-math-v2-core:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest reportlab jsonschema pypdfium2 pillow
+      - name: Validate Grade 4 authoring
+        run: python 'Grade 4/V2/Mathematics/CoreSkills/validation/validate_authoring.py'
+      - name: Validate Grade 4 semantic extraction
+        run: python 'Grade 4/V2/Mathematics/CoreSkills/validation/validate_semantic_extraction.py'
+      - name: Validate Grade 4 learning representation
+        run: python 'Grade 4/V2/Mathematics/LearningDesign/validation/validate_learning_representation.py'
+      - name: Validate authoring handoff
+        run: python 'Grade 4/V2/Mathematics/LearningDesign/validation/validate_authoring_handoff.py'
+      - name: Validate p97-99 StudyJourney instructional completeness
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_p97_p99_study_journey.py'
+      - name: Validate Grade 4 representation
+        run: pytest -q 'Grade 4/V2/Mathematics/Representation/tests'
+      - name: Validate Grade 4 publication
+        run: pytest -q 'Grade 4/V2/Mathematics/Publication/tests'
+      - name: Render p97-99 StudyJourney candidate
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/render_p97_p99_study_journey_candidate.py'
+      - name: Render StudyJourney pages with PDFium
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pypdfium2 as pdfium
+          pdf_path = Path('build/grade4_math_v2/Grade4_P97_P99_StudyJourney_Candidate.pdf')
+          out = Path('build/grade4_math_v2/study_journey_renders')
+          out.mkdir(parents=True, exist_ok=True)
+          doc = pdfium.PdfDocument(str(pdf_path))
+          assert len(doc) >= 8, f'unexpected StudyJourney page count: {len(doc)}'
+          for index in range(len(doc)):
+              page = doc[index]
+              image = page.render(scale=1.5).to_pil()
+              assert image.width > 500 and image.height > 700
+              image.save(out / f'page_{index + 1:02d}.png')
+          print(f'StudyJourney PDFium render PASS: {len(doc)} pages')
+          PY
+      - name: Build real pages 97-99 Core1 production candidate
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_real_p97_p99_core1_production.py'
+      - name: Render every legacy Core1 candidate page with PDFium
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pypdfium2 as pdfium
+
+          pdf_path = Path('build/grade4_math_v2/Primary_V2_P97_P99_Core1_Candidate.pdf')
+          out = Path('build/grade4_math_v2/renders')
+          out.mkdir(parents=True, exist_ok=True)
+          doc = pdfium.PdfDocument(str(pdf_path))
+          assert len(doc) >= 18, f'unexpected candidate page count: {len(doc)}'
+          for index in range(len(doc)):
+              page = doc[index]
+              bitmap = page.render(scale=1.5)
+              image = bitmap.to_pil()
+              assert image.width > 500 and image.height > 700
+              image.save(out / f'page_{index + 1:02d}.png')
+          print(f'PDFium render PASS: {len(doc)} pages')
+          PY
+      - name: Upload Grade 4 candidates and renders
+        uses: actions/upload-artifact@v4
+        with:
+          name: grade4-math-v2-p97-p99-study-and-core1-candidates
+          path: build/grade4_math_v2/
+          if-no-files-found: error

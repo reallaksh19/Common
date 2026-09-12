@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PrimaryMathCore1StudyPlan",
+  "description": "Plan specification for Core 1 Study Guide modules.",
+  "type": "object",
+  "required": ["study_guide_id", "modules"],
+  "properties": {
+    "study_guide_id": { "type": "string" },
+    "grade_level": { "type": "integer", "enum": [4, 5] },
+    "topic": { "type": "string" },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "module_id",
+          "title",
+          "pedagogical_sequence",
+          "dominant_representation",
+          "representation_bridge"
+        ],
+        "properties": {
+          "module_id": { "type": "string" },
+          "title": { "type": "string" },
+          "pedagogical_sequence": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "dominant_representation": { "type": "string" },
+          "representation_bridge": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["section_type", "title", "content"],
+              "properties": {
+                "section_type": {
+                  "type": "string",
+                  "enum": [
+                    "SEE_DISCOVER",
+                    "NOTICE",
+                    "MAKE_DRAW_REPRESENT",
+                    "CONNECT",
+                    "WORKED_EXAMPLE",
+                    "TRY_WITH_SUPPORT",
+                    "TRY_INDEPENDENTLY",
+                    "CHECK"
+                  ]
+                },
+                "title": { "type": "string" },
+                "content": { "type": "string" },
+                "primitive_call": {
+                  "type": "object",
+                  "properties": {
+                    "kind": { "type": "string" },
+                    "params": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

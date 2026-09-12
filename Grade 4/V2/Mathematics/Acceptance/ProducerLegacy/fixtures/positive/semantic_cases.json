@@ -1,0 +1,110 @@
+{
+  "candidate_id": "BENCHMARK-POSITIVE-BASELINE",
+  "timestamp": "2026-09-12T00:00:00Z",
+  "engine_version": "2.0.0",
+  "cases": [
+    {
+      "case_id": "BENCH-DEEP-MUL-01",
+      "domain": "NUMBER_OPERATIONS",
+      "grade_level": 4,
+      "scope_provenance": {
+        "scope_basis": "CURRICULUM_CONFIRMED",
+        "authority_ref": "NCERT_CLASS4_CH3",
+        "authority_version": "2026-v1",
+        "evidence_ref": "PR163-M4-MUL-01",
+        "universal_grade_scope_claimed": false
+      },
+      "math_invariants": {
+        "operation": "MULTIPLICATION",
+        "operands": [23, 6],
+        "result": 138,
+        "decomposition": [
+          { "expression": "20 * 6", "value": 120 },
+          { "expression": "3 * 6", "value": 18 }
+        ],
+        "partial_steps": [
+          { "step_index": 1, "description": "20 * 6", "partial_value": 120 },
+          { "step_index": 2, "description": "3 * 6", "partial_value": 18 }
+        ],
+        "check_relation": "120 + 18 == 138",
+        "check_satisfied": true
+      },
+      "representations": [
+        {
+          "role": "BRIDGE",
+          "kind": "AREA_MODEL",
+          "params": {
+            "factors": [23, 6],
+            "partitions": [
+              { "length": 20, "height": 6, "area": 120 },
+              { "length": 3, "height": 6, "area": 18 }
+            ]
+          },
+          "rendered_evidence": {
+            "element_count": 6,
+            "visual_checksum": "sha256-area-23-6",
+            "data_grounded": true,
+            "labels": ["20", "3", "6", "120", "18", "138"]
+          }
+        }
+      ],
+      "work_provenance": {
+        "tier": "STRUCTURED_REPLAY",
+        "actor": "CHILD",
+        "student_steps": [
+          { "step": "20 * 6 = 120" },
+          { "step": "3 * 6 = 18" },
+          { "step": "120 + 18 = 138" }
+        ],
+        "alignment_invariants": {
+          "place_value_aligned": true,
+          "decimal_aligned": true,
+          "intermediate_work_preserved": true
+        }
+      },
+      "core1_refs": {
+        "module_id": "C1-MOD-MUL-23X6",
+        "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"],
+        "dominant_representation": "AREA_MODEL",
+        "representation_bridge": ["GROUPS", "ARRAY", "AREA", "PARTIALS", "ALGORITHM"]
+      },
+      "core2_refs": {
+        "companion_id": "C2-COMP-MUL-23X6",
+        "linked_core1_module_id": "C1-MOD-MUL-23X6",
+        "appendix_a_batches": [
+          { "batch_id": "BATCH-1", "practice_role": "BUILD", "item_count": 5 },
+          { "batch_id": "BATCH-2", "practice_role": "TRANSFER", "item_count": 4 }
+        ],
+        "appendix_b_ladder": {
+          "H0_try": "Multiply 24 x 5 using area model partition.",
+          "H1_notice": "Notice that 24 can be split into 20 and 4.",
+          "H2_remember": "Remember to multiply each part by 5 and add the partial products.",
+          "H3_represent": "Draw a rectangle split into 20x5 and 4x5.",
+          "fresh_independent_retry_H0": "Now try 25 x 4 independently."
+        },
+        "appendix_c_ref": {
+          "format": "VISUAL_DECISION_REFERENCE",
+          "visual_decision_aid": "Multiplication Partition Flowcard",
+          "is_prose_cram_sheet": false
+        }
+      },
+      "learner_surface_guard": {
+        "pass": true,
+        "detected_internal_tokens": [],
+        "token_count": 0
+      },
+      "layout_custody": {
+        "page_count": 2,
+        "page_map": [
+          { "page_number": 1, "module_part": "DISCOVERY_AND_MODEL" },
+          { "page_number": 2, "module_part": "WORKED_AND_TRY" }
+        ],
+        "pdf_sha256": "3a4b5c6d7e8f90123456789abcdef0123456789abcdef0123456789abcdef01",
+        "child_first_geometry": {
+          "min_body_font_pt": 13.5,
+          "overflow_strategy": "ADD_PAGE"
+        }
+      }
+    }
+  ]
+}

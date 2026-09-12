@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/Mathematics/StudyDesign/contracts/study-journey.schema.json",
+  "title": "Grade4MathStudyJourneyPlan",
+  "type": "object",
+  "required": ["schema_version", "journey_id", "title", "grade_level", "modules", "source_coverage"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "journey_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "grade_level": {"const": 4},
+    "topic": {"type": "string"},
+    "source_coverage": {
+      "type": "object",
+      "required": ["required_source_refs", "covered_source_refs"],
+      "properties": {
+        "required_source_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "covered_source_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/module"}
+    }
+  },
+  "$defs": {
+    "module": {
+      "type": "object",
+      "required": ["module_id", "title", "learning_goal", "source_refs", "blocks", "mastery_evidence"],
+      "properties": {
+        "module_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "learning_goal": {"type": "string", "minLength": 1},
+        "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "concept_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "prerequisite_bridges": {"type": "array", "items": {"$ref": "#/$defs/bridge"}},
+        "misconception_targets": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "blocks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/block"}},
+        "mastery_evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "bridge": {
+      "type": "object",
+      "required": ["bridge_id", "statement", "provenance"],
+      "properties": {
+        "bridge_id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "provenance": {"const": "PEDAGOGICAL_BRIDGE"}
+      },
+      "additionalProperties": false
+    },
+    "block": {
+      "type": "object",
+      "required": ["block_id", "block_type", "title", "body", "answer_visibility"],
+      "properties": {
+        "block_id": {"type": "string", "minLength": 1},
+        "block_type": {
+          "enum": [
+            "SEE_DISCOVER", "NOTICE", "CONNECT", "WORKED_EXAMPLE", "GUIDED_TRY",
+            "INDEPENDENT_TRY", "ERROR_ANALYSIS", "TRANSFER", "RETRIEVAL", "REFERENCE", "SELF_CHECK"
+          ]
+        },
+        "title": {"type": "string", "minLength": 1},
+        "body": {"type": "string"},
+        "answer_visibility": {"enum": ["HIDDEN", "PARTIAL", "WORKED_EXAMPLE", "ANSWER_KEY_ONLY"]},
+        "representation": {
+          "type": ["object", "null"],
+          "properties": {
+            "kind": {"type": "string", "minLength": 1},
+            "params": {"type": "object"},
+            "fidelity": {"enum": ["EXACT", "REPRESENTATIVE_SAMPLE", "SCHEMATIC"]}
+          },
+          "required": ["kind", "params", "fidelity"],
+          "additionalProperties": false
+        },
+        "learner_prompt": {"type": "string"},
+        "solution_text": {"type": "string"},
+        "source_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

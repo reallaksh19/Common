@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/Representation/contracts/learning-representation-plan.schema.json",
+  "title": "PrimaryMathLearningRepresentationPlan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan_id",
+    "task_ref",
+    "learner_profile_ref",
+    "representation_class",
+    "primary_visual",
+    "all_visual_states",
+    "hint_visuals",
+    "hint_ladder",
+    "thinking_path",
+    "hint_ladder_ref",
+    "thinking_path_ref",
+    "fresh_retry_support_policy",
+    "publisher_invention_allowed"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "plan_id": {"type": "string", "minLength": 1},
+    "task_ref": {"type": "string", "minLength": 1},
+    "learner_profile_ref": {"type": "string", "minLength": 1},
+    "representation_class": {"enum": ["CONCRETE_PICTORIAL", "STRUCTURAL", "PROCEDURAL_WORK", "ABSTRACT_SYMBOLIC"]},
+    "primary_visual": {"$ref": "#/$defs/visualState"},
+    "all_visual_states": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/visualState"}
+    },
+    "hint_visuals": {
+      "type": "object",
+      "required": ["H1", "H2", "H3"],
+      "properties": {
+        "H1": {"$ref": "#/$defs/visualState"},
+        "H2": {"$ref": "#/$defs/visualState"},
+        "H3": {"$ref": "#/$defs/visualState"}
+      },
+      "additionalProperties": false
+    },
+    "hint_ladder": {"type": "object"},
+    "thinking_path": {"type": "object"},
+    "thinking_path_micro_visual_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "work_surface_ref": {"type": ["string", "null"]},
+    "work_surface": {"type": ["object", "null"]},
+    "hint_ladder_ref": {"type": "string", "minLength": 1},
+    "thinking_path_ref": {"type": "string", "minLength": 1},
+    "fresh_retry_support_policy": {"enum": ["NONE", "LEARNER_OPTIONAL_REFERENCE_ONLY"]},
+    "fresh_retry_prompt": {"type": "string", "minLength": 1},
+    "reference_visual_ref": {"type": ["string", "null"]},
+    "visual_language_key": {"type": "object", "additionalProperties": {"type": "string"}},
+    "publisher_invention_allowed": {"const": false}
+  },
+  "$defs": {
+    "visualState": {
+      "type": "object",
+      "required": ["visual_state_id", "primitive_kind", "representation_ref", "fidelity", "fade_mode", "semantic_params", "validator_refs"],
+      "properties": {
+        "visual_state_id": {"type": "string", "minLength": 1},
+        "primitive_kind": {"type": "string", "minLength": 1},
+        "representation_ref": {"type": "string", "minLength": 1},
+        "fidelity": {"enum": ["EXACT", "REPRESENTATIVE_SAMPLE", "SCHEMATIC"]},
+        "fade_mode": {"enum": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"]},
+        "semantic_params": {"type": "object"},
+        "validator_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,109 @@
+{
+  "candidate_id": "PRIMARY-MATH-V2-ENGINE-CANDIDATE-001",
+  "machine_gates": {
+    "CORPUS_INTEGRITY": "PASS",
+    "SEMANTIC_CONSISTENCY": "PASS",
+    "SCOPE_PROVENANCE_CONSISTENCY": "PASS",
+    "REPRESENTATION_EVIDENCE_PRESENT": "PASS",
+    "WORK_PROVENANCE_CONSISTENCY": "PASS",
+    "CORE1_CORE2_LINKAGE": "PASS",
+    "HINT_RETRY_CONTRACT": "PASS",
+    "LEARNER_SURFACE_GUARD": "PASS",
+    "ARTIFACT_CUSTODY": "PASS"
+  },
+  "human_review_status": {
+    "SUBJECT_CORRECTNESS_HUMAN_REVIEW": "PENDING_HUMAN_REVIEW",
+    "PEDAGOGICAL_DESIGN_HUMAN_REVIEW": "PENDING_HUMAN_REVIEW",
+    "ASSESSMENT_DESIGN_HUMAN_REVIEW": "PENDING_HUMAN_REVIEW",
+    "VISUAL_USABILITY_HUMAN_REVIEW": "PENDING_HUMAN_REVIEW",
+    "CHILD_USABILITY_HUMAN_REVIEW": "PENDING_HUMAN_REVIEW",
+    "MATURE_DESIGN_QUALITY_HUMAN_REVIEW": "PENDING_HUMAN_REVIEW"
+  },
+  "total_cases_evaluated": 20,
+  "passed_cases": 20,
+  "failed_cases": 0,
+  "triggered_falsifiers": [],
+  "case_evaluations": {
+    "BENCH-DEEP-MUL-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-DIV-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-DIV-02": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-DIV-03": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-DIV-04": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-DIV-05": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-DIV-06": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-FRAC-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-FRAC-02": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-DEEP-FRAC-03": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-PV-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-DEC-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-MEAS-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-GEOM-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-GEOM-02": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-GEOM-03": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-DATA-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-WP-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-ERR-01": {
+      "pass": true,
+      "falsifiers": []
+    },
+    "BENCH-BREADTH-NOTE-01": {
+      "pass": true,
+      "falsifiers": []
+    }
+  },
+  "overall_machine_pass": true
+}

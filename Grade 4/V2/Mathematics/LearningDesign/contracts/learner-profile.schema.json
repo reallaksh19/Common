@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/LearningDesign/contracts/learner-profile.schema.json",
+  "title": "PrimaryMathLearnerPublicationProfile",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "profile_id",
+    "body_font_min_pt",
+    "micro_label_min_pt",
+    "heading_min_pt",
+    "visual_area_target",
+    "workspace_area_target",
+    "text_area_max",
+    "max_major_learning_zones_per_page",
+    "solution_on_hint_page",
+    "progressive_disclosure",
+    "internal_semantic_labels_visible",
+    "supported_success_counts_as_independent",
+    "fresh_retry_required_after_support",
+    "shrink_to_fit_child_readability"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "profile_id": {"type": "string", "minLength": 1},
+    "body_font_min_pt": {"type": "number", "minimum": 12},
+    "micro_label_min_pt": {"type": "number", "minimum": 9.5},
+    "heading_min_pt": {"type": "number", "minimum": 16},
+    "visual_area_target": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {"type": "number", "minimum": 0.45, "maximum": 0.60},
+        "max": {"type": "number", "minimum": 0.45, "maximum": 0.60}
+      },
+      "additionalProperties": false
+    },
+    "workspace_area_target": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {"type": "number", "minimum": 0.20, "maximum": 0.30},
+        "max": {"type": "number", "minimum": 0.20, "maximum": 0.30}
+      },
+      "additionalProperties": false
+    },
+    "text_area_max": {"type": "number", "maximum": 0.25},
+    "max_major_learning_zones_per_page": {"type": "integer", "minimum": 1, "maximum": 3},
+    "solution_on_hint_page": {"const": false},
+    "progressive_disclosure": {"const": true},
+    "internal_semantic_labels_visible": {"const": false},
+    "supported_success_counts_as_independent": {"const": false},
+    "fresh_retry_required_after_support": {"const": true},
+    "shrink_to_fit_child_readability": {"const": false}
+  },
+  "additionalProperties": false
+}
