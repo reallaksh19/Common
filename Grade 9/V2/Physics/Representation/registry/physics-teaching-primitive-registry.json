@@ -1,0 +1,431 @@
+{
+  "genericity_statement": "Primitives are subject-wide Physics representation mechanisms. Motion, kinematics and dynamics enter only as render parameters extracted from P-A source questions and P-F structural obligations. No primitive is defined for a single topic.",
+  "primitives": [
+    {
+      "accessibility_pattern": "Acceleration-time graph with labelled axes and a signed level on each interval.",
+      "attention_target": "Level and sign of the plotted acceleration on each interval.",
+      "decorative": false,
+      "instructional_job": "Show acceleration as a separately plotted quantity whose signed area is a change of velocity.",
+      "learner_action": "Read the sign on each interval and say what it does to the velocity.",
+      "minimum_vector_ops": 12,
+      "primitive_id": "ACCELERATION_TIME_GRAPH",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_acceleration_time_graph",
+      "renderer_constraints": [
+        "AXES_LABELLED_WITH_UNITS",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "SIGN_OF_LEVEL_VISIBLE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "GRAPH_AREA_TO_ACCUMULATED_CHANGE"
+    },
+    {
+      "accessibility_pattern": "Bridge panel linking each symbol of the relation to the diagram feature it names.",
+      "attention_target": "Which diagram feature each symbol in the relation refers to.",
+      "decorative": false,
+      "instructional_job": "Connect each symbol in the relation back to the thing it names in the diagram.",
+      "learner_action": "Point from each symbol to the feature it names before substituting a number.",
+      "minimum_vector_ops": 12,
+      "primitive_id": "DIAGRAM_EQUATION_BRIDGE",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_diagram_equation_bridge",
+      "renderer_constraints": [
+        "AXIS_OR_ENTITY_LABELLED",
+        "EVERY_SYMBOL_BOUND_TO_A_DIAGRAM_FEATURE",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "DIAGRAM_TO_SYMBOLIC_RELATION"
+    },
+    {
+      "accessibility_pattern": "Free-body diagram isolating one body with a labelled arrow for each acting force.",
+      "attention_target": "Which forces act on the chosen body and in which direction.",
+      "decorative": false,
+      "instructional_job": "Isolate one body and show every force acting on it as a directed arrow from the body.",
+      "learner_action": "Name each arrow and check no force acting on another body has been drawn.",
+      "minimum_vector_ops": 10,
+      "primitive_id": "FORCE_DIAGRAM",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_force_diagram",
+      "renderer_constraints": [
+        "EVERY_ARROW_LABELLED",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "ONE_BODY_ISOLATED",
+        "SIGN_CONVENTION_VISIBLE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "SITUATION_TO_ISOLATED_BODY"
+    },
+    {
+      "accessibility_pattern": "Two-case contrast panel in which exactly one physical feature differs.",
+      "attention_target": "The single decisive feature that changes the answer.",
+      "decorative": false,
+      "instructional_job": "Place the shortcut model and the correct model on two cases differing in exactly one feature.",
+      "learner_action": "Predict both cases, then name the feature the shortcut ignores.",
+      "minimum_vector_ops": 10,
+      "primitive_id": "MINIMAL_PHYSICS_CONTRAST",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_minimal_physics_contrast",
+      "renderer_constraints": [
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "ONE_DECISIVE_FEATURE",
+        "TWO_CASES_REQUIRED"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "CASE_PAIR_TO_DECISIVE_FEATURE"
+    },
+    {
+      "accessibility_pattern": "Model-validity gate listing each assumption with its stated, implied or absent marking.",
+      "attention_target": "Each assumption of the selected model and whether the situation states it.",
+      "decorative": false,
+      "instructional_job": "Gate the relation behind its assumptions so an invalid model cannot be used silently.",
+      "learner_action": "Mark each assumption as stated, implied or absent before using the relation.",
+      "minimum_vector_ops": 6,
+      "primitive_id": "MODEL_VALIDITY_GATE",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_model_validity_gate",
+      "renderer_constraints": [
+        "EVERY_CONDITION_VISIBLE",
+        "GATE_BLOCKS_WHEN_UNSATISFIED",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "CONDITIONS_TO_MODEL_ADMISSIBILITY"
+    },
+    {
+      "accessibility_pattern": "Strip of successive body positions at equal time intervals along the declared axis.",
+      "attention_target": "Spacing between successive positions at equal time intervals.",
+      "decorative": false,
+      "instructional_job": "Expose the body's successive positions at equal time steps so uneven spacing reads as changing speed.",
+      "learner_action": "Compare successive gaps and say whether the speed is constant or changing.",
+      "minimum_vector_ops": 10,
+      "primitive_id": "MOTION_STRIP",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_motion_strip",
+      "renderer_constraints": [
+        "AXIS_OR_ENTITY_LABELLED",
+        "EQUAL_TIME_STEPS",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "DESCRIBED_STATE_TO_SPATIAL_PATTERN"
+    },
+    {
+      "accessibility_pattern": "Set of candidate graphs drawn on identical axes so one feature separates them.",
+      "attention_target": "The single feature that separates the candidate graphs.",
+      "decorative": false,
+      "instructional_job": "Put candidate graphs side by side so selection is a discrimination, not a guess.",
+      "learner_action": "Reject each candidate by naming the feature it gets wrong.",
+      "minimum_vector_ops": 16,
+      "primitive_id": "OPTION_GRAPH_SET_VIEW",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_option_graph_set_view",
+      "renderer_constraints": [
+        "ALL_OPTIONS_SAME_AXES",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "ONE_DECISIVE_FEATURE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "GRAPH_SET_TO_SELECTION"
+    },
+    {
+      "accessibility_pattern": "Phase strip with boundary markers and the continuity state labelled across each boundary.",
+      "attention_target": "The boundary instant and the state variables continuous across it.",
+      "decorative": false,
+      "instructional_job": "Mark where the motion changes character and show which state is carried across the boundary unchanged.",
+      "learner_action": "Copy the boundary state forward as the next phase's start state.",
+      "minimum_vector_ops": 10,
+      "primitive_id": "PHASE_BOUNDARY_VIEW",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_phase_boundary_view",
+      "renderer_constraints": [
+        "BOUNDARY_MARKED",
+        "CONTINUITY_STATE_LABELLED",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "MULTIPHASE_STATE_PROPAGATION"
+    },
+    {
+      "accessibility_pattern": "Scene showing the moving body, a fixed reference surface, and marked start and end positions.",
+      "attention_target": "What moves, what is fixed, and what changes between the start and the end of the situation.",
+      "decorative": false,
+      "instructional_job": "Show the physical situation before any symbol is written, so the learner reads events rather than a formula.",
+      "learner_action": "Point at the object and say what physically happens, in order.",
+      "minimum_vector_ops": 8,
+      "primitive_id": "PHENOMENON_SCENE",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_phenomenon_scene",
+      "renderer_constraints": [
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "SOURCE_SITUATION_ONLY",
+        "START_AND_END_MARKED"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "PHENOMENON_TO_DESCRIBED_STATE"
+    },
+    {
+      "accessibility_pattern": "Position-time graph with labelled axes and a rise-over-run slope triangle.",
+      "attention_target": "Slope of the plotted line and what the slope means physically.",
+      "decorative": false,
+      "instructional_job": "Make position-against-time readable as a record of motion whose slope is a velocity.",
+      "learner_action": "Build a slope triangle and state the velocity it gives.",
+      "minimum_vector_ops": 14,
+      "primitive_id": "POSITION_TIME_GRAPH",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_position_time_graph",
+      "renderer_constraints": [
+        "AXES_LABELLED_WITH_UNITS",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "SLOPE_TRIANGLE_PRESENT"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "GRAPH_SLOPE_TO_RATE"
+    },
+    {
+      "accessibility_pattern": "Relative-frame view marking the frame body and the relative quantity between the two bodies.",
+      "attention_target": "Which body the frame is attached to and what the relative quantity is.",
+      "decorative": false,
+      "instructional_job": "Show two bodies and the quantity of one measured from the other.",
+      "learner_action": "Subtract the frame body's quantity from the other body's before interpreting.",
+      "minimum_vector_ops": 10,
+      "primitive_id": "RELATIVE_FRAME_VIEW",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_relative_frame_view",
+      "renderer_constraints": [
+        "AXIS_OR_ENTITY_LABELLED",
+        "FRAME_BODY_MARKED",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "SIGN_CONVENTION_VISIBLE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "TWO_BODY_TO_RELATIVE_QUANTITY"
+    },
+    {
+      "accessibility_pattern": "Signed axis strip marking the origin, the declared positive direction, and each signed leg.",
+      "attention_target": "Where zero is and which direction has been declared positive.",
+      "decorative": false,
+      "instructional_job": "Fix the origin and the positive direction, and show every signed quantity against that one convention.",
+      "learner_action": "Re-sign every given quantity against the declared positive direction.",
+      "minimum_vector_ops": 12,
+      "primitive_id": "SIGN_FRAME_OVERLAY",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_sign_frame_overlay",
+      "renderer_constraints": [
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "ORIGIN_MARKED",
+        "POSITIVE_DIRECTION_MARKED",
+        "SIGN_CONVENTION_VISIBLE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "FRAME_TO_SIGNED_QUANTITY"
+    },
+    {
+      "accessibility_pattern": "Decoder showing the same curve read once as a slope and once as a signed area.",
+      "attention_target": "Whether the question asks for a rate or an accumulated change.",
+      "decorative": false,
+      "instructional_job": "Separate the two different readings of one plotted curve: slope as a rate, signed area as a change.",
+      "learner_action": "Choose slope or area before extracting anything from the curve.",
+      "minimum_vector_ops": 16,
+      "primitive_id": "SLOPE_AREA_DECODER",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_slope_area_decoder",
+      "renderer_constraints": [
+        "AXES_LABELLED_WITH_UNITS",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "SLOPE_AND_AREA_SHOWN_SEPARATELY"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "GRAPH_TO_DECODED_QUANTITY"
+    },
+    {
+      "accessibility_pattern": "Ruled state table with a start row and an end row and the unknown cell marked.",
+      "attention_target": "Which quantity is known at which instant, and which is missing.",
+      "decorative": false,
+      "instructional_job": "Hold the start state and the end state side by side so the unknown becomes visible.",
+      "learner_action": "Fill both rows, then mark the one quantity the question asks for.",
+      "minimum_vector_ops": 8,
+      "primitive_id": "STATE_TABLE",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_state_table",
+      "renderer_constraints": [
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "START_AND_END_ROWS",
+        "UNKNOWN_MARKED"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "DESCRIBED_STATE_TO_TABULAR_STATE"
+    },
+    {
+      "accessibility_pattern": "Timeline marking the bounding instants of the named interval and the span between them.",
+      "attention_target": "The two instants bounding the named interval.",
+      "decorative": false,
+      "instructional_job": "Make a named interval visible as the difference between two instants rather than a single time.",
+      "learner_action": "Compute the quantity at each bounding instant and subtract.",
+      "minimum_vector_ops": 10,
+      "primitive_id": "TIMELINE_INTERVAL_VIEW",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_timeline_interval_view",
+      "renderer_constraints": [
+        "AXIS_OR_ENTITY_LABELLED",
+        "BOTH_BOUNDING_INSTANTS_MARKED",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "INTERVAL_TO_STATE_DIFFERENCE"
+    },
+    {
+      "accessibility_pattern": "Trajectory view drawing the travelled path and the straight chord between start and end.",
+      "attention_target": "Path length against the straight start-to-end chord.",
+      "decorative": false,
+      "instructional_job": "Separate the path actually travelled from the straight-line change of position.",
+      "learner_action": "Trace the path, then draw the chord, and say which one the question asks for.",
+      "minimum_vector_ops": 8,
+      "primitive_id": "TRAJECTORY_VIEW",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_trajectory_view",
+      "renderer_constraints": [
+        "AXIS_OR_ENTITY_LABELLED",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "PATH_AND_CHORD_BOTH_DRAWN"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "PATH_TO_DISPLACEMENT"
+    },
+    {
+      "accessibility_pattern": "Vector state view with one labelled arrow per directed quantity at the named instant.",
+      "attention_target": "Direction and relative size of each vector state quantity at a named instant.",
+      "decorative": false,
+      "instructional_job": "Make each directed state quantity visible as an arrow with the sign the declared frame forces.",
+      "learner_action": "Read each arrow's direction, then write it as a signed component along the axis.",
+      "minimum_vector_ops": 8,
+      "primitive_id": "VECTOR_STATE_VIEW",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_vector_state_view",
+      "renderer_constraints": [
+        "ARROW_DIRECTION_MATCHES_SIGN",
+        "AXIS_OR_ENTITY_LABELLED",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "SIGN_CONVENTION_VISIBLE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "VECTOR_TO_SIGNED_COMPONENT"
+    },
+    {
+      "accessibility_pattern": "Velocity-time graph with labelled axes and shaded signed area under the line.",
+      "attention_target": "Slope of the line and the signed area beneath it.",
+      "decorative": false,
+      "instructional_job": "Make velocity-against-time readable as slope for acceleration and signed area for displacement.",
+      "learner_action": "Decide whether the question needs the slope or the area, then extract it.",
+      "minimum_vector_ops": 14,
+      "primitive_id": "VELOCITY_TIME_GRAPH",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_velocity_time_graph",
+      "renderer_constraints": [
+        "AXES_LABELLED_WITH_UNITS",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE",
+        "SIGNED_AREA_SHADED"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "GRAPH_AREA_TO_ACCUMULATED_CHANGE"
+    },
+    {
+      "accessibility_pattern": "Verification strip with one tick box per required independent physical check.",
+      "attention_target": "Which independent check has to pass before the answer is accepted.",
+      "decorative": false,
+      "instructional_job": "Make the required physical check an executable step that can actually fail.",
+      "learner_action": "Run each check and mark it only after it has actually been carried out.",
+      "minimum_vector_ops": 5,
+      "primitive_id": "VERIFICATION_CHECK_STRIP",
+      "realized_as_vector_graphics": true,
+      "renderer_binding": "physics_primitive_renderer.draw_verification_check_strip",
+      "renderer_constraints": [
+        "CHECK_IS_INDEPENDENT_OF_SOLVING_ROUTE",
+        "EVERY_CHECK_HAS_A_BOX",
+        "GRAYSCALE_SAFE",
+        "NO_QUANTITY_NOT_IN_SOURCE"
+      ],
+      "required_render_params": [],
+      "schematic_fallback_allowed": true,
+      "topic_scope_refs": [],
+      "translation_obligation": "RESULT_TO_INDEPENDENT_CHECK"
+    }
+  ],
+  "quantitative_grounding_states": [
+    "SOURCE_QUANTITIES",
+    "SCHEMATIC_STRUCTURE_ONLY"
+  ],
+  "realization_rule": "A primitive is satisfied only by actual vector graphics. Every primitive declares a minimum_vector_ops floor that the renderer must meet with real line/rect/circle/path operations; drawing text labels alone fails TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED.",
+  "registry_digest": "631ad224e6e22c0cb432547965449462d7e3556cce4d21cd8ea3049712b86c82",
+  "registry_id": "PHY-P-H-PRIMITIVES-v1",
+  "required_primitive_ids": [
+    "DIAGRAM_EQUATION_BRIDGE",
+    "FORCE_DIAGRAM",
+    "MOTION_STRIP",
+    "PHASE_BOUNDARY_VIEW",
+    "PHENOMENON_SCENE",
+    "POSITION_TIME_GRAPH",
+    "SIGN_FRAME_OVERLAY",
+    "TRAJECTORY_VIEW",
+    "VECTOR_STATE_VIEW",
+    "VELOCITY_TIME_GRAPH"
+  ],
+  "schema_version": "1.0.0",
+  "shared_library_ref": "Grade 9/V2/Shared/MasterTemplates/primitives (vendored from PR #310 @ 88d3a719)",
+  "stable_render_interface": "render_primitive(kind, params, canvas, bbox) -> RenderEvidence",
+  "subject": "PHYSICS"
+}
