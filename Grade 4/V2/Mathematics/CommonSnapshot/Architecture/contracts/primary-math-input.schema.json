@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/Architecture/contracts/primary-math-input.schema.json",
+  "title": "PrimaryMathInput",
+  "type": "object",
+  "required": ["schema_version", "input_id", "question_set"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "input_id": {"type": "string", "minLength": 1},
+    "question_set": {
+      "type": "object",
+      "required": ["questions"],
+      "properties": {
+        "source_ref": {"type": ["string", "null"]},
+        "questions": {"type": "array", "minItems": 1, "items": {"type": "object"}}
+      },
+      "additionalProperties": true
+    },
+    "student_workout": {
+      "type": ["object", "null"],
+      "description": "Optional learner work. When present, semantics are governed by Common #171/#172/#185."
+    },
+    "topic_hints": {
+      "type": ["array", "null"],
+      "items": {"type": "string"},
+      "description": "Optional scope labels/hints; never authoritative over stronger source evidence."
+    }
+  },
+  "additionalProperties": false
+}

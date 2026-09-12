@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "cases": [
+    {
+      "case_id": "QUESTION_ONLY",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "IN-Q-ONLY",
+        "question_set": {
+          "source_ref": "fixture://questions/multiplication",
+          "questions": [{"question_id": "Q1", "prompt": "23 × 6"}]
+        }
+      },
+      "expected": {
+        "student_work_present": false,
+        "topic_hints_present": false,
+        "scope_basis": "QUESTION_SET_OBSERVED",
+        "work_evidence_refs": [],
+        "concept_mode": "INTRODUCE"
+      }
+    },
+    {
+      "case_id": "QUESTION_PLUS_WORK",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "IN-Q-WORK",
+        "question_set": {
+          "source_ref": "fixture://questions/division",
+          "questions": [{"question_id": "Q2", "prompt": "7843 ÷ 13"}]
+        },
+        "student_workout": {
+          "work_evidence_id": "MWE-7843-13",
+          "provenance": "CHILD_WORK",
+          "work_steps": [
+            {"step_id": "WS1", "status": "CORRECT", "observed_value": "13×6=78"},
+            {"step_id": "WS2", "status": "INCORRECT", "observed_value": "quotient zero omitted"}
+          ]
+        }
+      },
+      "expected": {
+        "student_work_present": true,
+        "topic_hints_present": false,
+        "scope_basis": "QUESTION_SET_OBSERVED",
+        "work_evidence_refs": ["MWE-7843-13"],
+        "concept_mode": "PROBE"
+      }
+    },
+    {
+      "case_id": "QUESTION_PLUS_HINTS",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "IN-Q-HINTS",
+        "question_set": {
+          "source_ref": "fixture://questions/fractions",
+          "questions": [{"question_id": "Q3", "prompt": "Which fractions are equivalent?"}]
+        },
+        "topic_hints": ["fraction equivalence", "number line"]
+      },
+      "expected": {
+        "student_work_present": false,
+        "topic_hints_present": true,
+        "scope_basis": "QUESTION_SET_OBSERVED",
+        "work_evidence_refs": [],
+        "concept_mode": "CONNECT"
+      }
+    },
+    {
+      "case_id": "QUESTION_WORK_HINTS",
+      "input": {
+        "schema_version": "1.0.0",
+        "input_id": "IN-Q-WORK-HINTS",
+        "question_set": {
+          "source_ref": "fixture://school/division-set",
+          "questions": [
+            {"question_id": "Q4A", "prompt": "366 ÷ 12"},
+            {"question_id": "Q4B", "prompt": "3496 ÷ 23"}
+          ]
+        },
+        "student_workout": {
+          "work_evidence_id": "MWE-DIV-CONTRAST",
+          "provenance": "TEACHER_TRANSCRIPTION",
+          "work_steps": [
+            {"step_id": "WS1", "status": "INCORRECT", "observed_value": "zero quotient place omitted"},
+            {"step_id": "WS2", "status": "CORRECT", "observed_value": "3496÷23=152"}
+          ],
+          "transcription_certainty": "HIGH"
+        },
+        "topic_hints": ["long division", "place value"]
+      },
+      "expected": {
+        "student_work_present": true,
+        "topic_hints_present": true,
+        "scope_basis": "SCHOOL_CLASSWORK_OBSERVED",
+        "work_evidence_refs": ["MWE-DIV-CONTRAST"],
+        "concept_mode": "PROBE"
+      }
+    }
+  ]
+}

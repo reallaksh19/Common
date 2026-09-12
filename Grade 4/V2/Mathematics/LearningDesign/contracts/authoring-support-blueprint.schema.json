@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/Mathematics/LearningDesign/contracts/authoring-support-blueprint.schema.json",
+  "title": "Grade4MathAuthoringSupportBlueprint",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_kind",
+    "representation_class",
+    "primary",
+    "hint_steps",
+    "thinking_path",
+    "fresh_retry_prompt"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "task_kind": {"type": "string", "minLength": 1},
+    "representation_class": {
+      "enum": ["CONCRETE_PICTORIAL", "STRUCTURAL", "PROCEDURAL_WORK", "ABSTRACT_SYMBOLIC"]
+    },
+    "learner_prompt": {"type": "string", "minLength": 1},
+    "source_note": {"type": "string", "minLength": 1},
+    "solution_tokens": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "allowed_support_solution_tokens": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "primary": {"$ref": "#/$defs/visualSelection"},
+    "hint_steps": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {"$ref": "#/$defs/h1"},
+        {"$ref": "#/$defs/h2"},
+        {"$ref": "#/$defs/h3"}
+      ],
+      "items": false
+    },
+    "thinking_path": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "items": {"$ref": "#/$defs/thinkingStep"}
+    },
+    "work_surface_template": {
+      "type": ["object", "null"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1},
+        "semantic_params": {"type": "object"},
+        "validator_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "provenance": {"type": "string", "minLength": 1}
+      },
+      "required": ["kind", "semantic_params", "validator_refs"],
+      "additionalProperties": false
+    },
+    "visual_language_key": {"type": "object", "additionalProperties": {"type": "string"}},
+    "fresh_retry_prompt": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "visualSelection": {
+      "type": "object",
+      "required": ["representation_ref", "fidelity", "fade_mode"],
+      "properties": {
+        "representation_ref": {"type": "string", "minLength": 1},
+        "fidelity": {"enum": ["EXACT", "REPRESENTATIVE_SAMPLE", "SCHEMATIC"]},
+        "fade_mode": {"enum": ["FULL", "PARTIAL", "EMPTY_FRAME", "NONE"]},
+        "semantic_params_overlay": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "h1": {
+      "allOf": [
+        {"$ref": "#/$defs/hintBase"},
+        {"properties": {"level": {"const": "H1"}, "semantic_role": {"const": "NOTICE"}, "child_label": {"const": "LOOK"}}}
+      ]
+    },
+    "h2": {
+      "allOf": [
+        {"$ref": "#/$defs/hintBase"},
+        {"properties": {"level": {"const": "H2"}, "semantic_role": {"const": "REMEMBER"}, "child_label": {"const": "REMEMBER"}}}
+      ]
+    },
+    "h3": {
+      "allOf": [
+        {"$ref": "#/$defs/hintBase"},
+        {"properties": {"level": {"const": "H3"}, "semantic_role": {"const": "REPRESENT"}, "child_label": {"const": "SHOW IT"}}}
+      ]
+    },
+    "hintBase": {
+      "allOf": [
+        {"$ref": "#/$defs/visualSelection"},
+        {
+          "type": "object",
+          "required": ["level", "semantic_role", "child_label", "verbal_cue", "learner_action", "information_revealed"],
+          "properties": {
+            "level": {"enum": ["H1", "H2", "H3"]},
+            "semantic_role": {"enum": ["NOTICE", "REMEMBER", "REPRESENT"]},
+            "child_label": {"enum": ["LOOK", "REMEMBER", "SHOW IT"]},
+            "verbal_cue": {"type": "string", "minLength": 1},
+            "learner_action": {"type": "string", "minLength": 1},
+            "information_revealed": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          }
+        }
+      ]
+    },
+    "thinkingStep": {
+      "allOf": [
+        {"$ref": "#/$defs/visualSelection"},
+        {
+          "type": "object",
+          "required": ["semantic_role", "child_label", "one_line_action"],
+          "properties": {
+            "semantic_role": {"enum": ["INTERPRET", "MODEL", "EXECUTE", "COMBINE", "VERIFY"]},
+            "child_label": {"enum": ["LOOK", "SHOW IT", "WORK", "PUT TOGETHER", "CHECK"]},
+            "one_line_action": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

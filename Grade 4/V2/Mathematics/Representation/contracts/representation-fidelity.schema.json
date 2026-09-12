@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/Representation/contracts/representation-fidelity.schema.json",
+  "title": "PrimaryMathRepresentationFidelity",
+  "type": "object",
+  "required": ["schema_version", "fidelity"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "fidelity": {"enum": ["EXACT", "REPRESENTATIVE_SAMPLE", "SCHEMATIC"]},
+    "declared_quantity": {"type": ["number", "integer", "null"]},
+    "rendered_quantity": {"type": ["number", "integer", "null"]},
+    "continuation_marker_required": {"type": "boolean"},
+    "continuation_marker_ref": {"type": ["string", "null"]},
+    "notes": {"type": ["string", "null"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"fidelity": {"const": "EXACT"}}},
+      "then": {
+        "required": ["declared_quantity", "rendered_quantity"],
+        "properties": {"continuation_marker_required": {"const": false}}
+      }
+    },
+    {
+      "if": {"properties": {"fidelity": {"const": "REPRESENTATIVE_SAMPLE"}}},
+      "then": {
+        "required": ["declared_quantity", "rendered_quantity", "continuation_marker_ref"],
+        "properties": {"continuation_marker_required": {"const": true}}
+      }
+    }
+  ],
+  "additionalProperties": false
+}

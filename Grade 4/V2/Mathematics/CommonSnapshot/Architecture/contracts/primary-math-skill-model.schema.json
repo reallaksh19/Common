@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/Architecture/contracts/primary-math-skill-model.schema.json",
+  "title": "PrimaryMathSkillModel",
+  "type": "object",
+  "required": ["schema_version", "model_id", "input_ref", "concepts", "unresolved"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "model_id": {"type": "string", "minLength": 1},
+    "input_ref": {"type": "string", "minLength": 1},
+    "concepts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "concept-node.schema.json"}
+    },
+    "prerequisite_edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "properties": {
+          "from": {"type": "string"},
+          "to": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "problem_family_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "representation_requirements": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "quantity_structures": {"type": "array", "items": {"type": "object"}},
+    "reasoning_requirements": {"type": "array", "items": {"type": "string"}},
+    "practice_obligations": {"type": "array", "items": {"type": "string"}},
+    "retrieval_obligations": {"type": "array", "items": {"type": "string"}},
+    "transfer_obligations": {"type": "array", "items": {"type": "string"}},
+    "work_evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "diagnostic_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "unresolved": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["state", "description"],
+        "properties": {
+          "state": {"enum": ["MAPPING_PENDING", "SOURCE_NOT_PROVIDED", "AMBIGUOUS"]},
+          "description": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

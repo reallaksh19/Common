@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0.0",
+  "cases": [
+    {
+      "case_id": "SAME_RATE_HATS_120_240",
+      "task": {
+        "task_ref": "FIX-RATE-HATS-120-240",
+        "task_kind": "SAME_RATE_SCALE",
+        "representation_class": "STRUCTURAL",
+        "visual_language_key": {"money": "TEAL", "hats": "BLUE", "scale": "PURPLE"},
+        "primary_visual": {
+          "visual_state_id": "RATE-PRIMARY",
+          "primitive_kind": "RATE_SCALE_MODEL",
+          "representation_ref": "REP-RATE-SCALE",
+          "fidelity": "EXACT",
+          "fade_mode": "FULL",
+          "semantic_params": {"base_amount": 120, "target_amount": 240, "base_count": 3, "target_count": 6, "scale_factor": 2},
+          "validator_refs": ["SAME_RATE_SCALE"]
+        },
+        "visual_states": [
+          {"visual_state_id": "RATE-H1", "primitive_kind": "RATE_COMPARE", "representation_ref": "REP-RATE-COMPARE", "fidelity": "SCHEMATIC", "fade_mode": "FULL", "semantic_params": {"base_amount": 120, "target_amount": 240}, "validator_refs": ["SAME_RATE_SCALE"]},
+          {"visual_state_id": "RATE-H2", "primitive_kind": "SCALE_FACTOR_VIEW", "representation_ref": "REP-RATE-FACTOR", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"base_amount": 120, "target_amount": 240, "scale_factor": 2}, "validator_refs": ["SAME_RATE_SCALE"]},
+          {"visual_state_id": "RATE-H3", "primitive_kind": "RATE_SCALE_MODEL", "representation_ref": "REP-RATE-APPLY", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"base_count": 3, "scale_factor": 2}, "validator_refs": ["SAME_RATE_SCALE"]},
+          {"visual_state_id": "RATE-P1", "primitive_kind": "RATE_COMPARE", "representation_ref": "REP-RATE-COMPARE", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"base_amount": 120, "target_amount": 240}, "validator_refs": ["SAME_RATE_SCALE"]},
+          {"visual_state_id": "RATE-P2", "primitive_kind": "SCALE_FACTOR_VIEW", "representation_ref": "REP-RATE-FACTOR", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"scale_factor": 2}, "validator_refs": ["SAME_RATE_SCALE"]},
+          {"visual_state_id": "RATE-P3", "primitive_kind": "RATE_SCALE_MODEL", "representation_ref": "REP-RATE-APPLY", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"base_count": 3, "scale_factor": 2}, "validator_refs": ["SAME_RATE_SCALE"]},
+          {"visual_state_id": "RATE-P4", "primitive_kind": "INVERSE_CHECK", "representation_ref": "REP-RATE-CHECK", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"unit_rate": 40}, "validator_refs": ["SAME_RATE_SCALE"]}
+        ],
+        "hint_ladder": {
+          "ladder_id": "HL-RATE",
+          "task_ref": "FIX-RATE-HATS-120-240",
+          "steps": [
+            {"hint_id": "HL-RATE-H1", "level": "H1", "semantic_role": "NOTICE", "child_label": "LOOK", "verbal_cue": "Compare Rs 120 and Rs 240.", "visual_state_ref": "RATE-H1", "learner_action": "Point to how the money changed.", "information_revealed": ["MONEY_COMPARISON"], "may_reveal_final_answer": false},
+            {"hint_id": "HL-RATE-H2", "level": "H2", "semantic_role": "REMEMBER", "child_label": "REMEMBER", "verbal_cue": "Use the same scale factor at the same rate.", "visual_state_ref": "RATE-H2", "learner_action": "Mark the x2 change.", "information_revealed": ["SCALE_FACTOR"], "may_reveal_final_answer": false},
+            {"hint_id": "HL-RATE-H3", "level": "H3", "semantic_role": "REPRESENT", "child_label": "SHOW IT", "verbal_cue": "Apply x2 to the 3 hats.", "visual_state_ref": "RATE-H3", "learner_action": "Write 3 x 2, then solve it.", "information_revealed": ["FIRST_EXECUTABLE_STEP"], "may_reveal_final_answer": false}
+          ],
+          "fresh_retry_ref": "FRESH-RATE-01"
+        },
+        "thinking_path": {
+          "schema_version": "1.0.0",
+          "path_id": "TP-RATE",
+          "task_ref": "FIX-RATE-HATS-120-240",
+          "steps": [
+            {"step_id": "TP-RATE-1", "semantic_role": "INTERPRET", "child_label": "LOOK", "micro_visual_ref": "RATE-P1", "one_line_action": "Compare the money."},
+            {"step_id": "TP-RATE-2", "semantic_role": "MODEL", "child_label": "SHOW IT", "micro_visual_ref": "RATE-P2", "one_line_action": "Find the scale factor."},
+            {"step_id": "TP-RATE-3", "semantic_role": "EXECUTE", "child_label": "WORK", "micro_visual_ref": "RATE-P3", "one_line_action": "Scale the hats."},
+            {"step_id": "TP-RATE-4", "semantic_role": "VERIFY", "child_label": "CHECK", "micro_visual_ref": "RATE-P4", "one_line_action": "Check the unit rate."}
+          ]
+        },
+        "fresh_retry_ref": "FRESH-RATE-01"
+      }
+    },
+    {
+      "case_id": "DIVISION_TABLE_720_480",
+      "task": {
+        "task_ref": "FIX-DIV-TABLE-720-480",
+        "task_kind": "DIVISION_TABLE",
+        "representation_class": "STRUCTURAL",
+        "visual_language_key": {"columns": "BLUE", "rows": "TEAL", "active_cell": "PURPLE"},
+        "primary_visual": {
+          "visual_state_id": "TABLE-PRIMARY",
+          "primitive_kind": "DIVISION_TABLE_MODEL",
+          "representation_ref": "REP-DIV-TABLE",
+          "fidelity": "EXACT",
+          "fade_mode": "FULL",
+          "semantic_params": {"columns": [720, 480], "rows": [60, 15], "cell_mode": "BLANK"},
+          "validator_refs": ["DIVISION_TABLE"]
+        },
+        "visual_states": [
+          {"visual_state_id": "TABLE-H1", "primitive_kind": "DIVISION_TABLE_ROLE_HIGHLIGHT", "representation_ref": "REP-DIV-TABLE-ROLES", "fidelity": "SCHEMATIC", "fade_mode": "FULL", "semantic_params": {"columns": [720, 480], "rows": [60, 15]}, "validator_refs": ["DIVISION_TABLE"]},
+          {"visual_state_id": "TABLE-H2", "primitive_kind": "DIVISION_TABLE_CELL_MODEL", "representation_ref": "REP-DIV-TABLE-CELL", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"column": 720, "row": 60, "operation": "720/60"}, "validator_refs": ["DIVISION_TABLE"]},
+          {"visual_state_id": "TABLE-H3", "primitive_kind": "DIVISION_TABLE_CELL_MODEL", "representation_ref": "REP-DIV-TABLE-FIRST", "fidelity": "EXACT", "fade_mode": "PARTIAL", "semantic_params": {"column": 720, "row": 60, "quotient": 12}, "validator_refs": ["DIVISION_TABLE"]},
+          {"visual_state_id": "TABLE-P1", "primitive_kind": "DIVISION_TABLE_ROLE_HIGHLIGHT", "representation_ref": "REP-DIV-TABLE-ROLES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"columns": [720, 480]}, "validator_refs": ["DIVISION_TABLE"]},
+          {"visual_state_id": "TABLE-P2", "primitive_kind": "DIVISION_TABLE_ROLE_HIGHLIGHT", "representation_ref": "REP-DIV-TABLE-ROLES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"rows": [60, 15]}, "validator_refs": ["DIVISION_TABLE"]},
+          {"visual_state_id": "TABLE-P3", "primitive_kind": "DIVISION_TABLE_CELL_MODEL", "representation_ref": "REP-DIV-TABLE-CELL", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"operation": "column/row"}, "validator_refs": ["DIVISION_TABLE"]},
+          {"visual_state_id": "TABLE-P4", "primitive_kind": "DIVISION_TABLE_MODEL", "representation_ref": "REP-DIV-TABLE", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"expected_cells": 4}, "validator_refs": ["DIVISION_TABLE"]}
+        ],
+        "hint_ladder": {
+          "ladder_id": "HL-DIV-TABLE",
+          "task_ref": "FIX-DIV-TABLE-720-480",
+          "steps": [
+            {"hint_id": "HL-DIV-TABLE-H1", "level": "H1", "semantic_role": "NOTICE", "child_label": "LOOK", "verbal_cue": "Read a top number and a side number.", "visual_state_ref": "TABLE-H1", "learner_action": "Point to one column and one row.", "information_revealed": ["TABLE_ROLES"], "may_reveal_final_answer": false},
+            {"hint_id": "HL-DIV-TABLE-H2", "level": "H2", "semantic_role": "REMEMBER", "child_label": "REMEMBER", "verbal_cue": "Divide the top number by the side number.", "visual_state_ref": "TABLE-H2", "learner_action": "Read 720 / 60.", "information_revealed": ["ONE_CELL_OPERATION"], "may_reveal_final_answer": false},
+            {"hint_id": "HL-DIV-TABLE-H3", "level": "H3", "semantic_role": "REPRESENT", "child_label": "SHOW IT", "verbal_cue": "Model one cell, then continue the same way.", "visual_state_ref": "TABLE-H3", "learner_action": "Write 12 in the 720/60 cell, then solve the remaining cells.", "information_revealed": ["ONE_MODELED_CELL"], "may_reveal_final_answer": false}
+          ],
+          "fresh_retry_ref": "FRESH-DIV-TABLE-01"
+        },
+        "thinking_path": {
+          "schema_version": "1.0.0",
+          "path_id": "TP-DIV-TABLE",
+          "task_ref": "FIX-DIV-TABLE-720-480",
+          "steps": [
+            {"step_id": "TP-DIV-TABLE-1", "semantic_role": "INTERPRET", "child_label": "LOOK", "micro_visual_ref": "TABLE-P1", "one_line_action": "Read the top."},
+            {"step_id": "TP-DIV-TABLE-2", "semantic_role": "MODEL", "child_label": "SHOW IT", "micro_visual_ref": "TABLE-P2", "one_line_action": "Read the side."},
+            {"step_id": "TP-DIV-TABLE-3", "semantic_role": "EXECUTE", "child_label": "WORK", "micro_visual_ref": "TABLE-P3", "one_line_action": "Divide for each cell."},
+            {"step_id": "TP-DIV-TABLE-4", "semantic_role": "VERIFY", "child_label": "CHECK", "micro_visual_ref": "TABLE-P4", "one_line_action": "Check all 4 cells."}
+          ]
+        },
+        "work_surface": {
+          "schema_version": "1.0.0",
+          "surface_id": "WS-DIV-TABLE-720-480",
+          "task_ref": "FIX-DIV-TABLE-720-480",
+          "kind": "DIVISION_TABLE_WORKSPACE",
+          "semantic_params": {
+            "columns": [720, 480],
+            "rows": [60, 15],
+            "cells": [
+              {"column": 720, "row": 60, "quotient": 12},
+              {"column": 480, "row": 60, "quotient": 8},
+              {"column": 720, "row": 15, "quotient": 48},
+              {"column": 480, "row": 15, "quotient": 32}
+            ]
+          },
+          "validator_refs": ["DIVISION_TABLE"],
+          "provenance": "ENGINE_AUTHORED_VISUAL"
+        },
+        "fresh_retry_ref": "FRESH-DIV-TABLE-01"
+      }
+    }
+  ]
+}

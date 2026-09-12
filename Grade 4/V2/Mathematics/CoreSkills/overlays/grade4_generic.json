@@ -1,0 +1,20 @@
+{
+  "overlay_id": "OVERLAY-GRADE4-GENERIC",
+  "target_grade": 4,
+  "curriculum_authority": "COMMON_PRIMARY_CURRICULUM_V2",
+  "authority_version": "2026.1",
+  "capabilities": [
+    "PM-NUM-PV-01",
+    "PM-NUM-MUL-01",
+    "PM-NUM-DIV-01",
+    "PM-FRAC-EQ-01",
+    "PM-FRAC-COMP-01",
+    "PM-FRAC-OPS-01",
+    "PM-DEC-HUND-01",
+    "PM-MEAS-CONV-01",
+    "PM-GEOM-PERIM-AREA-01",
+    "PM-GEOM-ANG-01",
+    "PM-DATA-CHART-01",
+    "PM-NOTE-WORK-01"
+  ]
+}

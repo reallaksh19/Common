@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PrimaryMathCandidateExport",
+  "description": "Candidate export structure evaluated by the independent Primary Mathematics V2 benchmark oracle.",
+  "type": "object",
+  "required": [
+    "candidate_id",
+    "timestamp",
+    "cases"
+  ],
+  "properties": {
+    "candidate_id": { "type": "string" },
+    "timestamp": { "type": "string" },
+    "engine_version": { "type": "string" },
+    "cases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/BenchmarkCaseExport"
+      }
+    }
+  },
+  "$defs": {
+    "BenchmarkCaseExport": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "scope_provenance",
+        "math_invariants",
+        "representations",
+        "core1_refs",
+        "core2_refs",
+        "learner_surface_guard",
+        "layout_custody"
+      ],
+      "properties": {
+        "case_id": { "type": "string" },
+        "domain": { "type": "string" },
+        "grade_level": { "type": "integer", "enum": [4, 5] },
+        "scope_provenance": {
+          "type": "object",
+          "required": ["scope_basis"],
+          "properties": {
+            "scope_basis": {
+              "type": "string",
+              "enum": [
+                "QUESTION_SET_OBSERVED",
+                "SCHOOL_CLASSWORK_OBSERVED",
+                "CURRICULUM_CONFIRMED",
+                "CURRICULUM_OVERLAY",
+                "COMMON_G4_5_CAPABILITY",
+                "EXTENSION",
+                "STRETCH",
+                "MAPPING_PENDING",
+                "SOURCE_NOT_PROVIDED"
+              ]
+            },
+            "authority_ref": { "type": "string" },
+            "authority_version": { "type": "string" },
+            "evidence_ref": { "type": "string" },
+            "universal_grade_scope_claimed": { "type": "boolean" }
+          }
+        },
+        "math_invariants": {
+          "type": "object",
+          "required": ["operation", "operands"],
+          "properties": {
+            "operation": { "type": "string" },
+            "operands": {
+              "type": "array",
+              "items": { "type": "number" }
+            },
+            "result": { "type": "number" },
+            "remainder": { "type": "number" },
+            "decomposition": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "expression": { "type": "string" },
+                  "value": { "type": "number" }
+                }
+              }
+            },
+            "partial_steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "step_index": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "partial_value": { "type": "number" }
+                }
+              }
+            },
+            "check_relation": { "type": "string" },
+            "check_satisfied": { "type": "boolean" },
+            "quantity_structure": {
+              "type": "object",
+              "properties": {
+                "meaning": { "type": "string", "enum": ["SHARING", "GROUPING", "RATE_MEASURE", "AREA", "PARTITION", "OTHER"] },
+                "quantities": { "type": "array" },
+                "unit_chain": { "type": "array" },
+                "remainder_interpretation": {
+                  "type": "string",
+                  "enum": [
+                    "LEFTOVERS",
+                    "FULL_GROUPS_ONLY",
+                    "ROUND_UP_ONE_MORE_GROUP",
+                    "REPORT_QUOTIENT_AND_REMAINDER",
+                    "REMAINDER_IS_TARGET",
+                    "FRACTIONAL_SHARE",
+                    "DECIMAL_SHARE"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "representations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["role", "kind", "params", "rendered_evidence"],
+            "properties": {
+              "role": {
+                "type": "string",
+                "enum": ["PROVIDED", "CHILD_SELECTED", "CHILD_PRODUCED", "BRIDGE", "WORKED_EXAMPLE"]
+              },
+              "kind": { "type": "string" },
+              "params": { "type": "object" },
+              "rendered_evidence": {
+                "type": "object",
+                "required": ["element_count", "visual_checksum", "data_grounded"],
+                "properties": {
+                  "element_count": { "type": "integer", "minimum": 1 },
+                  "visual_checksum": { "type": "string" },
+                  "data_grounded": { "type": "boolean" },
+                  "labels": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "work_provenance": {
+          "type": "object",
+          "properties": {
+            "tier": {
+              "type": "string",
+              "enum": [
+                "ORIGINAL_SOURCE_IMAGE",
+                "FAITHFUL_TRANSCRIPTION",
+                "STRUCTURED_REPLAY",
+                "AUTHORED_NOTEBOOK_EXAMPLE"
+              ]
+            },
+            "actor": { "type": "string", "enum": ["CHILD", "TEACHER", "SYSTEM", "UNKNOWN"] },
+            "student_steps": { "type": "array" },
+            "teacher_annotations": { "type": "array" },
+            "self_corrections": { "type": "array" },
+            "has_ambiguity": { "type": "boolean" },
+            "alignment_invariants": {
+              "type": "object",
+              "properties": {
+                "place_value_aligned": { "type": "boolean" },
+                "decimal_aligned": { "type": "boolean" },
+                "quotient_digits_aligned": { "type": "boolean" },
+                "internal_zero_preserved": { "type": "boolean" },
+                "intermediate_work_preserved": { "type": "boolean" }
+              }
+            }
+          }
+        },
+        "core1_refs": {
+          "type": "object",
+          "required": ["module_id", "pedagogical_sequence", "dominant_representation"],
+          "properties": {
+            "module_id": { "type": "string" },
+            "pedagogical_sequence": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "dominant_representation": { "type": "string" },
+            "representation_bridge": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "core2_refs": {
+          "type": "object",
+          "required": ["companion_id", "appendix_a_batches", "appendix_b_ladder", "appendix_c_ref"],
+          "properties": {
+            "companion_id": { "type": "string" },
+            "linked_core1_module_id": { "type": "string" },
+            "appendix_a_batches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["batch_id", "practice_role", "item_count"],
+                "properties": {
+                  "batch_id": { "type": "string" },
+                  "practice_role": {
+                    "type": "string",
+                    "enum": ["RECONNECT", "BUILD", "CHOOSE", "MIX", "TRANSFER", "RETRIEVE"]
+                  },
+                  "item_count": { "type": "integer", "minimum": 1 }
+                }
+              }
+            },
+            "appendix_b_ladder": {
+              "type": "object",
+              "required": ["H0_try", "H1_notice", "H2_remember", "H3_represent", "fresh_independent_retry_H0"],
+              "properties": {
+                "H0_try": { "type": "string" },
+                "H1_notice": { "type": "string" },
+                "H2_remember": { "type": "string" },
+                "H3_represent": { "type": "string" },
+                "fresh_independent_retry_H0": { "type": "string" }
+              }
+            },
+            "appendix_c_ref": {
+              "type": "object",
+              "required": ["format", "visual_decision_aid"],
+              "properties": {
+                "format": { "type": "string", "enum": ["VISUAL_DECISION_REFERENCE", "FLOW_CARD", "COMPARISON_MATRIX"] },
+                "visual_decision_aid": { "type": "string" },
+                "is_prose_cram_sheet": { "type": "boolean" }
+              }
+            }
+          }
+        },
+        "learner_surface_guard": {
+          "type": "object",
+          "required": ["pass", "detected_internal_tokens"],
+          "properties": {
+            "pass": { "type": "boolean" },
+            "detected_internal_tokens": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "token_count": { "type": "integer" }
+          }
+        },
+        "layout_custody": {
+          "type": "object",
+          "required": ["page_count", "page_map", "pdf_sha256", "child_first_geometry"],
+          "properties": {
+            "page_count": { "type": "integer", "minimum": 1 },
+            "page_map": { "type": "array" },
+            "pdf_sha256": { "type": "string" },
+            "child_first_geometry": {
+              "type": "object",
+              "required": ["min_body_font_pt", "overflow_strategy"],
+              "properties": {
+                "min_body_font_pt": { "type": "number", "minimum": 12.0 },
+                "overflow_strategy": { "type": "string", "enum": ["ADD_PAGE", "PAGINATE"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

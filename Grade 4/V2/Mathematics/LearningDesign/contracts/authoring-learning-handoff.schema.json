@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/LearningDesign/contracts/authoring-learning-handoff.schema.json",
+  "title": "PrimaryMathAuthoringLearningHandoff",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "handoff_id",
+    "input_ref",
+    "authoring_result",
+    "module_support",
+    "coverage",
+    "publisher_invention_allowed"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "handoff_id": {"type": "string", "minLength": 1},
+    "input_ref": {"type": "string", "minLength": 1},
+    "authoring_result": {"type": "object"},
+    "module_support": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "product",
+          "module_id",
+          "concept_ref",
+          "support_status",
+          "learning_representation_plan",
+          "fresh_retry_prompt"
+        ],
+        "properties": {
+          "product": {"enum": ["CORE1", "CORE2"]},
+          "module_id": {"type": "string", "minLength": 1},
+          "concept_ref": {"type": "string", "minLength": 1},
+          "support_status": {"enum": ["PLANNED", "INDEPENDENT_PROBE_ONLY"]},
+          "learning_representation_plan": {
+            "oneOf": [
+              {"$ref": "../../Representation/contracts/learning-representation-plan.schema.json"},
+              {"type": "null"}
+            ]
+          },
+          "fresh_retry_prompt": {"type": ["string", "null"]}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"support_status": {"const": "PLANNED"}}},
+            "then": {
+              "properties": {
+                "learning_representation_plan": {"$ref": "../../Representation/contracts/learning-representation-plan.schema.json"},
+                "fresh_retry_prompt": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          {
+            "if": {"properties": {"support_status": {"const": "INDEPENDENT_PROBE_ONLY"}}},
+            "then": {
+              "properties": {
+                "learning_representation_plan": {"type": "null"},
+                "fresh_retry_prompt": {"type": "null"}
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["total_modules", "planned_modules", "independent_probe_modules", "unaccounted_modules"],
+      "properties": {
+        "total_modules": {"type": "integer", "minimum": 0},
+        "planned_modules": {"type": "integer", "minimum": 0},
+        "independent_probe_modules": {"type": "integer", "minimum": 0},
+        "unaccounted_modules": {"const": 0}
+      },
+      "additionalProperties": false
+    },
+    "publisher_invention_allowed": {"const": false}
+  },
+  "additionalProperties": false
+}

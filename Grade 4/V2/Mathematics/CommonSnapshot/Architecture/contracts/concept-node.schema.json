@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/Architecture/contracts/concept-node.schema.json",
+  "title": "PrimaryMathConceptNode",
+  "type": "object",
+  "required": ["concept_id", "title", "capability_refs", "scope_basis"],
+  "properties": {
+    "concept_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "scope_basis": {
+      "enum": [
+        "CURRICULUM_CONFIRMED",
+        "QUESTION_SET_OBSERVED",
+        "SCHOOL_CLASSWORK_OBSERVED",
+        "COMMON_G4_5_CAPABILITY",
+        "CURRICULUM_OVERLAY",
+        "EXTENSION",
+        "STRETCH",
+        "MAPPING_PENDING",
+        "SOURCE_NOT_PROVIDED"
+      ]
+    },
+    "authority_ref": {"type": ["string", "null"]},
+    "universal_grade_claim": {"type": "boolean", "default": false},
+    "learning_object_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "capability_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+    "prerequisite_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "representation_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "problem_family_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "invariant_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "error_signature_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "transfer_dimension_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "additionalProperties": false
+}
