@@ -1,0 +1,187 @@
+{
+  "version": "1.0.0",
+  "authority": "PRIMARY_MATH_V2_BENCHMARK_ACCEPTANCE",
+  "normative_primary_prs": [163, 171, 172, 185, 182, 164],
+  "cases": [
+    {
+      "case_id": "PMV2-MUL-BRIDGE-23X6",
+      "domain": "MULTIPLICATION",
+      "depth": "DEEP",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "MULTIPLICATION_BRIDGE", "a": 23, "b": 6, "split": [20, 3], "product": 138},
+      "required_representation_roles": ["EQUAL_GROUPS", "ARRAY", "DISTRIBUTIVE_AREA", "PARTIAL_PRODUCTS", "WRITTEN_ALGORITHM", "CHECK"],
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_TRANSLATION", "WRITTEN_WORK_ALIGNMENT", "CORE1_COVERAGE", "CORE2_PRACTICE_LINK"]
+    },
+    {
+      "case_id": "PMV2-DIV-SHARE-GROUP-24-6",
+      "domain": "DIVISION",
+      "depth": "DEEP",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "DIVISION_DUAL_MEANING", "total": 24, "divisor": 6, "quotient": 4},
+      "required_representation_roles": ["EQUAL_SHARE", "EQUAL_GROUP", "DIVISION_EQUATION"],
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_TRANSLATION", "QUANTITY_ROLE_DISTINCTION"]
+    },
+    {
+      "case_id": "PMV2-DIV-ZERO-366-12",
+      "domain": "DIVISION",
+      "depth": "DEEP",
+      "scope_basis": "QUESTION_SET_OBSERVED",
+      "oracle": {"kind": "DIVISION_ALGORITHM", "dividend": 366, "divisor": 12, "quotient": 30, "remainder": 6, "internal_zero_required": true},
+      "required_representation_roles": ["WRITTEN_DIVISION", "QUOTIENT_PLACE_SLOTS", "MULTIPLICATION_CHECK"],
+      "required_assertions": ["SCOPE_PROVENANCE", "MATH_INVARIANT", "WRITTEN_WORK_ALIGNMENT", "CORE1_COVERAGE", "CORE2_PRACTICE_LINK"]
+    },
+    {
+      "case_id": "PMV2-DIV-ZERO-7843-13",
+      "domain": "DIVISION",
+      "depth": "DEEP",
+      "scope_basis": "QUESTION_SET_OBSERVED",
+      "oracle": {"kind": "DIVISION_ALGORITHM", "dividend": 7843, "divisor": 13, "quotient": 603, "remainder": 4, "internal_zero_required": true},
+      "required_representation_roles": ["WRITTEN_DIVISION", "QUOTIENT_PLACE_SLOTS", "MULTIPLICATION_CHECK"],
+      "required_assertions": ["SCOPE_PROVENANCE", "MATH_INVARIANT", "WRITTEN_WORK_ALIGNMENT", "WORK_PROVENANCE"]
+    },
+    {
+      "case_id": "PMV2-DIV-CONTRAST-3496-23",
+      "domain": "DIVISION",
+      "depth": "DEEP",
+      "scope_basis": "QUESTION_SET_OBSERVED",
+      "oracle": {"kind": "DIVISION_ALGORITHM", "dividend": 3496, "divisor": 23, "quotient": 152, "remainder": 0, "internal_zero_required": false},
+      "required_representation_roles": ["WRITTEN_DIVISION", "MULTIPLES_SUPPORT", "MULTIPLICATION_CHECK"],
+      "required_assertions": ["SCOPE_PROVENANCE", "MATH_INVARIANT", "DIAGNOSTIC_CONTRAST_MEMBER"]
+    },
+    {
+      "case_id": "PMV2-DIV-DIAGNOSTIC-ZERO-CONTRAST",
+      "domain": "DIVISION_DIAGNOSIS",
+      "depth": "DEEP",
+      "scope_basis": "QUESTION_SET_OBSERVED",
+      "oracle": {"kind": "DIAGNOSTIC_CONTRAST", "focal_feature": "QUOTIENT_ZERO_REQUIRED", "positive_cases": ["PMV2-DIV-ZERO-366-12", "PMV2-DIV-ZERO-7843-13"], "negative_cases": ["PMV2-DIV-CONTRAST-3496-23"], "max_competing_hypotheses": 3},
+      "required_representation_roles": ["CONTRAST_SET", "DIAGNOSTIC_PROBE"],
+      "required_assertions": ["CONTRAST_FOCAL_FEATURE", "BOUNDED_HYPOTHESES", "SMALLEST_DISCRIMINATING_PROBE", "NO_DURABLE_TRAIT_FROM_PATTERN"]
+    },
+    {
+      "case_id": "PMV2-DIV-REMAINDER-CONTEXT",
+      "domain": "DIVISION",
+      "depth": "DEEP",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "REMAINDER_CONTEXT", "dividend": 29, "divisor": 6, "quotient": 4, "remainder": 5, "allowed_answer_forms": ["LEFTOVERS", "FULL_GROUPS_ONLY", "ROUND_UP_ONE_MORE_GROUP", "REPORT_QUOTIENT_AND_REMAINDER", "REMAINDER_IS_TARGET"]},
+      "required_representation_roles": ["REMAINDER_CONTEXT", "GROUP_MODEL", "ANSWER_FORM"],
+      "required_assertions": ["MATH_INVARIANT", "CONTEXT_DRIVES_ANSWER_FORM", "CORE2_PRACTICE_LINK"]
+    },
+    {
+      "case_id": "PMV2-UNIT-DOZEN-MONEY",
+      "domain": "WORD_PROBLEM_MODELLING",
+      "depth": "DEEP",
+      "scope_basis": "QUESTION_SET_OBSERVED",
+      "oracle": {"kind": "UNIT_CHAIN", "quantity": 23, "source_unit": "DOZEN", "conversion_factor": 12, "target_unit": "EGG", "rate": 6, "rate_unit": "CURRENCY_PER_EGG", "converted_quantity": 276, "result": 1656},
+      "required_representation_roles": ["QUANTITY_STRUCTURE", "UNIT_CHAIN", "MULTI_STEP_EQUATION"],
+      "required_assertions": ["SCOPE_PROVENANCE", "QUANTITY_UNIT_ROLE_RELATIONSHIP", "MATH_INVARIANT"]
+    },
+    {
+      "case_id": "PMV2-FRAC-EQUIV-1-2",
+      "domain": "FRACTIONS",
+      "depth": "DEEP",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "FRACTION_EQUIVALENCE", "fractions": [[1, 2], [2, 4], [4, 8]]},
+      "required_representation_roles": ["EQUAL_PARTITION", "FRACTION_STRIP", "NUMBER_LINE", "EQUIVALENCE_BRIDGE"],
+      "required_assertions": ["MATH_INVARIANT", "EQUAL_PARTITION", "REPRESENTATION_TRANSLATION"]
+    },
+    {
+      "case_id": "PMV2-FRAC-ADD-1-2-1-4",
+      "domain": "FRACTIONS",
+      "depth": "DEEP",
+      "scope_basis": "CURRICULUM_OVERLAY",
+      "oracle": {"kind": "FRACTION_ADDITION", "left": [1, 2], "right": [1, 4], "result": [3, 4]},
+      "required_representation_roles": ["REPARTITION", "EQUIVALENT_FRACTION", "FRACTION_ADDITION"],
+      "required_assertions": ["SCOPE_PROVENANCE", "MATH_INVARIANT", "REPRESENTATION_TRANSLATION"]
+    },
+    {
+      "case_id": "PMV2-PLACEVALUE-5043",
+      "domain": "NUMBER_PLACE_VALUE",
+      "depth": "BREADTH",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "PLACE_VALUE", "number": 5043, "digits": {"THOUSANDS": 5, "HUNDREDS": 0, "TENS": 4, "ONES": 3}, "expanded": [5000, 40, 3]},
+      "required_representation_roles": ["PLACE_VALUE_CHART", "EXPANDED_FORM"],
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_TRANSLATION", "WRITTEN_WORK_ALIGNMENT"]
+    },
+    {
+      "case_id": "PMV2-DECIMAL-0-37",
+      "domain": "DECIMALS",
+      "depth": "BREADTH",
+      "scope_basis": "CURRICULUM_OVERLAY",
+      "oracle": {"kind": "DECIMAL_HUNDREDTHS", "decimal": "0.37", "hundredths": 37},
+      "required_representation_roles": ["HUNDRED_GRID", "DECIMAL_PLACE_VALUE", "NUMBER_LINE"],
+      "required_assertions": ["SCOPE_PROVENANCE", "MATH_INVARIANT", "REPRESENTATION_TRANSLATION"]
+    },
+    {
+      "case_id": "PMV2-MEASURE-M-TO-CM",
+      "domain": "MEASUREMENT",
+      "depth": "BREADTH",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "UNIT_CONVERSION", "value": 3, "source_unit": "M", "target_unit": "CM", "factor": 100, "result": 300},
+      "required_representation_roles": ["UNIT_CHAIN", "MEASUREMENT_SCALE"],
+      "required_assertions": ["MATH_INVARIANT", "QUANTITY_UNIT_ROLE_RELATIONSHIP"]
+    },
+    {
+      "case_id": "PMV2-PERIMETER-AREA-RECT-6X4",
+      "domain": "MENSURATION",
+      "depth": "BREADTH",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "PERIMETER_AREA_CONTRAST", "length": 6, "width": 4, "perimeter": 20, "area": 24},
+      "required_representation_roles": ["PERIMETER_PATH", "AREA_TILE_GRID"],
+      "required_assertions": ["MATH_INVARIANT", "BOUNDARY_VS_COVERING_DISTINCTION"]
+    },
+    {
+      "case_id": "PMV2-VOLUME-3X2X4",
+      "domain": "VOLUME",
+      "depth": "BREADTH",
+      "scope_basis": "CURRICULUM_OVERLAY",
+      "oracle": {"kind": "VOLUME", "length": 3, "width": 2, "height": 4, "volume": 24},
+      "required_representation_roles": ["CUBE_LAYERS"],
+      "required_assertions": ["SCOPE_PROVENANCE", "MATH_INVARIANT"]
+    },
+    {
+      "case_id": "PMV2-ANGLE-65",
+      "domain": "GEOMETRY",
+      "depth": "BREADTH",
+      "scope_basis": "CURRICULUM_OVERLAY",
+      "oracle": {"kind": "ANGLE", "degrees": 65},
+      "required_representation_roles": ["ANGLE_MODEL", "PROTRACTOR_OR_TURN"],
+      "required_assertions": ["SCOPE_PROVENANCE", "GEOMETRIC_RELATIONSHIP"]
+    },
+    {
+      "case_id": "PMV2-DATA-BAR-SCALE-5",
+      "domain": "DATA",
+      "depth": "BREADTH",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "BAR_CHART", "scale": 5, "data": {"A": 10, "B": 25, "C": 15}},
+      "required_representation_roles": ["DATA_TABLE", "BAR_CHART", "SCALE_KEY"],
+      "required_assertions": ["MATH_INVARIANT", "CHART_DATA_FIDELITY"]
+    },
+    {
+      "case_id": "PMV2-WORK-PROVENANCE-MIXED-SUCCESS",
+      "domain": "WORK_EVIDENCE",
+      "depth": "DEEP",
+      "scope_basis": "SCHOOL_CLASSWORK_OBSERVED",
+      "oracle": {"kind": "WORK_PROVENANCE", "requires_correct_substep_preservation": true, "teacher_annotation_separate": true, "ambiguity_preserved": true},
+      "required_representation_roles": ["STRUCTURED_REPLAY"],
+      "required_assertions": ["WORK_PROVENANCE", "INCORRECT_FINAL_DOES_NOT_ERASE_CORRECT_SUBSTEPS", "TEACHER_ANNOTATION_SEPARATE", "AMBIGUITY_PRESERVED"]
+    },
+    {
+      "case_id": "PMV2-HINT-FADE-FRESH-RETRY",
+      "domain": "SUPPORT_AND_RETRY",
+      "depth": "DEEP",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "HINT_LADDER", "sequence": ["H0", "H1", "H2", "H3", "FRESH_H0"], "supported_success_is_independent": false},
+      "required_representation_roles": ["H1_NOTICE", "H2_REMEMBER", "H3_REPRESENT", "FRESH_INDEPENDENT_RETRY"],
+      "required_assertions": ["HINT_FADE", "FRESH_INDEPENDENT_RETRY", "SUPPORTED_SUCCESS_NOT_MASTERY"]
+    },
+    {
+      "case_id": "PMV2-ROUTE-CHANGE-AFTER-REPEAT-FAILURE",
+      "domain": "TEACHER_RUNTIME",
+      "depth": "DEEP",
+      "scope_basis": "COMMON_G4_5_CAPABILITY",
+      "oracle": {"kind": "ROUTE_CHANGE", "same_route_failures_before_change": 2, "must_change_meaningful_dimension": true},
+      "required_representation_roles": ["TEACHER_MOVE_TRACE"],
+      "required_assertions": ["ROUTE_CHANGE", "CONCEPTUAL_SUPPORT_SEPARATE_FROM_ACCESS", "INDEPENDENT_RETRY"]
+    }
+  ]
+}
