@@ -6,6 +6,10 @@ It is **not** a canonical release and does not supersede the repository's P-A ->
 
 ## Start here
 
+The repository keeps the binary handoff as `physics-agent-bootstrap-2026-09-12.zip` so the case-study PDFs, audits, and available generator can travel together without scattering binary fixtures across the main tree. **Download/extract that bundle first**; paths such as `artifacts/final/...`, `audits/...`, and `scripts/...` below refer to paths inside the extracted bundle. The README and manifest are also committed separately for browsing.
+
+Bundle SHA-256: `ad36facc746b715f5b10a76c851c0fa01eaf7a2bb1090afe79ab821eb177a034`.
+
 1. Read this README and `physics-agent-bootstrap-manifest.json`.
 2. For Chapters 2-5, inspect the final Core (1)/Core (2) pairs under `artifacts/final/`.
 3. For Motion in 1D Core (1), prefer `physics-motion-1d-core1-visual-concept-atlas-final.pdf`; it is the latest teaching-surface rebuild and intentionally supersedes the older Core (1) answer-custody artifact.
