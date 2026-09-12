@@ -19,11 +19,16 @@ from Primary.V2.Mathematics.Representation.engine.primitives.numbers import Numb
 from Primary.V2.Mathematics.Representation.engine.primitives.measurement import MeasurementPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.geometry import GeometryPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.data import DataPrimitives
+from Primary.V2.Mathematics.Representation.engine.primitives.learning_support import LearningSupportPrimitives
 from Primary.V2.Mathematics.Representation.engine.notebook import (
     AuthenticNotebookEngine,
     LongDivisionWorkoutSpec,
     ProvenanceTier
 )
+
+
+class UnsupportedPrimaryPrimitive(ValueError):
+    """Fail closed rather than degrade a required learning visual to an empty card."""
 
 
 def render_primitive(
@@ -75,6 +80,18 @@ def render_primitive(
         GeometryPrimitives.draw_angle(backend, bbox, params)
     elif k == "DATA_BAR_CHART" or k == "BAR_CHART":
         DataPrimitives.draw_scaled_bar_chart(backend, bbox, params)
+    elif k == "RATE_COMPARE":
+        LearningSupportPrimitives.draw_rate_compare(backend, bbox, params)
+    elif k == "SCALE_FACTOR_VIEW":
+        LearningSupportPrimitives.draw_scale_factor(backend, bbox, params)
+    elif k == "RATE_SCALE_MODEL" or k == "SAME_RATE_SCALE":
+        LearningSupportPrimitives.draw_rate_scale_model(backend, bbox, params)
+    elif k == "DIVISION_TABLE_MODEL":
+        LearningSupportPrimitives.draw_division_table_model(backend, bbox, params)
+    elif k == "DIVISION_TABLE_ROLE_HIGHLIGHT":
+        LearningSupportPrimitives.draw_division_table_roles(backend, bbox, params)
+    elif k == "DIVISION_TABLE_CELL_MODEL":
+        LearningSupportPrimitives.draw_division_table_cell(backend, bbox, params)
     elif k == "LONG_DIVISION_WORKOUT":
         nb = AuthenticNotebookEngine(backend)
         spec = LongDivisionWorkoutSpec(
@@ -101,5 +118,6 @@ def render_primitive(
             tier=ProvenanceTier(params.get("tier", "STRUCTURED_REPLAY"))
         )
     else:
-        # Fallback card
-        backend.draw_rect(bbox.x, bbox.y, bbox.width, bbox.height, fill=None, stroke=None)
+        raise UnsupportedPrimaryPrimitive(
+            f"TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED: unsupported primitive {kind!r}"
+        )
