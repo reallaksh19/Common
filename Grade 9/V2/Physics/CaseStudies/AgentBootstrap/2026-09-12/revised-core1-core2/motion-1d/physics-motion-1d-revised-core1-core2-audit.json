@@ -1,0 +1,29 @@
+{
+  "topic": "Motion in 1D",
+  "revision": "topic-by-topic learner rebuild",
+  "core1": {
+    "file": "physics-motion-1d-revised-core1.pdf",
+    "pages": 25,
+    "competencies": 11,
+    "sha256": "93571d95c4c114fc1d000b9d6289756d81e8924298da51ce436ff9afbdcfd29a",
+    "out_of_bounds_text_blocks": 0,
+    "severe_overlap_flags": 0,
+    "minimum_rendered_text_size_pt": 7.36,
+    "oob_examples": [],
+    "overlap_examples": []
+  },
+  "core2": {
+    "file": "physics-motion-1d-revised-core2.pdf",
+    "pages": 30,
+    "problems": 14,
+    "sha256": "b9f9d4d718c6212d6d71c67a79a5032bcc0e4348b1231b7f6b501dcbcd58cc4b",
+    "out_of_bounds_text_blocks": 0,
+    "severe_overlap_flags": 0,
+    "minimum_rendered_text_size_pt": 6.96,
+    "oob_examples": [],
+    "overlap_examples": []
+  },
+  "hint_pair_failures": [],
+  "hint_contract": "prompt first -> directly related reveal; H1 concept, H2 representation, H3 first executable relation; exactly two work lines",
+  "core1_contract": "recognition + representation + mechanism + relation construction/validity + worked + guided + faded + anti-trigger + quick check + explicit answer"
+}
