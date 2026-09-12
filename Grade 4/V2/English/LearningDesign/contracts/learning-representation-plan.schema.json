@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/English/LearningDesign/contracts/learning-representation-plan.schema.json",
+  "title": "PrimaryEnglishLearningRepresentationPlan",
+  "type": "object",
+  "required": ["schema_version", "question_ref", "teaching_sequence", "representations", "support", "response_demand", "coverage_obligations"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "question_ref": {"type": "string", "minLength": 1},
+    "teaching_sequence": {
+      "type": "array",
+      "minItems": 4,
+      "items": {"enum": ["TEACH", "MODEL", "GUIDED_PRACTICE", "DIAGNOSTIC_CONTRAST", "HINT_LADDER", "INDEPENDENT_RETRY", "TRANSFER", "RUBRIC_REVIEW"]}
+    },
+    "representations": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+    "response_demand": {"type": "object"},
+    "support": {
+      "type": "object",
+      "required": ["H1", "H2", "H3", "fresh_retry"],
+      "properties": {
+        "H1": {"type": "object"},
+        "H2": {"type": "object"},
+        "H3": {"type": "object"},
+        "fresh_retry": {"type": "object"}
+      }
+    },
+    "misconception_watches": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "source_model_ref": {"type": ["string", "null"]},
+    "source_boundary_required": {"type": "boolean"},
+    "coverage_obligations": {"type": "object"}
+  },
+  "additionalProperties": true
+}
