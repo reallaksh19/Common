@@ -45,6 +45,7 @@ policy = load(ROOT / "registry" / "physics-transfer-evidence-policy.json")
 ledger = load(ROOT / "fixtures" / "physics-transfer-evidence.fixture.json")
 classification = load(PHYS / "Core2Transfer" / "registry" / "physics-external-corpus-classification.json")
 review = load(PHYS / "AssessmentReview" / "registry" / "physics-item-validity-registry.json")
+source_ledger = load(PHYS / "SourceLedger" / "registry" / "physics-source-question-ledger.json")
 questions = question_set()
 
 TMP = tempfile.TemporaryDirectory()
@@ -52,13 +53,14 @@ page_map, _ = realize(bundle, registry, contract, TMP.name)
 
 
 def build(q=None, rv=None, c1=None, rb=None, c2=None, cl=None, sc=None, m=None,
-          pol=None, led=..., pm=...):
+          pol=None, led=..., pm=..., sl=...):
     return build_closure(
         copy.deepcopy(q or questions), copy.deepcopy(rv or review), copy.deepcopy(c1 or core1),
         copy.deepcopy(rb or bundle), copy.deepcopy(c2 or core2), copy.deepcopy(cl or classification),
         copy.deepcopy(sc or scope), copy.deepcopy(m or model), copy.deepcopy(pol or policy),
         copy.deepcopy(ledger if led is ... else led),
         copy.deepcopy(page_map if pm is ... else pm),
+        source_ledger=copy.deepcopy(source_ledger if sl is ... else sl),
     )
 
 
@@ -76,6 +78,38 @@ matrix = closure["source_coverage_matrix"]
 assert matrix["denominator"] == len(questions["questions"])
 assert not matrix["uncovered_item_refs"]
 PASSES.append("EVERY_SOURCE_ITEM_ACCOUNTED_FOR")
+
+# ------------------------------------------- P-A0 independent source denominator
+recon = closure["source_ledger_reconciliation"]
+assert recon is not None and recon["reconciliation_state"] == "RECONCILED"
+assert recon["ledger_denominator"] == len(questions["questions"])
+PASSES.append("CLOSURE_RECONCILES_AGAINST_THE_FROZEN_SOURCE_LEDGER")
+
+# Without the ledger, closure may not claim completeness at all: the proof would be
+# relative to the same question set it is auditing.
+no_ledger = build(sl=None)
+assert no_ledger["closure_state"] == "OPEN"
+assert any(g["gap_class"] == "COVERAGE_PROVEN_ONLY_AGAINST_ITSELF" for g in no_ledger["gaps"])
+lying_ledger = copy.deepcopy(no_ledger)
+lying_ledger["closure_state"] = "CLOSED"
+lying_ledger["gaps"] = []
+redigest(lying_ledger)
+expect("COVERAGE_PROVEN_ONLY_AGAINST_ITSELF",
+       lambda: validate_closure(lying_ledger, scope, model, policy))
+
+# A source item extraction never produced is invisible to the question-set denominator
+# and named by the ledger denominator.
+short_questions = copy.deepcopy(questions)
+dropped_ref = short_questions["questions"][4]["question_id"]
+short_questions["questions"] = [q for q in short_questions["questions"]
+                                if q["question_id"] != dropped_ref]
+short_closure = build(q=short_questions, pm=None)
+assert short_closure["closure_state"] == "OPEN"
+assert any(g["gap_class"] == "SOURCE_ITEM_MISSING_FROM_QUESTION_SET"
+           and g["ref"] == dropped_ref for g in short_closure["gaps"])
+assert not short_closure["source_coverage_matrix"]["uncovered_item_refs"], \
+    "the question-set denominator cannot see its own missing item — that is the blind spot"
+PASSES.append("SOURCE_ITEM_MISSING_FROM_QUESTION_SET")
 
 thin_core1 = copy.deepcopy(core1)
 victim = thin_core1["lessons"][0]["scope_trace"]["source_scope_trace_item_refs"]

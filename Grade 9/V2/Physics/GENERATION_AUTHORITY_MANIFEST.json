@@ -26,6 +26,7 @@
     "reasoning_role_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-reasoning-role-registry.json",
     "scope_authority": "Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json",
     "scope_bindings": "Grade 9/V2/Physics/AssessmentScope/registry/motion-question-scope-bindings.json",
+    "source_question_ledger": "Grade 9/V2/Physics/SourceLedger/registry/physics-source-question-ledger.json",
     "teaching_primitive_registry": "Grade 9/V2/Physics/Representation/registry/physics-teaching-primitive-registry.json",
     "transfer_badge_policy": "Grade 9/V2/Physics/Core2Transfer/registry/physics-transfer-badge-policy.json",
     "transfer_evidence_ledger": "Grade 9/V2/Physics/CoverageClosure/fixtures/physics-transfer-evidence.fixture.json",
@@ -58,6 +59,7 @@
     "product_renderer": "Grade 9/V2/Physics/ColdStart/engine/physics_product_renderer.py",
     "representation_realization": "Grade 9/V2/Physics/Representation/engine/realize_physics_representations.py",
     "representations": "Grade 9/V2/Physics/Representation/engine/build_physics_representations.py",
+    "source_ledger": "Grade 9/V2/Physics/SourceLedger/engine/build_physics_source_ledger.py",
     "study_synthesis": "Grade 9/V2/Physics/StudySynthesis/engine/build_physics_learner_study_model.py"
   },
   "entrypoint_doc": "Grade 9/V2/Physics/V2_GENERATION_ENTRYPOINT.md",
@@ -75,9 +77,10 @@
       "MACHINE_AUTHORITY_CHECK"
     ]
   },
-  "manifest_digest": "8ea429f46c04a66eab6b364e96a5abba4d6a139481c7d9592efe09d855084ba0",
+  "manifest_digest": "27168a841178e56178dfdc331a038c9310d74b371ace2b2d106e2926dae893ea",
   "manifest_id": "PHY-GENERATION-AUTHORITY-v1",
   "phase_order": [
+    "P-A0 SourceLedger",
     "P-A AssessmentIntake",
     "P-B AssessmentReview",
     "P-C AssessmentScope",
@@ -100,12 +103,13 @@
     "note": "PR #156 is a merged Physics pilot outside this V2 chain. It is a final-comparison reference only and must never be read by any P-A..P-K producer."
   },
   "required_authority_trace_decisions": [
-    "REQUIRED_SCOPE",
-    "TREATMENT",
-    "TEACHING_PRIMITIVE_SELECTION",
-    "EXTERNAL_ELIGIBILITY",
     "COVERAGE_CLOSURE",
-    "FINAL_PAGE_COMPOSITION"
+    "EXTERNAL_ELIGIBILITY",
+    "FINAL_PAGE_COMPOSITION",
+    "REQUIRED_SCOPE",
+    "SOURCE_COMPLETENESS",
+    "TEACHING_PRIMITIVE_SELECTION",
+    "TREATMENT"
   ],
   "runtime_input_contract": {
     "forbidden": [

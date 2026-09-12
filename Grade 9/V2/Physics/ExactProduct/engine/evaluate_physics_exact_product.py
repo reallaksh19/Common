@@ -146,6 +146,14 @@ def machine_findings(run_dir, run_report, closure, core1_map, core2_map, core2_p
 
     if closure["closure_state"] != "CLOSED":
         note("COVERAGE_CLOSURE_OPEN", closure["closure_state"])
+    # P-A0: source completeness must hold against the independent frozen denominator.
+    recon = closure.get("source_ledger_reconciliation")
+    if recon is None:
+        note("SOURCE_LEDGER_RECONCILIATION_FAILURE",
+             "no frozen source question ledger was reconciled for this run")
+    elif recon["reconciliation_state"] != "RECONCILED":
+        note("SOURCE_LEDGER_RECONCILIATION_FAILURE",
+             "; ".join(f"{f['code']}:{f['ref']}" for f in recon["findings"][:3]))
     if closure["source_coverage_matrix"]["uncovered_item_refs"]:
         note("SOURCE_COVERAGE_RECONCILIATION_FAILURE",
              ",".join(closure["source_coverage_matrix"]["uncovered_item_refs"][:3]))

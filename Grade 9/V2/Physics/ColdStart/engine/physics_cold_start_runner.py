@@ -135,6 +135,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         "phy_pe_runner", Path(repo_root) / manifest["engines"]["learner_evidence"])
     reads.extend([manifest["engines"]["problem_semantics"], manifest["engines"]["learner_evidence"]])
 
+    source_ledger = get("source_question_ledger")
     questions = get("question_set")
     topic_scope = get("declared_topic_scope")
     review_registry = get("item_validity_registry")
@@ -236,7 +237,8 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
                             copy.deepcopy(core1), copy.deepcopy(bundle), copy.deepcopy(core2),
                             copy.deepcopy(transfer_classification), copy.deepcopy(study_scope),
                             copy.deepcopy(study_model), copy.deepcopy(evidence_policy),
-                            copy.deepcopy(transfer_evidence), copy.deepcopy(rep_map))
+                            copy.deepcopy(transfer_evidence), copy.deepcopy(rep_map),
+                            source_ledger=copy.deepcopy(source_ledger))
 
     package = {
         "package_id": "PHY-P-K-TWO-PRODUCT-" + ("ATTEMPT" if with_attempts else "NO-ATTEMPT"),
@@ -276,6 +278,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         "manifest_ref": manifest["manifest_id"],
         "manifest_digest": manifest["manifest_digest"],
         "input_custody": {
+            "source_question_ledger_digest": source_ledger["ledger_digest"],
             "question_set_digest": digest(questions),
             "declared_topic_scope_digest": digest(topic_scope),
             "scope_authority_digest": scope_authority["authority_digest"],
@@ -333,10 +336,15 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
              "authority_refs": [transfer_classification["registry_id"]],
              "resolution": "External eligibility was classified against the scope authority before any "
                            "learner evidence was read."},
+            {"decision_class": "SOURCE_COMPLETENESS",
+             "authority_refs": [source_ledger["ledger_id"]],
+             "resolution": "Source completeness was reconciled against the P-A0 source question "
+                           "ledger, frozen from the source documents before authoring, rather than "
+                           "against the question set that is itself under audit."},
             {"decision_class": "COVERAGE_CLOSURE",
              "authority_refs": [evidence_policy["policy_id"], closure["closure_id"]],
-             "resolution": "Closure state was computed from the coverage matrices and the physical page "
-                           "map, not asserted."},
+             "resolution": "Closure state was computed from the coverage matrices, the source-ledger "
+                           "reconciliation and the physical page map, not asserted."},
             {"decision_class": "FINAL_PAGE_COMPOSITION",
              "authority_refs": [core1["plan_id"], core1a_plan["plan_id"], bundle["bundle_id"],
                                 core2["plan_id"]],
@@ -350,6 +358,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
             "representation_count": len(bundle["representations"]),
             "core2_page_count": len(core2["transfer_pages"]),
             "closure_state": closure["closure_state"],
+            "source_ledger_state": closure["summary"]["source_ledger_state"],
             "core1a_template_only_lessons": core1a_plan["quality_summary"]["template_only_content_count"],
             "core1a_publication_engineering_pass": core1a_report["publication_engineering_pass"],
             "appendix_c_present": bool(core1["appendices"]["appendix_c"]["present"]),

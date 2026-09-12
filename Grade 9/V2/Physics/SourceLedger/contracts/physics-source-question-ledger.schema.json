@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-source-question-ledger.schema.json",
+  "title": "PhysicsSourceQuestionLedger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ledger_id", "schema_version", "subject", "ledger_class", "production_claim",
+    "frozen_before_phase", "derived_from_question_set", "provenance_note",
+    "source_documents", "expected_direct_item_refs", "ledger_digest"
+  ],
+  "properties": {
+    "ledger_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "PHYSICS"},
+    "ledger_class": {"enum": ["SOURCE_DOCUMENT_LEDGER", "SYNTHETIC_FIXTURE_LEDGER"]},
+    "production_claim": {"type": "boolean"},
+    "frozen_before_phase": {
+      "description": "The ledger is an independent denominator only if it was frozen before the phase it is used to judge.",
+      "enum": ["P-A", "P-B", "P-C", "P-D", "P-E", "P-F", "P-G"]
+    },
+    "derived_from_question_set": {
+      "description": "Must be false. A ledger derived from the artifact it is supposed to audit proves nothing.",
+      "const": false
+    },
+    "provenance_note": {"type": "string", "minLength": 1},
+    "genericity_statement": {"type": "string"},
+    "source_documents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["document_id", "title", "declared_item_count", "items", "document_digest"],
+        "properties": {
+          "document_id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "source_locator": {"type": "string"},
+          "declared_item_count": {"type": "integer", "minimum": 1},
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["item_ref", "source_order", "item_class", "statement_fingerprint"],
+              "properties": {
+                "item_ref": {"type": "string", "minLength": 1},
+                "source_order": {"type": "integer", "minimum": 1},
+                "source_page": {"type": ["integer", "null"]},
+                "section": {"type": "string"},
+                "item_class": {
+                  "description": "DIRECT items must resolve to a coverage home of their own. SUPPORTING items may be covered through another item.",
+                  "enum": ["DIRECT", "SUPPORTING", "NON_ASSESSED"]
+                },
+                "declared_subtopic_ref": {"type": "string"},
+                "statement_fingerprint": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "document_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "expected_direct_item_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "expected_supporting_item_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "ledger_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

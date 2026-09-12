@@ -18,11 +18,16 @@ event classes, success count, distinct-instance count and delay that could close
 it, and a dimension named in ``never_closable_by_single_current_success`` can
 never move to CLOSED on one event.
 """
-import argparse, copy, hashlib, json
+import argparse, copy, hashlib, json, sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 D = Path(__file__).resolve().parents[1]
+_LEDGER_ENGINE = D.parent / "SourceLedger" / "engine"
+if str(_LEDGER_ENGINE) not in sys.path:
+    sys.path.insert(0, str(_LEDGER_ENGINE))
+
+from build_physics_source_ledger import reconcile as reconcile_source_ledger  # noqa: E402
 
 
 def canonical(o):
@@ -297,9 +302,29 @@ def build_learner_state_update(study_model, longitudinal, events, policy):
 # ---------------------------------------------------------------- closure
 
 
+def build_source_ledger_reconciliation(source_ledger, question_set, review_registry, source_matrix):
+    """Reconcile against the independent P-A0 denominator, not against the question set itself.
+
+    Without this, completeness is only ever proved relative to whatever extraction already
+    produced: a source item that never made it into the question set is invisible to every
+    matrix downstream, and concept coverage still reads as complete.
+    """
+    if source_ledger is None:
+        return None, [{
+            "gap_class": "COVERAGE_PROVEN_ONLY_AGAINST_ITSELF",
+            "ref": question_set["question_set_id"],
+            "detail": "No frozen source question ledger was supplied, so source completeness is "
+                      "proved only against the question set that is itself under audit.",
+        }]
+    report = reconcile_source_ledger(source_ledger, question_set, review_registry, source_matrix)
+    gaps = [{"gap_class": f["code"], "ref": f["ref"], "detail": f["detail"]}
+            for f in report["findings"]]
+    return report, gaps
+
+
 def build_closure(question_set, review_registry, core1_plan, representation_bundle, core2_plan,
                   classification, study_scope, study_model, policy, ledger=None, page_map=None,
-                  closure_id="PHY-P-J-COVERAGE-CLOSURE-v1"):
+                  closure_id="PHY-P-J-COVERAGE-CLOSURE-v1", source_ledger=None):
     if policy.get("policy_digest") != digest(policy, "policy_digest"):
         fail("COVERAGE_POLICY_DIGEST_MISMATCH")
     if core1_plan["study_model_digest"] != study_model["study_model_digest"]:
@@ -312,6 +337,8 @@ def build_closure(question_set, review_registry, core1_plan, representation_bund
     source_matrix, source_gaps = build_source_coverage(
         question_set, review_registry, core1_plan, core2_plan, study_scope, policy)
     external_matrix, external_gaps = build_external_coverage(core2_plan, classification, policy)
+    ledger_report, ledger_gaps = build_source_ledger_reconciliation(
+        source_ledger, question_set, review_registry, source_matrix)
 
     # representation coverage: every required capability must have a realized representation
     rep_by_cap = defaultdict(list)
@@ -351,7 +378,7 @@ def build_closure(question_set, review_registry, core1_plan, representation_bund
     longitudinal = build_longitudinal_update(study_model, events, policy)
     learner_state = build_learner_state_update(study_model, longitudinal, events, policy)
 
-    gaps = source_gaps + external_gaps + rep_gaps + realization_gaps
+    gaps = source_gaps + external_gaps + rep_gaps + realization_gaps + ledger_gaps
     closure_state = "CLOSED" if not gaps else "OPEN"
     closure = {
         "closure_id": closure_id,
@@ -365,6 +392,8 @@ def build_closure(question_set, review_registry, core1_plan, representation_bund
         "core2_plan_ref": core2_plan["plan_id"],
         "physical_page_map_ref": page_map["physical_page_map_id"] if page_map else None,
         "artifact_sha256": page_map["artifact_sha256"] if page_map else None,
+        "source_ledger_ref": (source_ledger or {}).get("ledger_id"),
+        "source_ledger_reconciliation": ledger_report,
         "source_coverage_matrix": source_matrix,
         "external_corpus_coverage_matrix": external_matrix,
         "longitudinal_update": longitudinal,
@@ -373,6 +402,8 @@ def build_closure(question_set, review_registry, core1_plan, representation_bund
         "physically_realized": realized,
         "gaps": sorted(gaps, key=lambda g: (g["gap_class"], g["ref"])),
         "summary": {
+            "source_ledger_denominator": (ledger_report or {}).get("ledger_denominator"),
+            "source_ledger_state": (ledger_report or {}).get("reconciliation_state", "NOT_SUPPLIED"),
             "source_denominator": source_matrix["denominator"],
             "source_uncovered": len(source_matrix["uncovered_item_refs"]),
             "external_denominator": external_matrix["denominator"],
@@ -418,6 +449,13 @@ def validate_closure(closure, study_scope, study_model, policy):
             fail("CLOSURE_CLAIMED_WITH_OPEN_GAPS", closure["gaps"][0]["gap_class"])
         if policy["closure_requires_physical_realization"] and not closure["physically_realized"]:
             fail("CLOSURE_CLAIMED_WITHOUT_PHYSICAL_REALIZATION", closure["closure_id"])
+        # P-A0: completeness must also hold against the independent source denominator,
+        # not only against the question set that is itself under audit.
+        recon = closure.get("source_ledger_reconciliation")
+        if recon is None:
+            fail("COVERAGE_PROVEN_ONLY_AGAINST_ITSELF", closure["closure_id"])
+        if recon["reconciliation_state"] != "RECONCILED":
+            fail(recon["findings"][0]["code"], recon["findings"][0]["ref"])
 
     if closure["learner_state_update"]["assessment_scope_unchanged"] is not True:
         fail("TRANSFER_EVIDENCE_SHRINKS_ASSESSMENT_SCOPE", "learner state update")
@@ -460,6 +498,7 @@ def main():
         ap.add_argument("--" + x, required=True)
     ap.add_argument("--evidence-ledger")
     ap.add_argument("--page-map")
+    ap.add_argument("--source-ledger")
     a = ap.parse_args()
     closure = build_closure(
         load(a.question_set), load(a.review_registry), load(a.core1_plan),
@@ -467,6 +506,7 @@ def main():
         load(a.study_scope), load(a.study_model), load(a.policy),
         load(a.evidence_ledger) if a.evidence_ledger else None,
         load(a.page_map) if a.page_map else None,
+        source_ledger=load(a.source_ledger) if a.source_ledger else None,
     )
     Path(a.out).write_text(json.dumps(closure, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
                            encoding="utf-8")
