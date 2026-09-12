@@ -1,47 +1,70 @@
 # Chemistry NCERT Core Workbench — Agent Handoff
 
-This folder is a **working handoff**, not a mature release. It packages the artifacts created while stress-testing and extending Chemistry PR #322 so another agent can continue from the current state instead of rebuilding the authoring approach from scratch.
+This directory is a **working authoring handoff**, not a mature-release claim. It captures the reusable files and operating rules discovered while stress-testing Chemistry PR #322 against fresh NCERT source material so a later agent can continue from the current state instead of restarting the design process.
 
-The branch for this handoff is intentionally stacked on `v2-chemistry-upgrade-real-rendering` (PR #322). That keeps the work close to the exact-product/representation changes it depends on and avoids mixing this experimental authoring work into `main` before #322 is resolved.
+This branch is intentionally **stacked on `v2-chemistry-upgrade-real-rendering` (PR #322)**. Open/review this PR against that branch, not against `main`, so the diff contains only the handoff work.
 
-## What is here
+## 0. Fast start for a new agent
 
-Four topics have complete Core (1) / Core (2) working artifacts:
+From `Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/`:
 
-| Topic | Core (1) | Core (2) | Retained NCERT question instances | Immediate answer checks | Full worked solutions |
+```bash
+python tools/restore_source_bundle.py --output restored-workspace
+python tools/validate_handoff.py restored-workspace/final
+```
+
+Then pick the nearest completed topic under `restored-workspace/final/` and use its HTML + coverage ledger as the starting pattern.
+
+Do **not** begin by designing pages. The first job is to freeze the source/question denominator for the new topic.
+
+## 1. What is preserved here
+
+Four topic builds are included as editable source-of-truth artifacts:
+
+| Topic | Core (1) | Core (2) | Retained source-question instances | Immediate answer checks | Full worked solutions |
 |---|---|---|---:|---:|---:|
-| Some Basic Concepts of Chemistry | `final/some-basic-concepts/core1.*` | `final/some-basic-concepts/core2.*` | 68 | 68 | 68 |
-| Behaviour of Gases | `final/behaviour-of-gases/core1.*` | `final/behaviour-of-gases/core2.*` | 27 | 27 | 27 |
-| Chemical Bonding | `final/chemical-bonding/core1.*` | `final/chemical-bonding/core2.*` | 38 | 38 | 38 |
-| Redox Reactions | `final/redox-reactions/core1.*` | `final/redox-reactions/core2.*` | 11 | 11 | 11 |
+| Some Basic Concepts of Chemistry | `core1.html` | `core2.html` | 68 | 68 | 68 |
+| Behaviour of Gases | `core1.html` | `core2.html` | 27 | 27 | 27 |
+| Chemical Bonding | `core1.html` | `core2.html` | 38 | 38 | 38 |
+| Redox Reactions | `core1.html` | `core2.html` | 11 | 11 | 11 |
 
-For each topic the folder contains:
+For each topic the restored tree contains:
 
-- `core1.html` — editable source for the Study Guide.
-- `core2.html` — editable source for the Question Helper / Transfer Book.
-- `coverage-ledger.csv` — retained NCERT question inventory and topic mapping.
-- generated PDF names/hashes are recorded in `BINARY_ARTIFACTS.md`; PDFs can be regenerated from the committed HTML with `tools/rebuild_pdf.py`.
+- `core1.html` — editable Core Study Guide source;
+- `core2.html` — editable ExamSIDE / Question Helper source;
+- `coverage-ledger.csv` — retained source-question inventory and mapping.
 
-The HTML files are the most useful starting point for an agent because they preserve layout, helper language, diagrams, equation styling and source links in editable form.
+The final editable sources are stored losslessly as a chunked base64 `tar.gz` archive under:
 
-## Start here — do not start from a blank page
+```text
+bundles/final-sources/
+```
 
-When authoring the next topic:
+`tools/restore_source_bundle.py` reconstructs them and verifies both byte size and SHA-256 before extraction.
 
-1. Read **this README** and `WORKFLOW.md`.
-2. Pick the completed topic whose reasoning pattern is closest to the new one.
-3. Copy its `core1.html`, `core2.html`, and `coverage-ledger.csv` as working templates.
-4. Replace the source denominator first. **Do not author pages until the denominator is frozen.**
-5. Derive question families / learner capabilities from the retained source items.
-6. Assign a visual obligation to each family before writing prose.
-7. Build Core (1), then Core (2), then run the checks in `tools/validate_handoff.py`.
-8. Render HTML to PDF with `tools/rebuild_pdf.py` and inspect the rendered pages, not only the HTML.
+Generated PDF filenames, byte sizes and SHA-256 values from the working session are recorded in `BINARY_ARTIFACTS.md`. The PDFs are reproducible from the HTML and therefore are not duplicated as opaque binaries in this handoff PR. Session-only screenshots/contact sheets are also omitted because they are QA evidence, not authoring inputs.
 
-## Source corpus used in this workbench
+## 2. What PR #322 gives you — and what this workbench adds
 
-The stress test used only the NCERT Class IX exemplar links supplied by the task plus the two sample papers. The most relevant source URLs are preserved in the HTML and coverage ledgers.
+PR #322 is strong in exact-product/publication engineering: product topology, chemistry notation safety, vector primitive realization, learner-surface guards, placement custody, frozen candidates and engineering falsifiers.
 
-Primary PDFs used repeatedly:
+This workbench adds the **cold-start authoring discipline** that a novice agent needs when given a new chapter + a set of source PDFs:
+
+1. source denominator closure;
+2. topic relevance / exclusion decisions;
+3. question-family and learner-capability derivation;
+4. visual-obligation assignment;
+5. Core (1) depth expectations;
+6. teacher-helper microcopy rules for Core (2);
+7. immediate answer-check requirements;
+8. rendering/legibility targets;
+9. final coverage invariants.
+
+Do not treat this handoff as evidence that PR #322's pending human gates have passed. Subject correctness, pedagogy, assessment, visual usability and mature-design review still require their authorized review path.
+
+## 3. Source corpus used during the stress test
+
+The workbench was created from the supplied NCERT Class IX exemplar PDFs and sample papers. Primary links used repeatedly:
 
 - Unit 1 — Matter in Our Surroundings: `https://ncert.nic.in/pdf/publication/exemplarproblem/classIX/science/ieep101.pdf`
 - Unit 2 — Is Matter Around Us Pure: `https://ncert.nic.in/pdf/publication/exemplarproblem/classIX/science/ieep102.pdf`
@@ -50,118 +73,229 @@ Primary PDFs used repeatedly:
 - Sample Question Paper I: `https://ncert.nic.in/pdf/publication/exemplarproblem/classIX/science/ieep116.pdf`
 - Sample Question Paper II: `https://ncert.nic.in/pdf/publication/exemplarproblem/classIX/science/ieep117.pdf`
 
-Do not silently import higher-grade or external chemistry merely because it is normally associated with the chapter title. Source-derived coverage and external enrichment must remain distinguishable.
+A chapter title is **not permission to import arbitrary textbook knowledge**. Keep source-derived obligations, justified enrichment and exclusions distinguishable.
 
-## Core (1) contract used in these artifacts
+## 4. Required authoring sequence
 
-Core (1) is the **teaching product**. It should not be a summary sheet. A mature-enough working page normally includes some combination of:
+Use this order. Skipping steps is how the first stress-test attempts became thin or incomplete.
 
-- an ordinary-language explanation;
-- a **diagrammatic representation**, not just prose;
-- a worked example with visible equations / steps;
-- an actionable helper / first move;
-- a misconception repair or “Watch for this” contrast;
-- guided, faded and independent practice where the topic supports it;
-- competitive / transfer reasoning where source-authorized;
-- a check or answer path for every practice question.
+### Step A — scan the complete supplied corpus
 
-Core (1) should also retain the PR #322 topology: Main Teaching + Core Practice + Core Solutions + Printable Handout. The exact internal layout can evolve, but those roles should not disappear silently.
+Do not select PDFs only from filenames. Inspect every supplied source that could plausibly contain an in-scope question, including sample papers.
 
-### Technical depth rule
+For every discovered question instance record:
 
-“Competitive” does **not** mean importing unsupported syllabus content. It means extracting more reasoning from the same authorized material: proportional shortcuts, dimensional reasoning, comparison methods, decision trees, sanity checks, exception handling and transfer between representations.
+- source PDF / unit;
+- source question number;
+- question focus;
+- `IN_SCOPE` / `OUT_OF_SCOPE`;
+- canonical topic/subtopic;
+- exclusion reason if not retained;
+- primary placement identity.
 
-## Core (2) contract used in these artifacts
+### Step B — freeze the denominator
 
-Every retained question is treated as a self-study object. The preferred page sequence is:
+Before writing Core (1) or Core (2), state explicit counts:
 
-1. **Try the question**
-2. **See the idea** — question-specific diagram / representation
-3. **Write this first** — the first useful mark on paper
-4. **First nudge**
-5. **Set it up on paper** — equation, table, classification frame, ledger, etc.
-6. **Watch for this** — likely error / misconception
-7. **Before you answer** — a verification check
-8. **Answer check** — immediate final answer / marking points, visually separated so the learner can cover it
-9. **Full worked solution later** — Appendix A or equivalent
+```text
+TOTAL_SCANNED
+RETAINED_IN_TOPIC
+EXCLUDED_WITH_REASON
+PRIMARY_PLACEMENTS
+MISSING
+DUPLICATE_PRIMARY
+```
 
-The helper must sound like a teacher helping the learner **do the next step**, not like a software workflow. Prefer “Write the ion charges, make total charge zero, then simplify the ratio” over “Apply the ionic-formula method.”
+A topic is not coverage-complete unless:
 
-## Non-negotiable self-study invariant
+```text
+RETAINED_IN_TOPIC == PRIMARY_PLACEMENTS
+MISSING == 0
+DUPLICATE_PRIMARY == 0
+```
 
-> **NO QUESTION WITHOUT A CHECKABLE ANSWER PATH.**
+Multi-skill questions may support several teaching concepts, but each source-question instance gets **one canonical primary placement** for counting purposes.
 
-For closed / objectively checkable items:
+### Step C — derive capabilities from questions
 
-`retained_questions == immediate_answer_checks == full_worked_solutions`
+Do not force questions into the capability taxonomy merely because a nearby label exists. Derive what the learner actually has to do.
 
-For genuinely open-ended items, replace the ordinary answer with an explicit `EXPECTED_RESPONSE_RUBRIC`; do not leave the learner with no way to check the attempt.
+Examples discovered during this work:
 
-The immediate answer is intentionally shorter than the full solution:
+- classify matter by composition;
+- convert units by dimensional reasoning;
+- distinguish coefficient / subscript / charge;
+- construct ionic formulae by charge neutrality;
+- calculate formula mass and composition;
+- move mass ↔ moles ↔ particles;
+- count ions / atoms per entity;
+- calculate concentration using the correct denominator;
+- follow stoichiometric mole-ratio routes;
+- assign oxidation number and track redox change.
 
-- MCQ → correct option + compact result;
-- numerical → final value + unit;
-- classification → expected classes / members;
-- short answer → essential marking points;
-- diagram / graph → expected labels / features.
+### Step D — assign visual obligations before prose
 
-## Visual-obligation rule
+A book can contain many diagrams and still fail locally. Decide the representation family at the question/concept-family level first.
 
-A book can contain many diagrams globally and still fail locally. The stronger rule used after the first iterations is:
+Useful visual families from the completed topics include:
 
-> **Every question family / major concept gets a declared visual reasoning aid when a visual would reduce cognitive load.**
-
-Examples used in these files include:
-
-- matter classification tree / sorting buckets;
-- unit-conversion ladder / dimensional cancellation;
-- formula anatomy: coefficient vs subscript vs charge;
-- ion-charge balance model;
-- electron-shell / valency representation;
-- mass ↔ moles ↔ particles bridge;
-- particle/entity count model;
-- concentration part/whole model;
-- reaction / stoichiometry route;
+- matter classification tree / three-bucket sort;
+- particle model;
+- dimensional-analysis ladder;
+- formula-anatomy strip;
+- ionic charge-balance builder;
+- electron-shell / valence representation;
+- mass–mole–particle bridge;
+- formula-unit → ion-count model;
+- concentration part/whole frame;
+- stoichiometry route;
+- atom-conservation ledger;
 - oxidation-number lane / before-after tracking;
 - redox vs non-redox contrast.
 
-A visual is not accepted merely because it occupies space. It should help the learner know what to **write, count, compare, cancel, label or track next**.
+A visual is useful only if it helps the learner know what to **write, draw, count, cancel, compare, label or track next**.
 
-## Typography / layout targets
+### Step E — build Core (1)
 
-PR #322's 8 pt minimum is an engineering floor, not a learner target. These artifacts evolved toward approximately:
+Core (1) is the teaching product, not a summary sheet. Preserve the PR #322 topology:
 
-- body instructional text: 10–11 pt or larger;
-- question stems: 12–14 pt where space permits;
-- primary equations: 12 pt+;
-- diagram labels / annotations: normally 9 pt+;
-- adequate white space for working;
-- no overlapping diagram shapes;
-- no essential meaning encoded by color alone.
+- Main Teaching;
+- Appendix A — Core Practice;
+- Appendix B — Core Solutions;
+- Appendix C — Printable Handout.
 
-Always inspect the **rendered PDF at actual output size**. HTML validity does not prove page usability.
+For a full-learning concept, aim for the following where applicable:
 
-## Relationship to PR #322
+- ordinary-language explanation;
+- diagrammatic representation;
+- rule/model/condition;
+- why/reconstruction reasoning;
+- worked example with visible equations/steps;
+- misconception repair;
+- guided attempt;
+- faded attempt;
+- independent attempt;
+- verification / sense check;
+- transfer or competitive reasoning derived from the authorized material.
 
-PR #322 is strong in publication engineering, notation safety, vector primitive realization, custody, exact-artifact freezing and learner-surface guards. This handoff captures the additional authoring rules that were discovered by applying it to new NCERT topics.
+“Competitive depth” means extracting stronger reasoning from the same scope — proportional shortcuts, comparison strategies, dimensional reasoning, sanity checks, decision trees, exceptions and transfer — not importing unsupported higher-grade syllabus content.
 
-Important distinction:
+### Step F — build Core (2)
 
-- PR #322 says which exact products / quality states / representation machinery exist.
-- This workbench documents how an agent should turn a fresh source corpus into learner-usable Core (1) and Core (2) artifacts without repeatedly rediscovering source closure, diagram selection, helper wording and answer-check requirements.
+Every retained source question is a self-study object. The preferred learner sequence is:
 
-The workbench does **not** claim that pending human gates in #322 are passed.
+1. **Try the question**
+2. **See the idea** — question-specific diagram / representation
+3. **Write this first**
+4. **First nudge**
+5. **Set it up on paper**
+6. **Watch for this**
+7. **Before you answer**
+8. **Answer check**
+9. **Full worked solution later**
 
-## Current known limitations
+The helper must tell the learner what to do next on paper. Avoid software-like statements such as “Apply the mole method.” Prefer:
 
-1. These HTML artifacts are working authoring sources, not yet integrated as first-class outputs of the C-F / C-G / C-H registries.
-2. Source ingestion was manually audited during the stress test; there is not yet a generic parser that freezes the denominator automatically from arbitrary PDFs.
-3. Some representation families needed here are not yet first-class PR #322 primitive kinds (for example classification trees, unit ladders, mole bridges and some quantitative setup frames).
-4. The artifacts preserve direct official NCERT hyperlinks for traceability; production source-display policy may need further alignment with repository contracts.
-5. Human subject, pedagogy, assessment and visual-usability review remains required before any mature-release claim.
-6. Historical iterations are retained under `history/` so future agents can see how the design evolved, but **the `final/` artifacts are the preferred starting point**.
+> Write `n = m/M`. Substitute the sample mass and molar mass with units. Cancel `g`; the remaining unit should be `mol`.
 
-## Repository layout in this handoff
+## 5. Non-negotiable answer invariant
+
+> **NO QUESTION WITHOUT A CHECKABLE ANSWER PATH.**
+
+For closed/objectively checkable items:
+
+```text
+retained_questions == immediate_answer_checks == full_worked_solutions
+```
+
+For genuinely open-ended prompts, provide an explicit expected-response rubric instead of pretending there is a single answer.
+
+Immediate checks are intentionally compact:
+
+- MCQ → option + result;
+- numerical → final value + unit;
+- classification → expected classes/members;
+- short answer → essential marking points;
+- graph/diagram → required labels/features.
+
+The full solution remains separate and shows reasoning/equations/units.
+
+## 6. Teacher-helper language contract
+
+A hint is weak if it only names a method. A useful hint produces an observable learner action.
+
+Bad:
+
+> Use formula writing rules.
+
+Better:
+
+> Write `Ca²⁺` and `PO₄³⁻`. The LCM of 2 and 3 is 6. How many calcium ions give +6? How many phosphate ions give −6? Put those counts into the formula and simplify if possible.
+
+Bad:
+
+> Use the definition to classify the substances.
+
+Better:
+
+> First split the entries into mixtures and pure substances. For each pure substance ask: one kind of atom only, or different elements chemically combined in a fixed ratio?
+
+## 7. Typography and page-geometry targets
+
+PR #322's 8 pt floor is an engineering minimum, not the preferred learner size. Use approximately:
+
+- instructional body: **10–11 pt+**;
+- question stem: **12–14 pt** where practical;
+- primary equations: **12 pt+**;
+- diagram labels: normally **9 pt+**;
+- enough working space for the expected calculation/reasoning;
+- no overlapping shapes;
+- no clipped text;
+- no essential meaning encoded only by color.
+
+Inspect rendered PDF pages at actual output size. HTML/CSS validity is not a visual-usability test.
+
+## 8. Validation before calling a topic complete
+
+Run:
+
+```bash
+python tools/validate_handoff.py restored-workspace/final
+```
+
+Then render both HTML products and inspect representative pages from **every page family**, not just the cover.
+
+Minimum acceptance checklist:
+
+- [ ] all supplied PDFs were considered;
+- [ ] retained denominator is fixed in a ledger;
+- [ ] excluded items have explicit reasons;
+- [ ] every retained question has exactly one primary placement;
+- [ ] every source-derived skill/concept has a Core (1) teaching home;
+- [ ] visually obligated concepts/questions have the right representation;
+- [ ] helpers tell the learner the next useful paper action;
+- [ ] all Core (1) practice has an answer path;
+- [ ] all Core (2) retained questions have immediate answer checks;
+- [ ] all Core (2) retained questions have full worked solutions/rubrics;
+- [ ] chemical notation is unambiguous;
+- [ ] units are shown through calculations;
+- [ ] text is legible at actual output size;
+- [ ] diagrams are unclipped and non-overlapping;
+- [ ] source links / identifiers do not leak internal authoring tokens;
+- [ ] no human-reviewed maturity is claimed without the required review.
+
+## 9. Choosing a template
+
+Use the completed topic with the closest reasoning structure:
+
+- **Some Basic Concepts** — best reference for mixed quantitative + classification + formula/mole workflows and large source denominators.
+- **Behaviour of Gases** — best reference for particle models, qualitative causal reasoning, phase/temperature graphs and state-change questions.
+- **Chemical Bonding** — best reference for notation, electron/valency visuals, ions and formula construction.
+- **Redox Reactions** — best reference for before/after tracking, oxidation-number reasoning and redox/non-redox contrasts.
+
+Copy structure, **not answers or chemistry entities**. New chapter content must remain grounded in its own source set.
+
+## 10. Files in this PR
 
 ```text
 NCERT-Core-Workbench/
@@ -169,35 +303,30 @@ NCERT-Core-Workbench/
 ├── WORKFLOW.md
 ├── BINARY_ARTIFACTS.md
 ├── requirements.txt
-├── final/
-│   ├── some-basic-concepts/
-│   ├── behaviour-of-gases/
-│   ├── chemical-bonding/
-│   └── redox-reactions/
-├── history/
-│   └── ... editable HTML iterations ...
+├── bundles/
+│   └── final-sources/
+│       └── final-sources.tar.gz.b64.part000 ... part007
 └── tools/
+    ├── restore_source_bundle.py
     ├── rebuild_pdf.py
     └── validate_handoff.py
 ```
 
-## Minimum acceptance checklist for a new topic
+After restoration:
 
-Before calling a topic complete, an agent should be able to answer **yes** to all of these:
+```text
+restored-workspace/
+└── final/
+    ├── some-basic-concepts/
+    │   ├── core1.html
+    │   ├── core2.html
+    │   └── coverage-ledger.csv
+    ├── behaviour-of-gases/
+    │   └── ...
+    ├── chemical-bonding/
+    │   └── ...
+    └── redox-reactions/
+        └── ...
+```
 
-- [ ] Did I scan all supplied source PDFs, not only filenames that looked relevant?
-- [ ] Is the retained denominator fixed and recorded in a ledger?
-- [ ] Does every retained question have exactly one canonical primary placement?
-- [ ] Is every source-derived concept / skill given a teaching home in Core (1)?
-- [ ] Does each major concept / question family have the correct visual reasoning aid where useful?
-- [ ] Do helpers tell the learner what to write / draw / count / compare next?
-- [ ] Does every Core (1) practice item have a quick answer and a worked solution or rubric?
-- [ ] Does every Core (2) retained item have an immediate answer check and a full worked solution or rubric?
-- [ ] Are equations, units, subscripts, superscripts and charges rendered unambiguously?
-- [ ] Are fonts large enough at actual PDF size?
-- [ ] Are diagrams unclipped, non-overlapping and semantically correct?
-- [ ] Did I visually inspect representative pages from every page family after PDF rendering?
-- [ ] Did I keep excluded / cross-chapter items explicit rather than silently dropping them?
-- [ ] Did I avoid claiming human-reviewed maturity?
-
-If any answer is “no”, the topic is not ready to be used as the next agent's baseline.
+The editable final source bundle is the intended handoff baseline. `BINARY_ARTIFACTS.md` records the rendered-session provenance; regenerate PDFs from the committed sources before making further edits or review claims.
