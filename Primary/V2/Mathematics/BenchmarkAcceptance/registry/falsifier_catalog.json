@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "authority": "PRIMARY_MATH_V2_BENCHMARK_ACCEPTANCE",
+  "falsifiers": [
+    {"id": "QUESTION_OBSERVED_SKILL_PROMOTED_TO_UNIVERSAL_GRADE_SCOPE", "authority_pr": 163, "class": "SCOPE"},
+    {"id": "CURRICULUM_CONFIRMED_WITHOUT_AUTHORITY_REF", "authority_pr": 163, "class": "SCOPE"},
+    {"id": "GRADE5_CLONED_AS_SEPARATE_CANONICAL_ONTOLOGY", "authority_pr": 163, "class": "ONTOLOGY"},
+    {"id": "RAW_QUESTIONS_RENDERED_DIRECTLY_WITHOUT_SKILL_MODEL", "authority_pr": 163, "class": "ARCHITECTURE"},
+
+    {"id": "INCORRECT_FINAL_ANSWER_ERASES_CORRECT_SUBSTEPS", "authority_pr": 171, "class": "WORK_EVIDENCE"},
+    {"id": "TEACHER_CORRECTION_RENDERED_AS_CHILD_ORIGINAL", "authority_pr": 171, "class": "WORK_EVIDENCE"},
+    {"id": "AMBIGUOUS_HANDWRITING_SILENTLY_RESOLVED", "authority_pr": 171, "class": "WORK_EVIDENCE"},
+    {"id": "CHILD_PRODUCED_STRATEGY_TREATED_AS_TEACHER_HINT", "authority_pr": 171, "class": "WORK_EVIDENCE"},
+    {"id": "KEYWORD_OPERATION_RULE_OVERRIDES_QUANTITY_STRUCTURE", "authority_pr": 171, "class": "QUANTITY_STRUCTURE"},
+    {"id": "UNIT_CHAIN_STEP_DROPPED", "authority_pr": 171, "class": "QUANTITY_STRUCTURE"},
+
+    {"id": "FINAL_ANSWER_ONLY_DIAGNOSIS", "authority_pr": 172, "class": "TEACHER_RUNTIME"},
+    {"id": "WHOLE_TOPIC_RETEACH_WITHOUT_BOUNDED_EVIDENCE", "authority_pr": 172, "class": "TEACHER_RUNTIME"},
+    {"id": "ERROR_SIGNATURE_PROMOTED_TO_DURABLE_LEARNER_TRAIT", "authority_pr": 172, "class": "DIAGNOSIS"},
+    {"id": "TEACHER_MOVE_WITHOUT_INDEPENDENT_RETRY", "authority_pr": 172, "class": "TEACHER_RUNTIME"},
+
+    {"id": "CONTRAST_SET_WITHOUT_FOCAL_FEATURE", "authority_pr": 185, "class": "DIAGNOSTIC_REASONING"},
+    {"id": "STRUCTURALLY_UNRELATED_CASES_USED_AS_DIAGNOSTIC_CONTRAST", "authority_pr": 185, "class": "DIAGNOSTIC_REASONING"},
+    {"id": "UNBOUNDED_COMPETING_HYPOTHESES", "authority_pr": 185, "class": "DIAGNOSTIC_REASONING"},
+    {"id": "DIAGNOSTIC_PROBE_WITHOUT_HYPOTHESES", "authority_pr": 185, "class": "DIAGNOSTIC_REASONING"},
+    {"id": "DIAGNOSTIC_PROBE_WITHOUT_OUTCOME_RULES", "authority_pr": 185, "class": "DIAGNOSTIC_REASONING"},
+    {"id": "DIAGNOSTIC_PROBE_INCREASES_UNRELATED_LOAD", "authority_pr": 185, "class": "DIAGNOSTIC_REASONING"},
+    {"id": "DIV_QUOTIENT_ZERO_PATTERN_COLLAPSED_TO_WEAK_IN_DIVISION", "authority_pr": 185, "class": "DIAGNOSIS"},
+
+    {"id": "TEXT_ARRAY_AS_STUDY_GUIDE", "authority_pr": 182, "class": "PUBLISHING"},
+    {"id": "INSTRUCTIONAL_VISUAL_REQUIRED_BUT_ONLY_LABEL_RENDERED", "authority_pr": 182, "class": "PUBLISHING"},
+    {"id": "CHILD_PAGE_DOMINATED_BY_ADULT_DIAGNOSTIC_LANGUAGE", "authority_pr": 182, "class": "PUBLISHING"},
+    {"id": "STUDENT_ADULT_EDITION_BOUNDARY_LOST", "authority_pr": 182, "class": "PUBLISHING"},
+    {"id": "PAGE_FIT_ACHIEVED_BY_SHRINKING_CHILD_READABILITY", "authority_pr": 182, "class": "PUBLISHING"},
+    {"id": "LEARNER_ACTION_MISSING_FROM_CONCEPT_SEQUENCE", "authority_pr": 182, "class": "PUBLISHING"},
+    {"id": "HINT_SEQUENCE_REVEALS_SOLUTION_INSTEAD_OF_RESTARTING_THINKING", "authority_pr": 182, "class": "HINTING"},
+    {"id": "H3_WITHOUT_FRESH_INDEPENDENT_RETRY", "authority_pr": 182, "class": "HINTING"},
+    {"id": "PAGE_IMAGE_CHILD_USABILITY_NOT_REVIEWED", "authority_pr": 182, "class": "HUMAN_REVIEW"},
+
+    {"id": "CONCEPTUAL_SUPPORT_CONFLATED_WITH_ACCESS_ADJUSTMENT", "authority_pr": 164, "class": "SUPPORT"},
+    {"id": "PROVIDED_REPRESENTATION_COUNTED_AS_CHILD_SELECTED", "authority_pr": 164, "class": "REPRESENTATION_EVIDENCE"},
+    {"id": "SAME_ROUTE_REPEATED_AFTER_TWO_FAILURES", "authority_pr": 164, "class": "TEACHER_RUNTIME"},
+    {"id": "SUPPORTED_SUCCESS_COUNTED_AS_INDEPENDENT_USE", "authority_pr": 164, "class": "LONGITUDINAL_EVIDENCE"},
+    {"id": "SAME_SESSION_SUCCESS_COUNTED_AS_DELAYED_RETENTION", "authority_pr": 164, "class": "LONGITUDINAL_EVIDENCE"},
+
+    {"id": "MULTIPLICATION_PARTIAL_PRODUCTS_DO_NOT_SUM_TO_PRODUCT", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "DIVISION_IDENTITY_INVALID", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "DIVISION_INTERNAL_ZERO_PLACE_LOST", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "DIVISION_LEADING_ZERO_INVENTED", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "DIVISION_REMAINDER_NOT_LESS_THAN_DIVISOR", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "SHARING_AND_GROUPING_QUANTITY_ROLES_COLLAPSED", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "FRACTION_PARTITIONS_NOT_EQUAL", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "FRACTION_EQUIVALENCE_FALSE", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "DECIMAL_HUNDRED_GRID_COUNT_MISMATCH", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "PLACE_VALUE_POSITION_MISMATCH", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "UNIT_CONVERSION_FACTOR_MISMATCH", "authority_pr": 171, "class": "MATH_ORACLE"},
+    {"id": "PERIMETER_AND_AREA_CONFLATED", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "VOLUME_LAYER_COUNT_MISMATCH", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "ANGLE_SEMANTIC_MISMATCH", "authority_pr": 182, "class": "MATH_ORACLE"},
+    {"id": "CHART_SCALE_DATA_MISMATCH", "authority_pr": 182, "class": "MATH_ORACLE"},
+
+    {"id": "PRODUCER_BOOLEAN_PASS_TRUSTED_AS_ACCEPTANCE_EVIDENCE", "authority_pr": 163, "class": "BENCHMARK_INDEPENDENCE"},
+    {"id": "BENCHMARK_EXPECTATION_CHANGED_IN_RENDERER_FIX", "authority_pr": 163, "class": "BENCHMARK_INDEPENDENCE"},
+    {"id": "CI_GREEN_TREATED_AS_HUMAN_PEDAGOGICAL_PASS", "authority_pr": 182, "class": "HUMAN_REVIEW"}
+  ]
+}
