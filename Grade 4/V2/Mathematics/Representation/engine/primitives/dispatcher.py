@@ -6,14 +6,8 @@ Unsupported mathematical visuals fail closed rather than becoming label-only car
 from __future__ import annotations
 
 from typing import Any, Dict
-from Primary.V2.Mathematics.Representation.engine.base import (
-    BoundingBox,
-    VectorRenderBackend,
-)
-from Primary.V2.Mathematics.Representation.engine.primitives.operations import (
-    MultiplicationPrimitives,
-    DivisionPrimitives,
-)
+from Primary.V2.Mathematics.Representation.engine.base import BoundingBox, VectorRenderBackend
+from Primary.V2.Mathematics.Representation.engine.primitives.operations import MultiplicationPrimitives, DivisionPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.fractions import FractionPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.decimals import DecimalPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.numbers import NumberPrimitives
@@ -22,23 +16,15 @@ from Primary.V2.Mathematics.Representation.engine.primitives.geometry import Geo
 from Primary.V2.Mathematics.Representation.engine.primitives.data import DataPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.learning_support import LearningSupportPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.grade4_semantics import Grade4SemanticPrimitives
-from Primary.V2.Mathematics.Representation.engine.notebook import (
-    AuthenticNotebookEngine,
-    LongDivisionWorkoutSpec,
-    ProvenanceTier,
-)
+from Primary.V2.Mathematics.Representation.engine.notebook import AuthenticNotebookEngine, LongDivisionWorkoutSpec, ProvenanceTier
+from Grade4.V2.Mathematics.Representation.engine.primitives.angle_support import AngleSupportPrimitives
 
 
 class UnsupportedPrimaryPrimitive(ValueError):
     """Fail closed rather than degrade a required learning visual to an empty card."""
 
 
-def render_primitive(
-    kind: str,
-    params: Dict[str, Any],
-    backend: VectorRenderBackend,
-    bbox: BoundingBox,
-) -> None:
+def render_primitive(kind: str, params: Dict[str, Any], backend: VectorRenderBackend, bbox: BoundingBox) -> None:
     """Render one validated mathematical primitive from semantic params only."""
     k = kind.upper()
 
@@ -67,6 +53,8 @@ def render_primitive(
         Grade4SemanticPrimitives.draw_angle_benchmark_compare(backend, bbox, params)
     elif k == "ANGLE_OBJECT_EXAMPLE":
         Grade4SemanticPrimitives.draw_angle_object_example(backend, bbox, params)
+    elif k == "ANGLE_CLASSIFICATION_SET":
+        AngleSupportPrimitives.draw_classification_set(backend, bbox, params)
 
     # Existing reusable mathematical primitives.
     elif k == "EQUAL_GROUPS":
