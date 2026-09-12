@@ -45,22 +45,53 @@ jobs:
           run_mg /tmp/mg-a.json
           run_mg /tmp/mg-b.json
           cmp /tmp/mg-a.json /tmp/mg-b.json
-      - name: Prove production fails closed without human PCK promotion
+      - name: Prove production authoring is provisional, never release-legal
         run: |
           C='Grade 9/V2/Mathematics/Core1Authoring'
           P='Grade 9/V2/Mathematics/InstructionalKnowledge'
-          set +e
           python "$C/engine/author_math_core1.py" \
             --study-model "$C/fixtures/study-model-two-capabilities.fixture.json" \
             --pck-candidates "$P/registry/math-pck-candidates.json" \
             --pck-promotions "$P/registry/math-pck-promotion-registry.json" \
             --profile "$C/policies/math-instructional-authoring-profile.json" \
             --scope-policy "$C/policies/math-core1-scope-completeness-policy.json" \
+            --out /tmp/mg-prod.json
+          python - <<'PY'
+          import json
+          plan = json.load(open('/tmp/mg-prod.json'))
+          assert plan['release_class'] == 'PROVISIONAL_PENDING_EXPERT_REVIEW', plan['release_class']
+          authority = plan['pck_authority']
+          assert authority['release_legal'] is False
+          assert authority['expert_review_state'] == 'PENDING'
+          assert authority['producer_legal_asset_refs'] == []
+          assert authority['provisional_asset_refs']
+          print('MATH M-G provisional authoring gate PASS')
+          PY
+      - name: Prove an empty promotion registry still fails closed
+        run: |
+          C='Grade 9/V2/Mathematics/Core1Authoring'
+          P='Grade 9/V2/Mathematics/InstructionalKnowledge'
+          python - <<'PY'
+          import copy, hashlib, json, sys
+          sys.path.insert(0, 'Grade 9/V2/Mathematics/InstructionalKnowledge/engine')
+          from promote_math_pck import digest
+          reg = json.load(open('Grade 9/V2/Mathematics/InstructionalKnowledge/registry/math-pck-promotion-registry.json'))
+          reg['promotions'] = []
+          reg['registry_digest'] = digest(reg, 'registry_digest')
+          json.dump(reg, open('/tmp/empty-promotions.json', 'w'))
+          PY
+          set +e
+          python "$C/engine/author_math_core1.py" \
+            --study-model "$C/fixtures/study-model-two-capabilities.fixture.json" \
+            --pck-candidates "$P/registry/math-pck-candidates.json" \
+            --pck-promotions /tmp/empty-promotions.json \
+            --profile "$C/policies/math-instructional-authoring-profile.json" \
+            --scope-policy "$C/policies/math-core1-scope-completeness-policy.json" \
             --out /tmp/should-not-exist.json \
-            2>/tmp/mg-prod.err
+            2>/tmp/mg-empty.err
           code=$?
           set -e
           test "$code" -ne 0
-          grep -q 'PCK_PROMOTION_REQUIRED:MATH-EQUALITY-PRESERVATION' /tmp/mg-prod.err
+          grep -q 'PCK_PROMOTION_REQUIRED:MATH-EQUALITY-PRESERVATION' /tmp/mg-empty.err
           test ! -f /tmp/should-not-exist.json
-          echo 'MATH M-G production promotion gate PASS'
+          echo 'MATH M-G empty-registry fail-closed gate PASS'

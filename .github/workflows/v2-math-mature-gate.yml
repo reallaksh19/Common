@@ -4,10 +4,14 @@ on:
   push:
     paths:
       - 'Grade 9/V2/Mathematics/Validation/MatureGate/**'
+      - 'Grade 9/V2/Mathematics/Publication/engine/**'
+      - 'Grade 9/V2/Shared/MasterTemplates/primitives/**'
       - '.github/workflows/v2-math-mature-gate.yml'
   pull_request:
     paths:
       - 'Grade 9/V2/Mathematics/Validation/MatureGate/**'
+      - 'Grade 9/V2/Mathematics/Publication/engine/**'
+      - 'Grade 9/V2/Shared/MasterTemplates/primitives/**'
       - '.github/workflows/v2-math-mature-gate.yml'
 
 jobs:
@@ -18,8 +22,39 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install jsonschema
+      - run: python -m pip install 'jsonschema>=4.20,<5' 'reportlab>=4.0'
       - name: Validate M-L exact-candidate and quality contracts
         run: python 'Grade 9/V2/Mathematics/Validation/MatureGate/contracts/validate_contracts.py'
       - name: Run M-L exact-product gate falsifiers
         run: python 'Grade 9/V2/Mathematics/Validation/MatureGate/tests/test_math_mature_gate.py'
+      - name: Prove the real rendered candidate is not eligible for mature release
+        run: |
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          ROOT = Path('Grade 9/V2/Mathematics/Validation/MatureGate').resolve()
+          sys.path.insert(0, str(ROOT / 'engine'))
+          from build_math_exact_candidate import build_rendered_binding
+          from evaluate_math_mature_gate import evaluate, load
+          policy = load(ROOT / 'registry' / 'math-mature-quality-policy.json')
+          candidate, realization = build_rendered_binding('/tmp/math-ml-rendered', 'A')
+          machine = {
+              'evidence_id': 'MATH-ML-MACHINE-RENDERED',
+              'candidate_digest': candidate['binding_digest'],
+              'artifact_set_digest': candidate['artifact_set_digest'],
+              'machine_falsifiers': 'PASS',
+              'publication_engineering': realization['publication_engineering'],
+              'exact_artifact_custody': 'PASS',
+              'failed_falsifiers': [],
+          }
+          decision = evaluate(candidate, policy, machine, None, [], None, gate_mode='REAL_RELEASE')
+          assert decision['quality_states']['PUBLICATION_ENGINEERING'] == 'PASS'
+          assert decision['mature_product_class'] == 'NOT_ELIGIBLE'
+          assert decision['release_evidence_eligible'] is False
+          assert 'M-L:PCK_EXPERT_REVIEW_PENDING' in decision['blockers']
+          print(json.dumps({
+              'quality_states': decision['quality_states'],
+              'mature_product_class': decision['mature_product_class'],
+              'blockers': decision['blockers'],
+          }, indent=2, sort_keys=True))
+          PY

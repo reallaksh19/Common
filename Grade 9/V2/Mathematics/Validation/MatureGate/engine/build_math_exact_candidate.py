@@ -37,14 +37,14 @@ def seal(binding):
     return binding
 
 
-def build_fixture_binding(selected_run="A"):
+def build_fixture_binding(selected_run="A",return_internals=False):
     if selected_run not in {"A","B"}: fail("UNKNOWN_SELECTED_RUN",selected_run)
     A=MATH/"AssessmentIntake"/"fixtures"
     questions=load(A/"mixed-grade9-question-set.fixture.json")
     topic=load(A/"mixed-grade9-topic-scope.fixture.json")
     attempts=load(A/"mixed-grade9-attempt-set.fixture.json")
-    run_a,_=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),repo_root=REPO,run_id="MATH-M-K-RUN-A")
-    run_b,_=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),copy.deepcopy(attempts),repo_root=REPO,run_id="MATH-M-K-RUN-B",fixture_observation_oracle=True)
+    run_a,internals_a=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),repo_root=REPO,run_id="MATH-M-K-RUN-A")
+    run_b,internals_b=run_cold_start(copy.deepcopy(questions),copy.deepcopy(topic),copy.deepcopy(attempts),repo_root=REPO,run_id="MATH-M-K-RUN-B",fixture_observation_oracle=True)
     comparison=compare_runs(run_a,run_b)
     if not all(comparison["invariants"].values()): fail("M_K_REPRODUCIBILITY_PROOF_NOT_CLOSED")
     selected=run_a if selected_run=="A" else run_b
@@ -89,7 +89,10 @@ def build_fixture_binding(selected_run="A"):
       "upstream_blockers":blockers,
       "binding_digest":"",
     }
-    return seal(binding)
+    sealed=seal(binding)
+    if return_internals:
+        return sealed,(internals_a if selected_run=="A" else internals_b)
+    return sealed
 
 
 def bind_rendered_artifacts(binding, artifacts, fixture_class=None):
@@ -115,12 +118,39 @@ def bind_rendered_artifacts(binding, artifacts, fixture_class=None):
     return seal(out)
 
 
+def build_rendered_binding(out_dir,selected_run="A"):
+    """Render the real two-product package and bind it as an exact candidate.
+
+    This is the path that closes M-L's PUBLICATION_ENGINEERING gate with a real
+    artifact. It does not close, and cannot close, any human-review gate.
+    """
+    sys.path.insert(0,str(MATH/"Publication"/"engine"))
+    sys.path.insert(0,str(MATH/"Core1Authoring"/"engine"))
+    from realize_math_core_products import realize
+    from author_math_core1 import load_candidate_bundle
+
+    binding,internals=build_fixture_binding(selected_run,return_internals=True)
+    if internals["core1_plan"] is None:
+        fail("RENDERED_CANDIDATE_WITHOUT_PRODUCTION_CORE1")
+    _,assets=load_candidate_bundle(MATH/"InstructionalKnowledge"/"registry"/"math-pck-candidates.json")
+    primitives=load(MATH/"RepresentationSemantics"/"registry"/"math-teaching-primitive-registry.json")
+    result,_=realize(internals["core1_plan"],internals["core2"],internals["closure"],assets,primitives,out_dir)
+    if result["publication_engineering"]!="PASS":
+        fail("RENDERED_CANDIDATE_PUBLICATION_ENGINEERING_FAILED")
+    rendered=bind_rendered_artifacts(binding,result["artifacts"])
+    return rendered,result
+
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--selected-run",choices=["A","B"],default="A")
+    ap.add_argument("--render-to",help="render the real two-product package into this directory and bind it")
     ap.add_argument("--out",required=True)
     args=ap.parse_args()
-    result=build_fixture_binding(args.selected_run)
+    if args.render_to:
+        result,_=build_rendered_binding(args.render_to,args.selected_run)
+    else:
+        result=build_fixture_binding(args.selected_run)
     Path(args.out).write_text(json.dumps(result,indent=2,sort_keys=True,ensure_ascii=False)+"\n",encoding="utf-8")
 
 

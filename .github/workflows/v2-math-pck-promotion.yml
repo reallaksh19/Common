@@ -1,0 +1,53 @@
+name: V2 Mathematics M-G PCK Promotion Mechanism
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/InstructionalKnowledge/**'
+      - 'Grade 9/V2/Mathematics/AssessmentScope/**'
+      - 'Grade 9/V2/Mathematics/ProblemSemantics/**'
+      - '.github/workflows/v2-math-pck-promotion.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-pck-promotion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate M-G PCK contracts and promotion honesty
+        run: python 'Grade 9/V2/Mathematics/InstructionalKnowledge/contracts/validate_contracts.py'
+      - name: Run M-G promotion pipeline falsifiers
+        run: python 'Grade 9/V2/Mathematics/InstructionalKnowledge/tests/test_math_pck_promotion.py'
+      - name: Prove the committed promotion registry is reproducible
+        run: |
+          P='Grade 9/V2/Mathematics/InstructionalKnowledge'
+          python "$P/engine/promote_math_pck.py" \
+            --pck-candidates "$P/registry/math-pck-candidates.json" \
+            --out /tmp/promotions-replay.json
+          cmp /tmp/promotions-replay.json "$P/registry/math-pck-promotion-registry.json"
+          echo 'MATH M-G promotion registry reproducibility PASS'
+      - name: Prove no promotion claims human expert review
+        run: |
+          python - <<'PY'
+          import json
+          path = 'Grade 9/V2/Mathematics/InstructionalKnowledge/registry/math-pck-promotion-registry.json'
+          registry = json.load(open(path))
+          assert registry['promotions'], 'PCK_REGISTRY_EMPTY_BUT_RELEASE_CLAIMED'
+          for record in registry['promotions']:
+              assert record['producer_legal'] is False, record['asset_id']
+              assert record['release_legal'] is False, record['asset_id']
+              assert record['review_source'] == 'AI_ASSISTED_REFERENCE_REVIEW', record['asset_id']
+              assert record['expert_review_state'] == {
+                  'SUBJECT_EXPERT_PASS': 'PENDING',
+                  'PEDAGOGY_EXPERT_PASS': 'PENDING',
+              }, record['asset_id']
+          print('MATH M-G no fabricated expert review PASS (%d provisional promotions)' % len(registry['promotions']))
+          PY
