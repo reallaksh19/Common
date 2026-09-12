@@ -1,0 +1,97 @@
+{
+  "registry_version": "1.0.0",
+  "description": "Unified canonical capability registry for Primary Mathematics Grades 4 and 5.",
+  "capabilities": [
+    {
+      "id": "PM-NUM-PV-01",
+      "domain": "NUMBER_AND_OPERATIONS",
+      "standard_grades": [4, 5],
+      "title": "Multi-digit Place Value Decomposition & Regrouping",
+      "description": "Decompose multi-digit numbers into standard base-10 positional values and regroup across places."
+    },
+    {
+      "id": "PM-NUM-MUL-01",
+      "domain": "NUMBER_AND_OPERATIONS",
+      "standard_grades": [4, 5],
+      "title": "Multi-digit Multiplication with Area Model & Partial Products",
+      "description": "Multiply multi-digit whole numbers bridging equal groups, arrays, area models, and vertical partial products."
+    },
+    {
+      "id": "PM-NUM-DIV-01",
+      "domain": "NUMBER_AND_OPERATIONS",
+      "standard_grades": [4, 5],
+      "title": "Multi-digit Division with Internal Quotient Zero & Remainder Semantics",
+      "description": "Divide multi-digit numbers preserving positional quotient zeros and contextual remainder meanings."
+    },
+    {
+      "id": "PM-FRAC-EQ-01",
+      "domain": "FRACTIONS",
+      "standard_grades": [4, 5],
+      "title": "Fraction Equivalence & Visual Partitioning",
+      "description": "Recognize and generate equivalent fractions using visual strips, area models, and number lines."
+    },
+    {
+      "id": "PM-FRAC-COMP-01",
+      "domain": "FRACTIONS",
+      "standard_grades": [4, 5],
+      "title": "Fraction Comparison with Grounded Reasoning",
+      "description": "Compare fractions with different numerators and denominators using benchmarks or common partitions."
+    },
+    {
+      "id": "PM-FRAC-OPS-01",
+      "domain": "FRACTIONS",
+      "standard_grades": [4, 5],
+      "title": "Fraction Addition and Subtraction",
+      "description": "Add and subtract fractions with like and related denominators using visual repartitioning."
+    },
+    {
+      "id": "PM-DEC-HUND-01",
+      "domain": "DECIMALS",
+      "standard_grades": [4, 5],
+      "title": "Decimal Tenths and Hundredths Representation",
+      "description": "Connect decimals to fractions, 10x10 grids, and calibrated number lines."
+    },
+    {
+      "id": "PM-MEAS-CONV-01",
+      "domain": "MEASUREMENT",
+      "standard_grades": [4, 5],
+      "title": "Unit Conversions and Multi-step Quantity Chains",
+      "description": "Convert between standard metric/customary units and solve multi-step rate and quantity problems."
+    },
+    {
+      "id": "PM-GEOM-PERIM-AREA-01",
+      "domain": "GEOMETRY_AND_MEASUREMENT",
+      "standard_grades": [4, 5],
+      "title": "Perimeter vs Area Non-conflation",
+      "description": "Distinguish boundary measure (linear units) from surface covering (square units) on rectilinear figures."
+    },
+    {
+      "id": "PM-GEOM-VOL-01",
+      "domain": "GEOMETRY_AND_MEASUREMENT",
+      "standard_grades": [5],
+      "title": "Volume by Cubic Unit Layers",
+      "description": "Measure volume of rectangular prisms by packing and counting unit cubes across layers."
+    },
+    {
+      "id": "PM-GEOM-ANG-01",
+      "domain": "GEOMETRY_AND_MEASUREMENT",
+      "standard_grades": [4, 5],
+      "title": "Angle Measurement and Geometric Classification",
+      "description": "Classify angles as acute, right, obtuse, or straight and verify geometric orientation."
+    },
+    {
+      "id": "PM-DATA-CHART-01",
+      "domain": "DATA_HANDLING",
+      "standard_grades": [4, 5],
+      "title": "Data Interpretation with Calibrated Scales",
+      "description": "Read and create bar graphs and pictograms reconciling key scales with represented data."
+    },
+    {
+      "id": "PM-NOTE-WORK-01",
+      "domain": "MATHEMATICAL_PRACTICE",
+      "standard_grades": [4, 5],
+      "title": "Authentic Notebook Work Alignment and Provenance",
+      "description": "Preserve authentic student work, column alignment, teacher annotations, and error contrast."
+    }
+  ]
+}

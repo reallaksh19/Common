@@ -237,8 +237,10 @@ class BenchmarkEvaluator:
 
         elif op == "UNIT_CONVERSION":
             steps = math.get("unit_steps", [])
-            for s in steps:
-                if s.get("unit") == "DOZEN_EGGS" and s.get("multiplier") != 12:
+            has_dozen = any(s.get("unit") == "DOZEN_EGGS" for s in steps)
+            if has_dozen:
+                has_valid_factor = any(s.get("multiplier") == 12 for s in steps)
+                if not has_valid_factor:
                     falsifiers.append("QUANTITY_UNIT_CHAIN_COLLAPSED")
 
         elif op == "FRACTION_OPERATION":

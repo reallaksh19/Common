@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PrimaryMathPrimitiveSpec",
+  "description": "Specification for visual representation primitive invocation. Enforces that all mathematical data derive from params.",
+  "type": "object",
+  "required": ["kind", "params", "bbox"],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "EQUAL_GROUPS",
+        "ARRAY",
+        "AREA_MODEL",
+        "PARTIAL_PRODUCTS",
+        "VERTICAL_ALGORITHM",
+        "ESTIMATE_CHECK",
+        "LONG_DIVISION_WORKOUT",
+        "FRACTION_STRIP",
+        "FRACTION_COMPARISON",
+        "FRACTION_ADDITION",
+        "DECIMAL_HUNDRED_GRID",
+        "DECIMAL_NUMBER_LINE",
+        "NUMBER_LINE",
+        "PLACE_VALUE_BLOCKS",
+        "RECTILINEAR_PERIMETER_AREA",
+        "VOLUME_CUBE_LAYERS",
+        "GEOMETRIC_ANGLE",
+        "BAR_CHART",
+        "NOTEBOOK_WORKOUT_REPLAY"
+      ]
+    },
+    "params": {
+      "type": "object",
+      "description": "Ground truth mathematical parameters governing the visualization."
+    },
+    "bbox": {
+      "type": "object",
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number", "minimum": 10 },
+        "height": { "type": "number", "minimum": 10 }
+      }
+    },
+    "styling": {
+      "type": "object",
+      "properties": {
+        "primary_color": { "type": "string" },
+        "secondary_color": { "type": "string" },
+        "background_color": { "type": "string" },
+        "show_labels": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "overlay_id": "OVERLAY-NCERT-CLASS5",
+  "target_grade": 5,
+  "curriculum_authority": "NCERT_MATHEMATICS_CLASS5",
+  "authority_version": "2026.1",
+  "chapters": [
+    { "chapter_number": 1, "name": "The Fish Tale", "mapped_capabilities": ["PM-NUM-PV-01", "PM-NUM-MUL-01", "PM-NUM-DIV-01", "PM-MEAS-CONV-01"] },
+    { "chapter_number": 2, "name": "Shapes and Angles", "mapped_capabilities": ["PM-GEOM-ANG-01"] },
+    { "chapter_number": 3, "name": "How Many Squares?", "mapped_capabilities": ["PM-GEOM-PERIM-AREA-01"] },
+    { "chapter_number": 4, "name": "Parts and Wholes", "mapped_capabilities": ["PM-FRAC-EQ-01", "PM-FRAC-COMP-01", "PM-FRAC-OPS-01"] },
+    { "chapter_number": 10, "name": "Tenths and Hundredths", "mapped_capabilities": ["PM-DEC-HUND-01"] },
+    { "chapter_number": 11, "name": "Area and its Boundary", "mapped_capabilities": ["PM-GEOM-PERIM-AREA-01"] },
+    { "chapter_number": 13, "name": "Ways to Multiply and Divide", "mapped_capabilities": ["PM-NUM-MUL-01", "PM-NUM-DIV-01"] },
+    { "chapter_number": 14, "name": "How Big? How Heavy?", "mapped_capabilities": ["PM-GEOM-VOL-01", "PM-MEAS-CONV-01"] }
+  ]
+}

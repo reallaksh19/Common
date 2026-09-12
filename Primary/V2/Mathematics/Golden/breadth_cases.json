@@ -1,0 +1,275 @@
+[
+  {
+    "case_id": "BENCH-DEEP-FRAC-01",
+    "domain": "FRACTIONS",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH9", "authority_version": "2026.1", "evidence_ref": "PR163-FRAC-EQ", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "FRACTION_EQUIVALENCE", "operands": [1, 2], "result": 0.5 },
+    "representations": [{
+      "role": "BRIDGE", "kind": "FRACTION_STRIP", "params": { "numerator": 2, "denominator": 4, "label": "2/4 = 1/2" },
+      "rendered_evidence": { "element_count": 6, "visual_checksum": "sha256-frac-eq", "data_grounded": true, "labels": ["2", "4", "2/4 = 1/2"] }
+    }],
+    "core1_refs": { "module_id": "C1-FRAC-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "FRACTION_STRIP" },
+    "core2_refs": {
+      "companion_id": "C2-FRAC-01", "linked_core1_module_id": "C1-FRAC-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "BUILD", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Find equivalent to 1/3.", "H1_notice": "Multiply numerator and denominator by 2.", "H2_remember": "Equivalent fractions occupy the same length.", "H3_represent": "Draw fraction strip.", "fresh_independent_retry_H0": "Find equivalent to 2/5." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Fraction Equivalence Wall", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-frac01-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-DEEP-FRAC-02",
+    "domain": "FRACTIONS",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH9", "authority_version": "2026.1", "evidence_ref": "PR163-FRAC-COMP", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "FRACTION_COMPARISON", "operands": [3, 4, 2, 3], "result": 1 },
+    "representations": [{
+      "role": "BRIDGE", "kind": "FRACTION_COMPARISON", "params": { "fraction_1": {"numerator": 3, "denominator": 4}, "fraction_2": {"numerator": 2, "denominator": 3}, "relation": ">" },
+      "rendered_evidence": { "element_count": 8, "visual_checksum": "sha256-frac-comp", "data_grounded": true, "labels": ["3/4", "2/3", ">"] }
+    }],
+    "core1_refs": { "module_id": "C1-FRAC-02", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "FRACTION_COMPARISON" },
+    "core2_refs": {
+      "companion_id": "C2-FRAC-02", "linked_core1_module_id": "C1-FRAC-02",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "CHOOSE", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Compare 3/5 and 2/3.", "H1_notice": "Convert to common denominator 15.", "H2_remember": "Compare numerators once denominators match.", "H3_represent": "Draw two aligned fraction strips.", "fresh_independent_retry_H0": "Compare 4/7 and 3/5." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Fraction Comparison Flowcard", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-frac02-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-DEEP-FRAC-03",
+    "domain": "FRACTIONS",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH9", "authority_version": "2026.1", "evidence_ref": "PR163-FRAC-ADD", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "FRACTION_OPERATION", "operands": [1, 4, 2, 4], "result": 0.75 },
+    "representations": [{
+      "role": "BRIDGE", "kind": "FRACTION_ADDITION", "params": { "num1": 1, "den1": 4, "num2": 2, "den2": 4, "res_num": 3, "res_den": 4 },
+      "rendered_evidence": { "element_count": 6, "visual_checksum": "sha256-frac-add", "data_grounded": true, "labels": ["1/4", "2/4", "3/4"] }
+    }],
+    "core1_refs": { "module_id": "C1-FRAC-03", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "FRACTION_ADDITION" },
+    "core2_refs": {
+      "companion_id": "C2-FRAC-03", "linked_core1_module_id": "C1-FRAC-03",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "BUILD", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Add 2/6 + 3/6.", "H1_notice": "The parts are the same size (sixths).", "H2_remember": "Add numerators, keep denominator unchanged.", "H3_represent": "Shade 2 parts then 3 parts on strip of 6.", "fresh_independent_retry_H0": "Add 3/8 + 4/8." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Fraction Addition Model", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-frac03-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-PV-01",
+    "domain": "NUMBER_AND_OPERATIONS",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH10", "authority_version": "2026.1", "evidence_ref": "PR163-PV-01", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "PLACE_VALUE", "operands": [4567], "result": 4567, "decomposition": [{"expression": "4000+500+60+7", "value": 4567}] },
+    "representations": [{
+      "role": "PROVIDED", "kind": "PLACE_VALUE_BLOCKS", "params": { "number": 4567, "expanded": [4000, 500, 60, 7] },
+      "rendered_evidence": { "element_count": 8, "visual_checksum": "sha256-pv-4567", "data_grounded": true, "labels": ["4567", "4000", "500", "60", "7"] }
+    }],
+    "core1_refs": { "module_id": "C1-PV-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "PLACE_VALUE_BLOCKS" },
+    "core2_refs": {
+      "companion_id": "C2-PV-01", "linked_core1_module_id": "C1-PV-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "RETRIEVE", "item_count": 5}],
+      "appendix_b_ladder": { "H0_try": "Write 5824 in expanded form.", "H1_notice": "Identify what each digit represents.", "H2_remember": "5 thousands, 8 hundreds, 2 tens, 4 ones.", "H3_represent": "Draw place value table.", "fresh_independent_retry_H0": "Write 7093 in expanded form." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Place Value Chart", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-pv-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-DEC-01",
+    "domain": "DECIMALS",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS5_CH10", "authority_version": "2026.1", "evidence_ref": "PR163-DEC-01", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "DECIMAL_HUNDREDTHS", "operands": [0.45], "result": 0.45 },
+    "representations": [{
+      "role": "PROVIDED", "kind": "DECIMAL_HUNDRED_GRID", "params": { "decimal_value": 0.45, "grid_shaded_cells": 45 },
+      "rendered_evidence": { "element_count": 105, "visual_checksum": "sha256-dec-grid", "data_grounded": true, "labels": ["0.45", "45", "0.45 = 45/100"] }
+    }],
+    "core1_refs": { "module_id": "C1-DEC-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "DECIMAL_HUNDRED_GRID" },
+    "core2_refs": {
+      "companion_id": "C2-DEC-01", "linked_core1_module_id": "C1-DEC-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "BUILD", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Represent 0.38 on a grid.", "H1_notice": "Each square is 1 hundredth (0.01).", "H2_remember": "0.38 means 38 squares out of 100.", "H3_represent": "Shade 3 full columns of 10 plus 8 squares.", "fresh_independent_retry_H0": "Represent 0.62 on a grid." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Tenths and Hundredths Grid Map", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-dec-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-MEAS-01",
+    "domain": "MEASUREMENT",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH3", "authority_version": "2026.1", "evidence_ref": "PR163-MEAS-01", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "MEASUREMENT_CONVERSION", "operands": [3, 1000], "result": 3000 },
+    "representations": [{
+      "role": "PROVIDED", "kind": "MEASUREMENT_CONVERSION", "params": { "from_value": 3, "from_unit": "KILOMETRE", "factor": 1000, "to_value": 3000, "to_unit": "METRE" },
+      "rendered_evidence": { "element_count": 6, "visual_checksum": "sha256-meas-3km", "data_grounded": true, "labels": ["3", "KILOMETRE", "3000", "METRE", "1000"] }
+    }],
+    "core1_refs": { "module_id": "C1-MEAS-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "MEASUREMENT_CONVERSION" },
+    "core2_refs": {
+      "companion_id": "C2-MEAS-01", "linked_core1_module_id": "C1-MEAS-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "TRANSFER", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Convert 5 km to metres.", "H1_notice": "Are metres smaller than kilometres?", "H2_remember": "1 kilometre = 1000 metres.", "H3_represent": "Draw the conversion arrow showing x 1000.", "fresh_independent_retry_H0": "Convert 7 kg to grams." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Metric Conversion Ladder", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-meas-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-GEOM-01",
+    "domain": "GEOMETRY_AND_MEASUREMENT",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH13", "authority_version": "2026.1", "evidence_ref": "PR163-GEOM-PERIM-AREA", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "GEOMETRY", "operands": [5, 3], "result": 15 },
+    "representations": [{
+      "role": "PROVIDED", "kind": "RECTILINEAR_PERIMETER_AREA", "params": { "width": 5, "height": 3, "perimeter": 16, "area": 15, "unit": "cm" },
+      "rendered_evidence": { "element_count": 8, "visual_checksum": "sha256-geom-5x3", "data_grounded": true, "labels": ["5", "3", "16", "15", "cm", "Perimeter = 16 cm", "Area = 15 cm^2"] }
+    }],
+    "core1_refs": { "module_id": "C1-GEOM-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "RECTILINEAR_PERIMETER_AREA" },
+    "core2_refs": {
+      "companion_id": "C2-GEOM-01", "linked_core1_module_id": "C1-GEOM-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "MIX", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Find perimeter and area of 6cm by 4cm rectangle.", "H1_notice": "Perimeter is fence length, area is tiles inside.", "H2_remember": "P = 2*(l+w), A = l*w.", "H3_represent": "Draw the rectangle with outline vs shaded grid.", "fresh_independent_retry_H0": "Find P and A for 7m by 2m garden." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Perimeter vs Area Comparison Matrix", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-geom01-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-GEOM-02",
+    "domain": "GEOMETRY_AND_MEASUREMENT",
+    "grade_level": 5,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS5_CH14", "authority_version": "2026.1", "evidence_ref": "PR163-GEOM-VOL", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "VOLUME", "operands": [4, 3, 2], "result": 24 },
+    "representations": [{
+      "role": "PROVIDED", "kind": "VOLUME_CUBE_LAYERS", "params": { "length": 4, "width": 3, "height": 2, "total_cubes": 24 },
+      "rendered_evidence": { "element_count": 28, "visual_checksum": "sha256-vol-4x3x2", "data_grounded": true, "labels": ["4", "3", "2", "12", "24"] }
+    }],
+    "core1_refs": { "module_id": "C1-GEOM-02", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "VOLUME_CUBE_LAYERS" },
+    "core2_refs": {
+      "companion_id": "C2-GEOM-02", "linked_core1_module_id": "C1-GEOM-02",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "BUILD", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Find volume of box 5 x 2 x 3 cubes.", "H1_notice": "Count cubes in one layer first (5 x 2 = 10).", "H2_remember": "Multiply layer count by height: 10 x 3 = 30.", "H3_represent": "Draw the 3-layer prism diagram.", "fresh_independent_retry_H0": "Find volume of box 4 x 4 x 2 cubes." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Volume Layer Decomposition Guide", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-geom02-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-GEOM-03",
+    "domain": "GEOMETRY_AND_MEASUREMENT",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS5_CH2", "authority_version": "2026.1", "evidence_ref": "PR163-GEOM-ANG", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "ANGLE", "operands": [120], "result": 120 },
+    "representations": [{
+      "role": "PROVIDED", "kind": "GEOMETRIC_ANGLE", "params": { "angle_degrees": 120, "classification": "OBTUSE" },
+      "rendered_evidence": { "element_count": 8, "visual_checksum": "sha256-ang-120", "data_grounded": true, "labels": ["120", "OBTUSE", "120 degrees (OBTUSE)"] }
+    }],
+    "core1_refs": { "module_id": "C1-GEOM-03", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "GEOMETRIC_ANGLE" },
+    "core2_refs": {
+      "companion_id": "C2-GEOM-03", "linked_core1_module_id": "C1-GEOM-03",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "CHOOSE", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Classify an angle of 45 degrees.", "H1_notice": "Is it smaller than a right angle corner (90)?", "H2_remember": "Angles less than 90 are acute.", "H3_represent": "Draw the angle against a 90 degree reference square.", "fresh_independent_retry_H0": "Classify an angle of 135 degrees." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Angle Family Classifier", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-geom03-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-DATA-01",
+    "domain": "DATA_HANDLING",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH14", "authority_version": "2026.1", "evidence_ref": "PR163-DATA-CHART", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "DATA_CHART", "operands": [15, 25], "result": 40 },
+    "representations": [{
+      "role": "PROVIDED", "kind": "DATA_BAR_CHART", "params": { "categories": ["Apples", "Bananas"], "values": [15, 25], "scale_unit": 5 },
+      "rendered_evidence": { "element_count": 10, "visual_checksum": "sha256-data-chart", "data_grounded": true, "labels": ["5", "15", "25", "Apples", "Bananas"] }
+    }],
+    "core1_refs": { "module_id": "C1-DATA-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "DATA_BAR_CHART" },
+    "core2_refs": {
+      "companion_id": "C2-DATA-01", "linked_core1_module_id": "C1-DATA-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "BUILD", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Read value of Oranges when bar reaches 4 grid lines on scale 5.", "H1_notice": "Check the key: 1 grid line = 5 items.", "H2_remember": "Multiply grid count by scale unit: 4 x 5 = 20.", "H3_represent": "Mark ticks on axis.", "fresh_independent_retry_H0": "Read value of Grapes at 6 grid lines." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Graph Scale Reading Card", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-data01-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-WP-01",
+    "domain": "WORD_PROBLEMS",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH3", "authority_version": "2026.1", "evidence_ref": "PR171-MWE-WP", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "WORD_PROBLEM", "operands": [24, 6], "result": 4, "quantity_structure": { "meaning": "SHARING", "defined_roles": ["GIVEN", "RATE", "TARGET_UNKNOWN"] } },
+    "representations": [{
+      "role": "PROVIDED", "kind": "DIVISION_SHARING_VS_GROUPING", "params": { "dividend": 24, "divisor": 6, "quotient": 4, "meaning": "SHARING" },
+      "rendered_evidence": { "element_count": 8, "visual_checksum": "sha256-wp-struct", "data_grounded": true, "labels": ["24", "6", "4", "SHARING"] }
+    }],
+    "core1_refs": { "module_id": "C1-WP-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "DIVISION_STRUCTURE" },
+    "core2_refs": {
+      "companion_id": "C2-WP-01", "linked_core1_module_id": "C1-WP-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "TRANSFER", "item_count": 4}],
+      "appendix_b_ladder": { "H0_try": "Solve 2-step word problem.", "H1_notice": "Underline given quantities and target unknown.", "H2_remember": "Map quantities to relationships before calculating.", "H3_represent": "Draw strip diagram of the story.", "fresh_independent_retry_H0": "Solve sibling word problem." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Word Problem Strategy Map", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-wp01-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-ERR-01",
+    "domain": "MATHEMATICAL_PRACTICE",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH11", "authority_version": "2026.1", "evidence_ref": "PR171-MWE-ERR", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "DIVISION", "operands": [366, 12], "result": 30, "remainder": 6 },
+    "representations": [{
+      "role": "WORKED_EXAMPLE", "kind": "LONG_DIVISION_WORKOUT", "params": { "dividend": 366, "divisor": 12, "quotient": 30, "remainder": 6, "quotient_digits": ["3", "0"] },
+      "rendered_evidence": { "element_count": 10, "visual_checksum": "sha256-err-366", "data_grounded": true, "labels": ["366", "12", "30", "3", "0"] }
+    }],
+    "work_provenance": {
+      "tier": "STRUCTURED_REPLAY",
+      "actor": "CHILD",
+      "student_steps": [{"step": "36 / 12 = 3"}, {"step": "bring down 6"}, {"step": "wrote 36 instead of 30"}],
+      "teacher_annotations": [{"note": "Check quotient place value continuity"}],
+      "alignment_invariants": { "place_value_aligned": true, "intermediate_work_preserved": true }
+    },
+    "core1_refs": { "module_id": "C1-ERR-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "LONG_DIVISION_WORKOUT" },
+    "core2_refs": {
+      "companion_id": "C2-ERR-01", "linked_core1_module_id": "C1-ERR-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "RECONNECT", "item_count": 3}],
+      "appendix_b_ladder": { "H0_try": "Spot the mistake in: 412 / 4 = 13.", "H1_notice": "Is 4 x 13 close to 412?", "H2_remember": "4 x 100 = 400, so answer must be over 100.", "H3_represent": "Circle the missing tens 0 in the quotient.", "fresh_independent_retry_H0": "Spot mistake in: 618 / 6 = 13." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Error Spotting Flowcard", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-err01-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  },
+  {
+    "case_id": "BENCH-BREADTH-NOTE-01",
+    "domain": "MATHEMATICAL_PRACTICE",
+    "grade_level": 4,
+    "scope_provenance": { "scope_basis": "CURRICULUM_CONFIRMED", "authority_ref": "NCERT_CLASS4_CH11", "authority_version": "2026.1", "evidence_ref": "PR171-MWE-TIERS", "universal_grade_scope_claimed": false },
+    "math_invariants": { "operation": "DIVISION", "operands": [7843, 13], "result": 603, "remainder": 4 },
+    "representations": [{
+      "role": "WORKED_EXAMPLE", "kind": "LONG_DIVISION_WORKOUT", "params": { "dividend": 7843, "divisor": 13, "quotient": 603, "remainder": 4, "quotient_digits": ["6", "0", "3"] },
+      "rendered_evidence": { "element_count": 12, "visual_checksum": "sha256-note-tiers", "data_grounded": true, "labels": ["7843", "13", "603", "6", "0", "3"] }
+    }],
+    "work_provenance": {
+      "tier": "STRUCTURED_REPLAY",
+      "actor": "CHILD",
+      "claims_original_handwriting": false,
+      "alignment_invariants": { "place_value_aligned": true, "intermediate_work_preserved": true }
+    },
+    "core1_refs": { "module_id": "C1-NOTE-01", "pedagogical_sequence": ["NOTICE", "MODEL", "WORKED", "SUPPORTED", "INDEPENDENT"], "dominant_representation": "LONG_DIVISION_WORKOUT" },
+    "core2_refs": {
+      "companion_id": "C2-NOTE-01", "linked_core1_module_id": "C1-NOTE-01",
+      "appendix_a_batches": [{"batch_id": "B1", "practice_role": "RETRIEVE", "item_count": 3}],
+      "appendix_b_ladder": { "H0_try": "Review workout steps.", "H1_notice": "Check intermediate multiples of 13.", "H2_remember": "Keep columns aligned vertically.", "H3_represent": "Draw vertical grid guidelines.", "fresh_independent_retry_H0": "Try 9245 / 15 workout." },
+      "appendix_c_ref": { "format": "VISUAL_DECISION_REFERENCE", "visual_decision_aid": "Notebook Column Alignment Guide", "is_prose_cram_sheet": false }
+    },
+    "learner_surface_guard": { "pass": true, "detected_internal_tokens": [], "token_count": 0 },
+    "layout_custody": { "page_count": 2, "page_map": [], "pdf_sha256": "sha256-note01-pdf", "child_first_geometry": { "min_body_font_pt": 13.5, "overflow_strategy": "ADD_PAGE" } }
+  }
+]
