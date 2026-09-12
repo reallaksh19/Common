@@ -19,7 +19,7 @@ copy_mod = mod("core1a_copy", D / "engine" / "physics_learner_copy.py")
 build = mod("core1a_build", D / "engine" / "build_physics_core1a.py")
 render = mod("core1a_render", D / "engine" / "render_physics_core1a.py")
 POLICY = json.loads((D / "registry" / "physics-core1a-publication-policy.json").read_text())
-COPY = json.loads((D / "registry" / "physics-learner-copy-titles.json").read_text())
+COPY = json.loads((D / "registry" / "physics-core1a-learner-language.json").read_text())
 
 
 def attempt(stage, prompt):
@@ -219,11 +219,21 @@ class LearnerCopyTests(unittest.TestCase):
     def test_internal_identifiers_are_unchanged_and_mapped(self):
         for role in ("MISCONCEPTION_REPAIR", "WORKED", "GUIDED", "FADED", "INDEPENDENT",
                      "TRANSFER", "VERIFY", "RECONSTRUCT", "ANCHOR", "MODEL", "EXECUTE",
-                     "INTERPRET", "READINESS_PROBE", "MODEL_CHECK", "PHYSICAL_CHECK"):
-            self.assertIn(role, COPY["titles"], role)
+                     "INTERPRET", "READINESS_PROBE", "MODEL_CHECK", "PHYSICAL_CHECK",
+                     "H1_NOTICE", "H2_MODEL", "H3_START"):
+            self.assertIn(role, COPY["module_labels"], role)
             title = copy_mod.learner_title(role)
             self.assertNotEqual(title, role)
             self.assertEqual(copy_mod.learner_copy_violations(title), [])
+
+    def test_existing_core1a_module_labels_are_preserved(self):
+        """#350's vocabulary is the incumbent; item 7 extends it, it does not restyle it."""
+        for role, label in (("REAL_WORLD_ANCHOR", "Start with a real situation"),
+                            ("KEY_IDEA", "The big idea"),
+                            ("WORKED_EXAMPLE", "Watch one worked example"),
+                            ("COMMON_TRAP", "Easy mistake to make"),
+                            ("GUIDED_PRACTICE", "Try it with help")):
+            self.assertEqual(copy_mod.learner_title(role), label)
 
     def test_falsifier_fires_on_a_raw_internal_role_label(self):
         self.assertIn("MISCONCEPTION_REPAIR",
@@ -231,9 +241,17 @@ class LearnerCopyTests(unittest.TestCase):
         self.assertIn("misconception repair",
                       copy_mod.learner_copy_violations("Misconception Repair"))
         self.assertIn("readiness gate", copy_mod.learner_copy_violations("Readiness Gate"))
+        # #350's own banned words are enforced by the same scan
+        self.assertIn("custody", copy_mod.learner_copy_violations("answer custody route"))
+        self.assertIn("source-grounded", copy_mod.learner_copy_violations("a source-grounded figure"))
         with self.assertRaises(ValueError) as ctx:
-            copy_mod.assert_learner_copy("Worked Example", where="page 3")
+            copy_mod.assert_learner_copy("Misconception Repair", where="page 3")
         self.assertIn("INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE", str(ctx.exception))
+
+    def test_ordinary_textbook_words_are_not_treated_as_jargon(self):
+        """The target is curriculum-design jargon, not normal school vocabulary."""
+        for phrase in ("Watch one worked example", "Try it with help", "Now try it yourself"):
+            self.assertEqual(copy_mod.learner_copy_violations(phrase), [], phrase)
 
     def test_rendered_core1a_page_text_carries_no_internal_role_label(self):
         c = core1()

@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Governed learner-facing copy vocabulary for the Physics learner products.
+"""Engine for the governed learner-facing copy vocabulary of the Physics learner products.
+
+The vocabulary itself lives in ``registry/physics-core1a-learner-language.json``, which
+Core (1A) already owned: this module extends that registry's reach rather than standing up
+a second one. #350 governed the fourteen publication module kinds and a banned-word list;
+P-UPGRADE-2 item 7 adds the roles that table did not reach — route states, hint levels,
+Core (2) solution sections, support stages, readiness/probe roles — plus a body-copy
+rewrite table and the falsifier that proves the whole thing was applied.
+
 
 Internal role and state identifiers (``MISCONCEPTION_REPAIR``, ``WORKED``, ``GUIDED``,
 ``EXECUTE``, ``H1_NOTICE`` …) are the schema and falsifier vocabulary and are **not**
@@ -26,7 +34,8 @@ import json
 import re
 from pathlib import Path
 
-REGISTRY_PATH = Path(__file__).resolve().parents[1] / "registry" / "physics-learner-copy-titles.json"
+REGISTRY_PATH = (Path(__file__).resolve().parents[1] / "registry"
+                 / "physics-core1a-learner-language.json")
 
 FALSIFIER = "INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE"
 
@@ -63,9 +72,9 @@ def humanize_role(role, registry=None):
 def learner_title(role, registry=None, default=None):
     """The learner-facing heading for an internal role identifier."""
     reg = registry or load_registry()
-    entry = reg["titles"].get(_normalise(role))
+    entry = reg["module_labels"].get(_normalise(role))
     if entry:
-        return entry["learner_title"]
+        return entry
     if default is not None:
         return default
     return humanize_role(role)
@@ -73,18 +82,18 @@ def learner_title(role, registry=None, default=None):
 
 def learner_subtitle(role, registry=None, default=""):
     reg = registry or load_registry()
-    entry = reg["titles"].get(_normalise(role))
-    return entry["learner_subtitle"] if entry else default
+    return reg.get("module_helpers", {}).get(_normalise(role), default)
 
 
 def is_mapped(role, registry=None):
     reg = registry or load_registry()
-    return _normalise(role) in reg["titles"]
+    return _normalise(role) in reg["module_labels"]
 
 
 def unmapped_roles(roles, registry=None):
     reg = registry or load_registry()
-    return sorted({_normalise(r) for r in roles if _normalise(r) and _normalise(r) not in reg["titles"]})
+    return sorted({_normalise(r) for r in roles
+                   if _normalise(r) and _normalise(r) not in reg["module_labels"]})
 
 
 def _rewrite_pattern(phrase):
@@ -145,7 +154,7 @@ def _phrase_patterns(registry):
     if cached is None:
         cached = [
             (phrase, re.compile(r"\b" + r"[\s\-]+".join(re.escape(w) for w in phrase.split()) + r"\b", re.I))
-            for phrase in registry["clinical_label_phrases"]
+            for phrase in registry["banned_learner_words"]
         ]
         _CACHE[("phrasepat", key)] = cached
     return cached
@@ -177,5 +186,5 @@ def assert_learner_copy(text, where="", registry=None):
 
 if __name__ == "__main__":  # pragma: no cover - manual inspection aid
     reg = load_registry()
-    for role in sorted(reg["titles"]):
-        print(f"{role:28s} -> {reg['titles'][role]['learner_title']}")
+    for role in sorted(reg["module_labels"]):
+        print(f"{role:28s} -> {reg['module_labels'][role]}")
