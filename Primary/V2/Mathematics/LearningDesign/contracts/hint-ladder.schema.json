@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/LearningDesign/contracts/hint-ladder.schema.json",
+  "title": "PrimaryMathVisualHintLadder",
+  "type": "object",
+  "required": ["schema_version", "ladder_id", "task_ref", "steps", "fresh_retry_ref"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "ladder_id": {"type": "string", "minLength": 1},
+    "task_ref": {"type": "string", "minLength": 1},
+    "steps": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {"$ref": "#/$defs/h1"},
+        {"$ref": "#/$defs/h2"},
+        {"$ref": "#/$defs/h3"}
+      ],
+      "items": false
+    },
+    "fresh_retry_ref": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "base": {
+      "type": "object",
+      "required": ["hint_id", "level", "semantic_role", "child_label", "verbal_cue", "visual_state_ref", "learner_action", "information_revealed", "may_reveal_final_answer"],
+      "properties": {
+        "hint_id": {"type": "string", "minLength": 1},
+        "level": {"enum": ["H1", "H2", "H3"]},
+        "semantic_role": {"enum": ["NOTICE", "REMEMBER", "REPRESENT"]},
+        "child_label": {"type": "string", "minLength": 1},
+        "verbal_cue": {"type": "string", "minLength": 1},
+        "visual_state_ref": {"type": "string", "minLength": 1},
+        "learner_action": {"type": "string", "minLength": 1},
+        "information_revealed": {"type": "array", "items": {"type": "string"}},
+        "may_reveal_final_answer": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "h1": {"allOf": [{"$ref": "#/$defs/base"}, {"properties": {"level": {"const": "H1"}, "semantic_role": {"const": "NOTICE"}, "child_label": {"const": "LOOK"}}}]},
+    "h2": {"allOf": [{"$ref": "#/$defs/base"}, {"properties": {"level": {"const": "H2"}, "semantic_role": {"const": "REMEMBER"}, "child_label": {"const": "REMEMBER"}}}]},
+    "h3": {"allOf": [{"$ref": "#/$defs/base"}, {"properties": {"level": {"const": "H3"}, "semantic_role": {"const": "REPRESENT"}, "child_label": {"const": "SHOW IT"}}}]}
+  },
+  "additionalProperties": false
+}
