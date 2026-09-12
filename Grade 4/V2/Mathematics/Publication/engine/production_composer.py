@@ -1,8 +1,8 @@
-"""Strict Primary Math V2 production publication entry point.
+"""Strict Grade 4 Math V2 production publication entry points.
 
-Legacy text-only H1/H2/H3 ladders remain readable by the historical page composer
-for migration tests, but they are forbidden here. New production publication must
-arrive through LearningRepresentationPlan / AuthoringLearningHandoff.
+Legacy renderer-local Core1 sections and text-only Core2 hint ladders remain readable
+by historical composers only for migration tests. Canonical production arrives
+through AuthoringLearningHandoff / LearningRepresentationPlan.
 """
 from __future__ import annotations
 
@@ -11,6 +11,9 @@ from pathlib import Path
 from typing import Any, Dict, Mapping, Tuple
 
 from Primary.V2.Mathematics.Publication.engine.authoring_handoff_adapter import AuthoringHandoffAdapter
+from Primary.V2.Mathematics.Publication.engine.core1_direct_composer import (
+    render_core1_from_authoring_handoff as _render_core1_from_handoff,
+)
 from Primary.V2.Mathematics.Publication.engine.page_composer import PrimaryPageComposer
 
 
@@ -29,7 +32,7 @@ def _require(condition: bool, code: str, message: str) -> None:
 
 
 class ProductionPrimaryPageComposer(PrimaryPageComposer):
-    """PrimaryPageComposer with text-only learning support disabled."""
+    """Historical Core2 composer with legacy text-only learning support disabled."""
 
     @staticmethod
     def validate_core2_plan(companion_plan: Mapping[str, Any]) -> None:
@@ -56,6 +59,24 @@ class ProductionPrimaryPageComposer(PrimaryPageComposer):
         return super().render_core2_companion(companion_plan, output_pdf_path)
 
 
+def render_core1_from_authoring_handoff(
+    handoff: Mapping[str, Any],
+    output_pdf_path: Path,
+    *,
+    title: str = "Grade 4 Mathematics Study Guide",
+    topic: str = "Mathematics",
+    grade_level: int = 4,
+) -> Tuple[str, Dict[str, Any]]:
+    """Canonical Core1 route: handoff -> LearningRepresentationPlan -> typed pages."""
+    return _render_core1_from_handoff(
+        handoff,
+        output_pdf_path,
+        title=title,
+        topic=topic,
+        grade_level=grade_level,
+    )
+
+
 def render_core2_from_authoring_handoff(
     handoff: Mapping[str, Any],
     output_pdf_path: Path,
@@ -65,7 +86,7 @@ def render_core2_from_authoring_handoff(
     appendix_a: Mapping[str, Any] | None = None,
     appendix_c: Mapping[str, Any] | None = None,
 ) -> Tuple[str, Dict[str, Any]]:
-    """Canonical one-call #336 -> #339 -> #327 production route."""
+    """Canonical Core2 route: authoring handoff -> visual hint ladder publisher."""
     companion_plan = AuthoringHandoffAdapter.build_core2_companion_plan(
         handoff,
         companion_id=companion_id,
