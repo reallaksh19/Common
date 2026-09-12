@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "difficulty_badges": {
+    "D1": {"learner_label": "Foundation", "helper": "A core idea. Build a clear picture first."},
+    "D2": {"learner_label": "Think carefully", "helper": "Connect the picture, words and equation."},
+    "D3": {"learner_label": "Challenge", "helper": "Follow the stages in order; do not skip the picture."},
+    "D4": {"learner_label": "Stretch", "helper": "An extension. Master the core ideas first."}
+  },
+  "module_labels": {
+    "REAL_WORLD_ANCHOR": "Start with a real situation",
+    "SEE_IT": "See it step by step",
+    "KEY_IDEA": "The big idea",
+    "PHYSICS_WORDS": "Physics words",
+    "MODEL_CHECK": "When does this model work?",
+    "MATH_BRIDGE": "Math bridge",
+    "WORKED_EXAMPLE": "Watch one worked example",
+    "COMMON_TRAP": "Easy mistake to make",
+    "GUIDED_PRACTICE": "Try it with help",
+    "FADED_PRACTICE": "Try with less help",
+    "INDEPENDENT_PRACTICE": "Now try it yourself",
+    "PHYSICAL_CHECK": "Does the answer make sense?",
+    "SELF_CHECK": "Quick check",
+    "TRANSFER_BRIDGE": "Ready to practise?"
+  },
+  "core2_navigation": {
+    "concept_to_core2_heading": "Where you will use this",
+    "concept_to_core2_action": "Try Core (2)",
+    "core2_to_concept_heading": "Need a quick refresher?",
+    "core2_to_concept_action": "Go back to this idea",
+    "challenge_badge": "Core (2) challenge"
+  },
+  "banned_learner_words": [
+    "repair",
+    "repair link",
+    "custody",
+    "falsifier",
+    "remediation",
+    "source-grounded",
+    "semantic drift",
+    "publication compiler",
+    "authority boundary"
+  ]
+}
