@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Any, Dict
 from Primary.V2.Mathematics.Representation.engine.base import BoundingBox, VectorRenderBackend
 from Primary.V2.Mathematics.Representation.engine.primitives.operations import MultiplicationPrimitives, DivisionPrimitives
+from Primary.V2.Mathematics.Representation.engine.primitives.realized_array import RealizedArrayPrimitive
 from Primary.V2.Mathematics.Representation.engine.primitives.fractions import FractionPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.fraction_bridges import FractionBridgePrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.decimals import DecimalPrimitives
@@ -25,7 +26,7 @@ def render_primitive(kind: str, params: Dict[str, Any], backend: VectorRenderBac
     if k == "EQUAL_GROUPS":
         MultiplicationPrimitives.draw_equal_groups(backend, bbox, params)
     elif k == "ARRAY":
-        MultiplicationPrimitives.draw_array(backend, bbox, params)
+        RealizedArrayPrimitive.draw(backend, bbox, params)
     elif k == "AREA_MODEL":
         MultiplicationPrimitives.draw_area_model(backend, bbox, params)
     elif k == "PARTIAL_PRODUCTS":
