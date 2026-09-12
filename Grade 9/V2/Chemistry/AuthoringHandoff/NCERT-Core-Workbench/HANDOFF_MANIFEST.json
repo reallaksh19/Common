@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "handoff_id": "CHEMISTRY-NCERT-CORE-WORKBENCH-2026-09-12",
+  "status": "DRAFT_WORKING_HANDOFF",
+  "stacked_on_branch": "v2-chemistry-upgrade-real-rendering",
+  "stacked_on_pr": 322,
+  "source_bundle": {
+    "directory": "bundles/final-sources",
+    "part_glob": "final-sources.tar.gz.b64.part*",
+    "part_count": 8,
+    "decoded_archive_bytes": 117370,
+    "decoded_archive_sha256": "9be4cc8bc1d40c28ba5940b1d1048975cd20838b68145ad82f62918ae8b107af",
+    "restore_command": "python tools/restore_source_bundle.py --output restored-workspace"
+  },
+  "topics": [
+    {
+      "id": "some-basic-concepts",
+      "title": "Some Basic Concepts of Chemistry",
+      "retained_questions": 68,
+      "required_immediate_answer_checks": 68,
+      "required_full_solutions": 68
+    },
+    {
+      "id": "behaviour-of-gases",
+      "title": "Behaviour of Gases",
+      "retained_questions": 27,
+      "required_immediate_answer_checks": 27,
+      "required_full_solutions": 27
+    },
+    {
+      "id": "chemical-bonding",
+      "title": "Chemical Bonding",
+      "retained_questions": 38,
+      "required_immediate_answer_checks": 38,
+      "required_full_solutions": 38
+    },
+    {
+      "id": "redox-reactions",
+      "title": "Redox Reactions",
+      "retained_questions": 11,
+      "required_immediate_answer_checks": 11,
+      "required_full_solutions": 11
+    }
+  ],
+  "required_topic_files_after_restore": [
+    "core1.html",
+    "core2.html",
+    "coverage-ledger.csv"
+  ],
+  "global_invariants": [
+    "RETAINED_IN_TOPIC == PRIMARY_PLACEMENTS",
+    "MISSING == 0",
+    "DUPLICATE_PRIMARY == 0",
+    "CLOSED_QUESTION_COUNT == IMMEDIATE_ANSWER_CHECK_COUNT == FULL_SOLUTION_COUNT",
+    "OPEN_ENDED_ITEMS_REQUIRE_EXPECTED_RESPONSE_RUBRIC",
+    "VISUALLY_OBLIGATED_FAMILIES_REQUIRE_REASONING_VISUAL",
+    "NO_MATURE_DESIGN_CLAIM_WITHOUT_AUTHORIZED_HUMAN_GATES"
+  ],
+  "notes": [
+    "Generated PDFs are reproducible outputs; their session filenames and SHA-256 values are recorded in BINARY_ARTIFACTS.md.",
+    "This handoff is an authoring baseline, not a release candidate.",
+    "Use README.md and WORKFLOW.md before modifying or extending a topic."
+  ]
+}
