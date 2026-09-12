@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/CoreSkills/contracts/authoring-result.schema.json",
+  "title": "PrimaryMathAuthoringResult",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "input_ref",
+    "skill_model",
+    "core1_plan",
+    "core2_plan",
+    "representation_plan",
+    "diagnostic_objects",
+    "authoring_trace"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "input_ref": {"type": "string", "minLength": 1},
+    "skill_model": {"type": "object"},
+    "core1_plan": {"type": "object"},
+    "core2_plan": {"type": "object"},
+    "representation_plan": {"type": "object"},
+    "diagnostic_objects": {"type": "array", "items": {"type": "object"}},
+    "authoring_trace": {
+      "type": "object",
+      "required": ["question_refs", "work_evidence_refs", "topic_hints", "concept_modes", "publisher_dependency"],
+      "properties": {
+        "question_refs": {"type": "array", "items": {"type": "string"}},
+        "work_evidence_refs": {"type": "array", "items": {"type": "string"}},
+        "topic_hints": {"type": "array", "items": {"type": "string"}},
+        "concept_modes": {"type": "object"},
+        "publisher_dependency": {"const": false}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
