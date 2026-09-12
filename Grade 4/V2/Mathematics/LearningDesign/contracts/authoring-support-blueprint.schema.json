@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/LearningDesign/contracts/authoring-support-blueprint.schema.json",
-  "title": "PrimaryMathAuthoringSupportBlueprint",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/Mathematics/LearningDesign/contracts/authoring-support-blueprint.schema.json",
+  "title": "Grade4MathAuthoringSupportBlueprint",
   "type": "object",
   "required": [
     "schema_version",
@@ -17,6 +17,18 @@
     "task_kind": {"type": "string", "minLength": 1},
     "representation_class": {
       "enum": ["CONCRETE_PICTORIAL", "STRUCTURAL", "PROCEDURAL_WORK", "ABSTRACT_SYMBOLIC"]
+    },
+    "learner_prompt": {"type": "string", "minLength": 1},
+    "source_note": {"type": "string", "minLength": 1},
+    "solution_tokens": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "allowed_support_solution_tokens": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
     },
     "primary": {"$ref": "#/$defs/visualSelection"},
     "hint_steps": {
