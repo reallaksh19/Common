@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install pytest reportlab jsonschema
+      - run: pip install pytest reportlab jsonschema pypdfium2 pillow
       - name: Validate Grade 4 authoring
         run: python 'Grade 4/V2/Mathematics/CoreSkills/validation/validate_authoring.py'
       - name: Validate Grade 4 semantic extraction
@@ -35,3 +35,30 @@ jobs:
         run: pytest -q 'Grade 4/V2/Mathematics/Representation/tests'
       - name: Validate Grade 4 publication
         run: pytest -q 'Grade 4/V2/Mathematics/Publication/tests'
+      - name: Build real pages 97-99 Core1 production candidate
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_real_p97_p99_core1_production.py'
+      - name: Render every candidate page with PDFium
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pypdfium2 as pdfium
+
+          pdf_path = Path('build/grade4_math_v2/Primary_V2_P97_P99_Core1_Candidate.pdf')
+          out = Path('build/grade4_math_v2/renders')
+          out.mkdir(parents=True, exist_ok=True)
+          doc = pdfium.PdfDocument(str(pdf_path))
+          assert len(doc) >= 18, f'unexpected candidate page count: {len(doc)}'
+          for index in range(len(doc)):
+              page = doc[index]
+              bitmap = page.render(scale=1.5)
+              image = bitmap.to_pil()
+              assert image.width > 500 and image.height > 700
+              image.save(out / f'page_{index + 1:02d}.png')
+          print(f'PDFium render PASS: {len(doc)} pages')
+          PY
+      - name: Upload real Core1 candidate and renders
+        uses: actions/upload-artifact@v4
+        with:
+          name: grade4-math-v2-p97-p99-core1-candidate
+          path: build/grade4_math_v2/
+          if-no-files-found: error
