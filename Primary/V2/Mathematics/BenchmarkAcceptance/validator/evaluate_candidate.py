@@ -169,10 +169,27 @@ class BenchmarkEvaluator:
         # 2. Representations check (PR #310 defect detector)
         if not reps:
             falsifiers.append("RENDERED_EVIDENCE_ARGUMENTS_IGNORED")
-        for r in reps:
-            ev = r.get("rendered_evidence", {})
-            if not ev.get("data_grounded") or ev.get("element_count", 0) <= 0:
-                falsifiers.append("RENDERED_EVIDENCE_ARGUMENTS_IGNORED")
+        else:
+            try:
+                import sys
+                from pathlib import Path
+                shared_val_path = Path(__file__).parent.parent.parent.parent.parent.parent / "Grade 9" / "V2" / "Shared" / "Validation"
+                if str(shared_val_path) not in sys.path:
+                    sys.path.append(str(shared_val_path))
+                from semantic_validator import VisualSemanticValidator
+                validator_available = True
+            except ImportError:
+                validator_available = False
+
+            for r in reps:
+                ev = r.get("rendered_evidence", {})
+                if not ev.get("data_grounded") or ev.get("element_count", 0) <= 0:
+                    falsifiers.append("RENDERED_EVIDENCE_ARGUMENTS_IGNORED")
+                
+                if validator_available:
+                    val_res = VisualSemanticValidator.validate_evidence(r)
+                    if not val_res.get("pass"):
+                        falsifiers.append("RENDERED_EVIDENCE_ARGUMENTS_IGNORED")
 
         # 3. Math invariants
         op = math.get("operation")

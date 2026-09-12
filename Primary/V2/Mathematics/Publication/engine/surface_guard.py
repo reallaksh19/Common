@@ -62,14 +62,16 @@ class LearnerSurfaceGuard:
     def scan_document(self, doc_data: Dict[str, Any]) -> Dict[str, Any]:
         """Recursively scans all text values in a dictionary structure."""
         text_chunks: List[str] = []
+        
+        # Keys that are purely internal metadata and should NOT be scanned for leaks
+        metadata_keys = {"id", "type", "kind", "skill_model_id", "linked_core1_id", "companion_id", "item_id", "section_type"}
 
         def _extract_strings(obj: Any) -> None:
             if isinstance(obj, str):
                 text_chunks.append(obj)
             elif isinstance(obj, dict):
                 for k, v in obj.items():
-                    # Only scan child-facing content fields
-                    if k in ["title", "content", "prompt", "text", "description", "label", "notes", "H0_try", "H1_notice", "H2_remember", "H3_represent"]:
+                    if k not in metadata_keys:
                         _extract_strings(v)
             elif isinstance(obj, list):
                 for item in obj:

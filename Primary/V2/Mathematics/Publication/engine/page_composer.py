@@ -96,7 +96,12 @@ class PrimaryPageComposer:
                     custody.record_element("PRIMITIVE", prim_call["kind"], bbox.x, bbox.y, bbox.width, bbox.height)
                     cur_y -= (prim_h + 20.0)
                 else:
-                    box_h = 55.0
+                    import textwrap
+                    char_width = self.metrics.BODY_FONT_SIZE * 0.55
+                    chars_per_line = max(int((self.metrics.usable_width - 24.0) / char_width), 1)
+                    lines_c = len(textwrap.wrap(str(sec_content), width=chars_per_line)) if sec_content else 1
+                    box_h = 35.0 + (lines_c * 16.0)
+
                     check_overflow(box_h + 15.0)
                     fill_c = PrimaryPalette.HIGHLIGHT_YELLOW if sec_type == "NOTICE" else PrimaryPalette.WHITE
                     backend.draw_rect(
@@ -105,7 +110,7 @@ class PrimaryPageComposer:
                         fill=fill_c, stroke=PrimaryPalette.CARD_BORDER, corner_radius=6.0
                     )
                     backend.draw_text(sec_title, self.metrics.MARGIN_LEFT + 12.0, cur_y - 20.0, font_size=self.metrics.BODY_FONT_SIZE, color=PrimaryPalette.NAVY)
-                    backend.draw_text(sec_content, self.metrics.MARGIN_LEFT + 12.0, cur_y - 40.0, font_size=self.metrics.BODY_FONT_SIZE, color=PrimaryPalette.STUDENT_PENCIL)
+                    backend.draw_paragraph(sec_content, self.metrics.MARGIN_LEFT + 12.0, cur_y - 40.0, width=self.metrics.usable_width - 24.0, font_size=self.metrics.BODY_FONT_SIZE, color=PrimaryPalette.STUDENT_PENCIL)
                     custody.record_element("SECTION", sec_type, self.metrics.MARGIN_LEFT, cur_y - box_h, self.metrics.usable_width, box_h)
                     cur_y -= (box_h + 15.0)
 
@@ -187,9 +192,15 @@ class PrimaryPageComposer:
 
             for itm in items:
                 p_text = itm.get("prompt", "")
-                check_overflow(45.0)
-                backend.draw_text(f"Q: {p_text}", self.metrics.MARGIN_LEFT + 15.0, cur_y, font_size=self.metrics.BODY_FONT_SIZE, color=PrimaryPalette.NAVY)
-                cur_y -= 18.0
+                import textwrap
+                char_width = self.metrics.BODY_FONT_SIZE * 0.55
+                chars_per_line = max(int((self.metrics.usable_width - 15.0) / char_width), 1)
+                lines_c = len(textwrap.wrap(str(p_text), width=chars_per_line)) if p_text else 1
+                prompt_h = lines_c * 16.0
+                
+                check_overflow(prompt_h + 30.0)
+                backend.draw_paragraph(f"Q: {p_text}", self.metrics.MARGIN_LEFT + 15.0, cur_y, width=self.metrics.usable_width - 15.0, font_size=self.metrics.BODY_FONT_SIZE, color=PrimaryPalette.NAVY)
+                cur_y -= prompt_h + 2.0
                 # Blank answer line
                 backend.draw_line(self.metrics.MARGIN_LEFT + 15.0, cur_y, self.metrics.usable_width + self.metrics.MARGIN_LEFT - 15.0, cur_y, stroke=PrimaryPalette.GRID_LINE, stroke_width=1.0)
                 cur_y -= 15.0
@@ -205,18 +216,43 @@ class PrimaryPageComposer:
         cur_y -= 25.0
 
         for lad in ladders:
-            check_overflow(140.0)
-            lad_h = 130.0
+            import textwrap
+            
+            def measure(text, font_size):
+                if not text: return 0
+                cw = font_size * 0.55
+                cpl = max(int((self.metrics.usable_width - 24.0) / cw), 1)
+                return len(textwrap.wrap(str(text), width=cpl)) * 16.0
+            
+            h1 = lad.get('H1_notice', '')
+            h2 = lad.get('H2_remember', '')
+            h3 = lad.get('H3_represent', '')
+            h0 = lad.get('fresh_independent_retry_H0', '')
+            
+            h1_h = measure(f"H1 (Notice): {h1}", 12.0)
+            h2_h = measure(f"H2 (Remember): {h2}", 12.0)
+            h3_h = measure(f"H3 (Represent): {h3}", 12.0)
+            h0_h = measure(f"Fresh H0 Independent Retry: {h0}", 12.5)
+            
+            lad_h = 30.0 + h1_h + h2_h + h3_h + h0_h + 20.0
+            
+            check_overflow(lad_h + 10.0)
             backend.draw_rect(
                 self.metrics.MARGIN_LEFT, cur_y - lad_h,
                 self.metrics.usable_width, lad_h,
                 fill=PrimaryPalette.LIGHT_BG, stroke=PrimaryPalette.CARD_BORDER, corner_radius=6.0
             )
             backend.draw_text(f"Problem: {lad.get('item_id', 'Item')}", self.metrics.MARGIN_LEFT + 12.0, cur_y - 20.0, font_size=self.metrics.BODY_FONT_SIZE, color=PrimaryPalette.NAVY)
-            backend.draw_text(f"H1 (Notice): {lad.get('H1_notice', '')}", self.metrics.MARGIN_LEFT + 12.0, cur_y - 42.0, font_size=12.0, color=PrimaryPalette.SLATE)
-            backend.draw_text(f"H2 (Remember): {lad.get('H2_remember', '')}", self.metrics.MARGIN_LEFT + 12.0, cur_y - 64.0, font_size=12.0, color=PrimaryPalette.SLATE)
-            backend.draw_text(f"H3 (Represent): {lad.get('H3_represent', '')}", self.metrics.MARGIN_LEFT + 12.0, cur_y - 86.0, font_size=12.0, color=PrimaryPalette.ACCENT_BLUE)
-            backend.draw_text(f"Fresh H0 Independent Retry: {lad.get('fresh_independent_retry_H0', '')}", self.metrics.MARGIN_LEFT + 12.0, cur_y - 110.0, font_size=12.5, color=PrimaryPalette.SOFT_GREEN)
+            
+            sy = cur_y - 42.0
+            backend.draw_paragraph(f"H1 (Notice): {h1}", self.metrics.MARGIN_LEFT + 12.0, sy, width=self.metrics.usable_width - 24.0, font_size=12.0, color=PrimaryPalette.SLATE)
+            sy -= h1_h
+            backend.draw_paragraph(f"H2 (Remember): {h2}", self.metrics.MARGIN_LEFT + 12.0, sy, width=self.metrics.usable_width - 24.0, font_size=12.0, color=PrimaryPalette.SLATE)
+            sy -= h2_h
+            backend.draw_paragraph(f"H3 (Represent): {h3}", self.metrics.MARGIN_LEFT + 12.0, sy, width=self.metrics.usable_width - 24.0, font_size=12.0, color=PrimaryPalette.ACCENT_BLUE)
+            sy -= h3_h
+            backend.draw_paragraph(f"Fresh H0 Independent Retry: {h0}", self.metrics.MARGIN_LEFT + 12.0, sy, width=self.metrics.usable_width - 24.0, font_size=12.5, color=PrimaryPalette.SOFT_GREEN)
+            
             custody.record_element("HINT_LADDER", lad.get("item_id", "LAD"), self.metrics.MARGIN_LEFT, cur_y - lad_h, self.metrics.usable_width, lad_h)
             cur_y -= (lad_h + 20.0)
 

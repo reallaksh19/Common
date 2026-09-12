@@ -141,6 +141,21 @@ class VectorRenderBackend(abc.ABC):
     ) -> None:
         pass
 
+    @abc.abstractmethod
+    def draw_paragraph(
+        self,
+        text: str,
+        x: float,
+        y: float,
+        width: float,
+        font_name: str = "Helvetica",
+        font_size: float = 13.5,
+        color: str = PrimaryPalette.NAVY,
+        line_height: float = 16.0
+    ) -> float:
+        """Draws wrapped text within a given width, returning the height consumed."""
+        pass
+
     def draw_arrow(
         self,
         x1: float,
@@ -211,6 +226,16 @@ class MockVectorBackend(VectorRenderBackend):
         self._element_counter += 1
         self.operations.append({"op": "polygon", "points": points, "fill": fill})
 
+    def draw_paragraph(self, text, x, y, width, font_name="Helvetica", font_size=13.5, color=PrimaryPalette.NAVY, line_height=16.0):
+        import textwrap
+        char_width = font_size * 0.55
+        chars_per_line = max(int(width / char_width), 1)
+        lines = textwrap.wrap(str(text), width=chars_per_line)
+        cur_y = y
+        for line in lines:
+            self.draw_text(line, x, cur_y, font_name, font_size, color)
+            cur_y -= line_height
+        return y - cur_y
 
 class ReportLabBackend(VectorRenderBackend):
     """Reference concrete backend drawing directly to ReportLab Canvas."""
@@ -302,3 +327,15 @@ class ReportLabBackend(VectorRenderBackend):
         p.close()
         self.canvas.drawPath(p, stroke=1 if s_col else 0, fill=1 if f_col else 0)
         self.canvas.restoreState()
+
+    def draw_paragraph(self, text, x, y, width, font_name="Helvetica", font_size=13.5, color=PrimaryPalette.NAVY, line_height=16.0):
+        import textwrap
+        char_width = font_size * 0.55
+        chars_per_line = max(int(width / char_width), 1)
+        lines = textwrap.wrap(str(text), width=chars_per_line)
+        cur_y = y
+        for line in lines:
+            self.draw_text(line, x, cur_y, font_name, font_size, color)
+            cur_y -= line_height
+        return y - cur_y
+
