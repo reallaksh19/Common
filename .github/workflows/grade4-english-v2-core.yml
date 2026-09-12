@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - primary-english-v2-source-evidence
+      - primary-english-v2-study-journey
     paths:
       - 'Grade 4/V2/English/**'
       - '.github/workflows/grade4-english-v2-core.yml'
@@ -23,11 +24,13 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install publication test dependencies
-        run: pip install pytest reportlab pypdfium2 pillow
+        run: pip install pytest reportlab pypdfium2 pillow jsonschema
       - name: Build first real English source-set handoff
         run: python 'Grade 4/V2/English/Benchmarks/source_sets/english_worksheet_09/build_fixture.py'
       - name: Validate source coverage and semantic invariants
         run: python 'Grade 4/V2/English/Acceptance/Validation/validate_english_worksheet_09.py'
+      - name: Validate StudyJourney instructional completeness
+        run: python 'Grade 4/V2/English/Acceptance/Validation/validate_english_worksheet_09_study_journey.py'
       - name: Validate deterministic publication
         run: pytest -q 'Grade 4/V2/English/Publication/tests'
       - name: Build and render real Worksheet 09 publication set
