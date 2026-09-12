@@ -25,6 +25,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate parent CoreSkills registries
-        run: python Primary/V2/Mathematics/CoreSkills/validation/validate_registries.py
+        run: python Primary/V2/Mathematics/CoreSkills/validate_registries.py
       - name: Validate cold-start authoring and falsifiers
         run: python Primary/V2/Mathematics/CoreSkills/validation/validate_authoring.py
