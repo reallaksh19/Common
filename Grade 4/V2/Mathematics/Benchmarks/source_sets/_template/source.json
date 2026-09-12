@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "template_only": true,
+  "source_set_id": "REPLACE_WITH_SOURCE_SET_ID",
+  "source_kind": "SCANNED_QUESTION_IMAGE_TRANSCRIPTION",
+  "scope_basis": "QUESTION_SET_OBSERVED",
+  "notes": [
+    "Replace every REPLACE_* value before treating this package as a real source set.",
+    "Transcribe only what is supported by the scan. Preserve defects and ambiguity explicitly.",
+    "Learner publication must not automatically embed the scanned source image as a teaching visual."
+  ],
+  "source_assets": [
+    {
+      "asset_ref": "SCAN-001",
+      "filename": "REPLACE_WITH_UPLOAD_OR_SOURCE_FILENAME",
+      "page_or_image_index": 1,
+      "source_region_note": "REPLACE_WITH_PAGE_OR_REGION_DESCRIPTION"
+    }
+  ],
+  "questions": [
+    {
+      "question_ref": "Q1",
+      "asset_ref": "SCAN-001",
+      "page_or_image_index": 1,
+      "raw_text": "REPLACE_WITH_FAITHFUL_VISIBLE_QUESTION_TEXT",
+      "answer_choices": [],
+      "diagram_observation": null,
+      "source_issue": "TEMPLATE_NOT_FILLED"
+    }
+  ]
+}
