@@ -1,0 +1,275 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-CORE1A-MOTION-IN-A-PLANE-v1",
+  "chapter_title": "Motion in a Plane",
+  "build_scope": "Source opening through Relative Motion; stop before §6.1 Motion of Boat in a Stream.",
+  "learner_language_rule": "Use child-friendly labels on learner pages. Internal QA terms remain in metadata only.",
+  "status": "IN_PROGRESS",
+  "concepts": [
+    {
+      "concept_id": "M2D_FOUNDATION",
+      "learner_title": "From one direction to two",
+      "difficulty": "D1",
+      "source_group_ids": ["SRC-G1", "SRC-G2"],
+      "equation_ids": [],
+      "source_examples": ["car moving straight on a road", "ball thrown toward a friend"],
+      "plain_language": [
+        "A straight-road journey can be described with one coordinate. A ball moving across the air usually needs two.",
+        "We make two-dimensional motion easier by splitting it into two perpendicular one-dimensional motions that share the same time."
+      ],
+      "physics_words": ["two-dimensional motion", "x-axis", "y-axis", "components", "resultant"],
+      "model_notes": [
+        "Choose the plane of motion as the x-y plane.",
+        "Choose a convenient t = 0 and place the origin at the particle's position at that instant.",
+        "Choose two mutually perpendicular axes."
+      ],
+      "illustration": {
+        "archetype": "COMPARE_THEN_BUILD",
+        "stages": [
+          {"id":"one_dimension","title":"One direction","learner_question":"How many coordinates are needed for a car moving on a straight road?"},
+          {"id":"two_dimensions","title":"Two directions","learner_question":"Why does the thrown ball need both x and y?"},
+          {"id":"choose_axes","title":"Build the coordinate frame","learner_question":"Where should we place the origin and axes?"}
+        ]
+      },
+      "easy_mistake": "Treating x-motion and y-motion as two different objects. They are two descriptions of the same object at the same instant.",
+      "core2_challenges": [],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_FOUNDATION",
+      "learner_title": "What makes a projectile special?",
+      "difficulty": "D1",
+      "source_group_ids": ["SRC-G3"],
+      "equation_ids": [],
+      "plain_language": [
+        "After launch, an ideal projectile keeps moving while gravity continually pulls downward.",
+        "Its curved path is called the trajectory."
+      ],
+      "physics_words": ["projectile", "trajectory", "gravity"],
+      "model_notes": [
+        "Near-Earth motion.",
+        "Air resistance neglected in the source model.",
+        "After launch, gravity is the continuing force considered by the model."
+      ],
+      "illustration": {
+        "archetype": "MOTION_UNFOLDS",
+        "stages": [
+          {"id":"launch","title":"Launch","learner_question":"What starts the motion?"},
+          {"id":"after_release","title":"After release","learner_question":"Which force keeps acting?"},
+          {"id":"curved_path","title":"Trajectory","learner_question":"Why does the path bend?"}
+        ]
+      },
+      "easy_mistake": "Thinking a forward force must keep pushing the projectile. In the ideal source model, the continuing acceleration is downward due to gravity.",
+      "core2_challenges": [],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_ANATOMY",
+      "learner_title": "Meet the parts of a projectile flight",
+      "difficulty": "D1",
+      "source_group_ids": ["SRC-G3.1"],
+      "equation_ids": ["M2D-EQ-PROJ-UX", "M2D-EQ-PROJ-UY", "M2D-EQ-PROJ-AX", "M2D-EQ-PROJ-AY"],
+      "plain_language": [
+        "The launch velocity points diagonally, so we split it into a horizontal part and a vertical part.",
+        "The launch point, launch angle, horizontal range and time of flight are labels for different parts of the same motion."
+      ],
+      "physics_words": ["point of projection", "angle of projection", "horizontal range", "time of flight"],
+      "model_notes": ["Use +x horizontally and +y upward for the chapter's default sign convention."],
+      "illustration": {
+        "archetype": "ANATOMY",
+        "stages": [
+          {"id":"whole_flight","title":"Name the flight","learner_question":"Where are launch, apex and landing?"},
+          {"id":"launch_vector","title":"Look at the launch velocity","learner_question":"Which way does u point?"},
+          {"id":"resolve_vector","title":"Split the launch velocity","learner_question":"What are u_x and u_y?"}
+        ]
+      },
+      "easy_mistake": "Using the full launch speed u as both the horizontal and vertical speed.",
+      "core2_challenges": ["Q10"],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_COMPONENT_CLOCK",
+      "learner_title": "One clock, two directions",
+      "difficulty": "D2",
+      "source_group_ids": ["SRC-G3.1.1", "SRC-G3.1.2"],
+      "equation_ids": [
+        "M2D-EQ-PROJ-UX", "M2D-EQ-PROJ-UY", "M2D-EQ-PROJ-AX", "M2D-EQ-PROJ-AY",
+        "M2D-EQ-PROJ-VX", "M2D-EQ-PROJ-X", "M2D-EQ-PROJ-VY", "M2D-EQ-PROJ-Y", "M2D-EQ-PROJ-VY2"
+      ],
+      "plain_language": [
+        "Horizontal motion and vertical motion are solved separately, but they belong to the same projectile and therefore share one clock.",
+        "Gravity changes the vertical velocity. In the ideal model it does not change the horizontal velocity."
+      ],
+      "physics_words": ["horizontal component", "vertical component", "shared time"],
+      "model_notes": ["Air resistance neglected.", "g treated as constant and downward.", "Use one consistent vertical sign convention."],
+      "illustration": {
+        "archetype": "STAGED_SEQUENCE",
+        "stages": [
+          {"id":"launch","title":"Start with one launch vector","learner_question":"What is the one velocity we are given?"},
+          {"id":"components","title":"Resolve it once","learner_question":"What are its x and y parts?"},
+          {"id":"same_clock","title":"Let both parts run on one clock","learner_question":"Which t belongs in both equations?"},
+          {"id":"later_state","title":"Check a later instant","learner_question":"What changed, and what stayed constant?"}
+        ]
+      },
+      "easy_mistake": "Using one value of time for x and a different value for y.",
+      "core2_challenges": ["Q10", "Q43"],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_APEX",
+      "learner_title": "At the top, what actually becomes zero?",
+      "difficulty": "D2",
+      "source_group_ids": ["SRC-G3.1.5"],
+      "equation_ids": ["M2D-EQ-PROJ-H", "M2D-EQ-PROJ-VY"],
+      "plain_language": [
+        "At the highest point, the vertical velocity is zero for an instant.",
+        "The projectile still has horizontal velocity, and gravity is still acting downward."
+      ],
+      "physics_words": ["apex", "maximum height", "vertical velocity"],
+      "model_notes": ["H is measured above the launch point in the source formula."],
+      "illustration": {
+        "archetype": "EVENT_TIMELINE",
+        "stages": [
+          {"id":"rising","title":"Rising","learner_question":"What sign does v_y have?"},
+          {"id":"apex","title":"Apex","learner_question":"Which component becomes zero?"},
+          {"id":"falling","title":"Falling","learner_question":"What sign does v_y have now?"},
+          {"id":"what_stays","title":"What stays the same?","learner_question":"What happened to v_x and g?"}
+        ]
+      },
+      "easy_mistake": "Saying the whole velocity or the acceleration becomes zero at the apex.",
+      "core2_challenges": ["Q01", "Q11", "Q13", "Q14", "Q17", "Q27", "Q40"],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_SAME_HEIGHT",
+      "learner_title": "Same-height flight: time, range and matching angles",
+      "difficulty": "D2",
+      "source_group_ids": ["SRC-G3.1.3", "SRC-G3.1.4"],
+      "equation_ids": ["M2D-EQ-PROJ-T", "M2D-EQ-PROJ-R"],
+      "source_examples": ["Illustration 1", "Illustration 2", "Illustration 3"],
+      "plain_language": [
+        "When launch and landing are at the same height, the vertical displacement at landing is zero.",
+        "That event unlocks a shortcut for total flight time. Multiplying the constant horizontal speed by that time gives the range.",
+        "Complementary launch angles have the same value of sin(2θ), so they can reach the same horizontal range with different path shapes."
+      ],
+      "physics_words": ["time of flight", "range", "complementary angles"],
+      "model_notes": ["Use the T and R shortcuts only when launch and landing heights are equal in the ideal model."],
+      "illustration": {
+        "archetype": "COMPARE_AND_DERIVE",
+        "stages": [
+          {"id":"same_height_event","title":"Spot the landing event","learner_question":"What is y at launch and at landing?"},
+          {"id":"time_unlock","title":"Unlock the time of flight","learner_question":"Which non-zero root represents landing?"},
+          {"id":"range_unlock","title":"Turn time into range","learner_question":"What is horizontal speed during the flight?"},
+          {"id":"matching_angles","title":"Compare two matching-angle paths","learner_question":"How can a low path and high path land at the same range?"}
+        ]
+      },
+      "easy_mistake": "Using same-height shortcuts for a projectile that lands above or below its launch point.",
+      "core2_challenges": ["Q02", "Q06", "Q07", "Q12", "Q16", "Q18", "Q19", "Q20", "Q22", "Q24", "Q25", "Q44", "Q52"],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_TRAJECTORY",
+      "learner_title": "Describe the path without using time",
+      "difficulty": "D3",
+      "source_group_ids": ["SRC-G3-TRAJ"],
+      "equation_ids": ["M2D-EQ-PROJ-TRAJ", "M2D-EQ-PROJ-TRAJ-R"],
+      "plain_language": [
+        "The x(t) and y(t) equations describe where the projectile is at a chosen time.",
+        "If we solve x(t) for t and substitute into y(t), the clock disappears from the equation and we get the shape y(x).",
+        "The result is quadratic in x, which is why the ideal projectile path is a parabola."
+      ],
+      "physics_words": ["trajectory", "eliminate time", "parabola"],
+      "model_notes": ["The axes and origin must match the derivation.", "The range form uses the same-height range R."],
+      "illustration": {
+        "archetype": "DERIVATION_BRIDGE",
+        "stages": [
+          {"id":"write_components","title":"Write x(t) and y(t)","learner_question":"Where does the same t appear?"},
+          {"id":"solve_for_time","title":"Solve x(t) for t","learner_question":"How can we express t using x?"},
+          {"id":"substitute","title":"Put that into y(t)","learner_question":"What disappears?"},
+          {"id":"read_shape","title":"Read the new equation","learner_question":"Why is the path a parabola?"}
+        ]
+      },
+      "easy_mistake": "Memorising the trajectory equation without checking whether its axes, origin and model conditions match the problem.",
+      "core2_challenges": ["Q38", "Q47"],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_HORIZONTAL_LAUNCH",
+      "learner_title": "Horizontal launch: one sideways speed, one falling motion",
+      "difficulty": "D2",
+      "source_group_ids": [],
+      "equation_ids": ["M2D-EQ-PROJ-X", "M2D-EQ-PROJ-Y", "M2D-EQ-PROJ-VX", "M2D-EQ-PROJ-VY"],
+      "source_examples": ["Illustration 5"],
+      "plain_language": [
+        "A horizontally launched projectile starts with no vertical velocity, but gravity immediately builds a downward vertical velocity.",
+        "The vertical fall decides how long the object is in the air; the horizontal speed then decides how far it travels in that time."
+      ],
+      "physics_words": ["horizontal launch", "fall time", "impact velocity"],
+      "model_notes": ["Do not use the same-height range shortcut when landing height differs from launch height."],
+      "illustration": {
+        "archetype": "MOTION_UNFOLDS",
+        "stages": [
+          {"id":"leave_edge","title":"Leaves horizontally","learner_question":"What is the initial vertical velocity?"},
+          {"id":"fall_clock","title":"Let gravity set the fall time","learner_question":"Which equation contains the vertical drop?"},
+          {"id":"horizontal_distance","title":"Use the same time sideways","learner_question":"How far does constant horizontal speed carry it?"},
+          {"id":"impact_vector","title":"Rebuild the impact velocity","learner_question":"How do v_x and v_y combine at impact?"}
+        ]
+      },
+      "easy_mistake": "Using horizontal speed to calculate the fall time.",
+      "core2_challenges": ["Q03", "Q04", "Q08", "Q29", "Q34", "Q42"],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "PROJECTILE_OUTFIELDER",
+      "learner_title": "The outfielder sees an angle, not a range",
+      "difficulty": "D3",
+      "source_group_ids": [],
+      "equation_ids": [],
+      "source_examples": ["Illustration 4"],
+      "plain_language": [
+        "The outfielder does not directly see x and y. The player sees the line-of-sight angle to the ball.",
+        "How that angle changes with time tells the player whether to stay put, move closer, or move farther away."
+      ],
+      "physics_words": ["line of sight", "elevation angle", "observer"],
+      "model_notes": ["Source case neglects air drag and assumes the catch is approximately at launch height."],
+      "illustration": {
+        "archetype": "SCENE_PLUS_GRAPH",
+        "stages": [
+          {"id":"scene","title":"See the ball from the outfielder","learner_question":"What angle does the player actually observe?"},
+          {"id":"geometry","title":"Turn the sight line into a ratio","learner_question":"Which distances form the right triangle?"},
+          {"id":"graph","title":"Watch the angle change","learner_question":"How do the correct, too-close and too-far curves differ?"}
+        ]
+      },
+      "easy_mistake": "Treating the outfielder problem as only a range calculation and ignoring the observer's changing line of sight.",
+      "core2_challenges": [],
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "RELATIVE_MOTION_FOUNDATION",
+      "learner_title": "Motion depends on who is watching",
+      "difficulty": "D2",
+      "source_group_ids": ["SRC-G6"],
+      "equation_ids": ["M2D-EQ-REL-V", "M2D-EQ-REL-A"],
+      "source_examples": ["Illustration 9", "Illustration 10", "Illustration 11"],
+      "plain_language": [
+        "Two people can describe the same moving object differently because they are measuring from different moving frames.",
+        "To find the velocity of A as seen from B, first name the observer B, then subtract B's velocity from A's velocity using vectors.",
+        "A useful picture is to move with B: subtract B's velocity from everything so B becomes stationary."
+      ],
+      "physics_words": ["frame of reference", "observer", "relative velocity", "relative acceleration"],
+      "model_notes": ["The source discussion here assumes the observers move at constant velocity for the basic frame-change picture."],
+      "illustration": {
+        "archetype": "VECTOR_BUILD",
+        "stages": [
+          {"id":"ground_frame","title":"Start from the ground view","learner_question":"What are A and B doing relative to Earth?"},
+          {"id":"choose_observer","title":"Choose who is watching","learner_question":"Whose frame should become stationary?"},
+          {"id":"subtract_observer","title":"Move with the observer","learner_question":"What happens when we subtract the observer's velocity from both?"},
+          {"id":"read_relative_vector","title":"Read what remains","learner_question":"What motion does the observer actually see?"}
+        ]
+      },
+      "easy_mistake": "Subtracting speed magnitudes without directions, or reversing who is observing whom.",
+      "core2_challenges": ["Q15", "Q37", "Q53"],
+      "build_status": "BUILT"
+    }
+  ]
+}

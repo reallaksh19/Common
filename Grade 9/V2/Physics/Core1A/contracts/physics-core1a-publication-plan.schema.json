@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core1a-publication-plan.schema.json",
+  "title": "Physics Core1A Publication Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_id", "schema_version", "subject", "product_id", "upstream_core1_plan_id",
+    "upstream_core1_digest", "two_product_topology_preserved", "lessons", "appendices",
+    "quality_summary", "plan_digest"
+  ],
+  "properties": {
+    "plan_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "PHYSICS"},
+    "product_id": {"const": "CORE_STUDY_GUIDE"},
+    "upstream_core1_plan_id": {"type": "string", "minLength": 1},
+    "upstream_core1_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "two_product_topology_preserved": {"const": true},
+    "lessons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lesson_ref", "capability_ref", "lesson_mode", "treatment", "concept_badge",
+          "modules", "publication_template", "content_maturity_findings"
+        ],
+        "properties": {
+          "lesson_ref": {"type": "string", "minLength": 1},
+          "capability_ref": {"type": "string", "minLength": 1},
+          "lesson_mode": {"enum": ["FULL_LEARNING", "CONCISE_VERIFY_ONLY", "PROBE"]},
+          "treatment": {"type": "string", "minLength": 1},
+          "concept_badge": {"type": "string", "minLength": 1},
+          "publication_template": {"enum": ["MATURE_CYCLE", "VERIFY_COMPACT", "PROBE_FIRST"]},
+          "modules": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["module_id", "kind", "title", "body", "source_fields", "answer_revealing"],
+              "properties": {
+                "module_id": {"type": "string", "minLength": 1},
+                "kind": {
+                  "enum": [
+                    "CONCEPT_BADGE", "REAL_WORLD_ANCHOR", "SEE_IT", "KEY_IDEA", "PHYSICS_WORDS",
+                    "REPRESENTATION_BRIDGE", "MODEL_CHECK", "MATH_BRIDGE", "WORKED_EXAMPLE",
+                    "COMMON_TRAP", "GUIDED_PRACTICE", "FADED_PRACTICE", "INDEPENDENT_PRACTICE",
+                    "PROBE", "PHYSICAL_CHECK", "SELF_CHECK", "TRANSFER_BRIDGE"
+                  ]
+                },
+                "title": {"type": "string"},
+                "body": {"type": "array", "items": {"type": "string"}},
+                "source_fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+                "answer_revealing": {"type": "boolean"},
+                "work_space_lines": {"type": "integer", "minimum": 0, "default": 0},
+                "figure_request": {
+                  "type": ["object", "null"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "mode": {"enum": ["PREFER_SOURCE_GROUNDED", "SCHEMATIC_ONLY", "NONE"]},
+                    "representation_requirements": {"type": "array", "items": {"type": "string"}},
+                    "caption": {"type": "string"}
+                  },
+                  "required": ["mode", "representation_requirements", "caption"]
+                }
+              }
+            }
+          },
+          "content_maturity_findings": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+        }
+      }
+    },
+    "appendices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["appendix_a_present", "appendix_b_present", "appendix_c_present"],
+      "properties": {
+        "appendix_a_present": {"const": true},
+        "appendix_b_present": {"const": true},
+        "appendix_c_present": {"const": true}
+      }
+    },
+    "quality_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template_only_content_count", "full_learning_count", "compact_count", "probe_count"],
+      "properties": {
+        "template_only_content_count": {"type": "integer", "minimum": 0},
+        "full_learning_count": {"type": "integer", "minimum": 0},
+        "compact_count": {"type": "integer", "minimum": 0},
+        "probe_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "plan_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

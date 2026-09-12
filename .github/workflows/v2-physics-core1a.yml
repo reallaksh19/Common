@@ -1,0 +1,45 @@
+name: V2 Physics Core1A
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Core1A/**'
+      - 'Grade 9/V2/Physics/CoreAuthoring/**'
+      - 'Grade 9/V2/Physics/Representation/**'
+      - '.github/workflows/v2-physics-core1a.yml'
+  workflow_dispatch:
+
+jobs:
+  core1a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install renderer/test dependencies
+        run: pip install reportlab jsonschema pypdf
+      - name: Run Core1A falsifiers
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a.py'
+      - name: Run Core1A learner UI policy checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_core1a_ui_policy.py'
+      - name: Run Core1A-Core2 linkage checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_linkage.py'
+      - name: Run source completeness checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_source_coverage.py'
+      - name: Run first Motion in a Plane chapter build checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_motion_in_a_plane_chapter_build.py'
+      - name: Compile first Motion in a Plane learner chapter plan
+        run: python 'Grade 9/V2/Physics/Core1A/engine/build_motion_in_a_plane_chapter.py' --out /tmp/motion-in-a-plane-core1a-chapter-plan.json
+      - name: Validate publication policy JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-publication-policy.json' > /dev/null
+      - name: Validate Core1A-Core2 linkage JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-core2-linkage.json' > /dev/null
+      - name: Validate learner language JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-learner-language.json' > /dev/null
+      - name: Validate Motion in a Plane source inventory JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-source-inventory.json' > /dev/null
+      - name: Validate Motion in a Plane chapter registry JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-chapter-v1.json' > /dev/null
+      - name: Validate publication schema JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-publication-plan.schema.json' > /dev/null

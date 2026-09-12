@@ -1,0 +1,156 @@
+{
+  "policy_id": "PHY-P-GA-CORE1A-PUBLICATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "product_id": "CORE_STUDY_GUIDE",
+  "two_product_topology_preserved": true,
+  "page": {
+    "size": "A4",
+    "margin_mm": 16,
+    "body_font_target_pt": 10.6,
+    "body_font_minimum_pt": 10.0,
+    "caption_font_minimum_pt": 8.0,
+    "diagram_label_font_minimum_pt": 8.0,
+    "badge_font_minimum_pt": 7.3,
+    "heading_font_minimum_pt": 12.0,
+    "meaningful_occupancy_target_min": 0.70,
+    "meaningful_occupancy_target_max": 0.85,
+    "maximum_major_callouts": 4,
+    "minimum_work_space_lines_guided": 3,
+    "minimum_work_space_lines_independent": 5,
+    "badge_must_remain_single_line": true,
+    "heading_badge_collision_forbidden": true,
+    "text_outside_page_bounds_forbidden": true,
+    "raw_math_strings_forbidden": ["sqrt(", "theta", "v_A/B", "u^2", "sin2theta"]
+  },
+  "difficulty": {
+    "D1_FOUNDATION": {
+      "learner_label": "D1 FOUNDATION",
+      "minimum_visual_stages": 1,
+      "requires_misconception_or_model_support": false
+    },
+    "D2_THINK_CAREFULLY": {
+      "learner_label": "D2 THINK CAREFULLY",
+      "minimum_visual_stages": 2,
+      "requires_misconception_or_model_support": true
+    },
+    "D3_CHALLENGING": {
+      "learner_label": "D3 CHALLENGING",
+      "minimum_visual_stages": 3,
+      "requires_misconception_or_model_support": true,
+      "requires_worked_reasoning": true
+    },
+    "D4_EXTENSION": {
+      "learner_label": "D4 EXTENSION",
+      "minimum_visual_stages": 1,
+      "must_be_marked_optional_extension": true
+    }
+  },
+  "learner_ui": {
+    "illustration_is_support_not_replacement": true,
+    "full_learning_order": [
+      "REAL_WORLD_ANCHOR",
+      "PLAIN_LANGUAGE_EXPLANATION",
+      "PHYSICS_WORDS_OR_MODEL_FRAME",
+      "STAGED_ILLUSTRATION",
+      "REPRESENTATION_BRIDGE",
+      "MODEL_CHECK",
+      "WORKED_EXAMPLE",
+      "COMMON_TRAP",
+      "CHECK",
+      "APPLY",
+      "CORE2_TRANSFER"
+    ],
+    "concept_gateway": ["CHECK", "APPLY", "TRANSFER"],
+    "core2_forward_link_required_when_mapped": true,
+    "core2_exact_repair_target_required": true,
+    "d2_d3_illustration_without_explanation_forbidden": true
+  },
+  "templates": {
+    "FULL_LEARNING": "MATURE_CYCLE",
+    "CONCISE_VERIFY_ONLY": "VERIFY_COMPACT",
+    "PROBE": "PROBE_FIRST"
+  },
+  "full_learning_required_modules": [
+    "CONCEPT_BADGE",
+    "REAL_WORLD_ANCHOR",
+    "SEE_IT",
+    "KEY_IDEA",
+    "MODEL_CHECK",
+    "WORKED_EXAMPLE",
+    "COMMON_TRAP",
+    "GUIDED_PRACTICE",
+    "FADED_PRACTICE",
+    "INDEPENDENT_PRACTICE",
+    "PHYSICAL_CHECK",
+    "SELF_CHECK",
+    "TRANSFER_BRIDGE"
+  ],
+  "verify_only_allowed_modules": [
+    "CONCEPT_BADGE",
+    "KEY_IDEA",
+    "INDEPENDENT_PRACTICE",
+    "PHYSICAL_CHECK",
+    "SELF_CHECK",
+    "TRANSFER_BRIDGE"
+  ],
+  "probe_allowed_modules": [
+    "CONCEPT_BADGE",
+    "PROBE",
+    "PHYSICAL_CHECK",
+    "SELF_CHECK"
+  ],
+  "template_only_phrases": [
+    "newly authored instance",
+    "work this practice instance",
+    "set up the system and frame",
+    "build the state table",
+    "select the relation",
+    "substitute the signed values",
+    "authored core1 instance"
+  ],
+  "quality_codes": [
+    "CORE1A_TEMPLATE_ONLY_CONTENT",
+    "CORE1A_SEMANTIC_DRIFT",
+    "CORE1A_UNOWNED_PHYSICS_INSERTED",
+    "CORE1A_UNOWNED_NUMERIC_QUANTITY",
+    "CORE1A_MODEL_VALIDITY_DROPPED",
+    "CORE1A_VERIFICATION_DROPPED",
+    "CORE1A_REQUIRED_MODULE_MISSING",
+    "CORE1A_RETEACH_BEFORE_PROBE",
+    "CORE1A_VERIFY_ONLY_EXPANDED_TO_RETEACH",
+    "CORE1A_BODY_FONT_TOO_SMALL",
+    "CORE1A_CAPTION_FONT_TOO_SMALL",
+    "CORE1A_DIAGRAM_LABEL_TOO_SMALL",
+    "CORE1A_BADGE_TEXT_CLIPPED_OR_WRAPPED",
+    "CORE1A_HEADING_BADGE_COLLISION",
+    "CORE1A_TEXT_OUT_OF_PAGE_BOUNDS",
+    "CORE1A_RAW_MATH_STRING",
+    "CORE1A_LOW_MEANINGFUL_OCCUPANCY",
+    "CORE1A_OVERFULL_PAGE",
+    "CORE1A_ORPHAN_HEADING",
+    "CORE1A_ACCIDENTAL_LARGE_VOID",
+    "CORE1A_WORKED_EXAMPLE_BAD_SPLIT",
+    "CORE1A_FIGURE_CAPTION_MISSING",
+    "CORE1A_INVENTED_FIGURE_QUANTITY",
+    "CORE1A_SOURCE_GROUNDED_FIGURE_LOST",
+    "CORE1A_REPRESENTATION_REQUIREMENT_MISSING",
+    "CORE1A_FIGURE_TOO_SMALL_TO_TEACH",
+    "CORE1A_D2_D3_VISUAL_WITHOUT_TEACHING",
+    "CORE1A_DIFFICULTY_SUPPORT_MISSING",
+    "CORE1A_NO_CORE2_MASTERY_LINK",
+    "CORE1A_CORE2_REPAIR_TARGET_MISMATCH",
+    "CORE1A_ORPHAN_TRANSFER_ITEM"
+  ],
+  "release_boundary": {
+    "machine_settable": ["PUBLICATION_ENGINEERING"],
+    "not_settable_here": [
+      "SUBJECT_CORRECTNESS",
+      "PEDAGOGICAL_DESIGN",
+      "ASSESSMENT_DESIGN",
+      "VISUAL_USABILITY",
+      "MATURE_DESIGN_QUALITY",
+      "REFERENCE_COMPARABILITY"
+    ]
+  }
+}
