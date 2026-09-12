@@ -1,0 +1,112 @@
+name: V2 Mathematics Core1A Textbook
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/Core1A/**'
+      - 'Grade 9/V2/Mathematics/Core1Authoring/**'
+      - 'Grade 9/V2/Mathematics/InstructionalKnowledge/**'
+      - 'Grade 9/V2/Mathematics/ProblemSemantics/**'
+      - '.github/workflows/v2-math-core1a-textbook.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-core1a-textbook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Core1A dependencies
+        run: python -m pip install 'jsonschema>=4.20,<5' 'reportlab>=4.0' 'pymupdf>=1.24'
+
+      - name: Run Core1A learner-product falsifiers
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/Core1A/tests' -p 'test_*.py' -v
+
+      - name: Produce real Core1 output from the PR 323 cold-start chain
+        run: |
+          mkdir -p /tmp/core1a
+          python - <<'PY'
+          import copy, json, sys
+          from pathlib import Path
+
+          MATH = Path('Grade 9/V2/Mathematics').resolve()
+          sys.path.insert(0, str(MATH / 'ColdStart' / 'engine'))
+          from math_cold_start_runner import run_cold_start, load, REPO
+
+          fixtures = MATH / 'AssessmentIntake' / 'fixtures'
+          questions = load(fixtures / 'mixed-grade9-question-set.fixture.json')
+          topic = load(fixtures / 'mixed-grade9-topic-scope.fixture.json')
+          report, internals = run_cold_start(
+              copy.deepcopy(questions), copy.deepcopy(topic),
+              repo_root=REPO, run_id='MATH-C1A-CI-RUN'
+          )
+          assert report['release_status'] != 'BLOCKED_UPSTREAM_PCK', report['release_status']
+          plan = internals['core1_plan']
+          assert plan is not None
+          Path('/tmp/core1a/core1_study_plan.json').write_text(
+              json.dumps(plan, indent=2, ensure_ascii=False) + '\n', encoding='utf-8'
+          )
+          print(json.dumps({
+              'core1_study_plan_id': plan['core1_study_plan_id'],
+              'lessons': len(plan['lessons']),
+              'release_class': plan['release_class'],
+          }, indent=2))
+          PY
+
+      - name: Realize capability-aware Core1A textbook PDF from the exact Core1 output
+        run: |
+          python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
+            --core1-plan /tmp/core1a/core1_study_plan.json \
+            --out-dir /tmp/core1a/product
+
+      - name: Inspect learner artifact
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import fitz
+
+          out = Path('/tmp/core1a/product')
+          audit = json.loads((out / 'core1a_quality_audit.json').read_text(encoding='utf-8'))
+          assert audit['quality_audit']['status'] == 'PASS'
+          pdf = fitz.open(out / 'core1a_student_textbook.pdf')
+          assert len(pdf) >= 2
+          text = '\n'.join(page.get_text() for page in pdf).lower()
+          forbidden = [
+              'author a new instance',
+              'source reuse is forbidden',
+              'candidate learner product',
+              'publication engineering',
+              'promotion registry',
+              '{rows}',
+              'capability_ref',
+              'problem_family_ref',
+          ]
+          for token in forbidden:
+              assert token not in text, f'learner PDF leaked internal text: {token}'
+          assert 'worked example' in text
+          assert 'guided practice' in text
+          assert 'your turn' in text
+          assert 'challenge' in text
+          assert 'answer check' in text
+          assert 'squaring a binomial without losing the middle term' in text
+          assert 'division as a rate' in text
+          assert 'keeping an equation balanced' in text
+          print(json.dumps({
+              'pages': len(pdf),
+              'pdf_sha256': audit['artifact']['pdf_sha256'],
+              'actual_problem_instances': audit['quality_audit']['actual_problem_instances'],
+          }, indent=2))
+          PY
+
+      - name: Upload Core1A textbook candidate and exact Core1 input
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-core1a-textbook
+          path: /tmp/core1a
+          if-no-files-found: error

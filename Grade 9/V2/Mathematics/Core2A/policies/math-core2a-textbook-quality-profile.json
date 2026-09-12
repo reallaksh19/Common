@@ -1,0 +1,51 @@
+{
+  "profile_id": "MATH-CORE2A-TEXTBOOK-QUALITY-V1",
+  "stage": "CORE2A",
+  "purpose": "Realize the approved Core2 transfer plan as a textbook-quality learner practice artifact without changing source-question authority or transfer structure.",
+  "immutable_structure": {
+    "preserve_source_question_order": true,
+    "preserve_source_stems_givens_options_units_subparts": true,
+    "preserve_question_ids": true,
+    "preserve_core1_linkage_state": true,
+    "preserve_assessment_safety": true,
+    "preserve_multiple_solution_semantics": true,
+    "preserve_source_note_traceability": true,
+    "attempt_precedes_solution": true,
+    "attempt_solution_immediate_adjacency_when_paired_page_format": true,
+    "preserve_reasoning_solution_verification_separation": true
+  },
+  "allowed_enhancements": [
+    "learner_facing_mathematical_representation",
+    "response_shaped_workspace",
+    "progressive_hint_presentation",
+    "worked_solution_narration",
+    "multi_stage_step_hierarchy",
+    "representation_plan_grounded_diagrams",
+    "verification_presentation",
+    "typography_spacing_pagination",
+    "publication_legal_core1a_review_links"
+  ],
+  "forbidden_transformations": [
+    "regroup_questions_away_from_approved_order",
+    "separate_all_attempts_from_all_worked_solutions_when_adjacency_is_approved",
+    "renumber_source_questions",
+    "replace_source_questions_with_new_instances",
+    "collapse_multi_stage_solution_to_answer_only",
+    "publish_unapproved_core1_link",
+    "alter_assessment_validity_or_solution_multiplicity"
+  ],
+  "required_falsifiers": [
+    "CORE2A_SOURCE_ORDER_DRIFT",
+    "CORE2A_SOURCE_STEM_DRIFT",
+    "CORE2A_QUESTION_ID_DRIFT",
+    "CORE2A_ATTEMPT_SOLUTION_ADJACENCY_LOST",
+    "CORE2A_HINT_DISCLOSES_SOLUTION",
+    "CORE2A_SOLUTION_DEPTH_COLLAPSED",
+    "CORE2A_VERIFICATION_LOST",
+    "CORE2A_CORE1_LINK_DRIFT",
+    "CORE2A_ASSESSMENT_SAFETY_LOST",
+    "CORE2A_MULTI_SOLUTION_COLLAPSED",
+    "CORE2A_INTERNAL_JARGON_LEAK",
+    "CORE2A_QUALITY_GATE_FAILED"
+  ]
+}
