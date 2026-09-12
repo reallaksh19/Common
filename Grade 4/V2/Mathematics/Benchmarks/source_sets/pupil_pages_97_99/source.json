@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0.0",
+  "source_set_id": "THE-PUPIL-P97-P99",
+  "source_kind": "WORKBOOK_PHOTO_TRANSCRIPTION",
+  "scope_basis": "QUESTION_SET_OBSERVED",
+  "notes": [
+    "Learner publication must not embed the photographed source pages.",
+    "Source defects and image ambiguity are preserved explicitly rather than silently repaired."
+  ],
+  "questions": [
+    {
+      "question_ref": "P97-Q1",
+      "page": 97,
+      "raw_text": "Which product is the same as 25 x 30? A. 3 x 10 x 25  B. (3 + 10) x 25  C. 30 x (25 x 10)",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P97-Q2",
+      "page": 97,
+      "raw_text": "23005 divided by 23005 is: A. 0  B. 23005  C. 1",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P97-Q3",
+      "page": 97,
+      "raw_text": "How many seconds are there in 3 hours?",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P97-Q4",
+      "page": 97,
+      "raw_text": "3250 divided by 18 is shown as quotient 179 and remainder 28. Which check can be used to find the mistake? A. quotient x divisor + remainder = dividend  B. remainder < dividend  C. remainder = divisor",
+      "source_issue": "DEFECTIVE_PRINTED_ITEM: 18 x 179 + 28 = 3250, so option A's reconstruction check passes; remainder < dividend also passes but is not the standard remainder bound. The violated rule is 0 <= remainder < divisor. Actual 3250 / 18 = 180 R10. No printed option states the complete standard rule."
+    },
+    {
+      "question_ref": "P97-Q5",
+      "page": 97,
+      "raw_text": "15 added to itself 15 times can be written as which multiplication?",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P97-Q6",
+      "page": 97,
+      "raw_text": "A sailfish can swim at 109 km/h. How fast can 9 sailfish swim?",
+      "source_issue": "SEMANTICALLY_INVALID_STORY: speeds of separate animals are not normally added to form one collective speed. The workbook's intended arithmetic is 9 equal groups of 109 = 981."
+    },
+    {
+      "question_ref": "P97-Q7",
+      "page": 97,
+      "raw_text": "The remainder is always smaller than the divisor. True or False?",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P97-Q8",
+      "page": 97,
+      "raw_text": "The product of the smallest two-digit number and the smallest three-digit number is: one thousand / the smallest four-digit number / 1000 / all of these.",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P97-Q9",
+      "page": 97,
+      "raw_text": "Name the angles shown using: acute, right, obtuse, straight, reflex.",
+      "source_issue": "PHOTO_MAPPING_UNCERTAIN: the photograph supports the intended five angle classes, but exact picture-to-name order is not asserted by the benchmark. Use clean benchmark geometry instead."
+    },
+    {
+      "question_ref": "P98-Q1",
+      "page": 98,
+      "raw_text": "Divide 2180 by 2.",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P98-Q2",
+      "page": 98,
+      "raw_text": "Divide 7048 by 24.",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P98-Q3",
+      "page": 98,
+      "raw_text": "Divide 888 by 12.",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P98-Q4",
+      "page": 98,
+      "raw_text": "Using a known right angle, draw 3 items with angles smaller than a right angle.",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P98-Q5",
+      "page": 98,
+      "raw_text": "Using a known right angle, draw 3 items with angles greater than a right angle.",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P99-Q1",
+      "page": 99,
+      "raw_text": "Saira buys 4 pens at Rs 50 each and 8 pencils at Rs 40 each. How much does she spend in all?",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P99-Q2",
+      "page": 99,
+      "raw_text": "Tim buys 3 hats for Rs 120. At the same rate, how many hats can he buy for Rs 240?",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P99-Q3",
+      "page": 99,
+      "raw_text": "Megha has 475 cookies. She packs 12 cookies in each box. How many full boxes can she fill and how many cookies are left?",
+      "source_issue": null
+    },
+    {
+      "question_ref": "P99-Q4",
+      "page": 99,
+      "raw_text": "Complete the division table. Columns: 720, 480. Rows: 60, 15. Each cell is column divided by row.",
+      "source_issue": null
+    }
+  ]
+}
