@@ -1,0 +1,284 @@
+{
+  "benchmark_corpus_version": "1.0.0",
+  "authority_reference": "Primary/V2/Mathematics/BenchmarkAcceptance/BENCHMARK_SPEC.md",
+  "cases": [
+    {
+      "case_id": "BENCH-DEEP-MUL-01",
+      "family": "MULTIPLICATION_BRIDGE",
+      "grade_level": 4,
+      "title": "Deep Multiplication Bridge 23 x 6",
+      "required_assertions": [
+        "SCOPE_PROVENANCE",
+        "MATH_INVARIANT",
+        "REPRESENTATION_REQUIRED",
+        "CORE1_COVERAGE",
+        "CORE2_PRACTICE_LINK",
+        "HINT_FADE",
+        "FRESH_INDEPENDENT_RETRY"
+      ],
+      "target_invariants": {
+        "operation": "MULTIPLICATION",
+        "operands": [23, 6],
+        "result": 138,
+        "decomposition": [
+          { "expression": "20 * 6", "value": 120 },
+          { "expression": "3 * 6", "value": 18 }
+        ],
+        "sum_of_partials": 138
+      },
+      "representation_bridge_route": [
+        "EQUAL_GROUPS",
+        "ARRAY",
+        "AREA_PARTITION",
+        "PARTIAL_PRODUCTS",
+        "VERTICAL_ALGORITHM",
+        "ESTIMATE_CHECK"
+      ]
+    },
+    {
+      "case_id": "BENCH-DEEP-DIV-01",
+      "family": "DIVISION_SHARING_VS_GROUPING",
+      "grade_level": 4,
+      "title": "Division Sharing (Partitive) vs Grouping (Quotitive) 24 / 6",
+      "required_assertions": [
+        "MATH_INVARIANT",
+        "REPRESENTATION_REQUIRED"
+      ],
+      "target_invariants": {
+        "operation": "DIVISION",
+        "operands": [24, 6],
+        "result": 4,
+        "remainder": 0,
+        "distinguish_structures": true
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-DIV-02",
+      "family": "DIVISION_INTERNAL_QUOTIENT_ZERO",
+      "grade_level": 4,
+      "title": "Internal Quotient Zero 366 / 12 = 30 R6",
+      "required_assertions": [
+        "MATH_INVARIANT",
+        "WRITTEN_WORK_ALIGNMENT",
+        "REPRESENTATION_REQUIRED"
+      ],
+      "target_invariants": {
+        "operation": "DIVISION",
+        "operands": [366, 12],
+        "result": 30,
+        "remainder": 6,
+        "internal_zero_digit_required": true,
+        "check_equation": "12 * 30 + 6 == 366"
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-DIV-03",
+      "family": "DIVISION_INTERNAL_QUOTIENT_ZERO",
+      "grade_level": 4,
+      "title": "Internal Quotient Zero 7843 / 13 = 603 R4",
+      "required_assertions": [
+        "MATH_INVARIANT",
+        "WRITTEN_WORK_ALIGNMENT",
+        "REPRESENTATION_REQUIRED"
+      ],
+      "target_invariants": {
+        "operation": "DIVISION",
+        "operands": [7843, 13],
+        "result": 603,
+        "remainder": 4,
+        "internal_zero_digit_required": true,
+        "check_equation": "13 * 603 + 4 == 7843"
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-DIV-04",
+      "family": "DIVISION_CONTRAST_STANDARD",
+      "grade_level": 4,
+      "title": "Division Non-Zero Internal Place Contrast 3496 / 23 = 152",
+      "required_assertions": [
+        "MATH_INVARIANT",
+        "WRITTEN_WORK_ALIGNMENT"
+      ],
+      "target_invariants": {
+        "operation": "DIVISION",
+        "operands": [3496, 23],
+        "result": 152,
+        "remainder": 0,
+        "internal_zero_digit_required": false,
+        "check_equation": "23 * 152 == 3496"
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-DIV-05",
+      "family": "DIVISION_REMAINDER_MEANING",
+      "grade_level": 4,
+      "title": "Division Context-Driven Remainder Interpretation",
+      "required_assertions": [
+        "MATH_INVARIANT"
+      ],
+      "target_invariants": {
+        "operation": "DIVISION",
+        "context_scenarios": [
+          { "context": "BUS_CAPACITY", "dividend": 125, "divisor": 40, "action": "ROUND_UP_ONE_MORE_GROUP", "final_answer": 4 },
+          { "context": "LEFTOVER_EGGS", "dividend": 50, "divisor": 12, "action": "LEFTOVERS", "final_answer": 2 }
+        ]
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-DIV-06",
+      "family": "QUANTITY_UNIT_CHAIN",
+      "grade_level": 4,
+      "title": "Unit Chain Conversion 23 Dozen Eggs at Rs 6 per egg",
+      "required_assertions": [
+        "MATH_INVARIANT"
+      ],
+      "target_invariants": {
+        "unit_steps": [
+          { "quantity": 23, "unit": "DOZEN_EGGS" },
+          { "multiplier": 12, "result_quantity": 276, "unit": "INDIVIDUAL_EGGS" },
+          { "rate": 6, "result_value": 1656, "unit": "RUPEES" }
+        ]
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-FRAC-01",
+      "family": "FRACTIONS_EQUIVALENCE",
+      "grade_level": 4,
+      "title": "Fraction Equivalence 1/2 = 2/4 = 4/8",
+      "required_assertions": [
+        "MATH_INVARIANT",
+        "REPRESENTATION_REQUIRED"
+      ],
+      "target_invariants": {
+        "equivalent_set": [
+          { "numerator": 1, "denominator": 2 },
+          { "numerator": 2, "denominator": 4 },
+          { "numerator": 4, "denominator": 8 }
+        ]
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-FRAC-02",
+      "family": "FRACTIONS_COMPARISON",
+      "grade_level": 4,
+      "title": "Fraction Comparison 3/4 > 2/3 with Grounded Strategy",
+      "required_assertions": [
+        "MATH_INVARIANT",
+        "REPRESENTATION_REQUIRED"
+      ],
+      "target_invariants": {
+        "fractions": [
+          { "numerator": 3, "denominator": 4 },
+          { "numerator": 2, "denominator": 3 }
+        ],
+        "relation": "GREATER_THAN",
+        "common_denominator": 12,
+        "converted": [
+          { "numerator": 9, "denominator": 12 },
+          { "numerator": 8, "denominator": 12 }
+        ]
+      }
+    },
+    {
+      "case_id": "BENCH-DEEP-FRAC-03",
+      "family": "FRACTIONS_ADDITION",
+      "grade_level": 4,
+      "title": "Fraction Addition like and unlike 1/4 + 2/4 and 1/2 + 1/4",
+      "required_assertions": [
+        "MATH_INVARIANT",
+        "REPRESENTATION_REQUIRED"
+      ],
+      "target_invariants": {
+        "sum_like": { "operands": ["1/4", "2/4"], "result": "3/4" },
+        "sum_unlike": { "operands": ["1/2", "1/4"], "repartition": "2/4", "result": "3/4" }
+      }
+    },
+    {
+      "case_id": "BENCH-BREADTH-PV-01",
+      "family": "PLACE_VALUE_DECOMPOSITION",
+      "grade_level": 4,
+      "title": "Breadth: Multi-digit Place Value Decomposition",
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_REQUIRED"],
+      "target_invariants": { "number": 4567, "expanded": [4000, 500, 60, 7] }
+    },
+    {
+      "case_id": "BENCH-BREADTH-DEC-01",
+      "family": "DECIMAL_HUNDREDTHS",
+      "grade_level": 4,
+      "title": "Breadth: Decimal Hundredths Grid and Number Line",
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_REQUIRED"],
+      "target_invariants": { "decimal_value": 0.45, "grid_shaded_cells": 45, "grid_total": 100 }
+    },
+    {
+      "case_id": "BENCH-BREADTH-MEAS-01",
+      "family": "MEASUREMENT_CONVERSION",
+      "grade_level": 4,
+      "title": "Breadth: Measurement Conversion km to m and kg to g",
+      "required_assertions": ["MATH_INVARIANT"],
+      "target_invariants": { "from_unit": "KILOMETRE", "to_unit": "METRE", "factor": 1000 }
+    },
+    {
+      "case_id": "BENCH-BREADTH-GEOM-01",
+      "family": "PERIMETER_VS_AREA",
+      "grade_level": 4,
+      "title": "Breadth: Perimeter vs Area Non-conflation",
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_REQUIRED"],
+      "target_invariants": { "width": 5, "height": 3, "perimeter": 16, "area": 15, "perimeter_unit": "cm", "area_unit": "cm^2" }
+    },
+    {
+      "case_id": "BENCH-BREADTH-GEOM-02",
+      "family": "VOLUME_CUBE_COUNT",
+      "grade_level": 5,
+      "title": "Breadth: Volume Rectangular Prism Layer Cube Count",
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_REQUIRED"],
+      "target_invariants": { "length": 4, "width": 3, "height": 2, "layer_count": 2, "cubes_per_layer": 12, "total_cubes": 24 }
+    },
+    {
+      "case_id": "BENCH-BREADTH-GEOM-03",
+      "family": "GEOMETRY_ANGLE_CLASSIFICATION",
+      "grade_level": 4,
+      "title": "Breadth: Angle Geometric Agreement",
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_REQUIRED"],
+      "target_invariants": { "angle_degrees": 120, "classification": "OBTUSE" }
+    },
+    {
+      "case_id": "BENCH-BREADTH-DATA-01",
+      "family": "DATA_BAR_CHART_SCALE",
+      "grade_level": 4,
+      "title": "Breadth: Data Bar Chart Scale Reconciliation",
+      "required_assertions": ["MATH_INVARIANT", "REPRESENTATION_REQUIRED"],
+      "target_invariants": { "scale_unit": 5, "categories": ["Apples", "Bananas"], "values": [15, 25] }
+    },
+    {
+      "case_id": "BENCH-BREADTH-WP-01",
+      "family": "WORD_PROBLEM_QUANTITY_STRUCTURE",
+      "grade_level": 4,
+      "title": "Breadth: Quantity-Unit-Role-Relationship Analysis",
+      "required_assertions": ["MATH_INVARIANT"],
+      "target_invariants": { "defined_roles": ["GIVEN", "RATE", "TARGET_UNKNOWN"] }
+    },
+    {
+      "case_id": "BENCH-BREADTH-ERR-01",
+      "family": "ERROR_ANALYSIS_CONTRAST",
+      "grade_level": 4,
+      "title": "Breadth: Student Error Object of Comparison",
+      "required_assertions": ["WRITTEN_WORK_ALIGNMENT"],
+      "target_invariants": { "error_preserved_as_contrast": true, "silent_normalization": false }
+    },
+    {
+      "case_id": "BENCH-BREADTH-NOTE-01",
+      "family": "NOTEBOOK_PROVENANCE_TIERS",
+      "grade_level": 4,
+      "title": "Breadth: 4-Tier Notebook Provenance Classification",
+      "required_assertions": ["WORK_PROVENANCE", "WRITTEN_WORK_ALIGNMENT"],
+      "target_invariants": {
+        "provenance_tiers": [
+          "ORIGINAL_SOURCE_IMAGE",
+          "FAITHFUL_TRANSCRIPTION",
+          "STRUCTURED_REPLAY",
+          "AUTHORED_NOTEBOOK_EXAMPLE"
+        ]
+      }
+    }
+  ]
+}

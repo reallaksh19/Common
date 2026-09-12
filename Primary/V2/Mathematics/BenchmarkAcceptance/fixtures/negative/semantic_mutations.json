@@ -1,0 +1,137 @@
+{
+  "mutation_suite_version": "1.0.0",
+  "mutations": [
+    {
+      "mutation_id": "MUT-SCOPE-UNIVERSAL-PROMOTION",
+      "expected_falsifier": "QUESTION_OBSERVED_SKILL_PROMOTED_TO_UNIVERSAL_GRADE_SCOPE",
+      "patch": {
+        "scope_provenance": {
+          "scope_basis": "QUESTION_SET_OBSERVED",
+          "universal_grade_scope_claimed": true
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-MUL-AREA-MISLABEL",
+      "expected_falsifier": "MULTIPLICATION_AREA_MODEL_MISLABEL",
+      "patch": {
+        "math_invariants": {
+          "operation": "MULTIPLICATION",
+          "operands": [23, 6],
+          "result": 138,
+          "decomposition": [
+            { "expression": "20 * 6", "value": 12 },
+            { "expression": "3 * 6", "value": 18 }
+          ]
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-MUL-PARTIAL-OMISSION",
+      "expected_falsifier": "MULTIPLICATION_PARTIAL_PRODUCTS_OMISSION",
+      "patch": {
+        "math_invariants": {
+          "operation": "MULTIPLICATION",
+          "operands": [23, 6],
+          "result": 138,
+          "partial_steps": [
+            { "step_index": 1, "description": "20 * 6", "partial_value": 120 }
+          ]
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-DIV-ZERO-DROPPED-366",
+      "expected_falsifier": "DIVISION_INTERNAL_QUOTIENT_ZERO_DROPPED",
+      "patch": {
+        "case_id": "BENCH-DEEP-DIV-02",
+        "math_invariants": {
+          "operation": "DIVISION",
+          "operands": [366, 12],
+          "result": 36,
+          "remainder": 6
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-DIV-ZERO-DROPPED-7843",
+      "expected_falsifier": "DIVISION_INTERNAL_QUOTIENT_ZERO_DROPPED",
+      "patch": {
+        "case_id": "BENCH-DEEP-DIV-03",
+        "math_invariants": {
+          "operation": "DIVISION",
+          "operands": [7843, 13],
+          "result": 63,
+          "remainder": 4
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-DIV-CHECK-VIOLATED",
+      "expected_falsifier": "DIVISION_CHECK_EQUATION_VIOLATED",
+      "patch": {
+        "math_invariants": {
+          "operation": "DIVISION",
+          "operands": [366, 12],
+          "result": 30,
+          "remainder": 5
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-DIV-REMAINDER-EXCEEDS",
+      "expected_falsifier": "DIVISION_REMAINDER_EXCEEDS_DIVISOR",
+      "patch": {
+        "math_invariants": {
+          "operation": "DIVISION",
+          "operands": [366, 12],
+          "result": 29,
+          "remainder": 18
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-SURFACE-LEAK",
+      "expected_falsifier": "LEARNER_SURFACE_LEAK_DETECTED",
+      "patch": {
+        "learner_surface_guard": {
+          "pass": false,
+          "detected_internal_tokens": ["pedagogical_sequence", "PrimaryMathSkillModel"]
+        }
+      }
+    },
+    {
+      "mutation_id": "MUT-ARGUMENTS-IGNORED",
+      "expected_falsifier": "RENDERED_EVIDENCE_ARGUMENTS_IGNORED",
+      "patch": {
+        "representations": [
+          {
+            "role": "PROVIDED",
+            "kind": "NUMBER_LINE",
+            "params": { "min": 0, "max": 100 },
+            "rendered_evidence": {
+              "element_count": 0,
+              "visual_checksum": "static-hash",
+              "data_grounded": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mutation_id": "MUT-CHILD-FONT-TOO-SMALL",
+      "expected_falsifier": "CHILD_READABILITY_FONT_SIZE_VIOLATED",
+      "patch": {
+        "layout_custody": {
+          "page_count": 1,
+          "page_map": [],
+          "pdf_sha256": "abc",
+          "child_first_geometry": {
+            "min_body_font_pt": 9.5,
+            "overflow_strategy": "SHRINK_TO_FIT"
+          }
+        }
+      }
+    }
+  ]
+}
