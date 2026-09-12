@@ -31,6 +31,8 @@ jobs:
         run: python 'Grade 4/V2/Mathematics/LearningDesign/validation/validate_learning_representation.py'
       - name: Validate authoring handoff
         run: python 'Grade 4/V2/Mathematics/LearningDesign/validation/validate_authoring_handoff.py'
+      - name: Validate p97-99 StudyJourney instructional completeness
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_p97_p99_study_journey.py'
       - name: Validate Grade 4 representation
         run: pytest -q 'Grade 4/V2/Mathematics/Representation/tests'
       - name: Validate Grade 4 publication
