@@ -1,41 +1,24 @@
 """
 Master Primitive Dispatcher for Primary Mathematics V2.
-Maps primitive calls to concrete implementations and enforces parameter derivation.
+Maps primitive calls to concrete implementations and fails closed on unknown kinds.
 """
 from __future__ import annotations
 
 from typing import Any, Dict
-from Primary.V2.Mathematics.Representation.engine.base import (
-    BoundingBox,
-    VectorRenderBackend
-)
-from Primary.V2.Mathematics.Representation.engine.primitives.operations import (
-    MultiplicationPrimitives,
-    DivisionPrimitives
-)
+from Primary.V2.Mathematics.Representation.engine.base import BoundingBox, VectorRenderBackend
+from Primary.V2.Mathematics.Representation.engine.primitives.operations import MultiplicationPrimitives, DivisionPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.fractions import FractionPrimitives
+from Primary.V2.Mathematics.Representation.engine.primitives.fraction_bridges import FractionBridgePrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.decimals import DecimalPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.numbers import NumberPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.measurement import MeasurementPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.geometry import GeometryPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.data import DataPrimitives
-from Primary.V2.Mathematics.Representation.engine.notebook import (
-    AuthenticNotebookEngine,
-    LongDivisionWorkoutSpec,
-    ProvenanceTier
-)
+from Primary.V2.Mathematics.Representation.engine.notebook import AuthenticNotebookEngine, LongDivisionWorkoutSpec, ProvenanceTier
 
 
-def render_primitive(
-    kind: str,
-    params: Dict[str, Any],
-    backend: VectorRenderBackend,
-    bbox: BoundingBox
-) -> None:
-    """
-    Renders any Primary Mathematics V2 visual primitive.
-    Guarantees that all mathematical entities are derived directly from params.
-    """
+def render_primitive(kind: str, params: Dict[str, Any], backend: VectorRenderBackend, bbox: BoundingBox) -> None:
+    """Render one grounded Primary Math primitive or fail closed."""
     k = kind.upper()
     if k == "EQUAL_GROUPS":
         MultiplicationPrimitives.draw_equal_groups(backend, bbox, params)
@@ -47,7 +30,7 @@ def render_primitive(
         MultiplicationPrimitives.draw_partial_products(backend, bbox, params)
     elif k == "ESTIMATE_CHECK":
         MultiplicationPrimitives.draw_estimate_check(backend, bbox, params)
-    elif k == "DIVISION_STRUCTURE" or k == "DIVISION_SHARING_VS_GROUPING":
+    elif k in {"DIVISION_STRUCTURE", "DIVISION_SHARING_VS_GROUPING"}:
         DivisionPrimitives.draw_sharing_vs_grouping(backend, bbox, params)
     elif k == "DIVISION_REMAINDER_CONTEXT":
         DivisionPrimitives.draw_remainder_context(backend, bbox, params)
@@ -59,6 +42,10 @@ def render_primitive(
         FractionPrimitives.draw_fraction_comparison(backend, bbox, params)
     elif k == "FRACTION_ADDITION":
         FractionPrimitives.draw_fraction_addition(backend, bbox, params)
+    elif k == "FRACTION_NUMBER_LINE":
+        FractionBridgePrimitives.draw_fraction_number_line(backend, bbox, params)
+    elif k == "FRACTION_ADDITION_REPARTITION":
+        FractionBridgePrimitives.draw_fraction_addition_repartition(backend, bbox, params)
     elif k == "DECIMAL_HUNDRED_GRID":
         DecimalPrimitives.draw_hundred_grid(backend, bbox, params)
     elif k == "DECIMAL_NUMBER_LINE":
@@ -73,7 +60,7 @@ def render_primitive(
         GeometryPrimitives.draw_volume_layers(backend, bbox, params)
     elif k == "GEOMETRIC_ANGLE":
         GeometryPrimitives.draw_angle(backend, bbox, params)
-    elif k == "DATA_BAR_CHART" or k == "BAR_CHART":
+    elif k in {"DATA_BAR_CHART", "BAR_CHART"}:
         DataPrimitives.draw_scaled_bar_chart(backend, bbox, params)
     elif k == "LONG_DIVISION_WORKOUT":
         nb = AuthenticNotebookEngine(backend)
@@ -87,19 +74,23 @@ def render_primitive(
             multiples_table=params.get("multiples_table"),
             provenance_tier=ProvenanceTier(params.get("provenance_tier", "STRUCTURED_REPLAY")),
             actor=params.get("actor", "CHILD"),
-            claims_original_handwriting=params.get("claims_original_handwriting", False)
+            claims_original_handwriting=params.get("claims_original_handwriting", False),
         )
         nb.render_long_division_bracket(bbox, spec)
     elif k == "VERTICAL_MULTIPLICATION":
+        factors = params.get("factors")
+        partial_products = params.get("partial_products")
+        total_product = params.get("total_product")
+        if not factors or partial_products is None or total_product is None:
+            raise ValueError("VERTICAL_MULTIPLICATION requires factors, partial_products and total_product")
         nb = AuthenticNotebookEngine(backend)
         nb.render_vertical_multiplication(
             bbox=bbox,
-            factors=params.get("factors", [23, 6]),
+            factors=factors,
             carry_rows=params.get("carry_rows", []),
-            partial_products=params.get("partial_products", [18, 120]),
-            total_product=params.get("total_product", 138),
-            tier=ProvenanceTier(params.get("tier", "STRUCTURED_REPLAY"))
+            partial_products=partial_products,
+            total_product=total_product,
+            tier=ProvenanceTier(params.get("tier", "STRUCTURED_REPLAY")),
         )
     else:
-        # Fallback card
-        backend.draw_rect(bbox.x, bbox.y, bbox.width, bbox.height, fill=None, stroke=None)
+        raise ValueError(f"UNKNOWN_PRIMARY_MATH_PRIMITIVE: {kind}")
