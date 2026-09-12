@@ -10,12 +10,24 @@ The repository keeps the binary handoff as `physics-agent-bootstrap-2026-09-12.z
 
 Bundle SHA-256: `ad36facc746b715f5b10a76c851c0fa01eaf7a2bb1090afe79ab821eb177a034`.
 
+### Shared TASK 1-4 repository references
+
+A byte-identical snapshot of the repository-owned Shared intake/reference assets from PR #310 is also committed under `shared-task-snapshot/` for direct agent access. This includes the Input and Expected output/Output files from:
+
+- `TASK 1-MATH`
+- `TASK 2-MATH`
+- `TASK 3- PHY`
+- `TASK 4-CHEM`
+
+The snapshot is pinned to PR #310 head `88d3a719b9de7df0477667248aab5fac5eeb2b6b`. `shared-task-snapshot/SOURCE.md` records provenance. These are repository assets from `Grade 9/V2/Shared/`, not the user-supplied chat attachments. Authority remains PR #310; re-snapshot deliberately if that PR changes.
+
 1. Read this README and `physics-agent-bootstrap-manifest.json`.
 2. For Chapters 2-5, inspect the final Core (1)/Core (2) pairs under `artifacts/final/`.
 3. For Motion in 1D Core (1), prefer `physics-motion-1d-core1-visual-concept-atlas-final.pdf`; it is the latest teaching-surface rebuild and intentionally supersedes the older Core (1) answer-custody artifact.
 4. Inspect `scripts/build_motion1d_visual_core1.py` for the available reproducible ReportLab implementation and visual primitives.
 5. Read the audits before reusing an artifact as a regression fixture.
-6. Do not copy or vendor the benchmark/reference PDFs that were supplied in chat. The case study used them to expose missing product contracts; the work here should remain independently authored.
+6. Use `shared-task-snapshot/` when cross-checking against the repository's TASK 1-4 intake/reference artifacts.
+7. Do not copy or vendor the separate benchmark/reference PDFs that were supplied only in chat. The case study used them to expose missing product contracts; the work here should remain independently authored.
 
 ## What this handoff captures
 
