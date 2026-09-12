@@ -1,0 +1,76 @@
+name: Primary Math V2 publisher integration
+
+on:
+  pull_request:
+    paths:
+      - 'Primary/V2/Mathematics/Publication/integration/**'
+      - 'Primary/V2/Mathematics/Publication/engine/**'
+      - 'Primary/V2/Mathematics/Representation/**'
+      - '.github/workflows/primary-math-v2-publisher-integration.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-authoring-to-publisher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install publisher and review runtime
+        run: |
+          python -m pip install reportlab
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+      - name: Fetch canonical authoring branch
+        run: |
+          git fetch origin primary-math-v2-authoring-engine --depth=1
+          git worktree add /tmp/pmv2-authoring FETCH_HEAD
+      - name: Produce canonical authoring result from semantic extraction
+        run: |
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          root = Path('/tmp/pmv2-authoring')
+          sys.path.insert(0, str(root))
+          from Primary.V2.Mathematics.CoreSkills.engine.semantic_extraction import normalize_extraction
+          from Primary.V2.Mathematics.CoreSkills.engine.author import author
+          fixture = json.loads((root / 'Primary/V2/Mathematics/CoreSkills/fixtures/authoring/semantic_extraction_cases.json').read_text())['valid']
+          normalized = normalize_extraction(fixture['primary_input'], fixture['extraction'])
+          result = author(normalized)
+          Path('/tmp/authoring-result.json').write_text(json.dumps(result, indent=2) + '\n')
+          print('canonical authoring result produced')
+          PY
+      - name: Project canonical plans and render exact PDFs with PR 327 engine
+        run: |
+          python Primary/V2/Mathematics/Publication/integration/run_adapter_smoke.py \
+            --authoring-result /tmp/authoring-result.json \
+            --content Primary/V2/Mathematics/Publication/integration/fixtures/multiplication_content.json \
+            --output-dir /tmp/publisher-smoke
+      - name: Build exact 20-case REAL_CANDIDATE and review pages
+        run: |
+          python Primary/V2/Mathematics/Publication/integration/first_real_candidate.py \
+            --output-dir /tmp/primary-real-candidate
+      - name: Fetch independent benchmark authority
+        run: |
+          git fetch origin primary-math-v2-benchmark-acceptance --depth=1
+          git worktree add /tmp/pmv2-benchmark FETCH_HEAD
+      - name: Run unmodified independent #325 evaluator
+        run: |
+          python /tmp/pmv2-benchmark/Primary/V2/Mathematics/BenchmarkAcceptance/validator/evaluate_candidate.py \
+            /tmp/primary-real-candidate/candidate_export.json \
+            --out /tmp/primary-real-candidate/independent_acceptance_report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: primary-math-v2-publisher-smoke
+          path: /tmp/publisher-smoke
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: primary-math-v2-first-real-candidate
+          path: /tmp/primary-real-candidate
+          if-no-files-found: error

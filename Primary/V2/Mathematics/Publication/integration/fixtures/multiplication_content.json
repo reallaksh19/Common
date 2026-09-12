@@ -1,0 +1,31 @@
+{
+  "publication_context": {
+    "title": "Primary Mathematics — Multiplication Bridge",
+    "topic": "23 × 6: groups to written multiplication",
+    "grade_label": "4–5"
+  },
+  "core2_modules": {
+    "C2-MULTIPLICATION-BRIDGE-BUILD": {
+      "batch_title": "Build the bridge",
+      "item_id": "MUL-BUILD-01",
+      "prompt": "Calculate 24 × 5. Show a split that makes the multiplication easier.",
+      "hint_ladder": {
+        "H0_try": "Try 24 × 5 independently.",
+        "H1_notice": "Notice that 24 can be split into 20 and 4.",
+        "H2_remember": "Multiply each part by 5, then combine the partial products.",
+        "H3_represent": "Draw an area model split into 20 × 5 and 4 × 5.",
+        "fresh_independent_retry_H0": "Now try 25 × 4 independently."
+      }
+    },
+    "C2-MULTIPLICATION-BRIDGE-TRANSFER": {
+      "batch_title": "Transfer the idea",
+      "item_id": "MUL-TRANSFER-01",
+      "prompt": "Six shelves hold 31 books each. Find the total and show a representation that helps you check the calculation."
+    }
+  },
+  "appendix_c": {
+    "title": "Appendix C — Multiplication Visual Quick Reference",
+    "decision_aid_name": "Split → multiply parts → combine",
+    "representation_id": "REP-MUL-AREA"
+  }
+}
