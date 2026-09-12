@@ -119,3 +119,41 @@ def core1_plan(attempts=False, plan_id=None):
         plan_id,
     )
     return scope, model, plan
+
+
+def question_set():
+    return load(A / "fixtures" / "motion-question-set.fixture.json")
+
+
+def representation_bundle(core1, model, bundle_id=None):
+    """Return the P-H representation bundle for a P-G plan."""
+    sys.path.insert(0, str(PHYS / "Representation" / "engine"))
+    from build_physics_representations import build_bundle  # noqa: E402
+
+    rep = PHYS / "Representation"
+    kwargs = {"bundle_id": bundle_id} if bundle_id else {}
+    return build_bundle(
+        copy.deepcopy(core1), copy.deepcopy(model), question_set(),
+        load(rep / "registry" / "physics-teaching-primitive-registry.json"),
+        load(rep / "registry" / "physics-page-intent-profile.json"),
+        load(rep / "registry" / "physics-figure-render-contract.json"),
+        **kwargs,
+    )
+
+
+def core2_plan(core1, model, scope, plan_id=None):
+    """Return the P-I Core2 transfer plan for a P-G plan."""
+    sys.path.insert(0, str(PHYS / "Core2Transfer" / "engine"))
+    from build_physics_core2_transfer import build_plan as build_core2  # noqa: E402
+
+    t = PHYS / "Core2Transfer"
+    kwargs = {"plan_id": plan_id} if plan_id else {}
+    return build_core2(
+        load(t / "fixtures" / "physics-external-transfer-source.fixture.json"),
+        load(t / "registry" / "physics-external-corpus-classification.json"),
+        copy.deepcopy(core1), copy.deepcopy(model), copy.deepcopy(scope),
+        load(t / "registry" / "physics-core2-authoring-profile.json"),
+        load(t / "registry" / "physics-transfer-badge-policy.json"),
+        load(t / "registry" / "physics-concept-segregation.json"),
+        **kwargs,
+    )

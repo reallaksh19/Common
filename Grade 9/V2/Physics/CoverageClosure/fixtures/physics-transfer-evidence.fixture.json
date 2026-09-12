@@ -1,0 +1,95 @@
+{
+  "authority_class": "SYNTHETIC_EVIDENCE_TEST_AUTHORITY",
+  "events": [
+    {
+      "capability_ref": "PHY-CAP-XT-SLOPE-VELOCITY",
+      "days_since_core1": 0,
+      "event_class": "CORE1_INDEPENDENT_ATTEMPT",
+      "event_digest": "7f2a8a16a7f83b824267b69e85fa5a0c3520ed6fa68ead266e6d7d77ea597945",
+      "event_id": "EV-01",
+      "instance_ref": "A-PHY-CAP-XT-SLOPE-VELOCITY-INDEPENDENT",
+      "outcome": "CORRECT",
+      "source_trace_refs": [
+        "Q12"
+      ]
+    },
+    {
+      "capability_ref": "PHY-CAP-XT-SLOPE-VELOCITY",
+      "days_since_core1": 1,
+      "event_class": "CORE2_NEW_INSTANCE",
+      "event_digest": "753dbede6e6ab63cb34a198e9aa2ca84b73138dce695125c73d3f6dbfef1bb8b",
+      "event_id": "EV-02",
+      "instance_ref": "PHY-CORE2-PHY-EXT06",
+      "outcome": "CORRECT",
+      "source_trace_refs": [
+        "PHY-EXT06"
+      ]
+    },
+    {
+      "capability_ref": "PHY-CAP-VT-SIGNED-AREA",
+      "days_since_core1": 1,
+      "event_class": "CORE2_NEW_INSTANCE",
+      "event_digest": "ff97ee323c14fd4de08dc2f6cb14afe64ff37e90f9a4373d16a332f71276a87a",
+      "event_id": "EV-03",
+      "instance_ref": "PHY-CORE2-PHY-EXT05",
+      "outcome": "CORRECT",
+      "source_trace_refs": [
+        "PHY-EXT05"
+      ]
+    },
+    {
+      "capability_ref": "PHY-CAP-VERTICAL-PROJECTION",
+      "days_since_core1": 2,
+      "event_class": "CORE2_NEW_CONTEXT",
+      "event_digest": "7be95fdebeb56335b49737b0f04f43a9e7faf05f68aff09bddac3de37110e9f8",
+      "event_id": "EV-04",
+      "instance_ref": "PHY-CORE2-PHY-EXT04",
+      "outcome": "CORRECT",
+      "source_trace_refs": [
+        "PHY-EXT04"
+      ]
+    },
+    {
+      "capability_ref": "PHY-CAP-MULTIPHASE-KINEMATICS",
+      "days_since_core1": 2,
+      "event_class": "CORE2_NEW_INSTANCE",
+      "event_digest": "d2b2ba6420ad7aa51278a452444b388781fa8111b9857649a6d0ecd31a42be6f",
+      "event_id": "EV-05",
+      "instance_ref": "PHY-CORE2-PHY-EXT07",
+      "outcome": "INCORRECT",
+      "source_trace_refs": [
+        "PHY-EXT07"
+      ]
+    },
+    {
+      "capability_ref": "PHY-CAP-DISTANCE-DISPLACEMENT",
+      "days_since_core1": 0,
+      "event_class": "CORE1_INDEPENDENT_ATTEMPT",
+      "event_digest": "2049caa541a96d551332e767a41ef7f9d04816029c7cedeacb005a0e8754ca22",
+      "event_id": "EV-06",
+      "instance_ref": "A-PHY-CAP-DISTANCE-DISPLACEMENT-INDEPENDENT",
+      "outcome": "CORRECT",
+      "source_trace_refs": [
+        "Q1"
+      ]
+    },
+    {
+      "capability_ref": "PHY-CAP-DISTANCE-DISPLACEMENT",
+      "days_since_core1": 3,
+      "event_class": "CORE2_NEW_INSTANCE",
+      "event_digest": "91b50982f4548c4983f345eb0a0c31a0cf4c142afc153be7ff04009d09402490",
+      "event_id": "EV-07",
+      "instance_ref": "PHY-CORE2-PHY-EXT02",
+      "outcome": "CORRECT",
+      "source_trace_refs": [
+        "PHY-EXT02"
+      ]
+    }
+  ],
+  "fixture_id": "PHY-P-J-TRANSFER-EVIDENCE-v1",
+  "ledger_digest": "3d44df8e364e57d2ed10f4754a0a8e85467de8c52d930d78093a13830f823fd1",
+  "production_claim": false,
+  "provenance_note": "Synthetic transfer-evidence events authored for this repository's P-J proof. No real learner data.",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}
