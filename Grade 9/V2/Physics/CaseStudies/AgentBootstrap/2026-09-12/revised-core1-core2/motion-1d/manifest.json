@@ -1,0 +1,22 @@
+{
+  "physics-motion-1d-revised-core1.pdf": {
+    "bytes": 112369,
+    "sha256": "93571d95c4c114fc1d000b9d6289756d81e8924298da51ce436ff9afbdcfd29a"
+  },
+  "physics-motion-1d-revised-core2.pdf": {
+    "bytes": 143409,
+    "sha256": "b9f9d4d718c6212d6d71c67a79a5032bcc0e4348b1231b7f6b501dcbcd58cc4b"
+  },
+  "physics-motion-1d-revised-core1-core2-audit.json": {
+    "bytes": 1124,
+    "sha256": "bacb70875262d321eda8b5f06397807a6c55fd9f901c1189d1ead48899b6d0eb"
+  },
+  "build_motion1d_revised_core1_core2.py": {
+    "bytes": 67644,
+    "sha256": "28fdf1cc389855fa502b42ce1e13ecde4de26a01ad74ab60874a681227e96de1"
+  },
+  "MOTION1D_REVISED_README.md": {
+    "bytes": 3261,
+    "sha256": "eedd30522adfba4f26367f60ec0c202e51cf8ec66d40eec443ffe64032d97201"
+  }
+}
