@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0.0",
+  "cases": [
+    {
+      "case_id": "MONEY_TWO_PART",
+      "task": {
+        "task_ref": "FIX-MONEY-4PEN-8PENCIL",
+        "task_kind": "MONEY_MULTI_PART",
+        "representation_class": "CONCRETE_PICTORIAL",
+        "visual_language_key": {"pens": "BLUE", "pencils": "ORANGE", "subtotals": "GREEN"},
+        "primary_visual": {
+          "visual_state_id": "MONEY-PRIMARY",
+          "primitive_kind": "MONEY_MODEL",
+          "representation_ref": "REP-MONEY-GROUPS",
+          "fidelity": "EXACT",
+          "fade_mode": "FULL",
+          "semantic_params": {"declared_quantity": 12, "rendered_quantity": 12, "groups": [{"kind": "PEN", "count": 4, "unit_price": 50}, {"kind": "PENCIL", "count": 8, "unit_price": 40}]},
+          "validator_refs": ["CARDINALITY", "MONEY_TOTAL"]
+        },
+        "visual_states": [
+          {"visual_state_id": "MONEY-H1", "primitive_kind": "OBJECT_GROUPS", "representation_ref": "REP-MONEY-GROUPS", "fidelity": "EXACT", "fade_mode": "FULL", "semantic_params": {"declared_quantity": 12, "rendered_quantity": 12}, "validator_refs": ["CARDINALITY"]},
+          {"visual_state_id": "MONEY-H2", "primitive_kind": "QUANTITY_STRUCTURE_MAP", "representation_ref": "REP-MONEY-BRANCHES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"branches": ["4x50", "8x40"]}, "validator_refs": ["QUANTITY_STRUCTURE"]},
+          {"visual_state_id": "MONEY-H3", "primitive_kind": "MONEY_MODEL", "representation_ref": "REP-MONEY-SUBTOTALS", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"subtotals": [200, 320]}, "validator_refs": ["MONEY_TOTAL"]},
+          {"visual_state_id": "MONEY-PATH-1", "primitive_kind": "OBJECT_GROUPS", "representation_ref": "REP-MONEY-GROUPS", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["QUANTITY_STRUCTURE"]},
+          {"visual_state_id": "MONEY-PATH-2", "primitive_kind": "QUANTITY_STRUCTURE_MAP", "representation_ref": "REP-MONEY-BRANCHES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["QUANTITY_STRUCTURE"]},
+          {"visual_state_id": "MONEY-PATH-3", "primitive_kind": "MONEY_MODEL", "representation_ref": "REP-MONEY-SUBTOTALS", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["MONEY_TOTAL"]},
+          {"visual_state_id": "MONEY-PATH-4", "primitive_kind": "INVERSE_CHECK", "representation_ref": "REP-MONEY-CHECK", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["MONEY_TOTAL"]}
+        ],
+        "hint_ladder": {
+          "ladder_id": "HL-MONEY",
+          "task_ref": "FIX-MONEY-4PEN-8PENCIL",
+          "steps": [
+            {"hint_id": "HL-MONEY-H1", "level": "H1", "semantic_role": "NOTICE", "child_label": "LOOK", "verbal_cue": "Keep the two purchases separate.", "visual_state_ref": "MONEY-H1", "learner_action": "Circle the pen group and pencil group.", "information_revealed": ["TWO_GROUPS"], "may_reveal_final_answer": false},
+            {"hint_id": "HL-MONEY-H2", "level": "H2", "semantic_role": "REMEMBER", "child_label": "REMEMBER", "verbal_cue": "Find each subtotal first.", "visual_state_ref": "MONEY-H2", "learner_action": "Write two multiplication costs.", "information_revealed": ["TWO_MULTIPLICATION_BRANCHES"], "may_reveal_final_answer": false},
+            {"hint_id": "HL-MONEY-H3", "level": "H3", "semantic_role": "REPRESENT", "child_label": "SHOW IT", "verbal_cue": "Put the two subtotals together.", "visual_state_ref": "MONEY-H3", "learner_action": "Add the subtotal boxes.", "information_revealed": ["SUBTOTALS"], "may_reveal_final_answer": false}
+          ],
+          "fresh_retry_ref": "FRESH-MONEY-01"
+        },
+        "thinking_path": {
+          "schema_version": "1.0.0",
+          "path_id": "TP-MONEY",
+          "task_ref": "FIX-MONEY-4PEN-8PENCIL",
+          "steps": [
+            {"step_id": "TP-MONEY-1", "semantic_role": "INTERPRET", "child_label": "LOOK", "micro_visual_ref": "MONEY-PATH-1", "one_line_action": "See two groups."},
+            {"step_id": "TP-MONEY-2", "semantic_role": "MODEL", "child_label": "SHOW IT", "micro_visual_ref": "MONEY-PATH-2", "one_line_action": "Show two costs."},
+            {"step_id": "TP-MONEY-3", "semantic_role": "COMBINE", "child_label": "PUT TOGETHER", "micro_visual_ref": "MONEY-PATH-3", "one_line_action": "Add the subtotals."},
+            {"step_id": "TP-MONEY-4", "semantic_role": "VERIFY", "child_label": "CHECK", "micro_visual_ref": "MONEY-PATH-4", "one_line_action": "Check the money unit."}
+          ]
+        },
+        "fresh_retry_ref": "FRESH-MONEY-01"
+      }
+    },
+    {
+      "case_id": "REMAINDER_REPRESENTATIVE_SAMPLE",
+      "task": {
+        "task_ref": "FIX-COOKIES-475-12",
+        "task_kind": "DIVISION_REMAINDER_CONTEXT",
+        "representation_class": "STRUCTURAL",
+        "primary_visual": {"visual_state_id": "REM-PRIMARY", "primitive_kind": "DIV_REMAINDER_CONTEXT", "representation_ref": "REP-REM-GROUPS", "fidelity": "REPRESENTATIVE_SAMPLE", "fade_mode": "FULL", "semantic_params": {"declared_quantity": 39, "rendered_quantity": 3, "continuation_marker": "... x39", "group_size": 12, "leftover": 7}, "validator_refs": ["EQUAL_GROUPS", "REMAINDER_RANGE"]},
+        "visual_states": [
+          {"visual_state_id": "REM-H1", "primitive_kind": "DIV_EQUAL_GROUP", "representation_ref": "REP-REM-GROUPSIZE", "fidelity": "SCHEMATIC", "fade_mode": "FULL", "semantic_params": {"group_size": 12}, "validator_refs": ["EQUAL_GROUPS"]},
+          {"visual_state_id": "REM-H2", "primitive_kind": "DIV_MULTIPLES_STRIP", "representation_ref": "REP-REM-MULTIPLES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"comparisons": ["12x40=480", "12x39=468"]}, "validator_refs": ["REMAINDER_RANGE"]},
+          {"visual_state_id": "REM-H3", "primitive_kind": "DIV_REMAINDER_CONTEXT", "representation_ref": "REP-REM-LEFTOVER", "fidelity": "EXACT", "fade_mode": "PARTIAL", "semantic_params": {"declared_quantity": 7, "rendered_quantity": 7, "leftover": 7}, "validator_refs": ["CARDINALITY", "REMAINDER_RANGE"]},
+          {"visual_state_id": "REM-P1", "primitive_kind": "DIV_EQUAL_GROUP", "representation_ref": "REP-REM-GROUPSIZE", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["EQUAL_GROUPS"]},
+          {"visual_state_id": "REM-P2", "primitive_kind": "DIV_MULTIPLES_STRIP", "representation_ref": "REP-REM-MULTIPLES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["REMAINDER_RANGE"]},
+          {"visual_state_id": "REM-P3", "primitive_kind": "DIV_REMAINDER_CONTEXT", "representation_ref": "REP-REM-LEFTOVER", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["REMAINDER_RANGE"]},
+          {"visual_state_id": "REM-P4", "primitive_kind": "INVERSE_CHECK", "representation_ref": "REP-REM-CHECK", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]}
+        ],
+        "hint_ladder": {"ladder_id": "HL-REM", "task_ref": "FIX-COOKIES-475-12", "steps": [
+          {"hint_id": "HL-REM-H1", "level": "H1", "semantic_role": "NOTICE", "child_label": "LOOK", "verbal_cue": "Make full groups of 12.", "visual_state_ref": "REM-H1", "learner_action": "Point to one full box.", "information_revealed": ["GROUP_SIZE"], "may_reveal_final_answer": false},
+          {"hint_id": "HL-REM-H2", "level": "H2", "semantic_role": "REMEMBER", "child_label": "REMEMBER", "verbal_cue": "Find the biggest multiple that fits.", "visual_state_ref": "REM-H2", "learner_action": "Compare 40 groups and 39 groups.", "information_revealed": ["BOUND"], "may_reveal_final_answer": false},
+          {"hint_id": "HL-REM-H3", "level": "H3", "semantic_role": "REPRESENT", "child_label": "SHOW IT", "verbal_cue": "Show the leftover after the full groups.", "visual_state_ref": "REM-H3", "learner_action": "Subtract the fitted amount.", "information_revealed": ["LEFTOVER"], "may_reveal_final_answer": false}], "fresh_retry_ref": "FRESH-REM-01"},
+        "thinking_path": {"schema_version": "1.0.0", "path_id": "TP-REM", "task_ref": "FIX-COOKIES-475-12", "steps": [
+          {"step_id": "TP-REM-1", "semantic_role": "INTERPRET", "child_label": "LOOK", "micro_visual_ref": "REM-P1", "one_line_action": "See the group size."},
+          {"step_id": "TP-REM-2", "semantic_role": "MODEL", "child_label": "SHOW IT", "micro_visual_ref": "REM-P2", "one_line_action": "Find the biggest fit."},
+          {"step_id": "TP-REM-3", "semantic_role": "EXECUTE", "child_label": "WORK", "micro_visual_ref": "REM-P3", "one_line_action": "Find the leftover."},
+          {"step_id": "TP-REM-4", "semantic_role": "VERIFY", "child_label": "CHECK", "micro_visual_ref": "REM-P4", "one_line_action": "Check the story answer."}]},
+        "fresh_retry_ref": "FRESH-REM-01"
+      }
+    },
+    {
+      "case_id": "LONG_DIVISION_7048_24",
+      "task": {
+        "task_ref": "FIX-DIV-7048-24",
+        "task_kind": "MULTI_DIGIT_DIVISION",
+        "representation_class": "PROCEDURAL_WORK",
+        "primary_visual": {"visual_state_id": "DIV-PRIMARY", "primitive_kind": "DIV_LONG_ALGORITHM", "representation_ref": "REP-DIV-LONG", "fidelity": "EXACT", "fade_mode": "FULL", "semantic_params": {"dividend": 7048, "divisor": 24, "quotient": 293, "remainder": 16}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS", "REMAINDER_RANGE"]},
+        "visual_states": [
+          {"visual_state_id": "DIV-H1", "primitive_kind": "ESTIMATE_BOUND", "representation_ref": "REP-DIV-ESTIMATE", "fidelity": "SCHEMATIC", "fade_mode": "FULL", "semantic_params": {"estimate": 300}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]},
+          {"visual_state_id": "DIV-H2", "primitive_kind": "DIV_MULTIPLES_STRIP", "representation_ref": "REP-DIV-MULTIPLES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"divisor": 24}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]},
+          {"visual_state_id": "DIV-H3", "primitive_kind": "DIV_LONG_ALGORITHM", "representation_ref": "REP-DIV-FIRSTSTEP", "fidelity": "EXACT", "fade_mode": "PARTIAL", "semantic_params": {"declared_quantity": 70, "rendered_quantity": 70, "partial_dividend": 70, "quotient_digit": 2, "product": 48}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]},
+          {"visual_state_id": "DIV-P1", "primitive_kind": "ESTIMATE_BOUND", "representation_ref": "REP-DIV-ESTIMATE", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]},
+          {"visual_state_id": "DIV-P2", "primitive_kind": "DIV_MULTIPLES_STRIP", "representation_ref": "REP-DIV-MULTIPLES", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]},
+          {"visual_state_id": "DIV-P3", "primitive_kind": "DIV_LONG_ALGORITHM", "representation_ref": "REP-DIV-LONG", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]},
+          {"visual_state_id": "DIV-P4", "primitive_kind": "INVERSE_CHECK", "representation_ref": "REP-DIV-CHECK", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["DIVISION_IDENTITY_AND_STEPS"]}
+        ],
+        "hint_ladder": {"ladder_id": "HL-DIV", "task_ref": "FIX-DIV-7048-24", "steps": [
+          {"hint_id": "HL-DIV-H1", "level": "H1", "semantic_role": "NOTICE", "child_label": "LOOK", "verbal_cue": "Estimate the quotient first.", "visual_state_ref": "DIV-H1", "learner_action": "Write a rough quotient.", "information_revealed": ["ESTIMATE"], "may_reveal_final_answer": false},
+          {"hint_id": "HL-DIV-H2", "level": "H2", "semantic_role": "REMEMBER", "child_label": "REMEMBER", "verbal_cue": "Use multiples of 24.", "visual_state_ref": "DIV-H2", "learner_action": "Choose the largest multiple that fits.", "information_revealed": ["MULTIPLES_SUPPORT"], "may_reveal_final_answer": false},
+          {"hint_id": "HL-DIV-H3", "level": "H3", "semantic_role": "REPRESENT", "child_label": "SHOW IT", "verbal_cue": "Start the long division with 70.", "visual_state_ref": "DIV-H3", "learner_action": "Write the first quotient digit and subtract 48.", "information_revealed": ["FIRST_STEP"], "may_reveal_final_answer": false}], "fresh_retry_ref": "FRESH-DIV-01"},
+        "thinking_path": {"schema_version": "1.0.0", "path_id": "TP-DIV", "task_ref": "FIX-DIV-7048-24", "steps": [
+          {"step_id": "TP-DIV-1", "semantic_role": "INTERPRET", "child_label": "LOOK", "micro_visual_ref": "DIV-P1", "one_line_action": "Estimate first."},
+          {"step_id": "TP-DIV-2", "semantic_role": "MODEL", "child_label": "SHOW IT", "micro_visual_ref": "DIV-P2", "one_line_action": "Use multiples of 24."},
+          {"step_id": "TP-DIV-3", "semantic_role": "EXECUTE", "child_label": "WORK", "micro_visual_ref": "DIV-P3", "one_line_action": "Long divide."},
+          {"step_id": "TP-DIV-4", "semantic_role": "VERIFY", "child_label": "CHECK", "micro_visual_ref": "DIV-P4", "one_line_action": "Check D x Q + R."}]},
+        "work_surface": {"schema_version": "1.0.0", "surface_id": "WS-DIV-7048-24", "task_ref": "FIX-DIV-7048-24", "kind": "LONG_DIVISION_WORK", "provenance": "AUTHORED_NOTEBOOK_EXAMPLE", "validator_refs": ["DIVISION_IDENTITY_AND_STEPS", "REMAINDER_RANGE"], "semantic_params": {"dividend": 7048, "divisor": 24, "quotient": 293, "remainder": 16, "quotient_places": [2,9,3], "steps": [
+          {"partial_dividend": 70, "quotient_digit": 2, "product": 48, "subtraction_remainder": 22, "bring_down_digit": 4},
+          {"partial_dividend": 224, "quotient_digit": 9, "product": 216, "subtraction_remainder": 8, "bring_down_digit": 8},
+          {"partial_dividend": 88, "quotient_digit": 3, "product": 72, "subtraction_remainder": 16, "bring_down_digit": null}], "check": {"identity_holds": true, "remainder_in_range": true}}},
+        "fresh_retry_ref": "FRESH-DIV-01"
+      }
+    },
+    {
+      "case_id": "ANGLE_DRAWING",
+      "task": {
+        "task_ref": "FIX-ANGLE-ACUTE",
+        "task_kind": "ANGLE_DRAWING",
+        "representation_class": "CONCRETE_PICTORIAL",
+        "primary_visual": {"visual_state_id": "ANGLE-PRIMARY", "primitive_kind": "ANGLE_OBJECT_EXAMPLE", "representation_ref": "REP-ANGLE-OBJECTS", "fidelity": "SCHEMATIC", "fade_mode": "FULL", "semantic_params": {"examples": ["scissors", "clock", "triangle"]}, "validator_refs": ["ANGLE_GEOMETRY"]},
+        "visual_states": [
+          {"visual_state_id": "ANGLE-H1", "primitive_kind": "ANGLE_RAYS_ARC", "representation_ref": "REP-ANGLE-60", "fidelity": "EXACT", "fade_mode": "FULL", "semantic_params": {"declared_quantity": 60, "rendered_quantity": 60, "degrees": 60}, "validator_refs": ["ANGLE_GEOMETRY"]},
+          {"visual_state_id": "ANGLE-H2", "primitive_kind": "ANGLE_BENCHMARK_COMPARE", "representation_ref": "REP-ANGLE-90", "fidelity": "EXACT", "fade_mode": "PARTIAL", "semantic_params": {"declared_quantity": 90, "rendered_quantity": 90, "degrees": 90}, "validator_refs": ["ANGLE_GEOMETRY"]},
+          {"visual_state_id": "ANGLE-H3", "primitive_kind": "ANGLE_OBJECT_EXAMPLE", "representation_ref": "REP-ANGLE-OBJECTS", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {"mark_vertex": true}, "validator_refs": ["ANGLE_GEOMETRY"]},
+          {"visual_state_id": "ANGLE-P1", "primitive_kind": "ANGLE_RAYS_ARC", "representation_ref": "REP-ANGLE-60", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["ANGLE_GEOMETRY"]},
+          {"visual_state_id": "ANGLE-P2", "primitive_kind": "ANGLE_BENCHMARK_COMPARE", "representation_ref": "REP-ANGLE-90", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["ANGLE_GEOMETRY"]},
+          {"visual_state_id": "ANGLE-P3", "primitive_kind": "ANGLE_OBJECT_EXAMPLE", "representation_ref": "REP-ANGLE-OBJECTS", "fidelity": "SCHEMATIC", "fade_mode": "PARTIAL", "semantic_params": {}, "validator_refs": ["ANGLE_GEOMETRY"]}
+        ],
+        "hint_ladder": {"ladder_id": "HL-ANGLE", "task_ref": "FIX-ANGLE-ACUTE", "steps": [
+          {"hint_id": "HL-ANGLE-H1", "level": "H1", "semantic_role": "NOTICE", "child_label": "LOOK", "verbal_cue": "Look for a narrow opening.", "visual_state_ref": "ANGLE-H1", "learner_action": "Compare the opening with a right angle.", "information_revealed": ["ACUTE_SHAPE"], "may_reveal_final_answer": false},
+          {"hint_id": "HL-ANGLE-H2", "level": "H2", "semantic_role": "REMEMBER", "child_label": "REMEMBER", "verbal_cue": "Acute angles are smaller than 90 degrees.", "visual_state_ref": "ANGLE-H2", "learner_action": "Use 90 degrees as the benchmark.", "information_revealed": ["BENCHMARK_90"], "may_reveal_final_answer": false},
+          {"hint_id": "HL-ANGLE-H3", "level": "H3", "semantic_role": "REPRESENT", "child_label": "SHOW IT", "verbal_cue": "Mark the vertex and rays on the object.", "visual_state_ref": "ANGLE-H3", "learner_action": "Draw and mark the angle.", "information_revealed": ["VERTEX_RAYS"], "may_reveal_final_answer": false}], "fresh_retry_ref": "FRESH-ANGLE-01"},
+        "thinking_path": {"schema_version": "1.0.0", "path_id": "TP-ANGLE", "task_ref": "FIX-ANGLE-ACUTE", "steps": [
+          {"step_id": "TP-ANGLE-1", "semantic_role": "INTERPRET", "child_label": "LOOK", "micro_visual_ref": "ANGLE-P1", "one_line_action": "Find the opening."},
+          {"step_id": "TP-ANGLE-2", "semantic_role": "MODEL", "child_label": "SHOW IT", "micro_visual_ref": "ANGLE-P2", "one_line_action": "Compare with 90 degrees."},
+          {"step_id": "TP-ANGLE-3", "semantic_role": "EXECUTE", "child_label": "WORK", "micro_visual_ref": "ANGLE-P3", "one_line_action": "Draw and mark the angle."}]},
+        "work_surface": {"schema_version": "1.0.0", "surface_id": "WS-ANGLE-01", "task_ref": "FIX-ANGLE-ACUTE", "kind": "ANGLE_DRAWING_WORKSPACE", "semantic_params": {"slots": 3}, "validator_refs": ["ANGLE_GEOMETRY"], "provenance": "ENGINE_AUTHORED_VISUAL"},
+        "fresh_retry_ref": "FRESH-ANGLE-01"
+      }
+    }
+  ]
+}
