@@ -1,0 +1,103 @@
+{
+  "classification_rule": "A candidate is ELIGIBLE_IN_SCOPE only when its primary capability is present in the P-C assessment scope authority and its problem family is present in the P-D family registry. Classification is fixed before any learner evidence is read, so the eligible denominator is identical in the no-attempt and attempt-present runs.",
+  "classifications": [
+    {
+      "candidate_id": "PHY-EXT01",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-AVERAGE-SPEED-EQUAL-DISTANCE",
+      "problem_family_ref": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-MODEL-VALIDITY-CHECK"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT02",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-DISTANCE-DISPLACEMENT",
+      "problem_family_ref": "PHY-PF-PATH-VS-CHORD",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT03",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-FIRST-EQUATION",
+      "problem_family_ref": "PHY-PF-FIRST-EQUATION",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-UNIFORM-ACCELERATION"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT04",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-VERTICAL-PROJECTION",
+      "problem_family_ref": "PHY-PF-VERTICAL-MAX-HEIGHT",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-FREE-FALL-CONSTANT-G"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT05",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-VT-SIGNED-AREA",
+      "problem_family_ref": "PHY-PF-VT-SIGNED-AREA",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-REPRESENTATION-TRANSLATE"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT06",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-XT-SLOPE-VELOCITY",
+      "problem_family_ref": "PHY-PF-XT-SLOPE",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-REPRESENTATION-TRANSLATE"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT07",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-MULTIPHASE-KINEMATICS",
+      "problem_family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-FRAME-SIGN-SETUP",
+        "PHY-CAP-STATE-PROPAGATE"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT08",
+      "out_of_scope_reason": null,
+      "primary_capability_ref": "PHY-CAP-RELATIVE-ACCELERATION-SAME-G",
+      "problem_family_ref": "PHY-PF-RELATIVE-G-CANCELLATION",
+      "scope_status": "ELIGIBLE_IN_SCOPE",
+      "supporting_capability_refs": [
+        "PHY-CAP-MODEL-VALIDITY-CHECK"
+      ]
+    },
+    {
+      "candidate_id": "PHY-EXT09",
+      "out_of_scope_reason": "The item's canonical capability is outside the P-C assessment scope authority for this question set.",
+      "primary_capability_ref": null,
+      "problem_family_ref": null,
+      "scope_status": "OUT_OF_SCOPE",
+      "supporting_capability_refs": []
+    }
+  ],
+  "corpus_digest": "806f1fb0897afeb41afdfb15b84785afff89d56089c683aad0057630aea5bcaa",
+  "corpus_ref": "PHY-P-I-CORPUS-01",
+  "registry_digest": "ddf5fe593321e49dd3c236621651193ad4f8d6bf2f0e6ed7ce363a0db1b1de7f",
+  "registry_id": "PHY-P-I-EXTERNAL-CLASSIFICATION-v1",
+  "schema_version": "1.0.0",
+  "scope_authority_ref": "PHY-P-C-SCOPE-AUTHORITY",
+  "subject": "PHYSICS"
+}

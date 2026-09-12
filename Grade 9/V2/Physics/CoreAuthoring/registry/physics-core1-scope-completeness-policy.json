@@ -1,0 +1,35 @@
+{
+  "policy_id": "PHY-P-G-CORE1-COMPLETENESS-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "required_appendices": [
+    "APPENDIX_A_CORE_PRACTICE",
+    "APPENDIX_B_CORE_SOLUTIONS",
+    "APPENDIX_C_PRINTABLE_HANDOUT"
+  ],
+  "every_study_scope_capability_needs_a_lesson": true,
+  "appendix_a_stage_plan_by_lesson_mode": {
+    "FULL_LEARNING": ["GUIDED", "FADED", "INDEPENDENT"],
+    "CONCISE_VERIFY_ONLY": ["INDEPENDENT"],
+    "PROBE": ["PROBE"]
+  },
+  "appendix_b_must_be_one_to_one_with_appendix_a": true,
+  "appendix_b_requires_independent_verification_route": true,
+  "appendix_c_answer_free": true,
+  "appendix_c_may_introduce_new_physics": false,
+  "appendix_c_print_constraints": [
+    "GRAYSCALE_SAFE",
+    "NO_COLOUR_DEPENDENT_MEANING",
+    "SIGN_AND_FRAME_LEGIBLE_WITHOUT_COLOUR",
+    "STANDALONE_WITHOUT_MAIN_BOOK",
+    "ANSWER_FREE"
+  ],
+  "forbidden_producer_inputs": [
+    "benchmark_inputs",
+    "mature_reference_wording",
+    "pr156",
+    "pull/156",
+    "raw_mature_reference"
+  ],
+  "release_authority_state": "PILOT_ONLY_HUMAN_EXPERT_RELEASE_NOT_GRANTED"
+}

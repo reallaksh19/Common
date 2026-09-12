@@ -1,0 +1,420 @@
+{
+  "authority_class": "SYNTHETIC_SOURCE_BODY_TEST_AUTHORITY",
+  "candidate_count_declared": 9,
+  "candidates": [
+    {
+      "candidate_id": "PHY-EXT01",
+      "source_digest": "3fe358215e7b11cec92f2a2812a1c8259b2d63adc25188e29e5fe576a11f49d1",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT01"
+    },
+    {
+      "candidate_id": "PHY-EXT02",
+      "source_digest": "f02f0d7e2187d327f776ba1e126272db372dca263a3499c770b32baea15d4c39",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT02"
+    },
+    {
+      "candidate_id": "PHY-EXT03",
+      "source_digest": "2abd1097ddb1988e36f12d5a3eb754e4bb0155b4d41e388177d3958bfebb678e",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT03"
+    },
+    {
+      "candidate_id": "PHY-EXT04",
+      "source_digest": "957d678d97723e933fc111cb691c95f327be123771504a43c1b9f418588a7708",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT04"
+    },
+    {
+      "candidate_id": "PHY-EXT05",
+      "source_digest": "c5d276968506185688e758270b564a809a6baffe49a8eae5dd67caaabaaec458",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT05"
+    },
+    {
+      "candidate_id": "PHY-EXT06",
+      "source_digest": "d9eda1a3e0f23eaca97c6c41e7dbb65994e8644f054903cde72bd7e6e9db626c",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT06"
+    },
+    {
+      "candidate_id": "PHY-EXT07",
+      "source_digest": "d4e046cb7aaffe739d1e1c204eed0a746cccd6ae8b5a15407d4b5efa849b7ae0",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT07"
+    },
+    {
+      "candidate_id": "PHY-EXT08",
+      "source_digest": "516da541f41712a1d74bae83e51c47f74ae587aefea227cb64c0e4d611d1fae3",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT08"
+    },
+    {
+      "candidate_id": "PHY-EXT09",
+      "source_digest": "672b77d72a19daedf20ba9bb560a78500819f6a078290da2a10358196cd740c7",
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT09"
+    }
+  ],
+  "corpus_digest": "806f1fb0897afeb41afdfb15b84785afff89d56089c683aad0057630aea5bcaa",
+  "corpus_id": "PHY-P-I-CORPUS-01",
+  "fixture_id": "PHY-P-I-EXTERNAL-TRANSFER-v1",
+  "production_claim": false,
+  "provenance_note": "Synthetic Grade 9 Physics transfer items authored for this repository's P-I proof. Not extracted from any real examination paper and not a production corpus.",
+  "records": [
+    {
+      "answer_key": "B",
+      "body_digest": "3fe358215e7b11cec92f2a2812a1c8259b2d63adc25188e29e5fe576a11f49d1",
+      "candidate_id": "PHY-EXT01",
+      "figure_required": false,
+      "figure_semantic": null,
+      "options": [
+        {
+          "label": "A",
+          "text": "50 km/h"
+        },
+        {
+          "label": "B",
+          "text": "48 km/h"
+        },
+        {
+          "label": "C",
+          "text": "52 km/h"
+        },
+        {
+          "label": "D",
+          "text": "45 km/h"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT01",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": null,
+      "stem": "A cyclist travels the first half of a straight route at 40 km/h and the second half at 60 km/h. What is the average speed for the whole route?",
+      "subparts": [],
+      "units": [
+        "km/h"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "f02f0d7e2187d327f776ba1e126272db372dca263a3499c770b32baea15d4c39",
+      "candidate_id": "PHY-EXT02",
+      "figure_required": true,
+      "figure_semantic": {
+        "model": "CLOSED_PATH",
+        "path": "CIRCULAR",
+        "start_equals_end": true
+      },
+      "options": [
+        {
+          "label": "A",
+          "text": "2πR and 2πR"
+        },
+        {
+          "label": "B",
+          "text": "2πR and 0"
+        },
+        {
+          "label": "C",
+          "text": "0 and 2πR"
+        },
+        {
+          "label": "D",
+          "text": "πR and 2R"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT02",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": null,
+      "stem": "A runner goes once around a circular track of radius R, returning to the start. What are the distance travelled and the magnitude of the displacement?",
+      "subparts": [],
+      "units": [
+        "m"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "2abd1097ddb1988e36f12d5a3eb754e4bb0155b4d41e388177d3958bfebb678e",
+      "candidate_id": "PHY-EXT03",
+      "figure_required": false,
+      "figure_semantic": null,
+      "options": [
+        {
+          "label": "A",
+          "text": "9 m/s"
+        },
+        {
+          "label": "B",
+          "text": "18 m/s"
+        },
+        {
+          "label": "C",
+          "text": "2 m/s"
+        },
+        {
+          "label": "D",
+          "text": "36 m/s"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT03",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": "forward",
+      "stem": "A body starts from rest and accelerates uniformly at 3 m/s^2. What is its velocity after 6 s?",
+      "subparts": [],
+      "units": [
+        "m/s",
+        "m/s^2",
+        "s"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "957d678d97723e933fc111cb691c95f327be123771504a43c1b9f418588a7708",
+      "candidate_id": "PHY-EXT04",
+      "figure_required": false,
+      "figure_semantic": null,
+      "options": [
+        {
+          "label": "A",
+          "text": "30 m/s upward"
+        },
+        {
+          "label": "B",
+          "text": "0"
+        },
+        {
+          "label": "C",
+          "text": "10 m/s downward"
+        },
+        {
+          "label": "D",
+          "text": "30 m/s downward"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT04",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": "upward",
+      "stem": "A ball is thrown vertically upward with speed 30 m/s. Taking g = 10 m/s^2 downward and upward as positive, what is its velocity at the highest point?",
+      "subparts": [],
+      "units": [
+        "m/s",
+        "m/s^2"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "c5d276968506185688e758270b564a809a6baffe49a8eae5dd67caaabaaec458",
+      "candidate_id": "PHY-EXT05",
+      "figure_required": true,
+      "figure_semantic": {
+        "axes": [
+          "t (s)",
+          "v (m/s)"
+        ],
+        "model": "VELOCITY_TIME_LINE",
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            4,
+            12
+          ]
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "text": "12 m"
+        },
+        {
+          "label": "B",
+          "text": "24 m"
+        },
+        {
+          "label": "C",
+          "text": "48 m"
+        },
+        {
+          "label": "D",
+          "text": "3 m"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT05",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": null,
+      "stem": "The velocity-time graph of a body is a straight line from (0 s, 0 m/s) to (4 s, 12 m/s). What is the displacement in the first 4 s?",
+      "subparts": [],
+      "units": [
+        "s",
+        "m/s",
+        "m"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "d9eda1a3e0f23eaca97c6c41e7dbb65994e8644f054903cde72bd7e6e9db626c",
+      "candidate_id": "PHY-EXT06",
+      "figure_required": true,
+      "figure_semantic": {
+        "axes": [
+          "t (s)",
+          "x (m)"
+        ],
+        "model": "POSITION_TIME_LINE",
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            5,
+            10
+          ]
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "text": "The body is at rest"
+        },
+        {
+          "label": "B",
+          "text": "The body moves with constant velocity"
+        },
+        {
+          "label": "C",
+          "text": "The body accelerates uniformly"
+        },
+        {
+          "label": "D",
+          "text": "The body reverses direction"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT06",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": null,
+      "stem": "A position-time graph is a straight line of constant positive slope. What does this tell you about the motion?",
+      "subparts": [],
+      "units": [
+        "s",
+        "m"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "d4e046cb7aaffe739d1e1c204eed0a746cccd6ae8b5a15407d4b5efa849b7ae0",
+      "candidate_id": "PHY-EXT07",
+      "figure_required": false,
+      "figure_semantic": null,
+      "options": [
+        {
+          "label": "A",
+          "text": "6 m/s"
+        },
+        {
+          "label": "B",
+          "text": "4 m/s"
+        },
+        {
+          "label": "C",
+          "text": "8 m/s"
+        },
+        {
+          "label": "D",
+          "text": "2 m/s"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT07",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": "forward",
+      "stem": "A cart accelerates at 2 m/s^2 for 3 s from rest, then at -1 m/s^2 for a further 2 s. What is its velocity at the end of the 5 s?",
+      "subparts": [],
+      "units": [
+        "m/s",
+        "m/s^2",
+        "s"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "516da541f41712a1d74bae83e51c47f74ae587aefea227cb64c0e4d611d1fae3",
+      "candidate_id": "PHY-EXT08",
+      "figure_required": false,
+      "figure_semantic": null,
+      "options": [
+        {
+          "label": "A",
+          "text": "g downward"
+        },
+        {
+          "label": "B",
+          "text": "0"
+        },
+        {
+          "label": "C",
+          "text": "2g downward"
+        },
+        {
+          "label": "D",
+          "text": "g upward"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT08",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": null,
+      "stem": "Two stones are released from rest at the same instant from different heights. Neglecting air resistance, what is the acceleration of one stone relative to the other?",
+      "subparts": [],
+      "units": [
+        "m/s^2"
+      ]
+    },
+    {
+      "answer_key": "B",
+      "body_digest": "672b77d72a19daedf20ba9bb560a78500819f6a078290da2a10358196cd740c7",
+      "candidate_id": "PHY-EXT09",
+      "figure_required": false,
+      "figure_semantic": null,
+      "options": [
+        {
+          "label": "A",
+          "text": "0.33 A"
+        },
+        {
+          "label": "B",
+          "text": "3 A"
+        },
+        {
+          "label": "C",
+          "text": "48 A"
+        },
+        {
+          "label": "D",
+          "text": "8 A"
+        }
+      ],
+      "source_link": "fixture://physics/external-transfer-index#PHY-EXT09",
+      "source_qc_status": "CLEAN",
+      "source_session": "SYNTHETIC",
+      "source_year": 2026,
+      "stated_positive_direction": null,
+      "stem": "A circuit contains a 12 V cell and a 4 ohm resistor. What current flows?",
+      "subparts": [],
+      "units": [
+        "V",
+        "A"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}
