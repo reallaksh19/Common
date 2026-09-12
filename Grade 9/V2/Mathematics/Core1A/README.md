@@ -14,9 +14,10 @@ MathCore1StudyPlan
         |
         v
 Core (1A)
+  - resolve the lesson capability
   - resolve bound PCK
   - resolve problem-family semantics
-  - materialize fresh learner problems
+  - materialize fresh capability-focused learner problems inside that family
   - write learner-facing explanation
   - realize misconception repair
   - realize worked -> guided -> less-help -> independent -> challenge
@@ -31,6 +32,24 @@ Core (1A)
 Core (1A) deliberately does **not** reuse original assessment questions. Those remain Core (2)
 transfer assets. Every learner problem in Core (1A) is a fresh, deterministic instance of the
 problem family declared by Core (1).
+
+## Capability first, family invariant second
+
+Core1 is capability-driven. One problem family can exercise several capabilities. For example,
+an equal-distance coordinate family can require binomial expansion, equality preservation,
+axis semantics and the final equidistance model. A learner lesson on **binomial square expansion**
+must therefore not be titled or written as though its instructional target were the whole
+equidistance family.
+
+The canonical Core1A entrypoint installs a capability-aware authoring layer:
+
+- the lesson title and explanation follow `capability_ref` and its matching PCK asset;
+- the authored problems still obey the declared `problem_family_ref`;
+- prerequisite capabilities get their own focused worked examples rather than a generic family problem;
+- when more than one PCK asset is bound, Core1A prefers the asset whose `capability_refs` explicitly contain the lesson capability.
+
+This distinction is release-critical for textbook quality: mathematical provenance stays family-grounded,
+while the student is actually taught the capability Core1 says the lesson is about.
 
 ## Why this stage is separate
 
@@ -67,8 +86,10 @@ This is intentional. A missing learner object must not be replaced by an authori
 
 ## CLI
 
+Use the capability-aware entrypoint:
+
 ```bash
-python 'Grade 9/V2/Mathematics/Core1A/engine/build_math_core1a_textbook.py' \
+python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
   --core1-plan /path/to/core1_study_plan.json \
   --out-dir /tmp/core1a
 ```
@@ -96,8 +117,21 @@ Math problem-family registry on PR #323:
 - linear trend/extrapolation
 - river-current linear system
 
+It also provides explicit capability-focused authoring for prerequisite/bridge capabilities in the
+current cold-start scope, including angle sum, arithmetic division, binomial-square expansion,
+equality preservation, fraction arithmetic, geometric modelling, two-point line construction,
+linear-system setup/solve, ordered-pair semantics, sign propagation, slope computation,
+substitution, unit interpretation, variable semantics and word modelling.
+
 A future topic is not silently generalized. If Core (1) asks Core (1A) for a new family, the run
 fails until that family receives learner-authoring support.
+
+## CI proof of the interface
+
+The Core1A workflow first runs #323's real Mathematics cold-start chain, writes its exact
+`core1_study_plan.json`, then feeds that file to Core1A. The produced PDF is text-inspected for
+internal jargon/template leakage and the workflow uploads both the exact Core1 input and Core1A
+outputs. This makes the Core1 -> Core1A -> PDF boundary directly auditable.
 
 ## Release meaning
 
