@@ -229,12 +229,16 @@ def build_learning_representation(task: Mapping[str, Any]) -> Dict[str, Any]:
         "learner_profile_ref": profile["profile_id"],
         "representation_class": task["representation_class"],
         "primary_visual": task["primary_visual"],
+        "all_visual_states": [dict(state) for state in task["visual_states"]],
         "hint_visuals": {
             step["level"]: states[step["visual_state_ref"]]
             for step in task["hint_ladder"]["steps"]
         },
+        "hint_ladder": dict(task["hint_ladder"]),
+        "thinking_path": dict(task["thinking_path"]),
         "thinking_path_micro_visual_refs": [step["micro_visual_ref"] for step in task["thinking_path"]["steps"]],
         "work_surface_ref": work_surface.get("surface_id") if work_surface else None,
+        "work_surface": dict(work_surface) if work_surface else None,
         "hint_ladder_ref": task["hint_ladder"]["ladder_id"],
         "thinking_path_ref": task["thinking_path"]["path_id"],
         "fresh_retry_support_policy": "NONE",
