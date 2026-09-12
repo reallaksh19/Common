@@ -1,0 +1,16 @@
+{
+  "overlay_id": "OVERLAY-NCERT-CLASS4",
+  "target_grade": 4,
+  "curriculum_authority": "NCERT_MATHEMATICS_CLASS4",
+  "authority_version": "2026.1",
+  "chapters": [
+    { "chapter_number": 3, "name": "A Trip to Bhopal", "mapped_capabilities": ["PM-NUM-MUL-01", "PM-NUM-DIV-01", "PM-MEAS-CONV-01"] },
+    { "chapter_number": 4, "name": "Tick-Tick-Tick", "mapped_capabilities": ["PM-MEAS-CONV-01"] },
+    { "chapter_number": 7, "name": "Jugs and Mugs", "mapped_capabilities": ["PM-MEAS-CONV-01"] },
+    { "chapter_number": 9, "name": "Halves and Quarters", "mapped_capabilities": ["PM-FRAC-EQ-01", "PM-FRAC-COMP-01"] },
+    { "chapter_number": 10, "name": "Play with Patterns", "mapped_capabilities": ["PM-NUM-PV-01"] },
+    { "chapter_number": 11, "name": "Tables and Shares", "mapped_capabilities": ["PM-NUM-MUL-01", "PM-NUM-DIV-01"] },
+    { "chapter_number": 13, "name": "Fields and Fences", "mapped_capabilities": ["PM-GEOM-PERIM-AREA-01"] },
+    { "chapter_number": 14, "name": "Smart Charts", "mapped_capabilities": ["PM-DATA-CHART-01"] }
+  ]
+}

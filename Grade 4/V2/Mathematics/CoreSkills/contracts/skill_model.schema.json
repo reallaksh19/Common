@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PrimaryMathSkillModel",
+  "description": "Intermediate skill model mapping question intake to canonical capabilities and pedagogical representations.",
+  "type": "object",
+  "required": [
+    "skill_model_id",
+    "scope_provenance",
+    "identified_capabilities",
+    "problem_families",
+    "target_representations"
+  ],
+  "properties": {
+    "skill_model_id": { "type": "string" },
+    "scope_provenance": {
+      "type": "object",
+      "required": ["scope_basis"],
+      "properties": {
+        "scope_basis": {
+          "type": "string",
+          "enum": [
+            "QUESTION_SET_OBSERVED",
+            "SCHOOL_CLASSWORK_OBSERVED",
+            "CURRICULUM_CONFIRMED",
+            "CURRICULUM_OVERLAY",
+            "COMMON_G4_5_CAPABILITY",
+            "EXTENSION",
+            "STRETCH",
+            "MAPPING_PENDING",
+            "SOURCE_NOT_PROVIDED"
+          ]
+        },
+        "authority_ref": { "type": "string" },
+        "authority_version": { "type": "string" },
+        "evidence_ref": { "type": "string" },
+        "universal_grade_scope_claimed": { "type": "boolean", "default": false }
+      }
+    },
+    "identified_capabilities": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "problem_families": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "target_representations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "role"],
+        "properties": {
+          "kind": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": ["PROVIDED", "CHILD_SELECTED", "CHILD_PRODUCED", "BRIDGE", "WORKED_EXAMPLE"]
+          }
+        }
+      }
+    },
+    "diagnostic_contrast_sets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["contrast_set_id", "focal_feature", "cases"],
+        "properties": {
+          "contrast_set_id": { "type": "string" },
+          "focal_feature": { "type": "string" },
+          "cases": { "type": "array" }
+        }
+      }
+    }
+  }
+}

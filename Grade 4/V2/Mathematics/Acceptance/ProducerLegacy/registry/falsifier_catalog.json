@@ -1,0 +1,246 @@
+{
+  "catalog_version": "1.0.0",
+  "total_falsifiers": 40,
+  "falsifiers": [
+    {
+      "code": "QUESTION_OBSERVED_SKILL_PROMOTED_TO_UNIVERSAL_GRADE_SCOPE",
+      "category": "SCOPE_PROVENANCE",
+      "severity": "BLOCKING",
+      "description": "Question-observed or school-observed skill promoted to universal grade-level curriculum truth without explicit authority binding."
+    },
+    {
+      "code": "RAW_QUESTIONS_RENDERED_DIRECTLY_WITHOUT_SKILL_MODEL",
+      "category": "SCOPE_PROVENANCE",
+      "severity": "BLOCKING",
+      "description": "Direct rendering from raw questions without going through the intermediate PrimaryMathSkillModel."
+    },
+    {
+      "code": "MULTIPLICATION_AREA_MODEL_MISLABEL",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Area model partition label does not equal the product of its sub-dimensions (e.g. 20 x 6 labeled as 12 instead of 120)."
+    },
+    {
+      "code": "MULTIPLICATION_PARTIAL_PRODUCTS_OMISSION",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Partial product step omitted from multi-digit multiplication bridge (e.g. 23 x 6 omitting 18)."
+    },
+    {
+      "code": "MULTIPLICATION_PRODUCT_SUM_MISMATCH",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Final product does not equal the sum of declared partial products."
+    },
+    {
+      "code": "MULTIPLICATION_ALGORITHM_DISCONNECTED_FROM_PLACE_VALUE",
+      "category": "REPRESENTATION_REQUIRED",
+      "severity": "BLOCKING",
+      "description": "Vertical algorithm presented without explicit place-value decomposition bridge."
+    },
+    {
+      "code": "DIVISION_SHARING_GROUPING_COLLAPSE",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Sharing (partitive) and grouping (quotitive) meanings collapsed into an identical generic visual/quantity structure."
+    },
+    {
+      "code": "DIVISION_INTERNAL_QUOTIENT_ZERO_DROPPED",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Internal quotient zero omitted when partial dividend < divisor after division has begun (e.g. 366/12=36 or 7843/13=63)."
+    },
+    {
+      "code": "DIVISION_CHECK_EQUATION_VIOLATED",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Division check relation violated: divisor * quotient + remainder != dividend."
+    },
+    {
+      "code": "DIVISION_REMAINDER_EXCEEDS_DIVISOR",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Division remainder is negative or greater than or equal to divisor."
+    },
+    {
+      "code": "DIVISION_REMAINDER_CONTEXT_UNHANDLED",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Remainder interpretation in word problem does not match required contextual action (e.g. round up buses, report leftovers)."
+    },
+    {
+      "code": "QUANTITY_UNIT_CHAIN_COLLAPSED",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Unit chain conversion skipped (e.g. 23 dozen eggs multiplied directly by unit rate instead of converting to individual eggs first)."
+    },
+    {
+      "code": "FRACTION_PARTITION_UNEQUAL",
+      "category": "REPRESENTATION_REQUIRED",
+      "severity": "BLOCKING",
+      "description": "Unequal physical/coordinate partitions presented as equal unit fractions."
+    },
+    {
+      "code": "FRACTION_SHADING_MISMATCH",
+      "category": "REPRESENTATION_REQUIRED",
+      "severity": "BLOCKING",
+      "description": "Number of shaded parts does not match the numerator of the declared fraction."
+    },
+    {
+      "code": "FRACTION_COMPARISON_UNGROUNDED",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Fraction inequality asserted without common denominator, common numerator, benchmark, or visual model reasoning."
+    },
+    {
+      "code": "FRACTION_ADDITION_DENOMINATOR_SUMMED",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Fraction addition incorrectly sums denominators (e.g. 1/4 + 2/4 = 3/8)."
+    },
+    {
+      "code": "PLACE_VALUE_DECOMPOSITION_POSITION_ERROR",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Expanded form digit values do not match standard base-10 positional values."
+    },
+    {
+      "code": "DECIMAL_HUNDRED_GRID_MISMATCH",
+      "category": "REPRESENTATION_REQUIRED",
+      "severity": "BLOCKING",
+      "description": "Count of shaded squares on 10x10 grid does not reconcile with declared decimal hundredths value."
+    },
+    {
+      "code": "DECIMAL_NUMBER_LINE_MISMATCH",
+      "category": "REPRESENTATION_REQUIRED",
+      "severity": "BLOCKING",
+      "description": "Plotted position on decimal number line does not match numerical decimal value."
+    },
+    {
+      "code": "MEASUREMENT_UNIT_CONVERSION_FACTOR_INVALID",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Conversion multiplier between units contradicts standard SI/customary definition."
+    },
+    {
+      "code": "PERIMETER_AREA_CONFLATED",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Boundary measure (linear units) conflated with surface covering (square units)."
+    },
+    {
+      "code": "VOLUME_CUBE_COUNT_MISMATCH",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Unit cube / layer count does not equal product of declared 3D dimensions."
+    },
+    {
+      "code": "GEOMETRY_ANGLE_INCONSISTENCY",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Rendered visual angle geometry contradicts declared angle classification or degree measure."
+    },
+    {
+      "code": "DATA_CHART_SCALE_MISMATCH",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Bar height, dot plot count, or pictogram symbols do not reconcile with chart scale key."
+    },
+    {
+      "code": "WORD_PROBLEM_QUANTITY_STRUCTURE_MISSING",
+      "category": "MATH_INVARIANT",
+      "severity": "BLOCKING",
+      "description": "Problem analysis fails to define explicit quantity, unit, role, relationship, and unknown before computation."
+    },
+    {
+      "code": "ERROR_ANALYSIS_SILENT_NORMALIZATION",
+      "category": "WRITTEN_WORK_ALIGNMENT",
+      "severity": "BLOCKING",
+      "description": "Learner error is silently rewritten into correct work rather than preserved as an explicit contrast object."
+    },
+    {
+      "code": "NOTEBOOK_REPLAY_CLAIMED_AS_ORIGINAL_HANDWRITING",
+      "category": "WORK_PROVENANCE",
+      "severity": "BLOCKING",
+      "description": "Structured replay or authored example mislabeled as original source handwriting."
+    },
+    {
+      "code": "NOTEBOOK_PLACE_VALUE_COLUMNS_MISALIGNED",
+      "category": "WRITTEN_WORK_ALIGNMENT",
+      "severity": "BLOCKING",
+      "description": "Digits across rows in vertical arithmetic do not align along vertical place-value columns."
+    },
+    {
+      "code": "NOTEBOOK_TEACHER_CORRECTION_CONFLATED_WITH_CHILD_WORK",
+      "category": "WORK_PROVENANCE",
+      "severity": "BLOCKING",
+      "description": "Teacher annotations or marks are recorded as child-produced evidence."
+    },
+    {
+      "code": "NOTEBOOK_AMBIGUITY_SILENTLY_RESOLVED",
+      "category": "WORK_PROVENANCE",
+      "severity": "BLOCKING",
+      "description": "Illegible or ambiguous student writing resolved into definitive answer without ambiguity marker."
+    },
+    {
+      "code": "NOTEBOOK_CORRECT_INTERMEDIATE_WORK_ERASED",
+      "category": "WRITTEN_WORK_ALIGNMENT",
+      "severity": "BLOCKING",
+      "description": "Correct intermediate substeps omitted or judged incorrect because final answer was wrong."
+    },
+    {
+      "code": "CORE1_REPRESENTATION_BRIDGE_MISSING",
+      "category": "CORE1_COVERAGE",
+      "severity": "BLOCKING",
+      "description": "Core 1 module provides only text summary and exercises without an instructional representation bridge."
+    },
+    {
+      "code": "CORE1_PEDAGOGICAL_SEQUENCE_INCOMPLETE",
+      "category": "CORE1_COVERAGE",
+      "severity": "BLOCKING",
+      "description": "Core 1 fails to support the required learning progression (Notice -> Model -> Worked -> Supported -> Independent)."
+    },
+    {
+      "code": "CORE2_PRACTICE_ROLE_UNDECLARED",
+      "category": "CORE2_PRACTICE_LINK",
+      "severity": "BLOCKING",
+      "description": "Appendix A practice batch lacks an explicit pedagogical practice role (RECONNECT, BUILD, CHOOSE, etc.)."
+    },
+    {
+      "code": "CORE2_HINT_LADDER_CONTRACT_VIOLATED",
+      "category": "HINT_FADE",
+      "severity": "BLOCKING",
+      "description": "Appendix B hint ladder omits standard levels (H1 Notice, H2 Remember, H3 Represent) or lacks fresh H0 independent retry."
+    },
+    {
+      "code": "CORE2_APPENDIX_C_IS_PROSE_CRAM_SHEET",
+      "category": "CORE2_PRACTICE_LINK",
+      "severity": "BLOCKING",
+      "description": "Appendix C visual quick reference replaced with dense prose text summary."
+    },
+    {
+      "code": "CORE2_HARDCODED_PAGE_NUMBER_REFERENCE",
+      "category": "CORE2_PRACTICE_LINK",
+      "severity": "BLOCKING",
+      "description": "Core 2 references Core 1 via fragile authored physical page numbers instead of stable semantic IDs."
+    },
+    {
+      "code": "LEARNER_SURFACE_LEAK_DETECTED",
+      "category": "LEARNER_SURFACE",
+      "severity": "BLOCKING",
+      "description": "Internal architectural, diagnostic, prompt, or engine tokens leaked onto student-facing pages."
+    },
+    {
+      "code": "CHILD_READABILITY_FONT_SIZE_VIOLATED",
+      "category": "LAYOUT_CUSTODY",
+      "severity": "BLOCKING",
+      "description": "Learner body text rendered below child readability minimum (12pt) or shrunk to fit instead of pagination."
+    },
+    {
+      "code": "RENDERED_EVIDENCE_ARGUMENTS_IGNORED",
+      "category": "REPRESENTATION_REQUIRED",
+      "severity": "BLOCKING",
+      "description": "Primitive draw call ignored input parameters and rendered hardcoded example constants (PR #310 defect)."
+    }
+  ]
+}
