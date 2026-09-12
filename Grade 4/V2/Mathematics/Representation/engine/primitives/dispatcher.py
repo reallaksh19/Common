@@ -1,17 +1,18 @@
-"""
-Master Primitive Dispatcher for Primary Mathematics V2.
-Maps primitive calls to concrete implementations and enforces parameter derivation.
+"""Master Primitive Dispatcher for Grade 4 Mathematics V2.
+
+Maps typed LearningDesign primitive calls to concrete vector implementations.
+Unsupported mathematical visuals fail closed rather than becoming label-only cards.
 """
 from __future__ import annotations
 
 from typing import Any, Dict
 from Primary.V2.Mathematics.Representation.engine.base import (
     BoundingBox,
-    VectorRenderBackend
+    VectorRenderBackend,
 )
 from Primary.V2.Mathematics.Representation.engine.primitives.operations import (
     MultiplicationPrimitives,
-    DivisionPrimitives
+    DivisionPrimitives,
 )
 from Primary.V2.Mathematics.Representation.engine.primitives.fractions import FractionPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.decimals import DecimalPrimitives
@@ -20,10 +21,11 @@ from Primary.V2.Mathematics.Representation.engine.primitives.measurement import 
 from Primary.V2.Mathematics.Representation.engine.primitives.geometry import GeometryPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.data import DataPrimitives
 from Primary.V2.Mathematics.Representation.engine.primitives.learning_support import LearningSupportPrimitives
+from Primary.V2.Mathematics.Representation.engine.primitives.grade4_semantics import Grade4SemanticPrimitives
 from Primary.V2.Mathematics.Representation.engine.notebook import (
     AuthenticNotebookEngine,
     LongDivisionWorkoutSpec,
-    ProvenanceTier
+    ProvenanceTier,
 )
 
 
@@ -35,14 +37,39 @@ def render_primitive(
     kind: str,
     params: Dict[str, Any],
     backend: VectorRenderBackend,
-    bbox: BoundingBox
+    bbox: BoundingBox,
 ) -> None:
-    """
-    Renders any Primary Mathematics V2 visual primitive.
-    Guarantees that all mathematical entities are derived directly from params.
-    """
+    """Render one validated mathematical primitive from semantic params only."""
     k = kind.upper()
-    if k == "EQUAL_GROUPS":
+
+    # Canonical Grade-4 LearningDesign semantic primitives.
+    if k == "OBJECT_GROUPS":
+        Grade4SemanticPrimitives.draw_object_groups(backend, bbox, params)
+    elif k == "MONEY_MODEL":
+        Grade4SemanticPrimitives.draw_money_model(backend, bbox, params)
+    elif k == "QUANTITY_STRUCTURE_MAP":
+        Grade4SemanticPrimitives.draw_quantity_structure_map(backend, bbox, params)
+    elif k == "INVERSE_CHECK":
+        Grade4SemanticPrimitives.draw_inverse_check(backend, bbox, params)
+    elif k == "DIV_EQUAL_GROUP":
+        Grade4SemanticPrimitives.draw_div_equal_group(backend, bbox, params)
+    elif k == "DIV_MULTIPLES_STRIP":
+        Grade4SemanticPrimitives.draw_div_multiples_strip(backend, bbox, params)
+    elif k == "DIV_REMAINDER_CONTEXT":
+        Grade4SemanticPrimitives.draw_div_remainder_context(backend, bbox, params)
+    elif k == "ESTIMATE_BOUND":
+        Grade4SemanticPrimitives.draw_estimate_bound(backend, bbox, params)
+    elif k == "DIV_LONG_ALGORITHM":
+        Grade4SemanticPrimitives.draw_div_long_algorithm(backend, bbox, params)
+    elif k == "ANGLE_RAYS_ARC":
+        Grade4SemanticPrimitives.draw_angle_rays_arc(backend, bbox, params)
+    elif k == "ANGLE_BENCHMARK_COMPARE":
+        Grade4SemanticPrimitives.draw_angle_benchmark_compare(backend, bbox, params)
+    elif k == "ANGLE_OBJECT_EXAMPLE":
+        Grade4SemanticPrimitives.draw_angle_object_example(backend, bbox, params)
+
+    # Existing reusable mathematical primitives.
+    elif k == "EQUAL_GROUPS":
         MultiplicationPrimitives.draw_equal_groups(backend, bbox, params)
     elif k == "ARRAY":
         MultiplicationPrimitives.draw_array(backend, bbox, params)
@@ -52,7 +79,7 @@ def render_primitive(
         MultiplicationPrimitives.draw_partial_products(backend, bbox, params)
     elif k == "ESTIMATE_CHECK":
         MultiplicationPrimitives.draw_estimate_check(backend, bbox, params)
-    elif k == "DIVISION_STRUCTURE" or k == "DIVISION_SHARING_VS_GROUPING":
+    elif k in {"DIVISION_STRUCTURE", "DIVISION_SHARING_VS_GROUPING"}:
         DivisionPrimitives.draw_sharing_vs_grouping(backend, bbox, params)
     elif k == "DIVISION_REMAINDER_CONTEXT":
         DivisionPrimitives.draw_remainder_context(backend, bbox, params)
@@ -78,13 +105,13 @@ def render_primitive(
         GeometryPrimitives.draw_volume_layers(backend, bbox, params)
     elif k == "GEOMETRIC_ANGLE":
         GeometryPrimitives.draw_angle(backend, bbox, params)
-    elif k == "DATA_BAR_CHART" or k == "BAR_CHART":
+    elif k in {"DATA_BAR_CHART", "BAR_CHART"}:
         DataPrimitives.draw_scaled_bar_chart(backend, bbox, params)
     elif k == "RATE_COMPARE":
         LearningSupportPrimitives.draw_rate_compare(backend, bbox, params)
     elif k == "SCALE_FACTOR_VIEW":
         LearningSupportPrimitives.draw_scale_factor(backend, bbox, params)
-    elif k == "RATE_SCALE_MODEL" or k == "SAME_RATE_SCALE":
+    elif k in {"RATE_SCALE_MODEL", "SAME_RATE_SCALE"}:
         LearningSupportPrimitives.draw_rate_scale_model(backend, bbox, params)
     elif k == "DIVISION_TABLE_MODEL":
         LearningSupportPrimitives.draw_division_table_model(backend, bbox, params)
@@ -104,7 +131,7 @@ def render_primitive(
             multiples_table=params.get("multiples_table"),
             provenance_tier=ProvenanceTier(params.get("provenance_tier", "STRUCTURED_REPLAY")),
             actor=params.get("actor", "CHILD"),
-            claims_original_handwriting=params.get("claims_original_handwriting", False)
+            claims_original_handwriting=params.get("claims_original_handwriting", False),
         )
         nb.render_long_division_bracket(bbox, spec)
     elif k == "VERTICAL_MULTIPLICATION":
@@ -115,7 +142,7 @@ def render_primitive(
             carry_rows=params.get("carry_rows", []),
             partial_products=params.get("partial_products", [18, 120]),
             total_product=params.get("total_product", 138),
-            tier=ProvenanceTier(params.get("tier", "STRUCTURED_REPLAY"))
+            tier=ProvenanceTier(params.get("tier", "STRUCTURED_REPLAY")),
         )
     else:
         raise UnsupportedPrimaryPrimitive(
