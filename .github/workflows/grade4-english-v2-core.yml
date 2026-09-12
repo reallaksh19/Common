@@ -1,0 +1,26 @@
+name: Grade 4 English V2 Core
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 4/V2/English/**'
+      - '.github/workflows/grade4-english-v2-core.yml'
+  push:
+    branches:
+      - primary-english-v2-source-evidence
+    paths:
+      - 'Grade 4/V2/English/**'
+      - '.github/workflows/grade4-english-v2-core.yml'
+
+jobs:
+  semantic-authoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build first real English source-set handoff
+        run: python 'Grade 4/V2/English/Benchmarks/source_sets/english_worksheet_09/build_fixture.py'
+      - name: Validate source coverage and semantic invariants
+        run: python 'Grade 4/V2/English/Acceptance/Validation/validate_english_worksheet_09.py'
