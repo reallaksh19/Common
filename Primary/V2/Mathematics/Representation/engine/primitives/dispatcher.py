@@ -1,6 +1,8 @@
 """
 Master Primitive Dispatcher for Primary Mathematics V2.
 Maps primitive calls to concrete implementations and fails closed on unknown kinds.
+A caller may suffix a primitive kind with ``__<semantic-id>`` for non-visible
+placement custody; rendering dispatch uses only the base kind before ``__``.
 """
 from __future__ import annotations
 
@@ -19,7 +21,7 @@ from Primary.V2.Mathematics.Representation.engine.notebook import AuthenticNoteb
 
 def render_primitive(kind: str, params: Dict[str, Any], backend: VectorRenderBackend, bbox: BoundingBox) -> None:
     """Render one grounded Primary Math primitive or fail closed."""
-    k = kind.upper()
+    k = kind.upper().split("__", 1)[0]
     if k == "EQUAL_GROUPS":
         MultiplicationPrimitives.draw_equal_groups(backend, bbox, params)
     elif k == "ARRAY":
