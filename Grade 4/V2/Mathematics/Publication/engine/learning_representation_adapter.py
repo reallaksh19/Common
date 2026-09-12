@@ -6,6 +6,7 @@ measured-publication inputs. Unsupported/missing states fail closed.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Mapping
 
@@ -24,10 +25,78 @@ def _require(condition: bool, code: str, message: str) -> None:
         raise LearningRepresentationPublicationError(code, message)
 
 
+def _leaf_values(value: Any):
+    if isinstance(value, Mapping):
+        for nested in value.values():
+            yield from _leaf_values(nested)
+    elif isinstance(value, (list, tuple, set)):
+        for nested in value:
+            yield from _leaf_values(nested)
+    elif value is not None:
+        yield str(value)
+
+
+def _contains_token(text: str, token: str) -> bool:
+    text = str(text or "")
+    token = str(token or "").strip()
+    if not token:
+        return False
+    if re.fullmatch(r"[-+]?\d+(?:\.\d+)?", token):
+        return re.search(rf"(?<![\d.]){re.escape(token)}(?![\d.])", text) is not None
+    return token.casefold() in text.casefold()
+
+
 class LearningRepresentationAdapter:
     """Consumes a validated upstream learning-representation plan without inference."""
 
     CHILD_LABELS = {"H1": "LOOK", "H2": "REMEMBER", "H3": "SHOW IT"}
+
+    @classmethod
+    def _validate_solution_guard(cls, plan: Mapping[str, Any]) -> None:
+        guard = plan.get("solution_guard")
+        if guard is None:
+            return
+        _require(isinstance(guard, dict), "SOLUTION_GUARD_INVALID", "solution_guard must be an object")
+        _require(
+            guard.get("policy") == "FORBID_DURING_HINTS_AND_THINKING_PATH",
+            "SOLUTION_GUARD_INVALID",
+            "unexpected solution guard policy",
+        )
+        tokens = [str(x).strip() for x in (guard.get("solution_tokens") or []) if str(x).strip()]
+        allowed = {str(x).strip() for x in (guard.get("allowed_support_solution_tokens") or []) if str(x).strip()}
+        _require(allowed.issubset(set(tokens)), "SOLUTION_GUARD_ALLOWLIST_INVALID", "allowed support token not in solution tokens")
+        if not tokens:
+            return
+
+        payloads: list[tuple[str, Any]] = []
+        for step in (plan.get("hint_ladder") or {}).get("steps", []):
+            level = str(step.get("level") or "H?")
+            payloads.append((f"{level} verbal cue", step.get("verbal_cue", "")))
+            payloads.append((f"{level} learner action", step.get("learner_action", "")))
+        for level, state in (plan.get("hint_visuals") or {}).items():
+            payloads.append((f"{level} visual", (state or {}).get("semantic_params") or {}))
+
+        state_index = {
+            state.get("visual_state_id"): state
+            for state in (plan.get("all_visual_states") or [])
+            if state.get("visual_state_id")
+        }
+        for step in (plan.get("thinking_path") or {}).get("steps", []):
+            owner = str(step.get("step_id") or step.get("child_label") or "thinking step")
+            payloads.append((f"thinking path {owner}", step.get("one_line_action", "")))
+            ref = step.get("micro_visual_ref")
+            if ref in state_index:
+                payloads.append((f"thinking visual {ref}", state_index[ref].get("semantic_params") or {}))
+
+        for token in tokens:
+            if token in allowed:
+                continue
+            for owner, payload in payloads:
+                if any(_contains_token(value, token) for value in _leaf_values(payload)):
+                    raise LearningRepresentationPublicationError(
+                        "SOLUTION_TOKEN_VISIBLE_DURING_SUPPORT",
+                        f"{owner} exposes final-answer token {token!r}",
+                    )
 
     @classmethod
     def validate_plan(cls, plan: Mapping[str, Any]) -> None:
@@ -46,6 +115,7 @@ class LearningRepresentationAdapter:
         _require(isinstance(ladder, dict), "PUBLISHER_REQUIRES_RESOLVED_HINT_LADDER", "plan must carry the validated hint ladder object, not only a ref")
         _require(isinstance(path, dict), "PUBLISHER_REQUIRES_RESOLVED_THINKING_PATH", "plan must carry the validated thinking path object, not only a ref")
         _require(ladder.get("fresh_retry_ref"), "H3_WITHOUT_FRESH_H0_RETRY", "resolved hint ladder needs fresh retry ref")
+        cls._validate_solution_guard(plan)
 
     @classmethod
     def build_hint_cards(cls, plan: Mapping[str, Any]) -> List[Dict[str, Any]]:
