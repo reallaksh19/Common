@@ -31,13 +31,34 @@ jobs:
         run: python 'Grade 4/V2/Mathematics/LearningDesign/validation/validate_learning_representation.py'
       - name: Validate authoring handoff
         run: python 'Grade 4/V2/Mathematics/LearningDesign/validation/validate_authoring_handoff.py'
+      - name: Validate p97-99 StudyJourney instructional completeness
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_p97_p99_study_journey.py'
       - name: Validate Grade 4 representation
         run: pytest -q 'Grade 4/V2/Mathematics/Representation/tests'
       - name: Validate Grade 4 publication
         run: pytest -q 'Grade 4/V2/Mathematics/Publication/tests'
+      - name: Render p97-99 StudyJourney candidate
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/render_p97_p99_study_journey_candidate.py'
+      - name: Render StudyJourney pages with PDFium
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pypdfium2 as pdfium
+          pdf_path = Path('build/grade4_math_v2/Grade4_P97_P99_StudyJourney_Candidate.pdf')
+          out = Path('build/grade4_math_v2/study_journey_renders')
+          out.mkdir(parents=True, exist_ok=True)
+          doc = pdfium.PdfDocument(str(pdf_path))
+          assert len(doc) >= 8, f'unexpected StudyJourney page count: {len(doc)}'
+          for index in range(len(doc)):
+              page = doc[index]
+              image = page.render(scale=1.5).to_pil()
+              assert image.width > 500 and image.height > 700
+              image.save(out / f'page_{index + 1:02d}.png')
+          print(f'StudyJourney PDFium render PASS: {len(doc)} pages')
+          PY
       - name: Build real pages 97-99 Core1 production candidate
         run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_real_p97_p99_core1_production.py'
-      - name: Render every candidate page with PDFium
+      - name: Render every legacy Core1 candidate page with PDFium
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -56,9 +77,9 @@ jobs:
               image.save(out / f'page_{index + 1:02d}.png')
           print(f'PDFium render PASS: {len(doc)} pages')
           PY
-      - name: Upload real Core1 candidate and renders
+      - name: Upload Grade 4 candidates and renders
         uses: actions/upload-artifact@v4
         with:
-          name: grade4-math-v2-p97-p99-core1-candidate
+          name: grade4-math-v2-p97-p99-study-and-core1-candidates
           path: build/grade4_math_v2/
           if-no-files-found: error
