@@ -1,0 +1,30 @@
+name: Primary Math V2 authoring engine
+
+on:
+  pull_request:
+    paths:
+      - 'Primary/V2/Mathematics/CoreSkills/**'
+      - 'Primary/V2/Mathematics/Architecture/**'
+      - '.github/workflows/primary-math-v2-authoring-engine.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Primary/V2/Mathematics/CoreSkills/**'
+      - 'Primary/V2/Mathematics/Architecture/**'
+      - '.github/workflows/primary-math-v2-authoring-engine.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-authoring-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate parent CoreSkills registries
+        run: python Primary/V2/Mathematics/CoreSkills/validation/validate_registries.py
+      - name: Validate cold-start authoring and falsifiers
+        run: python Primary/V2/Mathematics/CoreSkills/validation/validate_authoring.py
