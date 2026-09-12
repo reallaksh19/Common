@@ -33,9 +33,11 @@ jobs:
         run: python 'Grade 4/V2/English/Acceptance/Validation/validate_english_worksheet_09_study_journey.py'
       - name: Validate deterministic publication
         run: pytest -q 'Grade 4/V2/English/Publication/tests'
-      - name: Build and render real Worksheet 09 publication set
+      - name: Build and render legacy task-level Worksheet 09 publication set
         run: python 'Grade 4/V2/English/Acceptance/Validation/validate_english_worksheet_09_publication.py'
-      - name: Upload English V2 study guide, workbook, teacher key and renders
+      - name: Build and render StudyJourney publication candidate
+        run: python 'Grade 4/V2/English/Acceptance/Validation/validate_english_worksheet_09_study_journey_publication.py'
+      - name: Upload English V2 publication candidates and renders
         uses: actions/upload-artifact@v4
         with:
           name: grade4-english-v2-ws09-publication
