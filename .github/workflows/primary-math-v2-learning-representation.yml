@@ -5,6 +5,9 @@ on:
     paths:
       - 'Primary/V2/Mathematics/LearningDesign/**'
       - 'Primary/V2/Mathematics/Representation/contracts/**'
+      - 'Primary/V2/Mathematics/CoreSkills/engine/**'
+      - 'Primary/V2/Mathematics/CoreSkills/contracts/**'
+      - 'Primary/V2/Mathematics/CoreSkills/fixtures/authoring/**'
       - '.github/workflows/primary-math-v2-learning-representation.yml'
   push:
     branches:
@@ -12,11 +15,16 @@ on:
     paths:
       - 'Primary/V2/Mathematics/LearningDesign/**'
       - 'Primary/V2/Mathematics/Representation/contracts/**'
+      - 'Primary/V2/Mathematics/CoreSkills/engine/**'
+      - 'Primary/V2/Mathematics/CoreSkills/contracts/**'
+      - 'Primary/V2/Mathematics/CoreSkills/fixtures/authoring/**'
       - '.github/workflows/primary-math-v2-learning-representation.yml'
 
 jobs:
   validate-learning-representation:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,3 +32,5 @@ jobs:
           python-version: '3.12'
       - name: Validate Primary Math V2 learning representation contracts
         run: python Primary/V2/Mathematics/LearningDesign/validation/validate_learning_representation.py
+      - name: Validate authoring to learning-representation automatic handoff
+        run: python Primary/V2/Mathematics/LearningDesign/validation/validate_authoring_handoff.py
