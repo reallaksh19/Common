@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core-product-manifest.schema.json",
+  "title": "Mathematics Core Product Publication Manifest",
+  "description": "Hash-bound descriptor for one rendered Mathematics learner product. A green manifest asserts PUBLICATION_ENGINEERING only; every human-review dimension stays PENDING here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "schema_version",
+    "subject",
+    "product_role",
+    "artifact_path",
+    "release_legal",
+    "upstream",
+    "artifact_sha256",
+    "publication_structure_sha256",
+    "physical_page_map_sha256",
+    "publication_audit_sha256",
+    "upstream_digest",
+    "package_digest",
+    "quality_states"
+  ],
+  "properties": {
+    "manifest_id": {"type": "string", "pattern": "^MATH-CORE-MANIFEST-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "product_role": {"enum": ["CORE1_STUDY_GUIDE", "CORE2_TRANSFER_BOOK"]},
+    "artifact_path": {"type": "string", "minLength": 5},
+    "release_legal": {"type": "boolean"},
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core1_plan_ref",
+        "core1_plan_digest",
+        "core2_plan_ref",
+        "core2_plan_digest",
+        "coverage_package_ref",
+        "coverage_package_digest",
+        "teaching_primitive_registry_ref",
+        "core1_release_class",
+        "core2_release_class",
+        "pck_expert_review_state",
+        "release_legal"
+      ],
+      "properties": {
+        "core1_plan_ref": {"type": "string", "minLength": 3},
+        "core1_plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "core2_plan_ref": {"type": "string", "minLength": 3},
+        "core2_plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "coverage_package_ref": {"type": "string", "minLength": 3},
+        "coverage_package_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "teaching_primitive_registry_ref": {"type": "string", "minLength": 3},
+        "core1_release_class": {"enum": ["PRODUCTION", "PROVISIONAL_PENDING_EXPERT_REVIEW", "TEST_ONLY"]},
+        "core2_release_class": {"enum": ["SEMANTIC_TEST", "PROVISIONAL_PENDING_EXPERT_REVIEW", "PRODUCTION_READY"]},
+        "pck_expert_review_state": {"enum": ["NOT_RUN", "PENDING", "PASS", "NOT_REQUIRED"]},
+        "release_legal": {"type": "boolean"}
+      }
+    },
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "publication_structure_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "physical_page_map_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "publication_audit_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "upstream_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "package_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "quality_states": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "PUBLICATION_ENGINEERING",
+        "SUBJECT_CORRECTNESS",
+        "PEDAGOGICAL_DESIGN",
+        "ASSESSMENT_DESIGN",
+        "VISUAL_USABILITY",
+        "MATURE_DESIGN_QUALITY",
+        "REFERENCE_COMPARABILITY"
+      ],
+      "properties": {
+        "PUBLICATION_ENGINEERING": {"enum": ["PASS", "FAIL"]},
+        "SUBJECT_CORRECTNESS": {"const": "PENDING"},
+        "PEDAGOGICAL_DESIGN": {"const": "PENDING"},
+        "ASSESSMENT_DESIGN": {"const": "PENDING"},
+        "VISUAL_USABILITY": {"const": "PENDING"},
+        "MATURE_DESIGN_QUALITY": {"const": "PENDING"},
+        "REFERENCE_COMPARABILITY": {"const": "NOT_RUN"}
+      }
+    }
+  }
+}
