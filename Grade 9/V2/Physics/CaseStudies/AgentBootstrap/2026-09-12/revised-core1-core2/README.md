@@ -18,9 +18,9 @@ A competency is not considered taught merely because its formula is listed. Core
 
 Hints use a **paired prompt + reveal contract**. Each rung contains an open-ended learner question followed by a directly related reveal:
 
-1. **H1 - What is the key physics?** Ask about the decisive event/state/invariant/direction/frame. Reveal only the corresponding physical clarification.
-2. **H2 - How would you represent it?** Ask for the axes/components/diagram/graph/frame/geometry. Reveal the matching representation and governing relation/figure.
-3. **H3 - What would you write first?** Ask for the first executable mathematical constraint. Reveal that starting equation/construction only; do not solve it.
+1. **H1 - What is the key physics?** Ask about the decisive event/state/invariant/direction/frame/body/system. Reveal only the corresponding physical clarification.
+2. **H2 - How would you represent it?** Ask for axes/components/FBD/diagram/graph/frame/system boundary/geometry. Reveal the matching representation and governing relation/figure.
+3. **H3 - What would you write first?** Ask for the first executable mathematical or logical constraint. Reveal that starting equation/construction only; do not solve it.
 
 Every hint must be self-contained when revealed. Prompt/reveal mismatch, later-rung leakage and final-answer leakage are publication failures.
 
@@ -36,7 +36,7 @@ The full reasoning ladder is:
 4. CALCULATE
 5. INTERPRET
 
-Step completeness is required: no algebraic, geometric, sign, unit-bearing, state-transition or direction step needed by the learner may be silently skipped. Compactness comes from typography and dynamic layout, not from deleting reasoning.
+Step completeness is required: no algebraic, geometric, sign, unit-bearing, state-transition, force-ownership or direction step needed by the learner may be silently skipped. Compactness comes from typography and dynamic layout, not from deleting reasoning.
 
 ## Layout and typography gates
 
@@ -70,11 +70,23 @@ See `motion-1d/`.
 - Delayed-start/catch-up uses a concrete dual-track timeline rather than generic `phase 1 / boundary / phase 2` authoring labels.
 - Core 2 uses self-contained open-question/reveal hints and problem-specific compact representations.
 - Final automated scan: zero out-of-bounds text blocks and zero severe overlap flags in both PDFs.
-- All 55 pages were re-rendered after the final layout/figure fixes and representative pages were visually reviewed.
 
-### 3. Newton's Laws of Motion - NEXT
+### 3. Newton's Laws of Motion - COMPLETE REVISED PAIR
 
-Rebuild Core 1 and Core 2 together. Core 1 should teach the canonical reasoning chain `choose body -> identify interactions -> draw FBD -> choose axes -> resolve forces -> ΣF=ma -> interpret/check`. Core 2 hints must ask open-ended questions about body choice, force ownership, FBD/axes and the first force equation before revealing each rung.
+See `nlm/`.
+
+- Revised Core 1: 25 pages, 11 competency families.
+- Revised Core 2: 42 pages, 20 source-demand-aligned attempts and 20 full worked solutions.
+- The Core 1 reasoning spine is `choose body/system -> identify interactions/state -> build FBD/system/graph -> select law -> execute -> check`.
+- Core 2 represents all 20 direct Unit 9 demand families already recorded in the NLM reconciliation ledger.
+- Q10 remains ambiguity-aware: the source's smooth-floor wording does not justify inventing frictional rolling torque.
+- Core 2 figures are state-specific: braking and accelerating vehicle states are separated, frictionless puck pages do not invent horizontal forces, conservation pages show system boundaries, and force/mass tables use the actual problem state.
+- Final automated scan: zero out-of-bounds text blocks, zero severe overlap flags, zero hint-pair failures.
+- Both PDFs were re-rendered after the final representation/hint/layout corrections.
+
+### 4. Work & Energy - NEXT
+
+Rebuild Core 1 and Core 2 together. Core 1 should teach system choice and state-to-state energy accounting before formula selection: `choose system -> mark initial/final state -> identify energy stores -> identify external/non-conservative work -> write the energy balance -> solve -> verify`. Core 2 hints should ask the learner which state changes, which energy stores belong to the system, and what balance can be written before any substitution.
 
 ## Existing Motion in 2D case study
 
