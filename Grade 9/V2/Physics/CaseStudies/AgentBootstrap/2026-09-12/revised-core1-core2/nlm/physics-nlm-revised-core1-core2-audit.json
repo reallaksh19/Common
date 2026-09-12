@@ -1,0 +1,36 @@
+{
+  "topic": "Newton's Laws of Motion",
+  "revision": "topic-by-topic revised Core 1/Core 2",
+  "source_demand_coverage": {
+    "direct_unit9_demands": 20,
+    "core2_source_aligned_challenges": 20,
+    "source_ambiguous_discussion": "Q10 retained as ambiguity-aware challenge"
+  },
+  "core1": {
+    "file": "physics-nlm-revised-core1.pdf",
+    "pages": 25,
+    "competencies": 11,
+    "sha256": "b6254947cd186c9150388bb255ecce284337eb61d0c22d0f113b204b7b0321c0",
+    "out_of_bounds_text_blocks": 0,
+    "severe_overlap_flags": 0,
+    "minimum_rendered_text_size_pt": 6.96,
+    "oob_examples": [],
+    "overlap_examples": []
+  },
+  "core2": {
+    "file": "physics-nlm-revised-core2.pdf",
+    "pages": 42,
+    "problems": 20,
+    "sha256": "02848b5b1a8c58306ef6ce8528d24d77e32aef18f9e61f32247a94aa340e2341",
+    "out_of_bounds_text_blocks": 0,
+    "severe_overlap_flags": 0,
+    "minimum_rendered_text_size_pt": 7.1,
+    "oob_examples": [],
+    "overlap_examples": []
+  },
+  "hint_pair_failures": [],
+  "contracts": {
+    "core1": "recognition + body/system selection + representation + mechanism + relation construction/validity + worked + guided + faded + anti-trigger + quick check + explicit answer",
+    "core2": "question -> exact representation -> H1/H2/H3 paired prompt/reveal -> exactly two work lines; solution -> complete five-rung reasoning ladder -> explicit answer -> two checks -> watch-out -> Core1 link"
+  }
+}
