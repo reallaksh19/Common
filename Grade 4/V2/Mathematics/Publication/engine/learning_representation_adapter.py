@@ -41,8 +41,9 @@ def _contains_token(text: str, token: str) -> bool:
     token = str(token or "").strip()
     if not token:
         return False
-    if re.fullmatch(r"[-+]?\d+(?:\.\d+)?", token):
-        return re.search(rf"(?<![\d.]){re.escape(token)}(?![\d.])", text) is not None
+    if re.fullmatch(r"[-+]?[0-9]+(?:\.[0-9]+)?", token):
+        numbers = re.findall(r"[-+]?(?:[0-9]+\.[0-9]+|[0-9]+)", text)
+        return token in numbers
     return token.casefold() in text.casefold()
 
 
