@@ -129,6 +129,34 @@ class LearningSupportPrimitives:
 
     @staticmethod
     def draw_division_table_model(backend: VectorRenderBackend, bbox: BoundingBox, params: Dict[str, Any]) -> None:
+        """Render an exact table or a number-free completion state.
+
+        Exact semantic form supplies ``columns`` and ``rows`` (and optionally
+        grounded quotient cells). Completion form supplies only
+        ``expected_cells`` and intentionally reveals no operands or answers.
+        """
+        if "columns" not in params or "rows" not in params:
+            expected = int(params.get("expected_cells", 0))
+            if not 1 <= expected <= 12:
+                raise ValueError("DIVISION_TABLE_MODEL requires columns+rows or expected_cells 1..12")
+            backend.draw_rect(bbox.x, bbox.y, bbox.width, bbox.height, fill=PrimaryPalette.WHITE, stroke=PrimaryPalette.CARD_BORDER, corner_radius=6.0)
+            backend.draw_text(f"Complete all {expected} cells", bbox.x + bbox.width / 2.0, bbox.y_max - 22.0, font_size=11.0, color=PrimaryPalette.NAVY, align="center")
+            gap = 10.0
+            cols = min(expected, 4)
+            rows = int(math.ceil(expected / cols))
+            available_h = max(40.0, bbox.height - 56.0)
+            cell_w = (bbox.width - gap * (cols + 1)) / cols
+            cell_h = (available_h - gap * (rows + 1)) / rows
+            for index in range(expected):
+                r = index // cols
+                c = index % cols
+                x = bbox.x + gap + c * (cell_w + gap)
+                y = bbox.y + gap + (rows - 1 - r) * (cell_h + gap)
+                backend.draw_rect(x, y, cell_w, cell_h, fill=PrimaryPalette.LIGHT_BG, stroke=PrimaryPalette.CARD_BORDER, corner_radius=4.0)
+                backend.draw_text("?", x + cell_w / 2.0, y + cell_h / 2.0 - 5.0, font_size=14.0, color=PrimaryPalette.TEAL, align="center")
+            backend.record_evidence("DIVISION_TABLE_MODEL", params, expected * 2 + 2, [str(expected), "?"])
+            return
+
         columns = params["columns"]
         rows = params["rows"]
         values = {}
