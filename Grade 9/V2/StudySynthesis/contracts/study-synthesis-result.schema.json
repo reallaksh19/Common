@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "study-synthesis-result.schema.json",
+  "title": "V2 StudySynthesisResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "input_identity", "gaps"],
+  "properties": {
+    "status": {"enum": ["PASS", "BLOCKED"]},
+    "input_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["goal_ref", "canonical_target_scope_ref", "canonical_knowledge_set_ref", "research_learner_view_ref", "policy_version"],
+      "properties": {
+        "goal_ref": {"type": "string", "minLength": 1},
+        "canonical_target_scope_ref": {"type": "string", "minLength": 1},
+        "canonical_knowledge_set_ref": {"type": "string", "minLength": 1},
+        "research_learner_view_ref": {"type": "string", "minLength": 1},
+        "policy_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "learner_study_model": {"$ref": "learner-study-model.schema.json"},
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["gap_id", "gap_type", "target_id", "description", "required_refs"],
+        "properties": {
+          "gap_id": {"type": "string", "minLength": 3},
+          "gap_type": {"enum": ["CANONICAL_KNOWLEDGE_GAP", "LEARNER_STATE_REASON_GAP", "STUDY_SYNTHESIS_POLICY_GAP"]},
+          "target_id": {"type": "string", "minLength": 3},
+          "description": {"type": "string", "minLength": 3},
+          "required_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "PASS"}}}, "then": {"required": ["learner_study_model"], "properties": {"gaps": {"maxItems": 0}}}},
+    {"if": {"properties": {"status": {"const": "BLOCKED"}}}, "then": {"not": {"required": ["learner_study_model"]}, "properties": {"gaps": {"minItems": 1}}}}
+  ]
+}
