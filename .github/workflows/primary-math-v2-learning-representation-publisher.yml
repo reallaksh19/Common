@@ -27,3 +27,5 @@ jobs:
         run: pytest -q Primary/V2/Mathematics/Representation/tests/test_learning_support_primitives.py
       - name: Run learning-representation adapter tests
         run: pytest -q Primary/V2/Mathematics/Publication/tests/test_learning_representation_adapter.py
+      - name: Run measured learning-representation component tests
+        run: pytest -q Primary/V2/Mathematics/Publication/tests/test_learning_representation_components.py
