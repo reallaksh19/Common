@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "task_families": [
+    {"id": "ADJECTIVE_IDENTIFICATION", "domain": "GRAMMAR"},
+    {"id": "ADJECTIVE_CLASSIFICATION", "domain": "GRAMMAR"},
+    {"id": "CONTRAST_CLASSIFICATION", "domain": "GRAMMAR"},
+    {"id": "ADJECTIVE_ORDER", "domain": "GRAMMAR"},
+    {"id": "ADJECTIVE_ORDER_REPAIR", "domain": "GRAMMAR"},
+    {"id": "SOURCE_BOUNDARY_HANDLING", "domain": "GRAMMAR"},
+    {"id": "CONSTRUCT_NOUN_PHRASE", "domain": "WRITING"},
+    {"id": "MYSTERY_OBJECT_DESCRIPTION", "domain": "WRITING"},
+    {"id": "EXTENDED_DESCRIPTIVE_WRITING", "domain": "WRITING"},
+    {"id": "WRITING_REVISION", "domain": "WRITING"},
+    {"id": "POEM_MEANING", "domain": "POETRY"},
+    {"id": "LITERAL_COMPREHENSION", "domain": "READING"},
+    {"id": "CAUSE_EFFECT", "domain": "READING"},
+    {"id": "INFERENCE_WITH_EVIDENCE", "domain": "READING"},
+    {"id": "MULTI_CLUE_SYNTHESIS", "domain": "READING"},
+    {"id": "TRANSFER", "domain": "READING"},
+    {"id": "JUSTIFY_CHOICE", "domain": "READING"}
+  ]
+}
