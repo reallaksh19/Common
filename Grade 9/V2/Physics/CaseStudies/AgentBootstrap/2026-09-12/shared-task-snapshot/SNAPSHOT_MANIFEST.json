@@ -1,0 +1,24 @@
+{
+  "source": {
+    "repository": "reallaksh19/Common",
+    "pr": 310,
+    "branch": "v2/grade9-master-templates-intake-tasks",
+    "head_sha": "88d3a719b9de7df0477667248aab5fac5eeb2b6b"
+  },
+  "copy_semantics": "byte-identical reuse of existing Git blob SHAs",
+  "files": [
+    {"task":"TASK 1-MATH","section":"Expected output","name":"Grade9_Math_PT2_Core1_Mature_Study_Guide.pdf","blob_sha":"058a91fdb45deb1468080bbacc343931636f53bc","bytes":768491},
+    {"task":"TASK 1-MATH","section":"Expected output","name":"Grade9_Math_PT2_Core2_Transfer_v5_3.pdf","blob_sha":"07002514b220f6235e67282e7db47543d57cebcf","bytes":154052},
+    {"task":"TASK 1-MATH","section":"Input","name":"WhatsApp Image 2026-09-11 at 4.44.04 PM.jpeg","blob_sha":"f2f6da3336a3135baaf204e95baea5785db4a4a7","bytes":141436},
+    {"task":"TASK 1-MATH","section":"Input","name":"math.zip","blob_sha":"13a526227181001fa51ebe5d412f9e300044f709","bytes":614413},
+    {"task":"TASK 2-MATH","section":"Expected output","name":"JEE_Permutations_ExamSIDE_Practice_Integrated_Working_v1 (1).pdf","blob_sha":"49f892d5d23e6b9ae95c68010b337b7f43f15f12","bytes":931433},
+    {"task":"TASK 2-MATH","section":"Expected output","name":"JEE_Permutations_Study_Guide_Integrated_Working_v1 (1).pdf","blob_sha":"e18805950f5e2bb29112c168625925eecda2ef32","bytes":1271271},
+    {"task":"TASK 2-MATH","section":"Input","name":"question bank link.txt","blob_sha":"6780022755bd138572d4204ef5786c53d115cb52","bytes":96},
+    {"task":"TASK 3- PHY","section":"Input","name":"link.txt","blob_sha":"e7435503894e4927975e2331e24a826d7a1be034","bytes":77},
+    {"task":"TASK 3- PHY","section":"Output","name":"Motion_Grade9_Full_Study_Guide_SourceComplete_FINAL.pdf","blob_sha":"5750bdc3e506ad0beee1396b429c16de5d55e0a3","bytes":3383349},
+    {"task":"TASK 3- PHY","section":"Output","name":"Motion_Grade9_Student_Core_FINAL_Consolidated.pdf","blob_sha":"88256da1685ed0e14564ba11f5a33a0fcfcec7bb","bytes":1265515},
+    {"task":"TASK 4-CHEM","section":"Input","name":"link.txt","blob_sha":"6d15c6e6f26e94a166174688f4d06ab7ecd1153c","bytes":80},
+    {"task":"TASK 4-CHEM","section":"Output","name":"redox_master_examside_transfer_book_chapter_closeout (2).pdf","blob_sha":"4051e3609fc62d4738cb8c27ce79ff13961531dc","bytes":849467},
+    {"task":"TASK 4-CHEM","section":"Output","name":"redox_master_study_guide_chapter_closeout (1).pdf","blob_sha":"4125b59637c004341b9bcf62c47e794e289c2794","bytes":780688}
+  ]
+}
