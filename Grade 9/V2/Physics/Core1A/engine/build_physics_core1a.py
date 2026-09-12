@@ -105,14 +105,11 @@ def concept_badge(lesson):
     Title case, never SCREAMING_SNAKE: an upper-cased internal family name is itself an
     internal role label on a learner surface.
     """
-    helper = text(lesson.get("concept_helper"))
-    if helper:
-        words = re.findall(r"[A-Za-z0-9]+", helper)
-        if words:
-            return " ".join(w.capitalize() for w in words[:5])
+    words = re.findall(r"[A-Za-z0-9]+", human(lesson.get("capability_ref")))
+    if words:
+        return " ".join(w.capitalize() for w in words[:4])
     family = human(lesson.get("primary_pck_family"))
-    words = family.split()
-    return " ".join(w.capitalize() for w in words[:4]) or "Physics"
+    return " ".join(w.capitalize() for w in family.split()[:4]) or "Physics"
 
 
 def template_findings(lesson, policy):
@@ -138,27 +135,75 @@ def role_words(role):
     return learner_title(role, default=None) if role else ""
 
 
+def givens_line(instance):
+    parts = [f"{g['quantity']} = {g['value']} {g['unit']}".strip() for g in instance.get("givens") or []]
+    unknown = (instance.get("unknown") or {}).get("quantity")
+    line = "What you are told: " + "; ".join(parts) if parts else ""
+    if unknown:
+        line += f". What you want: {unknown}."
+    return line
+
+
+def frame_line(instance):
+    frame = instance.get("frame") or {}
+    bits = [frame.get("system"), frame.get("origin"), frame.get("positive_direction")]
+    bits = [b for b in bits if b]
+    if not bits:
+        return ""
+    return (f"Set it up: you are following {frame.get('system')}, measuring from {frame.get('origin')}, "
+            f"counting {frame.get('positive_direction')} as positive.")
+
+
 def worked_body(worked):
+    """The worked example is a solved instance, not a plan: situation, route, number."""
     if not worked:
         return []
+    instance = worked.get("authored_instance") or {}
     lines = [text(worked.get("prompt"))]
+    if instance:
+        lines.append(frame_line(instance))
+        lines.append(givens_line(instance))
+        for i, state in enumerate(instance.get("reasoning_route") or [], 1):
+            lines.append(f"{i}. {role_words(state['role'])}: {text(state.get('learner_text'))}")
+        answer = worked.get("final_answer") or {}
+        if answer.get("statement"):
+            lines.append("Answer: " + text(answer["statement"]))
+        quick = worked.get("quick_check") or {}
+        if quick.get("prompt"):
+            lines.append("One thing to check: " + text(quick["prompt"]))
+        verification = worked.get("independent_verification") or {}
+        if verification.get("route_description"):
+            lines.append("Check it a different way: " + text(verification["route_description"])
+                         + " " + text(verification.get("agreement_text")))
+        return [x for x in lines if x]
     for i, step in enumerate(worked.get("reasoning_steps") or [], 1):
-        role = role_words(step.get("role"))
-        lines.append(f"{i}. {role}: {text(step.get('text'))}")
+        lines.append(f"{i}. {role_words(step.get('role'))}: {text(step.get('text'))}")
     checks = [role_words(x) for x in worked.get("verification_steps") or []]
     if checks:
         lines.append("Check it: " + "; ".join(checks))
     return [x for x in lines if x]
 
 
-def practice_body(item):
+def practice_body(item, *, with_answer=False):
+    """A practice card is a protected attempt surface: never print the answer here."""
     if not item:
         return []
+    instance = item.get("authored_instance") or {}
     body = [text(item.get("prompt"))]
+    if instance:
+        body.append(givens_line(instance))
+    if text(item.get("method_reminder")):
+        body.append(text(item["method_reminder"]))
+    if with_answer and (item.get("final_answer") or {}).get("statement"):
+        body.append("Answer: " + text(item["final_answer"]["statement"]))
+    else:
+        answer = item.get("final_answer") or {}
+        if answer.get("answer_id"):
+            body.append("The full answer is in the answers appendix — try it first.")
     checks = [role_words(x) for x in item.get("verification_steps") or []]
     if checks:
         body.append("Once you have an answer, check it: " + "; ".join(checks))
-    return body
+    return [x for x in body if x]
 
 
 def compile_full(lesson, lid, policy):
@@ -293,6 +338,57 @@ def compile_probe(lesson, lid):
     ]
 
 
+PROTECTED_ATTEMPT_KINDS = ("GUIDED_PRACTICE", "FADED_PRACTICE", "INDEPENDENT_PRACTICE", "PROBE")
+
+
+def answer_statements(lesson):
+    """Every resolved answer string anywhere in this lesson."""
+    out = []
+    for key in ("worked_example", "guided_attempt", "faded_attempt", "independent_attempt",
+                "probe_attempt", "misconception_repair"):
+        item = lesson.get(key) or {}
+        statement = ((item.get("final_answer") or {}).get("statement") or "").strip()
+        if statement:
+            out.append(statement)
+    return out
+
+
+def validate_answer_custody(lesson, lesson_plan):
+    """Protected attempt surfaces may not print the answer beside the question.
+
+    The worked example is allowed to resolve in front of the learner — that is its job.
+    Guided, faded, independent and probe cards are not.
+    """
+    statements = set(answer_statements(lesson))
+    worked = ((lesson.get("worked_example") or {}).get("final_answer") or {}).get("statement", "")
+    for module_row in lesson_plan["modules"]:
+        if module_row["kind"] not in PROTECTED_ATTEMPT_KINDS:
+            continue
+        if module_row["answer_revealing"]:
+            fail("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE",
+                 f"{lesson_plan['lesson_ref']}:{module_row['kind']}:declared answer-revealing")
+        blob = " ".join(module_row["body"])
+        for statement in statements:
+            if statement and statement in blob and statement != worked:
+                fail("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE",
+                     f"{lesson_plan['lesson_ref']}:{module_row['kind']}")
+    return True
+
+
+def count_unanswered(lesson):
+    """Learner-facing questions in this lesson that resolve to no answer artifact."""
+    missing = []
+    for key in ("worked_example", "guided_attempt", "faded_attempt", "independent_attempt",
+                "probe_attempt"):
+        item = lesson.get(key)
+        if not item:
+            continue
+        answer = item.get("final_answer") or {}
+        if answer.get("value") is None or not item.get("answer_ref"):
+            missing.append(key)
+    return missing
+
+
 def validate_modules(lesson_plan, policy):
     mode = lesson_plan["lesson_mode"]
     kinds = [m["kind"] for m in lesson_plan["modules"]]
@@ -320,6 +416,7 @@ def build_publication_plan(core1, policy=None):
     lessons = []
     counts = {"FULL_LEARNING": 0, "CONCISE_VERIFY_ONLY": 0, "PROBE": 0}
     template_count = 0
+    unanswered_count = 0
     for lesson in core1.get("lessons") or []:
         mode = lesson["lesson_mode"]
         counts[mode] = counts.get(mode, 0) + 1
@@ -333,6 +430,10 @@ def build_publication_plan(core1, policy=None):
         else:
             fail("CORE1A_SEMANTIC_DRIFT", f"unknown lesson mode {mode}")
         findings = template_findings(lesson, policy)
+        unanswered = count_unanswered(lesson)
+        if unanswered:
+            findings.append("LEARNER_QUESTION_WITHOUT_ANSWER")
+            unanswered_count += len(unanswered)
         template_count += int("CORE1A_TEMPLATE_ONLY_CONTENT" in findings)
         rec = {
             "lesson_ref": lid,
@@ -342,9 +443,10 @@ def build_publication_plan(core1, policy=None):
             "concept_badge": concept_badge(lesson),
             "publication_template": policy["templates"][mode],
             "modules": mods,
-            "content_maturity_findings": findings,
+            "content_maturity_findings": sorted(set(findings)),
         }
         validate_modules(rec, policy)
+        validate_answer_custody(lesson, rec)
         lessons.append(rec)
 
     aps = core1.get("appendices") or {}
@@ -369,6 +471,7 @@ def build_publication_plan(core1, policy=None):
         },
         "quality_summary": {
             "template_only_content_count": template_count,
+            "learner_questions_without_answer": unanswered_count,
             "full_learning_count": counts.get("FULL_LEARNING", 0),
             "compact_count": counts.get("CONCISE_VERIFY_ONLY", 0),
             "probe_count": counts.get("PROBE", 0),

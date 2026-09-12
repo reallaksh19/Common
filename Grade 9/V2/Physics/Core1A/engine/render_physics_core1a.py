@@ -295,15 +295,19 @@ class Book:
         self.c.setFont("Helvetica", font)
         self.min_body_font = min(self.min_body_font, font)
         max_lines = max(1, int((h - head_h - 21 - work_h) / LEAD))
-        for line in lines[:max_lines]:
+        truncated = len(lines) > max_lines
+        shown = lines[:max_lines - 1] if truncated and max_lines > 1 else lines[:max_lines]
+        for line in shown:
             if line:
                 self.text(line)
                 self.c.drawString(x + 12, ty, line)
             ty -= LEAD
-        if len(lines) > max_lines:
+        if truncated:
+            # its own line, never printed over the last line of body text
             self.c.setFillColor(MUTED)
             self.c.setFont("Helvetica-Oblique", SMALL)
-            self.c.drawRightString(x + w - 12, ty + LEAD, "continues on the next page")
+            self.c.drawRightString(x + w - 12, ty, "(shortened to fit this page)")
+            ty -= LEAD
         if work_lines:
             base = y + 12
             self.c.setStrokeColor(colors.HexColor("#C5CDD5"))
@@ -536,39 +540,41 @@ def render_full_lesson(book, lesson_plan, number, rep_specs, primitive_renderer,
     see = first_module(lesson_plan, "SEE_IT")
     _card(book, see, MARGIN + col_w + col_gap, y_fig, col_w, max_h=280)
 
-    # Page B — explanation + worked reasoning + misconception repair.
-    y = book.new_page(section, title + " — how to do it")
-    y = book.title(y, number, title, "Build the picture, then test the shortcut that looks easier.", badge)
+    # Page B — the worked example gets a page of its own: a solved instance needs room for
+    # the situation, the givens, every route state with its substitution, and the answer.
+    y = book.new_page(section, title + " — watch it solved")
+    y = book.title(y, number, title, "One question, solved all the way to a number.", badge)
     y = book.card(MARGIN, y, PAGE_W - 2 * MARGIN, learner_title("REPRESENTATION_BRIDGE"),
-                  see["body"], "SEE_IT", max_h=150,
+                  see["body"], "SEE_IT", max_h=110,
                   subtitle=learner_subtitle("REPRESENTATION_BRIDGE"))
     spec2 = realize_specs[0] if realize_specs else (rep_specs[1] if len(rep_specs) > 1 else spec)
     if spec2 is not None:
         placed.append(id(spec2))
-    y, _ = book.figure(MARGIN, y, PAGE_W - 2 * MARGIN, 170,
+    y, _ = book.figure(MARGIN, y, PAGE_W - 2 * MARGIN, 140,
                        "The same situation drawn out. No new numbers are introduced here.",
                        spec2 if spec2 is not spec else None, primitive_renderer, intent_id)
     worked = first_module(lesson_plan, "WORKED_EXAMPLE")
-    trap = first_module(lesson_plan, "COMMON_TRAP")
-    _card(book, worked, MARGIN, y, col_w, max_h=250)
-    _card(book, trap, MARGIN + col_w + col_gap, y, col_w, max_h=250)
+    _card(book, worked, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=max(200, y - MARGIN - 12))
 
-    # Page C — faded practice + retrieval.
+    # Page C — the trap, the checks and where the idea goes next.
+    y = book.new_page(section, title + " — watch out for this")
+    y = book.title(y, number, title, "The shortcut that looks easier, and why it breaks.", badge)
+    trap = first_module(lesson_plan, "COMMON_TRAP")
+    y = _card(book, trap, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=260, work_lines=3)
+    check = first_module(lesson_plan, "PHYSICAL_CHECK")
+    y = _card(book, check, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=140)
+    selfc = first_module(lesson_plan, "SELF_CHECK")
+    y = _card(book, selfc, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=125)
+    transfer = first_module(lesson_plan, "TRANSFER_BRIDGE")
+    _card(book, transfer, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=110)
+
+    # Page D — practice, each attempt full width with its own working space.
     y = book.new_page(section, title + " — your turn")
     y = book.title(y, number, title, "Try it with help, then with less, then on your own.", badge)
-    g = first_module(lesson_plan, "GUIDED_PRACTICE")
-    f = first_module(lesson_plan, "FADED_PRACTICE")
-    ind = first_module(lesson_plan, "INDEPENDENT_PRACTICE")
-    y1 = _card(book, g, MARGIN, y, col_w, max_h=225, work_lines=g["work_space_lines"])
-    _card(book, f, MARGIN, y1, col_w, max_h=225, work_lines=f["work_space_lines"])
-    y2 = _card(book, ind, MARGIN + col_w + col_gap, y, col_w, max_h=270,
-               work_lines=ind["work_space_lines"])
-    check = first_module(lesson_plan, "PHYSICAL_CHECK")
-    y2 = _card(book, check, MARGIN + col_w + col_gap, y2, col_w, max_h=130)
-    selfc = first_module(lesson_plan, "SELF_CHECK")
-    y2 = _card(book, selfc, MARGIN + col_w + col_gap, y2, col_w, max_h=120)
-    transfer = first_module(lesson_plan, "TRANSFER_BRIDGE")
-    _card(book, transfer, MARGIN, min(y1 - 235, y2), PAGE_W - 2 * MARGIN, max_h=100)
+    for kind in ("GUIDED_PRACTICE", "FADED_PRACTICE", "INDEPENDENT_PRACTICE"):
+        m = first_module(lesson_plan, kind)
+        y = _card(book, m, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=225,
+                  work_lines=m["work_space_lines"])
 
     remaining = [s for s in (see_specs + realize_specs + understand_specs) if id(s) not in placed]
     if remaining:
