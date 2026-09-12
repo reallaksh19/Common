@@ -1,0 +1,260 @@
+{
+  "registry_id": "CHEM-LEARNER-COPY-TITLES-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Governed mapping from internal role/state identifiers to the warm, plain-English titles a Grade-9 learner actually reads. Internal identifiers are NOT renamed: schema fields, falsifier names and JSON enum values keep using them, and every test and engine keeps matching on them. What changes is that no renderer may print an internal role verbatim on a learner surface — it must resolve the role through this registry or fail closed.",
+  "reading_level_target": "GRADE_9_PLAIN_ENGLISH_WARM_NOT_CLINICAL",
+  "resolution_policy": "FAIL_CLOSED_NEVER_PRINT_INTERNAL_ROLE",
+  "used_by": [
+    "Grade 9/V2/Chemistry/ExactProduct/engine/realize_chemistry_exact_product.py"
+  ],
+  "falsifiers": [
+    "INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE",
+    "LEARNER_TITLE_MISSING_FOR_ROLE",
+    "LEARNER_TITLE_IS_INTERNAL_ROLE",
+    "LEARNER_TITLE_REGISTRY_DIGEST_DRIFT"
+  ],
+  "titles": {
+    "ACTIVATION": {
+      "learner_facing_title": "Get ready",
+      "surface": "CORE1"
+    },
+    "FAMILIAR_CONTEXT": {
+      "learner_facing_title": "Start with something you know",
+      "surface": "CORE1"
+    },
+    "MACROSCOPIC_ANCHOR": {
+      "learner_facing_title": "What you would actually see",
+      "surface": "CORE1"
+    },
+    "REPRESENTATION": {
+      "learner_facing_title": "Picture it like this",
+      "surface": "CORE1"
+    },
+    "ORDINARY_LANGUAGE_EXPLANATION": {
+      "learner_facing_title": "The idea in plain words",
+      "surface": "CORE1"
+    },
+    "RULE_MODEL_CONDITION": {
+      "learner_facing_title": "The rule you will use",
+      "surface": "CORE1"
+    },
+    "WHY_RECONSTRUCTION": {
+      "learner_facing_title": "Why it works",
+      "surface": "CORE1"
+    },
+    "WORKED_REASONING": {
+      "learner_facing_title": "Watch one worked out",
+      "surface": "CORE1"
+    },
+    "WORKED_REASONING_CHECK": {
+      "learner_facing_title": "Does the answer make sense?",
+      "surface": "CORE1"
+    },
+    "CONCEPT_HELPER": {
+      "learner_facing_title": "If you get stuck",
+      "surface": "CORE1"
+    },
+    "MISCONCEPTION_REPAIR": {
+      "learner_facing_title": "Common mistake to avoid",
+      "surface": "CORE1"
+    },
+    "MISCONCEPTION_WRONG_MODEL": {
+      "learner_facing_title": "An easy way to get this wrong",
+      "surface": "CORE1"
+    },
+    "MISCONCEPTION_CONTRAST": {
+      "learner_facing_title": "Now compare these two",
+      "surface": "CORE1"
+    },
+    "MISCONCEPTION_RETRY": {
+      "learner_facing_title": "Try that one again",
+      "surface": "CORE1"
+    },
+    "GUIDED_ATTEMPT": {
+      "learner_facing_title": "Try it with help",
+      "surface": "CORE1"
+    },
+    "FADED_ATTEMPT": {
+      "learner_facing_title": "Try it with less help",
+      "surface": "CORE1"
+    },
+    "INDEPENDENT_ATTEMPT": {
+      "learner_facing_title": "Now try it on your own",
+      "surface": "CORE1"
+    },
+    "INDEPENDENT_CHECK": {
+      "learner_facing_title": "Quick self-check",
+      "surface": "CORE1"
+    },
+    "CHEMICAL_VERIFICATION": {
+      "learner_facing_title": "Check your answer",
+      "surface": "BOTH"
+    },
+    "VERIFY": {
+      "learner_facing_title": "Check your answer",
+      "surface": "BOTH"
+    },
+    "TRANSFER": {
+      "learner_facing_title": "Where this shows up next",
+      "surface": "CORE1"
+    },
+    "DIAGNOSTIC_PROBE": {
+      "learner_facing_title": "One quick question first",
+      "surface": "CORE1"
+    },
+    "EVIDENCE_INTERPRETATION": {
+      "learner_facing_title": "What the evidence tells you",
+      "surface": "CORE1"
+    },
+    "APPENDIX_A_CORE_PRACTICE": {
+      "learner_facing_title": "Practice questions",
+      "surface": "CORE1"
+    },
+    "APPENDIX_A_ITEM": {
+      "learner_facing_title": "Practice",
+      "surface": "CORE1"
+    },
+    "APPENDIX_ANSWER_CHECK_STRIP": {
+      "learner_facing_title": "Quick answers — cover this page while you work",
+      "surface": "CORE1"
+    },
+    "APPENDIX_B_CORE_SOLUTIONS": {
+      "learner_facing_title": "Worked answers",
+      "surface": "CORE1"
+    },
+    "APPENDIX_B_ITEM": {
+      "learner_facing_title": "Worked answer",
+      "surface": "CORE1"
+    },
+    "APPENDIX_C_PRINTABLE_HANDOUT": {
+      "learner_facing_title": "One-page reminder sheet",
+      "surface": "CORE1"
+    },
+    "APPENDIX_C_NOTE": {
+      "learner_facing_title": "Print this page. It has no answers on it, and nothing new to learn — it is just the reminders.",
+      "surface": "CORE1"
+    },
+    "HANDOUT_FIRST_MOVE": {
+      "learner_facing_title": "Start by",
+      "surface": "CORE1"
+    },
+    "HANDOUT_RULE_CUE": {
+      "learner_facing_title": "Rule to remember",
+      "surface": "CORE1"
+    },
+    "HANDOUT_VERIFICATION_CUE": {
+      "learner_facing_title": "Before you move on",
+      "surface": "CORE1"
+    },
+    "WORKSPACE": {
+      "learner_facing_title": "Your working space",
+      "surface": "BOTH"
+    },
+    "H0_ATTEMPT_FIRST": {
+      "learner_facing_title": "Try it first",
+      "surface": "CORE2"
+    },
+    "H1_NOTICE": {
+      "learner_facing_title": "First nudge — what to notice",
+      "surface": "CORE2"
+    },
+    "H2_RULE_MODEL_REPRESENTATION": {
+      "learner_facing_title": "Second nudge — what to use",
+      "surface": "CORE2"
+    },
+    "H3_START": {
+      "learner_facing_title": "Third nudge — how to start",
+      "surface": "CORE2"
+    },
+    "REASONING_ROUTE": {
+      "learner_facing_title": "The path through this question",
+      "surface": "CORE2"
+    },
+    "SOLUTION_ROUTE": {
+      "learner_facing_title": "Full worked solution",
+      "surface": "CORE2"
+    },
+    "IMMEDIATE_ANSWER_CHECK": {
+      "learner_facing_title": "Answer check — cover this until you finish",
+      "surface": "BOTH"
+    },
+    "EXPECTED_RESPONSE_RUBRIC": {
+      "learner_facing_title": "What a good answer must include",
+      "surface": "BOTH"
+    },
+    "FINAL_ANSWER": {
+      "learner_facing_title": "Final answer",
+      "surface": "CORE2"
+    },
+    "PRIMARY_CONCEPT": {
+      "learner_facing_title": "Main idea being tested",
+      "surface": "CORE2"
+    },
+    "SUPPORTING_CONCEPT": {
+      "learner_facing_title": "Also uses",
+      "surface": "CORE2"
+    },
+    "CORE1_SOURCE_LINK": {
+      "learner_facing_title": "Where you learned this",
+      "surface": "CORE2"
+    },
+    "SOURCE_BADGE": {
+      "learner_facing_title": "Where this question comes from",
+      "surface": "CORE2"
+    },
+    "SOURCE_CONDITION": {
+      "learner_facing_title": "Condition given in the question",
+      "surface": "CORE2"
+    },
+    "SOURCE_FIGURE": {
+      "learner_facing_title": "The picture that comes with this question",
+      "surface": "CORE2"
+    }
+  },
+  "forbidden_heading_phrases": [
+    "misconception",
+    "repair",
+    "clinic",
+    "representation",
+    "reconstruct",
+    "verification",
+    "activation",
+    "activate",
+    "faded",
+    "guided attempt",
+    "independent attempt",
+    "diagnostic probe",
+    "reasoning route",
+    "transfer bridge",
+    "capability",
+    "treatment",
+    "hint ladder",
+    "rubric",
+    "primitive",
+    "page intent",
+    "study model",
+    "problem family",
+    "falsifier",
+    "pck"
+  ],
+  "forbidden_anywhere_phrases": [
+    "misconception",
+    "capability",
+    "study model",
+    "page intent",
+    "teaching primitive",
+    "hint ladder",
+    "problem family",
+    "falsifier",
+    "pedagogical design",
+    "reasoning role",
+    "treatment policy",
+    "publication engineering"
+  ],
+  "known_learner_copy_debt": [
+    "The word 'representation' still appears inside upstream-authored body copy that comes from the C-G problem-authoring templates, the promoted-PCK registry and the C-H primitive descriptions. It is barred from headings by forbidden_heading_phrases but is not yet barred everywhere, because rewriting that copy is a subject-authoring change rather than a renderer change. It is queued for the next authoring-copy pass and is deliberately NOT listed in forbidden_anywhere_phrases so this registry does not claim a cleanliness it has not got.",
+    "Chemistry-specific role titles beyond this table (for example a future 'lab safety note' role) must be added here before a renderer may print them; an unmapped role fails closed with LEARNER_TITLE_MISSING_FOR_ROLE rather than falling back to the internal identifier."
+  ],
+  "registry_digest": "9336556397eeb17811f7f7c9cde4560b808565119d87d9fc47d970e10dad5165"
+}
