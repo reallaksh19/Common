@@ -16,7 +16,7 @@
     "instructional_authoring_profile": "Grade 9/V2/Physics/CoreAuthoring/registry/physics-instructional-authoring-profile.json",
     "item_semantics_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/motion-item-semantics.json",
     "item_validity_registry": "Grade 9/V2/Physics/AssessmentReview/registry/physics-item-validity-registry.json",
-    "learner_copy_titles": "Grade 9/V2/Physics/Core1A/registry/physics-learner-copy-titles.json",
+    "learner_copy_titles": "Grade 9/V2/Physics/Core1A/registry/physics-core1a-learner-language.json",
     "learner_evidence_ledger": "Grade 9/V2/Physics/LearnerEvidence/fixtures/physics-learner-evidence-ledger.fixture.json",
     "observation_code_registry": "Grade 9/V2/Physics/LearnerEvidence/registry/physics-observation-code-registry.json",
     "page_intent_profile": "Grade 9/V2/Physics/Representation/registry/physics-page-intent-profile.json",
@@ -77,7 +77,7 @@
       "MACHINE_AUTHORITY_CHECK"
     ]
   },
-  "manifest_digest": "27168a841178e56178dfdc331a038c9310d74b371ace2b2d106e2926dae893ea",
+  "manifest_digest": "d848f8346106df3858b6d8c63e99171961ec455320dc1e311b81dcdab060c0ca",
   "manifest_id": "PHY-GENERATION-AUTHORITY-v1",
   "phase_order": [
     "P-A0 SourceLedger",

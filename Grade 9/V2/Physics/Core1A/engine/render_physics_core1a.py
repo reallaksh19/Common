@@ -255,17 +255,62 @@ class Book:
         self.account(MARGIN, y - 20, PAGE_W - 2 * MARGIN, 38)
         return y - 34
 
-    def card(self, x, y_top, w, title, body, kind="KEY_IDEA", max_h=None, font=BODY,
-             work_lines=0, subtitle=""):
-        accent, bg = KIND_STYLE.get(kind, (NAVY, PALE_BLUE))
+    def has_area_for(self, w, h, fill=0.92):
+        """Would this block push the page past its breathing-space budget?"""
+        content_area = (PAGE_H - 2 * MARGIN) * (PAGE_W - 2 * MARGIN)
+        return self.used_area + max(0.0, w) * max(0.0, h) <= fill * content_area
+
+    def card_height(self, w, body, subtitle="", font=BODY, work_lines=0, max_h=None,
+                    lines=None):
+        """Exactly the height ``card`` will use, so a page break is decided, not guessed."""
+        lines = self.wrapped(w, body, font) if lines is None else lines
+        head_h = 27 if not subtitle else 36
+        h = 4 + head_h + max(LEAD, len(lines) * LEAD) + work_lines * 15 + 15
+        return min(h, max_h) if max_h else h
+
+    def wrapped(self, w, body, font=BODY):
         inner = w - 24
         lines = []
         for para in body or []:
-            ps = wrap(para, "Helvetica", font, inner)
-            lines.extend(ps)
+            lines.extend(wrap(para, "Helvetica", font, inner))
             lines.append("")
         if lines and not lines[-1]:
             lines.pop()
+        return lines
+
+    def flow_card(self, x, y_top, w, title, body, kind="KEY_IDEA", font=BODY, subtitle="",
+                  section="", page_title="", bottom=None, head_room=34):
+        """Draw a card that continues onto further pages instead of being truncated.
+
+        The worked example is the one card a learner cannot afford to lose the end of: the
+        answer is at the bottom of it. So it flows rather than clipping.
+        """
+        bottom = MARGIN + 12 if bottom is None else bottom
+        lines = self.wrapped(w, body, font)
+        head_h = 27 if not subtitle else 36
+        content_area = (PAGE_H - 2 * MARGIN) * (PAGE_W - 2 * MARGIN)
+        first = True
+        while lines:
+            # never fill a page to its edge: leave breathing space, measured against the
+            # same occupancy metric the publication policy grades the page on
+            room_by_area = (0.92 * content_area - self.used_area) / max(1.0, w)
+            room_by_height = y_top - bottom
+            capacity = max(1, int((min(room_by_area, room_by_height) - head_h - 21) / LEAD))
+            chunk, lines = lines[:capacity], lines[capacity:]
+            heading = title if first else f"{title} (continued)"
+            y_top = self.card(x, y_top, w, heading, None, kind, font=font,
+                              subtitle=subtitle if first else "", lines=chunk)
+            first = False
+            if lines:
+                y_top = self.new_page(section, page_title)
+                y_top = self.title(y_top, "", page_title, "", "") if head_room else y_top
+        return y_top
+
+    def card(self, x, y_top, w, title, body, kind="KEY_IDEA", max_h=None, font=BODY,
+             work_lines=0, subtitle="", lines=None):
+        accent, bg = KIND_STYLE.get(kind, (NAVY, PALE_BLUE))
+        if lines is None:
+            lines = self.wrapped(w, body, font)
         head_h = 27 if not subtitle else 36
         text_h = max(LEAD, len(lines) * LEAD)
         work_h = work_lines * 15
@@ -462,6 +507,32 @@ def load_primitive_renderer():
         return None
 
 
+def primitive_size_contract(kind):
+    """Declared size floor for a primitive; the renderer allocates at least this much."""
+    try:
+        from physics_primitive_renderer import size_contract
+        return size_contract(kind)
+    except Exception:
+        return {"minimum_width_pt": 0.0, "minimum_height_pt": 0.0,
+                "supports_compact_variant": True}
+
+
+def figure_box_height(spec, requested, chrome=38.0):
+    """Height a figure box needs so the primitive inside clears its declared floor."""
+    if not spec:
+        return requested
+    floor = primitive_size_contract(spec.get("primitive_id", "")) ["minimum_height_pt"]
+    return max(float(requested), float(floor) + chrome)
+
+
+def fits_compact(spec, column_width, chrome=20.0):
+    if not spec:
+        return True
+    contract = primitive_size_contract(spec.get("primitive_id", ""))
+    return (contract["supports_compact_variant"]
+            and contract["minimum_width_pt"] + chrome <= column_width)
+
+
 def first_module(lesson_plan, kind):
     return next((m for m in lesson_plan["modules"] if m["kind"] == kind), None)
 
@@ -480,33 +551,42 @@ def _phase_specs(specs, phase):
     return [s for s in specs if s.get("page_intent_phase") == phase]
 
 
-def render_gallery(book, section, title, badge, specs, primitive_renderer, intent_id, number):
+def render_gallery(book, section, title, badge, specs, primitive_renderer, intent_id, number,
+                   start_y=None):
     """Place every remaining P-H representation for this capability.
 
     Core (1A) chooses the teaching spread, but it may not silently drop representations
     the P-H bundle declared for the capability: each one still gets a real page position
     and real draw-time evidence.
+
+    Figures are packed into whatever room the lesson left and then onto further pages,
+    sized to fill the page they land on — but never below the largest declared size floor
+    among them, because a figure squeezed under its floor is a publication defect rather
+    than a tighter layout.
     """
-    # Balanced chunks with an adaptive figure height, so the last gallery page of a
-    # capability is a full page of teaching rather than a mostly-empty tail.
-    max_per_page = 4
-    pages = max(1, math.ceil(len(specs) / max_per_page))
-    per_page = math.ceil(len(specs) / pages)
     gap = 4
-    for start in range(0, len(specs), per_page):
-        chunk = specs[start:start + per_page]
-        y = book.new_page(section, title)
-        y = book.title(y, number, title, "Different pictures of the same idea.", badge)
-        available = y - (MARGIN + 6)
-        fig_h = max(140.0, min(300.0, available / len(chunk) - (9 + gap)))
-        for spec in chunk:
-            phase_label = PHASE_GALLERY_TITLE.get(spec.get("page_intent_phase"), "Another way to see this")
+    floor = max([primitive_size_contract(s.get("primitive_id", ""))["minimum_height_pt"]
+                 for s in specs] or [0.0]) + 38.0
+    y = start_y
+    i = 0
+    while i < len(specs):
+        if y is None or y - (floor + 9 + gap) < MARGIN + 30:
+            y = book.new_page(section, title)
+            y = book.title(y, number, title, "Different pictures of the same idea.", badge)
+        available = y - (MARGIN + 30)
+        n = max(1, min(4, int(available // (floor + 9 + gap)), len(specs) - i))
+        fig_h = max(floor, min(300.0, available / n - (9 + gap)))
+        for spec in specs[i:i + n]:
+            phase_label = PHASE_GALLERY_TITLE.get(spec.get("page_intent_phase"),
+                                                  "Another way to see this")
             caption = phase_label + " — " + clean(
                 spec.get("accessibility_text") or spec.get("instructional_job")
                 or "another way to picture this.")
             y, _ = book.figure(MARGIN, y, PAGE_W - 2 * MARGIN, fig_h, caption,
                                spec, primitive_renderer, intent_id)
             y -= gap
+        i += n
+    return y
 
 
 def render_full_lesson(book, lesson_plan, number, rep_specs, primitive_renderer, section):
@@ -530,15 +610,23 @@ def render_full_lesson(book, lesson_plan, number, rep_specs, primitive_renderer,
     key = first_module(lesson_plan, "KEY_IDEA")
     y_left = _card(book, key, MARGIN, y_left, col_w, max_h=150)
     model = first_module(lesson_plan, "MODEL_CHECK")
-    _card(book, model, MARGIN, y_left, col_w, max_h=165)
+    y_left = _card(book, model, MARGIN, y_left, col_w, max_h=165)
     spec = see_specs[0] if see_specs else (rep_specs[0] if rep_specs else None)
     if spec is not None:
         placed.append(id(spec))
-    y_fig, _ = book.figure(MARGIN + col_w + col_gap, y, col_w, 235,
-                           "Link the real situation to a drawing before you calculate.",
-                           spec, primitive_renderer, intent_id)
     see = first_module(lesson_plan, "SEE_IT")
-    _card(book, see, MARGIN + col_w + col_gap, y_fig, col_w, max_h=280)
+    caption = "Link the real situation to a drawing before you calculate."
+    if spec is not None and not fits_compact(spec, col_w):
+        # The primitive's own size contract says it cannot teach in a half-width column,
+        # so it takes the full measure below both columns instead of being squeezed.
+        y_right = _card(book, see, MARGIN + col_w + col_gap, y, col_w, max_h=280)
+        book.figure(MARGIN, min(y_left, y_right), PAGE_W - 2 * MARGIN,
+                    figure_box_height(spec, 190), caption, spec, primitive_renderer, intent_id)
+    else:
+        y_fig, _ = book.figure(MARGIN + col_w + col_gap, y, col_w,
+                               figure_box_height(spec, 235), caption,
+                               spec, primitive_renderer, intent_id)
+        _card(book, see, MARGIN + col_w + col_gap, y_fig, col_w, max_h=280)
 
     # Page B — the worked example gets a page of its own: a solved instance needs room for
     # the situation, the givens, every route state with its substitution, and the answer.
@@ -550,35 +638,51 @@ def render_full_lesson(book, lesson_plan, number, rep_specs, primitive_renderer,
     spec2 = realize_specs[0] if realize_specs else (rep_specs[1] if len(rep_specs) > 1 else spec)
     if spec2 is not None:
         placed.append(id(spec2))
-    y, _ = book.figure(MARGIN, y, PAGE_W - 2 * MARGIN, 140,
+    y, _ = book.figure(MARGIN, y, PAGE_W - 2 * MARGIN,
+                       figure_box_height(spec2 if spec2 is not spec else None, 150),
                        "The same situation drawn out. No new numbers are introduced here.",
                        spec2 if spec2 is not spec else None, primitive_renderer, intent_id)
     worked = first_module(lesson_plan, "WORKED_EXAMPLE")
-    _card(book, worked, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=max(200, y - MARGIN - 12))
+    book.flow_card(MARGIN, y, PAGE_W - 2 * MARGIN, worked["title"], worked["body"],
+                   worked["kind"], subtitle=worked.get("subtitle", ""),
+                   section=section, page_title=title + " — watch it solved",
+                   bottom=MARGIN + 40)
 
-    # Page C — the trap, the checks and where the idea goes next.
-    y = book.new_page(section, title + " — watch out for this")
-    y = book.title(y, number, title, "The shortcut that looks easier, and why it breaks.", badge)
-    trap = first_module(lesson_plan, "COMMON_TRAP")
-    y = _card(book, trap, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=260, work_lines=3)
-    check = first_module(lesson_plan, "PHYSICAL_CHECK")
-    y = _card(book, check, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=140)
-    selfc = first_module(lesson_plan, "SELF_CHECK")
-    y = _card(book, selfc, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=125)
-    transfer = first_module(lesson_plan, "TRANSFER_BRIDGE")
-    _card(book, transfer, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=110)
+    # The trap, the checks, where the idea goes next, then the practice. These continue on
+    # whatever room the worked example left rather than each starting a fresh page, so the
+    # book has no half-empty pages between one teaching unit and the next.
+    full_w = PAGE_W - 2 * MARGIN
 
-    # Page D — practice, each attempt full width with its own working space.
-    y = book.new_page(section, title + " — your turn")
-    y = book.title(y, number, title, "Try it with help, then with less, then on your own.", badge)
+    def flow(module_row, subtitle, suffix, *, max_h, work_lines=0):
+        """Place one card, opening a page only when this card genuinely will not fit."""
+        nonlocal y
+        need = book.card_height(full_w, module_row["body"],
+                               subtitle=module_row.get("subtitle", ""),
+                               work_lines=work_lines, max_h=max_h)
+        if y - need < MARGIN + 12 or not book.has_area_for(full_w, need):
+            y = book.new_page(section, title + suffix)
+            y = book.title(y, number, title, subtitle, badge)
+        y = _card(book, module_row, MARGIN, y, full_w, max_h=max_h, work_lines=work_lines)
+        return y
+
+    flow(first_module(lesson_plan, "COMMON_TRAP"),
+         "The shortcut that looks easier, and why it breaks.", " — watch out for this",
+         max_h=260, work_lines=3)
+    flow(first_module(lesson_plan, "PHYSICAL_CHECK"),
+         "Check it before you accept it.", " — checking your work", max_h=140)
+    flow(first_module(lesson_plan, "SELF_CHECK"),
+         "Check it before you accept it.", " — checking your work", max_h=125)
+    flow(first_module(lesson_plan, "TRANSFER_BRIDGE"),
+         "Where this idea turns up next.", " — what comes next", max_h=110)
     for kind in ("GUIDED_PRACTICE", "FADED_PRACTICE", "INDEPENDENT_PRACTICE"):
         m = first_module(lesson_plan, kind)
-        y = _card(book, m, MARGIN, y, PAGE_W - 2 * MARGIN, max_h=225,
-                  work_lines=m["work_space_lines"])
+        flow(m, "Try it with help, then with less, then on your own.", " — your turn",
+             max_h=225, work_lines=m["work_space_lines"])
 
     remaining = [s for s in (see_specs + realize_specs + understand_specs) if id(s) not in placed]
     if remaining:
-        render_gallery(book, section, title, badge, remaining, primitive_renderer, intent_id, number)
+        render_gallery(book, section, title, badge, remaining, primitive_renderer,
+                       intent_id, number, start_y=y)
     book.close_intent(intent)
 
 
@@ -595,7 +699,7 @@ def render_compact_lesson(book, lesson_plan, number, rep_specs, primitive_render
                       work_lines=m.get("work_space_lines", 0))
     if rep_specs:
         render_gallery(book, section, title, lesson_plan["concept_badge"], rep_specs,
-                       primitive_renderer, intent_id, number)
+                       primitive_renderer, intent_id, number, start_y=y)
     book.close_intent(intent)
 
 
@@ -613,7 +717,7 @@ def render_probe_lesson(book, lesson_plan, number, rep_specs, primitive_renderer
                       work_lines=m.get("work_space_lines", 0))
     if rep_specs:
         render_gallery(book, section, title, lesson_plan["concept_badge"], rep_specs,
-                       primitive_renderer, intent_id, number)
+                       primitive_renderer, intent_id, number, start_y=y)
     book.close_intent(intent)
 
 

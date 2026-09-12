@@ -323,6 +323,125 @@ nocolour = copy.deepcopy(contract)
 nocolour["accessibility"]["grayscale_safe_required"] = False
 expect("COLOUR_IS_THE_ONLY_CHANNEL", lambda: build(con=nocolour))
 
+# ------------------------------------------------- renderer geometry hardening ---
+# P-UPGRADE-2 item 5: bbox is a hard clip boundary, the ink box is a real bound, and
+# every primitive carries a size contract that is checked at more than one size.
+import tempfile  # noqa: E402
+from reportlab.pdfgen import canvas as rl_canvas  # noqa: E402
+from physics_primitive_renderer import (  # noqa: E402
+    render_primitive, size_contract, supported_kinds, TracingCanvas, TracingPath,
+    check_size_contract, PrimitiveRenderError,
+)
+
+TMPPDF = str(Path(tempfile.mkdtemp()) / "probe.pdf")
+
+
+def fresh_canvas():
+    return rl_canvas.Canvas(TMPPDF, pagesize=(700, 900))
+
+
+def expect_code(code, fn):
+    try:
+        fn()
+    except (PrimitiveRenderError, ValueError) as e:
+        assert str(e).startswith(code), (code, str(e))
+        PASSES.append(code)
+        return
+    raise AssertionError("expected " + code)
+
+
+# every primitive declares a size contract, and it is a real floor
+for kind in supported_kinds():
+    c = size_contract(kind)
+    assert c["minimum_width_pt"] >= 120 and c["minimum_height_pt"] >= 60, kind
+    assert isinstance(c["supports_compact_variant"], bool), kind
+PASSES.append("EVERY_PRIMITIVE_DECLARES_A_SIZE_CONTRACT")
+
+# a primitive asked to draw below its declared floor is refused, not rendered badly
+for kind in ("VELOCITY_TIME_GRAPH", "VECTOR_STATE_VIEW", "FORCE_DIAGRAM"):
+    contract = size_contract(kind)
+    tiny = (contract["minimum_width_pt"] - 20, contract["minimum_height_pt"] - 20)
+    expect_code("PRIMITIVE_MIN_SIZE_VIOLATION",
+                lambda k=kind, t=tiny: render_primitive(k, {}, fresh_canvas(), (40, 40, t[0], t[1])))
+
+# at or above the floor, and at a second, larger size, ink stays inside the allocation
+for kind in supported_kinds():
+    contract = size_contract(kind)
+    for (w, h) in ((contract["minimum_width_pt"], contract["minimum_height_pt"]),
+                   (contract["minimum_width_pt"] + 180, contract["minimum_height_pt"] + 90)):
+        ev = render_primitive(kind, {}, fresh_canvas(), (40, 40, w, h))
+        assert ev["clipped_to_bbox"] is True, kind
+        assert ev["vector_ops"] > 0, kind
+        assert ev["ink_escapes_bbox"] is False, (kind, w, h, ev["ink_overflow_pt"])
+        assert not ev["path_ops_without_extent"], (kind, ev["path_ops_without_extent"])
+PASSES.append("PRIMITIVE_INK_STAYS_INSIDE_ITS_BBOX_AT_TWO_SIZES")
+
+# the falsifier is real: a deliberately escaping primitive is caught, not allowed
+import physics_primitive_renderer as _PR  # noqa: E402
+
+
+def _escaping(c, x, y, w, h, params):
+    c.setFont("Helvetica", 8)
+    c.rect(x, y, w, h)
+    c.line(x - 60, y - 40, x + w + 60, y + h + 40)
+
+
+_PR.RENDERERS["TEST_ESCAPING_PRIMITIVE"] = _escaping
+try:
+    ev = render_primitive("TEST_ESCAPING_PRIMITIVE", {}, fresh_canvas(), (200, 200, 300, 200),
+                          enforce_size_contract=False)
+    assert ev["ink_escapes_bbox"] is True and ev["ink_overflow_pt"] >= 40
+    expect_code("PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX",
+                lambda: render_primitive("TEST_ESCAPING_PRIMITIVE", {}, fresh_canvas(),
+                                         (200, 200, 300, 200), strict=True,
+                                         enforce_size_contract=False))
+
+    # a path built on the raw canvas contributes no measurable extent, and saying so is
+    # the point: an unmeasured path op means the ink box is not a bound at all
+    def _untraced_path(c, x, y, w, h, params):
+        c.rect(x, y, w, h)
+        raw = c._c.beginPath()
+        raw.moveTo(x + 5, y + 5)
+        raw.lineTo(x + w - 5, y + h - 5)
+        c.drawPath(raw)
+
+    _PR.RENDERERS["TEST_UNTRACED_PATH"] = _untraced_path
+    ev = render_primitive("TEST_UNTRACED_PATH", {}, fresh_canvas(), (200, 200, 300, 200),
+                          enforce_size_contract=False)
+    assert "drawPath:untraced_path" in ev["path_ops_without_extent"]
+    expect_code("TRACING_BBOX_INCOMPLETE_FOR_PATH_OP",
+                lambda: render_primitive("TEST_UNTRACED_PATH", {}, fresh_canvas(),
+                                         (200, 200, 300, 200), strict=True,
+                                         enforce_size_contract=False))
+finally:
+    _PR.RENDERERS.pop("TEST_ESCAPING_PRIMITIVE", None)
+    _PR.RENDERERS.pop("TEST_UNTRACED_PATH", None)
+
+# a Bezier's extent comes from its control points, not just its endpoints
+tracer = TracingCanvas(fresh_canvas())
+tracer.bezier(0, 0, 50, 400, 150, 400, 200, 0)
+assert tracer.ink_bbox["y1"] >= 400, tracer.ink_bbox
+path = tracer.beginPath()
+path.moveTo(0, 0)
+path.curveTo(10, 300, 90, 300, 100, 0)
+tracer.drawPath(path)
+assert tracer.ink_bbox["y1"] >= 400
+PASSES.append("TRACING_BBOX_ACCOUNTS_FOR_BEZIER_CONTROL_POINTS")
+
+# text contributes its measured extent, not the single anchor point
+tracer = TracingCanvas(fresh_canvas())
+tracer.setFont("Helvetica", 12)
+tracer.drawString(100, 100, "a reasonably long label")
+box = tracer.ink_bbox
+assert box["x1"] - box["x0"] > 90, box
+assert box["y0"] < 100 < box["y1"], box
+PASSES.append("TRACING_BBOX_USES_REAL_TEXT_EXTENT")
+
+# and the contract check itself reports the shortfall rather than a bare boolean
+detail = check_size_contract("VELOCITY_TIME_GRAPH", 100, 50, strict=False)
+assert detail["satisfied"] is False and detail["height_shortfall_pt"] > 0
+PASSES.append("SIZE_CONTRACT_REPORTS_THE_SHORTFALL")
+
 print(f"PHY P-H representation and realization falsifiers: {len(PASSES)} PASS")
 for code in PASSES:
     print("  -", code)

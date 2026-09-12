@@ -426,12 +426,13 @@ def resolve_verification(instance, symbols, states, answer, where):
     value = evaluate(equation, symbols, f"{where}:verification")
     mode = declared.get("compare_to", "FINAL_ANSWER")
     if mode == "FINAL_ANSWER":
-        expected = answer["value"]
+        # compare against the full-precision route value, not the rounded display value
+        expected = symbols[answer["symbol"]]
         expected_text = f"the answer, {fmt(expected, answer['unit'])}"
     else:
         expected = evaluate(declared["expected_equation"], symbols, f"{where}:verification-expected")
         expected_text = f"{declared['expected_equation']} = {fmt(expected)}"
-    if abs(float(value) - float(expected)) > max(TOLERANCE, abs(float(expected)) * 1e-6):
+    if abs(float(value) - float(expected)) > max(TOLERANCE, abs(float(expected)) * 1e-9):
         fail(VERIFICATION_ROUTE_NOT_INDEPENDENT,
              f"{where}: the second route gives {tidy(value)}, the first gives {tidy(expected)}")
     return {

@@ -49,6 +49,14 @@ TRACING_BBOX_INCOMPLETE_FOR_PATH_OP = "TRACING_BBOX_INCOMPLETE_FOR_PATH_OP"
 PRIMITIVE_MIN_SIZE_VIOLATION = "PRIMITIVE_MIN_SIZE_VIOLATION"
 
 REGISTRY_PATH = Path(__file__).resolve().parents[1] / "registry" / "physics-teaching-primitive-registry.json"
+
+# Primitives are handed a drawing box inset from their allocation by this much. Several
+# routines in the shared drawing layer place a right-edge label or an axis tick a fraction
+# of a point past the frame they were given; the inset keeps that hairline inside the
+# allocation instead of on a neighbouring block. It is a declared typographic margin, not
+# a tolerance on the falsifier: escapes are still measured against the full allocation, so
+# anything beyond the hairline is reported.
+INK_SAFETY_INSET_PT = 3.0
 # Size floors below which a primitive cannot render its own meaning. Used when the
 # registry cannot be read at all; the registry is the authority.
 _FALLBACK_SIZE_CONTRACT = {"minimum_width_pt": 200.0, "minimum_height_pt": 110.0,
@@ -335,6 +343,18 @@ def _fmt(value, unit=""):
     return f"{value}{(' ' + unit) if unit else ''}"
 
 
+def _fit(text, font, size, width):
+    """Trim a label to the room it actually has, so it cannot run out of the figure."""
+    s = str(text)
+    if width <= 0:
+        return ""
+    if stringWidth(s, font, size) <= width:
+        return s
+    while s and stringWidth(s + "…", font, size) > width:
+        s = s[:-1]
+    return (s + "…") if s else ""
+
+
 def _axis_label(params, key, default):
     return params.get(key) or default
 
@@ -448,7 +468,13 @@ def draw_vector_state_view(c, x, y, w, h, params):
         {"name": "v", "value": 1.0, "unit": ""},
         {"name": "a", "value": -1.0, "unit": ""},
     ]
-    base_x = x + 70
+    # Geometry derived from the allocated width. The signed scale is centred and the
+    # arrow reach is capped so that the value label on either side still lands inside
+    # the box: an arrow whose own label falls outside the figure is a bounds defect,
+    # not a style choice.
+    label_space = 78.0
+    base_x = x + w / 2.0
+    half = max(18.0, min(84.0, w / 2.0 - label_space - 12.0))
     top = y + h - 34
     # zero reference: the vertical body line plus a signed horizontal scale
     c.setStrokeColor(Palette.BORDER_CARD)
@@ -457,33 +483,41 @@ def draw_vector_state_view(c, x, y, w, h, params):
     c.setStrokeColor(Palette.BORDER_LIGHT)
     c.setLineWidth(0.5)
     c.setDash(2, 2)
-    for off in (-78, -39, 39, 78):
-        c.line(base_x + off, y + 22, base_x + off, top)
+    for frac in (-0.93, -0.46, 0.46, 0.93):
+        c.line(base_x + frac * half, y + 22, base_x + frac * half, top)
     c.setDash()
     c.setStrokeColor(Palette.TEXT_SECONDARY)
     c.setLineWidth(1.0)
-    c.line(base_x - 84, y + 22, base_x + 84, y + 22)
-    draw_arrow(c, base_x + 76, y + 22, base_x + 84, y + 22, Palette.TEXT_SECONDARY, line_width=1.0)
+    c.line(base_x - half, y + 22, base_x + half, y + 22)
+    draw_arrow(c, base_x + half - 8, y + 22, base_x + half, y + 22,
+               Palette.TEXT_SECONDARY, line_width=1.0)
     c.setFont(FONT_NAME, 6.2)
     c.setFillColor(Palette.TEXT_MUTED)
     c.drawCentredString(base_x, y + 14, "body")
 
+    rows = vectors[:4]
     row_y = top - 14
+    # the row pitch follows the height actually allocated, so a four-arrow state still
+    # lands inside a short box instead of walking off the bottom of the figure
+    span = max(0.0, (row_y - 8) - (y + 30))
+    step = min(22.0, span / max(1, len(rows) - 1)) if len(rows) > 1 else 22.0
     longest = max((abs(float(v.get("value", 1)) or 1) for v in vectors), default=1.0)
-    for v in vectors[:4]:
+    for v in rows:
         val = float(v.get("value", 1) or 0)
-        length = 26 + 52 * (abs(val) / (longest or 1))
+        length = half * (0.32 + 0.62 * (abs(val) / (longest or 1)))
         colour = Palette.PHYSICS_BLUE if val >= 0 else Palette.DANGER
         tip = base_x + length if val >= 0 else base_x - length
         draw_arrow(c, base_x, row_y, tip, row_y, colour, line_width=1.6)
         c.setFont(FONT_BOLD, 6.8)
         c.setFillColor(colour)
         text = f"{v.get('name', '?')} = {_fmt(val, v.get('unit', ''))}"
+        room = (x + w - 8) - (tip + 4) if val >= 0 else (tip - 4) - (x + 8)
+        text = _fit(text, FONT_BOLD, 6.8, max(12.0, room))
         if val >= 0:
             c.drawString(tip + 4, row_y - 2.5, text)
         else:
             c.drawRightString(tip - 4, row_y - 2.5, text)
-        row_y -= 22
+        row_y -= step
     c.setFont(FONT_NAME, 6.5)
     c.setFillColor(Palette.TEXT_SECONDARY)
     c.drawString(x + 20, y + 12, f"Positive direction: {_positive_direction(params)}. Arrow direction carries the sign.")
@@ -1195,30 +1229,94 @@ def pre_render_validate(kind, item_data, params):
     return True
 
 
-def render_primitive(kind, params, canvas, bbox, item_data=None):
+def check_size_contract(kind, w, h, strict=True):
+    """A primitive below its declared size floor cannot render its own meaning.
+
+    Returns the contract plus the measured shortfall; in strict mode a violation raises
+    ``PRIMITIVE_MIN_SIZE_VIOLATION`` rather than producing an unreadable figure.
+    """
+    contract = size_contract(kind)
+    short_w = max(0.0, contract["minimum_width_pt"] - float(w))
+    short_h = max(0.0, contract["minimum_height_pt"] - float(h))
+    ok = short_w <= 0 and short_h <= 0
+    if not ok and strict:
+        _fail(PRIMITIVE_MIN_SIZE_VIOLATION,
+              f"{kind}: {float(w):.1f}x{float(h):.1f}pt is below the declared floor of "
+              f"{contract['minimum_width_pt']:.0f}x{contract['minimum_height_pt']:.0f}pt")
+    return {
+        "minimum_width_pt": contract["minimum_width_pt"],
+        "minimum_height_pt": contract["minimum_height_pt"],
+        "supports_compact_variant": contract["supports_compact_variant"],
+        "width_shortfall_pt": round(short_w, 3),
+        "height_shortfall_pt": round(short_h, 3),
+        "satisfied": ok,
+    }
+
+
+def _overflow(bbox, ink):
+    if not ink:
+        return 0.0
+    x, y, w, h = bbox
+    return round(max(
+        x - ink["x0"], ink["x1"] - (x + w),
+        y - ink["y0"], ink["y1"] - (y + h), 0.0,
+    ), 3)
+
+
+def render_primitive(kind, params, canvas, bbox, item_data=None, strict=False,
+                     enforce_size_contract=True):
     """Render one teaching primitive and return measured render evidence.
 
-    ``bbox`` is ``(x, y, w, h)`` in PDF points. The returned evidence records
-    the real vector/text operation counts and the real ink bounding box, so a
-    caller can prove the primitive was realized rather than merely labelled.
+    ``bbox`` is ``(x, y, w, h)`` in PDF points and is a **hard clip boundary**, not
+    advice: the box is installed as a clip path before the primitive draws and released
+    afterwards, so no primitive can put ink on a neighbouring block whatever it computes.
+
+    The clip stops the ink; the evidence still reports the attempt. ``ink_bbox`` is a real
+    bound (path and Bezier control points, arc extents, measured text width and font
+    ascent/descent), ``ink_escapes_bbox``/``ink_overflow_pt`` say whether the primitive
+    tried to draw outside its allocation, and ``size_contract`` says whether it was given
+    enough room to mean anything. In ``strict`` mode an escape raises
+    ``PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX`` and an untraceable path operation raises
+    ``TRACING_BBOX_INCOMPLETE_FOR_PATH_OP``.
     """
     if kind not in RENDERERS:
         raise UnknownPrimitive(f"UNKNOWN_TEACHING_PRIMITIVE: {kind}")
     params = dict(params or {})
     pre_render_validate(kind, item_data, params)
     x, y, w, h = bbox
+    contract = check_size_contract(kind, w, h, strict=enforce_size_contract)
+
+    inset = INK_SAFETY_INSET_PT if min(w, h) > 6 * INK_SAFETY_INSET_PT else 0.0
     tracer = TracingCanvas(canvas)
-    tracer.saveState()
+    canvas.saveState()
     try:
-        RENDERERS[kind](tracer, x, y, w, h, params)
+        clip = canvas.beginPath()
+        clip.rect(x, y, w, h)
+        canvas.clipPath(clip, stroke=0, fill=0)
+        RENDERERS[kind](tracer, x + inset, y + inset, w - 2 * inset, h - 2 * inset, params)
     finally:
-        tracer.restoreState()
+        canvas.restoreState()
+
+    ink = tracer.ink_bbox
+    overflow = _overflow(bbox, ink)
+    escapes = overflow > 0.0
+    if tracer.path_ops_without_extent and strict:
+        _fail(TRACING_BBOX_INCOMPLETE_FOR_PATH_OP,
+              f"{kind}: {', '.join(sorted(set(tracer.path_ops_without_extent))[:3])}")
+    if escapes and strict:
+        _fail(PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX, f"{kind}: by {overflow:.1f}pt")
     return {
         "primitive_id": kind,
         "bbox": {"x0": x, "y0": y, "x1": x + w, "y1": y + h},
-        "ink_bbox": tracer.ink_bbox,
+        "ink_bbox": ink,
         "vector_ops": tracer.vector_ops,
         "text_ops": tracer.text_ops,
         "op_histogram": dict(sorted(tracer.op_histogram.items())),
         "realized": tracer.vector_ops > 0,
+        "clipped_to_bbox": True,
+        "draw_inset_pt": inset,
+        "ink_escapes_bbox": escapes,
+        "ink_overflow_pt": overflow,
+        "path_ops_without_extent": sorted(set(tracer.path_ops_without_extent)),
+        "size_contract": contract,
     }
