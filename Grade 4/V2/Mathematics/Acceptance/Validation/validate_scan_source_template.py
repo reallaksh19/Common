@@ -67,7 +67,7 @@ def main() -> None:
     ):
         assert required in start_text, f"START_HERE_COLD_START_STAGE_MISSING: {required}"
 
-    assert "do not start in Publication" in start_text.lower(), "START_HERE_PUBLISHER_BOUNDARY_MISSING"
+    assert "do not start in publication" in start_text.lower(), "START_HERE_PUBLISHER_BOUNDARY_MISSING"
     print("Grade 4 scan-source cold-start template: PASS")
 
 
