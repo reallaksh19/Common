@@ -29,3 +29,5 @@ jobs:
         run: pytest -q Primary/V2/Mathematics/Publication/tests/test_learning_representation_adapter.py
       - name: Run measured learning-representation component tests
         run: pytest -q Primary/V2/Mathematics/Publication/tests/test_learning_representation_components.py
+      - name: Render Core2 from LearningRepresentationPlan
+        run: pytest -q Primary/V2/Mathematics/Publication/tests/test_learning_representation_core2_render.py
