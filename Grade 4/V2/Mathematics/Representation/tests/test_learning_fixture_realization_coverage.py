@@ -1,9 +1,14 @@
 import json
 from pathlib import Path
 
-from Grade4.V2.Mathematics.Publication.engine.core1_components import WorkSurfaceComponent
+import pytest
+
+from Grade4.V2.Mathematics.Publication.engine.core1_components import (
+    Core1ComponentError,
+    WorkSurfaceComponent,
+)
+from Grade4.V2.Mathematics.Representation.engine.base import BoundingBox, MockVectorBackend
 from Grade4.V2.Mathematics.Representation.engine.primitives.dispatcher import render_primitive
-from Primary.V2.Mathematics.Representation.engine.base import BoundingBox, MockVectorBackend
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -52,7 +57,16 @@ def test_every_fixture_work_surface_has_a_typed_realizer():
         if not surface:
             continue
         backend = MockVectorBackend()
-        WorkSurfaceComponent.render(backend, BoundingBox(20, 20, 520, 255), surface)
+        required_h = WorkSurfaceComponent.measure(surface, 520)
+        WorkSurfaceComponent.render(backend, BoundingBox(20, 20, 520, required_h), surface)
         assert backend.operations, f"{case_id}:{surface.get('kind')} rendered no work-surface operations"
         seen += 1
     assert seen >= 2, "expected procedural/geometry work-surface fixtures"
+
+
+def test_measured_work_surface_rejects_a_box_shorter_than_its_contract():
+    surface = next(task["work_surface"] for _, task in _tasks() if task.get("work_surface") and task["work_surface"].get("kind") == "LONG_DIVISION_WORK")
+    required_h = WorkSurfaceComponent.measure(surface, 520)
+    with pytest.raises(Core1ComponentError) as exc:
+        WorkSurfaceComponent.render(MockVectorBackend(), BoundingBox(20, 20, 520, required_h - 1), surface)
+    assert exc.value.code == "WORK_SURFACE_BOX_TOO_SHORT"
