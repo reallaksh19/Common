@@ -1,14 +1,14 @@
-"""Automatic #336 -> #339 handoff for Primary Math V2.
+"""Automatic Grade 4 authoring -> LearningRepresentationPlan handoff.
 
-The deterministic CoreSkills authoring engine remains renderer-independent.  This
+The deterministic CoreSkills authoring engine remains renderer-independent. This
 module consumes its result plus explicit learning-support blueprints carried by
 normalized question evidence and emits one validated LearningRepresentationPlan
 per publishable Core1/Core2 module.
 
-No pedagogy is inferred from primitive names or raw question text.  Missing or
-conflicting support blueprints fail closed.  Diagnostic PROBE modules are the
-only explicit exemption: they remain independent H0 probes and do not receive a
-hint ladder before diagnosis.
+No pedagogy is inferred from primitive names or raw question text. Missing or
+conflicting support blueprints fail closed. Diagnostic PROBE modules are the only
+explicit exemption: they remain independent H0 probes and do not receive a hint
+ladder before diagnosis.
 """
 from __future__ import annotations
 
@@ -16,10 +16,10 @@ import copy
 import json
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, List, Mapping, Tuple
+from typing import Any, Dict, List, Mapping, Tuple
 
-from Primary.V2.Mathematics.CoreSkills.engine.author import author
-from Primary.V2.Mathematics.LearningDesign.engine.build_learning_representation import (
+from Grade4.V2.Mathematics.CoreSkills.engine.author import author
+from Grade4.V2.Mathematics.LearningDesign.engine.build_learning_representation import (
     LearningRepresentationError,
     build_learning_representation,
 )
@@ -77,6 +77,16 @@ def validate_support_blueprint(blueprint: Mapping[str, Any], owner: str = "suppo
     )
     _require(bool(str(blueprint.get("task_kind", "")).strip()), "LEARNING_SUPPORT_TASK_KIND_REQUIRED", owner)
     _require(bool(str(blueprint.get("fresh_retry_prompt", "")).strip()), "FRESH_H0_PROMPT_REQUIRED", owner)
+
+    learner_prompt = blueprint.get("learner_prompt")
+    _require(learner_prompt is None or bool(str(learner_prompt).strip()), "LEARNER_PROMPT_INVALID", owner)
+    source_note = blueprint.get("source_note")
+    _require(source_note is None or bool(str(source_note).strip()), "SOURCE_NOTE_INVALID", owner)
+    solution_tokens = blueprint.get("solution_tokens") or []
+    allowed_tokens = blueprint.get("allowed_support_solution_tokens") or []
+    _require(isinstance(solution_tokens, list) and all(bool(str(x).strip()) for x in solution_tokens), "SOLUTION_GUARD_INVALID", owner)
+    _require(isinstance(allowed_tokens, list) and all(bool(str(x).strip()) for x in allowed_tokens), "SOLUTION_GUARD_INVALID", owner)
+    _require(set(map(str, allowed_tokens)).issubset(set(map(str, solution_tokens))), "SOLUTION_GUARD_ALLOWLIST_INVALID", owner)
 
     primary = blueprint.get("primary") or {}
     _validate_visual_selection(primary, f"{owner}:primary")
@@ -251,6 +261,10 @@ def _task_from_blueprint(
         "task_ref": module_id,
         "task_kind": blueprint["task_kind"],
         "representation_class": blueprint["representation_class"],
+        "learner_prompt": blueprint.get("learner_prompt"),
+        "source_note": blueprint.get("source_note"),
+        "solution_tokens": list(blueprint.get("solution_tokens") or []),
+        "allowed_support_solution_tokens": list(blueprint.get("allowed_support_solution_tokens") or []),
         "primary_visual": primary,
         "visual_states": visual_states,
         "hint_ladder": {
@@ -273,7 +287,7 @@ def _task_from_blueprint(
 
 
 def build_authoring_handoff(primary_input: Mapping[str, Any]) -> Dict[str, Any]:
-    """Run #336 authoring, then deterministically construct #339 plans.
+    """Run authoring, then deterministically construct learning plans.
 
     Every non-PROBE Core1/Core2 module must receive a LearningRepresentationPlan.
     PROBE modules are explicitly recorded as independent-only exemptions; they may
