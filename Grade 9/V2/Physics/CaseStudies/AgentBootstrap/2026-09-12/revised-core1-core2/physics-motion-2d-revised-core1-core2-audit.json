@@ -1,0 +1,34 @@
+{
+  "format_name": "Revised Core 1 and Core 2 - frozen learner UI",
+  "source": "Motion in 2d(2).pdf",
+  "numbered_questions": 59,
+  "core1": {
+    "file": "physics-motion-2d-revised-core1.pdf",
+    "pages": 27,
+    "concept_pages": 22,
+    "missing_question_maps": [],
+    "out_of_bounds": [],
+    "severe_overlap_flags": [],
+    "sha256": "df5a0c6627177fca9511faa588028ee20b4ee1e3062dfa59c88e3b756978d3c1"
+  },
+  "core2": {
+    "file": "physics-motion-2d-revised-core2.pdf",
+    "pages": 122,
+    "attempt_pages": 59,
+    "solution_pages": 59,
+    "workspace_lines_per_attempt": 2,
+    "reasoning_ladder": [
+      "UNDERSTAND",
+      "REPRESENT",
+      "CONNECT",
+      "CALCULATE",
+      "INTERPRET"
+    ],
+    "missing_attempt_or_solution": [],
+    "missing_answers": [],
+    "out_of_bounds": [],
+    "severe_overlap_flags": [],
+    "sha256": "c0e46b7df71792d563071dc7be97008dfe2a48ed56c24a38dfdd88979fe88ab5"
+  },
+  "source_ambiguities": [49, 51]
+}
