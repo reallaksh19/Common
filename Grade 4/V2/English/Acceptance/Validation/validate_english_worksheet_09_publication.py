@@ -14,7 +14,7 @@ for path in (SOURCE_SET, PUB_ENGINE):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from build_fixture import build_handoff  # type: ignore  # noqa: E402
+from production_fixture import build_production_handoff  # type: ignore  # noqa: E402
 from production_composer import (  # type: ignore  # noqa: E402
     render_practice_workbook,
     render_study_guide,
@@ -50,9 +50,15 @@ def _render_check(path: Path, render_dir: Path) -> int:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    handoff = build_handoff()
+    handoff = build_production_handoff()
     refs = {p["question_ref"] for p in handoff["learning_representation_plans"]}
     assert refs == EXPECTED_REFS
+
+    for plan in handoff["learning_representation_plans"]:
+        assert plan.get("publication_provenance") == "VISUAL_QA_REFINEMENT_WITHOUT_SEMANTIC_CHANGE"
+        assert plan.get("source_prompt")
+        assert plan.get("learner_prompt")
+        assert plan["representation_specs"]
 
     study_model = build_study_guide_model(handoff)
     teacher_model = build_teacher_key_model(handoff)
