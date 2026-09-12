@@ -7,6 +7,7 @@ LearningRepresentationPlan.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, Mapping
 
@@ -55,6 +56,70 @@ def _require(condition: bool, code: str, message: str) -> None:
 def _require_keys(obj: Mapping[str, Any], keys: Iterable[str], code: str, owner: str) -> None:
     missing = [key for key in keys if key not in obj]
     _require(not missing, code, f"{owner} missing fields {missing}")
+
+
+def _leaf_values(value: Any):
+    if isinstance(value, Mapping):
+        for nested in value.values():
+            yield from _leaf_values(nested)
+    elif isinstance(value, (list, tuple, set)):
+        for nested in value:
+            yield from _leaf_values(nested)
+    elif value is not None:
+        yield str(value)
+
+
+def _contains_token(text: str, token: str) -> bool:
+    text = str(text or "")
+    token = str(token or "").strip()
+    if not token:
+        return False
+    if re.fullmatch(r"[-+]?\d+(?:\.\d+)?", token):
+        return re.search(rf"(?<![\d.]){re.escape(token)}(?![\d.])", text) is not None
+    return token.casefold() in text.casefold()
+
+
+def validate_solution_separation(task: Mapping[str, Any], visual_states: Mapping[str, Mapping[str, Any]]) -> None:
+    """Fail when declared final-answer tokens appear in guided learner support.
+
+    The guard intentionally inspects only learner-visible hint/thinking-path text
+    and the semantic parameters of the visual states those steps reference. The
+    primary study visual and work-surface evidence are governed separately by the
+    publication reveal policy.
+    """
+    tokens = [str(x).strip() for x in (task.get("solution_tokens") or []) if str(x).strip()]
+    if not tokens:
+        return
+    allowed = {str(x).strip() for x in (task.get("allowed_support_solution_tokens") or []) if str(x).strip()}
+    _require(allowed.issubset(set(tokens)), "SOLUTION_GUARD_ALLOWLIST_INVALID", "allowed support tokens must be declared solution tokens")
+
+    learner_payloads: list[tuple[str, Any]] = []
+    support_refs: set[str] = set()
+    for step in (task.get("hint_ladder") or {}).get("steps", []):
+        level = str(step.get("level") or "H?")
+        learner_payloads.append((f"{level} verbal cue", step.get("verbal_cue", "")))
+        learner_payloads.append((f"{level} learner action", step.get("learner_action", "")))
+        if step.get("visual_state_ref"):
+            support_refs.add(str(step["visual_state_ref"]))
+    for step in (task.get("thinking_path") or {}).get("steps", []):
+        owner = str(step.get("step_id") or step.get("child_label") or "thinking step")
+        learner_payloads.append((f"thinking path {owner}", step.get("one_line_action", "")))
+        if step.get("micro_visual_ref"):
+            support_refs.add(str(step["micro_visual_ref"]))
+    for ref in sorted(support_refs):
+        state = visual_states.get(ref)
+        if state is not None:
+            learner_payloads.append((f"support visual {ref}", state.get("semantic_params") or {}))
+
+    for token in tokens:
+        if token in allowed:
+            continue
+        for owner, payload in learner_payloads:
+            if any(_contains_token(value, token) for value in _leaf_values(payload)):
+                raise LearningRepresentationError(
+                    "SOLUTION_TOKEN_VISIBLE_DURING_SUPPORT",
+                    f"{owner} exposes final-answer token {token!r}",
+                )
 
 
 def validate_learner_profile(profile: Mapping[str, Any]) -> None:
@@ -211,6 +276,7 @@ def build_learning_representation(task: Mapping[str, Any]) -> Dict[str, Any]:
 
     validate_hint_ladder(task["hint_ladder"], states)
     validate_thinking_path(task["thinking_path"], states)
+    validate_solution_separation(task, states)
     _require(task["hint_ladder"].get("fresh_retry_ref") == task["fresh_retry_ref"], "H3_WITHOUT_FRESH_H0_RETRY", "hint ladder and task must share the same fresh retry ref")
 
     work_surface = task.get("work_surface")
@@ -222,12 +288,21 @@ def build_learning_representation(task: Mapping[str, Any]) -> Dict[str, Any]:
         primitive_kinds = {task["primary_visual"].get("primitive_kind")} | {x.get("primitive_kind") for x in states.values()}
         _require(bool(primitive_kinds & {"ANGLE_RAYS_ARC", "ANGLE_BENCHMARK_COMPARE", "ANGLE_OBJECT_EXAMPLE"}), "ANGLE_TASK_WITHOUT_RENDERED_RAYS", "angle task must contain actual angle geometry")
 
+    solution_tokens = [str(x).strip() for x in (task.get("solution_tokens") or []) if str(x).strip()]
+    allowed_tokens = [str(x).strip() for x in (task.get("allowed_support_solution_tokens") or []) if str(x).strip()]
     return {
         "schema_version": "1.0.0",
         "plan_id": f"LRP-{task['task_ref']}",
         "task_ref": task["task_ref"],
         "learner_profile_ref": profile["profile_id"],
         "representation_class": task["representation_class"],
+        "learner_prompt": task.get("learner_prompt"),
+        "source_note": task.get("source_note"),
+        "solution_guard": {
+            "policy": "FORBID_DURING_HINTS_AND_THINKING_PATH",
+            "solution_tokens": solution_tokens,
+            "allowed_support_solution_tokens": allowed_tokens,
+        },
         "primary_visual": task["primary_visual"],
         "all_visual_states": [dict(state) for state in task["visual_states"]],
         "hint_visuals": {
