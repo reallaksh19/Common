@@ -1,0 +1,2 @@
+weasyprint==68.0
+pypdf>=5.0
