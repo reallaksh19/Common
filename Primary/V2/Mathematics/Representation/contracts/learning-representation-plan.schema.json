@@ -49,6 +49,7 @@
     "hint_ladder_ref": {"type": "string", "minLength": 1},
     "thinking_path_ref": {"type": "string", "minLength": 1},
     "fresh_retry_support_policy": {"enum": ["NONE", "LEARNER_OPTIONAL_REFERENCE_ONLY"]},
+    "fresh_retry_prompt": {"type": "string", "minLength": 1},
     "reference_visual_ref": {"type": ["string", "null"]},
     "visual_language_key": {"type": "object", "additionalProperties": {"type": "string"}},
     "publisher_invention_allowed": {"const": false}
