@@ -54,15 +54,69 @@ required_asset_ids = {
     "MATH-PCK-SOLUTION-VERIFICATION-v1",
     "MATH-PCK-WORD-TO-EQUATION-MODELLING-v1",
 }
-assert required_asset_ids == {x["asset_id"] for x in CANDIDATE_ASSETS}
+assert required_asset_ids.issubset({x["asset_id"] for x in CANDIDATE_ASSETS})
 for asset in CANDIDATE_ASSETS:
     assert asset["lifecycle_status"] == "CANDIDATE"
     assert asset["review"]["status"] == "PENDING_HUMAN_REVIEW"
     assert not asset["review"]["human_review_evidence_refs"]
 
+# The production promotion registry now carries real pipeline output. Every
+# entry is provisional: authoring-legal, never producer-legal, expert review
+# still PENDING. No fabricated human PASS may appear.
+assert PROD["registry_class"] == "PRODUCTION"
+assert PROD["promotions"], "production promotion registry must be exercised, not empty"
+for rec in PROD["promotions"]:
+    assert rec["promotion_status"] == "PROVISIONAL_PROMOTED", rec["asset_id"]
+    assert rec["promotion_class"] == "AI_ASSISTED_PROVISIONAL"
+    assert rec["review_source"] == "AI_ASSISTED_REFERENCE_REVIEW"
+    assert rec["review_registry_class"] == "AI_ASSISTED"
+    assert rec["authoring_legal"] is True
+    assert rec["producer_legal"] is False
+    assert rec["release_legal"] is False
+    assert rec["expert_review_state"] == {"SUBJECT_EXPERT_PASS": "PENDING", "PEDAGOGY_EXPERT_PASS": "PENDING"}
+    assert [s["stage"] for s in rec["review_pipeline"]] == [
+        "EVIDENCE_PROVENANCE_REVIEW",
+        "PEDAGOGICAL_REVIEW",
+        "SUBJECT_REVIEW",
+        "SCOPE_REVIEW",
+    ]
+
+# A provisional promotion produces an authoring-legal plan that is explicitly
+# not release-legal.
+prod_plan = mg.author(STUDY, CANDIDATES, CANDIDATE_ASSETS, PROD, PROFILE, SCOPE_POLICY, test_mode=False)
+assert prod_plan["release_class"] == "PROVISIONAL_PENDING_EXPERT_REVIEW"
+assert prod_plan["pck_authority"]["expert_review_state"] == "PENDING"
+assert prod_plan["pck_authority"]["release_legal"] is False
+assert prod_plan["pck_authority"]["producer_legal_asset_refs"] == []
+assert prod_plan["pck_authority"]["provisional_asset_refs"]
+
+# A provisional record that claims producer legality is rejected by name.
+lying = copy.deepcopy(PROD)
+lying["promotions"][0]["producer_legal"] = True
+lying["promotions"][0]["promotion_digest"] = mg.digest(lying["promotions"][0], "promotion_digest")
+lying["registry_digest"] = mg.digest(lying, "registry_digest")
+expect_error(
+    "PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL",
+    lambda: mg.author(STUDY, CANDIDATES, CANDIDATE_ASSETS, lying, PROFILE, SCOPE_POLICY, test_mode=False),
+)
+
+# A provisional record that relabels itself as human-reviewed is rejected.
+fake_human = copy.deepcopy(PROD)
+fake_human["promotions"][0]["promotion_status"] = "PROMOTED"
+fake_human["promotions"][0]["promotion_digest"] = mg.digest(fake_human["promotions"][0], "promotion_digest")
+fake_human["registry_digest"] = mg.digest(fake_human, "registry_digest")
+expect_error(
+    "PCK_REVIEW_AUTHORITY_INVALID",
+    lambda: mg.author(STUDY, CANDIDATES, CANDIDATE_ASSETS, fake_human, PROFILE, SCOPE_POLICY, test_mode=False),
+)
+
+# An empty production registry still fails closed for full-teaching treatments.
+empty_prod = copy.deepcopy(PROD)
+empty_prod["promotions"] = []
+empty_prod["registry_digest"] = mg.digest(empty_prod, "registry_digest")
 expect_error(
     "PCK_PROMOTION_REQUIRED:MATH-EQUALITY-PRESERVATION",
-    lambda: mg.author(STUDY, CANDIDATES, CANDIDATE_ASSETS, PROD, PROFILE, SCOPE_POLICY, test_mode=False),
+    lambda: mg.author(STUDY, CANDIDATES, CANDIDATE_ASSETS, empty_prod, PROFILE, SCOPE_POLICY, test_mode=False),
 )
 
 expect_error(
@@ -98,13 +152,25 @@ for pap in eq["problem_authoring_plans"]:
 assert ready["instructional_sequence"] == ["ACTIVATE", "VERIFY"]
 assert all(step not in ready["instructional_sequence"] for step in ["WORKED", "GUIDED", "FADED", "TRANSFER"])
 
+# A full-teaching capability with no PCK candidate at all still fails closed.
 gap_study = copy.deepcopy(STUDY)
 cp = gap_study["learner_study_model"]["capability_plans"][0]
-cp["capability_ref"] = "MATH-FRACTION-ARITHMETIC"
+cp["capability_ref"] = "MATH-TRIGONOMETRIC-RATIO"
 cp["problem_family_refs"] = ["MATH-PF-LINE-SLOPE-POINT"]
+assert not any("MATH-TRIGONOMETRIC-RATIO" in a["capability_refs"] for a in CANDIDATE_ASSETS)
 expect_error(
-    "PCK_COVERAGE_GAP:MATH-FRACTION-ARITHMETIC",
+    "PCK_COVERAGE_GAP:MATH-TRIGONOMETRIC-RATIO",
     lambda: mg.author(gap_study, CANDIDATES, CANDIDATE_ASSETS, TEST_PROMO, PROFILE, SCOPE_POLICY, test_mode=True),
+)
+
+# A capability that has a candidate but no promotion of any class still fails closed.
+unpromoted_study = copy.deepcopy(STUDY)
+up = unpromoted_study["learner_study_model"]["capability_plans"][0]
+up["capability_ref"] = "MATH-FRACTION-ARITHMETIC"
+up["problem_family_refs"] = ["MATH-PF-LINE-SLOPE-POINT"]
+expect_error(
+    "PCK_PROMOTION_REQUIRED:MATH-FRACTION-ARITHMETIC",
+    lambda: mg.author(unpromoted_study, CANDIDATES, CANDIDATE_ASSETS, TEST_PROMO, PROFILE, SCOPE_POLICY, test_mode=True),
 )
 
 fake_prod = copy.deepcopy(TEST_PROMO)

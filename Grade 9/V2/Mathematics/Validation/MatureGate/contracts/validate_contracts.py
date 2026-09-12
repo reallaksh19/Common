@@ -20,7 +20,10 @@ validate_policy(policy)
 candidate=build_fixture_binding("A")
 validate_candidate(candidate)
 assert candidate["candidate_class"]=="SEMANTIC_COLD_START_EXACT_PACKAGE"
-assert candidate["materialization_state"]=="BLOCKED_UPSTREAM_PCK"
+assert candidate["materialization_state"]=="SEMANTIC_READY_RENDER_NOT_BOUND"
+assert candidate["core1_authoring_status"]=="PROVISIONAL_PLAN_READY"
+assert candidate["pck_expert_review_state"]=="PENDING"
+assert candidate["pck_release_legal"] is False
 assert candidate["artifact_set_digest"] is None
-assert candidate["upstream_blockers"]
+assert candidate["upstream_blockers"]==["M-L:RENDERED_EXACT_TWO_PRODUCT_NOT_BOUND"]
 print("MATH M-L contracts + quality policy + current exact semantic binding PASS")

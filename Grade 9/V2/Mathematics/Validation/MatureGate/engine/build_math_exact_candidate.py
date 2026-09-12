@@ -19,6 +19,11 @@ def digest(value, omit=None):
     return hashlib.sha256(canon(x).encode("utf-8")).hexdigest()
 
 
+# Core1 states whose semantics are materialized enough to render an exact
+# product. PROVISIONAL_PLAN_READY renders, but is never release-legal.
+RENDERABLE_CORE1_STATES={"PRODUCTION_PLAN_READY","PROVISIONAL_PLAN_READY"}
+
+
 def fail(code,detail=""):
     raise ValueError(f"{code}:{detail}" if detail else code)
 
@@ -43,8 +48,14 @@ def build_fixture_binding(selected_run="A"):
     comparison=compare_runs(run_a,run_b)
     if not all(comparison["invariants"].values()): fail("M_K_REPRODUCIBILITY_PROOF_NOT_CLOSED")
     selected=run_a if selected_run=="A" else run_b
-    blockers=sorted(set(selected["blockers"]+["M-L:RENDERED_EXACT_TWO_PRODUCT_NOT_BOUND"]))
-    material="BLOCKED_UPSTREAM_PCK" if selected["core1_authoring"]["status"]!="PRODUCTION_PLAN_READY" else "SEMANTIC_READY_RENDER_NOT_BOUND"
+    core1_status=selected["core1_authoring"]["status"]
+    renderable=core1_status in RENDERABLE_CORE1_STATES
+    # A PCK-expert-review blocker does not block publication engineering: the
+    # Core1/Core2 semantics are materialized. It blocks release legality, which
+    # is carried separately by pck_release_legal / pck_expert_review_state.
+    carried=[b for b in selected["blockers"] if not (renderable and b.endswith("PCK_EXPERT_REVIEW_PENDING"))]
+    blockers=sorted(set(carried+["M-L:RENDERED_EXACT_TWO_PRODUCT_NOT_BOUND"]))
+    material="SEMANTIC_READY_RENDER_NOT_BOUND" if renderable else "BLOCKED_UPSTREAM_PCK"
     binding={
       "candidate_id":"",
       "schema_version":"1.0.0",
@@ -64,7 +75,9 @@ def build_fixture_binding(selected_run="A"):
         "canonical_math_invariant":comparison["invariants"]["canonical_math_truth_identical"],
         "core2_semantics_invariant":comparison["invariants"]["core2_semantics_identical"],
       },
-      "core1_authoring_status":selected["core1_authoring"]["status"],
+      "core1_authoring_status":core1_status,
+      "pck_expert_review_state":selected["core1_authoring"]["pck_expert_review_state"],
+      "pck_release_legal":bool(selected["core1_authoring"]["release_legal"]),
       "core2_plan_ref":selected["stage_outputs"]["core2_plan_ref"],
       "core2_plan_digest":selected["stage_outputs"]["core2_plan_digest"],
       "coverage_package_ref":selected["stage_outputs"]["coverage_package_ref"],
@@ -81,7 +94,7 @@ def build_fixture_binding(selected_run="A"):
 
 def bind_rendered_artifacts(binding, artifacts, fixture_class=None):
     out=copy.deepcopy(binding)
-    if out["core1_authoring_status"]!="PRODUCTION_PLAN_READY":
+    if out["core1_authoring_status"] not in RENDERABLE_CORE1_STATES:
         fail("RENDERED_CANDIDATE_WITHOUT_PRODUCTION_CORE1")
     blocking=[x for x in out["upstream_blockers"] if x!="M-L:RENDERED_EXACT_TWO_PRODUCT_NOT_BOUND"]
     if blocking: fail("RENDERED_CANDIDATE_WITH_UPSTREAM_BLOCKER",blocking[0])

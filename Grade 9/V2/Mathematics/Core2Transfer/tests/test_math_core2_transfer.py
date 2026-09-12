@@ -38,7 +38,7 @@ ARGS=(Q,RR,RP,B,A,PS,VER,PRIM,PINT,PROF,None)
 PLAN=build_plan(*copy.deepcopy(ARGS))
 
 assert [x["question_ref"] for x in PLAN["pages"]]==[f"Q{i}" for i in range(1,15)]
-assert PLAN["summary"]=={"question_count":14,"attempt_first":True,"source_fidelity":True,"psychometric_claims":False,"publication_ready":False}
+assert PLAN["summary"]=={"question_count":14,"attempt_first":True,"source_fidelity":True,"psychometric_claims":False,"publication_ready":False,"release_legal":False}
 assert PLAN["release_class"]=="SEMANTIC_TEST" and PLAN["core1_linkage_mode"]=="PLANNED_UNTIL_PCK_PROMOTED"
 assert all(not p["hint_ladder"]["support_revealed_initially"] for p in PLAN["pages"])
 assert all(p["attempt_policy"]["attempt_original_first"] and p["attempt_policy"]["support_hidden_initially"] for p in PLAN["pages"])
@@ -130,6 +130,28 @@ expect("GUIDE_BADGE_PRESENTED_AS_PSYCHOMETRIC",lambda:validate_plan(bad,*BADARGS
 # 16 UNPROMOTED_CORE1_LINK_PUBLISHED
 bad=copy.deepcopy(PLAN); bad["release_class"]="PRODUCTION_READY"; bad["summary"]["publication_ready"]=True; reseal_plan(bad)
 expect("UNPROMOTED_CORE1_LINK_PUBLISHED",lambda:validate_plan(bad,*ARGS))
+
+# Provisional Core1 linkage: a real Core1 plan resting on AI-assisted-reference
+# PCK materializes the link but must never be reported as release-legal.
+PROV_C1={
+  "release_class":"PROVISIONAL_PENDING_EXPERT_REVIEW",
+  "lessons":[{"lesson_id":"MATH-C1L-"+("a"*16),"learner_title":"Provisional lesson","capability_ref":c}
+             for c in sorted({r for b in B["bindings"] for r in b["canonical_capability_refs"]})],
+}
+PARGS=(Q,RR,RP,B,A,PS,VER,PRIM,PINT,PROF,PROV_C1)
+PPLAN=build_plan(*copy.deepcopy(PARGS))
+assert PPLAN["core1_linkage_mode"]=="MATERIALIZED_PROVISIONAL"
+assert PPLAN["release_class"]=="PROVISIONAL_PENDING_EXPERT_REVIEW"
+assert PPLAN["summary"]["publication_ready"] is True
+assert PPLAN["summary"]["release_legal"] is False
+assert all(l["linkage_state"]=="MATERIALIZED_PROVISIONAL" and l["materialized_lesson_id"]
+           for p in PPLAN["pages"] for l in p["core1_lesson_refs"])
+validate_plan(PPLAN,*PARGS)
+# 17 PROVISIONAL_CORE1_LINK_CLAIMED_RELEASE_LEGAL
+bad=copy.deepcopy(PPLAN); bad["summary"]["release_legal"]=True; reseal_plan(bad)
+expect("PROVISIONAL_CORE1_LINK_CLAIMED_RELEASE_LEGAL",lambda:validate_plan(bad,*PARGS))
+bad=copy.deepcopy(PPLAN); bad["release_class"]="PRODUCTION_READY"; reseal_plan(bad)
+expect("PROVISIONAL_CORE1_LINK_CLAIMED_RELEASE_LEGAL",lambda:validate_plan(bad,*PARGS))
 
 AGAIN=build_plan(*copy.deepcopy(ARGS))
 assert json.dumps(PLAN,sort_keys=True,separators=(",",":"),ensure_ascii=False)==json.dumps(AGAIN,sort_keys=True,separators=(",",":"),ensure_ascii=False)

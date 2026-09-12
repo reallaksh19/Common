@@ -66,7 +66,9 @@ current=build_fixture_binding("A")
 validate_candidate(current)
 blocked=evaluate(current,POLICY,gate_mode="REAL_RELEASE")
 assert current["candidate_class"]=="SEMANTIC_COLD_START_EXACT_PACKAGE"
-assert current["core1_authoring_status"] in {"BLOCKED_PCK_CANDIDATE_COVERAGE","BLOCKED_PCK_PROMOTION"}
+assert current["core1_authoring_status"]=="PROVISIONAL_PLAN_READY"
+assert current["pck_expert_review_state"]=="PENDING"
+assert current["pck_release_legal"] is False
 assert current["artifact_set_digest"] is None
 assert blocked["quality_states"]["PUBLICATION_ENGINEERING"]=="BLOCKED"
 assert blocked["quality_states"]["SUBJECT_CORRECTNESS"]=="NOT_RUN"
