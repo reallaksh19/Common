@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "source_title": "Motion in a Plane",
-  "purpose": "Supplement the seed source inventory with formula-sheet and derivation relations that must be tracked explicitly before claiming source-complete coverage.",
+  "purpose": "Supplement the seed source inventory with formula-sheet and derivation relations that were not individually itemized in the first inventory pass.",
   "equations": [
     {
       "id": "M2D-EQ-REL-POS",
@@ -94,30 +94,21 @@
       "must_be_taught": true
     },
     {
-      "id": "M2D-EQ-CIRC-AT",
-      "source_locator": "§7.2-§7.3 / Formulae Sheet",
-      "canonical_expression": "a_t = dv/dt = alpha r",
-      "learner_name": "Tangential acceleration",
+      "id": "M2D-EQ-CIRC-AT-DVDT",
+      "source_locator": "§7.2 / Formulae Sheet",
+      "canonical_expression": "a_t = dv/dt",
+      "learner_name": "Tangential acceleration as change of speed",
       "core1a_home": "CIRCULAR_NONUNIFORM",
-      "valid_when": "radius is fixed and tangential acceleration describes change in speed",
+      "valid_when": "a_t is the tangential component of acceleration",
       "must_be_taught": true
     },
     {
-      "id": "M2D-EQ-CIRC-AR",
-      "source_locator": "§7.1 / Formulae Sheet",
-      "canonical_expression": "a_r = v^2/r = omega^2 r",
-      "learner_name": "Radial acceleration",
+      "id": "M2D-EQ-CIRC-AR-OMEGA",
+      "source_locator": "Formulae Sheet - Circular Motion",
+      "canonical_expression": "a_r = omega^2 r",
+      "learner_name": "Radial acceleration from angular speed",
       "core1a_home": "CIRCULAR_UNIFORM",
-      "valid_when": "instantaneous curvature radius is r; direction is toward the centre",
-      "must_be_taught": true
-    },
-    {
-      "id": "M2D-EQ-CIRC-ATOTAL",
-      "source_locator": "§7.2 / Illustration 16",
-      "canonical_expression": "a = sqrt(a_r^2 + a_t^2)",
-      "learner_name": "Total acceleration in non-uniform circular motion",
-      "core1a_home": "CIRCULAR_NONUNIFORM",
-      "valid_when": "radial and tangential accelerations are perpendicular",
+      "valid_when": "v = omega r and the instantaneous radius is r",
       "must_be_taught": true
     }
   ]
