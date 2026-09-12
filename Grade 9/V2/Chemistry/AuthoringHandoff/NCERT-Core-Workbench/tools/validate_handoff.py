@@ -126,11 +126,18 @@ def main() -> None:
                 f"{topic}: expected {expected} retained/placed ledger rows, found {ledger_retained}"
             )
 
-        # Core (1) must retain the teaching/practice/solution/handout topology.
+        # Core (1) must retain the teaching/practice/solution/print-reference roles.
+        # Historical iterations used labels such as "one-page helper sheet" rather
+        # than the literal word "handout", so accept equivalent learner-facing names.
         c1_lower = c1.lower()
-        for required_term in ("practice", "solution", "handout"):
-            if required_term not in c1_lower:
-                failures.append(f"{topic}: Core (1) missing visible {required_term!r} section marker")
+        topology_markers = {
+            "practice": ("practice",),
+            "solution": ("solution", "worked answer"),
+            "handout/reference": ("handout", "printable", "one-page helper sheet", "helper sheet"),
+        }
+        for role, markers in topology_markers.items():
+            if not any(marker in c1_lower for marker in markers):
+                failures.append(f"{topic}: Core (1) missing visible {role!r} section marker")
 
         report["topics"][topic] = {
             "expected_questions": expected,
