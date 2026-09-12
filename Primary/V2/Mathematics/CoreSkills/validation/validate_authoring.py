@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import copy
 import json
+import sys
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[5]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from Primary.V2.Mathematics.CoreSkills.engine.author import AuthoringError, author
 
@@ -73,7 +78,6 @@ def validate_positive_cases() -> None:
             if skill_model.get("work_evidence_refs") or result.get("diagnostic_objects"):
                 fail("question-only case fabricated learner work/diagnosis")
         if case_id == "QUESTION_PLUS_TOPIC_HINTS":
-            # Topic hints may label, but may not add or remove canonical capability truth.
             observed = set(case["input"]["question_set"]["questions"][0]["evidence"]["capability_refs"])
             planned = set(concepts[0]["capability_refs"])
             if observed != planned:
