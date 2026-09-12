@@ -19,6 +19,7 @@ from Primary.V2.Mathematics.LearningDesign.engine.build_learning_representation 
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "fixtures" / "learning_representation" / "cases.json"
+EXTENDED_FIXTURE = ROOT / "fixtures" / "learning_representation" / "extended_cases.json"
 
 
 def fail(message: str) -> None:
@@ -36,12 +37,21 @@ def expect_error(task, code: str) -> None:
 
 
 def load_cases():
-    return json.loads(FIXTURE.read_text(encoding="utf-8"))["cases"]
+    base = json.loads(FIXTURE.read_text(encoding="utf-8"))["cases"]
+    extended = json.loads(EXTENDED_FIXTURE.read_text(encoding="utf-8"))["cases"]
+    return base + extended
 
 
 def validate_positive_cases() -> None:
     cases = load_cases()
-    required = {"MONEY_TWO_PART", "REMAINDER_REPRESENTATIVE_SAMPLE", "LONG_DIVISION_7048_24", "ANGLE_DRAWING"}
+    required = {
+        "MONEY_TWO_PART",
+        "REMAINDER_REPRESENTATIVE_SAMPLE",
+        "LONG_DIVISION_7048_24",
+        "ANGLE_DRAWING",
+        "SAME_RATE_HATS_120_240",
+        "DIVISION_TABLE_720_480",
+    }
     seen = {case["case_id"] for case in cases}
     if seen != required:
         fail(f"fixture set mismatch: {sorted(seen)}")
@@ -70,6 +80,14 @@ def validate_positive_cases() -> None:
     angle = results["ANGLE_DRAWING"]
     if angle.get("work_surface_ref") != "WS-ANGLE-01":
         fail("angle drawing fixture lost learner drawing workspace")
+
+    rate = results["SAME_RATE_HATS_120_240"]["primary_visual"]["semantic_params"]
+    if rate.get("scale_factor") != 2 or rate.get("target_count") != 6:
+        fail("same-rate fixture lost linked x2 scaling")
+
+    table = results["DIVISION_TABLE_720_480"]
+    if table.get("work_surface_ref") != "WS-DIV-TABLE-720-480":
+        fail("division-table fixture lost required workspace")
 
 
 def validate_falsifiers() -> None:
@@ -113,6 +131,18 @@ def validate_falsifiers() -> None:
     tiny_font["learner_profile"] = copy.deepcopy(PRIMARY_SUPPORT_G4_5)
     tiny_font["learner_profile"]["body_font_min_pt"] = 9
     expect_error(tiny_font, "LEARNER_FONT_MIN")
+
+    broken_rate = copy.deepcopy(cases["SAME_RATE_HATS_120_240"])
+    broken_rate["primary_visual"]["semantic_params"]["target_count"] = 5
+    expect_error(broken_rate, "SAME_RATE_SCALE_INVALID")
+
+    no_table_surface = copy.deepcopy(cases["DIVISION_TABLE_720_480"])
+    no_table_surface.pop("work_surface")
+    expect_error(no_table_surface, "DIVISION_TABLE_WITHOUT_WORKSPACE")
+
+    broken_table = copy.deepcopy(cases["DIVISION_TABLE_720_480"])
+    broken_table["work_surface"]["semantic_params"]["cells"][0]["quotient"] = 11
+    expect_error(broken_table, "DIVISION_TABLE_ARITHMETIC_INVALID")
 
 
 def validate_no_renderer_dependency() -> None:
