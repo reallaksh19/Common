@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/English/StudyDesign/contracts/study-journey.schema.json",
+  "title": "Grade4EnglishStudyJourneyPlan",
+  "type": "object",
+  "required": ["schema_version", "journey_id", "title", "grade_level", "subject", "source_id", "required_source_refs", "learning_objects", "source_coverage"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "journey_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "grade_level": {"const": 4},
+    "subject": {"const": "ENGLISH"},
+    "source_id": {"type": "string", "minLength": 1},
+    "required_source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "learning_objects": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/learningObject"}},
+    "source_coverage": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/coverage"}}
+  },
+  "$defs": {
+    "learningObject": {
+      "type": "object",
+      "required": ["learning_object_id", "title", "learning_goal", "source_refs", "capability_refs", "blocks", "independent_evidence_refs"],
+      "properties": {
+        "learning_object_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "learning_goal": {"type": "string", "minLength": 1},
+        "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "prerequisite_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "misconception_targets": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "blocks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/block"}},
+        "independent_evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "block": {
+      "type": "object",
+      "required": ["block_id", "block_type", "title", "body", "source_refs", "audience", "answer_visibility"],
+      "properties": {
+        "block_id": {"type": "string", "minLength": 1},
+        "block_type": {
+          "enum": [
+            "NAVIGATION", "CONCEPT", "SOURCE_RULE", "VOCABULARY", "TEXT_ANALYSIS", "READING_ROUTINE",
+            "SOURCE_BOUNDARY", "WORKED_EXAMPLE", "ANNOTATED_MODEL", "CONTRAST", "MISCONCEPTION_CHECK",
+            "GUIDED_PRACTICE", "HINT_LADDER", "DIAGNOSTIC_PROBE", "INDEPENDENT_RETRY", "TRANSFER",
+            "RETRIEVAL", "RUBRIC", "ANSWER_CHECK", "REFERENCE", "SELF_CHECK"
+          ]
+        },
+        "title": {"type": "string", "minLength": 1},
+        "body": {"type": "string"},
+        "source_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "audience": {"enum": ["STUDENT", "ADULT", "BOTH"]},
+        "answer_visibility": {"enum": ["HIDDEN", "PARTIAL", "WORKED_EXAMPLE", "ANSWER_KEY_ONLY"]},
+        "learner_prompt": {"type": "string"},
+        "solution_text": {"type": "string"},
+        "representation_ref": {"type": ["string", "null"]},
+        "semantic_params": {"type": "object"},
+        "support_level": {"enum": ["H0", "H1", "H2", "H3", "NONE"]},
+        "provenance": {"enum": ["SOURCE_DERIVED", "PEDAGOGICAL_BRIDGE", "RESEARCH_ENRICHMENT"]}
+      },
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["source_ref", "learning_object_refs", "teach_block_refs", "model_block_refs", "practice_block_refs", "hint_block_refs", "verify_block_refs", "answer_or_rubric_block_refs"],
+      "properties": {
+        "source_ref": {"type": "string", "minLength": 1},
+        "learning_object_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "teach_block_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "model_block_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "practice_block_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "hint_block_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "verify_block_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "answer_or_rubric_block_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
