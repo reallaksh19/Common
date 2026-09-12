@@ -25,7 +25,7 @@ jobs:
         run: python -m pip install 'jsonschema>=4.20,<5' 'reportlab>=4.0' 'pymupdf>=1.24'
 
       - name: Run Core1A learner-product falsifiers
-        run: python 'Grade 9/V2/Mathematics/Core1A/tests/test_math_core1a_textbook.py'
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/Core1A/tests' -p 'test_*.py' -v
 
       - name: Produce real Core1 output from the PR 323 cold-start chain
         run: |
@@ -58,9 +58,9 @@ jobs:
           }, indent=2))
           PY
 
-      - name: Realize Core1A textbook PDF from the exact Core1 output
+      - name: Realize capability-aware Core1A textbook PDF from the exact Core1 output
         run: |
-          python 'Grade 9/V2/Mathematics/Core1A/engine/build_math_core1a_textbook.py' \
+          python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
             --core1-plan /tmp/core1a/core1_study_plan.json \
             --out-dir /tmp/core1a/product
 
@@ -84,6 +84,8 @@ jobs:
               'publication engineering',
               'promotion registry',
               '{rows}',
+              'capability_ref',
+              'problem_family_ref',
           ]
           for token in forbidden:
               assert token not in text, f'learner PDF leaked internal text: {token}'
@@ -92,6 +94,9 @@ jobs:
           assert 'your turn' in text
           assert 'challenge' in text
           assert 'answer check' in text
+          assert 'squaring a binomial without losing the middle term' in text
+          assert 'division as a rate' in text
+          assert 'keeping an equation balanced' in text
           print(json.dumps({
               'pages': len(pdf),
               'pdf_sha256': audit['artifact']['pdf_sha256'],
