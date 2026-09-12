@@ -126,23 +126,17 @@ The stress test repeatedly demonstrated that structural JSON validity and an in-
 | Lines & Angles | Core1 v2 is strong but not normalized to final cross-core/answer manifest | Core2 v1 | stress-test v1 | Retrofit bridge + answer-authority normalization |
 | Surface Areas & Volumes | strong v1 concept decomposition, not final cross-core | Core2 v1 | stress-test v1 | Retrofit bridge + answer-authority normalization; enhance 3-D diagrams |
 
-## Artifact bundle
+## Reusable artifact payload
 
-The binary learner artifacts and manifests are stored in:
+`STATUS.json` is the compact machine-readable handoff and `ARTIFACT_SHA256.txt` binds the exact generated PDFs/manifests from the stress-test run.
 
-- `pr323_stress_test_artifacts.tar.xz`
+The exact binary PDFs were generated outside the repository during the stress test. The GitHub connector used to create this handoff can write repository text objects but cannot directly import those local binary PDF bytes. Therefore this branch does **not** pretend that the original PDF binaries are checked in when they are not.
 
-Extract with:
-
-```bash
-tar -xJf pr323_stress_test_artifacts.tar.xz
-```
-
-The archive contains the reusable current/final PDFs and JSON manifests for all seven topics, plus `CONSOLIDATED_REBUILD_PLAN.md` and a SHA-256 inventory.
+For agent continuity, the handoff records the exact filenames, versions, page/status facts, SHA-256 digests, source authorities, design contract, defect history, remaining sequence, and consolidated acceptance/falsifier set. Where a binary-capable client is available, copy the exact artifacts named in `ARTIFACT_SHA256.txt` and verify their hashes before treating them as the same benchmark outputs.
 
 ## How a new agent should continue
 
-1. Read this README and `CONSOLIDATED_REBUILD_PLAN.md`.
+1. Read this README, `STATUS.json`, `CONSOLIDATED_REBUILD_PLAN.md`, and `ARTIFACT_SHA256.txt`.
 2. Inspect Number Systems, Euclid and Polynomials first; these embody the latest cross-core contract.
 3. Continue with **Linear Equations in Two Variables** before starting any new topic.
 4. Build the Core2 demand/atomic-ask map first, then author Core1 backwards from those reasoning requirements.
