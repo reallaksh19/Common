@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "response_structures": [
+    {"id": "CLASSIFICATION_TABLE", "parts": ["ITEM", "SOURCE_CATEGORY"], "judgement": "SOURCE_MODEL"},
+    {"id": "ORDERED_REWRITE", "parts": ["REWRITTEN_TEXT"], "judgement": "SOURCE_MODEL"},
+    {"id": "MYSTERY_OBJECT_FRAME", "parts": ["DESCRIPTION", "MATERIAL", "ORIGIN", "PURPOSE_INFERENCE"], "judgement": "RUBRIC"},
+    {"id": "TRAVEL_BLOGGER_RUBRIC", "parts": ["OPENING", "VISIBLE_DETAILS", "ADJECTIVES", "ADJECTIVE_ORDER", "REVISION"], "judgement": "RUBRIC"},
+    {"id": "ANSWER_TEXT_CLUE_CONNECTION", "parts": ["ANSWER", "TEXT_CLUE", "CONNECTION"], "judgement": "TEACHER_OR_SOURCE"},
+    {"id": "MULTI_CLUE_EXPLANATION", "parts": ["ANSWER", "TEXT_CLUES", "SYNTHESIS"], "judgement": "TEACHER_OR_SOURCE"},
+    {"id": "TRANSFER_REASON", "parts": ["TRANSFER_EXAMPLE", "THREAT_OR_PARALLEL", "REASON_OR_ACTION"], "judgement": "TEACHER_OR_SOURCE"},
+    {"id": "CHOICE_JUSTIFICATION", "parts": ["CHOICE", "JUSTIFICATION"], "judgement": "TEACHER_OR_SOURCE"}
+  ]
+}
