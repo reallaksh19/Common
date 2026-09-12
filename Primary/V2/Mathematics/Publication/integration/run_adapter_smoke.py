@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[5]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from Primary.V2.Mathematics.Publication.engine.page_composer import PrimaryPageComposer
 from Primary.V2.Mathematics.Publication.integration.canonical_plan_adapter import adapt_authoring_result
