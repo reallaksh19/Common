@@ -20,8 +20,13 @@ with tempfile.TemporaryDirectory() as td:
     assert decision['classification']==policy['blocked_classification']
     assert decision['exit_code']==2
     validate_release_decision(decision,candidate,[],policy)
-    assert candidate['machine_evidence']['formula_typography_pass']
-    assert candidate['machine_evidence']['macro_particle_symbolic_realized']
+    e=candidate['machine_evidence']
+    assert e['formula_typography_pass']
+    assert e['macro_particle_symbolic_realized']
+    assert e['learner_internal_identifier_leaks']==0
+    assert e['actual_placement_evidence'] and e['placement_bounds_violations']==0 and e['orphan_continuations']==0
+    assert len(e['teaching_primitive_kinds_realized'])>=policy['minimum_realized_primitive_kinds'],e
+    print('Realized teaching primitives =',e['teaching_primitives_drawn'],'across',len(e['teaching_primitive_kinds_realized']),'kinds')
     print('CHEMISTRY C-L exact PDF realization = PASS')
     print('Core1 pages =',candidate['artifacts'][0]['page_count'])
     print('Core2 pages =',candidate['artifacts'][1]['page_count'])

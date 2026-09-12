@@ -1,0 +1,2445 @@
+{
+  "actual_placement_evidence": true,
+  "artifact": "core-study-guide.pdf",
+  "artifact_sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
+  "bounds_violations": 0,
+  "content_placements": [
+    {
+      "content_ref": "COVER",
+      "fragment_kind": "START",
+      "page": 1,
+      "page_intent_id": "PI-COVER",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 741.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-01",
+      "fragment_kind": "START",
+      "page": 2,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 582.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-01-REACTION_BEFORE_AFTER_MAP",
+      "fragment_kind": "START",
+      "page": 2,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "REACTION_BEFORE_AFTER_MAP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 432.89,
+      "y1": 586.89
+    },
+    {
+      "content_ref": "LESSON-01-SPECIES_ROLE_MAP",
+      "fragment_kind": "START",
+      "page": 2,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "SPECIES_ROLE_MAP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 258.89,
+      "y1": 436.89
+    },
+    {
+      "content_ref": "LESSON-01",
+      "fragment_kind": "START",
+      "page": 2,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 54.89,
+      "y1": 262.89
+    },
+    {
+      "content_ref": "LESSON-01",
+      "fragment_kind": "CONTINUATION",
+      "page": 3,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 519.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-01-CONTRAST",
+      "fragment_kind": "START",
+      "page": 3,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 377.89,
+      "y1": 523.89
+    },
+    {
+      "content_ref": "LESSON-01",
+      "fragment_kind": "START",
+      "page": 3,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 181.89,
+      "y1": 381.89
+    },
+    {
+      "content_ref": "LESSON-01-CHECKS",
+      "fragment_kind": "START",
+      "page": 3,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 59.89,
+      "y1": 185.89
+    },
+    {
+      "content_ref": "LESSON-01",
+      "fragment_kind": "START",
+      "page": 3,
+      "page_intent_id": "PI-LESSON-01",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 43.89,
+      "y1": 63.89
+    },
+    {
+      "content_ref": "LESSON-02",
+      "fragment_kind": "START",
+      "page": 4,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 614.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-02-CONSERVATION_LEDGER",
+      "fragment_kind": "START",
+      "page": 4,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "CONSERVATION_LEDGER",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 480.89,
+      "y1": 618.89
+    },
+    {
+      "content_ref": "LESSON-02",
+      "fragment_kind": "START",
+      "page": 4,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 44.89,
+      "y1": 484.89
+    },
+    {
+      "content_ref": "LESSON-02",
+      "fragment_kind": "CONTINUATION",
+      "page": 5,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 771.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-02-CONTRAST",
+      "fragment_kind": "START",
+      "page": 5,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 629.89,
+      "y1": 775.89
+    },
+    {
+      "content_ref": "LESSON-02",
+      "fragment_kind": "START",
+      "page": 5,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 449.89,
+      "y1": 633.89
+    },
+    {
+      "content_ref": "LESSON-02-CHECKS",
+      "fragment_kind": "START",
+      "page": 5,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 344.89,
+      "y1": 453.89
+    },
+    {
+      "content_ref": "LESSON-02",
+      "fragment_kind": "START",
+      "page": 5,
+      "page_intent_id": "PI-LESSON-02",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 316.89,
+      "y1": 348.89
+    },
+    {
+      "content_ref": "LESSON-03",
+      "fragment_kind": "START",
+      "page": 6,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 614.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-03-RULE_PRIORITY_LADDER",
+      "fragment_kind": "START",
+      "page": 6,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "RULE_PRIORITY_LADDER",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 448.89,
+      "y1": 618.89
+    },
+    {
+      "content_ref": "LESSON-03-CONDITION_EXCEPTION_GATE",
+      "fragment_kind": "START",
+      "page": 6,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "CONDITION_EXCEPTION_GATE",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 286.89,
+      "y1": 452.89
+    },
+    {
+      "content_ref": "LESSON-03",
+      "fragment_kind": "START",
+      "page": 6,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 50.89,
+      "y1": 290.89
+    },
+    {
+      "content_ref": "LESSON-03",
+      "fragment_kind": "CONTINUATION",
+      "page": 7,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 567.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-03-CONTRAST",
+      "fragment_kind": "START",
+      "page": 7,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 425.89,
+      "y1": 571.89
+    },
+    {
+      "content_ref": "LESSON-03",
+      "fragment_kind": "START",
+      "page": 7,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 245.89,
+      "y1": 429.89
+    },
+    {
+      "content_ref": "LESSON-03-CHECKS",
+      "fragment_kind": "START",
+      "page": 7,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 140.89,
+      "y1": 249.89
+    },
+    {
+      "content_ref": "LESSON-03",
+      "fragment_kind": "START",
+      "page": 7,
+      "page_intent_id": "PI-LESSON-03",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 112.89,
+      "y1": 144.89
+    },
+    {
+      "content_ref": "LESSON-04",
+      "fragment_kind": "START",
+      "page": 8,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 598.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-04-MACRO_OBSERVATION_VIEW",
+      "fragment_kind": "START",
+      "page": 8,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "MACRO_OBSERVATION_VIEW",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 478.89,
+      "y1": 602.89
+    },
+    {
+      "content_ref": "LESSON-04-EVIDENCE_CLAIM_REASONING_CHAIN",
+      "fragment_kind": "START",
+      "page": 8,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "EVIDENCE_CLAIM_REASONING_CHAIN",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 340.89,
+      "y1": 482.89
+    },
+    {
+      "content_ref": "LESSON-04",
+      "fragment_kind": "START",
+      "page": 8,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 56.89,
+      "y1": 344.89
+    },
+    {
+      "content_ref": "LESSON-04",
+      "fragment_kind": "CONTINUATION",
+      "page": 9,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 647.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-04-CONTRAST",
+      "fragment_kind": "START",
+      "page": 9,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 505.89,
+      "y1": 651.89
+    },
+    {
+      "content_ref": "LESSON-04",
+      "fragment_kind": "START",
+      "page": 9,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 341.89,
+      "y1": 509.89
+    },
+    {
+      "content_ref": "LESSON-04-CHECKS",
+      "fragment_kind": "START",
+      "page": 9,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 253.89,
+      "y1": 345.89
+    },
+    {
+      "content_ref": "LESSON-04",
+      "fragment_kind": "START",
+      "page": 9,
+      "page_intent_id": "PI-LESSON-04",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 225.89,
+      "y1": 257.89
+    },
+    {
+      "content_ref": "LESSON-05",
+      "fragment_kind": "START",
+      "page": 10,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 598.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-05-FORMULA_ANATOMY_VIEW",
+      "fragment_kind": "START",
+      "page": 10,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "FORMULA_ANATOMY_VIEW",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 476.89,
+      "y1": 602.89
+    },
+    {
+      "content_ref": "LESSON-05-CHARGE_SUBSCRIPT_CONTRAST",
+      "fragment_kind": "START",
+      "page": 10,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "CHARGE_SUBSCRIPT_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 332.89,
+      "y1": 480.89
+    },
+    {
+      "content_ref": "LESSON-05",
+      "fragment_kind": "START",
+      "page": 10,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 48.89,
+      "y1": 336.89
+    },
+    {
+      "content_ref": "LESSON-05",
+      "fragment_kind": "CONTINUATION",
+      "page": 11,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 619.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-05-CONTRAST",
+      "fragment_kind": "START",
+      "page": 11,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 477.89,
+      "y1": 623.89
+    },
+    {
+      "content_ref": "LESSON-05",
+      "fragment_kind": "START",
+      "page": 11,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 297.89,
+      "y1": 481.89
+    },
+    {
+      "content_ref": "LESSON-05-CHECKS",
+      "fragment_kind": "START",
+      "page": 11,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 192.89,
+      "y1": 301.89
+    },
+    {
+      "content_ref": "LESSON-05",
+      "fragment_kind": "START",
+      "page": 11,
+      "page_intent_id": "PI-LESSON-05",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 164.89,
+      "y1": 196.89
+    },
+    {
+      "content_ref": "LESSON-06",
+      "fragment_kind": "START",
+      "page": 12,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 582.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-06-CONDITION_EXCEPTION_GATE",
+      "fragment_kind": "START",
+      "page": 12,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "CONDITION_EXCEPTION_GATE",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 420.89,
+      "y1": 586.89
+    },
+    {
+      "content_ref": "LESSON-06",
+      "fragment_kind": "START",
+      "page": 12,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 48.89,
+      "y1": 424.89
+    },
+    {
+      "content_ref": "LESSON-06",
+      "fragment_kind": "CONTINUATION",
+      "page": 13,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 711.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-06-CONTRAST",
+      "fragment_kind": "START",
+      "page": 13,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 569.89,
+      "y1": 715.89
+    },
+    {
+      "content_ref": "LESSON-06",
+      "fragment_kind": "START",
+      "page": 13,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 405.89,
+      "y1": 573.89
+    },
+    {
+      "content_ref": "LESSON-06-CHECKS",
+      "fragment_kind": "START",
+      "page": 13,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 317.89,
+      "y1": 409.89
+    },
+    {
+      "content_ref": "LESSON-06",
+      "fragment_kind": "START",
+      "page": 13,
+      "page_intent_id": "PI-LESSON-06",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 289.89,
+      "y1": 321.89
+    },
+    {
+      "content_ref": "LESSON-07",
+      "fragment_kind": "START",
+      "page": 14,
+      "page_intent_id": "PI-LESSON-07",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 630.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-07-APPARATUS_METHOD_FLOW",
+      "fragment_kind": "START",
+      "page": 14,
+      "page_intent_id": "PI-LESSON-07",
+      "primitive": "APPARATUS_METHOD_FLOW",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 496.89,
+      "y1": 634.89
+    },
+    {
+      "content_ref": "LESSON-07",
+      "fragment_kind": "START",
+      "page": 14,
+      "page_intent_id": "PI-LESSON-07",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 76.89,
+      "y1": 500.89
+    },
+    {
+      "content_ref": "LESSON-07-CONTRAST",
+      "fragment_kind": "START",
+      "page": 15,
+      "page_intent_id": "PI-LESSON-07",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 657.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-07",
+      "fragment_kind": "START",
+      "page": 15,
+      "page_intent_id": "PI-LESSON-07",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 493.89,
+      "y1": 661.89
+    },
+    {
+      "content_ref": "LESSON-07-CHECKS",
+      "fragment_kind": "START",
+      "page": 15,
+      "page_intent_id": "PI-LESSON-07",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 405.89,
+      "y1": 497.89
+    },
+    {
+      "content_ref": "LESSON-07",
+      "fragment_kind": "START",
+      "page": 15,
+      "page_intent_id": "PI-LESSON-07",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 377.89,
+      "y1": 409.89
+    },
+    {
+      "content_ref": "LESSON-08",
+      "fragment_kind": "START",
+      "page": 16,
+      "page_intent_id": "PI-LESSON-08",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 598.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-08",
+      "fragment_kind": "START",
+      "page": 16,
+      "page_intent_id": "PI-LESSON-08",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 146.89,
+      "y1": 602.89
+    },
+    {
+      "content_ref": "LESSON-08-CONTRAST",
+      "fragment_kind": "START",
+      "page": 17,
+      "page_intent_id": "PI-LESSON-08",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 657.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-08",
+      "fragment_kind": "START",
+      "page": 17,
+      "page_intent_id": "PI-LESSON-08",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 477.89,
+      "y1": 661.89
+    },
+    {
+      "content_ref": "LESSON-08-CHECKS",
+      "fragment_kind": "START",
+      "page": 17,
+      "page_intent_id": "PI-LESSON-08",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 372.89,
+      "y1": 481.89
+    },
+    {
+      "content_ref": "LESSON-08",
+      "fragment_kind": "START",
+      "page": 17,
+      "page_intent_id": "PI-LESSON-08",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 344.89,
+      "y1": 376.89
+    },
+    {
+      "content_ref": "LESSON-09",
+      "fragment_kind": "START",
+      "page": 18,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 598.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-09-MACRO_OBSERVATION_VIEW",
+      "fragment_kind": "START",
+      "page": 18,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "MACRO_OBSERVATION_VIEW",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 478.89,
+      "y1": 602.89
+    },
+    {
+      "content_ref": "LESSON-09-OBSERVATION_INFERENCE_TABLE",
+      "fragment_kind": "START",
+      "page": 18,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "OBSERVATION_INFERENCE_TABLE",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 352.89,
+      "y1": 482.89
+    },
+    {
+      "content_ref": "LESSON-09",
+      "fragment_kind": "START",
+      "page": 18,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 52.89,
+      "y1": 356.89
+    },
+    {
+      "content_ref": "LESSON-09",
+      "fragment_kind": "CONTINUATION",
+      "page": 19,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 663.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-09-CONTRAST",
+      "fragment_kind": "START",
+      "page": 19,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 521.89,
+      "y1": 667.89
+    },
+    {
+      "content_ref": "LESSON-09",
+      "fragment_kind": "START",
+      "page": 19,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 357.89,
+      "y1": 525.89
+    },
+    {
+      "content_ref": "LESSON-09-CHECKS",
+      "fragment_kind": "START",
+      "page": 19,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 269.89,
+      "y1": 361.89
+    },
+    {
+      "content_ref": "LESSON-09",
+      "fragment_kind": "START",
+      "page": 19,
+      "page_intent_id": "PI-LESSON-09",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 241.89,
+      "y1": 273.89
+    },
+    {
+      "content_ref": "LESSON-10",
+      "fragment_kind": "START",
+      "page": 20,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 582.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-10-REACTION_BEFORE_AFTER_MAP",
+      "fragment_kind": "START",
+      "page": 20,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "REACTION_BEFORE_AFTER_MAP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 432.89,
+      "y1": 586.89
+    },
+    {
+      "content_ref": "LESSON-10",
+      "fragment_kind": "START",
+      "page": 20,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 42.0,
+      "y1": 436.89
+    },
+    {
+      "content_ref": "LESSON-10",
+      "fragment_kind": "CONTINUATION",
+      "page": 21,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 723.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-10-CONTRAST",
+      "fragment_kind": "START",
+      "page": 21,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 581.89,
+      "y1": 727.89
+    },
+    {
+      "content_ref": "LESSON-10",
+      "fragment_kind": "START",
+      "page": 21,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 385.89,
+      "y1": 585.89
+    },
+    {
+      "content_ref": "LESSON-10-CHECKS",
+      "fragment_kind": "START",
+      "page": 21,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 263.89,
+      "y1": 389.89
+    },
+    {
+      "content_ref": "LESSON-10",
+      "fragment_kind": "START",
+      "page": 21,
+      "page_intent_id": "PI-LESSON-10",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 247.89,
+      "y1": 267.89
+    },
+    {
+      "content_ref": "LESSON-11",
+      "fragment_kind": "START",
+      "page": 22,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 554.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-11-PARTICLE_MODEL_VIEW",
+      "fragment_kind": "START",
+      "page": 22,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "PARTICLE_MODEL_VIEW",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 422.89,
+      "y1": 558.89
+    },
+    {
+      "content_ref": "LESSON-11-MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+      "fragment_kind": "START",
+      "page": 22,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 276.89,
+      "y1": 426.89
+    },
+    {
+      "content_ref": "LESSON-11",
+      "fragment_kind": "START",
+      "page": 22,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 56.89,
+      "y1": 280.89
+    },
+    {
+      "content_ref": "LESSON-11",
+      "fragment_kind": "CONTINUATION",
+      "page": 23,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 555.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-11-CONTRAST",
+      "fragment_kind": "START",
+      "page": 23,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 413.89,
+      "y1": 559.89
+    },
+    {
+      "content_ref": "LESSON-11",
+      "fragment_kind": "START",
+      "page": 23,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 233.89,
+      "y1": 417.89
+    },
+    {
+      "content_ref": "LESSON-11-CHECKS",
+      "fragment_kind": "START",
+      "page": 23,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 128.89,
+      "y1": 237.89
+    },
+    {
+      "content_ref": "LESSON-11",
+      "fragment_kind": "START",
+      "page": 23,
+      "page_intent_id": "PI-LESSON-11",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 100.89,
+      "y1": 132.89
+    },
+    {
+      "content_ref": "LESSON-12",
+      "fragment_kind": "START",
+      "page": 24,
+      "page_intent_id": "PI-LESSON-12",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 646.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-12-FORMULA_EQUATION_CHECK_STRIP",
+      "fragment_kind": "START",
+      "page": 24,
+      "page_intent_id": "PI-LESSON-12",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 541.89,
+      "y1": 650.89
+    },
+    {
+      "content_ref": "LESSON-12",
+      "fragment_kind": "START",
+      "page": 24,
+      "page_intent_id": "PI-LESSON-12",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 89.89,
+      "y1": 545.89
+    },
+    {
+      "content_ref": "LESSON-12-CONTRAST",
+      "fragment_kind": "START",
+      "page": 25,
+      "page_intent_id": "PI-LESSON-12",
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 657.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "LESSON-12",
+      "fragment_kind": "START",
+      "page": 25,
+      "page_intent_id": "PI-LESSON-12",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 477.89,
+      "y1": 661.89
+    },
+    {
+      "content_ref": "LESSON-12-CHECKS",
+      "fragment_kind": "START",
+      "page": 25,
+      "page_intent_id": "PI-LESSON-12",
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 372.89,
+      "y1": 481.89
+    },
+    {
+      "content_ref": "LESSON-12",
+      "fragment_kind": "START",
+      "page": 25,
+      "page_intent_id": "PI-LESSON-12",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 344.89,
+      "y1": 376.89
+    },
+    {
+      "content_ref": "APPENDIX-A",
+      "fragment_kind": "START",
+      "page": 26,
+      "page_intent_id": "PI-APPENDIX-A",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 51.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-A",
+      "fragment_kind": "CONTINUATION",
+      "page": 27,
+      "page_intent_id": "PI-APPENDIX-A",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 51.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-A",
+      "fragment_kind": "CONTINUATION",
+      "page": 28,
+      "page_intent_id": "PI-APPENDIX-A",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 107.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-B",
+      "fragment_kind": "START",
+      "page": 29,
+      "page_intent_id": "PI-APPENDIX-B",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 55.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-B",
+      "fragment_kind": "CONTINUATION",
+      "page": 30,
+      "page_intent_id": "PI-APPENDIX-B",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 51.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-B",
+      "fragment_kind": "CONTINUATION",
+      "page": 31,
+      "page_intent_id": "PI-APPENDIX-B",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 55.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-B",
+      "fragment_kind": "CONTINUATION",
+      "page": 32,
+      "page_intent_id": "PI-APPENDIX-B",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 55.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-B",
+      "fragment_kind": "CONTINUATION",
+      "page": 33,
+      "page_intent_id": "PI-APPENDIX-B",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 51.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-B",
+      "fragment_kind": "CONTINUATION",
+      "page": 34,
+      "page_intent_id": "PI-APPENDIX-B",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 51.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-B",
+      "fragment_kind": "CONTINUATION",
+      "page": 35,
+      "page_intent_id": "PI-APPENDIX-B",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 255.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-C",
+      "fragment_kind": "START",
+      "page": 36,
+      "page_intent_id": "PI-APPENDIX-C",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 51.89,
+      "y1": 799.89
+    },
+    {
+      "content_ref": "APPENDIX-C",
+      "fragment_kind": "CONTINUATION",
+      "page": 37,
+      "page_intent_id": "PI-APPENDIX-C",
+      "primitive": "TEXT_BLOCK",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 735.89,
+      "y1": 799.89
+    }
+  ],
+  "orphan_continuations": 0,
+  "page_count": 37,
+  "page_intents": [
+    {
+      "content_refs": [
+        "APPENDIX-A"
+      ],
+      "continuation_pages": [
+        27,
+        28
+      ],
+      "page_intent_id": "PI-APPENDIX-A",
+      "physical_pages": [
+        26,
+        27,
+        28
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "APPENDIX-B"
+      ],
+      "continuation_pages": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "page_intent_id": "PI-APPENDIX-B",
+      "physical_pages": [
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "APPENDIX-C"
+      ],
+      "continuation_pages": [
+        37
+      ],
+      "page_intent_id": "PI-APPENDIX-C",
+      "physical_pages": [
+        36,
+        37
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "COVER"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-COVER",
+      "physical_pages": [
+        1
+      ],
+      "split": false
+    },
+    {
+      "content_refs": [
+        "LESSON-01",
+        "LESSON-01-CHECKS",
+        "LESSON-01-CONTRAST",
+        "LESSON-01-REACTION_BEFORE_AFTER_MAP",
+        "LESSON-01-SPECIES_ROLE_MAP"
+      ],
+      "continuation_pages": [
+        3
+      ],
+      "page_intent_id": "PI-LESSON-01",
+      "physical_pages": [
+        2,
+        3
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-02",
+        "LESSON-02-CHECKS",
+        "LESSON-02-CONSERVATION_LEDGER",
+        "LESSON-02-CONTRAST"
+      ],
+      "continuation_pages": [
+        5
+      ],
+      "page_intent_id": "PI-LESSON-02",
+      "physical_pages": [
+        4,
+        5
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-03",
+        "LESSON-03-CHECKS",
+        "LESSON-03-CONDITION_EXCEPTION_GATE",
+        "LESSON-03-CONTRAST",
+        "LESSON-03-RULE_PRIORITY_LADDER"
+      ],
+      "continuation_pages": [
+        7
+      ],
+      "page_intent_id": "PI-LESSON-03",
+      "physical_pages": [
+        6,
+        7
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-04",
+        "LESSON-04-CHECKS",
+        "LESSON-04-CONTRAST",
+        "LESSON-04-EVIDENCE_CLAIM_REASONING_CHAIN",
+        "LESSON-04-MACRO_OBSERVATION_VIEW"
+      ],
+      "continuation_pages": [
+        9
+      ],
+      "page_intent_id": "PI-LESSON-04",
+      "physical_pages": [
+        8,
+        9
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-05",
+        "LESSON-05-CHARGE_SUBSCRIPT_CONTRAST",
+        "LESSON-05-CHECKS",
+        "LESSON-05-CONTRAST",
+        "LESSON-05-FORMULA_ANATOMY_VIEW"
+      ],
+      "continuation_pages": [
+        11
+      ],
+      "page_intent_id": "PI-LESSON-05",
+      "physical_pages": [
+        10,
+        11
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-06",
+        "LESSON-06-CHECKS",
+        "LESSON-06-CONDITION_EXCEPTION_GATE",
+        "LESSON-06-CONTRAST"
+      ],
+      "continuation_pages": [
+        13
+      ],
+      "page_intent_id": "PI-LESSON-06",
+      "physical_pages": [
+        12,
+        13
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-07",
+        "LESSON-07-APPARATUS_METHOD_FLOW",
+        "LESSON-07-CHECKS",
+        "LESSON-07-CONTRAST"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-LESSON-07",
+      "physical_pages": [
+        14,
+        15
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-08",
+        "LESSON-08-CHECKS",
+        "LESSON-08-CONTRAST"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-LESSON-08",
+      "physical_pages": [
+        16,
+        17
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-09",
+        "LESSON-09-CHECKS",
+        "LESSON-09-CONTRAST",
+        "LESSON-09-MACRO_OBSERVATION_VIEW",
+        "LESSON-09-OBSERVATION_INFERENCE_TABLE"
+      ],
+      "continuation_pages": [
+        19
+      ],
+      "page_intent_id": "PI-LESSON-09",
+      "physical_pages": [
+        18,
+        19
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-10",
+        "LESSON-10-CHECKS",
+        "LESSON-10-CONTRAST",
+        "LESSON-10-REACTION_BEFORE_AFTER_MAP"
+      ],
+      "continuation_pages": [
+        21
+      ],
+      "page_intent_id": "PI-LESSON-10",
+      "physical_pages": [
+        20,
+        21
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-11",
+        "LESSON-11-CHECKS",
+        "LESSON-11-CONTRAST",
+        "LESSON-11-MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "LESSON-11-PARTICLE_MODEL_VIEW"
+      ],
+      "continuation_pages": [
+        23
+      ],
+      "page_intent_id": "PI-LESSON-11",
+      "physical_pages": [
+        22,
+        23
+      ],
+      "split": true
+    },
+    {
+      "content_refs": [
+        "LESSON-12",
+        "LESSON-12-CHECKS",
+        "LESSON-12-CONTRAST",
+        "LESSON-12-FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-LESSON-12",
+      "physical_pages": [
+        24,
+        25
+      ],
+      "split": true
+    }
+  ],
+  "page_map_id": "CHEM-C-L-PAGEMAP-CORE1",
+  "page_metrics": [
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 1,
+      "semantic_content_refs": [
+        "COVER"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 2,
+      "semantic_content_refs": [
+        "LESSON-01",
+        "LESSON-01-REACTION_BEFORE_AFTER_MAP",
+        "LESSON-01-SPECIES_ROLE_MAP"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 3,
+      "semantic_content_refs": [
+        "LESSON-01",
+        "LESSON-01-CHECKS",
+        "LESSON-01-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 4,
+      "semantic_content_refs": [
+        "LESSON-02",
+        "LESSON-02-CONSERVATION_LEDGER"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 5,
+      "semantic_content_refs": [
+        "LESSON-02",
+        "LESSON-02-CHECKS",
+        "LESSON-02-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 6,
+      "semantic_content_refs": [
+        "LESSON-03",
+        "LESSON-03-CONDITION_EXCEPTION_GATE",
+        "LESSON-03-RULE_PRIORITY_LADDER"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 7,
+      "semantic_content_refs": [
+        "LESSON-03",
+        "LESSON-03-CHECKS",
+        "LESSON-03-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 8,
+      "semantic_content_refs": [
+        "LESSON-04",
+        "LESSON-04-EVIDENCE_CLAIM_REASONING_CHAIN",
+        "LESSON-04-MACRO_OBSERVATION_VIEW"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 9,
+      "semantic_content_refs": [
+        "LESSON-04",
+        "LESSON-04-CHECKS",
+        "LESSON-04-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 10,
+      "semantic_content_refs": [
+        "LESSON-05",
+        "LESSON-05-CHARGE_SUBSCRIPT_CONTRAST",
+        "LESSON-05-FORMULA_ANATOMY_VIEW"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 11,
+      "semantic_content_refs": [
+        "LESSON-05",
+        "LESSON-05-CHECKS",
+        "LESSON-05-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 12,
+      "semantic_content_refs": [
+        "LESSON-06",
+        "LESSON-06-CONDITION_EXCEPTION_GATE"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 13,
+      "semantic_content_refs": [
+        "LESSON-06",
+        "LESSON-06-CHECKS",
+        "LESSON-06-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 14,
+      "semantic_content_refs": [
+        "LESSON-07",
+        "LESSON-07-APPARATUS_METHOD_FLOW"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 15,
+      "semantic_content_refs": [
+        "LESSON-07",
+        "LESSON-07-CHECKS",
+        "LESSON-07-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 16,
+      "semantic_content_refs": [
+        "LESSON-08"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 17,
+      "semantic_content_refs": [
+        "LESSON-08",
+        "LESSON-08-CHECKS",
+        "LESSON-08-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 18,
+      "semantic_content_refs": [
+        "LESSON-09",
+        "LESSON-09-MACRO_OBSERVATION_VIEW",
+        "LESSON-09-OBSERVATION_INFERENCE_TABLE"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 19,
+      "semantic_content_refs": [
+        "LESSON-09",
+        "LESSON-09-CHECKS",
+        "LESSON-09-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 20,
+      "semantic_content_refs": [
+        "LESSON-10",
+        "LESSON-10-REACTION_BEFORE_AFTER_MAP"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 21,
+      "semantic_content_refs": [
+        "LESSON-10",
+        "LESSON-10-CHECKS",
+        "LESSON-10-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 22,
+      "semantic_content_refs": [
+        "LESSON-11",
+        "LESSON-11-MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "LESSON-11-PARTICLE_MODEL_VIEW"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 23,
+      "semantic_content_refs": [
+        "LESSON-11",
+        "LESSON-11-CHECKS",
+        "LESSON-11-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 24,
+      "semantic_content_refs": [
+        "LESSON-12",
+        "LESSON-12-FORMULA_EQUATION_CHECK_STRIP"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 25,
+      "semantic_content_refs": [
+        "LESSON-12",
+        "LESSON-12-CHECKS",
+        "LESSON-12-CONTRAST"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 26,
+      "semantic_content_refs": [
+        "APPENDIX-A"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 27,
+      "semantic_content_refs": [
+        "APPENDIX-A"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 28,
+      "semantic_content_refs": [
+        "APPENDIX-A"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 29,
+      "semantic_content_refs": [
+        "APPENDIX-B"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 30,
+      "semantic_content_refs": [
+        "APPENDIX-B"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 31,
+      "semantic_content_refs": [
+        "APPENDIX-B"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 32,
+      "semantic_content_refs": [
+        "APPENDIX-B"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 33,
+      "semantic_content_refs": [
+        "APPENDIX-B"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 34,
+      "semantic_content_refs": [
+        "APPENDIX-B"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 35,
+      "semantic_content_refs": [
+        "APPENDIX-B"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 36,
+      "semantic_content_refs": [
+        "APPENDIX-C"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 37,
+      "semantic_content_refs": [
+        "APPENDIX-C"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "label": "continuation",
+      "page": 1
+    },
+    {
+      "label": "CORE1-CAP-ATTACH-SPECIES-ROLE",
+      "page": 2
+    },
+    {
+      "label": "continuation",
+      "page": 3
+    },
+    {
+      "label": "CORE1-CAP-CHECK-ATOM-CONSERVATION",
+      "page": 4
+    },
+    {
+      "label": "continuation",
+      "page": 5
+    },
+    {
+      "label": "CORE1-CAP-CHECK-RULE-EXCEPTION",
+      "page": 6
+    },
+    {
+      "label": "continuation",
+      "page": 7
+    },
+    {
+      "label": "CORE1-CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "page": 8
+    },
+    {
+      "label": "Misconception clinic",
+      "page": 9
+    },
+    {
+      "label": "CORE1-CAP-PARSE-ION-CHARGE",
+      "page": 10
+    },
+    {
+      "label": "Misconception clinic",
+      "page": 11
+    },
+    {
+      "label": "CORE1-CAP-PRESERVE-REACTION-CONDITION",
+      "page": 12
+    },
+    {
+      "label": "continuation",
+      "page": 13
+    },
+    {
+      "label": "CORE1-CAP-READ-APPARATUS-METHOD",
+      "page": 14
+    },
+    {
+      "label": "Connect apparatus, property and method",
+      "page": 15
+    },
+    {
+      "label": "CORE1-CAP-READ-FORMULA",
+      "page": 16
+    },
+    {
+      "label": "Read a chemical formula before calculating",
+      "page": 17
+    },
+    {
+      "label": "CORE1-CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "page": 18
+    },
+    {
+      "label": "continuation",
+      "page": 19
+    },
+    {
+      "label": "CORE1-CAP-TRACK-REACTING-SPECIES",
+      "page": 20
+    },
+    {
+      "label": "continuation",
+      "page": 21
+    },
+    {
+      "label": "CORE1-CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "page": 22
+    },
+    {
+      "label": "Check",
+      "page": 23
+    },
+    {
+      "label": "CORE1-CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "page": 24
+    },
+    {
+      "label": "Verify a chemical representation before accepting it",
+      "page": 25
+    },
+    {
+      "label": "Appendix A",
+      "page": 26
+    },
+    {
+      "label": "Practice 13 — Separate ionic charge from subscripts",
+      "page": 27
+    },
+    {
+      "label": "continuation",
+      "page": 28
+    },
+    {
+      "label": "Appendix B",
+      "page": 29
+    },
+    {
+      "label": "continuation",
+      "page": 30
+    },
+    {
+      "label": "continuation",
+      "page": 31
+    },
+    {
+      "label": "continuation",
+      "page": 32
+    },
+    {
+      "label": "continuation",
+      "page": 33
+    },
+    {
+      "label": "continuation",
+      "page": 34
+    },
+    {
+      "label": "continuation",
+      "page": 35
+    },
+    {
+      "label": "Appendix C",
+      "page": 36
+    },
+    {
+      "label": "Verify a chemical representation before accepting it",
+      "page": 37
+    }
+  ],
+  "realized_primitives": [
+    {
+      "accessibility_text": "Before-and-after species map linking reactants and products. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "content_ref": "LESSON-01-REACTION_BEFORE_AFTER_MAP",
+      "page": 2,
+      "primitive": "REACTION_BEFORE_AFTER_MAP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 442.89,
+      "y1": 582.89
+    },
+    {
+      "accessibility_text": "Species role map separating changing reactants, spectators and products. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "content_ref": "LESSON-01-SPECIES_ROLE_MAP",
+      "page": 2,
+      "primitive": "SPECIES_ROLE_MAP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 268.89,
+      "y1": 432.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "content_ref": "LESSON-01-CONTRAST",
+      "page": 3,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 387.89,
+      "y1": 519.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "content_ref": "LESSON-01-CHECKS",
+      "page": 3,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 69.89,
+      "y1": 181.89
+    },
+    {
+      "accessibility_text": "Conservation ledger showing the required before-and-after bookkeeping. Chemical entities: 2H₂ + O₂ → 2H₂O.",
+      "content_ref": "LESSON-02-CONSERVATION_LEDGER",
+      "page": 4,
+      "primitive": "CONSERVATION_LEDGER",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 490.89,
+      "y1": 614.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature. Chemical entities: 2H₂ + O₂ → 2H₂O.",
+      "content_ref": "LESSON-02-CONTRAST",
+      "page": 5,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 639.89,
+      "y1": 771.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route. Chemical entities: 2H₂ + O₂ → 2H₂O.",
+      "content_ref": "LESSON-02-CHECKS",
+      "page": 5,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 354.89,
+      "y1": 449.89
+    },
+    {
+      "accessibility_text": "Rule-priority ladder with the source-authorized condition or exception gate. Conditions/exceptions: explicit exception, explicit exception supplied by source.",
+      "content_ref": "LESSON-03-RULE_PRIORITY_LADDER",
+      "page": 6,
+      "primitive": "RULE_PRIORITY_LADDER",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 458.89,
+      "y1": 614.89
+    },
+    {
+      "accessibility_text": "Decision gate showing when a default rule applies and when a condition or exception overrides it. Conditions/exceptions: explicit exception, explicit exception supplied by source.",
+      "content_ref": "LESSON-03-CONDITION_EXCEPTION_GATE",
+      "page": 6,
+      "primitive": "CONDITION_EXCEPTION_GATE",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 296.89,
+      "y1": 448.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature. Conditions/exceptions: explicit exception, explicit exception supplied by source.",
+      "content_ref": "LESSON-03-CONTRAST",
+      "page": 7,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 435.89,
+      "y1": 567.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route. Conditions/exceptions: explicit exception, explicit exception supplied by source.",
+      "content_ref": "LESSON-03-CHECKS",
+      "page": 7,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 150.89,
+      "y1": 245.89
+    },
+    {
+      "accessibility_text": "Macroscopic observation view showing only source-recorded evidence.",
+      "content_ref": "LESSON-04-MACRO_OBSERVATION_VIEW",
+      "page": 8,
+      "primitive": "MACRO_OBSERVATION_VIEW",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 488.89,
+      "y1": 598.89
+    },
+    {
+      "accessibility_text": "Observation-to-claim reasoning chain with evidence and inference separated.",
+      "content_ref": "LESSON-04-EVIDENCE_CLAIM_REASONING_CHAIN",
+      "page": 8,
+      "primitive": "EVIDENCE_CLAIM_REASONING_CHAIN",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 350.89,
+      "y1": 478.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature.",
+      "content_ref": "LESSON-04-CONTRAST",
+      "page": 9,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 515.89,
+      "y1": 647.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route.",
+      "content_ref": "LESSON-04-CHECKS",
+      "page": 9,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 263.89,
+      "y1": 341.89
+    },
+    {
+      "accessibility_text": "Annotated chemical formula with symbol, coefficient, subscript and charge distinguished. Chemical entities: Fe³⁺, SO₄²⁻.",
+      "content_ref": "LESSON-05-FORMULA_ANATOMY_VIEW",
+      "page": 10,
+      "primitive": "FORMULA_ANATOMY_VIEW",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 486.89,
+      "y1": 598.89
+    },
+    {
+      "accessibility_text": "Two-case contrast distinguishing superscript ionic charge from subscript. Chemical entities: Fe³⁺, SO₄²⁻.",
+      "content_ref": "LESSON-05-CHARGE_SUBSCRIPT_CONTRAST",
+      "page": 10,
+      "primitive": "CHARGE_SUBSCRIPT_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 342.89,
+      "y1": 476.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature. Chemical entities: Fe³⁺, SO₄²⁻.",
+      "content_ref": "LESSON-05-CONTRAST",
+      "page": 11,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 487.89,
+      "y1": 619.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route. Chemical entities: Fe³⁺, SO₄²⁻.",
+      "content_ref": "LESSON-05-CHECKS",
+      "page": 11,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 202.89,
+      "y1": 297.89
+    },
+    {
+      "accessibility_text": "Decision gate showing when a default rule applies and when a condition or exception overrides it. Chemical entities: A → B. Conditions/exceptions: heat.",
+      "content_ref": "LESSON-06-CONDITION_EXCEPTION_GATE",
+      "page": 12,
+      "primitive": "CONDITION_EXCEPTION_GATE",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 430.89,
+      "y1": 582.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature. Chemical entities: A → B. Conditions/exceptions: heat.",
+      "content_ref": "LESSON-06-CONTRAST",
+      "page": 13,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 579.89,
+      "y1": 711.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route. Chemical entities: A → B. Conditions/exceptions: heat.",
+      "content_ref": "LESSON-06-CHECKS",
+      "page": 13,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 327.89,
+      "y1": 405.89
+    },
+    {
+      "accessibility_text": "Apparatus-method flow linking a property to the relevant apparatus feature and intended observation.",
+      "content_ref": "LESSON-07-APPARATUS_METHOD_FLOW",
+      "page": 14,
+      "primitive": "APPARATUS_METHOD_FLOW",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 506.89,
+      "y1": 630.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature.",
+      "content_ref": "LESSON-07-CONTRAST",
+      "page": 15,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 667.89,
+      "y1": 799.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route.",
+      "content_ref": "LESSON-07-CHECKS",
+      "page": 15,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 415.89,
+      "y1": 493.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature.",
+      "content_ref": "LESSON-08-CONTRAST",
+      "page": 17,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 667.89,
+      "y1": 799.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route.",
+      "content_ref": "LESSON-08-CHECKS",
+      "page": 17,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 382.89,
+      "y1": 477.89
+    },
+    {
+      "accessibility_text": "Macroscopic observation view showing only source-recorded evidence.",
+      "content_ref": "LESSON-09-MACRO_OBSERVATION_VIEW",
+      "page": 18,
+      "primitive": "MACRO_OBSERVATION_VIEW",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 488.89,
+      "y1": 598.89
+    },
+    {
+      "accessibility_text": "Two-column table separating observation from inference.",
+      "content_ref": "LESSON-09-OBSERVATION_INFERENCE_TABLE",
+      "page": 18,
+      "primitive": "OBSERVATION_INFERENCE_TABLE",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 362.89,
+      "y1": 478.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature.",
+      "content_ref": "LESSON-09-CONTRAST",
+      "page": 19,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 531.89,
+      "y1": 663.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route.",
+      "content_ref": "LESSON-09-CHECKS",
+      "page": 19,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 279.89,
+      "y1": 357.89
+    },
+    {
+      "accessibility_text": "Before-and-after species map linking reactants and products. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "content_ref": "LESSON-10-REACTION_BEFORE_AFTER_MAP",
+      "page": 20,
+      "primitive": "REACTION_BEFORE_AFTER_MAP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 442.89,
+      "y1": 582.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "content_ref": "LESSON-10-CONTRAST",
+      "page": 21,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 591.89,
+      "y1": 723.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "content_ref": "LESSON-10-CHECKS",
+      "page": 21,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 273.89,
+      "y1": 385.89
+    },
+    {
+      "accessibility_text": "Particle model with composition and count taken only from source semantic data. Chemical entities: H₂O.",
+      "content_ref": "LESSON-11-PARTICLE_MODEL_VIEW",
+      "page": 22,
+      "primitive": "PARTICLE_MODEL_VIEW",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 432.89,
+      "y1": 554.89
+    },
+    {
+      "accessibility_text": "Three-level bridge from macroscopic evidence through particle model to symbolic notation. Chemical entities: H₂O.",
+      "content_ref": "LESSON-11-MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+      "page": 22,
+      "primitive": "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 286.89,
+      "y1": 422.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature. Chemical entities: H₂O.",
+      "content_ref": "LESSON-11-CONTRAST",
+      "page": 23,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 423.89,
+      "y1": 555.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route. Chemical entities: H₂O.",
+      "content_ref": "LESSON-11-CHECKS",
+      "page": 23,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 138.89,
+      "y1": 233.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route.",
+      "content_ref": "LESSON-12-FORMULA_EQUATION_CHECK_STRIP",
+      "page": 24,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 551.89,
+      "y1": 646.89
+    },
+    {
+      "accessibility_text": "Minimal two-case Chemistry contrast differing in exactly one decisive feature.",
+      "content_ref": "LESSON-12-CONTRAST",
+      "page": 25,
+      "primitive": "MINIMAL_CHEMISTRY_CONTRAST",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 667.89,
+      "y1": 799.89
+    },
+    {
+      "accessibility_text": "Compact verification strip listing only the checks required by the current Chemistry route.",
+      "content_ref": "LESSON-12-CHECKS",
+      "page": 25,
+      "primitive": "FORMULA_EQUATION_CHECK_STRIP",
+      "validated_by": "MasterTemplates.VisualSemanticValidator",
+      "x0": 42.0,
+      "x1": 553.28,
+      "y0": 382.89,
+      "y1": 477.89
+    }
+  ],
+  "schema_version": "1.0.0"
+}

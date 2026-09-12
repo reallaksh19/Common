@@ -85,7 +85,14 @@ def machine_validate(candidate,cold,policy,artifact_root='.',required_qc_refs=No
       (e['eligible_missing_core2']>0,'ELIGIBLE_ITEM_MISSING_CORE2'),
       (e['hint_failures']>0,'HINT_SUPPORT_FAILURE'),
       (e['solution_failures']>0,'SOLUTION_FAILURE'),
-      (not e['source_structure_formula_fidelity'],'SOURCE_STRUCTURE_OR_FORMULA_DRIFT_IGNORED')]
+      (not e['source_structure_formula_fidelity'],'SOURCE_STRUCTURE_OR_FORMULA_DRIFT_IGNORED'),
+      # Engineering falsifiers added with issue #321. Read with .get so a
+      # legacy candidate that predates these fields still evaluates.
+      (e.get('learner_internal_identifier_leaks',0)>0,'LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK'),
+      (len(e.get('teaching_primitive_kinds_realized',[]))<policy.get('minimum_realized_primitive_kinds',0),'TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED'),
+      ('actual_placement_evidence' in e and not e['actual_placement_evidence'],'PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE'),
+      (e.get('placement_bounds_violations',0)>0,'PLACEMENT_OUT_OF_PHYSICAL_BOUNDS'),
+      (e.get('orphan_continuations',0)>0,'ORPHAN_CONTINUATION_FRAGMENT')]
     failures += [code for cond,code in checks if cond]
     required_qc_refs=set(required_qc_refs or [])
     if not required_qc_refs<=set(candidate['source_qc_event_refs']): failures.append('SOURCE_QC_EVENT_LOST_IN_FINAL_PRODUCT')
@@ -129,6 +136,8 @@ def build_release_decision(candidate,machine_gate,reviews,reference_comparison,p
         if candidate['candidate_class']=='LEGACY_NONCONFORMING_REDOX': fail('LEGACY_NONCONFORMING_REDOX_SNAPSHOT_RECEIVES_MATURE_PASS')
         if candidate['candidate_class']=='KNOWN_THIN_SMOKE' or e['core1_instructional_depth']!='FULL_INSTRUCTIONAL': fail('KNOWN_THIN_SMOKE_SPECIMEN_RECEIVES_MATURE_DESIGN_PASS')
         if not e['macro_particle_symbolic_realized']: fail('MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED')
+        if e.get('teaching_primitives_label_only') and len(e['teaching_primitives_label_only'])>len(e.get('teaching_primitive_kinds_realized',[])): fail('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED')
+        if e.get('learner_internal_identifier_leaks',0)>0: fail('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK')
         if not e['primary_supports_correct']: fail('PRIMARY_SUPPORTS_LABELS_INCORRECT')
         if not e['visual_usable_actual_size']: fail('VISUAL_UNUSABLE_AT_ACTUAL_OUTPUT_SIZE')
         if not e['hints_distinct_from_solution']: fail('HINTS_DUPLICATE_SOLUTION_BUT_MARKED_MATURE')

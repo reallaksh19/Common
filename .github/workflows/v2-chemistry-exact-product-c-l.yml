@@ -4,11 +4,22 @@ on:
   push:
     paths:
       - 'Grade 9/V2/Chemistry/ExactProduct/**'
+      - 'Grade 9/V2/Shared/MasterTemplates/primitives/**'
       - '.github/workflows/v2-chemistry-exact-product-c-l.yml'
   pull_request:
     paths:
       - 'Grade 9/V2/Chemistry/ExactProduct/**'
+      - 'Grade 9/V2/Shared/MasterTemplates/primitives/**'
       - '.github/workflows/v2-chemistry-exact-product-c-l.yml'
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Also publish the frozen candidate as a GitHub Release asset'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 jobs:
   validate:
@@ -25,6 +36,8 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_product.py'
       - name: Realize and validate exact Core1/Core2 PDFs
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_realization.py'
+      - name: Prove no learner-facing identifier leak and no label-only primitive
+        run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_learner_surface.py'
       - name: Run exact-candidate AI pre-review firewall
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_ai_prereview.py'
       - name: Freeze exact CI candidate
@@ -35,10 +48,36 @@ jobs:
           --candidate /tmp/chemistry-c-l-exact/exact-product-candidate.json
           --core1 /tmp/chemistry-c-l-exact/core-study-guide.pdf
           --core2 /tmp/chemistry-c-l-exact/examside-solution-transfer-book.pdf
+          --page-map-core1 /tmp/chemistry-c-l-exact/physical-page-map-core1.json
+          --page-map-core2 /tmp/chemistry-c-l-exact/physical-page-map-core2.json
+          --policy 'Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json'
           --out-review /tmp/chemistry-c-l-exact/ai-pre-review.json
+      - name: Independently recompute custody from the exact bytes
+        run: >-
+          python 'Grade 9/V2/Chemistry/ExactProduct/validator/validate_chemistry_custody.py'
+          --out /tmp/chemistry-c-l-exact
+          --policy 'Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json'
+      - name: Verify the durable in-repo frozen candidate is intact
+        run: >-
+          python 'Grade 9/V2/Chemistry/ExactProduct/engine/freeze_chemistry_candidate.py'
+          --verify 'Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A'
       - name: Upload exact Chemistry candidate
         uses: actions/upload-artifact@v4
         with:
           name: chemistry-c-l-exact-candidate-${{ github.sha }}
           path: /tmp/chemistry-c-l-exact/
           if-no-files-found: error
+      # CI artifacts expire. The candidate is additionally committed under
+      # ExactProduct/candidates/, and can be published as a Release asset so a
+      # reviewer can still fetch the exact reviewed bytes afterwards.
+      - name: Publish frozen candidate as a Release asset
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="chemistry-c-l-exact-${GITHUB_SHA::12}"
+          gh release create "$TAG" \
+            --title "Chemistry C-L exact candidate ${GITHUB_SHA::12}" \
+            --notes "Frozen Chemistry V2 C-L exact candidate. Engineering custody only: AI pre-review is not human review, and SUBJECT_CORRECTNESS / PEDAGOGICAL_DESIGN / ASSESSMENT_DESIGN / VISUAL_USABILITY / MATURE_DESIGN_QUALITY all remain PENDING." \
+            || true
+          gh release upload "$TAG" /tmp/chemistry-c-l-exact/* --clobber
