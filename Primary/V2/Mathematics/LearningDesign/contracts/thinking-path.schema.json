@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/LearningDesign/contracts/thinking-path.schema.json",
+  "title": "PrimaryMathThinkingPath",
+  "type": "object",
+  "required": ["schema_version", "path_id", "task_ref", "steps"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "path_id": {"type": "string", "minLength": 1},
+    "task_ref": {"type": "string", "minLength": 1},
+    "steps": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["step_id", "semantic_role", "child_label", "micro_visual_ref", "one_line_action"],
+        "properties": {
+          "step_id": {"type": "string", "minLength": 1},
+          "semantic_role": {"enum": ["INTERPRET", "MODEL", "EXECUTE", "COMBINE", "VERIFY"]},
+          "child_label": {"enum": ["LOOK", "SHOW IT", "WORK", "PUT TOGETHER", "CHECK"]},
+          "micro_visual_ref": {"type": "string", "minLength": 1},
+          "one_line_action": {"type": "string", "minLength": 1},
+          "check": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
