@@ -1,0 +1,27 @@
+name: Primary V2 architecture
+
+on:
+  pull_request:
+    paths:
+      - 'Primary/V2/Mathematics/Architecture/**'
+      - '.github/workflows/primary-v2-architecture.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Primary/V2/Mathematics/Architecture/**'
+      - '.github/workflows/primary-v2-architecture.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-primary-v2-architecture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Primary Math V2 architecture contracts
+        run: python Primary/V2/Mathematics/Architecture/contracts/validate_architecture.py
