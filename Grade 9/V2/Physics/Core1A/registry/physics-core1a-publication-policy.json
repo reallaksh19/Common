@@ -1,0 +1,97 @@
+{
+  "policy_id": "PHY-P-GA-CORE1A-PUBLICATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "product_id": "CORE_STUDY_GUIDE",
+  "two_product_topology_preserved": true,
+  "page": {
+    "size": "A4",
+    "margin_mm": 16,
+    "body_font_target_pt": 10.2,
+    "body_font_minimum_pt": 9.5,
+    "caption_font_minimum_pt": 8.0,
+    "heading_font_minimum_pt": 12.0,
+    "meaningful_occupancy_target_min": 0.70,
+    "meaningful_occupancy_target_max": 0.85,
+    "maximum_major_callouts": 4,
+    "minimum_work_space_lines_guided": 3,
+    "minimum_work_space_lines_independent": 5
+  },
+  "templates": {
+    "FULL_LEARNING": "MATURE_CYCLE",
+    "CONCISE_VERIFY_ONLY": "VERIFY_COMPACT",
+    "PROBE": "PROBE_FIRST"
+  },
+  "full_learning_required_modules": [
+    "CONCEPT_BADGE",
+    "REAL_WORLD_ANCHOR",
+    "SEE_IT",
+    "KEY_IDEA",
+    "MODEL_CHECK",
+    "WORKED_EXAMPLE",
+    "COMMON_TRAP",
+    "GUIDED_PRACTICE",
+    "FADED_PRACTICE",
+    "INDEPENDENT_PRACTICE",
+    "PHYSICAL_CHECK",
+    "SELF_CHECK",
+    "TRANSFER_BRIDGE"
+  ],
+  "verify_only_allowed_modules": [
+    "CONCEPT_BADGE",
+    "KEY_IDEA",
+    "INDEPENDENT_PRACTICE",
+    "PHYSICAL_CHECK",
+    "SELF_CHECK",
+    "TRANSFER_BRIDGE"
+  ],
+  "probe_allowed_modules": [
+    "CONCEPT_BADGE",
+    "PROBE",
+    "PHYSICAL_CHECK",
+    "SELF_CHECK"
+  ],
+  "template_only_phrases": [
+    "newly authored instance",
+    "work this practice instance",
+    "set up the system and frame",
+    "build the state table",
+    "select the relation",
+    "substitute the signed values",
+    "authored core1 instance"
+  ],
+  "quality_codes": [
+    "CORE1A_TEMPLATE_ONLY_CONTENT",
+    "CORE1A_SEMANTIC_DRIFT",
+    "CORE1A_UNOWNED_PHYSICS_INSERTED",
+    "CORE1A_UNOWNED_NUMERIC_QUANTITY",
+    "CORE1A_MODEL_VALIDITY_DROPPED",
+    "CORE1A_VERIFICATION_DROPPED",
+    "CORE1A_REQUIRED_MODULE_MISSING",
+    "CORE1A_RETEACH_BEFORE_PROBE",
+    "CORE1A_VERIFY_ONLY_EXPANDED_TO_RETEACH",
+    "CORE1A_BODY_FONT_TOO_SMALL",
+    "CORE1A_CAPTION_FONT_TOO_SMALL",
+    "CORE1A_LOW_MEANINGFUL_OCCUPANCY",
+    "CORE1A_OVERFULL_PAGE",
+    "CORE1A_ORPHAN_HEADING",
+    "CORE1A_ACCIDENTAL_LARGE_VOID",
+    "CORE1A_WORKED_EXAMPLE_BAD_SPLIT",
+    "CORE1A_FIGURE_CAPTION_MISSING",
+    "CORE1A_INVENTED_FIGURE_QUANTITY",
+    "CORE1A_SOURCE_GROUNDED_FIGURE_LOST",
+    "CORE1A_REPRESENTATION_REQUIREMENT_MISSING",
+    "CORE1A_FIGURE_TOO_SMALL_TO_TEACH"
+  ],
+  "release_boundary": {
+    "machine_settable": ["PUBLICATION_ENGINEERING"],
+    "not_settable_here": [
+      "SUBJECT_CORRECTNESS",
+      "PEDAGOGICAL_DESIGN",
+      "ASSESSMENT_DESIGN",
+      "VISUAL_USABILITY",
+      "MATURE_DESIGN_QUALITY",
+      "REFERENCE_COMPARABILITY"
+    ]
+  }
+}
