@@ -1,0 +1,88 @@
+{
+  "handoff_version": "2026-09-12",
+  "parent_pr": 323,
+  "base_branch": "v2-math-upgrade-pck-renderer-mature-gates",
+  "consolidated_review_comment": 5646045040,
+  "hard_invariants": {
+    "cross_core": "Every non-trivial Core2 reasoning state resolves to explicit Core1 teaching evidence.",
+    "answer_authority": "Every learner-facing question has a model answer, verification, or explicit acceptance criterion.",
+    "source_completeness": "Core2 coverage is reconciled to a frozen source corpus and atomic asks, not only to supplied plan rows.",
+    "rendered_completeness": "Question/choice/subpart completeness must survive final layout and pagination.",
+    "visual_correctness": "Diagram semantics are subject correctness, not decorative QA."
+  },
+  "topics": {
+    "number_systems": {
+      "source_unit": "ieep201.pdf",
+      "status": "FINAL_CROSS_CORE",
+      "core1": "Number_Systems_Core1_Final_CrossCore_v2.pdf",
+      "core2": "Number_Systems_Core2_Final_CrossCore_v1.pdf",
+      "manifest": "Number_Systems_CrossCore_Bridge_Manifest_v2.json",
+      "top_level_questions": 46,
+      "source_rows": 118,
+      "core1_answer_authority": "PASS",
+      "unresolved_core2_reasoning_states": 0
+    },
+    "polynomials": {
+      "source_unit": "ieep202.pdf",
+      "status": "FINAL_CROSS_CORE",
+      "core1": "Polynomials_Core1_Final_CrossCore_v1.pdf",
+      "core2": "Polynomials_Core2_Final_CrossCore_v1.pdf",
+      "manifest": "Polynomials_CrossCore_Bridge_Manifest_v1.json",
+      "top_level_questions": 72,
+      "atomic_asks": 151
+    },
+    "coordinate_geometry": {
+      "source_unit": "ieep203.pdf",
+      "status": "PRE_FINAL_REBUILD_REQUIRED",
+      "core1": "Coordinate_Geometry_Core1_Study_Guide_v1.pdf",
+      "core2": "Coordinate_Geometry_Core2_Source_Linked_Practice_v1.pdf",
+      "manifest": "Coordinate_Geometry_StressTest_Manifest_v1.json",
+      "top_level_questions": 42,
+      "atomic_asks": 85
+    },
+    "linear_equations_two_variables": {
+      "source_unit": "ieep204.pdf",
+      "status": "NEXT_FINAL_REBUILD",
+      "core1": "Linear_Equations_Two_Variables_Core1_Study_Guide_v1.pdf",
+      "core2": "Linear_Equations_Two_Variables_Core2_Source_Linked_Practice_v1.pdf",
+      "manifest": "Linear_Equations_Two_Variables_StressTest_Manifest_v1.json",
+      "top_level_questions": 42,
+      "atomic_asks": 61
+    },
+    "euclids_geometry": {
+      "source_unit": "ieep205.pdf",
+      "status": "FINAL_CROSS_CORE",
+      "core1": "Euclids_Geometry_Core1_Final_CrossCore_v2.pdf",
+      "core2": "Euclids_Geometry_Core2_Final_CrossCore_v1.pdf",
+      "manifest": "Euclids_Geometry_CrossCore_Bridge_Manifest_v2.json",
+      "top_level_questions": 48,
+      "atomic_asks": 49,
+      "core1_answer_authority": "PASS",
+      "unresolved_core2_reasoning_states": 0
+    },
+    "lines_and_angles": {
+      "source_unit": "ieep206.pdf",
+      "status": "STRONG_CORE1_V2_NEEDS_FINAL_BRIDGE_NORMALIZATION",
+      "core1": "Lines_and_Angles_Core1_Study_Guide_v2.pdf",
+      "core2": "Lines_and_Angles_Core2_Source_Linked_Practice_v1.pdf",
+      "manifest": "Lines_and_Angles_StressTest_Manifest_v1.json",
+      "top_level_questions": 35
+    },
+    "surface_areas_volumes": {
+      "source_unit": "ieep213.pdf",
+      "status": "STRONG_V1_NEEDS_FINAL_BRIDGE_NORMALIZATION",
+      "core1": "Surface_Areas_and_Volumes_Core1_Study_Guide_v1.pdf",
+      "core2": "Surface_Areas_and_Volumes_Core2_Source_Linked_Practice_v1.pdf",
+      "manifest": "Surface_Areas_and_Volumes_StressTest_Manifest_v1.json",
+      "top_level_questions": 38,
+      "atomic_asks": 40
+    }
+  },
+  "remaining_order": [
+    "Linear Equations in Two Variables",
+    "Coordinate Geometry",
+    "Lines & Angles normalization",
+    "Surface Areas & Volumes normalization",
+    "Seven-topic cross-core audit"
+  ]
+}
