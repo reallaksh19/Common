@@ -23,3 +23,5 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/CoverageClosure/contracts/validate_contracts.py'
       - name: Run C-J closure falsifiers
         run: python 'Grade 9/V2/Chemistry/CoverageClosure/tests/test_chemistry_coverage_closure.py'
+      - name: Run source-ingestion denominator-freezing falsifiers
+        run: python 'Grade 9/V2/Chemistry/CoverageClosure/tests/test_chemistry_source_ingestion.py'

@@ -1,0 +1,261 @@
+{
+  "profile_id": "CHEM-SOURCE-INGESTION-PROFILE-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "stage": "SOURCE_INGESTION",
+  "purpose": "Freeze the source/question denominator from the supplied documents BEFORE authoring is allowed to start, and keep it reconcilable afterwards. This replaces PR #346's manual per-topic source audit with a generic stage whose counters are re-derived from declared evidence.",
+  "required_counters": [
+    "TOTAL_SCANNED",
+    "ELIGIBLE_IN_SCOPE",
+    "PLACED_UNIQUE",
+    "EXCLUDED_WITH_REASON",
+    "UNRESOLVED_WITH_REASON",
+    "MISSING",
+    "DUPLICATE_PRIMARY"
+  ],
+  "closure_invariants": [
+    "ELIGIBLE_IN_SCOPE == PLACED_UNIQUE",
+    "MISSING == 0",
+    "DUPLICATE_PRIMARY == 0",
+    "TOTAL_SCANNED == ELIGIBLE_IN_SCOPE + EXCLUDED_WITH_REASON + UNRESOLVED_WITH_REASON"
+  ],
+  "freeze_states": [
+    "UNFROZEN",
+    "FROZEN_ELIGIBLE_ONLY",
+    "FROZEN_ITEM_LEDGER"
+  ],
+  "authoring_requires_freeze_state": [
+    "FROZEN_ITEM_LEDGER"
+  ],
+  "freeze_state_semantics": {
+    "UNFROZEN": "No denominator has been frozen. Authoring is refused.",
+    "FROZEN_ELIGIBLE_ONLY": "The eligible/placed denominator is frozen and reconcilable, but the scanned denominator and exclusion counts were never recorded by the producing run. Usable as a coverage baseline; NOT sufficient to start authoring a new chapter.",
+    "FROZEN_ITEM_LEDGER": "Every scanned item is enumerated with a status and an explicit reason where it is not eligible. Authoring may start."
+  },
+  "unresolved_counter_policy": "RECORD_AS_UNRESOLVED_NEVER_INFER",
+  "falsifiers": [
+    "SOURCE_DENOMINATOR_NOT_FROZEN",
+    "AUTHORING_BEFORE_DENOMINATOR_FREEZE",
+    "ELIGIBLE_PLACED_MISMATCH",
+    "MISSING_SOURCE_ITEM",
+    "DUPLICATE_PRIMARY_PLACEMENT",
+    "EXCLUSION_WITHOUT_REASON",
+    "SCANNED_TOTAL_RECONCILIATION_FAILURE",
+    "INGESTION_EVIDENCE_DIGEST_MISMATCH",
+    "FROZEN_COUNTERS_NOT_DERIVED_FROM_EVIDENCE",
+    "SOURCE_ITEM_LEDGER_UNAVAILABLE",
+    "POST_AUTHORING_DENOMINATOR_DRIFT"
+  ],
+  "frozen_instances": [
+    {
+      "instance_id": "CHEM-INGEST-PIPELINE-EXTERNAL-CORPUS",
+      "denominator_class": "EXTERNAL_QUESTION_CORPUS",
+      "scope_label": "Chemistry V2 pipeline external transfer corpus",
+      "freeze_state": "FROZEN_ITEM_LEDGER",
+      "evidence": {
+        "kind": "SCOPE_STATUS_LEDGER",
+        "path": "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-external-corpus-classification.json",
+        "records_key": "classifications",
+        "item_id_key": "candidate_id",
+        "status_key": "scope_status",
+        "reason_key": "scope_reason",
+        "sha256": "88edb077d3e2eeb3d38f53993b2f8f1610beda9304c398551f1ee285d71f02f0"
+      },
+      "frozen_counters": {
+        "TOTAL_SCANNED": 6,
+        "ELIGIBLE_IN_SCOPE": 5,
+        "PLACED_UNIQUE": 5,
+        "EXCLUDED_WITH_REASON": 0,
+        "UNRESOLVED_WITH_REASON": 1,
+        "MISSING": 0,
+        "DUPLICATE_PRIMARY": 0
+      },
+      "unresolved_counters": [],
+      "runtime_reconciliation": "COVERAGE_CLOSURE_EXTERNAL_MATRIX"
+    },
+    {
+      "instance_id": "CHEM-INGEST-PIPELINE-SOURCE-OBLIGATIONS",
+      "denominator_class": "SOURCE_CONCEPT_OBLIGATIONS",
+      "scope_label": "Chemistry V2 pipeline source-obligation denominator",
+      "freeze_state": "FROZEN_ITEM_LEDGER",
+      "evidence": {
+        "kind": "SCOPE_STATUS_LEDGER",
+        "path": "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-source-obligation-ledger.json",
+        "records_key": "obligations",
+        "item_id_key": "obligation_id",
+        "status_key": "scope_status",
+        "reason_key": "scope_reason",
+        "sha256": "a15289404958ebf632228b4ed104b1680abb84c03955033e990dcebb95de6658"
+      },
+      "frozen_counters": {
+        "TOTAL_SCANNED": 12,
+        "ELIGIBLE_IN_SCOPE": 10,
+        "PLACED_UNIQUE": 10,
+        "EXCLUDED_WITH_REASON": 2,
+        "UNRESOLVED_WITH_REASON": 0,
+        "MISSING": 0,
+        "DUPLICATE_PRIMARY": 0
+      },
+      "unresolved_counters": [],
+      "runtime_reconciliation": "COVERAGE_CLOSURE_SOURCE_MATRIX"
+    },
+    {
+      "instance_id": "CHEM-INGEST-PIPELINE-ASSESSMENT-QUESTIONS",
+      "denominator_class": "ASSESSMENT_QUESTION_SET",
+      "scope_label": "Chemistry V2 pipeline assessment-question denominator",
+      "freeze_state": "FROZEN_ITEM_LEDGER",
+      "evidence": {
+        "kind": "SCOPE_STATUS_LEDGER",
+        "path": "Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-question-capability-bindings.json",
+        "records_key": "bindings",
+        "item_id_keys": [
+          "question_ref",
+          "part_ref"
+        ],
+        "status_key": "scope_status",
+        "reason_key": "scope_reason",
+        "sha256": "a2a86784ebc0f58d9387f721c783b8deb0504d15083ba5d7f96c4923fa53fa3d"
+      },
+      "frozen_counters": {
+        "TOTAL_SCANNED": 17,
+        "ELIGIBLE_IN_SCOPE": 14,
+        "PLACED_UNIQUE": 14,
+        "EXCLUDED_WITH_REASON": 2,
+        "UNRESOLVED_WITH_REASON": 1,
+        "MISSING": 0,
+        "DUPLICATE_PRIMARY": 0
+      },
+      "unresolved_counters": [],
+      "runtime_reconciliation": "COVERAGE_CLOSURE_CAPABILITY_RECORDS"
+    },
+    {
+      "instance_id": "CHEM-INGEST-NCERT-WORKBENCH-REDOX-REACTIONS",
+      "denominator_class": "AUTHORED_TOPIC_BASELINE",
+      "scope_label": "PR #346 NCERT workbench baseline: Redox Reactions",
+      "freeze_state": "FROZEN_ELIGIBLE_ONLY",
+      "evidence": {
+        "kind": "AUTHORING_HANDOFF_MANIFEST",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/HANDOFF_MANIFEST.json",
+        "topic_id": "redox-reactions",
+        "sha256": "e92a6c9e026a9ca15b1def1c10652ccc55eaeb7474e6db8f01d2088df477a4c0"
+      },
+      "corroborating_evidence": {
+        "kind": "AUTHORING_HANDOFF_VALIDATOR",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/tools/validate_handoff.py",
+        "symbol": "TOPICS",
+        "topic_id": "redox-reactions",
+        "sha256": "f4f9ae7c9442bca6545c57d5d0898ad20619156e39d67e48044c89004a0c0658"
+      },
+      "frozen_counters": {
+        "ELIGIBLE_IN_SCOPE": 11,
+        "PLACED_UNIQUE": 11,
+        "MISSING": 0,
+        "DUPLICATE_PRIMARY": 0
+      },
+      "unresolved_counters": [
+        "TOTAL_SCANNED",
+        "EXCLUDED_WITH_REASON",
+        "UNRESOLVED_WITH_REASON"
+      ],
+      "runtime_reconciliation": "AUTHORING_HANDOFF_ONLY"
+    },
+    {
+      "instance_id": "CHEM-INGEST-NCERT-WORKBENCH-BEHAVIOUR-OF-GASES",
+      "denominator_class": "AUTHORED_TOPIC_BASELINE",
+      "scope_label": "PR #346 NCERT workbench baseline: Behaviour of Gases",
+      "freeze_state": "FROZEN_ELIGIBLE_ONLY",
+      "evidence": {
+        "kind": "AUTHORING_HANDOFF_MANIFEST",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/HANDOFF_MANIFEST.json",
+        "topic_id": "behaviour-of-gases",
+        "sha256": "e92a6c9e026a9ca15b1def1c10652ccc55eaeb7474e6db8f01d2088df477a4c0"
+      },
+      "corroborating_evidence": {
+        "kind": "AUTHORING_HANDOFF_VALIDATOR",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/tools/validate_handoff.py",
+        "symbol": "TOPICS",
+        "topic_id": "behaviour-of-gases",
+        "sha256": "f4f9ae7c9442bca6545c57d5d0898ad20619156e39d67e48044c89004a0c0658"
+      },
+      "frozen_counters": {
+        "ELIGIBLE_IN_SCOPE": 27,
+        "PLACED_UNIQUE": 27,
+        "MISSING": 0,
+        "DUPLICATE_PRIMARY": 0
+      },
+      "unresolved_counters": [
+        "TOTAL_SCANNED",
+        "EXCLUDED_WITH_REASON",
+        "UNRESOLVED_WITH_REASON"
+      ],
+      "runtime_reconciliation": "AUTHORING_HANDOFF_ONLY"
+    },
+    {
+      "instance_id": "CHEM-INGEST-NCERT-WORKBENCH-CHEMICAL-BONDING",
+      "denominator_class": "AUTHORED_TOPIC_BASELINE",
+      "scope_label": "PR #346 NCERT workbench baseline: Chemical Bonding",
+      "freeze_state": "FROZEN_ELIGIBLE_ONLY",
+      "evidence": {
+        "kind": "AUTHORING_HANDOFF_MANIFEST",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/HANDOFF_MANIFEST.json",
+        "topic_id": "chemical-bonding",
+        "sha256": "e92a6c9e026a9ca15b1def1c10652ccc55eaeb7474e6db8f01d2088df477a4c0"
+      },
+      "corroborating_evidence": {
+        "kind": "AUTHORING_HANDOFF_VALIDATOR",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/tools/validate_handoff.py",
+        "symbol": "TOPICS",
+        "topic_id": "chemical-bonding",
+        "sha256": "f4f9ae7c9442bca6545c57d5d0898ad20619156e39d67e48044c89004a0c0658"
+      },
+      "frozen_counters": {
+        "ELIGIBLE_IN_SCOPE": 38,
+        "PLACED_UNIQUE": 38,
+        "MISSING": 0,
+        "DUPLICATE_PRIMARY": 0
+      },
+      "unresolved_counters": [
+        "TOTAL_SCANNED",
+        "EXCLUDED_WITH_REASON",
+        "UNRESOLVED_WITH_REASON"
+      ],
+      "runtime_reconciliation": "AUTHORING_HANDOFF_ONLY"
+    },
+    {
+      "instance_id": "CHEM-INGEST-NCERT-WORKBENCH-SOME-BASIC-CONCEPTS",
+      "denominator_class": "AUTHORED_TOPIC_BASELINE",
+      "scope_label": "PR #346 NCERT workbench baseline: Some Basic Concepts of Chemistry",
+      "freeze_state": "FROZEN_ELIGIBLE_ONLY",
+      "evidence": {
+        "kind": "AUTHORING_HANDOFF_MANIFEST",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/HANDOFF_MANIFEST.json",
+        "topic_id": "some-basic-concepts",
+        "sha256": "e92a6c9e026a9ca15b1def1c10652ccc55eaeb7474e6db8f01d2088df477a4c0"
+      },
+      "corroborating_evidence": {
+        "kind": "AUTHORING_HANDOFF_VALIDATOR",
+        "path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/tools/validate_handoff.py",
+        "symbol": "TOPICS",
+        "topic_id": "some-basic-concepts",
+        "sha256": "f4f9ae7c9442bca6545c57d5d0898ad20619156e39d67e48044c89004a0c0658"
+      },
+      "frozen_counters": {
+        "ELIGIBLE_IN_SCOPE": 68,
+        "PLACED_UNIQUE": 68,
+        "MISSING": 0,
+        "DUPLICATE_PRIMARY": 0
+      },
+      "unresolved_counters": [
+        "TOTAL_SCANNED",
+        "EXCLUDED_WITH_REASON",
+        "UNRESOLVED_WITH_REASON"
+      ],
+      "runtime_reconciliation": "AUTHORING_HANDOFF_ONLY"
+    }
+  ],
+  "known_limitations": [
+    "The four PR #346 topic baselines are frozen at FROZEN_ELIGIBLE_ONLY: that PR recorded the retained denominator (68/27/38/11) in two independent artifacts, but never recorded TOTAL_SCANNED or the exclusion count for those topics. Those counters are marked unresolved and are never inferred.",
+    "PR #346's committed source bundle does not reconstruct: bundles/final-sources/ decodes to 109144 bytes against a declared 117370, so tools/restore_source_bundle.py fails its own integrity check and the per-item coverage-ledger.csv files are not recoverable from this branch. Until those bytes are restored, the topic baselines cannot be promoted past FROZEN_ELIGIBLE_ONLY."
+  ],
+  "profile_digest": "6c06744d5fb9c455f523ccb0b3f27a23bac6f0d0e1cbf440a969022c11c42248"
+}

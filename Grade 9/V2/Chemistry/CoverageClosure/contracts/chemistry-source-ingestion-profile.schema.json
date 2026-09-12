@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-source-ingestion-profile.schema.json",
+  "title": "ChemistrySourceIngestionProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_id",
+    "schema_version",
+    "subject",
+    "stage",
+    "purpose",
+    "required_counters",
+    "closure_invariants",
+    "freeze_states",
+    "authoring_requires_freeze_state",
+    "freeze_state_semantics",
+    "unresolved_counter_policy",
+    "falsifiers",
+    "frozen_instances",
+    "known_limitations",
+    "profile_digest"
+  ],
+  "properties": {
+    "profile_id": {"type": "string", "minLength": 1},
+    "schema_version": {"type": "string", "minLength": 1},
+    "subject": {"const": "CHEMISTRY"},
+    "stage": {"const": "SOURCE_INGESTION"},
+    "purpose": {"type": "string", "minLength": 20},
+    "required_counters": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 7,
+      "items": {"enum": ["TOTAL_SCANNED", "ELIGIBLE_IN_SCOPE", "PLACED_UNIQUE", "EXCLUDED_WITH_REASON", "UNRESOLVED_WITH_REASON", "MISSING", "DUPLICATE_PRIMARY"]}
+    },
+    "closure_invariants": {"type": "array", "minItems": 4, "items": {"type": "string", "minLength": 5}},
+    "freeze_states": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 3,
+      "items": {"enum": ["UNFROZEN", "FROZEN_ELIGIBLE_ONLY", "FROZEN_ITEM_LEDGER"]}
+    },
+    "authoring_requires_freeze_state": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"enum": ["FROZEN_ITEM_LEDGER"]}
+    },
+    "freeze_state_semantics": {"type": "object", "minProperties": 3, "additionalProperties": {"type": "string", "minLength": 10}},
+    "unresolved_counter_policy": {"const": "RECORD_AS_UNRESOLVED_NEVER_INFER"},
+    "falsifiers": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 11,
+      "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+    },
+    "frozen_instances": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["instance_id", "denominator_class", "scope_label", "freeze_state", "evidence", "frozen_counters", "unresolved_counters", "runtime_reconciliation"],
+        "properties": {
+          "instance_id": {"type": "string", "minLength": 1},
+          "denominator_class": {"enum": ["EXTERNAL_QUESTION_CORPUS", "SOURCE_CONCEPT_OBLIGATIONS", "ASSESSMENT_QUESTION_SET", "AUTHORED_TOPIC_BASELINE"]},
+          "scope_label": {"type": "string", "minLength": 1},
+          "freeze_state": {"enum": ["UNFROZEN", "FROZEN_ELIGIBLE_ONLY", "FROZEN_ITEM_LEDGER"]},
+          "evidence": {
+            "type": "object",
+            "required": ["kind", "path", "sha256"],
+            "properties": {
+              "kind": {"enum": ["SCOPE_STATUS_LEDGER", "AUTHORING_HANDOFF_MANIFEST"]},
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            }
+          },
+          "corroborating_evidence": {
+            "type": "object",
+            "required": ["kind", "path", "sha256"],
+            "properties": {
+              "kind": {"enum": ["AUTHORING_HANDOFF_VALIDATOR"]},
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            }
+          },
+          "frozen_counters": {
+            "type": "object",
+            "required": ["ELIGIBLE_IN_SCOPE", "PLACED_UNIQUE", "MISSING", "DUPLICATE_PRIMARY"],
+            "additionalProperties": {"type": "integer", "minimum": 0}
+          },
+          "unresolved_counters": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}},
+          "runtime_reconciliation": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "known_limitations": {"type": "array", "items": {"type": "string", "minLength": 20}},
+    "profile_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

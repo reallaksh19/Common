@@ -33,11 +33,13 @@
       "depends_on": [],
       "required_registry_paths": [
         "Grade 9/V2/Chemistry/AssessmentReview/registry/chemistry-item-validity-registry.json",
-        "Grade 9/V2/Chemistry/AssessmentReview/policies/chemistry-diagnostic-use-policy.json"
+        "Grade 9/V2/Chemistry/AssessmentReview/policies/chemistry-diagnostic-use-policy.json",
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-source-ingestion-profile.json"
       ],
       "required_engine_paths": [
         "Grade 9/V2/Chemistry/AssessmentIntake/engine/build_chemistry_assessment_intake.py",
-        "Grade 9/V2/Chemistry/AssessmentReview/engine/review_chemistry_assessment.py"
+        "Grade 9/V2/Chemistry/AssessmentReview/engine/review_chemistry_assessment.py",
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/freeze_chemistry_source_denominator.py"
       ],
       "produces": [
         "ChemistryAssessmentIntake",
@@ -324,17 +326,20 @@
         "VISUAL_AND_LEGIBILITY_PREFLIGHT"
       ],
       "required_registry_paths": [
-        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json"
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-source-ingestion-profile.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/CoverageClosure/engine/build_chemistry_coverage_closure.py"
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/build_chemistry_coverage_closure.py",
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/freeze_chemistry_source_denominator.py"
       ],
       "produces": [
         "PublicationCoverageClosure"
       ],
       "falsifiers": [
         "SOURCE_OBLIGATION_WITHOUT_CORE1_COVERAGE",
-        "ELIGIBLE_EXTERNAL_QUESTION_WITHOUT_CORE2_TRANSFER"
+        "ELIGIBLE_EXTERNAL_QUESTION_WITHOUT_CORE2_TRANSFER",
+        "POST_AUTHORING_DENOMINATOR_DRIFT"
       ]
     },
     {
@@ -385,5 +390,5 @@
     "ASSESSMENT_DESIGN": "PENDING_AUTHORIZED_HUMAN_ONLY",
     "VISUAL_USABILITY": "PENDING_AUTHORIZED_HUMAN_ONLY"
   },
-  "contract_digest": "8bad3d97b4f7de8bfce1d12eb8c0c47a9bbaa339e38a8c9a55f9514380c1e3d2"
+  "contract_digest": "59cd0a1ee7c3f34fb8dc296e6196356a32b7b58914984a4288d8b2d1936e8b6e"
 }
