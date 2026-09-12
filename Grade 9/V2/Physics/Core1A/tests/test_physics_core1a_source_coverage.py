@@ -60,13 +60,20 @@ def main():
 
     # Core2 is the assessment side. Its registry must still account for every retained challenge.
     expected = inv["expected_source_question_count"]
-    challenge_ids = set()
-    for concept in link.get("concepts", []):
-        for qid in concept.get("core2_challenges", []):
-            challenge_ids.add(qid)
+    challenge_ids = {row["challenge_id"] for row in link.get("challenge_links", [])}
     assert len(challenge_ids) == expected, (
         f"Core2 linkage covers {len(challenge_ids)} challenges; expected {expected}"
     )
+    assert challenge_ids == {f"Q{i:02d}" for i in range(1, expected + 1)}, (
+        "Core2 challenge IDs must be exactly Q01..Q59"
+    )
+
+    # Cross-check the concept-side listing too, so forward/backward linkage cannot drift.
+    concept_side = set()
+    concepts = link.get("concepts", {})
+    for concept in concepts.values():
+        concept_side.update(concept.get("challenge_ids", []))
+    assert concept_side == challenge_ids, "Core2 concept map and challenge map disagree"
 
     print(
         "PASS source completeness inventory: "
