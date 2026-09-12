@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LearnerStudyScope V2 boundary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "learner_study_scope_id",
+    "schema_version",
+    "canonical_target_scope_id",
+    "learner_state_snapshot_ref",
+    "inherited_required_target_ids",
+    "active_target_ids",
+    "deferred_required_targets"
+  ],
+  "properties": {
+    "learner_study_scope_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+    "schema_version": {"const": "2.0.0"},
+    "canonical_target_scope_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+    "learner_state_snapshot_ref": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+    "inherited_required_target_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"}
+    },
+    "active_target_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"}
+    },
+    "deferred_required_targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["canonical_id", "reason_code", "decision_ref"],
+        "properties": {
+          "canonical_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+          "reason_code": {"enum": ["SEQUENCED_LATER", "DEPENDENCY_FIRST", "PROBE_PENDING", "CAPACITY_LIMIT"]},
+          "decision_ref": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"}
+        }
+      }
+    },
+    "added_dependency_target_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"}
+    }
+  }
+}

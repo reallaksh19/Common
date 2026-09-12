@@ -1,0 +1,14 @@
+{
+  "canonical_target_scope_id":"scope.synthetic.chem-gas-law",
+  "schema_version":"2.0.0",
+  "goal_request_id":"goal.synthetic.chem-gas-law",
+  "canonical_registry_id":"registry.grade9.synthetic",
+  "canonical_registry_version":"2026.09.11-v2",
+  "canonical_registry_digest":"790b8d3d0e748734423179dc0e0e04a98699549623091c004954fef5a2ab0c59",
+  "target_obligations":[
+    {"canonical_id":"chem.gas-law.relationship","obligation":"REQUIRED","goal_reason_refs":["goal.synthetic.chem-gas-law"]},
+    {"canonical_id":"math.coordinate-slope","obligation":"OPTIONAL","goal_reason_refs":["goal.synthetic.chem-gas-law"]}
+  ],
+  "excluded_target_ids":[],
+  "scope_policy_version":"scope-policy.synthetic.v1"
+}

@@ -1,0 +1,13 @@
+{
+  "registry_id":"registry.grade9.synthetic",
+  "schema_version":"2.0.0",
+  "version":"2026.09.11-v2",
+  "digest":"790b8d3d0e748734423179dc0e0e04a98699549623091c004954fef5a2ab0c59",
+  "assets":[
+    {"canonical_id":"chem.gas-law.relationship","subject":"CHEMISTRY","version":"2.1.0","digest":"4896c5842868d985d5c4cd639acc907965fed9dd5654b76f39e05d8638ce15a2","status":"ACTIVE","dependencies":[{"canonical_id":"chem.variable-entity.meaning","reason":"gas-law variables must preserve Chemistry entity meaning"},{"canonical_id":"math.proportional-reasoning","reason":"gas-law comparative reasoning requires shared proportional reasoning","required_version":"3.0.0"}]},
+    {"canonical_id":"chem.variable-entity.meaning","subject":"CHEMISTRY","version":"1.4.0","digest":"379c1b77921a6830c34122d6214391978583e13e2c4469c8473174ea83228308","status":"ACTIVE","dependencies":[]},
+    {"canonical_id":"math.proportional-reasoning","subject":"MATHEMATICS","version":"3.0.0","digest":"5b94964ef339a0ba08382dd65e34db25aec5ed12bb04dba405deed706877469d","status":"ACTIVE","dependencies":[{"canonical_id":"math.equality-transform","reason":"proportional transformations require equality-preserving operations"}]},
+    {"canonical_id":"math.equality-transform","subject":"MATHEMATICS","version":"2.2.0","digest":"305952a08b26bfc4a196185ca264fdf6ed28ed33829f0956da045d08d2ca97e3","status":"ACTIVE","dependencies":[]},
+    {"canonical_id":"math.coordinate-slope","subject":"MATHEMATICS","version":"1.8.0","digest":"5b6a51c6a98374a3ac3605eed02a1dc9773401f39ebcf12af09f82d3c31af016","status":"ACTIVE","dependencies":[]}
+  ]
+}

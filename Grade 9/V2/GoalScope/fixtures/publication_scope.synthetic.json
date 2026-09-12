@@ -1,0 +1,8 @@
+{
+  "publication_scope_id":"publication-scope.synthetic.001",
+  "schema_version":"2.0.0",
+  "learner_study_scope_id":"study-scope.synthetic.001",
+  "realization_mode":"STATIC_ARTIFACT",
+  "selected_target_ids":["chem.gas-law.relationship"],
+  "omitted_active_targets":[]
+}
