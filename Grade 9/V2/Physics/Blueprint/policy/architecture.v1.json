@@ -1,0 +1,36 @@
+{
+  "architecture_id": "PHY-BLUEPRINT-v1",
+  "schema_version": "1.0.0",
+  "planes": {
+    "EVIDENCE": {
+      "authority": "ORIGINAL_GROUND_TRUTH",
+      "description": "What inputs actually exist and what they support."
+    },
+    "REASONING": {
+      "authority": "DERIVED_CLAIMS",
+      "description": "What Core1, Core2, Join and Core1A infer from evidence."
+    },
+    "CONTROL": {
+      "authority": "PRODUCT_BEHAVIOUR_ONLY",
+      "description": "Learner state, purpose and owner overrides may alter execution but never historical evidence."
+    }
+  },
+  "roles": ["CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE2A"],
+  "role_lifecycle": {
+    "CORE2A": "PLACEHOLDER"
+  },
+  "invariants": {
+    "ground_truth_is_authority": true,
+    "adaptive_first_role": true,
+    "fresh_agent_per_role": true,
+    "second_role_independent_grounding": true,
+    "max_subtopics_per_handoff": 3,
+    "learning_atoms_unbounded": true,
+    "join_required_before_core1a": true,
+    "core1a_reasoning_before_manuscript": true,
+    "representation_requires_cognitive_purpose": true,
+    "equation_requires_learning_anatomy": true,
+    "owner_override_preserves_system_finding": true,
+    "absence_of_evidence_must_remain_visible": true
+  }
+}
