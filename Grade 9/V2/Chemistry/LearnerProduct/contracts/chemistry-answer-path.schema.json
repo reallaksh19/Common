@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-answer-path.schema.json",
+  "title": "Chemistry Learner Question Answer Path",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "question_ref",
+    "answer_path_kind",
+    "learner_question_present",
+    "answer_path_complete"
+  ],
+  "properties": {
+    "question_ref": {"type": "string", "minLength": 2},
+    "answer_path_kind": {"enum": ["OBJECTIVE_CHECKABLE", "OPEN_RUBRIC"]},
+    "learner_question_present": {"const": true},
+    "answer_path_complete": {"const": true},
+    "quick_check": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["learner_label", "answer_summary"],
+      "properties": {
+        "learner_label": {"const": "QUICK CHECK"},
+        "answer_summary": {"type": "string", "minLength": 1},
+        "unit": {"type": ["string", "null"]},
+        "marking_points": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "full_working": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["learner_label", "steps"],
+      "properties": {
+        "learner_label": {"const": "FULL WORKING"},
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "verification": {"type": ["string", "null"]}
+      }
+    },
+    "expected_response_rubric": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["learner_label", "criteria"],
+      "properties": {
+        "learner_label": {"const": "EXPECTED RESPONSE"},
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"answer_path_kind": {"const": "OBJECTIVE_CHECKABLE"}},
+        "required": ["answer_path_kind"]
+      },
+      "then": {
+        "required": ["quick_check", "full_working"],
+        "properties": {
+          "quick_check": {"type": "object"},
+          "full_working": {"type": "object"},
+          "expected_response_rubric": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"answer_path_kind": {"const": "OPEN_RUBRIC"}},
+        "required": ["answer_path_kind"]
+      },
+      "then": {
+        "required": ["expected_response_rubric"],
+        "properties": {
+          "expected_response_rubric": {"type": "object"}
+        }
+      }
+    }
+  ]
+}
