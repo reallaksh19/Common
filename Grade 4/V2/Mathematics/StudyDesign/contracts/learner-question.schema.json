@@ -8,6 +8,7 @@
     "origin",
     "display_ref",
     "prompt",
+    "task_support_policy",
     "answer_contract",
     "hint_contract"
   ],
