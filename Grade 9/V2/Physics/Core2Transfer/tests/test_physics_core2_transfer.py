@@ -298,6 +298,144 @@ assert {(p["candidate_ref"], p["problem_family_ref"]) for p in plan_na["transfer
        {(p["candidate_ref"], p["problem_family_ref"]) for p in plan["transfer_pages"]}
 PASSES.append("ATTEMPT_RUN_CHANGES_EXTERNAL_ELIGIBILITY")
 
+# --- P-UPGRADE-2 item 4: the hint ladder projects the shared route states -----
+from build_physics_core2_transfer import (  # noqa: E402
+    HINT_PROJECTION, VISUAL_ROLES, is_spatial_family, build_route_states,
+    representation_states,
+)
+
+for page in plan["transfer_pages"]:
+    states = {s["state_id"] for s in page["reasoning_route"]}
+    assert states, page["candidate_ref"]
+    # the same route-state shape P-G authors inside a worked instance
+    for s in page["reasoning_route"]:
+        assert s["role"] in ("FRAME", "REPRESENT", "MODEL", "EXECUTE", "INTERPRET", "VERIFY")
+        assert s["canonical_role_refs"], s["state_id"]
+        assert "output_state" in s and "why_valid" in s
+    for h in page["hint_ladder"]:
+        assert set(h["route_state_refs"]) <= states, (page["candidate_ref"], h["level"])
+        assert h["projected_route_role"] == HINT_PROJECTION[h["level"]]["route_role"]
+        assert h["visual_role"] == HINT_PROJECTION[h["level"]]["visual_role"]
+    assert {h["visual_role"] for h in page["hint_ladder"]} == set(VISUAL_ROLES)
+    # the solution projects the same states, so hints and solution cannot drift apart
+    linked = [s for s in page["solution"]["sections"] if s["route_state_refs"]]
+    assert linked, page["candidate_ref"]
+    for s in linked:
+        assert set(s["route_state_refs"]) <= states
+PASSES.append("HINT_LADDER_AND_SOLUTION_PROJECT_ONE_ROUTE")
+
+# a spatial family gets a diagram-first ladder, not prose about a diagram never shown
+spatial = [p for p in plan["transfer_pages"] if p["spatial_family"]]
+assert len(spatial) >= 1
+for page in spatial:
+    for h in page["hint_ladder"]:
+        assert h["representation_state_ref"], (page["candidate_ref"], h["level"])
+        assert h["figure"] and h["figure"]["primitive_id"], (page["candidate_ref"], h["level"])
+        assert h["diagram_first"] is True
+# and at least one of them is a genuinely spatial/vector family, source-figure backed
+assert any(p["problem_family_ref"] in {"PHY-PF-PATH-VS-CHORD", "PHY-PF-RELATIVE-G-CANCELLATION",
+                                       "PHY-PF-PROJECTILE-COMPONENTS"} for p in spatial)
+assert any(h["figure"]["quantitative_grounding"] == "SOURCE_QUANTITIES"
+           for p in spatial for h in p["hint_ladder"] if h["figure"])
+PASSES.append("SPATIAL_FAMILY_GETS_A_DIAGRAM_FIRST_LADDER")
+
+# a hint that is not a projection of a route state is caught
+unprojected = copy.deepcopy(plan)
+unprojected["transfer_pages"][0]["hint_ladder"][0]["route_state_refs"] = []
+redigest(unprojected)
+expect("HINT_NOT_PROJECTED_FROM_ROUTE_STATE",
+       lambda: validate_plan(unprojected, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+wrongrole = copy.deepcopy(plan)
+wrongrole["transfer_pages"][0]["hint_ladder"][0]["projected_route_role"] = "EXECUTE"
+redigest(wrongrole)
+expect("HINT_NOT_PROJECTED_FROM_ROUTE_STATE",
+       lambda: validate_plan(wrongrole, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+# a spatial family whose hints lose their representation is caught
+stripped = copy.deepcopy(plan)
+victim = next(p for p in stripped["transfer_pages"] if p["spatial_family"])
+victim["hint_ladder"][0]["representation_state_ref"] = None
+victim["hint_ladder"][0]["figure"] = None
+redigest(stripped)
+expect("SPATIAL_FAMILY_HINT_WITHOUT_REPRESENTATION",
+       lambda: validate_plan(stripped, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+prose_only = copy.deepcopy(plan)
+victim = next(p for p in prose_only["transfer_pages"] if p["spatial_family"])
+victim["hint_ladder"][1]["diagram_first"] = False
+redigest(prose_only)
+expect("SPATIAL_FAMILY_HINT_WITHOUT_REPRESENTATION",
+       lambda: validate_plan(prose_only, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+# a hint figure may not carry a quantity the source never stated
+invented = copy.deepcopy(plan)
+invented["transfer_pages"][0]["hint_ladder"][0]["figure"]["render_params"]["u"] = 12
+redigest(invented)
+expect("CORE2_INVENTS_FIGURE_QUANTITY",
+       lambda: validate_plan(invented, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+# spatial is decided by declared data, never by topic name
+record = model["capability_records"][0]
+flat = copy.deepcopy(record)
+flat["representation_requirements"] = ["RATE_TABLE"]
+assert is_spatial_family(flat, profile, {"figure_required": False}) is False
+assert is_spatial_family(flat, profile, {"figure_required": True}) is True
+vectorish = copy.deepcopy(record)
+vectorish["representation_requirements"] = ["MOTION_VECTOR_DIAGRAM"]
+assert is_spatial_family(vectorish, profile, {"figure_required": False}) is True
+PASSES.append("SPATIAL_CLASSIFICATION_IS_DATA_NOT_TOPIC_NAME")
+
+# --- P-UPGRADE-2 item 6: every transfer question resolves to the source's answer
+for page in plan["transfer_pages"]:
+    answer = page["final_answer"]
+    body = next(r for r in corpus["records"] if r["candidate_id"] == page["candidate_ref"])
+    assert answer["source_answer_key"] == body["answer_key"]
+    assert answer["authored_by_core2"] is False and answer["is_resolved_result"] is True
+    assert page["answer_ref"] == answer["answer_id"]
+    assert page["answer_shown_with_the_question"] is False
+    assert page["quick_check"]["is_answer"] is False
+    assert page["independent_verification"]["is_answer"] is False
+    assert page["independent_verification"]["is_distinct_from_solving_route"] is True
+    assert page["solution"]["answer_ref"] == answer["answer_id"]
+    # three distinct objects, never collapsed
+    assert len({answer["answer_id"], page["quick_check"]["quick_check_id"],
+                page["independent_verification"]["verification_id"]}) == 3
+PASSES.append("EVERY_TRANSFER_QUESTION_RESOLVES_TO_THE_SOURCE_ANSWER")
+
+noanswer = copy.deepcopy(plan)
+noanswer["transfer_pages"][0]["final_answer"] = {"statement": "", "is_resolved_result": False}
+redigest(noanswer)
+expect("LEARNER_QUESTION_WITHOUT_ANSWER",
+       lambda: validate_plan(noanswer, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+leaked = copy.deepcopy(plan)
+leaked["transfer_pages"][0]["answer_shown_with_the_question"] = True
+redigest(leaked)
+expect("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE",
+       lambda: validate_plan(leaked, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+collapsed = copy.deepcopy(plan)
+collapsed["transfer_pages"][0]["quick_check"]["is_answer"] = True
+redigest(collapsed)
+expect("SELF_CHECK_SUBSTITUTED_FOR_ANSWER",
+       lambda: validate_plan(collapsed, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
+rewritten = copy.deepcopy(plan)
+rewritten["transfer_pages"][0]["final_answer"]["source_answer_key"] = "D"
+redigest(rewritten)
+expect("SOURCE_BODY_REWRITTEN",
+       lambda: validate_plan(rewritten, corpus, classification, core1, model, scope,
+                             profile, badges, segregation))
+
 print(f"PHY P-I Core2 transfer falsifiers: {len(PASSES)} PASS")
 for code in PASSES:
     print("  -", code)

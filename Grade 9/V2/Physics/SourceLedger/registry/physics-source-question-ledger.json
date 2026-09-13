@@ -1,0 +1,166 @@
+{
+  "derived_from_question_set": false,
+  "expected_direct_item_refs": [
+    "Q1",
+    "Q2",
+    "Q3",
+    "Q4",
+    "Q5",
+    "Q6",
+    "Q7",
+    "Q8",
+    "Q9",
+    "Q10",
+    "Q11",
+    "Q12",
+    "Q13",
+    "Q14"
+  ],
+  "expected_supporting_item_refs": [],
+  "frozen_before_phase": "P-A",
+  "genericity_statement": "The ledger is data. Item refs, classes, source order and subtopic bindings are the only topic-specific facts, and the reconciliation engine contains none of them. A new Physics topic needs a new ledger, not a new code path.",
+  "ledger_class": "SYNTHETIC_FIXTURE_LEDGER",
+  "ledger_digest": "0eccb4a5efbce35ae1aa7c2cc7c813b260e6269f3c15107931417cc11c060c89",
+  "ledger_id": "PHY-P-A0-SOURCE-LEDGER-MOTION-v1",
+  "production_claim": false,
+  "provenance_note": "Transcribed from the declared source listing of artifact SYN-MOTION-V1 — the source each P-A item records in its own source_provenance — as the independent denominator for every later completeness proof. The repository's Motion source is a synthetic fixture and there is no separate source PDF in-tree, so this ledger declares ledger_class SYNTHETIC_FIXTURE_LEDGER and production_claim false: it may not be presented as a transcription of a real paper. For a real source the ledger MUST be transcribed from the source document before P-A extraction runs. The mechanism is identical either way, and it is the reconciliation engine, not this note, that makes the transcription load-bearing.",
+  "schema_version": "1.0.0",
+  "source_documents": [
+    {
+      "declared_item_count": 14,
+      "document_digest": "67c412ce46c4c64796ee47041d477ffa4d6863257056acdcc22ee4cfca66afdb",
+      "document_id": "SYN-MOTION-V1",
+      "items": [
+        {
+          "declared_subtopic_ref": "PHY-MOTION-DIST-DISP",
+          "item_class": "DIRECT",
+          "item_ref": "Q1",
+          "section": "A",
+          "source_order": 1,
+          "source_page": 1,
+          "statement_fingerprint": "Semicircle path A to B; distance and displacement"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-SPEED-VEL",
+          "item_class": "DIRECT",
+          "item_ref": "Q2",
+          "section": "A",
+          "source_order": 2,
+          "source_page": 1,
+          "statement_fingerprint": "Equal distances at two different speeds; average speed"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-ACCEL",
+          "item_class": "DIRECT",
+          "item_ref": "Q3",
+          "section": "A",
+          "source_order": 3,
+          "source_page": 1,
+          "statement_fingerprint": "20 m/s to rest in 5 s; acceleration"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-ACCEL",
+          "item_class": "DIRECT",
+          "item_ref": "Q4",
+          "section": "A",
+          "source_order": 4,
+          "source_page": 1,
+          "statement_fingerprint": "Displacement during the fifth second"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-ACCEL",
+          "item_class": "DIRECT",
+          "item_ref": "Q5",
+          "section": "B",
+          "source_order": 5,
+          "source_page": 2,
+          "statement_fingerprint": "From rest at 2 m/s^2; time to reach 10 m/s"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-GRAVITY",
+          "item_class": "DIRECT",
+          "item_ref": "Q6",
+          "section": "B",
+          "source_order": 6,
+          "source_page": 2,
+          "statement_fingerprint": "Stone dropped from 45 m"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-GRAVITY",
+          "item_class": "DIRECT",
+          "item_ref": "Q7",
+          "section": "B",
+          "source_order": 7,
+          "source_page": 2,
+          "statement_fingerprint": "Ball projected upward at 20 m/s; maximum height"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-GRAPHS",
+          "item_class": "DIRECT",
+          "item_ref": "Q8",
+          "section": "B",
+          "source_order": 8,
+          "source_page": 2,
+          "statement_fingerprint": "Signed displacement from a velocity-time graph"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-GRAVITY",
+          "item_class": "DIRECT",
+          "item_ref": "Q9",
+          "section": "B",
+          "source_order": 9,
+          "source_page": 3,
+          "statement_fingerprint": "Balloon rising at 8 m/s releases a stone"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-MULTIPHASE",
+          "item_class": "DIRECT",
+          "item_ref": "Q10",
+          "section": "C",
+          "source_order": 10,
+          "source_page": 3,
+          "statement_fingerprint": "Cart accelerates, then the acceleration changes"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-GRAVITY",
+          "item_class": "DIRECT",
+          "item_ref": "Q11",
+          "section": "C",
+          "source_order": 11,
+          "source_page": 3,
+          "statement_fingerprint": "Two stones in free fall; relative acceleration"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-GRAPHS",
+          "item_class": "DIRECT",
+          "item_ref": "Q12",
+          "section": "C",
+          "source_order": 12,
+          "source_page": 3,
+          "statement_fingerprint": "Choose the x-t graph for constant positive velocity"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-GRAPHS",
+          "item_class": "DIRECT",
+          "item_ref": "Q13",
+          "section": "C",
+          "source_order": 13,
+          "source_page": 4,
+          "statement_fingerprint": "Acceleration requested from a graph that is missing"
+        },
+        {
+          "declared_subtopic_ref": "PHY-MOTION-MULTIPHASE",
+          "item_class": "DIRECT",
+          "item_ref": "Q14",
+          "section": "C",
+          "source_order": 14,
+          "source_page": 4,
+          "statement_fingerprint": "Two-phase motion with three parts"
+        }
+      ],
+      "source_locator": "Grade 9/V2/Physics/AssessmentIntake/fixtures/physics-assessment-intake.example.json#SYN-MOTION-V1",
+      "title": "Grade 9 Physics — Motion (synthetic source assessment)"
+    }
+  ],
+  "subject": "PHYSICS"
+}

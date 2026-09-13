@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-source-reconciliation-report.schema.json",
+  "title": "PhysicsSourceReconciliationReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id", "schema_version", "subject", "ledger_ref", "ledger_digest",
+    "question_set_ref", "ledger_denominator", "question_set_denominator",
+    "rows", "findings", "reconciliation_state", "report_digest"
+  ],
+  "properties": {
+    "report_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "PHYSICS"},
+    "ledger_ref": {"type": "string", "minLength": 1},
+    "ledger_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "ledger_class": {"type": "string"},
+    "question_set_ref": {"type": "string", "minLength": 1},
+    "question_set_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "coverage_matrix_ref": {"type": ["string", "null"]},
+    "ledger_denominator": {"type": "integer", "minimum": 1},
+    "question_set_denominator": {"type": "integer", "minimum": 0},
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item_ref", "item_class", "disposition"],
+        "properties": {
+          "item_ref": {"type": "string", "minLength": 1},
+          "item_class": {"enum": ["DIRECT", "SUPPORTING", "NON_ASSESSED", "UNDECLARED"]},
+          "disposition": {
+            "enum": [
+              "PRESENT_IN_QUESTION_SET",
+              "ABSENT_FROM_QUESTION_SET",
+              "EXCLUDED_BY_REVIEW",
+              "UNDECLARED_BY_SOURCE_LEDGER"
+            ]
+          },
+          "source_order": {"type": ["integer", "null"]},
+          "declared_subtopic_ref": {"type": ["string", "null"]},
+          "coverage_disposition": {"type": ["string", "null"]},
+          "coverage_home_refs": {"type": "array", "items": {"type": "string"}},
+          "exclusion_reason": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "ref", "detail"],
+        "properties": {
+          "code": {
+            "enum": [
+              "SOURCE_LEDGER_NOT_FROZEN_BEFORE_AUTHORING",
+              "SOURCE_LEDGER_DERIVED_FROM_QUESTION_SET",
+              "SOURCE_LEDGER_DIGEST_MISMATCH",
+              "SOURCE_ITEM_MISSING_FROM_QUESTION_SET",
+              "QUESTION_SET_ITEM_NOT_IN_SOURCE_LEDGER",
+              "DIRECT_SOURCE_ITEM_WITHOUT_COVERAGE_HOME",
+              "COVERAGE_PROVEN_ONLY_AGAINST_ITSELF",
+              "SOURCE_LEDGER_IS_SYNTHETIC_CLAIMED_AS_PRODUCTION"
+            ]
+          },
+          "ref": {"type": "string"},
+          "detail": {"type": "string"}
+        }
+      }
+    },
+    "reconciliation_state": {"enum": ["RECONCILED", "OPEN"]},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "direct_expected": {"type": "integer", "minimum": 0},
+        "direct_present": {"type": "integer", "minimum": 0},
+        "direct_absent": {"type": "integer", "minimum": 0},
+        "direct_without_coverage_home": {"type": "integer", "minimum": 0},
+        "undeclared_question_set_items": {"type": "integer", "minimum": 0}
+      }
+    },
+    "report_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

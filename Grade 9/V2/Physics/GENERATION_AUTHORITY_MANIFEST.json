@@ -4,6 +4,7 @@
     "canonical_capabilities": "Grade 9/V2/Physics/Canonical/registry/capabilities.json",
     "concept_segregation": "Grade 9/V2/Physics/Core2Transfer/registry/physics-concept-segregation.json",
     "core1_completeness_policy": "Grade 9/V2/Physics/CoreAuthoring/registry/physics-core1-scope-completeness-policy.json",
+    "core1a_publication_policy": "Grade 9/V2/Physics/Core1A/registry/physics-core1a-publication-policy.json",
     "core2_authoring_profile": "Grade 9/V2/Physics/Core2Transfer/registry/physics-core2-authoring-profile.json",
     "declared_topic_scope": "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-topic-scope.fixture.json",
     "diagnostic_policy": "Grade 9/V2/Physics/LearnerEvidence/registry/physics-diagnostic-policy.json",
@@ -15,6 +16,7 @@
     "instructional_authoring_profile": "Grade 9/V2/Physics/CoreAuthoring/registry/physics-instructional-authoring-profile.json",
     "item_semantics_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/motion-item-semantics.json",
     "item_validity_registry": "Grade 9/V2/Physics/AssessmentReview/registry/physics-item-validity-registry.json",
+    "learner_copy_titles": "Grade 9/V2/Physics/Core1A/registry/physics-core1a-learner-language.json",
     "learner_evidence_ledger": "Grade 9/V2/Physics/LearnerEvidence/fixtures/physics-learner-evidence-ledger.fixture.json",
     "observation_code_registry": "Grade 9/V2/Physics/LearnerEvidence/registry/physics-observation-code-registry.json",
     "page_intent_profile": "Grade 9/V2/Physics/Representation/registry/physics-page-intent-profile.json",
@@ -24,6 +26,7 @@
     "reasoning_role_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-reasoning-role-registry.json",
     "scope_authority": "Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json",
     "scope_bindings": "Grade 9/V2/Physics/AssessmentScope/registry/motion-question-scope-bindings.json",
+    "source_question_ledger": "Grade 9/V2/Physics/SourceLedger/registry/physics-source-question-ledger.json",
     "teaching_primitive_registry": "Grade 9/V2/Physics/Representation/registry/physics-teaching-primitive-registry.json",
     "transfer_badge_policy": "Grade 9/V2/Physics/Core2Transfer/registry/physics-transfer-badge-policy.json",
     "transfer_evidence_ledger": "Grade 9/V2/Physics/CoverageClosure/fixtures/physics-transfer-evidence.fixture.json",
@@ -47,6 +50,8 @@
     "cold_start_runner": "Grade 9/V2/Physics/ColdStart/engine/physics_cold_start_runner.py",
     "cold_start_validator": "Grade 9/V2/Physics/ColdStart/engine/physics_cold_start_validator.py",
     "core1_authoring": "Grade 9/V2/Physics/CoreAuthoring/engine/build_physics_core1.py",
+    "core1a_publication": "Grade 9/V2/Physics/Core1A/engine/build_physics_core1a.py",
+    "core1a_renderer": "Grade 9/V2/Physics/Core1A/engine/render_physics_core1a.py",
     "core2_transfer": "Grade 9/V2/Physics/Core2Transfer/engine/build_physics_core2_transfer.py",
     "coverage_closure": "Grade 9/V2/Physics/CoverageClosure/engine/build_physics_coverage_closure.py",
     "learner_evidence": "Grade 9/V2/Physics/LearnerEvidence/engine/infer_physics_learner_evidence.py",
@@ -54,6 +59,7 @@
     "product_renderer": "Grade 9/V2/Physics/ColdStart/engine/physics_product_renderer.py",
     "representation_realization": "Grade 9/V2/Physics/Representation/engine/realize_physics_representations.py",
     "representations": "Grade 9/V2/Physics/Representation/engine/build_physics_representations.py",
+    "source_ledger": "Grade 9/V2/Physics/SourceLedger/engine/build_physics_source_ledger.py",
     "study_synthesis": "Grade 9/V2/Physics/StudySynthesis/engine/build_physics_learner_study_model.py"
   },
   "entrypoint_doc": "Grade 9/V2/Physics/V2_GENERATION_ENTRYPOINT.md",
@@ -71,9 +77,10 @@
       "MACHINE_AUTHORITY_CHECK"
     ]
   },
-  "manifest_digest": "859edae5882e875273c961f5659a0aff7a90fac74c332353cbaf0ed3f2b4fdf1",
+  "manifest_digest": "d848f8346106df3858b6d8c63e99171961ec455320dc1e311b81dcdab060c0ca",
   "manifest_id": "PHY-GENERATION-AUTHORITY-v1",
   "phase_order": [
+    "P-A0 SourceLedger",
     "P-A AssessmentIntake",
     "P-B AssessmentReview",
     "P-C AssessmentScope",
@@ -81,6 +88,7 @@
     "P-E LearnerEvidence",
     "P-F StudySynthesis",
     "P-G CoreAuthoring",
+    "P-GA Core1A",
     "P-H Representation",
     "P-I Core2Transfer",
     "P-J CoverageClosure",
@@ -95,12 +103,13 @@
     "note": "PR #156 is a merged Physics pilot outside this V2 chain. It is a final-comparison reference only and must never be read by any P-A..P-K producer."
   },
   "required_authority_trace_decisions": [
-    "REQUIRED_SCOPE",
-    "TREATMENT",
-    "TEACHING_PRIMITIVE_SELECTION",
-    "EXTERNAL_ELIGIBILITY",
     "COVERAGE_CLOSURE",
-    "FINAL_PAGE_COMPOSITION"
+    "EXTERNAL_ELIGIBILITY",
+    "FINAL_PAGE_COMPOSITION",
+    "REQUIRED_SCOPE",
+    "SOURCE_COMPLETENESS",
+    "TEACHING_PRIMITIVE_SELECTION",
+    "TREATMENT"
   ],
   "runtime_input_contract": {
     "forbidden": [

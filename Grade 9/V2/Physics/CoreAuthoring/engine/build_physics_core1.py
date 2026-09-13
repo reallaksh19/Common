@@ -11,14 +11,41 @@ PCK never chooses treatment and never redefines canonical Physics. Family
 selection is derived from the structural obligations already present in the P-F
 record, so a new Physics topic is data, not a new code branch.
 """
-import argparse, copy, hashlib, importlib.util, json
+import argparse, copy, hashlib, importlib.util, json, sys
 from collections import Counter
 from pathlib import Path
 
 D = Path(__file__).resolve().parents[1]
+if str(D / "engine") not in sys.path:
+    sys.path.insert(0, str(D / "engine"))
+
+from physics_instance_resolver import (  # noqa: E402
+    resolve_instance, assert_answer_custody, instance_for_family,
+    WORKED_EXAMPLE_UNINSTANTIATED, WORKED_EXAMPLE_FINAL_ANSWER_MISSING,
+    WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE, LEARNER_QUESTION_WITHOUT_ANSWER,
+    SELF_CHECK_SUBSTITUTED_FOR_ANSWER,
+)
+
 FULL = "FULL_LEARNING"
 CONCISE = "CONCISE_VERIFY_ONLY"
 PROBE = "PROBE"
+
+INSTANCE_REGISTRY_PATH = D / "registry" / "physics-authored-instances.json"
+
+# Deterministic variant per place an instance appears, so a learner never meets the same
+# numbers twice and every item still resolves to its own computed answer.
+STAGE_VARIANT = {
+    "WORKED": 0,
+    "GUIDED": 1,
+    "FADED": 2,
+    "INDEPENDENT": 3,
+    "RETRY": 4,
+    "PROBE": 5,
+    "APPENDIX_GUIDED": 6,
+    "APPENDIX_FADED": 7,
+    "APPENDIX_INDEPENDENT": 8,
+    "APPENDIX_PROBE": 9,
+}
 
 
 def canonical(o):
@@ -322,11 +349,64 @@ def verification_steps(rec, primary):
     return steps
 
 
-def attempt(stage, rec, primary, problem_profile, lesson_id):
+def load_instance_registry(path=None):
+    return load(path or INSTANCE_REGISTRY_PATH)
+
+
+def validate_instance_registry(registry):
+    """Custody and honesty checks on the authored-instance registry."""
+    if registry.get("subject") != "PHYSICS":
+        fail(WORKED_EXAMPLE_UNINSTANTIATED, "instance registry subject")
+    if registry.get("registry_digest") != digest(registry, "registry_digest"):
+        fail(WORKED_EXAMPLE_UNINSTANTIATED, "instance registry digest")
+    for state in (registry.get("human_expert_review_states") or {}).values():
+        if state == "PASS":
+            fail("FAKE_HUMAN_REVIEW_STATE", "instance registry claims an expert pass")
+    seen = set()
+    for row in registry["instances"]:
+        if row["problem_family_ref"] in seen:
+            fail(WORKED_EXAMPLE_UNINSTANTIATED,
+                 "two instances claim family " + row["problem_family_ref"])
+        seen.add(row["problem_family_ref"])
+    return True
+
+
+def authored_instance(rec, instance_registry, variant_key, item_id):
+    """Resolve the family's authored instance to real numbers for this exact item.
+
+    A Core (1) problem is no longer an authoring plan. Every place a learner is asked to
+    do something — worked, guided, faded, independent, retry, probe, Appendix A — carries
+    a resolved instance with a situation, declared givens, a typed reasoning route that
+    transforms state, and a computed answer.
+    """
+    family = family_ref(rec)
+    template = instance_for_family(instance_registry, family)
+    if template is None:
+        fail(WORKED_EXAMPLE_UNINSTANTIATED,
+             f"{rec['capability_ref']}: no authored instance exists for family {family}")
+    resolved = resolve_instance(
+        template, STAGE_VARIANT[variant_key], instance_id=item_id,
+        stage=variant_key.replace("APPENDIX_", ""),
+    )
+    assert_answer_custody(resolved, item_id)
+    return resolved
+
+
+def attempt(stage, rec, primary, problem_profile, lesson_id, instance_registry,
+            variant_key=None):
+    item_id = f"{lesson_id}-{stage}"
+    instance = authored_instance(rec, instance_registry, variant_key or stage, item_id)
     return {
-        "attempt_id": f"{lesson_id}-{stage}",
+        "attempt_id": item_id,
         "support_stage": stage,
-        "prompt": prompt_for(rec, problem_profile) + " " + problem_profile["stage_modifiers"][stage],
+        "prompt": instance["situation"] + " " + instance["question"],
+        "method_reminder": problem_profile["stage_modifiers"][stage],
+        "authored_instance": instance,
+        "final_answer": instance["final_answer"],
+        "quick_check": instance["quick_check"],
+        "independent_verification": instance["independent_verification"],
+        "answer_ref": instance["final_answer"]["answer_id"],
+        "answer_shown_with_the_question": False,
         "representation_spec": list(rec["representation_requirements"]),
         "frame_sign_required": has_frame_or_sign(rec),
         "model_validity_required": has_model_validity(rec),
@@ -334,16 +414,23 @@ def attempt(stage, rec, primary, problem_profile, lesson_id):
     }
 
 
-def worked_example(rec, primary, problem_profile, lesson_id):
+def worked_example(rec, primary, problem_profile, lesson_id, instance_registry):
+    item_id = f"{lesson_id}-WORKED-NEW"
+    instance = authored_instance(rec, instance_registry, "WORKED", item_id)
     return {
-        "instance_id": f"{lesson_id}-WORKED-NEW",
+        "instance_id": item_id,
         "source_class": problem_profile["new_instance_source_class"],
         "problem_family_ref": family_ref(rec),
         "primary_capability_ref": rec["capability_ref"],
         "physical_model_refs": list(rec["physical_model_refs"]),
         "law_refs": list(rec["law_refs"]),
-        "prompt": prompt_for(rec, problem_profile)
-        + " Work a newly authored instance of this family; original external transfer items stay reserved for Core2.",
+        "prompt": instance["situation"] + " " + instance["question"],
+        "authored_instance": instance,
+        "final_answer": instance["final_answer"],
+        "quick_check": instance["quick_check"],
+        "independent_verification": instance["independent_verification"],
+        "answer_ref": instance["final_answer"]["answer_id"],
+        "answer_shown_with_the_question": True,
         "representation_spec": list(rec["representation_requirements"]),
         "surface_variation": "situation_reframing_with_family_preserved",
         "external_candidate_refs": [],
@@ -365,7 +452,7 @@ def scope_trace(rec):
     }
 
 
-def build_lesson(rec, reg, profile, problem_profile):
+def build_lesson(rec, reg, profile, problem_profile, instance_registry):
     cap = rec["capability_ref"]
     primary, support, rule_id = select_pck(rec, reg, profile)
     mode = profile["lesson_mode_by_treatment"][rec["treatment"]]
@@ -401,6 +488,8 @@ def build_lesson(rec, reg, profile, problem_profile):
     }
 
     if mode == FULL:
+        retry_instance = authored_instance(
+            rec, instance_registry, "RETRY", f"{lesson_id}-MISCONCEPTION-RETRY")
         base.update(
             {
                 "see_phenomenon_anchor": primary["physical_anchor"],
@@ -421,19 +510,24 @@ def build_lesson(rec, reg, profile, problem_profile):
                 ),
                 "ordinary_language_explanation": primary["ordinary_language_bridge"],
                 "activation": "First move: " + first_move["reconstruction_route"][0],
-                "worked_example": worked_example(rec, primary, problem_profile, lesson_id),
+                "worked_example": worked_example(rec, primary, problem_profile, lesson_id, instance_registry),
                 "concept_helper": first_move["ordinary_language_bridge"],
                 "misconception_repair": {
                     "wrong_model": primary["common_wrong_model"],
                     "why_plausible": "The shortcut looks sufficient because it reproduces the right answer in the cases seen so far, before the decisive physical feature is tested.",
                     "minimal_contrast": contrast["minimal_contrast"],
                     "repair_steps": list(contrast["repair_route"]),
-                    "retry_prompt": prompt_for(rec, problem_profile)
-                    + " Retry on a close but newly authored instance after applying the repaired model.",
+                    "retry_prompt": retry_instance["situation"] + " " + retry_instance["question"],
+                    "retry_instance": retry_instance,
+                    "final_answer": retry_instance["final_answer"],
+                    "quick_check": retry_instance["quick_check"],
+                    "independent_verification": retry_instance["independent_verification"],
+                    "answer_ref": retry_instance["final_answer"]["answer_id"],
+                    "answer_shown_with_the_question": False,
                 },
-                "guided_attempt": attempt("GUIDED", rec, primary, problem_profile, lesson_id),
-                "faded_attempt": attempt("FADED", rec, primary, problem_profile, lesson_id),
-                "independent_attempt": attempt("INDEPENDENT", rec, primary, problem_profile, lesson_id),
+                "guided_attempt": attempt("GUIDED", rec, primary, problem_profile, lesson_id, instance_registry),
+                "faded_attempt": attempt("FADED", rec, primary, problem_profile, lesson_id, instance_registry),
+                "independent_attempt": attempt("INDEPENDENT", rec, primary, problem_profile, lesson_id, instance_registry),
                 "probe_attempt": None,
                 "physical_verification": verify_asset["understand_phase"],
                 "transfer_bridge": "Transfer family: "
@@ -466,7 +560,7 @@ def build_lesson(rec, reg, profile, problem_profile):
                 "misconception_repair": None,
                 "guided_attempt": None,
                 "faded_attempt": None,
-                "independent_attempt": attempt("INDEPENDENT", rec, primary, problem_profile, lesson_id),
+                "independent_attempt": attempt("INDEPENDENT", rec, primary, problem_profile, lesson_id, instance_registry),
                 "probe_attempt": None,
                 "physical_verification": verify_asset["understand_phase"],
                 "transfer_bridge": "Continue without reteaching once the independent physical check has passed.",
@@ -493,7 +587,7 @@ def build_lesson(rec, reg, profile, problem_profile):
             "guided_attempt": None,
             "faded_attempt": None,
             "independent_attempt": None,
-            "probe_attempt": attempt("PROBE", rec, primary, problem_profile, lesson_id),
+            "probe_attempt": attempt("PROBE", rec, primary, problem_profile, lesson_id, instance_registry),
             "probe_requirements": list(rec["probe_requirements"]),
             "physical_verification": verify_asset["understand_phase"],
             "transfer_bridge": "No transfer escalation until the probe has been interpreted.",
@@ -502,7 +596,7 @@ def build_lesson(rec, reg, profile, problem_profile):
     return base
 
 
-def build_appendices(lessons, records, profile, problem_profile, completeness):
+def build_appendices(lessons, records, profile, problem_profile, completeness, instance_registry):
     rec_by = {r["capability_ref"]: r for r in records}
     items, solutions, handout = [], [], []
     for lesson in lessons:
@@ -511,6 +605,7 @@ def build_appendices(lessons, records, profile, problem_profile, completeness):
         for stage in stages:
             iid = f"A-{lesson['capability_ref']}-{stage}"
             sol = f"B-SOL-{iid}"
+            inst = authored_instance(rec, instance_registry, "APPENDIX_" + stage, iid)
             items.append(
                 {
                     "item_id": iid,
@@ -519,7 +614,13 @@ def build_appendices(lessons, records, profile, problem_profile, completeness):
                     "primary_capability_ref": lesson["capability_ref"],
                     "support_stage": stage,
                     "scored": stage != "PROBE",
-                    "prompt": prompt_for(rec, problem_profile) + " " + problem_profile["stage_modifiers"][stage],
+                    "prompt": inst["situation"] + " " + inst["question"],
+                    "method_reminder": problem_profile["stage_modifiers"][stage],
+                    "authored_instance": inst,
+                    "answer_ref": inst["final_answer"]["answer_id"],
+                    # Appendix A is the protected attempt surface: the answer lives in
+                    # Appendix B, never beside the question.
+                    "answer_shown_with_the_question": False,
                     "representation_spec": list(rec["representation_requirements"]),
                     "frame_sign_required": has_frame_or_sign(rec),
                     "model_validity_required": has_model_validity(rec),
@@ -533,8 +634,13 @@ def build_appendices(lessons, records, profile, problem_profile, completeness):
                     "item_ref": iid,
                     "primary_capability_ref": lesson["capability_ref"],
                     "reasoning_steps": reasoning_steps(rec, problem_profile),
+                    "reasoning_route": inst["reasoning_route"],
                     "verification_steps": list(lesson["verification_steps"]),
-                    "final_response": problem_profile["final_response_frame"],
+                    "final_answer": inst["final_answer"],
+                    "quick_check": inst["quick_check"],
+                    "independent_verification": inst["independent_verification"],
+                    "answer_ref": inst["final_answer"]["answer_id"],
+                    "final_response": inst["final_answer"]["statement"],
                     "model_validity_note": "Model assumptions to check: "
                     + ", ".join(
                         uniq(c for x in rec["model_validity_obligations"] for c in x["validity_conditions"])
@@ -588,8 +694,11 @@ def build_plan(
     completeness,
     problem_profile,
     plan_id=None,
+    instance_registry=None,
 ):
+    instance_registry = instance_registry or load_instance_registry()
     validate_pck_registry(pck_registry, profile["minimum_promotion_state_for_authoring"])
+    validate_instance_registry(instance_registry)
     if study_model["subject"] != "PHYSICS" or study_scope["subject"] != "PHYSICS":
         fail("CORE1_IS_ONLY_A_REPAIR_MEMO", "subject")
     if study_model["study_scope_digest"] != study_scope["study_scope_digest"]:
@@ -598,9 +707,11 @@ def build_plan(
     for obj in (study_model, study_scope, profile, problem_profile):
         reject_forbidden_inputs(obj, forbidden)
 
-    lessons = [build_lesson(r, pck_registry, profile, problem_profile) for r in study_model["capability_records"]]
+    lessons = [build_lesson(r, pck_registry, profile, problem_profile, instance_registry)
+               for r in study_model["capability_records"]]
     appendices = build_appendices(
-        lessons, study_model["capability_records"], profile, problem_profile, completeness
+        lessons, study_model["capability_records"], profile, problem_profile, completeness,
+        instance_registry,
     )
     counts = Counter(l["lesson_mode"] for l in lessons)
     plan = {
@@ -639,6 +750,69 @@ def build_plan(
     plan["plan_digest"] = digest(plan, "plan_digest")
     validate_plan(plan, study_model, study_scope, pck_registry, profile, completeness, problem_profile)
     return plan
+
+
+TEMPLATE_ONLY_MARKERS = (
+    "newly authored instance", "authored core1 instance", "set up the system and frame",
+    "build the state table", "select the relation", "substitute the signed values",
+)
+
+
+def validate_worked_instance(worked, where):
+    """A worked example must resolve to an actual number through a real route."""
+    inst = worked.get("authored_instance")
+    if not inst or not inst.get("instantiated"):
+        fail(WORKED_EXAMPLE_UNINSTANTIATED, where)
+    prompt = str(worked.get("prompt", "")).lower()
+    if any(marker in prompt for marker in TEMPLATE_ONLY_MARKERS):
+        fail(WORKED_EXAMPLE_UNINSTANTIATED, f"{where}: the prompt is still an authoring plan")
+    if not inst.get("givens") or not inst.get("unknown"):
+        fail(WORKED_EXAMPLE_UNINSTANTIATED, where + ": no givens or no unknown")
+    route = inst.get("reasoning_route") or []
+    executed = [s for s in route if s.get("role") == "EXECUTE" and s.get("equation")]
+    if not executed:
+        fail(WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE,
+             where + ": no state substitutes into a relation")
+    given_symbols = {g["symbol"] for g in inst["givens"]}
+    produced = {s["output_state"].get("symbol") for s in executed}
+    if not (produced - given_symbols):
+        fail(WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE,
+             where + ": the route produces nothing the situation did not already state")
+    answer = worked.get("final_answer")
+    if not answer or answer.get("value") is None:
+        fail(WORKED_EXAMPLE_FINAL_ANSWER_MISSING, where)
+    if answer["symbol"] not in produced | given_symbols:
+        fail(WORKED_EXAMPLE_FINAL_ANSWER_MISSING, where + ": the answer is not a route output")
+    validate_learner_question(worked, where)
+    return True
+
+
+def validate_learner_question(item, where):
+    """Answer custody: answer, quick check and independent verification are three things.
+
+    A learner-facing question that resolves only to a hint, a self-check or a "check your
+    reasoning" prompt has no answer, and this is where that is caught.
+    """
+    if item is None:
+        fail(LEARNER_QUESTION_WITHOUT_ANSWER, where + ": no item")
+    answer = item.get("final_answer")
+    if not answer or answer.get("value") is None or not answer.get("is_resolved_result"):
+        fail(LEARNER_QUESTION_WITHOUT_ANSWER, where)
+    if not item.get("answer_ref"):
+        fail(LEARNER_QUESTION_WITHOUT_ANSWER, where + ": no answer reference")
+    quick = item.get("quick_check")
+    verification = item.get("independent_verification")
+    if not quick:
+        fail(LEARNER_QUESTION_WITHOUT_ANSWER, where + ": no quick check")
+    if not verification:
+        fail(LEARNER_QUESTION_WITHOUT_ANSWER, where + ": no independent verification")
+    if quick.get("is_answer") or verification.get("is_answer"):
+        fail(SELF_CHECK_SUBSTITUTED_FOR_ANSWER, where)
+    if quick.get("prompt") == answer.get("statement"):
+        fail(SELF_CHECK_SUBSTITUTED_FOR_ANSWER, where + ": the quick check restates the answer")
+    if not verification.get("is_distinct_from_solving_route"):
+        fail(SELF_CHECK_SUBSTITUTED_FOR_ANSWER, where + ": the verification is the solving route")
+    return True
 
 
 def validate_plan(plan, study_model, study_scope, pck_registry, profile, completeness, problem_profile):
@@ -700,22 +874,27 @@ def validate_plan(plan, study_model, study_scope, pck_registry, profile, complet
                 fail("PROBLEM_INSTANCE_WITHOUT_PROBLEM_FAMILY", cap)
             if not w["verification_steps"]:
                 fail("PHYSICAL_VERIFICATION_REDUCED_TO_ANSWER_ONLY", cap + ":worked example")
+            validate_worked_instance(w, cap)
             m = l["misconception_repair"]
             if not m or not m["repair_steps"] or not m["retry_prompt"]:
                 fail("MISCONCEPTION_WARNING_WITHOUT_REPAIR", cap)
+            validate_learner_question(m, f"{cap}:misconception_repair")
             for stage in ("guided_attempt", "faded_attempt", "independent_attempt"):
                 if l[stage] is None:
                     fail("CORE1_IS_ONLY_A_REPAIR_MEMO", f"{cap}:{stage}")
+                validate_learner_question(l[stage], f"{cap}:{stage}")
         elif l["lesson_mode"] == CONCISE:
             if l["worked_example"] or l["guided_attempt"] or l["faded_attempt"] or l["misconception_repair"]:
                 fail("READY_CAPABILITY_FULLY_RETAUGHT", cap)
             if l["independent_attempt"] is None:
                 fail("PHYSICAL_VERIFICATION_REDUCED_TO_ANSWER_ONLY", cap + ":no independent check")
+            validate_learner_question(l["independent_attempt"], f"{cap}:independent_attempt")
         else:
             if l["worked_example"] or l["guided_attempt"] or l["faded_attempt"] or l["independent_attempt"]:
                 fail("PROBE_SILENTLY_BECOMES_RETEACHING", cap)
             if not l.get("probe_requirements"):
                 fail("PROBE_FIRST_WITHOUT_PROBE_REQUIREMENT", cap)
+            validate_learner_question(l["probe_attempt"], f"{cap}:probe_attempt")
 
     aps = plan["appendices"]
     for key, code in (
@@ -734,11 +913,21 @@ def validate_plan(plan, study_model, study_scope, pck_registry, profile, complet
             fail("APPENDIX_A_USES_ORIGINAL_EXTERNAL_TRANSFER", x["item_id"])
         if not x["problem_family_ref"]:
             fail("PROBLEM_INSTANCE_WITHOUT_PROBLEM_FAMILY", x["item_id"])
+        if not x.get("answer_ref"):
+            fail(LEARNER_QUESTION_WITHOUT_ANSWER, x["item_id"])
+        # Appendix A is the protected attempt surface.
+        if x.get("answer_shown_with_the_question") is not False or "final_answer" in x:
+            fail("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE", x["item_id"])
     if {x["item_ref"] for x in sols} != {x["item_id"] for x in items} or len(sols) != len(items):
         fail("APPENDIX_B_INCOMPLETE")
+    answer_refs = {x["answer_ref"] for x in items}
     for x in sols:
         if not x["reasoning_steps"] or not x["verification_steps"]:
             fail("PHYSICAL_VERIFICATION_REDUCED_TO_ANSWER_ONLY", x["solution_id"])
+        validate_learner_question(x, x["solution_id"])
+        if x["answer_ref"] not in answer_refs:
+            fail(LEARNER_QUESTION_WITHOUT_ANSWER,
+                 x["solution_id"] + ": the solution answers a different item")
     hand = aps["appendix_c"]
     if hand.get("answer_free") is not True:
         fail("HANDOUT_CONTAINS_ANSWERS")
@@ -749,7 +938,7 @@ def validate_plan(plan, study_model, study_scope, pck_registry, profile, complet
     ):
         fail("HANDOUT_INTRODUCES_NEW_PHYSICS")
     blob = canonical(hand).lower()
-    for token in ("final_response", "answer is", "= "):
+    for token in ("final_response", "final_answer", "answer_ref", "answer is", "= "):
         if token in blob:
             fail("HANDOUT_CONTAINS_ANSWERS", token)
     return True

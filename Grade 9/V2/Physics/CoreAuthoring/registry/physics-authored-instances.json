@@ -1,0 +1,2505 @@
+{
+  "answer_custody_rule": "Every instance carries three separate objects and may never collapse them: final_answer is the resolved result, quick_check is one defining property, sign or unit, and independent_verification is a genuinely distinct route to the same number. The resolver rejects a verification whose relation is one of the solving-route relations.",
+  "genericity_statement": "An authored instance is data keyed by problem family. Every topic-specific fact — the situation, the declared frame, the quantities, the relation in each route state, the checks — lives here; the resolver engine contains arithmetic, route structure and answer custody and no Physics topic at all. A new Physics topic is a new row, not a new code branch, and the same schema carries a 1D kinematics instance, a free-fall instance and a projectile-components instance unchanged.",
+  "human_expert_review_states": {
+    "ASSESSMENT_EXPERT_PASS": "PENDING",
+    "PEDAGOGY_EXPERT_PASS": "PENDING",
+    "SUBJECT_EXPERT_PASS": "PENDING"
+  },
+  "instances": [
+    {
+      "constraints": [
+        "v1 > 0",
+        "v2 > 0",
+        "v1 != v2"
+      ],
+      "final_answer": {
+        "statement": "Her average speed for the whole ride is {answer} — closer to the slower half, because that is where she spends more of her time.",
+        "symbol": "v_avg",
+        "unit": "km/h"
+      },
+      "frame": {
+        "axis": "one straight road, no turns",
+        "origin": "the start of the road",
+        "positive_direction": "forward along the road",
+        "system": "the cyclist"
+      },
+      "givens": [
+        {
+          "quantity": "speed on the first half",
+          "sign_note": "forward, so positive",
+          "symbol": "v1",
+          "unit": "km/h",
+          "value": 40,
+          "values": [
+            40,
+            30,
+            20,
+            60,
+            24
+          ]
+        },
+        {
+          "quantity": "speed on the second half",
+          "sign_note": "forward, so positive",
+          "symbol": "v2",
+          "unit": "km/h",
+          "value": 60,
+          "values": [
+            60,
+            90,
+            30,
+            45,
+            36,
+            80
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "FINAL_ANSWER",
+        "equation": "120/((60/v1)+(60/v2))",
+        "route_description": "Pick any convenient road length — say 120 km. The first half is 60 km at {v1}, the second half is 60 km at {v2}. Add the two times, then divide the whole 120 km by that total time."
+      },
+      "instance_template_id": "PHY-INST-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "problem_family_ref": "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "question": "What is her average speed for the whole ride?",
+      "quick_check": {
+        "check_kind": "PROPERTY",
+        "prompt": "Your answer has to come out below the halfway value of the two speeds. If it came out exactly halfway, you averaged the speeds instead of the times.",
+        "property_expression": "v_avg < (v1+v2)/2"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Forward along the road counts as positive. The road splits into two halves of equal length.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "One straight road, no turning back, so the speeds are just how fast she is going forward."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v1",
+            "v2"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "Equal lengths, different speeds — so the slow half takes longer.",
+            "symbol": "picture"
+          },
+          "representation_ref": "MOTION_STRIP",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw the road as two equal lengths side by side, one slow and one fast."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v1",
+            "v2"
+          ],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Equal distances at two steady speeds gives average speed = 2 x v1 x v2 / (v1 + v2).",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "The speed is steady on each half, so time = distance / speed works on each half separately. Average speed always means total distance divided by total time — never the average of the two speeds."
+        },
+        {
+          "equation": "2*v1*v2/(v1+v2)",
+          "input_state_refs": [
+            "v1",
+            "v2"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "average speed",
+            "symbol": "v_avg",
+            "unit": "km/h"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "The road length cancels out, which is why the answer does not depend on how long the road is."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v_avg"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "The answer sits closer to the slower speed than to the faster one.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S5",
+          "why_valid": "She spends more time on the slow half, so the whole ride is dragged towards the slower speed."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v_avg",
+            "v1",
+            "v2"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Between the two speeds, and below the halfway value.",
+            "symbol": "check"
+          },
+          "representation_ref": "VERIFICATION_CHECK_STRIP",
+          "role": "VERIFY",
+          "state_id": "S6",
+          "why_valid": "The answer must land between the two speeds, and below their halfway value."
+        }
+      ],
+      "situation": "A cyclist rides along a straight road. She covers the first half of the road at a steady {v1} and the second half at a steady {v2}.",
+      "topic_ref": "PHY-MOTION-SPEED-VEL",
+      "unknown": {
+        "quantity": "average speed for the whole ride",
+        "symbol": "v_avg",
+        "unit": "km/h"
+      }
+    },
+    {
+      "constraints": [
+        "R > 0"
+      ],
+      "final_answer": {
+        "components": [
+          {
+            "quantity": "distance travelled",
+            "symbol": "s_path",
+            "unit": "m"
+          },
+          {
+            "quantity": "distance from the start",
+            "symbol": "s_disp",
+            "unit": "m"
+          }
+        ],
+        "statement": "She runs {s_path} of track, but she finishes only {s_disp} from where she started, in the straight line from A to B.",
+        "symbol": "s_disp",
+        "unit": "m"
+      },
+      "frame": {
+        "axis": "flat ground, two dimensions",
+        "origin": "point A, where she starts",
+        "positive_direction": "the straight line from A towards B",
+        "system": "the runner"
+      },
+      "givens": [
+        {
+          "quantity": "radius of the track",
+          "sign_note": "a length, always positive",
+          "symbol": "R",
+          "unit": "m",
+          "value": 20,
+          "values": [
+            20,
+            35,
+            50,
+            14,
+            28
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "(2*pi*R)/2",
+        "expected_equation": "s_path",
+        "route_description": "Do the curve a different way: a whole circle of radius {R} is 2 x pi x R all the way round, and she runs exactly half of it."
+      },
+      "instance_template_id": "PHY-INST-PATH-VS-CHORD",
+      "problem_family_ref": "PHY-PF-PATH-VS-CHORD",
+      "question": "How far has the runner travelled, and how far is she from where she started?",
+      "quick_check": {
+        "check_kind": "PROPERTY",
+        "prompt": "How far you end up from the start can never beat how far you ran. Check that your straight-line number is the smaller of the two.",
+        "property_expression": "s_disp < s_path"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Start at A. B is directly opposite, across the circle.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "Put the origin where she starts, so 'how far from the start' is measured from A."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "R"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "The curve is the path; the straight arrow is the gap between start and finish.",
+            "symbol": "picture"
+          },
+          "representation_ref": "TRAJECTORY_VIEW",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw the curved path she actually runs, then draw the straight arrow from A to B on top of it. They are two different lengths on the same picture."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "R"
+          ],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Half a circle of radius R is pi x R long; A to B straight across is 2 x R.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "Distance follows the path her feet take. Displacement only cares about where she started and where she ended."
+        },
+        {
+          "equation": "pi*R",
+          "input_state_refs": [
+            "R"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "distance travelled",
+            "symbol": "s_path",
+            "unit": "m"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Half of a full circumference, since she runs half the circle."
+        },
+        {
+          "equation": "2*R",
+          "input_state_refs": [
+            "R"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "distance from the start",
+            "symbol": "s_disp",
+            "unit": "m"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S5",
+          "why_valid": "A to B straight across is the diameter, which is twice the radius."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "s_path",
+            "s_disp"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "The bendier the path, the bigger the gap between the two numbers.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S6",
+          "why_valid": "She ran further than she ended up from the start, because the path bends."
+        }
+      ],
+      "situation": "A runner starts at point A on a semicircular track of radius {R} and runs along the curve all the way round to point B, directly opposite.",
+      "topic_ref": "PHY-MOTION-DIST-DISP",
+      "unknown": {
+        "quantity": "how far she ends up from the start",
+        "symbol": "s_disp",
+        "unit": "m"
+      }
+    },
+    {
+      "constraints": [
+        "a > 0",
+        "v > u"
+      ],
+      "final_answer": {
+        "statement": "She reaches {v} after {answer}.",
+        "symbol": "t",
+        "unit": "s"
+      },
+      "frame": {
+        "axis": "one straight path",
+        "origin": "where she starts",
+        "positive_direction": "the way she is heading",
+        "system": "the skateboarder"
+      },
+      "givens": [
+        {
+          "quantity": "starting velocity",
+          "sign_note": "she starts from rest, so zero",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 0,
+          "values": [
+            0
+          ]
+        },
+        {
+          "quantity": "acceleration",
+          "sign_note": "she speeds up in the direction she is heading, so positive",
+          "symbol": "a",
+          "unit": "m/s^2",
+          "value": 2,
+          "values": [
+            1.5,
+            2,
+            2.5,
+            3
+          ]
+        },
+        {
+          "quantity": "velocity she is aiming for",
+          "sign_note": "same direction, so positive",
+          "symbol": "v",
+          "unit": "m/s",
+          "value": 10,
+          "values": [
+            9,
+            10,
+            12,
+            7.5,
+            6
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "(v*v - u*u)/(2*a)",
+        "expected_equation": "u*t + 0.5*a*t*t",
+        "route_description": "Work out how far she travels, twice, by two different routes: once from the speeds alone using (v squared - u squared) / (2a), and once from the time you just found using u t + half a t squared. If your time is right, both give the same distance."
+      },
+      "instance_template_id": "PHY-INST-FIRST-EQUATION",
+      "problem_family_ref": "PHY-PF-FIRST-EQUATION",
+      "question": "How long does it take her to reach {v}?",
+      "quick_check": {
+        "check_kind": "UNIT",
+        "prompt": "Divide a speed by an acceleration and what is left is seconds. If your answer came out in metres you picked a relation with a distance in it.",
+        "property_expression": "t > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Forward is positive. She starts at rest at the origin.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "One straight path, and she only goes one way, so the direction she is heading counts as positive."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u",
+            "v",
+            "a"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "A straight line from 0 up to the target velocity. The steepness is the acceleration.",
+            "symbol": "picture"
+          },
+          "representation_ref": "VELOCITY_TIME_GRAPH",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Speeding up steadily draws a straight sloping line on a velocity-time graph, starting at zero."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "a"
+          ],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Steady acceleration, so v = u + a t applies over the whole interval.",
+            "symbol": "model"
+          },
+          "representation_ref": "MODEL_VALIDITY_GATE",
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "The acceleration is stated as steady, so the constant-acceleration relations are allowed. If she were speeding up unevenly they would not be."
+        },
+        {
+          "equation": "(v-u)/a",
+          "input_state_refs": [
+            "u",
+            "v",
+            "a"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "time taken",
+            "symbol": "t",
+            "unit": "s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Rearranging v = u + a t for the time gives t = (v - u) / a. That relation has exactly the three things we know and the one we want."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "t"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "That many seconds after she pushes off.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S5",
+          "why_valid": "A positive time means it happens after she sets off, which is the only sensible answer here."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "t"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Units come out as seconds, and the time is positive.",
+            "symbol": "check"
+          },
+          "representation_ref": "VERIFICATION_CHECK_STRIP",
+          "role": "VERIFY",
+          "state_id": "S6",
+          "why_valid": "A speed divided by an acceleration leaves seconds, so the units are right."
+        }
+      ],
+      "situation": "A skateboarder starts from rest on a flat straight path and speeds up steadily at {a}.",
+      "topic_ref": "PHY-MOTION-ACCEL",
+      "unknown": {
+        "quantity": "time taken",
+        "symbol": "t",
+        "unit": "s"
+      }
+    },
+    {
+      "constraints": [
+        "h > 0",
+        "g > 0"
+      ],
+      "final_answer": {
+        "components": [
+          {
+            "quantity": "time to reach the water",
+            "symbol": "t",
+            "unit": "s"
+          },
+          {
+            "quantity": "speed on arrival",
+            "symbol": "v_land",
+            "unit": "m/s"
+          }
+        ],
+        "statement": "The stone reaches the water after {t}, moving at {v_land} downwards.",
+        "symbol": "t",
+        "unit": "s"
+      },
+      "frame": {
+        "axis": "straight down",
+        "origin": "the point it is released from",
+        "positive_direction": "downwards, the way it is about to move",
+        "system": "the stone"
+      },
+      "givens": [
+        {
+          "quantity": "height of the drop",
+          "sign_note": "downwards is positive here, so the fall is positive",
+          "symbol": "h",
+          "unit": "m",
+          "value": 45,
+          "values": [
+            45,
+            20,
+            80,
+            125,
+            5
+          ]
+        },
+        {
+          "quantity": "acceleration due to gravity",
+          "sign_note": "downwards, the same way as positive",
+          "symbol": "g",
+          "unit": "m/s^2",
+          "value": 10,
+          "values": [
+            10
+          ]
+        },
+        {
+          "quantity": "starting velocity",
+          "sign_note": "dropped, not thrown, so zero",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 0,
+          "values": [
+            0
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "0.5*g*t*t",
+        "expected_equation": "h",
+        "route_description": "Put your time back into the distance relation and see whether it rebuilds the drop: half of g times your time squared should come back to {h}."
+      },
+      "instance_template_id": "PHY-INST-FREE-FALL",
+      "problem_family_ref": "PHY-PF-FREE-FALL",
+      "question": "How long does the stone take to reach the water, and how fast is it moving when it gets there?",
+      "quick_check": {
+        "check_kind": "PROPERTY",
+        "prompt": "Doubling the drop height does not double the time — the time follows the square root of the height. So a drop four times as high takes only twice as long.",
+        "property_expression": "t > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Down is positive. Zero is the release point.",
+            "symbol": "frame"
+          },
+          "representation_ref": "SIGN_FRAME_OVERLAY",
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "Everything in this problem happens downwards, so calling downwards positive keeps every number positive. Calling upwards positive also works — you just carry minus signs the whole way."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "h",
+            "u",
+            "g"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "Start: 0 m, 0 m/s. End: h down, speed unknown. Time is what we want.",
+            "symbol": "picture"
+          },
+          "representation_ref": "STATE_TABLE",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Write the start state and the end state in a table: at the start, speed 0 and position 0; at the end, position h and speed unknown."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "g"
+          ],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Free fall: steady acceleration g downwards, no other force.",
+            "symbol": "model"
+          },
+          "representation_ref": "MODEL_VALIDITY_GATE",
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "With air resistance ignored, gravity alone acts and the acceleration stays steady, so the constant-acceleration relations are allowed. For a light object like a feather they would not be."
+        },
+        {
+          "equation": "sqrt(2*h/g)",
+          "input_state_refs": [
+            "h",
+            "g"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "time to fall",
+            "symbol": "t",
+            "unit": "s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "From h = half g t squared with no starting speed, the time is the square root of 2h/g. This relation is the one that leaves out the final speed, which we were not given."
+        },
+        {
+          "equation": "g*t",
+          "input_state_refs": [
+            "g",
+            "t"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "speed when it hits the water",
+            "symbol": "v_land",
+            "unit": "m/s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S5",
+          "why_valid": "It starts at rest and gains g every second, so its speed on arrival is g times the fall time."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "t",
+            "v_land"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "A few seconds of fall, arriving fast.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S6",
+          "why_valid": "Both numbers are positive because both point downwards, the direction we chose as positive."
+        }
+      ],
+      "situation": "A small stone is dropped — not thrown — from a bridge {h} above the water. Take gravity as {g} and ignore air resistance.",
+      "topic_ref": "PHY-MOTION-GRAVITY",
+      "unknown": {
+        "quantity": "time to reach the water",
+        "symbol": "t",
+        "unit": "s"
+      }
+    },
+    {
+      "constraints": [
+        "t2 > t1",
+        "v2 != v1"
+      ],
+      "final_answer": {
+        "statement": "The trolley's acceleration is {answer} — it gains that much velocity every second.",
+        "symbol": "a",
+        "unit": "m/s^2"
+      },
+      "frame": {
+        "axis": "one straight track",
+        "origin": "the start of the timing",
+        "positive_direction": "the direction the graph calls positive velocity",
+        "system": "the trolley"
+      },
+      "givens": [
+        {
+          "quantity": "velocity at the first instant",
+          "sign_note": "positive, so it is moving the way the graph calls forward",
+          "symbol": "v1",
+          "unit": "m/s",
+          "value": 2,
+          "values": [
+            2,
+            0,
+            4,
+            1,
+            3
+          ]
+        },
+        {
+          "quantity": "first instant",
+          "sign_note": "a clock reading",
+          "symbol": "t1",
+          "unit": "s",
+          "value": 0,
+          "values": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "quantity": "velocity at the second instant",
+          "sign_note": "still positive, and bigger, so it is speeding up",
+          "symbol": "v2",
+          "unit": "m/s",
+          "value": 14,
+          "values": [
+            14,
+            12,
+            10,
+            9,
+            16
+          ]
+        },
+        {
+          "quantity": "second instant",
+          "sign_note": "a later clock reading",
+          "symbol": "t2",
+          "unit": "s",
+          "value": 4,
+          "values": [
+            4,
+            5,
+            6,
+            8
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "a*(t2-t1)",
+        "expected_equation": "v2-v1",
+        "route_description": "Run it backwards through the other graph. On an acceleration-time graph, the area under the line is the velocity gained, so your acceleration times the time between the two instants must rebuild {v2} minus {v1}."
+      },
+      "instance_template_id": "PHY-INST-GRAPH-ACCELERATION",
+      "problem_family_ref": "PHY-PF-GRAPH-ACCELERATION",
+      "question": "What is the trolley's acceleration?",
+      "quick_check": {
+        "check_kind": "UNIT",
+        "prompt": "The steepness of a velocity-time line is an acceleration, in m/s squared. If your answer came out in m/s you read the height of the line instead of how steeply it climbs.",
+        "property_expression": "a > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Up axis: velocity in m/s. Across axis: time in s.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "Read both axis labels first. The up axis is velocity, the across axis is time — so the steepness has velocity on top and time underneath."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v1",
+            "t1",
+            "v2",
+            "t2"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "A right-angled step under the line: across is the time taken, up is the velocity gained.",
+            "symbol": "picture"
+          },
+          "representation_ref": "VELOCITY_TIME_GRAPH",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Mark the two points on the line and draw the step between them: across for the time, up for the velocity gained."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Straight line on a velocity-time graph means steady acceleration, and the steepness is that acceleration.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "The line is straight, so the velocity changes at the same rate the whole way. That is exactly what constant acceleration means."
+        },
+        {
+          "equation": "(v2-v1)/(t2-t1)",
+          "input_state_refs": [
+            "v1",
+            "t1",
+            "v2",
+            "t2"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "acceleration",
+            "symbol": "a",
+            "unit": "m/s^2"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Steepness means change in the up quantity divided by change in the across quantity."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "a"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "It gains that much velocity every second.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S5",
+          "why_valid": "A positive steepness with a positive velocity means it is speeding up in the direction it is already going."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "a"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "The units come out as m/s squared.",
+            "symbol": "check"
+          },
+          "representation_ref": "VERIFICATION_CHECK_STRIP",
+          "role": "VERIFY",
+          "state_id": "S6",
+          "why_valid": "Metres per second, divided by seconds, is metres per second squared — the units of an acceleration."
+        }
+      ],
+      "situation": "A velocity-time graph for a trolley is a straight line. At {t1} the line reads {v1}, and at {t2} it reads {v2}.",
+      "topic_ref": "PHY-MOTION-GRAPHS",
+      "unknown": {
+        "quantity": "acceleration",
+        "symbol": "a",
+        "unit": "m/s^2"
+      }
+    },
+    {
+      "constraints": [
+        "u > 0",
+        "g > 0"
+      ],
+      "final_answer": {
+        "components": [
+          {
+            "quantity": "time until it stops rising",
+            "symbol": "t_top",
+            "unit": "s"
+          },
+          {
+            "quantity": "extra height gained",
+            "symbol": "rise",
+            "unit": "m"
+          }
+        ],
+        "statement": "The sandbag keeps rising for another {t_top}, climbing a further {rise} before it starts to fall.",
+        "symbol": "t_top",
+        "unit": "s"
+      },
+      "frame": {
+        "axis": "straight up and down",
+        "origin": "the point where it slips off",
+        "positive_direction": "upwards",
+        "system": "the sandbag, from the moment it leaves the balloon"
+      },
+      "givens": [
+        {
+          "quantity": "velocity the sandbag has at the moment it slips off",
+          "sign_note": "upwards, and up is positive, so positive",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 8,
+          "values": [
+            8,
+            5,
+            12,
+            6,
+            10
+          ]
+        },
+        {
+          "quantity": "acceleration due to gravity",
+          "sign_note": "downwards, so it counts as negative in this frame",
+          "symbol": "g",
+          "unit": "m/s^2",
+          "value": 10,
+          "values": [
+            10
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "u - g*t_top",
+        "expected_equation": "0",
+        "route_description": "Check the velocity at the instant you found. Starting at {u} upwards and losing {g} of it every second, the velocity after t_top seconds should come out at exactly zero."
+      },
+      "instance_template_id": "PHY-INST-MOVING-RELEASE",
+      "problem_family_ref": "PHY-PF-MOVING-RELEASE",
+      "question": "How long after it slips off does the sandbag stop rising, and how much higher does it get first?",
+      "quick_check": {
+        "check_kind": "SIGN",
+        "prompt": "At the very top the sandbag's speed is zero, but its acceleration is still {g} downwards. Zero speed does not mean zero acceleration — if it did, it would hang there forever.",
+        "property_expression": "t_top > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Up is positive. Zero is the point where it slips off.",
+            "symbol": "frame"
+          },
+          "representation_ref": "SIGN_FRAME_OVERLAY",
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "Call upwards positive, so the sandbag's starting velocity is positive and gravity is negative. Mixing those up is the usual way this goes wrong."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u",
+            "g"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "Velocity arrow up, acceleration arrow down — so it is still rising but slowing.",
+            "symbol": "picture"
+          },
+          "representation_ref": "VECTOR_STATE_VIEW",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw two arrows on the sandbag at the moment of release: a velocity arrow pointing up, an acceleration arrow pointing down. They fight each other."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u"
+          ],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "It keeps the balloon's upward velocity at release, then slows at g until it momentarily stops.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "This is the decisive bit. The sandbag does not start from rest: it leaves the balloon already moving up at the balloon's speed. From then on only gravity acts on it."
+        },
+        {
+          "equation": "u/g",
+          "input_state_refs": [
+            "u",
+            "g"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "time until it stops rising",
+            "symbol": "t_top",
+            "unit": "s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "It loses g of upward velocity every second, so it runs out of upward velocity after u/g seconds."
+        },
+        {
+          "equation": "u*u/(2*g)",
+          "input_state_refs": [
+            "u",
+            "g"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "extra height gained after release",
+            "symbol": "rise",
+            "unit": "m"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S5",
+          "why_valid": "From v squared = u squared - 2 g h with the final velocity zero, the extra rise is u squared over 2g."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "t_top",
+            "rise"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "It keeps rising for a moment, then turns round.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S6",
+          "why_valid": "It climbs a little further before it starts to come down, which is why a dropped object from a rising balloon does not head straight for the ground."
+        }
+      ],
+      "situation": "A hot-air balloon is rising steadily at {u} when a small sandbag slips off the side. Take gravity as {g} and ignore air resistance.",
+      "topic_ref": "PHY-MOTION-GRAVITY",
+      "unknown": {
+        "quantity": "time until it stops rising",
+        "symbol": "t_top",
+        "unit": "s"
+      }
+    },
+    {
+      "constraints": [
+        "t1 > 0",
+        "t2 > 0",
+        "a2 < 0",
+        "u + a1*t1 + a2*t2 > 0"
+      ],
+      "final_answer": {
+        "components": [
+          {
+            "quantity": "velocity at the boundary",
+            "symbol": "v1",
+            "unit": "m/s"
+          },
+          {
+            "quantity": "velocity at the end",
+            "symbol": "v2",
+            "unit": "m/s"
+          }
+        ],
+        "statement": "The cart reaches {v1} at the boundary and finishes at {v2}, still rolling forwards.",
+        "symbol": "v2",
+        "unit": "m/s"
+      },
+      "frame": {
+        "axis": "one straight track",
+        "origin": "where the timing starts",
+        "positive_direction": "the way the cart is already rolling",
+        "system": "the cart"
+      },
+      "givens": [
+        {
+          "quantity": "velocity at the start",
+          "sign_note": "forwards, so positive",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 5,
+          "values": [
+            5,
+            4,
+            6,
+            2,
+            8
+          ]
+        },
+        {
+          "quantity": "acceleration in the first part",
+          "sign_note": "speeding up forwards, so positive",
+          "symbol": "a1",
+          "unit": "m/s^2",
+          "value": 2,
+          "values": [
+            2,
+            1.5,
+            3,
+            2.5
+          ]
+        },
+        {
+          "quantity": "how long the first part lasts",
+          "sign_note": "a length of time",
+          "symbol": "t1",
+          "unit": "s",
+          "value": 3,
+          "values": [
+            3,
+            4,
+            2,
+            5,
+            6
+          ]
+        },
+        {
+          "quantity": "acceleration in the second part",
+          "sign_note": "slowing down, so it points backwards and is negative",
+          "symbol": "a2",
+          "unit": "m/s^2",
+          "value": -1,
+          "values": [
+            -1,
+            -2,
+            -1.5,
+            -0.5
+          ]
+        },
+        {
+          "quantity": "how long the second part lasts",
+          "sign_note": "a length of time",
+          "symbol": "t2",
+          "unit": "s",
+          "value": 2,
+          "values": [
+            2,
+            3,
+            4,
+            1
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "u*t1 + 0.5*a1*t1*t1",
+        "expected_equation": "((u + v1)/2)*t1",
+        "route_description": "Check the first part a different way. Work out how far the cart travels in part 1 using u t + half a t squared, and again using average velocity (u + v1) / 2 times t1. If the boundary velocity is right, both give the same distance."
+      },
+      "instance_template_id": "PHY-INST-MULTIPHASE-KINEMATICS",
+      "problem_family_ref": "PHY-PF-MULTIPHASE-KINEMATICS",
+      "question": "How fast is the cart moving at the very end?",
+      "quick_check": {
+        "check_kind": "PROPERTY",
+        "prompt": "Part 2 has to start at the velocity part 1 ended with. If you started part 2 from zero you threw the boundary state away, and the answer will come out far too small.",
+        "property_expression": "v2 > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Forwards is positive, for both parts.",
+            "symbol": "frame"
+          },
+          "representation_ref": "SIGN_FRAME_OVERLAY",
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "One direction for the whole problem: the way the cart is already rolling is positive. Speeding up is then positive and slowing down is negative."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u",
+            "a1",
+            "t1",
+            "a2",
+            "t2"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "Part 1, boundary, part 2. The velocity at the boundary is shared.",
+            "symbol": "picture"
+          },
+          "representation_ref": "PHASE_BOUNDARY_VIEW",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw the journey as two blocks with a line between them. The moment the track changes is the boundary, and it belongs to both parts."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Steady acceleration within each part, handled separately, joined at the boundary.",
+            "symbol": "model"
+          },
+          "representation_ref": "MODEL_VALIDITY_GATE",
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "The acceleration is steady inside each part but jumps between them, so you cannot use one relation across the whole journey. You have to do the parts one at a time."
+        },
+        {
+          "equation": "u + a1*t1",
+          "input_state_refs": [
+            "u",
+            "a1",
+            "t1"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "velocity at the boundary",
+            "symbol": "v1",
+            "unit": "m/s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Part 1 on its own: start at u, gain a1 every second for t1 seconds."
+        },
+        {
+          "equation": "v1 + a2*t2",
+          "input_state_refs": [
+            "v1",
+            "a2",
+            "t2"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "velocity at the end",
+            "symbol": "v2",
+            "unit": "m/s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S5",
+          "why_valid": "Part 2 starts at exactly the velocity part 1 finished with — not at zero. That carried-over velocity is the whole point of a two-part problem."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v1",
+            "v2"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Faster than it started, slower than at the boundary, still going forwards.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S6",
+          "why_valid": "Still positive, so the cart is still rolling forwards at the end — just not as fast as at the boundary."
+        }
+      ],
+      "situation": "A cart is already rolling at {u} along a straight track. For the first {t1} it speeds up steadily at {a1}. Then the track changes and for the next {t2} it slows steadily at {a2}.",
+      "topic_ref": "PHY-MOTION-MULTIPHASE",
+      "unknown": {
+        "quantity": "velocity at the end",
+        "symbol": "v2",
+        "unit": "m/s"
+      }
+    },
+    {
+      "constraints": [
+        "a > 0",
+        "n >= 2"
+      ],
+      "final_answer": {
+        "statement": "During that one second alone the go-kart covers {answer}.",
+        "symbol": "s_n",
+        "unit": "m"
+      },
+      "frame": {
+        "axis": "one straight track",
+        "origin": "where it is when the clock starts",
+        "positive_direction": "the way it is moving",
+        "system": "the go-kart"
+      },
+      "givens": [
+        {
+          "quantity": "velocity when the clock starts",
+          "sign_note": "forwards, so positive",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 2,
+          "values": [
+            2,
+            0,
+            3,
+            1,
+            4
+          ]
+        },
+        {
+          "quantity": "acceleration",
+          "sign_note": "speeding up forwards, so positive",
+          "symbol": "a",
+          "unit": "m/s^2",
+          "value": 3,
+          "values": [
+            3,
+            2,
+            4,
+            1.5
+          ]
+        },
+        {
+          "quantity": "which second we want",
+          "sign_note": "a counting number, not a time interval",
+          "symbol": "n",
+          "unit": "",
+          "value": 5,
+          "values": [
+            5,
+            4,
+            6,
+            3
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "FINAL_ANSWER",
+        "equation": "(u*n + 0.5*a*n*n) - (u*(n-1) + 0.5*a*(n-1)*(n-1))",
+        "route_description": "Do it the long way instead. Work out the total distance up to the end of second {n}, then the total up to the end of the second before, and subtract one from the other."
+      },
+      "instance_template_id": "PHY-INST-NTH-SECOND",
+      "problem_family_ref": "PHY-PF-NTH-SECOND",
+      "question": "How far does it travel during the {n}th second alone — that is, between the end of second {n} minus one and the end of second {n}?",
+      "quick_check": {
+        "check_kind": "UNIT",
+        "prompt": "This answer is a distance in metres, not a velocity — even though the working looks like a velocity calculation. It looks that way because the interval is exactly one second long.",
+        "property_expression": "s_n > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Forwards is positive and the clock starts at zero.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "One direction, forwards, and one clock started at the moment we are given the velocity."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "n"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "Shade the slot from the end of one second to the end of the next.",
+            "symbol": "picture"
+          },
+          "representation_ref": "TIMELINE_INTERVAL_VIEW",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw the clock as a line and shade just the one-second slot we want. It sits between two instants, it is not the whole journey."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "n"
+          ],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "A named second is an interval: distance up to n, minus distance up to n minus 1.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "'During the nth second' means between t = n minus 1 and t = n. That is a difference between two totals, not a total."
+        },
+        {
+          "equation": "u + a*(2*n - 1)/2",
+          "input_state_refs": [
+            "u",
+            "a",
+            "n"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "distance in that one second",
+            "symbol": "s_n",
+            "unit": "m"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Subtracting the two totals tidies up to u + a(2n - 1)/2. Every term is a distance, because the interval is exactly one second long."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "s_n"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "The next second will be longer still.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S5",
+          "why_valid": "Because the go-kart is speeding up, each second covers more ground than the one before it."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "s_n"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Bigger than the earlier seconds, smaller than the total.",
+            "symbol": "check"
+          },
+          "representation_ref": "VERIFICATION_CHECK_STRIP",
+          "role": "VERIFY",
+          "state_id": "S6",
+          "why_valid": "It should be bigger than the distance in the first second and smaller than the whole journey so far."
+        }
+      ],
+      "situation": "A go-kart is moving at {u} and then speeds up steadily at {a}.",
+      "topic_ref": "PHY-MOTION-ACCEL",
+      "unknown": {
+        "quantity": "distance travelled during that one second",
+        "symbol": "s_n",
+        "unit": "m"
+      }
+    },
+    {
+      "constraints": [
+        "g > 0",
+        "h_A != h_B"
+      ],
+      "final_answer": {
+        "statement": "The relative acceleration is {answer}: from the first stone, the second one does not appear to accelerate at all.",
+        "symbol": "a_rel",
+        "unit": "m/s^2"
+      },
+      "frame": {
+        "axis": "straight up and down",
+        "origin": "the release point of the first stone",
+        "positive_direction": "upwards",
+        "system": "both stones, watched from the first one"
+      },
+      "givens": [
+        {
+          "quantity": "acceleration due to gravity",
+          "sign_note": "downwards, so negative when up is positive",
+          "symbol": "g",
+          "unit": "m/s^2",
+          "value": 10,
+          "values": [
+            10,
+            9.8
+          ]
+        },
+        {
+          "quantity": "height the first stone starts from",
+          "sign_note": "a height above the ground",
+          "symbol": "h_A",
+          "unit": "m",
+          "value": 40,
+          "values": [
+            40,
+            60,
+            80
+          ]
+        },
+        {
+          "quantity": "height the second stone starts from",
+          "sign_note": "a different height above the ground",
+          "symbol": "h_B",
+          "unit": "m",
+          "value": 20,
+          "values": [
+            20,
+            15,
+            35,
+            50
+          ]
+        },
+        {
+          "quantity": "starting velocity of the first stone",
+          "sign_note": "released from rest, so zero",
+          "symbol": "u_A",
+          "unit": "m/s",
+          "value": 0,
+          "values": [
+            0
+          ]
+        },
+        {
+          "quantity": "starting velocity of the second stone",
+          "sign_note": "released from rest, so zero",
+          "symbol": "u_B",
+          "unit": "m/s",
+          "value": 0,
+          "values": [
+            0
+          ]
+        },
+        {
+          "quantity": "any moment during the fall, used only for checking",
+          "sign_note": "a clock reading",
+          "symbol": "t_test",
+          "unit": "s",
+          "value": 2,
+          "values": [
+            2,
+            3
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "(u_B - g*t_test) - (u_A - g*t_test)",
+        "expected_equation": "u_B - u_A",
+        "route_description": "Compare their velocities at any moment, say {t_test} after release. Each one is its starting velocity minus g times the time. Subtract them and the g-times-time parts cancel, so the gap between their velocities never changes — which is exactly what zero relative acceleration means."
+      },
+      "instance_template_id": "PHY-INST-RELATIVE-G-CANCELLATION",
+      "problem_family_ref": "PHY-PF-RELATIVE-G-CANCELLATION",
+      "question": "What is the acceleration of the second stone as seen by someone falling with the first one?",
+      "quick_check": {
+        "check_kind": "SIGN",
+        "prompt": "A zero answer here does not mean nothing is accelerating. Each stone really is speeding up at {g} downwards — they just do it identically, so neither gains on the other.",
+        "property_expression": "a_rel == 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Up is positive, and the observer is falling with the first stone.",
+            "symbol": "frame"
+          },
+          "representation_ref": "RELATIVE_FRAME_VIEW",
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "This question does not ask what the stones do from the ground — it asks what one does as seen from the other. Naming who is watching is the whole job here."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "g"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "Two identical downward arrows — one on each stone.",
+            "symbol": "picture"
+          },
+          "representation_ref": "VECTOR_STATE_VIEW",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw an acceleration arrow on each stone. Both arrows point down and both are the same length."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "g"
+          ],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Free fall gives both stones the same acceleration, g downwards.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "With air resistance ignored, gravity gives every object the same acceleration whatever its mass and whatever height it started from. The starting heights change where they are, not how they accelerate."
+        },
+        {
+          "equation": "-g",
+          "input_state_refs": [
+            "g"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "acceleration of the first stone",
+            "symbol": "a_A",
+            "unit": "m/s^2"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Up is positive and gravity pulls down, so the first stone's acceleration is negative g."
+        },
+        {
+          "equation": "0 - g",
+          "input_state_refs": [
+            "g"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "acceleration of the second stone",
+            "symbol": "a_B",
+            "unit": "m/s^2"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S5",
+          "why_valid": "The second stone gets exactly the same treatment from gravity, so its acceleration is the same negative g."
+        },
+        {
+          "equation": "a_B - a_A",
+          "input_state_refs": [
+            "a_A",
+            "a_B"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "relative acceleration",
+            "symbol": "a_rel",
+            "unit": "m/s^2"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S6",
+          "why_valid": "'As seen from the first stone' means subtract the first stone's acceleration from the second stone's."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "a_rel"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Neither stone gains on the other, so from one of them the other appears to hang still.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S7",
+          "why_valid": "Zero relative acceleration means the gap between the two stones changes at a steady rate — here it does not change at all, since both start from rest."
+        }
+      ],
+      "situation": "Two stones are released from rest at the same instant, one from {h_A} up and the other from {h_B} up. Take gravity as {g} and ignore air resistance.",
+      "topic_ref": "PHY-MOTION-GRAVITY",
+      "unknown": {
+        "quantity": "acceleration of the second stone relative to the first",
+        "symbol": "a_rel",
+        "unit": "m/s^2"
+      }
+    },
+    {
+      "constraints": [
+        "u > 0",
+        "g > 0"
+      ],
+      "final_answer": {
+        "components": [
+          {
+            "quantity": "greatest height",
+            "symbol": "h_max",
+            "unit": "m"
+          },
+          {
+            "quantity": "time to reach the top",
+            "symbol": "t_up",
+            "unit": "s"
+          }
+        ],
+        "statement": "The ball reaches {h_max}, taking {t_up} to get there.",
+        "symbol": "h_max",
+        "unit": "m"
+      },
+      "frame": {
+        "axis": "straight up and down",
+        "origin": "the ground, where it leaves the hand",
+        "positive_direction": "upwards",
+        "system": "the ball"
+      },
+      "givens": [
+        {
+          "quantity": "speed it is thrown at",
+          "sign_note": "upwards, and up is positive, so positive",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 20,
+          "values": [
+            20,
+            15,
+            25,
+            30,
+            12
+          ]
+        },
+        {
+          "quantity": "acceleration due to gravity",
+          "sign_note": "downwards, so it works against the throw",
+          "symbol": "g",
+          "unit": "m/s^2",
+          "value": 10,
+          "values": [
+            10
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "FINAL_ANSWER",
+        "equation": "u*t_up - 0.5*g*t_up*t_up",
+        "route_description": "Use the time instead of the speeds. Over the trip to the top, the height is u times the time, minus half of g times the time squared."
+      },
+      "instance_template_id": "PHY-INST-VERTICAL-MAX-HEIGHT",
+      "problem_family_ref": "PHY-PF-VERTICAL-MAX-HEIGHT",
+      "question": "How high does the ball get, and how long does it take to get there?",
+      "quick_check": {
+        "check_kind": "SIGN",
+        "prompt": "At the top the ball's speed is zero, but gravity has not switched off — the acceleration is still {g} downwards. That is why it does not stay up there.",
+        "property_expression": "h_max > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Up is positive. Zero is the ground.",
+            "symbol": "frame"
+          },
+          "representation_ref": "SIGN_FRAME_OVERLAY",
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "Up is positive, so the throw is positive and gravity is negative. That one decision fixes every sign after it."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u",
+            "g"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "The velocity arrow shrinks to nothing at the top; the gravity arrow stays the same all the way.",
+            "symbol": "picture"
+          },
+          "representation_ref": "VECTOR_STATE_VIEW",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw the ball at three moments: leaving the hand, halfway up, and at the top. The velocity arrow shrinks; the gravity arrow never does."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Steady acceleration g downwards, and velocity zero at the top.",
+            "symbol": "model"
+          },
+          "representation_ref": "MODEL_VALIDITY_GATE",
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "With air resistance ignored, the acceleration is steady all the way up, so the constant-acceleration relations hold. The key extra fact is that at the highest point the velocity is momentarily zero."
+        },
+        {
+          "equation": "u/g",
+          "input_state_refs": [
+            "u",
+            "g"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "time to reach the top",
+            "symbol": "t_up",
+            "unit": "s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "It loses g of upward velocity every second, so it runs out after u/g seconds."
+        },
+        {
+          "equation": "u*u/(2*g)",
+          "input_state_refs": [
+            "u",
+            "g"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "greatest height",
+            "symbol": "h_max",
+            "unit": "m"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S5",
+          "why_valid": "From v squared = u squared - 2 g h with the velocity zero at the top, the height is u squared over 2g. This relation skips the time, which we were not asked for first."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "h_max",
+            "t_up"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Double the throwing speed, quadruple the height.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S6",
+          "why_valid": "Throwing it twice as fast makes it go four times as high, because the height depends on the speed squared."
+        }
+      ],
+      "situation": "A ball is thrown straight up from the ground at {u}. Take gravity as {g} and ignore air resistance.",
+      "topic_ref": "PHY-MOTION-GRAVITY",
+      "unknown": {
+        "quantity": "greatest height reached",
+        "symbol": "h_max",
+        "unit": "m"
+      }
+    },
+    {
+      "constraints": [
+        "T > 0",
+        "v_end > 0"
+      ],
+      "final_answer": {
+        "statement": "The trolley travels {answer} in that time.",
+        "symbol": "s",
+        "unit": "m"
+      },
+      "frame": {
+        "axis": "one straight track",
+        "origin": "where it is when the clock starts",
+        "positive_direction": "the direction the graph calls positive",
+        "system": "the trolley"
+      },
+      "givens": [
+        {
+          "quantity": "velocity at the end of the interval",
+          "sign_note": "above the axis, so positive",
+          "symbol": "v_end",
+          "unit": "m/s",
+          "value": 12,
+          "values": [
+            12,
+            10,
+            8,
+            16,
+            6
+          ]
+        },
+        {
+          "quantity": "length of the interval",
+          "sign_note": "a length of time",
+          "symbol": "T",
+          "unit": "s",
+          "value": 4,
+          "values": [
+            4,
+            5,
+            2,
+            6
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "FINAL_ANSWER",
+        "equation": "((0 + v_end)/2)*T",
+        "route_description": "Use the average velocity instead of the area. It starts at 0 and finishes at {v_end}, and it changes steadily, so its average is half of {v_end}. Distance is then average velocity times time."
+      },
+      "instance_template_id": "PHY-INST-VT-SIGNED-AREA",
+      "problem_family_ref": "PHY-PF-VT-SIGNED-AREA",
+      "question": "How far does the trolley travel in that time?",
+      "quick_check": {
+        "check_kind": "UNIT",
+        "prompt": "Area under a velocity-time graph comes out in metres. If your answer is in m/s you read the height of the graph instead of the area under it.",
+        "property_expression": "s > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Up axis: velocity. Across axis: time. Area therefore means distance.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "Read the axes before anything else. Velocity up, time across — so areas on this graph have metres per second times seconds, which is metres."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v_end",
+            "T"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "A shaded triangle: base is the time, height is the final velocity.",
+            "symbol": "picture"
+          },
+          "representation_ref": "SLOPE_AREA_DECODER",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Shade the region between the line and the time axis. Here it is a triangle, because the line starts at zero."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Area under a velocity-time graph is the distance travelled.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "The question asks how far, not how fast it is changing — so this is an area question, not a steepness question. That is the decision that matters on any velocity-time graph."
+        },
+        {
+          "equation": "0.5*v_end*T",
+          "input_state_refs": [
+            "v_end",
+            "T"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "distance travelled",
+            "symbol": "s",
+            "unit": "m"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "The area of a triangle is half the base times the height."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "s"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "That is how far forwards it got in the interval.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S5",
+          "why_valid": "A positive area above the axis means it moved forwards that far."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "s",
+            "v_end",
+            "T"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Less than the top speed times the time.",
+            "symbol": "check"
+          },
+          "representation_ref": "VERIFICATION_CHECK_STRIP",
+          "role": "VERIFY",
+          "state_id": "S6",
+          "why_valid": "It must be less than it would have travelled at the top speed the whole way, because it spent most of the time slower than that."
+        }
+      ],
+      "situation": "The velocity-time graph of a trolley is a straight line starting at 0 m/s and reaching {v_end} after {T}.",
+      "topic_ref": "PHY-MOTION-GRAPHS",
+      "unknown": {
+        "quantity": "distance travelled",
+        "symbol": "s",
+        "unit": "m"
+      }
+    },
+    {
+      "constraints": [
+        "t2 > t1",
+        "x2 > x1"
+      ],
+      "final_answer": {
+        "statement": "The robot is moving at {answer}, and because the line is straight it keeps that velocity the whole time.",
+        "symbol": "v",
+        "unit": "m/s"
+      },
+      "frame": {
+        "axis": "one straight rail",
+        "origin": "the zero mark on the rail",
+        "positive_direction": "the direction the position axis counts up",
+        "system": "the robot"
+      },
+      "givens": [
+        {
+          "quantity": "position at the first instant",
+          "sign_note": "a position, measured from the zero mark",
+          "symbol": "x1",
+          "unit": "m",
+          "value": 0,
+          "values": [
+            0,
+            2,
+            5
+          ]
+        },
+        {
+          "quantity": "first instant",
+          "sign_note": "a clock reading",
+          "symbol": "t1",
+          "unit": "s",
+          "value": 0,
+          "values": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "quantity": "position at the second instant",
+          "sign_note": "further along, so a bigger position",
+          "symbol": "x2",
+          "unit": "m",
+          "value": 10,
+          "values": [
+            10,
+            20,
+            14,
+            18
+          ]
+        },
+        {
+          "quantity": "second instant",
+          "sign_note": "a later clock reading",
+          "symbol": "t2",
+          "unit": "s",
+          "value": 5,
+          "values": [
+            5,
+            4,
+            6,
+            8,
+            10
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "v*(t2-t1)",
+        "expected_equation": "x2-x1",
+        "route_description": "Run it forwards instead. If that really is the velocity, then over the same stretch of time the robot should cover exactly {x2} minus {x1}."
+      },
+      "instance_template_id": "PHY-INST-XT-SLOPE",
+      "problem_family_ref": "PHY-PF-XT-SLOPE",
+      "question": "How fast is the robot moving?",
+      "quick_check": {
+        "check_kind": "PROPERTY",
+        "prompt": "On a position-time graph the steepness is the velocity, and the height is only where the robot is. A high flat line means far away and not moving, not fast.",
+        "property_expression": "v > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Up axis: position in m. Across axis: time in s.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "The up axis here is position, not velocity. That one difference changes what the steepness means, so read the axes first."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "x1",
+            "t1",
+            "x2",
+            "t2"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "A step under the line: across is the time, up is the distance covered.",
+            "symbol": "picture"
+          },
+          "representation_ref": "POSITION_TIME_GRAPH",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Mark both instants on the line and draw the step between them: across for the time passed, up for the ground covered."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Straight position-time line means constant velocity, and the steepness is that velocity.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "A straight position-time line means the robot covers the same ground every second, so its velocity never changes."
+        },
+        {
+          "equation": "(x2-x1)/(t2-t1)",
+          "input_state_refs": [
+            "x1",
+            "t1",
+            "x2",
+            "t2"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "velocity",
+            "symbol": "v",
+            "unit": "m/s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Steepness is change in position divided by change in time — which is exactly what velocity means."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "It covers that much rail every second, always in the same direction.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S5",
+          "why_valid": "A positive steepness means it is moving the way the position axis counts up."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "v"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "The units come out as m/s.",
+            "symbol": "check"
+          },
+          "representation_ref": "VERIFICATION_CHECK_STRIP",
+          "role": "VERIFY",
+          "state_id": "S6",
+          "why_valid": "Metres divided by seconds is metres per second, which is a velocity."
+        }
+      ],
+      "situation": "The position-time graph of a robot on a straight rail is a straight line. At {t1} the robot is at {x1}, and at {t2} it is at {x2}.",
+      "topic_ref": "PHY-MOTION-GRAPHS",
+      "unknown": {
+        "quantity": "velocity",
+        "symbol": "v",
+        "unit": "m/s"
+      }
+    },
+    {
+      "constraints": [
+        "u > 0",
+        "t > 0"
+      ],
+      "final_answer": {
+        "statement": "The car's acceleration is {answer} — the minus sign means it points backwards, against the way the car is moving.",
+        "symbol": "a",
+        "unit": "m/s^2"
+      },
+      "frame": {
+        "axis": "one straight road",
+        "origin": "where the brakes go on",
+        "positive_direction": "the way the car is already moving",
+        "system": "the car"
+      },
+      "givens": [
+        {
+          "quantity": "velocity when the brakes go on",
+          "sign_note": "forwards, so positive",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 20,
+          "values": [
+            20,
+            24,
+            18,
+            30,
+            15
+          ]
+        },
+        {
+          "quantity": "velocity at the end",
+          "sign_note": "it stops, so zero",
+          "symbol": "v",
+          "unit": "m/s",
+          "value": 0,
+          "values": [
+            0
+          ]
+        },
+        {
+          "quantity": "time taken to stop",
+          "sign_note": "a length of time",
+          "symbol": "t",
+          "unit": "s",
+          "value": 5,
+          "values": [
+            5,
+            6,
+            4,
+            10
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "(v*v - u*u)/(2*a)",
+        "expected_equation": "((u+v)/2)*t",
+        "route_description": "Work out the braking distance twice. Once from the speeds alone, using (v squared - u squared) / (2a), and once from the average velocity (u + v) / 2 times the time. If your acceleration is right, both give the same distance."
+      },
+      "instance_template_id": "PHY-INST-UNIFORM-ACCELERATION-STATE-CHANGE",
+      "problem_family_ref": "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE",
+      "question": "What is the car's acceleration while it is braking?",
+      "quick_check": {
+        "check_kind": "SIGN",
+        "prompt": "A negative answer here means the acceleration points the opposite way to the motion. It does not mean a negative speed, and it does not automatically mean slowing down — that only follows because the velocity here is positive.",
+        "property_expression": "a < 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Forwards is positive. Zero is where the brakes go on.",
+            "symbol": "frame"
+          },
+          "representation_ref": "SIGN_FRAME_OVERLAY",
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "The way the car is already moving counts as positive. Braking then has to come out negative, because it works against the motion."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u",
+            "v",
+            "t"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "Start state, end state, and the time between them.",
+            "symbol": "picture"
+          },
+          "representation_ref": "STATE_TABLE",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Two states in a table: at the start it is doing u, at the end it is doing nothing. The time between them is given."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "Steady braking, so v = u + a t applies over the whole stop.",
+            "symbol": "model"
+          },
+          "representation_ref": "MODEL_VALIDITY_GATE",
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "The braking is stated as steady, so the acceleration is the same throughout and v = u + a t applies. Stamping on the brakes unevenly would break that."
+        },
+        {
+          "equation": "(v-u)/t",
+          "input_state_refs": [
+            "u",
+            "v",
+            "t"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "acceleration",
+            "symbol": "a",
+            "unit": "m/s^2"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "Rearranging v = u + a t for the acceleration gives (v - u) / t."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "a"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "The acceleration points backwards, which is why the car slows.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S5",
+          "why_valid": "The minus sign says the acceleration points backwards, against the motion. That is what braking is."
+        }
+      ],
+      "situation": "A car travelling at {u} brakes steadily and comes to a stop in {t}.",
+      "topic_ref": "PHY-MOTION-ACCEL",
+      "unknown": {
+        "quantity": "acceleration while braking",
+        "symbol": "a",
+        "unit": "m/s^2"
+      }
+    },
+    {
+      "constraints": [
+        "u > 0",
+        "theta_deg > 0",
+        "theta_deg < 90"
+      ],
+      "final_answer": {
+        "components": [
+          {
+            "quantity": "sideways part",
+            "symbol": "u_x",
+            "unit": "m/s"
+          },
+          {
+            "quantity": "upward part",
+            "symbol": "u_y",
+            "unit": "m/s"
+          }
+        ],
+        "statement": "It leaves the ground moving {u_x} sideways and {u_y} upwards.",
+        "symbol": "u_x",
+        "unit": "m/s"
+      },
+      "frame": {
+        "axis": "two directions at right angles: across and up",
+        "origin": "the point it is kicked from",
+        "positive_direction": "forwards along the ground, and upwards",
+        "system": "the ball"
+      },
+      "givens": [
+        {
+          "quantity": "speed it is kicked at",
+          "sign_note": "a speed, always positive",
+          "symbol": "u",
+          "unit": "m/s",
+          "value": 20,
+          "values": [
+            20,
+            25,
+            15,
+            30
+          ]
+        },
+        {
+          "quantity": "angle above the ground",
+          "sign_note": "measured up from the horizontal",
+          "symbol": "theta_deg",
+          "unit": "degrees",
+          "value": 30,
+          "values": [
+            30,
+            37,
+            45,
+            60
+          ]
+        }
+      ],
+      "independent_verification": {
+        "compare_to": "EXPRESSION",
+        "equation": "u_x*u_x + u_y*u_y",
+        "expected_equation": "u*u",
+        "route_description": "Check with Pythagoras. The two parts are the sides of a right-angled triangle whose slanted side is the original kick, so squaring them and adding must rebuild the kick speed squared."
+      },
+      "instance_template_id": "PHY-INST-PROJECTILE-COMPONENTS",
+      "problem_family_ref": "PHY-PF-PROJECTILE-COMPONENTS",
+      "question": "How fast is it moving sideways, and how fast is it moving upwards, at the moment it leaves the ground?",
+      "quick_check": {
+        "check_kind": "PROPERTY",
+        "prompt": "The sideways part never changes while the ball is in the air. Only the upward part does — so if your sideways number is bigger than the kick speed, something has gone wrong.",
+        "property_expression": "u_x > 0"
+      },
+      "reasoning_route": [
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "FRAME",
+            "statement": "Across is positive forwards, up is positive upwards, and the angle is measured from the ground.",
+            "symbol": "frame"
+          },
+          "representation_ref": null,
+          "role": "FRAME",
+          "state_id": "S1",
+          "why_valid": "Two directions at right angles, so two axes: across and up. The angle is measured up from the across axis."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u",
+            "theta_deg"
+          ],
+          "output_state": {
+            "kind": "REPRESENTATION",
+            "statement": "One slanted arrow, boxed into a sideways part and an upward part.",
+            "symbol": "picture"
+          },
+          "representation_ref": "VECTOR_STATE_VIEW",
+          "role": "REPRESENT",
+          "state_id": "S2",
+          "why_valid": "Draw the kick as one arrow at the given angle, then drop a right-angled box around it: the bottom side is the sideways part, the upright side is the upward part."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [],
+          "output_state": {
+            "kind": "MODEL",
+            "statement": "The across and up motions are independent, so they can be handled separately.",
+            "symbol": "model"
+          },
+          "representation_ref": null,
+          "role": "MODEL",
+          "state_id": "S3",
+          "why_valid": "The two directions do not interfere with each other. Gravity only pulls downwards, so it changes the upward part and leaves the sideways part alone."
+        },
+        {
+          "equation": "u*cos(radians(theta_deg))",
+          "input_state_refs": [
+            "u",
+            "theta_deg"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "sideways part of the velocity",
+            "symbol": "u_x",
+            "unit": "m/s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S4",
+          "why_valid": "The sideways part is the side of the right-angled triangle next to the angle, which is the speed times the cosine of the angle."
+        },
+        {
+          "equation": "u*sin(radians(theta_deg))",
+          "input_state_refs": [
+            "u",
+            "theta_deg"
+          ],
+          "output_state": {
+            "kind": "QUANTITY",
+            "quantity": "upward part of the velocity",
+            "symbol": "u_y",
+            "unit": "m/s"
+          },
+          "representation_ref": null,
+          "role": "EXECUTE",
+          "state_id": "S5",
+          "why_valid": "The upward part is the side opposite the angle, which is the speed times the sine of the angle."
+        },
+        {
+          "equation": null,
+          "input_state_refs": [
+            "u_x",
+            "u_y"
+          ],
+          "output_state": {
+            "kind": "STATEMENT",
+            "statement": "Sideways part fixed, upward part shrinking — that is what makes the curved path.",
+            "symbol": "meaning"
+          },
+          "representation_ref": null,
+          "role": "INTERPRET",
+          "state_id": "S6",
+          "why_valid": "The sideways part stays the same for the whole flight; the upward part is the one gravity keeps eating away at."
+        }
+      ],
+      "situation": "A ball is kicked off flat ground at {u}, at {theta_deg} above the horizontal.",
+      "topic_ref": "PHY-MOTION-2D",
+      "unknown": {
+        "quantity": "sideways part of the launch velocity",
+        "symbol": "u_x",
+        "unit": "m/s"
+      }
+    }
+  ],
+  "registry_digest": "a065a36379a7c21b721964636c168bcd6eebb096012b1a5844093f9ed4038baa",
+  "registry_id": "PHY-P-G-AUTHORED-INSTANCES-v1",
+  "release_authority_state": "PILOT_ONLY_HUMAN_EXPERT_RELEASE_NOT_GRANTED",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "variation_rule": "Each given may declare a list of allowed values. Variant k takes values[k % len(values)] per given, so a guided, faded, independent, retry or Appendix A item is a different set of numbers on the same physics. The lists are deliberately different lengths so variants do not move in lockstep. Every variant is checked against the instance's declared constraints, and its answer is computed by the resolver rather than authored."
+}

@@ -26,6 +26,7 @@ sys.path[:0] = [
     str(PHYS / "StudySynthesis" / "engine"),
     str(PHYS / "CoreAuthoring" / "engine"),
     str(PHYS / "Representation" / "engine"),
+    str(PHYS / "Core1A" / "engine"),
     str(PHYS / "Core2Transfer" / "engine"),
     str(PHYS / "CoverageClosure" / "engine"),
 ]
@@ -48,8 +49,10 @@ from build_physics_representations import build_bundle as build_representations 
 from realize_physics_representations import realize as realize_representations  # noqa: E402
 from build_physics_core2_transfer import build_plan as build_core2  # noqa: E402
 from build_physics_coverage_closure import build_closure  # noqa: E402
+from build_physics_core1a import build_publication_plan as build_core1a  # noqa: E402
+from render_physics_core1a import render_core1a  # noqa: E402
 from physics_product_renderer import (  # noqa: E402
-    render_core_study_guide, render_transfer_book, audit_product,
+    render_transfer_book, audit_product,
 )
 
 
@@ -132,6 +135,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         "phy_pe_runner", Path(repo_root) / manifest["engines"]["learner_evidence"])
     reads.extend([manifest["engines"]["problem_semantics"], manifest["engines"]["learner_evidence"]])
 
+    source_ledger = get("source_question_ledger")
     questions = get("question_set")
     topic_scope = get("declared_topic_scope")
     review_registry = get("item_validity_registry")
@@ -150,6 +154,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
     instructional_profile = get("instructional_authoring_profile")
     completeness_policy = get("core1_completeness_policy")
     problem_profile = get("problem_authoring_profile")
+    core1a_policy = get("core1a_publication_policy")
     primitive_registry = get("teaching_primitive_registry")
     page_intent_profile = get("page_intent_profile")
     render_contract = get("figure_render_contract")
@@ -209,21 +214,31 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
                         copy.deepcopy(core2_profile), copy.deepcopy(transfer_badges),
                         copy.deepcopy(concept_segregation))
 
-    # ---- two learner products
+    # ---- P-GA Core1A publication composition (the Core study guide is compiled, then rendered)
+    core1a_plan = build_core1a(copy.deepcopy(core1), copy.deepcopy(core1a_policy))
+
+    # ---- two learner products (never three: Appendix C stays a section of the Core guide)
     minimums = {p["primitive_id"]: p["minimum_vector_ops"] for p in primitive_registry["primitives"]}
     core1_pdf = out / "physics-core-study-guide.pdf"
     core2_pdf = out / "physics-transfer-solution-book.pdf"
-    core1_bytes, core1_map, core1_sections = render_core_study_guide(core1, bundle, core1_pdf)
+    core1a_report = render_core1a(core1, core1a_plan, core1_pdf, core1a_policy, bundle)
+    core1_map = core1a_report["physical_page_map"]
+    core1_sections = core1a_report["required_sections"]
+    core1_bytes = core1_pdf.read_bytes()
     core2_bytes, core2_map, core2_sections = render_transfer_book(core2, core2_pdf)
     audit_product(core1_map, core1_bytes, minimums)
     audit_product(core2_map, core2_bytes, minimums)
+    if core1a_report["learner_copy_violations"]:
+        fail("INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE",
+             ",".join(core1a_report["learner_copy_violations"][:5]))
 
     # ---- P-J coverage closure over the realized product
     closure = build_closure(copy.deepcopy(questions), copy.deepcopy(review_registry),
                             copy.deepcopy(core1), copy.deepcopy(bundle), copy.deepcopy(core2),
                             copy.deepcopy(transfer_classification), copy.deepcopy(study_scope),
                             copy.deepcopy(study_model), copy.deepcopy(evidence_policy),
-                            copy.deepcopy(transfer_evidence), copy.deepcopy(rep_map))
+                            copy.deepcopy(transfer_evidence), copy.deepcopy(rep_map),
+                            source_ledger=copy.deepcopy(source_ledger))
 
     package = {
         "package_id": "PHY-P-K-TWO-PRODUCT-" + ("ATTEMPT" if with_attempts else "NO-ATTEMPT"),
@@ -263,6 +278,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         "manifest_ref": manifest["manifest_id"],
         "manifest_digest": manifest["manifest_digest"],
         "input_custody": {
+            "source_question_ledger_digest": source_ledger["ledger_digest"],
             "question_set_digest": digest(questions),
             "declared_topic_scope_digest": digest(topic_scope),
             "scope_authority_digest": scope_authority["authority_digest"],
@@ -290,6 +306,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
             "P_F_study_scope": study_scope["study_scope_digest"],
             "P_F_study_model": study_model["study_model_digest"],
             "P_G_core1_plan": core1["plan_digest"],
+            "P_GA_core1a_publication_plan": core1a_plan["plan_digest"],
             "P_H_representation_bundle": bundle["bundle_digest"],
             "P_H_physical_page_map": rep_map["page_map_digest"],
             "P_I_core2_plan": core2["plan_digest"],
@@ -319,14 +336,21 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
              "authority_refs": [transfer_classification["registry_id"]],
              "resolution": "External eligibility was classified against the scope authority before any "
                            "learner evidence was read."},
+            {"decision_class": "SOURCE_COMPLETENESS",
+             "authority_refs": [source_ledger["ledger_id"]],
+             "resolution": "Source completeness was reconciled against the P-A0 source question "
+                           "ledger, frozen from the source documents before authoring, rather than "
+                           "against the question set that is itself under audit."},
             {"decision_class": "COVERAGE_CLOSURE",
              "authority_refs": [evidence_policy["policy_id"], closure["closure_id"]],
-             "resolution": "Closure state was computed from the coverage matrices and the physical page "
-                           "map, not asserted."},
+             "resolution": "Closure state was computed from the coverage matrices, the source-ledger "
+                           "reconciliation and the physical page map, not asserted."},
             {"decision_class": "FINAL_PAGE_COMPOSITION",
-             "authority_refs": [core1["plan_id"], bundle["bundle_id"], core2["plan_id"]],
-             "resolution": "Page composition followed the Core1 lesson order and the P-H page-intent "
-                           "phases; placement evidence was emitted while drawing."},
+             "authority_refs": [core1["plan_id"], core1a_plan["plan_id"], bundle["bundle_id"],
+                                core2["plan_id"]],
+             "resolution": "The Core study guide is composed by the P-GA Core (1A) publication "
+                           "compiler from the P-G lesson order and the P-H page-intent phases; "
+                           "placement evidence was emitted while drawing."},
         ],
         "summary": {
             "capability_count": len(study_scope["capability_scope_records"]),
@@ -334,6 +358,9 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
             "representation_count": len(bundle["representations"]),
             "core2_page_count": len(core2["transfer_pages"]),
             "closure_state": closure["closure_state"],
+            "source_ledger_state": closure["summary"]["source_ledger_state"],
+            "core1a_template_only_lessons": core1a_plan["quality_summary"]["template_only_content_count"],
+            "core1a_publication_engineering_pass": core1a_report["publication_engineering_pass"],
             "appendix_c_present": bool(core1["appendices"]["appendix_c"]["present"]),
             "total_vector_ops": (core1_map["realization_summary"]["total_vector_ops"]
                                  + core2_map["realization_summary"]["total_vector_ops"]),
@@ -351,6 +378,8 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
     artifacts = {
         "problem_semantics": semantics, "learner_snapshot": snapshot,
         "study_scope": study_scope, "study_model": study_model, "core1": core1,
+        "core1a_publication_plan": core1a_plan,
+        "core1a_quality_report": {k: v for k, v in core1a_report.items() if k != "physical_page_map"},
         "representation_bundle": bundle, "representation_page_map": rep_map,
         "core2": core2, "coverage_closure": closure,
         "core1_page_map": core1_map, "core2_page_map": core2_map,

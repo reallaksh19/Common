@@ -28,7 +28,7 @@ ROOT = HERE.parents[1]
 PHYS = HERE.parents[2]
 sys.path[:0] = [str(PHYS / "ColdStart" / "engine"), str(PHYS / "Representation" / "engine")]
 
-from physics_product_renderer import residual_internal_tokens  # noqa: E402
+from physics_product_renderer import residual_internal_tokens, residual_role_labels  # noqa: E402
 from physics_page_custody import reconciliation_errors  # noqa: E402
 
 PASS, FAIL, BLOCKED = 0, 1, 2
@@ -134,6 +134,12 @@ def machine_findings(run_dir, run_report, closure, core1_map, core2_map, core2_p
             leaked = residual_internal_tokens(text)
             if leaked:
                 note("INTERNAL_TOKEN_LEAKED_TO_LEARNER", f"{label}: {', '.join(leaked[:4])}")
+            # P-UPGRADE-2 item 7: the same vocabulary in prose, which the identifier-shape
+            # scan above cannot see. A Grade-9 page may not read "misconception repair".
+            role_labels = residual_role_labels(text)
+            if role_labels:
+                note("INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE",
+                     f"{label}: {', '.join(role_labels[:4])}")
             if label == "CORE_STUDY_GUIDE":
                 marker = "Appendix C"
                 idx = text.rfind(marker)
@@ -146,6 +152,14 @@ def machine_findings(run_dir, run_report, closure, core1_map, core2_map, core2_p
 
     if closure["closure_state"] != "CLOSED":
         note("COVERAGE_CLOSURE_OPEN", closure["closure_state"])
+    # P-A0: source completeness must hold against the independent frozen denominator.
+    recon = closure.get("source_ledger_reconciliation")
+    if recon is None:
+        note("SOURCE_LEDGER_RECONCILIATION_FAILURE",
+             "no frozen source question ledger was reconciled for this run")
+    elif recon["reconciliation_state"] != "RECONCILED":
+        note("SOURCE_LEDGER_RECONCILIATION_FAILURE",
+             "; ".join(f"{f['code']}:{f['ref']}" for f in recon["findings"][:3]))
     if closure["source_coverage_matrix"]["uncovered_item_refs"]:
         note("SOURCE_COVERAGE_RECONCILIATION_FAILURE",
              ",".join(closure["source_coverage_matrix"]["uncovered_item_refs"][:3]))

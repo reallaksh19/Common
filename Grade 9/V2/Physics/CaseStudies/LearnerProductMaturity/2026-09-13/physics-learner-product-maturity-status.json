@@ -1,0 +1,211 @@
+{
+  "attempt_invariance": {
+    "all_invariants_hold": true,
+    "expected_differences": {
+      "core1_plan_digest_differs": true,
+      "study_model_digest_differs": true
+    },
+    "invariants": {
+      "declared_topic_scope_digest_identical": true,
+      "external_corpus_digest_identical": true,
+      "external_eligibility_identical": true,
+      "law_truth_identical": true,
+      "physical_model_truth_identical": true,
+      "problem_family_truth_identical": true,
+      "problem_semantics_identical": true,
+      "question_set_digest_identical": true,
+      "required_capability_set_identical": true,
+      "required_item_set_identical": true,
+      "scope_authority_digest_identical": true,
+      "study_scope_digest_identical": true,
+      "two_product_topology_identical": true
+    }
+  },
+  "authority_digests": {
+    "authored_instances_registry": "a065a36379a7c21b721964636c168bcd6eebb096012b1a5844093f9ed4038baa",
+    "core1a_publication_plan": "bf07bb86a0d3968a48da5c16e33a807046090c23a412c3327f053d3ac341897e",
+    "generation_authority_manifest": "d848f8346106df3858b6d8c63e99171961ec455320dc1e311b81dcdab060c0ca",
+    "learner_language_registry_id": "PHY-CORE1A-LEARNER-LANGUAGE-v2",
+    "source_question_ledger": "0eccb4a5efbce35ae1aa7c2cc7c813b260e6269f3c15107931417cc11c060c89",
+    "teaching_primitive_registry": "9361cfa8242d4241bedbff6e83cf6bcb92553596cbbc0251859c00f18bfe192d"
+  },
+  "base_commit": "e4c7f5db6cacd2433589a2529525924d4f0464ba",
+  "branch": "v2-physics-learner-product-maturity",
+  "counts": {
+    "authored_instance_families": 14,
+    "learner_language_banned_terms": 43,
+    "learner_language_figure_titles": 19,
+    "learner_language_module_labels": 59,
+    "primitives_total": 19,
+    "primitives_with_size_contract": 19,
+    "source_ledger_direct_items": 14
+  },
+  "exact_product": {
+    "blocking_states": [
+      "ASSESSMENT_DESIGN",
+      "MATURE_DESIGN_QUALITY",
+      "PEDAGOGICAL_DESIGN",
+      "REFERENCE_COMPARABILITY",
+      "SUBJECT_CORRECTNESS",
+      "VISUAL_USABILITY"
+    ],
+    "candidate_digest": "597cb3569e8f3c3d18588bf0a9e9bfaeffe4ffd025205abd58fd0d40d67d75eb",
+    "candidate_id": "PHY-P-L-EXACT-CANDIDATE-v1",
+    "classification": "BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT",
+    "exit_code": 2,
+    "machine_findings": [],
+    "machine_gate": "PASS",
+    "quality_states": {
+      "ASSESSMENT_DESIGN": "PENDING",
+      "MATURE_DESIGN_QUALITY": "PENDING",
+      "PEDAGOGICAL_DESIGN": "PENDING",
+      "PUBLICATION_ENGINEERING": "PASS",
+      "REFERENCE_COMPARABILITY": "NOT_RUN",
+      "SUBJECT_CORRECTNESS": "PENDING",
+      "VISUAL_USABILITY": "PENDING"
+    },
+    "release_id": "PHY-P-L-EXACT-RELEASE-v1"
+  },
+  "handoff_id": "PHY-P-UPGRADE-2-LEARNER-PRODUCT-MATURITY-2026-09-13",
+  "head_commit": "a6505f3dd1bb118ad4bed5e2a7167583b1c81b8b",
+  "issue_ref": "https://github.com/reallaksh19/Common/issues/353",
+  "production_claim": false,
+  "release_claim": "PUBLICATION_ENGINEERING only. Every human review state is PENDING.",
+  "runs": {
+    "no-attempt": {
+      "closure_state": "CLOSED",
+      "core1_lesson_count": 17,
+      "core1a_instructional_content_maturity": "READY_FOR_HUMAN_REVIEW",
+      "core1a_learner_copy_violations": [],
+      "core1a_machine_findings": [],
+      "core1a_publication_engineering_pass": true,
+      "core2_hint_figure_count": 24,
+      "core2_page_count": 8,
+      "core2_spatial_page_count": 7,
+      "human_expert_review_states": {
+        "ASSESSMENT_EXPERT_PASS": "PENDING",
+        "PEDAGOGY_EXPERT_PASS": "PENDING",
+        "SUBJECT_EXPERT_PASS": "PENDING",
+        "VISUAL_USABILITY_EXPERT_PASS": "PENDING"
+      },
+      "manifest_digest": "d848f8346106df3858b6d8c63e99171961ec455320dc1e311b81dcdab060c0ca",
+      "products": {
+        "CORE_STUDY_GUIDE": {
+          "artifact_bytes": 453983,
+          "artifact_path": "physics-core-study-guide.pdf",
+          "artifact_sha256": "45b327a887f187bae5093587a7a4059f8b2c2e8d3da111512f333c0a625cabea",
+          "figure_count": 132,
+          "on_disk_sha256": "45b327a887f187bae5093587a7a4059f8b2c2e8d3da111512f333c0a625cabea",
+          "page_count": 162,
+          "required_sections": [
+            "MAIN_TEACHING",
+            "APPENDIX_A_CORE_PRACTICE",
+            "APPENDIX_B_CORE_SOLUTIONS",
+            "APPENDIX_C_PRINTABLE_HANDOUT"
+          ],
+          "vector_ops": 2370
+        },
+        "TRANSFER_SOLUTION_BOOK": {
+          "artifact_bytes": 43495,
+          "artifact_path": "physics-transfer-solution-book.pdf",
+          "artifact_sha256": "ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf",
+          "figure_count": 21,
+          "on_disk_sha256": "ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf",
+          "page_count": 16,
+          "required_sections": [
+            "TRANSFER_QUESTIONS",
+            "HINT_LADDERS",
+            "FULL_SOLUTIONS"
+          ],
+          "vector_ops": 426
+        }
+      },
+      "run_report_digest": "52044def3b6ef6e8bd29d9b3cd1a7a40798c10b00d55ee04547bcd3de33f2f6b",
+      "run_report_id": "PHY-P-K-RUN-NO-ATTEMPT",
+      "source_ledger_denominator": 14,
+      "source_ledger_reconciliation_state": "RECONCILED",
+      "source_question_ledger_digest": "0eccb4a5efbce35ae1aa7c2cc7c813b260e6269f3c15107931417cc11c060c89",
+      "stage_digests": {
+        "P_D_problem_semantics": "bb9ccb564b5206fd659d7926036b82599d19c2c96be9ce64ad6b60ab4b86ca3b",
+        "P_E_learner_snapshot": "d0aa5efbd88c31a707806904cc82299d534a03011e84c07d0909e503348a116d",
+        "P_F_study_model": "12dd16bbb607100b23092901b343cfd0a516566f8cc2dc06a12d9765316598d6",
+        "P_F_study_scope": "2a57f469d0679dd1e26ffd52c28129d9ca2faa5f9020cee4b2ccf5422131ea8d",
+        "P_GA_core1a_publication_plan": "2c36b1c5cbe7346e37ef5252b9e28aab43abf913e90c64cff17c718e04655cbd",
+        "P_G_core1_plan": "783ecfc6d3f99c94d760f6f7deced1073a715f6daf921d6635435adb654822ce",
+        "P_H_physical_page_map": "e95d3f21be3350dbb816743cb3923ce7b6c13563404fdb80d33cd19e223704e8",
+        "P_H_representation_bundle": "953f5ab3370229328436b7333f2de90628031287ce8448af9a4a560f239d0672",
+        "P_I_core2_plan": "56eee6c2664b2a71196a9e2f8aa6d81af29c84e394a43d052a7684994e24a4fa",
+        "P_J_coverage_closure": "39b768c1c20ef46161af545c32d197def871cf411c6f5d05a4bbced0c37df6fd"
+      }
+    },
+    "with-attempts": {
+      "closure_state": "CLOSED",
+      "core1_lesson_count": 17,
+      "core1a_instructional_content_maturity": "READY_FOR_HUMAN_REVIEW",
+      "core1a_learner_copy_violations": [],
+      "core1a_machine_findings": [],
+      "core1a_publication_engineering_pass": true,
+      "core2_hint_figure_count": 24,
+      "core2_page_count": 8,
+      "core2_spatial_page_count": 7,
+      "human_expert_review_states": {
+        "ASSESSMENT_EXPERT_PASS": "PENDING",
+        "PEDAGOGY_EXPERT_PASS": "PENDING",
+        "SUBJECT_EXPERT_PASS": "PENDING",
+        "VISUAL_USABILITY_EXPERT_PASS": "PENDING"
+      },
+      "manifest_digest": "d848f8346106df3858b6d8c63e99171961ec455320dc1e311b81dcdab060c0ca",
+      "products": {
+        "CORE_STUDY_GUIDE": {
+          "artifact_bytes": 437905,
+          "artifact_path": "physics-core-study-guide.pdf",
+          "artifact_sha256": "df560f141bff13b81d851a097e86434181633a061540702596ff6e8e69e3884d",
+          "figure_count": 128,
+          "on_disk_sha256": "df560f141bff13b81d851a097e86434181633a061540702596ff6e8e69e3884d",
+          "page_count": 157,
+          "required_sections": [
+            "MAIN_TEACHING",
+            "APPENDIX_A_CORE_PRACTICE",
+            "APPENDIX_B_CORE_SOLUTIONS",
+            "APPENDIX_C_PRINTABLE_HANDOUT"
+          ],
+          "vector_ops": 2302
+        },
+        "TRANSFER_SOLUTION_BOOK": {
+          "artifact_bytes": 43495,
+          "artifact_path": "physics-transfer-solution-book.pdf",
+          "artifact_sha256": "ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf",
+          "figure_count": 21,
+          "on_disk_sha256": "ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf",
+          "page_count": 16,
+          "required_sections": [
+            "TRANSFER_QUESTIONS",
+            "HINT_LADDERS",
+            "FULL_SOLUTIONS"
+          ],
+          "vector_ops": 426
+        }
+      },
+      "run_report_digest": "c229baf9a87ccff7532e2457792a6c6338dfc1606679437822ad397881920dfe",
+      "run_report_id": "PHY-P-K-RUN-ATTEMPT",
+      "source_ledger_denominator": 14,
+      "source_ledger_reconciliation_state": "RECONCILED",
+      "source_question_ledger_digest": "0eccb4a5efbce35ae1aa7c2cc7c813b260e6269f3c15107931417cc11c060c89",
+      "stage_digests": {
+        "P_D_problem_semantics": "bb9ccb564b5206fd659d7926036b82599d19c2c96be9ce64ad6b60ab4b86ca3b",
+        "P_E_learner_snapshot": "0af31de3f0f85abd6e96e47079a75ee40c0dff070c1d514168d0956b8aacaa7a",
+        "P_F_study_model": "ad5fed323754d34c0f2e436e5f47973ad07b7c490d18b72685675b81ad1a6b26",
+        "P_F_study_scope": "2a57f469d0679dd1e26ffd52c28129d9ca2faa5f9020cee4b2ccf5422131ea8d",
+        "P_GA_core1a_publication_plan": "bf07bb86a0d3968a48da5c16e33a807046090c23a412c3327f053d3ac341897e",
+        "P_G_core1_plan": "30f53e64454a1c68adbcde22af4ea5bb95526b97fa1b04fedd0347b2eed0e8ee",
+        "P_H_physical_page_map": "ba75d6406d97331aeda57c228c61e041e8e404d64bf5deeacc19ab9e827bbec5",
+        "P_H_representation_bundle": "cfdaa00f6a8fa5c5fd6ea5701d6f80546027b3ba4c3c71a100e2088e6bc4d4c9",
+        "P_I_core2_plan": "29eb4418997b2d42fd31d3cb6a68b59e3af7358fc3dede8374299fb1bf3670c7",
+        "P_J_coverage_closure": "e173df335abd7b37d1551fa32aa1da389ef94d4a30cea34f7b676d2190d19f9b"
+      }
+    }
+  },
+  "schema_version": "1.0.0",
+  "stacked_on": "v2-physics-core1a-publication (PR #350)",
+  "subject": "PHYSICS"
+}

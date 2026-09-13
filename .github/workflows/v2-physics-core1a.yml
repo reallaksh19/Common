@@ -43,6 +43,8 @@ jobs:
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_motion_in_a_plane_next_topics_build.py'
       - name: Compile river, rain and circular-motion learner plan
         run: python 'Grade 9/V2/Physics/Core1A/engine/build_motion_in_a_plane_next_topics.py' --out /tmp/motion-in-a-plane-core1a-next-topics-plan.json
+      - name: SBA transfer answers recompute, not merely asserted
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_sba_transfer_answer_arithmetic.py'
       - name: Validate publication policy JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-publication-policy.json' > /dev/null
       - name: Validate Core1A-Core2 linkage JSON

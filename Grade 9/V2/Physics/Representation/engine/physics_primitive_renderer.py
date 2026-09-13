@@ -21,6 +21,7 @@ this module composes the figure from the same shared primitives layer
 (``CartesianPlotter2D``, ``draw_card_box``, ``draw_arrow``, ``Palette``) so the
 house style stays identical and the shared library can absorb these later.
 """
+import json
 import math
 from pathlib import Path
 import sys
@@ -30,6 +31,7 @@ if str(_SHARED) not in sys.path:
     sys.path.insert(0, str(_SHARED))
 
 from reportlab.lib import colors  # noqa: E402
+from reportlab.pdfbase.pdfmetrics import stringWidth, getAscentDescent  # noqa: E402
 from primitives import (  # noqa: E402
     FONT_NAME, FONT_BOLD, Palette, draw_card_box, draw_arrow, draw_pill_badge,
     CartesianPlotter2D, KinematicGraphRenderer, Vector1DDiagram, FreeBodyDiagramRenderer,
@@ -41,9 +43,132 @@ VECTOR_METHODS = (
 )
 TEXT_METHODS = ("drawString", "drawCentredString", "drawRightString", "drawAlignedString")
 
+# ---------------------------------------------------------------- falsifiers
+PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX = "PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX"
+TRACING_BBOX_INCOMPLETE_FOR_PATH_OP = "TRACING_BBOX_INCOMPLETE_FOR_PATH_OP"
+PRIMITIVE_MIN_SIZE_VIOLATION = "PRIMITIVE_MIN_SIZE_VIOLATION"
+
+REGISTRY_PATH = Path(__file__).resolve().parents[1] / "registry" / "physics-teaching-primitive-registry.json"
+
+# Primitives are handed a drawing box inset from their allocation by this much. Several
+# routines in the shared drawing layer place a right-edge label or an axis tick a fraction
+# of a point past the frame they were given; the inset keeps that hairline inside the
+# allocation instead of on a neighbouring block. It is a declared typographic margin, not
+# a tolerance on the falsifier: escapes are still measured against the full allocation, so
+# anything beyond the hairline is reported.
+INK_SAFETY_INSET_PT = 3.0
+# Size floors below which a primitive cannot render its own meaning. Used when the
+# registry cannot be read at all; the registry is the authority.
+_FALLBACK_SIZE_CONTRACT = {"minimum_width_pt": 200.0, "minimum_height_pt": 110.0,
+                           "supports_compact_variant": False}
+
+
+def _load_size_contracts():
+    try:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    except OSError:
+        return {}
+    out = {}
+    for row in registry.get("primitives", []):
+        out[row["primitive_id"]] = {
+            "minimum_width_pt": float(row.get("minimum_width_pt",
+                                              _FALLBACK_SIZE_CONTRACT["minimum_width_pt"])),
+            "minimum_height_pt": float(row.get("minimum_height_pt",
+                                               _FALLBACK_SIZE_CONTRACT["minimum_height_pt"])),
+            "supports_compact_variant": bool(row.get("supports_compact_variant", False)),
+        }
+    return out
+
+
+SIZE_CONTRACTS = _load_size_contracts()
+
+
+def size_contract(kind):
+    """The declared size floor for one primitive. Callers use it to allocate space."""
+    return dict(SIZE_CONTRACTS.get(kind, _FALLBACK_SIZE_CONTRACT))
+
 
 class UnknownPrimitive(ValueError):
     """Raised when a primitive kind has no renderer binding."""
+
+
+class PrimitiveRenderError(ValueError):
+    """Raised with a falsifier code as its prefix."""
+
+
+def _fail(code, detail=""):
+    raise PrimitiveRenderError(f"{code}: {detail}" if detail else code)
+
+
+class TracingPath:
+    """Path proxy that records every point a primitive puts into a path.
+
+    ``drawPath`` is a single canvas call whose ink covers everything the path was built
+    from, so measuring only the call itself measures nothing. This records the segment
+    points **and the Bezier control points**, which is where a curve's extent actually
+    lives, and flags any path operation it does not understand rather than quietly
+    under-reporting the ink box.
+    """
+
+    def __init__(self, path):
+        self._p = path
+        self.xs = []
+        self.ys = []
+        self.unrecorded_ops = []
+
+    def _add(self, xs, ys):
+        self.xs.extend(xs)
+        self.ys.extend(ys)
+
+    def moveTo(self, x, y):
+        self._add([x], [y])
+        return self._p.moveTo(x, y)
+
+    def lineTo(self, x, y):
+        self._add([x], [y])
+        return self._p.lineTo(x, y)
+
+    def curveTo(self, x1, y1, x2, y2, x3, y3):
+        # control points included: a cubic never leaves the hull of its four points,
+        # so this is a sound (never under-stated) bound on the curve's extent.
+        self._add([x1, x2, x3], [y1, y2, y3])
+        return self._p.curveTo(x1, y1, x2, y2, x3, y3)
+
+    def rect(self, x, y, w, h):
+        self._add([x, x + w], [y, y + h])
+        return self._p.rect(x, y, w, h)
+
+    def roundRect(self, x, y, w, h, r):
+        self._add([x, x + w], [y, y + h])
+        return self._p.roundRect(x, y, w, h, r)
+
+    def circle(self, x, y, r):
+        self._add([x - r, x + r], [y - r, y + r])
+        return self._p.circle(x, y, r)
+
+    def ellipse(self, x, y, w, h):
+        self._add([x, x + w], [y, y + h])
+        return self._p.ellipse(x, y, w, h)
+
+    def arc(self, x1, y1, x2, y2, *a, **kw):
+        self._add([x1, x2], [y1, y2])
+        return self._p.arc(x1, y1, x2, y2, *a, **kw)
+
+    def arcTo(self, x1, y1, x2, y2, *a, **kw):
+        self._add([x1, x2], [y1, y2])
+        return self._p.arcTo(x1, y1, x2, y2, *a, **kw)
+
+    def close(self):
+        return self._p.close()
+
+    def __getattr__(self, name):
+        target = getattr(self._p, name)
+        if callable(target):
+            def recorded(*a, **kw):
+                self.unrecorded_ops.append(name)
+                return target(*a, **kw)
+            return recorded
+        return target
 
 
 class TracingCanvas:
@@ -52,6 +177,11 @@ class TracingCanvas:
     This is what makes ``TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED`` machine
     detectable: vector operations and text operations are counted separately,
     against coordinates the primitive actually emitted, not against a plan.
+
+    The ink box is a real bound, not an anchor sample. Paths contribute their segment
+    and Bezier control points, arcs and round rects contribute their enclosing boxes, and
+    text contributes its measured ``stringWidth`` and the font's ascent/descent rather
+    than the single point the string was anchored at.
     """
 
     def __init__(self, canvas):
@@ -61,6 +191,8 @@ class TracingCanvas:
         self.op_histogram = {}
         self.min_x = self.min_y = float("inf")
         self.max_x = self.max_y = float("-inf")
+        self.path_ops_without_extent = []
+        self._font = (FONT_NAME, 8.0)
 
     # -- bookkeeping ---------------------------------------------------------
     def _note(self, name, vector):
@@ -78,17 +210,47 @@ class TracingCanvas:
             self.min_y = min(self.min_y, y)
             self.max_y = max(self.max_y, y)
 
+    def _text_extent(self, x, y, text, align="left"):
+        """Real drawn extent of a string, not the anchor point."""
+        font, size = self._font
+        try:
+            width = stringWidth(str(text), font, size)
+            ascent, descent = getAscentDescent(font, size)
+        except Exception:
+            width, ascent, descent = len(str(text)) * size * 0.55, size * 0.75, -size * 0.25
+        if align == "centre":
+            x0, x1 = x - width / 2.0, x + width / 2.0
+        elif align == "right":
+            x0, x1 = x - width, x
+        else:
+            x0, x1 = x, x + width
+        self._extend([x0, x1], [y + descent, y + ascent])
+
     @property
     def ink_bbox(self):
         if self.min_x == float("inf"):
             return None
         return {"x0": self.min_x, "y0": self.min_y, "x1": self.max_x, "y1": self.max_y}
 
+    # -- state ---------------------------------------------------------------
+    def setFont(self, name, size, *a, **kw):
+        self._font = (name, size)
+        return self._c.setFont(name, size, *a, **kw)
+
+    def beginPath(self):
+        return TracingPath(self._c.beginPath())
+
     # -- counted vector operations -------------------------------------------
     def line(self, x1, y1, x2, y2):
         self._note("line", True)
         self._extend([x1, x2], [y1, y2])
         return self._c.line(x1, y1, x2, y2)
+
+    def lines(self, linelist, **kw):
+        self._note("lines", True)
+        for seg in linelist:
+            self._extend([seg[0], seg[2]], [seg[1], seg[3]])
+        return self._c.lines(linelist, **kw)
 
     def rect(self, x, y, w, h, **kw):
         self._note("rect", True)
@@ -107,22 +269,40 @@ class TracingCanvas:
 
     def ellipse(self, x1, y1, x2, y2, **kw):
         self._note("ellipse", True)
-        self._extend([x1, x2], [y1, y2])
+        self._extend([min(x1, x2), max(x1, x2)], [min(y1, y2), max(y1, y2)])
         return self._c.ellipse(x1, y1, x2, y2, **kw)
 
     def arc(self, x1, y1, x2, y2, *a, **kw):
+        # the enclosing box of the arc's ellipse, which bounds any sweep of it
         self._note("arc", True)
-        self._extend([x1, x2], [y1, y2])
+        self._extend([min(x1, x2), max(x1, x2)], [min(y1, y2), max(y1, y2)])
         return self._c.arc(x1, y1, x2, y2, *a, **kw)
 
     def drawPath(self, p, **kw):
         self._note("drawPath", True)
+        if isinstance(p, TracingPath):
+            if p.xs:
+                self._extend(p.xs, p.ys)
+            else:
+                self.path_ops_without_extent.append("drawPath:empty")
+            if p.unrecorded_ops:
+                self.path_ops_without_extent.extend(
+                    f"drawPath:{op}" for op in sorted(set(p.unrecorded_ops)))
+            return self._c.drawPath(p._p, **kw)
+        # a path built straight on the underlying canvas contributes no measurable extent
+        self.path_ops_without_extent.append("drawPath:untraced_path")
         return self._c.drawPath(p, **kw)
 
-    def bezier(self, *a, **kw):
+    def clipPath(self, p, **kw):
+        if isinstance(p, TracingPath):
+            return self._c.clipPath(p._p, **kw)
+        return self._c.clipPath(p, **kw)
+
+    def bezier(self, x1, y1, x2, y2, x3, y3, x4, y4, **kw):
+        # all four points, so the curve's real extent is bounded, not just its endpoints
         self._note("bezier", True)
-        self._extend([a[0], a[6]], [a[1], a[7]])
-        return self._c.bezier(*a, **kw)
+        self._extend([x1, x2, x3, x4], [y1, y2, y3, y4])
+        return self._c.bezier(x1, y1, x2, y2, x3, y3, x4, y4, **kw)
 
     def grid(self, xs, ys):
         self._note("grid", True)
@@ -132,22 +312,22 @@ class TracingCanvas:
     # -- counted text operations ---------------------------------------------
     def drawString(self, x, y, text, *a, **kw):
         self._note("drawString", False)
-        self._extend([x], [y])
+        self._text_extent(x, y, text, "left")
         return self._c.drawString(x, y, text, *a, **kw)
 
     def drawCentredString(self, x, y, text, *a, **kw):
         self._note("drawCentredString", False)
-        self._extend([x], [y])
+        self._text_extent(x, y, text, "centre")
         return self._c.drawCentredString(x, y, text, *a, **kw)
 
     def drawRightString(self, x, y, text, *a, **kw):
         self._note("drawRightString", False)
-        self._extend([x], [y])
+        self._text_extent(x, y, text, "right")
         return self._c.drawRightString(x, y, text, *a, **kw)
 
     def drawAlignedString(self, x, y, text, *a, **kw):
         self._note("drawAlignedString", False)
-        self._extend([x], [y])
+        self._text_extent(x, y, text, "left")
         return self._c.drawAlignedString(x, y, text, *a, **kw)
 
     def __getattr__(self, name):
@@ -161,6 +341,18 @@ def _fmt(value, unit=""):
     if isinstance(value, float) and value == int(value):
         value = int(value)
     return f"{value}{(' ' + unit) if unit else ''}"
+
+
+def _fit(text, font, size, width):
+    """Trim a label to the room it actually has, so it cannot run out of the figure."""
+    s = str(text)
+    if width <= 0:
+        return ""
+    if stringWidth(s, font, size) <= width:
+        return s
+    while s and stringWidth(s + "…", font, size) > width:
+        s = s[:-1]
+    return (s + "…") if s else ""
 
 
 def _axis_label(params, key, default):
@@ -276,7 +468,13 @@ def draw_vector_state_view(c, x, y, w, h, params):
         {"name": "v", "value": 1.0, "unit": ""},
         {"name": "a", "value": -1.0, "unit": ""},
     ]
-    base_x = x + 70
+    # Geometry derived from the allocated width. The signed scale is centred and the
+    # arrow reach is capped so that the value label on either side still lands inside
+    # the box: an arrow whose own label falls outside the figure is a bounds defect,
+    # not a style choice.
+    label_space = 78.0
+    base_x = x + w / 2.0
+    half = max(18.0, min(84.0, w / 2.0 - label_space - 12.0))
     top = y + h - 34
     # zero reference: the vertical body line plus a signed horizontal scale
     c.setStrokeColor(Palette.BORDER_CARD)
@@ -285,33 +483,41 @@ def draw_vector_state_view(c, x, y, w, h, params):
     c.setStrokeColor(Palette.BORDER_LIGHT)
     c.setLineWidth(0.5)
     c.setDash(2, 2)
-    for off in (-78, -39, 39, 78):
-        c.line(base_x + off, y + 22, base_x + off, top)
+    for frac in (-0.93, -0.46, 0.46, 0.93):
+        c.line(base_x + frac * half, y + 22, base_x + frac * half, top)
     c.setDash()
     c.setStrokeColor(Palette.TEXT_SECONDARY)
     c.setLineWidth(1.0)
-    c.line(base_x - 84, y + 22, base_x + 84, y + 22)
-    draw_arrow(c, base_x + 76, y + 22, base_x + 84, y + 22, Palette.TEXT_SECONDARY, line_width=1.0)
+    c.line(base_x - half, y + 22, base_x + half, y + 22)
+    draw_arrow(c, base_x + half - 8, y + 22, base_x + half, y + 22,
+               Palette.TEXT_SECONDARY, line_width=1.0)
     c.setFont(FONT_NAME, 6.2)
     c.setFillColor(Palette.TEXT_MUTED)
     c.drawCentredString(base_x, y + 14, "body")
 
+    rows = vectors[:4]
     row_y = top - 14
+    # the row pitch follows the height actually allocated, so a four-arrow state still
+    # lands inside a short box instead of walking off the bottom of the figure
+    span = max(0.0, (row_y - 8) - (y + 30))
+    step = min(22.0, span / max(1, len(rows) - 1)) if len(rows) > 1 else 22.0
     longest = max((abs(float(v.get("value", 1)) or 1) for v in vectors), default=1.0)
-    for v in vectors[:4]:
+    for v in rows:
         val = float(v.get("value", 1) or 0)
-        length = 26 + 52 * (abs(val) / (longest or 1))
+        length = half * (0.32 + 0.62 * (abs(val) / (longest or 1)))
         colour = Palette.PHYSICS_BLUE if val >= 0 else Palette.DANGER
         tip = base_x + length if val >= 0 else base_x - length
         draw_arrow(c, base_x, row_y, tip, row_y, colour, line_width=1.6)
         c.setFont(FONT_BOLD, 6.8)
         c.setFillColor(colour)
         text = f"{v.get('name', '?')} = {_fmt(val, v.get('unit', ''))}"
+        room = (x + w - 8) - (tip + 4) if val >= 0 else (tip - 4) - (x + 8)
+        text = _fit(text, FONT_BOLD, 6.8, max(12.0, room))
         if val >= 0:
             c.drawString(tip + 4, row_y - 2.5, text)
         else:
             c.drawRightString(tip - 4, row_y - 2.5, text)
-        row_y -= 22
+        row_y -= step
     c.setFont(FONT_NAME, 6.5)
     c.setFillColor(Palette.TEXT_SECONDARY)
     c.drawString(x + 20, y + 12, f"Positive direction: {_positive_direction(params)}. Arrow direction carries the sign.")
@@ -1023,30 +1229,94 @@ def pre_render_validate(kind, item_data, params):
     return True
 
 
-def render_primitive(kind, params, canvas, bbox, item_data=None):
+def check_size_contract(kind, w, h, strict=True):
+    """A primitive below its declared size floor cannot render its own meaning.
+
+    Returns the contract plus the measured shortfall; in strict mode a violation raises
+    ``PRIMITIVE_MIN_SIZE_VIOLATION`` rather than producing an unreadable figure.
+    """
+    contract = size_contract(kind)
+    short_w = max(0.0, contract["minimum_width_pt"] - float(w))
+    short_h = max(0.0, contract["minimum_height_pt"] - float(h))
+    ok = short_w <= 0 and short_h <= 0
+    if not ok and strict:
+        _fail(PRIMITIVE_MIN_SIZE_VIOLATION,
+              f"{kind}: {float(w):.1f}x{float(h):.1f}pt is below the declared floor of "
+              f"{contract['minimum_width_pt']:.0f}x{contract['minimum_height_pt']:.0f}pt")
+    return {
+        "minimum_width_pt": contract["minimum_width_pt"],
+        "minimum_height_pt": contract["minimum_height_pt"],
+        "supports_compact_variant": contract["supports_compact_variant"],
+        "width_shortfall_pt": round(short_w, 3),
+        "height_shortfall_pt": round(short_h, 3),
+        "satisfied": ok,
+    }
+
+
+def _overflow(bbox, ink):
+    if not ink:
+        return 0.0
+    x, y, w, h = bbox
+    return round(max(
+        x - ink["x0"], ink["x1"] - (x + w),
+        y - ink["y0"], ink["y1"] - (y + h), 0.0,
+    ), 3)
+
+
+def render_primitive(kind, params, canvas, bbox, item_data=None, strict=False,
+                     enforce_size_contract=True):
     """Render one teaching primitive and return measured render evidence.
 
-    ``bbox`` is ``(x, y, w, h)`` in PDF points. The returned evidence records
-    the real vector/text operation counts and the real ink bounding box, so a
-    caller can prove the primitive was realized rather than merely labelled.
+    ``bbox`` is ``(x, y, w, h)`` in PDF points and is a **hard clip boundary**, not
+    advice: the box is installed as a clip path before the primitive draws and released
+    afterwards, so no primitive can put ink on a neighbouring block whatever it computes.
+
+    The clip stops the ink; the evidence still reports the attempt. ``ink_bbox`` is a real
+    bound (path and Bezier control points, arc extents, measured text width and font
+    ascent/descent), ``ink_escapes_bbox``/``ink_overflow_pt`` say whether the primitive
+    tried to draw outside its allocation, and ``size_contract`` says whether it was given
+    enough room to mean anything. In ``strict`` mode an escape raises
+    ``PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX`` and an untraceable path operation raises
+    ``TRACING_BBOX_INCOMPLETE_FOR_PATH_OP``.
     """
     if kind not in RENDERERS:
         raise UnknownPrimitive(f"UNKNOWN_TEACHING_PRIMITIVE: {kind}")
     params = dict(params or {})
     pre_render_validate(kind, item_data, params)
     x, y, w, h = bbox
+    contract = check_size_contract(kind, w, h, strict=enforce_size_contract)
+
+    inset = INK_SAFETY_INSET_PT if min(w, h) > 6 * INK_SAFETY_INSET_PT else 0.0
     tracer = TracingCanvas(canvas)
-    tracer.saveState()
+    canvas.saveState()
     try:
-        RENDERERS[kind](tracer, x, y, w, h, params)
+        clip = canvas.beginPath()
+        clip.rect(x, y, w, h)
+        canvas.clipPath(clip, stroke=0, fill=0)
+        RENDERERS[kind](tracer, x + inset, y + inset, w - 2 * inset, h - 2 * inset, params)
     finally:
-        tracer.restoreState()
+        canvas.restoreState()
+
+    ink = tracer.ink_bbox
+    overflow = _overflow(bbox, ink)
+    escapes = overflow > 0.0
+    if tracer.path_ops_without_extent and strict:
+        _fail(TRACING_BBOX_INCOMPLETE_FOR_PATH_OP,
+              f"{kind}: {', '.join(sorted(set(tracer.path_ops_without_extent))[:3])}")
+    if escapes and strict:
+        _fail(PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX, f"{kind}: by {overflow:.1f}pt")
     return {
         "primitive_id": kind,
         "bbox": {"x0": x, "y0": y, "x1": x + w, "y1": y + h},
-        "ink_bbox": tracer.ink_bbox,
+        "ink_bbox": ink,
         "vector_ops": tracer.vector_ops,
         "text_ops": tracer.text_ops,
         "op_histogram": dict(sorted(tracer.op_histogram.items())),
         "realized": tracer.vector_ops > 0,
+        "clipped_to_bbox": True,
+        "draw_inset_pt": inset,
+        "ink_escapes_bbox": escapes,
+        "ink_overflow_pt": overflow,
+        "path_ops_without_extent": sorted(set(tracer.path_ops_without_extent)),
+        "size_contract": contract,
     }

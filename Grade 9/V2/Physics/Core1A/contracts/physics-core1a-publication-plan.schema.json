@@ -16,6 +16,7 @@
     "product_id": {"const": "CORE_STUDY_GUIDE"},
     "upstream_core1_plan_id": {"type": "string", "minLength": 1},
     "upstream_core1_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "learner_copy_registry_ref": {"type": "string", "minLength": 1},
     "two_product_topology_preserved": {"const": true},
     "lessons": {
       "type": "array",
@@ -52,6 +53,7 @@
                   ]
                 },
                 "title": {"type": "string"},
+                "subtitle": {"type": "string"},
                 "body": {"type": "array", "items": {"type": "string"}},
                 "source_fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
                 "answer_revealing": {"type": "boolean"},

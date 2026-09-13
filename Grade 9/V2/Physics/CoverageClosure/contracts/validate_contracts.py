@@ -18,6 +18,7 @@ from upstream import core1_plan, core2_plan, representation_bundle, question_set
 from realize_physics_representations import realize  # noqa: E402
 from build_physics_coverage_closure import build_closure  # noqa: E402
 
+LEDGER_C = PHYS / "SourceLedger" / "contracts"
 NAMES = [
     "physics-transfer-evidence-event.schema.json",
     "physics-source-coverage-matrix.schema.json",
@@ -27,6 +28,8 @@ NAMES = [
     "physics-publication-coverage-closure.schema.json",
 ]
 STORE = {n: json.loads((C / n).read_text(encoding="utf-8")) for n in NAMES}
+STORE["physics-source-reconciliation-report.schema.json"] = json.loads(
+    (LEDGER_C / "physics-source-reconciliation-report.schema.json").read_text(encoding="utf-8"))
 
 
 def validator(name):
@@ -44,6 +47,7 @@ policy = load(ROOT / "registry" / "physics-transfer-evidence-policy.json")
 ledger = load(ROOT / "fixtures" / "physics-transfer-evidence.fixture.json")
 classification = load(PHYS / "Core2Transfer" / "registry" / "physics-external-corpus-classification.json")
 review = load(PHYS / "AssessmentReview" / "registry" / "physics-item-validity-registry.json")
+source_ledger = load(PHYS / "SourceLedger" / "registry" / "physics-source-question-ledger.json")
 
 event_v = validator("physics-transfer-evidence-event.schema.json")
 for e in ledger["events"]:
@@ -52,7 +56,8 @@ for e in ledger["events"]:
 with tempfile.TemporaryDirectory() as td:
     page_map, _ = realize(bundle, registry, contract, td)
     closure = build_closure(question_set(), review, core1, bundle, core2, classification,
-                            scope, model, policy, ledger, page_map)
+                            scope, model, policy, ledger, page_map,
+                            source_ledger=source_ledger)
 
 validator("physics-source-coverage-matrix.schema.json").validate(closure["source_coverage_matrix"])
 validator("physics-external-corpus-coverage-matrix.schema.json").validate(

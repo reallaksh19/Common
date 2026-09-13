@@ -1,0 +1,27 @@
+{
+  "comparison_digest": "d82d34cc13aec370ca4644e91ff85b13b886bb7736d3b97096dc6cbe07888168",
+  "comparison_id": "PHY-P-K-COMPARISON-v1",
+  "expected_differences": {
+    "core1_plan_digest_differs": true,
+    "study_model_digest_differs": true
+  },
+  "invariants": {
+    "declared_topic_scope_digest_identical": true,
+    "external_corpus_digest_identical": true,
+    "external_eligibility_identical": true,
+    "law_truth_identical": true,
+    "physical_model_truth_identical": true,
+    "problem_family_truth_identical": true,
+    "problem_semantics_identical": true,
+    "question_set_digest_identical": true,
+    "required_capability_set_identical": true,
+    "required_item_set_identical": true,
+    "scope_authority_digest_identical": true,
+    "study_scope_digest_identical": true,
+    "two_product_topology_identical": true
+  },
+  "no_attempt_report_ref": "PHY-P-K-RUN-NO-ATTEMPT",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "with_attempts_report_ref": "PHY-P-K-RUN-ATTEMPT"
+}

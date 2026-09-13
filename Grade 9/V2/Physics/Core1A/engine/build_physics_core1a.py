@@ -19,6 +19,12 @@ HERE = Path(__file__).resolve()
 ROOT = HERE.parents[1]
 POLICY_PATH = ROOT / "registry" / "physics-core1a-publication-policy.json"
 
+if str(HERE.parent) not in sys.path:
+    sys.path.insert(0, str(HERE.parent))
+from physics_learner_copy import (  # noqa: E402
+    learner_title, learner_subtitle, load_registry,
+)
+
 
 def canonical(obj):
     return json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
@@ -64,11 +70,18 @@ def human(ref):
     return s[:1].upper() + s[1:] if s else "Physics concept"
 
 
-def module(mid, kind, title, body, source_fields, *, answer=False, work=0, figure=None):
+def module(mid, kind, body, source_fields, *, answer=False, work=0, figure=None, title=None):
+    """One learner-facing module.
+
+    ``kind`` stays the internal identifier the schema, policy and falsifiers use.
+    ``title``/``subtitle`` are the learner-facing wording, resolved once here through
+    the governed copy registry so no renderer prints an internal role verbatim.
+    """
     return {
         "module_id": mid,
         "kind": kind,
-        "title": title,
+        "title": title or learner_title(kind),
+        "subtitle": learner_subtitle(kind),
         "body": [text(x) for x in body if text(x)],
         "source_fields": sorted(set(source_fields)),
         "answer_revealing": bool(answer),
@@ -87,14 +100,16 @@ def figure_request(lesson, caption, mode="PREFER_SOURCE_GROUNDED"):
 
 
 def concept_badge(lesson):
-    helper = text(lesson.get("concept_helper"))
-    if helper:
-        words = re.findall(r"[A-Za-z0-9]+", helper)
-        if words:
-            return " ".join(words[:5]).upper()
+    """Short badge for the page corner.
+
+    Title case, never SCREAMING_SNAKE: an upper-cased internal family name is itself an
+    internal role label on a learner surface.
+    """
+    words = re.findall(r"[A-Za-z0-9]+", human(lesson.get("capability_ref")))
+    if words:
+        return " ".join(w.capitalize() for w in words[:4])
     family = human(lesson.get("primary_pck_family"))
-    words = family.split()
-    return " ".join(words[:4]).upper()
+    return " ".join(w.capitalize() for w in family.split()[:4]) or "Physics"
 
 
 def template_findings(lesson, policy):
@@ -115,52 +130,105 @@ def template_findings(lesson, policy):
     return sorted(set(findings))
 
 
+def role_words(role):
+    """Learner wording for an internal reasoning-role identifier."""
+    return learner_title(role, default=None) if role else ""
+
+
+def givens_line(instance):
+    parts = [f"{g['quantity']} = {g['value']} {g['unit']}".strip() for g in instance.get("givens") or []]
+    unknown = (instance.get("unknown") or {}).get("quantity")
+    line = "What you are told: " + "; ".join(parts) if parts else ""
+    if unknown:
+        line += f". What you want: {unknown}."
+    return line
+
+
+def frame_line(instance):
+    frame = instance.get("frame") or {}
+    bits = [frame.get("system"), frame.get("origin"), frame.get("positive_direction")]
+    bits = [b for b in bits if b]
+    if not bits:
+        return ""
+    return (f"Set it up: you are following {frame.get('system')}, measuring from {frame.get('origin')}, "
+            f"counting {frame.get('positive_direction')} as positive.")
+
+
 def worked_body(worked):
+    """The worked example is a solved instance, not a plan: situation, route, number."""
     if not worked:
         return []
+    instance = worked.get("authored_instance") or {}
     lines = [text(worked.get("prompt"))]
+    if instance:
+        lines.append(frame_line(instance))
+        lines.append(givens_line(instance))
+        for i, state in enumerate(instance.get("reasoning_route") or [], 1):
+            lines.append(f"{i}. {role_words(state['role'])}: {text(state.get('learner_text'))}")
+        answer = worked.get("final_answer") or {}
+        if answer.get("statement"):
+            lines.append("Answer: " + text(answer["statement"]))
+        quick = worked.get("quick_check") or {}
+        if quick.get("prompt"):
+            lines.append("One thing to check: " + text(quick["prompt"]))
+        verification = worked.get("independent_verification") or {}
+        if verification.get("route_description"):
+            lines.append("Check it a different way: " + text(verification["route_description"])
+                         + " " + text(verification.get("agreement_text")))
+        return [x for x in lines if x]
     for i, step in enumerate(worked.get("reasoning_steps") or [], 1):
-        role = human(step.get("role"))
-        lines.append(f"{i}. {role}: {text(step.get('text'))}")
-    checks = [human(x) for x in worked.get("verification_steps") or []]
+        lines.append(f"{i}. {role_words(step.get('role'))}: {text(step.get('text'))}")
+    checks = [role_words(x) for x in worked.get("verification_steps") or []]
     if checks:
-        lines.append("Check: " + "; ".join(checks))
+        lines.append("Check it: " + "; ".join(checks))
     return [x for x in lines if x]
 
 
-def practice_body(item):
+def practice_body(item, *, with_answer=False):
+    """A practice card is a protected attempt surface: never print the answer here."""
     if not item:
         return []
+    instance = item.get("authored_instance") or {}
     body = [text(item.get("prompt"))]
-    checks = [human(x) for x in item.get("verification_steps") or []]
+    if instance:
+        body.append(givens_line(instance))
+    if text(item.get("method_reminder")):
+        body.append(text(item["method_reminder"]))
+    if with_answer and (item.get("final_answer") or {}).get("statement"):
+        body.append("Answer: " + text(item["final_answer"]["statement"]))
+    else:
+        answer = item.get("final_answer") or {}
+        if answer.get("answer_id"):
+            body.append("The full answer is in the answers appendix — try it first.")
+    checks = [role_words(x) for x in item.get("verification_steps") or []]
     if checks:
-        body.append("After solving, check: " + "; ".join(checks))
-    return body
+        body.append("Once you have an answer, check it: " + "; ".join(checks))
+    return [x for x in body if x]
 
 
 def compile_full(lesson, lid, policy):
     mods = []
     badge = concept_badge(lesson)
-    mods.append(module(f"{lid}-badge", "CONCEPT_BADGE", "Concept", [badge], ["concept_helper", "primary_pck_family"]))
+    mods.append(module(f"{lid}-badge", "CONCEPT_BADGE", [badge], ["concept_helper", "primary_pck_family"]))
 
     anchor = nonempty(lesson.get("see_phenomenon_anchor"), lesson.get("see_phase"))
     mods.append(module(
-        f"{lid}-anchor", "REAL_WORLD_ANCHOR", "Start with the physical story", anchor,
+        f"{lid}-anchor", "REAL_WORLD_ANCHOR", anchor,
         ["see_phenomenon_anchor", "see_phase"],
-        figure=figure_request(lesson, "Figure: the physical situation before equations are chosen."),
+        figure=figure_request(lesson, "What is actually happening here, before any symbols."),
     ))
 
     see_body = nonempty(lesson.get("see_system_frame_sign"), lesson.get("realize_phase"))
     see_body.extend([f"{i}. {text(x)}" for i, x in enumerate(lesson.get("realize_reconstruction_steps") or [], 1)])
     mods.append(module(
-        f"{lid}-see", "SEE_IT", "See it → represent it", see_body,
+        f"{lid}-see", "SEE_IT", see_body,
         ["see_system_frame_sign", "realize_phase", "realize_reconstruction_steps"],
-        figure=figure_request(lesson, "Figure: a representation that preserves the physical state."),
+        figure=figure_request(lesson, "The same situation drawn so nothing physical is lost."),
     ))
 
     key = nonempty(lesson.get("ordinary_language_explanation"), lesson.get("understand_phase"))
     mods.append(module(
-        f"{lid}-key", "KEY_IDEA", "Key idea", key,
+        f"{lid}-key", "KEY_IDEA", key,
         ["ordinary_language_explanation", "understand_phase"],
     ))
 
@@ -168,30 +236,32 @@ def compile_full(lesson, lid, policy):
     if text(lesson.get("understand_relation_and_validity")):
         validity.insert(0, text(lesson["understand_relation_and_validity"]))
     mods.append(module(
-        f"{lid}-model", "MODEL_CHECK", "Can I use this model?", validity or ["Check the stated conditions before using the relation."],
+        f"{lid}-model", "MODEL_CHECK",
+        validity or ["Check the stated conditions before you use the rule."],
         ["understand_relation_and_validity", "model_validity_conditions", "model_validity_required"],
     ))
 
     worked = lesson.get("worked_example")
     mods.append(module(
-        f"{lid}-worked", "WORKED_EXAMPLE", "Worked example", worked_body(worked),
+        f"{lid}-worked", "WORKED_EXAMPLE", worked_body(worked),
         ["worked_example"], answer=True,
-        figure=figure_request(lesson, "Figure: representation used by the worked example."),
+        figure=figure_request(lesson, "The drawing this solved example works from."),
     ))
 
     repair = lesson.get("misconception_repair") or {}
     trap = []
     if repair:
         trap = [
-            "Common thought: " + text(repair.get("wrong_model")),
-            "Why it feels reasonable: " + text(repair.get("why_plausible")),
-            "Minimal contrast: " + text(repair.get("minimal_contrast")),
+            "What lots of people think: " + text(repair.get("wrong_model")),
+            "Why that feels right: " + text(repair.get("why_plausible")),
+            "Now compare these two cases: " + text(repair.get("minimal_contrast")),
         ]
-        trap.extend(["Repair: " + text(x) for x in repair.get("repair_steps") or []])
+        trap.extend(["Fix it like this: " + text(x) for x in repair.get("repair_steps") or []])
         if text(repair.get("retry_prompt")):
-            trap.append("Retry: " + text(repair["retry_prompt"]))
+            trap.append("Now try again: " + text(repair["retry_prompt"]))
     mods.append(module(
-        f"{lid}-trap", "COMMON_TRAP", "Common trap", trap or ["Compare the tempting shortcut with the physical model before accepting it."],
+        f"{lid}-trap", "COMMON_TRAP",
+        trap or ["Compare the shortcut that looks easier with what the physics actually says."],
         ["misconception_repair"],
     ))
 
@@ -199,23 +269,23 @@ def compile_full(lesson, lid, policy):
     faded = lesson.get("faded_attempt")
     independent = lesson.get("independent_attempt")
     mods.append(module(
-        f"{lid}-guided", "GUIDED_PRACTICE", "Try now — guided", practice_body(guided),
+        f"{lid}-guided", "GUIDED_PRACTICE", practice_body(guided),
         ["guided_attempt"], work=max(3, policy["page"]["minimum_work_space_lines_guided"]),
     ))
     mods.append(module(
-        f"{lid}-faded", "FADED_PRACTICE", "Try again — less help", practice_body(faded),
+        f"{lid}-faded", "FADED_PRACTICE", practice_body(faded),
         ["faded_attempt"], work=max(3, policy["page"]["minimum_work_space_lines_guided"]),
     ))
     mods.append(module(
-        f"{lid}-independent", "INDEPENDENT_PRACTICE", "Your turn", practice_body(independent),
+        f"{lid}-independent", "INDEPENDENT_PRACTICE", practice_body(independent),
         ["independent_attempt"], work=max(5, policy["page"]["minimum_work_space_lines_independent"]),
     ))
 
-    checks = [human(x) for x in lesson.get("verification_steps") or []]
+    checks = [role_words(x) for x in lesson.get("verification_steps") or []]
     if text(lesson.get("physical_verification")):
         checks.insert(0, text(lesson["physical_verification"]))
     mods.append(module(
-        f"{lid}-check", "PHYSICAL_CHECK", "Check before you accept the answer", checks,
+        f"{lid}-check", "PHYSICAL_CHECK", checks,
         ["physical_verification", "verification_steps"],
     ))
 
@@ -223,15 +293,15 @@ def compile_full(lesson, lid, policy):
     if repair and text(repair.get("retry_prompt")):
         selfcheck.append(text(repair["retry_prompt"]))
     if independent and text(independent.get("prompt")):
-        selfcheck.append("Without looking back, name the first move you would make on the independent problem.")
-    selfcheck.append("Explain the idea in one sentence without using a formula first.")
+        selfcheck.append("Without looking back, say what your first move would be on the last question.")
+    selfcheck.append("Say the idea out loud in one sentence, without using a formula.")
     mods.append(module(
-        f"{lid}-self", "SELF_CHECK", "30-second check", selfcheck,
+        f"{lid}-self", "SELF_CHECK", selfcheck,
         ["misconception_repair.retry_prompt", "independent_attempt.prompt"],
     ))
 
     mods.append(module(
-        f"{lid}-transfer", "TRANSFER_BRIDGE", "Where this idea goes next", [lesson.get("transfer_bridge")],
+        f"{lid}-transfer", "TRANSFER_BRIDGE", [lesson.get("transfer_bridge")],
         ["transfer_bridge"],
     ))
     return mods
@@ -240,12 +310,16 @@ def compile_full(lesson, lid, policy):
 def compile_verify(lesson, lid):
     badge = concept_badge(lesson)
     return [
-        module(f"{lid}-badge", "CONCEPT_BADGE", "Concept", [badge], ["concept_helper", "primary_pck_family"]),
-        module(f"{lid}-key", "KEY_IDEA", "Activate", nonempty(lesson.get("activation")), ["activation"]),
-        module(f"{lid}-ind", "INDEPENDENT_PRACTICE", "Verify independently", practice_body(lesson.get("independent_attempt")), ["independent_attempt"], work=5),
-        module(f"{lid}-check", "PHYSICAL_CHECK", "Check", [human(x) for x in lesson.get("verification_steps") or []], ["verification_steps"]),
-        module(f"{lid}-self", "SELF_CHECK", "30-second check", ["State the physical reason your answer is plausible."], ["verification_steps"]),
-        module(f"{lid}-transfer", "TRANSFER_BRIDGE", "Transfer", nonempty(lesson.get("transfer_bridge")), ["transfer_bridge"]),
+        module(f"{lid}-badge", "CONCEPT_BADGE", [badge], ["concept_helper", "primary_pck_family"]),
+        module(f"{lid}-key", "KEY_IDEA", nonempty(lesson.get("activation")), ["activation"],
+               title="You already know this one"),
+        module(f"{lid}-ind", "INDEPENDENT_PRACTICE", practice_body(lesson.get("independent_attempt")),
+               ["independent_attempt"], work=5),
+        module(f"{lid}-check", "PHYSICAL_CHECK",
+               [role_words(x) for x in lesson.get("verification_steps") or []], ["verification_steps"]),
+        module(f"{lid}-self", "SELF_CHECK", ["Say why your answer makes sense in the real situation."],
+               ["verification_steps"]),
+        module(f"{lid}-transfer", "TRANSFER_BRIDGE", nonempty(lesson.get("transfer_bridge")), ["transfer_bridge"]),
     ]
 
 
@@ -253,11 +327,66 @@ def compile_probe(lesson, lid):
     badge = concept_badge(lesson)
     probe = lesson.get("probe_attempt") or lesson.get("independent_attempt") or {}
     return [
-        module(f"{lid}-badge", "CONCEPT_BADGE", "Concept", [badge], ["concept_helper", "primary_pck_family"]),
-        module(f"{lid}-probe", "PROBE", "Try this before reading an explanation", practice_body(probe), ["probe_attempt", "independent_attempt"], work=6),
-        module(f"{lid}-check", "PHYSICAL_CHECK", "Check", [human(x) for x in lesson.get("verification_steps") or []], ["verification_steps"]),
-        module(f"{lid}-self", "SELF_CHECK", "What did the probe reveal?", ["Which part felt uncertain: the physical story, the representation, the relation, or the check?"], ["probe_requirements"]),
+        module(f"{lid}-badge", "CONCEPT_BADGE", [badge], ["concept_helper", "primary_pck_family"]),
+        module(f"{lid}-probe", "PROBE", practice_body(probe),
+               ["probe_attempt", "independent_attempt"], work=6),
+        module(f"{lid}-check", "PHYSICAL_CHECK",
+               [role_words(x) for x in lesson.get("verification_steps") or []], ["verification_steps"]),
+        module(f"{lid}-self", "SELF_CHECK",
+               ["Which part felt shaky: the situation, the drawing, the rule, or the check?"],
+               ["probe_requirements"], title="What did that tell you?"),
     ]
+
+
+PROTECTED_ATTEMPT_KINDS = ("GUIDED_PRACTICE", "FADED_PRACTICE", "INDEPENDENT_PRACTICE", "PROBE")
+
+
+def answer_statements(lesson):
+    """Every resolved answer string anywhere in this lesson."""
+    out = []
+    for key in ("worked_example", "guided_attempt", "faded_attempt", "independent_attempt",
+                "probe_attempt", "misconception_repair"):
+        item = lesson.get(key) or {}
+        statement = ((item.get("final_answer") or {}).get("statement") or "").strip()
+        if statement:
+            out.append(statement)
+    return out
+
+
+def validate_answer_custody(lesson, lesson_plan):
+    """Protected attempt surfaces may not print the answer beside the question.
+
+    The worked example is allowed to resolve in front of the learner — that is its job.
+    Guided, faded, independent and probe cards are not.
+    """
+    statements = set(answer_statements(lesson))
+    worked = ((lesson.get("worked_example") or {}).get("final_answer") or {}).get("statement", "")
+    for module_row in lesson_plan["modules"]:
+        if module_row["kind"] not in PROTECTED_ATTEMPT_KINDS:
+            continue
+        if module_row["answer_revealing"]:
+            fail("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE",
+                 f"{lesson_plan['lesson_ref']}:{module_row['kind']}:declared answer-revealing")
+        blob = " ".join(module_row["body"])
+        for statement in statements:
+            if statement and statement in blob and statement != worked:
+                fail("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE",
+                     f"{lesson_plan['lesson_ref']}:{module_row['kind']}")
+    return True
+
+
+def count_unanswered(lesson):
+    """Learner-facing questions in this lesson that resolve to no answer artifact."""
+    missing = []
+    for key in ("worked_example", "guided_attempt", "faded_attempt", "independent_attempt",
+                "probe_attempt"):
+        item = lesson.get(key)
+        if not item:
+            continue
+        answer = item.get("final_answer") or {}
+        if answer.get("value") is None or not item.get("answer_ref"):
+            missing.append(key)
+    return missing
 
 
 def validate_modules(lesson_plan, policy):
@@ -287,6 +416,7 @@ def build_publication_plan(core1, policy=None):
     lessons = []
     counts = {"FULL_LEARNING": 0, "CONCISE_VERIFY_ONLY": 0, "PROBE": 0}
     template_count = 0
+    unanswered_count = 0
     for lesson in core1.get("lessons") or []:
         mode = lesson["lesson_mode"]
         counts[mode] = counts.get(mode, 0) + 1
@@ -300,6 +430,10 @@ def build_publication_plan(core1, policy=None):
         else:
             fail("CORE1A_SEMANTIC_DRIFT", f"unknown lesson mode {mode}")
         findings = template_findings(lesson, policy)
+        unanswered = count_unanswered(lesson)
+        if unanswered:
+            findings.append("LEARNER_QUESTION_WITHOUT_ANSWER")
+            unanswered_count += len(unanswered)
         template_count += int("CORE1A_TEMPLATE_ONLY_CONTENT" in findings)
         rec = {
             "lesson_ref": lid,
@@ -309,9 +443,10 @@ def build_publication_plan(core1, policy=None):
             "concept_badge": concept_badge(lesson),
             "publication_template": policy["templates"][mode],
             "modules": mods,
-            "content_maturity_findings": findings,
+            "content_maturity_findings": sorted(set(findings)),
         }
         validate_modules(rec, policy)
+        validate_answer_custody(lesson, rec)
         lessons.append(rec)
 
     aps = core1.get("appendices") or {}
@@ -326,6 +461,7 @@ def build_publication_plan(core1, policy=None):
         "product_id": "CORE_STUDY_GUIDE",
         "upstream_core1_plan_id": core1["plan_id"],
         "upstream_core1_digest": core1["plan_digest"],
+        "learner_copy_registry_ref": load_registry()["registry_id"],
         "two_product_topology_preserved": True,
         "lessons": lessons,
         "appendices": {
@@ -335,6 +471,7 @@ def build_publication_plan(core1, policy=None):
         },
         "quality_summary": {
             "template_only_content_count": template_count,
+            "learner_questions_without_answer": unanswered_count,
             "full_learning_count": counts.get("FULL_LEARNING", 0),
             "compact_count": counts.get("CONCISE_VERIFY_ONLY", 0),
             "probe_count": counts.get("PROBE", 0),

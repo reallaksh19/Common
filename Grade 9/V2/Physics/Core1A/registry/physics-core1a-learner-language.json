@@ -1,43 +1,435 @@
 {
-  "schema_version": "1.0.0",
-  "difficulty_badges": {
-    "D1": {"learner_label": "Foundation", "helper": "A core idea. Build a clear picture first."},
-    "D2": {"learner_label": "Think carefully", "helper": "Connect the picture, words and equation."},
-    "D3": {"learner_label": "Challenge", "helper": "Follow the stages in order; do not skip the picture."},
-    "D4": {"learner_label": "Stretch", "helper": "An extension. Master the core ideas first."}
-  },
-  "module_labels": {
-    "REAL_WORLD_ANCHOR": "Start with a real situation",
-    "SEE_IT": "See it step by step",
-    "KEY_IDEA": "The big idea",
-    "PHYSICS_WORDS": "Physics words",
-    "MODEL_CHECK": "When does this model work?",
-    "MATH_BRIDGE": "Math bridge",
-    "WORKED_EXAMPLE": "Watch one worked example",
-    "COMMON_TRAP": "Easy mistake to make",
-    "GUIDED_PRACTICE": "Try it with help",
-    "FADED_PRACTICE": "Try with less help",
-    "INDEPENDENT_PRACTICE": "Now try it yourself",
-    "PHYSICAL_CHECK": "Does the answer make sense?",
-    "SELF_CHECK": "Quick check",
-    "TRANSFER_BRIDGE": "Ready to practise?"
-  },
-  "core2_navigation": {
-    "concept_to_core2_heading": "Where you will use this",
-    "concept_to_core2_action": "Try Core (2)",
-    "core2_to_concept_heading": "Need a quick refresher?",
-    "core2_to_concept_action": "Go back to this idea",
-    "challenge_badge": "Core (2) challenge"
-  },
   "banned_learner_words": [
+    "answer custody",
+    "authority boundary",
+    "capability ref",
+    "cognitive load",
+    "concept badge",
+    "custody",
+    "faded attempt",
+    "falsifier",
+    "first-step reference",
+    "guided attempt",
+    "hint ladder",
+    "independent attempt",
+    "learner state",
+    "lesson mode",
+    "minimal contrast",
+    "misconception repair",
+    "misconception warning",
+    "model check",
+    "model validity",
+    "phenomenon anchor",
+    "physical check",
+    "physical verification",
+    "probe attempt",
+    "publication compiler",
+    "quantitative grounding",
+    "readiness check",
+    "readiness gate",
+    "readiness probe",
+    "reasoning route",
+    "reasoning step",
+    "remediation",
     "repair",
     "repair link",
-    "custody",
-    "falsifier",
-    "remediation",
-    "source-grounded",
+    "representation bridge",
+    "retrieval practice",
+    "scaffolding level",
     "semantic drift",
-    "publication compiler",
-    "authority boundary"
-  ]
+    "source-grounded",
+    "state propagation",
+    "support stage",
+    "transfer bridge",
+    "verification route",
+    "verification step"
+  ],
+  "core2_navigation": {
+    "challenge_badge": "Core (2) challenge",
+    "concept_to_core2_action": "Try Core (2)",
+    "concept_to_core2_heading": "Where you will use this",
+    "core2_to_concept_action": "Go back to this idea",
+    "core2_to_concept_heading": "Need a quick refresher?"
+  },
+  "difficulty_badges": {
+    "D1": {
+      "helper": "A core idea. Build a clear picture first.",
+      "learner_label": "Foundation"
+    },
+    "D2": {
+      "helper": "Connect the picture, words and equation.",
+      "learner_label": "Think carefully"
+    },
+    "D3": {
+      "helper": "Follow the stages in order; do not skip the picture.",
+      "learner_label": "Challenge"
+    },
+    "D4": {
+      "helper": "An extension. Master the core ideas first.",
+      "learner_label": "Stretch"
+    }
+  },
+  "figure_titles": {
+    "ACCELERATION_TIME_GRAPH": "HOW THE SPEEDING UP CHANGES",
+    "DIAGRAM_EQUATION_BRIDGE": "WHAT EACH LETTER MEANS IN THE PICTURE",
+    "FORCE_DIAGRAM": "EVERY PUSH AND PULL ON ONE OBJECT",
+    "MINIMAL_PHYSICS_CONTRAST": "TWO CASES, ONE THING CHANGED",
+    "MODEL_VALIDITY_GATE": "WHEN YOU ARE ALLOWED TO USE THIS RULE",
+    "MOTION_STRIP": "WHERE IT IS AT EQUAL TIME STEPS",
+    "OPTION_GRAPH_SET_VIEW": "THE CHOICES, DRAWN ON THE SAME AXES",
+    "PHASE_BOUNDARY_VIEW": "WHAT CARRIES OVER WHEN THE MOTION CHANGES",
+    "PHENOMENON_SCENE": "WHAT IS ACTUALLY HAPPENING",
+    "POSITION_TIME_GRAPH": "POSITION AGAINST TIME: STEEPNESS IS SPEED",
+    "RELATIVE_FRAME_VIEW": "MEASURED FROM WHICH OBJECT?",
+    "SIGN_FRAME_OVERLAY": "WHERE ZERO IS AND WHICH WAY IS POSITIVE",
+    "SLOPE_AREA_DECODER": "STEEPNESS OR AREA? ONE GRAPH, TWO READINGS",
+    "STATE_TABLE": "WHAT YOU KNOW AT THE START AND AT THE END",
+    "TIMELINE_INTERVAL_VIEW": "ONE NAMED SECOND IS A DIFFERENCE",
+    "TRAJECTORY_VIEW": "THE PATH YOU TRAVEL VERSUS THE STRAIGHT LINE",
+    "VECTOR_STATE_VIEW": "WHICH WAY EACH ARROW POINTS",
+    "VELOCITY_TIME_GRAPH": "SPEED AGAINST TIME: STEEPNESS AND AREA",
+    "VERIFICATION_CHECK_STRIP": "CHECKS THAT COULD CATCH A MISTAKE"
+  },
+  "genericity_statement": "One governed vocabulary maps an internal role or state identifier to the warm, plain-English wording a Grade-9 learner actually reads. Internal identifiers are unchanged: schema fields, JSON enum values, falsifier names and test assertions keep using MISCONCEPTION_REPAIR, WORKED, GUIDED, EXECUTE and the rest. Only the rendered learner surface is translated, and it is translated here rather than in each renderer, so Core (1A) and Core (2) cannot drift into two different vocabularies.",
+  "internal_role_identifiers": [
+    "ANCHOR",
+    "ATTENTION_CUE",
+    "CONCEPT_BADGE",
+    "CONCISE_VERIFY_ONLY",
+    "CONTRAST",
+    "EXECUTE",
+    "EXECUTION",
+    "EXPLAIN",
+    "FADED",
+    "FIRST_MOVE_OVERLAY",
+    "FULL_LEARNING",
+    "GUIDED",
+    "H1_NOTICE",
+    "H2_MODEL",
+    "H3_START",
+    "INDEPENDENT",
+    "INTERPRET",
+    "MISCONCEPTION_REPAIR",
+    "MODEL",
+    "MODEL_AND_VALIDITY",
+    "MODEL_CHECK",
+    "MODEL_REPRESENTATION",
+    "PHYSICAL_CHECK",
+    "PHYSICAL_VERIFICATION",
+    "PROBE",
+    "QUICK_CHECK",
+    "READINESS_GATE",
+    "READINESS_PROBE",
+    "RECONSTRUCT",
+    "RELATION_CHOICE",
+    "REPRESENT",
+    "RESULT_INTERPRETATION",
+    "SELF_CHECK",
+    "STATE_TABLE",
+    "SYSTEM_AND_FRAME",
+    "TRANSFER",
+    "VERIFICATION",
+    "VERIFY",
+    "WORKED"
+  ],
+  "module_helpers": {
+    "ANCHOR": "A real situation before any symbols.",
+    "ANSWER": "Only look after you have tried.",
+    "ATTENTION_CUE": "Look here before you decide anything.",
+    "COMMON_TRAP": "Lots of people fall for this one.",
+    "CONTRAST": "Two cases, one thing changed.",
+    "EXECUTE": "Put the numbers in and keep the signs.",
+    "EXECUTION": "Put the numbers in and keep the signs.",
+    "EXPLAIN": "The idea in ordinary words.",
+    "EXTRACT": "Start values, end values, and the one you want.",
+    "FADED": "One of the cues is gone now.",
+    "FADED_PRACTICE": "One of the cues is gone now.",
+    "FIRST_MOVE_OVERLAY": "Just the first step. Stop there.",
+    "FRAME": "Decide which way counts as positive.",
+    "GUIDED": "The first move is done for you.",
+    "GUIDED_PRACTICE": "The first move is done for you.",
+    "H1_NOTICE": "No formula yet.",
+    "H2_MODEL": "Still nothing to calculate.",
+    "H3_START": "The first step only.",
+    "INDEPENDENT": "No cues this time. You have everything you need.",
+    "INDEPENDENT_PRACTICE": "No cues this time. You have everything you need.",
+    "INDEPENDENT_VERIFICATION": "A second route to the same answer.",
+    "INTERPRET": "Turn the number back into a real statement.",
+    "KEY_IDEA": "The one sentence worth remembering.",
+    "MINIMAL_CONTRAST": "Two cases, one thing changed.",
+    "MISCONCEPTION_REPAIR": "Lots of people fall for this one.",
+    "MODEL": "Pick the rule the situation allows.",
+    "MODEL_AND_VALIDITY": "Pick the rule the situation allows.",
+    "MODEL_CHECK": "Check the situation fits before you use the rule.",
+    "MODEL_REPRESENTATION": "The picture that makes the rule obvious.",
+    "MODEL_VALIDITY": "The rule only works under these conditions.",
+    "PHENOMENON_ANCHOR": "A real situation before any symbols.",
+    "PHYSICAL_CHECK": "Would this answer make sense in real life?",
+    "PHYSICAL_VERIFICATION": "Would this answer make sense in real life?",
+    "PRACTICE": "Work these on paper first.",
+    "PROBE": "No explanation yet. See what you already know.",
+    "QUICK_CHECK": "One sign, one unit, one direction.",
+    "READINESS_GATE": "Answer this before reading the explanation.",
+    "READINESS_PROBE": "Answer this before reading the explanation.",
+    "REAL_WORLD_ANCHOR": "A real situation before any symbols.",
+    "RECONSTRUCT": "Rebuild it instead of memorising it.",
+    "RELATION_CHOICE": "Choose the one with only your knowns and your unknown.",
+    "REPRESENT": "Draw what is happening before you write anything.",
+    "REPRESENTATION_BRIDGE": "Each mark in the drawing gets a name.",
+    "RESULT_INTERPRETATION": "Turn the number back into a real statement.",
+    "SEE_IT": "Draw what is happening before you write anything.",
+    "SELF_CHECK": "Thirty seconds, no notes.",
+    "SOLUTION": "Compare this with what you wrote.",
+    "SOLVE": "Put the numbers in and keep the signs.",
+    "STATE_TABLE": "Start values, end values, and the one you want.",
+    "SYSTEM_AND_FRAME": "Decide which way counts as positive.",
+    "TRANSFER": "Same idea, unfamiliar situation.",
+    "TRANSFER_BRIDGE": "You will meet it again here.",
+    "VERIFICATION": "A quick way to catch a mistake.",
+    "VERIFY": "A quick way to catch a mistake.",
+    "WORKED": "Every step, with the numbers.",
+    "WORKED_EXAMPLE": "Every step, with the numbers."
+  },
+  "module_labels": {
+    "ANCHOR": "Think About This",
+    "ANSWER": "The Answer",
+    "ATTENTION_CUE": "What to Notice First",
+    "COMMON_TRAP": "Easy mistake to make",
+    "CONCEPT_BADGE": "This Page Is About",
+    "CONTRAST": "Spot the Difference",
+    "EXECUTE": "Do the Working",
+    "EXECUTION": "Do the Working",
+    "EXPLAIN": "Where This Comes From",
+    "EXTRACT": "Write Down What You Know",
+    "FADED": "Try It With Less Help",
+    "FADED_PRACTICE": "Try with less help",
+    "FIRST_MOVE_OVERLAY": "Your First Move",
+    "FRAME": "Set Up Your Directions",
+    "GUIDED": "Try It With Help",
+    "GUIDED_PRACTICE": "Try it with help",
+    "H1_NOTICE": "Hint 1 — What to Notice",
+    "H2_MODEL": "Hint 2 — Which Rule Fits",
+    "H3_START": "Hint 3 — Your First Move",
+    "INDEPENDENT": "Try It Yourself",
+    "INDEPENDENT_PRACTICE": "Now try it yourself",
+    "INDEPENDENT_VERIFICATION": "Check It a Different Way",
+    "INTERPRET": "What the Answer Means",
+    "KEY_IDEA": "The big idea",
+    "MATH_BRIDGE": "Math bridge",
+    "MINIMAL_CONTRAST": "Spot the Difference",
+    "MISCONCEPTION_REPAIR": "Common Mistake to Avoid",
+    "MODEL": "Which Rule Fits Here?",
+    "MODEL_AND_VALIDITY": "Which Rule Fits Here?",
+    "MODEL_CHECK": "When does this model work?",
+    "MODEL_REPRESENTATION": "Draw It Like This",
+    "MODEL_VALIDITY": "When You Are Allowed to Use It",
+    "PHENOMENON_ANCHOR": "Think About This",
+    "PHYSICAL_CHECK": "Does the answer make sense?",
+    "PHYSICAL_VERIFICATION": "Sanity Check",
+    "PHYSICS_WORDS": "Physics words",
+    "PRACTICE": "Practice",
+    "PROBE": "Try This First",
+    "QUICK_CHECK": "One Thing to Check",
+    "READINESS_GATE": "Are You Ready to Move On?",
+    "READINESS_PROBE": "Are You Ready to Move On?",
+    "REAL_WORLD_ANCHOR": "Start with a real situation",
+    "RECONSTRUCT": "Where This Comes From",
+    "RELATION_CHOICE": "Pick the Right Formula",
+    "REPRESENT": "See It",
+    "REPRESENTATION_BRIDGE": "Turn the Picture Into Symbols",
+    "RESULT_INTERPRETATION": "What the Answer Means",
+    "SEE_IT": "See it step by step",
+    "SELF_CHECK": "Quick check",
+    "SOLUTION": "Full Worked Answer",
+    "SOLVE": "Do the Working",
+    "STATE_TABLE": "Write Down What You Know",
+    "SYSTEM_AND_FRAME": "Set Up Your Directions",
+    "TRANSFER": "Now Try a New Kind of Problem",
+    "TRANSFER_BRIDGE": "Ready to practise?",
+    "VERIFICATION": "Check Your Answer",
+    "VERIFY": "Check Your Answer",
+    "WORKED": "Watch It Solved",
+    "WORKED_EXAMPLE": "Watch one worked example"
+  },
+  "phrase_rewrites": [
+    [
+      "This capability record declares no additional model validity condition.",
+      "There is no extra condition to check for this one."
+    ],
+    [
+      "Run the independent physical check required by this capability.",
+      "Check the answer a second way — one that could actually show it is wrong."
+    ],
+    [
+      "model validity check",
+      "checking a rule fits the situation"
+    ],
+    [
+      "capability record",
+      "skill"
+    ],
+    [
+      "this capability",
+      "this skill"
+    ],
+    [
+      "then run the required physical check",
+      "then check it a way that could actually show it is wrong"
+    ],
+    [
+      "the required physical check",
+      "the check that could catch a mistake"
+    ],
+    [
+      "run the required physical check",
+      "check it in a way that could catch a mistake"
+    ],
+    [
+      "independent physical check",
+      "second, different check"
+    ],
+    [
+      "physical check",
+      "reality check"
+    ],
+    [
+      "physical verification",
+      "reality check"
+    ],
+    [
+      "Verify physical plausibility",
+      "Does the answer make sense?"
+    ],
+    [
+      "verify physical plausibility",
+      "ask whether the answer makes sense"
+    ],
+    [
+      "Verify model validity",
+      "Check you were allowed to use that rule"
+    ],
+    [
+      "verify model validity",
+      "check you were allowed to use that rule"
+    ],
+    [
+      "model validity condition",
+      "condition the rule needs"
+    ],
+    [
+      "model validity",
+      "whether the rule is allowed here"
+    ],
+    [
+      "Satisfy upstream verification obligation",
+      "Carry out the check"
+    ],
+    [
+      "without changing the physical model",
+      "without changing the situation"
+    ],
+    [
+      "Guided → faded → independent.",
+      "Try it with help, then with less, then on your own."
+    ],
+    [
+      "Activate → verify → check.",
+      "Warm up, try it, then check it."
+    ],
+    [
+      "Probe first — explanation comes only after evidence.",
+      "Have a go first. The explanation comes after."
+    ],
+    [
+      "Build the model, then test the tempting shortcut.",
+      "Build the picture, then test the shortcut that looks easier."
+    ],
+    [
+      "See the physical story before choosing equations.",
+      "Picture what is happening before you reach for a formula."
+    ],
+    [
+      "Check your method after attempting Appendix A.",
+      "Compare these with your own working."
+    ],
+    [
+      "Core practice — answers are not shown here.",
+      "Work these first. The answers are in the next appendix."
+    ],
+    [
+      "Answer-free first-move reference.",
+      "A one-page reminder of how to start. No answers here."
+    ],
+    [
+      "Original external transfer items remain reserved for Core2.",
+      "You will meet questions like this one in the transfer book."
+    ],
+    [
+      "original external transfer items stay reserved for Core2",
+      "questions like this one are saved for the transfer book"
+    ],
+    [
+      "Work a newly authored instance of this family",
+      "Work this practice question"
+    ],
+    [
+      "Transfer family: ",
+      "Where this idea turns up next: "
+    ],
+    [
+      "far transfer new context",
+      "the same idea in a situation that looks nothing like this one"
+    ],
+    [
+      "same physics different story",
+      "the same physics wearing a different story"
+    ],
+    [
+      "same model different story",
+      "the same rule in a different story"
+    ],
+    [
+      "same concept new representation",
+      "the same idea drawn a different way"
+    ],
+    [
+      "mixed model discrimination",
+      "deciding which of several rules fits"
+    ],
+    [
+      "mixed graph model selection",
+      "reading a graph and then choosing a rule"
+    ],
+    [
+      "model validity hidden condition",
+      "a condition you have to spot before the rule is allowed"
+    ],
+    [
+      "multiphase state propagation",
+      "carrying the state across a change in the motion"
+    ],
+    [
+      "physical verification without prompting",
+      "checking it without being told to"
+    ],
+    [
+      "sign frame discrimination",
+      "telling apart which way counts as positive"
+    ],
+    [
+      "A check that cannot fail is not a check; verification must be able to reject the answer.",
+      "A check that can never come out wrong is not a check. A real one has to be able to tell you the answer is wrong."
+    ]
+  ],
+  "policy": {
+    "applies_to_products": [
+      "CORE_STUDY_GUIDE",
+      "TRANSFER_SOLUTION_BOOK"
+    ],
+    "internal_identifiers_unchanged": true,
+    "reading_age_intent": "A 14-year-old opening the book should read an invitation, not a curriculum-design label.",
+    "unmapped_role_disposition": "HUMANIZE_AND_REPORT"
+  },
+  "registry_id": "PHY-CORE1A-LEARNER-LANGUAGE-v2",
+  "schema_version": "1.0.0"
 }

@@ -303,6 +303,147 @@ PASSES.append("NO_ATTEMPT_RUN_INVENTS_PHYSICS_WEAKNESS")
 assert plan_na["study_scope_digest"] == plan["study_scope_digest"]
 PASSES.append("ATTEMPT_RUN_CHANGES_REQUIRED_SCOPE")
 
+# --- P-UPGRADE-2 item 3: a worked example resolves to a real number -----------
+from build_physics_core1 import (  # noqa: E402
+    load_instance_registry, validate_instance_registry, validate_worked_instance,
+    validate_learner_question, authored_instance, STAGE_VARIANT,
+)
+from physics_instance_resolver import resolve_instance, evaluate, instance_for_family  # noqa: E402
+
+instances = load_instance_registry()
+validate_instance_registry(instances)
+PASSES.append("AUTHORED_INSTANCE_REGISTRY_IS_DIGEST_BOUND")
+
+# every declared family resolves, on every stage variant, to a computed answer whose
+# independent verification agrees by real arithmetic
+for row in instances["instances"]:
+    for key in sorted(STAGE_VARIANT):
+        r = resolve_instance(row, STAGE_VARIANT[key], instance_id=row["instance_template_id"],
+                             stage=key)
+        assert r["final_answer"]["value"] is not None, (row["instance_template_id"], key)
+        assert r["independent_verification"]["agrees_with_answer"] is True
+        assert r["independent_verification"]["is_distinct_from_solving_route"] is True
+        assert r["quick_check"]["is_answer"] is False
+        assert any(s["role"] == "EXECUTE" and s["equation"] for s in r["reasoning_route"])
+assert len(instances["instances"]) >= 12
+PASSES.append("EVERY_AUTHORED_INSTANCE_RESOLVES_TO_A_REAL_NUMBER")
+
+# a Motion-1D instance and an instance from another topic both resolve, with real physics
+one_d = resolve_instance(instance_for_family(instances, "PHY-PF-FIRST-EQUATION"), 0)
+assert one_d["final_answer"]["unit"] == "s" and one_d["final_answer"]["value"] > 0
+gravity = resolve_instance(instance_for_family(instances, "PHY-PF-FREE-FALL"), 0)
+assert gravity["final_answer"]["unit"] == "s"
+assert abs(0.5 * 10 * gravity["final_answer"]["value"] ** 2 - 45) < 1e-6
+graphs = resolve_instance(instance_for_family(instances, "PHY-PF-VT-SIGNED-AREA"), 0)
+assert graphs["final_answer"]["unit"] == "m"
+PASSES.append("INSTANCES_SPAN_MOTION_1D_AND_OTHER_EXERCISED_TOPICS")
+
+# the real worked examples in the built plan are instantiated, not authoring plans
+for lesson in plan["lessons"]:
+    if lesson["lesson_mode"] != "FULL_LEARNING":
+        continue
+    validate_worked_instance(lesson["worked_example"], lesson["capability_ref"])
+    body = lesson["worked_example"]["prompt"].lower()
+    assert "newly authored instance" not in body and "select the relation" not in body
+PASSES.append("WORKED_EXAMPLES_ARE_INSTANTIATED_NOT_PLANNED")
+
+# an uninstantiated worked example is caught
+plain = copy.deepcopy(plan["lessons"][0]["worked_example"])
+plain.pop("authored_instance")
+expect("WORKED_EXAMPLE_UNINSTANTIATED", lambda: validate_worked_instance(plain, "test"))
+
+noanswer = copy.deepcopy(plan["lessons"][0]["worked_example"])
+noanswer["final_answer"] = {"symbol": "t", "value": None}
+expect("WORKED_EXAMPLE_FINAL_ANSWER_MISSING",
+       lambda: validate_worked_instance(noanswer, "test"))
+
+flat = copy.deepcopy(plan["lessons"][0]["worked_example"])
+for state in flat["authored_instance"]["reasoning_route"]:
+    state["equation"] = None
+    state["role"] = "REPRESENT"
+expect("WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE",
+       lambda: validate_worked_instance(flat, "test"))
+
+# a route that only restates its givens does not transform state
+restating = copy.deepcopy(instance_for_family(instances, "PHY-PF-FIRST-EQUATION"))
+for state in restating["reasoning_route"]:
+    if state["role"] == "EXECUTE":
+        state["equation"] = "a"
+        state["output_state"] = {"symbol": "a", "unit": "m/s^2", "kind": "QUANTITY"}
+expect("WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE",
+       lambda: resolve_instance(restating, 0))
+
+# a route state that reads a symbol nothing produced is caught
+forward = copy.deepcopy(instance_for_family(instances, "PHY-PF-FIRST-EQUATION"))
+forward["reasoning_route"][3]["equation"] = "(v - u)/a + ghost"
+expect("WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE",
+       lambda: resolve_instance(forward, 0))
+
+# a declared answer that does not follow from the route is rejected, not trusted
+wrong = copy.deepcopy(instance_for_family(instances, "PHY-PF-FIRST-EQUATION"))
+wrong["independent_verification"]["equation"] = "(v*v - u*u)/(3*a)"
+expect("VERIFICATION_ROUTE_NOT_INDEPENDENT", lambda: resolve_instance(wrong, 0))
+
+# a "verification" that is just the solving relation again is not independent
+same = copy.deepcopy(instance_for_family(instances, "PHY-PF-FIRST-EQUATION"))
+same["independent_verification"] = {"route_description": "the same step again",
+                                    "equation": "(v-u)/a", "compare_to": "FINAL_ANSWER"}
+expect("VERIFICATION_ROUTE_NOT_INDEPENDENT", lambda: resolve_instance(same, 0))
+
+# the expression evaluator is arithmetic only
+expect("WORKED_EXAMPLE_UNINSTANTIATED",
+       lambda: evaluate("__import__('os').system('true')", {"a": 1}, "test"))
+PASSES.append("INSTANCE_EXPRESSIONS_ARE_ARITHMETIC_ONLY")
+
+# --- P-UPGRADE-2 item 6: answer custody --------------------------------------
+for lesson in plan["lessons"]:
+    for key in ("worked_example", "guided_attempt", "faded_attempt", "independent_attempt",
+                "probe_attempt"):
+        item = lesson.get(key)
+        if item:
+            validate_learner_question(item, f"{lesson['capability_ref']}:{key}")
+for item in plan["appendices"]["appendix_a"]["items"]:
+    assert item["answer_ref"] and item["answer_shown_with_the_question"] is False
+    assert "final_answer" not in item
+for sol in plan["appendices"]["appendix_b"]["solutions"]:
+    validate_learner_question(sol, sol["solution_id"])
+PASSES.append("EVERY_LEARNER_QUESTION_RESOLVES_TO_AN_ANSWER")
+
+unanswered = copy.deepcopy(plan["lessons"][0]["guided_attempt"])
+unanswered["final_answer"] = None
+expect("LEARNER_QUESTION_WITHOUT_ANSWER",
+       lambda: validate_learner_question(unanswered, "test"))
+
+noref = copy.deepcopy(plan["lessons"][0]["guided_attempt"])
+noref["answer_ref"] = ""
+expect("LEARNER_QUESTION_WITHOUT_ANSWER", lambda: validate_learner_question(noref, "test"))
+
+substituted = copy.deepcopy(plan["lessons"][0]["guided_attempt"])
+substituted["quick_check"] = dict(substituted["quick_check"], is_answer=True)
+expect("SELF_CHECK_SUBSTITUTED_FOR_ANSWER",
+       lambda: validate_learner_question(substituted, "test"))
+
+collapsed = copy.deepcopy(plan["lessons"][0]["guided_attempt"])
+collapsed["quick_check"] = dict(collapsed["quick_check"],
+                                prompt=collapsed["final_answer"]["statement"])
+expect("SELF_CHECK_SUBSTITUTED_FOR_ANSWER",
+       lambda: validate_learner_question(collapsed, "test"))
+
+leaky = copy.deepcopy(plan)
+leaky["appendices"]["appendix_a"]["items"][0]["final_answer"] = {"value": 1}
+leaky["plan_digest"] = ""
+leaky["plan_digest"] = digest(leaky, "plan_digest")
+expect("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE",
+       lambda: validate_plan(leaky, model, scope, registry, profile, completeness, problems))
+
+# answer, quick check and independent verification are three distinct objects
+w = plan["lessons"][0]["worked_example"]
+assert w["final_answer"]["answer_id"] != w["quick_check"]["quick_check_id"]
+assert w["quick_check"]["quick_check_id"] != w["independent_verification"]["verification_id"]
+assert w["independent_verification"]["equation"] not in [
+    s["equation"] for s in w["authored_instance"]["reasoning_route"] if s["equation"]]
+PASSES.append("ANSWER_QUICK_CHECK_AND_VERIFICATION_ARE_THREE_OBJECTS")
+
 print(f"PHY P-G Core1 authoring falsifiers: {len(PASSES)} PASS")
 for code in PASSES:
     print("  -", code)

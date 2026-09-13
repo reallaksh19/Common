@@ -25,6 +25,9 @@ def validator(name):
         "physics-core1-lesson.schema.json": schema("physics-core1-lesson.schema.json"),
         "physics-promoted-pck.schema.json": schema("physics-promoted-pck.schema.json"),
         "physics-core1-study-plan.schema.json": schema("physics-core1-study-plan.schema.json"),
+        "physics-authored-instance.schema.json": schema("physics-authored-instance.schema.json"),
+        "physics-instance-route-state.schema.json":
+            schema("physics-instance-route-state.schema.json"),
     }
     return Draft202012Validator(s, resolver=RefResolver(base_uri="", referrer=s, store=store))
 
@@ -53,8 +56,38 @@ for asset in registry["assets"]:
     assert auth["final_product_release_blocked"] is True, asset["asset_id"]
 
 assert set(plan["human_expert_review_states"].values()) == {"PENDING"}
+
+# P-UPGRADE-2 item 3/6: every authored instance and every route state in the built plan
+# validates against the shared contracts, and the registry itself declares no expert pass.
+instance_validator = validator("physics-authored-instance.schema.json")
+state_validator = validator("physics-instance-route-state.schema.json")
+instances = load(ROOT / "registry" / "physics-authored-instances.json")
+assert set(instances["human_expert_review_states"].values()) == {"PENDING"}
+
+checked = 0
+for lesson in plan["lessons"]:
+    for key in ("worked_example", "guided_attempt", "faded_attempt", "independent_attempt",
+                "probe_attempt"):
+        item = lesson.get(key) or {}
+        inst = item.get("authored_instance")
+        if not inst:
+            continue
+        instance_validator.validate(inst)
+        for state in inst["reasoning_route"]:
+            state_validator.validate(state)
+        checked += 1
+    repair = lesson.get("misconception_repair") or {}
+    if repair.get("retry_instance"):
+        instance_validator.validate(repair["retry_instance"])
+        checked += 1
+for item in plan["appendices"]["appendix_a"]["items"]:
+    instance_validator.validate(item["authored_instance"])
+    checked += 1
+
 print(
     "PHY P-G contract validation: PASS "
     f"({len(registry['assets'])} promoted-pilot PCK assets, {len(plan['lessons'])} Core1 lessons, "
-    f"{plan['summary']['appendix_a_item_count']} Appendix A items)"
+    f"{plan['summary']['appendix_a_item_count']} Appendix A items, "
+    f"{len(instances['instances'])} authored-instance families, "
+    f"{checked} resolved instances validated)"
 )

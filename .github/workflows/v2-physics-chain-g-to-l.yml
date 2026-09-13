@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - v2-physics-upgrade-full-chain-g-to-l
+      - v2-physics-core1a-publication
+      - v2-physics-learner-product-maturity
     paths:
       - "Grade 9/V2/Physics/**"
       - "Grade 9/V2/Shared/MasterTemplates/primitives/**"
@@ -29,6 +31,12 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
 
+      - name: P-A0 source ledger is an independent denominator
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/SourceLedger/contracts/validate_contracts.py"
+          python "$P/SourceLedger/tests/test_physics_source_ledger.py"
+
       - name: Re-prove the merged P-A to P-F chain is unbroken
         run: |
           P="Grade 9/V2/Physics"
@@ -51,7 +59,14 @@ jobs:
           python "$P/CoreAuthoring/contracts/validate_contracts.py"
           python "$P/CoreAuthoring/tests/test_physics_core1.py"
 
-      - name: P-H teaching primitives realized as vector graphics
+      - name: P-GA Core (1A) is the published Core study guide
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/Core1A/tests/test_physics_core1a.py"
+          python "$P/Core1A/tests/test_core1a_ui_policy.py"
+          python "$P/Core1A/tests/test_sba_transfer_answer_arithmetic.py"
+
+      - name: P-H teaching primitives realized as vector graphics, inside their bbox
         run: |
           P="Grade 9/V2/Physics"
           python "$P/Representation/contracts/validate_contracts.py"
@@ -108,6 +123,8 @@ jobs:
           name: physics-p-g-to-p-l-proof
           path: |
             /tmp/phy-cold-start/comparison.json
+            /tmp/phy-cold-start/with-attempts/core1a_publication_plan.json
+            /tmp/phy-cold-start/with-attempts/core1a_quality_report.json
             /tmp/phy-cold-start/no-attempt/run_report.json
             /tmp/phy-cold-start/with-attempts/run_report.json
             /tmp/phy-cold-start/with-attempts/physics-core-study-guide.pdf

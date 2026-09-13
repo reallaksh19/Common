@@ -1,0 +1,43 @@
+name: V2 Physics Source Ledger
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/SourceLedger/**'
+      - 'Grade 9/V2/Physics/CoverageClosure/**'
+      - 'Grade 9/V2/Physics/AssessmentIntake/fixtures/**'
+      - '.github/workflows/v2-physics-source-ledger.yml'
+  workflow_dispatch:
+
+jobs:
+  source-ledger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install "jsonschema>=4.20,<5" reportlab
+      - name: P-A0 source ledger contracts
+        run: python 'Grade 9/V2/Physics/SourceLedger/contracts/validate_contracts.py'
+      - name: P-A0 source ledger falsifiers
+        run: python 'Grade 9/V2/Physics/SourceLedger/tests/test_physics_source_ledger.py'
+      - name: P-J closure reconciles against the frozen ledger
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/CoverageClosure/contracts/validate_contracts.py"
+          python "$P/CoverageClosure/tests/test_physics_coverage_closure.py"
+      - name: Reconcile the repository question set against its frozen ledger
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/SourceLedger/engine/build_physics_source_ledger.py" \
+            --question-set "$P/AssessmentIntake/fixtures/motion-question-set.fixture.json" \
+            --review-registry "$P/AssessmentReview/registry/physics-item-validity-registry.json" \
+            --out /tmp/phy-source-reconciliation.json
+      - name: Upload reconciliation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-source-reconciliation
+          path: /tmp/phy-source-reconciliation.json
+          if-no-files-found: error

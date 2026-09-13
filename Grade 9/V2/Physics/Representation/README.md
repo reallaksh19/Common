@@ -81,6 +81,37 @@ that never stated it would be an invented quantity, so the adapter draws its own
 frame strip instead whenever the source states no journey legs
 (`SHARED_LIBRARY_DEFAULT_JOURNEY_NOT_PRESENTED_AS_SOURCE`).
 
+## The bbox is a hard boundary, not advice (P-UPGRADE-2 item 5)
+
+Three things were advisory and are now enforced.
+
+**The clip.** The allocation passed to `render_primitive` is installed as a clip path
+around the draw, and released afterwards. No primitive can put ink on a neighbouring block
+whatever it computes. The clip stops the ink; the evidence still reports the attempt, as
+`ink_escapes_bbox` and `ink_overflow_pt`, and `strict=True` raises
+`PRIMITIVE_INK_ESCAPES_ALLOCATED_BBOX`.
+
+**The ink box is a real bound.** `TracingCanvas.ink_bbox` used to sample anchor points,
+which under-measured almost everything. Now a `TracingPath` proxy records path segment
+points **and Bezier control points** (a cubic never leaves the hull of its four points, so
+the bound is sound); arcs, ellipses and round rects contribute their enclosing boxes; and
+text contributes its measured `stringWidth` with the font's ascent and descent rather than
+the single point it was anchored at. A path operation the tracer cannot measure is reported
+in `path_ops_without_extent` and raises `TRACING_BBOX_INCOMPLETE_FOR_PATH_OP` in strict
+mode — an unmeasured path op means the ink box is not a bound at all.
+
+**The size contract.** Every primitive declares `minimum_width_pt`, `minimum_height_pt` and
+`supports_compact_variant`. The floors are *measured*, not guessed: the larger of the swept
+containment minimum against the real renderer (with each primitive's worst declared
+payload — four arrows, five conditions, four options) and a teaching floor below which the
+figure is contained but its labels are no longer legible. A smaller allocation is refused
+with `PRIMITIVE_MIN_SIZE_VIOLATION`, and the tests exercise every primitive at two sizes.
+
+Two genuine bounds defects the new measurement exposed are fixed in the primitives
+themselves rather than tolerated: `VECTOR_STATE_VIEW` escaped its box by about 30 pt on the
+left (its signed scale and value labels were laid out from a fixed offset instead of the
+allocated width) and walked off the bottom with four arrows (a fixed 22 pt row pitch).
+
 ## Physical page custody
 
 Ported from the `PhysicalPageMap` mechanism proved in draft PR #161 / PR #196

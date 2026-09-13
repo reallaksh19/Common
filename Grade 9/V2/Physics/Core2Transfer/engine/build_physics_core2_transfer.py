@@ -12,12 +12,33 @@ The hint ladder is graded by construction: H1 may not name a relation, H2 may no
 substitute, H3 may not state a result, and no level may name an option label. The
 solution supplies the full reasoning route plus an independent physical check.
 """
-import argparse, copy, hashlib, json, re
+import argparse, copy, hashlib, json, re, sys
 from collections import Counter
 from pathlib import Path
 
 D = Path(__file__).resolve().parents[1]
+PHYS = D.parent
+if str(PHYS / "CoreAuthoring" / "engine") not in sys.path:
+    sys.path.insert(0, str(PHYS / "CoreAuthoring" / "engine"))
+
+from physics_instance_resolver import ROUTE_ROLE_TO_CANONICAL  # noqa: E402
+
 LEVELS = ("H1_NOTICE", "H2_MODEL", "H3_START")
+
+# One hint level projects one route state, through one visual role. The ladder is not
+# three independently authored strings: H1 points at the representation the route
+# already needs, H2 names the model that route state selected, H3 performs only the
+# route's own first move. Internal identifiers throughout; the learner sees the
+# governed copy registry's wording.
+HINT_PROJECTION = {
+    "H1_NOTICE": {"route_role": "REPRESENT", "visual_role": "ATTENTION_CUE",
+                  "figure_title": "WHAT TO NOTICE FIRST"},
+    "H2_MODEL": {"route_role": "MODEL", "visual_role": "MODEL_REPRESENTATION",
+                 "figure_title": "DRAW IT LIKE THIS"},
+    "H3_START": {"route_role": "FRAME", "visual_role": "FIRST_MOVE_OVERLAY",
+                 "figure_title": "YOUR FIRST MOVE — STOP THERE"},
+}
+VISUAL_ROLES = ("ATTENTION_CUE", "MODEL_REPRESENTATION", "FIRST_MOVE_OVERLAY")
 
 
 def canonical(o):
@@ -158,7 +179,114 @@ def attention_clause(record):
     return "which two instants the situation is asking you to compare"
 
 
-def build_hint_ladder(page_id, record, profile, option_labels):
+# ------------------------------------------------- shared reasoning-route states
+
+
+def representation_states(record, profile, body=None):
+    """Representation specs this item's route needs, derived, never invented.
+
+    Params come from the item's own preserved ``figure_semantic`` when the source states
+    one, and are otherwise schematic-only. A Core (2) page may not invent a quantity.
+    """
+    mapping = profile["primitive_by_representation_requirement"]
+    specs = []
+    semantic = (body or {}).get("figure_semantic") or {}
+    for requirement in record["representation_requirements"]:
+        primitive = mapping.get(requirement)
+        if not primitive:
+            continue
+        params, grounding = {}, "SCHEMATIC_STRUCTURE_ONLY"
+        points = semantic.get("points")
+        if points and primitive in {"POSITION_TIME_GRAPH", "VELOCITY_TIME_GRAPH",
+                                    "SLOPE_AREA_DECODER"}:
+            params = {"points": [list(p) for p in points]}
+            grounding = "SOURCE_QUANTITIES"
+        specs.append({
+            "representation_state_id": f"RS-{requirement}",
+            "representation_requirement_ref": requirement,
+            "primitive_id": primitive,
+            "render_params": params,
+            "quantitative_grounding": grounding,
+            "source_figure_semantic_used": bool(params),
+        })
+    return specs
+
+
+def build_route_states(page_id, record, profile, reps):
+    """The typed reasoning route for this transfer item.
+
+    The same route-state shape P-G authors inside a worked instance: role,
+    input_state_refs, representation_ref, why_valid, output_state. The hint ladder and the
+    solution are both projections of these states, so they cannot drift apart.
+
+    A Core (2) route carries no numbers: the source body is preserved exactly and this
+    layer may not invent quantities, so ``equation`` stays null and the outputs are
+    declared states rather than computed values.
+    """
+    model, condition = model_clause(record)
+    rep_by_role = {}
+    for spec in reps:
+        phase_role = "REPRESENT"
+        if spec["primitive_id"] in {"SIGN_FRAME_OVERLAY"}:
+            phase_role = "FRAME"
+        if spec["primitive_id"] in {"DIAGRAM_EQUATION_BRIDGE", "MODEL_VALIDITY_GATE"}:
+            phase_role = "MODEL"
+        rep_by_role.setdefault(phase_role, spec["representation_state_id"])
+    # a representation always backs REPRESENT if any exists at all
+    if reps:
+        rep_by_role.setdefault("REPRESENT", reps[0]["representation_state_id"])
+        rep_by_role.setdefault("FRAME", reps[0]["representation_state_id"])
+        rep_by_role.setdefault("MODEL", rep_by_role["REPRESENT"])
+
+    plan = [
+        ("FRAME", "Name the body being tracked and declare the origin and positive "
+                  "direction; every signed quantity below uses that one convention.",
+         "SYSTEM_AND_FRAME", "declared frame and sign convention"),
+        ("REPRESENT", f"Read the decisive feature of the situation: {attention_clause(record)}. "
+                      "Build the representation this family needs before choosing anything.",
+         "STATE_TABLE", "the stated quantities in the representation, with the unknown marked"),
+        ("MODEL", f"Model: {model}. It holds only while {condition}.",
+         "MODEL_AND_VALIDITY", "a selected model whose conditions have been checked"),
+        ("EXECUTE", "Choose the relation whose variables are exactly the known and wanted "
+                    "state variables, then substitute the signed values.",
+         "EXECUTION", "the requested quantity, carried through without dropping a sign"),
+        ("INTERPRET", "Translate the signed result back into a direction and say what it "
+                      "means physically before selecting an option.",
+         "RESULT_INTERPRETATION", "a physical statement, not just a number"),
+        ("VERIFY", "Run a check that could reject the answer: "
+                   + "; ".join(record["verification_requirements"] or ["VERIFY_DIMENSIONS"]),
+         "PHYSICAL_VERIFICATION", "an answer that survived an independent check"),
+    ]
+    states = []
+    for i, (role, why, section, output) in enumerate(plan, 1):
+        states.append({
+            "state_id": f"{page_id}-S{i}",
+            "role": role,
+            "canonical_role_refs": ROUTE_ROLE_TO_CANONICAL[role],
+            "input_state_refs": [states[-1]["state_id"]] if states else [],
+            "representation_ref": rep_by_role.get(role),
+            "equation": None,
+            "why_valid": why,
+            "output_state": {"kind": "STATEMENT", "statement": output},
+            "solution_section_ref": section,
+        })
+    return states
+
+
+def is_spatial_family(record, profile, body=None):
+    """Spatial by declared data, not by topic name.
+
+    A family is spatial when the primary capability's own representation obligations are
+    spatial, or when the source item preserved a figure. Vectors, projectiles, paths and
+    graphs all qualify through the same rule, so a new topic needs no code change.
+    """
+    spatial = set(profile["spatial_representation_requirements"])
+    if spatial & set(record["representation_requirements"]):
+        return True
+    return bool((body or {}).get("figure_required"))
+
+
+def build_hint_ladder(page_id, record, profile, option_labels, route_states, reps, body=None):
     model, condition = model_clause(record)
     text_by_level = {
         "H1_NOTICE": profile["hint_templates"]["H1_NOTICE"].format(attention=attention_clause(record)),
@@ -167,18 +295,55 @@ def build_hint_ladder(page_id, record, profile, option_labels):
             first_move=first_move_for(record, None, profile)
         ),
     }
+    by_role = {}
+    for state in route_states:
+        by_role.setdefault(state["role"], state)
+    rep_by_id = {spec["representation_state_id"]: spec for spec in reps}
+    spatial = is_spatial_family(record, profile, body)
+    # When the capability declares more than one representation, the levels take
+    # different ones, so the ladder shows the learner a changing picture rather than the
+    # same diagram three times.
+    per_level_rep = {}
+    if len(reps) > 1:
+        for n, level in enumerate(LEVELS):
+            per_level_rep[level] = reps[n % len(reps)]["representation_state_id"]
+
     ladder = []
     for i, level in enumerate(LEVELS, 1):
         text = text_by_level[level]
         bad = hint_violations(level, text, option_labels, profile)
         if bad:
             fail("HINT_REVEALS_ANSWER", f"{page_id}:{level}:{','.join(bad)}")
+        projection = HINT_PROJECTION[level]
+        state = by_role.get(projection["route_role"])
+        if state is None:
+            fail("HINT_NOT_PROJECTED_FROM_ROUTE_STATE",
+                 f"{page_id}:{level}:no {projection['route_role']} state")
+        rep_ref = per_level_rep.get(level) or state.get("representation_ref")
+        if spatial and not rep_ref:
+            fail("SPATIAL_FAMILY_HINT_WITHOUT_REPRESENTATION", f"{page_id}:{level}")
+        spec = rep_by_id.get(rep_ref) if rep_ref else None
+        params = copy.deepcopy(spec["render_params"]) if spec else {}
+        if spec:
+            # the same representation, read for a different job at each level
+            params["title"] = projection["figure_title"]
         ladder.append({
             "hint_id": f"{page_id}-{level}",
             "level": level,
             "order": i,
             "intent": profile["hint_level_intent"][level],
             "text": text,
+            # item 4: a projection of the shared route-state object, not a free string
+            "route_state_refs": [state["state_id"]],
+            "projected_route_role": state["role"],
+            "representation_state_ref": rep_ref,
+            "visual_role": projection["visual_role"],
+            "figure": {
+                "primitive_id": spec["primitive_id"],
+                "render_params": params,
+                "quantitative_grounding": spec["quantitative_grounding"],
+            } if spec else None,
+            "diagram_first": bool(spatial and spec),
             "reveals_relation": level != "H1_NOTICE",
             "reveals_result": False,
         })
@@ -216,7 +381,7 @@ def demand_vector(record, policy):
 # ------------------------------------------------------------------ solution
 
 
-def build_solution(page_id, record, profile):
+def build_solution(page_id, record, profile, route_states=None, answer=None):
     model, condition = model_clause(record)
     sections = {
         "SYSTEM_AND_FRAME": "Name the body being tracked and declare the origin and positive direction; "
@@ -238,13 +403,71 @@ def build_solution(page_id, record, profile):
     if not record["verification_requirements"] and profile["solution_requires_independent_verification"]:
         # the capability may declare none; the route default still has to be independent
         pass
+    by_section = {}
+    for state in route_states or []:
+        by_section.setdefault(state.get("solution_section_ref"), state["state_id"])
     return {
         "solution_id": f"{page_id}-SOLUTION",
-        "sections": [{"section": s, "text": sections[s]} for s in profile["solution_required_sections"]],
+        "sections": [{"section": s, "text": sections[s],
+                      "route_state_refs": [by_section[s]] if s in by_section else []}
+                     for s in profile["solution_required_sections"]],
         "verification_steps": list(record["verification_requirements"]) or ["VERIFY_DIMENSIONS"],
         "verification_is_independent_of_solving_route": True,
         "reasoning_route_roles": list(record["reasoning_route_roles"]),
+        "reasoning_route": list(route_states or []),
+        # item 6: the transfer question resolves to the source's own answer key, never
+        # only to a hint or a "check your reasoning" prompt.
+        "final_answer": answer,
+        "answer_ref": (answer or {}).get("answer_id"),
     }
+
+
+# ------------------------------------------------------------ answer custody
+
+
+def build_answer_custody(page_id, body, record, profile):
+    """Three separate objects for a transfer question, never collapsed into one.
+
+    The answer is the source's own answer key resolved to the option text — Core (2) does
+    not author it and may not alter it. The quick check is one defining property. The
+    independent verification is a genuinely different route. A transfer page that resolves
+    only to a hint has no answer, which is what LEARNER_QUESTION_WITHOUT_ANSWER catches.
+    """
+    key = body.get("answer_key")
+    option = next((o for o in body["options"] if o["label"] == key), None)
+    if not key or option is None:
+        fail("LEARNER_QUESTION_WITHOUT_ANSWER",
+             f"{page_id}: the source body carries no resolvable answer key")
+    answer = {
+        "answer_id": f"{page_id}-ANSWER",
+        "source_answer_key": key,
+        "answer_option_label": key,
+        "statement": f"({key}) {option['text']}",
+        "derived_from_source_key": True,
+        "authored_by_core2": False,
+        "is_resolved_result": True,
+    }
+    checks = list(record["verification_requirements"]) or ["VERIFY_DIMENSIONS"]
+    quick_check = {
+        "quick_check_id": f"{page_id}-QUICK-CHECK",
+        "check_kind": "PROPERTY",
+        "prompt": "Before you commit: check the one property this family always has to "
+                  f"satisfy — {checks[0].replace('_', ' ').lower()}. If that fails, the "
+                  "option is wrong whatever the arithmetic said.",
+        "is_answer": False,
+    }
+    verification = {
+        "verification_id": f"{page_id}-INDEPENDENT-VERIFICATION",
+        "route_description": "Now check it a different way from how you solved it: "
+                             + "; ".join(c.replace("_", " ").lower() for c in checks)
+                             + ". A check that reuses your own working cannot catch your "
+                               "own mistake.",
+        "is_distinct_from_solving_route": True,
+        "is_answer": False,
+    }
+    if quick_check["prompt"] == verification["route_description"]:
+        fail("SELF_CHECK_SUBSTITUTED_FOR_ANSWER", page_id)
+    return answer, quick_check, verification
 
 
 # ---------------------------------------------------------------- core1 link
@@ -314,6 +537,9 @@ def build_plan(corpus, classification, core1_plan, study_model, study_scope,
                 ),
                 "derived_from": profile["first_step_reference_source"],
             }
+        reps = representation_states(record, profile, body)
+        route_states = build_route_states(page_id, record, profile, reps)
+        answer, quick_check, verification = build_answer_custody(page_id, body, record, profile)
         pages.append({
             "page_id": page_id,
             "candidate_ref": cid,
@@ -330,8 +556,17 @@ def build_plan(corpus, classification, core1_plan, study_model, study_scope,
             "demand_score": score,
             "core1_linkage": core1_links(page_id, row, core1_plan, segregation),
             "first_step_reference_ref": family,
-            "hint_ladder": build_hint_ladder(page_id, record, profile, option_labels),
-            "solution": build_solution(page_id, record, profile),
+            "spatial_family": is_spatial_family(record, profile, body),
+            "representation_states": reps,
+            "reasoning_route": route_states,
+            "hint_ladder": build_hint_ladder(page_id, record, profile, option_labels,
+                                             route_states, reps, body),
+            "solution": build_solution(page_id, record, profile, route_states, answer),
+            "final_answer": answer,
+            "quick_check": quick_check,
+            "independent_verification": verification,
+            "answer_ref": answer["answer_id"],
+            "answer_shown_with_the_question": False,
             "frame_sign_required": any(
                 o["reference_frame"]["required"] or o["sign_convention"]["required"]
                 for o in record["system_frame_obligations"]
@@ -436,6 +671,67 @@ def validate_plan(plan, corpus, classification, core1_plan, study_model, study_s
             fail("HINT_LADDER_COLLAPSES_TO_SOLUTION", cid + ":level order")
         if ladder[0]["level"] != "H1_NOTICE":
             fail("H1_NOTICE_SKIPPED", cid)
+
+        # item 4: every hint is a projection of the page's own route states, and a
+        # spatial family gets a diagram-first ladder rather than prose about a diagram
+        # the learner is never shown.
+        state_ids = {s["state_id"] for s in p["reasoning_route"]}
+        rep_ids = {r["representation_state_id"] for r in p["representation_states"]}
+        if not state_ids:
+            fail("HINT_NOT_PROJECTED_FROM_ROUTE_STATE", cid + ":no route states")
+        for h in ladder:
+            refs = h.get("route_state_refs") or []
+            if not refs or not set(refs) <= state_ids:
+                fail("HINT_NOT_PROJECTED_FROM_ROUTE_STATE", f"{cid}:{h['level']}")
+            if h.get("projected_route_role") != HINT_PROJECTION[h["level"]]["route_role"]:
+                fail("HINT_NOT_PROJECTED_FROM_ROUTE_STATE", f"{cid}:{h['level']}:role")
+            if h.get("visual_role") not in VISUAL_ROLES:
+                fail("HINT_NOT_PROJECTED_FROM_ROUTE_STATE", f"{cid}:{h['level']}:visual role")
+            if h.get("representation_state_ref") and h["representation_state_ref"] not in rep_ids:
+                fail("HINT_NOT_PROJECTED_FROM_ROUTE_STATE", f"{cid}:{h['level']}:representation")
+            if p["spatial_family"]:
+                if not h.get("representation_state_ref") or not h.get("figure"):
+                    fail("SPATIAL_FAMILY_HINT_WITHOUT_REPRESENTATION", f"{cid}:{h['level']}")
+                if not h.get("diagram_first"):
+                    fail("SPATIAL_FAMILY_HINT_WITHOUT_REPRESENTATION",
+                         f"{cid}:{h['level']}:not diagram-first")
+        if {h["visual_role"] for h in ladder} != set(VISUAL_ROLES):
+            fail("HINT_LADDER_COLLAPSES_TO_SOLUTION", cid + ":visual roles repeat")
+        for spec in p["representation_states"]:
+            if spec["render_params"] and not spec["source_figure_semantic_used"]:
+                fail("CORE2_INVENTS_FIGURE_QUANTITY", f"{cid}:{spec['representation_state_id']}")
+        # a hint figure may carry the source's own quantities and a caption, nothing else:
+        # Core (2) preserves the source body and may not invent a number for a diagram
+        for h in ladder:
+            figure = h.get("figure") or {}
+            numeric = [k for k, v in (figure.get("render_params") or {}).items()
+                       if not isinstance(v, str)]
+            if numeric and figure.get("quantitative_grounding") != "SOURCE_QUANTITIES":
+                fail("CORE2_INVENTS_FIGURE_QUANTITY", f"{cid}:{h['level']}:{','.join(numeric)}")
+
+        # item 6: the page resolves to the source's own answer, and never beside the question
+        answer = p.get("final_answer") or {}
+        if not answer.get("statement") or not answer.get("is_resolved_result"):
+            fail("LEARNER_QUESTION_WITHOUT_ANSWER", cid)
+        if answer.get("source_answer_key") != body.get("answer_key"):
+            fail("SOURCE_BODY_REWRITTEN", cid + ":answer key")
+        if answer.get("authored_by_core2") is not False:
+            fail("SOURCE_BODY_REWRITTEN", cid + ":answer authored by core2")
+        if p.get("answer_shown_with_the_question") is not False:
+            fail("ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE", cid)
+        for key in ("quick_check", "independent_verification"):
+            obj = p.get(key) or {}
+            if not obj or obj.get("is_answer") is not False:
+                fail("SELF_CHECK_SUBSTITUTED_FOR_ANSWER", f"{cid}:{key}")
+        if not p["independent_verification"].get("is_distinct_from_solving_route"):
+            fail("SELF_CHECK_SUBSTITUTED_FOR_ANSWER", cid + ":verification not distinct")
+        if p["solution"].get("answer_ref") != answer["answer_id"]:
+            fail("LEARNER_QUESTION_WITHOUT_ANSWER", cid + ":solution answer reference")
+        for h in ladder:
+            if answer["answer_option_label"] and re.search(
+                    rf"\boption\s+{re.escape(answer['answer_option_label'])}\b", h["text"], re.I):
+                fail("HINT_REVEALS_ANSWER", f"{cid}:{h['level']}:answer option")
+
         option_labels = [o["label"] for o in p["options"]]
         for h in ladder:
             bad = hint_violations(h["level"], h["text"], option_labels, profile)

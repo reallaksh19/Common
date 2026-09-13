@@ -1,4 +1,5 @@
 {
+  "answer_custody_rule": "Every transfer page resolves to the source's own answer key, kept as a separate object from the quick check and from the independent verification, and never printed beside the question. Core (2) does not author the answer and may not alter it.",
   "first_step_reference_source": "P-D reasoning route first role plus the primary capability's frame/sign obligation.",
   "forbidden_producer_inputs": [
     "pr156",
@@ -34,12 +35,32 @@
     "H2_MODEL": "Name the physical model and the assumption that has to hold. Still performs no step.",
     "H3_START": "Give only the first physically meaningful move. Stops before any result."
   },
+  "hint_projection_rule": "H1/H2/H3 are projections of the page's own reasoning-route states, not three independently authored strings: H1 projects the REPRESENT state as an ATTENTION_CUE, H2 the MODEL state as a MODEL_REPRESENTATION, H3 the FRAME state as a FIRST_MOVE_OVERLAY. For a spatial family the ladder is diagram-first — each hint carries the representation the route already needs, so the learner is shown the diagram rather than read prose about one. Spatial is decided by the declared representation obligations and the preserved source figure, never by topic name.",
   "hint_templates": {
     "H1_NOTICE": "Notice {attention}. Read it from the item before choosing anything.",
     "H2_MODEL": "Model: {model}. It holds only while {condition}.",
     "H3_START": "First move: {first_move}. Stop there and check it before going further."
   },
-  "profile_digest": "9d23807f464e88b50952817e9e4a36b3da37a81285628ba2417ef9f19961e434",
+  "primitive_by_representation_requirement": {
+    "ACCELERATION_TIME_GRAPH": "ACCELERATION_TIME_GRAPH",
+    "EQUATION_STATE_RELATION": "DIAGRAM_EQUATION_BRIDGE",
+    "FORCE_DIAGRAM": "FORCE_DIAGRAM",
+    "FREE_BODY_DIAGRAM": "FORCE_DIAGRAM",
+    "MOTION_PATH_DIAGRAM": "TRAJECTORY_VIEW",
+    "MOTION_VECTOR_DIAGRAM": "VECTOR_STATE_VIEW",
+    "OPTION_GRAPH_SET": "OPTION_GRAPH_SET_VIEW",
+    "PHASE_STRIP": "PHASE_BOUNDARY_VIEW",
+    "POSITION_TIME_GRAPH": "POSITION_TIME_GRAPH",
+    "RATE_TABLE": "STATE_TABLE",
+    "RELATIVE_STATE_DIAGRAM": "RELATIVE_FRAME_VIEW",
+    "SIGNED_AREA_VIEW": "SLOPE_AREA_DECODER",
+    "SIGNED_AXIS": "SIGN_FRAME_OVERLAY",
+    "SOURCE_GRAPH": "SLOPE_AREA_DECODER",
+    "STATE_TABLE": "STATE_TABLE",
+    "TIMELINE_INTERVAL": "TIMELINE_INTERVAL_VIEW",
+    "VELOCITY_TIME_GRAPH": "VELOCITY_TIME_GRAPH"
+  },
+  "profile_digest": "7665a358d2b0fc4419d2ca17c253430791d0a243c1aed18de0d073e616b67929",
   "profile_id": "PHY-P-I-CORE2-AUTHORING-v1",
   "schema_version": "1.0.0",
   "solution_required_sections": [
@@ -53,5 +74,20 @@
   ],
   "solution_requires_independent_verification": true,
   "source_body_preservation": "EXACT",
+  "spatial_representation_requirements": [
+    "MOTION_PATH_DIAGRAM",
+    "MOTION_VECTOR_DIAGRAM",
+    "RELATIVE_STATE_DIAGRAM",
+    "FREE_BODY_DIAGRAM",
+    "FORCE_DIAGRAM",
+    "POSITION_TIME_GRAPH",
+    "VELOCITY_TIME_GRAPH",
+    "ACCELERATION_TIME_GRAPH",
+    "SIGNED_AREA_VIEW",
+    "SOURCE_GRAPH",
+    "OPTION_GRAPH_SET",
+    "PHASE_STRIP",
+    "SIGNED_AXIS"
+  ],
   "subject": "PHYSICS"
 }

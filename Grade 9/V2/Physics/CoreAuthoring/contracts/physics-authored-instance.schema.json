@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-authored-instance.schema.json",
+  "title": "PhysicsAuthoredInstance",
+  "description": "A resolved Physics problem instance. Subject-wide and generic: Motion 1D, free fall, graphs, multiphase and projectile instances are data rows of this one shape, never separate schemas. The reasoning route states are the same objects the P-I hint ladder projects from.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "instance_id", "instance_template_ref", "problem_family_ref", "situation", "question",
+    "frame", "givens", "unknown", "reasoning_route", "final_answer", "quick_check",
+    "independent_verification", "instantiated"
+  ],
+  "properties": {
+    "instance_id": {"type": "string", "minLength": 1},
+    "instance_template_ref": {"type": "string", "minLength": 1},
+    "problem_family_ref": {"type": "string", "minLength": 1},
+    "topic_ref": {"type": ["string", "null"]},
+    "support_stage": {"type": ["string", "null"]},
+    "variant_index": {"type": "integer", "minimum": 0},
+    "situation": {"type": "string", "minLength": 1},
+    "question": {"type": "string", "minLength": 1},
+    "frame": {
+      "type": "object",
+      "required": ["system", "origin", "positive_direction"],
+      "properties": {
+        "system": {"type": "string", "minLength": 1},
+        "origin": {"type": "string", "minLength": 1},
+        "positive_direction": {"type": "string", "minLength": 1},
+        "axis": {"type": "string"}
+      }
+    },
+    "givens": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["symbol", "quantity", "value", "unit"],
+        "properties": {
+          "symbol": {"type": "string", "minLength": 1},
+          "quantity": {"type": "string", "minLength": 1},
+          "value": {"type": "number"},
+          "unit": {"type": "string"},
+          "sign_note": {"type": "string"},
+          "stated_in_situation": {"const": true}
+        }
+      }
+    },
+    "unknown": {
+      "type": "object",
+      "required": ["symbol", "quantity"],
+      "properties": {
+        "symbol": {"type": "string", "minLength": 1},
+        "quantity": {"type": "string", "minLength": 1},
+        "unit": {"type": "string"}
+      }
+    },
+    "representation_refs": {"type": "array", "items": {"type": "string"}},
+    "reasoning_route": {
+      "type": "array",
+      "minItems": 3,
+      "items": {"$ref": "physics-instance-route-state.schema.json"}
+    },
+    "final_answer": {
+      "description": "The resolved result. Never a hint, never a check.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["answer_id", "symbol", "value", "statement", "is_resolved_result"],
+      "properties": {
+        "answer_id": {"type": "string", "minLength": 1},
+        "symbol": {"type": "string", "minLength": 1},
+        "value": {"type": "number"},
+        "unit": {"type": "string"},
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["symbol", "value"],
+            "properties": {
+              "symbol": {"type": "string"},
+              "quantity": {"type": "string"},
+              "value": {"type": "number"},
+              "unit": {"type": "string"}
+            }
+          }
+        },
+        "statement": {"type": "string", "minLength": 1},
+        "is_resolved_result": {"const": true}
+      }
+    },
+    "quick_check": {
+      "description": "One defining property, sign or unit. Never a substitute for the answer.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quick_check_id", "check_kind", "prompt", "is_answer"],
+      "properties": {
+        "quick_check_id": {"type": "string", "minLength": 1},
+        "check_kind": {"enum": ["PROPERTY", "SIGN", "UNIT", "LIMIT_CASE", "MAGNITUDE"]},
+        "prompt": {"type": "string", "minLength": 1},
+        "property_expression": {"type": ["string", "null"]},
+        "property_holds": {"type": ["boolean", "null"]},
+        "is_answer": {"const": false}
+      }
+    },
+    "independent_verification": {
+      "description": "A genuinely distinct route to the same number, evaluated as real arithmetic.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verification_id", "route_description", "equation", "value",
+        "agrees_with_answer", "is_distinct_from_solving_route", "is_answer"
+      ],
+      "properties": {
+        "verification_id": {"type": "string", "minLength": 1},
+        "route_description": {"type": "string", "minLength": 1},
+        "equation": {"type": "string", "minLength": 1},
+        "substitution": {"type": "string"},
+        "value": {"type": "number"},
+        "compare_to": {"enum": ["FINAL_ANSWER", "EXPRESSION"]},
+        "expected_equation": {"type": ["string", "null"]},
+        "agrees_with_answer": {"const": true},
+        "agreement_text": {"type": "string"},
+        "is_distinct_from_solving_route": {"const": true},
+        "is_answer": {"const": false}
+      }
+    },
+    "instantiated": {"const": true}
+  }
+}

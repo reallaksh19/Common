@@ -1,0 +1,35 @@
+{
+  "ai_pre_review_is_advisory_only": true,
+  "ai_pre_review_ref": "PHY-P-L-AI-PRE-REVIEW-v1",
+  "blocking_reason": "Machine publication-engineering gates are green, but no authorized human reviewer has examined these exact artifacts, so subject, pedagogical, assessment and visual states remain PENDING and the product is not mature.",
+  "blocking_states": [
+    "ASSESSMENT_DESIGN",
+    "MATURE_DESIGN_QUALITY",
+    "PEDAGOGICAL_DESIGN",
+    "REFERENCE_COMPARABILITY",
+    "SUBJECT_CORRECTNESS",
+    "VISUAL_USABILITY"
+  ],
+  "candidate_digest": "597cb3569e8f3c3d18588bf0a9e9bfaeffe4ffd025205abd58fd0d40d67d75eb",
+  "candidate_ref": "PHY-P-L-EXACT-CANDIDATE-v1",
+  "classification": "BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT",
+  "exit_code": 2,
+  "learning_effectiveness": "STUDY_REQUIRED",
+  "policy_ref": "PHY-P-L-EXACT-PRODUCT-QUALITY-v1",
+  "quality_states": {
+    "ASSESSMENT_DESIGN": "PENDING",
+    "MATURE_DESIGN_QUALITY": "PENDING",
+    "PEDAGOGICAL_DESIGN": "PENDING",
+    "PUBLICATION_ENGINEERING": "PASS",
+    "REFERENCE_COMPARABILITY": "NOT_RUN",
+    "SUBJECT_CORRECTNESS": "PENDING",
+    "VISUAL_USABILITY": "PENDING"
+  },
+  "reference_comparator_allowed_stage": "AFTER_ALL_HUMAN_GATES_PASS",
+  "reference_comparator_id": "FROZEN_PR156_MATURE_DESIGN_COMPARATOR",
+  "release_digest": "f278678e1a431474d142909d3d8ccf388b151a81a0d4b21fd0856b0f5677dd3b",
+  "release_id": "PHY-P-L-EXACT-RELEASE-v1",
+  "schema_version": "1.0.0",
+  "state_evidence": {},
+  "subject": "PHYSICS"
+}
