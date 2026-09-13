@@ -7,10 +7,16 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 def validate(rep, fixture, root:Path=ROOT):
-    Draft202012Validator(load(root/'contracts'/'physics-core1-source-contract.schema.json')).validate(fixture['source_contract'])
-    Draft202012Validator(load(root/'contracts'/'physics-core1-answer-contract.schema.json')).validate(fixture['answer_contract'])
-    required={'schema_version','representation_id','task','source_contract_ref','answer_contract_ref','sections','practice_ladder','verification','transfer_bridge'}
-    if set(rep)!=required: raise AssertionError('REPRESENTATION_SHAPE_DRIFT')
+    schemas={
+        'source': load(root/'contracts'/'physics-core1-source-contract.schema.json'),
+        'answer': load(root/'contracts'/'physics-core1-answer-contract.schema.json'),
+        'task': load(root/'contracts'/'physics-core1-production-task.schema.json'),
+        'representation': load(root/'contracts'/'physics-core1-learning-representation.schema.json'),
+    }
+    Draft202012Validator(schemas['source']).validate(fixture['source_contract'])
+    Draft202012Validator(schemas['answer']).validate(fixture['answer_contract'])
+    Draft202012Validator(schemas['task']).validate(fixture['task'])
+    Draft202012Validator(schemas['representation']).validate(rep)
     if fixture['task'].get('treatment') not in {'FULL_LEARNING','READY_VERIFY_ONLY','PROBE_FIRST'}: raise AssertionError('BAD_TASK_TREATMENT')
     profile=fixture['scaffold_profile']; kinds={s['kind'] for s in rep['sections']}
     missing=set(profile['required_kinds'])-kinds
@@ -21,7 +27,7 @@ def validate(rep, fixture, root:Path=ROOT):
     if fixture['task']['treatment']=='READY_VERIFY_ONLY' and any(k in kinds for k in {'SEE','REALIZE','UNDERSTAND'}): raise AssertionError('READY_VERIFY_RETAUGHT')
     if fixture['task']['treatment']=='PROBE_FIRST' and kinds!={'PROBE'}: raise AssertionError('PROBE_FIRST_RETAUGHT')
     if not rep['transfer_bridge']['do_not_leak_external_items']: raise AssertionError('TRANSFER_CUSTODY_LOST')
-    return {'status':'PASS','representation_id':rep['representation_id'],'checks':['SCHEMAS','TREATMENT','SCAFFOLD','VISUAL_STAGING','PRACTICE_LADDER','TRANSFER_CUSTODY']}
+    return {'status':'PASS','representation_id':rep['representation_id'],'checks':['SCHEMAS','TASK_CONTRACT','REPRESENTATION_CONTRACT','TREATMENT','SCAFFOLD','VISUAL_STAGING','PRACTICE_LADDER','TRANSFER_CUSTODY']}
 
 def main():
     import argparse
