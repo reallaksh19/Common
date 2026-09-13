@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-core2a-challenge-item.schema.json",
+  "title": "Chemistry Core2A Generated Challenge Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "challenge_id","schema_version","subject","lane","anchor_source_question_ref",
+    "core1a_binding","problem_family_ref","archetype_ref","archetype_name",
+    "novelty_mechanisms","prompt","learner_support","chemistry_validation",
+    "near_copy_check","answer_path","provenance","item_digest"
+  ],
+  "properties": {
+    "challenge_id": {"type":"string","pattern":"^CHEM-C2A-CH-"},
+    "schema_version": {"const":"1.0.0"},
+    "subject": {"const":"CHEMISTRY"},
+    "lane": {"const":"GENERATED_ORIGINAL"},
+    "anchor_source_question_ref": {"type":"string","minLength":1},
+    "core1a_binding": {
+      "type":"object","additionalProperties":false,
+      "required":["bucket_id","taught_capability_refs","h1_evidence_refs","h2_evidence_refs","h3_evidence_refs"],
+      "properties": {
+        "bucket_id":{"type":"string","minLength":1},
+        "taught_capability_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}},
+        "h1_evidence_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}},
+        "h2_evidence_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}},
+        "h3_evidence_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}}
+      }
+    },
+    "problem_family_ref":{"type":"string","pattern":"^PF-"},
+    "archetype_ref":{"type":"string","pattern":"^CHEM-ARCH-"},
+    "archetype_name":{"enum":["NEAR_TRANSFER","REVERSED_TARGET","HIDDEN_INFORMATION","REPRESENTATION_SWITCH","ERROR_DIAGNOSIS","COMPARE_RANK","CONDITION_EXCEPTION","MULTI_STEP_BRIDGE","CONSERVATION_RECONSTRUCTION","MIXED_SYNTHESIS"]},
+    "novelty_mechanisms":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}},
+    "prompt":{"type":"string","minLength":12},
+    "learner_support":{"type":"object"},
+    "chemistry_validation": {
+      "type":"object","additionalProperties":false,
+      "required":["validator","checks","expected_answer","status"],
+      "properties": {
+        "validator":{"type":"string","minLength":1},
+        "checks":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}},
+        "expected_answer":{"type":"string","minLength":1},
+        "status":{"const":"PASS"}
+      }
+    },
+    "near_copy_check": {
+      "type":"object","additionalProperties":false,
+      "required":["max_sequence_ratio","max_token_jaccard","closest_source_question_ref","exact_copy","status"],
+      "properties": {
+        "max_sequence_ratio":{"type":"number","minimum":0,"maximum":1},
+        "max_token_jaccard":{"type":"number","minimum":0,"maximum":1},
+        "closest_source_question_ref":{"type":"string","minLength":1},
+        "exact_copy":{"const":false},
+        "status":{"const":"PASS"}
+      }
+    },
+    "answer_path":{"type":"object"},
+    "provenance":{"type":"object"},
+    "item_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
