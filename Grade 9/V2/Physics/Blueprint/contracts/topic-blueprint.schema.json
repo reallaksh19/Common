@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-topic-blueprint.schema.json",
+  "title":"Physics Topic Blueprint",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","topic_blueprint_id","subject","grade","topic_id","title","canonical_blueprint_root","evidence","expected_route","route_must_be_derived","pilot_bindings","topic_blueprint_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "topic_blueprint_id":{"type":"string","pattern":"^TB-PHY-"},
+    "subject":{"const":"PHYSICS"},
+    "grade":{"type":"integer","minimum":9,"maximum":11},
+    "topic_id":{"type":"string","minLength":1},
+    "title":{"type":"string","minLength":1},
+    "canonical_blueprint_root":{"const":"Grade 9/V2/Physics/Blueprint"},
+    "evidence":{"type":"object"},
+    "expected_route":{"enum":["CORE1_FIRST","CORE2_FIRST","BLOCK"]},
+    "route_must_be_derived":{"const":true},
+    "pilot_bindings":{"type":"object","additionalProperties":false,"required":["join_fixture","control_state_fixture","core1a_stage_fixture","core2a_runtime_root"],"properties":{"join_fixture":{"type":"string","minLength":1},"control_state_fixture":{"type":"string","minLength":1},"core1a_stage_fixture":{"type":"string","minLength":1},"core2a_runtime_root":{"type":"string","minLength":1}}},
+    "topic_blueprint_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

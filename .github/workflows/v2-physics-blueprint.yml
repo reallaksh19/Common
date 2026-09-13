@@ -38,3 +38,7 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_core1a_stage_machine.py"
       - name: Prove manuscript gate from exact Join and control-state digests
         run: python "Grade 9/V2/Physics/Blueprint/engine/compile_core1a_stage_run.py" "Grade 9/V2/Physics/Blueprint/fixtures/core1a/stage-run-ready.json" --join /tmp/physics-join.json --control-state /tmp/physics-control-state.json --out /tmp/physics-core1a-stage-run.json
+      - name: Run Motion-in-a-Plane topic-pilot falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_topic_pilot.py"
+      - name: Validate Motion-in-a-Plane topic blueprint and derived route
+        run: python "Grade 9/V2/Physics/Blueprint/engine/validate_topic_blueprint.py" "Grade 9/V2/Physics/Blueprint/topics/motion-in-a-plane.v1.json"

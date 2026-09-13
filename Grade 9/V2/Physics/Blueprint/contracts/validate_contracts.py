@@ -6,7 +6,7 @@ from jsonschema import Draft202012Validator
 ROOT=Path(__file__).resolve().parents[1]
 def load(path:Path):return json.loads(path.read_text(encoding="utf-8"))
 def validate():
-    names=["architecture-blueprint.schema.json","packet-envelope.schema.json","evidence-state.schema.json","routing-decision.schema.json","independent-validation-session.schema.json","join-packet.schema.json","role-bindings.schema.json","learner-purpose-control-state.schema.json","core1a-stage-run.schema.json"];schemas={n:load(ROOT/"contracts"/n) for n in names}
+    names=["architecture-blueprint.schema.json","packet-envelope.schema.json","evidence-state.schema.json","routing-decision.schema.json","independent-validation-session.schema.json","join-packet.schema.json","role-bindings.schema.json","learner-purpose-control-state.schema.json","core1a-stage-run.schema.json","topic-blueprint.schema.json"];schemas={n:load(ROOT/"contracts"/n) for n in names}
     for s in schemas.values():Draft202012Validator.check_schema(s)
     Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(load(ROOT/"policy"/"architecture.v1.json"));bindings=load(ROOT/"policy"/"role-bindings.v1.json");Draft202012Validator(schemas["role-bindings.schema.json"]).validate(bindings)
     ev=Draft202012Validator(schemas["evidence-state.schema.json"])
