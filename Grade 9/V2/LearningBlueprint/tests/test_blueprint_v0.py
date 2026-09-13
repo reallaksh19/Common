@@ -29,9 +29,15 @@ class BlueprintV0Test(unittest.TestCase):
     def setUpClass(cls):
         cls.gt_schema = load(ROOT / "contracts" / "ground-truth-manifest.schema.json")
         cls.routing_schema = load(ROOT / "contracts" / "routing-input.schema.json")
+        cls.route_packet_schema = load(ROOT / "contracts" / "routing-decision.schema.json")
         cls.override_schema = load(ROOT / "contracts" / "owner-override.schema.json")
         cls.packet_schema = load(ROOT / "contracts" / "packet-envelope.schema.json")
         cls.goldens = load(ROOT / "golden" / "routing-goldens.json")["fixtures"]
+
+    def validate_route_packet(self, route):
+        route_schema = copy.deepcopy(self.route_packet_schema)
+        route_schema["allOf"][0] = copy.deepcopy(self.packet_schema)
+        jsonschema.Draft202012Validator(route_schema).validate(route)
 
     def test_all_routing_goldens(self):
         decisions = set()
@@ -46,8 +52,7 @@ class BlueprintV0Test(unittest.TestCase):
             decisions.add(route["system_decision"])
             self.assertEqual(route["system_decision"], fixture["expected_system_decision"], fixture["fixture_id"])
             self.assertEqual(route["final_decision"], fixture["expected_final_decision"], fixture["fixture_id"])
-            packet_view = {key: route[key] for key in self.packet_schema["required"]}
-            jsonschema.Draft202012Validator(self.packet_schema).validate(packet_view)
+            self.validate_route_packet(route)
             if "expected_assessment_interpretation" in fixture:
                 self.assertEqual(frozen["assessment_evidence_interpretation"], fixture["expected_assessment_interpretation"])
 
@@ -97,6 +102,7 @@ class BlueprintV0Test(unittest.TestCase):
         self.assertEqual(overridden["final_decision"], "CORE2_FIRST")
         self.assertEqual(overridden["override_audit"]["system_finding"], "CORE1_FIRST")
         self.assertTrue(overridden["override_audit"]["applied"])
+        self.validate_route_packet(overridden)
 
     def test_soft_override_cannot_bypass_block(self):
         fixture = copy.deepcopy(next(f for f in self.goldens if f["fixture_id"] == "SOFT-OVERRIDE-CANNOT-BYPASS-CONFLICT"))
@@ -105,6 +111,7 @@ class BlueprintV0Test(unittest.TestCase):
         self.assertEqual(overridden["system_decision"], "BLOCK_CONFLICT")
         self.assertEqual(overridden["final_decision"], "BLOCK_CONFLICT")
         self.assertFalse(overridden["override_audit"]["applied"])
+        self.validate_route_packet(overridden)
 
     def test_deterministic_replay(self):
         fixture = copy.deepcopy(next(f for f in self.goldens if f["fixture_id"] == "COARSE-SYLLABUS-RICH-QUESTIONS"))
