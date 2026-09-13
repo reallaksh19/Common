@@ -1,6 +1,6 @@
 # Mathematics V2 — Core (2A): cited challenge practice
 
-Core (2) remains the governed semantic transfer plan over the **original source questions**. Core (2A) now has two learner-product lanes:
+Core (2) remains the governed semantic transfer plan over the **original source questions**. Core (2A) has two learner-product lanes:
 
 ```text
 Core (1) + Core (1A) + Core (2)
@@ -17,6 +17,22 @@ core2a_student_challenge_practice.pdf
 ```
 
 The competitive corpus influences **question design and reasoning demand**, not curriculum authority. A generated challenge may only require mathematics already taught or explicitly approved upstream.
+
+## Canonical execution authority
+
+Future agents must execute Core2A through:
+
+`Grade 9/V2/Mathematics/LearnerProduct/EXECUTION_CONTRACT.md`
+
+and the policy:
+
+`LearnerProduct/policies/math-core2a-execution-policy.json`
+
+Do not infer challenge counts, challenge type, help order, citation behavior, or learner vocabulary from this README alone. Those decisions are machine-governed in the LearnerProduct contracts/policies.
+
+The current Core2A semantic contract is:
+
+`Core2A/contracts/math-core2a-challenge-plan.schema.json` (`schema_version = 2.0.0`).
 
 ## Source lane — immutable Core (2)
 
@@ -42,12 +58,28 @@ Fresh challenge questions must never replace, renumber or silently rewrite a Cor
 Core (1) mathematical authority
 + Core (1A) teaching buckets / representations
 + Core (2) source-question demand
-+ verified JEE / IOQM / RMO / INMO / IMO-style benchmark material
++ governed competitive archetypes
 ```
+
+The canonical archetype registry is:
+
+`LearnerProduct/registry/math-competitive-archetype-registry.json`
 
 Generated questions must be mathematically fresh. Official archives may be used to benchmark style, compactness, inference depth, representation shifts and synthesis demand, but an original generated question must not be presented as an official historical exam question.
 
 Difficulty must come from mathematical thinking — hidden structure, reversed targets, representation shifts, mixed ideas or deeper inference — not merely larger numbers or uglier arithmetic.
+
+## Challenge selection is not discretionary
+
+Apply `MATH-CORE2A-EXECUTION-v1`:
+
+- preserve every Core2 source anchor;
+- create one `NEAR_TRANSFER` slot per eligible bucket;
+- create one `STRUCTURAL_VARIATION` slot per eligible bucket;
+- create `MIXED_SYNTHESIS` only when at least two required buckets are mature/taught;
+- use the declared structural-variation priority rather than inventing a new ladder;
+- independently solve every generated item;
+- fail if the item requires untaught mathematics or is materially too close to a source item.
 
 ## Citation contract — shown with the question itself
 
@@ -68,15 +100,21 @@ For fresh challenge questions, the inline note must distinguish:
 - the official competitive archive used only as a style/demand benchmark;
 - the fact that the wording and mathematical instance are original to the workbook.
 
-The canonical contract is:
+Reusable provenance semantics are governed by:
 
-`Core2A/contracts/math-core2a-challenge-plan.schema.json`
+`LearnerProduct/contracts/math-question-provenance.schema.json`
 
-and requires `question_citation_policy = INLINE_WITH_EACH_QUESTION`.
+and:
+
+`LearnerProduct/policies/math-question-citation-policy.json`.
 
 ## Learner-facing help language
 
-Internal pipeline language must not appear in the learner product. Use stable child-friendly labels:
+Internal pipeline language must not appear in the learner product. The canonical vocabulary is owned by:
+
+`LearnerProduct/policies/math-learner-language-policy.json`.
+
+Stable public labels are:
 
 ```text
 TRY IT FIRST
@@ -91,8 +129,6 @@ WHERE THIS QUESTION CAME FROM
 
 Do not expose internal terms such as `reasoning route`, `repair route`, `grounding`, `learning atom`, `demand vector`, `transfer ladder`, registry IDs or publication-engineering terminology.
 
-The underlying semantic objects can remain technical internally; only the learner-facing surface is constrained here.
-
 ## Help progression
 
 Core (2A) keeps the Core (2) H1/H2/H3 semantics but translates them for the learner:
@@ -104,7 +140,9 @@ H2  BIGGER CLUE      — choose the mathematical idea / representation
 H3  HOW DO I START?  — first executable mathematical move
 ```
 
-After the clues, `THINK IT THROUGH` explains the strategy without hiding the key reasoning, then `FULL WORKING` executes the algebra/arithmetic, and `QUICK CHECK` verifies the result independently where appropriate.
+After the clues, `THINK IT THROUGH` explains the strategy, `FULL WORKING` executes the mathematics, and `QUICK CHECK` verifies the result independently where appropriate.
+
+The v2 Core2A schema requires each clue to bind back to taught Core1A content and requires an independent mathematical check for every item.
 
 ## Core (1A) relationship
 
@@ -123,6 +161,14 @@ mixed or competitive-style challenge
 ```
 
 A challenge must fail closed if it requires a capability that is not taught or otherwise approved upstream.
+
+## Golden process reference
+
+Use:
+
+`LearnerProduct/golden/theory-of-equations/`
+
+as the process example. Copy the **execution pattern**, not the Theory of Equations mathematics, into a new topic.
 
 ## Release and source integrity
 
@@ -145,12 +191,16 @@ CORE2A_SOURCE_STEM_DRIFT
 CORE2A_QUESTION_ID_DRIFT
 CORE2A_ATTEMPT_SOLUTION_ADJACENCY_LOST
 CORE2A_HINT_DISCLOSES_SOLUTION
+CORE2A_HINT_ATOM_NOT_PRETAUGHT
 CORE2A_SOLUTION_DEPTH_COLLAPSED
 CORE2A_VERIFICATION_LOST
 CORE2A_CORE1_LINK_DRIFT
 CORE2A_ASSESSMENT_SAFETY_LOST
 CORE2A_MULTI_SOLUTION_COLLAPSED
 CORE2A_UNTAUGHT_MATH_REQUIRED
+CORE2A_CHALLENGE_TARGET_UNGROUNDED
+CORE2A_GENERATED_ITEM_NOT_INDEPENDENTLY_VERIFIED
+CORE2A_GENERATED_ITEM_TOO_CLOSE_TO_SOURCE
 CORE2A_QUESTION_CITATION_MISSING
 CORE2A_CITATION_NOT_INLINE
 CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION
