@@ -1,0 +1,24 @@
+{
+  "policy_id": "CHEM-QUESTION-CITATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "inline_provenance_required": true,
+  "consolidated_bibliography_sufficient": false,
+  "source_item_rule": "A SOURCE_CORE2 item must identify its exact governed source question on the learner question surface.",
+  "generated_item_rule": "A GENERATED_ORIGINAL item must disclose that it is fresh/original when true and distinguish concept support, Core2 anchor, competition benchmark role and origin disclosure.",
+  "official_attribution_rule": "An official exam/year/question claim is permitted only when an exact official source has been independently verified.",
+  "allowed_citation_kinds": [
+    "CORE2_SOURCE",
+    "CORE1_TEACHING",
+    "CORE1A_TEACHING",
+    "COMPETITION_BENCHMARK",
+    "GENERATED_ORIGINAL"
+  ],
+  "learner_label": "WHERE THIS QUESTION CAME FROM",
+  "stop_conditions": [
+    "QUESTION_PROVENANCE_MISSING",
+    "SOURCE_LOCATOR_MISSING",
+    "CITATION_ROLE_AMBIGUOUS",
+    "FALSE_OFFICIAL_ATTRIBUTION"
+  ]
+}
