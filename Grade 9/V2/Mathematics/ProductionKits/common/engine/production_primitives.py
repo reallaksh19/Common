@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 PURPOSES = ("STARTER", "PRACTICE", "REVISION", "COMPETITION")
+REPRESENTATION_PURPOSES = PURPOSES + ("CORE1A_TEACHING",)
 REPRESENTATION_STAGES = (
     "SEE_THE_OBJECT","SEPARATE_THE_PARTS","SHOW_INFORMATION_FLOW","MAP_TO_SYMBOLS",
     "REBUILD_THE_MODEL","CHECK_UNDERSTANDING","CONNECT_TO_CORE2",
@@ -28,7 +29,8 @@ def route_task(intent: dict) -> dict:
     purpose = intent.get("purpose")
     if stage == "CORE2A" and purpose not in PURPOSES:
         return {"status":"NEEDS_USER_INPUT","code":"CORE2A_USER_PURPOSE_REQUIRED","question":CORE2A_PURPOSE_PROMPT,"allowed_answers":list(PURPOSES)}
-    if purpose is not None and purpose not in PURPOSES: fail("TASK_ROUTER_UNKNOWN_PURPOSE", str(purpose))
+    if stage != "CORE2A" and purpose is not None:
+        fail("TASK_ROUTER_PURPOSE_NOT_APPLICABLE", f"{stage}:{purpose}")
     return {"status":"ROUTED","stage":stage,"purpose":purpose,"scope":copy.deepcopy(intent.get("scope") or {})}
 
 def validate_source_bundle(bundle: dict, required_roles: set[str]) -> dict:
@@ -75,7 +77,7 @@ def build_scaffold_plan(purpose: str, profiles: dict[str,dict], bucket_ref: str)
     return {"scaffold_plan_id":"MATH-SCF-"+digest({"purpose":purpose,"bucket":bucket_ref,"profile":row})[:16],"purpose":purpose,"bucket_ref":bucket_ref,"profile_id":row["profile_id"],"settings":row["settings"]}
 
 def build_learning_representation(*,bucket_ref:str,purpose:str,stage_inputs:dict[str,dict],required_atom_refs:list[str]) -> dict:
-    if purpose not in PURPOSES: fail("REPRESENTATION_UNKNOWN_PURPOSE",purpose)
+    if purpose not in REPRESENTATION_PURPOSES: fail("REPRESENTATION_UNKNOWN_PURPOSE",purpose)
     stages=[]; covered=set()
     for stage in REPRESENTATION_STAGES:
         row=copy.deepcopy(stage_inputs.get(stage) or {}); status=row.get("status")
