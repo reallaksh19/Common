@@ -1,0 +1,14 @@
+{
+  "task":{"schema_version":"1.0.0","task_id":"CORE2-TASK-QG01-HIGH","question_id":"QG01","question_type":"MCQ","guide_demand":"HIGH","scaffold_profile_id":"CORE2-GUIDE-HIGH","required_inputs":["SOURCE_CONTRACT","ANSWER_CONTRACT","CORE1_LINK","SCAFFOLD_PROFILE"],"required_outputs":["TRANSFER_REPRESENTATION","VALIDATION_REPORT"]},
+  "source_contract":{"schema_version":"1.0.0","source_contract_id":"CORE2-SRC-QG01","question_id":"QG01","source_body":{"stem":"A projectile is launched at 40 m/s at 30 degrees above the horizontal. What is its initial vertical velocity component?","options":["10 m/s","20 m/s","20sqrt(3) m/s","40 m/s"]},"source_link":"fixture://core2/qg01","figure_semantics":["launch arrow at 30 degrees above +x","orthogonal x-y axes"],"source_digest":"QG01-SYNTH-001","eligible":true,"production_claim":false,"provenance_note":"Synthetic golden fixture for production-kit validation; not a real examination source."},
+  "answer_contract":{"schema_version":"1.0.0","answer_contract_id":"CORE2-ANS-QG01","question_id":"QG01","answer_type":"MCQ","canonical_answer":"choice-2","solution_steps":["Use the launch triangle: the vertical component is u sin(theta).","Evaluate 40 sin(30 degrees) to obtain 20 m/s, which corresponds to the second option."],"verification_route":["The vertical component must be less than the launch speed and positive for an upward launch."],"forbidden_hint_tokens":["20 m/s","second option","choice-2"]},
+  "scaffold_profile":{"profile_id":"CORE2-GUIDE-HIGH","guide_demand":"HIGH","minimum_representation_stages":3,"hint_order":["H1_NOTICE","H2_MODEL","H3_START"],"solution_after_hints":true},
+  "core1_link":{"lesson_ref":"CORE1-LESSON-VECTOR-COMPONENTS","capability_ref":"PHY-CAP-VECTOR-COMPONENTS"},
+  "first_step_reference":"Draw the launch velocity triangle and identify the component opposite the launch angle.",
+  "hint_seed":[
+    {"level":"H1_NOTICE","text":"Notice which part of the launch velocity points vertically."},
+    {"level":"H2_MODEL","text":"Resolve the launch vector into horizontal and vertical components using a right triangle."},
+    {"level":"H3_START","text":"Start with the vertical component relation u_y = u sin(theta)."}
+  ],
+  "representation_stages":["show the launch arrow","drop orthogonal component guides","highlight the vertical component"]
+}
