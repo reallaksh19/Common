@@ -1,0 +1,76 @@
+{
+  "policy_id": "CHEM-CORE1A-BUCKET-SYNTHESIS-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_order": [
+    "SOURCE_INTEGRITY",
+    "C_F_LEARNER_STUDY_MODEL",
+    "C_G_CORE1",
+    "C_H_REPRESENTATION",
+    "C_I_CORE2",
+    "CORE1A_BUCKET_SYNTHESIS"
+  ],
+  "grouping": {
+    "capability_coverage": "EXACTLY_ONCE",
+    "group_by": "CANONICAL_PRIMARY_PROBLEM_FAMILY",
+    "primary_family_authority": "PROBLEM_FAMILY_REGISTRY_CAPABILITY_DEFAULT",
+    "allow_renderer_grouping": false,
+    "preserve_core1_capability_order": true,
+    "ungrounded_family_action": "FAIL_CLOSED"
+  },
+  "learner_state": {
+    "authority": "C_F_ONLY",
+    "preserve_fields": ["learner_state", "treatment", "priority"],
+    "invent_parallel_readiness_taxonomy": false,
+    "intrinsic_difficulty_is_not_learner_state": true
+  },
+  "intrinsic_difficulty_from_core2_badge": {
+    "FOUNDATION": "D1",
+    "STANDARD": "D2",
+    "DEEP": "D3",
+    "VERY_DEEP": "D3",
+    "NO_PRIMARY_CORE2": "D1"
+  },
+  "learning_atom_sources": [
+    "ORDINARY_LANGUAGE_EXPLANATION",
+    "RULE_MODEL_CONDITION",
+    "RECONSTRUCTION_STEPS",
+    "WORKED_EXAMPLE_REASONING",
+    "MISCONCEPTION_MINIMAL_CONTRAST",
+    "TRANSFER_BRIDGE"
+  ],
+  "representation_sequence": [
+    "SEE_THE_PHENOMENON",
+    "SEE_THE_PARTICLES",
+    "SEE_THE_CHEMICAL_STRUCTURE",
+    "SEE_THE_SYMBOLS",
+    "CONNECT_THE_QUANTITIES",
+    "DO_THE_CHEMISTRY",
+    "VERIFY_THE_RESULT",
+    "CONNECT_TO_CORE2"
+  ],
+  "representation_rule": "Every stage is explicit. A stage may be NOT_APPLICABLE only with a reason. All C-H representations bound to a bucket remain mandatory representation obligations; decorative visuals do not count.",
+  "hint_preteach": {
+    "H1": "MEANING_OR_RULE_ATOM",
+    "H2": "C_H_REPRESENTATION",
+    "H3": "FIRST_EXECUTABLE_ATOM",
+    "required_for_every_core2_page": true,
+    "unbound_hint_action": "FAIL_CLOSED"
+  },
+  "problem_family_routine": {
+    "recognition_signals_from": ["ALLOWED_VARIATIONS", "REPRESENTATION_REQUIREMENTS"],
+    "method_steps_from": "REASONING_ROUTE_TEMPLATE",
+    "readiness_dimensions": ["RECOGNISE", "REPRESENT", "FIRST_MOVE", "FINISH_AND_VERIFY"],
+    "release_rule": "4_OF_4_WITHOUT_H2_OR_H3"
+  },
+  "stop_conditions": [
+    "CORE1A_UPSTREAM_BINDING_MISMATCH",
+    "CORE1A_TREATMENT_DRIFT",
+    "CORE1A_CAPABILITY_COVERAGE_FAILED",
+    "CORE1A_BUCKET_INVARIANT_UNGROUNDED",
+    "CORE1A_LEARNING_ATOMS_MISSING",
+    "CORE1A_VISUAL_OBLIGATION_UNCLOSED",
+    "CORE1A_CORE2_MAPPING_INCOMPLETE",
+    "CORE1A_HINT_NOT_PRETAUGHT"
+  ]
+}
