@@ -1,0 +1,48 @@
+name: V2 Chemistry Core1A Core2A Foundation
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/Core1A/**'
+      - 'Grade 9/V2/Chemistry/Core2A/**'
+      - 'Grade 9/V2/Chemistry/LearnerProduct/**'
+      - '.github/workflows/v2-chemistry-learner-product.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  chemistry-learner-product-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install contract-test dependency
+        run: python -m pip install 'jsonschema>=4.20,<5'
+
+      - name: Run Chemistry learner-product contract tests
+        run: >-
+          python -m unittest discover
+          -s 'Grade 9/V2/Chemistry/LearnerProduct/tests'
+          -p 'test_*.py' -v
+
+      - name: Validate learner-product policy and registry JSON
+        run: |
+          for f in \
+            'Grade 9/V2/Chemistry/LearnerProduct/policies/'*.json \
+            'Grade 9/V2/Chemistry/LearnerProduct/registry/'*.json; do
+            python -m json.tool "$f" > /dev/null
+          done
+
+      - name: Validate learner-product JSON schemas are parseable
+        run: |
+          for f in 'Grade 9/V2/Chemistry/LearnerProduct/contracts/'*.json; do
+            python -m json.tool "$f" > /dev/null
+          done
+
+      - name: Confirm canonical execution contract exists
+        run: test -s 'Grade 9/V2/Chemistry/LearnerProduct/EXECUTION_CONTRACT.md'
