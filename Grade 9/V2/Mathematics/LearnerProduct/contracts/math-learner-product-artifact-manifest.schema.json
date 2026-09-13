@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learner-product-artifact-manifest.schema.json",
+  "title": "Mathematics Learner Product Artifact Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "contract_version", "policy_versions", "input_digests", "output_digests", "stages", "falsifiers_triggered", "human_review_required", "status"],
+  "properties": {
+    "run_id": {"type": "string", "pattern": "^MATH-LPR-"},
+    "contract_version": {"type": "string"},
+    "policy_versions": {"type": "object"},
+    "input_digests": {"type": "object"},
+    "output_digests": {"type": "object"},
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stage", "status", "input_refs", "output_refs", "checks"],
+        "properties": {
+          "stage": {"type": "string"},
+          "status": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]},
+          "input_refs": {"type": "array", "items": {"type": "string"}},
+          "output_refs": {"type": "array", "items": {"type": "string"}},
+          "checks": {"type": "array", "items": {"type": "string"}},
+          "failure_code": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "falsifiers_triggered": {"type": "array", "items": {"type": "string"}},
+    "human_review_required": {"type": "boolean"},
+    "status": {"enum": ["PASS", "FAIL", "PROVISIONAL"]}
+  }
+}
