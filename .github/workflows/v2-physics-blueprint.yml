@@ -1,0 +1,25 @@
+name: V2 Physics Blueprint
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Blueprint/**'
+      - '.github/workflows/v2-physics-blueprint.yml'
+  workflow_dispatch:
+
+jobs:
+  blueprint-v1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install jsonschema
+      - name: Validate blueprint contracts
+        run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
+      - name: Run adaptive-routing golden fixtures
+        run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
+      - name: Run blueprint routing tests
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py"
