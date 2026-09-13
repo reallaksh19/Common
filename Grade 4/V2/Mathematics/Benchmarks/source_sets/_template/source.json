@@ -7,6 +7,7 @@
   "notes": [
     "Replace every REPLACE_* value before treating this package as a real source set.",
     "Transcribe only what is supported by the scan. Preserve defects and ambiguity explicitly.",
+    "Preserve the learner-visible worksheet numbering exactly; do not renumber source items.",
     "Learner publication must not automatically embed the scanned source image as a teaching visual."
   ],
   "source_assets": [
@@ -20,9 +21,13 @@
   "questions": [
     {
       "question_ref": "Q1",
+      "source_display_ref": "REPLACE_WITH_VISIBLE_WORKSHEET_REF_EG_I(a)",
+      "source_section_label": "REPLACE_WITH_SECTION_LABEL_OR_NULL",
+      "source_item_label": "REPLACE_WITH_ITEM_LABEL_OR_NULL",
       "asset_ref": "SCAN-001",
       "page_or_image_index": 1,
       "raw_text": "REPLACE_WITH_FAITHFUL_VISIBLE_QUESTION_TEXT",
+      "source_numeric_tokens": ["REPLACE_WITH_EVERY_VISIBLE_NUMERIC_TOKEN"],
       "answer_choices": [],
       "diagram_observation": null,
       "source_issue": "TEMPLATE_NOT_FILLED"
