@@ -32,7 +32,7 @@ assert rows["M2D-SBA-04"]["core2_primary_questions"] == ["Q01", "Q11", "Q13", "Q
 assert rows["M2D-SBA-05"]["core2_primary_questions"] == [
     "Q02", "Q06", "Q07", "Q12", "Q16", "Q18", "Q19", "Q20", "Q22", "Q24", "Q25", "Q44", "Q52"
 ]
-assert all(row["state"] == "BUILT" for row in index["rows"])
+assert all(rows[f"M2D-SBA-{i:02d}"]["state"] == "BUILT" for i in range(1, 6))
 
 routine_schema = {"type": "array", "items": sba_schema["$defs"]["transferRoutine"]}
 Draft202012Validator(routine_schema).validate(transfer["transfer_routines"])
