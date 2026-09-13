@@ -58,6 +58,8 @@ jobs:
             'Grade 9/V2/Chemistry/Core2A/policies/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
+          python -m json.tool 'Grade 9/V2/Chemistry/LearnerProduct/production/redox/redox-ncert-authority.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearnerProduct/production/redox/redox-production-profile.json' > /dev/null
 
       - name: Validate learner-product, Core1A and Core2A schemas are parseable
         run: |
@@ -81,5 +83,31 @@ jobs:
         with:
           name: chemistry-core1a-core2a-render-process-golden
           path: /tmp/chemistry-lp-render-golden
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Build real Redox NCERT production inputs
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearnerProduct/production/redox/build_redox_production_inputs.py'
+          --out-dir /tmp/chemistry-redox-inputs
+
+      - name: Execute 11-item Redox NCERT production through C-LP-25
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearnerProduct/engine/run_chemistry_ncert_production.py'
+          --run-manifest /tmp/chemistry-redox-inputs/redox_run_manifest.json
+          --study-model /tmp/chemistry-redox-inputs/redox_study_model.json
+          --core1-plan /tmp/chemistry-redox-inputs/redox_core1_plan.json
+          --representation-bundle /tmp/chemistry-redox-inputs/redox_representation_bundle.json
+          --core2-plan /tmp/chemistry-redox-inputs/redox_core2_plan.json
+          --coverage-closure /tmp/chemistry-redox-inputs/redox_coverage_closure.json
+          --out-dir /tmp/chemistry-redox-production
+
+      - name: Upload Redox NCERT production candidate for human review
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-redox-ncert-production-candidate
+          path: |
+            /tmp/chemistry-redox-inputs
+            /tmp/chemistry-redox-production
           if-no-files-found: error
           retention-days: 14
