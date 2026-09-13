@@ -1,9 +1,9 @@
 """Canonical document-level StudyJourney publisher for Grade 4 Math V2.
 
-This composer consumes StudyJourneyPlan.  It preserves block order and answer
-visibility and may realize optional typed representations through the existing
-primitive dispatcher.  It does not infer pedagogy from text or source question
-order.
+This composer consumes StudyJourneyPlan. It preserves block order, source
+question identity, answer visibility and hint policy. It may realize optional
+typed representations through the existing primitive dispatcher. It does not
+infer pedagogy from text or source question order.
 """
 from __future__ import annotations
 
@@ -46,6 +46,21 @@ class StudyJourneyComposer:
     def __init__(self) -> None:
         self.metrics = PageMetricsA4()
 
+    @staticmethod
+    def _question_height(question: Mapping[str, Any], width: float) -> float:
+        prompt = str(question.get("prompt") or "")
+        hint = question.get("hint_contract") or {}
+        answer = question.get("answer_contract") or {}
+        h = 26.0 + paragraph_height(prompt, width, font_size=11.0, line_height=14.5)
+        if str(hint.get("modality") or "NONE") != "NONE":
+            hint_text = str(hint.get("hint_text") or "")
+            h += 20.0 + paragraph_height(hint_text or "Use the visual model below.", width, font_size=10.5, line_height=14.0)
+        if str(answer.get("check_route") or "") == "INLINE":
+            h += 20.0 + paragraph_height(str(answer.get("answer_text") or ""), width, font_size=11.0, line_height=14.5)
+        else:
+            h += 24.0
+        return h + 10.0
+
     def render(self, plan: Mapping[str, Any], output_pdf_path: Path) -> Tuple[str, Dict[str, Any]]:
         validation = validate_study_journey(plan)
         c = canvas.Canvas(str(output_pdf_path), pagesize=(self.metrics.PAGE_WIDTH, self.metrics.PAGE_HEIGHT))
@@ -82,15 +97,18 @@ class StudyJourneyComposer:
                 block_type = str(block["block_type"])
                 fill, accent = BLOCK_STYLE[block_type]
                 body = str(block.get("body") or "")
-                prompt = str(block.get("learner_prompt") or "")
+                legacy_prompt = str(block.get("learner_prompt") or "")
                 solution = str(block.get("solution_text") or "")
                 visibility = str(block.get("answer_visibility") or "HIDDEN")
                 rep = block.get("representation")
+                questions = list(block.get("questions") or [])
 
                 text_h = 42.0 + paragraph_height(body, self.metrics.usable_width-28.0, font_size=11.0, line_height=14.5)
-                if prompt:
-                    text_h += paragraph_height(prompt, self.metrics.usable_width-28.0, font_size=11.0, line_height=14.5) + 12.0
-                if visibility in {"WORKED_EXAMPLE", "ANSWER_KEY_ONLY"} and solution:
+                if questions:
+                    text_h += sum(self._question_height(q, self.metrics.usable_width-44.0) for q in questions)
+                elif legacy_prompt:
+                    text_h += paragraph_height(legacy_prompt, self.metrics.usable_width-28.0, font_size=11.0, line_height=14.5) + 12.0
+                if not questions and visibility in {"WORKED_EXAMPLE", "ANSWER_KEY_ONLY"} and solution:
                     text_h += paragraph_height(solution, self.metrics.usable_width-28.0, font_size=11.0, line_height=14.5) + 14.0
                 rep_h = 150.0 if rep else 0.0
                 response_h = 76.0 if block_type in {"GUIDED_TRY", "INDEPENDENT_TRY", "TRANSFER", "RETRIEVAL"} else 0.0
@@ -107,12 +125,44 @@ class StudyJourneyComposer:
                 if body:
                     used = backend.draw_paragraph(body, self.metrics.MARGIN_LEFT+14.0, tcur, width=self.metrics.usable_width-28.0, font_size=11.0, color=PrimaryPalette.SLATE, line_height=14.5)
                     tcur -= used + 8.0
-                if prompt:
+
+                if questions:
+                    for q in questions:
+                        display_ref = str(q["display_ref"])
+                        prompt = str(q["prompt"])
+                        hint = q.get("hint_contract") or {}
+                        answer = q.get("answer_contract") or {}
+                        backend.draw_text(display_ref, self.metrics.MARGIN_LEFT+14.0, tcur, font_size=10.5, color=accent)
+                        tcur -= 15.0
+                        used = backend.draw_paragraph(prompt, self.metrics.MARGIN_LEFT+14.0, tcur, width=self.metrics.usable_width-28.0, font_size=11.0, color=PrimaryPalette.NAVY, line_height=14.5)
+                        tcur -= used + 7.0
+                        custody.record_element("STUDY_QUESTION", str(q["question_id"]), self.metrics.MARGIN_LEFT+14.0, tcur, self.metrics.usable_width-28.0, used+22.0)
+
+                        if str(hint.get("modality") or "NONE") != "NONE":
+                            modality = str(hint["modality"])
+                            backend.draw_text(f"HINT - {modality}", self.metrics.MARGIN_LEFT+14.0, tcur, font_size=9.0, color=PrimaryPalette.AMBER)
+                            tcur -= 14.0
+                            hint_text = str(hint.get("hint_text") or "Look at the visual model below.")
+                            used = backend.draw_paragraph(hint_text, self.metrics.MARGIN_LEFT+14.0, tcur, width=self.metrics.usable_width-28.0, font_size=10.5, color=PrimaryPalette.SLATE, line_height=14.0)
+                            tcur -= used + 7.0
+
+                        route = str(answer.get("check_route") or "")
+                        if route == "INLINE":
+                            backend.draw_text("ANSWER", self.metrics.MARGIN_LEFT+14.0, tcur, font_size=9.0, color=PrimaryPalette.TEAL)
+                            tcur -= 14.0
+                            used = backend.draw_paragraph(str(answer.get("answer_text") or ""), self.metrics.MARGIN_LEFT+14.0, tcur, width=self.metrics.usable_width-28.0, font_size=11.0, color=PrimaryPalette.NAVY, line_height=14.5)
+                            tcur -= used + 8.0
+                        else:
+                            route_label = route.replace("_", " ").title()
+                            backend.draw_text(f"CHECK AFTER TRYING: {route_label} - {answer.get('answer_ref')}", self.metrics.MARGIN_LEFT+14.0, tcur, font_size=9.5, color=PrimaryPalette.TEAL)
+                            tcur -= 18.0
+                elif legacy_prompt:
                     backend.draw_text("TRY", self.metrics.MARGIN_LEFT+14.0, tcur, font_size=9.5, color=PrimaryPalette.TEAL)
                     tcur -= 14.0
-                    used = backend.draw_paragraph(prompt, self.metrics.MARGIN_LEFT+14.0, tcur, width=self.metrics.usable_width-28.0, font_size=11.0, color=PrimaryPalette.NAVY, line_height=14.5)
+                    used = backend.draw_paragraph(legacy_prompt, self.metrics.MARGIN_LEFT+14.0, tcur, width=self.metrics.usable_width-28.0, font_size=11.0, color=PrimaryPalette.NAVY, line_height=14.5)
                     tcur -= used + 8.0
-                if visibility in {"WORKED_EXAMPLE", "ANSWER_KEY_ONLY"} and solution:
+
+                if not questions and visibility in {"WORKED_EXAMPLE", "ANSWER_KEY_ONLY"} and solution:
                     backend.draw_text("SOLUTION" if visibility == "WORKED_EXAMPLE" else "ANSWER CHECK", self.metrics.MARGIN_LEFT+14.0, tcur, font_size=9.5, color=accent)
                     tcur -= 14.0
                     used = backend.draw_paragraph(solution, self.metrics.MARGIN_LEFT+14.0, tcur, width=self.metrics.usable_width-28.0, font_size=11.0, color=PrimaryPalette.NAVY, line_height=14.5)
@@ -138,6 +188,8 @@ class StudyJourneyComposer:
             "journey_id": plan.get("journey_id"),
             "validation": validation,
             "publisher_invention_allowed": False,
+            "source_question_anchor_required": True,
+            "answer_contract_required": True,
             "page_count": page_count,
         }
         return pdf_sha, record
