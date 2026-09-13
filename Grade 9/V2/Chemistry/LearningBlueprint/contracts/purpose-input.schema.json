@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/chemistry/learning-blueprint/purpose-input.schema.json",
+  "title": "Chemistry Blueprint learning purpose input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["purpose_request_id", "mode"],
+  "properties": {"purpose_request_id": {"type": "string", "minLength": 2}, "mode": {"enum": ["FIRST_STUDY", "REVISION", "COMPETITIVE_EXAM"]}}
+}

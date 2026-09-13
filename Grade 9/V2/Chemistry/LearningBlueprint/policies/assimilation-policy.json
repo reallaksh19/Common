@@ -1,0 +1,15 @@
+{
+  "policy_id": "CHEM-G9-V2-ASSIMILATION-POLICY-v2",
+  "readiness_profiles": {
+    "20": {"scaffold_depth":"DEEP","secure_compression_span":1,"require_bridge_for_states":["PARTIAL","FRAGILE","UNKNOWN"],"fading_speed":"GRADUAL"},
+    "50": {"scaffold_depth":"MODERATE","secure_compression_span":2,"require_bridge_for_states":["FRAGILE","UNKNOWN"],"fading_speed":"MODERATE"},
+    "80": {"scaffold_depth":"LIGHT","secure_compression_span":4,"require_bridge_for_states":["FRAGILE","UNKNOWN"],"fading_speed":"RAPID"}
+  },
+  "purpose_profiles": {
+    "FIRST_STUDY": {"terminal_capabilities":["CONCEPT_CONSTRUCTION","REPRESENTATION_BUILDING","CAUSAL_UNDERSTANDING","DERIVATION_UNDERSTANDING","INDEPENDENT_USE"],"representation_competition":"REQUIRED_WHEN_REPRESENTATION_USED","symbol_bridge":"REQUIRED_FOR_IMPORTANT_EQUATION","default_fading_speed":"GRADUAL"},
+    "REVISION": {"terminal_capabilities":["RETRIEVAL","RECONSTRUCTION","DIAGNOSIS","WEAK_NODE_REPAIR","INDEPENDENT_USE"],"representation_competition":"REQUIRED_WHEN_REPRESENTATION_USED","symbol_bridge":"REQUIRED_WHEN_LEARNER_STATE_NOT_SECURE","default_fading_speed":"MODERATE"},
+    "COMPETITIVE_EXAM": {"terminal_capabilities":["RECOGNITION","HIDDEN_CONSTRAINT_DETECTION","PROBLEM_FAMILY_DISCRIMINATION","INVERSE_REASONING","REPRESENTATION_SWITCHING","TRANSFER"],"representation_competition":"REQUIRED_WHEN_REPRESENTATION_USED","symbol_bridge":"REQUIRED_WHEN_LEARNER_STATE_NOT_SECURE","default_fading_speed":"RAPID"}
+  },
+  "transition_kinds": ["ENTITY_OR_STATE","CAUSE_OR_LAW","REPRESENTATION","FRAME_OR_SIGN","CONSTRAINT_OR_EVENT","EQUATION_RELATION","ALGEBRAIC_TRANSFORMATION","INTERPRETATION","SPECIAL_CASE","MISCONCEPTION_BOUNDARY"],
+  "learner_states": ["SECURE","PARTIAL","FRAGILE","UNKNOWN"]
+}

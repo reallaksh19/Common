@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/chemistry/learning-blueprint/purpose-packet.schema.json",
+  "title": "Compiled Chemistry purpose packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packet_id","packet_type","mode","terminal_capabilities","representation_competition","symbol_bridge","default_fading_speed","prerequisite_bypass_allowed","digest"],
+  "properties": {"packet_id":{"type":"string"},"packet_type":{"const":"PUR"},"mode":{"enum":["FIRST_STUDY","REVISION","COMPETITIVE_EXAM"]},"terminal_capabilities":{"type":"array","minItems":1,"items":{"type":"string"}},"representation_competition":{"type":"string"},"symbol_bridge":{"type":"string"},"default_fading_speed":{"enum":["GRADUAL","MODERATE","RAPID"]},"prerequisite_bypass_allowed":{"const":false},"digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}
+}

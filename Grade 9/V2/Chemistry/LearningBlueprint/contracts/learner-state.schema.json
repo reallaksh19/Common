@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/chemistry/learning-blueprint/learner-state.schema.json",
+  "title": "Compiled Chemistry learner-state packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packet_id", "packet_type", "join_packet_ref", "join_digest", "readiness_prior", "prior_interpretation", "scaffold_depth", "secure_compression_span", "capabilities", "unresolved", "digest"],
+  "properties": {
+    "packet_id": {"type": "string"}, "packet_type": {"const": "LS"}, "join_packet_ref": {"type": "string"}, "join_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "readiness_prior": {"enum": [20,50,80]}, "prior_interpretation": {"const": "PRIOR_ONLY_NOT_DIAGNOSIS"}, "scaffold_depth": {"enum": ["DEEP","MODERATE","LIGHT"]}, "secure_compression_span": {"type": "integer", "minimum": 1},
+    "capabilities": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["capability_ref","state","origin","evidence_refs","bridge_required_by_profile"], "properties": {"capability_ref":{"type":"string"},"state":{"enum":["SECURE","PARTIAL","FRAGILE","UNKNOWN"]},"origin":{"enum":["CAPABILITY_EVIDENCE","READINESS_PRIOR_ONLY_NO_CAPABILITY_EVIDENCE"]},"evidence_refs":{"type":"array","items":{"type":"string"}},"bridge_required_by_profile":{"type":"boolean"}}}},
+    "unresolved": {"type":"array","items":{"type":"string"}}, "digest": {"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

@@ -33,3 +33,7 @@ def digest(payload: Any) -> str:
 
 def load_routing_policy() -> dict[str, Any]:
     return load_json(ROOT / "policies" / "adaptive-routing-policy.json")
+
+
+def load_assimilation_policy() -> dict[str, Any]:
+    return load_json(ROOT / "policies" / "assimilation-policy.json")

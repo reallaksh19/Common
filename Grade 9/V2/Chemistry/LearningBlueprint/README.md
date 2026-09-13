@@ -1,90 +1,93 @@
-# Grade 9 V2 — Learning Blueprint
+# Grade 9 V2 Chemistry — Learning Blueprint
 
-This directory is the cross-subject evidence/control/reasoning layer above subject-specific Core1/Core2/Core1A/Core2A production systems.
+This directory is the **Chemistry-specific** evidence, control and pedagogical-reasoning layer above the existing Chemistry Core1/Core2/Core1A/Core2A production system. It is intentionally located under `Grade 9/V2/Chemistry/`: the current contracts and goldens have only been proven against Chemistry. Reuse by Physics or Mathematics requires separate subject validation rather than an assumed cross-subject claim.
 
-The blueprint does **not** contain the subject answers. It governs what evidence exists, which specialist runs first, what each specialist must independently inspect, when packets may be revealed, how claims are validated, and when downstream pedagogy is allowed to proceed.
+The blueprint does **not** contain Chemistry answers. Original evidence remains authority; generated packets remain claims with explicit provenance, confidence and unresolved-state custody.
 
 ## v0 — evidence and adaptive routing
 
-v0 establishes:
-
-- original evidence and derived claims as separate namespaces;
-- Core1-first and Core2-first as equally legal routes;
-- routing from evidence state rather than fixed sequence;
-- explicit BLOCK states for insufficient evidence and material conflict;
-- maximum three subtopics per handoff without limiting later learning-atom decomposition;
-- absence/unknown evidence preserved rather than converted into zero importance;
-- owner overrides that change operational action while retaining the system finding.
-
-Convenience entrypoint:
-
-```bash
-python 'Grade 9/V2/LearningBlueprint/engine/run_blueprint_v0.py' \
-  --ground-truth path/to/ground-truth.json \
-  --routing-input path/to/routing-input.json \
-  --out-dir build/blueprint-v0
-```
+`v0` freezes the supplied evidence state and chooses `CORE1_FIRST`, `CORE2_FIRST`, or a blocking state from `SA / SS / QE / QR / UA / CI`. Missing evidence stays missing; zero supplied questions never becomes zero importance; owner overrides change execution without erasing the system finding; handoffs are limited to at most three subtopics without limiting later learning-atom decomposition.
 
 ## v1 — independent Core1/Core2 intelligence and Join
 
-v1 makes the fresh-agent boundary executable at the artifact level.
+`v1` enforces the epistemic relay:
 
 ```text
 v0 route
-   ↓
-FIRST SPECIALIST
-original evidence only
-   ↓
-freeze blind pass
-   ↓
-SECOND SPECIALIST
-fresh instance, original evidence only
-   ↓
-freeze blind pass
-   ↓
-only now reveal first packet
-   ↓
-claim-by-claim V-* comparison
-   ↓
+  ↓
+first specialist: original evidence only
+  ↓ freeze
+fresh second specialist: original evidence only
+  ↓ freeze
+only then reveal first packet
+  ↓
+claim-level V-* comparison
+  ↓
 Core1 × Core2 Join
-   ↓
+  ↓
 J-* + OBL-* assimilation obligations
 ```
 
-The second specialist blind pass may not contain upstream packet references. Its packet must be frozen before reveal. Every first-specialist claim must then receive exactly one explicit comparison status:
+The second specialist may not receive upstream packets during its blind pass, may not reuse the first instance ID, and must compare every upstream claim after reveal. Material contradiction and assessment demand without semantic support block the Join.
+
+## v2 — learner state, purpose and Core1A assimilation compiler
+
+`v2` starts only from `J.join_state = READY_FOR_LEARNER_STATE`.
 
 ```text
-CONFIRMED
-REFINED
-MISSING
-UNSUPPORTED
-CONTRADICTED
-OUT_OF_SCOPE
-UNKNOWN
+J-* obligations
+   ├─ learner readiness prior 20 / 50 / 80
+   │        ↓
+   │      LS-* capability state
+   │
+   └─ FIRST_STUDY / REVISION / COMPETITIVE_EXAM
+            ↓
+          PUR-*
+            ↓
+CT → LA → IC → EA → RR → RC → RD → MC → SB → FP
+            ↓
+          A-* assimilation bundle
+            ↓
+     manuscript_ready = true
+     only after all validators pass
+            ↓
+optional realized-product evidence
+            ↓
+          T-* taught-state receipt
 ```
 
-The Join is not a prose summary. It computes the capability topology:
+The readiness percentage is a **prior only**. If no capability-level evidence exists, the compiled learner state remains `UNKNOWN`; the system does not fabricate a diagnosis from `20`, `50`, or `80`.
 
-- assessment capability + semantic support → assimilation obligation;
-- assessment capability without semantic support → `BLOCK_MISSING_SEMANTIC_SUPPORT`;
-- material contradiction → `BLOCK_CONFLICT`;
-- semantic capability without assessment demand → preserved explicitly as **no assessment-demand evidence**, never downgraded to low importance.
+Core1A reasoning is materialized before prose authoring:
 
-v1 entrypoint:
+- `CT-*`: learner-before → required conceptual change → learner-after;
+- `LA-*`: learning atoms, with no three-atom cap;
+- `IC-*`: explicit inferential steps and readiness-sensitive bridges;
+- `EA-*`: important-equation anatomy, including assumptions, justified derivation, meaning, checks and validity limits;
+- `RR/RC/RD-*`: cognitive representation requirement, candidate competition and justified selection;
+- `MC-*`: misconception/boundary contrast;
+- `SB-*`: picture → words → symbols → equation bridge when required;
+- `FP-*`: worked → faded → independent practice with an independent check;
+- `A-*`: validated assimilation plan;
+- `T-*`: evidence-backed taught-state receipt. A plan alone cannot claim that a capability was actually taught or independently checked.
+
+Purpose changes the terminal learning contract but may never bypass prerequisite closure. `FIRST_STUDY`, `REVISION`, and `COMPETITIVE_EXAM` therefore produce different assimilation/fading behaviour while preserving the same semantic truth.
+
+## Entry points
 
 ```bash
-python 'Grade 9/V2/LearningBlueprint/engine/run_blueprint_v1.py' \
-  --route build/blueprint-v0/routing_packet.json \
-  --first-pass path/to/first-specialist.json \
-  --second-pass path/to/second-specialist.json \
-  --validation path/to/validation-packet.json \
-  --out-dir build/blueprint-v1
+python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/run_blueprint_v0.py' ...
+python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/run_blueprint_v1.py' ...
+python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/run_blueprint_v2.py' \
+  --join build/v1/join.json \
+  --learner learner.json \
+  --purpose purpose.json \
+  --design assimilation-design.json \
+  --out-dir build/v2
 ```
 
-The route decides whether Core1 or Core2 is first. Supplying the opposite order fails closed.
+Add `--realization realization-evidence.json` to v2 only after learner-facing realization exists and there is evidence for the taught-state flags.
 
-## What v1 still does not claim
+## Not yet claimed
 
-The repository runner validates independently produced specialist artifacts; it does not itself host an LLM runtime or claim that a GitHub Actions job can instantiate a fresh model. The protocol nevertheless makes the epistemic boundary machine-checkable: blind access state, separate instance IDs, freeze digests, reveal order, claim coverage and Join eligibility are all enforced.
-
-Later milestones will add learner-state compilation, purpose contracts, Core1A cognitive transformation / learning-atom / inference-chain / equation-assimilation / representation-selection stages, taught-state receipts, Core2A transfer eligibility, and finally the one-command blueprint-to-Core1/Core2/Core1A/Core2A production build.
+v2 does not yet generate the final Core1/Core2/Core1A/Core2A PDFs from one blueprint. The next milestone is Core2A transfer eligibility (`K ∩ D ∩ T ∩ purpose`) followed by wiring these Chemistry Blueprint packets into the existing Chemistry ProductionKit/render/final-audit stack.

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/chemistry/learning-blueprint/assimilation-bundle.schema.json",
+  "title": "Validated Chemistry Core1A assimilation bundle",
+  "type":"object","additionalProperties":false,
+  "required":["packet_id","packet_type","join_packet_ref","join_digest","learner_state_ref","learner_state_digest","purpose_ref","purpose_digest","purpose_mode","capability_treatments","manuscript_ready","validation_status","unresolved","digest"],
+  "properties": {"packet_id":{"type":"string"},"packet_type":{"const":"A"},"join_packet_ref":{"type":"string"},"join_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"learner_state_ref":{"type":"string"},"learner_state_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"purpose_ref":{"type":"string"},"purpose_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"purpose_mode":{"enum":["FIRST_STUDY","REVISION","COMPETITIVE_EXAM"]},"capability_treatments":{"type":"array","minItems":1,"items":{"type":"object"}},"manuscript_ready":{"const":true},"validation_status":{"const":"PASS"},"unresolved":{"type":"array","maxItems":0},"digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}
+}

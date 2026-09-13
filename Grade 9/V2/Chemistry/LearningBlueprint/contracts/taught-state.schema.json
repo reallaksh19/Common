@@ -1,0 +1,7 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://example.local/g9-v2/chemistry/learning-blueprint/taught-state.schema.json",
+  "title":"Evidence-backed Chemistry taught-state receipt",
+  "type":"object","additionalProperties":false,"required":["packet_id","packet_type","assimilation_packet_ref","assimilation_digest","purpose_mode","capabilities","release_state","digest"],
+  "properties":{"packet_id":{"type":"string"},"packet_type":{"const":"T"},"assimilation_packet_ref":{"type":"string"},"assimilation_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"purpose_mode":{"enum":["FIRST_STUDY","REVISION","COMPETITIVE_EXAM"]},"capabilities":{"type":"array","minItems":1,"items":{"type":"object"}},"release_state":{"const":"TAUGHT_STATE_EVIDENCE_RECORDED"},"digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}
+}

@@ -1,17 +1,17 @@
-name: V2 Learning Blueprint
+name: V2 Chemistry Learning Blueprint
 
 on:
   pull_request:
     paths:
-      - 'Grade 9/V2/LearningBlueprint/**'
-      - '.github/workflows/v2-learning-blueprint.yml'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-learning-blueprint.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  learning-blueprint:
+  chemistry-learning-blueprint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,18 +22,18 @@ jobs:
       - name: Install contract validator
         run: python -m pip install 'jsonschema>=4.20,<5'
 
-      - name: Validate Learning Blueprint JSON assets
+      - name: Validate Chemistry Learning Blueprint JSON assets
         run: |
           for f in \
-            'Grade 9/V2/LearningBlueprint/BLUEPRINT_INVARIANTS.json' \
-            'Grade 9/V2/LearningBlueprint/contracts/'*.json \
-            'Grade 9/V2/LearningBlueprint/policies/'*.json \
-            'Grade 9/V2/LearningBlueprint/golden/'*.json; do
+            'Grade 9/V2/Chemistry/LearningBlueprint/BLUEPRINT_INVARIANTS.json' \
+            'Grade 9/V2/Chemistry/LearningBlueprint/contracts/'*.json \
+            'Grade 9/V2/Chemistry/LearningBlueprint/policies/'*.json \
+            'Grade 9/V2/Chemistry/LearningBlueprint/golden/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
 
-      - name: Run Blueprint v0/v1 goldens and falsifiers
+      - name: Run Chemistry Blueprint v0/v1/v2 goldens and falsifiers
         run: >-
           python -m unittest discover
-          -s 'Grade 9/V2/LearningBlueprint/tests'
+          -s 'Grade 9/V2/Chemistry/LearningBlueprint/tests'
           -p 'test_*.py' -v

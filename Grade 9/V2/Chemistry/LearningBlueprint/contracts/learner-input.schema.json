@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/chemistry/learning-blueprint/learner-input.schema.json",
+  "title": "Chemistry Blueprint learner-state input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["learner_state_request_id", "readiness_prior", "capability_evidence"],
+  "properties": {
+    "learner_state_request_id": {"type": "string", "minLength": 2},
+    "readiness_prior": {"enum": [20, 50, 80]},
+    "capability_evidence": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["capability_ref", "state", "evidence_refs"], "properties": {"capability_ref": {"type": "string", "minLength": 2}, "state": {"enum": ["SECURE", "PARTIAL", "FRAGILE", "UNKNOWN"]}, "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}}}
+  }
+}
