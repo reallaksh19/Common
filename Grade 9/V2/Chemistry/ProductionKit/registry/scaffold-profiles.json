@@ -1,0 +1,87 @@
+{
+  "registry_id": "CHEM-PRODUCTION-SCAFFOLD-PROFILES-v1",
+  "version": "1.0.0",
+  "profiles": {
+    "CORE1_TEACH": {
+      "product": "CORE1",
+      "purpose": null,
+      "support_density": "HIGH",
+      "initial_clue_count": 0,
+      "source_on_sheet1": false,
+      "max_pages_per_question": 2,
+      "workspace_mm": {"MINIMAL": 24, "SHORT": 38, "MEDIUM": 56, "LONG": 78},
+      "required_blocks": ["REPRESENTATION", "EXPLANATION", "WORKED_REASONING", "MISCONCEPTION_REPAIR", "PRACTICE", "VERIFICATION"],
+      "answer_surface": "EXPECTED_RESPONSE_OR_FULL_WORKING"
+    },
+    "CORE2_HELPER": {
+      "product": "CORE2",
+      "purpose": null,
+      "support_density": "PROGRESSIVE",
+      "initial_clue_count": 0,
+      "source_on_sheet1": true,
+      "max_pages_per_question": 2,
+      "workspace_mm": {"MINIMAL": 28, "SHORT": 42, "MEDIUM": 60, "LONG": 82},
+      "required_blocks": ["QUESTION", "SOURCE", "WORKSPACE", "PROGRESSIVE_HELP", "QUICK_CHECK", "FULL_WORKING", "VERIFICATION"],
+      "answer_surface": "CHECK_THEN_FULL_WORKING"
+    },
+    "CORE1A_ASSIMILATE": {
+      "product": "CORE1A",
+      "purpose": null,
+      "support_density": "MEDIUM_HIGH",
+      "initial_clue_count": 1,
+      "source_on_sheet1": false,
+      "max_pages_per_question": 2,
+      "workspace_mm": {"MINIMAL": 24, "SHORT": 38, "MEDIUM": 54, "LONG": 72},
+      "required_blocks": ["BUCKET_INVARIANT", "REPRESENTATION", "ROUTINE", "GUIDED_PRACTICE", "FADED_PRACTICE", "INDEPENDENT_PRACTICE", "READINESS_CHECK"],
+      "answer_surface": "EXPECTED_RESPONSE_OR_FULL_WORKING"
+    },
+    "CORE2A_STARTER": {
+      "product": "CORE2A",
+      "purpose": "STARTER",
+      "support_density": "HIGH",
+      "initial_clue_count": 2,
+      "source_on_sheet1": true,
+      "max_pages_per_question": 2,
+      "workspace_mm": {"MINIMAL": 24, "SHORT": 36, "MEDIUM": 50, "LONG": 66},
+      "required_blocks": ["SOURCE", "QUESTION", "REPRESENTATION", "PARTIAL_START", "WORKSPACE", "TECHNICAL_CLUES", "QUICK_CHECK", "FULL_WORKING", "VERIFICATION"],
+      "answer_surface": "CHECK_THEN_FULL_WORKING"
+    },
+    "CORE2A_PRACTICE": {
+      "product": "CORE2A",
+      "purpose": "PRACTICE",
+      "support_density": "MEDIUM",
+      "initial_clue_count": 1,
+      "source_on_sheet1": true,
+      "max_pages_per_question": 2,
+      "workspace_mm": {"MINIMAL": 22, "SHORT": 34, "MEDIUM": 48, "LONG": 64},
+      "required_blocks": ["SOURCE", "QUESTION", "WORKSPACE", "TECHNICAL_CLUES", "QUICK_CHECK", "FULL_WORKING", "VERIFICATION"],
+      "answer_surface": "CHECK_THEN_FULL_WORKING"
+    },
+    "CORE2A_REVISION": {
+      "product": "CORE2A",
+      "purpose": "REVISION",
+      "support_density": "LOW",
+      "initial_clue_count": 1,
+      "source_on_sheet1": true,
+      "max_pages_per_question": 2,
+      "workspace_mm": {"MINIMAL": 16, "SHORT": 26, "MEDIUM": 38, "LONG": 52},
+      "required_blocks": ["SOURCE", "QUESTION", "WORKSPACE", "OPTIONAL_TECHNICAL_CLUE", "QUICK_CHECK", "ERROR_REPAIR", "FULL_WORKING"],
+      "answer_surface": "RAPID_CHECK_THEN_REPAIR"
+    },
+    "CORE2A_COMPETITION": {
+      "product": "CORE2A",
+      "purpose": "COMPETITION",
+      "support_density": "MINIMAL_TECHNICAL",
+      "initial_clue_count": 2,
+      "source_on_sheet1": true,
+      "max_pages_per_question": 2,
+      "workspace_mm": {"MINIMAL": 18, "SHORT": 30, "MEDIUM": 44, "LONG": 60},
+      "required_blocks": ["SOURCE", "QUESTION", "WORKSPACE", "TECHNICAL_CLUES_AT_BOTTOM", "QUICK_CHECK", "FULL_WORKING", "QUESTION_SPECIFIC_RELATION", "INDEPENDENT_CHECK"],
+      "answer_surface": "CHECK_THEN_FULL_WORKING",
+      "external_construction_benchmark_required": true,
+      "minimum_external_benchmarks": 2,
+      "generic_motivational_slogans_forbidden": true,
+      "generic_invariant_box_forbidden": true
+    }
+  }
+}
