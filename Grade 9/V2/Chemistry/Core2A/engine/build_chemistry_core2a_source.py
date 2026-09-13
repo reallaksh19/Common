@@ -6,6 +6,10 @@ closed Core1A bucket/hint evidence, adds learner-facing staged support, gives
 an immediate answer check plus full working, and emits sanitized inline
 provenance without leaking internal fixture/source identifiers onto learner
 surfaces.
+
+Both MCQ and constructed-response source questions are supported. Constructed
+responses remain checkable when C-I supplies a canonical response; fake options
+must never be invented merely to satisfy the learner-product layer.
 """
 from __future__ import annotations
 
@@ -52,26 +56,50 @@ def safe_http_url(value):
 
 
 def learner_question_locator(question_ref):
-    """Convert internal source keys into a public locator without losing custody.
-
-    The exact internal key remains in `question_ref` and `internal_source_custody`.
-    Learner provenance receives only a human-readable source locator. This keeps
-    fixture ids such as EXT01 off the page while retaining deterministic identity.
-    """
+    """Convert internal source keys into a public locator without losing custody."""
     value = str(question_ref or "").strip()
-    patterns = [
-        (r"^EXT0*(\d+)$", lambda m: f"source item {int(m.group(1))}"),
-        (r"^U0*(\d+)[-_]?Q0*(\d+)$", lambda m: f"unit {int(m.group(1))}, question {int(m.group(2))}"),
-        (r"^SP0*(\d+)[-_]?Q0*(\d+)$", lambda m: f"sample paper {int(m.group(1))}, question {int(m.group(2))}"),
-        (r"^(?:Q|QUESTION)[-_]?0*(\d+)$", lambda m: f"question {int(m.group(1))}"),
-    ]
-    for pattern, formatter in patterns:
-        match = re.fullmatch(pattern, value, flags=re.IGNORECASE)
-        if match:
-            return formatter(match)
+
+    match = re.fullmatch(r"^EXT0*(\d+)$", value, flags=re.IGNORECASE)
+    if match:
+        return f"source item {int(match.group(1))}"
+
+    match = re.fullmatch(r"^U0*(\d+)[-_]?Q0*(\d+)([A-Z])?$", value, flags=re.IGNORECASE)
+    if match:
+        part = f"({match.group(3).lower()})" if match.group(3) else ""
+        return f"unit {int(match.group(1))}, question {int(match.group(2))}{part}"
+
+    match = re.fullmatch(r"^SP0*(\d+)[-_]?Q0*(\d+)([A-Z])?$", value, flags=re.IGNORECASE)
+    if match:
+        part = f"({match.group(3).lower()})" if match.group(3) else ""
+        return f"sample paper {int(match.group(1))}, question {int(match.group(2))}{part}"
+
+    match = re.fullmatch(r"^(?:Q|QUESTION)[-_]?0*(\d+)$", value, flags=re.IGNORECASE)
+    if match:
+        return f"question {int(match.group(1))}"
+
     # Unknown machine identifiers stay in internal custody; they are never
     # prettified into learner text because that could silently expose schema ids.
     return "source question"
+
+
+def response_mode(page):
+    explicit = page.get("response_mode")
+    if explicit in {"MCQ", "CONSTRUCTED_RESPONSE"}:
+        return explicit
+    return "MCQ" if page.get("source_options") else "CONSTRUCTED_RESPONSE"
+
+
+def validate_response_shape(page):
+    mode = response_mode(page)
+    options = page.get("source_options") or []
+    if mode == "MCQ" and len(options) < 2:
+        fail("CORE2A_RESPONSE_MODE_INVALID", page["question_ref"] + ": MCQ requires source options")
+    if mode == "CONSTRUCTED_RESPONSE" and options:
+        fail("CORE2A_RESPONSE_MODE_INVALID", page["question_ref"] + ": constructed response cannot contain invented options")
+    solution = page.get("solution_route") or {}
+    if mode == "CONSTRUCTED_RESPONSE" and not str(solution.get("chemical_language_response") or "").strip():
+        fail("CORE2A_RESPONSE_MODE_INVALID", page["question_ref"] + ": canonical response missing")
+    return mode
 
 
 def family_tables(registry):
@@ -138,11 +166,18 @@ def translated_verification(page, policy):
 def build_provenance(page, source_policy):
     badges = page["source_badges"]
     safe_url = safe_http_url(page["source_link"])
-    label = badges["source"].replace("_", " ").strip().title()
-    locator = (
-        f"{badges['year']} · {badges['session']} · shift {badges['shift']} · "
-        f"{learner_question_locator(page['question_ref'])}"
-    )
+    label = str(badges.get("source") or "Chemistry source").replace("_", " ").strip().title()
+    locator = str(page.get("source_locator") or "").strip()
+    if not locator:
+        parts = [str(badges.get(k) or "").strip() for k in ("year", "session")]
+        shift = str(badges.get("shift") or "").strip()
+        if shift:
+            parts.append("shift " + shift)
+        parts.append(learner_question_locator(page["question_ref"]))
+        locator = " · ".join(x for x in parts if x)
+    relation = page.get("source_text_relation") or "EXACT_SOURCE"
+    official_ref = page.get("verified_official_source_ref")
+    official_claim = bool(official_ref) or source_policy["provenance"]["official_past_question_claim_default"]
     return {
         "question_origin": "SOURCE_CORE2",
         "display_inline": True,
@@ -154,20 +189,28 @@ def build_provenance(page, source_policy):
                 "locator": locator,
                 "url": safe_url,
                 "use": "SOURCE_TEXT",
-                "text_relation": "EXACT_SOURCE",
+                "text_relation": relation,
             }
         ],
-        "official_past_question_claim": source_policy["provenance"]["official_past_question_claim_default"],
-        "verified_official_source_ref": None,
+        "official_past_question_claim": official_claim,
+        "verified_official_source_ref": official_ref,
     }
 
 
 def build_answer_path(page, source_policy):
+    mode = validate_response_shape(page)
     solution = page["solution_route"]
     translated = translated_verification(page, source_policy)
-    condition_check = solution["condition_exception_check"].strip()
+    condition_check = str(solution.get("condition_exception_check") or "").strip()
     verification_parts = translated + ([condition_check] if condition_check else [])
-    answer_summary = solution["final_answer"] + " — " + solution["chemical_language_response"]
+    if mode == "MCQ":
+        answer_summary = str(solution["final_answer"]) + " — " + str(solution["chemical_language_response"])
+        marking_points = []
+    else:
+        answer_summary = str(solution["chemical_language_response"]).strip()
+        marking_points = list(page.get("quick_check_marking_points") or [])
+        if not marking_points:
+            marking_points = [answer_summary]
     return {
         "question_ref": page["question_ref"],
         "answer_path_kind": "OBJECTIVE_CHECKABLE",
@@ -177,7 +220,7 @@ def build_answer_path(page, source_policy):
             "learner_label": "QUICK CHECK",
             "answer_summary": answer_summary,
             "unit": None,
-            "marking_points": [],
+            "marking_points": marking_points,
         },
         "full_working": {
             "learner_label": "FULL WORKING",
@@ -235,6 +278,9 @@ def source_snapshot(page):
         "stem": page["source_stem"],
         "options": copy.deepcopy(page["source_options"]),
         "subparts": copy.deepcopy(page["source_subparts"]),
+        "response_mode": response_mode(page),
+        "source_locator": str(page.get("source_locator") or learner_question_locator(page["question_ref"])),
+        "source_text_relation": page.get("source_text_relation") or "EXACT_SOURCE",
         "figure_required": page["source_figure_required"],
         "figure_semantic": copy.deepcopy(page["source_figure_semantic"]),
         "condition_text": page["source_condition_text"],
@@ -246,6 +292,7 @@ def source_snapshot(page):
 
 
 def build_item(page, bucket, hint_binding, family_registry, source_policy, language_policy):
+    validate_response_shape(page)
     atom_refs = {a["atom_id"] for a in bucket["learning_atoms"]}
     rep_refs = {r["representation_ref"] for r in bucket["representation_obligations"]}
     for key in ("h1_evidence_refs", "h2_evidence_refs", "h3_evidence_refs"):
@@ -282,6 +329,7 @@ def build_item(page, bucket, hint_binding, family_registry, source_policy, langu
 
 
 def validate_item(item, page, bucket, hint_binding, family_registry, source_policy, language_policy):
+    validate_response_shape(page)
     if item["item_digest"] != digest(item, "item_digest"):
         fail("CORE2A_SOURCE_TEXT_UNTRACEABLE", item["question_ref"] + ": item digest")
     if item["lane"] != "SOURCE_CORE2" or item["question_ref"] != page["question_ref"]:
