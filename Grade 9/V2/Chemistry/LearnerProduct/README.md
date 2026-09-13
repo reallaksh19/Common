@@ -101,6 +101,8 @@ visual_preflight.json
 final_audit.json
 handoff_manifest.json
 learner_product_stage_evidence.json
+learner_product_manifest.json
+raster-proof/*.png
 ```
 
 ## Rendering contract
@@ -118,7 +120,7 @@ minimum visible     9 pt
 
 The renderer consumes the closed semantic package and C-H representation authority. It may place a selected primitive but may not select new Chemistry representations or invent chemical content.
 
-Every learner-visible text run passes through the existing Chemistry learner-surface guard. Internal ids remain in machine custody and must not appear on learner pages.
+Every learner-visible text run passes through the existing Chemistry learner-surface guard. Internal IDs remain in machine custody and must not appear on learner pages.
 
 ## Actual-PDF preflight
 
@@ -128,7 +130,7 @@ C-LP-23 validates the physical PDF rather than trusting the page plan. It checks
 PDF hash and page count
 A4 page geometry
 font floor
-physical text/primitive bounds
+physical text/primitive page bounds
 clipping
 text/primitive overlap
 internal-identifier leakage in extracted PDF text
@@ -143,7 +145,13 @@ Raster proof is machine evidence that pages actually render and are nonblank. It
 
 `golden/some-basic-concepts/expected-semantic-slice.json` freezes a small formula/charge, particle↔symbol and conservation process slice.
 
-It uses the repository synthetic cold-start fixture and explicitly has `production_claim=false`. It is a process golden, not an NCERT provenance claim and not a substitute for the 68-question Some Basic Concepts denominator in the authoring handoff.
+`golden/some-basic-concepts/build_render_golden.py` executes the synthetic process fixture through C-LP-25 and produces the exact PDFs, raster proofs, audits and handoff manifest used for render regression. CI uploads these as:
+
+```text
+chemistry-core1a-core2a-render-process-golden
+```
+
+The rendered golden is retained for human actual-size inspection. It explicitly has no production, official-source or human-release claim. It does not replace the 68-question Some Basic Concepts denominator in the authoring handoff.
 
 ## Non-negotiable rules
 
@@ -162,7 +170,7 @@ Machine PASS cannot upgrade pending human subject/pedagogy/assessment/visual gat
 
 ## Current boundary
 
-The machine implementation is complete for the synthetic cold-start/golden path through C-LP-25. Remaining programme work is broader Chemistry coverage and review, not pretending that machine publication engineering is expert approval:
+The machine implementation is complete for the synthetic cold-start/golden path through C-LP-25. Remaining programme work is broader Chemistry coverage and authorized review:
 
 - extend independent validators to future problem families as they become supported;
 - add governed mixed-synthesis compatibility before generating mixed challenges;
