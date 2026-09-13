@@ -1,0 +1,407 @@
+{
+  "fixture_set_id": "CHEM-PRODUCTION-KIT-GOLDENS-v1",
+  "fixtures": [
+    {
+      "fixture_id": "CORE1-FORMULA-TEACH",
+      "task": {
+        "task_id": "gold-core1-formula",
+        "product": "CORE1",
+        "purpose": null,
+        "topic": "Chemical Bonding",
+        "question_refs": ["C1-F1"],
+        "capability_refs": ["CAP-READ-FORMULA", "CAP-PARSE-ION-CHARGE"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET"
+      },
+      "questions": [
+        {
+          "question_id": "C1-F1",
+          "origin": "AUTHORED_CORE1_PRACTICE",
+          "stem": "Explain why Al2O3 is electrically neutral when Al is treated as Al3+ and O as O2-.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "NCERT Class IX exemplar, Chemical Bonding source cluster: ionic formula and valency items.",
+          "source_refs": [{"ref_id": "NCERT-CB-IONIC", "role": "CONTENT_ANCHOR", "label": "NCERT Chemical Bonding ionic-formula cluster", "url": null, "locator": "Unit 3"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-READ-FORMULA", "CAP-PARSE-ION-CHARGE"],
+          "difficulty": "D1",
+          "workspace_demand": "SHORT",
+          "technical_clues": []
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C1-F1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "2(+3) + 3(-2) = 0, so Al2O3 is neutral.",
+          "full_working": ["Two Al3+ ions contribute +6.", "Three O2- ions contribute -6.", "The total charge is 0."],
+          "expected_response_rubric": [],
+          "verification": ["Recalculate total positive and negative charge independently: +6 + (-6) = 0."],
+          "final_unit_or_entity": "Al2O3 formula unit"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE1-CONSERVATION-TEACH",
+      "task": {
+        "task_id": "gold-core1-conservation",
+        "product": "CORE1",
+        "purpose": null,
+        "topic": "Chemical Bonding",
+        "question_refs": ["C1-C1"],
+        "capability_refs": ["CAP-CHECK-ATOM-CONSERVATION"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET"
+      },
+      "questions": [
+        {
+          "question_id": "C1-C1",
+          "origin": "AUTHORED_CORE1_PRACTICE",
+          "stem": "Check whether 2H2 + O2 -> 2H2O conserves each element.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "NCERT Class IX exemplar source cluster: interpreting chemical formulae and reaction representations.",
+          "source_refs": [{"ref_id": "NCERT-CB-CONS", "role": "CONTENT_ANCHOR", "label": "NCERT reaction-representation cluster", "url": null, "locator": "Class IX Science exemplar"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-CHECK-ATOM-CONSERVATION"],
+          "difficulty": "D1",
+          "workspace_demand": "SHORT",
+          "technical_clues": []
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C1-C1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "Yes. H: 4 -> 4 and O: 2 -> 2.",
+          "full_working": ["Reactants contain 4 H atoms and 2 O atoms.", "Products contain 4 H atoms and 2 O atoms."],
+          "expected_response_rubric": [],
+          "verification": ["Count H and O again from coefficients multiplied by subscripts."],
+          "final_unit_or_entity": "atom counts"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE2-SOURCE-MCQ",
+      "task": {
+        "task_id": "gold-core2-mcq",
+        "product": "CORE2",
+        "purpose": null,
+        "topic": "Chemical Bonding",
+        "question_refs": ["C2-M1"],
+        "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET"
+      },
+      "questions": [
+        {
+          "question_id": "C2-M1",
+          "origin": "SOURCE_CORE2",
+          "stem": "Which notation represents an ion with two negative charges?",
+          "options": ["O2", "O2-", "2O", "O-2"],
+          "response_mode": "MCQ",
+          "source_display": "NCERT Class IX exemplar, Chemical Bonding, source question on ionic notation.",
+          "source_refs": [{"ref_id": "NCERT-CB-M1", "role": "QUESTION_SOURCE", "label": "NCERT ionic-notation item", "url": null, "locator": "Chemical Bonding"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+          "difficulty": "D1",
+          "workspace_demand": "MINIMAL",
+          "technical_clues": []
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C2-M1",
+          "response_mode": "MCQ",
+          "quick_check": "O2-",
+          "full_working": ["Ionic charge is written as a superscript to the upper right of the species symbol.", "The numeral 2 with a minus sign therefore denotes charge magnitude 2-."],
+          "expected_response_rubric": [],
+          "verification": ["Check that the numeral is being read as charge, not as a lower-right subscript."],
+          "final_unit_or_entity": "ion notation"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE2-SOURCE-CONSTRUCTED",
+      "task": {
+        "task_id": "gold-core2-constructed",
+        "product": "CORE2",
+        "purpose": null,
+        "topic": "Chemical Bonding",
+        "question_refs": ["C2-R1"],
+        "capability_refs": ["CAP-READ-FORMULA"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET"
+      },
+      "questions": [
+        {
+          "question_id": "C2-R1",
+          "origin": "SOURCE_CORE2",
+          "stem": "State the number of calcium and chlorine atoms represented by CaCl2.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "NCERT Class IX exemplar, Chemical Bonding, formula-reading source item.",
+          "source_refs": [{"ref_id": "NCERT-CB-R1", "role": "QUESTION_SOURCE", "label": "NCERT formula-reading item", "url": null, "locator": "Chemical Bonding"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-READ-FORMULA"],
+          "difficulty": "D1",
+          "workspace_demand": "MINIMAL",
+          "technical_clues": []
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C2-R1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "1 Ca atom and 2 Cl atoms.",
+          "full_working": ["No subscript after Ca means one calcium atom.", "The subscript 2 after Cl means two chlorine atoms."],
+          "expected_response_rubric": [],
+          "verification": ["Read each subscript locally; do not apply the chlorine subscript to calcium."],
+          "final_unit_or_entity": "atoms per formula unit"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE1A-FORMULA-ASSIMILATE",
+      "task": {
+        "task_id": "gold-core1a-formula",
+        "product": "CORE1A",
+        "purpose": null,
+        "topic": "Chemical Bonding",
+        "question_refs": ["C1A-F1"],
+        "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET"
+      },
+      "questions": [
+        {
+          "question_id": "C1A-F1",
+          "origin": "AUTHORED_CORE1A_PRACTICE",
+          "stem": "A student writes Mg2Cl. Diagnose the notation error and write the neutral formula formed by Mg2+ and Cl-.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "Core (1) Chemical Bonding ionic-formula bucket derived from the NCERT source cluster.",
+          "source_refs": [{"ref_id": "CORE1-CB-IONIC", "role": "CONTENT_ANCHOR", "label": "Core (1) ionic formula bucket", "url": null, "locator": "Chemical Bonding"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+          "difficulty": "D2",
+          "workspace_demand": "SHORT",
+          "technical_clues": ["Set total charge equal to zero before choosing subscripts."]
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C1A-F1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "MgCl2",
+          "full_working": ["Mg2+ contributes +2.", "Each Cl- contributes -1, so two chloride ions are required.", "The neutral formula is MgCl2."],
+          "expected_response_rubric": [],
+          "verification": ["Check charge: +2 + 2(-1) = 0."],
+          "final_unit_or_entity": "MgCl2"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE1A-CONSERVATION-ASSIMILATE",
+      "task": {
+        "task_id": "gold-core1a-conservation",
+        "product": "CORE1A",
+        "purpose": null,
+        "topic": "Chemical Bonding",
+        "question_refs": ["C1A-C1"],
+        "capability_refs": ["CAP-CHECK-ATOM-CONSERVATION"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET"
+      },
+      "questions": [
+        {
+          "question_id": "C1A-C1",
+          "origin": "AUTHORED_CORE1A_PRACTICE",
+          "stem": "A learner claims H2 + O2 -> H2O is acceptable because the formulas are correct. Identify the first conservation failure.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "Core (1) conservation bucket derived from NCERT reaction-representation questions.",
+          "source_refs": [{"ref_id": "CORE1-CONS", "role": "CONTENT_ANCHOR", "label": "Core (1) conservation bucket", "url": null, "locator": "Chemical Bonding"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-CHECK-ATOM-CONSERVATION"],
+          "difficulty": "D2",
+          "workspace_demand": "SHORT",
+          "technical_clues": ["Compare the oxygen atom count on the two sides before changing any formula." ]
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C1A-C1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "Oxygen is not conserved: 2 O atoms on the left, 1 on the right.",
+          "full_working": ["H is 2 on each side.", "O is 2 on the reactant side but 1 on the product side.", "Therefore the written equation is not balanced."],
+          "expected_response_rubric": [],
+          "verification": ["Recount each element without changing subscripts in the chemical formulas."],
+          "final_unit_or_entity": "oxygen atom count"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE2A-STARTER",
+      "task": {
+        "task_id": "gold-core2a-starter",
+        "product": "CORE2A",
+        "purpose": "STARTER",
+        "topic": "Chemical Bonding",
+        "question_refs": ["C2A-S1"],
+        "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET",
+        "constraints": {"max_pages_per_question": 2, "source_on_sheet1": true}
+      },
+      "questions": [
+        {
+          "question_id": "C2A-S1",
+          "origin": "SOURCE_CORE2",
+          "stem": "Write the neutral formula formed from Ca2+ and F-.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "Source: NCERT Class IX exemplar Chemical Bonding ionic-formula item; adapted only in ion choice for starter practice.",
+          "source_refs": [{"ref_id": "NCERT-CB-START", "role": "QUESTION_SOURCE", "label": "NCERT ionic-formula source family", "url": null, "locator": "Chemical Bonding"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+          "difficulty": "D1",
+          "workspace_demand": "SHORT",
+          "technical_clues": ["Write +2 + n(-1) = 0.", "The subscript belongs to the ion count in the formula unit, not to the ionic charge symbol."]
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C2A-S1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "CaF2",
+          "full_working": ["Calcium contributes +2.", "Two fluoride ions contribute -2.", "The neutral formula is CaF2."],
+          "expected_response_rubric": [],
+          "verification": ["Check charge: +2 + 2(-1) = 0."],
+          "final_unit_or_entity": "CaF2"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE2A-PRACTICE",
+      "task": {
+        "task_id": "gold-core2a-practice",
+        "product": "CORE2A",
+        "purpose": "PRACTICE",
+        "topic": "Chemical Bonding",
+        "question_refs": ["C2A-P1"],
+        "capability_refs": ["CAP-READ-FORMULA"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET",
+        "constraints": {"max_pages_per_question": 2, "source_on_sheet1": true}
+      },
+      "questions": [
+        {
+          "question_id": "C2A-P1",
+          "origin": "SOURCE_CORE2",
+          "stem": "How many oxygen atoms are represented in 3Al2O3?",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "Source: NCERT Class IX exemplar Chemical Bonding formula-reading family; coefficient changed for fresh practice.",
+          "source_refs": [{"ref_id": "NCERT-CB-PRACTICE", "role": "QUESTION_SOURCE", "label": "NCERT formula-reading family", "url": null, "locator": "Chemical Bonding"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-READ-FORMULA"],
+          "difficulty": "D1",
+          "workspace_demand": "MINIMAL",
+          "technical_clues": ["Multiply the leading coefficient by the oxygen subscript: 3 x 3."]
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C2A-P1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "9 oxygen atoms.",
+          "full_working": ["Each Al2O3 formula unit contains 3 oxygen atoms.", "Three formula units contain 3 x 3 = 9 oxygen atoms."],
+          "expected_response_rubric": [],
+          "verification": ["Expand 3Al2O3 as three copies of Al2O3 and recount O atoms."],
+          "final_unit_or_entity": "oxygen atoms"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE2A-REVISION",
+      "task": {
+        "task_id": "gold-core2a-revision",
+        "product": "CORE2A",
+        "purpose": "REVISION",
+        "topic": "Chemical Bonding",
+        "question_refs": ["C2A-RV1"],
+        "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+        "benchmark_sources": [],
+        "requested_output": "RENDER_READY_PACKET",
+        "constraints": {"max_pages_per_question": 2, "source_on_sheet1": true}
+      },
+      "questions": [
+        {
+          "question_id": "C2A-RV1",
+          "origin": "SOURCE_CORE2",
+          "stem": "Complete from memory: Al3+ and O2- form ______.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "Source: NCERT Class IX exemplar Chemical Bonding ionic-formula cluster; revision retrieval item.",
+          "source_refs": [{"ref_id": "NCERT-CB-REV", "role": "QUESTION_SOURCE", "label": "NCERT ionic-formula cluster", "url": null, "locator": "Chemical Bonding"}],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+          "difficulty": "D1",
+          "workspace_demand": "MINIMAL",
+          "technical_clues": ["If recall fails, solve 3m = 2n for the smallest positive integers m and n."]
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C2A-RV1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "Al2O3",
+          "full_working": ["Smallest equal total charge is 6.", "Two Al3+ give +6 and three O2- give -6.", "Formula: Al2O3."],
+          "expected_response_rubric": [],
+          "verification": ["2(+3) + 3(-2) = 0."],
+          "final_unit_or_entity": "Al2O3"
+        }
+      ]
+    },
+    {
+      "fixture_id": "CORE2A-COMPETITION",
+      "task": {
+        "task_id": "gold-core2a-competition",
+        "product": "CORE2A",
+        "purpose": "COMPETITION",
+        "topic": "Chemical Bonding",
+        "question_refs": ["C2A-COMP1"],
+        "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+        "benchmark_sources": [
+          {"title": "SOF Class 9 Science Olympiad sample paper", "url": "https://sofworld.org/download/file/fid/73697", "role": "CONSTRUCTION_REFERENCE"},
+          {"title": "HBCSE science olympiad resources", "url": "https://olympiads.hbcse.tifr.res.in/", "role": "CONSTRUCTION_REFERENCE"}
+        ],
+        "requested_output": "RENDER_READY_PACKET",
+        "constraints": {"max_pages_per_question": 2, "source_on_sheet1": true}
+      },
+      "questions": [
+        {
+          "question_id": "C2A-COMP1",
+          "origin": "GENERATED_ORIGINAL",
+          "stem": "A neutral compound has formula X2Y3. If Y forms Y2-, determine the charge on X and justify it from the formula.",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "source_display": "Construction references: SOF Class 9 sample-paper data-deduction format and HBCSE junior-science deduction format. Content anchor: NCERT Class IX Chemical Bonding ionic-formula cluster. This question is newly constructed.",
+          "source_refs": [
+            {"ref_id": "SOF-C9-SAMPLE", "role": "CONSTRUCTION_REFERENCE", "label": "SOF Class 9 sample-paper construction pattern", "url": "https://sofworld.org/download/file/fid/73697", "locator": "higher-order science question format"},
+            {"ref_id": "HBCSE-JSO", "role": "CONSTRUCTION_REFERENCE", "label": "HBCSE junior-science construction pattern", "url": "https://olympiads.hbcse.tifr.res.in/", "locator": "science olympiad resources"},
+            {"ref_id": "NCERT-CB-CONTENT", "role": "CONTENT_ANCHOR", "label": "NCERT Chemical Bonding ionic-formula cluster", "url": null, "locator": "Class IX exemplar"}
+          ],
+          "source_integrity": "CLEAN",
+          "capability_refs": ["CAP-PARSE-ION-CHARGE"],
+          "difficulty": "D2",
+          "workspace_demand": "SHORT",
+          "technical_clues": ["Let the charge on X be q. Neutrality gives 2q + 3(-2) = 0.", "Do not cross-multiply charge magnitudes mechanically; solve the signed charge equation."]
+        }
+      ],
+      "answers": [
+        {
+          "question_id": "C2A-COMP1",
+          "response_mode": "CONSTRUCTED_RESPONSE",
+          "quick_check": "X is X3+.",
+          "full_working": ["Let the charge on X be q.", "For neutral X2Y3: 2q + 3(-2) = 0.", "2q - 6 = 0, so q = +3."],
+          "expected_response_rubric": [],
+          "verification": ["Substitute q = +3: 2(+3) + 3(-2) = +6 - 6 = 0."],
+          "final_unit_or_entity": "X3+"
+        }
+      ]
+    }
+  ]
+}
