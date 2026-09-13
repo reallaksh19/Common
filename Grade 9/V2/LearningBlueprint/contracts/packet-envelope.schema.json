@@ -3,7 +3,7 @@
   "$id": "https://example.local/g9-v2/learning-blueprint/packet-envelope.schema.json",
   "title": "Learning Blueprint packet envelope",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": ["packet_id", "packet_type", "schema_version", "scope", "provenance", "dependencies", "confidence", "validation", "unresolved", "created_by", "digest"],
   "properties": {
     "packet_id": {"type": "string", "minLength": 3},
