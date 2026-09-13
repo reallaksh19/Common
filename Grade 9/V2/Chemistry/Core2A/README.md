@@ -14,20 +14,17 @@ GENERATED_ORIGINAL
 
 The lanes may share learner-support presentation, but they do not share provenance semantics.
 
-## Current implementation status
+## Current implementation
 
-Both lanes now have executable semantic planners.
+Both semantic lanes are executable and are now wired into the canonical learner-product runner through C-LP-21.
 
-- `engine/build_chemistry_core2a_source.py` realizes the governed `SOURCE_CORE2` denominator with source-fidelity, Core1A hint bindings, learner support, answer closure and inline provenance.
-- `engine/build_chemistry_core2a_challenges.py` deterministically selects and realizes `GENERATED_ORIGINAL` challenges from supported problem families, performs an independent Chemistry recomputation, applies a near-copy gate, binds answer/provenance contracts and fails closed when a family lacks an authorized generation/validation recipe.
+`SOURCE_CORE2` preserves every governed C-I item in order, including source text/options/subparts, figure semantics, conditions/states/units, source-QC state and source-fidelity custody. It binds each item to exactly one Core1A bucket and the exact pre-taught H1/H2/H3 evidence.
 
-This is still pre-rendering. Passing these semantic planners does not establish mature learner-product visual quality or any pending human release gate.
+`GENERATED_ORIGINAL` deterministically selects validator-backed challenge targets by problem family. Unsupported families are skipped with a recorded reason rather than free-written. Generated items reuse taught Core1A capability/hint evidence, pass an independent Chemistry validator, pass an all-source near-copy gate, and disclose fresh/original provenance.
 
-## Source lane
+The canonical semantic runner emits both plans and an answer-closure audit before stopping at the page-render boundary.
 
-A source item must preserve source identity, order, stem, givens, options, subparts, units, source-integrity/QC state and approved attempt-before-solution structure.
-
-Core (2A) may add:
+## Source lane learner flow
 
 ```text
 TRY IT FIRST
@@ -54,55 +51,34 @@ Generated questions must be fresh/original instances grounded in:
 - one or more mature problem families;
 - an approved Chemistry competitive archetype;
 - independently verified Chemistry and answer;
-- a passed near-copy check;
+- a passed near-copy check against every governed source stem;
 - inline provenance.
 
 Generated questions must never claim official NCERT/Olympiad/exam provenance unless an exact official source is independently verified.
 
 Challenge difficulty must come from Chemistry reasoning, representation or transfer demand, not bigger numbers, uglier decimals/exponents or extra arithmetic alone.
 
-The generated-lane engine is intentionally fail-closed. A problem family is generated only when `policies/chemistry-core2a-challenge-realization-policy.json` names both a governed transformation recipe and an independent validator. Unsupported families are recorded as skipped rather than being free-written by an agent.
-
-The first validator-backed family set is:
-
-```text
-PF-FORMULA_CHARGE_PARSE
-  → notation-role verification
-
-PF-MACRO_PARTICLE_SYMBOL_TRANSLATION
-  → particle identity/count/coefficient verification
-
-PF-CONSERVATION_LEDGER
-  → independent formula parse + atom-ledger recomputation
-
-PF-CONDITION_VALIDITY
-  → source-condition preservation verification
-
-PF-AGENT_ROLE_ASSIGNMENT
-  → electron-loss / reacting-species role recomputation
-```
-
 ## Deterministic challenge selection
 
 Selection is based on problem families, not raw source-question count.
 
-Default policy:
-
 ```text
-1 NEAR_TRANSFER per eligible supported problem family
-1 structural variation for eligible D2/D3 families when an explicit alternate-direction recipe exists
-MIXED_SYNTHESIS only when explicit compatibility/maturity authority exists
+1 NEAR_TRANSFER per supported problem family
+1 structural variation for eligible D2/D3 families when an explicit family recipe authorizes it
+MIXED_SYNTHESIS only when explicit bucket-compatibility/maturity authority exists
 ```
 
-`MIXED_SYNTHESIS` is therefore not inferred merely because two buckets happen to exist. Until compatibility authority is present, its generated count must remain zero.
+Current validator-backed families are:
 
-The canonical details live in `../LearnerProduct/policies/chemistry-core2a-execution-policy.json`, `../LearnerProduct/policies/chemistry-competitive-challenge-policy.json`, the competitive archetype registry, and `policies/chemistry-core2a-challenge-realization-policy.json`.
+```text
+PF-FORMULA_CHARGE_PARSE
+PF-MACRO_PARTICLE_SYMBOL_TRANSLATION
+PF-CONSERVATION_LEDGER
+PF-CONDITION_VALIDITY
+PF-AGENT_ROLE_ASSIGNMENT
+```
 
-## Near-copy gate
-
-Every fresh prompt is compared against all governed source stems, not only its anchor. Exact normalized copies are forbidden. The challenge-realization policy also sets deterministic sequence-similarity and token-Jaccard ceilings.
-
-A failed near-copy check is a hard stop. The item is not relabelled as “fresh” and released anyway.
+Families without a governed recipe + independent validator are not generated yet.
 
 ## Hint pre-teaching
 
@@ -114,13 +90,11 @@ BIGGER CLUE      = H2 representation/model
 HOW DO I START?  = H3 first executable symbolic/quantitative move
 ```
 
-Every reveal must bind to already-taught Core (1A) evidence. Generated items reuse those governed bindings rather than inventing a second hint curriculum.
+Every reveal must bind to already-taught Core (1A) evidence. A question whose hint contains new Chemistry is not ready.
 
 ## Mandatory answer path
 
-No learner-facing question may be published without a way for the learner to check the work.
-
-For objectively checkable questions:
+No learner-facing objective Core2A question may be published without:
 
 ```text
 QUESTION
@@ -128,46 +102,22 @@ QUESTION
 = FULL WORKING
 ```
 
-For genuinely open-ended questions:
+Genuinely open-ended questions instead require an explicit `EXPECTED RESPONSE` rubric.
 
-```text
-QUESTION
-= EXPECTED RESPONSE rubric
-```
-
-The quick check is concise; it is not a duplicate full solution. The full working must expose the complete Chemistry method, equations/steps, units/notation and verification.
-
-This invariant applies equally to source and generated lanes.
+The quick check is concise; it is not a duplicate full solution. The full working exposes the complete Chemistry method, equations/steps, notation and verification.
 
 ## Per-question provenance
 
 Every question carries its own `WHERE THIS QUESTION CAME FROM` block. A bibliography at the end does not satisfy this requirement.
 
-Source items identify the exact Core (2) source. Generated items identify Core1A concept support, the Core (2) transfer anchor and the fresh/original origin disclosure. Generated items set `official_past_question_claim=false` unless an independently verified exact official source exists; the current generator never upgrades a fresh item into an official claim.
+Source items identify the exact Core (2) source. Generated items disclose Core1A concept support, the Core2 anchor when used, and `GENERATED_ORIGINAL` status. Non-web internal custody links are forbidden from learner provenance.
 
 ## Independent Chemistry validation
 
-Generated items and worked solutions should be machine-checked where applicable for:
-
-```text
-formula/charge notation roles
-particle identity and entity multipliers
-atom/reaction conservation
-reaction-condition preservation
-species/electron-transfer role direction
-formula charge neutrality
-ionic charge preservation
-molar mass
-unit/dimensional consistency
-concentration denominator
-stoichiometric mole ratio
-oxidation-number sums/changes
-```
-
-Only the first five families above currently have executable generated-lane validators. The remaining checks are roadmap obligations, not silently claimed as implemented.
+Current generated-item validators independently recompute the applicable Chemistry rather than trusting the authored answer. The roadmap can expand validators for molar mass, units/dimensions, entity multipliers, concentration, stoichiometric ratios and additional redox/charge cases only when matching governed problem families are available.
 
 ## Release boundary
 
 Core (2A) cannot upgrade provisional upstream Chemistry/PCK authority, alter learner treatment, change source validity, invent official provenance, introduce untaught Chemistry or bypass human subject/pedagogy/assessment/visual review.
 
-The canonical cross-product order is defined in `../LearnerProduct/EXECUTION_CONTRACT.md`.
+The semantic plans are not rendered learner pages. C-LP-22 page rendering and downstream visual/final/handoff gates remain separate and pending.
