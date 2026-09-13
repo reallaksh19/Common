@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-theorem-direction.schema.json",
+  "title": "Mathematics Theorem Direction",
+  "description": "Theorem direction is first-class, not an implementation detail of the prose. Core2 proof routes depend on which direction was actually taught: a lesson that teaches only 'parallel lines give equal corresponding angles' has not prepared a learner for a Core2 item that needs the converse. The converse is stated separately, its truth is declared, and a converse that is merely the forward statement re-typed is refused.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["theorem_ref", "learner_name", "forward", "converse", "direction_taught"],
+  "properties": {
+    "theorem_ref": {"type": "string", "minLength": 3},
+    "learner_name": {"type": "string", "minLength": 5},
+    "forward": {"$ref": "#/$defs/implication"},
+    "converse": {
+      "allOf": [{"$ref": "#/$defs/implication"}],
+      "type": "object",
+      "required": ["condition", "conclusion", "is_true", "justification"],
+      "properties": {
+        "condition": {"type": "string", "minLength": 8},
+        "conclusion": {"type": "string", "minLength": 8},
+        "is_true": {"type": "boolean"},
+        "justification": {"type": "string", "minLength": 10}
+      }
+    },
+    "direction_taught": {"enum": ["FORWARD", "CONVERSE", "BOTH"]},
+    "counterexample_when_converse_false": {"type": ["string", "null"]}
+  },
+  "$defs": {
+    "implication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["condition", "conclusion"],
+      "properties": {
+        "condition": {"type": "string", "minLength": 8},
+        "conclusion": {"type": "string", "minLength": 8},
+        "is_true": {"type": "boolean"},
+        "justification": {"type": "string"}
+      }
+    }
+  }
+}

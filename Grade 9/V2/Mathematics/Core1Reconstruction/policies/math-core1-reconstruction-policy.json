@@ -1,0 +1,59 @@
+{
+  "policy_id": "MATH-CORE1-RECONSTRUCTION-POLICY-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Release policy for Core1 instructional depth. The strongest cross-topic finding of the seven-topic stress test was that Core2 became more mature than Core1: a question book exposed a six-state reasoning chain while the study guide that supposedly prepared the learner contained a theorem statement, a short explanation and one exercise. That is the wrong asymmetry.",
+  "principle": "A lesson plan containing the labels WORKED, GUIDED, FADED is not evidence. The learner-facing problem, derivation, representation and check must be present and valid.",
+  "full_treatments": ["ACTIVE_STUDY", "REPAIR_BEFORE", "REPAIR_IN_UNIT"],
+  "required_chain": [
+    "ANCHOR",
+    "REPRESENT",
+    "EXPLAIN",
+    "RECONSTRUCT",
+    "WORKED",
+    "GUIDED",
+    "FADED",
+    "INDEPENDENT",
+    "VERIFY",
+    "TRANSFER"
+  ],
+  "chain_order_is_significant": true,
+  "stage_evidence_requirements": {
+    "ANCHOR": {"evidence_kind": ["PROSE", "DERIVATION"], "min_prose_chars": 40},
+    "REPRESENT": {"evidence_kind": ["PROSE", "DERIVATION", "REALIZATION"], "min_prose_chars": 40},
+    "EXPLAIN": {"evidence_kind": ["PROSE", "DERIVATION"], "min_prose_chars": 80},
+    "RECONSTRUCT": {"evidence_kind": ["DERIVATION"], "min_derivation_steps": 3,
+                    "min_substantive_steps": 2},
+    "CONTRAST": {"evidence_kind": ["PROSE", "DERIVATION"], "min_prose_chars": 40},
+    "MISCONCEPTION_REPAIR": {"evidence_kind": ["PROSE", "DERIVATION"], "min_prose_chars": 40},
+    "WORKED": {"evidence_kind": ["REALIZATION"]},
+    "GUIDED": {"evidence_kind": ["REALIZATION"]},
+    "FADED": {"evidence_kind": ["REALIZATION"]},
+    "INDEPENDENT": {"evidence_kind": ["REALIZATION"]},
+    "VERIFY": {"evidence_kind": ["PROSE", "DERIVATION"], "min_prose_chars": 40},
+    "TRANSFER": {"evidence_kind": ["REALIZATION"]},
+    "READINESS": {"evidence_kind": ["PROSE", "REALIZATION"], "min_prose_chars": 30}
+  },
+  "theorem_direction_policy": {
+    "required_when_capability_is_theorem_based": true,
+    "converse_must_not_restate_the_forward_statement": true,
+    "converse_used_by_core2_must_be_taught": true
+  },
+  "cross_core_invariant": "Core2 required reasoning evidence - Core1 realized teaching evidence = {}",
+  "evidence_token_form": "<lesson_ref>#<ROLE>",
+  "evidence_token_rationale": "A lesson reference alone is not sufficient evidence. Linkage is at the level of the individual reasoning state.",
+  "falsifiers": [
+    "CORE1_RECONSTRUCTION_CHAIN_INCOMPLETE",
+    "CORE1_RECONSTRUCTION_WITHOUT_DERIVATION",
+    "CORE1_WORKED_INSTANCE_NOT_MATERIALIZED",
+    "CORE1_TRANSFER_INSTANCE_MISSING",
+    "CORE1_CHAIN_ORDER_DRIFT",
+    "CORE1_STAGE_UNDERREALIZED",
+    "THEOREM_DIRECTION_NOT_DECLARED",
+    "CONVERSE_RESTATES_FORWARD_STATEMENT",
+    "CONVERSE_USED_WITHOUT_BEING_TAUGHT",
+    "CORE1_CORE2_REASONING_COVERAGE_GAP",
+    "CORE1_RECONSTRUCTION_GATE_FAILED"
+  ],
+  "release_meaning": "PUBLICATION_ENGINEERING only. A realized reconstruction chain is evidence that the teaching surface exists and is grounded; it is not a pedagogy or expert-review PASS, both of which remain PENDING, and it promotes no PCK beyond PROVISIONAL_PROMOTED."
+}
