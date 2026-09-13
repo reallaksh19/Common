@@ -1,12 +1,179 @@
 {
-  "profile_id": "CHEM-NCERT-REDOX-PRODUCTION-v1",
-  "schema_version": "1.0.0",
-  "subject": "CHEMISTRY",
-  "topic_id": "REDOX",
   "baseline_topic_id": "redox-reactions",
-  "source_authority_ref": "CHEM-NCERT-REDOX-SOURCE-v1",
-  "source_question_denominator": 11,
-  "scope_statement": "The eleven retained NCERT items are the governed source-practice denominator. Oxidation-state and agent-role teaching is a clearly separated Redox depth extension derived from reaction evidence; it is not presented as additional NCERT source questions.",
+  "capabilities": {
+    "CAP-ATTACH-SPECIES-ROLE": {
+      "activation": "For any possible agent, write SELF first: what change does that reactant itself undergo?",
+      "chemical_entities": [
+        "Zn + Cu²⁺ → Zn²⁺ + Cu"
+      ],
+      "familiar_macro_anchor": "Use a fresh symbolic reaction to prove a reactant role from equation evidence. The role name comes after the self-change, not before it.",
+      "learner_title": "Prove the species role from its own change",
+      "misconception_contrast": null,
+      "ordinary_language_explanation": "An oxidising or reducing agent is named from the change it undergoes and causes. Prove the self-change first.",
+      "pck_asset_refs": [
+        "PCK-REDOX-SELF-OTHER",
+        "PCK-CHEM-SPECIES-ROLE",
+        "PCK-CHEM-VERIFICATION"
+      ],
+      "problem_family_ref": "PF-AGENT_ROLE_ASSIGNMENT",
+      "reconstruction_steps": [
+        "Track the reactant itself.",
+        "State whether its oxidation state rises or falls.",
+        "State the corresponding effect on the other reactant.",
+        "Attach the agent role only after those two statements agree."
+      ],
+      "representation_levels": [
+        "SYMBOLIC"
+      ],
+      "representation_requirements": [
+        "FORMULA"
+      ],
+      "rule_model_condition": "SELF change is evidence; the agent label is the conclusion. Never reverse that order.",
+      "scope_class": "REDOX_DEPTH_EXTENSION",
+      "transfer_bridge": "Agent vocabulary is a Redox depth extension and is not attributed to the eleven retained NCERT source asks.",
+      "verification_requirements": [
+        "CHECK_SPECIES_IDENTITY",
+        "VERIFY_RESULT"
+      ]
+    },
+    "CAP-CLASSIFY-CHANGE-EVIDENCE": {
+      "activation": "Before naming the change, underline the evidence that tells you whether a new substance appears.",
+      "chemical_entities": [],
+      "familiar_macro_anchor": "Rusting, burning, heating and gas evolution can look dramatic, but the deciding question is whether the evidence supports formation of a new substance.",
+      "learner_title": "Decide whether the evidence shows a chemical change",
+      "misconception_contrast": "Two questions may both mention heating: one can be only a state change, while another forms new substances. Heating itself is not the classifier.",
+      "ordinary_language_explanation": "Do not classify from a familiar word alone. Read the stated evidence first, decide what changed, and only then name the change or property.",
+      "pck_asset_refs": [
+        "PCK-CHEM-CHANGE-CLASSIFICATION",
+        "PCK-CHEM-FIRST-MOVE",
+        "PCK-CHEM-VERIFICATION"
+      ],
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION",
+      "reconstruction_steps": [
+        "Write the observation or process that is actually stated.",
+        "Ask whether the evidence shows a new substance or chemical reaction.",
+        "Classify only after that evidence test.",
+        "Check that the reason and the class agree."
+      ],
+      "representation_levels": [
+        "MACROSCOPIC"
+      ],
+      "representation_requirements": [
+        "OBSERVATION"
+      ],
+      "rule_model_condition": "A physical change does not create a new substance; a chemical change does. Use only the evidence supplied in the question.",
+      "scope_class": "SOURCE_DERIVED_CORE",
+      "transfer_bridge": "Use the same evidence-first routine on every retained NCERT classification item before moving to explicit Redox bookkeeping.",
+      "verification_requirements": [
+        "VERIFY_RESULT"
+      ]
+    },
+    "CAP-SEPARATE-OBSERVATION-INFERENCE": {
+      "activation": "Make two columns: what you actually observe or test, and what you infer from it.",
+      "chemical_entities": [],
+      "familiar_macro_anchor": "A smell, a pop test or gas evolution is evidence. The name of the gas is the inference supported by that evidence.",
+      "learner_title": "Keep the observation separate from the chemical inference",
+      "misconception_contrast": "‘A gas is evolved’ is an observation; ‘the gas is hydrogen’ is an inference that needs a supporting test.",
+      "ordinary_language_explanation": "Write the observation first. Then state the chemical claim it supports. This prevents a remembered answer from being written as though it were an observation.",
+      "pck_asset_refs": [
+        "PCK-CHEM-OBSERVATION-CLAIM",
+        "PCK-CHEM-FIRST-MOVE",
+        "PCK-CHEM-VERIFICATION"
+      ],
+      "problem_family_ref": "PF-EVIDENCE_TO_CLAIM",
+      "reconstruction_steps": [
+        "Copy the observation or test result without interpreting it.",
+        "Write the possible chemical inference separately.",
+        "Link the evidence to the inference.",
+        "Check that the inference is no stronger than the evidence."
+      ],
+      "representation_levels": [
+        "MACROSCOPIC",
+        "SYMBOLIC"
+      ],
+      "representation_requirements": [
+        "OBSERVATION"
+      ],
+      "rule_model_condition": "The claim must not say more than the recorded observation or test can support.",
+      "scope_class": "SOURCE_DERIVED_CORE",
+      "transfer_bridge": "Use this evidence-to-claim route on the iron–sulphur gas-identification source question and on later reaction evidence.",
+      "verification_requirements": [
+        "VERIFY_RESULT"
+      ]
+    },
+    "CAP-TRACK-OXIDATION-STATE": {
+      "activation": "Write the oxidation state of the same element before and after the reaction on one horizontal lane.",
+      "chemical_entities": [
+        "Zn + Cu²⁺ → Zn²⁺ + Cu",
+        "Zn",
+        "Cu²⁺",
+        "Zn²⁺",
+        "Cu"
+      ],
+      "familiar_macro_anchor": "After the NCERT source-practice denominator is protected, use a fresh Zn/Cu²⁺ reaction to make the numerical Redox bookkeeping explicit.",
+      "learner_title": "Use an oxidation-state lane to prove oxidation and reduction",
+      "misconception_contrast": null,
+      "ordinary_language_explanation": "Oxidation is an increase in oxidation state; reduction is a decrease. Track the same element before comparing the numbers.",
+      "pck_asset_refs": [
+        "PCK-REDOX-OXIDATION-LANE",
+        "PCK-CHEM-VERIFICATION"
+      ],
+      "problem_family_ref": "PF-OXIDATION_STATE_TRACKING",
+      "reconstruction_steps": [
+        "Write the before oxidation state for the element.",
+        "Write the after oxidation state for the same element.",
+        "Compare the two values and state increase or decrease.",
+        "Name oxidation only for an increase and reduction only for a decrease."
+      ],
+      "representation_levels": [
+        "SYMBOLIC"
+      ],
+      "representation_requirements": [
+        "FORMULA"
+      ],
+      "rule_model_condition": "In Zn + Cu²⁺ → Zn²⁺ + Cu, Zn changes from oxidation state 0 to +2 and Cu changes from +2 to 0. Track oxidation state as a bookkeeping value for the same element; do not confuse the idea with a claim about isolated particles in every compound.",
+      "scope_class": "REDOX_DEPTH_EXTENSION",
+      "transfer_bridge": "Use the lane as a proof tool on fresh Redox reactions after the NCERT source-practice denominator is closed.",
+      "verification_requirements": [
+        "VERIFY_RESULT"
+      ]
+    },
+    "CAP-TRACK-REACTING-SPECIES": {
+      "activation": "Write the reaction as a before/after map and point to the same element on both sides.",
+      "chemical_entities": [
+        "Zn + Cu²⁺ → Zn²⁺ + Cu"
+      ],
+      "familiar_macro_anchor": "After the NCERT source-practice ideas about chemical change are secure, use a separate fresh symbolic reaction to learn Redox tracking without giving away any retained source answer.",
+      "learner_title": "Track the same reacting species before naming Redox change",
+      "misconception_contrast": null,
+      "ordinary_language_explanation": "A Redox label is earned by tracking what happens to the same element or species across the reaction.",
+      "pck_asset_refs": [
+        "PCK-CHEM-SPECIES-ROLE",
+        "PCK-CHEM-FIRST-MOVE",
+        "PCK-CHEM-VERIFICATION"
+      ],
+      "problem_family_ref": "PF-AGENT_ROLE_ASSIGNMENT",
+      "reconstruction_steps": [
+        "Identify the reactant species.",
+        "Locate the same elements in the product.",
+        "Mark what changes and what is preserved.",
+        "Only then move to oxidation-state or agent labels."
+      ],
+      "representation_levels": [
+        "SYMBOLIC"
+      ],
+      "representation_requirements": [
+        "FORMULA"
+      ],
+      "rule_model_condition": "Track identity first; do not assign oxidation, reduction or agent roles from reagent reputation.",
+      "scope_class": "REDOX_DEPTH_EXTENSION",
+      "transfer_bridge": "This is a Redox depth extension using a fresh reaction; it is not an extra NCERT source question and does not reveal a retained source answer.",
+      "verification_requirements": [
+        "CHECK_SPECIES_IDENTITY",
+        "VERIFY_RESULT"
+      ]
+    }
+  },
   "capability_order": [
     "CAP-CLASSIFY-CHANGE-EVIDENCE",
     "CAP-SEPARATE-OBSERVATION-INFERENCE",
@@ -14,149 +181,146 @@
     "CAP-ATTACH-SPECIES-ROLE",
     "CAP-TRACK-OXIDATION-STATE"
   ],
-  "capabilities": {
-    "CAP-CLASSIFY-CHANGE-EVIDENCE": {
-      "learner_title": "Decide whether the evidence shows a chemical change",
-      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION",
-      "pck_asset_refs": ["PCK-CHEM-CHANGE-CLASSIFICATION", "PCK-CHEM-FIRST-MOVE", "PCK-CHEM-VERIFICATION"],
-      "scope_class": "SOURCE_DERIVED_CORE",
-      "chemical_entities": [],
-      "representation_levels": ["MACROSCOPIC"],
-      "representation_requirements": ["OBSERVATION"],
-      "verification_requirements": ["VERIFY_RESULT"],
-      "activation": "Before naming the change, underline the evidence that tells you whether a new substance appears.",
-      "familiar_macro_anchor": "Rusting, burning, heating and gas evolution can look dramatic, but the deciding question is whether the evidence supports formation of a new substance.",
-      "ordinary_language_explanation": "Do not classify from a familiar word alone. Read the stated evidence first, decide what changed, and only then name the change or property.",
-      "rule_model_condition": "A physical change does not create a new substance; a chemical change does. Use only the evidence supplied in the question.",
-      "reconstruction_steps": [
-        "Write the observation or process that is actually stated.",
-        "Ask whether the evidence shows a new substance or chemical reaction.",
-        "Classify only after that evidence test.",
-        "Check that the reason and the class agree."
-      ],
-      "misconception_contrast": "Two questions may both mention heating: one can be only a state change, while another forms new substances. Heating itself is not the classifier.",
-      "transfer_bridge": "Use the same evidence-first routine on every retained NCERT classification item before moving to explicit Redox bookkeeping."
-    },
-    "CAP-SEPARATE-OBSERVATION-INFERENCE": {
-      "learner_title": "Keep the observation separate from the chemical inference",
-      "problem_family_ref": "PF-EVIDENCE_TO_CLAIM",
-      "pck_asset_refs": ["PCK-CHEM-OBSERVATION-CLAIM", "PCK-CHEM-FIRST-MOVE", "PCK-CHEM-VERIFICATION"],
-      "scope_class": "SOURCE_DERIVED_CORE",
-      "chemical_entities": [],
-      "representation_levels": ["MACROSCOPIC", "SYMBOLIC"],
-      "representation_requirements": ["OBSERVATION"],
-      "verification_requirements": ["VERIFY_RESULT"],
-      "activation": "Make two columns: what you actually observe or test, and what you infer from it.",
-      "familiar_macro_anchor": "A smell, a pop test or gas evolution is evidence. The name of the gas is the inference supported by that evidence.",
-      "ordinary_language_explanation": "Write the observation first. Then state the chemical claim it supports. This prevents a remembered answer from being written as though it were an observation.",
-      "rule_model_condition": "The claim must not say more than the recorded observation or test can support.",
-      "reconstruction_steps": [
-        "Copy the observation or test result without interpreting it.",
-        "Write the possible chemical inference separately.",
-        "Link the evidence to the inference.",
-        "Check that the inference is no stronger than the evidence."
-      ],
-      "misconception_contrast": "‘A gas is evolved’ is an observation; ‘the gas is hydrogen’ is an inference that needs a supporting test.",
-      "transfer_bridge": "Use this evidence-to-claim route on the iron–sulphur gas-identification source question and on later reaction evidence."
-    },
-    "CAP-TRACK-REACTING-SPECIES": {
-      "learner_title": "Track the same reacting species before naming Redox change",
-      "problem_family_ref": "PF-AGENT_ROLE_ASSIGNMENT",
-      "pck_asset_refs": ["PCK-CHEM-SPECIES-ROLE", "PCK-CHEM-FIRST-MOVE", "PCK-CHEM-VERIFICATION"],
-      "scope_class": "REDOX_DEPTH_EXTENSION",
-      "chemical_entities": ["Fe + S → FeS"],
-      "representation_levels": ["SYMBOLIC"],
-      "representation_requirements": ["FORMULA"],
-      "verification_requirements": ["CHECK_SPECIES_IDENTITY", "VERIFY_RESULT"],
-      "activation": "Write the reaction as a before/after map and point to the same element on both sides.",
-      "familiar_macro_anchor": "The heated iron–sulphur source item establishes a new product. Redox reasoning now follows the same elements through that product instead of stopping at ‘chemical change’.",
-      "ordinary_language_explanation": "A Redox label is earned by tracking what happens to the same element or species across the reaction.",
-      "rule_model_condition": "Track identity first; do not assign oxidation, reduction or agent roles from reagent reputation.",
-      "reconstruction_steps": [
-        "Identify the reactant species.",
-        "Locate the same elements in the product.",
-        "Mark what changes and what is preserved.",
-        "Only then move to oxidation-state or agent labels."
-      ],
-      "misconception_contrast": null,
-      "transfer_bridge": "This is an extension of the source reaction evidence, not an extra NCERT source question."
-    },
-    "CAP-ATTACH-SPECIES-ROLE": {
-      "learner_title": "Prove the species role from its own change",
-      "problem_family_ref": "PF-AGENT_ROLE_ASSIGNMENT",
-      "pck_asset_refs": ["PCK-REDOX-SELF-OTHER", "PCK-CHEM-SPECIES-ROLE", "PCK-CHEM-VERIFICATION"],
-      "scope_class": "REDOX_DEPTH_EXTENSION",
-      "chemical_entities": ["Fe + S → FeS"],
-      "representation_levels": ["SYMBOLIC"],
-      "representation_requirements": ["FORMULA"],
-      "verification_requirements": ["CHECK_SPECIES_IDENTITY", "VERIFY_RESULT"],
-      "activation": "For any possible agent, write SELF first: what change does that reactant itself undergo?",
-      "familiar_macro_anchor": "The reaction tells you what each reactant does. The role name comes after that evidence, not before it.",
-      "ordinary_language_explanation": "An oxidising or reducing agent is named from the change it undergoes and causes. Prove the self-change first.",
-      "rule_model_condition": "SELF change is evidence; the agent label is the conclusion. Never reverse that order.",
-      "reconstruction_steps": [
-        "Track the reactant itself.",
-        "State whether its oxidation state rises or falls.",
-        "State the corresponding effect on the other reactant.",
-        "Attach the agent role only after those two statements agree."
-      ],
-      "misconception_contrast": null,
-      "transfer_bridge": "Agent vocabulary is a Redox depth extension and is not attributed to the eleven retained NCERT source asks."
-    },
-    "CAP-TRACK-OXIDATION-STATE": {
-      "learner_title": "Use an oxidation-state lane to prove oxidation and reduction",
-      "problem_family_ref": "PF-OXIDATION_STATE_TRACKING",
-      "pck_asset_refs": ["PCK-REDOX-OXIDATION-LANE", "PCK-CHEM-VERIFICATION"],
-      "scope_class": "REDOX_DEPTH_EXTENSION",
-      "chemical_entities": ["Fe + S → FeS", "Fe", "S"],
-      "representation_levels": ["SYMBOLIC"],
-      "representation_requirements": ["FORMULA"],
-      "verification_requirements": ["VERIFY_RESULT"],
-      "activation": "Write the oxidation state of the same element before and after the reaction on one horizontal lane.",
-      "familiar_macro_anchor": "The source reaction Fe + S → FeS forms a new substance. The Redox extension asks what numerical state change each element undergoes.",
-      "ordinary_language_explanation": "Oxidation is an increase in oxidation state; reduction is a decrease. Track the same element before comparing the numbers.",
-      "rule_model_condition": "Elemental Fe and S begin at oxidation state 0. In FeS, the school-level bookkeeping states are Fe +2 and S −2; these are oxidation states, not a claim that isolated Fe²⁺ and S²⁻ particles are present.",
-      "reconstruction_steps": [
-        "Write the before oxidation state for the element.",
-        "Write the after oxidation state for the same element.",
-        "Compare the two values and state increase or decrease.",
-        "Name oxidation only for an increase and reduction only for a decrease."
-      ],
-      "misconception_contrast": null,
-      "transfer_bridge": "Use the lane as a proof tool on fresh Redox reactions after the NCERT source-practice denominator is closed."
-    }
-  },
+  "profile_id": "CHEM-NCERT-REDOX-PRODUCTION-v1",
   "question_routes": {
-    "U2Q2": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Identify rusting as corrosion.", "State that rusting is a chemical change because a new substance forms."]},
-    "U2Q6": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Select melting, bending and drawing into wire as physical changes.", "Exclude rusting because it forms a new substance."]},
-    "U2Q7": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Select decaying and burning of wood as chemical changes.", "Do not classify sawing or hammering as chemical changes."]},
-    "U2Q15C": {"primary_capability_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE", "problem_family_ref": "PF-EVIDENCE_TO_CLAIM", "marking_points": ["State that strong heating causes iron and sulphur to react.", "State that a new substance, iron sulphide, is formed."]},
-    "U2Q18B": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Classify the statement as a chemical property.", "Use reaction with hydrochloric acid and hydrogen-gas evolution as the evidence."]},
-    "U2Q29A": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Classify the decomposition as a chemical change.", "Use formation of calcium oxide and carbon dioxide as evidence of new substances."]},
-    "U2Q30F": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Name oxygen as the required non-metal for combustion."]},
-    "U2Q35": {"primary_capability_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE", "problem_family_ref": "PF-EVIDENCE_TO_CLAIM", "marking_points": ["For heated part A, identify hydrogen sulphide and its characteristic rotten-egg odour.", "For unheated part B, identify hydrogen and the pop test."]},
-    "U2Q38C": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Classify burning of kerosene as a chemical change.", "State that combustion forms new substances."]},
-    "SP1Q3": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Identify rusting as corrosion.", "State that it is a chemical change."]},
-    "SP2Q2": {"primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE", "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION", "marking_points": ["Select melting, bending and drawing into wire as physical changes.", "Exclude rusting because it is a chemical change."]}
-  },
-  "source_family_support": {
-    "PF-REACTION_PROCESS_CLASSIFICATION": {
-      "workspace_fields": ["decisive evidence = ______", "new substance or reaction evidence = ______", "classification / answer = ______", "reason = ______"],
-      "h1": "Underline the word, observation or product that actually decides the answer.",
-      "h2": "Use the evidence test: a chemical change forms new substance(s); a physical change does not. For a named reaction requirement, use the process definition stated in the lesson.",
-      "h3": "Write ‘new substance or reaction evidence?’ and answer that line before you classify or choose.",
-      "verification": ["VERIFY_RESULT"]
+    "SP1Q3": {
+      "marking_points": [
+        "Identify rusting as corrosion.",
+        "State that it is a chemical change."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
     },
-    "PF-EVIDENCE_TO_CLAIM": {
-      "workspace_fields": ["observation / test = ______", "chemical inference = ______", "evidence link = ______", "final response = ______"],
-      "h1": "Write only what is observed or tested before naming the substance or product.",
-      "h2": "Keep evidence and inference in separate lines; the inference must be supported by the observation or test.",
-      "h3": "Draw two columns headed ‘observation/test’ and ‘inference’, then fill the left column first.",
-      "verification": ["VERIFY_RESULT"]
+    "SP2Q2": {
+      "marking_points": [
+        "Select melting, bending and drawing into wire as physical changes.",
+        "Exclude rusting because it is a chemical change."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
+    },
+    "U2Q15C": {
+      "marking_points": [
+        "State that strong heating causes iron and sulphur to react.",
+        "State that a new substance, iron sulphide, is formed."
+      ],
+      "primary_capability_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "problem_family_ref": "PF-EVIDENCE_TO_CLAIM"
+    },
+    "U2Q18B": {
+      "marking_points": [
+        "Classify the statement as a chemical property.",
+        "Use reaction with hydrochloric acid and hydrogen-gas evolution as the evidence."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
+    },
+    "U2Q2": {
+      "marking_points": [
+        "Identify rusting as corrosion.",
+        "State that rusting is a chemical change because a new substance forms."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
+    },
+    "U2Q29A": {
+      "marking_points": [
+        "Classify the decomposition as a chemical change.",
+        "Use formation of calcium oxide and carbon dioxide as evidence of new substances."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
+    },
+    "U2Q30F": {
+      "marking_points": [
+        "Name oxygen as the required non-metal for combustion."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
+    },
+    "U2Q35": {
+      "marking_points": [
+        "For heated part A, identify hydrogen sulphide; it has a foul smell and turns lead acetate solution black.",
+        "For unheated part B, identify hydrogen; it burns with a pop sound."
+      ],
+      "primary_capability_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "problem_family_ref": "PF-EVIDENCE_TO_CLAIM"
+    },
+    "U2Q38C": {
+      "marking_points": [
+        "Classify burning of kerosene as a chemical change.",
+        "State that combustion forms new substances."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
+    },
+    "U2Q6": {
+      "marking_points": [
+        "Select melting, bending and drawing into wire as physical changes.",
+        "Exclude rusting because it forms a new substance."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
+    },
+    "U2Q7": {
+      "marking_points": [
+        "Select decaying and burning of wood as chemical changes.",
+        "Do not classify sawing or hammering as chemical changes."
+      ],
+      "primary_capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION"
     }
   },
   "redox_extension_oxidation_states": [
-    {"element": "Fe", "before": 0, "after": 2, "before_species": "Fe", "after_species": "Fe"},
-    {"element": "S", "before": 0, "after": -2, "before_species": "S", "after_species": "S"}
-  ]
+    {
+      "element": "Zn",
+      "before": 0,
+      "after": 2,
+      "before_species": "Zn",
+      "after_species": "Zn"
+    },
+    {
+      "element": "Cu",
+      "before": 2,
+      "after": 0,
+      "before_species": "Cu",
+      "after_species": "Cu"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "scope_statement": "The eleven retained NCERT items are the governed source-practice denominator. Oxidation-state and agent-role teaching is a clearly separated Redox depth extension derived from reaction evidence; it is not presented as additional NCERT source questions.",
+  "source_authority_ref": "CHEM-NCERT-REDOX-SOURCE-v1",
+  "source_family_support": {
+    "PF-EVIDENCE_TO_CLAIM": {
+      "h1": "Write only what is observed or tested before naming the substance or product.",
+      "h2": "Keep evidence and inference in separate lines; the inference must be supported by the observation or test.",
+      "h3": "Draw two columns headed ‘observation/test’ and ‘inference’, then fill the left column first.",
+      "verification": [
+        "VERIFY_RESULT"
+      ],
+      "workspace_fields": [
+        "observation / test = ______",
+        "chemical inference = ______",
+        "evidence link = ______",
+        "final response = ______"
+      ]
+    },
+    "PF-REACTION_PROCESS_CLASSIFICATION": {
+      "h1": "Underline the word, observation or product that actually decides the answer.",
+      "h2": "Use the evidence test: a chemical change forms new substance(s); a physical change does not. For a named reaction requirement, use the process definition stated in the lesson.",
+      "h3": "Write ‘new substance or reaction evidence?’ and answer that line before you classify or choose.",
+      "verification": [
+        "VERIFY_RESULT"
+      ],
+      "workspace_fields": [
+        "decisive evidence = ______",
+        "new substance or reaction evidence = ______",
+        "classification / answer = ______",
+        "reason = ______"
+      ]
+    }
+  },
+  "source_question_denominator": 11,
+  "subject": "CHEMISTRY",
+  "topic_id": "REDOX"
 }
