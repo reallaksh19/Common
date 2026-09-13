@@ -1,0 +1,65 @@
+{
+  "policy_id": "MATH-ASSIMILATION-JOIN-v1",
+  "policy_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "principles": [
+    "Join may execute only after Core1/Core2 cross-validation.",
+    "Join preserves disagreement and UNKNOWN rather than manufacturing consensus.",
+    "Learner prior percent is provenance only and may not be converted directly into capability readiness.",
+    "Owner constraints remain operational controls and never become evidence.",
+    "Every assimilation obligation must cite admissible claim provenance.",
+    "An obligation may not depend on UNSUPPORTED, CONTRADICTED or OUT_OF_SCOPE claims.",
+    "Manuscript writing is downstream of AssimilationDemand."
+  ],
+  "claim_resolution": {
+    "CONFIRMED": "ADMISSIBLE_AS_STATED",
+    "REFINED": "ADMISSIBLE_AS_REFINED",
+    "UNSUPPORTED": "PRESERVE_AS_CONFLICT_NOT_AUTHORITY",
+    "CONTRADICTED": "PRESERVE_AS_CONFLICT_NOT_AUTHORITY",
+    "OUT_OF_SCOPE": "PRESERVE_AS_EXCLUDED_NOT_AUTHORITY",
+    "UNKNOWN": "PRESERVE_AS_UNKNOWN_NOT_AUTHORITY",
+    "MISSING": "ADMISSIBLE_INDEPENDENT_FINDING"
+  },
+  "learner_readiness_states": ["UNKNOWN", "DEVELOPING", "READY"],
+  "learner_gap_mapping": {
+    "READY": "NO_IDENTIFIED_GAP",
+    "DEVELOPING": "BRIDGE_OR_PRACTICE_REQUIRED",
+    "UNKNOWN": "UNKNOWN_REQUIRES_PROBE_OR_FULL_SUPPORT",
+    "UNLISTED": "UNKNOWN_REQUIRES_PROBE_OR_FULL_SUPPORT"
+  },
+  "purpose_requirements": {
+    "FIRST_STUDY": [
+      "CONSTRUCT_CONCEPTUAL_MODEL",
+      "MAKE_HIDDEN_INFERENCES_VISIBLE",
+      "USE_EXPLICIT_REPRESENTATION_BRIDGES",
+      "FADE_SUPPORT_GRADUALLY"
+    ],
+    "CONSOLIDATION": [
+      "STABILIZE_CORE_METHOD",
+      "VARY_SURFACE_FORM_WITHIN_TAUGHT_SCOPE",
+      "FADE_TO_INDEPENDENT_EXECUTION"
+    ],
+    "REVISION": [
+      "RETRIEVE_CORE_INVARIANTS",
+      "DISCRIMINATE_METHODS",
+      "REPAIR_ONLY_EVIDENCED_GAPS",
+      "USE_COMPACT_MIXED_RETRIEVAL"
+    ],
+    "COMPETITIVE_EXAM": [
+      "RECOGNIZE_STRUCTURE_UNDER_DISGUISE",
+      "TRANSFER_WITHIN_APPROVED_SEMANTIC_SCOPE",
+      "PRACTISE_REVERSE_OR_HIDDEN_TARGETS_WHEN_ELIGIBLE",
+      "DO_NOT_SKIP_NECESSARY_FOUNDATIONS"
+    ]
+  },
+  "obligation_types": [
+    "SEMANTIC_UNDERSTANDING",
+    "ASSESSMENT_RECOGNITION",
+    "PREREQUISITE",
+    "INFERENCE_BRIDGE",
+    "EQUATION_ASSIMILATION",
+    "REPRESENTATION",
+    "MISCONCEPTION_CONTRAST",
+    "TRANSFER"
+  ]
+}
