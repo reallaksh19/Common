@@ -87,27 +87,11 @@ CONSUMES -> OPERATION -> EMITS -> PASS GATE / FAIL CLOSED
 
 ### C-LP-00 — Validate upstream bindings
 
-**Consumes**
-- exact C-F LearnerStudyModel ref + digest;
-- exact C-G Core1Plan ref + digest;
-- exact C-H RepresentationBundle ref + digest;
-- exact C-I Core2Plan ref + digest;
-- exact C-J coverage/denominator closure ref + digest;
-- competitive registry when fresh challenges are requested.
+Consumes exact C-F LearnerStudyModel, C-G Core1Plan, C-H RepresentationBundle, C-I Core2Plan and C-J coverage closure references/digests, plus the competitive registry when fresh challenges are requested.
 
-**Operation**
-- verify references and digests;
-- verify Core1 and Core2 are from the same governed semantic run/scope;
-- verify learner-conditioned realization uses the exact upstream learner model;
-- verify source denominator custody.
-
-**Emits** validated learner-product run manifest.
-
-**Stop on** any binding/digest/scope mismatch.
+Pass only when all references, digests, semantic-run relationships and source-denominator custody agree.
 
 ### C-LP-01 — Freeze source denominator
-
-The retained source-question denominator must be explicit before learner-product authoring.
 
 Required counters:
 
@@ -128,11 +112,11 @@ MISSING == 0
 DUPLICATE_PRIMARY == 0
 ```
 
-No later stage may silently change the denominator.
+No later stage may silently change this denominator.
 
 ### C-LP-02 — Classify source integrity
 
-Every retained source question must carry one source-integrity state:
+Every retained source question carries one of:
 
 ```text
 CLEAN
@@ -142,33 +126,19 @@ CHEMICAL_OR_DOMAIN_ISSUE
 CONTEXT_AMBIGUITY
 ```
 
-Do not silently repair source text. Any normalized display form must preserve the original source identity and QC record.
+Do not silently repair source text. Any normalized display form preserves the source identity and QC record.
 
 ### C-LP-03 — Synthesize Core1A buckets
 
-Group Core1 capabilities only when they share a grounded Chemistry teaching invariant/problem family. Preserve every required capability exactly once as a primary bucket membership. Shared prerequisites may become bridge buckets.
-
-Core1 capability != learner textbook bucket.
+Group Core1 capabilities only when they share a grounded Chemistry teaching invariant/problem family. Preserve every required capability exactly once under one governed bucket home. Core1 capability is not automatically a learner textbook bucket.
 
 ### C-LP-04 — Bind learner treatment
 
-Intrinsic difficulty and learner readiness are separate.
-
-Core1A consumes the exact C-F learner state/treatment. Core1A must not invent a second readiness taxonomy such as `20% learner`, `weak learner`, `foundation learner`, or `advanced learner` unless that state is explicitly governed upstream.
+Intrinsic difficulty and learner readiness are separate. Core1A consumes the exact C-F learner state/treatment and may not invent a parallel readiness taxonomy.
 
 ### C-LP-05 — Decompose learning atoms
 
-A learning atom is the smallest teachable move required before a linked Core2 demand can legitimately be attempted.
-
-Each atom must include:
-- meaning/purpose;
-- prerequisite support;
-- ordinary-language bridge;
-- symbolic/quantitative form when applicable;
-- representation binding;
-- misconception contrast;
-- learner check;
-- Core2 hint binding when available.
+A learning atom is the smallest teachable move required before a linked Core2 demand can legitimately be attempted. Every atom is grounded in upstream lesson/PCK/problem-family authority; missing teaching cannot be patched with free-form agent prose.
 
 ### C-LP-06 — Build representation sequence
 
@@ -185,22 +155,11 @@ VERIFY_THE_RESULT
 CONNECT_TO_CORE2
 ```
 
-A stage may be `NOT_APPLICABLE` only with a recorded reason. Decorative illustration does not satisfy representation adequacy. The representation must help the learner know what to write, draw, count, compare, cancel, label, or track next.
+A stage may be `NOT_APPLICABLE` only with a reason. Decorative illustration does not satisfy a reasoning-visual obligation.
 
 ### C-LP-07 — Build problem families
 
-Do not treat many Core2 questions as one undifferentiated list. Cluster by recognition signal, representation, first move and solution routine.
-
-Each active problem family must include:
-- `LOOK FOR` recognition signals;
-- representation/setup;
-- numbered method;
-- worked analogue;
-- independent attempt;
-- optional staged hints after attempt;
-- verification/sense check;
-- readiness gate;
-- exact Core2 release targets.
+Cluster source demands by recognition signal, representation, first move and solution routine rather than by surface wording alone. Active families carry recognition signals, setup, method steps, verification, readiness and exact Core2 release targets.
 
 ### C-LP-08 — Close Core2 hint pre-teaching
 
@@ -212,194 +171,139 @@ H2 = representation/model
 H3 = first executable symbolic/quantitative move
 ```
 
-Every H1/H2/H3 reveal must bind to earlier Core1A teaching evidence. If a hint teaches new chemistry, the linked question is not releasable.
+Every H1/H2/H3 reveal must bind to earlier Core1A teaching evidence. If a hint teaches new Chemistry, the question is not releasable.
 
 ### C-LP-09 — Realize Core1A
 
-Core1A is a teaching product, not a summary sheet. It should realize the governed bucket plan through suitable combinations of:
-
-```text
-SEE / EXPLAIN / WATCH ONE / FINISH ONE /
-TRY WITH LESS HELP / TRY ALONE / CHECK / TRANSFER
-```
-
-Every learner-facing practice question requires an answer path governed by the answer-path contract.
+Realize the bucket plan as a semantic learner manuscript with teaching sections, governed visual refs, problem-family routines, practice and readiness checks. Every learner-facing practice item receives the governed answer path before page rendering.
 
 ### C-LP-10 — Map Core2 to Core1A
 
-Every Core2 question gets exact primary bucket/problem-family bindings and H1/H2/H3 learning-atom bindings. Duplicate primary placement is forbidden.
+Every Core2 question receives exact primary bucket/problem-family bindings and H1/H2/H3 teaching bindings. Duplicate primary placement is forbidden.
 
 ### C-LP-11 — Realize source Core2A items
 
-Preserve source identity, order, stem/givens/options/subparts/units and approved assessment-safety state. Add learner support without silently rewriting the source.
-
-Every item displays its own `WHERE THIS QUESTION CAME FROM` surface.
+Preserve source identity, order, stem/givens/options/subparts/units and QC state. Add learner support around the source without silently rewriting it. Every item carries per-question provenance.
 
 ### C-LP-12 — Select challenge targets
 
-Use the Chemistry competitive-challenge policy. Challenge count/type must not be chosen ad hoc.
-
-Default selection is problem-family based:
-- one `NEAR_TRANSFER` per eligible family;
-- one structural variation for eligible D2/D3 families with a valid alternate reasoning direction;
-- `MIXED_SYNTHESIS` only when at least two compatible taught buckets are mature.
+Use the Chemistry competitive-challenge policy. Selection is problem-family based and deterministic. Unsupported families are skipped with an explicit reason rather than free-written.
 
 ### C-LP-13 — Generate challenge candidates
 
-Generate only from taught Chemistry authority plus an approved competitive archetype. Competition sources may shape reasoning demand; they do not add curriculum authority.
+Generate only from taught Chemistry authority plus an approved competitive archetype. Competition style may shape reasoning demand but may not add curriculum authority.
 
 ### C-LP-14 — Validate chemistry
 
-Generated items and worked solutions must be independently checked where applicable for:
-- formula charge neutrality;
-- atom/reaction conservation;
-- ionic charge preservation;
-- molar-mass recomputation;
-- dimensional/unit consistency;
-- entity multipliers;
-- concentration denominator;
-- stoichiometric mole ratio;
-- oxidation-number sum/change;
-- redox-direction consistency.
+Generated items and worked solutions must be independently checked where applicable. The current family validators cover notation roles, particle/coefficient translation, atom conservation, condition preservation and electron-transfer role logic; additional families require their own governed validators before generation.
 
 ### C-LP-15 — Validate taught scope
 
-Every required capability must already be authorized/taught unless explicitly governed as stretch material. Default is fail closed.
+Every generated demand, helper and solution step must be supported by the taught Core1/Core1A scope and bound problem-family authority. Untaught Chemistry fails closed.
 
 ### C-LP-16 — Validate near-copy
 
-Fresh challenges must be materially distinct from source items while preserving the intended archetype. Cosmetic number/name substitution is not sufficient novelty.
+Compare every generated prompt against all governed source stems. Exact normalized copies are forbidden; configured sequence-similarity/token-overlap ceilings must pass.
 
 ### C-LP-17 — Bind provenance
 
-Every learner question displays provenance with that question. A consolidated bibliography is insufficient.
+Every question carries learner-visible provenance. Source questions identify their source in learner-readable form while retaining exact machine custody separately. Generated items state fresh/original status and may not falsely claim official past-question provenance.
 
-Generated items must identify themselves as fresh/original when true and must never claim official past-question provenance unless an exact official source is verified.
+### C-LP-18 — Author staged help
 
-### C-LP-18 to C-LP-20 — Author learner help and answers
+Support is attempt-first and bound to the already-closed H1/H2/H3 evidence. Learner labels use governed language such as `SMALL CLUE`, `BIGGER CLUE` and `HOW DO I START?` rather than internal registry jargon.
 
-Approved learner sequence:
+### C-LP-19 — Author quick check
 
-```text
-TRY IT FIRST
-SEE THE IDEA
-WRITE THIS FIRST
-SMALL CLUE
-BIGGER CLUE
-HOW DO I START?
-WATCH FOR THIS
-THINK IT THROUGH
-CHECK YOUR CHEMISTRY
-QUICK CHECK
-FULL WORKING
-WHERE THIS QUESTION CAME FROM
-```
+Every objectively checkable learner question receives a concise `QUICK CHECK` suitable for self-correction after the attempt.
 
-The helper must cause a useful learner action. `Use mole conversion` is insufficient; `Write n = m/M, put the mass on top, calculate molar mass below it, and check that g cancels` is actionable.
+### C-LP-20 — Author full working
+
+Every objectively checkable learner question receives complete `FULL WORKING` with Chemistry reasoning, notation/quantities where applicable and independent verification. Open/procedural tasks instead receive an `EXPECTED RESPONSE` rubric.
 
 ### C-LP-21 — Validate answer closure
 
-Non-negotiable self-study rule:
-
-> NO LEARNER-FACING QUESTION WITHOUT A CHECKABLE ANSWER PATH.
-
-For objectively checkable items:
+Hard invariant:
 
 ```text
-CLOSED_QUESTIONS_TOTAL
-== QUICK_CHECKS_TOTAL
-== FULL_WORKINGS_TOTAL
+objective questions == quick checks == full workings
+open questions == expected-response rubrics
 ```
 
-For genuinely open-ended items:
-
-```text
-OPEN_QUESTIONS_TOTAL
-== EXPECTED_RESPONSE_RUBRICS_TOTAL
-```
-
-This applies to Core1A guided/faded/independent practice, retrieval/readiness gates, Core2A source items and Core2A generated challenges.
+No learner-facing question is allowed to disappear from the answer denominator.
 
 ### C-LP-22 — Render learner products
 
-Page composition may change. Source integrity, chemistry semantics, learner treatment, question identity, provenance, support order and answer closure may not.
+Consumes only the closed semantic manuscript/plans and the exact C-H RepresentationBundle.
+
+Required behavior:
+
+- deterministic A4 Core (1A) and Core (2A) PDFs;
+- governed learner typography from `chemistry-learner-render-policy.json`;
+- source and generated lanes remain visibly distinct;
+- attempt pages do not expose their quick/full answers;
+- C-H selects representations; the renderer only realizes selected primitives;
+- every visible string passes the learner-surface identifier firewall;
+- physical text/primitive rectangles and artifact hashes are recorded.
+
+Emits `chemistry_core1a.pdf`, `chemistry_core2a.pdf` and `render_manifest.json`.
 
 ### C-LP-23 — Visual preflight
 
-Inspect rendered pages at actual output size. Reject clipping, collisions, unreadable density, raw notation, ambiguous subscript/charge, text-only treatment where a required visual is absent, or essential meaning encoded by color alone.
+Validate the **actual PDFs**, not only the layout plan.
+
+Machine checks include:
+
+```text
+artifact hash + page-count custody
+A4 physical page geometry
+visible-font floor
+physical text/primitive page bounds
+unintended text/primitive overlap
+internal-identifier leakage in extracted PDF text
+reasoning-visual obligation closure
+first/middle/last raster proof at governed DPI
+blank sampled-page detection
+```
+
+The raster proof confirms that pages can be rendered and are nonblank. It does not establish mature visual design.
+
+Emits `visual_preflight.json` and raster proof images.
 
 ### C-LP-24 — Final audit
 
-Emit machine evidence for:
-- upstream bindings/digests;
-- source denominator closure;
-- capability/bucket coverage;
-- representation obligations;
-- hint pre-teach closure;
-- source Core2A placement;
-- challenge validation;
-- provenance;
-- answer closure;
-- learner-language guard;
-- rendered visual checks;
-- pending human review states.
+Require semantic closure, answer closure, successful PDF realization and C-LP-23 machine preflight. Recompute artifact hashes and emit explicit machine-gate status.
+
+The audit must also preserve the independent human gates:
+
+```text
+SUBJECT_CORRECTNESS = PENDING
+PEDAGOGICAL_DESIGN = PENDING
+ASSESSMENT_DESIGN = PENDING
+VISUAL_USABILITY = PENDING
+MATURE_DESIGN_QUALITY = PENDING
+```
+
+A machine PASS must set `release_authorized=false` until those gates are granted by authorized review.
 
 ### C-LP-25 — Freeze handoff
 
-Every completed run must leave durable reusable files so another agent can continue without chat history:
-- run manifest;
-- exact upstream refs/digests;
-- source ledger/denominator;
-- Core1A bucket plan;
-- learning-atom and problem-family maps;
-- representation obligations;
-- hint-preteach map;
-- Core2A source/challenge plans;
-- provenance records;
-- answer-closure audit;
-- rendered artifact hashes;
-- visual QA result;
-- known limitations;
-- next active bucket/build state.
+Freeze a reusable handoff containing exact semantic refs/digests, rendered artifact hashes/page counts, final audit ref/digest and the files required for a new agent to continue without chat history.
 
-## Schema / policy / engine / golden separation
+Required status before human review:
 
 ```text
-SCHEMA  = what a legal object contains
-POLICY  = how production decisions are made
-ENGINE  = exact ordered execution
-GOLDEN  = concrete end-to-end example proving the process
+MACHINE_COMPLETE_HUMAN_REVIEW_PENDING
 ```
 
-No layer substitutes for another.
+The handoff must say what review/action is next; it may not relabel machine publication engineering as expert release approval.
 
-## Stop conditions
+## Golden process fixture
 
-Stop rather than improvise when:
-- source chemistry is damaged, contradictory or ambiguous without a QC state;
-- required learner state/treatment is unavailable;
-- Core1/Core1A/Core2 bindings disagree;
-- a bucket invariant cannot be grounded;
-- a required representation cannot be semantically grounded;
-- a Core2 hint cannot map to taught Core1A content;
-- a generated item requires untaught chemistry;
-- a generated item has not been independently verified;
-- a generated item is materially too close to source;
-- provenance role is unclear;
-- any learner question lacks its required answer path.
+`golden/some-basic-concepts/` contains a deliberately small synthetic formula/particle/conservation process golden. `build_render_golden.py` runs it through C-LP-25 and CI uploads the resulting PDFs, raster proofs and manifests for actual-size human inspection.
 
-## Canonical run interface
+The golden explicitly makes no production, NCERT-provenance or human-release claim and does not replace the 68-question Some Basic Concepts denominator preserved in the authoring handoff.
 
-The canonical run object is governed by:
+## Release rule
 
-`LearnerProduct/contracts/chemistry-learner-product-run.schema.json`
-
-The intended command is:
-
-```bash
-python 'Grade 9/V2/Chemistry/LearnerProduct/engine/run_chemistry_learner_product.py' \
-  --run-manifest /path/to/run.json \
-  --out-dir /tmp/chemistry-learner-product
-```
-
-Until downstream adapters are implemented, normal generation must fail closed with an explicit unsupported-stage error. `--validate-only` may be used to prove contract/policy bindings.
+A Chemistry learner product is machine-complete only when all C-LP stages applicable to the requested products pass and the frozen handoff exists. It is **release-complete only after the separately governed human subject, pedagogy, assessment and visual/mature-design gates are granted**.
