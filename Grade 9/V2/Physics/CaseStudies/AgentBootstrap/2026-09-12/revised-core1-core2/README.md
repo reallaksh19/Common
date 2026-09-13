@@ -82,15 +82,29 @@ See `nlm/`.
 - Q10 remains ambiguity-aware: the source's smooth-floor wording does not justify inventing frictional rolling torque.
 - Core 2 figures are state-specific: braking and accelerating vehicle states are separated, frictionless puck pages do not invent horizontal forces, conservation pages show system boundaries, and force/mass tables use the actual problem state.
 - Final automated scan: zero out-of-bounds text blocks, zero severe overlap flags, zero hint-pair failures.
-- Both PDFs were re-rendered after the final representation/hint/layout corrections.
 
-### 4. Work & Energy - NEXT
+### 4. Motion in 2D - NCERT CLASS IX EXEMPLAR SUBSET - COMPLETE
 
-Rebuild Core 1 and Core 2 together. Core 1 should teach system choice and state-to-state energy accounting before formula selection: `choose system -> mark initial/final state -> identify energy stores -> identify external/non-conservative work -> write the energy balance -> solve -> verify`. Core 2 hints should ask the learner which state changes, which energy stores belong to the system, and what balance can be written before any substitution.
+See `motion-2d-ncert/`.
 
-## Existing Motion in 2D case study
+This is deliberately a focused subset rather than a claim of full Motion in a Plane coverage.
 
-The Motion in 2D work remains the principal case study that established the revised Core 2 hint/solution architecture. Its previous PDFs are regression evidence; the topic-by-topic programme applies the same standard consistently across the remaining completed Physics topics.
+- Source pool: Unit 8 Q1/Q6/Q11; Unit 10 Q4/Q16/Q17/Q18/Q22; Unit 9 Q5 as TRANSFER.
+- Sample Paper I Q10 is explicitly deduplicated against Unit 8 Q1.
+- Revised Core 1: 20 pages, 9 competency families.
+- Revised Core 2: 20 pages, 9 protected attempts, compact answer key and 9 full worked solutions.
+- Learner questions are paraphrased from source demands; source IDs are retained.
+- The source boundary is explicit: no claim of complete oblique-projectile, boat/rain relative-velocity, angular-kinematics or non-uniform circular-motion coverage.
+- Final scan: zero out-of-bounds text blocks and zero severe overlap flags in both PDFs.
+- All pages were re-rendered after correcting figure geometry and learner-facing math typography.
+
+### Work & Energy - SKIPPED FOR THIS REVISION PASS
+
+Per user instruction, do not revise Work & Energy in this sequence unless explicitly reopened.
+
+## Next topic
+
+**Gravitation** - reconcile the full NCERT Class IX Exemplar Unit 10 demand surface first, then rebuild Core 1 and Core 2 together without double-counting the Motion-in-2D demands already isolated in `motion-2d-ncert/`.
 
 ## Answer requirement
 
