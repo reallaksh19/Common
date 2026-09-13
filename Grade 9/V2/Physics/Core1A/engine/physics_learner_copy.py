@@ -85,6 +85,17 @@ def learner_subtitle(role, registry=None, default=""):
     return reg.get("module_helpers", {}).get(_normalise(role), default)
 
 
+def figure_title(primitive_id, registry=None, default=None):
+    """Governed heading for a teaching primitive drawn on a learner page.
+
+    The primitives carry their own default titles, and several of those defaults are
+    curriculum-design labels ("MINIMAL CONTRAST", "MODEL VALIDITY GATE"). A learner product
+    supplies this heading instead, so the page says what the picture is for.
+    """
+    reg = registry or load_registry()
+    return reg.get("figure_titles", {}).get(_normalise(primitive_id), default)
+
+
 def is_mapped(role, registry=None):
     reg = registry or load_registry()
     return _normalise(role) in reg["module_labels"]

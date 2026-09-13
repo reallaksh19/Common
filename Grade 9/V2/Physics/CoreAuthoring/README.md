@@ -95,6 +95,59 @@ Worked examples and Appendix A items are `NEW_AUTHORED_CORE1` instances bound to
 upstream P-D problem family, with `external_candidate_refs` empty. Original external
 transfer items stay reserved for P-I Core2.
 
+## Authored instances: a worked example resolves to a number (P-UPGRADE-2 item 3)
+
+A Core (1) problem used to be an authoring *plan* — "select the model, choose the relation,
+solve" — with no situation, no quantities and no result. A learner cannot watch that being
+solved. Now every place a learner is asked to do something carries a **resolved instance**.
+
+```text
+registry/physics-authored-instances.json     data, keyed by problem family
+engine/physics_instance_resolver.py          the engine that makes the data load-bearing
+contracts/physics-authored-instance.schema.json
+contracts/physics-instance-route-state.schema.json   shared with P-I
+```
+
+An instance declares a `situation`, a `frame`, typed `givens`, one `unknown`, a typed
+`reasoning_route` of route states (`role`, `input_state_refs`, `representation_ref`,
+`equation`, `why_valid`, `output_state`) and its checks. The resolver then:
+
+- **computes** every `EXECUTE` state and the final answer with a restricted `ast`
+  evaluator — no `eval`, arithmetic and a fixed function set only — so a declared answer
+  that does not follow from the declared route is a failure, not a claim;
+- proves the route **transforms state**: every input must already be known and the set of
+  known symbols must grow, or `WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE`;
+- expands declared per-given value lists into deterministic variants, so worked, guided,
+  faded, independent, retry and Appendix A are different numbers on the same physics, each
+  with its own computed answer;
+- checks each variant against the instance's declared `constraints`, so a variant that
+  breaks the physics fails rather than rendering;
+- runs the declared `independent_verification` as real arithmetic on a genuinely different
+  expression, and rejects a "verification" that repeats a solving-route relation.
+
+14 families are authored, spanning Motion 1D, motion under gravity, graphs, multiphase,
+relative motion and projectile components. The engine holds arithmetic, route structure and
+answer custody — and no Physics topic at all, so a new topic is a new data row.
+
+Falsifiers: `WORKED_EXAMPLE_UNINSTANTIATED`, `WORKED_EXAMPLE_FINAL_ANSWER_MISSING`,
+`WORKED_EXAMPLE_REASONING_DOES_NOT_TRANSFORM_STATE`, `VERIFICATION_ROUTE_NOT_INDEPENDENT`,
+`INSTANCE_VARIANT_VIOLATES_DECLARED_CONSTRAINT`.
+
+## Answer custody (P-UPGRADE-2 item 6)
+
+Every learner-facing question resolves to three separate objects that may never collapse:
+
+- `final_answer` — the resolved result, recomputed from the route;
+- `quick_check` — one defining property, sign or unit;
+- `independent_verification` — a genuinely distinct route to the same number.
+
+Appendix A is a **protected attempt surface**: its items carry `answer_ref` only, and the
+answers live in Appendix B. A `final_answer` beside an Appendix A question is
+`ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE`.
+
+Falsifiers: `LEARNER_QUESTION_WITHOUT_ANSWER`, `SELF_CHECK_SUBSTITUTED_FOR_ANSWER`,
+`ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE`.
+
 ## Mandatory appendices
 
 ```text

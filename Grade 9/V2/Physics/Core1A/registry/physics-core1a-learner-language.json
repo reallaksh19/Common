@@ -69,6 +69,27 @@
       "learner_label": "Stretch"
     }
   },
+  "figure_titles": {
+    "ACCELERATION_TIME_GRAPH": "HOW THE SPEEDING UP CHANGES",
+    "DIAGRAM_EQUATION_BRIDGE": "WHAT EACH LETTER MEANS IN THE PICTURE",
+    "FORCE_DIAGRAM": "EVERY PUSH AND PULL ON ONE OBJECT",
+    "MINIMAL_PHYSICS_CONTRAST": "TWO CASES, ONE THING CHANGED",
+    "MODEL_VALIDITY_GATE": "WHEN YOU ARE ALLOWED TO USE THIS RULE",
+    "MOTION_STRIP": "WHERE IT IS AT EQUAL TIME STEPS",
+    "OPTION_GRAPH_SET_VIEW": "THE CHOICES, DRAWN ON THE SAME AXES",
+    "PHASE_BOUNDARY_VIEW": "WHAT CARRIES OVER WHEN THE MOTION CHANGES",
+    "PHENOMENON_SCENE": "WHAT IS ACTUALLY HAPPENING",
+    "POSITION_TIME_GRAPH": "POSITION AGAINST TIME: STEEPNESS IS SPEED",
+    "RELATIVE_FRAME_VIEW": "MEASURED FROM WHICH OBJECT?",
+    "SIGN_FRAME_OVERLAY": "WHERE ZERO IS AND WHICH WAY IS POSITIVE",
+    "SLOPE_AREA_DECODER": "STEEPNESS OR AREA? ONE GRAPH, TWO READINGS",
+    "STATE_TABLE": "WHAT YOU KNOW AT THE START AND AT THE END",
+    "TIMELINE_INTERVAL_VIEW": "ONE NAMED SECOND IS A DIFFERENCE",
+    "TRAJECTORY_VIEW": "THE PATH YOU TRAVEL VERSUS THE STRAIGHT LINE",
+    "VECTOR_STATE_VIEW": "WHICH WAY EACH ARROW POINTS",
+    "VELOCITY_TIME_GRAPH": "SPEED AGAINST TIME: STEEPNESS AND AREA",
+    "VERIFICATION_CHECK_STRIP": "CHECKS THAT COULD CATCH A MISTAKE"
+  },
   "genericity_statement": "One governed vocabulary maps an internal role or state identifier to the warm, plain-English wording a Grade-9 learner actually reads. Internal identifiers are unchanged: schema fields, JSON enum values, falsifier names and test assertions keep using MISCONCEPTION_REPAIR, WORKED, GUIDED, EXECUTE and the rest. Only the rendered learner surface is translated, and it is translated here rather than in each renderer, so Core (1A) and Core (2) cannot drift into two different vocabularies.",
   "internal_role_identifiers": [
     "ANCHOR",

@@ -22,6 +22,10 @@ NAMES = [
     "physics-core2-transfer-plan.schema.json",
 ]
 STORE = {n: json.loads((C / n).read_text(encoding="utf-8")) for n in NAMES}
+# the route-state object is shared with P-G: one schema, two phases
+STORE["physics-instance-route-state.schema.json"] = json.loads(
+    (PHYS / "CoreAuthoring" / "contracts" / "physics-instance-route-state.schema.json")
+    .read_text(encoding="utf-8"))
 
 
 def validator(name):

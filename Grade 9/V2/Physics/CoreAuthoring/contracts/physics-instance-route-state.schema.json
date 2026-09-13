@@ -41,6 +41,10 @@
         "statement": {"type": "string"}
       }
     },
-    "learner_text": {"type": "string"}
+    "learner_text": {"type": "string"},
+    "solution_section_ref": {
+      "description": "Set by P-I: which solution section projects this state, so the hint ladder and the full solution provably come from the same route.",
+      "type": ["string", "null"]
+    }
   }
 }

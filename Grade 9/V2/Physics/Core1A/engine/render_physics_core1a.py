@@ -38,6 +38,7 @@ for _p in (str(HERE.parent), str(PHYS / "Representation" / "engine"), str(PHYS /
 
 from physics_learner_copy import (  # noqa: E402
     learner_title, learner_subtitle, apply_phrase_rewrites, learner_copy_violations,
+    figure_title,
 )
 
 PAGE_W, PAGE_H = A4
@@ -375,8 +376,14 @@ class Book:
         rendered = False
         grounding = "SCHEMATIC_STRUCTURE_ONLY"
         if spec and renderer:
+            params = learner_params(spec.get("render_params") or {})
+            # the governed heading, not the primitive's own curriculum-design default
+            heading = figure_title(spec["primitive_id"])
+            if heading and not params.get("title"):
+                params["title"] = heading
+            self.text(params.get("title", ""))
             evidence = renderer(
-                spec["primitive_id"], learner_params(spec.get("render_params") or {}), self.c,
+                spec["primitive_id"], params, self.c,
                 (inner_x, inner_y, inner_w, inner_h),
             )
             rendered = True

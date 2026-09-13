@@ -33,6 +33,50 @@ the primary capability — the attention clause, model clause and first move are
 whether the capability carries frame/sign, multiphase, graph or model-validity obligations.
 There is no per-topic hint table.
 
+## The ladder projects one reasoning route (P-UPGRADE-2 item 4)
+
+H1/H2/H3 are not three independently authored strings. Each transfer page carries a typed
+`reasoning_route` — the **same** route-state object P-G authors inside a worked instance
+(`physics-instance-route-state.schema.json`) — and each hint is a projection of one state:
+
+| level | route state projected | `visual_role` |
+|---|---|---|
+| `H1_NOTICE` | `REPRESENT` | `ATTENTION_CUE` |
+| `H2_MODEL` | `MODEL` | `MODEL_REPRESENTATION` |
+| `H3_START` | `FRAME` | `FIRST_MOVE_OVERLAY` |
+
+The solution's sections project the same states, so the ladder and the solution cannot
+drift apart.
+
+For a **spatial** family the ladder is diagram-first: every hint carries the representation
+the route already needs, drawn through the P-H `render_primitive` interface with the same
+draw-time custody as any other figure — so a vectors, path or graph problem shows the
+learner the diagram instead of prose describing a diagram they never see. Spatial is
+decided by declared data (the capability's own representation obligations, or a preserved
+source figure), never by topic name, so a new topic needs no code change.
+
+Figure parameters come from the item's own preserved `figure_semantic` when the source
+states one, and are otherwise schematic-only: `CORE2_INVENTS_FIGURE_QUANTITY` fires if a
+hint diagram carries a number the source never stated.
+
+Falsifiers: `HINT_NOT_PROJECTED_FROM_ROUTE_STATE`,
+`SPATIAL_FAMILY_HINT_WITHOUT_REPRESENTATION`, `CORE2_INVENTS_FIGURE_QUANTITY`.
+
+## Answer custody (P-UPGRADE-2 item 6)
+
+Every transfer page resolves to three separate objects that may never collapse into one:
+
+- `final_answer` — the **source's own** answer key resolved to its option text.
+  `authored_by_core2: false`; Core (2) does not write the answer and may not alter it.
+- `quick_check` — one defining property for the family.
+- `independent_verification` — a genuinely distinct route, declared as such.
+
+The answer never appears beside the question (`answer_shown_with_the_question: false`), and
+no hint may name the answer's option label.
+
+Falsifiers: `LEARNER_QUESTION_WITHOUT_ANSWER`, `SELF_CHECK_SUBSTITUTED_FOR_ANSWER`,
+`ANSWER_LEAKS_INTO_PROTECTED_ATTEMPT_PAGE`.
+
 ## First-Step Reference
 
 One entry per problem family, derived from the same structure

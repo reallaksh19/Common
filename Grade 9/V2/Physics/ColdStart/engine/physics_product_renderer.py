@@ -11,7 +11,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve()
 PHYS = HERE.parents[2]
-sys.path[:0] = [str(PHYS / "Representation" / "engine")]
+sys.path[:0] = [str(PHYS / "Representation" / "engine"), str(PHYS / "Core1A" / "engine")]
 
 from reportlab.pdfgen import canvas as rl_canvas  # noqa: E402
 from reportlab.pdfbase.pdfmetrics import stringWidth  # noqa: E402
@@ -19,6 +19,11 @@ from physics_primitive_renderer import (  # noqa: E402
     render_primitive, TracingCanvas, FONT_NAME, FONT_BOLD, Palette, draw_card_box,
 )
 from physics_page_custody import reconciliation_errors  # noqa: E402
+# Same governed learner vocabulary as Core (1A): the two products may not drift into
+# two dialects, so both read the one registry through the one engine.
+from physics_learner_copy import (  # noqa: E402
+    learner_title, apply_phrase_rewrites, learner_copy_violations, figure_title,
+)
 
 PAGE_W, PAGE_H = 595.2756, 841.8898
 MARGIN = 42
@@ -95,6 +100,9 @@ def learner_text(text):
         s = s.replace(old, new)
     s = INTERNAL_REF_RE.sub(lambda m: human(m.group(0)).lower(), s)
     s = INTERNAL_TOKEN_RE.sub(lambda m: m.group(0).replace("_", " ").lower(), s)
+    # then the governed learner vocabulary, so clinical process wording is translated here
+    # exactly as it is in Core (1A) rather than in a second, divergent table
+    s = apply_phrase_rewrites(s)
     s = re.sub(r"\s{2,}", " ", s).strip()
     return s
 
@@ -103,6 +111,17 @@ def residual_internal_tokens(text):
     """Whatever the sanitizer would still let through. Used by the P-L learner-surface gate."""
     s = str(text or "")
     return sorted(set(INTERNAL_REF_RE.findall(s)) | set(INTERNAL_TOKEN_RE.findall(s)))
+
+
+def residual_role_labels(text):
+    """Clinical role labels that survived to a learner page.
+
+    The token scan above catches identifier *shapes* (``MISCONCEPTION_REPAIR``). This
+    catches the same vocabulary in prose ("misconception repair", "readiness gate"), which
+    is the leak the shape scan cannot see. Behind
+    ``INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE``.
+    """
+    return learner_copy_violations(text)
 
 
 def learner_params(params):
@@ -216,12 +235,21 @@ class ProductWriter:
             self.para(f"{i}. {item}", indent=indent)
 
     # ------------------------------------------------------------- evidence
-    def figure(self, spec, intent_id):
-        self.ensure(FIG_H + 10)
-        y = self.y - FIG_H
+    def figure(self, spec, intent_id, height=None):
+        from physics_primitive_renderer import size_contract  # noqa: E402
+        h = float(height or FIG_H)
+        # never allocate below the primitive's declared floor: a figure squeezed under its
+        # own size contract is a publication defect, not a tighter layout
+        h = max(h, size_contract(spec["primitive_id"])["minimum_height_pt"])
+        self.ensure(h + 10)
+        y = self.y - h
+        params = learner_params(spec["render_params"])
+        heading = figure_title(spec["primitive_id"])
+        if heading and not params.get("title"):
+            params["title"] = heading
         evidence = render_primitive(
-            spec["primitive_id"], learner_params(spec["render_params"]), self.c,
-            (MARGIN, y, PAGE_W - 2 * MARGIN, FIG_H)
+            spec["primitive_id"], params, self.c,
+            (MARGIN, y, PAGE_W - 2 * MARGIN, h)
         )
         if evidence["vector_ops"] < spec["minimum_vector_ops"]:
             fail("TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED",
@@ -232,7 +260,7 @@ class ProductWriter:
             "primitive": spec["primitive_id"],
             "page": self.page,
             "fragment_kind": "START",
-            "x0": MARGIN, "y0": y, "x1": PAGE_W - MARGIN, "y1": y + FIG_H,
+            "x0": MARGIN, "y0": y, "x1": PAGE_W - MARGIN, "y1": y + h,
             "ink_bbox": evidence["ink_bbox"],
             "vector_ops": evidence["vector_ops"],
             "text_ops": evidence["text_ops"],
@@ -242,6 +270,20 @@ class ProductWriter:
         self.page_refs[self.page].append(spec["representation_id"])
         self.y = y - 10
         return self.page
+
+    def hint_figure(self, page, hint, figure, intent_ref):
+        """Draw the representation a hint projects, with the same custody as any figure."""
+        from physics_primitive_renderer import size_contract  # noqa: E402
+        contract = size_contract(figure["primitive_id"])
+        spec = {
+            "representation_id": f"{hint['hint_id']}-FIGURE",
+            "primitive_id": figure["primitive_id"],
+            "render_params": figure.get("render_params") or {},
+            "quantitative_grounding": figure.get("quantitative_grounding",
+                                                 "SCHEMATIC_STRUCTURE_ONLY"),
+            "minimum_vector_ops": 1,
+        }
+        self.figure(spec, intent_ref, height=contract["minimum_height_pt"])
 
     def open_intent(self, intent_id, label):
         self._intent = {"page_intent_id": intent_id, "capability_ref": label,
@@ -418,12 +460,14 @@ def render_core_study_guide(core1_plan, bundle, out_path, title="Physics — Cor
 
 def render_transfer_book(core2_plan, out_path, title="Physics — Transfer & Solution Book"):
     w = ProductWriter(out_path, title, "TRANSFER_SOLUTION_BOOK")
+    intents = {}
     w.heading(title, size=17)
-    w.para("Each page is an original transfer question. Use the hints in order only if you are stuck: "
-           "the first tells you what to notice, the second names the model, the third gives only the "
-           "first move. The full solution follows.")
+    w.para("Each page is one question to try on your own. Only open the hints if you are "
+           "stuck, and only one at a time: the first tells you what to notice, the second "
+           "tells you which rule fits, the third gives you the first move and stops there. "
+           "The full worked answer comes after them.")
 
-    w.heading("First-step reference", size=13)
+    w.heading("How to start any of these", size=13)
     for entry in core2_plan["first_step_reference"]:
         w.subheading(human(entry["problem_family_ref"]))
         w.para(entry["first_move"])
@@ -432,20 +476,43 @@ def render_transfer_book(core2_plan, out_path, title="Physics — Transfer & Sol
         w.new_page()
         w.heading(f"Transfer question {n} — {human(page['core1_linkage']['primary_capability_ref'])}",
                   size=12)
-        w.para(f"Scaffolding level: {human(page['guide_demand_badge'])}.")
+        w.para(f"How much help this one gets: {human(page['guide_demand_badge'])}.")
+        intent = w.open_intent("PI-HINT-" + page["page_id"], page["page_id"])
+        intents[page["page_id"]] = intent
         w.subheading("Question")
         w.para(page["stem"])
         for option in page["options"]:
             w.para(f"({option['label']}) {option['text']}", indent=12)
-        w.subheading("Hints")
-        for hint in page["hint_ladder"]:
-            w.para(f"{hint['level'].split('_')[0]} — {hint['text']}", indent=8)
-        w.subheading("Solution")
+        w.subheading(learner_title("HINT_LADDER", default="If you get stuck"))
+        for n, hint in enumerate(page["hint_ladder"], 1):
+            w.subheading(learner_title(hint["level"], default=f"Hint {n}"))
+            w.para(hint["text"], indent=8)
+            # item 4: a spatial family gets the diagram the route already needs, not prose
+            # describing a diagram the learner is never shown.
+            figure = hint.get("figure")
+            if figure and hint.get("diagram_first"):
+                w.hint_figure(page, hint, figure, intent_ref="PI-HINT-" + page["page_id"])
+        w.subheading(learner_title("SOLUTION", default="Full worked answer"))
         for section in page["solution"]["sections"]:
-            w.para(f"{human(section['section'])}: {section['text']}")
+            w.para(f"{learner_title(section['section'], default=human(section['section']))}: "
+                   f"{section['text']}")
         w.bullets([human(v) for v in page["solution"]["verification_steps"]])
+        answer = page.get("final_answer") or {}
+        if answer.get("statement"):
+            w.subheading(learner_title("ANSWER", default="The answer"))
+            w.para(answer["statement"])
+        quick = page.get("quick_check") or {}
+        if quick.get("prompt"):
+            w.subheading(learner_title("QUICK_CHECK", default="One thing to check"))
+            w.para(quick["prompt"])
+        verification = page.get("independent_verification") or {}
+        if verification.get("route_description"):
+            w.subheading(learner_title("INDEPENDENT_VERIFICATION",
+                                       default="Check it a different way"))
+            w.para(verification["route_description"])
         w.para("This question practises the same skill taught in the study guide unit on "
                f"{human(page['core1_linkage']['primary_capability_ref']).lower()}.")
+        w.close_intent(intents[page["page_id"]])
 
     data, page_map = w.save()
     return data, page_map, ["TRANSFER_QUESTIONS", "HINT_LADDERS", "FULL_SOLUTIONS"]
