@@ -1,0 +1,118 @@
+{
+  "fixture_set_id": "G9-V2-BLUEPRINT-V1-GOLDENS",
+  "note": "Synthetic process fixtures. Validation freeze digests are materialized from the blind passes by the test harness before execution.",
+  "fixtures": [
+    {
+      "fixture_id": "SEMANTIC-FIRST-ALIGNED",
+      "route": {"packet_id": "R-V1-001", "digest": "1111111111111111111111111111111111111111111111111111111111111111", "final_decision": "CORE1_FIRST", "execution_blocked": false},
+      "first_pass": {
+        "pass_id": "PASS-K-GRAV", "packet_id": "K-GRAV", "packet_type": "K", "role": "CORE1", "instance_id": "C1-GRAV-01", "sequence_role": "FIRST_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-GRAV", "ground_truth_manifest_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "subtopic_refs": ["GRAVITY"], "upstream_packet_refs": [],
+        "claims": [
+          {"claim_id": "K-G1", "claim_domain": "SEMANTIC", "claim_kind": "CONCEPT_BOUNDARY", "statement": "Velocity direction and acceleration direction are distinct physical properties.", "capability_refs": ["CAP-VELOCITY-ACCELERATION"], "evidence_refs": ["GT-GRAV", "SRC-GRAV-1"], "confidence": "HIGH", "required_for_assessment": false},
+          {"claim_id": "K-G2", "claim_domain": "SEMANTIC", "claim_kind": "STATE", "statement": "At a vertical extremum the vertical velocity component is zero while acceleration can remain non-zero.", "capability_refs": ["CAP-APEX-STATE"], "evidence_refs": ["GT-GRAV", "SRC-GRAV-1"], "confidence": "HIGH", "required_for_assessment": false},
+          {"claim_id": "K-G3", "claim_domain": "SEMANTIC", "claim_kind": "LAW", "statement": "Near Earth in the stated model gravitational acceleration remains directed downward.", "capability_refs": ["CAP-GRAVITY-DIRECTION"], "evidence_refs": ["GT-GRAV", "SRC-GRAV-1"], "confidence": "HIGH", "required_for_assessment": false}
+        ],
+        "unresolved": []
+      },
+      "second_pass": {
+        "pass_id": "PASS-D-GRAV", "packet_id": "D-GRAV", "packet_type": "D", "role": "CORE2", "instance_id": "C2-GRAV-02", "sequence_role": "SECOND_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-GRAV", "ground_truth_manifest_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "subtopic_refs": ["GRAVITY"], "upstream_packet_refs": [],
+        "claims": [
+          {"claim_id": "D-G1", "claim_domain": "ASSESSMENT", "claim_kind": "HIDDEN_STATE", "statement": "Available questions require recognising the vertical-extremum state before selecting a relation.", "capability_refs": ["CAP-APEX-STATE"], "evidence_refs": ["GT-GRAV", "Q-GRAV-1"], "confidence": "HIGH", "required_for_assessment": true},
+          {"claim_id": "D-G2", "claim_domain": "ASSESSMENT", "claim_kind": "MISCONCEPTION", "statement": "The corpus can expose confusion between velocity direction and acceleration direction.", "capability_refs": ["CAP-VELOCITY-ACCELERATION"], "evidence_refs": ["GT-GRAV", "Q-GRAV-2"], "confidence": "MEDIUM", "required_for_assessment": true},
+          {"claim_id": "D-G3", "claim_domain": "ASSESSMENT", "claim_kind": "SCOPE_OBSERVATION", "statement": "The source establishes gravity direction, but the supplied questions do not independently demand that capability.", "capability_refs": ["CAP-GRAVITY-DIRECTION"], "evidence_refs": ["GT-GRAV", "SRC-GRAV-1"], "confidence": "HIGH", "required_for_assessment": false}
+        ],
+        "unresolved": []
+      },
+      "validation": {
+        "packet_id": "V-GRAV", "packet_type": "V", "first_pass_id": "PASS-K-GRAV", "second_pass_id": "PASS-D-GRAV", "first_role": "CORE1", "second_role": "CORE2", "first_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "second_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "reveal_after_second_freeze": true, "ground_truth_refs": ["GT-GRAV"],
+        "comparisons": [
+          {"comparison_id": "V-G1", "upstream_claim_id": "K-G1", "validator_claim_refs": ["D-G2"], "capability_refs": ["CAP-VELOCITY-ACCELERATION"], "status": "CONFIRMED", "evidence_refs": ["GT-GRAV", "SRC-GRAV-1", "Q-GRAV-2"], "note": "Independent assessment pass is compatible with the semantic boundary.", "unresolved": []},
+          {"comparison_id": "V-G2", "upstream_claim_id": "K-G2", "validator_claim_refs": ["D-G1"], "capability_refs": ["CAP-APEX-STATE"], "status": "CONFIRMED", "evidence_refs": ["GT-GRAV", "SRC-GRAV-1", "Q-GRAV-1"], "note": "Independent pass finds the same state distinction in the evidence.", "unresolved": []},
+          {"comparison_id": "V-G3", "upstream_claim_id": "K-G3", "validator_claim_refs": ["D-G3"], "capability_refs": ["CAP-GRAVITY-DIRECTION"], "status": "CONFIRMED", "evidence_refs": ["GT-GRAV", "SRC-GRAV-1"], "note": "Semantic claim is supported even though direct assessment demand is absent.", "unresolved": []}
+        ],
+        "unresolved": []
+      },
+      "expected_join_state": "READY_FOR_LEARNER_STATE",
+      "expected_obligation_capabilities": ["CAP-APEX-STATE", "CAP-VELOCITY-ACCELERATION"],
+      "expected_semantic_without_assessment": ["CAP-GRAVITY-DIRECTION"]
+    },
+    {
+      "fixture_id": "ASSESSMENT-FIRST-ALIGNED",
+      "route": {"packet_id": "R-V1-002", "digest": "2222222222222222222222222222222222222222222222222222222222222222", "final_decision": "CORE2_FIRST", "execution_blocked": false},
+      "first_pass": {
+        "pass_id": "PASS-D-ION", "packet_id": "D-ION", "packet_type": "D", "role": "CORE2", "instance_id": "C2-ION-01", "sequence_role": "FIRST_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-ION", "ground_truth_manifest_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "subtopic_refs": ["IONIC_FORMULA"], "upstream_packet_refs": [],
+        "claims": [
+          {"claim_id": "D-I1", "claim_domain": "ASSESSMENT", "claim_kind": "FIRST_NON_OBVIOUS_MOVE", "statement": "Questions require establishing total charge balance before accepting an ionic formula.", "capability_refs": ["CAP-CHARGE-BALANCE"], "evidence_refs": ["GT-ION", "Q-ION-1"], "confidence": "HIGH", "required_for_assessment": true},
+          {"claim_id": "D-I2", "claim_domain": "ASSESSMENT", "claim_kind": "PROBLEM_FAMILY", "statement": "The corpus requires constructing a neutral formula from ionic charges.", "capability_refs": ["CAP-IONIC-FORMULA"], "evidence_refs": ["GT-ION", "Q-ION-2"], "confidence": "HIGH", "required_for_assessment": true}
+        ],
+        "unresolved": []
+      },
+      "second_pass": {
+        "pass_id": "PASS-K-ION", "packet_id": "K-ION", "packet_type": "K", "role": "CORE1", "instance_id": "C1-ION-02", "sequence_role": "SECOND_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-ION", "ground_truth_manifest_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "subtopic_refs": ["IONIC_FORMULA"], "upstream_packet_refs": [],
+        "claims": [
+          {"claim_id": "K-I1", "claim_domain": "SEMANTIC", "claim_kind": "INVARIANT", "statement": "A neutral ionic formula unit has zero net charge.", "capability_refs": ["CAP-CHARGE-BALANCE"], "evidence_refs": ["GT-ION", "SRC-ION-1"], "confidence": "HIGH", "required_for_assessment": false},
+          {"claim_id": "K-I2", "claim_domain": "SEMANTIC", "claim_kind": "PROCEDURE_BOUNDARY", "statement": "Subscripts encode the smallest whole-number ion ratio that satisfies charge neutrality.", "capability_refs": ["CAP-IONIC-FORMULA"], "evidence_refs": ["GT-ION", "SRC-ION-1"], "confidence": "HIGH", "required_for_assessment": false}
+        ],
+        "unresolved": []
+      },
+      "validation": {
+        "packet_id": "V-ION", "packet_type": "V", "first_pass_id": "PASS-D-ION", "second_pass_id": "PASS-K-ION", "first_role": "CORE2", "second_role": "CORE1", "first_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "second_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "reveal_after_second_freeze": true, "ground_truth_refs": ["GT-ION"],
+        "comparisons": [
+          {"comparison_id": "V-I1", "upstream_claim_id": "D-I1", "validator_claim_refs": ["K-I1"], "capability_refs": ["CAP-CHARGE-BALANCE"], "status": "CONFIRMED", "evidence_refs": ["GT-ION", "Q-ION-1", "SRC-ION-1"], "note": "Question demand is semantically supported.", "unresolved": []},
+          {"comparison_id": "V-I2", "upstream_claim_id": "D-I2", "validator_claim_refs": ["K-I2"], "capability_refs": ["CAP-IONIC-FORMULA"], "status": "CONFIRMED", "evidence_refs": ["GT-ION", "Q-ION-2", "SRC-ION-1"], "note": "Problem-family demand is inside the semantic boundary.", "unresolved": []}
+        ],
+        "unresolved": []
+      },
+      "expected_join_state": "READY_FOR_LEARNER_STATE",
+      "expected_obligation_capabilities": ["CAP-CHARGE-BALANCE", "CAP-IONIC-FORMULA"],
+      "expected_semantic_without_assessment": []
+    },
+    {
+      "fixture_id": "MATERIAL-CONFLICT-BLOCKS-JOIN",
+      "route": {"packet_id": "R-V1-003", "digest": "3333333333333333333333333333333333333333333333333333333333333333", "final_decision": "CORE2_FIRST", "execution_blocked": false},
+      "first_pass": {
+        "pass_id": "PASS-D-CONFLICT", "packet_id": "D-CONFLICT", "packet_type": "D", "role": "CORE2", "instance_id": "C2-CONFLICT-01", "sequence_role": "FIRST_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-CONFLICT", "ground_truth_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "subtopic_refs": ["APEX"], "upstream_packet_refs": [],
+        "claims": [{"claim_id": "D-C1", "claim_domain": "ASSESSMENT", "claim_kind": "SOLUTION_STRUCTURE", "statement": "The supplied answer path treats acceleration as zero at the apex.", "capability_refs": ["CAP-APEX-ACCELERATION"], "evidence_refs": ["GT-CONFLICT", "KEY-C1"], "confidence": "MEDIUM", "required_for_assessment": true}],
+        "unresolved": ["ANSWER_KEY_SOURCE_CONFLICT_POSSIBLE"]
+      },
+      "second_pass": {
+        "pass_id": "PASS-K-CONFLICT", "packet_id": "K-CONFLICT", "packet_type": "K", "role": "CORE1", "instance_id": "C1-CONFLICT-02", "sequence_role": "SECOND_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-CONFLICT", "ground_truth_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "subtopic_refs": ["APEX"], "upstream_packet_refs": [],
+        "claims": [{"claim_id": "K-C1", "claim_domain": "SEMANTIC", "claim_kind": "LAW", "statement": "In the stated model acceleration remains gravitational and non-zero at the apex.", "capability_refs": ["CAP-APEX-ACCELERATION"], "evidence_refs": ["GT-CONFLICT", "SRC-C1"], "confidence": "HIGH", "required_for_assessment": false}],
+        "unresolved": []
+      },
+      "validation": {
+        "packet_id": "V-CONFLICT", "packet_type": "V", "first_pass_id": "PASS-D-CONFLICT", "second_pass_id": "PASS-K-CONFLICT", "first_role": "CORE2", "second_role": "CORE1", "first_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "second_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "reveal_after_second_freeze": true, "ground_truth_refs": ["GT-CONFLICT"],
+        "comparisons": [{"comparison_id": "V-C1", "upstream_claim_id": "D-C1", "validator_claim_refs": ["K-C1"], "capability_refs": ["CAP-APEX-ACCELERATION"], "status": "CONTRADICTED", "evidence_refs": ["GT-CONFLICT", "KEY-C1", "SRC-C1"], "note": "Question-key claim conflicts materially with semantic source authority.", "unresolved": ["SOURCE_ANSWER_CONFLICT"]}],
+        "unresolved": ["SOURCE_ANSWER_CONFLICT"]
+      },
+      "expected_join_state": "BLOCK_CONFLICT",
+      "expected_obligation_capabilities": [],
+      "expected_semantic_without_assessment": ["CAP-APEX-ACCELERATION"]
+    },
+    {
+      "fixture_id": "ASSESSMENT-DEMAND-MISSING-SEMANTIC-SUPPORT",
+      "route": {"packet_id": "R-V1-004", "digest": "4444444444444444444444444444444444444444444444444444444444444444", "final_decision": "CORE1_FIRST", "execution_blocked": false},
+      "first_pass": {
+        "pass_id": "PASS-K-MISS", "packet_id": "K-MISS", "packet_type": "K", "role": "CORE1", "instance_id": "C1-MISS-01", "sequence_role": "FIRST_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-MISS", "ground_truth_manifest_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "subtopic_refs": ["CONDITION"], "upstream_packet_refs": [],
+        "claims": [{"claim_id": "K-M1", "claim_domain": "SEMANTIC", "claim_kind": "CONDITION", "statement": "The known source establishes the base condition explicitly.", "capability_refs": ["CAP-BASE-CONDITION"], "evidence_refs": ["GT-MISS", "SRC-M1"], "confidence": "HIGH", "required_for_assessment": false}],
+        "unresolved": []
+      },
+      "second_pass": {
+        "pass_id": "PASS-D-MISS", "packet_id": "D-MISS", "packet_type": "D", "role": "CORE2", "instance_id": "C2-MISS-02", "sequence_role": "SECOND_SPECIALIST", "grounding_phase": "BLIND_GROUNDING", "access_state": "ORIGINAL_EVIDENCE_ONLY", "ground_truth_manifest_id": "GT-MISS", "ground_truth_manifest_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "subtopic_refs": ["CONDITION"], "upstream_packet_refs": [],
+        "claims": [
+          {"claim_id": "D-M1", "claim_domain": "ASSESSMENT", "claim_kind": "RECOGNITION_CUE", "statement": "One source question requires recognising the base condition.", "capability_refs": ["CAP-BASE-CONDITION"], "evidence_refs": ["GT-MISS", "Q-M1"], "confidence": "HIGH", "required_for_assessment": true},
+          {"claim_id": "D-M2", "claim_domain": "ASSESSMENT", "claim_kind": "HIDDEN_CONSTRAINT", "statement": "Another question appears to require an additional hidden constraint not established in the available semantic source.", "capability_refs": ["CAP-HIDDEN-CONSTRAINT"], "evidence_refs": ["GT-MISS", "Q-M2"], "confidence": "MEDIUM", "required_for_assessment": true}
+        ],
+        "unresolved": ["POSSIBLE_SCOPE_GAP"]
+      },
+      "validation": {
+        "packet_id": "V-MISS", "packet_type": "V", "first_pass_id": "PASS-K-MISS", "second_pass_id": "PASS-D-MISS", "first_role": "CORE1", "second_role": "CORE2", "first_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "second_pass_freeze_digest": "0000000000000000000000000000000000000000000000000000000000000000", "reveal_after_second_freeze": true, "ground_truth_refs": ["GT-MISS"],
+        "comparisons": [{"comparison_id": "V-M1", "upstream_claim_id": "K-M1", "validator_claim_refs": ["D-M1"], "capability_refs": ["CAP-BASE-CONDITION"], "status": "CONFIRMED", "evidence_refs": ["GT-MISS", "SRC-M1", "Q-M1"], "note": "Base semantic condition is confirmed.", "unresolved": []}],
+        "unresolved": ["POSSIBLE_SCOPE_GAP"]
+      },
+      "expected_join_state": "BLOCK_MISSING_SEMANTIC_SUPPORT",
+      "expected_obligation_capabilities": ["CAP-BASE-CONDITION"],
+      "expected_semantic_without_assessment": []
+    }
+  ]
+}

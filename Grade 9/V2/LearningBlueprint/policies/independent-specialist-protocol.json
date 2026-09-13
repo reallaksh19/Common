@@ -1,0 +1,48 @@
+{
+  "policy_id": "G9-V2-INDEPENDENT-SPECIALIST-PROTOCOL-v1",
+  "version": "1.0.0",
+  "purpose": "Prevent self-validation while allowing Core1/Core2 ordering to adapt to evidence.",
+  "phases": [
+    {
+      "phase": "BLIND_GROUNDING",
+      "rule": "The specialist receives original ground truth only and must not receive upstream specialist packets."
+    },
+    {
+      "phase": "FREEZE",
+      "rule": "The blind-grounding packet is hashed and frozen before any upstream packet is revealed."
+    },
+    {
+      "phase": "PACKET_REVEAL",
+      "rule": "Only after the second specialist blind pass is frozen may the first specialist packet be revealed."
+    },
+    {
+      "phase": "CLAIM_COMPARISON",
+      "rule": "Every upstream claim must receive exactly one explicit comparison status grounded in original evidence."
+    },
+    {
+      "phase": "JOIN",
+      "rule": "Core1 semantic support and Core2 assessment demand may join only after relay validation closes."
+    }
+  ],
+  "comparison_statuses": ["CONFIRMED", "REFINED", "MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"],
+  "join_rules": {
+    "material_contradiction": "BLOCK_CONFLICT",
+    "assessment_capability_without_semantic_support": "BLOCK_MISSING_SEMANTIC_SUPPORT",
+    "semantic_capability_without_assessment_demand": "PRESERVE_AS_NO_ASSESSMENT_EVIDENCE",
+    "aligned_capability": "EMIT_ASSIMILATION_OBLIGATION"
+  },
+  "failure_codes": [
+    "SPECIALIST_BLIND_PASS_HAS_UPSTREAM_ACCESS",
+    "SPECIALIST_ROLE_PACKET_TYPE_MISMATCH",
+    "SPECIALIST_INSTANCE_REUSED",
+    "SPECIALIST_SEQUENCE_ROLE_INVALID",
+    "SPECIALIST_GROUND_TRUTH_BINDING_MISMATCH",
+    "VALIDATION_REVEAL_BEFORE_SECOND_FREEZE",
+    "VALIDATION_FREEZE_DIGEST_MISMATCH",
+    "VALIDATION_UPSTREAM_CLAIM_COVERAGE_INCOMPLETE",
+    "VALIDATION_REFERENCES_UNKNOWN_CLAIM",
+    "VALIDATION_CAPABILITY_MISMATCH",
+    "BLUEPRINT_V1_ROUTE_ORDER_MISMATCH",
+    "BLUEPRINT_V1_ROUTE_BLOCKED"
+  ]
+}

@@ -1,4 +1,4 @@
-name: V2 Learning Blueprint v0
+name: V2 Learning Blueprint
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  blueprint-v0:
+  learning-blueprint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
       - name: Install contract validator
         run: python -m pip install 'jsonschema>=4.20,<5'
 
-      - name: Validate Blueprint v0 JSON assets
+      - name: Validate Learning Blueprint JSON assets
         run: |
           for f in \
             'Grade 9/V2/LearningBlueprint/BLUEPRINT_INVARIANTS.json' \
@@ -32,7 +32,7 @@ jobs:
             python -m json.tool "$f" > /dev/null
           done
 
-      - name: Run Blueprint v0 adaptive-routing goldens and falsifiers
+      - name: Run Blueprint v0/v1 goldens and falsifiers
         run: >-
           python -m unittest discover
           -s 'Grade 9/V2/LearningBlueprint/tests'

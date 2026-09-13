@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/learning-blueprint/validation-packet.schema.json",
+  "title": "Claim-level specialist validation packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packet_id", "packet_type", "first_pass_id", "second_pass_id", "first_role", "second_role", "first_pass_freeze_digest", "second_pass_freeze_digest", "reveal_after_second_freeze", "ground_truth_refs", "comparisons", "unresolved"],
+  "properties": {
+    "packet_id": {"type": "string", "minLength": 3},
+    "packet_type": {"const": "V"},
+    "first_pass_id": {"type": "string", "minLength": 3},
+    "second_pass_id": {"type": "string", "minLength": 3},
+    "first_role": {"enum": ["CORE1", "CORE2"]},
+    "second_role": {"enum": ["CORE1", "CORE2"]},
+    "first_pass_freeze_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "second_pass_freeze_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reveal_after_second_freeze": {"const": true},
+    "ground_truth_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+    "comparisons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["comparison_id", "upstream_claim_id", "validator_claim_refs", "capability_refs", "status", "evidence_refs", "note", "unresolved"],
+        "properties": {
+          "comparison_id": {"type": "string", "minLength": 3},
+          "upstream_claim_id": {"type": "string", "minLength": 3},
+          "validator_claim_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+          "status": {"enum": ["CONFIRMED", "REFINED", "MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"]},
+          "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+          "note": {"type": "string"},
+          "unresolved": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "unresolved": {"type": "array", "items": {"type": "string"}}
+  }
+}
