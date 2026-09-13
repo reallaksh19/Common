@@ -1,0 +1,72 @@
+{
+  "policy_id": "CHEM-CORE2A-SOURCE-REALIZATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "lane": "SOURCE_CORE2",
+  "preserve_from_core2_exactly": [
+    "question_ref",
+    "source_ref",
+    "source_qc_status",
+    "source_stem",
+    "source_options",
+    "source_subparts",
+    "source_figure_required",
+    "source_figure_semantic",
+    "source_condition_text",
+    "source_states",
+    "source_units",
+    "source_fidelity"
+  ],
+  "attempt_first": {
+    "support_initially_hidden": true,
+    "source_question_visible_before_support": true
+  },
+  "write_this_first": {
+    "basis": "FIRST_CORE2_WORKSPACE_FIELD",
+    "prefix": "Start by completing this line from the working frame: "
+  },
+  "see_the_idea": {
+    "basis": "CORE2_SOURCE_BOUND_VISUALS_PLUS_CORE1A_PRETAUGHT_REPRESENTATIONS",
+    "renderer_may_invent_visual": false
+  },
+  "watch_for_this": {
+    "basis": "CANONICAL_PROBLEM_FAMILY_COMMON_WRONG_MODEL",
+    "fallback": "CANONICAL_PROBLEM_FAMILY_COMMON_SYMBOLIC_ERROR",
+    "prefix": "Watch for this mistake: "
+  },
+  "think_it_through": {
+    "basis": "CORE2_WORKSPACE_FIELD_ORDER",
+    "opening": "Work through the question in this order using the working frame."
+  },
+  "verification_language": {
+    "CHECK_SPECIES_IDENTITY": "Check that you kept the same chemical species throughout the reasoning.",
+    "CHECK_CHARGE": "Check that ionic charge is preserved and read in the correct position.",
+    "CHECK_ATOMS": "Count each element on both sides and confirm the totals agree.",
+    "CHECK_CONDITIONS": "Check that every stated reaction condition is still present and attached to the reaction.",
+    "VERIFY_RESULT": "Check that the answer follows from the chemical representation and evidence, not from a surface cue."
+  },
+  "answer_path": {
+    "kind": "OBJECTIVE_CHECKABLE",
+    "quick_check_basis": "CORE2_FINAL_ANSWER_PLUS_CHEMICAL_LANGUAGE_RESPONSE",
+    "full_working_basis": "CORE2_SOLUTION_REASONING_STEPS",
+    "verification_basis": "CORE2_VERIFICATION_ROUTE_PLUS_CONDITION_EXCEPTION_CHECK"
+  },
+  "provenance": {
+    "question_origin": "SOURCE_CORE2",
+    "display_inline": true,
+    "learner_label": "WHERE THIS QUESTION CAME FROM",
+    "raw_non_http_source_link_may_render": false,
+    "official_past_question_claim_default": false
+  },
+  "stop_conditions": [
+    "CORE2A_SOURCE_ITEM_MISSING",
+    "CORE2A_SOURCE_ITEM_DUPLICATED",
+    "CORE2A_SOURCE_TEXT_UNTRACEABLE",
+    "CORE2A_CORE1A_BUCKET_BINDING_MISSING",
+    "CORE2A_HINT_ATOM_NOT_PRETAUGHT",
+    "CORE2A_SOURCE_INTEGRITY_DRIFT",
+    "CORE2A_ANSWER_PATH_MISSING",
+    "CORE2A_QUESTION_CITATION_MISSING",
+    "CORE2A_RAW_INTERNAL_SOURCE_LINK_LEAK"
+  ]
+}
