@@ -40,7 +40,7 @@
       ],
       "contracts": [
         "Core2A/contracts/chemistry-core2a-source-plan.schema.json",
-        "Core2A/contracts/chemistry-core2a-generated-plan.schema.json"
+        "Core2A/contracts/chemistry-core2a-challenge-plan.schema.json"
       ]
     }
   }
