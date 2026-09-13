@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Acceptance gate: every source-derived learner question has a realized visual hint."""
+"""Acceptance gate: every source question has three realized staged visual hints."""
 from __future__ import annotations
 
+import copy
 import sys
 from pathlib import Path
 
@@ -39,31 +40,46 @@ def main() -> None:
     enriched = attach_source_visual_hints(plan, catalog)
     coverage = assert_source_visual_hint_coverage(enriched)
 
-    # Every resolved visual must be a real supported primitive with vector output.
-    for source_ref, visual in catalog.items():
-        backend = MockVectorBackend()
-        render_primitive(
-            visual["primitive_kind"],
-            dict(visual["semantic_params"]),
-            backend,
-            BoundingBox(40.0, 40.0, 500.0, 150.0),
-        )
-        assert backend.operations, f"SOURCE_VISUAL_HINT_NOT_REALIZED: {source_ref}"
-        assert backend.get_evidence(), f"SOURCE_VISUAL_HINT_EVIDENCE_MISSING: {source_ref}"
+    if coverage["source_visual_stage_count"] != coverage["source_question_count"] * 3:
+        raise SystemExit(f"SOURCE_STAGED_HINT_COVERAGE_INCOMPLETE: {coverage}")
 
-    # One mutation proves this is an acceptance requirement, not documentation.
+    # Every H1/H2/H3 visual must be a supported vector primitive, not a label.
+    for source_ref, support in catalog.items():
+        stages = list(support.get("stages") or [])
+        assert [stage["level"] for stage in stages] == ["H1", "H2", "H3"]
+        for stage in stages:
+            backend = MockVectorBackend()
+            render_primitive(
+                stage["primitive_kind"],
+                dict(stage["semantic_params"]),
+                backend,
+                BoundingBox(40.0, 40.0, 500.0, 150.0),
+            )
+            assert backend.operations, f"SOURCE_VISUAL_HINT_NOT_REALIZED: {source_ref}/{stage['level']}"
+            assert backend.get_evidence(), f"SOURCE_VISUAL_HINT_EVIDENCE_MISSING: {source_ref}/{stage['level']}"
+
+    # Missing one whole source binding must fail.
     broken_catalog = dict(catalog)
     missing_ref = sorted(broken_catalog)[0]
     broken_catalog.pop(missing_ref)
     _must_fail(lambda: attach_source_visual_hints(plan, broken_catalog), "SOURCE_VISUAL_HINT_REQUIRED")
 
-    # Real publication path: source question -> visual representation custody.
+    # Missing one stage must fail too; coverage is stage-level, not only question-level.
+    one_stage_missing = copy.deepcopy(catalog)
+    target_ref = sorted(one_stage_missing)[0]
+    one_stage_missing[target_ref]["stages"] = one_stage_missing[target_ref]["stages"][:2]
+    _must_fail(lambda: attach_source_visual_hints(plan, one_stage_missing), "SOURCE_STAGED_HINT_REQUIRED")
+
+    # Real publication path must carry staged hint custody.
     out = REPO_ROOT / "build" / "grade4_math_v2" / "Source_Visual_Hint_Probe.pdf"
     out.parent.mkdir(parents=True, exist_ok=True)
     _, custody = render_source_anchored_study_journey(plan, catalog, out)
     assert out.exists() and out.stat().st_size > 0
-    assert custody["study_journey"]["source_visual_hint_required"] is True
-    assert custody["study_journey"]["source_visual_hint_coverage"]["source_question_count"] == coverage["source_question_count"]
+    sj = custody["study_journey"]
+    assert sj["source_visual_hint_required"] is True
+    assert sj["intrinsic_staged_hint_layout"] is True
+    assert sj["source_visual_hint_coverage"]["source_question_count"] == coverage["source_question_count"]
+    assert sj["source_visual_hint_coverage"]["source_visual_stage_count"] == coverage["source_visual_stage_count"]
 
     print({"status": "PASS", **coverage, "catalog_count": len(catalog), "pdf": str(out)})
 
