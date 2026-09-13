@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-production-task.schema.json",
+  "title": "Chemistry Production Task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "product", "topic", "question_refs", "requested_output"],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 3},
+    "product": {"enum": ["CORE1", "CORE2", "CORE1A", "CORE2A"]},
+    "purpose": {"type": ["string", "null"], "enum": ["STARTER", "PRACTICE", "REVISION", "COMPETITION", null]},
+    "topic": {"type": "string", "minLength": 2},
+    "question_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 2}
+    },
+    "capability_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^CAP-"}
+    },
+    "benchmark_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url", "role"],
+        "properties": {
+          "title": {"type": "string", "minLength": 2},
+          "url": {"type": "string", "pattern": "^https?://"},
+          "role": {"enum": ["CONSTRUCTION_REFERENCE", "CONTENT_AUTHORITY", "MARKING_REFERENCE"]}
+        }
+      }
+    },
+    "requested_output": {"enum": ["SEMANTIC_PACKET", "RENDER_READY_PACKET"]},
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_pages_per_question": {"type": "integer", "minimum": 1, "maximum": 4},
+        "source_on_sheet1": {"type": "boolean"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"product": {"const": "CORE2A"}}},
+      "then": {
+        "required": ["purpose"],
+        "properties": {
+          "purpose": {"enum": ["STARTER", "PRACTICE", "REVISION", "COMPETITION"]}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "product": {"const": "CORE2A"},
+          "purpose": {"const": "COMPETITION"}
+        },
+        "required": ["purpose"]
+      },
+      "then": {
+        "required": ["benchmark_sources"],
+        "properties": {"benchmark_sources": {"minItems": 2}}
+      }
+    }
+  ]
+}
