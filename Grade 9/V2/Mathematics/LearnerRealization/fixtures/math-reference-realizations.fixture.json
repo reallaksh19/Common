@@ -1,0 +1,6230 @@
+{
+  "fixture_id": "MATH-REFERENCE-REALIZATIONS-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Reference learner mathematical realizations for four of the seven stress-tested Grade 9 topics. Data instances of the subject-wide contracts; no topic contributes a schema shape.",
+  "parameterized_items": [
+    "LE-I1"
+  ],
+  "realizations": [
+    {
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "role": "WORKED",
+      "item_ref": "NS-W1",
+      "topic_ref": "NUMBER_SYSTEMS",
+      "capability_refs": [
+        "MATH-CAP-SURD-RATIONALISATION"
+      ],
+      "problem_family_ref": "MATH-PF-SURD-RATIONALISATION",
+      "statement": [
+        {
+          "segment": "TEXT",
+          "text": "Write"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "NUMBER",
+              "value": "1"
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "with a rational denominator, leaving the answer in exact surd form."
+        }
+      ],
+      "item_anchors": [
+        "√7",
+        "√7 − 2"
+      ],
+      "derivation": [
+        {
+          "step_id": "S1",
+          "role": "INTERPRET",
+          "input_state": null,
+          "operation": {
+            "name": "READ_GIVEN",
+            "rule_or_justification": "The given number is a single fraction whose denominator is √7 − 2."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "NUMBER",
+              "value": "1"
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "why_valid": "Reading the given number changes nothing about it.",
+          "learner_explanation": "You are given the fraction with √7 − 2 underneath.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S2",
+          "role": "CLASSIFY",
+          "input_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "NUMBER",
+              "value": "1"
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "operation": {
+            "name": "IDENTIFY_STRUCTURE",
+            "rule_or_justification": "The denominator √7 − 2 is a difference of two terms, one of which is a surd."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "NUMBER",
+              "value": "1"
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "why_valid": "Naming the structure does not change the number.",
+          "learner_explanation": "√7 − 2 has the shape a − b, and that shape has a partner a + b.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S3",
+          "role": "SELECT_THEOREM",
+          "input_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "NUMBER",
+              "value": "1"
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "operation": {
+            "name": "CHOOSE_IDENTITY",
+            "rule_or_justification": "For any real a and b, (a − b)(a + b) = a² − b², which removes a square root when a is a square root."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "a"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "b"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "a"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "b"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "a"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "b"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "The identity is true for every pair of real numbers.",
+          "learner_explanation": "With a = √7 and b = 2 this identity turns √7 into the whole number 7.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S4",
+          "role": "TRANSFORM",
+          "input_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "NUMBER",
+              "value": "1"
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "operation": {
+            "name": "MULTIPLY_BY_ONE_IN_DISGUISE",
+            "rule_or_justification": "Multiplying by (√7 + 2) over (√7 + 2) is multiplying by 1, so the value is untouched."
+          },
+          "substitution": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FRACTION",
+                "numerator": {
+                  "node": "NUMBER",
+                  "value": "1"
+                },
+                "denominator": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "RADICAL",
+                      "radicand": {
+                        "node": "NUMBER",
+                        "value": "7"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "TIMES"
+              },
+              {
+                "node": "FRACTION",
+                "numerator": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "RADICAL",
+                      "radicand": {
+                        "node": "NUMBER",
+                        "value": "7"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                },
+                "denominator": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "RADICAL",
+                      "radicand": {
+                        "node": "NUMBER",
+                        "value": "7"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "why_valid": "(√7 + 2) is not zero, so (√7 + 2)/(√7 + 2) is exactly 1.",
+          "learner_explanation": "Multiply above and below by √7 + 2. Nothing about the number changes because you multiplied by 1.",
+          "equivalence_witness": {
+            "transformation_id": "T1",
+            "operation": "MULTIPLY_BY_ONE_IN_DISGUISE",
+            "before_relation": {
+              "node": "FRACTION",
+              "numerator": {
+                "node": "NUMBER",
+                "value": "1"
+              },
+              "denominator": {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "RADICAL",
+                    "radicand": {
+                      "node": "NUMBER",
+                      "value": "7"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "FRACTION",
+                  "numerator": {
+                    "node": "NUMBER",
+                    "value": "1"
+                  },
+                  "denominator": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "RADICAL",
+                        "radicand": {
+                          "node": "NUMBER",
+                          "value": "7"
+                        }
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "MINUS"
+                      },
+                      {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "TIMES"
+                },
+                {
+                  "node": "FRACTION",
+                  "numerator": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "RADICAL",
+                        "radicand": {
+                          "node": "NUMBER",
+                          "value": "7"
+                        }
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "PLUS"
+                      },
+                      {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    ]
+                  },
+                  "denominator": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "RADICAL",
+                        "radicand": {
+                          "node": "NUMBER",
+                          "value": "7"
+                        }
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "PLUS"
+                      },
+                      {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "preserved_invariant": "VALUE",
+            "precondition": "√7 + 2 is non-zero, so the multiplier is a genuine 1.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": "MATH-C1L-SURD-CONJUGATE",
+          "trivial": false
+        },
+        {
+          "step_id": "S5",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FRACTION",
+                "numerator": {
+                  "node": "NUMBER",
+                  "value": "1"
+                },
+                "denominator": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "RADICAL",
+                      "radicand": {
+                        "node": "NUMBER",
+                        "value": "7"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "TIMES"
+              },
+              {
+                "node": "FRACTION",
+                "numerator": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "RADICAL",
+                      "radicand": {
+                        "node": "NUMBER",
+                        "value": "7"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                },
+                "denominator": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "RADICAL",
+                      "radicand": {
+                        "node": "NUMBER",
+                        "value": "7"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "operation": {
+            "name": "EXPAND",
+            "rule_or_justification": "Apply (a − b)(a + b) = a² − b² to the denominator (√7 − 2)(√7 + 2)."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "NUMBER",
+                  "value": "2"
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              }
+            ]
+          },
+          "output_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "POWER",
+                  "base": {
+                    "node": "RADICAL",
+                    "radicand": {
+                      "node": "NUMBER",
+                      "value": "7"
+                    }
+                  },
+                  "exponent": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "POWER",
+                  "base": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  "exponent": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                }
+              ]
+            }
+          },
+          "why_valid": "The identity is an equality, so replacing the product by a² − b² preserves the value.",
+          "learner_explanation": "The bottom becomes (√7)² − 2², and (√7)² is just 7.",
+          "equivalence_witness": {
+            "transformation_id": "T2",
+            "operation": "EXPAND",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "GROUP",
+                  "child": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "RADICAL",
+                        "radicand": {
+                          "node": "NUMBER",
+                          "value": "7"
+                        }
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "MINUS"
+                      },
+                      {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    ]
+                  },
+                  "fence": "PAREN"
+                },
+                {
+                  "node": "GROUP",
+                  "child": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "RADICAL",
+                        "radicand": {
+                          "node": "NUMBER",
+                          "value": "7"
+                        }
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "PLUS"
+                      },
+                      {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    ]
+                  },
+                  "fence": "PAREN"
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "POWER",
+                  "base": {
+                    "node": "RADICAL",
+                    "radicand": {
+                      "node": "NUMBER",
+                      "value": "7"
+                    }
+                  },
+                  "exponent": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "POWER",
+                  "base": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  "exponent": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                }
+              ]
+            },
+            "preserved_invariant": "VALUE",
+            "precondition": "√7 is a real number, so the difference-of-squares identity applies.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S6",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "POWER",
+                  "base": {
+                    "node": "RADICAL",
+                    "radicand": {
+                      "node": "NUMBER",
+                      "value": "7"
+                    }
+                  },
+                  "exponent": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "POWER",
+                  "base": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  "exponent": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                }
+              ]
+            }
+          },
+          "operation": {
+            "name": "EVALUATE",
+            "rule_or_justification": "Work out (√7)² − 2² as 7 − 4."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "NUMBER",
+                "value": "7"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "4"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "7"
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "why_valid": "Squaring a square root of a positive number returns the number.",
+          "learner_explanation": "(√7)² = 7 and 2² = 4, so the denominator under √7 + 2 is 7 − 4.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S7",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "denominator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "7"
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "operation": {
+            "name": "SIMPLIFY",
+            "rule_or_justification": "7 − 4 is 3, so the denominator is the rational number 3."
+          },
+          "substitution": {
+            "node": "NUMBER",
+            "value": "3"
+          },
+          "output_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "denominator": {
+              "node": "NUMBER",
+              "value": "3"
+            }
+          },
+          "why_valid": "3 is rational, which is what the question asked for.",
+          "learner_explanation": "The denominator is now 3, a whole number, and no √7 is left underneath.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S8",
+          "role": "VERIFY",
+          "input_state": {
+            "node": "FRACTION",
+            "numerator": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "NUMBER",
+                    "value": "7"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "denominator": {
+              "node": "NUMBER",
+              "value": "3"
+            }
+          },
+          "operation": {
+            "name": "CHECK",
+            "rule_or_justification": "Multiply the answer by the original denominator √7 − 2 and expect exactly 1."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "RADICAL",
+                      "radicand": {
+                        "node": "NUMBER",
+                        "value": "7"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "FRACTION",
+                    "numerator": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "RADICAL",
+                          "radicand": {
+                            "node": "NUMBER",
+                            "value": "7"
+                          }
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "PLUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "denominator": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "TIMES"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "RADICAL",
+                          "radicand": {
+                            "node": "NUMBER",
+                            "value": "7"
+                          }
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "1"
+              }
+            ]
+          },
+          "why_valid": "If the rewritten number really equals the original, undoing the original denominator must return 1.",
+          "learner_explanation": "(√7 + 2)(√7 − 2) is 3, and 3 over 3 is 1, so the rewrite is correct.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        }
+      ],
+      "scaffold": {
+        "H1": {
+          "text": "The denominator √7 − 2 has a partner that clears the square root. What is it?",
+          "derived_from_step_id": "S2",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-SURD-CONJUGATE"
+        },
+        "H2": {
+          "text": "Write a fraction equal to 1 whose top and bottom are both √7 + 2.",
+          "derived_from_step_id": "S4",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-SURD-CONJUGATE"
+        },
+        "H3": {
+          "text": "Multiply the given fraction by that fraction and expand only the denominator (√7 − 2)(√7 + 2) first.",
+          "derived_from_step_id": "S5",
+          "discloses_output": false,
+          "core1_evidence_ref": null
+        }
+      },
+      "answer_custody": {
+        "question_ref": "NS-W1",
+        "answer_kind": "EXPRESSION",
+        "final_answer": {
+          "node": "FRACTION",
+          "numerator": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "RADICAL",
+                "radicand": {
+                  "node": "NUMBER",
+                  "value": "7"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "PLUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              }
+            ]
+          },
+          "denominator": {
+            "node": "NUMBER",
+            "value": "3"
+          }
+        },
+        "final_answer_prose": null,
+        "model_proof_steps": [],
+        "acceptance_rule": null,
+        "admissible_answers": [],
+        "construction_verification_conditions": [],
+        "counterexample_witness": null,
+        "independent_verification": {
+          "kind": "RECOMBINE_WITH_ORIGINAL_DENOMINATOR",
+          "executable": true,
+          "statement": "Multiply the answer by the original denominator √7 − 2. The product must simplify to exactly 1.",
+          "expected": {
+            "node": "NUMBER",
+            "value": "1"
+          }
+        },
+        "quick_check": "Is there any square root left underneath?",
+        "placement": "AFTER_ATTEMPT",
+        "attempt_surface_answer_neutral": true,
+        "custody_id": "MATH-AC-cc402222756faa8a",
+        "custody_digest": "cc6e481e867ac29ecf643c272fffa26f5bd3ab94e12ac8262b48d71732c89a8c"
+      },
+      "source_distance": {
+        "source_question_reuse": false,
+        "basis": "Authored inside the surd-rationalisation family; no assessment item supplies 1 over √7 − 2."
+      },
+      "realization_id": "MATH-LMR-9fba4b0c2b82a2d4",
+      "realization_digest": "3e499434daa7c7b48e4493ad7fc0a46a55814fb9bfd9cdfec875ea9ee46f0a70"
+    },
+    {
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "role": "WORKED",
+      "item_ref": "PY-W1",
+      "topic_ref": "POLYNOMIALS",
+      "capability_refs": [
+        "MATH-CAP-FACTOR-THEOREM",
+        "MATH-CAP-POLYNOMIAL-FACTORISATION"
+      ],
+      "problem_family_ref": "MATH-PF-FACTOR-THEOREM-FACTORISATION",
+      "statement": [
+        {
+          "segment": "TEXT",
+          "text": "Show that"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SYMBOL",
+                  "name": "x"
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "is a factor of"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "and then factorise it completely."
+        }
+      ],
+      "item_anchors": [
+        "x³ − 2x² − x + 2",
+        "(x − 2)"
+      ],
+      "derivation": [
+        {
+          "step_id": "S1",
+          "role": "INTERPRET",
+          "input_state": null,
+          "operation": {
+            "name": "READ_GIVEN",
+            "rule_or_justification": "The cubic is x³ − 2x² − x + 2 and the suggested factor is (x − 2)."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "Restating the given cubic changes nothing.",
+          "learner_explanation": "You are given the cubic x³ − 2x² − x + 2 and asked about (x − 2).",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S2",
+          "role": "CLASSIFY",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "operation": {
+            "name": "IDENTIFY_STRUCTURE",
+            "rule_or_justification": "A suggested linear factor (x − 2) means the root to test is x = 2."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "Naming the candidate root does not change the cubic.",
+          "learner_explanation": "(x − 2) is zero when x = 2, so 2 is the number to test.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S3",
+          "role": "SELECT_THEOREM",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "operation": {
+            "name": "CHOOSE_THEOREM",
+            "rule_or_justification": "Factor theorem: (x − a) is a factor of p(x) exactly when p(a) = 0."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "a"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "0"
+              }
+            ]
+          },
+          "why_valid": "The factor theorem is an equivalence, so the test decides the question either way.",
+          "learner_explanation": "Instead of dividing first, test whether p(2) is 0.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S4",
+          "role": "SETUP",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "operation": {
+            "name": "SUBSTITUTE",
+            "rule_or_justification": "Put x = 2 into every term of x³ − 2x² − x + 2."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "NUMBER",
+                  "value": "2"
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "3"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              },
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "NUMBER",
+                  "value": "2"
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "PLUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "A polynomial is defined for every real input, so x = 2 is legal.",
+          "learner_explanation": "Replace each x in x³ − 2x² − x + 2 by 2: that gives 2³ − 2(2²) − 2 + 2.",
+          "equivalence_witness": {
+            "transformation_id": "T1",
+            "operation": "SUBSTITUTE",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "FUNCTION_CALL",
+                  "name": "p",
+                  "arguments": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "SYMBOL",
+                        "name": "x"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "3"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "SYMBOL",
+                        "name": "x"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "FUNCTION_CALL",
+                  "name": "p",
+                  "arguments": [
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "3"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "preserved_invariant": "VALUE",
+            "precondition": "x = 2 lies in the domain of the polynomial, so substitution preserves the value.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": "MATH-C1L-FACTOR-THEOREM",
+          "trivial": false
+        },
+        {
+          "step_id": "S5",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "operation": {
+            "name": "EVALUATE",
+            "rule_or_justification": "2³ = 8 and 2(2²) = 8, so the four terms are 8 − 8 − 2 + 2."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "NUMBER",
+                "value": "8"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "PLUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "0"
+              }
+            ]
+          },
+          "why_valid": "Each term is evaluated by ordinary arithmetic.",
+          "learner_explanation": "8 − 8 − 2 + 2 = 0, so p(2) = 0 exactly.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S6",
+          "role": "INFER",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "0"
+              }
+            ]
+          },
+          "operation": {
+            "name": "APPLY_THEOREM",
+            "rule_or_justification": "p(2) = 0, so by the factor theorem (x − 2) divides the cubic exactly."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              },
+              {
+                "node": "TEXT",
+                "text": " is a factor of "
+              },
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "The factor theorem turns the value p(2) = 0 into a divisibility statement.",
+          "learner_explanation": "Because p(2) came out as 0, (x − 2) really is a factor of x³ − 2x² − x + 2.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S7",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "operation": {
+            "name": "DIVIDE",
+            "rule_or_justification": "Divide x³ − 2x² − x + 2 by (x − 2); the division is exact and leaves x² − 1."
+          },
+          "substitution": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "POWER",
+                  "base": {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  "exponent": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "MINUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "1"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "POWER",
+                          "base": {
+                            "node": "SYMBOL",
+                            "name": "x"
+                          },
+                          "exponent": {
+                            "node": "NUMBER",
+                            "value": "2"
+                          }
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "The remainder is p(2) = 0, so the quotient is a polynomial of degree 2.",
+          "learner_explanation": "Dividing x³ − 2x² − x + 2 by (x − 2) gives x² − 1 with nothing left over.",
+          "equivalence_witness": {
+            "transformation_id": "T2",
+            "operation": "FACTOR",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "FUNCTION_CALL",
+                  "name": "p",
+                  "arguments": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "SYMBOL",
+                        "name": "x"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "3"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "SYMBOL",
+                        "name": "x"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "FUNCTION_CALL",
+                  "name": "p",
+                  "arguments": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "SYMBOL",
+                            "name": "x"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "MINUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "2"
+                          }
+                        ]
+                      },
+                      "fence": "PAREN"
+                    },
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "POWER",
+                            "base": {
+                              "node": "SYMBOL",
+                              "name": "x"
+                            },
+                            "exponent": {
+                              "node": "NUMBER",
+                              "value": "2"
+                            }
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "MINUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "1"
+                          }
+                        ]
+                      },
+                      "fence": "PAREN"
+                    }
+                  ]
+                }
+              ]
+            },
+            "preserved_invariant": "VALUE",
+            "precondition": "The division is exact because p(2) = 0, so no remainder term is dropped.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S8",
+          "role": "TRANSFORM",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "POWER",
+                          "base": {
+                            "node": "SYMBOL",
+                            "name": "x"
+                          },
+                          "exponent": {
+                            "node": "NUMBER",
+                            "value": "2"
+                          }
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              }
+            ]
+          },
+          "operation": {
+            "name": "FACTOR",
+            "rule_or_justification": "x² − 1 is a difference of squares, so it splits as (x − 1)(x + 1)."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "MINUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "PLUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "a² − b² = (a − b)(a + b) with a = x and b = 1.",
+          "learner_explanation": "x² − 1 is x² minus 1², so it becomes (x − 1)(x + 1) and the cubic is fully split.",
+          "equivalence_witness": {
+            "transformation_id": "T3",
+            "operation": "FACTOR",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "FUNCTION_CALL",
+                  "name": "p",
+                  "arguments": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "SYMBOL",
+                            "name": "x"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "MINUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "2"
+                          }
+                        ]
+                      },
+                      "fence": "PAREN"
+                    },
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "POWER",
+                            "base": {
+                              "node": "SYMBOL",
+                              "name": "x"
+                            },
+                            "exponent": {
+                              "node": "NUMBER",
+                              "value": "2"
+                            }
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "MINUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "1"
+                          }
+                        ]
+                      },
+                      "fence": "PAREN"
+                    }
+                  ]
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "FUNCTION_CALL",
+                  "name": "p",
+                  "arguments": [
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "SYMBOL",
+                            "name": "x"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "MINUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "2"
+                          }
+                        ]
+                      },
+                      "fence": "PAREN"
+                    },
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "SYMBOL",
+                            "name": "x"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "MINUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "1"
+                          }
+                        ]
+                      },
+                      "fence": "PAREN"
+                    },
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "SYMBOL",
+                            "name": "x"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "1"
+                          }
+                        ]
+                      },
+                      "fence": "PAREN"
+                    }
+                  ]
+                }
+              ]
+            },
+            "preserved_invariant": "VALUE",
+            "precondition": "x² − 1 is a difference of squares with a = x and b = 1.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S9",
+          "role": "VERIFY",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "FUNCTION_CALL",
+                "name": "p",
+                "arguments": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "PLUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              }
+            ]
+          },
+          "operation": {
+            "name": "CHECK",
+            "rule_or_justification": "Multiply the three factors back out and expect the original cubic term for term."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "SYMBOL",
+                  "name": "x"
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "3"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              },
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "SYMBOL",
+                  "name": "x"
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "SYMBOL",
+                "name": "x"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "PLUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "MINUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "PLUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "POWER",
+                    "base": {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    "exponent": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    }
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "Factorisation is only correct if expanding returns the original polynomial exactly.",
+          "learner_explanation": "Expanding (x − 2)(x − 1)(x + 1) returns x³ − 2x² − x + 2, so the factorisation is right.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        }
+      ],
+      "scaffold": {
+        "H1": {
+          "text": "A suggested factor (x − 2) points at one particular value of x. Which value, and what should p do there?",
+          "derived_from_step_id": "S2",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-FACTOR-THEOREM"
+        },
+        "H2": {
+          "text": "Test the value rather than dividing first: work out p at that value using x³ − 2x² − x + 2.",
+          "derived_from_step_id": "S3",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-FACTOR-THEOREM"
+        },
+        "H3": {
+          "text": "Substitute into every term of x³ − 2x² − x + 2 and evaluate the four numbers before deciding anything.",
+          "derived_from_step_id": "S4",
+          "discloses_output": false,
+          "core1_evidence_ref": null
+        }
+      },
+      "answer_custody": {
+        "question_ref": "PY-W1",
+        "answer_kind": "EXPRESSION",
+        "final_answer": {
+          "node": "SEQUENCE",
+          "items": [
+            {
+              "node": "GROUP",
+              "child": {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                ]
+              },
+              "fence": "PAREN"
+            },
+            {
+              "node": "GROUP",
+              "child": {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "MINUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "1"
+                  }
+                ]
+              },
+              "fence": "PAREN"
+            },
+            {
+              "node": "GROUP",
+              "child": {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "1"
+                  }
+                ]
+              },
+              "fence": "PAREN"
+            }
+          ]
+        },
+        "final_answer_prose": null,
+        "model_proof_steps": [],
+        "acceptance_rule": null,
+        "admissible_answers": [],
+        "construction_verification_conditions": [],
+        "counterexample_witness": null,
+        "independent_verification": {
+          "kind": "EXPAND_TO_RECOVER_ORIGINAL",
+          "executable": true,
+          "statement": "Multiply the three factors out. The expansion must return x³ − 2x² − x + 2 term for term, with no leftover terms.",
+          "expected": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "SYMBOL",
+                  "name": "x"
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "3"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              },
+              {
+                "node": "POWER",
+                "base": {
+                  "node": "SYMBOL",
+                  "name": "x"
+                },
+                "exponent": {
+                  "node": "NUMBER",
+                  "value": "2"
+                }
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "MINUS"
+              },
+              {
+                "node": "SYMBOL",
+                "name": "x"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "PLUS"
+              },
+              {
+                "node": "NUMBER",
+                "value": "2"
+              }
+            ]
+          }
+        },
+        "quick_check": "Do the three factors have the right degrees to make a cubic?",
+        "placement": "AFTER_ATTEMPT",
+        "attempt_surface_answer_neutral": true,
+        "custody_id": "MATH-AC-195d2096409ba2be",
+        "custody_digest": "c174922bc3d1a0d111290c0374be04b43da5e89ce278283236101e03367b59b8"
+      },
+      "source_distance": {
+        "source_question_reuse": false,
+        "basis": "Authored inside the factor-theorem family with coefficients not used by any assessment item."
+      },
+      "realization_id": "MATH-LMR-5bc126d4ad90d146",
+      "realization_digest": "b4f4bc631352442edc9ddbd1a105c270ff4f9e386bc799e330d281ce66e4db8c"
+    },
+    {
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "role": "GUIDED",
+      "item_ref": "CG-G1",
+      "topic_ref": "COORDINATE_GEOMETRY",
+      "capability_refs": [
+        "MATH-CAP-COORDINATE-DISTANCE",
+        "MATH-CAP-COORDINATE-MIDPOINT"
+      ],
+      "problem_family_ref": "MATH-PF-COORDINATE-DISTANCE",
+      "statement": [
+        {
+          "segment": "TEXT",
+          "text": "The points A"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "-2"
+                },
+                {
+                  "node": "TEXT",
+                  "text": ", "
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "3"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "and B"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "4"
+                },
+                {
+                  "node": "TEXT",
+                  "text": ", "
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "3"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "are plotted on the coordinate plane. Find the length AB and the coordinates of the midpoint M of AB."
+        }
+      ],
+      "item_anchors": [
+        "(−2, 3)",
+        "(4, 3)"
+      ],
+      "derivation": [
+        {
+          "step_id": "S1",
+          "role": "INTERPRET",
+          "input_state": null,
+          "operation": {
+            "name": "READ_GIVEN",
+            "rule_or_justification": "A is (−2, 3) and B is (4, 3); both are given exactly."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "-2"
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              },
+              {
+                "node": "TEXT",
+                "text": " and "
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "4"
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "why_valid": "Reading the two ordered pairs changes nothing.",
+          "learner_explanation": "A sits at (−2, 3) and B sits at (4, 3).",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S2",
+          "role": "REPRESENT",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "-2"
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              },
+              {
+                "node": "TEXT",
+                "text": " and "
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "4"
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "operation": {
+            "name": "READ_OFF_COORDINATES",
+            "rule_or_justification": "Both points have y-coordinate 3, so AB is a horizontal segment."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "ALIGNED_EQUATION",
+            "lines": [
+              {
+                "lhs": {
+                  "node": "SUBSCRIPT",
+                  "base": {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  },
+                  "subscript": {
+                    "node": "NUMBER",
+                    "value": "1"
+                  }
+                },
+                "relation": {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                "rhs": {
+                  "node": "NUMBER",
+                  "value": "3"
+                },
+                "annotation": null
+              },
+              {
+                "lhs": {
+                  "node": "SUBSCRIPT",
+                  "base": {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  },
+                  "subscript": {
+                    "node": "NUMBER",
+                    "value": "2"
+                  }
+                },
+                "relation": {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                "rhs": {
+                  "node": "NUMBER",
+                  "value": "3"
+                },
+                "annotation": null
+              }
+            ]
+          },
+          "why_valid": "Two points with equal y-coordinates lie on the same horizontal line.",
+          "learner_explanation": "(−2, 3) and (4, 3) share the same height 3, so AB runs straight across.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": "MATH-C1L-PLANE-ORIENTATION",
+          "trivial": false
+        },
+        {
+          "step_id": "S3",
+          "role": "SETUP",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "AB"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "RADICAL",
+                "radicand": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "x"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "2"
+                              }
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "x"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "1"
+                              }
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "y"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "2"
+                              }
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "y"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "1"
+                              }
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "operation": {
+            "name": "SUBSTITUTE",
+            "rule_or_justification": "Write the distance formula with the actual coordinates of A and B in it."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "AB"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "RADICAL",
+                "radicand": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "4"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "-2"
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "AB"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "RADICAL",
+                "radicand": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "4"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "-2"
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "why_valid": "The distance formula holds for any two points of the plane.",
+          "learner_explanation": "Put (4, 3) and (−2, 3) into the formula; the x-difference is 4 − (−2) and the y-difference is 3 − 3.",
+          "equivalence_witness": {
+            "transformation_id": "T1",
+            "operation": "SUBSTITUTE",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SYMBOL",
+                  "name": "AB"
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "POWER",
+                        "base": {
+                          "node": "GROUP",
+                          "child": {
+                            "node": "SEQUENCE",
+                            "items": [
+                              {
+                                "node": "SUBSCRIPT",
+                                "base": {
+                                  "node": "SYMBOL",
+                                  "name": "x"
+                                },
+                                "subscript": {
+                                  "node": "NUMBER",
+                                  "value": "2"
+                                }
+                              },
+                              {
+                                "node": "OPERATOR",
+                                "operator": "MINUS"
+                              },
+                              {
+                                "node": "SUBSCRIPT",
+                                "base": {
+                                  "node": "SYMBOL",
+                                  "name": "x"
+                                },
+                                "subscript": {
+                                  "node": "NUMBER",
+                                  "value": "1"
+                                }
+                              }
+                            ]
+                          },
+                          "fence": "PAREN"
+                        },
+                        "exponent": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "PLUS"
+                      },
+                      {
+                        "node": "POWER",
+                        "base": {
+                          "node": "GROUP",
+                          "child": {
+                            "node": "SEQUENCE",
+                            "items": [
+                              {
+                                "node": "SUBSCRIPT",
+                                "base": {
+                                  "node": "SYMBOL",
+                                  "name": "y"
+                                },
+                                "subscript": {
+                                  "node": "NUMBER",
+                                  "value": "2"
+                                }
+                              },
+                              {
+                                "node": "OPERATOR",
+                                "operator": "MINUS"
+                              },
+                              {
+                                "node": "SUBSCRIPT",
+                                "base": {
+                                  "node": "SYMBOL",
+                                  "name": "y"
+                                },
+                                "subscript": {
+                                  "node": "NUMBER",
+                                  "value": "1"
+                                }
+                              }
+                            ]
+                          },
+                          "fence": "PAREN"
+                        },
+                        "exponent": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SYMBOL",
+                  "name": "AB"
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "RADICAL",
+                  "radicand": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "POWER",
+                        "base": {
+                          "node": "GROUP",
+                          "child": {
+                            "node": "SEQUENCE",
+                            "items": [
+                              {
+                                "node": "NUMBER",
+                                "value": "4"
+                              },
+                              {
+                                "node": "OPERATOR",
+                                "operator": "MINUS"
+                              },
+                              {
+                                "node": "NUMBER",
+                                "value": "-2"
+                              }
+                            ]
+                          },
+                          "fence": "PAREN"
+                        },
+                        "exponent": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "PLUS"
+                      },
+                      {
+                        "node": "POWER",
+                        "base": {
+                          "node": "GROUP",
+                          "child": {
+                            "node": "SEQUENCE",
+                            "items": [
+                              {
+                                "node": "NUMBER",
+                                "value": "3"
+                              },
+                              {
+                                "node": "OPERATOR",
+                                "operator": "MINUS"
+                              },
+                              {
+                                "node": "NUMBER",
+                                "value": "3"
+                              }
+                            ]
+                          },
+                          "fence": "PAREN"
+                        },
+                        "exponent": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "preserved_invariant": "VALUE",
+            "precondition": "A and B are ordinary points of the plane, so the formula applies to them unchanged.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": "MATH-C1L-DISTANCE-FORMULA",
+          "trivial": false
+        },
+        {
+          "step_id": "S4",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "AB"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "RADICAL",
+                "radicand": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "4"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "-2"
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "POWER",
+                      "base": {
+                        "node": "GROUP",
+                        "child": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "MINUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            }
+                          ]
+                        },
+                        "fence": "PAREN"
+                      },
+                      "exponent": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "operation": {
+            "name": "EVALUATE",
+            "rule_or_justification": "4 − (−2) is 6 and 3 − 3 is 0, so AB is the square root of 36 + 0."
+          },
+          "substitution": {
+            "node": "RADICAL",
+            "radicand": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "36"
+                },
+                {
+                  "node": "OPERATOR",
+                  "operator": "PLUS"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "AB"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "6"
+              }
+            ]
+          },
+          "why_valid": "Subtracting a negative adds, so the x-difference really is 6.",
+          "learner_explanation": "From (−2, 3) to (4, 3) the horizontal gap is 6 and the vertical gap is 0, so AB = 6.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S5",
+          "role": "SETUP",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "M"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "SUBSCRIPT",
+                            "base": {
+                              "node": "SYMBOL",
+                              "name": "x"
+                            },
+                            "subscript": {
+                              "node": "NUMBER",
+                              "value": "1"
+                            }
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "SUBSCRIPT",
+                            "base": {
+                              "node": "SYMBOL",
+                              "name": "x"
+                            },
+                            "subscript": {
+                              "node": "NUMBER",
+                              "value": "2"
+                            }
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "SUBSCRIPT",
+                            "base": {
+                              "node": "SYMBOL",
+                              "name": "y"
+                            },
+                            "subscript": {
+                              "node": "NUMBER",
+                              "value": "1"
+                            }
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "SUBSCRIPT",
+                            "base": {
+                              "node": "SYMBOL",
+                              "name": "y"
+                            },
+                            "subscript": {
+                              "node": "NUMBER",
+                              "value": "2"
+                            }
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "operation": {
+            "name": "SUBSTITUTE",
+            "rule_or_justification": "Write the midpoint formula with the coordinates of A and B in it."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "M"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "NUMBER",
+                            "value": "-2"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "4"
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "NUMBER",
+                            "value": "3"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "3"
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "M"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "NUMBER",
+                            "value": "-2"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "4"
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "NUMBER",
+                            "value": "3"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "3"
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "why_valid": "The midpoint formula averages coordinates and holds for any two points.",
+          "learner_explanation": "Average the x-values of (−2, 3) and (4, 3), then average the y-values.",
+          "equivalence_witness": {
+            "transformation_id": "T2",
+            "operation": "SUBSTITUTE",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SYMBOL",
+                  "name": "M"
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "GROUP",
+                  "child": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "FRACTION",
+                        "numerator": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "x"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "1"
+                              }
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "PLUS"
+                            },
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "x"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "2"
+                              }
+                            }
+                          ]
+                        },
+                        "denominator": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      },
+                      {
+                        "node": "TEXT",
+                        "text": ", "
+                      },
+                      {
+                        "node": "FRACTION",
+                        "numerator": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "y"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "1"
+                              }
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "PLUS"
+                            },
+                            {
+                              "node": "SUBSCRIPT",
+                              "base": {
+                                "node": "SYMBOL",
+                                "name": "y"
+                              },
+                              "subscript": {
+                                "node": "NUMBER",
+                                "value": "2"
+                              }
+                            }
+                          ]
+                        },
+                        "denominator": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  },
+                  "fence": "PAREN"
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SYMBOL",
+                  "name": "M"
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "GROUP",
+                  "child": {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "FRACTION",
+                        "numerator": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "-2"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "PLUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "4"
+                            }
+                          ]
+                        },
+                        "denominator": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      },
+                      {
+                        "node": "TEXT",
+                        "text": ", "
+                      },
+                      {
+                        "node": "FRACTION",
+                        "numerator": {
+                          "node": "SEQUENCE",
+                          "items": [
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            },
+                            {
+                              "node": "OPERATOR",
+                              "operator": "PLUS"
+                            },
+                            {
+                              "node": "NUMBER",
+                              "value": "3"
+                            }
+                          ]
+                        },
+                        "denominator": {
+                          "node": "NUMBER",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  },
+                  "fence": "PAREN"
+                }
+              ]
+            },
+            "preserved_invariant": "VALUE",
+            "precondition": "Averaging coordinates is defined for every pair of real coordinates.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": "MATH-C1L-MIDPOINT-FORMULA",
+          "trivial": false
+        },
+        {
+          "step_id": "S6",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "M"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "NUMBER",
+                            "value": "-2"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "4"
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "FRACTION",
+                      "numerator": {
+                        "node": "SEQUENCE",
+                        "items": [
+                          {
+                            "node": "NUMBER",
+                            "value": "3"
+                          },
+                          {
+                            "node": "OPERATOR",
+                            "operator": "PLUS"
+                          },
+                          {
+                            "node": "NUMBER",
+                            "value": "3"
+                          }
+                        ]
+                      },
+                      "denominator": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      }
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "operation": {
+            "name": "EVALUATE",
+            "rule_or_justification": "(−2 + 4)/2 is 1 and (3 + 3)/2 is 3."
+          },
+          "substitution": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "1"
+                },
+                {
+                  "node": "TEXT",
+                  "text": ", "
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "3"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "M"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "1"
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "why_valid": "Both averages are ordinary arithmetic on the given coordinates.",
+          "learner_explanation": "The midpoint of (−2, 3) and (4, 3) is therefore (1, 3), which still has height 3.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S7",
+          "role": "VERIFY",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "M"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "1"
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "3"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "operation": {
+            "name": "CHECK",
+            "rule_or_justification": "Measure from A to M and from M to B; a midpoint must split AB into two equal halves."
+          },
+          "substitution": {
+            "node": "NUMBER",
+            "value": "3"
+          },
+          "output_state": {
+            "node": "ALIGNED_EQUATION",
+            "lines": [
+              {
+                "lhs": {
+                  "node": "SYMBOL",
+                  "name": "AM"
+                },
+                "relation": {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                "rhs": {
+                  "node": "NUMBER",
+                  "value": "3"
+                },
+                "annotation": null
+              },
+              {
+                "lhs": {
+                  "node": "SYMBOL",
+                  "name": "MB"
+                },
+                "relation": {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                "rhs": {
+                  "node": "NUMBER",
+                  "value": "3"
+                },
+                "annotation": null
+              }
+            ]
+          },
+          "why_valid": "If M is genuinely the midpoint, AM and MB must be equal and each must be half of AB.",
+          "learner_explanation": "From (−2, 3) to (1, 3) is 3, and from (1, 3) to (4, 3) is also 3, and 3 + 3 is the 6 found for AB.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        }
+      ],
+      "scaffold": {
+        "H1": {
+          "text": "Compare the two y-coordinates of (−2, 3) and (4, 3) before reaching for any formula.",
+          "derived_from_step_id": "S2",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-PLANE-ORIENTATION"
+        },
+        "H2": {
+          "text": "Which formula turns two ordered pairs such as (−2, 3) and (4, 3) into a length?",
+          "derived_from_step_id": "S3",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-DISTANCE-FORMULA"
+        },
+        "H3": {
+          "text": "Write the x-difference for (−2, 3) and (4, 3) as 4 − (−2) before squaring anything.",
+          "derived_from_step_id": "S4",
+          "discloses_output": false,
+          "core1_evidence_ref": null
+        }
+      },
+      "answer_custody": {
+        "question_ref": "CG-G1",
+        "answer_kind": "ORDERED_PAIR",
+        "final_answer": {
+          "node": "SEQUENCE",
+          "items": [
+            {
+              "node": "SYMBOL",
+              "name": "M"
+            },
+            {
+              "node": "RELATION",
+              "relation": "EQ"
+            },
+            {
+              "node": "GROUP",
+              "child": {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "1"
+                  },
+                  {
+                    "node": "TEXT",
+                    "text": ", "
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "3"
+                  }
+                ]
+              },
+              "fence": "PAREN"
+            }
+          ]
+        },
+        "final_answer_prose": "The length AB is 6 units and the midpoint M is (1, 3).",
+        "model_proof_steps": [],
+        "acceptance_rule": null,
+        "admissible_answers": [],
+        "construction_verification_conditions": [],
+        "counterexample_witness": null,
+        "independent_verification": {
+          "kind": "RECOMPUTE_INVARIANT",
+          "executable": true,
+          "statement": "Recompute AM and MB from the coordinates. Both must equal 3 and their sum must equal the AB you found.",
+          "expected": {
+            "node": "ALIGNED_EQUATION",
+            "lines": [
+              {
+                "lhs": {
+                  "node": "SYMBOL",
+                  "name": "AM"
+                },
+                "relation": {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                "rhs": {
+                  "node": "NUMBER",
+                  "value": "3"
+                },
+                "annotation": null
+              },
+              {
+                "lhs": {
+                  "node": "SYMBOL",
+                  "name": "MB"
+                },
+                "relation": {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                "rhs": {
+                  "node": "NUMBER",
+                  "value": "3"
+                },
+                "annotation": null
+              }
+            ]
+          }
+        },
+        "quick_check": "Does the midpoint lie between the two given points?",
+        "placement": "AFTER_ATTEMPT",
+        "attempt_surface_answer_neutral": true,
+        "custody_id": "MATH-AC-bf5ccebc2fa21a46",
+        "custody_digest": "900fe919d1a07598092f170a01423613e0c594a1f4bd3117bcfe654bf44a7082"
+      },
+      "source_distance": {
+        "source_question_reuse": false,
+        "basis": "Authored inside the coordinate-distance family; the coordinates are not taken from an assessment item."
+      },
+      "realization_id": "MATH-LMR-4032766590205c27",
+      "realization_digest": "6a743cd0c15ef7cfb47107193fcf0604345f2bf6ab6bb9d76faa85391906a78f"
+    },
+    {
+      "schema_version": "1.0.0",
+      "subject": "MATHEMATICS",
+      "role": "INDEPENDENT",
+      "item_ref": "LE-I1",
+      "topic_ref": "LINEAR_EQUATIONS",
+      "capability_refs": [
+        "MATH-CAP-LINEAR-PARAMETER-SUFFICIENCY"
+      ],
+      "problem_family_ref": "MATH-PF-LINEAR-PARAMETER-SUFFICIENCY",
+      "statement": [
+        {
+          "segment": "TEXT",
+          "text": "The line"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "passes through the point"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                },
+                {
+                  "node": "TEXT",
+                  "text": ", "
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "1"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "Find the value of k. Then decide whether the pair of equations"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "and"
+        },
+        {
+          "segment": "MATH",
+          "expression": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "4"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "16"
+              }
+            ]
+          }
+        },
+        {
+          "segment": "TEXT",
+          "text": "fixes one single ordered pair as its solution."
+        }
+      ],
+      "item_anchors": [
+        "2x + ky",
+        "(2, 1)"
+      ],
+      "derivation": [
+        {
+          "step_id": "S1",
+          "role": "INTERPRET",
+          "input_state": null,
+          "operation": {
+            "name": "READ_GIVEN",
+            "rule_or_justification": "The line is 2x + ky = 8 and the point it passes through is (2, 1)."
+          },
+          "substitution": null,
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "SEQUENCE",
+                    "items": [
+                      {
+                        "node": "NUMBER",
+                        "value": "2"
+                      },
+                      {
+                        "node": "SYMBOL",
+                        "name": "x"
+                      },
+                      {
+                        "node": "OPERATOR",
+                        "operator": "PLUS"
+                      },
+                      {
+                        "node": "SYMBOL",
+                        "name": "k"
+                      },
+                      {
+                        "node": "SYMBOL",
+                        "name": "y"
+                      }
+                    ]
+                  },
+                  {
+                    "node": "RELATION",
+                    "relation": "EQ"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "8"
+                  }
+                ]
+              },
+              {
+                "node": "TEXT",
+                "text": " through "
+              },
+              {
+                "node": "GROUP",
+                "child": {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    {
+                      "node": "TEXT",
+                      "text": ", "
+                    },
+                    {
+                      "node": "NUMBER",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "fence": "PAREN"
+              }
+            ]
+          },
+          "why_valid": "Restating the given line and point changes nothing.",
+          "learner_explanation": "2x + ky = 8 must be true when x is 2 and y is 1.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": true
+        },
+        {
+          "step_id": "S2",
+          "role": "SETUP",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          },
+          "operation": {
+            "name": "SUBSTITUTE",
+            "rule_or_justification": "A point lies on a line exactly when its coordinates satisfy the equation, so put x = 2 and y = 1 into 2x + ky = 8."
+          },
+          "substitution": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                },
+                {
+                  "node": "TEXT",
+                  "text": ", "
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "1"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "1"
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          },
+          "why_valid": "Lying on the line is defined by the equation being satisfied.",
+          "learner_explanation": "Putting (2, 1) into 2x + ky gives 2(2) + k(1), which must equal 8.",
+          "equivalence_witness": {
+            "transformation_id": "T1",
+            "operation": "SUBSTITUTE",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "x"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "k"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "y"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "8"
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "NUMBER",
+                        "value": "2"
+                      },
+                      "fence": "PAREN"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "k"
+                    },
+                    {
+                      "node": "GROUP",
+                      "child": {
+                        "node": "NUMBER",
+                        "value": "1"
+                      },
+                      "fence": "PAREN"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "8"
+                }
+              ]
+            },
+            "preserved_invariant": "SOLUTION_SET",
+            "precondition": "(2, 1) is a declared point of the line, so substituting it states a true equation rather than assuming one.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": "MATH-C1L-POINT-ON-LINE",
+          "trivial": false
+        },
+        {
+          "step_id": "S3",
+          "role": "EXECUTE",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "1"
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          },
+          "operation": {
+            "name": "EVALUATE",
+            "rule_or_justification": "2(2) is 4 and k(1) is k, so the equation becomes 4 + k = 8."
+          },
+          "substitution": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "NUMBER",
+                "value": "4"
+              },
+              {
+                "node": "OPERATOR",
+                "operator": "PLUS"
+              },
+              {
+                "node": "SYMBOL",
+                "name": "k"
+              }
+            ]
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "4"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          },
+          "why_valid": "Both products are evaluated by ordinary arithmetic.",
+          "learner_explanation": "After putting (2, 1) in, 2x + ky = 8 has collapsed to the single equation 4 + k = 8.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        },
+        {
+          "step_id": "S4",
+          "role": "TRANSFORM",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "4"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          },
+          "operation": {
+            "name": "REARRANGE",
+            "rule_or_justification": "Subtract 4 from both sides of 4 + k = 8."
+          },
+          "substitution": {
+            "node": "NUMBER",
+            "value": "4"
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "k"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "4"
+              }
+            ]
+          },
+          "why_valid": "Subtracting the same number from both sides is reversible, so no solution is gained or lost.",
+          "learner_explanation": "4 + k = 8 gives k = 4, so the line through (2, 1) is 2x + 4y = 8.",
+          "equivalence_witness": {
+            "transformation_id": "T2",
+            "operation": "SUBTRACT_FROM_BOTH_SIDES",
+            "before_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SEQUENCE",
+                  "items": [
+                    {
+                      "node": "NUMBER",
+                      "value": "4"
+                    },
+                    {
+                      "node": "OPERATOR",
+                      "operator": "PLUS"
+                    },
+                    {
+                      "node": "SYMBOL",
+                      "name": "k"
+                    }
+                  ]
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "8"
+                }
+              ]
+            },
+            "after_relation": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "SYMBOL",
+                  "name": "k"
+                },
+                {
+                  "node": "RELATION",
+                  "relation": "EQ"
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "4"
+                }
+              ]
+            },
+            "preserved_invariant": "SOLUTION_SET",
+            "precondition": "Subtracting 4 from both sides is reversible by adding 4, so the solution set is unchanged.",
+            "reversible": true,
+            "extraneous_root_check": null
+          },
+          "sufficiency": null,
+          "core1_evidence_ref": "MATH-C1L-EQUALITY-PRESERVATION",
+          "trivial": false
+        },
+        {
+          "step_id": "S5",
+          "role": "CHECK_SUFFICIENCY",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "4"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "k"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "16"
+              }
+            ]
+          },
+          "operation": {
+            "name": "COMPARE_VALUES",
+            "rule_or_justification": "With k = 4 the second equation is exactly twice the first, so the two equations carry the same information."
+          },
+          "substitution": {
+            "node": "NUMBER",
+            "value": "2"
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "4"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "x"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "8"
+                  },
+                  {
+                    "node": "SYMBOL",
+                    "name": "y"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "SEQUENCE",
+                      "items": [
+                        {
+                          "node": "NUMBER",
+                          "value": "2"
+                        },
+                        {
+                          "node": "SYMBOL",
+                          "name": "x"
+                        },
+                        {
+                          "node": "OPERATOR",
+                          "operator": "PLUS"
+                        },
+                        {
+                          "node": "NUMBER",
+                          "value": "4"
+                        },
+                        {
+                          "node": "SYMBOL",
+                          "name": "y"
+                        }
+                      ]
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              }
+            ]
+          },
+          "why_valid": "Two equations that are multiples of each other describe the same line, so their common solutions form that whole line.",
+          "learner_explanation": "4x + 8y = 16 is 2 times 2x + 4y = 8, so every point of the line satisfies both and (2, 1) is not the only one.",
+          "equivalence_witness": null,
+          "sufficiency": {
+            "status": "MULTIPLE",
+            "reason": "The second equation is a multiple of the first, so the pair is dependent and every point of the line is a solution.",
+            "parameter_refs": [
+              "k"
+            ]
+          },
+          "core1_evidence_ref": "MATH-C1L-INFORMATION-SUFFICIENCY",
+          "trivial": false
+        },
+        {
+          "step_id": "S6",
+          "role": "VERIFY",
+          "input_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SYMBOL",
+                "name": "k"
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "4"
+              }
+            ]
+          },
+          "operation": {
+            "name": "CHECK",
+            "rule_or_justification": "Substitute (2, 1) into 2x + 4y and expect exactly 8."
+          },
+          "substitution": {
+            "node": "GROUP",
+            "child": {
+              "node": "SEQUENCE",
+              "items": [
+                {
+                  "node": "NUMBER",
+                  "value": "2"
+                },
+                {
+                  "node": "TEXT",
+                  "text": ", "
+                },
+                {
+                  "node": "NUMBER",
+                  "value": "1"
+                }
+              ]
+            },
+            "fence": "PAREN"
+          },
+          "output_state": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "4"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "1"
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          },
+          "why_valid": "The value of k is only correct if the original point still satisfies the completed equation.",
+          "learner_explanation": "2(2) + 4(1) is 4 + 4, which is 8, so k = 4 really does put (2, 1) on the line.",
+          "equivalence_witness": null,
+          "sufficiency": null,
+          "core1_evidence_ref": null,
+          "trivial": false
+        }
+      ],
+      "scaffold": {
+        "H1": {
+          "text": "What does it mean, as an equation, for (2, 1) to be on the line 2x + ky = 8?",
+          "derived_from_step_id": "S2",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-POINT-ON-LINE"
+        },
+        "H2": {
+          "text": "Turn the statement about (2, 1) into a single equation in k alone.",
+          "derived_from_step_id": "S3",
+          "discloses_output": false,
+          "core1_evidence_ref": "MATH-C1L-POINT-ON-LINE"
+        },
+        "H3": {
+          "text": "Replace x and y in 2x + ky by the numbers from (2, 1) before doing anything with k.",
+          "derived_from_step_id": "S4",
+          "discloses_output": false,
+          "core1_evidence_ref": null
+        }
+      },
+      "answer_custody": {
+        "question_ref": "LE-I1",
+        "answer_kind": "NUMERIC",
+        "final_answer": {
+          "node": "SEQUENCE",
+          "items": [
+            {
+              "node": "SYMBOL",
+              "name": "k"
+            },
+            {
+              "node": "RELATION",
+              "relation": "EQ"
+            },
+            {
+              "node": "NUMBER",
+              "value": "4"
+            }
+          ]
+        },
+        "final_answer_prose": "k = 4. With that value the second equation is twice the first, so the pair does not fix a single ordered pair: every point of the line 2x + 4y = 8 is a solution.",
+        "model_proof_steps": [],
+        "acceptance_rule": null,
+        "admissible_answers": [],
+        "construction_verification_conditions": [],
+        "counterexample_witness": null,
+        "independent_verification": {
+          "kind": "SUBSTITUTE_BACK",
+          "executable": true,
+          "statement": "Substitute x = 2 and y = 1 into 2x + 4y. The result must be exactly 8, and one further point such as x = 0, y = 2 must also satisfy both equations.",
+          "expected": {
+            "node": "SEQUENCE",
+            "items": [
+              {
+                "node": "SEQUENCE",
+                "items": [
+                  {
+                    "node": "NUMBER",
+                    "value": "2"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "2"
+                    },
+                    "fence": "PAREN"
+                  },
+                  {
+                    "node": "OPERATOR",
+                    "operator": "PLUS"
+                  },
+                  {
+                    "node": "NUMBER",
+                    "value": "4"
+                  },
+                  {
+                    "node": "GROUP",
+                    "child": {
+                      "node": "NUMBER",
+                      "value": "1"
+                    },
+                    "fence": "PAREN"
+                  }
+                ]
+              },
+              {
+                "node": "RELATION",
+                "relation": "EQ"
+              },
+              {
+                "node": "NUMBER",
+                "value": "8"
+              }
+            ]
+          }
+        },
+        "quick_check": "Is your k a single number or a range?",
+        "placement": "ANSWER_APPENDIX",
+        "attempt_surface_answer_neutral": true,
+        "custody_id": "MATH-AC-282da93ec0ba8316",
+        "custody_digest": "98d95aefbf53bf8d60722d52e61875f6accf7ded233caa497bd4a26694ffd0a1"
+      },
+      "source_distance": {
+        "source_question_reuse": false,
+        "basis": "Authored inside the linear-parameter-sufficiency family; the parameter and point are not taken from an assessment item."
+      },
+      "realization_id": "MATH-LMR-d81ce65dfb227346",
+      "realization_digest": "ff4b921a812ffc92de38a5125ccd62a7756e3ecca206b9c36d9f82ce469e2a03"
+    }
+  ]
+}
