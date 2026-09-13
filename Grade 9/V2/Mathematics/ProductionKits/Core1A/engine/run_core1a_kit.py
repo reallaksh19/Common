@@ -34,7 +34,7 @@ def main():
     for b in bucket_plan['buckets']:
         row=match_representation_input(b,authored); used.append(tuple(sorted(row['member_capability_refs'])))
         atoms=[x['atom_id'] for x in b['learning_atoms']]
-        rep=build_learning_representation(bucket_ref=b['bucket_id'],purpose='STARTER',stage_inputs=row['stage_inputs'],required_atom_refs=atoms)
+        rep=build_learning_representation(bucket_ref=b['bucket_id'],purpose='CORE1A_TEACHING',stage_inputs=row['stage_inputs'],required_atom_refs=atoms)
         validate_learning_representation(rep,atoms); rep_plans.append(rep)
     if [x for x in authored if tuple(sorted(x['member_capability_refs'])) not in used]: raise ValueError('CORE1A_KIT_UNUSED_REPRESENTATION_INPUT')
     sections=[{'bucket_ref':b['bucket_id'],'title':b['title'],'invariant':b['bucket_invariant']['text'],'member_capability_refs':b['member_capability_refs'],'representation_ref':r['representation_id'],'core2_question_refs':b['core2_question_refs']} for b,r in zip(bucket_plan['buckets'],rep_plans)]
