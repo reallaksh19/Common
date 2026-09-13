@@ -2,16 +2,16 @@
 
 This directory is the deterministic learner-product layer downstream of the governed Chemistry semantic chain.
 
-It adapts two proven repository patterns:
+It adapts two repository patterns without copying their subject semantics:
 
 - Physics Core (1A): bucket assimilation, problem-family routines, hint pre-teaching closure, readiness gates and durable handoff.
 - Mathematics Core (1A)/(2A): explicit execution contract, schema/policy/engine/golden separation, dual Core2A lanes, per-question provenance and fail-closed orchestration.
 
-Chemistry does not copy either subject's semantics. It consumes Chemistry's C-F learner model, C-G Core1 authority, C-H representation bundle, C-I Core2 authority and C-J coverage closure.
+Chemistry consumes its own C-F learner model, C-G Core1 authority, C-H representation bundle, C-I Core2 authority and C-J coverage closure.
 
 ## Current implementation status
 
-The current branch implements the governed semantic chain through **C-LP-21 `VALIDATE_ANSWER_CLOSURE`**:
+The current branch implements the machine learner-product chain through **C-LP-25 `FREEZE_HANDOFF`**:
 
 - canonical C-LP-00..25 execution order;
 - exact run/provenance/answer-path contracts;
@@ -22,13 +22,16 @@ The current branch implements the governed semantic chain through **C-LP-21 `VAL
 - `GENERATED_ORIGINAL` challenge selection/generation for validator-backed problem families;
 - independent Chemistry recomputation for generated challenges;
 - all-source near-copy gating;
-- per-question provenance;
+- per-question learner-safe provenance with internal source identifiers retained only in custody data;
 - staged helper support bound to pre-taught H1/H2/H3 evidence;
 - answer-path closure for source, generated and Core1A practice;
-- semantic package/stage-evidence emission;
-- a frozen Some Basic Concepts process golden under `golden/some-basic-concepts/`.
+- deterministic Core1A/Core2A A4 PDF realization;
+- actual-PDF visual preflight;
+- machine final audit;
+- frozen reusable handoff manifest;
+- a Some Basic Concepts process golden under `golden/some-basic-concepts/`.
 
-Rendering and publication gates remain intentionally pending. The runner does not convert a semantic pass into a visual/release claim.
+A machine-complete run is **not** a learner-product release. Subject correctness, pedagogical design, assessment design, actual-size human visual usability and mature-design approval remain independent human gates and remain `PENDING`.
 
 ## Answer-path rule
 
@@ -68,7 +71,20 @@ python 'Grade 9/V2/Chemistry/LearnerProduct/engine/run_chemistry_learner_product
   --semantic-only
 ```
 
-The semantic run writes:
+Full machine learner-product execution through C-LP-25 uses the same arguments without `--semantic-only`:
+
+```bash
+python 'Grade 9/V2/Chemistry/LearnerProduct/engine/run_chemistry_learner_product.py' \
+  --run-manifest /path/to/run.json \
+  --study-model /path/to/study-model.json \
+  --core1-plan /path/to/core1-plan.json \
+  --representation-bundle /path/to/representation-bundle.json \
+  --core2-plan /path/to/core2-plan.json \
+  --coverage-closure /path/to/coverage-closure.json \
+  --out-dir /tmp/chemistry-learner-product
+```
+
+The full run leaves reusable semantic, render and audit custody including:
 
 ```text
 core1a_bucket_plan.json
@@ -77,21 +93,57 @@ core1a_manuscript.json
 core2a_source_plan.json
 core2a_challenge_plan.json
 answer_closure_audit.json
-learner_product_stage_evidence.json
 semantic_package_manifest.json
+chemistry_core1a.pdf
+chemistry_core2a.pdf
+render_manifest.json
+visual_preflight.json
+final_audit.json
+handoff_manifest.json
+learner_product_stage_evidence.json
 ```
 
-A normal run without `--semantic-only` executes the semantic chain and then fails closed with `CHEM_LP_RENDER_STAGE_NOT_IMPLEMENTED` at C-LP-22. This is deliberate: C-LP-22..25 are not silently skipped.
+## Rendering contract
+
+`policies/chemistry-learner-render-policy.json` currently requires A4 portrait pages with:
+
+```text
+body              10.5 pt
+question stem      12.5 pt
+small labels        9.25 pt
+section heading    13.5 pt
+chapter heading    19 pt
+minimum visible     9 pt
+```
+
+The renderer consumes the closed semantic package and C-H representation authority. It may place a selected primitive but may not select new Chemistry representations or invent chemical content.
+
+Every learner-visible text run passes through the existing Chemistry learner-surface guard. Internal ids remain in machine custody and must not appear on learner pages.
+
+## Actual-PDF preflight
+
+C-LP-23 validates the physical PDF rather than trusting the page plan. It checks:
+
+```text
+PDF hash and page count
+A4 page geometry
+font floor
+physical text/primitive bounds
+clipping
+text/primitive overlap
+internal-identifier leakage in extracted PDF text
+required reasoning-visual closure
+first/middle/last raster proof at 144 dpi
+blank-page detection
+```
+
+Raster proof is machine evidence that pages actually render and are nonblank. It is not a substitute for human actual-size visual review.
 
 ## Golden fixture boundary
 
-`golden/some-basic-concepts/expected-semantic-slice.json` freezes a small pre-render process slice covering:
+`golden/some-basic-concepts/expected-semantic-slice.json` freezes a small formula/charge, particle↔symbol and conservation process slice.
 
-- formula anatomy / charge;
-- particle ↔ symbolic translation;
-- atom conservation.
-
-It uses the repository's synthetic cold-start fixture and explicitly has `production_claim=false`. It is a process golden, not an NCERT provenance claim and not a substitute for the 68-question Some Basic Concepts handoff denominator.
+It uses the repository synthetic cold-start fixture and explicitly has `production_claim=false`. It is a process golden, not an NCERT provenance claim and not a substitute for the 68-question Some Basic Concepts denominator in the authoring handoff.
 
 ## Non-negotiable rules
 
@@ -103,10 +155,16 @@ Core2A source and generated lanes have different provenance semantics.
 Generated challenge difficulty must be conceptual/representational, not arithmetic ugliness.
 Every learner-facing question must have a checkable answer path.
 Every generated item must pass an independent Chemistry validator and near-copy gate.
-Every completed semantic run leaves durable machine-readable outputs.
-No semantic pass upgrades pending human subject/pedagogy/assessment/visual gates.
+Internal source identifiers must not leak into learner provenance or page text.
+Every completed run leaves durable semantic, rendered and audit custody.
+Machine PASS cannot upgrade pending human subject/pedagogy/assessment/visual gates.
 ```
 
-## Next implementation boundary
+## Current boundary
 
-The next slice is page realization: convert the closed semantic manuscript/source/challenge plans into Core (1A) and Core (2A) learner pages, then run actual-size typography, primitive, clipping/overlap, internal-ID-leak and visual-usability preflight before any PDF/release claim.
+The machine implementation is complete for the synthetic cold-start/golden path through C-LP-25. Remaining programme work is broader Chemistry coverage and review, not pretending that machine publication engineering is expert approval:
+
+- extend independent validators to future problem families as they become supported;
+- add governed mixed-synthesis compatibility before generating mixed challenges;
+- exercise the production authoring-handoff topics/denominators rather than only the synthetic process fixture;
+- run authorized Chemistry subject, pedagogy, assessment and actual-size visual review on exact frozen artifacts.
