@@ -2,18 +2,16 @@
 
 This layer is the canonical orchestration authority above the existing Core1/Core1A/Core2/Core2A production kits.
 
-It exists to enforce one governing distinction:
+Its governing invariant is:
 
 ```text
 EXECUTION ORDER MAY VARY.
 AUTHORITY ORDER MAY NOT.
 ```
 
-Core1 and Core2 are independent interpretations of original evidence. Either may execute first depending on the evidence available. Neither becomes ground truth merely because it executed first.
+Core1 and Core2 reconstruct different kinds of intelligence from the original evidence. Either may execute first when the evidence justifies it. Neither becomes ground truth because it executed first.
 
-## Increment 1 — blueprint foundation
-
-The first implemented increment freezes only the root contracts required before adaptive routing is added:
+## Implemented state
 
 ```text
 Original evidence
@@ -23,20 +21,19 @@ GroundTruthManifest
 MathLearningRunBlueprint
       ↓
 GT_READY
+      ↓
+Adaptive Evidence Router
+      ↓
+CORE1_FIRST | CORE2_FIRST | BLOCK
+      ↓
+ROUTED / BLOCKED_*
 ```
 
-The foundation deliberately does **not** choose Core1-first or Core2-first yet. Routing belongs to Increment 2 and must be based on evidence strength rather than hard-coded stage order.
+Increment 1 established immutable evidence binding and the root run state. Increment 2 adds evidence-adaptive first-role routing, owner routing overrides, deterministic max-three handoff bundling and routing goldens.
 
-## Original evidence is authority
+## Ground truth
 
-`GroundTruthManifest` records the original evidence available to the run:
-
-- question corpus;
-- syllabus;
-- authoritative source/textbook;
-- answer key;
-- solution set;
-- figure set.
+`GroundTruthManifest` records original question corpus, syllabus, authoritative source/textbook, answer key, solution set and figure set.
 
 Evidence availability is explicit:
 
@@ -48,66 +45,121 @@ UNRESOLVED
 CONFLICTED
 ```
 
-`ABSENT` means evidence is absent. It must never be converted into claims such as low importance, low difficulty, out-of-scope, or learner weakness.
+`ABSENT` means evidence is absent. It cannot be translated into low importance, low difficulty, out-of-scope status, learner weakness or a claim that the topic is not assessed.
 
-Only these authority classes are legal inside the ground-truth manifest:
-
-```text
-ORIGINAL_EVIDENCE
-AUTHORITATIVE_SOURCE
-```
-
-Derived claims, external benchmarks, model conclusions and owner overrides do not become ground truth.
+Only `ORIGINAL_EVIDENCE` and `AUTHORITATIVE_SOURCE` are legal ground-truth authority classes. Derived claims, benchmarks, agent conclusions and owner overrides remain outside ground truth.
 
 ## Root run blueprint
 
-Every downstream packet must belong to one `MathLearningRunBlueprint`.
+Every downstream artifact belongs to one `MathLearningRunBlueprint`. The run identity is assigned once and remains stable across state transitions; `run_digest` changes as state evolves.
 
-The run blueprint binds:
+The root binds exact ground-truth ref/digest, learner prior, learning purpose, product mode, owner override refs, routing, handoff bundles and later Core1/Core2/Join/Assimilation/Core1A/Core2A/publication refs.
 
-- exact ground-truth manifest reference and digest;
-- learner prior and learning purpose, when known;
-- owner override references without mutating evidence;
-- run state;
-- handoff bundles;
-- downstream packet references;
-- final publication/audit references.
-
-The run state machine is fixed at the root level:
-
-```text
-GT_READY
-ROUTED
-FIRST_CORE_COMPLETE
-SECOND_CORE_COMPLETE
-CROSS_VALIDATED
-JOIN_READY
-ASSIMILATION_COMPILED
-CORE1A_REALIZED
-EXPOSURE_RECORDED
-CORE2A_ELIGIBLE
-CORE2A_REALIZED
-FINAL_AUDIT_PASS
-
-BLOCKED_EVIDENCE
-BLOCKED_CONFLICT
-BLOCKED_PREREQUISITE
-BLOCKED_REPRESENTATION
-BLOCKED_EXPOSURE
-BLOCKED_OWNER_REVIEW
-```
-
-Increment 1 may initialize only `GT_READY`. Later increments will own legal transitions.
-
-## Handoff bundles
-
-The root schema already encodes the transport constraint:
+The handoff transport constraint is:
 
 ```text
 1 <= subtopics per bundle <= 3
 ```
 
-This is a relay-size constraint only. It does not constrain the number of learning atoms, equations, representations, misconceptions, inference edges or teaching steps inside a subtopic.
+This does not limit learning atoms, equations, inference edges, representations or teaching steps.
+
+## Increment 2 — Adaptive Relay / EvidenceRouter
+
+Routing consumes a `math-routing-build-spec` containing candidate subtopics and six evidence dimensions:
+
+```text
+SA  scope authority
+SS  semantic source strength
+QE  question evidence
+QR  question resolution
+UA  uncertainty
+CI  conflict index
+```
+
+All dimensions use the governed 0–4 rubric in `policies/math-evidence-routing-policy.json`; every non-zero evidential strength must point back to GroundTruth evidence. Numbers are not free-form confidence scores.
+
+Derived strengths are:
+
+```text
+semantic_strength   = max(SA, SS)
+assessment_strength = min(QE, QR)
+```
+
+The deterministic routing rules are:
+
+```text
+material conflict
+→ BLOCK_CONFLICT
+
+semantic_strength <= 1 and assessment_strength <= 1
+→ BLOCK_EVIDENCE
+
+strong semantic authority
+→ CORE1_FIRST
+
+otherwise rich + resolved question evidence
+→ CORE2_FIRST
+
+otherwise
+→ BLOCK_OWNER_REVIEW
+```
+
+If both Core1 and Core2 are evidence-admissible, normal system routing starts with Core1 because semantic authority is already strong; Core2 must still independently re-ground later. Missing/coarse semantic authority with rich resolved questions routes Core2 first.
+
+A GroundTruth item marked `CONFLICTED` blocks ordinary routing when used by the subtopic profile. Conflict is preserved, not silently reconciled.
+
+## Owner override semantics
+
+Routing computes `system_action` first and never overwrites it.
+
+A routing decision stores separately:
+
+```text
+SYSTEM ACTION
+OWNER OVERRIDE
+FINAL ACTION
+```
+
+`HARD` may change the operational first role even when the system recommended a block; the conflict/insufficiency remains recorded.
+
+`SOFT` may choose only a role already present in `eligible_roles`. It cannot manufacture evidence admissibility.
+
+Owner overrides never mutate GroundTruth.
+
+## Handoff bundle synthesis
+
+Routed subtopics are grouped by:
+
+```text
+final first role + coherence group
+```
+
+then ordered by declared subtopic sequence and chunked deterministically into bundles of at most three. Overflow creates another bundle; it never deletes or merges subtopics invisibly.
+
+## Executable command
+
+After initializing GroundTruth and a `GT_READY` run:
+
+```bash
+python 'Grade 9/V2/Mathematics/LearningBlueprint/engine/route_math_learning_run.py' \
+  --ground-truth /tmp/ground_truth_manifest.json \
+  --run /tmp/math_learning_run.json \
+  --routing-spec /tmp/routing_spec.json \
+  --out-plan /tmp/routing_plan.json \
+  --out-run /tmp/math_learning_run_routed.json
+```
+
+Optional owner routing control is supplied with `--override-ledger`.
+
+## Routing goldens
+
+Three goldens prove the architecture's central routing behavior:
+
+1. strong detailed syllabus/source + rich questions → `CORE1_FIRST`;
+2. absent/coarse syllabus + rich resolved questions → `CORE2_FIRST`;
+3. sparse/conflicted evidence → `BLOCK_CONFLICT` rather than forced consensus.
+
+The goldens validate routing behavior, not topic-specific mathematics.
 
 ## Files
 
@@ -115,25 +167,48 @@ This is a relay-size constraint only. It does not constrain the number of learni
 contracts/math-ground-truth-build-spec.schema.json
 contracts/math-ground-truth-manifest.schema.json
 contracts/math-learning-run-blueprint.schema.json
+contracts/math-routing-build-spec.schema.json
+contracts/math-routing-plan.schema.json
+contracts/math-owner-override-ledger.schema.json
+
 policies/math-evidence-state-policy.json
+policies/math-evidence-routing-policy.json
+
 engine/blueprint_common.py
 engine/build_ground_truth_manifest.py
 engine/init_math_learning_run.py
+engine/route_math_learning_run.py
+
+golden/routing/01-core1-first.json
+golden/routing/02-core2-first.json
+golden/routing/03-block-conflict.json
+
 tests/test_blueprint_foundation.py
+tests/test_adaptive_router.py
 ```
 
 ## Next increment
 
-Increment 2 adds the adaptive Relay/EvidenceRouter:
+Increment 3 implements the dual-intelligence runtime and independence firewall:
 
 ```text
-GroundTruthManifest
+routed bundle
       ↓
-subtopic evidence profile
+fresh first-role Core instance
       ↓
-HandoffBundle <= 3
+first package sealed
       ↓
-CORE1_FIRST | CORE2_FIRST | BLOCK
+fresh second-role instance
+      ↓
+PASS A: original ground truth only
+      ↓
+independent findings sealed
+      ↓
+PASS B: expose first-role package
+      ↓
+claim-level validation
+CONFIRMED / REFINED / MISSING / UNSUPPORTED /
+CONTRADICTED / OUT_OF_SCOPE / UNKNOWN
 ```
 
-No first-role decision is legal until that evidence router exists and passes its golden fixtures.
+The runtime must prove the second role completed its ground-truth-only pass before it could see the first role's claims. Fresh instance IDs alone are not sufficient evidence of independence.
