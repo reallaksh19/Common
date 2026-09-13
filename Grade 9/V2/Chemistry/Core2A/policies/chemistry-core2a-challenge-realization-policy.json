@@ -8,6 +8,34 @@
     "mixed_synthesis_requires_explicit_compatibility_authority": true,
     "unsupported_family_action": "SKIP_WITH_REASON"
   },
+  "construction_research": {
+    "competition_mode_requires_external_benchmark": true,
+    "minimum_benchmarks": 2,
+    "benchmark_must_be_authoritative_or_official": true,
+    "allowed_reuse": "CONSTRUCTION_PATTERN_ONLY",
+    "forbidden_reuse": [
+      "verbatim_question_text",
+      "distinctive numerical tuple copied without pedagogical need",
+      "official provenance claim for generated item"
+    ],
+    "examples_of_pattern_level_learning": [
+      "particle composition table",
+      "multi-statement selection",
+      "coded-species deduction",
+      "reverse ion/electron inference",
+      "integer reconstruction",
+      "error diagnosis from a plausible wrong answer"
+    ],
+    "record_benchmark_sources_machine_side": true,
+    "learner_display_default": "ONE_BOOK_LEVEL_REFERENCE_NOTE"
+  },
+  "attempt_page": {
+    "workspace": "DEMAND_SIZED",
+    "technical_clue_count": {"minimum": 1, "maximum": 2},
+    "technical_clue_position": "BOTTOM_AFTER_WORKSPACE",
+    "technical_clue_must_name_executable_relation_or_test": true,
+    "generic_motivation_or_start_rule_forbidden": true
+  },
   "supported_family_recipes": {
     "PF-FORMULA_CHARGE_PARSE": {
       "near_transfer_recipe": "FORMULA_SUBSCRIPT_SUPERSCRIPT_CONTRAST",
@@ -35,11 +63,22 @@
       "validator": "ELECTRON_TRANSFER_AGENT_ROLE"
     }
   },
+  "answer_page": {
+    "quick_check_required": true,
+    "full_working_required": true,
+    "technical_relation_required": true,
+    "technical_relation_must_apply_current_question_symbols_or_values": true,
+    "independent_consistency_check_required": true,
+    "generic_governing_invariant_box_forbidden": true,
+    "generic_repair_footer_forbidden": true,
+    "repeated_per_question_generated_disclaimer_forbidden": true
+  },
   "near_copy": {
     "exact_normalized_copy_forbidden": true,
     "max_sequence_ratio": 0.9,
     "max_token_jaccard": 0.8,
-    "compare_against_all_source_stems": true
+    "compare_against_all_source_stems": true,
+    "compare_against_external_benchmark_stems_when_custodied": true
   },
   "generation_boundary": {
     "new_species_forbidden": true,
@@ -51,11 +90,14 @@
   },
   "stop_conditions": [
     "CORE2A_CHALLENGE_TARGET_UNGROUNDED",
+    "CORE2A_COMPETITION_CONSTRUCTION_RESEARCH_MISSING",
     "CORE2A_UNTAUGHT_CHEMISTRY_REQUIRED",
     "CORE2A_GENERATED_ITEM_NOT_INDEPENDENTLY_VERIFIED",
     "CORE2A_GENERATED_ITEM_TOO_CLOSE_TO_SOURCE",
     "CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION",
-    "CORE2A_ANSWER_PATH_MISSING",
-    "CORE2A_QUESTION_CITATION_MISSING"
+    "CORE2A_TECHNICAL_CLUE_NOT_ACTIONABLE",
+    "CORE2A_KEY_RELATION_NOT_QUESTION_SPECIFIC",
+    "CORE2A_CONSISTENCY_CHECK_NOT_INDEPENDENT",
+    "CORE2A_ANSWER_PATH_MISSING"
   ]
 }
