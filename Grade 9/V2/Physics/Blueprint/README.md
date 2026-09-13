@@ -1,6 +1,8 @@
 # Physics V2 Blueprint — evidence-adaptive orchestration
 
-This directory is the orchestration layer above the Physics role-specific production kits. It makes execution order, evidence authority, validation discipline and downstream learner-product legality machine-enforceable.
+`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories such as `CoreAuthoring/`, `Core2Transfer/`, `Core1A/` and `Core2A/` are subordinate execution kits; they do not define a second architecture.
+
+The machine mapping is frozen in `policy/role-bindings.v1.json` so future work remains classified as Physics Blueprint work even when executable code lives in a specialist role folder.
 
 ## Current executable topology
 
@@ -27,12 +29,21 @@ Execution order is not authority order. Core1 remains semantic intelligence, Cor
 - normalized evidence and deterministic `CORE1_FIRST | CORE2_FIRST | BLOCK` routing;
 - fresh-instance independent second-pass protocol;
 - packet provenance and max-three handoff transport rule;
+- **Core1 × Core2 Join Gate** with exact demand-claim coverage and critical-conflict blocking;
 - Core1A assimilation-before-manuscript discipline;
-- active Core2A semantic/executable contract.
+- active Core2A taught-state-gated transfer contract.
+
+## Join Gate
+
+Every Core2 demand claim must appear **exactly once** in a Join reconciliation row. `CONFIRMED` and `REFINED` claims require explicit Core1 semantic grounding plus assimilation obligations. `MISSING`, `UNSUPPORTED`, `CONTRADICTED`, `OUT_OF_SCOPE` and `UNKNOWN` remain visible states.
+
+A required unresolved demand becomes `BLOCK` and makes the Join `JOIN_BLOCKED`. A deliberately non-blocking unresolved extension becomes `HOLD`, allowing `JOIN_READY_WITH_HOLDS` without rewriting uncertainty as low importance.
+
+Core1A may consume Join output only when `assimilation_ready = true`.
 
 ## Core2A authority boundary
 
-Core2A is now `ACTIVE`, but it is strictly downstream:
+Core2A is `ACTIVE`, but strictly downstream:
 
 ```text
 Core1 semantic boundary
@@ -46,7 +57,7 @@ Core2A may select and scaffold learner practice. It may not rewrite Core2 source
 
 A source question lacking required T receipts remains in immutable Core2 corpus custody and is marked `HELD_UNTIL_TEACHING_COMPLETE` for learner release.
 
-Generated-original challenges fail closed unless their required capabilities are taught, their source/family bindings agree, their near-copy gate passes, and an approved Physics validator independently recomputes the underlying relation.
+Generated-original challenges fail closed unless required capabilities are taught, source/family bindings agree, near-copy checks pass, and an approved Physics validator independently recomputes the underlying relation.
 
 ## Non-negotiable invariants
 
@@ -54,6 +65,8 @@ Generated-original challenges fail closed unless their required capabilities are
 - First role is evidence-adaptive, never topic-name hard-coded.
 - Core1 and Core2 are distinct epistemic roles.
 - The second role independently re-grounds before seeing upstream claims.
+- Every Core2 demand claim is reconciled exactly once at Join.
+- Critical unresolved Join claims block Core1A.
 - Every handoff contains at most three subtopics; learning atoms are unbounded.
 - Absence of evidence remains absence.
 - Owner overrides alter action, never historical evidence.
@@ -61,18 +74,19 @@ Generated-original challenges fail closed unless their required capabilities are
 - Core2A requires taught-state receipts.
 - Teaching completion does not imply learner mastery.
 
-## Running the architecture and Core2A proofs
+## Running the blueprint proofs
 
 ```bash
 python 'Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py'
 python 'Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py'
 python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py'
 python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py'
+python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_join.py'
+python 'Grade 9/V2/Physics/Blueprint/engine/compile_join.py' \
+  'Grade 9/V2/Physics/Blueprint/fixtures/join/join-ready.json' \
+  --out /tmp/physics-join.json
 
 python 'Grade 9/V2/Physics/Core2A/tests/test_physics_core2a.py'
-python 'Grade 9/V2/Physics/Core2A/engine/run_physics_core2a.py' \
-  --run 'Grade 9/V2/Physics/Core2A/golden/projectile-event/core2a-input.json' \
-  --out-dir /tmp/physics-core2a
 ```
 
-The Core2A golden is a process fixture only. It does not authorize every Motion-in-a-Plane problem family and does not replace human subject/pedagogy/assessment review.
+The Join and Core2A goldens are process fixtures. They prove architecture behavior; they do not authorize every Motion-in-a-Plane problem family or replace human subject/pedagogy/assessment review.

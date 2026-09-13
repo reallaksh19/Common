@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'Grade 9/V2/Physics/Blueprint/**'
+      - 'Grade 9/V2/Physics/Core2A/**'
       - '.github/workflows/v2-physics-blueprint.yml'
   workflow_dispatch:
 
@@ -17,7 +18,7 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: pip install jsonschema
-      - name: Validate blueprint contracts
+      - name: Validate blueprint contracts and role bindings
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
       - name: Run adaptive-routing golden fixtures
         run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
@@ -25,3 +26,11 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py"
       - name: Run independent second-pass tests
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py"
+      - name: Run Core1 x Core2 Join falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_join.py"
+      - name: Compile Join golden
+        run: |
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_join.py" \
+            "Grade 9/V2/Physics/Blueprint/fixtures/join/join-ready.json" \
+            --out /tmp/physics-join.json
+          python -m json.tool /tmp/physics-join.json > /dev/null

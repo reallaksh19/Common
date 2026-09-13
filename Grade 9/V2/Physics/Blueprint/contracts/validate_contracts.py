@@ -20,14 +20,16 @@ def validate() -> None:
         "evidence-state.schema.json",
         "routing-decision.schema.json",
         "independent-validation-session.schema.json",
+        "join-packet.schema.json",
+        "role-bindings.schema.json",
     ]
     schemas = {name: load(schema_dir / name) for name in schema_names}
     for schema in schemas.values():
         Draft202012Validator.check_schema(schema)
 
-    Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(
-        load(ROOT / "policy" / "architecture.v1.json")
-    )
+    Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(load(ROOT / "policy" / "architecture.v1.json"))
+    bindings = load(ROOT / "policy" / "role-bindings.v1.json")
+    Draft202012Validator(schemas["role-bindings.schema.json"]).validate(bindings)
 
     evidence_validator = Draft202012Validator(schemas["evidence-state.schema.json"])
     for fixture in sorted((ROOT / "fixtures" / "golden").glob("*.json")):
@@ -45,6 +47,13 @@ def validate() -> None:
     if not architecture["invariants"]["learning_atoms_unbounded"]:
         raise AssertionError("TRANSPORT_BOUND_LEAKED_INTO_PEDAGOGY")
 
+    if bindings["canonical_root"] != "Grade 9/V2/Physics/Blueprint":
+        raise AssertionError("PHYSICS_BLUEPRINT_ROOT_DRIFT")
+    if bindings["roles"]["JOIN"]["ownership"] != "BLUEPRINT_NATIVE":
+        raise AssertionError("JOIN_MUST_BE_BLUEPRINT_NATIVE")
+    if bindings["roles"]["CORE2A"]["implementation_root"] != "Grade 9/V2/Physics/Core2A":
+        raise AssertionError("CORE2A_ROLE_BINDING_DRIFT")
+
     independent = load(ROOT / "policy" / "independent-validation.v1.json")
     if not independent["self_validation_forbidden"]:
         raise AssertionError("SELF_VALIDATION_POLICY_DISABLED")
@@ -53,6 +62,12 @@ def validate() -> None:
     first = independent["passes"][0]
     if first["mode"] != "GROUND_TRUTH_ONLY" or "UPSTREAM_CLAIMS" not in first["must_not_see"]:
         raise AssertionError("GROUND_TRUTH_BLIND_PASS_POLICY_DRIFT")
+
+    join_policy = load(ROOT / "policy" / "join-policy.v1.json")
+    if join_policy["coverage_rule"] != "EVERY_CORE2_DEMAND_CLAIM_EXACTLY_ONCE":
+        raise AssertionError("JOIN_DEMAND_COVERAGE_POLICY_DRIFT")
+    if not join_policy["critical_conflict_blocks_core1a"]:
+        raise AssertionError("JOIN_CRITICAL_CONFLICT_GATE_DISABLED")
 
     print("Blueprint contracts: PASS")
 
