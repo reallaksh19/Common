@@ -1,103 +1,78 @@
 # Physics V2 Blueprint — evidence-adaptive orchestration
 
-This directory is the orchestration layer above the existing Physics role-specific production kits.
+This directory is the orchestration layer above the Physics role-specific production kits. It makes execution order, evidence authority, validation discipline and downstream learner-product legality machine-enforceable.
 
-It exists to make execution order, authority, routing and handoff discipline machine-enforceable without collapsing Core1, Core2 and Core1A into one monolithic schema.
-
-## Blueprint v1 implemented slice
-
-The first executable tranche now freezes and tests five things:
-
-1. architecture invariants;
-2. a common typed packet envelope;
-3. normalized evidence state;
-4. deterministic first-role routing with three golden fixtures;
-5. the independent second-pass protocol that prevents self-validation and hides upstream claims during the ground-truth-only pass.
-
-Next implementation slices are: Core1×Core2 Join, learner/purpose resolution, the Core1A assimilation state machine, Motion-in-2D topic pilot, and finally the publication compiler.
-
-## Authority model
+## Current executable topology
 
 ```text
 ORIGINAL GROUND TRUTH
-syllabus / authoritative source / questions / figures / answers
-        |
-        v
+        ↓
       CORE0
-normalized evidence + route decision
-        |
-        +---------------------+
-        |                     |
-        v                     v
-      CORE1                 CORE2
-        |                     |
-        +----------+----------+
-                   |
-          independent second pass
-                   |
-                   v
-                 JOIN
-                   |
-                   v
-                CORE1A
-          assimilation compiler
-                   |
-                   v
-             taught-state receipts
-                   |
-                   v
-                CORE2A
-       PLACEHOLDER / DISABLED in v1
+        ↓
+CORE1 ↔ independent second pass ↔ CORE2
+        ↓
+       JOIN
+        ↓
+      CORE1A
+assimilation + T-* taught-state receipts
+        ↓
+      CORE2A
+purpose-conditioned transfer compiler
 ```
 
-Execution order is not authority order. Core2 may execute first when the question corpus is the strongest evidence; Core1 remains the semantic-intelligence role. Core1 may execute first when syllabus/source authority is strong; Core2 still performs its own assessment-intelligence pass.
+Execution order is not authority order. Core1 remains semantic intelligence, Core2 remains assessment/transfer intelligence, and the second specialist must independently re-ground before seeing upstream claims.
 
-## Independent second-pass protocol
+## Implemented architecture slices
 
-The second role is always a fresh instance. Its validation session is forced through:
+- normalized evidence and deterministic `CORE1_FIRST | CORE2_FIRST | BLOCK` routing;
+- fresh-instance independent second-pass protocol;
+- packet provenance and max-three handoff transport rule;
+- Core1A assimilation-before-manuscript discipline;
+- active Core2A semantic/executable contract.
+
+## Core2A authority boundary
+
+Core2A is now `ACTIVE`, but it is strictly downstream:
 
 ```text
-PASS 1  GROUND_TRUTH_ONLY
-        upstream claims hidden
-        -> independent claims digest locked
-
-PASS 2  COMPARE_UPSTREAM
-        upstream packet revealed
-        -> frozen Pass-1 digest carried forward
-
-PASS 3  EMIT_VALIDATION
-        CONFIRMED / REFINED / MISSING / UNSUPPORTED /
-        CONTRADICTED / OUT_OF_SCOPE / UNKNOWN
+Core1 semantic boundary
+∩ Core1A T-* TEACHING_COMPLETE receipts
+∩ Core2 transfer envelope
+∩ learner-product purpose
+∩ owner policy
 ```
 
-A validator instance may not equal any upstream producer instance. A Pass-1 manifest containing an upstream packet fails machine QA.
+Core2A may select and scaffold learner practice. It may not rewrite Core2 source truth, invent untaught Physics, or infer learner mastery from publication completion.
 
-## Non-negotiable v1 invariants
+A source question lacking required T receipts remains in immutable Core2 corpus custody and is marked `HELD_UNTIL_TEACHING_COMPLETE` for learner release.
+
+Generated-original challenges fail closed unless their required capabilities are taught, their source/family bindings agree, their near-copy gate passes, and an approved Physics validator independently recomputes the underlying relation.
+
+## Non-negotiable invariants
 
 - Original evidence is authority; packets are claims.
 - First role is evidence-adaptive, never topic-name hard-coded.
 - Core1 and Core2 are distinct epistemic roles.
-- Reusing a specialist profile never means reusing the same agent instance.
 - The second role independently re-grounds before seeing upstream claims.
-- Every handoff contains at most three subtopics; learning-atom count is not bounded by that transport rule.
-- Absence of assessment evidence remains absence of evidence, never a claim of low importance.
-- Owner control may alter execution but may not rewrite historical evidence or prior system findings.
-- Core1A manuscript generation is downstream of assimilation reasoning, not a substitute for it.
-- Core2A is explicitly present only as a disabled placeholder until a semantic contract is approved.
+- Every handoff contains at most three subtopics; learning atoms are unbounded.
+- Absence of evidence remains absence.
+- Owner overrides alter action, never historical evidence.
+- Core1A reasoning precedes manuscript generation.
+- Core2A requires taught-state receipts.
+- Teaching completion does not imply learner mastery.
 
-## Running the implemented slice
+## Running the architecture and Core2A proofs
 
 ```bash
-python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
-python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
-python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py"
-python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py"
+python 'Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py'
+python 'Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py'
+python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py'
+python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py'
+
+python 'Grade 9/V2/Physics/Core2A/tests/test_physics_core2a.py'
+python 'Grade 9/V2/Physics/Core2A/engine/run_physics_core2a.py' \
+  --run 'Grade 9/V2/Physics/Core2A/golden/projectile-event/core2a-input.json' \
+  --out-dir /tmp/physics-core2a
 ```
 
-The routing goldens prove three different evidence conditions:
-
-- strong semantic authority and no questions -> `CORE1_FIRST`;
-- absent syllabus with a rich/resolved question corpus -> `CORE2_FIRST`;
-- weak/ambiguous evidence on both sides -> `BLOCK`.
-
-These are architecture proofs, not topic-specific exceptions.
+The Core2A golden is a process fixture only. It does not authorize every Motion-in-a-Plane problem family and does not replace human subject/pedagogy/assessment review.

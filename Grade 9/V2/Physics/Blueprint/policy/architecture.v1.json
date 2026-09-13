@@ -15,9 +15,16 @@
       "description": "Learner state, purpose and owner overrides may alter execution but never historical evidence."
     }
   },
-  "roles": ["CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE2A"],
+  "roles": [
+    "CORE0",
+    "CORE1",
+    "CORE2",
+    "JOIN",
+    "CORE1A",
+    "CORE2A"
+  ],
   "role_lifecycle": {
-    "CORE2A": "PLACEHOLDER"
+    "CORE2A": "ACTIVE"
   },
   "invariants": {
     "ground_truth_is_authority": true,
@@ -31,6 +38,8 @@
     "representation_requires_cognitive_purpose": true,
     "equation_requires_learning_anatomy": true,
     "owner_override_preserves_system_finding": true,
-    "absence_of_evidence_must_remain_visible": true
+    "absence_of_evidence_must_remain_visible": true,
+    "core2a_requires_taught_state_receipts": true,
+    "core2a_may_not_infer_learner_mastery": true
   }
 }

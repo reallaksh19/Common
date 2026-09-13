@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2a-run.schema.json",
+  "title": "Physics Core2A Run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "purpose",
+    "learner_profile_ref",
+    "taught_receipts",
+    "source_items",
+    "challenge_candidates"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "run_id": {"type": "string", "pattern": "^PHY-C2A-RUN-"},
+    "purpose": {
+      "enum": ["FIRST_STUDY", "PRACTICE", "REVISION", "COMPETITIVE_EXAM"]
+    },
+    "learner_profile_ref": {"type": "string", "minLength": 1},
+    "taught_receipts": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "source_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_ref",
+          "bucket_id",
+          "source_order",
+          "demand_level",
+          "problem_family_ref",
+          "required_capability_refs",
+          "source_provenance",
+          "core2_representation"
+        ],
+        "properties": {
+          "question_ref": {"type": "string", "minLength": 1},
+          "bucket_id": {"type": "string", "minLength": 1},
+          "source_order": {"type": "integer", "minimum": 1},
+          "demand_level": {"enum": ["EASY", "MEDIUM", "HARD"]},
+          "problem_family_ref": {"type": "string", "pattern": "^PF-"},
+          "required_capability_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "source_provenance": {"type": "string", "minLength": 1},
+          "core2_representation": {"type": "object"}
+        }
+      }
+    },
+    "challenge_candidates": {
+      "type": "array",
+      "items": {"type": "object"}
+    }
+  }
+}
