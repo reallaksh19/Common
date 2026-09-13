@@ -5,6 +5,8 @@ on:
     paths:
       - 'Grade 9/V2/Mathematics/Core1A/**'
       - 'Grade 9/V2/Mathematics/Core1Authoring/**'
+      - 'Grade 9/V2/Mathematics/Core2A/**'
+      - 'Grade 9/V2/Mathematics/LearnerProduct/**'
       - 'Grade 9/V2/Mathematics/StudySynthesis/**'
       - 'Grade 9/V2/Mathematics/LearnerIntelligence/**'
       - 'Grade 9/V2/Mathematics/InstructionalKnowledge/**'
@@ -28,6 +30,9 @@ jobs:
 
       - name: Run Core1A bucket and learner-product falsifiers
         run: python -m unittest discover -s 'Grade 9/V2/Mathematics/Core1A/tests' -p 'test_*.py' -v
+
+      - name: Run canonical learner-product execution-contract tests
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/LearnerProduct/tests' -p 'test_*.py' -v
 
       - name: Produce exact Core1 and learner StudyModel from the PR 323 cold-start chain
         run: |
