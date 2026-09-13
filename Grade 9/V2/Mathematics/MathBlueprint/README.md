@@ -1,6 +1,6 @@
-# Mathematics V2 — Adaptive Learning Blueprint
+# Mathematics V2 — Adaptive Math Blueprint
 
-This layer is the canonical orchestration authority above the existing Core1/Core1A/Core2/Core2A production kits.
+`MathBlueprint/` is the canonical Mathematics orchestration authority above Core1/Core2/Core1A/Core2A and the downstream production kits.
 
 Its governing invariant is:
 
@@ -9,9 +9,9 @@ EXECUTION ORDER MAY VARY.
 AUTHORITY ORDER MAY NOT.
 ```
 
-Core1 and Core2 reconstruct different kinds of intelligence from the original evidence. Either may execute first when the evidence justifies it. Neither becomes ground truth because it executed first.
+Core1 and Core2 reconstruct different kinds of intelligence from the same original evidence. Either may execute first when the evidence justifies it. Neither becomes ground truth because it executed first.
 
-## Implemented state
+## Implemented runtime
 
 ```text
 Original evidence
@@ -26,10 +26,29 @@ Adaptive Evidence Router
       ↓
 CORE1_FIRST | CORE2_FIRST | BLOCK
       ↓
-ROUTED / BLOCKED_*
+ROUTED
+      ↓
+fresh first-role specialist
+      ↓
+GROUND-TRUTH-ONLY context
+      ↓
+first intelligence package sealed
+      ↓
+fresh second-role specialist
+      ↓
+GROUND-TRUTH-ONLY independent context
+(first package explicitly withheld)
+      ↓
+independent package sealed
+      ↓
+validation context unlocks both sealed packages
+      ↓
+claim-level cross-validation
+      ↓
+CROSS_VALIDATED
 ```
 
-Increment 1 established immutable evidence binding and the root run state. Increment 2 adds evidence-adaptive first-role routing, owner routing overrides, deterministic max-three handoff bundling and routing goldens.
+Increment 1 established immutable evidence binding and the root run state. Increment 2 added evidence-adaptive routing, owner routing overrides and deterministic max-three handoff bundling. Increment 3 now implements the dual-intelligence independence firewall and claim-level cross-validation.
 
 ## Ground truth
 
@@ -65,7 +84,7 @@ This does not limit learning atoms, equations, inference edges, representations 
 
 ## Increment 2 — Adaptive Relay / EvidenceRouter
 
-Routing consumes a `math-routing-build-spec` containing candidate subtopics and six evidence dimensions:
+Routing profiles every candidate subtopic with six governed evidence dimensions:
 
 ```text
 SA  scope authority
@@ -76,7 +95,7 @@ UA  uncertainty
 CI  conflict index
 ```
 
-All dimensions use the governed 0–4 rubric in `policies/math-evidence-routing-policy.json`; every non-zero evidential strength must point back to GroundTruth evidence. Numbers are not free-form confidence scores.
+All dimensions use the 0–4 rubric in `policies/math-evidence-routing-policy.json`; positive evidential strength must cite GroundTruth evidence.
 
 Derived strengths are:
 
@@ -85,7 +104,7 @@ semantic_strength   = max(SA, SS)
 assessment_strength = min(QE, QR)
 ```
 
-The deterministic routing rules are:
+Routing is deterministic:
 
 ```text
 material conflict
@@ -104,15 +123,11 @@ otherwise
 → BLOCK_OWNER_REVIEW
 ```
 
-If both Core1 and Core2 are evidence-admissible, normal system routing starts with Core1 because semantic authority is already strong; Core2 must still independently re-ground later. Missing/coarse semantic authority with rich resolved questions routes Core2 first.
-
-A GroundTruth item marked `CONFLICTED` blocks ordinary routing when used by the subtopic profile. Conflict is preserved, not silently reconciled.
+If both roles are evidence-admissible, normal routing starts Core1 because semantic scope is already strongly established. Core2 must still independently re-ground. Missing/coarse semantic authority with rich resolved questions routes Core2 first.
 
 ## Owner override semantics
 
-Routing computes `system_action` first and never overwrites it.
-
-A routing decision stores separately:
+Routing stores separately:
 
 ```text
 SYSTEM ACTION
@@ -120,99 +135,139 @@ OWNER OVERRIDE
 FINAL ACTION
 ```
 
-`HARD` may change the operational first role even when the system recommended a block; the conflict/insufficiency remains recorded.
+`HARD` may change the operational first role while preserving the system finding. `SOFT` may select only an already evidence-admissible role. Owner overrides never mutate GroundTruth.
 
-`SOFT` may choose only a role already present in `eligible_roles`. It cannot manufacture evidence admissibility.
+## Increment 3 — Dual intelligence + independence firewall
 
-Owner overrides never mutate GroundTruth.
+Core1 and Core2 have separate claim vocabularies.
 
-## Handoff bundle synthesis
-
-Routed subtopics are grouped by:
+Core1 reconstructs semantic structure, including:
 
 ```text
-final first role + coherence group
+CONCEPT / MODEL / LAW / EQUATION / DERIVATION
+PREREQUISITE / CONSTRAINT / INVARIANT / STATE
+VALIDITY / CONCEPT_BOUNDARY
+REPRESENTATION_AFFORDANCE / STRUCTURAL_CONTRAST
 ```
 
-then ordered by declared subtopic sequence and chunked deterministically into bundles of at most three. Overflow creates another bundle; it never deletes or merges subtopics invisibly.
+Core2 reconstructs assessment cognition, including:
 
-## Executable command
+```text
+QUESTION_DEMAND / RECOGNITION_CUE / HIDDEN_CONSTRAINT
+REQUIRED_CAPABILITY / FIRST_NON_OBVIOUS_MOVE
+REPRESENTATION_SWITCH / REASONING_CHAIN / WRONG_CHAIN
+DIFFICULTY_VECTOR / PROBLEM_FAMILY / MISCONCEPTION
+SOLUTION_STRUCTURE / TRANSFER_ENVELOPE
+```
 
-After initializing GroundTruth and a `GT_READY` run:
+The runtime enforces three phases:
+
+```text
+FIRST_ROLE_ANALYSIS
+  context = GROUND_TRUTH_ONLY
+
+SECOND_ROLE_INDEPENDENT
+  context = GROUND_TRUTH_ONLY
+  first package = WITHHELD
+  second specialist must use a different agent instance
+
+SECOND_ROLE_VALIDATION
+  allowed only after the independent package is sealed
+  context = GROUND_TRUTH_PLUS_UPSTREAM_VALIDATION
+  first + independent packages become visible
+```
+
+A fresh instance ID by itself is not proof of independence. The sealed work order, context manifest and independent package prove that the second specialist completed its ground-truth-only pass before upstream claims were exposed.
+
+Every first-package claim must receive exactly one classification:
+
+```text
+CONFIRMED
+REFINED
+UNSUPPORTED
+CONTRADICTED
+OUT_OF_SCOPE
+UNKNOWN
+```
+
+`MISSING` is recorded separately when the independent second-role pass finds a grounded claim absent from the first package. A missing record must point to an actual sealed independent claim.
+
+Cross-validation does not mutate either specialist package. It creates a separate `math-cross-validation` artifact with original-evidence provenance.
+
+## Increment 3 executable contracts
+
+```text
+contracts/math-specialist-work-order.schema.json
+contracts/math-agent-context-manifest.schema.json
+contracts/math-specialist-package.schema.json
+contracts/math-cross-validation.schema.json
+contracts/math-dual-intelligence-session.schema.json
+
+policies/math-dual-intelligence-policy.json
+engine/run_dual_intelligence.py
+
+golden/dual_intelligence/01-core1-first-firewall.json
+golden/dual_intelligence/02-core2-first-firewall.json
+
+tests/test_dual_intelligence.py
+```
+
+The runtime is deliberately symmetric: `CORE1_FIRST` and `CORE2_FIRST` use the same firewall semantics; only specialist role order changes.
+
+## Commands
+
+Ground-truth and routing commands remain:
 
 ```bash
-python 'Grade 9/V2/Mathematics/LearningBlueprint/engine/route_math_learning_run.py' \
-  --ground-truth /tmp/ground_truth_manifest.json \
-  --run /tmp/math_learning_run.json \
-  --routing-spec /tmp/routing_spec.json \
-  --out-plan /tmp/routing_plan.json \
-  --out-run /tmp/math_learning_run_routed.json
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/build_ground_truth_manifest.py' ...
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/init_math_learning_run.py' ...
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/route_math_learning_run.py' ...
 ```
 
-Optional owner routing control is supplied with `--override-ledger`.
-
-## Routing goldens
-
-Three goldens prove the architecture's central routing behavior:
-
-1. strong detailed syllabus/source + rich questions → `CORE1_FIRST`;
-2. absent/coarse syllabus + rich resolved questions → `CORE2_FIRST`;
-3. sparse/conflicted evidence → `BLOCK_CONFLICT` rather than forced consensus.
-
-The goldens validate routing behavior, not topic-specific mathematics.
-
-## Files
+The dual-intelligence runtime exposes explicit commands rather than one opaque call:
 
 ```text
-contracts/math-ground-truth-build-spec.schema.json
-contracts/math-ground-truth-manifest.schema.json
-contracts/math-learning-run-blueprint.schema.json
-contracts/math-routing-build-spec.schema.json
-contracts/math-routing-plan.schema.json
-contracts/math-owner-override-ledger.schema.json
-
-policies/math-evidence-state-policy.json
-policies/math-evidence-routing-policy.json
-
-engine/blueprint_common.py
-engine/build_ground_truth_manifest.py
-engine/init_math_learning_run.py
-engine/route_math_learning_run.py
-
-golden/routing/01-core1-first.json
-golden/routing/02-core2-first.json
-golden/routing/03-block-conflict.json
-
-tests/test_blueprint_foundation.py
-tests/test_adaptive_router.py
+first-order
+context
+seal-package
+second-order
+context
+seal-package
+validation-order
+context
+cross-validate
 ```
 
-## Completion boundary
+This makes the information firewall auditable at every boundary.
 
-Increment 2 decides only **which intelligence role should run first** and creates safe handoff bundles. It does not yet claim that Core1/Core2 independent re-grounding is solved.
+## Golden fixtures
+
+Routing goldens prove:
+
+1. strong syllabus/source + rich questions → `CORE1_FIRST`;
+2. absent/coarse syllabus + rich resolved questions → `CORE2_FIRST`;
+3. sparse/conflicted evidence → block rather than forced consensus.
+
+Dual-intelligence goldens prove both Core1-first and Core2-first paths preserve the same independence firewall.
+
+Goldens demonstrate process behavior, not reusable topic content.
 
 ## Next increment
 
-Increment 3 implements the dual-intelligence runtime and independence firewall:
+Increment 4 builds the **Join / AssimilationDemand** layer after cross-validation:
 
 ```text
-routed bundle
-      ↓
-fresh first-role Core instance
-      ↓
-first package sealed
-      ↓
-fresh second-role instance
-      ↓
-PASS A: original ground truth only
-      ↓
-independent findings sealed
-      ↓
-PASS B: expose first-role package
-      ↓
-claim-level validation
-CONFIRMED / REFINED / MISSING / UNSUPPORTED /
-CONTRADICTED / OUT_OF_SCOPE / UNKNOWN
+validated Core1 semantic intelligence
+        +
+validated Core2 assessment intelligence
+        +
+learner capability state
+        +
+learning purpose
+        +
+owner constraints
+        ↓
+AssimilationDemand
 ```
 
-The runtime must prove the second role completed its ground-truth-only pass before it could see the first role's claims. Fresh instance IDs alone are not sufficient evidence of independence.
+The Join must preserve disagreement and unknowns, record provenance for each assimilation obligation, and produce the precise pedagogical requirements that the later Core1A Assimilation Compiler must solve. Manuscript writing remains downstream and is not allowed to substitute for this reasoning layer.
