@@ -63,7 +63,7 @@ class DualIntelligenceTests(unittest.TestCase):
             "manifest_digest": "",
         })
 
-    def run(self, manifest, first_role="CORE1"):
+    def make_run(self, manifest, first_role="CORE1"):
         return seal_learning_run({
             "run_id": "",
             "schema_version": "1.0.0",
@@ -148,7 +148,7 @@ class DualIntelligenceTests(unittest.TestCase):
 
     def prepare(self, first_role="CORE1", *, first_two=False):
         manifest = self.manifest()
-        run = self.run(manifest, first_role)
+        run = self.make_run(manifest, first_role)
         first_order = build_first_work_order(manifest, run, self.BUNDLE, "agent-first")
         first_context = materialize_context(manifest, run, first_order)
         first_package = seal_specialist_package(
@@ -230,7 +230,7 @@ class DualIntelligenceTests(unittest.TestCase):
         self.assertEqual(updated["current_state"], "CROSS_VALIDATED")
 
     def test_same_agent_cannot_self_validate(self):
-        manifest = self.manifest(); run = self.run(manifest, "CORE1")
+        manifest = self.manifest(); run = self.make_run(manifest, "CORE1")
         first_order = build_first_work_order(manifest, run, self.BUNDLE, "same-agent")
         first_context = materialize_context(manifest, run, first_order)
         first_package = seal_specialist_package(
@@ -242,7 +242,7 @@ class DualIntelligenceTests(unittest.TestCase):
             )
 
     def test_wrong_role_claim_type_is_rejected(self):
-        manifest = self.manifest(); run = self.run(manifest, "CORE1")
+        manifest = self.manifest(); run = self.make_run(manifest, "CORE1")
         order = build_first_work_order(manifest, run, self.BUNDLE, "agent-first")
         context = materialize_context(manifest, run, order)
         with self.assertRaisesRegex(ValueError, "SPECIALIST_CLAIM_TYPE_WRONG_ROLE"):
