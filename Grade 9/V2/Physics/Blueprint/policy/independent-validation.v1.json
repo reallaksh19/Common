@@ -1,0 +1,27 @@
+{
+  "policy_id": "PHY-INDEPENDENT-VALIDATION-v1",
+  "schema_version": "1.0.0",
+  "passes": [
+    {
+      "pass": 1,
+      "mode": "GROUND_TRUTH_ONLY",
+      "may_see": ["GROUND_TRUTH", "ROLE_POLICY", "CONTROL_INPUT_ALLOWED_FOR_ROLE"],
+      "must_not_see": ["UPSTREAM_CLAIMS", "UPSTREAM_CONCLUSIONS", "PREVIOUS_ROLE_CONVERSATION"],
+      "output": "LOCKED_INDEPENDENT_CLAIMS"
+    },
+    {
+      "pass": 2,
+      "mode": "COMPARE_UPSTREAM",
+      "may_see": ["GROUND_TRUTH", "LOCKED_INDEPENDENT_CLAIMS", "UPSTREAM_PACKETS"],
+      "output": "CLAIM_COMPARISON"
+    },
+    {
+      "pass": 3,
+      "mode": "EMIT_VALIDATION",
+      "allowed_claim_states": ["CONFIRMED", "REFINED", "MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"],
+      "output": "V_VALIDATION"
+    }
+  ],
+  "self_validation_forbidden": true,
+  "fresh_validator_instance_required": true
+}
