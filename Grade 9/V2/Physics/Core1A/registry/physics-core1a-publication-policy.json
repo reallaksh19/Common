@@ -13,6 +13,10 @@
     "diagram_label_font_minimum_pt": 8.0,
     "badge_font_minimum_pt": 7.3,
     "heading_font_minimum_pt": 12.0,
+    "bucket_opener_heading_max_pt": 26.0,
+    "page_section_heading_max_pt": 16.0,
+    "long_page_heading_max_pt": 14.5,
+    "subsection_heading_max_pt": 12.0,
     "meaningful_occupancy_target_min": 0.70,
     "meaningful_occupancy_target_max": 0.85,
     "maximum_major_callouts": 4,
@@ -48,6 +52,7 @@
   },
   "learner_ui": {
     "illustration_is_support_not_replacement": true,
+    "professionalisation_may_not_remove_instructional_functions": true,
     "full_learning_order": [
       "REAL_WORLD_ANCHOR",
       "PLAIN_LANGUAGE_EXPLANATION",
@@ -122,6 +127,8 @@
     "CORE1A_BODY_FONT_TOO_SMALL",
     "CORE1A_CAPTION_FONT_TOO_SMALL",
     "CORE1A_DIAGRAM_LABEL_TOO_SMALL",
+    "CORE1A_PAGE_HEADING_TOO_LARGE",
+    "CORE1A_PROFESSIONALISATION_CONTENT_LOSS",
     "CORE1A_BADGE_TEXT_CLIPPED_OR_WRAPPED",
     "CORE1A_HEADING_BADGE_COLLISION",
     "CORE1A_TEXT_OUT_OF_PAGE_BOUNDS",
