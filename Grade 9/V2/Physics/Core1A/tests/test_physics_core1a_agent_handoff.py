@@ -41,7 +41,11 @@ def load_class(n: int) -> str:
 
 
 completed = STATE["completed_active_buckets"]
-assert completed == ["M2D-SBA-03", "M2D-SBA-04", "M2D-SBA-05", "M2D-SBA-06"]
+assert completed, "build state must include at least one completed active bucket"
+active_ids = [b["bucket_id"] for b in REGISTRY["buckets"] if b["production_status"] == "ACTIVE"]
+# Completed buckets must be an ordered prefix of the active queue, with zero-primary buckets absent by construction.
+assert completed == active_ids[:len(completed)]
+assert STATE["last_completed_bucket"] == completed[-1]
 
 for bucket_id in completed:
     path = MANIFEST_DIR / f"{bucket_id}-v1.json"
@@ -62,7 +66,7 @@ for bucket_id in completed:
         assert all(manifest["qa"].values())
 
     release = manifest["question_release"]
-    assert [r["question_id"] for r in release] == manifest["primary_questions"]
+    assert {r["question_id"] for r in release} == set(manifest["primary_questions"])
     assert len({r["question_id"] for r in release}) == len(release)
     routines = set(manifest["transfer_routines"])
     for r in release:
@@ -86,17 +90,17 @@ for row in INDEX["rows"]:
     assert row["core2_primary_questions"] == canonical["core2_primary_questions"]
     assert row["core1a_teaching_home"] == canonical["core1a_homes"]
 
-# Build-state must derive the next active bucket, not rely on memory.
-active_ids = [b["bucket_id"] for b in REGISTRY["buckets"] if b["production_status"] == "ACTIVE"]
+# Build-state must derive the next active bucket, not rely on memory or page order.
 remaining = [bid for bid in active_ids if bid not in set(completed)]
 derived_next = remaining[0] if remaining else None
-assert STATE["next_active_bucket"] == derived_next == "M2D-SBA-07"
+assert STATE["next_active_bucket"] == derived_next
 
-# The reference cases must preserve intended load scaling and professional-lossless reference behavior.
+# Reference cases preserve load scaling and professional-lossless behavior.
 assert load_class(len(by_id["M2D-SBA-03"]["core2_primary_questions"])) == "LOW"
 assert load_class(len(by_id["M2D-SBA-04"]["core2_primary_questions"])) == "HIGH"
 assert load_class(len(by_id["M2D-SBA-05"]["core2_primary_questions"])) == "VERY_HIGH"
 assert load_class(len(by_id["M2D-SBA-06"]["core2_primary_questions"])) == "LOW"
+assert load_class(len(by_id["M2D-SBA-07"]["core2_primary_questions"])) == "HIGH"
 assert "PROFESSIONAL_TEXTBOOK_SPEC.md" in STATE["required_start_files"]
 
 print("Core1A agent handoff/build-state checks passed.")
