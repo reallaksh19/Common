@@ -2,8 +2,6 @@
 
 Core (1) is a governed **capability-level semantic teaching plan**. It is not yet the final textbook unit structure. Core (1A) must first identify coherent teaching buckets, using the exact learner-conditioned StudyModel that Core (1) was authored from, and only then realize those buckets as textbook-quality learner content.
 
-The corrected boundary is:
-
 ```text
 M-E LearnerStateSnapshot
         ↓
@@ -17,7 +15,7 @@ Core (1) MathCore1StudyPlan
   - PCK / problem-family / representation / verification authority
         ↓
 Core (1A)-B  BUCKET SYNTHESIS
-  - group related capabilities around a governed family/invariant
+  - group related capabilities around governed family/invariant
   - attach unambiguous prerequisite support
   - preserve exact learner state/treatment per capability
   - derive grounded learning atoms from PCK
@@ -30,35 +28,34 @@ Core (1A)-R  TEXTBOOK REALIZATION
 core1a_student_textbook.pdf
 ```
 
-## Critical correction: capability != bucket
+## Capability != bucket
 
 A `MathCore1Lesson` is capability-centric. A textbook bucket may contain several related capabilities when they share a real mathematical teaching invariant/problem family. Conversely, a prerequisite capability that feeds several unrelated buckets may need its own bridge bucket.
 
 Core (1A) therefore does **not** equate `Core1.lessons[]` with final textbook chapters.
 
-The canonical semantic object is now:
+The canonical semantic object is now `Core1ABucketPlan`:
 
 ```text
-Core1ABucketPlan
-  └─ Bucket[]
-       ├─ bucket_invariant
-       ├─ member_capability_refs[]
-       ├─ primary_capability_refs[]
-       ├─ supporting_capability_refs[]
-       ├─ learner_treatment_by_capability[]
-       ├─ dependency_edges[]
-       ├─ learning_atoms[]
-       ├─ representation_requirements[]
-       └─ verification_requirements[]
+Bucket[]
+ ├─ bucket_invariant
+ ├─ member_capability_refs[]
+ ├─ primary_capability_refs[]
+ ├─ supporting_capability_refs[]
+ ├─ learner_treatment_by_capability[]
+ ├─ dependency_edges[]
+ ├─ learning_atoms[]
+ ├─ representation_requirements[]
+ └─ verification_requirements[]
 ```
 
-`math-core1a-bucket-plan.schema.json` is the canonical Core (1A) semantic contract. The textbook manuscript is downstream of this object.
+`contracts/math-core1a-bucket-plan.schema.json` is the canonical Core (1A) semantic contract. The textbook manuscript is downstream of this object.
 
-## Critical correction: Core (1A) does not invent learner knowledge
+## Core (1A) does not invent learner knowledge
 
 Learner knowledge already exists upstream. M-E owns evidence/state and M-F owns treatment selection. Core (1A) consumes those decisions unchanged.
 
-Core (1A) must preserve, per capability:
+For every capability Core (1A) preserves:
 
 - `learner_state_readiness`: `UNKNOWN | DEVELOPING | READY`;
 - `learner_state_confidence`;
@@ -66,9 +63,9 @@ Core (1A) must preserve, per capability:
 - `treatment`;
 - `priority_band`.
 
-Core (1A) must **not** invent a second vocabulary such as `FOUNDATION`, `PARTIAL`, `20% learner`, or `50% learner` as learner-state truth.
+Core (1A) must **not** invent a second learner-state truth such as `FOUNDATION`, `PARTIAL`, `20% learner`, or `50% learner`.
 
-The same bucket can therefore contain different treatments. Example:
+A single bucket can legitimately contain different treatments:
 
 ```text
 capability A  READY       → VERIFY_ONLY
@@ -76,16 +73,16 @@ capability B  DEVELOPING  → REPAIR_IN_UNIT
 capability C  UNKNOWN     → ACTIVE_STUDY
 ```
 
-The learner product should activate A briefly, repair B, and fully teach C — without relabelling the learner.
+The learner product should activate A briefly, repair B, and fully teach C without relabelling the learner.
 
 ## Bucket synthesis policy
 
 The first implementation is deliberately conservative and deterministic:
 
-1. directly assessed capabilities are grouped when they share a governed problem family;
+1. directly assessed capabilities are grouped when they share governed problem-family authority;
 2. a prerequisite-only capability is attached to a single dependent bucket when the M-F dependency makes that unambiguous;
 3. a prerequisite feeding multiple buckets remains its own bridge bucket so it is taught once rather than duplicated;
-4. every Core (1) capability must appear in exactly one bucket;
+4. every Core (1) capability appears in exactly one bucket;
 5. bucket order follows the approved Core (1) capability order — no invented difficulty ranking;
 6. the bucket invariant must be grounded in either a canonical problem-family `target_job` or a bound PCK anchor;
 7. if the invariant cannot be grounded, generation fails rather than letting the renderer invent one.
@@ -94,12 +91,14 @@ This policy can later become richer, but only through governed semantic rules �
 
 ## Learning atoms
 
-Core (1A) creates traceable learning atoms from the bound PCK rather than inventing page labels. The current atom sources are:
+Core (1A) creates traceable learning atoms from the bound PCK rather than inventing page labels. Current atom sources are:
 
-- the selected PCK anchor / ordinary-language bridge;
+- selected PCK anchor / ordinary-language bridge;
 - each PCK reconstruction step.
 
-Each atom retains its capability and PCK source. These atoms are the intended future binding targets for Core (2)/(2A) H1/H2/H3 back-links.
+Each atom retains its capability and PCK source.
+
+Core (2) H1/H2/H3 → Core (1A) atom binding is **not silently inferred here**. It is the next cross-product closure and must consume the actual Core2TransferPlan. Until that binding is implemented, Core (1A) exposes grounded atoms and exact `core2_question_refs`; it does not claim hint coverage that has not been proven.
 
 ## Structure preservation
 
@@ -117,17 +116,7 @@ Core (1A) preserves:
 - original-assessment firewall;
 - release/provenance class.
 
-Core (1A) may change:
-
-- physical page count;
-- page composition;
-- explanatory depth;
-- number of fresh examples;
-- representation form;
-- worked-example narration;
-- whitespace and typography.
-
-In short:
+Core (1A) may change physical page count, page composition, explanatory depth, number of fresh examples, representation form, worked-example narration, whitespace and typography.
 
 ```text
 preserve governed semantics != preserve existing pages
@@ -150,7 +139,7 @@ core1a_student_textbook.pdf
 
 ## Fail-closed behavior
 
-Important falsifiers now include:
+Important falsifiers include:
 
 ```text
 CORE1A_STUDY_MODEL_REF_MISMATCH
@@ -173,7 +162,7 @@ CORE1A_QUALITY_GATE_FAILED
 
 ## CLI
 
-The exact learner StudyModel is now a required input:
+The exact learner StudyModel is a required input:
 
 ```bash
 python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
@@ -186,23 +175,23 @@ The CLI verifies the Core1→StudyModel digest/ref binding before bucket synthes
 
 ## CI proof
 
-The workflow runs the real PR #323 cold-start chain and extracts **both**:
+The workflow runs the real PR #323 cold-start chain and extracts both:
 
 ```text
 internals['study_model']
 internals['core1_plan']
 ```
 
-It proves that the Core1 plan is bound to that exact StudyModel, synthesizes the bucket plan, verifies exact capability coverage, verifies that `(learner_state_readiness, treatment)` is unchanged for every capability, rejects invented learner-state categories, then realizes and inspects the learner PDF.
+It proves the exact binding, synthesizes the bucket plan, verifies exact capability coverage, verifies that `(learner_state_readiness, treatment)` is unchanged for every capability, rejects invented learner-state categories, then realizes and inspects the learner PDF.
 
 ## Relation to Core (2A)
 
 ```text
-Core (1)  → Core (1A)-B bucket synthesis → Core (1A)-R textbook teaching PDF
-Core (2)  → Core (2A) source-transfer/practice PDF
+Core (1) → Core (1A)-B bucket synthesis → Core (1A)-R teaching PDF
+Core (2) → Core (2A) source-transfer/practice PDF
 ```
 
-Core (2A) preserves original-question authority. The next cross-product closure is to bind each Core (2) H1/H2/H3 reveal to Core (1A) learning atoms and fail when a reveal was not genuinely pre-taught.
+Core (2A) preserves original-question authority. Cross-product hint closure will require every Core (2) H1/H2/H3 reveal to bind to a grounded Core (1A) learning atom and fail when a reveal was not genuinely pre-taught.
 
 ## Release meaning
 
