@@ -26,7 +26,7 @@ def load(path):
 
 def make_run(internals):
     registry = load(LP / "registry" / "chemistry-competitive-archetype-registry.json")
-    run = {
+    run_manifest = {
         "run_id": "CHEM-LPR-a1b2c3d4e5f60718",
         "contract_version": "1.0.0",
         "subject": "CHEMISTRY",
@@ -65,8 +65,8 @@ def make_run(internals):
         },
         "run_digest": "0" * 64,
     }
-    run["run_digest"] = runner.canonical_digest(run)
-    return run
+    run_manifest["run_digest"] = runner.canonical_digest(run_manifest)
+    return run_manifest
 
 
 class ChemistryLearnerProductSemanticPipelineTests(unittest.TestCase):
@@ -81,14 +81,14 @@ class ChemistryLearnerProductSemanticPipelineTests(unittest.TestCase):
             repo_root=REPO,
             run_id="CHEM-LP-SEMANTIC-GOLDEN-COLDSTART",
         )
-        cls.run = make_run(cls.internals)
+        cls.run_manifest = make_run(cls.internals)
         cls.golden = load(LP / "golden" / "some-basic-concepts" / "expected-semantic-slice.json")
 
     def execute(self):
         td = tempfile.TemporaryDirectory()
         out = Path(td.name) / "out"
         package, files = runner.execute_semantic_pipeline(
-            copy.deepcopy(self.run),
+            copy.deepcopy(self.run_manifest),
             copy.deepcopy(self.internals["study_model"]),
             copy.deepcopy(self.internals["core1"]),
             copy.deepcopy(self.internals["representations"]),
@@ -156,7 +156,7 @@ class ChemistryLearnerProductSemanticPipelineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with self.assertRaisesRegex(ValueError, "CHEM_LP_UPSTREAM_DIGEST_MISMATCH:core1_plan"):
                 runner.execute_semantic_pipeline(
-                    copy.deepcopy(self.run), copy.deepcopy(self.internals["study_model"]), bad,
+                    copy.deepcopy(self.run_manifest), copy.deepcopy(self.internals["study_model"]), bad,
                     copy.deepcopy(self.internals["representations"]), copy.deepcopy(self.internals["core2"]),
                     copy.deepcopy(self.internals["closure"]), Path(td),
                 )
