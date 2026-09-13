@@ -51,6 +51,14 @@
       "core1a_teaching_home": ["PROJECTILE_SAME_HEIGHT"],
       "core2_primary_questions": ["Q02", "Q06", "Q07", "Q12", "Q16", "Q18", "Q19", "Q20", "Q22", "Q24", "Q25", "Q44", "Q52"],
       "state": "BUILT"
+    },
+    {
+      "bucket_id": "M2D-SBA-06",
+      "subtopic_bucket": "Describe the path without time - eliminate t, derive y(x), read path geometry, wall-coordinate and vector-notation transfer",
+      "origin": "Trajectory section",
+      "core1a_teaching_home": ["PROJECTILE_TRAJECTORY"],
+      "core2_primary_questions": ["Q38", "Q47"],
+      "state": "BUILT"
     }
   ]
 }
