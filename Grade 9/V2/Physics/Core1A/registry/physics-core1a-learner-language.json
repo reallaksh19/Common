@@ -359,6 +359,66 @@
     [
       "Answer-free first-move reference.",
       "A one-page reminder of how to start. No answers here."
+    ],
+    [
+      "Original external transfer items remain reserved for Core2.",
+      "You will meet questions like this one in the transfer book."
+    ],
+    [
+      "original external transfer items stay reserved for Core2",
+      "questions like this one are saved for the transfer book"
+    ],
+    [
+      "Work a newly authored instance of this family",
+      "Work this practice question"
+    ],
+    [
+      "Transfer family: ",
+      "Where this idea turns up next: "
+    ],
+    [
+      "far transfer new context",
+      "the same idea in a situation that looks nothing like this one"
+    ],
+    [
+      "same physics different story",
+      "the same physics wearing a different story"
+    ],
+    [
+      "same model different story",
+      "the same rule in a different story"
+    ],
+    [
+      "same concept new representation",
+      "the same idea drawn a different way"
+    ],
+    [
+      "mixed model discrimination",
+      "deciding which of several rules fits"
+    ],
+    [
+      "mixed graph model selection",
+      "reading a graph and then choosing a rule"
+    ],
+    [
+      "model validity hidden condition",
+      "a condition you have to spot before the rule is allowed"
+    ],
+    [
+      "multiphase state propagation",
+      "carrying the state across a change in the motion"
+    ],
+    [
+      "physical verification without prompting",
+      "checking it without being told to"
+    ],
+    [
+      "sign frame discrimination",
+      "telling apart which way counts as positive"
+    ],
+    [
+      "A check that cannot fail is not a check; verification must be able to reject the answer.",
+      "A check that can never come out wrong is not a check. A real one has to be able to tell you the answer is wrong."
     ]
   ],
   "policy": {

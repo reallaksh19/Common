@@ -674,17 +674,17 @@ def render_full_lesson(book, lesson_plan, number, rep_specs, primitive_renderer,
 
     flow(first_module(lesson_plan, "COMMON_TRAP"),
          "The shortcut that looks easier, and why it breaks.", " — watch out for this",
-         max_h=260, work_lines=3)
+         max_h=320, work_lines=3)
     flow(first_module(lesson_plan, "PHYSICAL_CHECK"),
-         "Check it before you accept it.", " — checking your work", max_h=140)
+         "Check it before you accept it.", " — checking your work", max_h=180)
     flow(first_module(lesson_plan, "SELF_CHECK"),
-         "Check it before you accept it.", " — checking your work", max_h=125)
+         "Check it before you accept it.", " — checking your work", max_h=160)
     flow(first_module(lesson_plan, "TRANSFER_BRIDGE"),
-         "Where this idea turns up next.", " — what comes next", max_h=110)
+         "Where this idea turns up next.", " — what comes next", max_h=140)
     for kind in ("GUIDED_PRACTICE", "FADED_PRACTICE", "INDEPENDENT_PRACTICE"):
         m = first_module(lesson_plan, kind)
         flow(m, "Try it with help, then with less, then on your own.", " — your turn",
-             max_h=225, work_lines=m["work_space_lines"])
+             max_h=290, work_lines=m["work_space_lines"])
 
     remaining = [s for s in (see_specs + realize_specs + understand_specs) if id(s) not in placed]
     if remaining:

@@ -10,7 +10,7 @@
     "SUBJECT_CORRECTNESS",
     "VISUAL_USABILITY"
   ],
-  "candidate_digest": "52cb96ec0edee12f80c16c353c823e953a4a92cd7896842357ea1febc0b7389f",
+  "candidate_digest": "597cb3569e8f3c3d18588bf0a9e9bfaeffe4ffd025205abd58fd0d40d67d75eb",
   "candidate_ref": "PHY-P-L-EXACT-CANDIDATE-v1",
   "classification": "BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT",
   "exit_code": 2,
@@ -27,7 +27,7 @@
   },
   "reference_comparator_allowed_stage": "AFTER_ALL_HUMAN_GATES_PASS",
   "reference_comparator_id": "FROZEN_PR156_MATURE_DESIGN_COMPARATOR",
-  "release_digest": "f3f8323034aae5c5a7fecb7ca15ed25c2d03d546eda8ae28fd948225548374b3",
+  "release_digest": "f278678e1a431474d142909d3d8ccf388b151a81a0d4b21fd0856b0f5677dd3b",
   "release_id": "PHY-P-L-EXACT-RELEASE-v1",
   "schema_version": "1.0.0",
   "state_evidence": {},

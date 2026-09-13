@@ -35,27 +35,28 @@ artifacts it names. There is no chat or issue history in the runtime input contr
 
 ## Current-best artifacts
 
-From the `with-attempts` run at head `e46ac563`.
+From the `with-attempts` run at head `a6505f3d` plus the learner-copy and card-height
+follow-up committed alongside this handoff refresh.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `artifacts/physics-core-study-guide.pdf` | 415299 | `9ecd078a2881ce8e43d3157192b869be927eeff6d212180e7b0418efb405fea5` |
+| `artifacts/physics-core-study-guide.pdf` | 437905 | `df560f141bff13b81d851a097e86434181633a061540702596ff6e8e69e3884d` |
 | `artifacts/physics-transfer-solution-book.pdf` | 43495 | `ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf` |
-| `artifacts/run_report.json` | 11807 | `e46f72e3b34ee0d6b7436b5d0fde593929cd0c647eb5eab00df1343cbb8d362f` |
-| `artifacts/core1a_quality_report.json` | 17721 | `f1aa2d251b2e70b3279325556cbe3ee53dd911834cae6446610ef7b440f29b6e` |
+| `artifacts/run_report.json` | 11807 | `d81d3e0f290636e21cecf612e4cc56bab9dac40bcf6d51b972ec6b5707eca280` |
+| `artifacts/core1a_quality_report.json` | 19446 | `74173c71754e91918314bbe06332ca05e5cb727ab3699e63bc766a792e62a665` |
 | `artifacts/comparison.json` | 996 | `cefcef8543be9a83311265da880c139e6d93dbba17fdcdcd6424be98bfff6c1e` |
-| `artifacts/exact_candidate.json` | 1564 | `ec2bba171cc7ed0b69bd43f16101caf5cfb157130dd2bdab1965c187933fdf4f` |
-| `artifacts/exact_release.json` | 1499 | `b0683eab7479a3a145a70ea4bb79c0616504a89a644d3c5bd387a6754597232f` |
-| `artifacts/ai_pre_review.json` (ADVISORY ONLY) | 2794 | `2071ed49b37ff832931be0611451822c54c7c7e01ceeceef952674bb086eba9f` |
+| `artifacts/exact_candidate.json` | 1564 | `885328bdcb0a1604b8a4c9ec416ad2cf4366784cbce78f555cc53cee0be89c32` |
+| `artifacts/exact_release.json` | 1499 | `1b31f6d9820cd070561d4ceb631b2ed46f8f9eedf0eab4a2d24d117345acd6e9` |
+| `artifacts/ai_pre_review.json` (ADVISORY ONLY) | 2794 | `da2936f594d71d9c6082fae8ce862562b3150d35510cc6129678baf8f23c7270` |
 
 Two products, never three: Appendix C is a section of the Core study guide.
 
 | Product | Pages | Figures | Draw-time vector ops |
 |---|---:|---:|---:|
-| `CORE_STUDY_GUIDE` | 142 | 128 | 2302 |
+| `CORE_STUDY_GUIDE` | 157 | 128 | 2302 |
 | `TRANSFER_SOLUTION_BOOK` | 16 | 21 | 426 |
 
-The `no-attempt` run produces 146 pages / 132 figures for the Core guide and a
+The `no-attempt` run produces 162 pages / 132 figures for the Core guide and a
 byte-identical transfer book; the assessment-derived scope digest is identical across both
 runs, which is the P-K invariant.
 
@@ -128,7 +129,7 @@ with font ascent/descent) instead of an anchor sample. Every primitive declares 
 size floors and `supports_compact_variant`, and a smaller allocation is refused. Two
 genuine bounds defects the new measurement exposed were fixed in the primitives
 themselves. Zero placements escape their allocated box at zero tolerance across all 128
-Core-guide figures.
+Core-guide figures and all 21 transfer-book figures.
 
 ### 6. Answer custody
 
@@ -190,7 +191,7 @@ chapter build, and `registry/physics-core1a-learner-language.json`.
   (it is the cross-topic genericity proof, using trigonometry through the same schema), but
   no capability in the Motion fixture binds to it, so it never appears in a rendered
   product. Motion-in-a-Plane content on #350 is where it becomes live.
-- **Occupancy remains an advisory signal.** 23 of 142 Core-guide pages are below the 70%
+- **Occupancy remains an advisory signal.** 35 of 157 Core-guide pages are below the 70%
   target (the lesson opening spreads, the cover and the appendix tails). The policy
   tolerates up to 25%; this is not a proof of good page rhythm.
 - **Item 7 is enforced on text, not on rendered pixels.** The scan reads `pdftotext`
