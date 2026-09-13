@@ -42,7 +42,7 @@ jobs:
           -s 'Grade 9/V2/Chemistry/Core1A/tests'
           -p 'test_*.py' -v
 
-      - name: Run Chemistry Core2A source-lane integration tests
+      - name: Run Chemistry Core2A source and generated challenge integration tests
         run: >-
           python -m unittest discover
           -s 'Grade 9/V2/Chemistry/Core2A/tests'
