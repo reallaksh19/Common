@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,7 @@ RUN_STATES = {
     "BLOCKED_EVIDENCE", "BLOCKED_CONFLICT", "BLOCKED_PREREQUISITE",
     "BLOCKED_REPRESENTATION", "BLOCKED_EXPOSURE", "BLOCKED_OWNER_REVIEW",
 }
+RUN_ID_RE = re.compile(r"^MATH-MLR-[0-9a-f]{16}$")
 
 
 def canonical(value: Any) -> str:
@@ -108,7 +110,16 @@ def seal_ground_truth(manifest: dict) -> dict:
 
 def seal_learning_run(run: dict) -> dict:
     out = copy.deepcopy(run)
-    out["run_id"] = "MATH-MLR-" + digest({k: v for k, v in out.items() if k not in {"run_id", "run_digest"}})[:16]
+    # A run is one evolving orchestration record. Assign identity once from the
+    # initial ground-truth/control-plane binding, then preserve it across state
+    # transitions while run_digest changes with state.
+    if not RUN_ID_RE.fullmatch(str(out.get("run_id") or "")):
+        identity = {
+            "ground_truth_ref": out.get("ground_truth_ref"),
+            "ground_truth_digest": out.get("ground_truth_digest"),
+            "initial_control_plane": copy.deepcopy(out.get("control_plane") or {}),
+        }
+        out["run_id"] = "MATH-MLR-" + digest(identity)[:16]
     out["run_digest"] = digest(out, "run_digest")
     validate_learning_run(out)
     return out
