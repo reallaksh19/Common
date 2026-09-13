@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 """Deterministic Chemistry Core (1A) / Core (2A) PDF realization.
 
-The renderer consumes only the closed semantic learner-product package plus the
-C-H RepresentationBundle. It does not select representations and it does not
-invent Chemistry. Selected C-H primitives are handed to the existing Chemistry
-vector primitive renderer; unavailable secondary primitives are recorded, while
-each teaching section / question must still realize at least one reasoning visual
-when its governed representation evidence is renderable.
-
-Every visible text run passes through the existing learner-surface identifier
-guard. Physical text/primitive rectangles are recorded while drawing so the
-visual-preflight stage can check the actual page geometry rather than a plan.
+Consumes only the closed semantic learner-product package plus the governed C-H
+RepresentationBundle. Representation selection remains upstream authority. The
+renderer may place a selected primitive but may not invent Chemistry or choose a
+replacement representation. Every visible text run passes the repository learner
+surface guard, and physical rectangles are recorded for C-LP-23 preflight.
 """
 from __future__ import annotations
 
@@ -25,8 +20,8 @@ from typing import Any
 
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase.pdfmetrics import stringWidth
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 HERE = Path(__file__).resolve()
@@ -122,15 +117,21 @@ def register_fonts() -> None:
 def capability_title(ref: str) -> str:
     if ref in CAPABILITY_TITLES:
         return CAPABILITY_TITLES[ref]
-    if ref.startswith("CAP-"):
-        return ref[4:].replace("-", " ").strip().capitalize()
-    return "Chemistry skill"
+    value = ref[4:] if ref.startswith("CAP-") else ref
+    return value.replace("-", " ").replace("_", " ").strip().capitalize() or "Chemistry skill"
 
 
 def _humanize_identifier(token: str) -> str:
+    """Translate machine identifiers into learner prose; never whitelist a leak."""
     if token in TOKEN_REPLACEMENTS:
         return TOKEN_REPLACEMENTS[token]
-    for prefix in ("CAP-", "PF-", "QF-", "REP-", "PCK-", "CHEM-CONCEPT-", "CHEM-"):
+    short = re.fullmatch(r"(EXT|CQ|CO|CS)(\d{1,4})", token)
+    if short:
+        return "Source question " + str(int(short.group(2)))
+    generic_short = re.fullmatch(r"(PF|QF|REP|PCK|CAP)(\d{1,4})", token)
+    if generic_short:
+        return "Chemistry reference " + str(int(generic_short.group(2)))
+    for prefix in ("CHEM-CONCEPT-", "CAP-", "PF-", "QF-", "REP-", "PCK-", "CHEM-"):
         if token.startswith(prefix):
             value = token[len(prefix):].replace("-", " ").replace("_", " ").strip().lower()
             return value[:1].upper() + value[1:] if value else "Chemistry idea"
@@ -148,8 +149,6 @@ def public_text(value: Any) -> str:
     text = str(value or "")
     for old, new in EXACT_REPLACEMENTS.items():
         text = text.replace(old, new)
-    # Replace only identifier-shaped tokens already identified by the repository
-    # firewall. Unknown shapes fail closed rather than being silently hidden.
     for token in GUARD.find_internal_identifiers(text):
         text = text.replace(token, _humanize_identifier(token))
     GUARD.assert_learner_safe(text, "learner product")
@@ -195,7 +194,6 @@ class PageWriter:
         register_fonts()
         page = policy["page"]
         self.path = Path(path)
-        self.title = title
         self.margin = float(page["margin_pt"])
         self.body = float(page["body_font_pt"])
         self.leading = float(page["body_leading_pt"])
@@ -220,10 +218,9 @@ class PageWriter:
     def width(self) -> float:
         return PAGE_W - 2 * self.margin
 
-    def _record(self, kind: str, x0: float, y0: float, x1: float, y1: float, text: str | None = None, font: float | None = None, ref: str | None = None) -> None:
+    def _record(self, kind, x0, y0, x1, y1, text=None, font=None, ref=None):
         self.draw_ops.append({
-            "page": self.page,
-            "kind": kind,
+            "page": self.page, "kind": kind,
             "x0": round(float(x0), 2), "y0": round(float(y0), 2),
             "x1": round(float(x1), 2), "y1": round(float(y1), 2),
             "text": text, "font_pt": font, "content_ref": ref,
@@ -249,15 +246,12 @@ class PageWriter:
 
     def _wrap(self, text: str, font: str, size: float, width: float) -> list[str]:
         words = public_text(text).replace("\n", " \n ").split()
-        lines: list[str] = []
-        current = ""
+        lines, current = [], ""
         for word in words:
             if word == "\n":
                 if current:
-                    lines.append(current)
-                    current = ""
-                lines.append("")
-                continue
+                    lines.append(current); current = ""
+                lines.append(""); continue
             trial = (current + " " + word).strip()
             if stringWidth(trial, font, size) <= width:
                 current = trial
@@ -269,61 +263,48 @@ class PageWriter:
             lines.append(current)
         return lines or [""]
 
-    def line(self, text: str, size: float | None = None, font: str = FONT, indent: float = 0.0, leading: float | None = None, ref: str | None = None) -> None:
+    def line(self, text, size=None, font=FONT, indent=0.0, leading=None, ref=None):
         size = float(size or self.body)
         leading = float(leading or self.leading)
-        safe = public_text(text)
-        for row in self._wrap(safe, font, size, self.width - indent):
+        for row in self._wrap(public_text(text), font, size, self.width - indent):
             self.ensure(leading + 2)
             x = self.margin + indent
-            self.c.setFont(font, size)
-            self.c.drawString(x, self.y, row)
-            w = stringWidth(row, font, size)
-            self._record("TEXT", x, self.y - size * 0.25, x + w, self.y + size, row, size, ref)
+            self.c.setFont(font, size); self.c.drawString(x, self.y, row)
+            width = stringWidth(row, font, size)
+            self._record("TEXT", x, self.y - size * 0.25, x + width, self.y + size, row, size, ref)
             self.y -= leading
         self.y -= 3
 
-    def heading(self, text: str, level: int = 1, ref: str | None = None) -> None:
+    def heading(self, text, level=1, ref=None):
         size = self.chapter if level == 1 else self.section
-        self.ensure(size + 18, text)
-        self.line(text, size=size, font=BOLD, leading=size + 5, ref=ref)
+        self.ensure(size + 18, str(text)); self.line(text, size=size, font=BOLD, leading=size + 5, ref=ref)
 
-    def label(self, text: str, ref: str | None = None) -> None:
-        self.ensure(self.small + 8)
-        self.line(text, size=self.small, font=BOLD, leading=self.small + 4, ref=ref)
+    def label(self, text, ref=None):
+        self.ensure(self.small + 8); self.line(text, size=self.small, font=BOLD, leading=self.small + 4, ref=ref)
 
-    def para(self, text: Any, ref: str | None = None) -> None:
-        if text in (None, ""):
-            return
-        self.line(public_text(text), ref=ref)
+    def para(self, text, ref=None):
+        if text not in (None, ""):
+            self.line(public_text(text), ref=ref)
 
-    def question_text(self, text: Any, ref: str | None = None) -> None:
-        self.line(public_text(text), size=self.question, font=FONT, leading=self.question_leading, ref=ref)
+    def question_text(self, text, ref=None):
+        self.line(public_text(text), size=self.question, leading=self.question_leading, ref=ref)
 
-    def bullets(self, values: list[Any] | None, ref: str | None = None) -> None:
+    def bullets(self, values, ref=None):
         for value in values or []:
             self.line("• " + public_text(value), indent=8, ref=ref)
 
-    def rule(self) -> None:
-        self.ensure(8)
-        self.c.setLineWidth(0.7)
-        self.c.line(self.margin, self.y, PAGE_W - self.margin, self.y)
-        self._record("RULE", self.margin, self.y - 0.5, PAGE_W - self.margin, self.y + 0.5)
-        self.y -= 10
+    def rule(self):
+        self.ensure(8); self.c.setLineWidth(0.7); self.c.line(self.margin, self.y, PAGE_W - self.margin, self.y)
+        self._record("RULE", self.margin, self.y - .5, PAGE_W - self.margin, self.y + .5); self.y -= 10
 
-    def workspace(self, lines: int = 5, ref: str | None = None) -> None:
+    def workspace(self, lines=5, ref=None):
         self.label("WORKSPACE", ref)
         for _ in range(lines):
-            self.ensure(18)
-            y = self.y - 6
-            self.c.setLineWidth(0.35)
-            self.c.line(self.margin, y, PAGE_W - self.margin, y)
-            self._record("WORKSPACE_LINE", self.margin, y - 0.5, PAGE_W - self.margin, y + 0.5, ref=ref)
-            self.y -= 18
+            self.ensure(18); y = self.y - 6; self.c.setLineWidth(.35); self.c.line(self.margin, y, PAGE_W - self.margin, y)
+            self._record("WORKSPACE_LINE", self.margin, y - .5, PAGE_W - self.margin, y + .5, ref=ref); self.y -= 18
 
-    def primitive(self, rep: dict[str, Any], ref: str, extra: dict[str, Any] | None = None) -> bool:
-        kind = rep["primitive_id"]
-        params = params_from_representation(rep, extra)
+    def primitive(self, rep, ref, extra=None):
+        kind = rep["primitive_id"]; params = params_from_representation(rep, extra)
         try:
             height = float(VP.primitive_height(kind, params, self.width))
         except VP.PrimitiveDataUnavailable as exc:
@@ -340,23 +321,19 @@ class PageWriter:
         self.y -= height + 10
         return True
 
-    def finish(self) -> dict[str, Any]:
+    def finish(self):
         self.c.save()
         return {
-            "pdf": self.path.name,
-            "page_count": self.page,
+            "pdf": self.path.name, "page_count": self.page,
             "minimum_visible_font_pt": round(self.minimum_font, 2),
             "page_size_pt": [round(PAGE_W, 3), round(PAGE_H, 3)],
-            "draw_ops": self.draw_ops,
-            "primitives": self.primitives,
-            "unavailable_primitives": self.unavailable_primitives,
-            "page_labels": self.page_labels,
+            "draw_ops": self.draw_ops, "primitives": self.primitives,
+            "unavailable_primitives": self.unavailable_primitives, "page_labels": self.page_labels,
         }
 
 
-def _visuals_for_refs(writer: PageWriter, refs: list[str], rep_index: dict[str, dict[str, Any]], content_ref: str, extra: dict[str, Any] | None = None) -> tuple[int, list[str]]:
-    realized = 0
-    unavailable: list[str] = []
+def _visuals_for_refs(writer, refs, rep_index, content_ref, extra=None):
+    realized, unavailable = 0, []
     for ref in refs:
         rep = rep_index.get(ref)
         if rep is None:
@@ -368,280 +345,165 @@ def _visuals_for_refs(writer: PageWriter, refs: list[str], rep_index: dict[str, 
     return realized, unavailable
 
 
-def _routine_title(row: dict[str, Any]) -> str:
-    signature = str(row.get("chemical_signature") or "").strip().rstrip(".")
-    return public_text(signature or "Problem-solving routine")
-
-
-def render_core1a(manuscript: dict[str, Any], representations: dict[str, Any], policy: dict[str, Any], path: Path) -> dict[str, Any]:
+def render_core1a(manuscript, representations, policy, path):
     writer = PageWriter(path, "Chemistry Core (1A) — Learner Study Guide", policy)
-    rep_index = representation_index(representations)
-    section_visuals: list[dict[str, Any]] = []
-
-    writer.heading("Chemistry Core (1A)", 1)
+    rep_index = representation_index(representations); visual_rows = []
+    writer.heading("Chemistry Core (1A)")
     writer.para("A learner study guide built from the governed Chemistry teaching plan. Learn the idea, use the representation, practise, check your response, then move to transfer questions.")
     writer.label("HOW TO USE THIS BOOK")
     writer.bullets(["Study the idea before the routine.", "Attempt every practice prompt before reading its expected response.", "Use the readiness check before moving to transfer practice."])
 
-    for b_index, bucket in enumerate(manuscript["buckets"], 1):
-        writer.new_page("Core (1A) bucket")
-        writer.heading(f"Part {b_index} — {public_text(bucket['learner_title'])}", 1)
-        writer.label("THE IDEA THAT HOLDS THIS PART TOGETHER")
-        writer.para(bucket["bucket_invariant"])
-
-        for s_index, section in enumerate(bucket["teaching_sections"], 1):
-            section_ref = f"C1A-B{b_index:02d}-S{s_index:02d}"
-            writer.heading(capability_title(section["capability_ref"]), 2, section_ref)
-            writer.label("SEE THE IDEA", section_ref)
-            writer.para(section.get("see") or section.get("activation"), section_ref)
-            writer.label("EXPLAIN", section_ref)
-            writer.bullets(section.get("explain"), section_ref)
+    for bi, bucket in enumerate(manuscript["buckets"], 1):
+        writer.new_page("Core (1A) bucket"); writer.heading(f"Part {bi} — {public_text(bucket['learner_title'])}")
+        writer.label("THE IDEA THAT HOLDS THIS PART TOGETHER"); writer.para(bucket["bucket_invariant"])
+        for si, section in enumerate(bucket["teaching_sections"], 1):
+            ref = f"C1A-B{bi:02d}-S{si:02d}"
+            writer.heading(capability_title(section["capability_ref"]), 2, ref)
+            writer.label("SEE THE IDEA", ref); writer.para(section.get("see") or section.get("activation"), ref)
+            writer.label("EXPLAIN", ref); writer.bullets(section.get("explain"), ref)
             refs = list(section.get("representation_refs") or [])
-            realized, unavailable = _visuals_for_refs(writer, refs, rep_index, section_ref)
-            supported = bool(refs)
-            if supported and realized == 0:
-                raise ValueError("CHEM_LP_RENDER_REQUIRED_VISUAL_MISSING:" + section_ref)
-            section_visuals.append({"content_ref": section_ref, "required_refs": refs, "realized": realized, "unavailable_secondary_refs": unavailable, "status": "PASS"})
-
+            realized, unavailable = _visuals_for_refs(writer, refs, rep_index, ref)
+            if refs and realized == 0:
+                raise ValueError("CHEM_LP_RENDER_REQUIRED_VISUAL_MISSING:" + ref)
+            visual_rows.append({"content_ref": ref, "required_refs": refs, "realized": realized, "unavailable_secondary_refs": unavailable, "status": "PASS"})
             if section.get("watch_one"):
-                writer.label("WATCH ONE", section_ref)
-                writer.para(section["watch_one"], section_ref)
+                writer.label("WATCH ONE", ref); writer.para(section["watch_one"], ref)
             worked = section.get("worked_example")
             if worked:
-                writer.label("WORKED EXAMPLE", section_ref)
-                writer.question_text(worked.get("prompt", ""), section_ref)
-                writer.bullets(worked.get("reasoning_steps"), section_ref)
-                writer.label("CHECK YOUR CHEMISTRY", section_ref)
-                writer.bullets(worked.get("verification_steps"), section_ref)
+                writer.label("WORKED EXAMPLE", ref); writer.question_text(worked.get("prompt", ""), ref)
+                writer.bullets(worked.get("reasoning_steps"), ref); writer.label("CHECK YOUR CHEMISTRY", ref); writer.bullets(worked.get("verification_steps"), ref)
             if section.get("verification_steps"):
-                writer.label("VERIFY THE RESULT", section_ref)
-                writer.bullets(section["verification_steps"], section_ref)
-            writer.para(section.get("transfer_bridge"), section_ref)
-            writer.rule()
+                writer.label("VERIFY THE RESULT", ref); writer.bullets(section["verification_steps"], ref)
+            writer.para(section.get("transfer_bridge"), ref); writer.rule()
 
-        for r_index, routine in enumerate(bucket.get("problem_family_routines") or [], 1):
-            ref = f"C1A-B{b_index:02d}-R{r_index:02d}"
-            writer.heading("Problem-solving routine", 2, ref)
-            writer.para(_routine_title(routine), ref)
-            writer.label("LOOK FOR", ref)
-            writer.bullets(routine.get("recognition_signals"), ref)
-            writer.label("STEP BY STEP", ref)
-            writer.bullets(routine.get("method_steps"), ref)
+        for ri, routine in enumerate(bucket.get("problem_family_routines") or [], 1):
+            ref = f"C1A-B{bi:02d}-R{ri:02d}"; writer.heading("Problem-solving routine", 2, ref)
+            writer.para(routine.get("chemical_signature") or "Problem-solving routine", ref)
+            writer.label("LOOK FOR", ref); writer.bullets(routine.get("recognition_signals"), ref)
+            writer.label("STEP BY STEP", ref); writer.bullets(routine.get("method_steps"), ref)
 
-        for p_index, item in enumerate(bucket.get("practice_items") or [], 1):
-            ref = f"C1A-B{b_index:02d}-P{p_index:02d}"
-            writer.new_page("Core (1A) practice")
-            writer.heading(f"Practice {p_index}", 2, ref)
-            writer.label("TRY IT FIRST", ref)
-            writer.question_text(item["prompt"], ref)
-            writer.workspace(6, ref)
-            writer.para("Check your response on the next page.", ref)
-            writer.new_page("Core (1A) expected response")
-            writer.heading(f"Practice {p_index} — check", 2, ref + "-A")
-            rubric = item["answer_path"]["expected_response_rubric"]
-            writer.label(rubric["learner_label"], ref + "-A")
-            writer.bullets(rubric["criteria"], ref + "-A")
+        for pi, item in enumerate(bucket.get("practice_items") or [], 1):
+            ref = f"C1A-B{bi:02d}-P{pi:02d}"; writer.new_page("Core (1A) practice")
+            writer.heading(f"Practice {pi}", 2, ref); writer.label("TRY IT FIRST", ref); writer.question_text(item["prompt"], ref)
+            writer.workspace(6, ref); writer.para("Check your response on the next page.", ref)
+            writer.new_page("Core (1A) expected response"); writer.heading(f"Practice {pi} — check", 2, ref + "-A")
+            rubric = item["answer_path"]["expected_response_rubric"]; writer.label(rubric["learner_label"], ref + "-A"); writer.bullets(rubric["criteria"], ref + "-A")
 
-        gate = bucket.get("readiness_gate") or {}
-        writer.new_page("Core (1A) readiness")
-        writer.heading("READY TO MOVE ON?", 2)
+        gate = bucket.get("readiness_gate") or {}; writer.new_page("Core (1A) readiness"); writer.heading("READY TO MOVE ON?", 2)
         writer.para("Move to transfer practice when you can do all four without opening a representation or start hint.")
         writer.bullets([TOKEN_REPLACEMENTS.get(x, public_text(x)) for x in gate.get("required_dimensions", [])])
 
     metrics = writer.finish()
-    metrics.update({
-        "product": "CORE1A",
-        "manuscript_ref": manuscript["manuscript_id"],
-        "manuscript_digest": manuscript["manuscript_digest"],
-        "representation_bundle_ref": representations["bundle_id"],
-        "representation_bundle_digest": representations["bundle_digest"],
-        "section_visual_closure": section_visuals,
-    })
-    metrics["pdf_sha256"] = sha_file(path)
-    metrics["metrics_digest"] = digest({k: v for k, v in metrics.items() if k != "metrics_digest"})
+    metrics.update({"product": "CORE1A", "manuscript_ref": manuscript["manuscript_id"], "manuscript_digest": manuscript["manuscript_digest"],
+                    "representation_bundle_ref": representations["bundle_id"], "representation_bundle_digest": representations["bundle_digest"],
+                    "section_visual_closure": visual_rows})
+    metrics["pdf_sha256"] = sha_file(path); metrics["metrics_digest"] = digest({k: v for k, v in metrics.items() if k != "metrics_digest"})
     return metrics
 
 
-def _draw_provenance(writer: PageWriter, provenance: dict[str, Any], ref: str) -> None:
+def _draw_provenance(writer, provenance, ref):
     writer.label("WHERE THIS QUESTION CAME FROM", ref)
     for citation in provenance.get("citations") or []:
-        label = public_text(citation.get("label", ""))
-        locator = public_text(citation.get("locator", ""))
-        text = label + (" — " + locator if locator else "")
-        writer.para(text, ref)
+        label = public_text(citation.get("label", "")); locator = public_text(citation.get("locator", ""))
+        writer.para(label + (" — " + locator if locator else ""), ref)
 
 
-def _source_prompt(writer: PageWriter, item: dict[str, Any], ref: str) -> None:
-    snap = item["source_snapshot"]
-    writer.question_text(snap["stem"], ref)
+def _source_prompt(writer, item, ref):
+    snap = item["source_snapshot"]; writer.question_text(snap["stem"], ref)
     for option in snap.get("options") or []:
         writer.para(f"{option.get('label', '')}. {option.get('text', '')}", ref)
     for subpart in snap.get("subparts") or []:
-        writer.para(subpart if isinstance(subpart, str) else canonical(subpart), ref)
+        if isinstance(subpart, str):
+            writer.para(subpart, ref)
+        elif isinstance(subpart, dict):
+            learner_text = subpart.get("text") or subpart.get("prompt") or subpart.get("stem")
+            if learner_text:
+                writer.para(learner_text, ref)
     if snap.get("condition_text"):
         writer.para("Recorded condition: " + public_text(snap["condition_text"]), ref)
 
 
-def _attempt_support(writer: PageWriter, support: dict[str, Any], ref: str) -> None:
-    writer.label("WRITE THIS FIRST", ref)
-    writer.para(support.get("write_this_first"), ref)
-    writer.label("SMALL CLUE", ref)
-    writer.para(support.get("small_clue"), ref)
-    writer.label("BIGGER CLUE", ref)
-    writer.para(support.get("bigger_clue"), ref)
-    writer.label("HOW DO I START?", ref)
-    writer.para(support.get("how_do_i_start"), ref)
-    writer.label("WATCH FOR THIS", ref)
-    writer.para(support.get("watch_for_this"), ref)
-    writer.label("THINK IT THROUGH", ref)
-    writer.bullets(support.get("think_it_through"), ref)
-    writer.label("CHECK YOUR CHEMISTRY", ref)
-    writer.bullets(support.get("check_your_chemistry"), ref)
+def _attempt_support(writer, support, ref):
+    for label, key, bullets in [
+        ("WRITE THIS FIRST", "write_this_first", False), ("SMALL CLUE", "small_clue", False),
+        ("BIGGER CLUE", "bigger_clue", False), ("HOW DO I START?", "how_do_i_start", False),
+        ("WATCH FOR THIS", "watch_for_this", False), ("THINK IT THROUGH", "think_it_through", True),
+        ("CHECK YOUR CHEMISTRY", "check_your_chemistry", True),
+    ]:
+        writer.label(label, ref)
+        (writer.bullets if bullets else writer.para)(support.get(key), ref)
 
 
-def _answer_pages(writer: PageWriter, answer_path: dict[str, Any], title: str, ref: str) -> None:
-    quick = answer_path.get("quick_check")
-    full = answer_path.get("full_working")
+def _answer_pages(writer, answer_path, title, ref):
+    quick, full = answer_path.get("quick_check"), answer_path.get("full_working")
     if not quick or not full:
         raise ValueError("CHEM_LP_RENDER_ANSWER_NAVIGATION_MISSING:" + ref)
-    writer.new_page("answer check")
-    writer.heading(title + " — QUICK CHECK", 2, ref + "-Q")
-    writer.para(quick["answer_summary"], ref + "-Q")
+    writer.new_page("answer check"); writer.heading(title + " — QUICK CHECK", 2, ref + "-Q"); writer.para(quick["answer_summary"], ref + "-Q")
     if quick.get("unit"):
         writer.para("Unit: " + public_text(quick["unit"]), ref + "-Q")
-    writer.bullets(quick.get("marking_points"), ref + "-Q")
-    writer.para("If your result does not match, return to the clues before opening the full working.", ref + "-Q")
-    writer.new_page("full working")
-    writer.heading(title + " — FULL WORKING", 2, ref + "-F")
-    writer.bullets(full["steps"], ref + "-F")
-    writer.label("VERIFY", ref + "-F")
-    writer.para(full["verification"], ref + "-F")
+    writer.bullets(quick.get("marking_points"), ref + "-Q"); writer.para("If your result does not match, return to the clues before opening the full working.", ref + "-Q")
+    writer.new_page("full working"); writer.heading(title + " — FULL WORKING", 2, ref + "-F"); writer.bullets(full["steps"], ref + "-F")
+    writer.label("VERIFY", ref + "-F"); writer.para(full["verification"], ref + "-F")
 
 
-def render_core2a(source_plan: dict[str, Any] | None, challenge_plan: dict[str, Any] | None, representations: dict[str, Any], policy: dict[str, Any], path: Path) -> dict[str, Any]:
+def render_core2a(source_plan, challenge_plan, representations, policy, path):
     writer = PageWriter(path, "Chemistry Core (2A) — Source & Challenge Practice", policy)
-    rep_index = representation_index(representations)
-    item_visuals: list[dict[str, Any]] = []
-    question_count = 0
-
-    writer.heading("Chemistry Core (2A)", 1)
-    writer.para("Attempt-first source practice followed by clearly labelled fresh challenge practice. Answers are separated from attempt pages so you can genuinely check your work.")
-    writer.label("THE PRACTICE LOOP")
-    writer.para("Try → use a clue only if needed → check the short answer → return to the question if wrong → open the full working.")
+    rep_index = representation_index(representations); visual_rows = []; questions = 0
+    writer.heading("Chemistry Core (2A)"); writer.para("Attempt-first source practice followed by clearly labelled fresh challenge practice. Answers are separated from attempt pages so you can genuinely check your work.")
+    writer.label("THE PRACTICE LOOP"); writer.para("Try → use a clue only if needed → check the short answer → return to the question if wrong → open the full working.")
 
     if source_plan:
-        writer.new_page("source practice")
-        writer.heading("SOURCE PRACTICE", 1)
-        writer.para("These questions preserve the governed Core (2) source identity and wording. Support is added around the question; the source itself is not silently rewritten.")
+        writer.new_page("source practice"); writer.heading("SOURCE PRACTICE"); writer.para("These questions preserve the governed source wording. Support is added around the question; the source itself is not silently rewritten.")
         for index, item in enumerate(source_plan["items"], 1):
-            question_count += 1
-            ref = f"C2A-S-{index:03d}"
-            writer.new_page("source question attempt")
-            writer.heading(f"Source question {index}", 2, ref)
-            writer.label("TRY IT FIRST", ref)
-            _source_prompt(writer, item, ref)
-            _draw_provenance(writer, item["provenance"], ref)
-            writer.workspace(5, ref)
-            support = item["learner_support"]
-            writer.label("SEE THE IDEA", ref)
-            refs = list((support.get("see_the_idea") or {}).get("pre_taught_representation_refs") or [])
-            snap = item["source_snapshot"]
-            extra = {
-                "observation": snap.get("stem"),
-                "condition_context": [snap["condition_text"]] if snap.get("condition_text") else [],
-                "particles": (snap.get("figure_semantic") or {}).get("particles") or [],
-            }
+            questions += 1; ref = f"C2A-S-{index:03d}"; writer.new_page("source question attempt"); writer.heading(f"Source question {index}", 2, ref)
+            writer.label("TRY IT FIRST", ref); _source_prompt(writer, item, ref); _draw_provenance(writer, item["provenance"], ref); writer.workspace(5, ref)
+            support = item["learner_support"]; writer.label("SEE THE IDEA", ref); refs = list((support.get("see_the_idea") or {}).get("pre_taught_representation_refs") or [])
+            snap = item["source_snapshot"]; extra = {"observation": snap.get("stem"), "condition_context": [snap["condition_text"]] if snap.get("condition_text") else [], "particles": (snap.get("figure_semantic") or {}).get("particles") or []}
             realized, unavailable = _visuals_for_refs(writer, refs, rep_index, ref, extra) if refs else (0, [])
-            item_visuals.append({"content_ref": ref, "required_refs": refs, "realized": realized, "unavailable_secondary_refs": unavailable, "status": "PASS" if (not refs or realized > 0) else "FAIL"})
             if refs and realized == 0:
                 raise ValueError("CHEM_LP_RENDER_REQUIRED_VISUAL_MISSING:" + ref)
-            _attempt_support(writer, support, ref)
-            writer.para("Answer check: next page.", ref)
-            _answer_pages(writer, item["answer_path"], f"Source question {index}", ref)
+            visual_rows.append({"content_ref": ref, "required_refs": refs, "realized": realized, "unavailable_secondary_refs": unavailable, "status": "PASS"})
+            _attempt_support(writer, support, ref); writer.para("Answer check: next page.", ref); _answer_pages(writer, item["answer_path"], f"Source question {index}", ref)
 
     if challenge_plan:
-        writer.new_page("fresh challenge practice")
-        writer.heading("FRESH CHALLENGE PRACTICE", 1)
-        writer.para("These are newly generated practice questions grounded in taught Chemistry. They are not claimed as official past-paper questions.")
+        writer.new_page("fresh challenge practice"); writer.heading("FRESH CHALLENGE PRACTICE"); writer.para("These are newly generated practice questions grounded in taught Chemistry. They are not claimed as official past-paper questions.")
         for index, item in enumerate(challenge_plan["items"], 1):
-            question_count += 1
-            ref = f"C2A-G-{index:03d}"
-            writer.new_page("fresh challenge attempt")
-            writer.heading(f"Fresh challenge {index}", 2, ref)
-            writer.label("TRY IT FIRST", ref)
-            writer.question_text(item["prompt"], ref)
-            _draw_provenance(writer, item["provenance"], ref)
-            writer.workspace(5, ref)
-            support = item["learner_support"]
-            writer.label("SEE THE IDEA", ref)
-            refs = list(item["core1a_binding"].get("h2_evidence_refs") or [])
+            questions += 1; ref = f"C2A-G-{index:03d}"; writer.new_page("fresh challenge attempt"); writer.heading(f"Fresh challenge {index}", 2, ref)
+            writer.label("TRY IT FIRST", ref); writer.question_text(item["prompt"], ref); _draw_provenance(writer, item["provenance"], ref); writer.workspace(5, ref)
+            support = item["learner_support"]; writer.label("SEE THE IDEA", ref); refs = list(item["core1a_binding"].get("h2_evidence_refs") or [])
             realized, unavailable = _visuals_for_refs(writer, refs, rep_index, ref) if refs else (0, [])
-            item_visuals.append({"content_ref": ref, "required_refs": refs, "realized": realized, "unavailable_secondary_refs": unavailable, "status": "PASS" if (not refs or realized > 0) else "FAIL"})
             if refs and realized == 0:
                 raise ValueError("CHEM_LP_RENDER_REQUIRED_VISUAL_MISSING:" + ref)
-            _attempt_support(writer, support, ref)
-            writer.para("Answer check: next page.", ref)
-            _answer_pages(writer, item["answer_path"], f"Fresh challenge {index}", ref)
+            visual_rows.append({"content_ref": ref, "required_refs": refs, "realized": realized, "unavailable_secondary_refs": unavailable, "status": "PASS"})
+            _attempt_support(writer, support, ref); writer.para("Answer check: next page.", ref); _answer_pages(writer, item["answer_path"], f"Fresh challenge {index}", ref)
 
     metrics = writer.finish()
-    metrics.update({
-        "product": "CORE2A",
-        "source_plan_ref": source_plan["plan_id"] if source_plan else None,
-        "source_plan_digest": source_plan["plan_digest"] if source_plan else None,
-        "challenge_plan_ref": challenge_plan["plan_id"] if challenge_plan else None,
-        "challenge_plan_digest": challenge_plan["plan_digest"] if challenge_plan else None,
-        "representation_bundle_ref": representations["bundle_id"],
-        "representation_bundle_digest": representations["bundle_digest"],
-        "question_count": question_count,
-        "item_visual_closure": item_visuals,
-    })
-    metrics["pdf_sha256"] = sha_file(path)
-    metrics["metrics_digest"] = digest({k: v for k, v in metrics.items() if k != "metrics_digest"})
+    metrics.update({"product": "CORE2A", "source_plan_ref": source_plan["plan_id"] if source_plan else None, "source_plan_digest": source_plan["plan_digest"] if source_plan else None,
+                    "challenge_plan_ref": challenge_plan["plan_id"] if challenge_plan else None, "challenge_plan_digest": challenge_plan["plan_digest"] if challenge_plan else None,
+                    "representation_bundle_ref": representations["bundle_id"], "representation_bundle_digest": representations["bundle_digest"], "question_count": questions,
+                    "item_visual_closure": visual_rows})
+    metrics["pdf_sha256"] = sha_file(path); metrics["metrics_digest"] = digest({k: v for k, v in metrics.items() if k != "metrics_digest"})
     return metrics
 
 
-def render_products(manuscript: dict[str, Any], source_plan: dict[str, Any] | None, challenge_plan: dict[str, Any] | None, representations: dict[str, Any], policy: dict[str, Any], out_dir: Path) -> dict[str, Any]:
+def render_products(manuscript, source_plan, challenge_plan, representations, policy, out_dir):
     if policy.get("policy_id") != "CHEM-LEARNER-RENDER-v1":
         raise ValueError("CHEM_LP_RENDER_POLICY_MISMATCH")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    core1_path = out_dir / "chemistry_core1a.pdf"
-    core2_path = out_dir / "chemistry_core2a.pdf"
-    core1_metrics = render_core1a(manuscript, representations, policy, core1_path)
-    core2_metrics = render_core2a(source_plan, challenge_plan, representations, policy, core2_path)
-    manifest = {
-        "manifest_id": "CHEM-LP-RENDER-" + manuscript["manuscript_id"].split("-")[-1],
-        "schema_version": "1.0.0",
-        "subject": "CHEMISTRY",
-        "render_policy_ref": policy["policy_id"],
-        "core1a": core1_metrics,
-        "core2a": core2_metrics,
-        "status": "RENDERED_NOT_PREFLIGHTED",
-        "manifest_digest": "",
-    }
-    payload = copy.deepcopy(manifest)
-    payload.pop("manifest_digest")
-    manifest["manifest_digest"] = digest(payload)
+    out_dir = Path(out_dir); out_dir.mkdir(parents=True, exist_ok=True)
+    core1_path, core2_path = out_dir / "chemistry_core1a.pdf", out_dir / "chemistry_core2a.pdf"
+    core1_metrics = render_core1a(manuscript, representations, policy, core1_path); core2_metrics = render_core2a(source_plan, challenge_plan, representations, policy, core2_path)
+    manifest = {"manifest_id": "CHEM-LP-RENDER-" + manuscript["manuscript_id"].split("-")[-1], "schema_version": "1.0.0", "subject": "CHEMISTRY",
+                "render_policy_ref": policy["policy_id"], "core1a": core1_metrics, "core2a": core2_metrics, "status": "RENDERED_NOT_PREFLIGHTED", "manifest_digest": ""}
+    payload = copy.deepcopy(manifest); payload.pop("manifest_digest"); manifest["manifest_digest"] = digest(payload)
     (out_dir / "render_manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return manifest
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--core1a-manuscript", required=True)
-    parser.add_argument("--core2a-source-plan")
-    parser.add_argument("--core2a-challenge-plan")
-    parser.add_argument("--representation-bundle", required=True)
-    parser.add_argument("--render-policy", required=True)
-    parser.add_argument("--out-dir", required=True)
-    args = parser.parse_args()
-    render_products(
-        load(args.core1a_manuscript),
-        load(args.core2a_source_plan) if args.core2a_source_plan else None,
-        load(args.core2a_challenge_plan) if args.core2a_challenge_plan else None,
-        load(args.representation_bundle),
-        load(args.render_policy),
-        Path(args.out_dir),
-    )
+def main():
+    parser = argparse.ArgumentParser(); parser.add_argument("--core1a-manuscript", required=True); parser.add_argument("--core2a-source-plan"); parser.add_argument("--core2a-challenge-plan")
+    parser.add_argument("--representation-bundle", required=True); parser.add_argument("--render-policy", required=True); parser.add_argument("--out-dir", required=True); args = parser.parse_args()
+    render_products(load(args.core1a_manuscript), load(args.core2a_source_plan) if args.core2a_source_plan else None,
+                    load(args.core2a_challenge_plan) if args.core2a_challenge_plan else None, load(args.representation_bundle), load(args.render_policy), Path(args.out_dir))
 
 
 if __name__ == "__main__":
