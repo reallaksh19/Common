@@ -1,120 +1,129 @@
-# Mathematics V2 — Core (2A): cited challenge practice
+# Mathematics V2 — Core (2A): purpose-conditioned learner practice
 
-Core (2) remains the governed semantic transfer plan over the **original source questions**. Core (2A) has two learner-product lanes:
+Core (2) remains the governed semantic transfer plan over the **complete original source-question set**. Core (2A) is a derived learner-product stage. It does not simply re-render Core (2): it must first know **why the learner is using the product**.
 
-```text
-Core (1) + Core (1A) + Core (2)
-              +
-verified competitive-question archives / archetypes
-              ↓
-Core (2A)
-   ├── SOURCE lane: realize original Core (2) questions faithfully
-   └── CHALLENGE lane: add fresh, grounded competitive-style questions
-              ↓
-core2a_challenge_plan.json
-core2a_quality_audit.json
-core2a_student_challenge_practice.pdf
-```
+## Mandatory purpose gate
 
-The competitive corpus influences **question design and reasoning demand**, not curriculum authority. A generated challenge may only require mathematics already taught or explicitly approved upstream.
-
-## Canonical execution authority
-
-Future agents must execute Core2A through:
-
-`Grade 9/V2/Mathematics/LearnerProduct/EXECUTION_CONTRACT.md`
-
-and the policy:
-
-`LearnerProduct/policies/math-core2a-execution-policy.json`
-
-Do not infer challenge counts, challenge type, help order, citation behavior, or learner vocabulary from this README alone. Those decisions are machine-governed in the LearnerProduct contracts/policies.
-
-The current Core2A semantic contract is:
-
-`Core2A/contracts/math-core2a-challenge-plan.schema.json` (`schema_version = 2.0.0`).
-
-## Source lane — immutable Core (2)
-
-For every `SOURCE_CORE2` question Core (2A) preserves:
-
-- original source-question order;
-- source stem, givens, options, units and subparts;
-- source question identifier;
-- Core (1) linkage state;
-- assessment-safety classification;
-- multiple-solution / underdetermined semantics;
-- source corrections and notes;
-- attempt before support and worked solution;
-- immediate attempt → worked adjacency where that is the approved page contract.
-
-Fresh challenge questions must never replace, renumber or silently rewrite a Core (2) source question.
-
-## Challenge lane — fresh competitive practice
-
-`GENERATED_CHALLENGE` questions may be added after or around preserved source anchors when they are grounded in:
+Before preparing Core (2A), establish exactly one purpose:
 
 ```text
-Core (1) mathematical authority
-+ Core (1A) teaching buckets / representations
-+ Core (2) source-question demand
-+ governed competitive archetypes
+STARTER
+PRACTICE
+REVISION
+COMPETITION
 ```
 
-The canonical archetype registry is:
+If purpose is missing, an interactive agent must ask exactly:
 
-`LearnerProduct/registry/math-competitive-archetype-registry.json`
+> Is this for Starter, Practice, Revision, or Competition?
 
-Generated questions must be mathematically fresh. Official archives may be used to benchmark style, compactness, inference depth, representation shifts and synthesis demand, but an original generated question must not be presented as an official historical exam question.
+Batch/CI execution fails with `CORE2A_USER_PURPOSE_REQUIRED`. There is no default to `PRACTICE`.
 
-Difficulty must come from mathematical thinking — hidden structure, reversed targets, representation shifts, mixed ideas or deeper inference — not merely larger numbers or uglier arithmetic.
+The executable authority is:
 
-## Challenge selection is not discretionary
+`Grade 9/V2/Mathematics/ProductionKits/Core2A/engine/run_core2a_kit.py`
 
-Apply `MATH-CORE2A-EXECUTION-v1`:
+with shared routing/scaffold/source/answer/provenance machinery under:
 
-- preserve every Core2 source anchor;
-- create one `NEAR_TRANSFER` slot per eligible bucket;
-- create one `STRUCTURAL_VARIATION` slot per eligible bucket;
-- create `MIXED_SYNTHESIS` only when at least two required buckets are mature/taught;
-- use the declared structural-variation priority rather than inventing a new ladder;
-- independently solve every generated item;
-- fail if the item requires untaught mathematics or is materially too close to a source item.
+`Grade 9/V2/Mathematics/ProductionKits/common/`.
+
+## Source versus benchmark
+
+```text
+SOURCE AUTHORITY decides WHAT mathematics is legal.
+PURPOSE decides WHY the product is being built.
+SCAFFOLD PROFILE decides HOW support is presented.
+BENCHMARKS may shape challenge DESIGN but may not expand curriculum scope.
+```
+
+Core (2A) consumes governed Core (1)/Core (1A)/Core (2) authority. Competition-mode external references are benchmark-only. The production benchmark registry is:
+
+`ProductionKits/common/registry/benchmark-source-registry.json`
+
+and currently permits official JEE Advanced, HBCSE Mathematics Olympiad and IMO archives only for `STYLE_BENCHMARK` or `ARCHETYPE_DERIVATION`. They are never curriculum authority.
+
+## Purpose-specific product behavior
+
+The product must differ materially by purpose.
+
+### STARTER
+
+- one useful Core (2) anchor per bucket where available;
+- at least one fresh `GUIDED_DIRECT` item per bucket;
+- full concept recap and high representation density;
+- generous staged help;
+- no competition benchmark.
+
+### PRACTICE
+
+- preserve all applicable Core (2) source items in the selected scope;
+- at least one fresh practice item per bucket;
+- repeated problem-family practice plus controlled variation;
+- help available but initially hidden;
+- no competition benchmark.
+
+### REVISION
+
+- select representative/high-demand Core (2) items rather than reproducing the whole set;
+- add invariant recall and method-discrimination prompts;
+- compact recap, low repetition and sparse help;
+- no competition benchmark required.
+
+### COMPETITION
+
+- use representative Core (2) anchors as baselines;
+- require `NEAR_TRANSFER` plus one structural challenge per eligible bucket;
+- structural challenges may use hidden information, reversed targets, representation shifts or parameter constraints;
+- mixed synthesis is allowed only across taught/approved buckets;
+- official competition archives may be cited only as benchmark/archetype sources;
+- generated questions must remain fresh and may not require untaught mathematics.
+
+Therefore Core (2A) is not required to reproduce every Core (2) question in every mode. **Core (2) remains the complete immutable source authority.** Whenever a Core (2) question is selected into Core (2A), its ID, stem, givens, options, units, subparts and assessment-safety semantics remain immutable.
+
+## Two item classes
+
+```text
+SOURCE_CORE2
+  selected original Core (2) item; source shape is immutable
+
+GENERATED_CHALLENGE
+  fresh item grounded in taught Core (1A) buckets and approved Core (2) demand
+```
+
+Fresh generated items may increase reasoning demand through hidden structure, reversed targets, representation shifts, synthesis or deeper inference. Difficulty must not be inflated merely through larger numbers, uglier fractions or extra arithmetic.
+
+## Answer contract
+
+Every selected or generated item must have a machine-checkable answer contract. The production contract is:
+
+`ProductionKits/common/contracts/math-answer-contract.schema.json`
+
+It requires a canonical answer, accepted equivalents, at least one solution path, independent verification checks, domain conditions, multiplicity semantics and `independent_solver_status = PASS`.
+
+Core (2) source items are also independently cross-checked by the Core2 production kit before becoming legal Core (2A) inputs.
 
 ## Citation contract — shown with the question itself
 
-Every Core (2A) question must carry a learner-visible box labelled:
+Every learner question must carry:
 
 ```text
 WHERE THIS QUESTION CAME FROM
 ```
 
-The citation belongs **on the question page itself**. A consolidated source list at the end is not sufficient.
+A consolidated bibliography alone is invalid.
 
-For source questions, the inline note identifies the exact Core (2) source question and locator.
+For source questions, the inline note identifies the exact Core (2) source question. For fresh questions, the note distinguishes:
 
-For fresh challenge questions, the inline note must distinguish:
+- Core (1A) concept support;
+- any Core (2) anchor;
+- competition benchmark/archetype role where applicable;
+- explicit disclosure that the question is a fresh workbook original.
 
-- the Core (1) / Core (1A) concept being practised;
-- any Core (2) source question used as the transfer anchor;
-- the official competitive archive used only as a style/demand benchmark;
-- the fact that the wording and mathematical instance are original to the workbook.
+Generated questions cannot claim official JEE/IOQM/RMO/INMO/IMO provenance unless the exact official source is genuinely being reproduced and verified under a separate exact-source policy.
 
-Reusable provenance semantics are governed by:
+## Learner-facing help
 
-`LearnerProduct/contracts/math-question-provenance.schema.json`
-
-and:
-
-`LearnerProduct/policies/math-question-citation-policy.json`.
-
-## Learner-facing help language
-
-Internal pipeline language must not appear in the learner product. The canonical vocabulary is owned by:
-
-`LearnerProduct/policies/math-learner-language-policy.json`.
-
-Stable public labels are:
+Use stable child-friendly labels:
 
 ```text
 TRY IT FIRST
@@ -129,82 +138,61 @@ WHERE THIS QUESTION CAME FROM
 
 Do not expose internal terms such as `reasoning route`, `repair route`, `grounding`, `learning atom`, `demand vector`, `transfer ladder`, registry IDs or publication-engineering terminology.
 
-## Help progression
-
-Core (2A) keeps the Core (2) H1/H2/H3 semantics but translates them for the learner:
+Core (2) H1/H2/H3 semantics map to:
 
 ```text
 H0  TRY IT FIRST
-H1  SMALL CLUE       — notice the useful structure
+H1  SMALL CLUE       — notice useful structure
 H2  BIGGER CLUE      — choose the mathematical idea / representation
 H3  HOW DO I START?  — first executable mathematical move
 ```
 
-After the clues, `THINK IT THROUGH` explains the strategy, `FULL WORKING` executes the mathematics, and `QUICK CHECK` verifies the result independently where appropriate.
+A generated item's help is validated against the full working so that a clue cannot simply disclose a solution step or answer.
 
-The v2 Core2A schema requires each clue to bind back to taught Core1A content and requires an independent mathematical check for every item.
+## Production-kit contracts
 
-## Core (1A) relationship
+Core (2A) uses:
 
-Core (1A) teaches the concept and representation. Core (2A) asks the learner to recognize and use that concept under less obvious conditions.
+- `ProductionKits/common/contracts/math-task-intent.schema.json`
+- `ProductionKits/common/contracts/math-source-bundle.schema.json`
+- `ProductionKits/common/contracts/math-answer-contract.schema.json`
+- `ProductionKits/common/contracts/math-product-blueprint.schema.json`
+- `ProductionKits/Core2A/contracts/math-core2a-candidate-set.schema.json`
+- `ProductionKits/common/profiles/scaffold-profiles.json`
+- `ProductionKits/common/registry/benchmark-source-registry.json`
 
-```text
-Core (1A) bucket
-     ↓
-Core (2) source anchor
-     ↓
-fresh near challenge
-     ↓
-reversed / hidden-form challenge
-     ↓
-mixed or competitive-style challenge
-```
+The existing semantic contract `Core2A/contracts/math-core2a-challenge-plan.schema.json` remains a governed Core2A semantic surface; the production kit adds executable routing, selection, answer checking and purpose differentiation around it.
 
-A challenge must fail closed if it requires a capability that is not taught or otherwise approved upstream.
+## Golden fixtures
 
-## Golden process reference
+The production kit ships exactly three cross-mode golden fixtures:
 
-Use:
+1. `golden/01-starter-hidden-roots.json` — STARTER behavior;
+2. `golden/02-practice-vs-revision.json` — same mathematical input, different PRACTICE and REVISION products;
+3. `golden/03-competition-theory-of-equations.json` — COMPETITION near-transfer, structural variation and mixed synthesis.
 
-`LearnerProduct/golden/theory-of-equations/`
-
-as the process example. Copy the **execution pattern**, not the Theory of Equations mathematics, into a new topic.
-
-## Release and source integrity
-
-Core (2A) inherits source legality and learner-state authority from upstream products. It cannot:
-
-- upgrade provisional PCK;
-- alter assessment validity;
-- invent learner readiness;
-- bypass human gates;
-- claim a generated question is an official JEE/IOQM/RMO/INMO/IMO item without a verified exact source;
-- use a competition citation without saying whether it is exact source text or style-only benchmarking.
+The golden rule is: **copy the process, not the fixture mathematics**.
 
 ## Required fail-closed checks
 
 At minimum:
 
 ```text
-CORE2A_SOURCE_ORDER_DRIFT
-CORE2A_SOURCE_STEM_DRIFT
-CORE2A_QUESTION_ID_DRIFT
-CORE2A_ATTEMPT_SOLUTION_ADJACENCY_LOST
-CORE2A_HINT_DISCLOSES_SOLUTION
-CORE2A_HINT_ATOM_NOT_PRETAUGHT
-CORE2A_SOLUTION_DEPTH_COLLAPSED
-CORE2A_VERIFICATION_LOST
-CORE2A_CORE1_LINK_DRIFT
-CORE2A_ASSESSMENT_SAFETY_LOST
-CORE2A_MULTI_SOLUTION_COLLAPSED
+CORE2A_USER_PURPOSE_REQUIRED
+CORE2A_PURPOSE_CANDIDATE_COVERAGE_GAP
 CORE2A_UNTAUGHT_MATH_REQUIRED
-CORE2A_CHALLENGE_TARGET_UNGROUNDED
-CORE2A_GENERATED_ITEM_NOT_INDEPENDENTLY_VERIFIED
-CORE2A_GENERATED_ITEM_TOO_CLOSE_TO_SOURCE
+CORE2A_HINT_DISCLOSES_SOLUTION
+CORE2A_HINT_DISCLOSES_ANSWER
+CORE2A_SOURCE_ANSWER_CONTRACT_MISSING
+CORE2A_NEAR_COPY_CHECK_FAILED
 CORE2A_QUESTION_CITATION_MISSING
-CORE2A_CITATION_NOT_INLINE
-CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION
-CORE2A_COMPETITION_SOURCE_ROLE_UNCLEAR
-CORE2A_LEARNER_JARGON_LEAK
-CORE2A_QUALITY_GATE_FAILED
+QUESTION_CITATION_NOT_INLINE
+GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION
+COMPETITION_BENCHMARK_OUTSIDE_COMPETITION_MODE
+CORE2A_COMPETITION_BENCHMARK_MISSING
+CORE2A_PURPOSE_DIFFERENTIATION_FAILED
 ```
+
+## Release boundary
+
+Core (2A) inherits upstream legality. It cannot upgrade provisional PCK, change learner diagnosis/treatment, alter source-question validity, invent official exam provenance, introduce untaught mathematics or bypass human review gates.
