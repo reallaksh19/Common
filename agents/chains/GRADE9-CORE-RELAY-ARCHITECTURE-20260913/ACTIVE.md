@@ -20,19 +20,19 @@ MERGE_AUTHORITY: OWNER_ONLY
 MERGE_AUTHORIZED: FALSE
 ROADMAP_MUTATION_AUTHORITY: NONE
 MISSION: Review and develop the owner-directed Core1/Core2/Core1A/Core2A subtopic relay architecture; accumulate all details in one draft PR.
-ACTIVE_ENDPOINT: EP-0001
-ACTIVE_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0001.md
-PR: NOT_ALLOCATED
+ACTIVE_ENDPOINT: EP-0002
+ACTIVE_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0002.md
+PR: 364
 BRANCH: draft/core-relay-architecture-review-20260913
-HEAD: 805094cc3d208e5a8342c41c2d9d54243d35ebc3
-REPORT_BASIS_HEAD: 805094cc3d208e5a8342c41c2d9d54243d35ebc3
+HEAD: 84c9871d7388e89aa1163efeb7ea8ccdb1904473
+REPORT_BASIS_HEAD: 84c9871d7388e89aa1163efeb7ea8ccdb1904473
 STATE: IN_PROGRESS
 ACTIVE_CUSTODIAN: Originating Codex architecture-review agent
-CUSTODY_EPOCH: 1
+CUSTODY_EPOCH: 2
 COORDINATION_STATE: SAFE_FOR_ISOLATED_ADVISORY_DOCUMENTS
 DEPENDENCIES: Read-only architecture evidence from PRs 350, 351, 362; no Git stacking dependency.
 MATERIAL_HISTORY_ROOT_BASE: 805094cc3d208e5a8342c41c2d9d54243d35ebc3
-MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0001.md
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0002.md
 ROADMAPS: Owner conversation and supplied architecture/checklist; historical product roadmaps remain unchanged.
 ROADMAP_REVIEW_STATUS: COMPLETE_FOR_ADVISORY_SCOPE
 ROADMAP_ALIGNMENT: PROPOSAL_ONLY
@@ -67,4 +67,4 @@ Prework is a custody record only. Research, source traces and proposed contracts
 
 ## Exact next action
 
-Commit this custody endpoint, then preserve the two supplied documents and owner corrections in the advisory directory, open the draft PR, and accumulate research/design evidence with immutable material receipts.
+PR #364 is open. Original inputs and owner basis are committed at 84c9871d7388e89aa1163efeb7ea8ccdb1904473. Next: research evidence, source inspection at pinned PR heads, and draft the concern audit, architecture, packet and agent-lifecycle contracts. This endpoint is the prework basis for the second material leg.
