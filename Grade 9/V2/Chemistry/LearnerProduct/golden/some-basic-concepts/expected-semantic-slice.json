@@ -1,0 +1,35 @@
+{
+  "golden_id": "CHEM-GOLDEN-SOME-BASIC-CONCEPTS-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "topic": "Some Basic Concepts of Chemistry",
+  "production_claim": false,
+  "fixture_scope": "PROCESS_GOLDEN_USING_SYNTHETIC_COLD_START_AUTHORITY",
+  "purpose": "Freeze the formula/particle/conservation learner-product process before page rendering. This is not an NCERT source claim and does not replace the 68-question authoring-handoff denominator.",
+  "selected_source_question_refs": ["EXT01", "EXT02", "EXT03"],
+  "selected_problem_family_refs": [
+    "PF-FORMULA_CHARGE_PARSE",
+    "PF-MACRO_PARTICLE_SYMBOL_TRANSLATION",
+    "PF-CONSERVATION_LEDGER"
+  ],
+  "required_invariants": {
+    "source_items_selected": 3,
+    "one_primary_core1a_bucket_per_source": true,
+    "h1_h2_h3_pretaught_for_every_source": true,
+    "source_quick_check_for_every_source": true,
+    "source_full_working_for_every_source": true,
+    "near_transfer_per_selected_family": 1,
+    "generated_items_have_independent_chemistry_validation": true,
+    "generated_items_have_near_copy_pass": true,
+    "generated_items_have_quick_check": true,
+    "generated_items_have_full_working": true,
+    "generated_items_claim_official_past_question": false,
+    "semantic_complete_through": "VALIDATE_ANSWER_CLOSURE",
+    "render_stages_pending": true
+  },
+  "notes": [
+    "The selected slice is deliberately small: formula anatomy/charge, particle-symbol translation, and atom conservation.",
+    "The golden freezes process and semantic closure, not visual page design.",
+    "The full NCERT Some Basic Concepts authoring baseline remains under AuthoringHandoff/NCERT-Core-Workbench with retained_questions=68."
+  ]
+}
