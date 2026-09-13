@@ -5,6 +5,8 @@ on:
     paths:
       - 'Grade 9/V2/Mathematics/Core1A/**'
       - 'Grade 9/V2/Mathematics/Core1Authoring/**'
+      - 'Grade 9/V2/Mathematics/StudySynthesis/**'
+      - 'Grade 9/V2/Mathematics/LearnerIntelligence/**'
       - 'Grade 9/V2/Mathematics/InstructionalKnowledge/**'
       - 'Grade 9/V2/Mathematics/ProblemSemantics/**'
       - '.github/workflows/v2-math-core1a-textbook.yml'
@@ -24,10 +26,10 @@ jobs:
       - name: Install Core1A dependencies
         run: python -m pip install 'jsonschema>=4.20,<5' 'reportlab>=4.0' 'pymupdf>=1.24'
 
-      - name: Run Core1A learner-product falsifiers
+      - name: Run Core1A bucket and learner-product falsifiers
         run: python -m unittest discover -s 'Grade 9/V2/Mathematics/Core1A/tests' -p 'test_*.py' -v
 
-      - name: Produce real Core1 output from the PR 323 cold-start chain
+      - name: Produce exact Core1 and learner StudyModel from the PR 323 cold-start chain
         run: |
           mkdir -p /tmp/core1a
           python - <<'PY'
@@ -47,24 +49,34 @@ jobs:
           )
           assert report['release_status'] != 'BLOCKED_UPSTREAM_PCK', report['release_status']
           plan = internals['core1_plan']
+          study_model = internals['study_model']
           assert plan is not None
+          assert study_model is not None
+          assert plan['study_model_ref'] == study_model['study_model_id']
+          assert plan['study_model_digest'] == study_model['study_model_digest']
           Path('/tmp/core1a/core1_study_plan.json').write_text(
               json.dumps(plan, indent=2, ensure_ascii=False) + '\n', encoding='utf-8'
           )
+          Path('/tmp/core1a/learner_study_model.json').write_text(
+              json.dumps(study_model, indent=2, ensure_ascii=False) + '\n', encoding='utf-8'
+          )
           print(json.dumps({
               'core1_study_plan_id': plan['core1_study_plan_id'],
+              'study_model_id': study_model['study_model_id'],
               'lessons': len(plan['lessons']),
+              'capability_plans': len(study_model['capability_plans']),
               'release_class': plan['release_class'],
           }, indent=2))
           PY
 
-      - name: Realize capability-aware Core1A textbook PDF from the exact Core1 output
+      - name: Synthesize buckets and realize bucket-centric Core1A textbook
         run: |
           python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
             --core1-plan /tmp/core1a/core1_study_plan.json \
+            --study-model /tmp/core1a/learner_study_model.json \
             --out-dir /tmp/core1a/product
 
-      - name: Inspect learner artifact
+      - name: Inspect bucket plan and learner artifact
         run: |
           python - <<'PY'
           import json
@@ -72,39 +84,53 @@ jobs:
           import fitz
 
           out = Path('/tmp/core1a/product')
+          bucket_plan = json.loads((out / 'core1a_bucket_plan.json').read_text(encoding='utf-8'))
+          manuscript = json.loads((out / 'core1a_textbook_manuscript.json').read_text(encoding='utf-8'))
           audit = json.loads((out / 'core1a_quality_audit.json').read_text(encoding='utf-8'))
+          study = json.loads(Path('/tmp/core1a/learner_study_model.json').read_text(encoding='utf-8'))
+
+          assert bucket_plan['coverage']['status'] == 'PASS'
           assert audit['quality_audit']['status'] == 'PASS'
+          assert manuscript['schema_version'] == '2.0.0'
+          assert len(bucket_plan['buckets']) >= 1
+
+          source_states = {
+              p['capability_ref']: (p['learner_state_readiness'], p['treatment'])
+              for p in study['capability_plans']
+          }
+          bucket_states = {
+              row['capability_ref']: (row['learner_state_readiness'], row['treatment'])
+              for b in bucket_plan['buckets']
+              for row in b['learner_treatment_by_capability']
+          }
+          assert bucket_states == source_states, 'Core1A changed learner state/treatment instead of consuming M-F'
+
+          raw = json.dumps(bucket_plan)
+          assert 'FOUNDATION' not in raw and 'PARTIAL' not in raw, 'Core1A invented a second learner-state vocabulary'
+
           pdf = fitz.open(out / 'core1a_student_textbook.pdf')
           assert len(pdf) >= 2
           text = '\n'.join(page.get_text() for page in pdf).lower()
           forbidden = [
-              'author a new instance',
-              'source reuse is forbidden',
-              'candidate learner product',
-              'publication engineering',
-              'promotion registry',
-              '{rows}',
-              'capability_ref',
-              'problem_family_ref',
+              'author a new instance', 'source reuse is forbidden', 'candidate learner product',
+              'publication engineering', 'promotion registry', '{rows}', 'capability_ref',
+              'problem_family_ref', 'learner_state_readiness', 'priority_band'
           ]
           for token in forbidden:
               assert token not in text, f'learner PDF leaked internal text: {token}'
           assert 'worked example' in text
-          assert 'guided practice' in text
           assert 'your turn' in text
           assert 'challenge' in text
           assert 'answer check' in text
-          assert 'squaring a binomial without losing the middle term' in text
-          assert 'division as a rate' in text
-          assert 'keeping an equation balanced' in text
           print(json.dumps({
+              'buckets': len(bucket_plan['buckets']),
               'pages': len(pdf),
               'pdf_sha256': audit['artifact']['pdf_sha256'],
               'actual_problem_instances': audit['quality_audit']['actual_problem_instances'],
           }, indent=2))
           PY
 
-      - name: Upload Core1A textbook candidate and exact Core1 input
+      - name: Upload Core1A bucket plan, exact upstream inputs and learner product
         uses: actions/upload-artifact@v4
         with:
           name: math-core1a-textbook
