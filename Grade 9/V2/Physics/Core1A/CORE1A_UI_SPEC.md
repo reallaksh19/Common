@@ -161,3 +161,9 @@ Use these as process references, not fixed page-count templates:
 - `M2D-SBA-05`: very-high load; publication map first, family map, expanded transfer section and multiple readiness gates.
 
 The exact execution order is defined in `AGENT_RUNBOOK.md`; machine state is defined in `registry/physics-core1a-motion-in-a-plane-build-state-v1.json` and per-bucket build manifests.
+
+## 14. Compatibility aliases for existing policy/tests
+
+The publication-policy registry still contains legacy machine labels such as `D3 CHALLENGING` and the older gateway phrase `CHECK → APPLY → CORE (2) TRANSFER`. Treat these as compatibility aliases, not as a reason to simplify the newer SBA flow.
+
+The current learner-facing flow is richer: independent attempt, optional hints, readiness, then transfer. When a learner is stuck, the backward link must still point to the **exact repair target**: the named Core (1A) learning atom or transfer routine that addresses the missing idea.
