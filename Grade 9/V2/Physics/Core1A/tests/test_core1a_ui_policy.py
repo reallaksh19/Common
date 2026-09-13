@@ -21,11 +21,17 @@ def main() -> None:
     assert page["body_font_minimum_pt"] >= 10.0
     assert page["diagram_label_font_minimum_pt"] >= 8.0
     assert page["badge_font_minimum_pt"] >= 7.0
+    assert page["bucket_opener_heading_max_pt"] <= 26.0
+    assert page["page_section_heading_max_pt"] <= 16.0
+    assert page["long_page_heading_max_pt"] <= 14.5
+    assert page["subsection_heading_max_pt"] <= 12.0
+    assert page["page_section_heading_max_pt"] < page["bucket_opener_heading_max_pt"]
     assert page["badge_must_remain_single_line"] is True
     assert page["heading_badge_collision_forbidden"] is True
     assert page["text_outside_page_bounds_forbidden"] is True
 
     assert ui["illustration_is_support_not_replacement"] is True
+    assert ui["professionalisation_may_not_remove_instructional_functions"] is True
     assert ui["concept_gateway"] == ["CHECK", "APPLY", "TRANSFER"]
     assert ui["core2_forward_link_required_when_mapped"] is True
     assert ui["core2_exact_repair_target_required"] is True
@@ -42,6 +48,8 @@ def main() -> None:
         "CORE1A_HEADING_BADGE_COLLISION",
         "CORE1A_TEXT_OUT_OF_PAGE_BOUNDS",
         "CORE1A_RAW_MATH_STRING",
+        "CORE1A_PAGE_HEADING_TOO_LARGE",
+        "CORE1A_PROFESSIONALISATION_CONTENT_LOSS",
         "CORE1A_D2_D3_VISUAL_WITHOUT_TEACHING",
         "CORE1A_DIFFICULTY_SUPPORT_MISSING",
         "CORE1A_NO_CORE2_MASTERY_LINK",
