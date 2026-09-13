@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Instructional-completeness gate for the p97-99 Grade 4 study journey."""
+"""Instructional-completeness and source-anchor gate for p97-99."""
 from __future__ import annotations
 
-import importlib.util
 import sys
 from pathlib import Path
 
@@ -23,6 +22,10 @@ def main() -> None:
 
     if result["source_coverage_count"] != len(ALL_REFS):
         raise SystemExit(f"coverage mismatch: {result}")
+    if result["source_question_count"] != len(ALL_REFS):
+        raise SystemExit(f"SOURCE_QUESTION_COVERAGE_GAP: expected {len(ALL_REFS)} source questions, got {result}")
+    if result["learner_question_count"] != result["answer_contract_count"]:
+        raise SystemExit(f"QUESTION_WITHOUT_ANSWER_CONTRACT: {result}")
     if result["worked_example_count"] < 5:
         raise SystemExit(f"teach-first journey has too few worked examples: {result}")
     if result["independent_block_count"] < 7:
@@ -41,17 +44,25 @@ def main() -> None:
     if missing:
         raise SystemExit(f"study journey missing pedagogical block types: {sorted(missing)}")
 
-    # The procedural module must teach before the 7048/24 independent task.
     division = next(m for m in plan["modules"] if m["module_id"] == "M3-WRITTEN-DIVISION")
     types = [b["block_type"] for b in division["blocks"]]
     if types.index("WORKED_EXAMPLE") > types.index("INDEPENDENT_TRY"):
         raise SystemExit("written division publishes independent work before a worked example")
 
-    # Source defects/ambiguities that drove the original acceptance work remain represented.
-    covered = {ref for module in plan["modules"] for ref in module["source_refs"]}
+    source_questions = {
+        str((q.get("source_identity") or {}).get("source_ref") or "")
+        for module in plan["modules"]
+        for block in module["blocks"]
+        for q in (block.get("questions") or [])
+        if q.get("origin") == "SOURCE"
+    }
+    missing_source_questions = sorted(set(ALL_REFS) - source_questions)
+    if missing_source_questions:
+        raise SystemExit(f"SOURCE_QUESTION_COVERAGE_GAP: {missing_source_questions}")
+
     for qref in ("P97-Q4", "P97-Q6", "P97-Q9"):
-        if qref not in covered:
-            raise SystemExit(f"source caveat lost from study journey: {qref}")
+        if qref not in source_questions:
+            raise SystemExit(f"source caveat lost from learner journey: {qref}")
 
     print({"status": "PASS", **result})
 
