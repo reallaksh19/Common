@@ -1,0 +1,50 @@
+{
+  "policy_id": "PHY-FIRST-ROLE-v1",
+  "schema_version": "1.0.0",
+  "metric_scale": {"min": 0, "max": 4},
+  "evaluation": "FIRST_MATCH_BY_PRIORITY",
+  "rules": [
+    {
+      "rule_id": "ROUTE-BLOCK-LOW-EVIDENCE",
+      "priority": 100,
+      "when": {"SA": "<2", "SS": "<2", "QE": "<2"},
+      "route": "BLOCK",
+      "reason": "Neither semantic authority nor assessment evidence is strong enough to establish scope safely."
+    },
+    {
+      "rule_id": "ROUTE-C1-STRONG-SEMANTIC",
+      "priority": 90,
+      "when": {"SA": ">=3", "SS": ">=3"},
+      "route": "CORE1_FIRST",
+      "reason": "Syllabus/source authority is sufficiently strong to reconstruct semantic scope before assessment analysis."
+    },
+    {
+      "rule_id": "ROUTE-C2-RICH-QUESTIONS",
+      "priority": 80,
+      "when": {"QE": ">=3", "QR": ">=3", "SA": "<3"},
+      "route": "CORE2_FIRST",
+      "reason": "Question evidence is rich and resolved while semantic scope authority is incomplete or coarse."
+    },
+    {
+      "rule_id": "ROUTE-C1-STRONG-SOURCE-SPARSE-QUESTIONS",
+      "priority": 70,
+      "when": {"SS": ">=3", "SA": ">=2", "QE": "<2"},
+      "route": "CORE1_FIRST",
+      "reason": "Strong semantic source authority exists while assessment evidence is sparse or absent."
+    },
+    {
+      "rule_id": "ROUTE-BLOCK-CONFLICT",
+      "priority": 60,
+      "when": {"CI": ">=3", "UA": ">=3"},
+      "route": "BLOCK",
+      "reason": "Evidence conflict and uncertainty are both too high for automatic first-role routing."
+    },
+    {
+      "rule_id": "ROUTE-BLOCK-DEFAULT",
+      "priority": 0,
+      "when": {},
+      "route": "BLOCK",
+      "reason": "No evidence pattern met an approved automatic routing rule; owner/adjudication is required."
+    }
+  ]
+}
