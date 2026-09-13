@@ -16,16 +16,16 @@
   ],
   "question_load": {"count":2,"class":"LOW","minimum_transfer_families":2},
   "phase_gates": [
-    {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["Publication index contains M2D-SBA-22 as the current in-progress active row after completed SBA-21."]},
+    {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["Publication index contains M2D-SBA-22 as the current active row after completed SBA-21."]},
     {"gate":"G1_SOURCE_AND_CORE2_AUDIT","status":"PASS","evidence":["Source boundary is practice-driven; Q05 and Q26 prompt, solution and hint ladders were audited against Revised Core (2) v2."]},
     {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["D3 concept with 20% foundation path; two primary questions form two distinct timed-event transfer families."]},
     {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Eight learning atoms cover event snapshots, launch-state recovery, clock continuity, total-flight reconstruction, event height and family choice."]},
     {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"PASS","evidence":["Every Q05/Q26 H1/H2/H3 reveal maps to an earlier learning atom plus worked and independent practice."]},
     {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PASS","evidence":["R1 timed-coordinate continuation and R2 time-partition reconstruction are separated and independently practised."]},
     {"gate":"G6_PAGE_PLAN","status":"PASS","evidence":["17-page professional-lossless plan preserves staged graphics, two worked examples, two independent-practice/hint/readiness sequences, mixed practice and final family chooser."]},
-    {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"PASS","evidence":["17 pages rendered; worked-example figure bounds were corrected; PDF preflight passes."]},
+    {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"PASS","evidence":["17 pages rendered; worked-example figure bounds and time-partition labels were corrected; PDF preflight passes."]},
     {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"PASS","evidence":["Each released family has independent practice before next-page H1/H2/H3 and a recognise/represent/first-move/finish readiness gate."]},
-    {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"IN_PROGRESS","evidence":["Registry/test/workflow files are being added; CI must pass before build state advances to SBA-23."]}
+    {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"PASS","evidence":["Dedicated SBA22 test, full Core1A workflow and full Physics P-G to P-L chain all passed before advancing build state."]}
   ],
   "learning_atoms": ["M2D-SBA-22A","M2D-SBA-22B","M2D-SBA-22C","M2D-SBA-22D","M2D-SBA-22E","M2D-SBA-22F","M2D-SBA-22G","M2D-SBA-22H"],
   "transfer_routines": ["M2D-SBA-22-R1","M2D-SBA-22-R2"],
@@ -36,9 +36,9 @@
     "hint_delivery_policy":"NEXT_PAGE",
     "readiness_gate_policy":"RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
   },
-  "qa": {"schema_valid":true,"primary_question_coverage_exact":true,"hint_preteach_complete":true,"visual_audit_complete":true,"pdf_preflight_complete":true,"ci_passed":false},
+  "qa": {"schema_valid":true,"primary_question_coverage_exact":true,"hint_preteach_complete":true,"visual_audit_complete":true,"pdf_preflight_complete":true,"ci_passed":true},
   "handoff": {
-    "status":"IN_PROGRESS",
+    "status":"COMPLETE",
     "expected_pdf_name":"M2D-SBA-22-professional-textbook-lossless-v1.pdf",
     "expected_montage_name":"M2D-SBA-22-professional-textbook-lossless-v1-montage.jpg",
     "next_active_bucket":"M2D-SBA-23",
