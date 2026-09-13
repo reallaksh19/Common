@@ -117,6 +117,7 @@ def validate_study_journey(plan: Mapping[str, Any]) -> Dict[str, Any]:
     block_ids: set[str] = set()
     question_ids: set[str] = set()
     answer_refs: set[str] = set()
+    source_question_refs: set[str] = set()
     covered: set[str] = set()
     worked_example_count = 0
     independent_count = 0
@@ -171,6 +172,8 @@ def validate_study_journey(plan: Mapping[str, Any]) -> Dict[str, Any]:
                 aref = str((question.get("answer_contract") or {}).get("answer_ref") or "")
                 _require(aref not in answer_refs, "DUPLICATE_ANSWER_REF", aref)
                 answer_refs.add(aref)
+                if str(question.get("origin") or "") == "SOURCE":
+                    source_question_refs.add(str((question.get("source_identity") or {}).get("source_ref") or ""))
                 learner_question_count += 1
 
         _require(any(str(b.get("block_type")) in TEACHING_BLOCKS for b in blocks), "TEACHING_BLOCK_REQUIRED", module_id)
@@ -179,6 +182,7 @@ def validate_study_journey(plan: Mapping[str, Any]) -> Dict[str, Any]:
     declared_covered = {str(x) for x in ((plan.get("source_coverage") or {}).get("covered_source_refs") or [])}
     _require(covered == declared_covered, "DECLARED_COVERAGE_MISMATCH", f"computed={sorted(covered)} declared={sorted(declared_covered)}")
     _require(required.issubset(covered), "SOURCE_COVERAGE_GAP", str(sorted(required - covered)))
+    _require(required.issubset(source_question_refs), "SOURCE_QUESTION_COVERAGE_GAP", str(sorted(required - source_question_refs)))
     _require(worked_example_count >= 1, "WORKED_EXAMPLE_REQUIRED", "journey has no worked example")
     _require(independent_count >= 1, "INDEPENDENT_EVIDENCE_REQUIRED", "journey has no independent task")
 
@@ -188,6 +192,7 @@ def validate_study_journey(plan: Mapping[str, Any]) -> Dict[str, Any]:
         "block_count": len(block_ids),
         "learner_question_count": learner_question_count,
         "answer_contract_count": len(answer_refs),
+        "source_question_count": len(source_question_refs),
         "worked_example_count": worked_example_count,
         "independent_block_count": independent_count,
         "source_coverage_count": len(covered),
