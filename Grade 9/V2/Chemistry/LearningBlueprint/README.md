@@ -73,6 +73,40 @@ Core1A reasoning is materialized before prose authoring:
 
 Purpose changes the terminal learning contract but may never bypass prerequisite closure. `FIRST_STUDY`, `REVISION`, and `COMPETITIVE_EXAM` therefore produce different assimilation/fading behaviour while preserving the same semantic truth.
 
+## v3 — Core2A transfer eligibility compiler
+
+`v3` does **not** generate a challenge merely because a question family is available. It first computes an explicit four-way eligibility intersection:
+
+```text
+K = validated semantic scope from A-*
+D = explicit Core2 transfer envelope
+T = evidence-backed taught state from T-*
+P = purpose profile
+
+eligible Core2A candidate = K ∩ D ∩ T ∩ P
+                              ↓
+                            X-*
+```
+
+Every candidate receives four machine-readable booleans:
+
+- `validated_semantic_scope`;
+- `transfer_envelope`;
+- `taught_state`;
+- `purpose`.
+
+Only a candidate for which all four are true is emitted in `eligible_item_ids`. A blocked candidate remains in the decision ledger with reason codes but cannot enter the downstream release list.
+
+The transfer envelope may **narrow** validated semantic scope but may never expand it. A purpose profile may narrow novelty, support mode, or capability-combination width, but may not re-authorize untaught or semantically unsupported content. Any declared `new_semantic_claims` blocks transfer.
+
+Current purpose policy is deliberately asymmetric:
+
+- `FIRST_STUDY`: at most one capability per candidate; `SAME_STRUCTURE` or `NEAR_TRANSFER`; hinted transfer may begin after evidence of `taught + represented + worked`, while independent transfer requires the full `faded + independent + checked` closure;
+- `REVISION`: independent transfer only; at most two capabilities; up to `INTERLEAVED_TRANSFER`; full taught-state closure required;
+- `COMPETITIVE_EXAM`: independent transfer only; at most three already-authorized capabilities; up to `EXTENDED_WITHIN_SCOPE`; full taught-state closure required.
+
+`EXTENDED_WITHIN_SCOPE` means harder recombination or less familiar surface form **without adding new chemistry semantics**. It is not permission to import higher-grade content.
+
 ## Entry points
 
 ```bash
@@ -84,10 +118,17 @@ python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/run_blueprint_v2.py' \
   --purpose purpose.json \
   --design assimilation-design.json \
   --out-dir build/v2
+
+python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/run_blueprint_v3.py' \
+  --assimilation build/v2/assimilation.json \
+  --taught build/v2/taught_state.json \
+  --envelope transfer-envelope.json \
+  --request transfer-request.json \
+  --out-dir build/v3
 ```
 
-Add `--realization realization-evidence.json` to v2 only after learner-facing realization exists and there is evidence for the taught-state flags.
+Add `--realization realization-evidence.json` to v2 only after learner-facing realization exists and there is evidence for the taught-state flags. v3 intentionally requires a `T-*` receipt; it cannot infer taught state from the assimilation plan.
 
 ## Not yet claimed
 
-v2 does not yet generate the final Core1/Core2/Core1A/Core2A PDFs from one blueprint. The next milestone is Core2A transfer eligibility (`K ∩ D ∩ T ∩ purpose`) followed by wiring these Chemistry Blueprint packets into the existing Chemistry ProductionKit/render/final-audit stack.
+v3 is an **eligibility compiler**, not yet the final one-command Chemistry product generator. The next milestone is to bind `X-*` release custody into the existing Chemistry Core2A challenge builder and ProductionKit, then drive Core1/Core2/Core1A/Core2A render, visual preflight, answer closure and final audit from the same blueprint authority. Human subject, pedagogy, assessment and visual-usability gates remain separate from machine completion.

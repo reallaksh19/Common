@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-transfer-envelope.schema.json",
+  "title": "Chemistry Blueprint v3 Transfer Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["envelope_id", "assimilation_packet_ref", "assimilation_digest", "capabilities"],
+  "properties": {
+    "envelope_id": {"type": "string", "minLength": 1},
+    "assimilation_packet_ref": {"type": "string", "minLength": 1},
+    "assimilation_digest": {"type": "string", "minLength": 1},
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_ref", "allowed_question_families", "max_novelty_level", "allowed_combination_with"],
+        "properties": {
+          "capability_ref": {"type": "string", "minLength": 1},
+          "allowed_question_families": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "max_novelty_level": {"enum": ["SAME_STRUCTURE", "NEAR_TRANSFER", "INTERLEAVED_TRANSFER", "EXTENDED_WITHIN_SCOPE"]},
+          "allowed_combination_with": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-transfer-request.schema.json",
+  "title": "Chemistry Blueprint v3 Transfer Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["transfer_request_id", "candidates"],
+  "properties": {
+    "transfer_request_id": {"type": "string", "minLength": 1},
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item_id", "primary_capability_ref", "required_capability_refs", "question_family", "novelty_level", "support_mode", "new_semantic_claims"],
+        "properties": {
+          "item_id": {"type": "string", "minLength": 1},
+          "primary_capability_ref": {"type": "string", "minLength": 1},
+          "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "question_family": {"type": "string", "minLength": 1},
+          "novelty_level": {"enum": ["SAME_STRUCTURE", "NEAR_TRANSFER", "INTERLEAVED_TRANSFER", "EXTENDED_WITHIN_SCOPE"]},
+          "support_mode": {"enum": ["HINTED", "INDEPENDENT"]},
+          "new_semantic_claims": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

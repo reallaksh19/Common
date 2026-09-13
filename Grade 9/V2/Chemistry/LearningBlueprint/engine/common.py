@@ -37,3 +37,7 @@ def load_routing_policy() -> dict[str, Any]:
 
 def load_assimilation_policy() -> dict[str, Any]:
     return load_json(ROOT / "policies" / "assimilation-policy.json")
+
+
+def load_transfer_policy() -> dict[str, Any]:
+    return load_json(ROOT / "policies" / "transfer-eligibility-policy.json")

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-transfer-eligibility.schema.json",
+  "title": "Chemistry Blueprint v3 Transfer Eligibility Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packet_id", "packet_type", "assimilation_packet_ref", "assimilation_digest", "taught_state_ref", "taught_state_digest", "purpose_mode", "envelope_ref", "envelope_digest", "transfer_request_id", "decisions", "eligible_item_ids", "blocked_item_ids", "release_state", "digest"],
+  "properties": {
+    "packet_id": {"type": "string", "pattern": "^X-"},
+    "packet_type": {"const": "X"},
+    "assimilation_packet_ref": {"type": "string"},
+    "assimilation_digest": {"type": "string"},
+    "taught_state_ref": {"type": "string"},
+    "taught_state_digest": {"type": "string"},
+    "purpose_mode": {"enum": ["FIRST_STUDY", "REVISION", "COMPETITIVE_EXAM"]},
+    "envelope_ref": {"type": "string"},
+    "envelope_digest": {"type": "string"},
+    "transfer_request_id": {"type": "string"},
+    "decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item_id", "status", "required_capability_refs", "question_family", "novelty_level", "support_mode", "intersection", "reason_codes", "reason_details"],
+        "properties": {
+          "item_id": {"type": "string"},
+          "status": {"enum": ["ELIGIBLE", "BLOCKED"]},
+          "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "question_family": {"type": "string"},
+          "novelty_level": {"type": "string"},
+          "support_mode": {"type": "string"},
+          "intersection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["validated_semantic_scope", "transfer_envelope", "taught_state", "purpose"],
+            "properties": {
+              "validated_semantic_scope": {"type": "boolean"},
+              "transfer_envelope": {"type": "boolean"},
+              "taught_state": {"type": "boolean"},
+              "purpose": {"type": "boolean"}
+            }
+          },
+          "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+          "reason_details": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "eligible_item_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "blocked_item_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "release_state": {"enum": ["TRANSFER_ITEMS_RELEASED", "NO_TRANSFER_ITEMS_RELEASED"]},
+    "digest": {"type": "string", "minLength": 1}
+  }
+}

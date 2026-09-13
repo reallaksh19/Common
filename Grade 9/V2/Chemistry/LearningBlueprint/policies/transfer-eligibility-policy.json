@@ -1,0 +1,45 @@
+{
+  "policy_id": "CHEM-G9-V2-TRANSFER-ELIGIBILITY-POLICY-v3",
+  "schema_version": "3.0.0",
+  "novelty_order": [
+    "SAME_STRUCTURE",
+    "NEAR_TRANSFER",
+    "INTERLEAVED_TRANSFER",
+    "EXTENDED_WITHIN_SCOPE"
+  ],
+  "base_taught_flags": ["taught", "represented", "worked"],
+  "independent_taught_flags": ["taught", "represented", "worked", "faded", "independent", "checked"],
+  "purpose_profiles": {
+    "FIRST_STUDY": {
+      "max_novelty_level": "NEAR_TRANSFER",
+      "max_capability_count": 1,
+      "allowed_support_modes": ["HINTED", "INDEPENDENT"],
+      "required_flags_by_support_mode": {
+        "HINTED": ["taught", "represented", "worked"],
+        "INDEPENDENT": ["taught", "represented", "worked", "faded", "independent", "checked"]
+      }
+    },
+    "REVISION": {
+      "max_novelty_level": "INTERLEAVED_TRANSFER",
+      "max_capability_count": 2,
+      "allowed_support_modes": ["INDEPENDENT"],
+      "required_flags_by_support_mode": {
+        "INDEPENDENT": ["taught", "represented", "worked", "faded", "independent", "checked"]
+      }
+    },
+    "COMPETITIVE_EXAM": {
+      "max_novelty_level": "EXTENDED_WITHIN_SCOPE",
+      "max_capability_count": 3,
+      "allowed_support_modes": ["INDEPENDENT"],
+      "required_flags_by_support_mode": {
+        "INDEPENDENT": ["taught", "represented", "worked", "faded", "independent", "checked"]
+      }
+    }
+  },
+  "hard_rules": [
+    "TRANSFER_ENVELOPE_MAY_NARROW_BUT_MUST_NOT_EXPAND_VALIDATED_SEMANTIC_SCOPE",
+    "NEW_SEMANTICS_ARE_FORBIDDEN_IN_TRANSFER_CANDIDATES",
+    "PURPOSE_MAY_NARROW_TRANSFER_BUT_MUST_NOT_EXPAND_SEMANTIC_SCOPE_OR_BYPASS_TAUGHT_STATE",
+    "ONLY_ELIGIBLE_ITEM_IDS_MAY_BE_RELEASED_DOWNSTREAM"
+  ]
+}
