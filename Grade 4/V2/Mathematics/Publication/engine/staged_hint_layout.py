@@ -3,8 +3,8 @@
 This component fixes a class of learner-page failures rather than one page:
 
 * H1/H2/H3 cards are measured before drawing;
-* a three-column row is used only when every card has enough width;
-* otherwise the cards stack vertically;
+* a three-column row is used only for genuinely compact support;
+* long or dense support stacks vertically even when three columns technically fit;
 * all text stays inside its own measured card;
 * thinking-path chips wrap as a 4-up row or 2x2 grid instead of using loose
   arrow text between fixed boxes;
@@ -16,7 +16,7 @@ when the measured height does not fit the remaining page space.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 from Grade4.V2.Mathematics.Publication.engine.layout_measure import paragraph_height
 from Grade4.V2.Mathematics.Representation.engine.base import BoundingBox, PrimaryPalette, VectorRenderBackend
@@ -61,6 +61,8 @@ class StagedHintComponent:
     ACTION_FONT = 10.0
     ACTION_LINE = 13.0
     MIN_COLUMN_W = 148.0
+    MAX_ROW_CARD_H = 205.0
+    MAX_ROW_COPY_CHARS = 82
     PATH_GAP = 8.0
     PATH_MIN_W = 104.0
     PATH_PAD = 8.0
@@ -88,6 +90,20 @@ class StagedHintComponent:
         return max(34.0, cls.PATH_PAD * 2 + paragraph_height(text, inner, font_size=cls.PATH_FONT, line_height=cls.PATH_LINE))
 
     @classmethod
+    def _row_is_readable(cls, stages: Sequence[Mapping[str, Any]], width: float) -> bool:
+        card_w = (width - 2 * cls.GAP) / 3.0
+        if card_w < cls.MIN_COLUMN_W:
+            return False
+        heights = [cls._stage_height(stage, card_w) for stage in stages]
+        if max(heights) > cls.MAX_ROW_CARD_H:
+            return False
+        for stage in stages:
+            copy_len = len(str(stage.get("verbal_cue") or "")) + len(str(stage.get("learner_action") or ""))
+            if copy_len > cls.MAX_ROW_COPY_CHARS:
+                return False
+        return True
+
+    @classmethod
     def plan(
         cls,
         stages: Sequence[Mapping[str, Any]],
@@ -100,7 +116,7 @@ class StagedHintComponent:
         _require(len(stages) == 3, "STAGED_HINT_EXACTLY_THREE_REQUIRED", str(len(stages)))
         _require(width > 0, "STAGED_HINT_WIDTH_INVALID", str(width))
 
-        can_row = (width - 2 * cls.GAP) / 3.0 >= cls.MIN_COLUMN_W
+        can_row = cls._row_is_readable(stages, width)
         stage_boxes: list[StagePlacement] = []
 
         if can_row:
@@ -192,7 +208,7 @@ class StagedHintComponent:
         top_y: float,
         width: float,
         thinking_path: Sequence[Mapping[str, Any]] = (),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         plan = cls.plan(stages, x=x, top_y=top_y, width=width, thinking_path=thinking_path)
 
         for i, (stage, placement) in enumerate(zip(stages, plan.stages)):
