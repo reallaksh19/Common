@@ -2,6 +2,47 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.local/g9-v2/learning-blueprint/routing-decision.schema.json",
   "title": "Adaptive routing decision packet",
-  "allOf": [{"$ref": "packet-envelope.schema.json"}],
-  "type": "object"
+  "allOf": [
+    {"$ref": "packet-envelope.schema.json"},
+    {
+      "type": "object",
+      "required": ["system_decision", "final_decision", "reason_codes", "metrics", "evidence_notes", "owner_override_ref", "execution_blocked"],
+      "properties": {
+        "packet_type": {"const": "R"},
+        "system_decision": {"enum": ["CORE1_FIRST", "CORE2_FIRST", "BLOCK_INSUFFICIENT_EVIDENCE", "BLOCK_CONFLICT"]},
+        "final_decision": {"enum": ["CORE1_FIRST", "CORE2_FIRST", "BLOCK_INSUFFICIENT_EVIDENCE", "BLOCK_CONFLICT"]},
+        "reason_codes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["SA", "SS", "QE", "QR", "UA", "CI"],
+          "properties": {
+            "SA": {"type": "integer", "minimum": 0, "maximum": 4},
+            "SS": {"type": "integer", "minimum": 0, "maximum": 4},
+            "QE": {"type": "integer", "minimum": 0, "maximum": 4},
+            "QR": {"type": "integer", "minimum": 0, "maximum": 4},
+            "UA": {"type": "integer", "minimum": 0, "maximum": 4},
+            "CI": {"type": "integer", "minimum": 0, "maximum": 4}
+          }
+        },
+        "evidence_notes": {"type": "array", "items": {"type": "string"}},
+        "owner_override_ref": {"type": ["string", "null"]},
+        "execution_blocked": {"type": "boolean"},
+        "override_audit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["override_id", "mode", "system_finding", "owner_value", "applied", "final_action", "rationale"],
+          "properties": {
+            "override_id": {"type": "string", "pattern": "^OVR-"},
+            "mode": {"enum": ["HARD", "SOFT"]},
+            "system_finding": {"type": "string"},
+            "owner_value": {"type": "string"},
+            "applied": {"type": "boolean"},
+            "final_action": {"type": "string"},
+            "rationale": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    }
+  ]
 }
