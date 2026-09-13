@@ -8,7 +8,7 @@ on:
       - 'Grade 9/V2/Mathematics/Core2A/**'
       - 'Grade 9/V2/Mathematics/LearnerProduct/**'
       - 'Grade 9/V2/Mathematics/ProductionKits/**'
-      - 'Grade 9/V2/Mathematics/LearningBlueprint/**'
+      - 'Grade 9/V2/Mathematics/MathBlueprint/**'
       - 'Grade 9/V2/Mathematics/StudySynthesis/**'
       - 'Grade 9/V2/Mathematics/LearnerIntelligence/**'
       - 'Grade 9/V2/Mathematics/InstructionalKnowledge/**'
@@ -39,8 +39,8 @@ jobs:
       - name: Run four-stage production-kit tests
         run: python -m unittest discover -s 'Grade 9/V2/Mathematics/ProductionKits/tests' -p 'test_*.py' -v
 
-      - name: Run adaptive learning-blueprint tests
-        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/LearningBlueprint/tests' -p 'test_*.py' -v
+      - name: Run adaptive MathBlueprint tests
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/MathBlueprint/tests' -p 'test_*.py' -v
 
       - name: Produce exact Core1 and learner StudyModel from the PR 323 cold-start chain
         run: |
