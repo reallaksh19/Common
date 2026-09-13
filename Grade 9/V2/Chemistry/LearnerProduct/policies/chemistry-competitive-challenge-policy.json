@@ -1,0 +1,47 @@
+{
+  "policy_id": "CHEM-COMPETITIVE-CHALLENGE-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Control fresh challenge generation so transfer demand rises without adding unapproved chemistry, relying on arithmetic ugliness, or faking official provenance.",
+  "allowed_novelty_mechanisms": [
+    "NEAR_TRANSFER",
+    "REVERSED_TARGET",
+    "HIDDEN_INFORMATION",
+    "REPRESENTATION_SWITCH",
+    "ERROR_DIAGNOSIS",
+    "COMPARE_RANK",
+    "CONDITION_EXCEPTION",
+    "MULTI_STEP_BRIDGE",
+    "CONSERVATION_RECONSTRUCTION",
+    "MIXED_SYNTHESIS"
+  ],
+  "forbidden_difficulty_inflation": [
+    "LARGER_NUMBERS_ONLY",
+    "UGLIER_DECIMALS_ONLY",
+    "UGLIER_EXPONENTS_ONLY",
+    "EXTRA_ARITHMETIC_ONLY",
+    "UNTAUGHT_CHEMISTRY",
+    "UNAPPROVED_FORMULA_OR_LAW"
+  ],
+  "competitive_source_classes": [
+    "OFFICIAL_VERIFIED",
+    "ADAPTED_VERIFIED_ARCHETYPE",
+    "EDITORIAL_COMPETITIVE_STYLE"
+  ],
+  "official_source_rule": "Official exam/year/question attribution is allowed only when an exact official source is verified.",
+  "generated_question_label_rule": "Fresh items influenced by competition archives must be described as generated/original competitive-style practice, never as official past questions.",
+  "curriculum_boundary": "Competitive material can change problem design and reasoning demand, not Chemistry curricular authority.",
+  "selection_basis": "PROBLEM_FAMILY",
+  "required_question_evidence": [
+    "TAUGHT_CAPABILITY_REFS",
+    "CORE1A_BUCKET_REFS",
+    "PROBLEM_FAMILY_REF",
+    "CORE2_ANCHOR_REFS_WHEN_USED",
+    "ARCHETYPE_REFS",
+    "NOVELTY_MECHANISMS",
+    "INDEPENDENT_CHEMISTRY_CHECK",
+    "NEAR_COPY_CHECK",
+    "PROVENANCE",
+    "ANSWER_PATH"
+  ]
+}
