@@ -1,0 +1,210 @@
+{
+  "schema": "Grade4EnglishAdjectiveBoundaryRegressionV1_DRAFT",
+  "status": "DRAFT",
+  "models": {
+    "OWNER_CONFIRMED_NINE_POSITION_DRAFT": {
+      "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE",
+      "verification_status": "OWNER_CONFIRMED_PENDING_PRIMARY_SOURCE",
+      "immutable_for_episode": true,
+      "categories": [
+        "NUMBER",
+        "OPINION",
+        "SIZE",
+        "AGE",
+        "SHAPE",
+        "COLOUR",
+        "ORIGIN",
+        "MATERIAL",
+        "PURPOSE"
+      ],
+      "order": [
+        "NUMBER",
+        "OPINION",
+        "SIZE",
+        "AGE",
+        "SHAPE",
+        "COLOUR",
+        "ORIGIN",
+        "MATERIAL",
+        "PURPOSE"
+      ]
+    },
+    "DERIVED_SEVEN_FAMILY_DRAFT": {
+      "authority": "DERIVED_STUDY_MATERIAL_ASSERTION",
+      "verification_status": "DERIVED_ONLY",
+      "immutable_for_episode": true,
+      "categories": [
+        "OPINION",
+        "SIZE",
+        "AGE",
+        "SHAPE",
+        "COLOUR",
+        "ORIGIN",
+        "MATERIAL"
+      ],
+      "order": [
+        "OPINION",
+        "SIZE",
+        "AGE",
+        "SHAPE",
+        "COLOUR",
+        "ORIGIN",
+        "MATERIAL"
+      ]
+    }
+  },
+  "required_case_ids": [
+    "large-heavy-brown-leather-suitcase",
+    "colourful-handmade-afghan-woollen-blanket",
+    "cheerful-new-bright-classroom-posters",
+    "broken-old-metal-cooking-pot"
+  ],
+  "cases": [
+    {
+      "id": "large-heavy-brown-leather-suitcase",
+      "model_id": "OWNER_CONFIRMED_NINE_POSITION_DRAFT",
+      "noun": "suitcase",
+      "expected_phrase": "large heavy brown leather suitcase",
+      "items": [
+        {
+          "word": "large",
+          "school_analysis": {"category": "SIZE", "status": "CLASSIFIED", "child_message": "Large tells how big."},
+          "phrase_placement": {"position_index": 0, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "heavy",
+          "school_analysis": {"category": null, "status": "SOURCE_MODEL_BOUNDARY", "child_message": "Heavy is a describing word, but it does not have a box in our book."},
+          "phrase_placement": {"position_index": 1, "authority": "OUTSIDE_CANONICAL_KNOWLEDGE"},
+          "forbidden_categories": ["SIZE", "QUALITY", "PHYSICAL_QUALITY"]
+        },
+        {
+          "word": "brown",
+          "school_analysis": {"category": "COLOUR", "status": "CLASSIFIED", "child_message": "Brown tells the colour."},
+          "phrase_placement": {"position_index": 2, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "leather",
+          "school_analysis": {"category": "MATERIAL", "status": "CLASSIFIED", "child_message": "Leather tells what it is made of."},
+          "phrase_placement": {"position_index": 3, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        }
+      ]
+    },
+    {
+      "id": "colourful-handmade-afghan-woollen-blanket",
+      "model_id": "OWNER_CONFIRMED_NINE_POSITION_DRAFT",
+      "noun": "blanket",
+      "expected_phrase": "colourful handmade Afghan woollen blanket",
+      "items": [
+        {
+          "word": "colourful",
+          "school_analysis": {"category": "COLOUR", "status": "CLASSIFIED", "child_message": "Colourful tells about colour."},
+          "phrase_placement": {"position_index": 0, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "handmade",
+          "school_analysis": {"category": null, "status": "SOURCE_MODEL_BOUNDARY", "child_message": "Handmade is a describing word, but it does not have a box in our book."},
+          "phrase_placement": {"position_index": 1, "authority": "OUTSIDE_CANONICAL_KNOWLEDGE"},
+          "forbidden_categories": ["QUALITY", "TYPE", "CONDITION"]
+        },
+        {
+          "word": "Afghan",
+          "school_analysis": {"category": "ORIGIN", "status": "CLASSIFIED", "child_message": "Afghan tells where it is from."},
+          "phrase_placement": {"position_index": 2, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "woollen",
+          "school_analysis": {"category": "MATERIAL", "status": "CLASSIFIED", "child_message": "Woollen tells what it is made of."},
+          "phrase_placement": {"position_index": 3, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        }
+      ]
+    },
+    {
+      "id": "cheerful-new-bright-classroom-posters",
+      "model_id": "OWNER_CONFIRMED_NINE_POSITION_DRAFT",
+      "noun": "posters",
+      "expected_phrase": "cheerful new bright classroom posters",
+      "items": [
+        {
+          "word": "cheerful",
+          "school_analysis": {"category": "OPINION", "status": "CLASSIFIED", "child_message": "Cheerful tells what we think or feel about them."},
+          "phrase_placement": {"position_index": 0, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "new",
+          "school_analysis": {"category": "AGE", "status": "CLASSIFIED", "child_message": "New tells the age."},
+          "phrase_placement": {"position_index": 1, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "bright",
+          "school_analysis": {"category": "COLOUR", "status": "CLASSIFIED", "child_message": "Bright tells about colour."},
+          "phrase_placement": {"position_index": 2, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "classroom",
+          "school_analysis": {"category": "PURPOSE", "status": "CLASSIFIED", "child_message": "Classroom tells what the posters are for."},
+          "phrase_placement": {"position_index": 3, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"},
+          "requires_model_category": "PURPOSE"
+        }
+      ]
+    },
+    {
+      "id": "broken-old-metal-cooking-pot",
+      "model_id": "OWNER_CONFIRMED_NINE_POSITION_DRAFT",
+      "noun": "pot",
+      "expected_phrase": "broken old metal cooking pot",
+      "items": [
+        {
+          "word": "broken",
+          "school_analysis": {"category": null, "status": "SOURCE_MODEL_BOUNDARY", "child_message": "Broken is a describing word, but it does not have a box in our book."},
+          "phrase_placement": {"position_index": 0, "authority": "OUTSIDE_CANONICAL_KNOWLEDGE"},
+          "forbidden_categories": ["CONDITION", "QUALITY", "TYPE"]
+        },
+        {
+          "word": "old",
+          "school_analysis": {"category": "AGE", "status": "CLASSIFIED", "child_message": "Old tells the age."},
+          "phrase_placement": {"position_index": 1, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "metal",
+          "school_analysis": {"category": "MATERIAL", "status": "CLASSIFIED", "child_message": "Metal tells what it is made of."},
+          "phrase_placement": {"position_index": 2, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"}
+        },
+        {
+          "word": "cooking",
+          "school_analysis": {"category": "PURPOSE", "status": "CLASSIFIED", "child_message": "Cooking tells what the pot is for."},
+          "phrase_placement": {"position_index": 3, "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE"},
+          "requires_model_category": "PURPOSE"
+        }
+      ]
+    },
+    {
+      "id": "classroom-under-seven-family-control",
+      "model_id": "DERIVED_SEVEN_FAMILY_DRAFT",
+      "noun": "posters",
+      "expected_phrase": "cheerful new bright classroom posters",
+      "items": [
+        {
+          "word": "cheerful",
+          "school_analysis": {"category": "OPINION", "status": "CLASSIFIED", "child_message": "Cheerful tells what we think or feel about them."},
+          "phrase_placement": {"position_index": 0, "authority": "DERIVED_STUDY_MATERIAL_ASSERTION"}
+        },
+        {
+          "word": "new",
+          "school_analysis": {"category": "AGE", "status": "CLASSIFIED", "child_message": "New tells the age."},
+          "phrase_placement": {"position_index": 1, "authority": "DERIVED_STUDY_MATERIAL_ASSERTION"}
+        },
+        {
+          "word": "bright",
+          "school_analysis": {"category": "COLOUR", "status": "CLASSIFIED", "child_message": "Bright tells about colour."},
+          "phrase_placement": {"position_index": 2, "authority": "DERIVED_STUDY_MATERIAL_ASSERTION"}
+        },
+        {
+          "word": "classroom",
+          "school_analysis": {"category": null, "status": "SOURCE_MODEL_BOUNDARY", "child_message": "Classroom is a describing word, but this seven-box model does not give it a box."},
+          "phrase_placement": {"position_index": 3, "authority": "OUTSIDE_CANONICAL_KNOWLEDGE"},
+          "forbidden_categories": ["PURPOSE"]
+        }
+      ]
+    }
+  ]
+}

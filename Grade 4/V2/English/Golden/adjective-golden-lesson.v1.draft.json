@@ -1,0 +1,146 @@
+{
+  "schema": "Grade4EnglishGoldenLessonV1_DRAFT",
+  "status": "DRAFT",
+  "audience": "CHILD_SURFACE",
+  "output_profile": {
+    "edition": "STUDENT",
+    "medium": "PRINT_PDF",
+    "page_size": "A4",
+    "orientation": "PORTRAIT",
+    "margin_top_mm": 15,
+    "margin_bottom_mm": 15,
+    "margin_inner_mm": 16,
+    "margin_outer_mm": 14,
+    "body_pt": 11,
+    "question_pt": 12,
+    "title_pt": 22
+  },
+  "child_load": {
+    "max_new_rules": 1,
+    "max_explanation_chunks": 3,
+    "max_instruction_words": 18,
+    "max_dense_rule_blocks": 1,
+    "require_learner_action": true,
+    "require_instructional_visual_on_teaching_pages": true
+  },
+  "school_model": {
+    "model_id": "OWNER_CONFIRMED_NINE_POSITION_DRAFT",
+    "authority": "OWNER_OR_TEACHER_SUPPLIED_RULE",
+    "verification_status": "OWNER_CONFIRMED_PENDING_PRIMARY_SOURCE",
+    "immutable_for_episode": true,
+    "categories": ["NUMBER", "OPINION", "SIZE", "AGE", "SHAPE", "COLOUR", "ORIGIN", "MATERIAL", "PURPOSE"],
+    "order": ["NUMBER", "OPINION", "SIZE", "AGE", "SHAPE", "COLOUR", "ORIGIN", "MATERIAL", "PURPOSE"]
+  },
+  "category_cards": [
+    {"id": "NUMBER", "label": "Number", "question": "How many?"},
+    {"id": "OPINION", "label": "Opinion", "question": "What do I think or feel?"},
+    {"id": "SIZE", "label": "Size", "question": "How big or small?"},
+    {"id": "AGE", "label": "Age", "question": "How old or new?"},
+    {"id": "SHAPE", "label": "Shape", "question": "What shape?"},
+    {"id": "COLOUR", "label": "Colour", "question": "What colour?"},
+    {"id": "ORIGIN", "label": "Origin", "question": "Where from?"},
+    {"id": "MATERIAL", "label": "Material", "question": "Made of what?"},
+    {"id": "PURPOSE", "label": "Purpose", "question": "What is it for?"}
+  ],
+  "pages": [
+    {
+      "page_id": "ADJ-GOLD-P01",
+      "page_role": "NOTICE",
+      "dominant_move": "NOTICE",
+      "title": "Describing words tell us more",
+      "goal": "Find the noun and the words that describe it.",
+      "new_rules": 1,
+      "explanation_chunks": ["A noun names a person, place, animal, or thing.", "An adjective is a describing word that tells us more about a noun."],
+      "instructional_visual": {"type": "NOUN_PHRASE_BUILDER", "phrase": "shiny blue kite", "noun": "kite", "adjectives": ["shiny", "blue"]},
+      "action": {"type": "CIRCLE_AND_UNDERLINE", "instruction": "Circle the describing words. Underline the noun.", "prompt": "tiny red boat", "response_space": "SMALL"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P02",
+      "page_role": "UNDERSTAND",
+      "dominant_move": "CLASSIFY",
+      "title": "Put describing words into book boxes",
+      "goal": "Ask one question to choose the right box.",
+      "new_rules": 1,
+      "explanation_chunks": ["Use the question on each card. Do not guess from the word alone."],
+      "instructional_visual": {"type": "CATEGORY_CARDS"},
+      "action": {"type": "CLASSIFY", "instruction": "Write the box name for each word.", "items": ["tiny", "Indian", "wooden"], "response_space": "MEDIUM"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P03",
+      "page_role": "UNDERSTAND",
+      "dominant_move": "ORDER",
+      "title": "Use the same book order every time",
+      "goal": "Classify first. Then read the boxes from left to right.",
+      "new_rules": 1,
+      "explanation_chunks": ["Only the boxes used in your phrase need to appear."],
+      "instructional_visual": {"type": "ORDER_TRAIN"},
+      "action": {"type": "ORDER", "instruction": "Which comes first: old or round?", "prompt": "old / round", "response_space": "SMALL"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P04",
+      "page_role": "WATCH_ONE",
+      "dominant_move": "MODEL",
+      "title": "Watch one: classify before you order",
+      "goal": "See how the boxes decide the order.",
+      "new_rules": 0,
+      "explanation_chunks": ["fascinating = Opinion", "new = Age; round = Shape; plastic = Material"],
+      "instructional_visual": {"type": "CLASSIFY_AND_ORDER", "scrambled": ["plastic", "round", "new", "fascinating"], "noun": "toy", "ordered": ["fascinating", "new", "round", "plastic"]},
+      "action": {"type": "CHECK", "instruction": "Point to the word that tells shape.", "answer_kind": "POINT", "response_space": "NONE"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P05",
+      "page_role": "BOUNDARY",
+      "dominant_move": "MODEL",
+      "title": "What if a word has no book box?",
+      "goal": "Keep the word. Do not invent a new box.",
+      "new_rules": 1,
+      "explanation_chunks": ["Heavy is still a describing word.", "Our book does not give heavy a box.", "For this phrase, keep heavy after large."],
+      "instructional_visual": {"type": "BOUNDARY_PHRASE", "noun": "suitcase", "items": [{"word": "large", "category": "SIZE"}, {"word": "heavy", "category": null, "boundary": true, "placement_authority": "OUTSIDE_CANONICAL_KNOWLEDGE"}, {"word": "brown", "category": "COLOUR"}, {"word": "leather", "category": "MATERIAL"}], "ordered": ["large", "heavy", "brown", "leather"]},
+      "action": {"type": "EXPLAIN", "instruction": "Why does heavy have a star instead of a box?", "response_space": "MEDIUM"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P06",
+      "page_role": "TRY_ONE",
+      "dominant_move": "CLASSIFY",
+      "title": "Try one with a star word",
+      "goal": "Use book boxes first. Mark an extra word with a star.",
+      "new_rules": 0,
+      "explanation_chunks": ["Broken has no box in this book model, so mark it with a star."],
+      "instructional_visual": {"type": "PRACTICE_PHRASE", "scrambled": ["cooking", "metal", "old", "broken"], "noun": "pot", "boundary_words": ["broken"], "expected": ["broken", "old", "metal", "cooking"]},
+      "action": {"type": "ORDER_AND_WRITE", "instruction": "Classify the words, then write the whole phrase.", "response_space": "LARGE"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P07",
+      "page_role": "FRESH_RETRY",
+      "dominant_move": "ORDER",
+      "title": "Fresh try: do it without the model",
+      "goal": "Use the routine on a new phrase.",
+      "new_rules": 0,
+      "explanation_chunks": ["Find the noun -> classify -> order -> read it aloud."],
+      "instructional_visual": {"type": "ROUTINE_STRIP", "steps": ["Find noun", "Classify", "Order", "Read aloud"]},
+      "action": {"type": "ORDER_AND_WRITE", "instruction": "Put these words in the book order.", "items": ["bright", "classroom", "new", "cheerful"], "noun": "posters", "response_space": "LARGE"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P08",
+      "page_role": "BOUNDARY",
+      "dominant_move": "REPAIR",
+      "title": "Another star word: handmade",
+      "goal": "A star word stays a describing word, not a new box.",
+      "new_rules": 0,
+      "explanation_chunks": ["Handmade does not fit one of our book boxes.", "Keep it starred; do not call it quality, type, or condition."],
+      "instructional_visual": {"type": "BOUNDARY_PHRASE", "noun": "blanket", "items": [{"word": "colourful", "category": "COLOUR"}, {"word": "handmade", "category": null, "boundary": true, "placement_authority": "OUTSIDE_CANONICAL_KNOWLEDGE"}, {"word": "Afghan", "category": "ORIGIN"}, {"word": "woollen", "category": "MATERIAL"}], "ordered": ["colourful", "handmade", "Afghan", "woollen"]},
+      "action": {"type": "CHECK", "instruction": "Which word gets the star?", "response_space": "SMALL"}
+    },
+    {
+      "page_id": "ADJ-GOLD-P09",
+      "page_role": "REVIEW",
+      "dominant_move": "REVIEW",
+      "title": "Check what you know",
+      "goal": "Show that you can use the routine by yourself.",
+      "new_rules": 0,
+      "explanation_chunks": ["Try these without looking back. Come back in 3-7 days and try again."],
+      "instructional_visual": {"type": "REVIEW_CHECKLIST", "steps": ["Find the noun", "Classify book words", "Star extra words", "Order", "Read aloud"]},
+      "action": {"type": "REVIEW", "instruction": "Classify and order the phrase, then explain one choice.", "items": ["wooden", "Brazilian", "old", "tiny"], "noun": "house", "response_space": "HALF_PAGE"}
+    }
+  ]
+}
