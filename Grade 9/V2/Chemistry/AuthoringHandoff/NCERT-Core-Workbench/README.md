@@ -4,6 +4,24 @@ This directory is a **working authoring handoff**, not a mature-release claim. I
 
 This branch is intentionally **stacked on `v2-chemistry-upgrade-real-rendering` (PR #322)**. Open/review this PR against that branch, not against `main`, so the diff contains only the handoff work.
 
+> **Continued in `../LEARNER-PRODUCT-MATURITY/`.** The next PR in this stack
+> promoted most of the operating rules below from prose into first-class
+> registries with falsifiers: denominator freezing, capability breadth, visual
+> obligations, helper pedagogy, Core 1 depth, answer custody, legibility targets
+> and kid-appropriate learner copy. Read that handoff's `README.md` and
+> `STATUS.json` for what is now machine-checked, what is not, and the exact
+> hashes of the current frozen candidate.
+>
+> One thing to know before you run anything here: **the source bundle in this
+> directory does not currently reconstruct.** `bundles/final-sources/` decodes to
+> 109144 bytes against the declared 117370 — `part000` is short and `part002` is
+> long, as committed — so `tools/restore_source_bundle.py` correctly fails its
+> integrity check and the per-topic `coverage-ledger.csv` files cannot be
+> recovered from this branch. `HANDOFF_MANIFEST.json` and
+> `tools/validate_handoff.py` are intact and agree with each other, and are what
+> the downstream reconciliations use. Restoring those bytes is the first item on
+> the next-steps list.
+
 ## 0. Fast start for a new agent
 
 From `Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/`:

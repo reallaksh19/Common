@@ -1,0 +1,199 @@
+{
+  "handoff_id": "CHEMISTRY-LEARNER-PRODUCT-MATURITY-2026-09-13",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "status": "DRAFT_WORKING_HANDOFF",
+  "addresses_issue": 356,
+  "stacked_on_branch": "draft/chemistry-ncert-core-workbench",
+  "stacked_on_pr": 346,
+  "sibling_handoff": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/README.md",
+  "entrypoint": "Grade 9/V2/Chemistry/GENERATION_CONTRACT.json",
+  "item_status": {
+    "1_generation_contract": {
+      "state": "DONE",
+      "evidence": "13 declared phases; structural and execution gates both fail closed; 9 contract falsifiers exercised."
+    },
+    "2_source_denominator_freezing": {
+      "state": "DONE_WITH_RECORDED_LIMITATION",
+      "evidence": "7 frozen instances. 3 pipeline denominators re-derive from the C-C registries and reconcile against the coverage closure; 4 PR #346 baselines re-derive from two independent #346 artifacts that must agree.",
+      "limitation": "The four baselines sit at FROZEN_ELIGIBLE_ONLY because #346 never recorded TOTAL_SCANNED or the exclusion count. Authoring from them is refused rather than inferred."
+    },
+    "3_capability_taxonomy_breadth": {
+      "state": "DECLARED_NOT_YET_EXERCISED",
+      "evidence": "24 chapter-generic capabilities, 14 carried forward and 10 new, closed against the canonical authority, the primitive registry, the instructional profile and the page-intent profile.",
+      "limitation": "The committed fixture corpus contains no quantitative or classification item, so the 10 new capabilities are not instantiated by a live run."
+    },
+    "4_visual_obligation_binding": {
+      "state": "DONE_WITH_RECORDED_LIMITATION",
+      "evidence": "Per-lesson and per-question ledger; 17/17 obligations realized and 5/5 questions carry their required visual in the frozen build. A single text-only question fails even when every primitive kind is realized elsewhere.",
+      "limitation": "The 9 new primitive families have no vector renderer yet and are registered RENDERER_PENDING_FAIL_CLOSED."
+    },
+    "5_helper_pedagogy_and_core1_depth": {
+      "state": "DONE",
+      "evidence": "7 intent classes with self-checking good/bad examples; 25 per-family actionable first moves; 5/5 Core 2 hint ladders pass; 12/12 full-learning lessons carry the complete spine. Two real defects found and fixed: the author-voice concept helper and the author-voice repair steps."
+    },
+    "6_answer_custody": {
+      "state": "DONE",
+      "evidence": "Core 1 36/36/36, Core 2 5/5/5, total 41/41/41; PR #346 baselines reconcile at 68/27/38/11. Quick answers live on a surface separate from the practice page."
+    },
+    "7_legibility_targets": {
+      "state": "PARTIAL",
+      "evidence": "Body 10.5 pt, stems 12.5 pt, subheadings 12 pt, footer raised to the 8 pt floor; derived line cap of 60 with an observed peak of 49; leading ratio enforced.",
+      "limitation": "DIAGRAM_LABEL and KEY_EQUATION are MEASURED_NOT_YET_ENFORCED. Rendered pages contain 5.4 pt spans from the vendored primitives package; that is reported as document_minimum_font_pt and explicitly not claimed to pass."
+    },
+    "8_kid_appropriate_learner_copy": {
+      "state": "DONE_WITH_RECORDED_DEBT",
+      "evidence": "49 internal roles mapped; every heading resolved fail-closed; all 61 rendered pages scanned and no clinical heading found. Internal identifiers are unchanged and asserted unchanged by test.",
+      "limitation": "The word \"representation\" still appears in upstream-authored body copy and is recorded as known_learner_copy_debt rather than claimed clean."
+    }
+  },
+  "quality_states": {
+    "PUBLICATION_ENGINEERING": "MACHINE_PASS_THIS_BRANCH",
+    "SUBJECT_CORRECTNESS": "PENDING",
+    "PEDAGOGICAL_DESIGN": "PENDING",
+    "ASSESSMENT_DESIGN": "PENDING",
+    "VISUAL_USABILITY": "PENDING",
+    "MATURE_DESIGN_QUALITY": "BLOCKED"
+  },
+  "release_decision": "BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT (exit code 2)",
+  "issue_274": "LEFT OPEN AND UNCHANGED. The human gates it describes are still PENDING and nothing here moves them.",
+  "registry_sha256": {
+    "AssessmentScope/registry/chemistry-capability-taxonomy.json": "1c2c4a54be995d314f0e37ef9e91d64e797fb12d43ae1053d2204ac53df53003",
+    "CoreAuthoring/registry/chemistry-core1-depth-profile.json": "204153c2afeda80ea4a372e36e7dd2fec9edc789cf1e37c64a42e75f9b432961",
+    "CoreAuthoring/registry/chemistry-helper-pedagogy-profile.json": "ef6d5cc3213b9fb6badc5a0a979e9a877fa9a1c9319e03d6ec59c98711f1514c",
+    "CoreAuthoring/registry/chemistry-learner-copy-titles.json": "8e6e08cbb45eceeb629f0c8c3f4e9ce9829a700d9900cc26a0db4a65f1599bfe",
+    "CoverageClosure/registry/chemistry-answer-custody-profile.json": "e1e36ceaaaaf2067cacf8ac03c87952f8ea0c01475beb10d96c3b40b9889cc46",
+    "CoverageClosure/registry/chemistry-source-ingestion-profile.json": "5ca25dd28fb4d8b0bb3dc5db1058b94dec75e7d45b9d06447788061d7a9c3121",
+    "ExactProduct/registry/chemistry-legibility-target-profile.json": "2a83a0f21c51a64f50754dbf166b1b88e81f7a3eb5ffc0f907568c35cd8c2ef9",
+    "GENERATION_CONTRACT.json": "2b6eb43232802fb5b26d083e6690a4397035942cf5ae2d4f44a6aa27014e3093",
+    "Representation/registry/chemistry-teaching-primitive-registry.json": "9bb1cc94ce658ef0976116aef0fab237236276bd8abf021550e7a54c25143239",
+    "Representation/registry/chemistry-visual-obligation-profile.json": "9add9fc39c5d8247ce4b6612780a1b3175598c75a74614f31c0a55bc0ac68b8b"
+  },
+  "frozen_candidate": {
+    "path": "Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A",
+    "frozen_package_digest": "6df16a446eeafe82800499b49835fdcd0ae87e20a2aacc162c8f99162a89c0e9",
+    "candidate_package_digest": "07bfeef36f44002db28d86776aaca4dcac81ec089f03dde26bc1f3be4edffc98",
+    "cold_start_report_digest": "ed832a71b2176acb58115a04807ca4065fac03922d4f0d47323624be0c2f4765",
+    "artifacts": [
+      {
+        "page_count": 48,
+        "path": "core-study-guide.pdf",
+        "product_id": "CORE_STUDY_GUIDE",
+        "sha256": "b2489e20eceb3da69fa634327247aafc4efd177b934682ac700b5c8cfb8a6a7a"
+      },
+      {
+        "page_count": 13,
+        "path": "examside-solution-transfer-book.pdf",
+        "product_id": "EXAMSIDE_SOLUTION_TRANSFER_BOOK",
+        "sha256": "81cf064bf685a2f880d54e95825fb7bec10b1b9da628e0739660b32a4c8bf65e"
+      }
+    ],
+    "files": {
+      "FROZEN_MANIFEST.json": {
+        "bytes": 3209,
+        "sha256": "7367bd8cca093bb4c7b3e19295c96bb2ba9d62ba0e88275be00f19c13fb2e7e0"
+      },
+      "ai-pre-review.json": {
+        "bytes": 1475,
+        "sha256": "bd90463b121d4af962847d064cfd9138c0594db65601b21942a22af05ee1ddc2"
+      },
+      "cold-start-report.json": {
+        "bytes": 75621,
+        "sha256": "4d53475328079abedb57f51f05a0c44ebd0fc3ee9d354bbb3668bc3c87d45056"
+      },
+      "core-study-guide.pdf": {
+        "bytes": 147080,
+        "sha256": "b2489e20eceb3da69fa634327247aafc4efd177b934682ac700b5c8cfb8a6a7a"
+      },
+      "exact-product-candidate.json": {
+        "bytes": 8370,
+        "sha256": "ce24f1b957b8d5277d9d0129bc13fb5ee664ae2a63645f2a4edf570e58c35e0a"
+      },
+      "examside-solution-transfer-book.pdf": {
+        "bytes": 67166,
+        "sha256": "81cf064bf685a2f880d54e95825fb7bec10b1b9da628e0739660b32a4c8bf65e"
+      },
+      "physical-page-map-core1.json": {
+        "bytes": 66961,
+        "sha256": "b9fc49b275e96c59a6ed9012b83aae151a64d543a8e50ce6cf54b6793471634c"
+      },
+      "physical-page-map-core2.json": {
+        "bytes": 14432,
+        "sha256": "6964e666fe48b9806e41c95f639950ca0410b82da86616d76a985aa936c46992"
+      },
+      "render-audit-core1.json": {
+        "bytes": 1210,
+        "sha256": "a221ffc17ab45d469ac414fcfe8a9c4a34af22a33e40de70f7f9a33d2975cd99"
+      },
+      "render-audit-core2.json": {
+        "bytes": 1209,
+        "sha256": "02d52bbc2654cf49c1fd67a842c4895916fd4aad81bf5b05f74a6c0c4b3bc66a"
+      },
+      "visual-obligation-ledger.json": {
+        "bytes": 12210,
+        "sha256": "19fff21875327d69332daf6658f13501caf7d0adaab52324f9bbe7e02a7b2f48"
+      }
+    }
+  },
+  "machine_evidence": {
+    "document_minimum_font_pt": 5.4,
+    "eligible_external_placed_unique": 5,
+    "eligible_external_total": 5,
+    "full_solutions_total": 41,
+    "immediate_answer_checks_total": 41,
+    "learner_body_pt": 10.5,
+    "learner_internal_identifier_leaks": 0,
+    "learner_role_label_leaks": 0,
+    "minimum_font_pt": 10.5,
+    "question_stem_pt": 12.5,
+    "questions_requiring_visual": 5,
+    "questions_total": 41,
+    "questions_with_required_visual": 5,
+    "source_obligations_closed": 10,
+    "source_obligations_required": 10,
+    "teaching_primitive_kinds_realized": [
+      "APPARATUS_METHOD_FLOW",
+      "CHARGE_SUBSCRIPT_CONTRAST",
+      "CONDITION_EXCEPTION_GATE",
+      "CONSERVATION_LEDGER",
+      "EVIDENCE_CLAIM_REASONING_CHAIN",
+      "FORMULA_ANATOMY_VIEW",
+      "FORMULA_EQUATION_CHECK_STRIP",
+      "MACRO_OBSERVATION_VIEW",
+      "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+      "MINIMAL_CHEMISTRY_CONTRAST",
+      "OBSERVATION_INFERENCE_TABLE",
+      "PARTICLE_MODEL_VIEW",
+      "REACTION_BEFORE_AFTER_MAP",
+      "RULE_PRIORITY_LADDER",
+      "SPECIES_ROLE_MAP"
+    ],
+    "teaching_primitives_drawn": 47,
+    "teaching_primitives_label_only": [
+      "COEFFICIENT_SUBSCRIPT_CONTRAST"
+    ],
+    "unenforced_legibility_targets": [
+      "DIAGRAM_LABEL",
+      "KEY_EQUATION"
+    ],
+    "visual_obligations_realized": 17,
+    "visual_obligations_required": 17
+  },
+  "known_limitations": [
+    "PR #346's committed source bundle does not reconstruct: bundles/final-sources/ decodes to 109144 bytes against a declared 117370 (part000 is 12528 base64 characters short, part002 is 1560 long, as committed), so restore_source_bundle.py fails its own integrity check and the per-topic coverage-ledger.csv files are not recoverable from this branch.",
+    "The four #346 topic baselines are frozen at FROZEN_ELIGIBLE_ONLY; TOTAL_SCANNED and the exclusion count were never recorded and are not inferred.",
+    "The ten new capabilities and their nine visual families are declared and cross-checked but not exercised end to end, because the committed corpus contains no item that needs them.",
+    "DIAGRAM_LABEL and KEY_EQUATION legibility targets are measured and reported, not enforced; each records what blocks it.",
+    "The word \"representation\" remains in upstream-authored body copy and is recorded as learner-copy debt.",
+    "No human gate has moved. The AI pre-review is a firewall, not a review."
+  ],
+  "next_steps_in_order": [
+    "Restore PR #346 source bundle bytes so the per-item coverage ledgers return, then promote the baselines past FROZEN_ELIGIBLE_ONLY.",
+    "Supply a corpus with quantitative and classification items so the ten new capabilities are instantiated.",
+    "Implement vector renderers for the nine RENDERER_PENDING_FAIL_CLOSED families, starting with MASS_MOLE_PARTICLE_BRIDGE and MATTER_CLASSIFICATION_TREE.",
+    "Declare a KEY_EQUATION content role in the C-G/C-I authoring contracts, then enforce that legibility target.",
+    "Raise vendored primitive label sizes to 9 pt in coordination with Math and Physics, then enforce DIAGRAM_LABEL and assert the document minimum against the 8 pt floor.",
+    "Run the subject-authoring copy pass that removes producer vocabulary from body text, then extend forbidden_anywhere_phrases.",
+    "Only then seek the authorized human gates."
+  ]
+}
