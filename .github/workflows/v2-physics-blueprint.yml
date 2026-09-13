@@ -42,3 +42,7 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_topic_pilot.py"
       - name: Validate Motion-in-a-Plane topic blueprint and derived route
         run: python "Grade 9/V2/Physics/Blueprint/engine/validate_topic_blueprint.py" "Grade 9/V2/Physics/Blueprint/topics/motion-in-a-plane.v1.json"
+      - name: Run Publication IR lossless-boundary falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_publication_ir.py"
+      - name: Compile lossless Publication IR golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_publication_ir.py" "Grade 9/V2/Physics/Blueprint/fixtures/publication/m2d-core1a-ir.json" --out /tmp/physics-publication-ir.json

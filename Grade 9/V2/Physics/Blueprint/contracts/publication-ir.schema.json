@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-publication-ir.schema.json",
+  "title":"Physics Publication Intermediate Representation",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","publication_ir_id","topic_id","product_mode","authority_boundary","upstream_artifacts","units","lossless_audit","publication_ir_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "publication_ir_id":{"type":"string","pattern":"^PUBIR-PHY-"},
+    "topic_id":{"type":"string","minLength":1},
+    "product_mode":{"enum":["CORE1A_TEXTBOOK","CORE2A_PRACTICE","COMBINED_REVIEW"]},
+    "authority_boundary":{"type":"object","additionalProperties":false,"required":["semantic_authority","renderer_authority","renderer_may_introduce_semantic_claims","renderer_may_substitute_representation"],"properties":{"semantic_authority":{"const":"UPSTREAM_ONLY"},"renderer_authority":{"const":"COMPOSITION_ONLY"},"renderer_may_introduce_semantic_claims":{"const":false},"renderer_may_substitute_representation":{"const":false}}},
+    "upstream_artifacts":{"type":"array","minItems":1,"uniqueItems":false,"items":{"type":"object","additionalProperties":false,"required":["role","artifact_ref","artifact_digest","release_state"],"properties":{"role":{"enum":["CORE1","CORE1A","CORE2","CORE2A"]},"artifact_ref":{"type":"string","minLength":1},"artifact_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"release_state":{"const":"RELEASED"}}}},
+    "units":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["unit_id","source_role","source_artifact_ref","semantic_ref","content_digest","surface_kind","representation_refs"],"properties":{"unit_id":{"type":"string","pattern":"^PUBUNIT-PHY-"},"source_role":{"enum":["CORE1","CORE1A","CORE2","CORE2A"]},"source_artifact_ref":{"type":"string","minLength":1},"semantic_ref":{"type":"string","minLength":1},"content_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"surface_kind":{"enum":["EXPLANATION","EQUATION","FIGURE","WORKED_EXAMPLE","PRACTICE_QUESTION","HINT","SOLUTION","PROVENANCE","CHECK"]},"representation_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}}}},
+    "lossless_audit":{"type":"object","additionalProperties":false,"required":["required_semantic_ref_count","placed_required_ref_count","missing_refs","duplicate_refs","unknown_refs","digest_mismatches","representation_violations","status"],"properties":{"required_semantic_ref_count":{"type":"integer","minimum":0},"placed_required_ref_count":{"type":"integer","minimum":0},"missing_refs":{"type":"array","maxItems":0},"duplicate_refs":{"type":"array","maxItems":0},"unknown_refs":{"type":"array","maxItems":0},"digest_mismatches":{"type":"array","maxItems":0},"representation_violations":{"type":"array","maxItems":0},"status":{"const":"PASS"}}},
+    "publication_ir_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

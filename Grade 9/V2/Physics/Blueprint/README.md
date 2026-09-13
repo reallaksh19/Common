@@ -13,54 +13,47 @@ CORE1 ↔ independent second pass ↔ CORE2
         ↓
        JOIN
         ↓
-learner state × purpose control state
+learner state × purpose
         ↓
-      CORE1A
-1A0 … 1A11 cognition/assimilation gates
+CORE1A 1A0…1A11
         ↓
-   1A12 manuscript
-        ↓
-T-* taught-state receipts
+1A12 manuscript + T receipts
         ↓
       CORE2A
+        ↓
+PUBLICATION IR
+lossless semantic audit
+        ↓
+renderer (composition only)
 ```
 
-## Implemented Blueprint slices
+## Blueprint guarantees now implemented
 
-- evidence normalization + adaptive `CORE1_FIRST | CORE2_FIRST | BLOCK` routing;
-- fresh-instance independent second-pass protocol;
-- Core1 × Core2 Join with exact Core2-demand coverage and critical-conflict blocking;
-- learner-prior resolver for `20 / 50 / 80` plus provenance-bound learner-evidence overrides;
-- orthogonal `FIRST_STUDY / PRACTICE / REVISION / COMPETITIVE_EXAM` purpose contracts;
-- guard that teaching/publication receipts cannot masquerade as learner-state evidence;
-- Core1A stage machine requiring ordered `1A0…1A11`, exact upstream digests and zero unresolved required jumps before `1A12_MANUSCRIPT`;
-- Motion-in-a-Plane as the first topic blueprint pilot;
-- active taught-state-gated Core2A execution kit.
+- evidence-adaptive routing, never topic-name routing;
+- independent second-role re-grounding;
+- Core1 × Core2 Join with exact demand coverage and critical-conflict blocking;
+- learner `20/50/80` prior resolved to capability state, with real learner evidence distinguished from teaching receipts;
+- orthogonal purpose contracts;
+- strict Core1A cognition-before-manuscript stage machine;
+- Motion-in-a-Plane real topic pilot deriving `CORE2_FIRST` from `SA=2, SS=3, QE=4, QR=4, UA=1, CI=1`;
+- taught-state-gated Core2A;
+- Publication IR with a fail-closed lossless semantic boundary.
 
-## Motion-in-a-Plane topic pilot
+## Publication boundary
 
-`topics/motion-in-a-plane.v1.json` carries the real topic evidence profile: partial/coarse scope authority, strong semantic source, the 59-question Core2 corpus, answer/QC uncertainty and figure evidence. The topic does **not** select its role by name. The current governed metrics are `SA=2, SS=3, QE=4, QR=4, UA=1, CI=1`, and the Governor therefore derives `CORE2_FIRST` through `ROUTE-C2-RICH-QUESTIONS`.
+The renderer is **not** a reasoning role. Publication IR can consume only upstream artifacts whose release state is already `RELEASED`. Every required upstream semantic ref must be placed exactly once. The compiler rejects missing or duplicated required refs, unknown semantic refs, changed content digests, source-role drift and unauthorized representation substitution.
 
-The pilot binds the Blueprint-native Join, learner/purpose control-state and Core1A stage-machine fixtures, while Core2A remains a subordinate runtime kit.
-
-## Core1A compiler gate
-
-`1A0 learner-state gap → 1A1 learning atoms → 1A2 inferential jumps → 1A3 cognitive transformation → 1A4 representation requirements → 1A5 candidates → 1A6 decisions → 1A7 picture/word/symbol/equation bridge → 1A8 misconception contrast → 1A9 worked/faded/independent plan → 1A10 Core2 transfer bridge → 1A11 unresolved-jump audit → 1A12 manuscript`.
-
-A stage cannot be skipped/reordered. A block stops later stages. Manuscript release requires every pre-manuscript stage to PASS and `unresolved_required_jump_count = 0`.
-
-## Core2A authority boundary
+The resulting IR fixes:
 
 ```text
-Core1 semantic boundary
-∩ Core1A T-* TEACHING_COMPLETE receipts
-∩ Core2 transfer envelope
-∩ learner-product purpose
-∩ owner policy
+semantic_authority = UPSTREAM_ONLY
+renderer_authority = COMPOSITION_ONLY
+renderer_may_introduce_semantic_claims = false
+renderer_may_substitute_representation = false
 ```
 
-Teaching completion never implies learner mastery.
+Optional semantic refs may be intentionally omitted; required semantics may not disappear through layout decisions.
 
 ## Current next boundary
 
-The architecture is now proven through the first real topic blueprint pilot. The next Blueprint tranche is the **publication compiler boundary**: consume governed Core1/Core1A/Core2/Core2A representations into Publication IR, run a lossless semantic audit, then render—without allowing the renderer to become a reasoning authority.
+The reasoning Blueprint and the semantic publication boundary are now machine-specified. The next tranche is **figure/page realization + actual-render QA**, consuming Publication IR without adding Physics reasoning. Human subject, pedagogy, assessment and visual review remain separate release gates.
