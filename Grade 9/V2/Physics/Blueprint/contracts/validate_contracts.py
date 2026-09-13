@@ -27,6 +27,8 @@ def validate():
         "render-custody.schema.json",
         "render-preflight-report.schema.json",
         "m2d-render-readiness.schema.json",
+        "m2d-manuscript-release-binding.schema.json",
+        "m2d-composition-plan.schema.json",
     ]
     schemas = {n: load(ROOT / "contracts" / n) for n in names}
     for schema in schemas.values():
@@ -59,6 +61,7 @@ def validate():
     pub = load(ROOT / "policy" / "publication-boundary.v1.json")
     render = load(ROOT / "policy" / "render-preflight.v1.json")
     m2d_rep = load(ROOT / "policy" / "m2d-representation-requirements.v1.json")
+    composition = load(ROOT / "policy" / "m2d-composition-release.v1.json")
 
     if not independent["self_validation_forbidden"] or not independent["fresh_validator_instance_required"]:
         raise AssertionError("INDEPENDENT_VALIDATION_POLICY_DISABLED")
@@ -76,6 +79,15 @@ def validate():
         raise AssertionError("RENDER_PHYSICAL_QA_POLICY_DRIFT")
     if m2d_rep.get("topic_id") != "PHY-M2D" or not all((m2d_rep.get("rules") or {}).values()):
         raise AssertionError("M2D_REPRESENTATION_GAP_POLICY_DRIFT")
+
+    creq = composition["requirements"]
+    car = composition["authority_rules"]
+    if composition.get("topic_id") != "PHY-M2D" or creq["representation_readiness_status"] != "READY_FOR_RENDER_ADAPTER":
+        raise AssertionError("M2D_COMPOSITION_POLICY_DRIFT")
+    if creq["manuscript_gate"] != "RELEASED" or creq["manuscript_next_stage"] != "1A12_MANUSCRIPT" or creq["unresolved_required_jump_count"] != 0:
+        raise AssertionError("M2D_COMPOSITION_MANUSCRIPT_GATE_DRIFT")
+    if car["composition_plan_may_invoke_renderer_directly"] or car["composition_plan_may_authorize_release"] or car["process_fixture_may_authorize_real_publication"]:
+        raise AssertionError("M2D_COMPOSITION_AUTHORITY_ESCALATION")
 
     print("Blueprint contracts: PASS")
 

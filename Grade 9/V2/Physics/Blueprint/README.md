@@ -1,8 +1,8 @@
 # Physics V2 Blueprint — evidence-adaptive orchestration
 
-`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories (`CoreAuthoring/`, `Core2Transfer/`, `Core1A/`, `Core2A/`, `Representation/`) are subordinate execution kits; `policy/role-bindings.v1.json` freezes the reasoning-role mapping.
+`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories (`CoreAuthoring/`, `Core2Transfer/`, `Core1A/`, `Core2A/`, `Representation/`) are subordinate execution kits.
 
-## Executable topology
+## Current executable topology
 
 ```text
 ORIGINAL GROUND TRUTH
@@ -26,46 +26,19 @@ lossless semantic audit
         ↓
 representation readiness
         ↓
+M2D composition-release gate
+        ↓
 existing Physics render stack
 composition only
         ↓
-RENDER CUSTODY
-        ↓
-actual-PDF preflight
-        ↓
-MACHINE PASS
-+ HUMAN VISUAL REVIEW PENDING
+render custody + actual-PDF preflight
 ```
 
-## Blueprint guarantees now implemented
+## Implemented Blueprint guarantees
 
 The Blueprint governs evidence-adaptive routing, independent second-role re-grounding, Core1 × Core2 Join, learner-state × purpose control, cognition-before-manuscript Core1A execution, taught-state-gated Core2A, lossless Publication IR, finished-PDF custody/preflight, and real Motion-in-a-Plane representation readiness.
 
-## Publication and render authority
-
-The renderer is **not** a reasoning role. Publication IR fixes semantic authority upstream and renderer authority to composition only. Render custody binds the exact Publication IR digest, renderer-report digest and finished-PDF SHA. Actual-PDF preflight inspects physical geometry, observed text font floor, page bounds, learner-visible internal identifiers, raster nonblank state and report/PDF page-count custody.
-
-Machine success still ends at:
-
-```text
-MACHINE_PREFLIGHT_PASS_HUMAN_VISUAL_REVIEW_PENDING
-release_authorized = false
-```
-
-## Motion-in-a-Plane representation gap and closure
-
-The first real readiness compilation correctly produced:
-
-```text
-10 real chapter concepts
-1 READY_FOR_REALIZATION
-9 BLOCKED_NEEDS_PRIMITIVE
-status = BLOCKED_REPRESENTATION_GAP
-```
-
-The blocked cognitive jobs were not patched with generic schematics. They were converted into a subject-wide 2D Physics representation extension under `Representation/`.
-
-The extension adds seven generic, topic-unbound vector primitives:
+The subject-wide 2D representation extension now provides seven generic vector primitives:
 
 ```text
 CARTESIAN_FRAME_2D
@@ -77,25 +50,48 @@ PARAMETRIC_ELIMINATION_BRIDGE_2D
 OBSERVER_LINE_OF_SIGHT_2D
 ```
 
-Each declares an instructional job, translation obligation, learner action, renderer constraints and minimum real vector-operation floor. Defaults are `SCHEMATIC_STRUCTURE_ONLY`: they carry structure, not invented numerical quantities. The existing `RELATIVE_FRAME_VIEW` and `OPTION_GRAPH_SET_VIEW` remain reused where their governed jobs actually match.
+Together with governed existing primitives, the real 10-concept Motion-in-a-Plane chapter now reaches `10/10 READY_FOR_REALIZATION`. That closes the representation gap only; it does not authorize publication.
 
-After explicit per-concept authorization against the combined subject-wide primitive registries, the real M2D readiness gate is now expected to produce:
+## Real Motion-in-a-Plane composition gate
+
+`engine/compile_m2d_composition_plan.py` maps every real chapter concept to:
+
+- an exact semantic digest from the source-locked Core1A chapter plan;
+- source-group and equation refs;
+- linked Core2 challenges;
+- the exact illustration archetype;
+- only explicitly authorized representation primitive refs;
+- a fixed learner page intent.
+
+The plan has **two independent prerequisites** before Publication IR can open:
 
 ```text
-10 READY_FOR_REALIZATION
-0 BLOCKED_NEEDS_PRIMITIVE
-status = READY_FOR_RENDER_ADAPTER
-release_authorized = false
+representation readiness = READY_FOR_RENDER_ADAPTER
+AND
+real Core1A manuscript release = repository-backed non-golden 1A12 provenance
 ```
 
-The gate remains fail-closed: topic-name similarity cannot authorize a primitive; clearing a missing capability without a real authorized vector primitive is rejected; chapter concept/archetype drift is rejected.
+A process fixture can never authorize real publication. A valid manuscript-release binding must carry `REPOSITORY_PRODUCTION` provenance, the exact real chapter-plan digest, a valid released stage-run digest, zero unresolved required jumps, and repository-backed artifact/evidence refs at every pre-manuscript stage. `GOLDEN` and `PROCESS_FIXTURE` provenance are rejected.
 
-## Render process proof
+The current real repository state intentionally compiles as:
 
-`engine/build_render_process_golden.py` invokes the existing `Core1A/engine/render_physics_core1a.py` and the Blueprint finished-PDF preflight. CI uploads the process PDF, renderer report, Publication IR, render custody, preflight report, raster proofs and real M2D readiness report.
+```text
+10 concepts mapped
+representation_status = READY_FOR_RENDER_ADAPTER
+manuscript_release_status = ABSENT
+composition_status = BLOCKED_UPSTREAM_MANUSCRIPT_RELEASE
+publication_ir_gate = BLOCKED
+renderer_invocation_allowed = false
+release_authorized = false
+next_action = MIGRATE_REAL_CORE1A_STAGE_RELEASE
+```
 
-The process PDF remains synthetic and does **not** assert production Motion-in-a-Plane maturity.
+This is the correct boundary: figure availability cannot substitute for pedagogical/manuscript release evidence.
 
-## Current next boundary
+## Render and release authority
 
-Once the 2D primitive extension and readiness closure are green, the next tranche is a **real Motion-in-a-Plane composition adapter**. It must consume the source-locked chapter plan plus exact authorized primitive refs, emit Publication IR before drawing, reuse the existing page/render infrastructure, and then pass the same actual-PDF preflight. Human actual-size figure/page review remains mandatory before any mature-product release claim.
+The renderer remains composition-only. Even a future `READY_FOR_PUBLICATION_IR` composition plan may not invoke the renderer directly; it must first pass the lossless Publication IR compiler. Finished PDFs then pass exact artifact custody and actual-PDF preflight. Machine success still ends at human visual review pending, never automatic release authorization.
+
+## Current next tranche
+
+Migrate a **real Core1A bucket** into the Blueprint stage machine, starting with `M2D-SBA-04` because it already contains seven explicit learning atoms, staged visual counts, misconceptions, checks, and exact H1/H2/H3 pre-teaching traces for its seven primary Core2 questions. Do not turn the process golden into production evidence; if real Join/independent-validation provenance is missing, the migration must expose that as the next block rather than fabricate it.

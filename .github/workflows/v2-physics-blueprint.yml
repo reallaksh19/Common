@@ -58,7 +58,11 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_m2d_render_readiness.py"
       - name: Compile real Motion-in-a-Plane representation-readiness report
         run: python "Grade 9/V2/Physics/Blueprint/engine/compile_m2d_render_readiness.py" --out /tmp/physics-blueprint-render-golden/m2d-render-readiness.json
-      - name: Upload rendered process proof and M2D readiness for human review
+      - name: Run real M2D composition and manuscript-release falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_m2d_composition_gate.py"
+      - name: Compile current real M2D composition state
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_m2d_composition_plan.py" --out /tmp/physics-blueprint-render-golden/m2d-composition-plan-current.json
+      - name: Upload rendered process proof and M2D readiness/composition state for human review
         uses: actions/upload-artifact@v4
         with:
           name: physics-blueprint-render-process-golden
