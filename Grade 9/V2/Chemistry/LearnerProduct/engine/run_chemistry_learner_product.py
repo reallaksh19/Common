@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """Canonical Chemistry Core (1A) / Core (2A) learner-product entrypoint.
 
-The runner has two honest operating boundaries:
+Operating boundaries:
 
 * --validate-only validates the immutable run contract and policy bindings.
 * --semantic-only executes the governed semantic learner-product chain through
   C-LP-21 (answer closure), writes durable machine-readable outputs, and stops
-  before page rendering. C-LP-22..25 remain explicitly pending.
-
-A normal production invocation executes the same semantic chain and then fails
-closed at the unimplemented render boundary rather than pretending the product
-is publication-ready.
+  before page rendering.
+* a normal invocation executes C-LP-00..C-LP-25: semantic realization, PDF page
+  realization, actual-PDF visual preflight, final machine audit and frozen
+  reusable handoff. Human subject/pedagogy/assessment/visual release gates stay
+  explicitly pending even when every machine stage passes.
 """
 from __future__ import annotations
 
@@ -40,6 +40,9 @@ from build_chemistry_core1a_build_state import compile_build_state  # noqa: E402
 from build_chemistry_core1a_manuscript import build_manuscript  # noqa: E402
 from build_chemistry_core2a_source import build_source_plan  # noqa: E402
 from build_chemistry_core2a_challenges import build_challenge_plan  # noqa: E402
+from render_chemistry_learner_products import render_products  # noqa: E402
+from preflight_chemistry_learner_products import run_preflight  # noqa: E402
+from finalize_chemistry_learner_products import finalize  # noqa: E402
 
 EXECUTION_SEQUENCE = [
     "VALIDATE_UPSTREAM_BINDINGS",
@@ -163,6 +166,7 @@ def _load_authority_bundle():
         "language": load_json(LP_ROOT / "policies/chemistry-learner-language-policy.json"),
         "citation": load_json(LP_ROOT / "policies/chemistry-question-citation-policy.json"),
         "answer": load_json(LP_ROOT / "policies/chemistry-answer-path-policy.json"),
+        "render": load_json(LP_ROOT / "policies/chemistry-learner-render-policy.json"),
         "archetypes": load_json(LP_ROOT / "registry/chemistry-competitive-archetype-registry.json"),
     }
 
@@ -218,7 +222,7 @@ def _answer_closure(manuscript, source_plan, challenge_plan, audit_id):
 
 
 def execute_semantic_pipeline(run, study_model, core1, representations, core2, closure, out_dir: Path):
-    foundation = validate_foundation(run)
+    validate_foundation(run)
     _verify_input(run, study_model, "learner_study_model", "study_model_id", "study_model_digest")
     _verify_input(run, core1, "core1_plan", "plan_id", "plan_digest")
     _verify_input(run, representations, "representation_bundle", "bundle_id", "bundle_digest")
@@ -342,6 +346,83 @@ def execute_semantic_pipeline(run, study_model, core1, representations, core2, c
     return package, files
 
 
+def execute_full_pipeline(run, study_model, core1, representations, core2, closure, out_dir: Path):
+    semantic_package, files = execute_semantic_pipeline(run, study_model, core1, representations, core2, closure, out_dir)
+    auth = _load_authority_bundle()
+    render_policy = auth["render"]
+    if render_policy.get("policy_id") != "CHEM-LEARNER-RENDER-v1":
+        raise ValueError("CHEM_LP_RENDER_POLICY_MISMATCH")
+
+    render_manifest = render_products(
+        files["core1a_manuscript.json"],
+        files["core2a_source_plan.json"],
+        files["core2a_challenge_plan.json"],
+        representations,
+        render_policy,
+        out_dir,
+    )
+    preflight = run_preflight(render_manifest, render_policy, out_dir, out_dir)
+    final_audit, handoff = finalize(
+        semantic_package,
+        files["answer_closure_audit.json"],
+        render_manifest,
+        preflight,
+        out_dir,
+        out_dir,
+    )
+
+    stage_doc = files["learner_product_stage_evidence.json"]
+    stages = stage_doc["stages"]
+    pages = render_manifest["core1a"]["page_count"] + render_manifest["core2a"]["page_count"]
+    stages[22] = _stage("RENDER_LEARNER_PRODUCTS", refs=[render_manifest["manifest_id"]], counters={
+        "core1a_pages": render_manifest["core1a"]["page_count"],
+        "core2a_pages": render_manifest["core2a"]["page_count"],
+        "total_pages": pages,
+        "primitives_realized": len(render_manifest["core1a"]["primitives"]) + len(render_manifest["core2a"]["primitives"]),
+    })
+    raster_samples = sum(len(preflight["products"][key]["pdf_parse_and_raster"]["raster_proof"]) for key in preflight["products"])
+    stages[23] = _stage("VISUAL_PREFLIGHT", refs=[preflight["preflight_id"]], counters={"raster_samples": raster_samples, "products_passed": 2})
+    stages[24] = _stage("FINAL_AUDIT", refs=[final_audit["audit_id"]], counters={"machine_failures": 0, "human_gates_pending": len(final_audit["human_gates"])})
+    stages[25] = _stage("FREEZE_HANDOFF", refs=[handoff["handoff_id"]], counters={"artifacts": len(handoff["artifacts"]), "reusable_files": len(handoff["reusable_files"])})
+    (out_dir / "learner_product_stage_evidence.json").write_text(json.dumps(stage_doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    full = {
+        "package_id": "CHEM-LP-ARTIFACT-" + run["run_id"].split("-")[-1],
+        "schema_version": "1.0.0",
+        "subject": "CHEMISTRY",
+        "run_ref": run["run_id"],
+        "run_digest": run["run_digest"],
+        "semantic_package_ref": semantic_package["package_id"],
+        "semantic_package_digest": semantic_package["package_digest"],
+        "complete_through": "FREEZE_HANDOFF",
+        "machine_status": "PASS",
+        "release_authorized": False,
+        "render_manifest_ref": render_manifest["manifest_id"],
+        "render_manifest_digest": render_manifest["manifest_digest"],
+        "visual_preflight_ref": preflight["preflight_id"],
+        "visual_preflight_digest": preflight["preflight_digest"],
+        "final_audit_ref": final_audit["audit_id"],
+        "final_audit_digest": final_audit["audit_digest"],
+        "handoff_ref": handoff["handoff_id"],
+        "handoff_digest": handoff["handoff_digest"],
+        "human_gates": copy.deepcopy(final_audit["human_gates"]),
+        "package_digest": "",
+    }
+    payload = copy.deepcopy(full)
+    payload.pop("package_digest")
+    full["package_digest"] = object_digest(payload)
+    (out_dir / "learner_product_manifest.json").write_text(json.dumps(full, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    files.update({
+        "render_manifest.json": render_manifest,
+        "visual_preflight.json": preflight,
+        "final_audit.json": final_audit,
+        "handoff_manifest.json": handoff,
+        "learner_product_stage_evidence.json": stage_doc,
+        "learner_product_manifest.json": full,
+    })
+    return full, files
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-manifest", type=Path, required=True)
@@ -371,22 +452,19 @@ def main() -> None:
     if any(path is None for path in required_paths):
         raise SystemExit("CHEM_LP_SEMANTIC_INPUT_FILES_REQUIRED")
 
-    package, _ = execute_semantic_pipeline(
-        run,
-        load_json(args.study_model),
-        load_json(args.core1_plan),
-        load_json(args.representation_bundle),
-        load_json(args.core2_plan),
-        load_json(args.coverage_closure),
-        args.out_dir,
-    )
+    study_model = load_json(args.study_model)
+    core1 = load_json(args.core1_plan)
+    representations = load_json(args.representation_bundle)
+    core2 = load_json(args.core2_plan)
+    closure = load_json(args.coverage_closure)
+
     if args.semantic_only:
+        package, _ = execute_semantic_pipeline(run, study_model, core1, representations, core2, closure, args.out_dir)
         print(json.dumps(package, indent=2))
         return
-    raise SystemExit(
-        "CHEM_LP_RENDER_STAGE_NOT_IMPLEMENTED: semantic chain passed through C-LP-21; "
-        "C-LP-22..C-LP-25 remain pending and no release claim is authorized."
-    )
+
+    package, _ = execute_full_pipeline(run, study_model, core1, representations, core2, closure, args.out_dir)
+    print(json.dumps(package, indent=2))
 
 
 if __name__ == "__main__":
