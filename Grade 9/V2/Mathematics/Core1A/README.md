@@ -6,27 +6,24 @@ Core (1) is a governed **capability-level semantic teaching plan**. It is not ye
 M-E LearnerStateSnapshot
         ↓
 M-F MathLearnerStudyModel
-  - UNKNOWN / DEVELOPING / READY
-  - confidence + observation refs
-  - VERIFY_ONLY / ACTIVE_STUDY / REPAIR_BEFORE / REPAIR_IN_UNIT / PROBE_FIRST
         ↓
 Core (1) MathCore1StudyPlan
-  - one capability-level lesson per M-F capability plan
-  - PCK / problem-family / representation / verification authority
         ↓
 Core (1A)-B  BUCKET SYNTHESIS
-  - group related capabilities around governed family/invariant
-  - attach unambiguous prerequisite support
-  - preserve exact learner state/treatment per capability
-  - derive grounded learning atoms from PCK
         ↓
 Core (1A)-R  TEXTBOOK REALIZATION
-  - explanations / representations / examples / practice
-  - worked → guided → faded → independent
-  - misconception repair + verification
         ↓
 core1a_student_textbook.pdf
 ```
+
+## Semantic ownership
+
+- **M-E** owns learner evidence/state: `UNKNOWN | DEVELOPING | READY`, confidence and observation refs.
+- **M-F** owns learner-conditioned treatment/priority: `VERIFY_ONLY | ACTIVE_STUDY | REPAIR_BEFORE | REPAIR_IN_UNIT | PROBE_FIRST`.
+- **Core (1)** owns complete capability-level instructional authority, PCK/problem-family bindings, representations and verification obligations.
+- **Core (1A)-B** owns teaching-bucket synthesis only. It may group capability plans, but it may not diagnose the learner, change treatment, invent mathematical scope or invent bucket invariants.
+- **Core (1A)-R** owns learner-facing textbook realization of the governed bucket plan.
+- **Core (2)/(2A)** owns original-question transfer and its learner realization.
 
 ## Capability != bucket
 
@@ -34,7 +31,7 @@ A `MathCore1Lesson` is capability-centric. A textbook bucket may contain several
 
 Core (1A) therefore does **not** equate `Core1.lessons[]` with final textbook chapters.
 
-The canonical semantic object is now `Core1ABucketPlan`:
+The canonical semantic object is `Core1ABucketPlan`:
 
 ```text
 Bucket[]
@@ -53,11 +50,9 @@ Bucket[]
 
 ## Core (1A) does not invent learner knowledge
 
-Learner knowledge already exists upstream. M-E owns evidence/state and M-F owns treatment selection. Core (1A) consumes those decisions unchanged.
+For every capability Core (1A) preserves from M-F:
 
-For every capability Core (1A) preserves:
-
-- `learner_state_readiness`: `UNKNOWN | DEVELOPING | READY`;
+- `learner_state_readiness`;
 - `learner_state_confidence`;
 - `learner_state_observation_refs`;
 - `treatment`;
@@ -73,7 +68,7 @@ capability B  DEVELOPING  → REPAIR_IN_UNIT
 capability C  UNKNOWN     → ACTIVE_STUDY
 ```
 
-The learner product should activate A briefly, repair B, and fully teach C without relabelling the learner.
+The learner product activates A briefly, repairs B, and fully teaches C without relabelling the learner.
 
 ## Bucket synthesis policy
 
@@ -83,7 +78,7 @@ The first implementation is deliberately conservative and deterministic:
 2. a prerequisite-only capability is attached to a single dependent bucket when the M-F dependency makes that unambiguous;
 3. a prerequisite feeding multiple buckets remains its own bridge bucket so it is taught once rather than duplicated;
 4. every Core (1) capability appears in exactly one bucket;
-5. bucket order follows the approved Core (1) capability order — no invented difficulty ranking;
+5. bucket order follows approved Core (1) capability order — no invented difficulty ranking;
 6. the bucket invariant must be grounded in either a canonical problem-family `target_job` or a bound PCK anchor;
 7. if the invariant cannot be grounded, generation fails rather than letting the renderer invent one.
 
@@ -91,7 +86,7 @@ This policy can later become richer, but only through governed semantic rules �
 
 ## Learning atoms
 
-Core (1A) creates traceable learning atoms from the bound PCK rather than inventing page labels. Current atom sources are:
+Core (1A) creates traceable learning atoms from bound PCK. Current atom sources are:
 
 - selected PCK anchor / ordinary-language bridge;
 - each PCK reconstruction step.
@@ -107,7 +102,7 @@ Preservation applies to **authority and learner-conditioned semantics**, not to 
 Core (1A) preserves:
 
 - complete Core (1) capability coverage;
-- Core (1) capability order as the stable ordering basis;
+- Core (1) capability order as stable ordering basis;
 - capability, PCK and problem-family authority;
 - M-F learner state, treatment and priority;
 - assessment-question bindings;
@@ -126,7 +121,7 @@ learner treatment != Core1A-invented learner level
 
 ## Textbook manuscript
 
-`math-core1a-textbook-manuscript.schema.json` is now bucket-centric (`schema_version = 2.0.0`). Each bucket contains learner-facing capability units, but the bucket is the visible teaching unit.
+`math-core1a-textbook-manuscript.schema.json` is bucket-centric (`schema_version = 2.0.0`). Each bucket contains learner-facing capability units, but the bucket is the visible teaching unit.
 
 Outputs:
 
