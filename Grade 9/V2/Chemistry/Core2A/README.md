@@ -1,80 +1,107 @@
-# Chemistry V2 — Core (2A): source practice + governed challenge practice
+# Chemistry V2 — Core (2A): purpose-specific practice + governed challenge transfer
 
-Core (2) remains the source-transfer authority. Core (2A) is the learner-facing practice realization.
+Core (2) remains the source-transfer authority. Core (2A) is a purpose-specific learner product and must not default to being Core (2) again with more scaffolding or more pages.
 
-Core (2A) has two strictly separated lanes:
+## Resolve purpose before authoring
+
+Before any Core (2A) is authored, the user purpose must be explicit:
+
+```text
+STARTER
+PRACTICE
+REVISION
+COMPETITION
+```
+
+If the purpose is unresolved, ask the user. Do not infer it silently.
+
+```text
+CORE2A_PURPOSE_UNRESOLVED
+```
+
+The selected purpose must materially change question selection, support density, workspace, challenge mix and page density.
+
+## Competition mode
+
+Competition mode defaults to fresh transfer rather than replaying the complete Core (2) source set. Difficulty should come from reasoning form: reversed targets, hidden information, constraint chaining, comparison/ranking, error diagnosis, representation switching and other governed challenge archetypes.
+
+Before fresh Competition questions are authored, inspect at least two authoritative/official external school-science competition sources and record what was learned at the construction-pattern level. Useful benchmark forms include:
+
+- particle-composition tables;
+- multi-statement selection;
+- coded-species deduction;
+- reverse electron/charge inference;
+- integer reconstruction;
+- error diagnosis from plausible wrong work.
+
+Do not copy benchmark question text. The existing near-copy gate still applies. Store benchmark URLs or stable refs in machine custody. Prefer one book-level construction-reference note over repeated per-question disclaimers.
+
+## Two-page default
+
+A learner question should normally occupy no more than two physical pages:
+
+```text
+PAGE 1 — ATTEMPT
+question
++ demand-sized workspace
++ 1–2 technical clues at the bottom, usable only if stuck
+
+PAGE 2 — CHECK AND SOLUTION
+QUICK CHECK
++ FULL WORKING
++ question-specific KEY RELATION / DECISION RULE
++ independent CONSISTENCY CHECK
+```
+
+A clue state is not automatically a clue page. A working area is not automatically a dedicated blank page. Any exception above two pages requires a specific reason.
+
+Technical clues must tell the learner what equation, relation, count, comparison or falsification test to execute next. Generic encouragement or a generic “competition start rule” does not satisfy the clue requirement.
+
+Answer-page sidebars must be question-specific. A generic statement such as “the formula unit is neutral” is insufficient unless it is instantiated with the current symbols/numbers (for example, `2q_X + 3(-2) = 0`). The consistency check must independently recompute or test the current result.
+
+Repeated learner-facing slogans, generic repair footers and repeated “not an official question” disclaimers are forbidden.
+
+## Core (2A) lanes
+
+When source practice is explicitly needed, Core (2A) can still realize the governed source lane:
 
 ```text
 SOURCE_CORE2
   preserve the governed source question and its integrity state
+```
 
+Fresh challenge practice uses:
+
+```text
 GENERATED_ORIGINAL
-  add fresh competitive-style transfer grounded in taught Chemistry
+  fresh transfer grounded in taught Chemistry
 ```
 
-The lanes may share learner-support presentation, but they do not share provenance semantics.
+The lanes do not share provenance semantics and must not be conflated.
 
-## Current implementation
+## Answer closure
 
-Both lanes are executable and wired through the canonical learner-product runner through C-LP-25.
-
-`SOURCE_CORE2` preserves every governed C-I item in order, including source text/options/subparts, figure semantics, conditions/states/units, source-QC state and source-fidelity custody. It binds each item to exactly one Core1A bucket and the exact pre-taught H1/H2/H3 evidence.
-
-`GENERATED_ORIGINAL` deterministically selects validator-backed challenge targets by problem family. Unsupported families are skipped with a recorded reason rather than free-written. Generated items reuse taught Core1A capability/hint evidence, pass an independent Chemistry validator, pass an all-source near-copy gate, and disclose fresh/original provenance.
-
-The full runner now realizes these semantic plans into deterministic learner PDF pages, runs physical-PDF preflight, freezes the final machine audit and leaves reusable artifact hashes/handoff custody. Machine completion does not grant human release approval.
-
-## Learner flow
+Compression never weakens self-study closure:
 
 ```text
-TRY IT FIRST
-SEE THE IDEA
-WRITE THIS FIRST
-SMALL CLUE
-BIGGER CLUE
-HOW DO I START?
-WATCH FOR THIS
-THINK IT THROUGH
-CHECK YOUR CHEMISTRY
-QUICK CHECK
-FULL WORKING
-WHERE THIS QUESTION CAME FROM
-```
-
-Source chemistry may not be silently rewritten. Source normalization requires an explicit QC record.
-
-## Attempt-first answer separation
-
-The rendered product deliberately separates attempt and checking surfaces:
-
-```text
-attempt page
-→ QUICK CHECK on a later page
-→ FULL WORKING after the quick check
-```
-
-The learner is told where the answer check is. The quick check is concise; it is not a duplicate solution. Full working contains the governed reasoning route and independent Chemistry verification.
-
-No learner-facing objective Core2A question may be published without:
-
-```text
-QUESTION
+CLOSED QUESTION
 = QUICK CHECK
 = FULL WORKING
+
+GENUINELY OPEN RESPONSE
+= EXPECTED RESPONSE RUBRIC
 ```
 
-Genuinely open-ended questions instead require an explicit `EXPECTED RESPONSE` rubric.
+## Generated challenge custody
 
-## Generated challenge lane
-
-Generated questions must be fresh/original instances grounded in:
+Generated questions must be grounded in:
 
 - taught Core (1)/Core (1A) authority;
 - an active governed problem family;
 - an approved Chemistry competitive archetype;
-- independently verified Chemistry and answer;
-- a passed near-copy check against every governed source stem;
-- inline provenance.
+- independent Chemistry verification;
+- passed near-copy checking against governed source stems and custodied external benchmarks;
+- machine-side provenance.
 
 Generated questions must never claim official NCERT/Olympiad/exam provenance unless an exact official source is independently verified.
 
@@ -100,7 +127,7 @@ PF-CONDITION_VALIDITY
 PF-AGENT_ROLE_ASSIGNMENT
 ```
 
-Families without a governed recipe + independent validator are not generated yet.
+Families without a governed recipe + independent validator are skipped with a recorded reason rather than free-written.
 
 ## Hint pre-teaching
 
@@ -112,23 +139,13 @@ BIGGER CLUE      = H2 representation/model
 HOW DO I START?  = H3 first executable symbolic/quantitative move
 ```
 
-Every reveal must bind to already-taught Core (1A) evidence. A question whose hint contains new Chemistry is not ready.
-
-## Per-question provenance
-
-Every question carries its own `WHERE THIS QUESTION CAME FROM` block. A bibliography at the end does not satisfy this requirement.
-
-Source items preserve exact machine custody of the Core (2) source, while the learner surface receives a human-readable source locator. Generated items disclose fresh/original status and supporting authority. Internal machine IDs and non-web custody links are forbidden on learner pages.
+For Competition mode, the rendered attempt page normally exposes only one or two compact technical clues after the workspace rather than the full H1/H2/H3 stack. The underlying reveals must still bind to already-taught Core (1A) evidence.
 
 ## Reasoning visuals
 
-Core2A does not choose diagrams during page rendering. Its H2 binding points to already-taught Core1A/C-H representation evidence. The learner renderer invokes those selected Chemistry vector primitives when the required semantic data is available.
+Core (2A) does not choose diagrams during page rendering. Its representation binding points to already-taught Core1A/C-H evidence. The learner renderer invokes selected Chemistry vector primitives when required semantic data is available.
 
-A governed visual obligation cannot silently become decoration or disappear. Secondary unavailable primitives are recorded; an item requiring visual reasoning cannot close with zero realized reasoning visuals.
-
-## Independent Chemistry validation
-
-Current generated-item validators independently recompute the applicable Chemistry rather than trusting the authored answer. The roadmap can expand validators for molar mass, units/dimensions, entity multipliers, concentration, stoichiometric ratios and additional redox/charge cases only when matching governed problem families are available.
+A governed visual obligation cannot silently become decoration or disappear. An item requiring visual reasoning cannot close with zero realized reasoning visuals.
 
 ## Physical-PDF gate and release boundary
 
