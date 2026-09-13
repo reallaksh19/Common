@@ -4,6 +4,7 @@
   "source_spec": "adjective-golden-lesson.v1.draft.json",
   "render": {
     "pdf": "adjective-golden-lesson.v1.draft.pdf",
+    "artifact_persistence": "GENERATED_LOCALLY_NOT_COMMITTED",
     "page_count": 9,
     "page_size": "A4",
     "renderer": "ReportLab",
