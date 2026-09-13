@@ -1,0 +1,128 @@
+{
+  "registry_id": "MATH-GLYPH-BINDING-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Subject-wide binding from semantic MathExpression tokens to the exact Unicode code points the learner product must print, plus the portable font families allowed to carry them. A code point named here is a publication obligation: if the bound font cannot map it, the run fails MATH_REQUIRED_GLYPH_MISSING rather than silently substituting an ASCII approximation.",
+  "font_binding": {
+    "role": "MATH_CAPABLE_TEXT",
+    "candidates": [
+      {
+        "family": "DejaVuSans",
+        "regular": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "bold": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "italic": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf"
+      },
+      {
+        "family": "FreeSerif",
+        "regular": "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
+        "bold": "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
+        "italic": "/usr/share/fonts/truetype/freefont/FreeSerifItalic.ttf"
+      },
+      {
+        "family": "NotoSans",
+        "regular": "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
+        "bold": "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf",
+        "italic": "/usr/share/fonts/truetype/noto/NotoSans-Italic.ttf"
+      }
+    ],
+    "forbidden_fallbacks": ["Helvetica", "Times-Roman", "Courier"],
+    "forbidden_fallback_reason": "ReportLab base-14 fonts are Latin-1 only and silently drop every mathematical glyph named in this registry."
+  },
+  "operators": {
+    "PLUS": "+",
+    "MINUS": "−",
+    "TIMES": "×",
+    "DIVIDE": "÷",
+    "DOT": "⋅",
+    "PLUS_MINUS": "±",
+    "MINUS_PLUS": "∓"
+  },
+  "relations": {
+    "EQ": "=",
+    "NE": "≠",
+    "LT": "<",
+    "LE": "≤",
+    "GT": ">",
+    "GE": "≥",
+    "APPROX": "≈",
+    "EQUIV": "≡",
+    "CONGRUENT": "≅",
+    "SIMILAR": "∼",
+    "PARALLEL": "∥",
+    "PERPENDICULAR": "⊥",
+    "IMPLIES": "⇒",
+    "IFF": "⇔",
+    "THEREFORE": "∴",
+    "BECAUSE": "∵"
+  },
+  "set_relations": {
+    "SUBSET": "⊂",
+    "SUBSET_EQ": "⊆",
+    "NOT_SUBSET": "⊄",
+    "ELEMENT": "∈",
+    "NOT_ELEMENT": "∉",
+    "UNION": "∪",
+    "INTERSECT": "∩"
+  },
+  "fences": {
+    "PAREN": ["(", ")"],
+    "BRACKET": ["[", "]"],
+    "BRACE": ["{", "}"],
+    "ABS": ["|", "|"],
+    "NONE": ["", ""]
+  },
+  "named_symbols": {
+    "NATURALS": "ℕ",
+    "WHOLES": "W",
+    "WHOLES_BLACKBOARD": "𝕎",
+    "INTEGERS": "ℤ",
+    "RATIONALS": "ℚ",
+    "REALS": "ℝ",
+    "IRRATIONALS": "ℙ",
+    "EMPTY_SET": "∅",
+    "INFINITY": "∞",
+    "DEGREE": "°",
+    "ANGLE": "∠",
+    "TRIANGLE": "△",
+    "RIGHT_ANGLE": "∟",
+    "PI": "π",
+    "THETA": "θ",
+    "ALPHA": "α",
+    "BETA": "β",
+    "GAMMA": "γ",
+    "DELTA": "Δ",
+    "SUM": "∑",
+    "FOR_ALL": "∀",
+    "EXISTS": "∃",
+    "ELLIPSIS": "…"
+  },
+  "radical_sign": "√",
+  "radical_overbar": true,
+  "astral_plane_note": "WHOLES binds to the NCERT-conventional 'W'. The blackboard-bold 𝕎 (U+1D54E) is present in the bound font but lies outside the BMP, where PDF text extraction round-trips unreliably; a glyph that cannot be read back cannot be gated after rendering, so it is not the default binding.",
+  "superscript_digits": {
+    "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
+    "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹",
+    "+": "⁺", "-": "⁻", "=": "⁼", "(": "⁽", ")": "⁾",
+    "n": "ⁿ", "i": "ⁱ"
+  },
+  "subscript_digits": {
+    "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄",
+    "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉",
+    "+": "₊", "-": "₋", "=": "₌", "(": "₍", ")": "₎",
+    "n": "ₙ", "x": "ₓ"
+  },
+  "forbidden_ascii_flattenings": [
+    {"pattern": "sqrt", "replaced_semantic": "RADICAL", "falsifier": "MATH_EXPRESSION_FLATTENED_TO_PLAIN_TEXT"},
+    {"pattern": "cbrt", "replaced_semantic": "RADICAL", "falsifier": "MATH_EXPRESSION_FLATTENED_TO_PLAIN_TEXT"},
+    {"pattern": "^", "replaced_semantic": "POWER", "falsifier": "MATH_EXPRESSION_FLATTENED_TO_PLAIN_TEXT"},
+    {"pattern": "<=", "replaced_semantic": "RELATION:LE", "falsifier": "MATH_RELATION_RENDERED_AS_ASCII_FALLBACK"},
+    {"pattern": ">=", "replaced_semantic": "RELATION:GE", "falsifier": "MATH_RELATION_RENDERED_AS_ASCII_FALLBACK"},
+    {"pattern": "!=", "replaced_semantic": "RELATION:NE", "falsifier": "MATH_RELATION_RENDERED_AS_ASCII_FALLBACK"},
+    {"pattern": "~=", "replaced_semantic": "RELATION:APPROX", "falsifier": "MATH_RELATION_RENDERED_AS_ASCII_FALLBACK"},
+    {"pattern": "=>", "replaced_semantic": "RELATION:IMPLIES", "falsifier": "MATH_RELATION_RENDERED_AS_ASCII_FALLBACK"},
+    {"pattern": "->", "replaced_semantic": "RELATION:IMPLIES", "falsifier": "MATH_RELATION_RENDERED_AS_ASCII_FALLBACK"},
+    {"pattern": "+/-", "replaced_semantic": "OPERATOR:PLUS_MINUS", "falsifier": "MATH_EXPRESSION_FLATTENED_TO_PLAIN_TEXT"},
+    {"pattern": "deg", "regex": "\\d\\s*deg\\b", "replaced_semantic": "SYMBOL:DEGREE", "falsifier": "MATH_EXPRESSION_FLATTENED_TO_PLAIN_TEXT"},
+    {"pattern": "subset of", "replaced_semantic": "SET_NOTATION:SUBSET", "falsifier": "MATH_EXPRESSION_FLATTENED_TO_PLAIN_TEXT"}
+  ]
+}
