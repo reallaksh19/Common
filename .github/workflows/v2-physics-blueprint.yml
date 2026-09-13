@@ -23,3 +23,5 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
       - name: Run blueprint routing tests
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py"
+      - name: Run independent second-pass tests
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py"
