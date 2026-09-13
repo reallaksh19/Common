@@ -46,11 +46,15 @@ validation context unlocks both sealed packages
 claim-level cross-validation
       ↓
 CROSS_VALIDATED
+      ↓
+Join / AssimilationDemand
+      ↓
+JOIN_READY | BLOCKED_CONFLICT
 ```
 
-Increment 1 established immutable evidence binding and the root run state. Increment 2 added evidence-adaptive routing, owner routing overrides and deterministic max-three handoff bundling. Increment 3 now implements the dual-intelligence independence firewall and claim-level cross-validation.
+Increment 1 established immutable evidence binding and root run state. Increment 2 added adaptive routing, owner routing overrides and deterministic max-three handoff bundling. Increment 3 implemented the dual-intelligence independence firewall and claim-level cross-validation. Increment 4 now compiles validated intelligence, learner capability state, purpose and owner constraints into `AssimilationDemand`.
 
-## Ground truth
+## Increment 1 — Ground truth + run blueprint
 
 `GroundTruthManifest` records original question corpus, syllabus, authoritative source/textbook, answer key, solution set and figure set.
 
@@ -68,13 +72,9 @@ CONFLICTED
 
 Only `ORIGINAL_EVIDENCE` and `AUTHORITATIVE_SOURCE` are legal ground-truth authority classes. Derived claims, benchmarks, agent conclusions and owner overrides remain outside ground truth.
 
-## Root run blueprint
+Every downstream artifact belongs to one `MathLearningRunBlueprint`. `run_id` remains stable while `run_digest` changes as state evolves. Learner prior, learning purpose and product mode remain separate control-plane fields.
 
-Every downstream artifact belongs to one `MathLearningRunBlueprint`. The run identity is assigned once and remains stable across state transitions; `run_digest` changes as state evolves.
-
-The root binds exact ground-truth ref/digest, learner prior, learning purpose, product mode, owner override refs, routing, handoff bundles and later Core1/Core2/Join/Assimilation/Core1A/Core2A/publication refs.
-
-The handoff transport constraint is:
+The relay transport constraint is:
 
 ```text
 1 <= subtopics per bundle <= 3
@@ -84,7 +84,7 @@ This does not limit learning atoms, equations, inference edges, representations 
 
 ## Increment 2 — Adaptive Relay / EvidenceRouter
 
-Routing profiles every candidate subtopic with six governed evidence dimensions:
+Routing profiles each candidate subtopic with:
 
 ```text
 SA  scope authority
@@ -94,8 +94,6 @@ QR  question resolution
 UA  uncertainty
 CI  conflict index
 ```
-
-All dimensions use the 0–4 rubric in `policies/math-evidence-routing-policy.json`; positive evidential strength must cite GroundTruth evidence.
 
 Derived strengths are:
 
@@ -123,25 +121,11 @@ otherwise
 → BLOCK_OWNER_REVIEW
 ```
 
-If both roles are evidence-admissible, normal routing starts Core1 because semantic scope is already strongly established. Core2 must still independently re-ground. Missing/coarse semantic authority with rich resolved questions routes Core2 first.
-
-## Owner override semantics
-
-Routing stores separately:
-
-```text
-SYSTEM ACTION
-OWNER OVERRIDE
-FINAL ACTION
-```
-
-`HARD` may change the operational first role while preserving the system finding. `SOFT` may select only an already evidence-admissible role. Owner overrides never mutate GroundTruth.
+Owner routing control stores `SYSTEM ACTION`, `OWNER OVERRIDE` and `FINAL ACTION` separately. `HARD` may change execution without rewriting evidence; `SOFT` may select only an already admissible role.
 
 ## Increment 3 — Dual intelligence + independence firewall
 
-Core1 and Core2 have separate claim vocabularies.
-
-Core1 reconstructs semantic structure, including:
+Core1 semantic claims include:
 
 ```text
 CONCEPT / MODEL / LAW / EQUATION / DERIVATION
@@ -150,7 +134,7 @@ VALIDITY / CONCEPT_BOUNDARY
 REPRESENTATION_AFFORDANCE / STRUCTURAL_CONTRAST
 ```
 
-Core2 reconstructs assessment cognition, including:
+Core2 assessment claims include:
 
 ```text
 QUESTION_DEMAND / RECOGNITION_CUE / HIDDEN_CONSTRAINT
@@ -160,7 +144,7 @@ DIFFICULTY_VECTOR / PROBLEM_FAMILY / MISCONCEPTION
 SOLUTION_STRUCTURE / TRANSFER_ENVELOPE
 ```
 
-The runtime enforces three phases:
+The runtime enforces:
 
 ```text
 FIRST_ROLE_ANALYSIS
@@ -169,15 +153,12 @@ FIRST_ROLE_ANALYSIS
 SECOND_ROLE_INDEPENDENT
   context = GROUND_TRUTH_ONLY
   first package = WITHHELD
-  second specialist must use a different agent instance
+  second specialist = fresh instance
 
 SECOND_ROLE_VALIDATION
-  allowed only after the independent package is sealed
+  only after independent package is sealed
   context = GROUND_TRUTH_PLUS_UPSTREAM_VALIDATION
-  first + independent packages become visible
 ```
-
-A fresh instance ID by itself is not proof of independence. The sealed work order, context manifest and independent package prove that the second specialist completed its ground-truth-only pass before upstream claims were exposed.
 
 Every first-package claim must receive exactly one classification:
 
@@ -190,11 +171,9 @@ OUT_OF_SCOPE
 UNKNOWN
 ```
 
-`MISSING` is recorded separately when the independent second-role pass finds a grounded claim absent from the first package. A missing record must point to an actual sealed independent claim.
+`MISSING` is separate and must reference an actual independently sealed second-role claim. Cross-validation never mutates either specialist package.
 
-Cross-validation does not mutate either specialist package. It creates a separate `math-cross-validation` artifact with original-evidence provenance.
-
-## Increment 3 executable contracts
+Key files:
 
 ```text
 contracts/math-specialist-work-order.schema.json
@@ -202,66 +181,21 @@ contracts/math-agent-context-manifest.schema.json
 contracts/math-specialist-package.schema.json
 contracts/math-cross-validation.schema.json
 contracts/math-dual-intelligence-session.schema.json
-
 policies/math-dual-intelligence-policy.json
 engine/run_dual_intelligence.py
-
-golden/dual_intelligence/01-core1-first-firewall.json
-golden/dual_intelligence/02-core2-first-firewall.json
-
 tests/test_dual_intelligence.py
 ```
 
-The runtime is deliberately symmetric: `CORE1_FIRST` and `CORE2_FIRST` use the same firewall semantics; only specialist role order changes.
+## Increment 4 — Join / AssimilationDemand
 
-## Commands
-
-Ground-truth and routing commands remain:
-
-```bash
-python 'Grade 9/V2/Mathematics/MathBlueprint/engine/build_ground_truth_manifest.py' ...
-python 'Grade 9/V2/Mathematics/MathBlueprint/engine/init_math_learning_run.py' ...
-python 'Grade 9/V2/Mathematics/MathBlueprint/engine/route_math_learning_run.py' ...
-```
-
-The dual-intelligence runtime exposes explicit commands rather than one opaque call:
+Join may run only after `CROSS_VALIDATED`.
 
 ```text
-first-order
-context
-seal-package
-second-order
-context
-seal-package
-validation-order
-context
-cross-validate
-```
-
-This makes the information firewall auditable at every boundary.
-
-## Golden fixtures
-
-Routing goldens prove:
-
-1. strong syllabus/source + rich questions → `CORE1_FIRST`;
-2. absent/coarse syllabus + rich resolved questions → `CORE2_FIRST`;
-3. sparse/conflicted evidence → block rather than forced consensus.
-
-Dual-intelligence goldens prove both Core1-first and Core2-first paths preserve the same independence firewall.
-
-Goldens demonstrate process behavior, not reusable topic content.
-
-## Next increment
-
-Increment 4 builds the **Join / AssimilationDemand** layer after cross-validation:
-
-```text
-validated Core1 semantic intelligence
+cross-validated Core1 semantic intelligence
         +
-validated Core2 assessment intelligence
+cross-validated / independently grounded Core2 assessment intelligence
         +
-learner capability state
+LearnerCapabilityState
         +
 learning purpose
         +
@@ -270,4 +204,148 @@ owner constraints
 AssimilationDemand
 ```
 
-The Join must preserve disagreement and unknowns, record provenance for each assimilation obligation, and produce the precise pedagogical requirements that the later Core1A Assimilation Compiler must solve. Manuscript writing remains downstream and is not allowed to substitute for this reasoning layer.
+### Learner capability state
+
+Learner prior percentage remains provenance only. It does not automatically create mastery claims.
+
+Capability readiness is limited to the existing vocabulary:
+
+```text
+UNKNOWN
+DEVELOPING
+READY
+```
+
+Each capability also records its basis:
+
+```text
+LEARNER_EVIDENCE
+OWNER_DECLARED_BASELINE
+UNKNOWN
+```
+
+An omitted capability is treated as `UNKNOWN`, not weak.
+
+Join converts readiness into a pedagogical gap state:
+
+```text
+READY
+→ NO_IDENTIFIED_GAP
+
+DEVELOPING
+→ BRIDGE_OR_PRACTICE_REQUIRED
+
+UNKNOWN / UNLISTED
+→ UNKNOWN_REQUIRES_PROBE_OR_FULL_SUPPORT
+```
+
+### Purpose is first-class
+
+Join compiles purpose requirements separately from learner state.
+
+`FIRST_STUDY`, `CONSOLIDATION`, `REVISION` and `COMPETITIVE_EXAM` have different terminal demands. Competition may increase recognition/transfer demand but carries an explicit `DO_NOT_SKIP_NECESSARY_FOUNDATIONS` requirement.
+
+### Conflict and unknown preservation
+
+Cross-validation results resolve as:
+
+```text
+CONFIRMED    → admissible as stated
+REFINED      → admissible as refined
+MISSING      → admissible independent finding
+UNKNOWN      → preserved as unknown, not authority
+UNSUPPORTED  → preserved as non-authoritative conflict
+CONTRADICTED → preserved as non-authoritative conflict
+OUT_OF_SCOPE → preserved as excluded conflict
+```
+
+Every conflict must be explicitly dispositioned as either:
+
+```text
+BLOCKING
+or
+DEFERRED with reason
+```
+
+An assimilation obligation may never cite `UNKNOWN`, `UNSUPPORTED`, `CONTRADICTED` or `OUT_OF_SCOPE` claims as authority.
+
+### Assimilation obligations
+
+Each obligation must state:
+
+```text
+obligation type
+statement
+origin claim refs
+original evidence provenance
+capability refs
+learner gap states
+whether required before Core2A
+```
+
+Allowed obligation types are:
+
+```text
+SEMANTIC_UNDERSTANDING
+ASSESSMENT_RECOGNITION
+PREREQUISITE
+INFERENCE_BRIDGE
+EQUATION_ASSIMILATION
+REPRESENTATION
+MISCONCEPTION_CONTRAST
+TRANSFER
+```
+
+Owner constraints are carried with `authority_class = OWNER_CONTROL`; they never become evidence.
+
+Increment 4 files:
+
+```text
+contracts/math-learner-capability-state.schema.json
+contracts/math-assimilation-demand-build-spec.schema.json
+contracts/math-assimilation-demand.schema.json
+policies/math-assimilation-join-policy.json
+engine/build_assimilation_demand.py
+tests/test_assimilation_join.py
+golden/assimilation/01-vieta-join-with-unknown-learner-state.json
+```
+
+The Join produces no textbook prose. Its output is the precise pedagogical problem the later Core1A Assimilation Compiler must solve.
+
+## Commands
+
+```bash
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/build_ground_truth_manifest.py' ...
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/init_math_learning_run.py' ...
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/route_math_learning_run.py' ...
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/run_dual_intelligence.py' ...
+python 'Grade 9/V2/Mathematics/MathBlueprint/engine/build_assimilation_demand.py' ...
+```
+
+The dual-intelligence runtime intentionally exposes `first-order`, `context`, `seal-package`, `second-order`, `validation-order` and `cross-validate` boundaries so the information firewall is auditable.
+
+## Golden fixtures
+
+Routing goldens prove Core1-first, Core2-first and conflict-blocking evidence situations. Dual-intelligence goldens prove symmetric firewall behavior for both execution orders. The AssimilationDemand golden proves that semantic + assessment intelligence can compile into a grounded teaching obligation while unknown learner state remains unknown rather than being interpreted as weakness.
+
+Goldens demonstrate process behavior, not reusable topic content.
+
+## Next increment
+
+Increment 5 is the **Core1A Assimilation Compiler**:
+
+```text
+AssimilationDemand
+      ↓
+CognitiveTransformation
+      ↓
+LearningAtom + InferenceChain + EquationAssimilation
+      ↓
+RepresentationRequirement → candidates → decision
+      ↓
+MisconceptionContrast + SymbolBridge + FadingPlan + TransferBridge
+      ↓
+AssimilationPlan
+```
+
+Manuscript writing remains downstream and may not begin until the assimilation plan passes its validators.
