@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-M2D-SBA-BUILD-STATE-v1",
+  "branch": "v2-physics-core1a-publication",
+  "pr_number": 350,
+  "policy": {
+    "skip_zero_primary_question_buckets": true,
+    "target_prior_knowledge_pct": 20,
+    "next_bucket_rule": "Choose the lowest-index bucket after the last completed active bucket whose production_status is ACTIVE; skip SKIP_NO_PRIMARY_CORE2.",
+    "handoff_rule": "Do not advance next_active_bucket until the current manifest is COMPLETE and CI passes."
+  },
+  "completed_active_buckets": [
+    "M2D-SBA-03",
+    "M2D-SBA-04",
+    "M2D-SBA-05"
+  ],
+  "skipped_no_primary_buckets_seen_so_far": [
+    "M2D-SBA-01",
+    "M2D-SBA-02"
+  ],
+  "last_completed_bucket": "M2D-SBA-05",
+  "next_active_bucket": "M2D-SBA-06",
+  "gold_standard_buckets": {
+    "M2D-SBA-03": "LOW question load; one main routine; independent practice, protected hints and readiness gate.",
+    "M2D-SBA-04": "HIGH question load; multiple distinct velocity-event routines plus cross-bucket release control.",
+    "M2D-SBA-05": "VERY_HIGH question load; family-map planning, enlarged transfer section, multiple independent-practice/readiness sequences."
+  },
+  "required_start_files": [
+    "AGENT_RUNBOOK.md",
+    "README.md",
+    "CORE1A_UI_SPEC.md",
+    "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "registry/physics-core1a-core2-linkage.json"
+  ]
+}
