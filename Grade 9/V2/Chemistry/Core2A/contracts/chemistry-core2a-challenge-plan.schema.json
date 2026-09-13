@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-core2a-challenge-plan.schema.json",
+  "title": "Chemistry Core2A Generated Challenge Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_id","schema_version","subject","lane","source_plan_ref","source_plan_digest",
+    "core1a_bucket_plan_ref","core1a_bucket_plan_digest","execution_policy_ref",
+    "competitive_policy_ref","archetype_registry_ref","challenge_realization_policy_ref",
+    "learner_language_policy_ref","citation_policy_ref","answer_path_policy_ref",
+    "items","skipped_families","summary","plan_digest"
+  ],
+  "properties": {
+    "plan_id":{"type":"string","minLength":1},
+    "schema_version":{"const":"1.0.0"},
+    "subject":{"const":"CHEMISTRY"},
+    "lane":{"const":"GENERATED_ORIGINAL"},
+    "source_plan_ref":{"type":"string","minLength":1},
+    "source_plan_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "core1a_bucket_plan_ref":{"type":"string","minLength":1},
+    "core1a_bucket_plan_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "execution_policy_ref":{"type":"string","minLength":1},
+    "competitive_policy_ref":{"type":"string","minLength":1},
+    "archetype_registry_ref":{"type":"string","minLength":1},
+    "challenge_realization_policy_ref":{"type":"string","minLength":1},
+    "learner_language_policy_ref":{"type":"string","minLength":1},
+    "citation_policy_ref":{"type":"string","minLength":1},
+    "answer_path_policy_ref":{"type":"string","minLength":1},
+    "items":{"type":"array","items":{"type":"object"}},
+    "skipped_families":{
+      "type":"array","items":{
+        "type":"object","additionalProperties":false,
+        "required":["problem_family_ref","reason"],
+        "properties":{"problem_family_ref":{"type":"string"},"reason":{"type":"string","minLength":1}}
+      }
+    },
+    "summary":{
+      "type":"object","additionalProperties":false,
+      "required":[
+        "source_families_seen","supported_families","near_transfer_required","near_transfer_realized",
+        "structural_variations_required","structural_variations_realized","generated_items_total",
+        "independent_chemistry_checks_passed","near_copy_checks_passed","quick_checks_realized",
+        "full_workings_realized","mixed_synthesis_realized","status"
+      ],
+      "properties":{
+        "source_families_seen":{"type":"integer","minimum":0},
+        "supported_families":{"type":"integer","minimum":0},
+        "near_transfer_required":{"type":"integer","minimum":0},
+        "near_transfer_realized":{"type":"integer","minimum":0},
+        "structural_variations_required":{"type":"integer","minimum":0},
+        "structural_variations_realized":{"type":"integer","minimum":0},
+        "generated_items_total":{"type":"integer","minimum":0},
+        "independent_chemistry_checks_passed":{"type":"integer","minimum":0},
+        "near_copy_checks_passed":{"type":"integer","minimum":0},
+        "quick_checks_realized":{"type":"integer","minimum":0},
+        "full_workings_realized":{"type":"integer","minimum":0},
+        "mixed_synthesis_realized":{"const":0},
+        "status":{"const":"PASS"}
+      }
+    },
+    "plan_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
