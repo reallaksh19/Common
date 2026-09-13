@@ -25,7 +25,8 @@ assert index["columns"] == [
     "SBA index", "Subtopic bucket", "Origin", "Core (1A) teaching home", "Core (2) primary questions", "State"
 ]
 rows = {row["bucket_id"]: row for row in index["rows"]}
-assert list(rows) == [f"M2D-SBA-{i:02d}" for i in range(1, 6)]
+# SBA05 regression checks must remain valid as the publication index grows.
+assert list(rows)[:5] == [f"M2D-SBA-{i:02d}" for i in range(1, 6)]
 assert rows["M2D-SBA-03"]["core2_primary_questions"] == ["Q10", "Q43"]
 assert rows["M2D-SBA-04"]["core2_primary_questions"] == ["Q01", "Q11", "Q13", "Q14", "Q17", "Q27", "Q40"]
 assert rows["M2D-SBA-05"]["core2_primary_questions"] == [
