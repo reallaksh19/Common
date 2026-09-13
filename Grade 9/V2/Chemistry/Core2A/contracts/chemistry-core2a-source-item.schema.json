@@ -33,6 +33,9 @@
         "stem",
         "options",
         "subparts",
+        "response_mode",
+        "source_locator",
+        "source_text_relation",
         "figure_required",
         "figure_semantic",
         "condition_text",
@@ -47,7 +50,7 @@
         "stem": {"type": "string", "minLength": 1},
         "options": {
           "type": "array",
-          "minItems": 2,
+          "minItems": 0,
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -59,6 +62,11 @@
           }
         },
         "subparts": {"type": "array"},
+        "response_mode": {"enum": ["MCQ", "CONSTRUCTED_RESPONSE"]},
+        "source_locator": {"type": "string", "minLength": 1},
+        "source_text_relation": {
+          "enum": ["EXACT_SOURCE", "EXACT_SOURCE_SUBPART", "ATOMIC_ASK_FROM_SOURCE_SUBPART"]
+        },
         "figure_required": {"type": "boolean"},
         "figure_semantic": {"type": ["object", "null"]},
         "condition_text": {"type": ["string", "null"]},
@@ -66,7 +74,27 @@
         "units": {"type": "array", "items": {"type": "string"}},
         "source_badges": {"type": "object"},
         "source_fidelity": {"type": "object"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"response_mode": {"const": "MCQ"}},
+            "required": ["response_mode"]
+          },
+          "then": {
+            "properties": {"options": {"minItems": 2}}
+          }
+        },
+        {
+          "if": {
+            "properties": {"response_mode": {"const": "CONSTRUCTED_RESPONSE"}},
+            "required": ["response_mode"]
+          },
+          "then": {
+            "properties": {"options": {"maxItems": 0}}
+          }
+        }
+      ]
     },
     "core1a_binding": {
       "type": "object",
