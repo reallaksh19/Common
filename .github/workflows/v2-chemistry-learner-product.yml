@@ -6,6 +6,12 @@ on:
       - 'Grade 9/V2/Chemistry/Core1A/**'
       - 'Grade 9/V2/Chemistry/Core2A/**'
       - 'Grade 9/V2/Chemistry/LearnerProduct/**'
+      - 'Grade 9/V2/Chemistry/ColdStart/**'
+      - 'Grade 9/V2/Chemistry/LearnerStudy/**'
+      - 'Grade 9/V2/Chemistry/CoreAuthoring/**'
+      - 'Grade 9/V2/Chemistry/Representation/**'
+      - 'Grade 9/V2/Chemistry/Core2Transfer/**'
+      - 'Grade 9/V2/Chemistry/ReasoningSemantics/**'
       - '.github/workflows/v2-chemistry-learner-product.yml'
   workflow_dispatch:
 
@@ -30,17 +36,26 @@ jobs:
           -s 'Grade 9/V2/Chemistry/LearnerProduct/tests'
           -p 'test_*.py' -v
 
+      - name: Run Chemistry Core1A bucket synthesis integration tests
+        run: >-
+          python -m unittest discover
+          -s 'Grade 9/V2/Chemistry/Core1A/tests'
+          -p 'test_*.py' -v
+
       - name: Validate learner-product policy and registry JSON
         run: |
           for f in \
             'Grade 9/V2/Chemistry/LearnerProduct/policies/'*.json \
-            'Grade 9/V2/Chemistry/LearnerProduct/registry/'*.json; do
+            'Grade 9/V2/Chemistry/LearnerProduct/registry/'*.json \
+            'Grade 9/V2/Chemistry/Core1A/policies/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
 
-      - name: Validate learner-product JSON schemas are parseable
+      - name: Validate learner-product and Core1A JSON schemas are parseable
         run: |
-          for f in 'Grade 9/V2/Chemistry/LearnerProduct/contracts/'*.json; do
+          for f in \
+            'Grade 9/V2/Chemistry/LearnerProduct/contracts/'*.json \
+            'Grade 9/V2/Chemistry/Core1A/contracts/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
 
