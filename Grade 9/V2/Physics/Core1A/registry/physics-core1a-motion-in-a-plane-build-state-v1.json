@@ -14,7 +14,8 @@
     "M2D-SBA-04",
     "M2D-SBA-05",
     "M2D-SBA-06",
-    "M2D-SBA-07"
+    "M2D-SBA-07",
+    "M2D-SBA-21"
   ],
   "skipped_no_primary_buckets_seen_so_far": [
     "M2D-SBA-01",
@@ -33,14 +34,15 @@
     "M2D-SBA-19",
     "M2D-SBA-20"
   ],
-  "last_completed_bucket": "M2D-SBA-07",
-  "next_active_bucket": "M2D-SBA-21",
+  "last_completed_bucket": "M2D-SBA-21",
+  "next_active_bucket": "M2D-SBA-22",
   "gold_standard_buckets": {
     "M2D-SBA-03": "LOW question load; one main routine; independent practice, protected hints and readiness gate.",
     "M2D-SBA-04": "HIGH question load; multiple distinct velocity-event routines plus cross-bucket release control.",
     "M2D-SBA-05": "VERY_HIGH question load; family-map planning, enlarged transfer section, multiple independent-practice/readiness sequences.",
     "M2D-SBA-06": "D3 low-question-load professional-lossless reference: full derivation depth, two distinct transfer families, restrained heading hierarchy and no instructional-function loss during textbook redesign.",
-    "M2D-SBA-07": "D2 HIGH-load professional-lossless reference: eight learning atoms, four transfer families, two worked/completion bridges, independent practice before protected hints, and restrained textbook heading hierarchy."
+    "M2D-SBA-07": "D2 HIGH-load professional-lossless reference: eight learning atoms, four transfer families, two worked/completion bridges, independent practice before protected hints, and restrained textbook heading hierarchy.",
+    "M2D-SBA-21": "D3 MEDIUM-load source-extension reference: explicit source-boundary disclosure, nine learning atoms, second-intersection geometry, normal-impact dual constraints, three independent transfer routines and professional-lossless publication."
   },
   "required_start_files": [
     "AGENT_RUNBOOK.md",
