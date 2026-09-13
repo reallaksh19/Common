@@ -5,29 +5,49 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-from common import ProductionKitError, digest, kit_root, load_json, write_json
+from common import ProductionKitError, chemistry_root, digest, kit_root, load_json, write_json
 
 
 ALLOWED_PRODUCTS = {"CORE1", "CORE2", "CORE1A", "CORE2A"}
 ALLOWED_PURPOSES = {"STARTER", "PRACTICE", "REVISION", "COMPETITION"}
 
 
-def _load_registries() -> tuple[dict[str, Any], dict[str, Any]]:
+def _load_registries() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     profiles = load_json(kit_root() / "registry" / "scaffold-profiles.json")
     routes = load_json(kit_root() / "registry" / "product-routes.json")
-    return profiles, routes
+    authorities = load_json(kit_root() / "registry" / "authority-bindings.json")
+    return profiles, routes, authorities
+
+
+def _validate_authority_paths(product: str, authority_registry: dict[str, Any]) -> dict[str, Any]:
+    root = chemistry_root()
+    shared = deepcopy(authority_registry["shared"])
+    product_binding = deepcopy(authority_registry["products"][product])
+    paths: list[str] = list(shared.values()) + list(product_binding.get("engines") or []) + list(product_binding.get("contracts") or [])
+    missing = [path for path in paths if not (root / path).is_file()]
+    if missing:
+        raise ProductionKitError(
+            "PRODUCTION_AUTHORITY_BINDING_MISSING",
+            f"{product}: {missing}",
+        )
+    return {
+        "registry_id": authority_registry["registry_id"],
+        "shared": shared,
+        "product": product_binding,
+    }
 
 
 def route_task(
     task: dict[str, Any],
     profiles_registry: dict[str, Any] | None = None,
     routes_registry: dict[str, Any] | None = None,
+    authority_registry: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    profiles_registry, routes_registry = (
-        (profiles_registry, routes_registry)
-        if profiles_registry is not None and routes_registry is not None
-        else _load_registries()
-    )
+    if profiles_registry is None or routes_registry is None or authority_registry is None:
+        loaded_profiles, loaded_routes, loaded_authorities = _load_registries()
+        profiles_registry = profiles_registry or loaded_profiles
+        routes_registry = routes_registry or loaded_routes
+        authority_registry = authority_registry or loaded_authorities
 
     product = task.get("product")
     if product not in ALLOWED_PRODUCTS:
@@ -58,6 +78,7 @@ def route_task(
             )
         profile_id = route_spec["profile_id"]
 
+    authority_bindings = _validate_authority_paths(product, authority_registry)
     profile = deepcopy(profile_map[profile_id])
     constraints = task.get("constraints") or {}
     requested_max = constraints.get("max_pages_per_question")
@@ -103,6 +124,7 @@ def route_task(
         "stages": list(route_spec["stages"]),
         "requested_output": task.get("requested_output", "RENDER_READY_PACKET"),
         "benchmark_sources": deepcopy(task.get("benchmark_sources") or []),
+        "authority_bindings": authority_bindings,
     }
     route_plan["route_digest"] = digest(route_plan)
     return route_plan
