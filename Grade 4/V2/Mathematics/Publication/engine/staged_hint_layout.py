@@ -3,15 +3,15 @@
 This component fixes a class of learner-page failures rather than one page:
 
 * H1/H2/H3 cards are measured before drawing;
-* a three-column row is used only for genuinely compact support;
-* long or dense support stacks vertically even when three columns technically fit;
+* compact support may use a three-column row;
+* dense support uses H1 full-width above H2/H3 side by side when readable;
+* narrow or very dense support stacks vertically;
 * all text stays inside its own measured card;
-* thinking-path chips wrap as a 4-up row or 2x2 grid instead of using loose
-  arrow text between fixed boxes;
+* thinking-path chips wrap as a 4-up row or 2x2 grid instead of loose arrows;
 * visual primitives are rendered only inside their allocated visual boxes.
 
-The component never shrinks learner text to force a fit. Callers must paginate
-when the measured height does not fit the remaining page space.
+The component never shrinks learner text to force a fit. Callers paginate when
+the measured unit does not fit the remaining page space.
 """
 from __future__ import annotations
 
@@ -55,14 +55,16 @@ class StagedHintComponent:
     GAP = 10.0
     CARD_PAD = 10.0
     LABEL_H = 18.0
-    VISUAL_H = 88.0
+    VISUAL_H = 72.0
     CUE_FONT = 10.5
     CUE_LINE = 14.0
     ACTION_FONT = 10.0
     ACTION_LINE = 13.0
     MIN_COLUMN_W = 148.0
-    MAX_ROW_CARD_H = 205.0
-    MAX_ROW_COPY_CHARS = 82
+    MAX_ROW_CARD_H = 192.0
+    MAX_ROW_COPY_CHARS = 76
+    MIN_TWO_COL_W = 210.0
+    MAX_TWO_COL_CARD_H = 220.0
     PATH_GAP = 8.0
     PATH_MIN_W = 104.0
     PATH_PAD = 8.0
@@ -82,6 +84,17 @@ class StagedHintComponent:
         return cls.CARD_PAD + cls.LABEL_H + 6.0 + cls.VISUAL_H + 8.0 + cue_h + text_gap + action_h + cls.CARD_PAD
 
     @classmethod
+    def _placement(cls, stage: Mapping[str, Any], level: str, x: float, top_y: float, width: float, height: float) -> StagePlacement:
+        sy = top_y - height
+        visual_y = top_y - cls.CARD_PAD - cls.LABEL_H - 6.0 - cls.VISUAL_H
+        visual = BoundingBox(x + cls.CARD_PAD, visual_y, width - 2 * cls.CARD_PAD, cls.VISUAL_H)
+        cue_top = visual_y - 8.0
+        cue = str(stage.get("verbal_cue") or "")
+        cue_h = paragraph_height(cue, visual.width, font_size=cls.CUE_FONT, line_height=cls.CUE_LINE) if cue else 0.0
+        action_top = cue_top - cue_h - (6.0 if cue and str(stage.get("learner_action") or "") else 0.0)
+        return StagePlacement(level, BoundingBox(x, sy, width, height), visual, cue_top, action_top)
+
+    @classmethod
     def _path_box_height(cls, step: Mapping[str, Any], width: float) -> float:
         inner = max(width - 2 * cls.PATH_PAD, 30.0)
         label = str(step.get("child_label") or "")
@@ -94,14 +107,19 @@ class StagedHintComponent:
         card_w = (width - 2 * cls.GAP) / 3.0
         if card_w < cls.MIN_COLUMN_W:
             return False
-        heights = [cls._stage_height(stage, card_w) for stage in stages]
-        if max(heights) > cls.MAX_ROW_CARD_H:
+        if max(cls._stage_height(stage, card_w) for stage in stages) > cls.MAX_ROW_CARD_H:
             return False
-        for stage in stages:
-            copy_len = len(str(stage.get("verbal_cue") or "")) + len(str(stage.get("learner_action") or ""))
-            if copy_len > cls.MAX_ROW_COPY_CHARS:
-                return False
-        return True
+        return all(
+            len(str(stage.get("verbal_cue") or "")) + len(str(stage.get("learner_action") or "")) <= cls.MAX_ROW_COPY_CHARS
+            for stage in stages
+        )
+
+    @classmethod
+    def _two_row_is_readable(cls, stages: Sequence[Mapping[str, Any]], width: float) -> bool:
+        half = (width - cls.GAP) / 2.0
+        if half < cls.MIN_TWO_COL_W:
+            return False
+        return max(cls._stage_height(stages[1], half), cls._stage_height(stages[2], half)) <= cls.MAX_TWO_COL_CARD_H
 
     @classmethod
     def plan(
@@ -115,42 +133,33 @@ class StagedHintComponent:
     ) -> SupportLayoutPlan:
         _require(len(stages) == 3, "STAGED_HINT_EXACTLY_THREE_REQUIRED", str(len(stages)))
         _require(width > 0, "STAGED_HINT_WIDTH_INVALID", str(width))
-
-        can_row = cls._row_is_readable(stages, width)
         stage_boxes: list[StagePlacement] = []
 
-        if can_row:
+        if cls._row_is_readable(stages, width):
             card_w = (width - 2 * cls.GAP) / 3.0
-            card_heights = [cls._stage_height(stage, card_w) for stage in stages]
-            row_h = max(card_heights)
+            row_h = max(cls._stage_height(stage, card_w) for stage in stages)
             for i, stage in enumerate(stages):
                 sx = x + i * (card_w + cls.GAP)
-                sy = top_y - row_h
-                inner_x = sx + cls.CARD_PAD
-                visual_y = top_y - cls.CARD_PAD - cls.LABEL_H - 6.0 - cls.VISUAL_H
-                visual = BoundingBox(inner_x, visual_y, card_w - 2 * cls.CARD_PAD, cls.VISUAL_H)
-                cue_top = visual_y - 8.0
-                cue = str(stage.get("verbal_cue") or "")
-                cue_h = paragraph_height(cue, visual.width, font_size=cls.CUE_FONT, line_height=cls.CUE_LINE) if cue else 0.0
-                action_top = cue_top - cue_h - (6.0 if cue and str(stage.get("learner_action") or "") else 0.0)
-                stage_boxes.append(StagePlacement(str(stage.get("level") or f"H{i+1}"), BoundingBox(sx, sy, card_w, row_h), visual, cue_top, action_top))
+                stage_boxes.append(cls._placement(stage, str(stage.get("level") or f"H{i+1}"), sx, top_y, card_w, row_h))
             used_h = row_h
             mode = "ROW"
+        elif cls._two_row_is_readable(stages, width):
+            h1 = cls._stage_height(stages[0], width)
+            stage_boxes.append(cls._placement(stages[0], str(stages[0].get("level") or "H1"), x, top_y, width, h1))
+            second_top = top_y - h1 - cls.GAP
+            half = (width - cls.GAP) / 2.0
+            lower_h = max(cls._stage_height(stages[1], half), cls._stage_height(stages[2], half))
+            stage_boxes.append(cls._placement(stages[1], str(stages[1].get("level") or "H2"), x, second_top, half, lower_h))
+            stage_boxes.append(cls._placement(stages[2], str(stages[2].get("level") or "H3"), x + half + cls.GAP, second_top, half, lower_h))
+            used_h = h1 + cls.GAP + lower_h
+            mode = "H1_TOP_H2H3_ROW"
         else:
             cur_top = top_y
             used_h = 0.0
             for i, stage in enumerate(stages):
                 h = cls._stage_height(stage, width)
-                sy = cur_top - h
-                inner_x = x + cls.CARD_PAD
-                visual_y = cur_top - cls.CARD_PAD - cls.LABEL_H - 6.0 - cls.VISUAL_H
-                visual = BoundingBox(inner_x, visual_y, width - 2 * cls.CARD_PAD, cls.VISUAL_H)
-                cue_top = visual_y - 8.0
-                cue = str(stage.get("verbal_cue") or "")
-                cue_h = paragraph_height(cue, visual.width, font_size=cls.CUE_FONT, line_height=cls.CUE_LINE) if cue else 0.0
-                action_top = cue_top - cue_h - (6.0 if cue and str(stage.get("learner_action") or "") else 0.0)
-                stage_boxes.append(StagePlacement(str(stage.get("level") or f"H{i+1}"), BoundingBox(x, sy, width, h), visual, cue_top, action_top))
-                cur_top = sy - cls.GAP
+                stage_boxes.append(cls._placement(stage, str(stage.get("level") or f"H{i+1}"), x, cur_top, width, h))
+                cur_top -= h + cls.GAP
                 used_h += h + (cls.GAP if i < len(stages) - 1 else 0.0)
             mode = "STACK"
 
@@ -174,9 +183,9 @@ class StagedHintComponent:
                 cur_top -= rh + (cls.PATH_GAP if row < rows - 1 else 0.0)
             used_h += 12.0 + sum(row_heights) + cls.PATH_GAP * max(rows - 1, 0)
 
-        plan = SupportLayoutPlan(mode=mode, height=used_h, stages=tuple(stage_boxes), path_boxes=tuple(path_boxes))
-        cls.assert_plan(plan, x=x, top_y=top_y, width=width)
-        return plan
+        result = SupportLayoutPlan(mode=mode, height=used_h, stages=tuple(stage_boxes), path_boxes=tuple(path_boxes))
+        cls.assert_plan(result, x=x, top_y=top_y, width=width)
+        return result
 
     @staticmethod
     def _overlap(a: BoundingBox, b: BoundingBox) -> bool:
@@ -210,19 +219,16 @@ class StagedHintComponent:
         thinking_path: Sequence[Mapping[str, Any]] = (),
     ) -> dict[str, Any]:
         plan = cls.plan(stages, x=x, top_y=top_y, width=width, thinking_path=thinking_path)
-
         for i, (stage, placement) in enumerate(zip(stages, plan.stages)):
             accent = cls.STAGE_ACCENTS[min(i, len(cls.STAGE_ACCENTS) - 1)]
             backend.draw_rect(placement.card.x, placement.card.y, placement.card.width, placement.card.height, fill=PrimaryPalette.WHITE, stroke=accent, corner_radius=6.0)
             label = str(stage.get("child_label") or stage.get("level") or f"H{i+1}")
             backend.draw_text(f"{stage.get('level', f'H{i+1}')}  {label}", placement.card.x + cls.CARD_PAD, placement.card.y_max - cls.CARD_PAD - 10.0, font_size=9.5, color=accent)
-
             primitive_kind = str(stage.get("primitive_kind") or "")
             params = stage.get("semantic_params")
             _require(bool(primitive_kind), "STAGED_HINT_PRIMITIVE_MISSING", placement.level)
             _require(isinstance(params, Mapping), "STAGED_HINT_PARAMS_MISSING", placement.level)
             render_primitive(primitive_kind, dict(params), backend, placement.visual)
-
             cue = str(stage.get("verbal_cue") or "")
             action = str(stage.get("learner_action") or "")
             if cue:
