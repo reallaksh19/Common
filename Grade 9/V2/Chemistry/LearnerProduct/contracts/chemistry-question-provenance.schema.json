@@ -38,7 +38,15 @@
           "use": {
             "enum": ["SOURCE_TEXT", "CONCEPT_SUPPORT", "STYLE_BENCHMARK", "ORIGIN_DISCLOSURE"]
           },
-          "text_relation": {"enum": ["EXACT_SOURCE", "FRESH_ORIGINAL", "STYLE_ONLY"]}
+          "text_relation": {
+            "enum": [
+              "EXACT_SOURCE",
+              "EXACT_SOURCE_SUBPART",
+              "ATOMIC_ASK_FROM_SOURCE_SUBPART",
+              "FRESH_ORIGINAL",
+              "STYLE_ONLY"
+            ]
+          }
         }
       }
     },
