@@ -12,6 +12,7 @@ REGISTRY = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba-v1.json"
 SBA04_PROFILE = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba04-20pct-v1.json"
 SBA05_PROFILE = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba05-20pct-v1.json"
 SBA06_PROFILE = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba06-20pct-v1.json"
+SBA07_PROFILE = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba07-20pct-v1.json"
 TRANSFER = ROOT / "registry" / "physics-core1a-motion-in-a-plane-transfer-routines-v1.json"
 
 schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
@@ -19,10 +20,11 @@ registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
 sba04_profile = json.loads(SBA04_PROFILE.read_text(encoding="utf-8"))
 sba05_profile = json.loads(SBA05_PROFILE.read_text(encoding="utf-8"))
 sba06_profile = json.loads(SBA06_PROFILE.read_text(encoding="utf-8"))
+sba07_profile = json.loads(SBA07_PROFILE.read_text(encoding="utf-8"))
 transfer = json.loads(TRANSFER.read_text(encoding="utf-8"))
 validator = Draft202012Validator(schema)
 Draft202012Validator.check_schema(schema)
-for doc in [registry, sba04_profile, sba05_profile, sba06_profile]:
+for doc in [registry, sba04_profile, sba05_profile, sba06_profile, sba07_profile]:
     validator.validate(doc)
 
 buckets = registry["buckets"]
@@ -50,6 +52,7 @@ assert by_id["M2D-SBA-05"]["core2_primary_questions"] == [
     "Q02", "Q06", "Q07", "Q12", "Q16", "Q18", "Q19", "Q20", "Q22", "Q24", "Q25", "Q44", "Q52"
 ]
 assert by_id["M2D-SBA-06"]["core2_primary_questions"] == ["Q38", "Q47"]
+assert by_id["M2D-SBA-07"]["core2_primary_questions"] == ["Q03", "Q04", "Q08", "Q09", "Q29", "Q30", "Q34", "Q36", "Q42"]
 
 policy = registry["policy"]
 assert policy["target_prior_knowledge_pct"] == [20, 50]
@@ -128,5 +131,20 @@ p06 = next(p for p in b06["profiles"] if p["prior_knowledge_pct"] == 20)
 assert len(p06["learning_atoms"]) >= 8
 coverage06 = {q["question_id"]: q for q in p06["core2_hint_coverage"]}
 assert set(coverage06) == {"Q38", "Q47"}
+
+# Detailed SBA07: high-load D2 bucket must teach all nine primary hint ladders.
+b07 = sba07_profile["buckets"][0]
+assert b07["bucket_id"] == "M2D-SBA-07"
+assert b07["intrinsic_difficulty"] == "D2"
+assert b07["core2_primary_questions"] == by_id["M2D-SBA-07"]["core2_primary_questions"]
+p07 = next(p for p in b07["profiles"] if p["prior_knowledge_pct"] == 20)
+assert p07["pathway"] == "FOUNDATION_PATH"
+assert len(p07["learning_atoms"]) >= 8
+assert max(a["visual_stage_count"] for a in p07["learning_atoms"]) >= 5
+coverage07 = {q["question_id"]: q for q in p07["core2_hint_coverage"]}
+assert set(coverage07) == set(b07["core2_primary_questions"])
+for q in coverage07.values():
+    assert [r["rung"] for r in q["hint_rungs"]] == ["H1", "H2", "H3"]
+    assert all(r["pre_taught"] is True for r in q["hint_rungs"])
 
 print("Core1A SBA schema/index/profile/transfer checks passed.")
