@@ -13,6 +13,7 @@ import argparse
 import copy
 import hashlib
 import json
+import re
 from collections import Counter
 from pathlib import Path
 from urllib.parse import urlparse
@@ -48,6 +49,29 @@ def fail(code, detail=""):
 def safe_http_url(value):
     parsed = urlparse(value or "")
     return value if parsed.scheme in {"http", "https"} and parsed.netloc else None
+
+
+def learner_question_locator(question_ref):
+    """Convert internal source keys into a public locator without losing custody.
+
+    The exact internal key remains in `question_ref` and `internal_source_custody`.
+    Learner provenance receives only a human-readable source locator. This keeps
+    fixture ids such as EXT01 off the page while retaining deterministic identity.
+    """
+    value = str(question_ref or "").strip()
+    patterns = [
+        (r"^EXT0*(\d+)$", lambda m: f"source item {int(m.group(1))}"),
+        (r"^U0*(\d+)[-_]?Q0*(\d+)$", lambda m: f"unit {int(m.group(1))}, question {int(m.group(2))}"),
+        (r"^SP0*(\d+)[-_]?Q0*(\d+)$", lambda m: f"sample paper {int(m.group(1))}, question {int(m.group(2))}"),
+        (r"^(?:Q|QUESTION)[-_]?0*(\d+)$", lambda m: f"question {int(m.group(1))}"),
+    ]
+    for pattern, formatter in patterns:
+        match = re.fullmatch(pattern, value, flags=re.IGNORECASE)
+        if match:
+            return formatter(match)
+    # Unknown machine identifiers stay in internal custody; they are never
+    # prettified into learner text because that could silently expose schema ids.
+    return "source question"
 
 
 def family_tables(registry):
@@ -115,7 +139,10 @@ def build_provenance(page, source_policy):
     badges = page["source_badges"]
     safe_url = safe_http_url(page["source_link"])
     label = badges["source"].replace("_", " ").strip().title()
-    locator = f"{badges['year']} · {badges['session']} · shift {badges['shift']} · {page['question_ref']}"
+    locator = (
+        f"{badges['year']} · {badges['session']} · shift {badges['shift']} · "
+        f"{learner_question_locator(page['question_ref'])}"
+    )
     return {
         "question_origin": "SOURCE_CORE2",
         "display_inline": True,
