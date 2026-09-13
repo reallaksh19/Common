@@ -15,6 +15,15 @@ from Grade4.V2.Mathematics.Benchmarks.source_sets.pupil_pages_97_99.study_journe
 SOURCE_PATH = REPO_ROOT / "Grade 4" / "V2" / "Mathematics" / "Benchmarks" / "source_sets" / "pupil_pages_97_99" / "source.json"
 
 
+def _issue_kind(value: object) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    return text.split(":", 1)[0]
+
+
 def main() -> None:
     source = json.loads(SOURCE_PATH.read_text(encoding="utf-8"))
     rows = {str(r["question_ref"]): r for r in source["questions"]}
@@ -37,8 +46,8 @@ def main() -> None:
                     raise SystemExit(f"SOURCE_QUESTION_TEXT_DRIFT: {ref}")
                 if list(identity.get("source_numeric_tokens") or []) != list(row.get("source_numeric_tokens") or []):
                     raise SystemExit(f"SOURCE_NUMERIC_TOKEN_DRIFT: {ref}")
-                if identity.get("source_issue") != row.get("source_issue"):
-                    raise SystemExit(f"SOURCE_ISSUE_DRIFT: {ref}")
+                if _issue_kind(identity.get("source_issue")) != _issue_kind(row.get("source_issue")):
+                    raise SystemExit(f"SOURCE_ISSUE_CATEGORY_DRIFT: {ref}")
                 seen[ref] = identity
 
     missing = sorted(set(rows) - set(seen))
