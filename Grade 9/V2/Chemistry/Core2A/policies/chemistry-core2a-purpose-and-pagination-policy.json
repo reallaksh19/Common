@@ -43,17 +43,54 @@
       "source_question_duplication_default": "NONE_UNLESS_EXPLICITLY_NEEDED_AS_ANCHOR",
       "fresh_transfer_default": "HIGH",
       "workspace": "DEMAND_SIZED",
-      "forbidden_default": "RENDER_ALL_CORE2_SOURCE_ITEMS_AS_A_SECOND_HELPER_BOOK"
+      "forbidden_default": "RENDER_ALL_CORE2_SOURCE_ITEMS_AS_A_SECOND_HELPER_BOOK",
+      "attempt_page_support": "ONE_OR_TWO_TECHNICAL_CLUES_AT_BOTTOM_AFTER_WORKSPACE",
+      "generic_start_rule_forbidden": true,
+      "repeated_disclaimer_footer_forbidden": true
     }
+  },
+  "competition_construction_research": {
+    "required_before_fresh_question_authoring": true,
+    "minimum_authoritative_or_official_external_benchmarks": 2,
+    "preferred_sources": [
+      "official school-science olympiad sample papers",
+      "official junior-science olympiad past papers",
+      "official model solutions or marking schemes"
+    ],
+    "extract": [
+      "question construction pattern",
+      "response format",
+      "information density",
+      "reasoning demand",
+      "representation type"
+    ],
+    "do_not_copy_question_text": true,
+    "near_copy_gate_still_required": true,
+    "machine_custody_requires_urls_or_stable_source_refs": true,
+    "learner_surface": "BOOK_LEVEL_CONSTRUCTION_REFERENCES_PREFERRED_OVER_REPEATED_PER_QUESTION_DISCLAIMERS",
+    "unavailable_external_research_action": "RECORD_UNAVAILABLE_AND_FAIL_COMPETITION_GENERATION_UNLESS_USER_EXPLICITLY_WAIVES",
+    "failure_code": "CORE2A_COMPETITION_CONSTRUCTION_RESEARCH_MISSING"
   },
   "page_budget": {
     "default_max_physical_pages_per_learner_question": 2,
-    "page_1_job": "ATTEMPT",
-    "page_2_job": "QUICK_CHECK_PLUS_FULL_WORKING_PLUS_VERIFICATION",
+    "page_1_job": "ATTEMPT_PLUS_DEMAND_SIZED_WORKSPACE_PLUS_OPTIONAL_TECHNICAL_CLUES",
+    "page_2_job": "QUICK_CHECK_PLUS_FULL_WORKING_PLUS_TECHNICAL_RELATION_PLUS_CONSISTENCY_CHECK",
     "dedicated_clue_page_default": false,
     "dedicated_blank_working_page_default": false,
+    "workspace_must_be_demand_sized": true,
     "exception_requires_reason": true,
     "exception_failure_code": "CORE2A_PAGE_BUDGET_EXCEPTION_UNJUSTIFIED"
+  },
+  "answer_page_quality": {
+    "generic_governing_invariant_box_forbidden": true,
+    "generic_repair_slogan_forbidden": true,
+    "key_relation_must_apply_to_current_numbers_or_symbols": true,
+    "consistency_check_must_recompute_or_independently_test_current_answer": true,
+    "failure_codes": [
+      "CORE2A_KEY_RELATION_NOT_QUESTION_SPECIFIC",
+      "CORE2A_CONSISTENCY_CHECK_NOT_INDEPENDENT",
+      "CORE2A_GENERIC_LEARNER_SLOGAN_LEAK"
+    ]
   },
   "answer_closure": {
     "closed_question_requires_quick_check": true,
@@ -66,8 +103,10 @@
     "prevention": [
       "resolve learner purpose before realization",
       "change selection and scaffolding according to purpose",
+      "research authentic competition construction patterns before fresh competition authoring",
       "treat reveal states as pedagogical states, not automatic physical pages",
       "allocate workspace from question demand rather than a fixed template",
+      "keep clues technical and subordinate to the learner attempt",
       "keep Core2 as source-question helper authority"
     ]
   }
