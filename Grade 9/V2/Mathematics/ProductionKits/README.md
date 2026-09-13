@@ -1,17 +1,27 @@
 # Grade 9 Mathematics Production Kits
 
-This directory contains executable production kits for the four governed product stages:
+This directory contains executable production adapters for the four governed product stages:
 
 - `Core1` — capability-level instructional authority (implemented upstream in `Core1Authoring`);
 - `Core1A` — bucketed learner-facing teaching realization;
 - `Core2` — source-faithful transfer authority (implemented upstream in `Core2Transfer`);
 - `Core2A` — purpose-conditioned learner practice / revision / starter / competition realization.
 
-These kits do **not** replace the upstream semantic engines. They make production use explicit, reproducible and fail-closed.
+These kits do **not** replace semantic authority and they are no longer the top-level orchestration contract.
+
+The adaptive orchestration authority is now:
+
+`Grade 9/V2/Mathematics/LearningBlueprint/`
+
+The LearningBlueprint owns immutable ground-truth binding, run identity/state and, in later increments, evidence-adaptive Core1/Core2 routing, independent re-grounding, cross-validation, Join and assimilation compilation. ProductionKits consume validated upstream products and turn them into executable product blueprints/audits.
 
 ## Governing split
 
 ```text
+GROUND TRUTH decides what evidence actually exists.
+LEARNING BLUEPRINT decides runtime ordering and admissible state transitions.
+CORE1 / CORE2 reconstruct different forms of intelligence from ground truth.
+ASSIMILATION decides what must change in the learner.
 SOURCE AUTHORITY decides WHAT mathematics is legal.
 PURPOSE ROUTER decides WHY the learner product is being built.
 SCAFFOLD PROFILE decides HOW much support is shown.
@@ -43,8 +53,8 @@ Batch/CI execution fails with `CORE2A_USER_PURPOSE_REQUIRED`. There is no defaul
 Each kit follows the same shape:
 
 ```text
-source bundle
-  -> validator
+validated upstream authority
+  -> source-bundle validator
   -> stage builder / selector
   -> answer + representation + scaffold contracts where applicable
   -> stage product / blueprint
