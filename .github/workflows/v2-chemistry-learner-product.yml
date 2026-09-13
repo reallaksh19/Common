@@ -6,6 +6,7 @@ on:
       - 'Grade 9/V2/Chemistry/Core1A/**'
       - 'Grade 9/V2/Chemistry/Core2A/**'
       - 'Grade 9/V2/Chemistry/LearnerProduct/**'
+      - 'Grade 9/V2/Chemistry/ProductionKit/**'
       - 'Grade 9/V2/Chemistry/ColdStart/**'
       - 'Grade 9/V2/Chemistry/LearnerStudy/**'
       - 'Grade 9/V2/Chemistry/CoreAuthoring/**'
@@ -49,24 +50,33 @@ jobs:
           -s 'Grade 9/V2/Chemistry/Core2A/tests'
           -p 'test_*.py' -v
 
-      - name: Validate learner-product policy and registry JSON
+      - name: Run Chemistry Core1/Core2/Core1A/Core2A production kit goldens and falsifiers
+        run: >-
+          python -m unittest discover
+          -s 'Grade 9/V2/Chemistry/ProductionKit/tests'
+          -p 'test_*.py' -v
+
+      - name: Validate learner-product and production-kit policy/registry JSON
         run: |
           for f in \
             'Grade 9/V2/Chemistry/LearnerProduct/policies/'*.json \
             'Grade 9/V2/Chemistry/LearnerProduct/registry/'*.json \
             'Grade 9/V2/Chemistry/Core1A/policies/'*.json \
-            'Grade 9/V2/Chemistry/Core2A/policies/'*.json; do
+            'Grade 9/V2/Chemistry/Core2A/policies/'*.json \
+            'Grade 9/V2/Chemistry/ProductionKit/registry/'*.json \
+            'Grade 9/V2/Chemistry/ProductionKit/golden/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
           python -m json.tool 'Grade 9/V2/Chemistry/LearnerProduct/production/redox/redox-ncert-authority.json' > /dev/null
           python -m json.tool 'Grade 9/V2/Chemistry/LearnerProduct/production/redox/redox-production-profile.json' > /dev/null
 
-      - name: Validate learner-product, Core1A and Core2A schemas are parseable
+      - name: Validate learner-product, Core1A, Core2A and production-kit schemas are parseable
         run: |
           for f in \
             'Grade 9/V2/Chemistry/LearnerProduct/contracts/'*.json \
             'Grade 9/V2/Chemistry/Core1A/contracts/'*.json \
-            'Grade 9/V2/Chemistry/Core2A/contracts/'*.json; do
+            'Grade 9/V2/Chemistry/Core2A/contracts/'*.json \
+            'Grade 9/V2/Chemistry/ProductionKit/contracts/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
 
