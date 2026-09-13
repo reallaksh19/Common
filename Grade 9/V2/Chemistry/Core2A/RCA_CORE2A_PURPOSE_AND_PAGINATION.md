@@ -1,34 +1,30 @@
-# RCA — Core (2A) purpose collapse and pagination inflation
+# RCA — Core (2A) purpose, pagination, construction quality and competition benchmarking
 
-## Incident
+## Failure observed
 
-A Chemical Bonding Core (2A) prototype was realized as a four-surface sequence for every question:
+The first Chemical Bonding Core (2A) prototype was fundamentally mis-specified. It treated the sequence
 
 ```text
-ATTEMPT
-→ CLUES
-→ QUICK CHECK
-→ FULL WORKING
+ATTEMPT -> CLUES -> QUICK CHECK -> FULL WORKING
 ```
 
-Those pedagogical states were incorrectly mapped one-to-one onto physical pages. The result was a very large book whose source-question lane substantially duplicated Core (2). The product was mechanically complete but conceptually weak: it did not first resolve why the learner wanted Core (2A).
+as four physical pages for every question. This inflated the product and, more importantly, made Core (2A) behave like Core (2) again with more scaffolding and more pages.
 
-## Root cause
+A second defect was exposed by review of the first competition rewrite: although the page count was reduced, the learner surface still contained repetitive slogans, oversized generic workspace, generic “governing invariant” boxes, generic verification prose, and repeated provenance disclaimers. Competition-question construction had also not been benchmarked against external authoritative competition papers before fresh questions were authored.
 
-The pipeline treated **product requested = Core (2A)** as sufficient intent. It was not sufficient.
+## Root causes
 
-Core (2) already owns source-faithful question-help. A downstream Core (2A) that repeats the same questions with more scaffolding and more pages can collapse into "Core (2) again" instead of becoming a distinct learner product.
+1. **Purpose was not resolved before authoring.** The pipeline knew which product to render but not why the learner wanted it.
+2. **Pedagogical states were confused with physical pages.** Attempt, clue, check and solution do not each require a page.
+3. **Workspace was template-driven rather than demand-driven.** Simple one-line deductions received the same large working area as multi-step items.
+4. **Support was mechanically complete but not technically selective.** Generic start rules and generic repair slogans occupied space without increasing Chemistry reasoning value.
+5. **Answer-page sidebars were generic.** “The formula unit is neutral” is true but substandard if the current question needs the explicit equation `2q_X + 3(-2)=0`.
+6. **Competition construction lacked external benchmarking.** Fresh questions were generated only from internal source anchors/problem families rather than first studying official school-science competition question forms.
+7. **Machine closure was allowed to dominate learner efficiency.** The invariant `QUESTION = QUICK CHECK = FULL WORKING` is correct, but it does not dictate a four-page or boilerplate-heavy layout.
 
-The failure had four coupled causes:
+## Correct product rule
 
-1. **Purpose was unresolved.** The learner intent was not classified as `STARTER`, `PRACTICE`, `REVISION`, or `COMPETITION` before authoring.
-2. **Reveal state was confused with page state.** Hidden/revealed support states were automatically given separate sheets.
-3. **Workspace was template-sized rather than demand-sized.** Simple MCQs and multi-step constructed responses received similar physical working areas.
-4. **Machine closure drove layout.** `QUESTION = QUICK CHECK = FULL WORKING` is an answerability invariant, not a requirement for three or four physical pages.
-
-## Corrective contract
-
-Core (2A) authoring must stop and ask the user for the intended mode when it is not explicitly supplied:
+Before Core (2A) authoring, resolve exactly one purpose:
 
 ```text
 STARTER
@@ -37,103 +33,85 @@ REVISION
 COMPETITION
 ```
 
-The agent may not silently infer the mode.
-
-Failure code:
+If unresolved, ask the user and fail closed with:
 
 ```text
 CORE2A_PURPOSE_UNRESOLVED
 ```
 
-The governing policy is:
+The selected mode must materially alter selection, support density, challenge mix, workspace and page density.
 
-`policies/chemistry-core2a-purpose-and-pagination-policy.json`
+## Competition-mode construction research
 
-## Purpose changes the product
+Before fresh Competition questions are authored, inspect at least two authoritative or official external school-science competition sources. Extract only construction patterns such as:
 
-### STARTER
+- particle-composition tables;
+- multi-statement items;
+- coded-species deduction;
+- reverse ion/electron inference;
+- integer reconstruction;
+- plausible-error diagnosis;
+- information supplied inside the problem so a harder deduction remains self-contained.
 
-High scaffolding, smaller progression, partially completed starts, representations and misconception prevention.
-
-### PRACTICE
-
-Independent routine practice with modest rescue support and enough workspace for the actual demand.
-
-### REVISION
-
-Compressed retrieval, fast checking, common-error repair and high question density. Minimal re-teaching.
-
-### COMPETITION
-
-Fresh source-anchored transfer with minimal upfront help, reversed targets, hidden information, multi-constraint chains, comparison/ranking, error diagnosis and representation switching. Difficulty comes from reasoning, not unsupported higher-grade theory or uglier arithmetic.
-
-Competition mode must not default to rendering every Core (2) source question as another helper book.
-
-## Pagination correction
-
-Default physical budget:
-
-```text
-1 learner question <= 2 pages
-```
-
-Preferred static-PDF pair:
-
-```text
-PAGE 1 — ATTEMPT
-question + mode-appropriate metadata/support + demand-sized workspace
-
-PAGE 2 — CHECK AND REPAIR
-compact QUICK CHECK + FULL WORKING + independent verification + provenance
-```
-
-A dedicated clue page is not the default. A dedicated blank working page is not the default. Any exception above two pages requires an explicit reason such as an unusually complex source figure or a genuinely long multi-part response.
+Do not copy question text. The near-copy gate remains mandatory. Store benchmark URLs or stable references in machine custody. Prefer a single book-level construction-reference note rather than repeated per-question disclaimers.
 
 Failure code:
 
 ```text
-CORE2A_PAGE_BUDGET_EXCEPTION_UNJUSTIFIED
+CORE2A_COMPETITION_CONSTRUCTION_RESEARCH_MISSING
 ```
+
+## Correct pagination rule
+
+Default static-PDF contract:
+
+```text
+1 learner question <= 2 physical pages
+```
+
+Preferred realization:
+
+```text
+PAGE 1 — ATTEMPT
+question
++ demand-sized workspace
++ 1–2 technical clues at the bottom, only if needed
+
+PAGE 2 — CHECK AND SOLUTION
+QUICK CHECK
++ FULL WORKING
++ KEY RELATION / DECISION RULE instantiated with the current symbols/numbers
++ independent CONSISTENCY CHECK
+```
+
+A clue state is not automatically a clue page. A workspace is not automatically a full-page blank area. Any exception above two pages requires a specific reason.
+
+## Learner-language quality guards
+
+For Competition mode:
+
+- generic “competition start rule” blocks are forbidden;
+- repeated “not an official past question” footers are forbidden;
+- generic “repair the earliest broken step” footers are forbidden;
+- generic “governing invariant” sidebars are forbidden;
+- technical clues must name the next executable equation, count, comparison or falsification test;
+- the key relation must apply to the current question values/symbols;
+- the consistency check must independently recompute or falsify the current result.
 
 ## Answer closure remains unchanged
 
-Compression must never remove the self-study answer path.
-
-For closed questions:
+Compression does not weaken self-study closure:
 
 ```text
-QUESTION
-= QUICK CHECK
-= FULL WORKING
+closed QUESTION = QUICK CHECK = FULL WORKING
+open QUESTION = EXPECTED RESPONSE RUBRIC
 ```
 
-For genuinely open responses:
+## Architectural distinction
 
 ```text
-QUESTION
-= EXPECTED RESPONSE RUBRIC
+Core (2)  = source-question helper authority
+Core (2A) = purpose-specific learner transfer product
 ```
 
-## Chemical Bonding competition correction
-
-The corrected competition realization uses Core (2) only as source/coverage authority. It does **not** duplicate the 38 source questions. Instead it builds 21 fresh competition-foundation transfers, three for each of the seven Core (1A) assimilation buckets, and uses exactly two physical pages per question:
-
-```text
-21 ATTEMPT pages
-+ 21 CHECK_AND_REPAIR pages
-```
-
-This preserves the distinction:
-
-```text
-Core (2)  = source-question helper
-Core (2A) = purpose-specific transfer product
-```
-
-## Prevention
-
-Future agents must resolve purpose before selecting questions, support density, challenge mix, workspace and pagination. A Core (2A) candidate that is effectively Core (2) with more pages should be rejected as:
-
-```text
-CORE2A_BECOMES_CORE2_WITH_MORE_PAGES
-```
+Core (2A) is defective if changing from Core (2) only increases scaffolding or page count without materially changing learner behaviour.
