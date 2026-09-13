@@ -6,6 +6,7 @@ from jsonschema import Draft202012Validator
 D=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(D/'engine'))
 from freeze_chemistry_source_denominator import validate_profile
+from validate_chemistry_answer_custody import load_profile as load_answer_custody_profile, reconcile_authored_baselines
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 
 schemas=[
@@ -39,3 +40,9 @@ print('CHEMISTRY C-J schemas = 7 PASS')
 print('CHEMISTRY C-J transfer evidence fixture = PASS')
 print('CHEMISTRY C-J longitudinal policy = PASS')
 print('CHEMISTRY C-J source-ingestion denominator profile = %d frozen instances PASS'%len(ingestion['frozen_instances']))
+custody=load_answer_custody_profile()
+assert custody['hint_is_not_an_answer_path'] is True
+assert custody['closed_invariant']=='questions_total == immediate_answer_checks_total == full_solutions_total'
+assert {'QUESTION_WITHOUT_ANSWER_PATH','QUESTION_WITHOUT_IMMEDIATE_CHECK','QUESTION_WITHOUT_FULL_SOLUTION','OPEN_RESPONSE_WITHOUT_RUBRIC','ANSWER_COUNT_RECONCILIATION_FAILURE'}<=set(custody['falsifiers'])
+baselines=reconcile_authored_baselines(custody,D.parents[3])
+print('CHEMISTRY C-J answer-custody profile = PR #346 baselines %s reconciled PASS'%'/'.join(str(baselines[k]['questions_total']) for k in ['some-basic-concepts','behaviour-of-gases','chemical-bonding','redox-reactions']))

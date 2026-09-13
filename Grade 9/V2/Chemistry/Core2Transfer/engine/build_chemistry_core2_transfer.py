@@ -83,6 +83,7 @@ def make_page(classification,body,core1_plan,families,badge_policy,transfer_badg
     condition_check='Preserve and verify the recorded condition: '+body['condition_text']+'.' if body['condition_text'] else 'No additional condition or exception is recorded for this source item.'
     route=list(fam['reasoning_route_template']); verification=list(profile['verification_by_family'][qfamily])
     page={'question_ref':cid,'source_ref':body['candidate_source_digest'],'source_year':body['source_year'],'source_session':body['source_session'],'source_shift':body['source_shift'],'scope_status':'ELIGIBLE_IN_SCOPE','source_qc_status':body['source_qc_status'],'source_stem':body['stem'],'source_options':copy.deepcopy(body['options']),'source_subparts':copy.deepcopy(body['subparts']),'source_figure_required':body['figure_required'],'source_figure_semantic':copy.deepcopy(body['figure_semantic']),'source_condition_text':body['condition_text'],'source_states':copy.deepcopy(body['states']),'source_units':copy.deepcopy(body['units']),'primary_concept_ref':binding['primary_concept_ref'],'primary_capability_ref':binding['primary_capability_ref'],'supporting_concept_refs':copy.deepcopy(binding['supporting_concept_refs']),'supporting_capability_refs':copy.deepcopy(binding['supporting_capability_refs']),'problem_family_ref':fam['family_id'],'demand_vector_ref':f"CHEM-C-I-DEMAND-{cid}",'guide_demand_badge':{'label':badge,'policy_ref':badge_policy['policy_id'],'semantic_class':'GUIDE_ASSIGNED_REASONING_DEMAND','psychometric_claim':False,'source_difficulty':None},'transfer_badge':transfer_badges['transfer_badges'][0],'source_badges':{'source':'SYNTHETIC_EXTERNAL_CORPUS','year':str(body['source_year']),'session':body['source_session'],'shift':body['source_shift']},'core1_lesson_refs':core1_links(binding,classification,core1_plan,profile),'workspace_spec':{'workspace_type':qfamily,'fields':copy.deepcopy(profile['workspace_by_family'][qfamily])},'hint_ladder':{'h0_attempt_first':profile['h0_text'],'support_revealed_initially':False,'h1_notice':hints['H1_NOTICE'],'h2_rule_model_representation':hints['H2_RULE_MODEL_REPRESENTATION'],'h3_start':hints['H3_START']},'reasoning_route':route,'reasoning_route_ref':f"CHEM-C-D-{fam['family_id']}-{cid}",'solution_route':{'reasoning_steps':copy.deepcopy(profile['solution_steps_by_family'][qfamily]),'verification_steps':verification,'final_answer':body['answer_key'],'chemical_language_response':option_text,'condition_exception_check':condition_check},'verification_route':verification,'visual_specs':visual_specs(cid,qfamily,binding,body,profile,primitive_registry),'source_link':body['source_link'],'source_fidelity':{'candidate_source_digest':body['candidate_source_digest'],'source_body_digest':body['body_digest'],'options_preserved':True,'figure_preserved':True,'condition_preserved':True,'notation_contract_ref':notation['contract_id']},'page_digest':''}
+    page['answer_path']=transfer_answer_path(cid,page['source_options'],page['solution_route'])
     page['page_digest']=digest(page,'page_digest'); return page,dims
 
 def core1_unspoiled(core1_plan,eligible):
@@ -92,6 +93,27 @@ def core1_unspoiled(core1_plan,eligible):
     for x in core1_plan['appendices']['appendix_a']['items']:
         if set(x.get('external_candidate_refs',[])) & eligible: return False
     return True
+
+def transfer_answer_path(question_ref,options,solution_route):
+    """Answer custody for a source-faithful transfer item.
+
+    The immediate check is a compact restatement of the solution route's own
+    final answer, placed on its own learner surface so the learner can check
+    without reading the worked solution. No new chemistry is derived here: if
+    the solution route has no final answer, this fails closed.
+    """
+    final=str((solution_route or {}).get('final_answer') or '').strip()
+    spoken=str((solution_route or {}).get('chemical_language_response') or '').strip()
+    if not final: fail('QUESTION_WITHOUT_IMMEDIATE_CHECK',question_ref)
+    if options:
+        labels={str(o.get('label')) for o in options}
+        if final not in labels: fail('QUESTION_WITHOUT_IMMEDIATE_CHECK',question_ref+':answer is not one of the options')
+        check='Correct option: '+final+(' — '+spoken if spoken else '')
+        kind='CLOSED_OPTION'
+    else:
+        check='Answer: '+final+(' ('+spoken+')' if spoken and spoken!=final else '')
+        kind='CLOSED_VALUE'
+    return {'kind':kind,'immediate_answer_check':check,'full_solution_ref':question_ref+'-SOLUTION'}
 
 def build_plan(corpus,classifications,bodies,core1_plan,study_model,families,badge_policy,transfer_badges,concept_registry,profile,primitive_registry,notation,plan_id='CHEM-C-I-CORE2-PLAN-v1'):
     candidates,classes,records,eligible=validate_source_bodies(corpus,bodies,classifications)

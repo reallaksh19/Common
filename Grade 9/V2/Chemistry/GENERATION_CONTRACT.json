@@ -174,18 +174,24 @@
         "INSTRUCTIONAL_AUTHORING"
       ],
       "required_registry_paths": [
-        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json"
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-problem-authoring-profile.json",
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-answer-custody-profile.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py"
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py",
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/validate_chemistry_answer_custody.py"
       ],
       "produces": [
         "AppendixACorePractice",
-        "AppendixBCoreSolutions"
+        "AppendixBCoreSolutions",
+        "AppendixAnswerCheckStrip"
       ],
       "falsifiers": [
         "QUESTION_WITHOUT_ANSWER_PATH",
-        "ANSWER_COUNT_RECONCILIATION_FAILURE"
+        "ANSWER_COUNT_RECONCILIATION_FAILURE",
+        "QUESTION_WITHOUT_IMMEDIATE_CHECK",
+        "QUESTION_WITHOUT_FULL_SOLUTION",
+        "OPEN_RESPONSE_WITHOUT_RUBRIC"
       ]
     },
     {
@@ -261,11 +267,13 @@
         "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
         "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
         "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json",
-        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-helper-pedagogy-profile.json"
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-helper-pedagogy-profile.json",
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-answer-custody-profile.json"
       ],
       "required_engine_paths": [
         "Grade 9/V2/Chemistry/Core2Transfer/engine/build_chemistry_core2_transfer.py",
-        "Grade 9/V2/Chemistry/CoreAuthoring/engine/validate_chemistry_instructional_depth.py"
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/validate_chemistry_instructional_depth.py",
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/validate_chemistry_answer_custody.py"
       ],
       "produces": [
         "Core2Plan"
@@ -273,7 +281,10 @@
       "falsifiers": [
         "DUPLICATE_PRIMARY_PLACEMENT",
         "ELIGIBLE_ITEM_MISSING_CORE2",
-        "NON_ACTIONABLE_HINT"
+        "NON_ACTIONABLE_HINT",
+        "QUESTION_WITHOUT_IMMEDIATE_CHECK",
+        "QUESTION_WITHOUT_FULL_SOLUTION",
+        "OPEN_RESPONSE_WITHOUT_RUBRIC"
       ]
     },
     {
@@ -350,19 +361,25 @@
       ],
       "required_registry_paths": [
         "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-transfer-evidence-policy.json",
-        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-source-ingestion-profile.json"
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-source-ingestion-profile.json",
+        "Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-answer-custody-profile.json"
       ],
       "required_engine_paths": [
         "Grade 9/V2/Chemistry/CoverageClosure/engine/build_chemistry_coverage_closure.py",
-        "Grade 9/V2/Chemistry/CoverageClosure/engine/freeze_chemistry_source_denominator.py"
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/freeze_chemistry_source_denominator.py",
+        "Grade 9/V2/Chemistry/CoverageClosure/engine/validate_chemistry_answer_custody.py"
       ],
       "produces": [
-        "PublicationCoverageClosure"
+        "PublicationCoverageClosure",
+        "AnswerCustodyReconciliation"
       ],
       "falsifiers": [
         "SOURCE_OBLIGATION_WITHOUT_CORE1_COVERAGE",
         "ELIGIBLE_EXTERNAL_QUESTION_WITHOUT_CORE2_TRANSFER",
-        "POST_AUTHORING_DENOMINATOR_DRIFT"
+        "POST_AUTHORING_DENOMINATOR_DRIFT",
+        "QUESTION_WITHOUT_IMMEDIATE_CHECK",
+        "QUESTION_WITHOUT_FULL_SOLUTION",
+        "OPEN_RESPONSE_WITHOUT_RUBRIC"
       ]
     },
     {
@@ -413,5 +430,5 @@
     "ASSESSMENT_DESIGN": "PENDING_AUTHORIZED_HUMAN_ONLY",
     "VISUAL_USABILITY": "PENDING_AUTHORIZED_HUMAN_ONLY"
   },
-  "contract_digest": "e3987d98f39510b0e2b3a700eb5d61dc912a9796f657b4736668c2fb013523c2"
+  "contract_digest": "8958f24344283d1d782640b42cf7e3623a3a223eed4fc456c41311c5308b260f"
 }

@@ -49,6 +49,26 @@ def validate_pck_registry(reg):
         if a.get('raw_mature_reference_used') is not False: fail('PCK_ASSET_WITHOUT_PROMOTION_AUTHORITY',a['asset_id']+':raw reference')
     return True
 
+def short_point(text):
+    t=str(text or '').strip().rstrip('.')
+    return t[:1].lower()+t[1:] if t else t
+
+def answer_path(item_id,sol_id,reasoning_steps,verification_steps):
+    """Answer custody for an authored Core 1 practice instance.
+
+    A Core 1 practice item is an authored open-response instance, so its
+    checkable answer is an expected-response rubric rather than a single value.
+    The rubric points are the already-authored solution method, restated as the
+    marking points the learner must be able to find in their own working; the
+    immediate check is that list in one compact line. Nothing here invents
+    chemistry, and the full worked solution stays separate in Appendix B.
+    """
+    points=[str(x).strip() for x in reasoning_steps if str(x).strip()]
+    if verification_steps: points=points+['Runs the required checks: '+', '.join(str(x) for x in verification_steps)+'.']
+    if len(points)<2: fail('OPEN_RESPONSE_WITHOUT_RUBRIC',item_id)
+    check='Check your working shows all %d points: '%len(points)+'; '.join(short_point(x) for x in points)+'.'
+    return {'kind':'OPEN_RESPONSE','immediate_answer_check':check,'expected_response_rubric':points,'full_solution_ref':sol_id}
+
 def family_ref(record):
     pf=[x for x in record['problem_family_refs'] if x.startswith('PF-')]
     refs=pf or record['problem_family_refs']
@@ -94,13 +114,16 @@ def build_appendices(lessons,records,reg,problem_profile,completeness):
         r=rec_by[l['capability_ref']]; primary=asset_by[l['pck_asset_refs'][0]]; fam=family_ref(r); stages=['GUIDED','FADED','INDEPENDENT'] if l['lesson_mode']=='FULL_LEARNING' else ['INDEPENDENT'] if l['lesson_mode']=='CONCISE_VERIFY_ONLY' else ['PROBE']
         for i,stage in enumerate(stages,1):
             iid=f"A-{l['capability_ref']}-{stage}"; prompt=problem_profile['prompt_templates'][l['capability_ref']]+' '+problem_profile['stage_modifiers'][stage]; sol=f'B-SOL-{iid}'
-            items.append({'item_id':iid,'source_class':'NEW_AUTHORED_CORE1','problem_family_ref':fam,'primary_capability_ref':l['capability_ref'],'supports_capability_refs':[],'support_stage':stage,'scored':stage!='PROBE','prompt':prompt,'representation_spec':uniq(r['representation_level_obligations']+r['representation_requirement_obligations']),'external_candidate_refs':[],'solution_ref':sol})
-            solutions.append({'solution_id':sol,'item_ref':iid,'primary_capability_ref':l['capability_ref'],'reasoning_steps':list(problem_profile['solution_reasoning_templates'][l['capability_ref']]),'verification_steps':verification(r,primary),'final_response':'A complete response states the relevant chemical evidence or rule, executes the recorded reasoning route, and gives the conclusion only after the required checks pass.','condition_exception_note':'Preserve and apply: '+', '.join(r['condition_exception_obligations']) if r['condition_exception_obligations'] else 'No additional condition/exception is required by this capability record.'})
+            reasoning=list(problem_profile['solution_reasoning_templates'][l['capability_ref']]); checks=verification(r,primary)
+            path=answer_path(iid,sol,reasoning,checks)
+            items.append({'item_id':iid,'source_class':'NEW_AUTHORED_CORE1','problem_family_ref':fam,'primary_capability_ref':l['capability_ref'],'supports_capability_refs':[],'support_stage':stage,'scored':stage!='PROBE','prompt':prompt,'representation_spec':uniq(r['representation_level_obligations']+r['representation_requirement_obligations']),'external_candidate_refs':[],'solution_ref':sol,'answer_path':path})
+            solutions.append({'solution_id':sol,'item_ref':iid,'primary_capability_ref':l['capability_ref'],'reasoning_steps':reasoning,'verification_steps':checks,'final_response':'A complete response states the relevant chemical evidence or rule, executes the recorded reasoning route, and gives the conclusion only after the required checks pass.','condition_exception_note':'Preserve and apply: '+', '.join(r['condition_exception_obligations']) if r['condition_exception_obligations'] else 'No additional condition/exception is required by this capability record.'})
     hand=[]
     for l in lessons:
         r=rec_by[l['capability_ref']]; primary=asset_by[l['pck_asset_refs'][0]]; first=next((asset_by[x] for x in l['pck_asset_refs'] if asset_by[x]['family']=='FIRST_MOVE_DECISION_SUPPORT'),primary); ver=verification(r,primary)
         hand.append({'capability_ref':l['capability_ref'],'first_move':first['reconstruction_route'][0],'rule_or_decision_cue':primary['rule_model_condition_cue'],'verification_cue':ver[0]})
-    return {'appendix_a':{'title':'Appendix A — Core Practice','present':True,'items':items},'appendix_b':{'title':'Appendix B — Core Solutions','present':True,'solutions':solutions},'appendix_c':{'title':'Appendix C — Printable Handout','present':True,'answer_free':True,'supported_capability_refs':uniq([l['capability_ref'] for l in lessons]),'introduced_capability_refs':[],'reference_entries':hand,'print_constraints':list(completeness['appendix_c_print_constraints'])}}
+    strip={'title':'Quick answers — cover this page while you work','present':True,'separate_surface_from_practice':True,'entries':[{'item_ref':x['item_id'],'immediate_answer_check':x['answer_path']['immediate_answer_check']} for x in items]}
+    return {'answer_check_strip':strip,'appendix_a':{'title':'Appendix A — Core Practice','present':True,'items':items},'appendix_b':{'title':'Appendix B — Core Solutions','present':True,'solutions':solutions},'appendix_c':{'title':'Appendix C — Printable Handout','present':True,'answer_free':True,'supported_capability_refs':uniq([l['capability_ref'] for l in lessons]),'introduced_capability_refs':[],'reference_entries':hand,'print_constraints':list(completeness['appendix_c_print_constraints'])}}
 
 def build_plan(study_model,study_scope,pck_registry,profile,completeness,problem_profile,plan_id='CHEM-C-G-CORE1-PLAN-v1',helper_profile=None):
     validate_pck_registry(pck_registry)

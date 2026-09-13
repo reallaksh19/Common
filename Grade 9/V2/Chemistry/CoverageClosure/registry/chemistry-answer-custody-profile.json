@@ -1,0 +1,49 @@
+{
+  "profile_id": "CHEM-ANSWER-CUSTODY-PROFILE-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "No learner-facing question without a checkable answer path. Every question a learner meets — Core 1 practice included, not only Core 2 transfer — resolves to an explicit immediate answer check AND a full worked solution or rubric. A hint is never an answer path. The vocabulary here is deliberately identical to the Physics answer-custody invariant so the two subjects stay comparable.",
+  "scope": [
+    "CORE1_PRACTICE",
+    "CORE2_TRANSFER"
+  ],
+  "answer_path_kinds": {
+    "CLOSED_OPTION": "A single correct option label. The immediate check names the option; the full solution shows why.",
+    "CLOSED_VALUE": "A single value with its unit, or a single formula. The immediate check gives that value; the full solution shows the method.",
+    "OPEN_RESPONSE": "No single answer exists. The immediate check lists the required marking points and an expected-response rubric is mandatory."
+  },
+  "immediate_check_rules": [
+    "Compact enough not to become a second solution.",
+    "On a learner surface separate from the question, so the learner can attempt first.",
+    "Derived from the already-authored solution route; never independently invented."
+  ],
+  "closed_invariant": "questions_total == immediate_answer_checks_total == full_solutions_total",
+  "open_invariant": "open_response_total == expected_response_rubrics_total",
+  "rubric_minimum_points": 2,
+  "hint_is_not_an_answer_path": true,
+  "falsifiers": [
+    "QUESTION_WITHOUT_ANSWER_PATH",
+    "QUESTION_WITHOUT_IMMEDIATE_CHECK",
+    "QUESTION_WITHOUT_FULL_SOLUTION",
+    "OPEN_RESPONSE_WITHOUT_RUBRIC",
+    "ANSWER_COUNT_RECONCILIATION_FAILURE",
+    "IMMEDIATE_CHECK_ON_SAME_SURFACE_AS_QUESTION",
+    "ANSWER_CUSTODY_PROFILE_DIGEST_DRIFT"
+  ],
+  "baseline_reconciliation": {
+    "note": "The four PR #346 topic baselines already satisfy this invariant by hand. The machine check is reconciled against their real recorded counts so it is proved against authored content rather than only against a fixture.",
+    "evidence_path": "Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/HANDOFF_MANIFEST.json",
+    "evidence_sha256": "e92a6c9e026a9ca15b1def1c10652ccc55eaeb7474e6db8f01d2088df477a4c0",
+    "expected": {
+      "some-basic-concepts": 68,
+      "behaviour-of-gases": 27,
+      "chemical-bonding": 38,
+      "redox-reactions": 11
+    }
+  },
+  "known_limitations": [
+    "Core 1 practice items are authored open-response instances, so their answer path is an expected-response rubric rather than a single value. That is the correct custody for an open item, but it means the Core 1 side of the invariant is checked as open_response_total == rubrics_total; it does not assert that a single closed answer exists, because one does not.",
+    "The #346 baseline reconciliation is against the recorded per-topic counts in HANDOFF_MANIFEST.json. It cannot be re-derived per question from that branch, because #346's committed source bundle does not reconstruct (see chemistry-source-ingestion-profile.json known_limitations)."
+  ],
+  "profile_digest": "bcb2528b33169db052bc1493f53c14f90bec293ef28f659e84d11dda088ff3ad"
+}

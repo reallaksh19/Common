@@ -25,3 +25,5 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/CoverageClosure/tests/test_chemistry_coverage_closure.py'
       - name: Run source-ingestion denominator-freezing falsifiers
         run: python 'Grade 9/V2/Chemistry/CoverageClosure/tests/test_chemistry_source_ingestion.py'
+      - name: Run answer-custody falsifiers across Core1 and Core2
+        run: python 'Grade 9/V2/Chemistry/CoverageClosure/tests/test_chemistry_answer_custody.py'
