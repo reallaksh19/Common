@@ -1,0 +1,46 @@
+{
+  "schema_version":"1.0.0",
+  "fixtures":[
+    {
+      "task_id":"G4-ENG-ADJ-WKS-6","task_archetype":"ADJECTIVE_ORDER","domain":"GRAMMAR","action":"ORDER","skill":"ADJECTIVE_ORDER",
+      "source_reference":{"source_kind":"WORKSHEET","page":null,"section_label":"Adjective Order","section_title":"Order the adjectives","question_number":"6","organizer_box":null,"original_label":"6) The Italian delicious, spicy soup ...","display_ref":"Worksheet Adjective Order-6"},
+      "child_prompt":"Put the describing words in the school order.",
+      "observed_student_answer":{"text":"delicious spicy Italian soup","transcription_status":"CONFIDENT"},
+      "answer":{"status":"VERIFIED_RULE","expected_response":"delicious spicy Italian soup","acceptable_answers":[],"explanation":"delicious is opinion, Italian is origin; spicy is retained as a boundary describing word under the bound school model.","evidence_refs":["ADJ-SCHOOL-MODEL"]},
+      "school_model":{"categories":["NUMBER","OPINION","SIZE","AGE","SHAPE","COLOUR","ORIGIN","MATERIAL","PURPOSE"],"boundary_words":["spicy"]},
+      "fresh_retry":{"display_ref":"Fresh A","prompt":"two small round wooden boxes"}
+    },
+    {
+      "task_id":"G4-ENG-GENDER-V-1","task_archetype":"IRREGULAR_GENDER_PAIR","domain":"GRAMMAR","action":"TRANSFORM","skill":"IRREGULAR_GENDER_PAIR",
+      "source_reference":{"source_kind":"WORKSHEET","page":null,"section_label":"V","section_title":"Write the feminine gender","question_number":"1","organizer_box":null,"original_label":"1) The _____ opened her home to refugees. (landlord)","display_ref":"Worksheet V-1"},
+      "child_prompt":"Change the noun in brackets to the feminine word that fits the sentence.",
+      "answer":{"status":"VERIFIED_RULE","expected_response":"landlady","acceptable_answers":[],"explanation":"landlady is the paired feminine noun for landlord in this worksheet vocabulary task.","evidence_refs":[]},
+      "preteach_pairs":[["landlord","landlady"]],
+      "fresh_retry":{"display_ref":"Fresh A","prompt":"The _____ ruled the country. (king)","answer":"queen"}
+    },
+    {
+      "task_id":"G4-ENG-PRONOUN-VI-1","task_archetype":"PRONOUN_CHOICE","domain":"GRAMMAR","action":"CHOOSE","skill":"PRONOUN_ROLE",
+      "source_reference":{"source_kind":"WORKSHEET","page":null,"section_label":"VI","section_title":"Choose the Correct Pronoun","question_number":"1","organizer_box":null,"original_label":"_____ had no place to stay ... (They / Their)","display_ref":"Worksheet VI-1"},
+      "child_prompt":"Choose the pronoun that fits each blank.",
+      "answer":{"status":"VERIFIED_RULE","expected_response":"They ... their","acceptable_answers":[],"explanation":"Who did the action? They. Whose country? their.","evidence_refs":[]},
+      "decision_questions":[{"cue":"Who?","choice":"They"},{"cue":"Whose?","choice":"their"}],
+      "fresh_retry":{"display_ref":"Fresh A","prompt":"The children packed _____ bags. (They / Their)","answer":"their"}
+    },
+    {
+      "task_id":"G4-ENG-MIGRATION-P98-B5","task_archetype":"READING_TO_ORGANIZER","domain":"READING","action":"EXTRACT","output_form":"ORGANIZER",
+      "source_reference":{"source_kind":"WORKBOOK","page":98,"section_label":"I","section_title":"Read the passage and map the journey","question_number":null,"organizer_box":"5","original_label":"Movement to cities (Industrial revolution)","display_ref":"Workbook p.98 - I - Box 5"},
+      "child_prompt":"Use the passage on p.97 to complete this organizer box.",
+      "answer":{"status":"DERIVED_FROM_SOURCE","expected_response":"People moved from farms to towns because factories in cities offered work.","acceptable_answers":["Factories opened in cities, so people moved from farms to towns to find work."],"explanation":"The answer shortens only the evidence in the visible Industrial Revolution paragraph.","evidence_refs":["p97-industrial-1","p97-industrial-2"]},
+      "evidence":{"source_lines":[{"id":"p97-industrial-1","text":"Factories opened up in cities, and people moved from farms to towns to find work."},{"id":"p97-industrial-2","text":"Around the same time, many Europeans moved to North and South America to start new lives."}],"highlight_spans":["Factories opened up in cities","from farms to towns","find work"],"keywords":["factories","cities","farms","towns","work"],"answer_frame":"People moved from ___ to ___ because factories in cities offered ___."},
+      "fresh_retry":{"display_ref":"Fresh Source A","prompt":"From a new paragraph, highlight the evidence first and write one short organizer answer."}
+    },
+    {
+      "task_id":"G4-ENG-MIGRATION-P98-B1","task_archetype":"READING_TO_ORGANIZER","domain":"READING","action":"EXTRACT","output_form":"ORGANIZER",
+      "source_reference":{"source_kind":"WORKBOOK","page":98,"section_label":"I","section_title":"Read the passage and map the journey","question_number":null,"organizer_box":"1","original_label":"Early Humans in Africa","display_ref":"Workbook p.98 - I - Box 1"},
+      "child_prompt":"Complete the organizer box from the supporting passage.",
+      "answer":{"status":"SOURCE_UNRESOLVED","expected_response":null,"acceptable_answers":[],"explanation":"Supporting paragraph is not visible in the supplied scan.","evidence_refs":[]},
+      "evidence":{"source_lines":[],"highlight_spans":[],"keywords":[]},
+      "fresh_retry":{"display_ref":"Fresh Source A","prompt":"Not generated until the missing source is supplied."}
+    }
+  ]
+}
