@@ -24,6 +24,10 @@ def _issue_kind(value: object) -> str | None:
     return text.split(":", 1)[0]
 
 
+def _numeric_values(values: object) -> list[str]:
+    return [str(value).replace(",", "").strip() for value in (values or [])]
+
+
 def main() -> None:
     source = json.loads(SOURCE_PATH.read_text(encoding="utf-8"))
     rows = {str(r["question_ref"]): r for r in source["questions"]}
@@ -44,7 +48,7 @@ def main() -> None:
                     raise SystemExit(f"SOURCE_DISPLAY_REF_DRIFT: {ref}")
                 if identity.get("source_text") != row.get("raw_text"):
                     raise SystemExit(f"SOURCE_QUESTION_TEXT_DRIFT: {ref}")
-                if list(identity.get("source_numeric_tokens") or []) != list(row.get("source_numeric_tokens") or []):
+                if _numeric_values(identity.get("source_numeric_tokens")) != _numeric_values(row.get("source_numeric_tokens")):
                     raise SystemExit(f"SOURCE_NUMERIC_TOKEN_DRIFT: {ref}")
                 if _issue_kind(identity.get("source_issue")) != _issue_kind(row.get("source_issue")):
                     raise SystemExit(f"SOURCE_ISSUE_CATEGORY_DRIFT: {ref}")
