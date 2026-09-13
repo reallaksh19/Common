@@ -1,0 +1,18 @@
+{
+  "name": "material conflict blocks routing instead of forcing consensus",
+  "subtopic": {
+    "subtopic_ref": "TOE-AMBIGUOUS",
+    "display_name": "Ambiguous root condition",
+    "sequence": 0,
+    "coherence_group": "THEORY_OF_EQUATIONS",
+    "scope_authority": {"score": 2, "reason_codes": ["COARSE_SCOPE"], "evidence_refs": ["GT-SYLLABUS-6666666666666666"]},
+    "semantic_source_strength": {"score": 2, "reason_codes": ["PARTIAL_SOURCE"], "evidence_refs": ["GT-AUTHORITATIVE_SOURCE-7777777777777777"]},
+    "question_evidence": {"score": 2, "reason_codes": ["SPARSE_QUESTIONS"], "evidence_refs": ["GT-QUESTION_CORPUS-8888888888888888"]},
+    "question_resolution": {"score": 1, "reason_codes": ["QUESTION_INTERPRETATION_UNRESOLVED"], "evidence_refs": ["GT-QUESTION_CORPUS-8888888888888888"]},
+    "uncertainty": {"score": 3, "reason_codes": ["MATERIAL_UNCERTAINTY"], "evidence_refs": ["GT-QUESTION_CORPUS-8888888888888888"]},
+    "conflict_index": {"score": 4, "reason_codes": ["SOURCE_AND_ANSWER_KEY_CONFLICT"], "evidence_refs": ["GT-ANSWER_KEY-9999999999999999"]},
+    "unresolved_issue_refs": ["ANSWER_KEY_CONFLICT"],
+    "conflict_refs": ["CONFLICT-ANSWER-01"]
+  },
+  "expected": {"system_action": "BLOCK_CONFLICT", "eligible_roles": [], "final_action": "BLOCK_CONFLICT"}
+}
