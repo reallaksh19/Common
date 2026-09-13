@@ -1,0 +1,88 @@
+{
+  "policy_id": "CHEM-CORE1A-EXECUTION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "bucket_synthesis": {
+    "group_direct_capabilities_when": [
+      "SHARED_GROUNDED_PROBLEM_FAMILY_AUTHORITY",
+      "SHARED_GROUNDED_PCK_INVARIANT",
+      "SHARED_CHEMISTRY_OPERATION_AND_REPRESENTATION"
+    ],
+    "unambiguous_prerequisite_action": "ATTACH_TO_DEPENDENT_BUCKET",
+    "shared_prerequisite_action": "CREATE_BRIDGE_BUCKET",
+    "capability_coverage": "EXACTLY_ONCE_PRIMARY",
+    "preserve_core1_order": true,
+    "invent_new_learner_state": false,
+    "learner_treatment_authority": "C_F_LEARNER_STUDY_MODEL_ONLY"
+  },
+  "intrinsic_difficulty": {
+    "allowed_labels": ["D1", "D2", "D3"],
+    "meaning": "INSTRUCTIONAL_COMPLEXITY_ONLY_NOT_LEARNER_STATE",
+    "harder_rule": "MORE_STAGED_REPRESENTATION_FEWER_INFERENTIAL_JUMPS_NOT_DENSER_TEXT"
+  },
+  "representation_sequence": [
+    "SEE_THE_PHENOMENON",
+    "SEE_THE_PARTICLES",
+    "SEE_THE_CHEMICAL_STRUCTURE",
+    "SEE_THE_SYMBOLS",
+    "CONNECT_THE_QUANTITIES",
+    "DO_THE_CHEMISTRY",
+    "VERIFY_THE_RESULT",
+    "CONNECT_TO_CORE2"
+  ],
+  "representation_rule": "Each stage must be realized or marked NOT_APPLICABLE with a recorded reason. Decorative illustration does not satisfy a visual obligation.",
+  "learning_atom_requirements": [
+    "MEANING_OR_PURPOSE",
+    "PREREQUISITE_SUPPORT",
+    "PLAIN_LANGUAGE",
+    "SYMBOLIC_OR_QUANTITATIVE_FORM_WHEN_APPLICABLE",
+    "REPRESENTATION_BINDING",
+    "MISCONCEPTION_CONTRAST",
+    "CHECK_PROMPT",
+    "CORE2_HINT_BINDING_WHEN_AVAILABLE"
+  ],
+  "problem_family_requirements": [
+    "LOOK_FOR_RECOGNITION_SIGNALS",
+    "REPRESENTATION_OR_SETUP",
+    "NUMBERED_METHOD",
+    "WORKED_ANALOGUE",
+    "INDEPENDENT_ATTEMPT",
+    "OPTIONAL_HINTS_AFTER_ATTEMPT",
+    "VERIFICATION_OR_SENSE_CHECK",
+    "READINESS_GATE",
+    "CORE2_RELEASE_TARGETS"
+  ],
+  "core2_hint_preteach": {
+    "H1": "KEY_CHEMISTRY_CONCEPT_OR_CRITERION",
+    "H2": "REPRESENTATION_OR_MODEL",
+    "H3": "FIRST_EXECUTABLE_SYMBOLIC_OR_QUANTITATIVE_MOVE",
+    "all_reveals_must_bind_to_prior_core1a_evidence": true
+  },
+  "teaching_progression": [
+    "SEE",
+    "EXPLAIN",
+    "WATCH_ONE",
+    "FINISH_ONE",
+    "TRY_WITH_LESS_HELP",
+    "TRY_ALONE",
+    "CHECK",
+    "TRANSFER"
+  ],
+  "readiness_gate": {
+    "required_abilities": ["RECOGNISE", "REPRESENT", "FIRST_MOVE", "FINISH_AND_VERIFY"],
+    "default_release_rule": "ALL_FOUR_WITHOUT_H2_OR_H3",
+    "failure_action": "ROUTE_TO_NAMED_LEARNING_ATOM_OR_PROBLEM_FAMILY_ROUTINE"
+  },
+  "practice_answer_rule": "EVERY_LEARNER_FACING_PRACTICE_ITEM_MUST_HAVE_AN_ANSWER_PATH",
+  "stop_conditions": [
+    "LEARNER_STATE_REQUIRED_BUT_UNAVAILABLE",
+    "CORE1A_BUCKET_INVARIANT_UNGROUNDED",
+    "CORE1A_CAPABILITY_COVERAGE_DRIFT",
+    "CORE1A_LEARNER_TREATMENT_DRIFT",
+    "CORE1A_REPRESENTATION_REQUIREMENT_UNMATERIALIZED",
+    "CORE1A_PROBLEM_FAMILY_UNDEFINED",
+    "CORE1A_HINT_NOT_PRETAUGHT",
+    "CORE1A_READINESS_GATE_MISSING",
+    "CORE1A_ANSWER_PATH_MISSING"
+  ]
+}
