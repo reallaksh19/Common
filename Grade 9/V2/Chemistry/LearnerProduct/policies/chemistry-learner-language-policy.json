@@ -1,0 +1,43 @@
+{
+  "policy_id": "CHEM-LEARNER-LANGUAGE-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "labels": {
+    "ATTEMPT": "TRY IT FIRST",
+    "REPRESENTATION": "SEE THE IDEA",
+    "FIRST_MARK": "WRITE THIS FIRST",
+    "H1": "SMALL CLUE",
+    "H2": "BIGGER CLUE",
+    "H3": "HOW DO I START?",
+    "MISCONCEPTION": "WATCH FOR THIS",
+    "REASONING": "THINK IT THROUGH",
+    "VERIFICATION": "CHECK YOUR CHEMISTRY",
+    "ANSWER": "QUICK CHECK",
+    "SOLUTION": "FULL WORKING",
+    "PROVENANCE": "WHERE THIS QUESTION CAME FROM",
+    "READINESS": "READY TO MOVE ON?",
+    "OPEN_RUBRIC": "EXPECTED RESPONSE"
+  },
+  "forbidden_learner_terms": [
+    "reasoning route",
+    "solution route",
+    "repair route",
+    "grounding",
+    "learning atom",
+    "demand vector",
+    "transfer ladder",
+    "capability_ref",
+    "problem_family_ref",
+    "PCK",
+    "SBA",
+    "publication index",
+    "release class",
+    "semantic authority",
+    "publication engineering",
+    "promotion registry",
+    "learner_state_readiness",
+    "priority_band"
+  ],
+  "actionability_rule": "A helper must tell the learner what useful chemistry to write, draw, count, compare, cancel, label or track next. Naming only a method is insufficient.",
+  "rule": "Internal semantics may remain technical. Learner pages must use approved public labels or ordinary chemistry language only."
+}
