@@ -23,7 +23,7 @@
   ],
   "question_load": {"count": 9, "class": "HIGH", "minimum_transfer_families": 3},
   "phase_gates": [
-    {"gate": "G0_INDEX_SYNC", "status": "PASS", "evidence": ["SBA publication index includes M2D-SBA-07 as the current in-progress row."]},
+    {"gate": "G0_INDEX_SYNC", "status": "PASS", "evidence": ["SBA publication index includes M2D-SBA-07 and is synchronized with canonical ownership."]},
     {"gate": "G1_SOURCE_AND_CORE2_AUDIT", "status": "PASS", "evidence": ["Source horizontal-launch equations, source Illustration 5 and all nine primary Core2 titles audited."]},
     {"gate": "G2_DIFFICULTY_AND_READINESS", "status": "PASS", "evidence": ["D2 concept, 20% foundation path; HIGH question load expands transfer into four families."]},
     {"gate": "G3_LEARNING_ATOM_DECOMPOSITION", "status": "PASS", "evidence": ["Eight learning atoms cover horizontal launch, vertical clock, impact velocity, displacement geometry, unequal heights, downward projection, opposite launches and units/ratios."]},
@@ -32,7 +32,7 @@
     {"gate": "G6_PAGE_PLAN", "status": "PASS", "evidence": ["24-page professional-lossless plan preserves concept teaching, two worked examples, completion practice, independent practice, next-page hints and readiness."]},
     {"gate": "G7_RENDER_AND_VISUAL_AUDIT", "status": "PASS", "evidence": ["24 pages rendered at 170 dpi; impact-vector orientation and launch-height label spacing corrected before release."]},
     {"gate": "G8_READINESS_AND_TRANSFER_AUDIT", "status": "PASS", "evidence": ["Each released family includes independent practice before next-page H1/H2/H3 and a recognise/represent/first-move/finish readiness gate."]},
-    {"gate": "G9_MACHINE_QA_AND_HANDOFF", "status": "IN_PROGRESS", "evidence": ["PDF preflight passes; waiting for branch CI before final handoff."]}
+    {"gate": "G9_MACHINE_QA_AND_HANDOFF", "status": "PASS", "evidence": ["PDF preflight passed; V2 Physics Core1A run 90 and full P-G to P-L run 95 completed successfully before state advance."]}
   ],
   "learning_atoms": ["M2D-SBA-07A", "M2D-SBA-07B", "M2D-SBA-07C", "M2D-SBA-07D", "M2D-SBA-07E", "M2D-SBA-07F", "M2D-SBA-07G", "M2D-SBA-07H"],
   "transfer_routines": ["M2D-SBA-07-R1", "M2D-SBA-07-R2", "M2D-SBA-07-R3", "M2D-SBA-07-R4"],
@@ -43,9 +43,9 @@
     "hint_delivery_policy": "NEXT_PAGE",
     "readiness_gate_policy": "RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
   },
-  "qa": {"schema_valid": true, "primary_question_coverage_exact": true, "hint_preteach_complete": true, "visual_audit_complete": true, "pdf_preflight_complete": true, "ci_passed": false},
+  "qa": {"schema_valid": true, "primary_question_coverage_exact": true, "hint_preteach_complete": true, "visual_audit_complete": true, "pdf_preflight_complete": true, "ci_passed": true},
   "handoff": {
-    "status": "IN_PROGRESS",
+    "status": "COMPLETE",
     "expected_pdf_name": "M2D-SBA-07-professional-textbook-lossless-v1.pdf",
     "expected_montage_name": "M2D-SBA-07-professional-textbook-lossless-v1-montage.jpg",
     "next_active_bucket": "M2D-SBA-21",
