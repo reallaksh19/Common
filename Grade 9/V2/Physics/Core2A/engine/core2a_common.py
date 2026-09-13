@@ -62,8 +62,6 @@ def teaching_index(receipts, learner_profile_ref, purpose):
             continue
         if receipt.get("learner_profile_ref") != learner_profile_ref:
             continue
-        # Purpose-specific receipts may be reused only when the teaching contract
-        # explicitly matches the requested product purpose.
         if receipt.get("purpose_ref") != purpose:
             continue
         by_capability.setdefault(cap, []).append(receipt)
@@ -132,6 +130,24 @@ def _close(a, b, tolerance):
     return math.isclose(float(a), float(b), rel_tol=tolerance, abs_tol=tolerance)
 
 
+def _require_units(case, expected):
+    for field, unit in expected.items():
+        if case.get(field) != unit:
+            raise ValueError(
+                "CORE2A_PHYSICS_VALIDATION_FAILED:UNIT:"
+                + field
+                + ":"
+                + str(case.get(field))
+            )
+
+
+def _finite_values(case, fields):
+    for field in fields:
+        value = float(case[field])
+        if not math.isfinite(value):
+            raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:NONFINITE:" + field)
+
+
 def validate_physics_case(case):
     validator = case.get("validator_type")
     tol = float(case.get("tolerance", 1e-9))
@@ -139,70 +155,144 @@ def validate_physics_case(case):
         raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:NONPOSITIVE_TOLERANCE")
 
     if validator == "CONSTANT_ACCELERATION_VELOCITY":
-        for field in ("u", "a", "t", "expected_v"):
+        numeric = ("u", "a", "t", "expected_v")
+        for field in numeric:
             if field not in case:
                 raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:MISSING_" + field)
+        _finite_values(case, numeric)
+        _require_units(
+            case,
+            {
+                "u_unit": "m/s",
+                "a_unit": "m/s^2",
+                "t_unit": "s",
+                "expected_v_unit": "m/s",
+            },
+        )
         if float(case["t"]) < 0:
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:NEGATIVE_TIME")
         computed = float(case["u"]) + float(case["a"]) * float(case["t"])
         if not _close(computed, case["expected_v"], tol):
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:VELOCITY_RECOMPUTE")
-        vector_frame = "PASS"
-        event = "PASS"
+        computed_unit = "m/s"
 
     elif validator == "CONSTANT_ACCELERATION_INITIAL_VELOCITY":
-        for field in ("v", "a", "t", "expected_u"):
+        numeric = ("v", "a", "t", "expected_u")
+        for field in numeric:
             if field not in case:
                 raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:MISSING_" + field)
+        _finite_values(case, numeric)
+        _require_units(
+            case,
+            {
+                "v_unit": "m/s",
+                "a_unit": "m/s^2",
+                "t_unit": "s",
+                "expected_u_unit": "m/s",
+            },
+        )
         if float(case["t"]) < 0:
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:NEGATIVE_TIME")
         computed = float(case["v"]) - float(case["a"]) * float(case["t"])
         if not _close(computed, case["expected_u"], tol):
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:INITIAL_VELOCITY_RECOMPUTE")
-        vector_frame = "PASS"
-        event = "PASS"
+        computed_unit = "m/s"
+
+    elif validator == "CONSTANT_ACCELERATION_EVENT_TIME":
+        numeric = ("u", "v", "a", "expected_t")
+        for field in numeric:
+            if field not in case:
+                raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:MISSING_" + field)
+        _finite_values(case, numeric)
+        _require_units(
+            case,
+            {
+                "u_unit": "m/s",
+                "v_unit": "m/s",
+                "a_unit": "m/s^2",
+                "expected_t_unit": "s",
+            },
+        )
+        if _close(case["a"], 0.0, tol):
+            raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:ZERO_ACCELERATION_EVENT_TIME")
+        computed = (float(case["v"]) - float(case["u"])) / float(case["a"])
+        if computed < 0:
+            raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:NEGATIVE_TIME")
+        if not _close(computed, case["expected_t"], tol):
+            raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:EVENT_TIME_RECOMPUTE")
+        computed_unit = "s"
 
     elif validator == "VECTOR_DOT_PERPENDICULAR":
         a = case.get("vector_a")
         b = case.get("vector_b")
         if not (isinstance(a, list) and isinstance(b, list) and len(a) == len(b) and len(a) >= 2):
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:VECTOR_SHAPE")
+        if case.get("vector_unit") != "m/s":
+            raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:UNIT:vector_unit")
+        if not all(math.isfinite(float(x)) for x in a + b):
+            raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:NONFINITE_VECTOR")
         computed = sum(float(x) * float(y) for x, y in zip(a, b))
         if not _close(computed, 0.0, tol):
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:DOT_NOT_ZERO")
-        vector_frame = "PASS"
-        event = "PASS"
+        computed_unit = "(m/s)^2"
 
     elif validator == "SPEED_FROM_COMPONENTS":
-        for field in ("vx", "vy", "expected_speed"):
+        numeric = ("vx", "vy", "expected_speed")
+        for field in numeric:
             if field not in case:
                 raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:MISSING_" + field)
+        _finite_values(case, numeric)
+        _require_units(
+            case,
+            {
+                "vx_unit": "m/s",
+                "vy_unit": "m/s",
+                "expected_speed_unit": "m/s",
+            },
+        )
         expected = float(case["expected_speed"])
         if expected < 0:
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:NEGATIVE_SPEED")
         computed = math.hypot(float(case["vx"]), float(case["vy"]))
         if not _close(computed, expected, tol):
             raise ValueError("CORE2A_PHYSICS_VALIDATION_FAILED:SPEED_RECOMPUTE")
-        vector_frame = "PASS"
-        event = "PASS"
+        computed_unit = "m/s"
 
     else:
         raise ValueError("CORE2A_PHYSICS_VALIDATOR_UNSUPPORTED:" + str(validator))
 
-    # These PASS states are emitted only after a supported relation has been
-    # independently recomputed and its domain checks have passed.
     return {
         "validator_type": validator,
+        "computed_value": computed,
+        "computed_unit": computed_unit,
         "independent_recompute": "PASS",
         "dimension_check": "PASS",
         "unit_check": "PASS",
-        "vector_frame_check": vector_frame,
-        "event_constraint_check": event,
+        "vector_frame_check": "PASS",
+        "event_constraint_check": "PASS",
         "physical_domain_check": "PASS",
         "limit_sanity_check": "PASS",
-        "answer_equivalence_check": "PASS",
+        "answer_equivalence_check": "PENDING",
         "status": "PASS",
     }
+
+
+def bind_answer_equivalence(candidate, validation):
+    match = re.search(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)", candidate["canonical_answer"])
+    if not match:
+        raise ValueError(
+            "CORE2A_PHYSICS_VALIDATION_FAILED:CANONICAL_NUMERIC_ANSWER_REQUIRED:"
+            + candidate["challenge_id"]
+        )
+    stated = float(match.group(0))
+    tolerance = float(candidate["physics_validation_case"].get("tolerance", 1e-9))
+    if not _close(stated, validation["computed_value"], tolerance):
+        raise ValueError(
+            "CORE2A_PHYSICS_VALIDATION_FAILED:ANSWER_EQUIVALENCE:"
+            + candidate["challenge_id"]
+        )
+    validation["answer_equivalence_check"] = "PASS"
+    return validation
 
 
 def ensure_no_hint_leak(candidate):

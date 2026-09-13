@@ -28,9 +28,7 @@ class PhysicsCore2ATests(unittest.TestCase):
         cls.source_schema = load(C2A / "contracts" / "physics-core2a-source-item.schema.json")
         cls.challenge_schema = load(C2A / "contracts" / "physics-core2a-challenge-item.schema.json")
         cls.run_schema = load(C2A / "contracts" / "physics-core2a-run.schema.json")
-        cls.t_schema = load(
-            C2A.parent / "Core1A" / "contracts" / "physics-taught-state-receipt.schema.json"
-        )
+        cls.t_schema = load(C2A.parent / "Core1A" / "contracts" / "physics-taught-state-receipt.schema.json")
 
     def test_golden_competition_run_passes_and_schemas_validate(self):
         jsonschema.validate(self.fixture, self.run_schema)
@@ -55,7 +53,6 @@ class PhysicsCore2ATests(unittest.TestCase):
         run = copy.deepcopy(self.fixture)
         run["taught_receipts"] = []
         run["challenge_candidates"] = []
-        # Revision has no generated-item coverage requirement.
         run["purpose"] = "REVISION"
         product, audit = compile_core2a(run)
         self.assertEqual(product["source_selected_count"], 0)
@@ -72,6 +69,18 @@ class PhysicsCore2ATests(unittest.TestCase):
         run = copy.deepcopy(self.fixture)
         run["challenge_candidates"][0]["physics_validation_case"]["expected_u"] = 25
         with self.assertRaisesRegex(ValueError, "CORE2A_PHYSICS_VALIDATION_FAILED"):
+            compile_core2a(run)
+
+    def test_canonical_answer_must_match_independent_recompute(self):
+        run = copy.deepcopy(self.fixture)
+        run["challenge_candidates"][0]["canonical_answer"] = "25 m/s upward"
+        with self.assertRaisesRegex(ValueError, "CORE2A_PHYSICS_VALIDATION_FAILED:ANSWER_EQUIVALENCE"):
+            compile_core2a(run)
+
+    def test_declared_units_are_validated(self):
+        run = copy.deepcopy(self.fixture)
+        run["challenge_candidates"][0]["physics_validation_case"]["a_unit"] = "m/s"
+        with self.assertRaisesRegex(ValueError, "CORE2A_PHYSICS_VALIDATION_FAILED:UNIT"):
             compile_core2a(run)
 
     def test_near_copy_is_rejected(self):

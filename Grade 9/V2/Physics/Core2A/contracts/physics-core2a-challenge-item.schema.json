@@ -98,6 +98,8 @@
       "additionalProperties": false,
       "required": [
         "validator_type",
+        "computed_value",
+        "computed_unit",
         "independent_recompute",
         "dimension_check",
         "unit_check",
@@ -118,7 +120,9 @@
         "physical_domain_check": {"const": "PASS"},
         "limit_sanity_check": {"const": "PASS"},
         "answer_equivalence_check": {"const": "PASS"},
-        "status": {"const": "PASS"}
+        "status": {"const": "PASS"},
+        "computed_value": {"type": "number"},
+        "computed_unit": {"type": "string", "minLength": 1}
       }
     },
     "near_copy_check": {

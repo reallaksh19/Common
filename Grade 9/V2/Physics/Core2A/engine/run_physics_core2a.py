@@ -16,6 +16,7 @@ from core2a_common import (
     release_evidence,
     teaching_index,
     validate_physics_case,
+    bind_answer_equivalence,
 )
 
 
@@ -73,6 +74,8 @@ def realize_challenge(candidate, purpose, source_rows, source_by_ref, teaching_b
         raise ValueError("CORE2A_SOURCE_BINDING_INVALID:FAMILY_DRIFT:" + candidate["challenge_id"])
     if anchor["bucket_id"] != candidate["bucket_id"]:
         raise ValueError("CORE2A_SOURCE_BINDING_INVALID:BUCKET_DRIFT:" + candidate["challenge_id"])
+    if anchor.get("release_status") != "RELEASED":
+        raise ValueError("CORE2A_SOURCE_BINDING_INVALID:ANCHOR_HELD:" + candidate["challenge_id"])
 
     missing, receipt_refs = release_evidence(
         candidate["required_capability_refs"], teaching_by_cap
@@ -90,6 +93,7 @@ def realize_challenge(candidate, purpose, source_rows, source_by_ref, teaching_b
 
     ensure_no_hint_leak(candidate)
     validation = validate_physics_case(candidate["physics_validation_case"])
+    validation = bind_answer_equivalence(candidate, validation)
     near_copy = near_copy_report(candidate["prompt"], source_rows)
 
     return {

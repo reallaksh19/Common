@@ -43,19 +43,16 @@ learner_profile_ref = requested learner profile
 purpose_ref = requested purpose
 ```
 
-Otherwise the source question remains in corpus custody with:
-
-```text
-HELD_UNTIL_TEACHING_COMPLETE
-```
+Otherwise the source question remains in corpus custody with `HELD_UNTIL_TEACHING_COMPLETE`.
 
 ### GENERATED_ORIGINAL
 
 Fresh questions may be realized only when:
 
-- the anchor Core (2) question and problem-family binding agree;
+- the anchor Core (2) question is itself releasable and its problem-family/bucket binding agrees;
 - every required capability has a matching teaching-complete receipt;
 - the Physics validator type is supported and independently recomputes the governed relation;
+- declared SI units are valid and the recomputed result matches the learner-facing canonical answer;
 - the generated prompt passes near-copy checking against all source stems;
 - staged help does not disclose the answer or duplicate full-working steps;
 - provenance explicitly says `GENERATED_ORIGINAL` and does not claim false official-question provenance.
@@ -69,11 +66,12 @@ The v1 executable validator registry authorizes:
 ```text
 CONSTANT_ACCELERATION_VELOCITY
 CONSTANT_ACCELERATION_INITIAL_VELOCITY
+CONSTANT_ACCELERATION_EVENT_TIME
 VECTOR_DOT_PERPENDICULAR
 SPEED_FROM_COMPONENTS
 ```
 
-The engine independently recomputes the relevant relation and only then emits the Physics validation PASS surface. Additional problem families require an explicit validator before generated challenges from those families are production-legal.
+The engine independently recomputes the relevant relation, validates declared SI units, and binds the recomputed numeric result to the learner-facing canonical answer before emitting PASS. Additional problem families require an explicit validator before generated challenges from those families are production-legal.
 
 ## Purpose behavior
 
