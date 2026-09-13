@@ -10,6 +10,21 @@
     "transfer_registry": "registry/physics-core1a-motion-in-a-plane-sba05-transfer-v1.json"
   },
   "primary_questions": ["Q02","Q06","Q07","Q12","Q16","Q18","Q19","Q20","Q22","Q24","Q25","Q44","Q52"],
+  "question_release": [
+    {"question_id":"Q02","status":"RELEASED","routine_id":"M2D-SBA-05-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q06","status":"RELEASED","routine_id":"M2D-SBA-05-R2","release_prerequisite_buckets":[]},
+    {"question_id":"Q07","status":"RELEASED","routine_id":"M2D-SBA-05-R3","release_prerequisite_buckets":[]},
+    {"question_id":"Q12","status":"RELEASED","routine_id":"M2D-SBA-05-R2","release_prerequisite_buckets":[]},
+    {"question_id":"Q16","status":"RELEASED","routine_id":"M2D-SBA-05-R4","release_prerequisite_buckets":[]},
+    {"question_id":"Q18","status":"RELEASED","routine_id":"M2D-SBA-05-R5","release_prerequisite_buckets":[]},
+    {"question_id":"Q19","status":"RELEASED","routine_id":"M2D-SBA-05-R5","release_prerequisite_buckets":[]},
+    {"question_id":"Q20","status":"RELEASED","routine_id":"M2D-SBA-05-R4","release_prerequisite_buckets":[]},
+    {"question_id":"Q22","status":"RELEASED","routine_id":"M2D-SBA-05-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q24","status":"RELEASED","routine_id":"M2D-SBA-05-R6","release_prerequisite_buckets":[]},
+    {"question_id":"Q25","status":"RELEASED","routine_id":"M2D-SBA-05-R7","release_prerequisite_buckets":[]},
+    {"question_id":"Q44","status":"RELEASED","routine_id":"M2D-SBA-05-R6","release_prerequisite_buckets":[]},
+    {"question_id":"Q52","status":"RELEASED","routine_id":"M2D-SBA-05-R5","release_prerequisite_buckets":[]}
+  ],
   "question_load": {"count": 13, "class": "VERY_HIGH", "minimum_transfer_families": 5},
   "phase_gates": [
     {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["Published SBA table is the first surface and lists all 13 primary questions."]},
@@ -38,6 +53,6 @@
     "expected_pdf_name":"M2D-SBA-05-same-height-flight-20pct-transfer-revised.pdf",
     "expected_montage_name":"M2D-SBA-05-transfer-revised-montage.jpg",
     "next_active_bucket":"M2D-SBA-06",
-    "notes":["Very-high question load is the reference case for scaling transfer elaboration with Core2 demand.","SBA05 also releases SBA04 Q14/Q27 once their same-height dependency is satisfied."]
+    "notes":["Very-high question load is the reference case for scaling transfer elaboration with Core2 demand.","SBA05 also releases SBA04 Q14/Q27 once their same-height dependency is satisfied through cross-bucket routine R8."]
   }
 }
