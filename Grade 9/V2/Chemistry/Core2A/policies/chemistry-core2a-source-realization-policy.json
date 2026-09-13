@@ -10,6 +10,9 @@
     "source_stem",
     "source_options",
     "source_subparts",
+    "response_mode",
+    "source_locator",
+    "source_text_relation",
     "source_figure_required",
     "source_figure_semantic",
     "source_condition_text",
@@ -17,6 +20,16 @@
     "source_units",
     "source_fidelity"
   ],
+  "response_modes": {
+    "MCQ": {
+      "minimum_options": 2,
+      "quick_check_basis": "CORE2_FINAL_OPTION_PLUS_CHEMICAL_LANGUAGE_RESPONSE"
+    },
+    "CONSTRUCTED_RESPONSE": {
+      "maximum_options": 0,
+      "quick_check_basis": "CORE2_CANONICAL_RESPONSE_PLUS_MARKING_POINTS"
+    }
+  },
   "attempt_first": {
     "support_initially_hidden": true,
     "source_question_visible_before_support": true
@@ -47,7 +60,7 @@
   },
   "answer_path": {
     "kind": "OBJECTIVE_CHECKABLE",
-    "quick_check_basis": "CORE2_FINAL_ANSWER_PLUS_CHEMICAL_LANGUAGE_RESPONSE",
+    "constructed_response_is_checkable_when_canonical_response_exists": true,
     "full_working_basis": "CORE2_SOLUTION_REASONING_STEPS",
     "verification_basis": "CORE2_VERIFICATION_ROUTE_PLUS_CONDITION_EXCEPTION_CHECK"
   },
@@ -65,6 +78,7 @@
     "CORE2A_CORE1A_BUCKET_BINDING_MISSING",
     "CORE2A_HINT_ATOM_NOT_PRETAUGHT",
     "CORE2A_SOURCE_INTEGRITY_DRIFT",
+    "CORE2A_RESPONSE_MODE_INVALID",
     "CORE2A_ANSWER_PATH_MISSING",
     "CORE2A_QUESTION_CITATION_MISSING",
     "CORE2A_RAW_INTERNAL_SOURCE_LINK_LEAK"
