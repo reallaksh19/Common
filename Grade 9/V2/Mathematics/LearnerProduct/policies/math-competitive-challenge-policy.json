@@ -1,0 +1,40 @@
+{
+  "policy_id": "MATH-COMPETITIVE-CHALLENGE-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Control how fresh challenge questions increase transfer demand without adding unapproved mathematics or faking official provenance.",
+  "allowed_novelty_mechanisms": [
+    "HIDDEN_INFORMATION",
+    "REVERSED_TARGET",
+    "REPRESENTATION_SHIFT",
+    "PARAMETER_CONSTRAINT",
+    "MIXED_CONCEPT_SYNTHESIS",
+    "SYMMETRIC_REWRITE",
+    "INVARIANT_RECOGNITION",
+    "CASE_SPLIT_WHEN_TAUGHT"
+  ],
+  "forbidden_difficulty_inflation": [
+    "LARGER_NUMBERS_ONLY",
+    "UGLIER_FRACTIONS_ONLY",
+    "EXTRA_ARITHMETIC_ONLY",
+    "UNTAUGHT_THEOREM",
+    "UNAPPROVED_IDENTITY"
+  ],
+  "competitive_source_classes": [
+    "OFFICIAL_VERIFIED",
+    "ADAPTED_VERIFIED_ARCHETYPE",
+    "EDITORIAL_COMPETITIVE_STYLE"
+  ],
+  "official_source_rule": "Official exam/year/question attribution is allowed only when an exact official source is verified.",
+  "generated_question_label_rule": "Fresh items influenced by competition archives must be described as generated/original competitive-style practice, never as official past questions.",
+  "curriculum_boundary": "Competitive material can change problem design and reasoning demand, not curricular authority.",
+  "required_question_evidence": [
+    "TAUGHT_CAPABILITY_REFS",
+    "CORE1A_BUCKET_REFS",
+    "CORE2_ANCHOR_REFS_WHEN_USED",
+    "ARCHETYPE_REFS",
+    "NOVELTY_MECHANISMS",
+    "INDEPENDENT_SOLUTION_CHECK",
+    "PROVENANCE"
+  ]
+}
