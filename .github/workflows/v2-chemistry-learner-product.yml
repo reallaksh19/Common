@@ -111,3 +111,17 @@ jobs:
             /tmp/chemistry-redox-production
           if-no-files-found: error
           retention-days: 14
+
+      - name: Restore Chemical Bonding handoff sources
+        run: >-
+          python 'Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench/tools/restore_source_bundle.py'
+          --root 'Grade 9/V2/Chemistry/AuthoringHandoff/NCERT-Core-Workbench'
+          --output /tmp/chemistry-handoff-restored
+
+      - name: Upload Chemical Bonding source snapshot for production migration
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-chemical-bonding-handoff-sources
+          path: /tmp/chemistry-handoff-restored/final/chemical-bonding
+          if-no-files-found: error
+          retention-days: 14
