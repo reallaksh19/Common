@@ -11,6 +11,7 @@ import jsonschema
 
 KIT = Path(__file__).resolve().parents[1]
 ENGINE = KIT / "engine"
+CHEMISTRY = KIT.parent
 if str(ENGINE) not in sys.path:
     sys.path.insert(0, str(ENGINE))
 
@@ -67,6 +68,8 @@ class ChemistryProductionKitTest(unittest.TestCase):
             self.assertEqual(audit["status"], "PASS")
             self.assertEqual(len(packet["questions"]), len(fixture["task"]["question_refs"]))
             self.assertEqual(len(reps["question_plans"]), len(fixture["task"]["question_refs"]))
+            self.assertIn("authority_bindings", route)
+            self.assertEqual(route["authority_bindings"]["registry_id"], "CHEM-PRODUCTION-AUTHORITY-BINDINGS-v1")
             if product == "CORE2A":
                 modes.add(fixture["task"]["purpose"])
                 for question_packet in packet["questions"]:
@@ -81,6 +84,20 @@ class ChemistryProductionKitTest(unittest.TestCase):
         self.assertGreaterEqual(per_product_count["CORE2"], 2)
         self.assertGreaterEqual(per_product_count["CORE1A"], 2)
         self.assertGreaterEqual(per_product_count["CORE2A"], 4)
+
+    def test_authority_bindings_point_to_real_repository_files(self):
+        seen = set()
+        for fixture in self.fixtures:
+            product = fixture["task"]["product"]
+            if product in seen:
+                continue
+            seen.add(product)
+            route = route_task(copy.deepcopy(fixture["task"]))
+            binding = route["authority_bindings"]
+            for relative in binding["shared"].values():
+                self.assertTrue((CHEMISTRY / relative).is_file(), relative)
+            for relative in binding["product"]["engines"] + binding["product"]["contracts"]:
+                self.assertTrue((CHEMISTRY / relative).is_file(), relative)
 
     def test_competition_sheet1_has_question_specific_source_and_technical_clues(self):
         fixture = next(f for f in self.fixtures if f["fixture_id"] == "CORE2A-COMPETITION")
@@ -117,6 +134,14 @@ class ChemistryProductionKitTest(unittest.TestCase):
         fixture["task"]["constraints"]["source_on_sheet1"] = False
         with self.assertRaises(ProductionKitError) as ctx:
             route_task(fixture["task"])
+        self.assertEqual(ctx.exception.code, "CORE2A_SHEET1_SOURCE_MISSING")
+
+    def test_core2a_question_without_sheet1_source_fails_specific_gate(self):
+        fixture = copy.deepcopy(next(f for f in self.fixtures if f["fixture_id"] == "CORE2A-PRACTICE"))
+        route = route_task(fixture["task"])
+        fixture["questions"][0]["source_display"] = ""
+        with self.assertRaises(ProductionKitError) as ctx:
+            validate_source_answer(fixture["task"], route, fixture["questions"], fixture["answers"])
         self.assertEqual(ctx.exception.code, "CORE2A_SHEET1_SOURCE_MISSING")
 
     def test_missing_answer_fails_closure(self):
