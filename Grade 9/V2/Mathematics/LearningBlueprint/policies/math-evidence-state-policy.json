@@ -1,0 +1,45 @@
+{
+  "policy_id": "MATH-EVIDENCE-STATE-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "states": {
+    "PRESENT": {
+      "meaning": "The referenced evidence exists and is available for direct inspection.",
+      "permits_negative_inference": false
+    },
+    "ABSENT": {
+      "meaning": "This evidence class is not available in the run.",
+      "permits_negative_inference": false,
+      "forbidden_inferences": [
+        "LOW_IMPORTANCE",
+        "LOW_DIFFICULTY",
+        "OUT_OF_SCOPE",
+        "LEARNER_WEAKNESS",
+        "NOT_ASSESSED_IN_GENERAL"
+      ]
+    },
+    "PARTIAL": {
+      "meaning": "Some evidence exists but coverage is incomplete or truncated.",
+      "permits_negative_inference": false,
+      "requires_uncertainty_preservation": true
+    },
+    "UNRESOLVED": {
+      "meaning": "Evidence exists but cannot yet support a settled interpretation.",
+      "permits_negative_inference": false,
+      "requires_uncertainty_preservation": true
+    },
+    "CONFLICTED": {
+      "meaning": "Two or more evidence items materially disagree and the conflict has not been adjudicated.",
+      "permits_negative_inference": false,
+      "requires_conflict_refs": true,
+      "requires_uncertainty_preservation": true
+    }
+  },
+  "authority_rules": [
+    "ORIGINAL_EVIDENCE_AND_AUTHORITATIVE_SOURCE_MAY_ENTER_GROUND_TRUTH",
+    "DERIVED_CLAIMS_MAY_NOT_ENTER_GROUND_TRUTH",
+    "EXTERNAL_BENCHMARKS_MAY_NOT_ENTER_GROUND_TRUTH",
+    "OWNER_OVERRIDES_MAY_NOT_REWRITE_GROUND_TRUTH",
+    "ABSENCE_OF_QUESTION_EVIDENCE_IS_NOT_EVIDENCE_OF_LOW_IMPORTANCE"
+  ]
+}
