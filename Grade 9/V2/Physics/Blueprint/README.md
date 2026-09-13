@@ -1,6 +1,6 @@
 # Physics V2 Blueprint — evidence-adaptive orchestration
 
-`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories (`CoreAuthoring/`, `Core2Transfer/`, `Core1A/`, `Core2A/`) are subordinate execution kits; `policy/role-bindings.v1.json` freezes that mapping.
+`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories (`CoreAuthoring/`, `Core2Transfer/`, `Core1A/`, `Core2A/`, `Representation/`) are subordinate execution kits; `policy/role-bindings.v1.json` freezes the reasoning-role mapping.
 
 ## Executable topology
 
@@ -24,6 +24,8 @@ CORE1A 1A0…1A11
 PUBLICATION IR
 lossless semantic audit
         ↓
+representation readiness
+        ↓
 existing Physics renderer
 composition only
         ↓
@@ -37,56 +39,42 @@ MACHINE PASS
 
 ## Blueprint guarantees now implemented
 
-- evidence-adaptive routing, never topic-name routing;
-- independent second-role re-grounding;
-- Core1 × Core2 Join with exact demand coverage and critical-conflict blocking;
-- learner `20/50/80` prior resolved to capability state, with real learner evidence distinguished from teaching receipts;
-- orthogonal purpose contracts;
-- strict Core1A cognition-before-manuscript state machine;
-- Motion-in-a-Plane real topic pilot deriving `CORE2_FIRST` from evidence rather than its name;
-- taught-state-gated Core2A;
-- Publication IR with a fail-closed lossless semantic boundary;
-- render custody plus independent actual-PDF preflight.
+The Blueprint now governs evidence-adaptive routing, independent second-role re-grounding, Core1 × Core2 Join, learner-state × purpose control, cognition-before-manuscript Core1A execution, taught-state-gated Core2A, lossless Publication IR, finished-PDF custody/preflight, and a real Motion-in-a-Plane representation-readiness gate.
 
 ## Publication and render authority
 
-The renderer is **not** a reasoning role. Publication IR can consume only upstream artifacts whose release state is already `RELEASED`. Required semantic refs must survive the lossless audit before rendering.
+The renderer is **not** a reasoning role. Publication IR fixes semantic authority upstream and renderer authority to composition only. Render custody binds the exact Publication IR digest, renderer-report digest and finished-PDF SHA. Actual-PDF preflight checks physical geometry, observed text font floor, page bounds, learner-visible internal identifiers, raster nonblank state and report/PDF page-count custody.
 
-```text
-semantic_authority = UPSTREAM_ONLY
-renderer_authority = COMPOSITION_ONLY
-renderer_may_introduce_semantic_claims = false
-renderer_may_substitute_representation = false
-```
-
-The Blueprint render layer does not replace the existing Physics renderer. It binds the exact Publication IR digest, renderer-report digest and finished-PDF SHA in a render-custody object, then independently inspects the finished PDF.
-
-Actual-PDF preflight checks:
-
-- SHA custody against the renderer report and render-custody object;
-- A4 page geometry;
-- actual extracted-text font floor;
-- text bounding boxes against physical page bounds;
-- learner-visible internal-identifier leakage;
-- first/middle/last raster proofs at 144 dpi;
-- effectively blank sampled pages;
-- renderer-reported page count against the physical PDF.
-
-Machine success deliberately emits:
+Machine success still ends at:
 
 ```text
 MACHINE_PREFLIGHT_PASS_HUMAN_VISUAL_REVIEW_PENDING
 release_authorized = false
 ```
 
-Machine renderability is not equivalent to mature visual quality or human subject/pedagogy/assessment approval.
+## Real Motion-in-a-Plane representation readiness
 
-## Render process golden
+`engine/compile_m2d_render_readiness.py` compiles the **real source-locked Motion-in-a-Plane chapter plan** against the actual subject-wide Physics primitive registry. Authorization is explicit per concept; name similarity and a primitive's generic schematic fallback are not enough to satisfy a missing cognitive job.
 
-`engine/build_render_process_golden.py` invokes the existing `Core1A/engine/render_physics_core1a.py`, not a second rendering stack. It freezes the publication plan, rendered PDF, renderer report, Publication IR, render custody, preflight report and raster proofs into one reviewable process artifact.
+The v1 baseline is intentionally fail-closed:
 
-The golden is a **process proof only**. It does not assert that the synthetic fixture is a production Motion-in-a-Plane learner product.
+```text
+10 real chapter concepts
+1 READY_FOR_REALIZATION
+9 BLOCKED_NEEDS_PRIMITIVE
+status = BLOCKED_REPRESENTATION_GAP
+```
+
+`RELATIVE_MOTION_FOUNDATION` is currently realizable with governed `RELATIVE_FRAME_VIEW`. The remaining concepts expose explicit subject-wide primitive capabilities that do not yet exist safely, including 2D coordinate framing, perpendicular vector decomposition, shared-clock projectile state sequences, apex-event state preservation, same-height projectile comparison, time-elimination trajectory bridging, and observer line-of-sight geometry.
+
+This is a stronger result than forcing the existing `TRAJECTORY_VIEW` or 1D-oriented vector semantics onto a different cognitive purpose. In particular, `TRAJECTORY_VIEW` is governed to distinguish travelled path from displacement/chord; it is not automatically legal as a projectile-dynamics teaching figure merely because the word “trajectory” matches.
+
+## Render process proof
+
+`engine/build_render_process_golden.py` invokes the existing `Core1A/engine/render_physics_core1a.py` and the Blueprint finished-PDF preflight. CI uploads the PDF, renderer report, Publication IR, render custody, preflight report, raster proofs, and the real M2D readiness report as one review artifact.
+
+The rendered golden remains a **process proof only**. It does not assert that the synthetic fixture is a production Motion-in-a-Plane learner product.
 
 ## Current next boundary
 
-The Blueprint now governs reasoning through actual rendered-artifact custody and machine preflight. The next tranche is to bind the **real Motion-in-a-Plane publication candidate** to this render gate, then perform actual-size human figure/page review and repair before any mature-product release claim.
+The next Blueprint tranche is **representation-gap closure**: implement the missing subject-wide 2D Physics primitives in the subordinate `Representation/` kit, with vector-operation evidence and no invented quantities, then recompile this readiness gate. Only after required concepts become realizable should a real Motion-in-a-Plane page adapter be allowed to emit a learner PDF for actual-size human review.

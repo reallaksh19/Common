@@ -26,6 +26,7 @@ def validate():
         "publication-ir.schema.json",
         "render-custody.schema.json",
         "render-preflight-report.schema.json",
+        "m2d-render-readiness.schema.json",
     ]
     schemas = {n: load(ROOT / "contracts" / n) for n in names}
     for schema in schemas.values():
@@ -57,6 +58,7 @@ def validate():
     c1a = load(ROOT / "policy" / "core1a-stage-machine.v1.json")
     pub = load(ROOT / "policy" / "publication-boundary.v1.json")
     render = load(ROOT / "policy" / "render-preflight.v1.json")
+    m2d_rep = load(ROOT / "policy" / "m2d-representation-requirements.v1.json")
 
     if not independent["self_validation_forbidden"] or not independent["fresh_validator_instance_required"]:
         raise AssertionError("INDEPENDENT_VALIDATION_POLICY_DISABLED")
@@ -72,6 +74,8 @@ def validate():
         raise AssertionError("RENDER_RELEASE_GATE_DRIFT")
     if render["page_geometry"]["format"] != "A4_PORTRAIT" or render["sample_raster_dpi"] < 144:
         raise AssertionError("RENDER_PHYSICAL_QA_POLICY_DRIFT")
+    if m2d_rep.get("topic_id") != "PHY-M2D" or not all((m2d_rep.get("rules") or {}).values()):
+        raise AssertionError("M2D_REPRESENTATION_GAP_POLICY_DRIFT")
 
     print("Blueprint contracts: PASS")
 

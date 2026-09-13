@@ -1,0 +1,93 @@
+{
+  "policy_id": "PHY-BP-M2D-REPRESENTATION-REQUIREMENTS-v1",
+  "schema_version": "1.0.0",
+  "topic_id": "PHY-M2D",
+  "rules": {
+    "exact_concept_coverage_required": true,
+    "name_similarity_authorization_forbidden": true,
+    "schematic_fallback_does_not_satisfy_missing_cognitive_job": true,
+    "ready_requires_at_least_one_authorized_existing_primitive": true
+  },
+  "requirements": [
+    {
+      "concept_id": "M2D_FOUNDATION",
+      "illustration_archetype": "COMPARE_THEN_BUILD",
+      "required_cognitive_jobs": ["ONE_DIMENSION_TO_TWO_DIMENSIONS","BUILD_2D_COORDINATE_FRAME"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["COORDINATE_FRAME_2D"],
+      "rationale": "A 1D signed-axis overlay cannot safely stand in for choosing two perpendicular axes for one object in a plane."
+    },
+    {
+      "concept_id": "PROJECTILE_FOUNDATION",
+      "illustration_archetype": "MOTION_UNFOLDS",
+      "required_cognitive_jobs": ["LAUNCH_TO_FREE_FLIGHT","DOWNWARD_GRAVITY_WITH_CURVED_PATH"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["PROJECTILE_STATE_SEQUENCE_2D"],
+      "rationale": "The existing trajectory primitive is governed for path-versus-displacement discrimination, not projectile dynamics under gravity."
+    },
+    {
+      "concept_id": "PROJECTILE_ANATOMY",
+      "illustration_archetype": "ANATOMY",
+      "required_cognitive_jobs": ["LABEL_PROJECTILE_FLIGHT_EVENTS","DECOMPOSE_LAUNCH_VECTOR_INTO_PERPENDICULAR_COMPONENTS"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["PROJECTILE_FLIGHT_ANATOMY_2D","VECTOR_DECOMPOSITION_2D"],
+      "rationale": "The learner must see one diagonal launch vector resolved into x and y components without implying two separate objects."
+    },
+    {
+      "concept_id": "PROJECTILE_COMPONENT_CLOCK",
+      "illustration_archetype": "STAGED_SEQUENCE",
+      "required_cognitive_jobs": ["DECOMPOSE_LAUNCH_VECTOR_INTO_PERPENDICULAR_COMPONENTS","TRACK_2D_PROJECTILE_STATES_ON_ONE_SHARED_CLOCK"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["VECTOR_DECOMPOSITION_2D","PROJECTILE_STATE_SEQUENCE_2D_SHARED_CLOCK"],
+      "rationale": "The figure must preserve one clock across horizontal and vertical component evolution."
+    },
+    {
+      "concept_id": "PROJECTILE_APEX",
+      "illustration_archetype": "EVENT_TIMELINE",
+      "required_cognitive_jobs": ["COMPARE_RISING_APEX_FALLING_VECTOR_STATES","DISTINGUISH_VY_ZERO_FROM_V_ZERO_AND_A_ZERO"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["PROJECTILE_STATE_SEQUENCE_2D_EVENT"],
+      "rationale": "Apex reasoning needs a 2D event-state view that preserves horizontal velocity and downward gravity when vertical velocity reaches zero."
+    },
+    {
+      "concept_id": "PROJECTILE_SAME_HEIGHT",
+      "illustration_archetype": "COMPARE_AND_DERIVE",
+      "required_cognitive_jobs": ["MARK_SAME_HEIGHT_LANDING_EVENT","COMPARE_COMPLEMENTARY_ANGLE_PATHS_AT_EQUAL_RANGE"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["PROJECTILE_SAME_HEIGHT_EVENT_2D","PROJECTILE_PARAMETER_COMPARE_2D"],
+      "rationale": "Same-height shortcuts and complementary-angle comparison require explicit event and path semantics absent from current primitives."
+    },
+    {
+      "concept_id": "PROJECTILE_TRAJECTORY",
+      "illustration_archetype": "DERIVATION_BRIDGE",
+      "required_cognitive_jobs": ["LINK_XT_AND_YT_TO_ONE_SHARED_TIME","ELIMINATE_TIME_TO_FORM_Y_OF_X","READ_PARABOLIC_PATH_FROM_RESULT"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["TRAJECTORY_TIME_ELIMINATION_BRIDGE_2D"],
+      "rationale": "The existing diagram-equation bridge maps symbols to features but does not represent the time-elimination transformation."
+    },
+    {
+      "concept_id": "PROJECTILE_HORIZONTAL_LAUNCH",
+      "illustration_archetype": "MOTION_UNFOLDS",
+      "required_cognitive_jobs": ["SHOW_ZERO_INITIAL_VERTICAL_COMPONENT","TRACK_FALL_TIME_AND_HORIZONTAL_MOTION_ON_ONE_CLOCK","REBUILD_IMPACT_VELOCITY_FROM_COMPONENTS"],
+      "authorized_existing_primitive_refs": [],
+      "missing_primitive_capabilities": ["PROJECTILE_STATE_SEQUENCE_2D_SHARED_CLOCK"],
+      "rationale": "Horizontal launch needs one 2D state sequence that couples fall time to constant horizontal motion."
+    },
+    {
+      "concept_id": "PROJECTILE_OUTFIELDER",
+      "illustration_archetype": "SCENE_PLUS_GRAPH",
+      "required_cognitive_jobs": ["SHOW_OBSERVER_LINE_OF_SIGHT_GEOMETRY","COMPARE_ANGLE_TIME_GRAPH_OPTIONS"],
+      "authorized_existing_primitive_refs": ["OPTION_GRAPH_SET_VIEW"],
+      "missing_primitive_capabilities": ["OBSERVER_LINE_OF_SIGHT_2D"],
+      "rationale": "The graph comparison primitive can support the second stage, but the observer sight-line geometry has no governed primitive yet."
+    },
+    {
+      "concept_id": "RELATIVE_MOTION_FOUNDATION",
+      "illustration_archetype": "VECTOR_BUILD",
+      "required_cognitive_jobs": ["CHOOSE_OBSERVER_FRAME","SUBTRACT_FRAME_BODY_VECTOR","READ_RELATIVE_QUANTITY"],
+      "authorized_existing_primitive_refs": ["RELATIVE_FRAME_VIEW"],
+      "missing_primitive_capabilities": [],
+      "rationale": "RELATIVE_FRAME_VIEW explicitly marks the frame body and the relative quantity and matches the chapter's observer-frame cognitive job."
+    }
+  ]
+}
