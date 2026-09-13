@@ -42,20 +42,28 @@ jobs:
           -s 'Grade 9/V2/Chemistry/Core1A/tests'
           -p 'test_*.py' -v
 
+      - name: Run Chemistry Core2A source-lane integration tests
+        run: >-
+          python -m unittest discover
+          -s 'Grade 9/V2/Chemistry/Core2A/tests'
+          -p 'test_*.py' -v
+
       - name: Validate learner-product policy and registry JSON
         run: |
           for f in \
             'Grade 9/V2/Chemistry/LearnerProduct/policies/'*.json \
             'Grade 9/V2/Chemistry/LearnerProduct/registry/'*.json \
-            'Grade 9/V2/Chemistry/Core1A/policies/'*.json; do
+            'Grade 9/V2/Chemistry/Core1A/policies/'*.json \
+            'Grade 9/V2/Chemistry/Core2A/policies/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
 
-      - name: Validate learner-product and Core1A JSON schemas are parseable
+      - name: Validate learner-product, Core1A and Core2A schemas are parseable
         run: |
           for f in \
             'Grade 9/V2/Chemistry/LearnerProduct/contracts/'*.json \
-            'Grade 9/V2/Chemistry/Core1A/contracts/'*.json; do
+            'Grade 9/V2/Chemistry/Core1A/contracts/'*.json \
+            'Grade 9/V2/Chemistry/Core2A/contracts/'*.json; do
             python -m json.tool "$f" > /dev/null
           done
 
