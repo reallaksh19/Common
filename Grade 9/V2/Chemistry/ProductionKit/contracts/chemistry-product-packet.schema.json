@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-product-packet.schema.json",
+  "title": "Chemistry Product Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "product", "profile_id", "route", "questions", "packet_digest"],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 3},
+    "product": {"enum": ["CORE1", "CORE2", "CORE1A", "CORE2A"]},
+    "purpose": {"type": ["string", "null"]},
+    "profile_id": {"type": "string", "minLength": 3},
+    "route": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 2}},
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_id", "source_display", "workspace_mm", "representation_refs", "sheets"],
+        "properties": {
+          "question_id": {"type": "string", "minLength": 2},
+          "source_display": {"type": "string", "minLength": 3},
+          "workspace_mm": {"type": "number", "minimum": 0, "maximum": 180},
+          "representation_refs": {"type": "array", "items": {"type": "string", "minLength": 2}},
+          "sheets": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sheet_number", "job", "blocks"],
+              "properties": {
+                "sheet_number": {"type": "integer", "minimum": 1, "maximum": 2},
+                "job": {"type": "string", "minLength": 2},
+                "blocks": {"type": "array", "minItems": 1, "items": {"type": "object"}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "packet_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
