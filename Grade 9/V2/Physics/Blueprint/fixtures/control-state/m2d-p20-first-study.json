@@ -1,0 +1,10 @@
+{
+  "control_state_id":"CTRL-PHY-M2D-P20-FIRST-001","topic_id":"PHY-M2D","learner_prior_pct":20,"purpose":"FIRST_STUDY",
+  "capability_prior_model":[
+    {"capability_ref":"PHY-CAP-VECTOR-MEANING","state_by_prior":{"20":"PARTIAL","50":"PARTIAL","80":"SECURE"}},
+    {"capability_ref":"PHY-CAP-SIGN-CONVENTION","state_by_prior":{"20":"FRAGILE","50":"PARTIAL","80":"SECURE"}},
+    {"capability_ref":"PHY-CAP-PROJECTILE-COMPONENTS","state_by_prior":{"20":"UNKNOWN","50":"FRAGILE","80":"PARTIAL"}},
+    {"capability_ref":"PHY-CAP-LINEAR-EQUATION","state_by_prior":{"20":"PARTIAL","50":"SECURE","80":"SECURE"}}
+  ],
+  "learner_evidence":[{"capability_ref":"PHY-CAP-LINEAR-EQUATION","evidence_kind":"DIAGNOSTIC","state":"SECURE","evidence_refs":["LE-PHY-M2D-DIAG-ALG-001"]}]
+}

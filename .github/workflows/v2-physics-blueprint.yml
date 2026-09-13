@@ -29,8 +29,8 @@ jobs:
       - name: Run Core1 x Core2 Join falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_join.py"
       - name: Compile Join golden
-        run: |
-          python "Grade 9/V2/Physics/Blueprint/engine/compile_join.py" \
-            "Grade 9/V2/Physics/Blueprint/fixtures/join/join-ready.json" \
-            --out /tmp/physics-join.json
-          python -m json.tool /tmp/physics-join.json > /dev/null
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_join.py" "Grade 9/V2/Physics/Blueprint/fixtures/join/join-ready.json" --out /tmp/physics-join.json
+      - name: Run learner-purpose control-state falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_control_state.py"
+      - name: Compile learner-purpose control-state golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/resolve_control_state.py" "Grade 9/V2/Physics/Blueprint/fixtures/control-state/m2d-p20-first-study.json" --out /tmp/physics-control-state.json
