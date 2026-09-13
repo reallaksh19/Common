@@ -1,0 +1,80 @@
+{
+  "policy_id": "CHEM-CORE2A-EXECUTION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "source_lane": {
+    "preserve_all_core2_questions": true,
+    "preserve_source_order": true,
+    "preserve_source_identity": true,
+    "preserve_source_integrity_state": true,
+    "preserve_attempt_before_solution": true,
+    "inline_citation_required": true,
+    "exactly_one_primary_core1a_problem_family": true
+  },
+  "challenge_selection": {
+    "basis": "PROBLEM_FAMILY_NOT_RAW_QUESTION_COUNT",
+    "per_eligible_problem_family": {
+      "near_transfer": 1,
+      "structural_variation": "WHEN_D2_OR_D3_AND_VALID_ALTERNATE_REASONING_DIRECTION_EXISTS"
+    },
+    "mixed_synthesis": "WHEN_AT_LEAST_TWO_COMPATIBLE_TAUGHT_BUCKETS_ARE_MATURE",
+    "structural_variation_priority": [
+      "REVERSED_TARGET",
+      "HIDDEN_INFORMATION",
+      "REPRESENTATION_SWITCH",
+      "ERROR_DIAGNOSIS",
+      "COMPARE_RANK",
+      "CONDITION_EXCEPTION",
+      "MULTI_STEP_BRIDGE",
+      "CONSERVATION_RECONSTRUCTION"
+    ]
+  },
+  "support_sequence": [
+    "TRY_IT_FIRST",
+    "SEE_THE_IDEA",
+    "WRITE_THIS_FIRST",
+    "SMALL_CLUE",
+    "BIGGER_CLUE",
+    "HOW_DO_I_START",
+    "WATCH_FOR_THIS",
+    "THINK_IT_THROUGH",
+    "CHECK_YOUR_CHEMISTRY",
+    "QUICK_CHECK",
+    "FULL_WORKING",
+    "WHERE_THIS_QUESTION_CAME_FROM"
+  ],
+  "hint_semantics": {
+    "SMALL_CLUE": "NOTICE_KEY_CHEMISTRY_OR_CRITERION",
+    "BIGGER_CLUE": "CHOOSE_REPRESENTATION_OR_MODEL",
+    "HOW_DO_I_START": "FIRST_EXECUTABLE_SYMBOLIC_OR_QUANTITATIVE_MOVE"
+  },
+  "answer_closure": {
+    "closed_question_rule": "QUESTION_EQUALS_QUICK_CHECK_EQUALS_FULL_WORKING",
+    "open_question_rule": "QUESTION_EQUALS_EXPECTED_RESPONSE_RUBRIC",
+    "applies_to_source_lane": true,
+    "applies_to_generated_lane": true
+  },
+  "challenge_validation": [
+    "INDEPENDENTLY_SOLVED",
+    "CHEMISTRY_SEMANTICS_VERIFIED",
+    "ANSWER_VERIFIED",
+    "UNITS_AND_CONDITIONS_CHECKED",
+    "REQUIRED_CAPABILITIES_TAUGHT",
+    "NOT_MATERIALLY_NEAR_COPY",
+    "INLINE_PROVENANCE_BOUND",
+    "ANSWER_PATH_COMPLETE"
+  ],
+  "stop_conditions": [
+    "CORE2A_SOURCE_ITEM_MISSING",
+    "CORE2A_SOURCE_ITEM_DUPLICATED",
+    "CORE2A_SOURCE_TEXT_UNTRACEABLE",
+    "CORE2A_UNTAUGHT_CHEMISTRY_REQUIRED",
+    "CORE2A_HINT_ATOM_NOT_PRETAUGHT",
+    "CORE2A_CHALLENGE_TARGET_UNGROUNDED",
+    "CORE2A_GENERATED_ITEM_NOT_INDEPENDENTLY_VERIFIED",
+    "CORE2A_GENERATED_ITEM_TOO_CLOSE_TO_SOURCE",
+    "CORE2A_QUESTION_CITATION_MISSING",
+    "CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION",
+    "CORE2A_ANSWER_PATH_MISSING"
+  ]
+}
