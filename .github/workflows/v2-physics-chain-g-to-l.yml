@@ -64,6 +64,7 @@ jobs:
           P="Grade 9/V2/Physics"
           python "$P/Core1A/tests/test_physics_core1a.py"
           python "$P/Core1A/tests/test_core1a_ui_policy.py"
+          python "$P/Core1A/tests/test_sba_transfer_answer_arithmetic.py"
 
       - name: P-H teaching primitives realized as vector graphics, inside their bbox
         run: |

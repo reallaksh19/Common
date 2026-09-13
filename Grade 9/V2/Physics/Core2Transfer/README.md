@@ -62,6 +62,24 @@ hint diagram carries a number the source never stated.
 Falsifiers: `HINT_NOT_PROJECTED_FROM_ROUTE_STATE`,
 `SPATIAL_FAMILY_HINT_WITHOUT_REPRESENTATION`, `CORE2_INVENTS_FIGURE_QUANTITY`.
 
+### Relationship to Core (1A)'s SBA hint pre-teaching contract
+
+Core (1A)'s Subtopic Bucket Assimilation layer carries its own rule for the same rungs:
+*every H1/H2/H3 reveal must trace to an earlier Core (1A) learning atom and to an
+example/check.* The two are **different axes of the same problem** and neither subsumes the
+other:
+
+| | question it answers | binding |
+|---|---|---|
+| SBA `core2_hint_coverage` | has the learner already been **taught** what this rung reveals? | rung → learning atom, with evidence |
+| P-I hint projection (here) | is this rung a **projection of the reasoning route**, and does a spatial family get the diagram? | rung → route state + representation state + visual role |
+
+SBA's `hint_rungs` carry no representation, visual role or figure; this layer's hints carry
+no learning-atom provenance. A later step should merge them into one rung object holding
+both `core1a_learning_atom` and `representation_state_ref`/`visual_role`, once Core (1A)'s
+SBA chapters reach the cold-start pipeline. Until then they are deliberately separate and
+both are enforced.
+
 ## Answer custody (P-UPGRADE-2 item 6)
 
 Every transfer page resolves to three separate objects that may never collapse into one:

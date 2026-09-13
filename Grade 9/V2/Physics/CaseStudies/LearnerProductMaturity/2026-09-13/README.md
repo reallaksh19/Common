@@ -167,6 +167,40 @@ chapter build, and `registry/physics-core1a-learner-language.json`.
 - #350's `learner_ui`, `difficulty` and `raw_math_strings_forbidden` policy and its
   `test_core1a_ui_policy.py` are untouched and still pass.
 
+## Relationship to #350's SBA layer
+
+While this work was in flight, #350 added a Subtopic Bucket Assimilation (SBA) system:
+stable bucket ids, difficulty × prior-knowledge teaching pathways, learning atoms, and a
+rule that *every Core (2) H1/H2/H3 reveal must trace to an earlier Core (1A) learning atom
+and to an example/check*. It is aimed at the same underlying defects from a different
+angle, so the overlap was checked explicitly rather than assumed.
+
+**Item 3 is not superseded.** No SBA artifact carries `givens`, `unknown`,
+`reasoning_route`, `equation` or `final_answer` — a scan of all six SBA registries returns
+none of those keys. SBA's `learning_atoms` are teaching plans (moves, visual-stage counts,
+misconceptions, checks) and its `method_steps` are prose. The one place SBA does carry
+numbers, `transfer_routines[].independent_practice`, states its answer as authored prose:
+`"u_y=20 m/s; T=4 s."` — correct today, but **asserted, not recomputed**. Edit the height
+in the prompt and the asserted answer silently becomes wrong. That gap is precisely what
+item 3's resolver closes, and the two layers also address different chapters: SBA covers
+Motion in a Plane, while the authored instances drive the Motion (1D) fixture the cold
+start actually runs.
+
+**Item 4 is complementary, not competing.** SBA binds each rung to a learning atom
+(*was this taught before it was hinted?*); item 4 binds each rung to a route state, a
+representation state and a visual role (*is this rung a projection of one reasoning route,
+and does a spatial family get the diagram?*). SBA's `hint_rungs` carry no representation,
+visual role or figure; the P-I rungs carry no learning-atom provenance. Both are enforced;
+merging them into one rung object is a named next step below.
+
+**A bridge was built rather than a parallel contract.**
+`Core1A/tests/test_sba_transfer_answer_arithmetic.py` points item 3's restricted arithmetic
+evaluator at SBA's own transfer routines: each routine's givens are taken from its own
+prompt, the relation its own `method_steps` teach is evaluated, and the result must agree
+with the number the registry asserts. All 8 routines and 13 asserted answers recompute and
+match — so #350's physics is now machine-verified instead of trusted, and it will fail
+loudly if either side drifts.
+
 ## Known limitations
 
 - **No human has read any of this.** Every subject, pedagogy, assessment and visual state
@@ -220,7 +254,16 @@ chapter build, and `registry/physics-core1a-learner-language.json`.
 5. **Raise body type to the 10.5–11 pt spec target.** The renderer is at 10.2 pt, above the
    10.0 pt floor but below `body_font_target_pt`. It is a layout retune, not a new
    mechanism.
-6. **Then, and only then, seek authorized human review.** The machine gates cannot move the
+6. **Merge the two hint-grounding axes into one rung object.** SBA answers "was this
+   taught?", the P-I projection answers "is this the route, and where is the diagram?".
+   One rung carrying both `core1a_learning_atom` and
+   `representation_state_ref`/`visual_role` would let a single falsifier cover both, once
+   Core (1A)'s SBA chapters reach the cold-start pipeline.
+7. **Migrate SBA's `independent_practice.answer_check` strings to the
+   `PhysicsAuthoredInstance` shape** so those answers are recomputed rather than asserted.
+   `test_sba_transfer_answer_arithmetic.py` already recomputes all eight; expressing them
+   as instances would make that structural instead of a companion test.
+8. **Then, and only then, seek authorized human review.** The machine gates cannot move the
    four human states, and no amount of further engineering will.
 
 ## Falsifiers added by this work
