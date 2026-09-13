@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-core1a-build-state.schema.json",
+  "title": "Chemistry Core1A Build State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "build_state_id",
+    "schema_version",
+    "subject",
+    "bucket_plan_ref",
+    "bucket_plan_digest",
+    "entries",
+    "next_active_bucket",
+    "summary",
+    "build_state_digest"
+  ],
+  "properties": {
+    "build_state_id": {"type": "string", "pattern": "^CHEM-C1A-BUILD-STATE-"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "CHEMISTRY"},
+    "bucket_plan_ref": {"type": "string", "pattern": "^CHEM-C1A-BP-"},
+    "bucket_plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bucket_id",
+          "primary_core2_question_count",
+          "publication_state",
+          "completed_gates",
+          "blocking_reason"
+        ],
+        "properties": {
+          "bucket_id": {"type": "string", "pattern": "^CHEM-C1A-SBA-[0-9]{2}$"},
+          "primary_core2_question_count": {"type": "integer", "minimum": 0},
+          "publication_state": {
+            "enum": [
+              "READY_FOR_REALIZATION",
+              "SKIP_NO_PRIMARY_CORE2",
+              "REALIZATION_IN_PROGRESS",
+              "COMPLETE",
+              "BLOCKED"
+            ]
+          },
+          "completed_gates": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "INDEX_SYNC",
+                "SOURCE_AND_CORE2_AUDIT",
+                "LEARNER_BINDING",
+                "LEARNING_ATOM_DECOMPOSITION",
+                "HINT_PRETEACH_CLOSURE",
+                "PROBLEM_FAMILY_ASSIMILATION",
+                "REPRESENTATION_PLAN",
+                "READINESS_GATE_DEFINED",
+                "REALIZATION",
+                "VISUAL_AUDIT",
+                "ANSWER_CLOSURE",
+                "MACHINE_QA",
+                "HANDOFF"
+              ]
+            }
+          },
+          "blocking_reason": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "next_active_bucket": {"type": ["string", "null"], "pattern": "^CHEM-C1A-SBA-[0-9]{2}$"},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bucket_count", "active_count", "skipped_count", "complete_count", "blocked_count"],
+      "properties": {
+        "bucket_count": {"type": "integer", "minimum": 1},
+        "active_count": {"type": "integer", "minimum": 0},
+        "skipped_count": {"type": "integer", "minimum": 0},
+        "complete_count": {"type": "integer", "minimum": 0},
+        "blocked_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "build_state_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
