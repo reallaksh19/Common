@@ -19,9 +19,10 @@ def validate() -> None:
         "packet-envelope.schema.json",
         "evidence-state.schema.json",
         "routing-decision.schema.json",
+        "independent-validation-session.schema.json",
     ]
     schemas = {name: load(schema_dir / name) for name in schema_names}
-    for name, schema in schemas.items():
+    for schema in schemas.values():
         Draft202012Validator.check_schema(schema)
 
     Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(
@@ -39,6 +40,15 @@ def validate() -> None:
         raise AssertionError("HANDOFF_BOUND_DRIFT")
     if not architecture["invariants"]["learning_atoms_unbounded"]:
         raise AssertionError("TRANSPORT_BOUND_LEAKED_INTO_PEDAGOGY")
+
+    independent = load(ROOT / "policy" / "independent-validation.v1.json")
+    if not independent["self_validation_forbidden"]:
+        raise AssertionError("SELF_VALIDATION_POLICY_DISABLED")
+    if not independent["fresh_validator_instance_required"]:
+        raise AssertionError("FRESH_VALIDATOR_POLICY_DISABLED")
+    first = independent["passes"][0]
+    if first["mode"] != "GROUND_TRUTH_ONLY" or "UPSTREAM_CLAIMS" not in first["must_not_see"]:
+        raise AssertionError("GROUND_TRUTH_BLIND_PASS_POLICY_DRIFT")
 
     print("Blueprint contracts: PASS")
 
