@@ -1,82 +1,59 @@
-# Physics V2 — Core (1A) Difficulty-Aware Learner Publication
+# Physics V2 — Core (1A) Difficulty-Aware Learner Assimilation
 
-Core (1A) is the learner-teaching assimilation layer between semantic **Core (1)** and the learner-facing Core study-guide PDF.
+> **Future agents: start with `AGENT_RUNBOOK.md`, not this README.**
 
-Core (1) answers **what must be taught**: source concepts, physical models, equations, examples, and capability boundaries.
+Core (1A) is the learner-teaching assimilation layer between semantic **Core (1)** and learner transfer in **Core (2)**. It remains the existing `CORE_STUDY_GUIDE` learner product; it is not a third product.
 
-Core (1A) answers **how a Grade-9 learner can actually acquire and use that knowledge** at the required subtopic level. It decomposes the chapter into stable **Subtopic Bucket Assimilation (SBA)** units, classifies intrinsic difficulty, models learner readiness (currently 20% and 50% usable prior knowledge), builds the necessary learning atoms, and verifies that every linked Core (2) hint reveal has already been taught before transfer.
+Core (1) answers **what must be taught**: source concepts, physical models, equations, examples and capability boundaries.
 
-Core (1A) remains the existing `CORE_STUDY_GUIDE` product. It is not a third learner product.
-
-```text
-P-G CoreAuthoring
-PhysicsCore1StudyPlan
-        │
-        ├──────────────┐
-        ▼              ▼
-source inventory    Core (2) linkage
-        │              │
-        └──────┬───────┘
-               ▼
-P-GA Core1A
-Subtopic Bucket Assimilation (SBA)
-difficulty × prior knowledge × learning atoms
-               │
-               ▼
-PhysicsCore1APublicationPlan
-               │
-               ▼
-Core1A renderer
-               │
-               ▼
-physics-core-study-guide.pdf
-```
-
-## Core (1) versus Core (1A)
-
-Core (1) is the semantic/pedagogical authority for the physics content.
-
-Core (1A) is not a prettier copy of Core (1), and it is not a reverse-engineered answer key for Core (2). It may expand a Core (1) concept into the prerequisite rebuilding, staged visuals, model conditions, misconception resolution, worked examples, guided examples, retrieval checks, and transfer bridges needed by a low-readiness learner. It may also build an explicit explanatory bridge for a source-visible practice/formula topic when the supplied theory is incomplete, provided the bridge does not invent new physics or silently claim that the missing theory existed in the source.
+Core (1A) answers **how a Grade-9 learner at a declared readiness level can acquire, recognise and use that knowledge inside a stable Subtopic Bucket Assimilation (SBA) unit**.
 
 The governing question is:
 
-> Given this specific subtopic bucket, its intrinsic difficulty, the learner's usable prior knowledge, and the Core (2) demands, what teaching sequence is required so the learner can understand and use it?
+> Given this bucket, its intrinsic difficulty, the learner's usable prior knowledge, and the exact Core (2) demands, what teaching and transfer sequence is required before independent practice is reasonable?
 
-## Subtopic Bucket Assimilation (SBA)
-
-Each chapter has stable bucket IDs such as:
+## Architecture
 
 ```text
-M2D-SBA-03
-M2D-SBA-04
-...
+SOURCE / CORE (1)
+what physics is authorised
+        ↓
+SBA INDEX
+what belongs together and which Core (2) questions it owns
+        ↓
+DIFFICULTY × READINESS
+how much support the learner needs
+        ↓
+LEARNING ATOMS
+small conceptual steps + staged visuals + misconceptions
+        ↓
+CORE (2) HINT PRETEACH AUDIT
+H1 / H2 / H3 must already be taught
+        ↓
+PROBLEM-FAMILY ASSIMILATION
+recognise → numbered method → independent practice → optional hints
+        ↓
+READINESS GATE
+recognise → represent → first move → finish
+        ↓
+CORE (2)
+protected transfer
 ```
 
-PDF page numbers are not semantic identifiers and may change during layout revision.
+## Stable SBA indexing
 
-Each SBA bucket records:
+Use semantic IDs such as `M2D-SBA-03`, never PDF page numbers as concept identifiers.
 
-- source/Core (1) basis;
-- intrinsic difficulty (`D1`–`D4`);
-- prerequisite buckets;
-- primary Revised Core (2) v2 questions;
-- 20% and/or 50% prior-knowledge pathways;
-- learning atoms;
-- required visual stages;
-- misconception targets;
-- worked/guided/retrieval evidence;
-- Core (2) H1/H2/H3 pre-teaching coverage;
-- question-specific release prerequisites.
+Every Revised Core (2) v2 question has exactly one **primary** SBA owner. A question may still be **HELD** until a prerequisite bucket is complete.
 
-Every Revised Core (2) v2 question belongs to exactly one **primary** SBA bucket. Secondary prerequisite buckets may also be required.
+For the current production queue:
 
-For the current SBA production queue, buckets with **zero primary Core (2) questions are retained in the chapter map but do not receive a dedicated SBA PDF**. Their status is `SKIP_NO_PRIMARY_CORE2`.
+- buckets with primary Core (2) questions are `ACTIVE` and receive dedicated SBA PDFs;
+- buckets with zero primary questions remain in the chapter map as `SKIP_NO_PRIMARY_CORE2` and are not built as dedicated PDFs.
 
-## Difficulty × prior knowledge
+## Difficulty and learner readiness
 
-Difficulty and readiness are separate variables.
-
-Core (1A) currently optimises especially for **medium/hard concepts with 50% or less usable prior knowledge**.
+Difficulty and prior knowledge are independent.
 
 ```text
                       learner readiness
@@ -85,164 +62,121 @@ Core (1A) currently optimises especially for **medium/hard concepts with 50% or 
 D1 FOUNDATION       rebuild basics     activate basics
 D2 THINK CAREFULLY  high support       moderate support
 D3 CHALLENGE        maximum support    high support
-D4 STRETCH/BRIDGE   full bridge        focused bridge
+D4 STRETCH          full bridge        focused bridge
 ```
 
-A 20%-knowledge D3 bucket normally needs:
+Core (1A) currently prioritises medium/hard buckets for learners at or below 50% usable prior knowledge.
 
-```text
-FOUNDATION / PRETRAINING
-→ STORY / PHENOMENON
-→ STAGED PICTURE
-→ WHAT CHANGED PHYSICALLY?
-→ PICTURE-TO-MATHS BRIDGE
-→ MISCONCEPTION RESOLUTION
-→ WATCH ONE
-→ COMPLETE ONE
-→ TRY ONE WITH HINTS
-→ RETRIEVAL GATE
-→ CORE (2)
-```
+A 20%-knowledge bucket should normally move from intuitive/pictorial understanding to independent transfer rather than from formula summary directly to Core (2).
 
-The badge is not decorative. Difficulty and readiness determine the minimum teaching support.
+## Mandatory learner sequence
 
-## Core (2) hint pre-teaching rule
+The exact process is machine-tracked by per-bucket build manifests. The default macro-order is:
 
-Core (2) uses protected hints:
+`SBA INDEX → FOUNDATION/PRETRAINING → CONCEPT BUILD → PICTORIAL STAGES → PICTURE-TO-MATHS → MISCONCEPTION → WATCH ONE → COMPLETE ONE → PROBLEM-FAMILY ROUTINE(S) → INDEPENDENT PRACTICE → HINTS → READINESS → CORE (2) TRANSFER SUMMARY`
 
-```text
-H1 — key physics
-H2 — representation/model
-H3 — first mathematical move
-```
+### Independent practice
 
-Core (1A) must pre-teach each reveal.
+Independent practice is mandatory for every released problem family. The learner must attempt before seeing H2/H3-style support.
 
-```text
-Core (2) Qxx
-│
-├── H1 ──> earlier Core (1A) learning atom + check
-├── H2 ──> earlier Core (1A) learning atom + representation
-└── H3 ──> earlier Core (1A) worked/guided first move
-```
+### Readiness
 
-A topic-level link is insufficient. If a hint rung has no earlier teaching home, the SBA build is incomplete.
+Each released family checks four abilities:
 
-A question may have a primary bucket but still be held until another prerequisite bucket is complete. Example: an apex-speed question may be primary in the velocity-event bucket but require the same-height range formula before the full Core (2) item is released.
+1. **RECOGNISE** the problem family;
+2. **REPRESENT** the model;
+3. choose the **FIRST MOVE** without H2/H3;
+4. **FINISH** a fresh analogous problem and check it.
 
-## Authority boundary
+Recommended release: 4/4 without H2/H3.
 
-Core (1A) may:
+## Core (2) hint pre-teaching
 
-- reorganise Core (1) content into stable SBA teaching units;
-- decompose concepts into smaller learner-facing learning atoms;
-- add prerequisite refreshers and explanatory bridges using already-authorised physics;
-- increase or reduce scaffolding according to difficulty and prior knowledge;
-- construct staged schematic visuals from source-authorised concepts without inventing numerical data;
-- create worked or guided examples only when the quantities/physics are authorised by the upstream/source contract;
-- explicitly teach a source-visible practice/formula bridge while marking the theory-source limitation honestly;
-- map Core (2) hints back to exact teaching atoms and delay question release until prerequisites are met;
-- report publication-quality and teaching-completeness findings.
+Core (2) uses:
 
-Core (1A) may **not**:
+- H1 — key physics;
+- H2 — representation/model;
+- H3 — first mathematical move.
 
-- invent a new physical law, model, capability, or unsupported problem family;
-- invent source attribution or claim missing source theory exists;
-- silently correct a source mathematical inconsistency without a source-QC note;
-- fabricate a Core (2) linkage where Revised Core (2) v2 has no matching primary question;
-- create a third learner product.
+Every reveal must trace backward to prior Core (1A) teaching evidence. A topic-level link alone is insufficient.
 
-## Learning-page grammar
+## Question-load scaling
 
-A mature 20%-knowledge bucket uses textbook teaching rather than a card dump:
+Core (1A) elaboration must grow with the number of distinct Core (2) demands, not just with intrinsic concept difficulty.
 
-```text
-BUCKET OPENER / FOUNDATION GATE
-→ MODEL CONTRACT / PHYSICS WORDS
-→ STAGED ILLUSTRATION
-→ WHAT TO NOTICE
-→ TURN THE PICTURE INTO MATHS
-→ WHY THIS STEP?
-→ EASY MISTAKE TO MAKE
-→ WATCH ONE
-→ COMPLETE ONE
-→ TRY ONE WITH HELP
-→ INDEPENDENT RETRIEVAL
-→ WHERE YOU WILL USE THIS
-```
+- 1–2 primary questions: `LOW` load;
+- 3–5: `MEDIUM`;
+- 6–9: `HIGH`;
+- 10+: `VERY_HIGH`.
 
-The staged illustration supports the teaching; it does not replace explanatory prose or reasoning.
+For HIGH/VERY_HIGH loads, cluster questions into problem families and expand the transfer section. Do not compress many questions into one end-page list.
 
-## Illustration requirements
+Reference cases:
 
-Illustrations are first-class instructional objects.
+- SBA-03 — LOW load;
+- SBA-04 — HIGH load;
+- SBA-05 — VERY_HIGH load.
 
-- use a stable coordinate frame unless the concept requires a frame change;
-- one conceptual change per stage;
-- labels anchor to semantic objects, not arbitrary page coordinates;
-- keep related words and graphics spatially adjacent;
-- D2/D3 concepts require staged visuals rather than one static diagram;
-- unresolved label collision or panel overflow is a build failure;
-- the renderer treats a completed figure as an atomic bounded object.
+## Source and authority boundary
 
-A hard concept means **more pictures and fewer inferential jumps**, not smaller text.
+Core (1A) may reorganise and scaffold authorised physics, add prerequisite refreshers, staged visuals, worked/guided/independent practice and explanatory bridges.
 
-## Learner-facing language
+Core (1A) may not invent a new law, unsupported problem family, fake source citation, fabricated Core (2) link, or silently correct a source issue. Source/Core (1) remains semantic authority.
 
-Do not expose internal production jargon such as `repair`, `custody`, `falsifier`, `remediation`, or `source-grounded`.
+## Learner UI
 
-Preferred learner language includes:
+See `CORE1A_UI_SPEC.md` for the normative learner-facing layout grammar. Important rules include:
 
-- `Where you will use this`
-- `Try Core (2)`
-- `Need a quick refresher?`
-- `Go back to this idea`
-- `Easy mistake to make`
-- `Does the answer make sense?`
-- `Ready to practise?`
+- hard concept = more pictures and fewer jumps;
+- pictures support teaching, not replace it;
+- real Greek/subscript/superscript/fraction/radical typography;
+- no raw learner strings like `sqrt(...)` or `theta`;
+- independent practice before hints;
+- readiness before release;
+- exact `Qxx` links and explicit HELD prerequisites.
 
-Difficulty labels:
+## Durable handoff state
 
-- `D1 FOUNDATION`
-- `D2 THINK CAREFULLY`
-- `D3 CHALLENGE`
-- `D4 STRETCH`
+A future agent must not infer progress from chat history.
 
-## Publication quality
+Read:
 
-Core (1A) keeps the existing publication QA:
+- `registry/physics-core1a-motion-in-a-plane-build-state-v1.json` for current queue state;
+- `registry/build-manifests/M2D-SBA-xx-v1.json` for completed-bucket evidence;
+- run `python Grade 9/V2/Physics/Core1A/engine/next_sba.py` to derive the next active bucket.
 
-- textbook body target 10.6 pt, hard floor 10.0 pt;
-- caption and diagram-label floors;
-- A4 page with stable margins;
-- no heading/badge collision;
-- no text outside page bounds;
-- properly rendered Greek symbols, subscripts, superscripts, fractions and radicals;
-- no raw learner-facing strings such as `sqrt(...)`, `theta`, `v_A/B`, or `u^2`;
-- no orphan headings or accidental half-page voids;
-- no worked example split before its result/check;
-- figures require captions/provenance mode;
-- final PDF remains hash-bound to its authorised inputs.
+If the derived next bucket disagrees with build-state, the build fails.
 
 ## Normative files
 
 ```text
 Core1A/
-├── README.md
-├── CORE1A_UI_SPEC.md
+├── AGENT_RUNBOOK.md                         # exact execution order
+├── README.md                                # architecture summary
+├── CORE1A_UI_SPEC.md                        # learner surface contract
+├── SOURCE_COMPLETENESS_SPEC.md
 ├── contracts/
 │   ├── physics-core1a-publication-plan.schema.json
-│   └── physics-core1a-subtopic-bucket.schema.json
+│   ├── physics-core1a-subtopic-bucket.schema.json
+│   ├── physics-core1a-sba-publication-index.schema.json
+│   └── physics-core1a-sba-build-manifest.schema.json
 ├── registry/
-│   ├── physics-core1a-publication-policy.json
+│   ├── physics-core1a-motion-in-a-plane-sba-v1.json
+│   ├── physics-core1a-motion-in-a-plane-sba-publication-index-v1.json
+│   ├── physics-core1a-motion-in-a-plane-build-state-v1.json
 │   ├── physics-core1a-core2-linkage.json
-│   └── physics-core1a-motion-in-a-plane-sba-v1.json
+│   ├── ...bucket profile / transfer files...
+│   └── build-manifests/
+│       ├── M2D-SBA-03-v1.json
+│       ├── M2D-SBA-04-v1.json
+│       └── M2D-SBA-05-v1.json
+├── engine/
+│   └── next_sba.py
 └── tests/
-    ├── test_physics_core1a.py
-    ├── test_physics_core1a_linkage.py
-    └── test_physics_core1a_sba.py
+    ├── test_physics_core1a_sba.py
+    └── test_physics_core1a_agent_handoff.py
 ```
 
 ## Release claim
 
-Core (1A) can prove publication engineering and SBA teaching-completeness properties. It does not independently redefine subject correctness; source/Core (1) remains the semantic authority, while Core (2) remains the protected transfer surface.
+We cannot guarantee that a future agent will never make a judgement error. The architecture instead makes the important deviations **explicit, machine-checkable and build-failing** so continuity does not depend on hidden memory or chat history.
