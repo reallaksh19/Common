@@ -1,0 +1,61 @@
+{
+  "policy_id": "CHEM-CORE2A-CHALLENGE-REALIZATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "selection": {
+    "mandatory_near_transfer_per_supported_family": 1,
+    "structural_variation_for_difficulty": ["D2", "D3"],
+    "mixed_synthesis_requires_explicit_compatibility_authority": true,
+    "unsupported_family_action": "SKIP_WITH_REASON"
+  },
+  "supported_family_recipes": {
+    "PF-FORMULA_CHARGE_PARSE": {
+      "near_transfer_recipe": "FORMULA_SUBSCRIPT_SUPERSCRIPT_CONTRAST",
+      "structural_archetype": "ERROR_DIAGNOSIS",
+      "validator": "FORMULA_NOTATION_ROLES"
+    },
+    "PF-MACRO_PARTICLE_SYMBOL_TRANSLATION": {
+      "near_transfer_recipe": "PARTICLE_COUNT_PLUS_ONE",
+      "structural_archetype": "ERROR_DIAGNOSIS",
+      "validator": "PARTICLE_COEFFICIENT_COMPOSITION"
+    },
+    "PF-CONSERVATION_LEDGER": {
+      "near_transfer_recipe": "ATOM_LEDGER_PAIR",
+      "structural_archetype": "CONSERVATION_RECONSTRUCTION",
+      "validator": "ATOM_LEDGER_RECOMPUTE"
+    },
+    "PF-CONDITION_VALIDITY": {
+      "near_transfer_recipe": "RESTORE_REACTION_CONDITION",
+      "structural_archetype": "CONDITION_EXCEPTION",
+      "validator": "CONDITION_PRESERVATION"
+    },
+    "PF-AGENT_ROLE_ASSIGNMENT": {
+      "near_transfer_recipe": "OPPOSITE_AGENT_TARGET",
+      "structural_archetype": "REVERSED_TARGET",
+      "validator": "ELECTRON_TRANSFER_AGENT_ROLE"
+    }
+  },
+  "near_copy": {
+    "exact_normalized_copy_forbidden": true,
+    "max_sequence_ratio": 0.9,
+    "max_token_jaccard": 0.8,
+    "compare_against_all_source_stems": true
+  },
+  "generation_boundary": {
+    "new_species_forbidden": true,
+    "new_rule_or_law_forbidden": true,
+    "new_condition_forbidden": true,
+    "arithmetic_only_difficulty_forbidden": true,
+    "must_reuse_taught_capability_and_problem_family": true,
+    "must_have_independent_validator": true
+  },
+  "stop_conditions": [
+    "CORE2A_CHALLENGE_TARGET_UNGROUNDED",
+    "CORE2A_UNTAUGHT_CHEMISTRY_REQUIRED",
+    "CORE2A_GENERATED_ITEM_NOT_INDEPENDENTLY_VERIFIED",
+    "CORE2A_GENERATED_ITEM_TOO_CLOSE_TO_SOURCE",
+    "CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION",
+    "CORE2A_ANSWER_PATH_MISSING",
+    "CORE2A_QUESTION_CITATION_MISSING"
+  ]
+}
