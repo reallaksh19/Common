@@ -12,23 +12,26 @@
   "completed_active_buckets": [
     "M2D-SBA-03",
     "M2D-SBA-04",
-    "M2D-SBA-05"
+    "M2D-SBA-05",
+    "M2D-SBA-06"
   ],
   "skipped_no_primary_buckets_seen_so_far": [
     "M2D-SBA-01",
     "M2D-SBA-02"
   ],
-  "last_completed_bucket": "M2D-SBA-05",
-  "next_active_bucket": "M2D-SBA-06",
+  "last_completed_bucket": "M2D-SBA-06",
+  "next_active_bucket": "M2D-SBA-07",
   "gold_standard_buckets": {
     "M2D-SBA-03": "LOW question load; one main routine; independent practice, protected hints and readiness gate.",
     "M2D-SBA-04": "HIGH question load; multiple distinct velocity-event routines plus cross-bucket release control.",
-    "M2D-SBA-05": "VERY_HIGH question load; family-map planning, enlarged transfer section, multiple independent-practice/readiness sequences."
+    "M2D-SBA-05": "VERY_HIGH question load; family-map planning, enlarged transfer section, multiple independent-practice/readiness sequences.",
+    "M2D-SBA-06": "D3 low-question-load professional-lossless reference: full derivation depth, two distinct transfer families, restrained heading hierarchy and no instructional-function loss during textbook redesign."
   },
   "required_start_files": [
     "AGENT_RUNBOOK.md",
     "README.md",
     "CORE1A_UI_SPEC.md",
+    "PROFESSIONAL_TEXTBOOK_SPEC.md",
     "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
     "registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
     "registry/physics-core1a-core2-linkage.json"
