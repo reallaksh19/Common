@@ -10,6 +10,10 @@
     "transfer_registry": "registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json"
   },
   "primary_questions": ["Q10", "Q43"],
+  "question_release": [
+    {"question_id":"Q10","status":"RELEASED","routine_id":"M2D-SBA-03-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q43","status":"HELD","routine_id":null,"release_prerequisite_buckets":["M2D-SBA-04"]}
+  ],
   "question_load": {"count": 2, "class": "LOW", "minimum_transfer_families": 1},
   "phase_gates": [
     {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["SBA publication index contains M2D-SBA-03."]},
@@ -17,7 +21,7 @@
     {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["D2, 20% foundation path."]},
     {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Components, horizontal motion, vertical motion, shared clock and no-time relation decomposed."]},
     {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"PASS","evidence":["Q10 pre-taught; Q43 held until SBA-04 apex teaching."]},
-    {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PASS","evidence":["R1 velocity-component routine created for Q10."]},
+    {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PASS","evidence":["R1 velocity-component routine created for Q10; Q43 release dependency is explicit."]},
     {"gate":"G6_PAGE_PLAN","status":"PASS","evidence":["Concept build followed by method, independent practice, separate hints and readiness."]},
     {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"PASS","evidence":["13-page transfer-revised PDF rendered and visually checked."]},
     {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"PASS","evidence":["Recognise/represent/first-move/finish readiness gate added for Q10."]},
