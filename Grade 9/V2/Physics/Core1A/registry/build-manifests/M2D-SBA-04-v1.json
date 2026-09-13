@@ -10,6 +10,15 @@
     "transfer_registry": "registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json"
   },
   "primary_questions": ["Q01","Q11","Q13","Q14","Q17","Q27","Q40"],
+  "question_release": [
+    {"question_id":"Q01","status":"RELEASED","routine_id":"M2D-SBA-04-R2","release_prerequisite_buckets":[]},
+    {"question_id":"Q11","status":"RELEASED","routine_id":"M2D-SBA-04-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q13","status":"RELEASED","routine_id":"M2D-SBA-04-R2","release_prerequisite_buckets":[]},
+    {"question_id":"Q14","status":"HELD","routine_id":"M2D-SBA-04-R4","release_prerequisite_buckets":["M2D-SBA-05"]},
+    {"question_id":"Q17","status":"RELEASED","routine_id":"M2D-SBA-04-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q27","status":"HELD","routine_id":"M2D-SBA-04-R4","release_prerequisite_buckets":["M2D-SBA-05"]},
+    {"question_id":"Q40","status":"RELEASED","routine_id":"M2D-SBA-04-R3","release_prerequisite_buckets":[]}
+  ],
   "question_load": {"count": 7, "class": "HIGH", "minimum_transfer_families": 3},
   "phase_gates": [
     {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["SBA publication index contains M2D-SBA-04 with seven primary questions."]},
