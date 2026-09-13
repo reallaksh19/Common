@@ -46,7 +46,10 @@
         "coverage_closure_ref": {"type": "string", "minLength": 3},
         "coverage_closure_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "competitive_registry_ref": {"type": ["string", "null"]},
-        "competitive_registry_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+        "competitive_registry_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "production_topic_id": {"type": ["string", "null"]},
+        "production_baseline_ref": {"type": ["string", "null"]},
+        "production_baseline_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
       }
     },
     "policy_refs": {
