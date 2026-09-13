@@ -8,7 +8,6 @@ import unittest
 from pathlib import Path
 
 BP = Path(__file__).resolve().parents[1]
-PHYS = BP.parent
 
 
 def mod(name, path):
@@ -20,7 +19,7 @@ def mod(name, path):
 
 compiler = mod("bp_m2d_render_readiness", BP / "engine" / "compile_m2d_render_readiness.py")
 POLICY = json.loads((BP / "policy" / "m2d-representation-requirements.v1.json").read_text())
-PRIMITIVES = json.loads((PHYS / "Representation" / "registry" / "physics-teaching-primitive-registry.json").read_text())
+PRIMITIVES = compiler.combined_primitive_registry()
 
 
 class MotionInAPlaneRenderReadinessTests(unittest.TestCase):
@@ -31,16 +30,14 @@ class MotionInAPlaneRenderReadinessTests(unittest.TestCase):
             policy or POLICY,
         )
 
-    def test_real_chapter_is_accounted_for_exactly_once(self):
+    def test_real_chapter_becomes_fully_realizable_only_after_generic_2d_closure(self):
         report = self.report()
         self.assertEqual(report["summary"]["concept_count"], 10)
-        self.assertEqual(report["summary"]["ready_count"], 1)
-        self.assertEqual(report["summary"]["blocked_count"], 9)
-        self.assertEqual(report["summary"]["status"], "BLOCKED_REPRESENTATION_GAP")
+        self.assertEqual(report["summary"]["ready_count"], 10)
+        self.assertEqual(report["summary"]["blocked_count"], 0)
+        self.assertEqual(report["summary"]["status"], "READY_FOR_RENDER_ADAPTER")
         self.assertFalse(report["summary"]["release_authorized"])
-        states = {row["concept_id"]: row["state"] for row in report["concepts"]}
-        self.assertEqual(states["RELATIVE_MOTION_FOUNDATION"], "READY_FOR_REALIZATION")
-        self.assertEqual(states["PROJECTILE_COMPONENT_CLOCK"], "BLOCKED_NEEDS_PRIMITIVE")
+        self.assertTrue(all(row["state"] == "READY_FOR_REALIZATION" for row in report["concepts"]))
 
     def test_policy_cannot_omit_a_real_concept(self):
         policy = copy.deepcopy(POLICY)
@@ -55,19 +52,19 @@ class MotionInAPlaneRenderReadinessTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "M2D_RENDER_UNKNOWN_AUTHORIZED_PRIMITIVE"):
             self.report(policy=policy)
 
-    def test_name_similarity_does_not_clear_missing_cognitive_job(self):
+    def test_name_similarity_does_not_clear_a_declared_missing_job(self):
         policy = copy.deepcopy(POLICY)
         row = next(x for x in policy["requirements"] if x["concept_id"] == "PROJECTILE_FOUNDATION")
         row["authorized_existing_primitive_refs"] = ["TRAJECTORY_VIEW"]
+        row["missing_primitive_capabilities"] = ["STATE_SEQUENCE_2D"]
         report = self.report(policy=policy)
         item = next(x for x in report["concepts"] if x["concept_id"] == "PROJECTILE_FOUNDATION")
         self.assertEqual(item["state"], "BLOCKED_NEEDS_PRIMITIVE")
-        self.assertIn("PROJECTILE_STATE_SEQUENCE_2D", item["missing_primitive_capabilities"])
 
     def test_policy_cannot_claim_ready_without_a_real_primitive(self):
         policy = copy.deepcopy(POLICY)
         row = next(x for x in policy["requirements"] if x["concept_id"] == "M2D_FOUNDATION")
-        row["missing_primitive_capabilities"] = []
+        row["authorized_existing_primitive_refs"] = []
         with self.assertRaisesRegex(AssertionError, "M2D_RENDER_REQUIREMENT_UNSATISFIED_WITHOUT_PRIMITIVE"):
             self.report(policy=policy)
 
@@ -77,6 +74,15 @@ class MotionInAPlaneRenderReadinessTests(unittest.TestCase):
         row["illustration_archetype"] = "ANATOMY"
         with self.assertRaisesRegex(AssertionError, "M2D_RENDER_ARCHETYPE_DRIFT"):
             self.report(policy=policy)
+
+    def test_subject_wide_2d_extension_is_part_of_the_exact_registry_digest(self):
+        ids = {row["primitive_id"] for row in PRIMITIVES["primitives"]}
+        for required in [
+            "CARTESIAN_FRAME_2D","VECTOR_COMPONENTS_2D","STATE_SEQUENCE_2D",
+            "PATH_ANATOMY_2D","EVENT_COMPARE_2D","PARAMETRIC_ELIMINATION_BRIDGE_2D",
+            "OBSERVER_LINE_OF_SIGHT_2D"
+        ]:
+            self.assertIn(required, ids)
 
 
 if __name__ == "__main__":

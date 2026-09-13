@@ -26,7 +26,7 @@ lossless semantic audit
         ↓
 representation readiness
         ↓
-existing Physics renderer
+existing Physics render stack
 composition only
         ↓
 RENDER CUSTODY
@@ -39,11 +39,11 @@ MACHINE PASS
 
 ## Blueprint guarantees now implemented
 
-The Blueprint now governs evidence-adaptive routing, independent second-role re-grounding, Core1 × Core2 Join, learner-state × purpose control, cognition-before-manuscript Core1A execution, taught-state-gated Core2A, lossless Publication IR, finished-PDF custody/preflight, and a real Motion-in-a-Plane representation-readiness gate.
+The Blueprint governs evidence-adaptive routing, independent second-role re-grounding, Core1 × Core2 Join, learner-state × purpose control, cognition-before-manuscript Core1A execution, taught-state-gated Core2A, lossless Publication IR, finished-PDF custody/preflight, and real Motion-in-a-Plane representation readiness.
 
 ## Publication and render authority
 
-The renderer is **not** a reasoning role. Publication IR fixes semantic authority upstream and renderer authority to composition only. Render custody binds the exact Publication IR digest, renderer-report digest and finished-PDF SHA. Actual-PDF preflight checks physical geometry, observed text font floor, page bounds, learner-visible internal identifiers, raster nonblank state and report/PDF page-count custody.
+The renderer is **not** a reasoning role. Publication IR fixes semantic authority upstream and renderer authority to composition only. Render custody binds the exact Publication IR digest, renderer-report digest and finished-PDF SHA. Actual-PDF preflight inspects physical geometry, observed text font floor, page bounds, learner-visible internal identifiers, raster nonblank state and report/PDF page-count custody.
 
 Machine success still ends at:
 
@@ -52,11 +52,9 @@ MACHINE_PREFLIGHT_PASS_HUMAN_VISUAL_REVIEW_PENDING
 release_authorized = false
 ```
 
-## Real Motion-in-a-Plane representation readiness
+## Motion-in-a-Plane representation gap and closure
 
-`engine/compile_m2d_render_readiness.py` compiles the **real source-locked Motion-in-a-Plane chapter plan** against the actual subject-wide Physics primitive registry. Authorization is explicit per concept; name similarity and a primitive's generic schematic fallback are not enough to satisfy a missing cognitive job.
-
-The v1 baseline is intentionally fail-closed:
+The first real readiness compilation correctly produced:
 
 ```text
 10 real chapter concepts
@@ -65,16 +63,39 @@ The v1 baseline is intentionally fail-closed:
 status = BLOCKED_REPRESENTATION_GAP
 ```
 
-`RELATIVE_MOTION_FOUNDATION` is currently realizable with governed `RELATIVE_FRAME_VIEW`. The remaining concepts expose explicit subject-wide primitive capabilities that do not yet exist safely, including 2D coordinate framing, perpendicular vector decomposition, shared-clock projectile state sequences, apex-event state preservation, same-height projectile comparison, time-elimination trajectory bridging, and observer line-of-sight geometry.
+The blocked cognitive jobs were not patched with generic schematics. They were converted into a subject-wide 2D Physics representation extension under `Representation/`.
 
-This is a stronger result than forcing the existing `TRAJECTORY_VIEW` or 1D-oriented vector semantics onto a different cognitive purpose. In particular, `TRAJECTORY_VIEW` is governed to distinguish travelled path from displacement/chord; it is not automatically legal as a projectile-dynamics teaching figure merely because the word “trajectory” matches.
+The extension adds seven generic, topic-unbound vector primitives:
+
+```text
+CARTESIAN_FRAME_2D
+VECTOR_COMPONENTS_2D
+STATE_SEQUENCE_2D
+PATH_ANATOMY_2D
+EVENT_COMPARE_2D
+PARAMETRIC_ELIMINATION_BRIDGE_2D
+OBSERVER_LINE_OF_SIGHT_2D
+```
+
+Each declares an instructional job, translation obligation, learner action, renderer constraints and minimum real vector-operation floor. Defaults are `SCHEMATIC_STRUCTURE_ONLY`: they carry structure, not invented numerical quantities. The existing `RELATIVE_FRAME_VIEW` and `OPTION_GRAPH_SET_VIEW` remain reused where their governed jobs actually match.
+
+After explicit per-concept authorization against the combined subject-wide primitive registries, the real M2D readiness gate is now expected to produce:
+
+```text
+10 READY_FOR_REALIZATION
+0 BLOCKED_NEEDS_PRIMITIVE
+status = READY_FOR_RENDER_ADAPTER
+release_authorized = false
+```
+
+The gate remains fail-closed: topic-name similarity cannot authorize a primitive; clearing a missing capability without a real authorized vector primitive is rejected; chapter concept/archetype drift is rejected.
 
 ## Render process proof
 
-`engine/build_render_process_golden.py` invokes the existing `Core1A/engine/render_physics_core1a.py` and the Blueprint finished-PDF preflight. CI uploads the PDF, renderer report, Publication IR, render custody, preflight report, raster proofs, and the real M2D readiness report as one review artifact.
+`engine/build_render_process_golden.py` invokes the existing `Core1A/engine/render_physics_core1a.py` and the Blueprint finished-PDF preflight. CI uploads the process PDF, renderer report, Publication IR, render custody, preflight report, raster proofs and real M2D readiness report.
 
-The rendered golden remains a **process proof only**. It does not assert that the synthetic fixture is a production Motion-in-a-Plane learner product.
+The process PDF remains synthetic and does **not** assert production Motion-in-a-Plane maturity.
 
 ## Current next boundary
 
-The next Blueprint tranche is **representation-gap closure**: implement the missing subject-wide 2D Physics primitives in the subordinate `Representation/` kit, with vector-operation evidence and no invented quantities, then recompile this readiness gate. Only after required concepts become realizable should a real Motion-in-a-Plane page adapter be allowed to emit a learner PDF for actual-size human review.
+Once the 2D primitive extension and readiness closure are green, the next tranche is a **real Motion-in-a-Plane composition adapter**. It must consume the source-locked chapter plan plus exact authorized primitive refs, emit Publication IR before drawing, reuse the existing page/render infrastructure, and then pass the same actual-PDF preflight. Human actual-size figure/page review remains mandatory before any mature-product release claim.

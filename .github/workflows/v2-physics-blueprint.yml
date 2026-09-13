@@ -52,6 +52,8 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_render_preflight.py"
       - name: Build actual render process golden with existing Physics renderer
         run: python "Grade 9/V2/Physics/Blueprint/engine/build_render_process_golden.py" --out-dir /tmp/physics-blueprint-render-golden
+      - name: Prove subject-wide 2D Physics primitives are real vector graphics
+        run: python "Grade 9/V2/Physics/Representation/tests/test_physics_2d_primitives.py"
       - name: Run real Motion-in-a-Plane representation-readiness falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_m2d_render_readiness.py"
       - name: Compile real Motion-in-a-Plane representation-readiness report

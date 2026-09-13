@@ -21,12 +21,6 @@ def digest(value: Any) -> str:
     return hashlib.sha256(canonical(value).encode("utf-8")).hexdigest()
 
 
-def digest_without_field(value: dict[str, Any], field: str) -> str:
-    clone = dict(value)
-    clone.pop(field, None)
-    return digest(clone)
-
-
 def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -46,6 +40,20 @@ def real_chapter_plan():
         load(reg / "physics-core1a-motion-in-a-plane-chapter-v1.json"),
         load(reg / "physics-core1a-core2-linkage.json"),
     )
+
+
+def combined_primitive_registry():
+    base = load(REP / "registry" / "physics-teaching-primitive-registry.json")
+    ext = load(REP / "registry" / "physics-2d-teaching-primitive-registry-v1.json")
+    base_ids = {row["primitive_id"] for row in base.get("primitives") or []}
+    ext_ids = {row["primitive_id"] for row in ext.get("primitives") or []}
+    overlap = sorted(base_ids & ext_ids)
+    if overlap:
+        raise AssertionError("M2D_RENDER_PRIMITIVE_REGISTRY_COLLISION:" + ",".join(overlap))
+    return {
+        "registry_sources": [base["registry_id"], ext["registry_id"]],
+        "primitives": list(base.get("primitives") or []) + list(ext.get("primitives") or []),
+    }
 
 
 def compile_readiness(chapter_plan: dict[str, Any], primitive_registry: dict[str, Any], policy: dict[str, Any]):
@@ -71,6 +79,9 @@ def compile_readiness(chapter_plan: dict[str, Any], primitive_registry: dict[str
         raise AssertionError("M2D_RENDER_POLICY_CONCEPT_COVERAGE_DRIFT:missing=%s;extra=%s" % (",".join(missing), ",".join(extra)))
 
     primitives = {row["primitive_id"]: row for row in primitive_registry.get("primitives") or []}
+    if len(primitives) != len(primitive_registry.get("primitives") or []):
+        raise AssertionError("M2D_RENDER_DUPLICATE_PRIMITIVE_ID")
+
     concepts = []
     blocked = []
     for concept in chapter_plan["concepts"]:
@@ -131,12 +142,12 @@ def main():
     import argparse
     from jsonschema import Draft202012Validator
 
-    ap = argparse.ArgumentParser(description="Compile real Motion-in-a-Plane representation readiness against the subject-wide primitive registry.")
+    ap = argparse.ArgumentParser(description="Compile real Motion-in-a-Plane representation readiness against the subject-wide Physics primitive registries.")
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
 
     chapter_plan = real_chapter_plan()
-    primitive_registry = load(REP / "registry" / "physics-teaching-primitive-registry.json")
+    primitive_registry = combined_primitive_registry()
     policy = load(ROOT / "policy" / "m2d-representation-requirements.v1.json")
     report = compile_readiness(chapter_plan, primitive_registry, policy)
     Draft202012Validator(load(ROOT / "contracts" / "m2d-render-readiness.schema.json")).validate(report)
