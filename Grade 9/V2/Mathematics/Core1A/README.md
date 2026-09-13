@@ -1,144 +1,209 @@
-# Mathematics V2 — Core (1A): textbook-quality teaching realization
+# Mathematics V2 — Core (1A): bucket synthesis + textbook realization
 
-Core (1) is the governed **semantic instructional plan**. Core (1A) is the learner-product layer that turns that approved plan into textbook-quality teaching content and a final learner PDF.
+Core (1) is a governed **capability-level semantic teaching plan**. It is not yet the final textbook unit structure. Core (1A) must first identify coherent teaching buckets, using the exact learner-conditioned StudyModel that Core (1) was authored from, and only then realize those buckets as textbook-quality learner content.
 
-The boundary is intentionally narrow:
+The corrected boundary is:
 
 ```text
-Core (1): governed instructional structure and mathematical authority
-        |
-        v
-Core (1A): textbook-quality teaching realization
-        |
-        +--> core1a_textbook_manuscript.json
-        +--> core1a_quality_audit.json
-        `--> core1a_student_textbook.pdf
+M-E LearnerStateSnapshot
+        ↓
+M-F MathLearnerStudyModel
+  - UNKNOWN / DEVELOPING / READY
+  - confidence + observation refs
+  - VERIFY_ONLY / ACTIVE_STUDY / REPAIR_BEFORE / REPAIR_IN_UNIT / PROBE_FIRST
+        ↓
+Core (1) MathCore1StudyPlan
+  - one capability-level lesson per M-F capability plan
+  - PCK / problem-family / representation / verification authority
+        ↓
+Core (1A)-B  BUCKET SYNTHESIS
+  - group related capabilities around a governed family/invariant
+  - attach unambiguous prerequisite support
+  - preserve exact learner state/treatment per capability
+  - derive grounded learning atoms from PCK
+        ↓
+Core (1A)-R  TEXTBOOK REALIZATION
+  - explanations / representations / examples / practice
+  - worked → guided → faded → independent
+  - misconception repair + verification
+        ↓
+core1a_student_textbook.pdf
 ```
 
-Core (1A) may substantially improve explanation, examples, mathematical representation, diagrams, worked-example narration, misconception repair, hints, typography, pagination and page composition. It must **not redesign the approved instructional architecture**.
+## Critical correction: capability != bucket
 
-## Structure-preservation invariant
+A `MathCore1Lesson` is capability-centric. A textbook bucket may contain several related capabilities when they share a real mathematical teaching invariant/problem family. Conversely, a prerequisite capability that feeds several unrelated buckets may need its own bridge bucket.
 
-The lesson structure emitted by Core (1) is an immutable product contract. Core (1A) preserves, as applicable:
+Core (1A) therefore does **not** equate `Core1.lessons[]` with final textbook chapters.
 
-- lesson/section order and identity;
-- capability and PCK bindings;
-- problem-family authority;
-- learner-practice identifiers and their answer mappings;
-- method-selection/readiness relationships;
-- required worked/guided/faded/independent/transfer roles;
-- mathematical verification obligations;
+The canonical semantic object is now:
+
+```text
+Core1ABucketPlan
+  └─ Bucket[]
+       ├─ bucket_invariant
+       ├─ member_capability_refs[]
+       ├─ primary_capability_refs[]
+       ├─ supporting_capability_refs[]
+       ├─ learner_treatment_by_capability[]
+       ├─ dependency_edges[]
+       ├─ learning_atoms[]
+       ├─ representation_requirements[]
+       └─ verification_requirements[]
+```
+
+`math-core1a-bucket-plan.schema.json` is the canonical Core (1A) semantic contract. The textbook manuscript is downstream of this object.
+
+## Critical correction: Core (1A) does not invent learner knowledge
+
+Learner knowledge already exists upstream. M-E owns evidence/state and M-F owns treatment selection. Core (1A) consumes those decisions unchanged.
+
+Core (1A) must preserve, per capability:
+
+- `learner_state_readiness`: `UNKNOWN | DEVELOPING | READY`;
+- `learner_state_confidence`;
+- `learner_state_observation_refs`;
+- `treatment`;
+- `priority_band`.
+
+Core (1A) must **not** invent a second vocabulary such as `FOUNDATION`, `PARTIAL`, `20% learner`, or `50% learner` as learner-state truth.
+
+The same bucket can therefore contain different treatments. Example:
+
+```text
+capability A  READY       → VERIFY_ONLY
+capability B  DEVELOPING  → REPAIR_IN_UNIT
+capability C  UNKNOWN     → ACTIVE_STUDY
+```
+
+The learner product should activate A briefly, repair B, and fully teach C — without relabelling the learner.
+
+## Bucket synthesis policy
+
+The first implementation is deliberately conservative and deterministic:
+
+1. directly assessed capabilities are grouped when they share a governed problem family;
+2. a prerequisite-only capability is attached to a single dependent bucket when the M-F dependency makes that unambiguous;
+3. a prerequisite feeding multiple buckets remains its own bridge bucket so it is taught once rather than duplicated;
+4. every Core (1) capability must appear in exactly one bucket;
+5. bucket order follows the approved Core (1) capability order — no invented difficulty ranking;
+6. the bucket invariant must be grounded in either a canonical problem-family `target_job` or a bound PCK anchor;
+7. if the invariant cannot be grounded, generation fails rather than letting the renderer invent one.
+
+This policy can later become richer, but only through governed semantic rules — never through page-layout heuristics.
+
+## Learning atoms
+
+Core (1A) creates traceable learning atoms from the bound PCK rather than inventing page labels. The current atom sources are:
+
+- the selected PCK anchor / ordinary-language bridge;
+- each PCK reconstruction step.
+
+Each atom retains its capability and PCK source. These atoms are the intended future binding targets for Core (2)/(2A) H1/H2/H3 back-links.
+
+## Structure preservation
+
+Preservation applies to **authority and learner-conditioned semantics**, not to old page geometry.
+
+Core (1A) preserves:
+
+- complete Core (1) capability coverage;
+- Core (1) capability order as the stable ordering basis;
+- capability, PCK and problem-family authority;
+- M-F learner state, treatment and priority;
+- assessment-question bindings;
+- prerequisite dependencies;
+- representation and verification requirements;
+- original-assessment firewall;
 - release/provenance class.
 
-Physical page count, whitespace, visual composition and the number of explanatory micro-examples are **not** structural invariants. Core (1A) may expand a 13-page plan into a longer textbook when that is required to teach the mathematics well.
+Core (1A) may change:
+
+- physical page count;
+- page composition;
+- explanatory depth;
+- number of fresh examples;
+- representation form;
+- worked-example narration;
+- whitespace and typography.
 
 In short:
 
 ```text
-preserve instructional architecture != preserve existing page composition
+preserve governed semantics != preserve existing pages
+capability lesson != textbook bucket
+learner treatment != Core1A-invented learner level
 ```
 
-## Textbook-quality transformation
+## Textbook manuscript
 
-Within the preserved structure, Core (1A) should aggressively improve the learner surface:
+`math-core1a-textbook-manuscript.schema.json` is now bucket-centric (`schema_version = 2.0.0`). Each bucket contains learner-facing capability units, but the bucket is the visible teaching unit.
 
-- lead difficult ideas with concrete mathematics before abstraction where the approved lesson allows it;
-- connect symbolic rules to visual or structural representations;
-- use worked examples that expose the reason for each step, not only the final procedure;
-- introduce technical vocabulary only when it is mathematically needed;
-- materialize actual learner problems rather than authoring instructions;
-- convert misconception metadata into learner-facing mistake + repair;
-- provide meaningful verification/checking moves;
-- use page composition that follows the mathematics rather than fixed cards or pipeline labels.
+Outputs:
 
-A quality pass that merely changes styling or inserts small callouts is insufficient. Core (1A) exists to add material teaching value while preserving the approved structure.
-
-## Capability first, family invariant second
-
-Core1 is capability-driven. One problem family can exercise several capabilities. A learner lesson must therefore follow `capability_ref` and its matching PCK asset, while authored instances remain valid members of the declared `problem_family_ref`.
-
-The canonical Core1A entrypoint installs a capability-aware authoring layer:
-
-- the lesson title and explanation follow `capability_ref` and its matching PCK asset;
-- the authored problems still obey the declared `problem_family_ref`;
-- prerequisite capabilities get focused worked examples rather than a generic family problem;
-- when more than one PCK asset is bound, Core1A prefers the asset whose `capability_refs` explicitly contain the lesson capability.
-
-This distinction is release-critical: mathematical provenance stays family-grounded while the student is actually taught the capability Core (1) says the lesson is about.
-
-## Fresh learner instances
-
-Core (1A) deliberately does **not** reuse original assessment questions. Those remain governed Core (2) transfer assets and are realized for learners in Core (2A).
-
-Every Core (1A) learner problem is a fresh, deterministic instance of the family declared by Core (1).
+```text
+core1a_bucket_plan.json
+core1a_textbook_manuscript.json
+core1a_quality_audit.json
+core1a_student_textbook.pdf
+```
 
 ## Fail-closed behavior
 
-The engine refuses to publish when a required family has no authored instance generator or when learner-surface quality is under-realized.
+Important falsifiers now include:
 
-Important falsifiers include:
-
-- `CORE1_AUTHORED_INSTANCE_NOT_MATERIALIZED`
-- `CORE1A_FAMILY_GENERATOR_MISSING`
-- `CORE1A_INTERNAL_JARGON_LEAK`
-- `CORE1A_INTERNAL_IDENTIFIER_LEAK`
-- `CORE1A_WORKED_EXAMPLE_DEPTH_MISSING`
-- `CORE1A_CONCEPT_EXPLANATION_UNDERREALIZED`
-- `CORE1_MISCONCEPTION_REPAIR_NOT_MATERIALIZED`
-- `CORE1A_QUALITY_GATE_FAILED`
-
-The next quality-policy revision should also fail on **structural drift**: reordering approved lessons, losing identifiers/answer mappings, or substituting a new learner taxonomy for the approved Core (1) architecture.
+```text
+CORE1A_STUDY_MODEL_REF_MISMATCH
+CORE1A_STUDY_MODEL_DIGEST_BINDING_MISMATCH
+CORE1A_STUDY_MODEL_SCOPE_COVERAGE_DRIFT
+CORE1A_TREATMENT_DRIFT
+CORE1A_SCOPE_ROLE_DRIFT
+CORE1A_ASSESSMENT_BINDING_DRIFT
+CORE1A_BUCKET_COVERAGE_FAILED
+CORE1A_BUCKET_INVARIANT_UNGROUNDED
+CORE1A_BUCKET_PCK_BINDING_MISSING
+CORE1A_BUCKET_LEARNING_ATOMS_MISSING
+CORE1A_LEARNER_TREATMENT_DRIFT
+CORE1A_FAMILY_GENERATOR_MISSING
+CORE1_AUTHORED_INSTANCE_NOT_MATERIALIZED
+CORE1A_INTERNAL_JARGON_LEAK
+CORE1A_INTERNAL_IDENTIFIER_LEAK
+CORE1A_QUALITY_GATE_FAILED
+```
 
 ## CLI
 
-Use the capability-aware entrypoint:
+The exact learner StudyModel is now a required input:
 
 ```bash
 python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
   --core1-plan /path/to/core1_study_plan.json \
+  --study-model /path/to/learner_study_model.json \
   --out-dir /tmp/core1a
 ```
 
-By default the engine resolves the Mathematics PCK candidate index and problem-family index from the repository. They can be overridden with `--pck-index` and `--problem-family-index`.
+The CLI verifies the Core1→StudyModel digest/ref binding before bucket synthesis.
 
-## Current family coverage
+## CI proof
 
-The first Core (1A) implementation materializes the 14 problem families currently present in the Mathematics problem-family registry on PR #323:
+The workflow runs the real PR #323 cold-start chain and extracts **both**:
 
-- Euclid classification
-- coordinate distance
-- quadrant/sign transformation
-- line intercept
-- line from slope + point
-- unordered-pair count
-- collinearity by slope
-- Euclid parallel condition
-- linear parameter sufficiency
-- intersection then line
-- equidistant point on an axis
-- equilateral-coordinate construction
-- linear trend/extrapolation
-- river-current linear system
+```text
+internals['study_model']
+internals['core1_plan']
+```
 
-It also provides explicit capability-focused authoring for prerequisite/bridge capabilities in the current cold-start scope, including angle sum, arithmetic division, binomial-square expansion, equality preservation, fraction arithmetic, geometric modelling, two-point line construction, linear-system setup/solve, ordered-pair semantics, sign propagation, slope computation, substitution, unit interpretation, variable semantics and word modelling.
-
-A future topic is not silently generalized. If Core (1) asks Core (1A) for a new family, the run fails until that family receives learner-authoring support.
-
-## CI proof of the interface
-
-The Core1A workflow first runs #323's real Mathematics cold-start chain, writes its exact `core1_study_plan.json`, then feeds that file to Core1A. The produced PDF is text-inspected for internal jargon/template leakage and the workflow uploads both the exact Core (1) input and Core (1A) outputs.
+It proves that the Core1 plan is bound to that exact StudyModel, synthesizes the bucket plan, verifies exact capability coverage, verifies that `(learner_state_readiness, treatment)` is unchanged for every capability, rejects invented learner-state categories, then realizes and inspects the learner PDF.
 
 ## Relation to Core (2A)
 
-The final learner-product architecture is:
-
 ```text
-Core (1)  --> Core (1A): textbook-quality teaching PDF
-Core (2)  --> Core (2A): textbook-quality source-transfer/practice PDF
+Core (1)  → Core (1A)-B bucket synthesis → Core (1A)-R textbook teaching PDF
+Core (2)  → Core (2A) source-transfer/practice PDF
 ```
 
-Core (2A) is defined separately under `Mathematics/Core2A/`. It preserves Core (2)'s source-question authority and attempt/solution structure while improving representation and worked-solution readability.
+Core (2A) preserves original-question authority. The next cross-product closure is to bind each Core (2) H1/H2/H3 reveal to Core (1A) learning atoms and fail when a reveal was not genuinely pre-taught.
 
 ## Release meaning
 
-Core (1A) inherits the release class of its source Core (1) plan. Better learner realization does not convert provisional PCK into producer-legal PCK and does not replace the M-L human gates.
+Core (1A) inherits the release legality of Core (1) and its upstream StudyModel/PCK authority. Better learner realization cannot upgrade provisional PCK, change learner diagnosis, alter treatment decisions, or bypass human gates.
