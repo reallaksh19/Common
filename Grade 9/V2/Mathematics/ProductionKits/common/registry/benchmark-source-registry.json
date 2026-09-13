@@ -1,0 +1,11 @@
+{
+  "registry_id":"MATH-COMPETITIVE-BENCHMARK-SOURCES-v1",
+  "schema_version":"1.0.0",
+  "authority_rule":"BENCHMARKS_MAY_SHAPE_REASONING_DEMAND_BUT_MAY_NOT_EXPAND_CURRICULUM_SCOPE",
+  "sources":[
+    {"source_id":"JEE_ADVANCED_OFFICIAL_ARCHIVE","label":"JEE Advanced official past question paper archive","url":"https://jeeadv.ac.in/archive.html","role":"COMPETITION_BENCHMARK","allowed_uses":["STYLE_BENCHMARK","ARCHETYPE_DERIVATION"],"curriculum_authority":false},
+    {"source_id":"HBCSE_MATH_OLYMPIAD_OFFICIAL_ARCHIVE","label":"HBCSE Mathematics Olympiad past papers and solutions","url":"https://olympiads.hbcse.tifr.res.in/how-to-prepare/past-papers/","role":"COMPETITION_BENCHMARK","allowed_uses":["STYLE_BENCHMARK","ARCHETYPE_DERIVATION"],"curriculum_authority":false},
+    {"source_id":"IMO_OFFICIAL_PROBLEMS","label":"International Mathematical Olympiad official problems archive","url":"https://www.imo-official.org/problems/","role":"COMPETITION_BENCHMARK","allowed_uses":["STYLE_BENCHMARK","ARCHETYPE_DERIVATION"],"curriculum_authority":false}
+  ],
+  "forbidden_sources_as_primary_benchmark":["UNVERIFIED_COACHING_SITE","BLOG","SCRAPED_QUESTION_BANK","AGGREGATOR_WITHOUT_OFFICIAL_PROVENANCE"]
+}

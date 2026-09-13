@@ -1,0 +1,9 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"math-product-blueprint.schema.json",
+  "title":"Mathematics Product Blueprint",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["blueprint_id","stage","purpose","source_bundle_ref","sections","question_specs","audit_requirements"],
+  "properties":{"blueprint_id":{"type":"string","pattern":"^MATH-BP-[0-9a-f]{16}$"},"stage":{"enum":["CORE1","CORE1A","CORE2","CORE2A"]},"purpose":{"type":["string","null"],"enum":["STARTER","PRACTICE","REVISION","COMPETITION",null]},"source_bundle_ref":{"type":"string","pattern":"^MATH-SRC-"},"sections":{"type":"array","items":{"type":"object"}},"question_specs":{"type":"array","items":{"type":"object"}},"audit_requirements":{"type":"array","minItems":1,"items":{"type":"string"}}}
+}
