@@ -1,0 +1,36 @@
+{
+  "policy_id": "G9-V2-ADAPTIVE-ROUTING-v0",
+  "schema_version": "1.0.0",
+  "metric_scale": {"minimum": 0, "maximum": 4},
+  "metric_meanings": {
+    "SA": "scope authority",
+    "SS": "semantic source strength",
+    "QE": "question evidence",
+    "QR": "question resolution",
+    "UA": "uncertainty",
+    "CI": "conflict index"
+  },
+  "priority_order": [
+    "BLOCK_MATERIAL_CONFLICT",
+    "BLOCK_HIGH_UNCERTAINTY",
+    "CORE1_STRONG_SEMANTIC_AUTHORITY",
+    "CORE2_RICH_QUESTIONS_WEAK_OR_COARSE_SEMANTICS",
+    "CORE2_RICH_RESOLVED_QUESTIONS_FALLBACK",
+    "BLOCK_INSUFFICIENT_EVIDENCE"
+  ],
+  "thresholds": {
+    "material_conflict_min": 3,
+    "high_uncertainty_min": 3,
+    "strong_scope_min": 3,
+    "strong_semantic_source_min": 3,
+    "rich_question_evidence_min": 3,
+    "resolved_questions_min": 3,
+    "coarse_semantic_max": 2
+  },
+  "decisions": ["CORE1_FIRST", "CORE2_FIRST", "BLOCK_INSUFFICIENT_EVIDENCE", "BLOCK_CONFLICT"],
+  "owner_override": {
+    "hard_may_change_blocked_or_unblocked_route": true,
+    "soft_may_not_bypass_block": true,
+    "system_finding_must_be_preserved": true
+  }
+}

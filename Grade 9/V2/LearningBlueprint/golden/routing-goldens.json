@@ -1,0 +1,189 @@
+{
+  "golden_set_id": "G9-V2-BLUEPRINT-V0-ROUTING-GOLDENS",
+  "schema_version": "1.0.0",
+  "fixtures": [
+    {
+      "fixture_id": "STRONG-SYLLABUS-NO-QUESTIONS",
+      "ground_truth": {
+        "manifest_id": "GT-STRONG-SYLLABUS",
+        "schema_version": "1.0.0",
+        "subject": "PHYSICS",
+        "grade": 9,
+        "topic_id": "MOTION-2D",
+        "evidence": {
+          "syllabus": {"state": "PRESENT", "refs": [{"ref_id": "SYL-1", "location": "fixture://syllabus", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "authoritative_sources": {"state": "PRESENT", "refs": [{"ref_id": "SRC-1", "location": "fixture://textbook", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "question_corpus": {"state": "ABSENT", "refs": []},
+          "answer_keys": {"state": "ABSENT", "refs": []},
+          "figures": {"state": "PARTIAL", "refs": [{"ref_id": "FIG-1", "location": "fixture://figures", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-STRONG-SYLLABUS", "ground_truth_manifest_id": "GT-STRONG-SYLLABUS", "subtopic_refs": ["GRAVITY"], "metrics": {"SA": 4, "SS": 4, "QE": 0, "QR": 0, "UA": 1, "CI": 0}, "evidence_notes": ["Detailed syllabus and source define scope"], "unresolved": []},
+      "expected_system_decision": "CORE1_FIRST",
+      "expected_final_decision": "CORE1_FIRST"
+    },
+    {
+      "fixture_id": "NO-SYLLABUS-RICH-QUESTIONS",
+      "ground_truth": {
+        "manifest_id": "GT-RICH-QUESTIONS",
+        "schema_version": "1.0.0",
+        "subject": "PHYSICS",
+        "grade": 9,
+        "topic_id": "MOTION-2D",
+        "evidence": {
+          "syllabus": {"state": "ABSENT", "refs": []},
+          "authoritative_sources": {"state": "ABSENT", "refs": []},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-SET", "location": "fixture://50-questions", "authority_class": "USER_SUPPLIED", "integrity_state": "CLEAN"}], "count": 50, "retained_count": 50},
+          "answer_keys": {"state": "PARTIAL", "refs": [{"ref_id": "ANS", "location": "fixture://answers", "authority_class": "USER_SUPPLIED", "integrity_state": "CLEAN"}]},
+          "figures": {"state": "UNKNOWN", "refs": []}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-RICH-QUESTIONS", "ground_truth_manifest_id": "GT-RICH-QUESTIONS", "subtopic_refs": ["PROJECTILE-MOTION", "GRAVITY"], "metrics": {"SA": 0, "SS": 0, "QE": 4, "QR": 4, "UA": 1, "CI": 0}, "evidence_notes": ["Questions reveal operational scope"], "unresolved": []},
+      "expected_system_decision": "CORE2_FIRST",
+      "expected_final_decision": "CORE2_FIRST"
+    },
+    {
+      "fixture_id": "COARSE-SYLLABUS-RICH-QUESTIONS",
+      "ground_truth": {
+        "manifest_id": "GT-COARSE-RICH",
+        "schema_version": "1.0.0",
+        "subject": "PHYSICS",
+        "grade": 9,
+        "topic_id": "MOTION-2D",
+        "evidence": {
+          "syllabus": {"state": "PARTIAL", "refs": [{"ref_id": "SYL-C", "location": "fixture://coarse-syllabus", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "authoritative_sources": {"state": "PARTIAL", "refs": [{"ref_id": "SRC-C", "location": "fixture://coarse-source", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-C", "location": "fixture://rich-questions", "authority_class": "USER_SUPPLIED", "integrity_state": "CLEAN"}], "count": 40, "retained_count": 38},
+          "answer_keys": {"state": "PRESENT", "refs": [{"ref_id": "A-C", "location": "fixture://answer-key", "authority_class": "USER_SUPPLIED", "integrity_state": "CLEAN"}]},
+          "figures": {"state": "PARTIAL", "refs": [{"ref_id": "F-C", "location": "fixture://figures", "authority_class": "USER_SUPPLIED", "integrity_state": "CLEAN"}]}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-COARSE-RICH", "ground_truth_manifest_id": "GT-COARSE-RICH", "subtopic_refs": ["GRAVITY", "SIGN-CONVENTION", "APEX-STATE"], "metrics": {"SA": 2, "SS": 2, "QE": 4, "QR": 4, "UA": 1, "CI": 0}, "evidence_notes": ["Syllabus names broad topic; questions resolve operational scope"], "unresolved": []},
+      "expected_system_decision": "CORE2_FIRST",
+      "expected_final_decision": "CORE2_FIRST"
+    },
+    {
+      "fixture_id": "RICH-SYLLABUS-RICH-QUESTIONS",
+      "ground_truth": {
+        "manifest_id": "GT-RICH-BOTH",
+        "schema_version": "1.0.0",
+        "subject": "CHEMISTRY",
+        "grade": 9,
+        "topic_id": "CHEMICAL-BONDING",
+        "evidence": {
+          "syllabus": {"state": "PRESENT", "refs": [{"ref_id": "SYL-B", "location": "fixture://bonding-syllabus", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "authoritative_sources": {"state": "PRESENT", "refs": [{"ref_id": "SRC-B", "location": "fixture://bonding-source", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-B", "location": "fixture://bonding-questions", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}], "count": 38, "retained_count": 38},
+          "answer_keys": {"state": "PRESENT", "refs": [{"ref_id": "A-B", "location": "fixture://bonding-answers", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "figures": {"state": "PRESENT", "refs": [{"ref_id": "F-B", "location": "fixture://bonding-figures", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-RICH-BOTH", "ground_truth_manifest_id": "GT-RICH-BOTH", "subtopic_refs": ["IONIC-BONDING"], "metrics": {"SA": 4, "SS": 4, "QE": 4, "QR": 4, "UA": 1, "CI": 0}, "evidence_notes": ["Semantic authority is strong; questions remain available to the fresh Core2 pass"], "unresolved": []},
+      "expected_system_decision": "CORE1_FIRST",
+      "expected_final_decision": "CORE1_FIRST"
+    },
+    {
+      "fixture_id": "SPARSE-AMBIGUOUS",
+      "ground_truth": {
+        "manifest_id": "GT-SPARSE",
+        "schema_version": "1.0.0",
+        "subject": "PHYSICS",
+        "grade": 9,
+        "topic_id": "UNKNOWN-SCOPE",
+        "evidence": {
+          "syllabus": {"state": "ABSENT", "refs": []},
+          "authoritative_sources": {"state": "ABSENT", "refs": []},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-S", "location": "fixture://two-ambiguous-questions", "authority_class": "USER_SUPPLIED", "integrity_state": "TRUNCATED_OR_CONTEXT_AMBIGUITY"}], "count": 2, "retained_count": 2},
+          "answer_keys": {"state": "ABSENT", "refs": []},
+          "figures": {"state": "ABSENT", "refs": []}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-SPARSE", "ground_truth_manifest_id": "GT-SPARSE", "subtopic_refs": ["UNRESOLVED-SUBTOPIC"], "metrics": {"SA": 0, "SS": 0, "QE": 1, "QR": 1, "UA": 4, "CI": 1}, "evidence_notes": ["Two questions are insufficient to infer stable scope"], "unresolved": ["QUESTION_SCOPE_AMBIGUOUS"]},
+      "expected_system_decision": "BLOCK_INSUFFICIENT_EVIDENCE",
+      "expected_final_decision": "BLOCK_INSUFFICIENT_EVIDENCE"
+    },
+    {
+      "fixture_id": "MATERIAL-CONFLICT",
+      "ground_truth": {
+        "manifest_id": "GT-CONFLICT",
+        "schema_version": "1.0.0",
+        "subject": "PHYSICS",
+        "grade": 9,
+        "topic_id": "MOTION-2D",
+        "evidence": {
+          "syllabus": {"state": "PRESENT", "refs": [{"ref_id": "SYL-X", "location": "fixture://syllabus", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "authoritative_sources": {"state": "PRESENT", "refs": [{"ref_id": "SRC-X", "location": "fixture://source", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-X", "location": "fixture://questions", "authority_class": "USER_SUPPLIED", "integrity_state": "SUBJECT_OR_DOMAIN_ISSUE"}], "count": 20, "retained_count": 18},
+          "answer_keys": {"state": "PARTIAL", "refs": [{"ref_id": "A-X", "location": "fixture://conflicting-answer-key", "authority_class": "USER_SUPPLIED", "integrity_state": "SUBJECT_OR_DOMAIN_ISSUE"}]},
+          "figures": {"state": "PRESENT", "refs": [{"ref_id": "F-X", "location": "fixture://figures", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-CONFLICT", "ground_truth_manifest_id": "GT-CONFLICT", "subtopic_refs": ["GRAVITY"], "metrics": {"SA": 4, "SS": 4, "QE": 3, "QR": 2, "UA": 2, "CI": 4}, "evidence_notes": ["Source and answer-key claims materially conflict"], "unresolved": ["SOURCE_ANSWER_CONFLICT"]},
+      "expected_system_decision": "BLOCK_CONFLICT",
+      "expected_final_decision": "BLOCK_CONFLICT"
+    },
+    {
+      "fixture_id": "SUPPLIED-ZERO-QUESTION-CORPUS",
+      "ground_truth": {
+        "manifest_id": "GT-ZERO-Q",
+        "schema_version": "1.0.0",
+        "subject": "CHEMISTRY",
+        "grade": 9,
+        "topic_id": "CHEMICAL-BONDING",
+        "evidence": {
+          "syllabus": {"state": "PRESENT", "refs": [{"ref_id": "SYL-Z", "location": "fixture://syllabus", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "authoritative_sources": {"state": "PRESENT", "refs": [{"ref_id": "SRC-Z", "location": "fixture://source", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-Z", "location": "fixture://empty-curated-corpus", "authority_class": "USER_SUPPLIED", "integrity_state": "CLEAN"}], "count": 0, "retained_count": 0},
+          "answer_keys": {"state": "ABSENT", "refs": []},
+          "figures": {"state": "PARTIAL", "refs": [{"ref_id": "F-Z", "location": "fixture://figures", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-ZERO-Q", "ground_truth_manifest_id": "GT-ZERO-Q", "subtopic_refs": ["COVALENT-BONDING"], "metrics": {"SA": 4, "SS": 4, "QE": 0, "QR": 0, "UA": 1, "CI": 0}, "evidence_notes": ["A supplied corpus contains zero retained questions; this is absence of assessment evidence, not evidence of unimportance"], "unresolved": []},
+      "expected_system_decision": "CORE1_FIRST",
+      "expected_final_decision": "CORE1_FIRST",
+      "expected_assessment_interpretation": "NO_ASSESSMENT_ITEMS_IN_SUPPLIED_CORPUS"
+    },
+    {
+      "fixture_id": "HARD-OWNER-ROUTE-OVERRIDE",
+      "ground_truth": {
+        "manifest_id": "GT-OWNER-OVERRIDE",
+        "schema_version": "1.0.0",
+        "subject": "CHEMISTRY",
+        "grade": 9,
+        "topic_id": "CHEMICAL-BONDING",
+        "evidence": {
+          "syllabus": {"state": "PRESENT", "refs": [{"ref_id": "SYL-O", "location": "fixture://syllabus", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "authoritative_sources": {"state": "PRESENT", "refs": [{"ref_id": "SRC-O", "location": "fixture://source", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-O", "location": "fixture://questions", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}], "count": 38, "retained_count": 38},
+          "answer_keys": {"state": "PRESENT", "refs": [{"ref_id": "A-O", "location": "fixture://answers", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "figures": {"state": "PRESENT", "refs": [{"ref_id": "F-O", "location": "fixture://figures", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-OWNER", "ground_truth_manifest_id": "GT-OWNER-OVERRIDE", "subtopic_refs": ["IONIC-BONDING"], "metrics": {"SA": 4, "SS": 4, "QE": 4, "QR": 4, "UA": 1, "CI": 0}, "evidence_notes": ["System recommends semantic-first"], "unresolved": []},
+      "override": {"override_id": "OVR-001", "schema_version": "1.0.0", "mode": "HARD", "target_domain": "ROUTING", "target_packet_id": "R-REQ-OWNER", "target_field": "final_decision", "system_value": "CORE1_FIRST", "owner_value": "CORE2_FIRST", "final_action": "CORE2_FIRST", "rationale": "Owner wants assessment-first stress testing", "owner_ref": "OWNER"},
+      "expected_system_decision": "CORE1_FIRST",
+      "expected_final_decision": "CORE2_FIRST"
+    },
+    {
+      "fixture_id": "SOFT-OVERRIDE-CANNOT-BYPASS-CONFLICT",
+      "ground_truth": {
+        "manifest_id": "GT-SOFT-BLOCK",
+        "schema_version": "1.0.0",
+        "subject": "PHYSICS",
+        "grade": 9,
+        "topic_id": "MOTION-2D",
+        "evidence": {
+          "syllabus": {"state": "PRESENT", "refs": [{"ref_id": "SYL-SO", "location": "fixture://syllabus", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "authoritative_sources": {"state": "PRESENT", "refs": [{"ref_id": "SRC-SO", "location": "fixture://source", "authority_class": "OFFICIAL_PRIMARY", "integrity_state": "CLEAN"}]},
+          "question_corpus": {"state": "PRESENT", "refs": [{"ref_id": "Q-SO", "location": "fixture://questions", "authority_class": "USER_SUPPLIED", "integrity_state": "SUBJECT_OR_DOMAIN_ISSUE"}], "count": 10, "retained_count": 10},
+          "answer_keys": {"state": "PARTIAL", "refs": [{"ref_id": "A-SO", "location": "fixture://answers", "authority_class": "USER_SUPPLIED", "integrity_state": "SUBJECT_OR_DOMAIN_ISSUE"}]},
+          "figures": {"state": "ABSENT", "refs": []}
+        }
+      },
+      "routing_input": {"routing_request_id": "REQ-SOFT-BLOCK", "ground_truth_manifest_id": "GT-SOFT-BLOCK", "subtopic_refs": ["GRAVITY"], "metrics": {"SA": 3, "SS": 3, "QE": 3, "QR": 2, "UA": 2, "CI": 4}, "evidence_notes": ["Material conflict must remain visible"], "unresolved": ["SOURCE_ANSWER_CONFLICT"]},
+      "override": {"override_id": "OVR-002", "schema_version": "1.0.0", "mode": "SOFT", "target_domain": "ROUTING", "target_packet_id": "R-REQ-SOFT-BLOCK", "target_field": "final_decision", "system_value": "BLOCK_CONFLICT", "owner_value": "CORE2_FIRST", "final_action": "BLOCK_CONFLICT", "rationale": "Prefer assessment-first if conflict is later resolved", "owner_ref": "OWNER"},
+      "expected_system_decision": "BLOCK_CONFLICT",
+      "expected_final_decision": "BLOCK_CONFLICT"
+    }
+  ]
+}

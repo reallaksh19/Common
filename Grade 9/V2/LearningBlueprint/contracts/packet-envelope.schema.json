@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/learning-blueprint/packet-envelope.schema.json",
+  "title": "Learning Blueprint packet envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packet_id", "packet_type", "schema_version", "scope", "provenance", "dependencies", "confidence", "validation", "unresolved", "created_by", "digest"],
+  "properties": {
+    "packet_id": {"type": "string", "minLength": 3},
+    "packet_type": {"enum": ["GT", "R", "G", "K", "D", "V", "J", "OBL", "LS", "PUR", "CT", "LA", "IC", "EA", "RR", "RC", "RD", "MC", "SB", "FP", "A", "T", "X", "OVR"]},
+    "schema_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "grade", "topic_id", "subtopic_refs"],
+      "properties": {
+        "subject": {"type": "string", "minLength": 1},
+        "grade": {"type": "integer", "minimum": 1, "maximum": 12},
+        "topic_id": {"type": "string", "minLength": 1},
+        "subtopic_refs": {"type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ground_truth_refs"],
+      "properties": {"ground_truth_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}
+    },
+    "dependencies": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "rationale"],
+      "properties": {
+        "level": {"enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"]},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "validator_refs"],
+      "properties": {
+        "status": {"enum": ["UNVALIDATED", "VALIDATED", "CONFIRMED", "REFINED", "MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"]},
+        "validator_refs": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "unresolved": {"type": "array", "items": {"type": "string"}},
+    "created_by": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "instance_id"],
+      "properties": {
+        "role": {"enum": ["CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE2A", "OWNER", "SYSTEM"]},
+        "instance_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

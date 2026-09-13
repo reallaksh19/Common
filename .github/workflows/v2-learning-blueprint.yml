@@ -1,0 +1,39 @@
+name: V2 Learning Blueprint v0
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/LearningBlueprint/**'
+      - '.github/workflows/v2-learning-blueprint.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  blueprint-v0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install contract validator
+        run: python -m pip install 'jsonschema>=4.20,<5'
+
+      - name: Validate Blueprint v0 JSON assets
+        run: |
+          for f in \
+            'Grade 9/V2/LearningBlueprint/BLUEPRINT_INVARIANTS.json' \
+            'Grade 9/V2/LearningBlueprint/contracts/'*.json \
+            'Grade 9/V2/LearningBlueprint/policies/'*.json \
+            'Grade 9/V2/LearningBlueprint/golden/'*.json; do
+            python -m json.tool "$f" > /dev/null
+          done
+
+      - name: Run Blueprint v0 adaptive-routing goldens and falsifiers
+        run: >-
+          python -m unittest discover
+          -s 'Grade 9/V2/LearningBlueprint/tests'
+          -p 'test_*.py' -v

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/learning-blueprint/routing-decision.schema.json",
+  "title": "Adaptive routing decision packet",
+  "allOf": [{"$ref": "packet-envelope.schema.json"}],
+  "type": "object"
+}

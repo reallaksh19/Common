@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/learning-blueprint/ground-truth-manifest.schema.json",
+  "title": "Ground-truth evidence manifest",
+  "$defs": {
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref_id", "location", "authority_class", "integrity_state"],
+      "properties": {
+        "ref_id": {"type": "string", "minLength": 1},
+        "location": {"type": "string", "minLength": 1},
+        "authority_class": {"enum": ["OFFICIAL_PRIMARY", "OFFICIAL_SECONDARY", "INSTITUTIONAL", "USER_SUPPLIED", "UNKNOWN"]},
+        "integrity_state": {"enum": ["CLEAN", "TYPOGRAPHIC_OR_OCR_AMBIGUITY", "SUBJECT_OR_DOMAIN_ISSUE", "TRUNCATED_OR_CONTEXT_AMBIGUITY", "UNREVIEWED"]},
+        "notes": {"type": "string"}
+      }
+    },
+    "evidenceSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "refs"],
+      "properties": {
+        "state": {"enum": ["PRESENT", "PARTIAL", "ABSENT", "UNKNOWN"]},
+        "refs": {"type": "array", "items": {"$ref": "#/$defs/evidenceRef"}},
+        "count": {"type": "integer", "minimum": 0},
+        "retained_count": {"type": "integer", "minimum": 0},
+        "notes": {"type": "string"}
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_id", "schema_version", "subject", "grade", "topic_id", "evidence"],
+  "properties": {
+    "manifest_id": {"type": "string", "minLength": 1},
+    "schema_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "subject": {"type": "string", "minLength": 1},
+    "grade": {"type": "integer", "minimum": 1, "maximum": 12},
+    "topic_id": {"type": "string", "minLength": 1},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["syllabus", "authoritative_sources", "question_corpus", "answer_keys", "figures"],
+      "properties": {
+        "syllabus": {"$ref": "#/$defs/evidenceSet"},
+        "authoritative_sources": {"$ref": "#/$defs/evidenceSet"},
+        "question_corpus": {"$ref": "#/$defs/evidenceSet"},
+        "answer_keys": {"$ref": "#/$defs/evidenceSet"},
+        "figures": {"$ref": "#/$defs/evidenceSet"}
+      }
+    }
+  }
+}

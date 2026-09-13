@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/g9-v2/learning-blueprint/owner-override.schema.json",
+  "title": "Owner operational override",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["override_id", "schema_version", "mode", "target_domain", "target_packet_id", "target_field", "system_value", "owner_value", "final_action", "rationale", "owner_ref"],
+  "properties": {
+    "override_id": {"type": "string", "pattern": "^OVR-"},
+    "schema_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "mode": {"enum": ["HARD", "SOFT"]},
+    "target_domain": {"enum": ["ROUTING", "PROFILE_SELECTION", "INCLUSION", "EXCLUSION", "SEQUENCING", "PURPOSE", "LEARNER_LEVEL", "RELEASE", "CORE2A_CHALLENGE_LEVEL"]},
+    "target_packet_id": {"type": "string", "minLength": 1},
+    "target_field": {"type": "string", "minLength": 1},
+    "system_value": {},
+    "owner_value": {},
+    "final_action": {},
+    "rationale": {"type": "string", "minLength": 1},
+    "owner_ref": {"type": "string", "minLength": 1}
+  }
+}
