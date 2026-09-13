@@ -21,6 +21,18 @@ CORE2A_PURPOSE_UNRESOLVED
 
 The selected purpose must materially change question selection, support density, workspace, challenge mix and page density.
 
+## Source belongs on Sheet 1 of every question
+
+Every Core (2A) attempt sheet must show the question's source/provenance basis on Sheet 1. A bibliography or book-level construction-reference page is not sufficient.
+
+For `SOURCE_CORE2`, show the exact human-readable source locator beside or immediately before the question.
+
+For `GENERATED_ORIGINAL`, show the construction references used to shape the question plus the governed Chemistry content anchor. The Sheet-1 wording must distinguish a construction reference from an official question source. A fresh question may not be presented as an official NCERT/Olympiad/exam item.
+
+```text
+CORE2A_SHEET1_SOURCE_MISSING
+```
+
 ## Competition mode
 
 Competition mode defaults to fresh transfer rather than replaying the complete Core (2) source set. Difficulty should come from reasoning form: reversed targets, hidden information, constraint chaining, comparison/ranking, error diagnosis, representation switching and other governed challenge archetypes.
@@ -34,7 +46,7 @@ Before fresh Competition questions are authored, inspect at least two authoritat
 - integer reconstruction;
 - error diagnosis from plausible wrong work.
 
-Do not copy benchmark question text. The existing near-copy gate still applies. Store benchmark URLs or stable refs in machine custody. Prefer one book-level construction-reference note over repeated per-question disclaimers.
+Do not copy benchmark question text. The existing near-copy gate still applies. Store benchmark URLs or stable refs in machine custody and show the applicable construction references on every generated question's Sheet 1.
 
 ## Two-page default
 
@@ -42,7 +54,8 @@ A learner question should normally occupy no more than two physical pages:
 
 ```text
 PAGE 1 — ATTEMPT
-question
+source / construction references
++ question
 + demand-sized workspace
 + 1–2 technical clues at the bottom, usable only if stuck
 
@@ -101,7 +114,7 @@ Generated questions must be grounded in:
 - an approved Chemistry competitive archetype;
 - independent Chemistry verification;
 - passed near-copy checking against governed source stems and custodied external benchmarks;
-- machine-side provenance.
+- per-question Sheet-1 construction-reference provenance.
 
 Generated questions must never claim official NCERT/Olympiad/exam provenance unless an exact official source is independently verified.
 
@@ -146,6 +159,10 @@ For Competition mode, the rendered attempt page normally exposes only one or two
 Core (2A) does not choose diagrams during page rendering. Its representation binding points to already-taught Core1A/C-H evidence. The learner renderer invokes selected Chemistry vector primitives when required semantic data is available.
 
 A governed visual obligation cannot silently become decoration or disappear. An item requiring visual reasoning cannot close with zero realized reasoning visuals.
+
+## Production kit
+
+`../ProductionKit/` provides the executable task router, source/answer contracts, scaffold profiles, learning-representation builder/validator, product-packet builder, and multi-product golden fixtures. Core (2A) Sheet-1 source custody and the two-page budget are enforced there before rendering.
 
 ## Physical-PDF gate and release boundary
 
