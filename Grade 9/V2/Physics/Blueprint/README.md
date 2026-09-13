@@ -1,8 +1,6 @@
 # Physics V2 Blueprint — evidence-adaptive orchestration
 
-`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories such as `CoreAuthoring/`, `Core2Transfer/`, `Core1A/` and `Core2A/` are subordinate execution kits; they do not define a second architecture.
-
-The machine mapping is frozen in `policy/role-bindings.v1.json` so future work remains classified as Physics Blueprint work even when executable code lives in a specialist role folder.
+`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories such as `CoreAuthoring/`, `Core2Transfer/`, `Core1A/` and `Core2A/` are subordinate execution kits; they do not define a second architecture. The mapping is frozen in `policy/role-bindings.v1.json`.
 
 ## Current executable topology
 
@@ -15,35 +13,64 @@ CORE1 ↔ independent second pass ↔ CORE2
         ↓
        JOIN
         ↓
+learner state × purpose control state
+        ↓
       CORE1A
-assimilation + T-* taught-state receipts
+1A0 … 1A11 cognition/assimilation gates
+        ↓
+   1A12 manuscript
+        ↓
+T-* taught-state receipts
         ↓
       CORE2A
-purpose-conditioned transfer compiler
 ```
 
-Execution order is not authority order. Core1 remains semantic intelligence, Core2 remains assessment/transfer intelligence, and the second specialist must independently re-ground before seeing upstream claims.
+Execution order is not authority order.
 
-## Implemented architecture slices
+## Implemented Blueprint slices
 
-- normalized evidence and deterministic `CORE1_FIRST | CORE2_FIRST | BLOCK` routing;
+- evidence normalization + adaptive `CORE1_FIRST | CORE2_FIRST | BLOCK` routing;
 - fresh-instance independent second-pass protocol;
-- packet provenance and max-three handoff transport rule;
-- **Core1 × Core2 Join Gate** with exact demand-claim coverage and critical-conflict blocking;
-- Core1A assimilation-before-manuscript discipline;
-- active Core2A taught-state-gated transfer contract.
+- Core1 × Core2 Join with exact Core2-demand coverage and critical-conflict blocking;
+- learner-prior resolver for `20 / 50 / 80` with real learner evidence allowed to override only when provenance exists;
+- orthogonal purpose contracts: `FIRST_STUDY / PRACTICE / REVISION / COMPETITIVE_EXAM`;
+- explicit guard that a teaching/publication receipt cannot be used as learner-state evidence;
+- Core1A stage machine requiring ordered completion of `1A0…1A11` and zero unresolved required inferential jumps before releasing `1A12_MANUSCRIPT`;
+- active, taught-state-gated Core2A execution kit.
 
 ## Join Gate
 
-Every Core2 demand claim must appear **exactly once** in a Join reconciliation row. `CONFIRMED` and `REFINED` claims require explicit Core1 semantic grounding plus assimilation obligations. `MISSING`, `UNSUPPORTED`, `CONTRADICTED`, `OUT_OF_SCOPE` and `UNKNOWN` remain visible states.
+Every Core2 demand claim is reconciled exactly once. `CONFIRMED`/`REFINED` claims require Core1 grounding and assimilation obligations. Required unresolved claims block Core1A; non-blocking unresolved extensions remain visible as holds.
 
-A required unresolved demand becomes `BLOCK` and makes the Join `JOIN_BLOCKED`. A deliberately non-blocking unresolved extension becomes `HOLD`, allowing `JOIN_READY_WITH_HOLDS` without rewriting uncertainty as low importance.
+## Learner state and purpose
 
-Core1A may consume Join output only when `assimilation_ready = true`.
+The learner percentage is only a prior. It resolves into capability-level `SECURE / PARTIAL / FRAGILE / UNKNOWN` states. Actual learner-response, diagnostic or teacher-observation evidence may override the heuristic state; Core1A teaching receipts may not.
+
+Purpose is separate from learner readiness. `COMPETITIVE_EXAM` may alter recognition/transfer emphasis but cannot bypass prerequisites or introduce untaught Physics.
+
+## Core1A compiler gate
+
+The pre-manuscript sequence is fixed:
+
+```text
+1A0 learner-state gap
+1A1 learning atoms
+1A2 inferential jumps
+1A3 cognitive transformation
+1A4 representation requirements
+1A5 representation candidates
+1A6 representation decisions
+1A7 picture→word→symbol→equation bridge
+1A8 misconception contrast
+1A9 worked→faded→independent plan
+1A10 Core2 transfer bridge
+1A11 unresolved-jump audit
+1A12 manuscript
+```
+
+A stage may not be skipped or reordered. A blocked stage stops later stages. `1A12_MANUSCRIPT` is released only when all twelve pre-manuscript stages pass and `unresolved_required_jump_count = 0`.
 
 ## Core2A authority boundary
-
-Core2A is `ACTIVE`, but strictly downstream:
 
 ```text
 Core1 semantic boundary
@@ -53,40 +80,17 @@ Core1 semantic boundary
 ∩ owner policy
 ```
 
-Core2A may select and scaffold learner practice. It may not rewrite Core2 source truth, invent untaught Physics, or infer learner mastery from publication completion.
+Teaching completion never implies learner mastery.
 
-A source question lacking required T receipts remains in immutable Core2 corpus custody and is marked `HELD_UNTIL_TEACHING_COMPLETE` for learner release.
-
-Generated-original challenges fail closed unless required capabilities are taught, source/family bindings agree, near-copy checks pass, and an approved Physics validator independently recomputes the underlying relation.
-
-## Non-negotiable invariants
-
-- Original evidence is authority; packets are claims.
-- First role is evidence-adaptive, never topic-name hard-coded.
-- Core1 and Core2 are distinct epistemic roles.
-- The second role independently re-grounds before seeing upstream claims.
-- Every Core2 demand claim is reconciled exactly once at Join.
-- Critical unresolved Join claims block Core1A.
-- Every handoff contains at most three subtopics; learning atoms are unbounded.
-- Absence of evidence remains absence.
-- Owner overrides alter action, never historical evidence.
-- Core1A reasoning precedes manuscript generation.
-- Core2A requires taught-state receipts.
-- Teaching completion does not imply learner mastery.
-
-## Running the blueprint proofs
+## Running Blueprint proofs
 
 ```bash
 python 'Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py'
-python 'Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py'
 python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py'
 python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py'
 python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_join.py'
-python 'Grade 9/V2/Physics/Blueprint/engine/compile_join.py' \
-  'Grade 9/V2/Physics/Blueprint/fixtures/join/join-ready.json' \
-  --out /tmp/physics-join.json
-
-python 'Grade 9/V2/Physics/Core2A/tests/test_physics_core2a.py'
+python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_control_state.py'
+python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_core1a_stage_machine.py'
 ```
 
-The Join and Core2A goldens are process fixtures. They prove architecture behavior; they do not authorize every Motion-in-a-Plane problem family or replace human subject/pedagogy/assessment review.
+These goldens prove process and authority behavior. They do not replace Physics subject review or authorize unsupported problem-family generation.

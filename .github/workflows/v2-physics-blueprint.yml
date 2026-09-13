@@ -34,3 +34,7 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_control_state.py"
       - name: Compile learner-purpose control-state golden
         run: python "Grade 9/V2/Physics/Blueprint/engine/resolve_control_state.py" "Grade 9/V2/Physics/Blueprint/fixtures/control-state/m2d-p20-first-study.json" --out /tmp/physics-control-state.json
+      - name: Run Core1A state-machine falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_core1a_stage_machine.py"
+      - name: Prove manuscript gate from exact Join and control-state digests
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_core1a_stage_run.py" "Grade 9/V2/Physics/Blueprint/fixtures/core1a/stage-run-ready.json" --join /tmp/physics-join.json --control-state /tmp/physics-control-state.json --out /tmp/physics-core1a-stage-run.json

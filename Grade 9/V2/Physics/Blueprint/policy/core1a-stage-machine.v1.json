@@ -1,0 +1,7 @@
+{
+  "policy_id":"PHY-CORE1A-STAGE-MACHINE-v1",
+  "schema_version":"1.0.0",
+  "pre_manuscript_stages":["1A0_LEARNER_STATE_GAP","1A1_LEARNING_ATOMS","1A2_INFERENTIAL_JUMPS","1A3_COGNITIVE_TRANSFORMATION","1A4_REPRESENTATION_REQUIREMENTS","1A5_REPRESENTATION_CANDIDATES","1A6_REPRESENTATION_DECISIONS","1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE","1A8_MISCONCEPTION_CONTRAST","1A9_WORKED_FADED_INDEPENDENT_PLAN","1A10_CORE2_TRANSFER_BRIDGE","1A11_UNRESOLVED_JUMP_AUDIT"],
+  "manuscript_stage":"1A12_MANUSCRIPT",
+  "rules":{"join_must_be_assimilation_ready":true,"control_state_required":true,"stage_order_is_strict":true,"blocked_stage_stops_later_stages":true,"pass_stage_requires_artifact_and_evidence":true,"all_pre_manuscript_stages_must_pass":true,"unresolved_required_jump_count_must_equal":0}
+}
