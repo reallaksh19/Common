@@ -1,0 +1,18 @@
+{
+  "name": "strong semantic authority routes Core1 first",
+  "subtopic": {
+    "subtopic_ref": "TOE-ROOT-COEFF",
+    "display_name": "Root and coefficient relations",
+    "sequence": 0,
+    "coherence_group": "THEORY_OF_EQUATIONS",
+    "scope_authority": {"score": 4, "reason_codes": ["DETAILED_SYLLABUS_SCOPE"], "evidence_refs": ["GT-SYLLABUS-1111111111111111"]},
+    "semantic_source_strength": {"score": 4, "reason_codes": ["AUTHORITATIVE_SOURCE_EXPLAINS_CONCEPT"], "evidence_refs": ["GT-AUTHORITATIVE_SOURCE-2222222222222222"]},
+    "question_evidence": {"score": 4, "reason_codes": ["RICH_QUESTION_CORPUS"], "evidence_refs": ["GT-QUESTION_CORPUS-3333333333333333"]},
+    "question_resolution": {"score": 4, "reason_codes": ["QUESTIONS_WELL_RESOLVED"], "evidence_refs": ["GT-QUESTION_CORPUS-3333333333333333"]},
+    "uncertainty": {"score": 0, "reason_codes": ["NO_MATERIAL_UNCERTAINTY"], "evidence_refs": []},
+    "conflict_index": {"score": 0, "reason_codes": ["NO_MATERIAL_CONFLICT"], "evidence_refs": []},
+    "unresolved_issue_refs": [],
+    "conflict_refs": []
+  },
+  "expected": {"system_action": "CORE1_FIRST", "eligible_roles": ["CORE1", "CORE2"], "final_action": "CORE1_FIRST"}
+}
