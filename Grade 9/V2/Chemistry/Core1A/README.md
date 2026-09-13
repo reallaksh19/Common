@@ -6,6 +6,20 @@ Core (1) remains the semantic authority for **what Chemistry must be taught**. C
 
 Core (1A) is not a prettier Core (1), not a summary sheet, and not a reverse-engineered Core (2) answer key.
 
+## Current implementation
+
+The branch now contains three executable Core1A semantic layers:
+
+```text
+build_chemistry_core1a_bucket_plan.py
+→ build_chemistry_core1a_build_state.py
+→ build_chemistry_core1a_manuscript.py
+```
+
+The manuscript is a **pre-render semantic learner product**. It realizes the bucket plan into ordered teaching sections, problem-family routines, Core1 practice and readiness metadata, but it does not claim page design or PDF maturity.
+
+The current C-G Appendix A practice templates are procedural/open-response tasks rather than fully instantiated single-answer questions. Core1A therefore binds each one to its exact Appendix B reasoning/verification authority as an `EXPECTED RESPONSE` rubric. It does not invent a fake quick answer. Future objectively checkable Core1A questions must carry both `QUICK CHECK` and `FULL WORKING`.
+
 ## Authority
 
 Core (1A) consumes and preserves:
@@ -24,7 +38,7 @@ A capability-centric Core (1) lesson is not automatically a learner textbook buc
 
 Shared prerequisites may become bridge buckets so they are taught once rather than duplicated.
 
-Every required Core (1) capability must appear exactly once as a primary bucket membership.
+Every required Core (1) capability must appear exactly once as a primary/supporting bucket membership under one canonical primary problem-family home.
 
 ## Learner state vs intrinsic difficulty
 
@@ -55,18 +69,7 @@ A stage may be `NOT_APPLICABLE` only with an explicit reason. Decorative visuals
 
 A learning atom is the smallest teachable move needed before a linked Core (2) demand can legitimately be attempted.
 
-Each atom should carry:
-
-```text
-purpose/meaning
-prerequisite support
-plain-language bridge
-symbolic or quantitative form when applicable
-representation binding
-misconception contrast
-learner check
-Core2 hint binding when available
-```
+Each atom is grounded in upstream C-G lesson/PCK/problem-family authority. Core1A cannot patch a missing atom with free-form agent prose.
 
 ## Core (2) hint pre-teaching
 
@@ -84,19 +87,7 @@ Every H1/H2/H3 reveal must bind to earlier Core (1A) evidence. If a hint introdu
 
 Do not map a large group of source questions as one undifferentiated transfer list. Split when recognition signals, representation choice or first move differ.
 
-Each active family requires:
-
-```text
-LOOK FOR
-representation/setup
-STEP 1 → STEP N
-worked analogue
-independent attempt
-optional hints after attempt
-verification/sense check
-READY TO MOVE ON?
-exact Core2 release targets
-```
+Each active family requires recognition signals, representation/setup, method steps, verification, readiness criteria and exact Core2 release targets.
 
 Readiness requires the learner to RECOGNISE, REPRESENT, choose the FIRST MOVE, and FINISH + VERIFY a fresh analogous item without H2/H3 by default.
 
@@ -108,24 +99,6 @@ Closed items require `QUICK CHECK` and `FULL WORKING`. Genuinely open items requ
 
 ## Build state
 
-The intended state machine is:
+The semantic build state records stable bucket IDs, completed pre-realization gates and `next_active_bucket`. A zero-primary bucket is retained as `SKIP_NO_PRIMARY_CORE2` rather than silently removed.
 
-```text
-INDEXED
-→ SOURCE_AUDITED
-→ LEARNER_BOUND
-→ LEARNING_ATOMS_DEFINED
-→ REPRESENTATIONS_DEFINED
-→ HINT_PRETEACH_CLOSED
-→ PROBLEM_FAMILIES_DEFINED
-→ PAGE_PLAN_READY
-→ CORE1A_RENDERED
-→ ANSWER_CLOSURE_PASS
-→ VISUAL_QA_PASS
-→ MACHINE_QA_PASS
-→ COMPLETE
-```
-
-A later state must never be marked complete while an earlier state is incomplete.
-
-The canonical cross-product order is defined in `../LearnerProduct/EXECUTION_CONTRACT.md`.
+Page rendering remains downstream. The canonical cross-product order is defined in `../LearnerProduct/EXECUTION_CONTRACT.md`.
