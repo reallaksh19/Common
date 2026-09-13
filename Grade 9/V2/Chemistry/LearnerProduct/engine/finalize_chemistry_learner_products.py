@@ -92,7 +92,7 @@ def finalize(semantic_package: dict[str, Any], answer_audit: dict[str, Any], ren
             "mature_design_quality": "PENDING"
         },
         "machine_status": "PASS",
-        "release_authorized": false,
+        "release_authorized": False,
         "release_boundary": "Machine publication engineering passed. Human subject/pedagogy/assessment/visual/mature-design approval is still required.",
         "audit_digest": ""
     }
