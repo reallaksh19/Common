@@ -1,0 +1,60 @@
+{
+  "artifact_id": "G4-ENG-ADJ-GOLDEN-LESSON-V1-DRAFT",
+  "status": "DRAFT_QA_PASS_FOR_GOLDEN_FIXTURE",
+  "source_spec": "adjective-golden-lesson.v1.draft.json",
+  "render": {
+    "pdf": "adjective-golden-lesson.v1.draft.pdf",
+    "page_count": 9,
+    "page_size": "A4",
+    "renderer": "ReportLab",
+    "page_image_dpi": 160
+  },
+  "automated_checks": {
+    "child_page_contract": "PASS",
+    "negative_mutation_checks": {
+      "missing_action": "PASS_EXPECTED_FAILURE",
+      "boundary_rendered_as_category": "PASS_EXPECTED_FAILURE",
+      "internal_label_leak": "PASS_EXPECTED_FAILURE",
+      "unresolved_boundary_placement": "PASS_EXPECTED_FAILURE"
+    },
+    "pdf_preflight": {
+      "openable": true,
+      "encrypted": false,
+      "likely_scanned": false,
+      "page_count": 9
+    },
+    "text_bounds": "PASS",
+    "minimum_rendered_text_size_pt": 9.0,
+    "out_of_page_text_spans": 0
+  },
+  "visual_page_review": {
+    "status": "PASS_FOR_DRAFT_GOLDEN_FIXTURE",
+    "all_pages_reviewed_as_images": true,
+    "checks": {
+      "no_clipped_text": "PASS",
+      "no_overlaps": "PASS",
+      "visual_hierarchy": "PASS",
+      "category_cards_legible": "PASS",
+      "boundary_star_legible": "PASS",
+      "writing_space_visible": "PASS",
+      "one_dominant_move_per_page": "PASS",
+      "adult_internal_labels_hidden": "PASS",
+      "fresh_retry_visibly_distinct": "PASS",
+      "delayed_retrieval_visible": "PASS"
+    },
+    "review_notes": [
+      "The nine category cards remain consistent between classification and order pages.",
+      "The boundary star is visually distinct from category boxes and is labelled as an extra describing word.",
+      "The heavy, broken, and handmade examples do not create new category boxes.",
+      "Practice pages reserve handwriting space rather than compressing content to fill the page.",
+      "The layout is intentionally sparse; no content was enlarged or added merely to consume unused page space."
+    ]
+  },
+  "known_limitations": [
+    "The nine-position school model remains OWNER_CONFIRMED_PENDING_PRIMARY_SOURCE and is not yet verified against the primary workbook.",
+    "This is a golden fixture render, not a released student product.",
+    "No supervised Grade 4 learner trial has been completed yet.",
+    "Full repository CI has not been run for this implementation slice."
+  ],
+  "release_decision": "NOT_RELEASE_READY"
+}
