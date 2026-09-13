@@ -1,0 +1,44 @@
+{
+  "policy_id": "MATH-EVIDENCE-ROUTING-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "principles": [
+    "Execution order may vary; authority order may not.",
+    "A first-role decision must be grounded in original evidence rather than stage convention.",
+    "Absence of question evidence is not evidence of low importance.",
+    "A hard owner override changes the operational route but never rewrites the system finding or ground truth.",
+    "A soft override may choose only an evidence-admissible role."
+  ],
+  "score_rubric": {
+    "0": "Absent or no usable evidence for this dimension.",
+    "1": "Fragmentary evidence; insufficient to establish the dimension.",
+    "2": "Partial or coarse evidence; useful but not independently decisive.",
+    "3": "Strong evidence that materially establishes the dimension.",
+    "4": "Direct, authoritative or highly resolved evidence for the dimension."
+  },
+  "derived_strength": {
+    "semantic_strength": "max(scope_authority, semantic_source_strength)",
+    "assessment_strength": "min(question_evidence, question_resolution)"
+  },
+  "eligibility": {
+    "CORE1": {"semantic_strength_min": 3, "conflict_index_max": 2},
+    "CORE2": {"question_evidence_min": 3, "question_resolution_min": 3, "conflict_index_max": 2}
+  },
+  "decision_order": [
+    {"rule_id": "R-CONFLICT-HARD", "when": "conflict_index >= 3 OR referenced ground-truth evidence is CONFLICTED", "action": "BLOCK_CONFLICT"},
+    {"rule_id": "R-NO-EVIDENCE", "when": "semantic_strength <= 1 AND assessment_strength <= 1", "action": "BLOCK_EVIDENCE"},
+    {"rule_id": "R-CORE1-STRONG", "when": "CORE1 eligible", "action": "CORE1_FIRST", "note": "If both roles are eligible, semantic authority starts the normal route; Core2 still independently re-grounds later."},
+    {"rule_id": "R-CORE2-STRONG", "when": "CORE2 eligible", "action": "CORE2_FIRST"},
+    {"rule_id": "R-AMBIGUOUS", "when": "neither role is eligible but at least partial evidence exists", "action": "BLOCK_OWNER_REVIEW"}
+  ],
+  "override_policy": {
+    "HARD": "May replace the system action with CORE1_FIRST, CORE2_FIRST or BLOCK_OWNER_REVIEW. System action remains recorded.",
+    "SOFT": "May replace the system action only with a role already present in eligible_roles. Otherwise it is ignored."
+  },
+  "bundle_policy": {
+    "group_by": ["final first role", "coherence_group"],
+    "ordering": "ascending source sequence",
+    "max_subtopics": 3,
+    "overflow": "deterministically chunk into additional bundles"
+  }
+}
