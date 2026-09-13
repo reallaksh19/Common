@@ -1,0 +1,420 @@
+{
+  "review_date": "2026-09-13",
+  "method": "GitHub connector fetch_file at pinned PR head; selected source inspection; no production execution",
+  "files": [
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/README.md",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "d1da6eb3ec8b20d2c93e0d4aa31762c8efde5dcc",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/README.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/AGENT_RUNBOOK.md",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "3ee1a33737219eb3c81a7c2949657fb087004e19",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/AGENT_RUNBOOK.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/contracts/physics-core1a-subtopic-bucket.schema.json",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "f901b6fa05b777a7afb65abcf64c7cadcea75ac8",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/contracts/physics-core1a-subtopic-bucket.schema.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "c7cff24a5d3f717942d9424aa1637981e5db5e87",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "5b7356024769018f4e9a89b03ac5df51cf1864e2",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/engine/next_sba.py",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "315c15b6de87c2ffa7547018817cb006a091ebb3",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/engine/next_sba.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/engine/build_motion_in_a_plane_chapter.py",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "808a3487d1571277c0cb2f2d42755be1c80abd9e",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/engine/build_motion_in_a_plane_chapter.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba.py",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "b7d46c04e8c77a7ecd600d6ab0c981764829ed88",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/tests/test_physics_core1a_sba.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/CORE1A_CORE2_LINKING.md",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "2de1055e0f418f802595fd9641ad5839ab1fe6d1",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/CORE1A_CORE2_LINKING.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/EXECUTION_CONTRACT.md",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "fca9b5586bcd612610fe4f9655be473e2a73918b",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/EXECUTION_CONTRACT.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/engine/run_learner_product.py",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "8e124e05e8e4962967daca12bbc0ebc2c7e06ddb",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/engine/run_learner_product.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/policies/math-core1a-execution-policy.json",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "4d3dec459870205eacade8cafed9b1f317bd1aa0",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/policies/math-core1a-execution-policy.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/policies/math-core2a-execution-policy.json",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "a0e106f48faab1671a22ac4632876123a783bbb9",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/policies/math-core2a-execution-policy.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/Core1A/engine/core1a_bucket_synthesis.py",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "66c298de31ced2761a4e638cd38df7214afcf6b1",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/Core1A/engine/core1a_bucket_synthesis.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/Core1A/engine/core1a_bucket_realization.py",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "24ad527ff74342ce27af390259fb16238cf4ee71",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/Core1A/engine/core1a_bucket_realization.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/Core1A/engine/core1a_capability_authoring.py",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "908114e86ee29cb34f99a707fe4e975a12f08253",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/Core1A/engine/core1a_capability_authoring.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 351,
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/golden/theory-of-equations/EXPECTED_STRUCTURE.json",
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "blob": "e765157efe9b527dd00703259a242d151d8b7100",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/golden/theory-of-equations/EXPECTED_STRUCTURE.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "706d451660871358b71a1589b0692c1121d02fbf",
+      "path": "Grade 9/V2/Physics/Core1A/SOURCE_COMPLETENESS_SPEC.md",
+      "pr": 350,
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/SOURCE_COMPLETENESS_SPEC.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "84a2e0cc2924c620db04dba3d507c263c508c399",
+      "path": "Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-source-inventory.json",
+      "pr": 350,
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-source-inventory.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "2e3f5be225c34daaddac673dfdc07dadacf6cf6a",
+      "path": "Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba05-transfer-v1.json",
+      "pr": 350,
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba05-transfer-v1.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "3daaea595b77c1a280a7633a7bea9b34b0b10571",
+      "path": "Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_linkage.py",
+      "pr": 350,
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/tests/test_physics_core1a_linkage.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "997b93de4cec69af90bc69b743a39aa36a0a9baf",
+      "path": "Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_source_coverage.py",
+      "pr": 350,
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/tests/test_physics_core1a_source_coverage.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "3959ab31f06f4ca171c1feaf5ac74a82e234366e",
+      "path": "Grade 9/V2/Mathematics/Core1A/README.md",
+      "pr": 351,
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/Core1A/README.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "74e4bd7963b9670bf9394ced9612a233dc05717a",
+      "path": "Grade 9/V2/Mathematics/Core2A/README.md",
+      "pr": 351,
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/Core2A/README.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "3589675ab8b47b5a9d8aff97c9bad98aeaaf83c4",
+      "path": "Grade 9/V2/Mathematics/Core2A/contracts/math-core2a-challenge-plan.schema.json",
+      "pr": 351,
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/Core2A/contracts/math-core2a-challenge-plan.schema.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "fd377e4da2b8fc6aed5c66c0be23133cc39b0fab",
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/contracts/math-representation-sequence.schema.json",
+      "pr": 351,
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/contracts/math-representation-sequence.schema.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "abc28d0000d12c2a91c41ec9d5db69ed65faf986",
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/contracts/math-question-provenance.schema.json",
+      "pr": 351,
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/contracts/math-question-provenance.schema.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "995d48d1715eee40281c25a61eeaeb26dacaeb88",
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/golden/theory-of-equations/README.md",
+      "pr": 351,
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/golden/theory-of-equations/README.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "5c9ea9b21299d20afaaea1ccb8797e7d5d687fb8",
+      "path": "Grade 9/V2/Mathematics/LearnerProduct/tests/test_learner_product_contract.py",
+      "pr": 351,
+      "ref": "d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359",
+      "url": "https://github.com/reallaksh19/Common/blob/d4b9fe87ba87c8460ec8b9a6481d9c91d7ae7359/Grade%209/V2/Mathematics/LearnerProduct/tests/test_learner_product_contract.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "a455402f7a740302f401f9e506e1ccf7a96a8329",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/EXECUTION_CONTRACT.md",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/EXECUTION_CONTRACT.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "3b64fbafdfef47d2765202a45474c8a1180d9fbe",
+      "path": "Grade 9/V2/Chemistry/Core1A/README.md",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core1A/README.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "4c76840c60ce29c817fc574db235008ecaf1b17c",
+      "path": "Grade 9/V2/Chemistry/Core2A/README.md",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core2A/README.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "856c22d606bebb4abc78820ff987fd0f930250e8",
+      "path": "Grade 9/V2/Chemistry/Core1A/contracts/chemistry-core1a-bucket-plan.schema.json",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core1A/contracts/chemistry-core1a-bucket-plan.schema.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "93c1728299c90c1b9888e238ce33bb196bd4d050",
+      "path": "Grade 9/V2/Chemistry/Core1A/engine/build_chemistry_core1a_bucket_plan.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core1A/engine/build_chemistry_core1a_bucket_plan.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "13d6079b56cdd35f45d6ceda91eb75486f0de28c",
+      "path": "Grade 9/V2/Chemistry/Core1A/engine/build_chemistry_core1a_manuscript.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core1A/engine/build_chemistry_core1a_manuscript.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "0d279a3d96b6ef9088307556bd733a43a68d2e0f",
+      "path": "Grade 9/V2/Chemistry/Core1A/engine/build_chemistry_core1a_build_state.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core1A/engine/build_chemistry_core1a_build_state.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "9aa125ed316dbff8459e2effefd28a9bf2cb6d61",
+      "path": "Grade 9/V2/Chemistry/Core2A/engine/build_chemistry_core2a_source.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core2A/engine/build_chemistry_core2a_source.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "e99bb2f84bc8d9137b52a5e4138f605a754c726e",
+      "path": "Grade 9/V2/Chemistry/Core2A/engine/build_chemistry_core2a_challenges.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/Core2A/engine/build_chemistry_core2a_challenges.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "4cbaed5b75c9908a320fab2214defd3b98817353",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/engine/run_chemistry_learner_product.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/engine/run_chemistry_learner_product.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "0f3a63fec2898d8aa2067255a68da17d8dcbaee6",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/engine/preflight_chemistry_learner_products.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/engine/preflight_chemistry_learner_products.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "a4685ada247ca363441c7a21726c8c4b89004b50",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/engine/finalize_chemistry_learner_products.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/engine/finalize_chemistry_learner_products.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "a1c249d9f1f1bad88ee480df4ab0e470139645d2",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/golden/some-basic-concepts/README.md",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/golden/some-basic-concepts/README.md",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "22bb379ee2b4317b9c5650914955ae6a6727e754",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/golden/some-basic-concepts/expected-semantic-slice.json",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/golden/some-basic-concepts/expected-semantic-slice.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "528933b7290738889e0b670bd38a5fb88cdfaffd",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/production/redox/redox-production-profile.json",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/production/redox/redox-production-profile.json",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "blob": "da0d836c3ff606d394df37d7792bb2d876fc4fe9",
+      "path": "Grade 9/V2/Chemistry/LearnerProduct/tests/test_chemistry_learner_product_semantic_pipeline.py",
+      "pr": 362,
+      "ref": "81bdc15598f49fcc1941a6da1d6df0388c56b1a7",
+      "url": "https://github.com/reallaksh19/Common/blob/81bdc15598f49fcc1941a6da1d6df0388c56b1a7/Grade%209/V2/Chemistry/LearnerProduct/tests/test_chemistry_learner_product_semantic_pipeline.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "DECISIVE_ANCHORS_IN_PR_EVIDENCE_OR_CONTEXT_ONLY"
+    },
+    {
+      "pr": 350,
+      "path": "Grade 9/V2/Physics/Core1A/engine/build_physics_core1a.py",
+      "ref": "c44cc1815308c2b3468f8b33bed1286adacc06ea",
+      "blob": "bb73cd58d4d3018b917b0f00b12bb1717eb799c0",
+      "url": "https://github.com/reallaksh19/Common/blob/c44cc1815308c2b3468f8b33bed1286adacc06ea/Grade%209/V2/Physics/Core1A/engine/build_physics_core1a.py",
+      "retrieval_status": "RETRIEVED",
+      "inspection": "BUILD_PUBLICATION_PLAN_AND_COMPILE_FULL"
+    }
+  ]
+}
