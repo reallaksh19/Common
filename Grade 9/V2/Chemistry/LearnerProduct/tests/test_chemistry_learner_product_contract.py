@@ -14,6 +14,7 @@ import jsonschema
 TEST = Path(__file__).resolve()
 LP_ROOT = TEST.parents[1]
 ENGINE_PATH = LP_ROOT / "engine/run_chemistry_learner_product.py"
+sys.path.insert(0, str(LP_ROOT / "engine"))
 
 spec = importlib.util.spec_from_file_location("chem_lp_runner", ENGINE_PATH)
 runner = importlib.util.module_from_spec(spec)
