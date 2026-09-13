@@ -73,7 +73,7 @@
     "hint_preteach_complete": true,
     "visual_audit_complete": true,
     "pdf_preflight_complete": true,
-    "ci_passed": false
+    "ci_passed": true
   },
   "handoff": {
     "status": "COMPLETE",
