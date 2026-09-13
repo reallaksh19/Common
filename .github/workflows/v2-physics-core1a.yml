@@ -35,6 +35,8 @@ jobs:
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba05_transfer.py'
       - name: Run SBA06 trajectory-transfer and professional-lossless checks
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba06_transfer.py'
+      - name: Run SBA07 horizontal-launch transfer and professional-lossless checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba07_transfer.py'
       - name: Run source completeness checks
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_source_coverage.py'
       - name: Run first Motion in a Plane chapter build checks
@@ -66,12 +68,16 @@ jobs:
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba05-transfer-v1.json' > /dev/null
       - name: Validate SBA06 transfer-routine JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba06-transfer-v1.json' > /dev/null
+      - name: Validate SBA07 transfer-routine JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba07-transfer-v1.json' > /dev/null
       - name: Validate SBA04 20-percent profile JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json' > /dev/null
       - name: Validate SBA05 20-percent profile JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba05-20pct-v1.json' > /dev/null
       - name: Validate SBA06 20-percent profile JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba06-20pct-v1.json' > /dev/null
+      - name: Validate SBA07 20-percent profile JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba07-20pct-v1.json' > /dev/null
       - name: Validate learner language JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-learner-language.json' > /dev/null
       - name: Validate Motion in a Plane source inventory JSON
