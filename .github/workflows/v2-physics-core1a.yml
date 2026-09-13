@@ -33,6 +33,8 @@ jobs:
         run: python 'Grade 9/V2/Physics/Core1A/engine/next_sba.py'
       - name: Run SBA05 publication-index and transfer-family checks
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba05_transfer.py'
+      - name: Run SBA06 trajectory-transfer and professional-lossless checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba06_transfer.py'
       - name: Run source completeness checks
         run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_source_coverage.py'
       - name: Run first Motion in a Plane chapter build checks
@@ -62,6 +64,8 @@ jobs:
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json' > /dev/null
       - name: Validate SBA05 transfer-routine JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba05-transfer-v1.json' > /dev/null
+      - name: Validate SBA06 transfer-routine JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba06-transfer-v1.json' > /dev/null
       - name: Validate SBA04 20-percent profile JSON
         run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json' > /dev/null
       - name: Validate SBA05 20-percent profile JSON
