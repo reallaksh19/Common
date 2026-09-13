@@ -187,6 +187,10 @@ tests/test_blueprint_foundation.py
 tests/test_adaptive_router.py
 ```
 
+## Completion boundary
+
+Increment 2 decides only **which intelligence role should run first** and creates safe handoff bundles. It does not yet claim that Core1/Core2 independent re-grounding is solved.
+
 ## Next increment
 
 Increment 3 implements the dual-intelligence runtime and independence firewall:
