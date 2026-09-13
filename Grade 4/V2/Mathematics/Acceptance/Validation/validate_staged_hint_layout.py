@@ -30,29 +30,10 @@ def _stage(level: str, label: str, cue: str, action: str, branches: list[str]) -
 
 
 def _long_stages() -> list[dict]:
-    # Deliberately resembles the density that caused the photographed overflow.
     return [
-        _stage(
-            "H1",
-            "LOOK",
-            "Read the story and point to what we know, what changes, and what the question asks us to find.",
-            "Say the quantities aloud before choosing an operation.",
-            ["45 cycles", "Rs 56,250", "need 25 cycles"],
-        ),
-        _stage(
-            "H2",
-            "SHOW",
-            "First find the value of one item. Keep the units beside the number so the meaning stays clear.",
-            "Write the one-item number sentence only.",
-            ["many", "divide", "one"],
-        ),
-        _stage(
-            "H3",
-            "NEXT",
-            "Use the value of one item to find the value of the number the question asks for.",
-            "Write only the next multiplication step; finish the calculation yourself.",
-            ["one", "scale", "needed"],
-        ),
+        _stage("H1", "LOOK", "Read the story and point to what we know, what changes, and what the question asks us to find.", "Say the quantities aloud before choosing an operation.", ["45 cycles", "Rs 56,250", "need 25 cycles"]),
+        _stage("H2", "SHOW", "First find the value of one item. Keep the units beside the number so the meaning stays clear.", "Write the one-item number sentence only.", ["many", "divide", "one"]),
+        _stage("H3", "NEXT", "Use the value of one item to find the value of the number the question asks for.", "Write only the next multiplication step; finish the calculation yourself.", ["one", "scale", "needed"]),
     ]
 
 
@@ -84,22 +65,22 @@ def _expect_fail(fn, code: str) -> None:
 
 
 def main() -> None:
-    long_plan = StagedHintComponent.plan(_long_stages(), x=40.0, top_y=760.0, width=515.0, thinking_path=_thinking_path())
-    if long_plan.mode != "STACK":
-        raise SystemExit(f"DENSE_STAGE_ROW_NOT_ALLOWED: {long_plan.mode}")
+    dense = StagedHintComponent.plan(_long_stages(), x=40.0, top_y=760.0, width=515.0, thinking_path=_thinking_path())
+    if dense.mode != "H1_TOP_H2H3_ROW":
+        raise SystemExit(f"DENSE_STAGE_TWO_ROW_EXPECTED: {dense.mode}")
 
-    short_plan = StagedHintComponent.plan(_short_stages(), x=40.0, top_y=760.0, width=515.0, thinking_path=_thinking_path())
-    if short_plan.mode != "ROW":
-        raise SystemExit(f"COMPACT_STAGE_ROW_EXPECTED: {short_plan.mode}")
+    compact = StagedHintComponent.plan(_short_stages(), x=40.0, top_y=760.0, width=515.0, thinking_path=_thinking_path())
+    if compact.mode != "ROW":
+        raise SystemExit(f"COMPACT_STAGE_ROW_EXPECTED: {compact.mode}")
 
     narrow = StagedHintComponent.plan(_short_stages(), x=40.0, top_y=760.0, width=330.0, thinking_path=_thinking_path())
     if narrow.mode != "STACK":
         raise SystemExit(f"NARROW_STAGE_MUST_STACK: {narrow.mode}")
 
-    _expect_fail(
-        lambda: StagedHintComponent.plan(_short_stages()[:2], x=40.0, top_y=760.0, width=515.0),
-        "STAGED_HINT_EXACTLY_THREE_REQUIRED",
-    )
+    if dense.height >= sum(StagedHintComponent._stage_height(s, 515.0) for s in _long_stages()):
+        raise SystemExit("DENSE_TWO_ROW_DID_NOT_REDUCE_VERTICAL_LOAD")
+
+    _expect_fail(lambda: StagedHintComponent.plan(_short_stages()[:2], x=40.0, top_y=760.0, width=515.0), "STAGED_HINT_EXACTLY_THREE_REQUIRED")
 
     broken = _short_stages()
     broken[1].pop("primitive_kind")
@@ -112,22 +93,12 @@ def main() -> None:
     StagedHintComponent.render(backend, _short_stages(), x=40.0, top_y=790.0, width=515.0, thinking_path=_thinking_path())
     c.save()
 
-    # Missing primitive is a realization failure, not a silent empty card.
     c2 = canvas.Canvas(str(out.with_name("Staged_Hint_Invalid.pdf")), pagesize=(595.27, 841.89))
     backend2 = ReportLabBackend(c2)
-    _expect_fail(
-        lambda: StagedHintComponent.render(backend2, broken, x=40.0, top_y=790.0, width=515.0),
-        "STAGED_HINT_PRIMITIVE_MISSING",
-    )
+    _expect_fail(lambda: StagedHintComponent.render(backend2, broken, x=40.0, top_y=790.0, width=515.0), "STAGED_HINT_PRIMITIVE_MISSING")
     c2.save()
 
-    print({
-        "status": "PASS",
-        "dense_mode": long_plan.mode,
-        "compact_mode": short_plan.mode,
-        "narrow_mode": narrow.mode,
-        "pdf": str(out),
-    })
+    print({"status": "PASS", "dense_mode": dense.mode, "compact_mode": compact.mode, "narrow_mode": narrow.mode, "pdf": str(out)})
 
 
 if __name__ == "__main__":
