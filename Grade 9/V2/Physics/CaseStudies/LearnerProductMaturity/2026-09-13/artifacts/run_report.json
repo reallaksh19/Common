@@ -1,0 +1,274 @@
+{
+  "assessment_truth": {
+    "eligible_external_candidate_refs": [
+      "PHY-EXT01",
+      "PHY-EXT02",
+      "PHY-EXT03",
+      "PHY-EXT04",
+      "PHY-EXT05",
+      "PHY-EXT06",
+      "PHY-EXT07",
+      "PHY-EXT08"
+    ],
+    "law_refs": [
+      "PHY-LAW-A-DELTA-V-BY-DELTA-T",
+      "PHY-LAW-AVERAGE-SPEED",
+      "PHY-LAW-DISPLACEMENT-DEFINITION",
+      "PHY-LAW-RELATIVE-ACCELERATION-DIFFERENCE",
+      "PHY-LAW-S-UT-HALF-AT2",
+      "PHY-LAW-STATE-CONTINUITY",
+      "PHY-LAW-V-U-AT",
+      "PHY-LAW-V2-U2-2AS",
+      "PHY-LAW-VT-AREA-DISPLACEMENT",
+      "PHY-LAW-XT-SLOPE-VELOCITY"
+    ],
+    "physical_model_refs": [
+      "PHY-MODEL-AVERAGE-SPEED",
+      "PHY-MODEL-CONSTANT-G-1D",
+      "PHY-MODEL-GRAPH-KINEMATICS",
+      "PHY-MODEL-MOVING-RELEASE",
+      "PHY-MODEL-PARTICLE-PATH-GEOMETRY",
+      "PHY-MODEL-PIECEWISE-CONSTANT-ACCELERATION",
+      "PHY-MODEL-RELATIVE-MOTION-SAME-G",
+      "PHY-MODEL-UNIFORM-ACCELERATION"
+    ],
+    "problem_family_refs": [
+      "PHY-PF-EQUAL-DISTANCE-AVERAGE-SPEED",
+      "PHY-PF-FIRST-EQUATION",
+      "PHY-PF-FREE-FALL",
+      "PHY-PF-GRAPH-ACCELERATION",
+      "PHY-PF-MOVING-RELEASE",
+      "PHY-PF-MULTIPHASE-KINEMATICS",
+      "PHY-PF-NTH-SECOND",
+      "PHY-PF-PATH-VS-CHORD",
+      "PHY-PF-RELATIVE-G-CANCELLATION",
+      "PHY-PF-UNIFORM-ACCELERATION-STATE-CHANGE",
+      "PHY-PF-VERTICAL-MAX-HEIGHT",
+      "PHY-PF-VT-SIGNED-AREA",
+      "PHY-PF-XT-SLOPE"
+    ],
+    "problem_semantics_digest": "bb9ccb564b5206fd659d7926036b82599d19c2c96be9ce64ad6b60ab4b86ca3b",
+    "required_capability_refs": [
+      "PHY-CAP-AVERAGE-SPEED-EQUAL-DISTANCE",
+      "PHY-CAP-DISTANCE-DISPLACEMENT",
+      "PHY-CAP-FIRST-EQUATION",
+      "PHY-CAP-FRAME-SIGN-SETUP",
+      "PHY-CAP-FREE-FALL-CONSTANT-G",
+      "PHY-CAP-GRAPH-ACCELERATION",
+      "PHY-CAP-MODEL-VALIDITY-CHECK",
+      "PHY-CAP-MOVING-RELEASE",
+      "PHY-CAP-MULTIPHASE-KINEMATICS",
+      "PHY-CAP-NTH-SECOND-INTERVAL",
+      "PHY-CAP-RELATIVE-ACCELERATION-SAME-G",
+      "PHY-CAP-REPRESENTATION-TRANSLATE",
+      "PHY-CAP-STATE-PROPAGATE",
+      "PHY-CAP-UNIFORM-ACCELERATION",
+      "PHY-CAP-VERTICAL-PROJECTION",
+      "PHY-CAP-VT-SIGNED-AREA",
+      "PHY-CAP-XT-SLOPE-VELOCITY"
+    ],
+    "required_item_refs": [
+      "Q1",
+      "Q10",
+      "Q11",
+      "Q12",
+      "Q13",
+      "Q14",
+      "Q14.a",
+      "Q14.b",
+      "Q14.c",
+      "Q2",
+      "Q3",
+      "Q4",
+      "Q5",
+      "Q6",
+      "Q7",
+      "Q8",
+      "Q9"
+    ],
+    "study_scope_digest": "2a57f469d0679dd1e26ffd52c28129d9ca2faa5f9020cee4b2ccf5422131ea8d",
+    "study_scope_ref": "PHY-P-F-LSS-6b9c68f953ace59d"
+  },
+  "authority_trace": [
+    {
+      "authority_refs": [
+        "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
+        "PHY-P-F-LSS-6b9c68f953ace59d"
+      ],
+      "decision_class": "REQUIRED_SCOPE",
+      "resolution": "Required capabilities were derived from the P-C scope authority and the question/capability bindings, not chosen by the agent."
+    },
+    {
+      "authority_refs": [
+        "PHY-P-F-TREATMENT-v1",
+        "PHY-P-F-LSM-370b0fa92331bea8"
+      ],
+      "decision_class": "TREATMENT",
+      "resolution": "Treatment per capability came from the P-F treatment policy applied to the P-E learner snapshot."
+    },
+    {
+      "authority_refs": [
+        "PHY-P-H-PRIMITIVES-v1",
+        "PHY-P-H-PAGE-INTENT-v1"
+      ],
+      "decision_class": "TEACHING_PRIMITIVE_SELECTION",
+      "resolution": "Primitives were selected from the capability's own representation requirements through the page-intent profile."
+    },
+    {
+      "authority_refs": [
+        "PHY-P-I-EXTERNAL-CLASSIFICATION-v1"
+      ],
+      "decision_class": "EXTERNAL_ELIGIBILITY",
+      "resolution": "External eligibility was classified against the scope authority before any learner evidence was read."
+    },
+    {
+      "authority_refs": [
+        "PHY-P-A0-SOURCE-LEDGER-MOTION-v1"
+      ],
+      "decision_class": "SOURCE_COMPLETENESS",
+      "resolution": "Source completeness was reconciled against the P-A0 source question ledger, frozen from the source documents before authoring, rather than against the question set that is itself under audit."
+    },
+    {
+      "authority_refs": [
+        "PHY-P-J-TRANSFER-EVIDENCE-v1",
+        "PHY-P-J-COVERAGE-CLOSURE-v1"
+      ],
+      "decision_class": "COVERAGE_CLOSURE",
+      "resolution": "Closure state was computed from the coverage matrices, the source-ledger reconciliation and the physical page map, not asserted."
+    },
+    {
+      "authority_refs": [
+        "PHY-P-G-CORE1-PLAN-v1",
+        "PHY-P-GA-CORE1A-PHY-P-G-CORE1-PLAN-v1",
+        "PHY-P-H-REPRESENTATIONS-v1",
+        "PHY-P-I-CORE2-PLAN-v1"
+      ],
+      "decision_class": "FINAL_PAGE_COMPOSITION",
+      "resolution": "The Core study guide is composed by the P-GA Core (1A) publication compiler from the P-G lesson order and the P-H page-intent phases; placement evidence was emitted while drawing."
+    }
+  ],
+  "human_expert_review_states": {
+    "ASSESSMENT_EXPERT_PASS": "PENDING",
+    "PEDAGOGY_EXPERT_PASS": "PENDING",
+    "SUBJECT_EXPERT_PASS": "PENDING",
+    "VISUAL_USABILITY_EXPERT_PASS": "PENDING"
+  },
+  "input_custody": {
+    "attempt_set_digest": "b196348f279be0ae655ceff86c8cfd3a77adb581020c300cb889e4688e698a26",
+    "declared_topic_scope_digest": "6d2e6606cc58e68a299f6cf1bba72368b5a5f925e90047944091899979828f5a",
+    "external_corpus_digest": "806f1fb0897afeb41afdfb15b84785afff89d56089c683aad0057630aea5bcaa",
+    "question_set_digest": "f110c8669c32f2dae52a0613ed6e611ea9125a1c5fdbd95a7cbeac9fd3de0095",
+    "scope_authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
+    "source_question_ledger_digest": "0eccb4a5efbce35ae1aa7c2cc7c813b260e6269f3c15107931417cc11c060c89"
+  },
+  "manifest_digest": "d848f8346106df3858b6d8c63e99171961ec455320dc1e311b81dcdab060c0ca",
+  "manifest_ref": "PHY-GENERATION-AUTHORITY-v1",
+  "report_digest": "4710ebb2de44d11afe929dec10a21f5e9e2fff6b4860b23178536c89b60e369e",
+  "report_id": "PHY-P-K-RUN-ATTEMPT",
+  "run_mode": "WITH_ATTEMPTS",
+  "runtime_dependency_audit": {
+    "chat_or_issue_history_used": false,
+    "manual_precomputed_inputs_used": [],
+    "raw_pr156_used": false,
+    "runtime_reads": [
+      "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-attempt-set.fixture.json",
+      "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-question-set.fixture.json",
+      "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-topic-scope.fixture.json",
+      "Grade 9/V2/Physics/AssessmentReview/policies/diagnostic-use-policy.json",
+      "Grade 9/V2/Physics/AssessmentReview/registry/physics-item-validity-registry.json",
+      "Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json",
+      "Grade 9/V2/Physics/AssessmentScope/registry/motion-question-scope-bindings.json",
+      "Grade 9/V2/Physics/Canonical/registry/capabilities.json",
+      "Grade 9/V2/Physics/Core1A/registry/physics-core1a-publication-policy.json",
+      "Grade 9/V2/Physics/Core2Transfer/fixtures/physics-external-transfer-source.fixture.json",
+      "Grade 9/V2/Physics/Core2Transfer/registry/physics-concept-segregation.json",
+      "Grade 9/V2/Physics/Core2Transfer/registry/physics-core2-authoring-profile.json",
+      "Grade 9/V2/Physics/Core2Transfer/registry/physics-external-corpus-classification.json",
+      "Grade 9/V2/Physics/Core2Transfer/registry/physics-transfer-badge-policy.json",
+      "Grade 9/V2/Physics/CoreAuthoring/registry/physics-core1-scope-completeness-policy.json",
+      "Grade 9/V2/Physics/CoreAuthoring/registry/physics-instructional-authoring-profile.json",
+      "Grade 9/V2/Physics/CoreAuthoring/registry/physics-problem-authoring-profile.json",
+      "Grade 9/V2/Physics/CoverageClosure/fixtures/physics-transfer-evidence.fixture.json",
+      "Grade 9/V2/Physics/CoverageClosure/registry/physics-transfer-evidence-policy.json",
+      "Grade 9/V2/Physics/LearnerEvidence/engine/infer_physics_learner_evidence.py",
+      "Grade 9/V2/Physics/LearnerEvidence/fixtures/physics-learner-evidence-ledger.fixture.json",
+      "Grade 9/V2/Physics/LearnerEvidence/registry/physics-diagnostic-policy.json",
+      "Grade 9/V2/Physics/LearnerEvidence/registry/physics-observation-code-registry.json",
+      "Grade 9/V2/Physics/ProblemSemantics/engine/build_physics_problem_semantics.py",
+      "Grade 9/V2/Physics/ProblemSemantics/registry/guide-demand-badge-policy.json",
+      "Grade 9/V2/Physics/ProblemSemantics/registry/motion-item-semantics.json",
+      "Grade 9/V2/Physics/ProblemSemantics/registry/physics-problem-family-registry.json",
+      "Grade 9/V2/Physics/ProblemSemantics/registry/physics-reasoning-role-registry.json",
+      "Grade 9/V2/Physics/ProblemSemantics/registry/physics-verification-route-registry.json",
+      "Grade 9/V2/Physics/Representation/registry/physics-figure-render-contract.json",
+      "Grade 9/V2/Physics/Representation/registry/physics-page-intent-profile.json",
+      "Grade 9/V2/Physics/Representation/registry/physics-teaching-primitive-registry.json",
+      "Grade 9/V2/Physics/SourceLedger/registry/physics-source-question-ledger.json",
+      "Grade 9/V2/Physics/StudySynthesis/policies/physics-treatment-policy.json"
+    ]
+  },
+  "schema_version": "1.0.0",
+  "stage_digests": {
+    "P_D_problem_semantics": "bb9ccb564b5206fd659d7926036b82599d19c2c96be9ce64ad6b60ab4b86ca3b",
+    "P_E_learner_snapshot": "0af31de3f0f85abd6e96e47079a75ee40c0dff070c1d514168d0956b8aacaa7a",
+    "P_F_study_model": "ad5fed323754d34c0f2e436e5f47973ad07b7c490d18b72685675b81ad1a6b26",
+    "P_F_study_scope": "2a57f469d0679dd1e26ffd52c28129d9ca2faa5f9020cee4b2ccf5422131ea8d",
+    "P_GA_core1a_publication_plan": "bf07bb86a0d3968a48da5c16e33a807046090c23a412c3327f053d3ac341897e",
+    "P_G_core1_plan": "30f53e64454a1c68adbcde22af4ea5bb95526b97fa1b04fedd0347b2eed0e8ee",
+    "P_H_physical_page_map": "ba75d6406d97331aeda57c228c61e041e8e404d64bf5deeacc19ab9e827bbec5",
+    "P_H_representation_bundle": "cfdaa00f6a8fa5c5fd6ea5701d6f80546027b3ba4c3c71a100e2088e6bc4d4c9",
+    "P_I_core2_plan": "29eb4418997b2d42fd31d3cb6a68b59e3af7358fc3dede8374299fb1bf3670c7",
+    "P_J_coverage_closure": "e173df335abd7b37d1551fa32aa1da389ef94d4a30cea34f7b676d2190d19f9b"
+  },
+  "subject": "PHYSICS",
+  "summary": {
+    "appendix_c_present": true,
+    "capability_count": 17,
+    "closure_state": "CLOSED",
+    "core1_lesson_count": 17,
+    "core1a_publication_engineering_pass": true,
+    "core1a_template_only_lessons": 0,
+    "core2_page_count": 8,
+    "representation_count": 128,
+    "source_ledger_state": "RECONCILED",
+    "total_vector_ops": 2728
+  },
+  "two_product_package": {
+    "package_id": "PHY-P-K-TWO-PRODUCT-ATTEMPT",
+    "product_count": 2,
+    "products": [
+      {
+        "artifact_bytes": 415299,
+        "artifact_path": "physics-core-study-guide.pdf",
+        "artifact_sha256": "9ecd078a2881ce8e43d3157192b869be927eeff6d212180e7b0418efb405fea5",
+        "figure_count": 128,
+        "page_count": 142,
+        "product_id": "CORE_STUDY_GUIDE",
+        "required_sections": [
+          "MAIN_TEACHING",
+          "APPENDIX_A_CORE_PRACTICE",
+          "APPENDIX_B_CORE_SOLUTIONS",
+          "APPENDIX_C_PRINTABLE_HANDOUT"
+        ],
+        "vector_ops": 2302
+      },
+      {
+        "artifact_bytes": 43495,
+        "artifact_path": "physics-transfer-solution-book.pdf",
+        "artifact_sha256": "ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf",
+        "figure_count": 21,
+        "page_count": 16,
+        "product_id": "TRANSFER_SOLUTION_BOOK",
+        "required_sections": [
+          "TRANSFER_QUESTIONS",
+          "HINT_LADDERS",
+          "FULL_SOLUTIONS"
+        ],
+        "vector_ops": 426
+      }
+    ],
+    "schema_version": "1.0.0",
+    "subject": "PHYSICS",
+    "third_product_created": false
+  }
+}

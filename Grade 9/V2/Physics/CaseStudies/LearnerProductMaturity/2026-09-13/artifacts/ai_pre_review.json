@@ -1,0 +1,63 @@
+{
+  "advisory_concerns": [
+    {
+      "concern": "MOSTLY_SCHEMATIC_FIGURES",
+      "detail": "Only 30 of 128 figures are grounded in stated source quantities. A subject reviewer should judge whether the schematic variants still carry enough physical specificity to teach.",
+      "for_role": "AUTHORIZED_PHYSICS_SUBJECT"
+    },
+    {
+      "concern": "NO_HUMAN_HAS_READ_THIS_PRODUCT",
+      "detail": "Nothing in this repository constitutes a subject, pedagogy, assessment or visual review of these artifacts. Every such state is PENDING and the product is not mature.",
+      "for_role": "ALL"
+    }
+  ],
+  "artifact_sha256_refs": [
+    "9ecd078a2881ce8e43d3157192b869be927eeff6d212180e7b0418efb405fea5",
+    "ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf"
+  ],
+  "authority": "ADVISORY_ONLY",
+  "may_set_mature_classification": false,
+  "observations": [
+    {
+      "detail": "142 pages, 128 figures, 2302 vector operations, sections MAIN_TEACHING, APPENDIX_A_CORE_PRACTICE, APPENDIX_B_CORE_SOLUTIONS, APPENDIX_C_PRINTABLE_HANDOUT.",
+      "observation": "CORE1_STRUCTURE"
+    },
+    {
+      "detail": "No internal identifier or SCREAMING_SNAKE token was found in the extracted text.",
+      "observation": "CORE1_LEARNER_SURFACE"
+    },
+    {
+      "detail": "Lesson modes: CONCISE_VERIFY_ONLY=1, FULL_LEARNING=16.",
+      "observation": "CORE1_TREATMENT_SPREAD"
+    },
+    {
+      "detail": "16 of 17 lessons carry a misconception contrast with repair steps and a retry prompt.",
+      "observation": "CORE1_MISCONCEPTION_COVERAGE"
+    },
+    {
+      "detail": "16 pages over 8 transfer questions; every page carries 3 graded hints and a full solution.",
+      "observation": "CORE2_STRUCTURE"
+    },
+    {
+      "detail": "No internal identifier or SCREAMING_SNAKE token was found in the extracted text.",
+      "observation": "CORE2_LEARNER_SURFACE"
+    },
+    {
+      "detail": "Scaffolding badges: INDEPENDENT_TRANSFER=6, SUPPORTED_TRANSFER=2.",
+      "observation": "CORE2_SCAFFOLDING_SPREAD"
+    },
+    {
+      "detail": "30 of 128 figures carry quantities extracted from the source assessment; the remainder are schematic structure with no invented numbers.",
+      "observation": "FIGURE_QUANTITATIVE_GROUNDING"
+    }
+  ],
+  "review_class": "AI_ASSISTED_REFERENCE_REVIEW",
+  "review_digest": "b81185ead10b6fd5ff81d52c1ae0d03bc4e3e59003d5671f099ed63d48804d5e",
+  "review_id": "PHY-P-L-AI-PRE-REVIEW-v1",
+  "reviewer_authority_class": "REPOSITORY_AUTOMATED_AGENT",
+  "run_report_ref": "PHY-P-K-RUN-ATTEMPT",
+  "schema_version": "1.0.0",
+  "sets_quality_states": false,
+  "statement": "This is an automated reading aid bound to the exact artifact bytes. It is not a subject, pedagogy, assessment or visual review and cannot satisfy one.",
+  "subject": "PHYSICS"
+}

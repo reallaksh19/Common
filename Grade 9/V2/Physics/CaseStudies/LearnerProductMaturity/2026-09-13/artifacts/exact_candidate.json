@@ -1,0 +1,47 @@
+{
+  "candidate_digest": "52cb96ec0edee12f80c16c353c823e953a4a92cd7896842357ea1febc0b7389f",
+  "candidate_id": "PHY-P-L-EXACT-CANDIDATE-v1",
+  "coverage_closure_ref": "PHY-P-J-COVERAGE-CLOSURE-v1",
+  "coverage_closure_state": "CLOSED",
+  "exact_artifacts_present": true,
+  "machine_findings": [],
+  "machine_gate": "PASS",
+  "policy_ref": "PHY-P-L-EXACT-PRODUCT-QUALITY-v1",
+  "products": [
+    {
+      "artifact_bytes": 415299,
+      "artifact_exists": true,
+      "artifact_path": "physics-core-study-guide.pdf",
+      "artifact_sha256": "9ecd078a2881ce8e43d3157192b869be927eeff6d212180e7b0418efb405fea5",
+      "figure_count": 128,
+      "page_count": 142,
+      "product_id": "CORE_STUDY_GUIDE",
+      "required_sections": [
+        "MAIN_TEACHING",
+        "APPENDIX_A_CORE_PRACTICE",
+        "APPENDIX_B_CORE_SOLUTIONS",
+        "APPENDIX_C_PRINTABLE_HANDOUT"
+      ],
+      "vector_ops": 2302
+    },
+    {
+      "artifact_bytes": 43495,
+      "artifact_exists": true,
+      "artifact_path": "physics-transfer-solution-book.pdf",
+      "artifact_sha256": "ce829bb27f97f4ba077d2ca0676cad1278931cc0eba5385b613bda9f8525e1cf",
+      "figure_count": 21,
+      "page_count": 16,
+      "product_id": "TRANSFER_SOLUTION_BOOK",
+      "required_sections": [
+        "TRANSFER_QUESTIONS",
+        "HINT_LADDERS",
+        "FULL_SOLUTIONS"
+      ],
+      "vector_ops": 426
+    }
+  ],
+  "run_report_digest": "4710ebb2de44d11afe929dec10a21f5e9e2fff6b4860b23178536c89b60e369e",
+  "run_report_ref": "PHY-P-K-RUN-ATTEMPT",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}

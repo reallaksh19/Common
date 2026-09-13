@@ -1,0 +1,740 @@
+{
+  "artifact_bytes": 415299,
+  "artifact_path": "physics-core-study-guide.pdf",
+  "artifact_sha256": "9ecd078a2881ce8e43d3157192b869be927eeff6d212180e7b0418efb405fea5",
+  "figure_count": 128,
+  "human_review_states_modified": false,
+  "instructional_content_maturity": "READY_FOR_HUMAN_REVIEW",
+  "learner_copy_violations": [],
+  "machine_findings": [],
+  "minimum_body_font_pt": 10.2,
+  "minimum_caption_font_pt": 8.0,
+  "page_count": 142,
+  "page_metrics": [
+    {
+      "meaningful_occupancy": 0.619,
+      "page": 1,
+      "title": "Physics — Motion in 1D"
+    },
+    {
+      "meaningful_occupancy": 0.596,
+      "page": 2,
+      "title": "AVERAGE SPEED EQUAL DISTANCE"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 3,
+      "title": "AVERAGE SPEED EQUAL DISTANCE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.862,
+      "page": 4,
+      "title": "AVERAGE SPEED EQUAL DISTANCE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 5,
+      "title": "AVERAGE SPEED EQUAL DISTANCE — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 6,
+      "title": "AVERAGE SPEED EQUAL DISTANCE — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.605,
+      "page": 7,
+      "title": "DISTANCE DISPLACEMENT"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 8,
+      "title": "DISTANCE DISPLACEMENT — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.825,
+      "page": 9,
+      "title": "DISTANCE DISPLACEMENT — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 10,
+      "title": "DISTANCE DISPLACEMENT — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 11,
+      "title": "DISTANCE DISPLACEMENT — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.614,
+      "page": 12,
+      "title": "FIRST EQUATION"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 13,
+      "title": "FIRST EQUATION — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.883,
+      "page": 14,
+      "title": "FIRST EQUATION — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 15,
+      "title": "FIRST EQUATION — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 16,
+      "title": "FIRST EQUATION — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 17,
+      "title": "FIRST EQUATION"
+    },
+    {
+      "meaningful_occupancy": 0.641,
+      "page": 18,
+      "title": "FRAME SIGN SETUP"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 19,
+      "title": "FRAME SIGN SETUP — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.883,
+      "page": 20,
+      "title": "FRAME SIGN SETUP — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 21,
+      "title": "FRAME SIGN SETUP — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 22,
+      "title": "FRAME SIGN SETUP — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 23,
+      "title": "FRAME SIGN SETUP"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 24,
+      "title": "FRAME SIGN SETUP"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 25,
+      "title": "FRAME SIGN SETUP"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 26,
+      "title": "FRAME SIGN SETUP"
+    },
+    {
+      "meaningful_occupancy": 0.45,
+      "page": 27,
+      "title": "FRAME SIGN SETUP"
+    },
+    {
+      "meaningful_occupancy": 0.651,
+      "page": 28,
+      "title": "FREE FALL CONSTANT G"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 29,
+      "title": "FREE FALL CONSTANT G — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.92,
+      "page": 30,
+      "title": "FREE FALL CONSTANT G — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 31,
+      "title": "FREE FALL CONSTANT G — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 32,
+      "title": "FREE FALL CONSTANT G — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 33,
+      "title": "FREE FALL CONSTANT G"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 34,
+      "title": "FREE FALL CONSTANT G"
+    },
+    {
+      "meaningful_occupancy": 0.596,
+      "page": 35,
+      "title": "GRAPH ACCELERATION"
+    },
+    {
+      "meaningful_occupancy": 0.916,
+      "page": 36,
+      "title": "GRAPH ACCELERATION — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.825,
+      "page": 37,
+      "title": "GRAPH ACCELERATION — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 38,
+      "title": "GRAPH ACCELERATION — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 39,
+      "title": "GRAPH ACCELERATION — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.651,
+      "page": 40,
+      "title": "Checking a rule fits the situation"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 41,
+      "title": "Checking a rule fits the situation — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.883,
+      "page": 42,
+      "title": "Checking a rule fits the situation — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 43,
+      "title": "Checking a rule fits the situation — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 44,
+      "title": "Checking a rule fits the situation — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 45,
+      "title": "Checking a rule fits the situation"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 46,
+      "title": "Checking a rule fits the situation"
+    },
+    {
+      "meaningful_occupancy": 0.849,
+      "page": 47,
+      "title": "Checking a rule fits the situation"
+    },
+    {
+      "meaningful_occupancy": 0.651,
+      "page": 48,
+      "title": "MOVING RELEASE"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 49,
+      "title": "MOVING RELEASE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.752,
+      "page": 50,
+      "title": "MOVING RELEASE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.794,
+      "page": 51,
+      "title": "MOVING RELEASE — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.915,
+      "page": 52,
+      "title": "MOVING RELEASE — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 53,
+      "title": "MOVING RELEASE"
+    },
+    {
+      "meaningful_occupancy": 0.849,
+      "page": 54,
+      "title": "MOVING RELEASE"
+    },
+    {
+      "meaningful_occupancy": 0.651,
+      "page": 55,
+      "title": "MULTIPHASE KINEMATICS"
+    },
+    {
+      "meaningful_occupancy": 0.916,
+      "page": 56,
+      "title": "MULTIPHASE KINEMATICS — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.734,
+      "page": 57,
+      "title": "MULTIPHASE KINEMATICS — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.794,
+      "page": 58,
+      "title": "MULTIPHASE KINEMATICS — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.915,
+      "page": 59,
+      "title": "MULTIPHASE KINEMATICS — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 60,
+      "title": "MULTIPHASE KINEMATICS"
+    },
+    {
+      "meaningful_occupancy": 0.849,
+      "page": 61,
+      "title": "MULTIPHASE KINEMATICS"
+    },
+    {
+      "meaningful_occupancy": 0.623,
+      "page": 62,
+      "title": "NTH SECOND INTERVAL"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 63,
+      "title": "NTH SECOND INTERVAL — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.865,
+      "page": 64,
+      "title": "NTH SECOND INTERVAL — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 65,
+      "title": "NTH SECOND INTERVAL — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 66,
+      "title": "NTH SECOND INTERVAL — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 67,
+      "title": "NTH SECOND INTERVAL"
+    },
+    {
+      "meaningful_occupancy": 0.614,
+      "page": 68,
+      "title": "RELATIVE ACCELERATION SAME G"
+    },
+    {
+      "meaningful_occupancy": 0.916,
+      "page": 69,
+      "title": "RELATIVE ACCELERATION SAME G — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.88,
+      "page": 70,
+      "title": "RELATIVE ACCELERATION SAME G — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.773,
+      "page": 71,
+      "title": "RELATIVE ACCELERATION SAME G — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.915,
+      "page": 72,
+      "title": "RELATIVE ACCELERATION SAME G — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.849,
+      "page": 73,
+      "title": "RELATIVE ACCELERATION SAME G"
+    },
+    {
+      "meaningful_occupancy": 0.614,
+      "page": 74,
+      "title": "REPRESENTATION TRANSLATE"
+    },
+    {
+      "meaningful_occupancy": 0.916,
+      "page": 75,
+      "title": "REPRESENTATION TRANSLATE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.697,
+      "page": 76,
+      "title": "REPRESENTATION TRANSLATE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.794,
+      "page": 77,
+      "title": "REPRESENTATION TRANSLATE — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.915,
+      "page": 78,
+      "title": "REPRESENTATION TRANSLATE — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 79,
+      "title": "REPRESENTATION TRANSLATE"
+    },
+    {
+      "meaningful_occupancy": 0.849,
+      "page": 80,
+      "title": "REPRESENTATION TRANSLATE"
+    },
+    {
+      "meaningful_occupancy": 0.651,
+      "page": 81,
+      "title": "STATE PROPAGATE"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 82,
+      "title": "STATE PROPAGATE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.752,
+      "page": 83,
+      "title": "STATE PROPAGATE — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.794,
+      "page": 84,
+      "title": "STATE PROPAGATE — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.915,
+      "page": 85,
+      "title": "STATE PROPAGATE — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 86,
+      "title": "STATE PROPAGATE"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 87,
+      "title": "STATE PROPAGATE"
+    },
+    {
+      "meaningful_occupancy": 0.831,
+      "page": 88,
+      "title": "UNIFORM ACCELERATION"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 89,
+      "title": "UNIFORM ACCELERATION"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 90,
+      "title": "UNIFORM ACCELERATION"
+    },
+    {
+      "meaningful_occupancy": 0.45,
+      "page": 91,
+      "title": "UNIFORM ACCELERATION"
+    },
+    {
+      "meaningful_occupancy": 0.632,
+      "page": 92,
+      "title": "VERTICAL PROJECTION"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 93,
+      "title": "VERTICAL PROJECTION — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.902,
+      "page": 94,
+      "title": "VERTICAL PROJECTION — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 95,
+      "title": "VERTICAL PROJECTION — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 96,
+      "title": "VERTICAL PROJECTION — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.907,
+      "page": 97,
+      "title": "VERTICAL PROJECTION"
+    },
+    {
+      "meaningful_occupancy": 0.596,
+      "page": 98,
+      "title": "VT SIGNED AREA"
+    },
+    {
+      "meaningful_occupancy": 0.916,
+      "page": 99,
+      "title": "VT SIGNED AREA — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.715,
+      "page": 100,
+      "title": "VT SIGNED AREA — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.794,
+      "page": 101,
+      "title": "VT SIGNED AREA — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.915,
+      "page": 102,
+      "title": "VT SIGNED AREA — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.849,
+      "page": 103,
+      "title": "VT SIGNED AREA"
+    },
+    {
+      "meaningful_occupancy": 0.614,
+      "page": 104,
+      "title": "XT SLOPE VELOCITY"
+    },
+    {
+      "meaningful_occupancy": 0.916,
+      "page": 105,
+      "title": "XT SLOPE VELOCITY — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.88,
+      "page": 106,
+      "title": "XT SLOPE VELOCITY — watch it solved"
+    },
+    {
+      "meaningful_occupancy": 0.908,
+      "page": 107,
+      "title": "XT SLOPE VELOCITY — checking your work"
+    },
+    {
+      "meaningful_occupancy": 0.911,
+      "page": 108,
+      "title": "XT SLOPE VELOCITY — your turn"
+    },
+    {
+      "meaningful_occupancy": 0.849,
+      "page": 109,
+      "title": "XT SLOPE VELOCITY"
+    },
+    {
+      "meaningful_occupancy": 0.842,
+      "page": 110,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.791,
+      "page": 111,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.791,
+      "page": 112,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.797,
+      "page": 113,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.791,
+      "page": 114,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.797,
+      "page": 115,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.797,
+      "page": 116,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.795,
+      "page": 117,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.793,
+      "page": 118,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.797,
+      "page": 119,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.791,
+      "page": 120,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.791,
+      "page": 121,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.198,
+      "page": 122,
+      "title": "Appendix A — Core Practice"
+    },
+    {
+      "meaningful_occupancy": 0.789,
+      "page": 123,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 124,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 125,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 126,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 127,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 128,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 129,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 130,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 131,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 132,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 133,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 134,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 135,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 136,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 137,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.739,
+      "page": 138,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.246,
+      "page": 139,
+      "title": "Appendix B — Core Solutions"
+    },
+    {
+      "meaningful_occupancy": 0.889,
+      "page": 140,
+      "title": "Appendix C — Printable Handout"
+    },
+    {
+      "meaningful_occupancy": 0.839,
+      "page": 141,
+      "title": "Appendix C — Printable Handout"
+    },
+    {
+      "meaningful_occupancy": 0.699,
+      "page": 142,
+      "title": "Appendix C — Printable Handout"
+    }
+  ],
+  "product_id": "CORE_STUDY_GUIDE",
+  "publication_engineering_pass": true,
+  "publication_plan_digest": "bf07bb86a0d3968a48da5c16e33a807046090c23a412c3327f053d3ac341897e",
+  "report_id": "PHY-P-GA-CORE1A-QUALITY-PHY-P-GA-CORE1A-PHY-P-G-CORE1-PLAN-v1",
+  "required_sections": [
+    "MAIN_TEACHING",
+    "APPENDIX_A_CORE_PRACTICE",
+    "APPENDIX_B_CORE_SOLUTIONS",
+    "APPENDIX_C_PRINTABLE_HANDOUT"
+  ],
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "total_vector_ops": 2302,
+  "upstream_core1_digest": "30f53e64454a1c68adbcde22af4ea5bb95526b97fa1b04fedd0347b2eed0e8ee",
+  "upstream_core1_plan_id": "PHY-P-G-CORE1-PLAN-v1"
+}
