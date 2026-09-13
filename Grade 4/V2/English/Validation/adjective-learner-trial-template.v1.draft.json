@@ -1,0 +1,34 @@
+{
+  "schema": "Grade4EnglishAdjectiveLearnerTrialV1_DRAFT",
+  "status": "NOT_RUN",
+  "learner": {
+    "grade": 4,
+    "anonymous_id": null
+  },
+  "artifact": "adjective-golden-lesson.v1.draft.pdf",
+  "observer": null,
+  "date": null,
+  "conditions": {
+    "adult_reading_support_used": null,
+    "adult_grammar_paraphrase_used": null,
+    "answer_revealing_prompt_used": null
+  },
+  "observations": {
+    "states_page_task_without_grammar_translation": null,
+    "classifies_before_ordering": null,
+    "boundary_word_does_not_create_new_box": null,
+    "explains_star_as_describing_word_without_book_box": null,
+    "explains_starred_word_placement_from_model_or_example": null,
+    "fresh_retry_uses_full_routine": null,
+    "needs_internal_or_adult_metadata": null
+  },
+  "regression_tasks": {
+    "large-heavy-brown-leather-suitcase": "NOT_RUN",
+    "broken-old-metal-cooking-pot": "NOT_RUN",
+    "cheerful-new-bright-classroom-posters": "NOT_RUN",
+    "fresh-unseen-item": "NOT_RUN"
+  },
+  "confusions": [],
+  "observer_notes": [],
+  "decision": "NOT_READY"
+}
