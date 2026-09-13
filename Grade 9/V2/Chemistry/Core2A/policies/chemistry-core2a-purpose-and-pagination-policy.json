@@ -1,0 +1,74 @@
+{
+  "policy_id": "CHEM-CORE2A-PURPOSE-PAGINATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "product": "CORE2A",
+  "purpose_resolution": {
+    "required_before_authoring": true,
+    "allowed_values": [
+      "STARTER",
+      "PRACTICE",
+      "REVISION",
+      "COMPETITION"
+    ],
+    "unresolved_action": "ASK_USER",
+    "unresolved_failure_code": "CORE2A_PURPOSE_UNRESOLVED",
+    "agent_may_infer_without_user_confirmation": false
+  },
+  "purpose_profiles": {
+    "STARTER": {
+      "primary_job": "high-scaffold entry into the taught problem families",
+      "upfront_support": "HIGH",
+      "source_question_duplication_default": "SELECTIVE",
+      "fresh_transfer_default": "LOW",
+      "workspace": "DEMAND_SIZED"
+    },
+    "PRACTICE": {
+      "primary_job": "independent routine practice with compact rescue support",
+      "upfront_support": "MEDIUM",
+      "source_question_duplication_default": "SELECTIVE",
+      "fresh_transfer_default": "MEDIUM",
+      "workspace": "DEMAND_SIZED"
+    },
+    "REVISION": {
+      "primary_job": "compressed retrieval, rapid checking and error repair",
+      "upfront_support": "LOW",
+      "source_question_duplication_default": "MINIMAL",
+      "fresh_transfer_default": "MEDIUM",
+      "workspace": "MINIMAL"
+    },
+    "COMPETITION": {
+      "primary_job": "fresh source-anchored transfer with reversed targets, constraint chains, comparison, error diagnosis and representation switching",
+      "upfront_support": "MINIMAL",
+      "source_question_duplication_default": "NONE_UNLESS_EXPLICITLY_NEEDED_AS_ANCHOR",
+      "fresh_transfer_default": "HIGH",
+      "workspace": "DEMAND_SIZED",
+      "forbidden_default": "RENDER_ALL_CORE2_SOURCE_ITEMS_AS_A_SECOND_HELPER_BOOK"
+    }
+  },
+  "page_budget": {
+    "default_max_physical_pages_per_learner_question": 2,
+    "page_1_job": "ATTEMPT",
+    "page_2_job": "QUICK_CHECK_PLUS_FULL_WORKING_PLUS_VERIFICATION",
+    "dedicated_clue_page_default": false,
+    "dedicated_blank_working_page_default": false,
+    "exception_requires_reason": true,
+    "exception_failure_code": "CORE2A_PAGE_BUDGET_EXCEPTION_UNJUSTIFIED"
+  },
+  "answer_closure": {
+    "closed_question_requires_quick_check": true,
+    "closed_question_requires_full_working": true,
+    "open_question_requires_expected_response_rubric": true,
+    "pagination_must_not_weaken_answer_closure": true
+  },
+  "rca_guard": {
+    "failure_pattern": "CORE2A_BECOMES_CORE2_WITH_MORE_PAGES",
+    "prevention": [
+      "resolve learner purpose before realization",
+      "change selection and scaffolding according to purpose",
+      "treat reveal states as pedagogical states, not automatic physical pages",
+      "allocate workspace from question demand rather than a fixed template",
+      "keep Core2 as source-question helper authority"
+    ]
+  }
+}
