@@ -1,0 +1,709 @@
+schema: Grade4EnglishChildFacingV2_DRAFT
+schema_status: DRAFT
+extract_status: DRAFT
+
+source_extract:
+  source:
+    id: SRC-G4-ENG-ADJ-UPLOAD-2026-09-13
+    title: adj.pdf
+    type: DERIVED_STUDY_GUIDE
+    authority: DERIVED_STUDY_MATERIAL_ASSERTION
+    pages: 21
+    provenance: USER_UPLOADED
+    transcription_status: VERIFIED_FROM_PARSED_UPLOAD
+    source_note: >-
+      This upload is a derived Grade 4 English study material, not the original
+      school workbook. Statements inside it about "the worksheet" or "the source"
+      are therefore extracted as claims of this study guide unless independently
+      verified against the primary workbook.
+
+  child_surface_policy:
+    target_age_band: GRADE_4
+    expose_internal_labels: false
+    preferred_boundary_message: "This word does not fit our seven boxes yet. Keep it aside for now."
+    preferred_learning_rhythm: "NOTICE -> UNDERSTAND -> WATCH ONE -> TRY ONE -> CHECK -> REPAIR -> FRESH RETRY -> TRANSFER"
+
+  source_model:
+    explicit_rules:
+      - rule_id: ADJ-SEVEN-FAMILIES
+        pages: [1, 2]
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: GRAMMAR
+        claim: >-
+          The study guide says the worksheet uses seven adjective families:
+          Opinion, Size, Age, Shape, Colour, Origin, Material.
+        categories:
+          - id: OPINION
+            recognition_question: "What do I think or feel?"
+          - id: SIZE
+            recognition_question: "How big, small, or wide?"
+          - id: AGE
+            recognition_question: "How old or new?"
+          - id: SHAPE
+            recognition_question: "What shape?"
+          - id: COLOUR
+            recognition_question: "What colour?"
+          - id: ORIGIN
+            recognition_question: "Where from?"
+          - id: MATERIAL
+            recognition_question: "Made of what?"
+
+      - rule_id: ADJ-SOURCE-ORDER
+        pages: [4, 5]
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: GRAMMAR
+        claim: "Opinion -> Size -> Age -> Shape -> Colour -> Origin -> Material -> Noun"
+        note: >-
+          Because the upload is derived study material, this order is not promoted
+          to primary-workbook authority by this extraction alone.
+
+      - rule_id: ADJ-BOUNDARY
+        page: 5
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: GRAMMAR
+        claim: >-
+          If a word does not fit the seven-family model cleanly, do not invent an
+          eighth source family merely to force classification.
+
+      - rule_id: TRAVEL-WRITING-CHECKLIST
+        page: 9
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: WRITING
+        claim: >-
+          The guide states that the worksheet checks an interesting opening,
+          at least six adjectives, visible details, correct adjective order, and
+          underlining of adjectives.
+
+      - rule_id: READING-POEM-AUTHORITY
+        pages: [12, 13]
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: READING
+        claim: >-
+          For poem-comprehension questions, use the poem as the answer authority;
+          outside knowledge must remain separate.
+
+      - rule_id: INFERENCE-ACC
+        pages: [15, 16]
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: READING
+        claim: "Build inference responses as Answer + Clue + Connection."
+
+      - rule_id: MULTI-CAUSE-SYNTHESIS
+        pages: [17, 18]
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: READING
+        claim: >-
+          When a question asks whether one cause was the only cause, gather more
+          than one relevant clue before synthesising the answer.
+
+      - rule_id: TRANSFER-FRAMES
+        pages: [19, 20, 21]
+        authority: DERIVED_STUDY_MATERIAL_ASSERTION
+        domain: READING_WRITING
+        claim: >-
+          Use Species -> Threat -> Action for one transfer task and Choice -> Reason
+          -> Expected effect for a hypothetical-choice task.
+
+    derived_patterns:
+      - pattern_id: TEACH-TRY-RETRY
+        evidence_pages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        description: >-
+          Most modules use a repeated sequence of learning goal/concept or source
+          rule, worked/annotated model, guided practice, hint ladder, and fresh
+          independent retry.
+
+      - pattern_id: PERSISTENT-ORGANIZER
+        evidence_pages: [1, 2, 4, 5, 7, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19, 20]
+        description: >-
+          The guide reuses named organizers such as Adjective Family Cards,
+          Adjective Order Train, Mystery Object Planner, Travel Blogger Planner,
+          Stanza Meaning Map, Answer-Clue-Connection, Multi Clue Table, and
+          threat/action or choice/reason frames.
+
+    unresolved_boundaries:
+      - boundary_id: ADJ-TRADITIONAL
+        page: 5
+        lexical_item: traditional
+        internal_label: SOURCE_MODEL_BOUNDARY
+        source_category: null
+        child_message: "This word does not fit our seven boxes yet."
+        canonical_analysis: null
+
+      - boundary_id: PRIMARY-WORKBOOK-AUTHORITY
+        pages: [1, 4, 9]
+        internal_label: SOURCE_UNRESOLVED
+        issue: >-
+          The guide repeatedly refers to "the worksheet" or "the source", but the
+          uploaded file itself is not the primary worksheet. The seven-family model,
+          order, and writing checklist therefore require primary-source verification
+          before being labelled EXPLICIT_SOURCE_RULE in a canonical extraction.
+
+  visual_models:
+    - model_id: VM-NOUN-PHRASE-BUILDER
+      pages: [1, 7]
+      type: STRUCTURE_FRAME
+      learner_role: "Shows describing words attaching to a noun."
+
+    - model_id: VM-ADJECTIVE-FAMILY-CARDS
+      pages: [1, 2]
+      type: CLASSIFICATION_GRID
+      learner_role: "Seven-family classification model."
+
+    - model_id: VM-ADJECTIVE-ORDER-TRAIN
+      pages: [4, 5]
+      type: ORDERING_SEQUENCE
+      learner_role: "Persistent order model for source-supported adjective families."
+
+    - model_id: VM-MYSTERY-OBJECT-PLANNER
+      pages: [7, 8]
+      type: WRITING_PLANNER
+      learner_role: "Object -> useful details -> made of/from -> possible use."
+
+    - model_id: VM-TRAVEL-BLOGGER-PLANNER
+      pages: [9, 10]
+      type: WRITING_PLANNER
+      learner_role: "Opening -> what I see -> zoom in -> how I feel."
+
+    - model_id: VM-STANZA-MEANING-MAP
+      pages: [12, 13]
+      type: READING_ORGANIZER
+      learner_role: "Tracks the four-part movement of the poem."
+
+    - model_id: VM-TEXT-VS-THINKING
+      pages: [13, 19]
+      type: EVIDENCE_BOUNDARY
+      learner_role: "Separates text evidence from outside knowledge or thinking."
+
+    - model_id: VM-ANSWER-CLUE-CONNECTION
+      pages: [15, 16]
+      type: REASONING_FRAME
+      learner_role: "Separates inference claim, text evidence, and reasoning link."
+
+    - model_id: VM-MULTI-CLUE-TABLE
+      pages: [17, 18]
+      type: SYNTHESIS_FRAME
+      learner_role: "Collects several clues before a combined answer."
+
+    - model_id: VM-TRANSFER-THREAT-ACTION
+      pages: [19, 20]
+      type: TRANSFER_FRAME
+      learner_role: "Links species, threat, and protective action."
+
+    - model_id: VM-CHOICE-REASON
+      pages: [19, 20]
+      type: JUSTIFICATION_FRAME
+      learner_role: "Links a hypothetical choice to why it matters."
+
+  learning_cells:
+    - learning_cell_id: LC-G4-ENG-ADJ-CLASSIFY
+      title: "Adjectives and the seven worksheet families"
+      domain: GRAMMAR
+      pages: [1, 2, 3]
+      objective: >-
+        Identify adjectives and classify them using the seven recognition questions
+        claimed by the study guide.
+      prerequisites:
+        - identify_noun
+        - identify_describing_word
+      skill_invariant: "Classify by the question the adjective answers, not by guessing."
+      source_refs: [ADJ-SEVEN-FAMILIES]
+      mental_model_refs: [VM-NOUN-PHRASE-BUILDER, VM-ADJECTIVE-FAMILY-CARDS]
+      misconceptions:
+        - confuse_origin_and_material
+        - confuse_size_and_shape
+      evidence_sequence:
+        - ACQUISITION
+        - INDEPENDENT_USE
+
+    - learning_cell_id: LC-G4-ENG-ADJ-ORDER
+      title: "Adjective order and source boundaries"
+      domain: GRAMMAR
+      pages: [4, 5, 6]
+      objective: "Classify first, then order only source-supported categories."
+      prerequisites:
+        - LC-G4-ENG-ADJ-CLASSIFY
+      skill_invariant: "Find noun -> classify -> mark boundary -> order -> reread."
+      source_refs: [ADJ-SOURCE-ORDER, ADJ-BOUNDARY]
+      mental_model_refs: [VM-ADJECTIVE-ORDER-TRAIN]
+      misconceptions:
+        - reorder_without_classifying
+        - invent_category_for_unresolved_word
+      evidence_sequence:
+        - ACQUISITION
+        - INDEPENDENT_USE
+
+    - learning_cell_id: LC-G4-ENG-DESCRIBE-OBJECT
+      title: "Describe a mystery object"
+      domain: WRITING
+      pages: [7, 8]
+      objective: >-
+        Use a noun plus useful descriptive details, material/origin information,
+        and a plausible use in a short description.
+      prerequisites:
+        - LC-G4-ENG-ADJ-CLASSIFY
+      mental_model_refs: [VM-MYSTERY-OBJECT-PLANNER]
+      misconception: adjective_stuffing
+      evidence_sequence:
+        - ACQUISITION
+        - INDEPENDENT_USE
+        - TRANSFER
+
+    - learning_cell_id: LC-G4-ENG-TRAVEL-DESCRIPTION
+      title: "Travel-blogger descriptive writing"
+      domain: WRITING
+      pages: [9, 10, 11]
+      objective: >-
+        Write a short place description with an interesting opening, visible
+        details, natural adjective use, and the checklist claimed by the guide.
+      source_refs: [TRAVEL-WRITING-CHECKLIST]
+      mental_model_refs: [VM-TRAVEL-BLOGGER-PLANNER]
+      misconception: adjective_stuffing
+      evidence_sequence:
+        - ACQUISITION
+        - INDEPENDENT_USE
+        - TRANSFER
+
+    - learning_cell_id: LC-G4-ENG-DODO-MEANING
+      title: "Read The Dodo's Story for meaning"
+      domain: READING
+      pages: [12, 13, 14]
+      objective: "Understand key vocabulary, follow stanza meaning, and state the poem's larger message."
+      source_refs: [READING-POEM-AUTHORITY]
+      mental_model_refs: [VM-STANZA-MEANING-MAP, VM-TEXT-VS-THINKING]
+      evidence_sequence:
+        - ACQUISITION
+        - INDEPENDENT_USE
+        - TRANSFER
+
+    - learning_cell_id: LC-G4-ENG-INFERENCE-ACC
+      title: "Inference with Answer + Clue + Connection"
+      domain: READING
+      pages: [15, 16]
+      objective: "Explain an inference using an answer, a poem clue, and a reasoning connection."
+      source_refs: [INFERENCE-ACC]
+      mental_model_refs: [VM-ANSWER-CLUE-CONNECTION]
+      misconception: plausible_but_unsupported_answer
+      evidence_sequence:
+        - ACQUISITION
+        - INDEPENDENT_USE
+        - TRANSFER
+
+    - learning_cell_id: LC-G4-ENG-MULTI-CAUSE
+      title: "Bring multiple causes together"
+      domain: READING
+      pages: [17, 18]
+      objective: "Gather multiple human-linked clues and synthesise a multi-cause answer."
+      source_refs: [MULTI-CAUSE-SYNTHESIS]
+      mental_model_refs: [VM-MULTI-CLUE-TABLE]
+      misconception: stops_after_first_cause
+      evidence_sequence:
+        - ACQUISITION
+        - INDEPENDENT_USE
+        - TRANSFER
+
+    - learning_cell_id: LC-G4-ENG-TRANSFER-JUSTIFY
+      title: "Transfer the message and justify a choice"
+      domain: READING_WRITING
+      pages: [19, 20, 21]
+      objective: >-
+        Connect a present-day threat to a protective action and justify a
+        hypothetical choice with a reason and expected effect.
+      source_refs: [TRANSFER-FRAMES]
+      mental_model_refs: [VM-TEXT-VS-THINKING, VM-TRANSFER-THREAT-ACTION, VM-CHOICE-REASON]
+      evidence_sequence:
+        - TRANSFER
+        - INDEPENDENT_USE
+
+  learning_episodes:
+    - episode_id: EP-ADJ-CLASSIFY-01
+      learning_cell_ref: LC-G4-ENG-ADJ-CLASSIFY
+      pages: [1, 2, 3]
+      notice: "An adjective adds information about a noun."
+      understand: "Use the seven recognition questions to name the family."
+      worked_example: "Swedish -> Origin; metal -> Material; wide -> Size; round -> Shape."
+      immediate_check: "Contrast Swedish/wooden and wide/round."
+      guided_try: "Sort the visible adjective list into the seven categories."
+      hint_ladder:
+        - "Ask what the word tells you."
+        - "The answer to that question names the family."
+        - "Place the word under the seven labelled headings."
+      fresh_retry: "Classify enormous, ancient, oval, Brazilian, cotton, lovely, purple."
+      evidence_stage_after_retry: INDEPENDENT_USE
+
+    - episode_id: EP-ADJ-ORDER-01
+      learning_cell_ref: LC-G4-ENG-ADJ-ORDER
+      pages: [4, 5, 6]
+      notice: "Classify before reordering."
+      understand: "Use only the source-supported family order."
+      worked_example: "huge ancient Indian stone temple"
+      annotated_model: "beautiful large wooden door"
+      boundary_example:
+        lexical_item: traditional
+        internal_label: SOURCE_MODEL_BOUNDARY
+        child_message: "This word does not fit our seven boxes yet."
+      guided_try: "Repair: plastic / round / new / fascinating / toy."
+      hint_ladder:
+        - "Find the noun."
+        - "Label each adjective by family."
+        - "Read only the needed family boxes from left to right."
+      fresh_retry: "Rewrite: old / tiny / Brazilian / wooden / house."
+      evidence_stage_after_retry: INDEPENDENT_USE
+
+    - episode_id: EP-MYSTERY-OBJECT-01
+      learning_cell_ref: LC-G4-ENG-DESCRIBE-OBJECT
+      pages: [7, 8]
+      worked_example: >-
+        A model object description gives useful details, material/origin information,
+        and a plausible use.
+      guided_try: "Plan a mysterious object, then write three clear sentences."
+      repair_probe: "If the description becomes an adjective pile, spread details across sentences."
+      fresh_retry: "Describe a strange box found in an old attic and give one plausible use."
+      evidence_stage_after_retry: TRANSFER
+
+    - episode_id: EP-TRAVEL-BLOG-01
+      learning_cell_ref: LC-G4-ENG-TRAVEL-DESCRIPTION
+      pages: [9, 10, 11]
+      understand: "Opening -> what I see -> zoom in -> how I feel."
+      worked_example: "A coast paragraph models natural adjective use across sentences."
+      contrast: "Natural descriptive writing vs adjective stuffing."
+      guided_try: "Plan one destination and draft 4-5 sentences."
+      hint_ladder:
+        - "Pick one thing you can see."
+        - "Add one useful detail."
+        - "Use the four-part planner."
+      fresh_retry: "Write 4-5 sentences about a mountain village after light rain."
+      evidence_stage_after_retry: INDEPENDENT_USE
+
+    - episode_id: EP-DODO-MEANING-01
+      learning_cell_ref: LC-G4-ENG-DODO-MEANING
+      pages: [12, 13, 14]
+      reading_routine:
+        - preview_title
+        - read_aloud_for_story
+        - reread_for_clues
+        - check_key_vocabulary
+        - summarise_each_stanza
+      worked_example: "Dodo lives freely -> dangers arrive -> Dodo disappears -> conservation message."
+      guided_try: "Summarise four stanzas and state the message."
+      hint_ladder:
+        - "Read one stanza only."
+        - "Say what changed in that stanza."
+        - "Put the four summaries into the meaning map."
+      fresh_retry: "Read a new conservation poem and state its topic and message."
+      evidence_stage_after_retry: TRANSFER
+
+    - episode_id: EP-INFERENCE-ACC-01
+      learning_cell_ref: LC-G4-ENG-INFERENCE-ACC
+      pages: [15, 16]
+      worked_example: "Forest clearing -> less food/habitat, supported by the fallen-fruit clue."
+      contrast: "Plausible idea vs evidence-supported inference."
+      guided_try: "Fill Answer -> Clue -> Connection for why forest clearing could harm the Dodo."
+      hint_ladder:
+        - "Find the line about what the Dodo got from trees."
+        - "Use Answer + Clue + Connection."
+        - "Fill the three boxes before combining them."
+      fresh_retry: "Use a different passage for one cause-effect inference."
+      evidence_stage_after_retry: TRANSFER
+
+    - episode_id: EP-MULTI-CAUSE-01
+      learning_cell_ref: LC-G4-ENG-MULTI-CAUSE
+      pages: [17, 18]
+      worked_example: "Hunting was not the only pressure; dogs/cats and forest clearing are additional clues."
+      diagnostic_probe: "Find two other human-linked actions in the danger stanza."
+      guided_try: "Collect hunting, introduced animals, and forest clearing before answering."
+      hint_ladder:
+        - "Look for another human-linked action."
+        - "Collect at least two non-hunting clues."
+        - "Use the clue table before the synthesis sentence."
+      fresh_retry: "Use a new paragraph containing three causes."
+      evidence_stage_after_retry: TRANSFER
+
+    - episode_id: EP-TRANSFER-JUSTIFY-01
+      learning_cell_ref: LC-G4-ENG-TRANSFER-JUSTIFY
+      pages: [19, 20, 21]
+      worked_example: "Sea turtle threat/action example plus a Dodo choice/reason example."
+      guided_try: "Plan one threat-action response and one choice-reason response."
+      hint_ladder:
+        - "Identify which frame the question needs."
+        - "Link action to threat or reason to chosen event."
+        - "Fill the frame boxes first."
+      fresh_retry: "Use a different species and a different story."
+      evidence_stage_after_retry: TRANSFER
+
+  tasks:
+    - task_id: T-ADJ-SORT-SOURCE-WORDS
+      page: 2
+      domain: GRAMMAR
+      action: CLASSIFY
+      source_authority: DERIVED_STUDY_MATERIAL_ASSERTION
+      child_prompt_summary: "Sort the listed adjective words into seven families."
+      mental_model_ref: VM-ADJECTIVE-FAMILY-CARDS
+      evidence_stage: ACQUISITION
+      fresh_retry_ref: T-ADJ-SORT-FRESH
+
+    - task_id: T-ADJ-SORT-FRESH
+      page: 3
+      domain: GRAMMAR
+      action: CLASSIFY
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      child_prompt_summary: "Classify a fresh set of seven adjectives."
+      evidence_stage: INDEPENDENT_USE
+
+    - task_id: T-ADJ-ORDER-GUIDED
+      page: 5
+      domain: GRAMMAR
+      action: ORDER
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      child_prompt_summary: "Repair a mixed adjective phrase after labelling categories."
+      mental_model_ref: VM-ADJECTIVE-ORDER-TRAIN
+      evidence_stage: ACQUISITION
+      fresh_retry_ref: T-ADJ-ORDER-FRESH
+
+    - task_id: T-ADJ-ORDER-FRESH
+      page: 6
+      domain: GRAMMAR
+      action: ORDER
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      child_prompt_summary: "Rewrite a fresh mixed adjective phrase independently."
+      evidence_stage: INDEPENDENT_USE
+
+    - task_id: T-MYSTERY-OBJECT-GUIDED
+      page: 7
+      domain: WRITING
+      action: WRITE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      mental_model_ref: VM-MYSTERY-OBJECT-PLANNER
+      evidence_stage: ACQUISITION
+      fresh_retry_ref: T-MYSTERY-OBJECT-FRESH
+
+    - task_id: T-MYSTERY-OBJECT-FRESH
+      page: 8
+      domain: WRITING
+      action: WRITE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      evidence_stage: TRANSFER
+
+    - task_id: T-TRAVEL-BLOG-GUIDED
+      page: 10
+      domain: WRITING
+      action: WRITE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      mental_model_ref: VM-TRAVEL-BLOGGER-PLANNER
+      evidence_stage: ACQUISITION
+      fresh_retry_ref: T-TRAVEL-BLOG-FRESH
+
+    - task_id: T-TRAVEL-BLOG-FRESH
+      page: 11
+      domain: WRITING
+      action: WRITE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      evidence_stage: INDEPENDENT_USE
+
+    - task_id: T-DODO-STANZA-SUMMARY
+      page: 13
+      domain: READING
+      action: SUMMARIZE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      mental_model_ref: VM-STANZA-MEANING-MAP
+      evidence_stage: ACQUISITION
+      fresh_retry_ref: T-FRESH-POEM-MESSAGE
+
+    - task_id: T-FRESH-POEM-MESSAGE
+      page: 14
+      domain: READING
+      action: SUMMARIZE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      evidence_stage: TRANSFER
+
+    - task_id: T-INFERENCE-ACC
+      page: 16
+      domain: READING
+      action: EXPLAIN
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      mental_model_ref: VM-ANSWER-CLUE-CONNECTION
+      evidence_stage: ACQUISITION
+      fresh_retry_ref: T-INFERENCE-FRESH
+
+    - task_id: T-INFERENCE-FRESH
+      page: 16
+      domain: READING
+      action: EXPLAIN
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      evidence_stage: TRANSFER
+
+    - task_id: T-MULTI-CAUSE
+      page: 18
+      domain: READING
+      action: SYNTHESIZE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      mental_model_ref: VM-MULTI-CLUE-TABLE
+      evidence_stage: ACQUISITION
+      fresh_retry_ref: T-MULTI-CAUSE-FRESH
+
+    - task_id: T-MULTI-CAUSE-FRESH
+      page: 18
+      domain: READING
+      action: SYNTHESIZE
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      evidence_stage: TRANSFER
+
+    - task_id: T-TRANSFER-THREAT-ACTION
+      page: 20
+      domain: READING_WRITING
+      action: TRANSFER
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      mental_model_ref: VM-TRANSFER-THREAT-ACTION
+      evidence_stage: TRANSFER
+
+    - task_id: T-TRANSFER-CHOICE-REASON
+      page: 20
+      domain: READING_WRITING
+      action: JUSTIFY
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      mental_model_ref: VM-CHOICE-REASON
+      evidence_stage: TRANSFER
+
+    - task_id: T-TRANSFER-FRESH-SPECIES
+      page: 20
+      domain: READING_WRITING
+      action: TRANSFER
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      evidence_stage: TRANSFER
+
+    - task_id: T-TRANSFER-FRESH-STORY
+      page: 21
+      domain: READING_WRITING
+      action: JUSTIFY
+      source_authority: AUTHORED_WITHIN_DERIVED_GUIDE
+      evidence_stage: INDEPENDENT_USE
+
+  diagnostics:
+    - diagnostic_id: D-ADJ-ORIGIN-MATERIAL
+      pages: [1, 2]
+      trigger: "Child confuses where-from with made-of."
+      probe: "Does this word tell where it is from, or what it is made of?"
+      likely_error: GRAMMAR_RULE_ERROR
+      repair: "Contrast an origin word with a material word using the two recognition questions."
+      fresh_retry: "Classify a new origin/material pair."
+
+    - diagnostic_id: D-ADJ-SIZE-SHAPE
+      pages: [1, 2]
+      trigger: "Child confuses how big/wide with what shape."
+      probe: "Does the word tell how big/wide, or what shape?"
+      likely_error: APPLICATION_ERROR
+      repair: "Contrast wide with round."
+      fresh_retry: "Classify tiny without help."
+
+    - diagnostic_id: D-ADJ-BOUNDARY-INVENTION
+      page: 5
+      trigger: "Learner or author forces an unresolved adjective into a new category."
+      probe: "Which of the seven source questions does this word answer cleanly?"
+      likely_error: SOURCE_MODEL_BOUNDARY
+      repair: "Keep the word outside the seven boxes unless source evidence establishes a category."
+      fresh_retry: "Classify only source-supported adjectives in a new phrase."
+
+    - diagnostic_id: D-WRITING-ADJECTIVE-STUFFING
+      pages: [8, 10]
+      trigger: "Description becomes a long adjective pile."
+      probe: "Can one detail move into its own sentence?"
+      likely_error: SENTENCE_CONTROL_ERROR
+      repair: "Spread details across sentences and preserve a clear noun."
+      fresh_retry: "Rewrite one sentence with fewer stacked adjectives."
+
+    - diagnostic_id: D-INFERENCE-UNSUPPORTED
+      pages: [15, 16]
+      trigger: "Answer is plausible but has no text clue."
+      probe: "Which words in the text helped you think that?"
+      likely_error: EVIDENCE_ERROR
+      repair: "Fill Answer, Clue, Connection separately."
+      fresh_retry: "Use a new passage."
+
+    - diagnostic_id: D-MULTI-CAUSE-ONE-CLUE
+      pages: [17, 18]
+      trigger: "Child names only hunting."
+      probe: "Find two other human-linked actions in the danger stanza."
+      likely_error: TEXT_LOCATION_ERROR
+      repair: "Collect several clues before combining them."
+      fresh_retry: "Use a new three-cause paragraph."
+
+  transfer:
+    - transfer_id: TR-ADJ-OWN-DESCRIPTION
+      pages: [7, 8, 9, 10, 11]
+      from: GRAMMAR_CLASSIFICATION_AND_ORDER
+      to: AUTHENTIC_DESCRIPTIVE_WRITING
+
+    - transfer_id: TR-READING-FRESH-POEM
+      page: 14
+      from: STANZA_SUMMARY
+      to: NEW_CONSERVATION_POEM
+
+    - transfer_id: TR-INFERENCE-FRESH-TEXT
+      page: 16
+      from: ANSWER_CLUE_CONNECTION
+      to: NEW_CAUSE_EFFECT_PASSAGE
+
+    - transfer_id: TR-MULTI-CAUSE-FRESH
+      page: 18
+      from: MULTI_CLUE_SYNTHESIS
+      to: NEW_THREE_CAUSE_PARAGRAPH
+
+    - transfer_id: TR-SPECIES-THREAT-ACTION
+      pages: [19, 20]
+      from: POEM_MESSAGE
+      to: NEW_SPECIES_AND_HUMAN_LINKED_THREAT
+
+    - transfer_id: TR-CHOICE-REASON-FRESH-STORY
+      page: 21
+      from: HYPOTHETICAL_CHOICE
+      to: NEW_STORY
+
+  delayed_retrieval:
+    status: NOT_PRESENT_AS_EXPLICIT_DELAYED_CHECK
+    note: >-
+      The upload contains fresh independent retries and transfer tasks, but no
+      explicit 3-7 day delayed-retrieval marker. Under the draft schema this is a
+      production gap for a study/revision product, not evidence of learner failure.
+
+  extraction_review:
+    strengths:
+      - "Strong teach -> guided try -> hint -> fresh retry pattern across modules."
+      - "Persistent visual organizers support classification, order, writing, and reasoning."
+      - "Fresh retries reduce the chance that success comes only from memorising a model."
+      - "Reading tasks separate answer, evidence, and reasoning rather than accepting unsupported guesses."
+      - "The guide explicitly recognises source boundaries instead of inventing adjective categories."
+
+    structural_gaps_under_new_schema:
+      - id: GAP-PRIMARY-AUTHORITY
+        severity: HIGH
+        description: >-
+          The file claims worksheet/source rules but is itself a derived guide.
+          Primary-workbook authority is not preserved strongly enough inside the artifact.
+
+      - id: GAP-CHILD-SURFACE-TECHNICALITY
+        severity: MEDIUM
+        description: >-
+          Some headings and boundary language remain adult/technical. Internal labels
+          should have simpler child-facing counterparts.
+
+      - id: GAP-DELAYED-RETRIEVAL
+        severity: MEDIUM
+        description: "No explicit delayed-retention check is scheduled or marked."
+
+      - id: GAP-GENERIC-PLACEHOLDERS
+        severity: MEDIUM
+        description: >-
+          Several pages contain generic 'Contrast Pair A <-> B' placeholders rather
+          than fully instantiated contrasts, weakening the learner-facing surface.
+
+      - id: GAP-PAGE-COUNT
+        severity: LOW
+        description: >-
+          The 21-page scope is broad. It is pedagogically richer than a rule-dump,
+          but a focused adjective-only study guide should be shorter and keep the
+          reading/poem unit separate unless intentionally combined.
+
+    decision: >-
+      Use this extraction as a benchmark for the new draft schema, but do not treat
+      adj.pdf as the primary workbook authority. Rebuild future adjective material
+      from primary source evidence with the same strong learning spine and clearer
+      child/teacher surface separation.
