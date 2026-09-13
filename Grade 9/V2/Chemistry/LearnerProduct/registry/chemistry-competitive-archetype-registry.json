@@ -1,0 +1,67 @@
+{
+  "registry_id": "CHEM-COMPETITIVE-ARCHETYPE-REGISTRY-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "archetypes": [
+    {
+      "archetype_id": "CHEM-ARCH-NEAR-TRANSFER",
+      "name": "NEAR_TRANSFER",
+      "purpose": "Keep the taught method but change chemistry/context enough to require genuine transfer.",
+      "required_novelty": ["NEW_INSTANCE", "NOT_COSMETIC_COPY"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-REVERSED-TARGET",
+      "name": "REVERSED_TARGET",
+      "purpose": "Reverse the direction of an already-taught quantitative or symbolic bridge.",
+      "required_novelty": ["TARGET_DIRECTION_CHANGED"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-HIDDEN-INFORMATION",
+      "name": "HIDDEN_INFORMATION",
+      "purpose": "Require inference of an intermediate quantity or chemistry state before the taught routine can be applied.",
+      "required_novelty": ["INTERMEDIATE_QUANTITY_NOT_GIVEN_DIRECTLY"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-REPRESENTATION-SWITCH",
+      "name": "REPRESENTATION_SWITCH",
+      "purpose": "Move between particle, structural, symbolic, tabular or quantitative representations.",
+      "required_novelty": ["INPUT_OR_OUTPUT_REPRESENTATION_CHANGED"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-ERROR-DIAGNOSIS",
+      "name": "ERROR_DIAGNOSIS",
+      "purpose": "Diagnose and repair a chemically meaningful error rather than repeat a standard calculation.",
+      "required_novelty": ["INCORRECT_WORK_OR_MODEL_TO_REPAIR"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-COMPARE-RANK",
+      "name": "COMPARE_RANK",
+      "purpose": "Compare or rank chemically related cases using a taught invariant or proportional relation.",
+      "required_novelty": ["MULTIPLE_CASES", "COMPARISON_REQUIRED"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-CONDITION-EXCEPTION",
+      "name": "CONDITION_EXCEPTION",
+      "purpose": "Require checking the condition under which a taught rule applies before using it.",
+      "required_novelty": ["CONDITION_OR_EXCEPTION_MUST_BE_TESTED"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-MULTI-STEP-BRIDGE",
+      "name": "MULTI_STEP_BRIDGE",
+      "purpose": "Chain at least two already-taught chemistry bridges without adding new curricular authority.",
+      "required_novelty": ["MULTIPLE_TAUGHT_STEPS_REQUIRED"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-CONSERVATION-RECONSTRUCTION",
+      "name": "CONSERVATION_RECONSTRUCTION",
+      "purpose": "Recover a missing/incorrect symbolic or particle relation from conservation or charge constraints.",
+      "required_novelty": ["RECONSTRUCTION_FROM_CONSTRAINT"]
+    },
+    {
+      "archetype_id": "CHEM-ARCH-MIXED-SYNTHESIS",
+      "name": "MIXED_SYNTHESIS",
+      "purpose": "Combine two or more mature taught buckets in one question.",
+      "required_novelty": ["AT_LEAST_TWO_COMPATIBLE_MATURE_BUCKETS"]
+    }
+  ]
+}
