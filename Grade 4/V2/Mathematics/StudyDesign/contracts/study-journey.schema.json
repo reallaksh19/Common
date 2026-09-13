@@ -77,6 +77,7 @@
           "additionalProperties": false
         },
         "learner_prompt": {"type": "string"},
+        "question_contract": {"$ref": "learner-question.schema.json"},
         "solution_text": {"type": "string"},
         "source_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
       },
