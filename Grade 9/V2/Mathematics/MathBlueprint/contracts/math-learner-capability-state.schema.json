@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learner-capability-state.schema.json",
+  "title": "Mathematics Learner Capability State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "state_id",
+    "schema_version",
+    "subject",
+    "run_ref",
+    "bundle_ref",
+    "prior_percent",
+    "capabilities",
+    "state_digest"
+  ],
+  "properties": {
+    "state_id": {"type": "string", "pattern": "^MATH-LCS-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "bundle_ref": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+    "prior_percent": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability_ref",
+          "readiness",
+          "basis",
+          "evidence_refs",
+          "owner_control_ref",
+          "notes"
+        ],
+        "properties": {
+          "capability_ref": {"type": "string", "minLength": 1},
+          "readiness": {"enum": ["UNKNOWN", "DEVELOPING", "READY"]},
+          "basis": {"enum": ["LEARNER_EVIDENCE", "OWNER_DECLARED_BASELINE", "UNKNOWN"]},
+          "evidence_refs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "owner_control_ref": {"type": ["string", "null"]},
+          "notes": {"type": ["string", "null"]}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"basis": {"const": "LEARNER_EVIDENCE"}}},
+            "then": {"properties": {"evidence_refs": {"minItems": 1}, "owner_control_ref": {"type": "null"}}}
+          },
+          {
+            "if": {"properties": {"basis": {"const": "OWNER_DECLARED_BASELINE"}}},
+            "then": {"properties": {"owner_control_ref": {"type": "string", "minLength": 1}}}
+          },
+          {
+            "if": {"properties": {"basis": {"const": "UNKNOWN"}}},
+            "then": {
+              "properties": {
+                "readiness": {"const": "UNKNOWN"},
+                "evidence_refs": {"maxItems": 0},
+                "owner_control_ref": {"type": "null"}
+              }
+            }
+          }
+        ]
+      }
+    },
+    "state_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
