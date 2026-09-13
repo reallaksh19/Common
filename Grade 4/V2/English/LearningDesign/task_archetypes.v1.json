@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "routing_policy": {
+    "raw_text_inference": "FORBIDDEN",
+    "unmatched_task": "FAIL_CLOSED",
+    "explicit_archetype_overrides_signature": true
+  },
+  "archetypes": [
+    {
+      "id": "ADJECTIVE_ORDER",
+      "signature": {"domain":"GRAMMAR","action":"ORDER","skill":"ADJECTIVE_ORDER"},
+      "scaffold_profile": "CLASSIFY_THEN_ORDER",
+      "answer_mode": "PHRASE",
+      "requires_source_taxonomy": true
+    },
+    {
+      "id": "IRREGULAR_GENDER_PAIR",
+      "signature": {"domain":"GRAMMAR","action":"TRANSFORM","skill":"IRREGULAR_GENDER_PAIR"},
+      "scaffold_profile": "PRETEACH_PAIR_THEN_APPLY",
+      "answer_mode": "WORD",
+      "requires_preteach": true
+    },
+    {
+      "id": "PRONOUN_CHOICE",
+      "signature": {"domain":"GRAMMAR","action":"CHOOSE","skill":"PRONOUN_ROLE"},
+      "scaffold_profile": "DECISION_QUESTION",
+      "answer_mode": "WORD_OR_PHRASE"
+    },
+    {
+      "id": "READING_TO_ORGANIZER",
+      "signature": {"domain":"READING","action":"EXTRACT","output_form":"ORGANIZER"},
+      "scaffold_profile": "SOURCE_EVIDENCE_LADDER",
+      "answer_mode": "SHORT_SOURCE_GROUNDED_RESPONSE",
+      "requires_evidence": true
+    },
+    {
+      "id": "WRITING_COMPOSITION",
+      "signature": {"domain":"WRITING","action":"WRITE"},
+      "scaffold_profile": "PLAN_MODEL_DRAFT_REVISE",
+      "answer_mode": "RUBRIC"
+    }
+  ]
+}

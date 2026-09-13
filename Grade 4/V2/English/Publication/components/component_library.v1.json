@@ -1,0 +1,23 @@
+{
+  "schema_version":"1.0.0",
+  "components":[
+    {"id":"WORKBOOK_REFERENCE_BADGE","purpose":"Display stable source identity such as Workbook p.98 - Box 5.","must_not":"invent or renumber source identifiers"},
+    {"id":"SOURCE_STRIP","purpose":"Reproduce only source lines needed for the task.","must_not":"paraphrase while claiming verbatim source"},
+    {"id":"EVIDENCE_HIGHLIGHT","purpose":"Visually mark exact source evidence used by the answer.","must_not":"highlight unsupported text"},
+    {"id":"KEYWORD_CHIPS","purpose":"Expose the small set of words the child should carry into the answer.","must_not":"become the complete answer"},
+    {"id":"ANSWER_BUILDER","purpose":"Turn evidence or classifications into a short response using a frame when needed.","must_not":"reveal answer before attempt unless worked example"},
+    {"id":"TRY_FIRST","purpose":"Visible independent attempt before progressive help."},
+    {"id":"ANSWER_CHECK","purpose":"Show the verified/derived answer after attempt.","must_not":"present unresolved content as correct"},
+    {"id":"FRESH_RETRY","purpose":"Require transfer to a new lexical/source surface after strong support."},
+    {"id":"CATEGORY_CARDS","purpose":"Stable grammar taxonomy cards bound to the source model."},
+    {"id":"ORDER_MODEL","purpose":"Stable adjective-order visual using only source-supported categories."},
+    {"id":"BOUNDARY_MARKER","purpose":"Mark describing words outside the school taxonomy without creating a new category."},
+    {"id":"PAIR_CARDS","purpose":"Preteach irregular vocabulary pairs."},
+    {"id":"DECISION_CARD","purpose":"Show concrete child questions such as Who? / Whose?"},
+    {"id":"WRITING_PLANNER","purpose":"Externalize ideas before drafting."},
+    {"id":"SHORT_MODEL","purpose":"One bounded model, not a block of solved examples."},
+    {"id":"DRAFT_SPACE","purpose":"Writing space proportional to the requested output."},
+    {"id":"REVISION_CHECKLIST","purpose":"Short child-facing checks for revision."},
+    {"id":"WORKED_EXAMPLE","purpose":"One fully modelled example before guided practice.","must_not":"become a passive block of solved items"}
+  ]
+}

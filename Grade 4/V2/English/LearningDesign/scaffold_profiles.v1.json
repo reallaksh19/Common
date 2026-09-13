@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "profiles": [
+    {
+      "schema_version":"1.0.0","id":"CLASSIFY_THEN_ORDER",
+      "purpose":"Grammar ordering when a stable school taxonomy controls order.",
+      "preteach_sequence":["SHOW_NOUN","SHOW_CATEGORY_QUESTIONS","SHOW_ORDER_MODEL"],
+      "teach_sequence":["FIND_NOUN","FIND_DESCRIBING_WORDS","CLASSIFY_SOURCE_SUPPORTED_WORDS","MARK_BOUNDARY_WORDS","MODEL_ORDER","READ_COMPLETE_PHRASE"],
+      "guided_sequence":["TRY_CLASSIFICATION","CHECK_CLASSIFICATION","ORDER_BOXED_WORDS","PLACE_BOUNDARY_WORD_WITH_EXPLICIT_AUTHORITY","READ_ALOUD"],
+      "help_sequence":[
+        {"level":"H1","role":"PROMPT","action":"Point to the noun. Do not reveal adjective categories."},
+        {"level":"H2","role":"CLUE","action":"Ask one source recognition question for the stuck word."},
+        {"level":"H3","role":"CHOICE","action":"Offer two plausible source-supported categories or mark it as a boundary word."},
+        {"level":"H4","role":"PARTIAL_MODEL","action":"Show the category order with the child's classified words, but leave the final phrase incomplete."},
+        {"level":"H5","role":"MODEL_AND_RETRY","action":"Show the complete model, then require a fresh lexical retry."}
+      ],
+      "required_components":["WORKBOOK_REFERENCE_BADGE","CATEGORY_CARDS","ORDER_MODEL","BOUNDARY_MARKER","TRY_FIRST","ANSWER_CHECK","FRESH_RETRY"],
+      "answer_reveal_policy":"AFTER_ATTEMPT_OR_H5","fresh_retry_required":true
+    },
+    {
+      "schema_version":"1.0.0","id":"PRETEACH_PAIR_THEN_APPLY",
+      "purpose":"Irregular vocabulary pairs that cannot be reliably derived from a productive rule.",
+      "preteach_sequence":["SHOW_PAIR_CARDS","SAY_PAIR","MATCH_PAIR"],
+      "teach_sequence":["MODEL_ONE_SENTENCE","NAME_SENTENCE_CLUE"],
+      "guided_sequence":["COMPLETE_ONE_WITH_CHOICE","COMPLETE_ONE_WITHOUT_CHOICE"],
+      "help_sequence":[
+        {"level":"H1","role":"PROMPT","action":"Point to the clue that tells which member of the pair is needed."},
+        {"level":"H2","role":"CLUE","action":"Show the base word and ask for its paired word."},
+        {"level":"H3","role":"CHOICE","action":"Offer the correct pair and one distractor."},
+        {"level":"H4","role":"PARTIAL_MODEL","action":"Insert the first sound or first letters only when useful."},
+        {"level":"H5","role":"MODEL_AND_RETRY","action":"Show the pair, reread the sentence, then use a new pair in a fresh sentence."}
+      ],
+      "required_components":["WORKBOOK_REFERENCE_BADGE","PAIR_CARDS","WORKED_EXAMPLE","TRY_FIRST","ANSWER_CHECK","FRESH_RETRY"],
+      "answer_reveal_policy":"AFTER_ATTEMPT_OR_H5","fresh_retry_required":true
+    },
+    {
+      "schema_version":"1.0.0","id":"DECISION_QUESTION",
+      "purpose":"Choice tasks where one concrete child question determines the grammatical role.",
+      "preteach_sequence":["SHOW_DECISION_QUESTIONS"],
+      "teach_sequence":["MODEL_QUESTION_TO_CHOICE","READ_COMPLETE_SENTENCE"],
+      "guided_sequence":["ASK_DECISION_QUESTION","CHOOSE","READ","CHECK_MEANING"],
+      "help_sequence":[
+        {"level":"H1","role":"PROMPT","action":"Ask the first child decision question without showing an option."},
+        {"level":"H2","role":"CLUE","action":"Identify whether the blank is doing the action or showing belonging."},
+        {"level":"H3","role":"CHOICE","action":"Show the two choices with their child questions."},
+        {"level":"H4","role":"PARTIAL_MODEL","action":"Read both choices in the sentence and compare meaning."},
+        {"level":"H5","role":"MODEL_AND_RETRY","action":"Show the correct sentence, then require a fresh sentence."}
+      ],
+      "required_components":["WORKBOOK_REFERENCE_BADGE","DECISION_CARD","TRY_FIRST","ANSWER_CHECK","FRESH_RETRY"],
+      "answer_reveal_policy":"AFTER_ATTEMPT_OR_H5","fresh_retry_required":true
+    },
+    {
+      "schema_version":"1.0.0","id":"SOURCE_EVIDENCE_LADDER",
+      "purpose":"Reading tasks that transform specific source evidence into a short answer or organizer entry.",
+      "preteach_sequence":["SHOW_OUTPUT_TARGET","SHOW_ONE_SOURCE_TO_ANSWER_MODEL"],
+      "teach_sequence":["FIND_SOURCE","HIGHLIGHT_EVIDENCE","PICK_KEY_WORDS","BUILD_SHORT_ANSWER","CHECK_AGAINST_TARGET"],
+      "guided_sequence":["TRY_FIND","CHECK_EVIDENCE","BUILD_WITH_FRAME","REMOVE_FRAME"],
+      "help_sequence":[
+        {"level":"H1","role":"LOCATE","action":"Point to the paragraph or source region, not the answer."},
+        {"level":"H2","role":"CLUE","action":"Point to the sentence containing the evidence."},
+        {"level":"H3","role":"EVIDENCE","action":"Reveal only the evidence phrase or highlight span."},
+        {"level":"H4","role":"FRAME","action":"Provide a short answer frame while keeping key words blank."},
+        {"level":"H5","role":"MODEL_AND_RETRY","action":"Show the source-grounded model answer, then require a fresh source-evidence item."}
+      ],
+      "required_components":["WORKBOOK_REFERENCE_BADGE","SOURCE_STRIP","EVIDENCE_HIGHLIGHT","KEYWORD_CHIPS","ANSWER_BUILDER","TRY_FIRST","ANSWER_CHECK"],
+      "answer_reveal_policy":"AFTER_ATTEMPT_OR_H5","fresh_retry_required":true,"source_only":true
+    },
+    {
+      "schema_version":"1.0.0","id":"PLAN_MODEL_DRAFT_REVISE",
+      "purpose":"Writing tasks requiring planning and revision rather than one-step answer production.",
+      "preteach_sequence":["SHOW_PURPOSE_AND_AUDIENCE","SHOW_SHORT_MODEL"],
+      "teach_sequence":["PLAN","MODEL_ONE_PART","DRAFT","CHECK","REVISE"],
+      "guided_sequence":["COMPLETE_PLANNER","DRAFT_WITH_FRAME","REMOVE_FRAME","SELF_CHECK"],
+      "help_sequence":[
+        {"level":"H1","role":"PROMPT","action":"Return to the planner and identify the missing idea."},
+        {"level":"H2","role":"CLUE","action":"Offer a question that generates content, not wording."},
+        {"level":"H3","role":"CHOICE","action":"Offer two structural choices."},
+        {"level":"H4","role":"PARTIAL_MODEL","action":"Model one sentence or one transition only."},
+        {"level":"H5","role":"MODEL_AND_RETRY","action":"Show a short model paragraph, then require a different prompt."}
+      ],
+      "required_components":["WORKBOOK_REFERENCE_BADGE","WRITING_PLANNER","SHORT_MODEL","DRAFT_SPACE","REVISION_CHECKLIST"],
+      "answer_reveal_policy":"RUBRIC_NOT_SINGLE_ANSWER","fresh_retry_required":false
+    }
+  ]
+}
