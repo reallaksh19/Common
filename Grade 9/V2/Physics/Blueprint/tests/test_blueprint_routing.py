@@ -101,9 +101,11 @@ def test_packet_transport_bound_is_three_subtopics_not_learning_atoms():
         raise AssertionError("PACKET_ALLOWED_MORE_THAN_THREE_SUBTOPICS")
 
 
-def test_core2a_is_placeholder_in_v1():
+def test_core2a_is_active_only_with_taught_state_guards():
     architecture = load_json(ROOT / "policy" / "architecture.v1.json")
-    assert architecture["role_lifecycle"]["CORE2A"] == "PLACEHOLDER"
+    assert architecture["role_lifecycle"]["CORE2A"] == "ACTIVE"
+    assert architecture["invariants"]["core2a_requires_taught_state_receipts"] is True
+    assert architecture["invariants"]["core2a_may_not_infer_learner_mastery"] is True
 
 
 def main():
