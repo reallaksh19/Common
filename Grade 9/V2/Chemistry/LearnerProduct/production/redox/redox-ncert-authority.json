@@ -1,0 +1,219 @@
+{
+  "authority_id": "CHEM-NCERT-REDOX-SOURCE-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "topic_id": "REDOX",
+  "production_claim": true,
+  "human_review_claim": false,
+  "baseline_ref": "CHEM-NCERT-BASELINE:redox-reactions",
+  "retained_question_count": 11,
+  "source_documents": [
+    {
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "label": "NCERT Class IX Science Exemplar — Unit 2",
+      "url": "https://ncert.nic.in/pdf/publication/exemplarproblem/classIX/science/ieep102.pdf"
+    },
+    {
+      "document_id": "NCERT-IX-EXEMPLAR-SAMPLE-I",
+      "label": "NCERT Class IX Science Exemplar — Sample Question Paper I",
+      "url": "https://ncert.nic.in/pdf/publication/exemplarproblem/classIX/science/ieep116.pdf"
+    },
+    {
+      "document_id": "NCERT-IX-EXEMPLAR-SAMPLE-II",
+      "label": "NCERT Class IX Science Exemplar — Sample Question Paper II",
+      "url": "https://ncert.nic.in/pdf/publication/exemplarproblem/classIX/science/ieep117.pdf"
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "U2Q2",
+      "source_order": 1,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q2",
+      "section": "Multiple Choice Questions",
+      "marks": 1,
+      "stem": "Rusting of an article made up of iron is called",
+      "options": [
+        {"label": "A", "text": "corrosion and it is a physical as well as chemical change"},
+        {"label": "B", "text": "dissolution and it is a physical change"},
+        {"label": "C", "text": "corrosion and it is a chemical change"},
+        {"label": "D", "text": "dissolution and it is a chemical change"}
+      ],
+      "response_mode": "MCQ",
+      "canonical_answer": "C",
+      "canonical_answer_text": "corrosion and it is a chemical change",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "EXACT_SOURCE"
+    },
+    {
+      "question_id": "U2Q6",
+      "source_order": 2,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q6",
+      "section": "Multiple Choice Questions",
+      "marks": 1,
+      "stem": "Which of the following are physical changes? (i) Melting of iron metal (ii) Rusting of iron (iii) Bending of an iron rod (iv) Drawing a wire of iron metal",
+      "options": [
+        {"label": "A", "text": "(i), (ii) and (iii)"},
+        {"label": "B", "text": "(i), (ii) and (iv)"},
+        {"label": "C", "text": "(i), (iii) and (iv)"},
+        {"label": "D", "text": "(ii), (iii) and (iv)"}
+      ],
+      "response_mode": "MCQ",
+      "canonical_answer": "C",
+      "canonical_answer_text": "(i), (iii) and (iv)",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "EXACT_SOURCE"
+    },
+    {
+      "question_id": "U2Q7",
+      "source_order": 3,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q7",
+      "section": "Multiple Choice Questions",
+      "marks": 1,
+      "stem": "Which of the following are chemical changes? (i) Decaying of wood (ii) Burning of wood (iii) Sawing of wood (iv) Hammering of a nail into a piece of wood",
+      "options": [
+        {"label": "A", "text": "(i) and (ii)"},
+        {"label": "B", "text": "(ii) and (iii)"},
+        {"label": "C", "text": "(iii) and (iv)"},
+        {"label": "D", "text": "(i) and (iv)"}
+      ],
+      "response_mode": "MCQ",
+      "canonical_answer": "A",
+      "canonical_answer_text": "(i) and (ii)",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "EXACT_SOURCE"
+    },
+    {
+      "question_id": "U2Q15C",
+      "source_order": 4,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q15(c)",
+      "section": "Short Answer Questions",
+      "marks": 1,
+      "stem": "What would you observe when a mixture of iron filings and sulphur powder is heated strongly?",
+      "options": [],
+      "response_mode": "CONSTRUCTED_RESPONSE",
+      "canonical_answer": "A new substance, iron sulphide, is formed.",
+      "canonical_answer_text": "A new substance, iron sulphide, is formed.",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "ATOMIC_ASK_FROM_SOURCE_SUBPART"
+    },
+    {
+      "question_id": "U2Q18B",
+      "source_order": 5,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q18(b)",
+      "section": "Short Answer Questions",
+      "marks": 1,
+      "stem": "Classify the following as physical or chemical properties: Zinc dissolves in hydrochloric acid with the evolution of hydrogen gas.",
+      "options": [],
+      "response_mode": "CONSTRUCTED_RESPONSE",
+      "canonical_answer": "Chemical property.",
+      "canonical_answer_text": "Chemical property.",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "ATOMIC_ASK_FROM_SOURCE_SUBPART"
+    },
+    {
+      "question_id": "U2Q29A",
+      "source_order": 6,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q29(a)",
+      "section": "Short Answer Questions",
+      "marks": 1,
+      "stem": "On heating calcium carbonate gets converted into calcium oxide and carbon dioxide. Is this a physical or a chemical change?",
+      "options": [],
+      "response_mode": "CONSTRUCTED_RESPONSE",
+      "canonical_answer": "Chemical change.",
+      "canonical_answer_text": "Chemical change.",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "ATOMIC_ASK_FROM_SOURCE_SUBPART"
+    },
+    {
+      "question_id": "U2Q30F",
+      "source_order": 7,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q30(f)",
+      "section": "Short Answer Questions",
+      "marks": 1,
+      "stem": "Name a non-metal which is required for combustion.",
+      "options": [],
+      "response_mode": "CONSTRUCTED_RESPONSE",
+      "canonical_answer": "Oxygen.",
+      "canonical_answer_text": "Oxygen.",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "EXACT_SOURCE_SUBPART"
+    },
+    {
+      "question_id": "U2Q35",
+      "source_order": 8,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q35",
+      "section": "Long Answer Questions",
+      "marks": 2,
+      "stem": "Iron filings and sulphur were mixed together and divided into two parts, ‘A’ and ‘B’. Part ‘A’ was heated strongly while Part ‘B’ was not heated. Dilute hydrochloric acid was added to both the Parts and evolution of gas was seen in both the cases. How will you identify the gases evolved?",
+      "options": [],
+      "response_mode": "CONSTRUCTED_RESPONSE",
+      "canonical_answer": "Part A gives hydrogen sulphide; part B gives hydrogen. Hydrogen sulphide has a characteristic rotten-egg odour; hydrogen is identified by the pop test.",
+      "canonical_answer_text": "Part A gives hydrogen sulphide; part B gives hydrogen. Hydrogen sulphide has a characteristic rotten-egg odour; hydrogen is identified by the pop test.",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "EXACT_SOURCE"
+    },
+    {
+      "question_id": "U2Q38C",
+      "source_order": 9,
+      "document_id": "NCERT-IX-EXEMPLAR-UNIT-2",
+      "source_locator": "Unit 2 Q38(c)",
+      "section": "Long Answer Questions",
+      "marks": 1,
+      "stem": "Classify each of the following, as a physical or a chemical change. Give reasons. Burning of kerosene in a lantern.",
+      "options": [],
+      "response_mode": "CONSTRUCTED_RESPONSE",
+      "canonical_answer": "Chemical change; new substances are formed during combustion.",
+      "canonical_answer_text": "Chemical change; new substances are formed during combustion.",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "ATOMIC_ASK_FROM_SOURCE_SUBPART"
+    },
+    {
+      "question_id": "SP1Q3",
+      "source_order": 10,
+      "document_id": "NCERT-IX-EXEMPLAR-SAMPLE-I",
+      "source_locator": "Sample Question Paper I Q3",
+      "section": "Multiple Choice Questions",
+      "marks": 1,
+      "stem": "Rusting of an article made up of iron is called",
+      "options": [
+        {"label": "A", "text": "corrosion and it is a physical as well as chemical change"},
+        {"label": "B", "text": "dissolution and it is a physical change"},
+        {"label": "C", "text": "corrosion and it is a chemical change"},
+        {"label": "D", "text": "dissolution and it is a chemical change"}
+      ],
+      "response_mode": "MCQ",
+      "canonical_answer": "C",
+      "canonical_answer_text": "corrosion and it is a chemical change",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "EXACT_SOURCE"
+    },
+    {
+      "question_id": "SP2Q2",
+      "source_order": 11,
+      "document_id": "NCERT-IX-EXEMPLAR-SAMPLE-II",
+      "source_locator": "Sample Question Paper II Q2",
+      "section": "Multiple Choice Questions",
+      "marks": 1,
+      "stem": "Which of the following are physical changes? (i) Melting of iron metal (ii) Rusting of iron (iii) Bending of an iron rod (iv) Drawing a wire of iron metal",
+      "options": [
+        {"label": "A", "text": "(i), (ii) and (iii)"},
+        {"label": "B", "text": "(i), (ii) and (iv)"},
+        {"label": "C", "text": "(i), (iii) and (iv)"},
+        {"label": "D", "text": "(ii), (iii) and (iv)"}
+      ],
+      "response_mode": "MCQ",
+      "canonical_answer": "C",
+      "canonical_answer_text": "(i), (iii) and (iv)",
+      "answer_authority": "CANONICAL_CHEMISTRY_REVIEW",
+      "source_text_relation": "EXACT_SOURCE"
+    }
+  ]
+}
