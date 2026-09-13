@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-source-question.schema.json",
+  "title": "Chemistry Source Question",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "question_id",
+    "origin",
+    "stem",
+    "response_mode",
+    "source_display",
+    "source_refs",
+    "source_integrity",
+    "capability_refs",
+    "difficulty"
+  ],
+  "properties": {
+    "question_id": {"type": "string", "minLength": 2},
+    "origin": {"enum": ["SOURCE_CORE2", "GENERATED_ORIGINAL", "AUTHORED_CORE1_PRACTICE", "AUTHORED_CORE1A_PRACTICE"]},
+    "stem": {"type": "string", "minLength": 5},
+    "options": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "subparts": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "response_mode": {"enum": ["MCQ", "CONSTRUCTED_RESPONSE", "OPEN_ENDED"]},
+    "source_display": {"type": "string", "minLength": 3},
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref_id", "role", "label"],
+        "properties": {
+          "ref_id": {"type": "string", "minLength": 2},
+          "role": {"enum": ["QUESTION_SOURCE", "CONTENT_ANCHOR", "CONSTRUCTION_REFERENCE", "MARKING_REFERENCE"]},
+          "label": {"type": "string", "minLength": 2},
+          "url": {"type": ["string", "null"], "pattern": "^https?://"},
+          "locator": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "source_integrity": {
+      "enum": ["CLEAN", "TYPOGRAPHIC_OCR_AMBIGUITY", "SCIENTIFIC_DOMAIN_ISSUE", "TRUNCATED_OR_AMBIGUOUS"]
+    },
+    "capability_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^CAP-"}
+    },
+    "difficulty": {"enum": ["D1", "D2", "D3"]},
+    "workspace_demand": {"enum": ["MINIMAL", "SHORT", "MEDIUM", "LONG"]},
+    "technical_clues": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {"type": "string", "minLength": 4}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"response_mode": {"const": "MCQ"}}},
+      "then": {"required": ["options"], "properties": {"options": {"minItems": 2}}}
+    },
+    {
+      "if": {"properties": {"origin": {"const": "GENERATED_ORIGINAL"}}},
+      "then": {
+        "properties": {
+          "source_refs": {
+            "contains": {"properties": {"role": {"const": "CONSTRUCTION_REFERENCE"}}, "required": ["role"]}
+          }
+        }
+      }
+    }
+  ]
+}
