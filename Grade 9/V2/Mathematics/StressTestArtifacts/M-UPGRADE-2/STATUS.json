@@ -1,0 +1,198 @@
+{
+  "handoff_id": "MATH-M-UPGRADE-2-HANDOFF-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "issue_ref": "https://github.com/reallaksh19/Common/issues/358",
+  "stacked_on": {
+    "branch": "v2-math-core1a-textbook-quality",
+    "pull_request": 351,
+    "which_is_stacked_on": {
+      "branch": "v2-math-upgrade-pck-renderer-mature-gates",
+      "pull_request": 323
+    }
+  },
+  "sibling_handoff": {
+    "path": "Grade 9/V2/Mathematics/StressTestArtifacts/PR323/",
+    "pull_request": 345,
+    "branch": "pr323-stress-test-artifacts-ready4",
+    "relationship": "EXTENDED_NOT_SUPERSEDED",
+    "present_on_this_branch": false,
+    "reason": "#345 is based directly on #323; this work is stacked on #351. PR323/ remains the authority for topic-by-topic artifact state, NCERT source authority and the binary bundle.",
+    "read_first": true
+  },
+  "normative_sources": [
+    {
+      "ref": "https://github.com/reallaksh19/Common/pull/323#issuecomment-5646045040",
+      "role": "CONSOLIDATED_SUPERSEDING_REVIEW"
+    },
+    {
+      "ref": "https://github.com/reallaksh19/Common/pull/323#issuecomment-5647300608",
+      "role": "RCA"
+    },
+    {
+      "ref": "https://github.com/reallaksh19/Common/pull/323#issuecomment-5646959166",
+      "role": "OWNER_HANDOFF_AND_ANSWER_AUTHORITY"
+    }
+  ],
+  "release_state": {
+    "moves": "PUBLICATION_ENGINEERING",
+    "pck_state": "PROVISIONAL_PROMOTED",
+    "expert_review": "PENDING",
+    "subject_review": "PENDING",
+    "pedagogy_review": "PENDING",
+    "assessment_review": "PENDING",
+    "visual_usability_review": "PENDING",
+    "human_review_asserted_anywhere": false
+  },
+  "items": [
+    {
+      "item": 1,
+      "name": "MathExpression semantic typesetting",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/MathTypesetting",
+      "tests": 24,
+      "evidence": "AST + Unicode target + measure-then-draw typesetter with real fraction rules, radical overbars and raised scripts; rendered-PDF inspection proves √72 = 6√2 and ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ survive and that scripts are geometrically raised.",
+      "open": "The #323 renderer's ascii_safe() path still exists and is still used by Publication/engine/realize_math_core_products.py; Core1A output still goes through its own safe_text()."
+    },
+    {
+      "item": 2,
+      "name": "LearnerMathematicalRealization layer",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/LearnerRealization",
+      "tests": 53,
+      "evidence": "Shared route-state object {role, input_state, operation, output_state, why_valid}; four topics realized as actual mathematics with real substitutions; cross-item transplant check.",
+      "relationship_to_351": "COMPLEMENTARY. #351's LearnerProduct contract orders the stages (LP-11/12/13 AUTHOR_STAGED_HELP / AUTHOR_THINK_IT_THROUGH / AUTHOR_FULL_WORKING) and its golden theory-of-equations fixture is explicitly a process fixture carrying no worked mathematics; STAGE_RUNNERS is empty. This item defines what counts as realized mathematics inside those stages.",
+      "open": "Not yet wired into STAGE_RUNNERS; no end-to-end learner PDF produced through the whole stack."
+    },
+    {
+      "item": 3,
+      "name": "Source / atomic-ask reconciliation ledger",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/SourceLedger",
+      "tests": 24,
+      "evidence": "Frozen manifest with required_question_refs AND required_atomic_ask_refs derived from the corpus; rendered witness proving presence, non-occlusion, non-clipping and text extractability on a real PDF.",
+      "open": "Runs against a 4-row / 12-ask source-shape probe, not against the full seven-topic frozen corpora, which live in #345's artifact bundle."
+    },
+    {
+      "item": 4,
+      "name": "Spatial representation semantics",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/RepresentationSemantics (additive)",
+      "tests": 32,
+      "evidence": "COORDINATE_PLANE / NUMBER_LINE / ANGLE_FIGURE declare domain, ticks, origin, axis direction, coordinates, angle-pair identity and parallel-fact status; representation_plan separates givens from learner_must_supply; declared relations are evaluated against declared coordinates.",
+      "open": "No SOLID / surface-selection primitive yet, so the Surface Areas & Volumes class of figure is not covered."
+    },
+    {
+      "item": 5,
+      "name": "Equivalence-transformation witness + information sufficiency",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/LearnerRealization",
+      "evidence": "{operation, before_relation, after_relation, preserved_invariant, precondition, reversible} with a required extraneous-root check for non-reversible moves; CHECK_SUFFICIENCY carrying UNIQUE/MULTIPLE/UNDERDETERMINED/INCONSISTENT.",
+      "open": "Invariant preservation is asserted and witnessed, not computed. The engine checks that a witness exists, is preconditioned and actually changes the relation; it does not symbolically verify that the solution set is preserved."
+    },
+    {
+      "item": 6,
+      "name": "Core1 reconstruction-chain depth and cross-core bridge",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/Core1Reconstruction",
+      "tests": 33,
+      "evidence": "Full chain realized in order with RECONSTRUCT carrying a real derivation and practice stages carrying materialized realizations that are re-validated through the item-2 gate; theorem direction first-class; teaching evidence derived, never declared; state-level cross-core linkage with an empty unresolved set.",
+      "open": "Two lessons, not the seven-topic corpus. The bridge is exercised over three rows."
+    },
+    {
+      "item": 7,
+      "name": "Typography + layout-safety contract",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/LayoutSafety",
+      "tests": 28,
+      "evidence": "Minimum readable size per semantic role; pairwise sibling collision with container awareness; measured-vs-allocated overflow; workspace per response mode; measure_then_pack() for solution pages.",
+      "open": "Audits an object map, and the two committed probes are the only renderers that emit one. #323's Publication renderer does not yet emit a math-rendered-object-map."
+    },
+    {
+      "item": 8,
+      "name": "Answer custody",
+      "state": "BUILT",
+      "phase": "Grade 9/V2/Mathematics/LearnerRealization",
+      "evidence": "Final answer, quick check and independent verification kept as three distinct objects; per-kind obligations for PROOF, CONSTRUCTION, MULTIPLE_VALID, OPEN_RESPONSE and COUNTEREXAMPLE; attempt surface checked against the answer strings.",
+      "vocabulary_alignment": "LEARNER_QUESTION_WITHOUT_ANSWER and SELF_CHECK_SUBSTITUTED_FOR_ANSWER kept as named in issue #358 so #353 (Physics) and #356 (Chemistry) can share the pattern.",
+      "open": "Custody is validated per realization; no Core2 appendix has been generated and checked end to end."
+    },
+    {
+      "item": 9,
+      "name": "Kid-appropriate learner copy",
+      "state": "SUPERSEDED_BY_351_THEN_EXTENDED_AND_ENFORCED",
+      "phase": "Grade 9/V2/Mathematics/LearnerProduct/policies/math-learner-language-policy.json + LearnerRealization/engine/learner_copy.py",
+      "what_351_already_had": "A real, more comprehensive central policy than the issue asked for: approved public labels (TRY IT FIRST, SMALL CLUE, BIGGER CLUE, HOW DO I START?, THINK IT THROUGH, FULL WORKING, QUICK CHECK, WHERE THIS QUESTION CAME FROM) and a forbidden-internal-terms list, bound by policy id in run_learner_product.py.",
+      "genuine_gap_closed": [
+        "No engine scanned text against it: run_learner_product.py checks the policy BINDING only and STAGE_RUNNERS is empty. learner_copy.py is that detector and reads the policy as its authority.",
+        "A bare internal ROLE label (RECONSTRUCT, CONTRAST, VERIFY) is not matched by a substring ban-list. forbidden_learner_role_labels, internal_role_label_public_titles, internal_identifier_patterns and role_label_detection were added to that policy file in place, keeping policy_id MATH-LEARNER-LANGUAGE-v1 so the binding check still resolves."
+      ],
+      "no_parallel_registry": "LearnerRealization/registry/math-learner-copy-registry.json holds no ban-list. It carries consumer bindings plus the eight legacy tokens Core1A enforced before the policy existed, unioned so adoption can only widen coverage."
+    }
+  ],
+  "exit_gate_assessment": [
+    {
+      "gate": "A real worked instance renders proper math typesetting and demonstrates the actual substitution, for at least two of the seven stress-tested topics",
+      "state": "MET",
+      "evidence": "Number Systems (conjugate rationalisation of 1⁄(√7 − 2)) and Polynomials (factor theorem with p(2) evaluated, then fully factorised), both with substitution nodes and no ASCII flattening."
+    },
+    {
+      "gate": "Source completeness is checked at both the question and atomic-ask level, and survives to the rendered page",
+      "state": "MET_ON_A_PROBE",
+      "evidence": "4 rows / 12 atomic asks reconciled and witnessed on a real rendered PDF, with occlusion, clipping and text-extractability gates firing on mutation.",
+      "caveat": "Probe corpus, not the seven-topic frozen corpora."
+    },
+    {
+      "gate": "At least one spatial-representation item proves learner_must_supply separation from givens",
+      "state": "MET",
+      "evidence": "COORDINATE_PLANE attempt surface declares givens A, B and learner target M, with M unplotted; the SOLUTION surface for the same item plots M and asserts MIDPOINT_OF and EQUIDISTANT_FROM_FIRST."
+    },
+    {
+      "gate": "At least one algebraic-transformation chain carries an explicit invariant witness",
+      "state": "MET",
+      "evidence": "Nine witnesses across the reference corpus, including a SOLUTION_SET-preserving SUBTRACT_FROM_BOTH_SIDES in the Linear Equations item."
+    },
+    {
+      "gate": "Core1 reconstruction-chain falsifiers are real and exercised",
+      "state": "MET",
+      "evidence": "33 tests; CORE1_RECONSTRUCTION_WITHOUT_DERIVATION, CORE1_WORKED_INSTANCE_NOT_MATERIALIZED, CORE1_TRANSFER_INSTANCE_MISSING, CORE1_CHAIN_ORDER_DRIFT and CORE1_CORE2_REASONING_COVERAGE_GAP each fired on a single mutation."
+    },
+    {
+      "gate": "No learner-facing question lacks an answer artifact",
+      "state": "MET_FOR_THE_REALIZATION_CORPUS",
+      "caveat": "Every realization in the corpus has custody. No claim is made about Core1A's or Core2's full question inventories, which do not yet flow through this layer."
+    },
+    {
+      "gate": "No internal role/jargon label appears on a rendered learner page",
+      "state": "PARTIALLY_MET",
+      "evidence": "The detector enforces the central policy across CORE1A, CORE2A and LEARNER_REALIZATION, and Core1A now fails closed on role labels and identifiers. Its real cold-start -> Core1A PDF chain passes.",
+      "caveat": "Core2A has no engine yet, so its learner pages cannot be scanned; the gate exists and is unexercised there."
+    },
+    {
+      "gate": "A handoff is left extending #345, not forking it",
+      "state": "MET",
+      "evidence": "This directory is a sibling under StressTestArtifacts/, points at PR323/ as read-first, and explicitly supersedes nothing in it."
+    }
+  ],
+  "known_open": [
+    "Three of the seven stress-tested topics (Euclid's Geometry, Lines & Angles, Surface Areas & Volumes) have no realized learner mathematics in this work; they appear only as shapes in the source-ledger probe.",
+    "No SOLID / surface-selection spatial primitive, so SOLID_SURFACE_SELECTION_MISMATCH from the consolidated review is not implemented.",
+    "LearnerProduct STAGE_RUNNERS remains empty; none of these phases is invoked by the ordered pipeline yet.",
+    "Publication/engine/realize_math_core_products.py still defines and uses ascii_safe(); it was not removed, because removing it would change #323's rendered product without a replacement renderer.",
+    "Core1A worked examples are not emitted through MathTypesetting.",
+    "Equivalence invariants are witnessed and preconditioned, not symbolically verified.",
+    "No end-to-end learner PDF has been produced through the full new stack; rendered evidence comes from two purpose-built probes."
+  ],
+  "verification": {
+    "how_to_reproduce": "python 'Grade 9/V2/Mathematics/<phase>/contracts/validate_contracts.py' then python -m unittest discover -s 'Grade 9/V2/Mathematics/<phase>/tests' -p 'test_*.py' for each of MathTypesetting, LearnerRealization, SourceLedger, LayoutSafety, Core1Reconstruction, plus RepresentationSemantics/tests/test_math_spatial_semantics.py.",
+    "ci_workflow": ".github/workflows/v2-math-learner-product-maturity.yml",
+    "ci_also_proves": [
+      "every committed fixture regenerates byte-identically (git diff --exit-code)",
+      "the #323 and #351 suites still pass",
+      "an audit bundle is emitted and uploaded"
+    ],
+    "new_tests_added": 194,
+    "existing_suites_still_passing": 21,
+    "total_math_test_files_passing": 27
+  }
+}
