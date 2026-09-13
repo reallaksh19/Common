@@ -1,0 +1,47 @@
+{
+  "registry_id": "CHEM-PRODUCTION-AUTHORITY-BINDINGS-v1",
+  "version": "1.0.0",
+  "shared": {
+    "representation_engine": "Representation/engine/build_chemistry_representations.py",
+    "representation_profile": "Representation/registry/chemistry-page-intent-profile.json",
+    "primitive_registry": "Representation/registry/chemistry-teaching-primitive-registry.json",
+    "problem_family_registry": "ReasoningSemantics/registry/chemistry-problem-family-registry.json",
+    "learner_renderer": "LearnerProduct/engine/render_chemistry_learner_products.py",
+    "pdf_preflight": "LearnerProduct/engine/preflight_chemistry_learner_products.py"
+  },
+  "products": {
+    "CORE1": {
+      "engines": ["CoreAuthoring/engine/build_chemistry_core1.py"],
+      "contracts": [
+        "CoreAuthoring/contracts/chemistry-core1-study-plan.schema.json",
+        "CoreAuthoring/contracts/chemistry-core1-lesson.schema.json",
+        "CoreAuthoring/contracts/chemistry-core-appendix-contract.schema.json"
+      ]
+    },
+    "CORE2": {
+      "engines": ["Core2Transfer/engine/build_chemistry_core2_transfer.py"],
+      "contracts": ["Core2Transfer/contracts/chemistry-core2-transfer-plan.schema.json"]
+    },
+    "CORE1A": {
+      "engines": [
+        "Core1A/engine/build_chemistry_core1a_bucket_plan.py",
+        "Core1A/engine/build_chemistry_core1a_build_state.py",
+        "Core1A/engine/build_chemistry_core1a_manuscript.py"
+      ],
+      "contracts": [
+        "Core1A/contracts/chemistry-core1a-bucket-plan.schema.json",
+        "Core1A/contracts/chemistry-core1a-build-state.schema.json"
+      ]
+    },
+    "CORE2A": {
+      "engines": [
+        "Core2A/engine/build_chemistry_core2a_source.py",
+        "Core2A/engine/build_chemistry_core2a_challenges.py"
+      ],
+      "contracts": [
+        "Core2A/contracts/chemistry-core2a-source-plan.schema.json",
+        "Core2A/contracts/chemistry-core2a-generated-plan.schema.json"
+      ]
+    }
+  }
+}
