@@ -70,3 +70,16 @@ jobs:
 
       - name: Confirm canonical execution contract exists
         run: test -s 'Grade 9/V2/Chemistry/LearnerProduct/EXECUTION_CONTRACT.md'
+
+      - name: Build rendered learner-product process golden
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearnerProduct/golden/some-basic-concepts/build_render_golden.py'
+          --out-dir /tmp/chemistry-lp-render-golden
+
+      - name: Upload rendered process golden for human actual-size review
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-core1a-core2a-render-process-golden
+          path: /tmp/chemistry-lp-render-golden
+          if-no-files-found: error
+          retention-days: 14
