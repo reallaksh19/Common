@@ -64,7 +64,10 @@ def answer_path(item_id,sol_id,reasoning_steps,verification_steps):
     chemistry, and the full worked solution stays separate in Appendix B.
     """
     points=[str(x).strip() for x in reasoning_steps if str(x).strip()]
-    if verification_steps: points=points+['Runs the required checks: '+', '.join(str(x) for x in verification_steps)+'.']
+    # The specific checks are internal tokens upstream, and Appendix B already
+    # prints them in learner phrasing, so the rubric points at them rather than
+    # restating them and leaking the identifiers onto the answer surface.
+    if verification_steps: points=points+['Runs every required check listed with the worked answer.']
     if len(points)<2: fail('OPEN_RESPONSE_WITHOUT_RUBRIC',item_id)
     check='Check your working shows all %d points: '%len(points)+'; '.join(short_point(x) for x in points)+'.'
     return {'kind':'OPEN_RESPONSE','immediate_answer_check':check,'expected_response_rubric':points,'full_solution_ref':sol_id}

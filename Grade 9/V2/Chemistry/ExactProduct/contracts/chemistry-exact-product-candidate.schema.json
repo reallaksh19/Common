@@ -139,6 +139,18 @@
     "teaching_primitive_registry_digest": {
      "type": "string",
      "pattern": "^[0-9a-f]{64}$"
+    },
+    "visual_obligation_ledger_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "learner_copy_title_registry_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "legibility_target_profile_digest": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
     }
    }
   },
@@ -234,7 +246,18 @@
     "teaching_primitive_kinds_selected",
     "teaching_primitives_drawn",
     "teaching_primitives_label_only",
-    "visual_semantic_validator_ref"
+    "visual_semantic_validator_ref",
+    "learner_role_label_leaks",
+    "visual_obligations_required",
+    "visual_obligations_realized",
+    "questions_requiring_visual",
+    "questions_with_required_visual",
+    "questions_total",
+    "immediate_answer_checks_total",
+    "full_solutions_total",
+    "learner_body_pt",
+    "question_stem_pt",
+    "unenforced_legibility_targets"
    ],
    "properties": {
     "answer_separation_pass": {
@@ -382,6 +405,71 @@
     },
     "visual_semantic_validator_ref": {
      "type": "string"
+    },
+    "learner_role_label_leaks": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "learner_copy_title_registry_ref": {
+     "type": "string"
+    },
+    "visual_obligation_profile_ref": {
+     "type": "string"
+    },
+    "visual_obligations_required": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "visual_obligations_realized": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "questions_requiring_visual": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "questions_with_required_visual": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "answer_custody_profile_ref": {
+     "type": "string"
+    },
+    "questions_total": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "immediate_answer_checks_total": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "full_solutions_total": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "legibility_core1": {
+     "type": "object"
+    },
+    "legibility_core2": {
+     "type": "object"
+    },
+    "learner_body_pt": {
+     "type": "number",
+     "minimum": 0
+    },
+    "question_stem_pt": {
+     "type": "number",
+     "minimum": 0
+    },
+    "document_minimum_font_pt": {
+     "type": "number",
+     "minimum": 0
+    },
+    "unenforced_legibility_targets": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     }
    }
   },

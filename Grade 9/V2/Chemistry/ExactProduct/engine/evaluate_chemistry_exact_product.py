@@ -92,7 +92,18 @@ def machine_validate(candidate,cold,policy,artifact_root='.',required_qc_refs=No
       (len(e.get('teaching_primitive_kinds_realized',[]))<policy.get('minimum_realized_primitive_kinds',0),'TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED'),
       ('actual_placement_evidence' in e and not e['actual_placement_evidence'],'PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE'),
       (e.get('placement_bounds_violations',0)>0,'PLACEMENT_OUT_OF_PHYSICAL_BOUNDS'),
-      (e.get('orphan_continuations',0)>0,'ORPHAN_CONTINUATION_FRAGMENT')]
+      (e.get('orphan_continuations',0)>0,'ORPHAN_CONTINUATION_FRAGMENT'),
+      # Learner-product maturity gates added with issue #356. Read with .get so a
+      # candidate frozen before these counters existed still evaluates.
+      (e.get('learner_role_label_leaks',0)>0,'INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE'),
+      ('learner_body_pt' in e and e['learner_body_pt']<policy.get('learner_body_minimum_pt',0),'LEARNER_BODY_TOO_SMALL'),
+      ('question_stem_pt' in e and e['question_stem_pt']<policy.get('question_stem_minimum_pt',0),'LEARNER_BODY_TOO_SMALL'),
+      (any(not (e.get(k) or {}).get('page_density_pass',True) for k in ['legibility_core1','legibility_core2']),'PAGE_DENSITY_EXCEEDS_POLICY'),
+      ('visual_obligations_required' in e and e['visual_obligations_realized']!=e['visual_obligations_required'],'TEXT_ONLY_WHEN_VISUAL_REQUIRED'),
+      ('questions_requiring_visual' in e and e['questions_with_required_visual']!=e['questions_requiring_visual'],'TEXT_ONLY_WHEN_VISUAL_REQUIRED'),
+      ('questions_total' in e and not (e['questions_total']==e['immediate_answer_checks_total']==e['full_solutions_total']),'ANSWER_COUNT_RECONCILIATION_FAILURE'),
+      ('questions_total' in e and e['questions_total']<1,'QUESTION_WITHOUT_ANSWER_PATH'),
+      (bool(set(e.get('unenforced_legibility_targets',[]))-set(policy.get('unenforced_legibility_targets_allowed',[]))),'LEARNER_BODY_TOO_SMALL')]
     failures += [code for cond,code in checks if cond]
     required_qc_refs=set(required_qc_refs or [])
     if not required_qc_refs<=set(candidate['source_qc_event_refs']): failures.append('SOURCE_QC_EVENT_LOST_IN_FINAL_PRODUCT')
@@ -138,6 +149,9 @@ def build_release_decision(candidate,machine_gate,reviews,reference_comparison,p
         if not e['macro_particle_symbolic_realized']: fail('MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED')
         if e.get('teaching_primitives_label_only') and len(e['teaching_primitives_label_only'])>len(e.get('teaching_primitive_kinds_realized',[])): fail('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED')
         if e.get('learner_internal_identifier_leaks',0)>0: fail('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK')
+        if e.get('learner_role_label_leaks',0)>0: fail('INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE')
+        if 'questions_requiring_visual' in e and e['questions_with_required_visual']!=e['questions_requiring_visual']: fail('TEXT_ONLY_WHEN_VISUAL_REQUIRED')
+        if 'questions_total' in e and not (e['questions_total']==e['immediate_answer_checks_total']==e['full_solutions_total']): fail('ANSWER_COUNT_RECONCILIATION_FAILURE')
         if not e['primary_supports_correct']: fail('PRIMARY_SUPPORTS_LABELS_INCORRECT')
         if not e['visual_usable_actual_size']: fail('VISUAL_UNUSABLE_AT_ACTUAL_OUTPUT_SIZE')
         if not e['hints_distinct_from_solution']: fail('HINTS_DUPLICATE_SOLUTION_BUT_MARKED_MATURE')

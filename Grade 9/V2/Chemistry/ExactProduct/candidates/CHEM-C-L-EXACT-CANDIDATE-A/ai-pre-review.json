@@ -1,12 +1,12 @@
 {
   "candidate_ref": "CHEM-C-L-EXACT-CANDIDATE-A",
-  "core1_pdf_sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
-  "core2_pdf_sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad",
+  "core1_pdf_sha256": "b2489e20eceb3da69fa634327247aafc4efd177b934682ac700b5c8cfb8a6a7a",
+  "core2_pdf_sha256": "81cf064bf685a2f880d54e95825fb7bec10b1b9da628e0739660b32a4c8bf65e",
   "evidence": {
     "label_only_primitive_kinds": [
       "COEFFICIENT_SUBSCRIPT_CONTRAST"
     ],
-    "pages_with_vector_graphics": 29,
+    "pages_with_vector_graphics": 32,
     "realized_primitive_kinds": [
       "APPARATUS_METHOD_FLOW",
       "CHARGE_SUBSCRIPT_CONTRAST",
@@ -24,7 +24,7 @@
       "RULE_PRIORITY_LADDER",
       "SPECIES_ROLE_MAP"
     ],
-    "total_pages": 49
+    "total_pages": 61
   },
   "findings": [],
   "not_established_by_this_review": [
@@ -34,7 +34,7 @@
     "VISUAL_USABILITY",
     "MATURE_DESIGN_QUALITY"
   ],
-  "package_digest": "234060ba08215a3b3b845b47bf3ef501acfebfffd3452943c7b1e9fdf38c540c",
+  "package_digest": "07bfeef36f44002db28d86776aaca4dcac81ec089f03dde26bc1f3be4edffc98",
   "production_claim": false,
   "review_id": "CHEM-C-L-AI-PRE-REVIEW-v2",
   "review_kind": "AI_PRE_REVIEW",

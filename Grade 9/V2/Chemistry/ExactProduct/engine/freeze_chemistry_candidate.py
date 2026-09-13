@@ -36,6 +36,7 @@ ROLES = {
     'render-audit-core2.json': 'RENDER_AUDIT_CORE2',
     'ai-pre-review.json': 'AI_PRE_REVIEW',
     'cold-start-report.json': 'COLD_START_REPORT',
+    'visual-obligation-ledger.json': 'VISUAL_OBLIGATION_LEDGER',
 }
 PDF_FILES = ('core-study-guide.pdf', 'examside-solution-transfer-book.pdf')
 

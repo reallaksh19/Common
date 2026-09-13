@@ -2,71 +2,77 @@
   "ai_pre_review_findings": [],
   "ai_pre_review_state": "PASS",
   "artifact_sha256": {
-    "CORE_STUDY_GUIDE": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
-    "EXAMSIDE_SOLUTION_TRANSFER_BOOK": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad"
+    "CORE_STUDY_GUIDE": "b2489e20eceb3da69fa634327247aafc4efd177b934682ac700b5c8cfb8a6a7a",
+    "EXAMSIDE_SOLUTION_TRANSFER_BOOK": "81cf064bf685a2f880d54e95825fb7bec10b1b9da628e0739660b32a4c8bf65e"
   },
-  "candidate_package_digest": "234060ba08215a3b3b845b47bf3ef501acfebfffd3452943c7b1e9fdf38c540c",
+  "candidate_package_digest": "07bfeef36f44002db28d86776aaca4dcac81ec089f03dde26bc1f3be4edffc98",
   "candidate_ref": "CHEM-C-L-EXACT-CANDIDATE-A",
-  "cold_start_report_digest": "5ddcc6f3f5cc110a39d327432d771eb6c2e6f7e558214e4c2284f25d14e4f3e2",
+  "cold_start_report_digest": "ed832a71b2176acb58115a04807ca4065fac03922d4f0d47323624be0c2f4765",
   "files": [
     {
       "bytes": 1475,
       "path": "ai-pre-review.json",
       "role": "AI_PRE_REVIEW",
-      "sha256": "50cd8a85591983f65f15a2f7be4a34bd0a870d9a1e3f5657b997f79fb46a72b6"
+      "sha256": "bd90463b121d4af962847d064cfd9138c0594db65601b21942a22af05ee1ddc2"
     },
     {
       "bytes": 75621,
       "path": "cold-start-report.json",
       "role": "COLD_START_REPORT",
-      "sha256": "1cd96dfaa1a9803fef6fab1ca089e2562f49b7771e4adaed159b6c0a9960dba3"
+      "sha256": "4d53475328079abedb57f51f05a0c44ebd0fc3ee9d354bbb3668bc3c87d45056"
     },
     {
-      "bytes": 133407,
+      "bytes": 147080,
       "path": "core-study-guide.pdf",
       "role": "CORE_STUDY_GUIDE_PDF",
-      "sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1"
+      "sha256": "b2489e20eceb3da69fa634327247aafc4efd177b934682ac700b5c8cfb8a6a7a"
     },
     {
-      "bytes": 5875,
+      "bytes": 8370,
       "path": "exact-product-candidate.json",
       "role": "EXACT_PRODUCT_CANDIDATE",
-      "sha256": "3665942fc247ed04713768241847cce4edf5a3e9fb569a5c0dd32b7069eeb342"
+      "sha256": "ce24f1b957b8d5277d9d0129bc13fb5ee664ae2a63645f2a4edf570e58c35e0a"
     },
     {
-      "bytes": 65704,
+      "bytes": 67166,
       "path": "examside-solution-transfer-book.pdf",
       "role": "EXAMSIDE_SOLUTION_TRANSFER_BOOK_PDF",
-      "sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad"
+      "sha256": "81cf064bf685a2f880d54e95825fb7bec10b1b9da628e0739660b32a4c8bf65e"
     },
     {
-      "bytes": 61388,
+      "bytes": 66961,
       "path": "physical-page-map-core1.json",
       "role": "PHYSICAL_PAGE_MAP_CORE1",
-      "sha256": "eddea37acea3a8436088c249a621f4406d767c0fbdeca69483a47d36e66dc6a9"
+      "sha256": "b9fc49b275e96c59a6ed9012b83aae151a64d543a8e50ce6cf54b6793471634c"
     },
     {
-      "bytes": 14227,
+      "bytes": 14432,
       "path": "physical-page-map-core2.json",
       "role": "PHYSICAL_PAGE_MAP_CORE2",
-      "sha256": "173e24d7e277f91983bc56900c33ca658f9d8d75e4cba6635c248680becda3f2"
+      "sha256": "6964e666fe48b9806e41c95f639950ca0410b82da86616d76a985aa936c46992"
     },
     {
-      "bytes": 417,
+      "bytes": 1210,
       "path": "render-audit-core1.json",
       "role": "RENDER_AUDIT_CORE1",
-      "sha256": "72e98916272ea095ce3ee04eead3351692b69b3458db086bf042af5c13e0f6b0"
+      "sha256": "a221ffc17ab45d469ac414fcfe8a9c4a34af22a33e40de70f7f9a33d2975cd99"
     },
     {
-      "bytes": 416,
+      "bytes": 1209,
       "path": "render-audit-core2.json",
       "role": "RENDER_AUDIT_CORE2",
-      "sha256": "b1dcb5ee92f3059974a9867c66beef3653b9a737ac09f45f62379dcc43ade678"
+      "sha256": "02d52bbc2654cf49c1fd67a842c4895916fd4aad81bf5b05f74a6c0c4b3bc66a"
+    },
+    {
+      "bytes": 12210,
+      "path": "visual-obligation-ledger.json",
+      "role": "VISUAL_OBLIGATION_LEDGER",
+      "sha256": "19fff21875327d69332daf6658f13501caf7d0adaab52324f9bbe7e02a7b2f48"
     }
   ],
   "manifest_id": "CHEM-C-L-FROZEN-CHEM-C-L-EXACT-CANDIDATE-A",
   "note": "Durable copy of the exact reviewed bytes. Engineering custody only; no human review of any kind is recorded or implied by this manifest.",
-  "package_digest": "ab64a8b44c527e836f5abbed1c7e133f21f1ec0a4a7437861b4462efd7ed990b",
+  "package_digest": "6df16a446eeafe82800499b49835fdcd0ae87e20a2aacc162c8f99162a89c0e9",
   "pdfs_included": true,
   "quality_states": {
     "ASSESSMENT_DESIGN": "PENDING",

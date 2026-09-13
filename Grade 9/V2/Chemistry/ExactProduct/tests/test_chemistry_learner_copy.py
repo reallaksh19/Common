@@ -99,7 +99,34 @@ bad = copy.deepcopy(registry); bad['resolution_policy'] = 'BEST_EFFORT'
 expect('LEARNER_TITLE_MISSING_FOR_ROLE', lambda: validate_registry(bad))
 tmp.unlink()
 
+# ---- the rendered pages a learner actually opens ---------------------------
+# The frozen candidate is the exact reviewed bytes, so the scan runs against it
+# rather than against a re-render.
+import pymupdf
+CANDIDATE = CHEM / 'ExactProduct' / 'candidates' / 'CHEM-C-L-EXACT-CANDIDATE-A'
+CLINICAL_HEADINGS = ['Misconception clinic', 'Misconception Repair', 'Representation path',
+                     'Reasoning route', 'Faded practice', 'Orient / activate', 'Verification',
+                     'Reconstruct the reasoning', 'Concept helper', 'Check your knowledge',
+                     'Try with me', 'H0 — Attempt first', 'H1 — Notice', 'H3 — Start']
+WARM_HEADINGS = [title_for(r, registry) for r in
+                 ['MISCONCEPTION_REPAIR', 'GUIDED_ATTEMPT', 'FADED_ATTEMPT', 'INDEPENDENT_ATTEMPT',
+                  'CHEMICAL_VERIFICATION', 'H0_ATTEMPT_FIRST', 'H1_NOTICE', 'H3_START',
+                  'IMMEDIATE_ANSWER_CHECK', 'CONCEPT_HELPER']]
+pages_text = []
+for name in ['core-study-guide.pdf', 'examside-solution-transfer-book.pdf']:
+    doc = pymupdf.open(str(CANDIDATE / name))
+    pages_text.extend(page.get_text('text') for page in doc)
+whole = '\n'.join(pages_text)
+assert pages_text, 'no rendered pages to scan'
+
+for clinical in CLINICAL_HEADINGS:
+    assert clinical not in whole, clinical
+assert scan_pages(pages_text, registry) == {}, scan_pages(pages_text, registry)
+for warm in WARM_HEADINGS:
+    assert warm in whole, warm
+
 print('CHEMISTRY LEARNER-COPY mapped internal roles = %d PASS' % len(registry['titles']))
 print('CHEMISTRY LEARNER-COPY internal identifiers unchanged = PASS')
 print('CHEMISTRY LEARNER-COPY clinical-heading falsifier catches what #322 cannot = PASS')
 print('CHEMISTRY LEARNER-COPY unmapped role fails closed = PASS')
+print('CHEMISTRY LEARNER-COPY rendered pages scanned = %d, clinical headings found = 0 PASS' % len(pages_text))

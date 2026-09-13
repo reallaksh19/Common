@@ -300,25 +300,29 @@
       "required_registry_paths": [
         "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json",
         "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-learner-copy-titles.json",
-        "Grade 9/V2/Chemistry/Representation/registry/chemistry-visual-obligation-profile.json"
+        "Grade 9/V2/Chemistry/Representation/registry/chemistry-visual-obligation-profile.json",
+        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-legibility-target-profile.json"
       ],
       "required_engine_paths": [
         "Grade 9/V2/Chemistry/ExactProduct/engine/realize_chemistry_exact_product.py",
         "Grade 9/V2/Chemistry/ExactProduct/engine/chemistry_visual_primitives.py",
         "Grade 9/V2/Chemistry/ExactProduct/engine/learner_surface_guard.py",
-        "Grade 9/V2/Chemistry/ExactProduct/engine/learner_copy_guard.py"
+        "Grade 9/V2/Chemistry/ExactProduct/engine/learner_copy_guard.py",
+        "Grade 9/V2/Chemistry/ExactProduct/engine/validate_chemistry_legibility.py"
       ],
       "produces": [
         "CoreStudyGuidePDF",
         "ExamSIDESolutionTransferBookPDF",
-        "PhysicalPageMap"
+        "PhysicalPageMap",
+        "VisualObligationLedger"
       ],
       "falsifiers": [
         "TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED",
         "LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK",
         "INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE",
         "TEXT_ONLY_WHEN_VISUAL_REQUIRED",
-        "LEARNER_TITLE_MISSING_FOR_ROLE"
+        "LEARNER_TITLE_MISSING_FOR_ROLE",
+        "LEARNER_BODY_TOO_SMALL"
       ]
     },
     {
@@ -332,21 +336,25 @@
         "REALIZATION"
       ],
       "required_registry_paths": [
-        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json"
+        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json",
+        "Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-legibility-target-profile.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/ExactProduct/engine/audit_chemistry_exact_candidate.py"
+        "Grade 9/V2/Chemistry/ExactProduct/engine/audit_chemistry_exact_candidate.py",
+        "Grade 9/V2/Chemistry/ExactProduct/engine/validate_chemistry_legibility.py"
       ],
       "produces": [
         "RenderAudit",
-        "AIPreReview"
+        "AIPreReview",
+        "LegibilityEvidence"
       ],
       "falsifiers": [
         "MIN_FONT_SIZE_FAILURE",
         "LEARNER_BODY_TOO_SMALL",
         "PAGE_DENSITY_EXCEEDS_POLICY",
         "OFF_PAGE_TEXT",
-        "TEXT_OR_CARD_COLLISION"
+        "TEXT_OR_CARD_COLLISION",
+        "INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE"
       ]
     },
     {
@@ -430,5 +438,5 @@
     "ASSESSMENT_DESIGN": "PENDING_AUTHORIZED_HUMAN_ONLY",
     "VISUAL_USABILITY": "PENDING_AUTHORIZED_HUMAN_ONLY"
   },
-  "contract_digest": "8958f24344283d1d782640b42cf7e3623a3a223eed4fc456c41311c5308b260f"
+  "contract_digest": "c4a7b1cf2201a7391b8b851ef04cdc69ab5222c3d7fd42509458554007bda58c"
 }

@@ -1,0 +1,403 @@
+{
+  "ledger_digest": "e6e1857404f2375491bce4b3a2038aabc97b20e344fe95128dceb91283c00c6c",
+  "ledger_id": "CHEM-C-H-VISUAL-OBLIGATIONS-v1",
+  "obligations": [
+    {
+      "allowed_families": [
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "REACTION_BEFORE_AFTER_MAP",
+        "SELF_OTHER_AGENT_FRAME",
+        "SPECIES_ROLE_MAP"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "REACTION_BEFORE_AFTER_MAP",
+        "SPECIES_ROLE_MAP"
+      ],
+      "capability_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "content_ref": "LESSON-01",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-01",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "REACTION_BEFORE_AFTER_MAP",
+        "SPECIES_ROLE_MAP"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "CONSERVATION_LEDGER",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "CONSERVATION_LEDGER",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "capability_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "content_ref": "LESSON-02",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-02",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "CONSERVATION_LEDGER",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "RULE_PRIORITY_LADDER"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "RULE_PRIORITY_LADDER"
+      ],
+      "capability_ref": "CAP-CHECK-RULE-EXCEPTION",
+      "content_ref": "LESSON-03",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-03",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "RULE_PRIORITY_LADDER"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "EVIDENCE_CLAIM_REASONING_CHAIN",
+        "MACRO_OBSERVATION_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "EVIDENCE_CLAIM_REASONING_CHAIN",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_OBSERVATION_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "capability_ref": "CAP-CLASSIFY-CHANGE-EVIDENCE",
+      "content_ref": "LESSON-04",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-04",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "EVIDENCE_CLAIM_REASONING_CHAIN",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_OBSERVATION_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "CHARGE_SUBSCRIPT_CONTRAST",
+        "FORMULA_ANATOMY_VIEW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "CHARGE_SUBSCRIPT_CONTRAST",
+        "FORMULA_ANATOMY_VIEW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "capability_ref": "CAP-PARSE-ION-CHARGE",
+      "content_ref": "LESSON-05",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-05",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "CHARGE_SUBSCRIPT_CONTRAST",
+        "FORMULA_ANATOMY_VIEW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "capability_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "content_ref": "LESSON-06",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-06",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "APPARATUS_METHOD_FLOW",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "APPARATUS_METHOD_FLOW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "capability_ref": "CAP-READ-APPARATUS-METHOD",
+      "content_ref": "LESSON-07",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-07",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "APPARATUS_METHOD_FLOW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "COEFFICIENT_SUBSCRIPT_CONTRAST",
+        "FORMULA_ANATOMY_VIEW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "COEFFICIENT_SUBSCRIPT_CONTRAST",
+        "FORMULA_ANATOMY_VIEW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "capability_ref": "CAP-READ-FORMULA",
+      "content_ref": "LESSON-08",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-08",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "EVIDENCE_CLAIM_REASONING_CHAIN",
+        "MACRO_OBSERVATION_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "OBSERVATION_INFERENCE_TABLE"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "EVIDENCE_CLAIM_REASONING_CHAIN",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_OBSERVATION_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "OBSERVATION_INFERENCE_TABLE"
+      ],
+      "capability_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+      "content_ref": "LESSON-09",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-09",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_OBSERVATION_VIEW",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "OBSERVATION_INFERENCE_TABLE"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "REACTION_BEFORE_AFTER_MAP",
+        "SPLIT_CONVERGE_TOPOLOGY"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "REACTION_BEFORE_AFTER_MAP"
+      ],
+      "capability_ref": "CAP-TRACK-REACTING-SPECIES",
+      "content_ref": "LESSON-10",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-10",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "REACTION_BEFORE_AFTER_MAP"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "PARTICLE_MODEL_VIEW"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "PARTICLE_MODEL_VIEW"
+      ],
+      "capability_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "content_ref": "LESSON-11",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-11",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "PARTICLE_MODEL_VIEW"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "FORMULA_EQUATION_CHECK_STRIP"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "capability_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "content_ref": "LESSON-12",
+      "obligation_id": "VO-CORE1_LESSON-LESSON-12",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "scope": "CORE1_LESSON"
+    },
+    {
+      "allowed_families": [
+        "CHARGE_SUBSCRIPT_CONTRAST",
+        "FORMULA_ANATOMY_VIEW",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "FORMULA_ANATOMY_VIEW"
+      ],
+      "capability_ref": "CAP-PARSE-ION-CHARGE",
+      "content_ref": "TRANSFER-01",
+      "obligation_id": "VO-CORE2_QUESTION-TRANSFER-01",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "FORMULA_ANATOMY_VIEW"
+      ],
+      "scope": "CORE2_QUESTION"
+    },
+    {
+      "allowed_families": [
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MACRO_PARTICLE_SYMBOLIC_BRIDGE",
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "PARTICLE_MODEL_VIEW"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "PARTICLE_MODEL_VIEW"
+      ],
+      "capability_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "content_ref": "TRANSFER-02",
+      "obligation_id": "VO-CORE2_QUESTION-TRANSFER-02",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "PARTICLE_MODEL_VIEW"
+      ],
+      "scope": "CORE2_QUESTION"
+    },
+    {
+      "allowed_families": [
+        "CONSERVATION_LEDGER",
+        "FORMULA_EQUATION_CHECK_STRIP",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "CONSERVATION_LEDGER"
+      ],
+      "capability_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "content_ref": "TRANSFER-03",
+      "obligation_id": "VO-CORE2_QUESTION-TRANSFER-03",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "CONSERVATION_LEDGER"
+      ],
+      "scope": "CORE2_QUESTION"
+    },
+    {
+      "allowed_families": [
+        "CONDITION_EXCEPTION_GATE",
+        "MINIMAL_CHEMISTRY_CONTRAST"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "CONDITION_EXCEPTION_GATE"
+      ],
+      "capability_ref": "CAP-PRESERVE-REACTION-CONDITION",
+      "content_ref": "TRANSFER-04",
+      "obligation_id": "VO-CORE2_QUESTION-TRANSFER-04",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "CONDITION_EXCEPTION_GATE"
+      ],
+      "scope": "CORE2_QUESTION"
+    },
+    {
+      "allowed_families": [
+        "MINIMAL_CHEMISTRY_CONTRAST",
+        "REACTION_BEFORE_AFTER_MAP",
+        "SELF_OTHER_AGENT_FRAME",
+        "SPECIES_ROLE_MAP"
+      ],
+      "binding_status": "BOUND",
+      "bound_families": [
+        "SPECIES_ROLE_MAP"
+      ],
+      "capability_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "content_ref": "TRANSFER-05",
+      "obligation_id": "VO-CORE2_QUESTION-TRANSFER-05",
+      "realization_status": "REALIZED",
+      "realized_families": [
+        "SPECIES_ROLE_MAP"
+      ],
+      "scope": "CORE2_QUESTION"
+    }
+  ],
+  "profile_ref": "CHEM-C-H-VISUAL-OBLIGATION-v1",
+  "representation_bundle_ref": "REP-CHEM-C-L-EXACT-RUN-A",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "summary": {
+    "questions_requiring_visual": 5,
+    "questions_with_required_visual": 5,
+    "visual_obligations_bound": 17,
+    "visual_obligations_realized": 17,
+    "visual_obligations_required": 17
+  },
+  "taxonomy_ref": "CHEM-CAPABILITY-TAXONOMY-v1"
+}

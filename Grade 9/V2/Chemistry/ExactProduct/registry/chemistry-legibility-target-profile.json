@@ -1,0 +1,91 @@
+{
+  "profile_id": "CHEM-C-L-LEGIBILITY-TARGET-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Separate the absolute engineering floor from the pedagogical target. PR #322's 8 pt rule stops a page being unreadable; it does not make a page comfortable for a 14-year-old. This profile carries the learner targets PR #346 arrived at by inspecting rendered pages at actual output size, plus a page-density rule so a page cannot satisfy the floor by cramming.",
+  "absolute_minimum_font_pt": 8.0,
+  "absolute_floor_falsifier": "MIN_FONT_SIZE_FAILURE",
+  "absolute_floor_scope": "CHEMISTRY_RENDERER_CONTROLLED_TEXT_ROLES",
+  "learner_targets": {
+    "INSTRUCTIONAL_BODY": {
+      "minimum_pt": 10.0,
+      "preferred_pt": 11.0,
+      "falsifier": "LEARNER_BODY_TOO_SMALL",
+      "enforcement_state": "ENFORCED"
+    },
+    "QUESTION_STEM": {
+      "minimum_pt": 12.0,
+      "preferred_pt": 14.0,
+      "falsifier": "LEARNER_BODY_TOO_SMALL",
+      "enforcement_state": "ENFORCED"
+    },
+    "SECTION_SUBHEADING": {
+      "minimum_pt": 11.0,
+      "preferred_pt": 12.0,
+      "falsifier": "LEARNER_BODY_TOO_SMALL",
+      "enforcement_state": "ENFORCED"
+    },
+    "HEADING": {
+      "minimum_pt": 13.0,
+      "preferred_pt": 16.0,
+      "falsifier": "LEARNER_BODY_TOO_SMALL",
+      "enforcement_state": "ENFORCED"
+    },
+    "PAGE_FOOTER": {
+      "minimum_pt": 8.0,
+      "preferred_pt": 8.0,
+      "falsifier": "MIN_FONT_SIZE_FAILURE",
+      "enforcement_state": "ENFORCED",
+      "instructional": false,
+      "note": "Non-instructional running head. Held at the absolute floor rather than the learner target, because no learning depends on reading it."
+    },
+    "KEY_EQUATION": {
+      "minimum_pt": 12.0,
+      "preferred_pt": 12.0,
+      "falsifier": "KEY_EQUATION_TOO_SMALL",
+      "enforcement_state": "MEASURED_NOT_YET_ENFORCED",
+      "blocked_by": "The Core 1 and Core 2 plans do not yet mark an equation as a distinct render role: chemical relations arrive inside instructional body prose, so the renderer has nothing to raise to 12 pt independently of the paragraph around it. Declaring a KEY_EQUATION content role in the C-G/C-I authoring contracts is the prerequisite, and is the next step rather than something this profile can assert."
+    },
+    "DIAGRAM_LABEL": {
+      "minimum_pt": 9.0,
+      "preferred_pt": 9.0,
+      "falsifier": "DIAGRAM_LABEL_TOO_SMALL",
+      "enforcement_state": "MEASURED_NOT_YET_ENFORCED",
+      "observed_minimum_pt": 5.4,
+      "blocked_by": "Teaching-primitive labels are drawn by the vendored Grade 9/V2/Shared/MasterTemplates/primitives package, which chooses its own label sizes and currently emits spans down to 5.4 pt. Raising them is a shared-package change that also alters Math and Physics rendering, so it is measured and reported here rather than silently passed or unilaterally changed."
+    }
+  },
+  "page_density": {
+    "min_leading_ratio": 1.25,
+    "max_text_coverage_ratio": 0.6,
+    "max_lines_per_page_rule": "floor(printable_height_pt / (INSTRUCTIONAL_BODY.minimum_pt * min_leading_ratio))",
+    "falsifier": "PAGE_DENSITY_EXCEEDS_POLICY",
+    "enforcement_state": "ENFORCED",
+    "why": "Without this, a renderer can satisfy any font floor by shrinking leading and packing lines until the page is unreadable at output size. The line cap is derived from the page geometry and the body target rather than being a chosen number.",
+    "observed_max_text_coverage_ratio": 0.53,
+    "threshold_rationale": "The check exists to catch cramming, which lands well above 0.6; the current build peaks at 0.53, so 0.6 leaves normal content headroom while a packed page still fails."
+  },
+  "document_minimum_measurement": {
+    "measure": "smallest text span size observed anywhere in the rendered PDF, including vendored primitive labels",
+    "enforcement_state": "MEASURED_NOT_YET_ENFORCED",
+    "observed_minimum_pt": 5.4,
+    "note": "Reported in machine evidence as document_minimum_font_pt. It is deliberately NOT asserted against absolute_minimum_font_pt, because that would claim a pass the vendored primitives package does not yet deliver. absolute_minimum_font_pt is enforced over the text roles the Chemistry renderer itself controls."
+  },
+  "falsifiers": [
+    "MIN_FONT_SIZE_FAILURE",
+    "LEARNER_BODY_TOO_SMALL",
+    "PAGE_DENSITY_EXCEEDS_POLICY",
+    "KEY_EQUATION_TOO_SMALL",
+    "DIAGRAM_LABEL_TOO_SMALL",
+    "LEGIBILITY_ROLE_NOT_MEASURED",
+    "LEGIBILITY_TARGET_PROFILE_DIGEST_DRIFT"
+  ],
+  "required_measured_roles": [
+    "INSTRUCTIONAL_BODY",
+    "QUESTION_STEM",
+    "SECTION_SUBHEADING",
+    "HEADING",
+    "PAGE_FOOTER"
+  ],
+  "profile_digest": "412310b3b563cae1e69e08ed742b2d4b2604ddf54e45632489e42d40054e4f3a"
+}

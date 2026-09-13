@@ -1,15 +1,41 @@
 {
-  "artifact_sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
+  "artifact_sha256": "b2489e20eceb3da69fa634327247aafc4efd177b934682ac700b5c8cfb8a6a7a",
   "audit_id": "CHEM-C-L-AUDIT-CORE1",
   "checks": {
     "ACTUAL_PLACEMENT_EVIDENCE": "PASS",
+    "LEARNER_BODY_TARGET": "PASS",
     "LEARNER_IDENTIFIER_SCAN": "PASS",
+    "LEARNER_ROLE_LABEL_SCAN": "PASS",
     "MIN_FONT": "PASS",
     "OFF_PAGE_TEXT": "PASS",
+    "PAGE_DENSITY": "PASS",
     "PDF_REOPEN": "PASS",
     "RASTER_ALL_PAGES": "PASS",
     "TEXT_COLLISION": "PASS"
   },
-  "minimum_font_pt": 9.0,
-  "vector_pages": 23
+  "legibility": {
+    "document_minimum_font_pt": 5.4,
+    "font_usage_pt": {
+      "HEADING": 15.0,
+      "INSTRUCTIONAL_BODY": 10.5,
+      "PAGE_FOOTER": 8.0,
+      "QUESTION_STEM": 12.5,
+      "SECTION_SUBHEADING": 12.0
+    },
+    "instructional_body_pt": 10.5,
+    "learner_body_target_pass": true,
+    "legibility_profile_ref": "CHEM-C-L-LEGIBILITY-TARGET-v1",
+    "max_lines_per_page_cap": 60,
+    "observed_max_lines_per_page": 49,
+    "observed_max_text_coverage_ratio": 0.5294,
+    "page_density_pass": true,
+    "question_stem_pt": 12.5,
+    "renderer_controlled_minimum_font_pt": 8.0,
+    "unenforced_legibility_targets": [
+      "DIAGRAM_LABEL",
+      "KEY_EQUATION"
+    ]
+  },
+  "minimum_font_pt": 10.5,
+  "vector_pages": 26
 }

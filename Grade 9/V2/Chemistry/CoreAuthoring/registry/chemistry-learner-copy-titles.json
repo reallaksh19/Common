@@ -250,11 +250,31 @@
     "pedagogical design",
     "reasoning role",
     "treatment policy",
-    "publication engineering"
+    "publication engineering",
+    "problem-family",
+    "study-model",
+    "page-intent"
   ],
   "known_learner_copy_debt": [
     "The word 'representation' still appears inside upstream-authored body copy that comes from the C-G problem-authoring templates, the promoted-PCK registry and the C-H primitive descriptions. It is barred from headings by forbidden_heading_phrases but is not yet barred everywhere, because rewriting that copy is a subject-authoring change rather than a renderer change. It is queued for the next authoring-copy pass and is deliberately NOT listed in forbidden_anywhere_phrases so this registry does not claim a cleanliness it has not got.",
     "Chemistry-specific role titles beyond this table (for example a future 'lab safety note' role) must be added here before a renderer may print them; an unmapped role fails closed with LEARNER_TITLE_MISSING_FOR_ROLE rather than falling back to the internal identifier."
   ],
-  "registry_digest": "9336556397eeb17811f7f7c9cde4560b808565119d87d9fc47d970e10dad5165"
+  "registry_digest": "dbd17d830efbceeabaebd190b10da44a49fee34bb771479a6d4a65191db3dfea",
+  "body_text_substitutions": {
+    "Decision support cannot add chemistry beyond the active StudyModel.": "Use only the chemistry stated or taught for this task.",
+    "The active conservation ledger comes from source/problem-family authority.": "Choose the conservation check the question actually needs.",
+    "Classification criteria must come from source/canonical authority in declared scope.": "Classify only from the stated evidence and the rule taught here.",
+    "Original external transfer remains reserved for Core2.": "Attempt the transfer questions only after this learning step.",
+    "Work on a newly authored source-authorized instance rather than an original external transfer item.": "Work on this practice instance before attempting the transfer questions.",
+    "Provide no procedural cue beyond the task and source-authorized representation.": "Try it independently using only the information in the task.",
+    "Use explicit first-move and representation cues.": "Use the first-move and picture cues shown here.",
+    "Remove one supplied cue and require the learner to choose the next move.": "One cue has been removed; choose the next move yourself.",
+    "No additional condition/exception is required by this capability record.": "No extra condition or exception applies to this task.",
+    "Preserve and apply: EXPLICIT_EXCEPTION, explicit exception supplied by source": "Preserve the explicit exception supplied with the task.",
+    "EXPLICIT_EXCEPTION": "explicit exception",
+    "Transfer family: ": "You will meet this again in: ",
+    "verification on a new representation/problem family": "checking your work on a new kind of question",
+    "Verification obligations are inherited from source/problem-family authority.": "Which checks you must run comes from the question itself and from what this page has taught you."
+  },
+  "body_text_substitution_policy": "Applied to learner-facing body copy before it is drawn. These exist because some upstream strings are written at the producer rather than at the learner; each one is a wording change only, and none changes a chemical claim. They are governed here rather than hard-coded in the renderer so they can be reviewed as learner copy."
 }

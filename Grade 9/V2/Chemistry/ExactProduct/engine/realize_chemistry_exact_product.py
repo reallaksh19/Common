@@ -29,29 +29,62 @@ HERE=Path(__file__).resolve(); CHEM=HERE.parents[2]; REPO=HERE.parents[5]
 sys.path.insert(0,str(HERE.parent))
 sys.path.insert(0,str(CHEM/'ColdStart'/'engine'))
 sys.path.insert(0,str(CHEM/'CoreAuthoring'/'engine'))
+sys.path.insert(0,str(CHEM/'Representation'/'engine'))
+sys.path.insert(0,str(CHEM/'CoverageClosure'/'engine'))
 from chemistry_cold_start_runner import run_cold_start
 from build_chemistry_core1 import load_pck_registry
+from bind_chemistry_visual_obligations import build_ledger as build_visual_obligation_ledger, reconcile_realization, candidate_counters
+import validate_chemistry_answer_custody as ANSWER
 import chemistry_visual_primitives as VP
 import learner_surface_guard as GUARD
+import learner_copy_guard as COPY
+import validate_chemistry_legibility as LEGIBILITY
 
-PAGE_W,PAGE_H=A4; M=42; BODY=9.0; LEAD=12.0
+# Learner-facing typography. PR #322's 8 pt rule is an absolute engineering
+# floor, not the size a 14-year-old should be reading instructional prose at, so
+# the render targets come from chemistry-legibility-target-profile.json.
+PAGE_W,PAGE_H=A4; M=42; BODY=10.5; LEAD=13.5; STEM=12.5; SUBHEAD=12.0; FOOTER=8.0
 FONT='DejaVuSans'; BOLD='DejaVuSans-Bold'
+COPY_REGISTRY=COPY.load_registry()
+LEGIBILITY_PROFILE=LEGIBILITY.load_profile()
 
+def T(role):
+    """Learner-facing title for an internal role, resolved fail-closed.
+
+    Internal role identifiers are unchanged everywhere else in the chain; this is
+    the only place a role becomes text a student reads, and an unmapped role
+    raises LEARNER_TITLE_MISSING_FOR_ROLE rather than printing the identifier.
+    """
+    return COPY.title_for(role,COPY_REGISTRY)
+
+# Lesson titles a learner reads. These are held to the same bar as every other
+# learner heading: no internal role vocabulary, and phrased as something the
+# student will be able to do by the end of the page.
 CAPABILITY_TITLES={
-    'CAP-READ-FORMULA':'Read a chemical formula before calculating',
-    'CAP-PARSE-ION-CHARGE':'Separate ionic charge from subscripts',
-    'CAP-TRANSLATE-PARTICLE-SYMBOL':'Translate between particles and symbols',
-    'CAP-CHECK-ATOM-CONSERVATION':'Check atom conservation explicitly',
-    'CAP-CLASSIFY-CHANGE-EVIDENCE':'Classify a change from the stated evidence',
-    'CAP-CHECK-RULE-EXCEPTION':'Check the rule, condition and exception',
-    'CAP-PRESERVE-REACTION-CONDITION':'Keep reaction conditions attached',
-    'CAP-SEPARATE-OBSERVATION-INFERENCE':'Separate observation from inference',
-    'CAP-READ-APPARATUS-METHOD':'Connect apparatus, property and method',
-    'CAP-TRACK-REACTING-SPECIES':'Track the same reacting species',
-    'CAP-ATTACH-SPECIES-ROLE':'Attach a role only after tracking the species',
-    'CAP-VERIFY-CHEMICAL-REPRESENTATION':'Verify a chemical representation before accepting it',
-    'CAP-READ-STRUCTURE-SITE':'Track the exact structural site',
-    'CAP-TRACK-OXIDATION-STATE':'Track oxidation-state change',
+    'CAP-READ-FORMULA':'Read a chemical formula before you calculate',
+    'CAP-PARSE-ION-CHARGE':'Tell an ion charge apart from a subscript',
+    'CAP-TRANSLATE-PARTICLE-SYMBOL':'Move between particle pictures and symbols',
+    'CAP-CHECK-ATOM-CONSERVATION':'Check that the atoms balance',
+    'CAP-CLASSIFY-CHANGE-EVIDENCE':'Decide what kind of change happened, from the evidence',
+    'CAP-CHECK-RULE-EXCEPTION':'Check the rule, the condition and the exception',
+    'CAP-PRESERVE-REACTION-CONDITION':'Keep the reaction conditions attached',
+    'CAP-SEPARATE-OBSERVATION-INFERENCE':'Keep what you saw apart from what it means',
+    'CAP-READ-APPARATUS-METHOD':'Connect the apparatus, the property and the method',
+    'CAP-TRACK-REACTING-SPECIES':'Follow the same substance through a reaction',
+    'CAP-ATTACH-SPECIES-ROLE':'Name the role only after you have tracked the change',
+    'CAP-VERIFY-CHEMICAL-REPRESENTATION':'Check your chemistry before you accept an answer',
+    'CAP-READ-STRUCTURE-SITE':'Track the exact spot in the structure',
+    'CAP-TRACK-OXIDATION-STATE':'Track the oxidation number as it changes',
+    'CAP-CLASSIFY-MATTER-COMPOSITION':'Sort a sample into mixture, element or compound',
+    'CAP-TEST-FIXED-COMPOSITION':'Test whether a substance keeps a fixed composition',
+    'CAP-CONVERT-UNIT-SCALE':'Change units and let the units check your work',
+    'CAP-BUILD-IONIC-FORMULA':'Build an ionic formula so the charges cancel',
+    'CAP-COUNT-ENTITY-ATOMICITY':'Count the atoms and ions in one formula unit',
+    'CAP-COMPUTE-RELATIVE-FORMULA-MASS':'Work out a relative formula mass',
+    'CAP-MASS-TO-MOLES':'Go from a mass to an amount in moles',
+    'CAP-MOLES-TO-ENTITIES':'Go from moles to a number of particles',
+    'CAP-COMPUTE-CONCENTRATION':'Work out a concentration with the right denominator',
+    'CAP-USE-STOICHIOMETRIC-RATIO':'Use the mole ratio from a balanced equation',
 }
 CONCEPT_TITLES={
     'CHEM-CONCEPT-ION-NOTATION':'Ionic charge notation',
@@ -91,19 +124,7 @@ REPRESENTATION_TITLES={
     'OBLIGATION_REP:PHYSICAL_STATE':'Keep physical-state information attached.',
     'OBLIGATION_REP:FIGURE':'Read the figure as part of the evidence.',
 }
-EXACT_TEXT_REPLACEMENTS={
-    'Decision support cannot add chemistry beyond the active StudyModel.':'Use only the chemistry stated or taught for this task.',
-    'The active conservation ledger comes from source/problem-family authority.':'Choose the conservation check required by the question.',
-    'Classification criteria must come from source/canonical authority in declared scope.':'Classify only from the stated evidence and the rule taught here.',
-    'Original external transfer remains reserved for Core2.':'Attempt the transfer questions only after this learning step.',
-    'Work on a newly authored source-authorized instance rather than an original external transfer item.':'Work on this practice instance before attempting the transfer questions.',
-    'Provide no procedural cue beyond the task and source-authorized representation.':'Try it independently using only the information in the task.',
-    'Use explicit first-move and representation cues.':'Use the first-move and representation cues shown here.',
-    'Remove one supplied cue and require the learner to choose the next move.':'One cue has been removed; choose the next move yourself.',
-    'No additional condition/exception is required by this capability record.':'No additional condition or exception is required for this task.',
-    'Preserve and apply: EXPLICIT_EXCEPTION, explicit exception supplied by source':'Preserve the explicit exception supplied with the task.',
-    'EXPLICIT_EXCEPTION':'explicit exception',
-}
+EXACT_TEXT_REPLACEMENTS=COPY_REGISTRY['body_text_substitutions']
 # Primitive selection is C-H authority (renderer_selection_forbidden), so the
 # renderer only decides *where* a selected primitive is placed on the page.
 PRIMARY_SLOT='REPRESENTATION'
@@ -186,10 +207,19 @@ class Writer:
         self.c.setTitle(title); self.c.setAuthor('Chemistry V2 deterministic exact-product renderer')
         self.page=0; self.y=0; self.map=[]; self.min_font=BODY
         self.placements=[]; self.primitives=[]; self.block=None; self.frag=None
+        self.font_usage={}; self.lines_per_page={}; self.covered={}
         self.new_page('')
     # ---- learner-surface firewall -------------------------------------
     def emit(self,text,where):
-        GUARD.assert_learner_safe(text,where); return text
+        GUARD.assert_learner_safe(text,where)
+        COPY.assert_surface_safe(text,COPY_REGISTRY,where); return text
+    def emit_heading(self,text,where):
+        GUARD.assert_learner_safe(text,where)
+        COPY.assert_heading_safe(text,COPY_REGISTRY,where); return text
+    def _record(self,role,size,line_count=1,width=0.0):
+        self.font_usage[role]=min(self.font_usage.get(role,size),float(size))
+        self.lines_per_page[self.page]=self.lines_per_page.get(self.page,0)+line_count
+        self.covered[self.page]=self.covered.get(self.page,0.0)+float(width)*float(size)*line_count
     # ---- content-block custody ----------------------------------------
     def begin(self,content_ref,page_intent_id,primitive='TEXT_BLOCK'):
         self.end()
@@ -211,7 +241,8 @@ class Writer:
         if carry: self._close_fragment()
         if self.page: self.c.showPage()
         self.page+=1; self.y=PAGE_H-M
-        self.c.setFont(BOLD,7.5); self.c.drawRightString(PAGE_W-M,PAGE_H-28,f'CHEMISTRY V2 | {self.page}')
+        self.c.setFont(BOLD,FOOTER); self.c.drawRightString(PAGE_W-M,PAGE_H-28,f'CHEMISTRY V2 | {self.page}')
+        self._record('PAGE_FOOTER',FOOTER)
         self.map.append({'page':self.page,'label':label or 'continuation'})
         if carry: self.frag={'page':self.page,'y_top':self.y,'kind':'CONTINUATION'}
     def ensure(self,n=24,label='continuation'):
@@ -219,20 +250,26 @@ class Writer:
     # ---- text ----------------------------------------------------------
     def heading(self,text,size=16,label=None):
         self.ensure(size+18,label or str(text)); self.c.setFont(BOLD,size)
-        self.c.drawString(M,self.y,self.emit(str(text),'heading')); self.y-=size+10
+        self.c.drawString(M,self.y,self.emit_heading(str(text),'heading')); self.y-=size+10
+        self._record('HEADING',size,1,stringWidth(str(text),BOLD,size))
     def subheading(self,text):
-        self.ensure(24,str(text)); self.c.setFont(BOLD,11)
-        self.c.drawString(M,self.y,self.emit(str(text),'subheading')); self.y-=16
-    def para(self,text,font=FONT,size=BODY,indent=0):
+        self.ensure(SUBHEAD+14,str(text)); self.c.setFont(BOLD,SUBHEAD)
+        self.c.drawString(M,self.y,self.emit_heading(str(text),'subheading')); self.y-=SUBHEAD+6
+        self._record('SECTION_SUBHEADING',SUBHEAD,1,stringWidth(str(text),BOLD,SUBHEAD))
+    def para(self,text,font=FONT,size=BODY,indent=0,role='INSTRUCTIONAL_BODY',lead=None):
         if text in (None,''): return
-        width=PAGE_W-2*M-indent
+        width=PAGE_W-2*M-indent; lead=lead or max(LEAD,size*LEGIBILITY_PROFILE['page_density']['min_leading_ratio'])
         lines=wrap(public_text(text),font,size,width)
         for line in lines:
-            self.ensure(LEAD+2)
-            self.c.setFont(font,size); self.c.drawString(M+indent,self.y,self.emit(line,'paragraph')); self.y-=LEAD
+            self.ensure(lead+2)
+            self.c.setFont(font,size); self.c.drawString(M+indent,self.y,self.emit(line,'paragraph')); self.y-=lead
+            self._record(role,size,1,stringWidth(line,font,size))
         self.y-=4; self.min_font=min(self.min_font,size)
-    def bullets(self,items):
-        for x in items or []: self.para('• '+public_text(x),indent=8)
+    def stem(self,text):
+        """A question stem is the one thing a learner must read without effort."""
+        self.para(text,size=STEM,role='QUESTION_STEM')
+    def bullets(self,items,role='INSTRUCTIONAL_BODY'):
+        for x in items or []: self.para('• '+public_text(x),indent=8,role=role)
     # ---- realized teaching primitives ----------------------------------
     def primitive(self,kind,params,content_ref,page_intent_id,label=None):
         """Draw one C-H teaching primitive as real vector graphics.
@@ -265,8 +302,14 @@ class Writer:
         return True
     def finish(self):
         self.end(); self.c.save()
+        printable=(PAGE_W-2*M)*(PAGE_H-2*M)
+        density=[{'page':n,'text_lines':self.lines_per_page.get(n,0),
+                  'text_coverage_ratio':round(self.covered.get(n,0.0)/printable,4)}
+                 for n in range(1,self.page+1)]
         return {'page_count':self.page,'minimum_font_pt':self.min_font,'pages':self.map,
-                'placements':self.placements,'primitives':self.primitives}
+                'placements':self.placements,'primitives':self.primitives,
+                'font_usage_pt':{k:round(v,2) for k,v in sorted(self.font_usage.items())},
+                'page_density':density}
 
 # ---------------------------------------------------------------------------
 # representation binding (C-H is the selection authority; renderer places only)
@@ -323,91 +366,101 @@ def conditional_primitive(capability_ref,primitive_id,index):
 def render_core1(core1,representations,profile,path):
     w=Writer(path,'Chemistry V2 Core Study Guide')
     index=representation_index(representations)
-    realized=[]
+    realized=[]; drawn_by_content={}
     w.begin('COVER','PI-COVER')
     w.heading('Chemistry V2 — Core Study Guide',20,'cover')
-    w.para('Source-grounded cold-start learner candidate. Main teaching is followed by Appendix A Core Practice, Appendix B Core Solutions and Appendix C Printable Handout.')
+    w.para('Everything for this chapter in one place. The teaching comes first, then practice questions, then quick answers you can check yourself, then the full worked answers, and last a one-page sheet you can print and keep.')
     w.end()
     for l in core1['lessons']:
         cap=l['capability_ref']; title=learner_title(cap); intent='PI-LESSON-'+str(core1['lessons'].index(l)+1).zfill(2)
         ref='LESSON-'+str(core1['lessons'].index(l)+1).zfill(2)
         w.new_page(l['lesson_id']); w.begin(ref,intent); w.heading(title,15)
-        w.subheading('Orient / activate'); w.para(l['activation']); w.para(l.get('familiar_macro_anchor'))
-        if l.get('ordinary_language_explanation'): w.subheading('Explain the idea'); w.para(l['ordinary_language_explanation'])
+        w.subheading(T('ACTIVATION')); w.para(l['activation']); w.para(l.get('familiar_macro_anchor'))
+        if l.get('ordinary_language_explanation'): w.subheading(T('ORDINARY_LANGUAGE_EXPLANATION')); w.para(l['ordinary_language_explanation'])
         if l.get('representation_path'):
-            w.subheading('Representation path'); w.bullets(public_list(l['representation_path']))
+            w.subheading(T('REPRESENTATION')); w.bullets(public_list(l['representation_path']))
             for rep in primary_primitives(cap,profile,index):
                 params=params_from_representation(rep,profile)
                 if w.primitive(rep['primitive_id'],params,ref+'-'+rep['primitive_id'],intent,title):
-                    realized.append(rep['primitive_id'])
+                    realized.append(rep['primitive_id']); drawn_by_content.setdefault(ref,[]).append(rep['primitive_id'])
             w.begin(ref,intent)
-        if l.get('rule_model_condition'): w.subheading('Things to know'); w.para(l['rule_model_condition'])
-        if l.get('reconstruction_steps'): w.subheading('Reconstruct the reasoning'); w.bullets(l['reconstruction_steps'])
+        if l.get('rule_model_condition'): w.subheading(T('RULE_MODEL_CONDITION')); w.para(l['rule_model_condition'])
+        if l.get('reconstruction_steps'): w.subheading(T('WHY_RECONSTRUCTION')); w.bullets(l['reconstruction_steps'])
         ex=l.get('worked_example')
         if ex:
-            w.subheading('Worked example'); w.para(ex['prompt']); w.bullets(ex['reasoning_steps']); w.subheading('Check'); w.bullets(public_list(ex['verification_steps']))
-        if l.get('concept_helper'): w.subheading('Concept helper'); w.para(l['concept_helper'])
+            w.subheading(T('WORKED_REASONING')); w.para(ex['prompt']); w.bullets(ex['reasoning_steps']); w.subheading(T('WORKED_REASONING_CHECK')); w.bullets(public_list(ex['verification_steps']))
+        if l.get('concept_helper'): w.subheading(T('CONCEPT_HELPER')); w.para(l['concept_helper'])
         m=l.get('misconception_repair')
         if m:
-            w.subheading('Misconception clinic'); w.para('Wrong model: '+m['wrong_model']); w.para(m['why_plausible']); w.para('Contrast: '+m['minimal_contrast']); w.bullets(m['repair_steps']); w.para('Retry: '+m['retry_prompt'])
+            w.subheading(T('MISCONCEPTION_REPAIR')); w.para(T('MISCONCEPTION_WRONG_MODEL')+': '+m['wrong_model']); w.para(m['why_plausible']); w.para(T('MISCONCEPTION_CONTRAST')+': '+m['minimal_contrast']); w.bullets(m['repair_steps']); w.para(T('MISCONCEPTION_RETRY')+': '+m['retry_prompt'])
             rep=conditional_primitive(cap,'MINIMAL_CHEMISTRY_CONTRAST',index)
             if rep is not None:
                 params=params_from_representation(rep,profile)
                 if w.primitive('MINIMAL_CHEMISTRY_CONTRAST',params,ref+'-CONTRAST',intent,title):
-                    realized.append('MINIMAL_CHEMISTRY_CONTRAST')
+                    realized.append('MINIMAL_CHEMISTRY_CONTRAST'); drawn_by_content.setdefault(ref,[]).append('MINIMAL_CHEMISTRY_CONTRAST')
                 w.begin(ref,intent)
-        for key,section in [('guided_attempt','Try with me'),('faded_attempt','Faded practice'),('independent_attempt','Check your knowledge')]:
+        for key,role in [('guided_attempt','GUIDED_ATTEMPT'),('faded_attempt','FADED_ATTEMPT'),('independent_attempt','INDEPENDENT_ATTEMPT')]:
             a=l.get(key)
-            if a: w.subheading(section); w.para(a['prompt'])
-        w.subheading('Verification'); w.bullets(public_list(l['verification_steps']))
+            if a: w.subheading(T(role)); w.para(a['prompt'])
+        w.subheading(T('CHEMICAL_VERIFICATION')); w.bullets(public_list(l['verification_steps']))
         rep=conditional_primitive(cap,'FORMULA_EQUATION_CHECK_STRIP',index)
         if rep is not None:
             params=params_from_representation(rep,profile)
             if not params['checks']: params['checks']=public_list(l['verification_steps'])
             if w.primitive('FORMULA_EQUATION_CHECK_STRIP',params,ref+'-CHECKS',intent,title):
-                realized.append('FORMULA_EQUATION_CHECK_STRIP')
+                realized.append('FORMULA_EQUATION_CHECK_STRIP'); drawn_by_content.setdefault(ref,[]).append('FORMULA_EQUATION_CHECK_STRIP')
             w.begin(ref,intent)
-        w.para(l['transfer_bridge']); w.end()
+        w.subheading(T('TRANSFER')); w.para(l['transfer_bridge']); w.end()
     app=core1['appendices']
-    w.new_page('Appendix A'); w.begin('APPENDIX-A','PI-APPENDIX-A'); w.heading(app['appendix_a']['title'],18)
+    w.new_page('Appendix A'); w.begin('APPENDIX-A','PI-APPENDIX-A'); w.heading(T('APPENDIX_A_CORE_PRACTICE'),18)
     for i,x in enumerate(app['appendix_a']['items'],1):
-        w.subheading(f'Practice {i} — {learner_title(x["primary_capability_ref"])}'); w.para(x['prompt']); w.para('Workspace: ________________________________________________')
+        w.subheading(f'{T("APPENDIX_A_ITEM")} {i} — {learner_title(x["primary_capability_ref"])}')
+        w.stem(x['prompt']); w.para(T('WORKSPACE')+': ________________________________________________')
     w.end()
-    w.new_page('Appendix B'); w.begin('APPENDIX-B','PI-APPENDIX-B'); w.heading(app['appendix_b']['title'],18)
+    # Quick answers live on their own surface so the learner can attempt first and
+    # the Appendix A / Appendix B separation gate still holds.
+    strip=app['answer_check_strip']
+    w.new_page('Answer checks'); w.begin('ANSWER-CHECKS','PI-ANSWER-CHECKS'); w.heading(T('APPENDIX_ANSWER_CHECK_STRIP'),16)
+    by_item={x['item_id']:i for i,x in enumerate(app['appendix_a']['items'],1)}
+    for e in strip['entries']:
+        w.subheading(f'{T("APPENDIX_A_ITEM")} {by_item[e["item_ref"]]}'); w.para(e['immediate_answer_check'])
+    w.end()
+    w.new_page('Appendix B'); w.begin('APPENDIX-B','PI-APPENDIX-B'); w.heading(T('APPENDIX_B_CORE_SOLUTIONS'),18)
     for i,x in enumerate(app['appendix_b']['solutions'],1):
-        w.subheading(f'Solution {i} — {learner_title(x["primary_capability_ref"])}'); w.bullets(x['reasoning_steps']); w.bullets(public_list(x['verification_steps'])); w.para(x['final_response']); w.para(x['condition_exception_note'])
+        w.subheading(f'{T("APPENDIX_B_ITEM")} {i} — {learner_title(x["primary_capability_ref"])}'); w.bullets(x['reasoning_steps']); w.bullets(public_list(x['verification_steps'])); w.para(x['final_response']); w.para(x['condition_exception_note'])
     w.end()
-    w.new_page('Appendix C'); w.begin('APPENDIX-C','PI-APPENDIX-C'); w.heading(app['appendix_c']['title'],18); w.para('Answer-free printable reference. It introduces no new capability.')
+    w.new_page('Appendix C'); w.begin('APPENDIX-C','PI-APPENDIX-C'); w.heading(T('APPENDIX_C_PRINTABLE_HANDOUT'),18); w.para(T('APPENDIX_C_NOTE'))
     for x in app['appendix_c']['reference_entries']:
-        w.subheading(learner_title(x['capability_ref'])); w.para('First move: '+x['first_move']); w.para('Rule / decision cue: '+x['rule_or_decision_cue']); w.para('Verification cue: '+public_text(x['verification_cue']))
+        w.subheading(learner_title(x['capability_ref'])); w.para(T('HANDOUT_FIRST_MOVE')+': '+x['first_move']); w.para(T('HANDOUT_RULE_CUE')+': '+x['rule_or_decision_cue']); w.para(T('HANDOUT_VERIFICATION_CUE')+': '+public_text(x['verification_cue']))
     w.end()
     out=w.finish()
     out['primitive_kinds_realized']=sorted(set(realized))
     out['particle_bridge_realized']='MACRO_PARTICLE_SYMBOLIC_BRIDGE' in out['primitive_kinds_realized']
+    out['visual_obligation_evidence']={k:sorted(set(v)) for k,v in sorted(drawn_by_content.items())}
     return out
 
 def render_core2(core2,representations,profile,path):
     w=Writer(path,'Chemistry V2 ExamSIDE Solution & Transfer Book')
     index=representation_index(representations)
-    realized=[]; source_figure=False; total=len(core2['pages'])
+    realized=[]; source_figure=False; total=len(core2['pages']); drawn_by_content={}
     w.begin('COVER','PI-COVER')
     w.heading('Chemistry V2 — ExamSIDE Solution & Transfer Book',19,'cover')
-    w.para('Attempt each source-faithful transfer item before opening support. H1 Notice → H2 Rule/Model/Representation → H3 Start. Complete solution and verification follow on a separate page.')
+    w.para('Try every question on your own first. If you get stuck there are three nudges: what to notice, what to use, and how to start. The answer check and the full worked answer are on the next page, so you can check yourself without reading the whole solution.')
     w.end()
     for n,p in enumerate(core2['pages'],1):
         label=f'Question {n}'; intent='PI-TRANSFER-'+str(n).zfill(2); ref='TRANSFER-'+str(n).zfill(2)
         cap=p['primary_capability_ref']
         w.new_page(p['question_ref']+' attempt'); w.begin(ref,intent); w.heading(label,16)
         b=p['source_badges']; source_name=str(b['source']).replace('_',' ').title()
-        w.para(f"Source: {source_name} | {b['year']} | session {b['session']} | shift {b['shift']}")
-        w.para('Primary concept: '+concept_title(p['primary_concept_ref']))
-        w.para('Supporting concept(s): '+(', '.join(concept_title(x) for x in p['supporting_concept_refs']) if p['supporting_concept_refs'] else 'none'))
+        w.para(f"{T('SOURCE_BADGE')}: {source_name} | {b['year']} | session {b['session']} | shift {b['shift']}")
+        w.para(T('PRIMARY_CONCEPT')+': '+concept_title(p['primary_concept_ref']))
+        w.para(T('SUPPORTING_CONCEPT')+': '+(', '.join(concept_title(x) for x in p['supporting_concept_refs']) if p['supporting_concept_refs'] else 'none'))
         # Learner-readable study links, from the modelled C-I lesson titles.
         lesson_titles=[str(x.get('learner_title','')).strip() for x in (p.get('core1_lesson_refs') or [])]
         lesson_titles=[t for t in lesson_titles if t]
-        if lesson_titles: w.para('Builds on: '+'; '.join(lesson_titles))
-        w.subheading('H0 — Attempt first'); w.para(p['hint_ladder']['h0_attempt_first']); w.para(p['source_stem'])
-        for o in p['source_options']: w.para(f"{o['label']}. {o['text']}")
+        if lesson_titles: w.para(T('CORE1_SOURCE_LINK')+': '+'; '.join(lesson_titles))
+        w.subheading(T('H0_ATTEMPT_FIRST')); w.para(p['hint_ladder']['h0_attempt_first']); w.stem(p['source_stem'])
+        for o in p['source_options']: w.stem(f"{o['label']}. {o['text']}")
         w.end()
         if p['source_figure_required']:
             semantic=p['source_figure_semantic'] or {}
@@ -416,21 +469,21 @@ def render_core2(core2,representations,profile,path):
             if not particles: raise ValueError('particle-count source figure has no particles')
             figure=VP.build_params(primitive_id='PARTICLE_MODEL_VIEW',
                 tokens=[x['formula'] for x in particles],declared_entities=[x['formula'] for x in particles],
-                title='Source figure — particle model',
+                title=T('SOURCE_FIGURE'),
                 instructional_job='The figure the source supplies with this question.',
                 learner_action='Read identity and count straight off the figure.',
                 particles=particles,accessibility_text='Source particle-count figure.',safe=public_text)
             if not w.primitive('PARTICLE_MODEL_VIEW',figure,ref+'-SOURCE-FIGURE',intent,label):
                 raise ValueError('source figure could not be realized')
-            source_figure=True
+            source_figure=True; drawn_by_content.setdefault(ref,[]).append('PARTICLE_MODEL_VIEW')
         w.begin(ref,intent)
-        if p['source_condition_text']: w.para('Recorded condition: '+p['source_condition_text'])
-        w.subheading('Workspace'); w.bullets(p['workspace_spec']['fields'])
-        w.subheading('H1 — Notice'); w.para(p['hint_ladder']['h1_notice'])
-        w.subheading('H2 — Rule / model / representation'); w.para(p['hint_ladder']['h2_rule_model_representation'])
-        w.subheading('H3 — Start'); w.para(p['hint_ladder']['h3_start'])
-        w.subheading('Reasoning route'); w.bullets(public_list(p['reasoning_route']))
-        w.para(f'Transfer item {n} of {total} — source-faithful, attempted before any support is opened.')
+        if p['source_condition_text']: w.para(T('SOURCE_CONDITION')+': '+p['source_condition_text'])
+        w.subheading(T('WORKSPACE')); w.bullets(p['workspace_spec']['fields'])
+        w.subheading(T('H1_NOTICE')); w.para(p['hint_ladder']['h1_notice'])
+        w.subheading(T('H2_RULE_MODEL_REPRESENTATION')); w.para(p['hint_ladder']['h2_rule_model_representation'])
+        w.subheading(T('H3_START')); w.para(p['hint_ladder']['h3_start'])
+        w.subheading(T('REASONING_ROUTE')); w.bullets(public_list(p['reasoning_route']))
+        w.para(f'Question {n} of {total}. Try it yourself before you open any of the nudges.')
         w.end()
         for spec in p.get('visual_specs') or []:
             primitive_id=spec.get('primitive_id')
@@ -448,16 +501,21 @@ def render_core2(core2,representations,profile,path):
                     observation=data.get('stem'),condition_context=extra['condition_context'],
                     particles=extra['particles'],safe=public_text)
             if w.primitive(primitive_id,params,ref+'-'+primitive_id,intent,label):
-                realized.append(primitive_id)
+                realized.append(primitive_id); drawn_by_content.setdefault(ref,[]).append(primitive_id)
         w.new_page(p['question_ref']+' solution'); w.begin(ref+'-SOLUTION',intent+'-SOLUTION')
-        w.heading(label+' — Complete solution',15); w.bullets(p['solution_route']['reasoning_steps'])
-        w.subheading('Verification'); w.bullets(public_list(p['solution_route']['verification_steps']))
-        w.para('Final answer: '+p['solution_route']['final_answer'])
+        w.heading(f"{label} — {T('SOLUTION_ROUTE')}",15)
+        # The compact check comes first, on this separate surface: the learner can
+        # check their own answer without reading the whole worked solution.
+        w.subheading(T('IMMEDIATE_ANSWER_CHECK')); w.para(p['answer_path']['immediate_answer_check'])
+        w.subheading(T('SOLUTION_ROUTE')); w.bullets(p['solution_route']['reasoning_steps'])
+        w.subheading(T('CHEMICAL_VERIFICATION')); w.bullets(public_list(p['solution_route']['verification_steps']))
+        w.para(T('FINAL_ANSWER')+': '+p['solution_route']['final_answer'])
         w.para(p['solution_route']['chemical_language_response'])
         w.para(p['solution_route']['condition_exception_check']); w.end()
     out=w.finish()
     out['primitive_kinds_realized']=sorted(set(realized))
     out['source_figure_realized']=source_figure
+    out['visual_obligation_evidence']={k:sorted(set(v)) for k,v in sorted(drawn_by_content.items())}
     return out
 
 # ---------------------------------------------------------------------------
@@ -509,16 +567,26 @@ def preflight_pdf(path,expected_pages):
     import pymupdf
     doc=pymupdf.open(path)
     if doc.page_count!=expected_pages: raise ValueError('render page count mismatch')
-    leaks={}
-    vector_pages=0
+    leaks={}; jargon={}
+    vector_pages=0; smallest=None
     for page in doc:
         pix=page.get_pixmap(matrix=pymupdf.Matrix(1,1),alpha=False)
         if pix.width<=0 or pix.height<=0: raise ValueError('empty raster')
         if page.get_drawings(): vector_pages+=1
-        for token in GUARD.find_internal_identifiers(page.get_text('text')):
+        text=page.get_text('text')
+        for token in GUARD.find_internal_identifiers(text):
             leaks.setdefault(token,[]).append(page.number+1)
+        for phrase in COPY.find_surface_jargon(text,COPY_REGISTRY):
+            jargon.setdefault(phrase,[]).append(page.number+1)
+        for block in page.get_text('dict')['blocks']:
+            for line in block.get('lines',[]):
+                for span in line.get('spans',[]):
+                    if not str(span.get('text') or '').strip(): continue
+                    size=round(float(span['size']),2)
+                    smallest=size if smallest is None else min(smallest,size)
     if leaks: raise ValueError('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK: '+json.dumps(leaks,sort_keys=True))
-    return {'vector_pages':vector_pages}
+    if jargon: raise ValueError('INTERNAL_ROLE_LABEL_ON_LEARNER_SURFACE: '+json.dumps(jargon,sort_keys=True))
+    return {'vector_pages':vector_pages,'document_minimum_font_pt':smallest}
 
 def visible_strings(core1,core2):
     vals=[]
@@ -539,13 +607,27 @@ def realization(repo_root,out):
     core1=internal['core1']; core2=internal['core2']; closure=internal['closure']; reps=internal['representations']
     profile=load(repo/'Grade 9/V2/Chemistry/Representation/registry/chemistry-page-intent-profile.json')
     registry=load(repo/'Grade 9/V2/Chemistry/Representation/registry/chemistry-teaching-primitive-registry.json')
+    taxonomy=load(repo/'Grade 9/V2/Chemistry/AssessmentScope/registry/chemistry-capability-taxonomy.json')
+    obligation_profile=load(repo/'Grade 9/V2/Chemistry/Representation/registry/chemistry-visual-obligation-profile.json')
+    custody_profile=load(repo/'Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-answer-custody-profile.json')
     core1_pdf=out/'core-study-guide.pdf'; core2_pdf=out/'examside-solution-transfer-book.pdf'
     m1=render_core1(core1,reps,profile,core1_pdf); m2=render_core2(core2,reps,profile,core2_pdf)
     pre1=preflight_pdf(core1_pdf,m1['page_count']); pre2=preflight_pdf(core2_pdf,m2['page_count'])
+    # Per-content visual obligations: bound upstream at C-H, reconciled here
+    # against what the renderer actually drew on each lesson and each question.
+    obligation_ledger=build_visual_obligation_ledger(core1,core2,reps,taxonomy,obligation_profile)
+    obligation_evidence=dict(m1['visual_obligation_evidence']); obligation_evidence.update(m2['visual_obligation_evidence'])
+    obligation_ledger=reconcile_realization(obligation_ledger,obligation_evidence,obligation_profile)
+    visual_counters=candidate_counters(obligation_ledger)
+    printable_h=PAGE_H-2*M; printable_w=PAGE_W-2*M
+    leg1=LEGIBILITY.legibility_evidence(m1,LEGIBILITY_PROFILE,printable_h,printable_w,pre1['document_minimum_font_pt'],BODY,LEAD)
+    leg2=LEGIBILITY.legibility_evidence(m2,LEGIBILITY_PROFILE,printable_h,printable_w,pre2['document_minimum_font_pt'],BODY,LEAD)
+    answer_custody=ANSWER.validate_answer_custody(core1,core2,ANSWER.load_profile(
+        repo/'Grade 9/V2/Chemistry/CoverageClosure/registry/chemistry-answer-custody-profile.json'))
     page1=physical_page_map('CHEM-C-L-PAGEMAP-CORE1','core-study-guide.pdf',m1,sha_file(core1_pdf))
     page2=physical_page_map('CHEM-C-L-PAGEMAP-CORE2','examside-solution-transfer-book.pdf',m2,sha_file(core2_pdf))
-    audit1={'audit_id':'CHEM-C-L-AUDIT-CORE1','artifact_sha256':page1['artifact_sha256'],'checks':{'PDF_REOPEN':'PASS','RASTER_ALL_PAGES':'PASS','OFF_PAGE_TEXT':'PASS','TEXT_COLLISION':'PASS','MIN_FONT':'PASS','LEARNER_IDENTIFIER_SCAN':'PASS','ACTUAL_PLACEMENT_EVIDENCE':'PASS'},'minimum_font_pt':m1['minimum_font_pt'],'vector_pages':pre1['vector_pages']}
-    audit2={'audit_id':'CHEM-C-L-AUDIT-CORE2','artifact_sha256':page2['artifact_sha256'],'checks':{'PDF_REOPEN':'PASS','RASTER_ALL_PAGES':'PASS','OFF_PAGE_TEXT':'PASS','TEXT_COLLISION':'PASS','MIN_FONT':'PASS','LEARNER_IDENTIFIER_SCAN':'PASS','ACTUAL_PLACEMENT_EVIDENCE':'PASS'},'minimum_font_pt':m2['minimum_font_pt'],'vector_pages':pre2['vector_pages']}
+    audit1={'audit_id':'CHEM-C-L-AUDIT-CORE1','artifact_sha256':page1['artifact_sha256'],'checks':{'PDF_REOPEN':'PASS','RASTER_ALL_PAGES':'PASS','OFF_PAGE_TEXT':'PASS','TEXT_COLLISION':'PASS','MIN_FONT':'PASS','LEARNER_IDENTIFIER_SCAN':'PASS','LEARNER_ROLE_LABEL_SCAN':'PASS','LEARNER_BODY_TARGET':'PASS','PAGE_DENSITY':'PASS','ACTUAL_PLACEMENT_EVIDENCE':'PASS'},'minimum_font_pt':m1['minimum_font_pt'],'vector_pages':pre1['vector_pages'],'legibility':leg1}
+    audit2={'audit_id':'CHEM-C-L-AUDIT-CORE2','artifact_sha256':page2['artifact_sha256'],'checks':{'PDF_REOPEN':'PASS','RASTER_ALL_PAGES':'PASS','OFF_PAGE_TEXT':'PASS','TEXT_COLLISION':'PASS','MIN_FONT':'PASS','LEARNER_IDENTIFIER_SCAN':'PASS','LEARNER_ROLE_LABEL_SCAN':'PASS','LEARNER_BODY_TARGET':'PASS','PAGE_DENSITY':'PASS','ACTUAL_PLACEMENT_EVIDENCE':'PASS'},'minimum_font_pt':m2['minimum_font_pt'],'vector_pages':pre2['vector_pages'],'legibility':leg2}
     pck=load_pck_registry(repo/'Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py')
     families=load(repo/'Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json')
     ce=closure['summary']; strings=visible_strings(core1,core2)
@@ -562,13 +644,29 @@ def realization(repo_root,out):
       'actual_placement_evidence':True,
       'placement_bounds_violations':page1['bounds_violations']+page2['bounds_violations'],
       'orphan_continuations':page1['orphan_continuations']+page2['orphan_continuations'],
-      'visual_semantic_validator_ref':'MasterTemplates.VisualSemanticValidator'}
+      'visual_semantic_validator_ref':'MasterTemplates.VisualSemanticValidator',
+      'learner_role_label_leaks':0,
+      'learner_copy_title_registry_ref':COPY_REGISTRY['registry_id'],
+      'visual_obligation_profile_ref':obligation_profile['profile_id'],
+      'visual_obligations_required':visual_counters['visual_obligations_required'],
+      'visual_obligations_realized':visual_counters['visual_obligations_realized'],
+      'questions_requiring_visual':visual_counters['questions_requiring_visual'],
+      'questions_with_required_visual':visual_counters['questions_with_required_visual'],
+      'answer_custody_profile_ref':custody_profile['profile_id'],
+      'questions_total':answer_custody['questions_total'],
+      'immediate_answer_checks_total':answer_custody['immediate_answer_checks_total'],
+      'full_solutions_total':answer_custody['full_solutions_total'],
+      'legibility_core1':leg1,'legibility_core2':leg2,
+      'learner_body_pt':min(leg1['instructional_body_pt'],leg2['instructional_body_pt']),
+      'question_stem_pt':min(leg1['question_stem_pt'],leg2['question_stem_pt']),
+      'document_minimum_font_pt':min(x for x in [pre1['document_minimum_font_pt'],pre2['document_minimum_font_pt']] if x),
+      'unenforced_legibility_targets':sorted(set(leg1['unenforced_legibility_targets'])|set(leg2['unenforced_legibility_targets']))}
     qc=[]
     for u in source['units']:
         for ev in u['source_provenance'].get('human_correction_events',[]): qc.append(ev if isinstance(ev,str) else ev['event_id'])
-    cand={'candidate_id':'CHEM-C-L-EXACT-CANDIDATE-A','schema_version':'1.0.0','subject':'CHEMISTRY','candidate_class':'CURRENT_COLD_START','cold_start_report_ref':report['run_id'],'cold_start_report_digest':report['report_digest'],'input_custody':{k:report['input_custody'][k] for k in ['source_set_digest','question_set_digest','corpus_digest','declared_topic_scope_digest']},'semantic_custody':{'source_obligation_ledger_digest':report['derived_authority']['source_ledger_digest'],'assessment_scope_digest':report['stage_outputs']['scope_bundle_digest'],'learner_study_model_digest':report['stage_outputs']['study_model_digest'],'pck_authority_digest':pck['registry_digest'],'problem_family_authority_digest':digest(families),'core1_semantic_digest':report['stage_outputs']['core1_plan_digest'],'appendix_a_semantic_digest':digest(core1['appendices']['appendix_a']),'appendix_b_semantic_digest':digest(core1['appendices']['appendix_b']),'appendix_c_semantic_digest':digest(core1['appendices']['appendix_c']),'core2_semantic_digest':report['stage_outputs']['core2_plan_digest'],'coverage_closure_digest':report['stage_outputs']['coverage_closure_digest'],'representation_bundle_digest':reps['bundle_digest'],'teaching_primitive_registry_digest':digest(registry)},'artifacts':[{'product_id':'CORE_STUDY_GUIDE','path':core1_pdf.name,'sha256':page1['artifact_sha256'],'page_count':m1['page_count'],'required_sections':['MAIN_TEACHING','APPENDIX_A_CORE_PRACTICE','APPENDIX_B_CORE_SOLUTIONS','APPENDIX_C_PRINTABLE_HANDOUT'],'physical_page_map_digest':digest(page1),'render_audit_digest':digest(audit1)},{'product_id':'EXAMSIDE_SOLUTION_TRANSFER_BOOK','path':core2_pdf.name,'sha256':page2['artifact_sha256'],'page_count':m2['page_count'],'required_sections':['TRANSFER_QUESTIONS','COMPLETE_SOLUTIONS'],'physical_page_map_digest':digest(page2),'render_audit_digest':digest(audit2)}],'machine_evidence':evidence,'source_qc_event_refs':qc,'package_digest':''}
+    cand={'candidate_id':'CHEM-C-L-EXACT-CANDIDATE-A','schema_version':'1.0.0','subject':'CHEMISTRY','candidate_class':'CURRENT_COLD_START','cold_start_report_ref':report['run_id'],'cold_start_report_digest':report['report_digest'],'input_custody':{k:report['input_custody'][k] for k in ['source_set_digest','question_set_digest','corpus_digest','declared_topic_scope_digest']},'semantic_custody':{'source_obligation_ledger_digest':report['derived_authority']['source_ledger_digest'],'assessment_scope_digest':report['stage_outputs']['scope_bundle_digest'],'learner_study_model_digest':report['stage_outputs']['study_model_digest'],'pck_authority_digest':pck['registry_digest'],'problem_family_authority_digest':digest(families),'core1_semantic_digest':report['stage_outputs']['core1_plan_digest'],'appendix_a_semantic_digest':digest(core1['appendices']['appendix_a']),'appendix_b_semantic_digest':digest(core1['appendices']['appendix_b']),'appendix_c_semantic_digest':digest(core1['appendices']['appendix_c']),'core2_semantic_digest':report['stage_outputs']['core2_plan_digest'],'coverage_closure_digest':report['stage_outputs']['coverage_closure_digest'],'representation_bundle_digest':reps['bundle_digest'],'teaching_primitive_registry_digest':digest(registry),'visual_obligation_ledger_digest':obligation_ledger['ledger_digest'],'learner_copy_title_registry_digest':digest(COPY_REGISTRY),'legibility_target_profile_digest':digest(LEGIBILITY_PROFILE)},'artifacts':[{'product_id':'CORE_STUDY_GUIDE','path':core1_pdf.name,'sha256':page1['artifact_sha256'],'page_count':m1['page_count'],'required_sections':['MAIN_TEACHING','APPENDIX_A_CORE_PRACTICE','APPENDIX_B_CORE_SOLUTIONS','APPENDIX_C_PRINTABLE_HANDOUT'],'physical_page_map_digest':digest(page1),'render_audit_digest':digest(audit1)},{'product_id':'EXAMSIDE_SOLUTION_TRANSFER_BOOK','path':core2_pdf.name,'sha256':page2['artifact_sha256'],'page_count':m2['page_count'],'required_sections':['TRANSFER_QUESTIONS','COMPLETE_SOLUTIONS'],'physical_page_map_digest':digest(page2),'render_audit_digest':digest(audit2)}],'machine_evidence':evidence,'source_qc_event_refs':qc,'package_digest':''}
     cand['package_digest']=hashlib.sha256(canonical({k:v for k,v in cand.items() if k!='package_digest'}).encode()).hexdigest()
-    outputs={'cold-start-report.json':report,'physical-page-map-core1.json':page1,'physical-page-map-core2.json':page2,'render-audit-core1.json':audit1,'render-audit-core2.json':audit2,'exact-product-candidate.json':cand}
+    outputs={'cold-start-report.json':report,'physical-page-map-core1.json':page1,'physical-page-map-core2.json':page2,'render-audit-core1.json':audit1,'render-audit-core2.json':audit2,'visual-obligation-ledger.json':obligation_ledger,'exact-product-candidate.json':cand}
     for name,obj in outputs.items(): (out/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
     return cand,report
 

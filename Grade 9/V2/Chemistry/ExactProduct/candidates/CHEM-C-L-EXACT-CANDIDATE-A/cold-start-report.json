@@ -1409,7 +1409,7 @@
   },
   "manifest_digest": "659cc55f5895cb0a0d5a3bc53d8c8b9f4234abfc41416bd689d9a3dd3ff1e8dd",
   "manifest_ref": "CHEM-C-K-AUTHORITY-MANIFEST-v1",
-  "report_digest": "5ddcc6f3f5cc110a39d327432d771eb6c2e6f7e558214e4c2284f25d14e4f3e2",
+  "report_digest": "ed832a71b2176acb58115a04807ca4065fac03922d4f0d47323624be0c2f4765",
   "run_id": "CHEM-C-L-EXACT-RUN-A",
   "run_mode": "NO_ATTEMPT",
   "runtime_dependency_audit": {
@@ -1451,8 +1451,8 @@
   "stage_outputs": {
     "canonical_binding_signature": "811b06bdebc4881ae730296d08cf91cb9467e7723ecd7d2bd61dc34937a9287c",
     "canonical_chemistry_truth_signature": "f6807662754000692d07a6569cd7068c2e5583b4d74b5bd8968e4cbf10daf941",
-    "core1_plan_digest": "63d96f3630619534e0b786356fe91e1aa026a0c53fad4c2315d4487073103c33",
-    "core2_plan_digest": "b7dbbc8ec061341292e17477251eb92718a44e849f5445a62e213a8825c21036",
+    "core1_plan_digest": "c09ecd986056f5377015c3084c5b3338c2f9fc7c48328331f559900248e5dd8a",
+    "core2_plan_digest": "0d8f196954828224159278f897329f39b6d94f6d646cffa642c0ae6c44e7a94e",
     "coverage_closure_digest": "296148adb18c05c3672a10c1190a09ddd6836c8e13450c1b53a3d0c85ec8adbf",
     "external_candidate_refs": [
       "EXT01",
@@ -1467,7 +1467,7 @@
     "primary_external_ownership_signature": "0de2a2ba936f5faf47bd61a0a4b82132f84fff9a30d3b8511699774fcdafb9b3",
     "problem_family_truth_signature": "e4f6aa5f653d057791dcb8a34a5f5d81b74c35bfaa817ef1c0d299f2491ead87",
     "reasoning_semantics_digest": "581bc1dd55f9c0ded050a9e8cd21691c7a10134e9bf6051c800940ce63588dbb",
-    "representation_bundle_digest": "e221bdc1e33fe47dd50d0edc6857a2673b3fe4ebc69b53a79447fb9d8c30f08b",
+    "representation_bundle_digest": "c0d7f1f7e225421ff1fac95ae26e8c85bec9cd2ece0a7789f8d73876001075c3",
     "review_digest": "313f7433a586de3afcbd8e3ab6723d0c58485cdb844d0f235dab068b3042b98a",
     "scope_bundle_digest": "911b328836ea075344ffa45e7479a7ca1126575958d98b5415c6c98c7d961f95",
     "scope_classification_signature": "1993550608848119c2812de3ae1bcb2ad5fdb214cb68b24159994c3ee49c6441",
@@ -1506,12 +1506,12 @@
     "source_unit_count": 12
   },
   "two_product_package": {
-    "package_digest": "0c45d52871d772b8824a28bc45761430b6ab40c14d540f6fc028b769ea87ff46",
+    "package_digest": "11f2d20d6ada870cf2482805dfc424c263dd6e7a4aaa97a1270d0bebb91a7bdf",
     "package_id": "PKG-CHEM-C-L-EXACT-RUN-A",
     "product_count": 2,
     "products": [
       {
-        "candidate_identity_sha256": "dc17f613087583f73fd6ac295a19a3ded2092b91a1a6e6e1274d2566f71d13d4",
+        "candidate_identity_sha256": "0373106653b897e7c3935472869b8f88c71c2999d0ae5ead122fdd168bb9559c",
         "identity_class": "FROZEN_SEMANTIC_CANDIDATE",
         "learner_title": "Core Study Guide",
         "media_type": "application/pdf",
@@ -1524,11 +1524,11 @@
           "APPENDIX_B_CORE_SOLUTIONS",
           "APPENDIX_C_PRINTABLE_HANDOUT"
         ],
-        "semantic_source_digest": "63d96f3630619534e0b786356fe91e1aa026a0c53fad4c2315d4487073103c33",
+        "semantic_source_digest": "c09ecd986056f5377015c3084c5b3338c2f9fc7c48328331f559900248e5dd8a",
         "semantic_source_ref": "CORE1-CHEM-C-L-EXACT-RUN-A"
       },
       {
-        "candidate_identity_sha256": "78c857cf9a4c2d323a5cfe35f8d2327d2425d17ede45c9e3f4a704173912ebd3",
+        "candidate_identity_sha256": "f6263652a0928217a5c0a8f59e4d56866848c522495da541b1c219eb060e2acb",
         "identity_class": "FROZEN_SEMANTIC_CANDIDATE",
         "learner_title": "ExamSIDE Solution & Transfer Book",
         "media_type": "application/pdf",
@@ -1544,7 +1544,7 @@
           "CHEMISTRY_REASONING_ROUTE",
           "COMPLETE_SOLUTIONS_VERIFICATION"
         ],
-        "semantic_source_digest": "b7dbbc8ec061341292e17477251eb92718a44e849f5445a62e213a8825c21036",
+        "semantic_source_digest": "0d8f196954828224159278f897329f39b6d94f6d646cffa642c0ae6c44e7a94e",
         "semantic_source_ref": "CORE2-CHEM-C-L-EXACT-RUN-A"
       }
     ],

@@ -1,7 +1,7 @@
 {
   "actual_placement_evidence": true,
   "artifact": "examside-solution-transfer-book.pdf",
-  "artifact_sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad",
+  "artifact_sha256": "81cf064bf685a2f880d54e95825fb7bec10b1b9da628e0739660b32a4c8bf65e",
   "bounds_violations": 0,
   "content_placements": [
     {
@@ -12,7 +12,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 742.89,
+      "y0": 726.39,
       "y1": 799.89
     },
     {
@@ -23,7 +23,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 597.89,
+      "y0": 556.76,
       "y1": 799.89
     },
     {
@@ -34,8 +34,8 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 309.89,
-      "y1": 601.89
+      "y0": 225.76,
+      "y1": 560.76
     },
     {
       "content_ref": "TRANSFER-01-FORMULA_ANATOMY_VIEW",
@@ -45,8 +45,8 @@
       "primitive": "FORMULA_ANATOMY_VIEW",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 187.89,
-      "y1": 313.89
+      "y0": 103.76,
+      "y1": 229.76
     },
     {
       "content_ref": "TRANSFER-01-SOLUTION",
@@ -56,7 +56,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 630.89,
+      "y0": 563.39,
       "y1": 799.89
     },
     {
@@ -67,7 +67,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 597.89,
+      "y0": 541.14,
       "y1": 799.89
     },
     {
@@ -78,8 +78,8 @@
       "primitive": "PARTICLE_MODEL_VIEW",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 465.89,
-      "y1": 601.89
+      "y0": 409.14,
+      "y1": 545.14
     },
     {
       "content_ref": "TRANSFER-02",
@@ -89,8 +89,8 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 165.89,
-      "y1": 469.89
+      "y0": 64.64,
+      "y1": 413.14
     },
     {
       "content_ref": "TRANSFER-02-PARTICLE_MODEL_VIEW",
@@ -111,7 +111,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 630.89,
+      "y0": 563.39,
       "y1": 799.89
     },
     {
@@ -122,7 +122,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 597.89,
+      "y0": 556.76,
       "y1": 799.89
     },
     {
@@ -133,8 +133,8 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 309.89,
-      "y1": 601.89
+      "y0": 225.76,
+      "y1": 560.76
     },
     {
       "content_ref": "TRANSFER-03-CONSERVATION_LEDGER",
@@ -144,8 +144,8 @@
       "primitive": "CONSERVATION_LEDGER",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 175.89,
-      "y1": 313.89
+      "y0": 91.76,
+      "y1": 229.76
     },
     {
       "content_ref": "TRANSFER-03-SOLUTION",
@@ -155,7 +155,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 630.89,
+      "y0": 563.39,
       "y1": 799.89
     },
     {
@@ -166,7 +166,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 585.89,
+      "y0": 554.64,
       "y1": 799.89
     },
     {
@@ -177,8 +177,8 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 269.89,
-      "y1": 589.89
+      "y0": 206.14,
+      "y1": 558.64
     },
     {
       "content_ref": "TRANSFER-04-CONDITION_EXCEPTION_GATE",
@@ -188,8 +188,8 @@
       "primitive": "CONDITION_EXCEPTION_GATE",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 107.89,
-      "y1": 273.89
+      "y0": 44.14,
+      "y1": 210.14
     },
     {
       "content_ref": "TRANSFER-04-SOLUTION",
@@ -199,7 +199,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 646.89,
+      "y0": 580.89,
       "y1": 799.89
     },
     {
@@ -210,7 +210,7 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 597.89,
+      "y0": 541.14,
       "y1": 799.89
     },
     {
@@ -221,34 +221,34 @@
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 249.89,
-      "y1": 601.89
+      "y0": 144.14,
+      "y1": 545.14
     },
     {
       "content_ref": "TRANSFER-05-SPECIES_ROLE_MAP",
       "fragment_kind": "START",
-      "page": 11,
+      "page": 12,
       "page_intent_id": "PI-TRANSFER-05",
       "primitive": "SPECIES_ROLE_MAP",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 75.89,
-      "y1": 253.89
+      "y0": 625.89,
+      "y1": 799.89
     },
     {
       "content_ref": "TRANSFER-05-SOLUTION",
       "fragment_kind": "START",
-      "page": 12,
+      "page": 13,
       "page_intent_id": "PI-TRANSFER-05-SOLUTION",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 602.89,
+      "y0": 518.89,
       "y1": 799.89
     }
   ],
   "orphan_continuations": 0,
-  "page_count": 12,
+  "page_count": 13,
   "page_intents": [
     {
       "content_refs": [
@@ -363,9 +363,10 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-05",
       "physical_pages": [
-        11
+        11,
+        12
       ],
-      "split": false
+      "split": true
     },
     {
       "content_refs": [
@@ -374,7 +375,7 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-05-SOLUTION",
       "physical_pages": [
-        12
+        13
       ],
       "split": false
     }
@@ -470,14 +471,21 @@
       "orphan_continuation": false,
       "page": 11,
       "semantic_content_refs": [
-        "TRANSFER-05",
-        "TRANSFER-05-SPECIES_ROLE_MAP"
+        "TRANSFER-05"
       ]
     },
     {
       "bounds_violations": 0,
       "orphan_continuation": false,
       "page": 12,
+      "semantic_content_refs": [
+        "TRANSFER-05-SPECIES_ROLE_MAP"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 13,
       "semantic_content_refs": [
         "TRANSFER-05-SOLUTION"
       ]
@@ -529,8 +537,12 @@
       "page": 11
     },
     {
-      "label": "EXT05 solution",
+      "label": "Question 5",
       "page": 12
+    },
+    {
+      "label": "EXT05 solution",
+      "page": 13
     }
   ],
   "realized_primitives": [
@@ -542,8 +554,8 @@
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 197.89,
-      "y1": 309.89
+      "y0": 113.76,
+      "y1": 225.76
     },
     {
       "accessibility_text": "Source particle-count figure.",
@@ -553,8 +565,8 @@
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 475.89,
-      "y1": 597.89
+      "y0": 419.14,
+      "y1": 541.14
     },
     {
       "accessibility_text": "Particle model with composition and count taken only from source semantic data. Chemical entities: H₂O.",
@@ -575,8 +587,8 @@
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 185.89,
-      "y1": 309.89
+      "y0": 101.76,
+      "y1": 225.76
     },
     {
       "accessibility_text": "Decision gate showing when a default rule applies and when a condition or exception overrides it. Chemical entities: A → B. Conditions/exceptions: heat.",
@@ -586,19 +598,19 @@
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 117.89,
-      "y1": 269.89
+      "y0": 54.14,
+      "y1": 206.14
     },
     {
       "accessibility_text": "Species role map separating changing reactants, spectators and products. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
       "content_ref": "TRANSFER-05-SPECIES_ROLE_MAP",
-      "page": 11,
+      "page": 12,
       "primitive": "SPECIES_ROLE_MAP",
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 85.89,
-      "y1": 249.89
+      "y0": 635.89,
+      "y1": 799.89
     }
   ],
   "schema_version": "1.0.0"
