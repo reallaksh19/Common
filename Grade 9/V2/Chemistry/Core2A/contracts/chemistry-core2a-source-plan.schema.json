@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-core2a-source-plan.schema.json",
+  "title": "Chemistry Core2A Source Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_id",
+    "schema_version",
+    "subject",
+    "lane",
+    "core2_plan_ref",
+    "core2_plan_digest",
+    "core1a_bucket_plan_ref",
+    "core1a_bucket_plan_digest",
+    "execution_policy_ref",
+    "source_realization_policy_ref",
+    "learner_language_policy_ref",
+    "citation_policy_ref",
+    "answer_path_policy_ref",
+    "items",
+    "summary",
+    "plan_digest"
+  ],
+  "properties": {
+    "plan_id": {"type": "string", "pattern": "^CHEM-C2A-SOURCE-PLAN-"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "CHEMISTRY"},
+    "lane": {"const": "SOURCE_CORE2"},
+    "core2_plan_ref": {"type": "string", "minLength": 1},
+    "core2_plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "core1a_bucket_plan_ref": {"type": "string", "pattern": "^CHEM-C1A-BP-"},
+    "core1a_bucket_plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "execution_policy_ref": {"const": "CHEM-CORE2A-EXECUTION-v1"},
+    "source_realization_policy_ref": {"const": "CHEM-CORE2A-SOURCE-REALIZATION-v1"},
+    "learner_language_policy_ref": {"const": "CHEM-LEARNER-LANGUAGE-v1"},
+    "citation_policy_ref": {"const": "CHEM-QUESTION-CITATION-v1"},
+    "answer_path_policy_ref": {"const": "CHEM-ANSWER-PATH-v1"},
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["item_id", "question_ref", "item_digest"],
+        "properties": {
+          "item_id": {"type": "string", "pattern": "^CHEM-C2A-SRC-"},
+          "question_ref": {"type": "string", "minLength": 1},
+          "item_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_questions_required",
+        "source_questions_realized",
+        "missing_source_question_refs",
+        "duplicate_source_question_refs",
+        "quick_checks_required",
+        "quick_checks_realized",
+        "full_workings_required",
+        "full_workings_realized",
+        "hint_reveals_required",
+        "hint_reveals_bound",
+        "raw_internal_source_links_rendered",
+        "status"
+      ],
+      "properties": {
+        "source_questions_required": {"type": "integer", "minimum": 1},
+        "source_questions_realized": {"type": "integer", "minimum": 1},
+        "missing_source_question_refs": {"type": "array", "maxItems": 0},
+        "duplicate_source_question_refs": {"type": "array", "maxItems": 0},
+        "quick_checks_required": {"type": "integer", "minimum": 1},
+        "quick_checks_realized": {"type": "integer", "minimum": 1},
+        "full_workings_required": {"type": "integer", "minimum": 1},
+        "full_workings_realized": {"type": "integer", "minimum": 1},
+        "hint_reveals_required": {"type": "integer", "minimum": 3},
+        "hint_reveals_bound": {"type": "integer", "minimum": 3},
+        "raw_internal_source_links_rendered": {"const": 0},
+        "status": {"const": "PASS"}
+      }
+    },
+    "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
