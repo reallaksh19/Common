@@ -11,16 +11,19 @@ SCHEMA = ROOT / "contracts" / "physics-core1a-subtopic-bucket.schema.json"
 REGISTRY = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba-v1.json"
 SBA04_PROFILE = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba04-20pct-v1.json"
 SBA05_PROFILE = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba05-20pct-v1.json"
+SBA06_PROFILE = ROOT / "registry" / "physics-core1a-motion-in-a-plane-sba06-20pct-v1.json"
 
 schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
 registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
 sba04_profile = json.loads(SBA04_PROFILE.read_text(encoding="utf-8"))
 sba05_profile = json.loads(SBA05_PROFILE.read_text(encoding="utf-8"))
+sba06_profile = json.loads(SBA06_PROFILE.read_text(encoding="utf-8"))
 validator = Draft202012Validator(schema)
 Draft202012Validator.check_schema(schema)
 validator.validate(registry)
 validator.validate(sba04_profile)
 validator.validate(sba05_profile)
+validator.validate(sba06_profile)
 
 buckets = registry["buckets"]
 assert len(buckets) == 31, f"expected 31 indexed SBA buckets, found {len(buckets)}"
@@ -48,6 +51,7 @@ assert by_id["M2D-SBA-04"]["core2_primary_questions"] == ["Q01", "Q11", "Q13", "
 assert by_id["M2D-SBA-05"]["core2_primary_questions"] == [
     "Q02", "Q06", "Q07", "Q12", "Q16", "Q18", "Q19", "Q20", "Q22", "Q24", "Q25", "Q44", "Q52"
 ]
+assert by_id["M2D-SBA-06"]["core2_primary_questions"] == ["Q38", "Q47"]
 
 policy = registry["policy"]
 assert policy["target_prior_knowledge_pct"] == [20, 50]
@@ -102,5 +106,28 @@ assert any(
     for atom in profile05["learning_atoms"]
     for check in atom["checks"]
 ), "SBA05 should explicitly close Q14/Q27 same-height dependency"
+
+# Detailed SBA06: 20%-knowledge D3 trajectory bucket must pre-teach Q38 and Q47 hint ladders.
+b06 = sba06_profile["buckets"][0]
+assert b06["bucket_id"] == "M2D-SBA-06"
+assert b06["intrinsic_difficulty"] == "D3"
+assert b06["core2_primary_questions"] == by_id["M2D-SBA-06"]["core2_primary_questions"]
+assert b06["prerequisite_buckets"] == ["M2D-SBA-03"]
+profile06 = next(p for p in b06["profiles"] if p["prior_knowledge_pct"] == 20)
+assert profile06["pathway"] == "FOUNDATION_PATH"
+assert len(profile06["learning_atoms"]) >= 8
+assert max(a["visual_stage_count"] for a in profile06["learning_atoms"]) >= 6
+
+coverage06 = {q["question_id"]: q for q in profile06["core2_hint_coverage"]}
+assert set(coverage06) == {"Q38", "Q47"}
+for qid, q in coverage06.items():
+    assert [r["rung"] for r in q["hint_rungs"]] == ["H1", "H2", "H3"]
+    assert all(r["pre_taught"] is True for r in q["hint_rungs"])
+    assert q["release_prerequisite_buckets"] == []
+
+atom_ids = {a["atom_id"] for a in profile06["learning_atoms"]}
+assert {"M2D-SBA-06C", "M2D-SBA-06E", "M2D-SBA-06F", "M2D-SBA-06H"}.issubset(atom_ids)
+assert coverage06["Q38"]["hint_rungs"][0]["core1a_learning_atom"] == "M2D-SBA-06F"
+assert coverage06["Q47"]["hint_rungs"][0]["core1a_learning_atom"] == "M2D-SBA-06E"
 
 print("Core1A SBA schema/index/profile checks passed.")
