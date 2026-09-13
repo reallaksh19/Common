@@ -1,88 +1,143 @@
-# Mathematics V2 — Core (2A): textbook-quality transfer realization
+# Mathematics V2 — Core (2A): cited challenge practice
 
-Core (2) is the governed semantic transfer/practice plan over the **original source questions**. Core (2A) is the learner-product layer that turns that approved transfer structure into a textbook-quality practice PDF.
-
-```text
-Core (2): governed source-question transfer semantics
-        |
-        v
-Core (2A): textbook-quality transfer realization
-        |
-        +--> core2a_textbook_manuscript.json
-        +--> core2a_quality_audit.json
-        `--> core2a_student_practice.pdf
-```
-
-Core (2A) exists for the same reason Core (1A) exists: the semantic product should remain auditable and machine-facing, while the final learner artifact should read like a professionally authored mathematics book.
-
-## Immutable transfer structure
-
-Core (2A) must preserve the approved Core (2) structure and source authority. In particular:
-
-- original source-question order is unchanged;
-- source stems, givens, options, units and subparts are unchanged;
-- question identifiers remain unchanged;
-- each question retains its Core (1) linkage state;
-- assessment-safety classifications remain unchanged;
-- multiple-solution and underdetermined cases remain intact;
-- source corrections/notes remain traceable;
-- the attempt surface remains before the worked solution;
-- for the approved paired-page format, each attempt page is immediately followed by its worked solution page;
-- reasoning, solution and verification remain distinct semantic objects.
-
-Core (2A) may not regroup all questions into one section and all solutions into another, may not renumber questions, and may not replace source problems with newly authored substitutes.
-
-## What Core (2A) is allowed to improve
-
-Structure preservation does **not** mean preserving sparse or weak page composition. Core (2A) may substantially improve:
-
-- mathematical representation on the attempt page;
-- workspace shaped to the response demanded by the question;
-- progressive learner hints, provided they do not disclose the solution prematurely;
-- worked-solution narration and visual hierarchy;
-- step labelling where it helps the learner follow a multi-stage argument;
-- diagrams, tables and equation annotations grounded in the Core (2) representation plan;
-- independent verification/checking presentation;
-- typography, spacing and pagination;
-- Core (1A) review backlinks where the linkage is publication-legal.
-
-The governing principle is:
+Core (2) remains the governed semantic transfer plan over the **original source questions**. Core (2A) now has two learner-product lanes:
 
 ```text
-preserve source problem + approved attempt/solution architecture
-while materially improving learner comprehension and mathematical representation
+Core (1) + Core (1A) + Core (2)
+              +
+verified competitive-question archives / archetypes
+              ↓
+Core (2A)
+   ├── SOURCE lane: realize original Core (2) questions faithfully
+   └── CHALLENGE lane: add fresh, grounded competitive-style questions
+              ↓
+core2a_challenge_plan.json
+core2a_quality_audit.json
+core2a_student_challenge_practice.pdf
 ```
 
-## Attempt-page contract
+The competitive corpus influences **question design and reasoning demand**, not curriculum authority. A generated challenge may only require mathematics already taught or explicitly approved upstream.
 
-The attempt page is not a second worked solution. It must preserve productive thinking.
+## Source lane — immutable Core (2)
 
-For each question, support should remain downstream of the source prompt and should respect the Core (2) hint ladder:
+For every `SOURCE_CORE2` question Core (2A) preserves:
+
+- original source-question order;
+- source stem, givens, options, units and subparts;
+- source question identifier;
+- Core (1) linkage state;
+- assessment-safety classification;
+- multiple-solution / underdetermined semantics;
+- source corrections and notes;
+- attempt before support and worked solution;
+- immediate attempt → worked adjacency where that is the approved page contract.
+
+Fresh challenge questions must never replace, renumber or silently rewrite a Core (2) source question.
+
+## Challenge lane — fresh competitive practice
+
+`GENERATED_CHALLENGE` questions may be added after or around preserved source anchors when they are grounded in:
 
 ```text
-H0  attempt the original question
-H1  notice the relevant structure
-H2  choose a representation or method
-H3  take the first executable mathematical step
+Core (1) mathematical authority
++ Core (1A) teaching buckets / representations
++ Core (2) source-question demand
++ verified JEE / IOQM / RMO / INMO / IMO-style benchmark material
 ```
 
-Core (2A) may make these supports more readable or visually meaningful, but it must not collapse H1/H2/H3 into the answer.
+Generated questions must be mathematically fresh. Official archives may be used to benchmark style, compactness, inference depth, representation shifts and synthesis demand, but an original generated question must not be presented as an official historical exam question.
 
-## Worked-page contract
+Difficulty must come from mathematical thinking — hidden structure, reversed targets, representation shifts, mixed ideas or deeper inference — not merely larger numbers or uglier arithmetic.
 
-The worked page should execute the mathematics fully enough for a learner to diagnose an error. A textbook-quality solution should, where mathematically relevant:
+## Citation contract — shown with the question itself
 
-1. identify the governing relation or representation;
-2. substitute the actual data;
-3. show the intermediate algebra/arithmetic;
-4. state the conclusion;
-5. perform an independent check.
+Every Core (2A) question must carry a learner-visible box labelled:
 
-A compact answer-only or solution-summary rendering is not acceptable when the Core (2) semantic solution is multi-stage.
+```text
+WHERE THIS QUESTION CAME FROM
+```
 
-## Structural falsifiers
+The citation belongs **on the question page itself**. A consolidated source list at the end is not sufficient.
 
-Core (2A) should fail closed on at least the following classes of drift:
+For source questions, the inline note identifies the exact Core (2) source question and locator.
+
+For fresh challenge questions, the inline note must distinguish:
+
+- the Core (1) / Core (1A) concept being practised;
+- any Core (2) source question used as the transfer anchor;
+- the official competitive archive used only as a style/demand benchmark;
+- the fact that the wording and mathematical instance are original to the workbook.
+
+The canonical contract is:
+
+`Core2A/contracts/math-core2a-challenge-plan.schema.json`
+
+and requires `question_citation_policy = INLINE_WITH_EACH_QUESTION`.
+
+## Learner-facing help language
+
+Internal pipeline language must not appear in the learner product. Use stable child-friendly labels:
+
+```text
+TRY IT FIRST
+SMALL CLUE
+BIGGER CLUE
+HOW DO I START?
+THINK IT THROUGH
+FULL WORKING
+QUICK CHECK
+WHERE THIS QUESTION CAME FROM
+```
+
+Do not expose internal terms such as `reasoning route`, `repair route`, `grounding`, `learning atom`, `demand vector`, `transfer ladder`, registry IDs or publication-engineering terminology.
+
+The underlying semantic objects can remain technical internally; only the learner-facing surface is constrained here.
+
+## Help progression
+
+Core (2A) keeps the Core (2) H1/H2/H3 semantics but translates them for the learner:
+
+```text
+H0  TRY IT FIRST
+H1  SMALL CLUE       — notice the useful structure
+H2  BIGGER CLUE      — choose the mathematical idea / representation
+H3  HOW DO I START?  — first executable mathematical move
+```
+
+After the clues, `THINK IT THROUGH` explains the strategy without hiding the key reasoning, then `FULL WORKING` executes the algebra/arithmetic, and `QUICK CHECK` verifies the result independently where appropriate.
+
+## Core (1A) relationship
+
+Core (1A) teaches the concept and representation. Core (2A) asks the learner to recognize and use that concept under less obvious conditions.
+
+```text
+Core (1A) bucket
+     ↓
+Core (2) source anchor
+     ↓
+fresh near challenge
+     ↓
+reversed / hidden-form challenge
+     ↓
+mixed or competitive-style challenge
+```
+
+A challenge must fail closed if it requires a capability that is not taught or otherwise approved upstream.
+
+## Release and source integrity
+
+Core (2A) inherits source legality and learner-state authority from upstream products. It cannot:
+
+- upgrade provisional PCK;
+- alter assessment validity;
+- invent learner readiness;
+- bypass human gates;
+- claim a generated question is an official JEE/IOQM/RMO/INMO/IMO item without a verified exact source;
+- use a competition citation without saying whether it is exact source text or style-only benchmarking.
+
+## Required fail-closed checks
+
+At minimum:
 
 ```text
 CORE2A_SOURCE_ORDER_DRIFT
@@ -95,23 +150,11 @@ CORE2A_VERIFICATION_LOST
 CORE2A_CORE1_LINK_DRIFT
 CORE2A_ASSESSMENT_SAFETY_LOST
 CORE2A_MULTI_SOLUTION_COLLAPSED
-CORE2A_INTERNAL_JARGON_LEAK
+CORE2A_UNTAUGHT_MATH_REQUIRED
+CORE2A_QUESTION_CITATION_MISSING
+CORE2A_CITATION_NOT_INLINE
+CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION
+CORE2A_COMPETITION_SOURCE_ROLE_UNCLEAR
+CORE2A_LEARNER_JARGON_LEAK
 CORE2A_QUALITY_GATE_FAILED
 ```
-
-## Relationship to Core (1A)
-
-The learner-product architecture is intentionally symmetric:
-
-```text
-Core (1)  --> Core (1A): textbook-quality teaching realization
-Core (2)  --> Core (2A): textbook-quality transfer realization
-```
-
-Core (1A) may author fresh learner instances inside governed problem families. Core (2A) must not: it realizes the original source questions supplied by Core (2).
-
-The two A-stages therefore have different authoring permissions but the same product-quality objective: preserve approved semantics and structure while producing learner-facing textbook-quality content and representation.
-
-## Release meaning
-
-Core (2A) inherits the publication legality and Core (1) linkage state of its source Core (2) plan. It cannot promote an unapproved Core (1) link, alter assessment validity, or bypass existing human gates.
