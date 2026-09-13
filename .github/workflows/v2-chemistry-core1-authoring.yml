@@ -28,3 +28,5 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/CoreAuthoring/contracts/validate_contracts.py'
       - name: Run C-G Core1 and Appendix falsifiers
         run: python 'Grade 9/V2/Chemistry/CoreAuthoring/tests/test_chemistry_core1.py'
+      - name: Run helper-pedagogy and Core1 instructional-depth falsifiers
+        run: python 'Grade 9/V2/Chemistry/CoreAuthoring/tests/test_chemistry_instructional_depth.py'

@@ -1,0 +1,297 @@
+{
+  "profile_id": "CHEM-C-G-HELPER-PEDAGOGY-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Promote PR #346's teacher-helper language rule into a machine-checkable contract. A hint that only names a concept — 'use the definition', 'apply the mole method' — is invalid. A valid hint says what to write, draw, count, cancel, compare, label or test next, and the learner can act on it with a pencil.",
+  "helper_intent_classes": {
+    "WRITE_RELATION": {
+      "produces": "A relation or equation written down with the given quantities substituted.",
+      "learner_action_verbs": [
+        "write",
+        "substitute",
+        "put",
+        "set up",
+        "express",
+        "add",
+        "divide",
+        "multiply",
+        "calculate"
+      ],
+      "example_good": "Write n = m/M, put the given mass on top and the molar mass underneath.",
+      "example_bad": "Use the mole formula."
+    },
+    "WRITE_SPECIES_OR_FORMULA": {
+      "produces": "A species, formula, equation or label written or marked on paper.",
+      "learner_action_verbs": [
+        "write",
+        "copy",
+        "draw",
+        "label",
+        "circle",
+        "underline",
+        "mark",
+        "list",
+        "name",
+        "record",
+        "restate",
+        "translate",
+        "assign",
+        "expand",
+        "make"
+      ],
+      "example_good": "Write Ca²⁺ and PO₄³⁻ side by side, then write the counts that make the charges cancel.",
+      "example_bad": "Use formula writing rules."
+    },
+    "COUNT_FEATURE": {
+      "produces": "A count of a named feature, written down.",
+      "learner_action_verbs": [
+        "count",
+        "total",
+        "tally",
+        "locate",
+        "find",
+        "identify",
+        "separate",
+        "track",
+        "trace",
+        "inspect",
+        "read",
+        "extract",
+        "select",
+        "map"
+      ],
+      "example_good": "Count H and O atoms separately on both sides of the equation.",
+      "example_bad": "Apply the conservation rule."
+    },
+    "CANCEL_UNIT": {
+      "produces": "A struck-out unit and a named surviving unit.",
+      "learner_action_verbs": [
+        "cancel",
+        "strike",
+        "convert",
+        "multiply by",
+        "check the unit"
+      ],
+      "example_good": "Cancel g top and bottom; the unit left should be mol.",
+      "example_bad": "Remember the conversion method."
+    },
+    "COMPARE_QUANTITY": {
+      "produces": "Two named things placed side by side and a stated difference.",
+      "learner_action_verbs": [
+        "compare",
+        "contrast",
+        "notice",
+        "predict",
+        "decide",
+        "choose",
+        "cross-check",
+        "recheck",
+        "look at",
+        "see whether"
+      ],
+      "example_good": "Notice where the numeral is written: upper right or lower right?",
+      "example_bad": "Think about the difference."
+    },
+    "TEST_DEFINITION": {
+      "produces": "A stated criterion applied to the case in front of the learner.",
+      "learner_action_verbs": [
+        "ask",
+        "test",
+        "decide",
+        "classify",
+        "apply",
+        "check the condition",
+        "split"
+      ],
+      "example_good": "First split the entries into mixtures and pure substances, then ask of each pure substance: one kind of atom, or different elements joined in a fixed ratio?",
+      "example_bad": "Use the definition to classify the substances."
+    },
+    "VERIFY_RESULT": {
+      "produces": "A named check run against the learner's own working.",
+      "learner_action_verbs": [
+        "verify",
+        "check",
+        "confirm",
+        "re-run",
+        "repair",
+        "tick"
+      ],
+      "example_good": "Check that the same species appears on both sides before accepting the answer.",
+      "example_bad": "Verify your answer."
+    }
+  },
+  "non_actionable_patterns": [
+    "^\\s*(use|apply|recall|remember|consider|employ|revise)\\s+(the\\s+|your\\s+|a\\s+)?(\\w[\\w-]*\\s+){0,2}(definition|definitions|formula|formulae|rule|rules|law|laws|method|methods|concept|concepts|principle|principles|approach|technique|idea|theory)s?\\b[^.]{0,30}\\.?\\s*$",
+    "\\ba (first move|hint|helper|prompt) should\\b",
+    "^\\s*(think about|be careful|pay attention|take care|keep in mind)\\b",
+    "\\b(elicit|scaffold the learner|show the learner|present to the learner|teach the learner)\\b",
+    "^\\s*(verify|check)\\s+(your|the)\\s+(answer|result|work)\\s*\\.?\\s*$"
+  ],
+  "stage_requirements": {
+    "H0_ATTEMPT_FIRST": {
+      "must_be_actionable": false,
+      "must_instruct_attempt_before_support": true,
+      "note": "H0 is not a content hint: its job is to make the learner attempt the question before any support is opened. It must instruct that attempt explicitly, and it may not be a description of the pedagogy."
+    },
+    "H1_NOTICE": {
+      "must_be_actionable": true,
+      "allowed_intent_classes": [
+        "COUNT_FEATURE",
+        "COMPARE_QUANTITY",
+        "WRITE_SPECIES_OR_FORMULA",
+        "TEST_DEFINITION",
+        "CANCEL_UNIT",
+        "WRITE_RELATION"
+      ],
+      "note": "H1 must name the specific feature to look at, not the topic."
+    },
+    "H2_RULE_MODEL_REPRESENTATION": {
+      "must_be_actionable": false,
+      "must_state_rule_content": true,
+      "minimum_words": 8,
+      "note": "H2 is allowed to be a statement, because its job is to supply the rule or model. It must state the rule's content; naming a rule without stating it is NON_ACTIONABLE_HINT."
+    },
+    "H3_START": {
+      "must_be_actionable": true,
+      "allowed_intent_classes": [
+        "WRITE_RELATION",
+        "WRITE_SPECIES_OR_FORMULA",
+        "COUNT_FEATURE",
+        "CANCEL_UNIT",
+        "COMPARE_QUANTITY",
+        "TEST_DEFINITION"
+      ],
+      "note": "H3 must be the first concrete move on paper."
+    },
+    "CORE1_CONCEPT_HELPER": {
+      "must_be_actionable": true,
+      "allowed_intent_classes": [
+        "WRITE_RELATION",
+        "WRITE_SPECIES_OR_FORMULA",
+        "COUNT_FEATURE",
+        "CANCEL_UNIT",
+        "COMPARE_QUANTITY",
+        "TEST_DEFINITION",
+        "VERIFY_RESULT"
+      ],
+      "note": "The Core 1 'if you get stuck' helper must produce an observable action, not restate what a good hint would do."
+    }
+  },
+  "first_move_by_pck_family": {
+    "FORMULA_ANATOMY_AND_CHARGE": {
+      "intent_class": "WRITE_SPECIES_OR_FORMULA",
+      "helper_text": "Copy the formula out with space around each part, then circle the number in front, each low number and any raised charge before you try to read what it means."
+    },
+    "SUBSCRIPT_COEFFICIENT_CHARGE_DISCRIMINATION": {
+      "intent_class": "WRITE_SPECIES_OR_FORMULA",
+      "helper_text": "Circle the number you are unsure about and say where it sits: in front of the formula, low down after a symbol, or raised up after it."
+    },
+    "MACRO_PARTICLE_SYMBOLIC_TRANSLATION": {
+      "intent_class": "COUNT_FEATURE",
+      "helper_text": "Count the separate particles you can actually see and write that number down before you write any symbols."
+    },
+    "CONSERVATION_ATOM_CHARGE_SPECIES": {
+      "intent_class": "COUNT_FEATURE",
+      "helper_text": "Draw two columns, give each element its own row, and count that element on the left and on the right before you compare anything."
+    },
+    "RULE_PRIORITY_AND_EXCEPTION": {
+      "intent_class": "TEST_DEFINITION",
+      "helper_text": "Underline the condition written with the reaction, then ask whether the usual rule still holds while that condition is there."
+    },
+    "OBSERVATION_EVIDENCE_CLAIM": {
+      "intent_class": "WRITE_SPECIES_OR_FORMULA",
+      "helper_text": "Write the observation on one line exactly as it was recorded, write your claim on the line under it, and draw an arrow from one to the other."
+    },
+    "REACTION_PROCESS_CLASSIFICATION": {
+      "intent_class": "TEST_DEFINITION",
+      "helper_text": "Write down the single observation that decides this, then test it against the rule before you write any label."
+    },
+    "SPECIES_ROLE_AND_SPECTATOR": {
+      "intent_class": "WRITE_SPECIES_OR_FORMULA",
+      "helper_text": "List the starting substances down the left and the finishing ones down the right, then join each substance to itself with a line before you name any role."
+    },
+    "STRUCTURE_SITE_REASONING": {
+      "intent_class": "WRITE_SPECIES_OR_FORMULA",
+      "helper_text": "Label each site in the structure with its own letter, then work on one lettered site at a time."
+    },
+    "PRACTICAL_METHOD_PROPERTY_LINK": {
+      "intent_class": "COMPARE_QUANTITY",
+      "helper_text": "Write down which property is being used, then decide which part of the apparatus uses it."
+    },
+    "CHEMICAL_VERIFICATION": {
+      "intent_class": "VERIFY_RESULT",
+      "helper_text": "List the checks that apply as short lines, then tick them off one at a time against your own working."
+    },
+    "MISCONCEPTION_MINIMAL_CONTRAST": {
+      "intent_class": "COMPARE_QUANTITY",
+      "helper_text": "Predict both answers before you look, then find the one feature that differs between them."
+    },
+    "FIRST_MOVE_DECISION_SUPPORT": {
+      "intent_class": "WRITE_RELATION",
+      "helper_text": "Write down what the question is asking for, then write the one piece of information you still need in order to get there."
+    },
+    "REDOX_OXIDATION_STATE_LANES": {
+      "intent_class": "COMPARE_QUANTITY",
+      "helper_text": "Write the oxidation number above the element before the change and above the same element after it, then compare the two numbers."
+    },
+    "REDOX_SELF_OTHER_AGENT_LOGIC": {
+      "intent_class": "WRITE_SPECIES_OR_FORMULA",
+      "helper_text": "Write what this substance did to itself on one line and what it did to the other substance on the next, then name it."
+    },
+    "REDOX_SPLIT_CONVERGE_TOPOLOGY": {
+      "intent_class": "COMPARE_QUANTITY",
+      "helper_text": "Mark the same element on every branch with its oxidation number, then see whether one value splits into two or two values meet at one."
+    },
+    "MATTER_COMPOSITION_CLASSIFICATION": {
+      "intent_class": "TEST_DEFINITION",
+      "helper_text": "Ask first whether the sample is one substance or a mix; if it is one substance, ask whether it holds one kind of atom or several joined in a fixed ratio."
+    },
+    "FIXED_COMPOSITION_EVIDENCE": {
+      "intent_class": "COMPARE_QUANTITY",
+      "helper_text": "Work out the mass ratio for each sample in its own row, then compare the rows before you decide."
+    },
+    "UNIT_SCALE_AND_DIMENSIONAL_REASONING": {
+      "intent_class": "CANCEL_UNIT",
+      "helper_text": "Write the quantity with its unit, multiply by the conversion factor the question gives you, and strike out the unit that appears both top and bottom."
+    },
+    "CHARGE_NEUTRALITY_FORMULA_CONSTRUCTION": {
+      "intent_class": "COUNT_FEATURE",
+      "helper_text": "Write both ions with their charges, then count how many of each you need so the plus total and the minus total cancel exactly."
+    },
+    "ENTITY_COUNTING_AND_ATOMICITY": {
+      "intent_class": "COUNT_FEATURE",
+      "helper_text": "Expand the bracket first, then count each atom or ion in one formula unit and write the totals down."
+    },
+    "RELATIVE_MASS_COMPOSITION": {
+      "intent_class": "WRITE_RELATION",
+      "helper_text": "Write one row per element as count times relative atomic mass, then add the rows up."
+    },
+    "MASS_MOLE_ENTITY_BRIDGE": {
+      "intent_class": "WRITE_RELATION",
+      "helper_text": "Write n = m/M, put the given mass on top and the molar mass underneath, then check that g cancels and mol is what is left."
+    },
+    "CONCENTRATION_PART_WHOLE": {
+      "intent_class": "WRITE_RELATION",
+      "helper_text": "Write the part on top, then say out loud whether the bottom is the whole solution or only the solvent before you divide."
+    },
+    "STOICHIOMETRIC_RATIO_ROUTE": {
+      "intent_class": "WRITE_RELATION",
+      "helper_text": "Circle the number in front of what you are given and the number in front of what you want, then write them as a fraction the right way up."
+    }
+  },
+  "falsifiers": [
+    "NON_ACTIONABLE_HINT",
+    "HELPER_INTENT_CLASS_UNDECLARED",
+    "HELPER_MISSING_FOR_PCK_FAMILY",
+    "HINT_DUPLICATES_FULL_SOLUTION",
+    "HELPER_PEDAGOGY_PROFILE_DIGEST_DRIFT"
+  ],
+  "hint_duplicates_solution_rule": "A hint may not reproduce the spelled-out final answer (H0/H1/H3) and may not reproduce a solution reasoning step verbatim (any stage).",
+  "profile_digest": "77cac9b8d4ce06b5d99bcdd60d7e20eef787294f6526a3783629422f593fa257",
+  "answer_leak_checked_stages": [
+    "H0_ATTEMPT_FIRST",
+    "H1_NOTICE",
+    "H3_START"
+  ],
+  "answer_leak_scope_note": "The spelled-out-answer leak check runs on H0, H1 and H3. It deliberately does not run on H2, because H2 exists to supply the rule, and for a notation-meaning item (\"what does the raised 2- mean?\") the rule and the answer necessarily overlap; failing H2 there would punish the hint for doing its job. The verbatim-solution-step check still runs on every stage, and the candidate-level hints_distinct_from_solution gate still covers the coarse case."
+}

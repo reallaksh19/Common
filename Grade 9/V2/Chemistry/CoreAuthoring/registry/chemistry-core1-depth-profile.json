@@ -1,0 +1,126 @@
+{
+  "profile_id": "CHEM-C-G-CORE1-DEPTH-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Require the full instructional spine for every full-learning capability, so Core 1 reads as competitive-study material rather than NCERT summary notes. A page that states the rule and stops is a summary; a page that also reconstructs it, works one out, repairs the likely wrong model and fades support is teaching.",
+  "depth_classes": {
+    "FULL_LEARNING": "Every required spine role must be present and must meet its minimum depth.",
+    "CONCISE_VERIFY_ONLY": "Only the verify-only roles are required; the full re-teach roles are forbidden.",
+    "PROBE": "Only the probe roles are required; worked example and guided/faded attempts are forbidden."
+  },
+  "required_spine_roles": [
+    {
+      "role": "CANONICAL_MODEL",
+      "lesson_field": "rule_model_condition",
+      "kind": "TEXT",
+      "minimum_words": 8,
+      "why": "The learner needs the rule or model stated in one place they can return to."
+    },
+    {
+      "role": "ORDINARY_LANGUAGE_EXPLANATION",
+      "lesson_field": "ordinary_language_explanation",
+      "kind": "TEXT",
+      "minimum_words": 7,
+      "why": "The same idea in plain words, before any notation.",
+      "minimum_words_rationale": "Set to block a placeholder, not to mandate a word count. The shortest real plain-language line in the promoted PCK registry is seven words (\"Name the evidence before naming the class.\"), which is terse but complete; raising the floor above it would manufacture a defect rather than find one."
+    },
+    {
+      "role": "TECHNICAL_RECONSTRUCTION",
+      "lesson_field": "reconstruction_steps",
+      "kind": "STEPS",
+      "minimum_items": 3,
+      "why": "Competitive depth means the learner can rebuild the result, not just quote it."
+    },
+    {
+      "role": "WORKED_EXAMPLE",
+      "lesson_field": "worked_example",
+      "kind": "WORKED",
+      "minimum_reasoning_steps": 3,
+      "minimum_verification_steps": 1,
+      "why": "One instance carried all the way through with the steps visible."
+    },
+    {
+      "role": "MISCONCEPTION_REPAIR",
+      "lesson_field": "misconception_repair",
+      "kind": "REPAIR",
+      "minimum_repair_steps": 3,
+      "requires_contrast": true,
+      "requires_retry": true,
+      "why": "The likely wrong model is named, contrasted against the right one, repaired and retried."
+    },
+    {
+      "role": "GUIDED_ATTEMPT",
+      "lesson_field": "guided_attempt",
+      "kind": "ATTEMPT",
+      "why": "Practice with the cues still present."
+    },
+    {
+      "role": "FADED_ATTEMPT",
+      "lesson_field": "faded_attempt",
+      "kind": "ATTEMPT",
+      "why": "Practice with one cue removed."
+    },
+    {
+      "role": "INDEPENDENT_ATTEMPT",
+      "lesson_field": "independent_attempt",
+      "kind": "ATTEMPT",
+      "why": "Practice with no cues, which is the exam condition."
+    },
+    {
+      "role": "CHEMICAL_VERIFICATION",
+      "lesson_field": "verification_steps",
+      "kind": "STEPS",
+      "minimum_items": 1,
+      "why": "An independent check the learner can run on their own answer."
+    },
+    {
+      "role": "TRANSFER",
+      "lesson_field": "transfer_bridge",
+      "kind": "TEXT",
+      "minimum_words": 6,
+      "why": "Where the same reasoning is needed next."
+    },
+    {
+      "role": "CONCEPT_HELPER",
+      "lesson_field": "concept_helper",
+      "kind": "TEXT",
+      "minimum_words": 8,
+      "actionable": true,
+      "why": "The 'if you get stuck' line must produce an observable action; it is governed by the helper-pedagogy profile."
+    }
+  ],
+  "verify_only_required_roles": [
+    "CHEMICAL_VERIFICATION",
+    "INDEPENDENT_ATTEMPT"
+  ],
+  "verify_only_forbidden_roles": [
+    "WORKED_EXAMPLE",
+    "MISCONCEPTION_REPAIR",
+    "GUIDED_ATTEMPT",
+    "FADED_ATTEMPT"
+  ],
+  "probe_required_roles": [
+    "CHEMICAL_VERIFICATION"
+  ],
+  "probe_forbidden_roles": [
+    "WORKED_EXAMPLE",
+    "GUIDED_ATTEMPT",
+    "FADED_ATTEMPT"
+  ],
+  "summary_level_indicators": [
+    "no reconstruction steps",
+    "no worked example",
+    "no misconception repair",
+    "attempts collapse to a single undifferentiated practice prompt"
+  ],
+  "falsifiers": [
+    "INSTRUCTIONAL_SPINE_INCOMPLETE",
+    "CORE1_SUMMARY_LEVEL_NOT_STUDY_MATERIAL",
+    "WORKED_EXAMPLE_WITHOUT_VISIBLE_STEPS",
+    "MISCONCEPTION_REPAIR_WITHOUT_CONTRAST",
+    "SUPPORT_FADING_NOT_DIFFERENTIATED",
+    "DEPTH_ROLE_NOT_ACTIONABLE",
+    "CORE1_DEPTH_PROFILE_DIGEST_DRIFT"
+  ],
+  "profile_digest": "8911ebe4e9b337e53dc78cb70e13490f459661a70bd37ec61542880cbcc1edcc"
+}

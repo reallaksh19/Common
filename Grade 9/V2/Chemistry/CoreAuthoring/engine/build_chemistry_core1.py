@@ -18,6 +18,23 @@ def load_pck_registry(path=None):
     p=Path(path) if path else D/'registry'/'chemistry_promoted_pck.py'
     spec=importlib.util.spec_from_file_location('chemistry_promoted_pck',p); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); return mod.build_registry()
 
+def load_helper_profile(path=None):
+    """Learner-directed helper microcopy, governed by the helper-pedagogy contract.
+
+    The promoted PCK registry carries the subject authority for each family; it
+    does not carry learner-facing microcopy, and its generic first-move asset
+    only describes what a good first move *should* do. That description is not
+    something a learner can act on, so the actionable per-family first move lives
+    in chemistry-helper-pedagogy-profile.json and is machine-checked there by
+    NON_ACTIONABLE_HINT.
+    """
+    return load(Path(path) if path else D/'registry'/'chemistry-helper-pedagogy-profile.json')
+
+def helper_first_move(family,helper_profile):
+    record=(helper_profile.get('first_move_by_pck_family') or {}).get(family)
+    if not record or not str(record.get('helper_text') or '').strip(): fail('HELPER_MISSING_FOR_PCK_FAMILY',str(family))
+    return record['helper_text']
+
 def validate_pck_registry(reg):
     x=copy.deepcopy(reg); got=x.pop('registry_digest',None)
     if got!=hashlib.sha256(canonical(x).encode()).hexdigest(): fail('PCK_ASSET_WITHOUT_PROMOTION_AUTHORITY','registry digest')
@@ -53,15 +70,20 @@ def problem(cap,record,primary,problem_profile,lesson_id):
     fam=family_ref(record); prompt=problem_profile['prompt_templates'][cap]
     return {'instance_id':f'{lesson_id}-WORKED-NEW','source_class':'NEW_AUTHORED_CORE1','problem_family_ref':fam,'primary_capability_ref':cap,'prompt':prompt+' Work on a newly authored source-authorized instance rather than an original external transfer item.','representation_spec':uniq(record['representation_level_obligations']+record['representation_requirement_obligations']),'surface_variation':'representation_reframing_and_cue_change','external_candidate_refs':[],'reasoning_steps':list(problem_profile['solution_reasoning_templates'][cap]),'verification_steps':verification(record,primary)}
 
-def build_lesson(record,reg,profile,problem_profile):
+def build_lesson(record,reg,profile,problem_profile,helper_profile=None):
+    helper_profile=helper_profile if helper_profile is not None else load_helper_profile()
     cap=record['capability_ref']; primary,support=select_pck(record,reg,profile); mode=profile['lesson_mode_by_treatment'][record['treatment']]; lesson_id='CORE1-'+cap
     pck_refs=[primary['asset_id']]+[a['asset_id'] for a in support]; first=next((a for a in support if a['family']=='FIRST_MOVE_DECISION_SUPPORT'),primary); contrast=next((a for a in support if a['family']=='MISCONCEPTION_MINIMAL_CONTRAST'),primary)
     base=problem_profile['prompt_templates'][cap]; ver=verification(record,primary)
     trace={'source_obligation_refs':list(record['source_obligation_refs']),'assessment_question_refs':list(record['assessment_question_refs']),'external_candidate_refs':list(record['external_candidate_refs']),'problem_family_refs':list(record['problem_family_refs'])}
     if mode=='FULL_LEARNING':
         rep=list(primary['particle_symbolic_representation_path'])+[f'OBLIGATION_LEVEL:{x}' for x in record['representation_level_obligations']]+[f'OBLIGATION_REP:{x}' for x in record['representation_requirement_obligations']]
-        mis={'wrong_model':primary['common_wrong_model'],'why_plausible':'The shortcut can look sufficient because it uses a familiar surface cue before the decisive chemical evidence is checked.','minimal_contrast':contrast['minimal_contrast'],'repair_steps':list(contrast['repair_route']),'retry_prompt':base+' Retry after applying the repaired model to a close but newly authored instance.'}
-        return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':mode,'pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode'][mode]),'scope_trace':trace,'activation':'Identify the target and state the first chemically meaningful move: '+first['reconstruction_route'][0],'familiar_macro_anchor':primary['familiar_macro_anchor'],'representation_path':rep,'ordinary_language_explanation':primary['ordinary_language_bridge'],'rule_model_condition':primary['rule_model_condition_cue'],'reconstruction_steps':list(primary['reconstruction_route']),'worked_example':problem(cap,record,primary,problem_profile,lesson_id),'concept_helper':first['ordinary_language_bridge'],'misconception_repair':mis,'guided_attempt':attempt(cap,'GUIDED',base,record,problem_profile,lesson_id),'faded_attempt':attempt(cap,'FADED',base,record,problem_profile,lesson_id),'independent_attempt':attempt(cap,'INDEPENDENT',base,record,problem_profile,lesson_id),'verification_steps':ver,'transfer_bridge':'Transfer family: '+primary['transfer_family']+'. Original external transfer remains reserved for Core2.','condition_exception_obligations':list(record['condition_exception_obligations'])}
+        # Repair steps come from the capability's own primary asset, not from the
+        # generic contrast support asset: that one is written at the author
+        # ("Elicit the wrong model.") rather than at the learner.
+        repair=list(primary['repair_route']) or list(contrast['repair_route'])
+        mis={'wrong_model':primary['common_wrong_model'],'why_plausible':'The shortcut can look sufficient because it uses a familiar surface cue before the decisive chemical evidence is checked.','minimal_contrast':contrast['minimal_contrast'],'repair_steps':repair,'retry_prompt':base+' Retry after applying the repaired model to a close but newly authored instance.'}
+        return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':mode,'pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode'][mode]),'scope_trace':trace,'activation':'Identify the target and state the first chemically meaningful move: '+first['reconstruction_route'][0],'familiar_macro_anchor':primary['familiar_macro_anchor'],'representation_path':rep,'ordinary_language_explanation':primary['ordinary_language_bridge'],'rule_model_condition':primary['rule_model_condition_cue'],'reconstruction_steps':list(primary['reconstruction_route']),'worked_example':problem(cap,record,primary,problem_profile,lesson_id),'concept_helper':helper_first_move(primary['family'],helper_profile),'misconception_repair':mis,'guided_attempt':attempt(cap,'GUIDED',base,record,problem_profile,lesson_id),'faded_attempt':attempt(cap,'FADED',base,record,problem_profile,lesson_id),'independent_attempt':attempt(cap,'INDEPENDENT',base,record,problem_profile,lesson_id),'verification_steps':ver,'transfer_bridge':'Transfer family: '+primary['transfer_family']+'. Original external transfer remains reserved for Core2.','condition_exception_obligations':list(record['condition_exception_obligations'])}
     if mode=='CONCISE_VERIFY_ONLY':
         return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':mode,'pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode'][mode]),'scope_trace':trace,'activation':'Brief activation: '+first['reconstruction_route'][0],'familiar_macro_anchor':'','representation_path':[f'OBLIGATION_LEVEL:{x}' for x in record['representation_level_obligations']],'ordinary_language_explanation':'','rule_model_condition':'','reconstruction_steps':[],'worked_example':None,'concept_helper':'','misconception_repair':None,'guided_attempt':None,'faded_attempt':None,'independent_attempt':attempt(cap,'INDEPENDENT',base,record,problem_profile,lesson_id),'verification_steps':ver,'transfer_bridge':'Continue without reteaching after the independent verification check.','condition_exception_obligations':list(record['condition_exception_obligations'])}
     return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':'PROBE','pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode']['PROBE']),'scope_trace':trace,'activation':'Collect decisive evidence before choosing repair or study depth.','familiar_macro_anchor':'','representation_path':[f'PROBE_REP:{x}' for x in record['representation_level_obligations']],'ordinary_language_explanation':'','rule_model_condition':'','reconstruction_steps':[],'worked_example':None,'concept_helper':'','misconception_repair':None,'guided_attempt':None,'faded_attempt':None,'independent_attempt':attempt(cap,'PROBE',base,record,problem_profile,lesson_id),'verification_steps':ver,'transfer_bridge':'No transfer escalation until the probe is interpreted.','condition_exception_obligations':list(record['condition_exception_obligations'])}
@@ -80,11 +102,12 @@ def build_appendices(lessons,records,reg,problem_profile,completeness):
         hand.append({'capability_ref':l['capability_ref'],'first_move':first['reconstruction_route'][0],'rule_or_decision_cue':primary['rule_model_condition_cue'],'verification_cue':ver[0]})
     return {'appendix_a':{'title':'Appendix A — Core Practice','present':True,'items':items},'appendix_b':{'title':'Appendix B — Core Solutions','present':True,'solutions':solutions},'appendix_c':{'title':'Appendix C — Printable Handout','present':True,'answer_free':True,'supported_capability_refs':uniq([l['capability_ref'] for l in lessons]),'introduced_capability_refs':[],'reference_entries':hand,'print_constraints':list(completeness['appendix_c_print_constraints'])}}
 
-def build_plan(study_model,study_scope,pck_registry,profile,completeness,problem_profile,plan_id='CHEM-C-G-CORE1-PLAN-v1'):
+def build_plan(study_model,study_scope,pck_registry,profile,completeness,problem_profile,plan_id='CHEM-C-G-CORE1-PLAN-v1',helper_profile=None):
     validate_pck_registry(pck_registry)
+    helper_profile=helper_profile if helper_profile is not None else load_helper_profile()
     if study_model['subject']!='CHEMISTRY' or study_scope['subject']!='CHEMISTRY': fail('CORE1_IS_ONLY_A_REPAIR_MEMO','subject')
     if study_model['study_scope_digest']!=study_scope['study_scope_digest']: fail('CORE1_IS_ONLY_A_REPAIR_MEMO','scope drift')
-    lessons=[build_lesson(r,pck_registry,profile,problem_profile) for r in study_model['capability_records']]
+    lessons=[build_lesson(r,pck_registry,profile,problem_profile,helper_profile) for r in study_model['capability_records']]
     appendices=build_appendices(lessons,study_model['capability_records'],pck_registry,problem_profile,completeness)
     out={'plan_id':plan_id,'schema_version':'1.0.0','subject':'CHEMISTRY','study_model_ref':study_model['study_model_id'],'study_model_digest':study_model['study_model_digest'],'study_scope_ref':study_scope['study_scope_id'],'study_scope_digest':study_scope['study_scope_digest'],'pck_registry_ref':pck_registry['registry_id'],'authoring_profile_ref':profile['profile_id'],'lessons':lessons,'appendices':appendices,'external_transfer_unspoiled':True,'scope_complete':True,'release_authority_state':'PILOT_ONLY_HUMAN_EXPERT_RELEASE_NOT_GRANTED','plan_digest':''}
     out['plan_digest']=digest(out,'plan_digest'); validate_plan(out,study_model,study_scope,pck_registry,profile,completeness,problem_profile); return out

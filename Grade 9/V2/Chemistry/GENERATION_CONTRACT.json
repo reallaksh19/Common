@@ -146,17 +146,21 @@
       ],
       "required_registry_paths": [
         "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-instructional-authoring-profile.json",
-        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json"
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-scope-completeness-policy.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-core1-depth-profile.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py"
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py",
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/validate_chemistry_instructional_depth.py"
       ],
       "produces": [
-        "Core1Plan"
+        "Core1Plan",
+        "Core1DepthReport"
       ],
       "falsifiers": [
         "CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE",
-        "INSTRUCTIONAL_SPINE_INCOMPLETE"
+        "INSTRUCTIONAL_SPINE_INCOMPLETE",
+        "CORE1_SUMMARY_LEVEL_NOT_STUDY_MATERIAL"
       ]
     },
     {
@@ -195,16 +199,20 @@
         "PROBLEM_AUTHORING"
       ],
       "required_registry_paths": [
-        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py"
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-helper-pedagogy-profile.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py"
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/build_chemistry_core1.py",
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/validate_chemistry_instructional_depth.py"
       ],
       "produces": [
-        "PromotedPCKBinding"
+        "PromotedPCKBinding",
+        "HelperPedagogyReport"
       ],
       "falsifiers": [
-        "NON_ACTIONABLE_HINT"
+        "NON_ACTIONABLE_HINT",
+        "HINT_DUPLICATES_FULL_SOLUTION"
       ]
     },
     {
@@ -252,17 +260,20 @@
       "required_registry_paths": [
         "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-core2-authoring-profile.json",
         "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-concept-segregation.json",
-        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json"
+        "Grade 9/V2/Chemistry/Core2Transfer/registry/chemistry-transfer-badge-policy.json",
+        "Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry-helper-pedagogy-profile.json"
       ],
       "required_engine_paths": [
-        "Grade 9/V2/Chemistry/Core2Transfer/engine/build_chemistry_core2_transfer.py"
+        "Grade 9/V2/Chemistry/Core2Transfer/engine/build_chemistry_core2_transfer.py",
+        "Grade 9/V2/Chemistry/CoreAuthoring/engine/validate_chemistry_instructional_depth.py"
       ],
       "produces": [
         "Core2Plan"
       ],
       "falsifiers": [
         "DUPLICATE_PRIMARY_PLACEMENT",
-        "ELIGIBLE_ITEM_MISSING_CORE2"
+        "ELIGIBLE_ITEM_MISSING_CORE2",
+        "NON_ACTIONABLE_HINT"
       ]
     },
     {
@@ -402,5 +413,5 @@
     "ASSESSMENT_DESIGN": "PENDING_AUTHORIZED_HUMAN_ONLY",
     "VISUAL_USABILITY": "PENDING_AUTHORIZED_HUMAN_ONLY"
   },
-  "contract_digest": "61099df8569e2af113b5bb28b8891b26cf0f7041baee75b3a1f081523c5edefd"
+  "contract_digest": "e3987d98f39510b0e2b3a700eb5d61dc912a9796f657b4736668c2fb013523c2"
 }
