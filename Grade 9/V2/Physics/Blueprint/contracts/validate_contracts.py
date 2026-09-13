@@ -34,8 +34,12 @@ def validate() -> None:
         evidence_validator.validate(load(fixture)["evidence"])
 
     architecture = load(ROOT / "policy" / "architecture.v1.json")
-    if architecture["role_lifecycle"]["CORE2A"] != "PLACEHOLDER":
-        raise AssertionError("CORE2A_MUST_REMAIN_PLACEHOLDER_IN_BLUEPRINT_V1")
+    if architecture["role_lifecycle"]["CORE2A"] != "ACTIVE":
+        raise AssertionError("CORE2A_MUST_BE_ACTIVE_AFTER_SEMANTIC_CONTRACT")
+    if not architecture["invariants"]["core2a_requires_taught_state_receipts"]:
+        raise AssertionError("CORE2A_TAUGHT_STATE_GATE_DISABLED")
+    if not architecture["invariants"]["core2a_may_not_infer_learner_mastery"]:
+        raise AssertionError("CORE2A_MASTERY_INFERENCE_GUARD_DISABLED")
     if architecture["invariants"]["max_subtopics_per_handoff"] != 3:
         raise AssertionError("HANDOFF_BOUND_DRIFT")
     if not architecture["invariants"]["learning_atoms_unbounded"]:
