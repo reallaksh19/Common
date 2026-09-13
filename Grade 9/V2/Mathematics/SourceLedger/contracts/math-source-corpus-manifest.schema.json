@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-source-corpus-manifest.schema.json",
+  "title": "Mathematics Frozen Source Corpus Manifest",
+  "description": "The independent, frozen record of what the source corpus actually asks, established BEFORE authoring. Completeness measured only against the supplied question_set is self-relative: an upstream omission cannot be detected by it. Completeness is therefore two-dimensional - required_question_refs AND required_atomic_ask_refs - because a compound question can lose a subpart, a proof obligation or a parameter condition while its top-level count stays unchanged.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "schema_version",
+    "subject",
+    "topic_ref",
+    "corpus_authority",
+    "frozen_at_stage",
+    "required_question_refs",
+    "required_atomic_ask_refs",
+    "questions",
+    "manifest_digest"
+  ],
+  "properties": {
+    "manifest_id": {"type": "string", "pattern": "^MATH-SCM-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "topic_ref": {"type": "string", "minLength": 3},
+    "corpus_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "reference", "vendored"],
+      "properties": {
+        "name": {"type": "string", "minLength": 4},
+        "reference": {"type": "string", "minLength": 4},
+        "vendored": {"type": "boolean"},
+        "note": {"type": ["string", "null"]}
+      }
+    },
+    "frozen_at_stage": {"const": "BEFORE_AUTHORING"},
+    "required_question_refs": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 2}
+    },
+    "required_atomic_ask_refs": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 2}
+    },
+    "questions": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_ref", "source_order", "stem", "response_mode",
+                     "subpart_shape", "atomic_asks"],
+        "properties": {
+          "question_ref": {"type": "string", "minLength": 2},
+          "source_order": {"type": "integer", "minimum": 1},
+          "stem": {"type": "string", "minLength": 5},
+          "response_mode": {
+            "enum": ["MCQ_SELECTION", "ONE_LINE_JUSTIFICATION", "ALGEBRA_CHAIN", "PROOF",
+                     "TABLE", "NUMBER_LINE", "COORDINATE_PLANE", "CONSTRUCTION",
+                     "MULTIPART", "MODEL_UNIT_CALCULATION"]
+          },
+          "subpart_shape": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["subpart_count", "option_count", "proof_obligation_count",
+                         "parameter_condition_count"],
+            "properties": {
+              "subpart_count": {"type": "integer", "minimum": 0},
+              "option_count": {"type": "integer", "minimum": 0},
+              "proof_obligation_count": {"type": "integer", "minimum": 0},
+              "parameter_condition_count": {"type": "integer", "minimum": 0}
+            }
+          },
+          "atomic_asks": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["atomic_ask_ref", "kind", "label", "text", "learner_visible"],
+              "properties": {
+                "atomic_ask_ref": {"type": "string", "minLength": 2},
+                "kind": {
+                  "enum": ["SUBPART", "OPTION", "PROOF_OBLIGATION", "PARAMETER_CONDITION",
+                           "UNIT_REQUIREMENT", "JUSTIFICATION", "CONSTRUCTION_STEP",
+                           "COUNTEREXAMPLE_REQUEST"]
+                },
+                "label": {"type": "string", "minLength": 1},
+                "text": {"type": "string", "minLength": 1},
+                "learner_visible": {"type": "boolean"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

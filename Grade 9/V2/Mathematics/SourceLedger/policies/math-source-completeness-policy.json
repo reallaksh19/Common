@@ -1,0 +1,46 @@
+{
+  "policy_id": "MATH-SOURCE-COMPLETENESS-POLICY-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Release policy for source completeness. Completeness is three-layered and each layer failed independently during the seven-topic stress test, so each layer is gated independently.",
+  "layers": {
+    "SOURCE_CORPUS_COMPLETENESS": "every top-level source row is present",
+    "ATOMIC_ASK_COMPLETENESS": "every required subpart, proof obligation, option and parameter condition is present",
+    "RENDERED_ASSESSMENT_COMPLETENESS": "every stem, option, subpart and required context is visible after layout"
+  },
+  "evidence_from_the_stress_test": [
+    "Number Systems: completeness relative only to the supplied question_set is self-relative, so an upstream omission goes undetected without an independent frozen manifest.",
+    "Polynomials: 72/72 top-level questions did not imply 151/151 atomic asks.",
+    "Linear Equations: all four options were present in the data while C and D were covered by the next panel on the rendered page."
+  ],
+  "freeze_requirements": {
+    "frozen_at_stage": "BEFORE_AUTHORING",
+    "required_question_refs_frozen": true,
+    "required_atomic_ask_refs_frozen": true,
+    "manifest_digest_pinned": true
+  },
+  "occlusion_policy": {
+    "overlap_area_ratio_threshold": 0.05,
+    "rationale": "A partially covered option is unusable to a learner, so the threshold is deliberately low; only paint-order-later opaque objects can occlude."
+  },
+  "clipping_policy": {
+    "must_lie_within_printable_area": true,
+    "tolerance_pt": 0.5
+  },
+  "rendered_text_policy": {
+    "learner_visible_atomic_asks_must_be_extractable_from_the_page": true,
+    "rationale": "Text that cannot be extracted from the rendered page is text a learner cannot read."
+  },
+  "falsifiers": [
+    "CORE2_SOURCE_CORPUS_COVERAGE_GAP",
+    "CORE2_ATOMIC_ASK_COVERAGE_GAP",
+    "CORE2_SUBPART_SHAPE_DRIFT",
+    "SOURCE_CORPUS_NOT_FROZEN_BEFORE_AUTHORING",
+    "SOURCE_CORPUS_MANIFEST_DIGEST_DRIFT",
+    "RENDERED_SOURCE_OPTION_COVERAGE_GAP",
+    "ASSESSMENT_OBJECT_OCCLUSION",
+    "ASSESSMENT_OBJECT_CLIPPED",
+    "SOURCE_LEDGER_GATE_FAILED"
+  ],
+  "release_meaning": "PUBLICATION_ENGINEERING only. A reconciled ledger is evidence that nothing was silently dropped; it is not a subject, pedagogy, assessment or expert-review PASS, all of which remain PENDING."
+}
