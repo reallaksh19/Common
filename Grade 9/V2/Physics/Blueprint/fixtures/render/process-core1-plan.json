@@ -1,0 +1,70 @@
+{
+  "plan_id": "PHY-P-G-RENDER-PROCESS-GOLDEN",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "pedagogy_model": "SEE_REALIZE_UNDERSTAND",
+  "lessons": [
+    {
+      "lesson_id": "PHY-CORE1-LESSON-RENDER-GOLDEN",
+      "capability_ref": "PHY-CAP-ACCELERATION-SIGN",
+      "treatment": "READY_VERIFY_ONLY",
+      "lesson_mode": "CONCISE_VERIFY_ONLY",
+      "primary_pck_family": "SYSTEM_FRAME_SIGN_SETUP",
+      "concept_helper": "direction and sign",
+      "activation": "Choose a positive direction before assigning signs.",
+      "independent_attempt": {
+        "prompt": "A runner has velocity to the left and acceleration to the right. Decide whether the speed initially rises or falls.",
+        "verification_steps": [
+          "VERIFY_SIGN"
+        ]
+      },
+      "verification_steps": [
+        "VERIFY_SIGN"
+      ],
+      "transfer_bridge": "Use the same direction logic in vertical motion."
+    }
+  ],
+  "appendices": {
+    "appendix_a": {
+      "present": true,
+      "title": "Appendix A — Core Practice",
+      "items": [
+        {
+          "item_id": "A1",
+          "support_stage": "INDEPENDENT",
+          "prompt": "Compare velocity and acceleration directions before deciding what happens to speed."
+        }
+      ]
+    },
+    "appendix_b": {
+      "present": true,
+      "title": "Appendix B — Core Solutions",
+      "solutions": [
+        {
+          "item_ref": "A1",
+          "reasoning_steps": [
+            {
+              "role": "COMPARE_SIGNS",
+              "text": "Opposite directions make the speed decrease initially."
+            }
+          ],
+          "final_response": "The speed initially decreases.",
+          "model_validity_note": "This is an instantaneous direction check."
+        }
+      ]
+    },
+    "appendix_c": {
+      "present": true,
+      "title": "Appendix C — Printable Handout",
+      "reference_entries": [
+        {
+          "capability_ref": "PHY-CAP-ACCELERATION-SIGN",
+          "first_move": "Compare velocity and acceleration directions.",
+          "frame_sign_cue": "Declare the positive direction.",
+          "relation_or_decision_cue": "Opposite signs reduce speed initially.",
+          "verification_cue": "VERIFY_SIGN"
+        }
+      ]
+    }
+  }
+}

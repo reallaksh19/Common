@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'Grade 9/V2/Physics/Blueprint/**'
+      - 'Grade 9/V2/Physics/Core1A/engine/render_physics_core1a.py'
+      - 'Grade 9/V2/Physics/Representation/**'
       - 'Grade 9/V2/Physics/Core2A/**'
       - '.github/workflows/v2-physics-blueprint.yml'
   workflow_dispatch:
@@ -17,7 +19,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: pip install jsonschema
+        run: pip install jsonschema reportlab pymupdf
       - name: Validate blueprint contracts and role bindings
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
       - name: Run adaptive-routing golden fixtures
@@ -46,3 +48,14 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_publication_ir.py"
       - name: Compile lossless Publication IR golden
         run: python "Grade 9/V2/Physics/Blueprint/engine/compile_publication_ir.py" "Grade 9/V2/Physics/Blueprint/fixtures/publication/m2d-core1a-ir.json" --out /tmp/physics-publication-ir.json
+      - name: Run actual-render custody and finished-PDF preflight falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_render_preflight.py"
+      - name: Build actual render process golden with existing Physics renderer
+        run: python "Grade 9/V2/Physics/Blueprint/engine/build_render_process_golden.py" --out-dir /tmp/physics-blueprint-render-golden
+      - name: Upload rendered PDF and raster proofs for human review
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-blueprint-render-process-golden
+          path: /tmp/physics-blueprint-render-golden
+          if-no-files-found: error
+          retention-days: 14
