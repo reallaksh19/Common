@@ -1,0 +1,50 @@
+{
+  "registry_id": "MATH-TYPOGRAPHY-ROLE-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Minimum readable physical size by SEMANTIC ROLE, not a single global floor. A global floor cannot express that a diagram label may legitimately be smaller than question body text while a solution body may not, and it was a global floor that allowed pages where text technically fit but was too small to teach from.",
+  "units": "points at final A4 scale",
+  "roles": {
+    "HEADING":           {"min_pt": 12.0, "preferred_pt": 14.0, "learner_visible": true},
+    "QUESTION_BODY":     {"min_pt": 9.5,  "preferred_pt": 11.0, "learner_visible": true},
+    "LEARNER_BODY":      {"min_pt": 9.5,  "preferred_pt": 10.5, "learner_visible": true},
+    "MATH_DISPLAY":      {"min_pt": 10.0, "preferred_pt": 12.0, "learner_visible": true},
+    "MATH_INLINE":       {"min_pt": 9.5,  "preferred_pt": 10.5, "learner_visible": true},
+    "DIAGRAM_LABEL":     {"min_pt": 7.5,  "preferred_pt": 9.0,  "learner_visible": true},
+    "ROUTE_STATE_LABEL": {"min_pt": 8.0,  "preferred_pt": 9.5,  "learner_visible": true},
+    "ROUTE_STATE_BODY":  {"min_pt": 9.0,  "preferred_pt": 10.5, "learner_visible": true},
+    "SOLUTION_BODY":     {"min_pt": 9.0,  "preferred_pt": 10.5, "learner_visible": true},
+    "WORKSPACE":         {"min_pt": 8.0,  "preferred_pt": 9.5,  "learner_visible": true},
+    "FOOTNOTE":          {"min_pt": 7.0,  "preferred_pt": 8.0,  "learner_visible": true},
+    "SOURCE_META":       {"min_pt": 7.0,  "preferred_pt": 8.0,  "learner_visible": true},
+    "PAGE_FURNITURE":    {"min_pt": 7.0,  "preferred_pt": 8.0,  "learner_visible": false}
+  },
+  "script_size_floor_pt": 6.0,
+  "script_size_floor_note": "Superscripts and subscripts are typeset at a reduced size; MathTypesetting refuses to render one below this floor rather than emitting an unreadable glyph.",
+  "workspace_requirements": {
+    "MCQ_SELECTION":          {"min_height_pt": 26.0,  "min_ruled_lines": 0, "note": "an option grid plus a choice box; a full lined page here is wasted area"},
+    "ONE_LINE_JUSTIFICATION": {"min_height_pt": 42.0,  "min_ruled_lines": 2},
+    "ALGEBRA_CHAIN":          {"min_height_pt": 120.0, "min_ruled_lines": 6},
+    "PROOF":                  {"min_height_pt": 190.0, "min_ruled_lines": 9, "note": "a proof needs room for GIVEN, licensed facts, derived statements and a conclusion"},
+    "TABLE":                  {"min_height_pt": 110.0, "min_ruled_lines": 0},
+    "NUMBER_LINE":            {"min_height_pt": 70.0,  "min_ruled_lines": 0},
+    "COORDINATE_PLANE":       {"min_height_pt": 170.0, "min_ruled_lines": 0},
+    "CONSTRUCTION":           {"min_height_pt": 190.0, "min_ruled_lines": 0},
+    "MULTIPART":              {"min_height_pt": 150.0, "min_ruled_lines": 6, "note": "a multipart item needs workspace per subpart, which is what overflowed in the Polynomials run"},
+    "MODEL_UNIT_CALCULATION": {"min_height_pt": 130.0, "min_ruled_lines": 5}
+  },
+  "collision_policy": {
+    "sibling_overlap_tolerance_pt": 0.5,
+    "containment_is_legal": true,
+    "note": "Two objects sharing a container are siblings and may not intersect. A child inside its container is legal containment, not a collision - which is why a page-bounds check alone could not see the Euclid two-up solution collision."
+  },
+  "whitespace_policy": {
+    "unused_page_area_ratio_threshold": 0.30,
+    "note": "Large unused whitespace and microtype can coexist. If a learner-visible object is set below its preferred size while at least this share of the page is unused, the smaller type is a layout-policy choice rather than a page-capacity limit."
+  },
+  "solution_packing_policy": {
+    "mode": "MEASURE_THEN_PACK",
+    "inter_block_gap_pt": 14.0,
+    "note": "One solution per page is correct when the content demands it. Two-up is an optimisation, not an invariant, and fixed-density packing is what produced the overlapping solution blocks."
+  }
+}

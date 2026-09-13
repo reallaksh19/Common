@@ -1,0 +1,47 @@
+{
+  "policy_id": "MATH-LAYOUT-SAFETY-POLICY-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Release policy for typography and layout. Proof readability and layout safety are release semantics, not cosmetic QA: a page that is structurally valid, deterministic and in bounds can still be unreadable, collided or silently truncated.",
+  "required_sequence": [
+    "semantic object",
+    "measure content",
+    "determine response mode",
+    "determine representation demand",
+    "determine workspace demand",
+    "paginate / place",
+    "inspect final composition"
+  ],
+  "sequence_rationale": "The renderer must not allocate a fixed rectangle because a component is called WORKSPACE, VERIFY or REASONING_ROUTE.",
+  "typography": {
+    "minimum_size_is_per_semantic_role": true,
+    "global_floor_is_insufficient": true,
+    "registry_ref": "math-typography-role-registry.json"
+  },
+  "collision": {
+    "pairwise_sibling_checks_required": true,
+    "page_bounds_check_is_insufficient": true
+  },
+  "pagination": {
+    "solution_blocks_measured_not_fixed_density": true,
+    "one_solution_per_page_is_acceptable": true
+  },
+  "evidence_from_the_stress_test": [
+    "Euclid: large unused whitespace and microtype coexisted on the same page, and two-up solution blocks collided.",
+    "Polynomials: multipart workspace overflowed its allocated rectangle.",
+    "Linear Equations: a following panel covered the tail of an option set.",
+    "Number Systems: early pages carried large empty lined regions beside generic verify boxes."
+  ],
+  "falsifiers": [
+    "LEARNER_TEXT_BELOW_MIN_READABLE_SIZE",
+    "DIAGRAM_LABEL_BELOW_MIN_READABLE_SIZE",
+    "MICROTYPE_USED_WHILE_EXPANDABLE_SPACE_EXISTS",
+    "LAYOUT_COMPONENT_INTERSECTION",
+    "CONTENT_OVERFLOW",
+    "NEGATIVE_REMAINING_HEIGHT",
+    "WORKSPACE_RESPONSE_MODE_MISMATCH",
+    "SOLUTION_BLOCK_PACKING_OVERFLOW",
+    "LAYOUT_SAFETY_GATE_FAILED"
+  ],
+  "release_meaning": "PUBLICATION_ENGINEERING only. Passing these gates means the page is readable, uncollided and complete after layout; it is not a visual-usability or expert-review PASS, both of which remain PENDING."
+}
