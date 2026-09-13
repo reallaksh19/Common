@@ -84,10 +84,10 @@ def validate_source_answer(
 
         source_display = str(question.get("source_display") or "").strip()
         source_refs = question.get("source_refs") or []
-        if not source_display or not source_refs:
-            raise ProductionKitError("SOURCE_TRACEABILITY_MISSING", qid)
         if source_on_sheet1 and not source_display:
             raise ProductionKitError("CORE2A_SHEET1_SOURCE_MISSING", qid)
+        if not source_display or not source_refs:
+            raise ProductionKitError("SOURCE_TRACEABILITY_MISSING", qid)
 
         origin = question.get("origin")
         if origin == "GENERATED_ORIGINAL":
