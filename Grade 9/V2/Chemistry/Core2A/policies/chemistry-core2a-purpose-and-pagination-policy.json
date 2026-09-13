@@ -5,12 +5,7 @@
   "product": "CORE2A",
   "purpose_resolution": {
     "required_before_authoring": true,
-    "allowed_values": [
-      "STARTER",
-      "PRACTICE",
-      "REVISION",
-      "COMPETITION"
-    ],
+    "allowed_values": ["STARTER", "PRACTICE", "REVISION", "COMPETITION"],
     "unresolved_action": "ASK_USER",
     "unresolved_failure_code": "CORE2A_PURPOSE_UNRESOLVED",
     "agent_may_infer_without_user_confirmation": false
@@ -49,6 +44,15 @@
       "repeated_disclaimer_footer_forbidden": true
     }
   },
+  "sheet1_source_provenance": {
+    "required_for_every_core2a_question": true,
+    "placement": "SHEET1_BEFORE_OR_ADJACENT_TO_QUESTION",
+    "source_core2_rule": "DISPLAY_EXACT_HUMAN_READABLE_SOURCE_LOCATOR",
+    "generated_original_rule": "DISPLAY_CONSTRUCTION_REFERENCES_PLUS_GOVERNED_CONTENT_ANCHOR",
+    "generated_original_must_distinguish_construction_reference_from_official_question_source": true,
+    "book_level_reference_page_is_not_sufficient": true,
+    "failure_code": "CORE2A_SHEET1_SOURCE_MISSING"
+  },
   "competition_construction_research": {
     "required_before_fresh_question_authoring": true,
     "minimum_authoritative_or_official_external_benchmarks": 2,
@@ -67,13 +71,13 @@
     "do_not_copy_question_text": true,
     "near_copy_gate_still_required": true,
     "machine_custody_requires_urls_or_stable_source_refs": true,
-    "learner_surface": "BOOK_LEVEL_CONSTRUCTION_REFERENCES_PREFERRED_OVER_REPEATED_PER_QUESTION_DISCLAIMERS",
+    "learner_surface": "EVERY_QUESTION_SHEET1_DISPLAYS_ITS_CONSTRUCTION_REFERENCES_AND_CONTENT_ANCHOR",
     "unavailable_external_research_action": "RECORD_UNAVAILABLE_AND_FAIL_COMPETITION_GENERATION_UNLESS_USER_EXPLICITLY_WAIVES",
     "failure_code": "CORE2A_COMPETITION_CONSTRUCTION_RESEARCH_MISSING"
   },
   "page_budget": {
     "default_max_physical_pages_per_learner_question": 2,
-    "page_1_job": "ATTEMPT_PLUS_DEMAND_SIZED_WORKSPACE_PLUS_OPTIONAL_TECHNICAL_CLUES",
+    "page_1_job": "ATTEMPT_PLUS_SOURCE_PLUS_DEMAND_SIZED_WORKSPACE_PLUS_OPTIONAL_TECHNICAL_CLUES",
     "page_2_job": "QUICK_CHECK_PLUS_FULL_WORKING_PLUS_TECHNICAL_RELATION_PLUS_CONSISTENCY_CHECK",
     "dedicated_clue_page_default": false,
     "dedicated_blank_working_page_default": false,
@@ -104,6 +108,7 @@
       "resolve learner purpose before realization",
       "change selection and scaffolding according to purpose",
       "research authentic competition construction patterns before fresh competition authoring",
+      "put the source/provenance basis on Sheet 1 of every learner question",
       "treat reveal states as pedagogical states, not automatic physical pages",
       "allocate workspace from question demand rather than a fixed template",
       "keep clues technical and subordinate to the learner attempt",
