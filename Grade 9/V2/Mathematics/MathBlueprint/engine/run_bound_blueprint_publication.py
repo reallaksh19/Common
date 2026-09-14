@@ -34,6 +34,10 @@ def main() -> None:
     if gate.get("status") != "PASS":
         fail("BOUND_BLUEPRINT_PUBLICATION_REQUIRES_RELEASE_PASS")
 
+    example_catalog = root / "core1a" / "core1a_governed_example_catalog.json"
+    if not example_catalog.exists():
+        fail("BOUND_BLUEPRINT_PUBLICATION_GOVERNED_EXAMPLE_CATALOG_REQUIRED")
+
     out = root / "publication"
     out.mkdir(parents=True, exist_ok=True)
     bp = out / "learner_page_blueprint.json"
@@ -41,9 +45,10 @@ def main() -> None:
     pdf = out / "blueprint_regenerated_learner_product.pdf"
     pdf_audit = out / "blueprint_pdf_audit.json"
 
-    run(HERE / "compile_bound_product_page_blueprint.py", [
+    run(HERE / "compile_governed_product_page_blueprint.py", [
         "--bucket-plan", str(root / "core1a" / "core1a_bucket_plan.json"),
         "--core1a-manuscript", str(root / "core1a" / "core1a_textbook_manuscript.json"),
+        "--core1a-example-catalog", str(example_catalog),
         "--core1b-dir", str(root / "core1b"),
         "--core2a-blueprint", str(root / "core2a" / "core2a_product_blueprint.json"),
         "--core2b-plan", str(root / "core2b" / "plan.json"),
@@ -68,6 +73,8 @@ def main() -> None:
         "source_release_gate": "PASS",
         "blueprint_id": bpa["blueprint_id"],
         "blueprint_sha256": bpa["blueprint_sha256"],
+        "difficulty_badge": load(bp)["difficulty_badge"],
+        "governed_example_catalog_digest": load(example_catalog)["catalog_digest"],
         "blueprint_page_count": bpa["page_count"],
         "render_object_count": bpa["render_object_count"],
         "pdf_sha256": pda["pdf_sha256"],
@@ -78,6 +85,7 @@ def main() -> None:
             "blueprint_audit": bp_audit.name,
             "pdf": pdf.name,
             "pdf_audit": pdf_audit.name,
+            "governed_example_catalog": "../core1a/core1a_governed_example_catalog.json",
         },
     }
     (out / "blueprint_publication_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
