@@ -27,12 +27,35 @@ def validate_frozen_source_custody(registry: dict, governance: dict) -> None:
     missing = sorted(set(expected) - set(custody))
     if missing:
         fail("RELEASE_FROZEN_SOURCE_CUSTODY_MISSING", ",".join(missing))
+
+    source_asset_by_ref = {
+        row["payload"]["question_ref"]: row["asset_id"]
+        for row in registry["assets"]
+        if row["asset_type"] == "SOURCE_QUESTION"
+    }
+    canonical_solution_by_question = {}
+    for row in registry["assets"]:
+        if row["asset_type"] != "CANONICAL_SOLUTION":
+            continue
+        qasset = row["payload"]["question_asset_ref"]
+        qref = next((q for q, aid in source_asset_by_ref.items() if aid == qasset), None)
+        if qref is None:
+            fail("RELEASE_CANONICAL_SOLUTION_QUESTION_BINDING_MISSING", row["asset_id"])
+        if qref in canonical_solution_by_question:
+            fail("RELEASE_CANONICAL_SOLUTION_DUPLICATE", qref)
+        canonical_solution_by_question[qref] = row["payload"]["answer_contract_ref"]
+
     for qref, frozen in expected.items():
         row = custody[qref]
         if row["source_relation"] != "EXACT_SOURCE":
             fail("RELEASE_FROZEN_SOURCE_RELATION_DRIFT", qref)
         if row["exact_stem_hash"] != frozen:
             fail("RELEASE_FROZEN_SOURCE_DIGEST_MISMATCH", qref)
+        expected_answer = canonical_solution_by_question.get(qref)
+        if expected_answer is None:
+            fail("RELEASE_CANONICAL_SOLUTION_MISSING", qref)
+        if row["answer_contract_ref"] != expected_answer:
+            fail("RELEASE_CANONICAL_ANSWER_CONTRACT_MISMATCH", qref)
 
 
 def release(registry: dict, receipts: list[dict]):
@@ -40,6 +63,7 @@ def release(registry: dict, receipts: list[dict]):
     validate_frozen_source_custody(registry, governance)
     result = dict(result)
     result["frozen_source_custody"] = {"status": "PASS"}
+    result["canonical_answer_custody"] = {"status": "PASS"}
     return coverage, similarity, governance, result
 
 
