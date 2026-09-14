@@ -1,6 +1,10 @@
 # Physics V2 — Core (1A) Difficulty-Badged Subtopic Assimilation
 
-> **Future agents: start with `AGENT_RUNBOOK.md`, not this README.**
+> **Canonical V8 learner-product spec:** `TECHNICAL_PUBLICATION_SPEC_v5.md`.
+>
+> New authoring must follow `Blueprint/SELF_HELP_ARCHITECTURE_V8.md`: CCU custody/coverage → CDAU purpose/differentiation → SDU v2 intrinsic difficulty → Concept TTU v3. Older policies below remain implementation/history context where not superseded.
+
+> **Future agents: start with `AGENT_RUNBOOK.md`, then read `TECHNICAL_PUBLICATION_SPEC_v5.md`.**
 
 Core (1A) is the declarative deep-teaching layer between semantic **Core (1)** and learner problem work.
 
@@ -22,13 +26,7 @@ Student knowledge percentage does **not** drive Core1A publication depth.
 
 Legacy `prior_knowledge_pct` fields in older fixtures/manifests are retained only for migration compatibility. New Core1A publication decisions must not use them as the depth selector.
 
-See:
-
-`BUCKET_DEPTH_POLICY_v1.md`
-
-and the machine policy:
-
-`../Blueprint/policy/core1ab-bucket-depth.v1.json`
+See the current V8/SDU policy first; `BUCKET_DEPTH_POLICY_v1.md` and older machine policies are historical where superseded.
 
 ## Difficulty-badge depth
 
@@ -55,7 +53,7 @@ and the machine policy:
 - sub-subtopic decomposition expected when conceptual jumps can be isolated;
 - soft capacity ceiling: about **30 pages**.
 
-Page ceilings are not targets. Do not pad to reach them. If the bucket needs more, split it further or obtain an owner exception rather than compressing reasoning.
+Page ceilings are not targets. Core1A and Core1B share the envelope but derive actual length independently.
 
 ## Mandatory declarative teaching spine
 
@@ -71,32 +69,9 @@ Use semantic IDs such as `M2D-SBA-03`, never PDF page numbers as concept identif
 
 Every Revised Core (2) question has exactly one primary SBA owner. A source question may still be HELD until prerequisite/source-integrity conditions are satisfied.
 
-## Core (2) hint pre-teaching
+## Source, answer and custody rule
 
-Core (2) uses:
-
-- H1 — key Physics / notice;
-- H2 — representation/model;
-- H3 — first mathematical move.
-
-Every reveal must trace backward to earlier Core1A teaching evidence. A topic-level link alone is insufficient.
-
-## Question-load scaling
-
-Question load may expand the transfer/problem-family section, but it does **not** replace the intrinsic bucket difficulty badge as the Core1A depth driver.
-
-- 1–2 primary questions: `LOW` load;
-- 3–5: `MEDIUM`;
-- 6–9: `HIGH`;
-- 10+: `VERY_HIGH`.
-
-For HIGH/VERY_HIGH loads, cluster questions into problem families rather than compressing them into one end-page list.
-
-## Source and authority boundary
-
-Core1A may reorganise and scaffold authorised Physics, add prerequisite refreshers, staged visuals, worked examples and explanatory bridges.
-
-Core1A may not invent a new law, unsupported problem family, fake source citation, fabricated Core2 link, or silently repair a source issue.
+CCU v1 is mandatory. Every canonical asset receives an explicit Core disposition; every learner-facing question/example has a stable ID, visible source class, retained source number where applicable, and canonical resolution. Author-created examples must be visibly author-created and may not impersonate source questions.
 
 ## Learner UI
 
