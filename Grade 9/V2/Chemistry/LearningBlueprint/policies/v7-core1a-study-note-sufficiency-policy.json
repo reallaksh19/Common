@@ -1,0 +1,48 @@
+{
+  "policy_id": "CHEM-G9-V2-CORE1A-STUDY-NOTE-SUFFICIENCY-v7",
+  "schema_version": "7.0.0",
+  "principle": "CORE1A_MUST_BE_CONTENT_BEARING_STUDY_NOTES_NOT_AN_EXECUTIVE_SUMMARY_OR_ARCHITECTURE_SURFACE",
+  "required_jobs_per_learning_atom": [
+    "MEANING",
+    "RULE_OR_DECISION",
+    "REPRESENTATION_OR_EQUATION",
+    "REASONING_CHAIN",
+    "BOUNDARY_OR_MISCONCEPTION",
+    "WORKED_OR_MODELED_EXAMPLE",
+    "PRACTICE",
+    "ANSWER_CLOSURE"
+  ],
+  "hard_minimums": {
+    "representation_types": 3,
+    "misconception_repairs": 2,
+    "reconstructable_ttu_refs": 2,
+    "practice_levels": ["GUIDED", "INDEPENDENT"],
+    "verification_objects": 2
+  },
+  "content_payload": {
+    "learner_payload_required": true,
+    "source_ref_required": true,
+    "ccbom_asset_id_required": true,
+    "empty_or_label_only_payload_forbidden": true
+  },
+  "learner_surface": {
+    "forbidden_internal_terms_default": [
+      "CDAU", "SDU", "LAU", "PAL", "CCBOM", "TTU", "FALSIFIER", "COMPILER",
+      "AUTHORITY_REF", "REALIZATION_REF", "SUPPORT_BAND", "SCHEMA_VERSION", "PRODUCT_MODE"
+    ],
+    "internal_identifiers_may_appear_only_in_machine_metadata": true,
+    "subject_language_must_dominate": true
+  },
+  "pagination": {
+    "mode": "CONTENT_FIRST",
+    "target_page_count_forbidden": true,
+    "content_closure_precedes_pagination": true
+  },
+  "cross_checks": {
+    "all_content_objects_must_resolve_to_declared_source_ref": true,
+    "all_content_objects_must_resolve_to_ccbom_asset": true,
+    "all_required_job_object_ids_must_resolve": true,
+    "practice_and_answers_must_resolve": true,
+    "summary_must_be_recomputed": true
+  }
+}
