@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -20,16 +22,19 @@ LAU_FIX = load("fixtures/architecture-v7/m2d-sba23-lau-owner-guided.json")
 CONCEPT_FIX = load("fixtures/architecture-v7/m2d-sba23-concept-ttu.json")
 PROBLEM_FIX = load("fixtures/architecture-v7/m2d-sba23-problem-ttu.json")
 
-# Schemas must parse and expose the new architecture objects.
-for schema_name in (
-    "contracts/core-differentiation-adaptation-unit.schema.json",
-    "contracts/study-differentiation-unit.schema.json",
-    "contracts/learner-adaptation-unit.schema.json",
-    "contracts/technical-teaching-unit-v3.schema.json",
-):
+# New architecture contracts must validate real process-golden objects, not merely parse.
+schema_fixture_pairs = [
+    ("contracts/core-differentiation-adaptation-unit.schema.json", CDAU_FIX),
+    ("contracts/study-differentiation-unit.schema.json", SDU_FIX),
+    ("contracts/learner-adaptation-unit.schema.json", LAU_FIX),
+    ("contracts/technical-teaching-unit-v3.schema.json", CONCEPT_FIX),
+    ("contracts/technical-teaching-unit-v3.schema.json", PROBLEM_FIX),
+]
+for schema_name, fixture in schema_fixture_pairs:
     schema = load(schema_name)
     assert schema["$schema"].endswith("2020-12/schema")
     assert schema["type"] == "object"
+    Draft202012Validator(schema).validate(fixture)
 
 # Upstream authority remains outside CDAU; product governance cannot rewrite truth.
 assert CDAU["authority_order"][:5] == [
