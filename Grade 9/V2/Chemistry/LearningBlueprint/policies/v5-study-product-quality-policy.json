@@ -8,7 +8,65 @@
     "content_closure_precedes_pagination": true,
     "page_envelope_must_not_cause_content_omission": true,
     "research_may_improve_realization_but_may_not_expand_chemistry_authority": true,
-    "shared_truth_does_not_authorize_shared_expository_prose": true
+    "shared_truth_does_not_authorize_shared_expository_prose": true,
+    "reconstructable_ttu_is_mandatory": true
+  },
+  "ttu_policy": {
+    "definition": "A reconstructable TTU is a governed technical representation with deliberately missing chemically meaningful structure that the learner must rebuild, complete, order, connect, plot, balance, label or select before canonical closure is revealed.",
+    "allowed_types": [
+      "INCOMPLETE_DIAGRAM",
+      "COMPONENT_ASSEMBLY",
+      "GRAPH_COMPLETION",
+      "EQUATION_SKELETON",
+      "EVENT_LINE",
+      "LEDGER_TABLE",
+      "DECISION_TREE",
+      "REACTION_SCHEME",
+      "REPRESENTATION_MAP",
+      "PARTICLE_SPECIES_MAP",
+      "OXIDATION_STATE_LANE"
+    ],
+    "allowed_cognitive_jobs": [
+      "RECONSTRUCT_STRUCTURE",
+      "COMPLETE_RELATION",
+      "SEQUENCE_EVENTS",
+      "MAP_COMPONENTS",
+      "PLOT_RELATION",
+      "BALANCE_CONSERVATION",
+      "SELECT_PATH",
+      "TRANSLATE_REPRESENTATION",
+      "TRACK_BEFORE_AFTER",
+      "CONNECT_CAUSE_EFFECT"
+    ],
+    "required_fields": [
+      "ttu_id",
+      "owner_id",
+      "ttu_type",
+      "cognitive_job",
+      "learner_action",
+      "initial_state",
+      "missing_elements",
+      "canonical_complete_state",
+      "hint_ladder",
+      "verification_rule",
+      "representation_authority_refs",
+      "exposure_mode"
+    ],
+    "minimum_missing_elements": 1,
+    "canonical_state_must_be_hidden_until_required_attempt": true,
+    "hint_ladder_must_bind_to_missing_structure": true,
+    "representation_authority_required": true,
+    "new_chemistry_in_ttu_forbidden": true,
+    "decorative_or_fully_completed_visual_does_not_count_as_ttu": true,
+    "study_minimum": "AT_LEAST_ONE_TTU_PER_LEARNING_ATOM",
+    "question_minimum": "AT_LEAST_ONE_TTU_PER_SELECTED_QUESTION",
+    "hard_bucket_requires_multiple_ttu_types_when_more_than_one_learning_atom": true,
+    "exposure_modes": {
+      "CORE1A": "MODEL_THEN_RECONSTRUCT",
+      "CORE1B": "RECONSTRUCT_BEFORE_CANONICAL",
+      "CORE2A": "SETUP_THEN_COMPLETE",
+      "CORE2B": "CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS"
+    }
   },
   "study_side": {
     "applies_to": ["CORE1A", "CORE1B"],
@@ -74,7 +132,7 @@
     "research_translation": {
       "EASY": "OPTIONAL",
       "MEDIUM": "REQUIRED_TO_TECHNICAL_OBJECTS",
-      "HARD": "DEEP_REQUIRED_TO_TECHNICAL_OBJECTS"
+      "HARD": "DEEP_REQUIRED_TO_TECHNICAL_OBJECTS_AND_TTUS"
     },
     "cross_core_reuse": {
       "allowed": [
@@ -125,6 +183,7 @@
       "every_selected_question_has_attempt_path": true,
       "every_selected_question_has_check_path": true,
       "every_selected_question_has_full_solution_path": true,
+      "every_selected_question_has_reconstructable_ttu": true,
       "every_hint_binds_to_a_reasoning_step": true,
       "coverage_ledger_required": true
     }
@@ -136,6 +195,7 @@
       "CONCEPT_EXPLANATION",
       "RULE_OR_DERIVATION",
       "REPRESENTATION",
+      "TTU_RECONSTRUCTION",
       "WORKED_EXAMPLE",
       "MISCONCEPTION_OR_BOUNDARY",
       "PRACTICE",
@@ -147,6 +207,7 @@
     "content_page_min_active_area_ratio": 0.55,
     "workspace_page_min_active_area_ratio": 0.30,
     "workspace_requires_explicit_learner_action": true,
+    "ttu_reconstruction_space_is_productive_not_blank_space": true,
     "cover_or_route_pages_may_not_be_used_to_pad_page_count": true,
     "every_non_cover_page_requires_technical_object_or_learner_action": true,
     "final_pdf_must_measure_actual_not_declared_active_area": true
