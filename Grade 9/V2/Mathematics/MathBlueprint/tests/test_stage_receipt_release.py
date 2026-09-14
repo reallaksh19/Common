@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import importlib.util
 import json
 import sys
 import unittest
@@ -73,6 +72,7 @@ class StageReceiptReleaseTests(unittest.TestCase):
         reg=load(REGISTRY); coverage, similarity, governance, result=release(reg,make_receipts(reg))
         self.assertEqual(result["status"],"PASS")
         self.assertEqual(result["frozen_source_custody"]["status"],"PASS")
+        self.assertEqual(result["canonical_answer_custody"]["status"],"PASS")
         self.assertEqual(coverage["coverage_scope"],"FULL_REGISTRY")
         self.assertEqual(set(similarity["coverage_declaration"]["stage_pairs"]),set(["CORE1A__CORE1B","CORE1A__CORE2A","CORE1A__CORE2B","CORE1B__CORE2A","CORE1B__CORE2B","CORE2A__CORE2B"]))
         self.assertEqual(len(governance["purpose_audits"]),4)
@@ -93,6 +93,10 @@ class StageReceiptReleaseTests(unittest.TestCase):
     def test_frozen_source_digest_mismatch_fails(self):
         reg=load(REGISTRY); receipts=make_receipts(reg); receipts[2]["question_custody"][0]["exact_stem_hash"]="0"*64
         with self.assertRaisesRegex(ValueError,"RELEASE_FROZEN_SOURCE_DIGEST_MISMATCH"): release(reg,receipts)
+
+    def test_canonical_answer_contract_mismatch_fails(self):
+        reg=load(REGISTRY); receipts=make_receipts(reg); receipts[2]["question_custody"][0]["answer_contract_ref"]="ANS-Q2-SWAPPED"
+        with self.assertRaisesRegex(ValueError,"RELEASE_CANONICAL_ANSWER_CONTRACT_MISMATCH"): release(reg,receipts)
 
     def test_learner_fit_over_ceiling_fails(self):
         reg=load(REGISTRY); receipts=make_receipts(reg); receipts[3]["learner_fit_evidence"][0]["actual_demand"]="M8_MIXED_COMPETITIVE"
