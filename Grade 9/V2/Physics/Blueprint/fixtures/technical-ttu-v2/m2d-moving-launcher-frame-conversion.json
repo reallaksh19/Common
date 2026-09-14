@@ -102,11 +102,13 @@
       },
       {
         "relation_id": "REL-COMP-X",
-        "expression": "u_x,G = u_x,T + V"
+        "expression": "u_x,G = u_x,T + V",
+        "conditions": ["source velocity is horizontal"]
       },
       {
         "relation_id": "REL-COMP-Y",
-        "expression": "u_y,G = u_y,T"
+        "expression": "u_y,G = u_y,T",
+        "conditions": ["source has zero vertical velocity component"]
       }
     ],
     "working_steps": [
@@ -170,19 +172,19 @@
         {
           "help_id": "H1",
           "function": "NOTICE",
-          "text": "Which two velocities must be combined to obtain the ball velocity seen from the ground?",
-          "addresses_element_ids": ["E-FRAME-BT", "E-FRAME-TG", "E-RESULT-BG"]
+          "text": "Which two velocities must be combined to obtain the missing ball velocity seen from the ground?",
+          "addresses_element_ids": ["E-RESULT-BG"]
         },
         {
           "help_id": "H2",
           "function": "REPRESENT",
-          "text": "Place v_TG head-to-tail with v_BT and draw the resultant from the original tail to the final head.",
+          "text": "Place the known source velocity head-to-tail with the known relative launch and draw the missing resultant from the original tail to the final head.",
           "addresses_element_ids": ["E-RESULT-BG"]
         },
         {
           "help_id": "H3",
           "function": "START",
-          "text": "Write v_BG = v_BT + v_TG, then add x-components: 8 + 6.",
+          "text": "Use the velocity-chain relation, then calculate the missing horizontal component by adding 8 + 6.",
           "addresses_element_ids": ["E-RESULT-BG", "E-COMP-X"]
         }
       ],
