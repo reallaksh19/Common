@@ -36,16 +36,18 @@ This proves the production gate still fails closed and that no default learner p
 
 ### 2. Explicit owner-waived completion
 
-After the calibration gate was surfaced, the owner explicitly instructed the run to proceed. That approval is recorded as:
+After the calibration gate was surfaced, the owner instructed the run to proceed. That instruction is recorded as:
 
 `CHAT-OWNER-APPROVAL-2026-09-14T11:40:41Z`
+
+The continuation binds the same reduced-support M4 PRACTICE controls that had already been disclosed and exercised in the prior test-only path; the values are therefore not inferred from learner performance or silently defaulted.
 
 The owner-waived path is stored in:
 
 - `owner-waived-generation-spec.json`
 - `owner-waived-run.json`
 
-The selected controls are the already exercised PRACTICE control set:
+Bound controls:
 
 - Core2A support profile: `REDUCED_SUPPORT`
 - Core2A maximum demand: `M4_HIDDEN_STRUCTURE`
