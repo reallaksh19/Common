@@ -1,0 +1,279 @@
+{
+  "schema_version": "1.0.0",
+  "trial_id": "MATH-ALL-CORE-TRIAL-EQDIST-v1",
+  "subject": "MATHEMATICS",
+  "grade": 9,
+  "subtopic": {
+    "subtopic_id": "MATH-EQUIDISTANT-POINT-ON-AXIS",
+    "title": "Point on an Axis Equidistant from Two Fixed Points",
+    "bucket_id": "BUCKET-COORD-EQDIST-AXIS",
+    "difficulty_badge": "MEDIUM"
+  },
+  "production_run": {
+    "purpose": "PRACTICE",
+    "learner_knowledge_percent": null,
+    "owner_waiver": null,
+    "expected_disposition": "BLOCKED_AT_CORE2A_CALIBRATION",
+    "note": "Core1/Core1A/Core1B/Core2 may proceed. Core2A and therefore Core2B must not compile without knowledge percentage or explicit owner waiver."
+  },
+  "core1": {
+    "status": "AUTHORITY_READY",
+    "governing_sentence": "Position first; distance second.",
+    "capabilities": [
+      {
+        "capability_id": "CAP-COORD-PAIR",
+        "statement": "A point on the x-axis has the form P=(x,0)."
+      },
+      {
+        "capability_id": "CAP-DISTANCE-FORMULA",
+        "statement": "Squared distance from P=(x,0) to (a,b) is (x-a)^2+b^2."
+      },
+      {
+        "capability_id": "CAP-EQUIDISTANT-EQUATION",
+        "statement": "Equidistant means the two squared distances are equal."
+      },
+      {
+        "capability_id": "CAP-SOLVE-REDUCED-LINEAR",
+        "statement": "After expansion, the x^2 terms cancel and the remaining equation is linear in x."
+      }
+    ],
+    "general_relation": "(x-a1)^2 + b1^2 = (x-a2)^2 + b2^2",
+    "concept_boundaries": [
+      "Averaging x-coordinates is a shortcut only when the geometry supplies the required symmetry; it is not the general method.",
+      "The unknown point must be parameterised from the axis constraint before the distance equation is built."
+    ]
+  },
+  "core1a": {
+    "status": "ASSIMILATION_COMPILED",
+    "difficulty_badge": "MEDIUM",
+    "learner_knowledge_consulted": false,
+    "max_pages": 20,
+    "target_page_budget": 16,
+    "pedagogy_web_search_required": true,
+    "web_search_depth": "STANDARD",
+    "research_brief_ref": "RESEARCH-BRIEF-EQDIST-MEDIUM-v1",
+    "pedagogy_web_research_refs": [
+      "https://openstax.org/books/college-algebra-2e/pages/2-1-the-rectangular-coordinate-systems-and-graphs",
+      "https://www.geogebra.org/m/rmpnhgc5"
+    ],
+    "subsubtopics": [
+      "What the x-axis constraint forces",
+      "Build the first right-triangle distance model",
+      "Build the second right-triangle distance model",
+      "Translate equidistant into equality of squared distances",
+      "Expand and see why x^2 cancels",
+      "Solve the reduced linear equation",
+      "Recognise the symmetric shortcut case",
+      "Contrast with a case where averaging x-coordinates fails",
+      "Reconstruct the equation from a coordinate diagram",
+      "Fade support from guided to independent",
+      "Connect the algebraic solution to the perpendicular-bisector locus"
+    ],
+    "representation_requirements": [
+      {
+        "representation_id": "REP-AXIS-CONSTRAINT",
+        "kind": "COORDINATE_DIAGRAM",
+        "must_make_visible": [
+          "P moves only on y=0",
+          "horizontal and vertical offsets to each fixed point"
+        ],
+        "must_not_imply": [
+          "P is the midpoint of A and B"
+        ]
+      },
+      {
+        "representation_id": "REP-TWO-TRIANGLES",
+        "kind": "RIGHT_TRIANGLE_OVERLAY",
+        "must_make_visible": [
+          "each squared distance is horizontal_offset^2 + vertical_offset^2",
+          "both distances share the same unknown x"
+        ],
+        "must_not_imply": [
+          "the two triangles are congruent"
+        ]
+      },
+      {
+        "representation_id": "REP-LOCUS",
+        "kind": "PERPENDICULAR_BISECTOR_LOCUS",
+        "must_make_visible": [
+          "all equidistant points form a perpendicular-bisector locus",
+          "the required answer is the intersection with the chosen axis"
+        ],
+        "must_not_imply": [
+          "the axis itself is always the perpendicular bisector"
+        ]
+      }
+    ],
+    "equation_assimilation": {
+      "physical_question": "Which point P on the x-axis is equally far from A and B?",
+      "constraint": "P=(x,0)",
+      "parent_model": "distance formula derived from Pythagorean theorem",
+      "legitimacy": "Distances are non-negative, so PA=PB is equivalent to PA^2=PB^2; squaring removes radicals without changing equality.",
+      "derivation": [
+        "PA^2=(x-a1)^2+b1^2",
+        "PB^2=(x-a2)^2+b2^2",
+        "Set PA^2=PB^2",
+        "Expand both binomial squares",
+        "Cancel the common x^2 term",
+        "Solve the remaining linear equation"
+      ],
+      "validity_limit": "If the reduced coefficient of x is zero, inspect the geometry/equation separately rather than dividing by zero."
+    },
+    "worked_anchor": {
+      "A": [-1, 4],
+      "B": [7, 2],
+      "P_form": "(x,0)",
+      "equation": "(x+1)^2 + 16 = (x-7)^2 + 4",
+      "reduced_equation": "16x = 36",
+      "answer": "P=(9/4,0)",
+      "verification": "Both squared distances equal 425/16."
+    },
+    "fading_plan": [
+      "MODELLED",
+      "GUIDED",
+      "FADED",
+      "INDEPENDENT"
+    ]
+  },
+  "core1b": {
+    "status": "STATIC_CONSOLIDATION_PLANNED",
+    "difficulty_badge": "MEDIUM",
+    "learner_knowledge_consulted": false,
+    "approved_capability_refs": [
+      "CAP-COORD-PAIR",
+      "CAP-DISTANCE-FORMULA",
+      "CAP-EQUIDISTANT-EQUATION",
+      "CAP-SOLVE-REDUCED-LINEAR"
+    ],
+    "new_math_refs": [],
+    "blocks": [
+      {
+        "kind": "METHOD_COMPARISON",
+        "prompt": "For A(1,2), B(5,2), P on the x-axis, compare symmetry with the general squared-distance method."
+      },
+      {
+        "kind": "ERROR_CONTRAST",
+        "prompt": "For A(-1,4), B(7,2), test the claim that averaging x-coordinates always gives the answer."
+      },
+      {
+        "kind": "COMPLETION",
+        "prompt": "For A(-2,3), B(4,1), fill the missing coordinate model, squared distances, and final linear step."
+      },
+      {
+        "kind": "FADED",
+        "prompt": "For A(0,5), B(6,1), solve with only P=(x,0) supplied."
+      },
+      {
+        "kind": "CONTROLLED_VARIATION",
+        "prompt": "Change only the axis or the fixed-point height relation and predict whether the shortcut remains valid."
+      },
+      {
+        "kind": "CLOSE_INDEPENDENT",
+        "prompt": "A(-4,3), B(2,1); P lies on the y-axis and is equidistant from A and B. Find P."
+      },
+      {
+        "kind": "ANSWER_CHECK",
+        "answers": [
+          "completion P=(1/3,0)",
+          "faded P=(1,0)",
+          "close independent P=(0,5)"
+        ]
+      }
+    ]
+  },
+  "core2": {
+    "status": "ASSESSMENT_INTELLIGENCE_READY",
+    "anchor_problem": "Find the point P on the x-axis that is equidistant from A(-1,4) and B(7,2).",
+    "problem_family": "MATH-EQUIDISTANT-POINT-ON-AXIS",
+    "recognition_cue": "x-axis constraint plus equal distances to two fixed points",
+    "hidden_state_or_event": "The unknown is a constrained point P=(x,0), not an unconstrained pair (x,y).",
+    "required_knowledge": [
+      "CAP-COORD-PAIR",
+      "CAP-DISTANCE-FORMULA",
+      "CAP-EQUIDISTANT-EQUATION",
+      "CAP-SOLVE-REDUCED-LINEAR"
+    ],
+    "first_non_obvious_move": "Parameterise the point as P=(x,0) before writing any distance expression.",
+    "representation_switch": "word/coordinate description -> two squared-distance expressions -> linear equation",
+    "reasoning_chain": [
+      "P=(x,0)",
+      "PA^2=(x+1)^2+16",
+      "PB^2=(x-7)^2+4",
+      "PA^2=PB^2",
+      "expand and cancel x^2",
+      "16x=36",
+      "x=9/4"
+    ],
+    "common_wrong_chain": "Average -1 and 7 to get x=3 without checking the unequal y-coordinates.",
+    "check": "Substitute x=9/4 into both squared distances and confirm equality.",
+    "difficulty_vector": {
+      "conceptual": "MEDIUM",
+      "representation": "MEDIUM",
+      "hidden_constraint": "MEDIUM",
+      "inverse_reasoning": "LOW",
+      "algebra": "MEDIUM",
+      "multi_step": "MEDIUM",
+      "representation_switch": "MEDIUM",
+      "novelty": "LOW"
+    }
+  },
+  "core2a": {
+    "production_status": "BLOCKED_MISSING_KNOWLEDGE_CALIBRATION",
+    "purpose": "PRACTICE",
+    "learner_knowledge_percent": null,
+    "owner_waiver": null,
+    "reason": "Generation cannot select support density or a maximum question-demand level without governed learner knowledge percentage or explicit owner waiver.",
+    "compiled_legal_pool": null
+  },
+  "core2b": {
+    "production_status": "BLOCKED_UPSTREAM_CORE2A_NOT_READY",
+    "reason": "Core2B cannot compile a transfer workbook until Core2A has a legal calibrated pool and an upstream compile ceiling.",
+    "compiled_product": null
+  },
+  "engineering_simulation": {
+    "test_only": true,
+    "not_learner_evidence": true,
+    "not_publishable": true,
+    "synthetic_calibration": {
+      "learner_knowledge_percent": 72,
+      "knowledge_percent_source_ref": "TEST-ONLY-SYNTHETIC-EVIDENCE",
+      "knowledge_calibration_policy_ref": "TEST-ONLY-CALIBRATION-v1",
+      "resolved_core2a_support_profile": "REDUCED_SUPPORT",
+      "resolved_core2a_max_demand_level": "M4_HIDDEN_STRUCTURE",
+      "resolved_core2b_max_demand_level": "M4_HIDDEN_STRUCTURE"
+    },
+    "core2a_compiled": {
+      "status": "TEST_ONLY_COMPILED",
+      "legal_items": [
+        {
+          "item_id": "EQ-D1",
+          "demand_level": "M0_DIRECT",
+          "stem": "P lies on the x-axis and is equidistant from A(-2,3) and B(4,3). Find P.",
+          "answer_check": "P=(1,0)."
+        },
+        {
+          "item_id": "EQ-R1",
+          "demand_level": "M2_REPRESENTATION_TRANSFER",
+          "stem": "A coordinate diagram shows P constrained to the x-axis, A(-1,4), and B(7,2). Build and solve the equal-distance equation.",
+          "answer_check": "P=(9/4,0)."
+        },
+        {
+          "item_id": "EQ-H1",
+          "demand_level": "M4_HIDDEN_STRUCTURE",
+          "stem": "A point P=(x,0) satisfies (x+3)^2+16=(x-5)^2+4. Interpret the equation geometrically and find P.",
+          "answer_check": "P=(1/4,0)."
+        }
+      ]
+    },
+    "core2b_compiled": {
+      "status": "TEST_ONLY_COMPILED",
+      "delivery_mode": "STATIC",
+      "compile_ceiling": "M4_HIDDEN_STRUCTURE",
+      "selected_item_ids": [
+        "EQ-R1",
+        "EQ-H1"
+      ],
+      "support_rule": "Attempt first; reveal recognition, concept, representation, first-move, method and answer-verification help only as authored static layers."
+    }
+  }
+}
