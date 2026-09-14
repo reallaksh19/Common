@@ -1,25 +1,22 @@
-# Chemistry six-core review set - Redox proof
+# Chemistry six-core review sample — Redox proof
 
-Subtopic: **species identity -> oxidation-state change -> electron consequence -> agent role** using the governed reaction `Zn + Cu2+ -> Zn2+ + Cu`.
+This folder contains the **replacement technical-density review set** for the subtopic:
 
-Files:
+**species identity → oxidation-state change → electron consequence → agent role**
 
-1. `01_Core1_Basic_Notes_Redox_Proof.pdf` - compact notes.
-2. `02_Core1A_Detailed_Declarative_Redox_Proof.pdf` - detailed HARD-bucket explanatory notes.
-3. `03_Core1B_Open_Ended_Self_Tutor_Redox_Proof.pdf` - open-ended concept self-tutor.
-4. `04_Core2_Frozen_Questions_With_Ladder_Hints_Redox_Proof.pdf` - owner-frozen review questions with ladder hints.
-5. `05_Core2A_Guided_Practice_Owner_Override_Redox_Proof.pdf` - declarative deliberate practice.
-6. `06_Core2B_Open_Ended_Problem_Tutor_Owner_Override_Redox_Proof.pdf` - open-ended problem-solving tutor.
-7. `07_Six_Core_Architecture_Validation_Redox_Proof.pdf` - architecture review.
+Governed reaction: `Zn + Cu2+ -> Zn2+ + Cu`.
 
-## Conditioning
+The earlier page-count-oriented review set was rejected because it was prose-heavy, duplicated explanations across cores and left excessive unused page area. The replacement set uses a **CONTENT_DETERMINED_NOT_TARGETED** page-count policy.
 
-No student knowledge percentage was supplied. Core2A/Core2B use an explicit **OWNER_OVERRIDE** rather than fabricating a percentage. The override changes support only, not the frozen review questions or Chemistry truth.
+Current files:
 
-## HARD-bucket research
+1. `01_Core1_Basic_Notes_Redox_Proof.pdf` — compact technical reference.
+2. `02_Core1A_Detailed_Declarative_Redox_Proof.pdf` — declarative technical teaching with reaction anatomy, OS/charge distinction, half-equation derivation, conservation, causal agent roles, worked proof and error clinic.
+3. `03_Core1B_Open_Ended_Self_Tutor_Redox_Proof.pdf` — constructive concept tutor built from evidence tables, derivation blanks, conservation checks, causal-role construction, diagnosis and teach-back.
+4. `04_Core2_Frozen_Questions_With_Ladder_Hints_Redox_Proof.pdf` — frozen owner review questions, hint matrix, answer authority and marking points.
+5. `05_Core2A_Guided_Practice_Owner_Override_Redox_Proof.pdf` — owner-conditioned declarative deliberate practice: worked → completion → independent.
+6. `06_Core2B_Open_Ended_Problem_Tutor_Owner_Override_Redox_Proof.pdf` — attempt-first problem tutor with committed planning, progressive help, reasoning reveal and error taxonomy.
 
-The realization records Chemistry-education research on Redox misconceptions, representation coordination and worked-example/fading design. Research improves pedagogy only; it does not expand Chemistry authority. This review remains at the currently governed symbolic representation level.
+For Core2A/Core2B, student knowledge % was not supplied; the fixture uses an explicit **OWNER_OVERRIDE** and does not fabricate a percentage.
 
-## Scope
-
-The three Core2 questions are owner-frozen review inputs and are **not** presented as NCERT/source-question claims. All six learner products are static and self-help complete.
+Quality rule: repeated prose across cores is not allowed except for frozen question stems, governed equations and minimal boilerplate. Pages must carry multiple technical objects such as equations, ledgers, tables, causal maps, completion structures or falsifiers.
