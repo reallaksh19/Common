@@ -9,6 +9,7 @@ Core1A worked examples must bind to the governed-example admission catalog.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 from pathlib import Path
 
@@ -16,11 +17,17 @@ import compile_bound_product_page_blueprint as legacy
 from blueprint_common import fail, load
 from materialize_intrinsic_depth import materialize_uniform_depth, depth_obligations
 from validate_content_complete_page_blueprint import validate_content_complete_blueprint
+from validate_self_teaching_generation_spec import validate_generation_spec
 
 
 def _governed_example_index(catalog: dict) -> dict[str, list[dict]]:
     if catalog.get("subject") != "MATHEMATICS" or catalog.get("catalog_role") != "GOVERNED_CORE1A_EXAMPLE_ADMISSION":
         fail("MATH_BLUEPRINT_GOVERNED_EXAMPLE_CATALOG_INVALID")
+    expected = catalog.get("catalog_digest")
+    material = copy.deepcopy(catalog)
+    material.pop("catalog_digest", None)
+    if not expected or legacy.digest(material) != expected:
+        fail("MATH_BLUEPRINT_GOVERNED_EXAMPLE_CATALOG_DIGEST_INVALID")
     out: dict[str, list[dict]] = {}
     for row in catalog.get("examples", []):
         if row.get("admission_status") != "ADMITTED" or not row.get("example_asset_id", "").startswith("GEX-MATH-"):
@@ -35,7 +42,6 @@ def bind_governed_example_authority(pages: list[dict], book: dict, catalog: dict
     index = _governed_example_index(catalog)
     known = {row["example_asset_id"]: row for rows in index.values() for row in rows}
 
-    # Manuscript provenance must be complete before publication compilation.
     for bucket in book.get("buckets", []):
         for unit in bucket.get("capability_units", []):
             cap = unit["capability_ref"]
@@ -72,6 +78,7 @@ def bind_governed_example_authority(pages: list[dict], book: dict, catalog: dict
 
 
 def compile_document(bucket_plan: dict, book: dict, core1b_dir: Path, c2a: dict, c2b: dict, gen: dict, catalog: dict) -> dict:
+    validate_generation_spec(gen)
     badges = {row["difficulty_badge"] for row in gen["core1_buckets"]}
     if len(badges) != 1:
         fail("MATH_BLUEPRINT_MIXED_DIFFICULTY_PUBLICATION_REQUIRES_BUNDLE", ",".join(sorted(badges)))
@@ -87,8 +94,6 @@ def compile_document(bucket_plan: dict, book: dict, core1b_dir: Path, c2a: dict,
     bind_governed_example_authority(pages, book, catalog)
     pages = materialize_uniform_depth(pages, badge, book)
 
-    # Re-bind after depth materialization because HARD transfer-bridge blocks are
-    # created from governed Core1A practice assets.
     raw = json.dumps(pages, ensure_ascii=False)
     if "CORE1A_AUTHORED_INSTANCE:" in raw:
         fail("MATH_BLUEPRINT_RAW_AUTHORED_INSTANCE_AUTHORITY_FORBIDDEN")
