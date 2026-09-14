@@ -3,7 +3,8 @@
 
 v4 decides depth/research and learner conditioning.
 v5 decides whether the planned learner artifact is actually a study product rather
-than an executive summary, padded booklet, or repeated generic template.
+than an executive summary, padded booklet, repeated generic template, or a set of
+fully-completed visuals that never asks the learner to reconstruct technical structure.
 """
 
 from __future__ import annotations
@@ -34,12 +35,89 @@ def _walk_keys(value: Any):
             yield from _walk_keys(child)
 
 
+def _validate_ttu(
+    ttu: dict[str, Any],
+    *,
+    owner_id: str,
+    product_mode: str,
+    policy: dict[str, Any],
+) -> tuple[str, str]:
+    tp = policy["ttu_policy"]
+    _require_fields(ttu, set(tp["required_fields"]), "CHEM_V5_TTU_REQUIRED_FIELD_MISSING")
+
+    tid = ttu.get("ttu_id")
+    if not isinstance(tid, str) or not tid.strip():
+        raise BlueprintV5Error("CHEM_V5_TTU_ID_INVALID")
+    if ttu.get("owner_id") != owner_id:
+        raise BlueprintV5Error("CHEM_V5_TTU_OWNER_MISMATCH")
+    ttype = ttu.get("ttu_type")
+    if ttype not in set(tp["allowed_types"]):
+        raise BlueprintV5Error("CHEM_V5_TTU_TYPE_INVALID")
+    if ttu.get("cognitive_job") not in set(tp["allowed_cognitive_jobs"]):
+        raise BlueprintV5Error("CHEM_V5_TTU_COGNITIVE_JOB_INVALID")
+    if not str(ttu.get("learner_action", "")).strip():
+        raise BlueprintV5Error("CHEM_V5_TTU_LEARNER_ACTION_MISSING")
+
+    initial = ttu.get("initial_state")
+    canonical = ttu.get("canonical_complete_state")
+    if not isinstance(initial, dict) or not initial:
+        raise BlueprintV5Error("CHEM_V5_TTU_INITIAL_STATE_MISSING")
+    if not isinstance(canonical, dict) or not canonical:
+        raise BlueprintV5Error("CHEM_V5_TTU_CANONICAL_STATE_MISSING")
+    if initial == canonical:
+        raise BlueprintV5Error("CHEM_V5_TTU_NOT_RECONSTRUCTABLE_ALREADY_COMPLETE")
+
+    missing = ttu.get("missing_elements")
+    if not isinstance(missing, list) or len(missing) < int(tp["minimum_missing_elements"]):
+        raise BlueprintV5Error("CHEM_V5_TTU_MISSING_STRUCTURE_ABSENT")
+    missing_ids: list[str] = []
+    for element in missing:
+        eid = element.get("element_id") if isinstance(element, dict) else None
+        role = element.get("semantic_role") if isinstance(element, dict) else None
+        if not isinstance(eid, str) or not eid.strip() or not isinstance(role, str) or not role.strip():
+            raise BlueprintV5Error("CHEM_V5_TTU_MISSING_ELEMENT_INVALID")
+        missing_ids.append(eid)
+    if len(set(missing_ids)) != len(missing_ids):
+        raise BlueprintV5Error("CHEM_V5_TTU_DUPLICATE_MISSING_ELEMENT")
+
+    hints = ttu.get("hint_ladder")
+    if not isinstance(hints, list) or not hints:
+        raise BlueprintV5Error("CHEM_V5_TTU_HINT_LADDER_MISSING")
+    targeted: set[str] = set()
+    missing_set = set(missing_ids)
+    for hint in hints:
+        if not isinstance(hint, dict):
+            raise BlueprintV5Error("CHEM_V5_TTU_HINT_INVALID")
+        targets = hint.get("targets_missing_element_ids")
+        if not isinstance(targets, list) or not targets or set(targets) - missing_set:
+            raise BlueprintV5Error("CHEM_V5_TTU_HINT_NOT_BOUND_TO_MISSING_STRUCTURE")
+        if not str(hint.get("hint_text", "")).strip():
+            raise BlueprintV5Error("CHEM_V5_TTU_HINT_TEXT_MISSING")
+        targeted.update(targets)
+    if targeted != missing_set:
+        raise BlueprintV5Error("CHEM_V5_TTU_HINT_COVERAGE_INCOMPLETE")
+
+    if not str(ttu.get("verification_rule", "")).strip():
+        raise BlueprintV5Error("CHEM_V5_TTU_VERIFICATION_MISSING")
+    refs = ttu.get("representation_authority_refs")
+    if not isinstance(refs, list) or not refs or any(not str(x).strip() for x in refs):
+        raise BlueprintV5Error("CHEM_V5_TTU_REPRESENTATION_AUTHORITY_MISSING")
+    if ttu.get("new_chemistry_refs", []) != []:
+        raise BlueprintV5Error("CHEM_V5_TTU_NEW_CHEMISTRY_FORBIDDEN")
+
+    expected_exposure = tp["exposure_modes"][product_mode]
+    if ttu.get("exposure_mode") != expected_exposure:
+        raise BlueprintV5Error("CHEM_V5_TTU_EXPOSURE_MODE_INVALID")
+    return tid, ttype
+
+
 def _validate_page_plan(
     page_plan: list[dict[str, Any]],
     policy: dict[str, Any],
-    known_ids: set[str],
-    id_field: str,
-) -> set[str]:
+    known_technical_ids: set[str],
+    technical_id_field: str,
+    known_ttu_ids: set[str],
+) -> tuple[set[str], set[str]]:
     if not page_plan:
         raise BlueprintV5Error("CHEM_V5_PAGE_PLAN_MISSING")
     ppolicy = policy["page_architecture"]
@@ -47,13 +125,14 @@ def _validate_page_plan(
     content_min = float(ppolicy["content_page_min_active_area_ratio"])
     workspace_min = float(ppolicy["workspace_page_min_active_area_ratio"])
     page_ids: set[str] = set()
-    rendered_ids: set[str] = set()
+    rendered_technical_ids: set[str] = set()
+    rendered_ttu_ids: set[str] = set()
     substantive_pages = 0
 
     for page in page_plan:
         _require_fields(
             page,
-            {"page_id", "page_role", "expected_active_area_ratio", id_field, "learner_action_ids"},
+            {"page_id", "page_role", "expected_active_area_ratio", technical_id_field, "ttu_ids", "learner_action_ids"},
             "CHEM_V5_PAGE_REQUIRED_FIELD_MISSING",
         )
         pid = page["page_id"]
@@ -67,21 +146,28 @@ def _validate_page_plan(
         if not isinstance(ratio, (int, float)) or isinstance(ratio, bool) or ratio < 0 or ratio > 1:
             raise BlueprintV5Error("CHEM_V5_PAGE_ACTIVE_AREA_INVALID")
 
-        technical_ids = page.get(id_field, [])
+        technical_ids = page.get(technical_id_field, [])
+        ttu_ids = page.get("ttu_ids", [])
         action_ids = page.get("learner_action_ids", [])
-        if role != "COVER" and not technical_ids and not action_ids:
+        if role != "COVER" and not technical_ids and not ttu_ids and not action_ids:
             raise BlueprintV5Error("CHEM_V5_PAGE_WITHOUT_TECHNICAL_JOB")
 
-        unknown = sorted(set(technical_ids) - known_ids)
-        if unknown:
-            raise BlueprintV5Error(f"CHEM_V5_PAGE_UNKNOWN_TECHNICAL_ID:{','.join(unknown)}")
-        rendered_ids.update(technical_ids)
+        unknown_technical = sorted(set(technical_ids) - known_technical_ids)
+        if unknown_technical:
+            raise BlueprintV5Error(f"CHEM_V5_PAGE_UNKNOWN_TECHNICAL_ID:{','.join(unknown_technical)}")
+        unknown_ttu = sorted(set(ttu_ids) - known_ttu_ids)
+        if unknown_ttu:
+            raise BlueprintV5Error(f"CHEM_V5_PAGE_UNKNOWN_TTU_ID:{','.join(unknown_ttu)}")
+        rendered_technical_ids.update(technical_ids)
+        rendered_ttu_ids.update(ttu_ids)
 
-        if role == "WORKSPACE":
+        if role in {"WORKSPACE", "TTU_RECONSTRUCTION"}:
             if ratio < workspace_min:
                 raise BlueprintV5Error("CHEM_V5_WORKSPACE_PAGE_TOO_EMPTY")
             if not action_ids or not str(page.get("workspace_justification", "")).strip():
                 raise BlueprintV5Error("CHEM_V5_WORKSPACE_NOT_JUSTIFIED")
+            if role == "TTU_RECONSTRUCTION" and not ttu_ids:
+                raise BlueprintV5Error("CHEM_V5_TTU_PAGE_WITHOUT_TTU")
             substantive_pages += 1
         elif role != "COVER":
             if ratio < content_min:
@@ -91,7 +177,7 @@ def _validate_page_plan(
 
     if substantive_pages == 0:
         raise BlueprintV5Error("CHEM_V5_SUMMARY_ONLY_ARTIFACT")
-    return rendered_ids
+    return rendered_technical_ids, rendered_ttu_ids
 
 
 def validate_study_product(product: dict[str, Any], policy: dict[str, Any]) -> dict[str, Any]:
@@ -99,7 +185,7 @@ def validate_study_product(product: dict[str, Any], policy: dict[str, Any]) -> d
         product,
         {
             "schema_version", "product_mode", "bucket_ref", "difficulty_badge",
-            "learning_atoms", "technical_objects", "practice_closure",
+            "learning_atoms", "technical_objects", "reconstructable_ttus", "practice_closure",
             "research_translation", "page_plan", "cross_core_reuse_audit",
         },
         "CHEM_V5_STUDY_REQUIRED_FIELD_MISSING",
@@ -166,6 +252,28 @@ def validate_study_product(product: dict[str, Any], policy: dict[str, Any]) -> d
         if missing:
             raise BlueprintV5Error(f"CHEM_V5_HARD_TECHNICAL_DEPTH_MISSING:{','.join(missing)}")
 
+    ttus = product["reconstructable_ttus"]
+    if not isinstance(ttus, list) or not ttus:
+        raise BlueprintV5Error("CHEM_V5_TTU_REQUIRED_FOR_STUDY_PRODUCT")
+    ttu_ids: set[str] = set()
+    ttu_types: set[str] = set()
+    ttus_by_atom: dict[str, int] = {aid: 0 for aid in atom_set}
+    for ttu in ttus:
+        owner = ttu.get("owner_id") if isinstance(ttu, dict) else None
+        if owner not in atom_set:
+            raise BlueprintV5Error("CHEM_V5_TTU_OWNER_MISMATCH")
+        tid, ttype = _validate_ttu(ttu, owner_id=owner, product_mode=mode, policy=policy)
+        if tid in ttu_ids:
+            raise BlueprintV5Error("CHEM_V5_TTU_DUPLICATE_ID")
+        ttu_ids.add(tid)
+        ttu_types.add(ttype)
+        ttus_by_atom[owner] += 1
+    missing_atoms = sorted(aid for aid, count in ttus_by_atom.items() if count < 1)
+    if missing_atoms:
+        raise BlueprintV5Error(f"CHEM_V5_TTU_MISSING_FOR_LEARNING_ATOM:{','.join(missing_atoms)}")
+    if badge == "HARD" and len(atom_set) > 1 and len(ttu_types) < 2:
+        raise BlueprintV5Error("CHEM_V5_HARD_TTU_TYPE_DIVERSITY_MISSING")
+
     closure = product["practice_closure"]
     if mode == "CORE1A":
         req = spolicy["practice_closure"]["CORE1A"]
@@ -193,15 +301,27 @@ def validate_study_product(product: dict[str, Any], policy: dict[str, Any]) -> d
     min_translations = 0 if badge == "EASY" else (1 if badge == "MEDIUM" else 2)
     if len(translations) < min_translations:
         raise BlueprintV5Error("CHEM_V5_RESEARCH_TO_CONTENT_TRANSLATION_MISSING")
+    bound_ttu_ids: set[str] = set()
     for entry in translations:
         ids = set(entry.get("technical_object_ids", []))
         if not ids or ids - object_ids:
             raise BlueprintV5Error("CHEM_V5_RESEARCH_TRANSLATION_TECHNICAL_BINDING_INVALID")
+        entry_ttu_ids = set(entry.get("ttu_ids", []))
+        if entry_ttu_ids - ttu_ids:
+            raise BlueprintV5Error("CHEM_V5_RESEARCH_TRANSLATION_TTU_BINDING_INVALID")
+        bound_ttu_ids.update(entry_ttu_ids)
+    if badge == "HARD" and not bound_ttu_ids:
+        raise BlueprintV5Error("CHEM_V5_HARD_RESEARCH_NOT_TRANSLATED_TO_TTU")
 
-    rendered = _validate_page_plan(product["page_plan"], policy, object_ids, "technical_object_ids")
-    missing_from_pages = sorted(object_ids - rendered)
+    rendered_objects, rendered_ttus = _validate_page_plan(
+        product["page_plan"], policy, object_ids, "technical_object_ids", ttu_ids
+    )
+    missing_from_pages = sorted(object_ids - rendered_objects)
     if missing_from_pages:
         raise BlueprintV5Error(f"CHEM_V5_TECHNICAL_OBJECT_NOT_REALIZED:{','.join(missing_from_pages)}")
+    missing_ttu_pages = sorted(ttu_ids - rendered_ttus)
+    if missing_ttu_pages:
+        raise BlueprintV5Error(f"CHEM_V5_TTU_NOT_REALIZED:{','.join(missing_ttu_pages)}")
 
     audit = product["cross_core_reuse_audit"]
     if audit.get("shared_expository_block_count") != 0:
@@ -216,7 +336,9 @@ def validate_study_product(product: dict[str, Any], policy: dict[str, Any]) -> d
         "product_mode": mode,
         "learning_atom_count": len(atoms),
         "technical_object_count": len(objects),
+        "ttu_count": len(ttus),
         "obligations_closed": True,
+        "ttu_reconstruction_closed": True,
         "page_count_used_as_quality_metric": False,
         "summary_only": False,
     }
@@ -250,6 +372,7 @@ def validate_question_product(product: dict[str, Any], policy: dict[str, Any]) -
     qpolicy = policy["question_side"]
     mandatory = set(qpolicy["core2a_required_jobs_per_question"] if mode == "CORE2A" else qpolicy["core2b_required_jobs_per_question"])
     all_step_ids: set[str] = set()
+    all_ttu_ids: set[str] = set()
     episode_qids: set[str] = set()
     for ep in episodes:
         qid = ep.get("question_id")
@@ -284,6 +407,15 @@ def validate_question_product(product: dict[str, Any], policy: dict[str, Any]) -
         if unclosed:
             raise BlueprintV5Error(f"CHEM_V5_QUESTION_OBLIGATION_UNCLOSED:{qid}:{','.join(unclosed)}")
 
+        ep_ttus = ep.get("reconstructable_ttus", [])
+        if not ep_ttus:
+            raise BlueprintV5Error(f"CHEM_V5_TTU_MISSING_FOR_QUESTION:{qid}")
+        for ttu in ep_ttus:
+            tid, _ = _validate_ttu(ttu, owner_id=qid, product_mode=mode, policy=policy)
+            if tid in all_ttu_ids:
+                raise BlueprintV5Error("CHEM_V5_TTU_DUPLICATE_ID")
+            all_ttu_ids.add(tid)
+
         hints = ep.get("hint_bindings", [])
         if "PROGRESSIVE_HINTS" in declared and not hints:
             raise BlueprintV5Error("CHEM_V5_CORE2B_PROGRESSIVE_HINTS_MISSING")
@@ -295,14 +427,19 @@ def validate_question_product(product: dict[str, Any], policy: dict[str, Any]) -
     selected = len(qids)
     if coverage.get("selected_question_count") != selected:
         raise BlueprintV5Error("CHEM_V5_QUESTION_COVERAGE_COUNT_INVALID")
-    for key in ("attempt_path_count", "check_path_count", "full_solution_path_count"):
+    for key in ("attempt_path_count", "check_path_count", "full_solution_path_count", "ttu_path_count"):
         if coverage.get(key) != selected:
             raise BlueprintV5Error(f"CHEM_V5_QUESTION_EPISODE_CLOSURE_MISSING:{key}")
 
-    rendered = _validate_page_plan(product["page_plan"], policy, all_step_ids, "technical_step_ids")
-    missing_from_pages = sorted(all_step_ids - rendered)
+    rendered_steps, rendered_ttus = _validate_page_plan(
+        product["page_plan"], policy, all_step_ids, "technical_step_ids", all_ttu_ids
+    )
+    missing_from_pages = sorted(all_step_ids - rendered_steps)
     if missing_from_pages:
         raise BlueprintV5Error(f"CHEM_V5_QUESTION_STEP_NOT_REALIZED:{','.join(missing_from_pages)}")
+    missing_ttu_pages = sorted(all_ttu_ids - rendered_ttus)
+    if missing_ttu_pages:
+        raise BlueprintV5Error(f"CHEM_V5_TTU_NOT_REALIZED:{','.join(missing_ttu_pages)}")
 
     audit = product["cross_core_reuse_audit"]
     if audit.get("shared_helper_prose_count") != 0:
@@ -316,7 +453,9 @@ def validate_question_product(product: dict[str, Any], policy: dict[str, Any]) -
         "status": "PASS",
         "product_mode": mode,
         "question_count": selected,
+        "ttu_count": len(all_ttu_ids),
         "episode_closure": True,
+        "ttu_reconstruction_closed": True,
         "question_custody_closed": True,
         "page_count_used_as_quality_metric": False,
     }
