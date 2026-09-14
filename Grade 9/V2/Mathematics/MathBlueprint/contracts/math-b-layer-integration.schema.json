@@ -8,6 +8,7 @@
     "integration_id",
     "schema_version",
     "subject",
+    "execution_class",
     "run_ref",
     "bundle_ref",
     "assimilation_plan_ref",
@@ -23,19 +24,29 @@
     "integration_id": {"type": "string", "pattern": "^MATH-BI-[0-9a-f]{16}$"},
     "schema_version": {"const": "1.0.0"},
     "subject": {"const": "MATHEMATICS"},
+    "execution_class": {"enum": ["PRODUCTION", "TEST_FIXTURE"]},
     "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
     "bundle_ref": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
     "assimilation_plan_ref": {"type": "string", "pattern": "^MATH-AP-[0-9a-f]{16}$"},
     "core1a_realization": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact_ref", "artifact_digest", "surface_manifest_ref", "surface_manifest_digest", "manifest_origin", "status"],
+      "required": [
+        "artifact_ref",
+        "artifact_digest",
+        "surface_manifest_ref",
+        "surface_manifest_digest",
+        "manifest_origin",
+        "semantic_binding",
+        "status"
+      ],
       "properties": {
         "artifact_ref": {"type": "string", "minLength": 1},
         "artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "surface_manifest_ref": {"type": "string", "minLength": 1},
         "surface_manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "manifest_origin": {"enum": ["RENDERER_EMITTED", "TEST_FIXTURE"]},
+        "semantic_binding": {"enum": ["ARTIFACT_ONLY", "SEMANTIC_COMPONENT_DIGESTS"]},
         "status": {"const": "REALIZED"}
       }
     },
