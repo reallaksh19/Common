@@ -1,0 +1,81 @@
+{
+  "policy_id": "MATH-B-LAYER-INTEGRATION-v1",
+  "policy_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "ownership": {
+    "CORE1A": "Decide assimilation, representation, method-comparison and learner-realization requirements.",
+    "CORE1B": "Verify realized learner exposure, collect learner-performance evidence, issue release or minimal repair requests.",
+    "CORE2A": "Compile the mathematically legal, purpose-conditioned task pool with answer/provenance custody.",
+    "CORE2B": "Select and sequence only Core2A-legal tasks using Core1B evidence, retrieval state and practice phase."
+  },
+  "epistemic_separation": [
+    "PLANNED_INSTRUCTION != REALIZED_INSTRUCTION",
+    "REALIZED_INSTRUCTION != LEARNER_PERFORMANCE_EVIDENCE",
+    "CORE2A_LEGALITY != CORE2B_READINESS",
+    "UPSTREAM_UNKNOWN_DEVELOPING_READY != DOWNSTREAM_RUNTIME_EVIDENCE_STATE"
+  ],
+  "core1b_rules": {
+    "surface_manifest_production_origin": "RENDERER_EMITTED",
+    "test_fixture_manifest_origin_allowed": true,
+    "representation_counts_as_realized_only_when": [
+      "surface_ref_resolves_in_manifest",
+      "capability_binding_matches",
+      "representation_semantic_role_is_present",
+      "learner_action_is_nonempty"
+    ],
+    "method_comparison_authority": "UPSTREAM_ASSIMILATION_PLAN",
+    "method_comparison_values": ["REQUIRED", "USEFUL", "NOT_APPLICABLE"],
+    "release_dimensions_are_capability_specific": true,
+    "initial_runtime_release_floor": "INTEGRATED_INDEPENDENT",
+    "transfer_ready_and_robust_are_normally_downstream_core2b_states": true,
+    "repair_target_authority": "ASSIMILATION_PLAN_OR_CAPABILITY_PROFILE"
+  },
+  "core2a_rules": {
+    "may_compile_before_core1b_release": true,
+    "learner_evidence_may_not_change_mathematical_legality": true,
+    "legal_pool_requires_ref_and_digest": true
+  },
+  "core2b_rules": {
+    "requires_core1b_release": true,
+    "requires_bound_core2a_legal_pool": true,
+    "session_boolean_core2a_legal_is_not_sufficient_authority": true,
+    "representation_requirements_must_be_covered_by_core1b_verified_exposure": true,
+    "method_discrimination_and_family_discrimination_are_distinct": true,
+    "mixed_practice_follows_acquisition": true,
+    "repair_targets_smallest_governed_structure": true,
+    "selection_rule": "Choose the highest-value safe next task for the current phase; do not mechanically choose the highest admissible transfer level.",
+    "transfer_levels": [
+      "M0_DIRECT",
+      "M1_CONTROLLED_VARIATION",
+      "M2_REPRESENTATION_TRANSFER",
+      "M3_INVERSE_TARGET",
+      "M4_HIDDEN_STRUCTURE",
+      "M5_METHOD_DISCRIMINATION",
+      "M6_FAMILY_DISCRIMINATION",
+      "M7_MULTI_STEP_SYNTHESIS",
+      "M8_MIXED_COMPETITIVE"
+    ],
+    "default_state_ceiling_is_policy_not_semantic_truth": true,
+    "practice_phases": ["ACQUISITION", "DISCRIMINATION", "RETRIEVAL", "COMPETITIVE"]
+  },
+  "feedback_loop": {
+    "core2b_failure_may_emit_repair_handoff": true,
+    "repair_handoff_returns_to_smallest_governed_core1b_core1a_target": true,
+    "after_repair_use_fresh_version_of_original_demand": true,
+    "runtime_evidence_may_feed_future_learner_state_only_through_explicit_evidence_ingestion": true
+  },
+  "blueprint_decisions": {
+    "method_comparison_should_be_governed_upstream": true,
+    "justify_method_should_be_capability_dependent_not_universally_required": true,
+    "surface_manifest_should_bind_semantic_payload_in_production": true,
+    "post_core1a_runtime_is_fork_join_not_single_linear_stage": true
+  },
+  "stop_conditions": [
+    "MATH_B_LAYER_CORE2B_WITHOUT_CORE1B_RELEASE",
+    "MATH_B_LAYER_CORE2B_WITHOUT_CORE2A_POOL",
+    "MATH_B_LAYER_CORE2A_POOL_BINDING_INCOMPLETE",
+    "MATH_B_LAYER_TEST_FIXTURE_MANIFEST_USED_IN_PRODUCTION",
+    "MATH_B_LAYER_UPSTREAM_STATE_REWRITE_FORBIDDEN",
+    "MATH_B_LAYER_ITEM_LEGALITY_NOT_POOL_BOUND"
+  ]
+}
