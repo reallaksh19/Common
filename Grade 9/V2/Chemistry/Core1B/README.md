@@ -102,7 +102,7 @@ The production compiler used by CI is:
 engine/compile_hard_redox_bucket_v2.py
 ```
 
-It builds on the governed page-specification helper in `compile_hard_redox_bucket.py` and specializes the self-help by conceptual module.
+It reuses the validated page specification and authority checks in `compile_hard_redox_bucket.py`, then specializes the self-help by conceptual module.
 
 The production path emits:
 
