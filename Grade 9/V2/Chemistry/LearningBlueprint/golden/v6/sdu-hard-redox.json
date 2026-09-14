@@ -1,0 +1,67 @@
+{
+  "schema_version": "6.0.0",
+  "router_id": "SDU",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "difficulty": {
+    "badge": "HARD",
+    "authority": "VALIDATED_DERIVED",
+    "evidence_profile": {
+      "prerequisite_depth": 3,
+      "element_interactivity": 4,
+      "inferential_jump_severity": 3,
+      "representation_translation": 3,
+      "model_discrimination": 3,
+      "sign_frame_sensitivity": 2,
+      "multi_step_dependency": 4,
+      "abstraction": 3,
+      "misconception_density": 4,
+      "synthesis": 3
+    }
+  },
+  "research_dossier": {
+    "research_level": "DEEP",
+    "semantic_sources": ["RSC-REDOX-SEMANTICS-001"],
+    "learning_difficulty_sources": ["CERP-REDOX-MISCONCEPTION-001"],
+    "misconception_evidence": ["MIS-OXSTATE-VS-CHARGE", "MIS-AGENT-NAMING-INVERSION"],
+    "representation_evidence": ["REP-STATE-LANES-SUPPORT-001"],
+    "representation_translation_risks": ["OXIDATION_STATE_IS_NOT_LITERAL_PARTICLE_CHARGE"],
+    "design_decisions": [
+      {"decision": "USE_OXIDATION_STATE_LANE", "reason": "MAKE_SAME_ELEMENT_BEFORE_AFTER_CHANGE_EXPLICIT"},
+      {"decision": "USE_ELECTRON_LEDGER", "reason": "CONNECT_STATE_CHANGE_TO_ELECTRON_CONSEQUENCE"}
+    ]
+  },
+  "concept_decomposition": {
+    "learning_atom_ids": ["LA-REDOX-TRACK-001", "LA-REDOX-ELECTRON-002", "LA-REDOX-AGENT-003"],
+    "sub_subtopic_ids": ["SS-IDENTITY", "SS-STATE-CHANGE", "SS-ELECTRON", "SS-AGENT-ROLE"],
+    "major_inferential_jump_ids": ["IJ-STATE-TO-ELECTRON", "IJ-ELECTRON-TO-AGENT"]
+  },
+  "representation_plan": {
+    "representation_requirement_ids": ["REP-REDOX-STATE-LANE-001", "REP-REDOX-ELECTRON-LEDGER-002"],
+    "translation_requirements": ["SPECIES_TO_STATE_LANE", "STATE_CHANGE_TO_ELECTRON_LEDGER", "ELECTRON_LEDGER_TO_AGENT_ROLE"],
+    "visual_reasoning_jobs": ["SYMBOLIC_MODEL", "CAUSAL_SEQUENCE", "ERROR_VISUAL"]
+  },
+  "misconception_plan": {
+    "misconception_ids": ["MIS-OXSTATE-VS-CHARGE", "MIS-AGENT-NAMING-INVERSION"],
+    "contrast_requirements": ["SELF_CHANGE_VS_OTHER_EFFECT", "OXIDATION_STATE_VS_ION_CHARGE"]
+  },
+  "core1a_plan": {
+    "product_mode": "CORE1A",
+    "concept_ttu_refs": ["CT-C1A-REDOX-001"],
+    "max_pages": 30,
+    "page_count_is_quality_metric": false
+  },
+  "core1b_plan": {
+    "product_mode": "CORE1B",
+    "concept_ttu_refs": ["CT-C1B-REDOX-001"],
+    "max_pages": 30,
+    "page_count_is_quality_metric": false
+  },
+  "depth_release_gate": {
+    "all_learning_atoms_closed": true,
+    "all_major_inferential_jumps_bridged": true,
+    "representation_coverage_complete": true,
+    "equation_assimilation_complete": true,
+    "misconception_coverage_complete": true,
+    "page_budget_exhaustion_required": false
+  }
+}
