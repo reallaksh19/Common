@@ -36,7 +36,7 @@
       "required": ["stage", "artifact_ref"],
       "properties": {
         "stage": {"$ref": "#/$defs/stage"},
-        "artifact_ref": {"type": "string", "minLength": 3}
+        "artifact_ref": {"type": "string", "minLength": 2}
       }
     },
     "comparison": {
