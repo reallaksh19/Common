@@ -1,0 +1,50 @@
+{
+  "schema_version": "6.0.0",
+  "dialogue_id": "TD-C1B-REDOX-001",
+  "product_mode": "CORE1B",
+  "target_change": "Move from memorised agent labels to reconstructing agent role from species identity, oxidation-state change and electron consequence.",
+  "initial_attempt": {
+    "answer_hidden": true,
+    "learner_commitment_required": true
+  },
+  "learner_output_required": ["PREDICTION", "DIAGRAM", "EXPLANATION", "DERIVATION", "VERIFICATION"],
+  "stages": [
+    {
+      "stage_id": "S1",
+      "stage_type": "NOTICE",
+      "prompt": "Which element must you track on both sides before naming any role?",
+      "cognitive_job": "species identity"
+    },
+    {
+      "stage_id": "S2",
+      "stage_type": "REPRESENT",
+      "prompt": "Complete the oxidation-state lanes for Zn and Cu without looking at the answer.",
+      "cognitive_job": "state-change reconstruction"
+    },
+    {
+      "stage_id": "S3",
+      "stage_type": "CONNECT",
+      "prompt": "Connect each state change to electron loss or gain, then to the effect on the other species.",
+      "cognitive_job": "causal bridge from state to role"
+    },
+    {
+      "stage_id": "S4",
+      "stage_type": "REFLECT",
+      "prompt": "Why is the reducing agent itself oxidised? State the rule in your own words.",
+      "cognitive_job": "teach-back"
+    }
+  ],
+  "stage_selection_reason": "This concept fails when learners jump directly to agent labels, so the dialogue forces identity, representation and causal connection before formal naming.",
+  "misconception_branches": [
+    {
+      "misconception_ref": "MIS-AGENT-NAMING-INVERSION",
+      "learner_self_identification_cue": "I called the species that is reduced the reducing agent.",
+      "corrective_prompt": "Separate SELF change from OTHER effect: what happened to this species, and what did that cause in the other species?"
+    }
+  ],
+  "canonical_reveal": {"after_attempt": true},
+  "reflection": {"compare_my_reasoning": true},
+  "verification": {"independent": true},
+  "repair_route": {"available": true, "static_cross_reference_only": true},
+  "delivery_mode": "STATIC"
+}
