@@ -11,8 +11,9 @@ Canonical Domain Registry and generation/difficulty spec is explicitly marked
 UNBOUND_PRE_RELEASE; it can never be mistaken for a fully governed release.
 
 Bound runs additionally admit candidate examples into a governed example catalog
-before learner authoring. The learner manuscript consumes those admitted assets;
-raw capability-bank objects are not direct publication authority.
+before learner authoring. Medium/Hard runs must also bind their pedagogy-research
+references to a typed research manifest; those sources may justify pedagogy and
+representation decisions but never become curriculum authority.
 """
 from __future__ import annotations
 
@@ -39,6 +40,7 @@ from producer_governance import core1a_receipt
 from emit_stage_governance import write_receipt, digest as governance_digest
 from validate_canonical_domain_registry import validate_registry
 from validate_self_teaching_generation_spec import validate_generation_spec
+from validate_pedagogy_research_manifest import validate_generation_research_bindings
 
 CONTRACTS = HERE.parent / "contracts"
 
@@ -93,6 +95,7 @@ def main() -> None:
     ap.add_argument("--pck-index", default=str(base.DEFAULT_PCK_INDEX))
     ap.add_argument("--problem-family-index", default=str(base.DEFAULT_FAMILY_INDEX))
     ap.add_argument("--generation-spec")
+    ap.add_argument("--pedagogy-research-manifest")
     ap.add_argument("--domain-registry")
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
@@ -108,8 +111,13 @@ def main() -> None:
         base.fail("CORE1A_STUDY_MODEL_DIGEST_INVALID")
 
     generation_spec = base.load(args.generation_spec) if args.generation_spec else None
+    research_manifest = base.load(args.pedagogy_research_manifest) if args.pedagogy_research_manifest else None
     if generation_spec is not None:
         validate_generation_spec(generation_spec)
+        validate_generation_research_bindings(generation_spec, research_manifest)
+    elif research_manifest is not None:
+        base.fail("CORE1A_RESEARCH_MANIFEST_WITHOUT_GENERATION_SPEC")
+
     registry = base.load(args.domain_registry) if args.domain_registry else None
     if registry is not None:
         validate_registry(registry)
@@ -158,6 +166,8 @@ def main() -> None:
         "governance_receipt_ref": receipt["receipt_id"],
         "governance_release_state": receipt["release_state"],
         "governed_example_catalog_ref": "core1a_governed_example_catalog.json" if registry is not None else None,
+        "pedagogy_research_manifest_ref": args.pedagogy_research_manifest,
+        "pedagogy_research_manifest_digest": governance_digest(research_manifest) if research_manifest is not None else None,
         "artifact": {"path": pdf_path.name, **pdf_meta},
         "release_class": book["release_class"],
     }
