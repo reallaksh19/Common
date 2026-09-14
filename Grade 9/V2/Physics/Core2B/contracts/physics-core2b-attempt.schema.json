@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2b-attempt.schema.json",
+  "title": "Physics Core2B Attempt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "attempt_id", "item_id", "outcome", "hint_level_used", "error_classes", "response_evidence"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "attempt_id": {"type": "string", "minLength": 1},
+    "item_id": {"type": "string", "minLength": 1},
+    "outcome": {"enum": ["CORRECT", "INCORRECT", "PARTIAL"]},
+    "hint_level_used": {"enum": ["NO_HINT", "RETRIEVAL_CUE", "REPRESENTATION_CUE", "MODEL_CUE", "FIRST_MOVE_CUE", "FULL_SOLUTION"]},
+    "error_classes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "response_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_selected", "representation_used", "first_move", "final_answer", "physical_check"],
+      "properties": {
+        "model_selected": {"type": ["string", "null"]},
+        "representation_used": {"type": ["string", "null"]},
+        "first_move": {"type": ["string", "null"]},
+        "final_answer": {"type": ["string", "null"]},
+        "physical_check": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
