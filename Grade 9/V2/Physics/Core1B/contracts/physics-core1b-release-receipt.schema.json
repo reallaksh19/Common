@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core1b-release-receipt.schema.json",
+  "title": "Physics Core1B Release Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "receipt_id", "capability_id", "teaching_receipt_ref", "learner_evidence_ref", "minimum_state", "released_problem_family_refs", "representation_evidence", "unresolved_required_atoms"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "capability_id": {"type": "string", "minLength": 1},
+    "teaching_receipt_ref": {"type": "string", "minLength": 1},
+    "learner_evidence_ref": {"type": "string", "minLength": 1},
+    "minimum_state": {"enum": ["INDEPENDENT", "TRANSFER_READY", "ROBUST"]},
+    "released_problem_family_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "representation_evidence": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "unresolved_required_atoms": {"type": "array", "maxItems": 0, "items": {"type": "string"}}
+  }
+}
