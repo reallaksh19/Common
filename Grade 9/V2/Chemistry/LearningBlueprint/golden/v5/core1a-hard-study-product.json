@@ -43,6 +43,70 @@
     {"object_id":"H-BRIDGE","atom_id":"LA-OS-TRACK","job":"MULTI_REPRESENTATION_BRIDGE","payload_type":"TABLE"},
     {"object_id":"H-INDEP","atom_id":"LA-AGENT-ROLE","job":"INDEPENDENT_PRACTICE","payload_type":"PRACTICE"}
   ],
+  "reconstructable_ttus": [
+    {
+      "ttu_id": "TTU-1A-OS-LANE",
+      "owner_id": "LA-OS-TRACK",
+      "ttu_type": "OXIDATION_STATE_LANE",
+      "cognitive_job": "TRACK_BEFORE_AFTER",
+      "learner_action": "Complete the missing oxidation states and direction labels for the same species across Zn + Cu2+ -> Zn2+ + Cu.",
+      "initial_state": {
+        "reaction": "Zn + Cu2+ -> Zn2+ + Cu",
+        "zn_lane": "0 -> [blank] -> [blank direction]",
+        "cu_lane": "[blank] -> 0 -> [blank direction]"
+      },
+      "missing_elements": [
+        {"element_id":"ZN-PRODUCT-OS","semantic_role":"oxidation state of Zn in Zn2+"},
+        {"element_id":"ZN-DIRECTION","semantic_role":"increase/decrease classification for Zn"},
+        {"element_id":"CU-REACTANT-OS","semantic_role":"oxidation state of Cu in Cu2+"},
+        {"element_id":"CU-DIRECTION","semantic_role":"increase/decrease classification for Cu"}
+      ],
+      "canonical_complete_state": {
+        "zn_lane": "0 -> +2 -> increase / oxidation",
+        "cu_lane": "+2 -> 0 -> decrease / reduction"
+      },
+      "hint_ladder": [
+        {"hint_id":"OS-H1","targets_missing_element_ids":["ZN-PRODUCT-OS","CU-REACTANT-OS"],"hint_text":"For a monatomic ion, oxidation state equals ionic charge."},
+        {"hint_id":"OS-H2","targets_missing_element_ids":["ZN-DIRECTION","CU-DIRECTION"],"hint_text":"Compare each element with itself before and after; increasing oxidation state is oxidation and decreasing is reduction."}
+      ],
+      "verification_rule": "The two lanes must show one increase and one decrease, and the inferred electron loss/gain must balance at 2 e-.",
+      "representation_authority_refs": ["C-H:SYMBOLIC_FORMULA", "CORE1A:REDOX-OXIDATION-STATE-LANE"],
+      "exposure_mode": "MODEL_THEN_RECONSTRUCT",
+      "new_chemistry_refs": []
+    },
+    {
+      "ttu_id": "TTU-1A-AGENT-ASSEMBLY",
+      "owner_id": "LA-AGENT-ROLE",
+      "ttu_type": "COMPONENT_ASSEMBLY",
+      "cognitive_job": "CONNECT_CAUSE_EFFECT",
+      "learner_action": "Assemble the causal chain SELF change -> electron effect on the other species -> agent role for Zn and Cu2+.",
+      "initial_state": {
+        "components": ["Zn", "Cu2+", "oxidised", "reduced", "gives e-", "accepts e-", "reducing agent", "oxidising agent"],
+        "chains": ["Zn -> [blank] -> [blank] -> [blank]", "Cu2+ -> [blank] -> [blank] -> [blank]"]
+      },
+      "missing_elements": [
+        {"element_id":"ZN-SELF","semantic_role":"self-change of Zn"},
+        {"element_id":"ZN-EFFECT","semantic_role":"electron action of Zn"},
+        {"element_id":"ZN-ROLE","semantic_role":"agent role of Zn"},
+        {"element_id":"CU-SELF","semantic_role":"self-change of Cu2+"},
+        {"element_id":"CU-EFFECT","semantic_role":"electron action of Cu2+"},
+        {"element_id":"CU-ROLE","semantic_role":"agent role of Cu2+"}
+      ],
+      "canonical_complete_state": {
+        "zn_chain": "Zn -> oxidised -> gives e- -> reducing agent",
+        "cu_chain": "Cu2+ -> reduced -> accepts e- -> oxidising agent"
+      },
+      "hint_ladder": [
+        {"hint_id":"AG-H1","targets_missing_element_ids":["ZN-SELF","CU-SELF"],"hint_text":"Decide what happens to each reactant itself before naming the agent."},
+        {"hint_id":"AG-H2","targets_missing_element_ids":["ZN-EFFECT","CU-EFFECT"],"hint_text":"Oxidation corresponds to electron loss; reduction corresponds to electron gain."},
+        {"hint_id":"AG-H3","targets_missing_element_ids":["ZN-ROLE","CU-ROLE"],"hint_text":"The reactant that is oxidised is the reducing agent; the reactant that is reduced is the oxidising agent."}
+      ],
+      "verification_rule": "Agent names must be opposite to the SELF process: oxidised reactant = reducing agent; reduced reactant = oxidising agent.",
+      "representation_authority_refs": ["CORE1A:REDOX-AGENT-ROLE-MAP"],
+      "exposure_mode": "MODEL_THEN_RECONSTRUCT",
+      "new_chemistry_refs": []
+    }
+  ],
   "practice_closure": {
     "worked_count": 2,
     "completion_count": 1,
@@ -50,16 +114,16 @@
     "full_solution_count": 2
   },
   "research_translation": [
-    {"research_ref":"R-REDOX-MISCONCEPTIONS","decision":"Add oxidation-number/charge contrast","technical_object_ids":["OS-BOUND","H-MISCON"]},
-    {"research_ref":"R-REPRESENTATION-COORDINATION","decision":"Add equation-to-ledger bridge","technical_object_ids":["H-BRIDGE","OS-EQ"]}
+    {"research_ref":"R-REDOX-MISCONCEPTIONS","decision":"Add oxidation-number/charge contrast and agent-role reconstruction","technical_object_ids":["OS-BOUND","H-MISCON"],"ttu_ids":["TTU-1A-AGENT-ASSEMBLY"]},
+    {"research_ref":"R-REPRESENTATION-COORDINATION","decision":"Add equation-to-state-lane bridge","technical_object_ids":["H-BRIDGE","OS-EQ"],"ttu_ids":["TTU-1A-OS-LANE"]}
   ],
   "page_plan": [
-    {"page_id":"P1","page_role":"ROUTE_OR_MAP","expected_active_area_ratio":0.66,"technical_object_ids":["OS-MEAN","AG-MEAN"],"learner_action_ids":[]},
-    {"page_id":"P2","page_role":"RULE_OR_DERIVATION","expected_active_area_ratio":0.76,"technical_object_ids":["OS-RULE","OS-EQ","H-DERIVE","H-BRIDGE"],"learner_action_ids":[]},
-    {"page_id":"P3","page_role":"WORKED_EXAMPLE","expected_active_area_ratio":0.78,"technical_object_ids":["OS-CHAIN","OS-WORKED","OS-BOUND","OS-ANSWER"],"learner_action_ids":[]},
-    {"page_id":"P4","page_role":"RULE_OR_DERIVATION","expected_active_area_ratio":0.74,"technical_object_ids":["AG-RULE","AG-EQ","AG-CHAIN","H-MISCON"],"learner_action_ids":[]},
-    {"page_id":"P5","page_role":"WORKED_EXAMPLE","expected_active_area_ratio":0.79,"technical_object_ids":["AG-WORKED","AG-BOUND","AG-ANSWER"],"learner_action_ids":[]},
-    {"page_id":"P6","page_role":"PRACTICE","expected_active_area_ratio":0.72,"technical_object_ids":["OS-PRACTICE","AG-PRACTICE","H-INDEP"],"learner_action_ids":["ACT-COMPLETION","ACT-INDEPENDENT"]}
+    {"page_id":"P1","page_role":"ROUTE_OR_MAP","expected_active_area_ratio":0.66,"technical_object_ids":["OS-MEAN","AG-MEAN"],"ttu_ids":[],"learner_action_ids":[]},
+    {"page_id":"P2","page_role":"RULE_OR_DERIVATION","expected_active_area_ratio":0.76,"technical_object_ids":["OS-RULE","OS-EQ","H-DERIVE","H-BRIDGE"],"ttu_ids":[],"learner_action_ids":[]},
+    {"page_id":"P3","page_role":"TTU_RECONSTRUCTION","expected_active_area_ratio":0.58,"technical_object_ids":["OS-CHAIN","OS-WORKED","OS-BOUND","OS-ANSWER"],"ttu_ids":["TTU-1A-OS-LANE"],"learner_action_ids":["ACT-RECONSTRUCT-OS"],"workspace_justification":"After seeing the modeled lane, the learner reconstructs a partially blank oxidation-state lane and checks electron consistency."},
+    {"page_id":"P4","page_role":"RULE_OR_DERIVATION","expected_active_area_ratio":0.74,"technical_object_ids":["AG-RULE","AG-EQ","AG-CHAIN","H-MISCON"],"ttu_ids":[],"learner_action_ids":[]},
+    {"page_id":"P5","page_role":"TTU_RECONSTRUCTION","expected_active_area_ratio":0.57,"technical_object_ids":["AG-WORKED","AG-BOUND","AG-ANSWER"],"ttu_ids":["TTU-1A-AGENT-ASSEMBLY"],"learner_action_ids":["ACT-ASSEMBLE-AGENT-CHAIN"],"workspace_justification":"The learner rebuilds the self-change to electron-effect to agent-role chain rather than rereading a completed diagram."},
+    {"page_id":"P6","page_role":"PRACTICE","expected_active_area_ratio":0.72,"technical_object_ids":["OS-PRACTICE","AG-PRACTICE","H-INDEP"],"ttu_ids":[],"learner_action_ids":["ACT-COMPLETION","ACT-INDEPENDENT"]}
   ],
   "cross_core_reuse_audit": {
     "shared_expository_block_count": 0,
