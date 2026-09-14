@@ -33,6 +33,8 @@ ENGINEERING CLOSURE RECEIPT
         ↓
 ENGINEERING PASSPORT
         ↓
+ENGINEERING-READY CCU BOUNDARY
+        ↓
 CCU technical consumption, only when READY
 ```
 
@@ -57,6 +59,11 @@ The request does not decide whether the registry operation should eventually be 
 `contracts/engineering-topic-manifest.schema.json`
 
 A manifest declares the direct technical gates required by the requested scope. It does not manually enumerate every prerequisite. The closure compiler derives Physics prerequisites recursively from the canonical registry.
+
+Each manifest binds its scope explicitly with:
+
+- `scope_kind`: `TOPIC | SUBTOPIC | BUCKET`;
+- `scope_ref`: the exact topic/subtopic/bucket identifier being authorized.
 
 The manifest keeps source state independent from technical state through:
 
@@ -106,6 +113,22 @@ The Passport is the human-visible projection of the closure receipt. It shows:
 
 The Passport cannot convert a blocked or internally inconsistent closure receipt into `ENGINEERING_READY`.
 
+## Engineering-ready CCU boundary
+
+`engine/validate_ccu_engineering_ready.py`
+
+This is the execution boundary between Engineering and CCU. It does not replace the existing CCU validator. It:
+
+1. verifies that the engineering manifest is a `BUCKET` manifest;
+2. requires the manifest `scope_ref` to equal the CCU `bucket_id`;
+3. requires `CCU` to be an authorized downstream technical consumer;
+4. recompiles the current engineering closure from the current registry;
+5. refuses CCU validation unless that closure is `READY`;
+6. invokes the existing `validate_ccu_v2.py` only after the technical boundary closes;
+7. returns the exact closure receipt ID/digest with the CCU validation result.
+
+This prevents a stale or manually asserted technical-ready flag from authorizing CCU.
+
 ## SBA-23 golden proof
 
 The v1 golden request intentionally declares only one direct gate:
@@ -123,6 +146,8 @@ PHY-M2D-SHARED-CLOCK
 PHY-M2D-MOVING-LAUNCHER
 ```
 
+The corresponding manifest binds `scope_ref = M2D-SBA-23`. The engineering-ready CCU boundary must reproduce this closure before invoking the existing SBA-23 CCU validator.
+
 The technical closure may be READY while `source_item_status = SOURCE_HELD`; source/legal custody remains downstream and independent.
 
 ## Falsification requirements
@@ -130,13 +155,15 @@ The technical closure may be READY while `source_item_status = SOURCE_HELD`; sou
 `tests/test_physics_engineering_workbench_v1.py` proves at minimum:
 
 - the SBA-23 closure is reproduced from one direct gate;
-- missing direct gates block;
+- SBA-23 CCU validation succeeds through the engineering-ready boundary;
+- missing direct gates block both the receipt and CCU boundary;
 - incomplete and source-held technical gates block;
 - cyclic prerequisites fail structurally;
 - invalid transitive registry references are rejected by the production gate validator;
 - Research depth without dossier/claim evidence blocks;
 - manual readiness fields are rejected by closed-world schemas;
-- Passport generation rejects a tampered contradictory receipt.
+- Passport generation rejects a tampered contradictory receipt;
+- a manifest cannot authorize a different CCU bucket.
 
 ## Deliberate v1 non-goals
 
