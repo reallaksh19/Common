@@ -40,12 +40,16 @@ def nonempty_payload(value: Any) -> bool:
     return value is not None
 
 
+def norm_reaction(value: str) -> str:
+    return re.sub(r"\s+", "", value).replace("⟶", "→").replace("->", "→").casefold()
+
+
 def validate(authority: dict[str, Any], ccbom: dict[str, Any], policy: dict[str, Any]) -> dict[str, Any]:
     required = {
         "schema_version", "authority_id", "subtopic_id", "subtopic_title", "difficulty_badge",
         "source_refs", "scope_statement", "learning_atoms", "content_objects",
-        "reconstructable_ttu_refs", "practice_progression", "learner_surface_policy",
-        "pagination_policy", "ccbom_ref", "completeness_summary"
+        "reconstructable_ttu_refs", "practice_progression", "practice_diversity",
+        "learner_surface_policy", "pagination_policy", "ccbom_ref", "completeness_summary"
     }
     missing = sorted(required - set(authority))
     if missing:
@@ -69,11 +73,13 @@ def validate(authority: dict[str, Any], ccbom: dict[str, Any], policy: dict[str,
     if not isinstance(objects, list) or not objects:
         fail("CHEM_V7_CORE1A_STUDY_CONTENT_OBJECTS_MISSING")
     by_id: dict[str, dict[str, Any]] = {}
+    by_question_id: dict[str, dict[str, Any]] = {}
     reps: set[str] = set()
     practice_levels: set[str] = set()
     class_counts: dict[str, int] = {}
     banned = [str(x).casefold() for x in authority["learner_surface_policy"].get("forbidden_internal_terms", [])]
     banned += [str(x).casefold() for x in policy["learner_surface"]["forbidden_internal_terms_default"]]
+    allowed_source_classes = set(policy["practice_provenance"]["allowed_source_classes"])
 
     for obj in objects:
         oid = str(obj.get("object_id", "")).strip()
@@ -99,14 +105,35 @@ def validate(authority: dict[str, Any], ccbom: dict[str, Any], policy: dict[str,
             reps.add(str(obj["representation_type"]))
         if obj.get("practice_level"):
             practice_levels.add(str(obj["practice_level"]))
+
+        if cls in {"GUIDED_PRACTICE", "INDEPENDENT_PRACTICE"}:
+            qid = str(obj.get("question_id", "")).strip()
+            if not qid or qid in by_question_id:
+                fail("CHEM_V7_CORE1A_STUDY_PRACTICE_QUESTION_ID_INVALID", oid)
+            by_question_id[qid] = obj
+            if obj.get("source_class") not in allowed_source_classes:
+                fail("CHEM_V7_CORE1A_STUDY_PRACTICE_SOURCE_CLASS_INVALID", qid)
+            if not str(obj.get("learner_source_display", "")).strip():
+                fail("CHEM_V7_CORE1A_STUDY_PRACTICE_SOURCE_NOT_LEARNER_VISIBLE", qid)
+            if not str(obj.get("answer_object_id", "")).strip():
+                fail("CHEM_V7_CORE1A_STUDY_PRACTICE_ANSWER_REF_MISSING", qid)
+
         learner = payload_text(obj.get("learner_payload")).casefold()
         for term in banned:
             if term and re.search(r"(?<![a-z0-9_])" + re.escape(term) + r"(?![a-z0-9_])", learner):
                 fail("CHEM_V7_CORE1A_STUDY_INTERNAL_JARGON_LEAK", f"{oid}:{term}")
-        ascii_leaks = ["e-", "cu2+", "zn2+"]
-        for token in ascii_leaks:
+        for token in ["e-", "cu2+", "zn2+"]:
             if token in learner:
                 fail("CHEM_V7_CORE1A_STUDY_ASCII_CHEMISTRY_LEAK", f"{oid}:{token}")
+
+    # Resolve question → answer closure only after all objects are indexed.
+    for qid, qobj in by_question_id.items():
+        aid = qobj["answer_object_id"]
+        ans = by_id.get(aid)
+        if not ans or ans.get("object_class") != "ANSWER":
+            fail("CHEM_V7_CORE1A_STUDY_PRACTICE_ANSWER_UNRESOLVED", f"{qid}:{aid}")
+        if ans.get("learning_atom_id") != qobj.get("learning_atom_id"):
+            fail("CHEM_V7_CORE1A_STUDY_PRACTICE_ANSWER_CROSS_BOUND", f"{qid}:{aid}")
 
     expected_jobs = set(policy["required_jobs_per_learning_atom"])
     job_class = {
@@ -142,14 +169,47 @@ def validate(authority: dict[str, Any], ccbom: dict[str, Any], policy: dict[str,
         fail("CHEM_V7_CORE1A_STUDY_OBJECT_ATOM_UNRESOLVED", ",".join(orphan_atoms))
 
     prog = authority["practice_progression"]
-    for field in ("worked_object_ids", "guided_object_ids", "independent_object_ids", "answer_object_ids"):
+    for field in ("worked_object_ids", "guided_object_ids", "faded_object_ids", "independent_object_ids", "answer_object_ids"):
         if not prog.get(field):
             fail("CHEM_V7_CORE1A_STUDY_PRACTICE_PROGRESSION_INCOMPLETE", field)
         for oid in prog[field]:
             if oid not in by_id:
                 fail("CHEM_V7_CORE1A_STUDY_PRACTICE_REF_UNRESOLVED", oid)
-    if len(prog["answer_object_ids"]) < len(prog["guided_object_ids"]) + len(prog["independent_object_ids"]):
+    if len(prog["answer_object_ids"]) < len(prog["guided_object_ids"]) + len(prog["faded_object_ids"]) + len(prog["independent_object_ids"]):
         fail("CHEM_V7_CORE1A_STUDY_PRACTICE_ANSWER_CLOSURE_INCOMPLETE")
+
+    # Same-reaction reconstruction is fading, not independent practice.
+    diversity = authority["practice_diversity"]
+    if diversity.get("same_surface_independent_forbidden") is not True:
+        fail("CHEM_V7_CORE1A_STUDY_SAME_SURFACE_INDEPENDENT_NOT_FORBIDDEN")
+    worked_sig = norm_reaction(str(diversity.get("worked_anchor_reaction", "")))
+    independent_sigs = [norm_reaction(str(x)) for x in diversity.get("independent_reaction_signatures", [])]
+    if not worked_sig or not independent_sigs:
+        fail("CHEM_V7_CORE1A_STUDY_INDEPENDENT_SIGNATURE_MISSING")
+    if any(sig == worked_sig for sig in independent_sigs):
+        fail("CHEM_V7_CORE1A_STUDY_INDEPENDENT_SAME_SURFACE_AS_WORKED")
+    fading_ids = set(diversity.get("fading_anchor_question_ids", []))
+    independent_ids = set(diversity.get("independent_question_ids", []))
+    if fading_ids & independent_ids:
+        fail("CHEM_V7_CORE1A_STUDY_PRACTICE_LINEAGE_COLLISION")
+    if not fading_ids or not independent_ids:
+        fail("CHEM_V7_CORE1A_STUDY_PRACTICE_LINEAGE_INCOMPLETE")
+    for qid in fading_ids:
+        qobj = by_question_id.get(qid)
+        if not qobj:
+            fail("CHEM_V7_CORE1A_STUDY_FADING_QUESTION_UNRESOLVED", qid)
+        if qobj.get("practice_level") not in {"GUIDED", "FADED"}:
+            fail("CHEM_V7_CORE1A_STUDY_FADING_QUESTION_LEVEL_INVALID", qid)
+    for qid in independent_ids:
+        qobj = by_question_id.get(qid)
+        if not qobj:
+            fail("CHEM_V7_CORE1A_STUDY_INDEPENDENT_QUESTION_UNRESOLVED", qid)
+        if qobj.get("practice_level") != "INDEPENDENT":
+            fail("CHEM_V7_CORE1A_STUDY_INDEPENDENT_QUESTION_LEVEL_INVALID", qid)
+        if qobj.get("source_class") not in {"SOURCE_ADAPTED", "SOURCE_FROZEN", "GENERATED_ORIGINAL"}:
+            fail("CHEM_V7_CORE1A_STUDY_INDEPENDENT_SOURCE_INVALID", qid)
+        if not str(qobj.get("learner_source_display", "")).strip():
+            fail("CHEM_V7_CORE1A_STUDY_INDEPENDENT_SOURCE_NOT_VISIBLE", qid)
 
     if authority["difficulty_badge"] == "HARD":
         minimums = policy["hard_minimums"]
@@ -197,6 +257,9 @@ def validate(authority: dict[str, Any], ccbom: dict[str, Any], policy: dict[str,
         "ccbom_asset_count": len(ccbom_assets),
         "representation_types": sorted(reps),
         "practice_levels": sorted(practice_levels),
+        "practice_question_count": len(by_question_id),
+        "independent_question_ids": sorted(independent_ids),
+        "fading_anchor_question_ids": sorted(fading_ids),
         "learner_surface_internal_jargon_leaks": 0,
         "pagination_mode": "CONTENT_FIRST"
     }
