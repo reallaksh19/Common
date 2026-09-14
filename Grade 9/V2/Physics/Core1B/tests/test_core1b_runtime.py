@@ -42,7 +42,11 @@ secure=copy.deepcopy(EVENTS[0]); secure["event_id"]="C1B-EVT-PHY-M2D-SBA04-SECUR
 skip_unit["prerequisite_skip_evidence"]=[{"atom_ref":"PHY-A-DIR-01","event_ref":secure["event_id"],"event_digest":secure["event_digest"]}]
 validate_unit(skip_unit,REG,AUTH,[secure])
 
+guided=copy.deepcopy(secure); guided["event_id"]="C1B-EVT-PHY-M2D-SBA04-GUIDED"; guided["event_kind"]="GUIDED_ATTEMPT"; guided["hint_level_used"]="FULL_SOLUTION"; guided["event_digest"]=digest_without(guided,"event_digest")
+skip_guided=copy.deepcopy(skip_unit); skip_guided["prerequisite_skip_evidence"]=[{"atom_ref":"PHY-A-DIR-01","event_ref":guided["event_id"],"event_digest":guided["event_digest"]}]
+expect("CORE1B_PREREQUISITE_SKIP_UNGROUNDED",lambda:validate_unit(skip_guided,REG,AUTH,[guided]))
+
 supported=copy.deepcopy(EVENTS[0]); supported["hint_level_used"]="MODEL_CUE"; supported["event_digest"]=digest_without(supported,"event_digest")
 assert derive_state(UNIT,AUTH,[supported])=="SUPPORTED"
 expect("CORE1B_OBSERVED_INDEPENDENT_EVIDENCE_REQUIRED",lambda:build_release_receipt(UNIT,REG,AUTH,[supported]))
-print("Physics Core1B runtime tests: PASS (10 guards)")
+print("Physics Core1B runtime tests: PASS (11 guards)")
