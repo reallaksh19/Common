@@ -1,0 +1,29 @@
+{
+  "core2a_authority_ref": "MATH-C2A-GOLDEN-EQDIST",
+  "purpose": "PRACTICE",
+  "max_demand_level": "M5_METHOD_DISCRIMINATION",
+  "generation_calibration": {
+    "calibration_basis": {
+      "type": "KNOWLEDGE_PERCENT",
+      "learner_knowledge_percent": 75,
+      "knowledge_source_ref": "ASSESSMENT:eqdist-diagnostic",
+      "calibration_policy_ref": "OWNER_POLICY:math-core2-calibration-v1",
+      "capability_knowledge": [
+        {"capability_ref":"MATH-EQUIDISTANT-POINT-ON-AXIS","percent":72},
+        {"capability_ref":"MATH-COORDINATE-DISTANCE","percent":70},
+        {"capability_ref":"MATH-ORDERED-PAIR-SEMANTICS","percent":84}
+      ]
+    },
+    "support_mode": "STANDARD"
+  },
+  "approved_capability_refs": ["MATH-EQUIDISTANT-POINT-ON-AXIS","MATH-COORDINATE-DISTANCE","MATH-ORDERED-PAIR-SEMANTICS"],
+  "core2a_legal_item_ids": ["EQ-D1","EQ-V1","EQ-R1","EQ-H1","EQ-M1"],
+  "title": "Transfer Practice — Equal-Distance Coordinate Problems",
+  "items": [
+    {"item_id":"B-EQ-D1","core2a_item_ref":"EQ-D1","demand_level":"M0_DIRECT","learner_label":"Try it first","family_label_visible":true,"capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"stem":"P lies on the x-axis and is equidistant from A(-2,3) and B(4,3). Find P.","support":[],"answer_check":"P=(1,0).","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:EQ-D1","source_relation":"FADING_ANCHOR","parent_question_refs":["EQ-D1"],"answer_contract_ref":"ANS-EQ-D1","learner_source_label":"Core2A fading anchor EQ-D1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-EQ-V1","core2a_item_ref":"EQ-V1","demand_level":"M1_CONTROLLED_VARIATION","learner_label":"Controlled variation","family_label_visible":true,"capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"stem":"P lies on the y-axis and is equidistant from A(2,-1) and B(2,7). Find P.","support":[],"answer_check":"P=(0,3).","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:EQ-V1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["EQ-V1"],"answer_contract_ref":"ANS-EQ-V1","learner_source_label":"Generated structural sibling of Core2A EQ-V1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-EQ-R1","core2a_item_ref":"EQ-R1","demand_level":"M2_REPRESENTATION_TRANSFER","learner_label":"Representation shift","family_label_visible":true,"capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS","MATH-COORDINATE-DISTANCE"],"stem":"A diagram shows P constrained to the x-axis, A(-1,4), and B(7,2). Write and solve the equal-distance equation.","support":[],"answer_check":"P=(9/4,0).","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:EQ-R1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["EQ-R1"],"answer_contract_ref":"ANS-EQ-R1","learner_source_label":"Generated representation sibling of Core2A EQ-R1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-EQ-H1","core2a_item_ref":"EQ-H1","demand_level":"M4_HIDDEN_STRUCTURE","learner_label":"Hidden structure","family_label_visible":false,"capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS","MATH-COORDINATE-DISTANCE"],"stem":"A point P=(x,0) satisfies (x+3)^2+16=(x-5)^2+4. Interpret the equation geometrically and find P.","support":[],"answer_check":"x=1/4; P=(1/4,0).","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:EQ-H1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["EQ-H1"],"answer_contract_ref":"ANS-EQ-H1","learner_source_label":"Generated hidden-structure sibling of Core2A EQ-H1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-EQ-M1","core2a_item_ref":"EQ-M1","demand_level":"M5_METHOD_DISCRIMINATION","learner_label":"Choose the efficient method","family_label_visible":false,"capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"stem":"For A(1,5), B(9,5), P on the x-axis, choose between symmetry and the general distance model, solve, and state why your choice is efficient.","support":[],"answer_check":"P=(5,0); symmetry is efficient because the fixed points have the same y-coordinate.","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:EQ-M1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["EQ-M1"],"answer_contract_ref":"ANS-EQ-M1","learner_source_label":"Generated method-discrimination sibling of Core2A EQ-M1","official_past_question_claim":false,"verified_official_source_ref":null}
+  ]
+}
