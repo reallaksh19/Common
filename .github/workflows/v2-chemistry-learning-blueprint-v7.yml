@@ -1,0 +1,88 @@
+name: V2 Chemistry Learning Blueprint v7 Product Assurance
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-learning-blueprint-v7.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-v7-product-assurance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate v7 JSON syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          paths = [
+              root/'policies/v7-product-assurance-policy.json',
+              root/'contracts/content-bill-of-materials-v7.schema.json',
+              root/'contracts/question-custody-v7.schema.json',
+              root/'contracts/product-assurance-v7.schema.json',
+              root/'contracts/badge-taxonomy-v7.schema.json',
+              root/'PRODUCT_ASSURANCE_INVARIANTS_V7.json',
+              *sorted((root/'golden/v7').glob('*.json')),
+          ]
+          for p in paths:
+              json.loads(p.read_text(encoding='utf-8'))
+              print('JSON OK', p)
+          PY
+
+      - name: Run v7 assurance falsifiers
+        run: |
+          python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v7_product_assurance.py' -v
+
+      - name: Validate CCBOM and differentiation goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          V="$ROOT/engine/validate_blueprint_v7.py"
+          P="$ROOT/policies/v7-product-assurance-policy.json"
+          python "$V" --policy "$P" --ccbom "$ROOT/golden/v7/ccbom-redox.json"
+          python "$V" --policy "$P" --similarity "$ROOT/golden/v7/similarity-redox.json"
+
+      - name: Validate separate difficulty namespaces
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          V="$ROOT/engine/validate_blueprint_v7.py"
+          P="$ROOT/policies/v7-product-assurance-policy.json"
+          python "$V" --policy "$P" --difficulty "$ROOT/golden/v7/difficulty-core1b-redox.json"
+          python "$V" --policy "$P" --difficulty "$ROOT/golden/v7/difficulty-core2b-redox.json"
+
+      - name: Validate Core purpose contracts
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          V="$ROOT/engine/validate_blueprint_v7.py"
+          P="$ROOT/policies/v7-product-assurance-policy.json"
+          python "$V" --policy "$P" --purpose "$ROOT/golden/v7/purpose-core1b-redox.json"
+          python "$V" --policy "$P" --purpose "$ROOT/golden/v7/purpose-core2b-redox.json"
+
+      - name: Validate learner fit through both conditioning routes
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          V="$ROOT/engine/validate_blueprint_v7.py"
+          P="$ROOT/policies/v7-product-assurance-policy.json"
+          python "$V" --policy "$P" --learner-fit "$ROOT/golden/v7/learner-fit-core2b-redox.json"
+          python "$V" --policy "$P" --learner-fit "$ROOT/golden/v7/learner-fit-owner-core2a-redox.json"
+
+      - name: Validate question custody and learner badges
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          V="$ROOT/engine/validate_blueprint_v7.py"
+          P="$ROOT/policies/v7-product-assurance-policy.json"
+          python "$V" --policy "$P" --question-custody "$ROOT/golden/v7/question-custody-source-u2q15c.json"
+          python "$V" --policy "$P" --badges "$ROOT/golden/v7/badges-core1b-redox.json"
+          python "$V" --policy "$P" --badges "$ROOT/golden/v7/badges-core2b-redox.json"
+
+      - name: Assert v7 release doctrine
+        run: |
+          grep -q 'mandatory_closed / mandatory_total = 1.00' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
+          grep -q 'Differentiation is checked against structured pedagogical fingerprints' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
+          grep -q 'Every question is source-visible and answer-closed' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
