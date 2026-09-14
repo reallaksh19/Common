@@ -1,0 +1,100 @@
+{
+  "schema_version": "3.0.0",
+  "ttu_id": "CONCEPT-TTU-M2D-SBA23-FRAME-CONVERSION",
+  "ttu_family": "CONCEPT_TTU",
+  "task_scale": "SUBSTANTIVE",
+  "bucket_id": "M2D-SBA-23",
+  "problem_family_id": "MOVING_LAUNCHER_RELEASE_CONVERSION",
+  "authority_binding": {
+    "authority_ref": "C1A-REL-PHY-M2D-SBA23-PROCESS-001",
+    "authority_class": "PROCESS_GOLDEN",
+    "may_author_new_semantics": false
+  },
+  "semantic_target": {
+    "capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+    "learning_atom_ids": ["PHY-ML-FRAME-01", "PHY-ML-ADD-01", "PHY-ML-COMP-01", "PHY-ML-SELECT-01"],
+    "inferential_jump": "A source-relative launch cannot enter ground-frame projectile equations until it is transformed into the ground frame.",
+    "success_claim": "Learner generates the frame-labelled relation and reconstructs the ground-frame launch state."
+  },
+  "canonical_expert_state": {
+    "setup": {
+      "knowns": ["v_BT=(8,6) m/s", "v_TG=(6,0) m/s"],
+      "unknowns": ["v_BG"],
+      "conditions": ["ordinary speeds", "trolley moves at constant velocity", "+x east, +y up"]
+    },
+    "representation": {
+      "representation_id": "REP-M2D-SBA23-VEL-TRIANGLE-CANONICAL",
+      "type": "VECTOR_OR_COMPONENT_CONSTRUCTION",
+      "elements": [
+        {"element_id": "E-BT", "semantic_type": "VECTOR", "canonical_content": "v_BT=(8,6)", "reasoning_role": "source-relative launch vector", "required_for_solution": true},
+        {"element_id": "E-TG", "semantic_type": "VECTOR", "canonical_content": "v_TG=(6,0)", "reasoning_role": "source translation vector", "required_for_solution": true},
+        {"element_id": "E-BG", "semantic_type": "VECTOR", "canonical_content": "v_BG=(14,6)", "reasoning_role": "analysis-frame resultant", "required_for_solution": true},
+        {"element_id": "E-MODEL", "semantic_type": "MODEL_CHOICE", "canonical_content": "frame conversion precedes projectile kinematics", "reasoning_role": "correct first model", "required_for_solution": true}
+      ],
+      "bindings": [
+        {"element_id": "E-BT", "relation_or_state_id": "REL-VEL", "binding_reason": "first addend"},
+        {"element_id": "E-TG", "relation_or_state_id": "REL-VEL", "binding_reason": "source-frame translation term"},
+        {"element_id": "E-BG", "relation_or_state_id": "REL-VEL", "binding_reason": "resultant used by ground-frame model"},
+        {"element_id": "E-MODEL", "relation_or_state_id": "S0", "binding_reason": "selects frame conversion before projectile equations"}
+      ]
+    },
+    "governing_relations": [
+      {"relation_id": "REL-VEL", "expression": "v_BG=v_BT+v_TG", "conditions": ["Galilean constant-relative-velocity frames"]}
+    ],
+    "reasoning_state_graph": [
+      {"state_id": "S0", "action": "identify object and frame for each velocity", "input_ids": ["E-BT", "E-TG"], "output": "frame-labelled velocity chain"},
+      {"state_id": "S1", "action": "generate the Galilean relation", "input_ids": ["E-BT", "E-TG", "REL-VEL"], "output": "v_BG=v_BT+v_TG"},
+      {"state_id": "S2", "action": "add components", "input_ids": ["E-BT", "E-TG"], "output": "v_BG=(14,6) m/s"}
+    ],
+    "result_or_conclusion": "The ball enters the ground-frame projectile model with launch state (14,6) m/s."
+  },
+  "learner_transformation": {
+    "required": true,
+    "modes": ["GENERATION", "SELECTION", "DERIVATION_CONNECTION", "VERIFICATION"],
+    "changes_reasoning_state": true,
+    "observable_product": "learner-drawn frame-labelled vector chain, generated relation and checked component result",
+    "targets": ["E-MODEL", "E-BG", "REL-VEL"],
+    "semantic_omissions": [],
+    "success_criteria": ["selects frame conversion before projectile kinematics", "generates v_BG=v_BT+v_TG", "obtains (14,6) m/s", "performs inverse or limiting-case check"],
+    "anti_triviality": {
+      "cosmetic_blank_allowed": false,
+      "arbitrary_number_blank_allowed": false,
+      "answer_copy_task_allowed": false,
+      "learner_action_targets_capability": true
+    }
+  },
+  "fixed_help": {
+    "preauthored": true,
+    "prompts": [
+      {"prompt_id": "P1", "function": "NOTICE", "text": "Which frame owns the given launch velocity, and which frame owns the requested projectile motion?", "addresses_targets": ["E-MODEL"]},
+      {"prompt_id": "P2", "function": "REPRESENT", "text": "Draw v_BT and v_TG head-to-tail and name the resultant.", "addresses_targets": ["E-BT", "E-TG", "E-BG"]},
+      {"prompt_id": "P3", "function": "CONNECT", "text": "Write the equation encoded by your vector construction.", "addresses_targets": ["REL-VEL"]}
+    ],
+    "dynamic_new_semantics_before_reveal_allowed": false
+  },
+  "canonical_reveal": {
+    "attempt_required": true,
+    "canonical_state_revealed_after_attempt": true,
+    "full_solution_exposure_is_mastery_evidence": false
+  },
+  "verification_contract": {
+    "independent_rules": [
+      {"rule_id": "V-INVERSE", "type": "INVERSE_RELATION", "instruction": "Subtract (6,0) from your proposed ground vector; you should recover (8,6).", "uses_answer_key": false, "applicable_before_reveal": true},
+      {"rule_id": "V-LIMIT", "type": "LIMITING_CASE", "instruction": "Set the trolley speed to zero; the ground launch should reduce to the trolley-relative launch.", "uses_answer_key": false, "applicable_before_reveal": true}
+    ]
+  },
+  "repair_contract": {
+    "failure_hypotheses": ["frame labels not secure", "vector-addition relation not reconstructed", "model order confused"],
+    "smallest_repair_route": "Core1B frame-label and velocity-chain reconstruction episode"
+  },
+  "layer_realizations": [
+    {"layer": "CORE1A", "mode": "REFERENCE", "uses_canonical_state": true, "uses_learner_transformation": false},
+    {"layer": "CORE1B", "mode": "RECONSTRUCTION", "uses_canonical_state": true, "uses_learner_transformation": true}
+  ],
+  "layout_contract": {
+    "learner_state_and_canonical_state_visually_distinct": true,
+    "help_separated_from_canonical_reveal": true,
+    "minimum_final_label_pt": 8.0,
+    "oversized_low_information_figure": false
+  }
+}
