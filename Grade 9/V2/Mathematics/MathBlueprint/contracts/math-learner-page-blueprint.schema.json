@@ -27,7 +27,7 @@
     },
     "contentBlock": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": ["block_id", "content_role", "content_signature", "math_refs", "upstream_ref", "transformation"],
       "properties": {
         "block_id": {"type": "string", "minLength": 3},
