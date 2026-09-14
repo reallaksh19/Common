@@ -2,10 +2,10 @@
 
 `Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories (`CoreAuthoring/`, `Core2Transfer/`, `Core1A/`, `Core1B/`, `Core2A/`, `Core2B/`, `Representation/`) are subordinate execution kits.
 
-## Authority topology and learner runtime
+## Active authority topology and learner runtime
 
 ```text
-ORIGINAL GROUND TRUTH
+ORIGINAL / OBSERVED GROUND TRUTH
         ↓
       CORE0
         ↓
@@ -33,79 +33,52 @@ Publication remains separate:
 CORE1A released semantics → Publication IR → composition-only renderer → render custody/preflight
 ```
 
-Execution order may vary. **Authority order may not.** A-layers authorize; B-layers execute authorized learner experiences and capture observed evidence.
+Execution order may vary. **Authority order may not.** A-layers authorize; B-layers execute authorized experiences and capture observed evidence.
 
-## Core1B / Core2B governance adopted after PR #368 review
+## Core1B — ACTIVE
 
-The A/B split is accepted as the right product architecture, with the B roles kept `DRAFT` until their execution contracts satisfy these Blueprint boundaries:
+Core1B now implements the PR #368 concept with stricter Blueprint custody:
 
-1. **Core1B is runtime, not teaching authority.** It must bind the exact released Core1A authority artifact by ref **and digest** before presenting or reorganizing instruction.
-2. **Exposure is not mastery.** A Core1B exposure/completion receipt proves that an authorized experience occurred. Unit readiness flags, author configuration, a teaching receipt, or a simulated pass may never manufacture `INDEPENDENT`, `TRANSFER_READY`, or `ROBUST` learner state. Readiness flags define what must be demonstrated; observed evidence proves whether it was demonstrated.
-3. **The atom graph is adaptive, not a mandatory linear script.** A required prerequisite may be omitted from the current unit only when provenance-backed evidence already shows it secure. This preserves the useful fine-grained atom registry without forcing a fragile-learner pathway on every learner.
-4. **`APPLICABILITY` is conditional-mandatory.** If Core1A marks model validity/conditions as required, Core1B release must test applicability. `EXPLAIN` is mandatory when the upstream capability contract requires explanatory understanding, rather than universally for every capability.
-5. **Learner state requires observed evidence.** Only provenance-backed learner response, diagnostic, or teacher observation may update learner control state. Evidence needs stable event identity/order plus ref/digest custody. Runtime evidence is append-only; superseding a current estimate preserves the prior event.
-6. **Core2B selects; Core2A legalizes.** Core2B must bind the exact Core2A legal-pool ref and digest and the exact upstream item ref. A local `core2a_legal: true` flag is not custody.
-7. **Escalation is per required capability.** A single session-wide learner state is insufficient for an item requiring multiple capabilities. Every required capability must independently meet the item's evidence floor.
-8. **Representation transfer requires successful observed use.** Teaching or attempting a representation does not itself establish representation coverage. An `INDEPENDENT` learner may reach representation-transfer work only when matching observed representation evidence exists; an incorrect exposure cannot silently add mastery coverage.
-9. **Transfer demand is multidimensional.** A scalar `T0…T8` ladder may be useful as a display/order hint, but cannot be the sole authorization rule. Structural distance, representation change, model discrimination, multi-step bridging, synthesis, and competitive mixing are separate dimensions. In particular, **discrimination and synthesis are not consecutive mastery states**.
-10. **Automatic error classification is a hypothesis.** A wrong answer is not a diagnosis. Runtime heuristics may propose an error class, but repair routing should treat it as a hypothesis until correlated with response evidence/history.
-11. **Repair is a request, not authority.** Core2B may route the smallest explanatory prerequisite set back to Core1B and then return to the original target. That request may not mutate Core1A teaching authority or Core2A legality.
-12. **Purpose and retrieval never expand legality.** `FIRST_STUDY / PRACTICE / REVISION / COMPETITIVE_EXAM` and a due-retrieval state may change selection inside the legal pool only.
+- exact released Core1A ref + digest required;
+- fine-grained atom graph with evidence-backed prerequisite skipping;
+- readiness fields are requirements, never mastery evidence;
+- learner state changes only from observed `LEARNER_RESPONSE`, `DIAGNOSTIC`, or `TEACHER_OBSERVATION` events;
+- event identity/order and evidence/event digests are append-only;
+- `APPLICABILITY` is required when upstream model validity is required;
+- `EXPLAIN` follows the upstream capability contract;
+- `INDEPENDENT` release requires a successful independent/retrieval event satisfying all required criteria with sufficiently low hint dependence;
+- internal runtime labels are blocked from learner-facing text.
 
-The normative contract is `policy/b-layer-runtime-boundary.v1.json`, enforced by `engine/validate_b_layer_boundary.py` and falsifier tests.
+## Core2B — ACTIVE
 
-## Implemented Blueprint guarantees
+Core2B consumes the actual Core2A product rather than accepting a local legality flag:
 
-The Blueprint governs evidence-adaptive routing, independent second-role re-grounding, Core1 × Core2 Join, learner-state × purpose control, cognition-before-manuscript Core1A execution, taught-state-gated Core2A, the draft B-layer runtime boundary, lossless Publication IR, finished-PDF custody/preflight, and real Motion-in-a-Plane representation readiness.
+- exact Core2A legal-pool ref + digest and exact item ID required;
+- every required capability is checked independently against a bound Core1B release plus observed transfer events;
+- scalar `T0…T8` labels are descriptive only; authorization uses structural distance, representation change, model discrimination, multi-step bridge, synthesis and competitive mixing;
+- representation shift cannot be invented downstream and requires upstream authorization plus successful observed representation use;
+- purpose/retrieval only choose within the legal/evidence-eligible pool;
+- error classification remains an explicit hypothesis;
+- repair requests target the smallest explanatory atom set and cannot mutate Core1A/Core2A authority;
+- incorrect representation exposure cannot become representation mastery.
 
-The subject-wide 2D representation extension provides seven generic vector primitives:
+The Blueprint workflow runs both runtime falsifier suites before continuing through the existing routing, Join, Core1A, Core2A, Publication IR and render/composition chain.
 
-```text
-CARTESIAN_FRAME_2D
-VECTOR_COMPONENTS_2D
-STATE_SEQUENCE_2D
-PATH_ANATOMY_2D
-EVENT_COMPARE_2D
-PARAMETRIC_ELIMINATION_BRIDGE_2D
-OBSERVER_LINE_OF_SIGHT_2D
-```
+## Publication and real M2D boundary
 
-Together with governed existing primitives, the real 10-concept Motion-in-a-Plane chapter reaches `10/10 READY_FOR_REALIZATION`. That closes the representation gap only; it does not authorize publication.
-
-## Real Motion-in-a-Plane composition gate
-
-`engine/compile_m2d_composition_plan.py` maps every real chapter concept to its exact semantic digest, source/equation/Core2 refs, illustration archetype, explicitly authorized representation refs, and learner page intent.
-
-Publication IR requires both:
+The subject-wide 2D representation extension plus existing primitives gives the real 10-concept Motion-in-a-Plane chapter `10/10 READY_FOR_REALIZATION`, but publication remains independently blocked until a repository-backed non-golden Core1A `1A12` manuscript release exists.
 
 ```text
-representation readiness = READY_FOR_RENDER_ADAPTER
-AND
-real Core1A manuscript release = repository-backed non-golden 1A12 provenance
-```
-
-The current real repository state remains intentionally blocked on the second condition:
-
-```text
-10 concepts mapped
 representation_status = READY_FOR_RENDER_ADAPTER
 manuscript_release_status = ABSENT
 composition_status = BLOCKED_UPSTREAM_MANUSCRIPT_RELEASE
 publication_ir_gate = BLOCKED
 renderer_invocation_allowed = false
 release_authorized = false
-next_action = MIGRATE_REAL_CORE1A_STAGE_RELEASE
 ```
 
-Figure availability and learner-runtime availability can never substitute for Core1A pedagogical/manuscript release evidence.
+Runtime activation cannot substitute for pedagogical/manuscript release evidence.
 
-## Render and release authority
+## Next Blueprint tranche
 
-The renderer remains composition-only. Even a future `READY_FOR_PUBLICATION_IR` composition plan must first pass the lossless Publication IR compiler. Finished PDFs then pass exact artifact custody and actual-PDF preflight. Machine success ends at human visual review pending, never automatic release authorization.
-
-## Current next tranche
-
-Two migrations may now proceed independently without crossing authority boundaries:
-
-- migrate a **real Core1A bucket** into the Blueprint stage machine, beginning with `M2D-SBA-04`;
-- revise PR #368's Core1B/Core2B draft contracts to bind exact A-layer digests and observed learner evidence, then activate the B roles only after those falsifiers pass.
+Continue the real Core1A migration beginning with `M2D-SBA-04`: convert its existing learning atoms, misconceptions and H1/H2/H3 traces into repository-backed `1A0…1A11` evidence, expose genuine missing stages, and only then open its real `1A12` manuscript/publication path.

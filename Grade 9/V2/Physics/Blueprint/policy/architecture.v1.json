@@ -2,38 +2,13 @@
   "architecture_id": "PHY-BLUEPRINT-v1",
   "schema_version": "1.0.0",
   "planes": {
-    "EVIDENCE": {
-      "authority": "ORIGINAL_AND_OBSERVED_GROUND_TRUTH",
-      "description": "What source inputs and observed learner interactions actually exist and what they support."
-    },
-    "REASONING": {
-      "authority": "DERIVED_CLAIMS_AND_GOVERNANCE",
-      "description": "What Core1, Core2, Join, Core1A and Core2A infer or authorize from evidence."
-    },
-    "CONTROL": {
-      "authority": "PRODUCT_BEHAVIOUR_ONLY",
-      "description": "Learner state, purpose and owner overrides may alter execution but never historical evidence or upstream authority."
-    },
-    "RUNTIME": {
-      "authority": "AUTHORIZED_EXPERIENCE_EXECUTION",
-      "description": "Core1B and Core2B execute already-authorized learner experiences, capture observed evidence and route repair without gaining semantic or legality authority."
-    }
+    "EVIDENCE": {"authority": "ORIGINAL_AND_OBSERVED_GROUND_TRUTH", "description": "What source inputs and observed learner interactions actually exist and what they support."},
+    "REASONING": {"authority": "DERIVED_CLAIMS_AND_GOVERNANCE", "description": "What Core1, Core2, Join, Core1A and Core2A infer or authorize from evidence."},
+    "CONTROL": {"authority": "PRODUCT_BEHAVIOUR_ONLY", "description": "Learner state, purpose and owner overrides may alter execution but never historical evidence or upstream authority."},
+    "RUNTIME": {"authority": "AUTHORIZED_EXPERIENCE_EXECUTION", "description": "Core1B and Core2B execute already-authorized learner experiences, capture observed evidence and route repair without gaining semantic or legality authority."}
   },
-  "roles": [
-    "CORE0",
-    "CORE1",
-    "CORE2",
-    "JOIN",
-    "CORE1A",
-    "CORE1B",
-    "CORE2A",
-    "CORE2B"
-  ],
-  "role_lifecycle": {
-    "CORE2A": "ACTIVE",
-    "CORE1B": "DRAFT",
-    "CORE2B": "DRAFT"
-  },
+  "roles": ["CORE0","CORE1","CORE2","JOIN","CORE1A","CORE1B","CORE2A","CORE2B"],
+  "role_lifecycle": {"CORE2A":"ACTIVE","CORE1B":"ACTIVE","CORE2B":"ACTIVE"},
   "invariants": {
     "ground_truth_is_authority": true,
     "adaptive_first_role": true,
