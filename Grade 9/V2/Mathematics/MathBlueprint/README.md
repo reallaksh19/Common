@@ -244,6 +244,38 @@ tests/test_self_teaching_generation_spec.py
 golden/self_teaching/01-depth-and-knowledge-calibration.json
 ```
 
+## Technical Engineering Gate Registry (Grades 9–11)
+
+The Mathematics Technical Engineering Gate Registry establishes deterministic, non-negotiable technical preconditions upstream of authored TTUs (CCU / CDAU boundary).
+
+```text
+MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md
+contracts/mathematics-technical-engineering-gate.schema.json
+policies/mathematics-technical-engineering-gates.v1.json
+engine/build_mathematics_engineering_gate_registry.py
+engine/validate_mathematics_engineering_gates.py
+tests/test_mathematics_engineering_gates.py
+```
+
+- **10 Coherent Gates:**
+  1. `MATH-NUM-RADICALS`: Real numbers, principal square root non-negativity ($\sqrt{x^2} = |x|$), conjugate rationalization.
+  2. `MATH-ALG-POLYNOMIALS`: Polynomial degrees, Factor Theorem, identities, Freshman's dream trap.
+  3. `MATH-LIN-EQUATIONS`: Linear systems in two variables, consistency ratios ($a_1/a_2$ vs $b_1/b_2$ vs $c_1/c_2$).
+  4. `MATH-QUAD-EQUATIONS`: Non-zero leading coefficient ($a \neq 0$), discriminant trichotomy, Vieta relations.
+  5. `MATH-GEO-COORDINATES`: Cartesian metric, section formula, vertical line undefined slope.
+  6. `MATH-GEO-TRIANGLES`: Congruence criteria (SSA forbidden), Thales theorem, similarity criteria.
+  7. `MATH-TRIG-RATIOS`: Right-triangle ratios, fundamental Pythagorean identities, acute domain.
+  8. `MATH-GEO-CIRCLES`: Tangent-radius perpendicularity, external equal tangents, cyclic quadrilateral supplementary angles.
+  9. `MATH-MENS-SURFACES`: Surface area internal boundary exclusion, melting volume conservation.
+  10. `MATH-STAT-PROBABILITY`: Probability bounds ($0 \le P(E) \le 1$), complementary events, empirical central tendency.
+
+- **Validation & Falsifier Battery:**
+  ```bash
+  python "Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_gates.py"
+  python -m unittest "Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_gates.py"
+  ```
+
+
 ## Source-question integrity
 
 ```text

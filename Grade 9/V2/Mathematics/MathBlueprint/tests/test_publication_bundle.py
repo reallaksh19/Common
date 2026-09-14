@@ -67,6 +67,7 @@ def make_bundle():
         "source_release_gate_digest": "a" * 64,
         "generation_spec_digest": "b" * 64,
         "governed_example_catalog_digest": "c" * 64,
+        "pedagogy_research_manifest_digest": None,
         "concept_components": components,
         "problem_component": problem,
         "publication_stage_order": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],

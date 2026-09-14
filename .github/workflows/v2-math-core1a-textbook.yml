@@ -51,6 +51,10 @@ jobs:
       - name: Run adaptive MathBlueprint tests
         run: python -m unittest discover -s 'Grade 9/V2/Mathematics/MathBlueprint/tests' -p 'test_*.py' -v
 
+      - name: Validate Mathematics Technical Engineering Gate Registry
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_gates.py'
+
+
       - name: Produce exact Core1, learner StudyModel and Core2 from the cold-start chain
         run: |
           mkdir -p /tmp/core1a
