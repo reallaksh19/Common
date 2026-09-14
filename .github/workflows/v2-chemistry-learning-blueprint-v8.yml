@@ -1,0 +1,46 @@
+name: V2 Chemistry Learning Blueprint v8
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-learning-blueprint-v8.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-blueprint-only-execution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate v8 JSON syntax
+        run: |
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/policies/v8-blueprint-only-execution-policy.json' >/dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/blueprint-execution-packet-v8.schema.json' >/dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/EXECUTION_INVARIANTS_V8.json' >/dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/golden/v8/core1a-ready-execution.json' >/dev/null
+      - name: Run v8 memory-boundary falsifiers
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v8_execution.py' -v
+      - name: Validate ready execution golden
+        run: |
+          python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_blueprint_v8.py' \
+            --policy 'Grade 9/V2/Chemistry/LearningBlueprint/policies/v8-blueprint-only-execution-policy.json' \
+            --packet 'Grade 9/V2/Chemistry/LearningBlueprint/golden/v8/core1a-ready-execution.json'
+      - name: Assert v8 governing invariants
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('Grade 9/V2/Chemistry/LearningBlueprint/EXECUTION_INVARIANTS_V8.json')
+          d=json.loads(p.read_text())
+          rules={x['rule'] for x in d['invariants']}
+          required={
+            'EVERY_CHEMISTRY_TASK_MUST_EXECUTE_FROM_A_SERIALIZED_BLUEPRINT_EXECUTION_PACKET',
+            'MODEL_MEMORY_AND_CONVERSATION_MEMORY_MUST_NOT_SERVE_AS_CHEMISTRY_CONTENT_AUTHORITY',
+            'EVERY_LEARNER_FACING_TECHNICAL_OBJECT_REQUIRES_AN_EXPLICIT_BLUEPRINT_AUTHORITY_BINDING',
+            'MISSING_REQUIRED_BLUEPRINT_AUTHORITY_BLOCKS_EXECUTION_AND_MUST_NOT_BE_FILLED_FROM_GENERAL_KNOWLEDGE'
+          }
+          assert required <= rules
+          PY
