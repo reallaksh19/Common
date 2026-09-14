@@ -1,0 +1,40 @@
+{
+  "topic": "A point on an axis equidistant from two fixed points",
+  "purpose": "PRACTICE",
+  "purpose_note": "Explicit review-fixture binding; not a silent default.",
+  "roles": {
+    "Core1": "semantic/PCK authority",
+    "Core1A": "build understanding",
+    "Core1B": "open-ended self-guided consolidation",
+    "Core2": "assessment intelligence",
+    "Core2A": "legal practice/transfer pool",
+    "Core2B": "static transfer workbook"
+  },
+  "core2a_legal_ids": [
+    "EQ-D1",
+    "EQ-R1",
+    "EQ-I1",
+    "EQ-H1",
+    "EQ-M1",
+    "EQ-F1"
+  ],
+  "core2b_selected_ids": [
+    "EQ-D1",
+    "EQ-R1",
+    "EQ-I1",
+    "EQ-H1",
+    "EQ-M1"
+  ],
+  "core2b_ceiling": "M5_METHOD_DISCRIMINATION",
+  "provenance": "PEDAGOGICALLY_GENERATED sample; no official exam attribution",
+  "correction": "EQ-H1: x=1/4, P=(1/4,0)",
+  "sha256": {
+    "core1": "d9890e5a68d841a89fbf7849da7ccd1f42dbbeef7595d0d1f8a69b8df498e82d",
+    "core1a": "0c01b8f7cd2c0a70336b62586199aba0bf1216233edf2c66dbf497e608740755",
+    "core1b": "af17f70b94c5b6a8e91981de2adc6a86a8bac7063571af8aeae2db6bc247ac28",
+    "core2": "042f7b257dca5bf442864289508138ec5ef9ee6c6f276f10212f087dbf00596e",
+    "core2a": "35a0cfa3961462700fb280953f3474fb2a16511ab26c022711d9577d94c95c03",
+    "core2b": "bff3f6605d795211b630f904d504ecc5997a564cdb7efb3782ae4a0b5182e2c5",
+    "validation": "7eb1be8bdb1fb07dada6aace95458cc778deeedb287770a09a6bc325545dc5d9"
+  }
+}
