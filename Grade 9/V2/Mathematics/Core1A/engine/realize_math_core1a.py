@@ -5,6 +5,10 @@ Core1A does not infer learner knowledge and does not equate a capability lesson 
 a textbook bucket. It consumes the exact Core1 study plan plus the exact M-F
 MathLearnerStudyModel, synthesizes governed teaching buckets, then realizes those
 buckets as the learner textbook.
+
+Every run also emits a producer governance receipt. A legacy run without a
+Canonical Domain Registry and generation/difficulty spec is explicitly marked
+UNBOUND_PRE_RELEASE; it can never be mistaken for a fully governed release.
 """
 from __future__ import annotations
 
@@ -16,13 +20,20 @@ from pathlib import Path
 import jsonschema
 
 HERE = Path(__file__).resolve().parent
-if str(HERE) not in sys.path:
-    sys.path.insert(0, str(HERE))
+MATH = HERE.parents[1]
+MB_ENGINE = MATH / "MathBlueprint" / "engine"
+for p in (HERE, MB_ENGINE):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
 
 import build_math_core1a_textbook as base
 import core1a_capability_authoring as capability
 from core1a_bucket_synthesis import synthesize_bucket_plan
 from core1a_bucket_realization import realize_bucket_manuscript, render_bucket_pdf
+from producer_governance import core1a_receipt
+from emit_stage_governance import write_receipt
+from validate_canonical_domain_registry import validate_registry
+from validate_self_teaching_generation_spec import validate_generation_spec
 
 CONTRACTS = HERE.parent / "contracts"
 
@@ -33,6 +44,8 @@ def main() -> None:
     ap.add_argument("--study-model", required=True)
     ap.add_argument("--pck-index", default=str(base.DEFAULT_PCK_INDEX))
     ap.add_argument("--problem-family-index", default=str(base.DEFAULT_FAMILY_INDEX))
+    ap.add_argument("--generation-spec")
+    ap.add_argument("--domain-registry")
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
 
@@ -45,6 +58,13 @@ def main() -> None:
         base.fail("CORE1A_CORE1_PLAN_DIGEST_MISMATCH")
     if study_model.get("study_model_digest") != base.digest(study_model, "study_model_digest"):
         base.fail("CORE1A_STUDY_MODEL_DIGEST_INVALID")
+
+    generation_spec = base.load(args.generation_spec) if args.generation_spec else None
+    if generation_spec is not None:
+        validate_generation_spec(generation_spec)
+    registry = base.load(args.domain_registry) if args.domain_registry else None
+    if registry is not None:
+        validate_registry(registry)
 
     assets = base.load_pck_assets(Path(args.pck_index))
     families = base.load_problem_families(Path(args.problem_family_index))
@@ -66,6 +86,14 @@ def main() -> None:
         json.dumps(book, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
+    receipt = core1a_receipt(
+        bucket_plan,
+        book,
+        registry=registry,
+        generation_spec=generation_spec,
+    )
+    write_receipt(receipt, out / "core1a_governance_receipt.json")
+
     pdf_path = out / "core1a_student_textbook.pdf"
     pdf_meta = render_bucket_pdf(book, pdf_path)
     audit = {
@@ -78,6 +106,8 @@ def main() -> None:
         "bucket_plan_digest": bucket_plan["plan_digest"],
         "book_digest": book["book_digest"],
         "quality_audit": book["quality_audit"],
+        "governance_receipt_ref": receipt["receipt_id"],
+        "governance_release_state": receipt["release_state"],
         "artifact": {"path": pdf_path.name, **pdf_meta},
         "release_class": book["release_class"],
     }
