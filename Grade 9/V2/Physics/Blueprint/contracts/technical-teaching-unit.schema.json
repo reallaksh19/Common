@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/physics/technical-teaching-unit.schema.json",
+  "title": "Physics Technical Teaching Unit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "ttu_id", "layer", "bucket_id", "problem_family_id",
+    "physical_setup", "technical_representation", "governing_relations",
+    "working_steps", "result_or_conclusion", "verification", "layout_contract"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "ttu_id": {"type": "string", "minLength": 1},
+    "layer": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "problem_family_id": {"type": "string", "minLength": 1},
+    "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "physical_setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["objects", "event", "knowns", "unknown", "analysis_frame", "axis_or_sign_convention"],
+      "properties": {
+        "objects": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "event": {"type": "string", "minLength": 1},
+        "knowns": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "unknown": {"type": "string", "minLength": 1},
+        "analysis_frame": {"type": "string", "minLength": 1},
+        "axis_or_sign_convention": {"type": "string", "minLength": 1},
+        "model_conditions": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "technical_representation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["representation_id", "type", "instructional_role", "learner_action", "variables", "bindings"],
+      "properties": {
+        "representation_id": {"type": "string", "minLength": 1},
+        "type": {
+          "enum": [
+            "VECTOR_OR_COMPONENT_CONSTRUCTION", "FREE_BODY_DIAGRAM", "GEOMETRIC_CONSTRUCTION",
+            "FIELD_OR_FORCE_REPRESENTATION", "TRAJECTORY_WITH_MEANINGFUL_AXES", "PHYSICAL_GRAPH",
+            "EVENT_TIMELINE", "STATE_TRANSITION_DIAGRAM", "REFERENCE_FRAME_OR_COORDINATE_DIAGRAM",
+            "PHYSICAL_VARIABLE_TABLE", "EQUATION_DEPENDENCY_MAP"
+          ]
+        },
+        "instructional_role": {"enum": ["REPRESENT", "EXPLAIN", "COMPARE", "PREDICT", "DERIVE", "CHECK"]},
+        "learner_action": {"enum": ["READ", "INTERPRET", "LABEL", "COMPLETE", "CONSTRUCT", "SELECT", "COMPARE", "DERIVE_FROM"]},
+        "variables": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["representation_element", "reasoning_target"],
+            "properties": {
+              "representation_element": {"type": "string", "minLength": 1},
+              "reasoning_target": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "governing_relations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["relation_id", "expression"],
+        "properties": {
+          "relation_id": {"type": "string", "minLength": 1},
+          "expression": {"type": "string", "minLength": 1},
+          "conditions": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "working_steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step_id", "action", "uses_relation_ids", "uses_representation_elements"],
+        "properties": {
+          "step_id": {"type": "string", "minLength": 1},
+          "action": {"type": "string", "minLength": 1},
+          "uses_relation_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "uses_representation_elements": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "result_or_conclusion": {"type": "string", "minLength": 1},
+    "verification": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "statement"],
+        "properties": {
+          "type": {"enum": ["SIGN", "DIRECTION", "UNITS", "DIMENSIONAL", "LIMITING_CASE", "PHYSICAL_SENSE", "MODEL_VALIDITY", "REPRESENTATION_CONSISTENCY"]},
+          "statement": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "layout_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "figure_adjacent_to_bound_working", "native_text_equations_preferred",
+        "minimum_final_label_pt", "oversized_low_information_figure", "large_unused_plot_region"
+      ],
+      "properties": {
+        "figure_adjacent_to_bound_working": {"const": true},
+        "native_text_equations_preferred": {"const": true},
+        "minimum_final_label_pt": {"type": "number", "minimum": 8.0},
+        "oversized_low_information_figure": {"const": false},
+        "large_unused_plot_region": {"const": false}
+      }
+    }
+  }
+}
