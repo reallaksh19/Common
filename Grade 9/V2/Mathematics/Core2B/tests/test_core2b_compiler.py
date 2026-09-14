@@ -48,7 +48,7 @@ class Core2BCompilerTests(unittest.TestCase):
         left = (x + 3) ** 2 + 16
         right = (x - 5) ** 2 + 4
         self.assertEqual(left, right)
-        self.assertEqual(left, 441 / 16)
+        self.assertEqual(left, 425 / 16)
 
     def test_live_attempts_are_forbidden(self):
         doc = self.load("equidistant-point-on-axis")
