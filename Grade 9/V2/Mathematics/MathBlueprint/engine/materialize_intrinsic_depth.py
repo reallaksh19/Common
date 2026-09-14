@@ -191,6 +191,7 @@ def depth_obligations(badge: str, pages: list[dict]) -> list[dict]:
         "MISCONCEPTION_COUNTEREXAMPLE": [first_id("CORE1A", "COUNTEREXAMPLE")],
         "FAILURE_MODE": [first_id("CORE1A", "COUNTEREXAMPLE")],
         "TRANSFER_BRIDGE": [next((b["block_id"] for p in by_stage["CORE1A"] for b in p["technical_blocks"] if b["block_id"].endswith("-TRANSFER-BRIDGE")), None)],
+        "VERIFICATION": [first_id("CORE1A", "VERIFICATION")],
         "INDEPENDENT_CHECK": [first_id("CORE1A", "VERIFICATION")],
     })
     evidence["CORE1B"].update({
