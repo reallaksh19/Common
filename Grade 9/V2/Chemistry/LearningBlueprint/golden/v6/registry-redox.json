@@ -1,0 +1,52 @@
+{
+  "schema_version": "6.0.0",
+  "registry_id": "REG-CHEM-G9-REDOX-001",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "join_ref": "J-REDOX-001",
+  "assets": [
+    {
+      "asset_id": "CON-REDOX-OXSTATE-001",
+      "asset_type": "CONCEPT",
+      "ground_truth_refs": ["K-REDOX-001"],
+      "validation_status": "VALIDATED",
+      "content_hash": "sha256:concept-redox-001"
+    },
+    {
+      "asset_id": "LA-REDOX-TRACK-001",
+      "asset_type": "LEARNING_ATOM",
+      "ground_truth_refs": ["K-REDOX-001"],
+      "validation_status": "VALIDATED",
+      "content_hash": "sha256:learning-atom-track-001"
+    },
+    {
+      "asset_id": "REP-REDOX-STATE-LANE-001",
+      "asset_type": "REPRESENTATION",
+      "ground_truth_refs": ["K-REDOX-001"],
+      "validation_status": "VALIDATED",
+      "content_hash": "sha256:rep-state-lane-001"
+    },
+    {
+      "asset_id": "PF-AGENT-ROLE-ASSIGNMENT",
+      "asset_type": "PROBLEM_FAMILY",
+      "ground_truth_refs": ["D-REDOX-001"],
+      "validation_status": "VALIDATED",
+      "content_hash": "sha256:pf-agent-role"
+    },
+    {
+      "asset_id": "Q-REDOX-FROZEN-001",
+      "asset_type": "SOURCE_QUESTION",
+      "ground_truth_refs": ["GT-QUESTION-REDOX-001"],
+      "validation_status": "VALIDATED",
+      "content_hash": "sha256:q-redox-frozen-001"
+    },
+    {
+      "asset_id": "SOL-REDOX-FROZEN-001",
+      "asset_type": "CANONICAL_SOLUTION",
+      "ground_truth_refs": ["GT-ANSWER-REDOX-001"],
+      "validation_status": "VALIDATED",
+      "content_hash": "sha256:sol-redox-frozen-001"
+    }
+  ],
+  "stable_id_policy": "ASSETS_KEEP_STABLE_IDS_ACROSS_DOWNSTREAM_REALIZATIONS",
+  "provenance_closed": true
+}
