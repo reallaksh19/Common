@@ -24,7 +24,9 @@ jobs:
           root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
           paths = [
               root/'policies/v7-product-assurance-policy.json',
+              root/'policies/v7-core1a-study-note-sufficiency-policy.json',
               root/'contracts/content-bill-of-materials-v7.schema.json',
+              root/'contracts/core1a-study-note-authority-v7.schema.json',
               root/'contracts/question-custody-v7.schema.json',
               root/'contracts/product-assurance-v7.schema.json',
               root/'contracts/badge-taxonomy-v7.schema.json',
@@ -39,13 +41,24 @@ jobs:
       - name: Run v7 assurance falsifiers
         run: |
           python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v7_product_assurance.py' -v
+          python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_core1a_study_note_v7.py' -v
 
-      - name: Validate CCBOM and differentiation goldens
+      - name: Validate CCBOM and Core1A study-note authority
         run: |
           ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
           V="$ROOT/engine/validate_blueprint_v7.py"
           P="$ROOT/policies/v7-product-assurance-policy.json"
           python "$V" --policy "$P" --ccbom "$ROOT/golden/v7/ccbom-redox.json"
+          python "$ROOT/engine/validate_core1a_study_note_v7.py" \
+            --policy "$ROOT/policies/v7-core1a-study-note-sufficiency-policy.json" \
+            --authority "$ROOT/golden/v7/core1a-study-note-redox-authority.json" \
+            --ccbom "$ROOT/golden/v7/ccbom-redox.json"
+
+      - name: Validate differentiation goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          V="$ROOT/engine/validate_blueprint_v7.py"
+          P="$ROOT/policies/v7-product-assurance-policy.json"
           python "$V" --policy "$P" --similarity "$ROOT/golden/v7/similarity-redox.json"
 
       - name: Validate separate difficulty namespaces
@@ -86,3 +99,4 @@ jobs:
           grep -q 'mandatory_closed / mandatory_total = 1.00' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
           grep -q 'Differentiation is checked against structured pedagogical fingerprints' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
           grep -q 'Every question is source-visible and answer-closed' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
+          grep -q 'Core1A study-note sufficiency' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
