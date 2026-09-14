@@ -19,85 +19,94 @@ PLAN = "MATH-AP-0123456789abcdef"
 DIGEST = "a" * 64
 
 
-def draft(*, c1b="RELEASED", c2a="LEGAL_POOL_READY", c2b="READY", execution="PRODUCTION"):
+def draft(*, c1b="NOT_COMPILED", c2a="LEGAL_POOL_READY", c2b="NOT_COMPILED", ceiling="M2_REPRESENTATION_TRANSFER"):
     return {
-        "execution_class": execution,
         "run_ref": RUN,
         "bundle_ref": BUNDLE,
         "assimilation_plan_ref": PLAN,
-        "core1a_realization": {
-            "artifact_ref": "core1a.pdf",
-            "artifact_digest": DIGEST,
-            "surface_manifest_ref": "core1a_surface_manifest.json",
-            "surface_manifest_digest": DIGEST,
-            "manifest_origin": "RENDERER_EMITTED" if execution == "PRODUCTION" else "TEST_FIXTURE",
-            "semantic_binding": "SEMANTIC_COMPONENT_DIGESTS" if execution == "PRODUCTION" else "ARTIFACT_ONLY",
-            "status": "REALIZED",
+        "core1a_authority": {
+            "authority_ref": "C1A-AUTH-1",
+            "authority_digest": DIGEST,
+            "approved_capability_refs": ["CAP-1", "CAP-2"],
+            "learner_treatment_ref": "MF-TREATMENT-1",
+            "status": "AUTHORITY_READY",
         },
         "core1b_lane": {
-            "exposure_receipt_refs": ["C1B-EXP-1"] if c1b != "NOT_READY" else [],
-            "learner_evidence_refs": ["C1B-EV-1"] if c1b in {"EVIDENCE_AVAILABLE", "RELEASED"} else [],
-            "release_receipt_refs": ["C1B-REL-1"] if c1b == "RELEASED" else [],
-            "repair_request_refs": [],
+            "compiled_plan_ref": "MATH-C1B-PLAN-1" if c1b == "COMPILED" else None,
+            "compiled_plan_digest": DIGEST if c1b == "COMPILED" else None,
+            "delivery_mode": "STATIC" if c1b == "COMPILED" else None,
             "status": c1b,
         },
         "core2a_lane": {
             "legal_pool_ref": "C2A-POOL-1" if c2a == "LEGAL_POOL_READY" else None,
             "legal_pool_digest": DIGEST if c2a == "LEGAL_POOL_READY" else None,
+            "purpose": "PRACTICE" if c2a == "LEGAL_POOL_READY" else None,
             "status": c2a,
         },
+        "core2b_compile_ceiling": {
+            "max_demand_level": ceiling,
+            "source_ref": "UPSTREAM-CEILING-1" if ceiling else None,
+            "source_class": "OTHER_GOVERNED_UPSTREAM" if ceiling else None,
+        },
         "core2b_lane": {
-            "session_ref": "C2B-SESSION-1" if c2b in {"READY", "ACTIVE"} else None,
-            "retrieval_state_refs": [],
-            "repair_handoff_refs": [],
+            "compiled_plan_ref": "MATH-C2B-PLAN-1" if c2b == "COMPILED" else None,
+            "compiled_plan_digest": DIGEST if c2b == "COMPILED" else None,
+            "delivery_mode": "STATIC" if c2b == "COMPILED" else None,
             "status": c2b,
         },
     }
 
 
 class BLayerIntegrationTests(unittest.TestCase):
-    def test_ready_requires_core1b_release_and_core2a_legal_pool(self):
+    def test_ready_to_compile_does_not_require_core1b_first(self):
         out = seal_b_layer_integration(draft())
-        self.assertEqual(out["status"], "CORE2B_READY")
+        self.assertEqual(out["status"], "READY_TO_COMPILE")
         validate_b_layer_integration(out)
 
-    def test_core2a_can_compile_before_core1b_release(self):
-        d = draft(c1b="EVIDENCE_AVAILABLE", c2a="LEGAL_POOL_READY", c2b="BLOCKED")
-        out = seal_b_layer_integration(d)
-        self.assertEqual(out["status"], "WAITING_FOR_CORE1B")
+    def test_core2b_can_compile_without_core1b_product(self):
+        out = seal_b_layer_integration(draft(c1b="NOT_COMPILED", c2b="COMPILED"))
+        self.assertEqual(out["status"], "PARTIALLY_COMPILED")
+        self.assertTrue(out["invariants"]["core2b_does_not_require_core1b_product"])
 
-    def test_core2b_cannot_start_from_exposure_only(self):
-        d = draft(c1b="EXPOSURE_VERIFIED", c2a="LEGAL_POOL_READY", c2b="READY")
-        with self.assertRaisesRegex(ValueError, "MATH_B_LAYER_CORE2B_WITHOUT_CORE1B_RELEASE"):
-            seal_b_layer_integration(d)
+    def test_core1b_can_compile_before_core2a_is_ready(self):
+        out = seal_b_layer_integration(draft(c1b="COMPILED", c2a="NOT_READY", c2b="NOT_COMPILED", ceiling=None))
+        self.assertEqual(out["status"], "PARTIALLY_COMPILED")
 
-    def test_core2b_cannot_start_without_bound_core2a_pool(self):
-        d = draft(c1b="RELEASED", c2a="NOT_READY", c2b="READY")
+    def test_core2b_requires_bound_core2a_pool(self):
+        d = draft(c1b="NOT_COMPILED", c2a="NOT_READY", c2b="COMPILED")
         with self.assertRaisesRegex(ValueError, "MATH_B_LAYER_CORE2B_WITHOUT_CORE2A_POOL"):
             seal_b_layer_integration(d)
 
-    def test_production_rejects_hand_authored_surface_manifest(self):
-        d = draft()
-        d["core1a_realization"]["manifest_origin"] = "TEST_FIXTURE"
-        with self.assertRaisesRegex(ValueError, "MATH_B_LAYER_TEST_FIXTURE_MANIFEST_USED_IN_PRODUCTION"):
+    def test_core2b_requires_upstream_compile_ceiling(self):
+        d = draft(c2b="COMPILED", ceiling=None)
+        with self.assertRaisesRegex(ValueError, "MATH_B_LAYER_CORE2B_COMPILE_CEILING_MISSING"):
             seal_b_layer_integration(d)
 
-    def test_production_requires_semantic_component_binding(self):
-        d = draft()
-        d["core1a_realization"]["semantic_binding"] = "ARTIFACT_ONLY"
-        with self.assertRaisesRegex(ValueError, "MATH_B_LAYER_PRODUCTION_SURFACE_SEMANTIC_BINDING_MISSING"):
+    def test_core1b_must_be_static_when_compiled(self):
+        d = draft(c1b="COMPILED")
+        d["core1b_lane"]["delivery_mode"] = None
+        with self.assertRaisesRegex(ValueError, "MATH_B_LAYER_CORE1B_NONSTATIC_DELIVERY|MATH_B_LAYER_CORE1B_PRODUCT_BINDING_INCOMPLETE"):
             seal_b_layer_integration(d)
 
-    def test_test_fixture_may_use_fixture_manifest(self):
-        out = seal_b_layer_integration(draft(execution="TEST_FIXTURE"))
-        self.assertEqual(out["status"], "CORE2B_READY")
+    def test_core2b_must_be_static_when_compiled(self):
+        d = draft(c2b="COMPILED")
+        d["core2b_lane"]["delivery_mode"] = None
+        with self.assertRaisesRegex(ValueError, "MATH_B_LAYER_CORE2B_NONSTATIC_DELIVERY|MATH_B_LAYER_CORE2B_PRODUCT_BINDING_INCOMPLETE"):
+            seal_b_layer_integration(d)
 
-    def test_planned_realized_evidenced_and_legal_ready_are_distinct(self):
-        out = seal_b_layer_integration(draft())
+    def test_compiled_products_do_not_claim_learner_evidence(self):
+        out = seal_b_layer_integration(draft(c1b="COMPILED", c2b="COMPILED"))
+        self.assertEqual(out["status"], "COMPILED")
         inv = out["invariants"]
-        self.assertTrue(inv["planned_not_realized"])
-        self.assertTrue(inv["realized_not_evidenced"])
-        self.assertTrue(inv["core2a_legality_not_core2b_readiness"])
+        self.assertTrue(inv["compiled_product_not_learner_evidence"])
+        self.assertTrue(inv["b_layers_do_not_ingest_learner_responses"])
+        self.assertTrue(inv["b_layers_do_not_emit_learner_state_transitions"])
+
+    def test_runtime_fields_are_not_part_of_integration_contract(self):
+        d = draft()
+        d["core2b_lane"]["retrieval_state_refs"] = []
+        with self.assertRaises(Exception):
+            seal_b_layer_integration(d)
 
 
 if __name__ == "__main__":
