@@ -263,16 +263,6 @@ V2–V8 remain historical transition documents. **V9 is canonical for learner-pr
 
 ---
 
-## Artifact-generation rule
-
-Learner artifacts must be regenerated from governed Blueprint state. The intended path is:
-
-`source/domain → technical gate → CCU → CDAU → SDU/LAU → TTU → Publication IR → renderer → preflight`.
-
-When an output defect is found, repair the first upstream logic/data object that permitted it, then regenerate. Direct artifact patching must not substitute for fixing product-generation logic.
-
----
-
 ## Visual publication gate
 
 Successful PDF generation is not a visual pass. Production learner PDFs require flow layout or collision validation, legible labels/equations, meaningful figure area, representation-to-working adjacency, page-by-page render review and montage review for new figure grammars.
