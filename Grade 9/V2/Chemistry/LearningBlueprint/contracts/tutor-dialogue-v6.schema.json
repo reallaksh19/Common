@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-tutor-dialogue-v6.schema.json",
+  "title": "Chemistry Tutor Dialogue v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dialogue_id",
+    "product_mode",
+    "target_change",
+    "learner_output_required",
+    "prompt_sequence",
+    "misconception_branches",
+    "reveal",
+    "reflection",
+    "verification",
+    "delivery_mode"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "dialogue_id": {"type": "string", "minLength": 1},
+    "product_mode": {"enum": ["CORE1B", "CORE2B"]},
+    "target_change": {"type": "string", "minLength": 1},
+    "learner_output_required": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {"enum": ["PREDICTION", "DIAGRAM", "EXPLANATION", "EQUATION", "MODEL_SELECTION", "CLASSIFICATION", "COMPARISON", "DERIVATION", "COUNTEREXAMPLE", "VERIFICATION"]}
+    },
+    "prompt_sequence": {
+      "type": "object",
+      "required": ["P0_ATTEMPT", "P1_NOTICE", "P2_REPRESENT", "P3_EXPLAIN", "P4_CONNECT", "P5_START"]
+    },
+    "misconception_branches": {"type": "array", "minItems": 1},
+    "reveal": {"type": "object", "required": ["canonical_state_after_attempt"]},
+    "reflection": {"type": "object", "required": ["compare_my_answer_to_canonical"]},
+    "verification": {"type": "object", "required": ["independent_check_required"]},
+    "delivery_mode": {"const": "STATIC"}
+  },
+  "additionalProperties": true
+}
