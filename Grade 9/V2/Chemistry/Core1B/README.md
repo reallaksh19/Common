@@ -92,17 +92,19 @@ misconception / boundary diagnosis
 fading / teach-back
 ```
 
-Each sub-subtopic receives three learner actions, giving 24 pages total. Every page remains open-ended and closes with fixed self-help, a canonical response and an independent check.
+Each sub-subtopic receives three learner actions, giving 24 pages total. Every page remains open-ended and closes with fixed self-help, a canonical response and an independent check. The production-quality gate also requires **eight distinct module-specific hint ladders**; a mechanically repeated hint script across all modules is not accepted as tutoring depth.
 
 The deep-research packet records four sources addressing Redox misconceptions, high-school electrochemical concept difficulty, representation coordination and worked-example/fading design. Research may improve realization, but it does **not** expand Chemistry authority. In particular, the current Redox production profile authorizes this depth extension at the symbolic level, so this golden deliberately refuses particle/submicroscopic Redox visuals unless upstream authority expands later.
 
-The production compiler is:
+The production compiler used by CI is:
 
 ```text
-engine/compile_hard_redox_bucket.py
+engine/compile_hard_redox_bucket_v2.py
 ```
 
-and emits:
+It builds on the governed page-specification helper in `compile_hard_redox_bucket.py` and specializes the self-help by conceptual module.
+
+The production path emits:
 
 ```text
 core1b_hard_plan.json
@@ -141,4 +143,4 @@ Current goldens validate:
 
 1. an `EASY` observation/evidence/inference bucket;
 2. a compact `HARD` Redox species/oxidation-state/agent-role contract golden;
-3. a 24-page production-depth `HARD` Redox self-tutor with deep research, sub-subtopic decomposition, symbolic-authority custody and complete per-page answer closure.
+3. a 24-page production-depth `HARD` Redox self-tutor with deep research, sub-subtopic decomposition, eight module-specific hint ladders, symbolic-authority custody and complete per-page answer closure.
