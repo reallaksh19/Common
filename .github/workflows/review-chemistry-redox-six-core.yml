@@ -1,0 +1,39 @@
+name: Build Chemistry Redox Six-Core Review
+
+on:
+  push:
+    branches:
+      - review-chemistry-redox-six-core
+    paths:
+      - 'Review Cores/Chemistry/redox-proof-species-state-agent/build_review_set.py'
+      - '.github/workflows/review-chemistry-redox-six-core.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-review-set:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: review-chemistry-redox-six-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PDF dependencies
+        run: python -m pip install 'reportlab>=4.0' 'pymupdf>=1.24'
+      - name: Build and validate six Chemistry cores
+        run: python 'Review Cores/Chemistry/redox-proof-species-state-agent/build_review_set.py'
+      - name: Commit generated review artifacts
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'Review Cores/Chemistry/redox-proof-species-state-agent/'
+          if git diff --cached --quiet; then
+            echo 'No generated changes'
+          else
+            git commit -m 'Build Chemistry Redox six-core review PDFs [skip ci]'
+            git push origin HEAD:review-chemistry-redox-six-core
+          fi
