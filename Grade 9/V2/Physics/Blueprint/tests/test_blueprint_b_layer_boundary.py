@@ -30,9 +30,18 @@ def expect(code, fn):
 validate_boundary(POLICY, ARCH, BINDINGS)
 PASSES.append("B_LAYER_BOUNDARY_BASELINE_VALID")
 
+for key, code in (
+    ("state_may_not_be_synthesized_from_unit_configuration", "UNIT_CONFIGURATION_MASQUERADES_AS_LEARNER_EVIDENCE"),
+    ("representation_coverage_requires_successful_observed_use", "REPRESENTATION_EXPOSURE_MASQUERADES_AS_MASTERY"),
+    ("supersession_preserves_prior_events", "LEARNER_EVIDENCE_HISTORY_OVERWRITABLE"),
+):
+    p = copy.deepcopy(POLICY)
+    p["learner_evidence"][key] = False
+    expect(code, lambda p=p: validate_boundary(p, ARCH, BINDINGS))
+
 p = copy.deepcopy(POLICY)
-p["learner_evidence"]["state_may_not_be_synthesized_from_unit_configuration"] = False
-expect("UNIT_CONFIGURATION_MASQUERADES_AS_LEARNER_EVIDENCE", lambda: validate_boundary(p, ARCH, BINDINGS))
+p["core1b_release_criteria"]["applicability_required_when_upstream_model_validity_required"] = False
+expect("CORE1B_APPLICABILITY_GATE_DROPPED", lambda: validate_boundary(p, ARCH, BINDINGS))
 
 p = copy.deepcopy(POLICY)
 p["handoffs"]["core2a_to_core2b_requires_legal_pool_ref_and_digest"] = False
@@ -49,6 +58,10 @@ expect("CORE2B_SCALAR_TRANSFER_RANK_OVERREACH", lambda: validate_boundary(p, ARC
 p = copy.deepcopy(POLICY)
 p["transfer_selection"]["discrimination_and_synthesis_are_independent_dimensions"] = False
 expect("CORE2B_DISCRIMINATION_SYNTHESIS_COLLAPSED", lambda: validate_boundary(p, ARCH, BINDINGS))
+
+p = copy.deepcopy(POLICY)
+p["repair_loop"]["automatic_error_classification_is_hypothesis_until_correlated"] = False
+expect("CORE2B_ERROR_HYPOTHESIS_OVERCLAIM", lambda: validate_boundary(p, ARCH, BINDINGS))
 
 p = copy.deepcopy(POLICY)
 p["repair_loop"]["repair_request_may_not_mutate_core1a_authority"] = False

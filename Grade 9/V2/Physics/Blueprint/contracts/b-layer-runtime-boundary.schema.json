@@ -4,7 +4,7 @@
   "title": "Physics B-layer Runtime Boundary",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "policy_id", "status", "role_split", "receipt_semantics", "handoffs", "learner_evidence", "transfer_selection", "repair_loop"],
+  "required": ["schema_version", "policy_id", "status", "role_split", "receipt_semantics", "handoffs", "core1b_release_criteria", "learner_evidence", "transfer_selection", "repair_loop"],
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "policy_id": {"const": "PHY-B-LAYER-RUNTIME-BOUNDARY-v1"},
@@ -40,25 +40,40 @@
         "core2b_to_core1b_repair_is_request_only": {"const": true}
       }
     },
+    "core1b_release_criteria": {
+      "type": "object", "additionalProperties": false,
+      "required": ["prerequisite_may_be_omitted_only_with_secure_observed_evidence", "unit_readiness_flags_are_requirements_not_evidence", "applicability_required_when_upstream_model_validity_required", "explain_required_when_capability_contract_requires_explanation", "release_claims_require_observed_evidence_refs"],
+      "properties": {
+        "prerequisite_may_be_omitted_only_with_secure_observed_evidence": {"const": true},
+        "unit_readiness_flags_are_requirements_not_evidence": {"const": true},
+        "applicability_required_when_upstream_model_validity_required": {"const": true},
+        "explain_required_when_capability_contract_requires_explanation": {"const": true},
+        "release_claims_require_observed_evidence_refs": {"const": true}
+      }
+    },
     "learner_evidence": {
       "type": "object", "additionalProperties": false,
-      "required": ["allowed_basis", "forbidden_basis", "state_may_not_be_synthesized_from_unit_configuration", "evidence_ref_and_digest_required", "append_only"],
+      "required": ["allowed_basis", "forbidden_basis", "state_may_not_be_synthesized_from_unit_configuration", "evidence_ref_and_digest_required", "event_identity_and_order_required", "supersession_preserves_prior_events", "representation_coverage_requires_successful_observed_use", "append_only"],
       "properties": {
         "allowed_basis": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"enum": ["LEARNER_RESPONSE", "DIAGNOSTIC", "TEACHER_OBSERVATION"]}},
         "forbidden_basis": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"enum": ["UNIT_READINESS_FLAG", "TEACHING_RECEIPT", "AUTHOR_CONFIG", "SIMULATED_PASS"]}},
         "state_may_not_be_synthesized_from_unit_configuration": {"const": true},
         "evidence_ref_and_digest_required": {"const": true},
+        "event_identity_and_order_required": {"const": true},
+        "supersession_preserves_prior_events": {"const": true},
+        "representation_coverage_requires_successful_observed_use": {"const": true},
         "append_only": {"const": true}
       }
     },
     "transfer_selection": {
       "type": "object", "additionalProperties": false,
-      "required": ["single_session_state_insufficient", "per_required_capability_state_required", "all_required_capabilities_must_meet_item_floor", "representation_transfer_requires_matching_observed_representation_evidence", "scalar_transfer_rank_may_not_be_sole_authorizer", "discrimination_and_synthesis_are_independent_dimensions", "transfer_dimensions", "purpose_cannot_expand_core2a_legal_pool", "retrieval_due_cannot_expand_core2a_legal_pool"],
+      "required": ["single_session_state_insufficient", "per_required_capability_state_required", "all_required_capabilities_must_meet_item_floor", "representation_transfer_requires_matching_observed_representation_evidence", "independent_may_reach_representation_transfer_only_with_matching_evidence", "scalar_transfer_rank_may_not_be_sole_authorizer", "discrimination_and_synthesis_are_independent_dimensions", "transfer_dimensions", "purpose_cannot_expand_core2a_legal_pool", "retrieval_due_cannot_expand_core2a_legal_pool"],
       "properties": {
         "single_session_state_insufficient": {"const": true},
         "per_required_capability_state_required": {"const": true},
         "all_required_capabilities_must_meet_item_floor": {"const": true},
         "representation_transfer_requires_matching_observed_representation_evidence": {"const": true},
+        "independent_may_reach_representation_transfer_only_with_matching_evidence": {"const": true},
         "scalar_transfer_rank_may_not_be_sole_authorizer": {"const": true},
         "discrimination_and_synthesis_are_independent_dimensions": {"const": true},
         "transfer_dimensions": {"type": "array", "minItems": 6, "uniqueItems": true, "items": {"enum": ["STRUCTURAL_DISTANCE", "REPRESENTATION_CHANGE", "MODEL_DISCRIMINATION", "MULTI_STEP_BRIDGE", "SYNTHESIS", "COMPETITIVE_MIXING"]}},
@@ -68,9 +83,10 @@
     },
     "repair_loop": {
       "type": "object", "additionalProperties": false,
-      "required": ["wrong_answer_is_not_diagnosis", "repair_smallest_explanatory_prerequisite_set", "repair_request_may_not_mutate_core1a_authority", "repair_request_may_not_mutate_core2a_legality", "return_to_original_target_after_repair"],
+      "required": ["wrong_answer_is_not_diagnosis", "automatic_error_classification_is_hypothesis_until_correlated", "repair_smallest_explanatory_prerequisite_set", "repair_request_may_not_mutate_core1a_authority", "repair_request_may_not_mutate_core2a_legality", "return_to_original_target_after_repair"],
       "properties": {
         "wrong_answer_is_not_diagnosis": {"const": true},
+        "automatic_error_classification_is_hypothesis_until_correlated": {"const": true},
         "repair_smallest_explanatory_prerequisite_set": {"const": true},
         "repair_request_may_not_mutate_core1a_authority": {"const": true},
         "repair_request_may_not_mutate_core2a_legality": {"const": true},

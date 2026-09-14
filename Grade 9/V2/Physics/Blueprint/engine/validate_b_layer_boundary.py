@@ -8,12 +8,8 @@ from typing import Mapping
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_B_ROLES = {"CORE1B", "CORE2B"}
 REQUIRED_TRANSFER_DIMENSIONS = {
-    "STRUCTURAL_DISTANCE",
-    "REPRESENTATION_CHANGE",
-    "MODEL_DISCRIMINATION",
-    "MULTI_STEP_BRIDGE",
-    "SYNTHESIS",
-    "COMPETITIVE_MIXING",
+    "STRUCTURAL_DISTANCE", "REPRESENTATION_CHANGE", "MODEL_DISCRIMINATION",
+    "MULTI_STEP_BRIDGE", "SYNTHESIS", "COMPETITIVE_MIXING",
 }
 REQUIRED_FORBIDDEN_EVIDENCE = {"UNIT_READINESS_FLAG", "TEACHING_RECEIPT", "AUTHOR_CONFIG", "SIMULATED_PASS"}
 
@@ -37,11 +33,8 @@ def validate_boundary(policy: Mapping, architecture: Mapping, bindings: Mapping)
 
     split = policy.get("role_split") or {}
     if not all(split.get(k) is True for k in (
-        "a_layers_authorize",
-        "b_layers_execute",
-        "b_layers_may_not_change_physics_truth",
-        "b_layers_may_not_expand_transfer_legality",
-        "b_layers_may_capture_observed_learner_evidence",
+        "a_layers_authorize", "b_layers_execute", "b_layers_may_not_change_physics_truth",
+        "b_layers_may_not_expand_transfer_legality", "b_layers_may_capture_observed_learner_evidence",
     )):
         raise AssertionError("B_LAYER_ROLE_SPLIT_DRIFT")
 
@@ -68,11 +61,28 @@ def validate_boundary(policy: Mapping, architecture: Mapping, bindings: Mapping)
     if not handoffs.get("core2b_to_core1b_repair_is_request_only"):
         raise AssertionError("B_LAYER_REPAIR_AUTHORITY_LEAK")
 
+    c1b = policy.get("core1b_release_criteria") or {}
+    for key, code in (
+        ("prerequisite_may_be_omitted_only_with_secure_observed_evidence", "CORE1B_SECURE_PREREQUISITE_SKIP_UNGROUNDED"),
+        ("unit_readiness_flags_are_requirements_not_evidence", "CORE1B_READINESS_FLAG_MASQUERADES_AS_EVIDENCE"),
+        ("applicability_required_when_upstream_model_validity_required", "CORE1B_APPLICABILITY_GATE_DROPPED"),
+        ("explain_required_when_capability_contract_requires_explanation", "CORE1B_EXPLAIN_CONTRACT_DROPPED"),
+        ("release_claims_require_observed_evidence_refs", "CORE1B_RELEASE_EVIDENCE_CUSTODY_MISSING"),
+    ):
+        if not c1b.get(key):
+            raise AssertionError(code)
+
     evidence = policy.get("learner_evidence") or {}
     if not evidence.get("state_may_not_be_synthesized_from_unit_configuration"):
         raise AssertionError("UNIT_CONFIGURATION_MASQUERADES_AS_LEARNER_EVIDENCE")
     if not evidence.get("evidence_ref_and_digest_required"):
         raise AssertionError("LEARNER_EVIDENCE_CUSTODY_MISSING")
+    if not evidence.get("event_identity_and_order_required"):
+        raise AssertionError("LEARNER_EVIDENCE_EVENT_IDENTITY_MISSING")
+    if not evidence.get("supersession_preserves_prior_events"):
+        raise AssertionError("LEARNER_EVIDENCE_HISTORY_OVERWRITABLE")
+    if not evidence.get("representation_coverage_requires_successful_observed_use"):
+        raise AssertionError("REPRESENTATION_EXPOSURE_MASQUERADES_AS_MASTERY")
     if not evidence.get("append_only"):
         raise AssertionError("RUNTIME_EVIDENCE_NOT_APPEND_ONLY")
     if not REQUIRED_FORBIDDEN_EVIDENCE <= set(evidence.get("forbidden_basis") or []):
@@ -84,6 +94,7 @@ def validate_boundary(policy: Mapping, architecture: Mapping, bindings: Mapping)
         ("per_required_capability_state_required", "CORE2B_PER_CAPABILITY_EVIDENCE_MISSING"),
         ("all_required_capabilities_must_meet_item_floor", "CORE2B_MULTI_CAPABILITY_FLOOR_MISSING"),
         ("representation_transfer_requires_matching_observed_representation_evidence", "CORE2B_REPRESENTATION_EVIDENCE_MISSING"),
+        ("independent_may_reach_representation_transfer_only_with_matching_evidence", "CORE2B_T2_INDEPENDENT_RULE_MISSING"),
         ("scalar_transfer_rank_may_not_be_sole_authorizer", "CORE2B_SCALAR_TRANSFER_RANK_OVERREACH"),
         ("discrimination_and_synthesis_are_independent_dimensions", "CORE2B_DISCRIMINATION_SYNTHESIS_COLLAPSED"),
         ("purpose_cannot_expand_core2a_legal_pool", "CORE2B_PURPOSE_EXPANDS_LEGALITY"),
@@ -97,6 +108,8 @@ def validate_boundary(policy: Mapping, architecture: Mapping, bindings: Mapping)
     repair = policy.get("repair_loop") or {}
     if not repair.get("wrong_answer_is_not_diagnosis"):
         raise AssertionError("CORE2B_WRONG_ANSWER_USED_AS_DIAGNOSIS")
+    if not repair.get("automatic_error_classification_is_hypothesis_until_correlated"):
+        raise AssertionError("CORE2B_ERROR_HYPOTHESIS_OVERCLAIM")
     if not repair.get("repair_smallest_explanatory_prerequisite_set"):
         raise AssertionError("CORE1B_REPAIR_SCOPE_TOO_BROAD")
     if not repair.get("repair_request_may_not_mutate_core1a_authority") or not repair.get("repair_request_may_not_mutate_core2a_legality"):
