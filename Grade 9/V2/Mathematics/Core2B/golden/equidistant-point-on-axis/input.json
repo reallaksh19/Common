@@ -48,7 +48,7 @@
       "capability_refs": ["MATH-EQUIDISTANT-POINT-ON-AXIS", "MATH-COORDINATE-DISTANCE"],
       "stem": "A point P=(x,0) satisfies (x+3)^2+16=(x-5)^2+4. Interpret the equation geometrically and find P.",
       "support": [],
-      "answer_check": "x=1; P=(1,0)."
+      "answer_check": "x=1/4; P=(1/4,0)."
     },
     {
       "item_id": "EQ-M1",
