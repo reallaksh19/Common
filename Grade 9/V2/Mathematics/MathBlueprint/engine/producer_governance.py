@@ -42,6 +42,26 @@ def _calibration_basis(cal: dict) -> dict:
     return {"type": "OWNER_OVERRIDE", "owner_ref": waiver["owner_ref"], "reason": waiver["reason"]}
 
 
+def _canonical_capability_refs(caps: Iterable[str], aliases: dict[str, set[str]], registry: dict | None) -> list[str]:
+    """Bind upstream capability IDs only to canonical CAPABILITY assets.
+
+    A single upstream capability may legitimately decompose into several registry assets
+    (for example CONCEPT + CAPABILITY). Learner-fit contracts must never inherit the
+    non-capability aliases merely because they share the same upstream source ref.
+    """
+    caps = [str(x) for x in caps if str(x).strip()]
+    if not registry:
+        return list(dict.fromkeys(caps))
+    assets = {row["asset_id"]: row for row in registry.get("assets", [])}
+    out = []
+    for cap in caps:
+        hits = sorted(aid for aid in aliases.get(cap, set()) if assets.get(aid, {}).get("asset_type") == "CAPABILITY")
+        if len(hits) != 1:
+            raise ValueError(f"PRODUCER_GOVERNANCE_CAPABILITY_BINDING_INVALID:{cap}:{','.join(hits)}")
+        out.append(hits[0])
+    return list(dict.fromkeys(out))
+
+
 def _difficulty_row(spec_row: dict) -> dict:
     badge = spec_row["difficulty_badge"]
     authority = {
@@ -54,7 +74,7 @@ def _difficulty_row(spec_row: dict) -> dict:
         evidence.append(spec_row["pedagogy_research_brief_ref"])
     evidence.extend(spec_row.get("pedagogy_web_research_refs", []))
     return {
-        "subtopic_ref": spec_row["bucket_id"],
+        "subtopic_ref": spec_row["subtopic_id"],
         "declared_badge": badge,
         "badge_authority": authority,
         "derived_dimensions": dict(spec_row["difficulty_dimensions"]),
@@ -75,9 +95,7 @@ def _match_difficulty(bucket_plan: dict, generation_spec: dict | None) -> list[d
     for bucket in bucket_plan["buckets"]:
         row = by_id.get(bucket["bucket_id"]) or by_title.get(bucket["title"].strip().lower())
         if row:
-            item = _difficulty_row(row)
-            item["subtopic_ref"] = bucket["bucket_id"]
-            out.append(item)
+            out.append(_difficulty_row(row))
     return out
 
 
@@ -239,11 +257,8 @@ def core2a_receipt(blueprint: dict, generation_spec: dict, *, registry: dict | N
             canonical_asset_refs=canonical, structural_signature=[q.get("slot") or "SOURCE", demand],
             lineage_keys=q.get("parent_question_refs") or [qid],
         ))
-        bound_caps = bind_refs(caps, aliases)
-        if registry and caps and len(bound_caps) != len(set(bind_refs([cap], aliases)[0] if bind_refs([cap], aliases) else cap for cap in caps)):
-            pass
         if caps:
-            fit_caps = bound_caps if registry else caps
+            fit_caps = _canonical_capability_refs(caps, aliases, registry)
             fits.append({
                 "item_ref": qid, "calibration_basis": basis, "required_capability_refs": fit_caps,
                 "support_mode": support, "maximum_allowed_demand": cal["resolved_core2a_max_demand_level"],
@@ -309,7 +324,7 @@ def core2b_receipt(source: dict, plan: dict, *, registry: dict | None) -> dict:
         if basis and support:
             fits.append({
                 "item_ref": iid, "calibration_basis": basis,
-                "required_capability_refs": bind_refs(caps, aliases) if registry else caps,
+                "required_capability_refs": _canonical_capability_refs(caps, aliases, registry),
                 "support_mode": support, "maximum_allowed_demand": plan["compile_ceiling"],
                 "actual_demand": item["demand_level"], "taught_scope_verified": True,
             })
