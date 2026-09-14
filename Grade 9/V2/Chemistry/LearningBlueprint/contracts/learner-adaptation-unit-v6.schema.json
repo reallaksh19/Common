@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-learner-adaptation-unit-v6.schema.json",
+  "title": "Chemistry Learner Adaptation Unit v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "router_id",
+    "question_id",
+    "question_authority_ref",
+    "problem_family",
+    "purpose",
+    "conditioning",
+    "task_demand",
+    "resolved_support"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "router_id": {"const": "LAU"},
+    "question_id": {"type": "string", "minLength": 1},
+    "question_authority_ref": {"type": "string", "minLength": 1},
+    "problem_family": {"type": "string", "minLength": 1},
+    "purpose": {"type": "string", "minLength": 1},
+    "conditioning": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {"enum": ["KNOWLEDGE_PERCENT", "OWNER_OVERRIDE"]},
+        "knowledge_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "owner_override": {"type": "object"}
+      }
+    },
+    "task_demand": {
+      "type": "object",
+      "required": [
+        "structural_distance",
+        "representation_change",
+        "model_discrimination",
+        "sign_or_direction_reversal",
+        "reversed_target",
+        "constraint_inversion",
+        "multi_step_bridge",
+        "synthesis",
+        "competitive_mixing"
+      ],
+      "additionalProperties": false
+    },
+    "resolved_support": {
+      "type": "object",
+      "required": ["demand_score", "demand_band", "support_band"]
+    }
+  },
+  "additionalProperties": true
+}
