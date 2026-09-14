@@ -112,6 +112,8 @@ chemistry_core1b_hard_redox.pdf
 core1b_hard_quality_audit.json
 ```
 
+CI preflights all 24 pages and rasterizes representative pages from the beginning, middle and end. A production exemplar is accepted only after the real learner PDF is visually reviewed for legibility, page density, distinct tutoring behavior and absence of clipping/overlap; JSON PASS alone is insufficient.
+
 ## Static boundary
 
 Forbidden runtime concepts include:
