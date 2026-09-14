@@ -65,6 +65,13 @@ jobs:
             --input 'Grade 9/V2/Chemistry/Core1B/golden/redox-species-role/input.json' \
             --out-dir /tmp/chem-b/core1b-redox
 
+      - name: Compile production-depth HARD Core1B Redox bucket
+        run: |
+          mkdir -p /tmp/chem-b/core1b-hard-production
+          python 'Grade 9/V2/Chemistry/Core1B/engine/compile_hard_redox_bucket.py' \
+            --input 'Grade 9/V2/Chemistry/Core1B/golden/hard-redox-production/input.json' \
+            --out-dir /tmp/chem-b/core1b-hard-production
+
       - name: Compile Core2B goldens
         run: |
           mkdir -p /tmp/chem-b/core2b-evidence /tmp/chem-b/core2b-classification
@@ -119,7 +126,6 @@ jobs:
               pdfs = list(d.glob('*.pdf'))
               assert len(pdfs) == 1
               doc = fitz.open(pdfs[0])
-              assert len(doc) >= 1
               raw = '\n'.join(page.get_text() for page in doc).lower()
               assert len(raw.strip()) > 100
               for token in forbidden_surface:
@@ -134,6 +140,37 @@ jobs:
           print('delivery_mode = STATIC')
           print('live_runtime_fields = ABSENT')
           print('blueprint_v4_consumption = PASS')
+          PY
+
+      - name: Preflight production-depth HARD Core1B Redox bucket
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import fitz
+
+          d = Path('/tmp/chem-b/core1b-hard-production')
+          audit = json.loads((d / 'core1b_hard_quality_audit.json').read_text(encoding='utf-8'))
+          assert audit['status'] == 'PASS'
+          assert audit['blueprint_v4']['difficulty_badge'] == 'HARD'
+          assert audit['realized_pages'] == 24
+          assert audit['page_ceiling'] == 30
+          assert audit['research_evidence_count'] >= 4
+          assert audit['representation_authority'] == ['SYMBOLIC']
+          assert audit['forbidden_representation_additions_absent'] is True
+          assert audit['answer_closure_pages'] == 24
+          pdf = d / 'chemistry_core1b_hard_redox.pdf'
+          doc = fitz.open(pdf)
+          assert len(doc) == 24
+          raw = '\n'.join(page.get_text() for page in doc).lower()
+          for token in ['knowledge_percent', 'capability_ref', 'problem_family_ref', 'particle_model', 'submicroscopic_scene']:
+              assert token not in raw, token
+          for page_no in (0, 11, 23):
+              pix = doc[page_no].get_pixmap(matrix=fitz.Matrix(1.5, 1.5), alpha=False)
+              pix.save(d / f'page-{page_no+1:02d}.png')
+          print('HARD_CORE1B_PRODUCTION_PREFLIGHT=PASS')
+          print('realized_pages = 24')
+          print('page_ceiling = 30')
           PY
 
       - name: Upload Chemistry B-layer learner products
