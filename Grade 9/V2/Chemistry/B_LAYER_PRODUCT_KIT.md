@@ -58,6 +58,36 @@ PREDICT -> REPRESENT -> EXPLAIN -> COMPARE -> CORRECT -> GENERALIZE
 
 Released tasks contain an open-ended attempt, fixed progressive self-help, canonical/expected response, explanation and independent check.
 
+### Production-depth HARD exemplar
+
+The Redox production golden proves that `HARD <= 30 pages` is a depth envelope rather than a one-page metadata badge. It realizes **24 pages** from the existing Core1A Redox authority across eight researched sub-subtopics:
+
+```text
+SPECIES IDENTITY
+OXIDATION-STATE MEANING
+DIRECTION -> REDOX LABEL
+ELECTRON CONSEQUENCE
+AGENT ROLE
+REPRESENTATION TRANSLATION
+MISCONCEPTION / BOUNDARY
+FADING / TEACH-BACK
+```
+
+Each module has its own four-step conceptual hint ladder. Reusing one generic hint script across all 24 pages is treated as a product-quality failure even if the PDF is mechanically valid.
+
+The golden keeps the current Redox depth extension at the upstream-authorized **symbolic** representation level. Deep web research may improve pedagogy and error treatment, but it cannot introduce a particle/submicroscopic model that upstream authority does not permit.
+
+The production exemplar must therefore demonstrate:
+
+- 24 realized pages within the 30-page HARD ceiling;
+- deep-research evidence recorded before realization;
+- eight module-specific hint ladders;
+- named symbolic visual reasoning jobs rather than decorative images;
+- open-ended attempt + static help + canonical answer/check on every page;
+- misconception contrasts for oxidation state vs charge and self-change vs agent role;
+- fading and teach-back at the end rather than repeated full worked examples;
+- zero learner-knowledge conditioning on Core1 depth.
+
 ## Core2B — v4 learner-conditioned realization
 
 Core2B asks:
@@ -118,7 +148,8 @@ OPEN-ENDED TASK
 ### Core1B
 
 1. `CAP-SEPARATE-OBSERVATION-INFERENCE` / `PF-EVIDENCE_TO_CLAIM` — EASY bucket.
-2. `CAP-ATTACH-SPECIES-ROLE` / `PF-AGENT_ROLE_ASSIGNMENT` — HARD bucket with deep-research and sub-subtopic decomposition authority.
+2. `CAP-ATTACH-SPECIES-ROLE` / `PF-AGENT_ROLE_ASSIGNMENT` — compact HARD contract golden.
+3. Redox species/oxidation-state/electron/agent-role — 24-page production-depth HARD exemplar with deep research and module-specific tutoring.
 
 ### Core2B
 
@@ -139,6 +170,8 @@ CHEM_V4_MEDIUM_RESEARCH_MISSING
 CHEM_V4_HARD_DEEP_RESEARCH_MISSING
 CHEM_CORE1B_HELP_ORDER_INVALID
 CHEM_CORE1B_ANSWER_CLOSURE_MISSING
+CHEM_CORE1B_HARD_REPRESENTATION_AUTHORITY_DRIFT
+CHEM_CORE1B_HARD_RESEARCH_EVIDENCE_INCOMPLETE
 CHEM_CORE2_LEARNER_CONDITION_UNRESOLVED
 CHEM_V4_KNOWLEDGE_PERCENT_INVALID
 CHEM_V4_CONDITIONING_DUAL_AUTHORITY
