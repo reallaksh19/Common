@@ -1,0 +1,8 @@
+{
+  "schema_version": "7.0.0",
+  "product_mode": "CORE1B",
+  "observed_actions": ["PREDICT_OR_RETRIEVE", "RECONSTRUCT", "EXPLAIN_OR_JUSTIFY", "VERIFY"],
+  "dominant_mode": "CONSTRUCTIVE_TUTOR",
+  "major_ttu_count": 5,
+  "learner_generated_major_ttu_count": 4
+}
