@@ -99,4 +99,4 @@ jobs:
           grep -q 'mandatory_closed / mandatory_total = 1.00' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
           grep -q 'Differentiation is checked against structured pedagogical fingerprints' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
           grep -q 'Every question is source-visible and answer-closed' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
-          grep -q 'Core1A study-note sufficiency' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_PRODUCT_ASSURANCE.md'
+          grep -q 'Core1A study-note sufficiency' 'Grade 9/V2/Chemistry/LearningBlueprint/V7_CORE1A_STUDY_NOTE_SUFFICIENCY.md'
