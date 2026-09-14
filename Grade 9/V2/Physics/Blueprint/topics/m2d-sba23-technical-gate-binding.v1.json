@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "binding_id": "TECH-GATE-BIND-M2D-SBA23-V1",
+  "bucket_id": "M2D-SBA-23",
+  "registry_ref": "policy/physics-technical-engineering-gates.v2.json",
+  "primary_gate_id": "PHY-M2D-MOVING-LAUNCHER",
+  "declared_gate_closure": [
+    "PHY-VEC-BASICS",
+    "PHY-VEC-ADD-SUB",
+    "PHY-VEC-COMPONENTS",
+    "PHY-M2D-PROJECTILE-COMPONENTS",
+    "PHY-M2D-SHARED-CLOCK",
+    "PHY-M2D-MOVING-LAUNCHER"
+  ],
+  "status": "TECHNICAL_GATE_READY",
+  "source_item_status": "SOURCE_HELD",
+  "downstream_consumers": ["CCU", "CDAU", "SDU", "LAU", "TTU", "PUBLICATION"],
+  "notes": "Technical readiness is independent of Q15 exact-source custody. The subtopic model may be technically ready while frozen Q15 remains held."
+}
