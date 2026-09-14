@@ -1,6 +1,6 @@
 {
   "kit_id": "V3B-PHYSICS-PRODUCTION-1",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "subject": "Physics",
   "entrypoint": "ProductionKit/run.py",
   "shared_runtime": "../Shared/v3b",
@@ -28,5 +28,10 @@
     "CONSTANT_ACCELERATION_EVENT_TIME",
     "SPEED_FROM_COMPONENTS",
     "APEX_STATE"
-  ]
+  ],
+  "runtime_status": "LEGACY_FOUR_CORE_PROTOTYPE_NOT_SIX_CORE_RELEASE",
+  "engineering_checker": "../Engineering/run.cjs",
+  "engineering_owner_board": "../Engineering/OWNER_BOARD.md",
+  "six_core_runtime_integration": "PENDING",
+  "engineering_source_head": "f2f22f0cea1c31ebf09da10241db8be0fde39789"
 }

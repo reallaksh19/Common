@@ -1,3 +1,7 @@
+# Historical architecture review — current successor below
+
+The current six-Core Physics contract is [Physics Engineering](../../Physics/Engineering/README.md). Later owner requirements supersede the four-Core meanings and learner-calibration assumptions below. Original inputs and historical reasoning remain preserved for traceability.
+
 # Core1 / Core2 / Core1A / Core2A — architecture review
 
 Status: DRAFT / ADVISORY. Owner authorized research and a cumulative draft PR on 2026-09-13. This review does not change production contracts or claim that proposed mechanisms are implemented or pedagogically validated.

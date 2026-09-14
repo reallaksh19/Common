@@ -34,6 +34,8 @@ A correct explanation connects the physical transfer, the chosen convention and 
 
 ## Check your representation
 
+![Expected boundary-and-work reconstruction](energy-reconstruction.svg)
+
 Accept a boundary sketch or equivalent annotated representation with all these features:
 
 | Feature | Physical meaning | Equation mapping |

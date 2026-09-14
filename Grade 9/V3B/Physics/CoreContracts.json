@@ -1,6 +1,6 @@
 {
   "subject": "Physics",
-  "contract_version": "1.0.0",
+  "contract_version": "1.1.0",
   "equation_semantic_fields": [
     "model_assumptions",
     "axis_and_sign",
@@ -29,5 +29,17 @@
   },
   "source_truth": "ORIGINAL_EVIDENCE_WITH_EXACT_PROVENANCE",
   "renderer_authority": "COMPOSITION_ONLY",
-  "new_generated_family_policy": "EXPLICIT_VALIDATOR_AND_SUBJECT_REVIEW_REQUIRED"
+  "new_generated_family_policy": "EXPLICIT_VALIDATOR_AND_SUBJECT_REVIEW_REQUIRED",
+  "six_core_contract_ref": "Engineering/CORE_CONTRACTS.md",
+  "engineering_gate_ref": "Engineering/registry.json",
+  "engineering_adoption_head": "f2f22f0cea1c31ebf09da10241db8be0fde39789",
+  "legacy_core_roles_status": "FOUR_CORE_RUNTIME_ONLY",
+  "learner_product_roles": {
+    "CORE1": "EXISTING_BASIC_NOTES",
+    "CORE2": "EXISTING_FROZEN_QUESTIONS_AND_HINTS",
+    "CORE1A": "DECLARATIVE_STUDY",
+    "CORE1B": "CONCEPTUAL_SELF_TUTOR",
+    "CORE2A": "SOLUTION_APPRENTICESHIP",
+    "CORE2B": "APPLICATION_AND_TRANSFER_TUTOR"
+  }
 }

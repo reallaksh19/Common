@@ -131,6 +131,11 @@ function run(input) {
   test("Gravity oracle: field and escape scaling differ",()=>{
     ok(1/2**2===0.25 && Math.abs(Math.sqrt(1/2)-1/Math.sqrt(2))<1e-15,"ratios");
   });
+  for (const product of input.products) test("Published Markdown retains all objects: "+product.core,()=>{
+    const document=input.documents[product.core];
+    ok(typeof document==="string","document missing");
+    for(const object of product.objects)ok(document.includes(object.content),"omitted "+object.id);
+  });
   return { status: rows.every(r=>r.status==="PASS")?"PASS":"FAIL", count:rows.length, tests:rows,
     scope:"Structural falsifiers and analytical calculations; no independent subject/learner approval.",
     node_cli:"NOT_RUN", browser_visual:"NOT_RUN", pdf_visual:"NOT_RUN", release_authorized:false };

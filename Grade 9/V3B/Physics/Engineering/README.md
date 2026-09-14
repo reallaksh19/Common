@@ -17,8 +17,8 @@ The current proof is a reviewed-by-author design specimen, not an approved textb
 
 ## Run
 
-`node Grade\ 9/V3B/Physics/Engineering/run.cjs check`
-`node Grade\ 9/V3B/Physics/Engineering/run.cjs test`
+`node 'Grade 9/V3B/Physics/Engineering/run.cjs' check`
+`node 'Grade 9/V3B/Physics/Engineering/run.cjs' test`
 
 The pure JavaScript engines are also exercised directly in the available JavaScript execution environment. Node CLI execution and browser/PDF visual inspection must be reported separately.
 
