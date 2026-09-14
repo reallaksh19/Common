@@ -9,6 +9,7 @@ from pathlib import Path
 
 from blueprint_common import digest, fail, load, validate_schema
 from validate_content_complete_page_blueprint import validate_content_complete_blueprint
+from validate_pedagogy_research_manifest import validate_generation_research_bindings
 from validate_self_teaching_generation_spec import validate_generation_spec
 
 
@@ -33,7 +34,7 @@ def _render_ids(pages: list[dict]) -> list[str]:
     return ids
 
 
-def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_spec: dict | None = None, catalog: dict | None = None) -> dict:
+def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_spec: dict | None = None, catalog: dict | None = None, research_manifest: dict | None = None) -> dict:
     validate_schema(bundle, "math-learner-publication-bundle.schema.json")
     if bundle.get("bundle_digest") != digest(bundle, "bundle_digest"):
         fail("MATH_PUBLICATION_BUNDLE_DIGEST_MISMATCH")
@@ -48,8 +49,14 @@ def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_s
             fail("MATH_PUBLICATION_BUNDLE_RELEASE_GATE_DIGEST_DRIFT")
     if generation_spec is not None:
         validate_generation_spec(generation_spec)
+        validate_generation_research_bindings(generation_spec, research_manifest)
         if bundle["generation_spec_digest"] != digest(generation_spec):
             fail("MATH_PUBLICATION_BUNDLE_GENERATION_SPEC_DIGEST_DRIFT")
+        expected_research_digest = digest(research_manifest) if research_manifest is not None else None
+        if bundle["pedagogy_research_manifest_digest"] != expected_research_digest:
+            fail("MATH_PUBLICATION_BUNDLE_RESEARCH_MANIFEST_DIGEST_DRIFT")
+    elif research_manifest is not None:
+        fail("MATH_PUBLICATION_BUNDLE_RESEARCH_WITHOUT_GENERATION_SPEC")
     if catalog is not None:
         material = copy.deepcopy(catalog); expected = material.pop("catalog_digest", None)
         if not expected or digest(material) != expected:
@@ -82,10 +89,6 @@ def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_s
         stages = {p["stage"] for p in component["pages"]}
         if stages != {"CORE1A", "CORE1B"}:
             fail("MATH_PUBLICATION_CONCEPT_COMPONENT_STAGE_DRIFT", component["component_id"])
-
-        # The canonical page validator currently validates all four stages as one
-        # learner product. Combine this concept component with the single shared
-        # problem component only in memory; the bundle stores Core2 content once.
         transient = {
             "schema_version": "1.0.0",
             "subject": "MATHEMATICS",
@@ -115,6 +118,7 @@ def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_s
         "render_object_count": len(object_ids) - len(page_ids),
         "render_object_ids": sorted(set(object_ids) - set(page_ids)),
         "component_validation_count": len(transient_audits),
+        "research_manifest_bound": research_manifest is not None,
         "semantic_model": "CONCEPT_BADGE_PLUS_PROBLEM_LEARNER_FIT",
     }
 
@@ -125,10 +129,12 @@ def main() -> None:
     ap.add_argument("--release-gate", required=True)
     ap.add_argument("--generation-spec", required=True)
     ap.add_argument("--core1a-example-catalog", required=True)
+    ap.add_argument("--pedagogy-research-manifest")
     ap.add_argument("--audit-out")
     args = ap.parse_args()
+    research = load(args.pedagogy_research_manifest) if args.pedagogy_research_manifest else None
     bundle = load(args.input)
-    audit = validate_bundle(bundle, load(args.release_gate), load(args.generation_spec), load(args.core1a_example_catalog))
+    audit = validate_bundle(bundle, load(args.release_gate), load(args.generation_spec), load(args.core1a_example_catalog), research)
     audit["bundle_sha256"] = digest(bundle)
     if args.audit_out:
         Path(args.audit_out).write_text(json.dumps(audit, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
