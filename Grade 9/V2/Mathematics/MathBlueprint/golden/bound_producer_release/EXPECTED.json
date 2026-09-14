@@ -1,0 +1,25 @@
+{
+  "golden_id": "MATH-BOUND-PRODUCER-RELEASE-v1",
+  "subject": "MATHEMATICS",
+  "purpose": "REVISION",
+  "producer_mode": "ACTUAL_CLI",
+  "registry_mode": "COMPILED_FROM_SAME_COLD_START_RUN",
+  "required_stages": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "required_stage_pairs": [
+    "CORE1A__CORE1B",
+    "CORE1A__CORE2A",
+    "CORE1A__CORE2B",
+    "CORE1B__CORE2A",
+    "CORE1B__CORE2B",
+    "CORE2A__CORE2B"
+  ],
+  "required_release_checks": [
+    "FULL_REGISTRY_COVERAGE",
+    "ALL_SIX_CROSS_CORE_PAIRS",
+    "CORE1A_CORE1B_DIFFICULTY_EQUALITY",
+    "CORE2A_CORE2B_LEARNER_FIT",
+    "FROZEN_SOURCE_STEM_CUSTODY",
+    "CANONICAL_ANSWER_CONTRACT_CUSTODY"
+  ],
+  "scope_note": "This golden proves real producer/receipt/release wiring over a minimal canonical registry compiled from the same run. Rich typed semantic realization for equations, representations and misconceptions is falsified separately by product-governance tests."
+}
