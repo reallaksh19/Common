@@ -1,0 +1,64 @@
+{
+  "core2a_authority_ref": "MATH-C2A-GOLDEN-EQDIST",
+  "purpose": "PRACTICE",
+  "max_demand_level": "M5_METHOD_DISCRIMINATION",
+  "approved_capability_refs": [
+    "MATH-EQUIDISTANT-POINT-ON-AXIS",
+    "MATH-COORDINATE-DISTANCE",
+    "MATH-ORDERED-PAIR-SEMANTICS"
+  ],
+  "core2a_legal_item_ids": ["EQ-D1", "EQ-V1", "EQ-R1", "EQ-H1", "EQ-M1"],
+  "title": "Transfer Practice — Equal-Distance Coordinate Problems",
+  "items": [
+    {
+      "item_id": "EQ-D1",
+      "demand_level": "M0_DIRECT",
+      "learner_label": "Try it first",
+      "family_label_visible": true,
+      "capability_refs": ["MATH-EQUIDISTANT-POINT-ON-AXIS"],
+      "stem": "P lies on the x-axis and is equidistant from A(-2,3) and B(4,3). Find P.",
+      "support": [],
+      "answer_check": "P=(1,0)."
+    },
+    {
+      "item_id": "EQ-V1",
+      "demand_level": "M1_CONTROLLED_VARIATION",
+      "learner_label": "Controlled variation",
+      "family_label_visible": true,
+      "capability_refs": ["MATH-EQUIDISTANT-POINT-ON-AXIS"],
+      "stem": "P lies on the y-axis and is equidistant from A(2,-1) and B(2,7). Find P.",
+      "support": [],
+      "answer_check": "P=(0,3)."
+    },
+    {
+      "item_id": "EQ-R1",
+      "demand_level": "M2_REPRESENTATION_TRANSFER",
+      "learner_label": "Representation shift",
+      "family_label_visible": true,
+      "capability_refs": ["MATH-EQUIDISTANT-POINT-ON-AXIS", "MATH-COORDINATE-DISTANCE"],
+      "stem": "A diagram shows P constrained to the x-axis, A(-1,4), and B(7,2). Write and solve the equal-distance equation.",
+      "support": [],
+      "answer_check": "P=(9/4,0)."
+    },
+    {
+      "item_id": "EQ-H1",
+      "demand_level": "M4_HIDDEN_STRUCTURE",
+      "learner_label": "Hidden structure",
+      "family_label_visible": false,
+      "capability_refs": ["MATH-EQUIDISTANT-POINT-ON-AXIS", "MATH-COORDINATE-DISTANCE"],
+      "stem": "A point P=(x,0) satisfies (x+3)^2+16=(x-5)^2+4. Interpret the equation geometrically and find P.",
+      "support": [],
+      "answer_check": "x=1/4; P=(1/4,0)."
+    },
+    {
+      "item_id": "EQ-M1",
+      "demand_level": "M5_METHOD_DISCRIMINATION",
+      "learner_label": "Choose the efficient method",
+      "family_label_visible": false,
+      "capability_refs": ["MATH-EQUIDISTANT-POINT-ON-AXIS"],
+      "stem": "For A(1,5), B(9,5), P on the x-axis, choose between symmetry and the general distance model, solve, and state why your choice is efficient.",
+      "support": [],
+      "answer_check": "P=(5,0); symmetry is efficient because the fixed points have the same y-coordinate."
+    }
+  ]
+}
