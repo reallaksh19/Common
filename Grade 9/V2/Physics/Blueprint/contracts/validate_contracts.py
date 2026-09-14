@@ -7,7 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]; PHYS=ROOT.parent
 
 def load(path:Path):return json.loads(path.read_text(encoding="utf-8"))
 def validate():
-    names=["architecture-blueprint.schema.json","packet-envelope.schema.json","evidence-state.schema.json","routing-decision.schema.json","independent-validation-session.schema.json","join-packet.schema.json","role-bindings.schema.json","learner-purpose-control-state.schema.json","core1a-stage-run.schema.json","topic-blueprint.schema.json","publication-ir.schema.json","render-custody.schema.json","render-preflight-report.schema.json","m2d-render-readiness.schema.json","m2d-manuscript-release-binding.schema.json","m2d-composition-plan.schema.json","b-layer-runtime-boundary.schema.json"]
+    names=["architecture-blueprint.schema.json","packet-envelope.schema.json","evidence-state.schema.json","routing-decision.schema.json","independent-validation-session.schema.json","join-packet.schema.json","role-bindings.schema.json","learner-purpose-control-state.schema.json","core1a-stage-run.schema.json","topic-blueprint.schema.json","publication-ir.schema.json","render-custody.schema.json","render-preflight-report.schema.json","m2d-render-readiness.schema.json","m2d-manuscript-release-binding.schema.json","m2d-composition-plan.schema.json","b-layer-runtime-boundary.schema.json","technical-teaching-unit.schema.json"]
     schemas={n:load(ROOT/"contracts"/n) for n in names}
     for s in schemas.values():Draft202012Validator.check_schema(s)
     architecture=load(ROOT/"policy"/"architecture.v1.json");Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(architecture)
@@ -15,6 +15,10 @@ def validate():
     b_policy=load(ROOT/"policy"/"b-layer-runtime-boundary.v1.json");Draft202012Validator(schemas["b-layer-runtime-boundary.schema.json"]).validate(b_policy)
     ev=Draft202012Validator(schemas["evidence-state.schema.json"])
     for f in sorted((ROOT/"fixtures"/"golden").glob("*.json")):ev.validate(load(f)["evidence"])
+    ttu_validator=Draft202012Validator(schemas["technical-teaching-unit.schema.json"])
+    ttu_files=sorted((ROOT/"fixtures"/"technical-ttu").glob("*.json"))
+    if not ttu_files:raise AssertionError("TECHNICAL_TTU_PROCESS_GOLDEN_MISSING")
+    for f in ttu_files:ttu_validator.validate(load(f))
     if any(architecture["role_lifecycle"].get(r)!="ACTIVE" for r in ("CORE2A","CORE1B","CORE2B")):raise AssertionError("BLUEPRINT_ACTIVE_ROLE_LIFECYCLE_DRIFT")
     if b_policy.get("status")!="ACTIVE":raise AssertionError("B_LAYER_GOVERNANCE_NOT_ACTIVE")
     if architecture["invariants"]["max_subtopics_per_handoff"]!=3 or not architecture["invariants"]["learning_atoms_unbounded"]:raise AssertionError("TRANSPORT_PEDAGOGY_BOUND_DRIFT")
@@ -36,6 +40,12 @@ def validate():
     if render["page_geometry"]["format"]!="A4_PORTRAIT" or render["sample_raster_dpi"]<144:raise AssertionError("RENDER_PHYSICAL_QA_POLICY_DRIFT")
     if m2d_rep.get("topic_id")!="PHY-M2D" or not all((m2d_rep.get("rules") or {}).values()):raise AssertionError("M2D_REPRESENTATION_GAP_POLICY_DRIFT")
     if m2d_comp.get("topic_id")!="PHY-M2D" or not all((m2d_comp.get("rules") or {}).values()):raise AssertionError("M2D_COMPOSITION_RELEASE_POLICY_DRIFT")
+    self_help=load(ROOT/"policy"/"self-help-core-publication.v5.json");ttu_policy=load(ROOT/"policy"/"technical-teaching-unit.v1.json");rep_quality=load(ROOT/"policy"/"physics-representation-semantic-quality.v1.json");layout=load(ROOT/"policy"/"pdf-layout-integrity.v2.json")
+    if not self_help["technical_teaching_unit_gate"]["representation_must_bind_to_reasoning"]:raise AssertionError("TTU_REASONING_BINDING_DISABLED")
+    if self_help["technical_teaching_unit_gate"]["generic_cards_count_as_physics_representation"]:raise AssertionError("GENERIC_CARD_FALSE_TECHNICAL_CLOSURE")
+    if ttu_policy["completion_rule"]["final_equation_without_visible_mapping_is_complete_ttu"]:raise AssertionError("TTU_MAPPING_GATE_DISABLED")
+    if rep_quality["binding_rule"]["figure_without_reasoning_binding_counts_as_technical_closure"]:raise AssertionError("FIGURE_BINDING_GATE_DISABLED")
+    if layout["composition"]["oversized_figure_displacing_required_working_allowed"]:raise AssertionError("OVERSIZED_FIGURE_GATE_DISABLED")
     sys.path.insert(0,str(ROOT/"engine"));from validate_b_layer_boundary import validate_boundary;validate_boundary(b_policy,architecture,bindings)
     print("Blueprint contracts: PASS")
 if __name__=="__main__":validate()
