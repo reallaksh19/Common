@@ -15,14 +15,29 @@ from blueprint_common import fail, load, validate_schema
 POLICY_PATH = HERE.parent / "policies" / "math-self-teaching-policy.json"
 
 
+def derived_difficulty(dimensions: dict) -> tuple[float, str]:
+    score = round(sum(dimensions.values()) / (4 * len(dimensions)) * 100, 2)
+    badge = "EASY" if score <= 32 else "MEDIUM" if score <= 65 else "HARD"
+    return score, badge
+
+
 def validate_generation_spec(doc: dict) -> None:
     validate_schema(doc, "math-self-teaching-generation-spec.schema.json")
     policy = load(POLICY_PATH)
     depth = policy["generation_governance"]["core1_series"]["difficulty_badges"]
 
+    seen_buckets = set()
     for bucket in doc["core1_buckets"]:
+        if bucket["bucket_id"] in seen_buckets:
+            fail("MATH_CORE1_DUPLICATE_BUCKET_ID", bucket["bucket_id"])
+        seen_buckets.add(bucket["bucket_id"])
+
         badge = bucket["difficulty_badge"]
         rules = depth[badge]
+        _, derived_badge = derived_difficulty(bucket["difficulty_dimensions"])
+        if bucket["difficulty_badge_basis"] == "CORE1_SEMANTIC_COMPLEXITY" and badge != derived_badge:
+            fail("MATH_CORE1_DERIVED_DIFFICULTY_BADGE_MISMATCH", f"{bucket['bucket_id']}:{badge}!={derived_badge}")
+
         if bucket["target_page_budget"] > rules["max_pages"]:
             fail("MATH_CORE1_BUCKET_PAGE_BUDGET_EXCEEDED", bucket["bucket_id"])
 
@@ -47,12 +62,21 @@ def validate_generation_spec(doc: dict) -> None:
     if has_percent == has_waiver:
         fail("MATH_CORE2_CALIBRATION_EXACTLY_ONE_REQUIRED")
 
+    cap_rows = cal["capability_knowledge"]
+    cap_refs = [row["capability_ref"] for row in cap_rows]
+    if len(cap_refs) != len(set(cap_refs)):
+        fail("MATH_CORE2_CAPABILITY_KNOWLEDGE_DUPLICATE")
+
     if has_percent:
         if not cal["knowledge_percent_source_ref"] or not cal["knowledge_calibration_policy_ref"]:
             fail("MATH_CORE2_KNOWLEDGE_PERCENT_BINDING_INCOMPLETE")
+        if not cap_rows:
+            fail("MATH_CORE2_CAPABILITY_KNOWLEDGE_REQUIRED")
     else:
         if cal["knowledge_percent_source_ref"] is not None or cal["knowledge_calibration_policy_ref"] is not None:
             fail("MATH_CORE2_WAIVER_CANNOT_FAKE_KNOWLEDGE_BINDING")
+        if cap_rows:
+            fail("MATH_CORE2_WAIVER_CANNOT_FAKE_CAPABILITY_KNOWLEDGE")
         if cal["resolved_core2a_support_profile"] != waiver["selected_core2a_support_profile"]:
             fail("MATH_CORE2_OWNER_WAIVER_SUPPORT_DRIFT")
         if cal["resolved_core2a_max_demand_level"] != waiver["selected_core2a_max_demand_level"]:
