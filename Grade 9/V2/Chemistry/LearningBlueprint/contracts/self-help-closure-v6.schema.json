@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-self-help-closure-v6.schema.json",
+  "title": "Chemistry Self Help Closure v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "closure_id",
+    "product_mode",
+    "canonical_answer_available",
+    "progressive_help_available",
+    "misconception_help_available",
+    "canonical_reveal_available",
+    "independent_verification",
+    "repair_path",
+    "next_step"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "closure_id": {"type": "string", "minLength": 1},
+    "product_mode": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "canonical_answer_available": {"const": true},
+    "progressive_help_available": {"const": true},
+    "misconception_help_available": {"const": true},
+    "canonical_reveal_available": {"const": true},
+    "independent_verification": {"type": "object", "required": ["required"]},
+    "repair_path": {"type": "object", "required": ["available"]},
+    "next_step": {"type": "object", "required": ["defined"]}
+  },
+  "additionalProperties": true
+}
