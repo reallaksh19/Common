@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-dual-track-product-model.schema.json",
+  "title": "Mathematics Dual-Track Product Model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "model_id",
+    "study_differentiation_unit",
+    "learner_adaptation_unit",
+    "concept_ttus",
+    "problem_ttus",
+    "stage_realizations"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "model_id": {"type": "string", "minLength": 6},
+    "study_differentiation_unit": {"$ref": "#/$defs/sdu"},
+    "learner_adaptation_unit": {"$ref": "#/$defs/lau"},
+    "concept_ttus": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ttu"}},
+    "problem_ttus": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ttu"}},
+    "stage_realizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+      "properties": {
+        "CORE1A": {"$ref": "#/$defs/stageRealization"},
+        "CORE1B": {"$ref": "#/$defs/stageRealization"},
+        "CORE2A": {"$ref": "#/$defs/stageRealization"},
+        "CORE2B": {"$ref": "#/$defs/stageRealization"}
+      }
+    }
+  },
+  "$defs": {
+    "difficulty": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "stage": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "fading": {"enum": ["MODELLED", "GUIDED", "FADED", "INDEPENDENT"]},
+    "exposureMode": {"enum": ["MODEL_THEN_RECONSTRUCT", "RECONSTRUCT_BEFORE_CANONICAL", "SETUP_THEN_COMPLETE", "CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS"]},
+    "ttuFamily": {"enum": ["CONCEPT", "PROBLEM"]},
+    "ttuKind": {"enum": ["INCOMPLETE_DIAGRAM", "COMPONENT_ASSEMBLY", "INCOMPLETE_GRAPH", "EQUATION_SKELETON", "EVENT_OR_STATE_LINE", "TABLE_OR_LEDGER", "REASONING_CHAIN", "REPRESENTATION_MAP", "CONSTRUCTION_SEQUENCE", "FLOW_MODEL", "OTHER"]},
+    "semanticPart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["part_id", "semantic_role", "math_refs"],
+      "properties": {
+        "part_id": {"type": "string", "minLength": 2},
+        "semantic_role": {"type": "string", "minLength": 3},
+        "math_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}}
+      }
+    },
+    "fixedHelp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["H1_NOTICE", "H2_REPRESENT", "H3_START"],
+      "properties": {
+        "H1_NOTICE": {"type": "string", "minLength": 3},
+        "H2_REPRESENT": {"type": "string", "minLength": 3},
+        "H3_START": {"type": "string", "minLength": 3}
+      }
+    },
+    "dialogue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_conceptual_change", "learner_outputs", "prompts", "canonical_reveal_after_attempt", "reflection_required", "independent_verification_required"],
+      "properties": {
+        "target_conceptual_change": {"type": "string", "minLength": 8},
+        "learner_outputs": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"enum": ["PREDICTION", "DIAGRAM", "GRAPH", "TABLE", "EXPLANATION", "EQUATION", "MODEL_SELECTION", "CLASSIFICATION", "DERIVATION", "FIRST_MOVE", "VERIFICATION"]}},
+        "prompts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["P0_ATTEMPT", "P1_NOTICE", "P2_REPRESENT", "P3_EXPLAIN", "P4_CONNECT", "P5_START"],
+          "properties": {
+            "P0_ATTEMPT": {"type": "string", "minLength": 3},
+            "P1_NOTICE": {"type": "string", "minLength": 3},
+            "P2_REPRESENT": {"type": "string", "minLength": 3},
+            "P3_EXPLAIN": {"type": "string", "minLength": 3},
+            "P4_CONNECT": {"type": "string", "minLength": 3},
+            "P5_START": {"type": "string", "minLength": 3}
+          }
+        },
+        "misconception_branch": {"type": ["object", "null"], "additionalProperties": false, "required": ["misconception_ref", "corrective_prompt"], "properties": {"misconception_ref": {"type": "string", "minLength": 2}, "corrective_prompt": {"type": "string", "minLength": 3}}},
+        "canonical_reveal_after_attempt": {"const": true},
+        "reflection_required": {"const": true},
+        "independent_verification_required": {"const": true}
+      }
+    },
+    "ttu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ttu_id", "family", "stage", "kind", "math_refs", "complete_state_ref", "exposure_mode",
+        "learner_action", "given_parts", "missing_parts", "target_relations", "fixed_help", "completion_key",
+        "verification_rule", "fading_level", "source_ttu_ref", "lineage_transform", "new_math_refs"
+      ],
+      "properties": {
+        "ttu_id": {"type": "string", "minLength": 4},
+        "family": {"$ref": "#/$defs/ttuFamily"},
+        "stage": {"$ref": "#/$defs/stage"},
+        "kind": {"$ref": "#/$defs/ttuKind"},
+        "math_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "complete_state_ref": {"type": "string", "minLength": 3},
+        "exposure_mode": {"$ref": "#/$defs/exposureMode"},
+        "learner_action": {"type": "string", "minLength": 8},
+        "given_parts": {"type": "array", "items": {"$ref": "#/$defs/semanticPart"}},
+        "missing_parts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/semanticPart"}},
+        "target_relations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+        "fixed_help": {"$ref": "#/$defs/fixedHelp"},
+        "completion_key": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 2}},
+        "verification_rule": {"type": "string", "minLength": 8},
+        "fading_level": {"$ref": "#/$defs/fading"},
+        "source_ttu_ref": {"type": ["string", "null"], "minLength": 4},
+        "lineage_transform": {"enum": ["ORIGIN", "RECONSTRUCT", "CONTRAST", "SOLUTION_ANATOMY", "TRANSFER", "VERIFY"]},
+        "dialogue_contract": {"anyOf": [{"$ref": "#/$defs/dialogue"}, {"type": "null"}]},
+        "representation": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["semantic_geometry_refs", "viewport", "clip_to_viewport"],
+          "properties": {
+            "semantic_geometry_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 2}},
+            "viewport": {"type": "object", "additionalProperties": false, "required": ["x", "y", "width", "height"], "properties": {"x": {"type": "number", "minimum": 0, "maximum": 1}, "y": {"type": "number", "minimum": 0, "maximum": 1}, "width": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}, "height": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}}},
+            "clip_to_viewport": {"const": true}
+          }
+        },
+        "new_math_refs": {"type": "array", "maxItems": 0}
+      }
+    },
+    "researchDossier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["research_level", "authoritative_sources", "known_learning_difficulties", "representation_research", "pedagogical_research", "source_provenance", "author_original_publication_assets_required"],
+      "properties": {
+        "research_level": {"enum": ["NONE", "TARGETED", "DEEP"]},
+        "authoritative_sources": {"type": "array", "items": {"type": "string", "minLength": 3}},
+        "known_learning_difficulties": {"type": "array", "items": {"type": "string", "minLength": 3}},
+        "representation_research": {"type": "array", "items": {"type": "string", "minLength": 3}},
+        "pedagogical_research": {"type": "array", "items": {"type": "string", "minLength": 3}},
+        "source_provenance": {"type": "array", "items": {"type": "string", "minLength": 3}},
+        "author_original_publication_assets_required": {"const": true}
+      }
+    },
+    "sdu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "subtopic_id", "difficulty_badge", "learner_knowledge_consulted", "page_ceiling", "research_dossier", "depth_obligations", "concept_ttu_ids"],
+      "properties": {
+        "unit_id": {"type": "string", "minLength": 4},
+        "subtopic_id": {"type": "string", "minLength": 3},
+        "difficulty_badge": {"$ref": "#/$defs/difficulty"},
+        "learner_knowledge_consulted": {"const": false},
+        "page_ceiling": {"enum": [10, 20, 30]},
+        "research_dossier": {"$ref": "#/$defs/researchDossier"},
+        "depth_obligations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+        "concept_ttu_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 4}}
+      }
+    },
+    "taskDemand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conceptual_demand", "structural_distance", "representation_change", "cue_visibility", "hidden_constraint", "method_discrimination", "reversed_target", "algebraic_burden", "multi_step_bridge", "synthesis", "novelty"],
+      "properties": {
+        "conceptual_demand": {"type": "integer", "minimum": 0, "maximum": 4},
+        "structural_distance": {"type": "integer", "minimum": 0, "maximum": 4},
+        "representation_change": {"type": "integer", "minimum": 0, "maximum": 4},
+        "cue_visibility": {"type": "integer", "minimum": 0, "maximum": 4},
+        "hidden_constraint": {"type": "integer", "minimum": 0, "maximum": 4},
+        "method_discrimination": {"type": "integer", "minimum": 0, "maximum": 4},
+        "reversed_target": {"type": "integer", "minimum": 0, "maximum": 4},
+        "algebraic_burden": {"type": "integer", "minimum": 0, "maximum": 4},
+        "multi_step_bridge": {"type": "integer", "minimum": 0, "maximum": 4},
+        "synthesis": {"type": "integer", "minimum": 0, "maximum": 4},
+        "novelty": {"type": "integer", "minimum": 0, "maximum": 4}
+      }
+    },
+    "lau": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "purpose", "calibration_basis", "task_demand", "support_mode", "production_support_profile_ref", "core2a_max_demand_level", "core2b_max_demand_level", "problem_ttu_ids", "knowledge_percent_is_mastery_claim"],
+      "properties": {
+        "unit_id": {"type": "string", "minLength": 4},
+        "purpose": {"enum": ["STARTER", "PRACTICE", "REVISION", "COMPETITION"]},
+        "calibration_basis": {
+          "oneOf": [
+            {"type": "object", "additionalProperties": false, "required": ["type", "learner_knowledge_percent", "knowledge_source_ref", "calibration_policy_ref"], "properties": {"type": {"const": "KNOWLEDGE_PERCENT"}, "learner_knowledge_percent": {"type": "number", "minimum": 0, "maximum": 100}, "knowledge_source_ref": {"type": "string", "minLength": 3}, "calibration_policy_ref": {"type": "string", "minLength": 3}, "capability_knowledge": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["capability_ref", "percent"], "properties": {"capability_ref": {"type": "string", "minLength": 2}, "percent": {"type": "number", "minimum": 0, "maximum": 100}}}}}},
+            {"type": "object", "additionalProperties": false, "required": ["type", "owner_ref", "reason"], "properties": {"type": {"const": "OWNER_OVERRIDE"}, "owner_ref": {"type": "string", "minLength": 3}, "reason": {"type": "string", "minLength": 8}}}
+          ]
+        },
+        "task_demand": {"$ref": "#/$defs/taskDemand"},
+        "support_mode": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
+        "production_support_profile_ref": {"type": "string", "minLength": 3},
+        "core2a_max_demand_level": {"enum": ["M0_DIRECT", "M1_CONTROLLED_VARIATION", "M2_REPRESENTATION_TRANSFER", "M3_INVERSE_TARGET", "M4_HIDDEN_STRUCTURE", "M5_METHOD_DISCRIMINATION", "M6_FAMILY_DISCRIMINATION", "M7_MULTI_STEP_SYNTHESIS", "M8_MIXED_COMPETITIVE"]},
+        "core2b_max_demand_level": {"enum": ["M0_DIRECT", "M1_CONTROLLED_VARIATION", "M2_REPRESENTATION_TRANSFER", "M3_INVERSE_TARGET", "M4_HIDDEN_STRUCTURE", "M5_METHOD_DISCRIMINATION", "M6_FAMILY_DISCRIMINATION", "M7_MULTI_STEP_SYNTHESIS", "M8_MIXED_COMPETITIVE"]},
+        "problem_ttu_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+        "knowledge_percent_is_mastery_claim": {"const": false}
+      }
+    },
+    "stageRealization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "identity", "ttu_family", "ttu_ids", "canonical_answer_available", "independent_verification_required"],
+      "properties": {
+        "stage": {"$ref": "#/$defs/stage"},
+        "identity": {"enum": ["DECLARATIVE_CONCEPT_REFERENCE", "OPEN_CONCEPT_RECONSTRUCTION_TUTOR", "ADAPTIVE_DECLARATIVE_PROBLEM_REFERENCE", "ADAPTIVE_OPEN_PROBLEM_TUTOR"]},
+        "ttu_family": {"$ref": "#/$defs/ttuFamily"},
+        "ttu_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+        "canonical_answer_available": {"const": true},
+        "independent_verification_required": {"const": true}
+      }
+    }
+  }
+}
