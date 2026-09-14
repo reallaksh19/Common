@@ -26,6 +26,10 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
       - name: Run B-layer runtime-boundary falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_b_layer_boundary.py"
+      - name: Run Core1B observed-evidence runtime falsifiers
+        run: python "Grade 9/V2/Physics/Core1B/tests/test_core1b_runtime.py"
+      - name: Run Core2B exact-pool transfer runtime falsifiers
+        run: python "Grade 9/V2/Physics/Core2B/tests/test_core2b_runtime.py"
       - name: Run adaptive-routing golden fixtures
         run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
       - name: Run blueprint routing tests
