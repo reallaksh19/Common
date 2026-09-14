@@ -14,11 +14,8 @@ if str(HERE) not in sys.path:
 from blueprint_common import digest, fail, load, validate_schema
 
 
-def _bound(ref, digest_value, delivery=None) -> bool:
-    ok = bool(ref and digest_value)
-    if delivery is not None:
-        ok = ok and delivery == "STATIC"
-    return ok
+def _bound(ref, digest_value, delivery) -> bool:
+    return bool(ref and digest_value and delivery == "STATIC")
 
 
 def _status(doc: dict) -> str:
