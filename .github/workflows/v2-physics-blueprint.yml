@@ -30,6 +30,8 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_self_help_core_grammar.py"
       - name: Validate V7 CDAU SDU LAU and TTU v3 architecture
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_cdau_sdu_lau_ttu_v7.py"
+      - name: Validate SBA23 V7 realization and source-hold boundaries
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_sba23_v7_realization.py"
       - name: Run B-layer runtime-boundary falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_b_layer_boundary.py"
       - name: Run Core1B observed-evidence runtime falsifiers
