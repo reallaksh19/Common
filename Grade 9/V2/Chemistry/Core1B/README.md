@@ -64,7 +64,7 @@ The help is fixed at compilation time. No learner response is consumed while the
 Core1B may instantiate:
 
 - observation -> evidence -> inference;
-- macroscopic -> particle/model -> symbolic translation when upstream-authorized;
+- macroscopic -> particle/model -> symbolic translation **only when upstream-authorized**;
 - species identity tracking;
 - conservation / charge / oxidation-state ledgers;
 - correct-vs-plausible-wrong contrast;
@@ -74,6 +74,41 @@ Core1B may instantiate:
 - concept-level retrieval and delayed recall prompts.
 
 A visual must perform one of the v4 named reasoning jobs. Decorative image count does not satisfy depth.
+
+## Production-depth HARD Redox golden
+
+`golden/hard-redox-production/` is the first deliberate **production-depth** Core1B bucket rather than a one-page contract golden.
+
+It consumes the existing Redox Core1A authority and does not modify Core1A. The bucket is `HARD`, has a 30-page v4 ceiling, and realizes **24 pages** across eight researched sub-subtopics:
+
+```text
+species identity
+oxidation-state meaning
+direction -> Redox label
+electron consequence
+agent role
+representation translation
+misconception / boundary diagnosis
+fading / teach-back
+```
+
+Each sub-subtopic receives three learner actions, giving 24 pages total. Every page remains open-ended and closes with fixed self-help, a canonical response and an independent check.
+
+The deep-research packet records four sources addressing Redox misconceptions, high-school electrochemical concept difficulty, representation coordination and worked-example/fading design. Research may improve realization, but it does **not** expand Chemistry authority. In particular, the current Redox production profile authorizes this depth extension at the symbolic level, so this golden deliberately refuses particle/submicroscopic Redox visuals unless upstream authority expands later.
+
+The production compiler is:
+
+```text
+engine/compile_hard_redox_bucket.py
+```
+
+and emits:
+
+```text
+core1b_hard_plan.json
+chemistry_core1b_hard_redox.pdf
+core1b_hard_quality_audit.json
+```
 
 ## Static boundary
 
@@ -92,7 +127,7 @@ mastery_update
 
 ## Outputs
 
-The reference compiler emits:
+The compact reference compiler emits:
 
 ```text
 core1b_plan.json
@@ -102,7 +137,8 @@ core1b_quality_audit.json
 
 The plan and audit retain the resolved v4 bucket ID, difficulty badge, page-envelope ceiling, research mode and control axis.
 
-The first goldens validate:
+Current goldens validate:
 
 1. an `EASY` observation/evidence/inference bucket;
-2. a `HARD` Redox species/oxidation-state/agent-role bucket with deep-research and sub-subtopic decomposition authority.
+2. a compact `HARD` Redox species/oxidation-state/agent-role contract golden;
+3. a 24-page production-depth `HARD` Redox self-tutor with deep research, sub-subtopic decomposition, symbolic-authority custody and complete per-page answer closure.
