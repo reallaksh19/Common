@@ -45,7 +45,7 @@ def _add_derivation(page: dict) -> str:
     bid = page["page_id"] + "-DERIVATION"
     page["technical_blocks"].append(bp.block(
         bid, "DERIVATION", "DERIVED_MATHEMATICS", list(anchor["math_refs"]), nodes,
-        upstream=anchor["block_id"], transform="DERIVE",
+        upstream=anchor["block_id"], transform="BUILD",
         authority_refs=list(anchor.get("authority_refs") or anchor["math_refs"]),
     ))
     return bid
@@ -132,8 +132,8 @@ def materialize_uniform_depth(pages: list[dict], badge: str, book: dict) -> list
     if len(c1a) != len(book.get("buckets", [])) or len(c1a) != len(c1b):
         fail("MATH_INTRINSIC_DEPTH_BUCKET_PAGE_ALIGNMENT_DRIFT")
 
-    for i, (a, b, bucket) in enumerate(zip(c1a, c1b, book["buckets"]), 1):
-        deriv = _add_derivation(a)
+    for a, b, bucket in zip(c1a, c1b, book["buckets"]):
+        _add_derivation(a)
         model = _first(a, "CASE_ANALYSIS") or a["technical_blocks"][0]
         counter = _first(a, "COUNTEREXAMPLE")
         verify = _first(a, "VERIFICATION")
@@ -142,13 +142,12 @@ def materialize_uniform_depth(pages: list[dict], badge: str, book: dict) -> list
         visible = [x["text"] for x in model.get("render_nodes", []) if x.get("type") in {"PARAGRAPH", "STEP", "MATH"}]
         _add_representation(a, "SYMBOL-BRIDGE", "SYMBOL_MAP", visible[:4] or [a["page_purpose"]])
 
-        # Core1B medium+ must explicitly contrast methods/errors and rebuild with less support.
         if not _first(b, "COUNTEREXAMPLE"):
             fail("MATH_INTRINSIC_DEPTH_CORE1B_CONTRAST_MISSING", b["page_id"])
 
         if badge == "HARD":
-            _add_representation(a, "FLOW", "FLOW_DEPENDENCY", visible[:5] or [a["page_purpose"]])
-            _add_representation(b, "FLOW", "FLOW_DEPENDENCY", [b["page_purpose"]])
+            _add_representation(a, "FLOW", "FLOW", visible[:5] or [a["page_purpose"]])
+            _add_representation(b, "FLOW", "FLOW", [b["page_purpose"]])
             _second_ttu(a, b)
             _add_transfer_bridge(a, bucket)
 
