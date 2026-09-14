@@ -1,0 +1,8 @@
+{
+  "schema_version": "7.0.0",
+  "product_mode": "CORE2B",
+  "observed_actions": ["ATTEMPT", "MODEL_OR_REPRESENTATION_CHOICE", "FIRST_MOVE_COMMITMENT", "JUSTIFY", "VERIFY"],
+  "dominant_mode": "OPEN_PROBLEM_TUTOR",
+  "major_ttu_count": 5,
+  "learner_generated_major_ttu_count": 4
+}
