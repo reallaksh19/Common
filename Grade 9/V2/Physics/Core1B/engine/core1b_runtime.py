@@ -6,6 +6,7 @@ ALLOWED_BASES={"LEARNER_RESPONSE","DIAGNOSTIC","TEACHER_OBSERVATION"}
 FORBIDDEN_SURFACE=("ATOM_","DIAGNOSTIC_BRANCH","STATE_FRAGILE","REPAIR_","TRANSFER_READY")
 BASE_REQUIREMENTS={"recognise","represent","first_move","finish","check"}
 INDEPENDENT_HINTS={"NO_HINT","RETRIEVAL_CUE"}
+SECURE_EVENT_KINDS={"ATOM_CHECK","INDEPENDENT_ATTEMPT","RETRIEVAL_ATTEMPT"}
 
 class Core1BRuntimeError(ValueError): pass
 
@@ -57,11 +58,19 @@ def validate_event(event:Mapping, previous_events:Sequence[Mapping]=())->None:
     if event.get("event_sequence")!=expected: raise Core1BRuntimeError("CORE1B_EVENT_SEQUENCE_NOT_APPEND_ONLY")
     if event.get("supersedes_event_id") is not None and event.get("supersedes_event_id") not in ids: raise Core1BRuntimeError("CORE1B_SUPERSESSION_UNKNOWN_EVENT")
 
+def _is_secure_observed_event(event:Mapping)->bool:
+    return (
+        event.get("basis") in ALLOWED_BASES
+        and event.get("outcome")=="PASS"
+        and event.get("event_kind") in SECURE_EVENT_KINDS
+        and event.get("hint_level_used") in INDEPENDENT_HINTS
+        and event.get("event_digest")==digest_without(event,"event_digest")
+    )
+
 def secure_atom_refs(events:Sequence[Mapping])->set[str]:
     secure=set()
     for e in events:
-        if e.get("basis") in ALLOWED_BASES and e.get("outcome")=="PASS" and e.get("event_digest")==digest_without(e,"event_digest"):
-            secure.update(e.get("atom_refs") or [])
+        if _is_secure_observed_event(e): secure.update(e.get("atom_refs") or [])
     return secure
 
 def required_criteria(unit:Mapping, authority:Mapping)->set[str]:
@@ -108,6 +117,6 @@ def build_release_receipt(unit:Mapping,registry:Mapping,authority:Mapping,events
     state=derive_state(unit,authority,events)
     if state!="INDEPENDENT": raise Core1BRuntimeError("CORE1B_OBSERVED_INDEPENDENT_EVIDENCE_REQUIRED")
     relevant=[e for e in events if e.get("capability_id")==unit.get("capability_id") and e.get("problem_family_ref")==unit.get("problem_family_ref")]
-    reps=sorted({e.get("representation_used") for e in relevant if e.get("outcome")=="PASS" and e.get("representation_used")})
+    reps=sorted({e.get("representation_used") for e in relevant if _is_secure_observed_event(e) and e.get("representation_used")})
     out={"schema_version":"1.0.0","receipt_id":"C1B-REL-"+unit["unit_id"],"learner_profile_ref":relevant[-1]["learner_profile_ref"],"capability_id":unit["capability_id"],"problem_family_ref":unit["problem_family_ref"],"core1a_release_ref":authority["authority_ref"],"core1a_release_digest":authority["authority_digest"],"state":"INDEPENDENT","observed_events":[{"event_ref":e["event_id"],"event_digest":e["event_digest"]} for e in relevant],"representation_evidence":reps,"unresolved_required_atoms":[],"semantics":"OBSERVED_INDEPENDENT_RELEASE_NOT_TRANSFER_LEGALITY"}
     out["receipt_digest"]=digest(out); return out
