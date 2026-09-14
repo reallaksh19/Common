@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.1.0",
+  "subject": "CHEMISTRY",
+  "delivery_mode": "STATIC",
+  "source_core1a_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+  "instruction_bucket": {
+    "schema_version": "4.0.0",
+    "bucket_id": "BUCKET-EASY-OBSERVATION-INFERENCE",
+    "subject": "CHEMISTRY",
+    "subtopic_id": "observation-inference",
+    "title": "Observation, evidence and chemical inference",
+    "difficulty_badge": "EASY",
+    "page_envelope": {
+      "max_pages": 10,
+      "is_ceiling_not_quota": true
+    },
+    "research": {
+      "mode": "OPTIONAL",
+      "research_refs": []
+    },
+    "visual_plan": {
+      "visual_jobs": [
+        "PHENOMENON_VISUAL",
+        "COMPARISON_VISUAL"
+      ]
+    },
+    "decomposition": {
+      "decision": "NOT_NEEDED",
+      "sub_subtopic_ids": []
+    },
+    "realization_modes": [
+      "CORE1A",
+      "CORE1B"
+    ]
+  },
+  "capability_ref": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+  "approved_capability_refs": [
+    "CAP-SEPARATE-OBSERVATION-INFERENCE"
+  ],
+  "problem_family_ref": "PF-EVIDENCE_TO_CLAIM",
+  "approved_problem_family_refs": [
+    "PF-EVIDENCE_TO_CLAIM"
+  ],
+  "new_chemistry_refs": [],
+  "title": "Separate observation, evidence and chemical inference",
+  "representation_summary": "A colourless gas is evolved. When tested with a lighted splint, it burns with a pop sound. Keep the observation/test separate from the chemical claim it supports.",
+  "task_prompt": "Write a complete evidence-to-claim response. State what is directly observed or tested, what you infer chemically, and why the evidence supports that inference. Then identify one wording error a learner could make by confusing observation with inference.",
+  "workspace_lines": 5,
+  "help_mode": "PROGRESSIVE_FIXED",
+  "help": [
+    {
+      "level": "H1_ORIENT",
+      "text": "Ask first: what could you directly observe or record without naming the gas?"
+    },
+    {
+      "level": "H2_REPRESENT",
+      "text": "Use two columns: OBSERVATION / TEST on the left and CHEMICAL INFERENCE on the right."
+    },
+    {
+      "level": "H3_PRINCIPLE",
+      "text": "The claim must not say more than the recorded observation or test can support."
+    },
+    {
+      "level": "H4_FIRST_MOVE",
+      "text": "Write 'gas evolved; lighted splint gives a pop sound' before writing any gas identity."
+    }
+  ],
+  "canonical_answer": "Observation/test: a gas is evolved and a lighted splint produces a pop sound. Chemical inference: the gas is hydrogen. Evidence link: the pop test supports the hydrogen inference. A common wording error is to write 'I observed hydrogen'; hydrogen is the inference, not the direct observation.",
+  "explanation": "The reasoning remains valid because the evidence is stated before the chemical claim, and the claim is no stronger than the test result supports.",
+  "check": "Could another reader see which sentence is the observation, which is the inference, and which evidence connects them?",
+  "cognitive_moves": [
+    "REPRESENT",
+    "EXPLAIN",
+    "CORRECT",
+    "GENERALIZE"
+  ]
+}
