@@ -38,6 +38,23 @@ class ProductionKitTests(unittest.TestCase):
         self.assertEqual(profiles['COMPETITION']['settings']['question_mix']['mixed_synthesis'],0.20)
         self.assertEqual(profiles['STARTER']['settings']['question_mix']['competitive'],0.0)
 
+    def test_core2a_knowledge_support_profiles_are_material(self):
+        profiles=c2a.load_knowledge_support_profiles(ROOT/'common'/'profiles'/'knowledge-support-profiles.json')
+        self.assertEqual(set(profiles),{'FOUNDATION_GUIDED','STANDARD_GUIDED','REDUCED_SUPPORT','ADVANCED_APPLIED'})
+        base=prim.build_scaffold_plan('PRACTICE',prim.load_scaffold_profiles(ROOT/'common'/'profiles'/'scaffold-profiles.json'),'B1')
+        foundation=c2a.apply_knowledge_support_profile(base,'FOUNDATION_GUIDED',profiles)
+        advanced=c2a.apply_knowledge_support_profile(base,'ADVANCED_APPLIED',profiles)
+        self.assertNotEqual(foundation['settings']['worked_example_density'],advanced['settings']['worked_example_density'])
+        self.assertNotEqual(foundation['settings']['help_visibility'],advanced['settings']['help_visibility'])
+        self.assertNotEqual(foundation['scaffold_plan_id'],advanced['scaffold_plan_id'])
+
+    def test_core2a_candidate_demand_ceiling_is_operational(self):
+        direct={'slot':'GUIDED_DIRECT'}; hidden={'slot':'HIDDEN_INFORMATION'}; synth={'slot':'MIXED_SYNTHESIS'}
+        self.assertTrue(c2a.candidate_within_ceiling(direct,'M1_CONTROLLED_VARIATION'))
+        self.assertFalse(c2a.candidate_within_ceiling(hidden,'M3_INVERSE_TARGET'))
+        self.assertTrue(c2a.candidate_within_ceiling(hidden,'M4_HIDDEN_STRUCTURE'))
+        self.assertFalse(c2a.candidate_within_ceiling(synth,'M6_FAMILY_DISCRIMINATION'))
+
     def test_benchmark_registry_never_becomes_curriculum_authority(self):
         reg=load(ROOT/'common'/'registry'/'benchmark-source-registry.json')
         self.assertGreaterEqual(len(reg['sources']),3)
@@ -98,6 +115,13 @@ class ProductionKitTests(unittest.TestCase):
         path=ROOT.parents[0]/'MathBlueprint'/'SELF_TEACHING.md'
         self.assertTrue(path.exists())
         self.assertIn('MathBlueprint/SELF_TEACHING.md',manifest['self_teaching_contract'])
+
+    def test_core2a_requires_generation_calibration(self):
+        manifest=load(ROOT/'Core2A'/'KIT_MANIFEST.json')
+        self.assertTrue(manifest['knowledge_gate']['required'])
+        self.assertTrue(manifest['knowledge_gate']['waivable_by_owner'])
+        self.assertTrue(manifest['knowledge_gate']['no_silent_default'])
+        self.assertEqual(set(manifest['knowledge_gate']['resolved_controls']),{'CORE2A_SUPPORT_PROFILE','CORE2A_MAX_DEMAND_LEVEL','CORE2B_MAX_DEMAND_LEVEL'})
 
     def test_exactly_three_golden_fixtures(self):
         self.assertEqual(len(list((ROOT/'golden').glob('*.json'))),3)
