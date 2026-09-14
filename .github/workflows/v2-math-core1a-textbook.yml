@@ -125,7 +125,7 @@ jobs:
 
       - name: Run genuinely bound four-producer release golden
         run: |
-          python 'Grade 9/V2/Mathematics/MathBlueprint/engine/run_bound_producer_release_golden.py' \
+          python 'Grade 9/V2/Mathematics/MathBlueprint/engine/run_bound_producer_release_golden_entry.py' \
             --core1-plan /tmp/core1a/core1_study_plan.json \
             --study-model /tmp/core1a/learner_study_model.json \
             --core2-plan /tmp/core1a/core2_plan.json \
