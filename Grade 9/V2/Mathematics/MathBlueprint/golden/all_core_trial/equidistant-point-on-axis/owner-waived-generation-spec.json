@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.1.0",
+  "subject": "MATHEMATICS",
+  "core1_buckets": [
+    {
+      "bucket_id": "BUCKET-COORD-EQDIST-AXIS",
+      "subtopic_title": "Point on an Axis Equidistant from Two Fixed Points",
+      "difficulty_badge": "MEDIUM",
+      "difficulty_badge_basis": "CORE1_SEMANTIC_COMPLEXITY",
+      "target_page_budget": 16,
+      "subsubtopic_plan": [
+        "Axis constraint and point parameterisation",
+        "Two coordinate-distance models",
+        "Equidistance as equality of squared distances",
+        "Expansion, cancellation and reduced linear equation",
+        "Symmetry shortcut versus general method",
+        "Perpendicular-bisector locus interpretation"
+      ],
+      "pedagogy_research_brief_ref": "RESEARCH-BRIEF-EQDIST-MEDIUM-v1",
+      "pedagogy_web_research_refs": [
+        "https://openstax.org/books/college-algebra-2e/pages/2-1-the-rectangular-coordinate-systems-and-graphs",
+        "https://www.geogebra.org/m/rmpnhgc5"
+      ],
+      "source_integrity_verification_refs": []
+    }
+  ],
+  "core2_calibration": {
+    "purpose": "PRACTICE",
+    "learner_knowledge_percent": null,
+    "knowledge_percent_source_ref": null,
+    "knowledge_calibration_policy_ref": null,
+    "owner_waiver": {
+      "owner_ref": "CHAT-OWNER-APPROVAL-2026-09-14T11:40:41Z",
+      "reason": "Owner instructed the all-core trial to proceed after the missing-calibration gate was explicitly reported; reuse the already exercised reduced-support M4 practice ceiling as the operational owner-selected control set.",
+      "selected_core2a_support_profile": "REDUCED_SUPPORT",
+      "selected_core2a_max_demand_level": "M4_HIDDEN_STRUCTURE",
+      "selected_core2b_max_demand_level": "M4_HIDDEN_STRUCTURE"
+    },
+    "resolved_core2a_support_profile": "REDUCED_SUPPORT",
+    "resolved_core2a_max_demand_level": "M4_HIDDEN_STRUCTURE",
+    "resolved_core2b_max_demand_level": "M4_HIDDEN_STRUCTURE"
+  }
+}
