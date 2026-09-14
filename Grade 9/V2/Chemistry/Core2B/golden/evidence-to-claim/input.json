@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.1.0",
+  "subject": "CHEMISTRY",
+  "delivery_mode": "STATIC",
+  "source_core2a_ref": "CHEM-NCERT-REDOX-SOURCE-v1",
+  "purpose": "PRACTICE",
+  "question_mode": "FROZEN_SOURCE_ITEM",
+  "learner_conditioning": {
+    "schema_version": "4.0.0",
+    "mode": "KNOWLEDGE_PERCENT",
+    "knowledge_percent": 50
+  },
+  "selected_item_id": "U2Q35",
+  "legal_core2a_item_ids": [
+    "U2Q15C",
+    "U2Q35"
+  ],
+  "new_chemistry_refs": [],
+  "source_item": {
+    "item_id": "U2Q35",
+    "source_locator": "NCERT Class IX Science Exemplar - Unit 2 Q35",
+    "provenance_class": "SOURCE_CORE2",
+    "problem_family_ref": "PF-EVIDENCE_TO_CLAIM",
+    "stem": "Iron filings and sulphur were mixed together and divided into two parts, A and B. Part A was heated strongly while Part B was not heated. Dilute hydrochloric acid was added to both parts and evolution of gas was seen in both cases. How will you identify the gases evolved?",
+    "canonical_answer": "Part A gives hydrogen sulphide; part B gives hydrogen. Hydrogen sulphide has a characteristic rotten-egg odour; hydrogen is identified by the pop test."
+  },
+  "workspace_lines": 10,
+  "help_mode": "PROGRESSIVE_FIXED",
+  "help": [
+    {
+      "level": "H1_ORIENT",
+      "text": "The target is not merely to name two gases; you must connect each part to identifying evidence."
+    },
+    {
+      "level": "H2_STRUCTURE",
+      "text": "Treat Part A and Part B as two separate evidence chains. Do not combine them."
+    },
+    {
+      "level": "H3_REPRESENTATION",
+      "text": "Use a two-row table: Part | what material is present before HCl | gas | identifying observation/test."
+    },
+    {
+      "level": "H4_PRINCIPLE",
+      "text": "A gas identity is an inference; it must be supported by the observation or test used to identify it."
+    },
+    {
+      "level": "H5_FIRST_MOVE",
+      "text": "Start with Part A: strong heating makes iron and sulphur react before HCl is added. Then handle Part B separately."
+    },
+    {
+      "level": "H6_PARTIAL_PATH",
+      "text": "Part A leads to hydrogen sulphide and Part B leads to hydrogen. Now supply the identification evidence for each without mixing the two chains."
+    },
+    {
+      "level": "H7_FULL_SOLUTION",
+      "text": "See the complete worked solution below."
+    },
+    {
+      "level": "H8_VERIFY_REFLECT",
+      "text": "Verify that each gas identity is paired with its own evidence and that the heated/unheated branches were never merged."
+    }
+  ],
+  "full_solution": "For Part A, strong heating causes iron and sulphur to form iron sulphide; with dilute HCl the evolved gas is hydrogen sulphide, identified by its characteristic foul/rotten-egg odour (and the governed marking point also records blackening with lead acetate). For Part B, the unheated mixture still contains iron; iron with dilute HCl evolves hydrogen, identified by the pop test. The answer is valid because each chemical inference is tied to the correct branch and its own identifying evidence.",
+  "verify_reflect": "Can you point to the exact observation/test supporting each gas identity? If the gas names were removed, could you reconstruct them from the two evidence chains rather than from memory?",
+  "difficulty_dimensions": {
+    "conceptual_novelty": "LOW",
+    "representation_distance": "MODERATE",
+    "method_visibility": "HIDDEN",
+    "discrimination": "TWO_BRANCH",
+    "step_depth": "MULTI_STAGE",
+    "information_structure": "SPLIT_CASE",
+    "reversal": "NONE",
+    "synthesis": "SINGLE_FAMILY",
+    "calculation_burden": "NONE",
+    "time_pressure": "UNTIMED"
+  }
+}
