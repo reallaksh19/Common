@@ -1,0 +1,39 @@
+{
+  "schema_version": "7.0.0",
+  "ccbom_id": "CCBOM-REDOX-STATE-001",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "registry_ref": "REG-REDOX-001",
+  "assets": [
+    {
+      "asset_id": "EQ-ZN-OX-HALF",
+      "asset_class": "EQUATION",
+      "authority_ref": "REG-EQ-ZN-OX-HALF",
+      "core_dispositions": {
+        "CORE1": {"disposition": "MUST_REFERENCE", "realization_ref": "C1-EQ-LEDGER"},
+        "CORE1A": {"disposition": "MUST_REALIZE", "realization_ref": "A1-EQ-ANATOMY-ZN"},
+        "CORE1B": {"disposition": "MUST_RECONSTRUCT", "realization_ref": "B1-TTU-EQ-SKELETON-ZN"},
+        "CORE2": {"disposition": "OPTIONAL"},
+        "CORE2A": {"disposition": "MUST_APPLY", "realization_ref": "A2-Q-REDOX-WORKED-EQ"},
+        "CORE2B": {"disposition": "MUST_SELECT_OR_RECONSTRUCT", "realization_ref": "B2-Q-REDOX-FIRST-MOVE-EQ"}
+      }
+    },
+    {
+      "asset_id": "MIS-OXSTATE-VS-CHARGE",
+      "asset_class": "MISCONCEPTION",
+      "authority_ref": "REG-MIS-OXSTATE-CHARGE",
+      "core_dispositions": {
+        "CORE1": {"disposition": "MUST_REFERENCE", "realization_ref": "C1-MIS-CONTRAST"},
+        "CORE1A": {"disposition": "MUST_REALIZE", "realization_ref": "A1-MIS-TABLE"},
+        "CORE1B": {"disposition": "MUST_RECONSTRUCT", "realization_ref": "B1-TTU-ERROR-DIAGNOSIS"},
+        "CORE2": {"disposition": "NOT_APPLICABLE"},
+        "CORE2A": {"disposition": "MUST_APPLY", "realization_ref": "A2-ERROR-TRAP"},
+        "CORE2B": {"disposition": "MUST_SELECT_OR_RECONSTRUCT", "realization_ref": "B2-DIAGNOSE-WRONG-ROUTE"}
+      }
+    }
+  ],
+  "coverage_summary": {
+    "mandatory_total": 10,
+    "mandatory_closed": 10,
+    "unresolved_asset_ids": []
+  }
+}
