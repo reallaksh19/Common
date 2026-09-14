@@ -43,6 +43,73 @@
     {"object_id":"H-BOUND","atom_id":"LA-OS-TRACK","job":"BOUNDARY_CHALLENGE","payload_type":"PRACTICE"},
     {"object_id":"H-RECON","atom_id":"LA-AGENT-ROLE","job":"INDEPENDENT_RECONSTRUCTION","payload_type":"RETRIEVAL"}
   ],
+  "reconstructable_ttus": [
+    {
+      "ttu_id": "TTU-1B-OS-LANE",
+      "owner_id": "LA-OS-TRACK",
+      "ttu_type": "OXIDATION_STATE_LANE",
+      "cognitive_job": "TRACK_BEFORE_AFTER",
+      "learner_action": "Without a completed model, reconstruct both oxidation-state lanes and decide which species is oxidised and reduced.",
+      "initial_state": {
+        "reaction": "Zn + Cu2+ -> Zn2+ + Cu",
+        "zn_lane": "[blank] -> [blank] -> [blank process]",
+        "cu_lane": "[blank] -> [blank] -> [blank process]"
+      },
+      "missing_elements": [
+        {"element_id":"B-OS-ZN-R","semantic_role":"Zn reactant oxidation state"},
+        {"element_id":"B-OS-ZN-P","semantic_role":"Zn product oxidation state"},
+        {"element_id":"B-OS-ZN-PROC","semantic_role":"Zn oxidation/reduction label"},
+        {"element_id":"B-OS-CU-R","semantic_role":"Cu reactant oxidation state"},
+        {"element_id":"B-OS-CU-P","semantic_role":"Cu product oxidation state"},
+        {"element_id":"B-OS-CU-PROC","semantic_role":"Cu oxidation/reduction label"}
+      ],
+      "canonical_complete_state": {
+        "zn_lane": "0 -> +2 -> oxidation",
+        "cu_lane": "+2 -> 0 -> reduction"
+      },
+      "hint_ladder": [
+        {"hint_id":"B-OS-H1","targets_missing_element_ids":["B-OS-ZN-R","B-OS-ZN-P","B-OS-CU-R","B-OS-CU-P"],"hint_text":"Match the same element before and after; free elements are 0 and monatomic ions take their charge."},
+        {"hint_id":"B-OS-H2","targets_missing_element_ids":["B-OS-ZN-PROC","B-OS-CU-PROC"],"hint_text":"Oxidation state up means oxidation; down means reduction."}
+      ],
+      "verification_rule": "A valid reconstruction must show one oxidation and one reduction, with opposite electron directions and a balanced 2 e- transfer.",
+      "representation_authority_refs": ["C-H:SYMBOLIC_FORMULA", "CORE1A:REDOX-OXIDATION-STATE-LANE"],
+      "exposure_mode": "RECONSTRUCT_BEFORE_CANONICAL",
+      "new_chemistry_refs": []
+    },
+    {
+      "ttu_id": "TTU-1B-AGENT-TREE",
+      "owner_id": "LA-AGENT-ROLE",
+      "ttu_type": "DECISION_TREE",
+      "cognitive_job": "SELECT_PATH",
+      "learner_action": "Complete the decision tree from SELF oxidation/reduction to electron action to agent name, then apply it to Zn and Cu2+.",
+      "initial_state": {
+        "tree": "SELF change? -> [oxidised/reduced] -> [electron action] -> [agent role]",
+        "application": "Zn -> [blank]; Cu2+ -> [blank]"
+      },
+      "missing_elements": [
+        {"element_id":"B-AG-OX-E","semantic_role":"electron action when reactant is oxidised"},
+        {"element_id":"B-AG-OX-R","semantic_role":"agent role when reactant is oxidised"},
+        {"element_id":"B-AG-RED-E","semantic_role":"electron action when reactant is reduced"},
+        {"element_id":"B-AG-RED-R","semantic_role":"agent role when reactant is reduced"},
+        {"element_id":"B-AG-ZN","semantic_role":"agent classification of Zn"},
+        {"element_id":"B-AG-CU","semantic_role":"agent classification of Cu2+"}
+      ],
+      "canonical_complete_state": {
+        "oxidised_path": "oxidised -> loses/gives e- -> reducing agent",
+        "reduced_path": "reduced -> gains/accepts e- -> oxidising agent",
+        "application": "Zn = reducing agent; Cu2+ = oxidising agent"
+      },
+      "hint_ladder": [
+        {"hint_id":"B-AG-H1","targets_missing_element_ids":["B-AG-OX-E","B-AG-RED-E"],"hint_text":"Translate oxidation/reduction into electron loss/gain first."},
+        {"hint_id":"B-AG-H2","targets_missing_element_ids":["B-AG-OX-R","B-AG-RED-R"],"hint_text":"Agent names describe what the reactant causes in the other species, so the name is opposite its own process."},
+        {"hint_id":"B-AG-H3","targets_missing_element_ids":["B-AG-ZN","B-AG-CU"],"hint_text":"Apply the two completed branches to Zn and Cu2+."}
+      ],
+      "verification_rule": "If the learner labels an oxidised reactant as oxidising agent or a reduced reactant as reducing agent, the reconstruction fails the SELF-vs-OTHER check.",
+      "representation_authority_refs": ["CORE1A:REDOX-AGENT-ROLE-MAP"],
+      "exposure_mode": "RECONSTRUCT_BEFORE_CANONICAL",
+      "new_chemistry_refs": []
+    }
+  ],
   "practice_closure": {
     "constructive_task_count": 4,
     "self_help_ladder_count": 2,
@@ -50,16 +117,16 @@
     "verification_check_count": 2
   },
   "research_translation": [
-    {"research_ref":"R-REDOX-MISCONCEPTIONS","decision":"Turn common agent inversion into error diagnosis","technical_object_ids":["AG-CORRECT","H-ERROR"]},
-    {"research_ref":"R-REPRESENTATION-COORDINATION","decision":"Require equation-to-state-ledger translation","technical_object_ids":["OS-REP","H-TRANS"]}
+    {"research_ref":"R-REDOX-MISCONCEPTIONS","decision":"Turn common agent inversion into a decision-tree reconstruction","technical_object_ids":["AG-CORRECT","H-ERROR"],"ttu_ids":["TTU-1B-AGENT-TREE"]},
+    {"research_ref":"R-REPRESENTATION-COORDINATION","decision":"Require equation-to-state-lane reconstruction before canonical reveal","technical_object_ids":["OS-REP","H-TRANS"],"ttu_ids":["TTU-1B-OS-LANE"]}
   ],
   "page_plan": [
-    {"page_id":"P1","page_role":"PRACTICE","expected_active_area_ratio":0.68,"technical_object_ids":["OS-PRED","OS-REP","H-TRANS"],"learner_action_ids":["ACT-TRACK"]},
-    {"page_id":"P2","page_role":"WORKSPACE","expected_active_area_ratio":0.44,"technical_object_ids":["OS-JUST","OS-CORRECT","H-BOUND"],"learner_action_ids":["ACT-EXPLAIN","ACT-COMPARE"],"workspace_justification":"Learner writes oxidation-state evidence and repairs a false redox trigger."},
-    {"page_id":"P3","page_role":"PRACTICE","expected_active_area_ratio":0.65,"technical_object_ids":["OS-HELP","OS-CANON","OS-VERIFY","OS-TEACH"],"learner_action_ids":["ACT-TEACHBACK"]},
-    {"page_id":"P4","page_role":"PRACTICE","expected_active_area_ratio":0.68,"technical_object_ids":["AG-PRED","AG-REP","AG-JUST"],"learner_action_ids":["ACT-ROLE-MAP"]},
-    {"page_id":"P5","page_role":"WORKSPACE","expected_active_area_ratio":0.46,"technical_object_ids":["AG-CORRECT","H-ERROR","H-RECON"],"learner_action_ids":["ACT-DIAGNOSE","ACT-RECONSTRUCT"],"workspace_justification":"Learner diagnoses self-change versus agent role before opening help."},
-    {"page_id":"P6","page_role":"PRACTICE","expected_active_area_ratio":0.66,"technical_object_ids":["AG-HELP","AG-CANON","AG-VERIFY","AG-TEACH"],"learner_action_ids":["ACT-VERIFY"]}
+    {"page_id":"P1","page_role":"TTU_RECONSTRUCTION","expected_active_area_ratio":0.49,"technical_object_ids":["OS-PRED","OS-REP","H-TRANS"],"ttu_ids":["TTU-1B-OS-LANE"],"learner_action_ids":["ACT-TRACK"],"workspace_justification":"The incomplete oxidation-state lane is the main learner task; blank area is reserved for reconstruction, not padding."},
+    {"page_id":"P2","page_role":"WORKSPACE","expected_active_area_ratio":0.44,"technical_object_ids":["OS-JUST","OS-CORRECT","H-BOUND"],"ttu_ids":[],"learner_action_ids":["ACT-EXPLAIN","ACT-COMPARE"],"workspace_justification":"Learner writes oxidation-state evidence and repairs a false redox trigger."},
+    {"page_id":"P3","page_role":"PRACTICE","expected_active_area_ratio":0.65,"technical_object_ids":["OS-HELP","OS-CANON","OS-VERIFY","OS-TEACH"],"ttu_ids":[],"learner_action_ids":["ACT-TEACHBACK"]},
+    {"page_id":"P4","page_role":"TTU_RECONSTRUCTION","expected_active_area_ratio":0.50,"technical_object_ids":["AG-PRED","AG-REP","AG-JUST"],"ttu_ids":["TTU-1B-AGENT-TREE"],"learner_action_ids":["ACT-ROLE-MAP"],"workspace_justification":"The learner reconstructs the agent decision tree before any canonical agent labels are shown."},
+    {"page_id":"P5","page_role":"WORKSPACE","expected_active_area_ratio":0.46,"technical_object_ids":["AG-CORRECT","H-ERROR","H-RECON"],"ttu_ids":[],"learner_action_ids":["ACT-DIAGNOSE","ACT-RECONSTRUCT"],"workspace_justification":"Learner diagnoses self-change versus agent role before opening help."},
+    {"page_id":"P6","page_role":"PRACTICE","expected_active_area_ratio":0.66,"technical_object_ids":["AG-HELP","AG-CANON","AG-VERIFY","AG-TEACH"],"ttu_ids":[],"learner_action_ids":["ACT-VERIFY"]}
   ],
   "cross_core_reuse_audit": {
     "shared_expository_block_count": 0,
