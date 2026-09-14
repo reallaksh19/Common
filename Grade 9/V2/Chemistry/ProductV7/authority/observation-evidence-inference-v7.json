@@ -1,0 +1,93 @@
+{
+  "schema_version": "7.0.0",
+  "subtopic_id": "CHEM-OBS-EVIDENCE-INFERENCE",
+  "bucket": "Chemical Change > Observation, Evidence and Inference",
+  "capability_id": "CAP-SEPARATE-OBSERVATION-INFERENCE",
+  "problem_family": "PF-EVIDENCE_TO_CLAIM",
+  "difficulty": {
+    "badge": "MEDIUM",
+    "dimensions": {
+      "prerequisite_depth": 1,
+      "element_interactivity": 1,
+      "inferential_jumps": 2,
+      "representation_translation": 2,
+      "abstraction": 1,
+      "model_discrimination": 2,
+      "condition_sensitivity": 1,
+      "misconception_density": 2,
+      "symbolic_quantitative_coupling": 0,
+      "synthesis": 2
+    }
+  },
+  "research_dossier": {
+    "research_level": "TARGETED",
+    "sources": [
+      {
+        "id": "RSC-C8RP00301G",
+        "citation": "Gkitzia, Salta & Tzougraki (2020), Students' competence in translating between different types of chemical representations, CERP 21, 307-330",
+        "doi": "10.1039/C8RP00301G",
+        "design_use": "Require learners to translate observable evidence into a distinct chemical claim rather than conflate representational levels."
+      },
+      {
+        "id": "RSC-C4RP00098F",
+        "citation": "Philipp, Johnson & Yezierski (2014), Development of a protocol to evaluate the use of representations in secondary chemistry instruction, CERP 15, 777-786",
+        "doi": "10.1039/C4RP00098F",
+        "design_use": "Make representation use explicit and learner-generated, not decorative."
+      }
+    ],
+    "scope_guard": "Research may improve representation and learner actions but may not add chemistry outside governed authority."
+  },
+  "canonical_rules": [
+    {"asset_id":"RULE-OBS-INF-01","text":"Record what is observed or tested before naming the chemical conclusion."},
+    {"asset_id":"RULE-OBS-INF-02","text":"A chemical inference must not be stronger than the evidence that supports it."},
+    {"asset_id":"RULE-OBS-INF-03","text":"Gas evolution is an observation; gas identity requires a distinguishing test or other supporting evidence."}
+  ],
+  "representations": [
+    {"asset_id":"REP-OBS-INF-TABLE","primitive":"OBSERVATION_INFERENCE_TABLE","job":"separate recorded evidence from chemical claim"},
+    {"asset_id":"REP-EVIDENCE-CLAIM-CHAIN","primitive":"EVIDENCE_CLAIM_REASONING_CHAIN","job":"show the inferential bridge from test result to claim"},
+    {"asset_id":"REP-EVENT-LINE","primitive":"EVENT_LINE","job":"keep treatment, observation and inference in causal order"}
+  ],
+  "misconceptions": [
+    {"asset_id":"MIS-GAS-NAME-AS-OBS","wrong_model":"I observed hydrogen gas.","repair":"Name the observable test result first; identify hydrogen only as the supported inference."},
+    {"asset_id":"MIS-EVOLUTION-PROVES-IDENTITY","wrong_model":"A gas evolved, therefore it was hydrogen.","repair":"Gas evolution establishes that a gas formed, not which gas formed."}
+  ],
+  "verification": [
+    {"asset_id":"VER-EVIDENCE-SUPPORT","check":"For each conclusion, point to the exact observation or test result that supports it."}
+  ],
+  "questions": [
+    {
+      "question_id":"CHEM-C2A-SRC-U2Q15C",
+      "source_class":"SOURCE_FROZEN",
+      "source_title":"NCERT Class IX Science Exemplar",
+      "source_unit_or_chapter":"Unit 2",
+      "source_question_number":"Q15(c)",
+      "source_locator":"Unit 2 Q15(c)",
+      "learner_visible_source":"NCERT Class IX Science Exemplar - Unit 2 - Q15(c)",
+      "stem":"What would you observe when a mixture of iron filings and sulphur powder is heated strongly?",
+      "source_stem_hash":"sha256:aee7f4363525dcd53340d62c5e6decb49178fb62f9f650ff619836574d19c2bc",
+      "stem_identity_status":"EXACT",
+      "answer_ref":"ANS-U2Q15C",
+      "canonical_solution_ref":"SOL-U2Q15C",
+      "verification_ref":"VER-U2Q15C",
+      "quick_answer":"A new substance, iron sulphide, is formed.",
+      "solution_points":["State the observed/process evidence before interpreting it.","State the chemical inference separately.","Check that the inference does not exceed the evidence.","Conclude that a new substance, iron sulphide, is formed."]
+    },
+    {
+      "question_id":"CHEM-C2A-SRC-U2Q35",
+      "source_class":"SOURCE_FROZEN",
+      "source_title":"NCERT Class IX Science Exemplar",
+      "source_unit_or_chapter":"Unit 2",
+      "source_question_number":"Q35",
+      "source_locator":"Unit 2 Q35",
+      "learner_visible_source":"NCERT Class IX Science Exemplar - Unit 2 - Q35",
+      "stem":"Iron filings and sulphur were mixed together and divided into two parts, ‘A’ and ‘B’. Part ‘A’ was heated strongly while Part ‘B’ was not heated. Dilute hydrochloric acid was added to both the Parts and evolution of gas was seen in both the cases. How will you identify the gases evolved?",
+      "source_stem_hash":"sha256:1570120b46bd48debac8bd44bde1622f385a5100d89c11f54782a0e55cf77446",
+      "stem_identity_status":"EXACT",
+      "answer_ref":"ANS-U2Q35",
+      "canonical_solution_ref":"SOL-U2Q35",
+      "verification_ref":"VER-U2Q35",
+      "quick_answer":"Part A: hydrogen sulphide; identify by characteristic foul smell or blackening of lead acetate paper. Part B: hydrogen; identify by the pop test.",
+      "solution_points":["Treat Part A and Part B as two separate evidence chains.","Part A was heated before acid was added; the gas is hydrogen sulphide and is identified by its characteristic evidence.","Part B was not heated; iron reacts with dilute hydrochloric acid and the gas is hydrogen, identified by the pop test.","Tie each gas name to the correct part and to the evidence used to identify it."]
+    }
+  ]
+}
