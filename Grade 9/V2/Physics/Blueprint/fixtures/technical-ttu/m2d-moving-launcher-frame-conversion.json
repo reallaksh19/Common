@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "ttu_id": "TTU-M2D-SBA23-FRAME-CONVERSION-PROCESS-GOLDEN",
+  "layer": "CORE1A",
+  "bucket_id": "M2D-SBA-23",
+  "problem_family_id": "MOVING_LAUNCHER_RELEASE_CONVERSION",
+  "difficulty_badge": "HARD",
+  "physical_setup": {
+    "objects": ["ball", "trolley", "ground observer"],
+    "event": "release from a trolley moving at constant velocity",
+    "knowns": ["ball launch velocity relative to trolley", "trolley velocity relative to ground"],
+    "unknown": "ball launch velocity relative to ground",
+    "analysis_frame": "GROUND",
+    "axis_or_sign_convention": "+x east, +y upward",
+    "model_conditions": ["classical Galilean frame conversion", "trolley velocity constant relative to ground"]
+  },
+  "technical_representation": {
+    "representation_id": "REP-VEL-TRIANGLE-001",
+    "type": "VECTOR_OR_COMPONENT_CONSTRUCTION",
+    "instructional_role": "DERIVE",
+    "learner_action": "INTERPRET",
+    "variables": ["v_BG", "v_BT", "v_TG"],
+    "bindings": [
+      {
+        "representation_element": "resultant vector v_BG",
+        "reasoning_target": "left side of v_BG = v_BT + v_TG"
+      },
+      {
+        "representation_element": "relative launch vector v_BT",
+        "reasoning_target": "first addend in v_BG = v_BT + v_TG"
+      },
+      {
+        "representation_element": "source vector v_TG",
+        "reasoning_target": "second addend in v_BG = v_BT + v_TG"
+      }
+    ]
+  },
+  "governing_relations": [
+    {
+      "relation_id": "REL-GALILEAN-VEL",
+      "expression": "v_BG = v_BT + v_TG",
+      "conditions": ["ordinary speeds", "constant relative frame velocity"]
+    },
+    {
+      "relation_id": "REL-COMP-X",
+      "expression": "u_x,G = u'_x + V"
+    },
+    {
+      "relation_id": "REL-COMP-Y",
+      "expression": "u_y,G = u'_y"
+    }
+  ],
+  "working_steps": [
+    {
+      "step_id": "S1",
+      "action": "Name all velocities by object and reference frame.",
+      "uses_relation_ids": ["REL-GALILEAN-VEL"],
+      "uses_representation_elements": ["relative launch vector v_BT", "source vector v_TG", "resultant vector v_BG"]
+    },
+    {
+      "step_id": "S2",
+      "action": "Resolve the trolley-relative launch into x and y components.",
+      "uses_relation_ids": ["REL-COMP-X", "REL-COMP-Y"],
+      "uses_representation_elements": ["relative launch vector v_BT"]
+    },
+    {
+      "step_id": "S3",
+      "action": "Add the source horizontal velocity to the relative horizontal component and preserve the vertical component.",
+      "uses_relation_ids": ["REL-COMP-X", "REL-COMP-Y"],
+      "uses_representation_elements": ["source vector v_TG", "resultant vector v_BG"]
+    }
+  ],
+  "result_or_conclusion": "The ground-frame launch vector is obtained before any ground-frame projectile equation is used.",
+  "verification": [
+    {
+      "type": "LIMITING_CASE",
+      "statement": "When trolley speed V tends to zero, the ground-frame launch tends to the trolley-relative launch."
+    },
+    {
+      "type": "MODEL_VALIDITY",
+      "statement": "The simple frame relation assumes constant relative frame velocity in the Galilean regime."
+    }
+  ],
+  "layout_contract": {
+    "figure_adjacent_to_bound_working": true,
+    "native_text_equations_preferred": true,
+    "minimum_final_label_pt": 8.0,
+    "oversized_low_information_figure": false,
+    "large_unused_plot_region": false
+  }
+}
