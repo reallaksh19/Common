@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engineering-claim-ledger.schema.json",
+  "title": "Physics Engineering Claim Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ledger_id", "request_id", "claims", "status"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "ledger_id": {"type": "string", "pattern": "^ENG-CLAIMS-[A-Z0-9-]+$"},
+    "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "claim", "claim_class", "scope", "source_refs", "used_by", "claim_status"],
+        "properties": {
+          "claim_id": {"type": "string", "pattern": "^CL-[A-Z0-9-]+$"},
+          "claim": {"type": "string", "minLength": 12},
+          "claim_class": {"enum": ["SOURCE_DEFINED", "STANDARD_PHYSICS_DERIVED", "AUTHORING_RECOMMENDATION", "SOURCE_SCOPE_HELD"]},
+          "scope": {"type": "string", "minLength": 3},
+          "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "used_by": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "claim_status": {"enum": ["VERIFIED", "PROVISIONAL", "HELD"]}
+        }
+      }
+    },
+    "status": {"enum": ["CLAIMS_IN_PROGRESS", "CLAIM_LEDGER_READY"]}
+  }
+}
