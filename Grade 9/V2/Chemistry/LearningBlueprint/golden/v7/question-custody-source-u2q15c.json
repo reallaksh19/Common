@@ -1,0 +1,16 @@
+{
+  "schema_version": "7.0.0",
+  "question_id": "CHEM-C2A-SRC-U2Q15C",
+  "source_class": "SOURCE_FROZEN",
+  "learner_visible_source": "NCERT Class IX Science Exemplar — Unit 2 — Q15(c)",
+  "source_title": "NCERT Class IX Science Exemplar",
+  "source_unit_or_chapter": "Unit 2",
+  "source_question_number": "Q15(c)",
+  "source_locator": "Unit 2 Q15(c)",
+  "source_stem_hash": "sha256:SOURCE-STEM-HASH-U2Q15C",
+  "stem_identity_status": "EXACT",
+  "answer_status": "CLOSED",
+  "answer_ref": "ANS-U2Q15C",
+  "canonical_solution_ref": "SOL-U2Q15C",
+  "verification_ref": "VER-U2Q15C"
+}
