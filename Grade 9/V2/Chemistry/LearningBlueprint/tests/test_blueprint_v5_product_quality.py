@@ -102,6 +102,8 @@ class BlueprintV5ProductQualityTests(unittest.TestCase):
             entry["ttu_ids"] = [x for x in entry.get("ttu_ids", []) if x != "TTU-1A-AGENT-ASSEMBLY"]
         for page in data["page_plan"]:
             page["ttu_ids"] = [x for x in page["ttu_ids"] if x != "TTU-1A-AGENT-ASSEMBLY"]
+            if page["page_role"] == "TTU_RECONSTRUCTION" and not page["ttu_ids"]:
+                page["page_role"] = "PRACTICE"
         with self.assertRaisesRegex(mod.BlueprintV5Error, "TTU_MISSING_FOR_LEARNING_ATOM"):
             mod.validate_study_product(data, POLICY)
 
@@ -136,10 +138,19 @@ class BlueprintV5ProductQualityTests(unittest.TestCase):
         with self.assertRaisesRegex(mod.BlueprintV5Error, "HARD_TTU_TYPE_DIVERSITY_MISSING"):
             mod.validate_study_product(data, POLICY)
 
-    def test_ttu_must_be_realized_on_a_page(self):
+    def test_ttu_reconstruction_page_cannot_lose_its_ttu(self):
+        data = load("core1a-hard-study-product.json")
+        page = next(x for x in data["page_plan"] if x["page_role"] == "TTU_RECONSTRUCTION")
+        page["ttu_ids"] = []
+        with self.assertRaisesRegex(mod.BlueprintV5Error, "TTU_PAGE_WITHOUT_TTU"):
+            mod.validate_study_product(data, POLICY)
+
+    def test_ttu_must_be_realized_somewhere_in_product(self):
         data = load("core1a-hard-study-product.json")
         for page in data["page_plan"]:
-            page["ttu_ids"] = [x for x in page["ttu_ids"] if x != "TTU-1A-OS-LANE"]
+            if "TTU-1A-OS-LANE" in page["ttu_ids"]:
+                page["ttu_ids"].remove("TTU-1A-OS-LANE")
+                page["page_role"] = "PRACTICE"
         with self.assertRaisesRegex(mod.BlueprintV5Error, "TTU_NOT_REALIZED"):
             mod.validate_study_product(data, POLICY)
 
