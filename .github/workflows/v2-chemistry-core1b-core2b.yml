@@ -68,7 +68,7 @@ jobs:
       - name: Compile production-depth HARD Core1B Redox bucket
         run: |
           mkdir -p /tmp/chem-b/core1b-hard-production
-          python 'Grade 9/V2/Chemistry/Core1B/engine/compile_hard_redox_bucket.py' \
+          python 'Grade 9/V2/Chemistry/Core1B/engine/compile_hard_redox_bucket_v2.py' \
             --input 'Grade 9/V2/Chemistry/Core1B/golden/hard-redox-production/input.json' \
             --out-dir /tmp/chem-b/core1b-hard-production
 
@@ -158,6 +158,8 @@ jobs:
           assert audit['research_evidence_count'] >= 4
           assert audit['representation_authority'] == ['SYMBOLIC']
           assert audit['forbidden_representation_additions_absent'] is True
+          assert audit['module_specific_hint_ladders'] is True
+          assert audit['hint_ladder_count'] == 8
           assert audit['answer_closure_pages'] == 24
           pdf = d / 'chemistry_core1b_hard_redox.pdf'
           doc = fitz.open(pdf)
@@ -165,12 +167,22 @@ jobs:
           raw = '\n'.join(page.get_text() for page in doc).lower()
           for token in ['knowledge_percent', 'capability_ref', 'problem_family_ref', 'particle_model', 'submicroscopic_scene']:
               assert token not in raw, token
-          for page_no in (0, 11, 23):
+          expected_help_phrases = [
+              'which element on the left must be matched',
+              'bookkeeping value used to compare before with after',
+              'electron loss must match electron gain',
+              'the reducing agent is itself oxidised',
+              'try to reconstruct before reopening any earlier page',
+          ]
+          for phrase in expected_help_phrases:
+              assert phrase in raw, phrase
+          for page_no in (0, 11, 14, 23):
               pix = doc[page_no].get_pixmap(matrix=fitz.Matrix(1.5, 1.5), alpha=False)
               pix.save(d / f'page-{page_no+1:02d}.png')
           print('HARD_CORE1B_PRODUCTION_PREFLIGHT=PASS')
           print('realized_pages = 24')
           print('page_ceiling = 30')
+          print('module_specific_hint_ladders = 8')
           PY
 
       - name: Upload Chemistry B-layer learner products
