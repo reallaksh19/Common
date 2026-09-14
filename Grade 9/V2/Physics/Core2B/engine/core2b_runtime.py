@@ -116,6 +116,7 @@ def choose_next_item(session:Mapping,legal_pool:Mapping,core1b_receipts:Mapping[
 
 def validate_attempt_event(event:Mapping,previous_events:Sequence[Mapping]=())->None:
     if event.get("event_digest")!=digest_without(event,"event_digest"):raise Core2BRuntimeError("CORE2B_ATTEMPT_DIGEST_MISMATCH")
+    if len(str(event.get("evidence_digest","")))!=64:raise Core2BRuntimeError("CORE2B_ATTEMPT_EVIDENCE_DIGEST_REQUIRED")
     expected=(max([e.get("event_sequence",0) for e in previous_events]) if previous_events else 0)+1
     if event.get("event_sequence")!=expected:raise Core2BRuntimeError("CORE2B_ATTEMPT_SEQUENCE_NOT_APPEND_ONLY")
     if event.get("event_id") in {e.get("event_id") for e in previous_events}:raise Core2BRuntimeError("CORE2B_ATTEMPT_DUPLICATE")
@@ -145,11 +146,14 @@ def build_core1b_repair_request(learner_profile_ref:str,capability_ref:str,item_
     return {"schema_version":"1.0.0","request_id":"C2B-TO-C1B-"+digest({"learner":learner_profile_ref,"cap":capability_ref,"item":item_ref,"atoms":atoms}),"learner_profile_ref":learner_profile_ref,"capability_ref":capability_ref,"return_to_core2a_item_ref":item_ref,"classification_state":"HYPOTHESIS","error_hypotheses":list(hypothesis.get("error_classes") or []),"repair_atom_refs":atoms,"authority_mutation_allowed":False,"instruction":"Repair only the smallest listed prerequisite set, recheck with observed evidence, then return to the original transfer item."}
 
 def update_retrieval_state(current:Mapping,event:Mapping)->dict:
-    validate_attempt_event(event,[] if current.get("last_event_ref") is None else [])
-    previous_digest=current.get("state_digest");state={"schema_version":"1.0.0","retrieval_count":int(current.get("retrieval_count",0))+1,"success_streak":int(current.get("success_streak",0)),"next_due_bucket":"SHORT","hint_dependence":"HIGH","representation_success":list(current.get("representation_success") or []),"last_event_ref":event["event_id"],"previous_state_digest":previous_digest}
+    if event.get("event_digest")!=digest_without(event,"event_digest"):raise Core2BRuntimeError("CORE2B_ATTEMPT_DIGEST_MISMATCH")
+    if len(str(event.get("evidence_digest","")))!=64:raise Core2BRuntimeError("CORE2B_ATTEMPT_EVIDENCE_DIGEST_REQUIRED")
+    expected=int(current.get("last_event_sequence",0))+1
+    if event.get("event_sequence")!=expected:raise Core2BRuntimeError("CORE2B_ATTEMPT_SEQUENCE_NOT_APPEND_ONLY")
+    previous_digest=current.get("state_digest");state={"schema_version":"1.0.0","retrieval_count":int(current.get("retrieval_count",0))+1,"success_streak":int(current.get("success_streak",0)),"next_due_bucket":"SHORT","hint_dependence":"HIGH","representation_success":list(current.get("representation_success") or []),"last_event_ref":event["event_id"],"last_event_sequence":event["event_sequence"],"previous_state_digest":previous_digest}
     if event.get("outcome")=="CORRECT":
         state["success_streak"]+=1;state["next_due_bucket"]="LONG" if state["success_streak"]>=3 else "MEDIUM"
     else:state["success_streak"]=0
     h=event.get("hint_level_used");state["hint_dependence"]="NONE" if h=="NO_HINT" else "LOW" if h in {"RETRIEVAL_CUE","REPRESENTATION_CUE"} else "MEDIUM" if h in {"MODEL_CUE","FIRST_MOVE_CUE"} else "HIGH"
-    if event.get("outcome")=="CORRECT" and event.get("representation_used") and event["representation_used"] not in state["representation_success"]:state["representation_success"].append(event["representation_used"])
+    if event.get("outcome")=="CORRECT" and h in LOW_HINTS and event.get("representation_used") and event["representation_used"] not in state["representation_success"]:state["representation_success"].append(event["representation_used"])
     state["representation_success"]=sorted(state["representation_success"]);state["state_digest"]=digest(state);return state
