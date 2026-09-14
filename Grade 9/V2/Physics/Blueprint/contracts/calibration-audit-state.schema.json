@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "calibration-audit-state.schema.json",
+  "title": "Physics Calibration & Audit State",
+  "type": "object",
+  "required": ["schema_version", "state_id", "duplication", "difficulty", "learner_fit"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "state_id": {"type": "string", "minLength": 1},
+    "duplication": {"$ref": "#/$defs/calibration_domain"},
+    "difficulty": {"$ref": "#/$defs/calibration_domain"},
+    "learner_fit": {"$ref": "#/$defs/calibration_domain"}
+  },
+  "$defs": {
+    "calibration_domain": {
+      "type": "object",
+      "required": ["maturity", "evidence_refs", "held_out_evaluation", "validated_policy_ref"],
+      "properties": {
+        "maturity": {"enum": ["ENGINEERING", "CALIBRATING", "VALIDATED"]},
+        "evidence_refs": {"type": "array", "items": {"type": "string"}},
+        "held_out_evaluation": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {"enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]},
+            "report_ref": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "validated_policy_ref": {"type": ["string", "null"]},
+        "approval_ref": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
