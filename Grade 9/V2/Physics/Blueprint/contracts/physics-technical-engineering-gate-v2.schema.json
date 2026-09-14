@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-technical-engineering-gate-v2.schema.json",
+  "title": "Physics Technical Engineering Gate Registry v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_id", "maturity", "gates"],
+  "properties": {
+    "schema_version": {"const": "2.0.0"},
+    "registry_id": {"type": "string", "minLength": 1},
+    "maturity": {"const": "ENGINEERING"},
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/gate"}
+    }
+  },
+  "$defs": {
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_class", "source_ref", "claim_scope"],
+      "properties": {
+        "claim_class": {"enum": ["SOURCE_DEFINED", "STANDARD_PHYSICS_DERIVED", "AUTHORING_RECOMMENDATION", "SOURCE_SCOPE_HELD"]},
+        "source_ref": {"type": "string", "minLength": 1},
+        "claim_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concept_id", "statement", "authority_ref"],
+      "properties": {
+        "concept_id": {"type": "string", "pattern": "^CON-[A-Z0-9-]+$"},
+        "statement": {"type": "string", "minLength": 12},
+        "authority_ref": {"type": "integer", "minimum": 0}
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation_id", "expression", "symbol_bindings", "conditions", "obligations"],
+      "properties": {
+        "relation_id": {"type": "string", "pattern": "^EQ-[A-Z0-9-]+$"},
+        "expression": {"type": "string", "minLength": 3},
+        "symbol_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 2}
+        },
+        "obligations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["EXPLAIN", "DERIVE", "INTERPRET", "REPRESENT", "APPLY", "INVERT", "VERIFY"]}
+        }
+      }
+    },
+    "representation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["representation_id", "representation_type", "mandatory_elements", "forbidden_omissions", "relation_bindings"],
+      "properties": {
+        "representation_id": {"type": "string", "pattern": "^REP-[A-Z0-9-]+$"},
+        "representation_type": {"type": "string", "minLength": 2},
+        "mandatory_elements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "forbidden_omissions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "relation_bindings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^EQ-[A-Z0-9-]+$"}
+        }
+      }
+    },
+    "misconception": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["misconception_id", "bad_model", "repair"],
+      "properties": {
+        "misconception_id": {"type": "string", "pattern": "^MIS-[A-Z0-9-]+$"},
+        "bad_model": {"type": "string", "minLength": 8},
+        "repair": {"type": "string", "minLength": 8}
+      }
+    },
+    "difficulty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maturity", "provisional_badge", "dimensions"],
+      "properties": {
+        "maturity": {"const": "ENGINEERING"},
+        "provisional_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["prerequisite_depth", "element_interactivity", "inferential_jump_severity", "representation_translation", "model_discrimination", "sign_or_frame_sensitivity", "multi_step_dependency", "abstraction", "misconception_density", "synthesis"],
+          "properties": {
+            "prerequisite_depth": {"type": "integer", "minimum": 0, "maximum": 3},
+            "element_interactivity": {"type": "integer", "minimum": 0, "maximum": 3},
+            "inferential_jump_severity": {"type": "integer", "minimum": 0, "maximum": 3},
+            "representation_translation": {"type": "integer", "minimum": 0, "maximum": 3},
+            "model_discrimination": {"type": "integer", "minimum": 0, "maximum": 3},
+            "sign_or_frame_sensitivity": {"type": "integer", "minimum": 0, "maximum": 3},
+            "multi_step_dependency": {"type": "integer", "minimum": 0, "maximum": 3},
+            "abstraction": {"type": "integer", "minimum": 0, "maximum": 3},
+            "misconception_density": {"type": "integer", "minimum": 0, "maximum": 3},
+            "synthesis": {"type": "integer", "minimum": 0, "maximum": 3}
+          }
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subtopic_id", "title", "domain", "status", "authority_basis", "prerequisites", "linked_buckets", "applicable_cores", "required_invariants", "concepts", "relations", "representations", "reasoning_sequence", "misconceptions", "verifications", "problem_families", "difficulty_engineering"],
+      "properties": {
+        "subtopic_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+        "title": {"type": "string", "minLength": 3},
+        "domain": {"type": "string", "minLength": 3},
+        "status": {"enum": ["ENGINEERING_GATE_READY", "ENGINEERING_GATE_INCOMPLETE", "SOURCE_SCOPE_HELD"]},
+        "authority_basis": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/authority"}},
+        "prerequisites": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "linked_buckets": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "applicable_cores": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["CORE1", "CORE1A", "CORE1B", "CORE2", "CORE2A", "CORE2B"]}},
+        "required_invariants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^INV-[A-Z0-9-]+$"}},
+        "concepts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/concept"}},
+        "relations": {"type": "array", "items": {"$ref": "#/$defs/relation"}},
+        "representations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/representation"}},
+        "reasoning_sequence": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 3}},
+        "misconceptions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/misconception"}},
+        "verifications": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["DIMENSIONAL", "UNITS", "SIGN_DIRECTION", "LIMITING_CASE", "INVERSE_RELATION", "SUBSTITUTE_BACK", "GRAPH_BEHAVIOUR", "BOUNDARY_CONDITION", "CONSERVATION", "SYMMETRY", "GEOMETRIC_CONSISTENCY", "MODEL_VALIDITY", "ORDER_OF_MAGNITUDE", "SHARED_CLOCK", "BODY_AGENT_CONSISTENCY", "STATIC_THRESHOLD", "CONSTRAINT_CONSISTENCY"]}},
+        "problem_families": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PF-[A-Z0-9-]+$"}},
+        "difficulty_engineering": {"$ref": "#/$defs/difficulty"}
+      }
+    }
+  }
+}
