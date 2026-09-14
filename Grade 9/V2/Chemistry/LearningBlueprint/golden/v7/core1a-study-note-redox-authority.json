@@ -1,0 +1,383 @@
+{
+  "schema_version": "7.0.0",
+  "authority_id": "CORE1A-STUDY-NOTE-REDOX-STATE-AGENT-v1",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "subtopic_title": "Redox proof: species identity → oxidation-state change → electron consequence → agent role",
+  "difficulty_badge": "HARD",
+  "source_refs": [
+    {"ref": "CHEM-NCERT-REDOX-PRODUCTION-v1", "role": "SEMANTIC_AUTHORITY"},
+    {"ref": "CT-C1A-REDOX-001", "role": "SEMANTIC_AUTHORITY"},
+    {"ref": "GRADE9-REDOX-SUBTOPIC-BOOK-BUILDER", "role": "PEDAGOGY_AUTHORITY"},
+    {"ref": "C-H:SYMBOLIC_FORMULA", "role": "REPRESENTATION_AUTHORITY"}
+  ],
+  "scope_statement": "This study note teaches the governed Redox depth extension using the fresh symbolic Zn/Cu²⁺ reaction. It is separate from the eleven retained NCERT source-practice questions and must not be presented as an extra NCERT question.",
+  "learning_atoms": [
+    {
+      "atom_id": "LA-REDOX-TRACK-001",
+      "learner_title": "Track the same reacting species before naming the change",
+      "required_job_object_ids": {
+        "MEANING": "OBJ-ID-MEAN",
+        "RULE_OR_DECISION": "OBJ-ID-RULE",
+        "REPRESENTATION_OR_EQUATION": "OBJ-OVERALL-EQ",
+        "REASONING_CHAIN": "OBJ-ID-CHAIN",
+        "BOUNDARY_OR_MISCONCEPTION": "OBJ-ID-MIS",
+        "WORKED_OR_MODELED_EXAMPLE": "OBJ-ID-WORKED",
+        "PRACTICE": "OBJ-ID-GUIDED",
+        "ANSWER_CLOSURE": "OBJ-ID-GUIDED-ANS"
+      }
+    },
+    {
+      "atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_title": "Use oxidation-state change to prove oxidation and reduction",
+      "required_job_object_ids": {
+        "MEANING": "OBJ-STATE-MEAN",
+        "RULE_OR_DECISION": "OBJ-STATE-RULE",
+        "REPRESENTATION_OR_EQUATION": "OBJ-STATE-LANE",
+        "REASONING_CHAIN": "OBJ-STATE-CHAIN",
+        "BOUNDARY_OR_MISCONCEPTION": "OBJ-STATE-MIS",
+        "WORKED_OR_MODELED_EXAMPLE": "OBJ-STATE-WORKED",
+        "PRACTICE": "OBJ-STATE-INDEP",
+        "ANSWER_CLOSURE": "OBJ-STATE-INDEP-ANS"
+      }
+    },
+    {
+      "atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_title": "Connect oxidation-state change to electron loss and gain",
+      "required_job_object_ids": {
+        "MEANING": "OBJ-E-MEAN",
+        "RULE_OR_DECISION": "OBJ-E-RULE",
+        "REPRESENTATION_OR_EQUATION": "OBJ-ZN-HALF",
+        "REASONING_CHAIN": "OBJ-E-CHAIN",
+        "BOUNDARY_OR_MISCONCEPTION": "OBJ-E-VERIFY",
+        "WORKED_OR_MODELED_EXAMPLE": "OBJ-E-WORKED",
+        "PRACTICE": "OBJ-E-GUIDED",
+        "ANSWER_CLOSURE": "OBJ-E-GUIDED-ANS"
+      }
+    },
+    {
+      "atom_id": "LA-REDOX-AGENT-003",
+      "learner_title": "Derive oxidising and reducing agent roles from self-change",
+      "required_job_object_ids": {
+        "MEANING": "OBJ-AG-MEAN",
+        "RULE_OR_DECISION": "OBJ-AG-RULE",
+        "REPRESENTATION_OR_EQUATION": "OBJ-AG-MAP",
+        "REASONING_CHAIN": "OBJ-AG-CHAIN",
+        "BOUNDARY_OR_MISCONCEPTION": "OBJ-AG-MIS",
+        "WORKED_OR_MODELED_EXAMPLE": "OBJ-AG-WORKED",
+        "PRACTICE": "OBJ-AG-INDEP",
+        "ANSWER_CLOSURE": "OBJ-AG-INDEP-ANS"
+      }
+    }
+  ],
+  "content_objects": [
+    {
+      "object_id": "OBJ-ID-MEAN",
+      "object_class": "MEANING",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": "A Redox label is earned by tracking what happens to the same element or species across the reaction.",
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "CON-REDOX-SPECIES-TRACK"
+    },
+    {
+      "object_id": "OBJ-ID-RULE",
+      "object_class": "RULE",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": "Track identity first. Do not assign oxidation, reduction or agent roles from reagent reputation.",
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "CON-REDOX-SPECIES-TRACK"
+    },
+    {
+      "object_id": "OBJ-OVERALL-EQ",
+      "object_class": "EQUATION",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": "Zn + Cu²⁺ → Zn²⁺ + Cu",
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "EQ-ZN-CU-OVERALL"
+    },
+    {
+      "object_id": "OBJ-ID-CHAIN",
+      "object_class": "REASONING_CHAIN",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": ["Identify each reactant species.", "Locate the same elements in the products.", "Mark what changes and what is preserved.", "Only then move to oxidation-state or agent labels."],
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "REP-REDOX-IDENTITY-MAP",
+      "representation_type": "SPECIES_IDENTITY_MAP"
+    },
+    {
+      "object_id": "OBJ-ID-MIS",
+      "object_class": "MISCONCEPTION_REPAIR",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": {"wrong_model": "Name the agent from memory before tracking the reaction.", "repair": "First prove the reactant's own change from the equation; attach the role only after that proof."},
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "MIS-REDOX-ROLE-BEFORE-TRACK"
+    },
+    {
+      "object_id": "OBJ-ID-WORKED",
+      "object_class": "WORKED_EXAMPLE",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": {"reaction": "Zn + Cu²⁺ → Zn²⁺ + Cu", "steps": ["Track Zn on both sides: Zn → Zn²⁺.", "Track Cu on both sides: Cu²⁺ → Cu.", "The same elements are now ready for oxidation-state comparison."]},
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "EX-REDOX-ZN-CU-IDENTITY"
+    },
+    {
+      "object_id": "OBJ-ID-GUIDED",
+      "object_class": "GUIDED_PRACTICE",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": "From Zn + Cu²⁺ → Zn²⁺ + Cu, complete: Zn maps to ______ and Cu²⁺ maps to ______ before you assign any Redox labels.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "Q-REDOX-ID-GUIDED",
+      "practice_level": "GUIDED"
+    },
+    {
+      "object_id": "OBJ-ID-GUIDED-ANS",
+      "object_class": "ANSWER",
+      "learning_atom_id": "LA-REDOX-TRACK-001",
+      "learner_payload": "Zn maps to Zn²⁺; Cu²⁺ maps to Cu.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "ANS-REDOX-ID-GUIDED"
+    },
+    {
+      "object_id": "OBJ-STATE-MEAN",
+      "object_class": "MEANING",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": "Oxidation is an increase in oxidation state; reduction is a decrease. Compare the same element before and after the reaction.",
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "CON-REDOX-STATE-DIRECTION"
+    },
+    {
+      "object_id": "OBJ-STATE-RULE",
+      "object_class": "RULE",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": "For the governed Zn/Cu²⁺ reaction, Zn changes 0 → +2 and Cu changes +2 → 0. Increase means oxidation; decrease means reduction.",
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "CON-REDOX-STATE-DIRECTION"
+    },
+    {
+      "object_id": "OBJ-STATE-LANE",
+      "object_class": "REPRESENTATION",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": {"Zn": "0 → +2 : increase : oxidation", "Cu": "+2 → 0 : decrease : reduction"},
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "REP-REDOX-STATE-LANE",
+      "representation_type": "OXIDATION_STATE_LANE"
+    },
+    {
+      "object_id": "OBJ-STATE-CHAIN",
+      "object_class": "REASONING_CHAIN",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": ["Write the before oxidation state.", "Write the after oxidation state for the same element.", "Compare the two values.", "Name oxidation only for an increase and reduction only for a decrease."],
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "REP-REDOX-STATE-LANE"
+    },
+    {
+      "object_id": "OBJ-STATE-MIS",
+      "object_class": "MISCONCEPTION_REPAIR",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": {"wrong_model": "Oxidation state is always the literal charge carried by an isolated particle.", "repair": "Use oxidation state here as the governed bookkeeping value for the same element; do not confuse it with a claim about isolated particles in every compound."},
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "MIS-OXSTATE-VS-CHARGE"
+    },
+    {
+      "object_id": "OBJ-STATE-WORKED",
+      "object_class": "WORKED_EXAMPLE",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": {"Zn": "0 → +2, so Zn is oxidised.", "Cu": "+2 → 0, so Cu²⁺ is reduced."},
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "EX-REDOX-ZN-CU-STATE"
+    },
+    {
+      "object_id": "OBJ-STATE-INDEP",
+      "object_class": "INDEPENDENT_PRACTICE",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": "Without looking at the completed lane, reconstruct both oxidation-state lanes for Zn + Cu²⁺ → Zn²⁺ + Cu and label each change as oxidation or reduction.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "Q-REDOX-STATE-INDEP",
+      "practice_level": "INDEPENDENT"
+    },
+    {
+      "object_id": "OBJ-STATE-INDEP-ANS",
+      "object_class": "ANSWER",
+      "learning_atom_id": "LA-REDOX-STATE-CHANGE-002",
+      "learner_payload": "Zn: 0 → +2, oxidation. Cu: +2 → 0, reduction.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "ANS-REDOX-STATE-INDEP"
+    },
+    {
+      "object_id": "OBJ-E-MEAN",
+      "object_class": "MEANING",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": "Electron loss corresponds to oxidation; electron gain corresponds to reduction.",
+      "source_ref": "GRADE9-REDOX-SUBTOPIC-BOOK-BUILDER",
+      "ccbom_asset_id": "CON-REDOX-ELECTRON-CONSEQUENCE"
+    },
+    {
+      "object_id": "OBJ-E-RULE",
+      "object_class": "RULE",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": "After proving the oxidation-state direction, write the matching electron consequence and check that electrons lost equal electrons gained.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "CON-REDOX-ELECTRON-CONSEQUENCE"
+    },
+    {
+      "object_id": "OBJ-ZN-HALF",
+      "object_class": "EQUATION",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": "Zn → Zn²⁺ + 2e⁻",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "EQ-ZN-OX-HALF"
+    },
+    {
+      "object_id": "OBJ-CU-HALF",
+      "object_class": "EQUATION",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": "Cu²⁺ + 2e⁻ → Cu",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "EQ-CU-RED-HALF"
+    },
+    {
+      "object_id": "OBJ-E-CHAIN",
+      "object_class": "REASONING_CHAIN",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": ["Zn oxidation state rises 0 → +2.", "That change corresponds to loss of 2e⁻.", "Cu oxidation state falls +2 → 0.", "That change corresponds to gain of 2e⁻."],
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "REP-REDOX-ELECTRON-LEDGER",
+      "representation_type": "ELECTRON_LEDGER"
+    },
+    {
+      "object_id": "OBJ-E-VERIFY",
+      "object_class": "VERIFICATION",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": "Electron check: 2e⁻ lost by Zn = 2e⁻ gained by Cu²⁺.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "VER-REDOX-ELECTRON-BALANCE"
+    },
+    {
+      "object_id": "OBJ-E-WORKED",
+      "object_class": "WORKED_EXAMPLE",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": {"oxidation_half": "Zn → Zn²⁺ + 2e⁻", "reduction_half": "Cu²⁺ + 2e⁻ → Cu", "check": "The electron counts match."},
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "EX-REDOX-ZN-CU-ELECTRON"
+    },
+    {
+      "object_id": "OBJ-E-GUIDED",
+      "object_class": "GUIDED_PRACTICE",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": "Complete the electron ledger: Zn → Zn²⁺ + ____ ; Cu²⁺ + ____ → Cu. Then check whether loss and gain balance.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "Q-REDOX-ELECTRON-GUIDED",
+      "practice_level": "GUIDED"
+    },
+    {
+      "object_id": "OBJ-E-GUIDED-ANS",
+      "object_class": "ANSWER",
+      "learning_atom_id": "LA-REDOX-ELECTRON-002",
+      "learner_payload": "Both blanks are 2e⁻; electrons lost and gained are equal.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "ANS-REDOX-ELECTRON-GUIDED"
+    },
+    {
+      "object_id": "OBJ-AG-MEAN",
+      "object_class": "MEANING",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": "An oxidising or reducing agent is named only after you prove what happens to that reactant itself and what effect it has on the other reactant.",
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "CON-REDOX-AGENT-ROLE"
+    },
+    {
+      "object_id": "OBJ-AG-RULE",
+      "object_class": "RULE",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": "Oxidised reactant = reducing agent. Reduced reactant = oxidising agent.",
+      "source_ref": "GRADE9-REDOX-SUBTOPIC-BOOK-BUILDER",
+      "ccbom_asset_id": "CON-REDOX-AGENT-ROLE"
+    },
+    {
+      "object_id": "OBJ-AG-MAP",
+      "object_class": "REPRESENTATION",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": {"Zn": "oxidised → gives electrons → reducing agent", "Cu²⁺": "reduced → accepts electrons → oxidising agent"},
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "REP-REDOX-SELF-OTHER",
+      "representation_type": "SELF_OTHER_AGENT_MAP"
+    },
+    {
+      "object_id": "OBJ-AG-CHAIN",
+      "object_class": "REASONING_CHAIN",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": ["State the reactant's self-change.", "State its electron action.", "State the effect on the other reactant.", "Attach the agent role last."],
+      "source_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+      "ccbom_asset_id": "REP-REDOX-SELF-OTHER"
+    },
+    {
+      "object_id": "OBJ-AG-MIS",
+      "object_class": "MISCONCEPTION_REPAIR",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": {"wrong_model": "The oxidising agent is itself oxidised, and the reducing agent is itself reduced.", "repair": "Agent names describe what the reactant causes in the other reactant: the oxidised reactant is the reducing agent; the reduced reactant is the oxidising agent."},
+      "source_ref": "GRADE9-REDOX-SUBTOPIC-BOOK-BUILDER",
+      "ccbom_asset_id": "MIS-AGENT-NAMING-INVERSION"
+    },
+    {
+      "object_id": "OBJ-AG-WORKED",
+      "object_class": "WORKED_EXAMPLE",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": {"Zn": "Zn is oxidised and gives electrons, so Zn is the reducing agent.", "Cu²⁺": "Cu²⁺ is reduced and accepts electrons, so Cu²⁺ is the oxidising agent."},
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "EX-REDOX-ZN-CU-AGENT"
+    },
+    {
+      "object_id": "OBJ-AG-INDEP",
+      "object_class": "INDEPENDENT_PRACTICE",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": "Reconstruct the complete proof for Zn + Cu²⁺ → Zn²⁺ + Cu: species identity → oxidation-state direction → electron consequence → agent role. Do not start from the agent names.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "Q-REDOX-AGENT-INDEP",
+      "practice_level": "INDEPENDENT"
+    },
+    {
+      "object_id": "OBJ-AG-INDEP-ANS",
+      "object_class": "ANSWER",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": "Zn: Zn → Zn²⁺, 0 → +2, loses 2e⁻, oxidised, reducing agent. Cu²⁺: Cu²⁺ → Cu, +2 → 0, gains 2e⁻, reduced, oxidising agent.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "ANS-REDOX-AGENT-INDEP"
+    },
+    {
+      "object_id": "OBJ-AG-VERIFY",
+      "object_class": "VERIFICATION",
+      "learning_atom_id": "LA-REDOX-AGENT-003",
+      "learner_payload": "Role check: the species that is oxidised must be the reducing agent; the species that is reduced must be the oxidising agent.",
+      "source_ref": "CT-C1A-REDOX-001",
+      "ccbom_asset_id": "VER-REDOX-ROLE-CHECK"
+    }
+  ],
+  "reconstructable_ttu_refs": ["TTU-1A-OS-LANE", "TTU-1A-AGENT-ASSEMBLY"],
+  "practice_progression": {
+    "worked_object_ids": ["OBJ-ID-WORKED", "OBJ-STATE-WORKED", "OBJ-E-WORKED", "OBJ-AG-WORKED"],
+    "guided_object_ids": ["OBJ-ID-GUIDED", "OBJ-E-GUIDED"],
+    "independent_object_ids": ["OBJ-STATE-INDEP", "OBJ-AG-INDEP"],
+    "answer_object_ids": ["OBJ-ID-GUIDED-ANS", "OBJ-STATE-INDEP-ANS", "OBJ-E-GUIDED-ANS", "OBJ-AG-INDEP-ANS"]
+  },
+  "learner_surface_policy": {
+    "subject_language_only": true,
+    "example_before_abstraction_when_helpful": true,
+    "forbidden_internal_terms": ["CDAU", "SDU", "LAU", "PAL", "CCBOM", "TTU", "falsifier", "compiler", "authority_ref", "realization_ref", "support_band", "schema_version", "product_mode"]
+  },
+  "pagination_policy": {
+    "mode": "CONTENT_FIRST",
+    "page_count_is_target": false,
+    "content_closure_precedes_pagination": true
+  },
+  "ccbom_ref": "CCBOM-REDOX-STATE-001",
+  "completeness_summary": {
+    "learning_atom_count": 4,
+    "content_object_count": 33,
+    "equation_count": 3,
+    "representation_count": 3,
+    "worked_example_count": 4,
+    "misconception_repair_count": 3,
+    "practice_count": 4,
+    "answer_count": 4,
+    "unresolved_object_ids": []
+  }
+}
