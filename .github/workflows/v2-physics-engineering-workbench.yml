@@ -5,10 +5,12 @@ on:
     paths:
       - 'Grade 9/V2/Physics/Blueprint/contracts/engineering-*.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_*.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py'
       - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v2.json'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v2.py'
+      - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-ccu.v1.json'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH_V1.md'
       - '.github/workflows/v2-physics-engineering-workbench.yml'
   workflow_dispatch:
@@ -27,6 +29,12 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
       - name: Run Engineering Workbench v1 falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
+      - name: Validate SBA23 CCU through engineering-ready boundary
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py"
+          "fixtures/engineering-workbench/m2d-sba23-request.v1.json"
+          "fixtures/engineering-workbench/m2d-sba23-manifest.v1.json"
+          "topics/m2d-sba23-ccu.v1.json"
       - name: Compile SBA23 engineering closure receipt
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py"
