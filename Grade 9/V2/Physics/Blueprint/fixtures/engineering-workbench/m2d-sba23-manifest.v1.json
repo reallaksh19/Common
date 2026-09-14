@@ -3,6 +3,7 @@
   "manifest_id": "ENG-MAN-M2D-SBA23-V1",
   "request_id": "ENG-REQ-M2D-SBA23-V1",
   "scope_kind": "BUCKET",
+  "scope_ref": "M2D-SBA-23",
   "topic_id": "PHY-M2D-SBA23",
   "title": "Moving-launcher projectile motion technical scope",
   "registry_ref": "policy/physics-technical-engineering-gates.v2.json",
