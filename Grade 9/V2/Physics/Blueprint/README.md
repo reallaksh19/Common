@@ -30,14 +30,46 @@ released teaching authority                 exact legal-pool custody
                                       EVIDENCE + CONTROL
 
 Publication remains separate:
-CORE1A released semantics → Publication IR → composition-only renderer → render custody/preflight
+Core1A released semantics → Publication IR → composition-only renderer → render custody/preflight
 ```
 
-Execution order may vary. **Authority order may not.** A-layers authorize; B-layers execute authorized experiences and capture observed evidence.
+Execution order may vary. **Authority order may not.**
 
-## Core1B — ACTIVE
+## Learner-product topology — SELF-HELP V1
 
-Core1B now implements the PR #368 concept with stricter Blueprint custody:
+The learner-facing definition is now explicit and separate from runtime authority.
+
+Every Core learner product must be usable without a teacher physically present. The canonical learner modes are:
+
+| Core | Learner mode | Primary question |
+|---|---|---|
+| Core1 | Basic declarative notes | What is true? |
+| Core1A | Declarative deep teaching | Teach me this subtopic completely. |
+| Core1B | Generative concept coach | Can I reconstruct, explain, represent and independently use what was taught? |
+| Core2 | Frozen source-question authority | What is being tested? |
+| Core2A | Declarative worked transfer atlas | Show me how an expert recognizes and solves this problem family. |
+| Core2B | Generative transfer coach | Can I recognize, select and transfer it when the surface changes? |
+
+This learner-product split does **not** weaken the authority split. Core1B still cannot author Physics semantics; Core2B still cannot legalize transfer.
+
+The machine-readable policy is:
+
+`policy/self-help-core-publication.v1.json`
+
+The policy standardizes:
+
+- self-help resolution for every open-ended prompt;
+- `H1 NOTICE → H2 REPRESENT → H3 START`;
+- answer/check/repair availability without requiring a teacher;
+- declarative A-layer products versus generative B-layer products;
+- difficulty adaptation by support density rather than mutation of frozen Core2 source;
+- explicit visual function tags;
+- immediate, later, mixed and Core2B retrieval;
+- full-solution exposure as teaching, never independent mastery evidence.
+
+## Core1B — ACTIVE runtime + v2 learner-product grammar
+
+Core1B now combines strict runtime custody with a generative self-teaching learner surface:
 
 - exact released Core1A ref + digest required;
 - fine-grained atom graph with evidence-backed prerequisite skipping;
@@ -46,23 +78,54 @@ Core1B now implements the PR #368 concept with stricter Blueprint custody:
 - event identity/order and evidence/event digests are append-only;
 - `APPLICABILITY` is required when upstream model validity is required;
 - `EXPLAIN` follows the upstream capability contract;
-- `INDEPENDENT` release requires a successful independent/retrieval event satisfying all required criteria with sufficiently low hint dependence;
-- internal runtime labels are blocked from learner-facing text.
+- `INDEPENDENT` release requires successful sufficiently low-hint independent/retrieval evidence;
+- internal runtime labels are blocked from learner-facing text;
+- learner episodes use open-ended attempt → progressive help → retry → local worked check → repair route;
+- the product must not read as a chatbot transcript or minimally guided discovery.
 
-## Core2B — ACTIVE
+See `../Core1B/LEARNER_PRODUCT_SPEC_v2.md`.
+
+## Core2A — ACTIVE legality + declarative worked-atlas grammar
+
+Core2A remains the transfer-legality compiler. Its learner-facing publication grammar now requires expert problem decomposition:
+
+`QUESTION → NOTICE → REPRESENT → MODEL → FIRST MOVE → FULL WORKING → CHECK → WRONG ROUTE → HARDNESS → VARIATION`
+
+Frozen Core2 source questions are not rewritten to make them easier. Difficulty adaptation changes support, reveal order, completion level, ordering and clearly-labelled generated-original variants.
+
+See `../Core2A/LEARNER_PRODUCT_SPEC_v1.md`.
+
+## Core2B — ACTIVE runtime + v2 learner-product grammar
 
 Core2B consumes the actual Core2A product rather than accepting a local legality flag:
 
 - exact Core2A legal-pool ref + digest and exact item ID required;
 - every required capability is checked independently against a bound Core1B release plus observed transfer events;
 - scalar `T0…T8` labels are descriptive only; authorization uses structural distance, representation change, model discrimination, multi-step bridge, synthesis and competitive mixing;
-- representation shift cannot be invented downstream and requires upstream authorization plus successful observed representation use;
+- representation shift cannot be invented downstream;
 - purpose/retrieval only choose within the legal/evidence-eligible pool;
 - error classification remains an explicit hypothesis;
 - repair requests target the smallest explanatory atom set and cannot mutate Core1A/Core2A authority;
-- incorrect representation exposure cannot become representation mastery.
+- incorrect/full-solution representation exposure cannot become representation mastery;
+- learner episodes are attempt-first and must end with recognition, representation, model-selection, full working, transfer statement and repair route.
 
-The Blueprint workflow runs both runtime falsifier suites before continuing through the existing routing, Join, Core1A, Core2A, Publication IR and render/composition chain.
+See `../Core2B/LEARNER_PRODUCT_SPEC_v2.md`.
+
+## Three-topic falsification pilot
+
+Before chapter-wide standardization, the self-help grammar must survive three different Physics structures:
+
+1. projectile vertical-event/apex reasoning;
+2. moving-launcher relative velocity;
+3. Newton model-selection / free-body reasoning as a cross-topic design stress test.
+
+The pilot is intentionally non-production where exact upstream authority is missing. SBA23 retains the exact-Q15 source hold.
+
+Machine-readable pilot:
+
+`topics/self-help-three-topic-falsification-pilot.v1.json`
+
+Promotion requires machine policy PASS **and** human pedagogy review. A process-golden PASS is not evidence of real learner efficacy.
 
 ## Publication and real M2D boundary
 
@@ -77,8 +140,8 @@ renderer_invocation_allowed = false
 release_authorized = false
 ```
 
-Runtime activation cannot substitute for pedagogical/manuscript release evidence.
+Runtime activation and learner-product grammar cannot substitute for pedagogical/manuscript release evidence.
 
 ## Next Blueprint tranche
 
-Continue the real Core1A migration beginning with `M2D-SBA-04`: convert its existing learning atoms, misconceptions and H1/H2/H3 traces into repository-backed `1A0…1A11` evidence, expose genuine missing stages, and only then open its real `1A12` manuscript/publication path.
+Run the three-topic falsification pilot. For each topic, produce one Core1B generative concept-coach slice, one Core2A declarative worked-atlas slice and one Core2B attempt-first transfer slice. Reject the grammar if it only works for projectile motion, if hints collapse into answer disclosure, if source-question immutability drifts, or if B-layer presentation leaks runtime internals.

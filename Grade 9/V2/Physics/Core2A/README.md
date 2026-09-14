@@ -1,6 +1,41 @@
-# Physics V2 — Core (2A): taught-state-gated transfer compiler
+# Physics V2 — Core (2A): taught-state-gated transfer compiler + Worked Transfer Atlas
 
 Core (2) remains the complete source-transfer authority. Core (2A) is a downstream learner-product compiler. It selects and realizes transfer practice for a stated learner purpose, but it may not change Physics truth, Core (2) source identity, Core (1A) teaching authority or learner-evidence history.
+
+At the learner surface, Core2A is now explicitly a **self-guided declarative worked problem atlas**:
+
+> **Show me how an expert recognizes, represents and solves this problem family.**
+
+The canonical learner-product grammar is defined in `LEARNER_PRODUCT_SPEC_v1.md`.
+
+## Frozen-source rule
+
+Core2 source questions are frozen. Core2A must not rewrite a source question to make it easier.
+
+Difficulty adaptation changes:
+
+- support density;
+- item ordering;
+- prerequisite explanation;
+- completion level;
+- visual support;
+- clearly-labelled `GENERATED_ORIGINAL` variants.
+
+The worked-atlas grammar is:
+
+```text
+QUESTION
+-> difficulty + required knowledge
+-> WHAT SHOULD I NOTICE?
+-> representation
+-> WHY THIS MODEL?
+-> FIRST MOVE
+-> full working
+-> physical/dimensional/limiting check
+-> common wrong route
+-> why the question is hard
+-> what changes in a variation
+```
 
 ## Semantic contract
 
@@ -14,7 +49,7 @@ Core1 semantic boundary
       Core2A
 ```
 
-A publication receipt proves that the learner product taught a capability. It does **not** prove that the learner mastered it. `learner_evidence_state = UNKNOWN` is therefore a legal and expected state.
+A publication receipt proves that the learner product taught a capability. It does **not** prove that the learner mastered it. `learner_evidence_state = UNKNOWN` is therefore legal and expected.
 
 ## Purpose is mandatory
 
@@ -71,69 +106,8 @@ VECTOR_DOT_PERPENDICULAR
 SPEED_FROM_COMPONENTS
 ```
 
-The engine independently recomputes the relevant relation, validates declared SI units, and binds the recomputed numeric result to the learner-facing canonical answer before emitting PASS. Additional problem families require an explicit validator before generated challenges from those families are production-legal.
-
-## Purpose behavior
-
-```text
-FIRST_STUDY
-  first releasable source anchor per bucket
-  guided direct challenge when available
-  high support
-
-PRACTICE
-  all releasable Core2 source items
-  near-transfer challenges when available
-  support initially hidden
-
-REVISION
-  highest-demand representative source item per bucket
-  compact retrieval/diagnostic use
-  no generated challenge requirement
-
-COMPETITIVE_EXAM
-  highest-demand representative source item per bucket
-  at least one NEAR_TRANSFER
-  at least one structural variation
-  structural difficulty, not arithmetic ugliness
-```
-
-Structural variations include reversed targets, hidden information, representation shifts, event constraints, parameter constraints, error diagnosis, compare/rank and multi-step bridges.
-
-## Executable surfaces
-
-```text
-contracts/
-  physics-core2a-run.schema.json
-  physics-core2a-source-item.schema.json
-  physics-core2a-challenge-item.schema.json
-
-policies/
-  physics-core2a-purpose-policy.json
-  physics-core2a-challenge-policy.json
-  physics-core2a-validator-registry.json
-
-engine/
-  core2a_common.py
-  run_physics_core2a.py
-
-golden/projectile-event/
-  core2a-input.json
-
-tests/
-  test_physics_core2a.py
-```
-
-Run the golden:
-
-```bash
-python 'Grade 9/V2/Physics/Core2A/engine/run_physics_core2a.py' \
-  --run 'Grade 9/V2/Physics/Core2A/golden/projectile-event/core2a-input.json' \
-  --out-dir /tmp/physics-core2a
-
-python 'Grade 9/V2/Physics/Core2A/tests/test_physics_core2a.py'
-```
+Additional problem families require an explicit validator before generated challenges from those families are production-legal.
 
 ## Release boundary
 
-This v1 activates the **semantic/executable Core2A model**. It does not claim that all Motion-in-a-Plane problem families are validator-backed yet, and it does not authorize a learner-facing PDF release. New generated families must acquire explicit Physics validators and tests before use.
+Core2A activates the semantic/executable legality model and the declarative learner-product grammar. A worked Core2A solution does not prove learner transfer; that evidence belongs to Core2B.

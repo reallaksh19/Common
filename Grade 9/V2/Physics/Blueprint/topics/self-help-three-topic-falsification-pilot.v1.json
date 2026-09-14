@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0.0",
+  "pilot_id": "PHY-BP-SELF-HELP-THREE-TOPIC-FALSIFICATION-V1",
+  "purpose": "Falsify the learner-product grammar before chapter-wide rollout.",
+  "release_status": "DESIGN_PILOT_NOT_PRODUCTION_AUTHORITY",
+  "required_layers": [
+    "CORE1A",
+    "CORE1B",
+    "CORE2A",
+    "CORE2B"
+  ],
+  "topics": [
+    {
+      "topic_id": "PROJECTILE_VERTICAL_EVENT",
+      "reason": "Tests sign, graph/table/equation translation, apex misconception and reversed-target transfer.",
+      "repo_binding": "M2D-SBA-04 / PHY-CAP-PROJECTILE-VERTICAL-EVENT",
+      "source_status": "PROCESS_GOLDEN_AVAILABLE",
+      "must_falsify": [
+        "Core1B becomes question spam instead of guided reconstruction",
+        "Core2A merely repeats a worked solution without recognition structure",
+        "Core2B reveals the model before the learner attempts selection"
+      ]
+    },
+    {
+      "topic_id": "MOVING_LAUNCHER_RELATIVE_VELOCITY",
+      "reason": "Tests frame naming, vector representation, sign reversal, model sequencing and surface transfer.",
+      "repo_binding": "M2D-SBA-23 / PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+      "source_status": "PROCESS_GOLDEN_AVAILABLE_EXACT_Q15_HELD",
+      "must_falsify": [
+        "Generated practice is confused with frozen Q15",
+        "Core1B becomes a chatbot transcript",
+        "Core2B tests arithmetic variation instead of structural transfer"
+      ]
+    },
+    {
+      "topic_id": "NEWTON_MODEL_SELECTION",
+      "reason": "Cross-topic stress test for free-body representation, competing-model selection and multi-step reasoning.",
+      "repo_binding": "NONE_YET",
+      "source_status": "DESIGN_ONLY_REQUIRES_FUTURE_CORE1_CORE2_BINDING",
+      "must_falsify": [
+        "The grammar depends specifically on projectile motion",
+        "Hints disclose the force equation before representation/model selection",
+        "Core2A changes the source question instead of changing support"
+      ]
+    }
+  ],
+  "pass_criteria": {
+    "all_products_self_help": true,
+    "a_layers_declarative": true,
+    "b_layers_generative_attempt_first": true,
+    "every_b_prompt_progressive_help_and_resolution": true,
+    "core2_source_immutability_preserved": true,
+    "repair_routes_point_to_smallest_explanatory_gap": true,
+    "runtime_authority_guards_unchanged": true
+  },
+  "promotion_rule": "Do not standardize chapter-wide until all three topics pass human pedagogy review plus machine policy checks."
+}

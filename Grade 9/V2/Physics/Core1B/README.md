@@ -1,6 +1,32 @@
-# Physics Core1B — learner concept-construction runtime
+# Physics Core1B — learner concept-construction runtime + Generative Concept Coach
 
 Core1B executes already-released Core1A teaching authority for a particular learner. It does not author new Physics or infer mastery from an authored unit.
+
+At the learner surface, Core1B is now explicitly a **self-guided generative teaching product**:
+
+> **Can the learner reconstruct, explain, represent and independently use what was taught?**
+
+The canonical learner-product grammar is defined in `LEARNER_PRODUCT_SPEC_v2.md`.
+
+## Learner-product rule
+
+Core1B must not read like a chatbot transcript and must not use minimally guided discovery.
+
+A substantial episode uses:
+
+```text
+OPEN-ENDED PROMPT
+  -> attempt space
+  -> H1 NOTICE
+  -> H2 REPRESENT
+  -> H3 START
+  -> try again
+  -> CHECK AFTER ATTEMPT
+  -> conceptual reconstruction
+  -> smallest repair route
+```
+
+Every open-ended prompt needs a local resolution. The student must never be stranded with only “ask your teacher”.
 
 ## Required input custody
 
@@ -18,12 +44,14 @@ Core1B may establish `INDEPENDENT`. Transfer readiness/robustness belongs downst
 
 If Core1A requires model-validity understanding, `applicability` is mandatory. `explain` is mandatory only when the upstream capability contract requires explanation.
 
+Full-solution exposure is teaching, not independent mastery evidence.
+
 ## Runtime flow
 
 ```text
 released Core1A authority
   -> select/skip atoms using observed evidence
-  -> learner-facing instruction
+  -> self-guided generative teaching episode
   -> independent attempt
   -> observed event
   -> evidence-derived release receipt
