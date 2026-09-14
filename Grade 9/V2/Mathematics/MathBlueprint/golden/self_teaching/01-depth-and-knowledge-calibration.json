@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "subject": "MATHEMATICS",
   "core1_buckets": [
     {
@@ -7,6 +7,19 @@
       "subtopic_title": "Representing a point constrained to an axis",
       "difficulty_badge": "EASY",
       "difficulty_badge_basis": "CORE1_SEMANTIC_COMPLEXITY",
+      "difficulty_dimensions": {
+        "prerequisite_depth": 1,
+        "element_interactivity": 1,
+        "inferential_jump_severity": 1,
+        "representation_translation": 1,
+        "abstraction": 1,
+        "method_discrimination": 1,
+        "notation_density": 1,
+        "derivation_burden": 1,
+        "misconception_density": 1,
+        "special_case_sensitivity": 1
+      },
+      "difficulty_validation_refs": ["DIFF:EASY:ordered-pair-v1"],
       "target_page_budget": 8,
       "subsubtopic_plan": [],
       "pedagogy_research_brief_ref": null,
@@ -18,6 +31,19 @@
       "subtopic_title": "Building an equal-distance equation from coordinates",
       "difficulty_badge": "MEDIUM",
       "difficulty_badge_basis": "CORE1_SEMANTIC_COMPLEXITY",
+      "difficulty_dimensions": {
+        "prerequisite_depth": 2,
+        "element_interactivity": 3,
+        "inferential_jump_severity": 2,
+        "representation_translation": 3,
+        "abstraction": 2,
+        "method_discrimination": 2,
+        "notation_density": 2,
+        "derivation_burden": 2,
+        "misconception_density": 3,
+        "special_case_sensitivity": 2
+      },
+      "difficulty_validation_refs": ["DIFF:MEDIUM:equal-distance-v1"],
       "target_page_budget": 18,
       "subsubtopic_plan": [
         "distance as a geometric invariant",
@@ -35,6 +61,19 @@
       "subtopic_title": "Recognizing when symmetry shortcuts are valid or fail",
       "difficulty_badge": "HARD",
       "difficulty_badge_basis": "OWNER",
+      "difficulty_dimensions": {
+        "prerequisite_depth": 3,
+        "element_interactivity": 4,
+        "inferential_jump_severity": 4,
+        "representation_translation": 4,
+        "abstraction": 3,
+        "method_discrimination": 4,
+        "notation_density": 3,
+        "derivation_burden": 3,
+        "misconception_density": 4,
+        "special_case_sensitivity": 3
+      },
+      "difficulty_validation_refs": ["DIFF:HARD:method-validity-v1", "OWNER:hard-method-validity"],
       "target_page_budget": 28,
       "subsubtopic_plan": [
         "symmetry condition",
@@ -56,6 +95,12 @@
     "learner_knowledge_percent": 62,
     "knowledge_percent_source_ref": "ASSESSMENT:diagnostic-2026-09-14",
     "knowledge_calibration_policy_ref": "OWNER_POLICY:math-core2-calibration-v1",
+    "capability_knowledge": [
+      {"capability_ref": "MATH-EQUIDISTANT-POINT-ON-AXIS", "percent": 58},
+      {"capability_ref": "MATH-COORDINATE-DISTANCE", "percent": 66},
+      {"capability_ref": "MATH-ORDERED-PAIR-SEMANTICS", "percent": 76},
+      {"capability_ref": "MATH-LINEAR-SYSTEM-SOLVE", "percent": 48}
+    ],
     "owner_waiver": null,
     "resolved_core2a_support_profile": "STANDARD_GUIDED",
     "resolved_core2a_max_demand_level": "M3_INVERSE_TARGET",
