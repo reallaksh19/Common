@@ -68,6 +68,24 @@ def validate(packet: dict, policy: dict) -> dict:
     key = _task_key(packet)
     required_types = set(policy["task_requirements"].get(key, []))
     missing_types = sorted(required_types - types)
+    status = packet["execution_status"]
+    if status not in {"READY", "BLOCKED"}:
+        raise BlueprintV8Error("CHEM_V8_EXECUTION_STATUS_INVALID")
+
+    # Fail closed on missing task authority before validating planned output bindings.
+    # A BLOCKED packet may describe planned outputs whose authority does not yet exist;
+    # those outputs are not executable until the authority gap is closed.
+    if missing_types:
+        if status != "BLOCKED":
+            raise BlueprintV8Error("CHEM_V8_REQUIRED_BLUEPRINT_AUTHORITY_MISSING:" + ",".join(missing_types))
+        if not packet.get("blocked_reasons"):
+            raise BlueprintV8Error("CHEM_V8_BLOCKED_REASON_MISSING")
+        return {"status": "BLOCKED", "missing_authority_types": missing_types}
+
+    if status == "BLOCKED":
+        if not packet.get("blocked_reasons"):
+            raise BlueprintV8Error("CHEM_V8_BLOCKED_REASON_MISSING")
+        return {"status": "BLOCKED", "missing_authority_types": []}
 
     bindings = packet["output_bindings"]
     if not isinstance(bindings, list):
@@ -82,20 +100,6 @@ def validate(packet: dict, policy: dict) -> dict:
             raise BlueprintV8Error("CHEM_V8_OUTPUT_BINDING_INCOMPLETE")
         if binding["authority_ref"] not in ref_ids:
             raise BlueprintV8Error("CHEM_V8_OUTPUT_AUTHORITY_REF_UNRESOLVED:" + binding["output_id"])
-
-    status = packet["execution_status"]
-    if status not in {"READY", "BLOCKED"}:
-        raise BlueprintV8Error("CHEM_V8_EXECUTION_STATUS_INVALID")
-    if missing_types:
-        if status != "BLOCKED":
-            raise BlueprintV8Error("CHEM_V8_REQUIRED_BLUEPRINT_AUTHORITY_MISSING:" + ",".join(missing_types))
-        if not packet.get("blocked_reasons"):
-            raise BlueprintV8Error("CHEM_V8_BLOCKED_REASON_MISSING")
-        return {"status": "BLOCKED", "missing_authority_types": missing_types}
-    if status == "BLOCKED":
-        if not packet.get("blocked_reasons"):
-            raise BlueprintV8Error("CHEM_V8_BLOCKED_REASON_MISSING")
-        return {"status": "BLOCKED", "missing_authority_types": []}
 
     return {
         "status": "READY",
