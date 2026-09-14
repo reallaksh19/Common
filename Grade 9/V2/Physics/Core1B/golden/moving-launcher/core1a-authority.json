@@ -1,0 +1,14 @@
+{
+  "schema_version":"1.0.0",
+  "authority_ref":"C1A-REL-PHY-M2D-SBA23-PROCESS-001",
+  "release_state":"RELEASED",
+  "provenance_class":"PROCESS_GOLDEN",
+  "topic_id":"PHY-M2D",
+  "bucket_id":"M2D-SBA-23",
+  "capability_id":"PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+  "problem_family_refs":["PF-MOVING-LAUNCHER-PROJECTILE"],
+  "model_validity_required":true,
+  "explanation_required":true,
+  "allowed_atom_refs":["PHY-ML-FRAME-01","PHY-ML-ADD-01","PHY-ML-COMP-01","PHY-ML-CLOCK-01","PHY-ML-GRAV-01","PHY-ML-LIMIT-01","PHY-ML-SELECT-01"],
+  "authority_digest":"10af24ce40a1fe1ba2b5af886842ea3e22b3272249c00c6f4ab7d02f7460f2d5"
+}

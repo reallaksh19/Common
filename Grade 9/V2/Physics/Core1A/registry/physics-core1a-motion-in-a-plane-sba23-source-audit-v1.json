@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "audit_id": "PHY-C1A-M2D-SBA23-SOURCE-AUDIT-v1",
+  "bucket_id": "M2D-SBA-23",
+  "question_id": "Q15",
+  "governed_identity": {
+    "sba_title": "Launch from something already moving",
+    "core1a_home": "MOVING_LAUNCHER",
+    "linkage_concept_id": "moving-launcher",
+    "linkage_challenge_title": "Moving launch source",
+    "core2_prompt_page": 17,
+    "core2_solution_page": 78
+  },
+  "evidence_checked": [
+    "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "registry/physics-core1a-core2-linkage.json",
+    "../Core2Transfer/registry/",
+    "../Core2Transfer/fixtures/"
+  ],
+  "exact_source_body": {"state": "UNRESOLVED_IN_REPOSITORY_TEXT_SURFACES_CHECKED", "text": null},
+  "exact_source_solution": {"state": "UNRESOLVED_IN_REPOSITORY_TEXT_SURFACES_CHECKED", "text": null},
+  "exact_source_hint_ladder": {"state": "UNRESOLVED_IN_REPOSITORY_TEXT_SURFACES_CHECKED", "h1": null, "h2": null, "h3": null},
+  "classification": "SOURCE_EVIDENCE_INCOMPLETE",
+  "release_decision": "BLOCK",
+  "blocked_claims": [
+    "Q15_SOURCE_EXACT",
+    "Q15_H1_H2_H3_PRETAUGHT",
+    "CORE1A_TEACHING_COMPLETE_FOR_Q15",
+    "CORE1A_MANUSCRIPT_RELEASE_FOR_SBA23",
+    "T_PHY_RECEIPT_FOR_Q15",
+    "CORE2A_Q15_RELEASE"
+  ],
+  "next_required_evidence": "Locate repository-backed Revised Core (2) v2 Q15 prompt, solution and H1/H2/H3 ladder; audit them verbatim before changing this decision."
+}

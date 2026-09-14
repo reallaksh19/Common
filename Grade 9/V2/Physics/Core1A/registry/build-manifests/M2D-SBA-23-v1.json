@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-23",
+  "learner_profile": {"prior_knowledge_pct":20,"intrinsic_difficulty":"D3","pathway":"FOUNDATION_PATH"},
+  "source_inputs": {
+    "sba_registry":"registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "core2_linkage":"registry/physics-core1a-core2-linkage.json",
+    "source_audit":"registry/physics-core1a-motion-in-a-plane-sba23-source-audit-v1.json",
+    "teaching_plan":"registry/physics-core1a-motion-in-a-plane-sba23-teaching-plan-v1.json"
+  },
+  "primary_questions": ["Q15"],
+  "question_release": [{"question_id":"Q15","status":"HELD_SOURCE_EVIDENCE_INCOMPLETE","release_prerequisite_buckets":["M2D-SBA-03","M2D-SBA-09"]}],
+  "phase_gates": [
+    {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["SBA registry and Core1A/Core2 linkage agree on M2D-SBA-23 -> Q15 -> moving-launcher."]},
+    {"gate":"G1_SOURCE_AND_CORE2_AUDIT","status":"BLOCKED","evidence":["Question identity and linkage are repository-backed, but exact Q15 prompt, solution and H1/H2/H3 text were not resolved from the text surfaces checked."]},
+    {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["Registry classifies SBA-23 as D3 with prerequisites M2D-SBA-03 and M2D-SBA-09; a 20-percent foundation teaching decomposition is staged without source-exact claims."]},
+    {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Eight provisional atoms cover frame labels, Galilean velocity addition at release, ground-frame componentization, one projectile clock, gravity/component separation, observer consistency, a limiting-case check and first-move selection."]},
+    {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"BLOCKED","evidence":["Cannot certify H1/H2/H3 pre-teaching until the exact governed Q15 hint ladder is located."]},
+    {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PLANNED","evidence":["Generated moving-launcher practice is explicitly author-created and not a surrogate for Q15."]},
+    {"gate":"G6_PAGE_PLAN","status":"NOT_RUN","evidence":["Publication authoring waits for G1/G4 source closure."]},
+    {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"NOT_RUN","evidence":["No learner-facing PDF is authorized while source audit is blocked."]},
+    {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"NOT_RUN","evidence":["Q15 remains held."]},
+    {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"PENDING","evidence":["Machine tests may validate the fail-closed state; they may not convert it into a pedagogical release."]}
+  ],
+  "handoff": {
+    "status":"BLOCKED_SOURCE_EVIDENCE_INCOMPLETE",
+    "next_active_bucket":"M2D-SBA-23",
+    "advance_build_state":false,
+    "notes":["Do not add SBA-23 to completed_active_buckets.","Do not add SBA-23 as BUILT in the publication index.","Do not issue a production Core1A authority or T receipt from this manifest."]
+  }
+}
