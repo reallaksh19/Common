@@ -179,15 +179,7 @@ Physics Technical Engineering Gates answer what a technically coherent subtopic 
 
 A product cannot bypass an applicable technical gate merely because TTU/CCU/CDAU are otherwise complete.
 
-## 8. PDF/artifact consequence
-
-Learner artifacts are downstream consequences of Blueprint state:
-
-`domain/source → technical gate → CCU → CDAU → SDU/LAU → TTU → Publication IR → renderer → preflight`.
-
-A learner-product defect should be fixed in the first upstream object that permitted it, then regenerated. Direct PDF patching must not substitute for repairing product-generation logic.
-
-## 9. Release gates
+## 8. Release gates
 
 Pre-release:
 
@@ -205,7 +197,7 @@ Post-use:
 
 10. `G-CALIBRATION` updates future policy confidence/versioning only.
 
-## 10. Normative V9 files
+## 9. Normative V9 files
 
 - `policy/content-custody-coverage-unit.v2.json`
 - `policy/calibration-audit-layer.v1.json`
