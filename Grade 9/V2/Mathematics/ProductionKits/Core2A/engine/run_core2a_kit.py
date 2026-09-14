@@ -8,9 +8,13 @@ HERE=Path(__file__).resolve(); MATH=HERE.parents[3]; PK=MATH/'ProductionKits'; C
 sys.path.insert(0,str(COMMON)); sys.path.insert(0,str(MB_ENGINE))
 from production_primitives import route_task, validate_source_bundle, validate_bound_object, load_scaffold_profiles, build_scaffold_plan, validate_answer_contract, validate_provenance, build_blueprint_id, canonical, digest
 from validate_self_teaching_generation_spec import validate_generation_spec
+from validate_canonical_domain_registry import validate_registry
+from producer_governance import core2a_receipt
+from emit_stage_governance import write_receipt
 
 REQUIRED_ROLES={'CORE1A_BUCKET_PLAN','CORE2_PLAN'}
 DEMAND_RANK={'EASY':1,'MEDIUM':2,'HARD':3}
+SOURCE_BADGE_DEMAND={'EASY':'M0_DIRECT','MEDIUM':'M1_CONTROLLED_VARIATION','HARD':'M3_INVERSE_TARGET'}
 STRUCTURAL_SLOTS={'HIDDEN_INFORMATION','REVERSED_TARGET','REPRESENTATION_SHIFT','PARAMETER_CONSTRAINT'}
 DEMAND_LEVELS=[
     'M0_DIRECT','M1_CONTROLLED_VARIATION','M2_REPRESENTATION_TRANSFER','M3_INVERSE_TARGET',
@@ -58,6 +62,15 @@ def candidate_demand_level(item):
     if slot not in SLOT_DEMAND: raise ValueError('CORE2A_CANDIDATE_SLOT_DEMAND_UNMAPPED:'+str(slot))
     return SLOT_DEMAND[slot]
 
+def source_demand_level(page):
+    explicit=page.get('demand_level')
+    if explicit:
+        if explicit not in DEMAND_LEVELS: raise ValueError('CORE2A_SOURCE_DEMAND_LEVEL_INVALID:'+str(explicit))
+        return explicit
+    badge=page.get('guide_demand_badge',{}).get('label','EASY')
+    if badge not in SOURCE_BADGE_DEMAND: raise ValueError('CORE2A_SOURCE_GUIDE_BADGE_UNMAPPED:'+str(badge))
+    return SOURCE_BADGE_DEMAND[badge]
+
 def candidate_within_ceiling(item,ceiling):
     return demand_index(candidate_demand_level(item)) <= demand_index(ceiling)
 
@@ -77,10 +90,10 @@ def source_selection(purpose,bucket,pages_by_id):
     if purpose in {'REVISION','COMPETITION'}:return [representative_page(pages)]
     return [pages[0]]
 
-def source_question_spec(page,bucket_ref,scaffold,ans):
+def source_question_spec(page,bucket_ref,scaffold,ans,required_capability_refs):
     h=page['hint_ladder']; reasoning=[str(x.get('mathematical_transition','')).strip() for x in page.get('reasoning_route',{}).get('steps',[]) if str(x.get('mathematical_transition','')).strip()]; working=[str(x) for x in page['solution_route'].get('steps') or []]; checks=[x if isinstance(x,str) else canonical(x) for x in page['solution_route'].get('verification_checks') or []]
     prov={'question_origin':'SOURCE_CORE2','display_inline':True,'learner_label':'Where this question came from','citations':[{'citation_kind':'CORE2_SOURCE','label':f"Core (2) {page['question_ref']}",'locator':page['question_ref'],'use':'SOURCE_TEXT','text_relation':'EXACT_SOURCE','url':None}],'official_past_question_claim':False,'verified_official_source_ref':page['source_ref']}; validate_provenance(prov)
-    return {'question_id':page['question_ref'],'question_class':'SOURCE_CORE2','bucket_refs':[bucket_ref],'prompt':page['source_stem'],'source_order':page['source_order'],'scaffold_plan_ref':scaffold['scaffold_plan_id'],'provenance':prov,'answer_contract':ans,'learner_support':{'TRY IT FIRST':True,'SMALL CLUE':h['H1']['text'],'BIGGER CLUE':h['H2']['text'],'HOW DO I START?':h['H3']['text'],'THINK IT THROUGH':reasoning,'FULL WORKING':working,'QUICK CHECK':checks}}
+    return {'question_id':page['question_ref'],'question_class':'SOURCE_CORE2','source_question_no':page['question_ref'],'bucket_refs':[bucket_ref],'required_capability_refs':list(required_capability_refs),'demand_level':source_demand_level(page),'prompt':page['source_stem'],'source_order':page['source_order'],'scaffold_plan_ref':scaffold['scaffold_plan_id'],'provenance':prov,'answer_contract':ans,'learner_support':{'TRY IT FIRST':True,'SMALL CLUE':h['H1']['text'],'BIGGER CLUE':h['H2']['text'],'HOW DO I START?':h['H3']['text'],'THINK IT THROUGH':reasoning,'FULL WORKING':working,'QUICK CHECK':checks}}
 
 def validate_candidate(item,purpose,buckets):
     if purpose not in item['eligible_purposes']: raise ValueError('CORE2A_CANDIDATE_WRONG_PURPOSE:'+item['candidate_id'])
@@ -123,10 +136,11 @@ def derived_revision_prompts(bucket):
     return prompts
 
 def build_candidate_spec(item,scaffold):
-    return {'question_id':item['candidate_id'],'question_class':'GENERATED_CHALLENGE','bucket_refs':item['bucket_refs'],'slot':item['slot'],'demand_level':candidate_demand_level(item),'prompt':item['prompt'],'scaffold_plan_ref':scaffold['scaffold_plan_id'],'provenance':item['provenance'],'answer_contract':item['answer_contract'],'learner_support':{'TRY IT FIRST':True,'SMALL CLUE':item['staged_help']['small_clue'],'BIGGER CLUE':item['staged_help']['bigger_clue'],'HOW DO I START?':item['staged_help']['how_do_i_start'],'THINK IT THROUGH':item['think_it_through'],'FULL WORKING':item['full_working'],'QUICK CHECK':item['quick_check']},'novelty_check':item['novelty_check']}
+    parents=list(item['novelty_check'].get('compared_to_refs') or [])
+    return {'question_id':item['candidate_id'],'question_class':'GENERATED_CHALLENGE','bucket_refs':item['bucket_refs'],'required_capability_refs':list(item['required_capability_refs']),'slot':item['slot'],'demand_level':candidate_demand_level(item),'prompt':item['prompt'],'scaffold_plan_ref':scaffold['scaffold_plan_id'],'provenance':item['provenance'],'answer_contract':item['answer_contract'],'parent_question_refs':parents,'source_relation':'FRESH_ORIGINAL','learner_source_label':'Generated original practice','learner_support':{'TRY IT FIRST':True,'SMALL CLUE':item['staged_help']['small_clue'],'BIGGER CLUE':item['staged_help']['bigger_clue'],'HOW DO I START?':item['staged_help']['how_do_i_start'],'THINK IT THROUGH':item['think_it_through'],'FULL WORKING':item['full_working'],'QUICK CHECK':item['quick_check']},'novelty_check':item['novelty_check']}
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--intent',required=True); ap.add_argument('--generation-spec',required=True); ap.add_argument('--source-bundle',required=True); ap.add_argument('--core1a-bucket-plan',required=True); ap.add_argument('--core2-plan',required=True); ap.add_argument('--core2-answer-contracts',required=True); ap.add_argument('--candidate-set'); ap.add_argument('--scaffold-profiles',default=str(PK/'common'/'profiles'/'scaffold-profiles.json')); ap.add_argument('--knowledge-support-profiles',default=str(PK/'common'/'profiles'/'knowledge-support-profiles.json')); ap.add_argument('--out-dir',required=True); a=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--intent',required=True); ap.add_argument('--generation-spec',required=True); ap.add_argument('--source-bundle',required=True); ap.add_argument('--core1a-bucket-plan',required=True); ap.add_argument('--core2-plan',required=True); ap.add_argument('--core2-answer-contracts',required=True); ap.add_argument('--candidate-set'); ap.add_argument('--domain-registry'); ap.add_argument('--scaffold-profiles',default=str(PK/'common'/'profiles'/'scaffold-profiles.json')); ap.add_argument('--knowledge-support-profiles',default=str(PK/'common'/'profiles'/'knowledge-support-profiles.json')); ap.add_argument('--out-dir',required=True); a=ap.parse_args()
     out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True); intent=load(a.intent); routed=route_task(intent); (out/'routing_result.json').write_text(json.dumps(routed,indent=2)+'\n',encoding='utf-8')
     if routed['status']!='ROUTED': print(routed['question']); raise SystemExit(2)
     if routed['stage']!='CORE2A': raise ValueError('CORE2A_KIT_WRONG_STAGE')
@@ -136,6 +150,8 @@ def main():
     if cal['purpose']!=purpose: raise ValueError('CORE2A_PURPOSE_CALIBRATION_MISMATCH:'+str(cal['purpose'])+'!='+str(purpose))
     calibration_mode='KNOWLEDGE_PERCENT' if cal['learner_knowledge_percent'] is not None else 'OWNER_WAIVER'
     c2a_ceiling=cal['resolved_core2a_max_demand_level']; support_profile=cal['resolved_core2a_support_profile']
+    registry=load(a.domain_registry) if a.domain_registry else None
+    if registry is not None: validate_registry(registry)
 
     bundle=load(a.source_bundle); validate_source_bundle(bundle,REQUIRED_ROLES); c1a=load(a.core1a_bucket_plan); c2=load(a.core2_plan)
     validate_bound_object(bundle,'CORE1A_BUCKET_PLAN',c1a,ref_fields=('bucket_plan_id',),digest_fields=('plan_digest',)); validate_bound_object(bundle,'CORE2_PLAN',c2,ref_fields=('plan_id',),digest_fields=('plan_digest',))
@@ -143,7 +159,7 @@ def main():
     for p in c2['pages']:
         if p['question_ref'] not in source_answers: raise ValueError('CORE2A_SOURCE_ANSWER_CONTRACT_MISSING:'+p['question_ref'])
         validate_answer_contract(source_answers[p['question_ref']])
-    buckets,_=bucket_maps(c1a); pages={p['question_ref']:p for p in c2['pages']}; profiles=load_scaffold_profiles(a.scaffold_profiles); knowledge_profiles=load_knowledge_support_profiles(a.knowledge_support_profiles); candidates=[]; dropped_by_ceiling=[]
+    buckets,qmap=bucket_maps(c1a); pages={p['question_ref']:p for p in c2['pages']}; profiles=load_scaffold_profiles(a.scaffold_profiles); knowledge_profiles=load_knowledge_support_profiles(a.knowledge_support_profiles); candidates=[]; dropped_by_ceiling=[]
     if a.candidate_set:
         cand_doc=load(a.candidate_set); schema=load(PK/'Core2A'/'contracts'/'math-core2a-candidate-set.schema.json'); jsonschema.validate(cand_doc,schema)
         eligible=[x for x in cand_doc['items'] if purpose in x['eligible_purposes']]
@@ -162,12 +178,19 @@ def main():
         if purpose=='STARTER': recall=[f"Start here: {b['bucket_invariant']['text']}"]+[f"Say this in your own words before solving: {x['text']}" for x in (b.get('learning_atoms') or [])[:2]]
         refs=[x['candidate_id'] for x in candidates if bid in x['bucket_refs']]
         sections.append({'bucket_ref':bid,'title':b['title'],'invariant':b['bucket_invariant']['text'],'scaffold_plan':sc,'selected_source_question_refs':ids,'recall_prompts':recall,'generated_candidate_refs':refs})
-        for p in selected: specs.append(source_question_spec(p,bid,sc,source_answers[p['question_ref']]))
+        for p in selected: specs.append(source_question_spec(p,bid,sc,source_answers[p['question_ref']],b['member_capability_refs']))
     for c in candidates: specs.append(build_candidate_spec(c,scaffolds[c['bucket_refs'][0]]))
     if purpose=='PRACTICE' and selected_count!=len(c2['pages']): raise ValueError('CORE2A_PRACTICE_DROPPED_SOURCE_ITEM')
     calibration={'mode':calibration_mode,'knowledge_percent_source_ref':cal['knowledge_percent_source_ref'],'knowledge_calibration_policy_ref':cal['knowledge_calibration_policy_ref'],'owner_waiver_ref':cal['owner_waiver']['owner_ref'] if cal['owner_waiver'] else None,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level']}
     bp={'stage':'CORE2A','purpose':purpose,'source_bundle_ref':bundle['bundle_id'],'generation_calibration':calibration,'sections':sections,'question_specs':specs,'audit_requirements':['PURPOSE_EXPLICIT','KNOWLEDGE_OR_OWNER_CALIBRATION_PASS','CORE2A_DEMAND_CEILING_PASS','SOURCE_CORE2_FIDELITY','ANSWER_CONTRACT_PASS','HINT_DISCLOSURE_PASS','INLINE_PROVENANCE','TAUGHT_SCOPE_ONLY','PURPOSE_DIFFERENTIATION_PASS']}; bp['blueprint_id']=build_blueprint_id(bp)
     (out/'core2a_product_blueprint.json').write_text(json.dumps(bp,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
-    audit={'kit_id':'MATH-PRODUCTION-KIT-CORE2A-v3','status':'PASS','purpose':purpose,'calibration_mode':calibration_mode,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level'],'bucket_count':len(buckets),'selected_source_question_count':selected_count,'generated_candidate_count':len(candidates),'generated_candidates_dropped_by_ceiling':dropped_by_ceiling,'blueprint_ref':bp['blueprint_id'],'same_as_core2':False}; (out/'core2a_kit_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8'); print(json.dumps(audit,indent=2))
+
+    receipt_pages=[]
+    for p in c2['pages']:
+        row=copy.deepcopy(p); row['answer_contract_ref']='ANS-'+p['question_ref']+'-'+digest(source_answers[p['question_ref']])[:12]; receipt_pages.append(row)
+    receipt=core2a_receipt(bp,gen,registry=registry,all_source_pages=receipt_pages)
+    write_receipt(receipt,out/'core2a_governance_receipt.json')
+
+    audit={'kit_id':'MATH-PRODUCTION-KIT-CORE2A-v4','status':'PASS','purpose':purpose,'calibration_mode':calibration_mode,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level'],'bucket_count':len(buckets),'selected_source_question_count':selected_count,'generated_candidate_count':len(candidates),'generated_candidates_dropped_by_ceiling':dropped_by_ceiling,'blueprint_ref':bp['blueprint_id'],'governance_receipt_ref':receipt['receipt_id'],'governance_release_state':receipt['release_state'],'same_as_core2':False}; (out/'core2a_kit_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8'); print(json.dumps(audit,indent=2))
 
 if __name__=='__main__': main()
