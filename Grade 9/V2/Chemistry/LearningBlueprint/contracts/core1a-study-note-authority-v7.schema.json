@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-core1a-study-note-authority-v7.schema.json",
+  "title": "Chemistry Core1A content-bearing study-note authority v7",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "authority_id", "subtopic_id", "subtopic_title", "difficulty_badge",
+    "source_refs", "scope_statement", "learning_atoms", "content_objects",
+    "reconstructable_ttu_refs", "practice_progression", "learner_surface_policy",
+    "pagination_policy", "ccbom_ref", "completeness_summary"
+  ],
+  "properties": {
+    "schema_version": {"const": "7.0.0"},
+    "authority_id": {"type": "string", "minLength": 1},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "subtopic_title": {"type": "string", "minLength": 1},
+    "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "source_refs": {
+      "type": "array", "minItems": 2, "uniqueItems": true,
+      "items": {"type": "object", "required": ["ref", "role"], "properties": {"ref": {"type": "string", "minLength": 1}, "role": {"enum": ["SEMANTIC_AUTHORITY", "SOURCE_CUSTODY", "PEDAGOGY_AUTHORITY", "REPRESENTATION_AUTHORITY", "RESEARCH_EVIDENCE"]}}, "additionalProperties": false}
+    },
+    "scope_statement": {"type": "string", "minLength": 20},
+    "learning_atoms": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["atom_id", "learner_title", "required_job_object_ids"],
+        "properties": {
+          "atom_id": {"type": "string", "minLength": 1},
+          "learner_title": {"type": "string", "minLength": 1},
+          "required_job_object_ids": {"type": "object", "minProperties": 8}
+        }
+      }
+    },
+    "content_objects": {
+      "type": "array", "minItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["object_id", "object_class", "learning_atom_id", "learner_payload", "source_ref", "ccbom_asset_id"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 1},
+          "object_class": {"enum": ["MEANING", "RULE", "EQUATION", "REPRESENTATION", "REASONING_CHAIN", "DERIVATION", "WORKED_EXAMPLE", "MISCONCEPTION_REPAIR", "BOUNDARY", "GUIDED_PRACTICE", "INDEPENDENT_PRACTICE", "ANSWER", "VERIFICATION", "PREREQUISITE_RECAP"]},
+          "learning_atom_id": {"type": "string", "minLength": 1},
+          "learner_payload": {"type": ["string", "object", "array"]},
+          "source_ref": {"type": "string", "minLength": 1},
+          "ccbom_asset_id": {"type": "string", "minLength": 1},
+          "representation_type": {"type": "string"},
+          "practice_level": {"enum": ["GUIDED", "FADED", "INDEPENDENT"]}
+        }
+      }
+    },
+    "reconstructable_ttu_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "practice_progression": {
+      "type": "object", "additionalProperties": false,
+      "required": ["worked_object_ids", "guided_object_ids", "independent_object_ids", "answer_object_ids"],
+      "properties": {
+        "worked_object_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "guided_object_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "independent_object_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "answer_object_ids": {"type": "array", "minItems": 2, "items": {"type": "string"}}
+      }
+    },
+    "learner_surface_policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["subject_language_only", "example_before_abstraction_when_helpful", "forbidden_internal_terms"],
+      "properties": {
+        "subject_language_only": {"const": true},
+        "example_before_abstraction_when_helpful": {"const": true},
+        "forbidden_internal_terms": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"type": "string"}}
+      }
+    },
+    "pagination_policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "page_count_is_target", "content_closure_precedes_pagination"],
+      "properties": {
+        "mode": {"const": "CONTENT_FIRST"},
+        "page_count_is_target": {"const": false},
+        "content_closure_precedes_pagination": {"const": true}
+      }
+    },
+    "ccbom_ref": {"type": "string", "minLength": 1},
+    "completeness_summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["learning_atom_count", "content_object_count", "equation_count", "representation_count", "worked_example_count", "misconception_repair_count", "practice_count", "answer_count", "unresolved_object_ids"],
+      "properties": {
+        "learning_atom_count": {"type": "integer", "minimum": 1},
+        "content_object_count": {"type": "integer", "minimum": 8},
+        "equation_count": {"type": "integer", "minimum": 1},
+        "representation_count": {"type": "integer", "minimum": 1},
+        "worked_example_count": {"type": "integer", "minimum": 1},
+        "misconception_repair_count": {"type": "integer", "minimum": 1},
+        "practice_count": {"type": "integer", "minimum": 2},
+        "answer_count": {"type": "integer", "minimum": 2},
+        "unresolved_object_ids": {"type": "array", "maxItems": 0}
+      }
+    }
+  }
+}
