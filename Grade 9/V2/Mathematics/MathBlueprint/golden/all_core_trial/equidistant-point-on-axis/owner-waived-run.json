@@ -155,7 +155,7 @@
         ],
         "why_key_move_works": "The equation already encodes the invariant PA^2=PB^2; the task is to uncover the geometry before solving.",
         "common_wrong_chain": "Treat the equation as context-free algebra and miss the distance interpretation.",
-        "verification": "Substituting x=1/4 makes both sides 441/16.",
+        "verification": "Substituting x=1/4 makes both sides 425/16.",
         "answer_check": "P=(1/4,0).",
         "provenance_role": "GENERATED_FROM_CORE2_FAMILY"
       }
