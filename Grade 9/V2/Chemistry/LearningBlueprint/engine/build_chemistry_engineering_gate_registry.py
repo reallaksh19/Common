@@ -1,0 +1,1580 @@
+#!/usr/bin/env python3
+"""Build and export the canonical Chemistry Technical Engineering Gate Registry."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+POLICY_DIR = ROOT / "policies"
+
+SUBTOPIC_GATES = [
+    {
+        "subtopic_id": "CHEM-SYM-LITERACY",
+        "learner_title": "Chemical Symbols, Atomic Notation & Formula Literacy",
+        "chapter": "Atoms and Molecules / Chemical Foundations",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 9 & 10 Science (Chemistry)",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 9 Science Chapter 3 (Atoms and Molecules), Sections 3.2-3.4",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-SYMBOL-Z-A",
+            "CON-CHEM-DIATOMIC-MOLECULES",
+            "CON-CHEM-SUBSCRIPT-VS-COEFF"
+        ],
+        "prerequisite_ids": ["MATH-BASIC-ARITHMETIC"],
+        "linked_buckets": ["B-CHEM-FOUNDATIONS"],
+        "linked_problem_family_ids": ["PF-CHEM-NUCLIDE-INTERPRET", "PF-CHEM-FORMULA-COUNT"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-SYMBOL-Z-A",
+                "canonical_statement": "An atom is designated by symbol X with atomic number Z (protons) and mass number A (protons + neutrons) as ^A_Z X.",
+                "why_required": "Grounds element identity and atomic composition.",
+                "failure_if_omitted": "Conflating isotopes or confusing atomic mass with atomic number."
+            },
+            {
+                "concept_id": "CON-CHEM-DIATOMIC-MOLECULES",
+                "canonical_statement": "Elementary gases exist as stable diatomic molecules (H2, N2, O2, F2, Cl2, Br2, I2) under standard conditions.",
+                "why_required": "Prevents writing monoatomic elemental gases in chemical equations.",
+                "failure_if_omitted": "Writing isolated O or H instead of O2 or H2 as chemical reactants."
+            },
+            {
+                "concept_id": "CON-CHEM-SUBSCRIPT-VS-COEFF",
+                "canonical_statement": "A subscript denotes the number of bonded atoms in a formula unit; a stoichiometric coefficient denotes the number of distinct formula units.",
+                "why_required": "Prevents catastrophic confusion between substance identity and substance quantity.",
+                "failure_if_omitted": "Treating 2H as equivalent to H2."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-ATOMIC-COMP",
+                "formula": "A = Z + N",
+                "meaning_of_symbols": "A mass number, Z atomic number, N neutron count",
+                "symbols": [
+                    {"symbol": "A", "name": "Mass number", "si_unit": "dimensionless integer", "dimension": "1"},
+                    {"symbol": "Z", "name": "Atomic number (proton count)", "si_unit": "dimensionless integer", "dimension": "1"},
+                    {"symbol": "N", "name": "Neutron count", "si_unit": "dimensionless integer", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "Non-negative integers",
+                "conditions_of_validity": "Nuclear ground state",
+                "obligations": ["EXPLAIN", "INVERT", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-NUCLIDE-NOTATION",
+                "representation_type": "JOHNSTONE_TRIPLET_DIAGRAM",
+                "name": "Nuclide Symbol Notation",
+                "chemistry_encoded": "Top-left mass number, bottom-left atomic number, centered chemical symbol",
+                "mandatory_labels": ["Symbol X", "Mass number A", "Atomic number Z"],
+                "what_cannot_be_omitted": "Superscript mass number and subscript atomic number placement",
+                "common_incorrect_version": "Writing mass number as right subscript or confusing with charge",
+                "verification_method": "Check A >= Z and A - Z equals integer neutron count"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Non-relativistic atomic nucleus",
+                "why_needed": "Nucleon conservation holds strictly",
+                "what_changes_if_violated": "Nuclear transmutation or mass defect occurs"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Identify element symbol from periodic authority", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Extract proton count Z and calculate neutron count N = A - Z", "inferential_jump": "LOW"},
+            {"step": 3, "expert_action": "Distinguish between free elemental atoms and stable diatomic molecules", "inferential_jump": "MEDIUM"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "NAME_STRING",
+                "to_mode": "FORMULA_STRING",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "Oxygen gas -> O2(g)"
+            },
+            {
+                "from_mode": "NUCLIDE_RECORD",
+                "to_mode": "PARTICLE_INVENTORY",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "^23_11 Na -> 11 protons, 12 neutrons, 11 electrons"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-COEFF-SUBSCRIPT-CONFUSION",
+                "incorrect_belief": "2H is chemically identical to H2",
+                "why_plausible": "Both contain two hydrogen atoms total",
+                "required_counterexample": "H2 is stable diatomic gas with covalent bond; 2H represents two separate reactive radical atoms",
+                "required_technical_repair": "Enforce: subscripts modify internal stoichiometry; coefficients scale external quantity"
+            }
+        ],
+        "mandatory_verifications": ["INTEGER_COUNT_CHECK", "MASS_CHARGE_CONSERVATION"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-NUCLIDE-INTERPRET",
+                "name": "Nuclide Notation Composition Analysis",
+                "recognition_cues": "Nuclear isotopic symbol with mass and atomic numbers",
+                "first_technical_move": "Read Z for protons and electrons; calculate A - Z for neutrons",
+                "common_fatal_error": "Subtracting atomic number from electron count",
+                "typical_unknown": "Neutron count or isotopic identity"
+            },
+            {
+                "family_id": "PF-CHEM-FORMULA-COUNT",
+                "name": "Formula Unit Atom Counting",
+                "recognition_cues": "Chemical formula with parentheses and coefficients",
+                "first_technical_move": "Multiply coefficient by inner subscript and outer parenthetical multiplier",
+                "common_fatal_error": "Adding coefficients instead of multiplying subscripts",
+                "typical_unknown": "Total atom count per element"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 1,
+            "element_interactivity": 1,
+            "inferential_jump_severity": 1,
+            "representation_translation": 2,
+            "model_discrimination": 2,
+            "sign_or_frame_sensitivity": 1,
+            "multi_step_dependency": 1,
+            "abstraction": 2,
+            "misconception_density": 2,
+            "synthesis": 1,
+            "provisional_difficulty": "EASY",
+            "difficulty_basis": "Direct symbolic literacy and integer particle counting",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-FOUNDATIONS", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-COEFF-AS-SUBSCRIPT",
+                "authoring_defect": "Conflating coefficient and subscript",
+                "expected_failure_reason": "Subscripts denote intramolecular bond stoichiometry, coefficients denote quantity of formula units"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-ION-VALENCY",
+        "learner_title": "Ions, Valency, Polyatomic Radicals & Formal Charge",
+        "chapter": "Atoms and Molecules / Chemical Bonding",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 9 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 9 Science Chapter 3, Section 3.4 (What is an Ion?)",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-ION-FORMATION",
+            "CON-CHEM-POLYATOMIC-IONS",
+            "CON-CHEM-VALENCY-CAPACITY"
+        ],
+        "prerequisite_ids": ["CHEM-SYM-LITERACY"],
+        "linked_buckets": ["B-CHEM-IONS"],
+        "linked_problem_family_ids": ["PF-CHEM-ION-CHARGE-DETERMINE"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-ION-FORMATION",
+                "canonical_statement": "An ion is a charged atom or group of atoms formed by the loss of electrons (cation, positive) or gain of electrons (anion, negative).",
+                "why_required": "Establishes physical origin of electrical charge in chemical species.",
+                "failure_if_omitted": "Believing ions are formed by proton transfer."
+            },
+            {
+                "concept_id": "CON-CHEM-POLYATOMIC-IONS",
+                "canonical_statement": "A polyatomic ion is a covalently bonded cluster of atoms carrying an overall net charge that acts as a single indivisible chemical unit (e.g. SO4^2-, CO3^2-, NH4+).",
+                "why_required": "Required to prevent decomposing stable radicals during formula writing.",
+                "failure_if_omitted": "Writing Al2SO43 instead of Al2(SO4)3."
+            },
+            {
+                "concept_id": "CON-CHEM-VALENCY-CAPACITY",
+                "canonical_statement": "Valency is the combining capacity of an element or radical, corresponding to the number of electrons lost, gained, or shared to achieve a noble gas electron configuration.",
+                "why_required": "Provides predictive capacity for chemical formula construction.",
+                "failure_if_omitted": "Blind memorization of formulas without valency basis."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-ION-CHARGE",
+                "formula": "q_ion = (Z - N_e) e",
+                "meaning_of_symbols": "q_ion net charge, Z proton count, N_e electron count, e elementary charge",
+                "symbols": [
+                    {"symbol": "q_ion", "name": "Net ionic charge", "si_unit": "C or multiple of e", "dimension": "[I T]"},
+                    {"symbol": "Z", "name": "Proton count", "si_unit": "integer", "dimension": "1"},
+                    {"symbol": "N_e", "name": "Electron count", "si_unit": "integer", "dimension": "1"},
+                    {"symbol": "e", "name": "Elementary charge unit", "si_unit": "C", "dimension": "[I T]"}
+                ],
+                "reference_frame_or_sign": "Signed integer multiple of e",
+                "conditions_of_validity": "Isolated or hydrated ion",
+                "obligations": ["EXPLAIN", "APPLY", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-LEWIS-ION",
+                "representation_type": "LEWIS_DOT_STRUCTURE",
+                "name": "Lewis Charge Bracket Diagram",
+                "chemistry_encoded": "Element or cluster enclosed in brackets with formal charge indicated as superscript",
+                "mandatory_labels": ["Species symbol", "Bracket enclosure", "Charge sign and magnitude (e.g. 2-)"],
+                "what_cannot_be_omitted": "Explicit sign and magnitude outside bracket",
+                "common_incorrect_version": "Writing charge inside brackets or omitting magnitude",
+                "verification_method": "Check total valence electrons minus formal bonds equals net bracket charge"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Integer electron transfer",
+                "why_needed": "Charge quantization holds strictly",
+                "what_changes_if_violated": "Fractional charges occur only in subatomic quark theory, invalid in chemistry"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Identify valence shell electron configuration", "inferential_jump": "MEDIUM"},
+            {"step": 2, "expert_action": "Determine electrons gained or lost to satisfy octet/duplet rule", "inferential_jump": "LOW"},
+            {"step": 3, "expert_action": "Assign signed ionic charge and deduce combining valency", "inferential_jump": "LOW"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "ELECTRON_COUNT",
+                "to_mode": "IONIC_SYMBOL",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "Magnesium atom (12p, 10e) -> Mg^2+"
+            },
+            {
+                "from_mode": "NAME_STRING",
+                "to_mode": "RADICAL_SYMBOL",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "Sulfate ion -> SO4^2- with valency 2"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-POLYATOMIC-SUBSCRIPT-NO-BRACKET",
+                "incorrect_belief": "Brackets are optional when writing multiple polyatomic ions (e.g. writing CaOH2 or Al2SO43)",
+                "why_plausible": "Learner treats the radical as ordinary concatenated letters",
+                "required_counterexample": "CaOH2 means 1 Ca, 1 O, 2 H; calcium hydroxide requires 2 hydroxide ions Ca(OH)2 (1 Ca, 2 O, 2 H)",
+                "required_technical_repair": "Enforce brackets around polyatomic radical whenever subscript is 2 or greater"
+            }
+        ],
+        "mandatory_verifications": ["CHARGE_QUANTIZATION_CHECK", "OCTET_SATISFACTION_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-ION-CHARGE-DETERMINE",
+                "name": "Ion Charge and Valency Determination",
+                "recognition_cues": "Given atomic number or group number, deduce ion formula and valency",
+                "first_technical_move": "Write electron configuration and determine distance to nearest noble gas",
+                "common_fatal_error": "Assigning positive charge to an atom that gains electrons",
+                "typical_unknown": "Ionic formula and valency magnitude"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 2,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 2,
+            "sign_or_frame_sensitivity": 2,
+            "multi_step_dependency": 2,
+            "abstraction": 2,
+            "misconception_density": 3,
+            "synthesis": 1,
+            "provisional_difficulty": "MEDIUM",
+            "difficulty_basis": "Subatomic charge calculation and polyatomic radical bracket rules",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-IONS", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-UNBRACKETED-RADICAL",
+                "authoring_defect": "Omitting parentheses around polyatomic ion with subscript > 1",
+                "expected_failure_reason": "Polyatomic radicals require brackets when multiplied by stoichiometric subscripts"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-FORMULA-CONSTRUCTION",
+        "learner_title": "Chemical Formula Construction & Electroneutrality",
+        "chapter": "Atoms and Molecules",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 9 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 9 Science Chapter 3, Section 3.4.2 (Writing Chemical Formulae)",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-ELECTRONEUTRALITY",
+            "CON-CHEM-CRISS-CROSS-METHOD"
+        ],
+        "prerequisite_ids": ["CHEM-ION-VALENCY"],
+        "linked_buckets": ["B-CHEM-FORMULAE"],
+        "linked_problem_family_ids": ["PF-CHEM-CRISS-CROSS-FORMULA"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-ELECTRONEUTRALITY",
+                "canonical_statement": "In any stable chemical compound, the total positive charge contributed by cations must exactly balance the total negative charge contributed by anions, resulting in net zero charge.",
+                "why_required": "Enforces fundamental physical condition for macroscopic stability.",
+                "failure_if_omitted": "Tolerating unneutralized ionic formulas such as MgCl or NaSO4."
+            },
+            {
+                "concept_id": "CON-CHEM-CRISS-CROSS-METHOD",
+                "canonical_statement": "Chemical formulas are constructed by crossing valencies/charges as opposite subscripts and reducing to simplest integer ratio.",
+                "why_required": "Provides deterministic algorithm for formula generation.",
+                "failure_if_omitted": "Guessing subscripts or writing unreduced ratios such as Mg2O2."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-ELECTRONEUTRALITY",
+                "formula": "n_+ * z_+ + n_- * z_- = 0",
+                "meaning_of_symbols": "n_+ cation count, z_+ cation charge, n_- anion count, z_- anion charge",
+                "symbols": [
+                    {"symbol": "n_+", "name": "Cation stoichiometric multiplier", "si_unit": "positive integer", "dimension": "1"},
+                    {"symbol": "z_+", "name": "Cation formal charge", "si_unit": "positive integer", "dimension": "1"},
+                    {"symbol": "n_-", "name": "Anion stoichiometric multiplier", "si_unit": "positive integer", "dimension": "1"},
+                    {"symbol": "z_-", "name": "Anion formal charge", "si_unit": "negative integer", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "Signed integer charge summation",
+                "conditions_of_validity": "Electrically neutral macroscopic compound",
+                "obligations": ["EXPLAIN", "DERIVE", "APPLY", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-CRISS-CROSS-DIAGRAM",
+                "representation_type": "CRISS_CROSS_SCHEMATIC",
+                "name": "Criss-Cross Valency Diagram",
+                "chemistry_encoded": "Cation and anion symbols at top, numerical valencies beneath, diagonal crossing lines pointing to subscripts",
+                "mandatory_labels": ["Cation symbol", "Anion symbol", "Valency numbers", "Crossing arrows", "Final formula"],
+                "what_cannot_be_omitted": "Explicit crossing vectors and integer simplification step",
+                "common_incorrect_version": "Carrying the plus/minus signs into the subscripts (e.g. Mg2+ Cl1- -> Mg-Cl2+)",
+                "verification_method": "Check total cation charge + total anion charge == 0"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Simplest empirical formula unit for ionic lattices",
+                "why_needed": "Ionic compounds form continuous lattices, not discrete molecules",
+                "what_changes_if_violated": "Writing NaCl as Na2Cl2 or continuous polymers without stoichiometric justification"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Write symbols of constituent ions with cation first", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Write valencies or charge magnitudes below each ion", "inferential_jump": "LOW"},
+            {"step": 3, "expert_action": "Criss-cross valencies to form provisional subscripts", "inferential_jump": "LOW"},
+            {"step": 4, "expert_action": "Divide by greatest common divisor to simplest integer ratio", "inferential_jump": "MEDIUM"},
+            {"step": 5, "expert_action": "Enclose polyatomic radicals in brackets if subscript > 1", "inferential_jump": "HIGH_FRAGILITY"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "ION_PAIR",
+                "to_mode": "NEUTRAL_FORMULA",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "(Al^3+, SO4^2-) -> Al2(SO4)3"
+            },
+            {
+                "from_mode": "NAME_STRING",
+                "to_mode": "NEUTRAL_FORMULA",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "Magnesium oxide -> Mg^2+, O^2- -> Mg2O2 -> MgO"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-FORMULA-UNBALANCED-CHARGE",
+                "incorrect_belief": "Elements combine 1:1 regardless of valency (e.g. magnesium chloride is MgCl)",
+                "why_plausible": "Overgeneralizing binary formulas from NaCl",
+                "required_counterexample": "Mg loses 2 electrons; each Cl accepts only 1 electron. Therefore 2 Cl ions are required to balance 1 Mg ion: MgCl2",
+                "required_technical_repair": "Enforce net charge electroneutrality check on every proposed formula"
+            }
+        ],
+        "mandatory_verifications": ["CHARGE_NEUTRALITY_CHECK", "SIMPLEST_INTEGER_RATIO_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-CRISS-CROSS-FORMULA",
+                "name": "Binary and Polyatomic Formula Construction",
+                "recognition_cues": "Given chemical name of salt or constituent ions, formulate neutral chemical formula",
+                "first_technical_move": "Identify ion charges, write criss-cross valencies, and check for radical brackets",
+                "common_fatal_error": "Leaving unreduced subscripts like Mg2O2 or omitting radical brackets",
+                "typical_unknown": "Final simplified neutral formula"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 2,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 2,
+            "sign_or_frame_sensitivity": 2,
+            "multi_step_dependency": 2,
+            "abstraction": 2,
+            "misconception_density": 2,
+            "synthesis": 2,
+            "provisional_difficulty": "MEDIUM",
+            "difficulty_basis": "Electroneutrality constraints and polyatomic bracket rules",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-FORMULAE", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-UNBALANCED-FORMULA",
+                "authoring_defect": "Writing formula that violates electroneutrality",
+                "expected_failure_reason": "Total positive charge must equal total negative charge in stable compound"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-EQ-BALANCING",
+        "learner_title": "Conservation of Mass & Chemical Equation Balancing",
+        "chapter": "Chemical Reactions and Equations",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 10 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 10 Science Chapter 1 (Chemical Reactions and Equations), Section 1.1.2",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-CONSERVATION-OF-MASS",
+            "CON-CHEM-ATOM-CONSERVATION",
+            "CON-CHEM-COEFFICIENT-ONLY-BALANCING"
+        ],
+        "prerequisite_ids": ["CHEM-FORMULA-CONSTRUCTION"],
+        "linked_buckets": ["B-CHEM-EQUATIONS"],
+        "linked_problem_family_ids": ["PF-CHEM-INSPECTION-BALANCING"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-CONSERVATION-OF-MASS",
+                "canonical_statement": "Mass cannot be created or destroyed in a chemical reaction; total mass of reactants must equal total mass of products.",
+                "why_required": "Fundamental governing physical conservation law for chemistry.",
+                "failure_if_omitted": "Treating unbalanced equations as physically valid representations."
+            },
+            {
+                "concept_id": "CON-CHEM-ATOM-CONSERVATION",
+                "canonical_statement": "The number of atoms of each element remains strictly conserved before and after a chemical reaction.",
+                "why_required": "Provides the mathematical basis for stoichiometric balancing.",
+                "failure_if_omitted": "Chemical equations that create or destroy elemental atoms."
+            },
+            {
+                "concept_id": "CON-CHEM-COEFFICIENT-ONLY-BALANCING",
+                "canonical_statement": "Balancing must be achieved exclusively by adjusting integer stoichiometric coefficients in front of formulas; chemical subscripts are strictly immutable.",
+                "why_required": "Altering subscripts mutates the identity of the chemical substance into a different or non-existent compound.",
+                "failure_if_omitted": "Balancing H2 + O2 by writing H2O2 instead of 2H2O."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-ATOM-BALANCE",
+                "formula": "sum_reactants nu_i * N_{i, k} = sum_products nu_j * N_{j, k}",
+                "meaning_of_symbols": "nu stoichiometric coefficient, N_{i, k} number of atoms of element k in formula unit i",
+                "symbols": [
+                    {"symbol": "nu_i", "name": "Stoichiometric coefficient of reactant i", "si_unit": "positive integer", "dimension": "1"},
+                    {"symbol": "nu_j", "name": "Stoichiometric coefficient of product j", "si_unit": "positive integer", "dimension": "1"},
+                    {"symbol": "N_{i, k}", "name": "Atom count of element k in species i", "si_unit": "positive integer", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "Exact element-wise equality",
+                "conditions_of_validity": "Closed system non-nuclear reaction",
+                "obligations": ["EXPLAIN", "DERIVE", "APPLY", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-ATOM-INVENTORY-TABLE",
+                "representation_type": "ATOM_INVENTORY_TABLE",
+                "name": "Atom Inventory Ledger",
+                "chemistry_encoded": "Three-column ledger: Element Name, Left Hand Side (Reactant) count, Right Hand Side (Product) count",
+                "mandatory_labels": ["Element Symbol", "Reactant Atom Count", "Product Atom Count"],
+                "what_cannot_be_omitted": "Explicit counts for all elements and verification that LHS == RHS",
+                "common_incorrect_version": "Counting atoms without multiplying through by prefix coefficients",
+                "verification_method": "Check LHS atom count equals RHS atom count for every element in the table"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Ordinary chemical reaction (non-nuclear)",
+                "why_needed": "Nuclear identities are conserved",
+                "what_changes_if_violated": "Nuclear transmutation requires mass-energy conservation E=mc^2"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Write skeleton equation with verified correct chemical formulas", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Compile atom inventory table for all elements", "inferential_jump": "LOW"},
+            {"step": 3, "expert_action": "Select element appearing in fewest formulas (usually metal/nonmetal, leaving H and O last)", "inferential_jump": "MEDIUM"},
+            {"step": 4, "expert_action": "Insert trial integer coefficient and immediately update inventory", "inferential_jump": "MEDIUM"},
+            {"step": 5, "expert_action": "Balance remaining elements (H then O) and verify all counts match", "inferential_jump": "HIGH_FRAGILITY"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "SKELETON_EQUATION",
+                "to_mode": "BALANCED_EQUATION",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "Fe + H2O -> Fe3O4 + H2 balanced to 3Fe + 4H2O -> Fe3O4 + 4H2"
+            },
+            {
+                "from_mode": "WORD_EQUATION",
+                "to_mode": "BALANCED_EQUATION",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "Hydrogen + Chlorine -> Hydrogen chloride balanced to H2 + Cl2 -> 2HCl"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-SUBSCRIPT-ALTERATION",
+                "incorrect_belief": "Subscripts can be changed to make atoms balance (e.g. H2 + O2 -> H2O2 to form water)",
+                "why_plausible": "Mechanically equalizes oxygen count quickly",
+                "required_counterexample": "H2O is water; H2O2 is hydrogen peroxide, a completely different toxic bleaching agent",
+                "required_technical_repair": "Strict prohibition: formula subscripts are immutable; balance only with leading coefficients"
+            }
+        ],
+        "mandatory_verifications": ["ELEMENT_WISE_ATOM_CONSERVATION_CHECK", "COEFFICIENT_INTEGER_SIMPLIFICATION_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-INSPECTION-BALANCING",
+                "name": "Inspection and Algebraic Equation Balancing",
+                "recognition_cues": "Unbalanced skeleton equation requiring lowest whole number integer coefficients",
+                "first_technical_move": "Construct atom inventory table and identify most complex formula unit to anchor",
+                "common_fatal_error": "Changing subscripts within formula units or using fractional coefficients without clearing",
+                "typical_unknown": "Set of lowest whole-number integer coefficients"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 3,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 2,
+            "sign_or_frame_sensitivity": 1,
+            "multi_step_dependency": 3,
+            "abstraction": 2,
+            "misconception_density": 3,
+            "synthesis": 2,
+            "provisional_difficulty": "HARD",
+            "difficulty_basis": "High element interactivity and multi-step linear dependency across coupled equations",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-EQUATIONS", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+            "conditional_badges": ["DIFFICULTY: HARD"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-SUBSCRIPT-MUTATION",
+                "authoring_defect": "Balancing an equation by mutating a chemical subscript",
+                "expected_failure_reason": "Subscripts define substance identity and are strictly immutable during equation balancing"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-STATE-SYMBOLS",
+        "learner_title": "Physical State Symbols, Precipitation & Gas Evolution",
+        "chapter": "Chemical Reactions and Equations",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 10 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 10 Science Chapter 1, Section 1.1.2 (Making Equation More Informative)",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-FOUR-STATES",
+            "CON-CHEM-AQ-VS-LIQUID",
+            "CON-CHEM-PHASE-INDICATORS"
+        ],
+        "prerequisite_ids": ["CHEM-EQ-BALANCING"],
+        "linked_buckets": ["B-CHEM-EQUATIONS"],
+        "linked_problem_family_ids": ["PF-CHEM-PRECIPITATION-STATES"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-FOUR-STATES",
+                "canonical_statement": "Every reactant and product in a complete chemical equation must declare its physical state: solid (s), liquid (l), gas (g), or aqueous solution (aq).",
+                "why_required": "Chemical behavior, enthalpy, and reaction pathway depend critically on aggregation state.",
+                "failure_if_omitted": "Treating gaseous water (steam) as identical to liquid water."
+            },
+            {
+                "concept_id": "CON-CHEM-AQ-VS-LIQUID",
+                "canonical_statement": "Liquid (l) denotes a pure liquid substance or solvent; aqueous (aq) denotes a solute dissolved in water, existing as hydrated ions or solvated molecules.",
+                "why_required": "Dissolved ionic compounds behave completely differently from molten or pure liquids.",
+                "failure_if_omitted": "Writing HCl(l) for hydrochloric acid or NaCl(l) for table salt dissolved in water."
+            },
+            {
+                "concept_id": "CON-CHEM-PHASE-INDICATORS",
+                "canonical_statement": "An insoluble solid formed from mixing solutions is a precipitate indicated by (s) or down-arrow; an evolved gas is indicated by (g) or up-arrow.",
+                "why_required": "Ties macroscopic reaction phenomena directly to chemical state.",
+                "failure_if_omitted": "Failing to recognize precipitate in double displacement reactions."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-PRECIPITATION-STATE",
+                "formula": "BaCl2(aq) + Na2SO4(aq) -> BaSO4(s) + 2NaCl(aq)",
+                "meaning_of_symbols": "BaCl2 aqueous barium chloride, Na2SO4 aqueous sodium sulfate, BaSO4 solid precipitate, NaCl aqueous sodium chloride",
+                "symbols": [
+                    {"symbol": "BaCl2(aq)", "name": "Barium chloride in aqueous solution", "si_unit": "aqueous state", "dimension": "1"},
+                    {"symbol": "Na2SO4(aq)", "name": "Sodium sulfate in aqueous solution", "si_unit": "aqueous state", "dimension": "1"},
+                    {"symbol": "BaSO4(s)", "name": "Barium sulfate white precipitate", "si_unit": "solid precipitate", "dimension": "1"},
+                    {"symbol": "NaCl(aq)", "name": "Sodium chloride spectator solution", "si_unit": "aqueous state", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "State symbol suffix on every species",
+                "conditions_of_validity": "Aqueous precipitation at room temperature",
+                "obligations": ["EXPLAIN", "REPRESENT", "APPLY", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-PHASE-EQUATION",
+                "representation_type": "PHASE_EQUATION_SCHEMATIC",
+                "name": "State-Annotated Chemical Equation",
+                "chemistry_encoded": "Balanced equation with explicit subscript/suffix state symbols and directional arrows",
+                "mandatory_labels": ["Species formula", "State symbol (s, l, g, aq)", "Precipitate / gas indicators"],
+                "what_cannot_be_omitted": "State notation on every chemical participant",
+                "common_incorrect_version": "Writing naked formulas without state symbols in aqueous reactions",
+                "verification_method": "Verify solubility rules to confirm precipitate state is (s)"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Aqueous solution at 1 atm and 25 deg C",
+                "why_needed": "Solubility product criteria apply",
+                "what_changes_if_violated": "High temperature or non-aqueous solvent alters solubility"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Identify solvent and dissolved status of each participant", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Apply solubility rules to determine whether product forms precipitate", "inferential_jump": "MEDIUM"},
+            {"step": 3, "expert_action": "Append appropriate state symbol suffix to every participant", "inferential_jump": "LOW"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "UNANNOTATED_EQUATION",
+                "to_mode": "STATE_ANNOTATED_EQUATION",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "CaO + H2O -> Ca(OH)2 -> CaO(s) + H2O(l) -> Ca(OH)2(aq)"
+            },
+            {
+                "from_mode": "OBSERVATION_SCENE",
+                "to_mode": "STATE_ANNOTATED_EQUATION",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "White precipitate on mixing lead nitrate and potassium iodide -> PbI2(s)"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-AQUEOUS-LIQUID-CONFLATION",
+                "incorrect_belief": "Aqueous solution and liquid are interchangeable, so HCl(aq) is the same as HCl(l)",
+                "why_plausible": "Both appear as fluids in a beaker",
+                "required_counterexample": "HCl(l) is pure liquefied hydrogen chloride at -85 deg C; HCl(aq) is dissolved H+ and Cl- ions in water exhibiting acidic properties",
+                "required_technical_repair": "Strict distinction: (l) is pure liquid; (aq) is water-solvated solution"
+            }
+        ],
+        "mandatory_verifications": ["SOLUBILITY_PRODUCT_PRECIPITATE_CHECK", "STATE_COMPLETENESS_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-PRECIPITATION-STATES",
+                "name": "State Symbol Assignment and Precipitation Identification",
+                "recognition_cues": "Aqueous double displacement reaction with potential insoluble product",
+                "first_technical_move": "Determine cation-anion exchange pairs and check solubility table",
+                "common_fatal_error": "Labeling soluble salt as solid precipitate or leaving off state symbols",
+                "typical_unknown": "Physical state symbols of products"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 2,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 3,
+            "sign_or_frame_sensitivity": 2,
+            "multi_step_dependency": 2,
+            "abstraction": 2,
+            "misconception_density": 2,
+            "synthesis": 2,
+            "provisional_difficulty": "MEDIUM",
+            "difficulty_basis": "Distinction between pure phases and solvated aqueous species",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-EQUATIONS", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-AQ-LIQUID-BLUR",
+                "authoring_defect": "Conflating pure liquid with aqueous solution",
+                "expected_failure_reason": "Aqueous species must be distinguished from pure liquid phases"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-REACTION-CONDITIONS",
+        "learner_title": "Reaction Conditions, Enthalpy & Catalytic Constraints",
+        "chapter": "Chemical Reactions and Equations",
+        "authority_tier": "STANDARD-CHEMISTRY-DERIVED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "STANDARD-CHEMISTRY-DERIVED",
+            "source_curriculum": "NCERT Grade 10 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 10 Science Chapter 1, Section 1.1.2 & Chapter 2",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-REACTION-ARROWS",
+            "CON-CHEM-CONDITION-SPECIFICATION",
+            "CON-CHEM-THERMOCHEMICAL-SIGN"
+        ],
+        "prerequisite_ids": ["CHEM-STATE-SYMBOLS"],
+        "linked_buckets": ["B-CHEM-EQUATIONS"],
+        "linked_problem_family_ids": ["PF-CHEM-CONDITION-DECODING"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-REACTION-ARROWS",
+                "canonical_statement": "Reaction arrows declare pathway reversibility: a single forward arrow indicates an irreversible reaction; a double half-arrow indicates dynamic chemical equilibrium.",
+                "why_required": "Distinguishes completion reactions from equilibrium systems.",
+                "failure_if_omitted": "Treating reversible Haber process or esterification as one-way completion."
+            },
+            {
+                "concept_id": "CON-CHEM-CONDITION-SPECIFICATION",
+                "canonical_statement": "External constraints such as temperature (Delta), pressure, light (h*nu), or specific catalysts must be annotated directly above and below the reaction arrow.",
+                "why_required": "Reactions do not proceed without meeting activation and kinetic thresholds.",
+                "failure_if_omitted": "Presenting high-barrier industrial syntheses as spontaneous room-temperature reactions."
+            },
+            {
+                "concept_id": "CON-CHEM-THERMOCHEMICAL-SIGN",
+                "canonical_statement": "Exothermic reactions release heat (Delta H < 0, heat on product side); endothermic reactions absorb heat (Delta H > 0, heat on reactant side).",
+                "why_required": "Enforces energy conservation and temperature change predictions.",
+                "failure_if_omitted": "Conflating heat absorption with heat release in decomposition reactions."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-PHOTOSYNTHESIS-CONDITIONS",
+                "formula": "6CO2(aq) + 12H2O(l) -> C6H12O6(aq) + 6O2(g) + 6H2O(l) [sunlight, chlorophyll]",
+                "meaning_of_symbols": "CO2 carbon dioxide, H2O water, C6H12O6 glucose, O2 oxygen; sunlight and chlorophyll are required catalysts/energy sources",
+                "symbols": [
+                    {"symbol": "CO2(aq)", "name": "Carbon dioxide", "si_unit": "aqueous state", "dimension": "1"},
+                    {"symbol": "H2O(l)", "name": "Liquid water", "si_unit": "liquid state", "dimension": "1"},
+                    {"symbol": "C6H12O6(aq)", "name": "Glucose", "si_unit": "aqueous state", "dimension": "1"},
+                    {"symbol": "O2(g)", "name": "Oxygen gas", "si_unit": "gas state", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "Catalyst/light annotated across arrow",
+                "conditions_of_validity": "Photochemical conditions present",
+                "obligations": ["EXPLAIN", "REPRESENT", "APPLY", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-REACTION-ENERGY-PROFILE",
+                "representation_type": "REACTION_ENERGY_PROFILE",
+                "name": "Reaction Coordinate Diagram",
+                "chemistry_encoded": "Potential energy vs reaction coordinate showing activation energy barrier and Delta H",
+                "mandatory_labels": ["Reactant energy", "Product energy", "Activation energy Ea", "Enthalpy change Delta H"],
+                "what_cannot_be_omitted": "Clear relative energy of products vs reactants and catalyst barrier lowering",
+                "common_incorrect_version": "Showing exothermic reaction with products higher than reactants",
+                "verification_method": "Check Delta H = H_products - H_reactants agrees with sign"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Constant pressure thermochemical system",
+                "why_needed": "Enthalpy Delta H equals heat exchanged",
+                "what_changes_if_violated": "Non-constant pressure requires internal energy Delta U analysis"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Identify if activation energy requires external input (heat, light, catalyst)", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Place external energy/catalyst annotations directly across reaction arrow", "inferential_jump": "LOW"},
+            {"step": 3, "expert_action": "Assign enthalpy sign Delta H based on bond breaking vs bond making", "inferential_jump": "MEDIUM"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "PROCESS_DESCRIPTION",
+                "to_mode": "CONDITION_ARROW_EQUATION",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "Heating limestone to make quicklime -> CaCO3(s) -(Delta)-> CaO(s) + CO2(g)"
+            },
+            {
+                "from_mode": "ENERGY_PROFILE",
+                "to_mode": "THERMOCHEMICAL_EQUATION",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "Energy absorbed -> Decomposition reaction is endothermic (Delta H > 0)"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-SPONTANEITY-WITHOUT-CONDITIONS",
+                "incorrect_belief": "If an equation is balanced, the reaction occurs spontaneously at room temperature",
+                "why_plausible": "Paper chemistry does not display activation energy barriers",
+                "required_counterexample": "H2 + O2 can sit mixed indefinitely at 25 deg C without reacting; a spark is required to overcome activation energy",
+                "required_technical_repair": "Explicitly mandate reaction condition annotations on every non-spontaneous transformation"
+            }
+        ],
+        "mandatory_verifications": ["ENTHALPY_SIGN_CONSISTENCY_CHECK", "CATALYST_INVARIANCE_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-CONDITION-DECODING",
+                "name": "Reaction Condition and Thermochemical Classification",
+                "recognition_cues": "Reaction with temperature, catalyst, or Delta H indicators",
+                "first_technical_move": "Read arrow annotations and determine if reaction is exothermic or endothermic",
+                "common_fatal_error": "Classifying thermal decomposition as exothermic",
+                "typical_unknown": "Reaction type and required catalytic conditions"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 2,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 2,
+            "sign_or_frame_sensitivity": 2,
+            "multi_step_dependency": 2,
+            "abstraction": 2,
+            "misconception_density": 2,
+            "synthesis": 2,
+            "provisional_difficulty": "MEDIUM",
+            "difficulty_basis": "Thermodynamic and kinetic condition requirements across reaction pathways",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-EQUATIONS", "SOURCE: STANDARD-CHEMISTRY-DERIVED", "ANSWER_STATUS: RESOLVED"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-MISSING-ACTIVATION-CONDITION",
+                "authoring_defect": "Omitting required external conditions on non-spontaneous reactions",
+                "expected_failure_reason": "Endothermic or catalytic reactions must declare required external conditions"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-REP-TRANSLATION",
+        "learner_title": "Johnstone's Triplet (Particulate <-> Symbolic <-> Macroscopic)",
+        "chapter": "Chemical Reactions and Equations / Chemical Foundations",
+        "authority_tier": "STANDARD-CHEMISTRY-DERIVED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "STANDARD-CHEMISTRY-DERIVED",
+            "source_curriculum": "NCERT Grade 9 & 10 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 10 Science Chapter 1 & Johnstone Chemical Education Framework",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-JOHNSTONE-TRIANGLE",
+            "CON-CHEM-SPECIES-TO-PHENOMENON"
+        ],
+        "prerequisite_ids": ["CHEM-STATE-SYMBOLS"],
+        "linked_buckets": ["B-CHEM-REPRESENTATIONS"],
+        "linked_problem_family_ids": ["PF-CHEM-TRIPLET-TRANSLATION"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-JOHNSTONE-TRIANGLE",
+                "canonical_statement": "Chemical understanding requires coherent translation across three levels: Macroscopic (tangible observations), Sub-microscopic / Particulate (atoms, molecules, ions), and Symbolic (formulas, equations, mathematics).",
+                "why_required": "Prevents rote symbolic formula manipulation disconnected from physical reality.",
+                "failure_if_omitted": "Learner manipulating equations without any mental model of reacting particles."
+            },
+            {
+                "concept_id": "CON-CHEM-SPECIES-TO-PHENOMENON",
+                "canonical_statement": "Every macroscopic observation (color change, temperature rise, precipitate, effervescence) must be causally linked to specific particulate species transformations.",
+                "why_required": "Ensures scientific causal attribution in chemical explanations.",
+                "failure_if_omitted": "Vague explanations attributing color change to 'the reaction' rather than specific product species."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-TRIPLET-MAPPING",
+                "formula": "Cu^2+(aq)[blue solution] + 2OH^-(aq)[colorless] -> Cu(OH)2(s)[pale blue precipitate]",
+                "meaning_of_symbols": "Shows direct binding between ionic species, formulas, and macroscopic visible phenomena",
+                "symbols": [
+                    {"symbol": "Cu^2+(aq)", "name": "Hydrated copper(II) cation", "si_unit": "aqueous species", "dimension": "1"},
+                    {"symbol": "OH^-(aq)", "name": "Hydroxide anion", "si_unit": "aqueous species", "dimension": "1"},
+                    {"symbol": "Cu(OH)2(s)", "name": "Copper(II) hydroxide insoluble solid", "si_unit": "solid precipitate", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "Causal triplet linkage",
+                "conditions_of_validity": "Aqueous precipitation",
+                "obligations": ["EXPLAIN", "REPRESENT", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-JOHNSTONE-TRIPLET",
+                "representation_type": "JOHNSTONE_TRIPLET_DIAGRAM",
+                "name": "Three-Level Chemistry Triplet Diagram",
+                "chemistry_encoded": "Three synchronized panels: Beaker photograph/sketch (Macroscopic), Ball-and-stick/particle model (Sub-microscopic), Chemical equation (Symbolic)",
+                "mandatory_labels": ["Macroscopic observation panel", "Particulate particle model panel", "Symbolic equation panel"],
+                "what_cannot_be_omitted": "Explicit bidirectional cross-reference links between particles and chemical formulas",
+                "common_incorrect_version": "Showing macroscopic beaker and equation but omitting particulate representation",
+                "verification_method": "Verify atom count in particulate model strictly matches coefficients in symbolic equation"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Discrete particle particulate model",
+                "why_needed": "Atoms and molecules obey discrete counting",
+                "what_changes_if_violated": "Continuous fluid mechanics assumptions blur chemical atomicity"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Record concrete macroscopic observation (e.g. effervescence, precipitate)", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Map observation to chemical species formed (e.g. gas molecules, insoluble lattice)", "inferential_jump": "MEDIUM"},
+            {"step": 3, "expert_action": "Write balanced symbolic equation reflecting particulate transformation", "inferential_jump": "MEDIUM"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "MACROSCOPIC_OBSERVATION",
+                "to_mode": "PARTICULATE_DIAGRAM",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "Fizzes and bubbles -> Gas molecules dispersing from liquid"
+            },
+            {
+                "from_mode": "PARTICULATE_BOX",
+                "to_mode": "SYMBOLIC_EQUATION",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "Counting 2 diatomic A2 and 1 diatomic B2 in box -> 2A2 + B2 -> 2A2B"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-MACROSCOPIC-PARTICLE-PROPERTIES",
+                "incorrect_belief": "Individual sub-microscopic particles possess macroscopic properties (e.g. a sulfur atom is yellow, an atom of gold expands when heated)",
+                "why_plausible": "Direct psychological projection of bulk sensory observations onto single atoms",
+                "required_counterexample": "Color is an optical property of bulk electronic transitions; a single isolated atom has no bulk macroscopic color or melting point",
+                "required_technical_repair": "Strictly distinguish between emergent bulk macroscopic phenomena and single-particle quantum/atomic states"
+            }
+        ],
+        "mandatory_verifications": ["PARTICLE_TO_SYMBOLIC_COUNT_MATCH", "OBSERVATION_CAUSAL_TRACE_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-TRIPLET-TRANSLATION",
+                "name": "Particulate-Box to Chemical Equation Translation",
+                "recognition_cues": "Diagram showing reacting particles in closed container before and after reaction",
+                "first_technical_move": "Count reactant molecules, identify excess species, and write stoichiometric ratio",
+                "common_fatal_error": "Including spectator or unreacted molecules as part of the core balanced equation",
+                "typical_unknown": "Balanced symbolic equation and limiting reactant"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 3,
+            "inferential_jump_severity": 2,
+            "representation_translation": 3,
+            "model_discrimination": 2,
+            "sign_or_frame_sensitivity": 1,
+            "multi_step_dependency": 2,
+            "abstraction": 3,
+            "misconception_density": 3,
+            "synthesis": 2,
+            "provisional_difficulty": "HARD",
+            "difficulty_basis": "Simultaneous coordination across sensory macroscopic, particulate sub-microscopic, and abstract symbolic representations",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-REPRESENTATIONS", "SOURCE: STANDARD-CHEMISTRY-DERIVED", "ANSWER_STATUS: RESOLVED"],
+            "conditional_badges": ["DIFFICULTY: HARD"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-PROJECTED-MACRO-PROPERTY",
+                "authoring_defect": "Attributing macroscopic bulk properties to individual atoms",
+                "expected_failure_reason": "Single atoms do not possess bulk macroscopic sensory properties"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-CALC-STOICHIOMETRY",
+        "learner_title": "Stoichiometry, Mole Conversions & Limiting Reagents",
+        "chapter": "Atoms and Molecules / Chemical Calculations",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 9 & 11 Science (Chemistry)",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 9 Science Chapter 3, Section 3.5 (Mole Concept) & Grade 11 Chapter 1",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-MOLE-DEFINITION",
+            "CON-CHEM-MOLAR-RATIO",
+            "CON-CHEM-LIMITING-REAGENT"
+        ],
+        "prerequisite_ids": ["CHEM-EQ-BALANCING"],
+        "linked_buckets": ["B-CHEM-CALCULATIONS"],
+        "linked_problem_family_ids": ["PF-CHEM-MASS-MOLE-CONVERT", "PF-CHEM-LIMITING-REAGENT-CALC"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-MOLE-DEFINITION",
+                "canonical_statement": "One mole is the amount of substance containing exactly 6.02214076 x 10^23 elementary entities, with mass in grams numerically equal to relative formula mass.",
+                "why_required": "Connects microscopic particle counts directly to macroscopic weighable grams.",
+                "failure_if_omitted": "Inability to perform quantitative chemical calculations."
+            },
+            {
+                "concept_id": "CON-CHEM-MOLAR-RATIO",
+                "canonical_statement": "Stoichiometric coefficients define the exact molar ratios in which substances react and form, never direct mass ratios.",
+                "why_required": "Chemical reactions occur atom-for-atom and molecule-for-molecule, not gram-for-gram.",
+                "failure_if_omitted": "Equating coefficients directly to gram masses."
+            },
+            {
+                "concept_id": "CON-CHEM-LIMITING-REAGENT",
+                "canonical_statement": "The limiting reagent is the reactant completely consumed first in a reaction, thereby capping the theoretical maximum yield of all products.",
+                "why_required": "Real reaction mixtures are rarely in exact stoichiometric balance.",
+                "failure_if_omitted": "Assuming all reactants are completely consumed regardless of initial quantities."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-MOLE-CONVERSION",
+                "formula": "n = m / M = N / N_A",
+                "meaning_of_symbols": "n moles, m sample mass, M molar mass, N entity count, N_A Avogadro constant",
+                "symbols": [
+                    {"symbol": "n", "name": "Amount of substance", "si_unit": "mol", "dimension": "[N]"},
+                    {"symbol": "m", "name": "Sample mass", "si_unit": "g or kg", "dimension": "[M]"},
+                    {"symbol": "M", "name": "Molar mass", "si_unit": "g/mol", "dimension": "[M N^-1]"},
+                    {"symbol": "N", "name": "Number of elementary entities", "si_unit": "dimensionless integer", "dimension": "1"},
+                    {"symbol": "N_A", "name": "Avogadro constant", "si_unit": "mol^-1", "dimension": "[N^-1]"}
+                ],
+                "reference_frame_or_sign": "Non-negative real quantities",
+                "conditions_of_validity": "Pure chemical substance with known molecular formula",
+                "obligations": ["EXPLAIN", "DERIVE", "INTERPRET", "APPLY", "INVERT", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-BCA-TABLE",
+                "representation_type": "BCA_MOLE_TABLE",
+                "name": "Before-Change-After (BCA) Mole Table",
+                "chemistry_encoded": "Structured table tracking moles of all species before reaction, during change (-nu*x, +nu*x), and after completion",
+                "mandatory_labels": ["Reaction equation header", "Before (initial moles)", "Change (delta moles)", "After (final moles)"],
+                "what_cannot_be_omitted": "Change line must strictly reflect stoichiometric coefficient ratios",
+                "common_incorrect_version": "Filling BCA table with gram masses instead of molar quantities",
+                "verification_method": "Check final moles >= 0 and limiting reagent final moles == 0"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "100% reaction completion without side reactions",
+                "why_needed": "Theoretical yield calculation applies",
+                "what_changes_if_violated": "Incomplete reaction or equilibrium requires percent yield calculation"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Convert all given reactant masses or particle counts into moles (n = m/M)", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Divide each reactant mole quantity by its stoichiometric coefficient to identify limiting reagent", "inferential_jump": "MEDIUM"},
+            {"step": 3, "expert_action": "Use limiting reactant moles to compute theoretical yield of products via molar ratio", "inferential_jump": "MEDIUM"},
+            {"step": 4, "expert_action": "Convert product moles back to requested units (grams or liters)", "inferential_jump": "LOW"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "MASS_INPUT",
+                "to_mode": "MOLE_QUANTITY",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "36 g of H2O -> 36 / 18 = 2.0 mol H2O"
+            },
+            {
+                "from_mode": "MOLE_RATIO",
+                "to_mode": "THEORETICAL_YIELD_MASS",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "2 mol H2 reacting with 1 mol O2 produces 2 mol H2O (36 g)"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-MASS-RATIO-COEFFICIENT",
+                "incorrect_belief": "Coefficients in an equation represent masses in grams (e.g. 2H2 + O2 -> 2H2O means 2g H2 reacts with 1g O2)",
+                "why_plausible": "Confusing stoichiometric integer count with macroscopic gram weight",
+                "required_counterexample": "2 mol H2 has mass 4g; 1 mol O2 has mass 32g; they react in 4g : 32g (1:8 mass ratio), not 2:1",
+                "required_technical_repair": "Enforce mandatory conversion: mass -> moles -> mole ratio -> product mass"
+            }
+        ],
+        "mandatory_verifications": ["LIMITING_REAGENT_NON_NEGATIVE_CHECK", "MASS_CONSERVATION_CLOSURE_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-MASS-MOLE-CONVERT",
+                "name": "Mass to Mole and Particle Interconversion",
+                "recognition_cues": "Given mass or number of molecules, calculate moles or atomic count",
+                "first_technical_move": "Compute molar mass from periodic table and apply n = m/M",
+                "common_fatal_error": "Using atomic mass instead of molecular mass for diatomic elements",
+                "typical_unknown": "Moles or number of particles"
+            },
+            {
+                "family_id": "PF-CHEM-LIMITING-REAGENT-CALC",
+                "name": "Limiting Reagent and Theoretical Yield Calculation",
+                "recognition_cues": "Given starting masses of two or more reactants",
+                "first_technical_move": "Convert all reactant masses to moles and compute n / nu for each",
+                "common_fatal_error": "Choosing limiting reactant by comparing masses directly without converting to moles",
+                "typical_unknown": "Limiting reactant and mass of product formed"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 3,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 2,
+            "sign_or_frame_sensitivity": 1,
+            "multi_step_dependency": 3,
+            "abstraction": 2,
+            "misconception_density": 3,
+            "synthesis": 2,
+            "provisional_difficulty": "HARD",
+            "difficulty_basis": "Multi-step quantitative dimensional analysis and limiting reactant branching logic",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-CALCULATIONS", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+            "conditional_badges": ["DIFFICULTY: HARD"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-MASS-RATIO-FALLACY",
+                "authoring_defect": "Treating stoichiometric coefficients as gram mass ratios",
+                "expected_failure_reason": "Stoichiometric coefficients dictate molar ratios, requiring molar mass conversion"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-ACID-BASE-IONS",
+        "learner_title": "Acids, Bases, Aqueous Ionization & Net Ionic Neutralization",
+        "chapter": "Acids, Bases and Salts",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 10 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 10 Science Chapter 2 (Acids, Bases and Salts), Sections 2.1-2.3",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-ARRHENIUS-IONIZATION",
+            "CON-CHEM-STRONG-VS-WEAK",
+            "CON-CHEM-NET-IONIC-NEUTRALIZATION"
+        ],
+        "prerequisite_ids": ["CHEM-STATE-SYMBOLS"],
+        "linked_buckets": ["B-CHEM-ACIDS-BASES"],
+        "linked_problem_family_ids": ["PF-CHEM-NEUTRALIZATION-NET-IONIC"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-ARRHENIUS-IONIZATION",
+                "canonical_statement": "Acids produce hydrogen/hydronium ions (H+ / H3O+) and bases produce hydroxide ions (OH-) exclusively in aqueous solution; moisture is mandatory for acidic/basic behavior.",
+                "why_required": "Explains why dry HCl gas or anhydrous citric acid fails to change dry litmus paper.",
+                "failure_if_omitted": "Believing acids act independently of water or solvent ionization."
+            },
+            {
+                "concept_id": "CON-CHEM-STRONG-VS-WEAK",
+                "canonical_statement": "Strong acids/bases dissociate completely in water (indicated by single arrow ->); weak acids/bases dissociate only partially, establishing dynamic equilibrium (indicated by double arrow <=>).",
+                "why_required": "Distinguishes concentration from acid strength.",
+                "failure_if_omitted": "Treating acetic acid dissociation as 100% complete."
+            },
+            {
+                "concept_id": "CON-CHEM-NET-IONIC-NEUTRALIZATION",
+                "canonical_statement": "Neutralization of a strong acid by a strong base is fundamentally the combination of H+(aq) and OH-(aq) to form liquid water, with spectator ions remaining dissolved.",
+                "why_required": "Reveals the true sub-microscopic chemical transformation behind acid-base reactions.",
+                "failure_if_omitted": "Viewing neutralization as a mysterious disappearance of acid rather than water formation."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-NET-IONIC-WATER",
+                "formula": "H+(aq) + OH^-(aq) -> H2O(l)",
+                "meaning_of_symbols": "H+ aqueous hydronium/hydrogen ion, OH- aqueous hydroxide ion, H2O neutral liquid water",
+                "symbols": [
+                    {"symbol": "H+(aq)", "name": "Hydrated proton / hydronium", "si_unit": "aqueous ion", "dimension": "1"},
+                    {"symbol": "OH^-(aq)", "name": "Hydroxide ion", "si_unit": "aqueous ion", "dimension": "1"},
+                    {"symbol": "H2O(l)", "name": "Liquid water molecule", "si_unit": "pure liquid", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "Net ionic neutralization",
+                "conditions_of_validity": "Dilute aqueous solution at 25 deg C",
+                "obligations": ["EXPLAIN", "DERIVE", "REPRESENT", "APPLY", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-HYDRATION-SCHEMATIC",
+                "representation_type": "JOHNSTONE_TRIPLET_DIAGRAM",
+                "name": "Hydronium Ion Solvation Model",
+                "chemistry_encoded": "Water molecule dipole orienting toward proton to form H3O+ ion in aqueous medium",
+                "mandatory_labels": ["Water dipole H2O", "Free proton H+", "Hydronium complex H3O+"],
+                "what_cannot_be_omitted": "Explicit water molecule participation in proton hydration",
+                "common_incorrect_version": "Showing bare naked unhydrated protons floating in water",
+                "verification_method": "Check charge conservation across H+ + H2O -> H3O+"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Aqueous solution at 25 deg C",
+                "why_needed": "Water auto-ionization Kw = [H+][OH-] = 1.0 x 10^-14 holds",
+                "what_changes_if_violated": "Neutral pH shifts from 7.0 at non-standard temperatures"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Identify acid/base species and presence of aqueous water solvent", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Determine degree of ionization (complete -> vs partial <=>)", "inferential_jump": "MEDIUM"},
+            {"step": 3, "expert_action": "Write molecular equation, complete ionic equation, and cancel spectator ions for net ionic equation", "inferential_jump": "HIGH_FRAGILITY"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "MOLECULAR_NEUTRALIZATION",
+                "to_mode": "NET_IONIC_EQUATION",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "HCl(aq) + NaOH(aq) -> NaCl(aq) + H2O(l) transformed to H+(aq) + OH-(aq) -> H2O(l)"
+            },
+            {
+                "from_mode": "DRY_GAS_TEST",
+                "to_mode": "AQUEOUS_IONIZATION_EXPLANATION",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "Dry HCl gas does not turn dry litmus paper red because H+ ions are generated only in presence of water"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-DRY-ACID-ACTIVE",
+                "incorrect_belief": "Substances like dry HCl gas or solid citric acid crystals are acidic by themselves without water",
+                "why_plausible": "They are named 'acids' on the reagent bottle",
+                "required_counterexample": "Dry HCl gas passed over dry blue litmus paper shows zero color change; adding one drop of water instantly turns it red",
+                "required_technical_repair": "Enforce: acidic behavior is a property of hydrated H+(aq) / H3O+ ions formed upon aqueous dissolution"
+            }
+        ],
+        "mandatory_verifications": ["SPECTATOR_ION_CANCELLATION_CHECK", "CHARGE_BALANCE_NET_IONIC_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-NEUTRALIZATION-NET-IONIC",
+                "name": "Acid-Base Neutralization and Net Ionic Derivation",
+                "recognition_cues": "Reaction between acid and base forming salt and water",
+                "first_technical_move": "Split strong electrolytes into dissociated ions and identify non-participating spectator ions",
+                "common_fatal_error": "Splitting water or weak acids into separate free ions in complete ionic equation",
+                "typical_unknown": "Spectator ions and net ionic equation"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 2,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 3,
+            "sign_or_frame_sensitivity": 2,
+            "multi_step_dependency": 2,
+            "abstraction": 2,
+            "misconception_density": 3,
+            "synthesis": 2,
+            "provisional_difficulty": "MEDIUM",
+            "difficulty_basis": "Ionization equilibrium distinctions and net ionic spectator cancellations",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-ACIDS-BASES", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-DRY-ACID-MISCONCEPTION",
+                "authoring_defect": "Omitting the necessity of water for acid ionization",
+                "expected_failure_reason": "Acidity requires aqueous dissociation into hydronium ions"
+            }
+        ]
+    },
+    {
+        "subtopic_id": "CHEM-REDOX-OXIDATION",
+        "learner_title": "Redox Reactions, Oxidation States & Electron Transfer",
+        "chapter": "Chemical Reactions and Equations",
+        "authority_tier": "SOURCE-DEFINED",
+        "maturity": "ENGINEERING",
+        "technical_readiness": "ENGINEERING_GATE_READY",
+        "provenance": {
+            "authority_class": "SOURCE-DEFINED",
+            "source_curriculum": "NCERT Grade 10 Science",
+            "source_scope": "IN_SCOPE",
+            "source_reference": "NCERT Grade 10 Science Chapter 1, Section 1.2.5 (Oxidation and Reduction)",
+            "claim_status": "VERIFIED_CANONICAL"
+        },
+        "canonical_concept_ids": [
+            "CON-CHEM-OIL-RIG",
+            "CON-CHEM-OXIDATION-STATE-RULES",
+            "CON-CHEM-AGENT-INVERSION"
+        ],
+        "prerequisite_ids": ["CHEM-ION-VALENCY", "CHEM-EQ-BALANCING"],
+        "linked_buckets": ["B-CHEM-REDOX"],
+        "linked_problem_family_ids": ["PF-CHEM-REDOX-AGENT-IDENTIFY"],
+        "technical_core": [
+            {
+                "concept_id": "CON-CHEM-OIL-RIG",
+                "canonical_statement": "Oxidation is the loss of electrons (increase in oxidation number); reduction is the gain of electrons (decrease in oxidation number); they occur simultaneously.",
+                "why_required": "Standard universal electron-transfer definition of redox.",
+                "failure_if_omitted": "Restricting redox solely to oxygen gain/loss."
+            },
+            {
+                "concept_id": "CON-CHEM-OXIDATION-STATE-RULES",
+                "canonical_statement": "Oxidation states are assigned by formal rules: free elements are 0, monoatomic ions equal their charge, oxygen is -2 (except peroxides), hydrogen is +1 (with nonmetals), and the sum equals the overall species charge.",
+                "why_required": "Enforces rigorous bookkeeping of electron transfer.",
+                "failure_if_omitted": "Arbitrary assignment of oxidation numbers."
+            },
+            {
+                "concept_id": "CON-CHEM-AGENT-INVERSION",
+                "canonical_statement": "The oxidizing agent is the reactant species that causes oxidation by accepting electrons (and is itself reduced); the reducing agent donates electrons (and is itself oxidized).",
+                "why_required": "Agent role terminology is systematically inverted relative to the substance oxidized/reduced.",
+                "failure_if_omitted": "Claiming the substance oxidized is the oxidizing agent."
+            }
+        ],
+        "mandatory_equations": [
+            {
+                "equation_id": "EQ-CHEM-REDOX-TRANSFER",
+                "formula": "CuO(s) + H2(g) -> Cu(s) + H2O(l)",
+                "meaning_of_symbols": "CuO copper(II) oxide (Cu reduced from +2 to 0, oxidizing agent), H2 hydrogen gas (H oxidized from 0 to +1, reducing agent)",
+                "symbols": [
+                    {"symbol": "CuO(s)", "name": "Copper(II) oxide", "si_unit": "solid", "dimension": "1"},
+                    {"symbol": "H2(g)", "name": "Hydrogen gas", "si_unit": "gas", "dimension": "1"},
+                    {"symbol": "Cu(s)", "name": "Elemental copper", "si_unit": "solid", "dimension": "1"},
+                    {"symbol": "H2O(l)", "name": "Water", "si_unit": "liquid", "dimension": "1"}
+                ],
+                "reference_frame_or_sign": "Simultaneous electron loss and gain",
+                "conditions_of_validity": "Thermal redox reduction",
+                "obligations": ["EXPLAIN", "DERIVE", "INTERPRET", "REPRESENT", "APPLY", "VERIFY"]
+            }
+        ],
+        "representations": [
+            {
+                "representation_id": "REP-CHEM-ELECTRON-TRANSFER-ARROWS",
+                "representation_type": "ELECTRON_TRANSFER_DIAGRAM",
+                "name": "Redox Oxidation Number Tracking Arc Diagram",
+                "chemistry_encoded": "Balanced equation with oxidation numbers written above elements, connected by bridging arcs labeled 'Oxidation (loss of e-)' and 'Reduction (gain of e-)'",
+                "mandatory_labels": ["Oxidation states above atoms", "Oxidation arc with e- count", "Reduction arc with e- count", "Oxidizing agent label", "Reducing agent label"],
+                "what_cannot_be_omitted": "Explicit numerical tracking of electron gain and loss confirming equal exchange",
+                "common_incorrect_version": "Drawing arrows without specifying electron transfer numbers",
+                "verification_method": "Check total electrons lost by reducing agent equals total electrons gained by oxidizing agent"
+            }
+        ],
+        "model_conditions": [
+            {
+                "condition": "Conservation of charge and electrons",
+                "why_needed": "Free electrons cannot accumulate in bulk chemical media",
+                "what_changes_if_violated": "Unbalanced half-reactions violate charge conservation"
+            }
+        ],
+        "reasoning_sequence": [
+            {"step": 1, "expert_action": "Assign oxidation numbers to every atom on reactant and product sides", "inferential_jump": "LOW"},
+            {"step": 2, "expert_action": "Identify species whose oxidation number increased (oxidized) and decreased (reduced)", "inferential_jump": "LOW"},
+            {"step": 3, "expert_action": "Apply agent inversion rule to designate oxidizing and reducing agents", "inferential_jump": "MEDIUM"},
+            {"step": 4, "expert_action": "Verify electron loss equals electron gain across balanced half-reactions", "inferential_jump": "HIGH_FRAGILITY"}
+        ],
+        "required_transformations": [
+            {
+                "from_mode": "REDOX_EQUATION",
+                "to_mode": "AGENT_ASSIGNMENT",
+                "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+                "description": "Zn + CuSO4 -> ZnSO4 + Cu -> Zn is oxidized (reducing agent), Cu^2+ is reduced (oxidizing agent)"
+            },
+            {
+                "from_mode": "HALF_REACTIONS",
+                "to_mode": "BALANCED_OVERALL_REDOX",
+                "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+                "description": "Combine Fe^2+ -> Fe^3+ + e- and MnO4^- + 8H+ + 5e- -> Mn^2+ + 4H2O by multiplying by 5"
+            }
+        ],
+        "misconceptions": [
+            {
+                "misconception_id": "MISC-CHEM-OXIDIZING-AGENT-OXIDIZED",
+                "incorrect_belief": "The oxidizing agent is the substance that gets oxidized",
+                "why_plausible": "Confusing the agent causing the action with the recipient of the action",
+                "required_counterexample": "A travel agent sends others on travel; an oxidizing agent oxidizes another substance by taking its electrons, and is therefore reduced itself",
+                "required_technical_repair": "Enforce: Oxidizing agent = species reduced (electron acceptor); Reducing agent = species oxidized (electron donor)"
+            }
+        ],
+        "mandatory_verifications": ["ELECTRON_CONSERVATION_EXCHANGE_CHECK", "OXIDATION_NUMBER_SUM_CHECK"],
+        "problem_families": [
+            {
+                "family_id": "PF-CHEM-REDOX-AGENT-IDENTIFY",
+                "name": "Redox Identification and Agent Assignment",
+                "recognition_cues": "Chemical equation with potential change in oxidation numbers or electron transfer",
+                "first_technical_move": "Assign oxidation states to all atoms before and after arrow",
+                "common_fatal_error": "Classifying the substance oxidized as the oxidizing agent",
+                "typical_unknown": "Substance oxidized, substance reduced, oxidizing agent, reducing agent"
+            }
+        ],
+        "difficulty_profile": {
+            "prerequisite_depth": 2,
+            "element_interactivity": 3,
+            "inferential_jump_severity": 2,
+            "representation_translation": 2,
+            "model_discrimination": 3,
+            "sign_or_frame_sensitivity": 2,
+            "multi_step_dependency": 2,
+            "abstraction": 2,
+            "misconception_density": 3,
+            "synthesis": 2,
+            "provisional_difficulty": "HARD",
+            "difficulty_basis": "Complex simultaneous electron bookkeeping and linguistic role inversion",
+            "maturity": "ENGINEERING"
+        },
+        "release_checklist": {
+            "canonical_concepts_present": True,
+            "mandatory_equations_present": True,
+            "validity_conditions_stated": True,
+            "required_representations_present": True,
+            "reasoning_chain_complete": True,
+            "misconceptions_addressed": True,
+            "independent_verification_exists": True,
+            "problem_family_map_exists": True,
+            "provenance_verified": True,
+            "difficulty_profile_validated": True
+        },
+        "badges": {
+            "base_badges": ["CORE", "BUCKET: B-CHEM-REDOX", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+            "conditional_badges": ["DIFFICULTY: HARD"]
+        },
+        "falsification_cases": [
+            {
+                "test_id": "CHEM-FAIL-AGENT-INVERSION-ERROR",
+                "authoring_defect": "Conflating oxidizing agent with oxidized species",
+                "expected_failure_reason": "Oxidizing agent causes oxidation and is itself reduced"
+            }
+        ]
+    }
+]
+
+REGISTRY = {
+    "schema_version": "1.0.0",
+    "registry_id": "CHEM-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
+    "authority": "CANONICAL_DOMAIN_REGISTRY",
+    "governing_standard": "FAIL_CLOSED_ENGINEERING_GATES",
+    "maturity": "ENGINEERING",
+    "subtopic_gates": SUBTOPIC_GATES
+}
+
+
+def build():
+    out_path = POLICY_DIR / "chemistry-technical-engineering-gates.v1.json"
+    out_path.write_text(json.dumps(REGISTRY, indent=2), encoding="utf-8")
+    print(f"Wrote {len(REGISTRY['subtopic_gates'])} Chemistry subtopic gates to {out_path}")
+
+
+if __name__ == "__main__":
+    build()
