@@ -11,10 +11,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 from compile_engineering_closure import EngineeringClosureError, compile_closure, load  # noqa: E402
 from compile_engineering_passport import EngineeringPassportError, compile_passport  # noqa: E402
+from validate_ccu_engineering_ready import EngineeringCCUError, validate_engineered_ccu  # noqa: E402
 
 REQUEST = load("fixtures/engineering-workbench/m2d-sba23-request.v1.json")
 MANIFEST = load("fixtures/engineering-workbench/m2d-sba23-manifest.v1.json")
 REGISTRY = load("policy/physics-technical-engineering-gates.v2.json")
+CCU = load("topics/m2d-sba23-ccu.v1.json")
 EXPECTED_CLOSURE = {
     "PHY-VEC-BASICS",
     "PHY-VEC-ADD-SUB",
@@ -42,6 +44,15 @@ def must_passport_fail(request, receipt, code):
     try:
         compile_passport(request, receipt)
     except EngineeringPassportError as exc:
+        assert exc.code == code, (code, exc.code, str(exc))
+        return
+    raise AssertionError(f"expected {code}")
+
+
+def must_ccu_fail(request, manifest, ccu, code):
+    try:
+        validate_engineered_ccu(request, manifest, ccu)
+    except EngineeringCCUError as exc:
         assert exc.code == code, (code, exc.code, str(exc))
         return
     raise AssertionError(f"expected {code}")
@@ -78,6 +89,14 @@ assert passport["ccu_technical_authorization"] == "ALLOWED"
 assert passport["source_item_status"] == "SOURCE_HELD"
 assert passport["closure_receipt_digest"].startswith("sha256:")
 
+# Integration proof: CCU validation is now callable through an engineering-ready boundary.
+ccu_result = validate_engineered_ccu(REQUEST, MANIFEST, CCU)
+assert ccu_result["status"] == "PASS"
+assert ccu_result["bucket_id"] == "M2D-SBA-23"
+assert ccu_result["engineering_gate_count"] == 6
+assert ccu_result["engineering_closure_digest"] == receipt["closure_digest"]
+assert ccu_result["source_item_status"] == "SOURCE_HELD"
+
 # Falsifier 1: an unknown direct requirement yields a visible BLOCKED receipt, not a manual READY escape hatch.
 bad_manifest = copy.deepcopy(MANIFEST)
 bad_manifest["required_gate_ids"] = ["PHY-M2D-NOT-REAL"]
@@ -87,6 +106,7 @@ assert blocked_receipt["blockers"][0]["code"] == "E_ENG_GATE_MISSING"
 blocked_passport = compile_passport(REQUEST, blocked_receipt)
 assert blocked_passport["technical_state"] == "BLOCKED_PENDING_ENGINEERING"
 assert blocked_passport["ccu_technical_authorization"] == "BLOCKED"
+must_ccu_fail(REQUEST, bad_manifest, CCU, "E_CCU_ENGINEERING_BLOCKED")
 
 # Falsifier 2: a non-ready gate poisons the closure even when all graph references still resolve.
 bad_registry = copy.deepcopy(REGISTRY)
@@ -132,4 +152,9 @@ tampered = copy.deepcopy(blocked_receipt)
 tampered["closure_status"] = "READY"
 must_passport_fail(REQUEST, tampered, "E_PASS_RECEIPT_INCONSISTENT")
 
-print("Physics Engineering Workbench v1: PASS (request + closure + research + passport falsifiers)")
+# Falsifier 9: a bucket manifest cannot authorize a different CCU bucket.
+bad_scope = copy.deepcopy(MANIFEST)
+bad_scope["scope_ref"] = "M2D-SBA-OTHER"
+must_ccu_fail(REQUEST, bad_scope, CCU, "E_CCU_ENGINEERING_SCOPE_MISMATCH")
+
+print("Physics Engineering Workbench v1: PASS (request + closure + research + passport + CCU-boundary falsifiers)")
