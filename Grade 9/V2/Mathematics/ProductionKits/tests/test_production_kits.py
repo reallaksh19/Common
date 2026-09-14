@@ -85,6 +85,20 @@ class ProductionKitTests(unittest.TestCase):
         bad=dict(a); bad['independent_solver_status']='PENDING'
         with self.assertRaises(ValueError): prim.validate_answer_contract(bad)
 
+    def test_core2a_is_declarative_solution_apprenticeship(self):
+        manifest=load(ROOT/'Core2A'/'KIT_MANIFEST.json')
+        self.assertEqual(manifest['pedagogy_mode'],'DECLARATIVE')
+        self.assertEqual(manifest['learner_role'],'SOLUTION_APPRENTICESHIP')
+        self.assertTrue(manifest['source_question_freeze'])
+        required={'STRUCTURAL_CUE','REPRESENTATION_CHOICE','FIRST_NON_OBVIOUS_MOVE','STEPWISE_SOLUTION','WHY_KEY_MOVES_WORK','COMMON_WRONG_CHAIN','VERIFICATION','NEARBY_VARIANT'}
+        self.assertTrue(required.issubset(set(manifest['solution_apprenticeship_requirements'])))
+
+    def test_core2a_self_teaching_contract_is_bound(self):
+        manifest=load(ROOT/'Core2A'/'KIT_MANIFEST.json')
+        path=ROOT.parents[0]/'MathBlueprint'/'SELF_TEACHING.md'
+        self.assertTrue(path.exists())
+        self.assertIn('MathBlueprint/SELF_TEACHING.md',manifest['self_teaching_contract'])
+
     def test_exactly_three_golden_fixtures(self):
         self.assertEqual(len(list((ROOT/'golden').glob('*.json'))),3)
 
