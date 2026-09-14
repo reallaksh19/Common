@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-study-differentiation-unit-v6.schema.json",
+  "title": "Chemistry Study Differentiation Unit v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "router_id",
+    "subtopic_id",
+    "difficulty_badge",
+    "research_dossier",
+    "depth_budget",
+    "sub_subtopic_plan",
+    "representation_requirements",
+    "depth_release_gate"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "router_id": {"const": "SDU"},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "research_dossier": {
+      "type": "object",
+      "required": [
+        "research_level",
+        "authoritative_sources",
+        "known_learning_difficulties",
+        "representation_research",
+        "pedagogical_research",
+        "source_provenance"
+      ]
+    },
+    "depth_budget": {
+      "type": "object",
+      "required": ["max_pages", "page_count_is_quality_metric", "closure_is_quality_metric"]
+    },
+    "sub_subtopic_plan": {"type": "object"},
+    "representation_requirements": {"type": "array", "items": {"type": "string"}},
+    "depth_release_gate": {
+      "type": "object",
+      "required": [
+        "all_learning_atoms_closed",
+        "all_major_inferential_jumps_bridged",
+        "representation_coverage_complete",
+        "equation_assimilation_complete",
+        "misconception_coverage_complete",
+        "page_budget_exhaustion_required"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
