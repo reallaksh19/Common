@@ -1,0 +1,69 @@
+{
+  "schema_version": "5.0.0",
+  "product_mode": "CORE1B",
+  "bucket_ref": "CHEM-BUCKET-REDOX-HARD",
+  "difficulty_badge": "HARD",
+  "learning_atoms": [
+    {
+      "atom_id": "LA-OS-TRACK",
+      "title": "Track oxidation-state change",
+      "required_jobs": [
+        "RETRIEVE_OR_PREDICT", "REPRESENT", "EXPLAIN_OR_JUSTIFY", "COMPARE_CORRECT_OR_BOUNDARY",
+        "GENERALIZE_OR_TEACH_BACK", "SELF_HELP", "CANONICAL_RESPONSE", "VERIFY"
+      ]
+    },
+    {
+      "atom_id": "LA-AGENT-ROLE",
+      "title": "Attach reducing and oxidising agent roles",
+      "required_jobs": [
+        "RETRIEVE_OR_PREDICT", "REPRESENT", "EXPLAIN_OR_JUSTIFY", "COMPARE_CORRECT_OR_BOUNDARY",
+        "GENERALIZE_OR_TEACH_BACK", "SELF_HELP", "CANONICAL_RESPONSE", "VERIFY"
+      ]
+    }
+  ],
+  "technical_objects": [
+    {"object_id":"OS-PRED","atom_id":"LA-OS-TRACK","job":"RETRIEVE_OR_PREDICT","payload_type":"RETRIEVAL"},
+    {"object_id":"OS-REP","atom_id":"LA-OS-TRACK","job":"REPRESENT","payload_type":"TABLE"},
+    {"object_id":"OS-JUST","atom_id":"LA-OS-TRACK","job":"EXPLAIN_OR_JUSTIFY","payload_type":"PRACTICE"},
+    {"object_id":"OS-CORRECT","atom_id":"LA-OS-TRACK","job":"COMPARE_CORRECT_OR_BOUNDARY","payload_type":"CONTRAST"},
+    {"object_id":"OS-TEACH","atom_id":"LA-OS-TRACK","job":"GENERALIZE_OR_TEACH_BACK","payload_type":"RETRIEVAL"},
+    {"object_id":"OS-HELP","atom_id":"LA-OS-TRACK","job":"SELF_HELP","payload_type":"HINT"},
+    {"object_id":"OS-CANON","atom_id":"LA-OS-TRACK","job":"CANONICAL_RESPONSE","payload_type":"ANSWER"},
+    {"object_id":"OS-VERIFY","atom_id":"LA-OS-TRACK","job":"VERIFY","payload_type":"VERIFICATION"},
+    {"object_id":"AG-PRED","atom_id":"LA-AGENT-ROLE","job":"RETRIEVE_OR_PREDICT","payload_type":"RETRIEVAL"},
+    {"object_id":"AG-REP","atom_id":"LA-AGENT-ROLE","job":"REPRESENT","payload_type":"TABLE"},
+    {"object_id":"AG-JUST","atom_id":"LA-AGENT-ROLE","job":"EXPLAIN_OR_JUSTIFY","payload_type":"PRACTICE"},
+    {"object_id":"AG-CORRECT","atom_id":"LA-AGENT-ROLE","job":"COMPARE_CORRECT_OR_BOUNDARY","payload_type":"CONTRAST"},
+    {"object_id":"AG-TEACH","atom_id":"LA-AGENT-ROLE","job":"GENERALIZE_OR_TEACH_BACK","payload_type":"RETRIEVAL"},
+    {"object_id":"AG-HELP","atom_id":"LA-AGENT-ROLE","job":"SELF_HELP","payload_type":"HINT"},
+    {"object_id":"AG-CANON","atom_id":"LA-AGENT-ROLE","job":"CANONICAL_RESPONSE","payload_type":"ANSWER"},
+    {"object_id":"AG-VERIFY","atom_id":"LA-AGENT-ROLE","job":"VERIFY","payload_type":"VERIFICATION"},
+    {"object_id":"H-ERROR","atom_id":"LA-AGENT-ROLE","job":"ERROR_DIAGNOSIS","payload_type":"CONTRAST"},
+    {"object_id":"H-TRANS","atom_id":"LA-OS-TRACK","job":"REPRESENTATION_TRANSLATION","payload_type":"TABLE"},
+    {"object_id":"H-BOUND","atom_id":"LA-OS-TRACK","job":"BOUNDARY_CHALLENGE","payload_type":"PRACTICE"},
+    {"object_id":"H-RECON","atom_id":"LA-AGENT-ROLE","job":"INDEPENDENT_RECONSTRUCTION","payload_type":"RETRIEVAL"}
+  ],
+  "practice_closure": {
+    "constructive_task_count": 4,
+    "self_help_ladder_count": 2,
+    "canonical_response_count": 2,
+    "verification_check_count": 2
+  },
+  "research_translation": [
+    {"research_ref":"R-REDOX-MISCONCEPTIONS","decision":"Turn common agent inversion into error diagnosis","technical_object_ids":["AG-CORRECT","H-ERROR"]},
+    {"research_ref":"R-REPRESENTATION-COORDINATION","decision":"Require equation-to-state-ledger translation","technical_object_ids":["OS-REP","H-TRANS"]}
+  ],
+  "page_plan": [
+    {"page_id":"P1","page_role":"PRACTICE","expected_active_area_ratio":0.68,"technical_object_ids":["OS-PRED","OS-REP","H-TRANS"],"learner_action_ids":["ACT-TRACK"]},
+    {"page_id":"P2","page_role":"WORKSPACE","expected_active_area_ratio":0.44,"technical_object_ids":["OS-JUST","OS-CORRECT","H-BOUND"],"learner_action_ids":["ACT-EXPLAIN","ACT-COMPARE"],"workspace_justification":"Learner writes oxidation-state evidence and repairs a false redox trigger."},
+    {"page_id":"P3","page_role":"PRACTICE","expected_active_area_ratio":0.65,"technical_object_ids":["OS-HELP","OS-CANON","OS-VERIFY","OS-TEACH"],"learner_action_ids":["ACT-TEACHBACK"]},
+    {"page_id":"P4","page_role":"PRACTICE","expected_active_area_ratio":0.68,"technical_object_ids":["AG-PRED","AG-REP","AG-JUST"],"learner_action_ids":["ACT-ROLE-MAP"]},
+    {"page_id":"P5","page_role":"WORKSPACE","expected_active_area_ratio":0.46,"technical_object_ids":["AG-CORRECT","H-ERROR","H-RECON"],"learner_action_ids":["ACT-DIAGNOSE","ACT-RECONSTRUCT"],"workspace_justification":"Learner diagnoses self-change versus agent role before opening help."},
+    {"page_id":"P6","page_role":"PRACTICE","expected_active_area_ratio":0.66,"technical_object_ids":["AG-HELP","AG-CANON","AG-VERIFY","AG-TEACH"],"learner_action_ids":["ACT-VERIFY"]}
+  ],
+  "cross_core_reuse_audit": {
+    "shared_expository_block_count": 0,
+    "repeated_generic_template_fraction": 0.10,
+    "shared_fact_ids": ["FACT-ZN-CU-REACTION", "FACT-OXIDATION-STATE-DIRECTION"]
+  }
+}
