@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.1.0",
+  "subject": "CHEMISTRY",
+  "delivery_mode": "STATIC",
+  "source_core2a_ref": "CHEM-NCERT-REDOX-SOURCE-v1",
+  "purpose": "PRACTICE",
+  "question_mode": "FROZEN_SOURCE_ITEM",
+  "learner_conditioning": {
+    "schema_version": "4.0.0",
+    "mode": "OWNER_OVERRIDE",
+    "owner_override": {
+      "reason": "Learner knowledge percentage unavailable; owner requests a low-support independent practice realization.",
+      "support_profile": {
+        "support_density": "LOW",
+        "hint_entry_level": "H3_REPRESENTATION",
+        "representation_support": "AVAILABLE_ON_REQUEST",
+        "first_move_support": "DEFERRED",
+        "solution_delay": "AFTER_FULL_ATTEMPT"
+      },
+      "demand_profile": {
+        "transfer_distance": "SAME_STRUCTURE",
+        "interleaving": false,
+        "synthesis_width": 1,
+        "time_pressure": "PRACTICE"
+      }
+    }
+  },
+  "selected_item_id": "U2Q29A",
+  "legal_core2a_item_ids": [
+    "U2Q2",
+    "U2Q6",
+    "U2Q7",
+    "U2Q18B",
+    "U2Q29A",
+    "U2Q38C"
+  ],
+  "new_chemistry_refs": [],
+  "source_item": {
+    "item_id": "U2Q29A",
+    "source_locator": "NCERT Class IX Science Exemplar - Unit 2 Q29(a)",
+    "provenance_class": "SOURCE_CORE2",
+    "problem_family_ref": "PF-REACTION_PROCESS_CLASSIFICATION",
+    "stem": "On heating calcium carbonate gets converted into calcium oxide and carbon dioxide. Is this a physical or a chemical change?",
+    "canonical_answer": "Chemical change."
+  },
+  "workspace_lines": 9,
+  "help_mode": "PROGRESSIVE_FIXED",
+  "help": [
+    {
+      "level": "H1_ORIENT",
+      "text": "Do not classify from the word 'heating'. Identify what the statement says has changed."
+    },
+    {
+      "level": "H2_STRUCTURE",
+      "text": "Separate the trigger (heating) from the decisive evidence (what substances are present before and after)."
+    },
+    {
+      "level": "H3_REPRESENTATION",
+      "text": "Write a simple before/after map: calcium carbonate -> calcium oxide + carbon dioxide."
+    },
+    {
+      "level": "H4_PRINCIPLE",
+      "text": "A chemical change forms new substance(s); a physical change does not. Use the evidence supplied in the question."
+    },
+    {
+      "level": "H5_FIRST_MOVE",
+      "text": "Ask: are calcium oxide and carbon dioxide the same substance as calcium carbonate?"
+    },
+    {
+      "level": "H6_PARTIAL_PATH",
+      "text": "Two different substances are formed from calcium carbonate. Use that evidence to classify the change and state the reason."
+    },
+    {
+      "level": "H7_FULL_SOLUTION",
+      "text": "See the complete worked solution below."
+    },
+    {
+      "level": "H8_VERIFY_REFLECT",
+      "text": "Check that your reason refers to formation of new substances rather than merely to heating."
+    }
+  ],
+  "full_solution": "Calcium carbonate is converted into calcium oxide and carbon dioxide. Because new substances are formed, this is a chemical change. Heating is the condition that causes the process; it is not by itself the classification criterion.",
+  "verify_reflect": "If a different question also mentioned heating but no new substance formed, would you still call it a chemical change? Your classification rule should survive that comparison.",
+  "difficulty_dimensions": {
+    "conceptual_novelty": "LOW",
+    "representation_distance": "LOW",
+    "method_visibility": "PARTLY_HIDDEN",
+    "discrimination": "CLASSIFICATION",
+    "step_depth": "SHORT",
+    "information_structure": "DIRECT_WITH_DISTRACTOR_CUE",
+    "reversal": "NONE",
+    "synthesis": "SINGLE_CAPABILITY",
+    "calculation_burden": "NONE",
+    "time_pressure": "UNTIMED"
+  }
+}
