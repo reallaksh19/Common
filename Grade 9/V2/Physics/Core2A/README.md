@@ -1,113 +1,58 @@
 # Physics V2 — Core (2A): taught-state-gated transfer compiler + Worked Transfer Atlas
 
-Core (2) remains the complete source-transfer authority. Core (2A) is a downstream learner-product compiler. It selects and realizes transfer practice for a stated learner purpose, but it may not change Physics truth, Core (2) source identity, Core (1A) teaching authority or learner-evidence history.
+> **Canonical V8 learner-product spec:** `LEARNER_PRODUCT_SPEC_v7.md`.
+>
+> New Core2A authoring must follow `Blueprint/SELF_HELP_ARCHITECTURE_V8.md`: frozen Core2 custody → CCU question/source/answer receipts → CDAU purpose/differentiation → LAU v2 learner fit → Problem TTU v3.
 
-At the learner surface, Core2A is now explicitly a **self-guided declarative worked problem atlas**:
+Core (2) remains the complete source-transfer authority. Core (2A) is a downstream learner-product compiler. It may not change Physics truth, Core (2) source identity, Core (1A) teaching authority or learner-evidence history.
 
-> **Show me how an expert recognizes, represents and solves this problem family.**
+At the learner surface:
 
-The canonical learner-product grammar is defined in `LEARNER_PRODUCT_SPEC_v1.md`.
+> **Show me how an expert recognizes, represents and solves this legal problem family.**
 
-## Frozen-source rule
+## Frozen-source and question-custody rule
 
-Core2 source questions are frozen. Core2A must not rewrite a source question to make it easier.
+Core2 source questions are frozen. Core2A must not rewrite a source question to make it easier. Original source question numbers are retained.
 
-Difficulty adaptation changes:
+Every learner-facing exemplar carries a stable question ID, source class, visible source label, source/legal lineage, problem-family/bucket/capability metadata and a canonical answer/solution. An unresolved source prompt or answer is `HELD` and cannot enter production Core2A.
 
-- support density;
-- item ordering;
-- prerequisite explanation;
-- completion level;
-- visual support;
-- clearly-labelled `GENERATED_ORIGINAL` variants.
+Author-created design pilots must be visibly labelled nonproduction and do not expand the legal pool.
+
+## Learner fit
+
+LAU v2 requires exactly one basis:
+
+- capability-specific `KNOWLEDGE_PERCENT` with provenance/confidence/evidence count/recency; or
+- explicit `OWNER_OVERRIDE` when usable knowledge evidence is unavailable.
+
+No silent default is permitted. Task demand and support are recorded separately. Fit labels are routing predictions, not mastery claims.
+
+## Worked Problem TTU
 
 The worked-atlas grammar is:
 
 ```text
 QUESTION
--> difficulty + required knowledge
--> WHAT SHOULD I NOTICE?
--> representation
--> WHY THIS MODEL?
--> FIRST MOVE
--> full working
--> physical/dimensional/limiting check
--> common wrong route
--> why the question is hard
--> what changes in a variation
+-> extract setup
+-> construct/select representation
+-> choose governing relation/model
+-> map givens
+-> intermediate working
+-> result
+-> independent physical/dimensional/limiting check
+-> wrong-route contrast where material
 ```
 
-## Semantic contract
+Core2A teaches representative exemplars; it does not solve every legal item by default.
 
-```text
-Core1 semantic boundary
-∩ Core1A T-* TEACHING_COMPLETE receipts
-∩ Core2 transfer envelope
-∩ learner-product purpose
-∩ owner policy
-        ↓
-      Core2A
-```
+## Core2A → Core2B lineage
 
-A publication receipt proves that the learner product taught a capability. It does **not** prove that the learner mastered it. `learner_evidence_state = UNKNOWN` is therefore legal and expected.
+Every exemplar is fingerprinted so downstream lineage is explicit:
 
-## Purpose is mandatory
-
-Exactly one purpose is required:
-
-```text
-FIRST_STUDY
-PRACTICE
-REVISION
-COMPETITIVE_EXAM
-```
-
-Purpose changes source-question selection, generated challenge mix and support density. Purpose never expands legal Physics scope.
-
-## Two lanes
-
-### SOURCE_CORE2
-
-The complete Core (2) corpus remains immutable authority. Core (2A) may select a purpose-dependent subset for a learner product, but it never deletes an unselected source question from Core (2).
-
-A source item is learner-releasable only when every required capability has a matching `T-PHY-*` receipt with:
-
-```text
-publication_state = TEACHING_COMPLETE
-learner_profile_ref = requested learner profile
-purpose_ref = requested purpose
-```
-
-Otherwise the source question remains in corpus custody with `HELD_UNTIL_TEACHING_COMPLETE`.
-
-### GENERATED_ORIGINAL
-
-Fresh questions may be realized only when:
-
-- the anchor Core (2) question is itself releasable and its problem-family/bucket binding agrees;
-- every required capability has a matching teaching-complete receipt;
-- the Physics validator type is supported and independently recomputes the governed relation;
-- declared SI units are valid and the recomputed result matches the learner-facing canonical answer;
-- the generated prompt passes near-copy checking against all source stems;
-- staged help does not disclose the answer or duplicate full-working steps;
-- provenance explicitly says `GENERATED_ORIGINAL` and does not claim false official-question provenance.
-
-Unsupported Physics validators fail closed. They are not free-written.
-
-## Physics validation
-
-The v1 executable validator registry authorizes:
-
-```text
-CONSTANT_ACCELERATION_VELOCITY
-CONSTANT_ACCELERATION_INITIAL_VELOCITY
-CONSTANT_ACCELERATION_EVENT_TIME
-VECTOR_DOT_PERPENDICULAR
-SPEED_FROM_COMPONENTS
-```
-
-Additional problem families require an explicit validator before generated challenges from those families are production-legal.
+- `FADING_ANCHOR` — same item with support faded; not transfer evidence;
+- `STRUCTURAL_SIBLING` — changed legal instance;
+- `FAR_TRANSFER_SIBLING` — changed representation/target/constraint/synthesis.
 
 ## Release boundary
 
-Core2A activates the semantic/executable legality model and the declarative learner-product grammar. A worked Core2A solution does not prove learner transfer; that evidence belongs to Core2B.
+Production Core2A requires exact legal-pool custody, CCU source/answer/duplication receipts, LAU fit receipt, Problem TTU completeness and all existing taught-state gates. A worked solution does not prove learner transfer.
