@@ -1,0 +1,57 @@
+{
+  "schema_version": "2.0.0",
+  "policy_id": "PHY-PDF-LAYOUT-INTEGRITY-V2",
+  "applies_to": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "release_rule": "A learner PDF may release only when technical content is legible, collision-free, semantically integrated and proportionally composed.",
+  "authoring": {
+    "preferred_text_layout": "FLOW_LAYOUT",
+    "figure_rule": "Figures are isolated layout blocks with explicit bounds and adjacent working/caption. Text must not be hand-positioned into the same free-canvas region unless collision checks exist.",
+    "absolute_positioning": "ALLOWED_ONLY_WITH_COLLISION_VALIDATION",
+    "native_text_equations_preferred": true,
+    "rasterized_equation_text_discouraged": true,
+    "figure_labels_should_use_native_or_vector_text_when_possible": true
+  },
+  "legibility": {
+    "body_text_min_pt_recommended": 9.0,
+    "figure_label_min_pt_at_final_size": 8.0,
+    "main_equation_min_pt_at_final_size": 9.5,
+    "figure_label_should_not_be_materially_smaller_than_body_text": true,
+    "labels_may_not_overlap_vectors_objects_or_each_other": true,
+    "equations_must_be_readable_at_normal_page_view": true
+  },
+  "composition": {
+    "one_dominant_instructional_purpose_per_page_or_spread_preferred": true,
+    "figure_and_working_must_be_adjacent_when_bound": true,
+    "orphaned_figure_separated_from_its_working_allowed": false,
+    "oversized_figure_displacing_required_working_allowed": false,
+    "large_empty_plot_region_allowed_without_pedagogical_reason": false,
+    "crop_figures_to_instructional_content": true,
+    "generic_cards_must_not_consume_primary_figure_area_when_technical_representation_is_required": true
+  },
+  "preflight": {
+    "render_every_page": true,
+    "minimum_renderer_count": 1,
+    "human_visual_review_required_for_new_layout": true,
+    "must_check": [
+      "TEXT_TEXT_OVERLAP",
+      "TEXT_FIGURE_OVERLAP",
+      "LABEL_VECTOR_OR_OBJECT_OVERLAP",
+      "CLIPPED_LABELS",
+      "BROKEN_GLYPHS",
+      "UNREADABLE_EQUATIONS",
+      "MICROSCOPIC_FIGURE_LABELS",
+      "EXCESSIVE_UNUSED_FIGURE_WHITESPACE",
+      "OVERSIZED_LOW_INFORMATION_FIGURE",
+      "ORPHANED_FIGURE_FROM_WORKING",
+      "FIGURE_CAPTION_COLLISION",
+      "HEADER_FIGURE_COLLISION"
+    ],
+    "fail_closed": true
+  },
+  "thumbnail_review": {
+    "required_for_new_template_or_figure_grammar": true,
+    "purpose": "Catch pages dominated by empty graphics, weak hierarchy, tiny labels or sparse technical working before release.",
+    "thumbnail_pass_does_not_replace_full_resolution_review": true
+  },
+  "regression_note": "SBA23 review screenshots showed that V1 allowed technically present but unreadable or low-information figures. V2 treats scale, semantic integration and proportional composition as release conditions."
+}
