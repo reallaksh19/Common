@@ -3,29 +3,33 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PUB = json.loads((ROOT / "policy" / "self-help-core-publication.v4.json").read_text())
+PUB = json.loads((ROOT / "policy" / "self-help-core-publication.v5.json").read_text())
 BUCKET = json.loads((ROOT / "policy" / "core1ab-bucket-authoring.v2.json").read_text())
 KNOW = json.loads((ROOT / "policy" / "core2ab-knowledge-routing.v1.json").read_text())
-TECH = json.loads((ROOT / "policy" / "technical-density-and-figure-contract.v1.json").read_text())
-LAYOUT = json.loads((ROOT / "policy" / "pdf-layout-integrity.v1.json").read_text())
+TTU = json.loads((ROOT / "policy" / "technical-teaching-unit.v1.json").read_text())
+REP = json.loads((ROOT / "policy" / "physics-representation-semantic-quality.v1.json").read_text())
+LAYOUT = json.loads((ROOT / "policy" / "pdf-layout-integrity.v2.json").read_text())
 PILOT = json.loads((ROOT / "topics" / "self-help-three-topic-falsification-pilot.v3.json").read_text())
 
-# Core1 family stays bucket-wise and knowledge-percent independent.
+# Core1 stays bucket-wise and knowledge-independent; Core2 stays knowledge/owner-routed.
 cp = PUB["control_planes"]
 assert cp["CORE1_FAMILY"]["student_knowledge_pct_drives_authored_depth"] is False
 assert cp["CORE1_FAMILY"]["always_subtopic_bucket_wise"] is True
 assert cp["CORE1_FAMILY"]["shared_learning_model_required"] is True
 assert cp["CORE2_FAMILY"]["student_knowledge_pct_required_unless_owner_override"] is True
 
-# Family-first / inference-first authoring.
+# TTU, not page/diagram/equation count, is the publication unit.
 center = PUB["authoring_center"]
-assert center["primary_units_in_order"][:4] == [
-    "SUBTOPIC_BUCKET", "HIDDEN_INVARIANT", "INFERENTIAL_JUMP", "PROBLEM_FAMILY"
-]
-assert "prose volume" in center["anti_pattern"]
-assert "A/B symmetry" in center["anti_pattern"]
+assert "TECHNICAL_TEACHING_UNIT" in center["primary_units_in_order"]
+assert "generic cards" in center["anti_pattern"]
+assert set(TTU["ttu_required_components"]) == {
+    "PHYSICAL_SETUP", "TECHNICAL_REPRESENTATION", "GOVERNING_RELATION",
+    "MAPPING_OR_WORKING", "RESULT_OR_CONCLUSION", "VERIFICATION"
+}
+assert TTU["completion_rule"]["final_equation_without_visible_mapping_is_complete_ttu"] is False
+assert TTU["completion_rule"]["learner_may_not_be_required_to_infer_missing_picture_to_equation_bridge"] is True
 
-# Shared bucket model and asymmetric page budgets remain required.
+# Shared Core1 model remains asymmetric in page realization.
 shared = BUCKET["shared_bucket_learning_model"]
 assert set(shared["required_fields"]) == {
     "HIDDEN_INVARIANTS", "PREREQUISITE_BRIDGES", "INFERENTIAL_JUMPS",
@@ -39,36 +43,34 @@ assert BUCKET["badges"]["EASY"]["core1a_soft_page_ceiling"] == 10
 assert BUCKET["badges"]["MEDIUM"]["core1a_soft_page_ceiling"] == 20
 assert BUCKET["badges"]["HARD"]["core1a_soft_page_ceiling"] == 30
 
-# Hard means technical closure, not prose or visual inflation.
-hard = PUB["hard_bucket_release"]
-assert hard["prose_only_release_allowed"] is False
-assert hard["core1a_requires_visible_technical_closure"] is True
-assert hard["core1b_requires_technical_reconstruction_at_fragile_checkpoints"] is True
-assert hard["long_prose_may_substitute_for_diagrams_equations_when_material"] is False
-
-assert TECH["hard_bucket_contract"]["prose_only_release_allowed"] is False
-assert "EQUATION_OR_SYMBOLIC_RELATION" in TECH["hard_bucket_contract"]["required_technical_forms_when_material"]
-assert "DIAGRAM_OR_GRAPH" in TECH["hard_bucket_contract"]["required_technical_forms_when_material"]
-assert "COMPONENT_OR_VECTOR_REPRESENTATION" in TECH["hard_bucket_contract"]["required_technical_forms_when_material"]
-assert "WORKED_TRANSFORMATION_OR_DERIVATION" in TECH["hard_bucket_contract"]["required_technical_forms_when_material"]
-assert "prose prompts" in TECH["core1b"]["prohibited_failure_mode"]
-
-# A/B remain dominant modes, not duplicate books.
-assert PUB["mode_rule"]["dominant_not_exclusive"] is True
-assert PUB["mode_rule"]["parallel_duplicate_books_for_A_and_B"] is False
+# Core1A/1B TTU realization.
 roles = PUB["learner_surface_roles"]
-assert roles["CORE1A"]["mode"] == "DECLARATIVE_DOMINANT_DEEP_TEACHING"
-assert roles["CORE1B"]["mode"] == "GENERATIVE_DOMINANT_TECHNICAL_RECONSTRUCTION"
-assert roles["CORE1B"]["page_budget"] == "DERIVED_FROM_FRAGILE_CHECKPOINT_COVERAGE_NOT_BADGE_SYMMETRY"
-assert "INCOMPLETE_OR_RECONSTRUCTABLE" in roles["CORE1B"]["technical_expectation"]
+assert roles["CORE1A"]["major_jump_or_family_requires_complete_ttu"] is True
+assert roles["CORE1B"]["fragile_technical_checkpoint_requires_reconstructable_ttu"] is True
+assert TTU["core1a"]["major_inferential_jump_requires_complete_ttu"] is True
+assert TTU["core1b"]["prose_only_prompt_may_replace_material_technical_reconstruction"] is False
+assert TTU["core1b"]["fragile_checkpoint_requires_reconstructable_ttu_when_technical"] is True
 
-# Hint ladder remains conditional.
-assert PUB["task_grammar_policy"]["MICRO_PROMPT"]["full_hint_ladder_required"] is False
-assert PUB["task_grammar_policy"]["REPRESENTATION_TASK"]["technical_representation_must_be_visible"] is True
-assert PUB["task_grammar_policy"]["SUBSTANTIVE_TASK"]["progressive_rescue_required_when_learner_can_be_stranded"] is True
-assert PUB["task_grammar_policy"]["SUBSTANTIVE_TASK"]["full_technical_check_required"] is True
+# A visual counts only when it carries actual Physics structure and binds to reasoning.
+assert PUB["representation_quality"]["eligible_representation_must_encode_physics_structure"] is True
+assert PUB["representation_quality"]["figure_reasoning_binding_required"] is True
+assert PUB["representation_quality"]["oversized_empty_plot_counts_as_representation"] is False
+assert PUB["representation_quality"]["prose_cards_count_as_technical_diagram"] is False
+assert "GENERIC_TEXT_CARD" in REP["non_counting_visuals"]
+assert "OVERSIZED_EMPTY_COORDINATE_PLANE" in REP["non_counting_visuals"]
+assert REP["binding_rule"]["figure_without_reasoning_binding_counts_as_technical_closure"] is False
+assert REP["semantic_completeness"]["variables_used_in_working_must_be_identifiable"] is True
+assert REP["semantic_completeness"]["frame_axis_direction_conventions_explicit_when_material"] is True
 
-# Core2 knowledge/owner input remains mandatory and authority-safe.
+# Model discrimination must use Physics structure, not generic boxes.
+md = REP["model_discrimination"]
+assert md["generic_A_B_C_cards_count_as_physics_representation"] is False
+assert set(md["minimum_comparison_fields"]) == {
+    "PHYSICAL_TRIGGER", "RELEVANT_REPRESENTATION_OR_MODEL", "FIRST_MOVE", "WHY_COMPETING_MODEL_IS_REJECTED"
+}
+assert PUB["representation_quality"]["model_discrimination_requires_physical_trigger_model_first_move_and_rejection_reason"] is True
+
+# Core2A/2B remain knowledge-routed and authority-safe, but now require TTUs.
 rir = KNOW["required_input_rule"]
 assert rir["no_silent_default"] is True
 assert set(rir["selection_basis_enum"]) == {"KNOWLEDGE_PERCENT", "OWNER_OVERRIDE"}
@@ -78,25 +80,35 @@ guards = KNOW["authority_guards"]
 assert guards["knowledge_pct_may_expand_core2a_legal_pool"] is False
 assert guards["owner_override_may_expand_core2a_legal_pool"] is False
 assert guards["owner_override_waives_only_missing_knowledge_pct"] is True
+assert roles["CORE2A"]["representative_worked_item_requires_complete_ttu"] is True
+assert roles["CORE2B"]["learner_selects_or_constructs_representation_and_model_when_part_of_transfer_demand"] is True
+assert TTU["core2a"]["large_figure_plus_final_equation_is_complete_worked_solution"] is False
+assert TTU["core2b"]["technical_check_after_attempt_required"] is True
 
-# Core2A/2B remain asymmetric and technically explicit.
-assert roles["CORE2A"]["selection_rule"] == "REPRESENTATIVE_EXEMPLARS_BY_FAMILY_AND_DEMAND_NOT_AUTOMATIC_ALL_ITEM_SOLVING"
-assert "EXPERT_REPRESENTATION" in roles["CORE2A"]["technical_expectation"]
-assert "AVOID_ONE_FOR_ONE_MIRROR" in roles["CORE2B"]["selection_rule"]
-assert "SELECTS_OR_CONSTRUCTS_TECHNICAL_REPRESENTATION" in roles["CORE2B"]["technical_expectation"]
+# Hints stay conditional; local technical resolution remains mandatory.
+assert PUB["task_grammar_policy"]["MICRO_PROMPT"]["full_hint_ladder_required"] is False
+assert PUB["task_grammar_policy"]["REPRESENTATION_TASK"]["reconstructable_ttu_required_when_technical"] is True
+assert PUB["task_grammar_policy"]["SUBSTANTIVE_TASK"]["progressive_rescue_required_when_learner_can_be_stranded"] is True
+assert PUB["task_grammar_policy"]["SUBSTANTIVE_TASK"]["full_technical_check_required"] is True
 
-# PDF layout is fail-closed: successful generation alone is not release.
+# Layout release now checks legibility, semantic scale and proportional composition.
 assert PUB["layout_release"]["successful_pdf_generation_is_visual_preflight_pass"] is False
 assert PUB["layout_release"]["render_every_page"] is True
-assert PUB["layout_release"]["fail_on_text_figure_overlap"] is True
-assert PUB["layout_release"]["fail_on_clipped_labels"] is True
-assert PUB["layout_release"]["flow_layout_or_collision_validation_required"] is True
+assert PUB["layout_release"]["fail_on_label_vector_overlap"] is True
+assert PUB["layout_release"]["fail_on_microscopic_figure_labels"] is True
+assert PUB["layout_release"]["fail_on_oversized_low_information_figure"] is True
+assert PUB["layout_release"]["fail_on_orphaned_figure_from_working"] is True
+assert PUB["layout_release"]["thumbnail_review_required_for_new_figure_grammar"] is True
 assert LAYOUT["preflight"]["render_every_page"] is True
 assert LAYOUT["preflight"]["fail_closed"] is True
-assert "TEXT_FIGURE_OVERLAP" in LAYOUT["preflight"]["must_check"]
-assert "HEADER_FIGURE_COLLISION" in LAYOUT["preflight"]["must_check"]
+assert LAYOUT["legibility"]["figure_label_min_pt_at_final_size"] >= 8.0
+assert LAYOUT["legibility"]["main_equation_min_pt_at_final_size"] >= 9.5
+assert LAYOUT["composition"]["oversized_figure_displacing_required_working_allowed"] is False
+assert LAYOUT["composition"]["large_empty_plot_region_allowed_without_pedagogical_reason"] is False
+assert "OVERSIZED_LOW_INFORMATION_FIGURE" in LAYOUT["preflight"]["must_check"]
+assert "MICROSCOPIC_FIGURE_LABELS" in LAYOUT["preflight"]["must_check"]
 
-# Three-topic pilot retains source holds and knowledge-routing rules.
+# Three-topic pilot retains source holds and adaptation-input rules.
 topics = PILOT["topics"]
 assert len(topics) == 3
 for t in topics:
@@ -115,4 +127,4 @@ moving = next(x for x in topics if x["topic_id"] == "MOVING_LAUNCHER_RELATIVE_VE
 assert "EXACT_Q15_HELD" in moving["source_status"]
 assert moving["core2_adaptation_input"]["selection_basis"] == "OWNER_OVERRIDE"
 
-print("Physics self-help core grammar v4: PASS")
+print("Physics self-help core grammar v5: PASS")
