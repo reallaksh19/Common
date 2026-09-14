@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "unit_id": "PHY-C1B-GOLDEN-PROJECTILE-EVENT",
+  "subject": "PHYSICS",
+  "bucket_id": "M2D-SBA-04",
+  "capability_id": "PHY-CAP-PROJECTILE-VERTICAL-EVENT",
+  "authority_refs": [
+    "Core1A:M2D-SBA-04",
+    "Core2A:PF-PROJECTILE-VERTICAL-EVENT",
+    "T-PHY-M2D-EVENT-001"
+  ],
+  "atom_refs": [
+    "PHY-A-DIR-01",
+    "PHY-A-SIGN-01",
+    "PHY-A-VEL-01",
+    "PHY-A-ACC-01",
+    "PHY-A-ACC-02",
+    "PHY-A-CONSTACC-01",
+    "PHY-A-TIME-01",
+    "PHY-A-COMP-01",
+    "PHY-A-GRAV-01",
+    "PHY-A-INDEP-01",
+    "PHY-A-TABLE-01",
+    "PHY-A-GRAPH-01",
+    "PHY-A-SLOPE-01",
+    "PHY-A-SYM-01",
+    "PHY-A-EQ-01"
+  ],
+  "learner_surface": {
+    "teacher_moves": [
+      "Imagine two identical balls leaving the same height. One is dropped and one is pushed sideways. Which lands first?",
+      "Look only at the up-down motion. What downward acceleration acts on each ball?",
+      "Vertical velocity changes +22, +12, +2, -8 m/s at one-second intervals. What do you notice?",
+      "Plot those values. What does the downward slope mean physically?",
+      "Say the relationship in words before we compress it into symbols."
+    ],
+    "worked_example": "One second after launch, v_y = +12 m/s and a_y = -10 m/s^2. Find the launch vertical velocity. Explain the sign choice and perform a physical check.",
+    "independent_task": "Two seconds after launch, v_y = +5 m/s and a_y = -9 m/s^2. Find u_y without model-revealing help and check the result physically."
+  },
+  "readiness": {
+    "recognise": true,
+    "represent": true,
+    "explain": true,
+    "first_move": true,
+    "finish": true,
+    "check": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2b-retrieval-state.schema.json",
+  "title": "Physics Core2B Retrieval State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "capability_id", "retrieval_count", "success_streak", "hint_dependence", "representation_coverage", "next_due_bucket"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "capability_id": {"type": "string", "minLength": 1},
+    "retrieval_count": {"type": "integer", "minimum": 0},
+    "success_streak": {"type": "integer", "minimum": 0},
+    "hint_dependence": {"enum": ["NONE", "LOW", "MEDIUM", "HIGH"]},
+    "representation_coverage": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "next_due_bucket": {"enum": ["NOW", "SHORT", "MEDIUM", "LONG"]}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1.0",
+  "policy_id": "PHY-C2B-HINT-V1",
+  "levels": [
+    {"id":"NO_HINT","purpose":"attempt-first"},
+    {"id":"RETRIEVAL_CUE","purpose":"reactivate already-taught physics without naming the full model"},
+    {"id":"REPRESENTATION_CUE","purpose":"point back to a taught representation"},
+    {"id":"MODEL_CUE","purpose":"name the taught model without giving the first algebraic move"},
+    {"id":"FIRST_MOVE_CUE","purpose":"supply the first mathematical move after model selection is no longer the assessed demand"},
+    {"id":"FULL_SOLUTION","purpose":"closure after attempt/support policy allows"}
+  ],
+  "learner_surface_forbidden_tokens": ["NO_HINT","RETRIEVAL_CUE","REPRESENTATION_CUE","MODEL_CUE","FIRST_MOVE_CUE","FULL_SOLUTION","TRANSFER_READY","REPAIR_"],
+  "invariants": [
+    "HINT_MUST_TRACE_TO_CORE1B_TAUGHT_EVIDENCE",
+    "HINT_MUST_NOT_INTRODUCE_NEW_PHYSICS",
+    "HINT_MUST_NOT_REMOVE_TARGET_REASONING_DEMAND",
+    "HINT_MUST_NOT_DISCLOSE_CANONICAL_ANSWER"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2b-session.schema.json",
+  "title": "Physics Core2B Session",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "session_id", "subject", "purpose", "learner_profile_ref", "learner_state", "legal_items", "representation_coverage", "retrieval_state"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "session_id": {"type": "string", "minLength": 1},
+    "subject": {"const": "PHYSICS"},
+    "purpose": {"enum": ["FIRST_STUDY", "PRACTICE", "REVISION", "COMPETITIVE_EXAM"]},
+    "learner_profile_ref": {"type": "string", "minLength": 1},
+    "learner_state": {"enum": ["SUPPORTED", "INDEPENDENT", "TRANSFER_READY", "ROBUST"]},
+    "representation_coverage": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "legal_items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item_id", "core2a_legal", "transfer_level", "problem_family_ref", "prompt", "required_capability_refs", "hint_texts"],
+        "properties": {
+          "item_id": {"type": "string", "minLength": 1},
+          "core2a_legal": {"const": true},
+          "transfer_level": {"enum": ["T0_DIRECT", "T1_NEAR_TRANSFER", "T2_REPRESENTATION_TRANSFER", "T3_REVERSED_TARGET", "T4_CONSTRAINT_TRANSFER", "T5_DISCRIMINATION", "T6_MULTI_STEP_BRIDGE", "T7_SYNTHESIS", "T8_COMPETITIVE_MIXED"]},
+          "problem_family_ref": {"type": "string", "minLength": 1},
+          "prompt": {"type": "string", "minLength": 1},
+          "required_capability_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "required_representation": {"type": ["string", "null"]},
+          "hint_texts": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "retrieval_state": {
+      "type": "object",
+      "required": ["retrieval_count", "due"],
+      "properties": {
+        "retrieval_count": {"type": "integer", "minimum": 0},
+        "due": {"type": "boolean"},
+        "last_result": {"enum": ["PASS", "FAIL", "UNTESTED"]}
+      }
+    }
+  }
+}

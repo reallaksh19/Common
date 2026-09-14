@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "session_id": "PHY-C2B-GOLDEN-PROJECTILE-EVENT",
+  "subject": "PHYSICS",
+  "purpose": "COMPETITIVE_EXAM",
+  "learner_profile_ref": "PHY-LS-P20",
+  "learner_state": "TRANSFER_READY",
+  "representation_coverage": ["EVENT_TIMELINE", "SIGNED_VERTICAL_VELOCITY", "VY_T_GRAPH"],
+  "legal_items": [
+    {
+      "item_id": "PHY-C2B-GOLDEN-DIRECT-01",
+      "core2a_legal": true,
+      "transfer_level": "T0_DIRECT",
+      "problem_family_ref": "PF-PROJECTILE-VERTICAL-EVENT",
+      "prompt": "A projectile has vertical velocity 12 m/s upward at t = 1 s. Take g = 10 m/s^2. What was its initial vertical velocity?",
+      "required_capability_refs": ["PHY-CAP-PROJECTILE-VERTICAL-EVENT"],
+      "required_representation": "EVENT_TIMELINE",
+      "hint_texts": [
+        "Keep one clock from launch to the stated event.",
+        "Think about how gravity changes the vertical velocity each second."
+      ]
+    },
+    {
+      "item_id": "PHY-C2B-GOLDEN-NEAR-01",
+      "core2a_legal": true,
+      "transfer_level": "T1_NEAR_TRANSFER",
+      "problem_family_ref": "PF-PROJECTILE-VERTICAL-EVENT",
+      "prompt": "During a projectile flight the vertical component is 6 m/s upward at t = 2 s. With upward positive and g = 9 m/s^2, determine the launch vertical component.",
+      "required_capability_refs": ["PHY-CAP-PROJECTILE-VERTICAL-EVENT"],
+      "required_representation": "SIGNED_VERTICAL_VELOCITY",
+      "hint_texts": [
+        "Keep one clock from launch.",
+        "Use the same vertical-motion relationship you used in the direct example."
+      ]
+    },
+    {
+      "item_id": "PHY-C2B-GOLDEN-REP-01",
+      "core2a_legal": true,
+      "transfer_level": "T2_REPRESENTATION_TRANSFER",
+      "problem_family_ref": "PF-PROJECTILE-VERTICAL-EVENT",
+      "prompt": "A v_y-versus-time graph is a straight line through (0 s, 24 m/s) and (2 s, 6 m/s). State the vertical acceleration and launch vertical velocity.",
+      "required_capability_refs": ["PHY-CAP-PROJECTILE-VERTICAL-EVENT"],
+      "required_representation": "VY_T_GRAPH",
+      "hint_texts": [
+        "Read the starting vertical velocity directly from the graph.",
+        "What physical quantity does the slope of a velocity-time graph represent?"
+      ]
+    },
+    {
+      "item_id": "PHY-C2B-GOLDEN-REVERSED-01",
+      "core2a_legal": true,
+      "transfer_level": "T3_REVERSED_TARGET",
+      "problem_family_ref": "PF-PROJECTILE-VERTICAL-EVENT",
+      "prompt": "A projectile is launched with vertical component 30 m/s. Its vertical component later becomes 3 m/s upward. If the vertical acceleration is -9 m/s^2, find how long after launch this state occurs.",
+      "required_capability_refs": ["PHY-CAP-PROJECTILE-VERTICAL-EVENT"],
+      "required_representation": "SIGNED_VERTICAL_VELOCITY",
+      "hint_texts": [
+        "What quantity is unknown this time?",
+        "The physical model has not changed; only the target has changed."
+      ]
+    }
+  ],
+  "retrieval_state": {
+    "retrieval_count": 2,
+    "due": false,
+    "last_result": "PASS"
+  }
+}
