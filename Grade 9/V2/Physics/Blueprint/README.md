@@ -37,16 +37,16 @@ Execution order may vary. **Authority order may not.**
 
 ---
 
-## Learner-product topology — SELF-HELP V3
+## Learner-product topology — SELF-HELP V5
 
 Every learner product must be usable without a teacher physically present.
 
-The learner-facing architecture is now **family-first and asymmetric**. Core1A/Core1B are not parallel books of equal depth; Core2A/Core2B are not solved/open-ended copies of the same item set.
+The learner-facing architecture is **family-first, asymmetric, technically explicit and fail-closed on visual quality**.
 
-The authoring hierarchy is:
+The canonical authoring hierarchy is:
 
 ```text
-SUBTOPIC BUCKET
+SUBTOPIC / SBA BUCKET
    ↓
 hidden invariant(s)
    ↓
@@ -54,135 +54,107 @@ prerequisite bridges
    ↓
 inferential jumps
    ↓
-representations + misconceptions
-   ↓
 problem families
    ↓
-Core1A declarative-dominant teaching
+TECHNICAL TEACHING UNITS (TTUs)
    ↓
-Core1B generative reconstruction checkpoints
-   ↓
-Core2A representative worked problem-family learning
-   ↓
-Core2B transfer across changed surfaces
+Core1A / Core1B / Core2A / Core2B realization
 ```
 
 Normative learner-product architecture:
 
-`SELF_HELP_ARCHITECTURE_V3.md`
+`SELF_HELP_ARCHITECTURE_V5.md`
 
 Machine-readable policies:
 
-- `policy/self-help-core-publication.v3.json`
+- `policy/self-help-core-publication.v5.json`
+- `policy/technical-teaching-unit.v1.json`
+- `policy/physics-representation-semantic-quality.v1.json`
+- `policy/pdf-layout-integrity.v2.json`
 - `policy/core1ab-bucket-authoring.v2.json`
 - `policy/core2ab-knowledge-routing.v1.json`
 
+### Technical Teaching Unit (TTU)
+
+A technical learner unit is complete only when it binds:
+
+`PHYSICAL SETUP → TECHNICAL REPRESENTATION → GOVERNING RELATION → MAPPING/WORKING → RESULT → VERIFICATION`
+
+A page does **not** become technical merely because it contains a diagram and an equation.
+
+The learner must be able to see how the variables/vectors/features in the representation map into the equation and then into the working.
+
+### What counts as a Physics representation
+
+Eligible technical forms include:
+
+- vector/component construction;
+- free-body diagram;
+- geometry/ray construction;
+- trajectory/graph with meaningful axes;
+- event timeline;
+- state transition;
+- frame/coordinate diagram;
+- physical-variable table;
+- equation dependency map.
+
+The following do not count toward technical closure:
+
+- generic text cards;
+- decorative arrows;
+- unlabeled axes;
+- oversized empty coordinate planes;
+- decorative illustrations;
+- prose converted into shapes;
+- figures not used by the accompanying working;
+- a final equation floating beneath an unmapped picture.
+
 ### Core1A / Core1B control plane
 
-Core1A/Core1B are always subtopic/SBA-bucket-wise. Student knowledge % does **not** drive their authored depth.
+Core1A/Core1B are always subtopic/SBA-bucket-wise. Student knowledge % does **not** drive authored depth.
 
-The bucket receives one intrinsic `EASY | MEDIUM | HARD` badge.
+The bucket receives one intrinsic `EASY | MEDIUM | HARD` badge. The badge controls inferential/technical closure, not image count or prose length.
 
-The badge controls **inferential closure**, not page inflation or visual quantity.
+Core1A uses soft capacity ceilings of about 10 / 20 / 30 pages for Easy / Medium / Hard. These remain ceilings, not targets.
 
-Core1A uses soft capacity ceilings of about 10 / 20 / 30 pages for Easy / Medium / Hard. These are ceilings, not targets.
+Core1B does not inherit those page ceilings. Its length comes from the fragile technical checkpoints and problem families that need learner reconstruction.
 
-Core1B does **not** inherit those page ceilings. Its length is derived from the smallest set of generative checkpoints needed to cover:
+### A/B are dominant modes, not duplicate books
 
-- fragile inferential jumps;
-- material misconceptions;
-- distinct problem-family recognition;
-- mixed/retrieval discrimination when families can be confused.
+- **Core1A** — declarative-dominant complete TTUs.
+- **Core1B** — generative-dominant reconstructable TTUs.
+- **Core2A** — declarative-dominant worked problem TTUs selected by legal problem family and learner support route.
+- **Core2B** — generative-dominant transfer TTUs using fresh legal items/variants when possible.
 
-A Hard 28-page Core1A may legitimately have an 11-page Core1B.
+Core1B may contain targeted post-attempt explanation. Core1A may contain compact generative checks. The system must not create parallel duplicate books.
 
-### A/B are dominant modes, not exclusive content types
+### Core1B — ACTIVE runtime + v6 learner-product grammar
 
-- **Core1A** is declarative-dominant, but may include prediction, quick checks, short completion and self-explanation prompts.
-- **Core1B** is generative-dominant, but may include post-attempt explanation, worked reconstruction and targeted reteaching.
-- **Core2A** is declarative-dominant problem learning and may let the learner attempt before revealing an expert solution.
-- **Core2B** is generative-dominant transfer and may explain after the attempt.
+Core1B retains strict evidence custody but now requires technical reconstruction where the capability is technical.
 
-The architecture must not create duplicate A/B books.
+A Hard Core1B page is noncompliant if it is mainly prose + blank lines while an expert would naturally use a vector diagram, graph, component split, event line, geometry construction, free-body diagram or symbolic relation.
 
-### Hint ladder — conditional, not universal
+See `../Core1B/LEARNER_PRODUCT_SPEC_v6.md`.
 
-`H1 NOTICE → H2 REPRESENT → H3 START` remains the standard progressive rescue ladder for substantive tasks.
-
-It is **not mandatory for every prompt**.
-
-Micro prediction, explanation or representation tasks may use a shorter grammar as long as the learner receives an explicit local resolution.
-
----
-
-## Core1B — ACTIVE runtime + v4 learner-product grammar
-
-Core1B combines strict runtime custody with selective generative reconstruction:
-
-- exact released Core1A ref + digest required;
-- fine-grained atom graph with evidence-backed prerequisite skipping;
-- readiness fields are requirements, never mastery evidence;
-- learner state changes only from observed `LEARNER_RESPONSE`, `DIAGNOSTIC`, or `TEACHER_OBSERVATION` events;
-- event identity/order and evidence/event digests are append-only;
-- `APPLICABILITY` is required when upstream model validity is required;
-- `EXPLAIN` follows the upstream capability contract;
-- `INDEPENDENT` requires successful sufficiently low-hint independent/retrieval evidence;
-- internal runtime labels are blocked from learner-facing text;
-- authored learner episodes target fragile jumps and problem-family recognition rather than repeating the full Core1A publication;
-- full H1/H2/H3 is reserved for substantive rescue tasks, not every micro-prompt.
-
-See `../Core1B/LEARNER_PRODUCT_SPEC_v4.md`.
-
----
-
-## Core2A — ACTIVE legality + v3 representative worked-family grammar
-
-Core2A remains the transfer-legality compiler.
+### Core2A — ACTIVE legality + v4 worked-TTU grammar
 
 Knowledge % is required unless explicitly waived by owner input.
 
-Its learner publication selects **representative worked exemplars by legal problem family and demand** rather than solving every legal item by default.
+Core2A selects representative legal exemplars by problem family/demand. Each exemplar must expose setup extraction, technical representation, governing relation, intermediate mapping/working, result and verification.
 
-A representative exemplar may use:
+A large diagram plus one final equation is not a worked solution.
 
-`QUESTION → NOTICE → REPRESENT → MODEL → FIRST MOVE → WORKING → CHECK → WRONG ROUTE → VARIATION`
+Model-discrimination pages must compare actual Physics structure — physical trigger, representation/model, first move and why a competing model is rejected. Generic A/B/C cards do not count as technical Physics representation.
 
-Frozen Core2 source questions are never rewritten to make them easier. Generated-original items must already be legal under Core2A.
+See `../Core2A/LEARNER_PRODUCT_SPEC_v4.md`.
 
-See `../Core2A/LEARNER_PRODUCT_SPEC_v3.md`.
-
----
-
-## Core2B — ACTIVE runtime + v4 transfer grammar
+### Core2B — ACTIVE runtime + v5 transfer-TTU grammar
 
 Core2B consumes the exact Core2A legal pool and observed Core1B evidence.
 
-It is attempt-first, but it should **not mirror Core2A item-for-item**. Where the legal pool permits, use different legal items or variants so the learner must recognize structure rather than replay a memorized worked solution.
+When representation/model choice is part of transfer, the learner must select or construct it before reveal. Core2B should avoid mirroring Core2A item-for-item where fresh legal items/variants exist.
 
-Transfer dimensions remain independent:
-
-- structural distance;
-- direction/sign reversal;
-- reversed target;
-- representation change;
-- model discrimination;
-- constraint inversion;
-- multi-step bridge;
-- synthesis;
-- competitive mixing.
-
-Runtime guards remain unchanged:
-
-- exact Core2A legal-pool ref + digest and exact item ID required;
-- every required capability checked against bound Core1B release/evidence;
-- `T0…T8` descriptive only;
-- representation shift cannot be invented downstream;
-- purpose/retrieval only choose within the legal/evidence-eligible pool;
-- error classification remains a hypothesis;
-- repair targets the smallest explanatory atom set;
-- incorrect/full-solution exposure cannot become representation mastery.
-
-See `../Core2B/LEARNER_PRODUCT_SPEC_v4.md`.
+See `../Core2B/LEARNER_PRODUCT_SPEC_v5.md`.
 
 ---
 
@@ -206,32 +178,42 @@ Allowed support bands:
 
 `FOUNDATION_HIGH_SUPPORT | GUIDED | STANDARD | CHALLENGE_MINIMAL`
 
-No silent default is allowed. The owner override waives only missing knowledge data; it cannot expand legality or rewrite source questions.
+No silent default is allowed. The owner override waives only missing knowledge data; it cannot expand legality or rewrite frozen source questions.
 
 ---
 
-## Three-topic falsification pilot — V3
+## Visual publication gate
 
-Before chapter-wide standardization, the grammar must survive:
+Successful PDF generation is **not** a visual pass.
+
+Production learner PDFs require:
+
+- flow layout or explicit collision validation;
+- legible technical labels/equations at final size;
+- figure labels that do not overlap vectors/objects;
+- figures cropped to instructional content;
+- proportional use of figure area;
+- figure and bound working kept adjacent;
+- page-by-page render review;
+- montage/thumbnail review for new figure grammars.
+
+Fail closed on microscopic labels, oversized low-information figures, excessive unused plotting space, clipped content, text/figure collision, orphaned figures and unreadable equations.
+
+---
+
+## Three-topic falsification pilot
+
+The learner grammar must survive:
 
 1. projectile vertical-event/apex reasoning;
 2. moving-launcher relative velocity;
 3. Newton model-selection / free-body reasoning.
 
-The current falsifiers explicitly reject:
-
-- Core1B duplicating Core1A page-for-page;
-- forcing H1/H2/H3 on every prompt;
-- treating Hard as visual/page inflation;
-- Core2A solving every legal item by default;
-- Core2B mirroring Core2A item-for-item;
-- owner override expanding legality.
+SBA23 retains the exact-Q15 source hold. Learner-product design cannot override source custody.
 
 Machine-readable pilot:
 
 `topics/self-help-three-topic-falsification-pilot.v3.json`
-
-SBA23 retains the exact-Q15 source hold.
 
 ---
 
@@ -252,8 +234,12 @@ Runtime activation and learner-product grammar cannot substitute for pedagogical
 
 ## Next Blueprint tranche
 
-Rebuild the M2D-SBA-23 falsification prototype under V3. Use the benchmark-derived rhythm:
+Rebuild M2D-SBA-23 only after the TTU/representation/layout gates are active. Reject the build if:
 
-`IDEA → REPRESENTATION → WORKED EXAMPLE → PROBLEM FAMILY → ATTEMPT → OPTIONAL HINTS → ANSWER → NEXT FAMILY → MIXED SYNTHESIS`
-
-Reject the build if Core1B repeats Core1A exposition, if Hard difficulty creates visual/page padding, if Core2A becomes an exhaustive solved duplicate by default, or if Core2B replays Core2A instead of testing transfer.
+- a page contains technical-looking graphics without representation-to-equation binding;
+- a Hard B-layer degenerates into prose prompts;
+- a worked solution skips setup extraction or intermediate mapping;
+- model-discrimination uses generic cards instead of Physics structure;
+- labels become microscopic or collide with vectors;
+- oversized figures displace the technical working;
+- Q15 source custody is weakened.
