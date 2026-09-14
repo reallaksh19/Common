@@ -40,6 +40,16 @@ class Core2BCompilerTests(unittest.TestCase):
         self.assertEqual(out["delivery_mode"], "STATIC")
         self.assertEqual(out["items"][-1]["demand_level"], "M6_FAMILY_DISCRIMINATION")
 
+    def test_equidistance_hidden_structure_answer_is_mathematically_verified(self):
+        doc = self.load("equidistant-point-on-axis")
+        item = next(x for x in doc["items"] if x["item_id"] == "EQ-H1")
+        self.assertEqual(item["answer_check"], "x=1/4; P=(1/4,0).")
+        x = 1 / 4
+        left = (x + 3) ** 2 + 16
+        right = (x - 5) ** 2 + 4
+        self.assertEqual(left, right)
+        self.assertEqual(left, 441 / 16)
+
     def test_live_attempts_are_forbidden(self):
         doc = self.load("equidistant-point-on-axis")
         doc["attempts"] = []
