@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1b-release-receipt.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","receipt_id","learner_profile_ref","capability_id","problem_family_ref","core1a_release_ref","core1a_release_digest","state","observed_events","representation_evidence","unresolved_required_atoms","semantics","receipt_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "receipt_id":{"type":"string","pattern":"^C1B-REL-"},
+    "learner_profile_ref":{"type":"string"},
+    "capability_id":{"type":"string"},
+    "problem_family_ref":{"type":"string"},
+    "core1a_release_ref":{"type":"string"},
+    "core1a_release_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "state":{"const":"INDEPENDENT"},
+    "observed_events":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["event_ref","event_digest"],"properties":{"event_ref":{"type":"string"},"event_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}},
+    "representation_evidence":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "unresolved_required_atoms":{"type":"array","maxItems":0,"items":{"type":"string"}},
+    "semantics":{"const":"OBSERVED_INDEPENDENT_RELEASE_NOT_TRANSFER_LEGALITY"},
+    "receipt_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

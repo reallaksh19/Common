@@ -1,0 +1,25 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1b-observed-event.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","event_id","event_sequence","learner_profile_ref","capability_id","problem_family_ref","basis","event_kind","outcome","criteria","atom_refs","representation_used","hint_level_used","evidence_ref","evidence_digest","supersedes_event_id","event_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "event_id":{"type":"string","pattern":"^C1B-EVT-"},
+    "event_sequence":{"type":"integer","minimum":1},
+    "learner_profile_ref":{"type":"string","minLength":1},
+    "capability_id":{"type":"string","minLength":1},
+    "problem_family_ref":{"type":"string","minLength":1},
+    "basis":{"enum":["LEARNER_RESPONSE","DIAGNOSTIC","TEACHER_OBSERVATION"]},
+    "event_kind":{"enum":["ATOM_CHECK","GUIDED_ATTEMPT","INDEPENDENT_ATTEMPT","RETRIEVAL_ATTEMPT"]},
+    "outcome":{"enum":["PASS","PARTIAL","FAIL"]},
+    "criteria":{"type":"object","additionalProperties":false,"required":["recognise","represent","explain","applicability","model_select","first_move","finish","check"],"properties":{"recognise":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]},"represent":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]},"explain":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]},"applicability":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]},"model_select":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]},"first_move":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]},"finish":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]},"check":{"enum":["PASS","PARTIAL","FAIL","UNTESTED"]}}},
+    "atom_refs":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "representation_used":{"type":["string","null"]},
+    "hint_level_used":{"enum":["NO_HINT","RETRIEVAL_CUE","REPRESENTATION_CUE","MODEL_CUE","FIRST_MOVE_CUE","FULL_SOLUTION"]},
+    "evidence_ref":{"type":"string","minLength":1},
+    "evidence_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "supersedes_event_id":{"type":["string","null"]},
+    "event_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

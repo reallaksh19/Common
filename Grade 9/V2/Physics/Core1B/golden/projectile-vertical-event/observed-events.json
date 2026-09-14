@@ -1,0 +1,11 @@
+[
+  {
+    "schema_version":"1.0.0","event_id":"C1B-EVT-PHY-M2D-SBA04-0001","event_sequence":1,
+    "learner_profile_ref":"PHY-LS-P20-DEMO","capability_id":"PHY-CAP-PROJECTILE-VERTICAL-EVENT","problem_family_ref":"PF-PROJECTILE-VERTICAL-EVENT",
+    "basis":"LEARNER_RESPONSE","event_kind":"INDEPENDENT_ATTEMPT","outcome":"PASS",
+    "criteria":{"recognise":"PASS","represent":"PASS","explain":"PASS","applicability":"PASS","model_select":"PASS","first_move":"PASS","finish":"PASS","check":"PASS"},
+    "atom_refs":["PHY-A-EQ-01"],"representation_used":"EVENT_TIMELINE","hint_level_used":"NO_HINT",
+    "evidence_ref":"repo:Core1B/golden/projectile-vertical-event/independent-response-001","evidence_digest":"1111111111111111111111111111111111111111111111111111111111111111",
+    "supersedes_event_id":null,"event_digest":"789496d5dc96404d7daba27de152ca306f32ec2d5236ba55f3ff1fd1e141043e"
+  }
+]
