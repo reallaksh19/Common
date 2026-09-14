@@ -145,7 +145,7 @@ def test_owner_waived_answers_are_mathematically_consistent():
     x = 1 / 4
     left = (x + 3) ** 2 + 16
     right = (x - 5) ** 2 + 4
-    assert left == right == 441 / 16
+    assert left == right == 425 / 16
 
     inverse = next(x for x in doc["core2a"]["legal_items"] if x["item_id"] == "EQ-I1")
     assert inverse["answer_check"] == "k=2±sqrt(21)."
