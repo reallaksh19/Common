@@ -1,0 +1,144 @@
+name: V2 Chemistry Core1B Core2B Self Tutor
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/Core1B/**'
+      - 'Grade 9/V2/Chemistry/Core2B/**'
+      - 'Grade 9/V2/Chemistry/B_LAYER_PRODUCT_KIT.md'
+      - '.github/workflows/v2-chemistry-core1b-core2b.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-static-self-tutor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install B-layer dependencies
+        run: python -m pip install 'reportlab>=4.0' 'pymupdf>=1.24'
+
+      - name: Enforce frozen upstream product and blueprint boundary
+        run: |
+          git fetch origin v2-chemistry-learning-blueprint-v4-bucket-conditioning
+          changed="$(git diff --name-only origin/v2-chemistry-learning-blueprint-v4-bucket-conditioning...HEAD)"
+          echo "$changed"
+          if echo "$changed" | grep -E '^Grade 9/V2/Chemistry/(Core1A|Core2A|LearningBlueprint|LearnerProduct)/'; then
+            echo 'CHEM_B_UPSTREAM_AUTHORITY_DRIFT'
+            exit 1
+          fi
+
+      - name: Validate consumed LearningBlueprint v4 authority
+        run: |
+          python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v4_controls.py' -v
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          policy = json.loads((root / 'policies/v4-bucket-and-conditioning-policy.json').read_text(encoding='utf-8'))
+          assert policy['core1_policy']['control_axis'] == 'INTRINSIC_SUBTOPIC_DIFFICULTY'
+          assert policy['core2_policy']['control_axis'] == 'LEARNER_CONDITIONING'
+          assert policy['core2_policy']['unresolved_conditioning_action'] == 'BLOCK'
+          print('BLUEPRINT_V4_CONSUMPTION_AUTHORITY=PASS')
+          PY
+
+      - name: Run Core1B self-tutor falsifiers
+        run: python -m unittest discover -s 'Grade 9/V2/Chemistry/Core1B/tests' -p 'test_*.py' -v
+
+      - name: Run Core2B self-tutor falsifiers
+        run: python -m unittest discover -s 'Grade 9/V2/Chemistry/Core2B/tests' -p 'test_*.py' -v
+
+      - name: Compile Core1B goldens
+        run: |
+          mkdir -p /tmp/chem-b/core1b-observation /tmp/chem-b/core1b-redox
+          python 'Grade 9/V2/Chemistry/Core1B/engine/compile_chemistry_core1b.py' \
+            --input 'Grade 9/V2/Chemistry/Core1B/golden/observation-inference/input.json' \
+            --out-dir /tmp/chem-b/core1b-observation
+          python 'Grade 9/V2/Chemistry/Core1B/engine/compile_chemistry_core1b.py' \
+            --input 'Grade 9/V2/Chemistry/Core1B/golden/redox-species-role/input.json' \
+            --out-dir /tmp/chem-b/core1b-redox
+
+      - name: Compile Core2B goldens
+        run: |
+          mkdir -p /tmp/chem-b/core2b-evidence /tmp/chem-b/core2b-classification
+          python 'Grade 9/V2/Chemistry/Core2B/engine/compile_chemistry_core2b.py' \
+            --input 'Grade 9/V2/Chemistry/Core2B/golden/evidence-to-claim/input.json' \
+            --out-dir /tmp/chem-b/core2b-evidence
+          python 'Grade 9/V2/Chemistry/Core2B/engine/compile_chemistry_core2b.py' \
+            --input 'Grade 9/V2/Chemistry/Core2B/golden/reaction-classification/input.json' \
+            --out-dir /tmp/chem-b/core2b-classification
+
+      - name: Assert v4 consumption, static boundary and learner-surface quality
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import fitz
+
+          root = Path('/tmp/chem-b')
+          expected = {
+              'core1b-observation': ('CORE1B', 'EASY'),
+              'core1b-redox': ('CORE1B', 'HARD'),
+              'core2b-evidence': ('CORE2B', 'KNOWLEDGE_PERCENT'),
+              'core2b-classification': ('CORE2B', 'OWNER_OVERRIDE'),
+          }
+          forbidden_surface = [
+              'capability_ref', 'problem_family_ref', 'approved_capability_refs',
+              'learner_response', 'attempt_history', 'adaptive_branch', 'mastery_update',
+              'knowledge_percent', 'support_density', 'blueprint_control_axis'
+          ]
+          summary = []
+          for name, (kind, expected_value) in expected.items():
+              d = root / name
+              audits = list(d.glob('*quality_audit.json'))
+              assert len(audits) == 1, d
+              audit = json.loads(audits[0].read_text(encoding='utf-8'))
+              assert audit['status'] == 'PASS'
+              assert audit['delivery_mode'] == 'STATIC'
+              assert audit['live_runtime_fields'] == 'ABSENT'
+              if kind == 'CORE1B':
+                  assert audit['blueprint_v4']['control_axis'] == 'INTRINSIC_SUBTOPIC_DIFFICULTY'
+                  assert audit['blueprint_v4']['difficulty_badge'] == expected_value
+                  assert audit['learner_knowledge_used_for_depth'] is False
+              else:
+                  assert audit['conditioning_mode'] == expected_value
+                  assert audit['blueprint_v4']['status'] == 'PASS'
+                  assert audit['resolved_support_profile']['hint_entry_level'].startswith('H')
+                  if expected_value == 'KNOWLEDGE_PERCENT':
+                      assert audit['knowledge_percent'] == 50
+                  else:
+                      assert audit['owner_override_auditable'] is True
+                      assert audit['fabricated_knowledge_percent'] is False
+              pdfs = list(d.glob('*.pdf'))
+              assert len(pdfs) == 1
+              doc = fitz.open(pdfs[0])
+              assert len(doc) >= 1
+              raw = '\n'.join(page.get_text() for page in doc).lower()
+              assert len(raw.strip()) > 100
+              for token in forbidden_surface:
+                  assert token not in raw, f'{name}: internal token leaked: {token}'
+              for page_no in sorted({0, len(doc)-1}):
+                  pix = doc[page_no].get_pixmap(matrix=fitz.Matrix(1.5, 1.5), alpha=False)
+                  pix.save(d / f'page-{page_no+1:02d}.png')
+              summary.append({'product': name, 'pages': len(doc), 'pdf': pdfs[0].name})
+          assert summary[2]['pages'] == 2
+          assert summary[3]['pages'] == 3
+          print(json.dumps(summary, indent=2))
+          print('delivery_mode = STATIC')
+          print('live_runtime_fields = ABSENT')
+          print('blueprint_v4_consumption = PASS')
+          PY
+
+      - name: Upload Chemistry B-layer learner products
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-core1b-core2b-self-tutor-v4-goldens
+          path: /tmp/chem-b
+          if-no-files-found: error
