@@ -1,0 +1,31 @@
+{
+  "core2a_authority_ref": "MATH-C2A-GOLDEN-LINSYS",
+  "purpose": "PRACTICE",
+  "max_demand_level": "M6_FAMILY_DISCRIMINATION",
+  "generation_calibration": {
+    "calibration_basis": {
+      "type": "KNOWLEDGE_PERCENT",
+      "learner_knowledge_percent": 82,
+      "knowledge_source_ref": "ASSESSMENT:linsys-diagnostic",
+      "calibration_policy_ref": "OWNER_POLICY:math-core2-calibration-v1",
+      "capability_knowledge": [
+        {"capability_ref":"MATH-LINEAR-SYSTEM-SOLVE","percent":84},
+        {"capability_ref":"MATH-LINEAR-SYSTEM-SETUP","percent":78},
+        {"capability_ref":"MATH-WORD-MODELLING","percent":74},
+        {"capability_ref":"MATH-VARIABLE-SEMANTICS","percent":88},
+        {"capability_ref":"MATH-SUBSTITUTION","percent":86}
+      ]
+    },
+    "support_mode": "CHALLENGE_MINIMAL"
+  },
+  "approved_capability_refs": ["MATH-LINEAR-SYSTEM-SOLVE","MATH-LINEAR-SYSTEM-SETUP","MATH-WORD-MODELLING","MATH-VARIABLE-SEMANTICS","MATH-SUBSTITUTION"],
+  "core2a_legal_item_ids": ["LS-D1","LS-V1","LS-R1","LS-M1","LS-F1"],
+  "title": "Transfer Practice — Linear Systems",
+  "items": [
+    {"item_id":"B-LS-D1","core2a_item_ref":"LS-D1","demand_level":"M0_DIRECT","learner_label":"Try it first","family_label_visible":true,"capability_refs":["MATH-LINEAR-SYSTEM-SOLVE"],"stem":"Solve x+y=11 and x-y=3.","support":[],"answer_check":"x=7, y=4.","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:LS-D1","source_relation":"FADING_ANCHOR","parent_question_refs":["LS-D1"],"answer_contract_ref":"ANS-LS-D1","learner_source_label":"Core2A fading anchor LS-D1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-LS-V1","core2a_item_ref":"LS-V1","demand_level":"M1_CONTROLLED_VARIATION","learner_label":"Controlled variation","family_label_visible":true,"capability_refs":["MATH-LINEAR-SYSTEM-SOLVE"],"stem":"Solve 2x+y=13 and 2x-y=3.","support":[],"answer_check":"x=4, y=5.","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:LS-V1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["LS-V1"],"answer_contract_ref":"ANS-LS-V1","learner_source_label":"Generated structural sibling of Core2A LS-V1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-LS-R1","core2a_item_ref":"LS-R1","demand_level":"M2_REPRESENTATION_TRANSFER","learner_label":"Model from conditions","family_label_visible":true,"capability_refs":["MATH-WORD-MODELLING","MATH-LINEAR-SYSTEM-SETUP","MATH-LINEAR-SYSTEM-SOLVE"],"stem":"Two numbers have sum 19 and difference 7. Define variables, write the system, and solve.","support":[],"answer_check":"13 and 6.","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:LS-R1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["LS-R1"],"answer_contract_ref":"ANS-LS-R1","learner_source_label":"Generated representation sibling of Core2A LS-R1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-LS-M1","core2a_item_ref":"LS-M1","demand_level":"M5_METHOD_DISCRIMINATION","learner_label":"Choose the efficient method","family_label_visible":false,"capability_refs":["MATH-LINEAR-SYSTEM-SOLVE","MATH-SUBSTITUTION"],"stem":"Solve y=3x-2 and 2x+y=18. Choose substitution or elimination and explain why your choice is efficient.","support":[],"answer_check":"x=4, y=10; substitution is efficient because one variable is already isolated.","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:LS-M1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["LS-M1"],"answer_contract_ref":"ANS-LS-M1","learner_source_label":"Generated method-discrimination sibling of Core2A LS-M1","official_past_question_claim":false,"verified_official_source_ref":null},
+    {"item_id":"B-LS-F1","core2a_item_ref":"LS-F1","demand_level":"M6_FAMILY_DISCRIMINATION","learner_label":"Identify the structure","family_label_visible":false,"capability_refs":["MATH-WORD-MODELLING","MATH-LINEAR-SYSTEM-SETUP","MATH-LINEAR-SYSTEM-SOLVE","MATH-VARIABLE-SEMANTICS"],"stem":"A school sold 18 tickets. Adult tickets cost 9 and student tickets cost 6. Revenue was 135. Decide what mathematical model is needed, define variables, and solve.","support":[],"answer_check":"9 adult tickets and 9 student tickets.","origin":"GENERATED_ORIGINAL","source_question_no":null,"source_ref":"CORE2A:LS-F1","source_relation":"STRUCTURAL_SIBLING","parent_question_refs":["LS-F1"],"answer_contract_ref":"ANS-LS-F1","learner_source_label":"Generated family-discrimination sibling of Core2A LS-F1","official_past_question_claim":false,"verified_official_source_ref":null}
+  ]
+}
