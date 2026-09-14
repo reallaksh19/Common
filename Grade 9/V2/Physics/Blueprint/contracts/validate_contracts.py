@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import json
+import sys
 from pathlib import Path
 from jsonschema import Draft202012Validator
 
@@ -29,30 +30,53 @@ def validate():
         "m2d-render-readiness.schema.json",
         "m2d-manuscript-release-binding.schema.json",
         "m2d-composition-plan.schema.json",
+        "b-layer-runtime-boundary.schema.json",
     ]
     schemas = {n: load(ROOT / "contracts" / n) for n in names}
     for schema in schemas.values():
         Draft202012Validator.check_schema(schema)
 
-    Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(load(ROOT / "policy" / "architecture.v1.json"))
+    architecture = load(ROOT / "policy" / "architecture.v1.json")
+    Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(architecture)
     bindings = load(ROOT / "policy" / "role-bindings.v1.json")
     Draft202012Validator(schemas["role-bindings.schema.json"]).validate(bindings)
+    b_policy = load(ROOT / "policy" / "b-layer-runtime-boundary.v1.json")
+    Draft202012Validator(schemas["b-layer-runtime-boundary.schema.json"]).validate(b_policy)
 
     ev = Draft202012Validator(schemas["evidence-state.schema.json"])
     for f in sorted((ROOT / "fixtures" / "golden").glob("*.json")):
         ev.validate(load(f)["evidence"])
 
-    architecture = load(ROOT / "policy" / "architecture.v1.json")
     if (
         architecture["role_lifecycle"]["CORE2A"] != "ACTIVE"
+        or architecture["role_lifecycle"]["CORE1B"] != "DRAFT"
+        or architecture["role_lifecycle"]["CORE2B"] != "DRAFT"
         or not architecture["invariants"]["core2a_requires_taught_state_receipts"]
         or not architecture["invariants"]["core2a_may_not_infer_learner_mastery"]
     ):
-        raise AssertionError("CORE2A_BLUEPRINT_GUARD_DRIFT")
+        raise AssertionError("BLUEPRINT_ROLE_LIFECYCLE_OR_CORE2A_GUARD_DRIFT")
     if architecture["invariants"]["max_subtopics_per_handoff"] != 3 or not architecture["invariants"]["learning_atoms_unbounded"]:
         raise AssertionError("TRANSPORT_PEDAGOGY_BOUND_DRIFT")
+    if set(architecture["roles"]) != {"CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE1B", "CORE2A", "CORE2B"}:
+        raise AssertionError("BLUEPRINT_ROLE_SET_DRIFT")
+    if architecture["planes"]["RUNTIME"]["authority"] != "AUTHORIZED_EXPERIENCE_EXECUTION":
+        raise AssertionError("B_LAYER_RUNTIME_PLANE_DRIFT")
+    for key in (
+        "b_layers_have_no_semantic_or_legality_authority",
+        "core1b_requires_released_core1a_authority",
+        "teaching_configuration_cannot_prove_learner_state",
+        "core2b_requires_digest_bound_core2a_legal_pool",
+        "core2b_escalation_requires_per_capability_evidence",
+        "runtime_evidence_is_append_only",
+        "repair_routing_cannot_rewrite_a_layer_authority",
+    ):
+        if not architecture["invariants"][key]:
+            raise AssertionError("B_LAYER_ARCHITECTURE_INVARIANT_DISABLED:" + key)
+
     if bindings["canonical_root"] != "Grade 9/V2/Physics/Blueprint" or bindings["roles"]["JOIN"]["ownership"] != "BLUEPRINT_NATIVE":
         raise AssertionError("PHYSICS_BLUEPRINT_ROLE_BINDING_DRIFT")
+    if bindings["roles"]["CORE1B"]["implementation_root"] != "Grade 9/V2/Physics/Core1B" or bindings["roles"]["CORE2B"]["implementation_root"] != "Grade 9/V2/Physics/Core2B":
+        raise AssertionError("B_LAYER_IMPLEMENTATION_ROOT_DRIFT")
 
     independent = load(ROOT / "policy" / "independent-validation.v1.json")
     join = load(ROOT / "policy" / "join-policy.v1.json")
@@ -61,13 +85,13 @@ def validate():
     pub = load(ROOT / "policy" / "publication-boundary.v1.json")
     render = load(ROOT / "policy" / "render-preflight.v1.json")
     m2d_rep = load(ROOT / "policy" / "m2d-representation-requirements.v1.json")
-    composition = load(ROOT / "policy" / "m2d-composition-release.v1.json")
+    m2d_comp = load(ROOT / "policy" / "m2d-composition-release.v1.json")
 
     if not independent["self_validation_forbidden"] or not independent["fresh_validator_instance_required"]:
         raise AssertionError("INDEPENDENT_VALIDATION_POLICY_DISABLED")
     if join["coverage_rule"] != "EVERY_CORE2_DEMAND_CLAIM_EXACTLY_ONCE" or not join["critical_conflict_blocks_core1a"]:
         raise AssertionError("JOIN_POLICY_DRIFT")
-    if purpose["invariant"] != "PURPOSE_CANNOT_BYPASS_REQUIRED_PREREQUISITES" or set(purpose["purposes"]) != {"FIRST_STUDY","PRACTICE","REVISION","COMPETITIVE_EXAM"}:
+    if purpose["invariant"] != "PURPOSE_CANNOT_BYPASS_REQUIRED_PREREQUISITES" or set(purpose["purposes"]) != {"FIRST_STUDY", "PRACTICE", "REVISION", "COMPETITIVE_EXAM"}:
         raise AssertionError("PURPOSE_POLICY_DRIFT")
     if len(c1a["pre_manuscript_stages"]) != 12 or c1a["manuscript_stage"] != "1A12_MANUSCRIPT" or c1a["rules"]["unresolved_required_jump_count_must_equal"] != 0:
         raise AssertionError("CORE1A_STAGE_MACHINE_DRIFT")
@@ -79,15 +103,12 @@ def validate():
         raise AssertionError("RENDER_PHYSICAL_QA_POLICY_DRIFT")
     if m2d_rep.get("topic_id") != "PHY-M2D" or not all((m2d_rep.get("rules") or {}).values()):
         raise AssertionError("M2D_REPRESENTATION_GAP_POLICY_DRIFT")
+    if m2d_comp.get("topic_id") != "PHY-M2D" or not all((m2d_comp.get("rules") or {}).values()):
+        raise AssertionError("M2D_COMPOSITION_RELEASE_POLICY_DRIFT")
 
-    creq = composition["requirements"]
-    car = composition["authority_rules"]
-    if composition.get("topic_id") != "PHY-M2D" or creq["representation_readiness_status"] != "READY_FOR_RENDER_ADAPTER":
-        raise AssertionError("M2D_COMPOSITION_POLICY_DRIFT")
-    if creq["manuscript_gate"] != "RELEASED" or creq["manuscript_next_stage"] != "1A12_MANUSCRIPT" or creq["unresolved_required_jump_count"] != 0:
-        raise AssertionError("M2D_COMPOSITION_MANUSCRIPT_GATE_DRIFT")
-    if car["composition_plan_may_invoke_renderer_directly"] or car["composition_plan_may_authorize_release"] or car["process_fixture_may_authorize_real_publication"]:
-        raise AssertionError("M2D_COMPOSITION_AUTHORITY_ESCALATION")
+    sys.path.insert(0, str(ROOT / "engine"))
+    from validate_b_layer_boundary import validate_boundary
+    validate_boundary(b_policy, architecture, bindings)
 
     print("Blueprint contracts: PASS")
 

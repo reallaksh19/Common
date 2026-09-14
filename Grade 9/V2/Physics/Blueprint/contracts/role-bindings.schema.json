@@ -12,14 +12,16 @@
     "roles": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE2A"],
+      "required": ["CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE1B", "CORE2A", "CORE2B"],
       "properties": {
         "CORE0": {"$ref": "#/$defs/binding"},
         "CORE1": {"$ref": "#/$defs/binding"},
         "CORE2": {"$ref": "#/$defs/binding"},
         "JOIN": {"$ref": "#/$defs/binding"},
         "CORE1A": {"$ref": "#/$defs/binding"},
-        "CORE2A": {"$ref": "#/$defs/binding"}
+        "CORE1B": {"$ref": "#/$defs/binding"},
+        "CORE2A": {"$ref": "#/$defs/binding"},
+        "CORE2B": {"$ref": "#/$defs/binding"}
       }
     }
   },

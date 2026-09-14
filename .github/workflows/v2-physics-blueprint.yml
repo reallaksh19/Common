@@ -5,8 +5,10 @@ on:
     paths:
       - 'Grade 9/V2/Physics/Blueprint/**'
       - 'Grade 9/V2/Physics/Core1A/**'
+      - 'Grade 9/V2/Physics/Core1B/**'
       - 'Grade 9/V2/Physics/Representation/**'
       - 'Grade 9/V2/Physics/Core2A/**'
+      - 'Grade 9/V2/Physics/Core2B/**'
       - '.github/workflows/v2-physics-blueprint.yml'
   workflow_dispatch:
 
@@ -22,6 +24,8 @@ jobs:
         run: pip install jsonschema reportlab pymupdf
       - name: Validate blueprint contracts and role bindings
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
+      - name: Run B-layer runtime-boundary falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_b_layer_boundary.py"
       - name: Run adaptive-routing golden fixtures
         run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
       - name: Run blueprint routing tests
