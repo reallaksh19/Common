@@ -1,8 +1,8 @@
 # Physics V2 Blueprint — evidence-adaptive orchestration
 
-`Grade 9/V2/Physics/Blueprint/` is the **canonical orchestration root for Physics Blueprint work**. Role-specific sibling directories (`CoreAuthoring/`, `Core2Transfer/`, `Core1A/`, `Core1B/`, `Core2A/`, `Core2B/`, `Representation/`) are subordinate execution kits.
+`Grade 9/V2/Physics/Blueprint/` is the canonical orchestration root. Role-specific sibling directories (`CoreAuthoring/`, `Core2Transfer/`, `Core1A/`, `Core1B/`, `Core2A/`, `Core2B/`, `Representation/`) are subordinate execution kits.
 
-## Active authority topology and learner runtime
+## Authority topology
 
 ```text
 ORIGINAL / OBSERVED GROUND TRUTH
@@ -13,233 +13,245 @@ CORE1 ↔ independent second pass ↔ CORE2
         ↓
        JOIN
         ↓
-learner state × purpose
+CANONICAL DOMAIN REGISTRY / learner-control authority
         ↓
-CORE1A 1A0…1A11
-        ↓
-1A12 manuscript + T receipts ─────────────→ CORE2A legal transfer pool
-        ↓                                      ↓
-released teaching authority                 exact legal-pool custody
-        ↓                                      ↓
-      CORE1B ── observed learner evidence ─→ CORE2B
-        ↑                                      │
-        └──── targeted repair request ─────────┘
-                                               ↓
-                                  attempts / retrieval evidence
-                                               ↓
-                                      EVIDENCE + CONTROL
+product differentiation and adaptation
+```
+
+Execution order may vary. **Authority order may not.** Product-design layers never manufacture truth, rewrite frozen source wording, create observed learner evidence, or expand Core2A legality.
 
 Publication remains separate:
-Core1A released semantics → Publication IR → composition-only renderer → render custody/preflight
-```
-
-Execution order may vary. **Authority order may not.**
-
----
-
-## Learner-product topology — SELF-HELP V5
-
-Every learner product must be usable without a teacher physically present.
-
-The learner-facing architecture is **family-first, asymmetric, technically explicit and fail-closed on visual quality**.
-
-The canonical authoring hierarchy is:
 
 ```text
-SUBTOPIC / SBA BUCKET
-   ↓
-hidden invariant(s)
-   ↓
-prerequisite bridges
-   ↓
-inferential jumps
-   ↓
-problem families
-   ↓
-TECHNICAL TEACHING UNITS (TTUs)
-   ↓
-Core1A / Core1B / Core2A / Core2B realization
+released Core1A semantics
+        ↓
+Publication IR
+        ↓
+composition-only renderer
+        ↓
+render custody / preflight
 ```
-
-Normative learner-product architecture:
-
-`SELF_HELP_ARCHITECTURE_V5.md`
-
-Machine-readable policies:
-
-- `policy/self-help-core-publication.v5.json`
-- `policy/technical-teaching-unit.v1.json`
-- `policy/physics-representation-semantic-quality.v1.json`
-- `policy/pdf-layout-integrity.v2.json`
-- `policy/core1ab-bucket-authoring.v2.json`
-- `policy/core2ab-knowledge-routing.v1.json`
-
-### Technical Teaching Unit (TTU)
-
-A technical learner unit is complete only when it binds:
-
-`PHYSICAL SETUP → TECHNICAL REPRESENTATION → GOVERNING RELATION → MAPPING/WORKING → RESULT → VERIFICATION`
-
-A page does **not** become technical merely because it contains a diagram and an equation.
-
-The learner must be able to see how the variables/vectors/features in the representation map into the equation and then into the working.
-
-### What counts as a Physics representation
-
-Eligible technical forms include:
-
-- vector/component construction;
-- free-body diagram;
-- geometry/ray construction;
-- trajectory/graph with meaningful axes;
-- event timeline;
-- state transition;
-- frame/coordinate diagram;
-- physical-variable table;
-- equation dependency map.
-
-The following do not count toward technical closure:
-
-- generic text cards;
-- decorative arrows;
-- unlabeled axes;
-- oversized empty coordinate planes;
-- decorative illustrations;
-- prose converted into shapes;
-- figures not used by the accompanying working;
-- a final equation floating beneath an unmapped picture.
-
-### Core1A / Core1B control plane
-
-Core1A/Core1B are always subtopic/SBA-bucket-wise. Student knowledge % does **not** drive authored depth.
-
-The bucket receives one intrinsic `EASY | MEDIUM | HARD` badge. The badge controls inferential/technical closure, not image count or prose length.
-
-Core1A uses soft capacity ceilings of about 10 / 20 / 30 pages for Easy / Medium / Hard. These remain ceilings, not targets.
-
-Core1B does not inherit those page ceilings. Its length comes from the fragile technical checkpoints and problem families that need learner reconstruction.
-
-### A/B are dominant modes, not duplicate books
-
-- **Core1A** — declarative-dominant complete TTUs.
-- **Core1B** — generative-dominant reconstructable TTUs.
-- **Core2A** — declarative-dominant worked problem TTUs selected by legal problem family and learner support route.
-- **Core2B** — generative-dominant transfer TTUs using fresh legal items/variants when possible.
-
-Core1B may contain targeted post-attempt explanation. Core1A may contain compact generative checks. The system must not create parallel duplicate books.
-
-### Core1B — ACTIVE runtime + v6 learner-product grammar
-
-Core1B retains strict evidence custody but now requires technical reconstruction where the capability is technical.
-
-A Hard Core1B page is noncompliant if it is mainly prose + blank lines while an expert would naturally use a vector diagram, graph, component split, event line, geometry construction, free-body diagram or symbolic relation.
-
-See `../Core1B/LEARNER_PRODUCT_SPEC_v6.md`.
-
-### Core2A — ACTIVE legality + v4 worked-TTU grammar
-
-Knowledge % is required unless explicitly waived by owner input.
-
-Core2A selects representative legal exemplars by problem family/demand. Each exemplar must expose setup extraction, technical representation, governing relation, intermediate mapping/working, result and verification.
-
-A large diagram plus one final equation is not a worked solution.
-
-Model-discrimination pages must compare actual Physics structure — physical trigger, representation/model, first move and why a competing model is rejected. Generic A/B/C cards do not count as technical Physics representation.
-
-See `../Core2A/LEARNER_PRODUCT_SPEC_v4.md`.
-
-### Core2B — ACTIVE runtime + v5 transfer-TTU grammar
-
-Core2B consumes the exact Core2A legal pool and observed Core1B evidence.
-
-When representation/model choice is part of transfer, the learner must select or construct it before reveal. Core2B should avoid mirroring Core2A item-for-item where fresh legal items/variants exist.
-
-See `../Core2B/LEARNER_PRODUCT_SPEC_v5.md`.
 
 ---
 
-## Core2 adaptation input
+# Canonical learner-product architecture — V7
 
-Core2A/Core2B require exactly one declared basis:
+Normative architecture:
 
-### KNOWLEDGE_PERCENT
+`SELF_HELP_ARCHITECTURE_V7.md`
 
-`student_knowledge_pct: 0..100`
+V7 preserves V6's reconstruction-complete TTU guarantees and adds cross-Core differentiation, intrinsic study-material difficulty and learner-fit routing.
 
-### OWNER_OVERRIDE
+```text
+CANONICAL DOMAIN REGISTRY
+        ↓
+       CDAU
+cross-Core lineage / purpose / duplication / bounded owner decisions
+        ↓
+   ┌────┴────┐
+   ↓         ↓
+  SDU       LAU
+Core1       Core2
+track       track
+   ↓         ↓
+CONCEPT    PROBLEM
+  TTU        TTU
+ /   \      /   \
+1A   1B    2A   2B
+```
 
-When knowledge % is unknown:
+## CDAU — cross-Core governance
 
-- `owner_ref`;
-- `reason`;
-- `support_band`.
+CDAU answers: **why does this content belong in this Core, and is it genuinely differentiated from neighboring Cores?**
 
-Allowed support bands:
+It governs:
 
-`FOUNDATION_HIGH_SUPPORT | GUIDED | STANDARD | CHALLENGE_MINIMAL`
+- canonical content lineage;
+- Core purpose contracts;
+- example fingerprints;
+- representation lineage;
+- cross-Core duplication classification;
+- source custody;
+- bounded owner decisions and provenance;
+- routing to SDU or LAU.
 
-No silent default is allowed. The owner override waives only missing knowledge data; it cannot expand legality or rewrite frozen source questions.
+Fundamental equations may legitimately recur. Duplication is judged by asset identity + example fingerprint + usage mode + learner action + solution path, not textual similarity alone.
+
+Allowed relationships include semantic reuse, pedagogical transformation, intentional fading anchors, structural siblings and far-transfer siblings. `PEDAGOGICAL_DUPLICATION` is release-blocking.
+
+## Owner control
+
+Owner control is global for product/routing decisions and always records:
+
+```text
+SYSTEM_FINDING
+OWNER_DECISION
+FINAL_ACTION
+```
+
+Owner may alter difficulty badge, research depth, bucket/subtopic split, representation choice, legal-family inclusion, support band and publication choice where upstream authority permits.
+
+Owner may **not** override Physics/Mathematics correctness, frozen source wording, source-integrity classification, provenance, observed evidence, exact legal-pool custody or authority order. When source custody is unresolved, an owner may choose a labelled design pilot; unresolved source text may not be relabelled exact.
+
+---
+
+## SDU — Study Differentiation Unit
+
+SDU applies only to **Core1A / Core1B**. `student_knowledge_pct` may not drive authored depth.
+
+Each bucket has an intrinsic `EASY | MEDIUM | HARD` badge with explicit authority:
+
+`OWNER_PROVIDED | SOURCE_PROVIDED | DERIVED | VALIDATED_DERIVED`
+
+A supplied badge is used; the evidence profile may flag disagreement but may not silently change it.
+
+Difficulty evidence includes prerequisite depth, element interactivity, inferential-jump severity, representation translation, model discrimination, sign/frame sensitivity, multi-step dependency, abstraction, misconception density and synthesis.
+
+### Shared maximum depth envelope
+
+Both Core1A and Core1B may use:
+
+- Easy: approximately up to 10 pages;
+- Medium: approximately up to 20 pages;
+- Hard: approximately up to 30 pages.
+
+These are **soft maximum envelopes, never quotas**. Same envelope does not imply same actual length, same content or same learner action. Core1A and Core1B actual lengths are independently derived.
+
+### Research policy
+
+- Easy: external research not required by default unless uncertainty demands it;
+- Medium: targeted research required;
+- Hard: deep research required.
+
+Research must produce design decisions: selected/rejected representations, misconception treatment, representation-translation risks and visual implications.
+
+---
+
+## LAU — Learner Adaptation Unit
+
+LAU applies only to **Core2A / Core2B**.
+
+Exactly one adaptation basis is required:
+
+1. capability-specific `KNOWLEDGE_PERCENT: 0..100`, with provenance/confidence; or
+2. `OWNER_OVERRIDE` when usable knowledge evidence is unavailable.
+
+No silent default is allowed.
+
+The learner model may include recognition, representation, model selection, first move, execution, explanation and verification subdimensions.
+
+Task demand remains multidimensional: structural distance, representation change, model discrimination, sign/direction reversal, reversed target, constraint inversion, multi-step bridge, synthesis and competitive mixing.
+
+Support may change bridge amount, representation completion, hints, working-step completeness, ordering, structural distance and retrieval timing. It may not alter frozen source wording, Physics truth or legal-pool boundaries.
+
+Core2B lineage modes:
+
+- `FADING_ANCHOR` — intentional same-item transition; **not transfer evidence**;
+- `STRUCTURAL_SIBLING` — changed legal instance; may support transfer evidence;
+- `FAR_TRANSFER_SIBLING` — changed representation/target/constraint/synthesis; stronger transfer when legal and observed.
+
+---
+
+## TTU v3 — Concept TTU and Problem TTU
+
+TTU is now a family:
+
+```text
+CONCEPT_TTU → Core1A / Core1B
+PROBLEM_TTU → Core2A / Core2B
+```
+
+Every substantive TTU binds:
+
+`semantic target → canonical expert state → technical representation → representation/relation bindings → reasoning-state graph → learner transformation → bounded help → canonical reveal → independent verification → repair`
+
+A diagram, equation, blanks or hints alone do not constitute a TTU.
+
+### B-layer learner transformations
+
+B-layer work is broader than omission/completion:
+
+`PREDICTION | COMPLETION | GENERATION | SELECTION | DISCRIMINATION | DIAGNOSIS | DERIVATION_CONNECTION | VERIFICATION | TRANSFER`
+
+The transformation must change the learner's reasoning state, produce an observable learner product and target the capability. Cosmetic blanks, arbitrary-number blanks and answer-copy tasks do not count.
+
+Tutor dialogue is target-driven, not a rigid transcript. Available functions include ATTEMPT, NOTICE, REPRESENT, EXPLAIN, CONNECT, START, CONTRAST and REPAIR. Only those needed by the reasoning target should be used.
+
+Full-solution exposure is learning support, not mastery or transfer evidence.
+
+---
+
+## Core identities
+
+- **Core1** — compact technical orientation.
+- **Core1A** — declarative-dominant complete Concept TTUs.
+- **Core1B** — generative-dominant Concept TTUs that make the learner reconstruct the model.
+- **Core2** — immutable frozen source questions/support.
+- **Core2A** — declarative worked Problem TTUs selected from the legal pool and learner route.
+- **Core2B** — generative transfer Problem TTUs using legal fading/sibling relationships and observed evidence.
+
+A/B are dominant modes, not duplicate books. Core1A may contain compact checks; Core1B may contain targeted post-attempt explanation. Core2A teaches representative expert reasoning; Core2B should not mirror it item-for-item when a legal sibling exists.
+
+---
+
+## Self-help closure
+
+All learner products must be usable without a teacher physically present. Substantive units define:
+
+- task/goal;
+- bounded help;
+- canonical answer/state under an explicit reveal rule;
+- misconception/repair route;
+- independent verification when technically applicable;
+- next step.
+
+`Compare with the answer` is not independent verification.
+
+---
+
+## Release gates
+
+Pre-release:
+
+1. `G-DOMAIN` — source/semantic grounding valid;
+2. `G-PURPOSE` — learner action belongs in this Core;
+3. `G-DIFFERENTIATION` — no accidental neighboring-Core duplication;
+4. `G-TTU` — technical interaction complete;
+5. `G-DIFFICULTY` — difficulty/task demand evidenced;
+6. `G-FIT` — Core2 support justified by knowledge or owner override;
+7. `G-PUBLICATION` — rendered product legible, integrated and collision-free.
+
+Post-use:
+
+8. `G-CALIBRATION` — observed behavior updates/challenges the learner-fit prediction; it never retroactively creates source or semantic authority.
+
+---
+
+## Normative files
+
+- `contracts/core-differentiation-adaptation-unit.schema.json`
+- `contracts/study-differentiation-unit.schema.json`
+- `contracts/learner-adaptation-unit.schema.json`
+- `contracts/technical-teaching-unit-v3.schema.json`
+- `policy/core-governance-cdau.v1.json`
+- `policy/study-differentiation-unit.v1.json`
+- `policy/learner-adaptation-unit.v1.json`
+- `policy/technical-teaching-unit.v3.json`
+- `policy/core1ab-bucket-authoring.v3.json`
+- `tests/test_blueprint_cdau_sdu_lau_ttu_v7.py`
+
+V2–V6 remain historical transition documents. **V7 is canonical for learner-product differentiation/adaptation.**
 
 ---
 
 ## Visual publication gate
 
-Successful PDF generation is **not** a visual pass.
-
-Production learner PDFs require:
-
-- flow layout or explicit collision validation;
-- legible technical labels/equations at final size;
-- figure labels that do not overlap vectors/objects;
-- figures cropped to instructional content;
-- proportional use of figure area;
-- figure and bound working kept adjacent;
-- page-by-page render review;
-- montage/thumbnail review for new figure grammars.
+Successful PDF generation is not a visual pass. Production learner PDFs require flow layout or collision validation, legible labels/equations, meaningful figure area, representation-to-working adjacency, page-by-page render review, and montage review for new figure grammars.
 
 Fail closed on microscopic labels, oversized low-information figures, excessive unused plotting space, clipped content, text/figure collision, orphaned figures and unreadable equations.
 
 ---
 
-## Three-topic falsification pilot
+## Real M2D publication boundary
 
-The learner grammar must survive:
-
-1. projectile vertical-event/apex reasoning;
-2. moving-launcher relative velocity;
-3. Newton model-selection / free-body reasoning.
-
-SBA23 retains the exact-Q15 source hold. Learner-product design cannot override source custody.
-
-Machine-readable pilot:
-
-`topics/self-help-three-topic-falsification-pilot.v3.json`
-
----
-
-## Publication and real M2D boundary
-
-The subject-wide 2D representation extension plus existing primitives gives the real 10-concept Motion-in-a-Plane chapter `10/10 READY_FOR_REALIZATION`, but publication remains independently blocked until a repository-backed non-golden Core1A `1A12` manuscript release exists.
-
-```text
-representation_status = READY_FOR_RENDER_ADAPTER
-manuscript_release_status = ABSENT
-composition_status = BLOCKED_UPSTREAM_MANUSCRIPT_RELEASE
-publication_ir_gate = BLOCKED
-renderer_invocation_allowed = false
-release_authorized = false
-```
-
-Runtime activation and learner-product grammar cannot substitute for pedagogical/manuscript release evidence.
-
-## Next Blueprint tranche
-
-Rebuild M2D-SBA-23 only after the TTU/representation/layout gates are active. Reject the build if:
-
-- a page contains technical-looking graphics without representation-to-equation binding;
-- a Hard B-layer degenerates into prose prompts;
-- a worked solution skips setup extraction or intermediate mapping;
-- model-discrimination uses generic cards instead of Physics structure;
-- labels become microscopic or collide with vectors;
-- oversized figures displace the technical working;
-- Q15 source custody is weakened.
+The real Motion-in-a-Plane chapter may have representation readiness while publication remains independently blocked until repository-backed manuscript/source authority exists. Learner-product architecture, runtime activation, owner decisions and visual quality cannot substitute for missing source/manuscript release evidence.
