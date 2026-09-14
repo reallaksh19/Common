@@ -1,0 +1,69 @@
+{
+  "schema_version": "5.0.0",
+  "product_mode": "CORE1A",
+  "bucket_ref": "CHEM-BUCKET-REDOX-HARD",
+  "difficulty_badge": "HARD",
+  "learning_atoms": [
+    {
+      "atom_id": "LA-OS-TRACK",
+      "title": "Track oxidation-state change",
+      "required_jobs": [
+        "MEANING", "RULE_OR_DECISION", "REPRESENTATION_OR_EQUATION", "REASONING_CHAIN",
+        "BOUNDARY_OR_MISCONCEPTION", "WORKED_OR_MODELED_EXAMPLE", "PRACTICE", "ANSWER_CLOSURE"
+      ]
+    },
+    {
+      "atom_id": "LA-AGENT-ROLE",
+      "title": "Attach reducing and oxidising agent roles",
+      "required_jobs": [
+        "MEANING", "RULE_OR_DECISION", "REPRESENTATION_OR_EQUATION", "REASONING_CHAIN",
+        "BOUNDARY_OR_MISCONCEPTION", "WORKED_OR_MODELED_EXAMPLE", "PRACTICE", "ANSWER_CLOSURE"
+      ]
+    }
+  ],
+  "technical_objects": [
+    {"object_id":"OS-MEAN","atom_id":"LA-OS-TRACK","job":"MEANING","payload_type":"DEFINITION"},
+    {"object_id":"OS-RULE","atom_id":"LA-OS-TRACK","job":"RULE_OR_DECISION","payload_type":"RULE"},
+    {"object_id":"OS-EQ","atom_id":"LA-OS-TRACK","job":"REPRESENTATION_OR_EQUATION","payload_type":"EQUATION"},
+    {"object_id":"OS-CHAIN","atom_id":"LA-OS-TRACK","job":"REASONING_CHAIN","payload_type":"DECISION_PIPELINE"},
+    {"object_id":"OS-BOUND","atom_id":"LA-OS-TRACK","job":"BOUNDARY_OR_MISCONCEPTION","payload_type":"CONTRAST"},
+    {"object_id":"OS-WORKED","atom_id":"LA-OS-TRACK","job":"WORKED_OR_MODELED_EXAMPLE","payload_type":"WORKED_EXAMPLE"},
+    {"object_id":"OS-PRACTICE","atom_id":"LA-OS-TRACK","job":"PRACTICE","payload_type":"PRACTICE"},
+    {"object_id":"OS-ANSWER","atom_id":"LA-OS-TRACK","job":"ANSWER_CLOSURE","payload_type":"ANSWER"},
+    {"object_id":"AG-MEAN","atom_id":"LA-AGENT-ROLE","job":"MEANING","payload_type":"DEFINITION"},
+    {"object_id":"AG-RULE","atom_id":"LA-AGENT-ROLE","job":"RULE_OR_DECISION","payload_type":"RULE"},
+    {"object_id":"AG-EQ","atom_id":"LA-AGENT-ROLE","job":"REPRESENTATION_OR_EQUATION","payload_type":"EQUATION"},
+    {"object_id":"AG-CHAIN","atom_id":"LA-AGENT-ROLE","job":"REASONING_CHAIN","payload_type":"DECISION_PIPELINE"},
+    {"object_id":"AG-BOUND","atom_id":"LA-AGENT-ROLE","job":"BOUNDARY_OR_MISCONCEPTION","payload_type":"CONTRAST"},
+    {"object_id":"AG-WORKED","atom_id":"LA-AGENT-ROLE","job":"WORKED_OR_MODELED_EXAMPLE","payload_type":"WORKED_EXAMPLE"},
+    {"object_id":"AG-PRACTICE","atom_id":"LA-AGENT-ROLE","job":"PRACTICE","payload_type":"PRACTICE"},
+    {"object_id":"AG-ANSWER","atom_id":"LA-AGENT-ROLE","job":"ANSWER_CLOSURE","payload_type":"ANSWER"},
+    {"object_id":"H-DERIVE","atom_id":"LA-OS-TRACK","job":"DERIVATION_OR_RULE_ANATOMY","payload_type":"DERIVATION"},
+    {"object_id":"H-MISCON","atom_id":"LA-AGENT-ROLE","job":"MISCONCEPTION_CONTRAST","payload_type":"CONTRAST"},
+    {"object_id":"H-BRIDGE","atom_id":"LA-OS-TRACK","job":"MULTI_REPRESENTATION_BRIDGE","payload_type":"TABLE"},
+    {"object_id":"H-INDEP","atom_id":"LA-AGENT-ROLE","job":"INDEPENDENT_PRACTICE","payload_type":"PRACTICE"}
+  ],
+  "practice_closure": {
+    "worked_count": 2,
+    "completion_count": 1,
+    "independent_count": 2,
+    "full_solution_count": 2
+  },
+  "research_translation": [
+    {"research_ref":"R-REDOX-MISCONCEPTIONS","decision":"Add oxidation-number/charge contrast","technical_object_ids":["OS-BOUND","H-MISCON"]},
+    {"research_ref":"R-REPRESENTATION-COORDINATION","decision":"Add equation-to-ledger bridge","technical_object_ids":["H-BRIDGE","OS-EQ"]}
+  ],
+  "page_plan": [
+    {"page_id":"P1","page_role":"ROUTE_OR_MAP","expected_active_area_ratio":0.66,"technical_object_ids":["OS-MEAN","AG-MEAN"],"learner_action_ids":[]},
+    {"page_id":"P2","page_role":"RULE_OR_DERIVATION","expected_active_area_ratio":0.76,"technical_object_ids":["OS-RULE","OS-EQ","H-DERIVE","H-BRIDGE"],"learner_action_ids":[]},
+    {"page_id":"P3","page_role":"WORKED_EXAMPLE","expected_active_area_ratio":0.78,"technical_object_ids":["OS-CHAIN","OS-WORKED","OS-BOUND","OS-ANSWER"],"learner_action_ids":[]},
+    {"page_id":"P4","page_role":"RULE_OR_DERIVATION","expected_active_area_ratio":0.74,"technical_object_ids":["AG-RULE","AG-EQ","AG-CHAIN","H-MISCON"],"learner_action_ids":[]},
+    {"page_id":"P5","page_role":"WORKED_EXAMPLE","expected_active_area_ratio":0.79,"technical_object_ids":["AG-WORKED","AG-BOUND","AG-ANSWER"],"learner_action_ids":[]},
+    {"page_id":"P6","page_role":"PRACTICE","expected_active_area_ratio":0.72,"technical_object_ids":["OS-PRACTICE","AG-PRACTICE","H-INDEP"],"learner_action_ids":["ACT-COMPLETION","ACT-INDEPENDENT"]}
+  ],
+  "cross_core_reuse_audit": {
+    "shared_expository_block_count": 0,
+    "repeated_generic_template_fraction": 0.08,
+    "shared_fact_ids": ["FACT-ZN-CU-REACTION", "FACT-OXIDATION-STATE-DIRECTION"]
+  }
+}
