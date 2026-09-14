@@ -32,12 +32,12 @@
         "static_products_do_not_claim_learner_mastery"
       ],
       "properties": {
-        "all_stages_close_the_help_loop": {"const": true},
-        "answers_are_independently_verified": {"const": true},
-        "visuals_have_cognitive_purpose": {"const": true},
-        "frozen_core2_questions_are_not_rewritten": {"const": true},
-        "generated_variants_have_new_identity": {"const": true},
-        "static_products_do_not_claim_learner_mastery": {"const": true}
+        "all_stages_close_the_help_loop": {"type": "boolean"},
+        "answers_are_independently_verified": {"type": "boolean"},
+        "visuals_have_cognitive_purpose": {"type": "boolean"},
+        "frozen_core2_questions_are_not_rewritten": {"type": "boolean"},
+        "generated_variants_have_new_identity": {"type": "boolean"},
+        "static_products_do_not_claim_learner_mastery": {"type": "boolean"}
       }
     }
   },
