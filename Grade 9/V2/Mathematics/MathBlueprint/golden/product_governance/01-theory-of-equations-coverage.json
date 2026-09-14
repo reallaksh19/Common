@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "ledger_id": "MATH-COV-THEORY-EQ-001",
+  "registry_ref": "MATH-REG-THEORY-EQ-001",
+  "coverage_scope": "FULL_REGISTRY",
+  "subtopics": [
+    {
+      "subtopic_id": "THEORY-OF-EQUATIONS",
+      "asset_coverage": [
+        {
+          "asset_ref": "REG-MATH-CON-VIETA", "asset_type": "CONCEPT",
+          "CORE1A": {"obligation":"REQUIRED","treatment":"EXPLAIN","disposition":"REALIZED","realization_refs":["A1-CON-VIETA"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"REQUIRED","treatment":"RECONSTRUCT","disposition":"RECONSTRUCTED","realization_refs":["B1-CON-VIETA"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"CONDITIONAL","treatment":"REFERENCE","disposition":"REFERENCED","realization_refs":["A2-Q2-CONCEPT"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"HIDE_UNTIL_NEEDED","disposition":"REFERENCED","realization_refs":["B2-Q2-HINT"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-CAP-COEFF_ROOT", "asset_type": "CAPABILITY",
+          "CORE1A": {"obligation":"REQUIRED","treatment":"EXPLAIN","disposition":"REALIZED","realization_refs":["A1-CAP-COEFF"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"REQUIRED","treatment":"RECONSTRUCT","disposition":"RECONSTRUCTED","realization_refs":["B1-CAP-COEFF"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"REQUIRED","treatment":"USE_WHEN_REQUIRED","disposition":"USED","realization_refs":["A2-Q2"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"REQUIRED","treatment":"TRANSFER","disposition":"USED","realization_refs":["B2-Q2-SIBLING"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-EQ-VIETA_SUM", "asset_type": "EQUATION",
+          "CORE1A": {"obligation":"REQUIRED","treatment":"EXPLAIN","disposition":"REALIZED","realization_refs":["A1-EQ-SUM"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"REQUIRED","treatment":"RECONSTRUCT","disposition":"RECONSTRUCTED","realization_refs":["B1-EQ-SUM"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"CONDITIONAL","treatment":"USE_WHEN_REQUIRED","disposition":"USED","realization_refs":["A2-Q2"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"HIDE_UNTIL_NEEDED","disposition":"USED","realization_refs":["B2-Q2-SIBLING"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-EQ-VIETA_PRODUCT", "asset_type": "EQUATION",
+          "CORE1A": {"obligation":"REQUIRED","treatment":"EXPLAIN","disposition":"REALIZED","realization_refs":["A1-EQ-PROD"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"REQUIRED","treatment":"RECONSTRUCT","disposition":"RECONSTRUCTED","realization_refs":["B1-EQ-PROD"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"CONDITIONAL","treatment":"USE_WHEN_REQUIRED","disposition":"USED","realization_refs":["A2-Q2"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"HIDE_UNTIL_NEEDED","disposition":"USED","realization_refs":["B2-Q2-SIBLING"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-ATOM-SIGN", "asset_type": "LEARNING_ATOM",
+          "CORE1A": {"obligation":"REQUIRED","treatment":"EXPLAIN","disposition":"REALIZED","realization_refs":["A1-ATOM-SIGN"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"REQUIRED","treatment":"RECONSTRUCT","disposition":"RECONSTRUCTED","realization_refs":["B1-ATOM-SIGN"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"CONDITIONAL","treatment":"REFERENCE","disposition":"REFERENCED","realization_refs":["A2-WRONG-CHAIN"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"HIDE_UNTIL_NEEDED","disposition":"REFERENCED","realization_refs":["B2-SIGN-HELP"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-REP-COEFF_ROOT_MAP", "asset_type": "REPRESENTATION",
+          "CORE1A": {"obligation":"REQUIRED","treatment":"EXPLAIN","disposition":"REALIZED","realization_refs":["A1-REP-MAP"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"REQUIRED","treatment":"RECONSTRUCT","disposition":"RECONSTRUCTED","realization_refs":["B1-REP-MAP"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"CONDITIONAL","treatment":"REFERENCE","disposition":"REFERENCED","realization_refs":["A2-Q2-REP"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"HIDE_UNTIL_NEEDED","disposition":"REFERENCED","realization_refs":["B2-Q2-REP-HELP"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-MIS-SIGN", "asset_type": "MISCONCEPTION",
+          "CORE1A": {"obligation":"REQUIRED","treatment":"EXPLAIN","disposition":"REALIZED","realization_refs":["A1-MIS-SIGN"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"REQUIRED","treatment":"RECONSTRUCT","disposition":"RECONSTRUCTED","realization_refs":["B1-DIAG-SIGN"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"CONDITIONAL","treatment":"REFERENCE","disposition":"REFERENCED","realization_refs":["A2-Q2-WRONG"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"HIDE_UNTIL_NEEDED","disposition":"REFERENCED","realization_refs":["B2-Q2-DIAG"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-PF-COEFF_ROOT", "asset_type": "PROBLEM_FAMILY",
+          "CORE1A": {"obligation":"OPTIONAL","treatment":"REFERENCE","disposition":"REFERENCED","realization_refs":["A1-CONNECT-C2"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"OPTIONAL","treatment":"TRANSFER","disposition":"REFERENCED","realization_refs":["B1-TRANSFER"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"REQUIRED","treatment":"SOLVE","disposition":"USED","realization_refs":["A2-Q2"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"REQUIRED","treatment":"TRANSFER","disposition":"USED","realization_refs":["B2-Q2-SIBLING"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-VER-SUB_BACK", "asset_type": "VERIFICATION_RULE",
+          "CORE1A": {"obligation":"OPTIONAL","treatment":"VERIFY","disposition":"USED","realization_refs":["A1-CHECK"],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"OPTIONAL","treatment":"VERIFY","disposition":"USED","realization_refs":["B1-CHECK"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"REQUIRED","treatment":"VERIFY","disposition":"USED","realization_refs":["A2-Q2-CHECK"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"REQUIRED","treatment":"VERIFY","disposition":"USED","realization_refs":["B2-Q2-CHECK"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-Q-Q2", "asset_type": "SOURCE_QUESTION",
+          "CORE1A": {"obligation":"NOT_APPLICABLE","treatment":"NONE","disposition":"NOT_APPLICABLE","realization_refs":[],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"NOT_APPLICABLE","treatment":"NONE","disposition":"NOT_APPLICABLE","realization_refs":[],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"REQUIRED","treatment":"SOURCE_CUSTODY","disposition":"REALIZED","realization_refs":["A2-Q2"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"SOURCE_CUSTODY","disposition":"REFERENCED","realization_refs":["B2-Q2-FADING"],"omission_reason":null,"owner_override_ref":null}
+        },
+        {
+          "asset_ref": "REG-MATH-SOL-Q2", "asset_type": "CANONICAL_SOLUTION",
+          "CORE1A": {"obligation":"NOT_APPLICABLE","treatment":"NONE","disposition":"NOT_APPLICABLE","realization_refs":[],"omission_reason":null,"owner_override_ref":null},
+          "CORE1B": {"obligation":"NOT_APPLICABLE","treatment":"NONE","disposition":"NOT_APPLICABLE","realization_refs":[],"omission_reason":null,"owner_override_ref":null},
+          "CORE2A": {"obligation":"REQUIRED","treatment":"SOLVE","disposition":"USED","realization_refs":["A2-Q2-SOLUTION"],"omission_reason":null,"owner_override_ref":null},
+          "CORE2B": {"obligation":"CONDITIONAL","treatment":"HIDE_UNTIL_NEEDED","disposition":"REFERENCED","realization_refs":["B2-Q2-REVEAL"],"omission_reason":null,"owner_override_ref":null}
+        }
+      ]
+    }
+  ]
+}
