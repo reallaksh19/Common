@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "ENG-REQ-M2D-SBA23-V1",
+  "subject": "PHYSICS",
+  "requested_topic": "MOTION_IN_A_PLANE",
+  "requested_scope": "MOVING_LAUNCHER",
+  "engineering_depth": "STANDARD",
+  "requested_action": "AUTO_DISCOVER",
+  "curriculum_scope": {
+    "grades": [9, 10, 11],
+    "curriculum": "REPOSITORY_GOVERNED_PHYSICS",
+    "exam_family": "COMPETITIVE_EXAM"
+  },
+  "requested_for": ["CCU", "CDAU", "SDU", "LAU", "TTU", "PUBLICATION"],
+  "notes": "Golden Workbench request reuses the existing canonical M2D-SBA-23 technical-gate closure; it does not change source custody."
+}
