@@ -135,6 +135,7 @@ def validate(doc):
     structural_review = sim["structural_fingerprint"]["review_at_or_above"]
     lexical_high = sim["lexical_five_shingle_jaccard"]["high_review_at_or_above"]
     lexical_review = sim["lexical_five_shingle_jaccard"]["review_at_or_above"]
+    lexical_candidate = sim["lexical_five_shingle_jaccard"]["candidate_at_or_above"]
     adjacent = {frozenset(("CORE1A", "CORE1B")), frozenset(("CORE2A", "CORE2B"))}
     results = []
     unresolved_review = False
@@ -158,13 +159,16 @@ def validate(doc):
         if exact_fp and pair["usage_equivalent"] and relation != "FADING_ANCHOR":
             fail(f"exact fingerprint with equivalent pedagogy: {left['question_id']} vs {right['question_id']}")
 
-        heuristic_review = structural >= structural_review or lex >= lexical_review or relation == "NEAR_DUPLICATE"
+        # FADING_ANCHOR is an explicit intentional-reuse lineage, not an unresolved heuristic duplicate.
+        heuristic_review = relation != "FADING_ANCHOR" and (
+            structural >= structural_review or lex >= lexical_review or relation == "NEAR_DUPLICATE"
+        )
         risk = "LOW"
-        if structural >= structural_high or lex >= lexical_high:
+        if heuristic_review and (structural >= structural_high or lex >= lexical_high):
             risk = "HIGH_REVIEW"
         elif heuristic_review:
             risk = "REVIEW"
-        elif structural >= sim["lexical_five_shingle_jaccard"]["candidate_at_or_above"]:
+        elif lex >= lexical_candidate:
             risk = "CANDIDATE"
 
         disposition = pair.get("review_disposition", "PENDING" if heuristic_review else "NOT_REQUIRED")
