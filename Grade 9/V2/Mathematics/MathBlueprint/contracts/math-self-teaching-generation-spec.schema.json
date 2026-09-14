@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-self-teaching-generation-spec.schema.json",
+  "title": "Mathematics Self-Teaching Generation Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "subject", "core1_buckets", "core2_calibration"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "core1_buckets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/core1Bucket"}
+    },
+    "core2_calibration": {"$ref": "#/$defs/core2Calibration"}
+  },
+  "$defs": {
+    "core1Bucket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bucket_id",
+        "subtopic_title",
+        "difficulty_badge",
+        "difficulty_badge_basis",
+        "target_page_budget",
+        "subsubtopic_plan",
+        "pedagogy_web_research_refs",
+        "source_integrity_verification_refs"
+      ],
+      "properties": {
+        "bucket_id": {"type": "string", "minLength": 3},
+        "subtopic_title": {"type": "string", "minLength": 3},
+        "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+        "difficulty_badge_basis": {"enum": ["OWNER", "CORE1_SEMANTIC_COMPLEXITY", "SOURCE_METADATA"]},
+        "target_page_budget": {"type": "integer", "minimum": 1},
+        "subsubtopic_plan": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "pedagogy_web_research_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "source_integrity_verification_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "core2Calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "purpose",
+        "learner_knowledge_percent",
+        "knowledge_percent_source_ref",
+        "knowledge_calibration_policy_ref",
+        "owner_waiver",
+        "resolved_core2a_support_profile",
+        "resolved_core2b_max_demand_level"
+      ],
+      "properties": {
+        "purpose": {"enum": ["STARTER", "PRACTICE", "REVISION", "COMPETITION"]},
+        "learner_knowledge_percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "knowledge_percent_source_ref": {"type": ["string", "null"], "minLength": 3},
+        "knowledge_calibration_policy_ref": {"type": ["string", "null"], "minLength": 3},
+        "owner_waiver": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/ownerWaiver"}
+          ]
+        },
+        "resolved_core2a_support_profile": {
+          "enum": ["FOUNDATION_GUIDED", "STANDARD_GUIDED", "REDUCED_SUPPORT", "ADVANCED_APPLIED"]
+        },
+        "resolved_core2b_max_demand_level": {
+          "enum": [
+            "M0_DIRECT",
+            "M1_CONTROLLED_VARIATION",
+            "M2_REPRESENTATION_TRANSFER",
+            "M3_INVERSE_TARGET",
+            "M4_HIDDEN_STRUCTURE",
+            "M5_METHOD_DISCRIMINATION",
+            "M6_FAMILY_DISCRIMINATION",
+            "M7_MULTI_STEP_SYNTHESIS",
+            "M8_MIXED_COMPETITIVE"
+          ]
+        }
+      }
+    },
+    "ownerWaiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_ref",
+        "reason",
+        "selected_core2a_support_profile",
+        "selected_core2b_max_demand_level"
+      ],
+      "properties": {
+        "owner_ref": {"type": "string", "minLength": 3},
+        "reason": {"type": "string", "minLength": 8},
+        "selected_core2a_support_profile": {
+          "enum": ["FOUNDATION_GUIDED", "STANDARD_GUIDED", "REDUCED_SUPPORT", "ADVANCED_APPLIED"]
+        },
+        "selected_core2b_max_demand_level": {
+          "enum": [
+            "M0_DIRECT",
+            "M1_CONTROLLED_VARIATION",
+            "M2_REPRESENTATION_TRANSFER",
+            "M3_INVERSE_TARGET",
+            "M4_HIDDEN_STRUCTURE",
+            "M5_METHOD_DISCRIMINATION",
+            "M6_FAMILY_DISCRIMINATION",
+            "M7_MULTI_STEP_SYNTHESIS",
+            "M8_MIXED_COMPETITIVE"
+          ]
+        }
+      }
+    }
+  }
+}

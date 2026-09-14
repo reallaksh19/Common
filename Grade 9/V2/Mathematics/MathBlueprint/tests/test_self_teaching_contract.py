@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import importlib.util
 import json
 import unittest
@@ -51,6 +50,24 @@ class SelfTeachingContractTests(unittest.TestCase):
         doc = self.load_policy()
         doc["stage_profiles"]["CORE2B"]["help_path"].remove("METHOD_HELP")
         with self.assertRaisesRegex(ValueError, "MATH_CORE2B_TRANSFER_HELP_INCOMPLETE"):
+            mod.validate_contract(doc)
+
+    def test_core1_depth_cannot_depend_on_learner_knowledge(self):
+        doc = self.load_policy()
+        doc["generation_governance"]["core1_series"]["learner_knowledge_controls_depth"] = True
+        with self.assertRaisesRegex(ValueError, "MATH_CORE1_DEPTH_MAY_NOT_USE_KNOWLEDGE_PERCENT"):
+            mod.validate_contract(doc)
+
+    def test_badge_page_budget_cannot_drift(self):
+        doc = self.load_policy()
+        doc["generation_governance"]["core1_series"]["difficulty_badges"]["HARD"]["max_pages"] = 40
+        with self.assertRaisesRegex(ValueError, "MATH_CORE1_DIFFICULTY_BADGE_POLICY_DRIFT"):
+            mod.validate_contract(doc)
+
+    def test_core2_calibration_applies_only_to_2a_2b(self):
+        doc = self.load_policy()
+        doc["generation_governance"]["core2_series"]["calibration_applies_to"] = ["CORE1A", "CORE2A", "CORE2B"]
+        with self.assertRaises(Exception):
             mod.validate_contract(doc)
 
     def test_static_products_cannot_claim_mastery(self):

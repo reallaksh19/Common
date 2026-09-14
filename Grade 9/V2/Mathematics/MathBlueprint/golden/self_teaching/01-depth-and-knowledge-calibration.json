@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "core1_buckets": [
+    {
+      "bucket_id": "B-EASY-ORDERED-PAIR",
+      "subtopic_title": "Representing a point constrained to an axis",
+      "difficulty_badge": "EASY",
+      "difficulty_badge_basis": "CORE1_SEMANTIC_COMPLEXITY",
+      "target_page_budget": 8,
+      "subsubtopic_plan": [],
+      "pedagogy_web_research_refs": [],
+      "source_integrity_verification_refs": []
+    },
+    {
+      "bucket_id": "B-MEDIUM-EQUAL-DISTANCE",
+      "subtopic_title": "Building an equal-distance equation from coordinates",
+      "difficulty_badge": "MEDIUM",
+      "difficulty_badge_basis": "CORE1_SEMANTIC_COMPLEXITY",
+      "target_page_budget": 18,
+      "subsubtopic_plan": [
+        "distance as a geometric invariant",
+        "mapping coordinates to squared-distance expressions"
+      ],
+      "pedagogy_web_research_refs": [
+        "https://doi.org/10.1016/j.edurev.2024.100639",
+        "https://doi.org/10.1016/S0959-4752(01)00030-5"
+      ],
+      "source_integrity_verification_refs": []
+    },
+    {
+      "bucket_id": "B-HARD-METHOD-VALIDITY",
+      "subtopic_title": "Recognizing when symmetry shortcuts are valid or fail",
+      "difficulty_badge": "HARD",
+      "difficulty_badge_basis": "OWNER",
+      "target_page_budget": 28,
+      "subsubtopic_plan": [
+        "symmetry condition",
+        "general distance model",
+        "counterexample and validity boundary",
+        "method comparison and reconstruction"
+      ],
+      "pedagogy_web_research_refs": [
+        "https://doi.org/10.1016/j.edurev.2024.100639",
+        "https://doi.org/10.1016/0364-0213(89)90002-5",
+        "https://doi.org/10.1016/j.jmathb.2024.101192"
+      ],
+      "source_integrity_verification_refs": []
+    }
+  ],
+  "core2_calibration": {
+    "purpose": "PRACTICE",
+    "learner_knowledge_percent": 62,
+    "knowledge_percent_source_ref": "ASSESSMENT:diagnostic-2026-09-14",
+    "knowledge_calibration_policy_ref": "OWNER_POLICY:math-core2-calibration-v1",
+    "owner_waiver": null,
+    "resolved_core2a_support_profile": "STANDARD_GUIDED",
+    "resolved_core2b_max_demand_level": "M4_HIDDEN_STRUCTURE"
+  }
+}

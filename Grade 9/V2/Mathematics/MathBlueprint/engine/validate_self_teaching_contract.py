@@ -43,6 +43,36 @@ CORE1B_HELP = {"MEANING_HELP", "REPRESENTATION_HELP", "CONCEPT_HELP", "FIRST_MOV
 CORE2A_HELP = {"RECOGNITION_HELP", "REPRESENTATION_HELP", "FIRST_MOVE_HELP", "PROCEDURE_HELP", "FULL_WORKING", "ANSWER_VERIFICATION"}
 CORE2B_HELP = {"RECOGNITION_HELP", "CONCEPT_HELP", "REPRESENTATION_HELP", "FIRST_MOVE_HELP", "METHOD_HELP", "ANSWER_VERIFICATION"}
 
+EXPECTED_DEPTH = {
+    "EASY": {
+        "max_pages": 10,
+        "pedagogy_web_research": "FORBIDDEN",
+        "minimum_web_sources": 0,
+        "subsubtopic_decomposition_allowed": False,
+        "visual_intensity": "STANDARD",
+        "step_by_step_required": True,
+        "dedicated_diagrams_required": True,
+    },
+    "MEDIUM": {
+        "max_pages": 20,
+        "pedagogy_web_research": "REQUIRED",
+        "minimum_web_sources": 2,
+        "subsubtopic_decomposition_allowed": True,
+        "visual_intensity": "HIGH",
+        "step_by_step_required": True,
+        "dedicated_diagrams_required": True,
+    },
+    "HARD": {
+        "max_pages": 30,
+        "pedagogy_web_research": "REQUIRED",
+        "minimum_web_sources": 3,
+        "subsubtopic_decomposition_allowed": True,
+        "visual_intensity": "VERY_HIGH",
+        "step_by_step_required": True,
+        "dedicated_diagrams_required": True,
+    },
+}
+
 
 def validate_contract(doc: dict) -> None:
     validate_schema(doc, "math-self-teaching-contract.schema.json")
@@ -74,6 +104,34 @@ def validate_contract(doc: dict) -> None:
         fail("MATH_CORE2A_SOLUTION_APPRENTICESHIP_INCOMPLETE")
     if not CORE2B_HELP.issubset(set(profiles["CORE2B"]["help_path"])):
         fail("MATH_CORE2B_TRANSFER_HELP_INCOMPLETE")
+
+    governance = doc["generation_governance"]
+    c1 = governance["core1_series"]
+    if c1["learner_knowledge_controls_depth"]:
+        fail("MATH_CORE1_DEPTH_MAY_NOT_USE_KNOWLEDGE_PERCENT")
+    if not c1["page_budget_is_cap_not_target"]:
+        fail("MATH_CORE1_PAGE_BUDGET_MUST_BE_CAP")
+    if not c1["pedagogy_research_does_not_change_authority"]:
+        fail("MATH_CORE1_RESEARCH_AUTHORITY_DRIFT")
+    for badge, expected in EXPECTED_DEPTH.items():
+        if c1["difficulty_badges"][badge] != expected:
+            fail("MATH_CORE1_DIFFICULTY_BADGE_POLICY_DRIFT", badge)
+
+    c2 = governance["core2_series"]
+    if c2["calibration_applies_to"] != ["CORE2A", "CORE2B"]:
+        fail("MATH_CORE2_CALIBRATION_SCOPE_DRIFT")
+    required_true = [
+        "learner_knowledge_percent_required_unless_owner_waiver",
+        "owner_waiver_allowed",
+        "missing_calibration_blocks_generation",
+        "purpose_still_required",
+        "no_silent_default",
+        "owner_waiver_must_supply_support_and_ceiling",
+    ]
+    if not all(c2[k] for k in required_true):
+        fail("MATH_CORE2_CALIBRATION_POLICY_WEAKENED")
+    if c2["knowledge_percent_is_mastery_claim"]:
+        fail("MATH_CORE2_KNOWLEDGE_PERCENT_NOT_MASTERY")
 
     inv = doc["global_invariants"]
     if not all(inv.values()):

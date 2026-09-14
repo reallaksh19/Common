@@ -25,6 +25,20 @@ Core1 series = build and reconstruct knowledge
 Core2 series = apply, select and transfer knowledge
 ```
 
+A second, independent generation-control distinction is now mandatory:
+
+```text
+Core1A / Core1B depth
+= SUBTOPIC DIFFICULTY BADGE
+!= learner knowledge percentage
+
+Core2A / Core2B calibration
+= learner knowledge percentage
+OR explicit owner waiver + owner-selected controls
+```
+
+See `GENERATION_CALIBRATION.md` for the executable rules.
+
 ## Core1A — build understanding
 
 Core1A remains the mature declarative teaching layer. It explains meaning, representations, equations, inference bridges, misconceptions and initial guided practice. It is not forced into the open-ended tutor page grammar.
@@ -38,6 +52,8 @@ A learner should be able to answer:
 - When does the method or shortcut fail?
 
 Core1A closes the loop with worked examples, checks and verified answers, but explanation may precede difficult application.
+
+Core1A is always authored **subtopic-wise as a bucket**. The bucket receives one `EASY / MEDIUM / HARD` difficulty badge based on mathematical/pedagogical complexity, not on a learner knowledge percentage. The badge governs research depth, decomposition, representation density and page budget.
 
 ## Core1B — reconstruct and consolidate
 
@@ -75,9 +91,29 @@ Core1B prompts target cognitive turning points, not every line. Typical prompts 
 
 Core1B stays near the taught mathematical neighbourhood while support fades. Its role is reconstruction and independent use, not transfer under heavily disguised structure.
 
+Core1B uses the **same subtopic bucket and difficulty badge as Core1A**. It may reorganize the content into open-ended tutor moves, but it may not lower or raise the bucket's knowledge depth because of learner knowledge percentage.
+
+## Core1-series depth badges
+
+Page budgets are **ceilings, not quotas**. A 30-page HARD bucket is permitted when the mathematics warrants it; padding content merely to reach a page count is forbidden.
+
+| Badge | Maximum pages per bucket/product | Pedagogy web research | Decomposition | Representation expectation |
+|---|---:|---|---|---|
+| EASY | 10 | forbidden for pedagogy enrichment | remain at subtopic level | visual + stepwise + dedicated diagrams where the idea needs them |
+| MEDIUM | 20 | required | subtopic → sub-subtopic allowed | high visual density, stepwise reasoning, dedicated diagrams |
+| HARD | 30 | required, deeper than MEDIUM | subtopic → sub-subtopic allowed | very high representation density, explicit inference bridges, dedicated diagrams/graphs/tables |
+
+`EASY` forbids **pedagogy-enrichment web search**. This does not disable the separate Source Integrity Protocol when original evidence is ambiguous, conflicted or damaged.
+
+For `MEDIUM` and `HARD`, external research is used to improve explanations, representations, visual models, misconception contrasts and alternative pedagogical decompositions. It never becomes curriculum authority and may not expand legal mathematical scope.
+
 ## Core2A — solution apprenticeship
 
 Core2A remains governed by explicit learner purpose (`STARTER / PRACTICE / REVISION / COMPETITION`) and may use only legal/taught mathematics. Frozen Core2 source questions remain byte-faithful in identity and stem; difficulty adjustment occurs through selection, support density, ordering and generated variants with new provenance.
+
+Core2A additionally requires **learner knowledge percentage** as a generation-calibration input. If that percentage is not known, generation is blocked unless the owner explicitly waives the requirement and supplies the replacement support profile and Core2B demand ceiling.
+
+The percentage is a product-calibration input, not a mastery claim and not a replacement for `UNKNOWN / DEVELOPING / READY`.
 
 Governing question:
 
@@ -98,11 +134,13 @@ question
 → nearby variant: what changes and what stays invariant?
 ```
 
-Core2A is not merely a question bank with answers. It is declarative solution apprenticeship.
+Knowledge calibration may change question selection, support density, worked-step granularity, representation support and ordering. It may not rewrite frozen source questions or create curriculum authority.
 
 ## Core2B — transfer tutor
 
 Core2B is an open-ended transfer tutor downstream of Core2A legality. It selects only from the legal pool and obeys the upstream compile-time demand ceiling.
+
+Core2B uses the **same Core2 learner-calibration input** as Core2A. Knowledge percentage may govern transfer distance, cue suppression, hint latency and maximum demand level through an explicit calibration policy. If knowledge is unknown, the owner waiver must state the support profile and transfer ceiling directly; the system must not invent a pseudo-percentage.
 
 Governing question:
 
@@ -122,6 +160,40 @@ UNFAMILIAR / LESS-CUED QUESTION
 ```
 
 When discrimination is being tested, family/method labels must not be visible before the attempt. Higher transfer may change representation, target direction, cue visibility, hidden constraints, method choice, family choice, multi-step synthesis or novelty, but cannot introduce illegal mathematics.
+
+## Core2 knowledge-calibration gate
+
+Core2A and Core2B must receive exactly one of these:
+
+```text
+A. learner_knowledge_percent = 0..100
+   + knowledge source/reference
+   + explicit calibration policy reference
+   + resolved Core2A support profile
+   + resolved Core2B maximum demand level
+
+OR
+
+B. owner waiver
+   + owner identity/reference
+   + reason percentage is unavailable
+   + owner-selected Core2A support profile
+   + owner-selected Core2B maximum demand level
+```
+
+Invalid states:
+
+```text
+no percentage + no waiver          → BLOCK
+percentage + waiver simultaneously → BLOCK
+waiver without explicit controls   → BLOCK
+inferred/default percentage        → FORBIDDEN
+silent default support/ceiling     → FORBIDDEN
+```
+
+Learning purpose remains separate from knowledge calibration. `PRACTICE` is not a default and must never be inferred from knowledge percentage.
+
+The architecture intentionally does **not** hard-code percentage bands such as `0–40 / 40–70 / 70+` without an owner-approved calibration policy. That avoids pseudo-precision. The percentage must resolve through a named policy, or the owner must directly supply the replacement controls.
 
 ## Universal self-teaching closure
 
@@ -170,6 +242,25 @@ PLANNED PEDAGOGY
 
 The open-ended B grammar is a static self-tutoring design. It does not ingest responses, branch live, or declare new learner state. Any actual learner evidence enters later through the governed learner-intelligence boundary.
 
+## Research basis and limits
+
+This design is informed by evidence that worked examples support initial acquisition, especially when learners actively explain important steps; that well-designed visualization interventions have a positive overall effect in mathematics; and that excessive/redundant explanation can add unnecessary cognitive load. These findings support **purposeful representations, modular decomposition and selective prompting**, not page inflation.
+
+Relevant research:
+
+- Schoenherr, Strohmaier & Schukajlow (2024), *Educational Research Review*, visualization meta-analysis: https://doi.org/10.1016/j.edurev.2024.100639
+- Renkl (2002), *Learning and Instruction*, worked examples + instructional/self explanations: https://doi.org/10.1016/S0959-4752(01)00030-5
+- Chi et al. (1989), self-explanations and example-independent knowledge: https://doi.org/10.1016/0364-0213(89)90002-5
+- Booth et al. (2024), explanation prompts in mathematics: https://doi.org/10.1016/j.jmathb.2024.101192
+- Gerjets et al. (2006), modular worked examples and redundancy risk: https://doi.org/10.1016/j.learninstruc.2006.02.007
+
+The `10 / 20 / 30` page ceilings and the EASY/MEDIUM/HARD research requirements are **owner product-design rules**, not empirical claims that those exact page counts are optimal.
+
 ## Publication gate
 
-Deterministic Publication is downstream of this contract. Publication work should not be frozen until Core1B, Core2A and Core2B products demonstrate this pedagogy across structurally different mathematics and learner-readiness conditions.
+Deterministic Publication remains downstream. Before publication is frozen, the architecture must demonstrate:
+
+- Core1A/Core1B bucket-depth behaviour for EASY, MEDIUM and HARD;
+- Core2A/Core2B generation with a real knowledge percentage;
+- Core2A/Core2B generation with an explicit owner waiver;
+- no drift in mathematical authority, source-question identity or answer verification.
