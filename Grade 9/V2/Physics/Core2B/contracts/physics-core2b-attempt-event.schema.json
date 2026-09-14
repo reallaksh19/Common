@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core2b-attempt-event.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","event_id","event_sequence","item_ref","outcome","hint_level_used","response_evidence","representation_used","declared_error_hypotheses","evidence_ref","evidence_digest","event_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},"event_id":{"type":"string","pattern":"^C2B-ATTEMPT-"},"event_sequence":{"type":"integer","minimum":1},"item_ref":{"type":"string"},
+    "outcome":{"enum":["CORRECT","INCORRECT","PARTIAL"]},"hint_level_used":{"enum":["NO_HINT","RETRIEVAL_CUE","REPRESENTATION_CUE","MODEL_CUE","FIRST_MOVE_CUE","FULL_SOLUTION"]},
+    "response_evidence":{"type":"object","additionalProperties":false,"required":["model_selected","applicability_statement","first_move","final_answer","physical_check"],"properties":{"model_selected":{"type":["string","null"]},"applicability_statement":{"type":["string","null"]},"first_move":{"type":["string","null"]},"final_answer":{"type":["string","null"]},"physical_check":{"type":["string","null"]}}},
+    "representation_used":{"type":["string","null"]},"declared_error_hypotheses":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "evidence_ref":{"type":"string"},"evidence_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"event_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}
