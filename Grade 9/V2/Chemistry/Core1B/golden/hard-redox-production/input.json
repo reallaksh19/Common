@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.2.0",
+  "subject": "CHEMISTRY",
+  "delivery_mode": "STATIC",
+  "source_core1a_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+  "instruction_bucket": {
+    "schema_version": "4.0.0",
+    "bucket_id": "BUCKET-HARD-REDOX-OXIDATION-STATE-PRODUCTION",
+    "subject": "CHEMISTRY",
+    "subtopic_id": "redox-oxidation-state-agent-role",
+    "title": "Track species, oxidation state, electron consequence and agent role",
+    "difficulty_badge": "HARD",
+    "page_envelope": {"max_pages": 30, "is_ceiling_not_quota": true},
+    "research": {
+      "mode": "DEEP_REQUIRED",
+      "research_refs": [
+        "CERP-2014-BRANDRIET-BRETZ-REDOX-MISCONCEPTIONS",
+        "CERP-2024-HIGH-SCHOOL-ELECTROCHEM-CONCEPTS",
+        "RSC-2026-JOHNSTONE-TRIANGLE",
+        "CERP-2009-WORKED-EXAMPLES-CHEMISTRY"
+      ],
+      "research_questions": [
+        "Which misconceptions recur around oxidation number, ionic charge and electron transfer?",
+        "Which representations help learners preserve species identity while moving from reaction equation to oxidation-state reasoning?",
+        "How should explanation and learner-generated reconstruction be sequenced to avoid unnecessary cognitive load?"
+      ]
+    },
+    "visual_plan": {
+      "visual_jobs": ["SYMBOLIC_MODEL", "QUANTITY_MODEL", "REPRESENTATION_BRIDGE", "ERROR_VISUAL"]
+    },
+    "decomposition": {
+      "decision": "SPLIT",
+      "sub_subtopic_ids": [
+        "species-identity",
+        "oxidation-state-meaning",
+        "direction-to-redox-label",
+        "electron-consequence",
+        "agent-role",
+        "representation-translation",
+        "misconception-and-boundary",
+        "fading-and-teach-back"
+      ]
+    },
+    "realization_modes": ["CORE1A", "CORE1B"]
+  },
+  "approved_capability_refs": [
+    "CAP-TRACK-REACTING-SPECIES",
+    "CAP-TRACK-OXIDATION-STATE",
+    "CAP-ATTACH-SPECIES-ROLE"
+  ],
+  "approved_problem_family_refs": ["PF-AGENT_ROLE_ASSIGNMENT", "PF-OXIDATION_STATE_TRACKING"],
+  "new_chemistry_refs": [],
+  "governed_facts": {
+    "reaction": "Zn + Cu2+ -> Zn2+ + Cu",
+    "species_pairs": [["Zn", "Zn2+"], ["Cu2+", "Cu"]],
+    "oxidation_state_lanes": {
+      "Zn": {"before": 0, "after": 2, "direction": "increase", "redox_label": "oxidation"},
+      "Cu": {"before": 2, "after": 0, "direction": "decrease", "redox_label": "reduction"}
+    },
+    "electron_statements": ["Zn -> Zn2+ + 2e-", "Cu2+ + 2e- -> Cu"],
+    "agent_roles": {"Zn": "reducing agent", "Cu2+": "oxidising agent"},
+    "governing_rules": [
+      "Track the same element or species before assigning a Redox label.",
+      "An increase in oxidation state is oxidation; a decrease is reduction.",
+      "SELF change is evidence; the agent role is the conclusion.",
+      "Oxidation state is a bookkeeping value; do not automatically treat it as an isolated-particle charge.",
+      "The electron loss and gain represented here must balance: 2e- lost = 2e- gained."
+    ]
+  },
+  "research_evidence": [
+    {
+      "id": "CERP-2014-BRANDRIET-BRETZ-REDOX-MISCONCEPTIONS",
+      "url": "https://pubs.rsc.org/en/content/articlehtml/2014/rp/c4rp00129j",
+      "design_use": "Add explicit contrasts for oxidation number versus charge, electron transfer and overconfident wrong models."
+    },
+    {
+      "id": "CERP-2024-HIGH-SCHOOL-ELECTROCHEM-CONCEPTS",
+      "url": "https://pubs.rsc.org/en/content/articlehtml/2024/rp/d3rp00124e",
+      "design_use": "Include diagnosis of recurring oxidation-number/charge and oxidation/reduction misconceptions."
+    },
+    {
+      "id": "RSC-2026-JOHNSTONE-TRIANGLE",
+      "url": "https://edu.rsc.org/representing-chemical-reactions/sodium-and-chlorine-reaction-johnstones-triangle-11-14-years/4022848.article",
+      "design_use": "Use representation bridges deliberately, but preserve the upstream Redox restriction to symbolic representation for this bucket instead of adding unauthorized particle imagery."
+    },
+    {
+      "id": "CERP-2009-WORKED-EXAMPLES-CHEMISTRY",
+      "url": "https://pubs.rsc.org/en/content/articlehtml/2009/rp/b901458f",
+      "design_use": "Move from explicit reconstruction frames toward completion, fading and independent teach-back rather than repeating full worked solutions."
+    }
+  ],
+  "module_sequence": [
+    "SPECIES_IDENTITY",
+    "OXIDATION_STATE_MEANING",
+    "DIRECTION_TO_LABEL",
+    "ELECTRON_CONSEQUENCE",
+    "AGENT_ROLE",
+    "REPRESENTATION_TRANSLATION",
+    "MISCONCEPTION_BOUNDARY",
+    "FADING_TEACH_BACK"
+  ],
+  "pages_per_module": 3,
+  "planned_pages": 24,
+  "representation_authority": ["SYMBOLIC"],
+  "forbidden_representation_additions": ["PARTICLE_MODEL", "SUBMICROSCOPIC_SCENE"],
+  "production_claim": "CORE1B_HARD_BUCKET_PRODUCTION_GOLDEN"
+}
