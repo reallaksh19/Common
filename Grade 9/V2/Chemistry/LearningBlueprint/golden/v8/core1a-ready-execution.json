@@ -1,0 +1,25 @@
+{
+  "schema_version": "8.0.0",
+  "execution_id": "CHEM-V8-GOLDEN-CORE1A-001",
+  "subject": "CHEMISTRY",
+  "task_type": "CORE_GENERATION",
+  "product_mode": "CORE1A",
+  "subtopic_id": "CHEM-REDOX-OS-AGENT",
+  "authority_refs": [
+    {"authority_type": "CANONICAL_DOMAIN_REGISTRY", "ref": "registry://chem/redox"},
+    {"authority_type": "CDAU", "ref": "cdau://chem/redox"},
+    {"authority_type": "SDU", "ref": "sdu://chem/redox"},
+    {"authority_type": "CONCEPT_TTU", "ref": "concept-ttu://chem/redox"},
+    {"authority_type": "CCBOM", "ref": "ccbom://chem/redox"},
+    {"authority_type": "PRODUCT_ASSURANCE", "ref": "pal://chem/redox"}
+  ],
+  "authority_sources_used": ["BLUEPRINT_PACKET", "EXPLICIT_OWNER_INPUT"],
+  "output_bindings": [
+    {"output_id": "EQ-ZN-CU-01", "object_class": "EQUATION", "authority_ref": "registry://chem/redox"},
+    {"output_id": "TTU-OS-LANE-01", "object_class": "TTU", "authority_ref": "concept-ttu://chem/redox"},
+    {"output_id": "BADGE-DIFF-01", "object_class": "DIFFICULTY_BADGE", "authority_ref": "sdu://chem/redox"}
+  ],
+  "missing_authority_action": "BLOCK",
+  "execution_status": "READY",
+  "blocked_reasons": []
+}
