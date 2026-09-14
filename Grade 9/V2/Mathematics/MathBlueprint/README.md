@@ -40,6 +40,8 @@ Core2 legal assessment intelligence
 Core2A declarative solution apprenticeship
 Core2B open-ended transfer tutoring
       ↓
+validated LearnerPageBlueprint
+      ↓
 future deterministic Publication
       ↓
 optional external learner-evidence ingestion
@@ -166,7 +168,49 @@ The percentage is a generation-calibration input; it does not overwrite `UNKNOWN
 
 No numeric percentage bands are hard-coded without an owner-approved calibration policy. A named policy resolves percentage to concrete controls.
 
-### Executable contracts
+## Increment 9 — Technical depth + page composition
+
+Canonical file: `TECHNICAL_COMPOSITION.md`.
+
+This increment makes technical density and layout semantics an upstream contract rather than a renderer preference.
+
+```text
+DIFFICULTY BADGE / STAGE ROLE
+        ↓
+TECHNICAL DEPTH OBLIGATIONS
+        ↓
+MATHEMATICAL BLOCKS + REPRESENTATIONS + TASKS
+        ↓
+LearnerPageBlueprint
+        ↓
+COMPOSITION VALIDATION
+        ↓
+Publication
+```
+
+Key invariants:
+
+- page count is an output, never a depth target;
+- prose-only learner pages fail;
+- manual spacer padding fails;
+- Core1A/Core1B MEDIUM/HARD depth is proven through typed mathematical obligations, not extra paragraphs;
+- repeated narrative/explanatory content across cores fails unless the repeated object is an immutable source, canonical formula/definition or answer identity;
+- downstream reuse declares lineage and a cognitive transformation (`BUILD / RECONSTRUCT / CONTRAST / SOLUTION_ANATOMY / TRANSFER / VERIFY`);
+- every learner-facing diagram/graph has semantic geometry, a bounded viewport and `clip_to_viewport = true`;
+- an infinite mathematical locus is clipped to its graph box and may not draw across the learner page;
+- open-ended B pages require explicit technical workspace plus answer derivation and verification.
+
+Executable files:
+
+```text
+contracts/math-learner-page-blueprint.schema.json
+policies/math-technical-composition-policy.json
+engine/validate_learner_page_blueprint.py
+tests/test_technical_composition.py
+golden/technical_composition/01-medium-equidistant-page-blueprint.json
+```
+
+## Executable self-teaching/calibration contracts
 
 ```text
 contracts/math-self-teaching-contract.schema.json
@@ -201,6 +245,8 @@ Do not freeze deterministic Publication until pedagogy goldens prove:
 - Core2A/Core2B generation with an owner waiver;
 - Core2A question-demand calibration and Core2B transfer-demand calibration;
 - self-help closure and independent answer validation;
+- validated technical depth and non-duplicative six-core page composition;
+- bounded/clipped representation geometry and explicit workspace semantics;
 - no drift in authority, source identity or transfer ceiling.
 
-Publication then becomes a deterministic compiler of already-governed learner products, not a content-authoring layer.
+Publication then becomes a deterministic compiler of an already-validated `LearnerPageBlueprint`, not a content-authoring or page-filling layer.
