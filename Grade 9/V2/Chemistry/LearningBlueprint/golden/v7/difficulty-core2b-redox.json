@@ -1,0 +1,7 @@
+{
+  "schema_version": "7.0.0",
+  "kind": "TASK_DEMAND",
+  "product_mode": "CORE2B",
+  "demand_score": 12,
+  "demand_band": "HIGH"
+}
