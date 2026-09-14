@@ -1,60 +1,41 @@
 # Physics Core1B — learner concept-construction runtime + Generative Concept Coach
 
+> **Canonical V8 learner-product spec:** `LEARNER_PRODUCT_SPEC_v9.md`.
+>
+> New learner-product authoring must follow `Blueprint/SELF_HELP_ARCHITECTURE_V8.md`: CCU custody/anti-duplication → CDAU purpose → SDU v2 → Concept TTU v3.
+
 Core1B executes already-released Core1A teaching authority for a particular learner. It does not author new Physics or infer mastery from an authored unit.
 
-At the learner surface, Core1B is now explicitly a **self-guided generative teaching product**:
+At the learner surface, Core1B asks:
 
 > **Can the learner reconstruct, explain, represent and independently use what was taught?**
 
-The canonical learner-product grammar is defined in `LEARNER_PRODUCT_SPEC_v2.md`.
+## V8 learner-product rule
 
-## Learner-product rule
+Core1B may not be a second copy of Core1A. Fragile checkpoints require meaningful generative transformations such as `GENERATION`, `SELECTION`, `DISCRIMINATION`, `DIAGNOSIS`, `DERIVATION_CONNECTION` or `VERIFICATION`.
 
-Core1B must not read like a chatbot transcript and must not use minimally guided discovery.
-
-A substantial episode uses:
-
-```text
-OPEN-ENDED PROMPT
-  -> attempt space
-  -> H1 NOTICE
-  -> H2 REPRESENT
-  -> H3 START
-  -> try again
-  -> CHECK AFTER ATTEMPT
-  -> conceptual reconstruction
-  -> smallest repair route
-```
-
-Every open-ended prompt needs a local resolution. The student must never be stranded with only “ask your teacher”.
+CCU requires every learner-facing task to retain question/task identity, visible source class, canonical resolution and cross-Core lineage. Exact Core1A numeric examples/complete diagrams are prohibited by default unless explicitly transformed or used as a declared `FADING_ANCHOR`.
 
 ## Required input custody
 
-Every unit binds the exact `core1a_release_ref` and `core1a_release_digest`. The runtime validates that binding before instruction. A unit can reorganize/scaffold only the atoms and problem families authorized upstream.
-
-## Adaptive atom graph
-
-The atom registry is deliberately fine-grained for fragile learners. It is not a mandatory script. A prerequisite may be omitted only when an earlier provenance-backed observed event already shows that atom secure.
+Every unit binds exact released Core1A authority. Canonical assets must have CCU dispositions. `TRANSFORMED` assets carry parent asset IDs and transformation refs; silent omission is not allowed.
 
 ## Readiness versus evidence
 
-`readiness_requirements` states what the learner must demonstrate. It is configuration, not evidence. Learner state can change only from append-only observed events whose basis is `LEARNER_RESPONSE`, `DIAGNOSTIC`, or `TEACHER_OBSERVATION`.
+Readiness requirements state what the learner must demonstrate; they are configuration, not evidence. Learner state changes only from append-only observed events whose basis is `LEARNER_RESPONSE`, `DIAGNOSTIC`, or `TEACHER_OBSERVATION`.
 
-Core1B may establish `INDEPENDENT`. Transfer readiness/robustness belongs downstream to Core2B evidence.
-
-If Core1A requires model-validity understanding, `applicability` is mandatory. `explain` is mandatory only when the upstream capability contract requires explanation.
-
-Full-solution exposure is teaching, not independent mastery evidence.
+Full-solution/canonical reveal is teaching support, not independent mastery evidence.
 
 ## Runtime flow
 
 ```text
 released Core1A authority
-  -> select/skip atoms using observed evidence
-  -> self-guided generative teaching episode
+  -> CCU custody / lineage
+  -> select reconstruction target using authorized atoms
+  -> generative Concept TTU
   -> independent attempt
   -> observed event
   -> evidence-derived release receipt
 ```
 
-A Core1B release receipt proves that observed evidence satisfied the unit's required criteria. It does not legalize transfer items; Core2A remains the transfer-legality authority.
+A Core1B release receipt proves observed criteria were satisfied. It does not legalize transfer items; Core2A remains transfer-legality authority.
