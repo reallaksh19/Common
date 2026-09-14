@@ -1,65 +1,19 @@
 {
-  "subject": "Chemistry",
-  "subtopic": "Redox proof: species identity -> oxidation-state change -> electron consequence -> agent role",
-  "governed_reaction": "Zn + Cu2+ -> Zn2+ + Cu",
-  "difficulty_badge": "HARD",
-  "core1_control_axis": "INTRINSIC_SUBTOPIC_DIFFICULTY",
-  "core2_conditioning": {
-    "mode": "OWNER_OVERRIDE",
-    "reason": "Student knowledge percentage not supplied; owner-directed six-core review build",
-    "fabricated_knowledge_percent": false,
-    "support_profile": "MEDIUM-HIGH for Core2A; LOW initial/MEDIUM total for Core2B"
+  "version": "FINAL-technical-density",
+  "page_count_policy": "CONTENT_DETERMINED_NOT_TARGETED",
+  "reaction": "Zn + Cu2+ -> Zn2+ + Cu",
+  "quality_gates": {
+    "cross_core_duplicate_prose": "only frozen stems/equations/boilerplate permitted",
+    "technical_objects_per_page": "multiple tables/equations/causal maps/tasks",
+    "learner_knowledge_core1": "forbidden",
+    "core2_conditioning": "OWNER_OVERRIDE because knowledge % absent"
   },
-  "core2_question_provenance": "OWNER_FROZEN_REVIEW_INPUT; not an NCERT/source-question claim",
-  "representation_authority": [
-    "SYMBOLIC"
-  ],
-  "research_evidence": [
-    {
-      "ref": "Brandriet & Bretz 2014, Chemistry Education Research and Practice",
-      "url": "https://pubs.rsc.org/en/content/articlehtml/2014/rp/c4rp00129j",
-      "use": "Redox misconception pressure and the need to separate labels from evidence."
-    },
-    {
-      "ref": "Taber 2013, Chemistry Education Research and Practice",
-      "url": "https://pubs.rsc.org/is/content/articlehtml/2013/rp/c3rp00012e",
-      "use": "Chemistry representation coordination and disciplined model use."
-    },
-    {
-      "ref": "RSC: Johnstone's triangle",
-      "url": "https://edu.rsc.org/feature/improve-students-understanding-with-johnstones-triangle/4019740.article",
-      "use": "Representation transitions should be explicit rather than assumed."
-    },
-    {
-      "ref": "Crippen & Brooks 2009, Chemistry Education Research and Practice",
-      "url": "https://pubs.rsc.org/en/content/articlehtml/2009/rp/b901458f",
-      "use": "Worked-example support should give way to completion and independent reasoning."
-    }
-  ],
-  "roles": {
-    "Core1": "compact basic notes",
-    "Core1A": "detailed declarative teaching",
-    "Core1B": "open-ended concept self-tutor",
-    "Core2": "frozen review questions + ladder hints",
-    "Core2A": "guided declarative deliberate practice",
-    "Core2B": "open-ended problem-solving tutor"
-  },
-  "page_counts": {
-    "01_Core1_Basic_Notes_Redox_Proof": 5,
-    "02_Core1A_Detailed_Declarative_Redox_Proof": 15,
-    "03_Core1B_Open_Ended_Self_Tutor_Redox_Proof": 9,
-    "04_Core2_Frozen_Questions_With_Ladder_Hints_Redox_Proof": 7,
-    "05_Core2A_Guided_Practice_Owner_Override_Redox_Proof": 8,
-    "06_Core2B_Open_Ended_Problem_Tutor_Owner_Override_Redox_Proof": 11,
-    "07_Six_Core_Architecture_Validation_Redox_Proof": 4
-  },
-  "sha256": {
-    "01_Core1_Basic_Notes_Redox_Proof": "97812bf741561f9dab2d6a6cd1c613712c30be46b4a6eac4914ffa0e2de3d130",
-    "02_Core1A_Detailed_Declarative_Redox_Proof": "98fcdf5bf32451f712b98d206eee4b14ee4e7798230a0ae643963e53a2607cdb",
-    "03_Core1B_Open_Ended_Self_Tutor_Redox_Proof": "15c7de17fddf8dcd9228b7742537d4779567243ccf7015f0d5bc632b570130b9",
-    "04_Core2_Frozen_Questions_With_Ladder_Hints_Redox_Proof": "b97c58ff8cba8a98feacd33d1099c777231665c6fa0388aa6dcf5908c78e7da8",
-    "05_Core2A_Guided_Practice_Owner_Override_Redox_Proof": "e98f5391a0ba0759cb490226a0ac7889a265c08e66c11d813c1ed670ca243169",
-    "06_Core2B_Open_Ended_Problem_Tutor_Owner_Override_Redox_Proof": "58546e6be1d462e8b60429a86cd925036561daba80e3df624a358551f475e3ec",
-    "07_Six_Core_Architecture_Validation_Redox_Proof": "ac9ffc2fc135e0cef098a1738478eba2276b235cdfddb6a177bc3e16de13b9ce"
+  "files": {
+    "01_Core1_Basic_Notes_Redox_Proof.pdf": {"pages": 1, "sha256": "35af1b5b5eeed9680b7578a26f63e2f2e71f0b69cb20a054590fb3498b0f972e"},
+    "02_Core1A_Detailed_Declarative_Redox_Proof.pdf": {"pages": 3, "sha256": "77fc062914c721862876fedf12d300ed9b6ed213898e03f56ebf2dd0cf857ba9"},
+    "03_Core1B_Open_Ended_Self_Tutor_Redox_Proof.pdf": {"pages": 2, "sha256": "3a0bc353e2fbff98c3762aa93da4de959d3dc008287b858b279d098d51659a74"},
+    "04_Core2_Frozen_Questions_With_Ladder_Hints_Redox_Proof.pdf": {"pages": 2, "sha256": "5b46865adf735f21bf2698cac8c1d95722313f20bdc4d0fa689814648f5361e3"},
+    "05_Core2A_Guided_Practice_Owner_Override_Redox_Proof.pdf": {"pages": 2, "sha256": "2f7915c32d24a7b31c7fa1fbe3113fe21c835fc764f512e24fb8a628263d4c7d"},
+    "06_Core2B_Open_Ended_Problem_Tutor_Owner_Override_Redox_Proof.pdf": {"pages": 2, "sha256": "26f04467b023ce7bb0496ddd0bf494beac99ee5a9929eec43976da0a4ce50dea"}
   }
 }
