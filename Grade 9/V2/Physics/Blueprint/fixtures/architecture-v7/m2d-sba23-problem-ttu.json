@@ -1,0 +1,102 @@
+{
+  "schema_version": "3.0.0",
+  "ttu_id": "PROBLEM-TTU-M2D-SBA23-STRUCTURAL-SIBLING",
+  "ttu_family": "PROBLEM_TTU",
+  "task_scale": "SUBSTANTIVE",
+  "bucket_id": "M2D-SBA-23",
+  "problem_family_id": "MOVING_LAUNCHER_RELEASE_CONVERSION",
+  "authority_binding": {
+    "authority_ref": "CORE2A-LEGAL-POOL-PROCESS-GOLDEN",
+    "authority_class": "PROCESS_GOLDEN",
+    "may_author_new_semantics": false
+  },
+  "semantic_target": {
+    "capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+    "learning_atom_ids": ["PHY-ML-FRAME-01", "PHY-ML-ADD-01", "PHY-ML-SELECT-01"],
+    "inferential_jump": "The learner must recognise the frame mismatch and select the relative-velocity model before ordinary projectile equations.",
+    "success_claim": "Learner recognises, represents, solves and verifies a changed moving-launcher instance without replaying a worked exemplar."
+  },
+  "canonical_expert_state": {
+    "setup": {
+      "knowns": ["trolley velocity = -5 m/s east-positive", "ball relative trolley = (9,12) m/s"],
+      "unknowns": ["ball ground-frame launch vector"],
+      "conditions": ["ordinary speeds", "constant source velocity", "+x east"]
+    },
+    "representation": {
+      "representation_id": "REP-M2D-SBA23-OPPOSITE-DIRECTION-TRIANGLE",
+      "type": "VECTOR_OR_COMPONENT_CONSTRUCTION",
+      "elements": [
+        {"element_id": "E-TRIGGER", "semantic_type": "MODEL_CHOICE", "canonical_content": "source-relative launch requested in ground frame", "reasoning_role": "selects frame conversion", "required_for_solution": true},
+        {"element_id": "E-REL", "semantic_type": "VECTOR", "canonical_content": "v_BT=(9,12)", "reasoning_role": "relative launch", "required_for_solution": true},
+        {"element_id": "E-SOURCE", "semantic_type": "VECTOR", "canonical_content": "v_TG=(-5,0)", "reasoning_role": "source motion with sign", "required_for_solution": true},
+        {"element_id": "E-RESULT", "semantic_type": "VECTOR", "canonical_content": "v_BG=(4,12)", "reasoning_role": "ground launch", "required_for_solution": true}
+      ],
+      "bindings": [
+        {"element_id": "E-TRIGGER", "relation_or_state_id": "S0", "binding_reason": "model selection trigger"},
+        {"element_id": "E-REL", "relation_or_state_id": "REL-VEL", "binding_reason": "first addend"},
+        {"element_id": "E-SOURCE", "relation_or_state_id": "REL-VEL", "binding_reason": "second addend with negative x sign"},
+        {"element_id": "E-RESULT", "relation_or_state_id": "REL-VEL", "binding_reason": "resultant"}
+      ]
+    },
+    "governing_relations": [
+      {"relation_id": "REL-VEL", "expression": "v_BG=v_BT+v_TG", "conditions": ["Galilean constant-relative-velocity frames"]}
+    ],
+    "reasoning_state_graph": [
+      {"state_id": "S0", "action": "recognise frame mismatch and choose east-positive sign convention", "input_ids": ["E-TRIGGER", "E-SOURCE"], "output": "frame-conversion model selected"},
+      {"state_id": "S1", "action": "construct signed vector relation", "input_ids": ["E-REL", "E-SOURCE", "REL-VEL"], "output": "(9,12)+(-5,0)"},
+      {"state_id": "S2", "action": "complete component addition", "input_ids": ["E-RESULT"], "output": "v_BG=(4,12) m/s"}
+    ],
+    "result_or_conclusion": "The ground-frame launch vector is (4,12) m/s."
+  },
+  "learner_transformation": {
+    "required": true,
+    "modes": ["SELECTION", "GENERATION", "TRANSFER", "VERIFICATION"],
+    "changes_reasoning_state": true,
+    "observable_product": "selected model, signed vector construction, component solution and independent direction check",
+    "targets": ["E-TRIGGER", "E-SOURCE", "E-RESULT"],
+    "semantic_omissions": [
+      {"element_id": "E-RESULT", "omission_kind": "REMOVE_COMPONENT", "pedagogical_reason": "learner must construct the changed-sign resultant"}
+    ],
+    "success_criteria": ["selects frame conversion", "uses -5 m/s for westward source", "obtains (4,12) m/s", "verifies westward source reduces eastward component"],
+    "anti_triviality": {
+      "cosmetic_blank_allowed": false,
+      "arbitrary_number_blank_allowed": false,
+      "answer_copy_task_allowed": false,
+      "learner_action_targets_capability": true
+    }
+  },
+  "fixed_help": {
+    "preauthored": true,
+    "prompts": [
+      {"prompt_id": "H1", "function": "NOTICE", "text": "Which frame owns the 9 east, 12 up launch, and which frame is requested?", "addresses_targets": ["E-TRIGGER"]},
+      {"prompt_id": "H2", "function": "REPRESENT", "text": "Choose east positive and write the trolley velocity as a signed vector.", "addresses_targets": ["E-SOURCE"]},
+      {"prompt_id": "H3", "function": "START", "text": "Write v_BG=v_BT+v_TG before adding components.", "addresses_targets": ["E-RESULT"]}
+    ],
+    "dynamic_new_semantics_before_reveal_allowed": false
+  },
+  "canonical_reveal": {
+    "attempt_required": true,
+    "canonical_state_revealed_after_attempt": true,
+    "full_solution_exposure_is_mastery_evidence": false
+  },
+  "verification_contract": {
+    "independent_rules": [
+      {"rule_id": "V-SIGN", "type": "SIGN_DIRECTION", "instruction": "Because the source moves west, your ground-frame eastward component must be smaller than the 9 m/s relative eastward component.", "uses_answer_key": false, "applicable_before_reveal": true},
+      {"rule_id": "V-INVERSE", "type": "INVERSE_RELATION", "instruction": "Subtract the signed source vector from your ground result; you should recover (9,12).", "uses_answer_key": false, "applicable_before_reveal": true}
+    ]
+  },
+  "repair_contract": {
+    "failure_hypotheses": ["sign convention fragile", "model recognition fragile", "vector addition fragile"],
+    "smallest_repair_route": "Core1B signed frame-conversion reconstruction"
+  },
+  "layer_realizations": [
+    {"layer": "CORE2A", "mode": "WORKED_APPLICATION", "uses_canonical_state": true, "uses_learner_transformation": false},
+    {"layer": "CORE2B", "mode": "TRANSFER_RECONSTRUCTION", "uses_canonical_state": true, "uses_learner_transformation": true}
+  ],
+  "layout_contract": {
+    "learner_state_and_canonical_state_visually_distinct": true,
+    "help_separated_from_canonical_reveal": true,
+    "minimum_final_label_pt": 8.0,
+    "oversized_low_information_figure": false
+  }
+}
