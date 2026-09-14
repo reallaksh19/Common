@@ -16,8 +16,20 @@
     "representation_types": 3,
     "misconception_repairs": 2,
     "reconstructable_ttu_refs": 2,
-    "practice_levels": ["GUIDED", "INDEPENDENT"],
+    "practice_levels": ["GUIDED", "FADED", "INDEPENDENT"],
     "verification_objects": 2
+  },
+  "practice_provenance": {
+    "every_practice_question_requires_question_id": true,
+    "every_practice_question_requires_learner_visible_source": true,
+    "every_practice_question_requires_answer_object_ref": true,
+    "allowed_source_classes": ["GENERATED_ORIGINAL", "SOURCE_ADAPTED", "SOURCE_FROZEN"]
+  },
+  "practice_diversity": {
+    "same_surface_independent_forbidden": true,
+    "same_reaction_reconstruction_counts_as": "FADING_ANCHOR",
+    "independent_practice_requires_different_reaction_signature": true,
+    "independent_practice_requires_traceable_source": true
   },
   "content_payload": {
     "learner_payload_required": true,
@@ -43,6 +55,8 @@
     "all_content_objects_must_resolve_to_ccbom_asset": true,
     "all_required_job_object_ids_must_resolve": true,
     "practice_and_answers_must_resolve": true,
+    "practice_source_and_answer_closure_must_resolve": true,
+    "independent_practice_must_not_be_same_surface_as_worked_anchor": true,
     "summary_must_be_recomputed": true
   }
 }
