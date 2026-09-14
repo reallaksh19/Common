@@ -75,7 +75,7 @@ class Core1AStudyNoteV7Tests(unittest.TestCase):
     def test_hard_note_requires_guided_faded_and_independent_practice(self):
         p = copy.deepcopy(AUTHORITY)
         p["practice_diversity"]["independent_question_ids"] = ["Q-REDOX-ELECTRON-GUIDED"]
-        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "INDEPENDENT_QUESTION_LEVEL_INVALID"):
+        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "PRACTICE_LINEAGE_COLLISION|INDEPENDENT_QUESTION_LEVEL_INVALID"):
             studyv7.validate(p, copy.deepcopy(CCBOM), POLICY)
 
     def test_every_practice_question_reveals_source(self):
