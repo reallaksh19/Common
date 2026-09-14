@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "student_facing_badges": {
+    "required_for_every_released_question": [
+      "CORE",
+      "BUCKET",
+      "CONCEPT",
+      "SOURCE",
+      "ANSWER_STATUS"
+    ],
+    "required_when_applicable": [
+      "DIFFICULTY",
+      "QUESTION_NUMBER",
+      "PROBLEM_FAMILY",
+      "LINKAGES",
+      "PREREQUISITES",
+      "LEARNER_ACTION",
+      "REPRESENTATION",
+      "TRANSFER_DISTANCE",
+      "MODEL_CONDITION",
+      "HINT_AVAILABILITY",
+      "EXAM_DEMAND"
+    ],
+    "source_badge_enum": [
+      "SOURCE",
+      "OWNER_SUPPLIED",
+      "AUTHOR_CREATED",
+      "GENERATED_LEGAL_SIBLING",
+      "AUTHOR_CREATED_DESIGN_PILOT"
+    ],
+    "learner_action_enum": [
+      "RECOGNISE",
+      "REPRESENT",
+      "SELECT",
+      "DERIVE",
+      "DIAGNOSE",
+      "VERIFY",
+      "TRANSFER"
+    ],
+    "transfer_distance_enum": ["DIRECT", "NEAR", "FAR", "NOT_APPLICABLE"]
+  },
+  "internal_only_metadata": [
+    "student_knowledge_percent",
+    "knowledge_confidence",
+    "authority_digest",
+    "legal_pool_digest",
+    "owner_override",
+    "source_integrity_internal_status",
+    "duplication_risk_score",
+    "lexical_similarity_score",
+    "structural_similarity_score",
+    "semantic_similarity_review_score",
+    "calibration_status",
+    "evidence_basis"
+  ],
+  "display_rules": {
+    "source_identity_must_be_visible_to_learner": true,
+    "author_created_question_may_look_official": false,
+    "frozen_source_question_number_must_be_retained": true,
+    "internal_governance_metadata_should_not_be_exposed_by_default": true,
+    "badge_overload_should_be_avoided_by_primary_header_plus_secondary_metadata": true
+  }
+}
