@@ -1,0 +1,91 @@
+{
+  "policy_id": "CHEM-G9-V2-BLUEPRINT-v4-BUCKET-CONDITIONING",
+  "schema_version": "4.0.0",
+  "subject": "CHEMISTRY",
+  "core1_policy": {
+    "control_axis": "INTRINSIC_SUBTOPIC_DIFFICULTY",
+    "learner_knowledge_must_not_control_depth": true,
+    "bucket_required": true,
+    "shared_badge_between_core1a_core1b": true,
+    "page_envelopes_are_ceilings_not_quotas": true,
+    "difficulty_bands": {
+      "EASY": {
+        "max_pages": 10,
+        "web_research": "OPTIONAL",
+        "minimum_visual_jobs": 1
+      },
+      "MEDIUM": {
+        "max_pages": 20,
+        "web_research": "REQUIRED",
+        "minimum_visual_jobs": 1
+      },
+      "HARD": {
+        "max_pages": 30,
+        "web_research": "DEEP_REQUIRED",
+        "minimum_visual_jobs": 2,
+        "sub_subtopic_decomposition": "RESEARCH_DECIDES"
+      }
+    },
+    "visual_rule": "MORE_DIFFICULTY_MEANS_MORE_REASONING_JOBS_NOT_DECORATIVE_IMAGES"
+  },
+  "core2_policy": {
+    "control_axis": "LEARNER_CONDITIONING",
+    "conditioning_required": true,
+    "accepted_modes": ["KNOWLEDGE_PERCENT", "OWNER_OVERRIDE"],
+    "unresolved_conditioning_action": "BLOCK",
+    "knowledge_percent_is": "SUPPORT_PRIOR_NOT_MASTERY_MEASUREMENT",
+    "knowledge_controls": [
+      "support_density",
+      "hint_depth",
+      "representation_support",
+      "first_move_support",
+      "solution_delay"
+    ],
+    "knowledge_must_not_change": [
+      "question_identity",
+      "source_provenance",
+      "validated_semantic_scope",
+      "legal_answer_authority"
+    ],
+    "default_support_bands": [
+      {
+        "min_inclusive": 0,
+        "max_inclusive": 30,
+        "support_density": "HIGH",
+        "hint_entry_level": "H1_ORIENT",
+        "representation_support": "SUPPLIED",
+        "first_move_support": "EXPLICIT",
+        "solution_delay": "AFTER_HINT_LADDER"
+      },
+      {
+        "min_inclusive": 31,
+        "max_inclusive": 60,
+        "support_density": "MEDIUM",
+        "hint_entry_level": "H2_STRUCTURE",
+        "representation_support": "AVAILABLE_ON_REQUEST",
+        "first_move_support": "AVAILABLE_ON_REQUEST",
+        "solution_delay": "AFTER_HINT_LADDER"
+      },
+      {
+        "min_inclusive": 61,
+        "max_inclusive": 80,
+        "support_density": "LOW",
+        "hint_entry_level": "H3_REPRESENTATION",
+        "representation_support": "AVAILABLE_ON_REQUEST",
+        "first_move_support": "DEFERRED",
+        "solution_delay": "AFTER_FULL_ATTEMPT"
+      },
+      {
+        "min_inclusive": 81,
+        "max_inclusive": 100,
+        "support_density": "MINIMAL",
+        "hint_entry_level": "H4_PRINCIPLE",
+        "representation_support": "DEFERRED",
+        "first_move_support": "DEFERRED",
+        "solution_delay": "AFTER_FULL_ATTEMPT"
+      }
+    ],
+    "owner_override_rule": "OWNER_OVERRIDE_IS_EXPLICIT_AUDITABLE_AND_REPLACES_MISSING_KNOWLEDGE_PERCENT_WITH_A_CONCRETE_SUPPORT_AND_DEMAND_PROFILE",
+    "purpose_rule": "OWNER_PURPOSE_CONTROLS_TRANSFER_DISTANCE_MIXING_SYNTHESIS_AND_TIME_PRESSURE_WITHIN_EXISTING_LEGALITY"
+  }
+}
