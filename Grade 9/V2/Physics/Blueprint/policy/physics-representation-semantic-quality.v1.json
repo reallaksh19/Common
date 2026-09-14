@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "PHY-REPRESENTATION-SEMANTIC-QUALITY-V1",
+  "applies_to": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "premise": "A visual counts as a Physics technical representation only when it encodes domain structure used in the learner reasoning.",
+  "eligible_representation_types": [
+    "VECTOR_OR_COMPONENT_CONSTRUCTION",
+    "FREE_BODY_DIAGRAM",
+    "GEOMETRIC_CONSTRUCTION",
+    "FIELD_OR_FORCE_REPRESENTATION",
+    "TRAJECTORY_WITH_MEANINGFUL_AXES",
+    "PHYSICAL_GRAPH",
+    "EVENT_TIMELINE",
+    "STATE_TRANSITION_DIAGRAM",
+    "REFERENCE_FRAME_OR_COORDINATE_DIAGRAM",
+    "PHYSICAL_VARIABLE_TABLE",
+    "EQUATION_DEPENDENCY_MAP"
+  ],
+  "non_counting_visuals": [
+    "GENERIC_TEXT_CARD",
+    "DECORATIVE_ARROW_BETWEEN_BOXES",
+    "UNLABELED_AXES",
+    "OVERSIZED_EMPTY_COORDINATE_PLANE",
+    "DECORATIVE_ILLUSTRATION",
+    "PROSE_CONVERTED_TO_SHAPES",
+    "FIGURE_NOT_USED_BY_ACCOMPANYING_WORKING",
+    "FINAL_EQUATION_FLOATING_UNDER_UNMAPPED_PICTURE"
+  ],
+  "semantic_completeness": {
+    "variables_used_in_working_must_be_identifiable": true,
+    "frame_axis_direction_conventions_explicit_when_material": true,
+    "important_vectors_objects_or_events_visually_distinguishable": true,
+    "caption_or_adjacent_working_must_state_what_to_read_from_figure": true,
+    "labels_must_be_unambiguous": true,
+    "figure_must_bind_to_at_least_one_equation_or_reasoning_step_when_material": true
+  },
+  "binding_rule": {
+    "required": true,
+    "allowed_bindings": [
+      "LABEL_TO_EQUATION_TERM",
+      "VECTOR_TO_COMPONENT",
+      "GRAPH_FEATURE_TO_PHYSICAL_QUANTITY",
+      "EVENT_TO_TIME_CONDITION",
+      "GEOMETRY_TO_TRIGONOMETRIC_RELATION",
+      "FORCE_ARROW_TO_NEWTON_EQUATION",
+      "STATE_TO_CONSERVATION_OR_KINEMATIC_RELATION"
+    ],
+    "figure_without_reasoning_binding_counts_as_technical_closure": false
+  },
+  "model_discrimination": {
+    "generic_A_B_C_cards_count_as_physics_representation": false,
+    "minimum_comparison_fields": [
+      "PHYSICAL_TRIGGER",
+      "RELEVANT_REPRESENTATION_OR_MODEL",
+      "FIRST_MOVE",
+      "WHY_COMPETING_MODEL_IS_REJECTED"
+    ]
+  },
+  "whitespace_and_scale": {
+    "large_unused_plot_region_without_instructional_purpose_allowed": false,
+    "figure_should_be_cropped_to_instructional_content": true,
+    "figure_area_must_be_proportional_to_information_carried": true,
+    "oversized_figure_that_displaces_needed_working_is_release_failure": true
+  }
+}
