@@ -9,6 +9,10 @@ buckets as the learner textbook.
 Every run also emits a producer governance receipt. A legacy run without a
 Canonical Domain Registry and generation/difficulty spec is explicitly marked
 UNBOUND_PRE_RELEASE; it can never be mistaken for a fully governed release.
+
+Bound runs additionally admit candidate examples into a governed example catalog
+before learner authoring. The learner manuscript consumes those admitted assets;
+raw capability-bank objects are not direct publication authority.
 """
 from __future__ import annotations
 
@@ -28,6 +32,7 @@ for p in (HERE, MB_ENGINE):
 
 import build_math_core1a_textbook as base
 import core1a_capability_authoring as capability
+import core1a_governed_example_authoring as governed_examples
 from core1a_bucket_synthesis import synthesize_bucket_plan
 from core1a_bucket_realization import realize_bucket_manuscript, render_bucket_pdf
 from producer_governance import core1a_receipt
@@ -81,6 +86,7 @@ def main() -> None:
     registry = base.load(args.domain_registry) if args.domain_registry else None
     if registry is not None:
         validate_registry(registry)
+        governed_examples.install(registry)
 
     assets = base.load_pck_assets(Path(args.pck_index))
     families = base.load_problem_families(Path(args.problem_family_index))
@@ -97,6 +103,13 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     (out / "core1a_bucket_plan.json").write_text(json.dumps(bucket_plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (out / "core1a_textbook_manuscript.json").write_text(json.dumps(book, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    if registry is not None:
+        catalog = governed_examples.catalog_document()
+        if not catalog["examples"]:
+            base.fail("CORE1A_GOVERNED_EXAMPLE_CATALOG_EMPTY")
+        (out / "core1a_governed_example_catalog.json").write_text(
+            json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
 
     receipt = core1a_receipt(bucket_plan, book, registry=registry, generation_spec=generation_spec)
     _restore_subtopic_identity(receipt, bucket_plan, generation_spec)
@@ -116,6 +129,7 @@ def main() -> None:
         "quality_audit": book["quality_audit"],
         "governance_receipt_ref": receipt["receipt_id"],
         "governance_release_state": receipt["release_state"],
+        "governed_example_catalog_ref": "core1a_governed_example_catalog.json" if registry is not None else None,
         "artifact": {"path": pdf_path.name, **pdf_meta},
         "release_class": book["release_class"],
     }
