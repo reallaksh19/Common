@@ -59,10 +59,11 @@ g["required_invariants"].remove("INV-NLM-THIRD-DISTINCT-BODIES")
 must_fail(bad, "E_GATE_INVARIANT_MISSING")
 
 # Mutation 5: normal force may not silently collapse to N=mg as the general model.
+# This gate has one canonical concept, so deleting it is rejected by the schema before the gate-specific concept check.
 bad = copy.deepcopy(REG)
 g = gate(bad, "PHY-NLM-NORMAL")
 g["concepts"] = [c for c in g["concepts"] if c["concept_id"] != "CON-NLM-NORMAL-NOT-ALWAYS-MG"]
-must_fail(bad, "E_GATE_INVARIANT_MISSING")
+must_fail(bad, "E_GATE_SCHEMA")
 
 # Mutation 6: static-friction inequality must survive.
 bad = copy.deepcopy(REG)
