@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-study-product-v5.schema.json",
+  "title": "Chemistry Study Product v5",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "product_mode",
+    "bucket_ref",
+    "difficulty_badge",
+    "learning_atoms",
+    "technical_objects",
+    "practice_closure",
+    "research_translation",
+    "page_plan",
+    "cross_core_reuse_audit"
+  ],
+  "properties": {
+    "schema_version": {"const": "5.0.0"},
+    "product_mode": {"enum": ["CORE1A", "CORE1B"]},
+    "bucket_ref": {"type": "string", "minLength": 1},
+    "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "learning_atoms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["atom_id", "title", "required_jobs"],
+        "properties": {
+          "atom_id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "required_jobs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "technical_objects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["object_id", "atom_id", "job", "payload_type"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 1},
+          "atom_id": {"type": "string", "minLength": 1},
+          "job": {"type": "string", "minLength": 1},
+          "payload_type": {
+            "enum": [
+              "DEFINITION",
+              "RULE",
+              "EQUATION",
+              "DERIVATION",
+              "TABLE",
+              "DIAGRAM",
+              "WORKED_EXAMPLE",
+              "CONTRAST",
+              "PRACTICE",
+              "ANSWER",
+              "HINT",
+              "VERIFICATION",
+              "RETRIEVAL",
+              "DECISION_PIPELINE"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "practice_closure": {"type": "object"},
+    "research_translation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["research_ref", "decision", "technical_object_ids"],
+        "properties": {
+          "research_ref": {"type": "string", "minLength": 1},
+          "decision": {"type": "string", "minLength": 1},
+          "technical_object_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "page_plan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["page_id", "page_role", "expected_active_area_ratio", "technical_object_ids", "learner_action_ids"],
+        "properties": {
+          "page_id": {"type": "string", "minLength": 1},
+          "page_role": {"type": "string", "minLength": 1},
+          "expected_active_area_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+          "technical_object_ids": {"type": "array", "items": {"type": "string"}},
+          "learner_action_ids": {"type": "array", "items": {"type": "string"}},
+          "workspace_justification": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "cross_core_reuse_audit": {
+      "type": "object",
+      "required": ["shared_expository_block_count", "repeated_generic_template_fraction"],
+      "properties": {
+        "shared_expository_block_count": {"type": "integer", "minimum": 0},
+        "repeated_generic_template_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+        "shared_fact_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "additionalProperties": true
+}
