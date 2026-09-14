@@ -1,0 +1,79 @@
+name: V2 Mathematics Core1B Core2B Static Products
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/Core1B/**'
+      - 'Grade 9/V2/Mathematics/Core2B/**'
+      - 'Grade 9/V2/Mathematics/ProductionKits/Core1B/**'
+      - 'Grade 9/V2/Mathematics/ProductionKits/Core2B/**'
+      - 'Grade 9/V2/Mathematics/B_LAYER_PRODUCT_KIT.md'
+      - '.github/workflows/v2-math-core1b-core2b.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-static-math-b-layers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install learner-product dependency
+        run: python -m pip install 'reportlab>=4.0'
+
+      - name: Run Core1B static compiler tests
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/Core1B/tests' -p 'test_*.py' -v
+
+      - name: Run Core2B static compiler tests
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/Core2B/tests' -p 'test_*.py' -v
+
+      - name: Compile Core1B goldens
+        run: |
+          mkdir -p /tmp/math-b-layer/core1b
+          python 'Grade 9/V2/Mathematics/Core1B/engine/compile_core1b.py' \
+            --input 'Grade 9/V2/Mathematics/Core1B/golden/equidistant-point-on-axis/input.json' \
+            --out /tmp/math-b-layer/core1b/equidistance.json \
+            --pdf /tmp/math-b-layer/core1b/equidistance.pdf
+          python 'Grade 9/V2/Mathematics/Core1B/engine/compile_core1b.py' \
+            --input 'Grade 9/V2/Mathematics/Core1B/golden/linear-system-modelling/input.json' \
+            --out /tmp/math-b-layer/core1b/linear-systems.json \
+            --pdf /tmp/math-b-layer/core1b/linear-systems.pdf
+
+      - name: Compile Core2B goldens
+        run: |
+          mkdir -p /tmp/math-b-layer/core2b
+          python 'Grade 9/V2/Mathematics/Core2B/engine/compile_core2b.py' \
+            --input 'Grade 9/V2/Mathematics/Core2B/golden/equidistant-point-on-axis/input.json' \
+            --out /tmp/math-b-layer/core2b/equidistance.json \
+            --pdf /tmp/math-b-layer/core2b/equidistance.pdf
+          python 'Grade 9/V2/Mathematics/Core2B/engine/compile_core2b.py' \
+            --input 'Grade 9/V2/Mathematics/Core2B/golden/linear-system-modelling/input.json' \
+            --out /tmp/math-b-layer/core2b/linear-systems.json \
+            --pdf /tmp/math-b-layer/core2b/linear-systems.pdf
+
+      - name: Assert static product boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('/tmp/math-b-layer')
+          for p in root.rglob('*.json'):
+              doc=json.loads(p.read_text(encoding='utf-8'))
+              assert doc['delivery_mode'] == 'STATIC', p
+              assert doc['quality_audit']['live_runtime_fields'] == 'ABSENT', p
+          pdfs=list(root.rglob('*.pdf'))
+          assert len(pdfs) == 4, pdfs
+          assert all(p.stat().st_size > 1000 for p in pdfs), pdfs
+          print('STATIC B-LAYER BOUNDARY PASS')
+          PY
+
+      - name: Upload static B-layer golden products
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-static-b-layer-goldens
+          path: /tmp/math-b-layer
+          if-no-files-found: error

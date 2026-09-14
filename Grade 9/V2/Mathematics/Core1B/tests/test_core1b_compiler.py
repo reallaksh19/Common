@@ -1,0 +1,63 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+import unittest
+from pathlib import Path
+
+HERE = Path(__file__).resolve()
+ROOT = HERE.parents[1]
+SPEC = importlib.util.spec_from_file_location("compile_core1b", ROOT / "engine" / "compile_core1b.py")
+mod = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(mod)
+
+
+class Core1BCompilerTests(unittest.TestCase):
+    def load(self, family: str):
+        return json.loads((ROOT / "golden" / family / "input.json").read_text(encoding="utf-8"))
+
+    def test_equidistance_compiles_static(self):
+        out = mod.compile_plan(self.load("equidistant-point-on-axis"))
+        self.assertEqual(out["delivery_mode"], "STATIC")
+        self.assertEqual(out["quality_audit"]["live_runtime_fields"], "ABSENT")
+        self.assertIn("METHOD_COMPARISON", {b["kind"] for b in out["blocks"]})
+
+    def test_linear_system_compiles_with_same_engine(self):
+        out = mod.compile_plan(self.load("linear-system-modelling"))
+        self.assertEqual(out["delivery_mode"], "STATIC")
+        self.assertIn("MATH-LINEAR-SYSTEM-SOLVE", out["capability_refs"])
+
+    def test_live_attempts_are_forbidden(self):
+        doc = self.load("equidistant-point-on-axis")
+        doc["attempts"] = []
+        with self.assertRaisesRegex(ValueError, "CORE1B_LIVE_RUNTIME_FIELD_FORBIDDEN"):
+            mod.compile_plan(doc)
+
+    def test_new_math_is_forbidden(self):
+        doc = self.load("equidistant-point-on-axis")
+        doc["blocks"][0]["new_math_refs"] = ["MATH-UNTaught-THEOREM"]
+        with self.assertRaisesRegex(ValueError, "CORE1B_NEW_MATH_NOT_ALLOWED"):
+            mod.compile_plan(doc)
+
+    def test_unapproved_capability_is_forbidden(self):
+        doc = self.load("linear-system-modelling")
+        doc["blocks"][0]["capability_refs"] = ["MATH-QUADRATIC-FORMULA"]
+        with self.assertRaisesRegex(ValueError, "CORE1B_UNAPPROVED_CAPABILITY_REF"):
+            mod.compile_plan(doc)
+
+    def test_close_independent_required(self):
+        doc = self.load("equidistant-point-on-axis")
+        doc["blocks"] = [b for b in doc["blocks"] if b["kind"] != "CLOSE_INDEPENDENT"]
+        with self.assertRaisesRegex(ValueError, "CORE1B_CLOSE_INDEPENDENT_MISSING"):
+            mod.compile_plan(doc)
+
+    def test_variation_may_not_change_multiple_critical_features_at_once(self):
+        doc = self.load("linear-system-modelling")
+        row = next(b for b in doc["blocks"] if b["kind"] == "CONTROLLED_VARIATION")["rows"][1]
+        row["changed_features"] = ["equation form", "variable meaning"]
+        with self.assertRaisesRegex(ValueError, "CORE1B_VARIATION_CHANGES_MULTIPLE_CRITICAL_FEATURES"):
+            mod.compile_plan(doc)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
