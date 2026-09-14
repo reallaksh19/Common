@@ -15,6 +15,8 @@ CORE1 ↔ independent second pass ↔ CORE2
         ↓
 CANONICAL DOMAIN REGISTRY
         ↓
+technical engineering readiness boundary
+        ↓
        CCU
 coverage / custody / source-answer traceability / anti-duplication
         ↓
@@ -31,6 +33,13 @@ CONCEPT    PROBLEM
   TTU        TTU
  /   \      /   \
 1A   1B    2A   2B
+        ↓
+publication / learner runtime
+        ↓
+observed learner evidence
+        ↓
+       CAL
+calibration / audit / versioned policy updates
 ```
 
 Product-design layers never manufacture truth, rewrite frozen source wording, create observed learner evidence, or expand Core2A legality.
@@ -38,7 +47,7 @@ Product-design layers never manufacture truth, rewrite frozen source wording, cr
 Publication remains separate:
 
 ```text
-released Core1A semantics
+released governed semantics
         ↓
 Publication IR
         ↓
@@ -49,15 +58,49 @@ render custody / preflight
 
 ---
 
-# Canonical learner-product architecture — V8
+# Canonical learner-product architecture — V9
 
-Normative architecture: `SELF_HELP_ARCHITECTURE_V8.md`.
+Normative architecture: `SELF_HELP_ARCHITECTURE_V9.md`.
 
-V8 preserves V7's CDAU/SDU/LAU/TTU architecture and adds **CCU — Content Custody & Coverage Unit**.
+V9 preserves all V8 CCU/CDAU/SDU/LAU/TTU guarantees and adds **CAL — Calibration & Audit Layer**. The key correction is that provisional similarity/difficulty/fit heuristics are explicitly distinguished from deterministic hard gates.
 
-## CCU — custody, coverage, question traceability
+## Deterministic hard gates
 
-CCU prevents silent omission and silent copying before CDAU sees the product.
+The following do not require empirical calibration and may block immediately:
+
+- missing applicable canonical-asset disposition;
+- required asset with no realization;
+- learner-facing released question with no canonical answer/resolution;
+- frozen source question number changed;
+- author/generated item impersonating source material;
+- frozen source wording/custody violation;
+- declared `PEDAGOGICAL_DUPLICATION`;
+- exact adjacent numeric dataset reuse without declared `FADING_ANCHOR`;
+- exact example fingerprint + equivalent learner usage without declared `FADING_ANCHOR`;
+- Core2B fading anchor claimed as independent transfer evidence;
+- learner-adaptive routing with neither usable learner evidence nor explicit owner override.
+
+These are constitutional release invariants and are not relaxed by later calibration.
+
+## Engineering heuristic gates
+
+Lexical/structural similarity scores, authored difficulty mappings and pre-use learner-fit predictions are currently `ENGINEERING` maturity.
+
+Current similarity values are triage thresholds:
+
+- lexical 5-shingle Jaccard `>=0.65`: candidate signal;
+- lexical `>=0.80`: review;
+- lexical `>=0.90`: high review;
+- structural fingerprint `>=0.70`: review;
+- structural fingerprint `>=0.85`: high review.
+
+**These do not auto-block solely because a score crosses the threshold.** At engineering maturity they create a review obligation. A review is either pending, adjudicated allow with reviewer provenance/reason, or adjudicated block.
+
+A universal semantic-embedding cosine threshold is forbidden.
+
+---
+
+## CCU v2 — custody, coverage and calibrated anti-duplication boundary
 
 Every canonical asset receives an explicit per-Core disposition:
 
@@ -65,47 +108,21 @@ Every canonical asset receives an explicit per-Core disposition:
 
 Blank disposition is illegal. Required assets need realization refs; transformed assets need lineage; held assets need blocking reasons.
 
-Every learner-facing question/task carries a stable Question Custody Record with:
+Every learner-facing question/task carries a stable Question Custody Record with question/source identity, bucket/problem family/capabilities, canonical resolution, legal status, learner-visible source label, badges and fingerprint/lineage where applicable.
 
-- question ID and displayed number;
-- source class and visible source label;
-- original source question number where applicable;
-- bucket/problem family/capabilities;
-- canonical answer/solution/diagram/derivation/rubric;
-- legal status;
-- badges;
-- fingerprint and lineage when applicable.
+A released/design-pilot learner question may not have a held/missing answer. Frozen source numbering is immutable. Author-created/generated items may not impersonate source questions.
 
-A released/design-pilot learner question may not have a held/missing answer. Frozen source numbering is immutable. Author-created/generated items may not impersonate official/source questions.
+Similarity remains multi-signal:
 
-### Similarity and anti-duplication
+`asset identity + structural fingerprint + lexical signal + semantic review signal + usage mode + learner action + solution path`.
 
-Similarity is multi-signal, never one score:
-
-- asset identity;
-- structural example fingerprint;
-- lexical 5-shingle Jaccard;
-- semantic similarity as a calibrated review signal;
-- usage mode;
-- learner action;
-- solution path.
-
-Initial deterministic thresholds:
-
-- lexical Jaccard `>=0.90`: high duplicate risk;
-- lexical Jaccard `>=0.80`: review;
-- structural score `>=0.85` with equivalent pedagogical usage: block unless explicit fading anchor;
-- structural score `>=0.70`: review.
-
-A universal semantic cosine threshold is deliberately forbidden; semantic thresholds must be calibrated on labelled Physics pairs.
-
-Allowed relationships: `SEMANTIC_REUSE`, `PEDAGOGICAL_TRANSFORMATION`, `FADING_ANCHOR`, `STRUCTURAL_SIBLING`, `FAR_TRANSFER_SIBLING`. `NEAR_DUPLICATE` requires review; `PEDAGOGICAL_DUPLICATION` blocks release.
+Allowed relationships remain `SEMANTIC_REUSE`, `PEDAGOGICAL_TRANSFORMATION`, `FADING_ANCHOR`, `STRUCTURAL_SIBLING`, `FAR_TRANSFER_SIBLING`. `NEAR_DUPLICATE` requires review; `PEDAGOGICAL_DUPLICATION` blocks.
 
 ---
 
 ## CDAU v2 — Core purpose and differentiation
 
-CDAU now consumes CCU receipts. It validates that content belongs in the intended Core and is genuinely differentiated from neighboring Cores.
+CDAU consumes CCU receipts and validates that content belongs in the intended Core and is genuinely differentiated from neighboring Cores.
 
 - Core1 — compact orientation;
 - Core1A — complete conceptual construction;
@@ -114,7 +131,7 @@ CDAU now consumes CCU receipts. It validates that content belongs in the intende
 - Core2A — expert problem learning;
 - Core2B — transfer and independent modelling.
 
-Every substantive unit declares usage mode and learner action. Core1B fragile checkpoints require generative transformation. Core2B must prefer a fresh legal sibling when available; a fading anchor cannot count as transfer evidence.
+Every substantive unit declares usage mode and learner action. Core1B fragile checkpoints require generative transformation. Core2B should prefer a fresh legal sibling when available; a fading anchor cannot count as transfer evidence.
 
 Owner control remains global but bounded and records:
 
@@ -128,26 +145,9 @@ Owner control cannot override Physics/Mathematics correctness, frozen source wor
 
 Student knowledge percentage may not drive authored Core1A/Core1B depth.
 
-Difficulty uses an evidence profile on a 0–3 engineering scale:
+Difficulty uses the existing 0–3 engineering evidence profile across prerequisite depth, element interactivity, inferential-jump severity, representation translation, model discrimination, sign/frame sensitivity, multi-step dependency, abstraction, misconception density and synthesis.
 
-- prerequisite depth;
-- element interactivity;
-- inferential-jump severity;
-- representation translation;
-- model discrimination;
-- sign/frame sensitivity;
-- multi-step dependency;
-- abstraction;
-- misconception density;
-- synthesis.
-
-Derived design rules:
-
-- Hard: at least two score-3 dimensions, or a declared critical bottleneck controlling the capability, or synthesis 3 with multi-step dependency >=2;
-- Medium: not Hard and at least one dimension score 2/3;
-- Easy: no dimension above 1 and no critical bottleneck.
-
-These are governance heuristics, not psychometric claims. Owner/source-supplied badges remain authoritative but disagreement must be recorded.
+The EASY/MEDIUM/HARD mapping remains an **authoring-governance heuristic**, not empirical item difficulty. It may govern research/depth now, but later expert calibration must remain distinct from learner-response-based empirical difficulty.
 
 Both Core1A and Core1B share the soft maximum depth envelope Easy ~10 / Medium ~20 / Hard ~30 pages. These are ceilings, not quotas; actual lengths are independently derived.
 
@@ -162,17 +162,11 @@ Exactly one adaptation basis is required:
 
 No silent default.
 
-Learner subdimensions may include recognition, representation, model selection, first move, execution, explanation and verification.
+Task demand is separate from learner state. Pre-use fit labels are routing predictions, not mastery claims:
 
-Task demand is separately recorded on 0–3 dimensions: structural distance, representation change, model discrimination, sign/direction reversal, reversed target, constraint inversion, multi-step bridge, synthesis, competitive mixing and calculation load.
+`LIKELY_UNDERCHALLENGE | GOOD_FIT | PRODUCTIVE_STRETCH | LIKELY_OVERLOAD | BLOCKED_PREREQUISITE | OWNER_ROUTED_NOT_KNOWLEDGE_VALIDATED`.
 
-Pre-use fit labels are routing predictions, not mastery claims:
-
-`LIKELY_UNDERCHALLENGE | GOOD_FIT | PRODUCTIVE_STRETCH | LIKELY_OVERLOAD | BLOCKED_PREREQUISITE | OWNER_ROUTED_NOT_KNOWLEDGE_VALIDATED`
-
-For the same task, lower knowledge should not receive less support than higher knowledge without explicit owner reason.
-
-Observed learner behavior after use updates/challenges the predicted fit; knowledge percentage alone is never mastery.
+Observed learner behavior updates/challenges the predicted fit; knowledge percentage alone is never mastery.
 
 ---
 
@@ -184,15 +178,33 @@ Observed learner behavior after use updates/challenges the predicted fit; knowle
 
 Every substantive TTU binds:
 
-`semantic target → canonical expert state → technical representation → representation/relation bindings → reasoning-state graph → learner transformation → bounded help → canonical reveal → independent verification → repair`
+`semantic target → canonical expert state → technical representation → representation/relation bindings → reasoning-state graph → learner transformation → bounded help → canonical reveal → independent verification → repair`.
 
 A diagram, equation, blank or hint alone does not constitute a TTU.
 
 B-layer transformation modes include:
 
-`PREDICTION | COMPLETION | GENERATION | SELECTION | DISCRIMINATION | DIAGNOSIS | DERIVATION_CONNECTION | VERIFICATION | TRANSFER`
+`PREDICTION | COMPLETION | GENERATION | SELECTION | DISCRIMINATION | DIAGNOSIS | DERIVATION_CONNECTION | VERIFICATION | TRANSFER`.
 
 Full-solution exposure is learning support, not mastery or transfer evidence.
+
+---
+
+## CAL — Calibration & Audit Layer
+
+CAL governs only non-deterministic policy maturity.
+
+Maturity states:
+
+`ENGINEERING | CALIBRATING | VALIDATED`.
+
+A domain may not become `VALIDATED` merely by changing a label. Validation requires evidence refs, completed held-out evaluation, a versioned validated-policy reference and approval provenance.
+
+Duplication calibration requires labelled Physics pairs covering all reuse/duplicate classes, boundary cases, independent reviewers, disagreement adjudication, agreement reporting, held-out evaluation and threshold-performance reporting.
+
+Difficulty calibration keeps authored difficulty separate from empirical item difficulty. Learner-fit calibration retains prediction/outcome pairs from observed correctness, representation/model selection, first move, hint level, completion, explanation, verification and later retrieval.
+
+CAL may update future versioned policy. It may not rewrite historical evidence, source truth, frozen source wording or legal-pool custody.
 
 ---
 
@@ -200,11 +212,11 @@ Full-solution exposure is learning support, not mastery or transfer evidence.
 
 Required learner-facing badges for every released question:
 
-`CORE | BUCKET | CONCEPT | SOURCE | ANSWER_STATUS`
+`CORE | BUCKET | CONCEPT | SOURCE | ANSWER_STATUS`.
 
 Conditional badges:
 
-`DIFFICULTY | QUESTION_NUMBER | PROBLEM_FAMILY | LINKAGES | PREREQUISITES | LEARNER_ACTION | REPRESENTATION | TRANSFER_DISTANCE | MODEL_CONDITION | HINT_AVAILABILITY | EXAM_DEMAND`
+`DIFFICULTY | QUESTION_NUMBER | PROBLEM_FAMILY | LINKAGES | PREREQUISITES | LEARNER_ACTION | REPRESENTATION | TRANSFER_DISTANCE | MODEL_CONDITION | HINT_AVAILABILITY | EXAM_DEMAND`.
 
 Source identity must always be visible. Internal knowledge %, confidence, digests, override state, similarity scores and calibration metadata remain internal by default.
 
@@ -215,36 +227,49 @@ Source identity must always be visible. Internal knowledge %, confidence, digest
 Pre-release:
 
 1. `G-DOMAIN` — source/semantic grounding valid;
-2. `G-CUSTODY-COVERAGE` — CCU coverage, question custody, answer/source and duplication receipts close;
-3. `G-PURPOSE` — learner action belongs in the Core;
-4. `G-DIFFERENTIATION` — no accidental neighboring-Core duplication;
-5. `G-TTU` — technical interaction complete;
-6. `G-DIFFICULTY` — intrinsic difficulty/task demand evidenced;
-7. `G-FIT` — Core2 support justified by knowledge evidence or explicit owner override;
-8. `G-PUBLICATION` — rendered product legible, integrated and collision-free.
+2. `G-TECHNICAL-ENGINEERING` — applicable technical readiness gate closes where implemented;
+3. `G-CUSTODY-COVERAGE` — CCU coverage, question custody, answer/source and duplication receipts close;
+4. `G-PURPOSE` — learner action belongs in the Core;
+5. `G-DIFFERENTIATION` — no accidental neighboring-Core duplication;
+6. `G-TTU` — technical interaction complete;
+7. `G-DIFFICULTY` — intrinsic difficulty/task demand evidenced;
+8. `G-FIT` — Core2 support justified by knowledge evidence or explicit owner override;
+9. `G-PUBLICATION` — rendered product legible, integrated and collision-free.
 
 Post-use:
 
-9. `G-CALIBRATION` — observed behavior updates/challenges predicted fit; it never creates semantic/source authority retroactively.
+10. `G-CALIBRATION` — observed evidence updates/challenges future policy confidence/versioning; it never creates semantic/source authority retroactively.
 
 ---
 
-## Normative V8 files
+## Normative V9 files
 
-- `SELF_HELP_ARCHITECTURE_V8.md`
+- `SELF_HELP_ARCHITECTURE_V9.md`
 - `contracts/content-custody-coverage-unit.schema.json`
-- `policy/content-custody-coverage-unit.v1.json`
+- `contracts/calibration-audit-state.schema.json`
+- `policy/content-custody-coverage-unit.v2.json`
+- `policy/calibration-audit-layer.v1.json`
 - `policy/question-badge-metadata.v1.json`
 - `policy/core-governance-cdau.v2.json`
 - `policy/study-differentiation-unit.v2.json`
 - `policy/learner-adaptation-unit.v2.json`
 - `policy/technical-teaching-unit.v3.json`
-- `engine/validate_ccu.py`
-- `topics/m2d-sba23-ccu.v1.json`
-- `topics/m2d-sba23-v8-realization-plan.json`
-- `tests/test_blueprint_ccu_v8.py`
+- `calibration/physics-calibration-state.v1.json`
+- `engine/validate_ccu_v2.py`
+- `engine/validate_calibration_audit.py`
+- `tests/test_blueprint_calibration_v9.py`
 
-V2–V7 remain historical transition documents. **V8 is canonical for learner-product custody, differentiation, adaptation and technical realization.**
+V2–V8 remain historical transition documents. **V9 is canonical for learner-product custody, differentiation, adaptation, technical realization and calibration maturity.**
+
+---
+
+## Artifact-generation rule
+
+Learner artifacts must be regenerated from governed Blueprint state. The intended path is:
+
+`source/domain → technical gate → CCU → CDAU → SDU/LAU → TTU → Publication IR → renderer → preflight`.
+
+When an output defect is found, repair the first upstream logic/data object that permitted it, then regenerate. Direct artifact patching must not substitute for fixing product-generation logic.
 
 ---
 
