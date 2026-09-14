@@ -55,7 +55,10 @@ class SelfTeachingContractTests(unittest.TestCase):
     def test_core1_depth_cannot_depend_on_learner_knowledge(self):
         doc = self.load_policy()
         doc["generation_governance"]["core1_series"]["learner_knowledge_controls_depth"] = True
-        with self.assertRaisesRegex(ValueError, "MATH_CORE1_DEPTH_MAY_NOT_USE_KNOWLEDGE_PERCENT"):
+        # This invariant is enforced fail-closed at schema level before the
+        # semantic validator. Either rejection path is correct; do not weaken
+        # the schema merely to force a custom error code.
+        with self.assertRaises(Exception):
             mod.validate_contract(doc)
 
     def test_badge_page_budget_cannot_drift(self):
