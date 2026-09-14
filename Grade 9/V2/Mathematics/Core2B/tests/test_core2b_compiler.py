@@ -16,11 +16,24 @@ class Core2BCompilerTests(unittest.TestCase):
     def load(self, family: str):
         return json.loads((ROOT / "golden" / family / "input.json").read_text(encoding="utf-8"))
 
-    def test_equidistance_compiles_static(self):
+    def test_equidistance_compiles_static_open_ended(self):
         out = mod.compile_plan(self.load("equidistant-point-on-axis"))
         self.assertEqual(out["delivery_mode"], "STATIC")
+        self.assertEqual(out["pedagogy_mode"], "OPEN_ENDED")
+        self.assertEqual(out["learner_role"], "SELECT_TRANSFER_DISCRIMINATE_SYNTHESIZE")
         self.assertEqual(out["compile_ceiling"], "M5_METHOD_DISCRIMINATION")
         self.assertTrue(out["quality_audit"]["all_items_core2a_legal"])
+        self.assertTrue(out["quality_audit"]["attempt_precedes_explanation"])
+
+    def test_every_item_gets_transfer_help_frame(self):
+        out = mod.compile_plan(self.load("linear-system-modelling"))
+        required = set(mod.HELP_SEQUENCE)
+        for item in out["items"]:
+            frame = item["self_guided_frame"]
+            self.assertTrue(frame["attempt_first"])
+            self.assertEqual(set(frame["help_sequence"]), required)
+            self.assertTrue(frame["transfer_focus"].strip())
+            self.assertTrue(frame["concept_level_not_solution_dump"])
 
     def test_linear_system_compiles_same_engine(self):
         out = mod.compile_plan(self.load("linear-system-modelling"))
@@ -31,6 +44,12 @@ class Core2BCompilerTests(unittest.TestCase):
         doc = self.load("equidistant-point-on-axis")
         doc["attempts"] = []
         with self.assertRaisesRegex(ValueError, "CORE2B_LIVE_RUNTIME_FIELD_FORBIDDEN"):
+            mod.compile_plan(doc)
+
+    def test_open_question_is_required(self):
+        doc = self.load("equidistant-point-on-axis")
+        doc["items"][0]["stem"] = ""
+        with self.assertRaisesRegex(ValueError, "CORE2B_OPEN_QUESTION_MISSING"):
             mod.compile_plan(doc)
 
     def test_item_must_be_core2a_legal(self):
