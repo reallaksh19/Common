@@ -28,7 +28,33 @@ ccbom_asset_id
 
 An unresolved source or CCBOM reference blocks compilation.
 
-For a HARD Core1A bucket, the authority must additionally contain multiple representation types, multiple misconception repairs, at least two reconstructable TTU references, guided and independent practice, and explicit verification objects.
+For a HARD Core1A bucket, the authority must additionally contain multiple representation types, multiple misconception repairs, at least two reconstructable TTU references, **guided → faded → independent** practice, and explicit verification objects.
+
+## Question provenance and practice diversity
+
+Every learner-facing practice question requires:
+
+```text
+question_id
+source_class
+learner_source_display
+answer_object_id
+```
+
+A generated question must say that it is generated. A source-adapted question must reveal the source and retain the source locator/question number in the learner display.
+
+Practice lineage is also explicit:
+
+```text
+same worked reaction reconstructed again
+    = FADING ANCHOR
+    ≠ independent practice
+
+different source-backed reaction / structural sibling
+    = independent practice candidate
+```
+
+Core1A must contain at least one independent practice item whose reaction signature is different from the worked anchor. The current Redox exemplar uses the governed `Zn + Cu²⁺ → Zn²⁺ + Cu` reaction for teaching and fading, then a source-disclosed NCERT Class XI Chemistry Exemplar Unit 8 Q13 reaction `Zn + 2HCl → ZnCl₂ + H₂` for independent reconstruction without expanding the taught conceptual scope.
 
 ## Learner-surface firewall
 
