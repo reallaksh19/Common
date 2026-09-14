@@ -1,4 +1,4 @@
-# Core relay architecture review — active custody
+# Physics V3B — current custody
 
 CHAIN_STATE_VERSION: 3
 HANDOVER_PROTOCOL_VERSION: 2
@@ -10,69 +10,51 @@ AGENT_INSTANCE_ID: codex:5cb7bf9c-1854-41c7-afb0-21b707438cb7
 COMMON_PROTOCOL: engineering-pr-delivery-v2
 COMMON_PROTOCOL_BASIS: fed57820909f4984a97d67437340df952b73a5ab
 COMMON_PROTOCOL_STATUS: CURRENT
-AUTHORITY_DOMAIN: New V3B architecture and executable production kits; V2 and source PRs read-only
+AUTHORITY_DOMAIN: Physics-first V3B six-Core architecture and gate proof; V2/source PRs read-only
 ENGINEERING_STATE: IN_PROGRESS
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: NOT_REQUIRED
 WRITE_AUTHORITY: WRITE_ALLOWED
-AUTO_STATE: RUNNING
+AUTO_STATE: PAUSED
 MERGE_AUTHORITY: OWNER_ONLY
 MERGE_AUTHORIZED: FALSE
 ROADMAP_MUTATION_AUTHORITY: NONE
-MISSION: Review and develop the owner-directed Core1/Core2/Core1A/Core2A subtopic relay architecture; accumulate all details in one draft PR.
-ACTIVE_ENDPOINT: EP-0004
-ACTIVE_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0004.md
+MISSION: Demonstrate Physics engineering gates and self-study quality before other-subject adaptation.
+ACTIVE_ENDPOINT: EP-0005
+ACTIVE_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0005.md
 PR: 364
 BRANCH: draft/core-relay-architecture-review-20260913
-HEAD: 70eafeb42e5e37a9850784f803bd63c403aa1ae2
-REPORT_BASIS_HEAD: 70eafeb42e5e37a9850784f803bd63c403aa1ae2
-STATE: IN_PROGRESS
+HEAD: b2c9a89284549fecff35cf8a6fdd086d966e7023
+REPORT_BASIS_HEAD: b2c9a89284549fecff35cf8a6fdd086d966e7023
+STATE: PHYSICS_PROOF_AVAILABLE_REVIEW_PENDING
 ACTIVE_CUSTODIAN: Originating Codex architecture-review agent
-CUSTODY_EPOCH: 4
-COORDINATION_STATE: SAFE_FOR_ISOLATED_ADVISORY_DOCUMENTS
-DEPENDENCIES: Read-only architecture evidence from PRs 350, 351, 362; no Git stacking dependency.
+CUSTODY_EPOCH: 5
+COORDINATION_STATE: PHYSICS_V3B_ONLY
+DEPENDENCIES: Read-only PR350 f2f22f0cea1c31ebf09da10241db8be0fde39789; no Git stacking dependency
 MATERIAL_HISTORY_ROOT_BASE: 805094cc3d208e5a8342c41c2d9d54243d35ebc3
-MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0003.md
-ROADMAPS: Owner conversation and supplied architecture/checklist; historical product roadmaps remain unchanged.
-ROADMAP_REVIEW_STATUS: COMPLETE_FOR_ADVISORY_SCOPE
-ROADMAP_ALIGNMENT: PROPOSAL_ONLY
-QUESTION_SET_STATUS: NOT_APPLICABLE
-QUESTION_PACK_ACTION: NOT_APPLICABLE
+MATERIAL_LEG_PREWORK_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0004.md
+QUALIFICATION_SCOPE_ID: QSCOPE-CORE-RELAY-PHYSICS-ENGINEERING
+QUESTION_SET_ID: CORE-RELAY-PHYSICS-ENGINEERING-QSET-0004
+QUESTION_SET_STATUS: AUTHORED_FOR_INDEPENDENT_ADMISSION
+QUESTION_PACK_ACTION: REUSED
 TAKEOVER_QUALIFICATION_READY: FALSE
+HANDOVER_CONTENT_READY: TRUE
+HANDOVER_VALIDATION_STATUS: NOT_RUN
 CHAIN_HANDOVER_READY: FALSE
 HANDOVER_READY: FALSE
 
-## Current authority and limits
+## Current user contract
 
-The owner explicitly authorized: “start now, create draft PR, keep stacking all the details.”
-This is a new originating documentation/research assignment, not takeover of any referenced PR or modification of production/source/oracle authority. No qualification PASS is claimed. The exact three progression-command labels have not been inferred from the owner's differently worded instruction; this bounded work proceeds under the explicit current task authorization.
+Core1 basic notes/Core2 frozen questions remain unchanged. Core1A/1B are detailed subtopic study modes governed by intrinsic badges; Core2A/2B are question modes requiring knowledge or explicit owner waiver and purpose. All questions retain identity, reveal source and have answers. Gates, omission/reuse checks, packet sufficiency, agent/profile/artifact reuse and 1–3-subtopic relay are mandatory architecture concerns. User explicitly authorized AUTO Physics-first proof. V2 and source PRs remain unchanged; no merge.
 
-## Current truth and coordination
+## Current evidence and limitations
 
-Default branch main was observed at 805094cc3d208e5a8342c41c2d9d54243d35ebc3. All six canonical main-branch ACTIVE records and the live open-PR listing were inspected. Existing chains concern engineering-governance tasks, not this exclusive work item. Subject follow-on PRs 359–361 exist; they are coordination context only. New paths are Grade 9/V2/Architecture/CoreRelay/ and this chain. No existing roadmap, pipeline, skill, workflow, or other chain is to be changed.
+Read Grade 9/V3B/Physics/Engineering/OWNER_BOARD.md, VALIDATION.md and EP-0005. 57 exact-module tests pass; 37 remote material files match authored bytes. Actual Physics manuscripts and diagrams are present. Browser/PDF visual inspection, independent subject review, real learner calibration, missing attachment reconciliation and Python state-machine integration remain pending. No complete textbook, learner release or measured agent reliability is claimed.
 
-## Task and acceptance custody
+## Cumulative custody
 
-1. Owner's clarified meanings of all four Cores govern.
-2. Core1A: detailed assimilation with pictures, real-life examples, simplified concepts/equations.
-3. Core2A: owner-selected experience from simplest questions to competitive readiness; readiness percentage is only an input.
-4. Packets, agent/profile/artifact reuse, fresh validation boundaries and the one-to-three-subtopic relay are central.
-5. Research principles and examine representative architecture paths in all three PRs.
-6. Deliver concern audit, packet map, lifecycle and Governor rules, subject examples, failure scenarios and evidence limitations.
-7. Accumulate bounded commits in one draft PR; no merge authorization.
-
-## Validation truth
-
-Prework is a custody record only. Research, source traces and proposed contracts remain IN_PROGRESS; product runtime, cold-agent evaluation and learner studies are NOT_RUN. No release or implementation completeness claim.
+Original task/checklist/architecture and prior review remain in Grade 9/V3B/Architecture/CoreRelay. Later six-Core requirements supersede historical four-Core assumptions. LEG-003 preserves only its committed foundation; LEG-004 records this proof. The root and six main ACTIVE records were inspected; no conflicting work-item custody. Owner roadmap intent is preserved; external roadmap mutation authority is NONE. Independent qualification is required before any future takeover; no self-admission PASS.
 
 ## Exact next action
 
-PR #364 is open. Original inputs and owner basis are committed at 84c9871d7388e89aa1163efeb7ea8ccdb1904473. Next: research evidence, source inspection at pinned PR heads, and draft the concern audit, architecture, packet and agent-lifecycle contracts. This endpoint is the prework basis for the second material leg.
-
-## Current scope expansion — 2026-09-14
-
-EP-0003 controls the owner-authorized V3B phase. Adopt updated production kits/blueprints into Grade 9/V3B with shared contracts and subject folders, core logic and tests. Preserve V2. PR364 stays draft; no merge until approval. Earlier advisory-only statements describe the previous leg. The originating agent continues; no takeover qualification or human release PASS is claimed.
-
-## Current controlling boundary — EP-0004
-
-Physics first, six-Core owner requirements and engineering gates govern this phase. Read EP-0004 before any historical four-Core instruction. Latest parent Physics head f2f22f0cea1c31ebf09da10241db8be0fde39789. New product files remain V3B; V2, other subjects and original inputs unchanged. Explicit AUTO authorization applies inside this scope. No merge authorization. Attachment reconciliation, actual PDF/browser inspection and independent human/learner evaluation remain unresolved.
+Review Physics specimens and resolve feedback/visual and subject-review gaps. Continue Physics production integration when those prerequisites are available; defer Mathematics/Chemistry until Physics quality is established. Keep PR364 draft and do not merge without approval.
