@@ -8,13 +8,10 @@
     "ttu_family",
     "ttu_id",
     "product_mode",
-    "learning_atom_id",
-    "canonical_truth_refs",
-    "representation_elements",
-    "semantic_bindings",
-    "reasoning_state_graph",
-    "misconceptions",
-    "verification",
+    "identity",
+    "canonical_expert_state",
+    "learner_transformation",
+    "reconstruction_options",
     "reconstructable_ttu_refs",
     "self_help_closure_ref",
     "realization_contract",
@@ -25,23 +22,64 @@
     "ttu_family": {"const": "CONCEPT_TTU"},
     "ttu_id": {"type": "string", "minLength": 1},
     "product_mode": {"enum": ["CORE1A", "CORE1B"]},
-    "learning_atom_id": {"type": "string", "minLength": 1},
-    "canonical_truth_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-    "representation_elements": {"type": "array", "minItems": 1},
-    "semantic_bindings": {"type": "array", "minItems": 1},
-    "reasoning_state_graph": {"type": "array", "minItems": 2},
-    "misconceptions": {"type": "array"},
-    "verification": {"type": "object"},
+    "identity": {
+      "type": "object",
+      "required": ["concept_id", "capability_ids", "learning_atom_ids", "inferential_jump_ids"],
+      "properties": {
+        "concept_id": {"type": "string", "minLength": 1},
+        "capability_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "learning_atom_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "inferential_jump_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "canonical_expert_state": {
+      "type": "object",
+      "required": [
+        "concept_statement",
+        "model",
+        "prerequisites",
+        "conditions",
+        "representations",
+        "equations",
+        "representation_equation_bindings",
+        "reasoning_chain",
+        "misconception_contrasts",
+        "verification"
+      ]
+    },
+    "learner_transformation": {
+      "type": "object",
+      "required": ["before_model", "target_model", "conceptual_change"]
+    },
+    "reconstruction_options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": ["PREDICT", "COMPLETE", "GENERATE", "SELECT", "DISCRIMINATE", "DIAGNOSE", "DERIVE", "CONNECT", "VERIFY", "TRANSFER"]
+      }
+    },
     "reconstructable_ttu_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
     "self_help_closure_ref": {"type": "string", "minLength": 1},
     "realization_contract": {
       "type": "object",
-      "required": ["identity", "exposure_mode", "learner_actions"]
+      "required": ["identity", "exposure_mode", "learner_actions"],
+      "properties": {
+        "identity": {"enum": ["DECLARATIVE_CONCEPT_REFERENCE", "OPEN_CONCEPT_RECONSTRUCTION_TUTOR"]},
+        "exposure_mode": {"enum": ["MODEL_THEN_RECONSTRUCT", "RECONSTRUCT_BEFORE_CANONICAL"]},
+        "learner_actions": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string"}}
+      }
     },
     "tutor_dialogue_ref": {"type": "string"},
     "differentiation_fingerprint": {
       "type": "object",
-      "required": ["example", "representation", "sequence", "solution", "learner_action"]
+      "required": ["example", "representation", "sequence", "solution", "learner_action"],
+      "properties": {
+        "example": {"type": "string"},
+        "representation": {"type": "string"},
+        "sequence": {"type": "string"},
+        "solution": {"type": "string"},
+        "learner_action": {"type": "string"}
+      }
     }
   },
   "additionalProperties": true
