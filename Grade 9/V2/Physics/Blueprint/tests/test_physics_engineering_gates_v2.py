@@ -66,10 +66,11 @@ g["concepts"] = [c for c in g["concepts"] if c["concept_id"] != "CON-NLM-NORMAL-
 must_fail(bad, "E_GATE_SCHEMA")
 
 # Mutation 6: static-friction inequality must survive.
+# The FBD is explicitly bound to that relation, so removing the relation first breaks the stronger representation binding invariant.
 bad = copy.deepcopy(REG)
 g = gate(bad, "PHY-NLM-FRICTION")
 g["relations"] = [r for r in g["relations"] if r["relation_id"] != "EQ-NLM-STATIC-INEQUALITY"]
-must_fail(bad, "E_GATE_INVARIANT_MISSING")
+must_fail(bad, "E_GATE_REP_BINDING")
 
 # Mutation 7: second law must depend on an FBD and component competence.
 bad = copy.deepcopy(REG)
