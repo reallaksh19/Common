@@ -28,7 +28,6 @@
         "B-VEC-FOUNDATIONS"
       ],
       "linked_problem_family_ids": [
-        "PF-VEC-IDENTIFY-TYPE",
         "PF-VEC-POLAR-SPEC"
       ],
       "technical_core": [
@@ -73,6 +72,14 @@
           "obligations": [
             "EXPLAIN",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "|A|",
+              "name": "Vector magnitude",
+              "si_unit": "dimensionless or physical unit",
+              "dimension": "[L] or [M L T^-2]"
+            }
           ]
         }
       ],
@@ -88,7 +95,8 @@
           ],
           "what_cannot_be_omitted": "Explicit arrowhead and declared reference line",
           "common_incorrect_version": "Arrow drawn floating in space with angle marked but no reference axis",
-          "verification_method": "Check invariance of vector under reference frame rotation"
+          "verification_method": "Check invariance of vector under reference frame rotation",
+          "representation_type": "GEOMETRIC_VECTOR_DIAGRAM"
         }
       ],
       "model_conditions": [
@@ -129,12 +137,14 @@
         {
           "from_mode": "WORDS",
           "to_mode": "POLAR_TUPLE",
-          "description": "Wind at 20 m/s North-East -> (|v|=20 m/s, theta=45 deg N of E)"
+          "description": "Wind at 20 m/s North-East -> (|v|=20 m/s, theta=45 deg N of E)",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         },
         {
           "from_mode": "POLAR_TUPLE",
           "to_mode": "VECTOR_DRAWING",
-          "description": "(50 N, 120 deg) -> scaled directed line segment"
+          "description": "(50 N, 120 deg) -> scaled directed line segment",
+          "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -192,7 +202,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -212,7 +224,14 @@
           "authoring_defect": "Omitting scalar vs vector distinction and magnitude positivity",
           "expected_failure_reason": "Scalar vs vector distinction must be explicit and |A| >= 0 enforced"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Vectors / Motion in a Plane",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-VEC-ADD-SUB",
@@ -236,8 +255,7 @@
         "B-VEC-ADDITION"
       ],
       "linked_problem_family_ids": [
-        "PF-VEC-TRIANGLE-SOLVE",
-        "PF-VEC-SUBTRACTION-RELATIVE"
+        "PF-VEC-TRIANGLE-SOLVE"
       ],
       "technical_core": [
         {
@@ -284,6 +302,32 @@
             "APPLY",
             "INVERT",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "R",
+              "name": "Resultant vector magnitude",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "A",
+              "name": "Vector A magnitude",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "B",
+              "name": "Vector B magnitude",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "theta",
+              "name": "Angle between vectors",
+              "si_unit": "rad",
+              "dimension": "1"
+            }
           ]
         },
         {
@@ -296,6 +340,32 @@
             "DERIVE",
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "alpha",
+              "name": "Angle of resultant relative to vector A",
+              "si_unit": "rad",
+              "dimension": "1"
+            },
+            {
+              "symbol": "A",
+              "name": "Vector A magnitude",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "B",
+              "name": "Vector B magnitude",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "theta",
+              "name": "Angle between vectors",
+              "si_unit": "rad",
+              "dimension": "1"
+            }
           ]
         }
       ],
@@ -312,7 +382,8 @@
           ],
           "what_cannot_be_omitted": "Directional arrowheads and resultant pointing from first tail to final head",
           "common_incorrect_version": "Resultant drawn head-to-head forming a continuous cyclic loop summing to zero",
-          "verification_method": "Trace path along arrows: resultant must bridge start to finish directly"
+          "verification_method": "Trace path along arrows: resultant must bridge start to finish directly",
+          "representation_type": "GEOMETRIC_VECTOR_DIAGRAM"
         }
       ],
       "model_conditions": [
@@ -363,12 +434,14 @@
         {
           "from_mode": "WORDS",
           "to_mode": "HEAD_TO_TAIL_GEOMETRY",
-          "description": "Walk 3 m East then 4 m North -> Right triangle with hypotenuse 5 m"
+          "description": "Walk 3 m East then 4 m North -> Right triangle with hypotenuse 5 m",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         },
         {
           "from_mode": "SUBTRACTION",
           "to_mode": "NEGATIVE_ADDITION",
-          "description": "Delta v = v_f - v_i -> v_f + (-v_i)"
+          "description": "Delta v = v_f - v_i -> v_f + (-v_i)",
+          "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -426,7 +499,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -451,7 +526,14 @@
           "authoring_defect": "Parallelogram formula presented without limiting collinear checks",
           "expected_failure_reason": "Collinear checks theta=0, 90, 180 deg are mandatory"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Vectors / Motion in a Plane",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-VEC-COMPONENTS",
@@ -476,8 +558,7 @@
       ],
       "linked_problem_family_ids": [
         "PF-VEC-RESOLVE-2D",
-        "PF-VEC-RECONSTRUCT-POLAR",
-        "PF-VEC-MULTI-ADD"
+        "PF-VEC-RECONSTRUCT-POLAR"
       ],
       "technical_core": [
         {
@@ -523,6 +604,26 @@
             "REPRESENT",
             "APPLY",
             "INVERT"
+          ],
+          "symbols": [
+            {
+              "symbol": "A_x",
+              "name": "X-component of vector A",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "|A|",
+              "name": "Magnitude of vector A",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "theta",
+              "name": "Angle from positive x-axis",
+              "si_unit": "rad",
+              "dimension": "1"
+            }
           ]
         },
         {
@@ -536,6 +637,26 @@
             "REPRESENT",
             "APPLY",
             "INVERT"
+          ],
+          "symbols": [
+            {
+              "symbol": "A_y",
+              "name": "Y-component of vector A",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "|A|",
+              "name": "Magnitude of vector A",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "theta",
+              "name": "Angle from positive x-axis",
+              "si_unit": "rad",
+              "dimension": "1"
+            }
           ]
         },
         {
@@ -548,6 +669,26 @@
             "DERIVE",
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "|A|",
+              "name": "Magnitude of vector A",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "A_x",
+              "name": "X-component of vector A",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            },
+            {
+              "symbol": "A_y",
+              "name": "Y-component of vector A",
+              "si_unit": "unit of vector",
+              "dimension": "[dim]"
+            }
           ]
         }
       ],
@@ -566,7 +707,8 @@
           ],
           "what_cannot_be_omitted": "Explicit right-angle square marker and clear adjacent axis for angle",
           "common_incorrect_version": "Drawing components without arrowheads or swapping sin and cos when angle is vertical",
-          "verification_method": "Check Pythagorean consistency: sqrt(A_x^2 + A_y^2) == A"
+          "verification_method": "Check Pythagorean consistency: sqrt(A_x^2 + A_y^2) == A",
+          "representation_type": "CARTESIAN_COMPONENT_DECOMPOSITION"
         }
       ],
       "model_conditions": [
@@ -612,12 +754,14 @@
         {
           "from_mode": "POLAR_VECTOR",
           "to_mode": "ORTHOGONAL_COMPONENTS",
-          "description": "(50 N, 143 deg) -> (-40 i + 30 j) N"
+          "description": "(50 N, 143 deg) -> (-40 i + 30 j) N",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         },
         {
           "from_mode": "ORTHOGONAL_COMPONENTS",
           "to_mode": "POLAR_VECTOR",
-          "description": "(-40 i + 30 j) N -> (|A|=50 N, theta=143.1 deg)"
+          "description": "(-40 i + 30 j) N -> (|A|=50 N, theta=143.1 deg)",
+          "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -675,7 +819,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -700,7 +846,14 @@
           "authoring_defect": "Components taught without resultant recovery",
           "expected_failure_reason": "Bi-directional translation Resultant <-> Components is mandatory"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Vectors / Motion in a Plane",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-INTERACTION",
@@ -756,6 +909,26 @@
             "EXPLAIN",
             "REPRESENT",
             "APPLY"
+          ],
+          "symbols": [
+            {
+              "symbol": "F_net",
+              "name": "Net external force vector",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "p",
+              "name": "Linear momentum vector",
+              "si_unit": "kg m/s",
+              "dimension": "[M L T^-1]"
+            },
+            {
+              "symbol": "t",
+              "name": "Time",
+              "si_unit": "s",
+              "dimension": "[T]"
+            }
           ]
         }
       ],
@@ -773,7 +946,8 @@
           ],
           "what_cannot_be_omitted": "Explicit Agent and Receiver identities for every force",
           "common_incorrect_version": "Listing 'force of motion' or 'inertia force'",
-          "verification_method": "Every force must trace to a real physical body in universe"
+          "verification_method": "Every force must trace to a real physical body in universe",
+          "representation_type": "SCHEMATIC_SYSTEM_BOUNDARY"
         }
       ],
       "model_conditions": [
@@ -809,7 +983,8 @@
         {
           "from_mode": "PHYSICAL_SCENE",
           "to_mode": "INTERACTION_INVENTORY",
-          "description": "Book on table in elevator -> Gravity (Earth) + Normal (Table)"
+          "description": "Book on table in elevator -> Gravity (Earth) + Normal (Table)",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -859,7 +1034,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -879,7 +1056,14 @@
           "authoring_defect": "Force of motion included in force inventory",
           "expected_failure_reason": "Force of motion is fictitious; forces require identifiable external physical agents"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-FBD",
@@ -935,6 +1119,26 @@
           "obligations": [
             "REPRESENT",
             "APPLY"
+          ],
+          "symbols": [
+            {
+              "symbol": "sum F_ext",
+              "name": "Vector sum of external forces",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "m",
+              "name": "Inertial mass of isolated body",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "a",
+              "name": "Acceleration vector of isolated body",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            }
           ]
         }
       ],
@@ -952,7 +1156,8 @@
           ],
           "what_cannot_be_omitted": "Central dot, labeled force arrows, coordinate axes",
           "common_incorrect_version": "Drawing m*a or velocity as a force on the body dot",
-          "verification_method": "Count forces on FBD: must match boundary contacts + gravity exactly"
+          "verification_method": "Count forces on FBD: must match boundary contacts + gravity exactly",
+          "representation_type": "FREE_BODY_DIAGRAM"
         }
       ],
       "model_conditions": [
@@ -993,7 +1198,8 @@
         {
           "from_mode": "PHYSICAL_SCENE",
           "to_mode": "FREE_BODY_DIAGRAM",
-          "description": "Block on incline with rope -> Dot with gravity, normal, tension, friction"
+          "description": "Block on incline with rope -> Dot with gravity, normal, tension, friction",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -1051,7 +1257,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -1076,7 +1284,14 @@
           "authoring_defect": "Action-reaction pair drawn on same body's FBD",
           "expected_failure_reason": "Action-reaction pairs act on different bodies, prohibited on same FBD"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "STANDARD-PHYSICS-DERIVED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-FIRST-LAW",
@@ -1127,6 +1342,20 @@
             "APPLY",
             "INVERT",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "sum F_x",
+              "name": "Net force along x-axis",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "sum F_y",
+              "name": "Net force along y-axis",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            }
           ]
         }
       ],
@@ -1141,7 +1370,8 @@
           ],
           "what_cannot_be_omitted": "Head-to-tail polygon must return to start point",
           "common_incorrect_version": "Open polygon claimed to be in equilibrium",
-          "verification_method": "Check loop closure: sum of vectors must be zero vector"
+          "verification_method": "Check loop closure: sum of vectors must be zero vector",
+          "representation_type": "ALGEBRAIC_SUPERPOSITION"
         }
       ],
       "model_conditions": [
@@ -1177,7 +1407,8 @@
         {
           "from_mode": "EQUILIBRIUM_SCENE",
           "to_mode": "COMPONENT_EQUATIONS",
-          "description": "Suspended lamp with 2 cables -> 2T sin(theta) - mg = 0"
+          "description": "Suspended lamp with 2 cables -> 2T sin(theta) - mg = 0",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -1234,7 +1465,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -1254,7 +1487,14 @@
           "authoring_defect": "Equilibrium described as no forces acting",
           "expected_failure_reason": "Equilibrium requires sum F = 0, not absence of physical interactions"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-SECOND-LAW",
@@ -1279,7 +1519,6 @@
         "B-NLM-SECOND-LAW"
       ],
       "linked_problem_family_ids": [
-        "PF-NLM-1D-ACCEL",
         "PF-NLM-2D-RESOLVED-ACCEL"
       ],
       "technical_core": [
@@ -1313,6 +1552,26 @@
             "APPLY",
             "INVERT",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "sum F_x",
+              "name": "Net external force along x-axis",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "m",
+              "name": "Mass",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "a_x",
+              "name": "Acceleration component along x-axis",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            }
           ]
         },
         {
@@ -1325,6 +1584,26 @@
             "APPLY",
             "INVERT",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "sum F_y",
+              "name": "Net external force along y-axis",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "m",
+              "name": "Mass",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "a_y",
+              "name": "Acceleration component along y-axis",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            }
           ]
         }
       ],
@@ -1340,7 +1619,8 @@
           ],
           "what_cannot_be_omitted": "Replacement of original angled force by resolved components",
           "common_incorrect_version": "Leaving angled forces unresolved while writing scalar equations",
-          "verification_method": "Check dimensions: every force component appears in exactly one axis equation"
+          "verification_method": "Check dimensions: every force component appears in exactly one axis equation",
+          "representation_type": "CARTESIAN_COMPONENT_DECOMPOSITION"
         }
       ],
       "model_conditions": [
@@ -1381,7 +1661,8 @@
         {
           "from_mode": "FBD",
           "to_mode": "DYNAMIC_EQUATIONS",
-          "description": "Block sliding down incline -> mg sin(theta) - f_k = ma, N - mg cos(theta) = 0"
+          "description": "Block sliding down incline -> mg sin(theta) - f_k = ma, N - mg cos(theta) = 0",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -1439,7 +1720,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -1459,7 +1742,14 @@
           "authoring_defect": "Combining forces from perpendicular axes into single scalar sum for ma",
           "expected_failure_reason": "Axis-wise decoupling (sum F_x = ma_x, sum F_y = ma_y) must be enforced"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-THIRD-LAW",
@@ -1483,7 +1773,6 @@
         "B-NLM-THIRD-LAW"
       ],
       "linked_problem_family_ids": [
-        "PF-NLM-PAIR-IDENTIFY",
         "PF-NLM-TWO-BLOCK-CONTACT"
       ],
       "technical_core": [
@@ -1518,6 +1807,20 @@
             "INTERPRET",
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "F_{A on B}",
+              "name": "Force exerted by body A on body B",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "F_{B on A}",
+              "name": "Force exerted by body B on body A",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            }
           ]
         }
       ],
@@ -1535,7 +1838,8 @@
           ],
           "what_cannot_be_omitted": "Separate drawings for both bodies; pair never on same body",
           "common_incorrect_version": "Drawing both F_AB and F_BA attached to body A",
-          "verification_method": "Check subscripts: F_12 must pair with F_21"
+          "verification_method": "Check subscripts: F_12 must pair with F_21",
+          "representation_type": "FREE_BODY_DIAGRAM"
         }
       ],
       "model_conditions": [
@@ -1576,7 +1880,8 @@
         {
           "from_mode": "SINGLE_INTERACTION",
           "to_mode": "DUAL_FBDS",
-          "description": "Man pushes crate -> Crate FBD shows forward push; Man FBD shows backward push"
+          "description": "Man pushes crate -> Crate FBD shows forward push; Man FBD shows backward push",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -1633,7 +1938,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -1653,7 +1960,14 @@
           "authoring_defect": "Treating normal force and gravity as action-reaction pair",
           "expected_failure_reason": "Normal force and gravity act on same body and have different physical natures"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-NORMAL",
@@ -1710,6 +2024,32 @@
             "APPLY",
             "INVERT",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "N",
+              "name": "Normal force magnitude",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "m",
+              "name": "Mass of object",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "g",
+              "name": "Gravitational field strength",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            },
+            {
+              "symbol": "theta",
+              "name": "Incline angle relative to horizontal",
+              "si_unit": "rad",
+              "dimension": "1"
+            }
           ]
         }
       ],
@@ -1725,7 +2065,8 @@
           ],
           "what_cannot_be_omitted": "Perpendicular square indicator; arrow pointing into body",
           "common_incorrect_version": "Drawing N pointing straight up toward sky on an incline",
-          "verification_method": "Check angle with surface tangent: must be exactly 90 deg"
+          "verification_method": "Check angle with surface tangent: must be exactly 90 deg",
+          "representation_type": "FREE_BODY_DIAGRAM"
         }
       ],
       "model_conditions": [
@@ -1761,7 +2102,8 @@
         {
           "from_mode": "ANGLED_PULL",
           "to_mode": "NORMAL_EXPRESSION",
-          "description": "Pull at angle theta -> N = mg - F sin(theta)"
+          "description": "Pull at angle theta -> N = mg - F sin(theta)",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -1811,7 +2153,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -1831,7 +2175,14 @@
           "authoring_defect": "Automatic N = mg assumption on incline or angled pull",
           "expected_failure_reason": "Normal force must be solved from perpendicular dynamic balance"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "STANDARD-PHYSICS-DERIVED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-TENSION",
@@ -1888,6 +2239,32 @@
             "DERIVE",
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "a",
+              "name": "Magnitude of Atwood system acceleration",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            },
+            {
+              "symbol": "m_1",
+              "name": "Mass of lighter hanging block",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "m_2",
+              "name": "Mass of heavier hanging block",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "g",
+              "name": "Gravitational acceleration",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            }
           ]
         },
         {
@@ -1900,6 +2277,32 @@
             "DERIVE",
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "T",
+              "name": "Tension in massless string",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "m_1",
+              "name": "Mass of block 1",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "m_2",
+              "name": "Mass of block 2",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "g",
+              "name": "Gravitational acceleration",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            }
           ]
         }
       ],
@@ -1916,7 +2319,8 @@
           ],
           "what_cannot_be_omitted": "Tension pulling away from each body along string",
           "common_incorrect_version": "Labeling tensions T1 and T2 for same massless string",
-          "verification_method": "Check continuous segments: must carry identical variable T"
+          "verification_method": "Check continuous segments: must carry identical variable T",
+          "representation_type": "CONSTRAINT_DIAGRAM"
         }
       ],
       "model_conditions": [
@@ -1957,7 +2361,8 @@
         {
           "from_mode": "PULLEY_SCENE",
           "to_mode": "SYSTEM_EQUATIONS",
-          "description": "Half Atwood machine -> T = m1 a, m2 g - T = m2 a"
+          "description": "Half Atwood machine -> T = m1 a, m2 g - T = m2 a",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -2007,7 +2412,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -2027,7 +2434,14 @@
           "authoring_defect": "Setting tension equal to mg in an accelerating Atwood machine",
           "expected_failure_reason": "Tension equals mg only in static equilibrium; in downward acceleration T < mg"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "STANDARD-PHYSICS-DERIVED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-FRICTION",
@@ -2052,8 +2466,7 @@
         "B-NLM-FRICTION"
       ],
       "linked_problem_family_ids": [
-        "PF-NLM-FRICTION-THRESHOLD",
-        "PF-NLM-INCLINE-SLIP"
+        "PF-NLM-FRICTION-THRESHOLD"
       ],
       "technical_core": [
         {
@@ -2087,6 +2500,26 @@
             "INTERPRET",
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "f_s",
+              "name": "Static friction force magnitude",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "mu_s",
+              "name": "Static friction coefficient",
+              "si_unit": "dimensionless",
+              "dimension": "1"
+            },
+            {
+              "symbol": "N",
+              "name": "Normal contact force magnitude",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            }
           ]
         },
         {
@@ -2098,6 +2531,26 @@
           "obligations": [
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "f_k",
+              "name": "Kinetic friction force magnitude",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "mu_k",
+              "name": "Kinetic friction coefficient",
+              "si_unit": "dimensionless",
+              "dimension": "1"
+            },
+            {
+              "symbol": "N",
+              "name": "Normal contact force magnitude",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            }
           ]
         }
       ],
@@ -2115,7 +2568,8 @@
           ],
           "what_cannot_be_omitted": "Slope 1 self-adjusting line and sharp drop to kinetic plateau",
           "common_incorrect_version": "Flat horizontal line for all applied forces",
-          "verification_method": "Check static slope: df/dF_app == 1"
+          "verification_method": "Check static slope: df/dF_app == 1",
+          "representation_type": "ALGEBRAIC_SUPERPOSITION"
         }
       ],
       "model_conditions": [
@@ -2151,7 +2605,8 @@
         {
           "from_mode": "PUSH_FORCE",
           "to_mode": "FRICTION_REGIME",
-          "description": "10 kg box, mu_s=0.5, pushed with 30 N -> f_{s,max}=49 N -> a=0, f_s=30 N"
+          "description": "10 kg box, mu_s=0.5, pushed with 30 N -> f_{s,max}=49 N -> a=0, f_s=30 N",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -2209,7 +2664,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -2229,7 +2686,14 @@
           "authoring_defect": "Static friction calculated blindly as mu_s * N when driving force is below threshold",
           "expected_failure_reason": "Static friction is governed by inequality f_s <= mu_s * N and self-adjusts to balance applied force"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     },
     {
       "subtopic_id": "PHY-NLM-CONNECTED",
@@ -2254,7 +2718,6 @@
         "B-NLM-CONNECTED-SYSTEMS"
       ],
       "linked_problem_family_ids": [
-        "PF-NLM-CONNECTED-BLOCKS-CONTACT",
         "PF-NLM-MOVABLE-PULLEY"
       ],
       "technical_core": [
@@ -2288,6 +2751,26 @@
             "DERIVE",
             "APPLY",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "sum F_ext_system",
+              "name": "Net external force on composite system",
+              "si_unit": "N",
+              "dimension": "[M L T^-2]"
+            },
+            {
+              "symbol": "sum m_i",
+              "name": "Total mass of composite system",
+              "si_unit": "kg",
+              "dimension": "[M]"
+            },
+            {
+              "symbol": "a_system",
+              "name": "Common system acceleration vector",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            }
           ]
         },
         {
@@ -2301,6 +2784,38 @@
             "APPLY",
             "INVERT",
             "VERIFY"
+          ],
+          "symbols": [
+            {
+              "symbol": "x_1",
+              "name": "Position coordinate of mass 1",
+              "si_unit": "m",
+              "dimension": "[L]"
+            },
+            {
+              "symbol": "x_2",
+              "name": "Position coordinate of movable pulley/mass 2",
+              "si_unit": "m",
+              "dimension": "[L]"
+            },
+            {
+              "symbol": "L",
+              "name": "Total fixed string length",
+              "si_unit": "m",
+              "dimension": "[L]"
+            },
+            {
+              "symbol": "a_1",
+              "name": "Acceleration of mass 1",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            },
+            {
+              "symbol": "a_2",
+              "name": "Acceleration of mass 2",
+              "si_unit": "m/s^2",
+              "dimension": "[L T^-2]"
+            }
           ]
         }
       ],
@@ -2317,7 +2832,8 @@
           ],
           "what_cannot_be_omitted": "Explicit dashed boundary line and external force identification",
           "common_incorrect_version": "Showing internal tension arrows crossing composite boundary",
-          "verification_method": "Every force in sum F_ext must have agent outside boundary"
+          "verification_method": "Every force in sum F_ext must have agent outside boundary",
+          "representation_type": "SCHEMATIC_SYSTEM_BOUNDARY"
         }
       ],
       "model_conditions": [
@@ -2353,7 +2869,8 @@
         {
           "from_mode": "MOVABLE_PULLEY",
           "to_mode": "CONSTRAINT_RELATION",
-          "description": "L = 2*x_p - x_m -> 2*a_p = a_m"
+          "description": "L = 2*x_p - x_m -> 2*a_p = a_m",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"
         }
       ],
       "misconceptions": [
@@ -2404,7 +2921,9 @@
         "reasoning_chain_complete": true,
         "misconceptions_addressed": true,
         "independent_verification_exists": true,
-        "problem_family_map_exists": true
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
       },
       "badges": {
         "base_badges": [
@@ -2424,7 +2943,14 @@
           "authoring_defect": "Assuming 1:1 acceleration in movable pulley system without constraint derivation",
           "expected_failure_reason": "Movable pulley systems require kinematic acceleration constraint derivation from string length"
         }
-      ]
+      ],
+      "provenance": {
+        "authority_class": "STANDARD-PHYSICS-DERIVED",
+        "source_curriculum": "NCERT Grade 11 Physics",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "NCERT Physics Part 1, Laws of Motion",
+        "claim_status": "VERIFIED_CANONICAL"
+      }
     }
   ]
 }

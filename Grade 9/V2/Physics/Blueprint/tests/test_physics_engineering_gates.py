@@ -13,7 +13,8 @@ from validate_engineering_gates import (  # noqa: E402
     validate,
     run_falsification_battery,
     validate_gate_schema,
-    validate_gate_subtopic,
+    validate_subtopic_invariants,
+    EngineeringGateValidationError,
 )
 
 REGISTRY_PATH = ROOT / "policy" / "physics-technical-engineering-gates.v1.json"
@@ -39,7 +40,7 @@ def test_16_point_technical_structure_present():
     reg = load_json(REGISTRY_PATH)
     required_keys = [
         "subtopic_id", "learner_title", "chapter", "authority_tier",
-        "maturity", "technical_readiness", "canonical_concept_ids",
+        "maturity", "technical_readiness", "provenance", "canonical_concept_ids",
         "prerequisite_ids", "linked_buckets", "linked_problem_family_ids",
         "technical_core", "mandatory_equations", "representations",
         "model_conditions", "reasoning_sequence", "required_transformations",

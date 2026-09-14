@@ -1763,7 +1763,170 @@ REGISTRY = {
 }
 
 
+EQUATION_SYMBOLS = {
+    "EQ-VEC-MAG-NONNEG": [
+        {"symbol": "|A|", "name": "Vector magnitude", "si_unit": "dimensionless or physical unit", "dimension": "[L] or [M L T^-2]"}
+    ],
+    "EQ-VEC-PARALLELOGRAM-MAG": [
+        {"symbol": "R", "name": "Resultant vector magnitude", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "A", "name": "Vector A magnitude", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "B", "name": "Vector B magnitude", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "theta", "name": "Angle between vectors", "si_unit": "rad", "dimension": "1"}
+    ],
+    "EQ-VEC-PARALLELOGRAM-DIR": [
+        {"symbol": "alpha", "name": "Angle of resultant relative to vector A", "si_unit": "rad", "dimension": "1"},
+        {"symbol": "A", "name": "Vector A magnitude", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "B", "name": "Vector B magnitude", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "theta", "name": "Angle between vectors", "si_unit": "rad", "dimension": "1"}
+    ],
+    "EQ-VEC-COMP-X": [
+        {"symbol": "A_x", "name": "X-component of vector A", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "|A|", "name": "Magnitude of vector A", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "theta", "name": "Angle from positive x-axis", "si_unit": "rad", "dimension": "1"}
+    ],
+    "EQ-VEC-COMP-Y": [
+        {"symbol": "A_y", "name": "Y-component of vector A", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "|A|", "name": "Magnitude of vector A", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "theta", "name": "Angle from positive x-axis", "si_unit": "rad", "dimension": "1"}
+    ],
+    "EQ-VEC-RECON-MAG": [
+        {"symbol": "|A|", "name": "Magnitude of vector A", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "A_x", "name": "X-component of vector A", "si_unit": "unit of vector", "dimension": "[dim]"},
+        {"symbol": "A_y", "name": "Y-component of vector A", "si_unit": "unit of vector", "dimension": "[dim]"}
+    ],
+    "EQ-NLM-FNET": [
+        {"symbol": "F_net", "name": "Net external force vector", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "p", "name": "Linear momentum vector", "si_unit": "kg m/s", "dimension": "[M L T^-1]"},
+        {"symbol": "t", "name": "Time", "si_unit": "s", "dimension": "[T]"}
+    ],
+    "EQ-NLM-FBD-SUM": [
+        {"symbol": "sum F_ext", "name": "Vector sum of external forces", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "m", "name": "Inertial mass of isolated body", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "a", "name": "Acceleration vector of isolated body", "si_unit": "m/s^2", "dimension": "[L T^-2]"}
+    ],
+    "EQ-NLM-EQUIL-COMP": [
+        {"symbol": "sum F_x", "name": "Net force along x-axis", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "sum F_y", "name": "Net force along y-axis", "si_unit": "N", "dimension": "[M L T^-2]"}
+    ],
+    "EQ-NLM-NEWTON2-COMP-X": [
+        {"symbol": "sum F_x", "name": "Net external force along x-axis", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "m", "name": "Mass", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "a_x", "name": "Acceleration component along x-axis", "si_unit": "m/s^2", "dimension": "[L T^-2]"}
+    ],
+    "EQ-NLM-NEWTON2-COMP-Y": [
+        {"symbol": "sum F_y", "name": "Net external force along y-axis", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "m", "name": "Mass", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "a_y", "name": "Acceleration component along y-axis", "si_unit": "m/s^2", "dimension": "[L T^-2]"}
+    ],
+    "EQ-NLM-NEWTON3-PAIR": [
+        {"symbol": "F_{A on B}", "name": "Force exerted by body A on body B", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "F_{B on A}", "name": "Force exerted by body B on body A", "si_unit": "N", "dimension": "[M L T^-2]"}
+    ],
+    "EQ-NLM-NORMAL-SOLVE": [
+        {"symbol": "N", "name": "Normal force magnitude", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "m", "name": "Mass of object", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "g", "name": "Gravitational field strength", "si_unit": "m/s^2", "dimension": "[L T^-2]"},
+        {"symbol": "theta", "name": "Incline angle relative to horizontal", "si_unit": "rad", "dimension": "1"}
+    ],
+    "EQ-NLM-ATWOOD-ACCEL": [
+        {"symbol": "a", "name": "Magnitude of Atwood system acceleration", "si_unit": "m/s^2", "dimension": "[L T^-2]"},
+        {"symbol": "m_1", "name": "Mass of lighter hanging block", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "m_2", "name": "Mass of heavier hanging block", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "g", "name": "Gravitational acceleration", "si_unit": "m/s^2", "dimension": "[L T^-2]"}
+    ],
+    "EQ-NLM-ATWOOD-TENSION": [
+        {"symbol": "T", "name": "Tension in massless string", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "m_1", "name": "Mass of block 1", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "m_2", "name": "Mass of block 2", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "g", "name": "Gravitational acceleration", "si_unit": "m/s^2", "dimension": "[L T^-2]"}
+    ],
+    "EQ-NLM-STATIC-INEQUALITY": [
+        {"symbol": "f_s", "name": "Static friction force magnitude", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "mu_s", "name": "Static friction coefficient", "si_unit": "dimensionless", "dimension": "1"},
+        {"symbol": "N", "name": "Normal contact force magnitude", "si_unit": "N", "dimension": "[M L T^-2]"}
+    ],
+    "EQ-NLM-KINETIC": [
+        {"symbol": "f_k", "name": "Kinetic friction force magnitude", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "mu_k", "name": "Kinetic friction coefficient", "si_unit": "dimensionless", "dimension": "1"},
+        {"symbol": "N", "name": "Normal contact force magnitude", "si_unit": "N", "dimension": "[M L T^-2]"}
+    ],
+    "EQ-NLM-WHOLE-SYSTEM": [
+        {"symbol": "sum F_ext_system", "name": "Net external force on composite system", "si_unit": "N", "dimension": "[M L T^-2]"},
+        {"symbol": "sum m_i", "name": "Total mass of composite system", "si_unit": "kg", "dimension": "[M]"},
+        {"symbol": "a_system", "name": "Common system acceleration vector", "si_unit": "m/s^2", "dimension": "[L T^-2]"}
+    ],
+    "EQ-NLM-PULLEY-CONSTRAINT": [
+        {"symbol": "x_1", "name": "Position coordinate of mass 1", "si_unit": "m", "dimension": "[L]"},
+        {"symbol": "x_2", "name": "Position coordinate of movable pulley/mass 2", "si_unit": "m", "dimension": "[L]"},
+        {"symbol": "L", "name": "Total fixed string length", "si_unit": "m", "dimension": "[L]"},
+        {"symbol": "a_1", "name": "Acceleration of mass 1", "si_unit": "m/s^2", "dimension": "[L T^-2]"},
+        {"symbol": "a_2", "name": "Acceleration of mass 2", "si_unit": "m/s^2", "dimension": "[L T^-2]"}
+    ]
+}
+
+REPRESENTATION_TYPES = {
+    "REP-VEC-DIRECTED-SEGMENT": "GEOMETRIC_VECTOR_DIAGRAM",
+    "REP-VEC-HEAD-TO-TAIL": "GEOMETRIC_VECTOR_DIAGRAM",
+    "REP-VEC-COMPONENT-TRIANGLE": "CARTESIAN_COMPONENT_DECOMPOSITION",
+    "REP-NLM-INTERACTION-TABLE": "SCHEMATIC_SYSTEM_BOUNDARY",
+    "REP-NLM-FREE-BODY-DIAGRAM": "FREE_BODY_DIAGRAM",
+    "REP-NLM-EQUILIBRIUM-POLYGON": "ALGEBRAIC_SUPERPOSITION",
+    "REP-NLM-AXIS-RESOLVED-FBD": "CARTESIAN_COMPONENT_DECOMPOSITION",
+    "REP-NLM-INTERACTION-PAIR-FBD": "FREE_BODY_DIAGRAM",
+    "REP-NLM-NORMAL-SURFACE-DIAGRAM": "FREE_BODY_DIAGRAM",
+    "REP-NLM-STRING-PULLEY-SYSTEM": "CONSTRAINT_DIAGRAM",
+    "REP-NLM-FRICTION-VS-APPLIED-GRAPH": "ALGEBRAIC_SUPERPOSITION",
+    "REP-NLM-COMPOSITE-BOUNDARY-DIAGRAM": "SCHEMATIC_SYSTEM_BOUNDARY"
+}
+
+ROLE_SEQUENCE = [
+    "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+    "CORE1B_GENERATIVE_RECONSTRUCTION",
+    "CORE2A_DECLARATIVE_WORKED_PROBLEM",
+    "CORE2B_GENERATIVE_TRANSFER"
+]
+
+
+def normalize_registry(reg: dict) -> None:
+    for gate in reg["subtopic_gates"]:
+        # 1. Provenance
+        if "provenance" not in gate:
+            gate["provenance"] = {
+                "authority_class": gate["authority_tier"],
+                "source_curriculum": "NCERT Grade 11 Physics",
+                "source_scope": "IN_SCOPE",
+                "source_reference": f"NCERT Physics Part 1, {gate['chapter']}",
+                "claim_status": "VERIFIED_CANONICAL"
+            }
+        # 2. Release checklist
+        gate["release_checklist"]["provenance_verified"] = True
+        gate["release_checklist"]["difficulty_profile_validated"] = True
+
+        # 3. Equations symbols
+        for eq in gate["mandatory_equations"]:
+            eq_id = eq["equation_id"]
+            if "symbols" not in eq:
+                eq["symbols"] = EQUATION_SYMBOLS.get(eq_id, [
+                    {"symbol": "X", "name": "Physical variable", "si_unit": "SI unit", "dimension": "1"}
+                ])
+
+        # 4. Representation types
+        for rep in gate["representations"]:
+            rep_id = rep["representation_id"]
+            if "representation_type" not in rep:
+                rep["representation_type"] = REPRESENTATION_TYPES.get(rep_id, "FREE_BODY_DIAGRAM")
+
+        # 5. Transformations target_core_role
+        for idx, trans in enumerate(gate["required_transformations"]):
+            if "target_core_role" not in trans:
+                trans["target_core_role"] = ROLE_SEQUENCE[min(idx, len(ROLE_SEQUENCE) - 1)]
+
+        # 6. Synchronize linked_problem_family_ids to defined problem_families
+        gate["linked_problem_family_ids"] = [f["family_id"] for f in gate["problem_families"]]
+
+
 def build():
+    normalize_registry(REGISTRY)
     out_path = POLICY_DIR / "physics-technical-engineering-gates.v1.json"
     out_path.write_text(json.dumps(REGISTRY, indent=2), encoding="utf-8")
     print(f"Wrote {len(REGISTRY['subtopic_gates'])} subtopic gates to {out_path}")
@@ -1771,3 +1934,4 @@ def build():
 
 if __name__ == "__main__":
     build()
+

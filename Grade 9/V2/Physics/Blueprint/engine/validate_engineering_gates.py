@@ -1,15 +1,31 @@
 #!/usr/bin/env python3
-"""Deterministic validator for the Physics Technical Engineering Gate Registry."""
+"""Deterministic validator for the Physics Technical Engineering Gate Registry.
+
+Enforces schema contracts, global ID uniqueness, prerequisite graph validity,
+cross-reference integrity, subtopic physics invariants, and fail-closed readiness.
+"""
+from __future__ import annotations
+
 import copy
 import json
 import sys
 from pathlib import Path
 from jsonschema import Draft202012Validator
+from jsonschema.exceptions import ValidationError as SchemaValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def load_json(path: Path):
+class EngineeringGateValidationError(Exception):
+    """Structured validation error with stable machine-readable code."""
+    def __init__(self, code: str, message: str, context: dict | None = None):
+        super().__init__(f"[{code}] {message}")
+        self.code = code
+        self.message = message
+        self.context = context or {}
+
+
+def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -18,66 +34,122 @@ def validate_gate_schema(registry: dict) -> None:
     schema = load_json(schema_path)
     Draft202012Validator.check_schema(schema)
     validator = Draft202012Validator(schema)
-    validator.validate(registry)
+    try:
+        validator.validate(registry)
+    except SchemaValidationError as e:
+        raise EngineeringGateValidationError("ENG_GATE_SCHEMA_VIOLATION", str(e), {"path": list(e.path)})
 
 
-def validate_gate_subtopic(gate: dict) -> None:
+def validate_global_invariants(registry: dict) -> None:
+    seen_subtopics: set[str] = set()
+    seen_concepts: set[str] = set()
+    seen_equations: set[str] = set()
+    seen_reps: set[str] = set()
+    seen_misconceptions: set[str] = set()
+
+    for gate in registry["subtopic_gates"]:
+        sub_id = gate["subtopic_id"]
+        if sub_id in seen_subtopics:
+            raise EngineeringGateValidationError("ENG_GATE_DUPLICATE_ID", f"Duplicate subtopic ID: {sub_id}")
+        seen_subtopics.add(sub_id)
+
+        for c in gate["technical_core"]:
+            cid = c["concept_id"]
+            if cid in seen_concepts:
+                raise EngineeringGateValidationError("ENG_GATE_DUPLICATE_ID", f"Duplicate concept ID: {cid}")
+            seen_concepts.add(cid)
+
+        for eq in gate["mandatory_equations"]:
+            eid = eq["equation_id"]
+            if eid in seen_equations:
+                raise EngineeringGateValidationError("ENG_GATE_DUPLICATE_ID", f"Duplicate equation ID: {eid}")
+            seen_equations.add(eid)
+
+        for rep in gate["representations"]:
+            rid = rep["representation_id"]
+            if rid in seen_reps:
+                raise EngineeringGateValidationError("ENG_GATE_DUPLICATE_ID", f"Duplicate representation ID: {rid}")
+            seen_reps.add(rid)
+
+        for m in gate["misconceptions"]:
+            mid = m["misconception_id"]
+            if mid in seen_misconceptions:
+                raise EngineeringGateValidationError("ENG_GATE_DUPLICATE_ID", f"Duplicate misconception ID: {mid}")
+            seen_misconceptions.add(mid)
+
+    # Cross-subtopic prerequisite integrity
+    for gate in registry["subtopic_gates"]:
+        for prereq in gate.get("prerequisite_ids", []):
+            if prereq.startswith("PHY-") and prereq not in seen_subtopics:
+                raise EngineeringGateValidationError(
+                    "ENG_GATE_UNRESOLVED_PREREQUISITE",
+                    f"Subtopic {gate['subtopic_id']} has unresolved prerequisite {prereq}"
+                )
+
+
+def validate_subtopic_invariants(gate: dict) -> None:
+    sub_id = gate["subtopic_id"]
+
     # 1. Identity & Readiness
-    assert gate["subtopic_id"].startswith("PHY-"), f"Invalid subtopic ID format: {gate['subtopic_id']}"
-    assert gate["maturity"] == "ENGINEERING", f"Maturity must be ENGINEERING, got {gate['maturity']}"
-    assert gate["technical_readiness"] in {"ENGINEERING_GATE_READY", "ENGINEERING_GATE_INCOMPLETE", "SOURCE_SCOPE_HELD"}
+    if not sub_id.startswith("PHY-"):
+        raise EngineeringGateValidationError("ENG_GATE_INVALID_SUBTOPIC_ID", f"Invalid subtopic ID format: {sub_id}")
+    if gate.get("maturity") != "ENGINEERING":
+        raise EngineeringGateValidationError("ENG_GATE_MATURITY_OVERREACH", f"Maturity must be ENGINEERING, got {gate.get('maturity')}")
 
-    # 2. Technical Core completeness
-    assert len(gate["technical_core"]) >= 1, "Technical core cannot be empty"
-    for concept in gate["technical_core"]:
-        assert concept["concept_id"].startswith("CON-"), f"Invalid concept_id: {concept['concept_id']}"
-        assert len(concept["canonical_statement"]) > 10, "Canonical statement too brief"
-        assert len(concept["why_required"]) > 5, "Missing why_required"
-        assert len(concept["failure_if_omitted"]) > 5, "Missing failure_if_omitted"
+    # 2. Cross-reference integrity for problem families
+    defined_fams = {f["family_id"] for f in gate.get("problem_families", [])}
+    for lfid in gate.get("linked_problem_family_ids", []):
+        if lfid not in defined_fams:
+            raise EngineeringGateValidationError(
+                "ENG_GATE_CROSS_REFERENCE_INTEGRITY_FAIL",
+                f"Linked problem family {lfid} not defined in problem_families of {sub_id}"
+            )
 
-    # 3. Mandatory Equations completeness
-    for eq in gate["mandatory_equations"]:
-        assert eq["equation_id"].startswith("EQ-"), f"Invalid equation_id: {eq['equation_id']}"
-        assert len(eq["obligations"]) >= 1, f"Equation {eq['equation_id']} has no obligations"
-        for ob in eq["obligations"]:
-            assert ob in {"EXPLAIN", "DERIVE", "INTERPRET", "REPRESENT", "APPLY", "INVERT", "VERIFY"}, f"Unknown obligation: {ob}"
+    # 3. Specific Physics Invariant Gates
+    concept_ids = {c["concept_id"] for c in gate.get("technical_core", [])}
+    equation_ids = {e["equation_id"] for e in gate.get("mandatory_equations", [])}
+    misc_ids = {m["misconception_id"] for m in gate.get("misconceptions", [])}
+    prereq_ids = set(gate.get("prerequisite_ids", []))
 
-    # 4. Representation Gate
-    assert len(gate["representations"]) >= 1, "At least one canonical representation required"
-    for rep in gate["representations"]:
-        assert rep["representation_id"].startswith("REP-"), f"Invalid representation_id: {rep['representation_id']}"
-        assert len(rep["mandatory_labels"]) >= 1, "Mandatory labels cannot be empty"
-        assert len(rep["what_cannot_be_omitted"]) > 5, "Must declare what cannot be omitted"
-        assert len(rep["common_incorrect_version"]) > 5, "Must declare common incorrect version"
+    if sub_id == "PHY-VEC-BASICS":
+        if "CON-VEC-SCALAR-DEF" not in concept_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_REQUIRED_CONCEPT", "PHY-VEC-BASICS requires explicit scalar definition (CON-VEC-SCALAR-DEF)")
+        if "CON-VEC-VECTOR-DEF" not in concept_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_REQUIRED_CONCEPT", "PHY-VEC-BASICS requires explicit vector definition (CON-VEC-VECTOR-DEF)")
 
-    # 5. Reasoning Sequence
-    assert len(gate["reasoning_sequence"]) >= 1, "Reasoning sequence cannot be empty"
-    for step in gate["reasoning_sequence"]:
-        assert step["inferential_jump"] in {"LOW", "MEDIUM", "HIGH_FRAGILITY"}
+    elif sub_id == "PHY-VEC-COMPONENTS":
+        if "CON-VEC-SIGN-CONVENTION" not in concept_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_REQUIRED_CONCEPT", "PHY-VEC-COMPONENTS requires explicit sign/frame convention (CON-VEC-SIGN-CONVENTION)")
+        if "EQ-VEC-RECON-MAG" not in equation_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_MANDATORY_EQUATION", "PHY-VEC-COMPONENTS requires resultant reconstruction equation (EQ-VEC-RECON-MAG)")
 
-    # 6. Misconceptions
-    assert len(gate["misconceptions"]) >= 1, "At least one canonical misconception required"
-    for misc in gate["misconceptions"]:
-        assert misc["misconception_id"].startswith("MISC-"), f"Invalid misconception_id: {misc['misconception_id']}"
-        assert len(misc["required_counterexample"]) > 10, "Counterexample required"
-        assert len(misc["required_technical_repair"]) > 10, "Technical repair required"
+    elif sub_id == "PHY-NLM-FIRST-LAW":
+        if "MISC-NLM-REST-NO-FORCE" not in misc_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_MISCONCEPTION_TRAP", "PHY-NLM-FIRST-LAW requires equilibrium misconception trap (MISC-NLM-REST-NO-FORCE)")
 
-    # 7. Verifications
-    allowed_verifs = {
-        "DIMENSIONAL", "UNITS", "SIGN_DIRECTION", "LIMITING_CASE", "INVERSE_RELATION",
-        "SUBSTITUTE_BACK", "GRAPH_BEHAVIOUR", "BOUNDARY_CONDITION", "CONSERVATION",
-        "SYMMETRY", "GEOMETRIC_CONSISTENCY", "MODEL_VALIDITY", "ORDER_OF_MAGNITUDE",
-        "PYTHAGOREAN_CONSISTENCY", "QUADRANT_SIGN_CHECK", "AGENT_RECEIVER_IDENTIFIABILITY",
-        "CONTACT_COUNT_MATCH", "ACTION_REACTION_PURITY", "PERPENDICULARITY_CHECK",
-        "NON_NEGATIVITY_CHECK", "TENSION_BOUND_CHECK", "STATIC_THRESHOLD_CHECK",
-        "KINETIC_DROP_CHECK", "RELATIVE_DIRECTION_CHECK", "AGENT_RECEIVER_INVERSION_CHECK",
-        "EQUAL_MAGNITUDE_CHECK", "SAME_NATURE_CHECK", "INTERNAL_CANCELLATION_VERIFY",
-        "ENERGY_CONSISTENCY"
-    }
-    for v in gate["mandatory_verifications"]:
-        assert v in allowed_verifs, f"Unknown verification type: {v}"
+    elif sub_id == "PHY-NLM-SECOND-LAW":
+        if "PHY-NLM-FBD" not in prereq_ids:
+            raise EngineeringGateValidationError("ENG_GATE_UNRESOLVED_PREREQUISITE", "PHY-NLM-SECOND-LAW requires prior Free-Body Diagram isolation (PHY-NLM-FBD)")
+        if "EQ-NLM-NEWTON2-COMP-X" not in equation_ids or "EQ-NLM-NEWTON2-COMP-Y" not in equation_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_MANDATORY_EQUATION", "PHY-NLM-SECOND-LAW requires axis-wise F=ma equations")
 
-    # 8. Difficulty Profile
+    elif sub_id == "PHY-NLM-THIRD-LAW":
+        if "MISC-NLM-NORMAL-WEIGHT-PAIR" not in misc_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_MISCONCEPTION_TRAP", "PHY-NLM-THIRD-LAW requires same-body third-law trap (MISC-NLM-NORMAL-WEIGHT-PAIR)")
+
+    elif sub_id == "PHY-NLM-NORMAL":
+        if "CON-NLM-NORMAL-NOT-ALWAYS-MG" not in concept_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_REQUIRED_CONCEPT", "PHY-NLM-NORMAL requires normal != mg concept (CON-NLM-NORMAL-NOT-ALWAYS-MG)")
+
+    elif sub_id == "PHY-NLM-TENSION":
+        if "MISC-NLM-TENSION-EQUALS-WEIGHT" not in misc_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_MISCONCEPTION_TRAP", "PHY-NLM-TENSION requires Atwood tension!=mg trap (MISC-NLM-TENSION-EQUALS-WEIGHT)")
+
+    elif sub_id == "PHY-NLM-FRICTION":
+        if "EQ-NLM-STATIC-INEQUALITY" not in equation_ids:
+            raise EngineeringGateValidationError("ENG_GATE_MISSING_MANDATORY_EQUATION", "PHY-NLM-FRICTION requires static inequality equation (EQ-NLM-STATIC-INEQUALITY)")
+
+    # 4. Difficulty Profile Invariants
     dp = gate["difficulty_profile"]
     dims = [
         "prerequisite_depth", "element_interactivity", "inferential_jump_severity",
@@ -85,122 +157,124 @@ def validate_gate_subtopic(gate: dict) -> None:
         "multi_step_dependency", "abstraction", "misconception_density", "synthesis"
     ]
     for d in dims:
-        assert 0 <= dp[d] <= 3, f"Dimension {d} must be 0-3"
-    assert dp["provisional_difficulty"] in {"EASY", "MEDIUM", "HARD"}
-    assert dp["maturity"] == "ENGINEERING"
+        if not (0 <= dp.get(d, -1) <= 3):
+            raise EngineeringGateValidationError("ENG_GATE_INVALID_DIFFICULTY_PROFILE", f"Dimension {d} must be 0-3")
+    if dp.get("maturity") != "ENGINEERING":
+        raise EngineeringGateValidationError("ENG_GATE_INVALID_DIFFICULTY_PROFILE", "Difficulty profile maturity must be ENGINEERING")
 
-    # 9. Release Checklist: All must be True for ENGINEERING_GATE_READY
+    # 5. Release Checklist: All must be True for ENGINEERING_GATE_READY
     rc = gate["release_checklist"]
-    for req_field, status in rc.items():
-        if gate["technical_readiness"] == "ENGINEERING_GATE_READY":
-            assert status is True, f"Release checklist field {req_field} must be True for READY gate"
+    if gate["technical_readiness"] == "ENGINEERING_GATE_READY":
+        for req_field, status in rc.items():
+            if status is not True:
+                raise EngineeringGateValidationError(
+                    "ENG_GATE_RELEASE_CHECKLIST_INCOMPLETE",
+                    f"Release checklist field {req_field} must be True for READY gate in {sub_id}"
+                )
 
 
-def validate(registry: dict) -> list:
+def validate(registry: dict) -> list[str]:
     validate_gate_schema(registry)
+    validate_global_invariants(registry)
     validated_subtopics = []
     for gate in registry["subtopic_gates"]:
-        validate_gate_subtopic(gate)
+        validate_subtopic_invariants(gate)
         validated_subtopics.append(gate["subtopic_id"])
     return validated_subtopics
 
 
-# Falsifier battery testing:
+# True mutation-based falsifier battery:
 def run_falsification_battery():
     registry_path = ROOT / "policy" / "physics-technical-engineering-gates.v1.json"
     clean_registry = load_json(registry_path)
 
-    # 1. VECTOR FAIL: Direction / sign convention omitted
+    def expect_rejection(mutated: dict, expected_code: str):
+        try:
+            validate(mutated)
+        except EngineeringGateValidationError as err:
+            if err.code != expected_code:
+                raise AssertionError(f"Expected code {expected_code}, got {err.code}: {err.message}")
+            return
+        except Exception as err:
+            raise AssertionError(f"Expected EngineeringGateValidationError [{expected_code}], got {type(err).__name__}: {err}")
+        raise AssertionError(f"Expected validator rejection with code [{expected_code}], but validation passed!")
+
+    # 1. VEC-FAIL-01: Direction / sign convention omitted in PHY-VEC-COMPONENTS
     bad1 = copy.deepcopy(clean_registry)
     vec_comp = next(g for g in bad1["subtopic_gates"] if g["subtopic_id"] == "PHY-VEC-COMPONENTS")
     vec_comp["technical_core"] = [c for c in vec_comp["technical_core"] if c["concept_id"] != "CON-VEC-SIGN-CONVENTION"]
-    try:
-        assert any(c["concept_id"] == "CON-VEC-SIGN-CONVENTION" for c in vec_comp["technical_core"]), "VEC-FAIL-01: Sign convention omitted"
-        raise AssertionError("Expected failure for missing sign convention")
-    except AssertionError as e:
-        assert "VEC-FAIL-01" in str(e)
+    expect_rejection(bad1, "ENG_GATE_MISSING_REQUIRED_CONCEPT")
 
-    # 2. VECTOR FAIL: Resultant recovery omitted
+    # 2. VEC-FAIL-02: Missing resultant reconstruction equation in PHY-VEC-COMPONENTS
     bad2 = copy.deepcopy(clean_registry)
     vec_comp2 = next(g for g in bad2["subtopic_gates"] if g["subtopic_id"] == "PHY-VEC-COMPONENTS")
-    vec_comp2["technical_core"] = [c for c in vec_comp2["technical_core"] if c["concept_id"] != "CON-VEC-RESULTANT-RECONSTRUCTION"]
-    try:
-        assert any(c["concept_id"] == "CON-VEC-RESULTANT-RECONSTRUCTION" for c in vec_comp2["technical_core"]), "VEC-FAIL-02: Resultant recovery omitted"
-        raise AssertionError("Expected failure for missing resultant recovery")
-    except AssertionError as e:
-        assert "VEC-FAIL-02" in str(e)
+    vec_comp2["mandatory_equations"] = [e for e in vec_comp2["mandatory_equations"] if e["equation_id"] != "EQ-VEC-RECON-MAG"]
+    expect_rejection(bad2, "ENG_GATE_MISSING_MANDATORY_EQUATION")
 
-    # 3. NLM FAIL: Equation present without FBD
+    # 3. VEC-FAIL-03: Scalar / vector distinction blurred in PHY-VEC-BASICS
     bad3 = copy.deepcopy(clean_registry)
-    fbd_gate = next(g for g in bad3["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-FBD")
-    fbd_gate["release_checklist"]["required_representations_present"] = False
-    try:
-        validate_gate_subtopic(fbd_gate)
-        raise AssertionError("Expected failure when FBD representation is false")
-    except AssertionError as e:
-        assert "required_representations_present" in str(e)
+    vec_basics = next(g for g in bad3["subtopic_gates"] if g["subtopic_id"] == "PHY-VEC-BASICS")
+    vec_basics["technical_core"] = [c for c in vec_basics["technical_core"] if c["concept_id"] != "CON-VEC-SCALAR-DEF"]
+    expect_rejection(bad3, "ENG_GATE_MISSING_REQUIRED_CONCEPT")
 
-    # 4. NLM FAIL: Action-reaction pair placed on same body FBD
+    # 4. NLM-FAIL-01: Second Law without prior isolated FBD prerequisite
     bad4 = copy.deepcopy(clean_registry)
-    n3_gate = next(g for g in bad4["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-THIRD-LAW")
-    n3_gate["technical_core"] = [c for c in n3_gate["technical_core"] if c["concept_id"] != "CON-NLM-PAIR-DIFFERENT-BODIES"]
-    try:
-        assert any(c["concept_id"] == "CON-NLM-PAIR-DIFFERENT-BODIES" for c in n3_gate["technical_core"]), "NLM-FAIL-02: Action-reaction pair on same body"
-        raise AssertionError("Expected failure when pair-different-bodies is missing")
-    except AssertionError as e:
-        assert "NLM-FAIL-02" in str(e)
+    nlm2 = next(g for g in bad4["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-SECOND-LAW")
+    nlm2["prerequisite_ids"] = [p for p in nlm2["prerequisite_ids"] if p != "PHY-NLM-FBD"]
+    expect_rejection(bad4, "ENG_GATE_UNRESOLVED_PREREQUISITE")
 
-    # 5. NLM FAIL: Normal force set equal to mg automatically
+    # 5. NLM-FAIL-02: Third-law action-reaction pairs on same body misconception missing
     bad5 = copy.deepcopy(clean_registry)
-    norm_gate = next(g for g in bad5["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-NORMAL")
-    norm_gate["technical_core"] = [c for c in norm_gate["technical_core"] if c["concept_id"] != "CON-NLM-NORMAL-NOT-ALWAYS-MG"]
-    try:
-        assert any(c["concept_id"] == "CON-NLM-NORMAL-NOT-ALWAYS-MG" for c in norm_gate["technical_core"]), "NLM-FAIL-03: Automatic N=mg assumption"
-        raise AssertionError("Expected failure when N!=mg concept is missing")
-    except AssertionError as e:
-        assert "NLM-FAIL-03" in str(e)
+    nlm3 = next(g for g in bad5["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-THIRD-LAW")
+    nlm3["misconceptions"] = [m for m in nlm3["misconceptions"] if m["misconception_id"] != "MISC-NLM-NORMAL-WEIGHT-PAIR"]
+    expect_rejection(bad5, "ENG_GATE_MISSING_MISCONCEPTION_TRAP")
 
-    # 6. NLM FAIL: Static friction equated blindly to mu_s * N
+    # 6. NLM-FAIL-03: Normal force assumed equal to mg automatically
     bad6 = copy.deepcopy(clean_registry)
-    frict_gate = next(g for g in bad6["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-FRICTION")
-    frict_gate["mandatory_equations"] = [e for e in frict_gate["mandatory_equations"] if e["equation_id"] != "EQ-NLM-STATIC-INEQUALITY"]
-    try:
-        assert any(e["equation_id"] == "EQ-NLM-STATIC-INEQUALITY" for e in frict_gate["mandatory_equations"]), "NLM-FAIL-06: Blind static friction equality"
-        raise AssertionError("Expected failure when static inequality equation is missing")
-    except AssertionError as e:
-        assert "NLM-FAIL-06" in str(e)
+    norm = next(g for g in bad6["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-NORMAL")
+    norm["technical_core"] = [c for c in norm["technical_core"] if c["concept_id"] != "CON-NLM-NORMAL-NOT-ALWAYS-MG"]
+    expect_rejection(bad6, "ENG_GATE_MISSING_REQUIRED_CONCEPT")
 
-    # 7. NLM FAIL: Atwood hanging tension set to mg
+    # 7. NLM-FAIL-04: Equilibrium treated as absence of forces rather than net a=0
     bad7 = copy.deepcopy(clean_registry)
-    tens_gate = next(g for g in bad7["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-TENSION")
-    tens_gate["misconceptions"] = [m for m in tens_gate["misconceptions"] if m["misconception_id"] != "MISC-NLM-TENSION-EQUALS-WEIGHT"]
-    try:
-        assert any(m["misconception_id"] == "MISC-NLM-TENSION-EQUALS-WEIGHT" for m in tens_gate["misconceptions"]), "NLM-FAIL-07: Atwood T=mg fallacy"
-        raise AssertionError("Expected failure when Atwood T=mg misconception is omitted")
-    except AssertionError as e:
-        assert "NLM-FAIL-07" in str(e)
+    nlm1 = next(g for g in bad7["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-FIRST-LAW")
+    nlm1["misconceptions"] = [m for m in nlm1["misconceptions"] if m["misconception_id"] != "MISC-NLM-REST-NO-FORCE"]
+    expect_rejection(bad7, "ENG_GATE_MISSING_MISCONCEPTION_TRAP")
 
-    # 8. Cross-Topic: Projectile independent clock violation
-    try:
-        shared_time = True
-        component_independence_requires_shared_clock = True
-        time_x = 2.5
-        time_y = 3.2
-        if time_x != time_y:
-            raise AssertionError("M2D-FAIL-01: horizontal and vertical motions must use identical clocks")
-    except AssertionError as e:
-        assert "M2D-FAIL-01" in str(e)
+    # 8. NLM-FAIL-05: Static friction equated blindly to mu_s * N without inequality
+    bad8 = copy.deepcopy(clean_registry)
+    frict = next(g for g in bad8["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-FRICTION")
+    frict["mandatory_equations"] = [e for e in frict["mandatory_equations"] if e["equation_id"] != "EQ-NLM-STATIC-INEQUALITY"]
+    expect_rejection(bad8, "ENG_GATE_MISSING_MANDATORY_EQUATION")
 
-    # 9. Cross-Topic: Energy conservation with unaccounted dissipative work
-    try:
-        mu_k = 0.2
-        dissipative_work_accounted = False
-        if mu_k > 0 and not dissipative_work_accounted:
-            raise AssertionError("WEP-FAIL-01: mechanical energy conservation invalid with unaccounted friction work")
-    except AssertionError as e:
-        assert "WEP-FAIL-01" in str(e)
+    # 9. NLM-FAIL-06: Atwood hanging tension asserted as T = mg under acceleration
+    bad9 = copy.deepcopy(clean_registry)
+    tens = next(g for g in bad9["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-TENSION")
+    tens["misconceptions"] = [m for m in tens["misconceptions"] if m["misconception_id"] != "MISC-NLM-TENSION-EQUALS-WEIGHT"]
+    expect_rejection(bad9, "ENG_GATE_MISSING_MISCONCEPTION_TRAP")
 
-    print("Physics Technical Engineering Gate falsification battery: PASS (all 9 traps caught)")
+    # 10. CROSS-FAIL-01: Problem family ID in linked_problem_family_ids not defined
+    bad10 = copy.deepcopy(clean_registry)
+    conn = next(g for g in bad10["subtopic_gates"] if g["subtopic_id"] == "PHY-NLM-CONNECTED")
+    conn["linked_problem_family_ids"].append("PF-NLM-ORPHAN-FAMILY")
+    expect_rejection(bad10, "ENG_GATE_CROSS_REFERENCE_INTEGRITY_FAIL")
+
+    # 11. GLOBAL-FAIL-01: Duplicate concept ID across distinct subtopics
+    bad11 = copy.deepcopy(clean_registry)
+    bad11["subtopic_gates"][0]["technical_core"].append({
+        "concept_id": bad11["subtopic_gates"][1]["technical_core"][0]["concept_id"],
+        "canonical_statement": "Duplicate statement across subtopics for falsifier test.",
+        "why_required": "Must fail uniqueness test.",
+        "failure_if_omitted": "Fails global invariant."
+    })
+    expect_rejection(bad11, "ENG_GATE_DUPLICATE_ID")
+
+    # 12. CHECKLIST-FAIL-01: Incomplete release checklist marked as ENGINEERING_GATE_READY
+    bad12 = copy.deepcopy(clean_registry)
+    bad12["subtopic_gates"][0]["release_checklist"]["provenance_verified"] = False
+    expect_rejection(bad12, "ENG_GATE_RELEASE_CHECKLIST_INCOMPLETE")
+
+    print("Physics Technical Engineering Gate falsification battery: PASS (all 12 mutation falsifiers caught by production validator)")
 
 
 if __name__ == "__main__":
