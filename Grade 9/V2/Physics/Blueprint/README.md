@@ -49,6 +49,30 @@ render custody / preflight
 
 ---
 
+# Physics Technical Engineering Gate Registry (Upstream of Authored TTUs)
+
+Normative specification: `PHYSICS_TECHNICAL_ENGINEERING_GATES.md`.  
+Schema contract: `contracts/physics-technical-engineering-gate.schema.json`.  
+Canonical policy & registry: `policy/physics-technical-engineering-gates.v1.json`.  
+Deterministic validator: `engine/validate_engineering_gates.py`.  
+Test suite & falsifiers: `tests/test_physics_engineering_gates.py`.
+
+At the **CANONICAL DOMAIN REGISTRY** boundary (upstream of CCU, CDAU, and authored TTUs), technical readiness requires fail-closed engineering validation. A physics subtopic cannot pass technical readiness without satisfying its 16-point technical gate structure:
+- **Technical Core**: Canonical statements, explicit reasons required, exact failure modes if omitted.
+- **Mandatory Equations**: Every symbol defined with units, conditions of validity, and obligations (`EXPLAIN`, `DERIVE`, `INTERPRET`, `REPRESENT`, `APPLY`, `INVERT`, `VERIFY`).
+- **Canonical Representations**: Geometry, axes, vectors, FBDs; declared mandatory labels, what cannot be omitted, and common incorrect versions.
+- **Model Applicability & Boundary Conditions**: Validity envelope, breakdown points, asymptotic behaviors, limiting cases.
+- **Reasoning Sequence**: Ordered derivation/concept flow with zero inferential jumps or hand-waving.
+- **Transformations & Learning Actions**: Explicit mapping across Core1A, Core1B, Core2A, and Core2B.
+- **Misconceptions & Traps**: Canonical errors, why intuitive, discrimination tasks, and refutation demonstrations.
+- **Mandatory Verifications**: Dimensional analysis, limiting cases, directional/sign checks, conservation constraints, order-of-magnitude estimates.
+- **Canonical Problem Families**: Identification, standard solution template, variation axes, common traps.
+- **Difficulty Profile**: 10-dimension engineering scale (0–3), `maturity: ENGINEERING` (strictly zero psychometric overclaim).
+- **Release Checklist**: 100% complete across all 10 criteria before marked `ENGINEERING_GATE_READY`.
+- **Falsification Battery**: Traps prompt-mandated omission defects (vector sign/direction omission, resultant reconstruction omission, scalar blur, NLM without FBD, third-law pair conflation on one body, automatic $N=mg$ assumption, blind static friction thresholding, Atwood tension fallacy, cross-topic clock desynchronization, dissipative energy conservation omission).
+
+---
+
 # Canonical learner-product architecture — V8
 
 Normative architecture: `SELF_HELP_ARCHITECTURE_V8.md`.

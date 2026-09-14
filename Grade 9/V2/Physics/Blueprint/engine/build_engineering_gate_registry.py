@@ -1,0 +1,1773 @@
+#!/usr/bin/env python3
+"""Build and export the canonical Physics Technical Engineering Gate Registry."""
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+POLICY_DIR = ROOT / "policy"
+
+REGISTRY = {
+    "schema_version": "1.0.0",
+    "registry_id": "PHY-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
+    "authority": "CANONICAL_DOMAIN_REGISTRY",
+    "governing_standard": "FAIL_CLOSED_ENGINEERING_GATES",
+    "maturity": "ENGINEERING",
+    "subtopic_gates": [
+        {
+            "subtopic_id": "PHY-VEC-BASICS",
+            "learner_title": "Scalars, Vectors, Magnitude, and Direction",
+            "chapter": "Vectors / Motion in a Plane",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-VEC-SCALAR-DEF",
+                "CON-VEC-VECTOR-DEF",
+                "CON-VEC-NOTATION",
+                "CON-VEC-MAGNITUDE",
+                "CON-VEC-DIRECTION-ANGLE",
+                "CON-VEC-EQUALITY"
+            ],
+            "prerequisite_ids": ["MATH-GEO-EUCLIDEAN-2D", "MATH-TRIG-RIGHT-TRIANGLE"],
+            "linked_buckets": ["B-VEC-FOUNDATIONS"],
+            "linked_problem_family_ids": ["PF-VEC-IDENTIFY-TYPE", "PF-VEC-POLAR-SPEC"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-VEC-SCALAR-DEF",
+                    "canonical_statement": "A scalar is a physical quantity completely specified by a single real number representing magnitude with appropriate units, obeying ordinary algebra.",
+                    "why_required": "Prevents treating scalar quantities as directed entities.",
+                    "failure_if_omitted": "Learner adds mass, speed, or time vectorially."
+                },
+                {
+                    "concept_id": "CON-VEC-VECTOR-DEF",
+                    "canonical_statement": "A vector is a physical quantity possessing both a non-negative magnitude and an intrinsic spatial direction that transforms according to vector algebra.",
+                    "why_required": "Establishes that having direction alone is insufficient (e.g. electric current is scalar).",
+                    "failure_if_omitted": "Misconception that current or pressure is a vector."
+                },
+                {
+                    "concept_id": "CON-VEC-NOTATION",
+                    "canonical_statement": "Vectors are denoted by an arrow over a symbol or boldface; magnitude is denoted by |A| or A, with |A| >= 0.",
+                    "why_required": "Distinguishes vector state from scalar magnitude.",
+                    "failure_if_omitted": "Equations conflating vector with magnitude."
+                },
+                {
+                    "concept_id": "CON-VEC-DIRECTION-ANGLE",
+                    "canonical_statement": "Direction in a 2D plane is specified relative to a declared reference axis (standard: CCW from +x axis).",
+                    "why_required": "Magnitude without directional reference is incomplete.",
+                    "failure_if_omitted": "Ambiguous vectors floating without coordinate orientation."
+                },
+                {
+                    "concept_id": "CON-VEC-EQUALITY",
+                    "canonical_statement": "Two vectors are equal iff their magnitudes and directions are identical, independent of spatial origin (free vectors).",
+                    "why_required": "Enables parallel transport for geometric addition.",
+                    "failure_if_omitted": "Inability to translate vectors geometrically."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-VEC-MAG-NONNEG",
+                    "formula": "|A| >= 0",
+                    "meaning_of_symbols": "A is vector, |A| is non-negative scalar magnitude",
+                    "reference_frame_or_sign": "Frame-independent non-negative real",
+                    "conditions_of_validity": "Universal Euclidean space",
+                    "obligations": ["EXPLAIN", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-VEC-DIRECTED-SEGMENT",
+                    "name": "Vector Arrow Diagram",
+                    "physics_encoded": "Directed line segment representing magnitude (length) and planar orientation (arrowhead)",
+                    "mandatory_labels": ["Vector symbol A", "Reference baseline axis", "Angle arc theta"],
+                    "what_cannot_be_omitted": "Explicit arrowhead and declared reference line",
+                    "common_incorrect_version": "Arrow drawn floating in space with angle marked but no reference axis",
+                    "verification_method": "Check invariance of vector under reference frame rotation"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Flat 2D Euclidean space",
+                    "why_needed": "Cartesian metric applies",
+                    "what_changes_if_violated": "Curved parallel transport requires Riemannian geometry"
+                },
+                {
+                    "condition": "Free vectors",
+                    "why_needed": "Can translate parallel without change",
+                    "what_changes_if_violated": "Bound vectors cannot be freely translated"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Identify physical quantity and discriminate scalar vs vector", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Establish reference axis and origin", "inferential_jump": "LOW"},
+                {"step": 3, "expert_action": "Extract magnitude (A >= 0) and measure angle relative to declared axis", "inferential_jump": "MEDIUM"},
+                {"step": 4, "expert_action": "Apply formal vector notation (|A| vs A)", "inferential_jump": "HIGH_FRAGILITY"}
+            ],
+            "required_transformations": [
+                {"from_mode": "WORDS", "to_mode": "POLAR_TUPLE", "description": "Wind at 20 m/s North-East -> (|v|=20 m/s, theta=45 deg N of E)"},
+                {"from_mode": "POLAR_TUPLE", "to_mode": "VECTOR_DRAWING", "description": "(50 N, 120 deg) -> scaled directed line segment"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-VEC-CURRENT",
+                    "incorrect_belief": "Any physical quantity with magnitude and direction is a vector",
+                    "why_plausible": "Current in a wire has an arrowhead indicating direction",
+                    "required_counterexample": "Current at a wire junction adds algebraically (I1+I2=I3), not vectorially",
+                    "required_technical_repair": "Vector must obey vector addition laws and transform correctly under spatial rotation"
+                },
+                {
+                    "misconception_id": "MISC-VEC-NEG-MAG",
+                    "incorrect_belief": "A negative vector has a negative magnitude",
+                    "why_plausible": "Confusing 1D signed coordinate with magnitude",
+                    "required_counterexample": "-A has magnitude |-A| = |A| >= 0; minus sign reverses direction",
+                    "required_technical_repair": "Enforce |A| >= 0 unconditionally; minus sign represents 180 deg direction flip"
+                }
+            ],
+            "mandatory_verifications": ["DIMENSIONAL", "UNITS", "SIGN_DIRECTION", "SYMMETRY"],
+            "problem_families": [
+                {
+                    "family_id": "PF-VEC-POLAR-SPEC",
+                    "name": "Polar Vector Specification",
+                    "recognition_cues": "Word problem specifying quantity, unit, and geographic or planar heading",
+                    "first_technical_move": "Draw Cartesian axes and fix positive angle baseline",
+                    "common_fatal_error": "Drawing arrow from origin without declaring reference axis",
+                    "typical_unknown": "Polar tuple (r, theta) and scaled arrow"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 1,
+                "element_interactivity": 1,
+                "inferential_jump_severity": 1,
+                "representation_translation": 2,
+                "model_discrimination": 2,
+                "sign_or_frame_sensitivity": 2,
+                "multi_step_dependency": 1,
+                "abstraction": 2,
+                "misconception_density": 2,
+                "synthesis": 1,
+                "provisional_difficulty": "EASY",
+                "difficulty_basis": "Basic definitions, scalar/vector discrimination, polar baseline translation",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-VEC-FOUNDATIONS", "CONCEPT: CON-VEC-VECTOR-DEF", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: EASY"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "VEC-FAIL-03",
+                    "authoring_defect": "Omitting scalar vs vector distinction and magnitude positivity",
+                    "expected_failure_reason": "Scalar vs vector distinction must be explicit and |A| >= 0 enforced"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-VEC-ADD-SUB",
+            "learner_title": "Vector Addition, Subtraction, and the Resultant",
+            "chapter": "Vectors / Motion in a Plane",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-VEC-RESULTANT",
+                "CON-VEC-TRIANGLE-LAW",
+                "CON-VEC-PARALLELOGRAM-LAW",
+                "CON-VEC-COMMUTATIVE",
+                "CON-VEC-SUBTRACTION-OPPOSITE",
+                "CON-VEC-NULL-VECTOR"
+            ],
+            "prerequisite_ids": ["PHY-VEC-BASICS"],
+            "linked_buckets": ["B-VEC-ADDITION"],
+            "linked_problem_family_ids": ["PF-VEC-TRIANGLE-SOLVE", "PF-VEC-SUBTRACTION-RELATIVE"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-VEC-RESULTANT",
+                    "canonical_statement": "The resultant vector R = A + B is the single vector that produces the identical physical effect as the individual vectors combined.",
+                    "why_required": "Anchors physical equivalence of combined vectors.",
+                    "failure_if_omitted": "Learner computes magnitude without understanding physical equivalence."
+                },
+                {
+                    "concept_id": "CON-VEC-TRIANGLE-LAW",
+                    "canonical_statement": "If two vectors are drawn head-to-tail, the third side from initial tail to final head is their resultant.",
+                    "why_required": "Primary operational definition of vector addition.",
+                    "failure_if_omitted": "Adding vectors tail-to-tail without parallel transport."
+                },
+                {
+                    "concept_id": "CON-VEC-PARALLELOGRAM-LAW",
+                    "canonical_statement": "If two concurrent vectors are drawn tail-to-tail, the diagonal of the completed parallelogram from the common tail is the resultant.",
+                    "why_required": "Standard construction for concurrent forces at an origin.",
+                    "failure_if_omitted": "Inability to find resultant of concurrent forces."
+                },
+                {
+                    "concept_id": "CON-VEC-SUBTRACTION-OPPOSITE",
+                    "canonical_statement": "Vector subtraction is defined as adding the negative vector: A - B = A + (-B).",
+                    "why_required": "Enforces consistency with change in velocity and relative motion.",
+                    "failure_if_omitted": "Subtracting magnitudes directly (|A - B| = A - B)."
+                },
+                {
+                    "concept_id": "CON-VEC-NULL-VECTOR",
+                    "canonical_statement": "The zero vector has zero magnitude and indeterminate direction; A + (-A) = 0.",
+                    "why_required": "Closes vector algebra under subtraction and equilibrium.",
+                    "failure_if_omitted": "Treating vector zero as a scalar without directional dimensionality."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-VEC-PARALLELOGRAM-MAG",
+                    "formula": "R = sqrt(A^2 + B^2 + 2*A*B*cos(theta))",
+                    "meaning_of_symbols": "R: resultant magnitude, A,B: vector magnitudes, theta: included angle tail-to-tail",
+                    "reference_frame_or_sign": "0 <= theta <= pi; R >= 0",
+                    "conditions_of_validity": "2D Euclidean space; identical dimensions",
+                    "obligations": ["DERIVE", "INTERPRET", "APPLY", "INVERT", "VERIFY"]
+                },
+                {
+                    "equation_id": "EQ-VEC-PARALLELOGRAM-DIR",
+                    "formula": "tan(alpha) = (B*sin(theta)) / (A + B*cos(theta))",
+                    "meaning_of_symbols": "alpha: angle of resultant R relative to vector A",
+                    "reference_frame_or_sign": "Denominator != 0",
+                    "conditions_of_validity": "A + B*cos(theta) != 0",
+                    "obligations": ["DERIVE", "APPLY", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-VEC-HEAD-TO-TAIL",
+                    "name": "Head-to-Tail Triangle",
+                    "physics_encoded": "Sequential addition of vectors",
+                    "mandatory_labels": ["Tails", "Heads", "Vector arrows A and B", "Resultant R with double arrowhead"],
+                    "what_cannot_be_omitted": "Directional arrowheads and resultant pointing from first tail to final head",
+                    "common_incorrect_version": "Resultant drawn head-to-head forming a continuous cyclic loop summing to zero",
+                    "verification_method": "Trace path along arrows: resultant must bridge start to finish directly"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Identical physical dimensions",
+                    "why_needed": "Cannot add forces to velocities",
+                    "what_changes_if_violated": "Dimensional catastrophe"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Verify dimensional compatibility of vectors", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Draw vectors tail-to-tail to identify true angle theta", "inferential_jump": "MEDIUM"},
+                {"step": 3, "expert_action": "Construct head-to-tail triangle or parallelogram", "inferential_jump": "LOW"},
+                {"step": 4, "expert_action": "Draw resultant from first tail to final head", "inferential_jump": "MEDIUM"},
+                {"step": 5, "expert_action": "Apply R = sqrt(A^2 + B^2 + 2AB cos theta)", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 6, "expert_action": "Calculate directional angle alpha relative to baseline vector", "inferential_jump": "MEDIUM"},
+                {"step": 7, "expert_action": "Check limiting collinear cases (theta = 0, 90, 180 deg)", "inferential_jump": "LOW"}
+            ],
+            "required_transformations": [
+                {"from_mode": "WORDS", "to_mode": "HEAD_TO_TAIL_GEOMETRY", "description": "Walk 3 m East then 4 m North -> Right triangle with hypotenuse 5 m"},
+                {"from_mode": "SUBTRACTION", "to_mode": "NEGATIVE_ADDITION", "description": "Delta v = v_f - v_i -> v_f + (-v_i)"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-VEC-SCALAR-SUM",
+                    "incorrect_belief": "|A + B| = |A| + |B| always",
+                    "why_plausible": "Arithmetic intuition 3 + 4 = 7",
+                    "required_counterexample": "3 N East + 4 N West = 1 N East; only equals 7 N when collinear theta = 0",
+                    "required_technical_repair": "Enforce triangle inequality: |A - B| <= R <= A + B"
+                },
+                {
+                    "misconception_id": "MISC-VEC-SUB-MAG",
+                    "incorrect_belief": "|A - B| = A - B",
+                    "why_plausible": "Naive algebraic subtraction",
+                    "required_counterexample": "If A is 5 m/s East and B is 5 m/s North, |A - B| = 5*sqrt(2) m/s != 0",
+                    "required_technical_repair": "Invert B to -B then add vectorially"
+                }
+            ],
+            "mandatory_verifications": ["LIMITING_CASE", "DIMENSIONAL", "SIGN_DIRECTION", "GEOMETRIC_CONSISTENCY"],
+            "problem_families": [
+                {
+                    "family_id": "PF-VEC-TRIANGLE-SOLVE",
+                    "name": "Two-Vector Resultant",
+                    "recognition_cues": "Two vectors with known magnitudes and included angle",
+                    "first_technical_move": "Draw vectors tail-to-tail to confirm angle theta",
+                    "common_fatal_error": "Using supplementary angle instead of interior angle",
+                    "typical_unknown": "Resultant R and direction angle alpha"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 2,
+                "inferential_jump_severity": 2,
+                "representation_translation": 3,
+                "model_discrimination": 2,
+                "sign_or_frame_sensitivity": 2,
+                "multi_step_dependency": 2,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 1,
+                "provisional_difficulty": "MEDIUM",
+                "difficulty_basis": "Trigonometric law of cosines, directional angle determination, scalar sum misconceptions",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-VEC-ADDITION", "CONCEPT: CON-VEC-TRIANGLE-LAW", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: MEDIUM"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "VEC-FAIL-04",
+                    "authoring_defect": "Cyclic loop head-to-tail drawn and stated as resultant",
+                    "expected_failure_reason": "Cyclic head-to-tail loop sums to zero, inverts resultant direction"
+                },
+                {
+                    "test_id": "VEC-FAIL-05",
+                    "authoring_defect": "Parallelogram formula presented without limiting collinear checks",
+                    "expected_failure_reason": "Collinear checks theta=0, 90, 180 deg are mandatory"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-VEC-COMPONENTS",
+            "learner_title": "Resolution of Vectors into Orthogonal Components",
+            "chapter": "Vectors / Motion in a Plane",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-VEC-COMPONENT-RESOLUTION",
+                "CON-VEC-UNIT-VECTORS",
+                "CON-VEC-SIGN-CONVENTION",
+                "CON-VEC-RESULTANT-RECONSTRUCTION",
+                "CON-VEC-INDEPENDENCE-AXES"
+            ],
+            "prerequisite_ids": ["PHY-VEC-BASICS", "PHY-VEC-ADD-SUB"],
+            "linked_buckets": ["B-VEC-COMPONENTS"],
+            "linked_problem_family_ids": ["PF-VEC-RESOLVE-2D", "PF-VEC-RECONSTRUCT-POLAR", "PF-VEC-MULTI-ADD"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-VEC-COMPONENT-RESOLUTION",
+                    "canonical_statement": "Any vector in a 2D plane can be uniquely decomposed into two perpendicular projections along orthogonal axes: A = A_x i + A_y j.",
+                    "why_required": "Converts 2D spatial problems into two decoupled 1D scalar problems.",
+                    "failure_if_omitted": "Learner attempts 2D dynamics without resolving along motion axes."
+                },
+                {
+                    "concept_id": "CON-VEC-UNIT-VECTORS",
+                    "canonical_statement": "Dimensionless vectors of unit magnitude (i, j, k) specifying spatial axis directions.",
+                    "why_required": "Separates magnitude from directional axis notation.",
+                    "failure_if_omitted": "Writing vector sums as bare scalars."
+                },
+                {
+                    "concept_id": "CON-VEC-SIGN-CONVENTION",
+                    "canonical_statement": "Scalar components A_x and A_y are signed real numbers depending on alignment with declared positive axes.",
+                    "why_required": "1D vector directions are encoded purely by algebraic signs (+/-).",
+                    "failure_if_omitted": "Dropping signs and treating components as purely positive magnitudes."
+                },
+                {
+                    "concept_id": "CON-VEC-RESULTANT-RECONSTRUCTION",
+                    "canonical_statement": "Given orthogonal components, original vector is recovered via A = sqrt(A_x^2 + A_y^2) and theta = atan2(A_y, A_x).",
+                    "why_required": "Completes bi-directional translation Vector <-> Components.",
+                    "failure_if_omitted": "Authoring teaches decomposition but leaves learner unable to state final vector."
+                },
+                {
+                    "concept_id": "CON-VEC-INDEPENDENCE-AXES",
+                    "canonical_statement": "Orthogonal vector components are mutually independent; variation along x has zero influence along y.",
+                    "why_required": "Foundational for 2D kinematics and Newton's second law axis decoupling.",
+                    "failure_if_omitted": "Mixing horizontal forces into vertical acceleration equations."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-VEC-COMP-X",
+                    "formula": "A_x = A*cos(theta)",
+                    "meaning_of_symbols": "A_x: horizontal component, theta: angle from adjacent x-axis",
+                    "reference_frame_or_sign": "Cartesian frame; sign depends on quadrant",
+                    "conditions_of_validity": "Angle measured from x-axis",
+                    "obligations": ["EXPLAIN", "REPRESENT", "APPLY", "INVERT"]
+                },
+                {
+                    "equation_id": "EQ-VEC-COMP-Y",
+                    "formula": "A_y = A*sin(theta)",
+                    "meaning_of_symbols": "A_y: vertical component, theta: angle from adjacent x-axis",
+                    "reference_frame_or_sign": "Cartesian frame; sign depends on quadrant",
+                    "conditions_of_validity": "Angle measured from x-axis",
+                    "obligations": ["EXPLAIN", "REPRESENT", "APPLY", "INVERT"]
+                },
+                {
+                    "equation_id": "EQ-VEC-RECON-MAG",
+                    "formula": "A = sqrt(A_x^2 + A_y^2)",
+                    "meaning_of_symbols": "A: recovered vector magnitude",
+                    "reference_frame_or_sign": "Sign-independent non-negative magnitude",
+                    "conditions_of_validity": "Orthogonal Cartesian components",
+                    "obligations": ["DERIVE", "APPLY", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-VEC-COMPONENT-TRIANGLE",
+                    "name": "Component Right Triangle",
+                    "physics_encoded": "Vector as hypotenuse of right triangle formed by orthogonal components",
+                    "mandatory_labels": ["Original vector A", "Axes x and y", "A_x i along base", "A_y j along altitude", "Right-angle marker", "Angle theta"],
+                    "what_cannot_be_omitted": "Explicit right-angle square marker and clear adjacent axis for angle",
+                    "common_incorrect_version": "Drawing components without arrowheads or swapping sin and cos when angle is vertical",
+                    "verification_method": "Check Pythagorean consistency: sqrt(A_x^2 + A_y^2) == A"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Mutually perpendicular axes (i . j = 0)",
+                    "why_needed": "Ensures independence of components without cross-terms",
+                    "what_changes_if_violated": "Oblique axes require metric tensor components"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Fix coordinate system and orientation of +x and +y", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Identify angle theta and mark which axis is adjacent", "inferential_jump": "MEDIUM"},
+                {"step": 3, "expert_action": "Resolve components: adjacent = A*cos(theta), opposite = A*sin(theta)", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 4, "expert_action": "Assign explicit algebraic signs (+/-) based on quadrant", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 5, "expert_action": "Write vector in unit-vector basis: A = A_x i + A_y j", "inferential_jump": "LOW"},
+                {"step": 6, "expert_action": "Reconstruct resultant magnitude and quadrant angle", "inferential_jump": "MEDIUM"}
+            ],
+            "required_transformations": [
+                {"from_mode": "POLAR_VECTOR", "to_mode": "ORTHOGONAL_COMPONENTS", "description": "(50 N, 143 deg) -> (-40 i + 30 j) N"},
+                {"from_mode": "ORTHOGONAL_COMPONENTS", "to_mode": "POLAR_VECTOR", "description": "(-40 i + 30 j) N -> (|A|=50 N, theta=143.1 deg)"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-VEC-COS-ALWAYS-X",
+                    "incorrect_belief": "A_x is ALWAYS A*cos(theta) and A_y is ALWAYS A*sin(theta)",
+                    "why_plausible": "Introductory textbook examples always measure angles from the horizontal",
+                    "required_counterexample": "On an incline, angle with normal is theta, so F_gy = mg*cos(theta) and F_gx = mg*sin(theta)",
+                    "required_technical_repair": "Adjacent component uses cos(theta); opposite component uses sin(theta)"
+                }
+            ],
+            "mandatory_verifications": ["PYTHAGOREAN_CONSISTENCY", "LIMITING_CASE", "QUADRANT_SIGN_CHECK"],
+            "problem_families": [
+                {
+                    "family_id": "PF-VEC-RESOLVE-2D",
+                    "name": "Orthogonal Vector Resolution",
+                    "recognition_cues": "Vector at arbitrary angle requiring rectangular components",
+                    "first_technical_move": "Mark angle and identify adjacent vs opposite axes",
+                    "common_fatal_error": "Blindly writing A_x = A*cos(theta) when angle is with vertical",
+                    "typical_unknown": "Signed rectangular components A_x, A_y"
+                },
+                {
+                    "family_id": "PF-VEC-RECONSTRUCT-POLAR",
+                    "name": "Polar Vector Recovery",
+                    "recognition_cues": "Given signed rectangular components (A_x, A_y)",
+                    "first_technical_move": "Plot components on Cartesian grid to identify quadrant",
+                    "common_fatal_error": "Ignoring signs and computing bare arctan(|A_y/A_x|)",
+                    "typical_unknown": "Magnitude A and true heading theta"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 2,
+                "inferential_jump_severity": 2,
+                "representation_translation": 3,
+                "model_discrimination": 2,
+                "sign_or_frame_sensitivity": 3,
+                "multi_step_dependency": 2,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 2,
+                "provisional_difficulty": "MEDIUM",
+                "difficulty_basis": "High quadrant sign sensitivity, adjacent vs opposite angle traps, resultant reconstruction",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-VEC-COMPONENTS", "CONCEPT: CON-VEC-COMPONENT-RESOLUTION", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: MEDIUM"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "VEC-FAIL-01",
+                    "authoring_defect": "Component resolution taught without coordinate axes or sign conventions",
+                    "expected_failure_reason": "Sign convention and coordinate axes are mandatory for components"
+                },
+                {
+                    "test_id": "VEC-FAIL-02",
+                    "authoring_defect": "Components taught without resultant recovery",
+                    "expected_failure_reason": "Bi-directional translation Resultant <-> Components is mandatory"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-INTERACTION",
+            "learner_title": "Force as an Interaction between Bodies",
+            "chapter": "Laws of Motion",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-FORCE-DEF",
+                "CON-NLM-INTERACTION-PAIR",
+                "CON-NLM-AGENT-RECEIVER",
+                "CON-NLM-CONTACT-VS-FIELD",
+                "CON-NLM-SUPERPOSITION"
+            ],
+            "prerequisite_ids": ["PHY-VEC-BASICS"],
+            "linked_buckets": ["B-NLM-FORCE-CONCEPT"],
+            "linked_problem_family_ids": ["PF-NLM-IDENTIFY-INTERACTIONS"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-FORCE-DEF",
+                    "canonical_statement": "A force is a vector push or pull exerted by one identifiable physical body on another body as a result of an interaction.",
+                    "why_required": "Eliminates fictitious forces generated by imagination.",
+                    "failure_if_omitted": "Learner invents internal or non-existent forces."
+                },
+                {
+                    "concept_id": "CON-NLM-AGENT-RECEIVER",
+                    "canonical_statement": "Every genuine force requires an explicit agent (causer) and receiver (object acted on): F_{on Receiver by Agent}.",
+                    "why_required": "Prerequisite for physical realism and Newton's third law.",
+                    "failure_if_omitted": "Drawing force arrows with no physical origin."
+                },
+                {
+                    "concept_id": "CON-NLM-CONTACT-VS-FIELD",
+                    "canonical_statement": "Forces are strictly contact forces (requiring physical contact) or field forces (action at a distance).",
+                    "why_required": "Guides systematic boundary scanning on FBDs.",
+                    "failure_if_omitted": "Omitting contact forces or inventing contact forces where no bodies touch."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-FNET",
+                    "formula": "F_net = sum(F_i)",
+                    "meaning_of_symbols": "F_net: vector sum of all external forces on body",
+                    "reference_frame_or_sign": "Inertial frame vector addition",
+                    "conditions_of_validity": "Point particle approximation",
+                    "obligations": ["EXPLAIN", "REPRESENT", "APPLY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-INTERACTION-TABLE",
+                    "name": "Interaction Inventory Table",
+                    "physics_encoded": "Explicit table of external boundary interactions",
+                    "mandatory_labels": ["Force Name", "Agent", "Receiver", "Type", "Direction"],
+                    "what_cannot_be_omitted": "Explicit Agent and Receiver identities for every force",
+                    "common_incorrect_version": "Listing 'force of motion' or 'inertia force'",
+                    "verification_method": "Every force must trace to a real physical body in universe"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Macroscopic classical mechanics",
+                    "why_needed": "Continuum forces are macroscopic manifestations of electromagnetism",
+                    "what_changes_if_violated": "Microscopic quantum interactions apply"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Identify target object of interest", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Scan for field forces (gravity: Earth on object)", "inferential_jump": "LOW"},
+                {"step": 3, "expert_action": "Trace boundary perimeter to locate all physical contact points", "inferential_jump": "MEDIUM"},
+                {"step": 4, "expert_action": "Verify every candidate force has an identifiable external agent", "inferential_jump": "HIGH_FRAGILITY"}
+            ],
+            "required_transformations": [
+                {"from_mode": "PHYSICAL_SCENE", "to_mode": "INTERACTION_INVENTORY", "description": "Book on table in elevator -> Gravity (Earth) + Normal (Table)"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-FORCE-OF-MOTION",
+                    "incorrect_belief": "A moving body possesses a force keeping it moving",
+                    "why_plausible": "Pushing an object across carpet requires continuous effort",
+                    "required_counterexample": "Puck gliding on frictionless ice maintains constant velocity with zero forward force",
+                    "required_technical_repair": "Forces cause changes in motion (acceleration), not velocity itself"
+                }
+            ],
+            "mandatory_verifications": ["AGENT_RECEIVER_IDENTIFIABILITY", "DIMENSIONAL", "MODEL_VALIDITY"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-IDENTIFY-INTERACTIONS",
+                    "name": "Interaction Classification",
+                    "recognition_cues": "Narrative of physical scene asking to identify all acting forces",
+                    "first_technical_move": "Draw boundary around object; scan field forces and boundary contacts",
+                    "common_fatal_error": "Adding forward force in direction of motion",
+                    "typical_unknown": "Complete table of real physical forces"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 1,
+                "element_interactivity": 2,
+                "inferential_jump_severity": 2,
+                "representation_translation": 2,
+                "model_discrimination": 3,
+                "sign_or_frame_sensitivity": 1,
+                "multi_step_dependency": 1,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 1,
+                "provisional_difficulty": "EASY",
+                "difficulty_basis": "Conceptually deep due to Aristotelian misconceptions, mathematically simple",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-FORCE-CONCEPT", "CONCEPT: CON-NLM-FORCE-DEF", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: EASY"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-05-PRE",
+                    "authoring_defect": "Force of motion included in force inventory",
+                    "expected_failure_reason": "Force of motion is fictitious; forces require identifiable external physical agents"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-FBD",
+            "learner_title": "Free-Body Diagrams and System Isolation",
+            "chapter": "Laws of Motion",
+            "authority_tier": "STANDARD-PHYSICS-DERIVED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-SYSTEM-ISOLATION",
+                "CON-NLM-FBD-DEFINITION",
+                "CON-NLM-EXTERNAL-FORCES-ONLY",
+                "CON-NLM-FBD-CONCURRENT-POINT",
+                "CON-NLM-NO-INTERNAL-PAIRS"
+            ],
+            "prerequisite_ids": ["PHY-VEC-BASICS", "PHY-NLM-INTERACTION"],
+            "linked_buckets": ["B-NLM-FBD"],
+            "linked_problem_family_ids": ["PF-NLM-CONSTRUCT-FBD"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-SYSTEM-ISOLATION",
+                    "canonical_statement": "A system is isolated by defining an imaginary closed boundary around the body of interest, severing all external connections.",
+                    "why_required": "Dictates exactly which forces count as external.",
+                    "failure_if_omitted": "Blurring internal and external forces."
+                },
+                {
+                    "concept_id": "CON-NLM-FBD-DEFINITION",
+                    "canonical_statement": "An FBD represents the isolated body showing ALL external forces acting ON that body as directed vectors.",
+                    "why_required": "Primary intermediate cognitive bridge from scene to equations.",
+                    "failure_if_omitted": "Bypassing FBD causes omitted forces and sign errors."
+                },
+                {
+                    "concept_id": "CON-NLM-EXTERNAL-FORCES-ONLY",
+                    "canonical_statement": "An FBD must contain ONLY forces exerted ON the isolated body BY external agents. Forces exerted BY the body are strictly prohibited.",
+                    "why_required": "Newton's second law governs acceleration from forces ON the body.",
+                    "failure_if_omitted": "Drawing action and reaction on the same FBD leading to false cancellation."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-FBD-SUM",
+                    "formula": "sum(F_external) = F_net",
+                    "meaning_of_symbols": "Sum of vectors crossing system boundary",
+                    "reference_frame_or_sign": "Inertial coordinate axes",
+                    "conditions_of_validity": "Isolated particle",
+                    "obligations": ["REPRESENT", "APPLY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-FREE-BODY-DIAGRAM",
+                    "name": "Free-Body Diagram",
+                    "physics_encoded": "Vector forces acting on isolated system in declared inertial frame",
+                    "mandatory_labels": ["System Name", "Central node dot", "Interaction subscripts", "Adjacent coordinate axes", "Off-body acceleration arrow"],
+                    "what_cannot_be_omitted": "Central dot, labeled force arrows, coordinate axes",
+                    "common_incorrect_version": "Drawing m*a or velocity as a force on the body dot",
+                    "verification_method": "Count forces on FBD: must match boundary contacts + gravity exactly"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Point-particle model",
+                    "why_needed": "Lines of action meet at center of mass",
+                    "what_changes_if_violated": "Extended body requires distributed FBD and torque"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "State exact body being isolated", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Draw central dot and downward gravity vector", "inferential_jump": "LOW"},
+                {"step": 3, "expert_action": "Trace boundary contact points and draw contact forces", "inferential_jump": "MEDIUM"},
+                {"step": 4, "expert_action": "Filter out internal forces and forces exerted BY the body", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 5, "expert_action": "Draw coordinate axes adjacent to diagram", "inferential_jump": "LOW"}
+            ],
+            "required_transformations": [
+                {"from_mode": "PHYSICAL_SCENE", "to_mode": "FREE_BODY_DIAGRAM", "description": "Block on incline with rope -> Dot with gravity, normal, tension, friction"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-FBD-MA-FORCE",
+                    "incorrect_belief": "Draw m*a as a force on the FBD",
+                    "why_plausible": "m*a appears in the equation sum F = ma",
+                    "required_counterexample": "If m*a were a force, then sum F - ma = 0 and nothing could ever accelerate",
+                    "required_technical_repair": "m*a is the kinematic outcome, never a force. Prohibited on the body dot."
+                },
+                {
+                    "misconception_id": "MISC-NLM-FBD-PAIR-ON-ONE",
+                    "incorrect_belief": "Draw normal force of floor on shoe AND push of shoe on floor on shoe's FBD",
+                    "why_plausible": "Both occur at the same contact interface",
+                    "required_counterexample": "Push on floor acts ON the floor, belongs on floor's FBD",
+                    "required_technical_repair": "Filter rule: Does this force act ON the isolated body? If not, discard."
+                }
+            ],
+            "mandatory_verifications": ["CONTACT_COUNT_MATCH", "ACTION_REACTION_PURITY", "SIGN_DIRECTION", "MODEL_VALIDITY"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-CONSTRUCT-FBD",
+                    "name": "FBD Construction",
+                    "recognition_cues": "Physical setup given requiring equations of motion",
+                    "first_technical_move": "Isolate body as dot; replace each contact with vector arrow",
+                    "common_fatal_error": "Skipping FBD and guessing equation signs",
+                    "typical_unknown": "Complete, validated FBD"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 3,
+                "inferential_jump_severity": 2,
+                "representation_translation": 3,
+                "model_discrimination": 3,
+                "sign_or_frame_sensitivity": 2,
+                "multi_step_dependency": 2,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 2,
+                "provisional_difficulty": "MEDIUM",
+                "difficulty_basis": "High cognitive load in spatial isolation and filtering out m*a and third-law pairs",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-FBD", "CONCEPT: CON-NLM-FBD-DEFINITION", "SOURCE: STANDARD-PHYSICS-DERIVED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: MEDIUM"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-01",
+                    "authoring_defect": "Writing dynamic equations directly without an FBD",
+                    "expected_failure_reason": "FBD is non-negotiable prerequisite for equations of motion"
+                },
+                {
+                    "test_id": "NLM-FAIL-02",
+                    "authoring_defect": "Action-reaction pair drawn on same body's FBD",
+                    "expected_failure_reason": "Action-reaction pairs act on different bodies, prohibited on same FBD"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-FIRST-LAW",
+            "learner_title": "Newton's First Law and Equilibrium",
+            "chapter": "Laws of Motion",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-FIRST-LAW-STMT",
+                "CON-NLM-INERTIAL-FRAME",
+                "CON-NLM-EQUILIBRIUM-DEF",
+                "CON-NLM-INERTIA-MASS"
+            ],
+            "prerequisite_ids": ["PHY-NLM-FBD", "PHY-VEC-COMPONENTS"],
+            "linked_buckets": ["B-NLM-FIRST-LAW"],
+            "linked_problem_family_ids": ["PF-NLM-STATIC-EQUILIBRIUM"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-FIRST-LAW-STMT",
+                    "canonical_statement": "An object continues at rest or in uniform straight-line motion unless acted upon by a non-zero net external force.",
+                    "why_required": "Defines force as the cause of acceleration.",
+                    "failure_if_omitted": "Belief that constant velocity requires forward driving force."
+                },
+                {
+                    "concept_id": "CON-NLM-EQUILIBRIUM-DEF",
+                    "canonical_statement": "Translational equilibrium is defined as a = 0, physically equivalent to sum(F) = 0. It does NOT mean no forces act.",
+                    "why_required": "Prevents confusing equilibrium with lack of interaction.",
+                    "failure_if_omitted": "Stating an object at rest has no forces on it."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-EQUIL-COMP",
+                    "formula": "sum(F_x) = 0, sum(F_y) = 0",
+                    "meaning_of_symbols": "Orthogonal component equilibrium equations",
+                    "reference_frame_or_sign": "Signed Cartesian sums",
+                    "conditions_of_validity": "Inertial frame, a = 0",
+                    "obligations": ["DERIVE", "APPLY", "INVERT", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-EQUILIBRIUM-POLYGON",
+                    "name": "Closed Force Polygon",
+                    "physics_encoded": "Vector equilibrium closing to origin",
+                    "mandatory_labels": ["Vector loop closure", "Concurrent forces"],
+                    "what_cannot_be_omitted": "Head-to-tail polygon must return to start point",
+                    "common_incorrect_version": "Open polygon claimed to be in equilibrium",
+                    "verification_method": "Check loop closure: sum of vectors must be zero vector"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Inertial reference frame",
+                    "why_needed": "Non-accelerating frame",
+                    "what_changes_if_violated": "Pseudo-forces must be introduced"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Confirm reference frame is inertial", "inferential_jump": "MEDIUM"},
+                {"step": 2, "expert_action": "Identify velocity is constant (a = 0)", "inferential_jump": "LOW"},
+                {"step": 3, "expert_action": "Draw complete FBD and resolve forces along axes", "inferential_jump": "MEDIUM"},
+                {"step": 4, "expert_action": "Set up independent equations: sum F_x = 0, sum F_y = 0", "inferential_jump": "HIGH_FRAGILITY"}
+            ],
+            "required_transformations": [
+                {"from_mode": "EQUILIBRIUM_SCENE", "to_mode": "COMPONENT_EQUATIONS", "description": "Suspended lamp with 2 cables -> 2T sin(theta) - mg = 0"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-REST-NO-FORCE",
+                    "incorrect_belief": "An object at rest has no forces acting on it",
+                    "why_plausible": "No visual motion occurring",
+                    "required_counterexample": "Book on table: gravity pulls down 9.8 N, table pushes up 9.8 N. If table removed, book falls.",
+                    "required_technical_repair": "Equilibrium means vector sum is zero, not absence of forces"
+                },
+                {
+                    "misconception_id": "MISC-NLM-CONST-V-NET-FORCE",
+                    "incorrect_belief": "A car moving at constant 100 km/h has a net forward force",
+                    "why_plausible": "Engine is burning fuel",
+                    "required_counterexample": "Engine force balances air drag and friction; net force is strictly zero",
+                    "required_technical_repair": "Constant velocity implies a = 0 implies net force = 0"
+                }
+            ],
+            "mandatory_verifications": ["LIMITING_CASE", "DIMENSIONAL", "SYMMETRY"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-STATIC-EQUILIBRIUM",
+                    "name": "Static Particle Equilibrium",
+                    "recognition_cues": "Suspended object at rest supported by strings or struts",
+                    "first_technical_move": "Draw FBD and resolve forces along x and y",
+                    "common_fatal_error": "Setting tension equal to weight without angle factors",
+                    "typical_unknown": "Cable tensions and support angles"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 2,
+                "inferential_jump_severity": 2,
+                "representation_translation": 2,
+                "model_discrimination": 2,
+                "sign_or_frame_sensitivity": 2,
+                "multi_step_dependency": 2,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 1,
+                "provisional_difficulty": "MEDIUM",
+                "difficulty_basis": "Deep misconceptions regarding constant velocity and net force",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-FIRST-LAW", "CONCEPT: CON-NLM-EQUILIBRIUM-DEF", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: MEDIUM"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-05",
+                    "authoring_defect": "Equilibrium described as no forces acting",
+                    "expected_failure_reason": "Equilibrium requires sum F = 0, not absence of physical interactions"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-SECOND-LAW",
+            "learner_title": "Newton's Second Law of Motion",
+            "chapter": "Laws of Motion",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-MOMENTUM-DEF",
+                "CON-NLM-SECOND-LAW-RATE",
+                "CON-NLM-F-MA-VECTOR",
+                "CON-NLM-AXIS-WISE-DECOUPLING",
+                "CON-NLM-UNITS-NEWTON"
+            ],
+            "prerequisite_ids": ["PHY-VEC-COMPONENTS", "PHY-NLM-FBD", "PHY-NLM-FIRST-LAW"],
+            "linked_buckets": ["B-NLM-SECOND-LAW"],
+            "linked_problem_family_ids": ["PF-NLM-1D-ACCEL", "PF-NLM-2D-RESOLVED-ACCEL"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-SECOND-LAW-RATE",
+                    "canonical_statement": "The net external force on a body equals the time rate of change of its linear momentum: F_net = dp/dt.",
+                    "why_required": "Fundamental definition of Newton's second law.",
+                    "failure_if_omitted": "Treating F=ma as an unprovable postulate rather than constant-mass rate."
+                },
+                {
+                    "concept_id": "CON-NLM-F-MA-VECTOR",
+                    "canonical_statement": "For constant mass, sum F = m*a. Acceleration is directly proportional to net force and points strictly in net force direction.",
+                    "why_required": "Operational engine for classical dynamics.",
+                    "failure_if_omitted": "Treating F=ma as scalar arithmetic without directional correspondence."
+                },
+                {
+                    "concept_id": "CON-NLM-AXIS-WISE-DECOUPLING",
+                    "canonical_statement": "Vector sum F = m*a decouples into independent equations: sum F_x = m*a_x and sum F_y = m*a_y.",
+                    "why_required": "Foundational algorithm for solving 2D dynamics.",
+                    "failure_if_omitted": "Blending vertical forces into horizontal acceleration equations."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-NEWTON2-COMP-X",
+                    "formula": "sum(F_x) = m*a_x",
+                    "meaning_of_symbols": "Signed force sum and acceleration along x",
+                    "reference_frame_or_sign": "+x aligned with acceleration",
+                    "conditions_of_validity": "Inertial frame, constant mass",
+                    "obligations": ["APPLY", "INVERT", "VERIFY"]
+                },
+                {
+                    "equation_id": "EQ-NLM-NEWTON2-COMP-Y",
+                    "formula": "sum(F_y) = m*a_y",
+                    "meaning_of_symbols": "Signed force sum and acceleration along y",
+                    "reference_frame_or_sign": "+y perpendicular to motion (a_y = 0)",
+                    "conditions_of_validity": "Inertial frame, constant mass",
+                    "obligations": ["APPLY", "INVERT", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-AXIS-RESOLVED-FBD",
+                    "name": "Resolved Axis FBD",
+                    "physics_encoded": "FBD with force components resolved parallel and perpendicular to acceleration",
+                    "mandatory_labels": ["Dashed component vectors", "Axes aligned with a", "Acceleration arrow a"],
+                    "what_cannot_be_omitted": "Replacement of original angled force by resolved components",
+                    "common_incorrect_version": "Leaving angled forces unresolved while writing scalar equations",
+                    "verification_method": "Check dimensions: every force component appears in exactly one axis equation"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Constant mass (dm/dt = 0)",
+                    "why_needed": "Allows pulling m out of derivative d(mv)/dt",
+                    "what_changes_if_violated": "Variable mass requires rocket thrust terms"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Isolate body and construct complete FBD", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Align +x with acceleration direction and +y perpendicular", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 3, "expert_action": "Resolve non-aligned forces into components", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 4, "expert_action": "Write sum F_x = m*a and sum F_y = 0", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 5, "expert_action": "Solve resulting system for acceleration and contact forces", "inferential_jump": "MEDIUM"}
+            ],
+            "required_transformations": [
+                {"from_mode": "FBD", "to_mode": "DYNAMIC_EQUATIONS", "description": "Block sliding down incline -> mg sin(theta) - f_k = ma, N - mg cos(theta) = 0"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-A-DIR-VEL",
+                    "incorrect_belief": "Acceleration must point in the direction the object is moving",
+                    "why_plausible": "When speeding up in a straight line, a and v align",
+                    "required_counterexample": "Braking car moves forward (v > 0) but accelerates backward (a < 0)",
+                    "required_technical_repair": "Acceleration points in direction of net force, NOT velocity"
+                },
+                {
+                    "misconception_id": "MISC-NLM-SCALAR-FMA",
+                    "incorrect_belief": "Add all forces as scalars and set equal to m*a",
+                    "why_plausible": "In 1D problems scalar arithmetic happens to match",
+                    "required_counterexample": "Pulling wagon at 30 deg: only 100*cos(30) accelerates wagon horizontally",
+                    "required_technical_repair": "Axis-wise component writing is non-negotiable"
+                }
+            ],
+            "mandatory_verifications": ["DIMENSIONAL", "LIMITING_CASE", "UNITS", "SIGN_DIRECTION"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-2D-RESOLVED-ACCEL",
+                    "name": "2D Incline / Angled Dynamics",
+                    "recognition_cues": "Object accelerating on surface under angled forces",
+                    "first_technical_move": "Align axes with acceleration; resolve angled forces and weight",
+                    "common_fatal_error": "Setting N = mg automatically on inclines or angled pulls",
+                    "typical_unknown": "Acceleration a and normal force N"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 3,
+                "inferential_jump_severity": 3,
+                "representation_translation": 3,
+                "model_discrimination": 2,
+                "sign_or_frame_sensitivity": 3,
+                "multi_step_dependency": 3,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 2,
+                "provisional_difficulty": "HARD",
+                "difficulty_basis": "Concurrently requires FBD construction, 2D vector resolution, axis decoupling, and linear system solving",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-SECOND-LAW", "CONCEPT: CON-NLM-F-MA-VECTOR", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: HARD"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-04",
+                    "authoring_defect": "Combining forces from perpendicular axes into single scalar sum for ma",
+                    "expected_failure_reason": "Axis-wise decoupling (sum F_x = ma_x, sum F_y = ma_y) must be enforced"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-THIRD-LAW",
+            "learner_title": "Newton's Third Law of Motion",
+            "chapter": "Laws of Motion",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-THIRD-LAW-STMT",
+                "CON-NLM-PAIR-DIFFERENT-BODIES",
+                "CON-NLM-PAIR-SAME-NATURE",
+                "CON-NLM-SIMULTANEITY",
+                "CON-NLM-NO-SELF-CANCELLATION"
+            ],
+            "prerequisite_ids": ["PHY-NLM-INTERACTION", "PHY-NLM-FBD"],
+            "linked_buckets": ["B-NLM-THIRD-LAW"],
+            "linked_problem_family_ids": ["PF-NLM-PAIR-IDENTIFY", "PF-NLM-TWO-BLOCK-CONTACT"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-THIRD-LAW-STMT",
+                    "canonical_statement": "To every action there is always an equal and opposite reaction: F_AB = -F_BA.",
+                    "why_required": "Establishes reciprocity of interactions and conservation of momentum.",
+                    "failure_if_omitted": "Belief that stronger body exerts greater force."
+                },
+                {
+                    "concept_id": "CON-NLM-PAIR-DIFFERENT-BODIES",
+                    "canonical_statement": "Action and reaction forces act strictly on two different bodies; they NEVER act on the same body.",
+                    "why_required": "Prevents cancelling action and reaction on one body.",
+                    "failure_if_omitted": "Claiming action and reaction cancel, making acceleration impossible."
+                },
+                {
+                    "concept_id": "CON-NLM-PAIR-SAME-NATURE",
+                    "canonical_statement": "An action-reaction pair consists of forces of the exact same physical nature (both gravitational, both normal, etc.).",
+                    "why_required": "Prevents pairing normal contact force with gravity.",
+                    "failure_if_omitted": "Claiming normal force on book is reaction to gravity."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-NEWTON3-PAIR",
+                    "formula": "F_{A on B} = - F_{B on A}",
+                    "meaning_of_symbols": "Equal and opposite force vectors on distinct bodies",
+                    "reference_frame_or_sign": "Exact opposite collinear vectors",
+                    "conditions_of_validity": "Classical mechanics",
+                    "obligations": ["EXPLAIN", "INTERPRET", "APPLY", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-INTERACTION-PAIR-FBD",
+                    "name": "Third-Law Dual FBD",
+                    "physics_encoded": "Two separate FBDs for bodies A and B with reciprocal forces",
+                    "mandatory_labels": ["Body A dot", "Body B dot", "F_{B on A}", "F_{A on B}", "Reversed agent subscripts"],
+                    "what_cannot_be_omitted": "Separate drawings for both bodies; pair never on same body",
+                    "common_incorrect_version": "Drawing both F_AB and F_BA attached to body A",
+                    "verification_method": "Check subscripts: F_12 must pair with F_21"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Non-relativistic mechanics",
+                    "why_needed": "Instantaneous central forces apply",
+                    "what_changes_if_violated": "Finite signal speed requires field momentum"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Identify interacting bodies A and B", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Identify force by A on B: F_AB", "inferential_jump": "LOW"},
+                {"step": 3, "expert_action": "Apply Newton III: F_BA = -F_AB", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 4, "expert_action": "Confirm same magnitude, opposite direction, same nature", "inferential_jump": "MEDIUM"},
+                {"step": 5, "expert_action": "Place F_AB on FBD of B and F_BA on FBD of A", "inferential_jump": "HIGH_FRAGILITY"}
+            ],
+            "required_transformations": [
+                {"from_mode": "SINGLE_INTERACTION", "to_mode": "DUAL_FBDS", "description": "Man pushes crate -> Crate FBD shows forward push; Man FBD shows backward push"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-NORMAL-WEIGHT-PAIR",
+                    "incorrect_belief": "Normal force on book resting on table is third-law reaction to weight",
+                    "why_plausible": "Both forces act on book, equal magnitude (N=mg), opposite directions",
+                    "required_counterexample": "Accelerating lift: N = m(g+a) != mg, yet 3rd law pairs are always equal",
+                    "required_technical_repair": "Reaction to Weight is gravitational pull by book on Earth; reaction to Normal is downward push on table"
+                },
+                {
+                    "misconception_id": "MISC-NLM-HORSE-CART",
+                    "incorrect_belief": "If horse and cart pull equally, neither can ever move",
+                    "why_plausible": "Apparent paradox of equal and opposite forces",
+                    "required_counterexample": "Forces act on different bodies: horse moves forward due to ground friction on hooves",
+                    "required_technical_repair": "Never add forces on different bodies. Draw isolated FBD for each body."
+                }
+            ],
+            "mandatory_verifications": ["AGENT_RECEIVER_INVERSION_CHECK", "EQUAL_MAGNITUDE_CHECK", "SAME_NATURE_CHECK"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-TWO-BLOCK-CONTACT",
+                    "name": "Multi-Block Push in Contact",
+                    "recognition_cues": "Two blocks in contact pushed by external force",
+                    "first_technical_move": "Separate into two isolated FBDs with equal and opposite contact forces",
+                    "common_fatal_error": "Claiming block 1 pushes block 2 harder because system accelerates",
+                    "typical_unknown": "System acceleration and contact force between blocks"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 2,
+                "inferential_jump_severity": 2,
+                "representation_translation": 3,
+                "model_discrimination": 3,
+                "sign_or_frame_sensitivity": 2,
+                "multi_step_dependency": 2,
+                "abstraction": 3,
+                "misconception_density": 3,
+                "synthesis": 2,
+                "provisional_difficulty": "MEDIUM",
+                "difficulty_basis": "Exceptional misconception density regarding action-reaction pairs and normal/weight confusion",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-THIRD-LAW", "CONCEPT: CON-NLM-PAIR-DIFFERENT-BODIES", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: MEDIUM"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-02-B",
+                    "authoring_defect": "Treating normal force and gravity as action-reaction pair",
+                    "expected_failure_reason": "Normal force and gravity act on same body and have different physical natures"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-NORMAL",
+            "learner_title": "Normal Contact Force and Surface Constraints",
+            "chapter": "Laws of Motion",
+            "authority_tier": "STANDARD-PHYSICS-DERIVED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-NORMAL-DEF",
+                "CON-NLM-NORMAL-CONSTRAINT",
+                "CON-NLM-NORMAL-SELF-ADJUSTING",
+                "CON-NLM-NORMAL-NOT-ALWAYS-MG"
+            ],
+            "prerequisite_ids": ["PHY-NLM-FBD", "PHY-NLM-SECOND-LAW"],
+            "linked_buckets": ["B-NLM-CONTACT-FORCES"],
+            "linked_problem_family_ids": ["PF-NLM-NORMAL-VARIED-SURFACE"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-NORMAL-DEF",
+                    "canonical_statement": "The normal force N is a contact force exerted by a compressed solid surface on a body, directed perpendicular to the surface.",
+                    "why_required": "Sets geometric directional invariant of surface contact.",
+                    "failure_if_omitted": "Drawing normal force in a non-perpendicular direction."
+                },
+                {
+                    "concept_id": "CON-NLM-NORMAL-CONSTRAINT",
+                    "canonical_statement": "The normal force is a constraint force self-adjusting to enforce the kinematic condition a_perp = 0.",
+                    "why_required": "Establishes that N has no fixed formula; solved from perpendicular dynamics.",
+                    "failure_if_omitted": "Treating N as a constant property of the body."
+                },
+                {
+                    "concept_id": "CON-NLM-NORMAL-NOT-ALWAYS-MG",
+                    "canonical_statement": "N = mg holds ONLY for solitary body at rest on flat horizontal surface. Under any other conditions, N != mg.",
+                    "why_required": "Primary defense against substituting N = mg blindly.",
+                    "failure_if_omitted": "Blindly writing N = mg on inclines or angled pulls."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-NORMAL-SOLVE",
+                    "formula": "sum(F_perp) = m*a_perp = 0 => N = sum(opposing perpendicular force components)",
+                    "meaning_of_symbols": "N solved algebraically from perpendicular force balance",
+                    "reference_frame_or_sign": "Perpendicular axis y_perp",
+                    "conditions_of_validity": "Body remains on surface",
+                    "obligations": ["DERIVE", "APPLY", "INVERT", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-NORMAL-SURFACE-DIAGRAM",
+                    "name": "Surface Normal Diagram",
+                    "physics_encoded": "Perpendicularity of normal force relative to tangent surface",
+                    "mandatory_labels": ["Tangent plane", "Right-angle marker", "Normal arrow N"],
+                    "what_cannot_be_omitted": "Perpendicular square indicator; arrow pointing into body",
+                    "common_incorrect_version": "Drawing N pointing straight up toward sky on an incline",
+                    "verification_method": "Check angle with surface tangent: must be exactly 90 deg"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Rigid surface constraint",
+                    "why_needed": "Prevents interpenetration (a_perp = 0)",
+                    "what_changes_if_violated": "Deformable surface requires elastic modeling"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Identify surface contact plane and draw N perpendicular into body", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Sum all forces along perpendicular axis", "inferential_jump": "MEDIUM"},
+                {"step": 3, "expert_action": "Set sum F_perp = m*a_perp = 0 and solve for N algebraically", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 4, "expert_action": "Check detachment condition N >= 0", "inferential_jump": "MEDIUM"}
+            ],
+            "required_transformations": [
+                {"from_mode": "ANGLED_PULL", "to_mode": "NORMAL_EXPRESSION", "description": "Pull at angle theta -> N = mg - F sin(theta)"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-N-EQUALS-MG",
+                    "incorrect_belief": "N = mg is the universal formula for normal force",
+                    "why_plausible": "Holds in introductory flat horizontal examples",
+                    "required_counterexample": "Incline: N = mg cos(theta); Angled pull: N = mg - F sin(theta); Elevator: N = m(g+a)",
+                    "required_technical_repair": "There is no general formula for normal force; N is an unknown solved from dynamics"
+                }
+            ],
+            "mandatory_verifications": ["PERPENDICULARITY_CHECK", "LIMITING_CASE", "NON_NEGATIVITY_CHECK"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-NORMAL-VARIED-SURFACE",
+                    "name": "Normal Force Calculation",
+                    "recognition_cues": "Object on surface with angled forces, inclines, or vertical accelerations",
+                    "first_technical_move": "Write perpendicular balance sum F_perp = m*a_perp",
+                    "common_fatal_error": "Replacing N with mg before writing equations",
+                    "typical_unknown": "Normal force N and apparent weight"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 2,
+                "inferential_jump_severity": 2,
+                "representation_translation": 2,
+                "model_discrimination": 3,
+                "sign_or_frame_sensitivity": 2,
+                "multi_step_dependency": 2,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 1,
+                "provisional_difficulty": "MEDIUM",
+                "difficulty_basis": "Unlearning N = mg; solving constraint force from perpendicular dynamics",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-CONTACT-FORCES", "CONCEPT: CON-NLM-NORMAL-DEF", "SOURCE: STANDARD-PHYSICS-DERIVED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: MEDIUM"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-03",
+                    "authoring_defect": "Automatic N = mg assumption on incline or angled pull",
+                    "expected_failure_reason": "Normal force must be solved from perpendicular dynamic balance"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-TENSION",
+            "learner_title": "Tension in Light Strings and Pulley Systems",
+            "chapter": "Laws of Motion",
+            "authority_tier": "STANDARD-PHYSICS-DERIVED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-TENSION-DEF",
+                "CON-NLM-TENSION-PULL-ONLY",
+                "CON-NLM-IDEAL-STRING-INVARIANCE",
+                "CON-NLM-IDEAL-PULLEY",
+                "CON-NLM-STRING-CONSTRAINT"
+            ],
+            "prerequisite_ids": ["PHY-NLM-FBD", "PHY-NLM-SECOND-LAW"],
+            "linked_buckets": ["B-NLM-CONTACT-FORCES"],
+            "linked_problem_family_ids": ["PF-NLM-ATWOOD-MACHINE"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-TENSION-PULL-ONLY",
+                    "canonical_statement": "A flexible string can only pull, never push (T >= 0); tension points away from the body along string line.",
+                    "why_required": "Fundamental directional invariant for string contact.",
+                    "failure_if_omitted": "Drawing tension pushing into body."
+                },
+                {
+                    "concept_id": "CON-NLM-IDEAL-STRING-INVARIANCE",
+                    "canonical_statement": "An ideal string is massless and inextensible; tension is strictly uniform along its continuous length.",
+                    "why_required": "F_net = m_s a = 0 implies delta T = 0.",
+                    "failure_if_omitted": "Assigning different tensions to segments of same continuous string."
+                },
+                {
+                    "concept_id": "CON-NLM-STRING-CONSTRAINT",
+                    "canonical_statement": "Because string is inextensible, connected bodies share acceleration magnitude along constraint path: a1 = a2 = a.",
+                    "why_required": "Kinematic coupling to close dynamic system.",
+                    "failure_if_omitted": "Treating accelerations of connected blocks as independent unknowns."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-ATWOOD-ACCEL",
+                    "formula": "a = ((m1 - m2) / (m1 + m2)) * g",
+                    "meaning_of_symbols": "Acceleration of ideal vertical Atwood machine",
+                    "reference_frame_or_sign": "Along string constraint direction",
+                    "conditions_of_validity": "Ideal massless string and pulley",
+                    "obligations": ["DERIVE", "APPLY", "VERIFY"]
+                },
+                {
+                    "equation_id": "EQ-NLM-ATWOOD-TENSION",
+                    "formula": "T = (2 * m1 * m2 / (m1 + m2)) * g",
+                    "meaning_of_symbols": "Tension in ideal Atwood string",
+                    "reference_frame_or_sign": "Non-negative scalar tension",
+                    "conditions_of_validity": "Ideal massless string and pulley",
+                    "obligations": ["DERIVE", "APPLY", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-STRING-PULLEY-SYSTEM",
+                    "name": "Pulley-String System Diagram",
+                    "physics_encoded": "Multi-body connected system with continuous string geometry",
+                    "mandatory_labels": ["Separate FBDs", "Tension arrows pointing away", "Uniform T label", "Acceleration arrow a"],
+                    "what_cannot_be_omitted": "Tension pulling away from each body along string",
+                    "common_incorrect_version": "Labeling tensions T1 and T2 for same massless string",
+                    "verification_method": "Check continuous segments: must carry identical variable T"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Massless inextensible string",
+                    "why_needed": "Uniform tension and rigid acceleration coupling",
+                    "what_changes_if_violated": "String mass creates position-dependent tension"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Identify continuous strings and assign single tension label T", "inferential_jump": "LOW"},
+                {"step": 2, "expert_action": "Draw isolated FBD for each connected body with tension pointing away", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 3, "expert_action": "Establish kinematic acceleration constraint a1 = a2 = a", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 4, "expert_action": "Write Newton's second law for each body along motion path", "inferential_jump": "MEDIUM"},
+                {"step": 5, "expert_action": "Solve system for acceleration and tension", "inferential_jump": "MEDIUM"}
+            ],
+            "required_transformations": [
+                {"from_mode": "PULLEY_SCENE", "to_mode": "SYSTEM_EQUATIONS", "description": "Half Atwood machine -> T = m1 a, m2 g - T = m2 a"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-TENSION-EQUALS-WEIGHT",
+                    "incorrect_belief": "In an Atwood machine, tension in string equals hanging weight: T = m2 g",
+                    "why_plausible": "Holds in static equilibrium",
+                    "required_counterexample": "If T = m2 g, net force is zero and hanging mass could never accelerate downward",
+                    "required_technical_repair": "When accelerating downward, T = m2(g - a) < m2 g"
+                }
+            ],
+            "mandatory_verifications": ["LIMITING_CASE", "DIMENSIONAL", "TENSION_BOUND_CHECK"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-ATWOOD-MACHINE",
+                    "name": "Atwood Pulley Dynamics",
+                    "recognition_cues": "Two masses connected by string over a pulley",
+                    "first_technical_move": "Draw separate FBDs for each mass; link accelerations",
+                    "common_fatal_error": "Setting T = mg on accelerating hanging mass",
+                    "typical_unknown": "Acceleration a and string tension T"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 2,
+                "element_interactivity": 3,
+                "inferential_jump_severity": 2,
+                "representation_translation": 3,
+                "model_discrimination": 2,
+                "sign_or_frame_sensitivity": 3,
+                "multi_step_dependency": 3,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 2,
+                "provisional_difficulty": "MEDIUM",
+                "difficulty_basis": "Multi-body coupled equations and tension bounds in accelerating systems",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-CONTACT-FORCES", "CONCEPT: CON-NLM-TENSION-DEF", "SOURCE: STANDARD-PHYSICS-DERIVED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: MEDIUM"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-07",
+                    "authoring_defect": "Setting tension equal to mg in an accelerating Atwood machine",
+                    "expected_failure_reason": "Tension equals mg only in static equilibrium; in downward acceleration T < mg"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-FRICTION",
+            "learner_title": "Static and Kinetic Friction",
+            "chapter": "Laws of Motion",
+            "authority_tier": "SOURCE-DEFINED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-FRICTION-ORIGIN",
+                "CON-NLM-STATIC-INEQUALITY",
+                "CON-NLM-STATIC-MAX-LIMITING",
+                "CON-NLM-KINETIC-CONST",
+                "CON-NLM-FRICTION-DIRECTION-OPPOSES-SLIP"
+            ],
+            "prerequisite_ids": ["PHY-NLM-FBD", "PHY-NLM-NORMAL", "PHY-NLM-SECOND-LAW"],
+            "linked_buckets": ["B-NLM-FRICTION"],
+            "linked_problem_family_ids": ["PF-NLM-FRICTION-THRESHOLD", "PF-NLM-INCLINE-SLIP"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-STATIC-INEQUALITY",
+                    "canonical_statement": "Static friction prevents relative sliding and is self-adjusting: 0 <= f_s <= f_{s,max} = mu_s * N.",
+                    "why_required": "Prevents equating static friction blindly to mu_s * N.",
+                    "failure_if_omitted": "Calculating f_s = 50 N for a block pushed with 5 N, predicting backward acceleration."
+                },
+                {
+                    "concept_id": "CON-NLM-KINETIC-CONST",
+                    "canonical_statement": "During active relative sliding, kinetic friction is f_k = mu_k * N, where mu_k <= mu_s.",
+                    "why_required": "Differentiates sliding regime from static threshold.",
+                    "failure_if_omitted": "Using static coefficient during active sliding motion."
+                },
+                {
+                    "concept_id": "CON-NLM-FRICTION-DIRECTION-OPPOSES-SLIP",
+                    "canonical_statement": "Friction opposes relative motion between contact surfaces, NOT motion relative to ground.",
+                    "why_required": "Explains how friction provides forward propulsion (walking, car tires).",
+                    "failure_if_omitted": "Belief that friction always opposes velocity."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-STATIC-INEQUALITY",
+                    "formula": "f_s <= mu_s * N",
+                    "meaning_of_symbols": "f_s: static friction, mu_s: static coefficient, N: normal force",
+                    "reference_frame_or_sign": "Parallel to contact surface",
+                    "conditions_of_validity": "Surfaces at relative rest",
+                    "obligations": ["EXPLAIN", "INTERPRET", "APPLY", "VERIFY"]
+                },
+                {
+                    "equation_id": "EQ-NLM-KINETIC",
+                    "formula": "f_k = mu_k * N",
+                    "meaning_of_symbols": "f_k: kinetic friction, mu_k: kinetic coefficient",
+                    "reference_frame_or_sign": "Opposing relative sliding velocity",
+                    "conditions_of_validity": "Active relative sliding",
+                    "obligations": ["APPLY", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-FRICTION-VS-APPLIED-GRAPH",
+                    "name": "Friction vs Applied Force Plot",
+                    "physics_encoded": "Piecewise response of friction as applied force increases",
+                    "mandatory_labels": ["Applied force axis", "Friction force axis", "Linear slope 1 region", "Peak f_{s,max}", "Kinetic plateau f_k"],
+                    "what_cannot_be_omitted": "Slope 1 self-adjusting line and sharp drop to kinetic plateau",
+                    "common_incorrect_version": "Flat horizontal line for all applied forces",
+                    "verification_method": "Check static slope: df/dF_app == 1"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Coulomb dry friction model",
+                    "why_needed": "Friction independent of contact area and sliding speed",
+                    "what_changes_if_violated": "Lubricated/viscous friction depends on velocity"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Calculate normal force N from perpendicular balance", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 2, "expert_action": "Calculate static threshold: f_{s,max} = mu_s * N", "inferential_jump": "LOW"},
+                {"step": 3, "expert_action": "Compare applied driving force F_drive with f_{s,max}", "inferential_jump": "MEDIUM"},
+                {"step": 4, "expert_action": "If F_drive <= f_{s,max}: a = 0, f_s = F_drive. Else: f = f_k = mu_k * N, solve ma", "inferential_jump": "HIGH_FRAGILITY"}
+            ],
+            "required_transformations": [
+                {"from_mode": "PUSH_FORCE", "to_mode": "FRICTION_REGIME", "description": "10 kg box, mu_s=0.5, pushed with 30 N -> f_{s,max}=49 N -> a=0, f_s=30 N"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-FRICTION-ALWAYS-MU-N",
+                    "incorrect_belief": "Static friction is always equal to mu_s * N",
+                    "why_plausible": "Formulas memorized as equations rather than inequalities",
+                    "required_counterexample": "Pushing car with 10 N: if f_s = mu_s * N = 7840 N, car would shoot backward!",
+                    "required_technical_repair": "Static friction self-adjusts to balance applied force up to mu_s * N ceiling"
+                },
+                {
+                    "misconception_id": "MISC-NLM-FRICTION-OPPOSES-MOTION",
+                    "incorrect_belief": "Friction always opposes the direction an object moves",
+                    "why_plausible": "Sliding boxes slow down due to friction",
+                    "required_counterexample": "Walking: ground friction pushes forward on foot, propelling person forward",
+                    "required_technical_repair": "Friction opposes relative sliding between surfaces, NOT motion relative to ground"
+                }
+            ],
+            "mandatory_verifications": ["STATIC_THRESHOLD_CHECK", "KINETIC_DROP_CHECK", "DIMENSIONAL", "RELATIVE_DIRECTION_CHECK"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-FRICTION-THRESHOLD",
+                    "name": "Dry Friction Thresholding",
+                    "recognition_cues": "Object on rough surface with applied force",
+                    "first_technical_move": "Calculate N; evaluate f_{s,max} = mu_s * N; compare with driving force",
+                    "common_fatal_error": "Calculating f = mu_k * N immediately without checking static threshold",
+                    "typical_unknown": "Friction regime, actual friction force f, acceleration a"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 3,
+                "element_interactivity": 3,
+                "inferential_jump_severity": 3,
+                "representation_translation": 3,
+                "model_discrimination": 3,
+                "sign_or_frame_sensitivity": 3,
+                "multi_step_dependency": 3,
+                "abstraction": 2,
+                "misconception_density": 3,
+                "synthesis": 2,
+                "provisional_difficulty": "HARD",
+                "difficulty_basis": "Branching if/else regime logic, normal force dependency, extreme misconception density",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-FRICTION", "CONCEPT: CON-NLM-STATIC-INEQUALITY", "SOURCE: SOURCE-DEFINED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: HARD"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-06",
+                    "authoring_defect": "Static friction calculated blindly as mu_s * N when driving force is below threshold",
+                    "expected_failure_reason": "Static friction is governed by inequality f_s <= mu_s * N and self-adjusts to balance applied force"
+                }
+            ]
+        },
+        {
+            "subtopic_id": "PHY-NLM-CONNECTED",
+            "learner_title": "Connected Systems and Acceleration Constraints",
+            "chapter": "Laws of Motion",
+            "authority_tier": "STANDARD-PHYSICS-DERIVED",
+            "maturity": "ENGINEERING",
+            "technical_readiness": "ENGINEERING_GATE_READY",
+            "canonical_concept_ids": [
+                "CON-NLM-SYSTEM-AS-WHOLE",
+                "CON-NLM-INTERNAL-FORCE-CANCELLATION",
+                "CON-NLM-ACCEL-CONSTRAINT-KINEMATICS",
+                "CON-NLM-MOVABLE-PULLEY-RATIO"
+            ],
+            "prerequisite_ids": ["PHY-NLM-FBD", "PHY-NLM-SECOND-LAW", "PHY-NLM-THIRD-LAW", "PHY-NLM-TENSION"],
+            "linked_buckets": ["B-NLM-CONNECTED-SYSTEMS"],
+            "linked_problem_family_ids": ["PF-NLM-CONNECTED-BLOCKS-CONTACT", "PF-NLM-MOVABLE-PULLEY"],
+            "technical_core": [
+                {
+                    "concept_id": "CON-NLM-SYSTEM-AS-WHOLE",
+                    "canonical_statement": "A composite system of multiple bodies can be treated as a single mass M_tot = sum(m_i) accelerated by external forces.",
+                    "why_required": "Enables fast determination of overall system acceleration.",
+                    "failure_if_omitted": "Learner gets bogged down in simultaneous multi-variable systems."
+                },
+                {
+                    "concept_id": "CON-NLM-INTERNAL-FORCE-CANCELLATION",
+                    "canonical_statement": "Internal forces cancel in pairs by Newton III and do not appear in whole-system equation.",
+                    "why_required": "Validates system-as-a-whole approach mathematically.",
+                    "failure_if_omitted": "Adding internal tensions to total system external force sums."
+                },
+                {
+                    "concept_id": "CON-NLM-ACCEL-CONSTRAINT-KINEMATICS",
+                    "canonical_statement": "String length constraint f(x_1, ..., x_n) = L differentiated twice yields acceleration relations.",
+                    "why_required": "Provides necessary kinematic relations to close system of dynamical equations.",
+                    "failure_if_omitted": "Assuming all connected bodies always share identical accelerations."
+                }
+            ],
+            "mandatory_equations": [
+                {
+                    "equation_id": "EQ-NLM-WHOLE-SYSTEM",
+                    "formula": "sum(F_external) = (sum m_i) * a_system",
+                    "meaning_of_symbols": "External force sum and system acceleration",
+                    "reference_frame_or_sign": "Collinear motion direction",
+                    "conditions_of_validity": "Rigid coupling, common acceleration magnitude",
+                    "obligations": ["DERIVE", "APPLY", "VERIFY"]
+                },
+                {
+                    "equation_id": "EQ-NLM-PULLEY-CONSTRAINT",
+                    "formula": "sum(T_i * a_i) = 0",
+                    "meaning_of_symbols": "Virtual work constraint for inextensible string networks",
+                    "reference_frame_or_sign": "Signed vector projections",
+                    "conditions_of_validity": "Ideal string-pulley network",
+                    "obligations": ["DERIVE", "APPLY", "INVERT", "VERIFY"]
+                }
+            ],
+            "representations": [
+                {
+                    "representation_id": "REP-NLM-COMPOSITE-BOUNDARY-DIAGRAM",
+                    "name": "Multi-body System Boundary",
+                    "physics_encoded": "System boundary demarcating internal vs external forces",
+                    "mandatory_labels": ["Dashed boundary around bodies", "External force arrows", "Internal cancellation indicators", "System acceleration"],
+                    "what_cannot_be_omitted": "Explicit dashed boundary line and external force identification",
+                    "common_incorrect_version": "Showing internal tension arrows crossing composite boundary",
+                    "verification_method": "Every force in sum F_ext must have agent outside boundary"
+                }
+            ],
+            "model_conditions": [
+                {
+                    "condition": "Rigid or inextensible connectors",
+                    "why_needed": "No relative elastic delay or oscillation",
+                    "what_changes_if_violated": "Spring-mass oscillations occur"
+                }
+            ],
+            "reasoning_sequence": [
+                {"step": 1, "expert_action": "Formulate string length constraint equation and differentiate twice", "inferential_jump": "HIGH_FRAGILITY"},
+                {"step": 2, "expert_action": "Choose strategy: system as whole (for a) vs separate FBDs (for internal forces)", "inferential_jump": "LOW"},
+                {"step": 3, "expert_action": "Write Newton's second law for each body along motion direction", "inferential_jump": "MEDIUM"},
+                {"step": 4, "expert_action": "Substitute acceleration constraints and solve linear system", "inferential_jump": "HIGH_FRAGILITY"}
+            ],
+            "required_transformations": [
+                {"from_mode": "MOVABLE_PULLEY", "to_mode": "CONSTRAINT_RELATION", "description": "L = 2*x_p - x_m -> 2*a_p = a_m"}
+            ],
+            "misconceptions": [
+                {
+                    "misconception_id": "MISC-NLM-PULLEY-EQUAL-A",
+                    "incorrect_belief": "All objects in any pulley system accelerate at the same rate",
+                    "why_plausible": "True in basic Atwood machine",
+                    "required_counterexample": "Movable pulley: pulling 2 m of string lifts load 1 m -> a_load = 0.5 * a_rope",
+                    "required_technical_repair": "Acceleration ratios must be derived from string length conservation"
+                }
+            ],
+            "mandatory_verifications": ["INTERNAL_CANCELLATION_VERIFY", "LIMITING_CASE", "DIMENSIONAL", "ENERGY_CONSISTENCY"],
+            "problem_families": [
+                {
+                    "family_id": "PF-NLM-MOVABLE-PULLEY",
+                    "name": "Movable Pulley Acceleration",
+                    "recognition_cues": "Pulleys that move up and down with the load",
+                    "first_technical_move": "Write string length in terms of position coordinates from fixed ceiling",
+                    "common_fatal_error": "Assuming a1 = a2",
+                    "typical_unknown": "Accelerations of individual masses and string tensions"
+                }
+            ],
+            "difficulty_profile": {
+                "prerequisite_depth": 3,
+                "element_interactivity": 3,
+                "inferential_jump_severity": 3,
+                "representation_translation": 3,
+                "model_discrimination": 3,
+                "sign_or_frame_sensitivity": 3,
+                "multi_step_dependency": 3,
+                "abstraction": 3,
+                "misconception_density": 2,
+                "synthesis": 3,
+                "provisional_difficulty": "HARD",
+                "difficulty_basis": "Synthesizes multi-FBD tracking, differential constraints, and linear system elimination",
+                "maturity": "ENGINEERING"
+            },
+            "release_checklist": {
+                "canonical_concepts_present": True,
+                "mandatory_equations_present": True,
+                "validity_conditions_stated": True,
+                "required_representations_present": True,
+                "reasoning_chain_complete": True,
+                "misconceptions_addressed": True,
+                "independent_verification_exists": True,
+                "problem_family_map_exists": True
+            },
+            "badges": {
+                "base_badges": ["CORE", "BUCKET: B-NLM-CONNECTED-SYSTEMS", "CONCEPT: CON-NLM-ACCEL-CONSTRAINT-KINEMATICS", "SOURCE: STANDARD-PHYSICS-DERIVED", "ANSWER_STATUS: RESOLVED"],
+                "conditional_badges": ["DIFFICULTY: HARD"]
+            },
+            "falsification_cases": [
+                {
+                    "test_id": "NLM-FAIL-PULLEY-RATIO",
+                    "authoring_defect": "Assuming 1:1 acceleration in movable pulley system without constraint derivation",
+                    "expected_failure_reason": "Movable pulley systems require kinematic acceleration constraint derivation from string length"
+                }
+            ]
+        }
+    ]
+}
+
+
+def build():
+    out_path = POLICY_DIR / "physics-technical-engineering-gates.v1.json"
+    out_path.write_text(json.dumps(REGISTRY, indent=2), encoding="utf-8")
+    print(f"Wrote {len(REGISTRY['subtopic_gates'])} subtopic gates to {out_path}")
+
+
+if __name__ == "__main__":
+    build()
