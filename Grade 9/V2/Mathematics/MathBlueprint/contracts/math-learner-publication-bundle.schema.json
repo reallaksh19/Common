@@ -7,6 +7,7 @@
   "required": [
     "schema_version", "subject", "bundle_id", "source_release_status",
     "source_release_gate_digest", "generation_spec_digest", "governed_example_catalog_digest",
+    "pedagogy_research_manifest_digest",
     "concept_components", "problem_component", "publication_stage_order", "bundle_digest"
   ],
   "properties": {
@@ -17,6 +18,12 @@
     "source_release_gate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "generation_spec_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "governed_example_catalog_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "pedagogy_research_manifest_digest": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      ]
+    },
     "publication_stage_order": {
       "const": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]
     },
