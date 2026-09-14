@@ -8,27 +8,27 @@ WORK_ITEM_KEY: common:grade9:core-relay-architecture-review:20260913
 WORK_ITEM_MODE: EXCLUSIVE
 AGENT_INSTANCE_ID: codex:5cb7bf9c-1854-41c7-afb0-21b707438cb7
 COMMON_PROTOCOL: engineering-pr-delivery-v2
-COMMON_PROTOCOL_BASIS: 805094cc3d208e5a8342c41c2d9d54243d35ebc3
+COMMON_PROTOCOL_BASIS: fed57820909f4984a97d67437340df952b73a5ab
 COMMON_PROTOCOL_STATUS: CURRENT
 AUTHORITY_DOMAIN: New V3B architecture and executable production kits; V2 and source PRs read-only
 ENGINEERING_STATE: IN_PROGRESS
 CUSTODY_STATE: HELD
 QUALIFICATION_STATE: NOT_REQUIRED
 WRITE_AUTHORITY: WRITE_ALLOWED
-AUTO_STATE: NOT_APPLICABLE
+AUTO_STATE: RUNNING
 MERGE_AUTHORITY: OWNER_ONLY
 MERGE_AUTHORIZED: FALSE
 ROADMAP_MUTATION_AUTHORITY: NONE
 MISSION: Review and develop the owner-directed Core1/Core2/Core1A/Core2A subtopic relay architecture; accumulate all details in one draft PR.
-ACTIVE_ENDPOINT: EP-0003
-ACTIVE_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0003.md
+ACTIVE_ENDPOINT: EP-0004
+ACTIVE_ENDPOINT_FILE: agents/chains/GRADE9-CORE-RELAY-ARCHITECTURE-20260913/endpoints/EP-0004.md
 PR: 364
 BRANCH: draft/core-relay-architecture-review-20260913
 HEAD: 70eafeb42e5e37a9850784f803bd63c403aa1ae2
 REPORT_BASIS_HEAD: 70eafeb42e5e37a9850784f803bd63c403aa1ae2
 STATE: IN_PROGRESS
 ACTIVE_CUSTODIAN: Originating Codex architecture-review agent
-CUSTODY_EPOCH: 3
+CUSTODY_EPOCH: 4
 COORDINATION_STATE: SAFE_FOR_ISOLATED_ADVISORY_DOCUMENTS
 DEPENDENCIES: Read-only architecture evidence from PRs 350, 351, 362; no Git stacking dependency.
 MATERIAL_HISTORY_ROOT_BASE: 805094cc3d208e5a8342c41c2d9d54243d35ebc3
@@ -72,3 +72,7 @@ PR #364 is open. Original inputs and owner basis are committed at 84c9871d7388e8
 ## Current scope expansion — 2026-09-14
 
 EP-0003 controls the owner-authorized V3B phase. Adopt updated production kits/blueprints into Grade 9/V3B with shared contracts and subject folders, core logic and tests. Preserve V2. PR364 stays draft; no merge until approval. Earlier advisory-only statements describe the previous leg. The originating agent continues; no takeover qualification or human release PASS is claimed.
+
+## Current controlling boundary — EP-0004
+
+Physics first, six-Core owner requirements and engineering gates govern this phase. Read EP-0004 before any historical four-Core instruction. Latest parent Physics head f2f22f0cea1c31ebf09da10241db8be0fde39789. New product files remain V3B; V2, other subjects and original inputs unchanged. Explicit AUTO authorization applies inside this scope. No merge authorization. Attachment reconciliation, actual PDF/browser inspection and independent human/learner evaluation remain unresolved.
