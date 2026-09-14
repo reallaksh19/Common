@@ -1,0 +1,161 @@
+{
+  "policy_id": "CHEM-G9-V2-BLUEPRINT-v5-STUDY-PRODUCT-QUALITY",
+  "schema_version": "5.0.0",
+  "subject": "CHEMISTRY",
+  "governing_principles": {
+    "study_note_definition": "TECHNICAL_OBJECT_CLOSURE_NOT_EXECUTIVE_SUMMARY",
+    "page_count_is_not_quality_metric": true,
+    "content_closure_precedes_pagination": true,
+    "page_envelope_must_not_cause_content_omission": true,
+    "research_may_improve_realization_but_may_not_expand_chemistry_authority": true,
+    "shared_truth_does_not_authorize_shared_expository_prose": true
+  },
+  "study_side": {
+    "applies_to": ["CORE1A", "CORE1B"],
+    "shared_authority": [
+      "bucket_scope",
+      "learning_atoms",
+      "prerequisites",
+      "representations",
+      "equations",
+      "misconceptions",
+      "validity_boundaries",
+      "research_package",
+      "difficulty_badge"
+    ],
+    "core1a_required_jobs_per_learning_atom": [
+      "MEANING",
+      "RULE_OR_DECISION",
+      "REPRESENTATION_OR_EQUATION",
+      "REASONING_CHAIN",
+      "BOUNDARY_OR_MISCONCEPTION",
+      "WORKED_OR_MODELED_EXAMPLE",
+      "PRACTICE",
+      "ANSWER_CLOSURE"
+    ],
+    "core1b_required_jobs_per_learning_atom": [
+      "RETRIEVE_OR_PREDICT",
+      "REPRESENT",
+      "EXPLAIN_OR_JUSTIFY",
+      "COMPARE_CORRECT_OR_BOUNDARY",
+      "GENERALIZE_OR_TEACH_BACK",
+      "SELF_HELP",
+      "CANONICAL_RESPONSE",
+      "VERIFY"
+    ],
+    "hard_bucket_additional_product_jobs": {
+      "CORE1A": [
+        "DERIVATION_OR_RULE_ANATOMY",
+        "MISCONCEPTION_CONTRAST",
+        "MULTI_REPRESENTATION_BRIDGE",
+        "INDEPENDENT_PRACTICE"
+      ],
+      "CORE1B": [
+        "ERROR_DIAGNOSIS",
+        "REPRESENTATION_TRANSLATION",
+        "BOUNDARY_CHALLENGE",
+        "INDEPENDENT_RECONSTRUCTION"
+      ]
+    },
+    "practice_closure": {
+      "CORE1A": {
+        "worked_min": 1,
+        "completion_min": 1,
+        "independent_min": 1,
+        "full_solution_min": 1
+      },
+      "CORE1B": {
+        "constructive_tasks_per_atom_min": 1,
+        "self_help_ladders_per_atom_min": 1,
+        "canonical_responses_per_atom_min": 1,
+        "verification_checks_per_atom_min": 1
+      }
+    },
+    "research_translation": {
+      "EASY": "OPTIONAL",
+      "MEDIUM": "REQUIRED_TO_TECHNICAL_OBJECTS",
+      "HARD": "DEEP_REQUIRED_TO_TECHNICAL_OBJECTS"
+    },
+    "cross_core_reuse": {
+      "allowed": [
+        "GOVERNED_FACT",
+        "GOVERNED_EQUATION",
+        "GOVERNED_TERM",
+        "SOURCE_CITATION"
+      ],
+      "forbidden": [
+        "EXPOSITORY_PARAGRAPH",
+        "GENERIC_HINT_BLOCK",
+        "WORKED_SOLUTION_PROSE"
+      ]
+    }
+  },
+  "question_side": {
+    "applies_to": ["CORE2A", "CORE2B"],
+    "core2a_required_jobs_per_question": [
+      "ATTEMPT",
+      "REPRESENTATION_OR_SETUP",
+      "FIRST_MOVE",
+      "TECHNICAL_BREAKDOWN",
+      "FULL_SOLUTION",
+      "ERROR_TRAP",
+      "VERIFICATION",
+      "RETRY_OR_NEAR_TRANSFER"
+    ],
+    "core2b_required_jobs_per_question": [
+      "ATTEMPT",
+      "TARGET_REPHRASE",
+      "RELEVANT_DATA_SELECTION",
+      "REPRESENTATION_CHOICE",
+      "PRINCIPLE_SELECTION",
+      "FIRST_MOVE_COMMIT",
+      "JUSTIFICATION",
+      "PROGRESSIVE_HINTS",
+      "FULL_SOLUTION",
+      "VERIFICATION",
+      "GENERALIZE_OR_DIAGNOSE"
+    ],
+    "question_custody": {
+      "source_question_stem_must_remain_identical": true,
+      "source_provenance_must_remain_identical": true,
+      "canonical_answer_authority_must_remain_identical": true,
+      "helper_prose_must_be_realization_specific": true
+    },
+    "episode_closure": {
+      "every_selected_question_has_attempt_path": true,
+      "every_selected_question_has_check_path": true,
+      "every_selected_question_has_full_solution_path": true,
+      "every_hint_binds_to_a_reasoning_step": true,
+      "coverage_ledger_required": true
+    }
+  },
+  "page_architecture": {
+    "allowed_page_roles": [
+      "COVER",
+      "ROUTE_OR_MAP",
+      "CONCEPT_EXPLANATION",
+      "RULE_OR_DERIVATION",
+      "REPRESENTATION",
+      "WORKED_EXAMPLE",
+      "MISCONCEPTION_OR_BOUNDARY",
+      "PRACTICE",
+      "QUESTION_EPISODE",
+      "WORKSPACE",
+      "SOLUTION",
+      "SUMMARY_OR_HANDOUT"
+    ],
+    "content_page_min_active_area_ratio": 0.55,
+    "workspace_page_min_active_area_ratio": 0.30,
+    "workspace_requires_explicit_learner_action": true,
+    "cover_or_route_pages_may_not_be_used_to_pad_page_count": true,
+    "every_non_cover_page_requires_technical_object_or_learner_action": true,
+    "final_pdf_must_measure_actual_not_declared_active_area": true
+  },
+  "anti_padding": {
+    "repeated_generic_template_fraction_max": 0.25,
+    "shared_expository_block_count_max_between_a_and_b": 0,
+    "unjustified_blank_area_forbidden": true,
+    "summary_only_artifact_forbidden": true,
+    "page_count_targeting_forbidden": true
+  }
+}
