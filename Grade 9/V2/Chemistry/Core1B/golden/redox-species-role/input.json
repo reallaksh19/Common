@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.1.0",
+  "subject": "CHEMISTRY",
+  "delivery_mode": "STATIC",
+  "source_core1a_ref": "CHEM-NCERT-REDOX-PRODUCTION-v1",
+  "instruction_bucket": {
+    "schema_version": "4.0.0",
+    "bucket_id": "BUCKET-HARD-REDOX-SPECIES-ROLE",
+    "subject": "CHEMISTRY",
+    "subtopic_id": "redox-species-role",
+    "title": "Track species, oxidation state and agent role",
+    "difficulty_badge": "HARD",
+    "page_envelope": {
+      "max_pages": 30,
+      "is_ceiling_not_quota": true
+    },
+    "research": {
+      "mode": "DEEP_REQUIRED",
+      "research_refs": [
+        "RSC-REDOX-REPRESENTATION",
+        "CERP-REDOX-MISCONCEPTIONS"
+      ],
+      "research_questions": [
+        "Which representations best connect species identity, oxidation state and electron transfer?",
+        "Which oxidation-state, charge and agent-role misconceptions recur for novice learners?"
+      ]
+    },
+    "visual_plan": {
+      "visual_jobs": [
+        "SYMBOLIC_MODEL",
+        "QUANTITY_MODEL",
+        "REPRESENTATION_BRIDGE",
+        "ERROR_VISUAL"
+      ]
+    },
+    "decomposition": {
+      "decision": "SPLIT",
+      "sub_subtopic_ids": [
+        "species-identity",
+        "oxidation-state-lane",
+        "electron-consequence",
+        "agent-role-and-error-cases"
+      ]
+    },
+    "realization_modes": [
+      "CORE1A",
+      "CORE1B"
+    ]
+  },
+  "capability_ref": "CAP-ATTACH-SPECIES-ROLE",
+  "approved_capability_refs": [
+    "CAP-TRACK-REACTING-SPECIES",
+    "CAP-TRACK-OXIDATION-STATE",
+    "CAP-ATTACH-SPECIES-ROLE"
+  ],
+  "problem_family_ref": "PF-AGENT_ROLE_ASSIGNMENT",
+  "approved_problem_family_refs": [
+    "PF-AGENT_ROLE_ASSIGNMENT"
+  ],
+  "new_chemistry_refs": [],
+  "title": "Prove Redox agent roles from the self-change",
+  "representation_summary": "Use only the already-taught reaction Zn + Cu2+ -> Zn2+ + Cu. Build the chain species identity -> oxidation-state change -> electron consequence -> agent role.",
+  "task_prompt": "A learner says: 'Zn is the reducing agent because Zn gets reduced.' Decide whether the reasoning is valid. Rewrite it as a four-link chemical proof and explain exactly why the original claim fails.",
+  "workspace_lines": 5,
+  "help_mode": "PROGRESSIVE_FIXED",
+  "help": [
+    {
+      "level": "H1_ORIENT",
+      "text": "Do not start from the agent label. Track Zn itself first."
+    },
+    {
+      "level": "H2_REPRESENT",
+      "text": "Write the oxidation-state lane Zn: 0 -> +2 and Cu: +2 -> 0."
+    },
+    {
+      "level": "H3_PRINCIPLE",
+      "text": "An increase in oxidation state is oxidation; a decrease is reduction. The agent role is concluded from the self-change and the effect on the other species."
+    },
+    {
+      "level": "H4_FIRST_MOVE",
+      "text": "Begin the proof with 'Zn: 0 -> +2, so Zn is oxidised' before discussing the reducing-agent label."
+    }
+  ],
+  "canonical_answer": "Zn changes from 0 to +2, so Zn is oxidised. Zn loses electrons; those electrons reduce Cu2+ to Cu. Therefore Zn acts as the reducing agent. Cu2+ changes from +2 to 0, so Cu2+ is reduced and acts as the oxidising agent. The original claim fails because it reverses Zn's proved self-change.",
+  "explanation": "SELF change is evidence; the agent label is the conclusion. The reasoning is valid only when the role agrees with the direction of oxidation-state change and electron transfer.",
+  "check": "The same two electrons lost by Zn must be the two electrons gained by Cu2+, and each role label must agree with that self-change.",
+  "cognitive_moves": [
+    "PREDICT",
+    "REPRESENT",
+    "COMPARE",
+    "CORRECT",
+    "GENERALIZE"
+  ]
+}
