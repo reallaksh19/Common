@@ -47,7 +47,7 @@ EXPECTED_DEPTH = {
     "EASY": {
         "max_pages": 10,
         "pedagogy_web_research": "FORBIDDEN",
-        "minimum_web_sources": 0,
+        "research_depth": "NONE",
         "subsubtopic_decomposition_allowed": False,
         "visual_intensity": "STANDARD",
         "step_by_step_required": True,
@@ -56,7 +56,7 @@ EXPECTED_DEPTH = {
     "MEDIUM": {
         "max_pages": 20,
         "pedagogy_web_research": "REQUIRED",
-        "minimum_web_sources": 2,
+        "research_depth": "STANDARD",
         "subsubtopic_decomposition_allowed": True,
         "visual_intensity": "HIGH",
         "step_by_step_required": True,
@@ -65,7 +65,7 @@ EXPECTED_DEPTH = {
     "HARD": {
         "max_pages": 30,
         "pedagogy_web_research": "REQUIRED",
-        "minimum_web_sources": 3,
+        "research_depth": "DEEP",
         "subsubtopic_decomposition_allowed": True,
         "visual_intensity": "VERY_HIGH",
         "step_by_step_required": True,
@@ -113,6 +113,8 @@ def validate_contract(doc: dict) -> None:
         fail("MATH_CORE1_PAGE_BUDGET_MUST_BE_CAP")
     if not c1["pedagogy_research_does_not_change_authority"]:
         fail("MATH_CORE1_RESEARCH_AUTHORITY_DRIFT")
+    if not c1["research_source_count_is_not_quality_proxy"]:
+        fail("MATH_CORE1_RESEARCH_COUNT_PROXY_FORBIDDEN")
     for badge, expected in EXPECTED_DEPTH.items():
         if c1["difficulty_badges"][badge] != expected:
             fail("MATH_CORE1_DIFFICULTY_BADGE_POLICY_DRIFT", badge)
@@ -126,7 +128,9 @@ def validate_contract(doc: dict) -> None:
         "missing_calibration_blocks_generation",
         "purpose_still_required",
         "no_silent_default",
-        "owner_waiver_must_supply_support_and_ceiling",
+        "core2a_question_demand_is_calibrated",
+        "core2b_transfer_demand_is_calibrated",
+        "owner_waiver_must_supply_all_resolved_controls",
     ]
     if not all(c2[k] for k in required_true):
         fail("MATH_CORE2_CALIBRATION_POLICY_WEAKENED")

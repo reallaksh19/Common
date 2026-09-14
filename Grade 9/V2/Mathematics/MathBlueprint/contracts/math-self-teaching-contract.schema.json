@@ -13,7 +13,7 @@
     "global_invariants"
   ],
   "properties": {
-    "schema_version": {"const": "2.0.0"},
+    "schema_version": {"const": "2.1.0"},
     "subject": {"const": "MATHEMATICS"},
     "self_taught": {"const": true},
     "stage_profiles": {
@@ -40,13 +40,15 @@
             "learner_knowledge_controls_depth",
             "difficulty_badges",
             "page_budget_is_cap_not_target",
-            "pedagogy_research_does_not_change_authority"
+            "pedagogy_research_does_not_change_authority",
+            "research_source_count_is_not_quality_proxy"
           ],
           "properties": {
             "bucket_unit": {"const": "SUBTOPIC_BUCKET"},
             "learner_knowledge_controls_depth": {"const": false},
             "page_budget_is_cap_not_target": {"const": true},
             "pedagogy_research_does_not_change_authority": {"const": true},
+            "research_source_count_is_not_quality_proxy": {"const": true},
             "difficulty_badges": {
               "type": "object",
               "additionalProperties": false,
@@ -70,7 +72,9 @@
             "knowledge_percent_is_mastery_claim",
             "purpose_still_required",
             "no_silent_default",
-            "owner_waiver_must_supply_support_and_ceiling"
+            "core2a_question_demand_is_calibrated",
+            "core2b_transfer_demand_is_calibrated",
+            "owner_waiver_must_supply_all_resolved_controls"
           ],
           "properties": {
             "calibration_applies_to": {"type": "array", "const": ["CORE2A", "CORE2B"]},
@@ -80,7 +84,9 @@
             "knowledge_percent_is_mastery_claim": {"const": false},
             "purpose_still_required": {"const": true},
             "no_silent_default": {"const": true},
-            "owner_waiver_must_supply_support_and_ceiling": {"const": true}
+            "core2a_question_demand_is_calibrated": {"const": true},
+            "core2b_transfer_demand_is_calibrated": {"const": true},
+            "owner_waiver_must_supply_all_resolved_controls": {"const": true}
           }
         }
       }
@@ -121,7 +127,7 @@
       "required": [
         "max_pages",
         "pedagogy_web_research",
-        "minimum_web_sources",
+        "research_depth",
         "subsubtopic_decomposition_allowed",
         "visual_intensity",
         "step_by_step_required",
@@ -130,7 +136,7 @@
       "properties": {
         "max_pages": {"type": "integer", "minimum": 1},
         "pedagogy_web_research": {"enum": ["FORBIDDEN", "REQUIRED"]},
-        "minimum_web_sources": {"type": "integer", "minimum": 0},
+        "research_depth": {"enum": ["NONE", "STANDARD", "DEEP"]},
         "subsubtopic_decomposition_allowed": {"type": "boolean"},
         "visual_intensity": {"enum": ["STANDARD", "HIGH", "VERY_HIGH"]},
         "step_by_step_required": {"const": true},

@@ -9,72 +9,61 @@ CORE1A / CORE1B
 topic complexity → difficulty badge → depth / research / representation budget
 
 CORE2A / CORE2B
-learner knowledge % OR owner waiver → support profile / transfer ceiling
+learner knowledge % OR owner waiver
+        ↓
+Core2A support + Core2A question-demand ceiling + Core2B transfer ceiling
 ```
 
-These must not be conflated.
+These systems must not be conflated.
 
 ## 2. Core1A/Core1B — difficulty-badge control
 
-Every learner product is generated **subtopic-wise as a bucket**.
-
-The same bucket badge binds Core1A and Core1B:
+Every learner product is generated **subtopic-wise as a bucket**. Core1A and Core1B share the same bucket identity and difficulty badge:
 
 ```text
 EASY | MEDIUM | HARD
 ```
 
-The badge is based on mathematical/pedagogical complexity or explicit owner designation, never learner knowledge percentage.
+The badge reflects mathematical/pedagogical complexity or an explicit owner designation. It never derives from learner knowledge percentage.
 
-Useful qualitative badge evidence includes:
-
-- prerequisite depth;
-- abstraction and hidden-state burden;
-- number of representation changes;
-- inference-chain density;
-- validity/exception density;
-- misconception density;
-- method branching;
-- symbol-to-meaning compression.
-
-No unexplained numeric complexity score is required.
+Useful badge evidence includes prerequisite depth, abstraction, representation changes, inference density, validity/exception density, misconception density, method branching and symbol-to-meaning compression. No unexplained numeric complexity score is required.
 
 ### EASY
 
-- up to 10 pages per bucket/product;
+- up to 10 pages per stage per bucket;
 - visual, step-by-step and diagram-supported;
 - no pedagogy-enrichment web search;
 - remain at the subtopic level;
-- source-integrity verification remains separate and may still be invoked if evidence is damaged or conflicted.
+- Source Integrity verification remains a separate safety path and may still be used when original evidence is ambiguous, damaged or conflicted.
 
 ### MEDIUM
 
-- up to 20 pages per bucket/product;
+- up to 20 pages per stage per bucket;
 - mandatory web research before authoring;
-- at least two credible research/source references in the research brief;
+- a research brief and credible web references are required;
 - subtopic → sub-subtopic decomposition allowed;
 - high visual density and dedicated diagrams;
 - explicit symbol bridges and misconception contrasts.
 
 ### HARD
 
-- up to 30 pages per bucket/product;
-- mandatory deeper web research before authoring;
-- at least three credible research/source references, including at least one high-authority or peer-reviewed source where available;
+- up to 30 pages per stage per bucket;
+- mandatory **deep** web research before authoring;
+- a deep research brief and credible web references are required;
 - subtopic → sub-subtopic decomposition allowed;
 - very high representation density;
 - dedicated diagrams/graphs/tables;
 - explicit inference bridges, validity boundaries and contrast cases.
 
-Page budgets are ceilings, not quotas. Depth is measured by mathematical and cognitive coverage, not page count.
+Page budgets are ceilings, not quotas. Depth is measured by mathematical and cognitive coverage, not by filling pages.
 
-Web research may improve **how** the mathematics is represented and explained. It cannot decide **what mathematics is legal**.
+Research-source counts are deliberately **not** used as a proxy for quality. The research brief must explain what was learned from the sources and how it improves pedagogy. Web research may improve **how** mathematics is represented and explained; it cannot decide **what mathematics is legal**.
 
 ## 3. Core2A/Core2B — learner-calibration control
 
 Generation is blocked until there is one valid learner-calibration path.
 
-### Path A — knowledge known
+### Path A — knowledge percentage known
 
 Required:
 
@@ -83,14 +72,17 @@ learner_knowledge_percent = 0..100
 knowledge_percent_source_ref
 knowledge_calibration_policy_ref
 resolved_core2a_support_profile
+resolved_core2a_max_demand_level
 resolved_core2b_max_demand_level
 ```
 
-The percentage is a generation-control input. It is not a new mastery label and does not replace `UNKNOWN / DEVELOPING / READY`.
+The percentage is a generation-control input. It is not a new mastery state and does not replace `UNKNOWN / DEVELOPING / READY`.
 
-### Path B — knowledge unknown
+The named calibration policy, not the architecture itself, maps percentage to the three resolved controls. This avoids hard-coded pseudo-precise bands.
 
-Owner waiver is allowed.
+### Path B — knowledge percentage unknown
+
+The owner may explicitly waive the percentage requirement.
 
 Required:
 
@@ -98,6 +90,7 @@ Required:
 owner_ref
 waiver reason
 owner-selected Core2A support profile
+owner-selected Core2A maximum demand level
 owner-selected Core2B maximum demand level
 ```
 
@@ -106,11 +99,14 @@ The system must not invent a percentage to fill the gap.
 ### Core2A uses calibration for
 
 - question selection within legal scope;
+- generated-item maximum demand;
 - support density;
 - worked-step granularity;
 - representation support;
 - ordering;
 - generated near/structural variants with new provenance.
+
+Frozen Core2 source questions remain frozen. A source question above the preferred generated-item ceiling may still appear when source/purpose policy requires it, but receives the resolved support treatment rather than being rewritten.
 
 ### Core2B uses calibration for
 
@@ -127,10 +123,10 @@ Core2B still selects only from Core2A-legal items and generated items that satis
 
 ## 4. Purpose remains separate
 
-`STARTER / PRACTICE / REVISION / COMPETITION` is still mandatory for Core2A/Core2B.
+`STARTER / PRACTICE / REVISION / COMPETITION` remains mandatory for Core2A/Core2B.
 
 ```text
-KNOWLEDGE % answers: how much support / transfer distance?
+KNOWLEDGE % answers: how much support and how far may demand move?
 PURPOSE answers: what job should this product perform?
 ```
 
@@ -139,18 +135,18 @@ Neither may silently infer the other.
 ## 5. Fail-closed states
 
 ```text
-Core1 bucket without difficulty badge                    → BLOCK
-EASY bucket with pedagogy-enrichment web research        → BLOCK
-MEDIUM/HARD bucket without required research evidence    → BLOCK
-bucket page budget above badge ceiling                   → BLOCK
-Core1 depth changed because of learner knowledge %       → BLOCK
+Core1 bucket without difficulty badge                         → BLOCK
+EASY bucket with pedagogy-enrichment web research             → BLOCK
+MEDIUM/HARD bucket without required research brief/evidence   → BLOCK
+bucket page budget above badge ceiling                        → BLOCK
+Core1 depth changed because of learner knowledge %            → BLOCK
 
-Core2 without knowledge % and without owner waiver       → BLOCK
-Core2 with both knowledge % and owner waiver             → BLOCK
-knowledge % without source + calibration-policy ref      → BLOCK
-owner waiver without explicit support + transfer ceiling → BLOCK
-silent/default knowledge %                               → BLOCK
-silent/default purpose                                   → BLOCK
+Core2 without knowledge % and without owner waiver            → BLOCK
+Core2 with both knowledge % and owner waiver                  → BLOCK
+knowledge % without source + calibration-policy ref           → BLOCK
+owner waiver without Core2A support + 2A/2B demand ceilings   → BLOCK
+silent/default knowledge %                                    → BLOCK
+silent/default purpose                                        → BLOCK
 ```
 
 ## 6. Execution contract
@@ -159,4 +155,4 @@ silent/default purpose                                   → BLOCK
 
 `validate_self_teaching_generation_spec.py` applies the semantic gates above.
 
-The canonical policy remains `math-self-teaching-policy.json`.
+The canonical self-teaching policy remains `math-self-teaching-policy.json`.

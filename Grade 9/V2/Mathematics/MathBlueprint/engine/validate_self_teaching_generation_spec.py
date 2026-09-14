@@ -25,11 +25,16 @@ def validate_generation_spec(doc: dict) -> None:
         rules = depth[badge]
         if bucket["target_page_budget"] > rules["max_pages"]:
             fail("MATH_CORE1_BUCKET_PAGE_BUDGET_EXCEEDED", bucket["bucket_id"])
+
         refs = bucket["pedagogy_web_research_refs"]
-        if rules["pedagogy_web_research"] == "FORBIDDEN" and refs:
-            fail("MATH_CORE1_EASY_PEDAGOGY_WEB_RESEARCH_FORBIDDEN", bucket["bucket_id"])
-        if rules["pedagogy_web_research"] == "REQUIRED" and len(refs) < rules["minimum_web_sources"]:
-            fail("MATH_CORE1_RESEARCH_EVIDENCE_INSUFFICIENT", bucket["bucket_id"])
+        brief = bucket["pedagogy_research_brief_ref"]
+        if rules["pedagogy_web_research"] == "FORBIDDEN":
+            if refs or brief is not None:
+                fail("MATH_CORE1_EASY_PEDAGOGY_WEB_RESEARCH_FORBIDDEN", bucket["bucket_id"])
+        else:
+            if not refs or not brief:
+                fail("MATH_CORE1_RESEARCH_EVIDENCE_INSUFFICIENT", bucket["bucket_id"])
+
         if not rules["subsubtopic_decomposition_allowed"] and bucket["subsubtopic_plan"]:
             fail("MATH_CORE1_SUBSUBTOPIC_DECOMPOSITION_FORBIDDEN", bucket["bucket_id"])
 
@@ -50,8 +55,10 @@ def validate_generation_spec(doc: dict) -> None:
             fail("MATH_CORE2_WAIVER_CANNOT_FAKE_KNOWLEDGE_BINDING")
         if cal["resolved_core2a_support_profile"] != waiver["selected_core2a_support_profile"]:
             fail("MATH_CORE2_OWNER_WAIVER_SUPPORT_DRIFT")
+        if cal["resolved_core2a_max_demand_level"] != waiver["selected_core2a_max_demand_level"]:
+            fail("MATH_CORE2_OWNER_WAIVER_CORE2A_CEILING_DRIFT")
         if cal["resolved_core2b_max_demand_level"] != waiver["selected_core2b_max_demand_level"]:
-            fail("MATH_CORE2_OWNER_WAIVER_CEILING_DRIFT")
+            fail("MATH_CORE2_OWNER_WAIVER_CORE2B_CEILING_DRIFT")
 
 
 def main() -> None:
@@ -64,6 +71,9 @@ def main() -> None:
         "status": "PASS",
         "core1_buckets": len(doc["core1_buckets"]),
         "core2_calibration": "KNOWLEDGE_PERCENT" if doc["core2_calibration"]["learner_knowledge_percent"] is not None else "OWNER_WAIVER",
+        "core2a_support_profile": doc["core2_calibration"]["resolved_core2a_support_profile"],
+        "core2a_max_demand_level": doc["core2_calibration"]["resolved_core2a_max_demand_level"],
+        "core2b_max_demand_level": doc["core2_calibration"]["resolved_core2b_max_demand_level"],
     }, indent=2))
 
 

@@ -132,13 +132,13 @@ bucket difficulty = EASY | MEDIUM | HARD
 
 The badge controls content depth, web research, decomposition, visual density and page ceiling. It is independent of learner knowledge percentage.
 
-| Badge | Page ceiling per bucket/product | Pedagogy web research | Internal decomposition |
+| Badge | Page ceiling per stage/bucket | Pedagogy web research | Internal decomposition |
 |---|---:|---|---|
 | EASY | 10 | forbidden | subtopic only |
-| MEDIUM | 20 | required | sub-subtopics allowed |
-| HARD | 30 | required, deeper | sub-subtopics allowed |
+| MEDIUM | 20 | required + research brief | sub-subtopics allowed |
+| HARD | 30 | required + deep research brief | sub-subtopics allowed |
 
-Page counts are ceilings, not targets. Research improves pedagogy/representation and never becomes curriculum authority.
+Page counts are ceilings, not targets. Research source count is not used as a proxy for quality. External research improves pedagogy/representation and never becomes curriculum authority.
 
 ### Core2A / Core2B
 
@@ -148,12 +148,14 @@ Generation requires learner knowledge percentage unless explicitly waived by the
 knowledge % known
 → source ref + calibration policy ref
 → Core2A support profile
-→ Core2B maximum demand level
+→ Core2A maximum generated-question demand
+→ Core2B maximum transfer demand
 
 knowledge % unknown
 → owner waiver + reason
 → owner-selected Core2A support profile
-→ owner-selected Core2B maximum demand level
+→ owner-selected Core2A maximum demand
+→ owner-selected Core2B maximum demand
 ```
 
 Missing both percentage and waiver blocks generation. Supplying both also blocks. No pseudo-percentage or silent default is permitted.
@@ -161,6 +163,8 @@ Missing both percentage and waiver blocks generation. Supplying both also blocks
 Learning purpose (`STARTER / PRACTICE / REVISION / COMPETITION`) remains mandatory and independent of knowledge percentage.
 
 The percentage is a generation-calibration input; it does not overwrite `UNKNOWN / DEVELOPING / READY` and does not itself prove mastery.
+
+No numeric percentage bands are hard-coded without an owner-approved calibration policy. A named policy resolves percentage to concrete controls.
 
 ### Executable contracts
 
@@ -195,6 +199,7 @@ Do not freeze deterministic Publication until pedagogy goldens prove:
 - EASY/MEDIUM/HARD Core1A/Core1B bucket behaviour;
 - Core2A/Core2B generation with a real knowledge percentage;
 - Core2A/Core2B generation with an owner waiver;
+- Core2A question-demand calibration and Core2B transfer-demand calibration;
 - self-help closure and independent answer validation;
 - no drift in authority, source identity or transfer ceiling.
 
