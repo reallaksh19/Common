@@ -146,12 +146,12 @@ jobs:
           print(json.dumps(summary, indent=2))
           PY
 
-      - name: Regenerate governed learner product from content-complete Blueprint
+      - name: Regenerate governed learner product from content-complete Blueprint bundle
         run: |
           python 'Grade 9/V2/Mathematics/MathBlueprint/engine/run_bound_blueprint_publication.py' \
             --bound-dir /tmp/core1a/bound-producer-release
 
-      - name: Inspect blueprint-only regenerated publication
+      - name: Inspect blueprint-bundle-only regenerated publication
         run: |
           python - <<'PY'
           import json
@@ -160,17 +160,20 @@ jobs:
 
           root = Path('/tmp/core1a/bound-producer-release/publication')
           summary = json.loads((root / 'blueprint_publication_summary.json').read_text(encoding='utf-8'))
-          bp_audit = json.loads((root / 'learner_page_blueprint_audit.json').read_text(encoding='utf-8'))
+          bundle_audit = json.loads((root / 'learner_publication_bundle_audit.json').read_text(encoding='utf-8'))
           pdf_audit = json.loads((root / 'blueprint_pdf_audit.json').read_text(encoding='utf-8'))
+          bundle = json.loads((root / 'learner_publication_bundle.json').read_text(encoding='utf-8'))
           assert summary['status'] == 'PASS'
           assert summary['source_release_gate'] == 'PASS'
-          assert summary['semantic_source'] == 'LEARNER_PAGE_BLUEPRINT_ONLY'
-          assert bp_audit['blueprint_sha256'] == pdf_audit['blueprint_sha256']
-          assert set(bp_audit['render_object_ids']) == set(pdf_audit['rendered_object_ids'])
+          assert summary['semantic_source'] == 'LEARNER_PUBLICATION_BUNDLE_ONLY'
+          assert bundle_audit['bundle_sha256'] == pdf_audit['bundle_sha256']
+          assert set(bundle_audit['render_object_ids']) == set(pdf_audit['rendered_object_ids'])
+          assert bundle['problem_component']['governance'] == 'LEARNER_FIT'
+          assert all(c['difficulty_badge'] in {'EASY','MEDIUM','HARD'} for c in bundle['concept_components'])
           pdf = fitz.open(root / 'blueprint_regenerated_learner_product.pdf')
           assert len(pdf) >= 1
           assert pdf_audit['rendered_object_count'] > 0
-          print(json.dumps({'blueprint_id':summary['blueprint_id'],'pages':len(pdf),'render_objects':summary['render_object_count'],'pdf_sha256':summary['pdf_sha256'],'semantic_source':summary['semantic_source']}, indent=2))
+          print(json.dumps({'bundle_id':summary['bundle_id'],'concept_components':summary['concept_component_count'],'difficulty_badges':summary['difficulty_badge_counts'],'pages':len(pdf),'render_objects':summary['render_object_count'],'pdf_sha256':summary['pdf_sha256'],'semantic_source':summary['semantic_source']}, indent=2))
           PY
 
       - name: Upload Core1A inputs, learner product and bound release artifacts
