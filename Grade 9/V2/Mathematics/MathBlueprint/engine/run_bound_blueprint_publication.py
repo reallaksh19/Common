@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the bound Mathematics learner product strictly from Blueprint logic."""
+"""Regenerate the bound Mathematics learner product strictly from Blueprint bundle logic."""
 from __future__ import annotations
 
 import argparse
@@ -30,59 +30,73 @@ def main() -> None:
     ap.add_argument("--bound-dir", required=True)
     args = ap.parse_args()
     root = Path(args.bound_dir)
-    gate = load(root / "release" / "product_release_gate.json")
+    gate_path = root / "release" / "product_release_gate.json"
+    gate = load(gate_path)
     if gate.get("status") != "PASS":
         fail("BOUND_BLUEPRINT_PUBLICATION_REQUIRES_RELEASE_PASS")
 
     example_catalog = root / "core1a" / "core1a_governed_example_catalog.json"
+    generation_spec = root / "inputs" / "generation_spec.json"
     if not example_catalog.exists():
         fail("BOUND_BLUEPRINT_PUBLICATION_GOVERNED_EXAMPLE_CATALOG_REQUIRED")
 
     out = root / "publication"
     out.mkdir(parents=True, exist_ok=True)
-    bp = out / "learner_page_blueprint.json"
-    bp_audit = out / "learner_page_blueprint_audit.json"
+    bundle = out / "learner_publication_bundle.json"
+    bundle_audit = out / "learner_publication_bundle_audit.json"
     pdf = out / "blueprint_regenerated_learner_product.pdf"
     pdf_audit = out / "blueprint_pdf_audit.json"
 
-    run(HERE / "compile_governed_product_page_blueprint.py", [
+    run(HERE / "compile_publication_bundle.py", [
         "--bucket-plan", str(root / "core1a" / "core1a_bucket_plan.json"),
         "--core1a-manuscript", str(root / "core1a" / "core1a_textbook_manuscript.json"),
         "--core1a-example-catalog", str(example_catalog),
         "--core1b-dir", str(root / "core1b"),
         "--core2a-blueprint", str(root / "core2a" / "core2a_product_blueprint.json"),
         "--core2b-plan", str(root / "core2b" / "plan.json"),
-        "--generation-spec", str(root / "inputs" / "generation_spec.json"),
-        "--out", str(bp),
+        "--generation-spec", str(generation_spec),
+        "--release-gate", str(gate_path),
+        "--out", str(bundle),
     ])
-    run(HERE / "validate_content_complete_page_blueprint.py", ["--input", str(bp), "--audit-out", str(bp_audit)])
-    run(HERE / "render_content_complete_blueprint_pdf.py", ["--input", str(bp), "--out", str(pdf), "--audit-out", str(pdf_audit)])
+    run(HERE / "validate_publication_bundle.py", [
+        "--input", str(bundle), "--release-gate", str(gate_path),
+        "--generation-spec", str(generation_spec),
+        "--core1a-example-catalog", str(example_catalog),
+        "--audit-out", str(bundle_audit),
+    ])
+    run(HERE / "render_publication_bundle_pdf.py", [
+        "--input", str(bundle), "--release-gate", str(gate_path),
+        "--generation-spec", str(generation_spec),
+        "--core1a-example-catalog", str(example_catalog),
+        "--out", str(pdf), "--audit-out", str(pdf_audit),
+    ])
 
-    bpa = load(bp_audit); pda = load(pdf_audit)
+    bpa = load(bundle_audit); pda = load(pdf_audit); bundle_doc = load(bundle)
     if bpa.get("status") != "PASS" or pda.get("status") != "PASS":
         fail("BOUND_BLUEPRINT_PUBLICATION_AUDIT_FAILED")
-    if bpa.get("blueprint_sha256") != pda.get("blueprint_sha256"):
+    if bpa.get("bundle_sha256") != pda.get("bundle_sha256"):
         fail("BOUND_BLUEPRINT_PUBLICATION_DIGEST_DRIFT")
     if set(bpa.get("render_object_ids") or []) != set(pda.get("rendered_object_ids") or []):
         fail("BOUND_BLUEPRINT_PUBLICATION_RENDER_COVERAGE_DRIFT")
-    if pda.get("semantic_source") != "LEARNER_PAGE_BLUEPRINT_ONLY":
+    if pda.get("semantic_source") != "LEARNER_PUBLICATION_BUNDLE_ONLY":
         fail("BOUND_BLUEPRINT_PUBLICATION_SOURCE_DRIFT")
 
     summary = {
         "status": "PASS",
         "source_release_gate": "PASS",
-        "blueprint_id": bpa["blueprint_id"],
-        "blueprint_sha256": bpa["blueprint_sha256"],
-        "difficulty_badge": load(bp)["difficulty_badge"],
-        "governed_example_catalog_digest": load(example_catalog)["catalog_digest"],
-        "blueprint_page_count": bpa["page_count"],
+        "bundle_id": bpa["bundle_id"],
+        "bundle_sha256": bpa["bundle_sha256"],
+        "concept_component_count": bpa["concept_component_count"],
+        "difficulty_badge_counts": bpa["difficulty_badge_counts"],
+        "governed_example_catalog_digest": bundle_doc["governed_example_catalog_digest"],
+        "semantic_page_count": pda["semantic_page_count"],
         "render_object_count": bpa["render_object_count"],
         "pdf_sha256": pda["pdf_sha256"],
         "pdf_size_bytes": pda["pdf_size_bytes"],
         "semantic_source": pda["semantic_source"],
         "paths": {
-            "blueprint": bp.name,
-            "blueprint_audit": bp_audit.name,
+            "bundle": bundle.name,
+            "bundle_audit": bundle_audit.name,
             "pdf": pdf.name,
             "pdf_audit": pdf_audit.name,
             "governed_example_catalog": "../core1a/core1a_governed_example_catalog.json",
