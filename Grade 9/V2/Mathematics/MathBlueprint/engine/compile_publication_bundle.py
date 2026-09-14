@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+"""Compile mixed-difficulty Mathematics publication components.
+
+Intrinsic difficulty belongs to the Core1 concept track, not to Core2. Each
+Core1 bucket is therefore materialized as its own badge-governed Concept
+Blueprint component. Core2A/Core2B live once in a learner-fit-governed Problem
+Blueprint component. The resulting bundle is the semantic input to publication.
+"""
+from __future__ import annotations
+
+import argparse
+import copy
+import json
+from pathlib import Path
+
+import compile_bound_product_page_blueprint as legacy
+from blueprint_common import digest, fail, load, validate_schema
+from compile_governed_product_page_blueprint import bind_governed_example_authority
+from materialize_intrinsic_depth import materialize_uniform_depth, depth_obligations
+from validate_self_teaching_generation_spec import validate_generation_spec
+
+
+def _seal_component(prefix: str, body: dict) -> dict:
+    out = copy.deepcopy(body)
+    out["component_id"] = prefix + digest({k: v for k, v in out.items() if k not in {"component_id", "component_digest"}})[:16]
+    out["component_digest"] = digest(out, "component_digest")
+    return out
+
+
+def compile_bundle(bucket_plan: dict, book: dict, core1b_dir: Path, c2a: dict, c2b: dict, gen: dict, catalog: dict) -> dict:
+    validate_generation_spec(gen)
+    spec_by_bucket = {row["bucket_id"]: row for row in gen["core1_buckets"]}
+    if len(spec_by_bucket) != len(gen["core1_buckets"]):
+        fail("MATH_PUBLICATION_BUNDLE_DUPLICATE_BUCKET_SPEC")
+
+    buckets = list(bucket_plan["buckets"])
+    if [b["bucket_id"] for b in buckets] != [b["bucket_id"] for b in book["buckets"]]:
+        fail("MATH_PUBLICATION_BUNDLE_BOOK_BUCKET_ORDER_DRIFT")
+    missing_specs = [b["bucket_id"] for b in buckets if b["bucket_id"] not in spec_by_bucket]
+    if missing_specs:
+        fail("MATH_PUBLICATION_BUNDLE_BUCKET_SPEC_MISSING", ",".join(missing_specs))
+
+    c1a_pages, c1a_ttu, unit_by_cap = legacy.compile_core1a_pages(book)
+    plans = legacy.load_core1b_plans(core1b_dir, [b["title"] for b in buckets])
+    c1b_pages, _ = legacy.compile_core1b_pages(bucket_plan, plans, c1a_ttu)
+    c2a_pages, c2a_ttu, _ = legacy.compile_core2a_pages(c2a, unit_by_cap)
+    c2b_pages = legacy.compile_core2b_pages(c2b, c2a_ttu)
+
+    bind_governed_example_authority(c1a_pages, book, catalog)
+
+    concept_components = []
+    for index, (bucket, a_page, b_page, book_bucket) in enumerate(zip(buckets, c1a_pages, c1b_pages, book["buckets"]), 1):
+        spec = spec_by_bucket[bucket["bucket_id"]]
+        badge = spec["difficulty_badge"]
+        component_pages = materialize_uniform_depth(
+            [a_page, b_page], badge, {"buckets": [book_bucket]}
+        )
+        component = _seal_component("MATH-CONCEPT-BP-", {
+            "sequence": index,
+            "bucket_ref": bucket["bucket_id"],
+            "subtopic_ref": spec["subtopic_id"],
+            "title": bucket["title"],
+            "difficulty_badge": badge,
+            "pages": component_pages,
+            "depth_obligations": depth_obligations(badge, component_pages),
+        })
+        concept_components.append(component)
+
+    problem_component = _seal_component("MATH-PROBLEM-BP-", {
+        "governance": "LEARNER_FIT",
+        "pages": [*c2a_pages, *c2b_pages],
+    })
+
+    bundle = {
+        "schema_version": "1.0.0",
+        "subject": "MATHEMATICS",
+        "bundle_id": "",
+        "source_release_status": "PASS",
+        "concept_components": concept_components,
+        "problem_component": problem_component,
+        "publication_stage_order": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+        "bundle_digest": "",
+    }
+    bundle["bundle_id"] = "MATH-PUB-BUNDLE-" + digest({k: v for k, v in bundle.items() if k not in {"bundle_id", "bundle_digest"}})[:16]
+    bundle["bundle_digest"] = digest(bundle, "bundle_digest")
+    validate_schema(bundle, "math-learner-publication-bundle.schema.json")
+    return bundle
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--bucket-plan", required=True)
+    ap.add_argument("--core1a-manuscript", required=True)
+    ap.add_argument("--core1a-example-catalog", required=True)
+    ap.add_argument("--core1b-dir", required=True)
+    ap.add_argument("--core2a-blueprint", required=True)
+    ap.add_argument("--core2b-plan", required=True)
+    ap.add_argument("--generation-spec", required=True)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    bundle = compile_bundle(
+        load(args.bucket_plan), load(args.core1a_manuscript), Path(args.core1b_dir),
+        load(args.core2a_blueprint), load(args.core2b_plan), load(args.generation_spec),
+        load(args.core1a_example_catalog),
+    )
+    Path(args.out).write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(json.dumps({
+        "status": "COMPILED",
+        "bundle_id": bundle["bundle_id"],
+        "concept_components": len(bundle["concept_components"]),
+        "difficulty_badges": sorted({x["difficulty_badge"] for x in bundle["concept_components"]}),
+        "problem_pages": len(bundle["problem_component"]["pages"]),
+    }, indent=2))
+
+
+if __name__ == "__main__":
+    main()
