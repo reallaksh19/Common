@@ -75,11 +75,13 @@ def candidate_within_ceiling(item,ceiling):
     return demand_index(candidate_demand_level(item)) <= demand_index(ceiling)
 
 def bucket_maps(plan):
-    by={b['bucket_id']:b for b in plan['buckets']}; qmap={}
+    by={}; qmap={}
     for b in plan['buckets']:
+        bid=b['bucket_id']
+        if bid in by: raise ValueError('CORE2A_BUCKET_ID_DUPLICATE:'+bid)
+        by[bid]=b
         for q in b.get('core2_question_refs') or []:
-            if q in qmap and qmap[q]!=b['bucket_id']: raise ValueError('CORE2A_SOURCE_QUESTION_MULTI_BUCKET:'+q)
-            qmap[q]=b['bucket_id']
+            qmap.setdefault(q,[]).append(bid)
     return by,qmap
 
 def representative_page(pages): return sorted(pages,key=lambda p:(-DEMAND_RANK.get(p.get('guide_demand_badge',{}).get('label','EASY'),0),p['source_order']))[0]
@@ -90,10 +92,21 @@ def source_selection(purpose,bucket,pages_by_id):
     if purpose in {'REVISION','COMPETITION'}:return [representative_page(pages)]
     return [pages[0]]
 
-def source_question_spec(page,bucket_ref,scaffold,ans,required_capability_refs):
+def unique_selected_source_ids(selected_by_bucket,pages_by_id):
+    ids={qid for refs in selected_by_bucket.values() for qid in refs}
+    return sorted(ids,key=lambda q:(pages_by_id[q]['source_order'],q))
+
+def source_question_spec(page,bucket_refs,scaffold,ans,required_capability_refs):
     h=page['hint_ladder']; reasoning=[str(x.get('mathematical_transition','')).strip() for x in page.get('reasoning_route',{}).get('steps',[]) if str(x.get('mathematical_transition','')).strip()]; working=[str(x) for x in page['solution_route'].get('steps') or []]; checks=[x if isinstance(x,str) else canonical(x) for x in page['solution_route'].get('verification_checks') or []]
     prov={'question_origin':'SOURCE_CORE2','display_inline':True,'learner_label':'Where this question came from','citations':[{'citation_kind':'CORE2_SOURCE','label':f"Core (2) {page['question_ref']}",'locator':page['question_ref'],'use':'SOURCE_TEXT','text_relation':'EXACT_SOURCE','url':None}],'official_past_question_claim':False,'verified_official_source_ref':page['source_ref']}; validate_provenance(prov)
-    return {'question_id':page['question_ref'],'question_class':'SOURCE_CORE2','source_question_no':page['question_ref'],'bucket_refs':[bucket_ref],'required_capability_refs':list(required_capability_refs),'demand_level':source_demand_level(page),'prompt':page['source_stem'],'source_order':page['source_order'],'scaffold_plan_ref':scaffold['scaffold_plan_id'],'provenance':prov,'answer_contract':ans,'learner_support':{'TRY IT FIRST':True,'SMALL CLUE':h['H1']['text'],'BIGGER CLUE':h['H2']['text'],'HOW DO I START?':h['H3']['text'],'THINK IT THROUGH':reasoning,'FULL WORKING':working,'QUICK CHECK':checks}}
+    return {'question_id':page['question_ref'],'question_class':'SOURCE_CORE2','source_question_no':page['question_ref'],'bucket_refs':list(bucket_refs),'required_capability_refs':list(required_capability_refs),'demand_level':source_demand_level(page),'prompt':page['source_stem'],'source_order':page['source_order'],'scaffold_plan_ref':scaffold['scaffold_plan_id'],'provenance':prov,'answer_contract':ans,'learner_support':{'TRY IT FIRST':True,'SMALL CLUE':h['H1']['text'],'BIGGER CLUE':h['H2']['text'],'HOW DO I START?':h['H3']['text'],'THINK IT THROUGH':reasoning,'FULL WORKING':working,'QUICK CHECK':checks}}
+
+def validate_source_question_scope(page,bucket_refs,buckets):
+    taught=set()
+    for bid in bucket_refs: taught.update(buckets[bid]['member_capability_refs'])
+    required=set(page.get('capability_refs') or [])
+    extra=sorted(required-taught)
+    if extra: raise ValueError('CORE2A_SOURCE_UNTAUGHT_MATH_REQUIRED:'+page['question_ref']+':'+','.join(extra))
 
 def validate_candidate(item,purpose,buckets):
     if purpose not in item['eligible_purposes']: raise ValueError('CORE2A_CANDIDATE_WRONG_PURPOSE:'+item['candidate_id'])
@@ -160,6 +173,8 @@ def main():
         if p['question_ref'] not in source_answers: raise ValueError('CORE2A_SOURCE_ANSWER_CONTRACT_MISSING:'+p['question_ref'])
         validate_answer_contract(source_answers[p['question_ref']])
     buckets,qmap=bucket_maps(c1a); pages={p['question_ref']:p for p in c2['pages']}; profiles=load_scaffold_profiles(a.scaffold_profiles); knowledge_profiles=load_knowledge_support_profiles(a.knowledge_support_profiles); candidates=[]; dropped_by_ceiling=[]
+    for qid,refs in qmap.items():
+        if qid in pages: validate_source_question_scope(pages[qid],refs,buckets)
     if a.candidate_set:
         cand_doc=load(a.candidate_set); schema=load(PK/'Core2A'/'contracts'/'math-core2a-candidate-set.schema.json'); jsonschema.validate(cand_doc,schema)
         eligible=[x for x in cand_doc['items'] if purpose in x['eligible_purposes']]
@@ -171,18 +186,27 @@ def main():
         if not candidate_within_ceiling(c,c2a_ceiling): raise ValueError('CORE2A_CANDIDATE_EXCEEDS_KNOWLEDGE_CEILING:'+c['candidate_id'])
         validate_candidate(c,purpose,buckets)
     check_candidate_coverage(purpose,buckets,candidates)
-    sections=[]; specs=[]; selected_count=0; scaffolds={}
+
+    sections=[]; specs=[]; scaffolds={}; selected_by_bucket={}
     for bid,b in buckets.items():
-        base_sc=build_scaffold_plan(purpose,profiles,bid); sc=apply_knowledge_support_profile(base_sc,support_profile,knowledge_profiles); scaffolds[bid]=sc; selected=source_selection(purpose,b,pages); ids=[p['question_ref'] for p in selected]; selected_count+=len(ids)
+        base_sc=build_scaffold_plan(purpose,profiles,bid); sc=apply_knowledge_support_profile(base_sc,support_profile,knowledge_profiles); scaffolds[bid]=sc
+        selected=source_selection(purpose,b,pages); ids=[p['question_ref'] for p in selected]; selected_by_bucket[bid]=ids
         recall=derived_revision_prompts(b) if purpose=='REVISION' else []
         if purpose=='STARTER': recall=[f"Start here: {b['bucket_invariant']['text']}"]+[f"Say this in your own words before solving: {x['text']}" for x in (b.get('learning_atoms') or [])[:2]]
         refs=[x['candidate_id'] for x in candidates if bid in x['bucket_refs']]
         sections.append({'bucket_ref':bid,'title':b['title'],'invariant':b['bucket_invariant']['text'],'scaffold_plan':sc,'selected_source_question_refs':ids,'recall_prompts':recall,'generated_candidate_refs':refs})
-        for p in selected: specs.append(source_question_spec(p,bid,sc,source_answers[p['question_ref']],b['member_capability_refs']))
+
+    selected_ids=unique_selected_source_ids(selected_by_bucket,pages); selected_count=len(selected_ids)
+    for qid in selected_ids:
+        bucket_refs=qmap.get(qid) or []
+        if not bucket_refs: raise ValueError('CORE2A_SELECTED_SOURCE_WITHOUT_BUCKET:'+qid)
+        page=pages[qid]; required=page.get('capability_refs') or sorted({cap for bid in bucket_refs for cap in buckets[bid]['member_capability_refs']})
+        specs.append(source_question_spec(page,bucket_refs,scaffolds[bucket_refs[0]],source_answers[qid],required))
     for c in candidates: specs.append(build_candidate_spec(c,scaffolds[c['bucket_refs'][0]]))
     if purpose=='PRACTICE' and selected_count!=len(c2['pages']): raise ValueError('CORE2A_PRACTICE_DROPPED_SOURCE_ITEM')
+
     calibration={'mode':calibration_mode,'knowledge_percent_source_ref':cal['knowledge_percent_source_ref'],'knowledge_calibration_policy_ref':cal['knowledge_calibration_policy_ref'],'owner_waiver_ref':cal['owner_waiver']['owner_ref'] if cal['owner_waiver'] else None,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level']}
-    bp={'stage':'CORE2A','purpose':purpose,'source_bundle_ref':bundle['bundle_id'],'generation_calibration':calibration,'sections':sections,'question_specs':specs,'audit_requirements':['PURPOSE_EXPLICIT','KNOWLEDGE_OR_OWNER_CALIBRATION_PASS','CORE2A_DEMAND_CEILING_PASS','SOURCE_CORE2_FIDELITY','ANSWER_CONTRACT_PASS','HINT_DISCLOSURE_PASS','INLINE_PROVENANCE','TAUGHT_SCOPE_ONLY','PURPOSE_DIFFERENTIATION_PASS']}; bp['blueprint_id']=build_blueprint_id(bp)
+    bp={'stage':'CORE2A','purpose':purpose,'source_bundle_ref':bundle['bundle_id'],'generation_calibration':calibration,'sections':sections,'question_specs':specs,'audit_requirements':['PURPOSE_EXPLICIT','KNOWLEDGE_OR_OWNER_CALIBRATION_PASS','CORE2A_DEMAND_CEILING_PASS','SOURCE_CORE2_FIDELITY','ANSWER_CONTRACT_PASS','HINT_DISCLOSURE_PASS','INLINE_PROVENANCE','TAUGHT_SCOPE_ONLY','PURPOSE_DIFFERENTIATION_PASS','MULTI_BUCKET_SOURCE_MEMBERSHIP_SAFE']}; bp['blueprint_id']=build_blueprint_id(bp)
     (out/'core2a_product_blueprint.json').write_text(json.dumps(bp,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 
     receipt_pages=[]
@@ -191,6 +215,6 @@ def main():
     receipt=core2a_receipt(bp,gen,registry=registry,all_source_pages=receipt_pages)
     write_receipt(receipt,out/'core2a_governance_receipt.json')
 
-    audit={'kit_id':'MATH-PRODUCTION-KIT-CORE2A-v4','status':'PASS','purpose':purpose,'calibration_mode':calibration_mode,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level'],'bucket_count':len(buckets),'selected_source_question_count':selected_count,'generated_candidate_count':len(candidates),'generated_candidates_dropped_by_ceiling':dropped_by_ceiling,'blueprint_ref':bp['blueprint_id'],'governance_receipt_ref':receipt['receipt_id'],'governance_release_state':receipt['release_state'],'same_as_core2':False}; (out/'core2a_kit_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8'); print(json.dumps(audit,indent=2))
+    audit={'kit_id':'MATH-PRODUCTION-KIT-CORE2A-v5','status':'PASS','purpose':purpose,'calibration_mode':calibration_mode,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level'],'bucket_count':len(buckets),'selected_source_question_count':selected_count,'multi_bucket_source_question_count':sum(1 for refs in qmap.values() if len(refs)>1),'generated_candidate_count':len(candidates),'generated_candidates_dropped_by_ceiling':dropped_by_ceiling,'blueprint_ref':bp['blueprint_id'],'governance_receipt_ref':receipt['receipt_id'],'governance_release_state':receipt['release_state'],'same_as_core2':False}; (out/'core2a_kit_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8'); print(json.dumps(audit,indent=2))
 
 if __name__=='__main__': main()
