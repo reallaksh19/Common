@@ -1,0 +1,230 @@
+{
+  "policy_id": "CHEM-G9-V2-BLUEPRINT-v6-DUAL-ROUTER-TTU-FAMILIES",
+  "schema_version": "6.0.0",
+  "subject": "CHEMISTRY",
+  "governing_sequence": [
+    "CANONICAL_DOMAIN_REGISTRY",
+    "SDU_OR_LAU",
+    "CONCEPT_TTU_OR_PROBLEM_TTU",
+    "A_OR_B_REALIZATION",
+    "V5_PRODUCT_COMPLETENESS_GATE",
+    "PDF_RENDER_AND_MEASURED_RELEASE_GATE"
+  ],
+  "study_differentiation_unit": {
+    "id": "SDU",
+    "applies_to": ["CORE1A", "CORE1B"],
+    "control_axis": "INTRINSIC_SUBTOPIC_DIFFICULTY",
+    "learner_knowledge_fields_forbidden": true,
+    "difficulty_bands": {
+      "EASY": {"max_pages": 10, "research_level": "NONE_OR_INTERNAL"},
+      "MEDIUM": {"max_pages": 20, "research_level": "TARGETED"},
+      "HARD": {"max_pages": 30, "research_level": "DEEP"}
+    },
+    "research_dossier_required_for": ["MEDIUM", "HARD"],
+    "depth_release_gate": {
+      "all_learning_atoms_closed": true,
+      "all_major_inferential_jumps_bridged": true,
+      "representation_coverage_complete": true,
+      "equation_assimilation_complete": true,
+      "misconception_coverage_complete": true,
+      "page_budget_exhaustion_required": false
+    }
+  },
+  "learner_adaptation_unit": {
+    "id": "LAU",
+    "applies_to": ["CORE2A", "CORE2B"],
+    "conditioning_modes": ["KNOWLEDGE_PERCENT", "OWNER_OVERRIDE"],
+    "task_demand_required": true,
+    "knowledge_percent_is": "SUPPORT_PRIOR_NOT_MASTERY_MEASUREMENT",
+    "owner_override_does_not_fabricate_percent": true,
+    "task_demand_dimensions": [
+      "structural_distance",
+      "representation_change",
+      "model_discrimination",
+      "sign_or_direction_reversal",
+      "reversed_target",
+      "constraint_inversion",
+      "multi_step_bridge",
+      "synthesis",
+      "competitive_mixing"
+    ],
+    "dimension_scale": {"min": 0, "max": 3},
+    "demand_bands": [
+      {"id": "LOW", "min_score": 0, "max_score": 4},
+      {"id": "MODERATE", "min_score": 5, "max_score": 9},
+      {"id": "HIGH", "min_score": 10, "max_score": 14},
+      {"id": "EXTREME", "min_score": 15, "max_score": 27}
+    ],
+    "knowledge_bands": [
+      {"id": "FOUNDATION", "min_percent": 0, "max_percent": 30},
+      {"id": "DEVELOPING", "min_percent": 31, "max_percent": 60},
+      {"id": "SECURE", "min_percent": 61, "max_percent": 80},
+      {"id": "ADVANCED", "min_percent": 81, "max_percent": 100}
+    ],
+    "support_matrix": {
+      "FOUNDATION": {
+        "LOW": "STANDARD",
+        "MODERATE": "GUIDED",
+        "HIGH": "FOUNDATION_HIGH_SUPPORT",
+        "EXTREME": "FOUNDATION_HIGH_SUPPORT"
+      },
+      "DEVELOPING": {
+        "LOW": "STANDARD",
+        "MODERATE": "GUIDED",
+        "HIGH": "GUIDED",
+        "EXTREME": "FOUNDATION_HIGH_SUPPORT"
+      },
+      "SECURE": {
+        "LOW": "CHALLENGE_MINIMAL",
+        "MODERATE": "STANDARD",
+        "HIGH": "GUIDED",
+        "EXTREME": "GUIDED"
+      },
+      "ADVANCED": {
+        "LOW": "CHALLENGE_MINIMAL",
+        "MODERATE": "CHALLENGE_MINIMAL",
+        "HIGH": "STANDARD",
+        "EXTREME": "GUIDED"
+      }
+    },
+    "owner_override_rule": "OWNER_OVERRIDE_SELECTS_AN_EXPLICIT_SUPPORT_BAND_AND_REASON_WHEN_KNOWLEDGE_IS_UNKNOWN; TASK_DEMAND_REMAINS_BOUND_TO_QUESTION_AUTHORITY",
+    "support_bands": {
+      "FOUNDATION_HIGH_SUPPORT": {
+        "CORE2A": {
+          "recognition_cue": "EXPLICIT",
+          "representation": "SUPPLIED",
+          "solution_exposure": "NEAR_COMPLETE_WORKED",
+          "why_steps": "EXTENSIVE",
+          "verification": "GUIDED"
+        },
+        "CORE2B": {
+          "reconstruction": "HIGHLY_SCAFFOLDED",
+          "representation": "GUIDED_SELECTION_OR_PARTIAL",
+          "hint_depth": "H1_TO_H5",
+          "canonical_reveal": "AFTER_GUIDED_COMMITMENT"
+        }
+      },
+      "GUIDED": {
+        "CORE2A": {
+          "recognition_cue": "AVAILABLE",
+          "representation": "PARTLY_SUPPLIED",
+          "solution_exposure": "FADED_WORKED",
+          "why_steps": "TARGETED",
+          "verification": "PROMPTED"
+        },
+        "CORE2B": {
+          "reconstruction": "GUIDED_MODEL_AND_REPRESENTATION",
+          "representation": "LEARNER_COMPLETES",
+          "hint_depth": "H1_TO_H4",
+          "canonical_reveal": "AFTER_FIRST_MOVE"
+        }
+      },
+      "STANDARD": {
+        "CORE2A": {
+          "recognition_cue": "MINIMAL",
+          "representation": "PARTIAL_OR_LEARNER_COMPLETED",
+          "solution_exposure": "PARTIAL_THEN_FULL_AFTER_ATTEMPT",
+          "why_steps": "SELECTIVE",
+          "verification": "LEARNER_PROMPTED"
+        },
+        "CORE2B": {
+          "reconstruction": "OPEN_PROBLEM_WITH_FIXED_HINTS",
+          "representation": "LEARNER_SELECTS",
+          "hint_depth": "H1_TO_H3",
+          "canonical_reveal": "AFTER_SUBSTANTIVE_ATTEMPT"
+        }
+      },
+      "CHALLENGE_MINIMAL": {
+        "CORE2A": {
+          "recognition_cue": "WITHHELD",
+          "representation": "LEARNER_SELECTS",
+          "solution_exposure": "AFTER_FULL_ATTEMPT_WITH_EXPERT_COMPARISON",
+          "why_steps": "EXPERT_DEBRIEF",
+          "verification": "INDEPENDENT"
+        },
+        "CORE2B": {
+          "reconstruction": "MODEL_REPRESENTATION_ROUTE_SELECTED_BY_LEARNER",
+          "representation": "LEARNER_SELECTS_AND_BUILDS",
+          "hint_depth": "MINIMAL_H1_H2",
+          "canonical_reveal": "AFTER_FULL_ATTEMPT"
+        }
+      }
+    }
+  },
+  "ttu_families": {
+    "CONCEPT_TTU": {
+      "used_by": ["CORE1A", "CORE1B"],
+      "centres_on": [
+        "conceptual_change",
+        "equation_meaning",
+        "representation",
+        "derivation",
+        "contrast"
+      ],
+      "shared_anatomy": [
+        "canonical_truth",
+        "representation_elements",
+        "semantic_bindings",
+        "reasoning_state_graph",
+        "misconceptions",
+        "verification"
+      ]
+    },
+    "PROBLEM_TTU": {
+      "used_by": ["CORE2A", "CORE2B"],
+      "centres_on": [
+        "recognition",
+        "model_selection",
+        "constraint",
+        "first_move",
+        "solution_path",
+        "verification",
+        "transfer"
+      ],
+      "shared_anatomy": [
+        "canonical_truth",
+        "representation_elements",
+        "semantic_bindings",
+        "reasoning_state_graph",
+        "misconceptions",
+        "verification"
+      ]
+    }
+  },
+  "realization_modes": {
+    "CORE1A": {
+      "canonical_identity": "DECLARATIVE_CONCEPT_REFERENCE",
+      "primary_actions": ["EXPLAIN", "DERIVE", "SHOW", "MODEL_THEN_RECONSTRUCT"],
+      "ttu_family": "CONCEPT_TTU"
+    },
+    "CORE1B": {
+      "canonical_identity": "OPEN_CONCEPT_RECONSTRUCTION_TUTOR",
+      "primary_actions": ["PREDICT", "RECONSTRUCT", "EXPLAIN", "VERIFY"],
+      "ttu_family": "CONCEPT_TTU",
+      "tutor_dialogue_required": true
+    },
+    "CORE2A": {
+      "canonical_identity": "ADAPTIVE_DECLARATIVE_PROBLEM_REFERENCE",
+      "primary_actions": ["STUDY_EXPERT_SOLUTION", "UNDERSTAND", "COMPLETE"],
+      "ttu_family": "PROBLEM_TTU"
+    },
+    "CORE2B": {
+      "canonical_identity": "ADAPTIVE_OPEN_PROBLEM_TUTOR",
+      "primary_actions": ["RECOGNISE", "SELECT", "SOLVE", "JUSTIFY", "TRANSFER"],
+      "ttu_family": "PROBLEM_TTU",
+      "tutor_dialogue_required": true
+    }
+  },
+  "self_help_closure_required_for_all": true,
+  "cross_core_differentiation": {
+    "learner_action_fingerprint_must_differ_between_a_and_b": true,
+    "realization_sequence_fingerprint_must_differ_between_a_and_b": true,
+    "all_five_fingerprints_may_not_match": [
+      "example",
+      "representation",
+      "sequence",
+      "solution",
+      "learner_action"
+    ]
+  }
+}
