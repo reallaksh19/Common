@@ -59,6 +59,33 @@ def _restore_subtopic_identity(receipt: dict, bucket_plan: dict, generation_spec
     receipt["receipt_id"] = "MATH-STAGE-GOV-CORE1A-" + governance_digest(receipt)[:16]
 
 
+def _refresh_governed_example_audit(book: dict, registry_bound: bool) -> None:
+    if not registry_bound:
+        return
+    practice_count = 0
+    worked_count = 0
+    missing = []
+    for bucket in book.get("buckets", []):
+        for unit in bucket.get("capability_units", []):
+            for ex in unit.get("worked_examples", []):
+                worked_count += 1
+                if not ex.get("governed_example_asset_ref") or not ex.get("content_digest"):
+                    missing.append(unit["capability_ref"] + ":WORKED")
+            for role, item in (unit.get("practice") or {}).items():
+                practice_count += 1
+                if item.get("source_class") != "GOVERNED_CORE1A_EXAMPLE" or not item.get("governed_example_asset_ref") or not item.get("content_digest"):
+                    missing.append(unit["capability_ref"] + ":" + role)
+    if missing:
+        base.fail("CORE1A_GOVERNED_EXAMPLE_PROVENANCE_INCOMPLETE", ",".join(sorted(set(missing))))
+    book["quality_audit"]["actual_problem_instances"] = practice_count
+    book["quality_audit"]["governed_worked_examples"] = worked_count
+    checks = list(book["quality_audit"].get("checks", []))
+    if "GOVERNED_EXAMPLE_ADMISSION_BOUND" not in checks:
+        checks.append("GOVERNED_EXAMPLE_ADMISSION_BOUND")
+    book["quality_audit"]["checks"] = checks
+    book["book_digest"] = base.digest(book, "book_digest")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--core1-plan", required=True)
@@ -96,6 +123,7 @@ def main() -> None:
     jsonschema.validate(bucket_plan, bucket_schema)
 
     book = realize_bucket_manuscript(bucket_plan, core1, assets, families)
+    _refresh_governed_example_audit(book, registry is not None)
     manuscript_schema = base.load(CONTRACTS / "math-core1a-textbook-manuscript.schema.json")
     jsonschema.validate(book, manuscript_schema)
 
