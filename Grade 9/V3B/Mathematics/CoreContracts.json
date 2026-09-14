@@ -1,0 +1,31 @@
+{
+  "subject": "Mathematics",
+  "contract_version": "1.0.0",
+  "equation_semantic_fields": [
+    "domain",
+    "hypotheses",
+    "equivalence_and_reversibility",
+    "excluded_values"
+  ],
+  "validator_ids": [
+    "POLYNOMIAL_FROM_ROOTS",
+    "POLYNOMIAL_VALUE",
+    "LINEAR_EQUATION"
+  ],
+  "risks": [
+    "lost solutions when cancelling",
+    "domain expansion",
+    "non-equivalent transformations",
+    "unjustified generalization"
+  ],
+  "basis": "5748e196231f5f20cfbe650201aa7fb5b17f2d08",
+  "core_roles": {
+    "CORE1": "CONNECTED_SEMANTIC_INTELLIGENCE",
+    "CORE2": "SOURCE_QUESTION_AND_DEMAND_INTELLIGENCE",
+    "CORE1A": "DIFFICULT_CONCEPT_ASSIMILATION",
+    "CORE2A": "OWNER_DIRECTED_PRACTICE"
+  },
+  "source_truth": "ORIGINAL_EVIDENCE_WITH_EXACT_PROVENANCE",
+  "renderer_authority": "COMPOSITION_ONLY",
+  "new_generated_family_policy": "EXPLICIT_VALIDATOR_AND_SUBJECT_REVIEW_REQUIRED"
+}

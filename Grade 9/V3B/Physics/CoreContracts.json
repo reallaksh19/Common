@@ -1,0 +1,33 @@
+{
+  "subject": "Physics",
+  "contract_version": "1.0.0",
+  "equation_semantic_fields": [
+    "model_assumptions",
+    "axis_and_sign",
+    "dimensions",
+    "physical_interpretation"
+  ],
+  "validator_ids": [
+    "CONSTANT_ACCELERATION_VELOCITY",
+    "CONSTANT_ACCELERATION_INITIAL_VELOCITY",
+    "CONSTANT_ACCELERATION_EVENT_TIME",
+    "SPEED_FROM_COMPONENTS",
+    "APEX_STATE"
+  ],
+  "risks": [
+    "velocity versus acceleration",
+    "component versus magnitude",
+    "diagram arrow semantics",
+    "model applicability"
+  ],
+  "basis": "1232ecaf6061b38fd692c25662d2af9936d921aa",
+  "core_roles": {
+    "CORE1": "CONNECTED_SEMANTIC_INTELLIGENCE",
+    "CORE2": "SOURCE_QUESTION_AND_DEMAND_INTELLIGENCE",
+    "CORE1A": "DIFFICULT_CONCEPT_ASSIMILATION",
+    "CORE2A": "OWNER_DIRECTED_PRACTICE"
+  },
+  "source_truth": "ORIGINAL_EVIDENCE_WITH_EXACT_PROVENANCE",
+  "renderer_authority": "COMPOSITION_ONLY",
+  "new_generated_family_policy": "EXPLICIT_VALIDATOR_AND_SUBJECT_REVIEW_REQUIRED"
+}
