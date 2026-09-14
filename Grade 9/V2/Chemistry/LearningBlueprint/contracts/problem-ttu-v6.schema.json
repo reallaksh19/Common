@@ -8,19 +8,14 @@
     "ttu_family",
     "ttu_id",
     "product_mode",
-    "question_id",
-    "question_authority_ref",
-    "problem_family",
-    "canonical_truth_refs",
-    "recognition",
-    "model_selection",
-    "constraint",
-    "first_move",
-    "solution_path",
-    "verification",
-    "transfer",
-    "reconstructable_ttu_refs",
+    "identity",
+    "task_state",
+    "expert_solution_state",
+    "task_demand",
+    "learner_interaction",
     "self_help_closure_ref",
+    "transfer_lineage",
+    "reconstructable_ttu_refs",
     "support_band_ref",
     "realization_contract",
     "differentiation_fingerprint"
@@ -30,25 +25,67 @@
     "ttu_family": {"const": "PROBLEM_TTU"},
     "ttu_id": {"type": "string", "minLength": 1},
     "product_mode": {"enum": ["CORE2A", "CORE2B"]},
-    "question_id": {"type": "string", "minLength": 1},
-    "question_authority_ref": {"type": "string", "minLength": 1},
-    "problem_family": {"type": "string", "minLength": 1},
-    "canonical_truth_refs": {"type": "array", "minItems": 1},
-    "recognition": {"type": "object"},
-    "model_selection": {"type": "object"},
-    "constraint": {"type": "object"},
-    "first_move": {"type": "object"},
-    "solution_path": {"type": "array", "minItems": 1},
-    "verification": {"type": "object"},
-    "transfer": {"type": "object"},
-    "reconstructable_ttu_refs": {"type": "array", "minItems": 1},
+    "identity": {
+      "type": "object",
+      "required": ["problem_family_id", "capability_requirements", "question_id", "question_authority_ref"],
+      "properties": {
+        "problem_family_id": {"type": "string", "minLength": 1},
+        "capability_requirements": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "question_id": {"type": "string", "minLength": 1},
+        "question_authority_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "task_state": {
+      "type": "object",
+      "required": ["givens", "unknown", "constraints", "event", "representation_options", "competing_models"]
+    },
+    "expert_solution_state": {
+      "type": "object",
+      "required": ["recognition", "representation", "model_selection", "first_move", "reasoning_steps", "equations", "result", "verification", "wrong_routes"]
+    },
+    "task_demand": {
+      "type": "object",
+      "required": [
+        "conceptual_demand",
+        "structural_distance",
+        "representation_change",
+        "model_discrimination",
+        "hidden_constraint",
+        "sign_direction_reversal",
+        "reversed_target",
+        "constraint_inversion",
+        "multi_step_bridge",
+        "synthesis",
+        "competitive_mixing",
+        "calculation_load"
+      ],
+      "additionalProperties": false
+    },
+    "learner_interaction": {"type": "object"},
     "self_help_closure_ref": {"type": "string", "minLength": 1},
+    "transfer_lineage": {
+      "type": "object",
+      "required": ["relationship", "transfer_evidence_status"],
+      "properties": {
+        "relationship": {"enum": ["FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"]},
+        "transfer_evidence_status": {"enum": ["NOT_TRANSFER_EVIDENCE", "NEAR_TRANSFER", "FAR_TRANSFER"]}
+      }
+    },
+    "reconstructable_ttu_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
     "support_band_ref": {"type": "string", "minLength": 1},
-    "realization_contract": {"type": "object", "required": ["identity", "exposure_mode", "learner_actions"]},
+    "realization_contract": {
+      "type": "object",
+      "required": ["identity", "exposure_mode", "learner_actions"],
+      "properties": {
+        "identity": {"enum": ["ADAPTIVE_DECLARATIVE_PROBLEM_REFERENCE", "ADAPTIVE_OPEN_PROBLEM_TUTOR"]},
+        "exposure_mode": {"enum": ["SETUP_THEN_COMPLETE", "CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS"]},
+        "learner_actions": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string"}}
+      }
+    },
     "tutor_dialogue_ref": {"type": "string"},
     "differentiation_fingerprint": {
       "type": "object",
-      "required": ["example", "representation", "sequence", "solution", "learner_action"]
+      "required": ["context", "problem_family", "known_quantities", "numerical_values", "target_unknown", "representation", "model_sequence", "special_condition", "solution_path", "learner_action"]
     }
   },
   "additionalProperties": true
