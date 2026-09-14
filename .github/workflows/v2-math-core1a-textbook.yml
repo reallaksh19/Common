@@ -5,9 +5,10 @@ on:
     paths:
       - 'Grade 9/V2/Mathematics/Core1A/**'
       - 'Grade 9/V2/Mathematics/Core1B/**'
+      - 'Grade 9/V2/Mathematics/Core2A/**'
       - 'Grade 9/V2/Mathematics/Core2B/**'
       - 'Grade 9/V2/Mathematics/Core1Authoring/**'
-      - 'Grade 9/V2/Mathematics/Core2A/**'
+      - 'Grade 9/V2/Mathematics/Core2Transfer/**'
       - 'Grade 9/V2/Mathematics/LearnerProduct/**'
       - 'Grade 9/V2/Mathematics/ProductionKits/**'
       - 'Grade 9/V2/Mathematics/MathBlueprint/**'
@@ -50,7 +51,7 @@ jobs:
       - name: Run adaptive MathBlueprint tests
         run: python -m unittest discover -s 'Grade 9/V2/Mathematics/MathBlueprint/tests' -p 'test_*.py' -v
 
-      - name: Produce exact Core1 and learner StudyModel from the PR 323 cold-start chain
+      - name: Produce exact Core1, learner StudyModel and Core2 from the cold-start chain
         run: |
           mkdir -p /tmp/core1a
           python - <<'PY'
@@ -66,16 +67,17 @@ jobs:
           topic = load(fixtures / 'mixed-grade9-topic-scope.fixture.json')
           report, internals = run_cold_start(copy.deepcopy(questions), copy.deepcopy(topic), repo_root=REPO, run_id='MATH-C1A-CI-RUN')
           assert report['release_status'] != 'BLOCKED_UPSTREAM_PCK', report['release_status']
-          plan = internals['core1_plan']; study_model = internals['study_model']
-          assert plan is not None and study_model is not None
+          plan = internals['core1_plan']; study_model = internals['study_model']; core2 = internals['core2']
+          assert plan is not None and study_model is not None and core2 is not None
           assert plan['study_model_ref'] == study_model['study_model_id']
           assert plan['study_model_digest'] == study_model['study_model_digest']
           Path('/tmp/core1a/core1_study_plan.json').write_text(json.dumps(plan, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
           Path('/tmp/core1a/learner_study_model.json').write_text(json.dumps(study_model, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-          print(json.dumps({'core1_study_plan_id': plan['core1_study_plan_id'],'study_model_id': study_model['study_model_id'],'lessons': len(plan['lessons']),'capability_plans': len(study_model['capability_plans']),'release_class': plan['release_class']}, indent=2))
+          Path('/tmp/core1a/core2_plan.json').write_text(json.dumps(core2, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+          print(json.dumps({'core1_study_plan_id': plan['core1_study_plan_id'],'study_model_id': study_model['study_model_id'],'core2_plan_id': core2['plan_id'],'lessons': len(plan['lessons']),'capability_plans': len(study_model['capability_plans']),'source_questions': len(core2['pages']),'release_class': plan['release_class']}, indent=2))
           PY
 
-      - name: Synthesize buckets and realize bucket-centric Core1A textbook
+      - name: Synthesize buckets and realize legacy unbound Core1A textbook
         run: |
           python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
             --core1-plan /tmp/core1a/core1_study_plan.json \
@@ -121,7 +123,30 @@ jobs:
           print(json.dumps({'buckets':len(bucket_plan['buckets']),'pages':len(pdf),'pdf_sha256':audit['artifact']['pdf_sha256'],'actual_problem_instances':audit['quality_audit']['actual_problem_instances'],'governance_receipt':receipt['receipt_id']}, indent=2))
           PY
 
-      - name: Upload Core1A bucket plan, exact upstream inputs and learner product
+      - name: Run genuinely bound four-producer release golden
+        run: |
+          python 'Grade 9/V2/Mathematics/MathBlueprint/engine/run_bound_producer_release_golden.py' \
+            --core1-plan /tmp/core1a/core1_study_plan.json \
+            --study-model /tmp/core1a/learner_study_model.json \
+            --core2-plan /tmp/core1a/core2_plan.json \
+            --out-dir /tmp/core1a/bound-producer-release
+
+      - name: Inspect bound release summary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          summary = json.loads(Path('/tmp/core1a/bound-producer-release/bound_producer_release_summary.json').read_text(encoding='utf-8'))
+          assert summary['status'] == 'PASS'
+          assert summary['release_gate']['status'] == 'PASS'
+          assert summary['release_gate']['frozen_source_custody']['status'] == 'PASS'
+          assert summary['release_gate']['canonical_answer_custody']['status'] == 'PASS'
+          assert summary['core1b_receipt_refs']
+          assert summary['source_question_count'] >= 1
+          print(json.dumps(summary, indent=2))
+          PY
+
+      - name: Upload Core1A inputs, learner product and bound release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: math-core1a-textbook
