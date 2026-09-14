@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-concept-ttu-v6.schema.json",
+  "title": "Chemistry Concept TTU v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "ttu_family",
+    "ttu_id",
+    "product_mode",
+    "learning_atom_id",
+    "canonical_truth_refs",
+    "representation_elements",
+    "semantic_bindings",
+    "reasoning_state_graph",
+    "misconceptions",
+    "verification",
+    "reconstructable_ttu_refs",
+    "self_help_closure_ref",
+    "realization_contract",
+    "differentiation_fingerprint"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "ttu_family": {"const": "CONCEPT_TTU"},
+    "ttu_id": {"type": "string", "minLength": 1},
+    "product_mode": {"enum": ["CORE1A", "CORE1B"]},
+    "learning_atom_id": {"type": "string", "minLength": 1},
+    "canonical_truth_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "representation_elements": {"type": "array", "minItems": 1},
+    "semantic_bindings": {"type": "array", "minItems": 1},
+    "reasoning_state_graph": {"type": "array", "minItems": 2},
+    "misconceptions": {"type": "array"},
+    "verification": {"type": "object"},
+    "reconstructable_ttu_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "self_help_closure_ref": {"type": "string", "minLength": 1},
+    "realization_contract": {
+      "type": "object",
+      "required": ["identity", "exposure_mode", "learner_actions"]
+    },
+    "tutor_dialogue_ref": {"type": "string"},
+    "differentiation_fingerprint": {
+      "type": "object",
+      "required": ["example", "representation", "sequence", "solution", "learner_action"]
+    }
+  },
+  "additionalProperties": true
+}
