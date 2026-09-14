@@ -1,0 +1,90 @@
+name: V2 Chemistry v7 PAL-assured learner products
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/ProductV7/**'
+      - '.github/workflows/v2-chemistry-v7-assured-products.yml'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-assure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install renderer dependencies
+        run: pip install reportlab pypdf pymupdf
+
+      - name: Assert downstream-only product diff
+        run: |
+          git fetch origin v2-chemistry-learning-blueprint-v4-bucket-conditioning
+          BAD=$(git diff --name-only origin/v2-chemistry-learning-blueprint-v4-bucket-conditioning...HEAD | grep -Ev '^(Grade 9/V2/Chemistry/ProductV7/|\.github/workflows/v2-chemistry-v7-assured-products\.yml$)' || true)
+          if [ -n "$BAD" ]; then
+            echo "ProductV7 PR modified upstream authority:"; echo "$BAD"; exit 1
+          fi
+
+      - name: Re-run upstream v7 assurance falsifiers
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v7_product_assurance.py' -v
+
+      - name: Run ProductV7 architecture tests
+        run: python -m unittest 'Grade 9/V2/Chemistry/ProductV7/tests/test_v7_products.py' -v
+
+      - name: Build all four learner products
+        run: |
+          python 'Grade 9/V2/Chemistry/ProductV7/engine/build_v7_products.py' \
+            --out-dir build/chemistry-product-v7
+
+      - name: Assert PAL manifest gates
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('build/chemistry-product-v7/product_manifest.json')
+          m=json.loads(p.read_text())
+          required={'ccbom','difficulty','purpose','learner_fit','question_custody','badges','realization_ref_closure','technical_density'}
+          assert required <= set(m['assurance'])
+          assert all(m['assurance'][k]=='PASS' for k in required)
+          assert set(m['products'])=={'CORE1A','CORE1B','CORE2A','CORE2B'}
+          for mode,prod in m['products'].items():
+              assert prod['page_count']>=1
+              for page in prod['page_audits']:
+                  threshold=.58 if page['workspace'] else .50
+                  assert page['technical_area_fraction']>=threshold,(mode,page)
+                  assert page['technical_object_count']>=4,(mode,page)
+          sim=m['similarity']['non_frozen_prose']
+          assert sim['verbatim_5gram_overlap']<=.10
+          assert sim['max_identical_contiguous_words']<=35
+          print('PAL manifest PASS')
+          PY
+
+      - name: PDF structural preflight and raster proof
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader
+          import fitz
+          out=Path('build/chemistry-product-v7')
+          ras=out/'raster-proof'; ras.mkdir(exist_ok=True)
+          for pdf in sorted(out.glob('*.pdf')):
+              r=PdfReader(str(pdf)); assert len(r.pages)>0
+              for i,p in enumerate(r.pages):
+                  assert len((p.extract_text() or '').strip())>=120,(pdf,i)
+              doc=fitz.open(pdf)
+              picks=sorted(set([0,len(doc)//2,len(doc)-1]))
+              for i in picks:
+                  pix=doc[i].get_pixmap(matrix=fitz.Matrix(1.4,1.4),alpha=False)
+                  pix.save(ras/f'{pdf.stem}-p{i+1}.png')
+              print(pdf.name, len(r.pages), 'pages OK')
+          PY
+
+      - name: Upload assured learner products
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-v7-pal-assured-observation-evidence-inference
+          path: build/chemistry-product-v7
