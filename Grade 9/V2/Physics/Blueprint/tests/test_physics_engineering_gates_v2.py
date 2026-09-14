@@ -40,10 +40,11 @@ g["required_invariants"].remove("INV-VEC-COMPONENT-SIGNS")
 must_fail(bad, "E_GATE_INVARIANT_MISSING")
 
 # Mutation 2: component -> resultant reconstruction relation is mandatory.
+# Removing it first breaks the representation-to-relation binding, which is the stronger/earlier deterministic failure.
 bad = copy.deepcopy(REG)
 g = gate(bad, "PHY-VEC-COMPONENTS")
 g["relations"] = [r for r in g["relations"] if r["relation_id"] != "EQ-VEC-RECONSTRUCT"]
-must_fail(bad, "E_GATE_INVARIANT_MISSING")
+must_fail(bad, "E_GATE_REP_BINDING")
 
 # Mutation 3: NLM may not proceed without the actual FBD representation contract.
 bad = copy.deepcopy(REG)
