@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "PHY-CORE1AB-BUCKET-DEPTH-V1",
+  "applies_to": ["CORE1A", "CORE1B"],
+  "segmentation_unit": "SUBTOPIC_BUCKET",
+  "student_knowledge_pct_used_for_depth": false,
+  "difficulty_badges": ["EASY", "MEDIUM", "HARD"],
+  "legacy_aliases": {"LOW": "EASY"},
+  "page_budget_rule": {
+    "type": "SOFT_CAPACITY_CEILING_NOT_TARGET",
+    "anti_padding": true,
+    "over_ceiling_action": "Split into coherent sub-subtopics first; exceed only with explicit owner exception. Never compress away necessary inferential steps."
+  },
+  "research_basis": {
+    "principles": [
+      "Segment complex material into meaningful learner-paced units.",
+      "Use signaling/cueing to direct attention to relevant visual and textual structure.",
+      "Use multiple representations in Physics when they clarify or enable reasoning.",
+      "More diagrams are not automatically better; every visual must perform an instructional function."
+    ],
+    "notes": "Exact page ceilings are product heuristics, not psychometric or research-derived thresholds."
+  },
+  "badges": {
+    "EASY": {
+      "soft_page_ceiling": 10,
+      "web_research_required_for_visual_and_pedagogy_design": false,
+      "web_research_exception": "Required only when source integrity, factual uncertainty, current external information or a missing representation demands verification.",
+      "sub_subtopic_decomposition": "OPTIONAL_WHEN_USEFUL",
+      "visual_intensity": "FUNCTIONAL_MINIMUM",
+      "step_density": "EXPLICIT_BUT_COMPACT",
+      "diagram_rule": "Use diagrams where they materially improve understanding; decorative images do not count."
+    },
+    "MEDIUM": {
+      "soft_page_ceiling": 20,
+      "web_research_required_for_visual_and_pedagogy_design": true,
+      "research_scope": "Find established representations, misconception patterns, worked-example structures and visual explanations relevant to the subtopic; adapt, do not copy.",
+      "sub_subtopic_decomposition": "REQUIRED_WHEN_MULTIPLE_DISTINCT_INFERENTIAL_JUMPS_EXIST",
+      "visual_intensity": "HIGH",
+      "step_density": "DETAILED",
+      "diagram_rule": "Provide dedicated diagrams for major model/representation changes and difficult inferential steps."
+    },
+    "HARD": {
+      "soft_page_ceiling": 30,
+      "web_research_required_for_visual_and_pedagogy_design": true,
+      "research_scope": "Research established representations, misconception evidence, expert solution structures, alternative representations and high-value visual explanations; adapt, do not copy.",
+      "sub_subtopic_decomposition": "EXPECTED_AND_REQUIRED_WHEN_CONCEPTUAL_JUMPS_CAN_BE_ISOLATED",
+      "visual_intensity": "VERY_HIGH",
+      "step_density": "MAXIMALLY_EXPLICIT_WITHOUT_REDUNDANT_PADDING",
+      "diagram_rule": "Use dedicated diagrams/visual sequences for each major conceptual transition; consider one or more sub-subtopic visual narratives when needed."
+    }
+  },
+  "layer_specific_realization": {
+    "CORE1A": "Declarative: explain completely at solution level, including full worked reasoning, derivations/checks where useful and misconception contrast.",
+    "CORE1B": "Generative: preserve the same bucket depth but turn the learner into the active constructor using open-ended prompts, attempt space, progressive help, local resolution and repair."
+  }
+}
