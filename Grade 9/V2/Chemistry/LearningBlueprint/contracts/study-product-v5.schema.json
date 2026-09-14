@@ -10,6 +10,7 @@
     "difficulty_badge",
     "learning_atoms",
     "technical_objects",
+    "reconstructable_ttus",
     "practice_closure",
     "research_translation",
     "page_plan",
@@ -66,6 +67,11 @@
         "additionalProperties": true
       }
     },
+    "reconstructable_ttus": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "reconstructable-ttu-v5.schema.json"}
+    },
     "practice_closure": {"type": "object"},
     "research_translation": {
       "type": "array",
@@ -75,7 +81,8 @@
         "properties": {
           "research_ref": {"type": "string", "minLength": 1},
           "decision": {"type": "string", "minLength": 1},
-          "technical_object_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+          "technical_object_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "ttu_ids": {"type": "array", "items": {"type": "string"}}
         }
       }
     },
@@ -84,12 +91,13 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["page_id", "page_role", "expected_active_area_ratio", "technical_object_ids", "learner_action_ids"],
+        "required": ["page_id", "page_role", "expected_active_area_ratio", "technical_object_ids", "ttu_ids", "learner_action_ids"],
         "properties": {
           "page_id": {"type": "string", "minLength": 1},
           "page_role": {"type": "string", "minLength": 1},
           "expected_active_area_ratio": {"type": "number", "minimum": 0, "maximum": 1},
           "technical_object_ids": {"type": "array", "items": {"type": "string"}},
+          "ttu_ids": {"type": "array", "items": {"type": "string"}},
           "learner_action_ids": {"type": "array", "items": {"type": "string"}},
           "workspace_justification": {"type": "string"}
         },
