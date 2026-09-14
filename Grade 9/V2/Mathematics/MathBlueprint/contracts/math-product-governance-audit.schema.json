@@ -90,7 +90,7 @@
       "required": ["stage", "item_ref", "calibration_basis", "required_capability_refs", "support_mode", "maximum_allowed_demand", "actual_demand", "taught_scope_verified", "result"],
       "properties": {
         "stage": {"enum": ["CORE2A", "CORE2B"]},
-        "item_ref": {"type": "string", "minLength": 3},
+        "item_ref": {"type": "string", "minLength": 2},
         "calibration_basis": {"$ref": "#/$defs/calibrationBasis"},
         "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
         "support_mode": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
