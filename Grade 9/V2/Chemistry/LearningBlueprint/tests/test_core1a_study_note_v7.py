@@ -21,6 +21,8 @@ class Core1AStudyNoteV7Tests(unittest.TestCase):
         out = studyv7.validate(copy.deepcopy(AUTHORITY), copy.deepcopy(CCBOM), POLICY)
         self.assertEqual(out["status"], "PASS")
         self.assertGreaterEqual(out["content_object_count"], 30)
+        self.assertIn("Q-REDOX-AGENT-INDEP", out["independent_question_ids"])
+        self.assertIn("FADED", out["practice_levels"])
         self.assertEqual(out["learner_surface_internal_jargon_leaks"], 0)
         self.assertEqual(out["pagination_mode"], "CONTENT_FIRST")
 
@@ -70,12 +72,36 @@ class Core1AStudyNoteV7Tests(unittest.TestCase):
         with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "HARD_REPRESENTATION_DEPTH_LOW"):
             studyv7.validate(p, copy.deepcopy(CCBOM), POLICY)
 
-    def test_hard_note_requires_guided_and_independent_practice(self):
+    def test_hard_note_requires_guided_faded_and_independent_practice(self):
         p = copy.deepcopy(AUTHORITY)
-        for obj in p["content_objects"]:
-            if obj.get("practice_level") == "INDEPENDENT":
-                obj["practice_level"] = "GUIDED"
-        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "HARD_PRACTICE_LEVELS_INCOMPLETE"):
+        p["practice_diversity"]["independent_question_ids"] = ["Q-REDOX-ELECTRON-GUIDED"]
+        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "INDEPENDENT_QUESTION_LEVEL_INVALID"):
+            studyv7.validate(p, copy.deepcopy(CCBOM), POLICY)
+
+    def test_every_practice_question_reveals_source(self):
+        p = copy.deepcopy(AUTHORITY)
+        q = next(x for x in p["content_objects"] if x.get("question_id") == "Q-REDOX-AGENT-INDEP")
+        q["learner_source_display"] = ""
+        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "PRACTICE_SOURCE_NOT_LEARNER_VISIBLE"):
+            studyv7.validate(p, copy.deepcopy(CCBOM), POLICY)
+
+    def test_every_practice_question_has_answer_ref(self):
+        p = copy.deepcopy(AUTHORITY)
+        q = next(x for x in p["content_objects"] if x.get("question_id") == "Q-REDOX-AGENT-INDEP")
+        q["answer_object_id"] = "MISSING-ANSWER"
+        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "PRACTICE_ANSWER_UNRESOLVED"):
+            studyv7.validate(p, copy.deepcopy(CCBOM), POLICY)
+
+    def test_same_reaction_cannot_claim_independent_practice(self):
+        p = copy.deepcopy(AUTHORITY)
+        p["practice_diversity"]["independent_reaction_signatures"] = [p["practice_diversity"]["worked_anchor_reaction"]]
+        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "INDEPENDENT_SAME_SURFACE_AS_WORKED"):
+            studyv7.validate(p, copy.deepcopy(CCBOM), POLICY)
+
+    def test_fading_anchor_cannot_be_counted_as_independent(self):
+        p = copy.deepcopy(AUTHORITY)
+        p["practice_diversity"]["independent_question_ids"] = ["Q-REDOX-STATE-FADED"]
+        with self.assertRaisesRegex(studyv7.Core1AStudyNoteError, "PRACTICE_LINEAGE_COLLISION|INDEPENDENT_QUESTION_LEVEL_INVALID"):
             studyv7.validate(p, copy.deepcopy(CCBOM), POLICY)
 
     def test_page_count_targeting_fails(self):
