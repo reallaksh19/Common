@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-b-layer-integration.schema.json",
+  "title": "Mathematics Core1B/Core2B Blueprint Integration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "integration_id",
+    "schema_version",
+    "subject",
+    "run_ref",
+    "bundle_ref",
+    "assimilation_plan_ref",
+    "core1a_realization",
+    "core1b_lane",
+    "core2a_lane",
+    "core2b_lane",
+    "invariants",
+    "status",
+    "integration_digest"
+  ],
+  "properties": {
+    "integration_id": {"type": "string", "pattern": "^MATH-BI-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "bundle_ref": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+    "assimilation_plan_ref": {"type": "string", "pattern": "^MATH-AP-[0-9a-f]{16}$"},
+    "core1a_realization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_ref", "artifact_digest", "surface_manifest_ref", "surface_manifest_digest", "manifest_origin", "status"],
+      "properties": {
+        "artifact_ref": {"type": "string", "minLength": 1},
+        "artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "surface_manifest_ref": {"type": "string", "minLength": 1},
+        "surface_manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "manifest_origin": {"enum": ["RENDERER_EMITTED", "TEST_FIXTURE"]},
+        "status": {"const": "REALIZED"}
+      }
+    },
+    "core1b_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exposure_receipt_refs", "learner_evidence_refs", "release_receipt_refs", "repair_request_refs", "status"],
+      "properties": {
+        "exposure_receipt_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "learner_evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "release_receipt_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "repair_request_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "status": {"enum": ["NOT_READY", "EXPOSURE_VERIFIED", "EVIDENCE_AVAILABLE", "RELEASED"]}
+      }
+    },
+    "core2a_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legal_pool_ref", "legal_pool_digest", "status"],
+      "properties": {
+        "legal_pool_ref": {"type": ["string", "null"]},
+        "legal_pool_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "status": {"enum": ["NOT_READY", "LEGAL_POOL_READY"]}
+      }
+    },
+    "core2b_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_ref", "retrieval_state_refs", "repair_handoff_refs", "status"],
+      "properties": {
+        "session_ref": {"type": ["string", "null"]},
+        "retrieval_state_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "repair_handoff_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "status": {"enum": ["BLOCKED", "READY", "ACTIVE"]}
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "planned_not_realized",
+        "realized_not_evidenced",
+        "core2a_legality_not_core2b_readiness",
+        "core2b_requires_core1b_release",
+        "core2b_requires_core2a_legal_pool",
+        "core2b_items_must_resolve_in_bound_core2a_pool",
+        "b_layer_may_not_rewrite_upstream_learner_state"
+      ],
+      "properties": {
+        "planned_not_realized": {"const": true},
+        "realized_not_evidenced": {"const": true},
+        "core2a_legality_not_core2b_readiness": {"const": true},
+        "core2b_requires_core1b_release": {"const": true},
+        "core2b_requires_core2a_legal_pool": {"const": true},
+        "core2b_items_must_resolve_in_bound_core2a_pool": {"const": true},
+        "b_layer_may_not_rewrite_upstream_learner_state": {"const": true}
+      }
+    },
+    "status": {"enum": ["WAITING_FOR_CORE1B", "WAITING_FOR_CORE2A", "CORE2B_READY", "CORE2B_ACTIVE"]},
+    "integration_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
