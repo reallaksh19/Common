@@ -31,11 +31,27 @@ import core1a_capability_authoring as capability
 from core1a_bucket_synthesis import synthesize_bucket_plan
 from core1a_bucket_realization import realize_bucket_manuscript, render_bucket_pdf
 from producer_governance import core1a_receipt
-from emit_stage_governance import write_receipt
+from emit_stage_governance import write_receipt, digest as governance_digest
 from validate_canonical_domain_registry import validate_registry
 from validate_self_teaching_generation_spec import validate_generation_spec
 
 CONTRACTS = HERE.parent / "contracts"
+
+
+def _restore_subtopic_identity(receipt: dict, bucket_plan: dict, generation_spec: dict | None) -> None:
+    if not generation_spec or not receipt["difficulty_evidence"]:
+        return
+    by_id = {row["bucket_id"]: row for row in generation_spec["core1_buckets"]}
+    by_title = {row["subtopic_title"].strip().lower(): row for row in generation_spec["core1_buckets"]}
+    actual_to_subtopic = {}
+    for bucket in bucket_plan["buckets"]:
+        row = by_id.get(bucket["bucket_id"]) or by_title.get(bucket["title"].strip().lower())
+        if row:
+            actual_to_subtopic[bucket["bucket_id"]] = row["subtopic_id"]
+    for row in receipt["difficulty_evidence"]:
+        row["subtopic_ref"] = actual_to_subtopic.get(row["subtopic_ref"], row["subtopic_ref"])
+    receipt["receipt_id"] = ""
+    receipt["receipt_id"] = "MATH-STAGE-GOV-CORE1A-" + governance_digest(receipt)[:16]
 
 
 def main() -> None:
@@ -79,19 +95,11 @@ def main() -> None:
 
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "core1a_bucket_plan.json").write_text(
-        json.dumps(bucket_plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
-    (out / "core1a_textbook_manuscript.json").write_text(
-        json.dumps(book, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+    (out / "core1a_bucket_plan.json").write_text(json.dumps(bucket_plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (out / "core1a_textbook_manuscript.json").write_text(json.dumps(book, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    receipt = core1a_receipt(
-        bucket_plan,
-        book,
-        registry=registry,
-        generation_spec=generation_spec,
-    )
+    receipt = core1a_receipt(bucket_plan, book, registry=registry, generation_spec=generation_spec)
+    _restore_subtopic_identity(receipt, bucket_plan, generation_spec)
     write_receipt(receipt, out / "core1a_governance_receipt.json")
 
     pdf_path = out / "core1a_student_textbook.pdf"
@@ -111,9 +119,7 @@ def main() -> None:
         "artifact": {"path": pdf_path.name, **pdf_meta},
         "release_class": book["release_class"],
     }
-    (out / "core1a_quality_audit.json").write_text(
-        json.dumps(audit, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+    (out / "core1a_quality_audit.json").write_text(json.dumps(audit, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
