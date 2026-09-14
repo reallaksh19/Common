@@ -3,6 +3,19 @@
   "subject": "MATHEMATICS",
   "audit_id": "MATH-SIM-THEORY-EQ-001",
   "policy_ref": "MATH-CROSS-CORE-SIMILARITY-v1",
+  "coverage_declaration": {
+    "comparison_scope": "ALL_CROSS_CORE_CANDIDATES",
+    "stage_pairs": [
+      "CORE1A__CORE1B",
+      "CORE1A__CORE2A",
+      "CORE1A__CORE2B",
+      "CORE1B__CORE2A",
+      "CORE1B__CORE2B",
+      "CORE2A__CORE2B"
+    ],
+    "candidate_pair_count": 7,
+    "uncompared_candidate_count": 0
+  },
   "comparisons": [
     {
       "comparison_id": "SIM-1A-1B-EQ",
