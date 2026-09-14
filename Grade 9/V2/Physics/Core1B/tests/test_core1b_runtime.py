@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import copy,json,sys
 from pathlib import Path
+from jsonschema import Draft202012Validator
 ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT/"engine"))
 from core1b_runtime import *
 
@@ -9,15 +10,24 @@ REG=load(ROOT/"registry"/"projectile-vertical-event-atoms-v1.json")
 G=ROOT/"golden"/"projectile-vertical-event"
 AUTH=load(G/"core1a-authority.json"); UNIT=load(G/"core1b-unit.json"); EVENTS=load(G/"observed-events.json")
 
+def schema(name):
+    s=load(ROOT/"contracts"/name);Draft202012Validator.check_schema(s);return Draft202012Validator(s)
 def expect(code,fn):
     try: fn()
     except Core1BRuntimeError as e:
         assert str(e).startswith(code),(code,str(e)); return
     raise AssertionError("expected "+code)
 
+AUTH_V=schema("physics-core1b-authority-release.schema.json")
+UNIT_V=schema("physics-core1b-unit.schema.json")
+EVENT_V=schema("physics-core1b-observed-event.schema.json")
+RECEIPT_V=schema("physics-core1b-release-receipt.schema.json")
+AUTH_V.validate(AUTH);UNIT_V.validate(UNIT)
+for e in EVENTS:EVENT_V.validate(e)
+
 validate_registry(REG); validate_unit(UNIT,REG,AUTH,[])
 assert derive_state(UNIT,AUTH,[])=="NOT_EXPOSED"
-receipt=build_release_receipt(UNIT,REG,AUTH,EVENTS)
+receipt=build_release_receipt(UNIT,REG,AUTH,EVENTS);RECEIPT_V.validate(receipt)
 assert receipt["state"]=="INDEPENDENT" and receipt["core1a_release_digest"]==AUTH["authority_digest"]
 assert receipt["representation_evidence"]==["EVENT_TIMELINE"]
 
@@ -49,4 +59,4 @@ expect("CORE1B_PREREQUISITE_SKIP_UNGROUNDED",lambda:validate_unit(skip_guided,RE
 supported=copy.deepcopy(EVENTS[0]); supported["hint_level_used"]="MODEL_CUE"; supported["event_digest"]=digest_without(supported,"event_digest")
 assert derive_state(UNIT,AUTH,[supported])=="SUPPORTED"
 expect("CORE1B_OBSERVED_INDEPENDENT_EVIDENCE_REQUIRED",lambda:build_release_receipt(UNIT,REG,AUTH,[supported]))
-print("Physics Core1B runtime tests: PASS (11 guards)")
+print("Physics Core1B runtime tests: PASS (11 guards + schema validation)")
