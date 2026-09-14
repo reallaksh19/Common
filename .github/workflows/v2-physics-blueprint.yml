@@ -32,6 +32,10 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_cdau_sdu_lau_ttu_v7.py"
       - name: Validate SBA23 V7 realization and source-hold boundaries
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_sba23_v7_realization.py"
+      - name: Validate SBA23 V8 CCU process golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/validate_ccu.py" "topics/m2d-sba23-ccu.v1.json"
+      - name: Run V8 CCU custody coverage duplication difficulty and fit falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_ccu_v8.py"
       - name: Run B-layer runtime-boundary falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_b_layer_boundary.py"
       - name: Run Core1B observed-evidence runtime falsifiers
