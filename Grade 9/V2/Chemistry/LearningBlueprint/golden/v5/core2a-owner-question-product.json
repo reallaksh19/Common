@@ -1,0 +1,76 @@
+{
+  "schema_version": "5.0.0",
+  "product_mode": "CORE2A",
+  "conditioning_ref": "V4-OWNER-OVERRIDE-REDOX",
+  "question_ids": ["CHEM-C2-SRC-Q15C", "CHEM-C2-SRC-Q29"],
+  "episodes": [
+    {
+      "question_id": "CHEM-C2-SRC-Q15C",
+      "source_class": "SOURCE_CORE2",
+      "stem_custody": "PRESERVED",
+      "provenance_custody": "PRESERVED",
+      "answer_custody": "PRESERVED",
+      "required_jobs": [
+        "ATTEMPT", "REPRESENTATION_OR_SETUP", "FIRST_MOVE", "TECHNICAL_BREAKDOWN",
+        "FULL_SOLUTION", "ERROR_TRAP", "VERIFICATION", "RETRY_OR_NEAR_TRANSFER"
+      ],
+      "technical_steps": [
+        {"step_id":"Q1-ATT","job":"ATTEMPT"},
+        {"step_id":"Q1-REP","job":"REPRESENTATION_OR_SETUP"},
+        {"step_id":"Q1-FIRST","job":"FIRST_MOVE"},
+        {"step_id":"Q1-BREAK","job":"TECHNICAL_BREAKDOWN"},
+        {"step_id":"Q1-SOL","job":"FULL_SOLUTION"},
+        {"step_id":"Q1-ERR","job":"ERROR_TRAP"},
+        {"step_id":"Q1-VER","job":"VERIFICATION"},
+        {"step_id":"Q1-RETRY","job":"RETRY_OR_NEAR_TRANSFER"}
+      ],
+      "hint_bindings": [
+        {"hint_id":"Q1-H1","binds_to_step_id":"Q1-FIRST"},
+        {"hint_id":"Q1-H2","binds_to_step_id":"Q1-BREAK"}
+      ]
+    },
+    {
+      "question_id": "CHEM-C2-SRC-Q29",
+      "source_class": "SOURCE_CORE2",
+      "stem_custody": "PRESERVED",
+      "provenance_custody": "PRESERVED",
+      "answer_custody": "PRESERVED",
+      "required_jobs": [
+        "ATTEMPT", "REPRESENTATION_OR_SETUP", "FIRST_MOVE", "TECHNICAL_BREAKDOWN",
+        "FULL_SOLUTION", "ERROR_TRAP", "VERIFICATION", "RETRY_OR_NEAR_TRANSFER"
+      ],
+      "technical_steps": [
+        {"step_id":"Q2-ATT","job":"ATTEMPT"},
+        {"step_id":"Q2-REP","job":"REPRESENTATION_OR_SETUP"},
+        {"step_id":"Q2-FIRST","job":"FIRST_MOVE"},
+        {"step_id":"Q2-BREAK","job":"TECHNICAL_BREAKDOWN"},
+        {"step_id":"Q2-SOL","job":"FULL_SOLUTION"},
+        {"step_id":"Q2-ERR","job":"ERROR_TRAP"},
+        {"step_id":"Q2-VER","job":"VERIFICATION"},
+        {"step_id":"Q2-RETRY","job":"RETRY_OR_NEAR_TRANSFER"}
+      ],
+      "hint_bindings": [
+        {"hint_id":"Q2-H1","binds_to_step_id":"Q2-FIRST"},
+        {"hint_id":"Q2-H2","binds_to_step_id":"Q2-BREAK"}
+      ]
+    }
+  ],
+  "coverage_closure": {
+    "selected_question_count": 2,
+    "attempt_path_count": 2,
+    "check_path_count": 2,
+    "full_solution_path_count": 2
+  },
+  "page_plan": [
+    {"page_id":"Q1-P1","page_role":"QUESTION_EPISODE","expected_active_area_ratio":0.67,"technical_step_ids":["Q1-ATT","Q1-REP","Q1-FIRST","Q1-BREAK"],"learner_action_ids":["ACT-Q1-ATTEMPT"]},
+    {"page_id":"Q1-P2","page_role":"SOLUTION","expected_active_area_ratio":0.74,"technical_step_ids":["Q1-SOL","Q1-ERR","Q1-VER","Q1-RETRY"],"learner_action_ids":[]},
+    {"page_id":"Q2-P1","page_role":"QUESTION_EPISODE","expected_active_area_ratio":0.66,"technical_step_ids":["Q2-ATT","Q2-REP","Q2-FIRST","Q2-BREAK"],"learner_action_ids":["ACT-Q2-ATTEMPT"]},
+    {"page_id":"Q2-P2","page_role":"SOLUTION","expected_active_area_ratio":0.75,"technical_step_ids":["Q2-SOL","Q2-ERR","Q2-VER","Q2-RETRY"],"learner_action_ids":[]}
+  ],
+  "cross_core_reuse_audit": {
+    "shared_helper_prose_count": 0,
+    "repeated_generic_template_fraction": 0.12,
+    "shared_question_stem_ids": ["CHEM-C2-SRC-Q15C", "CHEM-C2-SRC-Q29"],
+    "shared_answer_authority_ids": ["ANS-Q15C", "ANS-Q29"]
+  }
+}
