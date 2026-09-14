@@ -40,6 +40,8 @@ Core2 legal assessment intelligence
 Core2A declarative solution apprenticeship
 Core2B open-ended transfer tutoring
       ↓
+technical depth obligations + reconstructable TTUs
+      ↓
 validated LearnerPageBlueprint
       ↓
 future deterministic Publication
@@ -168,18 +170,18 @@ The percentage is a generation-calibration input; it does not overwrite `UNKNOWN
 
 No numeric percentage bands are hard-coded without an owner-approved calibration policy. A named policy resolves percentage to concrete controls.
 
-## Increment 9 — Technical depth + page composition
+## Increment 9 — Technical depth + reconstructable TTU composition
 
 Canonical file: `TECHNICAL_COMPOSITION.md`.
 
-This increment makes technical density and layout semantics an upstream contract rather than a renderer preference.
+This increment makes technical density, reconstruction and layout semantics upstream contracts rather than renderer preferences.
 
 ```text
 DIFFICULTY BADGE / STAGE ROLE
         ↓
 TECHNICAL DEPTH OBLIGATIONS
         ↓
-MATHEMATICAL BLOCKS + REPRESENTATIONS + TASKS
+MATHEMATICAL BLOCKS + RECONSTRUCTABLE TTUs
         ↓
 LearnerPageBlueprint
         ↓
@@ -188,15 +190,34 @@ COMPOSITION VALIDATION
 Publication
 ```
 
+A reconstructable TTU is a bounded technical object with a learner-facing incomplete state, a specific reconstruction target and a checked completed state. Supported kinds include incomplete diagrams, component models, incomplete graphs, equation skeletons, event lines, table skeletons, proof/reasoning chains, coordinate models, flow models and construction sequences.
+
+TTUs fade as:
+
+```text
+MODELLED → GUIDED → FADED → INDEPENDENT
+```
+
+Their lineage is stage-specific:
+
+```text
+Core1A TTU → Core1B reconstruction / contrast
+Core2A TTU → Core2B reconstruction / transfer
+```
+
 Key invariants:
 
 - page count is an output, never a depth target;
 - prose-only learner pages fail;
 - manual spacer padding fails;
 - Core1A/Core1B MEDIUM/HARD depth is proven through typed mathematical obligations, not extra paragraphs;
+- Core1A/Core1B/Core2A/Core2B must contain reconstructable TTUs;
+- every Core1B `OPEN_TUTOR` page and every Core2B `TRANSFER_TUTOR` page requires a TTU;
+- TTUs must contain real missing parts and a completion key that covers exactly those missing parts;
+- the renderer cannot choose the missing parts or complete the TTU;
 - repeated narrative/explanatory content across cores fails unless the repeated object is an immutable source, canonical formula/definition or answer identity;
 - downstream reuse declares lineage and a cognitive transformation (`BUILD / RECONSTRUCT / CONTRAST / SOLUTION_ANATOMY / TRANSFER / VERIFY`);
-- every learner-facing diagram/graph has semantic geometry, a bounded viewport and `clip_to_viewport = true`;
+- every learner-facing diagram/graph/TTU has semantic geometry, a bounded viewport and `clip_to_viewport = true`;
 - an infinite mathematical locus is clipped to its graph box and may not draw across the learner page;
 - open-ended B pages require explicit technical workspace plus answer derivation and verification.
 
@@ -207,7 +228,7 @@ contracts/math-learner-page-blueprint.schema.json
 policies/math-technical-composition-policy.json
 engine/validate_learner_page_blueprint.py
 tests/test_technical_composition.py
-golden/technical_composition/01-medium-equidistant-page-blueprint.json
+golden/technical_composition/02-medium-equidistant-reconstructable-ttu.json
 ```
 
 ## Executable self-teaching/calibration contracts
@@ -245,8 +266,9 @@ Do not freeze deterministic Publication until pedagogy goldens prove:
 - Core2A/Core2B generation with an owner waiver;
 - Core2A question-demand calibration and Core2B transfer-demand calibration;
 - self-help closure and independent answer validation;
+- reconstructable TTU coverage and lineage through Core1A→Core1B and Core2A→Core2B;
 - validated technical depth and non-duplicative six-core page composition;
-- bounded/clipped representation geometry and explicit workspace semantics;
+- bounded/clipped representation and TTU geometry with explicit workspace semantics;
 - no drift in authority, source identity or transfer ceiling.
 
-Publication then becomes a deterministic compiler of an already-validated `LearnerPageBlueprint`, not a content-authoring or page-filling layer.
+Publication then becomes a deterministic compiler of an already-validated `LearnerPageBlueprint`, not a content-authoring, omission-selecting or page-filling layer.
