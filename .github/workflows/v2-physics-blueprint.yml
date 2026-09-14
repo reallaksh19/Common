@@ -24,6 +24,8 @@ jobs:
         run: pip install jsonschema reportlab pymupdf
       - name: Validate blueprint contracts and role bindings
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
+      - name: Validate canonical Physics Technical Engineering Gates v2
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
       - name: Validate reconstruction-complete TTU v2 falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_ttu_v2.py"
       - name: Validate self-help learner-product grammar and three-topic pilot
