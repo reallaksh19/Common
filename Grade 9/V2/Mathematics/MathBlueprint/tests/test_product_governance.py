@@ -77,6 +77,18 @@ class ProductGovernanceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "SIMILARITY_HARD_DUPLICATE"):
             gov.validate_similarity(bad)
 
+    def test_strong_overlap_is_a_release_block_even_with_declared_semantic_reuse(self):
+        bad = copy.deepcopy(self.similarity)
+        row = bad["comparisons"][1]
+        row.update({
+            "declared_relation":"SEMANTIC_REUSE",
+            "content_similarity":0.80,
+            "pedagogical_similarity":0.70,
+            "classification":"STRONG_OVERLAP",
+        })
+        with self.assertRaisesRegex(ValueError, "SIMILARITY_STRONG_PEDAGOGICAL_OVERLAP"):
+            gov.validate_similarity(bad)
+
     def test_structural_sibling_must_live_inside_declared_band(self):
         bad = copy.deepcopy(self.similarity)
         bad["comparisons"][-1]["structural_similarity"] = 0.95
