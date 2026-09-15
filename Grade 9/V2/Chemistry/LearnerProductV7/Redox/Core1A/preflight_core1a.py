@@ -11,6 +11,7 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[5]
 BP = ROOT / "Grade 9" / "V2" / "Chemistry" / "LearningBlueprint"
+WORKFLOW = ROOT / ".github" / "workflows" / "v2-chemistry-redox-core1a-blueprint-proof.yml"
 
 EXPECTED_BLOCKER = "CHEM_PRODUCT_SCOPE_STRESS_AUDIT_NOT_AUTHORITY"
 CURRENT = {
@@ -98,13 +99,12 @@ def main() -> None:
     pdfs = sorted(str(path) for path in receipt_path.parent.rglob("*.pdf"))
     assert not pdfs, f"learner PDF emitted despite missing production source authority: {pdfs}"
 
-    # The rebuilt harness itself must not retain old Workbench v1 authority paths.
-    harness_text = "\n".join(
-        (HERE / name).read_text(encoding="utf-8")
-        for name in ("build_core1a.py", "preflight_core1a.py")
-    )
+    # Production code/workflow must not retain Workbench v1 authority dependencies.
+    producer_text = (HERE / "build_core1a.py").read_text(encoding="utf-8")
+    workflow_text = WORKFLOW.read_text(encoding="utf-8")
     for ref in FORBIDDEN_V1_REFS:
-        assert ref not in harness_text, f"old Workbench v1 authority reference retained: {ref}"
+        assert ref not in producer_text, f"old Workbench v1 producer authority reference retained: {ref}"
+        assert ref not in workflow_text, f"old Workbench v1 workflow authority reference retained: {ref}"
 
     print(json.dumps({
         "status": "PASS",
