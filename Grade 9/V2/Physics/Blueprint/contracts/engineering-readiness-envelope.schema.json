@@ -1,17 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "engineering-readiness-envelope.schema.json",
-  "title": "Physics Engineering Readiness Envelope",
+  "title": "Engineering Gate Readiness Envelope Compatibility Mirror",
+  "description": "Non-authoritative compatibility mirror. Runtime authority is Grade 9/V2/Shared/EngineeringGate/contracts/engineering-readiness-envelope.schema.json.",
+  "x-authority-ref": "Grade 9/V2/Shared/EngineeringGate/contracts/engineering-readiness-envelope.schema.json",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "envelope_id", "request_id", "manifest_id",
-    "engineering_receipt", "domain_receipt", "dimensions",
-    "consumer_permissions", "overall_state", "publication_authorization",
-    "blockers", "next_action", "envelope_digest"
+    "schema_version", "policy_id", "authority_layer", "envelope_id", "request_id", "manifest_id",
+    "engineering_receipt", "domain_receipt", "dimensions", "consumer_permissions",
+    "overall_state", "publication_authorization", "blockers", "next_action", "envelope_digest"
   ],
   "properties": {
     "schema_version": {"const": "1.0.0"},
+    "policy_id": {"type": "string", "minLength": 3},
+    "authority_layer": {"const": "ENGINEERING_GATE"},
     "envelope_id": {"type": "string", "pattern": "^ENG-READY-[A-Z0-9-]+$"},
     "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
     "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
@@ -38,26 +41,15 @@
     },
     "dimensions": {
       "type": "object", "additionalProperties": false,
-      "required": ["physics_technical", "research_provenance", "external_prerequisites", "source_authority"],
+      "required": ["technical", "research_provenance", "external_prerequisites", "source_authority"],
       "properties": {
-        "physics_technical": {"enum": ["READY", "BLOCKED"]},
+        "technical": {"enum": ["READY", "BLOCKED"]},
         "research_provenance": {"enum": ["READY", "BLOCKED", "NOT_REQUIRED"]},
         "external_prerequisites": {"enum": ["READY", "HELD"]},
         "source_authority": {"enum": ["READY", "HELD", "NOT_APPLICABLE"]}
       }
     },
-    "consumer_permissions": {
-      "type": "object", "additionalProperties": false,
-      "required": ["CCU", "CORE1A", "CORE1B", "CORE2A", "CORE2B", "PUBLICATION"],
-      "properties": {
-        "CCU": {"$ref": "#/$defs/consumer"},
-        "CORE1A": {"$ref": "#/$defs/consumer"},
-        "CORE1B": {"$ref": "#/$defs/consumer"},
-        "CORE2A": {"$ref": "#/$defs/consumer"},
-        "CORE2B": {"$ref": "#/$defs/consumer"},
-        "PUBLICATION": {"$ref": "#/$defs/consumer"}
-      }
-    },
+    "consumer_permissions": {"type": "object", "additionalProperties": {"$ref": "#/$defs/consumer"}},
     "overall_state": {"enum": ["READY_FOR_TECHNICAL_CONSUMPTION", "BLOCKED"]},
     "publication_authorization": {"const": "NOT_IMPLIED"},
     "blockers": {
@@ -67,7 +59,7 @@
         "required": ["code", "dimension", "message"],
         "properties": {
           "code": {"type": "string", "minLength": 2},
-          "dimension": {"enum": ["PHYSICS_TECHNICAL", "RESEARCH_PROVENANCE", "EXTERNAL_PREREQUISITES"]},
+          "dimension": {"enum": ["TECHNICAL", "RESEARCH_PROVENANCE", "EXTERNAL_PREREQUISITES"]},
           "ref": {"type": ["string", "null"]},
           "message": {"type": "string", "minLength": 3}
         }
