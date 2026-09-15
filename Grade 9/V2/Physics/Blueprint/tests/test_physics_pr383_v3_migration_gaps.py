@@ -34,17 +34,12 @@ assert report["source_snapshot"]["pr_number"] == 383
 assert report["source_snapshot"]["head_sha"] == "e92481f6e03a8bb49a55f568b03cba7c12fb942a"
 assert report["source_snapshot"]["source_gate_count"] == 43
 assert report["counts"]["discovered_subtopic_count"] == 43
-assert report["counts"]["already_reconciled_count"] == 13
-assert report["counts"]["migration_gap_count"] == 30
-assert report["target_control_plane"]["canonical_v3_gate_count"] == 24
+assert report["counts"]["already_reconciled_count"] == 12
+assert report["counts"]["migration_gap_count"] == 31
+assert report["target_control_plane"]["canonical_v3_gate_count"] == 23
 assert report["target_control_plane"]["readiness_rule"] == "DERIVED_BY_PRODUCTION_V3_VALIDATOR"
 assert report["target_control_plane"]["source_self_asserted_readiness_imported"] is False
 assert report["target_control_plane"]["case_specific_overrides"] == "PROHIBITED"
-
-reconciled = {row["discovery_gate_id"]: row for row in report["already_reconciled"]}
-assert reconciled["PHY-KIN-1D-MOTION"]["disposition"] == "EXACT_V3_ID"
-assert reconciled["PHY-KIN-1D-MOTION"]["v3_gate_ids"] == ["PHY-KIN-1D-MOTION"]
-assert all(row["discovery_gate_id"] != "PHY-KIN-1D-MOTION" for row in report["migration_gaps"])
 
 for gap in report["migration_gaps"]:
     assert gap["promotion_status"] == "BLOCKED_PENDING_V3_ENRICHMENT"

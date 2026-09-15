@@ -22,7 +22,6 @@ GATE_FILES = [
     "engineering-gates/newtonian-mechanics/PHY-NLM-CONNECTED.v3.json",
     "engineering-gates/gravitation/PHY-GRAV-FORCE.v3.json",
     "engineering-gates/gravitation/PHY-GRAV-FIELD.v3.json",
-    "engineering-gates/motion/PHY-KIN-1D-MOTION.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-PROJECTILE-COMPONENTS.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-SHARED-CLOCK.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
