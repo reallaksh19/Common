@@ -3,6 +3,7 @@ name: V2 Physics P-L Release Authority
 on:
   pull_request:
     paths:
+      - "Grade 9/V2/Physics/V2_GENERATION_ENTRYPOINT.md"
       - "Grade 9/V2/Physics/ExactProduct/**"
       - "Grade 9/V2/Shared/HumanReview/**"
       - ".github/workflows/v2-physics-release-authority.yml"
