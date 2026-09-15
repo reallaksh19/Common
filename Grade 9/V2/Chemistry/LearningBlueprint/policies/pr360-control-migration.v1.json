@@ -66,5 +66,10 @@
     "NO_HISTORICAL_PRODUCT_ARTIFACT_PROMOTED_TO_AUTHORITY",
     "CURRENT_LINEAGE_TESTS_PASS"
   ],
-  "status": "MIGRATION_COMPLETE_PENDING_CI"
+  "verification": {
+    "head_sha": "0e395bb74f925166caebee76503ea65f79751fa1",
+    "v7_product_assurance": "PASS",
+    "blueprint_v0_v6_regression_matrix": "PASS"
+  },
+  "status": "MIGRATION_COMPLETE"
 }
