@@ -5,7 +5,6 @@ import sys
 import unittest
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / "engine"
 sys.path.insert(0, str(ENGINE))
@@ -31,16 +30,19 @@ def easy_bucket():
     }
 
 
-def core1b_payload():
+def core1b_payload(module_ref="MODULE-A"):
     return {
         "subject": "CHEMISTRY",
         "delivery_mode": "STATIC",
         "source_core1a_ref": "TEST_ONLY_CORE1A_AUTHORITY",
         "instruction_bucket": easy_bucket(),
+        "module_ref": module_ref,
         "capability_ref": "CAP-GENERIC-TEST",
         "approved_capability_refs": ["CAP-GENERIC-TEST"],
         "problem_family_ref": "PF-GENERIC-TEST",
         "approved_problem_family_refs": ["PF-GENERIC-TEST"],
+        "used_representation_refs": ["REP-GENERIC-TEST"],
+        "approved_representation_refs": ["REP-GENERIC-TEST", "REP-GENERIC-ALTERNATE"],
         "new_chemistry_refs": [],
         "task_prompt": "Use the supplied synthetic evidence to construct a response.",
         "help_mode": "PROGRESSIVE_FIXED",
@@ -99,6 +101,7 @@ class StaticBLayerBoundaryTests(unittest.TestCase):
         self.assertEqual(result["product_mode"], "CORE1B")
         self.assertFalse(result["learner_knowledge_used_for_depth"])
         self.assertEqual(result["difficulty_badge"], "EASY")
+        self.assertFalse(result["representation_scope_expanded_by_research"])
 
     def test_core1b_rejects_live_runtime_fields(self):
         payload = core1b_payload()
@@ -127,6 +130,13 @@ class StaticBLayerBoundaryTests(unittest.TestCase):
             mod.validate_core1b(payload)
         self.assertEqual(ctx.exception.code, "CHEM_CORE1B_AUTHORITY_SCOPE_VIOLATION")
 
+    def test_core1b_rejects_representation_scope_expansion(self):
+        payload = core1b_payload()
+        payload["used_representation_refs"] = ["REP-NOT-AUTHORIZED"]
+        with self.assertRaises(mod.StaticBLayerBoundaryError) as ctx:
+            mod.validate_core1b(payload)
+        self.assertEqual(ctx.exception.code, "CHEM_CORE1B_REPRESENTATION_AUTHORITY_DRIFT")
+
     def test_core1b_rejects_bad_help_order_and_missing_answer(self):
         payload = core1b_payload()
         payload["help"][0], payload["help"][1] = payload["help"][1], payload["help"][0]
@@ -139,6 +149,19 @@ class StaticBLayerBoundaryTests(unittest.TestCase):
         with self.assertRaises(mod.StaticBLayerBoundaryError) as ctx:
             mod.validate_core1b(payload)
         self.assertEqual(ctx.exception.code, "CHEM_CORE1B_ANSWER_CLOSURE_MISSING")
+
+    def test_distinct_core1b_modules_cannot_reuse_identical_hint_ladder(self):
+        first = core1b_payload("MODULE-A")
+        second = core1b_payload("MODULE-B")
+        with self.assertRaises(mod.StaticBLayerBoundaryError) as ctx:
+            mod.validate_core1b_collection([first, second])
+        self.assertEqual(ctx.exception.code, "CHEM_CORE1B_GENERIC_HINT_LADDER_REUSED")
+
+        second["help"][0]["text"] = "Orient specifically to the second synthetic module's evidence."
+        result = mod.validate_core1b_collection([first, second])
+        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(result["module_count"], 2)
+        self.assertEqual(result["distinct_hint_ladder_count"], 2)
 
     def test_core2b_knowledge_changes_support_not_item_identity(self):
         medium = mod.validate_core2b(core2b_payload(50))
