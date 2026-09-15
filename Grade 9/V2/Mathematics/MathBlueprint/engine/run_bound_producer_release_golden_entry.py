@@ -2,17 +2,20 @@
 """Multi-bucket-safe entrypoint for the Engineering-bound four-producer golden.
 
 The Engineering-bound runner owns authority projection, current Engineering
-admission, producer execution and strict release. This entrypoint supplies two
-canonical storage rules discovered by the real cold-start corpus:
+admission, producer execution and strict release. This entrypoint supplies three
+canonical rules discovered by the real cold-start corpus:
 
 1. a source question may participate in multiple teaching buckets while the Domain
-   Registry stores it under one deterministic primary subtopic; and
+   Registry stores it under one deterministic primary subtopic;
 2. one Engineering source object must exist only once in the Canonical Domain
-   Registry even when it participates in many teaching scopes.
+   Registry even when it participates in many teaching scopes; and
+3. generation calibration must come from current authority: SDU derives Core1
+   intrinsic difficulty from exact Engineering profiles, while LAU consumes actual
+   learner evidence or an explicit owner waiver and never fabricates a percentage.
 
-Engineering-derived mathematical truth is therefore canonicalized by exact source
-identity.  Local subtopic/join/capability/question bindings and DIRECT-vs-prerequisite
-roles are retained in a digest-bound scope-membership ledger and are independently
+Engineering-derived mathematical truth is canonicalized by exact source identity.
+Local subtopic/join/capability/question bindings and DIRECT-vs-prerequisite roles
+are retained in a digest-bound scope-membership ledger and independently
 revalidated against the current Engineering graph before release.
 """
 from __future__ import annotations
@@ -22,13 +25,21 @@ import json
 from pathlib import Path
 
 import run_engineering_bound_producer_release_golden as base
+from compile_sdu_lau_generation_spec import compile_generation_spec
 from project_engineering_to_domain_registry_v2 import project_engineering_to_domain_registry_v2
 from validate_engineering_domain_projection_binding_v2 import validate_release_projection_binding_v2
 
 _LAST_ENGINEERING_DOMAIN_PROJECTION = None
 _LAST_ENGINEERING_REGISTRY = None
 _LAST_ENGINEERING_PROJECTION_COVERAGE = None
+_LAST_STUDY_MODEL = None
+_LAST_SDU_LAU_AUDIT = None
+_LAST_PEDAGOGY_RESEARCH_MANIFEST = None
 _ORIGINAL_BUILD_REGISTRY = base.legacy.build_registry
+
+HERE = Path(__file__).resolve()
+MATH_BLUEPRINT = HERE.parents[1]
+BOUND_WAIVER = MATH_BLUEPRINT / "golden" / "bound_producer_release" / "core2-owner-waiver.test.json"
 
 
 def multi_bucket_safe_subtopics(bucket_plan: dict):
@@ -45,6 +56,51 @@ def multi_bucket_safe_subtopics(bucket_plan: dict):
         for qid in bucket.get("core2_question_refs") or []:
             q_sid.setdefault(qid, sid)
     return bucket_sid, cap_sid, q_sid
+
+
+def authority_generation_spec(bucket_plan: dict, core1: dict, bucket_sid: dict[str, str]) -> dict:
+    """Replace the legacy EASY/1/60% golden fixture with SDU/LAU authority."""
+    global _LAST_SDU_LAU_AUDIT
+    global _LAST_PEDAGOGY_RESEARCH_MANIFEST
+    if _LAST_STUDY_MODEL is None:
+        base.fail("BOUND_GOLDEN_STUDY_MODEL_CONTEXT_MISSING")
+
+    engineering_registry = base.load_engineering("policies/mathematics-technical-engineering-gates.v1.json")
+    crosswalk = base.load_crosswalk(base.DEFAULT_CROSSWALK)
+    projection_coverage = base.resolve_bucket_gate_map(
+        crosswalk,
+        bucket_plan,
+        engineering_registry=engineering_registry,
+        fail_on_gap=True,
+    )
+    waiver = json.loads(BOUND_WAIVER.read_text(encoding="utf-8"))
+    expected = base.legacy.load(base.legacy.EXPECTED)
+    spec, research_manifest, audit = compile_generation_spec(
+        bucket_plan=bucket_plan,
+        study_model=_LAST_STUDY_MODEL,
+        bucket_sid=bucket_sid,
+        engineering_registry=engineering_registry,
+        projection_coverage=projection_coverage,
+        purpose=expected["purpose"],
+        release_class="TEST_ONLY",
+        owner_waiver=waiver,
+        allow_test_research_fixture=True,
+    )
+
+    capability_plans = _LAST_STUDY_MODEL.get("capability_plans") or []
+    audit["study_model_ref"] = _LAST_STUDY_MODEL.get("study_model_id")
+    audit["study_model_digest"] = _LAST_STUDY_MODEL.get("study_model_digest")
+    audit["unknown_capability_count"] = sum(
+        1 for row in capability_plans if row.get("learner_state_readiness") == "UNKNOWN"
+    )
+    audit["learner_observation_ref_count"] = sum(
+        len(row.get("learner_state_observation_refs") or []) for row in capability_plans
+    )
+    audit["owner_waiver_id"] = waiver["waiver_id"]
+    audit["owner_waiver_digest"] = waiver["waiver_digest"]
+    _LAST_SDU_LAU_AUDIT = audit
+    _LAST_PEDAGOGY_RESEARCH_MANIFEST = research_manifest
+    return spec
 
 
 def rich_engineering_registry_builder(core1, core2, bucket_plan, bucket_sid, cap_sid, q_sid, answer_refs):
@@ -78,7 +134,9 @@ def rich_engineering_registry_builder(core1, core2, bucket_plan, bucket_sid, cap
 
 
 def main() -> None:
+    global _LAST_STUDY_MODEL
     base.bucket_subtopics = multi_bucket_safe_subtopics
+    base.legacy.build_generation_spec = authority_generation_spec
     base.legacy.build_registry = rich_engineering_registry_builder
     ap = argparse.ArgumentParser()
     ap.add_argument("--core1-plan", required=True)
@@ -87,15 +145,32 @@ def main() -> None:
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
+    _LAST_STUDY_MODEL = json.loads(Path(args.study_model).read_text(encoding="utf-8"))
     summary = base.run_bound(Path(args.core1_plan), Path(args.study_model), Path(args.core2_plan), out_dir)
 
     if _LAST_ENGINEERING_DOMAIN_PROJECTION is None:
         base.fail("BOUND_GOLDEN_ENGINEERING_DOMAIN_PROJECTION_MISSING")
     if _LAST_ENGINEERING_REGISTRY is None or _LAST_ENGINEERING_PROJECTION_COVERAGE is None:
         base.fail("BOUND_GOLDEN_ENGINEERING_DOMAIN_REVALIDATION_CONTEXT_MISSING")
+    if _LAST_SDU_LAU_AUDIT is None:
+        base.fail("BOUND_GOLDEN_SDU_LAU_AUDIT_MISSING")
 
     projection_path = out_dir / "inputs" / "engineering_domain_projection_receipt.json"
     base.write(projection_path, _LAST_ENGINEERING_DOMAIN_PROJECTION)
+    base.write(out_dir / "inputs" / "sdu_lau_generation_audit.json", _LAST_SDU_LAU_AUDIT)
+    if _LAST_PEDAGOGY_RESEARCH_MANIFEST is not None:
+        base.write(
+            out_dir / "inputs" / "pedagogy_research_manifest.test.json",
+            _LAST_PEDAGOGY_RESEARCH_MANIFEST,
+        )
+
+    generation_spec = json.loads((out_dir / "inputs" / "generation_spec.json").read_text(encoding="utf-8"))
+    calibration = generation_spec["core2_calibration"]
+    if calibration["learner_knowledge_percent"] is not None:
+        base.fail("BOUND_GOLDEN_LAU_FABRICATED_PERCENT_PRESENT")
+    if not calibration.get("owner_waiver"):
+        base.fail("BOUND_GOLDEN_LAU_OWNER_WAIVER_MISSING")
+
     summary["engineering_domain_projection_ref"] = _LAST_ENGINEERING_DOMAIN_PROJECTION["projection_id"]
     summary["engineering_domain_projection_digest"] = _LAST_ENGINEERING_DOMAIN_PROJECTION["projection_digest"]
     summary["engineering_domain_base_asset_count"] = _LAST_ENGINEERING_DOMAIN_PROJECTION["base_asset_count"]
@@ -107,6 +182,14 @@ def main() -> None:
         - _LAST_ENGINEERING_DOMAIN_PROJECTION["projected_asset_count"]
     )
     summary["engineering_domain_transitive_gate_count"] = len(_LAST_ENGINEERING_DOMAIN_PROJECTION["transitive_gate_ids"])
+    summary["sdu_difficulty_badge_counts"] = _LAST_SDU_LAU_AUDIT["sdu_difficulty_badge_counts"]
+    summary["lau_calibration_mode"] = _LAST_SDU_LAU_AUDIT["lau_mode"]
+    summary["lau_fabricated_percent"] = _LAST_SDU_LAU_AUDIT["lau_fabricated_percent"]
+    summary["lau_owner_waiver_id"] = _LAST_SDU_LAU_AUDIT["owner_waiver_id"]
+    summary["lau_owner_waiver_digest"] = _LAST_SDU_LAU_AUDIT["owner_waiver_digest"]
+    summary["learner_observation_ref_count"] = _LAST_SDU_LAU_AUDIT["learner_observation_ref_count"]
+    summary["pedagogy_research_manifest_ref"] = _LAST_SDU_LAU_AUDIT["pedagogy_research_manifest_ref"]
+    summary["pedagogy_research_manifest_digest"] = _LAST_SDU_LAU_AUDIT["pedagogy_research_manifest_digest"]
     if summary["registry_ref"] != _LAST_ENGINEERING_DOMAIN_PROJECTION["domain_registry_ref"]:
         base.fail("BOUND_GOLDEN_ENGINEERING_DOMAIN_REGISTRY_REF_DRIFT")
 
@@ -125,9 +208,12 @@ def main() -> None:
         projection_coverage=_LAST_ENGINEERING_PROJECTION_COVERAGE,
     )
     summary["engineering_domain_projection_validation"] = projection_validation
-    check = "ENGINEERING_DOMAIN_CANONICAL_ASSET_MEMBERSHIP_CUSTODY"
-    if check not in summary["release_checks"]:
-        summary["release_checks"].append(check)
+    for check in (
+        "ENGINEERING_DOMAIN_CANONICAL_ASSET_MEMBERSHIP_CUSTODY",
+        "SDU_LAU_AUTHORITY_CALIBRATION",
+    ):
+        if check not in summary["release_checks"]:
+            summary["release_checks"].append(check)
 
     base.write(out_dir / "bound_producer_release_summary.json", summary)
     print(json.dumps(summary, indent=2, ensure_ascii=False))
