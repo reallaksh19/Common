@@ -23,9 +23,9 @@ JOIN
         ↓
 CANONICAL DOMAIN REGISTRY
         ↓
-CROSS-DOMAIN PREREQUISITE CLOSURE
-  ├─ authoritative provider receipt → READY
-  └─ no provider receipt → governed demand + HELD
+SHARED CROSS-DOMAIN PREREQUISITE PROTOCOL
+  ├─ provider-owned authority receipt → consumer closure READY
+  └─ no provider receipt → governed demand + consumer closure HELD
         ↓
 PHYSICS TECHNICAL ENGINEERING GATES
         ↓
@@ -63,9 +63,11 @@ This permits source-backed conceptual construction while leaving Core2/Core2A in
 
 Physics may require external prerequisites such as Mathematics but may not certify them. Each external prerequisite is `READY_FROM_AUTHORITATIVE_DOMAIN | HELD_NO_DOMAIN_RECEIPT`.
 
-Provider routing is governed by `policy/domain-prerequisite-routing.v1.json`. A missing provider receipt does not remain a narrative blocker: the closure emits a deterministic `DOMAIN-DEMAND-PHY-*` handoff identifying the prerequisite, the exact Physics gates that require it, the provider subject/entrypoint where routable, and the bound engineering receipt/digest. Routable missing authority is `OPEN_HELD`; an unknown provider is `OPEN_UNROUTABLE`. Both keep cross-domain closure held.
+The transport and custody protocol is globally owned by `Grade 9/V2/Shared/CrossDomain/`. Its provider registry routes repository-backed prerequisite namespaces to provider subjects; its demand and authority schemas are subject-neutral. Physics retains only its consumer-specific closure semantics and compiler. There is no parallel Physics-local copy of the cross-domain transport contracts.
 
-A future READY receipt must be provider-owned repository authority. The consumer requires the receipt source path to live under the registered provider root, validates the provider subject/prerequisite identity, recomputes the receipt digest, verifies all evidence refs exist, and rejects raw dictionaries or Physics-owned files impersonating external authority. This is a custody boundary, not a mechanism for Physics to manufacture Mathematics truth.
+A missing provider receipt does not remain a narrative blocker: the Physics closure emits a deterministic `DOMAIN-DEMAND-PHY-*` handoff identifying the prerequisite, the exact Physics engineering gates that require it, the registered provider subject/entrypoint when routable, and the bound engineering receipt/digest. Routable missing authority is `OPEN_HELD`; an unknown provider is `OPEN_UNROUTABLE`. Both keep Physics cross-domain closure held.
+
+A future READY receipt must be provider-owned repository authority. The consumer requires the receipt source path to live under the provider root registered in Shared, validates provider subject/prerequisite identity against that registry, recomputes the receipt digest, verifies all evidence refs exist, and rejects raw dictionaries or Physics-owned files impersonating external authority. Shared owns the protocol shape; the provider subject owns semantic readiness; the consumer owns its own closure decision. None of these layers may manufacture another subject's truth.
 
 ## State semantics
 
@@ -79,19 +81,20 @@ A seven-core stress test is a governed compiler execution, not a narrative decla
 
 Governed request fixtures are compiled in batch by `engine/compile_all_stress_tests.py`. Every request must produce a schema-valid receipt with a unique stress-test ID. The batch fails if any governed fixture derives `STRESS_TEST_FAIL`; negative/falsifier cases belong in unit tests rather than in the production governed-request set.
 
-The canonical `V2 Physics Blueprint` workflow writes the compiled receipts plus a deterministic manifest to `/tmp/physics-blueprint-stress-receipts` and uploads them only after the complete Blueprint job remains green. The CI artifact is named `physics-blueprint-v10-stress-receipts`. A Markdown stress-test record is descriptive only; the compiler output and its CI custody are authoritative for the current repository state.
+The canonical `V2 Physics Blueprint` workflow writes the compiled receipts plus a deterministic manifest to `/tmp/physics-blueprint-stress-receipts` and uploads them only after the complete Blueprint job remains green. The workflow is also triggered by `Grade 9/V2/Shared/CrossDomain/**` changes because Shared transport changes can alter Physics closure. The CI artifact is named `physics-blueprint-v10-stress-receipts`. A Markdown stress-test record is descriptive only; the compiler output and its CI custody are authoritative for the current repository state.
 
 ## Normative V10 files
 
 - `SELF_HELP_ARCHITECTURE_V10.md`
 - `contracts/scoped-execution-envelope.schema.json`
 - `contracts/scoped-evidence-receipt.schema.json`
-- `contracts/domain-prerequisite-authority.schema.json`
-- `contracts/domain-prerequisite-demand.schema.json`
 - `contracts/domain-prerequisite-closure.schema.json`
 - `contracts/seven-core-stress-test-request.schema.json`
 - `contracts/seven-core-stress-test-receipt.schema.json`
-- `policy/domain-prerequisite-routing.v1.json`
+- `Grade 9/V2/Shared/CrossDomain/PROTOCOL.md`
+- `Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-authority.schema.json`
+- `Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-demand.schema.json`
+- `Grade 9/V2/Shared/CrossDomain/registry/domain-provider-registry.v1.json`
 - `policy/join-policy.v2.json`
 - `policy/stress-test-state-semantics.v1.json`
 - `engine/compile_scoped_evidence.py`
