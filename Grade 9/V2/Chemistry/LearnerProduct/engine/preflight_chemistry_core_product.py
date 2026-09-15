@@ -53,6 +53,61 @@ def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def representation_physical_closure(metrics: dict[str, Any], authority: dict[str, Any]) -> dict[str, Any]:
+    """Bind Core authority representation use to actual primitive placements.
+
+    A representation is not physically realized because it exists in a bundle or because
+    a Core authority claims it was used. The renderer must emit a primitive placement
+    carrying that exact representation reference. Conversely, a renderer may not draw a
+    representation the Core payload did not declare as used.
+    """
+    closure = authority.get("representation_closure") or {}
+    required = {str(value) for value in closure.get("used_representation_refs", []) if str(value).strip()}
+    defined = {str(value) for value in closure.get("defined_representation_refs", []) if str(value).strip()}
+    primitive_rows = metrics.get("primitives") or []
+    if not isinstance(primitive_rows, list):
+        return {
+            "status": "FAIL",
+            "required_representation_refs": sorted(required),
+            "defined_representation_refs": sorted(defined),
+            "physically_realized_representation_refs": [],
+            "failures": ["CHEM_CORE_PREFLIGHT_REPRESENTATION_TRACE_INVALID"],
+        }
+
+    realized: set[str] = set()
+    malformed = False
+    for row in primitive_rows:
+        if not isinstance(row, dict):
+            malformed = True
+            continue
+        ref = str(row.get("representation_ref", "")).strip()
+        if not ref:
+            malformed = True
+            continue
+        realized.add(ref)
+
+    failures: list[str] = []
+    if malformed:
+        failures.append("CHEM_CORE_PREFLIGHT_REPRESENTATION_TRACE_INVALID")
+    missing = sorted(required - realized)
+    if missing:
+        failures.append("CHEM_CORE_PREFLIGHT_REPRESENTATION_NOT_PHYSICALLY_REALIZED:" + ",".join(missing))
+    unexpected = sorted(realized - required)
+    if unexpected:
+        failures.append("CHEM_CORE_PREFLIGHT_REPRESENTATION_PHYSICAL_AUTHORITY_DRIFT:" + ",".join(unexpected))
+    undefined = sorted(realized - defined) if defined else []
+    if undefined:
+        failures.append("CHEM_CORE_PREFLIGHT_REPRESENTATION_PHYSICAL_UNDEFINED:" + ",".join(undefined))
+
+    return {
+        "status": "PASS" if not failures else "FAIL",
+        "required_representation_refs": sorted(required),
+        "defined_representation_refs": sorted(defined),
+        "physically_realized_representation_refs": sorted(realized),
+        "failures": failures,
+    }
+
+
 def run_core_product_preflight(
     render_manifest: dict[str, Any],
     custody: dict[str, Any],
@@ -127,6 +182,9 @@ def run_core_product_preflight(
         if row["page"] in content_by_page:
             row.update({k: v for k, v in content_by_page[row["page"]].items() if k != "page"})
 
+    physical_representation_closure = representation_physical_closure(metrics, authority)
+    failures.extend(physical_representation_closure["failures"])
+
     review_candidate = review_candidate_checks(
         metrics,
         v5_policy,
@@ -153,6 +211,7 @@ def run_core_product_preflight(
         "artifact": copy.deepcopy(artifact),
         "page_checks": page_rows,
         "content_first_pagination": content_first,
+        "physical_representation_closure": physical_representation_closure,
         "review_candidate": review_candidate,
         "minimum_font_pt": round(global_min_font, 2),
         "failures": failures,
