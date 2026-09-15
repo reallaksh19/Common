@@ -6,17 +6,18 @@
   "additionalProperties": false,
   "required": [
     "schema_version", "subject", "receipt_id", "stage", "producer_ref", "source_refs",
-    "registry_binding", "purpose_evidence", "difficulty_evidence", "learner_fit_evidence",
+    "registry_binding", "engineering_custody", "purpose_evidence", "difficulty_evidence", "learner_fit_evidence",
     "question_custody", "coverage_claims", "artifacts", "release_state"
   ],
   "properties": {
-    "schema_version": {"const": "1.0.0"},
+    "schema_version": {"const": "1.1.0"},
     "subject": {"const": "MATHEMATICS"},
     "receipt_id": {"type": "string", "pattern": "^MATH-STAGE-GOV-[A-Z0-9_-]+-[0-9a-f]{16}$"},
     "stage": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
     "producer_ref": {"type": "string", "minLength": 3},
     "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
     "registry_binding": {"$ref": "#/$defs/registryBinding"},
+    "engineering_custody": {"$ref": "#/$defs/engineeringCustody"},
     "purpose_evidence": {"$ref": "#/$defs/purposeEvidence"},
     "difficulty_evidence": {"type": "array", "items": {"$ref": "#/$defs/difficultyEvidence"}},
     "learner_fit_evidence": {"type": "array", "items": {"$ref": "#/$defs/learnerFitEvidence"}},
@@ -38,6 +39,61 @@
         "registry_ref": {"type": ["string", "null"], "pattern": "^MATH-REG-"},
         "matched_asset_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}}
       }
+    },
+    "engineeringAuthorizationCustody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_id", "engineering_binding_id", "engineering_closure_receipt_id",
+        "engineering_closure_receipt_digest", "engineering_registry_digest", "validator_contract_digest",
+        "scope_refs", "direct_gate_ids", "transitive_gate_ids"
+      ],
+      "properties": {
+        "authorization_id": {"type":"string","pattern":"^MATH-ENG-AUTH-[A-Z0-9_-]+$"},
+        "engineering_binding_id": {"type":"string","pattern":"^MATH-ENG-BIND-[A-Z0-9_-]+$"},
+        "engineering_closure_receipt_id": {"type":"string","pattern":"^MATH-ENG-CLOSURE-[A-Z0-9_-]+$"},
+        "engineering_closure_receipt_digest": {"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+        "engineering_registry_digest": {"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+        "validator_contract_digest": {"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+        "scope_refs": {"type":"array","minItems":1,"maxItems":3,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+        "direct_gate_ids": {"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}},
+        "transitive_gate_ids": {"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}}
+      }
+    },
+    "engineeringCustody": {
+      "oneOf": [
+        {
+          "type":"object",
+          "additionalProperties":false,
+          "required":["status","reason"],
+          "properties": {
+            "status":{"const":"UNBOUND"},
+            "reason":{"type":"string","minLength":3}
+          }
+        },
+        {
+          "type":"object",
+          "additionalProperties":false,
+          "required":[
+            "status", "admission_id", "admission_digest", "domain_registry_id", "domain_registry_digest",
+            "engineering_registry_digest", "validator_contract_digest", "subtopic_gate_map_digest",
+            "authorized_direct_gate_ids", "authorization_custody", "custody_digest"
+          ],
+          "properties": {
+            "status":{"const":"BOUND"},
+            "admission_id":{"type":"string","pattern":"^MATH-ENG-DOMAIN-ADMISSION-[A-Z0-9_-]+$"},
+            "admission_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "domain_registry_id":{"type":"string","pattern":"^MATH-REG-"},
+            "domain_registry_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "engineering_registry_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "validator_contract_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "subtopic_gate_map_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "authorized_direct_gate_ids":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}},
+            "authorization_custody":{"type":"array","minItems":1,"items":{"$ref":"#/$defs/engineeringAuthorizationCustody"}},
+            "custody_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"}
+          }
+        }
+      ]
     },
     "purposeEvidence": {
       "type": "object",
