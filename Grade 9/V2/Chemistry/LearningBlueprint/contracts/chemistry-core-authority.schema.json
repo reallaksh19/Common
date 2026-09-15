@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-core-authority.schema.json",
+  "title": "Chemistry Unified Core Product Authority",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "authority_id", "subject", "product_mode", "subtopic_id",
+    "obligation_packet_id", "obligation_packet_digest", "payload_ref", "payload_digest",
+    "scope_units", "realized_obligation_ids", "learner_surface_strings", "validation_evidence",
+    "status", "authority_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "authority_id": {"type": "string", "pattern": "^CHEM-CORE-AUTH-[A-Z0-9-]+$"},
+    "subject": {"const": "CHEMISTRY"},
+    "product_mode": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "obligation_packet_id": {"type": "string"},
+    "obligation_packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "payload_ref": {"type": "string", "minLength": 1},
+    "payload_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "scope_units": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["scope_unit_id", "scope_unit_kind"],
+        "properties": {
+          "scope_unit_id": {"type": "string", "minLength": 1},
+          "scope_unit_kind": {"enum": ["ATOM", "MODULE", "ITEM"]}
+        }
+      }
+    },
+    "realized_obligation_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "learner_surface_strings": {"type": "array", "items": {"type": "string"}},
+    "validation_evidence": {"type": "object"},
+    "status": {"const": "CORE_AUTHORITY_READY"},
+    "authority_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
