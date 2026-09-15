@@ -21,6 +21,18 @@ QUALITY_KEYS=["PUBLICATION_ENGINEERING","SUBJECT_CORRECTNESS","PEDAGOGICAL_DESIG
 REVIEW_GATE={"SUBJECT":"SUBJECT_CORRECTNESS","PEDAGOGY":"PEDAGOGICAL_DESIGN","ASSESSMENT":"ASSESSMENT_DESIGN","VISUAL":"VISUAL_USABILITY"}
 
 
+def pck_release_legal(candidate):
+    """True only when the bound Core1 PCK carries authorized expert review.
+
+    An older binding that predates provisional PCK tracking is treated as
+    release-legal only if it declares PRODUCTION_PLAN_READY, which by
+    construction requires expert-reviewed promotions upstream.
+    """
+    if "pck_release_legal" in candidate:
+        return bool(candidate["pck_release_legal"]) and candidate.get("pck_expert_review_state") in {"PASS","NOT_REQUIRED"}
+    return candidate["core1_authoring_status"]=="PRODUCTION_PLAN_READY"
+
+
 def validate_policy(policy):
     if policy["policy_digest"]!=digest(policy,"policy_digest"): fail("MATURE_QUALITY_POLICY_DIGEST_MISMATCH")
     if policy["quality_state_order"]!=QUALITY_KEYS: fail("MATURE_QUALITY_STATE_ORDER_DRIFT")
@@ -37,8 +49,10 @@ def validate_candidate(candidate):
         if candidate["materialization_state"]!="RENDERED_EXACT": fail("RENDERED_CANDIDATE_STATE_MISMATCH")
         if len(candidate["artifacts"])!=2 or {x["artifact_role"] for x in candidate["artifacts"]}!={"CORE1_STUDY_GUIDE","CORE2_TRANSFER_BOOK"}: fail("EXACT_TWO_PRODUCT_TOPOLOGY_REQUIRED")
         if candidate["artifact_set_digest"]!=digest(candidate["artifacts"]): fail("EXACT_ARTIFACT_SET_DIGEST_MISMATCH")
-        if candidate["core1_authoring_status"]!="PRODUCTION_PLAN_READY": fail("CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE")
+        if candidate["core1_authoring_status"] not in {"PRODUCTION_PLAN_READY","PROVISIONAL_PLAN_READY"}: fail("CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE")
         if candidate["upstream_blockers"]: fail("RENDERED_CANDIDATE_WITH_UPSTREAM_BLOCKER",candidate["upstream_blockers"][0])
+        if candidate.get("pck_release_legal") is True and candidate.get("pck_expert_review_state")!="PASS":
+            fail("PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL",candidate["candidate_id"])
     else:
         if candidate["artifacts"] or candidate["artifact_set_digest"] is not None: fail("SEMANTIC_ONLY_CANDIDATE_HAS_RENDERED_ARTIFACTS")
     return True
@@ -119,6 +133,7 @@ def evaluate(candidate,policy,machine=None,ai_pre_review=None,review_receipts=No
         if machine or ai_pre_review or review_receipts or reference_validation: fail("QUALITY_EVIDENCE_WITHOUT_RENDERED_EXACT_CANDIDATE")
     else:
         if gate_mode=="REAL_RELEASE" and candidate["fixture_class"]!="REAL_RUNTIME": blockers.append("M-L:REAL_RUNTIME_CANDIDATE_REQUIRED")
+        if not pck_release_legal(candidate): blockers.append("M-L:PCK_EXPERT_REVIEW_PENDING")
         if machine is None:
             blockers.append("M-L:MACHINE_FALSIFIERS_NOT_RUN")
             states["MATURE_DESIGN_QUALITY"]="BLOCKED"
@@ -170,7 +185,7 @@ def evaluate(candidate,policy,machine=None,ai_pre_review=None,review_receipts=No
     all_quality=(states["PUBLICATION_ENGINEERING"]=="PASS" and states["SUBJECT_CORRECTNESS"]=="PASS" and states["PEDAGOGICAL_DESIGN"]=="PASS" and states["ASSESSMENT_DESIGN"]=="PASS" and states["VISUAL_USABILITY"]=="PASS" and states["MATURE_DESIGN_QUALITY"]=="PASS" and states["REFERENCE_COMPARABILITY"]=="PASS")
     real_reviews=all(r["release_evidence_eligible"] and r["review_mode"]=="REAL_RELEASE" and r["fixture_class"]=="REAL" for r in review_receipts) and len(review_receipts)==4
     ref_real=bool(reference_validation and reference_validation["release_evidence_eligible"] and reference_validation["mode"]=="REAL_RELEASE" and reference_validation["fixture_class"]=="REAL")
-    real_release=all_quality and gate_mode=="REAL_RELEASE" and candidate["fixture_class"]=="REAL_RUNTIME" and real_reviews and ref_real
+    real_release=all_quality and gate_mode=="REAL_RELEASE" and candidate["fixture_class"]=="REAL_RUNTIME" and real_reviews and ref_real and pck_release_legal(candidate)
     if real_release:
         product_class=policy["mature_product_class"]; release_eligible=True
     elif all_quality and gate_mode=="TEST_ONLY":
@@ -210,6 +225,7 @@ def validate_decision(decision,candidate,review_receipts,policy):
     if decision["quality_states"]["VISUAL_USABILITY"]=="PASS" and "VISUAL" not in dims: fail("MACHINE_GREEN_CLAIMED_AS_VISUAL_PASS")
     if decision["mature_product_class"]==policy["mature_product_class"]:
         if candidate["core1_authoring_status"]!="PRODUCTION_PLAN_READY": fail("CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE")
+        if not pck_release_legal(candidate): fail("PROVISIONAL_PCK_MARKED_MATURE",candidate["candidate_id"])
         if not all(v=="PASS" for v in decision["quality_states"].values()): fail("MATURE_PRODUCT_WITH_INCOMPLETE_QUALITY_GATES")
         if not decision["release_evidence_eligible"] or decision["gate_mode"]!="REAL_RELEASE" or candidate["fixture_class"]!="REAL_RUNTIME": fail("MATURE_PRODUCT_WITHOUT_REAL_RELEASE_EVIDENCE")
     if decision["learning_effectiveness_validation"]=="VALIDATED" and not decision["learning_effectiveness_evidence_ref"]: fail("LEARNING_EFFECTIVENESS_CLAIMED_WITHOUT_STUDY")

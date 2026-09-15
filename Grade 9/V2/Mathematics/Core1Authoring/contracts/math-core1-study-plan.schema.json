@@ -9,6 +9,7 @@
     "schema_version",
     "subject",
     "release_class",
+    "pck_authority",
     "study_model_ref",
     "study_model_digest",
     "pck_candidate_registry_ref",
@@ -30,10 +31,70 @@
       "const": "MATHEMATICS"
     },
     "release_class": {
+      "description": "PROVISIONAL_PENDING_EXPERT_REVIEW is authoring-legal but never release-legal: at least one bound PCK asset carries only AI-assisted reference review.",
       "enum": [
         "PRODUCTION",
+        "PROVISIONAL_PENDING_EXPERT_REVIEW",
         "TEST_ONLY"
       ]
+    },
+    "pck_authority": {
+      "description": "Which PCK promotion authority this plan actually rests on. Expressed over asset refs, generically; topic instances are data on the bound assets.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "promotion_registry_ref",
+        "promotion_registry_digest",
+        "bound_asset_refs",
+        "provisional_asset_refs",
+        "producer_legal_asset_refs",
+        "expert_review_state",
+        "release_legal"
+      ],
+      "properties": {
+        "promotion_registry_ref": {
+          "type": "string",
+          "minLength": 3
+        },
+        "promotion_registry_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bound_asset_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^MATH-PCK-"
+          }
+        },
+        "provisional_asset_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^MATH-PCK-"
+          }
+        },
+        "producer_legal_asset_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^MATH-PCK-"
+          }
+        },
+        "expert_review_state": {
+          "enum": [
+            "PENDING",
+            "PASS",
+            "NOT_REQUIRED"
+          ]
+        },
+        "release_legal": {
+          "type": "boolean"
+        }
+      }
     },
     "study_model_ref": {
       "type": "string",

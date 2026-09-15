@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core-product-page-map.schema.json",
+  "title": "Mathematics Core Product Physical Page Map",
+  "description": "Placement evidence read back from the coordinates actually used to draw one Mathematics learner product. Bound to the exact artifact sha256.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "page_map_id",
+    "schema_version",
+    "subject",
+    "product_role",
+    "artifact_path",
+    "artifact_sha256",
+    "page_count",
+    "actual_placement_evidence",
+    "figure_count",
+    "vector_figure_count",
+    "content_placements"
+  ],
+  "properties": {
+    "page_map_id": {"type": "string", "pattern": "^MATH-CORE-PAGEMAP-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "product_role": {"enum": ["CORE1_STUDY_GUIDE", "CORE2_TRANSFER_BOOK"]},
+    "artifact_path": {"type": "string", "minLength": 5},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "page_count": {"type": "integer", "minimum": 1},
+    "actual_placement_evidence": {"const": true},
+    "figure_count": {"type": "integer", "minimum": 1},
+    "vector_figure_count": {"type": "integer", "minimum": 1},
+    "content_placements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["content_ref", "page_intent_id", "page", "primitive", "x0", "y0", "x1", "y1", "fragment_kind"],
+        "properties": {
+          "content_ref": {"type": "string", "minLength": 3},
+          "page_intent_id": {"type": "string", "minLength": 3},
+          "page": {"type": "integer", "minimum": 1},
+          "primitive": {"type": "string", "minLength": 3},
+          "x0": {"type": "number"},
+          "y0": {"type": "number"},
+          "x1": {"type": "number"},
+          "y1": {"type": "number"},
+          "fragment_kind": {"const": "START"},
+          "figure": {"type": "boolean"},
+          "data_grounding": {"enum": ["DECLARED_NUMERIC", "DECLARED_SYMBOLIC"]},
+          "vector_geometry": {"type": "boolean"},
+          "library_binding": {"type": ["string", "null"]},
+          "merged_representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

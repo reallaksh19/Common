@@ -53,12 +53,20 @@ Subject, pedagogy and visual review receipts are normalized from the shared Huma
 
 ## Current repository state
 
-M-K currently closes repository-only semantic generation but correctly reports upstream Core1 PCK blockers. The production PCK promotion registry contains no fabricated human promotions, and not every assessment-scope full-teaching capability has a promoted PCK asset. Therefore the M-L exact binding is currently:
+M-G promotion now runs for real, so M-K materializes a Core1 plan and the
+renderer (`Publication/engine/realize_math_core_products.py`) produces a real
+two-product package. The bound PCK carries AI-assisted reference review only, so
+`pck_release_legal` is `false` and `pck_expert_review_state` is `PENDING`.
+
+`build_rendered_binding()` binds the real rendered package. Evaluating it in
+`REAL_RELEASE` mode gives:
 
 ```text
-candidate_class              SEMANTIC_COLD_START_EXACT_PACKAGE
-materialization_state        BLOCKED_UPSTREAM_PCK
-PUBLICATION_ENGINEERING      BLOCKED
+candidate_class              RENDERED_TWO_PRODUCT_EXACT_CANDIDATE
+materialization_state        RENDERED_EXACT
+core1_authoring_status       PROVISIONAL_PLAN_READY
+pck_expert_review_state      PENDING
+PUBLICATION_ENGINEERING      PASS
 SUBJECT_CORRECTNESS          NOT_RUN
 PEDAGOGICAL_DESIGN           NOT_RUN
 ASSESSMENT_DESIGN            NOT_RUN
@@ -69,7 +77,21 @@ learning effectiveness       NOT_RUN
 mature product class         NOT_ELIGIBLE
 ```
 
-This is the intended fail-closed state. #247 must remain open until a real rendered exact candidate exists and real authorized review evidence closes every required gate.
+with blockers including `M-L:PCK_EXPERT_REVIEW_PENDING`,
+`M-L:AI_PRE_REVIEW_NOT_RUN` and `M-L:REAL_RUNTIME_CANDIDATE_REQUIRED`.
+
+Only `PUBLICATION_ENGINEERING` moved. That is the intended fail-closed state:
+machine-green rendering is not a subject, pedagogy, assessment or visual PASS.
+A candidate resting on provisional PCK can never be classified
+`V2_MATURE_INSTRUCTIONAL_PRODUCT` — `PROVISIONAL_PCK_MARKED_MATURE` fires even
+when every other gate is satisfied.
+
+#247 must remain open until authorized human review evidence, bound to the exact
+artifact-set digest, closes every required gate.
+
+`build_fixture_binding()` (no render) still produces the semantic-only binding,
+now in state `SEMANTIC_READY_RENDER_NOT_BOUND` rather than
+`BLOCKED_UPSTREAM_PCK`.
 
 ## Test-only positive path
 

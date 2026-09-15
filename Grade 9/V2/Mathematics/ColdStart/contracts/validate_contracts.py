@@ -130,14 +130,31 @@ def validate_report(report, manifest, internals=None):
     elif c1["status"]=="PRODUCTION_PLAN_READY":
         if c1["missing_pck_candidate_capability_refs"] or c1["unpromoted_pck_capability_refs"] or not c1["production_plan_ref"]:
             fail("PRODUCTION_CORE1_WITHOUT_PCK_LEGALITY")
+        if c1["provisional_only_pck_capability_refs"] or not c1["release_legal"] or c1["pck_expert_review_state"]!="PASS":
+            fail("PRODUCTION_CORE1_WITHOUT_EXPERT_PCK_REVIEW")
+    elif c1["status"]=="PROVISIONAL_PLAN_READY":
+        if c1["missing_pck_candidate_capability_refs"] or c1["unpromoted_pck_capability_refs"] or not c1["production_plan_ref"]:
+            fail("PROVISIONAL_CORE1_WITHOUT_PCK_AUTHORING_LEGALITY")
+        if not c1["provisional_only_pck_capability_refs"]:
+            fail("PROVISIONAL_CORE1_WITHOUT_PROVISIONAL_PCK")
+        if c1["release_legal"] or c1["pck_expert_review_state"]!="PENDING":
+            fail("PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL")
+        if "M-G/#242:PCK_EXPERT_REVIEW_PENDING" not in report["blockers"]:
+            fail("PCK_EXPERT_REVIEW_BLOCKER_NOT_REPORTED")
     else:
         fail("UNKNOWN_CORE1_AUTHORING_STATUS",c1["status"])
-    if c1["status"]!="PRODUCTION_PLAN_READY" and report["release_status"]!="BLOCKED_UPSTREAM_PCK":
+    expected_release={
+        "PRODUCTION_PLAN_READY":"M_K_SEMANTIC_CANDIDATE_ONLY",
+        "PROVISIONAL_PLAN_READY":"PROVISIONAL_PENDING_PCK_EXPERT_REVIEW",
+    }.get(c1["status"],"BLOCKED_UPSTREAM_PCK")
+    if report["release_status"]!=expected_release:
         fail("UPSTREAM_PCK_BLOCKER_RELEASE_BYPASS")
     if report["core2"]["question_count"]!=14 or report["core2"]["source_fidelity"] is not True:
         fail("CORE2_SOURCE_CUSTODY_LOST")
-    if c1["status"]!="PRODUCTION_PLAN_READY" and report["core2"]["publication_ready"]:
+    if c1["status"] not in {"PRODUCTION_PLAN_READY","PROVISIONAL_PLAN_READY"} and report["core2"]["publication_ready"]:
         fail("CORE2_PUBLISHED_WITH_UNMATERIALIZED_CORE1")
+    if c1["status"]=="PROVISIONAL_PLAN_READY" and report["core2"]["core1_linkage_mode"]!="MATERIALIZED_PROVISIONAL":
+        fail("PROVISIONAL_CORE1_LINKAGE_STATE_DRIFT")
     if report["coverage_closure"]["assessment_row_count"]!=17:
         fail("ASSESSMENT_COVERAGE_ROW_GAP")
     if report["coverage_closure"]["semantic_gap_count"]!=0:

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-pck-promotion-review-record.schema.json",
+  "title": "Mathematics PCK Promotion Review Record",
+  "description": "One stage of the generic Mathematics PCK promotion pipeline. Records which review authority acted, what was checked, and the resulting state. A record is evidence of the stage that actually ran; it never asserts an authority that did not act.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "schema_version",
+    "subject",
+    "asset_id",
+    "asset_digest",
+    "stage",
+    "review_authority",
+    "status",
+    "checks_passed",
+    "findings",
+    "authority_refs",
+    "record_digest"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "pattern": "^MATH-PCKREV-[0-9A-Z_]+-[0-9a-f]{16}$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "MATHEMATICS"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^MATH-PCK-"
+    },
+    "asset_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stage": {
+      "enum": [
+        "EVIDENCE_PROVENANCE_REVIEW",
+        "PEDAGOGICAL_REVIEW",
+        "SUBJECT_REVIEW",
+        "SCOPE_REVIEW"
+      ]
+    },
+    "review_authority": {
+      "description": "The authority that actually performed this stage. AI_ASSISTED_REFERENCE_REVIEW and REPOSITORY_SCOPE_AUTHORITY are machine/AI authorities and are never equivalent to an expert pass.",
+      "enum": [
+        "AI_ASSISTED_REFERENCE_REVIEW",
+        "REPOSITORY_SCOPE_AUTHORITY",
+        "SUBJECT_EXPERT_PASS",
+        "PEDAGOGY_EXPERT_PASS"
+      ]
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "PENDING"
+      ]
+    },
+    "checks_passed": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z0-9_]+$"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "authority_refs": {
+      "description": "Repository authorities this stage read. Generic subject authorities only; a topic-specific source is not an admissible promotion authority.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "human_review_intake_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "record_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

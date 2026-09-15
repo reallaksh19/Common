@@ -1,0 +1,61 @@
+name: V2 Mathematics Core Product Renderer
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/Publication/engine/**'
+      - 'Grade 9/V2/Mathematics/Publication/contracts/math-core-product-*.json'
+      - 'Grade 9/V2/Mathematics/Publication/tests/test_math_core_product_renderer.py'
+      - 'Grade 9/V2/Mathematics/RepresentationSemantics/**'
+      - 'Grade 9/V2/Shared/MasterTemplates/primitives/**'
+      - '.github/workflows/v2-math-core-products.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-core-products:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install renderer dependencies
+        run: python -m pip install 'jsonschema>=4.20,<5' 'reportlab>=4.0'
+      - name: Run Core1/Core2 renderer falsifiers
+        run: python 'Grade 9/V2/Mathematics/Publication/tests/test_math_core_product_renderer.py'
+      - name: Render the two products from a cold-start run and prove determinism
+        run: |
+          python - <<'PY'
+          import copy, json, sys
+          from pathlib import Path
+          MATH = Path('Grade 9/V2/Mathematics').resolve()
+          for p in (MATH / 'ColdStart' / 'engine', MATH / 'Core1Authoring' / 'engine', MATH / 'Publication' / 'engine'):
+              sys.path.insert(0, str(p))
+          from math_cold_start_runner import run_cold_start, load, REPO
+          from author_math_core1 import load_candidate_bundle
+          from realize_math_core_products import realize
+          fixtures = MATH / 'AssessmentIntake' / 'fixtures'
+          questions = load(fixtures / 'mixed-grade9-question-set.fixture.json')
+          topic = load(fixtures / 'mixed-grade9-topic-scope.fixture.json')
+          report, internals = run_cold_start(copy.deepcopy(questions), copy.deepcopy(topic), repo_root=REPO, run_id='MATH-M-K-RUN-A')
+          assert report['release_status'] != 'BLOCKED_UPSTREAM_PCK', report['release_status']
+          assert internals['core1_plan'] is not None
+          _, assets = load_candidate_bundle(MATH / 'InstructionalKnowledge' / 'registry' / 'math-pck-candidates.json')
+          primitives = load(MATH / 'RepresentationSemantics' / 'registry' / 'math-teaching-primitive-registry.json')
+          a, _ = realize(internals['core1_plan'], internals['core2'], internals['closure'], assets, primitives, '/tmp/math-products-a')
+          b, _ = realize(internals['core1_plan'], internals['core2'], internals['closure'], assets, primitives, '/tmp/math-products-b')
+          assert a['artifact_set_digest'] == b['artifact_set_digest'], 'renderer is not deterministic'
+          assert a['publication_engineering'] == 'PASS'
+          assert a['release_legal'] is False
+          assert set(a['human_review_states'].values()) == {'PENDING'}
+          print(json.dumps({'artifact_set_digest': a['artifact_set_digest'], 'release_legal': a['release_legal']}, indent=2))
+          PY
+      - name: Upload rendered candidate products
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-core-products
+          path: /tmp/math-products-a
+          if-no-files-found: error

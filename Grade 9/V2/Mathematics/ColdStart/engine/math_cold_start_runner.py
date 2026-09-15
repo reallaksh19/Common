@@ -50,23 +50,39 @@ def candidate_assets():
     return reg, assets
 
 def pck_legality(study_model):
+    """Split PCK legality into authoring legality and release legality.
+
+    A `PROVISIONAL_PROMOTED` asset cleared the M-G promotion pipeline under
+    AI-assisted reference review only. It is authoring-legal, so Core1 can bind
+    it, but it is never release-legal: its SUBJECT/PEDAGOGY expert review stays
+    PENDING and is reported as such.
+    """
     reg,assets=candidate_assets()
     production=authority("InstructionalKnowledge/registry/math-pck-promotion-registry.json")
     coverage={}
     for asset in assets:
         for cap in asset["capability_refs"]:
             coverage.setdefault(cap,[]).append(asset["asset_id"])
-    promoted={}
+    authoring={}; release_legal={}
     for rec in production["promotions"]:
-        if rec["promotion_status"]=="PROMOTED" and rec.get("producer_legal") is True:
-            asset=next((a for a in assets if a["asset_id"]==rec["asset_id"]),None)
-            if asset and asset["asset_digest"]==rec["asset_digest"]:
-                for cap in asset["capability_refs"]:
-                    promoted.setdefault(cap,[]).append(asset["asset_id"])
+        asset=next((a for a in assets if a["asset_id"]==rec["asset_id"]),None)
+        if not asset or asset["asset_digest"]!=rec["asset_digest"]:
+            continue
+        status=rec["promotion_status"]
+        if status=="PROMOTED" and rec.get("producer_legal") is True:
+            target=[authoring,release_legal]
+        elif status=="PROVISIONAL_PROMOTED" and rec.get("authoring_legal") is True and not rec.get("producer_legal"):
+            target=[authoring]
+        else:
+            continue
+        for cap in asset["capability_refs"]:
+            for bucket in target:
+                bucket.setdefault(cap,[]).append(asset["asset_id"])
     full=sorted(x["capability_ref"] for x in study_model["capability_plans"] if x["treatment"] in FULL_TREATMENTS)
     missing=sorted(cap for cap in full if not coverage.get(cap))
-    unpromoted=sorted(cap for cap in full if coverage.get(cap) and not promoted.get(cap))
-    return reg,assets,production,full,missing,unpromoted
+    unpromoted=sorted(cap for cap in full if coverage.get(cap) and not authoring.get(cap))
+    provisional_only=sorted(cap for cap in full if authoring.get(cap) and not release_legal.get(cap))
+    return reg,assets,production,full,missing,unpromoted,provisional_only
 
 def treatment_signature(study_model):
     return digest([{"capability_ref":x["capability_ref"],"treatment":x["treatment"],"readiness":x["learner_state_readiness"]} for x in study_model["capability_plans"]])
@@ -172,7 +188,7 @@ def run_cold_start(question_set, topic_scope, attempt_set=None, repo_root=None, 
     study_scope=build_study_scope(scope_bindings,scope_authority)
     study_model=synthesize(study_scope,snapshot,treatment_policy)
 
-    cand_reg,cand_assets,prod_promos,full,missing,unpromoted=pck_legality(study_model)
+    cand_reg,cand_assets,prod_promos,full,missing,unpromoted,provisional_only=pck_legality(study_model)
     core1_plan=None
     if missing:
         c1status="BLOCKED_PCK_CANDIDATE_COVERAGE"
@@ -185,7 +201,7 @@ def run_cold_start(question_set, topic_scope, attempt_set=None, repo_root=None, 
             authority("Core1Authoring/policies/math-core1-scope-completeness-policy.json"),
             test_mode=False,
         )
-        c1status="PRODUCTION_PLAN_READY"
+        c1status="PRODUCTION_PLAN_READY" if core1_plan["release_class"]=="PRODUCTION" else "PROVISIONAL_PLAN_READY"
     core1_info={
       "candidate_class":"SCOPE_COMPLETE_AUTHORING_OBLIGATION_PLAN",
       "scope_complete":set(study_scope["direct_assessed_capability_refs"]+study_scope["prerequisite_support_capability_refs"])=={x["capability_ref"] for x in study_model["capability_plans"]},
@@ -193,6 +209,9 @@ def run_cold_start(question_set, topic_scope, attempt_set=None, repo_root=None, 
       "full_teaching_capability_count":len(full),
       "missing_pck_candidate_capability_refs":missing,
       "unpromoted_pck_capability_refs":unpromoted,
+      "provisional_only_pck_capability_refs":provisional_only,
+      "pck_expert_review_state":core1_plan["pck_authority"]["expert_review_state"] if core1_plan else "NOT_RUN",
+      "release_legal":bool(core1_plan and core1_plan["pck_authority"]["release_legal"]),
       "production_plan_ref":core1_plan["core1_study_plan_id"] if core1_plan else None,
       "status":c1status,
     }
@@ -210,6 +229,8 @@ def run_cold_start(question_set, topic_scope, attempt_set=None, repo_root=None, 
         blockers.append("M-G/#242:PCK_CANDIDATE_COVERAGE")
     if unpromoted:
         blockers.append("M-G/#242:PCK_HUMAN_PROMOTION")
+    if provisional_only and not missing and not unpromoted:
+        blockers.append("M-G/#242:PCK_EXPERT_REVIEW_PENDING")
     if not core2["summary"]["publication_ready"]:
         blockers.append("M-I/M-J:PUBLICATION_NOT_READY")
     blockers=sorted(set(blockers))
@@ -244,7 +265,10 @@ def run_cold_start(question_set, topic_scope, attempt_set=None, repo_root=None, 
       "coverage_closure":{"assessment_row_count":len(closure["assessment_coverage_matrix"]["rows"]),"semantic_gap_count":sum(len(v) for v in gap_report.values()),"publication_closure_status":closure["publication_coverage_closure"]["publication_closure_status"]},
       "authority_trace":[],
       "cold_start_status":"PASS_WITH_UPSTREAM_RELEASE_BLOCKERS" if blockers else "PASS_PRODUCTION_SEMANTICS",
-      "release_status":"BLOCKED_UPSTREAM_PCK" if c1status!="PRODUCTION_PLAN_READY" else "M_K_SEMANTIC_CANDIDATE_ONLY",
+      "release_status":{
+        "PRODUCTION_PLAN_READY":"M_K_SEMANTIC_CANDIDATE_ONLY",
+        "PROVISIONAL_PLAN_READY":"PROVISIONAL_PENDING_PCK_EXPERT_REVIEW",
+      }.get(c1status,"BLOCKED_UPSTREAM_PCK"),
       "blockers":blockers,
       "report_digest":"",
     }

@@ -80,14 +80,22 @@ assert pb["MATH-RIVER-CURRENT-MODEL"]["treatment"]=="VERIFY_ONLY"
 assert pb["MATH-BINOMIAL-SQUARE-EXPANSION"]["treatment"] in {"REPAIR_BEFORE","REPAIR_IN_UNIT"}
 assert pb["MATH-ARITHMETIC-DIVISION"]["treatment"] in {"REPAIR_BEFORE","REPAIR_IN_UNIT"}
 
-# M-G remains fail-closed; M-K may expose the scope-complete obligation candidate but may not fabricate human PCK promotion.
-assert run_a["core1_authoring"]["status"] in {"BLOCKED_PCK_CANDIDATE_COVERAGE","BLOCKED_PCK_PROMOTION"}
-assert run_b["core1_authoring"]["status"] in {"BLOCKED_PCK_CANDIDATE_COVERAGE","BLOCKED_PCK_PROMOTION"}
-assert run_a["core1_authoring"]["production_plan_ref"] is None
-assert run_b["core1_authoring"]["production_plan_ref"] is None
-assert run_a["release_status"]=="BLOCKED_UPSTREAM_PCK"
-assert run_b["release_status"]=="BLOCKED_UPSTREAM_PCK"
-assert not run_a["core2"]["publication_ready"] and not run_b["core2"]["publication_ready"]
+# M-G promotion has run for real, so Core1 materializes. It rests on AI-assisted
+# reference review only, so the run is PROVISIONAL and never release-legal.
+# M-K may expose the materialized candidate but may not fabricate human PCK promotion.
+for run in (run_a,run_b):
+    c1=run["core1_authoring"]
+    assert c1["status"]=="PROVISIONAL_PLAN_READY", c1["status"]
+    assert c1["production_plan_ref"] is not None
+    assert c1["missing_pck_candidate_capability_refs"]==[]
+    assert c1["unpromoted_pck_capability_refs"]==[]
+    assert c1["provisional_only_pck_capability_refs"]
+    assert c1["pck_expert_review_state"]=="PENDING"
+    assert c1["release_legal"] is False
+    assert run["release_status"]=="PROVISIONAL_PENDING_PCK_EXPERT_REVIEW"
+    assert "M-G/#242:PCK_EXPERT_REVIEW_PENDING" in run["blockers"]
+    assert run["core2"]["publication_ready"] is True
+    assert run["core2"]["core1_linkage_mode"]=="MATERIALIZED_PROVISIONAL"
 
 # Run A/B invariants and intended learner-conditioned differences.
 assert all(comparison["invariants"].values())
@@ -129,6 +137,19 @@ expect("TEST_ORACLE_PROMOTED_TO_PRODUCER",lambda:validate_report(bad,manifest))
 # 11 UPSTREAM_PCK_BLOCKER_RELEASE_BYPASS
 bad=copy.deepcopy(run_a); bad["release_status"]="M_K_SEMANTIC_CANDIDATE_ONLY"; redigest_report(bad)
 expect("UPSTREAM_PCK_BLOCKER_RELEASE_BYPASS",lambda:validate_report(bad,manifest))
+# 11b PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL
+bad=copy.deepcopy(run_a); bad["core1_authoring"]["release_legal"]=True; redigest_report(bad)
+expect("PROVISIONAL_PROMOTION_CLAIMED_PRODUCER_LEGAL",lambda:validate_report(bad,manifest))
+# 11c a provisional run may not silently claim the expert-reviewed production status
+bad=copy.deepcopy(run_a)
+bad["core1_authoring"]["status"]="PRODUCTION_PLAN_READY"
+bad["release_status"]="M_K_SEMANTIC_CANDIDATE_ONLY"
+redigest_report(bad)
+expect("PRODUCTION_CORE1_WITHOUT_EXPERT_PCK_REVIEW",lambda:validate_report(bad,manifest))
+# 11d COLD_START_STILL_BLOCKED_AFTER_PCK_FIX: with candidate coverage and a
+# populated promotion registry the run must not report the pre-fix blocked state.
+assert run_a["release_status"]!="BLOCKED_UPSTREAM_PCK"
+assert run_b["release_status"]!="BLOCKED_UPSTREAM_PCK"
 # 12 ATTEMPT_RUN_CHANGES_CANONICAL_MATH_TRUTH
 bad=copy.deepcopy(comparison); bad["invariants"]["canonical_math_truth_identical"]=False; redigest_comp(bad)
 expect("ATTEMPT_RUN_CHANGES_CANONICAL_MATH_TRUTH",lambda:validate_comparison(bad,run_a,run_b))

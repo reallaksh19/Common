@@ -93,15 +93,26 @@ def build_representation(q,binding,sem,review,primitive_registry,page_intent_pro
              "required_pck_jobs":[]}
     return build_representation_plan(context,specs,primitive_registry,page_intent_profile)
 
+MATERIALIZING_CORE1_RELEASE_CLASSES={"PRODUCTION":"MATERIALIZED","PROVISIONAL_PENDING_EXPERT_REVIEW":"MATERIALIZED_PROVISIONAL"}
+
 def planned_core1_link(cap,authority,core1_plan=None):
+    """Bind a Core2 page to a real Core1 lesson when one exists.
+
+    `MATERIALIZED_PROVISIONAL` means the lesson is real and bound, but the PCK
+    it rests on carries AI-assisted reference review only; its SUBJECT/PEDAGOGY
+    expert review is still PENDING. That is publishable as a candidate and never
+    release-legal.
+    """
     titles={x["capability_id"]:x["title"] for x in authority["capabilities"]}
     title=titles.get(cap,cap.removeprefix("MATH-").replace("-"," ").title())
-    lesson=None
-    if core1_plan and core1_plan.get("release_class")=="PRODUCTION":
-        lesson=next((x for x in core1_plan.get("lessons",[]) if x["capability_ref"]==cap),None)
+    lesson=None; state=None
+    if core1_plan:
+        state=MATERIALIZING_CORE1_RELEASE_CLASSES.get(core1_plan.get("release_class"))
+        if state:
+            lesson=next((x for x in core1_plan.get("lessons",[]) if x["capability_ref"]==cap),None)
     if lesson:
         return {"stable_id":lesson["lesson_id"],"learner_title":lesson["learner_title"],"capability_ref":cap,
-                "linkage_state":"MATERIALIZED","materialized_lesson_id":lesson["lesson_id"],"source_question_reuse":False}
+                "linkage_state":state,"materialized_lesson_id":lesson["lesson_id"],"source_question_reuse":False}
     return {"stable_id":"MATH-C1-PLANNED-"+digest(cap)[:8],"learner_title":title,"capability_ref":cap,
             "linkage_state":"PLANNED_UNTIL_PCK_PROMOTED","materialized_lesson_id":None,"source_question_reuse":False}
 
@@ -168,16 +179,24 @@ def build_plan(question_set,review_registry,review_policy,scope_bindings,authori
         }
         page["page_digest"]=digest(page,"page_digest")
         pages.append(page)
-    materialized=all(l["linkage_state"]=="MATERIALIZED" for p in pages for l in p["core1_lesson_refs"])
+    states={l["linkage_state"] for p in pages for l in p["core1_lesson_refs"]}
+    materialized=states=={"MATERIALIZED"}
+    provisional=bool(states) and states.issubset({"MATERIALIZED","MATERIALIZED_PROVISIONAL"}) and not materialized
+    if materialized:
+        linkage_mode="MATERIALIZED"; release_class="PRODUCTION_READY"
+    elif provisional:
+        linkage_mode="MATERIALIZED_PROVISIONAL"; release_class="PROVISIONAL_PENDING_EXPERT_REVIEW"
+    else:
+        linkage_mode="PLANNED_UNTIL_PCK_PROMOTED"; release_class="SEMANTIC_TEST"
     out={"plan_id":"","schema_version":"1.0.0","subject":"MATHEMATICS",
-         "release_class":"PRODUCTION_READY" if materialized else "SEMANTIC_TEST",
+         "release_class":release_class,
          "question_set_ref":question_set["question_set_id"],"question_set_digest":question_set["question_set_digest"],
          "problem_semantics_ref":problem_semantics["package_id"],"problem_semantics_digest":problem_semantics["package_digest"],
          "representation_authority_ref":primitive_registry["registry_id"],
-         "core1_linkage_mode":"MATERIALIZED" if materialized else "PLANNED_UNTIL_PCK_PROMOTED",
+         "core1_linkage_mode":linkage_mode,
          "pages":pages,
          "summary":{"question_count":len(pages),"attempt_first":True,"source_fidelity":True,"psychometric_claims":False,
-                    "publication_ready":bool(materialized)},
+                    "publication_ready":bool(materialized or provisional),"release_legal":bool(materialized)},
          "plan_digest":""}
     out["plan_id"]="MATH-C2TP-"+digest({"q":out["question_set_digest"],"ps":out["problem_semantics_digest"],
                                        "profile":digest(authoring_profile),"core1":out["core1_linkage_mode"]})[:16]
@@ -247,9 +266,14 @@ def validate_plan(plan,question_set,review_registry,review_policy,scope_bindings
         for s in rp["representations"]:
             if s["primitive_id"] not in prim_by: fail("REPRESENTATION_PLAN_DRIFT",qid)
     if plan["summary"]["psychometric_claims"] is not False: fail("GUIDE_BADGE_PRESENTED_AS_PSYCHOMETRIC")
-    any_planned=any(l["linkage_state"]!="MATERIALIZED" for p in plan["pages"] for l in p["core1_lesson_refs"])
-    if any_planned and (plan["release_class"]!="SEMANTIC_TEST" or plan["summary"]["publication_ready"]):
+    any_unlinked=any(l["linkage_state"]=="PLANNED_UNTIL_PCK_PROMOTED" for p in plan["pages"] for l in p["core1_lesson_refs"])
+    if any_unlinked and (plan["release_class"]!="SEMANTIC_TEST" or plan["summary"]["publication_ready"]):
         fail("UNPROMOTED_CORE1_LINK_PUBLISHED")
+    any_provisional=any(l["linkage_state"]=="MATERIALIZED_PROVISIONAL" for p in plan["pages"] for l in p["core1_lesson_refs"])
+    if any_provisional and (plan["release_class"]=="PRODUCTION_READY" or plan["summary"]["release_legal"]):
+        fail("PROVISIONAL_CORE1_LINK_CLAIMED_RELEASE_LEGAL")
+    if not any_provisional and not any_unlinked and plan["release_class"]!="PRODUCTION_READY":
+        fail("MATERIALIZED_CORE1_LINK_UNDERSTATED")
     return True
 
 def main():
