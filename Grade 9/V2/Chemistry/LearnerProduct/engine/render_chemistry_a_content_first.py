@@ -85,7 +85,9 @@ def _attempt_support_episode_height(writer: PageWriter, support: dict[str, Any])
             total += len(rows) * writer.leading + 3.0
 
     inner_w = writer.width - 28
-    title_rows = writer._wrap("ANSWER ROUTE", writer.BOLD if hasattr(writer, "BOLD") else "ChemV2-Bold", writer.small, inner_w)
+    # FONT is already registered by ReviewWriter. Width-estimation need not
+    # introduce a second font dependency; the title is short and single-line.
+    title_rows = writer._wrap("ANSWER ROUTE", FONT, writer.small, inner_w)
     body_rows = writer._wrap(_ANSWER_ROUTE_TEXT, FONT, writer.body, inner_w)
     total += 16.0 + len(title_rows) * (writer.small + 4.0) + len(body_rows) * writer.leading + 26.0
     return total + 18.0
