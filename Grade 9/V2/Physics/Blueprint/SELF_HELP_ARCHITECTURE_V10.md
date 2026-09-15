@@ -23,7 +23,9 @@ JOIN
         ↓
 CANONICAL DOMAIN REGISTRY
         ↓
-CROSS-DOMAIN PREREQUISITE RECEIPT
+CROSS-DOMAIN PREREQUISITE CLOSURE
+  ├─ authoritative provider receipt → READY
+  └─ no provider receipt → governed demand + HELD
         ↓
 PHYSICS TECHNICAL ENGINEERING GATES
         ↓
@@ -59,7 +61,11 @@ This permits source-backed conceptual construction while leaving Core2/Core2A in
 
 ## Cross-domain prerequisites
 
-Physics may require external prerequisites such as Mathematics but may not certify them. Each external prerequisite is `READY_FROM_AUTHORITATIVE_DOMAIN | HELD_NO_DOMAIN_RECEIPT`. Missing authoritative-domain receipts hold cross-domain closure without mutating Physics gate readiness.
+Physics may require external prerequisites such as Mathematics but may not certify them. Each external prerequisite is `READY_FROM_AUTHORITATIVE_DOMAIN | HELD_NO_DOMAIN_RECEIPT`.
+
+Provider routing is governed by `policy/domain-prerequisite-routing.v1.json`. A missing provider receipt does not remain a narrative blocker: the closure emits a deterministic `DOMAIN-DEMAND-PHY-*` handoff identifying the prerequisite, the exact Physics gates that require it, the provider subject/entrypoint where routable, and the bound engineering receipt/digest. Routable missing authority is `OPEN_HELD`; an unknown provider is `OPEN_UNROUTABLE`. Both keep cross-domain closure held.
+
+A future READY receipt must be provider-owned repository authority. The consumer requires the receipt source path to live under the registered provider root, validates the provider subject/prerequisite identity, recomputes the receipt digest, verifies all evidence refs exist, and rejects raw dictionaries or Physics-owned files impersonating external authority. This is a custody boundary, not a mechanism for Physics to manufacture Mathematics truth.
 
 ## State semantics
 
@@ -67,7 +73,7 @@ V10 distinguishes `PASS | READY | HELD | BLOCKED | NOT_INSTANTIATED | NOT_APPLIC
 
 ## Executable stress tests
 
-A seven-core stress test is a governed compiler execution, not a narrative declaration. The request contains no `final_verdict`. The compiler derives scoped routing, engineering closure, external-domain closure, JOIN state, all seven Core states, downstream gates, architecture violations and the final verdict.
+A seven-core stress test is a governed compiler execution, not a narrative declaration. The request contains no `final_verdict`. The compiler derives scoped routing, engineering closure, external-domain closure and open demands, JOIN state, all seven Core states, downstream gates, architecture violations and the final verdict.
 
 `STRESS_TEST_PASS` means the architecture behaved according to contract, including correct fail-closed holds. It does not mean every learner product is released.
 
@@ -81,9 +87,11 @@ The canonical `V2 Physics Blueprint` workflow writes the compiled receipts plus 
 - `contracts/scoped-execution-envelope.schema.json`
 - `contracts/scoped-evidence-receipt.schema.json`
 - `contracts/domain-prerequisite-authority.schema.json`
+- `contracts/domain-prerequisite-demand.schema.json`
 - `contracts/domain-prerequisite-closure.schema.json`
 - `contracts/seven-core-stress-test-request.schema.json`
 - `contracts/seven-core-stress-test-receipt.schema.json`
+- `policy/domain-prerequisite-routing.v1.json`
 - `policy/join-policy.v2.json`
 - `policy/stress-test-state-semantics.v1.json`
 - `engine/compile_scoped_evidence.py`
@@ -92,6 +100,7 @@ The canonical `V2 Physics Blueprint` workflow writes the compiled receipts plus 
 - `engine/compile_all_stress_tests.py`
 - `tests/test_blueprint_contract_inventory_v10.py`
 - `tests/test_blueprint_scope_v10.py`
+- `tests/test_blueprint_domain_prerequisites_v10.py`
 - `tests/test_blueprint_stress_test_v10.py`
 - `tests/test_blueprint_stress_batch_v10.py`
 - `.github/workflows/v2-physics-blueprint.yml`
