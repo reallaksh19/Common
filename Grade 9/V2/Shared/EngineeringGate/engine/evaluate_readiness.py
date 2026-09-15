@@ -69,6 +69,8 @@ def build_envelope(
         raise EngineeringGateError("E_ENG_GATE_REQUEST_RECEIPT_MISMATCH", "engineering receipt belongs to another request")
     if manifest.get("manifest_id") != engineering_receipt.get("manifest_id"):
         raise EngineeringGateError("E_ENG_GATE_MANIFEST_RECEIPT_MISMATCH", "engineering receipt belongs to another manifest")
+    if engineering_receipt.get("manifest_digest") != digest(manifest):
+        raise EngineeringGateError("E_ENG_GATE_MANIFEST_DRIFT", "manifest content no longer matches the engineering closure receipt")
     if domain_receipt.get("engineering_receipt_ref") != engineering_receipt.get("receipt_id"):
         raise EngineeringGateError("E_ENG_GATE_DOMAIN_MISMATCH", "domain closure is not bound to the engineering receipt")
 
@@ -131,6 +133,7 @@ def build_envelope(
         "manifest_id": manifest["manifest_id"],
         "engineering_receipt": {
             "receipt_id": engineering_receipt["receipt_id"],
+            "manifest_digest": engineering_receipt["manifest_digest"],
             "closure_digest": engineering_receipt["closure_digest"],
             "closure_status": engineering_receipt["closure_status"],
             "source_item_status": engineering_receipt["source_item_status"],
