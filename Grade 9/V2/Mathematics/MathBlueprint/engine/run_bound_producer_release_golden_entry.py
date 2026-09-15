@@ -41,7 +41,12 @@ def main() -> None:
     ap.add_argument("--core2-plan", required=True)
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
-    summary = base.run_bound(Path(args.core1_plan), Path(args.study_model), Path(args.core2_plan), Path(args.out_dir))
+    out_dir = Path(args.out_dir)
+    summary = base.run_bound(Path(args.core1_plan), Path(args.study_model), Path(args.core2_plan), out_dir)
+    legacy_key = "engineering_authorized_direct_gate_ids"
+    if legacy_key in summary:
+        summary["engineering_authorized_direct_gate_count"] = summary.pop(legacy_key)
+        base.write(out_dir / "bound_producer_release_summary.json", summary)
     print(json.dumps(summary, indent=2, ensure_ascii=False))
 
 
