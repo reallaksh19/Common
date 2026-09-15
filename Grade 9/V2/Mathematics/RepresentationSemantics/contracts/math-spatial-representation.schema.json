@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-spatial-representation.schema.json",
+  "title": "Mathematics Spatial Representation",
+  "description": "A figure is a mathematical object, not decoration. The existence of a vector primitive is not enough: a clean, in-bounds figure can still be mathematically wrong, and an answer-neutral attempt page can still leak its answer through the picture. So a spatial primitive declares its own semantics (domain, tick interval, origin, axis direction, coordinates, angle-pair identity) and the representation plan declares which objects are givens and which the learner must supply. Subject-wide generic across the three spatial classes the stress test exercised.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spatial_id", "schema_version", "subject", "surface", "primitive",
+               "semantics", "representation_plan", "spatial_digest"],
+  "properties": {
+    "spatial_id": {"type": "string", "pattern": "^MATH-SPATIAL-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "surface": {"enum": ["ATTEMPT", "TEACHING", "SOLUTION"]},
+    "primitive": {"enum": ["COORDINATE_PLANE", "NUMBER_LINE", "ANGLE_FIGURE"]},
+    "semantics": {
+      "oneOf": [
+        {"$ref": "#/$defs/coordinate_plane"},
+        {"$ref": "#/$defs/number_line"},
+        {"$ref": "#/$defs/angle_figure"}
+      ]
+    },
+    "representation_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["givens", "learner_must_supply", "answer_targets"],
+      "properties": {
+        "givens": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "learner_must_supply": {"type": "array", "uniqueItems": true,
+                                "items": {"type": "string"}},
+        "answer_targets": {"type": "array", "uniqueItems": true,
+                           "items": {"type": "string"}}
+      }
+    },
+    "spatial_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "role": {"enum": ["GIVEN", "LEARNER_MUST_SUPPLY", "DERIVED_CHECK"]},
+    "coordinate_plane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "x_domain", "y_domain", "tick_interval", "origin",
+                   "axis_direction", "point_coordinates", "declared_relations"],
+      "properties": {
+        "kind": {"const": "COORDINATE_PLANE"},
+        "x_domain": {"type": "array", "minItems": 2, "maxItems": 2,
+                     "items": {"type": "number"}},
+        "y_domain": {"type": "array", "minItems": 2, "maxItems": 2,
+                     "items": {"type": "number"}},
+        "tick_interval": {
+          "type": "object", "additionalProperties": false, "required": ["x", "y"],
+          "properties": {"x": {"type": "number", "exclusiveMinimum": 0},
+                         "y": {"type": "number", "exclusiveMinimum": 0}}
+        },
+        "origin": {
+          "type": "object", "additionalProperties": false, "required": ["x", "y"],
+          "properties": {"x": {"type": "number"}, "y": {"type": "number"}}
+        },
+        "axis_direction": {
+          "type": "object", "additionalProperties": false, "required": ["x", "y"],
+          "properties": {
+            "x": {"enum": ["RIGHT_POSITIVE", "LEFT_POSITIVE"]},
+            "y": {"enum": ["UP_POSITIVE", "DOWN_POSITIVE"]}
+          }
+        },
+        "point_coordinates": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["label", "role"],
+            "properties": {
+              "label": {"type": "string", "minLength": 1},
+              "x": {"type": ["number", "null"]},
+              "y": {"type": ["number", "null"]},
+              "role": {"$ref": "#/$defs/role"},
+              "plotted": {"type": "boolean"}
+            }
+          }
+        },
+        "declared_relations": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["kind", "point_labels"],
+            "properties": {
+              "kind": {
+                "enum": ["HORIZONTAL_SEGMENT", "VERTICAL_SEGMENT", "COLLINEAR",
+                         "EQUIDISTANT_FROM_FIRST", "IN_QUADRANT_I", "IN_QUADRANT_II",
+                         "IN_QUADRANT_III", "IN_QUADRANT_IV", "ON_X_AXIS", "ON_Y_AXIS",
+                         "MIDPOINT_OF"]
+              },
+              "point_labels": {"type": "array", "minItems": 1,
+                               "items": {"type": "string"}}
+            }
+          }
+        }
+      }
+    },
+    "number_line": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "domain", "tick_interval", "direction", "marked_points"],
+      "properties": {
+        "kind": {"const": "NUMBER_LINE"},
+        "domain": {"type": "array", "minItems": 2, "maxItems": 2,
+                   "items": {"type": "number"}},
+        "tick_interval": {"type": "number", "exclusiveMinimum": 0},
+        "direction": {"enum": ["RIGHT_POSITIVE", "LEFT_POSITIVE"]},
+        "marked_points": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["label", "role"],
+            "properties": {
+              "label": {"type": "string", "minLength": 1},
+              "value": {"type": ["number", "null"]},
+              "role": {"$ref": "#/$defs/role"},
+              "plotted": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "angle_figure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "vertices", "rays", "marked_angles", "declared_angle_pairs",
+                   "declared_parallel_facts", "parallel_marks"],
+      "properties": {
+        "kind": {"const": "ANGLE_FIGURE"},
+        "vertices": {
+          "type": "array", "minItems": 2,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["label", "x", "y"],
+            "properties": {"label": {"type": "string"}, "x": {"type": "number"},
+                           "y": {"type": "number"}}
+          }
+        },
+        "rays": {
+          "type": "array", "minItems": 2,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["from", "to"],
+            "properties": {"from": {"type": "string"}, "to": {"type": "string"}}
+          }
+        },
+        "marked_angles": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["label", "vertex", "ray_a", "ray_b", "role"],
+            "properties": {
+              "label": {"type": "string"},
+              "vertex": {"type": "string"},
+              "ray_a": {"type": "string"},
+              "ray_b": {"type": "string"},
+              "measure_deg": {"type": ["number", "null"]},
+              "role": {"$ref": "#/$defs/role"},
+              "measure_shown": {"type": "boolean"}
+            }
+          }
+        },
+        "declared_angle_pairs": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["kind", "angle_labels"],
+            "properties": {
+              "kind": {
+                "enum": ["LINEAR_PAIR", "VERTICALLY_OPPOSITE", "CORRESPONDING",
+                         "ALTERNATE_INTERIOR", "CO_INTERIOR", "ADJACENT"]
+              },
+              "angle_labels": {"type": "array", "minItems": 2, "maxItems": 2,
+                               "items": {"type": "string"}}
+            }
+          }
+        },
+        "declared_parallel_facts": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["line_a", "line_b", "status"],
+            "properties": {
+              "line_a": {"type": "string"},
+              "line_b": {"type": "string"},
+              "status": {"enum": ["GIVEN", "TO_BE_PROVED"]}
+            }
+          }
+        },
+        "parallel_marks": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["line_a", "line_b"],
+            "properties": {"line_a": {"type": "string"}, "line_b": {"type": "string"}}
+          }
+        }
+      }
+    }
+  }
+}

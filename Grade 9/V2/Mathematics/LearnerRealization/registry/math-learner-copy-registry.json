@@ -1,0 +1,51 @@
+{
+  "registry_id": "MATH-LEARNER-COPY-CONSUMERS-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Consumer bindings for the internal-semantics -> learner-copy boundary. This file deliberately holds NO ban-list of its own: the authority is LearnerProduct/policies/math-learner-language-policy.json, which #351 established as the central learner-language policy. What lives here is only the stage-to-falsifier mapping each consumer needs, plus the small set of legacy tokens Core1A already banned before that policy existed, so adopting the policy cannot narrow what Core1A already caught.",
+  "authority": {
+    "policy_id": "MATH-LEARNER-LANGUAGE-v1",
+    "policy_path": "Grade 9/V2/Mathematics/LearnerProduct/policies/math-learner-language-policy.json",
+    "supplies": [
+      "labels",
+      "forbidden_learner_terms",
+      "forbidden_learner_role_labels",
+      "internal_role_label_public_titles",
+      "internal_identifier_patterns",
+      "role_label_detection"
+    ]
+  },
+  "consumers": [
+    {
+      "stage": "CORE1A",
+      "falsifier": "CORE1A_INTERNAL_JARGON_LEAK",
+      "identifier_falsifier": "CORE1A_INTERNAL_IDENTIFIER_LEAK"
+    },
+    {
+      "stage": "CORE2A",
+      "falsifier": "CORE2A_LEARNER_JARGON_LEAK",
+      "identifier_falsifier": "CORE2A_LEARNER_JARGON_LEAK",
+      "note": "Core2A's quality profile declares CORE2A_LEARNER_JARGON_LEAK and no separate identifier code, so an identifier leak is raised under the same declared falsifier rather than inventing an undeclared one."
+    },
+    {
+      "stage": "LEARNER_REALIZATION",
+      "falsifier": "INTERNAL_REASONING_LABEL_EXPOSED_AS_LEARNER_COPY",
+      "identifier_falsifier": "INTERNAL_IDENTIFIER_EXPOSED_AS_LEARNER_COPY"
+    }
+  ],
+  "legacy_core1a_tokens": [
+    "author a new instance",
+    "source reuse is forbidden",
+    "core1 study plan",
+    "treatment ",
+    "reconstruction route",
+    "fading dimensions",
+    "candidate learner product",
+    "{rows}"
+  ],
+  "legacy_core1a_tokens_note": "Core1A enforced these before the central policy existed. They are unioned with the policy's forbidden_learner_terms rather than replaced, so nothing Core1A already refused can be lost by adopting the policy. They are intentionally not copied into the policy file: they are Core1A authoring artefacts, not general learner-language rules.",
+  "notes": [
+    "Core2A declared CORE2A_INTERNAL_JARGON_LEAK in its quality profile and the central policy declared the vocabulary, but until this phase no engine scanned learner text against either. LearnerRealization/engine/learner_copy.py is that engine, and each consumer keeps its own falsifier prefix so no existing vocabulary is replaced.",
+    "run_learner_product.py binds MATH-LEARNER-LANGUAGE-v1 by policy id only (a binding-drift check). This registry plus learner_copy.py is what makes the bound policy enforceable against actual text."
+  ]
+}

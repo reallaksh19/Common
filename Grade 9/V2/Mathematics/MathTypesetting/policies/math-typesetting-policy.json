@@ -1,0 +1,46 @@
+{
+  "policy_id": "MATH-TYPESETTING-POLICY-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Release policy for learner-visible mathematics. Mathematical meaning is carried by structure; a renderer may not recover structure that was destroyed upstream. Therefore every learner-visible mathematical object enters publication as a MathExpression AST and is typeset, never string-substituted.",
+  "principle": "Mathematics is a structured object, not an opaque string passed through an ASCII-safe renderer.",
+  "required_structural_nodes": [
+    "SYMBOL",
+    "NUMBER",
+    "FRACTION",
+    "RADICAL",
+    "POWER",
+    "SUBSCRIPT",
+    "SUPERSCRIPT",
+    "SET_NOTATION",
+    "ALIGNED_EQUATION",
+    "TRANSFORMATION_CHAIN"
+  ],
+  "render_targets": {
+    "UNICODE": "Accessibility/audit surface. Must contain the exact bound glyphs, real script characters and real radical signs.",
+    "TYPESET": "Measured, drawn surface. Fractions get a real rule, radicals a real overbar, scripts a real raised/lowered baseline at reduced size."
+  },
+  "font_policy": {
+    "math_font_must_be_bound": true,
+    "forbidden_base14_fallback": true,
+    "required_glyph_coverage": "every code point produced by the expression corpus",
+    "min_script_size_ratio": 0.62,
+    "min_absolute_script_pt": 6.0
+  },
+  "alignment_policy": {
+    "aligned_equation_alignment_anchor": "RELATION",
+    "transformation_chain_alignment_anchor": "STEP_LEFT_EDGE",
+    "alignment_tolerance_pt": 0.05
+  },
+  "falsifiers": [
+    "MATH_EXPRESSION_FLATTENED_TO_PLAIN_TEXT",
+    "MATH_FONT_NOT_BOUND",
+    "MATH_RELATION_RENDERED_AS_ASCII_FALLBACK",
+    "MATH_SCRIPT_NOT_TYPESET",
+    "MATH_REQUIRED_GLYPH_MISSING",
+    "MATH_SEMANTIC_AST_RENDER_MISMATCH",
+    "MATH_TRANSFORMATION_ALIGNMENT_LOST",
+    "MATH_TYPESETTING_GATE_FAILED"
+  ],
+  "release_meaning": "Passing these gates is PUBLICATION_ENGINEERING evidence only. It does not constitute subject, pedagogy, assessment or expert review, all of which remain PENDING."
+}

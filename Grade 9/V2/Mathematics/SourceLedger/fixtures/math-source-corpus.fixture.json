@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "topic_ref": "MIXED_GRADE9_SOURCE_PROBE",
+  "corpus_authority": {
+    "name": "Stress-test source-shape probe",
+    "reference": "Derived from the shapes named in PR #323 comments 5644501927, 5645333463 and 5645525718",
+    "vendored": false,
+    "note": "Deliberately not a vendored NCERT extract. The purpose of this fixture is to exercise the completeness dimensions, not to restate source content. The official units remain the authority named in the #345 handoff."
+  },
+  "frozen_at_stage": "BEFORE_AUTHORING",
+  "required_question_refs": [
+    "Q1",
+    "Q2",
+    "Q3",
+    "Q4"
+  ],
+  "required_atomic_ask_refs": [
+    "Q1#OPT-A",
+    "Q1#OPT-B",
+    "Q1#OPT-C",
+    "Q1#OPT-D",
+    "Q1#JUST",
+    "Q2#PROOF-1",
+    "Q2#PROOF-2",
+    "Q3#SUB-a",
+    "Q3#SUB-b",
+    "Q3#COND",
+    "Q4#SUB-a",
+    "Q4#UNITS"
+  ],
+  "questions": [
+    {
+      "question_ref": "Q1",
+      "source_order": 1,
+      "stem": "Which of the following points does NOT lie on the line 2x + 4y = 8?",
+      "response_mode": "MCQ_SELECTION",
+      "subpart_shape": {
+        "subpart_count": 0,
+        "option_count": 4,
+        "proof_obligation_count": 0,
+        "parameter_condition_count": 0
+      },
+      "atomic_asks": [
+        {
+          "atomic_ask_ref": "Q1#OPT-A",
+          "kind": "OPTION",
+          "label": "(A)",
+          "text": "(0, 2)",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q1#OPT-B",
+          "kind": "OPTION",
+          "label": "(B)",
+          "text": "(2, 1)",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q1#OPT-C",
+          "kind": "OPTION",
+          "label": "(C)",
+          "text": "(4, 0)",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q1#OPT-D",
+          "kind": "OPTION",
+          "label": "(D)",
+          "text": "(1, 2)",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q1#JUST",
+          "kind": "JUSTIFICATION",
+          "label": "Reason:",
+          "text": "Give a reason for the option you chose.",
+          "learner_visible": true
+        }
+      ]
+    },
+    {
+      "question_ref": "Q2",
+      "source_order": 2,
+      "stem": "Two distinct lines cannot have more than one point in common.",
+      "response_mode": "PROOF",
+      "subpart_shape": {
+        "subpart_count": 0,
+        "option_count": 0,
+        "proof_obligation_count": 2,
+        "parameter_condition_count": 0
+      },
+      "atomic_asks": [
+        {
+          "atomic_ask_ref": "Q2#PROOF-1",
+          "kind": "PROOF_OBLIGATION",
+          "label": "(i)",
+          "text": "Prove the statement using Euclid's axioms.",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q2#PROOF-2",
+          "kind": "PROOF_OBLIGATION",
+          "label": "(ii)",
+          "text": "Hence deduce that two distinct lines cannot both pass through two distinct given points.",
+          "learner_visible": true
+        }
+      ]
+    },
+    {
+      "question_ref": "Q3",
+      "source_order": 3,
+      "stem": "For the polynomial p(x) = x cubed + a x squared minus 5x + 6:",
+      "response_mode": "MULTIPART",
+      "subpart_shape": {
+        "subpart_count": 2,
+        "option_count": 0,
+        "proof_obligation_count": 0,
+        "parameter_condition_count": 1
+      },
+      "atomic_asks": [
+        {
+          "atomic_ask_ref": "Q3#SUB-a",
+          "kind": "SUBPART",
+          "label": "(a)",
+          "text": "Find the value of a for which (x minus 1) is a factor of p(x).",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q3#SUB-b",
+          "kind": "SUBPART",
+          "label": "(b)",
+          "text": "Using that value of a, factorise p(x) completely.",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q3#COND",
+          "kind": "PARAMETER_CONDITION",
+          "label": "Condition:",
+          "text": "State the values of a for which p(x) has no linear factor with integer root.",
+          "learner_visible": true
+        }
+      ]
+    },
+    {
+      "question_ref": "Q4",
+      "source_order": 4,
+      "stem": "A solid metal cylinder is melted and recast as a sphere of the same volume.",
+      "response_mode": "MODEL_UNIT_CALCULATION",
+      "subpart_shape": {
+        "subpart_count": 1,
+        "option_count": 0,
+        "proof_obligation_count": 0,
+        "parameter_condition_count": 0
+      },
+      "atomic_asks": [
+        {
+          "atomic_ask_ref": "Q4#SUB-a",
+          "kind": "SUBPART",
+          "label": "(a)",
+          "text": "Find the radius of the sphere.",
+          "learner_visible": true
+        },
+        {
+          "atomic_ask_ref": "Q4#UNITS",
+          "kind": "UNIT_REQUIREMENT",
+          "label": "Units:",
+          "text": "Give the radius in centimetres correct to one decimal place.",
+          "learner_visible": true
+        }
+      ]
+    }
+  ],
+  "manifest_id": "MATH-SCM-980bb4bead767c23",
+  "manifest_digest": "2283c36edb411276c2ad9d552756581cc727d33df1397337f12282023b8c0c08"
+}

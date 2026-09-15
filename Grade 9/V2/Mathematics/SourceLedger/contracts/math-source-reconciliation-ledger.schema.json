@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-source-reconciliation-ledger.schema.json",
+  "title": "Mathematics Source Reconciliation Ledger",
+  "description": "The final reconciliation block. Three completeness layers are reported separately - source corpus rows, atomic asks, and rendered learner-visible objects - because each one failed independently during the seven-topic stress test.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ledger_id", "schema_version", "subject", "topic_ref", "manifest_ref",
+               "manifest_digest", "question_dimension", "atomic_ask_dimension",
+               "shape_dimension", "rendered_dimension", "reconciliation", "status",
+               "release_meaning", "ledger_digest"],
+  "properties": {
+    "ledger_id": {"type": "string", "pattern": "^MATH-SRL-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "topic_ref": {"type": "string", "minLength": 3},
+    "manifest_ref": {"type": "string", "pattern": "^MATH-SCM-[0-9a-f]{16}$"},
+    "manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "question_dimension": {"$ref": "#/$defs/dimension"},
+    "atomic_ask_dimension": {"$ref": "#/$defs/dimension"},
+    "shape_dimension": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_ref", "expected", "observed", "drift"],
+        "properties": {
+          "question_ref": {"type": "string"},
+          "expected": {"type": "object"},
+          "observed": {"type": "object"},
+          "drift": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "rendered_dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checked", "visible", "missing", "occluded", "clipped", "evaluated"],
+      "properties": {
+        "evaluated": {"type": "boolean"},
+        "checked": {"type": "integer", "minimum": 0},
+        "visible": {"type": "integer", "minimum": 0},
+        "missing": {"type": "array", "items": {"type": "string"}},
+        "occluded": {"type": "array", "items": {"type": "string"}},
+        "clipped": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "reconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_source_rows", "included_source_rows", "required_atomic_asks",
+                   "included_atomic_asks", "concept_linked", "core1_evidence_linked",
+                   "solution_complete", "verification_complete", "render_visible",
+                   "unresolved"],
+      "properties": {
+        "required_source_rows": {"type": "integer", "minimum": 0},
+        "included_source_rows": {"type": "integer", "minimum": 0},
+        "required_atomic_asks": {"type": "integer", "minimum": 0},
+        "included_atomic_asks": {"type": "integer", "minimum": 0},
+        "concept_linked": {"type": "integer", "minimum": 0},
+        "core1_evidence_linked": {"type": "integer", "minimum": 0},
+        "solution_complete": {"type": "integer", "minimum": 0},
+        "verification_complete": {"type": "integer", "minimum": 0},
+        "render_visible": {"type": "integer", "minimum": 0},
+        "unresolved": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "status": {"enum": ["PASS", "BLOCKED"]},
+    "release_meaning": {"type": "string", "minLength": 10},
+    "ledger_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "included", "missing", "extra"],
+      "properties": {
+        "required": {"type": "integer", "minimum": 0},
+        "included": {"type": "integer", "minimum": 0},
+        "missing": {"type": "array", "items": {"type": "string"}},
+        "extra": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

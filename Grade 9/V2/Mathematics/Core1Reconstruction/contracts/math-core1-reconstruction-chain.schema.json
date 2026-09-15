@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core1-reconstruction-chain.schema.json",
+  "title": "Mathematics Core1 Reconstruction Chain",
+  "description": "A full-teaching lesson realizes ANCHOR -> REPRESENT -> EXPLAIN -> RECONSTRUCT -> WORKED -> GUIDED -> FADED -> INDEPENDENT -> VERIFY -> TRANSFER as an actual derivation chain. Declaring that the stage labels exist is not evidence: the RECONSTRUCT stage must contain a real derivation, and the practice stages must reference materialized learner realizations. The chain also publishes the reasoning evidence it genuinely teaches, which is what the cross-core bridge is checked against.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chain_id", "schema_version", "subject", "lesson_ref", "capability_ref",
+               "treatment", "stages", "realized_teaching_evidence", "chain_digest"],
+  "properties": {
+    "chain_id": {"type": "string", "pattern": "^MATH-C1RC-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "lesson_ref": {"type": "string", "pattern": "^MATH-C1L-"},
+    "capability_ref": {"type": "string", "pattern": "^MATH-"},
+    "treatment": {
+      "enum": ["VERIFY_ONLY", "ACTIVE_STUDY", "REPAIR_BEFORE", "REPAIR_IN_UNIT",
+               "PROBE_FIRST"]
+    },
+    "theorem_direction": {
+      "oneOf": [{"$ref": "math-theorem-direction.schema.json"}, {"type": "null"}]
+    },
+    "stages": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stage", "evidence_kind", "learner_heading"],
+        "properties": {
+          "stage": {
+            "enum": ["ACTIVATE", "PROBE", "ANCHOR", "REPRESENT", "EXPLAIN", "RECONSTRUCT",
+                     "CONTRAST", "MISCONCEPTION_REPAIR", "WORKED", "GUIDED", "FADED",
+                     "INDEPENDENT", "VERIFY", "TRANSFER", "READINESS"]
+          },
+          "evidence_kind": {"enum": ["PROSE", "DERIVATION", "REALIZATION"]},
+          "learner_heading": {"type": "string", "minLength": 4},
+          "prose": {"type": ["string", "null"]},
+          "derivation": {
+            "type": "array",
+            "items": {"$ref": "math-route-state.schema.json"}
+          },
+          "realization_ref": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "realized_teaching_evidence": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^MATH-C1L-[A-Za-z0-9._-]+#[A-Z_]+$"},
+      "description": "Derived, not declared: one token per reasoning role this lesson actually realizes, of the form <lesson_ref>#<ROLE>."
+    },
+    "chain_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

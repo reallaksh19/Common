@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-layout-audit.schema.json",
+  "title": "Mathematics Layout Safety Audit",
+  "description": "The post-layout composition report. It is emitted per rendered object map and carries the per-role typography census, the sibling-collision findings, the measured-versus-allocated overflow findings, workspace adequacy per response mode, and the measure-then-pack verdict for solution pages.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["audit_id", "schema_version", "subject", "map_ref", "status", "pages",
+               "typography", "collisions", "overflow", "workspace", "solution_packing",
+               "whitespace", "release_meaning", "audit_digest"],
+  "properties": {
+    "audit_id": {"type": "string", "pattern": "^MATH-LSA-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "map_ref": {"type": "string", "minLength": 3},
+    "status": {"enum": ["PASS", "BLOCKED"]},
+    "pages": {"type": "integer", "minimum": 1},
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["objects_checked", "roles_used", "below_minimum", "below_preferred"],
+      "properties": {
+        "objects_checked": {"type": "integer", "minimum": 0},
+        "roles_used": {"type": "array", "items": {"type": "string"}},
+        "below_minimum": {"type": "array", "items": {"type": "string"}},
+        "below_preferred": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "collisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sibling_pairs_checked", "intersections"],
+      "properties": {
+        "sibling_pairs_checked": {"type": "integer", "minimum": 0},
+        "intersections": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "overflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measured_objects", "content_overflow", "negative_remaining_height"],
+      "properties": {
+        "measured_objects": {"type": "integer", "minimum": 0},
+        "content_overflow": {"type": "array", "items": {"type": "string"}},
+        "negative_remaining_height": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checked", "response_modes", "mismatched"],
+      "properties": {
+        "checked": {"type": "integer", "minimum": 0},
+        "response_modes": {"type": "array", "items": {"type": "string"}},
+        "mismatched": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "solution_packing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "pages_checked", "overflowing_pages"],
+      "properties": {
+        "mode": {"const": "MEASURE_THEN_PACK"},
+        "pages_checked": {"type": "integer", "minimum": 0},
+        "overflowing_pages": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "whitespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unused_area_ratio_by_page", "microtype_with_space_available"],
+      "properties": {
+        "unused_area_ratio_by_page": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["page", "unused_ratio"],
+            "properties": {
+              "page": {"type": "integer", "minimum": 1},
+              "unused_ratio": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        },
+        "microtype_with_space_available": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "release_meaning": {"type": "string", "minLength": 10},
+    "audit_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

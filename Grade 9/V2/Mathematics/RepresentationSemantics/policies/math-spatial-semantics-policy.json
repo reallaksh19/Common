@@ -1,0 +1,49 @@
+{
+  "policy_id": "MATH-SPATIAL-SEMANTICS-POLICY-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Release policy for spatial representations. Figure correctness is subject correctness, not visual usability: a clean, in-bounds, deterministically rendered figure can still be mathematically wrong, and an answer-neutral attempt page can still leak its answer through the picture.",
+  "classification": "SUBJECT_CORRECTNESS",
+  "coordinate_plane": {
+    "require_canonical_axis_direction": true,
+    "min_ticks_per_axis": 4,
+    "coordinate_tolerance": 1e-09,
+    "required_declarations": [
+      "x_domain",
+      "y_domain",
+      "tick_interval",
+      "origin",
+      "axis_direction",
+      "point_coordinates",
+      "declared_relations"
+    ],
+    "rationale": "Coordinate Geometry showed that loose points+axes+relations cannot express what makes a figure right: a swapped axis, a point in the wrong quadrant or a scale that breaks a declared relation all render cleanly."
+  },
+  "number_line": {
+    "require_canonical_direction": true,
+    "min_ticks": 4
+  },
+  "angle_figure": {
+    "measure_tolerance_deg": 0.5,
+    "angle_pair_identity_is_semantic": true,
+    "rationale": "Lines & Angles showed that angle-pair identity must be declared rather than inferred from drawing position, and that a figure must not carry a parallel mark for a fact that is still to be proved."
+  },
+  "attempt_surface_policy": {
+    "learner_must_supply_separated_from_givens": true,
+    "answer_targets_may_not_be_plotted_on_the_attempt_surface": true,
+    "rationale": "Answer availability must not become answer leakage. A figure that plots the point the learner is asked to find has answered the question for them."
+  },
+  "falsifiers": [
+    "SPATIAL_REPRESENTATION_SEMANTICS_INVALID",
+    "ATTEMPT_REPRESENTATION_REVEALS_TARGET",
+    "SPATIAL_GIVEN_AND_TARGET_CONFLATED",
+    "SPATIAL_TARGET_NOT_DECLARED",
+    "COORDINATE_POINT_MISPLACED",
+    "AXIS_ORIENTATION_INCORRECT",
+    "VISUAL_SEMANTIC_RELATION_MISMATCH",
+    "ANGLE_PAIR_IDENTITY_MISMATCH",
+    "GEOMETRY_ASSUMPTION_LEAK",
+    "SPATIAL_SEMANTICS_GATE_FAILED"
+  ],
+  "release_meaning": "PUBLICATION_ENGINEERING only. Passing these gates is subject-correctness evidence for figures; visual usability and expert review remain PENDING."
+}

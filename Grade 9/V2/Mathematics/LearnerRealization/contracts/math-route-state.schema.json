@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-route-state.schema.json",
+  "title": "Mathematics Route State (learner mathematical realization step)",
+  "description": "One state transition in a learner-visible derivation. This is the shared cross-subject route-state shape {role, input_state, operation, output_state, why_valid}: naming an operation is never equivalent to demonstrating it, so a substantive state must expose a mathematical input and a mathematically changed output. Subject-wide generic; every topic is a data instance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "step_id",
+    "role",
+    "operation",
+    "output_state",
+    "why_valid",
+    "learner_explanation",
+    "trivial"
+  ],
+  "properties": {
+    "step_id": {"type": "string", "pattern": "^S[0-9]+$"},
+    "role": {
+      "enum": [
+        "INTERPRET",
+        "CLASSIFY",
+        "REPRESENT",
+        "MODEL",
+        "SELECT_THEOREM",
+        "SETUP",
+        "TRANSFORM",
+        "EXECUTE",
+        "COMPARE",
+        "INFER",
+        "CHECK_CONDITION",
+        "CHECK_SUFFICIENCY",
+        "VERIFY"
+      ]
+    },
+    "input_state": {
+      "oneOf": [{"$ref": "math-expression.schema.json"}, {"type": "null"}]
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "rule_or_justification"],
+      "properties": {
+        "name": {"type": "string", "minLength": 3},
+        "rule_or_justification": {"type": "string", "minLength": 8}
+      }
+    },
+    "substitution": {
+      "oneOf": [{"$ref": "math-expression.schema.json"}, {"type": "null"}]
+    },
+    "output_state": {"$ref": "math-expression.schema.json"},
+    "why_valid": {"type": "string", "minLength": 8},
+    "learner_explanation": {"type": "string", "minLength": 12},
+    "equivalence_witness": {
+      "oneOf": [{"$ref": "math-equivalence-transformation.schema.json"}, {"type": "null"}]
+    },
+    "sufficiency": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {
+            "status": {"enum": ["UNIQUE", "MULTIPLE", "UNDERDETERMINED", "INCONSISTENT"]},
+            "reason": {"type": "string", "minLength": 10},
+            "parameter_refs": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "core1_evidence_ref": {"type": ["string", "null"]},
+    "trivial": {"type": "boolean"}
+  }
+}

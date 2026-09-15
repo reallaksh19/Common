@@ -1,0 +1,60 @@
+{
+  "registry_id": "MATH-ATOMIC-ASK-KIND-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Subject-wide vocabulary for the second completeness dimension. An atomic ask is any obligation a source question places on the learner that can be lost independently of the question itself. These kinds are generic across every topic; a topic never introduces a new kind, it only supplies instances.",
+  "kinds": {
+    "SUBPART": {
+      "learner_visible": true,
+      "counts_toward": "subpart_count",
+      "loses_silently_when": "a compound question is rendered with only its first part"
+    },
+    "OPTION": {
+      "learner_visible": true,
+      "counts_toward": "option_count",
+      "loses_silently_when": "an option set is truncated, or a later panel covers the last options"
+    },
+    "PROOF_OBLIGATION": {
+      "learner_visible": true,
+      "counts_toward": "proof_obligation_count",
+      "loses_silently_when": "a 'prove ... and hence deduce ...' item keeps only the first deduction"
+    },
+    "PARAMETER_CONDITION": {
+      "learner_visible": true,
+      "counts_toward": "parameter_condition_count",
+      "loses_silently_when": "a condition such as 'for which values of k' is dropped, turning an underdetermined item into a unique-answer item"
+    },
+    "UNIT_REQUIREMENT": {
+      "learner_visible": true,
+      "counts_toward": null,
+      "loses_silently_when": "a modelling item loses its 'give your answer in cubic centimetres' clause"
+    },
+    "JUSTIFICATION": {
+      "learner_visible": true,
+      "counts_toward": null,
+      "loses_silently_when": "a 'give a reason for your answer' clause is dropped and the item becomes recall"
+    },
+    "CONSTRUCTION_STEP": {
+      "learner_visible": true,
+      "counts_toward": null,
+      "loses_silently_when": "a construction item keeps the figure but loses a required step"
+    },
+    "COUNTEREXAMPLE_REQUEST": {
+      "learner_visible": true,
+      "counts_toward": null,
+      "loses_silently_when": "a universal claim loses its 'or give a counterexample' branch"
+    }
+  },
+  "response_modes": [
+    "MCQ_SELECTION",
+    "ONE_LINE_JUSTIFICATION",
+    "ALGEBRA_CHAIN",
+    "PROOF",
+    "TABLE",
+    "NUMBER_LINE",
+    "COORDINATE_PLANE",
+    "CONSTRUCTION",
+    "MULTIPART",
+    "MODEL_UNIT_CALCULATION"
+  ]
+}
