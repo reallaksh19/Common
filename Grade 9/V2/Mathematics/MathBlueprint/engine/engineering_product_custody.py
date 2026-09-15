@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 from typing import Any
 
+import jsonschema
+
 from compile_mathematics_engineering_workbench import digest as engineering_digest
+from emit_stage_governance import digest as receipt_digest
 from validate_engineered_domain_admission import validate as validate_engineered_domain_admission
 
 
+ROOT = Path(__file__).resolve().parents[1]
+RECEIPT_SCHEMA = ROOT / "contracts" / "math-stage-governance-receipt.schema.json"
 UNBOUND_REASON = "ENGINEERING_DOMAIN_ADMISSION_NOT_SUPPLIED"
 
 
@@ -67,6 +73,36 @@ def load_custody(admission_path: str | Path | None, domain_registry: dict | None
         raise ValueError("ENGINEERING_PRODUCT_CUSTODY_REQUIRES_DOMAIN_REGISTRY")
     admission = json.loads(Path(admission_path).read_text(encoding="utf-8"))
     return build_custody(admission, domain_registry)
+
+
+def stamp_receipt(receipt: dict, custody: dict) -> dict:
+    """Attach Engineering custody and recompute stage readiness deterministically.
+
+    The low-level receipt primitive may be used by isolated unit tests without an
+    Engineering admission. Real producer entrypoints call this function on every run,
+    so an unstamped receipt cannot be mistaken for a release-capable producer output.
+    """
+    out = copy.deepcopy(receipt)
+    primitive_ready = out.get("release_state") == "READY_FOR_CROSS_CORE_AUDIT"
+    registry_bound = out.get("registry_binding", {}).get("status") == "BOUND"
+    engineering_bound = custody.get("status") == "BOUND"
+    if engineering_bound:
+        if not registry_bound:
+            raise ValueError("ENGINEERING_PRODUCT_CUSTODY_WITHOUT_DOMAIN_REGISTRY_BINDING")
+        if custody.get("domain_registry_id") != out["registry_binding"].get("registry_ref"):
+            raise ValueError("ENGINEERING_PRODUCT_CUSTODY_RECEIPT_REGISTRY_MISMATCH")
+    out["engineering_custody"] = copy.deepcopy(custody)
+    if out.get("release_state") == "BLOCKED_GOVERNANCE":
+        pass
+    elif primitive_ready and registry_bound and engineering_bound:
+        out["release_state"] = "READY_FOR_CROSS_CORE_AUDIT"
+    else:
+        out["release_state"] = "UNBOUND_PRE_RELEASE"
+    out["receipt_id"] = ""
+    out["receipt_id"] = f"MATH-STAGE-GOV-{out['stage']}-{receipt_digest(out)[:16]}"
+    schema = json.loads(RECEIPT_SCHEMA.read_text(encoding="utf-8"))
+    jsonschema.validate(out, schema)
+    return out
 
 
 def assert_same_custody(left: dict, right: dict, *, code: str = "ENGINEERING_PRODUCT_CUSTODY_DRIFT") -> None:
