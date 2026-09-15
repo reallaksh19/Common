@@ -4,6 +4,32 @@ This directory is the **Chemistry-specific** evidence, control and pedagogical-r
 
 The blueprint does **not** contain Chemistry answers. Original evidence remains authority; generated packets remain claims with explicit provenance, confidence and unresolved-state custody.
 
+---
+
+## Chemistry Technical Engineering Gate Registry (Upstream of Authored TTUs)
+
+Normative specification: `CHEMISTRY_TECHNICAL_ENGINEERING_GATES.md`.  
+Schema contract: `contracts/chemistry-technical-engineering-gate.schema.json`.  
+Canonical policy & registry: `policies/chemistry-technical-engineering-gates.v1.json`.  
+Deterministic validator: `engine/validate_chemistry_engineering_gates.py`.  
+Test suite & falsifiers: `tests/test_chemistry_engineering_gates.py`.
+
+At the **CANONICAL DOMAIN REGISTRY** boundary (upstream of CCU, CDAU, and authored TTUs), technical readiness requires fail-closed engineering validation across 10 granular, technically coherent Chemistry subtopics:
+- `CHEM-SYM-LITERACY`: Chemical symbols, atomic notation ($^A_Z X$), elemental diatomic molecules ($H_2, O_2, N_2, Cl_2$), subscripts vs coefficients.
+- `CHEM-ION-VALENCY`: Monoatomic ions, polyatomic radicals ($SO_4^{2-}, CO_3^{2-}, NH_4^+$), bracket enclosure rules, formal charges.
+- `CHEM-FORMULA-CONSTRUCTION`: Electroneutrality constraint ($\sum q_i = 0$), criss-cross valency algorithm, prohibition of unneutralized ionic formulas ($MgCl$, $NaSO_4$).
+- `CHEM-EQ-BALANCING`: Conservation of mass, atom conservation per element, coefficient-only balancing (subscript mutation strictly prohibited).
+- `CHEM-STATE-SYMBOLS`: Physical state symbols $(s), (l), (g), (aq)$, strict distinction between pure liquid $(l)$ and aqueous solution $(aq)$, precipitation $(\downarrow)$ and gas $(\uparrow)$ indicators.
+- `CHEM-REACTION-CONDITIONS`: Reaction arrow semantics (reversibility $\rightleftharpoons$ vs completion $\to$), catalytic/temperature/pressure conditions, thermochemical signs ($\Delta H < 0$ vs $\Delta H > 0$).
+- `CHEM-REP-TRANSLATION`: Johnstone's Triplet (Macroscopic observation $\leftrightarrow$ Particulate sub-microscopic model $\leftrightarrow$ Symbolic equation), prohibition of macroscopic property projection onto single particles.
+- `CHEM-CALC-STOICHIOMETRY`: Quantitative mole interconversions ($n = m/M$), molar ratios from coefficients (mass-ratio fallacy prevention), limiting reagent derivation.
+- `CHEM-ACID-BASE-IONS`: Arrhenius ionization in aqueous media, hydronium/hydroxide generation, moisture requirement for acidity, net ionic neutralization ($H^+ + OH^- \to H_2O$).
+- `CHEM-REDOX-OXIDATION`: Electron conservation, oxidation state assignment rules, agent role inversion (oxidizing agent is the species reduced).
+
+All subtopics enforce `maturity: ENGINEERING` and are verified by an automated 12-mutation production validator falsification battery.
+
+---
+
 ## v0 — evidence and adaptive routing
 
 `v0` freezes the supplied evidence state and chooses `CORE1_FIRST`, `CORE2_FIRST`, or a blocking state from `SA / SS / QE / QR / UA / CI`. Missing evidence stays missing; zero supplied questions never becomes zero importance; owner overrides change execution without erasing the system finding; handoffs are limited to at most three subtopics without limiting later learning-atom decomposition.
