@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "waiver_id": "MATH-CORE2-WAIVER-BOUND-GOLDEN-UNKNOWN",
+  "release_class": "TEST_ONLY",
+  "owner_ref": "OWNER:BOUND-GOLDEN",
+  "reason": "Golden has no learner observation evidence; use explicit test-only calibration rather than fabricate a learner percentage.",
+  "selected_core2a_support_profile": "STANDARD_GUIDED",
+  "selected_core2a_max_demand_level": "M3_INVERSE_TARGET",
+  "selected_core2b_max_demand_level": "M4_HIDDEN_STRUCTURE",
+  "waiver_digest": "da26db013e4be7098bf7389ddca31c3beed98744a773429ff5f2c0b48ac1d131"
+}
