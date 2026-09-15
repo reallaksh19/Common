@@ -1,0 +1,47 @@
+name: V2 Chemistry Four-Core Compilation
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - 'Grade 9/V2/Chemistry/LearnerProduct/**'
+      - '.github/workflows/v2-chemistry-four-core-compilation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  four-core-compilation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip jsonschema reportlab pymupdf pytest
+
+      - name: Run four-core compiler falsifiers
+        run: >-
+          pytest -q
+          'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_four_core_compilation.py'
+
+      - name: Re-run Engineering Workbench v2 regressions
+        run: >-
+          pytest -q
+          'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench_v2.py'
+          'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_gate_source_audit_generic.py'
+          'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_gates.py'
+
+      - name: Re-run Blueprint suite
+        run: pytest -q 'Grade 9/V2/Chemistry/LearningBlueprint/tests/'
+
+      - name: Re-run A-layer render regression
+        run: >-
+          pytest -q
+          'Grade 9/V2/Chemistry/LearnerProduct/tests/test_chemistry_learner_product_render_pipeline.py'
