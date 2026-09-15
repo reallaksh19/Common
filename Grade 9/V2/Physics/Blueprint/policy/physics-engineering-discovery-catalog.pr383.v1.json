@@ -38,7 +38,7 @@
     {"discovery_gate_id":"PHY-KIN-1D-MOTION","curriculum":{"grade":9,"chapter":"Ch 8"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-KIN-MOTION-GRAPHS","curriculum":{"grade":9,"chapter":"Ch 8"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-KIN-CIRCULAR-UNIFORM","curriculum":{"grade":9,"chapter":"Ch 8"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
-    {"discovery_gate_id":"PHY-FORCE-NEWTON-LAWS","curriculum":{"grade":9,"chapter":"Ch 9"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-FORCE-NEWTON-LAWS","curriculum":{"grade":9,"chapter":"Ch 9"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-NLM-INTERACTION","PHY-NLM-FBD","PHY-NLM-FIRST-LAW","PHY-NLM-SECOND-LAW","PHY-NLM-THIRD-LAW"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-FORCE-NEWTON-LAWS.v1.json"},
     {"discovery_gate_id":"PHY-FORCE-MOMENTUM-IMPULSE","curriculum":{"grade":9,"chapter":"Ch 9"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-GRAV-UNIVERSAL-LAW","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-GRAV-FORCE","PHY-GRAV-FIELD"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-GRAV-UNIVERSAL-LAW.v1.json"},
     {"discovery_gate_id":"PHY-GRAV-FREE-FALL","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
