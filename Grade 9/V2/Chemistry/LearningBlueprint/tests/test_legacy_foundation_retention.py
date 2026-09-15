@@ -60,13 +60,15 @@ class LegacyFoundationRetentionTests(unittest.TestCase):
         custody = (CHEM / "ExactProduct" / "validator" / "validate_chemistry_custody.py").read_text(encoding="utf-8")
         guard = (CHEM / "ExactProduct" / "engine" / "learner_surface_guard.py").read_text(encoding="utf-8")
         notation = (CHEM / "ExactProduct" / "engine" / "chemistry_notation.py").read_text(encoding="utf-8")
+        normalized_notation = " ".join(notation.split())
 
         self.assertIn("EXACT_ARTIFACT_HASH_MISMATCH", custody)
         self.assertIn("PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE", custody)
         self.assertIn("ORPHAN_CONTINUATION_FRAGMENT", custody)
         self.assertIn("MasterTemplates.VisualSemanticValidator", custody)
         self.assertIn("LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK", guard)
-        self.assertIn("Redox, conservation, acid-base and every other reaction type are handled as data", notation)
+        self.assertIn("Redox, conservation, acid-base and every other reaction type are handled as data", normalized_notation)
+        self.assertIn("never as separate code paths or separate schema shapes", normalized_notation)
 
     def test_pr322_machine_gate_cannot_substitute_for_human_gates(self):
         quality = load(CHEM / "ExactProduct" / "registry" / "chemistry-exact-product-quality-policy.json")
