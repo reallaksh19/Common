@@ -1,0 +1,107 @@
+{
+  "ledger_id": "CHEMISTRY-PR-CONSOLIDATION-v1",
+  "snapshot_date": "2026-09-15",
+  "repository": "reallaksh19/Common",
+  "principles": [
+    "ONE_ACTIVE_AUTHORITY_PER_ARCHITECTURAL_RESPONSIBILITY",
+    "TOPIC_STRESS_TESTS_ARE_NON_AUTHORITATIVE",
+    "REGRESSION_PROOFS_DO_NOT_DEFINE_GENERIC_ENGINE_BEHAVIOUR",
+    "USEFUL_SIBLING_WORK_MUST_BE_PORTED_EXPLICITLY_BEFORE_SUPERSESSION",
+    "NO_PR_IS_CLOSED_SOLELY_BECAUSE_A_NEWER_PR_EXISTS"
+  ],
+  "target_active_stack": [371, 384, 387, 385],
+  "pull_requests": [
+    {"number":322,"role":"PUBLICATION_RENDERING_FOUNDATION","disposition":"SUPERSEDED_BY_371_LINEAGE","authority_class":"INHERITED_PUBLICATION_ENGINEERING_INFRASTRUCTURE","ci_state":"LEGACY_RETENTION_PASS","next_action":"CLOSED_REVIEW_SURFACE; RETAIN GENERIC PUBLICATION ENGINEERING IN 371 ANCESTRY; HISTORICAL CANDIDATE IS NON_AUTHORITY"},
+    {"number":346,"role":"NCERT_AUTHORING_HANDOFF","disposition":"SUPERSEDED_BY_371_LINEAGE","authority_class":"HISTORICAL_AUTHORING_EVIDENCE","ci_state":"LEGACY_RETENTION_PASS","next_action":"CLOSED_REVIEW_SURFACE; RETAIN WORKBENCH ONLY AS HISTORICAL MIGRATION EVIDENCE"},
+    {"number":360,"role":"LEARNER_PRODUCT_MATURITY_SIBLING","disposition":"SUPERSEDED_BY_371","authority_class":"HISTORICAL_CONTROL_MIGRATION_SOURCE","ci_state":"MIGRATION_PASS","next_action":"CLOSED_REVIEW_SURFACE; RETAIN BRANCH AS HISTORICAL EVIDENCE ONLY"},
+    {"number":362,"role":"CORE1A_CORE2A_EXECUTION_FOUNDATION","disposition":"SUPERSEDED_BY_371_LINEAGE","authority_class":"INHERITED_EXECUTION_INFRASTRUCTURE","ci_state":"RETAINED_IN_371_ANCESTRY","next_action":"CLOSED_REVIEW_SURFACE; DO NOT DELETE BRANCH WHILE 371 USES ITS ANCESTRY"},
+    {"number":370,"role":"CORE1B_CORE2B_PRODUCT_PROOF","disposition":"SUPERSEDED_BY_371_STATIC_B_LAYER_BOUNDARY","authority_class":"REGRESSION_PRODUCT_IMPLEMENTATION","ci_state":"SOURCE_AND_MIGRATION_PASS","next_action":"CLOSED_REVIEW_SURFACE; RETAIN BRANCH AS B_LAYER PRODUCT REGRESSION"},
+    {"number":371,"role":"BLUEPRINT_ARCHITECTURE_ROOT","disposition":"ACTIVE","authority_class":"BLUEPRINT_PRODUCT_AND_GOVERNANCE_AUTHORITY","ci_state":"GOVERNANCE_INTEGRATION_PENDING_CI","next_action":"SERVE AS BLUEPRINT PRODUCT CONTROL STATIC_B_LAYER AND GOVERNANCE ROOT"},
+    {"number":375,"role":"V7_FOUR_PRODUCT_ASSURANCE_PROOF","disposition":"CLOSED_REGRESSION_PROOF","authority_class":"NON_CANONICAL_PRODUCT_PROOF","ci_state":"HISTORICAL_PASS","next_action":"RETAIN BRANCH AS V7 FOUR_PRODUCT REGRESSION ONLY"},
+    {"number":377,"role":"INITIAL_TECHNICAL_GATES_AND_REDOX_SPECIFIC_SOURCE_HARDENING","disposition":"SUPERSEDED_BY_387","authority_class":"ENGINEERING_MIGRATION_SOURCE","ci_state":"HISTORICAL_PASS","next_action":"CLOSED_REVIEW_SURFACE; RETAIN BRANCH AS MIGRATION EVIDENCE"},
+    {"number":381,"role":"REDOX_COUPLED_ENGINEERING_WORKBENCH_V1","disposition":"SUPERSEDED_BY_387","authority_class":"ENGINEERING_MIGRATION_SOURCE","ci_state":"HISTORICAL_PASS","next_action":"CLOSED_REVIEW_SURFACE; RETAIN BRANCH AS MIGRATION EVIDENCE"},
+    {"number":384,"role":"COMPLETE_GRADE9_11_TECHNICAL_GATE_REGISTRY","disposition":"ACTIVE","authority_class":"ENGINEERING_REGISTRY_AUTHORITY_CANDIDATE","ci_state":"PASS","next_action":"SERVE AS COMPLETE REGISTRY BASE FOR WORKBENCH_V2"},
+    {"number":385,"role":"REDOX_CORE1A_PRODUCT_STRESS_TEST","disposition":"BLOCKED_STRESS_TEST","authority_class":"NON_AUTHORITATIVE_STRESS_TEST","ci_state":"FAIL_ON_OLD_STACK","next_action":"REBASE_OR_REBUILD_ON_387; NEVER USE AS GROUND_TRUTH OR GENERIC CODE BASIS"},
+    {"number":386,"role":"ARCHITECTURE_GOVERNANCE_AND_PR_CONSOLIDATION","disposition":"SUPERSEDED_BY_371_GOVERNANCE_INTEGRATION","authority_class":"GOVERNANCE_MIGRATION_SOURCE","ci_state":"SOURCE_PASS_MIGRATION_PENDING","next_action":"CLOSE AFTER 371 GOVERNANCE WORKFLOW PASSES"},
+    {"number":387,"role":"GENERIC_SOURCE_AUDIT_AND_ENGINEERING_WORKBENCH_V2","disposition":"ACTIVE","authority_class":"ENGINEERING_CONTROL_PLANE_CANDIDATE","ci_state":"PASS","next_action":"BE UPSTREAM FOR TOPIC STRESS TESTS"}
+  ],
+  "migration_evidence": {
+    "322_346": {
+      "target_pr": 371,
+      "retention_ref": "LearningBlueprint/policies/legacy-foundation-retention.v1.json",
+      "verification_state": "RETENTION_COMPLETE_CI_PASS",
+      "closed_review_surfaces": [322, 346]
+    },
+    "360": {
+      "target_pr": 371,
+      "migration_ref": "LearningBlueprint/policies/pr360-control-migration.v1.json",
+      "generic_control_policy_ref": "LearningBlueprint/policies/product-control-consolidation.v1.json",
+      "controls_ported": ["GENERATION_ORCHESTRATION_CONTRACT", "SOURCE_DENOMINATOR_FREEZE", "LOCAL_VISUAL_OBLIGATION_CLOSURE", "FAIL_CLOSED_LEARNER_ROLE_PROJECTION", "ROLE_LEVEL_LEGIBILITY_AND_DENSITY"],
+      "controls_absorbed": ["HELPER_PEDAGOGY_ACTIONABILITY", "ANSWER_CUSTODY"],
+      "historical_only": ["CAPABILITY_TAXONOMY_BREADTH", "HISTORICAL_EXACT_PRODUCT_CANDIDATE"]
+    },
+    "362": {
+      "target_pr": 371,
+      "retention_mode": "GIT_ANCESTRY_AND_CURRENT_HEAD_FILES",
+      "verified_current_head_files": [
+        "LearnerProduct/EXECUTION_CONTRACT.md",
+        "LearnerProduct/policies/chemistry-answer-path-policy.json",
+        "LearnerProduct/policies/chemistry-learner-language-policy.json",
+        "LearnerProduct/policies/chemistry-learner-render-policy.json",
+        "LearnerProduct/engine/preflight_chemistry_learner_products.py"
+      ]
+    },
+    "370": {
+      "target_pr": 371,
+      "migration_ref": "LearningBlueprint/policies/pr370-control-migration.v1.json",
+      "generic_boundary_policy_ref": "LearningBlueprint/policies/static-b-layer-boundary.v1.json",
+      "generic_validator_ref": "LearningBlueprint/engine/validate_static_b_layer_boundary.py",
+      "controls_ported": [
+        "STATIC_ONLY_B_LAYER_BOUNDARY",
+        "NO_NEW_CHEMISTRY_IN_B_LAYER",
+        "CORE1B_DEPTH_INDEPENDENT_OF_LEARNER_PERCENT",
+        "CORE1B_UPSTREAM_CAPABILITY_FAMILY_AND_REPRESENTATION_CUSTODY",
+        "CORE1B_MODULE_SPECIFIC_HINT_LADDERS",
+        "CORE2B_SUPPORT_ONLY_CONDITIONING",
+        "CORE2B_CORE2A_LEGAL_ITEM_AND_SOURCE_IDENTITY_CUSTODY",
+        "PROGRESSIVE_FIXED_HELP_AND_ANSWER_CLOSURE"
+      ],
+      "regression_only": [
+        "B_LAYER_REPORTLAB_RENDERERS_AND_LAYOUT",
+        "TOPIC_SPECIFIC_HARD_DEEP_PRODUCT_EXEMPLAR",
+        "PR370_GOLDEN_INPUTS_AND_EMITTED_PRODUCTS"
+      ]
+    },
+    "375": {
+      "retention_mode": "REGRESSION_BRANCH_ONLY",
+      "head_sha": "d99c458d1f9de4ee62b67b313c437956f6103069",
+      "dedicated_workflow_state": "PASS",
+      "unique_generic_control_found": false
+    },
+    "386": {
+      "target_pr": 371,
+      "ported_files": [
+        "Governance/ARCHITECTURE_GOVERNANCE.md",
+        "Governance/chemistry-pr-consolidation.v1.json",
+        "LearningBlueprint/policies/topic-stress-test-boundary.v1.json",
+        "LearningBlueprint/tests/test_architecture_governance.py",
+        ".github/workflows/v2-chemistry-architecture-governance.yml"
+      ],
+      "source_head": "bd1157ed5969469d01ac2d069766d4c15ac90859",
+      "source_ci_state": "PASS",
+      "stale_reference_corrected": "TARGET_STACK_USES_387_NOT_381"
+    }
+  },
+  "closure_preconditions": {
+    "322_346": ["LEGACY_RETENTION_POLICY_PRESENT", "371_V0_V7_GREEN", "HISTORICAL_ARTIFACTS_NON_AUTHORITATIVE"],
+    "360": ["PORT_LEDGER_COMPLETE", "NO_UNIQUE_GENERIC_CONTROL_LOST", "371_CONTROL_MIGRATION_CI_GREEN"],
+    "362": ["EXECUTION_MECHANICS_EXPLICITLY_RETAINED_IN_371_LINEAGE", "371_HEAD_CONTAINS_EXECUTION_CONTRACT_AND_PREFLIGHT"],
+    "370": ["TOPIC_NEUTRAL_STATIC_B_LAYER_BOUNDARY_PORTED", "SYNTHETIC_B_LAYER_FALSIFIERS_GREEN", "TOPIC_PRODUCT_EXEMPLARS_CLASSIFIED_REGRESSION_ONLY", "371_V0_V7_GREEN"],
+    "375": ["NO_UNIQUE_GENERIC_CONTROL_FOUND", "SOURCE_BRANCH_CI_GREEN", "REGRESSION_BRANCH_RETAINED"],
+    "377": ["GENERIC_SOURCE_HARDENING_REWRITTEN_ON_384_LINEAGE", "NO_REDOX_SPECIFIC_VALIDATOR_LOGIC_RETAINED", "387_GREEN"],
+    "381": ["TOPIC_NEUTRAL_CLOSURE_PORTED", "GENERIC_PRODUCT_SOURCE_SCOPE_PORTED", "CDAU_AND_PAL_CUSTODY_PORTED", "387_GREEN"],
+    "386": ["TOPIC_STRESS_FIREWALL_PORTED_TO_371", "CONSOLIDATION_LEDGER_PORTED_TO_371", "GOVERNANCE_TEST_AND_WORKFLOW_GREEN_ON_371"],
+    "385": ["STRESS_TEST_RETAINED_AS_NON_AUTHORITATIVE_REGRESSION"]
+  },
+  "status": "GOVERNANCE_INTEGRATION_PENDING_CI"
+}
