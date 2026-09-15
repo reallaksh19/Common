@@ -25,6 +25,8 @@ jobs:
           paths = [
               root/'policies/v7-product-assurance-policy.json',
               root/'policies/v7-core1a-study-note-sufficiency-policy.json',
+              root/'policies/product-control-consolidation.v1.json',
+              root/'policies/pr360-control-migration.v1.json',
               root/'contracts/content-bill-of-materials-v7.schema.json',
               root/'contracts/core1a-study-note-authority-v7.schema.json',
               root/'contracts/question-custody-v7.schema.json',
@@ -42,6 +44,7 @@ jobs:
         run: |
           python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v7_product_assurance.py' -v
           python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_core1a_study_note_v7.py' -v
+          python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_product_control_consolidation.py' -v
 
       - name: Validate CCBOM and Core1A study-note authority
         run: |
