@@ -123,13 +123,8 @@ jobs:
           /tmp/m2d-sba04-engineering-closure.json
           --out /tmp/m2d-sba04-engineering-passport.json
           --markdown-out /tmp/m2d-sba04-engineering-passport.md
-      - name: Publish aggregate engineering readiness in workflow summary
-        run: |
-          cat /tmp/physics-engineering-readiness/summary.md >> "$GITHUB_STEP_SUMMARY"
-          printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
-          cat /tmp/m2d-sba23-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
-          printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
-          cat /tmp/m2d-sba04-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Publish canonical aggregate engineering authority in workflow summary
+        run: cat /tmp/physics-engineering-readiness/summary.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload subject-wide PR383 migration-gap proof
         uses: actions/upload-artifact@v4
         with:
