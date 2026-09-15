@@ -1,5 +1,7 @@
 # V3B acceptance and regression contract
 
+Implementation update: the [Physics publication host](../ProductionKit/V3B-Runtime-Map.md) now enforces a bounded subset against real exported HTML/SVG and source bytes. Its test results are separate from this full acceptance specification. Full six-Core authoring/release integration remains pending.
+
 This is a topic-independent specification of evidence required for acceptance, not a report that these tests have executed. The [rule catalogue](V3B-Production-Rules.json) assigns stable IDs. Existing JavaScript proof checks remain prerequisites within their documented scope; they do not implement this complete suite. The older four-Core Python runtime is not certified by this revision.
 
 ## Evidence and gate computation

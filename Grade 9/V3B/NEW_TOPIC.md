@@ -1,5 +1,7 @@
 # New-topic entry contract — current Physics phase
 
+Available publication path: [Physics publish/verify commands](Physics/ProductionKit/V3B-Publication-Input.md). The [runtime map](Physics/ProductionKit/V3B-Runtime-Map.md) states precisely which requirements are enforced and which remain review/integration gates. The legacy authoring command family remains a four-Core prototype.
+
 First read the [V3B production blueprint](Physics/Blueprint/V3B-Production-Blueprint.md), then use its [generic agent work order](Physics/Blueprint/V3B-Agent-Execution.md) and [acceptance/implementation ledger](Physics/Blueprint/V3B-Acceptance-and-Regression.md). These requirements apply to every Physics topic. The Motion stress test is a regression corpus, not a special authoring route.
 
 A new Physics topic begins at [Engineering/TOPIC_WORKFLOW.md](Physics/Engineering/TOPIC_WORKFLOW.md). Read the [owner board](Physics/Engineering/OWNER_BOARD.md), [Core contracts](Physics/Engineering/CORE_CONTRACTS.md), [packet contract](Physics/Engineering/PACKET_CONTRACT.md), and the topic's exact source/gate/baseline versions before authoring.

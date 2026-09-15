@@ -1,5 +1,7 @@
 # Physics owner board — V3B
 
+Current executable addition: [V3B Physics publication host](../ProductionKit/V3B-Runtime-Map.md). It now produces four A/B HTML products, source-bound vector/graph SVG, actual-answer checks and a per-publication owner board. Download the [portable proof archive](../ProductionKit/evidence/V3B-Publication-Proof.zip) and open OWNER_BOARD.html. These are integration specimens, not complete learner books. Academic/full-page browser review and full authoring-state integration remain open.
+
 ## Current architecture revision
 
 The [V3B production blueprint](../Blueprint/V3B-Production-Blueprint.md) now governs all new Physics topics. It requires substantive content and publication evidence, per-Core teaching depth, complete answers, declared example exposure, data-bound figures, scoped learner fit and portable relay. Motion supplies regression failure classes; it is not the production algorithm.

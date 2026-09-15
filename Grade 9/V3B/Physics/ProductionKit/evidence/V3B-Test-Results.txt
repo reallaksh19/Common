@@ -1,0 +1,33 @@
+test_actual_four_product_cli_and_readback (test_publication_host.PublicationHostTests.test_actual_four_product_cli_and_readback) ... ok
+test_all_question_pairs_and_intentional_reuse_are_visible (test_publication_host.PublicationHostTests.test_all_question_pairs_and_intentional_reuse_are_visible) ... ok
+test_changed_source_bytes_fail (test_publication_host.PublicationHostTests.test_changed_source_bytes_fail) ... ok
+test_changed_source_values_feed_calculation_after_legitimate_rebinding (test_publication_host.PublicationHostTests.test_changed_source_values_feed_calculation_after_legitimate_rebinding) ... ok
+test_empty_answer_body_with_anchor_and_resealed_hash_fails (test_publication_host.PublicationHostTests.test_empty_answer_body_with_anchor_and_resealed_hash_fails) ... ok
+test_empty_authored_solution_rejected (test_publication_host.PublicationHostTests.test_empty_authored_solution_rejected) ... ok
+test_equation_mutation_rejected (test_publication_host.PublicationHostTests.test_equation_mutation_rejected) ... ok
+test_equivalent_numeric_format_is_accepted (test_publication_host.PublicationHostTests.test_equivalent_numeric_format_is_accepted) ... ok
+test_forged_review_state_fails (test_publication_host.PublicationHostTests.test_forged_review_state_fails) ... ok
+test_graph_axis_minimum_and_piecewise_trend (test_publication_host.PublicationHostTests.test_graph_axis_minimum_and_piecewise_trend) ... ok
+test_graph_range_cannot_hide_observations (test_publication_host.PublicationHostTests.test_graph_range_cannot_hide_observations) ... ok
+test_knowledge_waiver_and_study_separation (test_publication_host.PublicationHostTests.test_knowledge_waiver_and_study_separation) ... ok
+test_missing_required_question_rejected (test_publication_host.PublicationHostTests.test_missing_required_question_rejected) ... ok
+test_numeric_variant_cannot_receive_transfer_approval (test_publication_host.PublicationHostTests.test_numeric_variant_cannot_receive_transfer_approval) ... ok
+test_omitted_runtime_file_cannot_be_hidden_by_manifest (test_publication_host.PublicationHostTests.test_omitted_runtime_file_cannot_be_hidden_by_manifest) ... ok
+test_original_condition_and_options_cannot_be_silently_lost (test_publication_host.PublicationHostTests.test_original_condition_and_options_cannot_be_silently_lost) ... ok
+test_original_source_number_cannot_change (test_publication_host.PublicationHostTests.test_original_source_number_cannot_change) ... ok
+test_owner_waiver_is_not_measured_knowledge (test_publication_host.PublicationHostTests.test_owner_waiver_is_not_measured_knowledge) ... ok
+test_recovery_uses_only_copied_sources_inputs_and_runtime (test_publication_host.PublicationHostTests.test_recovery_uses_only_copied_sources_inputs_and_runtime) ... ok
+test_requested_core_cannot_disappear_from_plan (test_publication_host.PublicationHostTests.test_requested_core_cannot_disappear_from_plan) ... ok
+test_source_atom_must_reach_required_core_objects (test_publication_host.PublicationHostTests.test_source_atom_must_reach_required_core_objects) ... ok
+test_stale_baseline_and_publication_cannot_be_overwritten (test_publication_host.PublicationHostTests.test_stale_baseline_and_publication_cannot_be_overwritten) ... ok
+test_svg_geometry_independent_sign_and_equal_scale_check (test_publication_host.PublicationHostTests.test_svg_geometry_independent_sign_and_equal_scale_check) ... ok
+test_tampered_svg_and_resealed_hash_rejected (test_publication_host.PublicationHostTests.test_tampered_svg_and_resealed_hash_rejected) ... ok
+test_unknown_scientific_family_is_held (test_publication_host.PublicationHostTests.test_unknown_scientific_family_is_held) ... ok
+test_unsupported_source_figure_is_held_instead_of_omitted (test_publication_host.PublicationHostTests.test_unsupported_source_figure_is_held_instead_of_omitted) ... ok
+test_wrong_figure_source_binding_rejected (test_publication_host.PublicationHostTests.test_wrong_figure_source_binding_rejected) ... ok
+test_wrong_visible_answer_detected_even_without_changing_calculator (test_publication_host.PublicationHostTests.test_wrong_visible_answer_detected_even_without_changing_calculator) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 2.162s
+
+OK

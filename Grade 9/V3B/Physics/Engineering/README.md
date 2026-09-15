@@ -1,5 +1,7 @@
 # Physics engineering gates — V3B
 
+Executable publication update: [Physics publication host and coverage](../ProductionKit/V3B-Runtime-Map.md). This separate command consumes authored products and creates checked HTML/SVG; its evidence does not extend the old interactive gate console automatically.
+
 Current mandatory authoring specification: [V3B production blueprint](../Blueprint/V3B-Production-Blueprint.md), [agent work order](../Blueprint/V3B-Agent-Execution.md), and [acceptance/implementation ledger](../Blueprint/V3B-Acceptance-and-Regression.md). This revision strengthens acceptance requirements; existing proof test counts do not certify them.
 
 Start with [OWNER_BOARD.md](OWNER_BOARD.md), then [TOPIC_WORKFLOW.md](TOPIC_WORKFLOW.md). The owner board makes topic scope, mandatory Physics, evidence, unresolved gaps and the next action visible before learner production.

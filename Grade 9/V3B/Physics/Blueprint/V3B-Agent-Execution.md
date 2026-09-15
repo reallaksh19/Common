@@ -1,5 +1,7 @@
 # V3B generic Physics agent execution and relay
 
+Publication execution: after preparing accepted baseline/source and authored product inputs, use the [Physics publication command](../ProductionKit/V3B-Publication-Input.md). It emits actual HTML/SVG and verifies their bytes and supported numerical answers. Do not infer academic approval from this bounded host.
+
 Use this work order for any Physics topic. Fill the parameters from owner instructions and source evidence; do not infer owner authorization or measured knowledge. Read [the production blueprint](V3B-Production-Blueprint.md) and [acceptance contract](V3B-Acceptance-and-Regression.md) first.
 
 ## Reusable work order

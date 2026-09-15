@@ -101,7 +101,7 @@
       "applies_to": "ALL_SELECTED",
       "required_evidence_method": "SOURCE_AND_REVIEW",
       "falsifier": "alter_value_unit_or_omit_subpart",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "COV-01",
@@ -109,7 +109,7 @@
       "applies_to": "ALL_SELECTED",
       "required_evidence_method": "HOST_AND_CONTENT",
       "falsifier": "retain_anchor_delete_body",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "SEM-01",
@@ -117,7 +117,7 @@
       "applies_to": "ALL_SELECTED",
       "required_evidence_method": "ORACLE_AND_REVIEW",
       "falsifier": "change_operation_or_condition",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "DEP-01",
@@ -141,7 +141,7 @@
       "applies_to": "ALL_SELECTED",
       "required_evidence_method": "HOST_AND_REVIEW",
       "falsifier": "add_unregistered_prompt_or_empty_answer",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "ANS-02",
@@ -149,7 +149,7 @@
       "applies_to": "COMPUTABLE_ANSWERS",
       "required_evidence_method": "ORACLE_AND_PUBLICATION",
       "falsifier": "corrupt_displayed_answer_only",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "FIG-01",
@@ -157,7 +157,7 @@
       "applies_to": "FIGURE_OBLIGATIONS",
       "required_evidence_method": "HOST_AND_REVIEW",
       "falsifier": "swap_incompatible_valid_figure",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "FIG-02",
@@ -165,7 +165,7 @@
       "applies_to": "FIGURE_OBLIGATIONS",
       "required_evidence_method": "GEOMETRY_AND_VISUAL_REVIEW",
       "falsifier": "change_direction_scale_or_graph",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "REUSE-01",
@@ -173,7 +173,7 @@
       "applies_to": "ALL_AB",
       "required_evidence_method": "HOST_AND_REVIEW",
       "falsifier": "omit_repeated_pair_from_author_list",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "TRANSFER-01",
@@ -189,7 +189,7 @@
       "applies_to": "PRACTICE_AB",
       "required_evidence_method": "HOST_AND_REVIEW",
       "falsifier": "remove_knowledge_and_waiver",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "FIT-02",
@@ -213,7 +213,7 @@
       "applies_to": "ALL_SELECTED",
       "required_evidence_method": "HOST_RECOVERY_EXERCISE",
       "falsifier": "omit_dependency_from_bundle",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     },
     {
       "id": "EXT-01",
@@ -229,7 +229,7 @@
       "applies_to": "ALL_SELECTED",
       "required_evidence_method": "TRUSTED_HOST",
       "falsifier": "claim_missing_or_stale_check_passed",
-      "runtime_enforcement": "PENDING"
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
     }
   ],
   "release": {
@@ -237,6 +237,7 @@
     "not_applicable_requires_reviewed_applicability": true,
     "exact_version_owner_authorization_required": true,
     "catalogue_validation_authorizes_release": false,
-    "runtime_enforcement": "PENDING"
-  }
+    "runtime_enforcement": "PREVIEW_HOST_ALWAYS_FALSE; FULL_RELEASE_INTEGRATION_PENDING"
+  },
+  "runtime_coverage_ref": "../ProductionKit/V3B-Runtime-Map.md"
 }

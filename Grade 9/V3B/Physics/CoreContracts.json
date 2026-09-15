@@ -45,5 +45,7 @@
   "production_blueprint_ref": "Blueprint/V3B-Production-Blueprint.md",
   "production_rule_catalogue_ref": "Blueprint/V3B-Production-Rules.json",
   "production_acceptance_ref": "Blueprint/V3B-Acceptance-and-Regression.md",
-  "production_runtime_enforcement": "PENDING"
+  "production_runtime_enforcement": "PARTIAL_PUBLICATION_HOST",
+  "production_entrypoint": "ProductionKit/run.py publish",
+  "production_host_coverage_ref": "ProductionKit/V3B-Runtime-Map.md"
 }
