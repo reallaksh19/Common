@@ -6,6 +6,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import pymupdf
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas as rl_canvas
 
@@ -13,7 +14,7 @@ D = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(D / "engine"))
 
 import chemistry_visual_primitives as VP  # noqa: E402
-from chemistry_electron_transfer_primitive import install  # noqa: E402
+from chemistry_electron_transfer_primitive import MIN_LEARNER_FONT_PT, install  # noqa: E402
 from realize_chemistry_exact_product import register_fonts  # noqa: E402
 
 install()
@@ -30,6 +31,7 @@ def expect(exc, fn, label):
 
 assert "ELECTRON_TRANSFER_LEDGER" in VP.PRIMITIVE_KINDS
 assert "ELECTRON_TRANSFER_LEDGER" in VP.RENDERERS
+assert MIN_LEARNER_FONT_PT == 9.0
 
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "electron-transfer-ledger-probe.pdf"
@@ -74,11 +76,26 @@ with tempfile.TemporaryDirectory() as td:
     )
     expect(
         VP.ConservationError,
-        lambda: VP.render_primitive("ELECTRON_TRANSFER_LEDGER", broken, c, (42, 120, 500, 126)),
+        lambda: VP.render_primitive("ELECTRON_TRANSFER_LEDGER", broken, c, (42, 120, 500, 164)),
         "unequal electron exchange rejected",
     )
     c.save()
     assert path.exists() and path.stat().st_size > 0
 
+    # Physical text extraction independently proves that this primitive does
+    # not undercut the current learner-product engineering font floor.
+    doc = pymupdf.open(path)
+    span_sizes = [
+        float(span["size"])
+        for page in doc
+        for block in page.get_text("dict").get("blocks", [])
+        for line in block.get("lines", [])
+        for span in line.get("spans", [])
+        if str(span.get("text", "")).strip()
+    ]
+    assert span_sizes, "no learner-facing text extracted from probe"
+    assert min(span_sizes) + 1e-6 >= MIN_LEARNER_FONT_PT, min(span_sizes)
+
 print("CHEMISTRY C-H electron-transfer primitive physical falsifiers = PASS")
 print("Same renderer exercised across multiple chemical contexts; no topic branch used.")
+print("Electron-transfer primitive minimum learner font = 9.0 pt PASS")
