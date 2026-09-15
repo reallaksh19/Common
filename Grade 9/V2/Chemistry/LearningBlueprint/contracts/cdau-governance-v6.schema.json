@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-cdau-governance-v6.schema.json",
+  "title": "Chemistry CDAU Governance v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "governance_id",
+    "subtopic_id",
+    "purpose_contracts",
+    "content_lineage",
+    "asset_reuse",
+    "duplicate_control",
+    "representation_lineage",
+    "example_fingerprints",
+    "source_custody",
+    "a_b_differentiation",
+    "owner_decision_provenance",
+    "self_help_requirements",
+    "release_policy"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "governance_id": {"type": "string", "minLength": 1},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "purpose_contracts": {
+      "type": "object",
+      "required": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    "content_lineage": {"type": "array", "minItems": 1},
+    "asset_reuse": {"type": "object"},
+    "duplicate_control": {
+      "type": "object",
+      "required": ["semantic_reuse_allowed", "pedagogical_duplication_forbidden"],
+      "properties": {
+        "semantic_reuse_allowed": {"const": true},
+        "pedagogical_duplication_forbidden": {"const": true}
+      }
+    },
+    "representation_lineage": {"type": "array"},
+    "example_fingerprints": {"type": "array"},
+    "source_custody": {
+      "type": "object",
+      "required": ["frozen_question_identity_preserved", "source_provenance_preserved", "canonical_solution_authority_preserved"],
+      "properties": {
+        "frozen_question_identity_preserved": {"const": true},
+        "source_provenance_preserved": {"const": true},
+        "canonical_solution_authority_preserved": {"const": true}
+      }
+    },
+    "a_b_differentiation": {
+      "type": "object",
+      "required": ["learner_action_differs", "sequence_differs", "pedagogical_duplication_status"],
+      "properties": {
+        "learner_action_differs": {"const": true},
+        "sequence_differs": {"const": true},
+        "pedagogical_duplication_status": {"const": "PASS"}
+      }
+    },
+    "owner_decision_provenance": {"type": "array"},
+    "self_help_requirements": {"type": "object"},
+    "release_policy": {
+      "type": "object",
+      "required": ["cdau_may_not_select_core2_support", "cdau_may_not_rewrite_intrinsic_difficulty"],
+      "properties": {
+        "cdau_may_not_select_core2_support": {"const": true},
+        "cdau_may_not_rewrite_intrinsic_difficulty": {"const": true}
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,104 @@
+name: V2 Chemistry Learning Blueprint v6 Canonical Architecture
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-learning-blueprint-v6.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-v6-architecture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate v6 JSON syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          targets = [
+              root / 'BLUEPRINT_INVARIANTS.json',
+              root / 'contracts/canonical-domain-registry-v6.schema.json',
+              root / 'contracts/cdau-governance-v6.schema.json',
+              root / 'contracts/study-differentiation-unit-v6.schema.json',
+              root / 'contracts/learner-adaptation-unit-v6.schema.json',
+              root / 'contracts/concept-ttu-v6.schema.json',
+              root / 'contracts/problem-ttu-v6.schema.json',
+              root / 'contracts/tutor-dialogue-v6.schema.json',
+              root / 'contracts/self-help-closure-v6.schema.json',
+              root / 'policies/v6-dual-router-ttu-family-policy.json',
+          ] + sorted((root / 'golden/v6').glob('*.json'))
+          for path in targets:
+              json.loads(path.read_text(encoding='utf-8'))
+              print('JSON_OK', path)
+          PY
+
+      - name: Run v6 canonical architecture falsifiers
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v6_architecture.py' -v
+
+      - name: Validate Registry CDAU SDU and LAU goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          POLICY="$ROOT/policies/v6-dual-router-ttu-family-policy.json"
+          ENGINE="$ROOT/engine/validate_blueprint_v6.py"
+          python "$ENGINE" --policy "$POLICY" --registry "$ROOT/golden/v6/registry-redox.json"
+          python "$ENGINE" --policy "$POLICY" --cdau "$ROOT/golden/v6/cdau-redox.json"
+          python "$ENGINE" --policy "$POLICY" --sdu "$ROOT/golden/v6/sdu-hard-redox.json"
+          python "$ENGINE" --policy "$POLICY" --lau "$ROOT/golden/v6/lau-knowledge-redox.json"
+          python "$ENGINE" --policy "$POLICY" --lau "$ROOT/golden/v6/lau-owner-redox.json"
+
+      - name: Validate Concept and Problem TTU goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          POLICY="$ROOT/policies/v6-dual-router-ttu-family-policy.json"
+          ENGINE="$ROOT/engine/validate_blueprint_v6.py"
+          python "$ENGINE" --policy "$POLICY" --concept-ttu "$ROOT/golden/v6/concept-ttu-core1a-redox.json"
+          python "$ENGINE" --policy "$POLICY" --concept-ttu "$ROOT/golden/v6/concept-ttu-core1b-redox.json"
+          python "$ENGINE" --policy "$POLICY" --problem-ttu "$ROOT/golden/v6/problem-ttu-core2a-redox.json"
+          python "$ENGINE" --policy "$POLICY" --problem-ttu "$ROOT/golden/v6/problem-ttu-core2b-redox.json"
+
+      - name: Validate B-layer dialogue and all self-help closures
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          POLICY="$ROOT/policies/v6-dual-router-ttu-family-policy.json"
+          ENGINE="$ROOT/engine/validate_blueprint_v6.py"
+          python "$ENGINE" --policy "$POLICY" --dialogue "$ROOT/golden/v6/dialogue-core1b-redox.json"
+          python "$ENGINE" --policy "$POLICY" --dialogue "$ROOT/golden/v6/dialogue-core2b-redox.json"
+          for f in "$ROOT"/golden/v6/self-help-*.json; do
+            python "$ENGINE" --policy "$POLICY" --self-help "$f"
+          done
+
+      - name: Assert v6 governing invariants
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          inv = json.loads((root / 'BLUEPRINT_INVARIANTS.json').read_text(encoding='utf-8'))
+          rules = {x['rule'] for x in inv['invariants']}
+          required = {
+              'CANONICAL_DOMAIN_REGISTRY_IS_DOWNSTREAM_OF_CORE1_CORE2_JOIN_AND_STORES_VALIDATED_STABLE_ASSET_IDS_WITH_PROVENANCE',
+              'CDAU_OWNS_CROSS_CORE_LINEAGE_DIFFERENTIATION_DUPLICATION_SOURCE_CUSTODY_AND_RELEASE_GOVERNANCE_BUT_NOT_SDU_OR_LAU_DECISIONS',
+              'SDU_GOVERNS_ONLY_CORE1A_CORE1B_AND_MUST_NOT_CONSUME_LEARNER_KNOWLEDGE_PERCENT_OR_LEARNER_STATE',
+              'LAU_SUPPORT_IS_A_FUNCTION_OF_LEARNER_STATE_OR_OWNER_OVERRIDE_TASK_DEMAND_AND_PURPOSE_NOT_KNOWLEDGE_PERCENT_ALONE',
+              'CORE1A_CORE1B_USE_CONCEPT_TTU_AND_CORE2A_CORE2B_USE_PROBLEM_TTU',
+              'CORE1B_AND_CORE2B_REQUIRE_STATIC_TARGET_DRIVEN_TUTOR_DIALOGUE_WITH_ATTEMPT_BEFORE_CANONICAL_REVEAL',
+              'A_REPRESENTS_THE_CANONICAL_COMPLETED_STATE_AND_B_REPRESENTS_THE_CANONICAL_RECONSTRUCTION_EXPERIENCE',
+              'G5_LEARNER_TASK_FIT_APPLIES_ONLY_TO_CORE2A_CORE2B_AND_DOES_NOT_APPLY_TO_CORE1A_CORE1B',
+          }
+          missing = sorted(required - rules)
+          assert not missing, missing
+          print('V6_GOVERNING_INVARIANTS=PASS')
+          PY
+
+      - name: Assert v6 documentation exists
+        run: test -s 'Grade 9/V2/Chemistry/LearningBlueprint/V6_CANONICAL_ARCHITECTURE.md'

@@ -1,0 +1,16 @@
+{
+  "schema_version": "7.0.0",
+  "product_mode": "CORE2A",
+  "question_id": "CHEM-C2A-SRC-U2Q15C",
+  "purpose": "REVISION",
+  "purpose_used": true,
+  "task_demand_score": 8,
+  "compiler_support": "GUIDED",
+  "fit_focus": ["recognition"],
+  "conditioning": {
+    "mode": "OWNER_OVERRIDE",
+    "support_band": "GUIDED",
+    "reason": "learner knowledge percentage unavailable",
+    "knowledge_percent": null
+  }
+}

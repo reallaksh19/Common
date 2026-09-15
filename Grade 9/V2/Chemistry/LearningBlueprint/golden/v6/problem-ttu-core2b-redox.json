@@ -1,0 +1,77 @@
+{
+  "schema_version": "6.0.0",
+  "ttu_family": "PROBLEM_TTU",
+  "ttu_id": "PT-C2B-REDOX-001",
+  "product_mode": "CORE2B",
+  "identity": {
+    "problem_family_id": "PF-AGENT-ROLE-ASSIGNMENT",
+    "capability_requirements": ["CAP-TRACK-OXIDATION-STATE", "CAP-ATTACH-SPECIES-ROLE"],
+    "question_id": "Q-REDOX-FROZEN-001",
+    "question_authority_ref": "REG-CHEM-G9-REDOX-001:Q-REDOX-FROZEN-001"
+  },
+  "task_state": {
+    "givens": ["Zn + Cu2+ -> Zn2+ + Cu"],
+    "unknown": "identify oxidation/reduction and oxidising/reducing agents",
+    "constraints": ["preserve species identity", "electron balance must close"],
+    "event": "redox electron transfer",
+    "representation_options": ["OXIDATION_STATE_LANE", "ELECTRON_LEDGER", "ROLE_CAUSAL_MAP"],
+    "competing_models": ["AGENT_BY_NAME_MEMORISATION", "AGENT_BY_SELF_CHANGE_AND_OTHER_EFFECT"]
+  },
+  "expert_solution_state": {
+    "recognition": "track the same element before and after reaction",
+    "representation": "oxidation-state lane plus electron ledger",
+    "model_selection": "state increase = oxidation/electron loss; state decrease = reduction/electron gain",
+    "first_move": "assign oxidation states before naming agents",
+    "reasoning_steps": ["select representation", "track identity", "compare states", "infer electron loss/gain", "justify agent role"],
+    "equations": ["Zn -> Zn2+ + 2e-", "Cu2+ + 2e- -> Cu"],
+    "result": "Zn is oxidised and is reducing agent; Cu2+ is reduced and is oxidising agent",
+    "verification": "electron ledger balances and role labels agree with self change",
+    "wrong_routes": ["naming agent before tracking state", "calling reduced species the reducing agent"]
+  },
+  "task_demand": {
+    "conceptual_demand": 2,
+    "structural_distance": 2,
+    "representation_change": 2,
+    "model_discrimination": 2,
+    "hidden_constraint": 1,
+    "sign_direction_reversal": 0,
+    "reversed_target": 1,
+    "constraint_inversion": 0,
+    "multi_step_bridge": 2,
+    "synthesis": 2,
+    "competitive_mixing": 1,
+    "calculation_load": 0
+  },
+  "learner_interaction": {
+    "mode": "OPEN_PROBLEM_RECONSTRUCTION",
+    "initial_attempt_required": true,
+    "representation_choice_required": true,
+    "first_move_commitment_required": true,
+    "reasoning_justification_required": true
+  },
+  "self_help_closure_ref": "SH-C2B-REDOX-001",
+  "transfer_lineage": {
+    "relationship": "STRUCTURAL_SIBLING",
+    "transfer_evidence_status": "NEAR_TRANSFER"
+  },
+  "reconstructable_ttu_refs": ["TTU-C2B-REDOX-ROUTE-001"],
+  "support_band_ref": "LAU-REDOX-001:GUIDED",
+  "tutor_dialogue_ref": "TD-C2B-REDOX-001",
+  "realization_contract": {
+    "identity": "ADAPTIVE_OPEN_PROBLEM_TUTOR",
+    "exposure_mode": "CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS",
+    "learner_actions": ["ATTEMPT", "SELECT_MODEL", "CONSTRUCT_REPRESENTATION", "CHOOSE_FIRST_MOVE", "JUSTIFY", "VERIFY", "TRANSFER"]
+  },
+  "differentiation_fingerprint": {
+    "context": "zinc copper redox sibling",
+    "problem_family": "PF-AGENT-ROLE-ASSIGNMENT",
+    "known_quantities": "reaction species",
+    "numerical_values": "none",
+    "target_unknown": "agent roles plus justification",
+    "representation": "learner-selected incomplete route map",
+    "model_sequence": "attempt -> select -> construct -> justify -> reveal",
+    "special_condition": "electron balance and self/other distinction",
+    "solution_path": "learner commits route before bounded hints and reveal",
+    "learner_action": "RECONSTRUCT_SOLVE_JUSTIFY_TRANSFER"
+  }
+}

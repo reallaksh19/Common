@@ -1,0 +1,94 @@
+{
+  "migration_id": "CHEM-PR370-CONTROL-MIGRATION-v1",
+  "schema_version": "1.0.0",
+  "source_pr": 370,
+  "target_lineage_pr": 371,
+  "rule": "Port only topic-neutral B-layer authority boundaries. Keep renderers, product goldens and topic-specific deep exemplars as non-authoritative regression evidence.",
+  "controls": [
+    {
+      "control_id": "STATIC_ONLY_B_LAYER_BOUNDARY",
+      "disposition": "PORTED_AS_GENERIC_AUTHORITY_GATE",
+      "target_ref": "policies/static-b-layer-boundary.v1.json + engine/validate_static_b_layer_boundary.py",
+      "reason": "Core1B/Core2B are static compile-time products; live learner-response/runtime adaptation fields fail closed."
+    },
+    {
+      "control_id": "NO_NEW_CHEMISTRY_IN_B_LAYER",
+      "disposition": "PORTED_AS_GENERIC_AUTHORITY_GATE",
+      "target_ref": "engine/validate_static_b_layer_boundary.py",
+      "reason": "B-layer products realize upstream authority and may not expand Chemistry scope."
+    },
+    {
+      "control_id": "CORE1B_DEPTH_INDEPENDENT_OF_LEARNER_PERCENT",
+      "disposition": "PORTED_AS_GENERIC_AUTHORITY_GATE",
+      "target_ref": "policies/static-b-layer-boundary.v1.json#core1b",
+      "reason": "Core1B depth remains controlled by v4 intrinsic bucket authority; learner knowledge fields are rejected."
+    },
+    {
+      "control_id": "CORE1B_UPSTREAM_CAPABILITY_FAMILY_AND_REPRESENTATION_CUSTODY",
+      "disposition": "PORTED_AND_HARDENED",
+      "target_ref": "engine/validate_static_b_layer_boundary.py#validate_core1b",
+      "reason": "Capability/problem-family scope is preserved and used representations must remain a subset of upstream-approved representations; research may deepen pedagogy but not expand scope."
+    },
+    {
+      "control_id": "CORE1B_MODULE_SPECIFIC_HINT_LADDERS",
+      "disposition": "PORTED_AS_GENERIC_COLLECTION_FALSIFIER",
+      "target_ref": "engine/validate_static_b_layer_boundary.py#validate_core1b_collection",
+      "reason": "Distinct conceptual modules may not silently reuse one mechanically identical help ladder."
+    },
+    {
+      "control_id": "CORE2B_SUPPORT_ONLY_CONDITIONING",
+      "disposition": "PORTED_AS_GENERIC_AUTHORITY_GATE",
+      "target_ref": "policies/static-b-layer-boundary.v1.json#core2b",
+      "reason": "Knowledge percent or owner override may alter support density/hint entry/solution delay but not question identity, provenance, semantic scope or answer authority."
+    },
+    {
+      "control_id": "CORE2B_CORE2A_LEGAL_ITEM_AND_SOURCE_IDENTITY_CUSTODY",
+      "disposition": "PORTED_AS_GENERIC_AUTHORITY_GATE",
+      "target_ref": "engine/validate_static_b_layer_boundary.py#validate_core2b",
+      "reason": "Core2B can consume only an item already legal under Core2A and must preserve frozen source identity and canonical answer custody."
+    },
+    {
+      "control_id": "PROGRESSIVE_FIXED_HELP_AND_ANSWER_CLOSURE",
+      "disposition": "PORTED_AND_ALSO_SUPPORTED_BY_EXISTING_PRODUCT_CONTROLS",
+      "target_ref": "policies/static-b-layer-boundary.v1.json + LearnerProduct/policies/chemistry-answer-path-policy.json",
+      "reason": "Open-ended static tutoring still requires ordered fixed help plus canonical/full answer and verification closure."
+    },
+    {
+      "control_id": "B_LAYER_REPORTLAB_RENDERERS_AND_LAYOUT",
+      "disposition": "REGRESSION_IMPLEMENTATION_ONLY",
+      "target_ref": "NONE",
+      "reason": "Page layout and historical renderer implementation are downstream product code, not Blueprint authority."
+    },
+    {
+      "control_id": "TOPIC_SPECIFIC_HARD_DEEP_PRODUCT_EXEMPLAR",
+      "disposition": "STRESS_REGRESSION_ONLY",
+      "target_ref": "NONE",
+      "reason": "The deep topic exemplar may falsify generic B-layer controls but cannot define Chemistry truth, module taxonomy, representation scope or generic coding branches."
+    },
+    {
+      "control_id": "PR370_GOLDEN_INPUTS_AND_EMITTED_PRODUCTS",
+      "disposition": "REGRESSION_EVIDENCE_ONLY",
+      "target_ref": "NONE",
+      "reason": "Historical product fixtures and artifacts remain recoverable test evidence only."
+    }
+  ],
+  "source_head_verification": {
+    "head_sha": "42b051f242ca830b72773eda506da0988ad3c771",
+    "dedicated_workflow": "V2 Chemistry Core1B Core2B Self Tutor",
+    "workflow_state": "PASS"
+  },
+  "target_head_verification": {
+    "head_sha": "d14124b0c282bae3003430a28a3a8f0d5006f272",
+    "blueprint_v0_v7_regression_matrix": "PASS",
+    "static_b_layer_synthetic_falsifiers": "PASS",
+    "migration_classification_test": "PASS"
+  },
+  "closure_requirements": [
+    "ALL_GENERIC_B_LAYER_CONTROLS_CLASSIFIED",
+    "TOPIC_NEUTRAL_UPSTREAM_VALIDATOR_EXISTS",
+    "SYNTHETIC_FALSIFIERS_PASS",
+    "NO_STRESS_TOPIC_BRANCHING_IN_UPSTREAM_VALIDATOR",
+    "PR370_PRODUCT_BRANCH_RETAINED_AS_REGRESSION_EVIDENCE"
+  ],
+  "status": "MIGRATION_COMPLETE"
+}

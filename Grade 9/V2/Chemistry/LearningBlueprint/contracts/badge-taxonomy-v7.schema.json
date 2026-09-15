@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-badge-taxonomy-v7.schema.json",
+  "title": "Chemistry Badge Taxonomy v7",
+  "type": "object",
+  "required": ["schema_version", "learner_visible", "machine_only", "rules"],
+  "properties": {
+    "schema_version": {"const": "7.0.0"},
+    "learner_visible": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "machine_only": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "rules": {
+      "type": "object",
+      "required": ["recommended_max_badges_per_page", "student_knowledge_percent_visible", "core1_difficulty_label", "core2_difficulty_label"]
+    }
+  },
+  "additionalProperties": false
+}

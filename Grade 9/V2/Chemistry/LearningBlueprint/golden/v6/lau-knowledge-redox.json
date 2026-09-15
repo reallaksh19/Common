@@ -1,0 +1,58 @@
+{
+  "schema_version": "6.0.0",
+  "router_id": "LAU",
+  "question_id": "Q-REDOX-FROZEN-001",
+  "question_authority_ref": "REG-CHEM-G9-REDOX-001:Q-REDOX-FROZEN-001",
+  "problem_family": "PF-AGENT-ROLE-ASSIGNMENT",
+  "purpose": "COMPETITIVE_EXAM",
+  "conditioning": {
+    "mode": "KNOWLEDGE_EVIDENCE",
+    "learner_state": {
+      "capability_scope": ["CAP-TRACK-OXIDATION-STATE", "CAP-ATTACH-SPECIES-ROLE"],
+      "knowledge_percent": 60,
+      "confidence": 0.72,
+      "provenance": ["T-REDOX-LEARNER-001"],
+      "evidence_count": 4,
+      "subdimensions": {
+        "recognition": 80,
+        "representation": 35,
+        "model_selection": 40,
+        "first_move": 45,
+        "execution": 75,
+        "explanation": 55,
+        "verification": 30
+      }
+    }
+  },
+  "task_demand": {
+    "conceptual_demand": 2,
+    "structural_distance": 2,
+    "representation_change": 2,
+    "model_discrimination": 2,
+    "hidden_constraint": 1,
+    "sign_direction_reversal": 0,
+    "reversed_target": 1,
+    "constraint_inversion": 0,
+    "multi_step_bridge": 2,
+    "synthesis": 2,
+    "competitive_mixing": 1,
+    "calculation_load": 1
+  },
+  "resolved_support": {
+    "support_band": "GUIDED",
+    "decision_basis": "LEARNER_TASK_FIT",
+    "learner_state_used": true,
+    "task_demand_used": true,
+    "purpose_used": true
+  },
+  "core2a_plan": {
+    "product_mode": "CORE2A",
+    "problem_ttu_refs": ["PT-C2A-REDOX-001"],
+    "support_band": "GUIDED"
+  },
+  "core2b_plan": {
+    "product_mode": "CORE2B",
+    "problem_ttu_refs": ["PT-C2B-REDOX-001"],
+    "support_band": "GUIDED"
+  }
+}

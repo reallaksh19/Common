@@ -1,0 +1,13 @@
+{
+  "schema_version": "4.0.0",
+  "bucket_id": "BUCKET-EASY-CHEMICAL-CHANGE-EVIDENCE",
+  "subject": "CHEMISTRY",
+  "subtopic_id": "chemical-change-evidence",
+  "title": "Evidence of chemical change",
+  "difficulty_badge": "EASY",
+  "page_envelope": {"max_pages": 10, "is_ceiling_not_quota": true},
+  "research": {"mode": "OPTIONAL", "research_refs": []},
+  "visual_plan": {"visual_jobs": ["PHENOMENON_VISUAL", "COMPARISON_VISUAL"]},
+  "decomposition": {"decision": "NOT_NEEDED", "sub_subtopic_ids": []},
+  "realization_modes": ["CORE1A", "CORE1B"]
+}

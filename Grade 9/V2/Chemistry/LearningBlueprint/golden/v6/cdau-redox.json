@@ -1,0 +1,48 @@
+{
+  "schema_version": "6.0.0",
+  "governance_id": "CD-REDOX-001",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "purpose_contracts": {
+    "CORE1A": {"identity": "DECLARATIVE_CONCEPT_REFERENCE"},
+    "CORE1B": {"identity": "OPEN_CONCEPT_RECONSTRUCTION_TUTOR"},
+    "CORE2A": {"identity": "ADAPTIVE_DECLARATIVE_PROBLEM_REFERENCE"},
+    "CORE2B": {"identity": "ADAPTIVE_OPEN_PROBLEM_TUTOR"}
+  },
+  "content_lineage": [
+    {"asset_id": "CON-REDOX-OXSTATE-001", "registry_ref": "REG-CHEM-G9-REDOX-001"},
+    {"asset_id": "PF-AGENT-ROLE-ASSIGNMENT", "registry_ref": "REG-CHEM-G9-REDOX-001"}
+  ],
+  "asset_reuse": {
+    "semantic_reuse": "ALLOWED",
+    "pedagogical_transformation": "REQUIRED_BETWEEN_A_AND_B"
+  },
+  "duplicate_control": {
+    "semantic_reuse_allowed": true,
+    "pedagogical_duplication_forbidden": true
+  },
+  "representation_lineage": [
+    {"representation_id": "REP-REDOX-STATE-LANE-001", "registry_ref": "REG-CHEM-G9-REDOX-001"}
+  ],
+  "example_fingerprints": [
+    {"fingerprint_id": "FP-C1A-REDOX-001", "learner_action": "STUDY_COMPLETE_REASONING"},
+    {"fingerprint_id": "FP-C1B-REDOX-001", "learner_action": "RECONSTRUCT_AND_VERIFY"}
+  ],
+  "source_custody": {
+    "frozen_question_identity_preserved": true,
+    "source_provenance_preserved": true,
+    "canonical_solution_authority_preserved": true
+  },
+  "a_b_differentiation": {
+    "learner_action_differs": true,
+    "sequence_differs": true,
+    "pedagogical_duplication_status": "PASS"
+  },
+  "owner_decision_provenance": [],
+  "self_help_requirements": {
+    "all_derivative_products_require_closure": true
+  },
+  "release_policy": {
+    "cdau_may_not_select_core2_support": true,
+    "cdau_may_not_rewrite_intrinsic_difficulty": true
+  }
+}

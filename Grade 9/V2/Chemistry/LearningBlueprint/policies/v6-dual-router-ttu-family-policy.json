@@ -1,0 +1,218 @@
+{
+  "policy_id": "CHEM-G9-V2-BLUEPRINT-v6-CANONICAL-ARCHITECTURE",
+  "schema_version": "6.0.0",
+  "subject": "CHEMISTRY",
+  "canonical_sequence": [
+    "ORIGINAL_GROUND_TRUTH",
+    "CORE0_EVIDENCE_ROUTE",
+    "CORE1_CORE2_INDEPENDENT_GROUNDING",
+    "CORE1_CORE2_JOIN_AUDIT",
+    "CANONICAL_DOMAIN_REGISTRY",
+    "CDAU_CROSS_CORE_GOVERNANCE",
+    "SDU_OR_LAU",
+    "CONCEPT_TTU_OR_PROBLEM_TTU",
+    "A_OR_B_REALIZATION",
+    "SELF_HELP_CLOSURE",
+    "V5_PRODUCT_COMPLETENESS_GATE",
+    "MEASURED_PUBLICATION_GATE",
+    "LEARNER_PRODUCT"
+  ],
+  "authority_domains": {
+    "GROUND_TRUTH": "WHAT_WAS_ACTUALLY_SUPPLIED",
+    "CORE1": "SUBJECT_SEMANTIC_STRUCTURE",
+    "CORE2": "ASSESSMENT_AND_QUESTION_DEMAND_STRUCTURE",
+    "CANONICAL_DOMAIN_REGISTRY": "VALIDATED_REUSABLE_DOMAIN_ASSETS",
+    "CDAU": "CROSS_CORE_LINEAGE_DIFFERENTIATION_AND_RELEASE_GOVERNANCE",
+    "SDU": "CORE1A_CORE1B_INTRINSIC_DEPTH_DECISIONS",
+    "LAU": "CORE2A_CORE2B_LEARNER_TASK_SUPPORT_FIT",
+    "TTU": "TECHNICAL_COMPLETENESS_OF_ONE_LEARNING_INTERACTION",
+    "OWNER": "AUDITABLE_OPERATIONAL_DECISIONS_WITHOUT_TRUTH_REWRITE"
+  },
+  "cdau": {
+    "owns": [
+      "core_purpose_contracts",
+      "content_lineage",
+      "asset_reuse",
+      "duplicate_detection",
+      "representation_lineage",
+      "problem_and_example_fingerprints",
+      "source_custody",
+      "a_b_differentiation",
+      "owner_decision_provenance",
+      "self_help_requirements",
+      "cross_core_release_policy"
+    ],
+    "must_not_decide": ["CORE2_LEARNER_SUPPORT_BAND", "CORE1_INTRINSIC_DIFFICULTY_BADGE"],
+    "semantic_reuse_allowed": true,
+    "pedagogical_duplication_forbidden": true
+  },
+  "study_differentiation_unit": {
+    "id": "SDU",
+    "applies_to": ["CORE1A", "CORE1B"],
+    "control_axis": "INTRINSIC_SUBTOPIC_DIFFICULTY",
+    "learner_knowledge_fields_forbidden": true,
+    "difficulty_authorities": ["OWNER_PROVIDED", "SOURCE_PROVIDED", "DERIVED", "VALIDATED_DERIVED"],
+    "evidence_profile_dimensions": [
+      "prerequisite_depth",
+      "element_interactivity",
+      "inferential_jump_severity",
+      "representation_translation",
+      "model_discrimination",
+      "sign_frame_sensitivity",
+      "multi_step_dependency",
+      "abstraction",
+      "misconception_density",
+      "synthesis"
+    ],
+    "difficulty_bands": {
+      "EASY": {"max_pages": 10, "research_level": "NONE"},
+      "MEDIUM": {"max_pages": 20, "research_level": "TARGETED"},
+      "HARD": {"max_pages": 30, "research_level": "DEEP"}
+    },
+    "page_count_is_quality_metric": false,
+    "closure_is_quality_metric": true,
+    "research_dossier_required_for": ["MEDIUM", "HARD"],
+    "depth_release_gate": {
+      "all_learning_atoms_closed": true,
+      "all_major_inferential_jumps_bridged": true,
+      "representation_coverage_complete": true,
+      "equation_assimilation_complete": true,
+      "misconception_coverage_complete": true,
+      "page_budget_exhaustion_required": false
+    }
+  },
+  "learner_adaptation_unit": {
+    "id": "LAU",
+    "applies_to": ["CORE2A", "CORE2B"],
+    "conditioning_modes": ["KNOWLEDGE_EVIDENCE", "OWNER_OVERRIDE"],
+    "task_demand_required": true,
+    "knowledge_percent_is": "ROUTING_PRIOR_NOT_MASTERY_MEASUREMENT",
+    "capability_subdimensions": [
+      "recognition",
+      "representation",
+      "model_selection",
+      "first_move",
+      "execution",
+      "explanation",
+      "verification"
+    ],
+    "owner_override_does_not_fabricate_percent": true,
+    "task_demand_dimensions": [
+      "conceptual_demand",
+      "structural_distance",
+      "representation_change",
+      "model_discrimination",
+      "hidden_constraint",
+      "sign_direction_reversal",
+      "reversed_target",
+      "constraint_inversion",
+      "multi_step_bridge",
+      "synthesis",
+      "competitive_mixing",
+      "calculation_load"
+    ],
+    "dimension_scale": {"min": 0, "max": 3},
+    "support_fit_rule": "SUPPORT_BAND_IS_A_FUNCTION_OF_LEARNER_STATE_TASK_DEMAND_AND_PURPOSE_NOT_KNOWLEDGE_PERCENT_ALONE",
+    "support_bands": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"],
+    "owner_override_rule": "WHEN_KNOWLEDGE_IS_UNKNOWN_OWNER_OVERRIDE_MUST_SUPPLY_SUPPORT_BAND_AND_REASON; TASK_DEMAND_AND_FROZEN_QUESTION_AUTHORITY_REMAIN_IN_FORCE",
+    "support_must_not_change": [
+      "frozen_question_identity",
+      "source_provenance",
+      "canonical_solution_correctness",
+      "validated_semantic_scope"
+    ]
+  },
+  "ttu_families": {
+    "CONCEPT_TTU": {
+      "used_by": ["CORE1A", "CORE1B"],
+      "centres_on": [
+        "conceptual_change",
+        "equation_meaning",
+        "representation",
+        "derivation",
+        "contrast"
+      ],
+      "core1a_mode": "CANONICAL_COMPLETED_CONCEPT_STATE_WITH_MODEL_THEN_RECONSTRUCT",
+      "core1b_mode": "CANONICAL_RECONSTRUCTION_EXPERIENCE_WITH_RECONSTRUCT_BEFORE_CANONICAL"
+    },
+    "PROBLEM_TTU": {
+      "used_by": ["CORE2A", "CORE2B"],
+      "centres_on": [
+        "recognition",
+        "model_selection",
+        "constraint",
+        "first_move",
+        "solution_path",
+        "verification",
+        "transfer"
+      ],
+      "core2a_mode": "CANONICAL_COMPLETED_PROBLEM_STATE_WITH_SETUP_THEN_COMPLETE",
+      "core2b_mode": "CANONICAL_RECONSTRUCTION_EXPERIENCE_WITH_CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS"
+    }
+  },
+  "tutor_dialogue": {
+    "required_for": ["CORE1B", "CORE2B"],
+    "delivery_mode": "STATIC",
+    "target_driven_not_template_driven": true,
+    "allowed_stage_types": [
+      "ATTEMPT",
+      "NOTICE",
+      "REPRESENT",
+      "EXPLAIN",
+      "CONNECT",
+      "START",
+      "CHECK",
+      "REFLECT"
+    ],
+    "canonical_reveal_after_attempt": true,
+    "independent_verification_required": true,
+    "repair_route_required": true
+  },
+  "self_help_closure": {
+    "required_for": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+    "requires": [
+      "canonical_answer_or_state",
+      "progressive_help",
+      "misconception_help",
+      "canonical_reveal",
+      "independent_verification",
+      "repair_path",
+      "next_step"
+    ]
+  },
+  "core_purpose_contracts": {
+    "CORE1A": {
+      "identity": "DECLARATIVE_CONCEPT_REFERENCE",
+      "learner_actions": ["READ", "INSPECT", "FOLLOW", "COMPARE", "INTERPRET", "STUDY_COMPLETE_REASONING"]
+    },
+    "CORE1B": {
+      "identity": "OPEN_CONCEPT_RECONSTRUCTION_TUTOR",
+      "learner_actions": ["PREDICT", "DRAW", "LABEL", "GENERATE", "SELECT", "EXPLAIN", "DERIVE", "DIAGNOSE", "VERIFY"]
+    },
+    "CORE2A": {
+      "identity": "ADAPTIVE_DECLARATIVE_PROBLEM_REFERENCE",
+      "learner_actions": ["STUDY_EXPERT_SOLUTION", "UNDERSTAND", "COMPLETE", "CHECK"]
+    },
+    "CORE2B": {
+      "identity": "ADAPTIVE_OPEN_PROBLEM_TUTOR",
+      "learner_actions": ["ATTEMPT", "SELECT_MODEL", "CONSTRUCT_REPRESENTATION", "CHOOSE_FIRST_MOVE", "REASON", "VERIFY", "TRANSFER"]
+    }
+  },
+  "cross_core_differentiation": {
+    "allowed": ["SEMANTIC_REUSE", "PEDAGOGICAL_TRANSFORMATION", "DECLARED_FADING_ANCHOR"],
+    "warning": ["NEAR_DUPLICATE"],
+    "fail": ["PEDAGOGICAL_DUPLICATION"],
+    "fingerprint_dimensions": ["context", "problem_family", "known_quantities", "numerical_values", "target_unknown", "representation", "model_sequence", "special_condition", "solution_path", "learner_action"],
+    "all_fingerprint_dimensions_may_not_match_between_adjacent_products": true
+  },
+  "publication_gates": [
+    "G0_EVIDENCE",
+    "G1_DOMAIN",
+    "G2_PURPOSE",
+    "G3_DIFFERENTIATION",
+    "G4_TTU",
+    "G5_FIT_CORE2_ONLY",
+    "G6_PUBLICATION",
+    "G7_CALIBRATION_POST_USE"
+  ]
+}

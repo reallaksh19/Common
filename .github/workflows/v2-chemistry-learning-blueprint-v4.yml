@@ -1,0 +1,75 @@
+name: V2 Chemistry Learning Blueprint v4
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-learning-blueprint-v4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-v4-controls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate JSON syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          targets = [
+              root / 'BLUEPRINT_INVARIANTS.json',
+              root / 'contracts/instruction-bucket-v4.schema.json',
+              root / 'contracts/core2-learner-conditioning-v4.schema.json',
+              root / 'policies/v4-bucket-and-conditioning-policy.json',
+          ] + sorted((root / 'golden/v4').glob('*.json'))
+          for path in targets:
+              json.loads(path.read_text(encoding='utf-8'))
+              print('JSON_OK', path)
+          PY
+
+      - name: Run v4 falsifier tests
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v4_controls.py' -v
+
+      - name: Validate Core1 bucket goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          POLICY="$ROOT/policies/v4-bucket-and-conditioning-policy.json"
+          python "$ROOT/engine/validate_blueprint_v4.py" --policy "$POLICY" --bucket "$ROOT/golden/v4/easy-bucket.json"
+          python "$ROOT/engine/validate_blueprint_v4.py" --policy "$POLICY" --bucket "$ROOT/golden/v4/hard-bucket.json"
+
+      - name: Validate Core2 conditioning goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          POLICY="$ROOT/policies/v4-bucket-and-conditioning-policy.json"
+          python "$ROOT/engine/validate_blueprint_v4.py" --policy "$POLICY" --conditioning "$ROOT/golden/v4/knowledge-conditioning-50.json"
+          python "$ROOT/engine/validate_blueprint_v4.py" --policy "$POLICY" --conditioning "$ROOT/golden/v4/owner-conditioning-override.json"
+
+      - name: Assert v4 governing invariants
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          inv = json.loads((root / 'BLUEPRINT_INVARIANTS.json').read_text(encoding='utf-8'))
+          rules = {x['rule'] for x in inv['invariants']}
+          required = {
+              'CORE1_BUCKET_DEPTH_IS_CONTROLLED_BY_INTRINSIC_DIFFICULTY_NOT_LEARNER_KNOWLEDGE',
+              'CORE1_PAGE_ENVELOPES_EASY_10_MEDIUM_20_HARD_30_ARE_CEILINGS_NOT_PAGE_QUOTAS',
+              'CORE2A_AND_CORE2B_REQUIRE_RESOLVED_LEARNER_CONDITIONING_BEFORE_COMPILATION',
+              'CORE2_LEARNER_CONDITIONING_MUST_BE_EITHER_KNOWLEDGE_PERCENT_OR_EXPLICIT_OWNER_OVERRIDE_NOT_BOTH',
+              'UNRESOLVED_CORE2_LEARNER_CONDITIONING_BLOCKS_COMPILATION_AND_MUST_NOT_DEFAULT_TO_FIFTY_PERCENT',
+              'CORE2_KNOWLEDGE_CONDITIONING_MUST_NOT_CHANGE_FROZEN_QUESTION_IDENTITY_SOURCE_PROVENANCE_VALIDATED_SEMANTIC_SCOPE_OR_ANSWER_AUTHORITY',
+          }
+          missing = sorted(required - rules)
+          assert not missing, missing
+          print('V4_GOVERNING_INVARIANTS=PASS')
+          PY

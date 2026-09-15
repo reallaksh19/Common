@@ -1,0 +1,75 @@
+{
+  "migration_id": "CHEM-PR360-CONTROL-MIGRATION-v1",
+  "schema_version": "1.0.0",
+  "source_pr": 360,
+  "target_lineage_pr": 371,
+  "rule": "Only generic controls survive. Historical fixtures, candidate artifacts, topic baselines and branch-specific implementations remain non-authoritative evidence.",
+  "controls": [
+    {
+      "control_id": "GENERATION_ORCHESTRATION_CONTRACT",
+      "disposition": "PORTED_AS_GENERIC_INVARIANT",
+      "target_ref": "policies/product-control-consolidation.v1.json#orchestration",
+      "reason": "The current learner execution contract already fixes product stages; the missing generic safeguard was machine-readable dependency/skip/inference discipline."
+    },
+    {
+      "control_id": "SOURCE_DENOMINATOR_FREEZE",
+      "disposition": "PORTED_AS_GENERIC_INVARIANT",
+      "target_ref": "policies/product-control-consolidation.v1.json#source_denominator_custody",
+      "reason": "C-LP-01 already freezes a denominator, while the migrated invariant adds evidence-derived counters, explicit freeze states, unresolved-value handling and authoring-before-freeze rejection."
+    },
+    {
+      "control_id": "CAPABILITY_TAXONOMY_BREADTH",
+      "disposition": "HISTORICAL_CONTENT_EVIDENCE_ONLY",
+      "target_ref": "NONE",
+      "reason": "A historical 24-capability registry is not promoted over the current canonical-domain and complete technical-gate authorities. Any useful capability content must be re-derived through current authority rather than copied."
+    },
+    {
+      "control_id": "LOCAL_VISUAL_OBLIGATION_CLOSURE",
+      "disposition": "PORTED_AS_GENERIC_INVARIANT",
+      "target_ref": "policies/product-control-consolidation.v1.json#visual_obligations",
+      "reason": "Current rendering already checks reasoning-visual closure; the migrated invariant preserves per-content-reference locality and forbids global realization from satisfying a missing local visual."
+    },
+    {
+      "control_id": "HELPER_PEDAGOGY_ACTIONABILITY",
+      "disposition": "ABSORBED_AND_HARDENED",
+      "target_ref": "LearnerProduct/policies/chemistry-learner-language-policy.json",
+      "reason": "Current learner language policy requires an actionable next chemistry move and rejects method-name-only help; staged help is also explicit in C-LP-18."
+    },
+    {
+      "control_id": "ANSWER_CUSTODY",
+      "disposition": "ABSORBED_AND_HARDENED",
+      "target_ref": "LearnerProduct/policies/chemistry-answer-path-policy.json + policies/v7-product-assurance-policy.json#question_custody",
+      "reason": "Current architecture requires quick-check/full-working or expected-response closure plus canonical solution and verification custody."
+    },
+    {
+      "control_id": "FAIL_CLOSED_LEARNER_ROLE_PROJECTION",
+      "disposition": "PORTED_AS_GENERIC_INVARIANT",
+      "target_ref": "policies/product-control-consolidation.v1.json#learner_surface_projection",
+      "reason": "Current learner-language labels are retained; the migrated invariant preserves the stronger rule that an unmapped internal role must fail rather than be prettified or printed."
+    },
+    {
+      "control_id": "ROLE_LEVEL_LEGIBILITY_AND_DENSITY",
+      "disposition": "PORTED_AS_GENERIC_INVARIANT",
+      "target_ref": "policies/product-control-consolidation.v1.json#legibility_assurance",
+      "reason": "Current PDF preflight enforces geometry/font/overlap/raster checks. The migrated invariant retains separate learner targets, density control and measured-but-not-silently-passed shared primitive text."
+    },
+    {
+      "control_id": "HISTORICAL_EXACT_PRODUCT_CANDIDATE",
+      "disposition": "REGRESSION_EVIDENCE_ONLY",
+      "target_ref": "NONE",
+      "reason": "Historical PDFs, page maps, render audits and hashes may diagnose regressions but cannot define product truth or generic architecture."
+    }
+  ],
+  "closure_requirements": [
+    "ALL_GENERIC_CONTROLS_CLASSIFIED",
+    "ALL_PORT_REQUIRED_CONTROLS_HAVE_CURRENT_TARGET_REF",
+    "NO_HISTORICAL_PRODUCT_ARTIFACT_PROMOTED_TO_AUTHORITY",
+    "CURRENT_LINEAGE_TESTS_PASS"
+  ],
+  "verification": {
+    "head_sha": "0e395bb74f925166caebee76503ea65f79751fa1",
+    "v7_product_assurance": "PASS",
+    "blueprint_v0_v6_regression_matrix": "PASS"
+  },
+  "status": "MIGRATION_COMPLETE"
+}

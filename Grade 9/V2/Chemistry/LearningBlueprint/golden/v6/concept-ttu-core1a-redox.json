@@ -1,0 +1,44 @@
+{
+  "schema_version": "6.0.0",
+  "ttu_family": "CONCEPT_TTU",
+  "ttu_id": "CT-C1A-REDOX-001",
+  "product_mode": "CORE1A",
+  "identity": {
+    "concept_id": "CON-REDOX-OXSTATE-001",
+    "capability_ids": ["CAP-TRACK-OXIDATION-STATE", "CAP-ATTACH-SPECIES-ROLE"],
+    "learning_atom_ids": ["LA-REDOX-TRACK-001", "LA-REDOX-ELECTRON-002", "LA-REDOX-AGENT-003"],
+    "inferential_jump_ids": ["IJ-STATE-TO-ELECTRON", "IJ-ELECTRON-TO-AGENT"]
+  },
+  "canonical_expert_state": {
+    "concept_statement": "Oxidation-state change identifies oxidation/reduction; electron consequence then determines agent role.",
+    "model": "SAME_SPECIES_IDENTITY_TO_STATE_CHANGE_TO_ELECTRON_CONSEQUENCE_TO_AGENT_ROLE",
+    "prerequisites": ["SPECIES_IDENTITY", "OXIDATION_STATE_RULES"],
+    "conditions": ["COMPARE_THE_SAME_ELEMENT_BEFORE_AND_AFTER_REACTION"],
+    "representations": ["REP-REDOX-STATE-LANE-001", "REP-REDOX-ELECTRON-LEDGER-002"],
+    "equations": ["Zn -> Zn2+ + 2e-", "Cu2+ + 2e- -> Cu"],
+    "representation_equation_bindings": ["Zn 0->+2 binds to electron loss", "Cu +2->0 binds to electron gain"],
+    "reasoning_chain": ["TRACK_IDENTITY", "ASSIGN_STATE", "COMPARE_STATE", "INFER_ELECTRONS", "ATTACH_ROLE"],
+    "misconception_contrasts": ["OXIDATION_STATE_VS_ION_CHARGE", "REDUCING_AGENT_IS_ITSELF_OXIDISED"],
+    "verification": {"electron_balance": "electrons lost = electrons gained", "role_check": "agent role must agree with self change and other effect"}
+  },
+  "learner_transformation": {
+    "before_model": "agent labels treated as memorised names",
+    "target_model": "agent role derived causally from species change and electron consequence",
+    "conceptual_change": "from label recall to reconstructable redox proof"
+  },
+  "reconstruction_options": ["COMPLETE", "CONNECT", "VERIFY"],
+  "reconstructable_ttu_refs": ["TTU-C1A-REDOX-STATE-LANE-001"],
+  "self_help_closure_ref": "SH-C1A-REDOX-001",
+  "realization_contract": {
+    "identity": "DECLARATIVE_CONCEPT_REFERENCE",
+    "exposure_mode": "MODEL_THEN_RECONSTRUCT",
+    "learner_actions": ["READ", "INSPECT", "FOLLOW", "COMPARE", "COMPLETE", "VERIFY"]
+  },
+  "differentiation_fingerprint": {
+    "example": "ZINC_COPPER_COMPLETE_MODEL",
+    "representation": "COMPLETED_STATE_LANE_THEN_PARTIAL_RECONSTRUCTION",
+    "sequence": "EXPLAIN_SHOW_DERIVE_COMPLETE_CHECK",
+    "solution": "CANONICAL_STATE_PRESENT_BEFORE_RECONSTRUCTION",
+    "learner_action": "STUDY_THEN_COMPLETE"
+  }
+}

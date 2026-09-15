@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-question-custody-v7.schema.json",
+  "title": "Chemistry Question Custody v7",
+  "type": "object",
+  "required": ["schema_version", "question_id", "source_class", "learner_visible_source", "answer_status", "answer_ref", "canonical_solution_ref", "verification_ref"],
+  "properties": {
+    "schema_version": {"const": "7.0.0"},
+    "question_id": {"type": "string", "minLength": 1},
+    "source_class": {"enum": ["SOURCE_FROZEN", "GENERATED_ORIGINAL"]},
+    "learner_visible_source": {"type": "string", "minLength": 1},
+    "source_title": {"type": "string"},
+    "source_edition": {"type": "string"},
+    "source_unit_or_chapter": {"type": "string"},
+    "source_question_number": {"type": "string"},
+    "source_locator": {"type": "string"},
+    "source_stem_hash": {"type": "string"},
+    "stem_identity_status": {"enum": ["EXACT", "NOT_APPLICABLE"]},
+    "generated_grounding_refs": {"type": "array", "items": {"type": "string"}},
+    "answer_status": {"const": "CLOSED"},
+    "answer_ref": {"type": "string", "minLength": 1},
+    "canonical_solution_ref": {"type": "string", "minLength": 1},
+    "verification_ref": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

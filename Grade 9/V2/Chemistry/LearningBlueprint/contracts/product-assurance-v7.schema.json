@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-product-assurance-v7.schema.json",
+  "title": "Chemistry Product Assurance Report v7",
+  "type": "object",
+  "required": ["schema_version", "assurance_id", "product_mode", "coverage", "similarity", "difficulty_or_task_demand", "purpose", "question_custody", "badge_audit", "release_candidate"],
+  "properties": {
+    "schema_version": {"const": "7.0.0"},
+    "assurance_id": {"type": "string", "minLength": 1},
+    "product_mode": {"enum": ["CORE1", "CORE1A", "CORE1B", "CORE2", "CORE2A", "CORE2B"]},
+    "coverage": {"type": "object"},
+    "similarity": {"type": "object"},
+    "difficulty_or_task_demand": {"type": "object"},
+    "purpose": {"type": "object"},
+    "learner_fit": {"type": "object"},
+    "question_custody": {"type": "object"},
+    "badge_audit": {"type": "object"},
+    "release_candidate": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}
