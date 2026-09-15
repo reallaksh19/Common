@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Compose the canonical Mathematics Engineering gate graph from exact source files.
+"""Compose the canonical Mathematics Engineering gate graph from governed sources.
 
-The large generated v1 registry remains the base artifact. Small, digest-bound
-extensions may add new gates only when they explicitly bind to the exact base blob
-and expected base gate count. The composed object retains the canonical registry ID
-and is what runtime Engineering/Blueprint consumers validate and digest.
+The large generated v1 registry remains the base artifact. Canonical extensions
+are discovered from a digest-bound catalog, not from topic-specific Python
+constants. Each extension must bind to the exact base blob and expected gate
+counts. The composed object retains the canonical registry ID and is what runtime
+Engineering/Blueprint consumers validate and digest.
 """
 from __future__ import annotations
 
@@ -15,8 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE_REGISTRY_REL = "policies/mathematics-technical-engineering-gates.v1.json"
-EUCLID_EXTENSION_REL = "policies/mathematics-technical-engineering-gates.v1.euclid-extension.json"
-CANONICAL_EXTENSION_RELS = [EUCLID_EXTENSION_REL]
+EXTENSION_CATALOG_REL = "policies/mathematics-engineering-extension-catalog.v1.json"
 
 
 class EngineeringRegistryCompositionError(Exception):
@@ -45,11 +45,102 @@ def file_sha256(path: str | Path) -> str:
     return "sha256:" + hashlib.sha256(_path(path).read_bytes()).hexdigest()
 
 
+def _validate_catalog_shape(catalog: dict) -> None:
+    required = {
+        "schema_version",
+        "subject",
+        "catalog_id",
+        "base_registry_ref",
+        "base_registry_git_blob_sha",
+        "extensions",
+    }
+    missing = sorted(required - set(catalog))
+    if missing:
+        raise EngineeringRegistryCompositionError(
+            "MATH_ENG_EXTENSION_CATALOG_SCHEMA",
+            f"missing={missing}",
+        )
+    if catalog["schema_version"] != "1.0.0" or catalog["subject"] != "MATHEMATICS":
+        raise EngineeringRegistryCompositionError(
+            "MATH_ENG_EXTENSION_CATALOG_SCHEMA",
+            "invalid schema_version or subject",
+        )
+    if catalog["base_registry_ref"] != BASE_REGISTRY_REL:
+        raise EngineeringRegistryCompositionError(
+            "MATH_ENG_EXTENSION_CATALOG_BASE_REF_DRIFT",
+            str(catalog["base_registry_ref"]),
+        )
+    entries = catalog["extensions"]
+    if not isinstance(entries, list):
+        raise EngineeringRegistryCompositionError(
+            "MATH_ENG_EXTENSION_CATALOG_SCHEMA",
+            "extensions must be a list",
+        )
+    refs = []
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {"extension_ref", "extension_git_blob_sha"}:
+            raise EngineeringRegistryCompositionError(
+                "MATH_ENG_EXTENSION_CATALOG_SCHEMA",
+                f"invalid extension entry: {entry!r}",
+            )
+        ref = entry["extension_ref"]
+        blob = entry["extension_git_blob_sha"]
+        if not isinstance(ref, str) or not ref:
+            raise EngineeringRegistryCompositionError(
+                "MATH_ENG_EXTENSION_CATALOG_SCHEMA",
+                "extension_ref must be a non-empty string",
+            )
+        if not isinstance(blob, str) or len(blob) != 40:
+            raise EngineeringRegistryCompositionError(
+                "MATH_ENG_EXTENSION_CATALOG_SCHEMA",
+                f"invalid extension_git_blob_sha for {ref}",
+            )
+        refs.append(ref)
+    if len(refs) != len(set(refs)):
+        raise EngineeringRegistryCompositionError(
+            "MATH_ENG_EXTENSION_CATALOG_DUPLICATE_REF",
+            str(refs),
+        )
+
+
+def load_extension_catalog() -> dict:
+    catalog = _load_raw(EXTENSION_CATALOG_REL)
+    _validate_catalog_shape(catalog)
+    actual_base_blob = git_blob_sha(BASE_REGISTRY_REL)
+    if catalog["base_registry_git_blob_sha"] != actual_base_blob:
+        raise EngineeringRegistryCompositionError(
+            "MATH_ENG_EXTENSION_CATALOG_BASE_BLOB_STALE",
+            f"expected={catalog['base_registry_git_blob_sha']}, actual={actual_base_blob}",
+        )
+    for entry in catalog["extensions"]:
+        actual = git_blob_sha(entry["extension_ref"])
+        if entry["extension_git_blob_sha"] != actual:
+            raise EngineeringRegistryCompositionError(
+                "MATH_ENG_EXTENSION_CATALOG_ENTRY_STALE",
+                f"{entry['extension_ref']}: expected={entry['extension_git_blob_sha']}, actual={actual}",
+            )
+    return catalog
+
+
+def canonical_extension_rels() -> list[str]:
+    return [entry["extension_ref"] for entry in load_extension_catalog()["extensions"]]
+
+
+# Compatibility surface for consumers that need the current ordered canonical
+# extension set. The value is data-derived and contains no topic-specific path.
+CANONICAL_EXTENSION_RELS = canonical_extension_rels()
+
+
 def _validate_extension_shape(extension: dict, rel: str, base: dict) -> None:
     required = {
-        "schema_version", "subject", "extension_id", "base_registry_id",
-        "base_registry_git_blob_sha", "expected_base_gate_count",
-        "expected_composed_gate_count", "subtopic_gates",
+        "schema_version",
+        "subject",
+        "extension_id",
+        "base_registry_id",
+        "base_registry_git_blob_sha",
+        "expected_base_gate_count",
+        "expected_composed_gate_count",
+        "subtopic_gates",
     }
     missing = sorted(required - set(extension))
     if missing:
@@ -74,14 +165,21 @@ def load_canonical_engineering_registry(
 ) -> dict:
     base_path = _path(base_registry)
     base = _load_raw(base_path)
-    extensions = list(CANONICAL_EXTENSION_RELS if extension_rels is None else extension_rels)
 
-    if Path(base_path).resolve() != _path(BASE_REGISTRY_REL).resolve():
-        if extensions:
-            raise EngineeringRegistryCompositionError(
-                "MATH_ENG_NONCANONICAL_BASE_WITH_EXTENSION",
-                str(base_path),
-            )
+    canonical_base = _path(BASE_REGISTRY_REL).resolve()
+    if base_path.resolve() != canonical_base and extension_rels:
+        raise EngineeringRegistryCompositionError(
+            "MATH_ENG_NONCANONICAL_BASE_WITH_EXTENSION",
+            str(base_path),
+        )
+
+    if extension_rels is None:
+        if base_path.resolve() != canonical_base:
+            extensions: list[str] = []
+        else:
+            extensions = canonical_extension_rels()
+    else:
+        extensions = list(extension_rels)
 
     actual_base_blob = git_blob_sha(base_path)
     composed = copy.deepcopy(base)
@@ -128,15 +226,18 @@ def load_canonical_engineering_registry(
 
 
 def canonical_source_custody() -> dict:
+    catalog = load_extension_catalog()
     return {
         "base_registry_ref": BASE_REGISTRY_REL,
         "base_registry_git_blob_sha": git_blob_sha(BASE_REGISTRY_REL),
+        "extension_catalog_ref": EXTENSION_CATALOG_REL,
+        "extension_catalog_git_blob_sha": git_blob_sha(EXTENSION_CATALOG_REL),
         "extensions": [
             {
-                "extension_ref": rel,
-                "extension_git_blob_sha": git_blob_sha(rel),
-                "extension_file_sha256": file_sha256(rel),
+                "extension_ref": entry["extension_ref"],
+                "extension_git_blob_sha": entry["extension_git_blob_sha"],
+                "extension_file_sha256": file_sha256(entry["extension_ref"]),
             }
-            for rel in CANONICAL_EXTENSION_RELS
+            for entry in catalog["extensions"]
         ],
     }
