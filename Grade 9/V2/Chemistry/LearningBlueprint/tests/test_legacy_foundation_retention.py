@@ -22,6 +22,7 @@ class LegacyFoundationRetentionTests(unittest.TestCase):
     def test_pr346_handoff_is_explicitly_historical_non_authority(self):
         self.assertEqual(self.p346["disposition"], "INHERITED_HISTORICAL_AUTHORING_HANDOFF")
         self.assertEqual(self.p346["authority_effect"], "NONE_HISTORICAL_EVIDENCE_ONLY")
+        self.assertEqual(self.p346["review_surface_state"], "CLOSED_UNMERGED")
         for forbidden in (
             "CURRENT_SOURCE_DENOMINATOR",
             "CURRENT_GROUND_TRUTH",
@@ -46,6 +47,7 @@ class LegacyFoundationRetentionTests(unittest.TestCase):
     def test_pr322_publication_engineering_infrastructure_is_present(self):
         self.assertEqual(self.p322["disposition"], "INHERITED_PUBLICATION_ENGINEERING_INFRASTRUCTURE")
         self.assertEqual(self.p322["authority_effect"], "PUBLICATION_ENGINEERING_ONLY")
+        self.assertEqual(self.p322["review_surface_state"], "CLOSED_UNMERGED")
         required = [
             CHEM / "ExactProduct" / "engine" / "chemistry_notation.py",
             CHEM / "ExactProduct" / "engine" / "chemistry_visual_primitives.py",
@@ -104,7 +106,8 @@ class LegacyFoundationRetentionTests(unittest.TestCase):
         self.assertEqual(findings, [], "\n".join(findings))
 
     def test_retention_status_is_explicit(self):
-        self.assertEqual(self.policy["status"], "RETENTION_CLASSIFIED_PENDING_CI")
+        self.assertEqual(self.policy["status"], "RETENTION_COMPLETE_CI_PASS")
+        self.assertEqual(self.policy["verification"]["workflow_matrix"], "V0_V7_PASS")
         self.assertIn("CLOSING_SOURCE_PRS_DOES_NOT_DELETE_INHERITED_FILES_OR_RECOVERABLE_BRANCHES", self.policy["global_invariants"])
 
 
