@@ -47,7 +47,7 @@ A learner should be able to answer:
 
 Core1A closes the loop with worked examples, checks and verified answers, but explanation may precede difficult application.
 
-Core1A is always authored **subtopic-wise as a bucket**. The bucket receives one `EASY / MEDIUM / HARD` difficulty badge based on mathematical/pedagogical complexity or owner designation, not on learner knowledge percentage. The badge governs research depth, decomposition, representation density and page ceiling.
+Core1A is always authored **subtopic-wise as a bucket**. The bucket receives one `EASY / MEDIUM / HARD` difficulty badge based on mathematical/pedagogical complexity or owner designation, not on learner knowledge percentage. The badge governs minimum research obligation, decomposition, representation density and page ceiling. It does not forbid discovery.
 
 ## Core1B — reconstruct and consolidate
 
@@ -87,15 +87,15 @@ Page budgets are **ceilings, not quotas**. Do not pad a bucket to reach a page c
 
 | Badge | Maximum pages per stage/bucket | Pedagogy web research | Decomposition | Representation expectation |
 |---|---:|---|---|---|
-| EASY | 10 | forbidden | subtopic only | visual + stepwise + dedicated diagrams where useful |
-| MEDIUM | 20 | required | subtopic → sub-subtopic allowed | high visual density, stepwise reasoning, dedicated diagrams |
+| EASY | 10 | optional | subtopic only | visual + stepwise + dedicated diagrams where useful |
+| MEDIUM | 20 | required, targeted | subtopic → sub-subtopic allowed | high visual density, stepwise reasoning, dedicated diagrams |
 | HARD | 30 | required, deep | subtopic → sub-subtopic allowed | very high representation density, inference bridges, dedicated diagrams/graphs/tables |
+
+Research permission and research obligation are intentionally separate. Web search may be used for any bucket when it improves representation, explanation, misconception repair or source understanding. `EASY` means that pedagogy research is not mandatory for promotion; it does **not** prohibit useful investigation. If optional research is used, its brief and evidence references must be fully bound. Half-bound research is invalid.
 
 For MEDIUM/HARD, a research brief plus credible web evidence is required before authoring. Source count is not used as a quality proxy. The research brief must record what the external research contributed to representation, explanation, misconception handling or decomposition.
 
-`EASY` forbids **pedagogy-enrichment web search**. This does not disable the separate Source Integrity Protocol when original evidence is ambiguous, conflicted or damaged.
-
-External research can improve pedagogy; it never becomes curriculum authority or expands legal mathematical scope.
+External research can improve pedagogy; it never becomes curriculum authority or expands legal mathematical scope. Source Integrity verification remains a separate path when original evidence is ambiguous, conflicted or damaged.
 
 ## Core2A — solution apprenticeship
 
@@ -248,13 +248,15 @@ Relevant research:
 - Booth et al. (2024), explanation prompts in mathematics: https://doi.org/10.1016/j.jmathb.2024.101192
 - Gerjets et al. (2006), modular worked examples and redundancy risk: https://doi.org/10.1016/j.learninstruc.2006.02.007
 
-The `10 / 20 / 30` page ceilings and EASY/MEDIUM/HARD research requirements are owner product-design rules, not empirical claims that those exact page counts are optimal.
+The `10 / 20 / 30` page ceilings and EASY/MEDIUM/HARD minimum research obligations are owner product-design rules, not empirical claims that those exact page counts are optimal.
 
 ## Publication gate
 
 Deterministic Publication remains downstream. Before publication is frozen, the architecture must demonstrate:
 
 - Core1A/Core1B bucket-depth behaviour for EASY, MEDIUM and HARD;
+- optional research at EASY is either absent or fully bound;
+- required research at MEDIUM/HARD is fully bound;
 - Core2A/Core2B generation with a real knowledge percentage;
 - Core2A/Core2B generation with an explicit owner waiver;
 - calibration of Core2A question demand as well as Core2B transfer demand;
