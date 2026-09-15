@@ -166,6 +166,37 @@ class ChemistryPhysicalRealizationFalsePassTests(unittest.TestCase):
             self.assertIn("Generic concept context", page_text)
             doc.close()
 
+    def test_heading_moves_before_it_can_be_orphaned(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "heading-keep-with-next.pdf"
+            writer = ReviewWriter(path, "Generic heading keep-with-next test", RENDER_POLICY)
+            writer.new_page("generic concept", role="CONCEPT_EXPLANATION")
+            writer.heading("Earlier generic section", level=2, ref="EARLIER")
+            writer.y = 130.0
+            old_page = writer.page
+            writer.heading("Next generic section", level=2, ref="NEXT")
+            writer.concept_panel("FIRST CONTENT", "Governed content remains with the section heading.", ref="NEXT")
+            metrics = writer.finish()
+
+            next_heading_rows = [
+                row for row in metrics["draw_ops"]
+                if row["kind"] == "TEXT" and row.get("text") == "Next generic section"
+            ]
+            self.assertEqual(len(next_heading_rows), 1)
+            self.assertGreater(next_heading_rows[0]["page"], old_page)
+            self.assertFalse(any(
+                row["kind"] == "CONTINUATION_HEADER" and row["page"] == next_heading_rows[0]["page"]
+                for row in metrics["draw_ops"]
+            ))
+
+            doc = pymupdf.open(path)
+            old_text = doc[old_page - 1].get_text("text")
+            new_text = doc[next_heading_rows[0]["page"] - 1].get_text("text")
+            self.assertNotIn("Next generic section", old_text)
+            self.assertIn("Next generic section", new_text)
+            self.assertIn("FIRST CONTENT", new_text)
+            doc.close()
+
     def test_static_b_physical_representation_is_post_attempt_and_topic_neutral(self):
         source = (LP_ROOT / "engine" / "render_chemistry_static_b_product.py").read_text(encoding="utf-8")
         self.assertIn("used_representation_refs", source)
