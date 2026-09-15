@@ -249,4 +249,8 @@ def render_bucket_pdf(book: dict, path: Path) -> dict:
 
     doc.build(story, onFirstPage=base.add_page_number, onLaterPages=base.add_page_number)
     data = path.read_bytes()
-    return {"pdf_sha256": hashlib.sha256(data).hexdigest(), "pdf_size_bytes": len(data)}
+    return {
+        "pdf_sha256": hashlib.sha256(data).hexdigest(),
+        "pdf_size_bytes": len(data),
+        "page_count": int(doc.page),
+    }
