@@ -6,8 +6,8 @@
   "engineering_request_ref": "fixtures/engineering-workbench/m2d-sba23-request.v1.json",
   "engineering_manifest_ref": "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json",
   "closure_receipt_id": "ENG-CLOSURE-M2D-SBA23-V3",
-  "closure_receipt_digest": "sha256:2eb5eb18b7af6df8c938b947fdf09808cf7c91b643754dfa7c7e3f322041100c",
+  "closure_receipt_digest": "sha256:d7fddf9db0e18f5843338e9a49b8e4251128d71e09cba9ec4ad17b4b62025280",
   "closure_logic_digest": "sha256:15a31ccf48f6820f07099d4a2b42f59b7a8b7ff3e9896f74ceaddb2540e9b7ee",
-  "registry_digest": "sha256:e719f2d2aa65a2f5a05c8efc740e7e22174e8f5f2936b1408817d09708f906ea",
-  "notes": "This binding carries custody of the exact validated Workbench closure. It does not redeclare the prerequisite closure or readiness status. Source/legal custody remains independently visible on the closure receipt. The registry digest covers the canonical 17-gate Physics v3 registry while the SBA23 transitive closure remains exactly six gates."
+  "registry_digest": "sha256:039e89d46d576c69eb6cf1c76b19ec3c4fc9284172fb10e3d00099a4feacdd71",
+  "notes": "This binding carries custody of the exact validated Workbench closure. It does not redeclare the prerequisite closure or readiness status. Source/legal custody remains independently visible on the closure receipt. The registry digest covers the canonical 23-gate Physics v3 registry while the SBA23 transitive closure remains exactly six gates."
 }
