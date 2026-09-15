@@ -43,12 +43,15 @@ def validate_generation_spec(doc: dict) -> None:
 
         refs = bucket["pedagogy_web_research_refs"]
         brief = bucket["pedagogy_research_brief_ref"]
-        if rules["pedagogy_web_research"] == "FORBIDDEN":
-            if refs or brief is not None:
-                fail("MATH_CORE1_EASY_PEDAGOGY_WEB_RESEARCH_FORBIDDEN", bucket["bucket_id"])
-        else:
+        research_mode = rules["pedagogy_web_research"]
+        if research_mode == "REQUIRED":
             if not refs or not brief:
                 fail("MATH_CORE1_RESEARCH_EVIDENCE_INSUFFICIENT", bucket["bucket_id"])
+        elif research_mode == "OPTIONAL":
+            if bool(refs) != (brief is not None):
+                fail("MATH_CORE1_OPTIONAL_RESEARCH_BINDING_INCOMPLETE", bucket["bucket_id"])
+        else:
+            fail("MATH_CORE1_RESEARCH_POLICY_INVALID", f"{badge}:{research_mode}")
 
         if not rules["subsubtopic_decomposition_allowed"] and bucket["subsubtopic_plan"]:
             fail("MATH_CORE1_SUBSUBTOPIC_DECOMPOSITION_FORBIDDEN", bucket["bucket_id"])
