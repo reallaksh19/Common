@@ -48,7 +48,11 @@ def main():
     tests=[v for k,v in globals().items() if k.startswith("test_") and callable(v)]
     for test in tests:test()
     print(f"Blueprint routing tests: PASS ({len(tests)} tests)")
-    for name in ("test_blueprint_scope_v10.py","test_blueprint_stress_test_v10.py"):
+    for name in (
+        "test_blueprint_contract_inventory_v10.py",
+        "test_blueprint_scope_v10.py",
+        "test_blueprint_stress_test_v10.py",
+    ):
         subprocess.run([sys.executable,str(ROOT/"tests"/name)],check=True)
 
 if __name__=="__main__":main()
