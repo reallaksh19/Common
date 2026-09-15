@@ -113,12 +113,16 @@ class EngineeringDomainProjectionBindingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "DOMAIN_PROJECTION_ASSET_DIGEST_MISMATCH"):
             validate_projection_binding(registry, bad)
 
-    def test_registry_asset_removal_fails_closed(self):
+    def test_registry_leaf_asset_removal_hits_projection_custody_gate(self):
         registry, receipt = self.projected()
         bad_registry = copy.deepcopy(registry)
-        target = receipt["asset_projections"][0]["asset_id"]
+        by_id = {row["asset_id"]: row for row in bad_registry["assets"]}
+        target = next(
+            row["asset_id"] for row in receipt["asset_projections"]
+            if by_id[row["asset_id"]]["asset_type"] == "VERIFICATION_RULE"
+        )
         bad_registry["assets"] = [x for x in bad_registry["assets"] if x["asset_id"] != target]
-        with self.assertRaisesRegex(ValueError, "DOMAIN_PROJECTION_TOTAL_ASSET_COUNT_DRIFT|DOMAIN_PROJECTION_ENGINEERING_ASSET_RECEIPT_DRIFT"):
+        with self.assertRaisesRegex(ValueError, "DOMAIN_PROJECTION_TOTAL_ASSET_COUNT_DRIFT"):
             validate_projection_binding(bad_registry, receipt)
 
     def test_release_summary_count_drift_fails_closed(self):
