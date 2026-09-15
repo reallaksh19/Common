@@ -6,7 +6,7 @@ This file is the canonical generation-control boundary for Core1A/Core1B depth a
 
 ```text
 CORE1A / CORE1B
-topic complexity → difficulty badge → depth / research / representation budget
+topic complexity → difficulty badge → depth / research obligation / representation budget
 
 CORE2A / CORE2B
 learner knowledge % OR owner waiver
@@ -28,18 +28,21 @@ The badge reflects mathematical/pedagogical complexity or an explicit owner desi
 
 Useful badge evidence includes prerequisite depth, abstraction, representation changes, inference density, validity/exception density, misconception density, method branching and symbol-to-meaning compression. No unexplained numeric complexity score is required.
 
+Difficulty controls the **minimum research obligation**, not permission to investigate. Discovery remains open at every difficulty; promotion/release remains strict.
+
 ### EASY
 
 - up to 10 pages per stage per bucket;
 - visual, step-by-step and diagram-supported;
-- no pedagogy-enrichment web search;
+- pedagogy-enrichment web research is optional, not prohibited;
+- if optional research is used, both a governed research brief and bound research references are required;
 - remain at the subtopic level;
 - Source Integrity verification remains a separate safety path and may still be used when original evidence is ambiguous, damaged or conflicted.
 
 ### MEDIUM
 
 - up to 20 pages per stage per bucket;
-- mandatory web research before authoring;
+- mandatory targeted web research before authoring;
 - a research brief and credible web references are required;
 - subtopic → sub-subtopic decomposition allowed;
 - high visual density and dedicated diagrams;
@@ -58,6 +61,15 @@ Useful badge evidence includes prerequisite depth, abstraction, representation c
 Page budgets are ceilings, not quotas. Depth is measured by mathematical and cognitive coverage, not by filling pages.
 
 Research-source counts are deliberately **not** used as a proxy for quality. The research brief must explain what was learned from the sources and how it improves pedagogy. Web research may improve **how** mathematics is represented and explained; it cannot decide **what mathematics is legal**.
+
+The promotion rule is therefore:
+
+```text
+DISCOVERY / SEARCH: permitted at every difficulty
+EASY promotion: research not required; if used, custody must be complete
+MEDIUM promotion: targeted research required
+HARD promotion: deep research required
+```
 
 ## 3. Core2A/Core2B — learner-calibration control
 
@@ -136,7 +148,7 @@ Neither may silently infer the other.
 
 ```text
 Core1 bucket without difficulty badge                         → BLOCK
-EASY bucket with pedagogy-enrichment web research             → BLOCK
+EASY bucket with half-bound optional research                 → BLOCK
 MEDIUM/HARD bucket without required research brief/evidence   → BLOCK
 bucket page budget above badge ceiling                        → BLOCK
 Core1 depth changed because of learner knowledge %            → BLOCK
