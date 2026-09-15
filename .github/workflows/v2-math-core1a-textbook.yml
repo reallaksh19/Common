@@ -130,7 +130,7 @@ jobs:
           print(json.dumps({'buckets':len(bucket_plan['buckets']),'pages':len(pdf),'pdf_sha256':audit['artifact']['pdf_sha256'],'actual_problem_instances':audit['quality_audit']['actual_problem_instances'],'governance_receipt':receipt['receipt_id']}, indent=2))
           PY
 
-      - name: Run Engineering-bound four-producer release golden
+      - name: Run full mixed-corpus Engineering-bound four-producer release golden
         run: |
           python 'Grade 9/V2/Mathematics/MathBlueprint/engine/run_bound_producer_release_golden_entry.py' \
             --core1-plan /tmp/core1a/core1_study_plan.json \
@@ -138,7 +138,7 @@ jobs:
             --core2-plan /tmp/core1a/core2_plan.json \
             --out-dir /tmp/core1a/bound-producer-release
 
-      - name: Inspect Engineering-bound release and full-scope gap audit
+      - name: Inspect full mixed-corpus Engineering-bound release
         run: |
           python - <<'PY'
           import json
@@ -147,23 +147,25 @@ jobs:
           summary = json.loads((root / 'bound_producer_release_summary.json').read_text(encoding='utf-8'))
           full_audit = json.loads((root / 'full_mixed_engineering_coverage_audit.json').read_text(encoding='utf-8'))
           assert summary['status'] == 'PASS'
-          assert summary['golden_id'] == 'MATH-BOUND-PRODUCER-RELEASE-v2'
-          assert summary['engineering_crosswalk_ref'] == 'MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V1'
+          assert summary['golden_id'] == 'MATH-BOUND-PRODUCER-RELEASE-v3'
+          assert summary['engineering_crosswalk_ref'] == 'MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V2'
           assert summary['release_gate']['status'] == 'PASS'
           assert summary['release_gate']['engineering_domain_authorization']['status'] == 'BOUND'
           assert summary['release_gate']['engineering_domain_authorization']['authorized_direct_gate_count'] >= 1
           assert summary['release_gate']['frozen_source_custody']['status'] == 'PASS'
           assert summary['release_gate']['canonical_answer_custody']['status'] == 'PASS'
-          assert summary['full_mixed_engineering_status'] == 'FULL_MIXED_CORPUS_NOT_ENGINEERING_RELEASE_READY'
-          assert summary['full_mixed_engineering_gap_capability_refs'] == ['MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE']
-          assert full_audit['required_status'] == 'BLOCKED_ENGINEERING_GAP'
-          assert full_audit['engineering_gap_count'] == 1
+          assert summary['full_mixed_engineering_status'] == 'FULL_MIXED_CORPUS_ENGINEERING_COVERED'
+          assert summary['full_mixed_engineering_gap_capability_refs'] == []
+          assert full_audit['required_status'] == 'COVERED'
+          assert full_audit['engineering_gap_count'] == 0
+          assert 'MATH-GEO-EUCLID-FOUNDATIONS' in full_audit['required_engineering_gate_ids']
           assert summary['engineering_projection_coverage']['required_status'] == 'COVERED'
-          assert summary['engineering_bound_projection']['source_question_refs'] == ['Q2']
-          assert set(summary['engineering_bound_projection']['capability_refs']) == {'MATH-ORDERED-PAIR-SEMANTICS','MATH-COORDINATE-DISTANCE'}
+          assert len(summary['engineering_bound_projection']['source_question_refs']) == 14
+          assert len(summary['engineering_bound_projection']['capability_refs']) == 30
+          assert 'MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE' in summary['engineering_bound_projection']['capability_refs']
           assert summary['core1b_receipt_refs']
-          assert summary['source_question_count'] == 1
-          assert summary['bucket_count'] == 1
+          assert summary['source_question_count'] == 14
+          assert summary['bucket_count'] >= 1
           print(json.dumps(summary, indent=2))
           PY
 
