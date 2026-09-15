@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "rubric_id": "PHY-P-L-PEDAGOGY-RUBRIC-v1",
+  "review_dimension": "PEDAGOGY",
+  "criteria": [
+    {"criterion_id":"PHY-PED-BOUNDARIES","required":true,"description":"Verify the learner can act on model/boundary information without hidden assumptions."},
+    {"criterion_id":"PHY-PED-WORKED-TRACE","required":true,"description":"Verify worked reasoning is usable as instruction rather than unexplained answer presentation."},
+    {"criterion_id":"PHY-PED-SUPPORT-FADING","required":true,"description":"Verify support and hinting fade coherently toward independent work."},
+    {"criterion_id":"PHY-PED-TRANSFER-COMPLETION","required":true,"description":"Verify transfer and completion tasks are learnable from the preceding teaching sequence."}
+  ]
+}

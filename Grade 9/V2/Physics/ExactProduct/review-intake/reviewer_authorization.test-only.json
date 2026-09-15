@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "PHY-P-L-REVIEWERS-TEST-v1",
+  "registry_class": "TEST_ONLY",
+  "version": "1.0.0-test",
+  "authorized_reviewers": {
+    "HUMAN_SUBJECT": ["physics-test-subject-001"],
+    "HUMAN_PEDAGOGY": ["physics-test-pedagogy-001"],
+    "HUMAN_ASSESSMENT": ["physics-test-assessment-001"],
+    "HUMAN_VISUAL": ["physics-test-visual-001"]
+  }
+}

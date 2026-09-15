@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "rubric_id": "PHY-P-L-ASSESSMENT-RUBRIC-v1",
+  "review_dimension": "ASSESSMENT",
+  "criteria": [
+    {"criterion_id":"PHY-ASM-SOURCE-INTEGRITY","required":true,"description":"Verify assessment use preserves source integrity and does not silently repair ambiguity, missing figures or damaged notation."},
+    {"criterion_id":"PHY-ASM-ITEM-VALIDITY","required":true,"description":"Verify assessable items are physically and mathematically usable under their stated information and model conditions."},
+    {"criterion_id":"PHY-ASM-ALTERNATIVE-MODELS","required":true,"description":"Verify assumption-sensitive or multiple-valid-model items preserve the valid alternatives and conditions rather than forcing one key assertion."},
+    {"criterion_id":"PHY-ASM-DIAGNOSTIC-USE","required":true,"description":"Verify underdetermined, defective, ambiguous or incomplete items cannot generate invalid negative learner inference."},
+    {"criterion_id":"PHY-ASM-REPRESENTATION-CUSTODY","required":true,"description":"Verify graphs, scales, vectors, figures and other physically meaningful representations remain bound to their exact source evidence."}
+  ]
+}
