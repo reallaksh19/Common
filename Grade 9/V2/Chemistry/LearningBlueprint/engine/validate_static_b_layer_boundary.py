@@ -48,6 +48,14 @@ def _base_checks(payload: dict[str, Any], policy: dict[str, Any]) -> None:
         fail("CHEM_B_NEW_CHEMISTRY_INTRODUCED")
 
 
+def _help_signature(payload: dict[str, Any]) -> tuple[str, ...]:
+    return tuple(
+        " ".join(str(row.get("text", "")).lower().split())
+        for row in payload.get("help", [])
+        if isinstance(row, dict)
+    )
+
+
 def validate_core1b(payload: dict[str, Any], policy: dict[str, Any] | None = None) -> dict[str, Any]:
     policy = policy or load(POLICY_PATH)
     _base_checks(payload, policy)
@@ -71,6 +79,16 @@ def validate_core1b(payload: dict[str, Any], policy: dict[str, Any] | None = Non
         fail("CHEM_CORE1B_AUTHORITY_SCOPE_VIOLATION", "capability_ref")
     if family not in set(payload.get("approved_problem_family_refs", [])):
         fail("CHEM_CORE1B_AUTHORITY_SCOPE_VIOLATION", "problem_family_ref")
+    if not str(payload.get("module_ref", "")).strip():
+        fail("CHEM_CORE1B_MODULE_REF_REQUIRED")
+
+    used_reps = payload.get("used_representation_refs")
+    approved_reps = payload.get("approved_representation_refs")
+    if not isinstance(used_reps, list) or not isinstance(approved_reps, list):
+        fail("CHEM_CORE1B_REPRESENTATION_AUTHORITY_REQUIRED")
+    unauthorized_reps = sorted(set(used_reps) - set(approved_reps))
+    if unauthorized_reps:
+        fail("CHEM_CORE1B_REPRESENTATION_AUTHORITY_DRIFT", ",".join(unauthorized_reps))
 
     for field in cfg["answer_closure_required"]:
         if not str(payload.get(field, "")).strip():
@@ -88,18 +106,45 @@ def validate_core1b(payload: dict[str, Any], policy: dict[str, Any] | None = Non
     ranks = [allowed.index(level) for level in levels]
     if ranks != sorted(ranks) or len(set(ranks)) != len(ranks):
         fail("CHEM_CORE1B_HELP_ORDER_INVALID")
+    if any(not str(row.get("text", "")).strip() for row in rows):
+        fail("CHEM_CORE1B_HELP_ORDER_INVALID", "empty help text")
 
     return {
         "status": "PASS",
         "product_mode": "CORE1B",
         "delivery_mode": "STATIC",
+        "module_ref": payload["module_ref"],
         "control_axis": cfg["control_axis"],
         "difficulty_badge": bucket_authority["difficulty_badge"],
         "page_envelope_max": bucket_authority["max_pages"],
         "research_mode": bucket_authority["research_mode"],
         "learner_knowledge_used_for_depth": False,
+        "used_representation_refs": sorted(set(used_reps)),
+        "representation_scope_expanded_by_research": False,
         "new_chemistry_refs": [],
         "answer_closure": "PASS",
+    }
+
+
+def validate_core1b_collection(payloads: list[dict[str, Any]], policy: dict[str, Any] | None = None) -> dict[str, Any]:
+    policy = policy or load(POLICY_PATH)
+    if not isinstance(payloads, list) or not payloads:
+        fail("CHEM_CORE1B_COLLECTION_EMPTY")
+    results = [validate_core1b(payload, policy) for payload in payloads]
+    by_module: dict[str, tuple[str, ...]] = {}
+    for payload in payloads:
+        module_ref = payload["module_ref"]
+        signature = _help_signature(payload)
+        for other_module, other_signature in by_module.items():
+            if module_ref != other_module and signature == other_signature:
+                fail("CHEM_CORE1B_GENERIC_HINT_LADDER_REUSED", f"{other_module},{module_ref}")
+        by_module[module_ref] = signature
+    return {
+        "status": "PASS",
+        "product_mode": "CORE1B_COLLECTION",
+        "module_count": len(set(by_module)),
+        "distinct_hint_ladder_count": len(set(by_module.values())),
+        "results": results,
     }
 
 
@@ -171,12 +216,17 @@ def validate_core2b(payload: dict[str, Any], policy: dict[str, Any] | None = Non
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=["CORE1B", "CORE2B"])
+    parser.add_argument("mode", choices=["CORE1B", "CORE1B_COLLECTION", "CORE2B"])
     parser.add_argument("payload")
     args = parser.parse_args()
     payload = load(Path(args.payload))
     try:
-        result = validate_core1b(payload) if args.mode == "CORE1B" else validate_core2b(payload)
+        if args.mode == "CORE1B":
+            result = validate_core1b(payload)
+        elif args.mode == "CORE1B_COLLECTION":
+            result = validate_core1b_collection(payload)
+        else:
+            result = validate_core2b(payload)
     except StaticBLayerBoundaryError as exc:
         print(json.dumps({"status": "FAIL", "code": exc.code, "message": exc.message}, indent=2))
         return 1
