@@ -16,14 +16,19 @@ except ImportError:  # pragma: no cover
 HERE = Path(__file__).resolve()
 LP_ROOT = HERE.parents[1]
 CHEM_ROOT = HERE.parents[2]
+BP_ROOT = CHEM_ROOT / "LearningBlueprint"
 sys.path.insert(0, str(CHEM_ROOT / "ExactProduct" / "engine"))
 
 from chemistry_content_first_preflight import content_first_page_checks  # noqa: E402
+from chemistry_review_candidate_preflight import review_candidate_checks  # noqa: E402
 import learner_surface_guard as GUARD  # noqa: E402
 
 A4_W = 595.28
 A4_H = 841.89
 POLICY_PATH = LP_ROOT / "policies" / "chemistry-learner-render-policy.json"
+V5_POLICY_PATH = BP_ROOT / "policies" / "v5-study-product-quality-policy.json"
+PRODUCT_CONTROL_PATH = BP_ROOT / "policies" / "product-control-consolidation.v1.json"
+REVIEW_POLICY_PATH = BP_ROOT / "policies" / "review-candidate-realization.v1.json"
 
 
 def canonical(obj: Any) -> str:
@@ -44,8 +49,8 @@ def file_digest(path: Path) -> str:
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def load_policy() -> dict[str, Any]:
-    return json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+def load_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def run_core_product_preflight(
@@ -63,7 +68,10 @@ def run_core_product_preflight(
     if render_manifest.get("core_authority_id") != authority["authority_id"] or render_manifest.get("core_authority_digest") != authority["authority_digest"]:
         raise ValueError("CHEM_CORE_PREFLIGHT_AUTHORITY_DRIFT")
 
-    policy = load_policy()
+    policy = load_json(POLICY_PATH)
+    v5_policy = load_json(V5_POLICY_PATH)
+    product_control = load_json(PRODUCT_CONTROL_PATH)
+    review_policy = load_json(REVIEW_POLICY_PATH)
     if render_manifest.get("render_policy_ref") != policy.get("policy_id"):
         raise ValueError("CHEM_CORE_PREFLIGHT_RENDER_POLICY_REF_DRIFT")
     if render_manifest.get("render_policy_digest") != digest(policy):
@@ -111,19 +119,25 @@ def run_core_product_preflight(
         page_rows.append({"page": page_no, "text_chars": len(text), "min_font_pt": round(page_min, 2)})
     doc.close()
 
-    content_first = content_first_page_checks(
-        render_manifest.get("renderer_metrics") or {},
-        policy,
-        render_manifest["product_mode"],
-    )
+    metrics = render_manifest.get("renderer_metrics") or {}
+    content_first = content_first_page_checks(metrics, policy, render_manifest["product_mode"])
     failures.extend(content_first["failures"])
     content_by_page = {row["page"]: row for row in content_first["page_checks"]}
     for row in page_rows:
         if row["page"] in content_by_page:
             row.update({k: v for k, v in content_by_page[row["page"]].items() if k != "page"})
 
+    review_candidate = review_candidate_checks(
+        metrics,
+        v5_policy,
+        product_control,
+        review_policy,
+        render_manifest["product_mode"],
+    )
+    failures.extend(review_candidate["failures"])
+
     report = {
-        "schema_version": "1.0.0",
+        "schema_version": "2.0.0",
         "preflight_id": render_manifest["render_id"].replace("CHEM-CORE-RENDER-", "CHEM-CORE-PREFLIGHT-", 1),
         "product_mode": render_manifest["product_mode"],
         "custody_id": custody["custody_id"],
@@ -132,12 +146,19 @@ def run_core_product_preflight(
         "core_authority_digest": authority["authority_digest"],
         "render_policy_ref": policy["policy_id"],
         "render_policy_digest": digest(policy),
+        "review_policy_ref": review_policy["policy_id"],
+        "review_policy_digest": digest(review_policy),
+        "product_control_ref": product_control["policy_id"],
+        "product_control_digest": digest(product_control),
         "artifact": copy.deepcopy(artifact),
         "page_checks": page_rows,
         "content_first_pagination": content_first,
+        "review_candidate": review_candidate,
         "minimum_font_pt": round(global_min_font, 2),
         "failures": failures,
         "status": "PASS" if not failures else "FAIL",
+        "maturity_state": review_candidate["maturity_state"],
+        "human_release_inferred": False,
         "preflight_digest": "",
     }
     report["preflight_digest"] = digest_without(report, "preflight_digest")
