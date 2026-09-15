@@ -11,6 +11,7 @@ from validate_self_teaching_generation_spec import validate_generation_spec
 from validate_canonical_domain_registry import validate_registry
 from producer_governance import core2a_receipt
 from emit_stage_governance import write_receipt
+from engineering_product_custody import load_custody, stamp_receipt, custody_summary
 
 REQUIRED_ROLES={'CORE1A_BUCKET_PLAN','CORE2_PLAN'}
 DEMAND_RANK={'EASY':1,'MEDIUM':2,'HARD':3}
@@ -153,7 +154,7 @@ def build_candidate_spec(item,scaffold):
     return {'question_id':item['candidate_id'],'question_class':'GENERATED_CHALLENGE','bucket_refs':item['bucket_refs'],'required_capability_refs':list(item['required_capability_refs']),'slot':item['slot'],'demand_level':candidate_demand_level(item),'prompt':item['prompt'],'scaffold_plan_ref':scaffold['scaffold_plan_id'],'provenance':item['provenance'],'answer_contract':item['answer_contract'],'parent_question_refs':parents,'source_relation':'FRESH_ORIGINAL','learner_source_label':'Generated original practice','learner_support':{'TRY IT FIRST':True,'SMALL CLUE':item['staged_help']['small_clue'],'BIGGER CLUE':item['staged_help']['bigger_clue'],'HOW DO I START?':item['staged_help']['how_do_i_start'],'THINK IT THROUGH':item['think_it_through'],'FULL WORKING':item['full_working'],'QUICK CHECK':item['quick_check']},'novelty_check':item['novelty_check']}
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--intent',required=True); ap.add_argument('--generation-spec',required=True); ap.add_argument('--source-bundle',required=True); ap.add_argument('--core1a-bucket-plan',required=True); ap.add_argument('--core2-plan',required=True); ap.add_argument('--core2-answer-contracts',required=True); ap.add_argument('--candidate-set'); ap.add_argument('--domain-registry'); ap.add_argument('--scaffold-profiles',default=str(PK/'common'/'profiles'/'scaffold-profiles.json')); ap.add_argument('--knowledge-support-profiles',default=str(PK/'common'/'profiles'/'knowledge-support-profiles.json')); ap.add_argument('--out-dir',required=True); a=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--intent',required=True); ap.add_argument('--generation-spec',required=True); ap.add_argument('--source-bundle',required=True); ap.add_argument('--core1a-bucket-plan',required=True); ap.add_argument('--core2-plan',required=True); ap.add_argument('--core2-answer-contracts',required=True); ap.add_argument('--candidate-set'); ap.add_argument('--domain-registry'); ap.add_argument('--engineering-admission'); ap.add_argument('--scaffold-profiles',default=str(PK/'common'/'profiles'/'scaffold-profiles.json')); ap.add_argument('--knowledge-support-profiles',default=str(PK/'common'/'profiles'/'knowledge-support-profiles.json')); ap.add_argument('--out-dir',required=True); a=ap.parse_args()
     out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True); intent=load(a.intent); routed=route_task(intent); (out/'routing_result.json').write_text(json.dumps(routed,indent=2)+'\n',encoding='utf-8')
     if routed['status']!='ROUTED': print(routed['question']); raise SystemExit(2)
     if routed['stage']!='CORE2A': raise ValueError('CORE2A_KIT_WRONG_STAGE')
@@ -165,6 +166,7 @@ def main():
     c2a_ceiling=cal['resolved_core2a_max_demand_level']; support_profile=cal['resolved_core2a_support_profile']
     registry=load(a.domain_registry) if a.domain_registry else None
     if registry is not None: validate_registry(registry)
+    engineering_custody=load_custody(a.engineering_admission,registry)
 
     bundle=load(a.source_bundle); validate_source_bundle(bundle,REQUIRED_ROLES); c1a=load(a.core1a_bucket_plan); c2=load(a.core2_plan)
     validate_bound_object(bundle,'CORE1A_BUCKET_PLAN',c1a,ref_fields=('bucket_plan_id',),digest_fields=('plan_digest',)); validate_bound_object(bundle,'CORE2_PLAN',c2,ref_fields=('plan_id',),digest_fields=('plan_digest',))
@@ -213,8 +215,9 @@ def main():
     for p in c2['pages']:
         row=copy.deepcopy(p); row['answer_contract_ref']='ANS-'+p['question_ref']+'-'+digest(source_answers[p['question_ref']])[:12]; receipt_pages.append(row)
     receipt=core2a_receipt(bp,gen,registry=registry,all_source_pages=receipt_pages)
+    receipt=stamp_receipt(receipt,engineering_custody)
     write_receipt(receipt,out/'core2a_governance_receipt.json')
 
-    audit={'kit_id':'MATH-PRODUCTION-KIT-CORE2A-v5','status':'PASS','purpose':purpose,'calibration_mode':calibration_mode,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level'],'bucket_count':len(buckets),'selected_source_question_count':selected_count,'multi_bucket_source_question_count':sum(1 for refs in qmap.values() if len(refs)>1),'generated_candidate_count':len(candidates),'generated_candidates_dropped_by_ceiling':dropped_by_ceiling,'blueprint_ref':bp['blueprint_id'],'governance_receipt_ref':receipt['receipt_id'],'governance_release_state':receipt['release_state'],'same_as_core2':False}; (out/'core2a_kit_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8'); print(json.dumps(audit,indent=2))
+    audit={'kit_id':'MATH-PRODUCTION-KIT-CORE2A-v5','status':'PASS','purpose':purpose,'calibration_mode':calibration_mode,'core2a_support_profile':support_profile,'core2a_max_demand_level':c2a_ceiling,'core2b_max_demand_level':cal['resolved_core2b_max_demand_level'],'bucket_count':len(buckets),'selected_source_question_count':selected_count,'multi_bucket_source_question_count':sum(1 for refs in qmap.values() if len(refs)>1),'generated_candidate_count':len(candidates),'generated_candidates_dropped_by_ceiling':dropped_by_ceiling,'blueprint_ref':bp['blueprint_id'],'governance_receipt_ref':receipt['receipt_id'],'governance_release_state':receipt['release_state'],'engineering_custody':custody_summary(engineering_custody),'same_as_core2':False}; (out/'core2a_kit_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8'); print(json.dumps(audit,indent=2))
 
 if __name__=='__main__': main()
