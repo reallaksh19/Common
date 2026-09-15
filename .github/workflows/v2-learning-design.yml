@@ -1,0 +1,47 @@
+name: V2 Learning Design
+
+on:
+  pull_request:
+    paths:
+      - "Grade 9/V2/LearningDesign/**"
+      - ".github/workflows/v2-learning-design.yml"
+  workflow_dispatch:
+
+jobs:
+  learning-design:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install schema validator
+        run: python -m pip install "jsonschema>=4.20,<5"
+      - name: Validate V2-05 contracts and generated artifacts
+        run: python "Grade 9/V2/LearningDesign/contracts/validate_contracts.py"
+      - name: Run Learning Design falsifiers
+        run: python "Grade 9/V2/LearningDesign/tests/test_learning_design.py"
+      - name: Deterministic design replay
+        run: |
+          D="Grade 9/V2/LearningDesign"
+          python "$D/engine/design_learning.py"             --study-model "$D/fixtures/learner_study_model.synthetic.json"             --publication-view "$D/fixtures/publication_planning_view.synthetic.json"             --publication-target "$D/fixtures/publication_target.synthetic.json"             --policy "$D/fixtures/learning_design_policy.synthetic.json"             --out /tmp/a.json
+          python "$D/engine/design_learning.py"             --study-model "$D/fixtures/learner_study_model.synthetic.json"             --publication-view "$D/fixtures/publication_planning_view.synthetic.json"             --publication-target "$D/fixtures/publication_target.synthetic.json"             --policy "$D/fixtures/learning_design_policy.synthetic.json"             --out /tmp/b.json
+          cmp /tmp/a.json /tmp/b.json
+          echo "V2_05_DETERMINISTIC_DESIGN = PASS"
+      - name: Runtime route-change replay
+        run: |
+          D="Grade 9/V2/LearningDesign"
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          d=Path("Grade 9/V2/LearningDesign")
+          sys.path.insert(0,str(d/"engine"))
+          from design_learning import build_design
+          load=lambda n: json.loads((d/"fixtures"/n).read_text())
+          r=build_design(load("learner_study_model.synthetic.json"),load("publication_planning_view.synthetic.json"),load("publication_target.synthetic.json"),load("learning_design_policy.synthetic.json"))
+          assert r["status"]=="READY"
+          Path("/tmp/plan.json").write_text(json.dumps(r["learning_design_plan"]))
+          PY
+          python "$D/runtime/select_support.py"             --plan /tmp/plan.json             --state "$D/fixtures/interaction_support_state.synthetic.json"             > /tmp/support.json
+          grep -q '"rung_id": "H3"' /tmp/support.json
+          echo "V2_05_ROUTE_CHANGE_RUNTIME = PASS"

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learning-design-policy.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version","max_same_route_failures","approved_support_rungs","forbidden_input_keys"],
+  "properties": {
+    "policy_version": {"type": "string","minLength": 1},
+    "max_same_route_failures": {"type": "integer","minimum": 1},
+    "approved_support_rungs": {
+      "type": "array","minItems": 2,
+      "items": {
+        "type": "object","additionalProperties": false,
+        "required": ["rung_id","support_class","route_mode","support_features","disclosure"],
+        "properties": {
+          "rung_id": {"type": "string","minLength": 1},
+          "support_class": {"enum": ["CONCEPTUAL","ACCESS"]},
+          "route_mode": {"enum": ["SAME_ROUTE","ROUTE_CHANGE"]},
+          "support_features": {"type": "array","uniqueItems": true,"items": {"type": "string","minLength": 1}},
+          "disclosure": {"enum": ["PROMPT","HINT","MODEL","ACCESS_ONLY"]}
+        }
+      }
+    },
+    "forbidden_input_keys": {"type": "array","uniqueItems": true,"items": {"type": "string","minLength": 1}},
+    "forbidden_design_keys": {"type": "array","uniqueItems": true,"items": {"type": "string","minLength": 1}}
+  }
+}

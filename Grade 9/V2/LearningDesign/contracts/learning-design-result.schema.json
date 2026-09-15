@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learning-design-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","status"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "status": {"enum": ["READY","BLOCKED"]},
+    "learning_design_plan": {"$ref": "learning-design-plan.schema.json"},
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object","additionalProperties": false,
+        "required": ["gap_type","reason","refs"],
+        "properties": {
+          "gap_type": {"const": "LEARNING_DESIGN_GAP"},
+          "reason": {"type": "string","minLength": 1},
+          "refs": {"type": "array","minItems": 1,"items": {"type": "string","minLength": 1}}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "READY"}}},"then": {"required": ["learning_design_plan"],"not": {"required": ["gaps"]}}},
+    {"if": {"properties": {"status": {"const": "BLOCKED"}}},"then": {"required": ["gaps"],"not": {"required": ["learning_design_plan"]}}}
+  ]
+}

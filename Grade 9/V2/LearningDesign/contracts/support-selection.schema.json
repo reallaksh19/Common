@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "support-selection.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["selection_id","learning_design_id","frozen_design_digest","unit_id","rung_id","support_class","route_mode","support_features","reason"],
+  "properties": {
+    "selection_id": {"type": "string","minLength": 1},
+    "learning_design_id": {"type": "string","minLength": 1},
+    "frozen_design_digest": {"type": "string","pattern": "^[a-f0-9]{64}$"},
+    "unit_id": {"type": "string","minLength": 1},
+    "rung_id": {"type": ["string","null"]},
+    "support_class": {"type": ["string","null"],"enum": ["CONCEPTUAL","ACCESS",null]},
+    "route_mode": {"type": ["string","null"],"enum": ["SAME_ROUTE","ROUTE_CHANGE",null]},
+    "support_features": {"type": "array","items": {"type": "string"}},
+    "reason": {"type": "string","minLength": 1}
+  }
+}

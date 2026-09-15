@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learning-design-plan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["learning_design_id","schema_version","learner_study_model_id","study_model_digest","publication_planning_view_id","publication_target_id","policy_version","units","obligation_coverage","runtime_support_contract"],
+  "properties": {
+    "learning_design_id": {"type": "string","minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "learner_study_model_id": {"type": "string","minLength": 1},
+    "study_model_digest": {"type": "string","pattern": "^[a-f0-9]{64}$"},
+    "publication_planning_view_id": {"type": "string","minLength": 1},
+    "publication_target_id": {"type": "string","minLength": 1},
+    "policy_version": {"type": "string","minLength": 1},
+    "units": {
+      "type": "array","minItems": 1,
+      "items": {
+        "type": "object","additionalProperties": false,
+        "required": ["unit_id","target_ref","study_treatment","readiness","choreography","support_progression"],
+        "properties": {
+          "unit_id": {"type": "string","minLength": 1},
+          "target_ref": {"type": "string","minLength": 1},
+          "study_treatment": {"enum": ["VERIFY_ONLY","COMPRESS","USE_AS_ENTRY_POINT","ACTIVE_STUDY"]},
+          "readiness": {"enum": ["READY","REPAIR_BEFORE","REPAIR_IN_UNIT","PROBE_FIRST"]},
+          "choreography": {
+            "type": "array","minItems": 1,
+            "items": {
+              "type": "object","additionalProperties": false,
+              "required": ["step_id","role","obligation_refs","learner_job","payload","learner_action"],
+              "properties": {
+                "step_id": {"type": "string","minLength": 1},
+                "role": {"enum": ["ANCHOR","PREDICT","RECONSTRUCT","REPRESENTATION_TRANSLATE","WORKED_REASONING","MINIMAL_CONTRAST","MISCONCEPTION_REPAIR","GUIDED_ATTEMPT","FADED_ATTEMPT","INDEPENDENT_ATTEMPT","VERIFICATION","TRANSFER","COMPLETION_EVIDENCE","DIAGNOSTIC_PROBE"]},
+                "obligation_refs": {"type": "array","minItems": 1,"uniqueItems": true,"items": {"type": "string","minLength": 1}},
+                "learner_job": {"type": "string","minLength": 1},
+                "payload": {"type": "object"},
+                "learner_action": {"type": "boolean"}
+              }
+            }
+          },
+          "support_progression": {
+            "type": "object","additionalProperties": false,
+            "required": ["worked","guided","faded","independent"],
+            "properties": {
+              "worked": {"$ref": "#/$defs/support_stage"},
+              "guided": {"$ref": "#/$defs/support_stage"},
+              "faded": {"$ref": "#/$defs/support_stage"},
+              "independent": {"$ref": "#/$defs/support_stage"}
+            }
+          }
+        }
+      }
+    },
+    "obligation_coverage": {
+      "type": "array","minItems": 1,
+      "items": {
+        "type": "object","additionalProperties": false,
+        "required": ["obligation_id","target_ref","realized_step_refs"],
+        "properties": {
+          "obligation_id": {"type": "string","minLength": 1},
+          "target_ref": {"type": "string","minLength": 1},
+          "realized_step_refs": {"type": "array","minItems": 1,"uniqueItems": true,"items": {"type": "string","minLength": 1}}
+        }
+      }
+    },
+    "runtime_support_contract": {
+      "type": "object","additionalProperties": false,
+      "required": ["max_same_route_failures","approved_rungs"],
+      "properties": {
+        "max_same_route_failures": {"type": "integer","minimum": 1},
+        "approved_rungs": {
+          "type": "array","minItems": 2,
+          "items": {
+            "type": "object","additionalProperties": false,
+            "required": ["rung_id","support_class","route_mode","support_features","disclosure"],
+            "properties": {
+              "rung_id": {"type": "string","minLength": 1},
+              "support_class": {"enum": ["CONCEPTUAL","ACCESS"]},
+              "route_mode": {"enum": ["SAME_ROUTE","ROUTE_CHANGE"]},
+              "support_features": {"type": "array","uniqueItems": true,"items": {"type": "string"}},
+              "disclosure": {"enum": ["PROMPT","HINT","MODEL","ACCESS_ONLY"]}
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "support_stage": {
+      "type": "object","additionalProperties": false,
+      "required": ["support_features","removed_since_previous"],
+      "properties": {
+        "support_features": {"type": "array","uniqueItems": true,"items": {"type": "string"}},
+        "removed_since_previous": {"type": "array","uniqueItems": true,"items": {"type": "string"}}
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "state_id": "ISS-SYN-001",
+  "schema_version": "1.0.0",
+  "learning_design_id": "LD-LSM-SYN-MATH-001-LDP-SYN-1",
+  "unit_id": "UNIT-MATH-EQUALITY-EXECUTION",
+  "attempt_id": "ATT-SYN-3",
+  "observed_at": "2026-09-11T00:05:00Z",
+  "response_status": "INCORRECT",
+  "consecutive_unsuccessful_attempts": 2,
+  "rungs_used": [
+    "H1",
+    "H2"
+  ],
+  "access_request": false
+}

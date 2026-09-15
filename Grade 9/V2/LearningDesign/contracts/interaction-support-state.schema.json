@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "interaction-support-state.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "state_id",
+    "schema_version",
+    "learning_design_id",
+    "unit_id",
+    "attempt_id",
+    "observed_at",
+    "response_status",
+    "consecutive_unsuccessful_attempts",
+    "rungs_used",
+    "access_request"
+  ],
+  "properties": {
+    "state_id": {"type": "string","minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "learning_design_id": {"type": "string","minLength": 1},
+    "unit_id": {"type": "string","minLength": 1},
+    "attempt_id": {"type": "string","minLength": 1},
+    "observed_at": {"type": "string","format": "date-time"},
+    "response_status": {"enum": ["NOT_ATTEMPTED","PARTIAL","INCORRECT","CORRECT"]},
+    "consecutive_unsuccessful_attempts": {"type": "integer","minimum": 0},
+    "rungs_used": {"type": "array","uniqueItems": true,"items": {"type": "string","minLength": 1}},
+    "access_request": {"type": "boolean"}
+  }
+}

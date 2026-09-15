@@ -1,0 +1,23 @@
+{
+  "publication_planning_view_id": "PPV-SYN-001",
+  "snapshot_ref": "LSS-SYN-001",
+  "as_of": "2026-09-11T00:00:00Z",
+  "privacy_scope": "MINIMIZED",
+  "descriptive_signals": [
+    {
+      "signal_ref": "PPV-SIG-SETUP",
+      "capability_id": "MATH-SYSTEM-SETUP",
+      "observation": "demonstrated setup can be used as an entry point"
+    },
+    {
+      "signal_ref": "PPV-SIG-EQ",
+      "capability_id": "MATH-EQUALITY-EXECUTION",
+      "observation": "execution requires repair"
+    },
+    {
+      "signal_ref": "PPV-SIG-SLOPE",
+      "capability_id": "MATH-SLOPE-SEMANTICS",
+      "observation": "state remains ambiguous; probe required"
+    }
+  ]
+}
