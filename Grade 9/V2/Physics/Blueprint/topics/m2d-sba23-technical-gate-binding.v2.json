@@ -7,7 +7,7 @@
   "engineering_manifest_ref": "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json",
   "closure_receipt_id": "ENG-CLOSURE-M2D-SBA23-V3",
   "closure_receipt_digest": "sha256:2eb5eb18b7af6df8c938b947fdf09808cf7c91b643754dfa7c7e3f322041100c",
-  "closure_logic_digest": "sha256:82976d947cbce07922c18abdd8e82d35e525ffe4b3e602d5564f99e3df24e73c",
+  "closure_logic_digest": "sha256:15a31ccf48f6820f07099d4a2b42f59b7a8b7ff3e9896f74ceaddb2540e9b7ee",
   "registry_digest": "sha256:e719f2d2aa65a2f5a05c8efc740e7e22174e8f5f2936b1408817d09708f906ea",
   "notes": "This binding carries custody of the exact validated Workbench closure. It does not redeclare the prerequisite closure or readiness status. Source/legal custody remains independently visible on the closure receipt. The registry digest covers the canonical 17-gate Physics v3 registry while the SBA23 transitive closure remains exactly six gates."
 }
