@@ -117,11 +117,19 @@ def render_core2b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     for row in visible:
         w.clue_panel(CORE2_HELP_LABELS[row["level"]], row["text"], ref)
 
-    w.heading("Full solution", level=2, ref=ref)
+    # Solution closure is deliberately a complete semantic episode rather than a
+    # terminal fragment left behind by clue pagination. The repeated source stem is
+    # upstream-governed question context, not newly authored Chemistry.
+    w.new_page("Core2B solution", role="SOLUTION")
+    w.heading("Full solution")
+    w.question_text(source["stem"], ref + "-SOLUTION-CONTEXT")
     w.answer_panel("FULL SOLUTION", payload["full_solution"], ref)
     w.answer_panel("ANSWER", source["canonical_answer"], ref)
     w.verification_panel("VERIFY AND REFLECT", payload["verify_reflect"], ref)
     w.action_panel("GENERALIZE", "Name the decisive clue that made this problem belong to its problem family, then state what would make the method fail.", ref)
+    w.action_panel("REBUILD WITHOUT LOOKING", "Cover the solution. Reproduce the reasoning path from the original question, then compare only after you have committed a complete chain.", ref)
+    w.workspace(5, ref)
+    w.action_panel("FINAL CHECK", "Mark the first point where your rebuilt path diverged from the governed solution, repair that step, and verify the conclusion again.", ref)
     return _finish(w, path, "CORE2B", evidence)
 
 
