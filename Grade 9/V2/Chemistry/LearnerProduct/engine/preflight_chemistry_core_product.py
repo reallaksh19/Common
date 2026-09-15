@@ -18,6 +18,7 @@ LP_ROOT = HERE.parents[1]
 CHEM_ROOT = HERE.parents[2]
 sys.path.insert(0, str(CHEM_ROOT / "ExactProduct" / "engine"))
 
+from chemistry_content_first_preflight import content_first_page_checks  # noqa: E402
 import learner_surface_guard as GUARD  # noqa: E402
 
 A4_W = 595.28
@@ -45,71 +46,6 @@ def file_digest(path: Path) -> str:
 
 def load_policy() -> dict[str, Any]:
     return json.loads(POLICY_PATH.read_text(encoding="utf-8"))
-
-
-def content_first_page_checks(
-    metrics: dict[str, Any],
-    policy: dict[str, Any],
-    product_mode: str,
-) -> dict[str, Any]:
-    cfg = policy.get("preflight", {}).get("content_first_pagination", {})
-    products = set(cfg.get("products") or [])
-    if product_mode not in products:
-        return {"status": "NOT_APPLICABLE", "page_checks": [], "failures": []}
-
-    failures: list[str] = []
-    if metrics.get("pagination_mode") != "CONTENT_FIRST":
-        failures.append("CHEM_CORE_PREFLIGHT_CONTENT_FIRST_MODE_MISSING")
-
-    draw_ops = metrics.get("draw_ops")
-    page_labels = metrics.get("page_labels")
-    if not isinstance(draw_ops, list) or not isinstance(page_labels, list):
-        failures.append("CHEM_CORE_PREFLIGHT_CONTENT_TRACE_MISSING")
-        return {"status": "FAIL", "page_checks": [], "failures": failures}
-
-    margin = float(policy["page"]["margin_pt"])
-    usable_height = A4_H - 2.0 * margin
-    threshold = float(cfg["minimum_noncover_active_height_ratio"])
-    cover_exempt = bool(cfg.get("cover_page_exempt", True))
-    labels = {int(row["page"]): str(row.get("label", "")) for row in page_labels}
-    by_page: dict[int, list[dict[str, Any]]] = {}
-    for op in draw_ops:
-        by_page.setdefault(int(op["page"]), []).append(op)
-
-    rows: list[dict[str, Any]] = []
-    for page_no in range(1, int(metrics.get("page_count", 0)) + 1):
-        ops = [row for row in by_page.get(page_no, []) if row.get("kind") != "FOOTER"]
-        clipped = []
-        for row in ops:
-            y0 = max(margin, float(row.get("y0", margin)))
-            y1 = min(A4_H - margin, float(row.get("y1", A4_H - margin)))
-            if y1 > y0:
-                clipped.append((y0, y1))
-        active_height = max((row[1] for row in clipped), default=margin) - min((row[0] for row in clipped), default=margin)
-        ratio = max(0.0, active_height / usable_height)
-        semantic_refs = sorted({str(row.get("content_ref")) for row in ops if row.get("content_ref")})
-        row = {
-            "page": page_no,
-            "label": labels.get(page_no, ""),
-            "active_height_ratio": round(ratio, 4),
-            "semantic_ref_count": len(semantic_refs),
-            "has_workspace": any(op.get("kind") == "WORKSPACE_LINE" for op in ops),
-            "has_primitive": any(op.get("kind") == "PRIMITIVE" for op in ops),
-        }
-        sparse = ratio < threshold and not (cover_exempt and page_no == 1)
-        row["content_first_status"] = "FAIL" if sparse else "PASS"
-        rows.append(row)
-        if sparse:
-            failures.append(
-                f"CHEM_LP_RENDER_SPARSE_SEMANTIC_FRAGMENT:{page_no}:{ratio:.4f}<{threshold:.4f}:{row['label']}"
-            )
-
-    return {
-        "status": "PASS" if not failures else "FAIL",
-        "minimum_noncover_active_height_ratio": threshold,
-        "page_checks": rows,
-        "failures": failures,
-    }
 
 
 def run_core_product_preflight(
@@ -172,11 +108,7 @@ def run_core_product_preflight(
         global_min_font = min(global_min_font, page_min)
         if page_min < font_floor:
             failures.append(f"CHEM_CORE_PREFLIGHT_FONT_FLOOR:{page_no}:{page_min:.2f}<{font_floor:.2f}")
-        page_rows.append({
-            "page": page_no,
-            "text_chars": len(text),
-            "min_font_pt": round(page_min, 2),
-        })
+        page_rows.append({"page": page_no, "text_chars": len(text), "min_font_pt": round(page_min, 2)})
     doc.close()
 
     content_first = content_first_page_checks(
@@ -211,8 +143,7 @@ def run_core_product_preflight(
     report["preflight_digest"] = digest_without(report, "preflight_digest")
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "core_product_preflight.json").write_text(
-        json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
+        json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     if failures:
         raise ValueError("CHEM_CORE_PREFLIGHT_FAILED:" + "|".join(failures[:8]))
