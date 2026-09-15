@@ -16,14 +16,14 @@
       "required_equations": [],
       "required_representations": [],
       "required_misconceptions": ["MISC-MATH-FRESHMANS-DREAM"],
-      "required_prerequisites": []
+      "required_prerequisites": ["MATH-NUM-RADICALS"]
     },
     "MATH-LIN-EQUATIONS": {
       "required_concepts": ["CON-MATH-LINEAR-SYSTEM-CONSISTENCY"],
       "required_equations": ["EQ-MATH-RATIO-CONSISTENCY"],
       "required_representations": [],
       "required_misconceptions": [],
-      "required_prerequisites": []
+      "required_prerequisites": ["MATH-ALG-POLYNOMIALS"]
     },
     "MATH-QUAD-EQUATIONS": {
       "required_concepts": ["CON-MATH-QUAD-NONZERO-LEAD"],
@@ -37,7 +37,7 @@
       "required_equations": ["EQ-MATH-DISTANCE-FORMULA"],
       "required_representations": [],
       "required_misconceptions": [],
-      "required_prerequisites": []
+      "required_prerequisites": ["MATH-NUM-RADICALS","MATH-ALG-POLYNOMIALS"]
     },
     "MATH-GEO-TRIANGLES": {
       "required_concepts": ["CON-MATH-CONGRUENCE-CRITERIA"],
@@ -78,7 +78,7 @@
   "generic_requirements": {
     "minimum_reasoning_steps": 2,
     "minimum_transformations": 2,
-    "required_transformation_roles": ["CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"],
+    "minimum_distinct_transformation_roles": 2,
     "minimum_verifications": 1,
     "minimum_problem_families": 1,
     "difficulty_dimensions": [
@@ -94,5 +94,5 @@
       "synthesis"
     ]
   },
-  "authority_rule": "technical_readiness and release_checklist in REG-MATH-TECH-GATE-V1 are compatibility data only; Workbench readiness is validator-derived from gate content plus this external invariant profile"
+  "authority_rule": "technical_readiness and release_checklist in REG-MATH-TECH-GATE-V1 are compatibility data only; Workbench readiness is validator-derived from gate content plus this external invariant profile; Core-role purpose completeness is validated downstream by TTU/product governance rather than by the technical Engineering Gate"
 }
