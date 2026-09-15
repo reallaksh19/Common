@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0.0",
+  "ledger_id": "ENG-CLAIMS-GRAV-FIELD-V1",
+  "request_id": "ENG-REQ-GRAV-FIELD-V1",
+  "claims": [
+    {
+      "claim_id": "CL-GRAV-FORCE-LAW",
+      "claim": "In Newtonian gravity, two point masses attract with force magnitude G m1 m2 / r^2 along the line joining them.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "NEWTONIAN_POINT_MASS_FORCE",
+      "source_refs": ["https://openstax.org/books/university-physics-volume-1/pages/13-1-newtons-law-of-universal-gravitation"],
+      "used_by": ["INV-GRAV-FORCE-ATTRACTIVE","INV-GRAV-FORCE-INVERSE-SQUARE","CON-GRAV-FORCE-ATTRACTION","EQ-GRAV-FORCE-MAGNITUDE","EQ-GRAV-FORCE-VECTOR"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-SPHERICAL-EXTERNAL",
+      "claim": "Outside a spherically symmetric mass distribution, Newtonian gravitational force and field are equivalent to those of the total mass concentrated at the centre.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "EXTERNAL_SPHERICAL_SYMMETRY",
+      "source_refs": ["https://openstax.org/books/university-physics-volume-1/pages/13-1-newtons-law-of-universal-gravitation"],
+      "used_by": ["INV-GRAV-FORCE-SOURCE-DISTANCE-SCOPE","CON-GRAV-SPHERICAL-EXTERNAL","PF-GRAV-SPHERICAL-EXTERNAL-FORCE","PF-GRAV-FIELD-SPHERICAL-EXTERNAL"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-THIRD-LAW-PAIR",
+      "claim": "The mutual gravitational forces on the two interacting masses are equal in magnitude, opposite in direction, and act on distinct bodies.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "NEWTONIAN_INTERACTION_PAIR",
+      "source_refs": ["https://openstax.org/books/university-physics-volume-1/pages/13-1-newtons-law-of-universal-gravitation"],
+      "used_by": ["INV-GRAV-FORCE-DISTINCT-BODIES","REP-GRAV-FORCE-PAIR"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-G-CODATA",
+      "claim": "When a numerical Newtonian gravitational constant is required, the engineering source of record is the current NIST-hosted CODATA recommended value set rather than a memorized rounded constant.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "NUMERICAL_CONSTANT_PROVENANCE",
+      "source_refs": ["https://physics.nist.gov/cuu/Constants/"],
+      "used_by": ["EQ-GRAV-FORCE-MAGNITUDE","EQ-GRAV-FORCE-VECTOR","EQ-GRAV-FIELD-POINT-MASS"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-FIELD-DEFINITION",
+      "claim": "Gravitational field at a point is gravitational force per unit test mass; equivalently, a mass m in field g experiences gravitational force m g within the Newtonian model.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "GRAVITATIONAL_FIELD_DEFINITION",
+      "source_refs": [
+        "https://openstax.org/books/university-physics-volume-1/pages/13-2-gravitation-near-earths-surface",
+        "https://openstax.org/books/university-physics-volume-1/pages/5-4-mass-and-weight"
+      ],
+      "used_by": ["INV-GRAV-FIELD-FORCE-PER-MASS","INV-GRAV-FIELD-TEST-MASS-INDEPENDENCE","CON-GRAV-FIELD-FORCE-PER-MASS","EQ-GRAV-FIELD-DEFINITION","MIS-GRAV-FIELD-EQUALS-FORCE"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-FIELD-RADIAL",
+      "claim": "A point mass or externally equivalent spherical source produces a gravitational field directed radially inward with magnitude proportional to 1/r^2.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "RADIAL_INVERSE_SQUARE_FIELD",
+      "source_refs": ["https://openstax.org/books/university-physics-volume-1/pages/13-2-gravitation-near-earths-surface"],
+      "used_by": ["INV-GRAV-FIELD-RADIAL-INWARD","INV-GRAV-FIELD-INVERSE-SQUARE","CON-GRAV-FIELD-RADIAL","EQ-GRAV-FIELD-POINT-MASS","REP-GRAV-RADIAL-FIELD"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-FIELD-SUPERPOSITION",
+      "claim": "For multiple Newtonian source masses, the net gravitational field at one field point is the vector sum of the individual source-field contributions at that point.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "NEWTONIAN_FIELD_SUPERPOSITION",
+      "source_refs": [
+        "https://openstax.org/books/university-physics-volume-1/pages/13-1-newtons-law-of-universal-gravitation",
+        "https://openstax.org/books/university-physics-volume-1/pages/5-1-forces"
+      ],
+      "used_by": ["INV-GRAV-FIELD-SUPERPOSITION","CON-GRAV-FIELD-SUPERPOSITION","EQ-GRAV-FIELD-SUPERPOSITION","REP-GRAV-FIELD-SUPERPOSITION","PF-GRAV-FIELD-SUPERPOSITION"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-LOCAL-G-NOT-UNIVERSAL",
+      "claim": "The familiar near-Earth value of gravitational field strength is location-dependent and must not be treated as a universal value throughout space.",
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "LOCAL_NEAR_EARTH_APPROXIMATION",
+      "source_refs": [
+        "https://openstax.org/books/university-physics-volume-1/pages/13-2-gravitation-near-earths-surface",
+        "https://openstax.org/books/university-physics-volume-1/pages/5-4-mass-and-weight"
+      ],
+      "used_by": ["INV-GRAV-FIELD-MODEL-SCOPE","MIS-GRAV-G-UNIVERSAL-9P8"],
+      "claim_status": "VERIFIED"
+    },
+    {
+      "claim_id": "CL-GRAV-MISCONCEPTION-EVIDENCE",
+      "claim": "TIMSS analyses report that only 36 percent of grade-eight students on average across the sampled countries identified gravity as acting on a parachutist in all four tested states, while 57 percent selected responses in which gravity acted only while falling.",
+      "claim_class": "AUTHORING_RECOMMENDATION",
+      "scope": "MISCONCEPTION_SELECTION_EVIDENCE",
+      "source_refs": ["https://link.springer.com/chapter/10.1007/978-3-030-30188-0_4"],
+      "used_by": ["MIS-GRAV-FORCE-FALLING-ONLY","MIS-GRAV-DOWN-ABSOLUTE"],
+      "claim_status": "VERIFIED"
+    }
+  ],
+  "status": "CLAIM_LEDGER_READY"
+}
