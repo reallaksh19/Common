@@ -50,6 +50,56 @@ def _core1a_attempt_height(writer: PageWriter, prompt: str, workspace_lines: int
     return writer.section + 24 + _wrapped_height(writer, prompt, question=True) + 34 + workspace_lines * 20 + 70
 
 
+_ATTEMPT_SUPPORT_FIELDS = (
+    ("write_this_first", False),
+    ("small_clue", False),
+    ("bigger_clue", False),
+    ("how_do_i_start", False),
+    ("watch_for_this", False),
+    ("think_it_through", True),
+    ("check_your_chemistry", True),
+)
+_ANSWER_ROUTE_TEXT = "Complete the attempt first. The quick check starts on the next page."
+
+
+def _attempt_support_episode_height(writer: PageWriter, support: dict[str, Any]) -> float:
+    """Measure one complete support episode before emitting any of it.
+
+    `_attempt_support` is legacy drawing code that emits several labels incrementally.
+    Without a reservation, the tail can spill onto a sparse continuation page. This
+    estimator mirrors those generic label/body geometries and reserves the complete
+    episode plus its answer-route panel as one pagination unit.
+    """
+    total = 24.0
+    label_height = writer.small + 15.0
+    for key, is_list in _ATTEMPT_SUPPORT_FIELDS:
+        total += label_height
+        value = support.get(key)
+        if is_list:
+            values = value if isinstance(value, list) else ([] if value in (None, "") else [value])
+            for item in values:
+                rows = writer._wrap(public_text(item), FONT, writer.body, writer.width - 25)
+                total += len(rows) * writer.leading + 2.0
+        elif value not in (None, ""):
+            rows = writer._wrap(public_text(value), FONT, writer.body, writer.width)
+            total += len(rows) * writer.leading + 3.0
+
+    inner_w = writer.width - 28
+    title_rows = writer._wrap("ANSWER ROUTE", writer.BOLD if hasattr(writer, "BOLD") else "ChemV2-Bold", writer.small, inner_w)
+    body_rows = writer._wrap(_ANSWER_ROUTE_TEXT, FONT, writer.body, inner_w)
+    total += 16.0 + len(title_rows) * (writer.small + 4.0) + len(body_rows) * writer.leading + 26.0
+    return total + 18.0
+
+
+def _begin_attempt_support_episode(writer: PageWriter, support: dict[str, Any]) -> None:
+    height = _attempt_support_episode_height(writer, support)
+    maximum_fresh_page_height = PAGE_H - 54.0 - writer.margin - 8.0
+    if height > maximum_fresh_page_height:
+        raise ValueError("CHEM_LP_RENDER_SUPPORT_EPISODE_TOO_TALL")
+    writer.ensure(height, "attempt support", role="QUESTION_EPISODE")
+    writer.set_page_role("QUESTION_EPISODE")
+
+
 def _joined(values: list[Any] | None) -> str:
     return "  •  ".join(public_text(x) for x in (values or []))
 
@@ -270,8 +320,9 @@ def render_core2a_content_first(source_plan, challenge_plan, representations, po
                 "unavailable_secondary_refs": unavailable,
                 "status": "PASS",
             })
+            _begin_attempt_support_episode(writer, support)
             _attempt_support(writer, support, ref)
-            writer.action_panel("ANSWER ROUTE", "Complete the attempt first. The quick check starts on the next page.", ref)
+            writer.action_panel("ANSWER ROUTE", _ANSWER_ROUTE_TEXT, ref)
             _answer_pages_content_first(writer, item["answer_path"], f"Source question {index}", ref, context)
 
     if challenge_plan:
@@ -301,8 +352,9 @@ def render_core2a_content_first(source_plan, challenge_plan, representations, po
                 "unavailable_secondary_refs": unavailable,
                 "status": "PASS",
             })
+            _begin_attempt_support_episode(writer, support)
             _attempt_support(writer, support, ref)
-            writer.action_panel("ANSWER ROUTE", "Complete the attempt first. The quick check starts on the next page.", ref)
+            writer.action_panel("ANSWER ROUTE", _ANSWER_ROUTE_TEXT, ref)
             _answer_pages_content_first(writer, item["answer_path"], f"Fresh challenge {index}", ref, context)
 
     metrics = writer.finish()
