@@ -28,10 +28,10 @@ def main() -> None:
     assert result["status"] == "PASS"
     assert result["discovered_subtopic_count"] == 43
     assert result["exact_v3_count"] == 12
-    assert result["mapped_v3_target_count"] == 10
-    assert result["migration_required_count"] == 28
+    assert result["mapped_v3_target_count"] == 11
+    assert result["migration_required_count"] == 27
     assert result["v3_native_or_refined_count"] == 6
-    assert result["canonical_v3_gate_count"] == 23
+    assert result["canonical_v3_gate_count"] == 24
     assert result["case_artifacts_role"] == "STRESS_TEST_ONLY"
     assert result["readiness_rule"] == "DERIVED_BY_PRODUCTION_V3_VALIDATOR"
 
@@ -59,6 +59,11 @@ def main() -> None:
         "PHY-M2D-VELOCITY-EVOLUTION",
     ]
     assert projectile["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-KIN-2D-PROJECTILE.v1.json"
+
+    relative = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-KIN-RELATIVE-2D")
+    assert relative["disposition"] == "MAPPED_V3"
+    assert relative["v3_gate_ids"] == ["PHY-M2D-RELATIVE-VELOCITY"]
+    assert relative["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-KIN-RELATIVE-2D.v1.json"
 
     exact_ids = {
         row["discovery_gate_id"]
@@ -111,6 +116,10 @@ def main() -> None:
 
     bad = copy.deepcopy(catalog)
     bad["v3_native_or_refined_gate_ids"].append("PHY-M2D-PROJECTILE-COMPONENTS")
+    expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
+
+    bad = copy.deepcopy(catalog)
+    bad["v3_native_or_refined_gate_ids"].append("PHY-M2D-RELATIVE-VELOCITY")
     expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
 
     bad = copy.deepcopy(catalog)
