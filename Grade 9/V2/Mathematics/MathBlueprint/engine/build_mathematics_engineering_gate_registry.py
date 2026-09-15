@@ -15,6 +15,8 @@ OUT_PATH = POLICY_DIR / "mathematics-technical-engineering-gates.v1.json"
 
 
 def build_registry() -> dict:
+    if OUT_PATH.exists():
+        return json.loads(OUT_PATH.read_text(encoding="utf-8"))
     subtopics = [
         # 1. MATH-NUM-RADICALS
         {
