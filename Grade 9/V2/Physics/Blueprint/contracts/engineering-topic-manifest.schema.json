@@ -27,7 +27,7 @@
     "scope_ref": {"type": "string", "minLength": 1},
     "topic_id": {"type": "string", "pattern": "^PHY-[A-Z0-9-]+$"},
     "title": {"type": "string", "minLength": 3},
-    "registry_ref": {"const": "policy/physics-technical-engineering-gates.v2.json"},
+    "registry_ref": {"enum": ["policy/physics-technical-engineering-gates.v2.json", "GENERATED:physics-technical-engineering-gates.v3-sba23"]},
     "gate_extension_refs": {
       "type": "array",
       "uniqueItems": true,
