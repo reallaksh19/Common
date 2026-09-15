@@ -24,6 +24,12 @@ GATE_FILES = [
     "engineering-gates/gravitation/PHY-GRAV-FIELD.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-PROJECTILE-COMPONENTS.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-SHARED-CLOCK.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-MOVING-LAUNCHER.v3.json",
 ]
 
@@ -44,13 +50,7 @@ def build_registry() -> dict:
     gates = [load(path) for path in GATE_FILES]
     if len({gate["subtopic_id"] for gate in gates}) != len(gates):
         raise ValueError("PHY_GATE_DUPLICATE_ID: duplicate subtopic_id in v3 gate source set")
-    registry = {
-        "schema_version": "3.0.0",
-        "registry_id": "PHYSICS-TECHNICAL-ENGINEERING-GATES-V3",
-        "maturity": "ENGINEERING",
-        "gates": gates,
-    }
-    return registry
+    return {"schema_version":"3.0.0","registry_id":"PHYSICS-TECHNICAL-ENGINEERING-GATES-V3","maturity":"ENGINEERING","gates":gates}
 
 
 def main() -> None:
@@ -60,17 +60,8 @@ def main() -> None:
     registry = build_registry()
     rendered = json.dumps(registry, indent=2, ensure_ascii=False) + "\n"
     if args.out:
-        out = Path(args.out)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(rendered, encoding="utf-8")
-    print(json.dumps({
-        "status": "BUILT",
-        "registry_id": registry["registry_id"],
-        "gate_count": len(registry["gates"]),
-        "gate_ids": [g["subtopic_id"] for g in registry["gates"]],
-        "registry_digest": digest(registry),
-    }, indent=2))
+        out = Path(args.out); out.parent.mkdir(parents=True, exist_ok=True); out.write_text(rendered, encoding="utf-8")
+    print(json.dumps({"status":"BUILT","registry_id":registry["registry_id"],"gate_count":len(registry["gates"]),"gate_ids":[g["subtopic_id"] for g in registry["gates"]],"registry_digest":digest(registry)}, indent=2))
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()
