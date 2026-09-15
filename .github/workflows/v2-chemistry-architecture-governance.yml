@@ -1,0 +1,31 @@
+name: V2 Chemistry Architecture Governance
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/Governance/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/policies/topic-stress-test-boundary.v1.json'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_architecture_governance.py'
+      - '.github/workflows/v2-chemistry-architecture-governance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  architecture-governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate governance JSON
+        run: |
+          python -m json.tool 'Grade 9/V2/Chemistry/Governance/chemistry-pr-consolidation.v1.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/policies/topic-stress-test-boundary.v1.json' > /dev/null
+
+      - name: Enforce topic stress-test authority boundary
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_architecture_governance.py' -v
