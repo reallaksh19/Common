@@ -1,0 +1,73 @@
+{
+  "content_items": [
+    {
+      "content_id": "C-ANCHOR",
+      "learner_job": "Predict before manipulating.",
+      "learning_design_refs": ["STEP-ANCHOR"],
+      "materiality": "MATERIAL",
+      "primitive": "PREDICT_BOX",
+      "semantic_payload": "Use a correct system setup as the entry point and predict which algebra move preserves equality."
+    },
+    {
+      "content_id": "C-RECON",
+      "learner_job": "Rebuild the invariant before procedure.",
+      "learning_design_refs": ["STEP-RECON"],
+      "materiality": "MATERIAL",
+      "primitive": "RECONSTRUCTION_LADDER",
+      "semantic_payload": "Reconstruct equality as two expressions that must remain equal after the same legal operation is applied to both sides."
+    },
+    {
+      "content_id": "C-CONTRAST",
+      "learner_job": "Identify the decisive difference.",
+      "learning_design_refs": ["STEP-CONTRAST"],
+      "materiality": "MATERIAL",
+      "primitive": "MINIMAL_CONTRAST_PANEL",
+      "semantic_payload": "Compare one legal transformation with one superficially similar illegal transformation while holding the equation structure constant."
+    },
+    {
+      "content_id": "C-WORKED",
+      "learner_job": "Follow and check the reasoning chain.",
+      "learning_design_refs": ["STEP-WORKED", "STEP-VERIFY"],
+      "materiality": "MATERIAL",
+      "primitive": "WORKED_REASONING_STACK",
+      "semantic_payload": "Show one legal mathematical operation per line, state why equality is preserved, and verify by substitution."
+    },
+    {
+      "content_id": "C-GUIDED",
+      "learner_job": "Perform the transformation with fading support.",
+      "learning_design_refs": ["STEP-GUIDED", "STEP-FADED"],
+      "materiality": "MATERIAL",
+      "primitive": "GUIDED_WORKSPACE",
+      "semantic_payload": "Complete a new equality transformation with reduced prompts and visible workspace."
+    },
+    {
+      "content_id": "C-CHECK",
+      "learner_job": "Execute verification, not merely read a checklist.",
+      "learning_design_refs": ["STEP-VERIFY"],
+      "materiality": "MATERIAL",
+      "primitive": "SELF_CHECK_STRIP",
+      "semantic_payload": "Substitute the result back into the original relation and explicitly decide whether both sides match."
+    },
+    {
+      "content_id": "C-TRANSFER",
+      "learner_job": "Transfer the invariant to a non-isomorphic form.",
+      "learning_design_refs": ["STEP-TRANSFER"],
+      "materiality": "MATERIAL",
+      "primitive": "TRANSFER_CHALLENGE",
+      "semantic_payload": "Solve a representation-shifted problem where the unknown appears on the opposite side and verify the result."
+    },
+    {
+      "content_id": "D-RULE",
+      "learner_job": "None",
+      "learning_design_refs": [],
+      "materiality": "DECORATIVE",
+      "primitive": "TEXT_BLOCK",
+      "semantic_payload": "Synthetic specimen — engineering custody proof only."
+    }
+  ],
+  "learning_design_id": "LD-SYN-MATH-EQUALITY-001",
+  "schema_version": "1.0.0",
+  "semantic_product_id": "LSP-SYN-MATH-EQUALITY-001",
+  "subject": "MATHEMATICS",
+  "title": "Synthetic Equality Repair Experience"
+}
