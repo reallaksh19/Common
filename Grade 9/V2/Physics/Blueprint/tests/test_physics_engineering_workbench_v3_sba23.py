@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 
 from build_physics_engineering_gate_registry_v3 import build_registry  # noqa: E402
-from compile_engineering_closure import EngineeringClosureError, compile_closure, load  # noqa: E402
+from compile_engineering_closure import EngineeringClosureError, V3_REGISTRY_REF, compile_closure, load  # noqa: E402
 from compile_engineering_passport import compile_passport  # noqa: E402
 from validate_ccu_engineering_ready import validate_engineered_ccu  # noqa: E402
 
@@ -40,10 +40,10 @@ def must_closure_error(request: dict, manifest: dict, code: str, **kwargs) -> No
     raise AssertionError(f"expected {code}")
 
 
-# v3 is now a real Workbench source: derived readiness, same exact SBA23 closure.
+# v3 is the canonical subject-wide Workbench source: derived readiness, same exact SBA23 closure.
 v3 = compile_closure(REQUEST, V3_MANIFEST)
 assert v3["closure_status"] == "READY"
-assert v3["registry_ref"] == "GENERATED:physics-technical-engineering-gates.v3-sba23"
+assert v3["registry_ref"] == V3_REGISTRY_REF
 assert set(v3["transitive_gate_ids"]) == EXPECTED
 assert v3["counts"] == {
     "direct_gate_count": 1,
@@ -127,4 +127,4 @@ bad_manifest = copy.deepcopy(V3_MANIFEST)
 bad_manifest["gate_extension_refs"] = ["policy/physics-technical-engineering-gates.v2.json"]
 must_closure_error(REQUEST, bad_manifest, "E_ENG_GATE_EXTENSION_INVALID")
 
-print("Physics Engineering Workbench v3 SBA23: PASS (derived v3 readiness + enriched passport + v2 equivalence + CCU boundary)")
+print("Physics Engineering Workbench v3 SBA23: PASS (canonical subject registry + derived readiness + enriched passport + v2 equivalence + CCU boundary)")
