@@ -58,6 +58,20 @@
         "subtopic_id": { "type": "string", "pattern": "^MATH-[A-Z0-9]+-[A-Z0-9-]+$" },
         "learner_title": { "type": "string" },
         "chapter": { "type": "string" },
+        "jee_tier": {
+          "type": "string",
+          "enum": ["NOT_IN_JEE", "JEE_MAINS", "JEE_ADVANCED", "BOTH"]
+        },
+        "cbse_ref": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["grade", "chapter"],
+          "properties": {
+            "grade": { "type": "integer" },
+            "chapter": { "type": "string" },
+            "section": { "type": "string" }
+          }
+        },
         "authority_tier": {
           "type": "string",
           "enum": [
@@ -197,7 +211,12 @@
                   "MENSURATION_NET_OR_COMPOSITE_SCHEMATIC",
                   "PROBABILITY_TREE_OR_VENN",
                   "SIGN_CHART_OR_DISCRIMINANT_PLOT",
-                  "FREQUENCY_DISTRIBUTION_HISTOGRAM"
+                  "FREQUENCY_DISTRIBUTION_HISTOGRAM",
+                  "ARGAND_PLANE_POLAR_PLOT",
+                  "TANGENT_SECANT_LIMIT_DIAGRAM",
+                  "VENN_EULER_DIAGRAM",
+                  "THREE_DIMENSIONAL_OCTANT_SCHEMATIC",
+                  "CONIC_FOCUS_DIRECTRIX_CONSTRUCTION"
                 ]
               },
               "name": { "type": "string" },
