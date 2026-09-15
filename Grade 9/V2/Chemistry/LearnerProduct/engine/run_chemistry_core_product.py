@@ -12,6 +12,7 @@ HERE = Path(__file__).resolve()
 LP_ROOT = HERE.parents[1]
 CHEM_ROOT = LP_ROOT.parent
 sys.path.insert(0, str(CHEM_ROOT / "LearningBlueprint" / "engine"))
+sys.path.insert(0, str(CHEM_ROOT / "ExactProduct" / "engine"))
 
 from compile_chemistry_core_authority import digest as semantic_digest  # noqa: E402
 from compile_chemistry_core_product_custody import digest_without  # noqa: E402
