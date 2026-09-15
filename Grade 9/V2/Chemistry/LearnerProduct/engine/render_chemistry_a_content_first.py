@@ -26,13 +26,17 @@ from render_chemistry_learner_products import (
 )
 
 
-def _wrapped_height(writer: PageWriter, text: Any, *, question: bool = False) -> float:
+def _wrapped_height(writer: PageWriter, text: Any, *, question: bool = False, indent: float = 0.0) -> float:
     value = public_text(text)
     if question:
-        lines = writer._wrap(value, FONT, writer.question, writer.width)
+        lines = writer._wrap(value, FONT, writer.question, writer.width - indent)
         return len(lines) * writer.question_leading + 3.0
-    lines = writer._wrap(value, FONT, writer.body, writer.width)
+    lines = writer._wrap(value, FONT, writer.body, writer.width - indent)
     return len(lines) * writer.leading + 3.0
+
+
+def _wrapped_list_height(writer: PageWriter, values: list[Any] | None, *, indent: float = 8.0) -> float:
+    return sum(_wrapped_height(writer, "• " + public_text(value), indent=indent) for value in (values or []))
 
 
 def _begin_semantic_block(writer: PageWriter, label: str, minimum_height: float) -> None:
@@ -177,11 +181,23 @@ def _source_context(item: dict[str, Any]) -> str:
     return "\n".join(str(row) for row in rows if str(row).strip())
 
 
+def _core2a_full_working_height(writer: PageWriter, full: dict[str, Any], question_context: str, *, repeat_context: bool) -> float:
+    height = writer.section + 24.0
+    if repeat_context:
+        height += writer.small + 12.0 + _wrapped_height(writer, question_context, question=True) + 14.0
+    height += _wrapped_list_height(writer, full.get("steps"), indent=8.0)
+    height += writer.small + 12.0 + _wrapped_height(writer, full["verification"])
+    return height + 18.0
+
+
 def _answer_pages_content_first(writer: PageWriter, answer_path, title, ref, question_context: str):
     quick, full = answer_path.get("quick_check"), answer_path.get("full_working")
     if not quick or not full:
         raise ValueError("CHEM_LP_RENDER_ANSWER_NAVIGATION_MISSING:" + ref)
 
+    # The quick check remains next-page-or-later, preserving attempt-first answer
+    # visibility. Full working is ordered after quick check but is not forced onto a
+    # separate page. If it cannot fit as one semantic block, the block moves intact.
     writer.new_page("answer check")
     writer.heading(title + " — QUICK CHECK", 2, ref + "-Q")
     writer.label("QUESTION", ref + "-Q-CONTEXT")
@@ -193,11 +209,18 @@ def _answer_pages_content_first(writer: PageWriter, answer_path, title, ref, que
     writer.bullets(quick.get("marking_points"), ref + "-Q")
     writer.para("If your result does not match, return to the clues before opening the full working.", ref + "-Q")
 
-    writer.new_page("full working")
+    before = writer.page
+    _begin_semantic_block(
+        writer,
+        "full working",
+        _core2a_full_working_height(writer, full, question_context, repeat_context=False),
+    )
+    moved = writer.page != before
     writer.heading(title + " — FULL WORKING", 2, ref + "-F")
-    writer.label("QUESTION", ref + "-F-CONTEXT")
-    writer.question_text(question_context, ref + "-F-CONTEXT")
-    writer.rule()
+    if moved:
+        writer.label("QUESTION", ref + "-F-CONTEXT")
+        writer.question_text(question_context, ref + "-F-CONTEXT")
+        writer.rule()
     writer.bullets(full["steps"], ref + "-F")
     writer.label("VERIFY", ref + "-F")
     writer.para(full["verification"], ref + "-F")
