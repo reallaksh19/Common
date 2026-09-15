@@ -1,0 +1,86 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A7-PWSE-BRIDGE-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE",
+  "evidence_kind": "PICTURE_WORD_SYMBOL_EQUATION_BRIDGE",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "topics/m2d-sba04-design/pwse-bridge-plan.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a6-representation-decision.v1.json"
+  ],
+  "artifact_refs": [
+    "M2D-SBA-04A",
+    "M2D-SBA-04B",
+    "M2D-SBA-04C",
+    "M2D-SBA-04D",
+    "M2D-SBA-04E",
+    "M2D-SBA-04F",
+    "M2D-SBA-04G"
+  ],
+  "evidence_refs": [
+    "topics/m2d-sba04-design/pwse-bridge-plan.v1.json#bridges"
+  ],
+  "proof": {
+    "bridge_rows": [
+      {
+        "learning_atom_ref": "M2D-SBA-04A",
+        "picture_ref": "PWSE-SBA04A-PIC-COMPONENT-ARROW",
+        "word_ref": "PWSE-SBA04A-WORD-VECTOR-NOT-SCALAR",
+        "symbol_ref": "PWSE-SBA04A-SYM-VECTOR-COMPONENTS",
+        "equation_ref": "PWSE-SBA04A-EQ-MAGNITUDE",
+        "translation_check_refs": ["PWSE-SBA04A-CHECK-VECTOR-RECONSTRUCTION"]
+      },
+      {
+        "learning_atom_ref": "M2D-SBA-04B",
+        "picture_ref": "PWSE-SBA04B-PIC-RISE-APEX-FALL",
+        "word_ref": "PWSE-SBA04B-WORD-COMPONENT-EVOLUTION",
+        "symbol_ref": "PWSE-SBA04B-SYM-STATE-SIGNS",
+        "equation_ref": "PWSE-SBA04B-EQ-EVOLUTION",
+        "translation_check_refs": ["PWSE-SBA04B-CHECK-STAGE-SIGNS"]
+      },
+      {
+        "learning_atom_ref": "M2D-SBA-04C",
+        "picture_ref": "PWSE-SBA04C-PIC-DIRECTION-TRIANGLE",
+        "word_ref": "PWSE-SBA04C-WORD-CURRENT-DIRECTION",
+        "symbol_ref": "PWSE-SBA04C-SYM-PHI-COMPONENTS",
+        "equation_ref": "PWSE-SBA04C-EQ-DIRECTION",
+        "translation_check_refs": ["PWSE-SBA04C-CHECK-FALLING-DIRECTION"]
+      },
+      {
+        "learning_atom_ref": "M2D-SBA-04D",
+        "picture_ref": "PWSE-SBA04D-PIC-SPEED-TRIANGLE",
+        "word_ref": "PWSE-SBA04D-WORD-MAGNITUDE-AND-APEX",
+        "symbol_ref": "PWSE-SBA04D-SYM-SPEED",
+        "equation_ref": "PWSE-SBA04D-EQ-SPEED",
+        "translation_check_refs": ["PWSE-SBA04D-CHECK-APEX-SPEED"]
+      },
+      {
+        "learning_atom_ref": "M2D-SBA-04E",
+        "picture_ref": "PWSE-SBA04E-PIC-SAME-HEIGHT-PAIR",
+        "word_ref": "PWSE-SBA04E-WORD-SAME-SPEED-DIFFERENT-VELOCITY",
+        "symbol_ref": "PWSE-SBA04E-SYM-PAIRED-STATES",
+        "equation_ref": "PWSE-SBA04E-EQ-SYMMETRY",
+        "translation_check_refs": ["PWSE-SBA04E-CHECK-EQUAL-HEIGHT-PAIR"]
+      },
+      {
+        "learning_atom_ref": "M2D-SBA-04F",
+        "picture_ref": "PWSE-SBA04F-PIC-PERPENDICULAR-PAIR",
+        "word_ref": "PWSE-SBA04F-WORD-PERP-CONSTRAINT",
+        "symbol_ref": "PWSE-SBA04F-SYM-DOT-PAIR",
+        "equation_ref": "PWSE-SBA04F-EQ-DOT-ZERO",
+        "translation_check_refs": ["PWSE-SBA04F-CHECK-GEOMETRY-TO-DOT"]
+      },
+      {
+        "learning_atom_ref": "M2D-SBA-04G",
+        "picture_ref": "PWSE-SBA04G-PIC-HEIGHT-STATE",
+        "word_ref": "PWSE-SBA04G-WORD-HEIGHT-WITHOUT-CLOCK",
+        "symbol_ref": "PWSE-SBA04G-SYM-HEIGHT-SPEED",
+        "equation_ref": "PWSE-SBA04G-EQ-HEIGHT-SPEED",
+        "translation_check_refs": ["PWSE-SBA04G-CHECK-HEIGHT-TO-SPEED"]
+      }
+    ],
+    "unbridged_atom_refs": []
+  },
+  "unresolved_requirements": []
+}
