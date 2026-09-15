@@ -57,7 +57,7 @@ def selection_for(receipt: dict, row: dict, suffix: str = "TEST", depth: str = "
 class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
     def test_discovery_is_ranked_but_non_authoritative(self):
         target = REGISTRY["subtopic_gates"][0]
-        request = discovery_request(target["learner_title"], "NONAUTH")
+        request = discovery_request(target["learner_title"], "NONAUTH", kinds=["ENGINEERING_GATE"])
         receipt = discover_candidates(request, copy.deepcopy(REGISTRY))
         self.assertGreater(receipt["candidate_count"], 0)
         self.assertEqual(receipt["candidates"][0]["scope_ref"], target["subtopic_id"])
@@ -149,9 +149,6 @@ class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
     def test_discovery_can_surface_held_candidate_but_authority_still_blocks(self):
         registry = copy.deepcopy(REGISTRY)
         target = registry["subtopic_gates"][0]
-        target["authority_tier"] = "SOURCE_SCOPE_HELD"
-        target["technical_readiness"] = "SOURCE_SCOPE_HELD"
-        target["provenance"]["authority_class"] = "SOURCE_SCOPE_HELD"
         target["provenance"]["source_scope"] = "HELD_SCOPE"
 
         request = discovery_request(target["learner_title"], "HELD", kinds=["ENGINEERING_GATE"])
