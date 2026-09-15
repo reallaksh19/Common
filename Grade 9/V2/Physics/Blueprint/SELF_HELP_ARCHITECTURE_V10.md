@@ -71,6 +71,10 @@ A seven-core stress test is a governed compiler execution, not a narrative decla
 
 `STRESS_TEST_PASS` means the architecture behaved according to contract, including correct fail-closed holds. It does not mean every learner product is released.
 
+Governed request fixtures are compiled in batch by `engine/compile_all_stress_tests.py`. Every request must produce a schema-valid receipt with a unique stress-test ID. The batch fails if any governed fixture derives `STRESS_TEST_FAIL`; negative/falsifier cases belong in unit tests rather than in the production governed-request set.
+
+The canonical `V2 Physics Blueprint` workflow writes the compiled receipts plus a deterministic manifest to `/tmp/physics-blueprint-stress-receipts` and uploads them only after the complete Blueprint job remains green. The CI artifact is named `physics-blueprint-v10-stress-receipts`. A Markdown stress-test record is descriptive only; the compiler output and its CI custody are authoritative for the current repository state.
+
 ## Normative V10 files
 
 - `SELF_HELP_ARCHITECTURE_V10.md`
@@ -85,7 +89,11 @@ A seven-core stress test is a governed compiler execution, not a narrative decla
 - `engine/compile_scoped_evidence.py`
 - `engine/compile_domain_prerequisite_closure.py`
 - `engine/compile_seven_core_stress_test.py`
+- `engine/compile_all_stress_tests.py`
+- `tests/test_blueprint_contract_inventory_v10.py`
 - `tests/test_blueprint_scope_v10.py`
 - `tests/test_blueprint_stress_test_v10.py`
+- `tests/test_blueprint_stress_batch_v10.py`
+- `.github/workflows/v2-physics-blueprint.yml`
 
 V10 is global. It contains no Q15-, river-, relative-motion-, or PR-specific branch in policy logic. Topic-specific data may appear only in fixtures or governed source artifacts.
