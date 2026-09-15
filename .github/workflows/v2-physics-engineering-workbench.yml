@@ -6,13 +6,19 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/contracts/engineering-*.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-engineering-gate-v3.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-gate-binding*.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-engineering-discovery-catalog.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/engineering-gates/**'
       - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_*.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_pr383_v3_migration_gaps.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_discovery_catalog.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_technical_gate_binding.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py'
       - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
+      - 'Grade 9/V2/Physics/Blueprint/provenance/pr383/**'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_pr383_v3_migration_gaps.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba04.py'
@@ -20,11 +26,13 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v2.json'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-engineering-gate-invariants.v3.json'
+      - 'Grade 9/V2/Physics/Blueprint/policy/physics-engineering-discovery-catalog.pr383.v1.json'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v2.py'
       - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-technical-gate-binding*.json'
       - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-ccu.v1.json'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH.md'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH_V1.md'
+      - 'Grade 9/V2/Physics/Blueprint/PR383_TO_V3_MIGRATION.md'
       - '.github/workflows/v2-physics-engineering-workbench.yml'
   workflow_dispatch:
 
@@ -49,6 +57,10 @@ jobs:
           python "Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py"
           --registry /tmp/physics-engineering-gates-v3.json
           --report-out /tmp/physics-engineering-gates-v3-report.json
+      - name: Reconcile PR383 discovery breadth against canonical v3 Workbench
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py"
+      - name: Validate exact PR383 source custody and fail-closed v3 migration gaps
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_pr383_v3_migration_gaps.py"
       - name: Run Physics v3 full-registry equivalence and mutation falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
       - name: Run legacy Engineering Workbench v1 regression falsifiers
