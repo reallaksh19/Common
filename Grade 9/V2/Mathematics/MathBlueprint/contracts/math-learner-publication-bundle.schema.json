@@ -7,11 +7,11 @@
   "required": [
     "schema_version", "subject", "bundle_id", "source_release_status",
     "source_release_gate_digest", "generation_spec_digest", "governed_example_catalog_digest",
-    "pedagogy_research_manifest_digest",
+    "pedagogy_research_manifest_digest", "engineering_visibility_manifest_digest", "engineering_visibility",
     "concept_components", "problem_component", "publication_stage_order", "bundle_digest"
   ],
   "properties": {
-    "schema_version": {"const": "1.0.0"},
+    "schema_version": {"const": "1.1.0"},
     "subject": {"const": "MATHEMATICS"},
     "bundle_id": {"type": "string", "pattern": "^MATH-PUB-BUNDLE-"},
     "source_release_status": {"const": "PASS"},
@@ -24,6 +24,8 @@
         {"type": "string", "pattern": "^[0-9a-f]{64}$"}
       ]
     },
+    "engineering_visibility_manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "engineering_visibility": {"type": "object"},
     "publication_stage_order": {
       "const": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]
     },
