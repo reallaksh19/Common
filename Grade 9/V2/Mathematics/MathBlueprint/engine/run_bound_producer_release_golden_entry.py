@@ -36,6 +36,7 @@ _LAST_STUDY_MODEL = None
 _LAST_SDU_LAU_AUDIT = None
 _LAST_PEDAGOGY_RESEARCH_MANIFEST = None
 _ORIGINAL_BUILD_REGISTRY = base.legacy.build_registry
+_ORIGINAL_RUN_CLI = base.legacy.run_cli
 
 HERE = Path(__file__).resolve()
 MATH_BLUEPRINT = HERE.parents[1]
@@ -103,6 +104,24 @@ def authority_generation_spec(bucket_plan: dict, core1: dict, bucket_sid: dict[s
     return spec
 
 
+def research_aware_run_cli(script: Path, args: list[str]) -> str:
+    """Carry the exact compiled pedagogy-research manifest into Core1A.
+
+    The legacy bound runner predates the manifest argument.  Keep its orchestration
+    intact while supplying the missing custody edge at the CLI boundary.
+    """
+    forwarded = list(args)
+    if script.name == "realize_math_core1a.py" and _LAST_PEDAGOGY_RESEARCH_MANIFEST is not None:
+        if "--generation-spec" not in forwarded:
+            base.fail("BOUND_GOLDEN_RESEARCH_WITHOUT_GENERATION_SPEC")
+        spec_path = Path(forwarded[forwarded.index("--generation-spec") + 1])
+        research_path = spec_path.parent / "pedagogy_research_manifest.test.json"
+        base.write(research_path, _LAST_PEDAGOGY_RESEARCH_MANIFEST)
+        if "--pedagogy-research-manifest" not in forwarded:
+            forwarded += ["--pedagogy-research-manifest", str(research_path)]
+    return _ORIGINAL_RUN_CLI(script, forwarded)
+
+
 def rich_engineering_registry_builder(core1, core2, bucket_plan, bucket_sid, cap_sid, q_sid, answer_refs):
     """Upgrade the integration registry to canonical rich Engineering authority."""
     global _LAST_ENGINEERING_DOMAIN_PROJECTION
@@ -138,6 +157,7 @@ def main() -> None:
     base.bucket_subtopics = multi_bucket_safe_subtopics
     base.legacy.build_generation_spec = authority_generation_spec
     base.legacy.build_registry = rich_engineering_registry_builder
+    base.legacy.run_cli = research_aware_run_cli
     ap = argparse.ArgumentParser()
     ap.add_argument("--core1-plan", required=True)
     ap.add_argument("--study-model", required=True)
