@@ -1,119 +1,148 @@
 # Mathematics Technical Engineering Gate Registry (Grades 9–11)
 
 **Canonical Registry ID:** `REG-MATH-TECH-GATE-V1`  
-**Current Canonical Gate Count:** **45**  
+**Current canonical gate count:** **45**  
 **Maturity:** `ENGINEERING`  
 **Boundary:** upstream technical/epistemic authority before Blueprint product design  
 **Psychometric status:** no unvalidated psychometric claims are promoted into Engineering truth
 
-This document describes the current technical contract. The executable registry, schema and validator remain authoritative.
+This document describes the current technical contract. The executable Engineering data, schemas, generic validators, extension catalog and depth policy are authoritative.
 
-## 1. Canonical source composition
+## 1. Architectural invariant
+
+```text
+MATHEMATICAL TOPIC KNOWLEDGE
+        lives in Engineering data
+                ↓
+generic Engineering validation
+                ↓
+exact identity + prerequisite closure + custody
+                ↓
+Blueprint generic orchestration
+```
+
+Blueprint/runtime code must not contain topic-specific branches, topic-specific extension filenames, remembered topic aliases, fuzzy title mappings or hidden semantic fallbacks.
+
+A new mathematical gate may require new Engineering data. It must **not** require a new Blueprint implementation for that mathematical topic.
+
+## 2. Canonical source composition
 
 The canonical Engineering graph is assembled deterministically from:
 
 ```text
 policies/mathematics-technical-engineering-gates.v1.json
-        44-gate generated base
+        canonical base registry
                 +
-policies/mathematics-technical-engineering-gates.v1.euclid-extension.json
-        exact digest-bound Euclid Foundations extension
+policies/mathematics-engineering-extension-catalog.v1.json
+        ordered digest-bound extension references
+                +
+referenced Engineering extension data
                 ↓
 engine/engineering_registry_composition.py
                 ↓
 REG-MATH-TECH-GATE-V1
-        45-gate canonical graph
 ```
 
-The extension is accepted only when it binds to the exact base Git blob, expected base gate count and expected composed gate count. Duplicate gate IDs fail closed. The composed registry keeps the stable registry identity but receives a new canonical digest, which invalidates stale downstream Engineering custody.
+The composer contains no topic-specific extension path. The catalog binds to the exact base Git blob and to the exact Git blob of each extension. Every extension additionally binds to the stable registry identity, expected pre-extension gate count and expected composed gate count. Stale custody, duplicate gate IDs and count drift fail closed.
 
-## 2. Gate structure
+The current graph happens to contain one post-base extension and 45 total gates. Those are current repository facts, not composition-engine constants.
 
-Each Engineering gate is schema-closed and must carry the complete technical object required by `contracts/mathematics-technical-engineering-gate.schema.json`:
+## 3. Gate structure
+
+Each Engineering gate is schema-closed and must carry the technical object required by `contracts/mathematics-technical-engineering-gate.schema.json`, including:
 
 1. canonical `subtopic_id` and learner title;
-2. chapter / curriculum provenance;
+2. chapter/curriculum provenance;
 3. authority tier and `ENGINEERING` maturity;
-4. technical readiness;
+4. declared technical readiness;
 5. provenance and claim status;
 6. canonical concept identities;
 7. prerequisite gate identities;
 8. linked curriculum buckets;
 9. linked problem-family identities;
 10. technical-core invariant statements;
-11. mandatory equations / formal relations with symbol meaning and validity;
-12. required representations;
-13. model conditions and boundary cases;
+11. equations/formal relations with symbol meaning and validity conditions;
+12. mathematical representations;
+13. model conditions and validity boundaries;
 14. expert reasoning sequence;
-15. required representation transformations across Core roles;
+15. required transformations across Core roles;
 16. misconception traps with counterexamples and repairs;
-17. mandatory independent verifications;
-18. problem-family recognition and first move;
-19. ten-dimension intrinsic difficulty profile;
-20. all-true release checklist for `ENGINEERING_GATE_READY`;
-21. badges;
+17. independent verification obligations;
+18. problem-family recognition and first moves;
+19. intrinsic difficulty profile;
+20. release checklist;
+21. badges; and
 22. explicit falsification cases.
 
-A fluent explanation without these structures is not an Engineering-ready gate.
+A fluent explanation or topic label without the required technical object is not an Engineering-ready gate.
 
-## 3. Current 45th gate: Euclidean Foundations
+## 4. Mathematical invariants are data, not validator branches
 
-The current expansion adds:
+Gate-specific mathematical invariants live in:
 
-`MATH-GEO-EUCLID-FOUNDATIONS`
+`policies/mathematics-engineering-gate-invariants.v1.json`
 
-**Learner title:** Euclidean Foundations: Axioms, Postulates & Theorem Status  
-**CBSE scope:** Grade 9, Introduction to Euclid's Geometry  
-**JEE tier:** `NOT_IN_JEE`
-
-The gate closes the exact AssessmentScope capability:
-
-`MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE`
-
-It does not alias that capability to lines/angles or triangle proof. It owns the missing foundational classification object directly.
-
-Mandatory Euclid structures include:
+The production validator understands generic invariant categories only:
 
 ```text
-CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION
-CON-MATH-EUCLID-ASSUMPTION-VS-THEOREM
-CON-MATH-EUCLID-SCOPE-OF-ASSUMPTION
-EQ-MATH-EUCLID-CLASSIFICATION
-REP-MATH-EUCLID-CLASSIFICATION-TABLE
-REP-MATH-EUCLID-LOGICAL-STATUS-FLOW
-MISC-MATH-EUCLID-AXIOM-POSTULATE-PROOF
-PF-MATH-EUCLID-AXIOM-POSTULATE-CLASSIFICATION
+required_concept_ids
+required_equation_ids
+required_representation_ids
+required_misconception_ids
+required_prerequisite_ids
 ```
 
-The validity boundary is explicit: the Grade-9 curriculum convention first separates foundational assumptions from definitions/theorems, then distinguishes an axiom/common notion from a postulate by general-mathematics versus geometry-specific scope. The gate also records that broader mathematical traditions may use the terminology less sharply, so the classification frame must remain declared.
+The validator does **not** contain `if gate == <named topic>` logic. Current gate IDs and mathematical requirements may appear in the Engineering invariant data because that file is part of mathematical authority; adding or changing those requirements does not require a Python topic branch.
 
-## 4. Representation vocabulary
+The invariant profile participates in `validator_contract_digest`, so an invariant change automatically stales downstream custody.
 
-The Engineering schema includes formal mathematical and pedagogical representations such as coordinate plots, proof layouts, sign/discriminant charts, probability trees, Argand plots and conic constructions.
+## 5. Global graph and readiness invariants
 
-For Euclid Foundations the schema now also admits:
+Before Blueprint may consume Engineering authority, the generic validator requires at least:
 
-`DEFINITION_CLASSIFICATION_TABLE`
-
-This is used for both the explicit axiom/postulate/theorem comparison table and the independent logical-status decision flow. A one-step memorization list is not an adequate representation.
-
-## 5. Graph and closure invariants
-
-The validator requires:
-
+- schema validity;
 - globally unique gate, concept, equation, representation and misconception IDs;
-- every prerequisite gate to exist;
-- no self-dependency;
-- linked problem-family IDs to resolve inside the gate;
-- every READY gate to have a complete release checklist;
-- structural difficulty dimensions to remain in their permitted ranges;
-- selected domain gates to preserve mandatory concepts/equations/representations/misconceptions.
+- all Mathematics prerequisite gate identities to resolve;
+- no self-dependency or prerequisite cycle;
+- linked problem-family IDs to resolve inside their owning gate;
+- the external mathematical invariant profile to pass;
+- intrinsic difficulty dimensions to remain within their allowed range;
+- every declared READY gate to have an internally complete release checklist;
+- source scope not to be held; and
+- the requested Engineering depth profile to pass.
 
-Blueprint then computes transitive prerequisite closure over the validated graph. Blueprint does not maintain a duplicate topic graph.
+Declared `technical_readiness` is therefore necessary but cannot self-authorize missing mathematical structure.
 
-## 6. Stable validation failures
+## 6. Engineering depth is independent of gate identity
 
-The production validator emits stable codes including:
+An Engineering request chooses:
+
+```text
+FOUNDATION | STANDARD | RESEARCH
+```
+
+The executable depth rules live in:
+
+`policies/mathematics-engineering-depth-policy.v1.json`
+
+That policy contains structural thresholds, not topic names. The same gate can therefore pass `STANDARD` and fail `RESEARCH` when its Engineering data lacks the generic research-depth structure.
+
+This distinction prevents unnecessary registry proliferation:
+
+```text
+same mathematical capability, greater rigor
+    → same gate + stronger engineering_depth
+
+new mathematical capability
+    → new Engineering gate data
+
+existing gate merely added to a product/exam scope
+    → scope/crosswalk membership change only
+```
+
+## 7. Stable validation failures
+
+Production validation emits stable machine-readable codes, including:
 
 ```text
 MATH_GATE_SCHEMA_VIOLATION
@@ -121,6 +150,7 @@ MATH_GATE_DUPLICATE_ID
 MATH_GATE_INVALID_SUBTOPIC_ID
 MATH_GATE_MATURITY_OVERREACH
 MATH_GATE_UNRESOLVED_PREREQUISITE
+MATH_GATE_DEPENDENCY_CYCLE
 MATH_GATE_CROSS_REFERENCE_INTEGRITY_FAIL
 MATH_GATE_MISSING_REQUIRED_CONCEPT
 MATH_GATE_MISSING_MANDATORY_EQUATION
@@ -130,47 +160,46 @@ MATH_GATE_INVALID_DIFFICULTY_PROFILE
 MATH_GATE_RELEASE_CHECKLIST_INCOMPLETE
 ```
 
-The composition layer additionally fails stale or conflicting extension custody before Engineering validation can proceed.
+The composition layer separately rejects stale catalog/base/extension custody and duplicate extension identity before Engineering admission can proceed.
 
-## 7. Mutation falsification battery
+## 8. Data-derived falsification
 
-`engine/validate_mathematics_engineering_gates.py` executes **16 mutation falsifiers**. Existing falsifiers cover radicals, quadratics, coordinate geometry, polynomials, triangle congruence, probability, prerequisite closure, proof representation, problem-family cross-reference, global ID uniqueness and release-checklist readiness.
+`engine/validate_mathematics_engineering_gates.py` generates mutation falsifiers from the current invariant profile rather than maintaining a topic-coded mutation list.
 
-Four additional Euclid-specific mutations must fail:
+Current CI evidence catches **29 data-derived mutations** through the production validator. The number is evidence from the current Engineering data, not a fixed architecture constant: it may change as invariant data changes.
 
-1. remove `CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION`;
-2. remove `EQ-MATH-EUCLID-CLASSIFICATION`;
-3. remove `REP-MATH-EUCLID-CLASSIFICATION-TABLE` while retaining another schema-valid representation;
-4. remove `MISC-MATH-EUCLID-AXIOM-POSTULATE-PROOF`.
+Generic additional mutations test cross-reference integrity, global identity uniqueness and READY/release-checklist consistency.
 
-This ensures Euclid Foundations is an engineered gate, not merely a 45th identifier.
+This is important because adding a newly governed gate or invariant should extend the falsification surface through data rather than requiring another Python `if` block.
 
-## 8. Composition/custody falsifiers
+## 9. Generic extension proof
 
-`tests/test_engineering_registry_composition.py` separately verifies that:
+`tests/test_engineering_registry_composition.py` proves the extension mechanism itself, including:
 
-- the canonical composition has 45 unique gates;
-- an extension bound to a stale base Git blob fails;
-- an extension declaring the wrong base gate count fails;
-- an extension that duplicates an existing gate ID fails;
-- a v2 AssessmentScope crosswalk patch bound to a stale Euclid-extension blob fails;
-- a v2 crosswalk patch bound to a stale base-crosswalk blob fails.
+- canonical catalog composition has unique gate IDs;
+- stale base-blob custody fails;
+- wrong pre-extension gate count fails;
+- duplicate extension gate identity fails;
+- stale crosswalk/base custody fails; and
+- a completely new synthetic Mathematics gate can be created in extension data, composed after the current catalog and validated by the production validator **without modifying production Python for that gate**.
 
-These tests protect the authority chain around the registry rather than only the mathematical contents inside a gate.
+That last test is the architectural acceptance test for topic independence.
 
-## 9. AssessmentScope coverage
+## 10. AssessmentScope coverage
 
-AssessmentScope and Engineering are separate canonical vocabularies. Their bridge is exact and versioned.
+AssessmentScope and Engineering use separate canonical vocabularies. Their bridge is exact, versioned and fail-closed.
 
-Historical v1:
+Historical base crosswalk:
 
 `policies/math-assessment-engineering-crosswalk.mixed-grade9.v1.json`
 
-Current v2 patch:
+Current patch:
 
 `policies/math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json`
 
-Current mixed Grade-9 coverage is:
+The patch may reference a canonical extension only when that extension is present in the current extension catalog and its exact Git blob matches. The crosswalk compiler does not know the mathematical meaning of that extension.
+
+Current mixed Grade-9 evidence is:
 
 ```text
 required capabilities: 30
@@ -178,48 +207,31 @@ Engineering-covered:   30
 Engineering gaps:       0
 ```
 
-The old v1 29/30 state remains preserved as historical custody. V2 changes only the Euclid-classification row and binds it to `MATH-GEO-EUCLID-FOUNDATIONS`.
+These counts describe the current fixture/scope and are not hard-coded production requirements.
 
-## 10. Release proof
+## 11. Adding a new subtopic systematically
 
-The registry is not considered operationally sufficient merely because all 45 gates validate. CI must also prove that downstream Blueprint consumers use current authority.
-
-The full mixed-corpus golden now covers:
+For a genuinely new mathematical capability:
 
 ```text
-Q1 ... Q14
-30 required capabilities
-45-gate current Engineering graph
-one or more bounded Engineering authorization bundles
-actual Core1A
-actual Core1B
-actual Core2A
-actual Core2B
-strict cross-Core release
-frozen source custody
-canonical answer custody
-governed learner publication regeneration
+1. Author Engineering gate data to the schema.
+2. Declare prerequisites by exact Engineering gate ID.
+3. Add gate-specific mathematical invariants to the invariant data when required.
+4. Add the extension file to the digest-bound extension catalog.
+5. Run generic composition + Engineering validation + mutation falsification.
+6. If an AssessmentScope capability needs the gate, update the exact-ID crosswalk data.
+7. Request FOUNDATION/STANDARD/RESEARCH through the generic Workbench.
+8. Allow Blueprint to consume only the resulting exact closure receipt/binding.
 ```
 
-A future Engineering expansion should change registry/extension data and custody, not add topic-name branches to Blueprint.
+No Blueprint topic branch is added in any of those steps.
 
-## 11. Canonical files
+If the requested change is only greater depth for an existing mathematical capability, do **not** create a duplicate topic gate by default. Use the existing gate with the appropriate generic Engineering depth profile and enrich the Engineering data if that profile exposes a real structural gap.
 
-```text
-contracts/mathematics-technical-engineering-gate.schema.json
-policies/mathematics-technical-engineering-gates.v1.json
-policies/mathematics-technical-engineering-gates.v1.euclid-extension.json
-engine/engineering_registry_composition.py
-engine/validate_mathematics_engineering_gates.py
-engine/compile_mathematics_engineering_workbench.py
-policies/math-assessment-engineering-crosswalk.mixed-grade9.v1.json
-policies/math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json
-engine/validate_assessment_engineering_crosswalk.py
-tests/test_mathematics_engineering_gates.py
-tests/test_engineering_registry_composition.py
-tests/test_assessment_engineering_crosswalk.py
-```
+## 12. Blueprint boundary
 
-The architectural invariant is:
+Blueprint computes deterministic closure and product authorization from validated Engineering receipts. It does not maintain a second mathematical truth graph.
 
-> **Mathematical technical authority is explicit, typed, falsifiable and digest-bound. Blueprint consumes exact Engineering identities and current custody; it never invents a missing gate by semantic resemblance.**
+The governing invariant is:
+
+> **Engineering owns mathematical truth, gate-specific requirements and topic data. Blueprint owns generic orchestration. New topics, subtopics and rigor levels flow from Engineering data through generic validation and custody; they never become remembered or hard-coded Blueprint cases.**
