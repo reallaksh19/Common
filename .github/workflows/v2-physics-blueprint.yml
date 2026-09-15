@@ -26,6 +26,8 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
       - name: Validate canonical Physics Technical Engineering Gates v2
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
+      - name: Reconcile PR383 discovery breadth against canonical v3 Workbench
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py"
       - name: Validate SBA23 technical-gate prerequisite closure
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py"
       - name: Validate reconstruction-complete TTU v2 falsifiers
