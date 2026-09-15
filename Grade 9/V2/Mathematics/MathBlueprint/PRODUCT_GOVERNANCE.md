@@ -2,12 +2,13 @@
 
 This contract sits after the Canonical Domain Registry and before deterministic Publication.
 
-It answers four release questions:
+It answers five release questions:
 
 1. Did any validated concept, equation, representation, misconception, problem family, source question or verification asset disappear?
 2. Did two Core products copy the same material without a declared pedagogical transformation?
 3. Do difficulty badges and Core-purpose labels produce observable product behavior rather than decorative metadata?
 4. For Core2A/Core2B, does every learner-facing item fit the governed learner calibration and retain question/answer/source custody?
+5. If Engineering authority is shown to the learner or author, is that visibility derived from exact current custody without becoming a second authorization path?
 
 ## 1. Coverage ledger
 
@@ -122,10 +123,12 @@ These are owner-calibratable policy thresholds, not claims about universal educa
 Operational consequences are mandatory:
 
 ```text
-EASY   -> <=10-page ceiling, no pedagogy-enrichment web research
-MEDIUM -> <=20-page ceiling, TARGETED research
-HARD   -> <=30-page ceiling, DEEP research
+EASY   -> <=10-page ceiling, pedagogy-enrichment web research OPTIONAL
+MEDIUM -> <=20-page ceiling, TARGETED research REQUIRED
+HARD   -> <=30-page ceiling, DEEP research REQUIRED
 ```
+
+Research permission and research obligation are separate. Optional EASY research may be omitted. If it is used, its brief and evidence references must be fully bound under the same research-custody contract; partially bound research is invalid. External research may improve pedagogy but does not become mathematical or curriculum authority.
 
 If owner/source authority overrides the derived badge, both findings remain visible. The operational badge controls production; the derived profile remains in the audit.
 
@@ -241,3 +244,50 @@ python Grade\ 9/V2/Mathematics/MathBlueprint/engine/validate_product_governance.
 ```
 
 Publication must fail closed when any of these audits fail.
+
+## 9. Engineering visibility in the released learner product
+
+A released product may expose Engineering provenance and technical structure for explainability, but only through the derived Engineering visibility manifest compiled after product release admission.
+
+The visibility compiler revalidates every Engineering binding against current authority, recompiles current closure and Passport state, then derives the aggregate view. The learner publication bundle embeds both the complete visibility object and its digest.
+
+Learner-visible Engineering information may include:
+
+```text
+gate title and chapter
+DIRECT / PREREQUISITE_CLOSURE role
+requested Engineering depth
+technical READY state
+prerequisite closure
+provenance
+Engineering structure counts
+intrinsic difficulty profile
+required representations + verification methods
+misconception traps + technical repairs
+mandatory verification obligations
+```
+
+It may not create or modify:
+
+```text
+Engineering gate membership
+prerequisite closure
+technical readiness
+mathematical scope
+publication authorization
+```
+
+The visibility contract therefore requires:
+
+```text
+authority = NON_AUTHORITATIVE_VIEW_OF_BOUND_ENGINEERING_AUTHORITY
+publication_authorization = NOT_IMPLIED
+```
+
+The PDF renderer receives the external visibility manifest only as a validation witness. Learner-facing Engineering semantics are rendered from the validated visibility object already embedded in the learner publication bundle, preserving the publication invariant:
+
+```text
+semantic_source = LEARNER_PUBLICATION_BUNDLE_ONLY
+```
+
+Release fails closed if the visibility manifest is stale, belongs to a different release gate, differs from the embedded copy, claims publication authority, or if rendered gate coverage differs from validated gate coverage.
