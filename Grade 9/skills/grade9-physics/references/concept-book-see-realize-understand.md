@@ -160,6 +160,26 @@ If not, the lesson is incomplete.
 
 ## 6. Mandatory SRU authoring gates
 
+These 15 gates are authoring-time judgment calls, not facts a schema can compute. If a `grade9-physics-publication` concept is ready to record a finding against a gate, use the matching `SRUAcceptance` field below (`validate_v2.py`) — and set `reviewer` to a named independent reviewer, not whoever authored the concept: an unreviewed self-attestation is rejected by `validate()`.
+
+| Gate | `SRUAcceptance` field |
+|---|---|
+| SRU-01 No Naked Equation | `no_naked_equation` |
+| SRU-02 Every Symbol Speaks | `every_symbol_speaks` |
+| SRU-03 Every Term Has an Origin | `every_term_has_origin` |
+| SRU-04 Explain Unusual Mathematics | `explains_unusual_mathematics` |
+| SRU-05 Verbalize Before Calculating | `verbalize_before_calculating` |
+| SRU-06 Prediction Required | `prediction_required` |
+| SRU-07 Misconception Confrontation | `misconception_confrontation` |
+| SRU-08 Reconstruction Test | `reconstruction_test` |
+| SRU-09 Source Traceability | `source_traceability` |
+| SRU-10 Do Not Silently Repair Source Defects | `no_silent_source_repair` |
+| SRU-11 Symbolic Depth | `symbolic_depth` |
+| SRU-12 Assumptions / Validity | `assumptions_stated` |
+| SRU-13 Representation Translation | `representation_translation` |
+| SRU-14 Scaling Reasoning | `scaling_reasoning` |
+| SRU-15 Transfer | `transfer_required` |
+
 ### SRU-01 — No Naked Equation
 
 No important equation may first appear as an isolated formula box.

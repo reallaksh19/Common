@@ -1,6 +1,5 @@
 ---
 name: grade9-corpus-coverage-auditor
-version: 5
 description: Deprecated redirect. The general corpus-audit rules and mathematics-specific extensions are now merged into grade9-math-corpus-coverage-auditor.
 ---
 

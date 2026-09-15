@@ -1,0 +1,16 @@
+{
+  "schema": "Pydantic Model, extra fields forbidden",
+  "questions": 8,
+  "numerically_recomputed": 7,
+  "pedagogy": "MANUAL_REVIEW_REQUIRED",
+  "pages": 27,
+  "links": 55,
+  "broken_links": [],
+  "text_overlap_findings": [],
+  "outside_page": [],
+  "minimum_text_role_size": 10.5,
+  "figure_occurrences": 20,
+  "pdf_sha256": "ab74610eadbdad2de4d27ea7732ed6a03069d78f36b3b306b5b7f622705d13f2",
+  "model_sha256": "08c30e682d1c8256af965468686d5cab207260a531560ac45ba4cf0fad75b7cd",
+  "visual_review": "SEPARATE_REVIEW_REQUIRED"
+}

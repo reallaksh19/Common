@@ -23,8 +23,16 @@ SKILLS = [
     "grade9-learning-enrichment",
     "grade9-publication",
     "grade9-textbook-publisher",
+    "grade9-subtopic-completeness-auditor",
+    "grade9-transfer-coverage-auditor",
+    "grade9-chapter-closeout-auditor",
+    "grade9-redox-subtopic-book-builder",
+    "grade9-redox-chapter-closeout-auditor",
     "grade9-math",
     "grade9-physics",
+    "grade9-physics-subtopic-book-builder",
+    "grade9-physics-publication",
+    "grade9-physics-examside",
     "grade9-chemistry",
 ]
 

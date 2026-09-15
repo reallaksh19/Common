@@ -1,6 +1,6 @@
 ---
 name: grade9-physics-subtopic-book-builder
-description: Build one Grade 9 Physics subtopic at a time as a paired Study Guide and external-transfer question book, using source-grounded concept assimilation, real-life physical anchors, functional visuals, causal misconception repair, H1-H3 scaffold fading, per-subtopic ExamSIDE coverage audits, Appendix solutions, and strict typography/layout/render QA. Use for Motion subtopic Study Guide + PYQ/ExamSIDE pairs and similar Physics learning packages.
+description: Build one Grade 9 Physics subtopic at a time as exactly two paired files: a Core Study Guide with Appendices A–C and an ExamSIDE Solution Book with source-grounded questions, concept/difficulty badges, H1–H3 hints, mixed transfer and complete solutions. Use for Motion subtopic Core + ExamSIDE pairs and similar Physics learning packages.
 ---
 
 # Grade 9 Physics Subtopic Book Builder
@@ -18,22 +18,28 @@ This skill is a production specialist. It works with, and does not replace:
 
 ## Core product contract
 
-For each subtopic produce a pair:
+For each subtopic produce exactly this pair:
 
 ```text
-(1) STUDY GUIDE
+(1) CORE STUDY GUIDE
     concept assimilation + application + guided fading
+    + Appendix A independently attemptable Core practice
+    + Appendix B optional H1-H3 hints and complete Core solutions
+    + Appendix C printable handout
 
-(2) TRANSFER QUESTION BOOK
+(2) EXAMSIDE SOLUTION BOOK
     every eligible external/PYQ item assigned to the subtopic
-    + stable concept links
-    + learner difficulty
+    + visible primary-concept segregation labels
+    + task badges and evidence-grounded learner difficulty badges
     + H1-H3 support according to difficulty
+    + concept-hidden mixed transfer followed by post-marking diagnosis
     + visual/model helpers where required
     + Appendix A full solutions
 ```
 
-Do not hand-pick a convenient external-question sample and call the subtopic transfer-complete. The required-question set must come from the transfer-coverage audit.
+Give both files stable model IDs under one pair ID and reciprocal companion IDs. Their topic, grade/subject/chapter, canonical concept authority and concept segregation must match. Run the publication adapter's `validate_v2.py --pair` gate; neither file may be published or counted complete by itself.
+
+Do not hand-pick a convenient external-question sample and call the subtopic transfer-complete. The required-question set must come from the transfer-coverage audit. If no qualified external corpus exists, mark ExamSIDE `NOT_RUN`; do not substitute original questions or silently emit only the Core file.
 
 ---
 
@@ -58,7 +64,7 @@ what constant acceleration looks like
 
 Do not set a page-count target. Let concept assimilation determine length.
 
-Block progression to the next subtopic until the current Study Guide + transfer pair passes content, transfer, typography, layout and render gates.
+Block progression to the next subtopic until the current Core Study Guide + ExamSIDE Solution Book pair passes identity, content, transfer, typography, layout and render gates.
 
 ---
 
@@ -370,7 +376,7 @@ freeze corpus snapshot
 -> classify candidates by minimum solution path
 -> assign every eligible item exactly one primary subtopic
 -> derive CURRENT_SUBTOPIC_REQUIRED set
--> build transfer book from that required set
+-> build the ExamSIDE Solution Book from that required set
 -> reverse-audit every question back to concept/support/solution/source
 ```
 
@@ -401,9 +407,11 @@ secondary_concept_ids
 question_family
 novelty
 learner_difficulty
+difficulty_basis
+source_difficulty_code
 coverage_status
 study_guide_concept_link
-transfer_book_question_id
+examside_question_id
 hint_depth_required
 h1_present
 h2_present
@@ -420,9 +428,11 @@ Stable concept/question IDs are authoritative; PDF page numbers are convenience 
 
 ---
 
-## 12. Transfer-book difficulty support
+## 12. ExamSIDE difficulty support
 
-Default learner-facing policy:
+Retain a source-owned difficulty code unchanged, then record its normalized D1–D5 band and learner-facing label separately. When no source code exists, `EDITORIAL_TASK_DEMAND` or `EXPERT_CALIBRATED` must be explicit; never present an editorial label as source-owned.
+
+Default support policy after normalization:
 
 ```text
 D1 -> H1 optional/minimal recognition aid
@@ -437,8 +447,8 @@ For each current subtopic:
 
 - include all required eligible external items assigned to it;
 - group by reasoning/application family;
-- show D1-D5 difficulty;
-- show stable Study Guide concept link;
+- show the learner difficulty badge and its recorded basis;
+- show the stable primary Study Guide concept as a visible concept-segregation label outside mixed-test attempts;
 - preserve source/provenance link;
 - provide H1-H3 according to difficulty;
 - provide a visual/concept helper when required;
@@ -523,7 +533,7 @@ B LEARNER ARCHITECTURE
   -> application families
   -> prerequisite / misconception map
 
-C STUDY GUIDE
+C CORE STUDY GUIDE
   -> real-life anchor
   -> visual/helper
   -> explanation/reconstruction
@@ -535,6 +545,9 @@ C STUDY GUIDE
   -> Guided 2 faded
   -> transfer
   -> retrieval/self-check
+  -> Appendix A Core practice
+  -> Appendix B hints + complete Core solutions
+  -> Appendix C printable handout
 
 D STUDY GUIDE AUDIT
   -> source + pedagogy + typography + render
@@ -544,7 +557,7 @@ E EXTERNAL REQUIRED SET
   -> minimum solution path
   -> primary-subtopic assignment
 
-F TRANSFER BOOK
+F EXAMSIDE SOLUTION BOOK
   -> all required questions
   -> concept links
   -> D1-D5
@@ -560,6 +573,7 @@ H FINAL PDF QA
   -> inspect contact sheet
   -> inspect equation-, graph-, misconception-, and hint-heavy pages full size
   -> validate links
+  -> validate reciprocal pair identity and shared topic/concept authority
   -> PASS before next subtopic
 ```
 
@@ -570,10 +584,14 @@ A subtopic is complete only when:
 ```text
 SOURCE = PASS
 PEDAGOGY = PASS
-TRANSFER = PASS (when applicable)
+CORE_APPENDICES_A_TO_C = PASS
+EXAMSIDE = PASS
+PAIR_RECONCILIATION = PASS
 TYPOGRAPHY = PASS
 LAYOUT = PASS
 RENDER = PASS
 ```
+
+If a qualified external corpus is unavailable, `EXAMSIDE = NOT_RUN` and the subtopic package remains incomplete; this is preferable to manufacturing a second file from original questions.
 
 Static QA proves package/content coverage, not measured learner mastery.

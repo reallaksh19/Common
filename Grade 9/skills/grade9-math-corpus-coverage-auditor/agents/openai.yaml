@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grade 9 Math Corpus Coverage Auditor"
+  short_description: "Reconcile mathematics corpora and publications"
+  default_prompt: "Use $grade9-math-corpus-coverage-auditor to reconcile this mathematics corpus against its learning and publication artifacts."

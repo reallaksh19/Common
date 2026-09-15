@@ -1,5 +1,9 @@
 # Motion in a Straight Line
 
+## Two-topic teaching pilot for review
+
+[B30/B80 rebuild package](B30_B80_Rebuild/README.md) contains executable Physics publication and ExamSIDE skills, concept contracts, PDF schema, learner PDFs, review evidence and historical backups. Its authored distance/displacement and signed v–t area examples are a separate teaching pilot; they do not replace or claim completion of the 68-question source authority below.
+
 ## Source authority
 
 Primary assessment authority: the supplied **Motion in straight line questions** bank containing 68 questions.

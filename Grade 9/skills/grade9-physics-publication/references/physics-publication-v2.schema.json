@@ -1,0 +1,1909 @@
+{
+  "$defs": {
+    "Block": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "heading",
+            "body",
+            "equation"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "text"
+      ],
+      "title": "Block",
+      "type": "object"
+    },
+    "CanonicalConceptRegistry": {
+      "additionalProperties": false,
+      "properties": {
+        "registry_id": {
+          "minLength": 1,
+          "title": "Registry Id",
+          "type": "string"
+        },
+        "source_locator": {
+          "minLength": 1,
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "allowed_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "registry_id",
+        "source_locator",
+        "source_sha256",
+        "allowed_ids"
+      ],
+      "title": "CanonicalConceptRegistry",
+      "type": "object"
+    },
+    "Citation": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 65,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "title": "Locator",
+          "type": "string"
+        },
+        "verification": {
+          "const": "VERIFIED",
+          "title": "Verification",
+          "type": "string"
+        },
+        "source_document": {
+          "minLength": 1,
+          "title": "Source Document",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "source_page": {
+          "minimum": 1,
+          "title": "Source Page",
+          "type": "integer"
+        },
+        "raw_stem": {
+          "minLength": 1,
+          "title": "Raw Stem",
+          "type": "string"
+        },
+        "raw_answer": {
+          "minLength": 1,
+          "title": "Raw Answer",
+          "type": "string"
+        },
+        "values_units": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Values Units",
+          "type": "array"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Options",
+          "type": "array"
+        },
+        "figure_locator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Figure Locator"
+        },
+        "figure_semantics": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Figure Semantics",
+          "type": "array"
+        },
+        "target_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target Ids",
+          "type": "array"
+        },
+        "adaptation_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adaptation Note"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "locator",
+        "verification",
+        "source_document",
+        "source_sha256",
+        "source_page",
+        "raw_stem",
+        "raw_answer",
+        "values_units",
+        "options",
+        "figure_semantics",
+        "target_ids"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "Concept": {
+      "additionalProperties": false,
+      "properties": {
+        "concept_id": {
+          "title": "Concept Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "claim": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Claim"
+        },
+        "canonical_concept_id": {
+          "title": "Canonical Concept Id",
+          "type": "string"
+        },
+        "primary_anchor_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Primary Anchor Ids",
+          "type": "array"
+        },
+        "prerequisites": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prerequisites",
+          "type": "array"
+        },
+        "same_level_question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Same Level Question Ids",
+          "type": "array"
+        },
+        "challenge_question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Challenge Question Ids",
+          "type": "array"
+        },
+        "misconception_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Misconception Ids",
+          "type": "array"
+        },
+        "mastery_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Mastery Path",
+          "type": "array"
+        },
+        "sru": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SRUAcceptance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "concept_id",
+        "title",
+        "canonical_concept_id"
+      ],
+      "title": "Concept",
+      "type": "object"
+    },
+    "Difficulty": {
+      "additionalProperties": false,
+      "properties": {
+        "physical_model_selection": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Physical Model Selection"
+        },
+        "conceptual_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conceptual Reasoning"
+        },
+        "representation_translation": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Representation Translation"
+        },
+        "vector_spatial_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vector Spatial Reasoning"
+        },
+        "equation_construction": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Equation Construction"
+        },
+        "experimental_data_reasoning": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experimental Data Reasoning"
+        },
+        "constraints_cases": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Constraints Cases"
+        }
+      },
+      "title": "Difficulty",
+      "type": "object"
+    },
+    "DifficultyBadge": {
+      "additionalProperties": false,
+      "properties": {
+        "normalized_band": {
+          "enum": [
+            "D1",
+            "D2",
+            "D3",
+            "D4",
+            "D5"
+          ],
+          "title": "Normalized Band",
+          "type": "string"
+        },
+        "learner_label": {
+          "enum": [
+            "Easy",
+            "Medium",
+            "Hard",
+            "Challenge"
+          ],
+          "title": "Learner Label",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "SOURCE_MAPPING",
+            "EDITORIAL_TASK_DEMAND",
+            "EXPERT_CALIBRATED"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "source_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Code"
+        }
+      },
+      "required": [
+        "normalized_band",
+        "learner_label",
+        "basis"
+      ],
+      "title": "DifficultyBadge",
+      "type": "object"
+    },
+    "Figure": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "numberline",
+            "vt",
+            "tiles",
+            "compare",
+            "blank"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "const": "FINAL",
+          "title": "Status",
+          "type": "string"
+        },
+        "dependency_class": {
+          "enum": [
+            "NONE",
+            "GRAPH",
+            "DIAGRAM",
+            "TABLE",
+            "TIMELINE",
+            "NUMBER_LINE",
+            "OPTION_FIGURES",
+            "STATEMENT_SET",
+            "MIXED"
+          ],
+          "title": "Dependency Class",
+          "type": "string"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Range"
+        },
+        "positions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Positions"
+        },
+        "displacement": {
+          "default": false,
+          "title": "Displacement",
+          "type": "boolean"
+        },
+        "leg_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leg Labels"
+        },
+        "ticks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ticks"
+        },
+        "show_endpoints": {
+          "default": true,
+          "title": "Show Endpoints",
+          "type": "boolean"
+        },
+        "trange": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trange"
+        },
+        "vrange": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vrange"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        },
+        "tticks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tticks"
+        },
+        "vticks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vticks"
+        },
+        "shade": {
+          "default": false,
+          "title": "Shade",
+          "type": "boolean"
+        },
+        "annotations": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {},
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Annotations"
+        },
+        "cols": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cols"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rows"
+        },
+        "figures": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Figure"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Figures"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "instruction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instruction"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "status",
+        "dependency_class"
+      ],
+      "title": "Figure",
+      "type": "object"
+    },
+    "GuidedSolution": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "figure": {
+          "$ref": "#/$defs/Figure"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "text",
+        "figure"
+      ],
+      "title": "GuidedSolution",
+      "type": "object"
+    },
+    "Handout": {
+      "additionalProperties": false,
+      "properties": {
+        "route": {
+          "$ref": "#/$defs/Figure"
+        },
+        "graph": {
+          "$ref": "#/$defs/Figure"
+        },
+        "left": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "title": "Left",
+          "type": "array"
+        },
+        "right": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "title": "Right",
+          "type": "array"
+        }
+      },
+      "required": [
+        "route",
+        "graph",
+        "left",
+        "right"
+      ],
+      "title": "Handout",
+      "type": "object"
+    },
+    "HintStep": {
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "enum": [
+            "H1",
+            "H2",
+            "H3"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tier",
+        "text"
+      ],
+      "title": "HintStep",
+      "type": "object"
+    },
+    "Lesson": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "kicker": {
+          "title": "Kicker",
+          "type": "string"
+        },
+        "intro": {
+          "title": "Intro",
+          "type": "string"
+        },
+        "figure": {
+          "$ref": "#/$defs/Figure"
+        },
+        "caption": {
+          "title": "Caption",
+          "type": "string"
+        },
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "minItems": 2,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "takeaway": {
+          "title": "Takeaway",
+          "type": "string"
+        },
+        "concept_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Concept Ids",
+          "type": "array"
+        },
+        "source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "practice_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Practice Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "kicker",
+        "intro",
+        "figure",
+        "caption",
+        "blocks",
+        "takeaway",
+        "concept_ids",
+        "source_refs"
+      ],
+      "title": "Lesson",
+      "type": "object"
+    },
+    "Misconception": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "wrong_model": {
+          "title": "Wrong Model",
+          "type": "string"
+        },
+        "observable_error": {
+          "title": "Observable Error",
+          "type": "string"
+        },
+        "diagnostic_question": {
+          "title": "Diagnostic Question",
+          "type": "string"
+        },
+        "repair_explanation": {
+          "title": "Repair Explanation",
+          "type": "string"
+        },
+        "micro_example": {
+          "title": "Micro Example",
+          "type": "string"
+        },
+        "transfer_check": {
+          "title": "Transfer Check",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "wrong_model",
+        "observable_error",
+        "diagnostic_question",
+        "repair_explanation",
+        "micro_example",
+        "transfer_check"
+      ],
+      "title": "Misconception",
+      "type": "object"
+    },
+    "MixedTest": {
+      "additionalProperties": false,
+      "properties": {
+        "test_id": {
+          "minLength": 1,
+          "title": "Test Id",
+          "type": "string"
+        },
+        "set_id": {
+          "minLength": 1,
+          "title": "Set Id",
+          "type": "string"
+        },
+        "study_mode": {
+          "const": "MIXED_TRANSFER",
+          "title": "Study Mode",
+          "type": "string"
+        },
+        "concept_hidden": {
+          "const": true,
+          "title": "Concept Hidden",
+          "type": "boolean"
+        },
+        "question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Question Ids",
+          "type": "array"
+        },
+        "diagnosis_map": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Diagnosis Map",
+          "type": "object"
+        }
+      },
+      "required": [
+        "test_id",
+        "set_id",
+        "study_mode",
+        "concept_hidden",
+        "question_ids",
+        "diagnosis_map"
+      ],
+      "title": "MixedTest",
+      "type": "object"
+    },
+    "ProductIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "pair_id": {
+          "minLength": 1,
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "CORE_STUDY_GUIDE",
+            "EXAMSIDE_SOLUTION_BOOK"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "companion_model_id": {
+          "minLength": 1,
+          "title": "Companion Model Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "pair_id",
+        "role",
+        "companion_model_id"
+      ],
+      "title": "ProductIdentity",
+      "type": "object"
+    },
+    "Project": {
+      "additionalProperties": false,
+      "properties": {
+        "grade": {
+          "const": 9,
+          "default": 9,
+          "title": "Grade",
+          "type": "integer"
+        },
+        "subject": {
+          "title": "Subject",
+          "type": "string"
+        },
+        "chapter": {
+          "title": "Chapter",
+          "type": "string"
+        },
+        "target_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Level"
+        },
+        "core_question_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Core Question Count"
+        },
+        "challenge_question_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Challenge Question Count"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "subject",
+        "chapter"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "QA": {
+      "additionalProperties": false,
+      "properties": {
+        "source_qc_complete": {
+          "title": "Source Qc Complete",
+          "type": "boolean"
+        },
+        "answers_verified": {
+          "title": "Answers Verified",
+          "type": "boolean"
+        },
+        "concept_links_verified": {
+          "title": "Concept Links Verified",
+          "type": "boolean"
+        },
+        "difficulty_checked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Difficulty Checked"
+        },
+        "pdf_render_checked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Render Checked"
+        },
+        "pdf_links_checked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdf Links Checked"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_qc_complete",
+        "answers_verified",
+        "concept_links_verified"
+      ],
+      "title": "QA",
+      "type": "object"
+    },
+    "Question": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "question": {
+          "minLength": 15,
+          "title": "Question",
+          "type": "string"
+        },
+        "primary_concept_id": {
+          "title": "Primary Concept Id",
+          "type": "string"
+        },
+        "secondary_concept_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Secondary Concept Ids",
+          "type": "array"
+        },
+        "recap": {
+          "title": "Recap",
+          "type": "string"
+        },
+        "solution": {
+          "$ref": "#/$defs/Solution"
+        },
+        "hints": {
+          "items": {
+            "$ref": "#/$defs/HintStep"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Hints",
+          "type": "array"
+        },
+        "repair_mode": {
+          "enum": [
+            "LOCAL_LESSON",
+            "EXTERNAL_COMPANION",
+            "SELF_CONTAINED"
+          ],
+          "title": "Repair Mode",
+          "type": "string"
+        },
+        "repair_target": {
+          "title": "Repair Target",
+          "type": "string"
+        },
+        "repair_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RepairReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "task_type": {
+          "enum": [
+            "Apply",
+            "Explain",
+            "Connect",
+            "Transfer",
+            "Compare"
+          ],
+          "title": "Task Type",
+          "type": "string"
+        },
+        "difficulty": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Difficulty"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "difficulty_badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DifficultyBadge"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "difficulty_source": {
+          "enum": [
+            "AUTHOR_HEURISTIC",
+            "SOURCE_ANALYSIS",
+            "EXPERT_CALIBRATED",
+            "EMPIRICAL"
+          ],
+          "title": "Difficulty Source",
+          "type": "string"
+        },
+        "workspace": {
+          "title": "Workspace",
+          "type": "string"
+        },
+        "source_status": {
+          "enum": [
+            "ORIGINAL",
+            "SOURCE_VERIFIED",
+            "ADAPTED"
+          ],
+          "title": "Source Status",
+          "type": "string"
+        },
+        "transcription_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "VERIFIED_TRANSCRIPTION",
+                "RECONSTRUCTED",
+                "QC_ALERT",
+                "SOURCE_UNRESOLVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transcription Status"
+        },
+        "provenance_class": {
+          "enum": [
+            "USER_UPLOADED_ANCHOR",
+            "OFFICIAL_PYQ",
+            "SECONDARY_VERIFIED_PYQ",
+            "PUBLISHED_REFERENCE",
+            "ORIGINAL_CALIBRATED",
+            "RECONSTRUCTED_FROM_SCAN"
+          ],
+          "title": "Provenance Class",
+          "type": "string"
+        },
+        "answer": {
+          "minLength": 3,
+          "title": "Answer",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "numeric_check": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Numeric Check"
+        },
+        "source_citation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Citation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "solution_figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "question",
+        "primary_concept_id",
+        "secondary_concept_ids",
+        "recap",
+        "solution",
+        "hints",
+        "repair_mode",
+        "repair_target",
+        "figure",
+        "task_type",
+        "difficulty_source",
+        "workspace",
+        "source_status",
+        "provenance_class",
+        "answer",
+        "source_refs",
+        "numeric_check"
+      ],
+      "title": "Question",
+      "type": "object"
+    },
+    "Questions": {
+      "additionalProperties": false,
+      "properties": {
+        "anchors": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Anchors",
+          "type": "array"
+        },
+        "core_calibrated": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Core Calibrated",
+          "type": "array"
+        },
+        "challenges": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Challenges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "anchors",
+        "core_calibrated",
+        "challenges"
+      ],
+      "title": "Questions",
+      "type": "object"
+    },
+    "RepairReference": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "title": "Locator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "locator"
+      ],
+      "title": "RepairReference",
+      "type": "object"
+    },
+    "SRUAcceptance": {
+      "additionalProperties": false,
+      "properties": {
+        "no_naked_equation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "No Naked Equation"
+        },
+        "every_symbol_speaks": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Every Symbol Speaks"
+        },
+        "every_term_has_origin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Every Term Has Origin"
+        },
+        "explains_unusual_mathematics": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Explains Unusual Mathematics"
+        },
+        "verbalize_before_calculating": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verbalize Before Calculating"
+        },
+        "prediction_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prediction Required"
+        },
+        "misconception_confrontation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Misconception Confrontation"
+        },
+        "reconstruction_test": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reconstruction Test"
+        },
+        "source_traceability": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Traceability"
+        },
+        "no_silent_source_repair": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "No Silent Source Repair"
+        },
+        "symbolic_depth": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbolic Depth"
+        },
+        "assumptions_stated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assumptions Stated"
+        },
+        "representation_translation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Representation Translation"
+        },
+        "scaling_reasoning": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scaling Reasoning"
+        },
+        "transfer_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transfer Required"
+        },
+        "reviewer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "title": "SRUAcceptance",
+      "type": "object"
+    },
+    "Solution": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "minLength": 10,
+          "title": "Why",
+          "type": "string"
+        },
+        "method": {
+          "minLength": 10,
+          "title": "Method",
+          "type": "string"
+        },
+        "answer": {
+          "minLength": 3,
+          "title": "Answer",
+          "type": "string"
+        },
+        "keep": {
+          "minLength": 10,
+          "title": "Keep",
+          "type": "string"
+        }
+      },
+      "required": [
+        "why",
+        "method",
+        "answer",
+        "keep"
+      ],
+      "title": "Solution",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provenance_class": {
+          "enum": [
+            "USER_UPLOADED_ANCHOR",
+            "OFFICIAL_PYQ",
+            "SECONDARY_VERIFIED_PYQ",
+            "PUBLISHED_REFERENCE",
+            "ORIGINAL_CALIBRATED",
+            "RECONSTRUCTED_FROM_SCAN"
+          ],
+          "title": "Provenance Class",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "source_id",
+        "title",
+        "provenance_class"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "edition": {
+      "title": "Edition",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "band": {
+      "enum": [
+        "B30",
+        "B80",
+        "B90"
+      ],
+      "title": "Band",
+      "type": "string"
+    },
+    "learner_label": {
+      "title": "Learner Label",
+      "type": "string"
+    },
+    "product": {
+      "enum": [
+        "core",
+        "question_bank",
+        "study_guide",
+        "transfer_book"
+      ],
+      "title": "Product",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "FOR_USER_REVIEW",
+        "RELEASE_CANDIDATE"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "project": {
+      "$ref": "#/$defs/Project"
+    },
+    "grade_scope": {
+      "additionalProperties": true,
+      "title": "Grade Scope",
+      "type": "object"
+    },
+    "placement": {
+      "additionalProperties": true,
+      "title": "Placement",
+      "type": "object"
+    },
+    "concepts": {
+      "items": {
+        "$ref": "#/$defs/Concept"
+      },
+      "title": "Concepts",
+      "type": "array"
+    },
+    "canonical_concept_registry": {
+      "$ref": "#/$defs/CanonicalConceptRegistry"
+    },
+    "topic_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Topic Ids",
+      "type": "array"
+    },
+    "frozen_questions": {
+      "title": "Frozen Questions",
+      "type": "integer"
+    },
+    "lessons": {
+      "items": {
+        "$ref": "#/$defs/Lesson"
+      },
+      "title": "Lessons",
+      "type": "array"
+    },
+    "questions": {
+      "$ref": "#/$defs/Questions"
+    },
+    "lesson_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Lesson Ids",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "misconceptions": {
+      "items": {
+        "$ref": "#/$defs/Misconception"
+      },
+      "title": "Misconceptions",
+      "type": "array"
+    },
+    "mixed_tests": {
+      "items": {
+        "$ref": "#/$defs/MixedTest"
+      },
+      "title": "Mixed Tests",
+      "type": "array"
+    },
+    "handout": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Handout"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "source_claim": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Claim"
+    },
+    "guided_solutions": {
+      "items": {
+        "$ref": "#/$defs/GuidedSolution"
+      },
+      "title": "Guided Solutions",
+      "type": "array"
+    },
+    "product_identity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProductIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "qa": {
+      "$ref": "#/$defs/QA"
+    }
+  },
+  "required": [
+    "schema_version",
+    "edition",
+    "title",
+    "band",
+    "learner_label",
+    "product",
+    "status",
+    "project",
+    "grade_scope",
+    "placement",
+    "concepts",
+    "canonical_concept_registry",
+    "topic_ids",
+    "frozen_questions",
+    "lessons",
+    "questions",
+    "lesson_ids",
+    "sources",
+    "qa"
+  ],
+  "title": "Model",
+  "type": "object"
+}

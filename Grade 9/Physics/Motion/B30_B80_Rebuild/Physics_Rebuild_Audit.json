@@ -1,0 +1,196 @@
+{
+  "status": "FOR_USER_REVIEW",
+  "date": "2026-09-10",
+  "scope": "Two-topic original-question Motion publication pilot; not a full chapter or verified external corpus.",
+  "sources": [
+    {
+      "file": "sources/Original_Physics_Skill_and_Drafts.zip",
+      "sha256": "df58ef2e5fccd485e0920565d3394a25829215b33117e81cf5e6f74bab3f4812"
+    },
+    {
+      "file": "sources/Original_Architecture_Concept_Note.zip",
+      "sha256": "b8aeaba4b7eff444dabcc7595974ade0c9b37a9b2a7c9d918455f3ed7e61d21c"
+    },
+    {
+      "file": "sources/Reference_Motion_Unit9_Full_Batch.pdf",
+      "sha256": "38204a13ffa49d46e271b8324208badde2c9cbdb55a53c7256b42fc124048cde"
+    }
+  ],
+  "artifacts": {
+    "Motion_B30_Rebuilt": {
+      "schema": "Pydantic Model, extra fields forbidden",
+      "questions": 8,
+      "numerically_recomputed": 7,
+      "pedagogy": "MANUAL_REVIEW_REQUIRED",
+      "pages": 27,
+      "links": 55,
+      "broken_links": [],
+      "text_overlap_findings": [],
+      "outside_page": [],
+      "minimum_text_role_size": 10.5,
+      "figure_occurrences": 20,
+      "pdf_sha256": "ab74610eadbdad2de4d27ea7732ed6a03069d78f36b3b306b5b7f622705d13f2",
+      "model_sha256": "08c30e682d1c8256af965468686d5cab207260a531560ac45ba4cf0fad75b7cd",
+      "visual_review": "SEPARATE_REVIEW_REQUIRED"
+    },
+    "Motion_B80_Rebuilt": {
+      "schema": "Pydantic Model, extra fields forbidden",
+      "questions": 8,
+      "numerically_recomputed": 6,
+      "pedagogy": "MANUAL_REVIEW_REQUIRED",
+      "pages": 22,
+      "links": 50,
+      "broken_links": [],
+      "text_overlap_findings": [],
+      "outside_page": [],
+      "minimum_text_role_size": 10.5,
+      "figure_occurrences": 16,
+      "pdf_sha256": "ee093618259ed1e559b45a566e434e90d16d4ba22d9fb26eb3e8d624a7f3b330",
+      "model_sha256": "6c27ed73f33befe3f9d577f9222e311a4e555e7789557c45300168029f4e8b80",
+      "visual_review": "SEPARATE_REVIEW_REQUIRED"
+    },
+    "Motion_Optional_Hint_Practice": {
+      "schema": "Pydantic Model, extra fields forbidden",
+      "questions": 8,
+      "numerically_recomputed": 6,
+      "pedagogy": "MANUAL_REVIEW_REQUIRED",
+      "pages": 16,
+      "links": 40,
+      "broken_links": [],
+      "text_overlap_findings": [],
+      "outside_page": [],
+      "minimum_text_role_size": 10.5,
+      "figure_occurrences": 7,
+      "pdf_sha256": "7290c579abef28c938461c7de5143b30fa6fac422af1958afadc00074a61e8ce",
+      "model_sha256": "d275acfdfe09818c5f41ab22dc63538311f156377a4976e9dd8af3de3ad30a93",
+      "visual_review": "SEPARATE_REVIEW_REQUIRED"
+    }
+  },
+  "machine_evidence": {
+    "file": "review_evidence.json",
+    "sha256": "f851b7c6a4c77a99596bdf8b97371b26cc9680161e3b5beacfb5e73976315736",
+    "generated_at_utc": "2026-09-10T02:41:18.616888+00:00",
+    "status": "PASS"
+  },
+  "manual_review": {
+    "codex_visual_review": {
+      "status": "PASS",
+      "reviewer": "Codex",
+      "reviewed_at_utc": "2026-09-10T02:40:12.526479+00:00",
+      "dpi": 200,
+      "pages_reviewed": 65,
+      "pdf_hashes": {
+        "Motion_B30_Rebuilt": "ab74610eadbdad2de4d27ea7732ed6a03069d78f36b3b306b5b7f622705d13f2",
+        "Motion_B80_Rebuilt": "ee093618259ed1e559b45a566e434e90d16d4ba22d9fb26eb3e8d624a7f3b330",
+        "Motion_Optional_Hint_Practice": "7290c579abef28c938461c7de5143b30fa6fac422af1958afadc00074a61e8ce"
+      },
+      "notes": "All 65 final pages inspected from 200 DPI renders; full-book contact sheets and Appendix A/B/C high-risk pages showed no clipping, collision, illegible label, broken hierarchy, or answer leakage before the attempt surfaces.",
+      "evidence_file": "visual_review_evidence.json",
+      "evidence_sha256": "9fd430db2b8c8bee016bf8cd684e148649d18c5868852307ec92b6a735d42141"
+    },
+    "independent_pedagogy_review": "PENDING",
+    "classroom_testing": "NOT_RUN",
+    "known_package_integrity_blockers_remaining": 0,
+    "weak_topic_diagnosis_and_retry_workflow": "OUT_OF_SCOPE",
+    "source_owned_difficulty_mapping": "NOT_RUN"
+  },
+  "tests": {
+    "skill_family_validation": {
+      "status": "PASS",
+      "evidence_ids": [
+        "skill-family"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "skill_installation": {
+      "status": "PASS",
+      "evidence_ids": [
+        "scratch-install"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "publication_contract": {
+      "status": "PASS",
+      "evidence_ids": [
+        "publication-suite"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "evidence_integrity": {
+      "status": "PASS",
+      "evidence_ids": [
+        "review-evidence-contract"
+      ],
+      "exit_codes": [
+        0
+      ]
+    },
+    "source_reconciliation": {
+      "status": "PASS",
+      "evidence_ids": [
+        "source-ledger",
+        "reconciliation-suite",
+        "artifact-reconciliation"
+      ],
+      "exit_codes": [
+        0,
+        0,
+        0
+      ]
+    },
+    "shared_model_contracts": {
+      "status": "PASS",
+      "evidence_ids": [
+        "bank-motion_B30_v2",
+        "links-motion_B30_v2",
+        "bank-motion_B80_v2",
+        "links-motion_B80_v2",
+        "bank-motion_question_bank_v2",
+        "links-motion_question_bank_v2"
+      ],
+      "exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pdf_preflights": {
+      "status": "PASS",
+      "evidence_ids": [
+        "assimilation-motion-b30-rebuilt",
+        "typography-motion-b30-rebuilt",
+        "overlap-motion-b30-rebuilt",
+        "assimilation-motion-b80-rebuilt",
+        "typography-motion-b80-rebuilt",
+        "overlap-motion-b80-rebuilt",
+        "assimilation-motion-optional-hint-practice",
+        "typography-motion-optional-hint-practice",
+        "overlap-motion-optional-hint-practice"
+      ],
+      "exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "backup": {
+    "file": "Physics_Before_Rebuild_Backup.zip",
+    "sha256": "cd041a90d21c2d9254b19f736076b0ec49eb8889b6ccdf5a8c124c4c70d72b7f"
+  }
+}

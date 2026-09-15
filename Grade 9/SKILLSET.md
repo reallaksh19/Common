@@ -14,12 +14,21 @@ This folder contains the reusable Grade 9 learning-production skill family deriv
 | `grade9-publication` | Source-faithful Grade 9-11 PDF reconstruction: zero-loss core mapping, teacher-value additions, benchmarked layout, stable renumbering/cross-links, figure recovery, anti-drift checkpoints and render-first certification |
 | `grade9-subtopic-completeness-auditor` | Whole-subtopic audit: source, instructional grammar, familiar/real-life bridges, helpers, misconceptions, practice, chemistry typography and layout |
 | `grade9-transfer-coverage-auditor` | Subtopic-wise external/PYQ accounting; missing/duplicate placement; concept, hint, solution and source-link coverage |
+| `grade9-chapter-closeout-auditor` | Subject-agnostic final chapter gate for frozen-corpus, source, batch and publication closure |
+| `grade9-corpus-coverage-auditor` | Deprecated compatibility redirect to the current mathematics corpus auditor |
+| `grade9-math-assimilation` | Partial-knowledge Mathematics assimilation, first-step recognition and transfer workflow |
+| `grade9-math-corpus-coverage-auditor` | Unified Mathematics corpus and publication-readiness audit |
 | `grade9-redox-subtopic-book-builder` | Source-grounded Redox Study Guide + ExamSIDE transfer-book builder with approved textbook rhythm, Redox-specific helpers/misconceptions, chemistry typography, H1-H3 support, Appendix A, transfer audit and render-first QA |
 | `grade9-redox-chapter-closeout-auditor` | Final Redox chapter gate: enumerate the full frozen ExamSIDE corpus, classify every candidate, backfill missed eligible PYQs, preserve unique primary homes, audit source obligations and block closeout until chapter counters pass |
+| `grade9-physics-subtopic-book-builder` | Per-topic exact two-file builder: Core Study Guide with Appendices A–C + ExamSIDE Solution Book |
+| `grade9-physics-publication` | Typed B30/B80/B90 product-pair model, renderer, pair reconciliation and audit adapter |
+| `grade9-physics-examside` | Source-ledger/reconciliation workflow for the ExamSIDE Solution Book, including concept/difficulty badges, H1–H3 and transfer diagnosis |
 | `grade9-textbook-publisher` | Kid-friendly linked textbook/question-bank PDF production and QA from validated canonical master data |
 | `grade9-math` | Mathematics reasoning/difficulty profile plus SEE -> REALIZE -> UNDERSTAND -> ADOPT concept-book mode |
 | `grade9-physics` | Physics model/representation/validation profile plus SEE -> REALIZE -> UNDERSTAND concept-book mode |
 | `grade9-chemistry` | Chemistry macro-particle-symbolic/evidence profile |
+| `ioqm-grade9-main-topic-builder` | Integrated IOQM Grade 9 main-topic production workflow |
+| `ioqm-grade9-model-exam-builder` | Reproducible IOQM-style model-exam production and PDF QA workflow |
 
 ## Shared contracts
 
