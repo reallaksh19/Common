@@ -144,6 +144,10 @@ def compile_closure(
     status_map = validated_status_map(registry)
 
     gate_map = {gate["subtopic_id"]: gate for gate in registry["gates"]}
+    internal_prefixes = tuple(sorted({gate_id.split("-", 1)[0] + "-" for gate_id in gate_map}))
+    if not internal_prefixes:
+        fail("E_ENG_REGISTRY_INVALID", "registry contains no gate namespace")
+
     direct = list(manifest["required_gate_ids"])
     direct_set = set(direct)
     seen: set[str] = set()
@@ -166,7 +170,7 @@ def compile_closure(
             return
         visiting.append(gate_id)
         for prereq in gate["prerequisites"]:
-            if prereq.startswith("PHY-"):
+            if prereq.startswith(internal_prefixes):
                 walk(prereq)
         visiting.pop()
         seen.add(gate_id)
@@ -222,12 +226,14 @@ def compile_closure(
     elif closure_status == "READY":
         authority_note = "technical engineering closure is READY; downstream custody, pedagogy and learner-evidence gates remain independent"
     else:
-        authority_note = "technical engineering closure is BLOCKED; CCU may not consume this scope as technically ready"
+        authority_note = "technical engineering closure is BLOCKED; declared downstream technical consumers may not consume this scope as ready"
 
     extension_refs = list(manifest.get("gate_extension_refs", []))
+    manifest_digest = canonical_digest(manifest)
     digest_payload = {
         "request_id": request["request_id"],
         "manifest_id": manifest["manifest_id"],
+        "manifest_digest": manifest_digest,
         "registry_digest": canonical_digest(registry),
         "gate_extension_refs": extension_refs,
         "direct_gate_ids": direct,
@@ -243,6 +249,7 @@ def compile_closure(
         "receipt_id": manifest["manifest_id"].replace("ENG-MAN-", "ENG-CLOSURE-", 1),
         "request_id": request["request_id"],
         "manifest_id": manifest["manifest_id"],
+        "manifest_digest": manifest_digest,
         "registry_ref": manifest["registry_ref"],
         "gate_extension_refs": extension_refs,
         "registry_digest": digest_payload["registry_digest"],
@@ -266,7 +273,7 @@ def compile_closure(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compile a Physics engineering prerequisite closure receipt")
+    parser = argparse.ArgumentParser(description="Compile an Engineering Gate prerequisite closure receipt")
     parser.add_argument("request")
     parser.add_argument("manifest")
     parser.add_argument("--out")
