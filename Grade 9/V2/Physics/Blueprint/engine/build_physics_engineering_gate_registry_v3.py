@@ -11,6 +11,15 @@ GATE_FILES = [
     "engineering-gates/vectors/PHY-VEC-BASICS.v3.json",
     "engineering-gates/vectors/PHY-VEC-ADD-SUB.v3.json",
     "engineering-gates/vectors/PHY-VEC-COMPONENTS.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-INTERACTION.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-FBD.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-FIRST-LAW.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-SECOND-LAW.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-THIRD-LAW.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-NORMAL.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-TENSION.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-FRICTION.v3.json",
+    "engineering-gates/newtonian-mechanics/PHY-NLM-CONNECTED.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-PROJECTILE-COMPONENTS.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-SHARED-CLOCK.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-MOVING-LAUNCHER.v3.json",
@@ -35,7 +44,7 @@ def build_registry() -> dict:
         raise ValueError("PHY_GATE_DUPLICATE_ID: duplicate subtopic_id in v3 gate source set")
     registry = {
         "schema_version": "3.0.0",
-        "registry_id": "PHYSICS-TECHNICAL-ENGINEERING-GATES-V3-SBA23",
+        "registry_id": "PHYSICS-TECHNICAL-ENGINEERING-GATES-V3",
         "maturity": "ENGINEERING",
         "gates": gates,
     }
@@ -43,7 +52,7 @@ def build_registry() -> dict:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Build the deterministic Physics Technical Engineering Gate v3 SBA23 registry")
+    ap = argparse.ArgumentParser(description="Build the deterministic canonical Physics Technical Engineering Gate v3 registry")
     ap.add_argument("--out")
     args = ap.parse_args()
     registry = build_registry()
