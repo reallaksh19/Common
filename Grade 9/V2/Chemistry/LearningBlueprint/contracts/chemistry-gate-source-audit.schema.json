@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-gate-source-audit.schema.json",
+  "title": "Chemistry Engineering Gate Source Audit v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "audit_id",
+    "gate_id",
+    "base_registry_ref",
+    "audit_role",
+    "effective_provenance",
+    "source_layers",
+    "scope_tiers",
+    "coverage_requirements",
+    "asset_bindings",
+    "learner_surface_policy",
+    "repair_records",
+    "audit_status"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.0.0"},
+    "audit_id": {"type": "string", "pattern": "^CHEM-SOURCE-AUDIT-[A-Z0-9-]+$"},
+    "gate_id": {"type": "string", "pattern": "^CHEM-[A-Z0-9]+-[A-Z0-9-]+$"},
+    "base_registry_ref": {"type": "string", "minLength": 5},
+    "audit_role": {
+      "enum": ["PRODUCTION_SOURCE_AUDIT", "STRESS_TEST_SOURCE_AUDIT"]
+    },
+    "effective_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_class", "source_curricula", "scope_policy", "source_references"],
+      "properties": {
+        "authority_class": {
+          "enum": [
+            "SOURCE_DEFINED",
+            "STANDARD_CHEMISTRY_DERIVED",
+            "AUTHORING_RECOMMENDATION",
+            "MIXED",
+            "SOURCE_SCOPE_HELD"
+          ]
+        },
+        "source_curricula": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "scope_policy": {"type": "string", "minLength": 3},
+        "source_references": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 5}
+        }
+      }
+    },
+    "source_layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["layer_id", "authority_class", "source_ref", "scope", "supports"],
+        "properties": {
+          "layer_id": {"type": "string", "pattern": "^SRC-[A-Z0-9-]+$"},
+          "authority_class": {
+            "enum": [
+              "SOURCE_DEFINED",
+              "OFFICIAL_SYLLABUS",
+              "STANDARD_CHEMISTRY_DERIVED",
+              "AUTHORING_RECOMMENDATION",
+              "SOURCE_SCOPE_HELD"
+            ]
+          },
+          "source_ref": {"type": "string", "minLength": 5},
+          "scope": {"type": "string", "minLength": 3},
+          "supports": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 3}
+          }
+        }
+      }
+    },
+    "scope_tiers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tier_id", "grade_band", "description"],
+        "properties": {
+          "tier_id": {"type": "string", "pattern": "^[A-Z0-9_-]+$"},
+          "grade_band": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "coverage_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["CONCEPT", "EQUATION", "TRANSFORMATION"]}
+    },
+    "asset_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asset_kind",
+          "asset_ref",
+          "authority_layer_ids",
+          "scope_tier_id",
+          "claim_class",
+          "downstream_scope"
+        ],
+        "properties": {
+          "asset_kind": {"enum": ["CONCEPT", "EQUATION", "TRANSFORMATION"]},
+          "asset_ref": {"type": "string", "minLength": 3},
+          "authority_layer_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^SRC-[A-Z0-9-]+$"}
+          },
+          "scope_tier_id": {"type": "string", "pattern": "^[A-Z0-9_-]+$"},
+          "claim_class": {
+            "enum": [
+              "SOURCE_DEFINED",
+              "STANDARD_CHEMISTRY_DERIVED",
+              "AUTHORING_RECOMMENDATION",
+              "SOURCE_SCOPE_HELD"
+            ]
+          },
+          "downstream_scope": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "learner_surface_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "internal_concept_ids_hidden",
+        "legacy_internal_ids",
+        "forbidden_surface_labels",
+        "preferred_surface_language"
+      ],
+      "properties": {
+        "internal_concept_ids_hidden": {"type": "boolean"},
+        "legacy_internal_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "forbidden_surface_labels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "preferred_surface_language": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "repair_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["defect_id", "status", "repair"],
+        "properties": {
+          "defect_id": {"type": "string", "minLength": 3},
+          "status": {"enum": ["REPAIRED_BY_AUDIT_LAYER", "OPEN", "HELD"]},
+          "repair": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "audit_status": {"enum": ["SOURCE_HARDENED", "SOURCE_HELD"]}
+  }
+}
