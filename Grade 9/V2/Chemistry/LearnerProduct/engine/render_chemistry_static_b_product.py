@@ -105,6 +105,12 @@ def render_core1b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     w.route_panel("USE LESS HELP FIRST", "Read clues from the top. Stop as soon as you can continue independently.", ref)
     for row in payload["help"]:
         w.clue_panel(CORE1_HELP_LABELS[row["level"]], row["text"], ref)
+    w.action_panel(
+        "RESUME YOUR RECONSTRUCTION",
+        "Use only the clue or clues you opened. Continue your original reconstruction now and commit a revised explanation before turning to the check.",
+        ref,
+    )
+    w.workspace(4, ref)
 
     # The canonical check is a distinct post-attempt semantic episode. Starting it
     # explicitly prevents a governed visual from becoming an orphan continuation of
