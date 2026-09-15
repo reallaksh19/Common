@@ -9,73 +9,77 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 
-from compile_mathematics_engineering_workbench import compile_closure, digest, load  # noqa: E402
+from compile_mathematics_engineering_workbench import (  # noqa: E402
+    compile_binding,
+    compile_closure,
+    load,
+    resolve_manifest,
+)
 from validate_mathematics_engineering_binding import (  # noqa: E402
     MathematicsEngineeringBindingError,
     validate,
 )
 
-REQUEST_REF = "fixtures/engineering-workbench/quad-equations-request.v1.json"
-MANIFEST_REF = "fixtures/engineering-workbench/quad-equations-manifest.v1.json"
-BINDING_REF = "fixtures/engineering-workbench/quad-equations-binding.v1.json"
-REQUEST = load(REQUEST_REF)
-MANIFEST = load(MANIFEST_REF)
-FROZEN_BINDING = load(BINDING_REF)
 REGISTRY = load("policies/mathematics-technical-engineering-gates.v1.json")
-PROFILE = load("policies/mathematics-engineering-gate-invariants.v1.json")
 
 
-def gate(doc: dict, gate_id: str) -> dict:
-    return next(g for g in doc["subtopic_gates"] if g["subtopic_id"] == gate_id)
+def first_gate_id(registry: dict = REGISTRY) -> str:
+    return registry["subtopic_gates"][0]["subtopic_id"]
 
 
-def make_binding(registry: dict | None = None, profile: dict | None = None) -> dict:
-    registry = registry or copy.deepcopy(REGISTRY)
-    profile = profile or copy.deepcopy(PROFILE)
-    receipt = compile_closure(REQUEST, MANIFEST, registry, profile)
+def request_for(gate_id: str, suffix: str = "BIND") -> dict:
     return {
         "schema_version": "1.0.0",
         "subject": "MATHEMATICS",
-        "binding_id": "MATH-ENG-BIND-QUAD-001",
-        "request_ref": REQUEST_REF,
-        "manifest_ref": MANIFEST_REF,
-        "closure_receipt_id": receipt["receipt_id"],
-        "closure_receipt_digest": digest(receipt),
-        "registry_digest": receipt["registry_digest"],
-        "invariant_profile_digest": receipt["invariant_profile_digest"],
-        "downstream_consumer": "CANONICAL_DOMAIN_REGISTRY"
+        "request_id": f"MATH-ENG-REQ-{suffix}",
+        "scope_kind": "ENGINEERING_GATE",
+        "scope_refs": [gate_id],
+        "engineering_depth": "STANDARD",
+        "learning_purpose": "FIRST_STUDY",
+        "owner_decision_ref": None,
     }
 
 
+def current_bundle(registry: dict | None = None):
+    registry = registry or copy.deepcopy(REGISTRY)
+    request = request_for(first_gate_id(registry))
+    manifest = resolve_manifest(request, registry)
+    receipt = compile_closure(request, manifest, registry)
+    binding = compile_binding(request, manifest, receipt, "CANONICAL_DOMAIN_REGISTRY")
+    return request, manifest, receipt, binding, registry
+
+
 class MathematicsEngineeringBindingTests(unittest.TestCase):
-    def test_persisted_exact_current_closure_binding_passes(self):
-        current = make_binding()
-        self.assertEqual(FROZEN_BINDING, current, "persisted closure custody is stale")
-        result = validate(FROZEN_BINDING, copy.deepcopy(REGISTRY), copy.deepcopy(PROFILE))
+    def test_runtime_binding_revalidates_current_engineering_authority(self):
+        request, manifest, _, binding, registry = current_bundle()
+        result = validate(binding, request, manifest, registry)
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["technical_authorization"], "ALLOWED")
         self.assertEqual(result["publication_authorization"], "NOT_IMPLIED")
 
-    def test_stale_registry_binding_fails(self):
-        registry = copy.deepcopy(REGISTRY)
-        gate(registry, "MATH-NUM-RADICALS")["learner_title"] += " revised"
+    def test_registry_change_stales_runtime_binding(self):
+        request, manifest, _, binding, registry = current_bundle()
+        registry["subtopic_gates"][0]["learner_title"] += " revised"
         with self.assertRaises(MathematicsEngineeringBindingError) as ctx:
-            validate(FROZEN_BINDING, registry, copy.deepcopy(PROFILE))
+            validate(binding, request, manifest, registry)
         self.assertIn(ctx.exception.code, {"MATH_ENG_BIND_RECEIPT_DIGEST_MISMATCH", "MATH_ENG_BIND_REGISTRY_DIGEST_MISMATCH"})
 
-    def test_stale_invariant_profile_binding_fails(self):
-        profile = copy.deepcopy(PROFILE)
-        profile["authority_rule"] += " revised"
-        with self.assertRaises(MathematicsEngineeringBindingError) as ctx:
-            validate(FROZEN_BINDING, copy.deepcopy(REGISTRY), profile)
-        self.assertIn(ctx.exception.code, {"MATH_ENG_BIND_RECEIPT_DIGEST_MISMATCH", "MATH_ENG_BIND_PROFILE_DIGEST_MISMATCH"})
+    def test_scope_change_stales_runtime_binding(self):
+        request, manifest, _, binding, registry = current_bundle()
+        if len(registry["subtopic_gates"]) < 2:
+            self.skipTest("need at least two gates")
+        request2 = request_for(registry["subtopic_gates"][1]["subtopic_id"], "BIND2")
+        manifest2 = resolve_manifest(request2, registry)
+        with self.assertRaises(MathematicsEngineeringBindingError):
+            validate(binding, request2, manifest2, registry)
 
-    def test_blocked_current_closure_cannot_be_consumed(self):
-        registry = copy.deepcopy(REGISTRY)
-        quad = gate(registry, "MATH-QUAD-EQUATIONS")
-        quad["reasoning_sequence"] = quad["reasoning_sequence"][:1]
+    def test_incomplete_authoritative_gate_cannot_be_consumed(self):
+        request, manifest, _, binding, registry = current_bundle()
+        target = registry["subtopic_gates"][0]
+        target["technical_readiness"] = "ENGINEERING_GATE_INCOMPLETE"
+        target["release_checklist"][next(iter(target["release_checklist"]))] = False
         with self.assertRaises(MathematicsEngineeringBindingError) as ctx:
-            validate(FROZEN_BINDING, registry, copy.deepcopy(PROFILE))
+            validate(binding, request, manifest, registry)
         self.assertEqual(ctx.exception.code, "MATH_ENG_BIND_CLOSURE_BLOCKED")
 
 
