@@ -34,8 +34,8 @@ assert report["source_snapshot"]["pr_number"] == 383
 assert report["source_snapshot"]["head_sha"] == "e92481f6e03a8bb49a55f568b03cba7c12fb942a"
 assert report["source_snapshot"]["source_gate_count"] == 43
 assert report["counts"]["discovered_subtopic_count"] == 43
-assert report["counts"]["already_reconciled_count"] == 13
-assert report["counts"]["migration_gap_count"] == 30
+assert report["counts"]["already_reconciled_count"] == 14
+assert report["counts"]["migration_gap_count"] == 29
 assert report["target_control_plane"]["canonical_v3_gate_count"] == 23
 assert report["target_control_plane"]["readiness_rule"] == "DERIVED_BY_PRODUCTION_V3_VALIDATOR"
 assert report["target_control_plane"]["source_self_asserted_readiness_imported"] is False
@@ -44,7 +44,16 @@ assert report["target_control_plane"]["case_specific_overrides"] == "PROHIBITED"
 reconciled = {row["discovery_gate_id"]: row for row in report["already_reconciled"]}
 assert reconciled["PHY-GRAV-UNIVERSAL-LAW"]["disposition"] == "MAPPED_V3"
 assert reconciled["PHY-GRAV-UNIVERSAL-LAW"]["v3_gate_ids"] == ["PHY-GRAV-FORCE", "PHY-GRAV-FIELD"]
+assert reconciled["PHY-FORCE-NEWTON-LAWS"]["disposition"] == "MAPPED_V3"
+assert reconciled["PHY-FORCE-NEWTON-LAWS"]["v3_gate_ids"] == [
+    "PHY-NLM-INTERACTION",
+    "PHY-NLM-FBD",
+    "PHY-NLM-FIRST-LAW",
+    "PHY-NLM-SECOND-LAW",
+    "PHY-NLM-THIRD-LAW",
+]
 assert all(row["discovery_gate_id"] != "PHY-GRAV-UNIVERSAL-LAW" for row in report["migration_gaps"])
+assert all(row["discovery_gate_id"] != "PHY-FORCE-NEWTON-LAWS" for row in report["migration_gaps"])
 
 for gap in report["migration_gaps"]:
     assert gap["promotion_status"] == "BLOCKED_PENDING_V3_ENRICHMENT"
