@@ -28,8 +28,8 @@ def main() -> None:
     assert result["status"] == "PASS"
     assert result["discovered_subtopic_count"] == 43
     assert result["exact_v3_count"] == 12
-    assert result["mapped_v3_target_count"] == 2
-    assert result["migration_required_count"] == 30
+    assert result["mapped_v3_target_count"] == 7
+    assert result["migration_required_count"] == 29
     assert result["v3_native_or_refined_count"] == 9
     assert result["canonical_v3_gate_count"] == 23
     assert result["case_artifacts_role"] == "STRESS_TEST_ONLY"
@@ -39,6 +39,24 @@ def main() -> None:
     assert grav["disposition"] == "MAPPED_V3"
     assert grav["v3_gate_ids"] == ["PHY-GRAV-FORCE", "PHY-GRAV-FIELD"]
     assert grav["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-GRAV-UNIVERSAL-LAW.v1.json"
+
+    newton = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-FORCE-NEWTON-LAWS")
+    assert newton["disposition"] == "MAPPED_V3"
+    assert newton["v3_gate_ids"] == [
+        "PHY-NLM-INTERACTION",
+        "PHY-NLM-FBD",
+        "PHY-NLM-FIRST-LAW",
+        "PHY-NLM-SECOND-LAW",
+        "PHY-NLM-THIRD-LAW",
+    ]
+    assert newton["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-FORCE-NEWTON-LAWS.v1.json"
+
+    exact_ids = {
+        row["discovery_gate_id"]
+        for row in catalog["discovered_subtopics"]
+        if row["disposition"] == "EXACT_V3_ID"
+    }
+    assert set(newton["v3_gate_ids"]).issubset(exact_ids)
 
     bad = copy.deepcopy(catalog)
     bad["discovered_subtopics"].pop()
@@ -76,6 +94,10 @@ def main() -> None:
 
     bad = copy.deepcopy(catalog)
     bad["v3_native_or_refined_gate_ids"].append("PHY-GRAV-FORCE")
+    expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
+
+    bad = copy.deepcopy(catalog)
+    bad["v3_native_or_refined_gate_ids"].append("PHY-NLM-SECOND-LAW")
     expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
 
     bad = copy.deepcopy(catalog)
