@@ -4,9 +4,9 @@
   "title": "Mathematics Pedagogy Research Manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version","subject","manifest_id","release_class","curriculum_authority","sources","decisions","manifest_digest"],
+  "required": ["schema_version","subject","manifest_id","release_class","curriculum_authority","sources","decisions","claims","manifest_digest"],
   "properties": {
-    "schema_version": {"const": "1.0.0"},
+    "schema_version": {"const": "1.1.0"},
     "subject": {"const": "MATHEMATICS"},
     "manifest_id": {"type":"string","pattern":"^MATH-PED-RESEARCH-"},
     "release_class": {"enum":["PRODUCTION","TEST_ONLY"]},
@@ -38,9 +38,37 @@
           "decision_ref":{"type":"string","pattern":"^PED-BRIEF-"},
           "subtopic_ref":{"type":"string","minLength":3},
           "research_depth":{"enum":["STANDARD","DEEP"]},
-          "coverage":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["REPRESENTATION_DESIGN","MISCONCEPTION_REPAIR","INFERENTIAL_DECOMPOSITION","WORKED_EXAMPLE_DESIGN","FADING","TRANSFER_DESIGN"]}},
+          "coverage":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["REPRESENTATION_DESIGN","SIGNALING_AND_COHERENCE","MULTIPLE_REPRESENTATION_MAPPING","WORKED_EXAMPLE_DESIGN","FADING","SELF_EXPLANATION","MISCONCEPTION_REPAIR","INFERENTIAL_DECOMPOSITION","TRANSFER_DESIGN"]}},
           "research_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^PED-WEB-"}},
           "decision_summary":{"type":"string","minLength":20}
+        }
+      }
+    },
+    "claims": {
+      "type":"array","minItems":1,
+      "items": {
+        "type":"object","additionalProperties":false,
+        "required":["claim_ref","decision_ref","support_category","claim_text","confidence","confidence_basis","evidence_links","contradiction_resolution"],
+        "properties": {
+          "claim_ref":{"type":"string","pattern":"^PED-CLAIM-"},
+          "decision_ref":{"type":"string","pattern":"^PED-BRIEF-"},
+          "support_category":{"enum":["REPRESENTATION_DESIGN","SIGNALING_AND_COHERENCE","MULTIPLE_REPRESENTATION_MAPPING","WORKED_EXAMPLE_DESIGN","FADING","SELF_EXPLANATION","MISCONCEPTION_REPAIR","INFERENTIAL_DECOMPOSITION","TRANSFER_DESIGN"]},
+          "claim_text":{"type":"string","minLength":20},
+          "confidence":{"enum":["LOW","MODERATE","HIGH"]},
+          "confidence_basis":{"type":"string","minLength":20},
+          "evidence_links": {
+            "type":"array","minItems":1,"uniqueItems":true,
+            "items": {
+              "type":"object","additionalProperties":false,
+              "required":["research_ref","stance","rationale"],
+              "properties": {
+                "research_ref":{"type":"string","pattern":"^PED-WEB-"},
+                "stance":{"enum":["SUPPORTS","CONTRADICTS"]},
+                "rationale":{"type":"string","minLength":12}
+              }
+            }
+          },
+          "contradiction_resolution":{"anyOf":[{"type":"null"},{"type":"string","minLength":20}]}
         }
       }
     },
