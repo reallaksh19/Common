@@ -155,6 +155,12 @@ def render_core2b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     w.route_panel("USE ONLY WHAT YOU NEED", "Start at the first visible clue and stop when you can resume the solution independently.", ref)
     for row in visible:
         w.clue_panel(CORE2_HELP_LABELS[row["level"]], row["text"], ref)
+    w.action_panel(
+        "RESUME YOUR SOLUTION",
+        "Use only the clue or clues you opened. Continue your own reasoning and commit the next steps before opening the full solution.",
+        ref,
+    )
+    w.workspace(4, ref)
 
     # Solution closure is deliberately a complete semantic episode rather than a
     # terminal fragment left behind by clue pagination. The repeated source stem is
