@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
-from jsonschema.exceptions import ValidationError as SchemaValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / "engine"
@@ -66,11 +65,14 @@ def validate(registry: dict | None = None, invariant_profile: dict | None = None
     if set(gate_map) != required_gate_ids:
         fail("PHY_GATE_CANONICAL_SET_MISMATCH", f"expected={sorted(required_gate_ids)} actual={sorted(gate_map)}")
 
+    # Canonical semantic assets are globally unique. Problem-family IDs are intentionally
+    # reusable across gates (e.g. incline or Atwood) because each gate contributes a
+    # gate-specific engineering view of the same family; family uniqueness is local below.
     global_ids: dict[str, str] = {}
     categories = [
         ("concepts", "concept_id"), ("relations", "relation_id"),
         ("representations", "representation_id"), ("misconceptions", "misconception_id"),
-        ("problem_families", "family_id"), ("required_transformations", "transformation_id"),
+        ("required_transformations", "transformation_id"),
     ]
     for gate in gates:
         gid = gate["subtopic_id"]
@@ -215,7 +217,7 @@ def validate(registry: dict | None = None, invariant_profile: dict | None = None
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Validate Physics Technical Engineering Gate v3 SBA23 registry")
+    ap = argparse.ArgumentParser(description="Validate canonical Physics Technical Engineering Gate v3 registry")
     ap.add_argument("--registry")
     ap.add_argument("--report-out")
     args = ap.parse_args()
