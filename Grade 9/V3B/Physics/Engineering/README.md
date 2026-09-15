@@ -1,5 +1,7 @@
 # Physics engineering gates — V3B
 
+Current mandatory authoring specification: [V3B production blueprint](../Blueprint/V3B-Production-Blueprint.md), [agent work order](../Blueprint/V3B-Agent-Execution.md), and [acceptance/implementation ledger](../Blueprint/V3B-Acceptance-and-Regression.md). This revision strengthens acceptance requirements; existing proof test counts do not certify them.
+
 Start with [OWNER_BOARD.md](OWNER_BOARD.md), then [TOPIC_WORKFLOW.md](TOPIC_WORKFLOW.md). The owner board makes topic scope, mandatory Physics, evidence, unresolved gaps and the next action visible before learner production.
 
 This is the Physics-first extension of draft PR #364, based on PR #350 at `f2f22f0cea1c31ebf09da10241db8be0fde39789`. V2 and Core1/Core2 source products are unchanged. [ADOPTION.md](ADOPTION.md) records precisely what was adapted.
@@ -31,3 +33,4 @@ The pure JavaScript engines are also exercised directly in the available JavaScr
 5. Earlier Architecture/CoreRelay documents as background where compatible.
 
 The earlier Shared/run.py is a four-Core prototype. It is not the six-Core release path and cannot be used as proof that these new gates ran. This package is an executable architectural prerequisite; automatic integration with that Python runtime remains pending.
+

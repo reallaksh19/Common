@@ -1,5 +1,7 @@
 # Topic packet and extension transaction
 
+Mandatory portable payload and current-state detail: [V3B agent execution and relay](../Blueprint/V3B-Agent-Execution.md). Source summaries and answer-only packets cannot substitute for the required source/model/content dependency closure.
+
 Every packet envelope has schema_version, packet_id, packet_type, topic_id, bucket_ids (1–3), producer_instance, producer_role, created_at, predecessor_packet_ids, exact source/gate/baseline/policy revisions, artifact manifest, review evidence, unresolved issues and next action. Digests are computed by the execution host from bytes; author-supplied hashes alone are not trust evidence.
 
 ## Packet types
@@ -43,3 +45,4 @@ Before accepting output, compare packet predecessors and gate/baseline versions 
 A changed shared prerequisite invalidates all downstream consumers transitively. A newly added independent bucket does not force unrelated pages to regenerate. Removed required gates or missing closure block the extension.
 
 Portable recovery requires original sources, actual assets, exact policy code, all accepted/rejected packets and review records; a manifest pointing to inaccessible files is not a complete handoff. This package defines that host obligation but does not claim to implement filesystem portability or model isolation.
+

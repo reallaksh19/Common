@@ -1,6 +1,22 @@
 # Physics owner board — V3B
 
-**Current outcome:** a runnable topic-gate design with 9 gates, 54 explicit obligations and 57 passing checks. Four Thermodynamics learner specimens and a bounded Gravity research specimen are available for review. None is approved for learner release.
+## Current architecture revision
+
+The [V3B production blueprint](../Blueprint/V3B-Production-Blueprint.md) now governs all new Physics topics. It requires substantive content and publication evidence, per-Core teaching depth, complete answers, declared example exposure, data-bound figures, scoped learner fit and portable relay. Motion supplies regression failure classes; it is not the production algorithm.
+
+| Layer | Current status | Next evidence needed |
+|---|---|---|
+| Generic blueprint and entry contracts | REVISED in draft | Owner/academic review of requirements |
+| Rule catalogue and acceptance matrix | 17 specified rules | Executable adapters and successful falsifiers |
+| Existing 57-check proof | HISTORICAL, narrower scope | Real file/artifact binding and six-Core integration |
+| Scientific/pedagogical quality | NOT newly validated | Independent review against inference and Core-purpose obligations |
+| Diagram and final-page quality | NOT newly validated | Model-bound assets and final-size inspection |
+| Agent recovery and learner fit | NOT newly validated | Actual restart and applicable learner evidence |
+| Learner release / merge | BLOCKED / NOT AUTHORIZED | All applicable evidence and owner authorization |
+
+Read the [implementation ledger](../Blueprint/V3B-Acceptance-and-Regression.md). Catalogue/Markdown validation is not production enforcement. The interactive console below still represents the earlier gate proof and does not yet display or enforce these 17 production rules.
+
+**Earlier proof outcome:** a runnable topic-gate design with 9 gates, 54 explicit obligations and 57 passing checks. Four Thermodynamics learner specimens and a bounded Gravity research specimen are available for review. None is approved for learner release.
 
 [Open the interactive console file](owner-console.html) · [Topic setup and extension workflow](TOPIC_WORKFLOW.md) · [Executed checks](evidence/test-results.json)
 
@@ -64,3 +80,4 @@ Specify the target investigation and prerequisite boundary. The current Gravity 
 - Cold-agent and learner trials before claiming measured drift prevention or learner effectiveness.
 
 Mathematics and Chemistry are deferred until the owner has reviewed the Physics proof. PR #364 remains draft; merge authorization is false.
+

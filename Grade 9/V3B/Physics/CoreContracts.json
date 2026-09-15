@@ -1,6 +1,6 @@
 {
   "subject": "Physics",
-  "contract_version": "1.1.0",
+  "contract_version": "1.2.0",
   "equation_semantic_fields": [
     "model_assumptions",
     "axis_and_sign",
@@ -41,5 +41,9 @@
     "CORE1B": "CONCEPTUAL_SELF_TUTOR",
     "CORE2A": "SOLUTION_APPRENTICESHIP",
     "CORE2B": "APPLICATION_AND_TRANSFER_TUTOR"
-  }
+  },
+  "production_blueprint_ref": "Blueprint/V3B-Production-Blueprint.md",
+  "production_rule_catalogue_ref": "Blueprint/V3B-Production-Rules.json",
+  "production_acceptance_ref": "Blueprint/V3B-Acceptance-and-Regression.md",
+  "production_runtime_enforcement": "PENDING"
 }

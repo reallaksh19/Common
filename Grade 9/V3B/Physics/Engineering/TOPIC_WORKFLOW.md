@@ -1,5 +1,7 @@
 # Topic setup, extension and controlled depth
 
+Before any topic-specific example, apply the [V3B production blueprint](../Blueprint/V3B-Production-Blueprint.md) and [generic work order](../Blueprint/V3B-Agent-Execution.md). Thermodynamics and Gravity below are illustrative bindings, not universal pipeline branches. See the acceptance ledger for enforcement still pending.
+
 ## Owner-visible setup before authoring
 
 A new topic begins with a short Topic Contract, not a manuscript. The owner sees:
@@ -80,3 +82,4 @@ A fresh reviewer must inspect original sources and actual mathematical/diagram c
 ## AUTO boundary
 
 AUTO may inventory, research, propose gates, create specimens, execute checks, repair defects and prepare the draft. It may not invent owner waivers, independent approval, learner observations, source question numbers or merge authority. It proceeds with non-release previews where those inputs are missing, completing all useful reviewable work.
+

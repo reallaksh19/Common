@@ -1,5 +1,7 @@
 # New-topic entry contract — current Physics phase
 
+First read the [V3B production blueprint](Physics/Blueprint/V3B-Production-Blueprint.md), then use its [generic agent work order](Physics/Blueprint/V3B-Agent-Execution.md) and [acceptance/implementation ledger](Physics/Blueprint/V3B-Acceptance-and-Regression.md). These requirements apply to every Physics topic. The Motion stress test is a regression corpus, not a special authoring route.
+
 A new Physics topic begins at [Engineering/TOPIC_WORKFLOW.md](Physics/Engineering/TOPIC_WORKFLOW.md). Read the [owner board](Physics/Engineering/OWNER_BOARD.md), [Core contracts](Physics/Engineering/CORE_CONTRACTS.md), [packet contract](Physics/Engineering/PACKET_CONTRACT.md), and the topic's exact source/gate/baseline versions before authoring.
 
 1. Record requested scope, Cores, grade/exam destination and source availability.
@@ -31,3 +33,4 @@ The Thermodynamics cycle binding demonstrates adding a subtopic without regenera
 The existing Shared/run.py/Physics ProductionKit/run.py command family implements the earlier four-Core prototype. It does not execute this six-Core release contract. Do not initialize a new production topic with it and claim these engineering gates have run. Future integration must bind the accepted engineering receipts into its real state transitions and pass falsifiers before production use.
 
 Mathematics/Chemistry work is deferred. No V2/source/owner-roadmap mutation or merge is authorized by this entrypoint.
+

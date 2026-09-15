@@ -1,5 +1,7 @@
 # Six-Core authoring and evidence contract
 
+Mandatory realization detail: [V3B production blueprint](../Blueprint/V3B-Production-Blueprint.md). Apply its depth, per-Core action, full-answer, exposure and bound-publication requirements alongside this contract. Structural proof checks do not implement the complete acceptance suite.
+
 Core1 basic notes and Core2 frozen questions/hints remain existing input products. This extension governs detailed Core1A/1B/2A/2B realizations without modifying either.
 
 | Core | Dominant learner job | Mandatory substantive evidence |
@@ -29,7 +31,7 @@ Do not equate a field called content with scientific sufficiency. The validator 
 
 ## All questions, including embedded prompts
 
-Every learner prompt has a question record, its visible source classification and an answer plus explanatory resolution/verification. A sketch prompt needs an expected sketch or features rubric. A research question with no known unique result needs a model-bound result or evaluation rubric with uncertainty, not an invented canonical discovery.
+Every learner prompt has a question record, its visible source classification and an answer plus explanatory resolution/verification. A task requiring a specific scientific drawing needs a realized model drawing plus acceptance features; see the blueprint for divergent-design rubric cases. A research question with no known unique result needs a model-bound result or evaluation rubric with uncertainty, not an invented canonical discovery.
 
 Frozen source question number/subpart and canonical stem remain intact. The source object binds figure/options/conditions where applicable; the minimal proof checker covers text-only items and may not certify a figure-dependent exam item. A production adapter must verify all original fields and exact source bytes.
 
@@ -63,3 +65,4 @@ Keep internally: original question ID, gate/baseline versions, source digest, re
 8. Owner release.
 
 The current pure checker is a structural acceptance prerequisite. It always reports release_authorized=false. External reviewer authority and file digest verification need a trusted execution host. The old four-Core runtime is not silently certified by running this checker.
+
