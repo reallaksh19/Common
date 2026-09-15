@@ -56,6 +56,8 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
       - name: Run blueprint routing tests
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py"
+      - name: Compile governed V10 seven-core stress receipts
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_all_stress_tests.py" --out-dir /tmp/physics-blueprint-stress-receipts
       - name: Run independent second-pass tests
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py"
       - name: Run Core1 x Core2 Join falsifiers
@@ -99,5 +101,12 @@ jobs:
         with:
           name: physics-blueprint-render-process-golden
           path: /tmp/physics-blueprint-render-golden
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload governed V10 seven-core stress receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-blueprint-v10-stress-receipts
+          path: /tmp/physics-blueprint-stress-receipts
           if-no-files-found: error
           retention-days: 14
