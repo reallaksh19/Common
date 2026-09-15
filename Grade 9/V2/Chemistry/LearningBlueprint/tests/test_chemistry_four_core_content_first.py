@@ -8,7 +8,7 @@ CHEM_ROOT = ROOT.parent
 LP_ROOT = CHEM_ROOT / "LearnerProduct"
 sys.path.insert(0, str(LP_ROOT / "engine"))
 
-from preflight_chemistry_core_product import content_first_page_checks  # noqa: E402
+from chemistry_content_first_preflight import content_first_page_checks  # noqa: E402
 
 POLICY = json.loads((LP_ROOT / "policies" / "chemistry-learner-render-policy.json").read_text(encoding="utf-8"))
 
