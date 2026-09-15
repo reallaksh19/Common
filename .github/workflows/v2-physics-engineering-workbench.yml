@@ -5,18 +5,22 @@ on:
     paths:
       - 'Grade 9/V2/Physics/Blueprint/contracts/engineering-*.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-engineering-gate-v3.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-gate-binding*.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/engineering-gates/**'
       - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_*.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_technical_gate_binding.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py'
       - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v2.json'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-engineering-gate-invariants.v3.json'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v2.py'
+      - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-technical-gate-binding*.json'
       - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-ccu.v1.json'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH_V1.md'
       - '.github/workflows/v2-physics-engineering-workbench.yml'
@@ -49,6 +53,8 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
       - name: Run v3 Engineering Workbench SBA23 integration proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py"
+      - name: Validate exact SBA23 Workbench closure custody binding
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py"
       - name: Validate SBA23 CCU through v3 engineering-ready boundary
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py"
