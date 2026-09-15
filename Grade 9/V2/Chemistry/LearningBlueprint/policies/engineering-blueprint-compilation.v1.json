@@ -1,0 +1,34 @@
+{
+  "policy_id": "CHEM-ENGINEERING-BLUEPRINT-COMPILATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_class": "ENGINEERING_TO_BLUEPRINT_COMPILATION",
+  "principles": [
+    "ENGINEERING_ASSETS_COMPILE_TO_OBLIGATIONS_NOT_LEARNER_PROSE",
+    "PREREQUISITE_CLOSURE_IS_AUTHORIZATION_CONTEXT_NOT_AUTOMATIC_PRODUCT_CONTENT",
+    "DIRECT_GATE_REQUIREMENTS_FAIL_CLOSED",
+    "TRANSFORMATION_TARGET_CORE_ROLE_IS_AUTHORITATIVE",
+    "TOPIC_NAMES_MAY_NOT_BRANCH_GENERIC_CONTROL_FLOW"
+  ],
+  "core_role_map": {
+    "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION": "CORE1A",
+    "CORE1B_GENERATIVE_RECONSTRUCTION": "CORE1B",
+    "CORE2A_DECLARATIVE_WORKED_PROBLEM": "CORE2A",
+    "CORE2B_GENERATIVE_TRANSFER": "CORE2B"
+  },
+  "kind_defaults": {
+    "CONCEPT": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": ["CORE1A"]},
+    "EQUATION": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": ["CORE1A"]},
+    "REPRESENTATION": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": ["CORE1A"]},
+    "MODEL_CONDITION": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": ["CORE1A"]},
+    "REASONING_STEP": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": ["CORE1A"]},
+    "TRANSFORMATION": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": []},
+    "MISCONCEPTION": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": ["CORE1A"]},
+    "VERIFICATION": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": ["CORE1A"]},
+    "PROBLEM_FAMILY": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": []},
+    "DIFFICULTY_PROFILE": {"authorized_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"], "required_direct_modes": []}
+  },
+  "product_modes": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "scope_unit_kinds": ["ATOM", "MODULE", "ITEM"],
+  "status": "ACTIVE"
+}
