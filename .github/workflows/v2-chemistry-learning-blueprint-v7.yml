@@ -29,6 +29,7 @@ jobs:
               root/'policies/pr360-control-migration.v1.json',
               root/'policies/pr370-control-migration.v1.json',
               root/'policies/static-b-layer-boundary.v1.json',
+              root/'policies/legacy-foundation-retention.v1.json',
               root/'contracts/content-bill-of-materials-v7.schema.json',
               root/'contracts/core1a-study-note-authority-v7.schema.json',
               root/'contracts/question-custody-v7.schema.json',
@@ -49,6 +50,7 @@ jobs:
           python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_product_control_consolidation.py' -v
           python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_static_b_layer_boundary.py' -v
           python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_pr370_control_migration.py' -v
+          python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_legacy_foundation_retention.py' -v
 
       - name: Validate CCBOM and Core1A study-note authority
         run: |
