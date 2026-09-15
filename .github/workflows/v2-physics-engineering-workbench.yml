@@ -40,6 +40,7 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_READINESS_KERNEL.md'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH_V1.md'
       - 'Grade 9/V2/Physics/Blueprint/PR383_TO_V3_MIGRATION.md'
+      - 'Grade 9/V2/Shared/EngineeringGate/**'
       - 'Grade 9/V2/Shared/CrossDomain/**'
       - '.github/workflows/v2-physics-engineering-workbench.yml'
   workflow_dispatch:
@@ -54,6 +55,8 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: pip install jsonschema
+      - name: Prove global Engineering Gate readiness policy without topic fixtures
+        run: python "Grade 9/V2/Shared/EngineeringGate/tests/test_readiness_policy.py"
       - name: Run legacy v2 gate regression proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
       - name: Build canonical Physics Technical Engineering Gates v3 registry
@@ -85,7 +88,7 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
       - name: Run legacy Engineering Workbench v1 regression falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
-      - name: Run aggregate Engineering Readiness envelope falsifiers
+      - name: Run Blueprint adapter against global Engineering Gate authority
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_readiness_envelope.py"
       - name: Run canonical v3 Engineering Workbench SBA23 integration proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py"
