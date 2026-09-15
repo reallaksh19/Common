@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "catalog_id": "REG-MATH-TECH-GATE-EXTENSIONS-V1",
+  "base_registry_ref": "policies/mathematics-technical-engineering-gates.v1.json",
+  "base_registry_git_blob_sha": "9c305c816564c145d77ca74ec6206e3491f73afe",
+  "extensions": [
+    {
+      "extension_ref": "policies/mathematics-technical-engineering-gates.v1.euclid-extension.json",
+      "extension_git_blob_sha": "e10a756dca736fdbd8cf1ab40eccee5988a6c6b8"
+    }
+  ]
+}
