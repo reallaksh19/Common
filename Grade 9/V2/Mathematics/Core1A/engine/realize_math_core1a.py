@@ -7,8 +7,9 @@ MathLearnerStudyModel, synthesizes governed teaching buckets, then realizes thos
 buckets as the learner textbook.
 
 Every run also emits a producer governance receipt. A legacy run without a
-Canonical Domain Registry and generation/difficulty spec is explicitly marked
-UNBOUND_PRE_RELEASE; it can never be mistaken for a fully governed release.
+Canonical Domain Registry, generation/difficulty spec, and Engineering-domain
+admission is explicitly marked UNBOUND_PRE_RELEASE; it can never be mistaken for
+a fully governed release.
 
 Bound runs additionally admit candidate examples into a governed example catalog
 before learner authoring. Medium/Hard runs must also bind their pedagogy-research
@@ -38,6 +39,7 @@ from core1a_bucket_synthesis import synthesize_bucket_plan
 from core1a_bucket_realization import realize_bucket_manuscript, render_bucket_pdf
 from producer_governance import core1a_receipt
 from emit_stage_governance import write_receipt, digest as governance_digest
+from engineering_product_custody import load_custody, stamp_receipt, custody_summary
 from validate_canonical_domain_registry import validate_registry
 from validate_self_teaching_generation_spec import validate_generation_spec
 from validate_pedagogy_research_manifest import validate_generation_research_bindings
@@ -97,6 +99,7 @@ def main() -> None:
     ap.add_argument("--generation-spec")
     ap.add_argument("--pedagogy-research-manifest")
     ap.add_argument("--domain-registry")
+    ap.add_argument("--engineering-admission")
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
 
@@ -122,6 +125,7 @@ def main() -> None:
     if registry is not None:
         validate_registry(registry)
         governed_examples.install(registry)
+    engineering_custody = load_custody(args.engineering_admission, registry)
 
     assets = base.load_pck_assets(Path(args.pck_index))
     families = base.load_problem_families(Path(args.problem_family_index))
@@ -149,6 +153,7 @@ def main() -> None:
 
     receipt = core1a_receipt(bucket_plan, book, registry=registry, generation_spec=generation_spec)
     _restore_subtopic_identity(receipt, bucket_plan, generation_spec)
+    receipt = stamp_receipt(receipt, engineering_custody)
     write_receipt(receipt, out / "core1a_governance_receipt.json")
 
     pdf_path = out / "core1a_student_textbook.pdf"
@@ -165,6 +170,7 @@ def main() -> None:
         "quality_audit": book["quality_audit"],
         "governance_receipt_ref": receipt["receipt_id"],
         "governance_release_state": receipt["release_state"],
+        "engineering_custody": custody_summary(engineering_custody),
         "governed_example_catalog_ref": "core1a_governed_example_catalog.json" if registry is not None else None,
         "pedagogy_research_manifest_ref": args.pedagogy_research_manifest,
         "pedagogy_research_manifest_digest": governance_digest(research_manifest) if research_manifest is not None else None,
