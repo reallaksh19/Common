@@ -37,6 +37,11 @@ class ChemistryFourCoreContentFirstTests(unittest.TestCase):
         self.assertEqual(result["status"], "FAIL")
         self.assertTrue(any("CHEM_LP_RENDER_SPARSE_SEMANTIC_FRAGMENT" in row for row in result["failures"]))
 
+    def test_moderately_sparse_noncover_page_also_fails_at_engineering_floor(self):
+        result = content_first_page_checks(metrics_with_second_page_span(640, 760), POLICY, "CORE2A")
+        self.assertEqual(result["status"], "FAIL")
+        self.assertTrue(any("CHEM_LP_RENDER_SPARSE_SEMANTIC_FRAGMENT" in row for row in result["failures"]))
+
     def test_content_bearing_noncover_page_passes(self):
         result = content_first_page_checks(metrics_with_second_page_span(560, 760), POLICY, "CORE1A")
         self.assertEqual(result["status"], "PASS")
@@ -67,16 +72,19 @@ class ChemistryFourCoreContentFirstTests(unittest.TestCase):
         self.assertNotIn('writer.new_page("fresh challenge practice")', renderer)
         self.assertIn('writer.new_page("Core (1A) expected response")', renderer)
         self.assertIn('writer.new_page("answer check")', renderer)
-        self.assertIn('writer.new_page("full working")', renderer)
+        self.assertNotIn('writer.new_page("full working")', renderer)
+        self.assertIn('"full working",', renderer)
+        self.assertIn("moved = writer.page != before", renderer)
+        self.assertIn("if moved:", renderer)
         lowered = renderer.lower()
         for forbidden in ("redox", "mno4", "permanganate"):
             self.assertNotIn(forbidden, lowered)
 
-    def test_policy_forbids_page_count_targeting(self):
+    def test_policy_forbids_page_count_targeting_and_sets_sparse_floor(self):
         cfg = POLICY["preflight"]["content_first_pagination"]
         self.assertEqual(set(cfg["products"]), {"CORE1A", "CORE2A"})
         self.assertFalse(cfg["page_count_is_quality_metric"])
-        self.assertGreater(cfg["minimum_noncover_active_height_ratio"], 0)
+        self.assertEqual(cfg["minimum_noncover_active_height_ratio"], 0.18)
 
 
 if __name__ == "__main__":
