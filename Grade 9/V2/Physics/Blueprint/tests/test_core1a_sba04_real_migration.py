@@ -7,12 +7,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
-from compile_core1a_real_bucket_migration import compile_audit  # noqa: E402
+from compile_core1a_real_bucket_migration import MigrationCompilationError, compile_audit  # noqa: E402
 from validate_core1a_real_bucket_migration import MigrationValidationError, load_blueprint, validate  # noqa: E402
 
 AUDIT = load_blueprint("topics/m2d-sba04-core1a-migration-audit.v1.json")
 SPEC_REF = AUDIT["migration_spec_ref"]
 SPEC = load_blueprint(SPEC_REF)
+CANDIDATE_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-representation-candidates.json"
+DECISION_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-representation-decision.json"
+LINEAGE_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-worked-faded-lineage.json"
+WRONG_KIND_RECEIPT = "fixtures/core1a-migration-stage-evidence/wrong-kind.json"
+MALFORMED_LINEAGE_RECEIPT = "fixtures/core1a-migration-stage-evidence/malformed-worked-faded-lineage.json"
 
 
 def must_fail(doc, code):
@@ -22,6 +27,19 @@ def must_fail(doc, code):
         assert exc.code == code, (code, exc.code, str(exc))
         return
     raise AssertionError(f"expected {code}")
+
+
+def must_compile_fail(spec, code):
+    try:
+        compile_audit(spec, spec_ref=SPEC_REF)
+    except MigrationCompilationError as exc:
+        assert exc.code == code, (code, exc.code, str(exc))
+        return
+    raise AssertionError(f"expected {code}")
+
+
+def stage_state(audit, stage):
+    return next(r for r in audit["stage_audit"] if r["stage"] == stage)["evidence_state"]
 
 
 # The canonical audit is compiler output from declared data, not a hand-maintained case exception.
@@ -40,8 +58,8 @@ assert result["engineering_closure_digest"].startswith("sha256:")
 assert "1A0_LEARNER_STATE_GAP" in result["incomplete_stages"]
 assert "1A2_INFERENTIAL_JUMPS" in result["incomplete_stages"]
 assert "1A11_UNRESOLVED_JUMP_AUDIT" in result["incomplete_stages"]
-assert next(r for r in AUDIT["stage_audit"] if r["stage"] == "1A2_INFERENTIAL_JUMPS")["evidence_state"] == "PARTIAL"
-assert next(r for r in AUDIT["stage_audit"] if r["stage"] == "1A11_UNRESOLVED_JUMP_AUDIT")["evidence_state"] == "PARTIAL"
+assert stage_state(AUDIT, "1A2_INFERENTIAL_JUMPS") == "PARTIAL"
+assert stage_state(AUDIT, "1A11_UNRESOLVED_JUMP_AUDIT") == "PARTIAL"
 assert result["held_questions"] == ["Q14", "Q27"]
 assert len(result["high_fragility_step_refs"]) == 8
 assert result["learning_atom_ids"] == [f"M2D-SBA-04{x}" for x in "ABCDEFG"]
@@ -100,10 +118,43 @@ bad["source_refs"].append("policy/core1a-stage-machine.v1.json")
 bad["source_refs"].sort()
 must_fail(bad, "E_MIGRATION_SOURCE_CUSTODY_DRIFT")
 
+# Typed receipt positive 1: candidate-set proof can promote 1A5 only; it cannot imply a representation decision.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [CANDIDATE_RECEIPT]
+probe_audit = compile_audit(probe, spec_ref=SPEC_REF)
+assert stage_state(probe_audit, "1A5_REPRESENTATION_CANDIDATES") == "PRESENT"
+assert stage_state(probe_audit, "1A6_REPRESENTATION_DECISIONS") == "MISSING"
+assert probe_audit["release_authorized"] is False
+
+# Typed receipt positive 2: an explicit decision receipt independently promotes 1A6 after candidate evidence is present.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [CANDIDATE_RECEIPT, DECISION_RECEIPT]
+probe_audit = compile_audit(probe, spec_ref=SPEC_REF)
+assert stage_state(probe_audit, "1A5_REPRESENTATION_CANDIDATES") == "PRESENT"
+assert stage_state(probe_audit, "1A6_REPRESENTATION_DECISIONS") == "PRESENT"
+assert probe_audit["release_authorized"] is False
+
+# Typed receipt positive 3: worked/faded evidence requires an explicit worked -> faded -> independent lineage fingerprint.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [LINEAGE_RECEIPT]
+probe_audit = compile_audit(probe, spec_ref=SPEC_REF)
+assert stage_state(probe_audit, "1A9_WORKED_FADED_INDEPENDENT_PLAN") == "PRESENT"
+assert probe_audit["release_authorized"] is False
+
+# Typed receipt falsifier 1: a decision-shaped receipt may not masquerade as candidate-set evidence.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [WRONG_KIND_RECEIPT]
+must_compile_fail(probe, "E_MIG_COMPILE_STAGE_RECEIPT_SCHEMA")
+
+# Typed receipt falsifier 2: a worked/faded claim without an invariant lineage fingerprint is not admissible.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [MALFORMED_LINEAGE_RECEIPT]
+must_compile_fail(probe, "E_MIG_COMPILE_STAGE_RECEIPT_SCHEMA")
+
 # Architectural guard: case facts are data, not Python branches in the generic compiler/validator.
 for rel in ("engine/compile_core1a_real_bucket_migration.py", "engine/validate_core1a_real_bucket_migration.py"):
     text = (ROOT / rel).read_text(encoding="utf-8")
     for forbidden in ("M2D-SBA-04", "M2D-SBA-05", "Q14", "Q27"):
         assert forbidden not in text, f"CASE_LITERAL_LEAK:{rel}:{forbidden}"
 
-print("Core1A real-bucket migration: PASS (generic compiler + real SBA04 data + fail-closed 1A12 boundary)")
+print("Core1A real-bucket migration: PASS (typed stage evidence + generic compiler + real SBA04 data + fail-closed 1A12 boundary)")

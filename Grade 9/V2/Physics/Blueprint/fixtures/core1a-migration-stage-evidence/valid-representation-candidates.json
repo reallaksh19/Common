@@ -1,0 +1,21 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "SYNTH-C1A-REP-CANDIDATES",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A5_REPRESENTATION_CANDIDATES",
+  "evidence_kind": "REPRESENTATION_CANDIDATE_SET",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json"
+  ],
+  "artifact_refs": ["REP-A", "REP-B", "REP-C"],
+  "evidence_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json#representation_candidates"
+  ],
+  "proof": {
+    "candidate_ids": ["REP-A", "REP-B", "REP-C"],
+    "rejected_candidate_ids": ["REP-C"],
+    "selection_criteria_refs": ["CRIT-NOVICE-NOTICING", "CRIT-TRANSLATION"]
+  },
+  "unresolved_requirements": []
+}
