@@ -43,6 +43,12 @@ This occurs, for example, when a broad curriculum bundle is reconciled into fine
 
 `v3_native_or_refined_gate_ids` is different. It denotes canonical gates with no source-backed reconciliation role in the catalog, so it must remain disjoint from both exact and mapped target sets.
 
+### Normalization during reviewed mapping
+
+A reviewed mapping may preserve a broad source obligation through a **decomposition already explicit in canonical v3**, rather than by copying the old source structure verbatim. For example, a source shortcut equation may be represented by canonical component relations plus an event constraint, or an old broad prerequisite may be absorbed into governed canonical relations instead of retained as a nonexistent prerequisite ID.
+
+That normalization is allowed only when the review points to exact repository-backed target objects that collectively preserve the source obligation. It may not invent a missing relation, prerequisite, representation, or Physics claim. If the canonical target set cannot account for an obligation, the review must remain blocked and the discovery remains `MIGRATION_REQUIRED`.
+
 A mapping review itself grants neither engineering readiness nor source custody. Its decision is limited to technical discovery reconciliation, and the validator fixes `readiness_authorized = false` and `source_custody_promoted = false`.
 
 ## Case isolation
