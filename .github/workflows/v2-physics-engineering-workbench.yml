@@ -4,9 +4,9 @@ on:
   pull_request:
     paths:
       - 'Grade 9/V2/Physics/Blueprint/contracts/engineering-*.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-engineering-*.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-engineering-gate-v3.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-gate-binding*.schema.json'
-      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-engineering-discovery-catalog.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/engineering-gates/**'
       - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_*.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/compile_pr383_v3_migration_gaps.py'
@@ -61,6 +61,10 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py"
       - name: Validate exact PR383 source custody and fail-closed v3 migration gaps
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_pr383_v3_migration_gaps.py"
+      - name: Compile subject-wide PR383 to v3 migration-gap artifact
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_pr383_v3_migration_gaps.py"
+          --out /tmp/pr383-v3-migration-gaps.json
       - name: Run Physics v3 full-registry equivalence and mutation falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
       - name: Run legacy Engineering Workbench v1 regression falsifiers
@@ -108,6 +112,13 @@ jobs:
           cat /tmp/m2d-sba23-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
           printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
           cat /tmp/m2d-sba04-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload subject-wide PR383 migration-gap proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-pr383-v3-migration-gaps
+          path: /tmp/pr383-v3-migration-gaps.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload SBA23 engineering proof
         uses: actions/upload-artifact@v4
         with:

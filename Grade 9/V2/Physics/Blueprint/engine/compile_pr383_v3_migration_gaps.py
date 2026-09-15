@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -17,6 +18,7 @@ from validate_engineering_gates_v3 import validate as validate_v3_registry  # no
 
 SNAPSHOT_MANIFEST_REL = "provenance/pr383/source-snapshot.manifest.json"
 DISCOVERY_CATALOG_REL = "policy/physics-engineering-discovery-catalog.pr383.v1.json"
+REPORT_SCHEMA_REL = "contracts/physics-engineering-migration-gap-report.schema.json"
 
 BLOCKER_CODES = [
     "V3_SCOPE_STATE_REVIEW_REQUIRED",
@@ -116,6 +118,13 @@ def verify_snapshot_identity(manifest: dict) -> dict:
     }
 
 
+def validate_report(report: dict) -> None:
+    try:
+        jsonschema.validate(report, load(REPORT_SCHEMA_REL))
+    except jsonschema.ValidationError as exc:
+        fail("E_PR383_MIGRATION_REPORT_SCHEMA", exc.message)
+
+
 def compile_report() -> dict:
     manifest = load(SNAPSHOT_MANIFEST_REL)
     identity = verify_snapshot_identity(manifest)
@@ -189,7 +198,7 @@ def compile_report() -> dict:
                 }
             )
 
-    return {
+    report = {
         "schema_version": "1.0.0",
         "report_id": "PR383-TO-CANONICAL-V3-MIGRATION-GAPS",
         "source_snapshot": {
@@ -214,11 +223,24 @@ def compile_report() -> dict:
         "already_reconciled": exact_or_mapped,
         "migration_gaps": gaps,
     }
+    validate_report(report)
+    return report
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Compile fail-closed PR383 to canonical v3 engineering migration gaps")
+    parser.add_argument("--out")
+    args = parser.parse_args()
+
     report = compile_report()
-    print(json.dumps(report, indent=2, ensure_ascii=False))
+    rendered = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(rendered, encoding="utf-8")
+        print(json.dumps({"status": "COMPILED", "report_id": report["report_id"], "counts": report["counts"]}, indent=2))
+    else:
+        print(rendered, end="")
 
 
 if __name__ == "__main__":

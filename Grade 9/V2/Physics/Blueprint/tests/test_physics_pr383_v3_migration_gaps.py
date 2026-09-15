@@ -14,6 +14,7 @@ from compile_pr383_v3_migration_gaps import (  # noqa: E402
     PR383MigrationGapError,
     compile_report,
     load,
+    validate_report,
     verify_snapshot_identity,
 )
 
@@ -62,6 +63,16 @@ expect_code(lambda: verify_snapshot_identity(bad), "E_PR383_SNAPSHOT_REGISTRY_BL
 bad = copy.deepcopy(manifest)
 bad["source"]["schema_git_blob_sha"] = "0" * 40
 expect_code(lambda: verify_snapshot_identity(bad), "E_PR383_SNAPSHOT_SCHEMA_BLOB_DRIFT")
+
+# The report contract itself prevents later code from silently promoting gaps
+# or importing PR383's self-asserted readiness as canonical v3 authority.
+bad_report = copy.deepcopy(report)
+bad_report["migration_gaps"][0]["promotion_authorized"] = True
+expect_code(lambda: validate_report(bad_report), "E_PR383_MIGRATION_REPORT_SCHEMA")
+
+bad_report = copy.deepcopy(report)
+bad_report["target_control_plane"]["source_self_asserted_readiness_imported"] = True
+expect_code(lambda: validate_report(bad_report), "E_PR383_MIGRATION_REPORT_SCHEMA")
 
 print("PR383 -> canonical v3 migration-gap compiler: PASS")
 print(json.dumps(report["counts"], sort_keys=True))
