@@ -2,12 +2,20 @@
 
 This document is normative for the Mathematics Engineering Gate / MathBlueprint boundary.
 
-Its purpose is to prevent Blueprint from becoming topic-specific, example-specific, or dependent on remembered mathematics. Engineering is upstream technical authority. Blueprint may consume that authority only through exact, digest-bound identities, generic policy evaluation and deterministic closure.
+Its purpose is to prevent Blueprint from becoming topic-specific, example-specific, or dependent on remembered mathematics while still allowing a usable discovery surface. Engineering is upstream technical authority. Blueprint may consume that authority only through exact, digest-bound identities, generic policy evaluation and deterministic closure.
 
 ## 1. Canonical authority direction
 
 ```text
-ASSESSMENT / DECLARED-SCOPE AUTHORITY
+NATURAL-LANGUAGE NEED / SEARCH / ALIAS / HINT / EXTERNAL RESEARCH
+        |
+        | non-authoritative discovery only
+        v
+RANKED ENGINEERING CANDIDATES
+        |
+        | explicit exact-ID selection required
+        v
+ASSESSMENT / DECLARED-SCOPE AUTHORITY OR EXACT USER SELECTION
         |
         | exact versioned capability custody bridge when vocabularies differ
         v
@@ -62,6 +70,7 @@ Engineering owns:
 - technical readiness data.
 
 Blueprint owns:
+- non-authoritative discovery orchestration;
 - exact request resolution;
 - generic depth evaluation;
 - deterministic prerequisite closure;
@@ -69,7 +78,9 @@ Blueprint owns:
 - downstream orchestration.
 ```
 
-Blueprint must not contain mathematical topic branches, topic-specific extension filenames, remembered aliases, title/fuzzy/semantic resolution, or locally invented capability mappings.
+Blueprint runtime must not contain mathematical topic branches, topic-specific extension filenames, remembered aliases or locally invented capability mappings.
+
+Approximate, alias, fuzzy, semantic, model-assisted or web-assisted mechanisms are permitted only inside an explicitly non-authoritative discovery layer. They may rank or explain candidates, but they may not create Engineering authority. Authority begins only after an explicit exact identity enters the existing exact resolver.
 
 A new mathematical subtopic is an Engineering-data change. It is not a reason to add a new topic-specific Blueprint implementation.
 
@@ -140,7 +151,38 @@ existing capability added to a product/exam scope
 
 A gate may legitimately pass `STANDARD` and be blocked at `RESEARCH`. Blueprint does not invent a research version of the topic.
 
-## 6. Exact AssessmentScope → Engineering custody bridge
+## 6. Non-authoritative discovery precedes exact resolution
+
+The discovery boundary is specified in:
+
+`ENGINEERING_DISCOVERY.md`
+
+and implemented by:
+
+`engine/compile_mathematics_engineering_discovery.py`
+
+Discovery is schema-locked to:
+
+```text
+view_class = NON_AUTHORITATIVE_ENGINEERING_DISCOVERY
+authority = CANDIDATE_DISCOVERY_ONLY
+technical_authorization = NOT_EVALUATED
+publication_authorization = NOT_IMPLIED
+automatic_selection = false
+requires_explicit_exact_selection = true
+```
+
+Discovery may use natural-language labels, approximate text, aliases, hints, embeddings, semantic search, model-generated query expansion or web-assisted discovery, provided those mechanisms remain non-authoritative.
+
+A separate exact selection object must bind to the exact discovery receipt digest and state:
+
+`explicit_selection_acknowledgement = EXACT_IDENTITY_CONFIRMED`.
+
+Only then may the selected exact gate/bucket identities be copied into the existing standard Engineering request format. The discovery compiler does not perform Engineering authorization.
+
+A discovery candidate may still be incomplete, held, out of source scope, insufficient for the requested depth, or otherwise blocked later. This is intentional: discovery answers “what might the user mean?”; Engineering authority answers “what may the system consume?”
+
+## 7. Exact AssessmentScope → Engineering custody bridge
 
 AssessmentScope and Engineering intentionally use different canonical identity systems. That vocabulary boundary is crossed only through an explicit, versioned exact-ID bridge.
 
@@ -164,11 +206,11 @@ Current mixed Grade-9 evidence is:
 
 These counts are fixture/scope evidence rather than production constants.
 
-No title matching, substring matching, semantic matching, LLM matching, remembered aliases, conversation memory, or per-topic runtime fallback may create Engineering authority.
+No title matching, substring matching, semantic matching, LLM matching, remembered alias, conversation memory or search result may create Engineering authority. Such mechanisms may only produce non-authoritative candidates before exact selection.
 
-## 7. Permitted Engineering resolution
+## 8. Permitted authoritative Engineering resolution
 
-Blueprint Engineering requests may resolve only by:
+After any optional discovery step, Blueprint Engineering requests may resolve only by:
 
 1. exact Engineering Gate identity; or
 2. exact `linked_buckets` membership in the current Engineering registry.
@@ -181,7 +223,9 @@ Unknown scope is:
 
 Unknown capability-to-gate custody is a crosswalk failure. Neither state is permission to infer.
 
-## 8. Closure and bounded authorization
+A rank-1 discovery candidate, high similarity score, model confidence, alias match or web result is never equivalent to exact resolution.
+
+## 9. Closure and bounded authorization
 
 For direct gate set `D`, Blueprint computes:
 
@@ -195,7 +239,7 @@ A larger product may require multiple bounded authorization bundles. Canonical D
 
 Unknown prerequisites, self-dependencies and cycles fail upstream Engineering validation.
 
-## 9. Readiness and custody
+## 10. Readiness and custody
 
 Engineering authorization requires current generic Engineering validation and current depth admission:
 
@@ -209,7 +253,7 @@ schema PASS
 = Blueprint technical admission may proceed
 ```
 
-A READY label cannot rescue missing required Engineering structure.
+A READY label cannot rescue missing required Engineering structure. Discovery metadata cannot rescue it either.
 
 Every Engineering binding carries exact custody including:
 
@@ -227,7 +271,9 @@ downstream_consumer
 
 The validator-contract digest includes the Engineering schema, generic validator source, registry composer, extension catalog, all canonical extension sources, invariant profile and depth policy. Changes to those inputs invalidate old custody automatically.
 
-## 10. Engineering visibility / Passport
+Discovery custody is intentionally separate: it proves the request, registry and candidate set the user saw before selection; it is not a substitute for Engineering authorization custody.
+
+## 11. Engineering visibility / Passport
 
 Engineering must be visible without creating a second source of truth.
 
@@ -247,7 +293,7 @@ Before rendering that view, Passport verifies that the supplied registry digest 
 
 The Passport is a view of Engineering authority, never a replacement for it.
 
-## 11. Producer invariant
+## 12. Producer invariant
 
 Registry binding alone is insufficient for a producer to claim release readiness.
 
@@ -266,7 +312,7 @@ Engineering authorization does not replace SDU, LAU, TTU, source custody, answer
 ENGINEERING AUTHORIZATION != PUBLICATION AUTHORIZATION
 ```
 
-## 12. Research permission versus promotion obligation
+## 13. Research permission versus promotion obligation
 
 Pedagogy web search is not mathematical authority and must not be artificially disabled merely because a bucket is intrinsically EASY.
 
@@ -278,9 +324,9 @@ HARD    → deep research REQUIRED
 
 When optional research is used, its research brief and evidence references must still be fully bound. Partial custody fails. Production research still requires production-grade verified evidence, while TEST_ONLY evidence cannot authorize a production release.
 
-This keeps discovery permissive while keeping promotion strict.
+This uses the same architectural principle as Engineering discovery: permissive exploration, strict promotion.
 
-## 13. Full mixed-corpus release proof
+## 14. Full mixed-corpus release proof
 
 `golden/bound_producer_release/EXPECTED.json` defines the current deterministic full mixed Grade-9 proof.
 
@@ -309,7 +355,7 @@ The run must:
 
 Any future capability that is not Engineering-covered must fail before authoring. The golden may not silently narrow itself back to a covered subset.
 
-## 14. Falsification requirements
+## 15. Falsification requirements
 
 The authority boundary is valid only while CI proves the current generic properties, including:
 
@@ -320,6 +366,11 @@ catalog/base/blob/count custody falsifiers pass
 synthetic new gate composes and validates without production topic-code changes
 registry-wide exact gate proof covers every current gate
 generic STANDARD-vs-RESEARCH depth falsifier passes
+non-authoritative discovery never auto-authorizes
+approximate discovery does not weaken exact resolution
+discovery selection is exact-ID and digest-bound
+registry drift stales discovery selection
+held discovery candidate remains blocked by Engineering authority
 runtime custody binding falsifiers pass
 Canonical Domain admission falsifiers pass
 exact AssessmentScope bridge validates
@@ -333,7 +384,7 @@ learner publication regeneration passes
 
 The current mutation count and current gate count are CI evidence, not constants that production logic should assume.
 
-## 15. Non-regression rule
+## 16. Non-regression rule
 
 A future change is architecturally invalid if it introduces any of the following:
 
@@ -342,7 +393,9 @@ Blueprint-owned parallel mathematics truth
 a hard-coded runtime gate inventory
 a topic-specific validator branch
 a topic-specific extension path in production Python
-a title/fuzzy/semantic/memory resolver
+a fuzzy/semantic/memory mechanism that directly authorizes Engineering
+a rank-1 or similarity-threshold auto-authorization path
+an alias-to-gate authorization without explicit exact selection
 an undeclared capability-to-gate inference
 a persisted example binding treated as universal authority
 a topic-specific release bypass
@@ -351,4 +404,4 @@ an owner override that rewrites Engineering truth or provenance
 
 The invariant is:
 
-> **Engineering defines mathematical identities and topic-specific technical truth as governed data. Explicit custody bridges connect other canonical vocabularies to that graph. Blueprint consumes exact identities, generic depth policy and deterministic closure; examples test the system but never define it.**
+> **Engineering defines mathematical identities and topic-specific technical truth as governed data. Discovery may permissively find candidates, but only explicit exact identities, generic depth policy and deterministic closure may cross into Engineering authority. Examples and search results can help find the graph; they never define it.**
