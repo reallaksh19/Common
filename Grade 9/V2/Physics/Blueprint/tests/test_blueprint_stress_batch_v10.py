@@ -19,7 +19,10 @@ def test_batch_compiles_governed_receipts() -> None:
         assert manifest["request_count"] >= 1
         assert (out / "manifest.json").exists()
         ids = {row["stress_test_id"] for row in manifest["receipts"]}
-        assert "STRESS-PHY-G9-CBSE-M2D-RELATIVE" in ids
+        governed = json.loads(
+            (ROOT / "fixtures" / "stress-tests" / "relative-motion-grade9-cbse.request.v1.json").read_text(encoding="utf-8")
+        )
+        assert governed["stress_test_id"] in ids
         for row in manifest["receipts"]:
             assert row["final_verdict"] == "STRESS_TEST_PASS"
             assert row["receipt_digest"].startswith("sha256:")
