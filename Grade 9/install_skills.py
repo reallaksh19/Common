@@ -5,8 +5,8 @@ Examples:
   python "Grade 9/install_skills.py" --dest .agents/skills
   python "Grade 9/install_skills.py" --dest "$CODEX_HOME/skills" --force
 
-This script copies only skill folders. Shared Grade 9 references remain in the
-repository; install from the repository when you want cross-skill shared files.
+This list must include every skill routed by the Grade 9 orchestrator for the
+supported workflows. Shared references remain in the repository.
 """
 
 from __future__ import annotations
@@ -22,10 +22,16 @@ SKILLS = [
     "grade9-question-bank",
     "grade9-learning-enrichment",
     "grade9-publication",
+    "grade9-subtopic-completeness-auditor",
+    "grade9-transfer-coverage-auditor",
     "grade9-textbook-publisher",
     "grade9-math",
     "grade9-physics",
     "grade9-chemistry",
+    "grade9-chemistry-topic-builder",
+    "grade9-chemistry-publication-review",
+    "grade9-redox-subtopic-book-builder",
+    "grade9-redox-chapter-closeout-auditor",
 ]
 
 

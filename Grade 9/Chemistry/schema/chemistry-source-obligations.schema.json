@@ -1,0 +1,11 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/reallaksh19/Common/Grade%209/Chemistry/schema/chemistry-source-obligations.schema.json",
+  "title":"Chemistry Source Obligation Ledger","type":"object",
+  "required":["schema_version","subject","chapter_id","source","obligations"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"subject":{"const":"Chemistry"},"chapter_id":{"type":"string"},
+    "source":{"type":"object","required":["name","pages","sha256"],"properties":{"name":{"type":"string"},"pages":{"type":"integer","minimum":1},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
+    "obligations":{"type":"array","minItems":1,"items":{"type":"object","required":["obligation_id","title","source_page","source_locator","evidence_summary","primary_unit_id","status"],"properties":{"obligation_id":{"type":"string"},"title":{"type":"string"},"source_page":{"type":"integer","minimum":1},"source_locator":{"type":"string","minLength":3},"evidence_summary":{"type":"string"},"primary_unit_id":{"type":"string"},"status":{"enum":["TAUGHT","DEFERRED_VALID","EXCLUDED_VALID","UNRESOLVED"]}}}}
+  },"additionalProperties":true
+}
