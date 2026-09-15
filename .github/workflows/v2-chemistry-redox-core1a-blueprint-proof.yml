@@ -1,0 +1,67 @@
+name: V2 Chemistry Redox Core1A Stress Boundary
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-redox-core1a-blueprint-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-redox-stress-boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install contract dependencies
+        run: pip install jsonschema
+
+      - name: Revalidate generic source-audit v2 falsifiers
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_gate_source_audit_generic.py' -v
+
+      - name: Revalidate Engineering Workbench v2 authority firewall
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench_v2.py' -v
+
+      - name: Revalidate current Redox stress source audit
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_gate_source_audit.py'
+          'stress_tests/redox/source-audit.v2.json'
+
+      - name: Revalidate current Core1A study-note authority
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_core1a_study_note_v7.py'
+          --policy 'Grade 9/V2/Chemistry/LearningBlueprint/policies/v7-core1a-study-note-sufficiency-policy.json'
+          --authority 'Grade 9/V2/Chemistry/LearningBlueprint/golden/v7/core1a-study-note-redox-authority.json'
+          --ccbom 'Grade 9/V2/Chemistry/LearningBlueprint/golden/v7/ccbom-redox.json'
+
+      - name: Prove stress audit cannot authorize Core1A product scope
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/build_core1a.py'
+          --receipt /tmp/core1a_redox_stress_receipt.json
+
+      - name: Preflight current Blueprint custody and no-render boundary
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/preflight_core1a.py'
+          /tmp/core1a_redox_stress_receipt.json
+
+      - name: Assert no learner PDF was emitted
+        run: |
+          if find /tmp -maxdepth 1 -name 'core1a_redox*.pdf' -print -quit | grep -q .; then
+            echo 'A learner PDF was emitted without production source authority.' >&2
+            exit 1
+          fi
+
+      - name: Upload stress-boundary receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-redox-core1a-stress-boundary
+          path: /tmp/core1a_redox_stress_receipt.json
+          if-no-files-found: error
+          retention-days: 14
