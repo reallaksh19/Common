@@ -76,11 +76,16 @@ def review_candidate_checks(
 
         active_height = max((b for _, b in spans), default=margin) - min((a for a, _ in spans), default=margin)
         active_ratio = max(0.0, active_height / usable_height)
-        is_cover = role == "COVER" or page_no == 1
+        # COVER is a physical first-page exemption, not a role that may be
+        # inherited by continuations. Otherwise a sparse overflow page could
+        # accidentally bypass the current Blueprint density authority.
+        is_cover = page_no == 1
         is_workspace = role == "WORKSPACE"
         threshold = workspace_min if is_workspace else content_min
         page_failures: list[str] = []
 
+        if page_no > 1 and role == "COVER":
+            page_failures.append("CHEM_REVIEW_COVER_ROLE_AFTER_FIRST_PAGE")
         if not is_cover and active_ratio < threshold:
             page_failures.append(f"CHEM_REVIEW_UNJUSTIFIED_EMPTY_PAGE_AREA:{active_ratio:.4f}<{threshold:.4f}")
         if not is_cover and len(major) < minimum_major:
