@@ -30,7 +30,7 @@ def gate(registry: dict, gate_id: str) -> dict:
     return next(row for row in registry["subtopic_gates"] if row["subtopic_id"] == gate_id)
 
 
-def request_for_gate(gate_id: str, suffix: str = "TEST") -> dict:
+def request_for_gate(gate_id: str, suffix: str = "TEST", depth: str = "STANDARD") -> dict:
     safe = gate_id.replace("-", "_")
     return {
         "schema_version": "1.0.0",
@@ -38,20 +38,20 @@ def request_for_gate(gate_id: str, suffix: str = "TEST") -> dict:
         "request_id": f"MATH-ENG-REQ-{suffix}_{safe}",
         "scope_kind": "ENGINEERING_GATE",
         "scope_refs": [gate_id],
-        "engineering_depth": "STANDARD",
+        "engineering_depth": depth,
         "learning_purpose": "FIRST_STUDY",
         "owner_decision_ref": None,
     }
 
 
-def request_for_bucket(bucket_id: str, suffix: str = "BUCKET") -> dict:
+def request_for_bucket(bucket_id: str, suffix: str = "BUCKET", depth: str = "STANDARD") -> dict:
     return {
         "schema_version": "1.0.0",
         "subject": "MATHEMATICS",
         "request_id": f"MATH-ENG-REQ-{suffix}",
         "scope_kind": "BUCKET",
         "scope_refs": [bucket_id],
-        "engineering_depth": "STANDARD",
+        "engineering_depth": depth,
         "learning_purpose": "FIRST_STUDY",
         "owner_decision_ref": None,
     }
@@ -136,6 +136,27 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
         with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
             resolve_manifest(request, registry)
         self.assertEqual(ctx.exception.code, "MATH_ENG_REGISTRY_INVALID")
+
+    def test_research_depth_is_a_generic_stricter_contract(self):
+        registry = copy.deepcopy(REGISTRY)
+        target_id = gate_ids(registry)[0]
+        target = gate(registry, target_id)
+        target["model_conditions"] = []
+
+        standard = request_for_gate(target_id, "DEPTH_STANDARD", "STANDARD")
+        standard_manifest = resolve_manifest(standard, registry)
+        standard_receipt = compile_closure(standard, standard_manifest, registry)
+        self.assertEqual(standard_receipt["technical_authorization"], "ALLOWED")
+
+        research = request_for_gate(target_id, "DEPTH_RESEARCH", "RESEARCH")
+        research_manifest = resolve_manifest(research, registry)
+        research_receipt = compile_closure(research, research_manifest, registry)
+        state = next(row for row in research_receipt["gate_states"] if row["gate_id"] == target_id)
+        self.assertIn("MATH_ENG_DEPTH_MODEL_CONDITIONS_INSUFFICIENT", state["failure_codes"])
+        self.assertEqual(research_receipt["technical_authorization"], "BLOCKED")
+        passport = compile_passport(research, research_manifest, research_receipt)
+        self.assertEqual(passport["engineering_depth"], "RESEARCH")
+        self.assertEqual(passport["blueprint_technical_authorization"], "BLOCKED")
 
     def test_subject_guard_rejects_non_math_before_resolution(self):
         request = request_for_gate(gate_ids()[0], "SUBJECT")
