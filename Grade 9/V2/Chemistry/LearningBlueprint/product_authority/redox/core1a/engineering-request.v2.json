@@ -1,0 +1,16 @@
+{
+  "schema_version": "2.0.0",
+  "request_id": "CHEM-ENG-REQ-REDOX-CORE1A-PRODUCTION-V2",
+  "subject": "CHEMISTRY",
+  "requested_topic": "Redox reactions - species identity, oxidation-state change, electron consequence and agent role",
+  "requested_scope": "Grade 9 competitive-foundation Core1A using the declared Redox technical gate and current grade-banded production source audit",
+  "engineering_depth": "STANDARD",
+  "requested_action": "DECLARE_DIRECT_GATES",
+  "curriculum_scope": {
+    "grades": [9, 10, 11],
+    "curriculum": "NCERT grade-banded Chemistry/Science competitive-foundation extension",
+    "exam_family": "Competitive foundation"
+  },
+  "requested_for": ["CORE1A", "CDAU", "PAL", "PUBLICATION"],
+  "notes": "Engineering depth is STANDARD. The independent SDU pedagogical authority remains HARD/DEEP and does not imply a Workbench RESEARCH request."
+}

@@ -1,0 +1,98 @@
+name: V2 Chemistry Redox Core1A Authorized Blueprint Proof
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/product_authority/redox/core1a/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/source_audits/redox/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/golden/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/policies/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_redox_core1a_product_authority_v2.py'
+      - '.github/workflows/v2-chemistry-redox-core1a-blueprint-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-authorized-blueprint-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install product dependencies
+        run: python -m pip install 'jsonschema>=4.20,<5' reportlab pymupdf
+
+      - name: Validate serialized product authority JSON
+        run: |
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/product_authority/redox/core1a/engineering-request.v2.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/product_authority/redox/core1a/engineering-manifest.v2.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/product_authority/redox/core1a/grade-extension-authorization.v1.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/product_authority/redox/core1a/product-source-scope.v2.json' > /dev/null
+
+      - name: Revalidate production source audit
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_gate_source_audit.py'
+          'source_audits/redox/production-source-audit.v2.json'
+
+      - name: Prove Workbench v2 product custody and PAL
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_redox_core1a_product_authority_v2.py' -v
+
+      - name: Revalidate current Core1A study-note authority
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_core1a_study_note_v7.py'
+          --policy 'Grade 9/V2/Chemistry/LearningBlueprint/policies/v7-core1a-study-note-sufficiency-policy.json'
+          --authority 'Grade 9/V2/Chemistry/LearningBlueprint/golden/v7/core1a-study-note-redox-authority.json'
+          --ccbom 'Grade 9/V2/Chemistry/LearningBlueprint/golden/v7/ccbom-redox.json'
+
+      - name: Build Core1A strictly from current Blueprint and v2 custody
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/build_core1a_content_first.py'
+          --out /tmp/core1a_redox_blueprint_proof.pdf
+          --manifest /tmp/core1a_redox_blueprint_proof.manifest.json
+
+      - name: Render every page for visual review
+        run: |
+          mkdir -p /tmp/core1a-renders
+          python - <<'PY'
+          import pymupdf as fitz
+          doc = fitz.open('/tmp/core1a_redox_blueprint_proof.pdf')
+          matrix = fitz.Matrix(2.0, 2.0)
+          for i, page in enumerate(doc):
+              page.get_pixmap(matrix=matrix, alpha=False).save(f'/tmp/core1a-renders/page-{i+1:02d}.png')
+          print('rendered', doc.page_count, 'pages')
+          PY
+
+      - name: Run structural learner-surface and whitespace preflight
+        id: preflight
+        continue-on-error: true
+        run: >-
+          python 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/preflight_core1a.py'
+          /tmp/core1a_redox_blueprint_proof.pdf
+          /tmp/core1a_redox_blueprint_proof.manifest.json
+
+      - name: Upload PDF manifest and rendered pages even on preflight failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-redox-core1a-authorized-blueprint-proof
+          path: |
+            /tmp/core1a_redox_blueprint_proof.pdf
+            /tmp/core1a_redox_blueprint_proof.manifest.json
+            /tmp/core1a-renders/*.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce preflight result after diagnostic upload
+        if: always()
+        run: |
+          if [ '${{ steps.preflight.outcome }}' != 'success' ]; then
+            echo 'Core1A preflight failed; diagnostic PDF/renders were uploaded.' >&2
+            exit 1
+          fi

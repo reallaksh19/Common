@@ -1,0 +1,27 @@
+{
+  "schema_version": "2.0.0",
+  "scope_contract_id": "CHEM-PRODUCT-SCOPE-REDOX-CORE1A-PRODUCTION-V2",
+  "gate_id": "CHEM-REDOX-OXIDATION",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "source_audit_ref": "source_audits/redox/production-source-audit.v2.json",
+  "source_audit_digest": "sha256:617c0a649e49793ab9e438736f0f21a9f0bb9199e7ea1f2b64fd4c28f8955557",
+  "learner_grade": 9,
+  "program_context": "COMPETITIVE_FOUNDATION_EXTENSION",
+  "authorized_scope_tiers": ["FOUNDATION_G10", "FORMAL_G11"],
+  "held_scope_tiers": ["EXTENDED_G11"],
+  "extension_authority_ref": "product_authority/redox/core1a/grade-extension-authorization.v1.json#CHEM-G9-COMPETITIVE-FOUNDATION-REDOX-v1",
+  "extension_reason": "Explicit Grade 9 competitive-foundation authorization for the Class X foundation and Class XI formal oxidation-state/electron/agent reasoning required by the current Core1A authority; formal balancing remains held.",
+  "learning_atom_scope_assignments": [
+    {"learning_atom_id": "LA-REDOX-TRACK-001", "scope_tier": "FOUNDATION_G10"},
+    {"learning_atom_id": "LA-REDOX-STATE-CHANGE-002", "scope_tier": "FORMAL_G11"},
+    {"learning_atom_id": "LA-REDOX-ELECTRON-002", "scope_tier": "FORMAL_G11"},
+    {"learning_atom_id": "LA-REDOX-AGENT-003", "scope_tier": "FORMAL_G11"}
+  ],
+  "held_transformation_guards": [
+    {
+      "fingerprint": "HALF_REACTIONS->BALANCED_OVERALL_REDOX|CORE1B_GENERATIVE_RECONSTRUCTION",
+      "detection_tokens": ["MnO4", "permanganate", "acidic medium"]
+    }
+  ],
+  "status": "SCOPE_CONTRACT_READY"
+}
