@@ -41,6 +41,29 @@ def validate_with_schema(obj: dict, schema_rel: str, code: str):
         fail(code, exc.message)
 
 
+def compose_registry(manifest: dict, supplied_registry: dict | None = None) -> dict:
+    if supplied_registry is not None:
+        return supplied_registry
+
+    base = load(manifest["registry_ref"])
+    extension_refs = list(manifest.get("gate_extension_refs", []))
+    if not extension_refs:
+        return base
+
+    composed = {**base, "gates": list(base["gates"])}
+    extension_schema = load("contracts/physics-technical-engineering-gate-extension-v1.schema.json")
+    for rel in extension_refs:
+        try:
+            extension = load(rel)
+            jsonschema.validate(extension, extension_schema)
+        except (OSError, json.JSONDecodeError, jsonschema.ValidationError) as exc:
+            fail("E_ENG_GATE_EXTENSION_INVALID", f"{rel}: {exc}")
+        if extension["base_registry_ref"] != manifest["registry_ref"]:
+            fail("E_ENG_GATE_EXTENSION_BASE_MISMATCH", f"{rel} targets {extension['base_registry_ref']}")
+        composed["gates"].extend(extension["gates"])
+    return composed
+
+
 def validate_research_artifact(
     *,
     request: dict,
@@ -82,7 +105,7 @@ def compile_closure(
     if request["request_id"] != manifest["request_id"]:
         fail("E_ENG_REQUEST_MANIFEST_MISMATCH", "manifest request_id does not match request")
 
-    registry = registry if registry is not None else load(manifest["registry_ref"])
+    registry = compose_registry(manifest, registry)
     try:
         validate_registry(registry)
     except GateValidationError as exc:
@@ -169,10 +192,12 @@ def compile_closure(
     else:
         authority_note = "technical engineering closure is BLOCKED; CCU may not consume this scope as technically ready"
 
+    extension_refs = list(manifest.get("gate_extension_refs", []))
     digest_payload = {
         "request_id": request["request_id"],
         "manifest_id": manifest["manifest_id"],
         "registry_digest": canonical_digest(registry),
+        "gate_extension_refs": extension_refs,
         "direct_gate_ids": direct,
         "transitive_gate_ids": ordered,
         "gate_states": gate_states,
@@ -187,6 +212,7 @@ def compile_closure(
         "request_id": request["request_id"],
         "manifest_id": manifest["manifest_id"],
         "registry_ref": manifest["registry_ref"],
+        "gate_extension_refs": extension_refs,
         "registry_digest": digest_payload["registry_digest"],
         "closure_digest": canonical_digest(digest_payload),
         "direct_gate_ids": direct,
