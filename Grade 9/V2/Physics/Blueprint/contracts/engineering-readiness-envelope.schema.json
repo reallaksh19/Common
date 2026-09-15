@@ -20,9 +20,10 @@
     "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
     "engineering_receipt": {
       "type": "object", "additionalProperties": false,
-      "required": ["receipt_id", "closure_digest", "closure_status", "source_item_status"],
+      "required": ["receipt_id", "manifest_digest", "closure_digest", "closure_status", "source_item_status"],
       "properties": {
         "receipt_id": {"type": "string"},
+        "manifest_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
         "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
         "closure_status": {"enum": ["READY", "BLOCKED"]},
         "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]}
