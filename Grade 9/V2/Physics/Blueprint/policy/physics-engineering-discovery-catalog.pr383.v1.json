@@ -54,7 +54,7 @@
     {"discovery_gate_id":"PHY-ELEC-POWER-JOULE","curriculum":{"grade":10,"chapter":"Ch 12"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-MAG-FIELD-LORENTZ","curriculum":{"grade":10,"chapter":"Ch 13"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-MAG-INDUCTION-FARADAY","curriculum":{"grade":10,"chapter":"Ch 13"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
-    {"discovery_gate_id":"PHY-KIN-2D-PROJECTILE","curriculum":{"grade":11,"chapter":"Ch 4"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-KIN-2D-PROJECTILE","curriculum":{"grade":11,"chapter":"Ch 4"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK","PHY-M2D-VELOCITY-EVOLUTION"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-KIN-2D-PROJECTILE.v1.json"},
     {"discovery_gate_id":"PHY-KIN-CIRCULAR-DYNAMICS","curriculum":{"grade":11,"chapter":"Ch 4"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-KIN-RELATIVE-2D","curriculum":{"grade":11,"chapter":"Ch 4"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-WEP-VARIABLE-FORCE","curriculum":{"grade":11,"chapter":"Ch 6"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
@@ -68,9 +68,6 @@
     {"discovery_gate_id":"PHY-OSC-SHM-WAVES","curriculum":{"grade":11,"chapter":"Ch 14"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]}
   ],
   "v3_native_or_refined_gate_ids": [
-    "PHY-M2D-PROJECTILE-COMPONENTS",
-    "PHY-M2D-SHARED-CLOCK",
-    "PHY-M2D-VELOCITY-EVOLUTION",
     "PHY-M2D-VELOCITY-DIRECTION",
     "PHY-M2D-SPEED-MAGNITUDE",
     "PHY-M2D-SAME-HEIGHT-VELOCITY",
