@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "scope_contract_id": "CHEM-PRODUCT-SCOPE-REDOX-001",
+  "gate_id": "CHEM-REDOX-OXIDATION",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "learner_grade": 9,
+  "program_context": "COMPETITIVE_FOUNDATION_EXTENSION",
+  "authorized_scope_tiers": ["FOUNDATION_G10", "FORMAL_G11"],
+  "held_scope_tiers": ["EXTENDED_G11"],
+  "extension_authority_ref": "CORE1A-STUDY-NOTE-REDOX-STATE-AGENT-v1:scope_statement",
+  "extension_reason": "The governed Grade 9 competitive-foundation Redox note intentionally extends into oxidation-state, electron-transfer and agent-role reasoning while excluding formal acidic/basic redox balancing.",
+  "learning_atom_scope_assignments": [
+    {"learning_atom_id": "LA-REDOX-TRACK-001", "scope_tier": "FOUNDATION_G10"},
+    {"learning_atom_id": "LA-REDOX-STATE-CHANGE-002", "scope_tier": "FORMAL_G11"},
+    {"learning_atom_id": "LA-REDOX-ELECTRON-002", "scope_tier": "FORMAL_G11"},
+    {"learning_atom_id": "LA-REDOX-AGENT-003", "scope_tier": "FORMAL_G11"}
+  ],
+  "held_transformation_guards": [
+    {
+      "fingerprint": "HALF_REACTIONS->BALANCED_OVERALL_REDOX|MnO4-acidic",
+      "detection_tokens": ["MnO4", "permanganate", "acidic half-reaction", "8H+", "5e-"]
+    }
+  ],
+  "status": "SCOPE_CONTRACT_READY"
+}
