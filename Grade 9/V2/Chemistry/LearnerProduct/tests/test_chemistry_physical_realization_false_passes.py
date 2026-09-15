@@ -11,7 +11,7 @@ sys.path.insert(0, str(LP_ROOT / "engine"))
 
 from chemistry_review_candidate_preflight import review_candidate_checks  # noqa: E402
 from preflight_chemistry_core_product import representation_physical_closure  # noqa: E402
-from render_chemistry_a_content_first import _begin_attempt_support_episode  # noqa: E402
+from render_chemistry_a_content_first import _begin_attempt_support_episode, _render_attempt_support  # noqa: E402
 
 V5 = json.loads((BP_ROOT / "policies" / "v5-study-product-quality-policy.json").read_text(encoding="utf-8"))
 PRODUCT_CONTROL = json.loads((BP_ROOT / "policies" / "product-control-consolidation.v1.json").read_text(encoding="utf-8"))
@@ -28,6 +28,7 @@ class FakeWriter:
     def __init__(self):
         self.ensure_calls = []
         self.roles = []
+        self.panels = []
 
     def _wrap(self, text, font, size, width):
         words = str(text or "").split()
@@ -38,6 +39,12 @@ class FakeWriter:
 
     def set_page_role(self, role):
         self.roles.append(role)
+
+    def clue_panel(self, title, text, ref=None):
+        self.panels.append(("CLUE_PANEL", title, text, ref))
+
+    def verification_panel(self, title, text, ref=None):
+        self.panels.append(("VERIFICATION_PANEL", title, text, ref))
 
 
 def two_page_metrics_with_illegal_cover_continuation():
@@ -102,7 +109,7 @@ class ChemistryPhysicalRealizationFalsePassTests(unittest.TestCase):
         self.assertEqual(result["status"], "FAIL")
         self.assertTrue(any(value.startswith("CHEM_CORE_PREFLIGHT_REPRESENTATION_PHYSICAL_AUTHORITY_DRIFT") for value in result["failures"]))
 
-    def test_core2_support_episode_is_reserved_before_incremental_drawing(self):
+    def test_core2_support_episode_is_reserved_and_rendered_as_semantic_surfaces(self):
         writer = FakeWriter()
         support = {
             "write_this_first": "state the target",
@@ -116,16 +123,27 @@ class ChemistryPhysicalRealizationFalsePassTests(unittest.TestCase):
         _begin_attempt_support_episode(writer, support)
         self.assertEqual(len(writer.ensure_calls), 1)
         height, label, role = writer.ensure_calls[0]
-        self.assertGreater(height, 250.0)
+        self.assertGreater(height, 400.0)
         self.assertEqual(label, "attempt support")
         self.assertEqual(role, "QUESTION_EPISODE")
         self.assertEqual(writer.roles, ["QUESTION_EPISODE"])
+
+        _render_attempt_support(writer, support, "TEST-SUPPORT")
+        kinds = [row[0] for row in writer.panels]
+        self.assertEqual(kinds.count("CLUE_PANEL"), 6)
+        self.assertEqual(kinds.count("VERIFICATION_PANEL"), 1)
+        self.assertTrue(all(row[3] == "TEST-SUPPORT" for row in writer.panels))
+
+        source = (LP_ROOT / "engine" / "render_chemistry_a_content_first.py").read_text(encoding="utf-8")
+        self.assertNotIn("_attempt_support,", source)
+        self.assertIn("_render_attempt_support(writer, support, ref)", source)
 
     def test_static_b_physical_representation_is_post_attempt_and_topic_neutral(self):
         source = (LP_ROOT / "engine" / "render_chemistry_static_b_product.py").read_text(encoding="utf-8")
         self.assertIn("used_representation_refs", source)
         self.assertIn("writer.primitive", source)
         self.assertNotIn("CLUE ROUTE", source)
+        self.assertIn("RESUME YOUR RECONSTRUCTION", source)
         self.assertLess(source.index('w.answer_panel("EXPECTED RESPONSE"'), source.index('_render_used_representations(w, payload, ref + "-CHECK")'))
         self.assertLess(source.index('_render_used_representations(w, payload, ref + "-CHECK")'), source.index('w.verification_panel("VERIFY"'))
         lowered = source.lower()
