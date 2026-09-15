@@ -32,18 +32,9 @@ EXPECTED = {
     *DIRECT,
 }
 UNRELATED = {
-    "PHY-M2D-MOVING-LAUNCHER",
-    "PHY-GRAV-FORCE",
-    "PHY-GRAV-FIELD",
-    "PHY-NLM-INTERACTION",
-    "PHY-NLM-FBD",
-    "PHY-NLM-FIRST-LAW",
-    "PHY-NLM-SECOND-LAW",
-    "PHY-NLM-THIRD-LAW",
-    "PHY-NLM-NORMAL",
-    "PHY-NLM-TENSION",
-    "PHY-NLM-FRICTION",
-    "PHY-NLM-CONNECTED",
+    "PHY-M2D-MOVING-LAUNCHER", "PHY-GRAV-FORCE", "PHY-GRAV-FIELD",
+    "PHY-NLM-INTERACTION", "PHY-NLM-FBD", "PHY-NLM-FIRST-LAW", "PHY-NLM-SECOND-LAW",
+    "PHY-NLM-THIRD-LAW", "PHY-NLM-NORMAL", "PHY-NLM-TENSION", "PHY-NLM-FRICTION", "PHY-NLM-CONNECTED",
 }
 
 
@@ -51,51 +42,40 @@ def gate(registry: dict, gate_id: str) -> dict:
     return next(row for row in registry["gates"] if row["subtopic_id"] == gate_id)
 
 
-# Real SBA04 technical scope: six taught capabilities are direct; Physics prerequisites are recursive.
 receipt = compile_closure(REQUEST, MANIFEST)
 assert receipt["closure_status"] == "READY"
 assert receipt["registry_ref"] == V3_REGISTRY_REF
 assert set(receipt["direct_gate_ids"]) == DIRECT
 assert set(receipt["transitive_gate_ids"]) == EXPECTED
 assert set(receipt["transitive_gate_ids"]).isdisjoint(UNRELATED)
-assert receipt["counts"] == {
-    "direct_gate_count": 6,
-    "transitive_gate_count": 11,
-    "ready_gate_count": 11,
-    "blocked_gate_count": 0,
-}
+assert receipt["counts"] == {"direct_gate_count": 6, "transitive_gate_count": 11, "ready_gate_count": 11, "blocked_gate_count": 0}
 assert all(row["status"] == "ENGINEERING_GATE_READY" for row in receipt["gate_states"])
 assert receipt["source_item_status"] == "SOURCE_READY"
+assert receipt["manifest_digest"].startswith("sha256:")
 
-# Passport is a projection of the same validated closure, not a second readiness authority.
+# Passport projects technical diagnostics only; global Engineering Gate owns consumer permission.
 passport = compile_passport(REQUEST, receipt)
 assert passport["schema_version"] == "2.0.0"
 assert passport["technical_state"] == "ENGINEERING_READY"
 assert passport["registry_digest"] == receipt["registry_digest"]
 assert passport["source_item_status"] == "SOURCE_READY"
-assert passport["ccu_technical_authorization"] == "ALLOWED"
+assert passport["consumer_authorization"] == "NOT_EVALUATED"
 assert passport["publication_authorization"] == "NOT_IMPLIED"
 assert all(row["status"] == "PASS" for row in passport["technical_coverage"].values())
 assert {row["gate_id"] for row in passport["direct_gate_profiles"]} == DIRECT
 assert all(row["provisional_badge"] == "HARD" for row in passport["direct_gate_profiles"])
 assert any(row["hotspot_type"] == "INFERENTIAL_JUMP" for row in passport["fragility_hotspots"])
 
-# A direct SBA04 capability cannot be downgraded to DRAFT without blocking the closure.
 bad_registry = build_registry()
 gate(bad_registry, "PHY-M2D-PERPENDICULAR-VELOCITY")["scope_state"] = "DRAFT"
 blocked = compile_closure(REQUEST, MANIFEST, registry=bad_registry)
 assert blocked["closure_status"] == "BLOCKED"
-assert any(
-    row["gate_id"] == "PHY-M2D-PERPENDICULAR-VELOCITY"
-    and row["status"] == "ENGINEERING_GATE_INCOMPLETE"
-    for row in blocked["gate_states"]
-)
+assert any(row["gate_id"] == "PHY-M2D-PERPENDICULAR-VELOCITY" and row["status"] == "ENGINEERING_GATE_INCOMPLETE" for row in blocked["gate_states"])
 
-# An unrelated gate added to direct scope visibly pollutes the closure; the canonical manifest must not do this.
 bad_manifest = copy.deepcopy(MANIFEST)
 bad_manifest["required_gate_ids"].append("PHY-M2D-MOVING-LAUNCHER")
 polluted = compile_closure(REQUEST, bad_manifest)
 assert "PHY-M2D-MOVING-LAUNCHER" in polluted["transitive_gate_ids"]
 assert set(receipt["transitive_gate_ids"]) == EXPECTED
 
-print("Physics Engineering Workbench v3 SBA04: PASS (6 direct capabilities + exact 11-gate closure + HARD technical profiles + no unrelated scope pollution)")
+print("Physics Engineering Workbench v3 SBA04: PASS (exact technical closure; Passport diagnostic only)")
