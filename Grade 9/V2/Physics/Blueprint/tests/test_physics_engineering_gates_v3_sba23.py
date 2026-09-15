@@ -57,10 +57,12 @@ SBA04 = {
     "PHY-M2D-PERPENDICULAR-VELOCITY",
     "PHY-M2D-SPEED-AT-HEIGHT",
 }
-FULL = BASE15 | GRAVITY | SBA04
+RELATIVE = {"PHY-M2D-RELATIVE-VELOCITY"}
+FULL = BASE15 | GRAVITY | SBA04 | RELATIVE
 SBA23_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK","PHY-M2D-MOVING-LAUNCHER"}
 GRAV_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-NLM-INTERACTION","PHY-NLM-FBD","PHY-NLM-FIRST-LAW","PHY-NLM-SECOND-LAW","PHY-NLM-THIRD-LAW","PHY-GRAV-FORCE","PHY-GRAV-FIELD"}
 SBA04_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK"} | SBA04
+RELATIVE_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-RELATIVE-VELOCITY"}
 
 # Deterministic canonical assembly and validator-derived readiness.
 assert REG == build_registry()
@@ -68,7 +70,7 @@ assert digest(REG) == digest(build_registry())
 report = validate(REG)
 assert report["status"] == "PASS"
 assert report["registry_id"] == "PHYSICS-TECHNICAL-ENGINEERING-GATES-V3"
-assert report["gate_count"] == 23
+assert report["gate_count"] == 24
 assert report["all_engineering_ready"] is True
 assert {x["gate_id"] for x in report["gate_states"]} == FULL
 assert all("status" not in g for g in REG["gates"])
@@ -108,10 +110,19 @@ for gid in SBA04:
     assert any(a["source_ref"].startswith("Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json") for a in g["authority_basis"])
     assert g["reasoning_sequence"] and g["required_transformations"] and g["misconceptions"] and g["problem_families"]
 
+# Generic relative velocity is source-defined from the pinned PR383 discovery, not a case fixture.
+relative = gate(REG, "PHY-M2D-RELATIVE-VELOCITY")
+assert relative["scope_state"] == "ACTIVE"
+assert relative["linked_buckets"] == []
+assert relative["prerequisites"] == ["PHY-VEC-ADD-SUB", "PHY-VEC-COMPONENTS"]
+assert any(a["source_ref"].endswith("#PHY-KIN-RELATIVE-2D") for a in relative["authority_basis"])
+assert {r["relation_id"] for r in relative["relations"]} == {"EQ-M2D-RELATIVE-VELOCITY", "EQ-M2D-RIVER-CROSSING-TIME", "EQ-M2D-RIVER-DRIFT"}
+
 # Subject growth may not pollute older scoped closures.
 assert physics_closure(REG, ["PHY-M2D-MOVING-LAUNCHER"]) == SBA23_CLOSURE
 assert physics_closure(REG, ["PHY-GRAV-FIELD"]) == GRAV_CLOSURE
 assert physics_closure(REG, sorted(SBA04)) == SBA04_CLOSURE
+assert physics_closure(REG, ["PHY-M2D-RELATIVE-VELOCITY"]) == RELATIVE_CLOSURE
 
 # Shared problem-family IDs are legal cross-gate linkage, semantic authority IDs are not.
 assert "PF-NLM-INCLINE" in {x["family_id"] for x in gate(REG, "PHY-NLM-SECOND-LAW")["problem_families"]}
@@ -155,6 +166,11 @@ bad=copy.deepcopy(REG); gate(bad,"PHY-GRAV-FORCE")["prerequisites"].remove("PHY-
 bad=copy.deepcopy(REG); gate(bad,"PHY-GRAV-FIELD")["verifications"].remove("SYMMETRY"); must_fail(bad,"PHY_GATE_REQUIRED_VERIFICATION_MISSING")
 bad=copy.deepcopy(REG); gate(bad,"PHY-GRAV-FORCE")["relations"][0]["symbols"][4]["unit_dimension"]=""; must_fail(bad,"PHY_GATE_SCHEMA_VIOLATION")
 
+# Generic relative-velocity falsifiers.
+bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-RELATIVE-VELOCITY")["required_invariants"].remove("INV-M2D-RELATIVE-VELOCITY-SUBTRACTION"); must_fail(bad,"PHY_GATE_REQUIRED_INVARIANT_MISSING")
+bad=copy.deepcopy(REG); g=gate(bad,"PHY-M2D-RELATIVE-VELOCITY"); g["relations"]=[r for r in g["relations"] if r["relation_id"]!="EQ-M2D-RIVER-CROSSING-TIME"]; must_fail(bad,"PHY_GATE_REQUIRED_RELATION_MISSING")
+bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-RELATIVE-VELOCITY")["prerequisites"].remove("PHY-VEC-COMPONENTS"); must_fail(bad,"PHY_GATE_REQUIRED_PREREQUISITE_MISSING")
+
 # SBA04 technical-gate falsifiers: one per new capability plus bucket custody.
 for gid, invariant in [
     ("PHY-M2D-VELOCITY-EVOLUTION","INV-M2D-APEX-VY-ZERO-NOT-GZERO"),
@@ -169,4 +185,4 @@ for gid, invariant in [
 bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-VELOCITY-EVOLUTION")["linked_buckets"].remove("M2D-SBA-04"); must_fail(bad,"PHY_GATE_REQUIRED_BUCKET_BINDING_MISSING")
 bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-PERPENDICULAR-VELOCITY")["relations"][0]["symbols"][0]["reference_frame_role"]=""; must_fail(bad,"PHY_GATE_SCHEMA_VIOLATION")
 
-print("Physics Technical Engineering Gates v3: PASS (23-gate custody + scoped-closure invariance + SBA04 technical gates + mutation falsifiers)")
+print("Physics Technical Engineering Gates v3: PASS (24-gate custody + relative velocity + scoped-closure invariance + SBA04 technical gates + mutation falsifiers)")
