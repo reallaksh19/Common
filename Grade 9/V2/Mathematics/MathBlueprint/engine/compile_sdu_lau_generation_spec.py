@@ -257,31 +257,45 @@ def build_test_research_manifest(rows: list[dict]) -> dict | None:
         ],
     }
     decisions = []
+    claims = []
     for row in non_easy:
         depth = "DEEP" if row["difficulty_badge"] == "HARD" else "STANDARD"
+        coverage = ["REPRESENTATION_DESIGN", "MISCONCEPTION_REPAIR"]
+        if depth == "DEEP":
+            coverage.extend(["INFERENTIAL_DECOMPOSITION", "TRANSFER_DESIGN"])
+        decision_ref = "PED-BRIEF-TEST-" + digest({"subtopic": row["subtopic_id"], "depth": depth})[:16].upper()
         decisions.append({
-            "decision_ref": "PED-BRIEF-TEST-" + digest({"subtopic": row["subtopic_id"], "depth": depth})[:16].upper(),
+            "decision_ref": decision_ref,
             "subtopic_ref": row["subtopic_id"],
             "research_depth": depth,
-            "coverage": [
-                "REPRESENTATION_DESIGN",
-                "MISCONCEPTION_REPAIR",
-                "INFERENTIAL_DECOMPOSITION",
-                "WORKED_EXAMPLE_DESIGN",
-                "FADING",
-                "TRANSFER_DESIGN",
-            ],
+            "coverage": coverage,
             "research_refs": [research_ref],
             "decision_summary": "Test-only evidence exercises the required research custody path without asserting curriculum authority.",
         })
+        for category in coverage:
+            claims.append({
+                "claim_ref": "PED-CLAIM-TEST-" + digest({"decision_ref": decision_ref, "category": category})[:16].upper(),
+                "decision_ref": decision_ref,
+                "support_category": category,
+                "claim_text": f"Retained test evidence supports the {category.replace('_', ' ').lower()} pedagogy decision for this subtopic.",
+                "confidence": "MODERATE",
+                "confidence_basis": "Synthetic TEST_ONLY evidence validates claim-to-source custody and does not establish production evidence quality.",
+                "evidence_links": [{
+                    "research_ref": research_ref,
+                    "stance": "SUPPORTS",
+                    "rationale": "Fixture is retained to exercise this exact support category.",
+                }],
+                "contradiction_resolution": None,
+            })
     manifest = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "subject": "MATHEMATICS",
         "manifest_id": "MATH-PED-RESEARCH-BOUND-TEST-" + digest([row["subtopic_id"] for row in non_easy])[:12].upper(),
         "release_class": "TEST_ONLY",
         "curriculum_authority": False,
         "sources": [source],
         "decisions": decisions,
+        "claims": claims,
         "manifest_digest": "",
     }
     manifest["manifest_digest"] = digest(manifest, "manifest_digest")
@@ -361,5 +375,7 @@ def compile_generation_spec(
         "lau_fabricated_percent": False,
         "pedagogy_research_manifest_ref": manifest["manifest_id"] if manifest else None,
         "pedagogy_research_manifest_digest": manifest["manifest_digest"] if manifest else None,
+        "pedagogy_research_decision_count": len(manifest["decisions"]) if manifest else 0,
+        "pedagogy_research_claim_count": len(manifest["claims"]) if manifest else 0,
     }
     return spec, manifest, audit
