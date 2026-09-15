@@ -37,6 +37,13 @@ GENERIC ENGINEERING DEPTH POLICY
           EXACT CUSTODY BINDING
                 ↓
   Canonical Domain Registry / CDAU / SDU / LAU
+                ↓
+      governed product release
+                ↓
+DERIVED ENGINEERING VISIBILITY
+(non-authoritative; publication authority not implied)
+                ↓
+ learner publication bundle / renderer
 ```
 
 Blueprint does not know mathematical topics. It receives only exact Engineering identities, validated gate state, depth policy results and deterministic prerequisite closure.
@@ -137,6 +144,57 @@ Every Passport therefore carries:
 
 `publication_authorization = NOT_IMPLIED`.
 
+## Product visibility boundary
+
+Engineering truth is allowed to become visible without becoming a second authorization path.
+
+`engine/compile_engineering_visibility_manifest.py` starts from the exact Engineering Domain admission used by the released product. For every bounded authorization it:
+
+1. reloads the exact request, manifest and binding;
+2. revalidates that binding against current Engineering authority;
+3. recompiles the current closure;
+4. recompiles the Passport using the same current registry;
+5. rejects any stale custody or blocked technical authorization;
+6. derives one aggregate learner/author visibility manifest.
+
+The visibility manifest is governed by:
+
+`contracts/math-engineering-visibility-manifest.schema.json`
+
+It exposes the exact visible Engineering closure, including:
+
+- DIRECT versus PREREQUISITE_CLOSURE roles;
+- requested Engineering depth;
+- current technical state;
+- prerequisite identities;
+- provenance;
+- Engineering structure counts;
+- intrinsic difficulty profile;
+- required representations and their verification methods;
+- misconception statements and required technical repairs;
+- mandatory verification obligations.
+
+The manifest is explicitly:
+
+```text
+view_class = DERIVED_ENGINEERING_PRODUCT_VISIBILITY
+authority = NON_AUTHORITATIVE_VIEW_OF_BOUND_ENGINEERING_AUTHORITY
+technical_authorization = ALLOWED
+publication_authorization = NOT_IMPLIED
+```
+
+The released learner publication bundle embeds the complete validated manifest and its digest. The PDF renderer renders the Engineering map **only from the embedded semantic bundle**. The external manifest is supplied at validation time solely to prove exact equality with the embedded copy; it is not a second semantic input to the renderer.
+
+Therefore:
+
+```text
+Engineering authority → visibility
+visibility -/→ Engineering authority
+visibility -/→ publication authorization
+```
+
+A stale binding cannot render a visibility manifest. A visibility manifest bound to a different release gate cannot enter the publication bundle. Altering the embedded view breaks its digest. Changing `publication_authorization` away from `NOT_IMPLIED` fails closed.
+
 ## Generic extensibility proof
 
 The test suite constructs an additional synthetic gate entirely from extension data, composes it after the current canonical extension set and validates the result through the production validator. No production Python is modified for the synthetic gate.
@@ -150,8 +208,13 @@ The same suite proves:
 - catalog/base/blob/count drift rejection;
 - duplicate extension gate rejection;
 - `STANDARD` versus stricter `RESEARCH` admission without topic-specific branches;
-- exact stale-binding rejection.
+- exact stale-binding rejection;
+- data-derived topic-independence of generic Blueprint runtime code;
+- stale Engineering custody cannot produce product visibility;
+- Engineering visibility cannot claim publication authority;
+- publication bundles bind the exact visibility digest;
+- rendered Engineering gate coverage equals validated visibility gate coverage.
 
 The architectural invariant is:
 
-> **Engineering owns mathematical truth and gate-specific data. Blueprint owns generic orchestration only. New topics, subtopics and depth changes flow from Engineering data through generic validation; they never become remembered or hard-coded Blueprint cases.**
+> **Engineering owns mathematical truth and gate-specific data. Blueprint owns generic orchestration only. New topics, subtopics and depth changes flow from Engineering data through generic validation; they never become remembered or hard-coded Blueprint cases. Derived visibility may explain that authority to authors and learners, but it never becomes authority itself.**
