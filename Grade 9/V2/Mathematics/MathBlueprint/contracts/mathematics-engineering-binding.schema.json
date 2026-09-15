@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mathematics-engineering-binding.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","subject","binding_id","request_ref","manifest_ref","closure_receipt_id","closure_receipt_digest","registry_digest","invariant_profile_digest","downstream_consumer"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "binding_id": {"type": "string", "pattern": "^MATH-ENG-BIND-[A-Z0-9_-]+$"},
+    "request_ref": {"type": "string", "minLength": 3},
+    "manifest_ref": {"type": "string", "minLength": 3},
+    "closure_receipt_id": {"type": "string", "pattern": "^MATH-ENG-CLOSURE-[A-Z0-9_-]+$"},
+    "closure_receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "invariant_profile_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "downstream_consumer": {"enum": ["CANONICAL_DOMAIN_REGISTRY","CDAU","SDU","LAU","PUBLICATION_PILOT"]}
+  }
+}
