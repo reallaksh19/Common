@@ -97,7 +97,9 @@ class ProductControlConsolidationTests(unittest.TestCase):
             if row["disposition"] == "PORTED_AS_GENERIC_INVARIANT":
                 self.assertNotEqual(row["target_ref"], "NONE")
         self.assertEqual(rows["HISTORICAL_EXACT_PRODUCT_CANDIDATE"]["disposition"], "REGRESSION_EVIDENCE_ONLY")
-        self.assertEqual(self.migration["status"], "MIGRATION_COMPLETE_PENDING_CI")
+        self.assertEqual(self.migration["status"], "MIGRATION_COMPLETE")
+        self.assertEqual(self.migration["verification"]["v7_product_assurance"], "PASS")
+        self.assertEqual(self.migration["verification"]["blueprint_v0_v6_regression_matrix"], "PASS")
 
 
 if __name__ == "__main__":
