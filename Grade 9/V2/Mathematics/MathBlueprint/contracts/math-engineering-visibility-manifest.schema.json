@@ -23,8 +23,8 @@
     "publication_authorization": {"const": "NOT_IMPLIED"},
     "source_domain_admission_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "source_release_gate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "registry_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "validator_contract_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "validator_contract_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "authorization_count": {"type": "integer", "minimum": 1},
     "gate_count": {"type": "integer", "minimum": 1},
     "authorizations": {
@@ -44,7 +44,7 @@
           "engineering_depth": {"enum": ["FOUNDATION", "STANDARD", "RESEARCH"]},
           "direct_gate_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^MATH-"}},
           "transitive_gate_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^MATH-"}},
-          "closure_receipt_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "closure_receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
           "passport_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
         }
       }
