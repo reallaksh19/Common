@@ -1,14 +1,18 @@
 {
   "schema_version": "2.0.0",
   "audit_id": "C1A-MIGRATION-AUDIT-M2D-SBA04-V1",
+  "migration_spec_ref": "topics/m2d-sba04-core1a-migration-spec.v1.json",
   "bucket_id": "M2D-SBA-04",
   "source_refs": [
     "Core1A/registry/build-manifests/M2D-SBA-04-v1.json",
+    "Core1A/registry/physics-core1a-core2-linkage.json",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba-v1.json",
     "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
     "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json",
-    "Core1A/registry/physics-core1a-core2-linkage.json",
+    "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json",
     "fixtures/engineering-workbench/m2d-sba04-request.v1.json",
-    "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json"
+    "topics/m2d-sba04-core1a-migration-spec.v1.json"
   ],
   "legacy_claim": {
     "status": "COMPLETE",
@@ -46,96 +50,237 @@
     {
       "stage": "1A0_LEARNER_STATE_GAP",
       "evidence_state": "LEGACY_ONLY",
-      "artifact_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#policy"],
-      "evidence_refs": ["prior_knowledge_pct=20 legacy routing field"],
-      "notes": ["Legacy 20% routing exists, but current Core1A authored depth is governed by intrinsic SDU difficulty rather than learner percentage. A migrated intrinsic design-state/gap receipt is not yet bound to this real bucket."]
+      "artifact_refs": [
+        "Core1A/registry/build-manifests/M2D-SBA-04-v1.json"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile",
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#policy"
+      ],
+      "notes": [
+        "Legacy learner-profile routing and categorical difficulty exist, but they do not constitute the current intrinsic SDU design-state/gap receipt."
+      ]
     },
     {
       "stage": "1A1_LEARNING_ATOMS",
       "evidence_state": "PRESENT",
-      "artifact_refs": ["M2D-SBA-04A","M2D-SBA-04B","M2D-SBA-04C","M2D-SBA-04D","M2D-SBA-04E","M2D-SBA-04F","M2D-SBA-04G"],
-      "evidence_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#buckets[0].profiles[0].learning_atoms"],
-      "notes": ["Seven repository-backed learning atoms exist and cover velocity vector, flight stages, direction, speed, same-height comparison, perpendicular velocity and speed-at-height reasoning."]
+      "artifact_refs": [
+        "M2D-SBA-04A",
+        "M2D-SBA-04B",
+        "M2D-SBA-04C",
+        "M2D-SBA-04D",
+        "M2D-SBA-04E",
+        "M2D-SBA-04F",
+        "M2D-SBA-04G"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#buckets[M2D-SBA-04].profiles[20].learning_atoms"
+      ],
+      "notes": [
+        "Repository-backed learning atoms exactly match the build manifest namespace."
+      ]
     },
     {
       "stage": "1A2_INFERENTIAL_JUMPS",
-      "evidence_state": "MISSING",
-      "artifact_refs": [],
-      "evidence_refs": [],
-      "notes": ["The canonical Engineering Gates now expose dependency-aware reasoning steps and HIGH_FRAGILITY jumps, but no Core1A stage artifact yet maps those jumps to all seven SBA04 learning atoms with closure status."]
+      "evidence_state": "PARTIAL",
+      "artifact_refs": [
+        "PHY-M2D-VELOCITY-EVOLUTION",
+        "PHY-M2D-VELOCITY-DIRECTION",
+        "PHY-M2D-SPEED-MAGNITUDE",
+        "PHY-M2D-SAME-HEIGHT-VELOCITY",
+        "PHY-M2D-PERPENDICULAR-VELOCITY",
+        "PHY-M2D-SPEED-AT-HEIGHT"
+      ],
+      "evidence_refs": [
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-EVOLUTION.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-DIRECTION.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-MAGNITUDE.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SAME-HEIGHT-VELOCITY.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-PERPENDICULAR-VELOCITY.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-AT-HEIGHT.reasoning_sequence"
+      ],
+      "notes": [
+        "Canonical Engineering Gates expose dependency-aware reasoning and fragility, but no Core1A atom-by-atom novice omission closure receipt exists."
+      ]
     },
     {
       "stage": "1A3_COGNITIVE_TRANSFORMATION",
       "evidence_state": "PARTIAL",
-      "artifact_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].teaching_moves"],
-      "evidence_refs": ["legacy teaching-move lists"],
-      "notes": ["Teaching moves exist, but they are not explicitly bound jump-by-jump to the cognitive transformation required from novice state to canonical expert state."]
+      "artifact_refs": [
+        "M2D-SBA-04A",
+        "M2D-SBA-04B",
+        "M2D-SBA-04C",
+        "M2D-SBA-04D",
+        "M2D-SBA-04E",
+        "M2D-SBA-04F",
+        "M2D-SBA-04G"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].teaching_moves"
+      ],
+      "notes": [
+        "Teaching moves exist, but they are not a governed jump-by-jump novice-to-expert cognitive transformation receipt."
+      ]
     },
     {
       "stage": "1A4_REPRESENTATION_REQUIREMENTS",
       "evidence_state": "PARTIAL",
-      "artifact_refs": ["engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#representations"],
-      "evidence_refs": ["Canonical v3 gate representations define semantic geometry, mandatory elements/labels, forbidden omissions, must-not-imply guards and relation/concept bindings."],
-      "notes": ["Technical representation requirements are now canonical, but a Core1A pedagogical stage artifact still must map each learning atom/inferential jump to what the learner must notice and why that representation is required."]
+      "artifact_refs": [
+        "PHY-M2D-VELOCITY-EVOLUTION",
+        "PHY-M2D-VELOCITY-DIRECTION",
+        "PHY-M2D-SPEED-MAGNITUDE",
+        "PHY-M2D-SAME-HEIGHT-VELOCITY",
+        "PHY-M2D-PERPENDICULAR-VELOCITY",
+        "PHY-M2D-SPEED-AT-HEIGHT"
+      ],
+      "evidence_refs": [
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-EVOLUTION.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-DIRECTION.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-MAGNITUDE.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SAME-HEIGHT-VELOCITY.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-PERPENDICULAR-VELOCITY.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-AT-HEIGHT.representations"
+      ],
+      "notes": [
+        "Canonical technical representation requirements exist, but Core1A still needs an atom/jump pedagogical noticing-and-purpose binding."
+      ]
     },
     {
       "stage": "1A5_REPRESENTATION_CANDIDATES",
       "evidence_state": "MISSING",
       "artifact_refs": [],
       "evidence_refs": [],
-      "notes": ["No explicit pedagogical candidate set or rejected representation alternatives are recorded for SBA04."]
+      "notes": [
+        "No governed Core1A pedagogical representation-candidate set with rejected alternatives is bound."
+      ]
     },
     {
       "stage": "1A6_REPRESENTATION_DECISIONS",
       "evidence_state": "MISSING",
       "artifact_refs": [],
       "evidence_refs": [],
-      "notes": ["Canonical technical representations exist, but no pedagogical decision receipt explains primary/secondary selection against alternatives for the learner-facing Core1A build."]
+      "notes": [
+        "No governed Core1A primary/secondary representation decision receipt is bound."
+      ]
     },
     {
       "stage": "1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE",
       "evidence_state": "PARTIAL",
-      "artifact_refs": ["M2D-SBA-04A","M2D-SBA-04C","M2D-SBA-04D","M2D-SBA-04F","M2D-SBA-04G"],
-      "evidence_refs": ["legacy teaching moves connecting velocity arrows/components/equations","canonical v3 representation-to-relation bindings"],
-      "notes": ["Technical representation-to-relation bindings are now explicit, but no Core1A artifact proves the full picture→word→symbol→equation learning bridge across the relevant atoms."]
+      "artifact_refs": [
+        "M2D-SBA-04A",
+        "M2D-SBA-04B",
+        "M2D-SBA-04C",
+        "M2D-SBA-04D",
+        "M2D-SBA-04E",
+        "M2D-SBA-04F",
+        "M2D-SBA-04G"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].teaching_moves",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-EVOLUTION.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-DIRECTION.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-MAGNITUDE.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SAME-HEIGHT-VELOCITY.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-PERPENDICULAR-VELOCITY.representations",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-AT-HEIGHT.representations"
+      ],
+      "notes": [
+        "Picture/component/equation ingredients exist, but no full picture-to-word-to-symbol-to-equation bridge receipt closes every relevant atom."
+      ]
     },
     {
       "stage": "1A8_MISCONCEPTION_CONTRAST",
       "evidence_state": "PRESENT",
-      "artifact_refs": ["M2D-SBA-04A:misconceptions","M2D-SBA-04B:misconceptions","M2D-SBA-04C:misconceptions","M2D-SBA-04D:misconceptions","M2D-SBA-04E:misconceptions","M2D-SBA-04F:misconceptions","M2D-SBA-04G:misconceptions"],
-      "evidence_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].misconceptions","canonical v3 gate misconception counterexamples and repair requirements"],
-      "notes": ["Every legacy learning atom declares at least one misconception and the v3 gates now preserve technical counterexample/repair requirements; learner-facing realization remains downstream of this audit."]
+      "artifact_refs": [
+        "M2D-SBA-04A",
+        "M2D-SBA-04B",
+        "M2D-SBA-04C",
+        "M2D-SBA-04D",
+        "M2D-SBA-04E",
+        "M2D-SBA-04F",
+        "M2D-SBA-04G"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-EVOLUTION.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-DIRECTION.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-MAGNITUDE.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SAME-HEIGHT-VELOCITY.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-PERPENDICULAR-VELOCITY.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-AT-HEIGHT.misconceptions"
+      ],
+      "notes": [
+        "Every learning atom declares misconceptions and the direct Engineering Gates provide governed counterexample/repair requirements."
+      ]
     },
     {
       "stage": "1A9_WORKED_FADED_INDEPENDENT_PLAN",
       "evidence_state": "PARTIAL",
-      "artifact_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#publication_plan"],
-      "evidence_refs": ["macro order includes WATCH_ONE, COMPLETE_ONE, INDEPENDENT_PRACTICE and ATTEMPT_BEFORE_HINTS"],
-      "notes": ["The publication sequence implies fading, but there is no explicit example lineage/fingerprint or TTU receipt proving worked→faded→independent transformation without cross-Core copying."]
+      "artifact_refs": [
+        "M2D-SBA-04-R1",
+        "M2D-SBA-04-R2",
+        "M2D-SBA-04-R3",
+        "M2D-SBA-04-R4"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json#bucket[M2D-SBA-04].transfer_routines",
+        "Core1A/registry/build-manifests/M2D-SBA-04-v1.json#publication_plan.macro_order"
+      ],
+      "notes": [
+        "Worked/guided/independent structure, hint ladders and readiness checks exist, but no governed worked-to-faded example lineage/fingerprint receipt proves the transformation."
+      ]
     },
     {
       "stage": "1A10_CORE2_TRANSFER_BRIDGE",
       "evidence_state": "PRESENT",
-      "artifact_refs": ["Q01","Q11","Q13","Q14","Q17","Q27","Q40"],
-      "evidence_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#core2_hint_coverage"],
-      "notes": ["Repository-backed H1/H2/H3 preteach traces exist for all seven primary questions. Q14 and Q27 remain explicitly held until M2D-SBA-05."]
+      "artifact_refs": [
+        "Q01",
+        "Q11",
+        "Q13",
+        "Q14",
+        "Q17",
+        "Q27",
+        "Q40"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#core2_hint_coverage",
+        "Core1A/registry/build-manifests/M2D-SBA-04-v1.json#question_release"
+      ],
+      "notes": [
+        "Every primary Core2 question has exact H1/H2/H3 preteach trace to a repository learning atom; held transfers remain explicit in the build manifest."
+      ]
     },
     {
       "stage": "1A11_UNRESOLVED_JUMP_AUDIT",
-      "evidence_state": "MISSING",
-      "artifact_refs": [],
-      "evidence_refs": [],
-      "notes": ["No Core1A unresolved-jump closure audit exists; legacy G9/COMPLETE claims and technical Engineering readiness cannot substitute for this stage."]
+      "evidence_state": "PARTIAL",
+      "artifact_refs": [
+        "PHY-M2D-VELOCITY-EVOLUTION",
+        "PHY-M2D-VELOCITY-DIRECTION",
+        "PHY-M2D-SPEED-MAGNITUDE",
+        "PHY-M2D-SAME-HEIGHT-VELOCITY",
+        "PHY-M2D-PERPENDICULAR-VELOCITY",
+        "PHY-M2D-SPEED-AT-HEIGHT"
+      ],
+      "evidence_refs": [
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-EVOLUTION.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-DIRECTION.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-MAGNITUDE.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SAME-HEIGHT-VELOCITY.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-PERPENDICULAR-VELOCITY.reasoning_sequence",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-AT-HEIGHT.reasoning_sequence"
+      ],
+      "notes": [
+        "The technical jump inventory is governed and exposes 8 HIGH_FRAGILITY step(s), but no Core1A unresolved-required-jump closure receipt proves the remaining count is zero."
+      ]
     }
   ],
   "release_authorized": false,
   "block_reasons": [
-    "LEGACY_ONLY_STAGE_EVIDENCE:1A0_LEARNER_STATE_GAP must be replaced by intrinsic SDU design-state evidence; learner percentage is not Core1A authority",
-    "MISSING_STAGE_EVIDENCE:1A2_INFERENTIAL_JUMPS",
+    "LEGACY_ONLY_STAGE_EVIDENCE:1A0_LEARNER_STATE_GAP",
     "MISSING_STAGE_EVIDENCE:1A5_REPRESENTATION_CANDIDATES",
     "MISSING_STAGE_EVIDENCE:1A6_REPRESENTATION_DECISIONS",
-    "MISSING_STAGE_EVIDENCE:1A11_UNRESOLVED_JUMP_AUDIT",
-    "PARTIAL_STAGE_EVIDENCE:1A3,1A4,1A7,1A9",
-    "SOURCE_TRANSFER_HOLD:Q14,Q27 require M2D-SBA-05"
+    "PARTIAL_STAGE_EVIDENCE:1A2_INFERENTIAL_JUMPS,1A3_COGNITIVE_TRANSFORMATION,1A4_REPRESENTATION_REQUIREMENTS,1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE,1A9_WORKED_FADED_INDEPENDENT_PLAN,1A11_UNRESOLVED_JUMP_AUDIT",
+    "DOWNSTREAM_TRANSFER_HOLD:Q14:requires=M2D-SBA-05",
+    "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05"
   ]
 }
