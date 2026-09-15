@@ -12,6 +12,7 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py'
       - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v2.json'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-engineering-gate-invariants.v3.json'
@@ -44,19 +45,21 @@ jobs:
           --report-out /tmp/physics-engineering-gates-v3-sba23-report.json
       - name: Run Physics v3 SBA23 equivalence and mutation falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
-      - name: Run Engineering Workbench v1 falsifiers
+      - name: Run legacy Engineering Workbench v1 falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
-      - name: Validate SBA23 CCU through engineering-ready boundary
+      - name: Run v3 Engineering Workbench SBA23 integration proof
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py"
+      - name: Validate SBA23 CCU through v3 engineering-ready boundary
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py"
           "fixtures/engineering-workbench/m2d-sba23-request.v1.json"
-          "fixtures/engineering-workbench/m2d-sba23-manifest.v1.json"
+          "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json"
           "topics/m2d-sba23-ccu.v1.json"
-      - name: Compile SBA23 engineering closure receipt
+      - name: Compile SBA23 v3 engineering closure receipt
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py"
           "fixtures/engineering-workbench/m2d-sba23-request.v1.json"
-          "fixtures/engineering-workbench/m2d-sba23-manifest.v1.json"
+          "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json"
           --out /tmp/m2d-sba23-engineering-closure.json
       - name: Compile human-visible SBA23 Engineering Passport
         run: >-
