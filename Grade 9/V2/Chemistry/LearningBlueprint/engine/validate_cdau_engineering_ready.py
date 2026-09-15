@@ -17,9 +17,12 @@ def validate_engineered_cdau(request,manifest,cdau):
     try: binding=compile_binding(request,manifest)
     except ChemistryEngineeringBindingError as exc: fail("CHEM_CDAU_ENGINEERING_BLOCKED",f"{exc.code}: {exc.message}")
     if "CDAU" not in binding["authorized_consumers"]: fail("CHEM_CDAU_ENGINEERING_NOT_AUTHORIZED","binding does not authorize CDAU")
+    if "CHEM-REDOX-OXIDATION" in manifest.get("required_gate_ids",[]):
+        audits=[x for x in binding["source_audit_states"] if x["gate_id"]=="CHEM-REDOX-OXIDATION"]
+        if len(audits)!=1 or audits[0]["status"]!="SOURCE_HARDENED": fail("CHEM_CDAU_SOURCE_AUDIT_MISSING","Redox CDAU requires SOURCE_HARDENED audit custody")
     try: jsonschema.validate(cdau,load("contracts/cdau-governance-v6.schema.json"))
     except jsonschema.ValidationError as exc: fail("CHEM_CDAU_SCHEMA",exc.message)
-    return {"status":"PASS","subtopic_id":cdau["subtopic_id"],"engineering_binding_id":binding["binding_id"],"engineering_binding_digest":digest(binding),"engineering_closure_receipt_id":binding["closure_receipt_id"],"engineering_closure_digest":binding["closure_digest"],"source_item_status":binding["source_item_status"]}
+    return {"status":"PASS","subtopic_id":cdau["subtopic_id"],"engineering_binding_id":binding["binding_id"],"engineering_binding_digest":digest(binding),"engineering_closure_receipt_id":binding["closure_receipt_id"],"engineering_closure_digest":binding["closure_digest"],"source_audit_states":binding["source_audit_states"],"source_item_status":binding["source_item_status"]}
 def main():
     p=argparse.ArgumentParser(); p.add_argument("request"); p.add_argument("manifest"); p.add_argument("cdau"); a=p.parse_args(); print(json.dumps(validate_engineered_cdau(load(a.request),load(a.manifest),load(a.cdau)),indent=2))
 if __name__=="__main__": main()
