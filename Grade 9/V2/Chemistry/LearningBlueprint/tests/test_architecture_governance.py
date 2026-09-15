@@ -84,6 +84,8 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertEqual(rows[377]["disposition"], "SUPERSEDED_BY_387")
         self.assertEqual(rows[381]["disposition"], "SUPERSEDED_BY_387")
         self.assertEqual(rows[385]["authority_class"], "NON_AUTHORITATIVE_STRESS_TEST")
+        self.assertEqual(rows[385]["disposition"], "ACTIVE_EXPECTED_BLOCK_STRESS_PROOF")
+        self.assertEqual(rows[385]["ci_state"], "PASS_EXPECTED_SOURCE_AUTHORITY_BLOCK")
 
     def test_closed_siblings_have_explicit_retention_or_migration(self):
         rows = {row["number"]: row for row in self.ledger["pull_requests"]}
@@ -105,6 +107,14 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertIn("CORE1B_MODULE_SPECIFIC_HINT_LADDERS", migration["370"]["controls_ported"])
         self.assertIn("TOPIC_SPECIFIC_HARD_DEEP_PRODUCT_EXEMPLAR", migration["370"]["regression_only"])
         self.assertFalse(migration["375"]["unique_generic_control_found"])
+        self.assertEqual(migration["385"]["base_pr"], 387)
+        self.assertEqual(migration["385"]["workflow_state"], "PASS")
+        self.assertEqual(migration["385"]["source_audit_role"], "STRESS_TEST_SOURCE_AUDIT")
+        self.assertEqual(migration["385"]["source_audit_authority_effect"], "NONE_STRESS_TEST_ONLY")
+        self.assertEqual(migration["385"]["expected_blocker"], "CHEM_PRODUCT_SCOPE_STRESS_AUDIT_NOT_AUTHORITY")
+        self.assertEqual(migration["385"]["observed_blocker"], migration["385"]["expected_blocker"])
+        self.assertFalse(migration["385"]["product_emitted"])
+        self.assertEqual(migration["385"]["pdf_count"], 0)
         self.assertEqual(migration["386"]["target_pr"], 371)
         self.assertEqual(migration["386"]["target_governance_workflow_state"], "PASS")
         self.assertEqual(migration["386"]["target_blueprint_matrix_state"], "V0_V7_PASS")
@@ -117,6 +127,8 @@ class ArchitectureGovernanceTests(unittest.TestCase):
             self.assertTrue(preconditions[key])
         for condition in ("TOPIC_STRESS_FIREWALL_PORTED_TO_371", "CONSOLIDATION_LEDGER_PORTED_TO_371", "GOVERNANCE_TEST_AND_WORKFLOW_GREEN_ON_371"):
             self.assertIn(condition, preconditions["386"])
+        for condition in ("REBUILT_DIRECTLY_ON_387", "STRESS_AUDIT_AUTHORITY_EFFECT_NONE", "EXPECTED_PRODUCT_SCOPE_BLOCK_CONFIRMED", "NO_LEARNER_PDF_EMITTED"):
+            self.assertIn(condition, preconditions["385"])
 
     def test_governance_integration_state_is_explicit(self):
         self.assertEqual(self.ledger["status"], "GOVERNANCE_INTEGRATION_COMPLETE")
