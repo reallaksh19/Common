@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Deterministic validator for the Mathematics Technical Engineering Gate Registry.
 
-Enforces schema contracts, global ID uniqueness, prerequisite graph validity,
-cross-reference integrity, subtopic mathematical invariants, and fail-closed readiness.
-The canonical registry is a deterministic composition of the generated v1 base and
-its exact digest-bound Engineering extensions.
+Runtime logic is deliberately topic-agnostic. Mathematical requirements live in
+Engineering data; this validator understands only generic invariant categories,
+graph integrity, schema contracts, readiness rules and falsification mechanics.
 """
 from __future__ import annotations
 
@@ -22,10 +21,12 @@ from engineering_registry_composition import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CANONICAL_REGISTRY_PATH = ROOT / BASE_REGISTRY_REL
+INVARIANT_PROFILE_PATH = ROOT / "policies" / "mathematics-engineering-gate-invariants.v1.json"
 
 
 class MathematicsEngineeringGateValidationError(Exception):
     """Structured validation error with stable machine-readable code."""
+
     def __init__(self, code: str, message: str, context: dict | None = None):
         super().__init__(f"[{code}] {message}")
         self.code = code
@@ -40,6 +41,10 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_invariant_profile(path: Path = INVARIANT_PROFILE_PATH) -> dict:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
 def validate_gate_schema(registry: dict) -> None:
     schema_path = ROOT / "contracts" / "mathematics-technical-engineering-gate.schema.json"
     schema = load_json(schema_path)
@@ -51,6 +56,97 @@ def validate_gate_schema(registry: dict) -> None:
         raise MathematicsEngineeringGateValidationError(
             "MATH_GATE_SCHEMA_VIOLATION", str(e), {"path": list(e.path)}
         )
+
+
+def validate_invariant_profile(profile: dict, registry: dict) -> dict[str, dict]:
+    required_top = {"schema_version", "subject", "profile_id", "gate_invariants"}
+    missing = sorted(required_top - set(profile))
+    if missing or profile.get("schema_version") != "1.0.0" or profile.get("subject") != "MATHEMATICS":
+        raise MathematicsEngineeringGateValidationError(
+            "MATH_GATE_INVARIANT_PROFILE_SCHEMA",
+            f"missing={missing}",
+        )
+
+    rows = profile.get("gate_invariants")
+    if not isinstance(rows, list):
+        raise MathematicsEngineeringGateValidationError(
+            "MATH_GATE_INVARIANT_PROFILE_SCHEMA",
+            "gate_invariants must be a list",
+        )
+
+    required_row = {
+        "gate_id",
+        "required_concept_ids",
+        "required_equation_ids",
+        "required_representation_ids",
+        "required_misconception_ids",
+        "required_prerequisite_ids",
+    }
+    registry_ids = {gate["subtopic_id"] for gate in registry.get("subtopic_gates", [])}
+    out: dict[str, dict] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            raise MathematicsEngineeringGateValidationError(
+                "MATH_GATE_INVARIANT_PROFILE_SCHEMA",
+                f"row must be object: {row!r}",
+            )
+        missing_row = sorted(required_row - set(row))
+        if missing_row:
+            raise MathematicsEngineeringGateValidationError(
+                "MATH_GATE_INVARIANT_PROFILE_SCHEMA",
+                f"{row.get('gate_id')}: missing={missing_row}",
+            )
+        gate_id = row["gate_id"]
+        if not isinstance(gate_id, str) or not gate_id.startswith("MATH-"):
+            raise MathematicsEngineeringGateValidationError(
+                "MATH_GATE_INVARIANT_PROFILE_SCHEMA",
+                f"invalid gate_id={gate_id!r}",
+            )
+        if gate_id in out:
+            raise MathematicsEngineeringGateValidationError(
+                "MATH_GATE_INVARIANT_PROFILE_DUPLICATE_GATE",
+                gate_id,
+            )
+        if gate_id not in registry_ids:
+            raise MathematicsEngineeringGateValidationError(
+                "MATH_GATE_INVARIANT_PROFILE_UNKNOWN_GATE",
+                gate_id,
+            )
+        for key in required_row - {"gate_id"}:
+            values = row[key]
+            if not isinstance(values, list) or len(values) != len(set(values)) or any(
+                not isinstance(value, str) or not value for value in values
+            ):
+                raise MathematicsEngineeringGateValidationError(
+                    "MATH_GATE_INVARIANT_PROFILE_SCHEMA",
+                    f"{gate_id}:{key}",
+                )
+        out[gate_id] = row
+    return out
+
+
+def _validate_dependency_cycles(registry: dict) -> None:
+    gates = {gate["subtopic_id"]: gate for gate in registry["subtopic_gates"]}
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def walk(gate_id: str) -> None:
+        if gate_id in visited:
+            return
+        if gate_id in visiting:
+            raise MathematicsEngineeringGateValidationError(
+                "MATH_GATE_DEPENDENCY_CYCLE",
+                gate_id,
+            )
+        visiting.add(gate_id)
+        for prereq in gates[gate_id].get("prerequisite_ids", []):
+            if isinstance(prereq, str) and prereq.startswith("MATH-"):
+                walk(prereq)
+        visiting.remove(gate_id)
+        visited.add(gate_id)
+
+    for gate_id in gates:
+        walk(gate_id)
 
 
 def validate_global_invariants(registry: dict) -> None:
@@ -68,37 +164,19 @@ def validate_global_invariants(registry: dict) -> None:
             )
         seen_subtopics.add(sub_id)
 
-        for c in gate["technical_core"]:
-            cid = c["concept_id"]
-            if cid in seen_concepts:
-                raise MathematicsEngineeringGateValidationError(
-                    "MATH_GATE_DUPLICATE_ID", f"Duplicate concept ID: {cid}"
-                )
-            seen_concepts.add(cid)
-
-        for eq in gate["mandatory_equations"]:
-            eid = eq["equation_id"]
-            if eid in seen_equations:
-                raise MathematicsEngineeringGateValidationError(
-                    "MATH_GATE_DUPLICATE_ID", f"Duplicate equation ID: {eid}"
-                )
-            seen_equations.add(eid)
-
-        for rep in gate["representations"]:
-            rid = rep["representation_id"]
-            if rid in seen_reps:
-                raise MathematicsEngineeringGateValidationError(
-                    "MATH_GATE_DUPLICATE_ID", f"Duplicate representation ID: {rid}"
-                )
-            seen_reps.add(rid)
-
-        for m in gate["misconceptions"]:
-            mid = m["misconception_id"]
-            if mid in seen_misconceptions:
-                raise MathematicsEngineeringGateValidationError(
-                    "MATH_GATE_DUPLICATE_ID", f"Duplicate misconception ID: {mid}"
-                )
-            seen_misconceptions.add(mid)
+        for collection, key, seen in (
+            (gate["technical_core"], "concept_id", seen_concepts),
+            (gate["mandatory_equations"], "equation_id", seen_equations),
+            (gate["representations"], "representation_id", seen_reps),
+            (gate["misconceptions"], "misconception_id", seen_misconceptions),
+        ):
+            for row in collection:
+                item_id = row[key]
+                if item_id in seen:
+                    raise MathematicsEngineeringGateValidationError(
+                        "MATH_GATE_DUPLICATE_ID", f"Duplicate {key}: {item_id}"
+                    )
+                seen.add(item_id)
 
     for gate in registry["subtopic_gates"]:
         for prereq in gate.get("prerequisite_ids", []):
@@ -113,8 +191,26 @@ def validate_global_invariants(registry: dict) -> None:
                     f"Subtopic {gate['subtopic_id']} has self-dependency",
                 )
 
+    _validate_dependency_cycles(registry)
 
-def validate_subtopic_invariants(gate: dict) -> None:
+
+def _require_ids(
+    gate_id: str,
+    actual: set[str],
+    required: list[str],
+    code: str,
+    category: str,
+) -> None:
+    missing = sorted(set(required) - actual)
+    if missing:
+        raise MathematicsEngineeringGateValidationError(
+            code,
+            f"{gate_id} missing required {category}: {missing}",
+            {"gate_id": gate_id, "category": category, "missing": missing},
+        )
+
+
+def validate_subtopic_invariants(gate: dict, invariant: dict | None = None) -> None:
     sub_id = gate["subtopic_id"]
 
     if not sub_id.startswith("MATH-"):
@@ -128,181 +224,74 @@ def validate_subtopic_invariants(gate: dict) -> None:
         )
 
     defined_fams = {f["family_id"] for f in gate.get("problem_families", [])}
-    for lfid in gate.get("linked_problem_family_ids", []):
-        if lfid not in defined_fams:
+    for linked_family_id in gate.get("linked_problem_family_ids", []):
+        if linked_family_id not in defined_fams:
             raise MathematicsEngineeringGateValidationError(
                 "MATH_GATE_CROSS_REFERENCE_INTEGRITY_FAIL",
-                f"Linked problem family {lfid} not defined in problem_families of {sub_id}",
+                f"Linked problem family {linked_family_id} not defined in problem_families of {sub_id}",
             )
 
     concept_ids = {c["concept_id"] for c in gate.get("technical_core", [])}
     equation_ids = {e["equation_id"] for e in gate.get("mandatory_equations", [])}
     representation_ids = {r["representation_id"] for r in gate.get("representations", [])}
-    misc_ids = {m["misconception_id"] for m in gate.get("misconceptions", [])}
-    prereq_ids = set(gate.get("prerequisite_ids", []))
+    misconception_ids = {m["misconception_id"] for m in gate.get("misconceptions", [])}
+    prerequisite_ids = set(gate.get("prerequisite_ids", []))
 
-    if sub_id == "MATH-NUM-RADICALS":
-        if "CON-MATH-PRINCIPAL-SQUARE-ROOT-ABS" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-NUM-RADICALS requires principal square root non-negativity concept (CON-MATH-PRINCIPAL-SQUARE-ROOT-ABS)",
-            )
-        if "EQ-MATH-RADICAL-IDENTITY" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-NUM-RADICALS requires radical identity equation (EQ-MATH-RADICAL-IDENTITY)",
-            )
-
-    elif sub_id == "MATH-ALG-POLYNOMIALS":
-        if "CON-MATH-FACTOR-THEOREM" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-ALG-POLYNOMIALS requires factor theorem concept (CON-MATH-FACTOR-THEOREM)",
-            )
-        if "MISC-MATH-FRESHMANS-DREAM" not in misc_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MISCONCEPTION_TRAP",
-                "MATH-ALG-POLYNOMIALS requires Freshman's dream trap (MISC-MATH-FRESHMANS-DREAM)",
-            )
-
-    elif sub_id == "MATH-LIN-EQUATIONS":
-        if "CON-MATH-LINEAR-SYSTEM-CONSISTENCY" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-LIN-EQUATIONS requires linear system consistency concept (CON-MATH-LINEAR-SYSTEM-CONSISTENCY)",
-            )
-        if "EQ-MATH-RATIO-CONSISTENCY" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-LIN-EQUATIONS requires ratio consistency equation (EQ-MATH-RATIO-CONSISTENCY)",
-            )
-
-    elif sub_id == "MATH-QUAD-EQUATIONS":
-        if "MATH-ALG-POLYNOMIALS" not in prereq_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_UNRESOLVED_PREREQUISITE",
-                "MATH-QUAD-EQUATIONS requires polynomial prerequisite (MATH-ALG-POLYNOMIALS)",
-            )
-        if "CON-MATH-QUAD-NONZERO-LEAD" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-QUAD-EQUATIONS requires non-zero leading coefficient concept (CON-MATH-QUAD-NONZERO-LEAD)",
-            )
-        if "EQ-MATH-QUAD-FORMULA" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-QUAD-EQUATIONS requires quadratic formula (EQ-MATH-QUAD-FORMULA)",
-            )
-
-    elif sub_id == "MATH-GEO-COORDINATES":
-        if "CON-MATH-VERTICAL-SLOPE-UNDEFINED" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-GEO-COORDINATES requires vertical slope undefined concept (CON-MATH-VERTICAL-SLOPE-UNDEFINED)",
-            )
-        if "EQ-MATH-DISTANCE-FORMULA" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-GEO-COORDINATES requires distance formula (EQ-MATH-DISTANCE-FORMULA)",
-            )
-
-    elif sub_id == "MATH-GEO-EUCLID-FOUNDATIONS":
-        if "CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-GEO-EUCLID-FOUNDATIONS requires the axiom/postulate distinction concept",
-            )
-        if "EQ-MATH-EUCLID-CLASSIFICATION" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-GEO-EUCLID-FOUNDATIONS requires its formal classification relation",
-            )
-        if "REP-MATH-EUCLID-CLASSIFICATION-TABLE" not in representation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_REPRESENTATION",
-                "MATH-GEO-EUCLID-FOUNDATIONS requires the definition-classification table representation",
-            )
-        if "MISC-MATH-EUCLID-AXIOM-POSTULATE-PROOF" not in misc_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MISCONCEPTION_TRAP",
-                "MATH-GEO-EUCLID-FOUNDATIONS requires the proof-status misconception repair",
-            )
-
-    elif sub_id == "MATH-GEO-TRIANGLES":
-        if "CON-MATH-CONGRUENCE-CRITERIA" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-GEO-TRIANGLES requires congruence criteria concept (CON-MATH-CONGRUENCE-CRITERIA)",
-            )
-        if "MISC-MATH-SSA-CONGRUENCE-FALLACY" not in misc_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MISCONCEPTION_TRAP",
-                "MATH-GEO-TRIANGLES requires SSA fallacy trap (MISC-MATH-SSA-CONGRUENCE-FALLACY)",
-            )
-        if "REP-MATH-GEOMETRIC-TWO-COLUMN-PROOF" not in representation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_REPRESENTATION",
-                "MATH-GEO-TRIANGLES requires two-column proof representation (REP-MATH-GEOMETRIC-TWO-COLUMN-PROOF)",
-            )
-
-    elif sub_id == "MATH-TRIG-RATIOS":
-        if "CON-MATH-TRIG-ACUTE-DOMAIN" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-TRIG-RATIOS requires acute domain concept (CON-MATH-TRIG-ACUTE-DOMAIN)",
-            )
-        if "EQ-MATH-PYTHAGOREAN-TRIG-IDENTITY" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-TRIG-RATIOS requires Pythagorean identity (EQ-MATH-PYTHAGOREAN-TRIG-IDENTITY)",
-            )
-
-    elif sub_id == "MATH-GEO-CIRCLES":
-        if "CON-MATH-TANGENT-RADIUS-PERPENDICULAR" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-GEO-CIRCLES requires tangent-radius perpendicularity concept (CON-MATH-TANGENT-RADIUS-PERPENDICULAR)",
-            )
-        if "EQ-MATH-CYCLIC-QUAD-SUPPLEMENTARY" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-GEO-CIRCLES requires cyclic quad supplementary equation (EQ-MATH-CYCLIC-QUAD-SUPPLEMENTARY)",
-            )
-
-    elif sub_id == "MATH-MENS-SURFACES":
-        if "CON-MATH-COMPOSITE-INTERFACE-EXCLUSION" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-MENS-SURFACES requires interface exclusion concept (CON-MATH-COMPOSITE-INTERFACE-EXCLUSION)",
-            )
-        if "EQ-MATH-VOLUME-CONSERVATION" not in equation_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MANDATORY_EQUATION",
-                "MATH-MENS-SURFACES requires volume conservation equation (EQ-MATH-VOLUME-CONSERVATION)",
-            )
-
-    elif sub_id == "MATH-STAT-PROBABILITY":
-        if "CON-MATH-PROBABILITY-BOUNDS" not in concept_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_REQUIRED_CONCEPT",
-                "MATH-STAT-PROBABILITY requires probability bounds concept (CON-MATH-PROBABILITY-BOUNDS)",
-            )
-        if "MISC-MATH-PROBABILITY-OUT-OF-BOUNDS" not in misc_ids:
-            raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_MISSING_MISCONCEPTION_TRAP",
-                "MATH-STAT-PROBABILITY requires probability bounds trap (MISC-MATH-PROBABILITY-OUT-OF-BOUNDS)",
-            )
+    if invariant is not None:
+        _require_ids(
+            sub_id,
+            concept_ids,
+            invariant["required_concept_ids"],
+            "MATH_GATE_MISSING_REQUIRED_CONCEPT",
+            "concept IDs",
+        )
+        _require_ids(
+            sub_id,
+            equation_ids,
+            invariant["required_equation_ids"],
+            "MATH_GATE_MISSING_MANDATORY_EQUATION",
+            "equation IDs",
+        )
+        _require_ids(
+            sub_id,
+            representation_ids,
+            invariant["required_representation_ids"],
+            "MATH_GATE_MISSING_MANDATORY_REPRESENTATION",
+            "representation IDs",
+        )
+        _require_ids(
+            sub_id,
+            misconception_ids,
+            invariant["required_misconception_ids"],
+            "MATH_GATE_MISSING_MISCONCEPTION_TRAP",
+            "misconception IDs",
+        )
+        _require_ids(
+            sub_id,
+            prerequisite_ids,
+            invariant["required_prerequisite_ids"],
+            "MATH_GATE_UNRESOLVED_PREREQUISITE",
+            "prerequisite IDs",
+        )
 
     dp = gate["difficulty_profile"]
     dims = [
-        "prerequisite_depth", "element_interactivity", "inferential_jump_severity",
-        "representation_translation", "model_discrimination", "sign_or_frame_sensitivity",
-        "multi_step_dependency", "abstraction", "misconception_density", "synthesis",
+        "prerequisite_depth",
+        "element_interactivity",
+        "inferential_jump_severity",
+        "representation_translation",
+        "model_discrimination",
+        "sign_or_frame_sensitivity",
+        "multi_step_dependency",
+        "abstraction",
+        "misconception_density",
+        "synthesis",
     ]
-    for d in dims:
-        if not (0 <= dp.get(d, -1) <= 3):
+    for dimension in dims:
+        if not (0 <= dp.get(dimension, -1) <= 3):
             raise MathematicsEngineeringGateValidationError(
-                "MATH_GATE_INVALID_DIFFICULTY_PROFILE", f"Dimension {d} must be 0-3"
+                "MATH_GATE_INVALID_DIFFICULTY_PROFILE",
+                f"Dimension {dimension} must be 0-3",
             )
     if dp.get("maturity") != "ENGINEERING":
         raise MathematicsEngineeringGateValidationError(
@@ -310,30 +299,35 @@ def validate_subtopic_invariants(gate: dict) -> None:
             "Difficulty profile maturity must be ENGINEERING",
         )
 
-    rc = gate["release_checklist"]
+    checklist = gate["release_checklist"]
     if gate["technical_readiness"] == "ENGINEERING_GATE_READY":
-        for req_field, status in rc.items():
+        for field, status in checklist.items():
             if status is not True:
                 raise MathematicsEngineeringGateValidationError(
                     "MATH_GATE_RELEASE_CHECKLIST_INCOMPLETE",
-                    f"Release checklist field {req_field} must be True for READY gate in {sub_id}",
+                    f"Release checklist field {field} must be True for READY gate in {sub_id}",
                 )
 
 
 def validate(registry: dict) -> list[str]:
     validate_gate_schema(registry)
     validate_global_invariants(registry)
+    invariant_by_gate = validate_invariant_profile(load_invariant_profile(), registry)
     validated_subtopics = []
     for gate in registry["subtopic_gates"]:
-        validate_subtopic_invariants(gate)
+        validate_subtopic_invariants(gate, invariant_by_gate.get(gate["subtopic_id"]))
         validated_subtopics.append(gate["subtopic_id"])
     return validated_subtopics
 
 
 def run_falsification_battery() -> None:
+    """Generate mutation falsifiers from invariant data rather than topic names."""
     clean_registry = load_json(CANONICAL_REGISTRY_PATH)
+    invariant_by_gate = validate_invariant_profile(load_invariant_profile(), clean_registry)
+    falsifier_count = 0
 
     def expect_rejection(mutated: dict, expected_code: str) -> None:
+        nonlocal falsifier_count
         try:
             validate(mutated)
         except MathematicsEngineeringGateValidationError as err:
@@ -341,6 +335,7 @@ def run_falsification_battery() -> None:
                 raise AssertionError(
                     f"Expected code {expected_code}, got {err.code}: {err.message}"
                 )
+            falsifier_count += 1
             return
         except Exception as err:
             raise AssertionError(
@@ -350,108 +345,54 @@ def run_falsification_battery() -> None:
             f"Expected validator rejection with code [{expected_code}], but validation passed!"
         )
 
-    bad1 = copy.deepcopy(clean_registry)
-    rad = next(g for g in bad1["subtopic_gates"] if g["subtopic_id"] == "MATH-NUM-RADICALS")
-    rad["technical_core"] = [c for c in rad["technical_core"] if c["concept_id"] != "CON-MATH-PRINCIPAL-SQUARE-ROOT-ABS"]
-    expect_rejection(bad1, "MATH_GATE_MISSING_REQUIRED_CONCEPT")
+    category_specs = (
+        ("required_concept_ids", "technical_core", "concept_id", "MATH_GATE_MISSING_REQUIRED_CONCEPT"),
+        ("required_equation_ids", "mandatory_equations", "equation_id", "MATH_GATE_MISSING_MANDATORY_EQUATION"),
+        ("required_representation_ids", "representations", "representation_id", "MATH_GATE_MISSING_MANDATORY_REPRESENTATION"),
+        ("required_misconception_ids", "misconceptions", "misconception_id", "MATH_GATE_MISSING_MISCONCEPTION_TRAP"),
+        ("required_prerequisite_ids", "prerequisite_ids", None, "MATH_GATE_UNRESOLVED_PREREQUISITE"),
+    )
+    for gate_id, invariant in invariant_by_gate.items():
+        for invariant_key, collection_key, item_key, error_code in category_specs:
+            required = invariant[invariant_key]
+            if not required:
+                continue
+            target = required[0]
+            mutated = copy.deepcopy(clean_registry)
+            gate = next(row for row in mutated["subtopic_gates"] if row["subtopic_id"] == gate_id)
+            if item_key is None:
+                gate[collection_key] = [value for value in gate[collection_key] if value != target]
+            else:
+                gate[collection_key] = [row for row in gate[collection_key] if row[item_key] != target]
+            expect_rejection(mutated, error_code)
 
-    bad2 = copy.deepcopy(clean_registry)
-    quad = next(g for g in bad2["subtopic_gates"] if g["subtopic_id"] == "MATH-QUAD-EQUATIONS")
-    quad["technical_core"] = [c for c in quad["technical_core"] if c["concept_id"] != "CON-MATH-QUAD-NONZERO-LEAD"]
-    expect_rejection(bad2, "MATH_GATE_MISSING_REQUIRED_CONCEPT")
+    bad_cross_ref = copy.deepcopy(clean_registry)
+    first_gate = bad_cross_ref["subtopic_gates"][0]
+    first_gate["linked_problem_family_ids"].append("PF-MATH-ORPHAN-FAMILY-FALSIFIER")
+    expect_rejection(bad_cross_ref, "MATH_GATE_CROSS_REFERENCE_INTEGRITY_FAIL")
 
-    bad3 = copy.deepcopy(clean_registry)
-    geo = next(g for g in bad3["subtopic_gates"] if g["subtopic_id"] == "MATH-GEO-COORDINATES")
-    geo["technical_core"] = [c for c in geo["technical_core"] if c["concept_id"] != "CON-MATH-VERTICAL-SLOPE-UNDEFINED"]
-    expect_rejection(bad3, "MATH_GATE_MISSING_REQUIRED_CONCEPT")
+    bad_duplicate = copy.deepcopy(clean_registry)
+    bad_duplicate["subtopic_gates"][0]["technical_core"].append(
+        copy.deepcopy(bad_duplicate["subtopic_gates"][1]["technical_core"][0])
+    )
+    expect_rejection(bad_duplicate, "MATH_GATE_DUPLICATE_ID")
 
-    bad4 = copy.deepcopy(clean_registry)
-    coord = next(g for g in bad4["subtopic_gates"] if g["subtopic_id"] == "MATH-GEO-COORDINATES")
-    coord["mandatory_equations"] = [e for e in coord["mandatory_equations"] if e["equation_id"] != "EQ-MATH-DISTANCE-FORMULA"]
-    expect_rejection(bad4, "MATH_GATE_MISSING_MANDATORY_EQUATION")
-
-    bad5 = copy.deepcopy(clean_registry)
-    poly = next(g for g in bad5["subtopic_gates"] if g["subtopic_id"] == "MATH-ALG-POLYNOMIALS")
-    poly["misconceptions"] = [m for m in poly["misconceptions"] if m["misconception_id"] != "MISC-MATH-FRESHMANS-DREAM"]
-    expect_rejection(bad5, "MATH_GATE_MISSING_MISCONCEPTION_TRAP")
-
-    bad6 = copy.deepcopy(clean_registry)
-    tri = next(g for g in bad6["subtopic_gates"] if g["subtopic_id"] == "MATH-GEO-TRIANGLES")
-    tri["misconceptions"] = [m for m in tri["misconceptions"] if m["misconception_id"] != "MISC-MATH-SSA-CONGRUENCE-FALLACY"]
-    expect_rejection(bad6, "MATH_GATE_MISSING_MISCONCEPTION_TRAP")
-
-    bad7 = copy.deepcopy(clean_registry)
-    prob = next(g for g in bad7["subtopic_gates"] if g["subtopic_id"] == "MATH-STAT-PROBABILITY")
-    prob["misconceptions"] = [m for m in prob["misconceptions"] if m["misconception_id"] != "MISC-MATH-PROBABILITY-OUT-OF-BOUNDS"]
-    expect_rejection(bad7, "MATH_GATE_MISSING_MISCONCEPTION_TRAP")
-
-    bad8 = copy.deepcopy(clean_registry)
-    quad8 = next(g for g in bad8["subtopic_gates"] if g["subtopic_id"] == "MATH-QUAD-EQUATIONS")
-    quad8["prerequisite_ids"] = [p for p in quad8["prerequisite_ids"] if p != "MATH-ALG-POLYNOMIALS"]
-    expect_rejection(bad8, "MATH_GATE_UNRESOLVED_PREREQUISITE")
-
-    bad9 = copy.deepcopy(clean_registry)
-    tri9 = next(g for g in bad9["subtopic_gates"] if g["subtopic_id"] == "MATH-GEO-TRIANGLES")
-    tri9["representations"] = [{
-        "representation_id": "REP-MATH-GENERIC-PLACEHOLDER",
-        "representation_type": "GEOMETRIC_TWO_COLUMN_PROOF",
-        "name": "Generic Placeholder Representation",
-        "math_encoded": "Generic proof schema without two-column statements and reasons",
-        "mandatory_labels": ["Statement", "Reason"],
-        "what_cannot_be_omitted": "Mandatory proof steps",
-        "common_incorrect_version": "Missing step justifications",
-        "verification_method": "Check",
-    }]
-    expect_rejection(bad9, "MATH_GATE_MISSING_MANDATORY_REPRESENTATION")
-
-    bad10 = copy.deepcopy(clean_registry)
-    rad10 = next(g for g in bad10["subtopic_gates"] if g["subtopic_id"] == "MATH-NUM-RADICALS")
-    rad10["linked_problem_family_ids"].append("PF-MATH-ORPHAN-FAMILY")
-    expect_rejection(bad10, "MATH_GATE_CROSS_REFERENCE_INTEGRITY_FAIL")
-
-    bad11 = copy.deepcopy(clean_registry)
-    bad11["subtopic_gates"][0]["technical_core"].append({
-        "concept_id": bad11["subtopic_gates"][1]["technical_core"][0]["concept_id"],
-        "canonical_statement": "Duplicate statement across subtopics for falsifier test.",
-        "why_required": "Must fail uniqueness test.",
-        "failure_if_omitted": "Fails global invariant.",
-    })
-    expect_rejection(bad11, "MATH_GATE_DUPLICATE_ID")
-
-    bad12 = copy.deepcopy(clean_registry)
-    bad12["subtopic_gates"][0]["release_checklist"]["provenance_verified"] = False
-    expect_rejection(bad12, "MATH_GATE_RELEASE_CHECKLIST_INCOMPLETE")
-
-    euclid = lambda doc: next(g for g in doc["subtopic_gates"] if g["subtopic_id"] == "MATH-GEO-EUCLID-FOUNDATIONS")
-
-    bad13 = copy.deepcopy(clean_registry)
-    e13 = euclid(bad13)
-    e13["technical_core"] = [c for c in e13["technical_core"] if c["concept_id"] != "CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION"]
-    expect_rejection(bad13, "MATH_GATE_MISSING_REQUIRED_CONCEPT")
-
-    bad14 = copy.deepcopy(clean_registry)
-    e14 = euclid(bad14)
-    e14["mandatory_equations"] = [e for e in e14["mandatory_equations"] if e["equation_id"] != "EQ-MATH-EUCLID-CLASSIFICATION"]
-    expect_rejection(bad14, "MATH_GATE_MISSING_MANDATORY_EQUATION")
-
-    bad15 = copy.deepcopy(clean_registry)
-    e15 = euclid(bad15)
-    e15["representations"] = [r for r in e15["representations"] if r["representation_id"] != "REP-MATH-EUCLID-CLASSIFICATION-TABLE"]
-    expect_rejection(bad15, "MATH_GATE_MISSING_MANDATORY_REPRESENTATION")
-
-    bad16 = copy.deepcopy(clean_registry)
-    e16 = euclid(bad16)
-    e16["misconceptions"] = [m for m in e16["misconceptions"] if m["misconception_id"] != "MISC-MATH-EUCLID-AXIOM-POSTULATE-PROOF"]
-    expect_rejection(bad16, "MATH_GATE_MISSING_MISCONCEPTION_TRAP")
+    bad_checklist = copy.deepcopy(clean_registry)
+    ready_gate = next(
+        gate for gate in bad_checklist["subtopic_gates"]
+        if gate["technical_readiness"] == "ENGINEERING_GATE_READY"
+    )
+    ready_gate["release_checklist"]["provenance_verified"] = False
+    expect_rejection(bad_checklist, "MATH_GATE_RELEASE_CHECKLIST_INCOMPLETE")
 
     print(
         "Mathematics Technical Engineering Gate falsification battery: PASS "
-        "(all 16 mutation falsifiers caught by production validator)"
+        f"({falsifier_count} data-derived mutation falsifiers caught by production validator)"
     )
 
 
 if __name__ == "__main__":
-    reg = load_json(CANONICAL_REGISTRY_PATH)
-    subtopics = validate(reg)
+    registry = load_json(CANONICAL_REGISTRY_PATH)
+    subtopics = validate(registry)
     print(f"Validated {len(subtopics)} Mathematics Technical Engineering subtopic gates: PASS")
     run_falsification_battery()
