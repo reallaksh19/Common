@@ -18,7 +18,9 @@ The external mandatory-content policy is:
 
 `policy/physics-engineering-gate-invariants.v3.json`
 
-The legacy aggregate v2 registry and v2 validator are retained only as migration provenance and regression evidence. They are not the canonical source for new Workbench manifests.
+The legacy aggregate v2 registry, the former Gravity v1 extension and their validators are retained only as migration provenance/regression evidence. New Workbench manifests consume:
+
+`GENERATED:physics-technical-engineering-gates.v3`
 
 ## Authority boundary
 
@@ -43,10 +45,11 @@ Engineering readiness does not grant source legality, pedagogical authority, lea
 
 ## Canonical registry
 
-The current deterministic v3 registry contains 15 gates across:
+The deterministic v3 registry currently contains **17 gates** across:
 
 - Vectors;
 - Newtonian Mechanics;
+- Gravitation;
 - Motion in a Plane.
 
 Each gate is stored independently. The registry builder must produce deterministic canonical JSON and a stable SHA-256 digest for the same source set.
@@ -77,7 +80,7 @@ ENGINEERING REQUEST
         ↓
 TOPIC / SUBTOPIC / BUCKET MANIFEST
         ↓
-CANONICAL V3 REGISTRY
+CANONICAL SUBJECT-WIDE V3 REGISTRY
         ↓
 V3 PRODUCTION VALIDATION
         ↓
@@ -87,7 +90,7 @@ RESEARCH DOSSIER + CLAIM LEDGER, when engineering_depth = RESEARCH
         ↓
 ENGINEERING CLOSURE RECEIPT
         ↓
-EXACT RECEIPT CUSTODY BINDING
+EXACT RECEIPT CUSTODY BINDING, where a downstream binding is required
         ↓
 ENGINEERING PASSPORT
         ↓
@@ -98,7 +101,7 @@ The manifest declares direct gates only. `compile_engineering_closure.py` derive
 
 ## Exact closure custody
 
-New technical bindings use `physics-technical-gate-binding.v2.schema.json` and do not redeclare a prerequisite closure or READY flag.
+New technical bindings use `physics-technical-gate-binding-v2.schema.json` and do not redeclare a prerequisite closure or READY flag.
 
 A binding carries:
 
@@ -109,7 +112,7 @@ A binding carries:
 - exact closure-logic digest;
 - exact canonical registry digest.
 
-`validate_technical_gate_binding.py` recompiles the current Workbench closure and fails when any custodied digest is stale.
+`validate_technical_gate_binding.py` recompiles the current Workbench closure and fails when any custodied digest is stale. Expanding the subject registry therefore invalidates stale bindings even when a scoped closure still contains the same gates.
 
 ## SBA23 integration proof
 
@@ -117,7 +120,7 @@ The SBA23 manifest declares only:
 
 `PHY-M2D-MOVING-LAUNCHER`
 
-The full 15-gate registry must still derive exactly this six-gate closure:
+The full 17-gate registry must still derive exactly this six-gate closure:
 
 ```text
 PHY-VEC-BASICS
@@ -131,6 +134,33 @@ PHY-M2D-MOVING-LAUNCHER
 This proves that expanding the subject registry does not pollute a scoped Workbench closure.
 
 The closure may be technically READY while `source_item_status = SOURCE_HELD`. That source/legal hold remains independently visible downstream.
+
+## Gravity RESEARCH integration proof
+
+The human-reviewed Gravity discovery creates two domain gates:
+
+```text
+PHY-GRAV-FORCE
+      ↓
+PHY-GRAV-FIELD
+```
+
+The Gravity manifest declares only `PHY-GRAV-FIELD`. At `engineering_depth = RESEARCH`, the Workbench additionally requires the release-ready Gravity Research Dossier and Claim Ledger. The canonical registry must derive exactly this 10-gate closure:
+
+```text
+PHY-VEC-BASICS
+PHY-VEC-ADD-SUB
+PHY-VEC-COMPONENTS
+PHY-NLM-INTERACTION
+PHY-NLM-FBD
+PHY-NLM-FIRST-LAW
+PHY-NLM-SECOND-LAW
+PHY-NLM-THIRD-LAW
+PHY-GRAV-FORCE
+PHY-GRAV-FIELD
+```
+
+Gravitational potential, potential energy, escape speed and orbital mechanics remain outside this request and may not enter by silent scope growth.
 
 ## Engineering Passport
 
@@ -149,10 +179,10 @@ The Passport has no independent authority to promote a blocked closure.
 
 ## Validation/falsification
 
-The v3 suite must prove:
+The v3 suite proves, among other cases:
 
 - deterministic full-registry assembly;
-- exact v2→v3 semantic preservation for all migrated gates;
+- exact legacy→v3 semantic preservation for migrated base and Gravity gates;
 - globally unique semantic authorities;
 - valid prerequisite graph and cycle rejection;
 - external invariant-profile enforcement;
@@ -164,11 +194,13 @@ The v3 suite must prove:
 - meaningful misconception counterexamples and repair;
 - problem-family bindings and intentional family reuse;
 - Newtonian model distinctions such as `N != mg` generally, tension model dependence, static-friction inequality and system-boundary consistency;
+- Gravity inverse-square, radial-direction, force/field distinction and vector-superposition custody;
+- reviewed Gravity discovery and claim-level RESEARCH provenance;
 - validator-derived readiness;
 - exact closure custody and stale-binding rejection;
-- CCU authorization only after current Workbench closure is READY.
+- CCU authorization only after the current Workbench closure is READY.
 
-The legacy v2 validator/Workbench tests continue to run as regression proofs during migration, but they do not define current authority.
+Legacy v2 tests continue as regression proofs, but they do not define current authority.
 
 ## Engineering depth versus learner difficulty
 
