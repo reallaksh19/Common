@@ -22,12 +22,13 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v2.py'
       - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-technical-gate-binding*.json'
       - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-ccu.v1.json'
+      - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH.md'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH_V1.md'
       - '.github/workflows/v2-physics-engineering-workbench.yml'
   workflow_dispatch:
 
 jobs:
-  engineering-workbench-v1:
+  engineering-workbench-v3:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,22 +37,22 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: pip install jsonschema
-      - name: Validate canonical Physics Technical Engineering Gates v2
+      - name: Run legacy v2 gate regression proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
-      - name: Build Physics Technical Engineering Gates v3 SBA23 vertical slice
+      - name: Build canonical Physics Technical Engineering Gates v3 registry
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py"
-          --out /tmp/physics-engineering-gates-v3-sba23.json
-      - name: Validate Physics Technical Engineering Gates v3 SBA23 vertical slice
+          --out /tmp/physics-engineering-gates-v3.json
+      - name: Validate canonical Physics Technical Engineering Gates v3 registry
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py"
-          --registry /tmp/physics-engineering-gates-v3-sba23.json
-          --report-out /tmp/physics-engineering-gates-v3-sba23-report.json
-      - name: Run Physics v3 SBA23 equivalence and mutation falsifiers
+          --registry /tmp/physics-engineering-gates-v3.json
+          --report-out /tmp/physics-engineering-gates-v3-report.json
+      - name: Run Physics v3 full-registry equivalence and mutation falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
-      - name: Run legacy Engineering Workbench v1 falsifiers
+      - name: Run legacy Engineering Workbench v1 regression falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
-      - name: Run v3 Engineering Workbench SBA23 integration proof
+      - name: Run canonical v3 Engineering Workbench SBA23 integration proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py"
       - name: Validate exact SBA23 Workbench closure custody binding
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py"
@@ -76,13 +77,13 @@ jobs:
           --markdown-out /tmp/m2d-sba23-engineering-passport.md
       - name: Publish passport in workflow summary
         run: cat /tmp/m2d-sba23-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Upload engineering closure and passport proof
+      - name: Upload engineering registry, closure and passport proof
         uses: actions/upload-artifact@v4
         with:
           name: physics-engineering-workbench-sba23
           path: |
-            /tmp/physics-engineering-gates-v3-sba23.json
-            /tmp/physics-engineering-gates-v3-sba23-report.json
+            /tmp/physics-engineering-gates-v3.json
+            /tmp/physics-engineering-gates-v3-report.json
             /tmp/m2d-sba23-engineering-closure.json
             /tmp/m2d-sba23-engineering-passport.json
             /tmp/m2d-sba23-engineering-passport.md
