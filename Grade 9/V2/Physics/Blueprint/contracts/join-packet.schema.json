@@ -103,8 +103,17 @@
         "matched_target_item_count": {"type": "integer", "minimum": 0},
         "scope_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
         "corpus_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-        "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-        "unresolved_issues": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "unresolved_issues": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
       }
     },
     "join_status": {"enum": ["JOIN_READY", "JOIN_READY_WITH_HOLDS", "JOIN_READY_NO_CORE2_DEMAND", "JOIN_BLOCKED"]},
@@ -113,15 +122,23 @@
   },
   "allOf": [
     {
-      "if": {"properties": {"demand_claim_count": {"const": 0}}, "required": ["demand_claim_count"]},
+      "if": {
+        "properties": {"demand_claim_count": {"const": 0}},
+        "required": ["demand_claim_count"]
+      },
       "then": {
         "required": ["assessment_coverage"],
         "properties": {"items": {"maxItems": 0}}
       }
     },
     {
-      "if": {"properties": {"demand_claim_count": {"minimum": 1}}, "required": ["demand_claim_count"]},
-      "then": {"properties": {"items": {"minItems": 1}}
+      "if": {
+        "properties": {"demand_claim_count": {"minimum": 1}},
+        "required": ["demand_claim_count"]
+      },
+      "then": {
+        "properties": {"items": {"minItems": 1}}
+      }
     }
   ]
 }
