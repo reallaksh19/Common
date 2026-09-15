@@ -9,6 +9,7 @@
       "disposition": "INHERITED_HISTORICAL_AUTHORING_HANDOFF",
       "retention_mode": "CURRENT_371_ANCESTRY_AND_RECOVERABLE_BRANCH",
       "authority_effect": "NONE_HISTORICAL_EVIDENCE_ONLY",
+      "review_surface_state": "CLOSED_UNMERGED",
       "current_retained_root": "AuthoringHandoff/NCERT-Core-Workbench",
       "generic_controls_already_absorbed": {
         "source_denominator_freeze": "LearningBlueprint/policies/product-control-consolidation.v1.json#source_denominator_custody",
@@ -39,6 +40,7 @@
       "disposition": "INHERITED_PUBLICATION_ENGINEERING_INFRASTRUCTURE",
       "retention_mode": "CURRENT_371_ANCESTRY_AND_RECOVERABLE_BRANCH",
       "authority_effect": "PUBLICATION_ENGINEERING_ONLY",
+      "review_surface_state": "CLOSED_UNMERGED",
       "current_infrastructure_refs": [
         "ExactProduct/engine/chemistry_notation.py",
         "ExactProduct/engine/chemistry_visual_primitives.py",
@@ -90,5 +92,10 @@
     "INHERITED_PUBLICATION_ENGINEERING_MAY_VALIDATE_CURRENT_PRODUCTS_BUT_HISTORICAL_CANDIDATES_DO_NOT_DEFINE_THEM",
     "CLOSING_SOURCE_PRS_DOES_NOT_DELETE_INHERITED_FILES_OR_RECOVERABLE_BRANCHES"
   ],
-  "status": "RETENTION_CLASSIFIED_PENDING_CI"
+  "verification": {
+    "blueprint_head": "785ae6622120bd614ef90a568bfdc674dd61fdc4",
+    "workflow_matrix": "V0_V7_PASS",
+    "verified_date": "2026-09-15"
+  },
+  "status": "RETENTION_COMPLETE_CI_PASS"
 }
