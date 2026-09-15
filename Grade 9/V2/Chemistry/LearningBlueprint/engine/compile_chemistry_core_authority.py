@@ -60,9 +60,10 @@ def _validate_packet(packet: dict[str, Any]) -> None:
 def _scope_units(product_mode: str, payload: dict[str, Any]) -> list[dict[str, str]]:
     units: list[dict[str, str]] = []
     if product_mode == "CORE1A":
-        if not isinstance(payload.get("buckets"), list):
+        manuscript = payload.get("manuscript")
+        if not isinstance(manuscript, dict) or not isinstance(manuscript.get("buckets"), list):
             fail("CHEM_CORE_AUTH_CORE1A_MANUSCRIPT_REQUIRED")
-        for bucket in payload["buckets"]:
+        for bucket in manuscript["buckets"]:
             for atom in bucket.get("learning_atoms", []):
                 atom_id = atom.get("atom_id")
                 if atom_id:
@@ -118,18 +119,25 @@ def _surface_strings(value: Any, parent_key: str = "") -> list[str]:
 
 def _mode_validation(product_mode: str, payload: dict[str, Any]) -> dict[str, Any]:
     if product_mode == "CORE1A":
-        if not payload.get("manuscript_id") or not isinstance(payload.get("buckets"), list):
+        manuscript = payload.get("manuscript")
+        representations = payload.get("representation_bundle")
+        if not isinstance(manuscript, dict) or not manuscript.get("manuscript_id") or not isinstance(manuscript.get("buckets"), list):
             fail("CHEM_CORE_AUTH_CORE1A_MANUSCRIPT_REQUIRED")
-        return {"status": "PASS", "adapter": "CORE1A_MANUSCRIPT", "bucket_count": len(payload["buckets"])}
+        if not isinstance(representations, dict) or not representations.get("bundle_id"):
+            fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_REQUIRED")
+        return {"status": "PASS", "adapter": "CORE1A_MANUSCRIPT", "bucket_count": len(manuscript["buckets"]), "representation_bundle_ref": representations["bundle_id"]}
     if product_mode == "CORE2A":
         source = payload.get("source_plan")
         challenge = payload.get("challenge_plan")
+        representations = payload.get("representation_bundle")
         if source is None and challenge is None:
             fail("CHEM_CORE_AUTH_CORE2A_PLAN_REQUIRED")
+        if not isinstance(representations, dict) or not representations.get("bundle_id"):
+            fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_REQUIRED")
         count = sum(len(plan.get("items", [])) for plan in (source, challenge) if isinstance(plan, dict))
         if count < 1:
             fail("CHEM_CORE_AUTH_CORE2A_ITEMS_REQUIRED")
-        return {"status": "PASS", "adapter": "CORE2A_PLANS", "item_count": count}
+        return {"status": "PASS", "adapter": "CORE2A_PLANS", "item_count": count, "representation_bundle_ref": representations["bundle_id"]}
     if product_mode == "CORE1B":
         return validate_core1b(payload)
     if product_mode == "CORE2B":
