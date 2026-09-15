@@ -15,6 +15,7 @@ ENGINEERING_SCHEMA_REL = "contracts/mathematics-technical-engineering-gate.schem
 ENGINEERING_VALIDATOR_PATH = ROOT / "engine" / "validate_mathematics_engineering_gates.py"
 ENGINEERING_COMPOSER_PATH = ROOT / "engine" / "engineering_registry_composition.py"
 ENGINEERING_INVARIANT_PROFILE_PATH = ROOT / "policies" / "mathematics-engineering-gate-invariants.v1.json"
+ENGINEERING_DEPTH_POLICY_PATH = ROOT / "policies" / "mathematics-engineering-depth-policy.v1.json"
 
 from engineering_registry_composition import (  # noqa: E402
     BASE_REGISTRY_REL,
@@ -69,6 +70,7 @@ def engineering_validator_contract_digest() -> str:
         "registry_composer_source_sha256": _bytes_digest(ENGINEERING_COMPOSER_PATH.read_bytes()),
         "extension_catalog_source_sha256": _bytes_digest((ROOT / EXTENSION_CATALOG_REL).read_bytes()),
         "invariant_profile_source_sha256": _bytes_digest(ENGINEERING_INVARIANT_PROFILE_PATH.read_bytes()),
+        "depth_policy_source_sha256": _bytes_digest(ENGINEERING_DEPTH_POLICY_PATH.read_bytes()),
         "canonical_extension_source_sha256": [
             _bytes_digest((ROOT / rel).read_bytes()) for rel in CANONICAL_EXTENSION_RELS
         ],
@@ -98,6 +100,96 @@ def _validate_authoritative_registry(registry: dict) -> None:
 
 def _gate_index(registry: dict) -> dict[str, dict]:
     return {gate["subtopic_id"]: gate for gate in registry["subtopic_gates"]}
+
+
+def _load_depth_policy() -> dict:
+    policy = json.loads(ENGINEERING_DEPTH_POLICY_PATH.read_text(encoding="utf-8"))
+    if (
+        policy.get("schema_version") != "1.0.0"
+        or policy.get("subject") != "MATHEMATICS"
+        or set(policy.get("profiles", {})) != {"FOUNDATION", "STANDARD", "RESEARCH"}
+    ):
+        raise MathematicsEngineeringWorkbenchError("MATH_ENG_DEPTH_POLICY_INVALID", "top-level policy shape")
+
+    required = {
+        "min_reasoning_steps",
+        "min_model_conditions",
+        "min_misconceptions",
+        "min_required_transformations",
+        "min_falsification_cases",
+        "required_transformation_roles",
+        "require_non_provisional_provenance",
+    }
+    for depth, row in policy["profiles"].items():
+        if set(row) != required:
+            raise MathematicsEngineeringWorkbenchError(
+                "MATH_ENG_DEPTH_POLICY_INVALID",
+                f"{depth}: fields={sorted(row)}",
+            )
+        for key in (
+            "min_reasoning_steps",
+            "min_model_conditions",
+            "min_misconceptions",
+            "min_required_transformations",
+            "min_falsification_cases",
+        ):
+            value = row[key]
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise MathematicsEngineeringWorkbenchError(
+                    "MATH_ENG_DEPTH_POLICY_INVALID",
+                    f"{depth}:{key}={value!r}",
+                )
+        roles = row["required_transformation_roles"]
+        if not isinstance(roles, list) or len(roles) != len(set(roles)) or any(
+            not isinstance(role, str) or not role for role in roles
+        ):
+            raise MathematicsEngineeringWorkbenchError(
+                "MATH_ENG_DEPTH_POLICY_INVALID",
+                f"{depth}:required_transformation_roles",
+            )
+        if not isinstance(row["require_non_provisional_provenance"], bool):
+            raise MathematicsEngineeringWorkbenchError(
+                "MATH_ENG_DEPTH_POLICY_INVALID",
+                f"{depth}:require_non_provisional_provenance",
+            )
+    return policy
+
+
+def _depth_failures(gate: dict, engineering_depth: str) -> list[str]:
+    policy = _load_depth_policy()
+    profile = policy["profiles"].get(engineering_depth)
+    if profile is None:
+        raise MathematicsEngineeringWorkbenchError(
+            "MATH_ENG_DEPTH_UNKNOWN",
+            engineering_depth,
+        )
+
+    failures: list[str] = []
+    checks = (
+        ("reasoning_sequence", "min_reasoning_steps", "MATH_ENG_DEPTH_REASONING_INSUFFICIENT"),
+        ("model_conditions", "min_model_conditions", "MATH_ENG_DEPTH_MODEL_CONDITIONS_INSUFFICIENT"),
+        ("misconceptions", "min_misconceptions", "MATH_ENG_DEPTH_MISCONCEPTION_COVERAGE_INSUFFICIENT"),
+        ("required_transformations", "min_required_transformations", "MATH_ENG_DEPTH_TRANSFORMATIONS_INSUFFICIENT"),
+        ("falsification_cases", "min_falsification_cases", "MATH_ENG_DEPTH_FALSIFICATION_INSUFFICIENT"),
+    )
+    for collection, minimum_key, code in checks:
+        if len(gate.get(collection) or []) < profile[minimum_key]:
+            failures.append(code)
+
+    required_roles = set(profile["required_transformation_roles"])
+    actual_roles = {
+        row.get("target_core_role")
+        for row in gate.get("required_transformations") or []
+        if row.get("target_core_role")
+    }
+    if not required_roles.issubset(actual_roles):
+        failures.append("MATH_ENG_DEPTH_TRANSFORMATION_COVERAGE_INSUFFICIENT")
+
+    if profile["require_non_provisional_provenance"]:
+        if gate.get("provenance", {}).get("claim_status") == "PROVISIONAL":
+            failures.append("MATH_ENG_DEPTH_PROVENANCE_PROVISIONAL")
+
+    return failures
 
 
 def resolve_manifest(request: dict, registry: dict | None = None) -> dict:
@@ -188,7 +280,7 @@ def _closure(gates: dict[str, dict], direct_gate_ids: list[str]) -> list[str]:
     return ordered
 
 
-def authoritative_gate_state(gate: dict) -> dict:
+def authoritative_gate_state(gate: dict, engineering_depth: str = "STANDARD") -> dict:
     source_scope = gate.get("provenance", {}).get("source_scope", "UNRESOLVED")
     readiness = gate.get("technical_readiness", "ENGINEERING_GATE_INCOMPLETE")
     failures: list[str] = []
@@ -197,13 +289,14 @@ def authoritative_gate_state(gate: dict) -> dict:
         failures.append("MATH_ENG_SOURCE_SCOPE_HELD")
     if readiness != "ENGINEERING_GATE_READY":
         failures.append("MATH_ENG_GATE_NOT_READY")
+    failures.extend(_depth_failures(gate, engineering_depth))
 
     return {
         "gate_id": gate["subtopic_id"],
         "authoritative_technical_readiness": readiness,
         "source_scope": source_scope,
         "blueprint_admissible": not failures,
-        "failure_codes": failures,
+        "failure_codes": list(dict.fromkeys(failures)),
     }
 
 
@@ -240,7 +333,10 @@ def compile_closure(
 
     gates = _gate_index(registry)
     transitive = _closure(gates, manifest["direct_gate_ids"])
-    states = [authoritative_gate_state(gates[gate_id]) for gate_id in transitive]
+    states = [
+        authoritative_gate_state(gates[gate_id], request["engineering_depth"])
+        for gate_id in transitive
+    ]
     ready = sum(1 for state in states if state["blueprint_admissible"])
     blocked = len(states) - ready
 
