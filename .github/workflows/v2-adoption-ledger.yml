@@ -1,0 +1,31 @@
+name: V2 Adoption Ledger
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Architecture/V2-00A_Adoption/**'
+      - '.github/workflows/v2-adoption-ledger.yml'
+  push:
+    paths:
+      - 'Grade 9/V2/Architecture/V2-00A_Adoption/**'
+      - '.github/workflows/v2-adoption-ledger.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Parse JSON contracts
+        run: |
+          python -m json.tool 'Grade 9/V2/Architecture/V2-00A_Adoption/ADOPTION_LEDGER.schema.json' >/dev/null
+          python -m json.tool 'Grade 9/V2/Architecture/V2-00A_Adoption/adoption_ledger.json' >/dev/null
+      - name: Validate seeded adoption ledger
+        run: |
+          python 'Grade 9/V2/Architecture/V2-00A_Adoption/validate_adoption_ledger.py' \
+            'Grade 9/V2/Architecture/V2-00A_Adoption/adoption_ledger.json'
+      - name: Run migration falsifiers
+        run: |
+          python 'Grade 9/V2/Architecture/V2-00A_Adoption/test_validate_adoption_ledger.py'

@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "programme_issue": 175,
+  "implementation_issue": 178,
+  "entries": [
+    {
+      "id": "A-VALID-MINIMAL",
+      "source_pr_or_issue": "PR #160",
+      "source_path_or_artifact": "canonical registry family",
+      "source_commit_or_identity": "example-source-identity",
+      "source_authority_class": "CANONICAL",
+      "behavior_or_invariant": "Canonical truth remains learner-independent and versioned.",
+      "v2_action": "ADAPT",
+      "v2_owner": "CORE1_CANONICAL_AUTHORITY",
+      "v2_destination": "Grade 9/V2/Core1/",
+      "semantic_differences": ["V2 destination is clean-lineage."],
+      "old_validation": ["historical contract validation"],
+      "new_validation_required": ["V2 canonical validation"],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    }
+  ]
+}

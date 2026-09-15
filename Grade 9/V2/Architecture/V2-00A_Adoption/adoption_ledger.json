@@ -1,0 +1,285 @@
+{
+  "schema_version": "0.1.0",
+  "programme_issue": 175,
+  "implementation_issue": 178,
+  "entries": [
+    {
+      "id": "A-PR160-CANONICAL",
+      "source_pr_or_issue": "PR #160",
+      "source_path_or_artifact": "canonical registry, ScopeGraph, ResearchClaim, RepresentationRequirement, ResearchBundle identity/promotion mechanisms",
+      "source_commit_or_identity": "1453635baed20570c9d62f9342be87a5d9a4e482",
+      "source_authority_class": "CANONICAL",
+      "behavior_or_invariant": "Learner-independent subject semantics are versioned, provenance-bound and deterministically packaged.",
+      "v2_action": "ADAPT",
+      "v2_owner": "CORE1_CANONICAL_AUTHORITY",
+      "v2_destination": "Grade 9/V2/Core1/",
+      "semantic_differences": [
+        "V2 adds dependency-closed CanonicalKnowledgeSet composition.",
+        "Learner state may influence study scope but cannot mutate canonical truth."
+      ],
+      "old_validation": [
+        "CONTRACT_SCHEMA_FREEZE_V1 = PASS",
+        "CORE1_DETERMINISTIC_REBUILD = PASS"
+      ],
+      "new_validation_required": [
+        "V2 canonical schema validation",
+        "dependency-closure falsifiers",
+        "deterministic V2 package rebuild",
+        "learner-mutation rejection"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR160-EXAM-EVIDENCE",
+      "source_pr_or_issue": "PR #160",
+      "source_path_or_artifact": "SourceLedger, rights/use state, ExamDemandProfile and question content/occurrence/evidence ledgers",
+      "source_commit_or_identity": "1453635baed20570c9d62f9342be87a5d9a4e482",
+      "source_authority_class": "EVIDENCE",
+      "behavior_or_invariant": "Subject truth is separated from source/exam/question evidence and evidence carries provenance and use state.",
+      "v2_action": "ADAPT",
+      "v2_owner": "CORE1_EVIDENCE_CUSTODY",
+      "v2_destination": "Grade 9/V2/Core1/evidence/",
+      "semantic_differences": [
+        "V2 evidence participates in dependency-closed canonical adjudication but remains distinct from canonical truth."
+      ],
+      "old_validation": [
+        "stable material-object traceability",
+        "structured rights/use state",
+        "external-question denominator dispositions"
+      ],
+      "new_validation_required": [
+        "V2 provenance/rights validation",
+        "truth-vs-evidence ownership falsifiers",
+        "question-evidence denominator tests"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR161-PUBLICATION-CUSTODY",
+      "source_pr_or_issue": "PR #161",
+      "source_path_or_artifact": "PublicationStructure, PhysicalPageMap, placement evidence, PDF hash binding, PublicationAudit/Manifest and independent validators",
+      "source_commit_or_identity": "a90d800aecdb9c7a812ea3c9da5ba5158719c60b",
+      "source_authority_class": "REALIZATION",
+      "behavior_or_invariant": "Material semantic content is traceable through structure and physical placement to an exact hash-bound artifact.",
+      "v2_action": "ADAPT",
+      "v2_owner": "CORE2C_PUBLICATION_REALIZATION",
+      "v2_destination": "Grade 9/V2/Core2/PublicationRealization/",
+      "semantic_differences": [
+        "V2 publication consumes already-owned StudyModel and LearningDesign outputs; realization cannot decide study content."
+      ],
+      "old_validation": [
+        "MODEL_TO_STRUCTURE_MATERIAL_CUSTODY = PASS",
+        "physical page custody/morphology exercised",
+        "exact PDF hash binding exercised"
+      ],
+      "new_validation_required": [
+        "V2 semantic-to-physical custody suite",
+        "StudyModel ownership rejection tests",
+        "exact-artifact drift falsifiers"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR161-LEARNING-DESIGN-OWNERSHIP",
+      "source_pr_or_issue": "PR #161",
+      "source_path_or_artifact": "PublicationPlan/LearningDesign learner-adaptation ownership",
+      "source_commit_or_identity": "a90d800aecdb9c7a812ea3c9da5ba5158719c60b",
+      "source_authority_class": "DECISION",
+      "behavior_or_invariant": "The old Core2 path proved executable learning-design binding but combined responsibilities that V2 separates.",
+      "v2_action": "REWRITE",
+      "v2_owner": "CORE2B_LEARNING_DESIGN",
+      "v2_destination": "Grade 9/V2/Core2/LearningDesign/",
+      "semantic_differences": [
+        "Study selection moves to V2 Core2-A Study Synthesis.",
+        "LearningDesign is narrowed to teaching choreography and may not rewrite StudyModel obligations."
+      ],
+      "old_validation": [
+        "LearningDesign contract executable on exercised paths"
+      ],
+      "new_validation_required": [
+        "StudyModel-vs-LearningDesign ownership tests",
+        "support/fading/transfer semantic falsifiers"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR166-LEARNER-EVIDENCE",
+      "source_pr_or_issue": "PR #166",
+      "source_path_or_artifact": "LearnerEvidenceLedger and scoped evidence provenance",
+      "source_commit_or_identity": "466641a1a3e5062e1fe1f7f60b6ceaf78d957033",
+      "source_authority_class": "EVIDENCE",
+      "behavior_or_invariant": "Learner evidence is append-only/descriptive and remains distinct from observation, diagnosis, state and teaching decisions.",
+      "v2_action": "ADAPT",
+      "v2_owner": "LEARNER_INTELLIGENCE",
+      "v2_destination": "Grade 9/V2/LearnerIntelligence/evidence/",
+      "semantic_differences": [
+        "V2 binds evidence to deterministic as-of/temporal policy and separates research/publication projections."
+      ],
+      "old_validation": [
+        "shared contract schema-validity gate"
+      ],
+      "new_validation_required": [
+        "V2 evidence schema validation",
+        "append-only/provenance tests",
+        "evidence-is-not-diagnosis falsifier"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR166-LEARNER-STATE",
+      "source_pr_or_issue": "PR #166",
+      "source_path_or_artifact": "ReasoningObservation, DiagnosticCase, LearnerStateSnapshot and scoped LearnerStateView contracts",
+      "source_commit_or_identity": "466641a1a3e5062e1fe1f7f60b6ceaf78d957033",
+      "source_authority_class": "INFERENCE",
+      "behavior_or_invariant": "Learner state is derived from evidence under explicit policy and is not canonical subject truth or a teaching decision.",
+      "v2_action": "ADAPT",
+      "v2_owner": "LEARNER_INTELLIGENCE",
+      "v2_destination": "Grade 9/V2/LearnerIntelligence/state/",
+      "semantic_differences": [
+        "V2 snapshot identity must bind evidence digest, registry version, diagnostic policy and explicit temporal input."
+      ],
+      "old_validation": [
+        "shared learner-state contract family"
+      ],
+      "new_validation_required": [
+        "deterministic snapshot identity",
+        "state-vs-study-decision boundary tests",
+        "staleness/as-of tests"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR167-REASONING-CONTRACTS",
+      "source_pr_or_issue": "PR #167",
+      "source_path_or_artifact": "CapabilityDefinition, ErrorSignature, DiagnosticProbe and Math/Physics/Chemistry reasoning contracts",
+      "source_commit_or_identity": "8fb111808a21ef4e9dcd56d4c08c0854e05199e3",
+      "source_authority_class": "CANONICAL",
+      "behavior_or_invariant": "A shared evidence engine can reference discipline-specific reasoning semantics and shared dependencies without collapsing subjects into one diagnostic model.",
+      "v2_action": "ADAPT",
+      "v2_owner": "CORE1_CANONICAL_AUTHORITY",
+      "v2_destination": "Grade 9/V2/Core1/reasoning/",
+      "semantic_differences": [
+        "Canonical capability/reasoning meaning is owned by Core1; learner-specific observations and states remain in Learner Intelligence.",
+        "Cross-subject recurrence remains a hypothesis/evidence pattern rather than a durable learner trait unless separately established."
+      ],
+      "old_validation": [
+        "subject-schema validity gate",
+        "cross-subject reasoning falsifier definitions"
+      ],
+      "new_validation_required": [
+        "canonical-vs-learner ownership tests",
+        "shared dependency composition tests",
+        "subject reasoning contract validation"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR168-INFERENCE-POLICY",
+      "source_pr_or_issue": "PR #168",
+      "source_path_or_artifact": "DiagnosticPolicy and positive-evidence-preserving inference methodology",
+      "source_commit_or_identity": "badcdaf6e55addc092acf94a498c908180ff8296",
+      "source_authority_class": "INFERENCE",
+      "behavior_or_invariant": "Wrong answers preserve successful checkpoints, localize failure, retain competing hypotheses and produce probes when evidence is ambiguous.",
+      "v2_action": "ADAPT",
+      "v2_owner": "LEARNER_INTELLIGENCE",
+      "v2_destination": "Grade 9/V2/LearnerIntelligence/inference/",
+      "semantic_differences": [
+        "V2 inference is integrated with deterministic temporal semantics and clean V2 capability identities."
+      ],
+      "old_validation": [
+        "cross-subject answer-sheet semantic falsifiers"
+      ],
+      "new_validation_required": [
+        "positive-evidence preservation tests",
+        "ambiguity-to-probe tests",
+        "single-error overdiagnosis rejection"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "PLANNED"
+    },
+    {
+      "id": "A-PR168-SYNTHETIC-FIXTURES",
+      "source_pr_or_issue": "PR #168",
+      "source_path_or_artifact": "anonymized synthetic Math/Physics/Chemistry answer-sheet acceptance fixtures",
+      "source_commit_or_identity": "badcdaf6e55addc092acf94a498c908180ff8296",
+      "source_authority_class": "EVIDENCE",
+      "behavior_or_invariant": "Synthetic fixtures test inference behavior but are not evidence about a real learner.",
+      "v2_action": "TEST_FIXTURE_ONLY",
+      "v2_owner": "TEST_CONFORMANCE",
+      "v2_destination": "Grade 9/V2/tests/LearnerIntelligence/",
+      "semantic_differences": [
+        "Fixtures may be normalized to V2 IDs but must retain synthetic/test provenance."
+      ],
+      "old_validation": [
+        "cross-subject acceptance fixture exercised against Phase 3 policy"
+      ],
+      "new_validation_required": [
+        "fixture provenance gate",
+        "production-evidence rejection test"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "TEST_ONLY"
+    },
+    {
+      "id": "A-PRIMARY-GENERAL-INVARIANTS",
+      "source_pr_or_issue": "Issue #162 / PR #163 / PR #164",
+      "source_path_or_artifact": "general evidence-dimension/support/route-change invariants from Primary architecture",
+      "source_commit_or_identity": "PR163=35e38a7cd0cb95e84c061394bd93d7e6cbf64123; PR164=85222b70407d58cffa2642748447a5b1b939367c",
+      "source_authority_class": "DECISION",
+      "behavior_or_invariant": "Independent use, delayed retention and transfer are distinguishable evidence dimensions; repeated same-route failure may justify a meaningful route change.",
+      "v2_action": "REFERENCE_ONLY",
+      "v2_owner": "ARCHITECTURE_GOVERNANCE",
+      "v2_destination": "Grade 9/V2/Architecture/reference-review/primary-general-invariants",
+      "semantic_differences": [
+        "No Primary ontology, grade-specific runtime contract or mastery enum is imported into Grade 9–11 V2."
+      ],
+      "old_validation": [
+        "Primary canonical semantics implemented in PR #163/#164"
+      ],
+      "new_validation_required": [
+        "independent Grade 9–11 justification before any later adoption"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": false,
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "A-ISSUE165-RCA",
+      "source_pr_or_issue": "Issue #165",
+      "source_path_or_artifact": "benchmark gap hypotheses, teaching-primitive candidates and human review dimensions",
+      "source_commit_or_identity": "issue-165-20260911",
+      "source_authority_class": "VALIDATION",
+      "behavior_or_invariant": "Technically correct custody does not prove instructional sufficiency; benchmark-derived RCA can expose validation gaps.",
+      "v2_action": "REFERENCE_ONLY",
+      "v2_owner": "RELEASE_VALIDATION",
+      "v2_destination": "Grade 9/V2/Validation/reference-review/issue-165",
+      "semantic_differences": [
+        "No PR #156/#157-derived page grammar or teaching primitive becomes producer truth in V2-00A."
+      ],
+      "old_validation": [],
+      "new_validation_required": [
+        "independent pedagogical justification before any producer-side adoption",
+        "candidate-first benchmark firewall check"
+      ],
+      "runtime_dependency_allowed": false,
+      "benchmark_derived": true,
+      "status": "REFERENCE_ONLY"
+    }
+  ]
+}
