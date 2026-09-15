@@ -363,7 +363,13 @@ def run_falsification_battery() -> None:
             if item_key is None:
                 gate[collection_key] = [value for value in gate[collection_key] if value != target]
             else:
-                gate[collection_key] = [row for row in gate[collection_key] if row[item_key] != target]
+                target_row = next(
+                    (row for row in gate[collection_key] if row[item_key] == target),
+                    None,
+                )
+                if target_row is None:
+                    raise AssertionError(f"Invariant target absent before mutation: {gate_id}:{target}")
+                target_row[item_key] = target + "-FALSIFIER-MISSING"
             expect_rejection(mutated, error_code)
 
     bad_cross_ref = copy.deepcopy(clean_registry)
