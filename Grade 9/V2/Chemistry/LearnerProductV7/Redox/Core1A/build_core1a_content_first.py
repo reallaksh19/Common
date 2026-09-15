@@ -22,9 +22,9 @@ _original_render_object = core.render_object
 def _content_first_render_object(obj, st, realized, question_ids, source_labels):
     flowables = _original_render_object(obj, st, realized, question_ids, source_labels)
     if obj.get("object_class") == "INDEPENDENT_PRACTICE":
-        # Generic layout rule: reserve enough room for a full independent-practice
-        # plus reconstruction/check sequence. Existing content is moved, never padded.
-        return [CondPageBreak(140 * mm)] + flowables
+        # Generic layout rule: reserve enough room for independent practice plus
+        # its reconstruction/check sequence. Existing content is moved, never padded.
+        return [CondPageBreak(190 * mm)] + flowables
     return flowables
 
 
