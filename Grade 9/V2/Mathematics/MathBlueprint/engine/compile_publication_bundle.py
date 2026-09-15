@@ -15,6 +15,7 @@ from pathlib import Path
 
 import compile_bound_product_page_blueprint as legacy
 from blueprint_common import digest, fail, load, validate_schema
+from compile_engineering_visibility_manifest import validate_visibility_manifest
 from compile_governed_product_page_blueprint import bind_governed_example_authority
 from materialize_intrinsic_depth import materialize_uniform_depth, depth_obligations
 from validate_pedagogy_research_manifest import validate_generation_research_bindings
@@ -28,11 +29,29 @@ def _seal_component(prefix: str, body: dict) -> dict:
     return out
 
 
-def compile_bundle(bucket_plan: dict, book: dict, core1b_dir: Path, c2a: dict, c2b: dict, gen: dict, catalog: dict, release_gate: dict, research_manifest: dict | None = None) -> dict:
+def compile_bundle(
+    bucket_plan: dict,
+    book: dict,
+    core1b_dir: Path,
+    c2a: dict,
+    c2b: dict,
+    gen: dict,
+    catalog: dict,
+    release_gate: dict,
+    engineering_visibility: dict,
+    research_manifest: dict | None = None,
+) -> dict:
     validate_generation_spec(gen)
     validate_generation_research_bindings(gen, research_manifest)
+    visibility_audit = validate_visibility_manifest(engineering_visibility)
     if release_gate.get("status") != "PASS":
         fail("MATH_PUBLICATION_BUNDLE_RELEASE_GATE_REQUIRED")
+    if engineering_visibility["source_release_gate_digest"] != digest(release_gate):
+        fail("MATH_PUBLICATION_BUNDLE_ENGINEERING_VISIBILITY_RELEASE_DRIFT")
+    if engineering_visibility["publication_authorization"] != "NOT_IMPLIED":
+        fail("MATH_PUBLICATION_BUNDLE_ENGINEERING_VISIBILITY_AUTHORITY_FORBIDDEN")
+    if visibility_audit["status"] != "PASS":
+        fail("MATH_PUBLICATION_BUNDLE_ENGINEERING_VISIBILITY_INVALID")
     if catalog.get("catalog_role") != "GOVERNED_CORE1A_EXAMPLE_ADMISSION" or not catalog.get("catalog_digest"):
         fail("MATH_PUBLICATION_BUNDLE_EXAMPLE_CATALOG_INVALID")
     material = copy.deepcopy(catalog); material.pop("catalog_digest", None)
@@ -77,7 +96,7 @@ def compile_bundle(bucket_plan: dict, book: dict, core1b_dir: Path, c2a: dict, c
         "pages": [*c2a_pages, *c2b_pages],
     })
     bundle = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "subject": "MATHEMATICS",
         "bundle_id": "",
         "source_release_status": "PASS",
@@ -85,6 +104,8 @@ def compile_bundle(bucket_plan: dict, book: dict, core1b_dir: Path, c2a: dict, c
         "generation_spec_digest": digest(gen),
         "governed_example_catalog_digest": catalog["catalog_digest"],
         "pedagogy_research_manifest_digest": digest(research_manifest) if research_manifest is not None else None,
+        "engineering_visibility_manifest_digest": engineering_visibility["manifest_digest"],
+        "engineering_visibility": copy.deepcopy(engineering_visibility),
         "concept_components": concept_components,
         "problem_component": problem_component,
         "publication_stage_order": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
@@ -106,6 +127,7 @@ def main() -> None:
     ap.add_argument("--core2b-plan", required=True)
     ap.add_argument("--generation-spec", required=True)
     ap.add_argument("--pedagogy-research-manifest")
+    ap.add_argument("--engineering-visibility-manifest", required=True)
     ap.add_argument("--release-gate", required=True)
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
@@ -113,10 +135,18 @@ def main() -> None:
     bundle = compile_bundle(
         load(args.bucket_plan), load(args.core1a_manuscript), Path(args.core1b_dir),
         load(args.core2a_blueprint), load(args.core2b_plan), load(args.generation_spec),
-        load(args.core1a_example_catalog), load(args.release_gate), research,
+        load(args.core1a_example_catalog), load(args.release_gate),
+        load(args.engineering_visibility_manifest), research,
     )
     Path(args.out).write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({"status":"COMPILED","bundle_id":bundle["bundle_id"],"concept_components":len(bundle["concept_components"]),"difficulty_badges":sorted({x["difficulty_badge"] for x in bundle["concept_components"]}),"problem_pages":len(bundle["problem_component"]["pages"])}, indent=2))
+    print(json.dumps({
+        "status": "COMPILED",
+        "bundle_id": bundle["bundle_id"],
+        "concept_components": len(bundle["concept_components"]),
+        "difficulty_badges": sorted({x["difficulty_badge"] for x in bundle["concept_components"]}),
+        "problem_pages": len(bundle["problem_component"]["pages"]),
+        "engineering_visibility_gate_count": bundle["engineering_visibility"]["gate_count"],
+    }, indent=2))
 
 
 if __name__ == "__main__":
