@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-gate-source-audit.schema.json",
+  "title": "Chemistry Engineering Gate Source Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "audit_id",
+    "gate_id",
+    "base_registry_ref",
+    "base_provenance_status",
+    "effective_provenance",
+    "source_layers",
+    "claim_bindings",
+    "equation_bindings",
+    "transformation_bindings",
+    "scope_tiers",
+    "learner_surface_policy",
+    "current_gate_defects",
+    "audit_status"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "audit_id": {"type": "string", "pattern": "^CHEM-SOURCE-AUDIT-[A-Z0-9-]+$"},
+    "gate_id": {"const": "CHEM-REDOX-OXIDATION"},
+    "base_registry_ref": {"const": "policies/chemistry-technical-engineering-gates.v1.json"},
+    "base_provenance_status": {"const": "SUPERSEDED_BY_SOURCE_AUDIT"},
+    "effective_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_class", "source_curriculum", "scope_policy", "source_references"],
+      "properties": {
+        "authority_class": {"const": "MIXED_SOURCE_DEFINED_AND_STANDARD_DERIVED"},
+        "source_curriculum": {"const": "NCERT Class X Science + NCERT Class XI Chemistry"},
+        "scope_policy": {"const": "GRADE_BANDED"},
+        "source_references": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 5}}
+      }
+    },
+    "source_layers": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["layer_id", "authority_class", "source_ref", "scope", "supports"],
+        "properties": {
+          "layer_id": {"type": "string", "pattern": "^SRC-[A-Z0-9-]+$"},
+          "authority_class": {"enum": ["SOURCE_DEFINED", "OFFICIAL_SYLLABUS", "STANDARD_CHEMISTRY_DERIVED"]},
+          "source_ref": {"type": "string", "minLength": 5},
+          "scope": {"type": "string", "minLength": 3},
+          "supports": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}}
+        }
+      }
+    },
+    "claim_bindings": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["asset_id", "authority_layer_ids", "scope_tier", "claim_class", "downstream_scope"],
+        "properties": {
+          "asset_id": {"type": "string", "pattern": "^CON-CHEM-"},
+          "authority_layer_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "scope_tier": {"enum": ["FOUNDATION_G10", "FORMAL_G11", "EXTENDED_G11"]},
+          "claim_class": {"enum": ["SOURCE_DEFINED", "STANDARD_CHEMISTRY_DERIVED"]},
+          "downstream_scope": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "equation_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["equation_id", "authority_layer_ids", "scope_tier", "downstream_scope"],
+        "properties": {
+          "equation_id": {"type": "string", "pattern": "^EQ-CHEM-"},
+          "authority_layer_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "scope_tier": {"enum": ["FOUNDATION_G10", "FORMAL_G11", "EXTENDED_G11"]},
+          "downstream_scope": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "transformation_bindings": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fingerprint", "authority_layer_ids", "scope_tier", "downstream_scope"],
+        "properties": {
+          "fingerprint": {"type": "string", "minLength": 5},
+          "authority_layer_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "scope_tier": {"enum": ["FOUNDATION_G10", "FORMAL_G11", "EXTENDED_G11"]},
+          "downstream_scope": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "scope_tiers": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tier_id", "grade_band", "description"],
+        "properties": {
+          "tier_id": {"enum": ["FOUNDATION_G10", "FORMAL_G11", "EXTENDED_G11"]},
+          "grade_band": {"type": "string", "minLength": 2},
+          "description": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "learner_surface_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["internal_concept_ids_hidden", "legacy_internal_ids", "forbidden_surface_labels", "preferred_surface_language"],
+      "properties": {
+        "internal_concept_ids_hidden": {"const": true},
+        "legacy_internal_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "forbidden_surface_labels": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "preferred_surface_language": {"type": "array", "minItems": 2, "items": {"type": "string"}}
+      }
+    },
+    "current_gate_defects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["defect_id", "status", "repair"],
+        "properties": {
+          "defect_id": {"type": "string", "pattern": "^CHEM-REDOX-DEFECT-"},
+          "status": {"const": "REPAIRED_BY_AUDIT_LAYER"},
+          "repair": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "audit_status": {"const": "SOURCE_HARDENED"}
+  }
+}
