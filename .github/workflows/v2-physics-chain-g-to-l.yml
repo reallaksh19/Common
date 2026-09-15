@@ -86,6 +86,7 @@ jobs:
         run: |
           P="Grade 9/V2/Physics"
           python "$P/ExactProduct/contracts/validate_contracts.py"
+          python "$P/ExactProduct/tests/test_release_authority_manifest.py"
           python "$P/ExactProduct/tests/test_physics_exact_product.py"
           python "$P/ExactProduct/tests/test_physics_human_review_intake.py"
           python "$P/ExactProduct/tests/test_physics_governed_release.py"
