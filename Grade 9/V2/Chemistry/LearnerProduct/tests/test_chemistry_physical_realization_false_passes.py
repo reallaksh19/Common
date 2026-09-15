@@ -1,7 +1,10 @@
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
+
+import pymupdf
 
 HERE = Path(__file__).resolve()
 LP_ROOT = HERE.parents[1]
@@ -10,12 +13,14 @@ BP_ROOT = CHEM_ROOT / "LearningBlueprint"
 sys.path.insert(0, str(LP_ROOT / "engine"))
 
 from chemistry_review_candidate_preflight import review_candidate_checks  # noqa: E402
+from chemistry_review_writer import ReviewWriter  # noqa: E402
 from preflight_chemistry_core_product import representation_physical_closure  # noqa: E402
 from render_chemistry_a_content_first import _begin_attempt_support_episode, _render_attempt_support  # noqa: E402
 
 V5 = json.loads((BP_ROOT / "policies" / "v5-study-product-quality-policy.json").read_text(encoding="utf-8"))
 PRODUCT_CONTROL = json.loads((BP_ROOT / "policies" / "product-control-consolidation.v1.json").read_text(encoding="utf-8"))
 REVIEW = json.loads((BP_ROOT / "policies" / "review-candidate-realization.v1.json").read_text(encoding="utf-8"))
+RENDER_POLICY = json.loads((LP_ROOT / "policies" / "chemistry-learner-render-policy.json").read_text(encoding="utf-8"))
 
 
 class FakeWriter:
@@ -138,12 +143,41 @@ class ChemistryPhysicalRealizationFalsePassTests(unittest.TestCase):
         self.assertNotIn("_attempt_support,", source)
         self.assertIn("_render_attempt_support(writer, support, ref)", source)
 
+    def test_automatic_continuation_repeats_current_semantic_heading_physically(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "continuation-context.pdf"
+            writer = ReviewWriter(path, "Generic continuation context test", RENDER_POLICY)
+            writer.new_page("generic concept", role="CONCEPT_EXPLANATION")
+            writer.heading("Generic concept context", level=2, ref="GENERIC-CONTEXT")
+            writer.y = writer.margin + 12.0
+            writer.para("Continue the governed learner reasoning without losing its section context.", ref="GENERIC-CONTEXT")
+            metrics = writer.finish()
+
+            continuation_rows = [row for row in metrics["draw_ops"] if row["kind"] == "CONTINUATION_HEADER"]
+            self.assertEqual(len(continuation_rows), 1)
+            continuation = continuation_rows[0]
+            self.assertGreater(continuation["page"], 2)
+            self.assertEqual(continuation["text"], "Generic concept context")
+            self.assertEqual(continuation["content_ref"], "GENERIC-CONTEXT")
+
+            doc = pymupdf.open(path)
+            page_text = doc[continuation["page"] - 1].get_text("text")
+            self.assertIn("CONTINUING", page_text)
+            self.assertIn("Generic concept context", page_text)
+            doc.close()
+
     def test_static_b_physical_representation_is_post_attempt_and_topic_neutral(self):
         source = (LP_ROOT / "engine" / "render_chemistry_static_b_product.py").read_text(encoding="utf-8")
         self.assertIn("used_representation_refs", source)
         self.assertIn("writer.primitive", source)
         self.assertNotIn("CLUE ROUTE", source)
         self.assertIn("RESUME YOUR RECONSTRUCTION", source)
+        self.assertIn("RESUME YOUR SOLUTION", source)
+        resume_solution = source.index('"RESUME YOUR SOLUTION"')
+        resume_workspace = source.index("w.workspace(4, ref)", resume_solution)
+        solution_page = source.index('w.new_page("Core2B solution"', resume_solution)
+        self.assertLess(resume_solution, resume_workspace)
+        self.assertLess(resume_workspace, solution_page)
         self.assertLess(source.index('w.answer_panel("EXPECTED RESPONSE"'), source.index('_render_used_representations(w, payload, ref + "-CHECK")'))
         self.assertLess(source.index('_render_used_representations(w, payload, ref + "-CHECK")'), source.index('w.verification_panel("VERIFY"'))
         lowered = source.lower()
