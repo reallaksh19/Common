@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from assemble_product_governance_from_receipts import assemble
-from engineering_product_custody import load_custody, custody_summary
+from engineering_product_custody import build_custody, custody_summary
 from validate_product_governance import load
 
 
@@ -74,12 +74,27 @@ def validate_frozen_source_custody(registry: dict, governance: dict) -> None:
             fail("RELEASE_CANONICAL_ANSWER_CONTRACT_MISMATCH", qref)
 
 
-def release(registry: dict, receipts: list[dict], engineering_custody: dict | None = None):
-    validate_engineering_custody(registry, receipts, engineering_custody)
+def release(
+    registry: dict,
+    receipts: list[dict],
+    engineering_admission: dict | None = None,
+    *,
+    engineering_authorizations: dict[str, dict] | None = None,
+    technical_registry: dict | None = None,
+):
+    if engineering_admission is None:
+        fail("RELEASE_ENGINEERING_ADMISSION_REQUIRED")
+    current_custody = build_custody(
+        engineering_admission,
+        registry,
+        engineering_authorizations=engineering_authorizations,
+        technical_registry=technical_registry,
+    )
+    validate_engineering_custody(registry, receipts, current_custody)
     coverage, similarity, governance, result = assemble(registry, receipts)
     validate_frozen_source_custody(registry, governance)
     result = dict(result)
-    result["engineering_domain_authorization"] = {"status": "PASS", **custody_summary(engineering_custody)}
+    result["engineering_domain_authorization"] = {"status": "PASS", **custody_summary(current_custody)}
     result["frozen_source_custody"] = {"status": "PASS"}
     result["canonical_answer_custody"] = {"status": "PASS"}
     return coverage, similarity, governance, result
@@ -93,9 +108,9 @@ def main() -> None:
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
     registry = load(args.registry)
-    engineering_custody = load_custody(args.engineering_admission, registry)
+    engineering_admission = load(args.engineering_admission)
     receipts = [load(x) for x in args.receipt]
-    coverage, similarity, governance, result = release(registry, receipts, engineering_custody)
+    coverage, similarity, governance, result = release(registry, receipts, engineering_admission)
     out = Path(args.out_dir); out.mkdir(parents=True, exist_ok=True)
     for name, obj in (
         ("core_coverage_ledger.json", coverage),
