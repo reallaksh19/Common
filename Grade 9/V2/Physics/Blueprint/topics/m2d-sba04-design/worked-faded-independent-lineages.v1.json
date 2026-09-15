@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0.0",
+  "lineage_plan_id": "M2D-SBA04-WORKED-FADED-INDEPENDENT-V1",
+  "bucket_id": "M2D-SBA-04",
+  "authority_class": "CORE1A_AUTHORING_DESIGN_DECISION",
+  "transfer_registry_ref": "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json",
+  "fingerprint_method": "sha256 of canonical JSON for each structural_invariant object (sorted keys, compact separators)",
+  "lineages": [
+    {
+      "lineage_id": "M2D-SBA04-R1-LIN-V1",
+      "routine_id": "M2D-SBA-04-R1",
+      "structural_invariant": {
+        "problem_family": "VELOCITY_DIRECTION_HORIZONTAL_EVENT",
+        "recognition": ["direction_or_angle_of_velocity", "horizontal_velocity_event", "work_backward_from_later_apex"],
+        "required_moves": ["write_current_components", "identify_v_y_zero_horizontal_event", "derive_direction_from_signed_components", "interpret_and_check"],
+        "protected_relation": "current signed components determine direction; horizontal event iff v_y=0"
+      },
+      "invariant_fingerprint": "sha256:4daddb00c8b5964312a1094896e3b85ada611cba62560b6bc634ea752db5d4df",
+      "worked": {
+        "artifact_id": "WFI-SBA04-R1-WORKED",
+        "prompt": "A projectile has constant horizontal velocity 15 m/s and becomes horizontal at t=4.0 s. With g=10 m/s^2, find the velocity angle at t=2.0 s.",
+        "scaffolding": ["Mark v_y=0 at t=4.0 s.", "Work backward two seconds to find v_y at t=2.0 s.", "Combine v_x and signed v_y to obtain the angle.", "State the direction relative to horizontal."],
+        "answer_check": "v_y(2)=20 m/s and v_x=15 m/s, so phi=atan2(20,15) above horizontal."
+      },
+      "faded": {
+        "artifact_id": "WFI-SBA04-R1-FADED",
+        "prompt": "A projectile has constant horizontal velocity 24 m/s and becomes horizontal at t=3.5 s. With g=10 m/s^2, find the velocity angle at t=1.5 s.",
+        "retained_scaffolding": ["Use the later horizontal event to recover the earlier vertical component.", "Finish by converting the signed component pair into direction."],
+        "removed_scaffolding": ["explicit v_y=0 substitution", "explicit elapsed-time arithmetic"]
+      },
+      "independent": {
+        "artifact_id": "WFI-SBA04-R1-INDEPENDENT",
+        "registry_ref": "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json#M2D-SBA-04-R1.independent_practice"
+      }
+    },
+    {
+      "lineage_id": "M2D-SBA04-R2-LIN-V1",
+      "routine_id": "M2D-SBA-04-R2",
+      "structural_invariant": {
+        "problem_family": "PERPENDICULAR_VELOCITY_EVENT",
+        "recognition": ["velocity_perpendicular_to_initial_velocity", "explicit_90_degree_condition"],
+        "required_moves": ["write_both_velocity_vectors", "translate_90_degrees_to_dot_zero", "substitute_matching_components", "solve_and_check_positive_time"],
+        "protected_relation": "perpendicular velocity vectors in a common frame satisfy u dot v(t)=0"
+      },
+      "invariant_fingerprint": "sha256:9da8b364dfcf632acdac04c97c70e33d343ab12021fe960d1ce9034128246479",
+      "worked": {
+        "artifact_id": "WFI-SBA04-R2-WORKED",
+        "prompt": "A projectile is launched with u=(6 i + 8 j) m/s. With g=10 m/s^2, find the first time its velocity is perpendicular to its initial velocity.",
+        "scaffolding": ["Write u and v(t) in the same x-y frame.", "Translate perpendicularity to u dot v(t)=0.", "Substitute the signed component pairs.", "Solve for positive t and substitute back."],
+        "answer_check": "v(t)=(6,8-10t); 36+8(8-10t)=0 gives t=1.25 s."
+      },
+      "faded": {
+        "artifact_id": "WFI-SBA04-R2-FADED",
+        "prompt": "A projectile is launched with u=(12 i + 5 j) m/s. With g=10 m/s^2, find the first time its velocity is perpendicular to its initial velocity.",
+        "retained_scaffolding": ["Represent both velocity vectors in one frame.", "Use the vector condition before solving."],
+        "removed_scaffolding": ["explicit dot-product expansion", "explicit substitution-back step"]
+      },
+      "independent": {
+        "artifact_id": "WFI-SBA04-R2-INDEPENDENT",
+        "registry_ref": "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json#M2D-SBA-04-R2.independent_practice"
+      }
+    },
+    {
+      "lineage_id": "M2D-SBA04-R3-LIN-V1",
+      "routine_id": "M2D-SBA-04-R3",
+      "structural_invariant": {
+        "problem_family": "SPEED_AT_GIVEN_HEIGHT",
+        "recognition": ["speed_at_specified_height", "fraction_of_maximum_height", "time_absent_or_unnecessary"],
+        "required_moves": ["separate_horizontal_vertical", "use_vertical_no_time_relation", "apply_maximum_height_condition", "rebuild_total_speed_and_compare"],
+        "protected_relation": "v_y^2=u_y^2-2gy with constant v_x, then v^2=v_x^2+v_y^2"
+      },
+      "invariant_fingerprint": "sha256:cfdc029c6d0eab0d147f2485b790b0ec28c70306e967a71af20342d926e51f95",
+      "worked": {
+        "artifact_id": "WFI-SBA04-R3-WORKED",
+        "prompt": "An ideal projectile has u_x=10 m/s and u_y=20 m/s. Find its speed at half its maximum height, using g=10 m/s^2 without solving time.",
+        "scaffolding": ["Use 2gH=u_y^2.", "At H/2 evaluate v_y^2=u_y^2-2g(H/2).", "Keep v_x=u_x.", "Rebuild total speed from squared components."],
+        "answer_check": "H=20 m, v_y^2=200, and v^2=100+200=300, so v=10 sqrt(3) m/s."
+      },
+      "faded": {
+        "artifact_id": "WFI-SBA04-R3-FADED",
+        "prompt": "An ideal projectile has u_x=12 m/s and u_y=16 m/s. Find the ratio of its speed at H/2 to its launch speed without solving time.",
+        "retained_scaffolding": ["Use the no-time vertical relation at H/2.", "Compare squared total speeds."],
+        "removed_scaffolding": ["explicit maximum-height substitution", "explicit total-speed expansion"]
+      },
+      "independent": {
+        "artifact_id": "WFI-SBA04-R3-INDEPENDENT",
+        "registry_ref": "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json#M2D-SBA-04-R3.independent_practice"
+      }
+    },
+    {
+      "lineage_id": "M2D-SBA04-R4-LIN-V1",
+      "routine_id": "M2D-SBA-04-R4",
+      "structural_invariant": {
+        "problem_family": "APEX_MINIMUM_SPEED_CROSS_BUCKET",
+        "recognition": ["minimum_projectile_speed", "apex_speed_fraction_of_launch_speed", "question_continues_to_range_or_height"],
+        "required_moves": ["identify_apex_speed", "convert_speed_ratio_to_angle", "stop_at_bucket_boundary", "release_only_after_SBA05"],
+        "protected_relation": "v_apex=v_min=u cos(theta); range/height continuation remains held until M2D-SBA-05"
+      },
+      "invariant_fingerprint": "sha256:850c1793a27fdebdd9db7cb4a17abd7ede1fbc7b2b67e8d1e76b2e1efc5a6264",
+      "worked": {
+        "artifact_id": "WFI-SBA04-R4-WORKED",
+        "prompt": "A projectile has minimum speed 0.8u. Determine the launch-angle relation available from SBA04 and state where the solution must stop before SBA05.",
+        "scaffolding": ["Identify the apex as the minimum-speed event.", "Use v_apex=u cos(theta).", "Convert the ratio to cos(theta).", "Do not introduce range or height formulas."],
+        "answer_check": "cos(theta)=0.8; theta=cos^-1(0.8). Stop before range/height continuation."
+      },
+      "faded": {
+        "artifact_id": "WFI-SBA04-R4-FADED",
+        "prompt": "A projectile has minimum speed 0.5u. Determine the launch-angle relation that SBA04 alone licenses, and identify any continuation that remains held.",
+        "retained_scaffolding": ["Use the apex/minimum-speed relation.", "Respect the SBA04-to-SBA05 boundary."],
+        "removed_scaffolding": ["explicit cosine equation", "explicit instruction naming range and height formulas"]
+      },
+      "independent": {
+        "artifact_id": "WFI-SBA04-R4-INDEPENDENT",
+        "registry_ref": "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json#M2D-SBA-04-R4.independent_practice"
+      }
+    }
+  ]
+}

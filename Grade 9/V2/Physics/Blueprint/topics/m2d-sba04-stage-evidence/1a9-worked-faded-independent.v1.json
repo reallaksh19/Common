@@ -1,0 +1,59 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A9-WORKED-FADED-INDEPENDENT-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A9_WORKED_FADED_INDEPENDENT_PLAN",
+  "evidence_kind": "WORKED_TO_FADED_LINEAGE",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "topics/m2d-sba04-design/worked-faded-independent-lineages.v1.json",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json"
+  ],
+  "artifact_refs": [
+    "M2D-SBA04-R1-LIN-V1",
+    "M2D-SBA04-R2-LIN-V1",
+    "M2D-SBA04-R3-LIN-V1",
+    "M2D-SBA04-R4-LIN-V1"
+  ],
+  "evidence_refs": [
+    "topics/m2d-sba04-design/worked-faded-independent-lineages.v1.json#lineages",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json#M2D-SBA-04.transfer_routines"
+  ],
+  "proof": {
+    "lineages": [
+      {
+        "lineage_id": "M2D-SBA04-R1-LIN-V1",
+        "worked_ref": "WFI-SBA04-R1-WORKED",
+        "faded_ref": "WFI-SBA04-R1-FADED",
+        "independent_ref": "WFI-SBA04-R1-INDEPENDENT",
+        "invariant_fingerprint": "sha256:4daddb00c8b5964312a1094896e3b85ada611cba62560b6bc634ea752db5d4df",
+        "fading_changes": ["remove-explicit-v_y-zero-substitution", "remove-explicit-elapsed-time-arithmetic"]
+      },
+      {
+        "lineage_id": "M2D-SBA04-R2-LIN-V1",
+        "worked_ref": "WFI-SBA04-R2-WORKED",
+        "faded_ref": "WFI-SBA04-R2-FADED",
+        "independent_ref": "WFI-SBA04-R2-INDEPENDENT",
+        "invariant_fingerprint": "sha256:9da8b364dfcf632acdac04c97c70e33d343ab12021fe960d1ce9034128246479",
+        "fading_changes": ["remove-explicit-dot-product-expansion", "remove-explicit-substitution-back-step"]
+      },
+      {
+        "lineage_id": "M2D-SBA04-R3-LIN-V1",
+        "worked_ref": "WFI-SBA04-R3-WORKED",
+        "faded_ref": "WFI-SBA04-R3-FADED",
+        "independent_ref": "WFI-SBA04-R3-INDEPENDENT",
+        "invariant_fingerprint": "sha256:cfdc029c6d0eab0d147f2485b790b0ec28c70306e967a71af20342d926e51f95",
+        "fading_changes": ["remove-explicit-maximum-height-substitution", "remove-explicit-total-speed-expansion"]
+      },
+      {
+        "lineage_id": "M2D-SBA04-R4-LIN-V1",
+        "worked_ref": "WFI-SBA04-R4-WORKED",
+        "faded_ref": "WFI-SBA04-R4-FADED",
+        "independent_ref": "WFI-SBA04-R4-INDEPENDENT",
+        "invariant_fingerprint": "sha256:850c1793a27fdebdd9db7cb4a17abd7ede1fbc7b2b67e8d1e76b2e1efc5a6264",
+        "fading_changes": ["remove-explicit-cosine-equation", "remove-explicit-range-height-formula-warning-while-retaining-boundary-check"]
+      }
+    ]
+  },
+  "unresolved_requirements": []
+}
