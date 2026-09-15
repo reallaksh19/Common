@@ -5,17 +5,20 @@ on:
     paths:
       - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-engineering-*.schema.json'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-product-engineering-custody-v1.schema.json'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-product-source-scope-v1.schema.json'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-gate-source-audit.schema.json'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/compile_chemistry_engineering_*.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/compile_chemistry_product_engineering_custody.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_cdau_engineering_ready.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_pal_engineering_ready.py'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_product_source_scope.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_engineering_gates_v2.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_gate_source_audit.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench_v1.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_authorization_binding.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_product_engineering_custody.py'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_product_source_scope.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_redox_source_hardening.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/policies/chemistry-technical-engineering-gates.v1.json'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/policies/chemistry-redox-source-audit.v1.json'
@@ -36,6 +39,8 @@ jobs:
         run: pip install jsonschema
       - name: Validate Redox source hardening and grade-scope custody
         run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_redox_source_hardening.py"
+      - name: Validate Redox product source-scope contract
+        run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_product_source_scope.py"
       - name: Validate PR377 Chemistry gates through hardened wrapper
         run: python "Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_engineering_gates_v2.py"
       - name: Run Chemistry Engineering Workbench falsifiers
@@ -68,13 +73,17 @@ jobs:
           "fixtures/engineering-workbench/redox-request.v1.json"
           "fixtures/engineering-workbench/redox-manifest.v1.json"
           "golden/v7/ccbom-redox.json"
+          "fixtures/engineering-workbench/redox-product-source-scope.v1.json"
+          "golden/v7/core1a-study-note-redox-authority.json"
           --out /tmp/chem-redox-product-engineering-custody.json
-      - name: Validate PAL against current engineering custody
+      - name: Validate PAL against current engineering, scope and product custody
         run: >-
           python "Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_pal_engineering_ready.py"
           "fixtures/engineering-workbench/redox-request.v1.json"
           "fixtures/engineering-workbench/redox-manifest.v1.json"
           "golden/v7/ccbom-redox.json"
+          "fixtures/engineering-workbench/redox-product-source-scope.v1.json"
+          "golden/v7/core1a-study-note-redox-authority.json"
           /tmp/chem-redox-product-engineering-custody.json
       - name: Compile Redox Engineering Passport
         run: >-
