@@ -53,6 +53,23 @@ assert newton_result["readiness_authorized"] is False
 assert newton_result["source_custody_promoted"] is False
 assert "Q15" not in json.dumps(newton_review, sort_keys=True)
 
+projectile_review = load("provenance/pr383/mapping-reviews/PHY-KIN-2D-PROJECTILE.v1.json")
+projectile_result = validate(projectile_review)
+assert projectile_result["status"] == "PASS"
+assert projectile_result["decision"] == "APPROVED"
+assert projectile_result["discovery_gate_id"] == "PHY-KIN-2D-PROJECTILE"
+assert projectile_result["target_gate_ids"] == [
+    "PHY-M2D-PROJECTILE-COMPONENTS",
+    "PHY-M2D-SHARED-CLOCK",
+    "PHY-M2D-VELOCITY-EVOLUTION",
+]
+assert projectile_result["source_obligation_count"] == 14
+assert projectile_result["covered_obligation_count"] == 14
+assert projectile_result["uncovered_obligation_count"] == 0
+assert projectile_result["readiness_authorized"] is False
+assert projectile_result["source_custody_promoted"] is False
+assert "Q15" not in json.dumps(projectile_review, sort_keys=True)
+
 bad = copy.deepcopy(grav_review)
 bad["target_snapshot"][0]["gate_git_blob_sha"] = "0" * 40
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_TARGET_BLOB_DRIFT")
@@ -72,9 +89,13 @@ bad = copy.deepcopy(newton_review)
 bad["coverage"][0]["target_refs"][0]["target_pointer"] = "/concepts/999"
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_POINTER_INVALID")
 
-bad = copy.deepcopy(newton_review)
+bad = copy.deepcopy(projectile_review)
+bad["target_snapshot"][1]["gate_git_blob_sha"] = "0" * 40
+expect_code(lambda: validate(bad), "E_ENG_MAPPING_TARGET_BLOB_DRIFT")
+
+bad = copy.deepcopy(projectile_review)
 bad["question_id"] = "Q15"
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_REVIEW_SCHEMA")
 
 print("Physics engineering discovery mapping reviews: PASS")
-print({"gravitation": grav_result, "newton_laws": newton_result})
+print({"gravitation": grav_result, "newton_laws": newton_result, "projectile": projectile_result})
