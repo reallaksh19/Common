@@ -3,127 +3,22 @@
   "profile_id": "PHYSICS-ENGINEERING-GATE-INVARIANTS-V3",
   "scope": "CANONICAL_PHYSICS_GATE_REGISTRY",
   "required_gates": {
-    "PHY-VEC-BASICS": {
-      "required_invariants": ["INV-VEC-SCALAR-VECTOR-DISTINCTION", "INV-VEC-MAGNITUDE-NONNEGATIVE", "INV-VEC-DIRECTION-REFERENCE"],
-      "required_concepts": ["CON-VEC-SCALAR-VECTOR", "CON-VEC-DIRECTION-REFERENCE"],
-      "required_relations": ["EQ-VEC-MAGNITUDE-NONNEGATIVE"],
-      "required_representations": ["REP-VEC-DIRECTED-SEGMENT"],
-      "required_prerequisites": [],
-      "required_verifications": ["UNITS", "SIGN_DIRECTION", "GEOMETRIC_CONSISTENCY"]
-    },
-    "PHY-VEC-ADD-SUB": {
-      "required_invariants": ["INV-VEC-HEAD-TO-TAIL", "INV-VEC-SUBTRACTION-NEGATIVE", "INV-VEC-RESULTANT-MEANING"],
-      "required_concepts": ["CON-VEC-RESULTANT", "CON-VEC-SUBTRACTION"],
-      "required_relations": ["EQ-VEC-SUM"],
-      "required_representations": ["REP-VEC-HEAD-TO-TAIL"],
-      "required_prerequisites": ["PHY-VEC-BASICS"],
-      "required_verifications": ["SIGN_DIRECTION", "GEOMETRIC_CONSISTENCY", "LIMITING_CASE"]
-    },
-    "PHY-VEC-COMPONENTS": {
-      "required_invariants": ["INV-VEC-AXES-DECLARED", "INV-VEC-COMPONENT-SIGNS", "INV-VEC-COMPONENT-TO-RESULTANT"],
-      "required_concepts": ["CON-VEC-SIGN-CONVENTION", "CON-VEC-RESULTANT-RECONSTRUCTION"],
-      "required_relations": ["EQ-VEC-COMPONENTS", "EQ-VEC-RECONSTRUCT"],
-      "required_representations": ["REP-VEC-COMPONENT-TRIANGLE"],
-      "required_prerequisites": ["PHY-VEC-ADD-SUB"],
-      "required_verifications": ["SIGN_DIRECTION", "INVERSE_RELATION", "GEOMETRIC_CONSISTENCY"]
-    },
-    "PHY-NLM-INTERACTION": {
-      "required_invariants": ["INV-NLM-FORCE-HAS-AGENT-RECEIVER", "INV-NLM-CONTACT-VS-NONCONTACT"],
-      "required_concepts": ["CON-NLM-AGENT-RECEIVER"],
-      "required_relations": [],
-      "required_representations": ["REP-NLM-INTERACTION-LINK"],
-      "required_prerequisites": ["PHY-VEC-BASICS"],
-      "required_verifications": ["BODY_AGENT_CONSISTENCY", "MODEL_VALIDITY"]
-    },
-    "PHY-NLM-FBD": {
-      "required_invariants": ["INV-NLM-SYSTEM-SELECTED-FIRST", "INV-NLM-FBD-FORCES-ON-SYSTEM-ONLY", "INV-NLM-FBD-COMPLETE"],
-      "required_concepts": ["CON-NLM-SYSTEM-BOUNDARY"],
-      "required_relations": [],
-      "required_representations": ["REP-NLM-FBD"],
-      "required_prerequisites": ["PHY-NLM-INTERACTION", "PHY-VEC-BASICS"],
-      "required_verifications": ["BODY_AGENT_CONSISTENCY", "MODEL_VALIDITY"]
-    },
-    "PHY-NLM-FIRST-LAW": {
-      "required_invariants": ["INV-NLM-EQUILIBRIUM-A-ZERO", "INV-NLM-ZERO-NET-FORCE-NOT-ZERO-VELOCITY", "INV-NLM-INERTIAL-FRAME"],
-      "required_concepts": ["CON-NLM-EQUILIBRIUM"],
-      "required_relations": ["EQ-NLM-EQUILIBRIUM"],
-      "required_representations": ["REP-NLM-EQUILIBRIUM-FBD"],
-      "required_prerequisites": ["PHY-NLM-FBD"],
-      "required_verifications": ["SIGN_DIRECTION", "MODEL_VALIDITY"]
-    },
-    "PHY-NLM-SECOND-LAW": {
-      "required_invariants": ["INV-NLM-FBD-BEFORE-EQUATION", "INV-NLM-AXIS-WISE-SUM-F", "INV-NLM-SAME-SYSTEM-SAME-AXES"],
-      "required_concepts": ["CON-NLM-NET-FORCE"],
-      "required_relations": ["EQ-NLM-SECOND-X", "EQ-NLM-SECOND-Y"],
-      "required_representations": ["REP-NLM-FBD-AXES"],
-      "required_prerequisites": ["PHY-NLM-FBD", "PHY-VEC-COMPONENTS", "PHY-NLM-FIRST-LAW"],
-      "required_verifications": ["UNITS", "SIGN_DIRECTION", "SUBSTITUTE_BACK", "MODEL_VALIDITY"]
-    },
-    "PHY-NLM-THIRD-LAW": {
-      "required_invariants": ["INV-NLM-THIRD-DISTINCT-BODIES", "INV-NLM-THIRD-EQUAL-OPPOSITE", "INV-NLM-THIRD-SAME-INTERACTION"],
-      "required_concepts": ["CON-NLM-PAIR-DIFFERENT-BODIES"],
-      "required_relations": ["EQ-NLM-THIRD"],
-      "required_representations": ["REP-NLM-THIRD-PAIR"],
-      "required_prerequisites": ["PHY-NLM-INTERACTION", "PHY-NLM-FBD"],
-      "required_verifications": ["BODY_AGENT_CONSISTENCY", "SIGN_DIRECTION"]
-    },
-    "PHY-NLM-NORMAL": {
-      "required_invariants": ["INV-NLM-NORMAL-PERPENDICULAR", "INV-NLM-NORMAL-NOT-ALWAYS-MG"],
-      "required_concepts": ["CON-NLM-NORMAL-NOT-ALWAYS-MG"],
-      "required_relations": ["EQ-NLM-NORMAL-CONSTRAINT"],
-      "required_representations": ["REP-NLM-NORMAL-FBD"],
-      "required_prerequisites": ["PHY-NLM-FBD", "PHY-NLM-SECOND-LAW"],
-      "required_verifications": ["SIGN_DIRECTION", "CONSTRAINT_CONSISTENCY"]
-    },
-    "PHY-NLM-TENSION": {
-      "required_invariants": ["INV-NLM-TENSION-STRING-MODEL", "INV-NLM-TENSION-NOT-ALWAYS-MG", "INV-NLM-CONSTRAINT-KINEMATICS"],
-      "required_concepts": ["CON-NLM-TENSION-MODEL"],
-      "required_relations": ["EQ-NLM-TENSION-BODY"],
-      "required_representations": ["REP-NLM-TENSION-FBDS"],
-      "required_prerequisites": ["PHY-NLM-FBD", "PHY-NLM-SECOND-LAW"],
-      "required_verifications": ["CONSTRAINT_CONSISTENCY", "SIGN_DIRECTION", "SUBSTITUTE_BACK"]
-    },
-    "PHY-NLM-FRICTION": {
-      "required_invariants": ["INV-NLM-STATIC-FRICTION-INEQUALITY", "INV-NLM-FRICTION-OPPOSES-RELATIVE-TENDENCY", "INV-NLM-KINETIC-AFTER-SLIDING"],
-      "required_concepts": ["CON-NLM-STATIC-FRICTION-ADAPTIVE"],
-      "required_relations": ["EQ-NLM-STATIC-INEQUALITY", "EQ-NLM-KINETIC-FRICTION"],
-      "required_representations": ["REP-NLM-FRICTION-FBD"],
-      "required_prerequisites": ["PHY-NLM-NORMAL", "PHY-NLM-SECOND-LAW"],
-      "required_verifications": ["STATIC_THRESHOLD", "SIGN_DIRECTION", "MODEL_VALIDITY"]
-    },
-    "PHY-NLM-CONNECTED": {
-      "required_invariants": ["INV-NLM-CONNECTED-SYSTEM-CHOICE", "INV-NLM-INTERNAL-EXTERNAL-DISTINCTION", "INV-NLM-CONSTRAINT-CONSISTENCY"],
-      "required_concepts": ["CON-NLM-CONNECTED-SYSTEM"],
-      "required_relations": ["EQ-NLM-CONNECTED-SYSTEM"],
-      "required_representations": ["REP-NLM-CONNECTED-MULTI"],
-      "required_prerequisites": ["PHY-NLM-SECOND-LAW", "PHY-NLM-THIRD-LAW", "PHY-NLM-TENSION"],
-      "required_verifications": ["CONSTRAINT_CONSISTENCY", "BODY_AGENT_CONSISTENCY", "SUBSTITUTE_BACK"]
-    },
-    "PHY-M2D-PROJECTILE-COMPONENTS": {
-      "required_invariants": ["INV-M2D-FRAME-DECLARED", "INV-M2D-LAUNCH-COMPONENTS-SIGNED", "INV-M2D-GRAVITY-VERTICAL-ONLY"],
-      "required_concepts": ["CON-M2D-PROJECTILE-COMPONENTS"],
-      "required_relations": ["EQ-M2D-X", "EQ-M2D-Y"],
-      "required_representations": ["REP-M2D-PROJECTILE-COMPONENTS"],
-      "required_prerequisites": ["PHY-VEC-COMPONENTS"],
-      "required_verifications": ["UNITS", "SIGN_DIRECTION", "MODEL_VALIDITY"]
-    },
-    "PHY-M2D-SHARED-CLOCK": {
-      "required_invariants": ["INV-M2D-SHARED-CLOCK", "INV-M2D-SAME-EVENT-STATE"],
-      "required_concepts": ["CON-M2D-SHARED-CLOCK"],
-      "required_relations": ["EQ-M2D-SHARED-TIME"],
-      "required_representations": ["REP-M2D-EVENT-TIMELINE"],
-      "required_prerequisites": ["PHY-M2D-PROJECTILE-COMPONENTS"],
-      "required_verifications": ["SHARED_CLOCK", "SUBSTITUTE_BACK"]
-    },
-    "PHY-M2D-MOVING-LAUNCHER": {
-      "required_invariants": ["INV-M2D-VELOCITY-FRAMES-NAMED", "INV-M2D-GALILEAN-ADD-BEFORE-PROJECTILE", "INV-M2D-INHERITED-HORIZONTAL-MOTION", "INV-M2D-ZERO-SOURCE-LIMIT"],
-      "required_concepts": ["CON-M2D-FRAME-NAMING", "CON-M2D-INHERITED-MOTION"],
-      "required_relations": ["EQ-M2D-GALILEAN-ADD"],
-      "required_representations": ["REP-M2D-FRAME-VELOCITY-TRIANGLE"],
-      "required_prerequisites": ["PHY-VEC-COMPONENTS", "PHY-M2D-PROJECTILE-COMPONENTS", "PHY-M2D-SHARED-CLOCK"],
-      "required_linked_buckets": ["M2D-SBA-23"],
-      "required_verifications": ["INVERSE_RELATION", "LIMITING_CASE", "SIGN_DIRECTION", "SHARED_CLOCK"],
-      "required_reasoning_order": ["FRAME_NAMING", "FRAME_CONVERSION", "PROJECTILE_EVOLUTION", "INVERSE_AND_LIMIT_CHECK"]
-    }
+    "PHY-VEC-BASICS": {"required_invariants":["INV-VEC-SCALAR-VECTOR-DISTINCTION","INV-VEC-MAGNITUDE-NONNEGATIVE","INV-VEC-DIRECTION-REFERENCE"],"required_concepts":["CON-VEC-SCALAR-VECTOR","CON-VEC-DIRECTION-REFERENCE"],"required_relations":["EQ-VEC-MAGNITUDE-NONNEGATIVE"],"required_representations":["REP-VEC-DIRECTED-SEGMENT"],"required_prerequisites":[],"required_verifications":["UNITS","SIGN_DIRECTION","GEOMETRIC_CONSISTENCY"]},
+    "PHY-VEC-ADD-SUB": {"required_invariants":["INV-VEC-HEAD-TO-TAIL","INV-VEC-SUBTRACTION-NEGATIVE","INV-VEC-RESULTANT-MEANING"],"required_concepts":["CON-VEC-RESULTANT","CON-VEC-SUBTRACTION"],"required_relations":["EQ-VEC-SUM"],"required_representations":["REP-VEC-HEAD-TO-TAIL"],"required_prerequisites":["PHY-VEC-BASICS"],"required_verifications":["SIGN_DIRECTION","GEOMETRIC_CONSISTENCY","LIMITING_CASE"]},
+    "PHY-VEC-COMPONENTS": {"required_invariants":["INV-VEC-AXES-DECLARED","INV-VEC-COMPONENT-SIGNS","INV-VEC-COMPONENT-TO-RESULTANT"],"required_concepts":["CON-VEC-SIGN-CONVENTION","CON-VEC-RESULTANT-RECONSTRUCTION"],"required_relations":["EQ-VEC-COMPONENTS","EQ-VEC-RECONSTRUCT"],"required_representations":["REP-VEC-COMPONENT-TRIANGLE"],"required_prerequisites":["PHY-VEC-ADD-SUB"],"required_verifications":["SIGN_DIRECTION","INVERSE_RELATION","GEOMETRIC_CONSISTENCY"]},
+    "PHY-NLM-INTERACTION": {"required_invariants":["INV-NLM-FORCE-HAS-AGENT-RECEIVER","INV-NLM-CONTACT-VS-NONCONTACT"],"required_concepts":["CON-NLM-AGENT-RECEIVER"],"required_relations":[],"required_representations":["REP-NLM-INTERACTION-LINK"],"required_prerequisites":["PHY-VEC-BASICS"],"required_verifications":["BODY_AGENT_CONSISTENCY","MODEL_VALIDITY"]},
+    "PHY-NLM-FBD": {"required_invariants":["INV-NLM-SYSTEM-SELECTED-FIRST","INV-NLM-FBD-FORCES-ON-SYSTEM-ONLY","INV-NLM-FBD-COMPLETE"],"required_concepts":["CON-NLM-SYSTEM-BOUNDARY"],"required_relations":[],"required_representations":["REP-NLM-FBD"],"required_prerequisites":["PHY-NLM-INTERACTION","PHY-VEC-BASICS"],"required_verifications":["BODY_AGENT_CONSISTENCY","MODEL_VALIDITY"]},
+    "PHY-NLM-FIRST-LAW": {"required_invariants":["INV-NLM-EQUILIBRIUM-A-ZERO","INV-NLM-ZERO-NET-FORCE-NOT-ZERO-VELOCITY","INV-NLM-INERTIAL-FRAME"],"required_concepts":["CON-NLM-EQUILIBRIUM"],"required_relations":["EQ-NLM-EQUILIBRIUM"],"required_representations":["REP-NLM-EQUILIBRIUM-FBD"],"required_prerequisites":["PHY-NLM-FBD"],"required_verifications":["SIGN_DIRECTION","MODEL_VALIDITY"]},
+    "PHY-NLM-SECOND-LAW": {"required_invariants":["INV-NLM-FBD-BEFORE-EQUATION","INV-NLM-AXIS-WISE-SUM-F","INV-NLM-SAME-SYSTEM-SAME-AXES"],"required_concepts":["CON-NLM-NET-FORCE"],"required_relations":["EQ-NLM-SECOND-X","EQ-NLM-SECOND-Y"],"required_representations":["REP-NLM-FBD-AXES"],"required_prerequisites":["PHY-NLM-FBD","PHY-VEC-COMPONENTS","PHY-NLM-FIRST-LAW"],"required_verifications":["UNITS","SIGN_DIRECTION","SUBSTITUTE_BACK","MODEL_VALIDITY"]},
+    "PHY-NLM-THIRD-LAW": {"required_invariants":["INV-NLM-THIRD-DISTINCT-BODIES","INV-NLM-THIRD-EQUAL-OPPOSITE","INV-NLM-THIRD-SAME-INTERACTION"],"required_concepts":["CON-NLM-PAIR-DIFFERENT-BODIES"],"required_relations":["EQ-NLM-THIRD"],"required_representations":["REP-NLM-THIRD-PAIR"],"required_prerequisites":["PHY-NLM-INTERACTION","PHY-NLM-FBD"],"required_verifications":["BODY_AGENT_CONSISTENCY","SIGN_DIRECTION"]},
+    "PHY-NLM-NORMAL": {"required_invariants":["INV-NLM-NORMAL-PERPENDICULAR","INV-NLM-NORMAL-NOT-ALWAYS-MG"],"required_concepts":["CON-NLM-NORMAL-NOT-ALWAYS-MG"],"required_relations":["EQ-NLM-NORMAL-CONSTRAINT"],"required_representations":["REP-NLM-NORMAL-FBD"],"required_prerequisites":["PHY-NLM-FBD","PHY-NLM-SECOND-LAW"],"required_verifications":["SIGN_DIRECTION","CONSTRAINT_CONSISTENCY"]},
+    "PHY-NLM-TENSION": {"required_invariants":["INV-NLM-TENSION-STRING-MODEL","INV-NLM-TENSION-NOT-ALWAYS-MG","INV-NLM-CONSTRAINT-KINEMATICS"],"required_concepts":["CON-NLM-TENSION-MODEL"],"required_relations":["EQ-NLM-TENSION-BODY"],"required_representations":["REP-NLM-TENSION-FBDS"],"required_prerequisites":["PHY-NLM-FBD","PHY-NLM-SECOND-LAW"],"required_verifications":["CONSTRAINT_CONSISTENCY","SIGN_DIRECTION","SUBSTITUTE_BACK"]},
+    "PHY-NLM-FRICTION": {"required_invariants":["INV-NLM-STATIC-FRICTION-INEQUALITY","INV-NLM-FRICTION-OPPOSES-RELATIVE-TENDENCY","INV-NLM-KINETIC-AFTER-SLIDING"],"required_concepts":["CON-NLM-STATIC-FRICTION-ADAPTIVE"],"required_relations":["EQ-NLM-STATIC-INEQUALITY","EQ-NLM-KINETIC-FRICTION"],"required_representations":["REP-NLM-FRICTION-FBD"],"required_prerequisites":["PHY-NLM-NORMAL","PHY-NLM-SECOND-LAW"],"required_verifications":["STATIC_THRESHOLD","SIGN_DIRECTION","MODEL_VALIDITY"]},
+    "PHY-NLM-CONNECTED": {"required_invariants":["INV-NLM-CONNECTED-SYSTEM-CHOICE","INV-NLM-INTERNAL-EXTERNAL-DISTINCTION","INV-NLM-CONSTRAINT-CONSISTENCY"],"required_concepts":["CON-NLM-CONNECTED-SYSTEM"],"required_relations":["EQ-NLM-CONNECTED-SYSTEM"],"required_representations":["REP-NLM-CONNECTED-MULTI"],"required_prerequisites":["PHY-NLM-SECOND-LAW","PHY-NLM-THIRD-LAW","PHY-NLM-TENSION"],"required_verifications":["CONSTRAINT_CONSISTENCY","BODY_AGENT_CONSISTENCY","SUBSTITUTE_BACK"]},
+    "PHY-GRAV-FORCE": {"required_invariants":["INV-GRAV-FORCE-ATTRACTIVE","INV-GRAV-FORCE-INVERSE-SQUARE","INV-GRAV-FORCE-DISTINCT-BODIES","INV-GRAV-FORCE-SOURCE-DISTANCE-SCOPE"],"required_concepts":["CON-GRAV-FORCE-ATTRACTION","CON-GRAV-SPHERICAL-EXTERNAL"],"required_relations":["EQ-GRAV-FORCE-MAGNITUDE","EQ-GRAV-FORCE-VECTOR"],"required_representations":["REP-GRAV-FORCE-PAIR"],"required_prerequisites":["PHY-NLM-INTERACTION","PHY-NLM-THIRD-LAW","PHY-VEC-BASICS"],"required_verifications":["UNITS","SIGN_DIRECTION","SYMMETRY","LIMITING_CASE","MODEL_VALIDITY","ORDER_OF_MAGNITUDE","BODY_AGENT_CONSISTENCY"]},
+    "PHY-GRAV-FIELD": {"required_invariants":["INV-GRAV-FIELD-FORCE-PER-MASS","INV-GRAV-FIELD-TEST-MASS-INDEPENDENCE","INV-GRAV-FIELD-RADIAL-INWARD","INV-GRAV-FIELD-INVERSE-SQUARE","INV-GRAV-FIELD-SUPERPOSITION","INV-GRAV-FIELD-MODEL-SCOPE"],"required_concepts":["CON-GRAV-FIELD-FORCE-PER-MASS","CON-GRAV-FIELD-RADIAL","CON-GRAV-FIELD-SUPERPOSITION"],"required_relations":["EQ-GRAV-FIELD-DEFINITION","EQ-GRAV-FIELD-POINT-MASS","EQ-GRAV-FIELD-SUPERPOSITION"],"required_representations":["REP-GRAV-RADIAL-FIELD","REP-GRAV-FIELD-SUPERPOSITION"],"required_prerequisites":["PHY-GRAV-FORCE","PHY-VEC-COMPONENTS","PHY-NLM-SECOND-LAW"],"required_verifications":["UNITS","SIGN_DIRECTION","SYMMETRY","LIMITING_CASE","GEOMETRIC_CONSISTENCY","MODEL_VALIDITY","ORDER_OF_MAGNITUDE"]},
+    "PHY-M2D-PROJECTILE-COMPONENTS": {"required_invariants":["INV-M2D-FRAME-DECLARED","INV-M2D-LAUNCH-COMPONENTS-SIGNED","INV-M2D-GRAVITY-VERTICAL-ONLY"],"required_concepts":["CON-M2D-PROJECTILE-COMPONENTS"],"required_relations":["EQ-M2D-X","EQ-M2D-Y"],"required_representations":["REP-M2D-PROJECTILE-COMPONENTS"],"required_prerequisites":["PHY-VEC-COMPONENTS"],"required_verifications":["UNITS","SIGN_DIRECTION","MODEL_VALIDITY"]},
+    "PHY-M2D-SHARED-CLOCK": {"required_invariants":["INV-M2D-SHARED-CLOCK","INV-M2D-SAME-EVENT-STATE"],"required_concepts":["CON-M2D-SHARED-CLOCK"],"required_relations":["EQ-M2D-SHARED-TIME"],"required_representations":["REP-M2D-EVENT-TIMELINE"],"required_prerequisites":["PHY-M2D-PROJECTILE-COMPONENTS"],"required_verifications":["SHARED_CLOCK","SUBSTITUTE_BACK"]},
+    "PHY-M2D-MOVING-LAUNCHER": {"required_invariants":["INV-M2D-VELOCITY-FRAMES-NAMED","INV-M2D-GALILEAN-ADD-BEFORE-PROJECTILE","INV-M2D-INHERITED-HORIZONTAL-MOTION","INV-M2D-ZERO-SOURCE-LIMIT"],"required_concepts":["CON-M2D-FRAME-NAMING","CON-M2D-INHERITED-MOTION"],"required_relations":["EQ-M2D-GALILEAN-ADD"],"required_representations":["REP-M2D-FRAME-VELOCITY-TRIANGLE"],"required_prerequisites":["PHY-VEC-COMPONENTS","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK"],"required_linked_buckets":["M2D-SBA-23"],"required_verifications":["INVERSE_RELATION","LIMITING_CASE","SIGN_DIRECTION","SHARED_CLOCK"],"required_reasoning_order":["FRAME_NAMING","FRAME_CONVERSION","PROJECTILE_EVOLUTION","INVERSE_AND_LIMIT_CHECK"]}
   }
 }
