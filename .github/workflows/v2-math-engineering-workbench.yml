@@ -1,0 +1,40 @@
+name: V2 Mathematics Engineering Workbench
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/MathBlueprint/**'
+      - '.github/workflows/v2-math-engineering-workbench.yml'
+  workflow_dispatch:
+
+jobs:
+  mathematics-engineering-workbench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install jsonschema
+      - name: Validate PR379 Mathematics Engineering Gate registry
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_gates.py'
+      - name: Run Mathematics Engineering Gate falsifiers
+        run: python -m unittest 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_gates.py'
+      - name: Run Mathematics Engineering Workbench falsifiers
+        run: python -m unittest 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_workbench.py'
+      - name: Run exact closure custody binding falsifiers
+        run: python -m unittest 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_binding.py'
+      - name: Compile quadratic Engineering closure and Passport
+        run: |
+          mkdir -p /tmp/math-engineering-workbench
+          python 'Grade 9/V2/Mathematics/MathBlueprint/engine/compile_mathematics_engineering_workbench.py' \
+            --request 'fixtures/engineering-workbench/quad-equations-request.v1.json' \
+            --manifest 'fixtures/engineering-workbench/quad-equations-manifest.v1.json' \
+            --receipt-out /tmp/math-engineering-workbench/quad-closure.json \
+            --passport-out /tmp/math-engineering-workbench/quad-passport.json
+      - name: Upload Workbench proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: mathematics-engineering-workbench-proof
+          path: /tmp/math-engineering-workbench/
