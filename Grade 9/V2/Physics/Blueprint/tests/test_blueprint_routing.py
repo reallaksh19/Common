@@ -52,6 +52,7 @@ def main():
         "test_blueprint_contract_inventory_v10.py",
         "test_blueprint_scope_v10.py",
         "test_blueprint_stress_test_v10.py",
+        "test_blueprint_stress_batch_v10.py",
     ):
         subprocess.run([sys.executable,str(ROOT/"tests"/name)],check=True)
 
