@@ -11,10 +11,10 @@ from typing import Any
 
 from chemistry_review_writer import ReviewWriter as PageWriter
 from render_chemistry_learner_products import (
+    BOLD,
     FONT,
     PAGE_H,
     TOKEN_REPLACEMENTS,
-    _attempt_support,
     _draw_provenance,
     _source_prompt,
     _visuals_for_refs,
@@ -51,46 +51,43 @@ def _core1a_attempt_height(writer: PageWriter, prompt: str, workspace_lines: int
 
 
 _ATTEMPT_SUPPORT_FIELDS = (
-    ("write_this_first", False),
-    ("small_clue", False),
-    ("bigger_clue", False),
-    ("how_do_i_start", False),
-    ("watch_for_this", False),
-    ("think_it_through", True),
-    ("check_your_chemistry", True),
+    ("WRITE THIS FIRST", "write_this_first", "CLUE_PANEL"),
+    ("SMALL CLUE", "small_clue", "CLUE_PANEL"),
+    ("BIGGER CLUE", "bigger_clue", "CLUE_PANEL"),
+    ("HOW DO I START?", "how_do_i_start", "CLUE_PANEL"),
+    ("WATCH FOR THIS", "watch_for_this", "CLUE_PANEL"),
+    ("THINK IT THROUGH", "think_it_through", "CLUE_PANEL"),
+    ("CHECK YOUR CHEMISTRY", "check_your_chemistry", "VERIFICATION_PANEL"),
 )
 _ANSWER_ROUTE_TEXT = "Complete the attempt first. The quick check starts on the next page."
 
 
-def _attempt_support_episode_height(writer: PageWriter, support: dict[str, Any]) -> float:
-    """Measure one complete support episode before emitting any of it.
+def _support_text(value: Any) -> str:
+    if value in (None, ""):
+        return ""
+    if isinstance(value, list):
+        return "  •  ".join(public_text(item) for item in value if item not in (None, ""))
+    return public_text(value)
 
-    `_attempt_support` is legacy drawing code that emits several labels incrementally.
-    Without a reservation, the tail can spill onto a sparse continuation page. This
-    estimator mirrors those generic label/body geometries and reserves the complete
-    episode plus its answer-route panel as one pagination unit.
-    """
-    total = 24.0
-    label_height = writer.small + 15.0
-    for key, is_list in _ATTEMPT_SUPPORT_FIELDS:
-        total += label_height
-        value = support.get(key)
-        if is_list:
-            values = value if isinstance(value, list) else ([] if value in (None, "") else [value])
-            for item in values:
-                rows = writer._wrap(public_text(item), FONT, writer.body, writer.width - 25)
-                total += len(rows) * writer.leading + 2.0
-        elif value not in (None, ""):
-            rows = writer._wrap(public_text(value), FONT, writer.body, writer.width)
-            total += len(rows) * writer.leading + 3.0
 
+def _semantic_panel_height(writer: PageWriter, title: str, text: str) -> float:
+    """Mirror ReviewWriter._panel_text vertical geometry for atomic reservation."""
     inner_w = writer.width - 28
-    # FONT is already registered by ReviewWriter. Width-estimation need not
-    # introduce a second font dependency; the title is short and single-line.
-    title_rows = writer._wrap("ANSWER ROUTE", FONT, writer.small, inner_w)
-    body_rows = writer._wrap(_ANSWER_ROUTE_TEXT, FONT, writer.body, inner_w)
-    total += 16.0 + len(title_rows) * (writer.small + 4.0) + len(body_rows) * writer.leading + 26.0
-    return total + 18.0
+    title_rows = writer._wrap(public_text(title).upper(), BOLD, writer.small, inner_w)
+    body_rows = writer._wrap(public_text(text), FONT, writer.body, inner_w)
+    panel_height = 16.0 + len(title_rows) * (writer.small + 4.0) + len(body_rows) * writer.leading + 16.0
+    return panel_height + 10.0
+
+
+def _attempt_support_episode_height(writer: PageWriter, support: dict[str, Any]) -> float:
+    """Measure the complete semantic support episode before emitting any panel."""
+    total = 24.0
+    for title, key, _kind in _ATTEMPT_SUPPORT_FIELDS:
+        text = _support_text(support.get(key))
+        if text:
+            total += _semantic_panel_height(writer, title, text)
+    total += _semantic_panel_height(writer, "ANSWER ROUTE", _ANSWER_ROUTE_TEXT)
+    return total + 8.0
 
 
 def _begin_attempt_support_episode(writer: PageWriter, support: dict[str, Any]) -> None:
@@ -100,6 +97,18 @@ def _begin_attempt_support_episode(writer: PageWriter, support: dict[str, Any]) 
         raise ValueError("CHEM_LP_RENDER_SUPPORT_EPISODE_TOO_TALL")
     writer.ensure(height, "attempt support", role="QUESTION_EPISODE")
     writer.set_page_role("QUESTION_EPISODE")
+
+
+def _render_attempt_support(writer: PageWriter, support: dict[str, Any], ref: str) -> None:
+    """Render governed support as review-grade semantic surfaces, never raw filler."""
+    for title, key, kind in _ATTEMPT_SUPPORT_FIELDS:
+        text = _support_text(support.get(key))
+        if not text:
+            continue
+        if kind == "VERIFICATION_PANEL":
+            writer.verification_panel(title, text, ref)
+        else:
+            writer.clue_panel(title, text, ref)
 
 
 def _joined(values: list[Any] | None) -> str:
@@ -323,7 +332,7 @@ def render_core2a_content_first(source_plan, challenge_plan, representations, po
                 "status": "PASS",
             })
             _begin_attempt_support_episode(writer, support)
-            _attempt_support(writer, support, ref)
+            _render_attempt_support(writer, support, ref)
             writer.action_panel("ANSWER ROUTE", _ANSWER_ROUTE_TEXT, ref)
             _answer_pages_content_first(writer, item["answer_path"], f"Source question {index}", ref, context)
 
@@ -355,7 +364,7 @@ def render_core2a_content_first(source_plan, challenge_plan, representations, po
                 "status": "PASS",
             })
             _begin_attempt_support_episode(writer, support)
-            _attempt_support(writer, support, ref)
+            _render_attempt_support(writer, support, ref)
             writer.action_panel("ANSWER ROUTE", _ANSWER_ROUTE_TEXT, ref)
             _answer_pages_content_first(writer, item["answer_path"], f"Fresh challenge {index}", ref, context)
 
