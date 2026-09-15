@@ -88,6 +88,8 @@ class ReviewWriter:
         self.page = 0
         self.y = 0.0
         self.current_role = "COVER"
+        self.current_context = ""
+        self.current_context_ref = None
         self.draw_ops: list[dict[str, Any]] = []
         self.primitives: list[dict[str, Any]] = []
         self.unavailable_primitives: list[dict[str, Any]] = []
@@ -118,11 +120,65 @@ class ReviewWriter:
         if self.page_labels:
             self.page_labels[-1]["role"] = role
 
-    def new_page(self, label: str, role: str | None = None) -> None:
+    def _draw_continuation_header(self, context: str, ref=None) -> None:
+        value = public_text(context)
+        if not value:
+            return
+        inner_w = self.width - 28
+        rows = self._wrap(value, BOLD, self.small, inner_w)
+        row_leading = self.small + 4.0
+        height = 18.0 + row_leading + len(rows) * row_leading + 10.0
+        y0 = self.y - height
+        self.c.setFillColor(BLUE_PALE)
+        self.c.setStrokeColor(LINE)
+        self.c.setLineWidth(0.7)
+        self.c.roundRect(self.margin, y0, self.width, height, 7, fill=1, stroke=1)
+        self.c.setFillColor(ACCENT_DARK)
+        self.c.setFont(BOLD, self.small)
+        label_y = self.y - 15.0
+        self.c.drawString(self.margin + 14, label_y, "CONTINUING")
+        self._record(
+            "TEXT",
+            self.margin + 14,
+            label_y - self.small * .25,
+            self.margin + 14 + stringWidth("CONTINUING", BOLD, self.small),
+            label_y + self.small,
+            "CONTINUING",
+            self.small,
+            ref,
+        )
+        self.c.setFillColor(INK)
+        text_y = label_y - row_leading
+        for row in rows:
+            self.c.drawString(self.margin + 14, text_y, row)
+            self._record(
+                "TEXT",
+                self.margin + 14,
+                text_y - self.small * .25,
+                self.margin + 14 + stringWidth(row, BOLD, self.small),
+                text_y + self.small,
+                row,
+                self.small,
+                ref,
+            )
+            text_y -= row_leading
+        self._record("CONTINUATION_HEADER", self.margin, y0, self.margin + self.width, self.y, value, None, ref)
+        self.y = y0 - 10.0
+
+    def new_page(
+        self,
+        label: str,
+        role: str | None = None,
+        continuation_context: str | None = None,
+        continuation_ref=None,
+    ) -> None:
         if self.page:
             self.c.showPage()
         self.page += 1
         self.current_role = role or getattr(self, "current_role", "CONCEPT_EXPLANATION")
+        if continuation_context is None:
+            self.current_context = ""
+            self.current_context_ref = None
         self.c.setFillColor(PAPER)
         self.c.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
 
@@ -152,10 +208,26 @@ class ReviewWriter:
         )
         self.y = PAGE_H - band_h - 24.0
         self.page_labels.append({"page": self.page, "label": public_text(label), "role": self.current_role})
+        if continuation_context:
+            self._draw_continuation_header(continuation_context, continuation_ref)
 
-    def ensure(self, height: float, label: str = "continuation", role: str | None = None) -> None:
+    def ensure(
+        self,
+        height: float,
+        label: str = "continuation",
+        role: str | None = None,
+        *,
+        show_context: bool = True,
+    ) -> None:
         if self.y - height < self.margin + 8:
-            self.new_page(label, role=role or self.current_role)
+            context = self.current_context if show_context else None
+            context_ref = self.current_context_ref if show_context else None
+            self.new_page(
+                label,
+                role=role or self.current_role,
+                continuation_context=context,
+                continuation_ref=context_ref,
+            )
 
     def _wrap(self, text: str, font: str, size: float, width: float) -> list[str]:
         words = public_text(text).replace("\n", " \n ").split()
@@ -195,10 +267,13 @@ class ReviewWriter:
         self.y -= 3
 
     def heading(self, text, level=1, ref=None):
+        value = public_text(text)
         size = self.chapter if level == 1 else self.section
-        rows = self._wrap(public_text(text), BOLD, size, self.width - 20)
+        rows = self._wrap(value, BOLD, size, self.width - 20)
         height = len(rows) * (size + 5) + (16 if level == 1 else 12)
-        self.ensure(height, public_text(text))
+        self.ensure(height, value, show_context=False)
+        self.current_context = value
+        self.current_context_ref = ref
         if level == 1:
             self.c.setFillColor(ACCENT)
             self.c.roundRect(self.margin, self.y - 8, 7, height - 4, 3, fill=1, stroke=0)
