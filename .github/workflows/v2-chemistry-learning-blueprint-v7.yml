@@ -31,6 +31,7 @@ jobs:
               root/'policies/chemistry-redox-source-audit.v1.json',
               root/'contracts/chemistry-technical-engineering-gate.schema.json',
               root/'contracts/chemistry-gate-source-audit.schema.json',
+              root/'contracts/chemistry-product-source-scope-v1.schema.json',
               root/'contracts/chemistry-product-engineering-custody-v1.schema.json',
               root/'contracts/content-bill-of-materials-v7.schema.json',
               root/'contracts/core1a-study-note-authority-v7.schema.json',
@@ -51,6 +52,9 @@ jobs:
       - name: Validate Redox source hardening and grade-scope custody
         run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_redox_source_hardening.py"
 
+      - name: Validate Redox learner-product source scope
+        run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_product_source_scope.py"
+
       - name: Validate product engineering custody and PAL boundary
         run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_product_engineering_custody.py"
 
@@ -68,11 +72,15 @@ jobs:
             "fixtures/engineering-workbench/redox-request.v1.json" \
             "fixtures/engineering-workbench/redox-manifest.v1.json" \
             "golden/v7/ccbom-redox.json" \
+            "fixtures/engineering-workbench/redox-product-source-scope.v1.json" \
+            "golden/v7/core1a-study-note-redox-authority.json" \
             --out /tmp/chem-redox-product-engineering-custody.json
           python "$ROOT/engine/validate_pal_engineering_ready.py" \
             "fixtures/engineering-workbench/redox-request.v1.json" \
             "fixtures/engineering-workbench/redox-manifest.v1.json" \
             "golden/v7/ccbom-redox.json" \
+            "fixtures/engineering-workbench/redox-product-source-scope.v1.json" \
+            "golden/v7/core1a-study-note-redox-authority.json" \
             /tmp/chem-redox-product-engineering-custody.json
           python "$V" --policy "$P" --ccbom "$ROOT/golden/v7/ccbom-redox.json"
           python "$ROOT/engine/validate_core1a_study_note_v7.py" \
