@@ -103,12 +103,14 @@ class ArchitectureGovernanceTests(unittest.TestCase):
 
     def test_pr_ledger_keeps_product_stress_test_out_of_authority(self):
         rows = {row["number"]: row for row in self.ledger["pull_requests"]}
-        self.assertEqual(self.ledger["target_active_stack"], [371, 384, 381, 385])
+        self.assertEqual(self.ledger["target_active_stack"], [371, 384, 387, 381, 385])
         self.assertEqual(rows[385]["role"], "REDOX_CORE1A_PRODUCT_STRESS_TEST")
         self.assertEqual(rows[385]["authority_class"], "NON_AUTHORITATIVE_STRESS_TEST")
         self.assertEqual(rows[385]["disposition"], "BLOCKED_STRESS_TEST")
         self.assertEqual(rows[371]["authority_class"], "BLUEPRINT_CONTROL_AUTHORITY")
         self.assertEqual(rows[381]["authority_class"], "ENGINEERING_CONTROL_PLANE")
+        self.assertEqual(rows[384]["ci_state"], "PASS")
+        self.assertEqual(rows[387]["role"], "GENERIC_GATE_SOURCE_AUDIT_V2")
 
     def test_supersession_requires_explicit_migration(self):
         rows = {row["number"]: row for row in self.ledger["pull_requests"]}
@@ -116,7 +118,8 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertEqual(rows[377]["disposition"], "PORT_THEN_SUPERSEDE")
         preconditions = self.ledger["closure_preconditions"]
         self.assertIn("PORT_LEDGER_COMPLETE", preconditions["360"])
-        self.assertIn("VALID_SOURCE_HARDENING_PORTED_TO_384_LINEAGE", preconditions["377"])
+        self.assertIn("GENERIC_SOURCE_HARDENING_REWRITTEN_ON_384_LINEAGE", preconditions["377"])
+        self.assertIn("NO_REDOX_SPECIFIC_VALIDATOR_LOGIC_RETAINED", preconditions["377"])
 
 
 if __name__ == "__main__":
