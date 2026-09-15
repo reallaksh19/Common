@@ -83,7 +83,9 @@ Every discovered subtopic must be explicitly classified as an exact v3 identity,
 
 The discovery catalog cannot carry or self-assert technical readiness. The canonical v3 source files, external invariant profile and production validator remain the only technical-readiness control plane. Item IDs, SBA buckets and other case artifacts may stress-test this machinery but may not define its logic or promote source custody.
 
-The generic `PHY-M2D-RELATIVE-VELOCITY` gate is a subject-level example of this rule. It is source-defined from the pinned PR #383 `PHY-KIN-RELATIVE-2D` discovery and has no SBA or question linkage. It owns the reviewed 2D relative-velocity subtraction, river-bank component decomposition, perpendicular-component crossing time and parallel-component drift semantics. `PHY-M2D-MOVING-LAUNCHER` remains a separate specialised projectile gate; no dependency between those gates is inferred merely because they both use Galilean velocity reasoning.
+The reviewed `PHY-GRAV-FREE-FALL` discovery demonstrates normalized reuse of existing authority rather than gate proliferation. Its universal-gravitation prerequisite maps to the canonical force/field pair; its old 1D-motion prerequisite and free-fall shortcut formulas map to governed vertical displacement, velocity evolution and named-event timing; its return-state symmetry maps to the canonical same-height gate. No new free-fall formula gate is created, and the source-authored readiness field remains ignored. The source statement that ascent and descent times match is interpreted only as equal elapsed segment durations for the source-declared launch-to-apex and apex-to-return-to-release-level event under the uniform-g/no-drag model, not as equal absolute timestamps for arbitrary same-height states.
+
+The generic `PHY-M2D-RELATIVE-VELOCITY` gate is a subject-level example of the opposite case. It is source-defined from the pinned PR #383 `PHY-KIN-RELATIVE-2D` discovery because those river-crossing semantics were not already fully governed, and it has no SBA or question linkage. It owns the reviewed 2D relative-velocity subtraction, river-bank component decomposition, perpendicular-component crossing time and parallel-component drift semantics. `PHY-M2D-MOVING-LAUNCHER` remains a separate specialised projectile gate; no dependency between those gates is inferred merely because they both use Galilean velocity reasoning.
 
 ## Workbench lifecycle
 
@@ -124,7 +126,7 @@ A binding carries:
 - exact closure-logic digest;
 - exact canonical registry digest.
 
-`validate_technical_gate_binding.py` recompiles the current Workbench closure and fails when any custodied digest is stale. Expanding the subject registry therefore invalidates stale bindings even when a scoped closure still contains the same gates. The 24-gate relative-velocity expansion exercised this rule: the SBA23 closure remained six gates, while its exact receipt and registry digests had to be refreshed.
+`validate_technical_gate_binding.py` recompiles the current Workbench closure and fails when any custodied digest is stale. Expanding the subject registry therefore invalidates stale bindings even when a scoped closure still contains the same gates. The 24-gate relative-velocity expansion exercised this rule: the SBA23 closure remained six gates, while its exact receipt and registry digests had to be refreshed. A discovery-only reconciliation such as free fall does not change those digests because it does not change canonical gate bytes or the registry set.
 
 ## SBA23 stress-test integration proof
 
@@ -202,6 +204,7 @@ The v3 suite proves, among other cases:
 - model-condition bindings;
 - representation semantic guards;
 - reasoning dependency/order integrity;
+- reviewed free-fall normalization across gravitation, vertical component evolution, event timing and same-height symmetry without duplicate formula authority;
 - generic relative-velocity subtraction and river-crossing component separation;
 - moving-launcher frame conversion before projectile evolution;
 - meaningful misconception counterexamples and repair;
