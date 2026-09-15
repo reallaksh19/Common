@@ -1,0 +1,186 @@
+{
+  "schema_version": "M2D-REQ-1.1.0",
+  "topic_id": "PHY-M2D-RM-20260915",
+  "academic_year": "2026-27",
+  "status": "DESIGN_REHEARSAL_NOT_RELEASED",
+  "source": {
+    "id": "SYN-M2D-20260915-V1",
+    "state": "FROZEN_FOR_TEST",
+    "sha256": "6aac1841445e051244c3ad41f2d1ccab0d21e486b92efd0da68a87298bb29648"
+  },
+  "learner_fixture": {
+    "id": "K50",
+    "kind": "SYNTHETIC_REHEARSAL_ONLY",
+    "screening_items": 10,
+    "aggregate": "5/10 (50%)",
+    "demonstrated": [
+      "SI units",
+      "simple speed calculation",
+      "signed numbers",
+      "plotting one coordinate pair",
+      "identifying a right angle"
+    ],
+    "gaps": [
+      "distance versus displacement",
+      "two-coordinate changes",
+      "naming a reference frame",
+      "relative-velocity subtraction order",
+      "simultaneous-time reasoning"
+    ],
+    "confidence": "Each skill observation is low-confidence evidence from one item; no subtopic mastery percentage is inferred.",
+    "practice_policy": {
+      "Core2A": {
+        "authored_questions": 12,
+        "entry": 6,
+        "standard": 4,
+        "stretch": 2
+      },
+      "Core2B": {
+        "authored_questions": 12,
+        "entry": 6,
+        "standard": 4,
+        "stretch": 2
+      }
+    },
+    "real_use_rule": "Actual diagnostic evidence or explicit owner-directed waiver and target required."
+  },
+  "core_meanings": {
+    "Core1": "Concise basic notes, prerequisite reminders, topic map, answered quick checks and deeper-help pointers.",
+    "Core2": "All 12 frozen source questions unchanged, with H1/H2/H3, complete answer and reasoning around each immutable source block.",
+    "Core1A": "Detailed declarative textbook teaching by bucket, with worked reasoning, visuals, examples, misconception repair and answered checkpoints.",
+    "Core1B": "Self-contained conceptual tutor that elicits prediction/drawing/explanation/reconstruction before reveal; expected reasoning, wrong responses, feedback, retry, final synthesis.",
+    "Core2A": "New difficulty-adjusted solution-apprenticeship bank; graded hints, full solutions, units, diagrams where useful, independent check.",
+    "Core2B": "New conceptual-transfer bank; hints, acceptable reasoning, alternatives, rubric, misconception feedback and complete closure."
+  },
+  "authoring_constraints": {
+    "no_trigonometry": true,
+    "no_calculus": true,
+    "no_dot_products": true,
+    "no_grade11_projectile_formulae": true,
+    "baseline_focus": "constant-velocity planar motion and relative motion",
+    "closest_approach": "small labelled enrichment using table/algebra/completing square only",
+    "projectile_motion": "not baseline requirement",
+    "rotating_frames": "not baseline requirement",
+    "relativity": "not baseline requirement",
+    "gravity_research": "separate depth/scope contract if requested"
+  },
+  "intrinsic_badges": [
+    {
+      "bucket_id": "B01",
+      "subtopic": "Observer, frame, axes, origin and common clock",
+      "badge": "Easy",
+      "decision": "RETAIN",
+      "reason": "One core idea plus conventions; errors are mainly naming/notation rather than multi-step inference."
+    },
+    {
+      "bucket_id": "B02",
+      "subtopic": "Path, distance, displacement and average quantities",
+      "badge": "Medium",
+      "decision": "RETAIN",
+      "reason": "Requires distinguishing path from endpoint change and connecting two average quantities."
+    },
+    {
+      "bucket_id": "B03",
+      "subtopic": "Coordinates, components and reconstructing a vector visually",
+      "badge": "Hard",
+      "decision": "RETAIN",
+      "reason": "Requires translating coordinates to signed component changes and reconstructing magnitude visually; multiple representations interact."
+    },
+    {
+      "bucket_id": "B04",
+      "subtopic": "Constant motion in two coordinates; tables and graphs",
+      "badge": "Medium",
+      "decision": "RETAIN",
+      "reason": "Requires coordinating x and y tables/graphs through one clock, but constant velocity keeps algebra modest."
+    },
+    {
+      "bucket_id": "B05",
+      "subtopic": "One-dimensional relative motion, units and signs",
+      "badge": "Medium",
+      "decision": "RETAIN",
+      "reason": "Requires subtraction order, signs and unit reconciliation, with common intuitive reversals."
+    },
+    {
+      "bucket_id": "B06",
+      "subtopic": "Relative velocity in two dimensions and observer reversal",
+      "badge": "Hard",
+      "decision": "RETAIN",
+      "reason": "Requires component-wise subtraction plus observer reversal and relative-position ordering; multiple representations interact."
+    },
+    {
+      "bucket_id": "B07",
+      "subtopic": "Meeting requires the same position at the same time",
+      "badge": "Hard",
+      "decision": "RETAIN",
+      "reason": "Requires two simultaneous coordinate constraints and rejection of path-intersection-only reasoning."
+    },
+    {
+      "bucket_id": "B08",
+      "subtopic": "Boat/current and rain/observer model transfer; ambiguity",
+      "badge": "Hard",
+      "decision": "RETAIN",
+      "reason": "Requires frame-chain transfer, across/along decomposition and ambiguity diagnosis across unfamiliar contexts."
+    }
+  ],
+  "research_sources": [
+    {
+      "id": "R-CBSE-ST",
+      "authority": "CBSE official",
+      "url": "https://cbseacademic.nic.in/web_material/CurriculumMain27/SecPart1/ScienceSt_SecP1_2026-27.pdf",
+      "access_date": "2026-09-15",
+      "supports": "Standard Grade 9 Motion scope: straight-line motion, graphs, distance/displacement, speed/velocity, elementary circular motion; does not itself establish full 2D relative-motion applications."
+    },
+    {
+      "id": "R-CBSE-AD",
+      "authority": "CBSE official",
+      "url": "https://cbseacademic.nic.in/web_material/CurriculumMain27/SecPart1/ScienceAd_SecP1_2026-27.pdf",
+      "access_date": "2026-09-15",
+      "supports": "Optional Advanced Chapter 2 introduces frame of reference, motion as relative, scalars/vectors, graphical vector addition and asks graphical vector subtraction."
+    },
+    {
+      "id": "R-OS-4.1",
+      "authority": "OpenStax/Rice University",
+      "url": "https://openstax.org/books/university-physics-volume-1/pages/4-1-displacement-and-velocity-vectors",
+      "access_date": "2026-09-15",
+      "supports": "Coordinate-system setup, displacement as final minus initial position, average velocity in multiple dimensions, independence of perpendicular components; used to inform B02–B04 explanations/visuals."
+    },
+    {
+      "id": "R-OS-4.5",
+      "authority": "OpenStax/Rice University",
+      "url": "https://openstax.org/books/university-physics-volume-1/pages/4-5-relative-motion-in-one-and-two-dimensions",
+      "access_date": "2026-09-15",
+      "supports": "Named reference frames and relative position/velocity vector equations in one and two dimensions; used to inform B05–B08 explanations and subtraction diagrams."
+    },
+    {
+      "id": "R-OS-2.3",
+      "authority": "OpenStax/Rice University",
+      "url": "https://openstax.org/books/physics/pages/2-3-position-vs-time-graphs",
+      "access_date": "2026-09-15",
+      "supports": "Time-axis convention and slope-as-average-velocity for straight position-time graph segments; used for B04 graph decisions."
+    },
+    {
+      "id": "R-NIST-SI",
+      "authority": "NIST",
+      "url": "https://www.nist.gov/si-redefinition/definitions-si-base-units",
+      "access_date": "2026-09-15",
+      "supports": "Official SI symbols m for metre and s for second; supports unit discipline in B05 and all calculations."
+    }
+  ],
+  "live_contract_reconciliation": {
+    "checked_at": "2026-09-15",
+    "physics_pr350_previous_head": "96a6dcec170d73eafe0b8a12af1daca1c51634e2",
+    "physics_pr350_final_head": "f8c606599d3c2061c968f377dea79b7ab868bbe8",
+    "v3b_pr364_head": "6be71db1a321c449131a26ee3084b6b9c0edca28",
+    "canonical_v3_workbench_blob": "4a149fbc48c5a32d147f5a094126277c74482c9b",
+    "applicable_v3_gate_blobs": {
+      "PHY-M2D-SHARED-CLOCK.v3.json": "af715733f1a28b52395f871a5ab5d78c136d3e2a",
+      "PHY-VEC-COMPONENTS.v3.json": "aaf4c667056a44915a5a0a71d34a19f8a7ee37c5",
+      "PHY-VEC-ADD-SUB.v3.json": "fa504ad7e9bc5c46c10ee0aad833489606bf9ea5"
+    },
+    "bounded_adoption": "Shared-clock/common-frame/sign/subtraction/Pythagorean reconstruction invariants adopted. Trigonometric component resolution and atan2 remain excluded by the owner Grade 9 contract. The last four PR350 commits changed Workbench documentation/closure binding, not those three gate files."
+  },
+  "release": {
+    "authorized": false,
+    "reason": "Single-instance self-review only; no independent reviewer, learner trial, owner approval, publication or merge authorization."
+  }
+}

@@ -1,0 +1,7 @@
+reuse_id,source_locator,target_locator,reuse_class,allowed,learner_action_change,rationale,review_status
+R01,Core2A.md#2a-q02,Core2B.md#2b-q02,REGISTERED_ANCHOR_REVISIT,true,"compute displacement -> predict direction/reconstruct endpoint","Same component anchor supports inverse reconstruction; not counted as fresh transfer.",SELF_REVIEWED
+R02,Core2A.md#2a-q06,Core2B.md#2b-q06,REGISTERED_ANCHOR_REVISIT,true,"compute ground subtraction -> infer observer reversal from relative vector","Fades setup and changes requested action.",SELF_REVIEWED
+R03,Core2A.md#2a-q08,Core2B.md#2b-q10,REGISTERED_ANCHOR_REVISIT,true,"solve crossing -> diagnose wrong denominator and repair","Error diagnosis tests model linkage rather than repeated arithmetic.",SELF_REVIEWED
+R04,Core2A.md#2a-q12,Core2B.md#2b-q12,REGISTERED_ANCHOR_REVISIT,true,"derive inverse speed -> discriminate competing plans","Changed model-selection action; not independent transfer evidence.",SELF_REVIEWED
+R05,source-corpus.md#Q01-Q12,Core2.md#q01-q12,FROZEN_SOURCE,true,"none","Exact reuse required by source-fidelity contract; excluded from prose-duplication statistics but checked byte-for-byte at block level.",FIDELITY_CHECKED
+R06,equation-register.json,all-cores,CANONICAL_EQUATION,true,"context-specific interpretation","Shared physics truth may recur; equations are excluded from prose statistics and checked semantically.",SELF_REVIEWED

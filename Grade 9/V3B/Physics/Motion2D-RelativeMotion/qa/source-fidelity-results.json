@@ -1,0 +1,103 @@
+{
+  "status": "PASS",
+  "questions": [
+    {
+      "question": "Q01",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    },
+    {
+      "question": "Q02",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": true
+    },
+    {
+      "question": "Q03",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    },
+    {
+      "question": "Q04",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    },
+    {
+      "question": "Q05",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    },
+    {
+      "question": "Q06",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_immutable_block": null
+    },
+    {
+      "question": "Q07",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_immutable_block": null
+    },
+    {
+      "question": "Q08",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    },
+    {
+      "question": "Q09",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_immutable_block": null
+    },
+    {
+      "question": "Q10",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    },
+    {
+      "question": "Q11",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    },
+    {
+      "question": "Q12",
+      "source_exact": true,
+      "attribution_present": true,
+      "hint_ladder_present": true,
+      "answer_anchor_present": true,
+      "q02_table_in_immutable_block": null
+    }
+  ],
+  "q12_scientific_hold": true,
+  "failures": []
+}

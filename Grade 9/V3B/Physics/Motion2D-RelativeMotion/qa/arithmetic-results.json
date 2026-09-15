@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "check_count": 46,
+  "method": "independent recomputation from givens inside the author execution; not an independent reviewer",
+  "coverage": ["Q01-Q12 frozen arithmetic/model conclusions", "2A-Q07", "2A-Q08", "2A-Q12", "2B-Q07", "2B-Q12", "EXT-Q-001"],
+  "failures": []
+}

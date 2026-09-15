@@ -1,0 +1,47 @@
+{
+  "schema_version": "M2D-EXT-ATOM-1.0.0",
+  "extension_id": "EXT-001",
+  "parent_inventory_sha256": "b039883f18fb5c1ca6e2c874f506004f60e4dc8ad74e7ea3c542c53662c2ea2f",
+  "atoms": [
+    {
+      "atom_id": "EXT-B05E-C01",
+      "kind": "contract_concept",
+      "text": "Equal velocities in the same frame imply zero relative velocity.",
+      "bucket": "B05E",
+      "source_ref": "EXT-001",
+      "required": true
+    },
+    {
+      "atom_id": "EXT-B05E-C02",
+      "kind": "contract_concept",
+      "text": "Zero relative velocity makes relative position constant; the constant can be nonzero.",
+      "bucket": "B05E",
+      "source_ref": "EXT-001",
+      "required": true
+    },
+    {
+      "atom_id": "EXT-B05E-C03",
+      "kind": "contract_concept",
+      "text": "Equal nonzero ground velocities do not make either object stationary on ground.",
+      "bucket": "B05E",
+      "source_ref": "EXT-001",
+      "required": true
+    },
+    {
+      "atom_id": "EXT-B05E-MIS01",
+      "kind": "misconception_repair",
+      "text": "Zero relative velocity does not imply co-location; retain initial relative position.",
+      "bucket": "B05E",
+      "source_ref": "EXT-001",
+      "required": true
+    },
+    {
+      "atom_id": "EXT-B05E-Q01",
+      "kind": "question_obligation",
+      "text": "Apply equal-velocity invariant with nonzero initial separation and ground-frame interpretation.",
+      "bucket": "B05E",
+      "source_ref": "EXT-Q-001",
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "renderer": "CairoSVG author-run raster evidence; canonical deliverables are SVG source files",
+  "diagram_count": 10,
+  "machine_checks": ["rendered", "nonblank", "title metadata", "description metadata"],
+  "canonical_svg_git_blobs": {
+    "boat-current.svg": "27ac807a625692004d22d5b19a7c8903a9b8e8bc",
+    "collision-pair.svg": "45f1d5848485e987250eb54205e33351850e36a0",
+    "component-triangle.svg": "f6e08530b0966ab8430057f22c828b8afa1c7795",
+    "frames-axes-clock.svg": "caf59671b7f410e5078755dbcd72adfcfae6b1b1",
+    "path-displacement.svg": "109cb66b10f54e2d795dd9975c4912481ee55bfb",
+    "rain-observer.svg": "ae2363c008aa222107f72354b6a01f670dea75e2",
+    "relative-1d-signline.svg": "8e477418480459595afae93358392279ee215f7c",
+    "relative-subtraction.svg": "10180f74eb9d8d68c1ff3abd0691febb4f9b46b2",
+    "time-labelled-path.svg": "22be42039f8dd694647327637ae797dde52c3490",
+    "xy-time-graphs.svg": "133e0ca4fee2b23bf77935ac5f95f2c4c2bc3898"
+  },
+  "visual_review": "SELF_REVIEW_PASS; independent actual-size learner visual/accessibility review NOT_RUN",
+  "raster_intermediates": "execution-only; not required repository learner assets",
+  "failures": []
+}

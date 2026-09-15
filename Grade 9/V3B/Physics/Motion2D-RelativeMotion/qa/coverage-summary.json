@@ -1,0 +1,19 @@
+{
+  "schema_version": "M2D-COVERAGE-1.2.0",
+  "atom_count": 159,
+  "core_count": 6,
+  "disposition_count": 954,
+  "required_realizations": 448,
+  "required_realized": 448,
+  "not_required_with_reason": 506,
+  "disposition_counts": {
+    "RECALL": 60,
+    "REFERENCE": 84,
+    "FULL_TEACHING": 101,
+    "APPLICATION": 152,
+    "TRANSFER": 51,
+    "NOT_REQUIRED_WITH_REASON": 506
+  },
+  "coverage_sha256": "640d2e34b8375a5a5213e0fbceeec3fdb45fbd97035cee58990e8dcfed590778",
+  "layout": "one atom row; three fields per Core (disposition, locator, reason); logical denominator remains atom×Core"
+}

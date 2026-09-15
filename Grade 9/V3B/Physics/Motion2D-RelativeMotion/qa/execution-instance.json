@@ -1,0 +1,9 @@
+{
+  "execution_instance_id": "chatgpt-gpt5.6sol:38645350-207e-4c3e-adaa-c2e1244189fb",
+  "producer_role": "Physics six-Core author/rehearsal integrator",
+  "profile_version": "GPT-5.6 Sol / repository-task continuation / 2026-09-15",
+  "predecessor_context": "Same conversation continuation after an uncommitted local workspace was unavailable; rebuilt from durable repository state plus safe handoff summary. This is not an independent cold-run.",
+  "reviewer_identity": "chatgpt-gpt5.6sol:38645350-207e-4c3e-adaa-c2e1244189fb",
+  "review_independence": "SELF_REVIEW_NOT_INDEPENDENT",
+  "cold_restart_evaluation": "NOT_RUN"
+}

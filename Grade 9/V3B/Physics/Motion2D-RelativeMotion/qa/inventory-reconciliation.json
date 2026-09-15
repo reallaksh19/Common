@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "source_sha256": "6aac1841445e051244c3ad41f2d1ccab0d21e486b92efd0da68a87298bb29648",
+  "question_headers": [
+    "Q01",
+    "Q02",
+    "Q03",
+    "Q04",
+    "Q05",
+    "Q06",
+    "Q07",
+    "Q08",
+    "Q09",
+    "Q10",
+    "Q11",
+    "Q12"
+  ],
+  "subpart_counts": {
+    "Q01": 4,
+    "Q02": 4,
+    "Q03": 3,
+    "Q04": 3,
+    "Q05": 2,
+    "Q06": 3,
+    "Q07": 1,
+    "Q08": 3,
+    "Q09": 3,
+    "Q10": 3,
+    "Q11": 3,
+    "Q12": 1
+  },
+  "q02_table_rows": [
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "2",
+      "6",
+      "8"
+    ],
+    [
+      "4",
+      "12",
+      "16"
+    ],
+    [
+      "6",
+      "12",
+      "16"
+    ]
+  ],
+  "kind_counts": {
+    "source_condition": 7,
+    "contract_concept": 27,
+    "equation": 11,
+    "visual_relationship": 8,
+    "research_support": 4,
+    "source_question_full": 12,
+    "source_datum_or_condition": 56,
+    "source_subpart": 33,
+    "source_quality_status": 1
+  },
+  "atom_total": 159,
+  "failures": []
+}
