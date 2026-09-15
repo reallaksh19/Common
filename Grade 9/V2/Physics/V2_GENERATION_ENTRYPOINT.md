@@ -1,6 +1,6 @@
 # Physics V2 — generation entrypoint (cold start)
 
-Read this file and `GENERATION_AUTHORITY_MANIFEST.json`. Between them they are sufficient: **no chat history, no issue history and no manually pre-computed intermediate is required or permitted.** If an implementation needs one, the repository architecture is incomplete and must remain blocked.
+Read this file and `GENERATION_AUTHORITY_MANIFEST.json` for P-A…P-K generation. For P-L mature-release work, also read `ExactProduct/RELEASE_AUTHORITY_MANIFEST.json`. Together these repository artifacts are sufficient: **no chat history, no issue history and no manually pre-computed intermediate is required or permitted.** If an implementation needs one, the repository architecture is incomplete and must remain blocked.
 
 ## P-K generation command
 
@@ -83,7 +83,7 @@ frozen PR #156 comparison
 governed mature-release decision
 ```
 
-`ExactProduct/engine/evaluate_physics_governed_release.py` is the canonical real-release authority. The older `evaluate_physics_exact_product.py` remains the machine/state-projection primitive and synthetic state-machine test surface; arbitrary inline attestations from that helper are not real release authority.
+`ExactProduct/RELEASE_AUTHORITY_MANIFEST.json` is the cold-start authority map for this P-L path. `ExactProduct/engine/evaluate_physics_governed_release.py` is the canonical real-release authority. The older `evaluate_physics_exact_product.py` remains the machine/state-projection primitive and synthetic state-machine test surface; arbitrary inline attestations from that helper are not real release authority.
 
 ## Boundaries
 
