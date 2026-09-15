@@ -20,28 +20,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install 'jsonschema>=4.20,<5'
-      - name: Validate PR379 Mathematics Engineering Gate registry
+      - name: Validate authoritative Mathematics Engineering Gate registry
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_gates.py'
       - name: Run Mathematics Engineering Gate falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_gates.py'
-      - name: Run Mathematics Engineering Workbench falsifiers
+      - name: Run registry-driven Engineering Workbench falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_workbench.py'
-      - name: Run exact closure custody binding falsifiers
+      - name: Run runtime custody binding falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_binding.py'
-      - name: Run Engineering-gated Canonical Domain admission falsifiers
+      - name: Run generic Engineering-gated domain admission falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_engineered_domain_admission.py'
-      - name: Validate persisted quadratic closure binding
-        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_binding.py' 'Grade 9/V2/Mathematics/MathBlueprint/fixtures/engineering-workbench/quad-equations-binding.v1.json'
-      - name: Validate Theory-of-Equations engineered domain admission
-        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_engineered_domain_admission.py' --admission 'Grade 9/V2/Mathematics/MathBlueprint/fixtures/engineering-workbench/theory-equations-domain-admission.v1.json'
-      - name: Compile quadratic Engineering closure and Passport
+      - name: Compile registry-wide Blueprint authorization proof
         run: |
           mkdir -p /tmp/math-engineering-workbench
           python 'Grade 9/V2/Mathematics/MathBlueprint/engine/compile_mathematics_engineering_workbench.py' \
-            --request 'fixtures/engineering-workbench/quad-equations-request.v1.json' \
-            --manifest 'fixtures/engineering-workbench/quad-equations-manifest.v1.json' \
-            --receipt-out /tmp/math-engineering-workbench/quad-closure.json \
-            --passport-out /tmp/math-engineering-workbench/quad-passport.json
+            --registry-proof-out /tmp/math-engineering-workbench/registry-proof.json
       - name: Upload Workbench proof
         uses: actions/upload-artifact@v4
         with:
