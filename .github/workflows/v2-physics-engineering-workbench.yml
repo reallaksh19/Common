@@ -15,6 +15,7 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba04.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py'
       - 'Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v2.json'
@@ -54,6 +55,8 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
       - name: Run canonical v3 Engineering Workbench SBA23 integration proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py"
+      - name: Run canonical v3 Engineering Workbench SBA04 real-bucket proof
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba04.py"
       - name: Validate exact SBA23 Workbench closure custody binding
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py"
       - name: Validate SBA23 CCU through v3 engineering-ready boundary
@@ -75,9 +78,25 @@ jobs:
           /tmp/m2d-sba23-engineering-closure.json
           --out /tmp/m2d-sba23-engineering-passport.json
           --markdown-out /tmp/m2d-sba23-engineering-passport.md
-      - name: Publish passport in workflow summary
-        run: cat /tmp/m2d-sba23-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Upload engineering registry, closure and passport proof
+      - name: Compile SBA04 v3 engineering closure receipt
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py"
+          "fixtures/engineering-workbench/m2d-sba04-request.v1.json"
+          "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json"
+          --out /tmp/m2d-sba04-engineering-closure.json
+      - name: Compile human-visible SBA04 Engineering Passport
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_passport.py"
+          "fixtures/engineering-workbench/m2d-sba04-request.v1.json"
+          /tmp/m2d-sba04-engineering-closure.json
+          --out /tmp/m2d-sba04-engineering-passport.json
+          --markdown-out /tmp/m2d-sba04-engineering-passport.md
+      - name: Publish passports in workflow summary
+        run: |
+          cat /tmp/m2d-sba23-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
+          printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/m2d-sba04-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload SBA23 engineering proof
         uses: actions/upload-artifact@v4
         with:
           name: physics-engineering-workbench-sba23
@@ -87,5 +106,15 @@ jobs:
             /tmp/m2d-sba23-engineering-closure.json
             /tmp/m2d-sba23-engineering-passport.json
             /tmp/m2d-sba23-engineering-passport.md
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload SBA04 engineering proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-workbench-sba04
+          path: |
+            /tmp/m2d-sba04-engineering-closure.json
+            /tmp/m2d-sba04-engineering-passport.json
+            /tmp/m2d-sba04-engineering-passport.md
           if-no-files-found: error
           retention-days: 14
