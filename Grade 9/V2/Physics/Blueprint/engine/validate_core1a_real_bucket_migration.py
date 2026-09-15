@@ -8,9 +8,14 @@ from pathlib import Path
 import jsonschema
 
 ROOT = Path(__file__).resolve().parents[1]
-PHYSICS = ROOT.parent
 sys.path.insert(0, str(ROOT / "engine"))
-from compile_engineering_closure import EngineeringClosureError, V3_REGISTRY_REF, compile_closure  # noqa: E402
+
+from compile_core1a_real_bucket_migration import (  # noqa: E402
+    MigrationCompilationError,
+    compile_audit_with_facts,
+    load_json,
+    resolve_repo_ref,
+)
 
 
 class MigrationValidationError(Exception):
@@ -21,118 +26,96 @@ class MigrationValidationError(Exception):
 
 
 def load_blueprint(rel: str):
-    return json.loads((ROOT / rel).read_text(encoding="utf-8"))
+    return load_json(ROOT / rel)
 
 
-def load_physics(rel: str):
-    return json.loads((PHYSICS / rel).read_text(encoding="utf-8"))
-
-
-def fail(code: str, message: str):
+def fail(code: str, message: str) -> None:
     raise MigrationValidationError(code, message)
-
-
-STAGES = [
-    "1A0_LEARNER_STATE_GAP",
-    "1A1_LEARNING_ATOMS",
-    "1A2_INFERENTIAL_JUMPS",
-    "1A3_COGNITIVE_TRANSFORMATION",
-    "1A4_REPRESENTATION_REQUIREMENTS",
-    "1A5_REPRESENTATION_CANDIDATES",
-    "1A6_REPRESENTATION_DECISIONS",
-    "1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE",
-    "1A8_MISCONCEPTION_CONTRAST",
-    "1A9_WORKED_FADED_INDEPENDENT_PLAN",
-    "1A10_CORE2_TRANSFER_BRIDGE",
-    "1A11_UNRESOLVED_JUMP_AUDIT",
-]
 
 
 def validate(audit: dict) -> dict:
     try:
-        schema = load_blueprint("contracts/core1a-real-bucket-migration-audit.schema.json")
-        jsonschema.validate(audit, schema)
+        jsonschema.validate(audit, load_blueprint("contracts/core1a-real-bucket-migration-audit.schema.json"))
     except jsonschema.ValidationError as exc:
         fail("E_MIGRATION_SCHEMA", exc.message)
 
-    if [row["stage"] for row in audit["stage_audit"]] != STAGES:
-        fail("E_MIGRATION_STAGE_ORDER", "stage audit must contain exact 1A0..1A11 order")
-
-    manifest = load_physics("Core1A/registry/build-manifests/M2D-SBA-04-v1.json")
-    profile = load_physics("Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json")
-    if manifest["bucket_id"] != audit["bucket_id"]:
-        fail("E_MIGRATION_BUCKET_DRIFT", "manifest bucket does not match audit")
-    if manifest["handoff"]["status"] != audit["legacy_claim"]["status"]:
-        fail("E_MIGRATION_LEGACY_CLAIM_DRIFT", "legacy COMPLETE claim changed or misreported")
-    if audit["legacy_claim"]["accepted_as_v9_release_evidence"] is not False:
-        fail("E_MIGRATION_LEGACY_AUTHORITY", "legacy COMPLETE may not authorize V9 release")
-
-    bucket = next((b for b in profile["buckets"] if b["bucket_id"] == audit["bucket_id"]), None)
-    if bucket is None:
-        fail("E_MIGRATION_PROFILE_BUCKET_MISSING", audit["bucket_id"])
-    learning_atoms = {a["atom_id"] for a in bucket["profiles"][0]["learning_atoms"]}
-    stage_atoms = next(r for r in audit["stage_audit"] if r["stage"] == "1A1_LEARNING_ATOMS")
-    if set(stage_atoms["artifact_refs"]) != learning_atoms:
-        fail("E_MIGRATION_ATOM_COVERAGE", f"audit atoms do not exactly match repository atoms: expected={sorted(learning_atoms)}")
-
-    primary_questions = set(manifest["primary_questions"])
-    stage_transfer = next(r for r in audit["stage_audit"] if r["stage"] == "1A10_CORE2_TRANSFER_BRIDGE")
-    if set(stage_transfer["artifact_refs"]) != primary_questions:
-        fail("E_MIGRATION_TRANSFER_COVERAGE", "1A10 question coverage does not equal manifest primary_questions")
-
-    releases = {q["question_id"]: q for q in manifest["question_release"]}
-    for held_id in ("Q14", "Q27"):
-        row = releases.get(held_id)
-        if not row or row["status"] != "HELD" or "M2D-SBA-05" not in row["release_prerequisite_buckets"]:
-            fail("E_MIGRATION_CROSS_BUCKET_HOLD", f"{held_id} must remain held for M2D-SBA-05")
-
-    technical = audit["technical_gate_audit"]
-    request = load_blueprint(technical["engineering_request_ref"])
-    engineering_manifest = load_blueprint(technical["engineering_manifest_ref"])
-    if request["request_id"] != engineering_manifest["request_id"]:
-        fail("E_MIGRATION_ENGINEERING_REQUEST_MANIFEST_MISMATCH", "Workbench request_id and manifest request_id differ")
-    if engineering_manifest["scope_kind"] != "BUCKET" or engineering_manifest["scope_ref"] != audit["bucket_id"]:
-        fail("E_MIGRATION_ENGINEERING_SCOPE_MISMATCH", "Workbench manifest must bind the audited SBA bucket")
-    if technical["registry_ref"] != V3_REGISTRY_REF or engineering_manifest["registry_ref"] != V3_REGISTRY_REF:
-        fail("E_MIGRATION_REGISTRY_REF_DRIFT", "real migration must consume the canonical subject-wide v3 Engineering registry")
+    stages = load_blueprint("policy/core1a-stage-machine.v1.json")["pre_manuscript_stages"]
+    if [row["stage"] for row in audit["stage_audit"]] != stages:
+        fail("E_MIGRATION_STAGE_ORDER", "stage audit must contain the canonical pre-manuscript stage order")
 
     try:
-        receipt = compile_closure(request, engineering_manifest)
-    except EngineeringClosureError as exc:
-        fail("E_MIGRATION_ENGINEERING_CLOSURE_FAILED", f"{exc.code}: {exc.message}")
+        spec_path = resolve_repo_ref(audit["migration_spec_ref"])
+        spec = load_json(spec_path)
+        expected, facts = compile_audit_with_facts(spec, spec_ref=audit["migration_spec_ref"])
+    except MigrationCompilationError as exc:
+        fail("E_MIGRATION_DERIVATION", f"{exc.code}: {exc.message}")
 
-    if set(technical["direct_gate_ids"]) != set(receipt["direct_gate_ids"]):
-        fail("E_MIGRATION_DIRECT_GATE_DRIFT", f"audit direct gates do not match current Workbench receipt: {receipt['direct_gate_ids']}")
-    if set(technical["closure_gate_ids"]) != set(receipt["transitive_gate_ids"]):
-        fail("E_MIGRATION_CLOSURE_GATE_DRIFT", f"audit closure gates do not match current Workbench receipt: {receipt['transitive_gate_ids']}")
+    if audit["bucket_id"] != expected["bucket_id"]:
+        fail("E_MIGRATION_BUCKET_DRIFT", f"audit bucket {audit['bucket_id']} != spec-derived {expected['bucket_id']}")
+    if audit["source_refs"] != expected["source_refs"]:
+        fail("E_MIGRATION_SOURCE_CUSTODY_DRIFT", "audit source_refs do not equal the spec-derived repository source set")
 
-    derived_technical_status = "READY" if receipt["closure_status"] == "READY" else "INCOMPLETE"
-    if technical["status"] != derived_technical_status:
-        fail("E_MIGRATION_TECHNICAL_STATUS_DRIFT", f"audit={technical['status']} current={derived_technical_status}")
+    if audit["legacy_claim"]["status"] != expected["legacy_claim"]["status"] or audit["legacy_claim"]["claim_ref"] != expected["legacy_claim"]["claim_ref"]:
+        fail("E_MIGRATION_LEGACY_CLAIM_DRIFT", "legacy claim no longer matches the declared repository claim")
+    if audit["legacy_claim"]["accepted_as_v9_release_evidence"] is not False:
+        fail("E_MIGRATION_LEGACY_AUTHORITY", "legacy completion may not authorize current Core1A release")
 
-    incomplete_stages = [r["stage"] for r in audit["stage_audit"] if r["evidence_state"] != "PRESENT"]
-    technical_incomplete = derived_technical_status != "READY"
-    if (incomplete_stages or technical_incomplete) and audit["release_authorized"]:
-        fail("E_MIGRATION_FALSE_RELEASE", f"release true with technical/stage gaps: {incomplete_stages}")
-    if (incomplete_stages or technical_incomplete) and not audit["block_reasons"]:
-        fail("E_MIGRATION_BLOCK_REASONS_REQUIRED", "blocked migration requires reasons")
+    technical = audit["technical_gate_audit"]
+    expected_technical = expected["technical_gate_audit"]
+    if (
+        technical["engineering_request_ref"] != expected_technical["engineering_request_ref"]
+        or technical["engineering_manifest_ref"] != expected_technical["engineering_manifest_ref"]
+        or technical["registry_ref"] != expected_technical["registry_ref"]
+    ):
+        fail("E_MIGRATION_ENGINEERING_BINDING_DRIFT", "technical audit bindings differ from the migration spec/live Engineering Gate authority")
+    if set(technical["direct_gate_ids"]) != set(expected_technical["direct_gate_ids"]):
+        fail("E_MIGRATION_DIRECT_GATE_DRIFT", f"audit direct gates do not match current Engineering Gate closure: {expected_technical['direct_gate_ids']}")
+    if set(technical["closure_gate_ids"]) != set(expected_technical["closure_gate_ids"]):
+        fail("E_MIGRATION_CLOSURE_GATE_DRIFT", f"audit closure gates do not match current Engineering Gate closure: {expected_technical['closure_gate_ids']}")
+    if technical["status"] != expected_technical["status"]:
+        fail("E_MIGRATION_TECHNICAL_STATUS_DRIFT", f"audit={technical['status']} current={expected_technical['status']}")
 
+    actual_rows = {row["stage"]: row for row in audit["stage_audit"]}
+    expected_rows = {row["stage"]: row for row in expected["stage_audit"]}
+    atom_stage = stages[1]
+    if set(actual_rows[atom_stage]["artifact_refs"]) != set(expected_rows[atom_stage]["artifact_refs"]):
+        fail("E_MIGRATION_ATOM_COVERAGE", "learning-atom evidence does not exactly match the selected repository profile")
+    transfer_stage = stages[10]
+    if set(actual_rows[transfer_stage]["artifact_refs"]) != set(expected_rows[transfer_stage]["artifact_refs"]):
+        fail("E_MIGRATION_TRANSFER_COVERAGE", "Core2 transfer evidence does not exactly match build-manifest primary questions")
+
+    for stage in stages:
+        if actual_rows[stage] != expected_rows[stage]:
+            fail("E_MIGRATION_STAGE_EVIDENCE_DRIFT", f"{stage} differs from evidence derived by the generic migration compiler")
+
+    incomplete_stages = [row["stage"] for row in expected["stage_audit"] if row["evidence_state"] != "PRESENT"]
+    if audit["release_authorized"] and not expected["release_authorized"]:
+        fail("E_MIGRATION_FALSE_RELEASE", f"release true with governed blockers: {incomplete_stages}")
+    if audit["release_authorized"] != expected["release_authorized"]:
+        fail("E_MIGRATION_RELEASE_DRIFT", f"audit={audit['release_authorized']} derived={expected['release_authorized']}")
+    if audit["block_reasons"] != expected["block_reasons"]:
+        fail("E_MIGRATION_BLOCK_REASON_DRIFT", "block reasons do not equal the compiler-derived blockers")
+
+    receipt = facts["engineering_receipt"]
     return {
         "status": "PASS",
         "bucket_id": audit["bucket_id"],
         "legacy_claim": audit["legacy_claim"]["status"],
         "release_authorized": audit["release_authorized"],
-        "technical_gate_status": derived_technical_status,
+        "technical_gate_status": expected_technical["status"],
         "engineering_registry_ref": receipt["registry_ref"],
         "engineering_registry_digest": receipt["registry_digest"],
         "engineering_closure_digest": receipt["closure_digest"],
         "engineering_gate_count": receipt["counts"]["transitive_gate_count"],
         "incomplete_stages": incomplete_stages,
-        "held_questions": [qid for qid, row in releases.items() if row["status"] == "HELD"],
+        "held_questions": facts["held_questions"],
+        "high_fragility_step_refs": facts["high_fragility_step_refs"],
+        "learning_atom_ids": facts["learning_atom_ids"],
+        "transfer_routine_ids": facts["transfer_routine_ids"],
     }
 
 
-def main():
+def main() -> None:
     rel = sys.argv[1] if len(sys.argv) > 1 else "topics/m2d-sba04-core1a-migration-audit.v1.json"
     print(json.dumps(validate(load_blueprint(rel)), indent=2))
 
