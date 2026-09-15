@@ -294,6 +294,15 @@ def main() -> None:
     summary["learner_observation_ref_count"] = _LAST_SDU_LAU_AUDIT["learner_observation_ref_count"]
     summary["pedagogy_research_manifest_ref"] = _LAST_SDU_LAU_AUDIT["pedagogy_research_manifest_ref"]
     summary["pedagogy_research_manifest_digest"] = _LAST_SDU_LAU_AUDIT["pedagogy_research_manifest_digest"]
+
+    if _LAST_PEDAGOGY_RESEARCH_MANIFEST is None:
+        base.fail("BOUND_GOLDEN_PEDAGOGY_RESEARCH_MANIFEST_MISSING")
+    if summary["pedagogy_research_manifest_ref"] != _LAST_PEDAGOGY_RESEARCH_MANIFEST["manifest_id"]:
+        base.fail("BOUND_GOLDEN_PEDAGOGY_RESEARCH_MANIFEST_REF_DRIFT")
+    if summary["pedagogy_research_manifest_digest"] != _LAST_PEDAGOGY_RESEARCH_MANIFEST["manifest_digest"]:
+        base.fail("BOUND_GOLDEN_PEDAGOGY_RESEARCH_MANIFEST_DIGEST_DRIFT")
+    summary["pedagogy_research_manifest_release_class"] = _LAST_PEDAGOGY_RESEARCH_MANIFEST["release_class"]
+
     if summary["registry_ref"] != _LAST_ENGINEERING_DOMAIN_PROJECTION["domain_registry_ref"]:
         base.fail("BOUND_GOLDEN_ENGINEERING_DOMAIN_REGISTRY_REF_DRIFT")
 
