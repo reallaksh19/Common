@@ -10,7 +10,7 @@ import jsonschema
 ROOT = Path(__file__).resolve().parents[1]
 PHYSICS = ROOT.parent
 sys.path.insert(0, str(ROOT / "engine"))
-from validate_engineering_gates_v2 import load as load_gate_registry, validate as validate_gate_registry  # noqa: E402
+from compile_engineering_closure import EngineeringClosureError, V3_REGISTRY_REF, compile_closure  # noqa: E402
 
 
 class MigrationValidationError(Exception):
@@ -86,18 +86,32 @@ def validate(audit: dict) -> dict:
         if not row or row["status"] != "HELD" or "M2D-SBA-05" not in row["release_prerequisite_buckets"]:
             fail("E_MIGRATION_CROSS_BUCKET_HOLD", f"{held_id} must remain held for M2D-SBA-05")
 
-    registry = load_gate_registry("policy/physics-technical-engineering-gates.v2.json")
-    validate_gate_registry(registry)
-    gate_map = {g["subtopic_id"]: g for g in registry["gates"]}
-    for gid in audit["technical_gate_audit"]["ready_gate_ids"]:
-        if gid not in gate_map or gate_map[gid]["status"] != "ENGINEERING_GATE_READY":
-            fail("E_MIGRATION_READY_GATE_INVALID", gid)
-    for gid in audit["technical_gate_audit"]["missing_gate_candidates"]:
-        if gid in gate_map:
-            fail("E_MIGRATION_GAP_STALE", f"{gid} now exists; migration audit must be updated")
+    technical = audit["technical_gate_audit"]
+    request = load_blueprint(technical["engineering_request_ref"])
+    engineering_manifest = load_blueprint(technical["engineering_manifest_ref"])
+    if request["request_id"] != engineering_manifest["request_id"]:
+        fail("E_MIGRATION_ENGINEERING_REQUEST_MANIFEST_MISMATCH", "Workbench request_id and manifest request_id differ")
+    if engineering_manifest["scope_kind"] != "BUCKET" or engineering_manifest["scope_ref"] != audit["bucket_id"]:
+        fail("E_MIGRATION_ENGINEERING_SCOPE_MISMATCH", "Workbench manifest must bind the audited SBA bucket")
+    if technical["registry_ref"] != V3_REGISTRY_REF or engineering_manifest["registry_ref"] != V3_REGISTRY_REF:
+        fail("E_MIGRATION_REGISTRY_REF_DRIFT", "real migration must consume the canonical subject-wide v3 Engineering registry")
+
+    try:
+        receipt = compile_closure(request, engineering_manifest)
+    except EngineeringClosureError as exc:
+        fail("E_MIGRATION_ENGINEERING_CLOSURE_FAILED", f"{exc.code}: {exc.message}")
+
+    if set(technical["direct_gate_ids"]) != set(receipt["direct_gate_ids"]):
+        fail("E_MIGRATION_DIRECT_GATE_DRIFT", f"audit direct gates do not match current Workbench receipt: {receipt['direct_gate_ids']}")
+    if set(technical["closure_gate_ids"]) != set(receipt["transitive_gate_ids"]):
+        fail("E_MIGRATION_CLOSURE_GATE_DRIFT", f"audit closure gates do not match current Workbench receipt: {receipt['transitive_gate_ids']}")
+
+    derived_technical_status = "READY" if receipt["closure_status"] == "READY" else "INCOMPLETE"
+    if technical["status"] != derived_technical_status:
+        fail("E_MIGRATION_TECHNICAL_STATUS_DRIFT", f"audit={technical['status']} current={derived_technical_status}")
 
     incomplete_stages = [r["stage"] for r in audit["stage_audit"] if r["evidence_state"] != "PRESENT"]
-    technical_incomplete = audit["technical_gate_audit"]["status"] != "READY"
+    technical_incomplete = derived_technical_status != "READY"
     if (incomplete_stages or technical_incomplete) and audit["release_authorized"]:
         fail("E_MIGRATION_FALSE_RELEASE", f"release true with technical/stage gaps: {incomplete_stages}")
     if (incomplete_stages or technical_incomplete) and not audit["block_reasons"]:
@@ -108,7 +122,11 @@ def validate(audit: dict) -> dict:
         "bucket_id": audit["bucket_id"],
         "legacy_claim": audit["legacy_claim"]["status"],
         "release_authorized": audit["release_authorized"],
-        "technical_gate_status": audit["technical_gate_audit"]["status"],
+        "technical_gate_status": derived_technical_status,
+        "engineering_registry_ref": receipt["registry_ref"],
+        "engineering_registry_digest": receipt["registry_digest"],
+        "engineering_closure_digest": receipt["closure_digest"],
+        "engineering_gate_count": receipt["counts"]["transitive_gate_count"],
         "incomplete_stages": incomplete_stages,
         "held_questions": [qid for qid, row in releases.items() if row["status"] == "HELD"],
     }
