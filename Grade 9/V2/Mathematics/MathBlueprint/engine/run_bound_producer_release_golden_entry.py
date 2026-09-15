@@ -37,6 +37,7 @@ _LAST_SDU_LAU_AUDIT = None
 _LAST_PEDAGOGY_RESEARCH_MANIFEST = None
 _ORIGINAL_BUILD_REGISTRY = base.legacy.build_registry
 _ORIGINAL_CORE1B_INPUT = base.legacy.core1b_input
+_ORIGINAL_CORE2B_INPUT = base.legacy.core2b_input
 _ORIGINAL_RUN_CLI = base.legacy.run_cli
 
 HERE = Path(__file__).resolve()
@@ -125,6 +126,66 @@ def sdu_aware_core1b_input(bucket: dict, book_bucket: dict, spec_row: dict, core
     return doc
 
 
+def lau_aware_core2b_input(blueprint: dict, generation_spec: dict) -> dict:
+    """Build Core2B calibration without inventing capability percentages in waiver mode."""
+    cal = generation_spec["core2_calibration"]
+    if cal["learner_knowledge_percent"] is not None:
+        return _ORIGINAL_CORE2B_INPUT(blueprint, generation_spec)
+
+    waiver = cal.get("owner_waiver")
+    if not waiver:
+        base.fail("BOUND_GOLDEN_CORE2B_LAU_WAIVER_MISSING")
+    if cal.get("capability_knowledge"):
+        base.fail("BOUND_GOLDEN_CORE2B_WAIVER_HAS_FAKE_CAPABILITY_KNOWLEDGE")
+
+    specs = list(blueprint["question_specs"])
+    if not specs:
+        base.fail("BOUND_GOLDEN_CORE2A_NO_LEGAL_ITEMS")
+    caps = sorted({cap for row in specs for cap in row.get("required_capability_refs", [])})
+    items = []
+    for i, row in enumerate(specs, 1):
+        parent = row["question_id"]
+        iid = "B2-" + base.production_digest([parent, i])[:12].upper()
+        rcaps = list(row.get("required_capability_refs", []))
+        items.append({
+            "item_id": iid,
+            "core2a_item_ref": parent,
+            "demand_level": "M1_CONTROLLED_VARIATION",
+            "learner_label": "Fresh controlled transfer",
+            "family_label_visible": True,
+            "capability_refs": rcaps,
+            "stem": "A fresh variation preserves the governed mathematical capability behind source item " + parent + ". Select the model, state the first executable move, and explain how the result should be independently verified.",
+            "support": [],
+            "answer_check": "A valid response must select a model consistent with the governed capability, justify the first move, and state an independent verification that checks the result against the problem conditions.",
+            "origin": "GENERATED_ORIGINAL",
+            "source_question_no": None,
+            "source_ref": "GENERATED:" + iid,
+            "source_relation": "FRESH_ORIGINAL",
+            "parent_question_refs": [parent],
+            "answer_contract_ref": "ANS-" + iid + "-OPEN",
+            "learner_source_label": "Generated transfer from " + parent,
+            "official_past_question_claim": False,
+            "verified_official_source_ref": None,
+        })
+    return {
+        "core2a_authority_ref": blueprint["blueprint_id"],
+        "purpose": blueprint["purpose"],
+        "max_demand_level": cal["resolved_core2b_max_demand_level"],
+        "approved_capability_refs": caps,
+        "core2a_legal_item_ids": [row["question_id"] for row in specs],
+        "generation_calibration": {
+            "support_mode": "GUIDED",
+            "calibration_basis": {
+                "type": "OWNER_OVERRIDE",
+                "owner_ref": waiver["owner_ref"],
+                "reason": waiver["reason"],
+            },
+        },
+        "title": "Bound Core2B transfer golden",
+        "items": items,
+    }
+
+
 def research_aware_run_cli(script: Path, args: list[str]) -> str:
     """Carry the exact compiled pedagogy-research manifest into Core1A.
 
@@ -178,6 +239,7 @@ def main() -> None:
     base.bucket_subtopics = multi_bucket_safe_subtopics
     base.legacy.build_generation_spec = authority_generation_spec
     base.legacy.core1b_input = sdu_aware_core1b_input
+    base.legacy.core2b_input = lau_aware_core2b_input
     base.legacy.build_registry = rich_engineering_registry_builder
     base.legacy.run_cli = research_aware_run_cli
     ap = argparse.ArgumentParser()
