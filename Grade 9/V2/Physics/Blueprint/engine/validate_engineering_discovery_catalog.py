@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / "engine"))
 
 from build_physics_engineering_gate_registry_v3 import build_registry  # noqa: E402
 from validate_engineering_gates_v3 import validate as validate_v3_registry  # noqa: E402
+from validate_engineering_mapping_review import MappingReviewError, validate as validate_mapping_review  # noqa: E402
 
 
 class DiscoveryCatalogError(Exception):
@@ -57,8 +58,11 @@ def validate(catalog: dict) -> dict:
         discovery_id = entry["discovery_gate_id"]
         disposition = entry["disposition"]
         targets = entry["v3_gate_ids"]
+        review_ref = entry.get("mapping_review_ref")
 
         if disposition == "EXACT_V3_ID":
+            if review_ref is not None:
+                fail("E_ENG_DISCOVERY_MAPPING_REVIEW_UNEXPECTED", discovery_id)
             if targets != [discovery_id]:
                 fail("E_ENG_DISCOVERY_EXACT_ID_MISMATCH", f"{discovery_id} exact disposition must bind only itself")
             if discovery_id not in current_ids:
@@ -68,8 +72,21 @@ def validate(catalog: dict) -> dict:
             missing = sorted(set(targets) - current_ids)
             if missing:
                 fail("E_ENG_DISCOVERY_MAPPING_TARGET_MISSING", f"{discovery_id} maps to unknown v3 gates {missing}")
+            try:
+                review = load(review_ref)
+                review_result = validate_mapping_review(
+                    review,
+                    expected_discovery_id=discovery_id,
+                    expected_targets=targets,
+                )
+            except (FileNotFoundError, json.JSONDecodeError, MappingReviewError) as exc:
+                fail("E_ENG_DISCOVERY_MAPPING_REVIEW_INVALID", f"{discovery_id}: {exc}")
+            if review_result["decision"] != "APPROVED":
+                fail("E_ENG_DISCOVERY_MAPPING_REVIEW_NOT_APPROVED", discovery_id)
             mapped_targets.update(targets)
         elif disposition == "MIGRATION_REQUIRED":
+            if review_ref is not None:
+                fail("E_ENG_DISCOVERY_MAPPING_REVIEW_UNEXPECTED", discovery_id)
             migration_required += 1
             if discovery_id in current_ids:
                 fail("E_ENG_DISCOVERY_STALE_MIGRATION_HOLD", f"{discovery_id} now exists in v3 and must be reconciled explicitly")

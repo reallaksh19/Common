@@ -29,8 +29,9 @@ report = compile_report()
 assert report["source_snapshot"]["pr_number"] == 383
 assert report["source_snapshot"]["head_sha"] == "e92481f6e03a8bb49a55f568b03cba7c12fb942a"
 assert report["source_snapshot"]["source_gate_count"] == 43
-assert report["counts"]["migration_gap_count"] == 31
-assert report["counts"]["structural_minimums_satisfied_count"] + report["counts"]["structural_minimums_blocked_count"] == 31
+assert report["counts"]["migration_gap_count"] == 30
+assert report["counts"]["structural_minimums_satisfied_count"] == 0
+assert report["counts"]["structural_minimums_blocked_count"] == 30
 assert report["target_contract"]["minimums_derived_from_schema"] is True
 assert report["target_contract"]["readiness_rule"] == "STRUCTURAL_PREFLIGHT_NEVER_GRANTS_ENGINEERING_READINESS"
 
@@ -40,6 +41,7 @@ assert kin["source_counts"]["required_transformations"] == 1
 assert kin["v3_minimums"]["required_transformations"] == 2
 assert "required_transformations" in kin["unsatisfied_minimums"]
 assert kin["structural_minimums_satisfied"] is False
+assert "PHY-GRAV-UNIVERSAL-LAW" not in entries
 
 for row in report["entries"]:
     failures = [field for field, minimum in row["v3_minimums"].items() if row["source_counts"][field] < minimum]
@@ -48,8 +50,6 @@ for row in report["entries"]:
     assert row["promotion_authorized"] is False
     assert row["readiness_authorized"] is False
 
-# Structural sufficiency is only a source-shape preflight. It cannot grant
-# canonical readiness or introduce case/item-specific engineering logic.
 assert "Q15" not in json.dumps(report, sort_keys=True)
 
 bad = copy.deepcopy(report)

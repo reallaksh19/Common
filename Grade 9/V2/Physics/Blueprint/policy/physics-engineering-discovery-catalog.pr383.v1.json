@@ -40,7 +40,7 @@
     {"discovery_gate_id":"PHY-KIN-CIRCULAR-UNIFORM","curriculum":{"grade":9,"chapter":"Ch 8"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-FORCE-NEWTON-LAWS","curriculum":{"grade":9,"chapter":"Ch 9"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-FORCE-MOMENTUM-IMPULSE","curriculum":{"grade":9,"chapter":"Ch 9"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
-    {"discovery_gate_id":"PHY-GRAV-UNIVERSAL-LAW","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-GRAV-UNIVERSAL-LAW","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-GRAV-FORCE","PHY-GRAV-FIELD"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-GRAV-UNIVERSAL-LAW.v1.json"},
     {"discovery_gate_id":"PHY-GRAV-FREE-FALL","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-FLUID-BUOYANCY-ARCHIMEDES","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
     {"discovery_gate_id":"PHY-WORK-ENERGY-POWER","curriculum":{"grade":9,"chapter":"Ch 11"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
@@ -68,8 +68,6 @@
     {"discovery_gate_id":"PHY-OSC-SHM-WAVES","curriculum":{"grade":11,"chapter":"Ch 14"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]}
   ],
   "v3_native_or_refined_gate_ids": [
-    "PHY-GRAV-FORCE",
-    "PHY-GRAV-FIELD",
     "PHY-M2D-PROJECTILE-COMPONENTS",
     "PHY-M2D-SHARED-CLOCK",
     "PHY-M2D-VELOCITY-EVOLUTION",

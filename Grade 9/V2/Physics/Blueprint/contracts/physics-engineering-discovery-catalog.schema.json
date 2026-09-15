@@ -62,7 +62,7 @@
           "jee_tier": {"enum": ["NOT_IN_JEE", "JEE_MAINS", "JEE_ADVANCED", "BOTH"]},
           "disposition": {"enum": ["EXACT_V3_ID", "MAPPED_V3", "MIGRATION_REQUIRED"]},
           "v3_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
-          "mapping_review_ref": {"type": "string", "minLength": 1}
+          "mapping_review_ref": {"type": "string", "pattern": "^provenance/pr383/mapping-reviews/[A-Za-z0-9._-]+\\.json$"}
         },
         "allOf": [
           {"if": {"properties": {"disposition": {"const": "EXACT_V3_ID"}}}, "then": {"properties": {"v3_gate_ids": {"minItems": 1, "maxItems": 1}}}},
