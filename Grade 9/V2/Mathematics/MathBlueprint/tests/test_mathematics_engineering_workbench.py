@@ -13,6 +13,7 @@ from compile_mathematics_engineering_workbench import (  # noqa: E402
     MathematicsEngineeringWorkbenchError,
     compile_closure,
     compile_passport,
+    derive_gate_state,
     digest,
     load,
 )
@@ -28,6 +29,15 @@ def gate(doc: dict, gate_id: str) -> dict:
 
 
 class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
+    def test_all_pr379_gates_rederive_ready_without_declared_flags(self):
+        registry_ids = {g["subtopic_id"] for g in REGISTRY["subtopic_gates"]}
+        self.assertEqual(set(PROFILE["required_gates"]), registry_ids)
+        states = [derive_gate_state(g, PROFILE) for g in REGISTRY["subtopic_gates"]]
+        failures = {x["gate_id"]: x["failure_codes"] for x in states if x["derived_status"] != "ENGINEERING_GATE_READY"}
+        self.assertEqual(failures, {})
+        self.assertTrue(all(x["declared_technical_readiness_ignored"] for x in states))
+        self.assertTrue(all(x["declared_release_checklist_ignored"] for x in states))
+
     def test_quadratic_closure_is_validator_derived(self):
         receipt = compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), PROFILE)
         self.assertEqual(receipt["closure_status"], "READY")
@@ -84,6 +94,13 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
         state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
         self.assertEqual(state["derived_status"], "ENGINEERING_GATE_INCOMPLETE")
         self.assertIn("MATH_ENG_REQUIRED_CONCEPT_MISSING", state["failure_codes"])
+
+    def test_profile_must_cover_registry_exactly(self):
+        profile = copy.deepcopy(PROFILE)
+        del profile["required_gates"]["MATH-STAT-PROBABILITY"]
+        with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
+            compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), profile)
+        self.assertEqual(ctx.exception.code, "MATH_ENG_INVARIANT_PROFILE_GATE_SET_MISMATCH")
 
     def test_source_scope_hold_blocks_closure(self):
         registry = copy.deepcopy(REGISTRY)
