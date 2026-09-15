@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
+
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,6 +14,7 @@ from compile_mathematics_engineering_workbench import (  # noqa: E402
     compile_closure,
     digest,
     load,
+    resolve_manifest,
 )
 
 
@@ -22,34 +25,52 @@ class MathematicsEngineeringBindingError(Exception):
         self.message = message
 
 
-def validate(binding: dict, registry: dict | None = None, invariant_profile: dict | None = None) -> dict:
+def _schema_validate(binding: dict) -> None:
     schema = load("contracts/mathematics-engineering-binding.schema.json")
     errors = sorted(Draft202012Validator(schema).iter_errors(binding), key=lambda e: list(e.path))
     if errors:
         e = errors[0]
         raise MathematicsEngineeringBindingError("MATH_ENG_BIND_SCHEMA", f"{e.message}; path={list(e.path)}")
+
+
+def validate(
+    binding: dict,
+    request: dict,
+    manifest: dict | None = None,
+    registry: dict | None = None,
+) -> dict:
+    """Recompile Engineering authorization from current authority and verify custody.
+
+    Bindings are runtime artifacts. They do not carry topic-specific file refs and
+    they never reconstruct gate semantics from memory.
+    """
+    _schema_validate(binding)
     if binding["subject"] != "MATHEMATICS":
         raise MathematicsEngineeringBindingError("MATH_ENG_BIND_SUBJECT", "binding subject must be MATHEMATICS")
 
-    request = load(binding["request_ref"])
-    manifest = load(binding["manifest_ref"])
     try:
-        receipt = compile_closure(request, manifest, registry=registry, invariant_profile=invariant_profile)
+        current_manifest = manifest or resolve_manifest(request, registry)
+        receipt = compile_closure(request, current_manifest, registry)
     except MathematicsEngineeringWorkbenchError as exc:
         raise MathematicsEngineeringBindingError("MATH_ENG_BIND_RECOMPILE_FAILED", str(exc)) from exc
 
     if receipt["closure_status"] != "READY":
         raise MathematicsEngineeringBindingError("MATH_ENG_BIND_CLOSURE_BLOCKED", receipt["closure_status"])
-    actual_receipt_digest = digest(receipt)
+
     checks = [
+        ("request_digest", digest(request), "MATH_ENG_BIND_REQUEST_DIGEST_MISMATCH"),
+        ("manifest_digest", digest(current_manifest), "MATH_ENG_BIND_MANIFEST_DIGEST_MISMATCH"),
         ("closure_receipt_id", receipt["receipt_id"], "MATH_ENG_BIND_RECEIPT_ID_MISMATCH"),
-        ("closure_receipt_digest", actual_receipt_digest, "MATH_ENG_BIND_RECEIPT_DIGEST_MISMATCH"),
+        ("closure_receipt_digest", digest(receipt), "MATH_ENG_BIND_RECEIPT_DIGEST_MISMATCH"),
         ("registry_digest", receipt["registry_digest"], "MATH_ENG_BIND_REGISTRY_DIGEST_MISMATCH"),
-        ("invariant_profile_digest", receipt["invariant_profile_digest"], "MATH_ENG_BIND_PROFILE_DIGEST_MISMATCH"),
+        ("validator_contract_digest", receipt["validator_contract_digest"], "MATH_ENG_BIND_VALIDATOR_DIGEST_MISMATCH"),
+        ("scope_refs", receipt["scope_refs"], "MATH_ENG_BIND_SCOPE_MISMATCH"),
+        ("direct_gate_ids", receipt["direct_gate_ids"], "MATH_ENG_BIND_DIRECT_GATE_MISMATCH"),
+        ("transitive_gate_ids", receipt["transitive_gate_ids"], "MATH_ENG_BIND_CLOSURE_MISMATCH"),
     ]
     for field, actual, code in checks:
         if binding[field] != actual:
-            raise MathematicsEngineeringBindingError(code, f"expected {binding[field]} got {actual}")
+            raise MathematicsEngineeringBindingError(code, f"expected {binding[field]!r} got {actual!r}")
 
     return {
         "status": "PASS",
@@ -57,20 +78,28 @@ def validate(binding: dict, registry: dict | None = None, invariant_profile: dic
         "binding_id": binding["binding_id"],
         "downstream_consumer": binding["downstream_consumer"],
         "closure_receipt_id": receipt["receipt_id"],
-        "closure_receipt_digest": actual_receipt_digest,
+        "closure_receipt_digest": digest(receipt),
         "registry_digest": receipt["registry_digest"],
-        "invariant_profile_digest": receipt["invariant_profile_digest"],
-        "direct_gate_ids": list(receipt["direct_gate_ids"]),
-        "transitive_gate_ids": list(receipt["transitive_gate_ids"]),
+        "validator_contract_digest": receipt["validator_contract_digest"],
+        "scope_refs": receipt["scope_refs"],
+        "direct_gate_ids": receipt["direct_gate_ids"],
+        "transitive_gate_ids": receipt["transitive_gate_ids"],
         "technical_authorization": "ALLOWED",
         "publication_authorization": "NOT_IMPLIED",
     }
 
 
-if __name__ == "__main__":
-    import argparse
-    ap = argparse.ArgumentParser()
-    ap.add_argument("binding")
+def main() -> None:
+    ap = argparse.ArgumentParser(description="Validate runtime Mathematics Engineering custody binding")
+    ap.add_argument("--binding", required=True)
+    ap.add_argument("--request", required=True)
+    ap.add_argument("--manifest")
     args = ap.parse_args()
-    doc = json.loads(Path(args.binding).read_text(encoding="utf-8"))
-    print(json.dumps(validate(doc), indent=2))
+    binding = json.loads(Path(args.binding).read_text(encoding="utf-8"))
+    request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+    manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8")) if args.manifest else None
+    print(json.dumps(validate(binding, request, manifest), indent=2))
+
+
+if __name__ == "__main__":
+    main()
