@@ -165,7 +165,7 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
             resolve_manifest(request, copy.deepcopy(REGISTRY))
         self.assertEqual(ctx.exception.code, "MATH_ENG_REQUEST_SCHEMA")
 
-    def test_dependency_cycle_fails_closed_without_named_case(self):
+    def test_dependency_cycle_is_rejected_by_upstream_engineering_validation(self):
         registry = copy.deepcopy(REGISTRY)
         child = next((g for g in registry["subtopic_gates"] if g.get("prerequisite_ids")), None)
         if child is None:
@@ -173,10 +173,9 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
         parent_id = next(p for p in child["prerequisite_ids"] if p.startswith("MATH-"))
         gate(registry, parent_id)["prerequisite_ids"].append(child["subtopic_id"])
         request = request_for_gate(child["subtopic_id"], "CYCLE")
-        manifest = resolve_manifest(request, registry)
         with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
-            compile_closure(request, manifest, registry)
-        self.assertEqual(ctx.exception.code, "MATH_ENG_DEPENDENCY_CYCLE")
+            resolve_manifest(request, registry)
+        self.assertEqual(ctx.exception.code, "MATH_ENG_REGISTRY_INVALID")
 
     def test_receipt_custody_changes_when_authoritative_registry_changes(self):
         target_id = gate_ids()[0]
