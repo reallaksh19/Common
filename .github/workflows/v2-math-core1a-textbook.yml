@@ -146,6 +146,7 @@ jobs:
           root = Path('/tmp/core1a/bound-producer-release')
           summary = json.loads((root / 'bound_producer_release_summary.json').read_text(encoding='utf-8'))
           full_audit = json.loads((root / 'full_mixed_engineering_coverage_audit.json').read_text(encoding='utf-8'))
+          projection = json.loads((root / 'inputs' / 'engineering_domain_projection_receipt.json').read_text(encoding='utf-8'))
           assert summary['status'] == 'PASS'
           assert summary['golden_id'] == 'MATH-BOUND-PRODUCER-RELEASE-v3'
           assert summary['engineering_crosswalk_ref'] == 'MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V2'
@@ -166,6 +167,28 @@ jobs:
           assert summary['core1b_receipt_refs']
           assert summary['source_question_count'] == 14
           assert summary['bucket_count'] >= 1
+
+          # Global canonicality invariants: canonical mathematical truth is stored once;
+          # local teaching uses remain in the independently custodied membership ledger.
+          assert projection['schema_version'] == '2.0.0'
+          assert summary['engineering_domain_projection_validation']['status'] == 'PASS'
+          assert summary['engineering_domain_projection_validation']['release_binding'] == 'PASS'
+          assert summary['registry_asset_count'] == summary['engineering_domain_base_asset_count'] + summary['engineering_domain_projected_asset_count']
+          assert summary['engineering_domain_scope_membership_count'] == summary['engineering_domain_expanded_projection_count']
+          assert summary['engineering_domain_deduplicated_scope_copy_count'] == summary['engineering_domain_scope_membership_count'] - summary['engineering_domain_projected_asset_count']
+          assert summary['engineering_domain_scope_membership_count'] > summary['engineering_domain_projected_asset_count']
+          assert len(projection['canonical_assets']) == summary['engineering_domain_projected_asset_count']
+          assert len(projection['scope_memberships']) == summary['engineering_domain_scope_membership_count']
+          source_keys = [(x['engineering_gate_id'], x['engineering_source_kind'], x['engineering_source_ref']) for x in projection['canonical_assets']]
+          assert len(source_keys) == len(set(source_keys)), 'Engineering source identity was duplicated in the Canonical Domain Registry'
+
+          # Golden evidence for the current full mixed Grade-9 corpus. These values are
+          # fixture evidence only; production logic derives them dynamically.
+          assert summary['engineering_domain_base_asset_count'] == 102
+          assert summary['engineering_domain_projected_asset_count'] == 128
+          assert summary['engineering_domain_scope_membership_count'] == 878
+          assert summary['engineering_domain_deduplicated_scope_copy_count'] == 750
+          assert summary['registry_asset_count'] == 230
           print(json.dumps(summary, indent=2))
           PY
 
