@@ -66,7 +66,7 @@ def run_core_product(
     elif mode == "CORE2A":
         metrics = render_core2a_content_first(payload.get("source_plan"), payload.get("challenge_plan"), payload["representation_bundle"], policy, pdf_path)
     elif mode in {"CORE1B", "CORE2B"}:
-        metrics = render_static_b_product(mode, payload, pdf_path)
+        metrics = render_static_b_product(mode, payload, policy, pdf_path)
     else:
         raise ValueError("CHEM_CORE_RUN_MODE_INVALID")
 
