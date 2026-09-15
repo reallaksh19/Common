@@ -27,25 +27,12 @@
     "receipt_id": {"type": "string", "pattern": "^ENG-CLOSURE-[A-Z0-9-]+$"},
     "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
     "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
-    "registry_ref": {"const": "policy/physics-technical-engineering-gates.v2.json"},
-    "gate_extension_refs": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
-    },
+    "registry_ref": {"enum": ["policy/physics-technical-engineering-gates.v2.json", "GENERATED:physics-technical-engineering-gates.v3-sba23"]},
+    "gate_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-    "direct_gate_ids": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}
-    },
-    "transitive_gate_ids": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}
-    },
+    "direct_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+    "transitive_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
     "gate_states": {
       "type": "array",
       "items": {
@@ -66,16 +53,7 @@
         "additionalProperties": false,
         "required": ["code", "message"],
         "properties": {
-          "code": {
-            "enum": [
-              "E_ENG_GATE_MISSING",
-              "E_ENG_GATE_NOT_READY",
-              "E_ENG_RESEARCH_DOSSIER_REQUIRED",
-              "E_ENG_CLAIM_LEDGER_REQUIRED",
-              "E_ENG_RESEARCH_DOSSIER_INVALID",
-              "E_ENG_CLAIM_LEDGER_INVALID"
-            ]
-          },
+          "code": {"enum": ["E_ENG_GATE_MISSING", "E_ENG_GATE_NOT_READY", "E_ENG_RESEARCH_DOSSIER_REQUIRED", "E_ENG_CLAIM_LEDGER_REQUIRED", "E_ENG_RESEARCH_DOSSIER_INVALID", "E_ENG_CLAIM_LEDGER_INVALID"]},
           "gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
           "message": {"type": "string", "minLength": 1}
         }
