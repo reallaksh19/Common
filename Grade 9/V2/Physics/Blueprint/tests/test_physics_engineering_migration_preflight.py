@@ -29,9 +29,9 @@ report = compile_report()
 assert report["source_snapshot"]["pr_number"] == 383
 assert report["source_snapshot"]["head_sha"] == "e92481f6e03a8bb49a55f568b03cba7c12fb942a"
 assert report["source_snapshot"]["source_gate_count"] == 43
-assert report["counts"]["migration_gap_count"] == 27
+assert report["counts"]["migration_gap_count"] == 26
 assert report["counts"]["structural_minimums_satisfied_count"] == 0
-assert report["counts"]["structural_minimums_blocked_count"] == 27
+assert report["counts"]["structural_minimums_blocked_count"] == 26
 assert report["target_contract"]["minimums_derived_from_schema"] is True
 assert report["target_contract"]["readiness_rule"] == "STRUCTURAL_PREFLIGHT_NEVER_GRANTS_ENGINEERING_READINESS"
 
@@ -42,6 +42,7 @@ assert kin["v3_minimums"]["required_transformations"] == 2
 assert "required_transformations" in kin["unsatisfied_minimums"]
 assert kin["structural_minimums_satisfied"] is False
 assert "PHY-GRAV-UNIVERSAL-LAW" not in entries
+assert "PHY-GRAV-FREE-FALL" not in entries
 assert "PHY-FORCE-NEWTON-LAWS" not in entries
 assert "PHY-KIN-2D-PROJECTILE" not in entries
 assert "PHY-KIN-RELATIVE-2D" not in entries
