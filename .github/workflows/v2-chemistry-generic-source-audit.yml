@@ -5,11 +5,14 @@ on:
     paths:
       - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-gate-source-audit.schema.json'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-engineering-*.schema.json'
-      - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-product-source-scope-v1.schema.json'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-product-*.schema.json'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_gate_source_audit.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_engineering_registry_runtime.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/compile_chemistry_engineering_*.py'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/compile_chemistry_product_*.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_product_source_scope.py'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_cdau_engineering_ready.py'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_pal_engineering_ready.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/stress_tests/**'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_gate_source_audit_generic.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench_v2.py'
@@ -42,12 +45,13 @@ jobs:
           python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-engineering-research-dossier.schema.json' > /dev/null
           python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-engineering-claim-ledger.schema.json' > /dev/null
           python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-product-source-scope-v1.schema.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-product-engineering-custody-v1.schema.json' > /dev/null
           python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/stress_tests/redox/source-audit.v2.json' > /dev/null
 
       - name: Run gate-generic source-audit falsifiers
         run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_gate_source_audit_generic.py' -v
 
-      - name: Run Workbench v2 generic-closure and source-authority falsifiers
+      - name: Run Workbench v2 closure, source-authority, custody and PAL falsifiers
         run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench_v2.py' -v
 
       - name: Re-run complete engineering-gate registry falsifiers
