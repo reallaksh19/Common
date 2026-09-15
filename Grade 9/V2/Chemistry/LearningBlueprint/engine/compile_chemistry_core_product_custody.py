@@ -54,6 +54,42 @@ def _schema(obj: dict[str, Any], rel: str, code: str) -> None:
         fail(code, exc.message)
 
 
+def _validate_transformation_realization(
+    obligation_packet: dict[str, Any],
+    authority: dict[str, Any],
+    source_scope: dict[str, Any],
+    audit: dict[str, Any],
+) -> None:
+    realized = set(authority["realized_obligation_ids"])
+    authorized_tiers = set(source_scope["authorized_scope_tiers"])
+    held_tiers = set(source_scope["held_scope_tiers"])
+    transform_bindings = {
+        row["asset_ref"]: row
+        for row in audit["asset_bindings"]
+        if row["asset_kind"] == "TRANSFORMATION"
+    }
+    for obligation in obligation_packet["obligations"]:
+        if obligation["kind"] != "TRANSFORMATION" or not obligation["direct"]:
+            continue
+        if authority["product_mode"] not in obligation["authorized_modes"]:
+            continue
+        asset_ref = obligation["asset_ref"]
+        binding = transform_bindings.get(asset_ref)
+        if binding is None:
+            fail("CHEM_CORE_CUSTODY_TRANSFORMATION_SCOPE_BINDING_MISSING", asset_ref)
+        tier = binding["scope_tier_id"]
+        obligation_id = obligation["obligation_id"]
+        if tier in held_tiers:
+            if obligation_id in realized:
+                fail("CHEM_CORE_CUSTODY_HELD_TRANSFORMATION_REALIZED", asset_ref)
+            continue
+        if tier in authorized_tiers:
+            if obligation_id not in realized:
+                fail("CHEM_CORE_CUSTODY_AUTHORIZED_TRANSFORMATION_MISSING", asset_ref)
+            continue
+        fail("CHEM_CORE_CUSTODY_TRANSFORMATION_TIER_UNRESOLVED", f"{asset_ref}:{tier}")
+
+
 def compile_core_product_custody(
     request: dict[str, Any],
     manifest: dict[str, Any],
@@ -127,6 +163,7 @@ def compile_core_product_custody(
 
     current_registry = registry if registry is not None else load(manifest["registry_ref"])
     scope_result = validate_core_source_scope(source_scope, audit, authority, current_registry)
+    _validate_transformation_realization(obligation_packet, authority, source_scope, audit)
 
     suffix = manifest["manifest_id"].replace("CHEM-ENG-MAN-", "", 1)
     custody = {
