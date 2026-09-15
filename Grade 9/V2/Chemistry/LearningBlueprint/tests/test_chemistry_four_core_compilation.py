@@ -16,7 +16,6 @@ from compile_chemistry_blueprint_obligations import compile_blueprint_obligation
 from compile_chemistry_core_authority import ChemistryCoreAuthorityError, compile_core_authority  # noqa: E402
 from compile_chemistry_core_product_custody import ChemistryCoreProductCustodyError, compile_core_product_custody  # noqa: E402
 from compile_chemistry_engineering_closure import digest as engineering_digest  # noqa: E402
-from run_chemistry_core_product import run_core_product  # noqa: E402
 
 REGISTRY = json.loads((ROOT / "policies/chemistry-technical-engineering-gates.v1.json").read_text(encoding="utf-8"))
 
@@ -200,6 +199,15 @@ class ChemistryFourCoreCompilationTests(unittest.TestCase):
         self.assertEqual(ctx.exception.code,"CHEM_CORE_CUSTODY_SOURCE_AUDIT_NOT_PRODUCTION")
 
     def test_static_b_modes_render_and_preflight_from_exact_custody(self):
+        # Blueprint-only CI intentionally installs only contract dependencies.
+        # Artifact realization is exercised here when render dependencies are present
+        # and is mandatory in the dedicated four-core workflow.
+        try:
+            from run_chemistry_core_product import run_core_product
+        except ModuleNotFoundError as exc:
+            if exc.name in {"reportlab", "pymupdf", "fitz"}:
+                self.skipTest(f"render dependency not installed in Blueprint-only workflow: {exc.name}")
+            raise
         for mode in ("CORE1B","CORE2B"):
             authority = self.authority_for(mode)
             scope = scope_for(authority,self.audit,self.audit_ref)
