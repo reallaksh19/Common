@@ -14,10 +14,12 @@ REGISTRY_REL = "policies/mathematics-technical-engineering-gates.v1.json"
 ENGINEERING_SCHEMA_REL = "contracts/mathematics-technical-engineering-gate.schema.json"
 ENGINEERING_VALIDATOR_PATH = ROOT / "engine" / "validate_mathematics_engineering_gates.py"
 ENGINEERING_COMPOSER_PATH = ROOT / "engine" / "engineering_registry_composition.py"
+ENGINEERING_INVARIANT_PROFILE_PATH = ROOT / "policies" / "mathematics-engineering-gate-invariants.v1.json"
 
 from engineering_registry_composition import (  # noqa: E402
     BASE_REGISTRY_REL,
     CANONICAL_EXTENSION_RELS,
+    EXTENSION_CATALOG_REL,
     load_canonical_engineering_registry,
 )
 from validate_mathematics_engineering_gates import (  # noqa: E402
@@ -60,10 +62,13 @@ def _bytes_digest(value: bytes) -> str:
 
 
 def engineering_validator_contract_digest() -> str:
+    """Digest every executable/data input that defines Engineering admission."""
     payload = {
         "schema": load(ENGINEERING_SCHEMA_REL),
         "validator_source_sha256": _bytes_digest(ENGINEERING_VALIDATOR_PATH.read_bytes()),
         "registry_composer_source_sha256": _bytes_digest(ENGINEERING_COMPOSER_PATH.read_bytes()),
+        "extension_catalog_source_sha256": _bytes_digest((ROOT / EXTENSION_CATALOG_REL).read_bytes()),
+        "invariant_profile_source_sha256": _bytes_digest(ENGINEERING_INVARIANT_PROFILE_PATH.read_bytes()),
         "canonical_extension_source_sha256": [
             _bytes_digest((ROOT / rel).read_bytes()) for rel in CANONICAL_EXTENSION_RELS
         ],
