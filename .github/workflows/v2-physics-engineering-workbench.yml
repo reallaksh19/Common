@@ -18,6 +18,7 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Physics/Blueprint/provenance/pr383/**'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_migration_preflight.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_pr383_v3_migration_gaps.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py'
@@ -65,6 +66,12 @@ jobs:
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/compile_pr383_v3_migration_gaps.py"
           --out /tmp/pr383-v3-migration-gaps.json
+      - name: Validate source-only structural preflight for unresolved migrations
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_migration_preflight.py"
+      - name: Compile source-only structural migration preflight artifact
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_migration_preflight.py"
+          --out /tmp/pr383-v3-migration-preflight.json
       - name: Run Physics v3 full-registry equivalence and mutation falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
       - name: Run legacy Engineering Workbench v1 regression falsifiers
@@ -117,6 +124,13 @@ jobs:
         with:
           name: physics-engineering-pr383-v3-migration-gaps
           path: /tmp/pr383-v3-migration-gaps.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload subject-wide PR383 structural migration preflight
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-pr383-v3-migration-preflight
+          path: /tmp/pr383-v3-migration-preflight.json
           if-no-files-found: error
           retention-days: 14
       - name: Upload SBA23 engineering proof
