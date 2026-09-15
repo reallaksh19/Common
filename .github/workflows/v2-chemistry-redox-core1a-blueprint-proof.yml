@@ -53,7 +53,7 @@ jobs:
 
       - name: Build Core1A strictly from current Blueprint and v2 custody
         run: >-
-          python 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/build_core1a.py'
+          python 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/build_core1a_content_first.py'
           --out /tmp/core1a_redox_blueprint_proof.pdf
           --manifest /tmp/core1a_redox_blueprint_proof.manifest.json
 
