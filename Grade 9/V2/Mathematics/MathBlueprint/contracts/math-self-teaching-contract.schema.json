@@ -135,7 +135,7 @@
       ],
       "properties": {
         "max_pages": {"type": "integer", "minimum": 1},
-        "pedagogy_web_research": {"enum": ["FORBIDDEN", "REQUIRED"]},
+        "pedagogy_web_research": {"enum": ["OPTIONAL", "REQUIRED"]},
         "research_depth": {"enum": ["NONE", "STANDARD", "DEEP"]},
         "subsubtopic_decomposition_allowed": {"type": "boolean"},
         "visual_intensity": {"enum": ["STANDARD", "HIGH", "VERY_HIGH"]},
