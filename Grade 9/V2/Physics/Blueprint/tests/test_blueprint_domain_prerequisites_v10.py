@@ -5,7 +5,11 @@ import json
 import sys
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 ROOT = Path(__file__).resolve().parents[1]
+REPO = ROOT.parents[3]
+SHARED = REPO / "Grade 9" / "V2" / "Shared" / "CrossDomain"
 sys.path.insert(0, str(ROOT / "engine"))
 
 from compile_domain_prerequisite_closure import compile_domain_prerequisite_closure  # noqa: E402
@@ -14,6 +18,10 @@ from compile_engineering_closure import compile_closure  # noqa: E402
 
 def load(rel: str):
     return json.loads((ROOT / rel).read_text(encoding="utf-8"))
+
+
+def load_shared(rel: str):
+    return json.loads((SHARED / rel).read_text(encoding="utf-8"))
 
 
 def engineering_receipt():
@@ -43,11 +51,16 @@ def test_missing_external_authority_emits_provider_demands():
 
     demands = {row["prerequisite_id"]: row for row in receipt["demands"]}
     assert set(demands) == set(rows)
+    assert all(row["requester_subject"] == "PHYSICS" for row in demands.values())
     assert all(row["provider_subject"] == "MATHEMATICS" for row in demands.values())
     assert all(row["status"] == "OPEN_HELD" for row in demands.values())
     assert all(row["provider_entrypoint_ref"] == "Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md" for row in demands.values())
+    assert all(row["authority_contract_ref"] == "Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-authority.schema.json" for row in demands.values())
     assert "PHY-VEC-BASICS" in demands["MATH-GEO-2D"]["required_by_gate_ids"]
     assert "PHY-VEC-COMPONENTS" in demands["MATH-TRIG-RIGHT"]["required_by_gate_ids"]
+    validator = Draft202012Validator(load_shared("contracts/domain-prerequisite-demand.schema.json"))
+    for demand in demands.values():
+        validator.validate(demand)
 
 
 def test_raw_authority_dictionary_cannot_close_without_repository_source_ref():
@@ -84,6 +97,13 @@ def test_physics_owned_file_cannot_impersonate_math_authority():
             ["Grade 9/V2/Physics/Blueprint/fixtures/stress-tests/relative-motion-grade9-cbse.request.v1.json"],
         ),
     )
+
+
+def test_shared_authority_contract_is_provider_owned_not_physics_owned():
+    schema = load_shared("contracts/domain-prerequisite-authority.schema.json")
+    assert schema["title"] == "Cross-Domain Prerequisite Authority Receipt"
+    assert schema["properties"]["provider_subject"] == {"type": "string", "minLength": 1}
+    assert not (ROOT / "contracts" / "domain-prerequisite-authority.schema.json").exists()
 
 
 def main():

@@ -9,6 +9,7 @@ on:
       - 'Grade 9/V2/Physics/Representation/**'
       - 'Grade 9/V2/Physics/Core2A/**'
       - 'Grade 9/V2/Physics/Core2B/**'
+      - 'Grade 9/V2/Shared/CrossDomain/**'
       - '.github/workflows/v2-physics-blueprint.yml'
   workflow_dispatch:
 

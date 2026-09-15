@@ -7,25 +7,54 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO = ROOT.parents[3]
+SHARED = REPO / "Grade 9" / "V2" / "Shared" / "CrossDomain"
 
 
 def load(rel: str):
     return json.loads((ROOT / rel).read_text(encoding="utf-8"))
 
 
+def load_shared(rel: str):
+    return json.loads((SHARED / rel).read_text(encoding="utf-8"))
+
+
 def test_v10_contract_schemas_are_valid():
-    names = [
+    local_names = [
         "contracts/scoped-execution-envelope.schema.json",
         "contracts/scoped-evidence-receipt.schema.json",
-        "contracts/domain-prerequisite-authority.schema.json",
-        "contracts/domain-prerequisite-demand.schema.json",
         "contracts/domain-prerequisite-closure.schema.json",
         "contracts/seven-core-stress-test-request.schema.json",
         "contracts/seven-core-stress-test-receipt.schema.json",
         "contracts/join-packet.schema.json",
     ]
-    for rel in names:
+    shared_names = [
+        "contracts/domain-prerequisite-authority.schema.json",
+        "contracts/domain-prerequisite-demand.schema.json",
+    ]
+    for rel in local_names:
         Draft202012Validator.check_schema(load(rel))
+    for rel in shared_names:
+        Draft202012Validator.check_schema(load_shared(rel))
+
+
+def test_v10_cross_domain_transport_is_shared_not_physics_shadowed():
+    for rel in (
+        "contracts/domain-prerequisite-authority.schema.json",
+        "contracts/domain-prerequisite-demand.schema.json",
+        "policy/domain-prerequisite-routing.v1.json",
+    ):
+        assert not (ROOT / rel).exists(), "PHYSICS_LOCAL_CROSS_DOMAIN_PROTOCOL_SHADOW:" + rel
+    closure = load("contracts/domain-prerequisite-closure.schema.json")
+    demand_ref = closure["properties"]["demands"]["items"]["$ref"]
+    assert demand_ref == "https://schemas.common/v2/shared/cross-domain/domain-prerequisite-demand.schema.json"
+
+
+def test_v10_shared_demand_contract_is_subject_neutral_transport():
+    demand = load_shared("contracts/domain-prerequisite-demand.schema.json")
+    assert demand["properties"]["requester_subject"] == {"type": "string", "minLength": 1}
+    assert demand["properties"]["demand_id"]["pattern"] == "^DOMAIN-DEMAND-[A-Z0-9-]+$"
+    assert demand["properties"]["authority_contract_ref"]["const"] == "Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-authority.schema.json"
 
 
 def test_v10_join_policy_keeps_verified_absence_distinct_from_unknown():
@@ -43,12 +72,16 @@ def test_v10_join_policy_keeps_verified_absence_distinct_from_unknown():
 
 
 def test_v10_domain_provider_registry_routes_math_without_self_certifying_it():
-    policy = load("policy/domain-prerequisite-routing.v1.json")
+    policy = load_shared("registry/domain-provider-registry.v1.json")
+    assert policy["registry_id"] == "V2-CROSS-DOMAIN-PROVIDER-REGISTRY-v1"
     math = next(row for row in policy["providers"] if row["prerequisite_prefix"] == "MATH-")
     assert math["provider_subject"] == "MATHEMATICS"
     assert math["provider_root"] == "Grade 9/V2/Mathematics"
     assert math["authority_entrypoint_ref"] == "Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md"
+    assert policy["authority_contract_ref"] == "Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-authority.schema.json"
+    assert policy["demand_contract_ref"] == "Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-demand.schema.json"
     assert policy["unknown_provider_policy"] == "OPEN_UNROUTABLE_AND_HOLD"
+    assert all(policy["rules"].values())
 
 
 def test_v10_state_semantics_forbid_surrogate_passes():
@@ -77,6 +110,7 @@ def test_v10_normative_architecture_exists_and_declares_canonicality():
     assert "V10 supersedes V9 as the canonical learner-product architecture" in text
     assert "Topic-wide evidence may not be silently reused" in text
     assert "A seven-core stress test is a governed compiler execution" in text
+    assert "Shared/CrossDomain" in text
 
 
 def main():

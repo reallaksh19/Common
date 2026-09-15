@@ -10,10 +10,12 @@ from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
 
 HERE = Path(__file__).resolve()
 ROOT = HERE.parents[1]
 REPO = ROOT.parents[3]
+SHARED = REPO / "Grade 9" / "V2" / "Shared" / "CrossDomain"
 sys.path.insert(0, str(ROOT / "engine"))
 
 from build_physics_engineering_gate_registry_v3 import build_registry  # noqa: E402
@@ -31,8 +33,12 @@ def schema(name: str) -> dict[str, Any]:
     return json.loads((ROOT / "contracts" / name).read_text(encoding="utf-8"))
 
 
+def shared_schema(name: str) -> dict[str, Any]:
+    return json.loads((SHARED / "contracts" / name).read_text(encoding="utf-8"))
+
+
 def load_policy() -> dict[str, Any]:
-    return json.loads((ROOT / "policy" / "domain-prerequisite-routing.v1.json").read_text(encoding="utf-8"))
+    return json.loads((SHARED / "registry" / "domain-provider-registry.v1.json").read_text(encoding="utf-8"))
 
 
 def repo_path(ref: str) -> Path:
@@ -56,6 +62,12 @@ def _slug(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9-]+", "-", value).strip("-")
 
 
+def _closure_validator() -> Draft202012Validator:
+    demand = shared_schema("domain-prerequisite-demand.schema.json")
+    registry = Registry().with_resource(demand["$id"], Resource.from_contents(demand))
+    return Draft202012Validator(schema("domain-prerequisite-closure.schema.json"), registry=registry)
+
+
 def _verify_authorities(
     authority_receipts: list[dict[str, Any]],
     authority_refs: list[str],
@@ -63,7 +75,7 @@ def _verify_authorities(
     if len(authority_receipts) != len(authority_refs):
         raise AssertionError("DOMAIN_PREREQUISITE_AUTHORITY_SOURCE_REF_REQUIRED")
 
-    validator = Draft202012Validator(schema("domain-prerequisite-authority.schema.json"))
+    validator = Draft202012Validator(shared_schema("domain-prerequisite-authority.schema.json"))
     authorities: dict[str, dict[str, Any]] = {}
 
     for row, source_ref in zip(authority_receipts, authority_refs, strict=True):
@@ -107,6 +119,7 @@ def compile_domain_prerequisite_closure(
     authority_receipts = authority_receipts or []
     authority_refs = authority_refs or []
     authorities = _verify_authorities(authority_receipts, authority_refs)
+    policy = load_policy()
 
     gate_map = {gate["subtopic_id"]: gate for gate in build_registry()["gates"]}
     required_by: dict[str, set[str]] = {}
@@ -121,7 +134,7 @@ def compile_domain_prerequisite_closure(
 
     rows: list[dict[str, Any]] = []
     demands: list[dict[str, Any]] = []
-    demand_validator = Draft202012Validator(schema("domain-prerequisite-demand.schema.json"))
+    demand_validator = Draft202012Validator(shared_schema("domain-prerequisite-demand.schema.json"))
 
     for prerequisite_id in sorted(required_by):
         authority = authorities.get(prerequisite_id)
@@ -147,7 +160,7 @@ def compile_domain_prerequisite_closure(
             "required_by_gate_ids": sorted(required_by[prerequisite_id]),
             "engineering_receipt_ref": engineering_receipt["receipt_id"],
             "engineering_closure_digest": engineering_receipt["closure_digest"],
-            "authority_contract_ref": "contracts/domain-prerequisite-authority.schema.json",
+            "authority_contract_ref": policy["authority_contract_ref"],
             "status": "OPEN_HELD" if provider else "OPEN_UNROUTABLE",
             "demand_digest": "",
         }
@@ -172,7 +185,7 @@ def compile_domain_prerequisite_closure(
         "closure_digest": "",
     }
     receipt["closure_digest"] = digest({k: v for k, v in receipt.items() if k != "closure_digest"})
-    Draft202012Validator(schema("domain-prerequisite-closure.schema.json")).validate(receipt)
+    _closure_validator().validate(receipt)
     return receipt
 
 
