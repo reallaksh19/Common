@@ -3,12 +3,14 @@
   "$id": "mathematics-engineered-domain-admission.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version","subject","admission_id","domain_registry_ref","engineering_binding_ref","subtopic_gate_map"],
+  "required": ["schema_version","subject","admission_id","domain_registry_ref","engineering_request_ref","engineering_manifest_ref","engineering_binding_ref","subtopic_gate_map"],
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "subject": {"const": "MATHEMATICS"},
     "admission_id": {"type":"string","pattern":"^MATH-ENG-DOMAIN-ADMISSION-[A-Z0-9_-]+$"},
     "domain_registry_ref": {"type":"string","minLength":3},
+    "engineering_request_ref": {"type":"string","minLength":3},
+    "engineering_manifest_ref": {"type":"string","minLength":3},
     "engineering_binding_ref": {"type":"string","minLength":3},
     "subtopic_gate_map": {
       "type":"array",
