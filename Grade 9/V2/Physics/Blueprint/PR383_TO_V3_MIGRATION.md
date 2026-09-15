@@ -13,6 +13,8 @@ source-schema validation
         ↓
 discovery reconciliation
         ↓
+repository-backed mapping review, where needed
+        ↓
 v3 migration-gap compilation
         ↓
 reviewed v3 gate source(s)
@@ -48,11 +50,15 @@ For a gate still marked `MIGRATION_REQUIRED`, the compiler may preserve source-b
 
 Preservation does **not** mean v3 readiness.
 
+A `MAPPED_V3` entry is different from direct migration. It requires a repository-backed mapping review that accounts for every source obligation against exact canonical v3 target blobs. A broad source gate may map into several refined canonical gates. An exact source identity and a broader reviewed mapping may legitimately converge on the same canonical target because those are independent source-provenance roles; this does not create a second readiness authority.
+
+`v3_native_or_refined_gate_ids` remains exclusive: those gates have no source-backed reconciliation role and therefore may not also be exact or mapped targets.
+
 ## What may not be imported as authority
 
-PR #383 fields `technical_readiness` and `release_checklist` are deliberately discarded as control inputs. Canonical v3 does not permit a gate source to self-assert readiness.
+PR #383 fields `technical_readiness` and `release_checklist` are deliberately discarded as control inputs. Canonical v3 does not permit a gate source to self-assert readiness. Mapping reviews likewise fix `readiness_authorized = false` and `source_custody_promoted = false`.
 
-A migrated gate remains blocked until the v3 control plane has explicit repository-backed evidence for at least:
+A directly migrated gate remains blocked until the v3 control plane has explicit repository-backed evidence for at least:
 
 - reviewed `scope_state`;
 - applicable Core roles;
@@ -70,14 +76,23 @@ These are enrichment obligations, not permission to infer missing Physics conten
 
 ## Current state
 
-The pinned PR #383 registry contains 43 discovered subtopics. The current canonical v3 registry contains 23 gates. Discovery reconciliation currently recognizes 12 exact v3 identities and holds 31 PR #383 discoveries for explicit v3 migration. The current v3 registry also contains 11 native/refined gates that are not forced into PR #383 naming.
+The pinned PR #383 registry contains 43 discovered subtopics. The current canonical v3 registry contains 23 gates. Discovery reconciliation currently contains:
 
-The migration-gap compiler therefore reports the 31 unresolved discoveries as:
+- 12 `EXACT_V3_ID` source discoveries;
+- 2 reviewed `MAPPED_V3` source discoveries: the broad Newton-laws bundle and universal-gravitation bundle;
+- 29 `MIGRATION_REQUIRED` source discoveries;
+- 9 canonical v3-native/refined gates with no PR #383 source-backed reconciliation role.
+
+The five canonical NLM targets of `PHY-FORCE-NEWTON-LAWS` are also exact PR #383 identities. That overlap is intentional and means the category counts are provenance-role counts, not a partition whose target counts can be added to derive the 23-gate registry size.
+
+The migration-gap compiler therefore reports 14 reconciled PR #383 discovery entries and the remaining 29 unresolved discoveries as:
 
 `BLOCKED_PENDING_V3_ENRICHMENT`
 
 with `promotion_authorized = false`.
 
+The source-only structural preflight also remains fail closed: none of those 29 unresolved source gates independently satisfies all canonical v3 collection minimums, and structural preflight can never grant engineering readiness.
+
 ## Q15 boundary
 
-Q15 is a stress fixture only. It is not source truth for this migration layer, it is not a gate-definition input, and no Q15/SBA23 branch exists in the migration compiler. The test suite asserts that Q15 does not appear in the subject-wide migration report.
+Q15 is a stress fixture only. It is not source truth for this migration layer, it is not a gate-definition input, and no Q15/SBA23 branch exists in the migration compiler. The test suite asserts that Q15 does not appear in the subject-wide migration report or mapping-review authority.
