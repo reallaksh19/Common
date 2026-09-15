@@ -48,17 +48,28 @@ def main() -> None:
 
     example_catalog = root / "core1a" / "core1a_governed_example_catalog.json"
     generation_spec = root / "inputs" / "generation_spec.json"
+    engineering_admission = root / "inputs" / "engineering_domain_admission.json"
     research_manifest = _research_manifest(root)
     research_args = ["--pedagogy-research-manifest", str(research_manifest)] if research_manifest else []
     if not example_catalog.exists():
         fail("BOUND_BLUEPRINT_PUBLICATION_GOVERNED_EXAMPLE_CATALOG_REQUIRED")
+    if not engineering_admission.exists():
+        fail("BOUND_BLUEPRINT_PUBLICATION_ENGINEERING_ADMISSION_REQUIRED")
 
     out = root / "publication"
     out.mkdir(parents=True, exist_ok=True)
+    visibility = out / "engineering_visibility_manifest.json"
     bundle = out / "learner_publication_bundle.json"
     bundle_audit = out / "learner_publication_bundle_audit.json"
     pdf = out / "blueprint_regenerated_learner_product.pdf"
     pdf_audit = out / "blueprint_pdf_audit.json"
+
+    run(HERE / "compile_engineering_visibility_manifest.py", [
+        "--engineering-admission", str(engineering_admission),
+        "--release-gate", str(gate_path),
+        "--out", str(visibility),
+    ])
+    visibility_args = ["--engineering-visibility-manifest", str(visibility)]
 
     run(HERE / "compile_publication_bundle.py", [
         "--bucket-plan", str(root / "core1a" / "core1a_bucket_plan.json"),
@@ -69,6 +80,7 @@ def main() -> None:
         "--core2b-plan", str(root / "core2b" / "plan.json"),
         "--generation-spec", str(generation_spec),
         *research_args,
+        *visibility_args,
         "--release-gate", str(gate_path),
         "--out", str(bundle),
     ])
@@ -77,6 +89,7 @@ def main() -> None:
         "--generation-spec", str(generation_spec),
         "--core1a-example-catalog", str(example_catalog),
         *research_args,
+        *visibility_args,
         "--audit-out", str(bundle_audit),
     ])
     run(HERE / "render_publication_bundle_pdf.py", [
@@ -84,10 +97,11 @@ def main() -> None:
         "--generation-spec", str(generation_spec),
         "--core1a-example-catalog", str(example_catalog),
         *research_args,
+        *visibility_args,
         "--out", str(pdf), "--audit-out", str(pdf_audit),
     ])
 
-    bpa = load(bundle_audit); pda = load(pdf_audit); bundle_doc = load(bundle)
+    bpa = load(bundle_audit); pda = load(pdf_audit); bundle_doc = load(bundle); visibility_doc = load(visibility)
     if bpa.get("status") != "PASS" or pda.get("status") != "PASS":
         fail("BOUND_BLUEPRINT_PUBLICATION_AUDIT_FAILED")
     if bpa.get("bundle_sha256") != pda.get("bundle_sha256"):
@@ -98,6 +112,16 @@ def main() -> None:
         fail("BOUND_BLUEPRINT_PUBLICATION_SOURCE_DRIFT")
     if bpa.get("research_manifest_bound") != pda.get("research_manifest_bound"):
         fail("BOUND_BLUEPRINT_PUBLICATION_RESEARCH_CUSTODY_DRIFT")
+    if not bpa.get("engineering_visibility_bound") or not pda.get("engineering_visibility_bound"):
+        fail("BOUND_BLUEPRINT_PUBLICATION_ENGINEERING_VISIBILITY_UNBOUND")
+    if bpa.get("engineering_visibility_manifest_digest") != visibility_doc.get("manifest_digest"):
+        fail("BOUND_BLUEPRINT_PUBLICATION_ENGINEERING_VISIBILITY_DIGEST_DRIFT")
+    if pda.get("engineering_visibility_manifest_digest") != visibility_doc.get("manifest_digest"):
+        fail("BOUND_BLUEPRINT_PUBLICATION_ENGINEERING_VISIBILITY_RENDER_DIGEST_DRIFT")
+    if pda.get("rendered_engineering_visibility_gate_ids") != bpa.get("engineering_visibility_gate_ids"):
+        fail("BOUND_BLUEPRINT_PUBLICATION_ENGINEERING_VISIBILITY_RENDER_COVERAGE_DRIFT")
+    if bundle_doc["engineering_visibility"]["publication_authorization"] != "NOT_IMPLIED":
+        fail("BOUND_BLUEPRINT_PUBLICATION_ENGINEERING_VISIBILITY_AUTHORITY_DRIFT")
 
     summary = {
         "status": "PASS",
@@ -109,12 +133,19 @@ def main() -> None:
         "governed_example_catalog_digest": bundle_doc["governed_example_catalog_digest"],
         "pedagogy_research_manifest_digest": bundle_doc["pedagogy_research_manifest_digest"],
         "research_manifest_bound": bpa["research_manifest_bound"],
+        "engineering_visibility_manifest_id": visibility_doc["manifest_id"],
+        "engineering_visibility_manifest_digest": visibility_doc["manifest_digest"],
+        "engineering_visibility_authorization_count": visibility_doc["authorization_count"],
+        "engineering_visibility_gate_count": visibility_doc["gate_count"],
+        "engineering_visibility_publication_authorization": visibility_doc["publication_authorization"],
+        "engineering_visibility_bound": True,
         "semantic_page_count": pda["semantic_page_count"],
         "render_object_count": bpa["render_object_count"],
         "pdf_sha256": pda["pdf_sha256"],
         "pdf_size_bytes": pda["pdf_size_bytes"],
         "semantic_source": pda["semantic_source"],
         "paths": {
+            "engineering_visibility_manifest": visibility.name,
             "bundle": bundle.name,
             "bundle_audit": bundle_audit.name,
             "pdf": pdf.name,
