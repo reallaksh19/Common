@@ -28,9 +28,9 @@ def main() -> None:
     assert result["status"] == "PASS"
     assert result["discovered_subtopic_count"] == 43
     assert result["exact_v3_count"] == 12
-    assert result["mapped_v3_target_count"] == 11
-    assert result["migration_required_count"] == 27
-    assert result["v3_native_or_refined_count"] == 6
+    assert result["mapped_v3_target_count"] == 12
+    assert result["migration_required_count"] == 26
+    assert result["v3_native_or_refined_count"] == 5
     assert result["canonical_v3_gate_count"] == 24
     assert result["case_artifacts_role"] == "STRESS_TEST_ONLY"
     assert result["readiness_rule"] == "DERIVED_BY_PRODUCTION_V3_VALIDATOR"
@@ -39,6 +39,18 @@ def main() -> None:
     assert grav["disposition"] == "MAPPED_V3"
     assert grav["v3_gate_ids"] == ["PHY-GRAV-FORCE", "PHY-GRAV-FIELD"]
     assert grav["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-GRAV-UNIVERSAL-LAW.v1.json"
+
+    free_fall = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-GRAV-FREE-FALL")
+    assert free_fall["disposition"] == "MAPPED_V3"
+    assert free_fall["v3_gate_ids"] == [
+        "PHY-GRAV-FORCE",
+        "PHY-GRAV-FIELD",
+        "PHY-M2D-PROJECTILE-COMPONENTS",
+        "PHY-M2D-SHARED-CLOCK",
+        "PHY-M2D-VELOCITY-EVOLUTION",
+        "PHY-M2D-SAME-HEIGHT-VELOCITY",
+    ]
+    assert free_fall["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-GRAV-FREE-FALL.v1.json"
 
     newton = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-FORCE-NEWTON-LAWS")
     assert newton["disposition"] == "MAPPED_V3"
@@ -102,8 +114,8 @@ def main() -> None:
     expect_code(bad, "E_ENG_DISCOVERY_MAPPING_REVIEW_INVALID")
 
     bad = copy.deepcopy(catalog)
-    row = next(x for x in bad["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-GRAV-UNIVERSAL-LAW")
-    row["v3_gate_ids"] = ["PHY-GRAV-FORCE"]
+    row = next(x for x in bad["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-GRAV-FREE-FALL")
+    row["v3_gate_ids"] = ["PHY-GRAV-FORCE", "PHY-GRAV-FIELD"]
     expect_code(bad, "E_ENG_DISCOVERY_MAPPING_REVIEW_INVALID")
 
     bad = copy.deepcopy(catalog)
@@ -120,6 +132,10 @@ def main() -> None:
 
     bad = copy.deepcopy(catalog)
     bad["v3_native_or_refined_gate_ids"].append("PHY-M2D-RELATIVE-VELOCITY")
+    expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
+
+    bad = copy.deepcopy(catalog)
+    bad["v3_native_or_refined_gate_ids"].append("PHY-M2D-SAME-HEIGHT-VELOCITY")
     expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
 
     bad = copy.deepcopy(catalog)
