@@ -1,0 +1,61 @@
+name: V2 Chemistry Redox Core1A Blueprint Proof
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-redox-core1a-blueprint-proof.yml'
+  workflow_dispatch:
+
+jobs:
+  build-blueprint-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install product dependencies
+        run: pip install reportlab pymupdf jsonschema
+      - name: Revalidate product source scope
+        run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_product_source_scope.py"
+      - name: Revalidate product engineering custody
+        run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_product_engineering_custody.py"
+      - name: Revalidate Core1A study-note authority
+        run: >-
+          python "Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_core1a_study_note_v7.py"
+          --policy "Grade 9/V2/Chemistry/LearningBlueprint/policies/v7-core1a-study-note-sufficiency-policy.json"
+          --authority "Grade 9/V2/Chemistry/LearningBlueprint/golden/v7/core1a-study-note-redox-authority.json"
+          --ccbom "Grade 9/V2/Chemistry/LearningBlueprint/golden/v7/ccbom-redox.json"
+      - name: Build Core1A strictly from current Blueprint
+        run: >-
+          python "Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/build_core1a.py"
+          --out /tmp/core1a_redox_blueprint_proof.pdf
+          --manifest /tmp/core1a_redox_blueprint_proof.manifest.json
+      - name: Run structural and learner-surface preflight
+        run: >-
+          python "Grade 9/V2/Chemistry/LearnerProductV7/Redox/Core1A/preflight_core1a.py"
+          /tmp/core1a_redox_blueprint_proof.pdf
+          /tmp/core1a_redox_blueprint_proof.manifest.json
+      - name: Render all pages for visual review
+        run: |
+          mkdir -p /tmp/core1a-renders
+          python - <<'PY'
+          import fitz
+          doc=fitz.open('/tmp/core1a_redox_blueprint_proof.pdf')
+          mat=fitz.Matrix(2.0,2.0)
+          for i,p in enumerate(doc):
+              p.get_pixmap(matrix=mat,alpha=False).save(f'/tmp/core1a-renders/page-{i+1:02d}.png')
+          print('rendered', doc.page_count, 'pages')
+          PY
+      - name: Upload Core1A proof and renders
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-redox-core1a-blueprint-proof
+          path: |
+            /tmp/core1a_redox_blueprint_proof.pdf
+            /tmp/core1a_redox_blueprint_proof.manifest.json
+            /tmp/core1a-renders/*.png
+          if-no-files-found: error
+          retention-days: 14
