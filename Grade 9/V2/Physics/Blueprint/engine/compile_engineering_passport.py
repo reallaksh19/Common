@@ -51,10 +51,8 @@ def validate_receipt_semantics(receipt: dict):
 
 def _base_passport(request: dict, receipt: dict) -> dict:
     ready = receipt["closure_status"] == "READY"
-    if ready and receipt["source_item_status"] == "SOURCE_HELD":
-        next_action = "Proceed to CCU for technical consumption while preserving the independent source/legal hold."
-    elif ready:
-        next_action = "Proceed to CCU; custody, pedagogy, publication and learner-evidence gates remain independently governed."
+    if ready:
+        next_action = "Submit the exact engineering closure and manifest to the global Engineering Gate before any downstream consumer proceeds."
     else:
         next_action = receipt["blockers"][0]["message"] if receipt["blockers"] else "Resolve blocked technical gates and recompile closure."
     counts = receipt["counts"]
@@ -74,7 +72,7 @@ def _base_passport(request: dict, receipt: dict) -> dict:
         "blocked_gate_count": counts["blocked_gate_count"],
         "gate_states": receipt["gate_states"],
         "source_item_status": receipt["source_item_status"],
-        "ccu_technical_authorization": "ALLOWED" if ready else "BLOCKED",
+        "consumer_authorization": "NOT_EVALUATED",
         "next_action": next_action,
     }
 
@@ -168,14 +166,14 @@ def compile_passport(request: dict, receipt: dict) -> dict:
 def render_markdown(passport: dict) -> str:
     mark = {"ENGINEERING_GATE_READY": "✓", "ENGINEERING_GATE_INCOMPLETE": "△", "SOURCE_SCOPE_HELD": "✕", "MISSING": "✕"}
     lines = [
-        "# Physics Engineering Passport",
+        "# Physics Engineering Passport — diagnostic only",
         "",
         f"- **Request:** {passport['requested_topic']} — {passport['requested_scope']}",
         f"- **Engineering depth:** {passport['engineering_depth']}",
         f"- **Technical state:** {passport['technical_state']}",
         f"- **Closure:** {passport['ready_gate_count']}/{passport['transitive_gate_count']} gates READY",
         f"- **Source state:** {passport['source_item_status']}",
-        f"- **CCU technical authorization:** {passport['ccu_technical_authorization']}",
+        f"- **Consumer authorization:** {passport['consumer_authorization']} — owned by global Engineering Gate",
     ]
     if passport.get("schema_version") == "2.0.0":
         lines.extend([
@@ -206,7 +204,7 @@ def render_markdown(passport: dict) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compile a human-visible Physics Engineering Passport")
+    parser = argparse.ArgumentParser(description="Compile a diagnostic subject Engineering Passport; consumer authority is evaluated globally")
     parser.add_argument("request")
     parser.add_argument("closure_receipt")
     parser.add_argument("--out")
