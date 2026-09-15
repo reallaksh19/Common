@@ -36,6 +36,8 @@ jobs:
           if-no-files-found: error
       - name: Run Mathematics Engineering Gate falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_gates.py'
+      - name: Enforce Engineering-to-Blueprint topic independence
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_blueprint_topic_independence.py'
       - name: Run registry-driven Engineering Workbench falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_workbench.py'
       - name: Run runtime custody binding falsifiers
