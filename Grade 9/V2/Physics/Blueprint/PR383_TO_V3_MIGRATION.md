@@ -52,6 +52,8 @@ Preservation does **not** mean v3 readiness.
 
 A `MAPPED_V3` entry is different from direct migration. It requires a repository-backed mapping review that accounts for every source obligation against exact canonical v3 target blobs. A broad source gate may map into several refined canonical gates. An exact source identity and a broader reviewed mapping may legitimately converge on the same canonical target because those are independent source-provenance roles; this does not create a second readiness authority.
 
+A reviewed mapping may also normalize an old broad source structure into an already-governed canonical decomposition. For example, the PR #383 projectile shortcut formulas are reconciled through canonical component displacement relations, the shared event clock and apex velocity evolution, rather than by creating a second shortcut-formula gate. Likewise, the source's separate 1D-motion prerequisite is accounted for by the governed one-dimensional component relations already present in the refined M2D targets rather than by inventing a nonexistent canonical prerequisite ID.
+
 `v3_native_or_refined_gate_ids` remains exclusive: those gates have no source-backed reconciliation role and therefore may not also be exact or mapped targets.
 
 ## What may not be imported as authority
@@ -79,19 +81,21 @@ These are enrichment obligations, not permission to infer missing Physics conten
 The pinned PR #383 registry contains 43 discovered subtopics. The current canonical v3 registry contains 23 gates. Discovery reconciliation currently contains:
 
 - 12 `EXACT_V3_ID` source discoveries;
-- 2 reviewed `MAPPED_V3` source discoveries: the broad Newton-laws bundle and universal-gravitation bundle;
-- 29 `MIGRATION_REQUIRED` source discoveries;
-- 9 canonical v3-native/refined gates with no PR #383 source-backed reconciliation role.
+- 3 reviewed `MAPPED_V3` source discoveries: the broad Newton-laws bundle, universal-gravitation bundle and 2D-projectile bundle;
+- 28 `MIGRATION_REQUIRED` source discoveries;
+- 6 canonical v3-native/refined gates with no PR #383 source-backed reconciliation role.
 
 The five canonical NLM targets of `PHY-FORCE-NEWTON-LAWS` are also exact PR #383 identities. That overlap is intentional and means the category counts are provenance-role counts, not a partition whose target counts can be added to derive the 23-gate registry size.
 
-The migration-gap compiler therefore reports 14 reconciled PR #383 discovery entries and the remaining 29 unresolved discoveries as:
+The three canonical M2D targets of `PHY-KIN-2D-PROJECTILE` were previously classified as native/refined. Once the repository-backed mapping review established full source-obligation coverage, they became source-backed mapping targets and were removed from the native/refined set.
+
+The migration-gap compiler therefore reports 15 reconciled PR #383 discovery entries and the remaining 28 unresolved discoveries as:
 
 `BLOCKED_PENDING_V3_ENRICHMENT`
 
 with `promotion_authorized = false`.
 
-The source-only structural preflight also remains fail closed: none of those 29 unresolved source gates independently satisfies all canonical v3 collection minimums, and structural preflight can never grant engineering readiness.
+The source-only structural preflight also remains fail closed: none of those 28 unresolved source gates independently satisfies all canonical v3 collection minimums, and structural preflight can never grant engineering readiness.
 
 ## Q15 boundary
 
