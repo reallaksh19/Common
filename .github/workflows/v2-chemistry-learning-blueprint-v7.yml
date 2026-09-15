@@ -65,14 +65,14 @@ jobs:
           V="$ROOT/engine/validate_blueprint_v7.py"
           P="$ROOT/policies/v7-product-assurance-policy.json"
           python "$ROOT/engine/compile_chemistry_product_engineering_custody.py" \
-            "$ROOT/fixtures/engineering-workbench/redox-request.v1.json" \
-            "$ROOT/fixtures/engineering-workbench/redox-manifest.v1.json" \
-            "$ROOT/golden/v7/ccbom-redox.json" \
+            "fixtures/engineering-workbench/redox-request.v1.json" \
+            "fixtures/engineering-workbench/redox-manifest.v1.json" \
+            "golden/v7/ccbom-redox.json" \
             --out /tmp/chem-redox-product-engineering-custody.json
           python "$ROOT/engine/validate_pal_engineering_ready.py" \
-            "$ROOT/fixtures/engineering-workbench/redox-request.v1.json" \
-            "$ROOT/fixtures/engineering-workbench/redox-manifest.v1.json" \
-            "$ROOT/golden/v7/ccbom-redox.json" \
+            "fixtures/engineering-workbench/redox-request.v1.json" \
+            "fixtures/engineering-workbench/redox-manifest.v1.json" \
+            "golden/v7/ccbom-redox.json" \
             /tmp/chem-redox-product-engineering-custody.json
           python "$V" --policy "$P" --ccbom "$ROOT/golden/v7/ccbom-redox.json"
           python "$ROOT/engine/validate_core1a_study_note_v7.py" \
