@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-engineering-migration-preflight.schema.json",
+  "title": "Physics Engineering Migration Structural Preflight",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "source_snapshot", "target_contract", "counts", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "report_id": {"const": "PR383-TO-V3-SOURCE-STRUCTURAL-PREFLIGHT"},
+    "source_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pr_number", "head_sha", "registry_git_blob_sha", "source_gate_count"],
+      "properties": {
+        "pr_number": {"type": "integer", "minimum": 1},
+        "head_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "registry_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "source_gate_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "target_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_ref", "schema_git_blob_sha", "minimums_derived_from_schema", "readiness_rule"],
+      "properties": {
+        "schema_ref": {"const": "contracts/physics-technical-engineering-gate-v3.schema.json"},
+        "schema_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "minimums_derived_from_schema": {"const": true},
+        "readiness_rule": {"const": "STRUCTURAL_PREFLIGHT_NEVER_GRANTS_ENGINEERING_READINESS"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["migration_gap_count", "structural_minimums_satisfied_count", "structural_minimums_blocked_count"],
+      "properties": {
+        "migration_gap_count": {"type": "integer", "minimum": 0},
+        "structural_minimums_satisfied_count": {"type": "integer", "minimum": 0},
+        "structural_minimums_blocked_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/entry"}
+    }
+  },
+  "$defs": {
+    "collection_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concepts", "relations", "model_conditions", "representations", "reasoning_sequence", "required_transformations", "misconceptions", "problem_families", "falsification_cases"],
+      "properties": {
+        "concepts": {"type": "integer", "minimum": 0},
+        "relations": {"type": "integer", "minimum": 0},
+        "model_conditions": {"type": "integer", "minimum": 0},
+        "representations": {"type": "integer", "minimum": 0},
+        "reasoning_sequence": {"type": "integer", "minimum": 0},
+        "required_transformations": {"type": "integer", "minimum": 0},
+        "misconceptions": {"type": "integer", "minimum": 0},
+        "problem_families": {"type": "integer", "minimum": 0},
+        "falsification_cases": {"type": "integer", "minimum": 0}
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovery_gate_id", "source_gate_digest", "source_counts", "v3_minimums", "unsatisfied_minimums", "structural_minimums_satisfied", "promotion_authorized", "readiness_authorized"],
+      "properties": {
+        "discovery_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+        "source_gate_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "source_counts": {"$ref": "#/$defs/collection_counts"},
+        "v3_minimums": {"$ref": "#/$defs/collection_counts"},
+        "unsatisfied_minimums": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["concepts", "relations", "model_conditions", "representations", "reasoning_sequence", "required_transformations", "misconceptions", "problem_families", "falsification_cases"]}
+        },
+        "structural_minimums_satisfied": {"type": "boolean"},
+        "promotion_authorized": {"const": false},
+        "readiness_authorized": {"const": false}
+      }
+    }
+  }
+}
