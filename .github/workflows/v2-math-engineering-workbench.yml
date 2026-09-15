@@ -28,6 +28,12 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_workbench.py'
       - name: Run exact closure custody binding falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_binding.py'
+      - name: Run Engineering-gated Canonical Domain admission falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_engineered_domain_admission.py'
+      - name: Validate persisted quadratic closure binding
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_binding.py' 'Grade 9/V2/Mathematics/MathBlueprint/fixtures/engineering-workbench/quad-equations-binding.v1.json'
+      - name: Validate Theory-of-Equations engineered domain admission
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_engineered_domain_admission.py' --admission 'Grade 9/V2/Mathematics/MathBlueprint/fixtures/engineering-workbench/theory-equations-domain-admission.v1.json'
       - name: Compile quadratic Engineering closure and Passport
         run: |
           mkdir -p /tmp/math-engineering-workbench
