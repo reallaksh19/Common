@@ -24,6 +24,7 @@ def test_v10_contract_schemas_are_valid():
         "contracts/scoped-execution-envelope.schema.json",
         "contracts/scoped-evidence-receipt.schema.json",
         "contracts/domain-prerequisite-closure.schema.json",
+        "contracts/engineering-readiness-envelope.schema.json",
         "contracts/seven-core-stress-test-request.schema.json",
         "contracts/seven-core-stress-test-receipt.schema.json",
         "contracts/join-packet.schema.json",
@@ -87,18 +88,10 @@ def test_v10_domain_provider_registry_routes_math_without_self_certifying_it():
 def test_v10_state_semantics_forbid_surrogate_passes():
     policy = load("policy/stress-test-state-semantics.v1.json")
     assert set(policy["states"]) == {
-        "PASS",
-        "READY",
-        "HELD",
-        "BLOCKED",
-        "NOT_INSTANTIATED",
-        "NOT_APPLICABLE",
-        "NOT_RUN",
-        "NOT_ISSUED",
+        "PASS", "READY", "HELD", "BLOCKED", "NOT_INSTANTIATED", "NOT_APPLICABLE", "NOT_RUN", "NOT_ISSUED",
     }
     assert set(policy["forbidden_surrogate_pass_labels"]) == {
-        "PASS_BY_NONFABRICATION",
-        "PASS_FAIL_CLOSED_DIFFERENTIATION",
+        "PASS_BY_NONFABRICATION", "PASS_FAIL_CLOSED_DIFFERENTIATION",
     }
     assert policy["rules"]["topic_route_may_not_be_reused_for_narrower_scope_without_scoped_evidence"] is True
     assert policy["rules"]["technical_gate_difficulty_is_not_an_sdu_receipt"] is True
@@ -111,6 +104,15 @@ def test_v10_normative_architecture_exists_and_declares_canonicality():
     assert "Topic-wide evidence may not be silently reused" in text
     assert "A seven-core stress test is a governed compiler execution" in text
     assert "Shared/CrossDomain" in text
+
+
+def test_v10_engineering_kernel_joins_internal_and_external_readiness_before_consumption():
+    text = (ROOT / "ENGINEERING_READINESS_KERNEL.md").read_text(encoding="utf-8")
+    assert "Discovery is permissive; promotion and consumption are strict" in text
+    assert "ENGINEERING READINESS ENVELOPE" in text
+    assert "A held Mathematics prerequisite does not stop steps 1–8. It does stop step 9." in text
+    assert (ROOT / "engine" / "compile_engineering_readiness.py").exists()
+    assert (ROOT / "engine" / "compile_all_engineering_readiness.py").exists()
 
 
 def main():
