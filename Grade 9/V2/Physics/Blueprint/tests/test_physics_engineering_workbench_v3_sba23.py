@@ -53,6 +53,7 @@ assert v3["counts"] == {
 }
 assert all(x["status"] == "ENGINEERING_GATE_READY" for x in v3["gate_states"])
 assert v3["source_item_status"] == "SOURCE_HELD"
+assert v3["manifest_digest"].startswith("sha256:")
 
 passport = compile_passport(REQUEST, v3)
 assert passport["schema_version"] == "2.0.0"
@@ -60,25 +61,24 @@ assert passport["technical_state"] == "ENGINEERING_READY"
 assert passport["registry_digest"] == v3["registry_digest"]
 assert passport["publication_authorization"] == "NOT_IMPLIED"
 assert passport["source_item_status"] == "SOURCE_HELD"
-assert passport["ccu_technical_authorization"] == "ALLOWED"  # internal-Physics projection only
+assert passport["consumer_authorization"] == "NOT_EVALUATED"
 assert all(row["status"] == "PASS" for row in passport["technical_coverage"].values())
 
-# Canonical consumer authority is now the aggregate envelope, not the internal-only Passport.
+# Canonical consumer authority is the global Engineering Gate envelope, not the diagnostic Passport.
 engineering, domain, envelope = compile_readiness(REQUEST, V3_MANIFEST)
 assert engineering["closure_status"] == "READY"
 assert domain["closure_status"] == "HELD"
+assert envelope["authority_layer"] == "ENGINEERING_GATE"
 assert envelope["overall_state"] == "BLOCKED"
+assert set(envelope["consumer_permissions"]) == set(V3_MANIFEST["downstream_consumers"])
 assert envelope["consumer_permissions"]["CCU"]["status"] == "BLOCKED"
 assert envelope["dimensions"]["external_prerequisites"] == "HELD"
-assert {row["ref"] for row in envelope["blockers"] if row["dimension"] == "EXTERNAL_PREREQUISITES"} == {
-    "MATH-GEO-2D", "MATH-TRIG-RIGHT"
-}
 try:
     validate_engineered_ccu(REQUEST, V3_MANIFEST, CCU)
 except EngineeringCCUError as exc:
     assert exc.code == "E_CCU_ENGINEERING_BLOCKED"
 else:
-    raise AssertionError("CCU consumed Physics-only readiness while Math prerequisites were held")
+    raise AssertionError("declared consumer bypassed global Engineering Gate authority")
 
 v2 = compile_closure(REQUEST, V2_MANIFEST)
 assert v2["closure_status"] == "READY"
@@ -86,6 +86,7 @@ assert set(v2["transitive_gate_ids"]) == EXPECTED
 assert [x["gate_id"] for x in v2["gate_states"]] == [x["gate_id"] for x in v3["gate_states"]]
 legacy_passport = compile_passport(REQUEST, v2)
 assert legacy_passport["schema_version"] == "1.0.0"
+assert legacy_passport["consumer_authorization"] == "NOT_EVALUATED"
 assert "technical_coverage" not in legacy_passport
 
 bad = build_registry()
@@ -109,4 +110,4 @@ bad_manifest = copy.deepcopy(V3_MANIFEST)
 bad_manifest["gate_extension_refs"] = ["policy/physics-technical-engineering-gates.v2.json"]
 must_closure_error(REQUEST, bad_manifest, "E_ENG_GATE_EXTENSION_INVALID")
 
-print("Physics Engineering Workbench v3 SBA23: PASS (internal closure READY, aggregate consumer authority held until Math receipts)")
+print("Physics Engineering Workbench v3 SBA23: PASS (diagnostic Passport; global Engineering Gate owns consumer authority)")
