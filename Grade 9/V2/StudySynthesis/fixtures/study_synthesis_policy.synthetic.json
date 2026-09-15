@@ -1,0 +1,19 @@
+{
+  "policy_id": "SYN-STUDY-POLICY",
+  "version": "1.0.0",
+  "state_rules": {
+    "DEMONSTRATED": {"engagement_mode": "VERIFY_ONLY", "readiness_mode": "READY"},
+    "DEVELOPING": {"engagement_mode": "ACTIVE_STUDY", "readiness_mode": "REPAIR_IN_UNIT"},
+    "REPAIR_REQUIRED": {"engagement_mode": "ACTIVE_STUDY", "readiness_mode": "REPAIR_BEFORE"},
+    "PROBE_REQUIRED": {"engagement_mode": "ACTIVE_STUDY", "readiness_mode": "PROBE_FIRST"},
+    "AMBIGUOUS": {"engagement_mode": "ACTIVE_STUDY", "readiness_mode": "PROBE_FIRST"},
+    "UNKNOWN": {"engagement_mode": "ACTIVE_STUDY", "readiness_mode": "PROBE_FIRST"}
+  },
+  "entry_point_rule": {"enabled": true, "from_state": "DEMONSTRATED", "when_dependency_of_readiness": ["REPAIR_BEFORE", "REPAIR_IN_UNIT", "PROBE_FIRST"]},
+  "requirement_rules": {
+    "REPAIR_BEFORE": ["RECONSTRUCTION", "WORKED_REASONING", "VERIFICATION", "COMPLETION_EVIDENCE"],
+    "REPAIR_IN_UNIT": ["VERIFICATION", "COMPLETION_EVIDENCE"],
+    "PROBE_FIRST": ["COMPLETION_EVIDENCE"],
+    "VERIFY_ONLY": ["TRANSFER", "COMPLETION_EVIDENCE"]
+  }
+}

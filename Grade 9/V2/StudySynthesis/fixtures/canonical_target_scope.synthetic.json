@@ -1,0 +1,15 @@
+{
+  "scope_id": "SYN-SCOPE-MATH-01",
+  "required_target_ids": [
+    "math.word-equation-modeling",
+    "math.linear-system-setup",
+    "math.equality-execution",
+    "math.slope-semantics",
+    "math.verification"
+  ],
+  "dependency_edges": [
+    {"from": "math.linear-system-setup", "to": "math.equality-execution"},
+    {"from": "math.equality-execution", "to": "math.verification"}
+  ],
+  "source": "SYNTHETIC_TEST"
+}

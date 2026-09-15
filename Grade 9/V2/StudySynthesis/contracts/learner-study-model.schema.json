@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "learner-study-model.schema.json",
+  "title": "V2 LearnerStudyModel",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["study_model_id", "schema_version", "goal_ref", "canonical_target_scope_ref", "canonical_knowledge_set_ref", "research_learner_view_ref", "study_synthesis_policy_version", "target_decisions"],
+  "properties": {
+    "study_model_id": {"type": "string", "minLength": 3},
+    "schema_version": {"const": "1.0.0"},
+    "goal_ref": {"type": "string", "minLength": 3},
+    "canonical_target_scope_ref": {"type": "string", "minLength": 3},
+    "canonical_knowledge_set_ref": {"type": "string", "minLength": 3},
+    "research_learner_view_ref": {"type": "string", "minLength": 3},
+    "study_synthesis_policy_version": {"type": "string", "minLength": 1},
+    "target_decisions": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["target_id", "engagement_mode", "readiness_mode", "canonical_refs", "learner_state_reason_refs", "decision_basis", "study_requirements"],
+        "properties": {
+          "target_id": {"type": "string", "minLength": 3},
+          "engagement_mode": {"enum": ["VERIFY_ONLY", "COMPRESS", "USE_AS_ENTRY_POINT", "ACTIVE_STUDY"]},
+          "readiness_mode": {"enum": ["READY", "REPAIR_BEFORE", "REPAIR_IN_UNIT", "PROBE_FIRST"]},
+          "canonical_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "learner_state_reason_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "decision_basis": {"type": "object", "additionalProperties": false, "required": ["capability_state", "policy_rule"], "properties": {"capability_state": {"enum": ["DEMONSTRATED", "DEVELOPING", "REPAIR_REQUIRED", "PROBE_REQUIRED", "AMBIGUOUS", "UNKNOWN"]}, "policy_rule": {"type": "string", "minLength": 1}}},
+          "study_requirements": {
+            "type": "array",
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["requirement_id", "kind", "statement", "canonical_refs", "learner_state_reason_refs"],
+              "properties": {
+                "requirement_id": {"type": "string", "minLength": 3},
+                "kind": {"enum": ["CONCEPTUAL_BRIDGE", "RECONSTRUCTION", "REPRESENTATION_MEANING", "MISCONCEPTION_CONTRAST", "WORKED_REASONING", "VERIFICATION", "TRANSFER", "COMPLETION_EVIDENCE"]},
+                "statement": {"type": "string", "minLength": 3},
+                "canonical_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+                "learner_state_reason_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

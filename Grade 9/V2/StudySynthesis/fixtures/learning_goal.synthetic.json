@@ -1,0 +1,11 @@
+{
+  "goal_id": "SYN-GOAL-MATH-RELIABILITY",
+  "requested_target_ids": [
+    "math.word-equation-modeling",
+    "math.linear-system-setup",
+    "math.equality-execution",
+    "math.slope-semantics",
+    "math.verification"
+  ],
+  "source": "SYNTHETIC_TEST"
+}

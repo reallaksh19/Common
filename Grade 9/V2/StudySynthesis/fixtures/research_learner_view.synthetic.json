@@ -1,0 +1,11 @@
+{
+  "research_learner_view_id": "SYN-RLV-01",
+  "capabilities": [
+    {"target_id": "math.word-equation-modeling", "state": "DEMONSTRATED", "reason_refs": ["SYN-STATE-MODELING-DEMO"]},
+    {"target_id": "math.linear-system-setup", "state": "DEMONSTRATED", "reason_refs": ["SYN-STATE-SETUP-DEMO"]},
+    {"target_id": "math.equality-execution", "state": "REPAIR_REQUIRED", "reason_refs": ["SYN-STATE-EQUALITY-REPAIR"]},
+    {"target_id": "math.slope-semantics", "state": "PROBE_REQUIRED", "reason_refs": ["SYN-STATE-SLOPE-PROBE"]},
+    {"target_id": "math.verification", "state": "DEVELOPING", "reason_refs": ["SYN-STATE-VERIFY-DEVELOP"]}
+  ],
+  "source": "SYNTHETIC_TEST"
+}

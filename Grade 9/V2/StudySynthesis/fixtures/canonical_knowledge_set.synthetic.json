@@ -1,0 +1,11 @@
+{
+  "canonical_knowledge_set_id": "SYN-CKS-MATH-01",
+  "assets": [
+    {"asset_id": "math.word-equation-modeling", "version": "1", "digest": "sha256:modeling", "semantic_requirements": ["TRANSFER", "COMPLETION_EVIDENCE"]},
+    {"asset_id": "math.linear-system-setup", "version": "1", "digest": "sha256:setup", "semantic_requirements": ["RECONSTRUCTION", "TRANSFER"]},
+    {"asset_id": "math.equality-execution", "version": "1", "digest": "sha256:equality", "semantic_requirements": ["RECONSTRUCTION", "WORKED_REASONING", "VERIFICATION", "COMPLETION_EVIDENCE"]},
+    {"asset_id": "math.slope-semantics", "version": "1", "digest": "sha256:slope", "semantic_requirements": ["REPRESENTATION_MEANING", "COMPLETION_EVIDENCE"]},
+    {"asset_id": "math.verification", "version": "1", "digest": "sha256:verify", "semantic_requirements": ["VERIFICATION", "COMPLETION_EVIDENCE"]}
+  ],
+  "source": "SYNTHETIC_TEST"
+}
