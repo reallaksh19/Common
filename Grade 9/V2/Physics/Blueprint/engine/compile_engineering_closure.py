@@ -15,7 +15,9 @@ from validate_engineering_gates_v2 import GateValidationError as GateValidationE
 from build_physics_engineering_gate_registry_v3 import build_registry as build_registry_v3  # noqa: E402
 from validate_engineering_gates_v3 import PhysicsEngineeringGateV3Error, validate as validate_registry_v3  # noqa: E402
 
-V3_REGISTRY_REF = "GENERATED:physics-technical-engineering-gates.v3-sba23"
+V3_REGISTRY_REF = "GENERATED:physics-technical-engineering-gates.v3"
+LEGACY_V3_REGISTRY_REF = "GENERATED:physics-technical-engineering-gates.v3-sba23"
+V3_REGISTRY_REFS = {V3_REGISTRY_REF, LEGACY_V3_REGISTRY_REF}
 
 
 class EngineeringClosureError(Exception):
@@ -50,9 +52,9 @@ def compose_registry(manifest: dict, supplied_registry: dict | None = None) -> d
         return supplied_registry
 
     extension_refs = list(manifest.get("gate_extension_refs", []))
-    if manifest["registry_ref"] == V3_REGISTRY_REF:
+    if manifest["registry_ref"] in V3_REGISTRY_REFS:
         if extension_refs:
-            fail("E_ENG_GATE_EXTENSION_INVALID", "v3 SBA23 generated registry does not accept v2 gate extensions")
+            fail("E_ENG_GATE_EXTENSION_INVALID", "canonical v3 generated registry does not accept v2 gate extensions")
         return build_registry_v3()
 
     base = load(manifest["registry_ref"])
