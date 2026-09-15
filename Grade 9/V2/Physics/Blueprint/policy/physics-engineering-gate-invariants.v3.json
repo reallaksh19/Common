@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "profile_id": "PHYSICS-ENGINEERING-GATE-INVARIANTS-V3-SBA23",
-  "scope": "SBA23_VERTICAL_SLICE",
+  "profile_id": "PHYSICS-ENGINEERING-GATE-INVARIANTS-V3",
+  "scope": "CANONICAL_PHYSICS_GATE_REGISTRY",
   "required_gates": {
     "PHY-VEC-BASICS": {
       "required_invariants": ["INV-VEC-SCALAR-VECTOR-DISTINCTION", "INV-VEC-MAGNITUDE-NONNEGATIVE", "INV-VEC-DIRECTION-REFERENCE"],
@@ -26,6 +26,78 @@
       "required_representations": ["REP-VEC-COMPONENT-TRIANGLE"],
       "required_prerequisites": ["PHY-VEC-ADD-SUB"],
       "required_verifications": ["SIGN_DIRECTION", "INVERSE_RELATION", "GEOMETRIC_CONSISTENCY"]
+    },
+    "PHY-NLM-INTERACTION": {
+      "required_invariants": ["INV-NLM-FORCE-HAS-AGENT-RECEIVER", "INV-NLM-CONTACT-VS-NONCONTACT"],
+      "required_concepts": ["CON-NLM-AGENT-RECEIVER"],
+      "required_relations": [],
+      "required_representations": ["REP-NLM-INTERACTION-LINK"],
+      "required_prerequisites": ["PHY-VEC-BASICS"],
+      "required_verifications": ["BODY_AGENT_CONSISTENCY", "MODEL_VALIDITY"]
+    },
+    "PHY-NLM-FBD": {
+      "required_invariants": ["INV-NLM-SYSTEM-SELECTED-FIRST", "INV-NLM-FBD-FORCES-ON-SYSTEM-ONLY", "INV-NLM-FBD-COMPLETE"],
+      "required_concepts": ["CON-NLM-SYSTEM-BOUNDARY"],
+      "required_relations": [],
+      "required_representations": ["REP-NLM-FBD"],
+      "required_prerequisites": ["PHY-NLM-INTERACTION", "PHY-VEC-BASICS"],
+      "required_verifications": ["BODY_AGENT_CONSISTENCY", "MODEL_VALIDITY"]
+    },
+    "PHY-NLM-FIRST-LAW": {
+      "required_invariants": ["INV-NLM-EQUILIBRIUM-A-ZERO", "INV-NLM-ZERO-NET-FORCE-NOT-ZERO-VELOCITY", "INV-NLM-INERTIAL-FRAME"],
+      "required_concepts": ["CON-NLM-EQUILIBRIUM"],
+      "required_relations": ["EQ-NLM-EQUILIBRIUM"],
+      "required_representations": ["REP-NLM-EQUILIBRIUM-FBD"],
+      "required_prerequisites": ["PHY-NLM-FBD"],
+      "required_verifications": ["SIGN_DIRECTION", "MODEL_VALIDITY"]
+    },
+    "PHY-NLM-SECOND-LAW": {
+      "required_invariants": ["INV-NLM-FBD-BEFORE-EQUATION", "INV-NLM-AXIS-WISE-SUM-F", "INV-NLM-SAME-SYSTEM-SAME-AXES"],
+      "required_concepts": ["CON-NLM-NET-FORCE"],
+      "required_relations": ["EQ-NLM-SECOND-X", "EQ-NLM-SECOND-Y"],
+      "required_representations": ["REP-NLM-FBD-AXES"],
+      "required_prerequisites": ["PHY-NLM-FBD", "PHY-VEC-COMPONENTS", "PHY-NLM-FIRST-LAW"],
+      "required_verifications": ["UNITS", "SIGN_DIRECTION", "SUBSTITUTE_BACK", "MODEL_VALIDITY"]
+    },
+    "PHY-NLM-THIRD-LAW": {
+      "required_invariants": ["INV-NLM-THIRD-DISTINCT-BODIES", "INV-NLM-THIRD-EQUAL-OPPOSITE", "INV-NLM-THIRD-SAME-INTERACTION"],
+      "required_concepts": ["CON-NLM-PAIR-DIFFERENT-BODIES"],
+      "required_relations": ["EQ-NLM-THIRD"],
+      "required_representations": ["REP-NLM-THIRD-PAIR"],
+      "required_prerequisites": ["PHY-NLM-INTERACTION", "PHY-NLM-FBD"],
+      "required_verifications": ["BODY_AGENT_CONSISTENCY", "SIGN_DIRECTION"]
+    },
+    "PHY-NLM-NORMAL": {
+      "required_invariants": ["INV-NLM-NORMAL-PERPENDICULAR", "INV-NLM-NORMAL-NOT-ALWAYS-MG"],
+      "required_concepts": ["CON-NLM-NORMAL-NOT-ALWAYS-MG"],
+      "required_relations": ["EQ-NLM-NORMAL-CONSTRAINT"],
+      "required_representations": ["REP-NLM-NORMAL-FBD"],
+      "required_prerequisites": ["PHY-NLM-FBD", "PHY-NLM-SECOND-LAW"],
+      "required_verifications": ["SIGN_DIRECTION", "CONSTRAINT_CONSISTENCY"]
+    },
+    "PHY-NLM-TENSION": {
+      "required_invariants": ["INV-NLM-TENSION-STRING-MODEL", "INV-NLM-TENSION-NOT-ALWAYS-MG", "INV-NLM-CONSTRAINT-KINEMATICS"],
+      "required_concepts": ["CON-NLM-TENSION-MODEL"],
+      "required_relations": ["EQ-NLM-TENSION-BODY"],
+      "required_representations": ["REP-NLM-TENSION-FBDS"],
+      "required_prerequisites": ["PHY-NLM-FBD", "PHY-NLM-SECOND-LAW"],
+      "required_verifications": ["CONSTRAINT_CONSISTENCY", "SIGN_DIRECTION", "SUBSTITUTE_BACK"]
+    },
+    "PHY-NLM-FRICTION": {
+      "required_invariants": ["INV-NLM-STATIC-FRICTION-INEQUALITY", "INV-NLM-FRICTION-OPPOSES-RELATIVE-TENDENCY", "INV-NLM-KINETIC-AFTER-SLIDING"],
+      "required_concepts": ["CON-NLM-STATIC-FRICTION-ADAPTIVE"],
+      "required_relations": ["EQ-NLM-STATIC-INEQUALITY", "EQ-NLM-KINETIC-FRICTION"],
+      "required_representations": ["REP-NLM-FRICTION-FBD"],
+      "required_prerequisites": ["PHY-NLM-NORMAL", "PHY-NLM-SECOND-LAW"],
+      "required_verifications": ["STATIC_THRESHOLD", "SIGN_DIRECTION", "MODEL_VALIDITY"]
+    },
+    "PHY-NLM-CONNECTED": {
+      "required_invariants": ["INV-NLM-CONNECTED-SYSTEM-CHOICE", "INV-NLM-INTERNAL-EXTERNAL-DISTINCTION", "INV-NLM-CONSTRAINT-CONSISTENCY"],
+      "required_concepts": ["CON-NLM-CONNECTED-SYSTEM"],
+      "required_relations": ["EQ-NLM-CONNECTED-SYSTEM"],
+      "required_representations": ["REP-NLM-CONNECTED-MULTI"],
+      "required_prerequisites": ["PHY-NLM-SECOND-LAW", "PHY-NLM-THIRD-LAW", "PHY-NLM-TENSION"],
+      "required_verifications": ["CONSTRAINT_CONSISTENCY", "BODY_AGENT_CONSISTENCY", "SUBSTITUTE_BACK"]
     },
     "PHY-M2D-PROJECTILE-COMPONENTS": {
       "required_invariants": ["INV-M2D-FRAME-DECLARED", "INV-M2D-LAUNCH-COMPONENTS-SIGNED", "INV-M2D-GRAVITY-VERTICAL-ONLY"],
