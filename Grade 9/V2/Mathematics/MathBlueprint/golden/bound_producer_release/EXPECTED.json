@@ -1,9 +1,21 @@
 {
-  "golden_id": "MATH-BOUND-PRODUCER-RELEASE-v1",
+  "golden_id": "MATH-BOUND-PRODUCER-RELEASE-v2",
   "subject": "MATHEMATICS",
   "purpose": "REVISION",
   "producer_mode": "ACTUAL_CLI",
-  "registry_mode": "COMPILED_FROM_SAME_COLD_START_RUN",
+  "registry_mode": "COMPILED_FROM_SAME_COLD_START_RUN_ENGINEERING_COVERED_PROJECTION",
+  "engineering_crosswalk_ref": "MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V1",
+  "full_mixed_expected_engineering_gap_capability_refs": [
+    "MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE"
+  ],
+  "engineering_bound_projection": {
+    "source_question_refs": ["Q2"],
+    "capability_refs": [
+      "MATH-ORDERED-PAIR-SEMANTICS",
+      "MATH-COORDINATE-DISTANCE"
+    ],
+    "rationale": "Q2 plus its exact prerequisite capability form a source-derived coordinate-distance slice whose AssessmentScope capabilities are all explicitly covered by the current Engineering crosswalk. The full mixed corpus remains separately audited and is not represented as Engineering-complete while Euclid foundations are unmapped."
+  },
   "required_stages": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
   "required_stage_pairs": [
     "CORE1A__CORE1B",
@@ -14,6 +26,7 @@
     "CORE2A__CORE2B"
   ],
   "required_release_checks": [
+    "ENGINEERING_DOMAIN_AUTHORIZATION",
     "FULL_REGISTRY_COVERAGE",
     "ALL_SIX_CROSS_CORE_PAIRS",
     "CORE1A_CORE1B_DIFFICULTY_EQUALITY",
@@ -21,5 +34,5 @@
     "FROZEN_SOURCE_STEM_CUSTODY",
     "CANONICAL_ANSWER_CONTRACT_CUSTODY"
   ],
-  "scope_note": "This golden proves real producer/receipt/release wiring over a minimal canonical registry compiled from the same run. Rich typed semantic realization for equations, representations and misconceptions is falsified separately by product-governance tests."
+  "scope_note": "This golden proves real Core1A/Core1B/Core2A/Core2B CLI receipt/release wiring over an explicitly declared Engineering-covered projection of the same cold-start run. The full mixed corpus is audited first and must continue to expose any upstream Engineering coverage gap instead of being silently narrowed or fuzzily mapped."
 }
