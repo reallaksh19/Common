@@ -6,11 +6,27 @@ import json
 from pathlib import Path
 
 from assemble_product_governance_from_receipts import assemble
+from engineering_product_custody import load_custody, custody_summary
 from validate_product_governance import load
 
 
 def fail(code: str, detail: str = "") -> None:
     raise ValueError(f"{code}:{detail}" if detail else code)
+
+
+def validate_engineering_custody(registry: dict, receipts: list[dict], current_custody: dict | None) -> None:
+    if current_custody is None or current_custody.get("status") != "BOUND":
+        fail("RELEASE_ENGINEERING_ADMISSION_REQUIRED")
+    if current_custody.get("domain_registry_id") != registry.get("registry_id"):
+        fail("RELEASE_ENGINEERING_DOMAIN_REGISTRY_ID_MISMATCH")
+    for receipt in receipts:
+        stamped = receipt.get("engineering_custody")
+        if stamped is None:
+            fail("RELEASE_ENGINEERING_CUSTODY_MISSING", receipt.get("receipt_id", "UNKNOWN"))
+        if stamped.get("status") != "BOUND":
+            fail("RELEASE_ENGINEERING_CUSTODY_UNBOUND", receipt.get("receipt_id", "UNKNOWN"))
+        if stamped != current_custody:
+            fail("RELEASE_ENGINEERING_CUSTODY_STALE_OR_DRIFT", receipt.get("receipt_id", "UNKNOWN"))
 
 
 def validate_frozen_source_custody(registry: dict, governance: dict) -> None:
@@ -58,10 +74,12 @@ def validate_frozen_source_custody(registry: dict, governance: dict) -> None:
             fail("RELEASE_CANONICAL_ANSWER_CONTRACT_MISMATCH", qref)
 
 
-def release(registry: dict, receipts: list[dict]):
+def release(registry: dict, receipts: list[dict], engineering_custody: dict | None = None):
+    validate_engineering_custody(registry, receipts, engineering_custody)
     coverage, similarity, governance, result = assemble(registry, receipts)
     validate_frozen_source_custody(registry, governance)
     result = dict(result)
+    result["engineering_domain_authorization"] = {"status": "PASS", **custody_summary(engineering_custody)}
     result["frozen_source_custody"] = {"status": "PASS"}
     result["canonical_answer_custody"] = {"status": "PASS"}
     return coverage, similarity, governance, result
@@ -70,12 +88,14 @@ def release(registry: dict, receipts: list[dict]):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--registry", required=True)
+    ap.add_argument("--engineering-admission", required=True)
     ap.add_argument("--receipt", action="append", required=True)
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
     registry = load(args.registry)
+    engineering_custody = load_custody(args.engineering_admission, registry)
     receipts = [load(x) for x in args.receipt]
-    coverage, similarity, governance, result = release(registry, receipts)
+    coverage, similarity, governance, result = release(registry, receipts, engineering_custody)
     out = Path(args.out_dir); out.mkdir(parents=True, exist_ok=True)
     for name, obj in (
         ("core_coverage_ledger.json", coverage),
