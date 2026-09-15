@@ -77,6 +77,12 @@
     "dedicated_workflow": "V2 Chemistry Core1B Core2B Self Tutor",
     "workflow_state": "PASS"
   },
+  "target_head_verification": {
+    "head_sha": "d14124b0c282bae3003430a28a3a8f0d5006f272",
+    "blueprint_v0_v7_regression_matrix": "PASS",
+    "static_b_layer_synthetic_falsifiers": "PASS",
+    "migration_classification_test": "PASS"
+  },
   "closure_requirements": [
     "ALL_GENERIC_B_LAYER_CONTROLS_CLASSIFIED",
     "TOPIC_NEUTRAL_UPSTREAM_VALIDATOR_EXISTS",
@@ -84,5 +90,5 @@
     "NO_STRESS_TOPIC_BRANCHING_IN_UPSTREAM_VALIDATOR",
     "PR370_PRODUCT_BRANCH_RETAINED_AS_REGRESSION_EVIDENCE"
   ],
-  "status": "MIGRATION_COMPLETE_PENDING_CI"
+  "status": "MIGRATION_COMPLETE"
 }
