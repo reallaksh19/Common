@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0.0",
+  "profile_id": "PHYSICS-ENGINEERING-GATE-INVARIANTS-V3-SBA23",
+  "scope": "SBA23_VERTICAL_SLICE",
+  "required_gates": {
+    "PHY-VEC-BASICS": {
+      "required_invariants": ["INV-VEC-SCALAR-VECTOR-DISTINCTION", "INV-VEC-MAGNITUDE-NONNEGATIVE", "INV-VEC-DIRECTION-REFERENCE"],
+      "required_concepts": ["CON-VEC-SCALAR-VECTOR", "CON-VEC-DIRECTION-REFERENCE"],
+      "required_relations": ["EQ-VEC-MAGNITUDE-NONNEGATIVE"],
+      "required_representations": ["REP-VEC-DIRECTED-SEGMENT"],
+      "required_prerequisites": [],
+      "required_verifications": ["UNITS", "SIGN_DIRECTION", "GEOMETRIC_CONSISTENCY"]
+    },
+    "PHY-VEC-ADD-SUB": {
+      "required_invariants": ["INV-VEC-HEAD-TO-TAIL", "INV-VEC-SUBTRACTION-NEGATIVE", "INV-VEC-RESULTANT-MEANING"],
+      "required_concepts": ["CON-VEC-RESULTANT", "CON-VEC-SUBTRACTION"],
+      "required_relations": ["EQ-VEC-SUM"],
+      "required_representations": ["REP-VEC-HEAD-TO-TAIL"],
+      "required_prerequisites": ["PHY-VEC-BASICS"],
+      "required_verifications": ["SIGN_DIRECTION", "GEOMETRIC_CONSISTENCY", "LIMITING_CASE"]
+    },
+    "PHY-VEC-COMPONENTS": {
+      "required_invariants": ["INV-VEC-AXES-DECLARED", "INV-VEC-COMPONENT-SIGNS", "INV-VEC-COMPONENT-TO-RESULTANT"],
+      "required_concepts": ["CON-VEC-SIGN-CONVENTION", "CON-VEC-RESULTANT-RECONSTRUCTION"],
+      "required_relations": ["EQ-VEC-COMPONENTS", "EQ-VEC-RECONSTRUCT"],
+      "required_representations": ["REP-VEC-COMPONENT-TRIANGLE"],
+      "required_prerequisites": ["PHY-VEC-ADD-SUB"],
+      "required_verifications": ["SIGN_DIRECTION", "INVERSE_RELATION", "GEOMETRIC_CONSISTENCY"]
+    },
+    "PHY-M2D-PROJECTILE-COMPONENTS": {
+      "required_invariants": ["INV-M2D-FRAME-DECLARED", "INV-M2D-LAUNCH-COMPONENTS-SIGNED", "INV-M2D-GRAVITY-VERTICAL-ONLY"],
+      "required_concepts": ["CON-M2D-PROJECTILE-COMPONENTS"],
+      "required_relations": ["EQ-M2D-X", "EQ-M2D-Y"],
+      "required_representations": ["REP-M2D-PROJECTILE-COMPONENTS"],
+      "required_prerequisites": ["PHY-VEC-COMPONENTS"],
+      "required_verifications": ["UNITS", "SIGN_DIRECTION", "MODEL_VALIDITY"]
+    },
+    "PHY-M2D-SHARED-CLOCK": {
+      "required_invariants": ["INV-M2D-SHARED-CLOCK", "INV-M2D-SAME-EVENT-STATE"],
+      "required_concepts": ["CON-M2D-SHARED-CLOCK"],
+      "required_relations": ["EQ-M2D-SHARED-TIME"],
+      "required_representations": ["REP-M2D-EVENT-TIMELINE"],
+      "required_prerequisites": ["PHY-M2D-PROJECTILE-COMPONENTS"],
+      "required_verifications": ["SHARED_CLOCK", "SUBSTITUTE_BACK"]
+    },
+    "PHY-M2D-MOVING-LAUNCHER": {
+      "required_invariants": ["INV-M2D-VELOCITY-FRAMES-NAMED", "INV-M2D-GALILEAN-ADD-BEFORE-PROJECTILE", "INV-M2D-INHERITED-HORIZONTAL-MOTION", "INV-M2D-ZERO-SOURCE-LIMIT"],
+      "required_concepts": ["CON-M2D-FRAME-NAMING", "CON-M2D-INHERITED-MOTION"],
+      "required_relations": ["EQ-M2D-GALILEAN-ADD"],
+      "required_representations": ["REP-M2D-FRAME-VELOCITY-TRIANGLE"],
+      "required_prerequisites": ["PHY-VEC-COMPONENTS", "PHY-M2D-PROJECTILE-COMPONENTS", "PHY-M2D-SHARED-CLOCK"],
+      "required_linked_buckets": ["M2D-SBA-23"],
+      "required_verifications": ["INVERSE_RELATION", "LIMITING_CASE", "SIGN_DIRECTION", "SHARED_CLOCK"],
+      "required_reasoning_order": ["FRAME_NAMING", "FRAME_CONVERSION", "PROJECTILE_EVOLUTION", "INVERSE_AND_LIMIT_CHECK"]
+    }
+  }
+}
