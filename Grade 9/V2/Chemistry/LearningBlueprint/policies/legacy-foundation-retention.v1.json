@@ -1,0 +1,94 @@
+{
+  "policy_id": "CHEM-LEGACY-FOUNDATION-RETENTION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "purpose": "Close stale foundation review surfaces without losing inherited generic infrastructure or promoting historical authoring/product artifacts to current authority.",
+  "source_prs": {
+    "346": {
+      "role": "NCERT_AUTHORING_HANDOFF",
+      "disposition": "INHERITED_HISTORICAL_AUTHORING_HANDOFF",
+      "retention_mode": "CURRENT_371_ANCESTRY_AND_RECOVERABLE_BRANCH",
+      "authority_effect": "NONE_HISTORICAL_EVIDENCE_ONLY",
+      "current_retained_root": "AuthoringHandoff/NCERT-Core-Workbench",
+      "generic_controls_already_absorbed": {
+        "source_denominator_freeze": "LearningBlueprint/policies/product-control-consolidation.v1.json#source_denominator_custody",
+        "local_visual_obligations": "LearningBlueprint/policies/product-control-consolidation.v1.json#visual_obligations",
+        "answer_path_closure": "LearnerProduct/policies/chemistry-answer-path-policy.json + LearningBlueprint/policies/v7-product-assurance-policy.json#question_custody",
+        "learner_surface_and_legibility": "LearnerProduct/policies/chemistry-learner-language-policy.json + LearnerProduct/policies/chemistry-learner-render-policy.json + LearningBlueprint/policies/product-control-consolidation.v1.json#legibility_assurance",
+        "rendered_page_inspection": "LearnerProduct/engine/preflight_chemistry_learner_products.py"
+      },
+      "historical_only": [
+        "topic names and retained-question counts in HANDOFF_MANIFEST.json",
+        "base64 source-bundle bytes",
+        "restored HTML/CSV topic manuscripts",
+        "session PDF hashes and filenames",
+        "handoff-specific workflow prose",
+        "historical capability/family derivations"
+      ],
+      "forbidden_uses": [
+        "CURRENT_SOURCE_DENOMINATOR",
+        "CURRENT_GROUND_TRUTH",
+        "CANONICAL_DOMAIN_AUTHORITY",
+        "GENERIC_ENGINE_BRANCH_KEY",
+        "DEFAULT_PRODUCT_POLICY",
+        "CURRENT_TOPIC_SCOPE_AUTHORIZATION"
+      ]
+    },
+    "322": {
+      "role": "EXACT_PRODUCT_PUBLICATION_ENGINEERING_FOUNDATION",
+      "disposition": "INHERITED_PUBLICATION_ENGINEERING_INFRASTRUCTURE",
+      "retention_mode": "CURRENT_371_ANCESTRY_AND_RECOVERABLE_BRANCH",
+      "authority_effect": "PUBLICATION_ENGINEERING_ONLY",
+      "current_infrastructure_refs": [
+        "ExactProduct/engine/chemistry_notation.py",
+        "ExactProduct/engine/chemistry_visual_primitives.py",
+        "ExactProduct/engine/learner_surface_guard.py",
+        "ExactProduct/validator/validate_chemistry_custody.py",
+        "ExactProduct/registry/chemistry-exact-product-quality-policy.json",
+        "Shared/MasterTemplates/primitives"
+      ],
+      "retained_generic_controls": [
+        "SOURCE_AUTHORIZED_CHEMISTRY_NOTATION_DRIVES_RENDER_GEOMETRY",
+        "SEMANTIC_VALIDATION_PRECEDES_VECTOR_PRIMITIVE_DRAW",
+        "REALIZED_PRIMITIVE_REQUIRES_PHYSICAL_VECTOR_EVIDENCE",
+        "LEARNER_SURFACE_INTERNAL_IDENTIFIER_FIREWALL",
+        "EXACT_PDF_SHA256_CUSTODY",
+        "PHYSICAL_PAGE_MAP_RECOMPUTED_FROM_ACTUAL_PLACEMENT_EVIDENCE",
+        "PLANNED_PLACEMENT_MAY_NOT_MASQUERADE_AS_PHYSICAL_EVIDENCE",
+        "PLACEMENT_BOUNDS_AND_CONTINUATION_CUSTODY",
+        "FROZEN_PACKAGE_DIGEST_CUSTODY",
+        "MACHINE_ENGINEERING_PASS_SEPARATE_FROM_HUMAN_REVIEW_GATES"
+      ],
+      "historical_only": [
+        "CHEM-C-L-EXACT-CANDIDATE-A PDF bytes",
+        "candidate-specific hashes and page counts",
+        "candidate-specific page maps and render audits",
+        "historical AI pre-review result",
+        "historical comparator/negative-control instances",
+        "historical product classification state"
+      ],
+      "forbidden_uses": [
+        "CURRENT_GROUND_TRUTH",
+        "CURRENT_CANONICAL_PRODUCT",
+        "GENERIC_ENGINE_BRANCH_KEY_FROM_CANDIDATE_CONTENT",
+        "HUMAN_REVIEW_SUBSTITUTE",
+        "LEARNER_EFFICACY_EVIDENCE",
+        "CURRENT_TOPIC_SCOPE_AUTHORIZATION"
+      ],
+      "human_gates_remain_independent": [
+        "SUBJECT_CORRECTNESS",
+        "PEDAGOGICAL_DESIGN",
+        "ASSESSMENT_DESIGN",
+        "VISUAL_USABILITY",
+        "MATURE_DESIGN_QUALITY"
+      ]
+    }
+  },
+  "global_invariants": [
+    "CURRENT_BLUEPRINT_ENGINES_MUST_NOT_READ_AUTHORING_HANDOFF_BUNDLES_AS_AUTHORITY",
+    "CURRENT_BLUEPRINT_ENGINES_MUST_NOT_READ_EXACT_PRODUCT_CANDIDATE_BYTES_AS_AUTHORITY",
+    "INHERITED_PUBLICATION_ENGINEERING_MAY_VALIDATE_CURRENT_PRODUCTS_BUT_HISTORICAL_CANDIDATES_DO_NOT_DEFINE_THEM",
+    "CLOSING_SOURCE_PRS_DOES_NOT_DELETE_INHERITED_FILES_OR_RECOVERABLE_BRANCHES"
+  ],
+  "status": "RETENTION_CLASSIFIED_PENDING_CI"
+}
