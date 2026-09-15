@@ -2,9 +2,9 @@
 """Content-first pagination wrapper for the Blueprint-driven Core1A renderer.
 
 This module changes layout only. It does not contain or alter Chemistry payload.
-Independent-practice blocks start on a fresh page only when the remaining frame
-cannot hold a meaningful practice/reconstruction sequence, preventing a dense
-penultimate page from producing a sparse tail page.
+A reconstruction block starts on a fresh page only when the remaining frame
+cannot hold a meaningful reconstruction/check sequence. Practice remains where
+normal flow places it; no filler content or target page count is introduced.
 """
 from __future__ import annotations
 
@@ -16,16 +16,14 @@ from reportlab.platypus import CondPageBreak
 
 import build_core1a as core
 
-_original_render_object = core.render_object
+_original_render_ttu = core.render_ttu
 
 
-def _content_first_render_object(obj, st, realized, question_ids, source_labels):
-    flowables = _original_render_object(obj, st, realized, question_ids, source_labels)
-    if obj.get("object_class") == "INDEPENDENT_PRACTICE":
-        # Generic layout rule: reserve enough room for independent practice plus
-        # its reconstruction/check sequence. Existing content is moved, never padded.
-        return [CondPageBreak(190 * mm)] + flowables
-    return flowables
+def _content_first_render_ttu(ttu, st):
+    flowables = _original_render_ttu(ttu, st)
+    # Generic layout rule: reserve contiguous space for reconstruction, hints,
+    # canonical completion and verification. Existing content is moved, never padded.
+    return [CondPageBreak(125 * mm)] + flowables
 
 
 def main():
@@ -33,7 +31,7 @@ def main():
     parser.add_argument("--out", default=str(core.HERE / "out/core1a_redox_blueprint_proof.pdf"))
     parser.add_argument("--manifest", default=str(core.HERE / "out/core1a_redox_blueprint_proof.manifest.json"))
     args = parser.parse_args()
-    core.render_object = _content_first_render_object
+    core.render_ttu = _content_first_render_ttu
     core.build(Path(args.out), Path(args.manifest))
     print(args.out)
 
