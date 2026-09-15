@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -369,9 +370,74 @@ def compile_closure(
     return receipt
 
 
-def compile_passport(request: dict, manifest: dict, receipt: dict) -> dict:
+def _engineering_surface(request: dict, receipt: dict, registry: dict) -> dict:
+    if digest(registry) != receipt["registry_digest"]:
+        raise MathematicsEngineeringWorkbenchError(
+            "MATH_ENG_PASSPORT_REGISTRY_CUSTODY_DRIFT",
+            "passport view must be derived from the exact registry bound by the closure receipt",
+        )
+    gates = _gate_index(registry)
+    states = {row["gate_id"]: row for row in receipt["gate_states"]}
+    direct = set(receipt["direct_gate_ids"])
+    rows = []
+    for gate_id in receipt["transitive_gate_ids"]:
+        gate = gates[gate_id]
+        state = states[gate_id]
+        provenance = gate.get("provenance") or {}
+        rows.append({
+            "gate_id": gate_id,
+            "scope_role": "DIRECT" if gate_id in direct else "PREREQUISITE_CLOSURE",
+            "learner_title": gate.get("learner_title"),
+            "chapter": gate.get("chapter"),
+            "requested_engineering_depth": request["engineering_depth"],
+            "technical_state": "READY" if state["blueprint_admissible"] else "BLOCKED",
+            "failure_codes": list(state["failure_codes"]),
+            "prerequisite_ids": list(gate.get("prerequisite_ids") or []),
+            "provenance": {
+                "authority_tier": gate.get("authority_tier"),
+                "source_scope": provenance.get("source_scope"),
+                "claim_status": provenance.get("claim_status"),
+                "source_reference": provenance.get("source_reference"),
+            },
+            "structure_counts": {
+                "canonical_concepts": len(gate.get("technical_core") or []),
+                "mandatory_equations": len(gate.get("mandatory_equations") or []),
+                "representations": len(gate.get("representations") or []),
+                "model_conditions": len(gate.get("model_conditions") or []),
+                "reasoning_steps": len(gate.get("reasoning_sequence") or []),
+                "transformations": len(gate.get("required_transformations") or []),
+                "misconceptions": len(gate.get("misconceptions") or []),
+                "verification_obligations": len(gate.get("mandatory_verifications") or []),
+                "problem_families": len(gate.get("problem_families") or []),
+                "falsification_cases": len(gate.get("falsification_cases") or []),
+            },
+            "difficulty_profile": copy.deepcopy(gate.get("difficulty_profile") or {}),
+            "release_checklist_pass": all((gate.get("release_checklist") or {}).values()),
+        })
     return {
-        "schema_version": "1.0.0",
+        "view_class": "DERIVED_ENGINEERING_VISIBILITY",
+        "authority": "NON_AUTHORITATIVE_VIEW_OF_BOUND_ENGINEERING_RECEIPT",
+        "requested_engineering_depth": request["engineering_depth"],
+        "technical_authorization": receipt["technical_authorization"],
+        "closure_status": receipt["closure_status"],
+        "direct_gate_count": receipt["counts"]["direct_gate_count"],
+        "transitive_gate_count": receipt["counts"]["transitive_gate_count"],
+        "ready_gate_count": receipt["counts"]["ready_gate_count"],
+        "blocked_gate_count": receipt["counts"]["blocked_gate_count"],
+        "gates": rows,
+    }
+
+
+def compile_passport(
+    request: dict,
+    manifest: dict,
+    receipt: dict,
+    registry: dict | None = None,
+) -> dict:
+    registry = registry or load(REGISTRY_REL)
+    surface = _engineering_surface(request, receipt, registry)
+    return {
+        "schema_version": "1.1.0",
         "subject": "MATHEMATICS",
         "passport_id": "MATH-ENG-PASSPORT-" + request["request_id"].removeprefix("MATH-ENG-REQ-"),
         "request_id": request["request_id"],
@@ -389,6 +455,8 @@ def compile_passport(request: dict, manifest: dict, receipt: dict) -> dict:
         "closure_receipt_digest": digest(receipt),
         "blueprint_technical_authorization": receipt["technical_authorization"],
         "publication_authorization": "NOT_IMPLIED",
+        "engineering_surface": surface,
+        "engineering_surface_digest": digest(surface),
     }
 
 
@@ -493,7 +561,7 @@ def main() -> None:
     registry = load(REGISTRY_REL)
     manifest = load(args.manifest) if args.manifest else resolve_manifest(request, registry)
     receipt = compile_closure(request, manifest, registry)
-    passport = compile_passport(request, manifest, receipt)
+    passport = compile_passport(request, manifest, receipt, registry)
     binding = compile_binding(request, manifest, receipt, args.downstream_consumer)
 
     _write(args.manifest_out, manifest)
