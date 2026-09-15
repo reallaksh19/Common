@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Validate exact custody between Engineering projection receipts and Domain registry.
 
-This validator is deliberately independent of the projector's construction path.
-A projection is acceptable only when its receipt, every projected registry asset,
-and (when supplied) the final release summary all agree exactly.
+Global gate membership and local gate role are intentionally distinct. A gate may
+be direct authority for one teaching subtopic while appearing only through
+prerequisite closure for another. Release validation therefore reconstructs each
+subtopic's exact AssessmentScope capability set, resolves its exact Engineering
+scope, recomputes prerequisite closure from the current Engineering graph, and
+then validates every projected asset in that local context.
 """
 from __future__ import annotations
 
@@ -12,6 +15,7 @@ from pathlib import Path
 
 import jsonschema
 
+from compile_mathematics_engineering_workbench import digest as engineering_digest
 from project_engineering_to_domain_registry import digest
 from validate_canonical_domain_registry import validate_registry
 
@@ -40,7 +44,36 @@ def _receipt_digest(receipt: dict) -> str:
     return digest({k: v for k, v in receipt.items() if k != "projection_digest"})
 
 
-def validate_projection_binding(registry: dict, receipt: dict) -> dict:
+def _engineering_gate_index(engineering_registry: dict) -> dict[str, dict]:
+    return {row["subtopic_id"]: row for row in engineering_registry.get("subtopic_gates", [])}
+
+
+def _engineering_closure(gates: dict[str, dict], direct_gate_ids: set[str]) -> set[str]:
+    out: set[str] = set()
+    visiting: set[str] = set()
+
+    def walk(gate_id: str) -> None:
+        if gate_id in out:
+            return
+        if gate_id in visiting:
+            fail("DOMAIN_PROJECTION_ENGINEERING_CYCLE", gate_id)
+        gate = gates.get(gate_id)
+        if gate is None:
+            fail("DOMAIN_PROJECTION_ENGINEERING_GATE_UNKNOWN", gate_id)
+        visiting.add(gate_id)
+        for prereq in gate.get("prerequisite_ids", []):
+            if prereq not in gates:
+                fail("DOMAIN_PROJECTION_ENGINEERING_PREREQUISITE_UNKNOWN", f"{gate_id}:{prereq}")
+            walk(prereq)
+        visiting.remove(gate_id)
+        out.add(gate_id)
+
+    for gate_id in direct_gate_ids:
+        walk(gate_id)
+    return out
+
+
+def validate_projection_binding(registry: dict, receipt: dict, engineering_registry: dict) -> dict:
     validate_registry(registry)
     schema = json.loads(PROJECTION_SCHEMA.read_text(encoding="utf-8"))
     jsonschema.validate(receipt, schema)
@@ -49,6 +82,10 @@ def validate_projection_binding(registry: dict, receipt: dict) -> dict:
         fail("DOMAIN_PROJECTION_RECEIPT_DIGEST_INVALID")
     if receipt["domain_registry_ref"] != registry["registry_id"]:
         fail("DOMAIN_PROJECTION_REGISTRY_REF_DRIFT")
+    if receipt["engineering_registry_id"] != engineering_registry.get("registry_id"):
+        fail("DOMAIN_PROJECTION_ENGINEERING_REGISTRY_REF_DRIFT")
+    if receipt["engineering_registry_digest"] != engineering_digest(engineering_registry):
+        fail("DOMAIN_PROJECTION_ENGINEERING_REGISTRY_DIGEST_DRIFT")
 
     projections = receipt["asset_projections"]
     if receipt["projected_asset_count"] != len(projections):
@@ -60,20 +97,22 @@ def validate_projection_binding(registry: dict, receipt: dict) -> dict:
     transitive = set(receipt["transitive_gate_ids"])
     if not direct <= transitive:
         fail("DOMAIN_PROJECTION_DIRECT_NOT_IN_TRANSITIVE_CLOSURE")
+    gates = _engineering_gate_index(engineering_registry)
+    if _engineering_closure(gates, direct) != transitive:
+        fail("DOMAIN_PROJECTION_GLOBAL_TRANSITIVE_CLOSURE_DRIFT")
 
     assets = {row["asset_id"]: row for row in registry["assets"]}
     projected_ids = [row["asset_id"] for row in projections]
     if len(projected_ids) != len(set(projected_ids)):
         fail("DOMAIN_PROJECTION_RECEIPT_DUPLICATE_ASSET")
-    registry_engineering_ids = {
-        aid for aid in assets if aid.startswith("REG-MATH-ENG-")
-    }
+    registry_engineering_ids = {aid for aid in assets if aid.startswith("REG-MATH-ENG-")}
     if registry_engineering_ids != set(projected_ids):
         missing = sorted(set(projected_ids) - registry_engineering_ids)
         orphan = sorted(registry_engineering_ids - set(projected_ids))
         fail("DOMAIN_PROJECTION_ENGINEERING_ASSET_RECEIPT_DRIFT", f"missing={missing};orphan={orphan}")
 
     gates_with_assets: set[str] = set()
+    direct_rows: set[str] = set()
     prerequisite_rows = 0
     type_counts: dict[str, int] = {}
     for row in projections:
@@ -97,20 +136,26 @@ def validate_projection_binding(registry: dict, receipt: dict) -> dict:
         type_counts[expected_type] = type_counts.get(expected_type, 0) + 1
 
         gate_id = row["engineering_gate_id"]
+        role = row["engineering_gate_role"]
         gates_with_assets.add(gate_id)
         if gate_id not in transitive:
             fail("DOMAIN_PROJECTION_ASSET_GATE_OUTSIDE_CLOSURE", f"{aid}:{gate_id}")
-        expected_role = "DIRECT" if gate_id in direct else "PREREQUISITE_CLOSURE"
-        if row["engineering_gate_role"] != expected_role:
-            fail("DOMAIN_PROJECTION_GATE_ROLE_DRIFT", f"{aid}:{expected_role}")
-        if expected_role == "PREREQUISITE_CLOSURE":
+        if role == "DIRECT":
+            if gate_id not in direct:
+                fail("DOMAIN_PROJECTION_DIRECT_ROLE_OUTSIDE_GLOBAL_DIRECT_SET", f"{aid}:{gate_id}")
+            direct_rows.add(gate_id)
+        elif role == "PREREQUISITE_CLOSURE":
             prerequisite_rows += 1
+        else:  # schema normally catches this, retained as a stable semantic failure.
+            fail("DOMAIN_PROJECTION_GATE_ROLE_INVALID", f"{aid}:{role}")
 
     if gates_with_assets != transitive:
         fail(
             "DOMAIN_PROJECTION_TRANSITIVE_GATE_ASSET_GAP",
             f"missing={sorted(transitive-gates_with_assets)};extra={sorted(gates_with_assets-transitive)}",
         )
+    if direct_rows != direct:
+        fail("DOMAIN_PROJECTION_DIRECT_GATE_ASSET_GAP", f"missing={sorted(direct-direct_rows)}")
     if transitive - direct and prerequisite_rows == 0:
         fail("DOMAIN_PROJECTION_PREREQUISITE_ASSETS_MISSING")
 
@@ -125,13 +170,23 @@ def validate_projection_binding(registry: dict, receipt: dict) -> dict:
     }
 
 
+def _subtopic_capability_sets(registry: dict) -> dict[str, frozenset[str]]:
+    out: dict[str, set[str]] = {}
+    for asset in registry["assets"]:
+        if asset["asset_type"] != "CAPABILITY":
+            continue
+        out.setdefault(asset["subtopic_id"], set()).update(asset.get("core1_refs", []))
+    return {sid: frozenset(refs) for sid, refs in out.items() if refs}
+
+
 def validate_release_projection_binding(
     registry: dict,
     receipt: dict,
     summary: dict,
     full_engineering_audit: dict,
+    engineering_registry: dict,
 ) -> dict:
-    result = validate_projection_binding(registry, receipt)
+    result = validate_projection_binding(registry, receipt, engineering_registry)
 
     scalar_pairs = {
         "projection_id": (receipt["projection_id"], summary.get("engineering_domain_projection_ref")),
@@ -164,7 +219,59 @@ def validate_release_projection_binding(
     if full_engineering_audit.get("crosswalk_id") != receipt["crosswalk_ref"]:
         fail("DOMAIN_PROJECTION_FULL_AUDIT_CROSSWALK_DRIFT")
 
+    bucket_rows = full_engineering_audit.get("bucket_gate_map") or []
+    scope_by_caps: dict[frozenset[str], dict] = {}
+    for bucket in bucket_rows:
+        caps = frozenset(bucket.get("capability_refs") or [])
+        if not caps:
+            fail("DOMAIN_PROJECTION_FULL_AUDIT_BUCKET_CAPABILITIES_EMPTY", str(bucket.get("bucket_id")))
+        if caps in scope_by_caps:
+            fail("DOMAIN_PROJECTION_FULL_AUDIT_BUCKET_CAPABILITY_SET_AMBIGUOUS", ",".join(sorted(caps)))
+        scope_by_caps[caps] = bucket
+
+    subtopic_caps = _subtopic_capability_sets(registry)
+    gates = _engineering_gate_index(engineering_registry)
+    projected_by_subtopic: dict[str, list[dict]] = {}
+    for row in receipt["asset_projections"]:
+        projected_by_subtopic.setdefault(row["subtopic_id"], []).append(row)
+
+    recomputed_direct: set[str] = set()
+    recomputed_transitive: set[str] = set()
+    locally_prerequisite_rows = 0
+    for sid, rows in projected_by_subtopic.items():
+        caps = subtopic_caps.get(sid)
+        if not caps:
+            fail("DOMAIN_PROJECTION_SUBTOPIC_CAPABILITY_BINDING_MISSING", sid)
+        bucket = scope_by_caps.get(caps)
+        if bucket is None:
+            fail("DOMAIN_PROJECTION_SUBTOPIC_BUCKET_MATCH_MISSING", f"{sid}:{sorted(caps)}")
+        local_direct = set(bucket.get("engineering_gate_ids") or [])
+        if not local_direct:
+            fail("DOMAIN_PROJECTION_SUBTOPIC_DIRECT_GATE_SET_EMPTY", sid)
+        local_closure = _engineering_closure(gates, local_direct)
+        actual_gates = {row["engineering_gate_id"] for row in rows}
+        if actual_gates != local_closure:
+            fail(
+                "DOMAIN_PROJECTION_SUBTOPIC_CLOSURE_DRIFT",
+                f"{sid}:missing={sorted(local_closure-actual_gates)};extra={sorted(actual_gates-local_closure)}",
+            )
+        for row in rows:
+            gate_id = row["engineering_gate_id"]
+            expected_role = "DIRECT" if gate_id in local_direct else "PREREQUISITE_CLOSURE"
+            if row["engineering_gate_role"] != expected_role:
+                fail("DOMAIN_PROJECTION_GATE_ROLE_DRIFT", f"{row['asset_id']}:{expected_role}")
+            if expected_role == "PREREQUISITE_CLOSURE":
+                locally_prerequisite_rows += 1
+        recomputed_direct.update(local_direct)
+        recomputed_transitive.update(local_closure)
+
+    if recomputed_direct != set(receipt["direct_gate_ids"]):
+        fail("DOMAIN_PROJECTION_RECOMPUTED_DIRECT_GATE_DRIFT")
+    if recomputed_transitive != set(receipt["transitive_gate_ids"]):
+        fail("DOMAIN_PROJECTION_RECOMPUTED_TRANSITIVE_GATE_DRIFT")
+
     if summary.get("release_gate", {}).get("status") != "PASS":
         fail("DOMAIN_PROJECTION_RELEASE_GATE_NOT_PASS")
     result["release_binding"] = "PASS"
+    result["locally_prerequisite_projection_count"] = locally_prerequisite_rows
     return result

@@ -10,7 +10,8 @@ bucket order). Additional teaching memberships remain on Core2A specs.
 
 It also upgrades the same-run integration registry through the generic
 Engineering -> Canonical Domain projector before any producer consumes it, then
-independently revalidates the projection receipt against the final release graph.
+independently revalidates every projected asset against the final registry, exact
+crosswalk scopes and current Engineering prerequisite graph.
 """
 from __future__ import annotations
 
@@ -97,11 +98,13 @@ def main() -> None:
 
     registry = json.loads((out_dir / "inputs" / "domain_registry.json").read_text(encoding="utf-8"))
     full_audit = json.loads((out_dir / "full_mixed_engineering_coverage_audit.json").read_text(encoding="utf-8"))
+    engineering_registry = base.load_engineering("policies/mathematics-technical-engineering-gates.v1.json")
     projection_validation = validate_release_projection_binding(
         registry,
         _LAST_ENGINEERING_DOMAIN_PROJECTION,
         summary,
         full_audit,
+        engineering_registry,
     )
     summary["engineering_domain_projection_validation"] = projection_validation
     check = "ENGINEERING_DOMAIN_RICH_PROJECTION_CUSTODY"
