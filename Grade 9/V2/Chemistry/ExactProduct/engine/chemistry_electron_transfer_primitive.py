@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 PRIMITIVE_ID = "ELECTRON_TRANSFER_LEDGER"
+MIN_LEARNER_FONT_PT = 9.0
 _INSTALLED = False
 
 
@@ -66,20 +67,27 @@ def electron_transfer_rows(params: dict[str, Any], conservation_error: type[Exce
 def _renderer(VP, canvas, x: float, y: float, w: float, h: float, params: dict[str, Any]) -> None:
     # Compute and validate the entire ledger before the first draw operation.
     rows, total_lost, total_gained = electron_transfer_rows(params, VP.ConservationError)
-    top = VP.panel(canvas, x, y, w, h, params.get("title") or "Electron-transfer ledger: loss, gain, balance")
+
+    # The shared card helper uses an 8 pt optional title. This primitive is used
+    # inside products governed by a 9 pt engineering floor, so draw only the
+    # shared frame and supply a compliant semantic title ourselves.
+    VP.panel(canvas, x, y, w, h, None)
+    title = params.get("title") or "Electron-transfer ledger: loss, gain, balance"
+    VP.label(canvas, x + 12, y + h - 18, title, size=10.0, color="teal", font=VP.BOLD, width=w - 24)
     VP.label(
         canvas,
         x + 12,
-        top,
+        y + h - 34,
         params.get("attention_target") or "Track state change, electron direction and exchange balance.",
-        size=6.6,
+        size=MIN_LEARNER_FONT_PT,
         color="muted",
         width=w - 24,
     )
-    body_top = y + h - 45
-    footer_h = 30.0
-    available = max(48.0, body_top - (y + footer_h + 7))
-    row_h = min(30.0, available / len(rows))
+
+    body_top = y + h - 48
+    footer_h = 32.0
+    available = max(72.0, body_top - (y + footer_h + 8))
+    row_h = min(38.0, available / len(rows))
     for index, row in enumerate(rows):
         ry = body_top - (index + 1) * row_h
         accent = "amber" if row["direction"] == "LOSS" else "teal"
@@ -87,20 +95,21 @@ def _renderer(VP, canvas, x: float, y: float, w: float, h: float, params: dict[s
         VP.box(canvas, x + 12, ry + 2, w - 24, row_h - 4, fill=fill, stroke=accent, radius=4, width=0.9)
         left = "%s  %s" % (row["before_species"], _state_text(row["before"]))
         right = "%s  %s" % (row["after_species"], _state_text(row["after"]))
-        VP.label(canvas, x + 20, ry + row_h / 2 - 2.5, left, size=7.1, color="ink", font=VP.BOLD, width=120)
-        VP.arrow(canvas, x + 150, ry + row_h / 2, x + 194, ry + row_h / 2, color=accent, width=1.1, head=4.2)
-        VP.label(canvas, x + 202, ry + row_h / 2 - 2.5, right, size=7.1, color="ink", font=VP.BOLD, width=120)
+        baseline = ry + row_h / 2 - 3.2
+        VP.label(canvas, x + 20, baseline, left, size=9.4, color="ink", font=VP.BOLD, width=120)
+        VP.arrow(canvas, x + 150, ry + row_h / 2, x + 194, ry + row_h / 2, color=accent, width=1.2, head=4.6)
+        VP.label(canvas, x + 202, baseline, right, size=9.4, color="ink", font=VP.BOLD, width=120)
         action = "%s %d e⁻" % ("LOSES" if row["direction"] == "LOSS" else "GAINS", row["electron_count"])
-        VP.label(canvas, x + w - 20, ry + row_h / 2 - 2.5, action, size=7.0, color=accent, font=VP.BOLD, align="right", width=112)
+        VP.label(canvas, x + w - 20, baseline, action, size=9.2, color=accent, font=VP.BOLD, align="right", width=112)
 
-    balance_y = y + 12
-    VP.box(canvas, x + 12, balance_y, w - 24, 20, fill="green_fill", stroke="green", radius=4, width=1.0)
+    balance_y = y + 10
+    VP.box(canvas, x + 12, balance_y, w - 24, 24, fill="green_fill", stroke="green", radius=4, width=1.0)
     VP.label(
         canvas,
         x + w / 2,
-        balance_y + 6,
+        balance_y + 7.5,
         "electron check: lost = gained = %d e⁻" % total_lost,
-        size=7.0,
+        size=9.2,
         color="green",
         font=VP.BOLD,
         align="center",
@@ -126,18 +135,18 @@ def install() -> None:
             return original_height(kind, params, width)
         try:
             rows, _, _ = electron_transfer_rows(params, VP.ConservationError)
-            return max(126.0, 70.0 + 30.0 * len(rows))
+            return max(164.0, 88.0 + 38.0 * len(rows))
         except (ValueError, VP.ConservationError):
-            return 126.0
+            return 164.0
 
     if PRIMITIVE_ID not in VP.PRIMITIVE_KINDS:
         VP.PRIMITIVE_KINDS = tuple(VP.PRIMITIVE_KINDS) + (PRIMITIVE_ID,)
     VP.PRIMITIVE_TITLES[PRIMITIVE_ID] = "Electron-transfer ledger: loss, gain, balance"
     VP.RENDERERS[PRIMITIVE_ID] = draw
-    VP.BASE_HEIGHTS[PRIMITIVE_ID] = 126
+    VP.BASE_HEIGHTS[PRIMITIVE_ID] = 164
     VP.REDOX_GATED.add(PRIMITIVE_ID)
     VP.primitive_height = extended_height
     _INSTALLED = True
 
 
-__all__ = ["PRIMITIVE_ID", "electron_transfer_rows", "install"]
+__all__ = ["MIN_LEARNER_FONT_PT", "PRIMITIVE_ID", "electron_transfer_rows", "install"]
