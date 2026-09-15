@@ -18,7 +18,7 @@
     "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
     "closure_receipt_id": {"type": "string", "pattern": "^ENG-CLOSURE-[A-Z0-9-]+$"},
     "closure_receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-    "registry_ref": {"const": "GENERATED:physics-technical-engineering-gates.v3-sba23"},
+    "registry_ref": {"enum": ["GENERATED:physics-technical-engineering-gates.v3", "GENERATED:physics-technical-engineering-gates.v3-sba23"]},
     "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "requested_topic": {"type": "string", "minLength": 2},
     "requested_scope": {"type": "string", "minLength": 2},
