@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import json
 import sys
 import tempfile
@@ -14,7 +13,7 @@ if str(ENGINE) not in sys.path:
 
 from engineering_registry_composition import (  # noqa: E402
     BASE_REGISTRY_REL,
-    EUCLID_EXTENSION_REL,
+    CANONICAL_EXTENSION_RELS,
     EngineeringRegistryCompositionError,
     load_canonical_engineering_registry,
 )
@@ -53,15 +52,27 @@ class EngineeringRegistryCompositionTests(unittest.TestCase):
         for path in (ROOT / "tests").glob("math-eng-composition-*.json"):
             path.unlink(missing_ok=True)
 
-    def test_canonical_composition_has_45_unique_gates(self):
+    def canonical_extension(self) -> tuple[str, dict]:
+        self.assertTrue(CANONICAL_EXTENSION_RELS)
+        ref = CANONICAL_EXTENSION_RELS[0]
+        return ref, raw(ref)
+
+    def test_canonical_composition_has_unique_catalogued_gates(self):
+        base = raw(BASE_REGISTRY_REL)
         registry = load_canonical_engineering_registry()
         ids = [row["subtopic_id"] for row in registry["subtopic_gates"]]
-        self.assertEqual(len(ids), 45)
+        expected = len(base["subtopic_gates"])
+        catalogued_ids = []
+        for rel in CANONICAL_EXTENSION_RELS:
+            extension = raw(rel)
+            expected += len(extension["subtopic_gates"])
+            catalogued_ids.extend(row["subtopic_id"] for row in extension["subtopic_gates"])
+        self.assertEqual(len(ids), expected)
         self.assertEqual(len(ids), len(set(ids)))
-        self.assertIn("MATH-GEO-EUCLID-FOUNDATIONS", ids)
+        self.assertTrue(set(catalogued_ids).issubset(ids))
 
     def test_extension_stale_base_blob_fails_closed(self):
-        extension = raw(EUCLID_EXTENSION_REL)
+        _, extension = self.canonical_extension()
         extension["base_registry_git_blob_sha"] = "0" * 40
         path = self.temp_json(extension)
         with self.assertRaises(EngineeringRegistryCompositionError) as ctx:
@@ -69,15 +80,15 @@ class EngineeringRegistryCompositionTests(unittest.TestCase):
         self.assertEqual(ctx.exception.code, "MATH_ENG_EXTENSION_BASE_BLOB_STALE")
 
     def test_extension_wrong_base_gate_count_fails_closed(self):
-        extension = raw(EUCLID_EXTENSION_REL)
-        extension["expected_base_gate_count"] = 43
+        _, extension = self.canonical_extension()
+        extension["expected_base_gate_count"] -= 1
         path = self.temp_json(extension)
         with self.assertRaises(EngineeringRegistryCompositionError) as ctx:
             load_canonical_engineering_registry(extension_rels=[str(path)])
         self.assertEqual(ctx.exception.code, "MATH_ENG_EXTENSION_BASE_GATE_COUNT_DRIFT")
 
     def test_extension_duplicate_gate_id_fails_closed(self):
-        extension = raw(EUCLID_EXTENSION_REL)
+        _, extension = self.canonical_extension()
         base = raw(BASE_REGISTRY_REL)
         extension["subtopic_gates"][0]["subtopic_id"] = base["subtopic_gates"][0]["subtopic_id"]
         path = self.temp_json(extension)
