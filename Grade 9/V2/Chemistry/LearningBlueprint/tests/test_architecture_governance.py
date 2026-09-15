@@ -83,10 +83,34 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertEqual(rows[381]["disposition"], "SUPERSEDED_BY_387")
         self.assertEqual(rows[385]["authority_class"], "NON_AUTHORITATIVE_STRESS_TEST")
 
-    def test_supersession_requires_explicit_migration(self):
+    def test_product_and_execution_siblings_have_explicit_retention_before_supersession(self):
         rows = {row["number"]: row for row in self.ledger["pull_requests"]}
-        self.assertEqual(rows[360]["disposition"], "MINE_THEN_SUPERSEDE")
+        self.assertEqual(rows[360]["disposition"], "SUPERSEDED_BY_371")
+        self.assertEqual(rows[360]["ci_state"], "MIGRATION_PASS")
+        self.assertEqual(rows[362]["disposition"], "SUPERSEDED_BY_371_LINEAGE")
+        self.assertEqual(rows[362]["ci_state"], "RETAINED_IN_371_ANCESTRY")
+
+        migration = self.ledger["migration_evidence"]
+        self.assertEqual(migration["360"]["target_pr"], 371)
+        self.assertIn("GENERATION_ORCHESTRATION_CONTRACT", migration["360"]["controls_ported"])
+        self.assertIn("ANSWER_CUSTODY", migration["360"]["controls_absorbed"])
+        self.assertIn("HISTORICAL_EXACT_PRODUCT_CANDIDATE", migration["360"]["historical_only"])
+        self.assertEqual(migration["362"]["target_pr"], 371)
+        self.assertEqual(migration["362"]["retention_mode"], "GIT_ANCESTRY_AND_CURRENT_HEAD_FILES")
+        for required in (
+            "LearnerProduct/EXECUTION_CONTRACT.md",
+            "LearnerProduct/policies/chemistry-answer-path-policy.json",
+            "LearnerProduct/policies/chemistry-learner-render-policy.json",
+            "LearnerProduct/engine/preflight_chemistry_learner_products.py",
+        ):
+            self.assertIn(required, migration["362"]["verified_current_head_files"])
+
+    def test_supersession_requires_explicit_migration(self):
         preconditions = self.ledger["closure_preconditions"]
+        for condition in ("PORT_LEDGER_COMPLETE", "NO_UNIQUE_GENERIC_CONTROL_LOST", "371_CONTROL_MIGRATION_CI_GREEN"):
+            self.assertIn(condition, preconditions["360"])
+        for condition in ("EXECUTION_MECHANICS_EXPLICITLY_RETAINED_IN_371_LINEAGE", "371_HEAD_CONTAINS_EXECUTION_CONTRACT_AND_PREFLIGHT"):
+            self.assertIn(condition, preconditions["362"])
         for condition in ("GENERIC_SOURCE_HARDENING_REWRITTEN_ON_384_LINEAGE", "NO_REDOX_SPECIFIC_VALIDATOR_LOGIC_RETAINED", "387_GREEN"):
             self.assertIn(condition, preconditions["377"])
         for condition in ("TOPIC_NEUTRAL_CLOSURE_PORTED", "GENERIC_PRODUCT_SOURCE_SCOPE_PORTED", "CDAU_AND_PAL_CUSTODY_PORTED", "387_GREEN"):
