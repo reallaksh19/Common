@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-capability.schema.json",
+  "title": "MathCapabilityDefinition V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["capability_id","subject","reasoning_stage","capability_class","description","success_criteria"],
+  "properties": {
+    "capability_id": {"type":"string","pattern":"^MATH-[A-Z0-9-]+$"},
+    "subject": {"const":"MATHEMATICS"},
+    "reasoning_stage": {"enum":["UNDERSTAND_OBJECT","SELECT_REPRESENTATION","RECOGNIZE_STRUCTURE","SELECT_OPERATION","TRANSFORM","PRESERVE_INVARIANT","CHECK_CONDITIONS","VERIFY_RESULT"]},
+    "capability_class": {"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["CONCEPTUAL","REPRESENTATIONAL","MODEL_SELECTION","PROCEDURAL","SYMBOLIC","VALIDATION","TRANSFER"]}},
+    "description": {"type":"string","minLength":1},
+    "prerequisite_capability_refs": {"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "success_criteria": {"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+    "error_signature_refs": {"type":"array","uniqueItems":true,"items":{"type":"string","pattern":"^MATH-ERR-[A-Z0-9-]+$"}},
+    "diagnostic_probe_refs": {"type":"array","uniqueItems":true,"items":{"type":"string","pattern":"^MATH-PROBE-[A-Z0-9-]+$"}},
+    "reasoning_family_refs": {"type":"array","uniqueItems":true,"items":{"enum":["INVARIANT_TRACKING","REPRESENTATION_SEMANTICS","VERIFICATION"]}}
+  }
+}
