@@ -36,11 +36,17 @@ _LAST_STUDY_MODEL = None
 _LAST_SDU_LAU_AUDIT = None
 _LAST_PEDAGOGY_RESEARCH_MANIFEST = None
 _ORIGINAL_BUILD_REGISTRY = base.legacy.build_registry
+_ORIGINAL_CORE1B_INPUT = base.legacy.core1b_input
 _ORIGINAL_RUN_CLI = base.legacy.run_cli
 
 HERE = Path(__file__).resolve()
 MATH_BLUEPRINT = HERE.parents[1]
 BOUND_WAIVER = MATH_BLUEPRINT / "golden" / "bound_producer_release" / "core2-owner-waiver.test.json"
+CORE1B_DIFFICULTY_CONSEQUENCES = {
+    "EASY": {"page_ceiling": 10, "research_level": "NONE"},
+    "MEDIUM": {"page_ceiling": 20, "research_level": "TARGETED"},
+    "HARD": {"page_ceiling": 30, "research_level": "DEEP"},
+}
 
 
 def multi_bucket_safe_subtopics(bucket_plan: dict):
@@ -104,10 +110,25 @@ def authority_generation_spec(bucket_plan: dict, core1: dict, bucket_sid: dict[s
     return spec
 
 
+def sdu_aware_core1b_input(bucket: dict, book_bucket: dict, spec_row: dict, core1a_book_id: str, index: int) -> dict:
+    """Preserve the same SDU finding and its operational consequences in Core1B."""
+    doc = _ORIGINAL_CORE1B_INPUT(bucket, book_bucket, spec_row, core1a_book_id, index)
+    badge = spec_row["difficulty_badge"]
+    if badge not in CORE1B_DIFFICULTY_CONSEQUENCES:
+        base.fail("BOUND_GOLDEN_CORE1B_DIFFICULTY_BADGE_INVALID", badge)
+    consequence = CORE1B_DIFFICULTY_CONSEQUENCES[badge]
+    difficulty = doc["difficulty_governance"]
+    difficulty["page_ceiling"] = consequence["page_ceiling"]
+    difficulty["research_level"] = consequence["research_level"]
+    if difficulty["operational_badge"] != badge or difficulty["declared_badge"] != badge:
+        base.fail("BOUND_GOLDEN_CORE1B_DIFFICULTY_BADGE_DRIFT", bucket["bucket_id"])
+    return doc
+
+
 def research_aware_run_cli(script: Path, args: list[str]) -> str:
     """Carry the exact compiled pedagogy-research manifest into Core1A.
 
-    The legacy bound runner predates the manifest argument.  Keep its orchestration
+    The legacy bound runner predates the manifest argument. Keep its orchestration
     intact while supplying the missing custody edge at the CLI boundary.
     """
     forwarded = list(args)
@@ -156,6 +177,7 @@ def main() -> None:
     global _LAST_STUDY_MODEL
     base.bucket_subtopics = multi_bucket_safe_subtopics
     base.legacy.build_generation_spec = authority_generation_spec
+    base.legacy.core1b_input = sdu_aware_core1b_input
     base.legacy.build_registry = rich_engineering_registry_builder
     base.legacy.run_cli = research_aware_run_cli
     ap = argparse.ArgumentParser()
