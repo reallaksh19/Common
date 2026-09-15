@@ -10,8 +10,24 @@ from validate_cdau_engineering_ready import validate_engineered_cdau
 
 REQUEST=load("fixtures/engineering-workbench/redox-request.v1.json"); MANIFEST=load("fixtures/engineering-workbench/redox-manifest.v1.json"); CDAU=load("golden/v6/cdau-redox.json")
 Draft202012Validator.check_schema(load("contracts/chemistry-engineering-authorization-binding.schema.json"))
-b=compile_binding(REQUEST,MANIFEST); assert b["status"]=="ENGINEERING_AUTHORIZED"; assert b["scope_ref"]=="REDOX-SPECIES-STATE-AGENT"; assert {"CDAU","PAL"}.issubset(set(b["authorized_consumers"])); assert b["registry_digest"].startswith("sha256:") and b["closure_digest"].startswith("sha256:")
-r=validate_engineered_cdau(REQUEST,MANIFEST,CDAU); assert r["status"]=="PASS" and r["engineering_binding_id"]==b["binding_id"] and r["engineering_binding_digest"].startswith("sha256:")
+b=compile_binding(REQUEST,MANIFEST)
+assert b["status"]=="ENGINEERING_AUTHORIZED"
+assert b["scope_ref"]=="REDOX-SPECIES-STATE-AGENT"
+assert {"CDAU","PAL"}.issubset(set(b["authorized_consumers"]))
+assert b["registry_digest"].startswith("sha256:") and b["closure_digest"].startswith("sha256:")
+assert len(b["source_audit_states"])==1
+sa=b["source_audit_states"][0]
+assert sa["gate_id"]=="CHEM-REDOX-OXIDATION"
+assert sa["status"]=="SOURCE_HARDENED"
+assert sa["scope_policy"]=="GRADE_BANDED"
+assert sa["audit_digest"].startswith("sha256:")
+
+r=validate_engineered_cdau(REQUEST,MANIFEST,CDAU)
+assert r["status"]=="PASS"
+assert r["engineering_binding_id"]==b["binding_id"]
+assert r["engineering_binding_digest"].startswith("sha256:")
+assert r["source_audit_states"]==b["source_audit_states"]
+
 bad=copy.deepcopy(MANIFEST); bad["external_prerequisite_resolutions"]=[]
 try: compile_binding(REQUEST,bad)
 except ChemistryEngineeringBindingError as e: assert e.code=="CHEM_BIND_ENGINEERING_BLOCKED"
