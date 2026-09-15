@@ -18,6 +18,7 @@ def test_v10_contract_schemas_are_valid():
         "contracts/scoped-execution-envelope.schema.json",
         "contracts/scoped-evidence-receipt.schema.json",
         "contracts/domain-prerequisite-authority.schema.json",
+        "contracts/domain-prerequisite-demand.schema.json",
         "contracts/domain-prerequisite-closure.schema.json",
         "contracts/seven-core-stress-test-request.schema.json",
         "contracts/seven-core-stress-test-receipt.schema.json",
@@ -39,6 +40,15 @@ def test_v10_join_policy_keeps_verified_absence_distinct_from_unknown():
     assert policy["verified_no_target_demand_allows_assimilation"] is True
     assert policy["coverage_unknown_blocks_assimilation"] is True
     assert policy["zero_demand_requires_scoped_coverage_receipt"] is True
+
+
+def test_v10_domain_provider_registry_routes_math_without_self_certifying_it():
+    policy = load("policy/domain-prerequisite-routing.v1.json")
+    math = next(row for row in policy["providers"] if row["prerequisite_prefix"] == "MATH-")
+    assert math["provider_subject"] == "MATHEMATICS"
+    assert math["provider_root"] == "Grade 9/V2/Mathematics"
+    assert math["authority_entrypoint_ref"] == "Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md"
+    assert policy["unknown_provider_policy"] == "OPEN_UNROUTABLE_AND_HOLD"
 
 
 def test_v10_state_semantics_forbid_surrogate_passes():
