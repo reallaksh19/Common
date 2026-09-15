@@ -271,7 +271,8 @@ class ReviewWriter:
         size = self.chapter if level == 1 else self.section
         rows = self._wrap(value, BOLD, size, self.width - 20)
         height = len(rows) * (size + 5) + (16 if level == 1 else 12)
-        self.ensure(height, value, show_context=False)
+        follow_reserve = self.leading * (6.0 if level == 1 else 5.0)
+        self.ensure(height + follow_reserve, value, show_context=False)
         self.current_context = value
         self.current_context_ref = ref
         if level == 1:
