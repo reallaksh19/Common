@@ -57,7 +57,8 @@ SBA04 = {
     "PHY-M2D-PERPENDICULAR-VELOCITY",
     "PHY-M2D-SPEED-AT-HEIGHT",
 }
-FULL = BASE15 | GRAVITY | SBA04
+PR383_MIGRATED = {"PHY-KIN-1D-MOTION"}
+FULL = BASE15 | GRAVITY | SBA04 | PR383_MIGRATED
 SBA23_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK","PHY-M2D-MOVING-LAUNCHER"}
 GRAV_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-NLM-INTERACTION","PHY-NLM-FBD","PHY-NLM-FIRST-LAW","PHY-NLM-SECOND-LAW","PHY-NLM-THIRD-LAW","PHY-GRAV-FORCE","PHY-GRAV-FIELD"}
 SBA04_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK"} | SBA04
@@ -68,7 +69,7 @@ assert digest(REG) == digest(build_registry())
 report = validate(REG)
 assert report["status"] == "PASS"
 assert report["registry_id"] == "PHYSICS-TECHNICAL-ENGINEERING-GATES-V3"
-assert report["gate_count"] == 23
+assert report["gate_count"] == 24
 assert report["all_engineering_ready"] is True
 assert {x["gate_id"] for x in report["gate_states"]} == FULL
 assert all("status" not in g for g in REG["gates"])
@@ -108,10 +109,23 @@ for gid in SBA04:
     assert any(a["source_ref"].startswith("Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json") for a in g["authority_basis"])
     assert g["reasoning_sequence"] and g["required_transformations"] and g["misconceptions"] and g["problem_families"]
 
+# First subject-wide PR383 migration is source-bound and does not import the
+# source registry's self-asserted technical_readiness or release_checklist.
+kin = gate(REG, "PHY-KIN-1D-MOTION")
+assert kin["scope_state"] == "ACTIVE"
+assert kin["prerequisites"] == []
+assert kin["linked_buckets"] == ["BUCKET-PHYS-MOTION"]
+assert kin["applicable_cores"] == ["CORE1A"]
+assert any("provenance/pr383/physics-technical-engineering-gates.v1.json#PHY-KIN-1D-MOTION@89b009c31c79ad4b2009577220705d2711eadc4b" == a["source_ref"] for a in kin["authority_basis"])
+assert {x["relation_id"] for x in kin["relations"]} == {"EQ-PHYS-KINEMATICS-V"}
+assert {x["representation_id"] for x in kin["representations"]} == {"REP-PHYS-KIN-1D-AXIS"}
+assert "technical_readiness" not in kin and "release_checklist" not in kin
+
 # Subject growth may not pollute older scoped closures.
 assert physics_closure(REG, ["PHY-M2D-MOVING-LAUNCHER"]) == SBA23_CLOSURE
 assert physics_closure(REG, ["PHY-GRAV-FIELD"]) == GRAV_CLOSURE
 assert physics_closure(REG, sorted(SBA04)) == SBA04_CLOSURE
+assert physics_closure(REG, ["PHY-KIN-1D-MOTION"]) == {"PHY-KIN-1D-MOTION"}
 
 # Shared problem-family IDs are legal cross-gate linkage, semantic authority IDs are not.
 assert "PF-NLM-INCLINE" in {x["family_id"] for x in gate(REG, "PHY-NLM-SECOND-LAW")["problem_families"]}
@@ -155,6 +169,9 @@ bad=copy.deepcopy(REG); gate(bad,"PHY-GRAV-FORCE")["prerequisites"].remove("PHY-
 bad=copy.deepcopy(REG); gate(bad,"PHY-GRAV-FIELD")["verifications"].remove("SYMMETRY"); must_fail(bad,"PHY_GATE_REQUIRED_VERIFICATION_MISSING")
 bad=copy.deepcopy(REG); gate(bad,"PHY-GRAV-FORCE")["relations"][0]["symbols"][4]["unit_dimension"]=""; must_fail(bad,"PHY_GATE_SCHEMA_VIOLATION")
 
+# PR383 migration falsifier: the new canonical gate is held to the external invariant profile.
+bad=copy.deepcopy(REG); gate(bad,"PHY-KIN-1D-MOTION")["required_invariants"].remove("INV-KIN-1D-CONSTANT-ACCELERATION"); must_fail(bad,"PHY_GATE_REQUIRED_INVARIANT_MISSING")
+
 # SBA04 technical-gate falsifiers: one per new capability plus bucket custody.
 for gid, invariant in [
     ("PHY-M2D-VELOCITY-EVOLUTION","INV-M2D-APEX-VY-ZERO-NOT-GZERO"),
@@ -169,4 +186,4 @@ for gid, invariant in [
 bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-VELOCITY-EVOLUTION")["linked_buckets"].remove("M2D-SBA-04"); must_fail(bad,"PHY_GATE_REQUIRED_BUCKET_BINDING_MISSING")
 bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-PERPENDICULAR-VELOCITY")["relations"][0]["symbols"][0]["reference_frame_role"]=""; must_fail(bad,"PHY_GATE_SCHEMA_VIOLATION")
 
-print("Physics Technical Engineering Gates v3: PASS (23-gate custody + scoped-closure invariance + SBA04 technical gates + mutation falsifiers)")
+print("Physics Technical Engineering Gates v3: PASS (24-gate custody + first PR383 source migration + scoped-closure invariance + SBA04 technical gates + mutation falsifiers)")

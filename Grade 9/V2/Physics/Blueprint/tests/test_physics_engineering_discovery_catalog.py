@@ -27,10 +27,10 @@ def main() -> None:
 
     assert result["status"] == "PASS"
     assert result["discovered_subtopic_count"] == 43
-    assert result["exact_v3_count"] == 12
-    assert result["migration_required_count"] == 31
+    assert result["exact_v3_count"] == 13
+    assert result["migration_required_count"] == 30
     assert result["v3_native_or_refined_count"] == 11
-    assert result["canonical_v3_gate_count"] == 23
+    assert result["canonical_v3_gate_count"] == 24
     assert result["case_artifacts_role"] == "STRESS_TEST_ONLY"
     assert result["readiness_rule"] == "DERIVED_BY_PRODUCTION_V3_VALIDATOR"
 
