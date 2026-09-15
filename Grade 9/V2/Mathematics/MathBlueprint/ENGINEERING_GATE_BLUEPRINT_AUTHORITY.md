@@ -2,202 +2,169 @@
 
 This document is normative for the Mathematics Engineering Gate / MathBlueprint boundary.
 
-It exists to prevent Blueprint from becoming topic-specific, example-specific, or dependent on an agent's remembered mathematics. Engineering Gate content is upstream technical authority; Blueprint consumes that authority through explicit, digest-bound identities and deterministic closure.
+Its purpose is to prevent Blueprint from becoming topic-specific, example-specific, or dependent on remembered mathematics. Engineering is upstream technical authority. Blueprint may consume that authority only through exact, digest-bound identities and deterministic closure.
 
-## 1. Authority direction
+## 1. Canonical authority direction
 
 ```text
 ASSESSMENT / DECLARED-SCOPE AUTHORITY
         |
-        | exact, versioned capability identity bridge only when vocabularies differ
+        | exact versioned capability custody bridge when vocabularies differ
         v
 DIRECT ENGINEERING GATE IDS
         ^
         |
-MATHEMATICS TECHNICAL ENGINEERING GATE REGISTRY
+CANONICAL MATHEMATICS ENGINEERING GRAPH
+  generated v1 base registry
+        +
+  exact digest-bound Engineering extensions
         |
         | Engineering schema + validator
         v
 VALIDATED ENGINEERING GATE GRAPH
         |
-        | exact runtime Engineering request
+        | exact runtime request; <=3 direct scope refs per authorization bundle
         v
 TRANSITIVE ENGINEERING CLOSURE
         |
-        | every gate READY and in authorized closure
+        | every gate READY and inside authorized closure
         v
-ENGINEERING AUTHORIZATION BINDING
+ENGINEERING AUTHORIZATION BINDING(S)
         |
-        | explicit Canonical Domain admission + digest-bound custody
+        | explicit Canonical Domain subtopic -> exact gate binding
         v
-CANONICAL DOMAIN REGISTRY
+CANONICAL DOMAIN ADMISSION
         |
-        | same Engineering custody stamped by every producer
+        | normalized Engineering custody
         v
-CORE1A / CORE1B / CORE2A / CORE2B
+Core1A / Core1B / Core2A / Core2B
         |
-        | cross-Core custody equality + current-admission revalidation
+        | custody equality + current-admission revalidation
         v
 CDAU -> SDU / LAU -> TTU -> PRODUCT -> PUBLICATION
 ```
 
-Engineering Gate is therefore an upstream technical-authority boundary. MathBlueprint is not allowed to recreate a second mathematics gate system downstream.
+Execution order may vary. Authority order may not.
 
-## 2. Ownership
+## 2. Canonical Engineering graph
 
-### Engineering Gate owns
+The current canonical graph contains **45 Grade 9–11 Engineering gates**.
 
-- the canonical gate inventory;
-- gate identifiers;
-- curriculum/source references;
-- prerequisite edges;
-- linked bucket identifiers;
-- technical concepts, equations, representations and conditions recorded by a gate;
-- technical readiness;
-- the Engineering schema;
-- Engineering registry validation and falsification.
+The large generated artifact remains:
 
-The current Engineering authority imported from PR #382 contains 44 Grade 9–11 gates. The architecture does not depend on the number 44: adding, removing or changing gates changes registry data, not Blueprint routing code.
+`policies/mathematics-technical-engineering-gates.v1.json`
 
-### AssessmentScope authority owns
+The Euclidean-foundations authority is added through the exact extension:
 
-- canonical assessment capability identifiers;
-- declared-topic identity;
-- capability prerequisite identity;
-- source-question-to-capability binding;
-- assessment problem-family identity boundaries.
+`policies/mathematics-technical-engineering-gates.v1.euclid-extension.json`
 
-AssessmentScope does not become Engineering authority merely because an assessment capability has a similar title to an Engineering gate.
+The canonical loader is:
 
-### MathBlueprint Workbench owns
+`engine/engineering_registry_composition.py`
 
-- accepting a bounded runtime Engineering request;
-- resolving that request to exact Engineering Gate IDs;
-- computing transitive prerequisite closure;
-- refusing a closure containing a non-ready/held gate;
-- emitting authorization manifest/receipt/binding;
-- preserving registry and validator-contract custody by digest;
-- proving that downstream consumers use a currently valid closure.
+The extension must bind to the exact base registry Git blob, the expected base gate count, and the expected composed gate count. Duplicate gate identities fail closed. The composed object retains registry identity `REG-MATH-TECH-GATE-V1`; however, its canonical digest changes when an authorized extension changes, so old downstream custody becomes stale automatically.
 
-MathBlueprint Workbench does **not** own topic mathematics, a parallel invariant list, or a compiled-in gate allowlist.
+This is composition of one Engineering authority graph, not a second Blueprint-owned registry.
 
-## 3. Legal identity paths
+## 3. Euclid Foundations gate
 
-Engineering scope must arrive at the Workbench as exact Engineering Gate IDs or exact Engineering-owned bucket IDs.
+The 45th gate is:
 
-### A. Exact Engineering Gate identity
+`MATH-GEO-EUCLID-FOUNDATIONS`
 
-```text
-scope_kind = ENGINEERING_GATE
-scope_refs = [exact gate id ...]
-```
+It closes the previously explicit upstream gap for:
 
-Each supplied ID must exist exactly in the current Engineering registry.
+`MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE`
 
-### B. Exact Engineering registry bucket linkage
+The gate is a full Engineering object, not a compatibility alias. It contains, among other required structures:
 
-```text
-scope_kind = BUCKET
-scope_refs = [exact linked bucket id ...]
-```
+- `CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION`;
+- `CON-MATH-EUCLID-ASSUMPTION-VS-THEOREM`;
+- `CON-MATH-EUCLID-SCOPE-OF-ASSUMPTION`;
+- `EQ-MATH-EUCLID-CLASSIFICATION`;
+- `REP-MATH-EUCLID-CLASSIFICATION-TABLE`;
+- `REP-MATH-EUCLID-LOGICAL-STATUS-FLOW`;
+- `MISC-MATH-EUCLID-AXIOM-POSTULATE-PROOF`;
+- `PF-MATH-EUCLID-AXIOM-POSTULATE-CLASSIFICATION`;
+- explicit validity conditions, reasoning sequence, verification obligations, transformations, difficulty profile, release checklist, and falsification cases.
 
-A bucket resolves only through `subtopic_gate.linked_buckets` in the current Engineering registry.
+The validator has topic-specific Engineering invariants for this gate. Removing its classification concept, formal relation, required representation, or misconception repair must fail validation.
 
-### C. Exact cross-authority custody bridge
+## 4. Exact AssessmentScope → Engineering custody bridge
 
-AssessmentScope and Engineering intentionally use different canonical vocabularies. Where a downstream run begins from AssessmentScope capability IDs, a versioned repository authority bridge may translate those **exact IDs** to direct Engineering Gate IDs before constructing the Workbench request.
+AssessmentScope and Engineering intentionally use different canonical identity systems. That vocabulary boundary is crossed only through an explicit, versioned exact-ID bridge.
 
-Such a bridge is legal only when all of the following are true:
-
-```text
-exact AssessmentScope capability id
-+ exact AssessmentScope authority id/digest
-+ exact Engineering registry id/digest
-+ explicit Engineering gate id(s)
-+ explicit binding role
-+ explicit uncovered/gap state when no gate exists
-```
-
-The current mixed-Grade-9 bridge is:
+Historical v1 authority remains immutable:
 
 `policies/math-assessment-engineering-crosswalk.mixed-grade9.v1.json`
 
-and is validated by:
+It records the prior 29-covered / 1-gap state.
 
-`engine/validate_assessment_engineering_crosswalk.py`.
+The current v2 migration is:
 
-This bridge is **not** an Engineering resolver and is not allowed to match titles, prose or embeddings. It is custody data between two independently canonical identifier systems. Runtime code joins exact IDs only.
+`policies/math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json`
 
-`FOUNDATIONAL_SUPPORT` means the Engineering gate authorizes the mathematical support used inside that bounded corpus; it does not claim semantic equivalence between the support capability and the entire gate.
+The patch binds to:
 
-## 4. Explicitly forbidden resolution
+- the exact v1 crosswalk Git blob;
+- the v1 crosswalk identity;
+- the exact historical Engineering registry digest;
+- the exact Euclid extension reference;
+- the exact Euclid extension Git blob.
 
-Blueprint and the custody bridge must never establish Engineering authority through:
+It overrides only `MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE`, binding it directly to `MATH-GEO-EUCLID-FOUNDATIONS`.
 
-```text
-topic title similarity
-substring matching
-fuzzy matching
-LLM semantic matching
-remembered aliases
-unversioned hand-written mappings in runtime code
-per-topic if/else branches
-sample/golden-case identity used as general authority
-previous conversation memory
-agent prior knowledge
-```
-
-A repository-authored crosswalk is not permission to guess. Every row is an explicit reviewed identity assertion bound to both current authorities. If an exact mapping is absent, the state is a named Engineering gap, not an inferred nearest gate.
-
-For direct Workbench resolution the unmapped state remains:
+The canonical current result is:
 
 ```text
-MATH_ENG_SCOPE_UNMAPPED
+30 required mixed Grade-9 capabilities
+30 COVERED
+0 ENGINEERING_GAP
 ```
 
-For the AssessmentScope bridge the blocked state is:
+No title matching, substring matching, semantic matching, LLM matching, remembered aliases, conversation memory, or per-topic runtime fallback may create Engineering authority.
+
+## 5. Permitted Engineering resolution
+
+Blueprint Engineering requests may resolve only by:
+
+1. exact Engineering Gate identity; or
+2. exact `linked_buckets` membership in the current Engineering registry.
+
+The AssessmentScope bridge is a separate explicit custody layer for translating canonical capability IDs to exact Engineering gate IDs. It is not a fuzzy resolver.
+
+Unknown scope is:
+
+`MATH_ENG_SCOPE_UNMAPPED`
+
+Unknown capability-to-gate custody is a crosswalk failure. Neither state is permission to infer.
+
+## 6. Closure and bounded authorization
+
+For direct gate set `D`, Blueprint computes:
 
 ```text
-MATH_ENG_CROSSWALK_REQUIRED_CAPABILITY_GAP
+CLOSURE(D) = D union every transitive prerequisite reachable from D
 ```
 
-## 5. Closure rule
+Each Engineering request/authorization bundle may contain at most three direct scope refs. This is a relay bound only; the transitive closure has no three-gate cap.
 
-For direct gates `D`, Blueprint computes the complete prerequisite closure from the current Engineering graph:
+A larger product may therefore require multiple bounded authorization bundles. Canonical Domain admission must reference each bundle explicitly, and every admitted subtopic must bind to exact gates inside one of the authorized closures.
 
-```text
-CLOSURE(D) = D union all transitive prerequisite_ids reachable from D
-```
+Unknown prerequisites and dependency cycles fail closed.
 
-A relay Engineering request may contain at most three direct scope refs. That is a relay/scope bound only. The transitive Engineering closure has no three-gate cap.
+## 7. Readiness and custody
 
-When a product needs more than three direct gates, admission is partitioned into multiple bounded authorizations. Each Canonical Domain subtopic records exactly which direct gate(s) and which authorization(s) admit it.
-
-Unknown prerequisite IDs fail closed. Dependency cycles fail closed.
-
-A transitive prerequisite is not automatically permission to use that prerequisite gate as the direct semantic admission target of another domain subtopic.
-
-## 6. Readiness rule
-
-Blueprint first requires the Engineering registry to pass the Engineering-owned validator.
-
-After that validation, each gate in the closure is admissible only when its authoritative Engineering state permits it. Blueprint does not re-derive mathematics with a second topic-specific table.
+Engineering authorization requires current Engineering validation plus admissible gate state:
 
 ```text
 ENGINEERING validator PASS
 AND gate.technical_readiness == ENGINEERING_GATE_READY
-AND gate.maturity == ENGINEERING
 AND source scope is not HELD
-=> blueprint_admissible = true
+=> Blueprint technical admission may proceed
 ```
 
-Otherwise technical authorization is blocked.
-
-A downstream owner decision cannot rewrite Engineering truth, source custody, provenance or technical readiness.
-
-## 7. Runtime custody
-
-Every Engineering authorization binds at least:
+Every Engineering binding carries at least:
 
 ```text
 registry_digest
@@ -205,182 +172,97 @@ validator_contract_digest
 scope_refs
 direct_gate_ids
 transitive_gate_ids
-closure status
+closure_receipt_digest
+downstream_consumer
 ```
 
-The validator-contract digest covers the Engineering schema and Engineering validator implementation. Therefore a change in either the registry or validator contract makes an old downstream binding stale.
+The validator-contract digest includes the Engineering schema, Engineering validator, canonical registry composer, and canonical extension sources. Therefore changing any of those inputs invalidates old custody.
 
-Bindings are runtime artifacts. The repository must not use a persisted topic-specific binding as architectural authority for other topics.
+## 8. Producer invariant
 
-## 8. Canonical Domain admission
-
-A Canonical Domain Registry may be structurally valid and still lack current Engineering authorization.
-
-Admission therefore requires both:
-
-```text
-DOMAIN REGISTRY VALID
-AND
-CURRENT ENGINEERING AUTHORIZATION(S) VALID
-```
-
-Every admitted domain subtopic must map explicitly to direct Engineering Gate IDs and to the authorization that owns each direct gate. The admission validator must verify:
-
-- every domain subtopic is mapped;
-- every mapped gate is a direct gate in the referenced authorization, not merely a transitive prerequisite;
-- every authorization is current and targets `CANONICAL_DOMAIN_REGISTRY`;
-- all direct authorization gates are actually used by the admission;
-- Engineering registry and validator-contract digests are current;
-- no authorization exceeds the relay direct-scope bound.
-
-The admission validator may verify an explicit mapping; it may not invent that mapping from a domain title or remembered concept.
-
-## 9. Producer custody invariant
-
-Canonical Domain binding alone is insufficient for a release-ready producer receipt.
-
-Every real Core1A/Core1B/Core2A/Core2B producer must stamp normalized Engineering custody containing the current domain-admission and Engineering authority digests.
+Registry binding alone is insufficient for a producer to claim release readiness.
 
 ```text
 REGISTRY BOUND
-AND PRODUCER GOVERNANCE COMPLETE
-AND ENGINEERING CUSTODY BOUND
++ PRODUCER GOVERNANCE COMPLETE
++ ENGINEERING CUSTODY BOUND
 => READY_FOR_CROSS_CORE_AUDIT
 ```
 
-Otherwise the producer remains:
+Core1A, Core1B, Core2A and Core2B must all carry normalized Engineering custody. Cross-Core assembly rejects custody disagreement. Final release reconstructs current Engineering admission from current repository authority and compares it with producer receipts; a stale or pre-baked custody object cannot authorize release.
 
-```text
-UNBOUND_PRE_RELEASE
-```
-
-The cross-Core assembler requires all four stages to carry the same Engineering custody. Missing, unbound or different custody blocks assembly.
-
-## 10. Final release revalidation
-
-The final release gate must not trust a producer's stored custody merely because it has a valid shape.
-
-Release therefore requires the current Engineering admission artifact and re-runs Engineering-domain validation from current repository authority. It then compares the freshly rebuilt custody against every producer receipt.
-
-```text
-CURRENT ADMISSION REVALIDATES
-AND RECEIPT CUSTODY == CURRENT CUSTODY FOR ALL FOUR STAGES
-AND CROSS-CORE GOVERNANCE PASS
-AND SOURCE / ANSWER CUSTODY PASS
-=> RELEASE PASS
-```
-
-A caller may not bypass current Engineering validation by supplying a pre-baked custody object.
-
-## 11. Known mixed-Grade-9 coverage state
-
-The current mixed Grade 9 cold-start corpus contains 30 required capabilities. The exact crosswalk currently reports:
-
-```text
-29 COVERED
-1 ENGINEERING_GAP
-```
-
-The explicit gap is:
-
-```text
-MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE
-  -> MATH_ENG_GAP_EUCLID_FOUNDATIONS
-```
-
-No current direct Engineering gate owns axiom-versus-postulate classification. Mapping it to `MATH-GEO-LINES-ANGLES` or triangle axioms would overstate current Engineering authority.
-
-Therefore the full mixed corpus is deliberately reported as:
-
-```text
-FULL_MIXED_CORPUS_NOT_ENGINEERING_RELEASE_READY
-```
-
-This is a valid governance finding, not a reason to weaken the boundary.
-
-The actual-producer release golden separately uses the exact Engineering-covered projection declared in `golden/bound_producer_release/EXPECTED.json`:
-
-```text
-source question: Q2
-capabilities:
-  MATH-ORDERED-PAIR-SEMANTICS
-  MATH-COORDINATE-DISTANCE
-engineering gate:
-  MATH-GEO-COORDINATES
-```
-
-The projection proves the complete producer/release machinery while retaining the full-corpus gap audit as a separate artifact. Adding a future Euclid-foundations Engineering gate must change the full-scope audit visibly; it must not silently widen the golden.
-
-## 12. Global-change invariant
-
-A valid Engineering registry expansion must not require new Blueprint topic logic.
-
-The required behaviour is:
-
-```text
-Engineering registry N gates
-        ↓
-Blueprint enumerates current registry
-        ↓
-N runtime gate proofs
-```
-
-This is enforced by the registry-wide Workbench proof and its tests. The proof obtains its gate set from `subtopic_gates` at runtime; it does not contain a compiled-in gate list.
-
-The PR #382 expansion from 10 to 44 gates is the current falsifier for this invariant: the same Blueprint Workbench code runs unchanged against the larger registry.
-
-A new cross-authority mapping may require a crosswalk data update because AssessmentScope and Engineering are separate authority systems; it must not require a new resolver branch.
-
-## 13. CI release invariant
-
-CI must prove from current repository state:
-
-```text
-Engineering registry validator PASS
-Engineering mutation falsifiers PASS
-registry-driven Blueprint resolver/closure tests PASS
-runtime custody binding tests PASS
-generic engineered-domain admission tests PASS
-AssessmentScope -> Engineering crosswalk validation PASS
-full mixed-scope gap audit is explicit and stable
-actual Core1A producer Engineering-bound
-actual Core1B producer Engineering-bound
-actual Core2A producer Engineering-bound
-actual Core2B producer Engineering-bound
-all four producer custody values equal
-current Engineering admission revalidated at release
-cross-Core release PASS
-frozen source custody PASS
-canonical answer custody PASS
-learner publication regeneration PASS
-```
-
-A topic-specific CI step such as "compile quadratic closure" or "validate Theory-of-Equations admission" is not the governing architectural proof.
-
-## 14. Separation from pedagogy
-
-Engineering authorization means the required technical mathematics is permitted to enter the downstream design system. It does not itself authorize publication and it does not collapse CDAU/SDU/LAU/TTU responsibilities.
+Engineering authorization does not replace SDU, LAU, TTU, source custody, answer custody, similarity governance, or publication governance.
 
 ```text
 ENGINEERING AUTHORIZATION != PUBLICATION AUTHORIZATION
 ```
 
-Core1A/Core1B depth remains SDU-controlled by intrinsic difficulty. Core2A/Core2B adaptation remains LAU-controlled by learner evidence or explicit owner waiver. TTUs remain responsible for technical teaching/reconstruction completeness.
+## 9. Full mixed-corpus release proof
 
-## 15. Non-regression rule
+`golden/bound_producer_release/EXPECTED.json` now defines `MATH-BOUND-PRODUCER-RELEASE-v3`.
 
-A future change is architecturally invalid if it introduces any of the following into MathBlueprint:
+The deterministic projection contract is identity-preserving and equals the complete current mixed Grade-9 cold-start scope:
 
 ```text
-a Blueprint-owned second Engineering truth registry
-a Blueprint-owned compiled gate inventory
-a title/fuzzy/memory resolver
-an unversioned mapping embedded in runtime code
+source questions: Q1 ... Q14
+required capabilities: 30 / 30
+Engineering gaps: 0
+```
+
+The run must:
+
+- synthesize the complete mixed Core1 / StudyModel / Core2 scope;
+- resolve every required capability through the exact v2 bridge;
+- build one or more bounded Engineering authorization bundles;
+- admit the same-run Canonical Domain Registry;
+- execute the actual Core1A, Core1B, Core2A and Core2B CLIs;
+- stamp matching Engineering custody into every stage receipt;
+- cover all six cross-Core stage pairs;
+- revalidate current Engineering admission at final release;
+- preserve frozen source-question hashes;
+- preserve canonical answer-contract custody;
+- regenerate the governed learner publication.
+
+Any future capability that is not Engineering-covered must fail before authoring. The golden may not silently narrow itself back to a covered subset.
+
+## 10. Falsification requirements
+
+The authority boundary is valid only while CI proves all of the following:
+
+```text
+45-gate canonical Engineering graph validates
+Engineering mutation falsifiers pass
+Euclid-specific invariant falsifiers pass
+registry-wide exact gate proof covers every current gate
+runtime custody binding falsifiers pass
+Canonical Domain admission falsifiers pass
+stale extension base-blob custody fails
+wrong extension base gate count fails
+duplicate extension gate identity fails
+stale v2 crosswalk base custody fails
+stale v2 crosswalk extension custody fails
+30/30 mixed capability bridge validates
+full 14-question four-producer Engineering-bound release passes
+all producer Engineering custody values agree
+frozen source custody passes
+canonical answer custody passes
+learner publication regeneration passes
+```
+
+## 11. Non-regression rule
+
+A future change is architecturally invalid if it introduces any of the following:
+
+```text
+Blueprint-owned parallel mathematics truth
+a hard-coded runtime gate inventory
+a title/fuzzy/semantic/memory resolver
+an undeclared capability-to-gate inference
 a persisted example binding treated as universal authority
-a special runtime branch for one mathematical topic
-a release path that trusts stale producer custody without current Engineering revalidation
+a topic-specific release bypass
+an owner override that rewrites Engineering truth or provenance
 ```
 
 The invariant is:
 
-> **Engineering defines the technical gate graph. AssessmentScope and Engineering may be joined only through explicit, versioned exact-identity custody data. Blueprint consumes resulting Engineering IDs by deterministic closure and preserves that authority through every producer and release boundary. Examples may test the system; they may never define the system.**
+> **Engineering defines the technical gate graph. Explicit custody bridges connect other canonical vocabularies to that graph. Blueprint consumes the resulting exact identities and deterministic closures; examples test the system but never define it.**
