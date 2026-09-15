@@ -1,0 +1,82 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A4-REPRESENTATION-REQUIREMENTS-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A4_REPRESENTATION_REQUIREMENTS",
+  "evidence_kind": "REPRESENTATION_REQUIREMENTS",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json"
+  ],
+  "artifact_refs": [
+    "REP-M2D-VELOCITY-STAGE-TIMELINE",
+    "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+    "REP-M2D-SPEED-TRIANGLE",
+    "REP-M2D-SAME-HEIGHT-PAIR",
+    "REP-M2D-PERP-VELOCITY-PAIR",
+    "REP-M2D-SPEED-AT-HEIGHT"
+  ],
+  "evidence_refs": [
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#representations",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#representations",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#representations",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#representations",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#representations",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#representations"
+  ],
+  "proof": {
+    "requirement_rows": [
+      {
+        "scope_ref": "PHY-M2D-VELOCITY-EVOLUTION",
+        "representation_requirement_ref": "REP-M2D-VELOCITY-STAGE-TIMELINE",
+        "noticing_target": "Across rising, apex and falling states, v_x stays constant, signed v_y passes through zero, and g remains downward.",
+        "instructional_purpose": "Separate the changing velocity state from acceleration and make the apex a component event rather than a stop event.",
+        "translation_obligation": "Translate the staged trajectory picture into rising/apex/falling words, then signed v_x/v_y symbols, then v_x(t)=u_x and v_y(t)=u_y-g t."
+      },
+      {
+        "scope_ref": "PHY-M2D-VELOCITY-DIRECTION",
+        "representation_requirement_ref": "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+        "noticing_target": "Instantaneous direction follows the current signed component pair; the sign of v_y distinguishes rising from falling direction.",
+        "instructional_purpose": "Prevent reuse of the launch angle and force direction to be reconstructed from the current velocity state.",
+        "translation_obligation": "Translate the tangent/component picture into direction language, then v_x/v_y/phi symbols, then the quadrant-resolved relation phi=atan2(v_y,v_x)."
+      },
+      {
+        "scope_ref": "PHY-M2D-SPEED-MAGNITUDE",
+        "representation_requirement_ref": "REP-M2D-SPEED-TRIANGLE",
+        "noticing_target": "Speed is the nonnegative hypotenuse of signed components; at the apex the vertical leg vanishes while the horizontal leg remains.",
+        "instructional_purpose": "Separate scalar speed magnitude from component signs and block the zero-speed-at-apex misconception.",
+        "translation_obligation": "Translate the component triangle into magnitude language, then v_x/v_y/v symbols, then v=sqrt(v_x^2+v_y^2) and v_apex=|v_x|."
+      },
+      {
+        "scope_ref": "PHY-M2D-SAME-HEIGHT-VELOCITY",
+        "representation_requirement_ref": "REP-M2D-SAME-HEIGHT-PAIR",
+        "noticing_target": "At equal heights the two states share v_x and |v_y|, reverse the sign of v_y, and therefore share speed but not velocity direction.",
+        "instructional_purpose": "Distinguish scalar same-height symmetry from equality of the velocity vector.",
+        "translation_obligation": "Translate the paired trajectory points into comparison words, then signed component pairs, then v_y,fall=-v_y,rise together with equal-speed magnitude."
+      },
+      {
+        "scope_ref": "PHY-M2D-PERPENDICULAR-VELOCITY",
+        "representation_requirement_ref": "REP-M2D-PERP-VELOCITY-PAIR",
+        "noticing_target": "The two nonzero velocity vectors must be identified in one common frame and their right-angle relation involves both signed component pairs.",
+        "instructional_purpose": "Replace the one-component-zero shortcut with the general vector condition for perpendicularity.",
+        "translation_obligation": "Translate the perpendicular arrow picture into right-angle language, then two component pairs, then u_x v_x(t)+u_y v_y(t)=0."
+      },
+      {
+        "scope_ref": "PHY-M2D-SPEED-AT-HEIGHT",
+        "representation_requirement_ref": "REP-M2D-SPEED-AT-HEIGHT",
+        "noticing_target": "The target state is anchored to a declared height origin, keeps the horizontal component unchanged, and derives the vertical component from displacement rather than time.",
+        "instructional_purpose": "Support height-based speed reasoning without origin drift, unnecessary clock solving, or loss of the horizontal contribution.",
+        "translation_obligation": "Translate the trajectory and height marker into target-state words, then y/u_x/v_y symbols, then v_y^2=u_y^2-2gy and v^2=u_x^2+v_y^2."
+      }
+    ],
+    "unbound_requirement_refs": []
+  },
+  "unresolved_requirements": []
+}
