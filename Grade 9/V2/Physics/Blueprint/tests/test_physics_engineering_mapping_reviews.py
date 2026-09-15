@@ -21,41 +21,60 @@ def expect_code(fn, code: str) -> None:
     raise AssertionError(f"expected {code}")
 
 
-review = load("provenance/pr383/mapping-reviews/PHY-GRAV-UNIVERSAL-LAW.v1.json")
-result = validate(review)
-assert result["status"] == "PASS"
-assert result["decision"] == "APPROVED"
-assert result["discovery_gate_id"] == "PHY-GRAV-UNIVERSAL-LAW"
-assert result["target_gate_ids"] == ["PHY-GRAV-FORCE", "PHY-GRAV-FIELD"]
-assert result["source_obligation_count"] == 11
-assert result["covered_obligation_count"] == 11
-assert result["uncovered_obligation_count"] == 0
-assert result["readiness_authorized"] is False
-assert result["source_custody_promoted"] is False
-assert "Q15" not in json.dumps(review, sort_keys=True)
+grav_review = load("provenance/pr383/mapping-reviews/PHY-GRAV-UNIVERSAL-LAW.v1.json")
+grav_result = validate(grav_review)
+assert grav_result["status"] == "PASS"
+assert grav_result["decision"] == "APPROVED"
+assert grav_result["discovery_gate_id"] == "PHY-GRAV-UNIVERSAL-LAW"
+assert grav_result["target_gate_ids"] == ["PHY-GRAV-FORCE", "PHY-GRAV-FIELD"]
+assert grav_result["source_obligation_count"] == 11
+assert grav_result["covered_obligation_count"] == 11
+assert grav_result["uncovered_obligation_count"] == 0
+assert grav_result["readiness_authorized"] is False
+assert grav_result["source_custody_promoted"] is False
+assert "Q15" not in json.dumps(grav_review, sort_keys=True)
 
-bad = copy.deepcopy(review)
+newton_review = load("provenance/pr383/mapping-reviews/PHY-FORCE-NEWTON-LAWS.v1.json")
+newton_result = validate(newton_review)
+assert newton_result["status"] == "PASS"
+assert newton_result["decision"] == "APPROVED"
+assert newton_result["discovery_gate_id"] == "PHY-FORCE-NEWTON-LAWS"
+assert newton_result["target_gate_ids"] == [
+    "PHY-NLM-INTERACTION",
+    "PHY-NLM-FBD",
+    "PHY-NLM-FIRST-LAW",
+    "PHY-NLM-SECOND-LAW",
+    "PHY-NLM-THIRD-LAW",
+]
+assert newton_result["source_obligation_count"] == 12
+assert newton_result["covered_obligation_count"] == 12
+assert newton_result["uncovered_obligation_count"] == 0
+assert newton_result["readiness_authorized"] is False
+assert newton_result["source_custody_promoted"] is False
+assert "Q15" not in json.dumps(newton_review, sort_keys=True)
+
+bad = copy.deepcopy(grav_review)
 bad["target_snapshot"][0]["gate_git_blob_sha"] = "0" * 40
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_TARGET_BLOB_DRIFT")
 
-bad = copy.deepcopy(review)
+bad = copy.deepcopy(grav_review)
 bad["coverage"].pop()
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_SOURCE_COVERAGE_MISMATCH")
 
-bad = copy.deepcopy(review)
+bad = copy.deepcopy(grav_review)
 pointer = bad["coverage"][0]["source_pointer"]
 bad["coverage"][0]["status"] = "UNCOVERED"
 bad["coverage"][0]["target_refs"] = []
 bad["decision"]["uncovered_source_pointers"] = [pointer]
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_APPROVAL_HAS_GAPS")
 
-bad = copy.deepcopy(review)
+bad = copy.deepcopy(newton_review)
 bad["coverage"][0]["target_refs"][0]["target_pointer"] = "/concepts/999"
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_POINTER_INVALID")
 
-bad = copy.deepcopy(review)
+bad = copy.deepcopy(newton_review)
 bad["question_id"] = "Q15"
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_REVIEW_SCHEMA")
 
 print("Physics engineering discovery mapping reviews: PASS")
-print(result)
+print({"gravitation": grav_result, "newton_laws": newton_result})
