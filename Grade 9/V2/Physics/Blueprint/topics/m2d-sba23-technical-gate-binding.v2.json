@@ -1,0 +1,13 @@
+{
+  "schema_version": "2.0.0",
+  "binding_id": "TECH-GATE-BIND-M2D-SBA23-V2",
+  "bucket_id": "M2D-SBA-23",
+  "primary_gate_id": "PHY-M2D-MOVING-LAUNCHER",
+  "engineering_request_ref": "fixtures/engineering-workbench/m2d-sba23-request.v1.json",
+  "engineering_manifest_ref": "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json",
+  "closure_receipt_id": "ENG-CLOSURE-M2D-SBA23-V3",
+  "closure_receipt_digest": "sha256:d995204df3fd3fc808176af5e45076f8fd95fcaecd4eb431d49256b63462447b",
+  "closure_logic_digest": "sha256:d611ceba996f92735f17b8d5cfa83b694d9947882050e5d445e19cbad91fcfeb",
+  "registry_digest": "sha256:ebb0c2faeeb778a2ae17e55bd20efae07095ef1a90c76764299c2e5d4d248eed",
+  "notes": "This binding carries custody of the exact validated Workbench closure. It does not redeclare the prerequisite closure or readiness status. Source/legal custody remains independently visible on the closure receipt."
+}
