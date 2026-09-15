@@ -13,10 +13,13 @@ from validate_core1a_real_bucket_migration import MigrationValidationError, load
 AUDIT = load_blueprint("topics/m2d-sba04-core1a-migration-audit.v1.json")
 SPEC_REF = AUDIT["migration_spec_ref"]
 SPEC = load_blueprint(SPEC_REF)
+LEARNER_GAP_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-learner-state-gap.json"
 CANDIDATE_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-representation-candidates.json"
 DECISION_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-representation-decision.json"
 LINEAGE_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-worked-faded-lineage.json"
 WRONG_KIND_RECEIPT = "fixtures/core1a-migration-stage-evidence/wrong-kind.json"
+MALFORMED_GAP_NO_INVENTORY_RECEIPT = "fixtures/core1a-migration-stage-evidence/malformed-learner-state-gap-no-inventory.json"
+MALFORMED_GAP_PUBLICATION_EVIDENCE_RECEIPT = "fixtures/core1a-migration-stage-evidence/malformed-learner-state-gap-publication-evidence.json"
 MALFORMED_LINEAGE_RECEIPT = "fixtures/core1a-migration-stage-evidence/malformed-worked-faded-lineage.json"
 
 
@@ -117,6 +120,24 @@ bad = copy.deepcopy(AUDIT)
 bad["source_refs"].append("policy/core1a-stage-machine.v1.json")
 bad["source_refs"].sort()
 must_fail(bad, "E_MIGRATION_SOURCE_CUSTODY_DRIFT")
+
+# Typed receipt positive 0: 1A0 requires an explicit intrinsic-design/control-state gap inventory.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [LEARNER_GAP_RECEIPT]
+probe_audit = compile_audit(probe, spec_ref=SPEC_REF)
+assert stage_state(probe_audit, "1A0_LEARNER_STATE_GAP") == "PRESENT"
+assert stage_state(probe_audit, "1A5_REPRESENTATION_CANDIDATES") == "MISSING"
+assert probe_audit["release_authorized"] is False
+
+# Typed receipt falsifier 0a: a learner-state claim without any capability gap inventory is not admissible.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [MALFORMED_GAP_NO_INVENTORY_RECEIPT]
+must_compile_fail(probe, "E_MIG_COMPILE_STAGE_RECEIPT_SCHEMA")
+
+# Typed receipt falsifier 0b: publication teaching receipts may not masquerade as learner evidence.
+probe = copy.deepcopy(SPEC)
+probe["stage_evidence_refs"] = [MALFORMED_GAP_PUBLICATION_EVIDENCE_RECEIPT]
+must_compile_fail(probe, "E_MIG_COMPILE_STAGE_RECEIPT_SCHEMA")
 
 # Typed receipt positive 1: candidate-set proof can promote 1A5 only; it cannot imply a representation decision.
 probe = copy.deepcopy(SPEC)
