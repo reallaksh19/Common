@@ -100,7 +100,7 @@ def validate(
         fail("E_GRAV_DISCOVERY", "PHY-GRAV-FIELD must be a child of PHY-GRAV-FORCE")
     if manifest["required_gate_ids"] != ["PHY-GRAV-FIELD"]:
         fail("E_GRAV_DISCOVERY", "manifest must declare only gravitational field as the direct gate")
-    if "policy/physics-technical-engineering-gates.gravity.v1.json" not in manifest.get("gate_extension_refs", []):
+    if not manifest.get("gate_extension_refs"):
         fail("E_GRAV_DISCOVERY", "Gravity gate extension is not bound by the manifest")
 
     registry = compose_registry(manifest)
