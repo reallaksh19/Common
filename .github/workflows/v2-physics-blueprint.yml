@@ -57,6 +57,16 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
       - name: Run blueprint routing tests
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py"
+      - name: Validate V10 contract inventory and Shared cross-domain boundary
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_contract_inventory_v10.py"
+      - name: Validate V10 scoped evidence and curriculum authority
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_scope_v10.py"
+      - name: Validate V10 external-domain prerequisite handoff
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_domain_prerequisites_v10.py"
+      - name: Run V10 seven-core stress falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_stress_test_v10.py"
+      - name: Run V10 stress-batch determinism falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_stress_batch_v10.py"
       - name: Compile governed V10 seven-core stress receipts
         run: python "Grade 9/V2/Physics/Blueprint/engine/compile_all_stress_tests.py" --out-dir /tmp/physics-blueprint-stress-receipts
       - name: Run independent second-pass tests
