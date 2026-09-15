@@ -91,7 +91,7 @@ class EngineeringVisibilityManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             admission, release_gate, _, binding_path = self.build_inputs(Path(td))
             binding = json.loads(binding_path.read_text(encoding="utf-8"))
-            binding["registry_digest"] = "0" * 64
+            binding["registry_digest"] = "sha256:" + "0" * 64
             binding_path.write_text(json.dumps(binding, indent=2) + "\n", encoding="utf-8")
             with self.assertRaisesRegex(Exception, "MATH_ENG_BIND_REGISTRY_DIGEST_MISMATCH"):
                 compile_visibility_manifest(admission, release_gate, registry=copy.deepcopy(REGISTRY))
