@@ -1,0 +1,37 @@
+name: V2 Chemistry Generic Gate Source Audit
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-gate-source-audit.schema.json'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_gate_source_audit.py'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/stress_tests/**'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_gate_source_audit_generic.py'
+      - '.github/workflows/v2-chemistry-generic-source-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generic-source-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install validator dependency
+        run: python -m pip install 'jsonschema>=4.20,<5'
+
+      - name: Validate source-audit schema and stress fixture JSON
+        run: |
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/contracts/chemistry-gate-source-audit.schema.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Chemistry/LearningBlueprint/stress_tests/redox/source-audit.v2.json' > /dev/null
+
+      - name: Run gate-generic source-audit falsifiers
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_gate_source_audit_generic.py' -v
+
+      - name: Re-run complete engineering-gate registry falsifiers
+        run: python 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_gates.py'
