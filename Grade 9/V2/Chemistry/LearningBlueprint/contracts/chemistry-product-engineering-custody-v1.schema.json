@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-product-engineering-custody-v1.schema.json",
+  "title": "Chemistry Product Engineering Custody v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "custody_id",
+    "request_id",
+    "manifest_id",
+    "scope_ref",
+    "ccbom_id",
+    "ccbom_digest",
+    "engineering_binding_id",
+    "engineering_binding_digest",
+    "closure_receipt_id",
+    "closure_digest",
+    "registry_digest",
+    "source_audit_states",
+    "authorized_consumer",
+    "source_item_status",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "custody_id": {"type": "string", "pattern": "^CHEM-PRODUCT-ENG-CUSTODY-[A-Z0-9-]+$"},
+    "request_id": {"type": "string", "pattern": "^CHEM-ENG-REQ-[A-Z0-9-]+$"},
+    "manifest_id": {"type": "string", "pattern": "^CHEM-ENG-MAN-[A-Z0-9-]+$"},
+    "scope_ref": {"type": "string", "minLength": 1},
+    "ccbom_id": {"type": "string", "minLength": 1},
+    "ccbom_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "engineering_binding_id": {"type": "string", "pattern": "^CHEM-ENG-BIND-[A-Z0-9-]+$"},
+    "engineering_binding_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "closure_receipt_id": {"type": "string", "pattern": "^CHEM-ENG-CLOSURE-[A-Z0-9-]+$"},
+    "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "source_audit_states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gate_id", "audit_ref", "audit_digest", "status", "scope_policy"],
+        "properties": {
+          "gate_id": {"type": "string"},
+          "audit_ref": {"type": "string"},
+          "audit_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "status": {"const": "SOURCE_HARDENED"},
+          "scope_policy": {"const": "GRADE_BANDED"}
+        }
+      }
+    },
+    "authorized_consumer": {"const": "PAL"},
+    "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]},
+    "status": {"const": "ENGINEERING_CUSTODY_READY"}
+  }
+}
