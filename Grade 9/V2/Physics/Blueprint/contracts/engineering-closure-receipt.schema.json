@@ -10,6 +10,7 @@
     "request_id",
     "manifest_id",
     "registry_ref",
+    "gate_extension_refs",
     "registry_digest",
     "closure_digest",
     "direct_gate_ids",
@@ -27,6 +28,11 @@
     "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
     "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
     "registry_ref": {"const": "policy/physics-technical-engineering-gates.v2.json"},
+    "gate_extension_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
     "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "direct_gate_ids": {
