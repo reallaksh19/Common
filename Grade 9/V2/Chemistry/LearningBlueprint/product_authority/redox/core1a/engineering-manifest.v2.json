@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0.0",
+  "manifest_id": "CHEM-ENG-MAN-REDOX-CORE1A-PRODUCTION-V2",
+  "request_id": "CHEM-ENG-REQ-REDOX-CORE1A-PRODUCTION-V2",
+  "scope_kind": "SUBTOPIC",
+  "scope_ref": "REDOX-SPECIES-STATE-AGENT",
+  "topic_id": "CHEM-REDOX-CORE1A",
+  "title": "Redox Core1A production engineering manifest",
+  "registry_ref": "policies/chemistry-technical-engineering-gates.v1.json",
+  "required_gate_ids": ["CHEM-REDOX-OXIDATION"],
+  "optional_gate_ids": [],
+  "out_of_scope_gate_ids": [],
+  "source_audits": [
+    {
+      "gate_id": "CHEM-REDOX-OXIDATION",
+      "audit_ref": "source_audits/redox/production-source-audit.v2.json"
+    }
+  ],
+  "external_prerequisite_resolutions": [
+    {
+      "dependency_id": "MATH-BASIC-ARITHMETIC",
+      "status": "RESOLVED_BY_OWNER_SCOPE",
+      "evidence_ref": "CHEM-ENG-REQ-REDOX-CORE1A-PRODUCTION-V2:curriculum_scope",
+      "note": "Basic arithmetic is an explicit prerequisite baseline of the declared Grade 9 competitive-foundation product scope; no Chemistry authority is inferred from this resolution."
+    }
+  ],
+  "source_item_status": "SOURCE_READY",
+  "downstream_consumers": ["CDAU", "SDU", "TTU", "PAL", "PUBLICATION"],
+  "notes": "Direct gate is declared explicitly; Chemistry prerequisites are recursively derived by Workbench v2."
+}
