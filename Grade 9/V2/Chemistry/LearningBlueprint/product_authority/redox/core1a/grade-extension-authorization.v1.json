@@ -1,0 +1,14 @@
+{
+  "authorization_id": "CHEM-G9-COMPETITIVE-FOUNDATION-REDOX-v1",
+  "subject": "CHEMISTRY",
+  "product": "CORE1A",
+  "subtopic_id": "REDOX-SPECIES-STATE-AGENT",
+  "learner_grade": 9,
+  "program_context": "COMPETITIVE_FOUNDATION_EXTENSION",
+  "source_audit_ref": "source_audits/redox/production-source-audit.v2.json",
+  "authorized_scope_tiers": ["FOUNDATION_G10", "FORMAL_G11"],
+  "held_scope_tiers": ["EXTENDED_G11"],
+  "authority_basis": "The Grade 9 competitive-foundation Redox product explicitly extends through the Class X reaction-recognition foundation and the Class XI formal oxidation-state/electron/agent reasoning needed by the current Core1A authority, while holding formal balancing depth.",
+  "forbidden_inference": "Learner grade alone never authorizes a higher source tier; this record is the explicit product-specific extension authority.",
+  "status": "AUTHORIZED"
+}
