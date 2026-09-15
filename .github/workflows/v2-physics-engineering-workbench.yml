@@ -9,6 +9,8 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-gate-binding*.schema.json'
       - 'Grade 9/V2/Physics/Blueprint/engineering-gates/**'
       - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_*.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_all_engineering_readiness.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_domain_prerequisite_closure.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/compile_pr383_v3_migration_gaps.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py'
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_discovery_catalog.py'
@@ -18,6 +20,7 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py'
       - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Physics/Blueprint/provenance/pr383/**'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_engineering_readiness_envelope.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_mapping_reviews.py'
       - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_migration_preflight.py'
@@ -34,8 +37,10 @@ on:
       - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-technical-gate-binding*.json'
       - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-ccu.v1.json'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH.md'
+      - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_READINESS_KERNEL.md'
       - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH_V1.md'
       - 'Grade 9/V2/Physics/Blueprint/PR383_TO_V3_MIGRATION.md'
+      - 'Grade 9/V2/Shared/CrossDomain/**'
       - '.github/workflows/v2-physics-engineering-workbench.yml'
   workflow_dispatch:
 
@@ -80,18 +85,18 @@ jobs:
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
       - name: Run legacy Engineering Workbench v1 regression falsifiers
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
+      - name: Run aggregate Engineering Readiness envelope falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_readiness_envelope.py"
       - name: Run canonical v3 Engineering Workbench SBA23 integration proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py"
       - name: Run canonical v3 Engineering Workbench SBA04 real-bucket proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba04.py"
       - name: Validate exact SBA23 Workbench closure custody binding
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py"
-      - name: Validate SBA23 CCU through v3 engineering-ready boundary
+      - name: Compile all canonical v3 requests through one generic readiness pipeline
         run: >-
-          python "Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py"
-          "fixtures/engineering-workbench/m2d-sba23-request.v1.json"
-          "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json"
-          "topics/m2d-sba23-ccu.v1.json"
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_all_engineering_readiness.py"
+          --out-dir /tmp/physics-engineering-readiness
       - name: Compile SBA23 v3 engineering closure receipt
         run: >-
           python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py"
@@ -118,8 +123,10 @@ jobs:
           /tmp/m2d-sba04-engineering-closure.json
           --out /tmp/m2d-sba04-engineering-passport.json
           --markdown-out /tmp/m2d-sba04-engineering-passport.md
-      - name: Publish passports in workflow summary
+      - name: Publish aggregate engineering readiness in workflow summary
         run: |
+          cat /tmp/physics-engineering-readiness/summary.md >> "$GITHUB_STEP_SUMMARY"
+          printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
           cat /tmp/m2d-sba23-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
           printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
           cat /tmp/m2d-sba04-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
@@ -135,6 +142,13 @@ jobs:
         with:
           name: physics-engineering-pr383-v3-migration-preflight
           path: /tmp/pr383-v3-migration-preflight.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload aggregate engineering readiness proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-readiness
+          path: /tmp/physics-engineering-readiness
           if-no-files-found: error
           retention-days: 14
       - name: Upload SBA23 engineering proof
