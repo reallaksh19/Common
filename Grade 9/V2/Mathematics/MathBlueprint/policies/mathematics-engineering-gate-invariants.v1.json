@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0.0",
+  "profile_id": "MATH-ENGINEERING-GATE-INVARIANTS-v1",
+  "subject": "MATHEMATICS",
+  "registry_id": "REG-MATH-TECH-GATE-V1",
+  "required_gates": {
+    "MATH-NUM-RADICALS": {
+      "required_concepts": ["CON-MATH-PRINCIPAL-SQUARE-ROOT-ABS"],
+      "required_equations": ["EQ-MATH-RADICAL-IDENTITY"],
+      "required_representations": [],
+      "required_misconceptions": [],
+      "required_prerequisites": []
+    },
+    "MATH-ALG-POLYNOMIALS": {
+      "required_concepts": ["CON-MATH-FACTOR-THEOREM"],
+      "required_equations": [],
+      "required_representations": [],
+      "required_misconceptions": ["MISC-MATH-FRESHMANS-DREAM"],
+      "required_prerequisites": []
+    },
+    "MATH-LIN-EQUATIONS": {
+      "required_concepts": ["CON-MATH-LINEAR-SYSTEM-CONSISTENCY"],
+      "required_equations": ["EQ-MATH-RATIO-CONSISTENCY"],
+      "required_representations": [],
+      "required_misconceptions": [],
+      "required_prerequisites": []
+    },
+    "MATH-QUAD-EQUATIONS": {
+      "required_concepts": ["CON-MATH-QUAD-NONZERO-LEAD"],
+      "required_equations": ["EQ-MATH-QUAD-FORMULA"],
+      "required_representations": [],
+      "required_misconceptions": [],
+      "required_prerequisites": ["MATH-ALG-POLYNOMIALS"]
+    },
+    "MATH-GEO-COORDINATES": {
+      "required_concepts": ["CON-MATH-VERTICAL-SLOPE-UNDEFINED"],
+      "required_equations": ["EQ-MATH-DISTANCE-FORMULA"],
+      "required_representations": [],
+      "required_misconceptions": [],
+      "required_prerequisites": []
+    },
+    "MATH-GEO-TRIANGLES": {
+      "required_concepts": ["CON-MATH-CONGRUENCE-CRITERIA"],
+      "required_equations": [],
+      "required_representations": ["REP-MATH-GEOMETRIC-TWO-COLUMN-PROOF"],
+      "required_misconceptions": ["MISC-MATH-SSA-CONGRUENCE-FALLACY"],
+      "required_prerequisites": []
+    },
+    "MATH-TRIG-RATIOS": {
+      "required_concepts": ["CON-MATH-TRIG-ACUTE-DOMAIN"],
+      "required_equations": ["EQ-MATH-PYTHAGOREAN-TRIG-IDENTITY"],
+      "required_representations": [],
+      "required_misconceptions": [],
+      "required_prerequisites": []
+    },
+    "MATH-GEO-CIRCLES": {
+      "required_concepts": ["CON-MATH-TANGENT-RADIUS-PERPENDICULAR"],
+      "required_equations": ["EQ-MATH-CYCLIC-QUAD-SUPPLEMENTARY"],
+      "required_representations": [],
+      "required_misconceptions": [],
+      "required_prerequisites": []
+    },
+    "MATH-MENS-SURFACES": {
+      "required_concepts": ["CON-MATH-COMPOSITE-INTERFACE-EXCLUSION"],
+      "required_equations": ["EQ-MATH-VOLUME-CONSERVATION"],
+      "required_representations": [],
+      "required_misconceptions": [],
+      "required_prerequisites": []
+    },
+    "MATH-STAT-PROBABILITY": {
+      "required_concepts": ["CON-MATH-PROBABILITY-BOUNDS"],
+      "required_equations": [],
+      "required_representations": [],
+      "required_misconceptions": ["MISC-MATH-PROBABILITY-OUT-OF-BOUNDS"],
+      "required_prerequisites": []
+    }
+  },
+  "generic_requirements": {
+    "minimum_reasoning_steps": 2,
+    "minimum_transformations": 2,
+    "required_transformation_roles": ["CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION"],
+    "minimum_verifications": 1,
+    "minimum_problem_families": 1,
+    "difficulty_dimensions": [
+      "prerequisite_depth",
+      "element_interactivity",
+      "inferential_jump_severity",
+      "representation_translation",
+      "model_discrimination",
+      "sign_or_frame_sensitivity",
+      "multi_step_dependency",
+      "abstraction",
+      "misconception_density",
+      "synthesis"
+    ]
+  },
+  "authority_rule": "technical_readiness and release_checklist in REG-MATH-TECH-GATE-V1 are compatibility data only; Workbench readiness is validator-derived from gate content plus this external invariant profile"
+}
