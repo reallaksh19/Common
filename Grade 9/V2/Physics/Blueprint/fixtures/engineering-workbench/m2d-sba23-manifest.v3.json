@@ -6,11 +6,11 @@
   "scope_ref": "M2D-SBA-23",
   "topic_id": "PHY-M2D-SBA23",
   "title": "Moving-launcher projectile motion technical scope",
-  "registry_ref": "GENERATED:physics-technical-engineering-gates.v3-sba23",
+  "registry_ref": "GENERATED:physics-technical-engineering-gates.v3",
   "required_gate_ids": ["PHY-M2D-MOVING-LAUNCHER"],
   "optional_gate_ids": [],
   "out_of_scope_gate_ids": [],
   "source_item_status": "SOURCE_HELD",
   "downstream_consumers": ["CCU", "CDAU", "SDU", "LAU", "TTU", "PUBLICATION"],
-  "notes": "The v3 Workbench must derive the same six-gate SBA23 closure, but engineering readiness comes from the v3 production validator rather than a gate-authored status field."
+  "notes": "The canonical v3 Workbench must derive the same six-gate SBA23 closure from the subject-wide registry; engineering readiness comes from the v3 production validator rather than a gate-authored status field."
 }
