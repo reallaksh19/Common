@@ -45,7 +45,7 @@ Engineering readiness does not grant source legality, pedagogical authority, lea
 
 ## Canonical registry
 
-The deterministic v3 registry currently contains **17 gates** across:
+The deterministic v3 registry currently contains **23 gates** across:
 
 - Vectors;
 - Newtonian Mechanics;
@@ -72,6 +72,16 @@ Gate content includes:
 - provisional intrinsic engineering difficulty vector.
 
 Problem-family IDs may intentionally be shared across gates when the same family spans multiple technical gates. Concepts, relations, representations and misconceptions remain globally unique authorities.
+
+## Discovery breadth versus control authority
+
+PR #383 is consumed as a pinned **subject-wide discovery/coverage input**, not as a readiness authority. Its 43-subtopic Grade 9–11 catalog is reconciled through:
+
+`policy/physics-engineering-discovery-catalog.pr383.v1.json`
+
+Every discovered subtopic must be explicitly classified as an exact v3 identity, a reviewed v3 mapping, or `MIGRATION_REQUIRED`. Conversely, every live v3 gate must be reconciled as an exact/mapped target or a v3-native/refined gate.
+
+The discovery catalog cannot carry or self-assert technical readiness. The canonical v3 source files, external invariant profile and production validator remain the only technical-readiness control plane. Item IDs, SBA buckets and other case artifacts may stress-test this machinery but may not define its logic or promote source custody.
 
 ## Workbench lifecycle
 
@@ -114,13 +124,13 @@ A binding carries:
 
 `validate_technical_gate_binding.py` recompiles the current Workbench closure and fails when any custodied digest is stale. Expanding the subject registry therefore invalidates stale bindings even when a scoped closure still contains the same gates.
 
-## SBA23 integration proof
+## SBA23 stress-test integration proof
 
-The SBA23 manifest declares only:
+SBA23 is a case-level stress fixture only; it does not define the Workbench registry or readiness rules. Its manifest declares only:
 
 `PHY-M2D-MOVING-LAUNCHER`
 
-The full 17-gate registry must still derive exactly this six-gate closure:
+The full 23-gate registry must still derive exactly this six-gate closure:
 
 ```text
 PHY-VEC-BASICS
@@ -198,6 +208,7 @@ The v3 suite proves, among other cases:
 - reviewed Gravity discovery and claim-level RESEARCH provenance;
 - validator-derived readiness;
 - exact closure custody and stale-binding rejection;
+- subject-wide PR #383 discovery reconciliation without importing self-asserted readiness;
 - CCU authorization only after the current Workbench closure is READY.
 
 Legacy v2 tests continue as regression proofs, but they do not define current authority.
