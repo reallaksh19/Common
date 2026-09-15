@@ -11,7 +11,11 @@ import jsonschema
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
-from validate_engineering_gates_v2 import GateValidationError, validate as validate_registry  # noqa: E402
+from validate_engineering_gates_v2 import GateValidationError as GateValidationErrorV2, validate as validate_registry_v2  # noqa: E402
+from build_physics_engineering_gate_registry_v3 import build_registry as build_registry_v3  # noqa: E402
+from validate_engineering_gates_v3 import PhysicsEngineeringGateV3Error, validate as validate_registry_v3  # noqa: E402
+
+V3_REGISTRY_REF = "GENERATED:physics-technical-engineering-gates.v3-sba23"
 
 
 class EngineeringClosureError(Exception):
@@ -45,8 +49,13 @@ def compose_registry(manifest: dict, supplied_registry: dict | None = None) -> d
     if supplied_registry is not None:
         return supplied_registry
 
-    base = load(manifest["registry_ref"])
     extension_refs = list(manifest.get("gate_extension_refs", []))
+    if manifest["registry_ref"] == V3_REGISTRY_REF:
+        if extension_refs:
+            fail("E_ENG_GATE_EXTENSION_INVALID", "v3 SBA23 generated registry does not accept v2 gate extensions")
+        return build_registry_v3()
+
+    base = load(manifest["registry_ref"])
     if not extension_refs:
         return base
 
@@ -62,6 +71,30 @@ def compose_registry(manifest: dict, supplied_registry: dict | None = None) -> d
             fail("E_ENG_GATE_EXTENSION_BASE_MISMATCH", f"{rel} targets {extension['base_registry_ref']}")
         composed["gates"].extend(extension["gates"])
     return composed
+
+
+def validated_status_map(registry: dict) -> dict[str, str]:
+    version = registry.get("schema_version")
+    if version == "3.0.0":
+        try:
+            validate_registry_v3(registry)
+        except PhysicsEngineeringGateV3Error as exc:
+            fail("E_ENG_REGISTRY_INVALID", f"{exc.code}: {exc.message}")
+        return {
+            gate["subtopic_id"]: (
+                "ENGINEERING_GATE_READY" if gate["scope_state"] == "ACTIVE"
+                else "SOURCE_SCOPE_HELD" if gate["scope_state"] == "SOURCE_SCOPE_HELD"
+                else "ENGINEERING_GATE_INCOMPLETE"
+            )
+            for gate in registry["gates"]
+        }
+    if version == "2.0.0":
+        try:
+            validate_registry_v2(registry)
+        except GateValidationErrorV2 as exc:
+            fail("E_ENG_REGISTRY_INVALID", f"{exc.code}: {exc.message}")
+        return {gate["subtopic_id"]: gate["status"] for gate in registry["gates"]}
+    fail("E_ENG_REGISTRY_INVALID", f"unsupported engineering registry schema_version {version}")
 
 
 def validate_research_artifact(
@@ -106,10 +139,7 @@ def compile_closure(
         fail("E_ENG_REQUEST_MANIFEST_MISMATCH", "manifest request_id does not match request")
 
     registry = compose_registry(manifest, registry)
-    try:
-        validate_registry(registry)
-    except GateValidationError as exc:
-        fail("E_ENG_REGISTRY_INVALID", f"{exc.code}: {exc.message}")
+    status_map = validated_status_map(registry)
 
     gate_map = {gate["subtopic_id"]: gate for gate in registry["gates"]}
     direct = list(manifest["required_gate_ids"])
@@ -151,10 +181,10 @@ def compile_closure(
             gate_states.append({"gate_id": gate_id, "status": "MISSING", "direct": gate_id in direct_set})
             blockers.append({"code": "E_ENG_GATE_MISSING", "gate_id": gate_id, "message": f"required technical gate {gate_id} is not present"})
             continue
-        status = gate["status"]
+        status = status_map[gate_id]
         gate_states.append({"gate_id": gate_id, "status": status, "direct": gate_id in direct_set})
         if status != "ENGINEERING_GATE_READY":
-            blockers.append({"code": "E_ENG_GATE_NOT_READY", "gate_id": gate_id, "message": f"{gate_id} status is {status}"})
+            blockers.append({"code": "E_ENG_GATE_NOT_READY", "gate_id": gate_id, "message": f"{gate_id} derived status is {status}"})
 
     if request["engineering_depth"] == "RESEARCH":
         validate_research_artifact(
