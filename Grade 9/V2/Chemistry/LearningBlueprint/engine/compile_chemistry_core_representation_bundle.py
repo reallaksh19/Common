@@ -6,6 +6,10 @@ that names the Engineering representation obligation, Chemistry capability and C
 primitive. This compiler validates that plan against the Engineering obligation
 packet, the existing primitive registry, page-intent profile and notation contract,
 then emits the governed representation bundle consumed by learner-product renderers.
+
+Additive C-H extensions are merged as authority data. They may add primitives and
+conditional page-intent choices, but may not change the base registry/profile IDs,
+override an existing primitive or conditional key, or permit renderer selection.
 """
 from __future__ import annotations
 
@@ -26,11 +30,13 @@ from build_chemistry_representations import (  # noqa: E402
     validate_notation,
     validate_registry,
 )
-from compile_chemistry_engineering_closure import load  # noqa: E402
 
 PRIMITIVE_REGISTRY_REL = "../Representation/registry/chemistry-teaching-primitive-registry.json"
 PAGE_INTENT_REL = "../Representation/registry/chemistry-page-intent-profile.json"
 NOTATION_REL = "../Representation/registry/chemistry-notation-render-contract.json"
+DEFAULT_EXTENSION_RELS = (
+    "../Representation/registry/chemistry-electron-transfer-primitive-extension.v1.json",
+)
 
 
 class ChemistryCoreRepresentationError(ValueError):
@@ -59,6 +65,48 @@ def _load_chem_relative(rel: str) -> dict[str, Any]:
     return json.loads((ROOT / rel).resolve().read_text(encoding="utf-8"))
 
 
+def _apply_extensions(
+    primitive_registry: dict[str, Any],
+    page_intent_profile: dict[str, Any],
+    extensions: list[dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, Any], list[str]]:
+    registry = copy.deepcopy(primitive_registry)
+    profile = copy.deepcopy(page_intent_profile)
+    primitive_ids = {str(row.get("primitive_id")) for row in registry.get("primitives", [])}
+    conditional = profile.setdefault("conditional_primitives", {})
+    extension_refs: list[str] = []
+    for extension in extensions:
+        extension_id = str(extension.get("extension_id", "")).strip()
+        if not extension_id or extension.get("subject") != "CHEMISTRY":
+            fail("CHEM_CORE_REP_EXTENSION_INVALID", extension_id or "unnamed")
+        if extension.get("extends_primitive_registry") != registry.get("registry_id"):
+            fail("CHEM_CORE_REP_EXTENSION_REGISTRY_DRIFT", extension_id)
+        if extension.get("extends_page_intent_profile") != profile.get("profile_id"):
+            fail("CHEM_CORE_REP_EXTENSION_PAGE_INTENT_DRIFT", extension_id)
+        if extension.get("renderer_selection_forbidden") is not True:
+            fail("CHEM_CORE_REP_EXTENSION_RENDERER_SELECTION_FORBIDDEN", extension_id)
+        rows = extension.get("primitives")
+        additions = extension.get("conditional_primitives")
+        if not isinstance(rows, list) or not isinstance(additions, dict):
+            fail("CHEM_CORE_REP_EXTENSION_INVALID", extension_id)
+        for primitive in rows:
+            primitive_id = str(primitive.get("primitive_id", "")).strip() if isinstance(primitive, dict) else ""
+            if not primitive_id:
+                fail("CHEM_CORE_REP_EXTENSION_INVALID", extension_id)
+            if primitive_id in primitive_ids:
+                fail("CHEM_CORE_REP_EXTENSION_PRIMITIVE_OVERRIDE", primitive_id)
+            registry.setdefault("primitives", []).append(copy.deepcopy(primitive))
+            primitive_ids.add(primitive_id)
+        for key, primitive_id in additions.items():
+            if key in conditional:
+                fail("CHEM_CORE_REP_EXTENSION_PAGE_INTENT_OVERRIDE", str(key))
+            if primitive_id not in primitive_ids:
+                fail("CHEM_CORE_REP_EXTENSION_PAGE_INTENT_UNKNOWN", str(primitive_id))
+            conditional[str(key)] = str(primitive_id)
+        extension_refs.append(extension_id)
+    return registry, profile, extension_refs
+
+
 def _authorized_representation_rows(packet: dict[str, Any], product_mode: str) -> list[dict[str, Any]]:
     return [
         row for row in packet.get("obligations", [])
@@ -84,6 +132,7 @@ def compile_core_representation_bundle(
     primitive_registry: dict[str, Any] | None = None,
     page_intent_profile: dict[str, Any] | None = None,
     notation_contract: dict[str, Any] | None = None,
+    representation_extensions: list[dict[str, Any]] | None = None,
     bundle_id: str,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     if product_mode not in {"CORE1A", "CORE1B", "CORE2A", "CORE2B"}:
@@ -97,6 +146,12 @@ def compile_core_representation_bundle(
     primitive_registry = primitive_registry or _load_chem_relative(PRIMITIVE_REGISTRY_REL)
     page_intent_profile = page_intent_profile or _load_chem_relative(PAGE_INTENT_REL)
     notation_contract = notation_contract or _load_chem_relative(NOTATION_REL)
+    extensions = representation_extensions
+    if extensions is None:
+        extensions = [_load_chem_relative(rel) for rel in DEFAULT_EXTENSION_RELS]
+    primitive_registry, page_intent_profile, extension_refs = _apply_extensions(
+        primitive_registry, page_intent_profile, extensions
+    )
     primitive_by_id = validate_registry(primitive_registry)
     validate_notation(notation_contract)
 
@@ -188,6 +243,7 @@ def compile_core_representation_bundle(
         "product_mode": product_mode,
         "obligation_packet_ref": obligation_packet["packet_id"],
         "primitive_registry_ref": primitive_registry["registry_id"],
+        "primitive_registry_extension_refs": extension_refs,
         "page_intent_profile_ref": page_intent_profile["profile_id"],
         "notation_contract_ref": notation_contract["contract_id"],
         "representations": compiled,
@@ -195,6 +251,7 @@ def compile_core_representation_bundle(
             "representation_count": len(compiled),
             "engineering_representation_count": len(covered),
             "required_engineering_representation_count": len(required),
+            "representation_extension_count": len(extension_refs),
             "renderer_selection_allowed": False,
         },
         "bundle_digest": "",
