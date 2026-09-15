@@ -32,6 +32,8 @@
         "subtopic_id",
         "learner_title",
         "chapter",
+        "jee_tier",
+        "cbse_ref",
         "authority_tier",
         "maturity",
         "technical_readiness",
@@ -58,6 +60,20 @@
         "subtopic_id": { "type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$" },
         "learner_title": { "type": "string" },
         "chapter": { "type": "string" },
+        "jee_tier": {
+          "type": "string",
+          "enum": ["NOT_IN_JEE", "JEE_MAINS", "JEE_ADVANCED", "BOTH"]
+        },
+        "cbse_ref": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["grade", "chapter"],
+          "properties": {
+            "grade": { "type": "integer" },
+            "chapter": { "type": "string" },
+            "section": { "type": "string" }
+          }
+        },
         "authority_tier": { "type": "string", "enum": ["SOURCE-DEFINED", "STANDARD-PHYSICS-DERIVED", "AUTHORING-RECOMMENDATION", "SOURCE_SCOPE_HELD"] },
         "maturity": { "type": "string", "enum": ["ENGINEERING"] },
         "technical_readiness": { "type": "string", "enum": ["ENGINEERING_GATE_READY", "ENGINEERING_GATE_INCOMPLETE", "SOURCE_SCOPE_HELD"] },
@@ -152,7 +168,13 @@
                   "CARTESIAN_COMPONENT_DECOMPOSITION",
                   "SCHEMATIC_SYSTEM_BOUNDARY",
                   "ALGEBRAIC_SUPERPOSITION",
-                  "CONSTRAINT_DIAGRAM"
+                  "CONSTRAINT_DIAGRAM",
+                  "KINEMATIC_GRAPH_PLOT",
+                  "RAY_OPTICS_DIAGRAM",
+                  "CIRCUIT_SCHEMATIC",
+                  "THERMODYNAMIC_PV_CYCLE",
+                  "WAVE_OSCILLATION_PLOT",
+                  "FIELD_LINE_EQUIPOTENTIAL_MAP"
                 ]
               },
               "name": { "type": "string" },

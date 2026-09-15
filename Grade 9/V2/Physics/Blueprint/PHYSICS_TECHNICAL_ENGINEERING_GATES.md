@@ -67,6 +67,56 @@ Monolithic chapter gates (e.g., `GATE-NLM = PASS`) are strictly prohibited. A mo
 
 ## 2. Chapter / Subtopic Dependency Graph
 
+## 2.1 Complete Grade 9–11 Master Technical Engineering Gate Registry (43 Subtopics)
+
+| Gate ID | Learner Title | Gr | CBSE Ch | JEE Tier | Prereqs | Key Formula / Constraint |
+| :--- | :--- | :---: | :---: | :---: | :--- | :--- |
+| `PHY-VEC-BASICS` | Scalars, Vectors, Magnitude, and Direction | 11 | Ch 3 | `BOTH` | MATH-GEO-EUCLIDEAN-2D, MATH-TRIG-RIGHT-TRIANGLE | `$\|A\| >= 0$` |
+| `PHY-VEC-ADD-SUB` | Vector Addition, Subtraction, and the Resultant | 11 | Ch 3 | `BOTH` | PHY-VEC-BASICS | `$R = sqrt(A^2 + B^2 + 2*A*B*cos(theta))$` |
+| `PHY-VEC-COMPONENTS` | Resolution of Vectors into Orthogonal Components | 11 | Ch 3 | `BOTH` | PHY-VEC-BASICS, PHY-VEC-ADD-SUB | `$A_x = A*cos(theta)$` |
+| `PHY-NLM-INTERACTION` | Force as an Interaction between Bodies | 11 | Ch 5 | `BOTH` | PHY-VEC-BASICS | `$F_net = sum(F_i)$` |
+| `PHY-NLM-FBD` | Free-Body Diagrams and System Isolation | 11 | Ch 5 | `BOTH` | PHY-VEC-BASICS, PHY-NLM-INTERACTION | `$sum(F_external) = F_net$` |
+| `PHY-NLM-FIRST-LAW` | Newton's First Law and Equilibrium | 11 | Ch 5 | `BOTH` | PHY-NLM-FBD, PHY-VEC-COMPONENTS | `$sum(F_x) = 0, sum(F_y) = 0$` |
+| `PHY-NLM-SECOND-LAW` | Newton's Second Law of Motion | 11 | Ch 5 | `BOTH` | PHY-VEC-COMPONENTS, PHY-NLM-FBD, PHY-NLM-FIRST-LAW | `$sum(F_x) = m*a_x$` |
+| `PHY-NLM-THIRD-LAW` | Newton's Third Law of Motion | 11 | Ch 5 | `BOTH` | PHY-NLM-INTERACTION, PHY-NLM-FBD | `$F_{A on B} = - F_{B on A}$` |
+| `PHY-NLM-NORMAL` | Normal Contact Force and Surface Constraints | 11 | Ch 5 | `BOTH` | PHY-NLM-FBD, PHY-NLM-SECOND-LAW | `$sum(F_perp) = m*a_perp = 0 => N = sum(opposing perpendicular force components)$` |
+| `PHY-NLM-TENSION` | Tension in Light Strings and Pulley Systems | 11 | Ch 5 | `BOTH` | PHY-NLM-FBD, PHY-NLM-SECOND-LAW | `$a = ((m1 - m2) / (m1 + m2)) * g$` |
+| `PHY-NLM-FRICTION` | Static and Kinetic Friction | 11 | Ch 5 | `BOTH` | PHY-NLM-FBD, PHY-NLM-NORMAL, PHY-NLM-SECOND-LAW | `$f_s <= mu_s * N$` |
+| `PHY-NLM-CONNECTED` | Connected Systems and Acceleration Constraints | 11 | Ch 5 | `BOTH` | PHY-NLM-FBD, PHY-NLM-SECOND-LAW, PHY-NLM-THIRD-LAW, PHY-NLM-TENSION | `$sum(F_external) = (sum m_i) * a_system$` |
+| `PHY-KIN-1D-MOTION` | 1D Motion: Displacement, Velocity & Constant Acceleration Equations | 9 | Ch 8 | `JEE_MAINS` | None | `$v = u + a t$` |
+| `PHY-KIN-MOTION-GRAPHS` | Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement) | 9 | Ch 8 | `JEE_MAINS` | PHY-KIN-1D-MOTION | `$\Delta x = \int v(t) \, dt$` |
+| `PHY-KIN-CIRCULAR-UNIFORM` | Uniform Circular Motion: Centripetal Acceleration & Radial Direction | 9 | Ch 8 | `JEE_MAINS` | PHY-KIN-1D-MOTION | `$a_c = \frac{v^2}{r} = \omega^2 r$` |
+| `PHY-FORCE-NEWTON-LAWS` | Newton's Three Laws: Inertia, F=ma & Action-Reaction | 9 | Ch 9 | `BOTH` | None | `$\Sigma \vec{F} = m \vec{a}$` |
+| `PHY-FORCE-MOMENTUM-IMPULSE` | Momentum, Impulse & Conservation of Linear Momentum | 9 | Ch 9 | `BOTH` | PHY-FORCE-NEWTON-LAWS | `$m_1 \vec{u}_1 + m_2 \vec{u}_2 = m_1 \vec{v}_1 + m_2 \vec{v}_2$` |
+| `PHY-GRAV-UNIVERSAL-LAW` | Universal Law of Gravitation: Inverse-Square Law & Field g | 9 | Ch 10 | `BOTH` | None | `$F = G \frac{m_1 m_2}{r^2}$` |
+| `PHY-GRAV-FREE-FALL` | Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight | 9 | Ch 10 | `JEE_MAINS` | PHY-KIN-1D-MOTION, PHY-GRAV-UNIVERSAL-LAW | `$H_{\text{max}} = \frac{u^2}{2g}, \quad T_{\text{flight}} = \frac{2u}{g}$` |
+| `PHY-FLUID-BUOYANCY-ARCHIMEDES` | Buoyancy, Archimedes' Principle & Floatation Equilibrium | 9 | Ch 10 | `JEE_MAINS` | None | `$F_b = \rho_{\text{fluid}} V_{\text{sub}} g$` |
+| `PHY-WORK-ENERGY-POWER` | Work Definition, Kinetic Energy & Work-Energy Theorem | 9 | Ch 11 | `BOTH` | PHY-FORCE-NEWTON-LAWS | `$W = F s \cos \theta$` |
+| `PHY-ENERGY-CONSERVATION-LAW` | Conservation of Mechanical Energy & Rate of Work (Power) | 9 | Ch 11 | `BOTH` | PHY-WORK-ENERGY-POWER | `$E = \frac{1}{2} m v^2 + m g h = \text{constant}$` |
+| `PHY-SOUND-LONGITUDINAL-WAVES` | Sound: Longitudinal Compression Waves, Speed & Echo | 9 | Ch 12 | `NOT_IN_JEE` | None | `$v = f \lambda$` |
+| `PHY-OPTICS-REFLECTION-MIRRORS` | Light Reflection: Spherical Mirrors, Mirror Formula & Sign Convention | 10 | Ch 10 | `JEE_MAINS` | None | `$\frac{1}{v} + \frac{1}{u} = \frac{1}{f}, \quad m = -\frac{v}{u}$` |
+| `PHY-OPTICS-REFRACTION-LENSES` | Light Refraction: Snell's Law, Lens Formula & Lens Power | 10 | Ch 10 | `BOTH` | None | `$\frac{1}{v} - \frac{1}{u} = \frac{1}{f}, \quad P = \frac{1}{f}$` |
+| `PHY-OPTICS-HUMAN-EYE` | Human Eye Optics, Accommodation & Vision Defect Corrections | 10 | Ch 11 | `NOT_IN_JEE` | PHY-OPTICS-REFRACTION-LENSES | `$P = \frac{1}{f} = \frac{1}{v} - \frac{1}{u}$` |
+| `PHY-OPTICS-DISPERSION-SCATTERING` | Dispersion of Light, Prism Spectrum & Rayleigh Scattering | 10 | Ch 11 | `NOT_IN_JEE` | PHY-OPTICS-REFRACTION-LENSES | `$I \propto \frac{1}{\lambda^4}$` |
+| `PHY-ELEC-CURRENT-OHM` | Electric Current, Potential Difference & Ohm's Law | 10 | Ch 12 | `BOTH` | None | `$V = I R, \quad R = \rho \frac{L}{A}$` |
+| `PHY-ELEC-POWER-JOULE` | Joule's Law of Heating, Electric Power & Circuit Safety | 10 | Ch 12 | `BOTH` | PHY-ELEC-CURRENT-OHM | `$P = V I = I^2 R = \frac{V^2}{R}, \quad H = I^2 R t$` |
+| `PHY-MAG-FIELD-LORENTZ` | Magnetic Field, Right-Hand Rule & Lorentz Force on Wire | 10 | Ch 13 | `JEE_MAINS` | PHY-ELEC-CURRENT-OHM | `$F = I L B \sin \theta$` |
+| `PHY-MAG-INDUCTION-FARADAY` | Electromagnetic Induction: Faraday's Laws & Lenz's Law | 10 | Ch 13 | `BOTH` | PHY-MAG-FIELD-LORENTZ | `$\mathcal{E} = -N \frac{d\Phi_B}{dt}, \quad \Phi_B = B A \cos \theta$` |
+| `PHY-KIN-2D-PROJECTILE` | 2D Projectile Motion: Component Independence, Range & Trajectory | 11 | Ch 4 | `BOTH` | PHY-VEC-COMPONENTS, PHY-KIN-1D-MOTION | `$R = \frac{u^2 \sin 2\theta}{g}, \quad H = \frac{u^2 \sin^2 \theta}{2g}, \quad T = \frac{2u \sin \theta}{g}$` |
+| `PHY-KIN-CIRCULAR-DYNAMICS` | Circular Motion Dynamics: Centripetal Force & Banking of Roads | 11 | Ch 4 | `BOTH` | PHY-VEC-COMPONENTS, PHY-KIN-CIRCULAR-UNIFORM | `$\tan \theta = \frac{v^2}{r g}$` |
+| `PHY-KIN-RELATIVE-2D` | Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction | 11 | Ch 4 | `BOTH` | PHY-VEC-ADD-SUB, PHY-KIN-1D-MOTION | `$\vec{v}_{AB} = \vec{v}_A - \vec{v}_B$` |
+| `PHY-WEP-VARIABLE-FORCE` | Work Done by Variable Forces, Conservative Fields & Potential Energy | 11 | Ch 6 | `BOTH` | PHY-NLM-SECOND-LAW, PHY-WORK-ENERGY-POWER | `$W_{\text{spring}} = -\frac{1}{2} k x^2, \quad F = -k x$` |
+| `PHY-SYS-CENTRE-MASS` | Centre of Mass: Discrete & Continuous Systems, Motion of COM | 11 | Ch 7 | `BOTH` | PHY-VEC-COMPONENTS, PHY-NLM-SECOND-LAW | `$\vec{F}_{\text{ext}} = M \vec{a}_{\text{cm}}, \quad \vec{r}_{\text{cm}} = \frac{\sum m_i \vec{r}_i}{\sum m_i}$` |
+| `PHY-ROT-RIGID-BODY` | Rotational Dynamics: Torque, Moment of Inertia & Parallel/Perpendicular Axes | 11 | Ch 7 | `BOTH` | PHY-SYS-CENTRE-MASS | `$\tau = I \alpha, \quad I = I_{\text{cm}} + M d^2$` |
+| `PHY-ROT-ANGULAR-MOMENTUM` | Angular Momentum Conservation & Pure Rolling Motion | 11 | Ch 7 | `JEE_ADVANCED` | PHY-ROT-RIGID-BODY | `$v_{\text{cm}} = R \omega, \quad L = I_{\text{cm}} \omega + \vec{r}_{\text{cm}} \times M \vec{v}_{\text{cm}}$` |
+| `PHY-GRAV-PLANETARY-ORBITS` | Kepler's Laws, Orbital Mechanics & Escape Velocity | 11 | Ch 8 | `BOTH` | PHY-GRAV-UNIVERSAL-LAW, PHY-KIN-CIRCULAR-DYNAMICS | `$v_e = \sqrt{\frac{2 G M}{R}} = \sqrt{2 g R}, \quad v_o = \sqrt{\frac{G M}{r}}$` |
+| `PHY-SOLID-ELASTICITY-HOOKE` | Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus | 11 | Ch 9 | `JEE_MAINS` | None | `$Y = \frac{\text{Stress}}{\text{Strain}} = \frac{F / A}{\Delta L / L} = \frac{F L}{A \Delta L}$` |
+| `PHY-FLUID-BERNOULLI-EQUATION` | Fluid Dynamics: Continuity Equation & Bernoulli's Principle | 11 | Ch 10 | `JEE_ADVANCED` | PHY-FLUID-BUOYANCY-ARCHIMEDES, PHY-WORK-ENERGY-POWER | `$P + \frac{1}{2} \rho v^2 + \rho g h = \text{constant}$` |
+| `PHY-THERMO-FIRST-SECOND-LAW` | Thermodynamics: First Law, Carnot Cycle & Second Law Statements | 11 | Ch 12 | `BOTH` | PHY-WORK-ENERGY-POWER | `$\eta = 1 - \frac{T_C}{T_H}, \quad \Delta Q = \Delta U + W$` |
+| `PHY-OSC-SHM-WAVES` | Simple Harmonic Motion: Kinematics, Energy Oscillations & Restoring Force | 11 | Ch 14 | `BOTH` | PHY-NLM-SECOND-LAW, PHY-SOUND-LONGITUDINAL-WAVES | `$a = -\omega^2 x, \quad x(t) = A \cos(\omega t + \phi)$` |
+
+
+
 The following directed acyclic graph defines the non-negotiable prerequisite relationships. No downstream subtopic gate may be evaluated as `ENGINEERING_GATE_READY` unless all its immediate upstream dependencies are `ENGINEERING_GATE_READY`.
 
 ```mermaid
@@ -1693,22 +1743,54 @@ Every subtopic is rated across the ten canonical complexity dimensions on an eng
 - **D9:** `misconception_density`
 - **D10:** `synthesis`
 
-### Complexity Dimension Matrix
+### Comprehensive 43-Subtopic Complexity Dimension Matrix
 
-| Subtopic ID | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 | Provisional Difficulty | Dominant Complexity Drivers / Evidence Basis |
+| Subtopic ID | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 | Provisional Difficulty | Dominant Complexity Drivers / Basis |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| `PHY-VEC-BASICS` | 1 | 1 | 1 | 2 | 2 | 2 | 1 | 2 | 2 | 1 | **EASY** | Basic definitions; notation discipline; polar baseline translation. |
-| `PHY-VEC-ADD-SUB` | 2 | 2 | 2 | 3 | 2 | 2 | 2 | 2 | 3 | 1 | **MEDIUM** | Law of cosines derivation; relative direction subtraction; head-to-tail geometry. |
-| `PHY-VEC-COMPONENTS` | 2 | 2 | 2 | 3 | 2 | 3 | 2 | 2 | 3 | 2 | **MEDIUM** | High sign/quadrant sensitivity; adjacent vs opposite trigonometry. |
-| `PHY-NLM-INTERACTION` | 1 | 2 | 2 | 2 | 3 | 1 | 1 | 2 | 3 | 1 | **EASY** | Conceptually challenging due to entrenched Aristotelian misconceptions. |
-| `PHY-NLM-FBD` | 2 | 3 | 2 | 3 | 3 | 2 | 2 | 2 | 3 | 2 | **MEDIUM** | Multi-vector spatial isolation; filtering out $ma$ and reaction forces. |
-| `PHY-NLM-FIRST-LAW` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 1 | **MEDIUM** | High misconception density regarding constant velocity and net force. |
-| `PHY-NLM-SECOND-LAW` | 2 | 3 | 3 | 3 | 2 | 3 | 3 | 2 | 3 | 2 | **HARD** | Decoupled 2D equations of motion; vector $\vec{F} = m\vec{a}$; component resolution. |
-| `PHY-NLM-THIRD-LAW` | 2 | 2 | 2 | 3 | 3 | 2 | 2 | 3 | 3 | 2 | **MEDIUM** | Action-reaction pair discrimination; resolving normal/gravity misconception. |
-| `PHY-NLM-NORMAL` | 2 | 2 | 2 | 2 | 3 | 2 | 2 | 2 | 3 | 1 | **MEDIUM** | Unlearning $N = mg$; solving constraint force from perpendicular dynamics. |
-| `PHY-NLM-TENSION` | 2 | 3 | 2 | 3 | 2 | 3 | 3 | 2 | 3 | 2 | **MEDIUM** | Multi-body coupled equations; tension invariance in massless strings. |
-| `PHY-NLM-FRICTION` | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | 3 | 2 | **HARD** | Inequality branching ($f_s \le \mu_s N$ vs $f_k = \mu_k N$); relative motion opposition. |
-| `PHY-NLM-CONNECTED` | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | 3 | **HARD** | Multi-body system synthesis; internal force cancellation; movable pulley ratios. |
+| `PHY-VEC-BASICS` | 1 | 1 | 1 | 2 | 2 | 2 | 1 | 2 | 2 | 1 | **EASY** | Basic definitions, scalar/vector discrimination, polar baseline translation |
+| `PHY-VEC-ADD-SUB` | 2 | 2 | 2 | 3 | 2 | 2 | 2 | 2 | 3 | 1 | **MEDIUM** | Trigonometric law of cosines, directional angle determination, scalar sum misconceptions |
+| `PHY-VEC-COMPONENTS` | 2 | 2 | 2 | 3 | 2 | 3 | 2 | 2 | 3 | 2 | **MEDIUM** | High quadrant sign sensitivity, adjacent vs opposite angle traps, resultant reconstruction |
+| `PHY-NLM-INTERACTION` | 1 | 2 | 2 | 2 | 3 | 1 | 1 | 2 | 3 | 1 | **EASY** | Conceptually deep due to Aristotelian misconceptions, mathematically simple |
+| `PHY-NLM-FBD` | 2 | 3 | 2 | 3 | 3 | 2 | 2 | 2 | 3 | 2 | **MEDIUM** | High cognitive load in spatial isolation and filtering out m*a and third-law pairs |
+| `PHY-NLM-FIRST-LAW` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 1 | **MEDIUM** | Deep misconceptions regarding constant velocity and net force |
+| `PHY-NLM-SECOND-LAW` | 2 | 3 | 3 | 3 | 2 | 3 | 3 | 2 | 3 | 2 | **HARD** | Concurrently requires FBD construction, 2D vector resolution, axis decoupling, and linear system solving |
+| `PHY-NLM-THIRD-LAW` | 2 | 2 | 2 | 3 | 3 | 2 | 2 | 3 | 3 | 2 | **MEDIUM** | Exceptional misconception density regarding action-reaction pairs and normal/weight confusion |
+| `PHY-NLM-NORMAL` | 2 | 2 | 2 | 2 | 3 | 2 | 2 | 2 | 3 | 1 | **MEDIUM** | Unlearning N = mg; solving constraint force from perpendicular dynamics |
+| `PHY-NLM-TENSION` | 2 | 3 | 2 | 3 | 2 | 3 | 3 | 2 | 3 | 2 | **MEDIUM** | Multi-body coupled equations and tension bounds in accelerating systems |
+| `PHY-NLM-FRICTION` | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | 3 | 2 | **HARD** | Branching if/else regime logic, normal force dependency, extreme misconception density |
+| `PHY-NLM-CONNECTED` | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | 3 | **HARD** | Synthesizes multi-FBD tracking, differential constraints, and linear system elimination |
+| `PHY-KIN-1D-MOTION` | 0 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Rectilinear kinematics under uniform acceleration. |
+| `PHY-KIN-MOTION-GRAPHS` | 1 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Graphical kinematics and signed area integration. |
+| `PHY-KIN-CIRCULAR-UNIFORM` | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Kinematics of circular motion. |
+| `PHY-FORCE-NEWTON-LAWS` | 0 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Newtonian dynamics and force isolation. |
+| `PHY-FORCE-MOMENTUM-IMPULSE` | 1 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Linear momentum conservation and collision mechanics. |
+| `PHY-GRAV-UNIVERSAL-LAW` | 0 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Universal gravitation and inverse-square field. |
+| `PHY-GRAV-FREE-FALL` | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Vertical kinematics and parabolic symmetry. |
+| `PHY-FLUID-BUOYANCY-ARCHIMEDES` | 0 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Hydrostatic buoyancy and fluid equilibrium. |
+| `PHY-WORK-ENERGY-POWER` | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Scalar mechanics and work-energy relations. |
+| `PHY-ENERGY-CONSERVATION-LAW` | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Conservation of mechanical energy and power. |
+| `PHY-SOUND-LONGITUDINAL-WAVES` | 0 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Mechanical longitudinal acoustics. |
+| `PHY-OPTICS-REFLECTION-MIRRORS` | 0 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Geometrical ray optics and mirror reflection. |
+| `PHY-OPTICS-REFRACTION-LENSES` | 0 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Refraction and Gaussian thin lens optics. |
+| `PHY-OPTICS-HUMAN-EYE` | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Physiological optics and corrective refraction. |
+| `PHY-OPTICS-DISPERSION-SCATTERING` | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Chromatic dispersion and atmospheric scattering. |
+| `PHY-ELEC-CURRENT-OHM` | 0 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | DC electrical circuits and linear transport. |
+| `PHY-ELEC-POWER-JOULE` | 1 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Electrical power dissipation and safety engineering. |
+| `PHY-MAG-FIELD-LORENTZ` | 1 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Magnetic fields and vector cross-product deflections. |
+| `PHY-MAG-INDUCTION-FARADAY` | 1 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Electrodynamics and flux induction. |
+| `PHY-KIN-2D-PROJECTILE` | 2 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Two-dimensional kinematics and orthogonal projection. |
+| `PHY-KIN-CIRCULAR-DYNAMICS` | 2 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Curvilinear dynamics and inclined constraint resolution. |
+| `PHY-KIN-RELATIVE-2D` | 2 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Two-dimensional relative velocity and vector navigation. |
+| `PHY-WEP-VARIABLE-FORCE` | 2 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Work-energy theorem for position-dependent forces. |
+| `PHY-SYS-CENTRE-MASS` | 2 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | System particle mechanics and centre of mass dynamics. |
+| `PHY-ROT-RIGID-BODY` | 1 | 3 | 3 | 1 | 3 | 2 | 3 | 3 | 1 | 3 | **HARD** | Rigid body rotation and rotational inertia. |
+| `PHY-ROT-ANGULAR-MOMENTUM` | 1 | 3 | 3 | 1 | 3 | 2 | 3 | 3 | 1 | 3 | **HARD** | Angular momentum and rolling constraint mechanics. |
+| `PHY-GRAV-PLANETARY-ORBITS` | 2 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Celestial mechanics and gravitational potential energy. |
+| `PHY-SOLID-ELASTICITY-HOOKE` | 0 | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 | **EASY** | Solid mechanics and linear elasticity. |
+| `PHY-FLUID-BERNOULLI-EQUATION` | 2 | 3 | 3 | 1 | 3 | 2 | 3 | 3 | 1 | 3 | **HARD** | Hydrodynamics and streamline energy conservation. |
+| `PHY-THERMO-FIRST-SECOND-LAW` | 1 | 3 | 3 | 1 | 3 | 2 | 3 | 3 | 1 | 3 | **HARD** | Thermodynamic cycles and entropy limits. |
+| `PHY-OSC-SHM-WAVES` | 2 | 2 | 2 | 1 | 2 | 2 | 2 | 2 | 1 | 2 | **MEDIUM** | Harmonic oscillations and conservative energy trade-offs. |
+
 
 *Governance Rule:* All ratings carry `maturity = ENGINEERING`. They represent technical structural complexity and must not be cited as empirical item difficulties until validated against student performance data.
 
