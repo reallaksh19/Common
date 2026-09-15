@@ -125,7 +125,12 @@ def _mode_validation(product_mode: str, payload: dict[str, Any]) -> dict[str, An
             fail("CHEM_CORE_AUTH_CORE1A_MANUSCRIPT_REQUIRED")
         if not isinstance(representations, dict) or not representations.get("bundle_id"):
             fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_REQUIRED")
-        return {"status": "PASS", "adapter": "CORE1A_MANUSCRIPT", "bucket_count": len(manuscript["buckets"]), "representation_bundle_ref": representations["bundle_id"]}
+        return {
+            "status": "PASS",
+            "adapter": "CORE1A_MANUSCRIPT",
+            "bucket_count": len(manuscript["buckets"]),
+            "representation_bundle_ref": representations["bundle_id"],
+        }
     if product_mode == "CORE2A":
         source = payload.get("source_plan")
         challenge = payload.get("challenge_plan")
@@ -137,12 +142,166 @@ def _mode_validation(product_mode: str, payload: dict[str, Any]) -> dict[str, An
         count = sum(len(plan.get("items", [])) for plan in (source, challenge) if isinstance(plan, dict))
         if count < 1:
             fail("CHEM_CORE_AUTH_CORE2A_ITEMS_REQUIRED")
-        return {"status": "PASS", "adapter": "CORE2A_PLANS", "item_count": count, "representation_bundle_ref": representations["bundle_id"]}
+        return {
+            "status": "PASS",
+            "adapter": "CORE2A_PLANS",
+            "item_count": count,
+            "representation_bundle_ref": representations["bundle_id"],
+        }
     if product_mode == "CORE1B":
         return validate_core1b(payload)
     if product_mode == "CORE2B":
         return validate_core2b(payload)
     fail("CHEM_CORE_AUTH_MODE_INVALID", product_mode)
+
+
+def _bundle_representation_refs(payload: dict[str, Any]) -> set[str]:
+    bundle = payload.get("representation_bundle")
+    if bundle is None:
+        return set()
+    if not isinstance(bundle, dict) or not str(bundle.get("bundle_id", "")).strip():
+        fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_INVALID")
+    rows = bundle.get("representations")
+    if rows is None:
+        rows = []
+    if not isinstance(rows, list):
+        fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_INVALID", "representations")
+    refs: list[str] = []
+    for row in rows:
+        if not isinstance(row, dict) or not str(row.get("representation_id", "")).strip():
+            fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_INVALID", "representation_id")
+        refs.append(str(row["representation_id"]))
+    if len(refs) != len(set(refs)):
+        fail("CHEM_CORE_AUTH_REPRESENTATION_DUPLICATE")
+    return set(refs)
+
+
+def _used_representation_refs(product_mode: str, payload: dict[str, Any]) -> set[str]:
+    refs: set[str] = set()
+    if product_mode == "CORE1A":
+        manuscript = payload.get("manuscript") or {}
+        for bucket in manuscript.get("buckets", []):
+            for section in bucket.get("teaching_sections", []):
+                values = section.get("representation_refs", [])
+                if not isinstance(values, list):
+                    fail("CHEM_CORE_AUTH_REPRESENTATION_USAGE_INVALID", "CORE1A")
+                refs.update(str(value) for value in values if str(value).strip())
+    elif product_mode == "CORE1B":
+        values = payload.get("used_representation_refs", [])
+        if not isinstance(values, list):
+            fail("CHEM_CORE_AUTH_REPRESENTATION_USAGE_INVALID", "CORE1B")
+        refs.update(str(value) for value in values if str(value).strip())
+    elif product_mode == "CORE2A":
+        for key in ("source_plan", "challenge_plan"):
+            plan = payload.get(key)
+            if not isinstance(plan, dict):
+                continue
+            for item in plan.get("items", []):
+                support = item.get("learner_support") or {}
+                see = support.get("see_the_idea") or {}
+                values = see.get("pre_taught_representation_refs", [])
+                if not isinstance(values, list):
+                    fail("CHEM_CORE_AUTH_REPRESENTATION_USAGE_INVALID", "CORE2A:see_the_idea")
+                refs.update(str(value) for value in values if str(value).strip())
+                binding = item.get("core1a_binding") or {}
+                values = binding.get("h2_evidence_refs", [])
+                if not isinstance(values, list):
+                    fail("CHEM_CORE_AUTH_REPRESENTATION_USAGE_INVALID", "CORE2A:core1a_binding")
+                refs.update(str(value) for value in values if str(value).strip())
+    elif product_mode == "CORE2B":
+        values = payload.get("used_representation_refs", [])
+        if values is None:
+            values = []
+        if not isinstance(values, list):
+            fail("CHEM_CORE_AUTH_REPRESENTATION_USAGE_INVALID", "CORE2B")
+        refs.update(str(value) for value in values if str(value).strip())
+    else:
+        fail("CHEM_CORE_AUTH_MODE_INVALID", product_mode)
+    return refs
+
+
+def _representation_closure(
+    product_mode: str,
+    payload: dict[str, Any],
+    obligation_packet: dict[str, Any],
+    realized_obligation_ids: list[str],
+) -> dict[str, Any]:
+    authorized_rows = [
+        row for row in obligation_packet["obligations"]
+        if row["kind"] == "REPRESENTATION"
+        and product_mode in row["authorized_modes"]
+    ]
+    direct_rows = [row for row in authorized_rows if row["direct"]]
+    # Prerequisite closure authorizes use when explicitly bound, but never makes
+    # prerequisite representations automatic product content. Only direct-gate
+    # representations can be mandatory for this one-direct-gate artifact.
+    authorized_assets = {str(row["asset_ref"]) for row in authorized_rows}
+    required_assets = {
+        str(row["asset_ref"]) for row in direct_rows
+        if product_mode in row["required_realization_modes"]
+    }
+    claimed_assets = {
+        str(row["asset_ref"]) for row in direct_rows
+        if row["obligation_id"] in set(realized_obligation_ids)
+    }
+
+    defined_refs = _bundle_representation_refs(payload)
+    used_refs = _used_representation_refs(product_mode, payload)
+    bindings = payload.get("representation_bindings", [])
+    if bindings is None:
+        bindings = []
+    if not isinstance(bindings, list):
+        fail("CHEM_CORE_AUTH_REPRESENTATION_BINDINGS_INVALID")
+
+    by_rep: dict[str, set[str]] = {}
+    for row in bindings:
+        if not isinstance(row, dict):
+            fail("CHEM_CORE_AUTH_REPRESENTATION_BINDINGS_INVALID")
+        rep_ref = str(row.get("representation_ref", "")).strip()
+        engineering_refs = row.get("engineering_representation_refs")
+        if not rep_ref or not isinstance(engineering_refs, list) or not engineering_refs:
+            fail("CHEM_CORE_AUTH_REPRESENTATION_BINDINGS_INVALID")
+        refs = {str(value).strip() for value in engineering_refs if str(value).strip()}
+        if not refs:
+            fail("CHEM_CORE_AUTH_REPRESENTATION_BINDINGS_INVALID")
+        if rep_ref in by_rep:
+            fail("CHEM_CORE_AUTH_REPRESENTATION_BINDING_DUPLICATE", rep_ref)
+        unauthorized = sorted(refs - authorized_assets)
+        if unauthorized:
+            fail("CHEM_CORE_AUTH_REPRESENTATION_ASSET_UNAUTHORIZED", ",".join(unauthorized))
+        by_rep[rep_ref] = refs
+
+    undefined = sorted(used_refs - defined_refs)
+    if undefined:
+        fail("CHEM_CORE_AUTH_REPRESENTATION_UNDEFINED", ",".join(undefined))
+    unbound = sorted(used_refs - set(by_rep))
+    if unbound:
+        fail("CHEM_CORE_AUTH_REPRESENTATION_USE_UNBOUND", ",".join(unbound))
+
+    realized_assets: set[str] = set()
+    for rep_ref in used_refs:
+        realized_assets.update(by_rep[rep_ref])
+
+    missing_required = sorted(required_assets - realized_assets)
+    if missing_required:
+        fail("CHEM_CORE_AUTH_REQUIRED_REPRESENTATION_UNREALIZED", ",".join(missing_required))
+
+    overclaimed = sorted(claimed_assets - realized_assets)
+    if overclaimed:
+        fail("CHEM_CORE_AUTH_REPRESENTATION_REALIZATION_OVERCLAIM", ",".join(overclaimed))
+
+    if (required_assets or used_refs or claimed_assets) and not defined_refs:
+        fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_EMPTY")
+
+    return {
+        "status": "PASS",
+        "authorized_engineering_representation_refs": sorted(authorized_assets),
+        "required_engineering_representation_refs": sorted(required_assets),
+        "realized_engineering_representation_refs": sorted(realized_assets),
+        "defined_representation_refs": sorted(defined_refs),
+        "used_representation_refs": sorted(used_refs),
+        "binding_count": len(bindings),
+    }
 
 
 def compile_core_authority(
@@ -184,6 +343,9 @@ def compile_core_authority(
     if missing:
         fail("CHEM_CORE_AUTH_REQUIRED_OBLIGATION_MISSING", ",".join(missing))
 
+    representation_closure = _representation_closure(
+        product_mode, payload, obligation_packet, realized
+    )
     authority = {
         "schema_version": "1.0.0",
         "authority_id": authority_id,
@@ -196,6 +358,7 @@ def compile_core_authority(
         "payload_digest": digest(payload),
         "scope_units": _scope_units(product_mode, payload),
         "realized_obligation_ids": realized,
+        "representation_closure": representation_closure,
         "learner_surface_strings": _surface_strings(payload),
         "validation_evidence": validation,
         "status": "CORE_AUTHORITY_READY",
