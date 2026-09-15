@@ -58,7 +58,6 @@ def must_ccu_fail(request, manifest, ccu, code):
     raise AssertionError(f"expected {code}")
 
 
-# Contract sanity: all legacy Workbench schemas remain valid while consumer authority is refined downstream.
 for schema_name in (
     "engineering-request.schema.json",
     "engineering-topic-manifest.schema.json",
@@ -69,7 +68,6 @@ for schema_name in (
 ):
     Draft202012Validator.check_schema(load("contracts/" + schema_name))
 
-# Golden regression: legacy v1 still derives exactly the six-gate internal Physics closure.
 receipt = compile_closure(REQUEST, MANIFEST)
 assert receipt["closure_status"] == "READY"
 assert set(receipt["transitive_gate_ids"]) == EXPECTED_CLOSURE
@@ -82,18 +80,18 @@ assert receipt["counts"] == {
 assert receipt["source_item_status"] == "SOURCE_HELD"
 assert receipt["registry_digest"].startswith("sha256:")
 assert receipt["closure_digest"].startswith("sha256:")
+assert receipt["manifest_digest"].startswith("sha256:")
 
-# Legacy Passport is retained as an internal-Physics projection, not aggregate consumer authority.
+# Passport is diagnostic only; it cannot authorize any consumer.
 passport = compile_passport(REQUEST, receipt)
 assert passport["technical_state"] == "ENGINEERING_READY"
-assert passport["ccu_technical_authorization"] == "ALLOWED"
+assert passport["consumer_authorization"] == "NOT_EVALUATED"
 assert passport["source_item_status"] == "SOURCE_HELD"
 assert passport["closure_receipt_digest"].startswith("sha256:")
 
-# Consumer authority is now aggregate. Missing provider-owned Math receipts must block CCU even for legacy manifests.
+# Consumer authority is aggregate/global. Missing provider-owned prerequisites block the declared consumer.
 must_ccu_fail(REQUEST, MANIFEST, CCU, "E_CCU_ENGINEERING_BLOCKED")
 
-# Falsifier 1: an unknown direct requirement yields a visible BLOCKED receipt, not a manual READY escape hatch.
 bad_manifest = copy.deepcopy(MANIFEST)
 bad_manifest["required_gate_ids"] = ["PHY-M2D-NOT-REAL"]
 blocked_receipt = compile_closure(REQUEST, bad_manifest)
@@ -101,34 +99,29 @@ assert blocked_receipt["closure_status"] == "BLOCKED"
 assert blocked_receipt["blockers"][0]["code"] == "E_ENG_GATE_MISSING"
 blocked_passport = compile_passport(REQUEST, blocked_receipt)
 assert blocked_passport["technical_state"] == "BLOCKED_PENDING_ENGINEERING"
-assert blocked_passport["ccu_technical_authorization"] == "BLOCKED"
+assert blocked_passport["consumer_authorization"] == "NOT_EVALUATED"
 must_ccu_fail(REQUEST, bad_manifest, CCU, "E_CCU_ENGINEERING_BLOCKED")
 
-# Falsifier 2: a non-ready gate poisons the closure even when all graph references still resolve.
 bad_registry = copy.deepcopy(REGISTRY)
 gate(bad_registry, "PHY-M2D-MOVING-LAUNCHER")["status"] = "ENGINEERING_GATE_INCOMPLETE"
 blocked = compile_closure(REQUEST, MANIFEST, registry=bad_registry)
 assert blocked["closure_status"] == "BLOCKED"
 assert any(item["code"] == "E_ENG_GATE_NOT_READY" for item in blocked["blockers"])
 
-# Falsifier 3: SOURCE_SCOPE_HELD is independently visible and cannot be treated as technical READY.
 bad_registry = copy.deepcopy(REGISTRY)
 gate(bad_registry, "PHY-M2D-MOVING-LAUNCHER")["status"] = "SOURCE_SCOPE_HELD"
 blocked = compile_closure(REQUEST, MANIFEST, registry=bad_registry)
 assert blocked["closure_status"] == "BLOCKED"
 assert any(state["status"] == "SOURCE_SCOPE_HELD" for state in blocked["gate_states"])
 
-# Falsifier 4: dependency cycles are structural defects and fail before any readiness receipt is issued.
 bad_registry = copy.deepcopy(REGISTRY)
 gate(bad_registry, "PHY-VEC-BASICS")["prerequisites"].append("PHY-M2D-MOVING-LAUNCHER")
 must_closure_fail(REQUEST, MANIFEST, "E_ENG_DEPENDENCY_CYCLE", registry=bad_registry)
 
-# Falsifier 5: a broken transitive registry reference is rejected by the production engineering-gate validator.
 bad_registry = copy.deepcopy(REGISTRY)
 gate(bad_registry, "PHY-M2D-MOVING-LAUNCHER")["prerequisites"].append("PHY-NOT-REAL")
 must_closure_fail(REQUEST, MANIFEST, "E_ENG_REGISTRY_INVALID", registry=bad_registry)
 
-# Falsifier 6: RESEARCH is a formal engineering mode, not a label. Missing research artifacts block closure.
 research_request = copy.deepcopy(REQUEST)
 research_request["engineering_depth"] = "RESEARCH"
 research_receipt = compile_closure(research_request, MANIFEST)
@@ -138,19 +131,16 @@ assert {item["code"] for item in research_receipt["blockers"]} >= {
     "E_ENG_CLAIM_LEDGER_REQUIRED",
 }
 
-# Falsifier 7: readiness cannot be manually asserted onto a request because the contract is closed-world.
 bad_request = copy.deepcopy(REQUEST)
 bad_request["engineering_ready"] = True
 must_closure_fail(bad_request, MANIFEST, "E_ENG_REQUEST_SCHEMA")
 
-# Falsifier 8: the Passport refuses a receipt whose claimed READY state contradicts its blockers.
 tampered = copy.deepcopy(blocked_receipt)
 tampered["closure_status"] = "READY"
 must_passport_fail(REQUEST, tampered, "E_PASS_RECEIPT_INCONSISTENT")
 
-# Falsifier 9: a bucket manifest cannot authorize a different CCU bucket.
 bad_scope = copy.deepcopy(MANIFEST)
 bad_scope["scope_ref"] = "M2D-SBA-OTHER"
 must_ccu_fail(REQUEST, bad_scope, CCU, "E_CCU_ENGINEERING_SCOPE_MISMATCH")
 
-print("Physics Engineering Workbench v1: PASS (legacy internal closure preserved; aggregate cross-domain consumer boundary enforced)")
+print("Physics Engineering Workbench v1: PASS (legacy closure preserved; Passport diagnostic only; global consumer boundary enforced)")
