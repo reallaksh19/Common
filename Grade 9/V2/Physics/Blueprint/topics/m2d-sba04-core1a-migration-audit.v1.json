@@ -1,12 +1,14 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "audit_id": "C1A-MIGRATION-AUDIT-M2D-SBA04-V1",
   "bucket_id": "M2D-SBA-04",
   "source_refs": [
     "Core1A/registry/build-manifests/M2D-SBA-04-v1.json",
     "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
     "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json",
-    "Core1A/registry/physics-core1a-core2-linkage.json"
+    "Core1A/registry/physics-core1a-core2-linkage.json",
+    "fixtures/engineering-workbench/m2d-sba04-request.v1.json",
+    "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json"
   ],
   "legacy_claim": {
     "status": "COMPLETE",
@@ -14,14 +16,10 @@
     "accepted_as_v9_release_evidence": false
   },
   "technical_gate_audit": {
-    "ready_gate_ids": [
-      "PHY-VEC-BASICS",
-      "PHY-VEC-ADD-SUB",
-      "PHY-VEC-COMPONENTS",
-      "PHY-M2D-PROJECTILE-COMPONENTS",
-      "PHY-M2D-SHARED-CLOCK"
-    ],
-    "missing_gate_candidates": [
+    "engineering_request_ref": "fixtures/engineering-workbench/m2d-sba04-request.v1.json",
+    "engineering_manifest_ref": "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json",
+    "registry_ref": "GENERATED:physics-technical-engineering-gates.v3",
+    "direct_gate_ids": [
       "PHY-M2D-VELOCITY-EVOLUTION",
       "PHY-M2D-VELOCITY-DIRECTION",
       "PHY-M2D-SPEED-MAGNITUDE",
@@ -29,7 +27,20 @@
       "PHY-M2D-PERPENDICULAR-VELOCITY",
       "PHY-M2D-SPEED-AT-HEIGHT"
     ],
-    "status": "INCOMPLETE"
+    "closure_gate_ids": [
+      "PHY-VEC-BASICS",
+      "PHY-VEC-ADD-SUB",
+      "PHY-VEC-COMPONENTS",
+      "PHY-M2D-PROJECTILE-COMPONENTS",
+      "PHY-M2D-SHARED-CLOCK",
+      "PHY-M2D-VELOCITY-EVOLUTION",
+      "PHY-M2D-VELOCITY-DIRECTION",
+      "PHY-M2D-SPEED-MAGNITUDE",
+      "PHY-M2D-SAME-HEIGHT-VELOCITY",
+      "PHY-M2D-PERPENDICULAR-VELOCITY",
+      "PHY-M2D-SPEED-AT-HEIGHT"
+    ],
+    "status": "READY"
   },
   "stage_audit": [
     {
@@ -37,7 +48,7 @@
       "evidence_state": "LEGACY_ONLY",
       "artifact_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#policy"],
       "evidence_refs": ["prior_knowledge_pct=20 legacy routing field"],
-      "notes": ["Legacy 20% routing exists, but V9 Core1A authored depth is governed by intrinsic SDU difficulty rather than learner percentage. A migrated control-state/gap receipt is not yet bound to this real bucket."]
+      "notes": ["Legacy 20% routing exists, but current Core1A authored depth is governed by intrinsic SDU difficulty rather than learner percentage. A migrated intrinsic design-state/gap receipt is not yet bound to this real bucket."]
     },
     {
       "stage": "1A1_LEARNING_ATOMS",
@@ -51,7 +62,7 @@
       "evidence_state": "MISSING",
       "artifact_refs": [],
       "evidence_refs": [],
-      "notes": ["Teaching moves imply several jumps, but there is no explicit repository object enumerating required inferential jumps with stable IDs and closure status."]
+      "notes": ["The canonical Engineering Gates now expose dependency-aware reasoning steps and HIGH_FRAGILITY jumps, but no Core1A stage artifact yet maps those jumps to all seven SBA04 learning atoms with closure status."]
     },
     {
       "stage": "1A3_COGNITIVE_TRANSFORMATION",
@@ -63,37 +74,37 @@
     {
       "stage": "1A4_REPRESENTATION_REQUIREMENTS",
       "evidence_state": "PARTIAL",
-      "artifact_refs": ["visual_stage_count fields","legacy teaching moves mentioning trajectory, component triangles and timelines"],
-      "evidence_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms"],
-      "notes": ["Representation intent exists, but mandatory semantic elements, equation bindings and forbidden omissions are not expressed as technical representation requirements for the six missing SBA04-specific gate candidates."]
+      "artifact_refs": ["engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#representations","engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#representations"],
+      "evidence_refs": ["Canonical v3 gate representations define semantic geometry, mandatory elements/labels, forbidden omissions, must-not-imply guards and relation/concept bindings."],
+      "notes": ["Technical representation requirements are now canonical, but a Core1A pedagogical stage artifact still must map each learning atom/inferential jump to what the learner must notice and why that representation is required."]
     },
     {
       "stage": "1A5_REPRESENTATION_CANDIDATES",
       "evidence_state": "MISSING",
       "artifact_refs": [],
       "evidence_refs": [],
-      "notes": ["No explicit candidate set or rejected representation alternatives are recorded for SBA04."]
+      "notes": ["No explicit pedagogical candidate set or rejected representation alternatives are recorded for SBA04."]
     },
     {
       "stage": "1A6_REPRESENTATION_DECISIONS",
       "evidence_state": "MISSING",
       "artifact_refs": [],
       "evidence_refs": [],
-      "notes": ["The legacy PDF/manifest shows chosen visuals but does not contain a decision receipt explaining why each representation was selected over alternatives."]
+      "notes": ["Canonical technical representations exist, but no pedagogical decision receipt explains primary/secondary selection against alternatives for the learner-facing Core1A build."]
     },
     {
       "stage": "1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE",
       "evidence_state": "PARTIAL",
       "artifact_refs": ["M2D-SBA-04A","M2D-SBA-04C","M2D-SBA-04D","M2D-SBA-04F","M2D-SBA-04G"],
-      "evidence_refs": ["legacy teaching moves connecting velocity arrows/components/equations"],
-      "notes": ["Several atoms describe the intended bridge, but no explicit TTU-style representation-to-relation binding proves complete picture→word→symbol→equation closure."]
+      "evidence_refs": ["legacy teaching moves connecting velocity arrows/components/equations","canonical v3 representation-to-relation bindings"],
+      "notes": ["Technical representation-to-relation bindings are now explicit, but no Core1A artifact proves the full picture→word→symbol→equation learning bridge across the relevant atoms."]
     },
     {
       "stage": "1A8_MISCONCEPTION_CONTRAST",
       "evidence_state": "PRESENT",
       "artifact_refs": ["M2D-SBA-04A:misconceptions","M2D-SBA-04B:misconceptions","M2D-SBA-04C:misconceptions","M2D-SBA-04D:misconceptions","M2D-SBA-04E:misconceptions","M2D-SBA-04F:misconceptions","M2D-SBA-04G:misconceptions"],
-      "evidence_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].misconceptions"],
-      "notes": ["Every legacy learning atom declares at least one misconception; migration still needs canonical repair/contrast realizations before manuscript release."]
+      "evidence_refs": ["Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].misconceptions","canonical v3 gate misconception counterexamples and repair requirements"],
+      "notes": ["Every legacy learning atom declares at least one misconception and the v3 gates now preserve technical counterexample/repair requirements; learner-facing realization remains downstream of this audit."]
     },
     {
       "stage": "1A9_WORKED_FADED_INDEPENDENT_PLAN",
@@ -114,12 +125,12 @@
       "evidence_state": "MISSING",
       "artifact_refs": [],
       "evidence_refs": [],
-      "notes": ["No explicit unresolved-jump audit exists; legacy G9/COMPLETE claims cannot substitute for this stage."]
+      "notes": ["No Core1A unresolved-jump closure audit exists; legacy G9/COMPLETE claims and technical Engineering readiness cannot substitute for this stage."]
     }
   ],
   "release_authorized": false,
   "block_reasons": [
-    "TECHNICAL_GATE_INCOMPLETE:SBA04-specific velocity/direction/speed/event gates not yet canonicalized",
+    "LEGACY_ONLY_STAGE_EVIDENCE:1A0_LEARNER_STATE_GAP must be replaced by intrinsic SDU design-state evidence; learner percentage is not Core1A authority",
     "MISSING_STAGE_EVIDENCE:1A2_INFERENTIAL_JUMPS",
     "MISSING_STAGE_EVIDENCE:1A5_REPRESENTATION_CANDIDATES",
     "MISSING_STAGE_EVIDENCE:1A6_REPRESENTATION_DECISIONS",
