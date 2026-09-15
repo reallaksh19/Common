@@ -1,14 +1,14 @@
-# Physics Gravity Research Engineering v1
+# Physics Gravity Research Engineering — canonicalized v3 tranche
 
 ## Purpose
 
-This tranche is the first new-domain proof of the Engineering Workbench after SBA-23. It implements the request:
+This tranche is the first RESEARCH-depth new-domain proof of the canonical Engineering Workbench after SBA-23. It implements:
 
 > Add gravitational field at RESEARCH engineering depth for Grade 9-11 competitive-exam use.
 
 `RESEARCH` is technical-evidence depth. It does not increase learner difficulty by itself.
 
-## Engineering lifecycle
+## Current lifecycle
 
 ```text
 ENG-REQ-GRAV-FIELD-V1
@@ -23,24 +23,25 @@ RESEARCH DOSSIER
         ↓
 CLAIM-LEVEL PROVENANCE LEDGER
         ↓
-VALIDATED GRAVITY GATE EXTENSION
+CANONICAL V3 GATE SOURCES
+engineering-gates/gravitation/**
         ↓
-CANONICAL BASE REGISTRY + EXTENSION
+SUBJECT-WIDE V3 REGISTRY
         ↓
-PRODUCTION GATE VALIDATION
+PRODUCTION V3 VALIDATION
         ↓
 10-GATE TRANSITIVE CLOSURE
         ↓
 ENGINEERING PASSPORT
 ```
 
-Automatic semantic similarity does not choose the operation. Discovery is explicitly `HUMAN_REVIEWED`.
+Automatic semantic similarity does not choose the discovery operation. Discovery remains explicitly `HUMAN_REVIEWED`.
 
-## Why two gates
+## Gate ownership
 
 ### `PHY-GRAV-FORCE`
 
-Owns the Newtonian interaction model:
+Owns the Newtonian gravitational interaction model:
 
 - mutual attraction;
 - inverse-square force law;
@@ -51,45 +52,32 @@ Owns the Newtonian interaction model:
 
 ### `PHY-GRAV-FIELD`
 
-Owns a different capability family:
+Owns a distinct capability family:
 
 - field as force per unit mass;
 - test-mass independence within the Newtonian model;
 - inward radial inverse-square field;
 - field-vector representation;
-- vector superposition at a common field point;
+- vector superposition at one common field point;
 - field/force discrimination;
-- local near-Earth `g` versus universal field behavior.
+- local near-Earth `g` versus spatially varying gravitational field.
 
-Putting both into `PHY-NLM-SECOND-LAW` or a monolithic `PHY-GRAVITY` gate is rejected because the new material has independent governing relations, model conditions, representations, misconceptions, problem families and verification logic.
+Putting both into `PHY-NLM-SECOND-LAW` or a monolithic `PHY-GRAVITY` gate remains rejected because the domain has independent governing relations, model conditions, representations, misconceptions, problem families and verification logic.
 
-## Research sources
+## Research evidence custody
 
-The dossier binds claims to the following source classes:
+The Research Dossier and Claim Ledger remain mandatory for this RESEARCH request. Gate authority refs bind the reviewed claim ledger, so canonicalization into v3 does not erase research provenance.
 
-- OpenStax University Physics Vol. 1, §13.1 — Newtonian universal gravitation, attractive direction, third-law pair, point/spherical-source applicability: https://openstax.org/books/university-physics-volume-1/pages/13-1-newtons-law-of-universal-gravitation
-- OpenStax University Physics Vol. 1, §13.2 — gravitational field, inward radial representation and inverse-square spatial dependence: https://openstax.org/books/university-physics-volume-1/pages/13-2-gravitation-near-earths-surface
-- OpenStax University Physics Vol. 1, §5.1 — vector addition of force contributions: https://openstax.org/books/university-physics-volume-1/pages/5-1-forces
-- OpenStax University Physics Vol. 1, §5.4 — `w = m g` and location dependence of gravitational acceleration/field strength: https://openstax.org/books/university-physics-volume-1/pages/5-4-mass-and-weight
-- NIST/CODATA constants database — current source of record for numerical `G`: https://physics.nist.gov/cuu/Constants/
-- IEA/TIMSS misconception analysis — used only to select misconception falsifiers, not as Physics authority: https://link.springer.com/chapter/10.1007/978-3-030-30188-0_4
+The evidence set includes source classes for:
 
-## Quantitative misconception evidence
+- Newtonian universal gravitation and spherical-source applicability;
+- gravitational field and radial inverse-square dependence;
+- vector-force composition/superposition foundations;
+- mass/weight and local `g` distinction;
+- numerical `G` source-of-record custody;
+- misconception evidence used for falsifier selection rather than Physics truth authority.
 
-The TIMSS analysis provides a concrete reason to engineer gravity misconceptions explicitly rather than assuming prior intuition is reliable. In one grade-eight item averaged across the sampled countries:
-
-- **36%** correctly identified gravity as acting on a parachutist in all four tested states;
-- **57%** selected responses in which gravity acted only while the jumper was falling.
-
-The same research program reports that gravity misconceptions were generally common across countries and grades, with many misconception frequencies at or above 25% and some reaching at least 50% in individual countries/context combinations.
-
-This evidence supports mandatory falsifiers for:
-
-- `MIS-GRAV-FORCE-FALLING-ONLY`;
-- geometry/source-based force direction rather than motion-based direction;
-- local radial direction rather than an absolute page-down concept.
-
-It does not determine learner difficulty badges or mastery.
+Misconception evidence supports explicit repair for models such as gravity acting only while falling, force direction following motion, universal `g = 9.8 N/kg`, and absolute page-down gravity. It does not set learner mastery or learner difficulty.
 
 ## Scope boundary
 
@@ -116,15 +104,37 @@ Explicitly excluded from this request:
 
 Those require later Engineering Requests rather than silent scope growth.
 
-## Registry extension
+## Canonicalization status
 
-The current 15-gate v2 base registry is not rewritten for this pilot. The manifest references:
+The former file:
 
 `policy/physics-technical-engineering-gates.gravity.v1.json`
 
-The closure compiler merges the extension into the base registry in memory, validates the combined registry with the existing production gate validator, and digest-binds the extension reference into the closure receipt.
+is retained only as migration provenance. It is no longer merged into a v2 registry in memory for the active path.
 
-This is an incremental addition mechanism, not a second authority registry. Duplicate IDs, unresolved prerequisites and broken representation/relation bindings still fail through the canonical validator.
+The canonical gates are now:
+
+`engineering-gates/gravitation/PHY-GRAV-FORCE.v3.json`
+
+`engineering-gates/gravitation/PHY-GRAV-FIELD.v3.json`
+
+They are assembled with the rest of Physics by:
+
+`engine/build_physics_engineering_gate_registry_v3.py`
+
+and validated by:
+
+`engine/validate_engineering_gates_v3.py`
+
+The active Gravity manifest is:
+
+`fixtures/engineering-workbench/grav-field-manifest.v3.json`
+
+and consumes:
+
+`GENERATED:physics-technical-engineering-gates.v3`
+
+No Gravity extension ref is permitted on the canonical v3 path.
 
 ## Expected closure
 
@@ -151,18 +161,27 @@ No manual `engineering_ready` assertion exists.
 
 ## Falsification
 
-`engine/validate_gravity_research_v1.py` and `tests/test_physics_gravity_research_v1.py` reject at least:
+The current Gravity proof rejects, among other cases:
 
 - missing inverse-square field invariant;
-- missing superposition relation;
-- changing `CREATE_CHILD` to `EXTEND`;
+- missing field-superposition relation;
+- changing reviewed `CREATE_CHILD` to `EXTEND`;
 - incorrect field parent ownership;
 - a claim source absent from the dossier;
 - provisional claims inside a READY ledger;
-- removing misconception evidence from the dossier while claims still depend on it;
-- RESEARCH closure without the dossier reference;
-- manually making gravitational force a second direct manifest gate rather than deriving it as a prerequisite.
+- removing evidence still referenced by claims;
+- RESEARCH closure without dossier custody;
+- manually making gravitational force a second direct manifest gate;
+- reintroducing the legacy v2 extension mechanism;
+- Gravity gate authority no longer bound to the claim ledger;
+- unrelated direct-gate padding of the exact closure.
+
+The subject-wide v3 registry separately falsifies typed symbol, model-condition, representation, reasoning, misconception, verification and invariant-profile failures.
+
+## Publication boundary
+
+Gravity Engineering READY authorizes technical consumption only. The Engineering Passport explicitly keeps publication authorization separate. Core1A pedagogical completion, Core2 transfer legality, learner state and PDF publication remain downstream Blueprint gates.
 
 ## PDF provenance rule
 
-The project-wide rule remains binding: any future PDF must be generated only after re-reading the current repository Blueprint for that exact PDF task. Earlier PDFs, previous chats, summaries, model memory, or unauthorised subject-memory reconstruction may not substitute for the current repository Blueprint.
+Any future PDF must be generated only after re-reading the current repository Blueprint for that exact PDF task. Earlier PDFs, previous chats, summaries, model memory, or unauthorised subject-memory reconstruction may not substitute for the current repository Blueprint.
