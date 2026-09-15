@@ -53,9 +53,8 @@ def _ids(gate: dict, field: str, id_field: str) -> set[str]:
 def derive_gate_state(gate: dict, invariant_profile: dict) -> dict:
     """Derive technical readiness without trusting registry readiness/checklist flags.
 
-    The Engineering Gate proves mathematics/technical completeness. Whether a
-    particular Core realizes its own pedagogical purpose is validated later by
-    Concept/Problem TTU and product-governance gates, not here.
+    Engineering Gate proves mathematical/technical completeness. Core-purpose
+    pedagogy is validated downstream by TTU/product governance.
     """
     gid = gate["subtopic_id"]
     req = invariant_profile["required_gates"].get(gid)
@@ -99,7 +98,7 @@ def derive_gate_state(gate: dict, invariant_profile: dict) -> dict:
     if len(transforms) < generic["minimum_transformations"]:
         failures.append("MATH_ENG_TRANSFORMATIONS_INCOMPLETE")
     distinct_roles = {x.get("target_core_role") for x in transforms if x.get("target_core_role")}
-    if len(distinct_roles) < generic.get("minimum_distinct_transformation_roles", 1):
+    if len(distinct_roles) < generic["minimum_distinct_transformation_roles"]:
         failures.append("MATH_ENG_TRANSFORMATION_DIVERSITY_INCOMPLETE")
 
     if len(gate.get("mandatory_verifications", [])) < generic["minimum_verifications"]:
@@ -173,6 +172,8 @@ def compile_closure(request: dict, manifest: dict, registry: dict | None = None,
 
     registry = registry or load(manifest["registry_ref"])
     invariant_profile = invariant_profile or load(manifest["invariant_profile_ref"])
+    schema_validate(invariant_profile, "mathematics-engineering-invariant-profile.schema.json", "MATH_ENG_INVARIANT_PROFILE_SCHEMA")
+
     if invariant_profile.get("subject") != "MATHEMATICS":
         raise MathematicsEngineeringWorkbenchError("MATH_ENG_SUBJECT_MISMATCH", "invariant profile is not Mathematics")
     if registry.get("registry_id") != invariant_profile.get("registry_id"):
@@ -184,6 +185,16 @@ def compile_closure(request: dict, manifest: dict, registry: dict | None = None,
         raise MathematicsEngineeringWorkbenchError("MATH_ENG_REGISTRY_INVALID", str(exc)) from exc
 
     gates = {g["subtopic_id"]: g for g in registry["subtopic_gates"]}
+    profile_gates = set(invariant_profile["required_gates"])
+    registry_gates = set(gates)
+    if profile_gates != registry_gates:
+        missing = sorted(registry_gates - profile_gates)
+        stale = sorted(profile_gates - registry_gates)
+        raise MathematicsEngineeringWorkbenchError(
+            "MATH_ENG_INVARIANT_PROFILE_GATE_SET_MISMATCH",
+            f"profile must cover registry exactly; missing={missing}, stale={stale}",
+        )
+
     transitive = _closure(gates, manifest["direct_gate_ids"])
     states = [derive_gate_state(gates[gid], invariant_profile) for gid in transitive]
     ready = sum(1 for x in states if x["derived_status"] == "ENGINEERING_GATE_READY")
@@ -244,9 +255,13 @@ def main() -> None:
     receipt = compile_closure(request, manifest)
     passport = compile_passport(request, receipt)
     if args.receipt_out:
-        Path(args.receipt_out).write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+        out = Path(args.receipt_out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     if args.passport_out:
-        Path(args.passport_out).write_text(json.dumps(passport, indent=2) + "\n", encoding="utf-8")
+        out = Path(args.passport_out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(passport, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"receipt": receipt, "passport": passport}, indent=2))
 
 
