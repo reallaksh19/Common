@@ -1,0 +1,45 @@
+name: Primary Math V2 benchmark acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'Primary/V2/Mathematics/BenchmarkAcceptance/**'
+      - '.github/workflows/primary-math-v2-benchmark-acceptance.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Primary/V2/Mathematics/BenchmarkAcceptance/**'
+      - '.github/workflows/primary-math-v2-benchmark-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-benchmark-corpus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate frozen benchmark corpus and adversarial mutations
+        run: python Primary/V2/Mathematics/BenchmarkAcceptance/validator/validate_corpus.py
+
+      - name: Prove positive semantic oracle independently
+        run: >-
+          python Primary/V2/Mathematics/BenchmarkAcceptance/validator/evaluate_candidate.py
+          Primary/V2/Mathematics/BenchmarkAcceptance/fixtures/positive/semantic_cases.json
+          --semantic-only
+
+      - name: Prove full acceptance remains blocked without exact rendered artifacts
+        shell: bash
+        run: |
+          set +e
+          python Primary/V2/Mathematics/BenchmarkAcceptance/validator/evaluate_candidate.py \
+            Primary/V2/Mathematics/BenchmarkAcceptance/fixtures/positive/semantic_cases.json \
+            >/tmp/full-eval.txt
+          rc=$?
+          cat /tmp/full-eval.txt
+          test "$rc" -eq 2

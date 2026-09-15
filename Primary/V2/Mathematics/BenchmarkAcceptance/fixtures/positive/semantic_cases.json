@@ -1,0 +1,166 @@
+{
+  "version": "1.0.0",
+  "candidate_id": "PRIMARY-MATH-V2-BENCHMARK-POSITIVE-A",
+  "evidence_class": "TEST_FIXTURE",
+  "producer": "BenchmarkAcceptance",
+  "cases": [
+    {
+      "case_id": "PMV2-MUL-BRIDGE-23X6",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["EQUAL_GROUPS", "ARRAY", "DISTRIBUTIVE_AREA", "PARTIAL_PRODUCTS", "WRITTEN_ALGORITHM", "CHECK"],
+      "math_evidence": {"a": 23, "b": 6, "split": [20, 3], "partial_products": [120, 18], "product": 138, "check_product": 138},
+      "product_evidence": {"core1_ref": "C1-MUL-BRIDGE", "core2_practice_ref": "C2-MUL-BUILD-01", "raw_question_direct_render": false}
+    },
+    {
+      "case_id": "PMV2-DIV-SHARE-GROUP-24-6",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["EQUAL_SHARE", "EQUAL_GROUP", "DIVISION_EQUATION"],
+      "math_evidence": {
+        "sharing": {"total": 24, "group_count": 6, "group_size": 4, "unknown_role": "GROUP_SIZE"},
+        "grouping": {"total": 24, "group_size": 6, "group_count": 4, "unknown_role": "GROUP_COUNT"}
+      }
+    },
+    {
+      "case_id": "PMV2-DIV-ZERO-366-12",
+      "scope": {"basis": "QUESTION_SET_OBSERVED", "universal_grade_claim": false},
+      "representations": ["WRITTEN_DIVISION", "QUOTIENT_PLACE_SLOTS", "MULTIPLICATION_CHECK"],
+      "math_evidence": {"dividend": 366, "divisor": 12, "quotient": 30, "remainder": 6, "quotient_digits": [3, 0], "zero_place_preserved": true},
+      "product_evidence": {"core1_ref": "C1-DIV-ZERO-PLACE", "core2_practice_ref": "C2-DIV-BUILD-ZERO-01", "raw_question_direct_render": false}
+    },
+    {
+      "case_id": "PMV2-DIV-ZERO-7843-13",
+      "scope": {"basis": "QUESTION_SET_OBSERVED", "universal_grade_claim": false},
+      "representations": ["WRITTEN_DIVISION", "QUOTIENT_PLACE_SLOTS", "MULTIPLICATION_CHECK"],
+      "math_evidence": {"dividend": 7843, "divisor": 13, "quotient": 603, "remainder": 4, "quotient_digits": [6, 0, 3], "zero_place_preserved": true},
+      "work_evidence": {"final_correctness": "INCORRECT", "steps": [{"id": "w1", "status": "CORRECT"}, {"id": "w2", "status": "AMBIGUOUS"}], "teacher_annotations": [{"actor": "TEACHER", "kind": "CORRECTION"}], "replay_provenance": "STRUCTURED_REPLAY"}
+    },
+    {
+      "case_id": "PMV2-DIV-CONTRAST-3496-23",
+      "scope": {"basis": "QUESTION_SET_OBSERVED", "universal_grade_claim": false},
+      "representations": ["WRITTEN_DIVISION", "MULTIPLES_SUPPORT", "MULTIPLICATION_CHECK"],
+      "math_evidence": {"dividend": 3496, "divisor": 23, "quotient": 152, "remainder": 0, "quotient_digits": [1, 5, 2], "zero_place_preserved": false}
+    },
+    {
+      "case_id": "PMV2-DIV-DIAGNOSTIC-ZERO-CONTRAST",
+      "scope": {"basis": "QUESTION_SET_OBSERVED", "universal_grade_claim": false},
+      "representations": ["CONTRAST_SET", "DIAGNOSTIC_PROBE"],
+      "math_evidence": {},
+      "diagnosis_evidence": {
+        "focal_feature": "QUOTIENT_ZERO_REQUIRED",
+        "positive_cases": ["PMV2-DIV-ZERO-366-12", "PMV2-DIV-ZERO-7843-13"],
+        "negative_cases": ["PMV2-DIV-CONTRAST-3496-23"],
+        "learner_label": null,
+        "competing_hypotheses": [
+          {"hypothesis_id": "H-DIV-GENERAL", "error_signature": "DIV_GENERAL_LONG_DIVISION_PROCEDURE", "durable_trait": false},
+          {"hypothesis_id": "H-DIV-ZERO", "error_signature": "DIV_QUOTIENT_ZERO_PLACE_VALUE", "durable_trait": false}
+        ],
+        "probe": {
+          "hypothesis_ids": ["H-DIV-GENERAL", "H-DIV-ZERO"],
+          "manipulated_feature": "QUOTIENT_ZERO_REQUIRED",
+          "controlled_load": {"language": "LOW", "representation_novelty": "LOW", "fact_retrieval_demand": "LOW"},
+          "outcome_rules": [
+            {"no_zero": "CORRECT", "zero": "INCORRECT", "increase": "H-DIV-ZERO"},
+            {"no_zero": "INCORRECT", "zero": "INCORRECT", "keep_open": ["H-DIV-GENERAL", "H-DIV-ZERO"]}
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "PMV2-DIV-REMAINDER-CONTEXT",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["REMAINDER_CONTEXT", "GROUP_MODEL", "ANSWER_FORM"],
+      "math_evidence": {"quotient": 4, "remainder": 5, "answer_form": "ROUND_UP_ONE_MORE_GROUP", "context_rule_explicit": true},
+      "product_evidence": {"core2_practice_ref": "C2-DIV-TRANSFER-REMAINDER-01", "raw_question_direct_render": false}
+    },
+    {
+      "case_id": "PMV2-UNIT-DOZEN-MONEY",
+      "scope": {"basis": "QUESTION_SET_OBSERVED", "universal_grade_claim": false},
+      "representations": ["QUANTITY_STRUCTURE", "UNIT_CHAIN", "MULTI_STEP_EQUATION"],
+      "math_evidence": {"source_quantity": 23, "source_unit": "DOZEN", "conversion_factor": 12, "converted_quantity": 276, "target_unit": "EGG", "rate": 6, "result": 1656}
+    },
+    {
+      "case_id": "PMV2-FRAC-EQUIV-1-2",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["EQUAL_PARTITION", "FRACTION_STRIP", "NUMBER_LINE", "EQUIVALENCE_BRIDGE"],
+      "math_evidence": {"fractions": [[1, 2], [2, 4], [4, 8]], "equal_partitions": true}
+    },
+    {
+      "case_id": "PMV2-FRAC-ADD-1-2-1-4",
+      "scope": {"basis": "CURRICULUM_OVERLAY", "authority_ref": "TEST-OVERLAY-FRACTION-ADD", "universal_grade_claim": false},
+      "representations": ["REPARTITION", "EQUIVALENT_FRACTION", "FRACTION_ADDITION"],
+      "math_evidence": {"left": [1, 2], "right": [1, 4], "result": [3, 4], "repartition_or_equivalence_explicit": true}
+    },
+    {
+      "case_id": "PMV2-PLACEVALUE-5043",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["PLACE_VALUE_CHART", "EXPANDED_FORM"],
+      "math_evidence": {"number": 5043, "digits": {"THOUSANDS": 5, "HUNDREDS": 0, "TENS": 4, "ONES": 3}, "expanded": [5000, 40, 3]}
+    },
+    {
+      "case_id": "PMV2-DECIMAL-0-37",
+      "scope": {"basis": "CURRICULUM_OVERLAY", "authority_ref": "TEST-OVERLAY-DECIMAL", "universal_grade_claim": false},
+      "representations": ["HUNDRED_GRID", "DECIMAL_PLACE_VALUE", "NUMBER_LINE"],
+      "math_evidence": {"decimal": "0.37", "shaded_hundredths": 37}
+    },
+    {
+      "case_id": "PMV2-MEASURE-M-TO-CM",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["UNIT_CHAIN", "MEASUREMENT_SCALE"],
+      "math_evidence": {"value": 3, "source_unit": "M", "target_unit": "CM", "factor": 100, "result": 300}
+    },
+    {
+      "case_id": "PMV2-PERIMETER-AREA-RECT-6X4",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["PERIMETER_PATH", "AREA_TILE_GRID"],
+      "math_evidence": {"perimeter": 20, "area": 24, "perimeter_semantics": "BOUNDARY", "area_semantics": "COVERING"}
+    },
+    {
+      "case_id": "PMV2-VOLUME-3X2X4",
+      "scope": {"basis": "CURRICULUM_OVERLAY", "authority_ref": "TEST-OVERLAY-VOLUME", "universal_grade_claim": false},
+      "representations": ["CUBE_LAYERS"],
+      "math_evidence": {"volume": 24, "cube_count": 24}
+    },
+    {
+      "case_id": "PMV2-ANGLE-65",
+      "scope": {"basis": "CURRICULUM_OVERLAY", "authority_ref": "TEST-OVERLAY-ANGLE", "universal_grade_claim": false},
+      "representations": ["ANGLE_MODEL", "PROTRACTOR_OR_TURN"],
+      "math_evidence": {"declared_degrees": 65, "represented_degrees": 65}
+    },
+    {
+      "case_id": "PMV2-DATA-BAR-SCALE-5",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["DATA_TABLE", "BAR_CHART", "SCALE_KEY"],
+      "math_evidence": {"scale": 5, "data": {"A": 10, "B": 25, "C": 15}, "rendered_values": {"A": 10, "B": 25, "C": 15}}
+    },
+    {
+      "case_id": "PMV2-WORK-PROVENANCE-MIXED-SUCCESS",
+      "scope": {"basis": "SCHOOL_CLASSWORK_OBSERVED", "universal_grade_claim": false},
+      "representations": ["STRUCTURED_REPLAY"],
+      "math_evidence": {},
+      "work_evidence": {
+        "final_correctness": "INCORRECT",
+        "steps": [
+          {"id": "WS-01", "kind": "FACT_RETRIEVAL", "status": "CORRECT", "actor": "CHILD"},
+          {"id": "WS-02", "kind": "PLACE_VALUE_WRITE", "status": "AMBIGUOUS", "actor": "CHILD"},
+          {"id": "WS-03", "kind": "SUBTRACTION", "status": "INCORRECT", "actor": "CHILD"}
+        ],
+        "teacher_annotations": [{"actor": "TEACHER", "relation_to_step": "WS-02", "kind": "CORRECTION"}],
+        "replay_provenance": "STRUCTURED_REPLAY"
+      }
+    },
+    {
+      "case_id": "PMV2-HINT-FADE-FRESH-RETRY",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["H1_NOTICE", "H2_REMEMBER", "H3_REPRESENT", "FRESH_INDEPENDENT_RETRY"],
+      "math_evidence": {},
+      "hint_evidence": {"sequence": ["H0", "H1", "H2", "H3", "FRESH_H0"], "supported_success_is_independent": false, "supported_item_id": "SUP-01", "fresh_retry_item_id": "IND-02"}
+    },
+    {
+      "case_id": "PMV2-ROUTE-CHANGE-AFTER-REPEAT-FAILURE",
+      "scope": {"basis": "COMMON_G4_5_CAPABILITY", "universal_grade_claim": false},
+      "representations": ["TEACHER_MOVE_TRACE"],
+      "math_evidence": {},
+      "runtime_evidence": {"same_route_failures": 2, "route_changed": true, "changed_dimension": "REPRESENTATION", "conceptual_support": "H3_REPRESENT", "access_adjustment": "NONE", "independent_retry_after_repair": true}
+    }
+  ]
+}
