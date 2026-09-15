@@ -29,10 +29,14 @@
       "learner_readiness_percent"
     ],
     "authority_scope_required": ["capability_ref", "problem_family_ref"],
+    "module_ref_required": true,
+    "used_representation_refs_must_be_subset_of_approved_representation_refs": true,
+    "research_may_deepen_pedagogy_but_may_not_expand_authorized_representation_scope": true,
     "new_chemistry_refs_must_be_empty": true,
     "help_mode": "PROGRESSIVE_FIXED",
     "help_order": ["H1_ORIENT", "H2_REPRESENT", "H3_PRINCIPLE", "H4_FIRST_MOVE"],
     "help_may_use_ordered_prefix_or_subsequence": true,
+    "distinct_modules_must_not_share_mechanically_identical_hint_ladders": true,
     "answer_closure_required": ["task_prompt", "canonical_answer", "check"],
     "page_envelope_is_ceiling_not_quota": true,
     "learner_knowledge_must_not_control_depth": true
