@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import runpy
 import sys
 from pathlib import Path
 
@@ -178,4 +179,17 @@ for rel in ("engine/compile_core1a_real_bucket_migration.py", "engine/validate_c
     for forbidden in ("M2D-SBA-04", "M2D-SBA-05", "Q14", "Q27"):
         assert forbidden not in text, f"CASE_LITERAL_LEAK:{rel}:{forbidden}"
 
-print("Core1A real-bucket migration: PASS (typed stage evidence + generic compiler + real SBA04 data + fail-closed 1A12 boundary)")
+# Keep all real SBA04 authored-evidence receipts on the same authoritative CI path as the aggregate migration test.
+for rel in (
+    "tests/test_core1a_sba04_real_inferential_jump_receipt.py",
+    "tests/test_core1a_sba04_real_cognitive_transformation_receipt.py",
+    "tests/test_core1a_sba04_real_representation_requirements_receipt.py",
+    "tests/test_core1a_sba04_real_representation_design.py",
+    "tests/test_core1a_sba04_real_pwse_bridge.py",
+    "tests/test_core1a_sba04_real_worked_faded_lineage.py",
+    "tests/test_core1a_sba04_unresolved_jump_audit.py",
+    "tests/test_core1a_sba04_real_learner_state_gap.py",
+):
+    runpy.run_path(str(ROOT / rel), run_name="__main__")
+
+print("Core1A real-bucket migration: PASS (typed stage evidence + real SBA04 authored evidence + generic compiler + fail-closed 1A12 boundary)")
