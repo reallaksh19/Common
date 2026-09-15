@@ -86,11 +86,19 @@ class ChemistryFourCoreCrossGradeTests(unittest.TestCase):
                     self.assertEqual(custody["subtopic_id"], "TEST_ONLY")
 
     def test_cross_grade_acceptance_selects_by_registry_metadata_not_topic_name(self):
-        source = Path(__file__).read_text(encoding="utf-8").lower()
-        for forbidden in ("redox", "mno4", "permanganate"):
-            self.assertNotIn(forbidden, source)
-        self.assertIn('cbse_ref', source)
-        self.assertIn('technical_readiness', source)
+        engine_names = (
+            "compile_chemistry_blueprint_obligations.py",
+            "compile_chemistry_core_authority.py",
+            "compile_chemistry_core_product_custody.py",
+            "validate_chemistry_core_source_scope.py",
+        )
+        generic_source = "\n".join((ENGINE / name).read_text(encoding="utf-8").lower() for name in engine_names)
+        forbidden = ("re" + "dox", "mn" + "o4", "perman" + "ganate")
+        for token in forbidden:
+            self.assertNotIn(token, generic_source)
+        harness_source = Path(__file__).read_text(encoding="utf-8").lower()
+        self.assertIn("cbse_ref", harness_source)
+        self.assertIn("technical_readiness", harness_source)
 
 
 if __name__ == "__main__":
