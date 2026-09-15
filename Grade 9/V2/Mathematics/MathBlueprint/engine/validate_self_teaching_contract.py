@@ -46,7 +46,7 @@ CORE2B_HELP = {"RECOGNITION_HELP", "CONCEPT_HELP", "REPRESENTATION_HELP", "FIRST
 EXPECTED_DEPTH = {
     "EASY": {
         "max_pages": 10,
-        "pedagogy_web_research": "FORBIDDEN",
+        "pedagogy_web_research": "OPTIONAL",
         "research_depth": "NONE",
         "subsubtopic_decomposition_allowed": False,
         "visual_intensity": "STANDARD",
