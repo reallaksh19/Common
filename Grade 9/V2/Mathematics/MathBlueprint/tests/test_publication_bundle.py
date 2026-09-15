@@ -52,8 +52,8 @@ def make_visibility():
         "publication_authorization": "NOT_IMPLIED",
         "source_domain_admission_digest": "d" * 64,
         "source_release_gate_digest": "a" * 64,
-        "registry_digest": "e" * 64,
-        "validator_contract_digest": "f" * 64,
+        "registry_digest": "sha256:" + "e" * 64,
+        "validator_contract_digest": "sha256:" + "f" * 64,
         "authorization_count": 1,
         "gate_count": 1,
         "authorizations": [{
@@ -63,7 +63,7 @@ def make_visibility():
             "engineering_depth": "STANDARD",
             "direct_gate_ids": ["MATH-TEST-GATE"],
             "transitive_gate_ids": ["MATH-TEST-GATE"],
-            "closure_receipt_digest": "1" * 64,
+            "closure_receipt_digest": "sha256:" + "1" * 64,
             "passport_digest": "2" * 64,
         }],
         "gates": [{
