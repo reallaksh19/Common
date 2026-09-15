@@ -21,22 +21,27 @@ def must_fail(doc, code):
     raise AssertionError(f"expected {code}")
 
 
-# Positive: legacy COMPLETE is visible but does not authorize V9 release.
+# Positive: technical Engineering closure is now READY, but legacy COMPLETE still cannot authorize Core1A release.
 result = validate(AUDIT)
 assert result["status"] == "PASS"
 assert result["legacy_claim"] == "COMPLETE"
 assert result["release_authorized"] is False
-assert result["technical_gate_status"] == "INCOMPLETE"
+assert result["technical_gate_status"] == "READY"
+assert result["engineering_registry_ref"] == "GENERATED:physics-technical-engineering-gates.v3"
+assert result["engineering_gate_count"] == 11
+assert result["engineering_registry_digest"].startswith("sha256:")
+assert result["engineering_closure_digest"].startswith("sha256:")
+assert "1A0_LEARNER_STATE_GAP" in result["incomplete_stages"]
 assert "1A2_INFERENTIAL_JUMPS" in result["incomplete_stages"]
 assert "1A11_UNRESOLVED_JUMP_AUDIT" in result["incomplete_stages"]
 assert set(result["held_questions"]) >= {"Q14", "Q27"}
 
-# Falsifier 1: legacy COMPLETE may never be promoted directly to V9 authority.
+# Falsifier 1: legacy COMPLETE may never be promoted directly to current release authority.
 bad = copy.deepcopy(AUDIT)
 bad["legacy_claim"]["accepted_as_v9_release_evidence"] = True
 must_fail(bad, "E_MIGRATION_SCHEMA")
 
-# Falsifier 2: release cannot open while explicit stage/technical gaps remain.
+# Falsifier 2: release cannot open while explicit pedagogical stage gaps remain, even with technical READY.
 bad = copy.deepcopy(AUDIT)
 bad["release_authorized"] = True
 must_fail(bad, "E_MIGRATION_FALSE_RELEASE")
@@ -53,14 +58,29 @@ stage = next(r for r in bad["stage_audit"] if r["stage"] == "1A10_CORE2_TRANSFER
 stage["artifact_refs"].remove("Q40")
 must_fail(bad, "E_MIGRATION_TRANSFER_COVERAGE")
 
-# Falsifier 5: a gate labelled ready must actually exist and be READY in the canonical registry.
+# Falsifier 5: direct-gate custody cannot drift from the live Workbench manifest/receipt.
 bad = copy.deepcopy(AUDIT)
-bad["technical_gate_audit"]["ready_gate_ids"].append("PHY-M2D-NOT-REAL")
-must_fail(bad, "E_MIGRATION_READY_GATE_INVALID")
+bad["technical_gate_audit"]["direct_gate_ids"].remove("PHY-M2D-SPEED-AT-HEIGHT")
+must_fail(bad, "E_MIGRATION_DIRECT_GATE_DRIFT")
 
-# Falsifier 6: stage order cannot drift.
+# Falsifier 6: transitive-closure custody cannot omit a real prerequisite.
+bad = copy.deepcopy(AUDIT)
+bad["technical_gate_audit"]["closure_gate_ids"].remove("PHY-VEC-BASICS")
+must_fail(bad, "E_MIGRATION_CLOSURE_GATE_DRIFT")
+
+# Falsifier 7: technical READY/INCOMPLETE is derived from the current Workbench closure, not manually editable.
+bad = copy.deepcopy(AUDIT)
+bad["technical_gate_audit"]["status"] = "INCOMPLETE"
+must_fail(bad, "E_MIGRATION_TECHNICAL_STATUS_DRIFT")
+
+# Falsifier 8: migration cannot silently bind another bucket's Workbench manifest.
+bad = copy.deepcopy(AUDIT)
+bad["technical_gate_audit"]["engineering_manifest_ref"] = "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json"
+must_fail(bad, "E_MIGRATION_ENGINEERING_REQUEST_MANIFEST_MISMATCH")
+
+# Falsifier 9: stage order cannot drift.
 bad = copy.deepcopy(AUDIT)
 bad["stage_audit"][2], bad["stage_audit"][3] = bad["stage_audit"][3], bad["stage_audit"][2]
 must_fail(bad, "E_MIGRATION_STAGE_ORDER")
 
-print("Core1A M2D-SBA-04 real migration audit: PASS (repository-backed fail-closed evidence)")
+print("Core1A M2D-SBA-04 real migration audit: PASS (live v3 Workbench technical authority + fail-closed pedagogical release)")
