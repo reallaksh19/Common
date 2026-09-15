@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 from pathlib import Path
 from typing import Iterable
@@ -9,12 +10,13 @@ from typing import Iterable
 from jsonschema import Draft202012Validator
 
 from compile_mathematics_engineering_workbench import digest as engineering_digest, load as load_engineering
+from engineering_registry_composition import EUCLID_EXTENSION_REL, git_blob_sha
 from validate_mathematics_engineering_gates import validate as validate_engineering_registry
 
 ROOT = Path(__file__).resolve().parents[1]
 MATH = ROOT.parent
 SCHEMA = ROOT / "contracts" / "math-assessment-engineering-crosswalk.schema.json"
-DEFAULT_CROSSWALK = ROOT / "policies" / "math-assessment-engineering-crosswalk.mixed-grade9.v1.json"
+DEFAULT_CROSSWALK = ROOT / "policies" / "math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json"
 DEFAULT_ASSESSMENT_AUTHORITY = MATH / "AssessmentScope" / "authority" / "math-assessment-scope-authority.json"
 
 
@@ -25,12 +27,101 @@ class MathematicsAssessmentEngineeringCrosswalkError(Exception):
         self.message = message
 
 
-def load(path: str | Path) -> dict:
+def _raw_load(path: str | Path) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
+def _resolve_root_relative(ref: str) -> Path:
+    path = (ROOT / ref).resolve()
+    if ROOT.resolve() not in path.parents and path != ROOT.resolve():
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_REF_OUTSIDE_ROOT",
+            ref,
+        )
+    return path
+
+
+def _compose_crosswalk_patch(path: Path) -> dict:
+    patch = _raw_load(path)
+    required = {
+        "schema_version", "subject", "patch_id", "canonical_crosswalk_id",
+        "base_crosswalk_ref", "base_crosswalk_id", "base_crosswalk_git_blob_sha",
+        "base_engineering_registry_digest", "engineering_extension_ref",
+        "engineering_extension_git_blob_sha", "overrides",
+    }
+    missing = sorted(required - set(patch))
+    if missing or patch.get("schema_version") != "1.0.0" or patch.get("subject") != "MATHEMATICS":
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_SCHEMA",
+            f"missing={missing}",
+        )
+
+    base_path = _resolve_root_relative(patch["base_crosswalk_ref"])
+    actual_base_blob = git_blob_sha(base_path)
+    if actual_base_blob != patch["base_crosswalk_git_blob_sha"]:
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_BASE_STALE",
+            f"expected={patch['base_crosswalk_git_blob_sha']}, actual={actual_base_blob}",
+        )
+    base = _raw_load(base_path)
+    if base.get("crosswalk_id") != patch["base_crosswalk_id"]:
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_BASE_ID_DRIFT",
+            str(base.get("crosswalk_id")),
+        )
+    if base.get("engineering_registry_digest") != patch["base_engineering_registry_digest"]:
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_BASE_ENGINEERING_DIGEST_DRIFT",
+            str(base.get("engineering_registry_digest")),
+        )
+
+    if patch["engineering_extension_ref"] != EUCLID_EXTENSION_REL:
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_EXTENSION_REF_DRIFT",
+            patch["engineering_extension_ref"],
+        )
+    actual_ext_blob = git_blob_sha(EUCLID_EXTENSION_REL)
+    if actual_ext_blob != patch["engineering_extension_git_blob_sha"]:
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_EXTENSION_STALE",
+            f"expected={patch['engineering_extension_git_blob_sha']}, actual={actual_ext_blob}",
+        )
+
+    composed = copy.deepcopy(base)
+    rows = {row["capability_ref"]: row for row in composed["rows"]}
+    override_refs = [row.get("capability_ref") for row in patch["overrides"]]
+    if len(override_refs) != len(set(override_refs)) or not override_refs:
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_OVERRIDE_DUPLICATE",
+            str(override_refs),
+        )
+    unknown = sorted(set(override_refs) - set(rows))
+    if unknown:
+        raise MathematicsAssessmentEngineeringCrosswalkError(
+            "MATH_ENG_CROSSWALK_PATCH_OVERRIDE_UNKNOWN_CAPABILITY",
+            str(unknown),
+        )
+    for override in patch["overrides"]:
+        rows[override["capability_ref"]] = copy.deepcopy(override)
+    composed["rows"] = [rows[row["capability_ref"]] for row in base["rows"]]
+    composed["crosswalk_id"] = patch["canonical_crosswalk_id"]
+    engineering_registry = load_engineering("policies/mathematics-technical-engineering-gates.v1.json")
+    composed["engineering_registry_digest"] = engineering_digest(engineering_registry)
+    return composed
+
+
+def load(path: str | Path) -> dict:
+    p = Path(path)
+    if not p.is_absolute():
+        p = ROOT / p
+    doc = _raw_load(p)
+    if "base_crosswalk_ref" in doc and "overrides" in doc:
+        return _compose_crosswalk_patch(p)
+    return doc
+
+
 def _schema_validate(doc: dict) -> None:
-    schema = load(SCHEMA)
+    schema = _raw_load(SCHEMA)
     errors = sorted(Draft202012Validator(schema).iter_errors(doc), key=lambda e: list(e.path))
     if errors:
         e = errors[0]
@@ -48,7 +139,7 @@ def validate(
 ) -> dict:
     """Validate an exact-ID custody bridge; never infer a mapping from prose or titles."""
     _schema_validate(crosswalk)
-    assessment_authority = assessment_authority or load(DEFAULT_ASSESSMENT_AUTHORITY)
+    assessment_authority = assessment_authority or _raw_load(DEFAULT_ASSESSMENT_AUTHORITY)
     engineering_registry = engineering_registry or load_engineering("policies/mathematics-technical-engineering-gates.v1.json")
     validate_engineering_registry(engineering_registry)
 
