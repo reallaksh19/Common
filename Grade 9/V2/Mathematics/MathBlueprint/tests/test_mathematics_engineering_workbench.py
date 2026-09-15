@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import copy
-import json
 import sys
 import unittest
 from pathlib import Path
@@ -33,12 +32,17 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
         receipt = compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), PROFILE)
         self.assertEqual(receipt["closure_status"], "READY")
         self.assertEqual(receipt["direct_gate_ids"], ["MATH-QUAD-EQUATIONS"])
-        self.assertEqual(set(receipt["transitive_gate_ids"]), {"MATH-ALG-POLYNOMIALS", "MATH-QUAD-EQUATIONS"})
-        self.assertEqual(receipt["counts"]["ready_gate_count"], 2)
+        self.assertEqual(
+            receipt["transitive_gate_ids"],
+            ["MATH-NUM-RADICALS", "MATH-ALG-POLYNOMIALS", "MATH-QUAD-EQUATIONS"],
+        )
+        self.assertEqual(receipt["counts"]["ready_gate_count"], 3)
+        self.assertEqual(receipt["counts"]["transitive_gate_count"], 3)
         self.assertTrue(all(x["declared_technical_readiness_ignored"] for x in receipt["gate_states"]))
         self.assertTrue(all(x["declared_release_checklist_ignored"] for x in receipt["gate_states"]))
         passport = compile_passport(REQUEST, receipt)
         self.assertEqual(passport["technical_state"], "ENGINEERING_READY")
+        self.assertEqual(passport["gate_count"], 3)
         self.assertEqual(passport["ccu_technical_authorization"], "ALLOWED")
         self.assertEqual(passport["publication_authorization"], "NOT_IMPLIED")
 
@@ -50,6 +54,7 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
         receipt = compile_closure(REQUEST, MANIFEST, registry, PROFILE)
         state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
         self.assertEqual(state["derived_status"], "ENGINEERING_GATE_READY")
+        self.assertEqual(receipt["closure_status"], "READY")
 
     def test_self_declared_ready_cannot_rescue_missing_workbench_requirement(self):
         registry = copy.deepcopy(REGISTRY)
@@ -63,6 +68,14 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
         self.assertEqual(state["derived_status"], "ENGINEERING_GATE_INCOMPLETE")
         self.assertIn("MATH_ENG_REASONING_SEQUENCE_INCOMPLETE", state["failure_codes"])
         self.assertEqual(receipt["closure_status"], "BLOCKED")
+
+    def test_core_role_mix_is_not_a_technical_readiness_proxy(self):
+        receipt = compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), PROFILE)
+        quad = gate(REGISTRY, "MATH-QUAD-EQUATIONS")
+        roles = {x["target_core_role"] for x in quad["required_transformations"]}
+        self.assertNotIn("CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION", roles)
+        state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
+        self.assertEqual(state["derived_status"], "ENGINEERING_GATE_READY")
 
     def test_external_invariant_profile_is_authority(self):
         profile = copy.deepcopy(PROFILE)
