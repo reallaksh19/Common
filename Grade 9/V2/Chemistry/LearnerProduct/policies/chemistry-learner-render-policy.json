@@ -69,7 +69,7 @@
     "content_first_pagination": {
       "products": ["CORE1A", "CORE2A"],
       "cover_page_exempt": true,
-      "minimum_noncover_active_height_ratio": 0.12,
+      "minimum_noncover_active_height_ratio": 0.18,
       "sparse_semantic_fragments_forbidden": true,
       "page_count_is_quality_metric": false
     }
