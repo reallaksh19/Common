@@ -15,7 +15,8 @@ from referencing import Registry, Resource
 HERE = Path(__file__).resolve()
 ROOT = HERE.parents[1]
 REPO = ROOT.parents[3]
-SHARED = REPO / "Grade 9" / "V2" / "Shared" / "CrossDomain"
+SHARED_CROSS = REPO / "Grade 9" / "V2" / "Shared" / "CrossDomain"
+SHARED_GATE = REPO / "Grade 9" / "V2" / "Shared" / "EngineeringGate"
 sys.path.insert(0, str(ROOT / "engine"))
 
 from build_physics_engineering_gate_registry_v3 import build_registry  # noqa: E402
@@ -29,16 +30,16 @@ def digest(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical(value)).hexdigest()
 
 
-def schema(name: str) -> dict[str, Any]:
-    return json.loads((ROOT / "contracts" / name).read_text(encoding="utf-8"))
+def shared_cross_schema(name: str) -> dict[str, Any]:
+    return json.loads((SHARED_CROSS / "contracts" / name).read_text(encoding="utf-8"))
 
 
-def shared_schema(name: str) -> dict[str, Any]:
-    return json.loads((SHARED / "contracts" / name).read_text(encoding="utf-8"))
+def shared_gate_schema(name: str) -> dict[str, Any]:
+    return json.loads((SHARED_GATE / "contracts" / name).read_text(encoding="utf-8"))
 
 
 def load_policy() -> dict[str, Any]:
-    return json.loads((SHARED / "registry" / "domain-provider-registry.v1.json").read_text(encoding="utf-8"))
+    return json.loads((SHARED_CROSS / "registry" / "domain-provider-registry.v1.json").read_text(encoding="utf-8"))
 
 
 def repo_path(ref: str) -> Path:
@@ -62,10 +63,24 @@ def _slug(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9-]+", "-", value).strip("-")
 
 
+def _registry_context() -> tuple[dict[str, Any], str, tuple[str, ...], str]:
+    registry = build_registry()
+    registry_id = registry.get("registry_id", "")
+    if not registry_id:
+        raise AssertionError("ENGINEERING_GATE_REGISTRY_ID_REQUIRED")
+    requester_subject = registry_id.split("-", 1)[0]
+    gate_prefixes = sorted({gate["subtopic_id"].split("-", 1)[0] for gate in registry["gates"]})
+    if not gate_prefixes:
+        raise AssertionError("ENGINEERING_GATE_INTERNAL_PREFIX_REQUIRED")
+    internal_prefixes = tuple(prefix + "-" for prefix in gate_prefixes)
+    receipt_namespace = "-".join(gate_prefixes)
+    return registry, requester_subject, internal_prefixes, receipt_namespace
+
+
 def _closure_validator() -> Draft202012Validator:
-    demand = shared_schema("domain-prerequisite-demand.schema.json")
+    demand = shared_cross_schema("domain-prerequisite-demand.schema.json")
     registry = Registry().with_resource(demand["$id"], Resource.from_contents(demand))
-    return Draft202012Validator(schema("domain-prerequisite-closure.schema.json"), registry=registry)
+    return Draft202012Validator(shared_gate_schema("domain-prerequisite-closure.schema.json"), registry=registry)
 
 
 def _verify_authorities(
@@ -75,7 +90,7 @@ def _verify_authorities(
     if len(authority_receipts) != len(authority_refs):
         raise AssertionError("DOMAIN_PREREQUISITE_AUTHORITY_SOURCE_REF_REQUIRED")
 
-    validator = Draft202012Validator(shared_schema("domain-prerequisite-authority.schema.json"))
+    validator = Draft202012Validator(shared_cross_schema("domain-prerequisite-authority.schema.json"))
     authorities: dict[str, dict[str, Any]] = {}
 
     for row, source_ref in zip(authority_receipts, authority_refs, strict=True):
@@ -120,21 +135,22 @@ def compile_domain_prerequisite_closure(
     authority_refs = authority_refs or []
     authorities = _verify_authorities(authority_receipts, authority_refs)
     policy = load_policy()
+    registry, requester_subject, internal_prefixes, receipt_namespace = _registry_context()
 
-    gate_map = {gate["subtopic_id"]: gate for gate in build_registry()["gates"]}
+    gate_map = {gate["subtopic_id"]: gate for gate in registry["gates"]}
     required_by: dict[str, set[str]] = {}
     for gate_id in engineering_receipt["transitive_gate_ids"]:
         gate = gate_map.get(gate_id)
         if not gate:
             continue
         for prerequisite_id in gate["prerequisites"]:
-            if prerequisite_id.startswith("PHY-"):
+            if prerequisite_id.startswith(internal_prefixes):
                 continue
             required_by.setdefault(prerequisite_id, set()).add(gate_id)
 
     rows: list[dict[str, Any]] = []
     demands: list[dict[str, Any]] = []
-    demand_validator = Draft202012Validator(shared_schema("domain-prerequisite-demand.schema.json"))
+    demand_validator = Draft202012Validator(shared_cross_schema("domain-prerequisite-demand.schema.json"))
 
     for prerequisite_id in sorted(required_by):
         authority = authorities.get(prerequisite_id)
@@ -149,11 +165,11 @@ def compile_domain_prerequisite_closure(
 
         provider = provider_for(prerequisite_id)
         request_suffix = engineering_receipt["request_id"].replace("ENG-REQ-", "", 1)
-        demand_id = "DOMAIN-DEMAND-PHY-" + _slug(request_suffix + "-" + prerequisite_id)
+        demand_id = f"DOMAIN-DEMAND-{receipt_namespace}-" + _slug(request_suffix + "-" + prerequisite_id)
         demand = {
             "schema_version": "1.0.0",
             "demand_id": demand_id,
-            "requester_subject": "PHYSICS",
+            "requester_subject": requester_subject,
             "provider_subject": provider["provider_subject"] if provider else None,
             "provider_entrypoint_ref": provider["authority_entrypoint_ref"] if provider else None,
             "prerequisite_id": prerequisite_id,
@@ -177,7 +193,7 @@ def compile_domain_prerequisite_closure(
     closure_status = "HELD" if demands else "READY"
     receipt = {
         "schema_version": "1.0.0",
-        "receipt_id": "DOMAIN-CLOSURE-PHY-" + engineering_receipt["request_id"].replace("ENG-REQ-", "", 1),
+        "receipt_id": f"DOMAIN-CLOSURE-{receipt_namespace}-" + engineering_receipt["request_id"].replace("ENG-REQ-", "", 1),
         "engineering_receipt_ref": engineering_receipt["receipt_id"],
         "prerequisites": rows,
         "demands": demands,
@@ -190,7 +206,7 @@ def compile_domain_prerequisite_closure(
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Compile Physics external-domain prerequisite closure and provider demands.")
+    ap = argparse.ArgumentParser(description="Compile external-domain prerequisite closure from the active Engineering Gate registry")
     ap.add_argument("engineering_receipt", type=Path)
     ap.add_argument("--authority", action="append", default=[])
     ap.add_argument("--out", type=Path)
