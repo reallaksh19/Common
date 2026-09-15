@@ -1,0 +1,41 @@
+{
+  "handoff": "physics-agent-bootstrap-2026-09-12",
+  "base_review_pr": 332,
+  "entries": [
+    {"path":"README.md","bytes":10882,"sha256":"4b2a2e4136a1794745e810b0f61d3474f2a26a61f18cb8832768575bead679e1"},
+    {"path":"artifacts/final/physics-gravitation-core1-source-complete-study-guide.pdf","bytes":116245,"sha256":"a28866a6c63d5cbcb07ff79aa124d37f31ecef302a6e5b9962d8ab5e245593f3"},
+    {"path":"artifacts/final/physics-gravitation-core2-diagrammatic-transfer-book.pdf","bytes":131600,"sha256":"90acbf1ca24326f4e2b0788045f96a01b6f464e505d6878f2685be8208b97125"},
+    {"path":"artifacts/final/physics-motion-1d-core1-visual-concept-atlas-final.pdf","bytes":140175,"sha256":"531929d459353f5ae23c567c825347a768f9e13ab853829ae0be4b6cd13d2bde"},
+    {"path":"artifacts/final/physics-motion-1d-core2-answer-custody-final.pdf","bytes":146815,"sha256":"0e61b6d6f7840cb16991afbd0c5727dc5b00ef0842757137eefbe2b83e352525"},
+    {"path":"artifacts/final/physics-motion-2d-core1-answer-custody-final.pdf","bytes":127143,"sha256":"d0de1c1cad3292059dff13c9d86efc7031d00e5f55e5e0af5da560380ba7115b"},
+    {"path":"artifacts/final/physics-motion-2d-core2-answer-custody-final.pdf","bytes":146393,"sha256":"70e14375fc768626a766c713743c03526bbffaa2386b29dfa15d5711735213c8"},
+    {"path":"artifacts/final/physics-nlm-core1-answer-custody-final.pdf","bytes":128345,"sha256":"7c3a5de9b083c014235093e54cf3ad8c518ecb6d3c6d6b4ef8456eda7866cb98"},
+    {"path":"artifacts/final/physics-nlm-core2-answer-custody-final.pdf","bytes":149719,"sha256":"6afcdd37d527278639d75a55f8be650c13edce5428590b09905f163992e54574"},
+    {"path":"artifacts/final/physics-vectors-core1-answer-custody-final.pdf","bytes":121632,"sha256":"1148cbdaebff7db6b36214b1a9cc2cc54d3db32500013471958965c579a3b957"},
+    {"path":"artifacts/final/physics-vectors-core2-answer-custody-final.pdf","bytes":145254,"sha256":"0dc83b9f65d2e8100ef4a1b923f937346cba7137112803d6b5301d8b8a24e319"},
+    {"path":"artifacts/final/physics-work-energy-core1-robust-layout-v2.pdf","bytes":130626,"sha256":"c6a171e35838b2493559ec908edff2a435ebcbe730830a7a8a74f4bc292dd839"},
+    {"path":"artifacts/final/physics-work-energy-core2-robust-layout-v2.pdf","bytes":147892,"sha256":"ae1b8d9f6a73b6a5d6a5f666c6bc9aaf6c987720e4b192cd721e1dc4aceba594"},
+    {"path":"artifacts/superseded/physics-motion-1d-core1-answer-custody-final.pdf","bytes":135387,"sha256":"3bd719e277a9d3dc59404f16c8ce972f0a39d214d37d9d01c0f014948a824944"},
+    {"path":"audits/physics-foundation-ch2-5-answer-custody-consolidated-audit.json","bytes":3512,"sha256":"1ebd8833607859acbef81a0323f5c505e99a378c8f75ea71f2855975408fa508"},
+    {"path":"audits/physics-foundation-ch2-5-consolidation-audit.json","bytes":8234,"sha256":"3b2b5052f1435e062e11f93f5bcf7aac5ea680610f191a98105df5fa092b7d20"},
+    {"path":"audits/physics-foundation-ch2-5-consolidation-manifest.json","bytes":1491,"sha256":"2dbb0f65f9be7b61970f83583d2a5c0df0b8bceaf27093eb38b8275d715ef875"},
+    {"path":"audits/physics-foundation-ch2-5-core2-answer-custody-audit.json","bytes":2819,"sha256":"be8fd19c80d57689c8b403ff947f3f6aee267d0561947db1dc394059ac89abda"},
+    {"path":"audits/physics-foundation-ch2-5-recovery-audit.json","bytes":6509,"sha256":"4a9cc49f40ac55492e49068d28e89e4e203724baca0727a0a592f0b48e4241e2"},
+    {"path":"audits/physics-foundation-ch2-5-recovery-manifest.json","bytes":1582,"sha256":"c842992c9c6740639a9f513de09989f9a61acf9c15a1f45658c14fbc082df14d"},
+    {"path":"audits/physics-gravitation-source-complete-audit.json","bytes":1894,"sha256":"853f5d4b6683c0484162339d2baebfb65302e5814c5e613b130608a07de7a9ad"},
+    {"path":"audits/physics-motion-1d-core1-visual-concept-atlas-audit.json","bytes":562,"sha256":"e7af3641a2f95b7ea33dc8002994f281d1a8a1f7a646e7f967d54211537663a5"},
+    {"path":"audits/physics-motion-2d-specific-checks-v4-audit.json","bytes":1735,"sha256":"006cbf48df4bfc67ea2277297fbd8355c832003018176de8741c85b56f5400a8"},
+    {"path":"audits/physics-motion-2d-structural-rebuild-v2-audit.json","bytes":1442,"sha256":"8db72f4338b2abb4f481d4cf693cd4317fdf712f342f688148e9f22377260720"},
+    {"path":"audits/physics-motion-2d-worked-verification-v3-audit.json","bytes":1414,"sha256":"4c0059ef77f6e122e9bbe78246d9029b81fdfc837a0be21e8150fe7c113ae5ae"},
+    {"path":"audits/physics-nlm-source-complete-audit.json","bytes":6755,"sha256":"ac972eb5bf867316f75fb2b8a7901b904bee8fa04a0f49c289b95eb4d19d5b74"},
+    {"path":"audits/physics-vectors-core2-diagrammatic-rebuild-audit.json","bytes":561,"sha256":"f8812ef194951cdf05655613455821ee3028eaf21d2ca6d3375c30a69807b290"},
+    {"path":"audits/physics-vectors-source-reconciled-audit.json","bytes":2372,"sha256":"2e2a7fda42abc961bd4ee0f3d84a9eb457f8d45dd6ea3b586e45b5988317fa1e"},
+    {"path":"audits/physics-work-energy-robust-layout-v2-audit.json","bytes":5029,"sha256":"2e420602ab04bcedb2a272ca81df5dc747cf42a2fe77d51563156dda8869f976"},
+    {"path":"scripts/build_motion1d_visual_core1.py","bytes":50073,"sha256":"5d1a6103de9a4d0cacb1ce52726db50c5a69db3af18a4e8811e8df61b326f7db"}
+  ],
+  "notes": [
+    "Independent case-study handoff; not canonical release.",
+    "Benchmark/reference PDFs supplied by the user are not redistributed.",
+    "Prefer artifacts/final/physics-motion-1d-core1-visual-concept-atlas-final.pdf over the superseded Motion 1D Core (1) artifact."
+  ]
+}

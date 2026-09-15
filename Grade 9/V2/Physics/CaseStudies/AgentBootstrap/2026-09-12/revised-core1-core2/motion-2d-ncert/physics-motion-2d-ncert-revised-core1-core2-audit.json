@@ -1,0 +1,23 @@
+{
+  "topic": "Motion in 2D - NCERT Class IX Exemplar selected subset",
+  "scope_note": "Focused subset only; does not claim full Motion in a Plane coverage.",
+  "source_inventory": [
+    {"id":"U8-Q1","source":"NCERT Class IX Science Exemplar Unit 8 - Motion","disposition":"TEACH/PRACTICE","demand":"displacement after half a circular path","unique_cluster":"curved-path displacement"},
+    {"id":"U8-Q6","source":"NCERT Class IX Science Exemplar Unit 8 - Motion","disposition":"TEACH/PRACTICE","demand":"constant speed on merry-go-round still accelerated","unique_cluster":"direction-changing velocity"},
+    {"id":"U8-Q11","source":"NCERT Class IX Science Exemplar Unit 8 - Motion","disposition":"TEACH/PRACTICE","demand":"when distance equals displacement magnitude","unique_cluster":"path vs displacement"},
+    {"id":"U10-Q4","source":"NCERT Class IX Science Exemplar Unit 10 - Gravitation","disposition":"TEACH/PRACTICE","demand":"direction immediately after string breaks in circular motion","unique_cluster":"tangent release"},
+    {"id":"U10-Q16","source":"NCERT Class IX Science Exemplar Unit 10 - Gravitation","disposition":"TEACH/PRACTICE","demand":"source and dependence of planetary centripetal force","unique_cluster":"gravity as centripetal force"},
+    {"id":"U10-Q17","source":"NCERT Class IX Science Exemplar Unit 10 - Gravitation","disposition":"TEACH/PRACTICE","demand":"horizontal throw versus simultaneous drop","unique_cluster":"independent horizontal/vertical motion"},
+    {"id":"U10-Q18","source":"NCERT Class IX Science Exemplar Unit 10 - Gravitation","disposition":"TEACH/PRACTICE","demand":"moon direction if Earth gravity vanished","unique_cluster":"orbital tangent/inertia"},
+    {"id":"U10-Q22","source":"NCERT Class IX Science Exemplar Unit 10 - Gravitation","disposition":"TEACH/PRACTICE","demand":"why Earth does not fall into Sun","unique_cluster":"orbit as continuous inward acceleration"},
+    {"id":"U9-Q5","source":"NCERT Class IX Science Exemplar Unit 9 - Force and Laws of Motion","disposition":"TRANSFER","demand":"coin tossed in train falls behind; infer train motion","unique_cluster":"accelerating-frame relative motion"},
+    {"id":"Sample-I-Q10","source":"NCERT Class IX Science Exemplar Sample Question Paper I","disposition":"DUPLICATE","demand":"same half-circle displacement as U8-Q1","unique_cluster":"curved-path displacement"}
+  ],
+  "unique_demand_count": 9,
+  "duplicate_count": 1,
+  "core1": {"file":"physics-motion-2d-ncert-revised-core1.pdf","sha256":"8707d6fc78a2f9fac52c0cc3000248e9708604a618591e34f6a6f46fa3fdd8ca","competency_families":9,"pages":20,"out_of_bounds":[],"severe_overlap":[]},
+  "core2": {"file":"physics-motion-2d-ncert-revised-core2.pdf","sha256":"57efc6ec24ae5136d000106abcb10b55a83b4e7f6da4a58d50cd3ab56146c9c2","attempts":9,"solutions":9,"explicit_answers":9,"pages":20,"out_of_bounds":[],"severe_overlap":[]},
+  "hint_contract": {"paired_prompt_reveal":true,"h1_h2_h3_count":27,"answer_leakage_intended":false},
+  "source_to_core2": {"M2D-NC-01":"U8-Q1 / Sample-I-Q10 duplicate","M2D-NC-02":"U8-Q6","M2D-NC-03":"U8-Q11","M2D-NC-04":"U10-Q4","M2D-NC-05":"U10-Q16","M2D-NC-06":"U10-Q17","M2D-NC-07":"U10-Q18","M2D-NC-08":"U10-Q22","M2D-NC-09":"U9-Q5 (transfer)"},
+  "publication_gates": {"core1_all_core2_moves_pre_taught":true,"all_questions_have_explicit_answers":true,"sample_I_Q10_deduplicated_against_U8_Q1":true,"source_boundary_explicit":true,"out_of_bounds_zero":true,"severe_overlap_zero":true}
+}

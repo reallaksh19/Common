@@ -1,0 +1,40 @@
+{
+  "topic": "Vectors",
+  "revision": "topic-by-topic learner rebuild",
+  "core1": {
+    "file": "physics-vectors-revised-core1.pdf",
+    "pages": 25,
+    "sha256": "577ae72b99796ec8ff2c15f119aeda59213f7780698c2195fb2c0bb59b142c73",
+    "out_of_bounds_text_blocks": 0,
+    "severe_overlap_flags": 0,
+    "oob_examples": [],
+    "overlap_examples": []
+  },
+  "core2": {
+    "file": "physics-vectors-revised-core2.pdf",
+    "pages": 30,
+    "sha256": "dcadea30ba00cf07e2638c476ffdd321f2202920e92dce0382810468fe1b8651",
+    "out_of_bounds_text_blocks": 0,
+    "severe_overlap_flags": 0,
+    "oob_examples": [],
+    "overlap_examples": []
+  },
+  "core2_problem_count": 14,
+  "hint_contract": "prompt first -> directly related reveal; H1 concept, H2 representation, H3 first executable equation; exactly two work lines",
+  "core1_contract": "recognition + representation + mechanism + relation construction/validity + worked + guided + faded + anti-trigger + quick check + answer",
+  "render_verification": {
+    "core1_rendered_pages": 25,
+    "core2_rendered_pages": 30,
+    "renderer": "pdfium via render_pdf.py",
+    "representative_visual_review": [
+      "core1 cover",
+      "core1 concept",
+      "core1 practice",
+      "core1 atlas",
+      "core2 attempt",
+      "core2 quick key",
+      "core2 solution"
+    ],
+    "status": "pass"
+  }
+}

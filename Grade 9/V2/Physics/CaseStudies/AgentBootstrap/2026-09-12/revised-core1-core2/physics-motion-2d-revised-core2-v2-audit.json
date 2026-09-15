@@ -1,0 +1,18 @@
+{
+  "file": "physics-motion-2d-revised-core2-v2.pdf",
+  "pages": 122,
+  "numbered_source_questions": 59,
+  "attempt_pages": 59,
+  "solution_pages": 59,
+  "workspace_lines_per_attempt": 2,
+  "hint_contract": "self-contained open-ended prompt + directly matched reveal",
+  "hint_pair_validation_failures": [],
+  "missing_challenges": [],
+  "missing_solutions": [],
+  "missing_answers": [],
+  "source_ambiguities": [49, 51],
+  "out_of_bounds_text": [],
+  "severe_overlap_flags": [],
+  "sha256": "b5fedd1b2620fb5dddc53f9e90edb9b798aa4af3bf6f4e07b761bf05a3ac0d9c",
+  "solution_ladder": ["UNDERSTAND", "REPRESENT", "CONNECT", "CALCULATE", "INTERPRET"]
+}
