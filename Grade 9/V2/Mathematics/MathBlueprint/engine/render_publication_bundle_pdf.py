@@ -31,8 +31,15 @@ def ordered_pages(bundle: dict) -> list[dict]:
     return pages
 
 
-def render_bundle(bundle: dict, release_gate: dict, generation_spec: dict, catalog: dict, out_pdf: Path) -> dict:
-    validation = validate_bundle(bundle, release_gate, generation_spec, catalog)
+def render_bundle(
+    bundle: dict,
+    release_gate: dict,
+    generation_spec: dict,
+    catalog: dict,
+    out_pdf: Path,
+    research_manifest: dict | None = None,
+) -> dict:
+    validation = validate_bundle(bundle, release_gate, generation_spec, catalog, research_manifest)
     st = styles()
     pages = ordered_pages(bundle)
     pdf = SimpleDocTemplate(
@@ -82,6 +89,7 @@ def render_bundle(bundle: dict, release_gate: dict, generation_spec: dict, catal
         "pdf_size_bytes": len(data),
         "semantic_source": "LEARNER_PUBLICATION_BUNDLE_ONLY",
         "difficulty_badge_counts": validation["difficulty_badge_counts"],
+        "research_manifest_bound": validation["research_manifest_bound"],
     }
 
 
@@ -91,14 +99,16 @@ def main() -> None:
     ap.add_argument("--release-gate", required=True)
     ap.add_argument("--generation-spec", required=True)
     ap.add_argument("--core1a-example-catalog", required=True)
+    ap.add_argument("--pedagogy-research-manifest")
     ap.add_argument("--out", required=True)
     ap.add_argument("--audit-out", required=True)
     args = ap.parse_args()
     bundle = load(args.input)
+    research = load(args.pedagogy_research_manifest) if args.pedagogy_research_manifest else None
     out = Path(args.out); out.parent.mkdir(parents=True, exist_ok=True)
     audit = render_bundle(
         bundle, load(args.release_gate), load(args.generation_spec),
-        load(args.core1a_example_catalog), out,
+        load(args.core1a_example_catalog), out, research,
     )
     Path(args.audit_out).write_text(json.dumps(audit, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(audit, indent=2, ensure_ascii=False))
