@@ -9,6 +9,7 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[3]
 SHARED = REPO / "Grade 9" / "V2" / "Shared" / "CrossDomain"
+SHARED_GATE = REPO / "Grade 9" / "V2" / "Shared" / "EngineeringGate"
 
 
 def load(rel: str):
@@ -17,6 +18,10 @@ def load(rel: str):
 
 def load_shared(rel: str):
     return json.loads((SHARED / rel).read_text(encoding="utf-8"))
+
+
+def load_shared_gate(rel: str):
+    return json.loads((SHARED_GATE / rel).read_text(encoding="utf-8"))
 
 
 def test_v10_contract_schemas_are_valid():
@@ -33,10 +38,16 @@ def test_v10_contract_schemas_are_valid():
         "contracts/domain-prerequisite-authority.schema.json",
         "contracts/domain-prerequisite-demand.schema.json",
     ]
+    shared_gate_names = [
+        "contracts/domain-prerequisite-closure.schema.json",
+        "contracts/engineering-readiness-envelope.schema.json",
+    ]
     for rel in local_names:
         Draft202012Validator.check_schema(load(rel))
     for rel in shared_names:
         Draft202012Validator.check_schema(load_shared(rel))
+    for rel in shared_gate_names:
+        Draft202012Validator.check_schema(load_shared_gate(rel))
 
 
 def test_v10_cross_domain_transport_is_shared_not_physics_shadowed():
@@ -49,6 +60,7 @@ def test_v10_cross_domain_transport_is_shared_not_physics_shadowed():
     closure = load("contracts/domain-prerequisite-closure.schema.json")
     demand_ref = closure["properties"]["demands"]["items"]["$ref"]
     assert demand_ref == "https://schemas.common/v2/shared/cross-domain/domain-prerequisite-demand.schema.json"
+    assert closure["x-authority-ref"] == "Grade 9/V2/Shared/EngineeringGate/contracts/domain-prerequisite-closure.schema.json"
 
 
 def test_v10_shared_demand_contract_is_subject_neutral_transport():
@@ -106,11 +118,16 @@ def test_v10_normative_architecture_exists_and_declares_canonicality():
     assert "Shared/CrossDomain" in text
 
 
-def test_v10_engineering_kernel_joins_internal_and_external_readiness_before_consumption():
+def test_v10_engineering_kernel_defers_consumer_authority_to_global_gate():
     text = (ROOT / "ENGINEERING_READINESS_KERNEL.md").read_text(encoding="utf-8")
     assert "Discovery is permissive; promotion and consumption are strict" in text
     assert "ENGINEERING READINESS ENVELOPE" in text
-    assert "A held Mathematics prerequisite does not stop steps 1–8. It does stop step 9." in text
+    assert "Blueprint must never be modified to recognize a topic, subtopic, bucket, prerequisite, downstream consumer, or exception merely because a particular case needs it" in text
+    assert "If data is absent, the system holds or rejects. It does not infer from model memory." in text
+    assert (SHARED_GATE / "engine" / "evaluate_readiness.py").exists()
+    assert (SHARED_GATE / "tests" / "test_readiness_policy.py").exists()
+    readiness_mirror = load("contracts/engineering-readiness-envelope.schema.json")
+    assert readiness_mirror["x-authority-ref"] == "Grade 9/V2/Shared/EngineeringGate/contracts/engineering-readiness-envelope.schema.json"
     assert (ROOT / "engine" / "compile_engineering_readiness.py").exists()
     assert (ROOT / "engine" / "compile_all_engineering_readiness.py").exists()
 
