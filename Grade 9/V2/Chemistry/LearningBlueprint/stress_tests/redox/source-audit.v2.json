@@ -1,0 +1,175 @@
+{
+  "schema_version": "2.0.0",
+  "audit_id": "CHEM-SOURCE-AUDIT-REDOX-STRESS-V2",
+  "gate_id": "CHEM-REDOX-OXIDATION",
+  "base_registry_ref": "policies/chemistry-technical-engineering-gates.v1.json",
+  "audit_role": "STRESS_TEST_SOURCE_AUDIT",
+  "effective_provenance": {
+    "authority_class": "MIXED",
+    "source_curricula": [
+      "NCERT Class X Science",
+      "NCERT Class XI Chemistry"
+    ],
+    "scope_policy": "GRADE_BANDED",
+    "source_references": [
+      "NCERT Class X Science, Chapter 1, Section 1.2.5 (Oxidation and Reduction)",
+      "NCERT Chemistry Classes XI-XII syllabus, Unit VIII: Redox Reactions",
+      "NCERT Class XI Chemistry Exemplar, Unit 8: Redox Reactions"
+    ]
+  },
+  "source_layers": [
+    {
+      "layer_id": "SRC-NCERT-X-SCI-REDOX",
+      "authority_class": "SOURCE_DEFINED",
+      "source_ref": "NCERT Class X Science Chapter 1 Section 1.2.5",
+      "scope": "Class X oxidation/reduction reaction foundation",
+      "supports": [
+        "oxygen/hydrogen framing of oxidation and reduction",
+        "CuO + H2 -> Cu + H2O textbook redox example",
+        "simultaneous oxidation and reduction recognition at Class X level"
+      ]
+    },
+    {
+      "layer_id": "SRC-NCERT-XI-SYLLABUS-REDOX",
+      "authority_class": "OFFICIAL_SYLLABUS",
+      "source_ref": "NCERT Chemistry Classes XI-XII syllabus Unit VIII",
+      "scope": "Class XI formal Redox Reactions",
+      "supports": [
+        "electron-transfer definition",
+        "oxidation-number reasoning",
+        "formal redox balancing scope"
+      ]
+    },
+    {
+      "layer_id": "SRC-NCERT-XI-EXEMPLAR-REDOX",
+      "authority_class": "SOURCE_DEFINED",
+      "source_ref": "NCERT Class XI Chemistry Exemplar Unit 8",
+      "scope": "Official Class XI Redox Reactions exemplar corpus",
+      "supports": [
+        "existence of an official Class XI redox practice corpus"
+      ]
+    },
+    {
+      "layer_id": "SRC-STANDARD-REDOX-DERIVATION",
+      "authority_class": "STANDARD_CHEMISTRY_DERIVED",
+      "source_ref": "DERIVED_FROM:SRC-NCERT-XI-SYLLABUS-REDOX",
+      "scope": "Standard derived formal-redox examples within the Class XI syllabus envelope",
+      "supports": [
+        "agent-role relation derived from electron acceptance/donation",
+        "illustrative acidic half-reaction transformation"
+      ]
+    }
+  ],
+  "scope_tiers": [
+    {
+      "tier_id": "FOUNDATION_G10",
+      "grade_band": "10",
+      "description": "Reaction-recognition foundation from the Class X source context."
+    },
+    {
+      "tier_id": "FORMAL_G11",
+      "grade_band": "11",
+      "description": "Formal electron-transfer, oxidation-number and agent-role reasoning."
+    },
+    {
+      "tier_id": "EXTENDED_G11",
+      "grade_band": "11",
+      "description": "Formal ionic redox and half-reaction transformations held unless explicitly authorized."
+    }
+  ],
+  "coverage_requirements": [
+    "CONCEPT",
+    "EQUATION",
+    "TRANSFORMATION"
+  ],
+  "asset_bindings": [
+    {
+      "asset_kind": "CONCEPT",
+      "asset_ref": "CON-CHEM-OIL-RIG",
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX"],
+      "scope_tier_id": "FORMAL_G11",
+      "claim_class": "SOURCE_DEFINED",
+      "downstream_scope": "Legacy internal identifier only; learner-facing wording uses direct electron-transfer language."
+    },
+    {
+      "asset_kind": "CONCEPT",
+      "asset_ref": "CON-CHEM-OXIDATION-STATE-RULES",
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX"],
+      "scope_tier_id": "FORMAL_G11",
+      "claim_class": "SOURCE_DEFINED",
+      "downstream_scope": "Formal Class XI oxidation-number reasoning."
+    },
+    {
+      "asset_kind": "CONCEPT",
+      "asset_ref": "CON-CHEM-AGENT-INVERSION",
+      "authority_layer_ids": [
+        "SRC-NCERT-XI-SYLLABUS-REDOX",
+        "SRC-STANDARD-REDOX-DERIVATION"
+      ],
+      "scope_tier_id": "FORMAL_G11",
+      "claim_class": "STANDARD_CHEMISTRY_DERIVED",
+      "downstream_scope": "Agent assignment remains derived Chemistry and is not attributed verbatim to an exemplar index."
+    },
+    {
+      "asset_kind": "EQUATION",
+      "asset_ref": "EQ-CHEM-REDOX-TRANSFER",
+      "authority_layer_ids": [
+        "SRC-NCERT-X-SCI-REDOX",
+        "SRC-NCERT-XI-SYLLABUS-REDOX"
+      ],
+      "scope_tier_id": "FOUNDATION_G10",
+      "claim_class": "SOURCE_DEFINED",
+      "downstream_scope": "Reaction example is foundation-level; formal annotations require higher-scope authority."
+    },
+    {
+      "asset_kind": "TRANSFORMATION",
+      "asset_ref": "REDOX_EQUATION->AGENT_ASSIGNMENT|CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+      "authority_layer_ids": [
+        "SRC-NCERT-XI-SYLLABUS-REDOX",
+        "SRC-STANDARD-REDOX-DERIVATION"
+      ],
+      "scope_tier_id": "FORMAL_G11",
+      "claim_class": "STANDARD_CHEMISTRY_DERIVED",
+      "downstream_scope": "Formal agent assignment within the Class XI source-scope envelope."
+    },
+    {
+      "asset_kind": "TRANSFORMATION",
+      "asset_ref": "HALF_REACTIONS->BALANCED_OVERALL_REDOX|CORE1B_GENERATIVE_RECONSTRUCTION",
+      "authority_layer_ids": [
+        "SRC-NCERT-XI-SYLLABUS-REDOX",
+        "SRC-STANDARD-REDOX-DERIVATION"
+      ],
+      "scope_tier_id": "EXTENDED_G11",
+      "claim_class": "SOURCE_SCOPE_HELD",
+      "downstream_scope": "Held for lower-grade products unless formal ionic redox balancing is explicitly authorized."
+    }
+  ],
+  "learner_surface_policy": {
+    "internal_concept_ids_hidden": true,
+    "legacy_internal_ids": ["CON-CHEM-OIL-RIG"],
+    "forbidden_surface_labels": ["OIL RIG", "agent inversion"],
+    "preferred_surface_language": [
+      "oxidation: electron loss / oxidation number increases",
+      "reduction: electron gain / oxidation number decreases",
+      "oxidising agent is reduced; reducing agent is oxidised"
+    ]
+  },
+  "repair_records": [
+    {
+      "defect_id": "STRESS-REDOX-PROVENANCE-OVERCLAIM",
+      "status": "REPAIRED_BY_AUDIT_LAYER",
+      "repair": "Separate Class X reaction-recognition authority from Class XI formal redox authority."
+    },
+    {
+      "defect_id": "STRESS-REDOX-GRADE-SCOPE-LEAK",
+      "status": "REPAIRED_BY_AUDIT_LAYER",
+      "repair": "Hold the formal half-reaction transformation outside lower-grade product scope unless explicitly authorized."
+    },
+    {
+      "defect_id": "STRESS-REDOX-LEARNER-JARGON",
+      "status": "REPAIRED_BY_AUDIT_LAYER",
+      "repair": "Keep legacy mnemonic and architecture labels off learner-facing surfaces."
+    }
+  ],
+  "audit_status": "SOURCE_HARDENED"
+}
