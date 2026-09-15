@@ -1,118 +1,134 @@
-# Physics Engineering Readiness Kernel — canonical consumption boundary
+# Engineering Readiness Kernel — global authority above Blueprint
 
-## Purpose
+## Authority order
 
-The Engineering Kernel is the mandatory boundary between broad subject research and downstream learner-product consumption.
+The Engineering Gate is upstream authority. Blueprint is a downstream consumer/adapter.
 
-Its governing rule is:
+```text
+DISCOVERY / EVIDENCE
+        ↓
+SUBJECT ENGINEERING GATES + CROSS-DOMAIN AUTHORITY RECEIPTS
+        ↓
+GLOBAL ENGINEERING GATE READINESS POLICY
+        ↓
+ENGINEERING READINESS ENVELOPE
+        ↓
+BLUEPRINT / OTHER DECLARED CONSUMERS
+```
+
+The canonical global authority is under:
+
+- `Grade 9/V2/Shared/EngineeringGate/policy/readiness-policy.v1.json`
+- `Grade 9/V2/Shared/EngineeringGate/contracts/`
+- `Grade 9/V2/Shared/EngineeringGate/engine/evaluate_readiness.py`
+
+Blueprint-local readiness code is compatibility/orchestration only. It may compile subject receipts and pass them to the global Engineering Gate, but it does not own readiness policy.
+
+## Non-negotiable invariant
+
+> **Blueprint must never be modified to recognize a topic, subtopic, bucket, prerequisite, downstream consumer, or exception merely because a particular case needs it.**
+
+No Blueprint readiness branch may depend on remembered domain facts, case IDs, special topic names, fixed prerequisite IDs, or a hand-maintained consumer list.
+
+All case variation must arrive as governed data:
+
+- engineering request;
+- engineering manifest;
+- canonical subject gate registry;
+- research evidence receipts when required;
+- provider-owned cross-domain authority receipts;
+- the global Engineering Gate policy.
+
+If data is absent, the system holds or rejects. It does not infer from model memory.
+
+## Discovery versus consumption
+
+The governing rule remains:
 
 > **Discovery is permissive; promotion and consumption are strict.**
 
-Agents may search broadly, inspect external sources, create candidate mappings, and build RESEARCH dossiers while the final prerequisite graph is incomplete. Missing authority must remain visible, but it must not stop discovery itself. A downstream technical consumer may proceed only from an aggregate Engineering Readiness Envelope.
+Broad discovery, source inspection, reconciliation, and research dossier construction may continue while prerequisite authority is unresolved. Missing authority remains visible. A downstream consumer may proceed only when the Engineering Readiness Envelope explicitly allows that consumer.
 
-## Canonical lifecycle
+## Exact-manifest custody
 
-```text
-ENGINEERING REQUEST
-        ↓
-DISCOVERY / RECONCILIATION
-        ↓
-CANONICAL V3 GATE SOURCES
-        ↓
-PHYSICS TECHNICAL CLOSURE ─────────────┐
-        ↓                              │
-RESEARCH DOSSIER + CLAIM LEDGER        │ when depth = RESEARCH
-                                       │
-CROSS-DOMAIN PREREQUISITE CLOSURE ────┤
-                                       ↓
-                       ENGINEERING READINESS ENVELOPE
-                                       ↓
-                         consumer-specific permission
-                                       ↓
-                         CCU / Core1A / Core1B /
-                         Core2A / Core2B
-```
+Consumer permission is data-driven from the manifest's `downstream_consumers` field. The Engineering closure receipt binds the exact manifest with `manifest_digest`.
 
-The Engineering Passport remains a useful internal-Physics projection. It is not sufficient consumer authority because it does not own another domain's prerequisite readiness. The aggregate Engineering Readiness Envelope is the consumer boundary.
+The global evaluator rejects:
 
-## Readiness dimensions
+- a manifest belonging to another request;
+- a receipt belonging to another manifest;
+- same-ID manifest content drift;
+- a domain closure bound to another engineering receipt;
+- a requested consumer that is not declared by the exact manifest.
 
-The envelope exposes four independent dimensions:
+This prevents a caller from adding a consumer after engineering closure or from asking Blueprint to remember that a consumer "should" be allowed.
 
-- `physics_technical` — canonical Physics gates and recursive Physics prerequisite closure;
-- `research_provenance` — `READY`, `BLOCKED`, or `NOT_REQUIRED` according to engineering depth;
-- `external_prerequisites` — authoritative-domain receipts only;
-- `source_authority` — independent source/legal state, never silently collapsed into technical readiness.
+## Generic readiness dimensions
 
-A technical consumer is `ALLOWED` only when Physics technical closure is READY and external prerequisite closure is READY. Publication is always `NOT_AUTHORIZED` by engineering alone.
+The global envelope exposes subject-neutral dimensions:
 
-This prevents contradictory user-facing states such as `CCU ALLOWED` while Mathematics prerequisites remain `HELD_NO_DOMAIN_RECEIPT`.
+- `technical` — subject Engineering Gate closure;
+- `research_provenance` — research evidence state when the request depth requires it;
+- `external_prerequisites` — provider-owned cross-domain authority only;
+- `source_authority` — independent source/legal state.
 
-## Adding a new topic such as Thermodynamics
+The global evaluator does not contain subject/topic prerequisite IDs. Subject adapters produce technical and cross-domain receipts; the global Engineering Gate joins them according to policy.
 
-Do not begin by creating teaching prose or a one-off workflow. Create an Engineering Request at the requested depth and perform discovery/reconciliation first.
+## Consumer permission rule
 
-Typical candidate capabilities may include temperature, thermal equilibrium, heat capacity, calorimetry, phase change, internal energy, gas work, the first law, P-V representations and heat transfer. Discovery may also identify external Mathematics capabilities or reusable Physics gates.
+Permissions are generated only for consumers declared by the exact manifest.
 
-Each candidate is reconciled as one of:
-
-`REUSE | EXTEND | CREATE_CHILD | CREATE_NEW | OUT_OF_SCOPE | UNRESOLVED`
-
-Only reviewed candidates are promoted to canonical `engineering-gates/**/PHY-*.v3.json` authority. The manifest declares direct requested gates; `compile_engineering_closure.py` derives recursive Physics prerequisites. `compile_domain_prerequisite_closure.py` derives external-domain demands. `compile_engineering_readiness.py` joins both without allowing either layer to impersonate the other.
-
-## Adding one research-depth subtopic
-
-For a request such as gravitational field at `RESEARCH` depth:
-
-1. create/update the Engineering Request;
-2. perform broad discovery and human-reviewed reconciliation;
-3. build the Research Dossier and claim-level Claim Ledger;
-4. create or reuse canonical v3 gates;
-5. declare only the direct requested gates in the manifest;
-6. compile Physics prerequisite closure;
-7. compile external-domain prerequisite closure;
-8. compile the aggregate Engineering Readiness Envelope;
-9. allow downstream consumption only if that consumer is `ALLOWED`.
-
-A held Mathematics prerequisite does not stop steps 1–8. It does stop step 9.
-
-## Minimum promotion criteria
-
-Every promoted gate must have, where applicable:
-
-- stable subject capability identity;
-- explicit scope and authority basis;
-- explicit Physics and external prerequisites;
-- core scientific concepts/laws/relations;
-- symbol, dimensional and frame/sign semantics for equations;
-- model validity conditions and failure consequences;
-- at least one verification/falsification route;
-- contradiction, cycle and duplicate-authority checks;
-- explicit cross-domain ownership rather than consumer self-certification.
-
-The following are conditional rather than bureaucratic quotas: dedicated diagrams, misconception models, transformations, problem-family count and research source count. They are required when the capability needs them, not merely to fill a schema.
-
-`RESEARCH` additionally requires a release-ready Research Dossier and Claim Ledger. Research depth is evidence depth; it does not automatically increase learner difficulty.
-
-## Generic CI rule
-
-New ordinary topics/subtopics should be data additions, not new validators or bespoke workflows.
-
-`compile_all_engineering_readiness.py` discovers canonical v3 request/manifest pairs and compiles each through the same readiness pipeline. A new topic should require new Python code only when it introduces a genuinely new class of invariant that the Engineering Kernel cannot express.
-
-CI compilation does not fail merely because a legitimate authority is held. Held states are valid governed outputs. Consumer-specific validation fails when a blocked consumer attempts to proceed.
-
-## User visibility
-
-Author/reviewer interfaces should project the envelope as a compact engineering map:
+For an ordinary technical consumer:
 
 ```text
-Physics technical        READY
-Research provenance      READY
-External prerequisites   HELD (2)
-Source authority         HELD
-Core1A consumption       BLOCKED
-Publication              NOT AUTHORIZED
+ALLOWED ⇔ technical closure READY
+          AND external prerequisite closure READY
 ```
 
-Learner-facing products should translate this into subject language (dependencies, model limits, fragile reasoning points, common traps) and must not expose internal receipt IDs or digest machinery.
+Consumers listed in the global policy as non-authorizing domains remain `NOT_AUTHORIZED` regardless of technical readiness. Engineering readiness cannot manufacture an authority it does not own.
+
+A consumer absent from the manifest is not `BLOCKED`, `ALLOWED`, or guessed. A request to require it fails as `E_ENG_GATE_CONSUMER_UNDECLARED`.
+
+## Subject adapter responsibilities
+
+A subject adapter may:
+
+1. validate its canonical Engineering Gate registry;
+2. derive recursive prerequisites from that registry;
+3. compile a technical closure receipt;
+4. bind the exact manifest digest;
+5. compile provider-owned external prerequisite closure/demands;
+6. submit those receipts plus the exact manifest to the global Engineering Gate evaluator.
+
+A subject adapter may not:
+
+- hardcode a downstream consumer set;
+- hardcode external prerequisite IDs in readiness policy;
+- grant cross-domain authority locally;
+- override a global held state;
+- treat a Passport or internal projection as aggregate authority.
+
+## Adding new engineering scope
+
+Ordinary new scope is a data operation:
+
+1. add/reconcile canonical Engineering Gate data;
+2. add/update request and manifest data;
+3. add research evidence only when the request depth requires it;
+4. provide authoritative external-domain receipts when available;
+5. run the same global evaluator.
+
+Do not add a Blueprint `if topic == ...`, a special workflow, or a remembered exception. New code is justified only for a genuinely new invariant class that cannot be represented by the existing Engineering Gate contracts.
+
+## CI invariant
+
+CI proves two layers independently:
+
+1. `Grade 9/V2/Shared/EngineeringGate/tests/test_readiness_policy.py` uses topic-agnostic synthetic data to prove the global policy, exact-manifest custody, manifest-driven consumers, held-state behavior, and rejection of undeclared remembered consumers.
+2. Subject integration tests prove that the subject adapter produces receipts accepted by the global evaluator.
+
+A legitimate `HELD` state is a successful governance output. CI fails when code bypasses the gate, mutates custody, invents authority, or attempts blocked/undeclared consumption.
+
+## Visibility
+
+The canonical user/reviewer readiness projection is the Engineering Readiness Envelope, not an internal subject Passport. Internal receipts may remain diagnostic artifacts, but they cannot contradict or supersede global Engineering Gate authority.
