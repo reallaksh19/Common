@@ -40,13 +40,21 @@
     },
     {
       "layer_id": "SRC-NCERT-XI-EXEMPLAR-REDOX",
-      "authority_class": "STANDARD_CHEMISTRY_DERIVED",
+      "authority_class": "SOURCE_DEFINED",
       "source_ref": "https://ncert.nic.in/exemplar-problems.php?ln=en",
-      "scope": "Class XI Chemistry Exemplar Unit 8 Redox Reactions",
+      "scope": "NCERT Class XI Chemistry Exemplar lists Unit 8 Redox Reactions",
       "supports": [
-        "formal redox problem practice",
-        "oxidising/reducing agent classification",
-        "oxidation-number based discrimination"
+        "existence of an official Class XI Redox Reactions exemplar practice corpus"
+      ]
+    },
+    {
+      "layer_id": "SRC-STANDARD-REDOX-DERIVATION",
+      "authority_class": "STANDARD_CHEMISTRY_DERIVED",
+      "source_ref": "DERIVED_FROM:SRC-NCERT-XI-SYLLABUS-REDOX",
+      "scope": "Standard chemistry derivations used as illustrative formal-redox examples within the Class XI syllabus envelope",
+      "supports": [
+        "oxidising/reducing-agent relation derived from electron acceptance/donation",
+        "acidic permanganate half-reaction as an illustrative EXTENDED_G11 derivation rather than a claimed NCERT source question"
       ]
     }
   ],
@@ -67,10 +75,10 @@
     },
     {
       "asset_id": "CON-CHEM-AGENT-INVERSION",
-      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-NCERT-XI-EXEMPLAR-REDOX"],
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-STANDARD-REDOX-DERIVATION"],
       "scope_tier": "FORMAL_G11",
       "claim_class": "STANDARD_CHEMISTRY_DERIVED",
-      "downstream_scope": "Formal redox agent assignment after electron/oxidation-number tracking."
+      "downstream_scope": "Formal redox agent assignment after electron/oxidation-number tracking; rule is derived chemistry, not attributed verbatim to the exemplar index."
     }
   ],
   "equation_bindings": [
@@ -84,15 +92,15 @@
   "transformation_bindings": [
     {
       "fingerprint": "REDOX_EQUATION->AGENT_ASSIGNMENT|Zn+CuSO4",
-      "authority_layer_ids": ["SRC-NCERT-X-SCI-REDOX", "SRC-NCERT-XI-SYLLABUS-REDOX"],
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-STANDARD-REDOX-DERIVATION"],
       "scope_tier": "FORMAL_G11",
-      "downstream_scope": "Reaction-level observation may appear earlier; formal oxidising/reducing-agent assignment is Class XI scope."
+      "downstream_scope": "Formal oxidising/reducing-agent assignment is Class XI scope; this fingerprint is a derived structural example, not a frozen NCERT question."
     },
     {
       "fingerprint": "HALF_REACTIONS->BALANCED_OVERALL_REDOX|MnO4-acidic",
-      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-NCERT-XI-EXEMPLAR-REDOX"],
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-STANDARD-REDOX-DERIVATION"],
       "scope_tier": "EXTENDED_G11",
-      "downstream_scope": "Grade XI only; must be SOURCE_SCOPE_HELD for Grade 9/10 learner products unless owner scope explicitly includes formal redox balancing."
+      "downstream_scope": "Grade XI only; illustrative derived example; must be SOURCE_SCOPE_HELD for Grade 9/10 learner products unless owner scope explicitly includes formal redox balancing."
     }
   ],
   "scope_tiers": [
@@ -137,6 +145,11 @@
       "defect_id": "CHEM-REDOX-DEFECT-LEARNER-JARGON",
       "status": "REPAIRED_BY_AUDIT_LAYER",
       "repair": "Legacy mnemonic and architecture labels remain internal IDs only and are prohibited from learner-facing surfaces."
+    },
+    {
+      "defect_id": "CHEM-REDOX-DEFECT-EXEMPLAR-ATTRIBUTION",
+      "status": "REPAIRED_BY_AUDIT_LAYER",
+      "repair": "The NCERT Exemplar index is used only to establish the official Unit 8 practice corpus; specific derived equations or agent rules are not falsely attributed to that index."
     }
   ],
   "audit_status": "SOURCE_HARDENED"

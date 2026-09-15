@@ -22,10 +22,11 @@ assert result["status"] == "PASS"
 assert result["audit_status"] == "SOURCE_HARDENED"
 assert result["concept_binding_count"] == 3
 assert result["equation_binding_count"] == 1
-assert result["source_layer_count"] == 3
+assert result["source_layer_count"] == 4
 
+# Preserve schema validity while removing the required formal-authority identity.
 bad = copy.deepcopy(AUDIT)
-bad["source_layers"] = [x for x in bad["source_layers"] if x["layer_id"] != "SRC-NCERT-XI-SYLLABUS-REDOX"]
+next(x for x in bad["source_layers"] if x["layer_id"] == "SRC-NCERT-XI-SYLLABUS-REDOX")["layer_id"] = "SRC-NCERT-XI-SYLLABUS-OTHER"
 must_fail(bad, "CHEM_SOURCE_AUDIT_FORMAL_SOURCE_MISSING")
 
 bad = copy.deepcopy(AUDIT)
@@ -43,6 +44,15 @@ must_fail(bad, "CHEM_SOURCE_AUDIT_LEARNER_JARGON")
 bad = copy.deepcopy(AUDIT)
 next(x for x in bad["transformation_bindings"] if "MnO4" in x["fingerprint"])["scope_tier"] = "FOUNDATION_G10"
 must_fail(bad, "CHEM_SOURCE_AUDIT_SCOPE_LEAK")
+
+bad = copy.deepcopy(AUDIT)
+next(x for x in bad["source_layers"] if x["layer_id"] == "SRC-NCERT-XI-EXEMPLAR-REDOX")["authority_class"] = "STANDARD_CHEMISTRY_DERIVED"
+must_fail(bad, "CHEM_SOURCE_AUDIT_EXEMPLAR_AUTHORITY")
+
+bad = copy.deepcopy(AUDIT)
+agent = next(x for x in bad["claim_bindings"] if x["asset_id"] == "CON-CHEM-AGENT-INVERSION")
+agent["authority_layer_ids"] = ["SRC-NCERT-XI-SYLLABUS-REDOX"]
+must_fail(bad, "CHEM_SOURCE_AUDIT_DERIVED_CLAIM_CUSTODY")
 
 bad = copy.deepcopy(AUDIT)
 bad["current_gate_defects"] = [x for x in bad["current_gate_defects"] if x["defect_id"] != "CHEM-REDOX-DEFECT-PROVENANCE-OVERCLAIM"]
