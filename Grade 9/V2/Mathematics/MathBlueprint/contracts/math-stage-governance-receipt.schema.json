@@ -6,11 +6,11 @@
   "additionalProperties": false,
   "required": [
     "schema_version", "subject", "receipt_id", "stage", "producer_ref", "source_refs",
-    "registry_binding", "engineering_custody", "purpose_evidence", "difficulty_evidence", "learner_fit_evidence",
+    "registry_binding", "purpose_evidence", "difficulty_evidence", "learner_fit_evidence",
     "question_custody", "coverage_claims", "artifacts", "release_state"
   ],
   "properties": {
-    "schema_version": {"const": "1.1.0"},
+    "schema_version": {"const": "1.0.0"},
     "subject": {"const": "MATHEMATICS"},
     "receipt_id": {"type": "string", "pattern": "^MATH-STAGE-GOV-[A-Z0-9_-]+-[0-9a-f]{16}$"},
     "stage": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
@@ -66,10 +66,7 @@
           "type":"object",
           "additionalProperties":false,
           "required":["status","reason"],
-          "properties": {
-            "status":{"const":"UNBOUND"},
-            "reason":{"type":"string","minLength":3}
-          }
+          "properties": {"status":{"const":"UNBOUND"},"reason":{"type":"string","minLength":3}}
         },
         {
           "type":"object",
@@ -96,8 +93,7 @@
       ]
     },
     "purposeEvidence": {
-      "type": "object",
-      "additionalProperties": false,
+      "type": "object", "additionalProperties": false,
       "required": ["purpose_contract", "learner_actions", "canonical_reveal_after_attempt", "evidence_refs"],
       "properties": {
         "purpose_contract": {"enum": ["BUILD_UNDERSTANDING", "RECONSTRUCT_CONCEPT", "SOLUTION_APPRENTICESHIP", "TRANSFER_TUTOR"]},
@@ -107,18 +103,14 @@
       }
     },
     "difficultyEvidence": {
-      "type": "object",
-      "additionalProperties": false,
+      "type": "object", "additionalProperties": false,
       "required": ["subtopic_ref", "declared_badge", "badge_authority", "derived_dimensions", "operational_badge", "page_ceiling", "research_level", "owner_override_ref", "evidence_refs"],
       "properties": {
-        "subtopic_ref": {"type": "string", "minLength": 3},
-        "declared_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+        "subtopic_ref": {"type": "string", "minLength": 3}, "declared_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
         "badge_authority": {"enum": ["OWNER", "SOURCE_METADATA", "DERIVED", "VALIDATED_DERIVED"]},
         "derived_dimensions": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 4}, "minProperties": 10},
-        "operational_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
-        "page_ceiling": {"enum": [10, 20, 30]},
-        "research_level": {"enum": ["NONE", "TARGETED", "DEEP"]},
-        "owner_override_ref": {"type": ["string", "null"], "minLength": 3},
+        "operational_badge": {"enum": ["EASY", "MEDIUM", "HARD"]}, "page_ceiling": {"enum": [10, 20, 30]},
+        "research_level": {"enum": ["NONE", "TARGETED", "DEEP"]}, "owner_override_ref": {"type": ["string", "null"], "minLength": 3},
         "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}}
       }
     },
@@ -129,57 +121,43 @@
       ]
     },
     "learnerFitEvidence": {
-      "type": "object",
-      "additionalProperties": false,
+      "type": "object", "additionalProperties": false,
       "required": ["item_ref", "calibration_basis", "required_capability_refs", "support_mode", "maximum_allowed_demand", "actual_demand", "taught_scope_verified"],
       "properties": {
-        "item_ref": {"type": "string", "minLength": 2},
-        "calibration_basis": {"$ref": "#/$defs/calibrationBasis"},
+        "item_ref": {"type": "string", "minLength": 2}, "calibration_basis": {"$ref": "#/$defs/calibrationBasis"},
         "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
         "support_mode": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
-        "maximum_allowed_demand": {"$ref": "#/$defs/demandLevel"},
-        "actual_demand": {"$ref": "#/$defs/demandLevel"},
-        "taught_scope_verified": {"const": true}
+        "maximum_allowed_demand": {"$ref": "#/$defs/demandLevel"}, "actual_demand": {"$ref": "#/$defs/demandLevel"}, "taught_scope_verified": {"const": true}
       }
     },
     "questionCustody": {
-      "type": "object",
-      "additionalProperties": false,
+      "type": "object", "additionalProperties": false,
       "required": ["question_id", "origin", "source_question_no", "source_ref", "source_relation", "parent_question_refs", "exact_stem_hash", "answer_contract_ref", "answer_status", "learner_source_label", "official_past_question_claim", "verified_official_source_ref"],
       "properties": {
-        "question_id": {"type": "string", "minLength": 2},
-        "origin": {"enum": ["SOURCE_CORE2", "GENERATED_ORIGINAL"]},
-        "source_question_no": {"type": ["string", "null"], "minLength": 1},
-        "source_ref": {"type": "string", "minLength": 2},
+        "question_id": {"type": "string", "minLength": 2}, "origin": {"enum": ["SOURCE_CORE2", "GENERATED_ORIGINAL"]},
+        "source_question_no": {"type": ["string", "null"], "minLength": 1}, "source_ref": {"type": "string", "minLength": 2},
         "source_relation": {"enum": ["EXACT_SOURCE", "FRESH_ORIGINAL", "FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"]},
         "parent_question_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
-        "exact_stem_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
-        "answer_contract_ref": {"type": "string", "minLength": 3},
-        "answer_status": {"const": "VERIFIED"},
-        "learner_source_label": {"type": "string", "minLength": 5},
-        "official_past_question_claim": {"type": "boolean"},
-        "verified_official_source_ref": {"type": ["string", "null"], "minLength": 3}
+        "exact_stem_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}, "answer_contract_ref": {"type": "string", "minLength": 3},
+        "answer_status": {"const": "VERIFIED"}, "learner_source_label": {"type": "string", "minLength": 5},
+        "official_past_question_claim": {"type": "boolean"}, "verified_official_source_ref": {"type": ["string", "null"], "minLength": 3}
       }
     },
     "coverageClaim": {
-      "type": "object",
-      "additionalProperties": false,
+      "type": "object", "additionalProperties": false,
       "required": ["local_ref", "local_type", "canonical_asset_refs", "disposition", "realization_refs"],
       "properties": {
-        "local_ref": {"type": "string", "minLength": 2},
-        "local_type": {"$ref": "#/$defs/assetType"},
+        "local_ref": {"type": "string", "minLength": 2}, "local_type": {"$ref": "#/$defs/assetType"},
         "canonical_asset_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
         "disposition": {"enum": ["REALIZED", "RECONSTRUCTED", "REFERENCED", "USED"]},
         "realization_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}}
       }
     },
     "artifact": {
-      "type": "object",
-      "additionalProperties": false,
+      "type": "object", "additionalProperties": false,
       "required": ["artifact_ref", "artifact_kind", "content_hash", "content_tokens", "math_tokens", "pedagogy_signature", "structural_signature", "capability_refs", "canonical_asset_refs", "lineage_keys"],
       "properties": {
-        "artifact_ref": {"type": "string", "minLength": 2},
-        "artifact_kind": {"$ref": "#/$defs/artifactKind"},
+        "artifact_ref": {"type": "string", "minLength": 2}, "artifact_kind": {"$ref": "#/$defs/artifactKind"},
         "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "content_tokens": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "math_tokens": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
