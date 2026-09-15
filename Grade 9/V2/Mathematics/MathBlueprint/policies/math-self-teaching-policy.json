@@ -72,7 +72,7 @@
       "pedagogy_research_does_not_change_authority": true,
       "research_source_count_is_not_quality_proxy": true,
       "difficulty_badges": {
-        "EASY": {"max_pages": 10, "pedagogy_web_research": "FORBIDDEN", "research_depth": "NONE", "subsubtopic_decomposition_allowed": false, "visual_intensity": "STANDARD", "step_by_step_required": true, "dedicated_diagrams_required": true},
+        "EASY": {"max_pages": 10, "pedagogy_web_research": "OPTIONAL", "research_depth": "NONE", "subsubtopic_decomposition_allowed": false, "visual_intensity": "STANDARD", "step_by_step_required": true, "dedicated_diagrams_required": true},
         "MEDIUM": {"max_pages": 20, "pedagogy_web_research": "REQUIRED", "research_depth": "STANDARD", "subsubtopic_decomposition_allowed": true, "visual_intensity": "HIGH", "step_by_step_required": true, "dedicated_diagrams_required": true},
         "HARD": {"max_pages": 30, "pedagogy_web_research": "REQUIRED", "research_depth": "DEEP", "subsubtopic_decomposition_allowed": true, "visual_intensity": "VERY_HIGH", "step_by_step_required": true, "dedicated_diagrams_required": true}
       }
