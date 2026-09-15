@@ -65,7 +65,10 @@ def _row(
         if target_mode is None:
             fail("CHEM_BP_OBL_TRANSFORMATION_TARGET_MISSING", asset_ref)
         authorized = [target_mode]
-        required = [target_mode] if direct else []
+        # Engineering declares the target Core, but product source scope decides
+        # whether that transformation is authorized or held for this learner
+        # product. Custody therefore resolves mandatory realization later.
+        required = []
     return {
         "obligation_id": _obligation_id(gate["subtopic_id"], kind, asset_ref),
         "gate_id": gate["subtopic_id"],
