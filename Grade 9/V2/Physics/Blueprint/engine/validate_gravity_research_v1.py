@@ -172,9 +172,14 @@ def validate(
     if receipt["counts"] != {"direct_gate_count":1,"transitive_gate_count":10,"ready_gate_count":10,"blocked_gate_count":0}:
         fail("E_GRAV_CLOSURE", f"unexpected Gravity closure counts: {receipt['counts']}")
 
+    # The subject Passport is diagnostic only. Research validation proves technical
+    # closure/provenance; downstream consumer permission belongs exclusively to the
+    # global Engineering Gate and is intentionally not evaluated here.
     passport = compile_passport(request, receipt)
-    if passport["technical_state"] != "ENGINEERING_READY" or passport["ccu_technical_authorization"] != "ALLOWED":
-        fail("E_GRAV_CLOSURE", "Gravity passport did not become ENGINEERING_READY")
+    if passport["technical_state"] != "ENGINEERING_READY":
+        fail("E_GRAV_CLOSURE", "Gravity technical closure did not become ENGINEERING_READY")
+    if passport["consumer_authorization"] != "NOT_EVALUATED":
+        fail("E_GRAV_CLOSURE", "subject Passport must not issue downstream consumer authority")
 
     return {
         "status": "PASS",
