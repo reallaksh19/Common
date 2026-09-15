@@ -51,6 +51,12 @@ def _ids(gate: dict, field: str, id_field: str) -> set[str]:
 
 
 def derive_gate_state(gate: dict, invariant_profile: dict) -> dict:
+    """Derive technical readiness without trusting registry readiness/checklist flags.
+
+    The Engineering Gate proves mathematics/technical completeness. Whether a
+    particular Core realizes its own pedagogical purpose is validated later by
+    Concept/Problem TTU and product-governance gates, not here.
+    """
     gid = gate["subtopic_id"]
     req = invariant_profile["required_gates"].get(gid)
     failures: list[str] = []
@@ -88,13 +94,14 @@ def derive_gate_state(gate: dict, invariant_profile: dict) -> dict:
     generic = invariant_profile["generic_requirements"]
     if len(gate.get("reasoning_sequence", [])) < generic["minimum_reasoning_steps"]:
         failures.append("MATH_ENG_REASONING_SEQUENCE_INCOMPLETE")
+
     transforms = gate.get("required_transformations", [])
     if len(transforms) < generic["minimum_transformations"]:
         failures.append("MATH_ENG_TRANSFORMATIONS_INCOMPLETE")
-    roles = {x.get("target_core_role") for x in transforms}
-    for role in generic["required_transformation_roles"]:
-        if role not in roles:
-            failures.append("MATH_ENG_REQUIRED_CORE_TRANSFORMATION_MISSING")
+    distinct_roles = {x.get("target_core_role") for x in transforms if x.get("target_core_role")}
+    if len(distinct_roles) < generic.get("minimum_distinct_transformation_roles", 1):
+        failures.append("MATH_ENG_TRANSFORMATION_DIVERSITY_INCOMPLETE")
+
     if len(gate.get("mandatory_verifications", [])) < generic["minimum_verifications"]:
         failures.append("MATH_ENG_VERIFICATION_MISSING")
     if len(gate.get("problem_families", [])) < generic["minimum_problem_families"]:
