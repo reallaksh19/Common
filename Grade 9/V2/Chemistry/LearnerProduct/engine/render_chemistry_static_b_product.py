@@ -17,6 +17,7 @@ sys.path.insert(0, str(CHEM_ROOT / "LearningBlueprint" / "engine"))
 sys.path.insert(0, str(CHEM_ROOT / "ExactProduct" / "engine"))
 
 from chemistry_review_writer import ReviewWriter  # noqa: E402
+from render_chemistry_learner_products import representation_index  # noqa: E402
 from validate_static_b_layer_boundary import validate_core1b, validate_core2b  # noqa: E402
 import learner_surface_guard as GUARD  # noqa: E402
 
@@ -42,6 +43,31 @@ def _safe(value: Any) -> str:
     return text
 
 
+def _render_used_representations(writer: ReviewWriter, payload: dict[str, Any], ref: str) -> list[str]:
+    """Physically realize only the representations the validated B payload uses.
+
+    This helper performs no representation selection. The payload's
+    ``used_representation_refs`` is already constrained by upstream Engineering / Core
+    authority; the renderer merely closes that declared use after the learner attempt.
+    """
+    refs = [str(value) for value in (payload.get("used_representation_refs") or []) if str(value).strip()]
+    if not refs:
+        return []
+    bundle = payload.get("representation_bundle")
+    if not isinstance(bundle, dict):
+        raise ValueError("CHEM_CORE_RENDER_B_REPRESENTATION_BUNDLE_REQUIRED")
+    by_ref = representation_index(bundle)
+    realized: list[str] = []
+    for rep_ref in refs:
+        rep = by_ref.get(rep_ref)
+        if rep is None:
+            raise ValueError("CHEM_CORE_RENDER_B_REPRESENTATION_REF_MISSING:" + rep_ref)
+        if not writer.primitive(rep, ref + ":" + rep_ref):
+            raise ValueError("CHEM_CORE_RENDER_B_REQUIRED_VISUAL_UNAVAILABLE:" + rep_ref)
+        realized.append(rep_ref)
+    return realized
+
+
 def _finish(writer: ReviewWriter, path: Path, mode: str, evidence: dict[str, Any]) -> dict[str, Any]:
     out = writer.finish()
     raw = path.read_bytes()
@@ -60,6 +86,7 @@ def render_core1b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     evidence = validate_core1b(payload)
     w = ReviewWriter(path, "Chemistry Core1B — Reconstruction Workbook", policy)
     ref = "CORE1B-MODULE"
+    w.set_page_role("QUESTION_EPISODE")
 
     w.heading(payload.get("title") or "Chemistry reconstruction practice")
     w.route_panel(
@@ -72,7 +99,6 @@ def render_core1b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     w.action_panel("RECONSTRUCT", "Build the representation or relationship yourself before looking at the clue ladder.", ref)
     w.action_panel("EXPLAIN OR JUSTIFY", "Write why your reconstruction is chemically consistent, not only what the final statement is.", ref)
     w.workspace(max(7, int(payload.get("workspace_lines", 8))), ref)
-    w.action_panel("CLUE ROUTE", "Keep this attempt visible. The fixed clue ladder starts on the next page.", ref)
 
     w.new_page("Core1B reconstruction clues", role="TTU_RECONSTRUCTION")
     w.heading("Progressive clues")
@@ -84,8 +110,11 @@ def render_core1b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     w.answer_panel("EXPECTED RESPONSE", payload["canonical_answer"], ref)
     if payload.get("explanation"):
         w.concept_panel("WHY IT WORKS", payload["explanation"], ref)
+    realized = _render_used_representations(w, payload, ref + "-CHECK")
     w.verification_panel("VERIFY", payload["check"], ref)
     w.action_panel("TEACH IT BACK", "Cover the expected response and explain the decisive relationship in your own words, then run the verification again.", ref)
+    evidence = dict(evidence)
+    evidence["physically_realized_representation_refs"] = realized
     return _finish(w, path, "CORE1B", evidence)
 
 
@@ -95,6 +124,7 @@ def render_core2b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     support = evidence["resolved_support_profile"]
     ref = "CORE2B-ITEM"
     w = ReviewWriter(path, "Chemistry Core2B — Transfer Workbook", policy)
+    w.set_page_role("QUESTION_EPISODE")
 
     w.heading("Chemistry transfer practice")
     w.route_panel("SOURCE", source["source_locator"], ref)
@@ -104,7 +134,6 @@ def render_core2b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     w.action_panel("MODEL OR REPRESENTATION CHOICE", "Commit to the representation, quantities or species you will track before opening the clue ladder.", ref)
     w.action_panel("FIRST MOVE + WHY", "Write your first move and one sentence justifying why it is chemically valid.", ref)
     w.workspace(max(7, int(payload.get("workspace_lines", 10))), ref)
-    w.action_panel("CLUE ROUTE", "Finish a genuine attempt first. The fixed clue ladder begins on the next page.", ref)
 
     entry = support["hint_entry_level"]
     allowed = list(CORE2_HELP_LABELS)
@@ -125,11 +154,14 @@ def render_core2b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     w.question_text(source["stem"], ref + "-SOLUTION-CONTEXT")
     w.answer_panel("FULL SOLUTION", payload["full_solution"], ref)
     w.answer_panel("ANSWER", source["canonical_answer"], ref)
+    realized = _render_used_representations(w, payload, ref + "-SOLUTION")
     w.verification_panel("VERIFY AND REFLECT", payload["verify_reflect"], ref)
     w.action_panel("GENERALIZE", "Name the decisive clue that made this problem belong to its problem family, then state what would make the method fail.", ref)
     w.action_panel("REBUILD WITHOUT LOOKING", "Cover the solution. Reproduce the reasoning path from the original question, then compare only after you have committed a complete chain.", ref)
     w.workspace(5, ref)
     w.action_panel("FINAL CHECK", "Mark the first point where your rebuilt path diverged from the governed solution, repair that step, and verify the conclusion again.", ref)
+    evidence = dict(evidence)
+    evidence["physically_realized_representation_refs"] = realized
     return _finish(w, path, "CORE2B", evidence)
 
 
