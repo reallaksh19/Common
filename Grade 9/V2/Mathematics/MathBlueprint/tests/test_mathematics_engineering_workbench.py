@@ -154,7 +154,7 @@ class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
         state = next(row for row in research_receipt["gate_states"] if row["gate_id"] == target_id)
         self.assertIn("MATH_ENG_DEPTH_MODEL_CONDITIONS_INSUFFICIENT", state["failure_codes"])
         self.assertEqual(research_receipt["technical_authorization"], "BLOCKED")
-        passport = compile_passport(research, research_manifest, research_receipt)
+        passport = compile_passport(research, research_manifest, research_receipt, registry)
         self.assertEqual(passport["engineering_depth"], "RESEARCH")
         self.assertEqual(passport["blueprint_technical_authorization"], "BLOCKED")
 
