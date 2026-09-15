@@ -104,6 +104,23 @@
           "what_cannot_be_omitted": "The assumed-versus-derived test and the scope test must both be visible before assigning the label.",
           "common_incorrect_version": "A two-column memorization list that labels sentences as axiom/postulate without showing the decision criterion.",
           "verification_method": "Check that every classified item first passes the foundational-assumption test and then uses the declared scope criterion."
+        },
+        {
+          "representation_id": "REP-MATH-EUCLID-LOGICAL-STATUS-FLOW",
+          "representation_type": "DEFINITION_CLASSIFICATION_TABLE",
+          "name": "Foundational-Status Decision Flow",
+          "math_encoded": "Decision flow: statement -> foundational assumption? -> if no, definition/theorem route; if yes, general mathematical scope? -> AXIOM, otherwise geometry-specific -> POSTULATE.",
+          "mandatory_labels": [
+            "Foundational assumption?",
+            "Definition or theorem",
+            "General mathematical scope?",
+            "Geometry-specific scope?",
+            "Axiom",
+            "Postulate"
+          ],
+          "what_cannot_be_omitted": "The first branch must separate assumptions from definitions/theorems before the axiom/postulate scope branch.",
+          "common_incorrect_version": "A one-step flow that asks only whether the sentence appears geometric and labels it a postulate.",
+          "verification_method": "Trace a theorem and an axiom through the flow; they must diverge at the foundational-assumption branch before scope classification."
         }
       ],
       "model_conditions": [
