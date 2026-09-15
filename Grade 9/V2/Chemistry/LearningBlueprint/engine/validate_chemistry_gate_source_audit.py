@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import copy, json, sys
+import json, sys
 from pathlib import Path
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import ValidationError
@@ -33,9 +33,18 @@ def validate(audit: dict, registry: dict | None = None) -> dict:
         fail("CHEM_SOURCE_AUDIT_GATE_MISSING", audit["gate_id"])
 
     layers = {x["layer_id"]: x for x in audit["source_layers"]}
-    required_layers = {"SRC-NCERT-X-SCI-REDOX", "SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-NCERT-XI-EXEMPLAR-REDOX"}
+    required_layers = {
+        "SRC-NCERT-X-SCI-REDOX",
+        "SRC-NCERT-XI-SYLLABUS-REDOX",
+        "SRC-NCERT-XI-EXEMPLAR-REDOX",
+        "SRC-STANDARD-REDOX-DERIVATION",
+    }
     if not required_layers.issubset(layers):
         fail("CHEM_SOURCE_AUDIT_FORMAL_SOURCE_MISSING", f"missing={sorted(required_layers-set(layers))}")
+    if layers["SRC-NCERT-XI-EXEMPLAR-REDOX"]["authority_class"] != "SOURCE_DEFINED":
+        fail("CHEM_SOURCE_AUDIT_EXEMPLAR_AUTHORITY", "official NCERT Exemplar corpus must remain SOURCE_DEFINED")
+    if layers["SRC-STANDARD-REDOX-DERIVATION"]["authority_class"] != "STANDARD_CHEMISTRY_DERIVED":
+        fail("CHEM_SOURCE_AUDIT_DERIVATION_AUTHORITY", "illustrative derived redox equations must remain STANDARD_CHEMISTRY_DERIVED")
 
     def check_refs(items):
         for item in items:
@@ -58,6 +67,9 @@ def validate(audit: dict, registry: dict | None = None) -> dict:
     for cid in ("CON-CHEM-OIL-RIG", "CON-CHEM-OXIDATION-STATE-RULES", "CON-CHEM-AGENT-INVERSION"):
         if concept_map[cid]["scope_tier"] == "FOUNDATION_G10":
             fail("CHEM_SOURCE_AUDIT_SCOPE_LEAK", f"{cid} cannot be authorized solely as Grade 10 foundation")
+    agent = concept_map["CON-CHEM-AGENT-INVERSION"]
+    if agent["claim_class"] != "STANDARD_CHEMISTRY_DERIVED" or "SRC-STANDARD-REDOX-DERIVATION" not in agent["authority_layer_ids"]:
+        fail("CHEM_SOURCE_AUDIT_DERIVED_CLAIM_CUSTODY", "agent assignment rule must retain standard-derived custody")
 
     if "CON-CHEM-OIL-RIG" not in audit["learner_surface_policy"]["legacy_internal_ids"] or not audit["learner_surface_policy"]["internal_concept_ids_hidden"]:
         fail("CHEM_SOURCE_AUDIT_LEARNER_JARGON", "legacy OIL-RIG concept ID must remain internal only")
@@ -67,14 +79,24 @@ def validate(audit: dict, registry: dict | None = None) -> dict:
     permanganate = next((x for x in audit["transformation_bindings"] if "MnO4" in x["fingerprint"]), None)
     if permanganate is None or permanganate["scope_tier"] != "EXTENDED_G11":
         fail("CHEM_SOURCE_AUDIT_SCOPE_LEAK", "permanganate half-reaction must be EXTENDED_G11")
+    if "SRC-STANDARD-REDOX-DERIVATION" not in permanganate["authority_layer_ids"]:
+        fail("CHEM_SOURCE_AUDIT_DERIVED_CLAIM_CUSTODY", "permanganate illustrative half-reaction must retain derived custody")
 
     cuo = next((x for x in audit["equation_bindings"] if x["equation_id"] == "EQ-CHEM-REDOX-TRANSFER"), None)
     if cuo is None or cuo["scope_tier"] != "FOUNDATION_G10":
         fail("CHEM_SOURCE_AUDIT_FOUNDATION_BINDING", "CuO/H2 equation must retain Class X foundation custody")
+    if "SRC-NCERT-X-SCI-REDOX" not in cuo["authority_layer_ids"]:
+        fail("CHEM_SOURCE_AUDIT_FOUNDATION_BINDING", "CuO/H2 equation must retain Class X source custody")
 
     defects = {x["defect_id"] for x in audit["current_gate_defects"]}
-    if "CHEM-REDOX-DEFECT-PROVENANCE-OVERCLAIM" not in defects:
-        fail("CHEM_SOURCE_AUDIT_PROVENANCE_OVERCLAIM_UNRESOLVED", "v1 Grade-10-only provenance overclaim must be explicitly repaired")
+    for required_defect in {
+        "CHEM-REDOX-DEFECT-PROVENANCE-OVERCLAIM",
+        "CHEM-REDOX-DEFECT-GRADE-SCOPE-LEAK",
+        "CHEM-REDOX-DEFECT-LEARNER-JARGON",
+        "CHEM-REDOX-DEFECT-EXEMPLAR-ATTRIBUTION",
+    }:
+        if required_defect not in defects:
+            fail("CHEM_SOURCE_AUDIT_PROVENANCE_OVERCLAIM_UNRESOLVED", f"required repair record missing: {required_defect}")
 
     return {
         "status": "PASS",
