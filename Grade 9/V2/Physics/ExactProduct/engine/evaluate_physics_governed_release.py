@@ -14,10 +14,13 @@ def check_schema(name,obj): Draft202012Validator(load(ROOT/'contracts'/name)).va
 def candidate_refs(candidate): return sorted(p['artifact_sha256'] for p in candidate['products'])
 
 def validate_governed_intake(binding,intake,candidate,mode):
-    refs=candidate_refs(candidate)
+    refs=candidate_refs(candidate); artifact_set_digest=sha(refs)
     if binding.get('candidate_id')!=candidate['candidate_id']+'-HUMAN-REVIEW': raise ValueError('HUMAN_REVIEW_BINDING_CANDIDATE_MISMATCH')
     if sorted(binding.get('artifact_sha256_refs') or [])!=refs: raise ValueError('HUMAN_REVIEW_BINDING_ARTIFACT_SET_MISMATCH')
-    if intake.get('candidate_sha256')!=binding.get('artifact_sha256') or sorted(intake.get('candidate_artifact_sha256_refs') or [])!=refs: raise ValueError('HUMAN_REVIEW_INTAKE_ARTIFACT_SET_MISMATCH')
+    if binding.get('artifact_sha256')!=artifact_set_digest or binding.get('baseline_artifact_sha256')!=artifact_set_digest: raise ValueError('HUMAN_REVIEW_BINDING_DIGEST_MISMATCH')
+    if intake.get('candidate_sha256')!=artifact_set_digest or sorted(intake.get('candidate_artifact_sha256_refs') or [])!=refs: raise ValueError('HUMAN_REVIEW_INTAKE_ARTIFACT_SET_MISMATCH')
+    summary=intake.get('quality_review_summary') or {}
+    if summary.get('revised_artifact_sha256')!=artifact_set_digest or sorted(summary.get('artifact_sha256_refs') or [])!=refs: raise ValueError('HUMAN_REVIEW_SUMMARY_ARTIFACT_SET_MISMATCH')
     if intake.get('policy_id')!='PHY-P-L-HUMAN-REVIEW-v1': raise ValueError('HUMAN_REVIEW_POLICY_MISMATCH')
     if intake.get('intake_status')!='READY' or intake.get('rejected_submissions'): raise ValueError('HUMAN_REVIEW_EVIDENCE_REJECTED')
     if mode=='REAL_RELEASE':
@@ -34,11 +37,12 @@ def project_attestations(intake,refs):
             review_class,role=CLASS[state]; out.append({'quality_state':state,'review_class':review_class,'reviewer_role':role,'attestation_ref':intake['intake_id']+':'+state,'artifact_sha256_refs':refs,'outcome':value})
     return out
 
-def validate_comparison(comp,candidate,refs,mode,human_pass):
+def validate_comparison(comp,candidate,refs,mode,human_pass,human_release_eligible):
     check_schema('physics-reference-comparison.schema.json',comp)
     x=copy.deepcopy(comp); got=x.pop('comparison_digest'); expected=sha(x)
     if got!=expected: raise ValueError('REFERENCE_COMPARISON_DIGEST_MISMATCH')
     if not human_pass: raise ValueError('REFERENCE_COMPARISON_RUN_BEFORE_HUMAN_GATES')
+    if mode=='REAL_RELEASE' and not human_release_eligible: raise ValueError('REAL_HUMAN_REVIEW_EVIDENCE_NOT_ELIGIBLE_FOR_REFERENCE')
     if comp['candidate_ref']!=candidate['candidate_id'] or comp['candidate_digest']!=candidate['candidate_digest'] or sorted(comp['artifact_sha256_refs'])!=refs: raise ValueError('REFERENCE_COMPARISON_NOT_BOUND_TO_EXACT_CANDIDATE')
     if mode=='REAL_RELEASE':
         if comp['mode']!='REAL_RELEASE' or comp['fixture_class']!='REAL' or not comp['release_evidence_eligible']: raise ValueError('REAL_REFERENCE_COMPARISON_CUSTODY_INVALID')
@@ -47,21 +51,24 @@ def validate_comparison(comp,candidate,refs,mode,human_pass):
 
 def evaluate_governed(candidate,policy,ai,binding,intake,mode='REAL_RELEASE',comparison=None):
     refs=validate_governed_intake(binding,intake,candidate,mode); attestations=project_attestations(intake,refs)
-    release=base_evaluate(candidate,policy,attestations,ai); q=release['quality_states']; human_pass=all(q[s]=='PASS' for s in HUMAN)
+    release=base_evaluate(candidate,policy,attestations,ai); q=release['quality_states']; human_pass=all(q[s]=='PASS' for s in HUMAN); human_release_eligible=bool(intake.get('release_evidence_eligible'))
+    reference_authorized=bool(human_pass and (mode=='TEST_ONLY' or human_release_eligible))
     if comparison is not None:
-        validate_comparison(comparison,candidate,refs,mode,human_pass)
+        validate_comparison(comparison,candidate,refs,mode,human_pass,human_release_eligible)
         q['REFERENCE_COMPARABILITY']=comparison['status']; q['MATURE_DESIGN_QUALITY']='PASS' if comparison['status']=='PASS' else 'FAIL'
         if comparison['status']=='FAIL': release['classification']=policy['failed_classification']; release['exit_code']=FAIL
         else: release['classification']=policy['mature_classification']; release['exit_code']=PASS
         release['blocking_states']=sorted(s for s in policy['required_quality_states'] if q[s] in {'PENDING','NOT_RUN','READY_TO_RUN'})
         release['blocking_reason']='Every required governed gate resolved PASS.' if release['exit_code']==PASS else 'Final reference comparison failed.'
         release['release_digest']=''; release['release_digest']=digest(release,'release_digest'); validate_release(release,candidate,policy)
-    real_ok=bool(mode=='REAL_RELEASE' and release['exit_code']==PASS and intake.get('release_evidence_eligible') and comparison and comparison.get('release_evidence_eligible'))
+    real_ok=bool(mode=='REAL_RELEASE' and release['exit_code']==PASS and human_release_eligible and comparison and comparison.get('release_evidence_eligible'))
+    if mode=='REAL_RELEASE' and release['exit_code']==PASS and not real_ok: raise ValueError('REAL_GOVERNED_RELEASE_EVIDENCE_INCOMPLETE')
     if mode=='TEST_ONLY' and release['exit_code']==PASS:
         classification='TEST_ONLY_FULL_PASS_NOT_RELEASEABLE'; exit_code=BLOCKED
     else:
         classification=release['classification']; exit_code=release['exit_code']
-    decision={'decision_id':'PHY-P-L-GOVERNED-RELEASE-'+mode,'schema_version':'1.0.0','subject':'PHYSICS','candidate_ref':candidate['candidate_id'],'candidate_digest':candidate['candidate_digest'],'artifact_sha256_refs':refs,'gate_mode':mode,'human_review_intake_ref':intake['intake_id'],'human_review_input_digest':intake['input_digest'],'human_review_release_evidence_eligible':bool(intake.get('release_evidence_eligible')),'quality_states':q,'reference_comparison_ref':comparison['comparison_id'] if comparison else None,'reference_comparison_digest':comparison['comparison_digest'] if comparison else None,'reference_read_authorized':bool(human_pass),'classification':classification,'release_evidence_eligible':real_ok,'exit_code':exit_code,'blocking_states':release['blocking_states'] if exit_code!=BLOCKED or mode=='REAL_RELEASE' else sorted(set(release['blocking_states']+['TEST_ONLY_EVIDENCE_NOT_RELEASEABLE'])),'decision_digest':''}
+    blocking=release['blocking_states'] if exit_code!=BLOCKED or mode=='REAL_RELEASE' else sorted(set(release['blocking_states']+['TEST_ONLY_EVIDENCE_NOT_RELEASEABLE']))
+    decision={'decision_id':'PHY-P-L-GOVERNED-RELEASE-'+mode,'schema_version':'1.0.0','subject':'PHYSICS','candidate_ref':candidate['candidate_id'],'candidate_digest':candidate['candidate_digest'],'artifact_sha256_refs':refs,'gate_mode':mode,'human_review_intake_ref':intake['intake_id'],'human_review_input_digest':intake['input_digest'],'human_review_release_evidence_eligible':human_release_eligible,'quality_states':q,'reference_comparison_ref':comparison['comparison_id'] if comparison else None,'reference_comparison_digest':comparison['comparison_digest'] if comparison else None,'reference_read_authorized':reference_authorized,'classification':classification,'release_evidence_eligible':real_ok,'exit_code':exit_code,'blocking_states':blocking,'decision_digest':''}
     decision['decision_digest']=sha({k:v for k,v in decision.items() if k!='decision_digest'}); check_schema('physics-governed-release.schema.json',decision)
     if decision['release_evidence_eligible'] and (mode!='REAL_RELEASE' or decision['classification']!=policy['mature_classification'] or decision['exit_code']!=PASS): raise ValueError('GOVERNED_RELEASE_ELIGIBILITY_INVALID')
     return decision,release
