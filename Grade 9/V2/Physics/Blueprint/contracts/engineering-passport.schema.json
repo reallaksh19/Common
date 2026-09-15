@@ -1,28 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "engineering-passport.schema.json",
-  "title": "Physics Engineering Passport",
+  "title": "Subject Engineering Passport Diagnostic",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version",
-    "passport_id",
-    "request_id",
-    "manifest_id",
-    "closure_receipt_id",
-    "closure_receipt_digest",
-    "requested_topic",
-    "requested_scope",
-    "engineering_depth",
-    "technical_state",
-    "direct_gate_count",
-    "transitive_gate_count",
-    "ready_gate_count",
-    "blocked_gate_count",
-    "gate_states",
-    "source_item_status",
-    "ccu_technical_authorization",
-    "next_action"
+    "schema_version", "passport_id", "request_id", "manifest_id", "closure_receipt_id", "closure_receipt_digest",
+    "requested_topic", "requested_scope", "engineering_depth", "technical_state", "direct_gate_count",
+    "transitive_gate_count", "ready_gate_count", "blocked_gate_count", "gate_states", "source_item_status",
+    "consumer_authorization", "next_action"
   ],
   "properties": {
     "schema_version": {"const": "1.0.0"},
@@ -42,18 +28,16 @@
     "gate_states": {
       "type": "array",
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["gate_id", "status", "direct"],
+        "type": "object", "additionalProperties": false, "required": ["gate_id", "status", "direct"],
         "properties": {
-          "gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+          "gate_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$"},
           "status": {"enum": ["ENGINEERING_GATE_READY", "ENGINEERING_GATE_INCOMPLETE", "SOURCE_SCOPE_HELD", "MISSING"]},
           "direct": {"type": "boolean"}
         }
       }
     },
     "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]},
-    "ccu_technical_authorization": {"enum": ["ALLOWED", "BLOCKED"]},
+    "consumer_authorization": {"const": "NOT_EVALUATED"},
     "next_action": {"type": "string", "minLength": 1}
   }
 }
