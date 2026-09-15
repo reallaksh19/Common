@@ -133,6 +133,10 @@ This prevents a multi-gate topic request from silently pretending that one sourc
 
 Generic compiler, custody and renderer-control code may not branch on Redox or any other Chemistry topic name. Topic-specific source audits and semantic payloads enter only as governed data at the edge.
 
+## Branch-lineage note
+
+This architecture branch is stacked on Engineering Workbench v2 (#387). The current #371 Blueprint head and #387 Workbench head diverge from their shared earlier base, so #387 does not physically contain #371's later static-B files. This branch therefore ports only the generic `static-b-layer-boundary.v1.json` policy and `validate_static_b_layer_boundary.py` validator required by the four-core compiler. It does not port #370 topic goldens, topic-specific B builders or product exemplars.
+
 ## Non-claims
 
 A machine-complete core artifact does not establish learner efficacy, mastery, subject-review approval, pedagogical approval, assessment approval, visual-usability approval or publication authorization. Those remain separate governed gates.
