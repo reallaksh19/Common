@@ -106,6 +106,10 @@ def render_core1b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     for row in payload["help"]:
         w.clue_panel(CORE1_HELP_LABELS[row["level"]], row["text"], ref)
 
+    # The canonical check is a distinct post-attempt semantic episode. Starting it
+    # explicitly prevents a governed visual from becoming an orphan continuation of
+    # the clue page while preserving the attempt-first boundary.
+    w.new_page("Core1B reconstruction check", role="SOLUTION")
     w.heading("Check your reconstruction", level=2, ref=ref)
     w.answer_panel("EXPECTED RESPONSE", payload["canonical_answer"], ref)
     if payload.get("explanation"):
@@ -156,6 +160,11 @@ def render_core2b(payload: dict[str, Any], policy: dict[str, Any], path: Path) -
     w.answer_panel("ANSWER", source["canonical_answer"], ref)
     realized = _render_used_representations(w, payload, ref + "-SOLUTION")
     w.verification_panel("VERIFY AND REFLECT", payload["verify_reflect"], ref)
+
+    # Reflection is intentionally a task-bound workspace page, not a sparse solution
+    # continuation. This uses the existing workspace-page density authority.
+    w.new_page("Core2B transfer reflection", role="WORKSPACE")
+    w.heading("Rebuild and generalize")
     w.action_panel("GENERALIZE", "Name the decisive clue that made this problem belong to its problem family, then state what would make the method fail.", ref)
     w.action_panel("REBUILD WITHOUT LOOKING", "Cover the solution. Reproduce the reasoning path from the original question, then compare only after you have committed a complete chain.", ref)
     w.workspace(5, ref)
