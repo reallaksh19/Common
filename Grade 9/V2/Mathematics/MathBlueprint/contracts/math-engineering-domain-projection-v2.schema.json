@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-engineering-domain-projection-v2.schema.json",
+  "title": "Mathematics Engineering to Canonical Domain Projection Receipt v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "subject", "projection_id", "domain_registry_ref",
+    "engineering_registry_id", "engineering_registry_digest", "crosswalk_ref",
+    "base_asset_count", "projected_asset_count", "scope_membership_count",
+    "expanded_projection_digest", "expanded_projected_asset_count",
+    "direct_gate_ids", "transitive_gate_ids", "canonical_assets",
+    "scope_memberships", "projection_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "projection_id": {"type": "string", "pattern": "^MATH-ENG-DOMAIN-PROJ-V2-[A-F0-9]{16}$"},
+    "domain_registry_ref": {"type": "string", "pattern": "^MATH-REG-"},
+    "engineering_registry_id": {"type": "string", "minLength": 3},
+    "engineering_registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "crosswalk_ref": {"type": "string", "minLength": 3},
+    "base_asset_count": {"type": "integer", "minimum": 1},
+    "projected_asset_count": {"type": "integer", "minimum": 1},
+    "scope_membership_count": {"type": "integer", "minimum": 1},
+    "expanded_projection_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "expanded_projected_asset_count": {"type": "integer", "minimum": 1},
+    "direct_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^MATH-"}},
+    "transitive_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^MATH-"}},
+    "canonical_assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asset_id", "engineering_gate_id", "engineering_source_kind",
+          "engineering_source_ref", "primary_subtopic_id", "primary_join_ref",
+          "capability_refs", "core2_refs", "membership_refs", "asset_digest"
+        ],
+        "properties": {
+          "asset_id": {"type": "string", "pattern": "^REG-MATH-ENG-"},
+          "engineering_gate_id": {"type": "string", "pattern": "^MATH-"},
+          "engineering_source_kind": {
+            "enum": [
+              "TECHNICAL_CORE", "MODEL_CONDITIONS", "MANDATORY_EQUATION",
+              "REPRESENTATION", "REASONING_STEP", "REQUIRED_TRANSFORMATION",
+              "MISCONCEPTION", "MANDATORY_VERIFICATION", "PROBLEM_FAMILY"
+            ]
+          },
+          "engineering_source_ref": {"type": "string", "minLength": 1},
+          "primary_subtopic_id": {"type": "string", "minLength": 3},
+          "primary_join_ref": {"type": "string", "minLength": 3},
+          "capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "core2_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "membership_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^MATH-ENG-SCOPE-MEMBER-"}},
+          "asset_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "scope_memberships": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "membership_id", "asset_ref", "subtopic_id", "join_ref",
+          "engineering_gate_id", "engineering_gate_role", "capability_refs",
+          "core2_refs", "membership_digest"
+        ],
+        "properties": {
+          "membership_id": {"type": "string", "pattern": "^MATH-ENG-SCOPE-MEMBER-[A-F0-9]{20}$"},
+          "asset_ref": {"type": "string", "pattern": "^REG-MATH-ENG-"},
+          "subtopic_id": {"type": "string", "minLength": 3},
+          "join_ref": {"type": "string", "minLength": 3},
+          "engineering_gate_id": {"type": "string", "pattern": "^MATH-"},
+          "engineering_gate_role": {"enum": ["DIRECT", "PREREQUISITE_CLOSURE"]},
+          "capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "core2_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "membership_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "projection_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
