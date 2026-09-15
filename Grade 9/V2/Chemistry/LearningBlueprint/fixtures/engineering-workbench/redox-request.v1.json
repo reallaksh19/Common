@@ -1,0 +1,12 @@
+{
+  "schema_version":"1.0.0",
+  "request_id":"CHEM-ENG-REQ-REDOX-001",
+  "subject":"CHEMISTRY",
+  "requested_topic":"Redox Reactions",
+  "requested_scope":"Species identity → oxidation-state change → electron consequence → agent role",
+  "engineering_depth":"STANDARD",
+  "requested_action":"AUTO_DISCOVER",
+  "curriculum_scope":{"grades":[9,10,11],"curriculum":"NCERT / foundation extension","exam_family":"Grade 9–11 competitive foundation"},
+  "requested_for":["CDAU","SDU","LAU","TTU","PAL"],
+  "notes":"Vertical-slice proof of Chemistry engineering closure; not a learner-mastery claim."
+}

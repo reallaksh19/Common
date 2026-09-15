@@ -1,0 +1,10 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"chemistry-engineering-research-dossier.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","dossier_id","request_id","engineering_depth","scope_definition","authoritative_source_set","curriculum_boundaries","representation_evidence","misconception_evidence","selected_design_decisions","rejected_alternatives","status"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},"dossier_id":{"type":"string","pattern":"^CHEM-ENG-DOSSIER-[A-Z0-9-]+$"},"request_id":{"type":"string","pattern":"^CHEM-ENG-REQ-[A-Z0-9-]+$"},"engineering_depth":{"const":"RESEARCH"},"scope_definition":{"type":"string","minLength":10},
+    "authoritative_source_set":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["source_ref","authority_class","scope"],"properties":{"source_ref":{"type":"string","minLength":1},"authority_class":{"enum":["SOURCE_DEFINED","STANDARD_CHEMISTRY_DERIVED","AUTHORING_RECOMMENDATION"]},"scope":{"type":"string","minLength":3}}}},
+    "curriculum_boundaries":{"type":"array","minItems":1,"items":{"type":"string","minLength":3}},"representation_evidence":{"type":"array","minItems":1,"items":{"type":"string"}},"misconception_evidence":{"type":"array","minItems":1,"items":{"type":"string"}},"selected_design_decisions":{"type":"array","minItems":1,"items":{"type":"string"}},"rejected_alternatives":{"type":"array","items":{"type":"string"}},"status":{"enum":["RESEARCH_IN_PROGRESS","RESEARCH_DOSSIER_READY"]}
+  }
+}

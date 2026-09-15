@@ -1,0 +1,17 @@
+{
+  "schema_version":"1.0.0",
+  "manifest_id":"CHEM-ENG-MAN-REDOX-001",
+  "request_id":"CHEM-ENG-REQ-REDOX-001",
+  "scope_kind":"SUBTOPIC",
+  "scope_ref":"REDOX-SPECIES-STATE-AGENT",
+  "topic_id":"CHEM-REDOX",
+  "title":"Redox proof: species identity → oxidation-state change → electron consequence → agent role",
+  "registry_ref":"policies/chemistry-technical-engineering-gates.v1.json",
+  "required_gate_ids":["CHEM-REDOX-OXIDATION"],
+  "optional_gate_ids":[],
+  "out_of_scope_gate_ids":["CHEM-CALC-STOICHIOMETRY","CHEM-ACID-BASE-IONS"],
+  "external_prerequisite_resolutions":[{"dependency_id":"MATH-BASIC-ARITHMETIC","status":"RESOLVED_BY_OWNER_SCOPE","evidence_ref":"OWNER_SCOPE:Grade9-entry-basic-arithmetic","note":"Visible owner-scope resolution until a cross-subject prerequisite registry is bound; not source evidence."}],
+  "source_item_status":"SOURCE_HELD",
+  "downstream_consumers":["CDAU","SDU","LAU","TTU","PAL"],
+  "notes":"Declare only the direct Redox gate; internal Chemistry prerequisites must be recursively derived."
+}
