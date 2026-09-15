@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -12,6 +13,14 @@ _CONDITION = re.compile(r"^(<=|>=|==|<|>)([0-4])$")
 
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _canonical(value: Any) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+
+def _digest(value: Any) -> str:
+    return "sha256:" + hashlib.sha256(_canonical(value)).hexdigest()
 
 
 def metric_snapshot(evidence: dict[str, Any]) -> dict[str, int]:
@@ -79,6 +88,38 @@ def route(
         "owner_override": owner_override,
         "final_route": final_route,
         "evidence_metric_snapshot": metric_snapshot(evidence),
+    }
+
+
+def route_scoped(
+    scoped_receipt: dict[str, Any],
+    policy: dict[str, Any] | None = None,
+    owner_override: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Route only from an integrity-checked scoped evidence receipt.
+
+    Existing topic routing remains unchanged through ``route``. Narrower executions must
+    use this boundary so topic-wide evidence cannot be silently reused for a subtopic,
+    bucket or case.
+    """
+    if scoped_receipt.get("derivation") != "SCOPED_EVIDENCE_COMPILER_V1":
+        raise AssertionError("ROUTING_EVIDENCE_SCOPE_MISMATCH:DERIVATION")
+    body = {k: v for k, v in scoped_receipt.items() if k != "receipt_digest"}
+    if scoped_receipt.get("receipt_digest") != _digest(body):
+        raise AssertionError("ROUTING_EVIDENCE_SCOPE_MISMATCH:RECEIPT_DIGEST")
+    if scoped_receipt.get("evidence_digest") != _digest(scoped_receipt.get("evidence")):
+        raise AssertionError("ROUTING_EVIDENCE_SCOPE_MISMATCH:EVIDENCE_DIGEST")
+    if scoped_receipt.get("scope_kind") != "TOPIC" and not scoped_receipt.get("scope_digest"):
+        raise AssertionError("ROUTING_EVIDENCE_SCOPE_MISMATCH:SCOPE_DIGEST")
+    decision = route(scoped_receipt["evidence"], policy=policy, owner_override=owner_override)
+    return {
+        "scope_binding": {
+            "scope_kind": scoped_receipt["scope_kind"],
+            "scope_ref": scoped_receipt["scope_ref"],
+            "scope_digest": scoped_receipt["scope_digest"],
+            "evidence_digest": scoped_receipt["evidence_digest"],
+        },
+        "routing_decision": decision,
     }
 
 

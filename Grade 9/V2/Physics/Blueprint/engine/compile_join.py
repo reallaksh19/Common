@@ -9,6 +9,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PASS_STATES = {"CONFIRMED", "REFINED"}
 UNRESOLVED_STATES = {"MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"}
+COVERAGE_STATES = {"DEMANDS_PRESENT", "VERIFIED_NO_TARGET_DEMAND", "COVERAGE_UNKNOWN"}
 
 
 def canonical(value: Any) -> str:
@@ -28,7 +29,36 @@ def _claim_refs(rows: list[dict[str, Any]], label: str) -> list[str]:
     return refs
 
 
-def compile_join(spec: dict[str, Any]) -> dict[str, Any]:
+def _validated_zero_demand_coverage(coverage: dict[str, Any]) -> dict[str, Any]:
+    state = coverage.get("state")
+    if state not in COVERAGE_STATES:
+        raise AssertionError("JOIN_ASSESSMENT_COVERAGE_STATE_INVALID")
+    count = int(coverage.get("matched_target_item_count", -1))
+    evidence_refs = [str(x).strip() for x in (coverage.get("evidence_refs") or []) if str(x).strip()]
+    issues = [str(x).strip() for x in (coverage.get("unresolved_issues") or []) if str(x).strip()]
+    if not evidence_refs:
+        raise AssertionError("JOIN_ASSESSMENT_COVERAGE_EVIDENCE_REQUIRED")
+    if not str(coverage.get("scope_digest", "")).startswith("sha256:"):
+        raise AssertionError("JOIN_ASSESSMENT_SCOPE_DIGEST_REQUIRED")
+    if not str(coverage.get("corpus_digest", "")).startswith("sha256:"):
+        raise AssertionError("JOIN_ASSESSMENT_CORPUS_DIGEST_REQUIRED")
+    if state == "DEMANDS_PRESENT":
+        raise AssertionError("JOIN_DEMANDS_PRESENT_WITH_ZERO_DEMAND_CLAIMS")
+    if state == "VERIFIED_NO_TARGET_DEMAND" and count != 0:
+        raise AssertionError("JOIN_VERIFIED_ZERO_DEMAND_COUNT_MISMATCH")
+    if state == "COVERAGE_UNKNOWN" and not issues:
+        raise AssertionError("JOIN_COVERAGE_UNKNOWN_REQUIRES_ISSUE")
+    return {
+        "state": state,
+        "matched_target_item_count": count,
+        "scope_digest": coverage["scope_digest"],
+        "corpus_digest": coverage["corpus_digest"],
+        "evidence_refs": sorted(set(evidence_refs)),
+        "unresolved_issues": sorted(set(issues)),
+    }
+
+
+def compile_join(spec: dict[str, Any], assessment_coverage: dict[str, Any] | None = None) -> dict[str, Any]:
     validation_refs = list(spec.get("validation_session_refs") or [])
     if not validation_refs:
         raise AssertionError("JOIN_VALIDATION_SESSION_REQUIRED")
@@ -38,8 +68,43 @@ def compile_join(spec: dict[str, Any]) -> dict[str, Any]:
     knowledge_refs = set(_claim_refs(list(spec.get("knowledge_claims") or []), "KNOWLEDGE"))
     demand_order = _claim_refs(list(spec.get("demand_claims") or []), "DEMAND")
     demand_refs = set(demand_order)
+
+    # V10: zero demands are legal only when a scoped assessment-coverage receipt proves
+    # either VERIFIED_NO_TARGET_DEMAND or COVERAGE_UNKNOWN. This distinguishes verified
+    # absence from missing knowledge while keeping ordinary demand-bearing JOINs byte-stable.
     if not demand_refs:
-        raise AssertionError("JOIN_DEMAND_CLAIMS_REQUIRED")
+        coverage = _validated_zero_demand_coverage(assessment_coverage or spec.get("assessment_coverage") or {})
+        if list(spec.get("reconciliations") or []):
+            raise AssertionError("JOIN_ZERO_DEMAND_RECONCILIATION_FORBIDDEN")
+        if coverage["state"] == "VERIFIED_NO_TARGET_DEMAND":
+            join_status, assimilation_ready = "JOIN_READY_NO_CORE2_DEMAND", True
+            conflicts: list[dict[str, Any]] = []
+        else:
+            join_status, assimilation_ready = "JOIN_BLOCKED", False
+            conflicts = [{
+                "demand_claim_ref": "ASSESSMENT_COVERAGE",
+                "status": "UNKNOWN",
+                "reason": coverage["unresolved_issues"][0],
+            }]
+        packet = {
+            "schema_version": "1.0.0",
+            "join_id": spec["join_id"],
+            "topic_id": spec["topic_id"],
+            "core1_packet_ref": spec["core1_packet_ref"],
+            "core2_packet_ref": spec["core2_packet_ref"],
+            "validation_session_refs": sorted(validation_refs),
+            "demand_claim_count": 0,
+            "items": [],
+            "critical_conflicts": conflicts,
+            "join_status": join_status,
+            "assimilation_ready": assimilation_ready,
+            "assessment_coverage": coverage,
+        }
+        packet["join_digest"] = digest(packet)
+        return packet
+
+    if assessment_coverage is not None and assessment_coverage.get("state") != "DEMANDS_PRESENT":
+        raise AssertionError("JOIN_ASSESSMENT_COVERAGE_DEMAND_MISMATCH")
 
     reconciliations = list(spec.get("reconciliations") or [])
     by_demand: dict[str, dict[str, Any]] = {}
@@ -145,11 +210,13 @@ def main() -> None:
 
     ap = argparse.ArgumentParser(description="Compile the Physics Core1 x Core2 Join gate.")
     ap.add_argument("spec", type=Path)
+    ap.add_argument("--assessment-coverage", type=Path)
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
 
     spec = json.loads(args.spec.read_text(encoding="utf-8"))
-    packet = compile_join(spec)
+    coverage = json.loads(args.assessment_coverage.read_text(encoding="utf-8")) if args.assessment_coverage else None
+    packet = compile_join(spec, assessment_coverage=coverage)
     schema = json.loads((ROOT / "contracts" / "join-packet.schema.json").read_text(encoding="utf-8"))
     Draft202012Validator(schema).validate(packet)
     text = json.dumps(packet, indent=2, ensure_ascii=False) + "\n"
