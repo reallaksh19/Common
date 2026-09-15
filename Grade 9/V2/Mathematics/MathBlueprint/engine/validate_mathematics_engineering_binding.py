@@ -60,6 +60,8 @@ def validate(binding: dict, registry: dict | None = None, invariant_profile: dic
         "closure_receipt_digest": actual_receipt_digest,
         "registry_digest": receipt["registry_digest"],
         "invariant_profile_digest": receipt["invariant_profile_digest"],
+        "direct_gate_ids": list(receipt["direct_gate_ids"]),
+        "transitive_gate_ids": list(receipt["transitive_gate_ids"]),
         "technical_authorization": "ALLOWED",
         "publication_authorization": "NOT_IMPLIED",
     }
