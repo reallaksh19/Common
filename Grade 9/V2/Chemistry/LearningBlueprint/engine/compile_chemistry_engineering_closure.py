@@ -8,6 +8,7 @@ import jsonschema
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 from validate_chemistry_engineering_gates_v2 import ChemistryEngineeringGateV2Error, validate as validate_registry
+from validate_chemistry_gate_source_audit import ChemistrySourceAuditError, validate as validate_source_audit
 
 
 class ChemistryEngineeringClosureError(Exception):
@@ -66,6 +67,20 @@ def compile_closure(request, manifest, *, registry=None, research_dossier=None, 
         status=gate["technical_readiness"]; gate_states.append({"gate_id":gid,"status":status,"direct":gid in direct_set})
         if status != "ENGINEERING_GATE_READY": blockers.append({"code":"CHEM_ENG_GATE_NOT_READY","gate_id":gid,"message":f"{gid} status is {status}"})
 
+    source_audit_states=[]
+    if "CHEM-REDOX-OXIDATION" in ordered and gate_map.get("CHEM-REDOX-OXIDATION") is not None:
+        audit_ref="policies/chemistry-redox-source-audit.v1.json"
+        audit=load(audit_ref)
+        try: audit_result=validate_source_audit(audit,registry)
+        except ChemistrySourceAuditError as exc: fail("CHEM_ENG_SOURCE_AUDIT_INVALID",f"{exc.code}: {exc.message}")
+        source_audit_states.append({
+            "gate_id":"CHEM-REDOX-OXIDATION",
+            "audit_ref":audit_ref,
+            "audit_digest":digest(audit),
+            "status":audit_result["audit_status"],
+            "scope_policy":audit["effective_provenance"]["scope_policy"]
+        })
+
     resolution_map={r["dependency_id"]:r for r in manifest["external_prerequisite_resolutions"]}; ext_states=[]
     for dep in sorted(external):
         r=resolution_map.get(dep)
@@ -80,9 +95,9 @@ def compile_closure(request, manifest, *, registry=None, research_dossier=None, 
 
     ready=sum(s["status"]=="ENGINEERING_GATE_READY" for s in gate_states); blocked=len(gate_states)-ready; ext_blocked=sum(s["status"] in {"BLOCKED","UNRESOLVED"} for s in ext_states); status="BLOCKED" if blockers else "READY"
     registry_digest=digest(registry)
-    payload={"request_id":request["request_id"],"manifest_id":manifest["manifest_id"],"registry_digest":registry_digest,"direct_gate_ids":direct,"closure_gate_ids":ordered,"gate_states":gate_states,"external_dependency_states":ext_states,"blockers":blockers,"closure_status":status,"source_item_status":manifest["source_item_status"]}
+    payload={"request_id":request["request_id"],"manifest_id":manifest["manifest_id"],"registry_digest":registry_digest,"source_audit_states":source_audit_states,"direct_gate_ids":direct,"closure_gate_ids":ordered,"gate_states":gate_states,"external_dependency_states":ext_states,"blockers":blockers,"closure_status":status,"source_item_status":manifest["source_item_status"]}
     note="technical engineering closure READY; source, pedagogy, learner-state and publication authority remain independent" if status=="READY" else "technical engineering closure BLOCKED; downstream engineering consumption forbidden"
-    receipt={"schema_version":"1.0.0","receipt_id":manifest["manifest_id"].replace("CHEM-ENG-MAN-","CHEM-ENG-CLOSURE-",1),"request_id":request["request_id"],"manifest_id":manifest["manifest_id"],"registry_ref":manifest["registry_ref"],"registry_digest":registry_digest,"closure_digest":digest(payload),"direct_gate_ids":direct,"closure_gate_ids":ordered,"gate_states":gate_states,"external_dependency_states":ext_states,"blockers":blockers,"counts":{"direct_gate_count":len(direct),"closure_gate_count":len(ordered),"ready_gate_count":ready,"blocked_gate_count":blocked,"external_dependency_count":len(ext_states),"external_blocked_count":ext_blocked},"closure_status":status,"source_item_status":manifest["source_item_status"],"authority_note":note}
+    receipt={"schema_version":"1.0.0","receipt_id":manifest["manifest_id"].replace("CHEM-ENG-MAN-","CHEM-ENG-CLOSURE-",1),"request_id":request["request_id"],"manifest_id":manifest["manifest_id"],"registry_ref":manifest["registry_ref"],"registry_digest":registry_digest,"source_audit_states":source_audit_states,"closure_digest":digest(payload),"direct_gate_ids":direct,"closure_gate_ids":ordered,"gate_states":gate_states,"external_dependency_states":ext_states,"blockers":blockers,"counts":{"direct_gate_count":len(direct),"closure_gate_count":len(ordered),"ready_gate_count":ready,"blocked_gate_count":blocked,"external_dependency_count":len(ext_states),"external_blocked_count":ext_blocked},"closure_status":status,"source_item_status":manifest["source_item_status"],"authority_note":note}
     validate_schema(receipt,"contracts/chemistry-engineering-closure-receipt.schema.json","CHEM_ENG_RECEIPT_SCHEMA"); return receipt
 
 def main():
