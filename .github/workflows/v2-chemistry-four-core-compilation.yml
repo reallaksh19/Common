@@ -24,7 +24,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: python -m pip install --upgrade pip jsonschema reportlab pymupdf pytest
+        run: python -m pip install --upgrade pip jsonschema reportlab pymupdf pypdf pytest
 
       - name: Run four-core compiler falsifiers
         run: >-
