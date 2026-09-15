@@ -24,8 +24,9 @@ assert result["concept_binding_count"] == 3
 assert result["equation_binding_count"] == 1
 assert result["source_layer_count"] == 3
 
+# Preserve schema validity while removing the required formal-authority identity.
 bad = copy.deepcopy(AUDIT)
-bad["source_layers"] = [x for x in bad["source_layers"] if x["layer_id"] != "SRC-NCERT-XI-SYLLABUS-REDOX"]
+next(x for x in bad["source_layers"] if x["layer_id"] == "SRC-NCERT-XI-SYLLABUS-REDOX")["layer_id"] = "SRC-NCERT-XI-SYLLABUS-OTHER"
 must_fail(bad, "CHEM_SOURCE_AUDIT_FORMAL_SOURCE_MISSING")
 
 bad = copy.deepcopy(AUDIT)
