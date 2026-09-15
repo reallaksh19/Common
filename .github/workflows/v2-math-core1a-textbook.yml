@@ -12,6 +12,7 @@ on:
       - 'Grade 9/V2/Mathematics/LearnerProduct/**'
       - 'Grade 9/V2/Mathematics/ProductionKits/**'
       - 'Grade 9/V2/Mathematics/MathBlueprint/**'
+      - 'Grade 9/V2/Mathematics/AssessmentScope/**'
       - 'Grade 9/V2/Mathematics/StudySynthesis/**'
       - 'Grade 9/V2/Mathematics/LearnerIntelligence/**'
       - 'Grade 9/V2/Mathematics/InstructionalKnowledge/**'
@@ -54,6 +55,8 @@ jobs:
       - name: Validate Mathematics Technical Engineering Gate Registry
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_gates.py'
 
+      - name: Validate exact AssessmentScope to Engineering crosswalk
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_assessment_engineering_crosswalk.py'
 
       - name: Produce exact Core1, learner StudyModel and Core2 from the cold-start chain
         run: |
@@ -127,7 +130,7 @@ jobs:
           print(json.dumps({'buckets':len(bucket_plan['buckets']),'pages':len(pdf),'pdf_sha256':audit['artifact']['pdf_sha256'],'actual_problem_instances':audit['quality_audit']['actual_problem_instances'],'governance_receipt':receipt['receipt_id']}, indent=2))
           PY
 
-      - name: Run genuinely bound four-producer release golden
+      - name: Run Engineering-bound four-producer release golden
         run: |
           python 'Grade 9/V2/Mathematics/MathBlueprint/engine/run_bound_producer_release_golden_entry.py' \
             --core1-plan /tmp/core1a/core1_study_plan.json \
@@ -135,18 +138,32 @@ jobs:
             --core2-plan /tmp/core1a/core2_plan.json \
             --out-dir /tmp/core1a/bound-producer-release
 
-      - name: Inspect bound release summary
+      - name: Inspect Engineering-bound release and full-scope gap audit
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          summary = json.loads(Path('/tmp/core1a/bound-producer-release/bound_producer_release_summary.json').read_text(encoding='utf-8'))
+          root = Path('/tmp/core1a/bound-producer-release')
+          summary = json.loads((root / 'bound_producer_release_summary.json').read_text(encoding='utf-8'))
+          full_audit = json.loads((root / 'full_mixed_engineering_coverage_audit.json').read_text(encoding='utf-8'))
           assert summary['status'] == 'PASS'
+          assert summary['golden_id'] == 'MATH-BOUND-PRODUCER-RELEASE-v2'
+          assert summary['engineering_crosswalk_ref'] == 'MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V1'
           assert summary['release_gate']['status'] == 'PASS'
+          assert summary['release_gate']['engineering_domain_authorization']['status'] == 'BOUND'
+          assert summary['release_gate']['engineering_domain_authorization']['authorized_direct_gate_count'] >= 1
           assert summary['release_gate']['frozen_source_custody']['status'] == 'PASS'
           assert summary['release_gate']['canonical_answer_custody']['status'] == 'PASS'
+          assert summary['full_mixed_engineering_status'] == 'FULL_MIXED_CORPUS_NOT_ENGINEERING_RELEASE_READY'
+          assert summary['full_mixed_engineering_gap_capability_refs'] == ['MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE']
+          assert full_audit['required_status'] == 'BLOCKED_ENGINEERING_GAP'
+          assert full_audit['engineering_gap_count'] == 1
+          assert summary['engineering_projection_coverage']['required_status'] == 'COVERED'
+          assert summary['engineering_bound_projection']['source_question_refs'] == ['Q2']
+          assert set(summary['engineering_bound_projection']['capability_refs']) == {'MATH-ORDERED-PAIR-SEMANTICS','MATH-COORDINATE-DISTANCE'}
           assert summary['core1b_receipt_refs']
-          assert summary['source_question_count'] >= 1
+          assert summary['source_question_count'] == 1
+          assert summary['bucket_count'] == 1
           print(json.dumps(summary, indent=2))
           PY
 
