@@ -25,6 +25,17 @@ def run(script: Path, args: list[str]) -> None:
         raise RuntimeError(f"BOUND_BLUEPRINT_PUBLICATION_FAILED:{script.name}\nSTDOUT:\n{proc.stdout}\nSTDERR:\n{proc.stderr}")
 
 
+def _research_manifest(root: Path) -> Path | None:
+    candidates = [
+        root / "inputs" / "pedagogy_research_manifest.json",
+        root / "inputs" / "pedagogy_research_manifest.test.json",
+    ]
+    existing = [path for path in candidates if path.exists()]
+    if len(existing) > 1:
+        fail("BOUND_BLUEPRINT_PUBLICATION_RESEARCH_MANIFEST_AMBIGUOUS")
+    return existing[0] if existing else None
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bound-dir", required=True)
@@ -37,6 +48,8 @@ def main() -> None:
 
     example_catalog = root / "core1a" / "core1a_governed_example_catalog.json"
     generation_spec = root / "inputs" / "generation_spec.json"
+    research_manifest = _research_manifest(root)
+    research_args = ["--pedagogy-research-manifest", str(research_manifest)] if research_manifest else []
     if not example_catalog.exists():
         fail("BOUND_BLUEPRINT_PUBLICATION_GOVERNED_EXAMPLE_CATALOG_REQUIRED")
 
@@ -55,6 +68,7 @@ def main() -> None:
         "--core2a-blueprint", str(root / "core2a" / "core2a_product_blueprint.json"),
         "--core2b-plan", str(root / "core2b" / "plan.json"),
         "--generation-spec", str(generation_spec),
+        *research_args,
         "--release-gate", str(gate_path),
         "--out", str(bundle),
     ])
@@ -62,12 +76,14 @@ def main() -> None:
         "--input", str(bundle), "--release-gate", str(gate_path),
         "--generation-spec", str(generation_spec),
         "--core1a-example-catalog", str(example_catalog),
+        *research_args,
         "--audit-out", str(bundle_audit),
     ])
     run(HERE / "render_publication_bundle_pdf.py", [
         "--input", str(bundle), "--release-gate", str(gate_path),
         "--generation-spec", str(generation_spec),
         "--core1a-example-catalog", str(example_catalog),
+        *research_args,
         "--out", str(pdf), "--audit-out", str(pdf_audit),
     ])
 
@@ -80,6 +96,8 @@ def main() -> None:
         fail("BOUND_BLUEPRINT_PUBLICATION_RENDER_COVERAGE_DRIFT")
     if pda.get("semantic_source") != "LEARNER_PUBLICATION_BUNDLE_ONLY":
         fail("BOUND_BLUEPRINT_PUBLICATION_SOURCE_DRIFT")
+    if bpa.get("research_manifest_bound") != pda.get("research_manifest_bound"):
+        fail("BOUND_BLUEPRINT_PUBLICATION_RESEARCH_CUSTODY_DRIFT")
 
     summary = {
         "status": "PASS",
@@ -89,6 +107,8 @@ def main() -> None:
         "concept_component_count": bpa["concept_component_count"],
         "difficulty_badge_counts": bpa["difficulty_badge_counts"],
         "governed_example_catalog_digest": bundle_doc["governed_example_catalog_digest"],
+        "pedagogy_research_manifest_digest": bundle_doc["pedagogy_research_manifest_digest"],
+        "research_manifest_bound": bpa["research_manifest_bound"],
         "semantic_page_count": pda["semantic_page_count"],
         "render_object_count": bpa["render_object_count"],
         "pdf_sha256": pda["pdf_sha256"],
@@ -100,6 +120,7 @@ def main() -> None:
             "pdf": pdf.name,
             "pdf_audit": pdf_audit.name,
             "governed_example_catalog": "../core1a/core1a_governed_example_catalog.json",
+            "pedagogy_research_manifest": str(research_manifest.relative_to(root)) if research_manifest else None,
         },
     }
     (out / "blueprint_publication_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
