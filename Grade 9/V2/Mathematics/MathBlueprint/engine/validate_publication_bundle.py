@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from blueprint_common import digest, fail, load, validate_schema
+from compile_engineering_visibility_manifest import validate_visibility_manifest
 from validate_content_complete_page_blueprint import validate_content_complete_blueprint
 from validate_pedagogy_research_manifest import validate_generation_research_bindings
 from validate_self_teaching_generation_spec import validate_generation_spec
@@ -34,7 +35,14 @@ def _render_ids(pages: list[dict]) -> list[str]:
     return ids
 
 
-def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_spec: dict | None = None, catalog: dict | None = None, research_manifest: dict | None = None) -> dict:
+def validate_bundle(
+    bundle: dict,
+    release_gate: dict | None = None,
+    generation_spec: dict | None = None,
+    catalog: dict | None = None,
+    research_manifest: dict | None = None,
+    engineering_visibility_manifest: dict | None = None,
+) -> dict:
     validate_schema(bundle, "math-learner-publication-bundle.schema.json")
     if bundle.get("bundle_digest") != digest(bundle, "bundle_digest"):
         fail("MATH_PUBLICATION_BUNDLE_DIGEST_MISMATCH")
@@ -42,11 +50,25 @@ def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_s
     if bundle.get("bundle_id") != expected_bundle_id:
         fail("MATH_PUBLICATION_BUNDLE_ID_MISMATCH")
 
+    embedded_visibility = bundle["engineering_visibility"]
+    visibility_audit = validate_visibility_manifest(embedded_visibility)
+    if bundle["engineering_visibility_manifest_digest"] != embedded_visibility["manifest_digest"]:
+        fail("MATH_PUBLICATION_BUNDLE_ENGINEERING_VISIBILITY_DIGEST_DRIFT")
+    if embedded_visibility["publication_authorization"] != "NOT_IMPLIED":
+        fail("MATH_PUBLICATION_BUNDLE_ENGINEERING_VISIBILITY_AUTHORITY_FORBIDDEN")
+    if engineering_visibility_manifest is not None:
+        validate_visibility_manifest(engineering_visibility_manifest)
+        if digest(engineering_visibility_manifest) != digest(embedded_visibility):
+            fail("MATH_PUBLICATION_BUNDLE_ENGINEERING_VISIBILITY_SOURCE_DRIFT")
+
     if release_gate is not None:
         if release_gate.get("status") != "PASS":
             fail("MATH_PUBLICATION_BUNDLE_RELEASE_GATE_NOT_PASS")
-        if bundle["source_release_gate_digest"] != digest(release_gate):
+        release_digest = digest(release_gate)
+        if bundle["source_release_gate_digest"] != release_digest:
             fail("MATH_PUBLICATION_BUNDLE_RELEASE_GATE_DIGEST_DRIFT")
+        if embedded_visibility["source_release_gate_digest"] != release_digest:
+            fail("MATH_PUBLICATION_BUNDLE_ENGINEERING_VISIBILITY_RELEASE_DRIFT")
     if generation_spec is not None:
         validate_generation_spec(generation_spec)
         validate_generation_research_bindings(generation_spec, research_manifest)
@@ -119,7 +141,13 @@ def validate_bundle(bundle: dict, release_gate: dict | None = None, generation_s
         "render_object_ids": sorted(set(object_ids) - set(page_ids)),
         "component_validation_count": len(transient_audits),
         "research_manifest_bound": research_manifest is not None,
-        "semantic_model": "CONCEPT_BADGE_PLUS_PROBLEM_LEARNER_FIT",
+        "engineering_visibility_bound": engineering_visibility_manifest is not None,
+        "engineering_visibility_manifest_id": visibility_audit["manifest_id"],
+        "engineering_visibility_manifest_digest": visibility_audit["manifest_digest"],
+        "engineering_visibility_authorization_count": visibility_audit["authorization_count"],
+        "engineering_visibility_gate_count": visibility_audit["gate_count"],
+        "engineering_visibility_gate_ids": [row["gate_id"] for row in embedded_visibility["gates"]],
+        "semantic_model": "CONCEPT_BADGE_PLUS_PROBLEM_LEARNER_FIT_PLUS_ENGINEERING_VISIBILITY",
     }
 
 
@@ -130,11 +158,19 @@ def main() -> None:
     ap.add_argument("--generation-spec", required=True)
     ap.add_argument("--core1a-example-catalog", required=True)
     ap.add_argument("--pedagogy-research-manifest")
+    ap.add_argument("--engineering-visibility-manifest", required=True)
     ap.add_argument("--audit-out")
     args = ap.parse_args()
     research = load(args.pedagogy_research_manifest) if args.pedagogy_research_manifest else None
     bundle = load(args.input)
-    audit = validate_bundle(bundle, load(args.release_gate), load(args.generation_spec), load(args.core1a_example_catalog), research)
+    audit = validate_bundle(
+        bundle,
+        load(args.release_gate),
+        load(args.generation_spec),
+        load(args.core1a_example_catalog),
+        research,
+        load(args.engineering_visibility_manifest),
+    )
     audit["bundle_sha256"] = digest(bundle)
     if args.audit_out:
         Path(args.audit_out).write_text(json.dumps(audit, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
