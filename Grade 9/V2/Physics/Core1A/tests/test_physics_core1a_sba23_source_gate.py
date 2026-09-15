@@ -18,7 +18,16 @@ assert b['core2_primary_questions']==['Q15'] and b['core1a_homes']==['MOVING_LAU
 q=next(x for x in link['challenge_links'] if x['challenge_id']=='Q15')
 assert q['core1a_concept_id']=='moving-launcher' and q['challenge_title']=='Moving launch source'
 assert audit['release_decision']=='BLOCK' and audit['classification']=='SOURCE_EVIDENCE_INCOMPLETE'
-assert audit['exact_source_body']['text'] is None and audit['exact_source_hint_ladder']['h1'] is None
+assert audit['exact_source_body']['text'] is None and audit['exact_source_solution']['text'] is None
+assert audit['exact_source_hint_ladder']['h1'] is None and audit['exact_source_hint_ladder']['h2'] is None and audit['exact_source_hint_ladder']['h3'] is None
+provenance=audit['cross_pr_provenance_checked']
+assert provenance['pull_request']==343
+assert provenance['source_scan_status']=='CHAT_PROVIDED_NOT_REDISTRIBUTED'
+assert provenance['revised_core2_pdf_status']=='GENERATED_CONVERSATION_ARTIFACT_NOT_REPOSITORY_FILE'
+assert provenance['repo_generator_status']=='CONTRACT_ONLY_CHAT_SOURCE_NOT_EMBEDDED'
+assert provenance['usable_as_exact_q15_authority'] is False
+assert 'cannot close G1 or G4' in provenance['finding']
+assert 'active Physics authority branch' in audit['next_required_evidence']
 assert plan['status']=='PROVISIONAL_TEACHING_MODEL_NOT_RELEASE_AUTHORITY'
 assert len(plan['learning_atoms'])==8 and plan['core2_release']['Q15'].startswith('HELD_')
 r=transfer['transfer_routines'][0]
@@ -30,4 +39,4 @@ assert next(g for g in manifest['phase_gates'] if g['gate']=='G4_CORE2_HINT_PRET
 assert manifest['qa']['hint_preteach_complete'] is False and manifest['qa']['pdf_preflight_complete'] is False
 assert 'M2D-SBA-23' not in state['completed_active_buckets'] and state['next_active_bucket']=='M2D-SBA-23'
 assert 'M2D-SBA-23' not in {row['bucket_id'] for row in pub['rows']}
-print('SBA23 source-integrity gate: PASS (identity bound; canonical manifest remains held)')
+print('SBA23 source-integrity gate: PASS (identity bound; cross-PR provenance checked; canonical manifest remains held)')
