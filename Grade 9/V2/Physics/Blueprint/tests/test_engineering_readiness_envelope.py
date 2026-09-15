@@ -11,24 +11,24 @@ from compile_engineering_readiness import build_envelope, compile_readiness  # n
 from compile_engineering_closure import load  # noqa: E402
 
 
-def test_relative_motion_internal_ready_but_external_math_held():
+def test_subject_adapter_uses_global_manifest_driven_permissions():
     request = load("fixtures/engineering-workbench/relative-motion-request.v1.json")
     manifest = load("fixtures/engineering-workbench/relative-motion-manifest.v3.json")
     engineering, domain, envelope = compile_readiness(request, manifest)
 
     assert engineering["closure_status"] == "READY"
     assert domain["closure_status"] == "HELD"
-    assert envelope["dimensions"]["physics_technical"] == "READY"
+    assert envelope["authority_layer"] == "ENGINEERING_GATE"
+    assert envelope["dimensions"]["technical"] == "READY"
     assert envelope["dimensions"]["external_prerequisites"] == "HELD"
     assert envelope["overall_state"] == "BLOCKED"
+    assert set(envelope["consumer_permissions"]) == set(manifest["downstream_consumers"])
     assert envelope["consumer_permissions"]["CCU"]["status"] == "BLOCKED"
-    assert envelope["consumer_permissions"]["CORE1A"]["status"] == "BLOCKED"
     assert envelope["consumer_permissions"]["PUBLICATION"]["status"] == "NOT_AUTHORIZED"
-    refs = {row["ref"] for row in envelope["blockers"] if row["dimension"] == "EXTERNAL_PREREQUISITES"}
-    assert refs == {"MATH-GEO-2D", "MATH-TRIG-RIGHT"}
+    assert "CORE1A" not in envelope["consumer_permissions"]
 
 
-def test_research_depth_compiles_evidence_without_requiring_external_promotion():
+def test_research_depth_compiles_evidence_without_external_promotion():
     request = load("fixtures/engineering-workbench/grav-field-request.v1.json")
     manifest = load("fixtures/engineering-workbench/grav-field-manifest.v3.json")
     engineering, domain, envelope = compile_readiness(request, manifest)
@@ -39,28 +39,31 @@ def test_research_depth_compiles_evidence_without_requiring_external_promotion()
     assert envelope["domain_receipt"]["closure_status"] == domain["closure_status"]
     if domain["closure_status"] == "HELD":
         assert envelope["overall_state"] == "BLOCKED"
-        assert envelope["consumer_permissions"]["CORE1A"]["status"] == "BLOCKED"
+        for consumer, row in envelope["consumer_permissions"].items():
+            if consumer != "PUBLICATION":
+                assert row["status"] == "BLOCKED"
 
 
-def test_ready_domain_receipt_allows_technical_consumers_but_not_publication():
+def test_ready_domain_allows_only_manifest_declared_technical_consumers():
     request = load("fixtures/engineering-workbench/relative-motion-request.v1.json")
     manifest = load("fixtures/engineering-workbench/relative-motion-manifest.v3.json")
     engineering, _, held = compile_readiness(request, manifest)
     ready_domain = {
         "schema_version": "1.0.0",
-        "receipt_id": "DOMAIN-CLOSURE-PHY-TEST-READY",
+        "receipt_id": "DOMAIN-CLOSURE-TEST-READY",
         "engineering_receipt_ref": engineering["receipt_id"],
         "prerequisites": [],
         "demands": [],
         "closure_status": "READY",
         "closure_digest": "sha256:" + "1" * 64,
     }
-    envelope = build_envelope(request, engineering, ready_domain)
+    envelope = build_envelope(request, manifest, engineering, ready_domain)
     assert held["overall_state"] == "BLOCKED"
     assert envelope["overall_state"] == "READY_FOR_TECHNICAL_CONSUMPTION"
-    for consumer in ["CCU", "CORE1A", "CORE1B", "CORE2A", "CORE2B"]:
-        assert envelope["consumer_permissions"][consumer]["status"] == "ALLOWED"
-    assert envelope["consumer_permissions"]["PUBLICATION"]["status"] == "NOT_AUTHORIZED"
+    assert set(envelope["consumer_permissions"]) == set(manifest["downstream_consumers"])
+    for consumer, row in envelope["consumer_permissions"].items():
+        expected = "NOT_AUTHORIZED" if consumer == "PUBLICATION" else "ALLOWED"
+        assert row["status"] == expected
     assert envelope["publication_authorization"] == "NOT_IMPLIED"
 
 
@@ -77,7 +80,7 @@ def main():
     tests = [value for name, value in globals().items() if name.startswith("test_") and callable(value)]
     for test in tests:
         test()
-    print(f"Engineering readiness envelope: PASS ({len(tests)} tests)")
+    print(f"Blueprint Engineering Gate adapter: PASS ({len(tests)} tests)")
 
 
 if __name__ == "__main__":
