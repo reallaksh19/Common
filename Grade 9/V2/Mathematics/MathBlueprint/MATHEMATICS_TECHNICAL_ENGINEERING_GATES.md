@@ -78,47 +78,56 @@ Additional required sections:
 
 ## 3. Subtopic Coverage & Granular Engineering Decomposition
 
-The registry is decomposed into 10 technically coherent subtopic gates:
+The registry is decomposed into **44 technically coherent subtopic gates** covering the complete CBSE curriculum from Grade 9 through Grade 11, mapped to IIT JEE examination tiers (`NOT_IN_JEE`, `JEE_MAINS`, `JEE_ADVANCED`, `BOTH`):
 
-1. **`MATH-NUM-RADICALS`** (Real Numbers & Radicals)
-   - Invariant: Principal square root non-negativity $\sqrt{x^2} = |x|$; conjugate rationalization $\frac{1}{\sqrt{a} \pm \sqrt{b}}$.
-   - Trap: Claiming $\sqrt{25} = \pm 5$ (confusing solution to $x^2 = 25$ with definition of principal root).
+### Complete Subtopic Gate Inventory (44 Gates)
 
-2. **`MATH-ALG-POLYNOMIALS`** (Polynomials & Factorization)
-   - Invariant: Factor Theorem ($P(a) = 0 \iff (x-a) \mid P(x)$); algebraic identities; degree additive in multiplication.
-   - Trap: "Freshman's Dream" $(a+b)^2 = a^2 + b^2$ (omission of middle cross-term $2ab$).
-
-3. **`MATH-LIN-EQUATIONS`** (Linear Systems in Two Variables)
-   - Invariant: Consistency ratios ($\frac{a_1}{a_2} \ne \frac{b_1}{b_2}$ unique, $\frac{a_1}{a_2} = \frac{b_1}{b_2} \ne \frac{c_1}{c_2}$ inconsistent, $\frac{a_1}{a_2} = \frac{b_1}{b_2} = \frac{c_1}{c_2}$ dependent); non-degeneracy condition $a_i^2 + b_i^2 \ne 0$.
-   - Trap: Blind cross-multiplication or elimination without checking for parallel lines ($0 = k$).
-
-4. **`MATH-QUAD-EQUATIONS`** (Quadratic Equations & Discriminant)
-   - Invariant: Standard form $ax^2 + bx + c = 0$ with $a \neq 0$; discriminant $\Delta = b^2 - 4ac$ trichotomy; Vieta relations $\alpha+\beta = -b/a$, $\alpha\beta = c/a$.
-   - Trap: Dropping leading coefficient condition $a \ne 0$; forgetting sign when taking square root of discriminant.
-
-5. **`MATH-GEO-COORDINATES`** (Coordinate Geometry & Metrics)
-   - Invariant: Euclidean distance $d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$; section formula; slope $m = \frac{y_2-y_1}{x_2-x_1}$ requires $x_1 \ne x_2$ (vertical lines have undefined slope).
-   - Trap: Subtracting coordinates in inconsistent order or treating vertical line slope as 0.
-
-6. **`MATH-GEO-TRIANGLES`** (Euclidean Triangles: Congruence & Similarity)
-   - Invariant: Congruence criteria (SSS, SAS, ASA, AAS, RHS); Basic Proportionality Theorem (Thales); AA/SAS/SSS similarity.
-   - Trap: Accepting SSA (Side-Side-Angle) or AAA as congruence criteria without right-angle/hypotenuse restriction.
-
-7. **`MATH-TRIG-RATIOS`** (Trigonometric Ratios & Pythagorean Identities)
-   - Invariant: Right-triangle definitions; fundamental identity $\sin^2\theta + \cos^2\theta = 1$; domain restriction $0^\circ < \theta < 90^\circ$ for acute ratios.
-   - Trap: Treating $\sin\theta$ as $\sin \times \theta$; dividing by $\cos\theta$ when $\theta = 90^\circ$.
-
-8. **`MATH-GEO-CIRCLES`** (Circle Theorems & Tangents)
-   - Invariant: Tangent perpendicular to radius at point of contact ($r \perp t$); equal tangents from external point; cyclic quadrilateral opposite angles sum to $180^\circ$.
-   - Trap: Assuming tangent from external point can be drawn without common point of contact or that radius is perpendicular anywhere on secant line.
-
-9. **`MATH-MENS-SURFACES`** (Mensuration: Surface Areas & Volumes)
-   - Invariant: Composite solids surface area requires subtraction of internal contact faces ($SA_{total} = SA_1 + SA_2 - 2 A_{contact}$); volume conservation during melting/recasting.
-   - Trap: Adding surface areas of component solids without subtracting the hidden joining surface.
-
-10. **`MATH-STAT-PROBABILITY`** (Statistics & Classical Probability)
-    - Invariant: Probability axioms $0 \le P(E) \le 1$; complementary event $P(E) + P(\bar{E}) = 1$; empirical mode-median-mean relation.
-    - Trap: Reporting probabilities greater than 1 or negative probabilities; computing mean of unequal grouped data without class weights.
+| Subtopic ID | Learner Title | CBSE Ref | JEE Tier |
+|---|---|---|---|
+| `MATH-NUM-RADICALS` | Real Numbers, Radicals & Conjugate Rationalization | Gr 9 Ch 1 | `NOT_IN_JEE` |
+| `MATH-NUM-EUCLID-DIVISION` | Euclid's Division Lemma & Fundamental Theorem of Arithmetic | Gr 10 Ch 1 | `NOT_IN_JEE` |
+| `MATH-NUM-IRRATIONAL-PROOF` | Proofs of Irrationality & Decimal Expansions | Gr 10 Ch 1 | `NOT_IN_JEE` |
+| `MATH-ALG-POLYNOMIALS` | Polynomials, Factor Theorem & Identities | Gr 9–10 Ch 2 | `NOT_IN_JEE` |
+| `MATH-ALG-POLY-ZEROS-GRAPH` | Polynomial Zeros, Coefficients & Parabolic Graphs | Gr 10 Ch 2 | `JEE_MAINS` |
+| `MATH-LIN-EQUATIONS` | Linear Systems in Two Variables & Consistency Matrix | Gr 9–10 Ch 3 | `NOT_IN_JEE` |
+| `MATH-QUAD-EQUATIONS` | Quadratic Equations, Discriminant & Vieta Relations | Gr 10 Ch 4 | `JEE_MAINS` |
+| `MATH-SEQ-AP` | Arithmetic Progressions: General Term & Summation | Gr 10 Ch 5 | `JEE_MAINS` |
+| `MATH-GEO-LINES-ANGLES` | Lines, Angles, Transversals & Angle Sum Theorem | Gr 9 Ch 6 | `NOT_IN_JEE` |
+| `MATH-GEO-TRIANGLES` | Euclidean Triangles: Congruence (SSA Fallacy) & Similarity (BPT) | Gr 9–10 Ch 7/6 | `NOT_IN_JEE` |
+| `MATH-GEO-PYTHAGORAS` | Pythagorean Theorem, Converse & Right Triangle Projections | Gr 10 Ch 6 | `JEE_MAINS` |
+| `MATH-GEO-QUADRILATERALS` | Quadrilaterals: Parallelograms & Mid-Point Theorem | Gr 9 Ch 8 | `NOT_IN_JEE` |
+| `MATH-GEO-CIRCLES` | Circle Theorems, Tangent-Radius $\perp$ & Cyclic Quadrilaterals | Gr 9–10 Ch 10 | `NOT_IN_JEE` |
+| `MATH-GEO-CIRCLES-AREA` | Areas Related to Circles: Sectors, Segments & Combinations | Gr 10 Ch 12 | `NOT_IN_JEE` |
+| `MATH-GEO-COORDINATES` | Coordinate Geometry: Distance, Section, Slope & Collinearity | Gr 9–10 Ch 7 | `JEE_MAINS` |
+| `MATH-GEO-HERON` | Heron's Formula & Quadrilateral Area Partitions | Gr 9 Ch 10 | `NOT_IN_JEE` |
+| `MATH-MENS-SURFACES` | Surface Areas, Volumes & Composite Solid Interface Exclusion | Gr 9–10 Ch 13 | `NOT_IN_JEE` |
+| `MATH-TRIG-RATIOS` | Trigonometric Ratios, Pythagorean Identities (Acute) | Gr 10 Ch 8 | `JEE_MAINS` |
+| `MATH-TRIG-HEIGHTS-DISTANCES` | Applications of Trigonometry: Heights & Distances | Gr 10 Ch 9 | `NOT_IN_JEE` |
+| `MATH-STAT-PROBABILITY` | Empirical & Classical Probability Foundations | Gr 9–10 Ch 14–15 | `NOT_IN_JEE` |
+| `MATH-STAT-CUMFREQ` | Cumulative Frequency Distributions, Ogive & Graphical Median | Gr 10 Ch 14 | `NOT_IN_JEE` |
+| `MATH-SET-OPERATIONS` | Sets: Operations, De Morgan's Laws & Venn Diagrams | Gr 11 Ch 1 | `JEE_MAINS` |
+| `MATH-REL-FUNCTIONS` | Relations, Mappings & Domain-Range Determinations | Gr 11 Ch 2 | `JEE_MAINS` |
+| `MATH-FUNC-TYPES` | Function Types: Injective, Surjective, Bijective & Symmetry | Gr 11 Ch 2 | `JEE_MAINS` |
+| `MATH-TRIG-EXTENDED-DOMAIN` | Trigonometric Functions: Radian Measure & All-Quadrant Signs | Gr 11 Ch 3 | `BOTH` |
+| `MATH-TRIG-COMPOUND-ANGLES` | Compound Angle Identities & Double/Half Angle Formulas | Gr 11 Ch 3 | `BOTH` |
+| `MATH-TRIG-EQUATIONS` | Trigonometric Equations: General Solutions & Principal Values | Gr 11 Ch 3 | `BOTH` |
+| `MATH-TRIG-PROPERTIES-TRIANGLES` | Properties of Triangles: Sine Rule, Cosine Rule & Radii | Gr 11 Ch 3 | `BOTH` |
+| `MATH-ALG-COMPLEX-NUMBERS` | Complex Numbers: Argand Plane, Modulus, Argument & Polar Form | Gr 11 Ch 5 | `BOTH` |
+| `MATH-LIN-INEQUALITIES` | Linear Inequalities in One & Two Variables, Feasible Regions | Gr 11 Ch 6 | `JEE_MAINS` |
+| `MATH-PERM-COMB` | Permutations & Combinations: Fundamental Counting, nPr & nCr | Gr 11 Ch 7 | `BOTH` |
+| `MATH-ALG-BINOMIAL-THEOREM` | Binomial Theorem for Positive Integral Index & General Terms | Gr 11 Ch 8 | `BOTH` |
+| `MATH-SEQ-GP-SPECIAL` | Geometric Progressions, Infinite GP & Special Sums ($\Sigma n^2, n^3$) | Gr 11 Ch 9 | `BOTH` |
+| `MATH-PROOF-INDUCTION` | Principle of Mathematical Induction: Base & Inductive Steps | Gr 11 Ch 4 | `JEE_MAINS` |
+| `MATH-LINES-2D` | Straight Lines: Standard Forms, Angles Between Lines & Distance | Gr 11 Ch 10 | `BOTH` |
+| `MATH-CONIC-CIRCLE` | Conic Sections: Circles, Tangents & Director Circle | Gr 11 Ch 11 | `BOTH` |
+| `MATH-CONIC-PARABOLA` | Conic Sections: Parabola, Standard Forms & Latus Rectum | Gr 11 Ch 11 | `BOTH` |
+| `MATH-CONIC-ELLIPSE` | Conic Sections: Ellipse, Eccentricity & Foci | Gr 11 Ch 11 | `BOTH` |
+| `MATH-CONIC-HYPERBOLA` | Conic Sections: Hyperbola, Asymptotes & Eccentricity | Gr 11 Ch 11 | `JEE_ADVANCED` |
+| `MATH-3D-INTRO` | Introduction to 3D Geometry: Octants, Distance & Section Formulas | Gr 11 Ch 12 | `JEE_MAINS` |
+| `MATH-CALC-LIMITS` | Limits of Functions: Indeterminate Forms & Standard Limits | Gr 11 Ch 13 | `BOTH` |
+| `MATH-CALC-DERIVATIVES` | Derivatives: First Principles, Product, Quotient & Chain Rules | Gr 11 Ch 13 | `BOTH` |
+| `MATH-STAT-VARIANCE-SD` | Measures of Dispersion: Variance & Standard Deviation | Gr 11 Ch 15 | `JEE_MAINS` |
+| `MATH-PROB-EVENTS` | Axiomatic Probability, Conditional Probability & Bayes' Theorem | Gr 11 Ch 16 | `BOTH` |
 
 ---
 

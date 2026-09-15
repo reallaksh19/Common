@@ -25,7 +25,7 @@ class MathematicsEngineeringGateTests(unittest.TestCase):
     def test_math_registry_schema_and_subtopic_invariants(self):
         reg = load_json(REGISTRY_PATH)
         subtopics = validate(reg)
-        self.assertEqual(len(subtopics), 10)
+        self.assertEqual(len(subtopics), 44)
         expected_subtopics = [
             "MATH-NUM-RADICALS",
             "MATH-ALG-POLYNOMIALS",
