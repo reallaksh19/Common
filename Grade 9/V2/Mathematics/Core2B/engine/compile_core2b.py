@@ -16,6 +16,7 @@ if str(MB_ENGINE) not in sys.path:
 
 from producer_governance import core2b_receipt
 from emit_stage_governance import write_receipt
+from engineering_product_custody import load_custody, stamp_receipt, custody_summary
 from validate_canonical_domain_registry import validate_registry
 
 LEVELS = [
@@ -258,15 +259,17 @@ def render_pdf(plan: dict, path: Path) -> None:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(); ap.add_argument("--input", required=True); ap.add_argument("--out", required=True); ap.add_argument("--pdf"); ap.add_argument("--domain-registry"); ap.add_argument("--governance-out"); args = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("--input", required=True); ap.add_argument("--out", required=True); ap.add_argument("--pdf"); ap.add_argument("--domain-registry"); ap.add_argument("--engineering-admission"); ap.add_argument("--governance-out"); args = ap.parse_args()
     source = json.loads(Path(args.input).read_text(encoding="utf-8")); plan = compile_plan(source)
     registry = json.loads(Path(args.domain_registry).read_text(encoding="utf-8")) if args.domain_registry else None
     if registry is not None: validate_registry(registry)
+    engineering_custody = load_custody(args.engineering_admission, registry)
     receipt = core2b_receipt(source, plan, registry=registry)
+    receipt = stamp_receipt(receipt, engineering_custody)
     Path(args.out).write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     gov_path = Path(args.governance_out) if args.governance_out else Path(args.out).with_suffix(".governance.json"); write_receipt(receipt, gov_path)
     if args.pdf: render_pdf(plan, Path(args.pdf))
-    print(json.dumps({"plan_id":plan["plan_id"],"governance_receipt_ref":receipt["receipt_id"],"governance_release_state":receipt["release_state"]}))
+    print(json.dumps({"plan_id":plan["plan_id"],"governance_receipt_ref":receipt["receipt_id"],"governance_release_state":receipt["release_state"],"engineering_custody":custody_summary(engineering_custody)}))
 
 
 if __name__ == "__main__":
