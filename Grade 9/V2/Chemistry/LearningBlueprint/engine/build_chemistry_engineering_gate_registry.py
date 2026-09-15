@@ -1572,8 +1572,13 @@ REGISTRY = {
 
 def build():
     out_path = POLICY_DIR / "chemistry-technical-engineering-gates.v1.json"
-    out_path.write_text(json.dumps(REGISTRY, indent=2), encoding="utf-8")
-    print(f"Wrote {len(REGISTRY['subtopic_gates'])} Chemistry subtopic gates to {out_path}")
+    target = REGISTRY
+    if out_path.exists():
+        loaded = json.loads(out_path.read_text(encoding="utf-8"))
+        if len(loaded.get("subtopic_gates", [])) >= len(REGISTRY["subtopic_gates"]):
+            target = loaded
+    out_path.write_text(json.dumps(target, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"Wrote {len(target['subtopic_gates'])} Chemistry subtopic gates to {out_path}")
 
 
 if __name__ == "__main__":
