@@ -13,133 +13,165 @@ from compile_mathematics_engineering_workbench import (  # noqa: E402
     MathematicsEngineeringWorkbenchError,
     compile_closure,
     compile_passport,
-    derive_gate_state,
+    compile_registry_proof,
     digest,
     load,
+    resolve_manifest,
 )
 
-REQUEST = load("fixtures/engineering-workbench/quad-equations-request.v1.json")
-MANIFEST = load("fixtures/engineering-workbench/quad-equations-manifest.v1.json")
 REGISTRY = load("policies/mathematics-technical-engineering-gates.v1.json")
-PROFILE = load("policies/mathematics-engineering-gate-invariants.v1.json")
 
 
-def gate(doc: dict, gate_id: str) -> dict:
-    return next(g for g in doc["subtopic_gates"] if g["subtopic_id"] == gate_id)
+def gate_ids(registry: dict = REGISTRY) -> list[str]:
+    return [gate["subtopic_id"] for gate in registry["subtopic_gates"]]
+
+
+def gate(registry: dict, gate_id: str) -> dict:
+    return next(row for row in registry["subtopic_gates"] if row["subtopic_id"] == gate_id)
+
+
+def request_for_gate(gate_id: str, suffix: str = "TEST") -> dict:
+    safe = gate_id.replace("-", "_")
+    return {
+        "schema_version": "1.0.0",
+        "subject": "MATHEMATICS",
+        "request_id": f"MATH-ENG-REQ-{suffix}_{safe}",
+        "scope_kind": "ENGINEERING_GATE",
+        "scope_refs": [gate_id],
+        "engineering_depth": "STANDARD",
+        "learning_purpose": "FIRST_STUDY",
+        "owner_decision_ref": None,
+    }
+
+
+def request_for_bucket(bucket_id: str, suffix: str = "BUCKET") -> dict:
+    return {
+        "schema_version": "1.0.0",
+        "subject": "MATHEMATICS",
+        "request_id": f"MATH-ENG-REQ-{suffix}",
+        "scope_kind": "BUCKET",
+        "scope_refs": [bucket_id],
+        "engineering_depth": "STANDARD",
+        "learning_purpose": "FIRST_STUDY",
+        "owner_decision_ref": None,
+    }
 
 
 class MathematicsEngineeringWorkbenchTests(unittest.TestCase):
-    def test_all_pr379_gates_rederive_ready_without_declared_flags(self):
-        registry_ids = {g["subtopic_id"] for g in REGISTRY["subtopic_gates"]}
-        self.assertEqual(set(PROFILE["required_gates"]), registry_ids)
-        states = [derive_gate_state(g, PROFILE) for g in REGISTRY["subtopic_gates"]]
-        failures = {x["gate_id"]: x["failure_codes"] for x in states if x["derived_status"] != "ENGINEERING_GATE_READY"}
-        self.assertEqual(failures, {})
-        self.assertTrue(all(x["declared_technical_readiness_ignored"] for x in states))
-        self.assertTrue(all(x["declared_release_checklist_ignored"] for x in states))
+    def test_registry_proof_is_generated_from_every_current_gate(self):
+        proof = compile_registry_proof(copy.deepcopy(REGISTRY))
+        ids = gate_ids()
+        self.assertEqual(proof["gate_count"], len(ids))
+        self.assertEqual({row["gate_id"] for row in proof["gate_proofs"]}, set(ids))
+        self.assertEqual(proof["ready_gate_count"], len(ids))
+        self.assertEqual(proof["blocked_gate_ids"], [])
+        self.assertTrue(proof["all_registry_gates_blueprint_admissible"])
 
-    def test_quadratic_closure_is_validator_derived(self):
-        receipt = compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), PROFILE)
-        self.assertEqual(receipt["closure_status"], "READY")
-        self.assertEqual(receipt["direct_gate_ids"], ["MATH-QUAD-EQUATIONS"])
-        self.assertEqual(
-            receipt["transitive_gate_ids"],
-            ["MATH-NUM-RADICALS", "MATH-ALG-POLYNOMIALS", "MATH-QUAD-EQUATIONS"],
-        )
-        self.assertEqual(receipt["counts"]["ready_gate_count"], 3)
-        self.assertEqual(receipt["counts"]["transitive_gate_count"], 3)
-        self.assertTrue(all(x["declared_technical_readiness_ignored"] for x in receipt["gate_states"]))
-        self.assertTrue(all(x["declared_release_checklist_ignored"] for x in receipt["gate_states"]))
-        passport = compile_passport(REQUEST, receipt)
-        self.assertEqual(passport["technical_state"], "ENGINEERING_READY")
-        self.assertEqual(passport["gate_count"], 3)
-        self.assertEqual(passport["ccu_technical_authorization"], "ALLOWED")
-        self.assertEqual(passport["publication_authorization"], "NOT_IMPLIED")
+    def test_every_gate_resolves_by_exact_registry_identity(self):
+        for gate_id in gate_ids():
+            request = request_for_gate(gate_id)
+            manifest = resolve_manifest(request, copy.deepcopy(REGISTRY))
+            self.assertEqual(manifest["resolution_mode"], "GATE_IDENTITY")
+            self.assertEqual(manifest["direct_gate_ids"], [gate_id])
+            receipt = compile_closure(request, manifest, copy.deepcopy(REGISTRY))
+            self.assertEqual(receipt["direct_gate_ids"], [gate_id])
+            self.assertIn(gate_id, receipt["transitive_gate_ids"])
+            self.assertEqual(receipt["technical_authorization"], "ALLOWED")
+            passport = compile_passport(request, manifest, receipt)
+            self.assertEqual(passport["blueprint_technical_authorization"], "ALLOWED")
 
-    def test_self_declared_incomplete_cannot_demote_valid_gate(self):
-        registry = copy.deepcopy(REGISTRY)
-        quad = gate(registry, "MATH-QUAD-EQUATIONS")
-        quad["technical_readiness"] = "ENGINEERING_GATE_INCOMPLETE"
-        quad["release_checklist"]["reasoning_chain_complete"] = False
-        receipt = compile_closure(REQUEST, MANIFEST, registry, PROFILE)
-        state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
-        self.assertEqual(state["derived_status"], "ENGINEERING_GATE_READY")
-        self.assertEqual(receipt["closure_status"], "READY")
+    def test_every_registry_bucket_resolves_only_from_linked_buckets(self):
+        buckets = sorted({b for g in REGISTRY["subtopic_gates"] for b in g.get("linked_buckets", [])})
+        self.assertTrue(buckets)
+        for index, bucket_id in enumerate(buckets):
+            request = request_for_bucket(bucket_id, f"BUCKET_{index}")
+            manifest = resolve_manifest(request, copy.deepcopy(REGISTRY))
+            expected = [
+                g["subtopic_id"]
+                for g in REGISTRY["subtopic_gates"]
+                if bucket_id in set(g.get("linked_buckets") or [])
+            ]
+            self.assertEqual(manifest["resolution_mode"], "REGISTRY_LINKED_BUCKET")
+            self.assertEqual(manifest["direct_gate_ids"], expected)
 
-    def test_self_declared_ready_cannot_rescue_missing_workbench_requirement(self):
-        registry = copy.deepcopy(REGISTRY)
-        quad = gate(registry, "MATH-QUAD-EQUATIONS")
-        quad["technical_readiness"] = "ENGINEERING_GATE_READY"
-        for key in quad["release_checklist"]:
-            quad["release_checklist"][key] = True
-        quad["reasoning_sequence"] = quad["reasoning_sequence"][:1]
-        receipt = compile_closure(REQUEST, MANIFEST, registry, PROFILE)
-        state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
-        self.assertEqual(state["derived_status"], "ENGINEERING_GATE_INCOMPLETE")
-        self.assertIn("MATH_ENG_REASONING_SEQUENCE_INCOMPLETE", state["failure_codes"])
-        self.assertEqual(receipt["closure_status"], "BLOCKED")
-
-    def test_core_role_mix_is_not_a_technical_readiness_proxy(self):
-        receipt = compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), PROFILE)
-        quad = gate(REGISTRY, "MATH-QUAD-EQUATIONS")
-        roles = {x["target_core_role"] for x in quad["required_transformations"]}
-        self.assertNotIn("CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION", roles)
-        state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
-        self.assertEqual(state["derived_status"], "ENGINEERING_GATE_READY")
-
-    def test_external_invariant_profile_is_authority(self):
-        profile = copy.deepcopy(PROFILE)
-        profile["required_gates"]["MATH-QUAD-EQUATIONS"]["required_concepts"].append("CON-MATH-NOT-PRESENT")
-        receipt = compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), profile)
-        state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
-        self.assertEqual(state["derived_status"], "ENGINEERING_GATE_INCOMPLETE")
-        self.assertIn("MATH_ENG_REQUIRED_CONCEPT_MISSING", state["failure_codes"])
-
-    def test_profile_must_cover_registry_exactly(self):
-        profile = copy.deepcopy(PROFILE)
-        del profile["required_gates"]["MATH-STAT-PROBABILITY"]
+    def test_unknown_scope_has_no_fuzzy_or_memory_fallback(self):
+        request = request_for_bucket("BUCKET-NOT-IN-REGISTRY")
         with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
-            compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), profile)
-        self.assertEqual(ctx.exception.code, "MATH_ENG_INVARIANT_PROFILE_GATE_SET_MISMATCH")
+            resolve_manifest(request, copy.deepcopy(REGISTRY))
+        self.assertEqual(ctx.exception.code, "MATH_ENG_SCOPE_UNMAPPED")
 
-    def test_source_scope_hold_blocks_closure(self):
+    def test_manifest_cannot_override_registry_resolution(self):
+        ids = gate_ids()
+        request = request_for_gate(ids[0], "FORGED")
+        manifest = resolve_manifest(request, copy.deepcopy(REGISTRY))
+        manifest["direct_gate_ids"] = [ids[-1]]
+        with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
+            compile_closure(request, manifest, copy.deepcopy(REGISTRY))
+        self.assertEqual(ctx.exception.code, "MATH_ENG_MANIFEST_STALE_OR_FORGED")
+
+    def test_authoritative_incomplete_gate_blocks_blueprint(self):
         registry = copy.deepcopy(REGISTRY)
-        quad = gate(registry, "MATH-QUAD-EQUATIONS")
-        quad["provenance"]["source_scope"] = "HELD_SCOPE"
-        receipt = compile_closure(REQUEST, MANIFEST, registry, PROFILE)
-        state = next(x for x in receipt["gate_states"] if x["gate_id"] == "MATH-QUAD-EQUATIONS")
-        self.assertEqual(state["derived_status"], "SOURCE_SCOPE_HELD")
+        target_id = gate_ids(registry)[0]
+        target = gate(registry, target_id)
+        target["technical_readiness"] = "ENGINEERING_GATE_INCOMPLETE"
+        first_check = next(iter(target["release_checklist"]))
+        target["release_checklist"][first_check] = False
+        request = request_for_gate(target_id, "INCOMPLETE")
+        manifest = resolve_manifest(request, registry)
+        receipt = compile_closure(request, manifest, registry)
+        state = next(row for row in receipt["gate_states"] if row["gate_id"] == target_id)
+        self.assertEqual(state["authoritative_technical_readiness"], "ENGINEERING_GATE_INCOMPLETE")
+        self.assertFalse(state["blueprint_admissible"])
         self.assertEqual(receipt["closure_status"], "BLOCKED")
+        self.assertEqual(receipt["technical_authorization"], "BLOCKED")
 
-    def test_subject_guard_rejects_non_math_request(self):
-        request = copy.deepcopy(REQUEST)
+    def test_ready_gate_with_broken_engineering_checklist_is_rejected_upstream(self):
+        registry = copy.deepcopy(REGISTRY)
+        target_id = gate_ids(registry)[0]
+        target = gate(registry, target_id)
+        target["technical_readiness"] = "ENGINEERING_GATE_READY"
+        first_check = next(iter(target["release_checklist"]))
+        target["release_checklist"][first_check] = False
+        request = request_for_gate(target_id, "BROKEN_READY")
+        with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
+            resolve_manifest(request, registry)
+        self.assertEqual(ctx.exception.code, "MATH_ENG_REGISTRY_INVALID")
+
+    def test_subject_guard_rejects_non_math_before_resolution(self):
+        request = request_for_gate(gate_ids()[0], "SUBJECT")
         request["subject"] = "PHYSICS"
         with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
-            compile_closure(request, MANIFEST, copy.deepcopy(REGISTRY), PROFILE)
+            resolve_manifest(request, copy.deepcopy(REGISTRY))
         self.assertEqual(ctx.exception.code, "MATH_ENG_REQUEST_SCHEMA")
 
-    def test_unknown_direct_gate_fails_closed(self):
-        manifest = copy.deepcopy(MANIFEST)
-        manifest["direct_gate_ids"] = ["MATH-FAKE-GATE"]
-        with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
-            compile_closure(REQUEST, manifest, copy.deepcopy(REGISTRY), PROFILE)
-        self.assertEqual(ctx.exception.code, "MATH_ENG_GATE_UNKNOWN")
-
-    def test_dependency_cycle_fails_closed(self):
+    def test_dependency_cycle_fails_closed_without_named_case(self):
         registry = copy.deepcopy(REGISTRY)
-        poly = gate(registry, "MATH-ALG-POLYNOMIALS")
-        poly["prerequisite_ids"].append("MATH-QUAD-EQUATIONS")
+        child = next((g for g in registry["subtopic_gates"] if g.get("prerequisite_ids")), None)
+        if child is None:
+            self.skipTest("registry contains no prerequisite edges")
+        parent_id = next(p for p in child["prerequisite_ids"] if p.startswith("MATH-"))
+        gate(registry, parent_id)["prerequisite_ids"].append(child["subtopic_id"])
+        request = request_for_gate(child["subtopic_id"], "CYCLE")
+        manifest = resolve_manifest(request, registry)
         with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
-            compile_closure(REQUEST, MANIFEST, registry, PROFILE)
+            compile_closure(request, manifest, registry)
         self.assertEqual(ctx.exception.code, "MATH_ENG_DEPENDENCY_CYCLE")
 
-    def test_receipt_digest_changes_when_registry_changes(self):
-        receipt = compile_closure(REQUEST, MANIFEST, copy.deepcopy(REGISTRY), PROFILE)
-        registry = copy.deepcopy(REGISTRY)
-        gate(registry, "MATH-NUM-RADICALS")["learner_title"] += " (revised)"
-        changed = compile_closure(REQUEST, MANIFEST, registry, PROFILE)
-        self.assertNotEqual(receipt["registry_digest"], changed["registry_digest"])
-        self.assertNotEqual(digest(receipt), digest(changed))
+    def test_receipt_custody_changes_when_authoritative_registry_changes(self):
+        target_id = gate_ids()[0]
+        request = request_for_gate(target_id, "DIGEST")
+        registry_a = copy.deepcopy(REGISTRY)
+        manifest_a = resolve_manifest(request, registry_a)
+        receipt_a = compile_closure(request, manifest_a, registry_a)
+
+        registry_b = copy.deepcopy(REGISTRY)
+        gate(registry_b, target_id)["learner_title"] += " revised"
+        manifest_b = resolve_manifest(request, registry_b)
+        receipt_b = compile_closure(request, manifest_b, registry_b)
+
+        self.assertNotEqual(receipt_a["registry_digest"], receipt_b["registry_digest"])
+        self.assertNotEqual(digest(receipt_a), digest(receipt_b))
+        self.assertEqual(receipt_a["validator_contract_digest"], receipt_b["validator_contract_digest"])
 
 
 if __name__ == "__main__":
