@@ -9,6 +9,7 @@ on:
       - 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_engineering_gates_v2.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench_v1.py'
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_authorization_binding.py'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/policies/chemistry-technical-engineering-gates.v1.json'
       - 'Grade 9/V2/Chemistry/LearningBlueprint/ENGINEERING_WORKBENCH_V1.md'
       - '.github/workflows/v2-chemistry-engineering-workbench.yml'
@@ -28,6 +29,8 @@ jobs:
         run: python "Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_engineering_gates_v2.py"
       - name: Run Chemistry Engineering Workbench falsifiers
         run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench_v1.py"
+      - name: Validate authorization binding
+        run: python "Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_authorization_binding.py"
       - name: Validate Redox CDAU through engineering-ready boundary
         run: >-
           python "Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_cdau_engineering_ready.py"
@@ -40,6 +43,12 @@ jobs:
           "fixtures/engineering-workbench/redox-request.v1.json"
           "fixtures/engineering-workbench/redox-manifest.v1.json"
           --out /tmp/chem-redox-engineering-closure.json
+      - name: Compile Redox authorization binding
+        run: >-
+          python "Grade 9/V2/Chemistry/LearningBlueprint/engine/compile_chemistry_engineering_authorization_binding.py"
+          "fixtures/engineering-workbench/redox-request.v1.json"
+          "fixtures/engineering-workbench/redox-manifest.v1.json"
+          --out /tmp/chem-redox-engineering-binding.json
       - name: Compile Redox Engineering Passport
         run: >-
           python "Grade 9/V2/Chemistry/LearningBlueprint/engine/compile_chemistry_engineering_passport.py"
@@ -49,12 +58,13 @@ jobs:
           --markdown-out /tmp/chem-redox-engineering-passport.md
       - name: Publish passport in workflow summary
         run: cat /tmp/chem-redox-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Upload closure and passport proof
+      - name: Upload closure, binding and passport proof
         uses: actions/upload-artifact@v4
         with:
           name: chemistry-engineering-workbench-redox
           path: |
             /tmp/chem-redox-engineering-closure.json
+            /tmp/chem-redox-engineering-binding.json
             /tmp/chem-redox-engineering-passport.json
             /tmp/chem-redox-engineering-passport.md
           if-no-files-found: error
