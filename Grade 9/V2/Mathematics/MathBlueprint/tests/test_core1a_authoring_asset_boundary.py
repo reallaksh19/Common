@@ -17,6 +17,17 @@ if str(CORE1A_ENGINE) not in sys.path:
 import core1a_capability_authoring as authoring
 
 
+def assignment_value(tree: ast.Module, name: str):
+    for node in tree.body:
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id == name:
+                    return node.value
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) and node.target.id == name:
+            return node.value
+    return None
+
+
 class Core1AAuthoringAssetBoundaryTests(unittest.TestCase):
     def test_projection_is_typed_non_authoritative_and_custodied(self):
         projection = authoring.load_authoring_assets()
@@ -45,7 +56,9 @@ class Core1AAuthoringAssetBoundaryTests(unittest.TestCase):
             value.id for value in custom_node.values if isinstance(value, ast.Name)
         }
         self.assertFalse(executable_functions & legacy_bank_functions)
-        self.assertNotIn("CAPABILITY_TITLES = {", executable)
+        # Projection-derived dictionaries are legal; literal authored corpora are not.
+        self.assertNotIsInstance(assignment_value(tree, "CAPABILITY_TITLES"), ast.Dict)
+        self.assertNotIsInstance(assignment_value(tree, "CUSTOM_BANKS"), ast.Dict)
         self.assertNotIn("def angle_sum_bank", executable)
         self.assertNotIn("def geometric_modelling_bank", executable)
 
