@@ -30,6 +30,7 @@ GATE_FILES = [
     "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-RELATIVE-VELOCITY.v3.json",
     "engineering-gates/motion-in-2d/PHY-M2D-MOVING-LAUNCHER.v3.json",
 ]
 
