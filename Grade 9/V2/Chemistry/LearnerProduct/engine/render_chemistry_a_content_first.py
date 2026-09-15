@@ -46,7 +46,7 @@ def _begin_semantic_block(writer: PageWriter, label: str, minimum_height: float,
         writer.rule()
 
 
-def _core1a_attempt_height(writer: PageWriter, prompt: str, workspace_lines: int = 6) -> float:
+def _core1a_attempt_height(writer: PageWriter, prompt: str, workspace_lines: int = 8) -> float:
     return writer.section + 24 + _wrapped_height(writer, prompt, question=True) + 34 + workspace_lines * 20 + 70
 
 
@@ -111,20 +111,22 @@ def render_core1a_content_first(manuscript, representations, policy, path):
             writer.bullets(routine.get("recognition_signals"), ref)
             writer.label("STEP BY STEP", ref)
             writer.bullets(routine.get("method_steps"), ref)
+            if routine.get("common_fatal_errors"):
+                writer.action_panel("AVOID THIS", _joined(routine.get("common_fatal_errors")), ref)
 
         for pi, item in enumerate(bucket.get("practice_items") or [], 1):
             ref = f"C1A-B{bi:02d}-P{pi:02d}"
             _begin_semantic_block(
                 writer,
                 "Core (1A) practice",
-                _core1a_attempt_height(writer, item["prompt"], 6),
+                _core1a_attempt_height(writer, item["prompt"], 8),
                 role="PRACTICE",
             )
             writer.set_page_role("PRACTICE")
             writer.heading(f"Practice {pi}", 2, ref)
             writer.label("TRY IT FIRST", ref)
             writer.question_text(item["prompt"], ref)
-            writer.workspace(6, ref)
+            writer.workspace(8, ref)
             writer.action_panel("CHECK ROUTE", "Finish your own response first. The expected response begins on the next page.", ref)
 
             writer.new_page("Core (1A) expected response", role="SOLUTION")
