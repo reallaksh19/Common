@@ -1,0 +1,114 @@
+{
+  "ledger_id": "CHEMISTRY-PR-CONSOLIDATION-v1",
+  "snapshot_date": "2026-09-15",
+  "repository": "reallaksh19/Common",
+  "principles": [
+    "ONE_ACTIVE_AUTHORITY_PER_ARCHITECTURAL_RESPONSIBILITY",
+    "TOPIC_STRESS_TESTS_ARE_NON_AUTHORITATIVE",
+    "REGRESSION_PROOFS_DO_NOT_DEFINE_GENERIC_ENGINE_BEHAVIOUR",
+    "USEFUL_SIBLING_WORK_MUST_BE_PORTED_EXPLICITLY_BEFORE_SUPERSESSION",
+    "NO_PR_IS_CLOSED_SOLELY_BECAUSE_A_NEWER_PR_EXISTS"
+  ],
+  "target_active_stack": [
+    371,
+    384,
+    381,
+    385
+  ],
+  "pull_requests": [
+    {
+      "number": 322,
+      "role": "PUBLICATION_RENDERING_FOUNDATION",
+      "disposition": "FREEZE_REGRESSION_INFRASTRUCTURE",
+      "authority_class": "HISTORICAL_FOUNDATION",
+      "next_action": "STOP_FEATURE_DEVELOPMENT_AND_RETAIN_AS_MIGRATION_EVIDENCE"
+    },
+    {
+      "number": 346,
+      "role": "NCERT_AUTHORING_HANDOFF",
+      "disposition": "QUARANTINE_THEN_SUPERSEDE",
+      "authority_class": "TRANSITIONAL_HANDOFF",
+      "next_action": "DO_NOT_USE_AS_CURRENT_SOURCE_AUTHORITY; RETAIN_ONLY_RECOVERABLE_MIGRATION_EVIDENCE"
+    },
+    {
+      "number": 360,
+      "role": "LEARNER_PRODUCT_MATURITY_SIBLING",
+      "disposition": "MINE_THEN_SUPERSEDE",
+      "authority_class": "SIBLING_MIGRATION_SOURCE",
+      "next_action": "PORT_GENERIC_GENERATION_CONTRACT_DENOMINATOR_VISUAL_ANSWER_AND_COPY_GATES_ONLY_WHEN_NOT_ALREADY_PRESENT"
+    },
+    {
+      "number": 362,
+      "role": "CORE1A_CORE2A_EXECUTION_FOUNDATION",
+      "disposition": "RETAIN_TEMPORARILY_THEN_ABSORB",
+      "authority_class": "EXECUTION_INFRASTRUCTURE",
+      "next_action": "KEEP_COMPILER_RENDER_PREFLIGHT_AND_CUSTODY_MECHANICS_DOWNSTREAM_OF_CURRENT_BLUEPRINT_AUTHORITY"
+    },
+    {
+      "number": 370,
+      "role": "CORE1B_CORE2B_PRODUCT_PROOF",
+      "disposition": "FREEZE_AS_REGRESSION_PROOF",
+      "authority_class": "NON_CANONICAL_PRODUCT_PROOF",
+      "next_action": "NO_NEW_ARCHITECTURE_AUTHORITY"
+    },
+    {
+      "number": 371,
+      "role": "BLUEPRINT_ARCHITECTURE_ROOT",
+      "disposition": "ACTIVE",
+      "authority_class": "BLUEPRINT_CONTROL_AUTHORITY",
+      "next_action": "RECEIVE_GENERIC_GOVERNANCE_AND_DOWNSTREAM_ENGINEERING_BINDINGS"
+    },
+    {
+      "number": 375,
+      "role": "V7_FOUR_PRODUCT_ASSURANCE_PROOF",
+      "disposition": "FREEZE_AS_REGRESSION_PROOF",
+      "authority_class": "NON_CANONICAL_PRODUCT_PROOF",
+      "next_action": "KEEP_AS_PRODUCT_ASSURANCE_REGRESSION_ONLY"
+    },
+    {
+      "number": 377,
+      "role": "INITIAL_TECHNICAL_GATES_AND_SOURCE_HARDENING",
+      "disposition": "PORT_THEN_SUPERSEDE",
+      "authority_class": "ENGINEERING_MIGRATION_SOURCE",
+      "next_action": "PORT_GENERIC_SOURCE_HARDENING_AND_ANY_VALID_GATE_REPAIRS_INTO_COMPLETE_REGISTRY_WITHOUT_REDOX_AS_AUTHORITY"
+    },
+    {
+      "number": 381,
+      "role": "ENGINEERING_WORKBENCH",
+      "disposition": "ACTIVE_AFTER_REGISTRY_REBASE",
+      "authority_class": "ENGINEERING_CONTROL_PLANE",
+      "next_action": "REBASE_OR_RETARGET_TO_CONSOLIDATED_COMPLETE_GATE_REGISTRY; REMOVE_ANY_ASSUMPTION_THAT_A_REDOX_GOLDEN_DEFINES_GENERIC_FLOW"
+    },
+    {
+      "number": 384,
+      "role": "COMPLETE_GRADE9_11_TECHNICAL_GATE_REGISTRY",
+      "disposition": "ACTIVE",
+      "authority_class": "ENGINEERING_REGISTRY_AUTHORITY_CANDIDATE",
+      "ci_state": "DEPENDENCY_FIX_COMMITTED_AWAITING_RERUN",
+      "next_action": "REQUIRE_FULL_GREEN_THEN_INTEGRATE_GENERIC_SOURCE_HARDENING_FROM_377"
+    },
+    {
+      "number": 385,
+      "role": "REDOX_CORE1A_PRODUCT_STRESS_TEST",
+      "disposition": "BLOCKED_STRESS_TEST",
+      "authority_class": "NON_AUTHORITATIVE_STRESS_TEST",
+      "ci_state": "FAIL",
+      "next_action": "DO_NOT_USE_AS_GROUND_TRUTH_OR_CODE_BASIS; RESUME_ONLY_AFTER_UPSTREAM_AUTHORITY_STACK_IS_CONSOLIDATED"
+    }
+  ],
+  "closure_preconditions": {
+    "360": [
+      "PORT_LEDGER_COMPLETE",
+      "NO_UNIQUE_GENERIC_CONTROL_LOST"
+    ],
+    "362": [
+      "EXECUTION_MECHANICS_ABSORBED_OR_EXPLICITLY_RETAINED_IN_371_LINEAGE"
+    ],
+    "377": [
+      "VALID_SOURCE_HARDENING_PORTED_TO_384_LINEAGE"
+    ],
+    "385": [
+      "STRESS_TEST_REPLACED_OR_RETAINED_AS_NON_AUTHORITATIVE_REGRESSION"
+    ]
+  }
+}
