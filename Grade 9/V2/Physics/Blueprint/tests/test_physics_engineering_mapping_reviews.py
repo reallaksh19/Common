@@ -70,6 +70,19 @@ assert projectile_result["readiness_authorized"] is False
 assert projectile_result["source_custody_promoted"] is False
 assert "Q15" not in json.dumps(projectile_review, sort_keys=True)
 
+relative_review = load("provenance/pr383/mapping-reviews/PHY-KIN-RELATIVE-2D.v1.json")
+relative_result = validate(relative_review)
+assert relative_result["status"] == "PASS"
+assert relative_result["decision"] == "APPROVED"
+assert relative_result["discovery_gate_id"] == "PHY-KIN-RELATIVE-2D"
+assert relative_result["target_gate_ids"] == ["PHY-M2D-RELATIVE-VELOCITY"]
+assert relative_result["source_obligation_count"] == 14
+assert relative_result["covered_obligation_count"] == 14
+assert relative_result["uncovered_obligation_count"] == 0
+assert relative_result["readiness_authorized"] is False
+assert relative_result["source_custody_promoted"] is False
+assert "Q15" not in json.dumps(relative_review, sort_keys=True)
+
 bad = copy.deepcopy(grav_review)
 bad["target_snapshot"][0]["gate_git_blob_sha"] = "0" * 40
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_TARGET_BLOB_DRIFT")
@@ -93,9 +106,15 @@ bad = copy.deepcopy(projectile_review)
 bad["target_snapshot"][1]["gate_git_blob_sha"] = "0" * 40
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_TARGET_BLOB_DRIFT")
 
-bad = copy.deepcopy(projectile_review)
+bad = copy.deepcopy(relative_review)
+bad["coverage"][1]["target_refs"] = []
+bad["coverage"][1]["status"] = "UNCOVERED"
+bad["decision"]["uncovered_source_pointers"] = [bad["coverage"][1]["source_pointer"]]
+expect_code(lambda: validate(bad), "E_ENG_MAPPING_APPROVAL_HAS_GAPS")
+
+bad = copy.deepcopy(relative_review)
 bad["question_id"] = "Q15"
 expect_code(lambda: validate(bad), "E_ENG_MAPPING_REVIEW_SCHEMA")
 
 print("Physics engineering discovery mapping reviews: PASS")
-print({"gravitation": grav_result, "newton_laws": newton_result, "projectile": projectile_result})
+print({"gravitation": grav_result, "newton_laws": newton_result, "projectile": projectile_result, "relative_velocity": relative_result})
