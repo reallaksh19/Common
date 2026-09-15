@@ -45,7 +45,7 @@ Engineering readiness does not grant source legality, pedagogical authority, lea
 
 ## Canonical registry
 
-The deterministic v3 registry currently contains **23 gates** across:
+The deterministic v3 registry currently contains **24 gates** across:
 
 - Vectors;
 - Newtonian Mechanics;
@@ -82,6 +82,8 @@ PR #383 is consumed as a pinned **subject-wide discovery/coverage input**, not a
 Every discovered subtopic must be explicitly classified as an exact v3 identity, a reviewed v3 mapping, or `MIGRATION_REQUIRED`. Conversely, every live v3 gate must be reconciled as an exact/mapped target or a v3-native/refined gate.
 
 The discovery catalog cannot carry or self-assert technical readiness. The canonical v3 source files, external invariant profile and production validator remain the only technical-readiness control plane. Item IDs, SBA buckets and other case artifacts may stress-test this machinery but may not define its logic or promote source custody.
+
+The generic `PHY-M2D-RELATIVE-VELOCITY` gate is a subject-level example of this rule. It is source-defined from the pinned PR #383 `PHY-KIN-RELATIVE-2D` discovery and has no SBA or question linkage. It owns the reviewed 2D relative-velocity subtraction, river-bank component decomposition, perpendicular-component crossing time and parallel-component drift semantics. `PHY-M2D-MOVING-LAUNCHER` remains a separate specialised projectile gate; no dependency between those gates is inferred merely because they both use Galilean velocity reasoning.
 
 ## Workbench lifecycle
 
@@ -122,7 +124,7 @@ A binding carries:
 - exact closure-logic digest;
 - exact canonical registry digest.
 
-`validate_technical_gate_binding.py` recompiles the current Workbench closure and fails when any custodied digest is stale. Expanding the subject registry therefore invalidates stale bindings even when a scoped closure still contains the same gates.
+`validate_technical_gate_binding.py` recompiles the current Workbench closure and fails when any custodied digest is stale. Expanding the subject registry therefore invalidates stale bindings even when a scoped closure still contains the same gates. The 24-gate relative-velocity expansion exercised this rule: the SBA23 closure remained six gates, while its exact receipt and registry digests had to be refreshed.
 
 ## SBA23 stress-test integration proof
 
@@ -130,7 +132,7 @@ SBA23 is a case-level stress fixture only; it does not define the Workbench regi
 
 `PHY-M2D-MOVING-LAUNCHER`
 
-The full 23-gate registry must still derive exactly this six-gate closure:
+The full 24-gate registry must still derive exactly this six-gate closure:
 
 ```text
 PHY-VEC-BASICS
@@ -141,7 +143,7 @@ PHY-M2D-SHARED-CLOCK
 PHY-M2D-MOVING-LAUNCHER
 ```
 
-This proves that expanding the subject registry does not pollute a scoped Workbench closure.
+This proves that expanding the subject registry does not pollute a scoped Workbench closure. The newly added generic `PHY-M2D-RELATIVE-VELOCITY` gate is deliberately absent from this closure unless a separate repository-backed dependency review changes the moving-launcher prerequisite graph.
 
 The closure may be technically READY while `source_item_status = SOURCE_HELD`. That source/legal hold remains independently visible downstream.
 
@@ -200,6 +202,7 @@ The v3 suite proves, among other cases:
 - model-condition bindings;
 - representation semantic guards;
 - reasoning dependency/order integrity;
+- generic relative-velocity subtraction and river-crossing component separation;
 - moving-launcher frame conversion before projectile evolution;
 - meaningful misconception counterexamples and repair;
 - problem-family bindings and intentional family reuse;
@@ -209,6 +212,7 @@ The v3 suite proves, among other cases:
 - validator-derived readiness;
 - exact closure custody and stale-binding rejection;
 - subject-wide PR #383 discovery reconciliation without importing self-asserted readiness;
+- case-level closures remaining unchanged under unrelated subject-registry growth;
 - CCU authorization only after the current Workbench closure is READY.
 
 Legacy v2 tests continue as regression proofs, but they do not define current authority.
