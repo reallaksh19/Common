@@ -13,7 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_REL = "policies/mathematics-technical-engineering-gates.v1.json"
 ENGINEERING_SCHEMA_REL = "contracts/mathematics-technical-engineering-gate.schema.json"
 ENGINEERING_VALIDATOR_PATH = ROOT / "engine" / "validate_mathematics_engineering_gates.py"
+ENGINEERING_COMPOSER_PATH = ROOT / "engine" / "engineering_registry_composition.py"
 
+from engineering_registry_composition import (  # noqa: E402
+    BASE_REGISTRY_REL,
+    CANONICAL_EXTENSION_RELS,
+    load_canonical_engineering_registry,
+)
 from validate_mathematics_engineering_gates import (  # noqa: E402
     MathematicsEngineeringGateValidationError,
     validate as validate_engineering_registry,
@@ -27,10 +33,17 @@ class MathematicsEngineeringWorkbenchError(Exception):
         self.message = message
 
 
-def load(rel_or_path: str | Path) -> dict:
+def _resolved_path(rel_or_path: str | Path) -> Path:
     p = Path(rel_or_path)
     if not p.is_absolute():
         p = ROOT / p
+    return p
+
+
+def load(rel_or_path: str | Path) -> dict:
+    p = _resolved_path(rel_or_path)
+    if p.resolve() == (ROOT / BASE_REGISTRY_REL).resolve():
+        return load_canonical_engineering_registry(p)
     return json.loads(p.read_text(encoding="utf-8"))
 
 
@@ -50,6 +63,10 @@ def engineering_validator_contract_digest() -> str:
     payload = {
         "schema": load(ENGINEERING_SCHEMA_REL),
         "validator_source_sha256": _bytes_digest(ENGINEERING_VALIDATOR_PATH.read_bytes()),
+        "registry_composer_source_sha256": _bytes_digest(ENGINEERING_COMPOSER_PATH.read_bytes()),
+        "canonical_extension_source_sha256": [
+            _bytes_digest((ROOT / rel).read_bytes()) for rel in CANONICAL_EXTENSION_RELS
+        ],
     }
     return digest(payload)
 
@@ -121,7 +138,7 @@ def resolve_manifest(request: dict, registry: dict | None = None) -> dict:
                     resolved.append(gate_id)
         direct_gate_ids = resolved
         resolution_mode = "REGISTRY_LINKED_BUCKET"
-    else:  # schema should already reject this
+    else:
         raise MathematicsEngineeringWorkbenchError("MATH_ENG_SCOPE_KIND_INVALID", request["scope_kind"])
 
     suffix = request["request_id"].removeprefix("MATH-ENG-REQ-")
