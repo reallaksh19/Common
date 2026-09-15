@@ -156,6 +156,7 @@ def validate_similarity(audit: dict, policy: dict | None = None) -> dict:
     policy = policy or load(SIMILARITY_POLICY)
     hard = []
     near = []
+    strong = []
     for row in audit["comparisons"]:
         computed = _similarity_class(row, policy)
         if computed != row["classification"]:
@@ -164,10 +165,14 @@ def validate_similarity(audit: dict, policy: dict | None = None) -> dict:
             hard.append(row["comparison_id"])
         if computed == "NEAR_DUPLICATE":
             near.append(row["comparison_id"])
+        if computed == "STRONG_OVERLAP":
+            strong.append(row["comparison_id"])
     if hard:
         fail("SIMILARITY_HARD_DUPLICATE", ",".join(hard))
     if near:
         fail("SIMILARITY_NEAR_DUPLICATE_UNDECLARED", ",".join(near))
+    if strong:
+        fail("SIMILARITY_STRONG_PEDAGOGICAL_OVERLAP", ",".join(strong))
     return {"comparison_count": len(audit["comparisons"]), "status": "PASS"}
 
 
