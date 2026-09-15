@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core1a-family-authoring-assets.schema.json",
+  "title": "Mathematics Core1A problem-family authoring candidate projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","subject","asset_set_id","content_role","curriculum_authority","source_custody","families","asset_set_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "asset_set_id": {"type": "string", "pattern": "^MATH-CORE1A-FAMILY-AUTHORING-ASSETS-[A-F0-9]{16}$"},
+    "content_role": {"const": "CORE1A_FAMILY_AUTHORING_CANDIDATE"},
+    "curriculum_authority": {"const": false},
+    "source_custody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id","legacy_source_ref","legacy_source_git_blob_sha","parser_contract"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "legacy_source_ref": {"type": "string", "minLength": 1},
+        "legacy_source_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "parser_contract": {"const": "RESTRICTED_AST_FAMILY_PROJECTION_v1"}
+      }
+    },
+    "families": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["family_ref","title","examples"],
+        "properties": {
+          "family_ref": {"type": "string", "pattern": "^MATH-PF-[A-Z0-9-]+$"},
+          "title": {"type": "string", "minLength": 1},
+          "examples": {
+            "type": "array",
+            "minItems": 6,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["example_id","prompt","steps","answer","hints","source_class"],
+              "properties": {
+                "example_id": {"type": "string", "pattern": "^MATH-C1A-FAM-EX-[A-F0-9]{16}$"},
+                "prompt": {"type": "string", "minLength": 1},
+                "steps": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+                "answer": {"type": "string", "minLength": 1},
+                "hints": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "minLength": 1}},
+                "source_class": {"const": "AUTHORING_CANDIDATE"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "asset_set_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
