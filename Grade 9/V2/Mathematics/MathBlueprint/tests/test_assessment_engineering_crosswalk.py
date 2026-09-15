@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import json
 import sys
 import unittest
 from pathlib import Path
@@ -26,23 +25,26 @@ def canonical():
 
 
 class AssessmentEngineeringCrosswalkTests(unittest.TestCase):
-    def test_canonical_crosswalk_exposes_exact_upstream_gap(self):
+    def test_canonical_crosswalk_covers_all_mixed_grade9_capabilities(self):
         result = validate(canonical())
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["capability_count"], 30)
-        self.assertEqual(result["engineering_gap_count"], 1)
-        self.assertEqual(result["engineering_gaps"][0]["capability_ref"], "MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE")
-        self.assertEqual(result["engineering_gaps"][0]["gap_code"], "MATH_ENG_GAP_EUCLID_FOUNDATIONS")
+        self.assertEqual(result["covered_capability_count"], 30)
+        self.assertEqual(result["engineering_gap_count"], 0)
+        self.assertEqual(result["engineering_gaps"], [])
+
+    def test_euclid_classification_resolves_to_exact_foundations_gate(self):
+        result = resolve_capability_gates(canonical(), ["MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE"])
+        self.assertEqual(result["required_status"], "COVERED")
+        self.assertEqual(
+            result["capability_gate_map"]["MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE"],
+            ["MATH-GEO-EUCLID-FOUNDATIONS"],
+        )
 
     def test_exact_capability_resolution_has_no_title_or_fuzzy_fallback(self):
         with self.assertRaises(MathematicsAssessmentEngineeringCrosswalkError) as ctx:
             resolve_capability_gates(canonical(), ["Euclid Classify Axiom Postulate"])
         self.assertEqual(ctx.exception.code, "MATH_ENG_CROSSWALK_REQUIRED_CAPABILITY_OUTSIDE_SCOPE")
-
-    def test_required_gap_fails_closed(self):
-        with self.assertRaises(MathematicsAssessmentEngineeringCrosswalkError) as ctx:
-            resolve_capability_gates(canonical(), ["MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE"])
-        self.assertEqual(ctx.exception.code, "MATH_ENG_CROSSWALK_REQUIRED_CAPABILITY_GAP")
 
     def test_covered_capability_resolves_only_to_declared_exact_gate(self):
         result = resolve_capability_gates(canonical(), ["MATH-COORDINATE-DISTANCE"])
@@ -61,7 +63,10 @@ class AssessmentEngineeringCrosswalkTests(unittest.TestCase):
         doc = canonical()
         old = doc["rows"][0]["capability_ref"]
         doc["rows"][0]["capability_ref"] = "MATH-NOT-IN-ASSESSMENT-AUTHORITY"
-        doc["coverage_scope_capability_refs"] = ["MATH-NOT-IN-ASSESSMENT-AUTHORITY" if x == old else x for x in doc["coverage_scope_capability_refs"]]
+        doc["coverage_scope_capability_refs"] = [
+            "MATH-NOT-IN-ASSESSMENT-AUTHORITY" if x == old else x
+            for x in doc["coverage_scope_capability_refs"]
+        ]
         with self.assertRaises(MathematicsAssessmentEngineeringCrosswalkError) as ctx:
             validate(doc)
         self.assertEqual(ctx.exception.code, "MATH_ENG_CROSSWALK_UNKNOWN_ASSESSMENT_CAPABILITY")
@@ -79,17 +84,24 @@ class AssessmentEngineeringCrosswalkTests(unittest.TestCase):
             "member_capability_refs": ["MATH-BINOMIAL-SQUARE-EXPANSION", "MATH-EQUIDISTANT-POINT-ON-AXIS"],
         }]}
         result = resolve_bucket_gate_map(canonical(), plan)
-        self.assertEqual(result["bucket_gate_map"][0]["engineering_gate_ids"], ["MATH-ALG-POLYNOMIALS", "MATH-GEO-COORDINATES"])
+        self.assertEqual(
+            result["bucket_gate_map"][0]["engineering_gate_ids"],
+            ["MATH-ALG-POLYNOMIALS", "MATH-GEO-COORDINATES"],
+        )
         self.assertEqual(result["bucket_gate_map"][0]["engineering_gap_capability_refs"], [])
 
-    def test_bucket_gap_is_visible_when_nonfatal_audit_requested(self):
+    def test_euclid_bucket_is_release_covered(self):
         plan = {"buckets": [{
             "bucket_id": "B-EUCLID",
             "member_capability_refs": ["MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE"],
         }]}
-        result = resolve_bucket_gate_map(canonical(), plan, fail_on_gap=False)
-        self.assertEqual(result["required_status"], "BLOCKED_ENGINEERING_GAP")
-        self.assertEqual(result["bucket_gate_map"][0]["engineering_gap_capability_refs"], ["MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE"])
+        result = resolve_bucket_gate_map(canonical(), plan)
+        self.assertEqual(result["required_status"], "COVERED")
+        self.assertEqual(
+            result["bucket_gate_map"][0]["engineering_gate_ids"],
+            ["MATH-GEO-EUCLID-FOUNDATIONS"],
+        )
+        self.assertEqual(result["bucket_gate_map"][0]["engineering_gap_capability_refs"], [])
 
 
 if __name__ == "__main__":
