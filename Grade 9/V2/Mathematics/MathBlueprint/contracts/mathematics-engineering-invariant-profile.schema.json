@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mathematics-engineering-invariant-profile.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","profile_id","subject","registry_id","required_gates","generic_requirements","authority_rule"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "profile_id": {"const": "MATH-ENGINEERING-GATE-INVARIANTS-v1"},
+    "subject": {"const": "MATHEMATICS"},
+    "registry_id": {"const": "REG-MATH-TECH-GATE-V1"},
+    "required_gates": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["required_concepts","required_equations","required_representations","required_misconceptions","required_prerequisites"],
+        "properties": {
+          "required_concepts": {"type":"array","uniqueItems":true,"items":{"type":"string","minLength":3}},
+          "required_equations": {"type":"array","uniqueItems":true,"items":{"type":"string","minLength":3}},
+          "required_representations": {"type":"array","uniqueItems":true,"items":{"type":"string","minLength":3}},
+          "required_misconceptions": {"type":"array","uniqueItems":true,"items":{"type":"string","minLength":3}},
+          "required_prerequisites": {"type":"array","uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}}
+        }
+      }
+    },
+    "generic_requirements": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["minimum_reasoning_steps","minimum_transformations","minimum_distinct_transformation_roles","minimum_verifications","minimum_problem_families","difficulty_dimensions"],
+      "properties": {
+        "minimum_reasoning_steps":{"type":"integer","minimum":1},
+        "minimum_transformations":{"type":"integer","minimum":1},
+        "minimum_distinct_transformation_roles":{"type":"integer","minimum":1},
+        "minimum_verifications":{"type":"integer","minimum":1},
+        "minimum_problem_families":{"type":"integer","minimum":1},
+        "difficulty_dimensions":{"type":"array","minItems":10,"maxItems":10,"uniqueItems":true,"items":{"enum":["prerequisite_depth","element_interactivity","inferential_jump_severity","representation_translation","model_discrimination","sign_or_frame_sensitivity","multi_step_dependency","abstraction","misconception_density","synthesis"]}}
+      }
+    },
+    "authority_rule":{"type":"string","minLength":20}
+  }
+}
