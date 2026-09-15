@@ -182,8 +182,6 @@ class HintBox(Flowable):
 
 
 def box_table(title: str, body_flowables, styles, bg=PANEL, border=LINE):
-    data=[[Paragraph(ptxt(title), styles["h2"])] + ([body_flowables] if isinstance(body_flowables, Flowable) else [body_flowables])]
-    # Keep title and body as separate rows to avoid awkward inline nesting.
     rows=[[Paragraph(ptxt(title),styles["h2"])],[body_flowables if isinstance(body_flowables,Flowable) else body_flowables]]
     t=Table(rows,colWidths=[168*mm],hAlign="LEFT")
     t.setStyle(TableStyle([
@@ -272,7 +270,6 @@ def build(out_pdf: Path, out_manifest: Path):
     doc.addPageTemplates([PageTemplate(id="page",frames=[frame],onPage=lambda c,d: page_header_footer(c,d,authority["subtopic_title"]))])
 
     story=[]; realized=set(); realized_ttus=[]; answers=[]; question_ids=[]; source_labels=[]
-    # Title + learner-visible badges. These values are all derived from current Blueprint authority.
     story.append(Paragraph("Redox Reactions",styles["title"]))
     story.append(Paragraph(ptxt(authority["subtopic_title"]),styles["subtitle"]))
     badges=[f"Core1A",f"Difficulty: {authority['difficulty_badge']}",f"Grade {scope['learner_grade']} competitive foundation",f"Scope: {', '.join(scope['authorized_scope_tiers'])}"]
@@ -292,7 +289,6 @@ def build(out_pdf: Path, out_manifest: Path):
     for obj in authority["content_objects"]: objects_by_atom[obj["learning_atom_id"]].append(obj)
     order={"MEANING":1,"RULE":2,"EQUATION":3,"REPRESENTATION":4,"REASONING_CHAIN":5,"WORKED_EXAMPLE":6,"MISCONCEPTION_REPAIR":7,"VERIFICATION":8,"GUIDED_PRACTICE":9,"INDEPENDENT_PRACTICE":10,"ANSWER":99}
 
-    # Which TTU belongs after which concept atom is derived from the serialized TTU owner and current authority references.
     ttu_by_owner={t["owner_id"]:t for t in ttu_map.values() if t["ttu_id"] in required_ttu_ids}
     owner_alias={"LA-OS-TRACK":"LA-REDOX-STATE-CHANGE-002","LA-AGENT-ROLE":"LA-REDOX-AGENT-003"}
     ttu_by_atom={owner_alias.get(k,k):v for k,v in ttu_by_owner.items()}
@@ -313,7 +309,8 @@ def build(out_pdf: Path, out_manifest: Path):
             story.append(box_table("Check your reconstruction",flatten_payload(canonical,styles),styles,bg=ANSWER_BG)); story.append(Spacer(1,2*mm))
             story.append(Paragraph("Verification: "+ptxt(ttu.get("verification_rule","")),styles["body"]))
 
-    story.append(PageBreak())
+    # Do not force a new page for answers. Content-first pagination lets the section
+    # use remaining space and creates a new page only when the actual content requires it.
     story.append(Paragraph("Answers and checks",styles["h1"]))
     answer_map={a["object_id"]:a for a in answers}
     for practice_id in authority["practice_progression"]["answer_object_ids"]:
