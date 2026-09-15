@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-core-product-custody.schema.json",
+  "title": "Chemistry Unified Core Product Custody",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "custody_id", "subject", "product_mode", "request_id", "manifest_id",
+    "subtopic_id", "engineering_binding_id", "engineering_binding_digest", "closure_receipt_id",
+    "closure_digest", "registry_digest", "obligation_packet_id", "obligation_packet_digest",
+    "source_scope_contract_id", "source_scope_contract_digest", "core_authority_id", "core_authority_digest",
+    "source_audit_ref", "source_audit_digest", "status", "custody_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "custody_id": {"type": "string", "pattern": "^CHEM-CORE-CUSTODY-[A-Z0-9-]+$"},
+    "subject": {"const": "CHEMISTRY"},
+    "product_mode": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "request_id": {"type": "string"},
+    "manifest_id": {"type": "string"},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "engineering_binding_id": {"type": "string"},
+    "engineering_binding_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "closure_receipt_id": {"type": "string"},
+    "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "obligation_packet_id": {"type": "string"},
+    "obligation_packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "source_scope_contract_id": {"type": "string"},
+    "source_scope_contract_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "core_authority_id": {"type": "string"},
+    "core_authority_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "source_audit_ref": {"type": "string"},
+    "source_audit_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "status": {"const": "CORE_PRODUCT_CUSTODY_READY"},
+    "custody_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
