@@ -15,7 +15,7 @@ sys.path.insert(0, str(CHEM_ROOT / "LearningBlueprint" / "engine"))
 
 from compile_chemistry_core_authority import digest as semantic_digest  # noqa: E402
 from compile_chemistry_core_product_custody import digest_without  # noqa: E402
-from render_chemistry_learner_products import render_core1a, render_core2a  # noqa: E402
+from render_chemistry_a_content_first import render_core1a_content_first, render_core2a_content_first  # noqa: E402
 from render_chemistry_static_b_product import render_static_b_product  # noqa: E402
 from preflight_chemistry_core_product import run_core_product_preflight  # noqa: E402
 
@@ -62,9 +62,9 @@ def run_core_product(
     pdf_path = out_dir / f"chemistry_{mode.lower()}.pdf"
 
     if mode == "CORE1A":
-        metrics = render_core1a(payload["manuscript"], payload["representation_bundle"], policy, pdf_path)
+        metrics = render_core1a_content_first(payload["manuscript"], payload["representation_bundle"], policy, pdf_path)
     elif mode == "CORE2A":
-        metrics = render_core2a(payload.get("source_plan"), payload.get("challenge_plan"), payload["representation_bundle"], policy, pdf_path)
+        metrics = render_core2a_content_first(payload.get("source_plan"), payload.get("challenge_plan"), payload["representation_bundle"], policy, pdf_path)
     elif mode in {"CORE1B", "CORE2B"}:
         metrics = render_static_b_product(mode, payload, pdf_path)
     else:
