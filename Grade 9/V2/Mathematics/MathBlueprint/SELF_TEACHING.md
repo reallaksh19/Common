@@ -95,6 +95,8 @@ Research permission and research obligation are intentionally separate. Web sear
 
 For MEDIUM/HARD, a research brief plus credible web evidence is required before authoring. Source count is not used as a quality proxy. The research brief must record what the external research contributed to representation, explanation, misconception handling or decomposition.
 
+Research is promoted claim-by-claim, not merely because a URL appears in a manifest. Every declared research-decision coverage category must have an explicit pedagogy claim. Every retained source relevant to that claim category is classified as `SUPPORTS` or `CONTRADICTS`; a promoted claim needs supporting evidence, and contradictory retained evidence needs an explicit resolution. Claims record `LOW / MODERATE / HIGH` confidence, while production promotion rejects `LOW` confidence. Sources actually used by promoted claims must remain in the bucket's bound research references. Discovery-only material may remain outside that promoted binding. None of these rules impose a universal minimum number of sources.
+
 External research can improve pedagogy; it never becomes curriculum authority or expands legal mathematical scope. Source Integrity verification remains a separate path when original evidence is ambiguous, conflicted or damaged.
 
 ## Core2A — solution apprenticeship
@@ -257,6 +259,9 @@ Deterministic Publication remains downstream. Before publication is frozen, the 
 - Core1A/Core1B bucket-depth behaviour for EASY, MEDIUM and HARD;
 - optional research at EASY is either absent or fully bound;
 - required research at MEDIUM/HARD is fully bound;
+- promoted research decisions have complete claim coverage;
+- retained category-relevant evidence is classified and contradictions are resolved;
+- production promotion does not rely on LOW-confidence pedagogy claims;
 - Core2A/Core2B generation with a real knowledge percentage;
 - Core2A/Core2B generation with an explicit owner waiver;
 - calibration of Core2A question demand as well as Core2B transfer demand;
