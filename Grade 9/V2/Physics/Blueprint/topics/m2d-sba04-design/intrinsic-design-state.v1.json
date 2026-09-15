@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "design_state_id": "SDU-M2D-SBA04-INTRINSIC-V1",
+  "bucket_id": "M2D-SBA-04",
+  "difficulty_semantics": "INTRINSIC_AUTHORING_GOVERNANCE",
+  "intrinsic_difficulty": "D3",
+  "student_knowledge_pct_used_for_authored_depth": false,
+  "source_refs": [
+    "Core1A/registry/build-manifests/M2D-SBA-04-v1.json",
+    "topics/m2d-sba04-stage-evidence/1a2-inferential-jump-closure.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json"
+  ],
+  "requirements": [
+    {
+      "requirement_ref": "REQ-M2D-SBA04-A-VECTOR-STATE",
+      "capability_ref": "M2D-SBA-04A",
+      "demand": "Distinguish the directed velocity state from scalar speed and reconstruct velocity from signed components."
+    },
+    {
+      "requirement_ref": "REQ-M2D-SBA04-B-APEX-COMPONENT-EVENT",
+      "capability_ref": "M2D-SBA-04B",
+      "demand": "Track signed component evolution through rising, apex and falling states without treating the apex as zero acceleration or zero total velocity."
+    },
+    {
+      "requirement_ref": "REQ-M2D-SBA04-C-CURRENT-DIRECTION",
+      "capability_ref": "M2D-SBA-04C",
+      "demand": "Translate the current signed component pair into instantaneous velocity direction with correct quadrant/sign semantics."
+    },
+    {
+      "requirement_ref": "REQ-M2D-SBA04-D-SPEED-MAGNITUDE",
+      "capability_ref": "M2D-SBA-04D",
+      "demand": "Reconstruct scalar speed from vector components and identify the apex minimum-speed condition without setting total speed to zero."
+    },
+    {
+      "requirement_ref": "REQ-M2D-SBA04-E-SAME-HEIGHT-SYMMETRY",
+      "capability_ref": "M2D-SBA-04E",
+      "demand": "Discriminate same-height speed symmetry from velocity-vector equality by preserving v_x and reversing the sign of v_y."
+    },
+    {
+      "requirement_ref": "REQ-M2D-SBA04-F-PERPENDICULAR-CONSTRAINT",
+      "capability_ref": "M2D-SBA-04F",
+      "demand": "Represent two velocity vectors in one frame and translate perpendicularity into a signed dot-product condition."
+    },
+    {
+      "requirement_ref": "REQ-M2D-SBA04-G-HEIGHT-SPEED",
+      "capability_ref": "M2D-SBA-04G",
+      "demand": "Use a declared displacement origin and no-time vertical relation to recover v_y at height, then reconstruct total speed with constant v_x."
+    }
+  ],
+  "authority_note": "The legacy 20-percent learner prior is not used to set authored difficulty or to claim mastery. D3 and the requirement inventory describe intrinsic task/design demand; learner state is governed separately."
+}
