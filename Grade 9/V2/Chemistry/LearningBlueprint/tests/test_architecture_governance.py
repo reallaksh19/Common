@@ -89,6 +89,10 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertEqual(rows[360]["ci_state"], "MIGRATION_PASS")
         self.assertEqual(rows[362]["disposition"], "SUPERSEDED_BY_371_LINEAGE")
         self.assertEqual(rows[362]["ci_state"], "RETAINED_IN_371_ANCESTRY")
+        self.assertEqual(rows[370]["disposition"], "SUPERSEDED_BY_371_STATIC_B_LAYER_BOUNDARY")
+        self.assertEqual(rows[370]["ci_state"], "SOURCE_AND_MIGRATION_PASS")
+        self.assertEqual(rows[375]["disposition"], "CLOSED_REGRESSION_PROOF")
+        self.assertEqual(rows[375]["authority_class"], "NON_CANONICAL_PRODUCT_PROOF")
 
         migration = self.ledger["migration_evidence"]
         self.assertEqual(migration["360"]["target_pr"], 371)
@@ -105,12 +109,22 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         ):
             self.assertIn(required, migration["362"]["verified_current_head_files"])
 
+        self.assertEqual(migration["370"]["target_pr"], 371)
+        self.assertIn("CORE1B_MODULE_SPECIFIC_HINT_LADDERS", migration["370"]["controls_ported"])
+        self.assertIn("TOPIC_SPECIFIC_HARD_DEEP_PRODUCT_EXEMPLAR", migration["370"]["regression_only"])
+        self.assertEqual(migration["375"]["retention_mode"], "REGRESSION_BRANCH_ONLY")
+        self.assertFalse(migration["375"]["unique_generic_control_found"])
+
     def test_supersession_requires_explicit_migration(self):
         preconditions = self.ledger["closure_preconditions"]
         for condition in ("PORT_LEDGER_COMPLETE", "NO_UNIQUE_GENERIC_CONTROL_LOST", "371_CONTROL_MIGRATION_CI_GREEN"):
             self.assertIn(condition, preconditions["360"])
         for condition in ("EXECUTION_MECHANICS_EXPLICITLY_RETAINED_IN_371_LINEAGE", "371_HEAD_CONTAINS_EXECUTION_CONTRACT_AND_PREFLIGHT"):
             self.assertIn(condition, preconditions["362"])
+        for condition in ("TOPIC_NEUTRAL_STATIC_B_LAYER_BOUNDARY_PORTED", "SYNTHETIC_B_LAYER_FALSIFIERS_GREEN", "TOPIC_PRODUCT_EXEMPLARS_CLASSIFIED_REGRESSION_ONLY", "371_V0_V7_GREEN"):
+            self.assertIn(condition, preconditions["370"])
+        for condition in ("NO_UNIQUE_GENERIC_CONTROL_FOUND", "SOURCE_BRANCH_CI_GREEN", "REGRESSION_BRANCH_RETAINED"):
+            self.assertIn(condition, preconditions["375"])
         for condition in ("GENERIC_SOURCE_HARDENING_REWRITTEN_ON_384_LINEAGE", "NO_REDOX_SPECIFIC_VALIDATOR_LOGIC_RETAINED", "387_GREEN"):
             self.assertIn(condition, preconditions["377"])
         for condition in ("TOPIC_NEUTRAL_CLOSURE_PORTED", "GENERIC_PRODUCT_SOURCE_SCOPE_PORTED", "CDAU_AND_PAL_CUSTODY_PORTED", "387_GREEN"):
