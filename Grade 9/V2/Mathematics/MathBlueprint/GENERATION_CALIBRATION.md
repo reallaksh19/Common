@@ -71,6 +71,47 @@ MEDIUM promotion: targeted research required
 HARD promotion: deep research required
 ```
 
+### Claim-level evidence promotion
+
+A source entering the research workspace is not automatically promoted into pedagogy. Promotion is governed at the **decision and claim** level:
+
+```text
+OPEN DISCOVERY / SEARCH
+        ↓
+RESEARCH DECISION
+(subtopic + depth + coverage + retained sources)
+        ↓
+PEDAGOGY CLAIM
+(one explicit proposition for one support category)
+        ↓
+EVIDENCE LINKS
+SUPPORTS | CONTRADICTS
+        ↓
+CONFIDENCE
+LOW | MODERATE | HIGH
+        ↓
+CONTRADICTION RESOLUTION
+(when disagreement exists)
+        ↓
+PROMOTED GENERATION BINDING
+```
+
+The executable contract is `math-pedagogy-research-manifest.schema.json` plus `validate_pedagogy_research_manifest.py`.
+
+Promotion requirements are subject-wide and topic-independent:
+
+- every coverage category declared by a research decision has at least one explicit promoted claim;
+- every source retained by that decision that is relevant to the claim category is explicitly classified as `SUPPORTS` or `CONTRADICTS` for that claim;
+- every promoted claim has at least one supporting evidence link;
+- contradictory retained evidence requires an explicit resolution explaining why the promoted decision remains bounded and defensible;
+- a source may support multiple claims when it genuinely bears on multiple promoted decisions; there is no universal minimum source count;
+- discovery-only sources do not need to enter the promoted generation binding;
+- every evidence source actually used by a promoted claim must survive into the bucket's bound research references;
+- `PRODUCTION` manifests require verified web captures and reject `LOW`-confidence promoted claims;
+- `TEST_ONLY` manifests may exercise the custody path but cannot authorize production.
+
+Confidence is an evidence-promotion control, not mathematical authority. No research claim, regardless of confidence, can add curriculum scope, create a mathematical fact, or override Engineering/curriculum authority.
+
 ## 3. Core2A/Core2B — learner-calibration control
 
 Generation is blocked until there is one valid learner-calibration path.
@@ -150,6 +191,12 @@ Neither may silently infer the other.
 Core1 bucket without difficulty badge                         → BLOCK
 EASY bucket with half-bound optional research                 → BLOCK
 MEDIUM/HARD bucket without required research brief/evidence   → BLOCK
+research decision coverage without a promoted claim           → BLOCK
+promoted claim without supporting evidence                    → BLOCK
+relevant retained source left unclassified for a claim        → BLOCK
+contradictory promoted evidence without explicit resolution   → BLOCK
+PRODUCTION promotion with LOW-confidence claim                → BLOCK
+promoted claim source missing from generation binding         → BLOCK
 bucket page budget above badge ceiling                        → BLOCK
 Core1 depth changed because of learner knowledge %            → BLOCK
 
@@ -166,5 +213,7 @@ silent/default purpose                                        → BLOCK
 `math-self-teaching-generation-spec.schema.json` captures the per-run inputs.
 
 `validate_self_teaching_generation_spec.py` applies the semantic gates above.
+
+`math-pedagogy-research-manifest.schema.json` and `validate_pedagogy_research_manifest.py` govern research evidence promotion and its generation binding.
 
 The canonical self-teaching policy remains `math-self-teaching-policy.json`.
