@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Multi-bucket-safe entrypoint for the bound four-producer release golden.
+"""Multi-bucket-safe entrypoint for the Engineering-bound four-producer golden.
 
-The underlying runner owns the integration mechanics. This entrypoint supplies the
+The Engineering-bound runner owns authority projection, current Engineering
+admission, producer execution and strict release. This entrypoint supplies the
 canonical storage rule discovered by the real cold-start corpus: a source question
-may participate in multiple teaching buckets, while the Registry stores it under
-one deterministic primary subtopic (the first bucket in canonical bucket order).
-Additional teaching memberships remain on the Core2A question spec and are not
-collapsed by the Registry storage choice.
+may participate in multiple teaching buckets, while the Canonical Domain Registry
+stores it under one deterministic primary subtopic (the first bucket in canonical
+bucket order). Additional teaching memberships remain on Core2A specs.
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ import argparse
 import json
 from pathlib import Path
 
-import run_bound_producer_release_golden as base
+import run_engineering_bound_producer_release_golden as base
 
 
 def multi_bucket_safe_subtopics(bucket_plan: dict):
