@@ -4,6 +4,7 @@
   "additionalProperties": false,
   "properties": {
     "accepted_submission_ids": {"items": {"minLength": 1, "type": "string"}, "type": "array"},
+    "candidate_artifact_sha256_refs": {"items": {"pattern": "^[0-9a-f]{64}$", "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
     "candidate_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
     "fixture_class": {"enum": ["REAL", "TEST_ONLY_SYNTHETIC"]},
     "input_digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
