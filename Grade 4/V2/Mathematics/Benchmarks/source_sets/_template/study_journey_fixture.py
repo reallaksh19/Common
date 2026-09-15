@@ -1,8 +1,9 @@
 """Document-level StudyJourney template for a copied scanned source set.
 
-Do not turn source order into lesson order mechanically.  Group source evidence
+Do not turn source order into lesson order mechanically. Group source evidence
 into teaching concepts, then choose teach/worked/guided/independent/transfer
-blocks deliberately.
+blocks deliberately. Any learner-facing question must carry a source/generation
+identity, answer contract and explicit hint policy.
 """
 from __future__ import annotations
 
@@ -23,7 +24,7 @@ def B(
     *,
     visibility: str = "HIDDEN",
     refs: Iterable[str] = (),
-    learner_prompt: str = "",
+    questions: Iterable[Dict[str, Any]] = (),
     solution_text: str = "",
     representation: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
@@ -35,8 +36,9 @@ def B(
         "answer_visibility": visibility,
         "source_refs": list(refs),
     }
-    if learner_prompt:
-        out["learner_prompt"] = learner_prompt
+    qs = list(questions)
+    if qs:
+        out["questions"] = qs
     if solution_text:
         out["solution_text"] = solution_text
     if representation is not None:
@@ -44,41 +46,50 @@ def B(
     return out
 
 
-# Replace with explicit concept-level modules after semantic extraction.
-#
-# A useful module shape is:
-#
+# A SOURCE learner question must retain the complete visible worksheet identity.
+# Example shape (replace all values):
 # {
-#   "module_id": "M1-...",
-#   "title": "...",
-#   "learning_goal": "...",
-#   "source_refs": ["Q1", "Q2"],
-#   "concept_refs": ["..."],
-#   "prerequisite_bridges": [
-#       {
-#           "bridge_id": "BR-M1-...",
-#           "statement": "instructionally necessary bridge",
-#           "provenance": "PEDAGOGICAL_BRIDGE"
-#       }
-#   ],
-#   "misconception_targets": ["bounded mechanism, not learner trait"],
-#   "blocks": [
-#       B("M1-SEE", "SEE_DISCOVER", "...", "...", refs=["Q1"]),
-#       B(
-#           "M1-WORKED", "WORKED_EXAMPLE", "...", "...",
-#           visibility="WORKED_EXAMPLE", refs=["Q1"],
-#           solution_text="complete authored worked example"
-#       ),
-#       B(
-#           "M1-INDEPENDENT", "INDEPENDENT_TRY", "...", "...",
-#           refs=["Q2"], learner_prompt="fresh answer-free attempt"
-#       ),
-#   ],
-#   "mastery_evidence": ["observable evidence statement"]
+#   "question_id": "M1-Q1",
+#   "origin": "SOURCE",
+#   "display_ref": "I(a)",
+#   "prompt": "40 ÷ 5 + 12 = ____",
+#   "source_identity": {
+#       "source_ref": "Q1",
+#       "source_display_ref": "I(a)",
+#       "source_text": "40 ÷ 5 + 12 = ____",
+#       "source_numeric_tokens": ["40", "5", "12"],
+#       "source_asset_ref": "SCAN-001",
+#       "source_page_or_image_index": 1,
+#       "source_section_label": "I",
+#       "source_item_label": "a",
+#       "source_issue": null
+#   },
+#   "task_support_policy": "NUMERIC_FIRST",
+#   "answer_contract": {
+#       "answer_kind": "EXACT",
+#       "answer_text": "20",
+#       "check_route": "CHECK_AFTER_TRY",
+#       "answer_ref": "ANS-Q1"
+#   },
+#   "hint_contract": {
+#       "modality": "NUMERIC",
+#       "hint_text": "40 ÷ 5 = 8. Now use 8 + 12.",
+#       "visual_ref": null,
+#       "may_reveal_final_answer": false
+#   }
 # }
 #
-# Do not reuse p97-p99 module content unless the new source independently
-# supports the same mathematics and sequence.
+# Generated questions must use labels such as Practice A / Fresh Try A / Check A
+# and must set source_identity=null. They must never reuse source numbering.
+#
+# Hint policy:
+# - NUMERIC_FIRST for arithmetic/procedure: give a small numeric next step.
+# - VISUAL_FIRST for structure/geometry: bind to a real representation.
+# - MIXED when both are necessary.
+# - NO_HINT for a true independent attempt.
+#
+# Every learner question must have an answer contract even when the answer is
+# delayed to an answer map or teacher key.
 MODULES: list[Dict[str, Any]] = []
 
 
@@ -97,28 +108,17 @@ def _source_refs() -> list[str]:
 def build_study_journey() -> Dict[str, Any]:
     required = _source_refs()
     if not MODULES:
-        raise ValueError(
-            "TEMPLATE_REQUIRES_STUDY_JOURNEY: synthesize source questions into explicit teaching modules"
-        )
+        raise ValueError("TEMPLATE_REQUIRES_STUDY_JOURNEY: synthesize source questions into explicit teaching modules")
 
-    covered = sorted({
-        str(ref)
-        for module in MODULES
-        for ref in (module.get("source_refs") or [])
-    })
-
+    covered = sorted({str(ref) for module in MODULES for ref in (module.get("source_refs") or [])})
     plan = {
         "schema_version": "1.0.0",
         "journey_id": "REPLACE_WITH_STUDY_JOURNEY_ID",
         "grade_level": 4,
         "title": "REPLACE_WITH_LEARNER_FACING_STUDY_GUIDE_TITLE",
         "modules": MODULES,
-        "source_coverage": {
-            "required_source_refs": required,
-            "covered_source_refs": covered,
-        },
+        "source_coverage": {"required_source_refs": required, "covered_source_refs": covered},
     }
-
     if "REPLACE_" in plan["journey_id"] or "REPLACE_" in plan["title"]:
         raise ValueError("TEMPLATE_NOT_FILLED: StudyJourney identity/title")
     return plan

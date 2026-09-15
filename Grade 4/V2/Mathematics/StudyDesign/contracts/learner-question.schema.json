@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/Mathematics/StudyDesign/contracts/learner-question.schema.json",
+  "title": "Grade4MathLearnerQuestionContract",
+  "$defs": {
+    "visualHint": {
+      "type": "object",
+      "required": ["primitive_kind", "semantic_params", "fidelity"],
+      "properties": {
+        "primitive_kind": {"type": "string", "minLength": 1},
+        "semantic_params": {"type": "object"},
+        "fidelity": {"enum": ["EXACT", "SCHEMATIC", "REPRESENTATIVE"]}
+      },
+      "additionalProperties": false
+    },
+    "hintStage": {
+      "type": "object",
+      "required": [
+        "level",
+        "child_label",
+        "visual_ref",
+        "primitive_kind",
+        "semantic_params",
+        "verbal_cue",
+        "learner_action"
+      ],
+      "properties": {
+        "level": {"enum": ["H1", "H2", "H3"]},
+        "semantic_role": {"type": "string"},
+        "child_label": {"type": "string", "minLength": 1},
+        "visual_ref": {"type": "string", "minLength": 1},
+        "primitive_kind": {"type": "string", "minLength": 1},
+        "semantic_params": {"type": "object"},
+        "fidelity": {"enum": ["EXACT", "SCHEMATIC", "REPRESENTATIVE"]},
+        "fade_mode": {"type": "string"},
+        "verbal_cue": {"type": "string"},
+        "learner_action": {"type": "string"},
+        "information_revealed": {"type": "array", "items": {"type": "string"}},
+        "provenance": {"type": "string"},
+        "validator_refs": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "thinkingStep": {
+      "type": "object",
+      "required": ["child_label", "one_line_action", "visual_ref", "primitive_kind", "semantic_params"],
+      "properties": {
+        "semantic_role": {"type": "string"},
+        "child_label": {"type": "string", "minLength": 1},
+        "one_line_action": {"type": "string", "minLength": 1},
+        "visual_ref": {"type": "string", "minLength": 1},
+        "primitive_kind": {"type": "string", "minLength": 1},
+        "semantic_params": {"type": "object"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "question_id",
+    "origin",
+    "display_ref",
+    "prompt",
+    "task_support_policy",
+    "answer_contract",
+    "hint_contract"
+  ],
+  "properties": {
+    "question_id": {"type": "string", "minLength": 1},
+    "origin": {"enum": ["SOURCE", "GENERATED_PRACTICE"]},
+    "display_ref": {"type": "string", "minLength": 1},
+    "prompt": {"type": "string", "minLength": 1},
+    "source_identity": {
+      "oneOf": [
+        {"$ref": "../../CoreSkills/contracts/source-identity.schema.json"},
+        {"type": "null"}
+      ]
+    },
+    "task_support_policy": {"enum": ["NUMERIC_FIRST", "VISUAL_FIRST", "MIXED", "NO_HINT"]},
+    "answer_contract": {
+      "type": "object",
+      "required": ["answer_kind", "answer_text", "check_route", "answer_ref"],
+      "properties": {
+        "answer_kind": {"enum": ["EXACT", "EXEMPLAR", "RUBRIC", "SOURCE_DEFECT_RESOLUTION"]},
+        "answer_text": {"type": "string", "minLength": 1},
+        "check_route": {"enum": ["INLINE", "CHECK_AFTER_TRY", "ANSWER_MAP", "TEACHER_KEY"]},
+        "answer_ref": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "hint_contract": {
+      "type": "object",
+      "required": ["modality", "may_reveal_final_answer"],
+      "properties": {
+        "modality": {"enum": ["NUMERIC", "VISUAL", "MIXED", "NONE"]},
+        "hint_text": {"type": ["string", "null"]},
+        "visual_ref": {"type": ["string", "null"]},
+        "visual_hint": {"oneOf": [{"$ref": "#/$defs/visualHint"}, {"type": "null"}]},
+        "stages": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/hintStage"}
+        },
+        "thinking_path": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/thinkingStep"}
+        },
+        "may_reveal_final_answer": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"origin": {"const": "SOURCE"}}, "required": ["origin"]},
+      "then": {
+        "required": ["source_identity"],
+        "properties": {"source_identity": {"type": "object"}}
+      }
+    },
+    {
+      "if": {"properties": {"origin": {"const": "GENERATED_PRACTICE"}}, "required": ["origin"]},
+      "then": {
+        "properties": {"source_identity": {"type": "null"}}
+      }
+    }
+  ],
+  "additionalProperties": false
+}

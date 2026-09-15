@@ -33,6 +33,12 @@ jobs:
         run: python 'Grade 4/V2/Mathematics/LearningDesign/validation/validate_authoring_handoff.py'
       - name: Validate scan-source cold-start template
         run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_scan_source_template.py'
+      - name: Validate source question identity, answer coverage and hint modality
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_source_question_contracts.py'
+      - name: Prove metadata-only source coverage is rejected
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_source_question_coverage_falsifier.py'
+      - name: Validate source identity custody against transcription
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_source_identity_custody.py'
       - name: Validate p97-99 StudyJourney instructional completeness
         run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_p97_p99_study_journey.py'
       - name: Validate Grade 4 representation
