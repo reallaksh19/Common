@@ -9,9 +9,10 @@ import jsonschema
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
-from compile_engineering_closure import compile_closure, compose_registry, load  # noqa: E402
+from build_physics_engineering_gate_registry_v3 import build_registry as build_registry_v3  # noqa: E402
+from compile_engineering_closure import compile_closure, load  # noqa: E402
 from compile_engineering_passport import compile_passport  # noqa: E402
-from validate_engineering_gates_v2 import GateValidationError, validate as validate_registry  # noqa: E402
+from validate_engineering_gates_v3 import PhysicsEngineeringGateV3Error, validate as validate_registry_v3  # noqa: E402
 
 
 class GravityResearchValidationError(Exception):
@@ -79,6 +80,8 @@ def validate(
     manifest: dict,
     dossier: dict,
     ledger: dict,
+    *,
+    registry: dict | None = None,
 ) -> dict:
     validate_schema(request, "contracts/engineering-request.schema.json", "E_GRAV_SCHEMA")
     validate_schema(discovery, "contracts/engineering-discovery-decision.schema.json", "E_GRAV_SCHEMA")
@@ -100,13 +103,15 @@ def validate(
         fail("E_GRAV_DISCOVERY", "PHY-GRAV-FIELD must be a child of PHY-GRAV-FORCE")
     if manifest["required_gate_ids"] != ["PHY-GRAV-FIELD"]:
         fail("E_GRAV_DISCOVERY", "manifest must declare only gravitational field as the direct gate")
-    if not manifest.get("gate_extension_refs"):
-        fail("E_GRAV_DISCOVERY", "Gravity gate extension is not bound by the manifest")
+    if manifest["registry_ref"] != "GENERATED:physics-technical-engineering-gates.v3":
+        fail("E_GRAV_DISCOVERY", "Gravity manifest must consume the canonical subject-wide v3 registry")
+    if manifest.get("gate_extension_refs"):
+        fail("E_GRAV_DISCOVERY", "canonical v3 Gravity must not use the legacy v2 extension mechanism")
 
-    registry = compose_registry(manifest)
+    registry = registry if registry is not None else build_registry_v3()
     try:
-        validate_registry(registry)
-    except GateValidationError as exc:
+        validate_registry_v3(registry)
+    except PhysicsEngineeringGateV3Error as exc:
         fail("E_GRAV_GATE_INVARIANT", f"{exc.code}: {exc.message}")
     gate_map = {gate["subtopic_id"]: gate for gate in registry["gates"]}
 
@@ -141,7 +146,7 @@ def validate(
         gravity_assets |= ids(gate["relations"], "relation_id")
         gravity_assets |= ids(gate["representations"], "representation_id")
         gravity_assets |= ids(gate["misconceptions"], "misconception_id")
-        gravity_assets |= set(gate["problem_families"])
+        gravity_assets |= ids(gate["problem_families"], "family_id")
         for authority in gate["authority_basis"]:
             prefix = "ENG-CLAIMS-GRAV-FIELD-V1:"
             if not authority["source_ref"].startswith(prefix):
@@ -155,7 +160,13 @@ def validate(
         if unknown_targets:
             fail("E_GRAV_PROVENANCE", f"{claim['claim_id']} used_by has unknown Gravity targets: {sorted(unknown_targets)}")
 
-    receipt = compile_closure(request, manifest, research_dossier=dossier, claim_ledger=ledger)
+    receipt = compile_closure(
+        request,
+        manifest,
+        registry=registry,
+        research_dossier=dossier,
+        claim_ledger=ledger,
+    )
     if receipt["closure_status"] != "READY" or set(receipt["transitive_gate_ids"]) != EXPECTED_CLOSURE:
         fail("E_GRAV_CLOSURE", f"unexpected Gravity closure: {receipt['closure_status']} {receipt['transitive_gate_ids']}")
     if receipt["counts"] != {"direct_gate_count":1,"transitive_gate_count":10,"ready_gate_count":10,"blocked_gate_count":0}:
@@ -169,6 +180,7 @@ def validate(
         "status": "PASS",
         "request_id": request_id,
         "decision_id": discovery["decision_id"],
+        "registry_id": registry["registry_id"],
         "gravity_gates": sorted(EXPECTED),
         "claim_count": len(ledger["claims"]),
         "closure_gate_count": receipt["counts"]["transitive_gate_count"],
@@ -180,7 +192,7 @@ def validate(
 def main():
     request = load("fixtures/engineering-workbench/grav-field-request.v1.json")
     discovery = load("fixtures/engineering-workbench/grav-field-discovery.v1.json")
-    manifest = load("fixtures/engineering-workbench/grav-field-manifest.v1.json")
+    manifest = load("fixtures/engineering-workbench/grav-field-manifest.v3.json")
     dossier = load("fixtures/engineering-workbench/grav-field-research-dossier.v1.json")
     ledger = load("fixtures/engineering-workbench/grav-field-claim-ledger.v1.json")
     print(json.dumps(validate(request, discovery, manifest, dossier, ledger), indent=2))
