@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engineering-domain-prerequisite-closure.schema.json",
+  "title": "Engineering Gate External Domain Prerequisite Closure",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "receipt_id", "engineering_receipt_ref", "prerequisites",
+    "demands", "closure_status", "closure_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "receipt_id": {"type": "string", "pattern": "^DOMAIN-CLOSURE-[A-Z0-9-]+$"},
+    "engineering_receipt_ref": {"type": "string", "minLength": 1},
+    "prerequisites": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["prerequisite_id", "status", "authority_ref", "demand_id"],
+        "properties": {
+          "prerequisite_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["READY_FROM_AUTHORITATIVE_DOMAIN", "HELD_NO_DOMAIN_RECEIPT"]},
+          "authority_ref": {"type": ["string", "null"]},
+          "demand_id": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "demands": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "https://schemas.common/v2/shared/cross-domain/domain-prerequisite-demand.schema.json"}
+    },
+    "closure_status": {"enum": ["READY", "HELD"]},
+    "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
