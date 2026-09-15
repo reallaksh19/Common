@@ -29,25 +29,42 @@ def fail(code: str, message: str):
     raise ChemistryPALEngineeringError(code, message)
 
 
-def validate_pal_engineering_ready(request: dict, manifest: dict, ccbom: dict, custody: dict) -> dict:
+def validate_pal_engineering_ready(
+    request: dict,
+    manifest: dict,
+    ccbom: dict,
+    source_scope_contract: dict,
+    product_authority: dict,
+    custody: dict,
+) -> dict:
     try:
         jsonschema.validate(custody, load("contracts/chemistry-product-engineering-custody-v1.schema.json"))
     except jsonschema.ValidationError as exc:
         fail("CHEM_PAL_ENGINEERING_CUSTODY_SCHEMA", exc.message)
 
     try:
-        expected = compile_product_custody(request, manifest, ccbom)
+        expected = compile_product_custody(
+            request,
+            manifest,
+            ccbom,
+            source_scope_contract,
+            product_authority,
+        )
     except ChemistryProductEngineeringCustodyError as exc:
         fail("CHEM_PAL_ENGINEERING_BLOCKED", f"{exc.code}: {exc.message}")
 
     if custody != expected:
         differing = sorted(k for k in set(custody) | set(expected) if custody.get(k) != expected.get(k))
-        fail("CHEM_PAL_ENGINEERING_CUSTODY_STALE", f"custody differs from current engineering state: {differing}")
+        fail("CHEM_PAL_ENGINEERING_CUSTODY_STALE", f"custody differs from current engineering/product state: {differing}")
 
     return {
         "status": "PASS",
         "ccbom_id": custody["ccbom_id"],
         "scope_ref": custody["scope_ref"],
+        "product_scope_contract_id": custody["product_scope_contract_id"],
+        "product_scope_contract_digest": custody["product_scope_contract_digest"],
+        "product_authority_id": custody["product_authority_id"],
+        "product_authority_digest": custody["product_authority_digest"],
         "engineering_binding_id": custody["engineering_binding_id"],
         "engineering_binding_digest": custody["engineering_binding_digest"],
         "closure_digest": custody["closure_digest"],
@@ -62,11 +79,18 @@ def main() -> int:
     p.add_argument("request")
     p.add_argument("manifest")
     p.add_argument("ccbom")
+    p.add_argument("source_scope_contract")
+    p.add_argument("product_authority")
     p.add_argument("custody")
     a = p.parse_args()
     try:
         result = validate_pal_engineering_ready(
-            load(a.request), load(a.manifest), load(a.ccbom), load(a.custody)
+            load(a.request),
+            load(a.manifest),
+            load(a.ccbom),
+            load(a.source_scope_contract),
+            load(a.product_authority),
+            load(a.custody),
         )
     except ChemistryPALEngineeringError as exc:
         print(json.dumps({"status": "FAIL", "reason": str(exc)}, indent=2))
