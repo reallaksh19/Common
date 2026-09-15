@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-engineering-blueprint-obligations.schema.json",
+  "title": "Chemistry Engineering to Blueprint Obligation Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "packet_id", "subject", "request_id", "manifest_id", "scope_ref",
+    "engineering_binding_id", "engineering_binding_digest", "closure_receipt_id", "closure_digest",
+    "registry_ref", "registry_digest", "direct_gate_ids", "closure_gate_ids", "obligations", "counts",
+    "status", "packet_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "packet_id": {"type": "string", "pattern": "^CHEM-BP-OBL-[A-Z0-9-]+$"},
+    "subject": {"const": "CHEMISTRY"},
+    "request_id": {"type": "string"},
+    "manifest_id": {"type": "string"},
+    "scope_ref": {"type": "string", "minLength": 1},
+    "engineering_binding_id": {"type": "string"},
+    "engineering_binding_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "closure_receipt_id": {"type": "string"},
+    "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "registry_ref": {"type": "string"},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "direct_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "closure_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "obligations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "obligation_id", "gate_id", "direct", "kind", "asset_ref", "authorized_modes",
+          "required_realization_modes", "source_authority_tier", "payload"
+        ],
+        "properties": {
+          "obligation_id": {"type": "string", "pattern": "^CHEM-OBL-[A-Z0-9-]+$"},
+          "gate_id": {"type": "string"},
+          "direct": {"type": "boolean"},
+          "kind": {"enum": ["CONCEPT", "EQUATION", "REPRESENTATION", "MODEL_CONDITION", "REASONING_STEP", "TRANSFORMATION", "MISCONCEPTION", "VERIFICATION", "PROBLEM_FAMILY", "DIFFICULTY_PROFILE"]},
+          "asset_ref": {"type": "string", "minLength": 1},
+          "authorized_modes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]}},
+          "required_realization_modes": {"type": "array", "uniqueItems": true, "items": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]}},
+          "source_authority_tier": {"type": "string"},
+          "payload": {"type": "object"}
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_count", "direct_gate_count", "obligation_count", "required_by_mode"],
+      "properties": {
+        "gate_count": {"type": "integer", "minimum": 1},
+        "direct_gate_count": {"type": "integer", "minimum": 1},
+        "obligation_count": {"type": "integer", "minimum": 1},
+        "required_by_mode": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+          "properties": {
+            "CORE1A": {"type": "integer", "minimum": 0},
+            "CORE1B": {"type": "integer", "minimum": 0},
+            "CORE2A": {"type": "integer", "minimum": 0},
+            "CORE2B": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    },
+    "status": {"const": "BLUEPRINT_OBLIGATIONS_READY"},
+    "packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
