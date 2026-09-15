@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections import defaultdict
-from itertools import combinations, product
+from itertools import product
 from pathlib import Path
 
 import jsonschema
@@ -13,6 +13,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 RECEIPT_SCHEMA = ROOT / "contracts" / "math-stage-governance-receipt.schema.json"
 
+from compile_mathematics_engineering_workbench import digest as engineering_digest
 from emit_stage_governance import digest, registry_alias_map
 from validate_canonical_domain_registry import validate_registry
 from validate_product_governance import (
@@ -42,16 +43,31 @@ def _jaccard(a, b) -> float:
 def _validate_receipts(receipts: list[dict], registry: dict) -> dict[str, list[dict]]:
     schema = load(RECEIPT_SCHEMA)
     by: dict[str, list[dict]] = defaultdict(list)
+    custody_digests: set[str] = set()
+    expected_domain_digest = engineering_digest(registry)
     for receipt in receipts:
         jsonschema.validate(receipt, schema)
         stage = receipt["stage"]
         if receipt["registry_binding"]["status"] != "BOUND" or receipt["registry_binding"]["registry_ref"] != registry["registry_id"]:
             fail("ASSEMBLER_RECEIPT_REGISTRY_UNBOUND", receipt["receipt_id"])
+        custody = receipt.get("engineering_custody")
+        if custody is None:
+            fail("ASSEMBLER_RECEIPT_ENGINEERING_CUSTODY_MISSING", receipt["receipt_id"])
+        if custody.get("status") != "BOUND":
+            fail("ASSEMBLER_RECEIPT_ENGINEERING_CUSTODY_UNBOUND", receipt["receipt_id"])
+        if custody.get("domain_registry_id") != registry["registry_id"] or custody.get("domain_registry_digest") != expected_domain_digest:
+            fail("ASSEMBLER_RECEIPT_ENGINEERING_DOMAIN_DRIFT", receipt["receipt_id"])
+        custody_material = {k:v for k,v in custody.items() if k != "custody_digest"}
+        if custody.get("custody_digest") != engineering_digest(custody_material):
+            fail("ASSEMBLER_RECEIPT_ENGINEERING_CUSTODY_DIGEST_INVALID", receipt["receipt_id"])
+        custody_digests.add(custody["custody_digest"])
         if receipt["release_state"] != "READY_FOR_CROSS_CORE_AUDIT":
             fail("ASSEMBLER_RECEIPT_NOT_RELEASE_READY", receipt["receipt_id"])
         by[stage].append(receipt)
     if set(by) != set(STAGES):
         fail("ASSEMBLER_STAGE_COVERAGE_INCOMPLETE", ",".join(sorted(set(STAGES)-set(by))))
+    if len(custody_digests) != 1:
+        fail("ASSEMBLER_ENGINEERING_CUSTODY_DRIFT", ",".join(sorted(custody_digests)))
     return by
 
 
