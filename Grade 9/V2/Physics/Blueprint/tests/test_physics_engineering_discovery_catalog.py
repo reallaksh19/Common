@@ -28,9 +28,9 @@ def main() -> None:
     assert result["status"] == "PASS"
     assert result["discovered_subtopic_count"] == 43
     assert result["exact_v3_count"] == 12
-    assert result["mapped_v3_target_count"] == 7
-    assert result["migration_required_count"] == 29
-    assert result["v3_native_or_refined_count"] == 9
+    assert result["mapped_v3_target_count"] == 10
+    assert result["migration_required_count"] == 28
+    assert result["v3_native_or_refined_count"] == 6
     assert result["canonical_v3_gate_count"] == 23
     assert result["case_artifacts_role"] == "STRESS_TEST_ONLY"
     assert result["readiness_rule"] == "DERIVED_BY_PRODUCTION_V3_VALIDATOR"
@@ -50,6 +50,15 @@ def main() -> None:
         "PHY-NLM-THIRD-LAW",
     ]
     assert newton["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-FORCE-NEWTON-LAWS.v1.json"
+
+    projectile = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-KIN-2D-PROJECTILE")
+    assert projectile["disposition"] == "MAPPED_V3"
+    assert projectile["v3_gate_ids"] == [
+        "PHY-M2D-PROJECTILE-COMPONENTS",
+        "PHY-M2D-SHARED-CLOCK",
+        "PHY-M2D-VELOCITY-EVOLUTION",
+    ]
+    assert projectile["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-KIN-2D-PROJECTILE.v1.json"
 
     exact_ids = {
         row["discovery_gate_id"]
@@ -98,6 +107,10 @@ def main() -> None:
 
     bad = copy.deepcopy(catalog)
     bad["v3_native_or_refined_gate_ids"].append("PHY-NLM-SECOND-LAW")
+    expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
+
+    bad = copy.deepcopy(catalog)
+    bad["v3_native_or_refined_gate_ids"].append("PHY-M2D-PROJECTILE-COMPONENTS")
     expect_code(bad, "E_ENG_DISCOVERY_DOUBLE_CLASSIFIED")
 
     bad = copy.deepcopy(catalog)
