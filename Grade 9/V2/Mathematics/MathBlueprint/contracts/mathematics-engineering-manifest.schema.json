@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mathematics-engineering-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","subject","manifest_id","request_id","scope_kind","scope_ref","registry_ref","invariant_profile_ref","direct_gate_ids"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "manifest_id": {"type": "string", "pattern": "^MATH-ENG-MANIFEST-[A-Z0-9_-]+$"},
+    "request_id": {"type": "string", "pattern": "^MATH-ENG-REQ-[A-Z0-9_-]+$"},
+    "scope_kind": {"enum": ["SUBTOPIC","BUCKET"]},
+    "scope_ref": {"type": "string", "minLength": 3},
+    "registry_ref": {"const": "policies/mathematics-technical-engineering-gates.v1.json"},
+    "invariant_profile_ref": {"const": "policies/mathematics-engineering-gate-invariants.v1.json"},
+    "direct_gate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}
+    }
+  }
+}
