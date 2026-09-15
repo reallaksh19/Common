@@ -103,9 +103,13 @@ def validate(catalog: dict) -> dict:
     if missing_current:
         fail("E_ENG_DISCOVERY_V3_UNRECONCILED", f"canonical v3 gates are absent from discovery reconciliation {missing_current}")
 
-    overlap = (exact_targets & mapped_targets) | (exact_targets & native) | (mapped_targets & native)
+    # Exact source identity and broader reviewed source mappings are independent
+    # provenance roles and may legitimately converge on the same canonical gate.
+    # Native/refined means there is no source-backed reconciliation role, so it
+    # remains strictly disjoint from both exact and mapped target sets.
+    overlap = (exact_targets | mapped_targets) & native
     if overlap:
-        fail("E_ENG_DISCOVERY_DOUBLE_CLASSIFIED", f"v3 gates have more than one reconciliation role {sorted(overlap)}")
+        fail("E_ENG_DISCOVERY_DOUBLE_CLASSIFIED", f"native/refined v3 gates are also source-backed {sorted(overlap)}")
 
     return {
         "status": "PASS",
