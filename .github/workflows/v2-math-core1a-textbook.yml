@@ -84,26 +84,27 @@ jobs:
           print(json.dumps({'core1_study_plan_id': plan['core1_study_plan_id'],'study_model_id': study_model['study_model_id'],'core2_plan_id': core2['plan_id'],'lessons': len(plan['lessons']),'capability_plans': len(study_model['capability_plans']),'source_questions': len(core2['pages']),'release_class': plan['release_class']}, indent=2))
           PY
 
-      - name: Synthesize buckets and realize legacy unbound Core1A textbook
+      - name: Run legacy unbound Core1A renderer regression (non-publishable)
         run: |
           python 'Grade 9/V2/Mathematics/Core1A/engine/realize_math_core1a.py' \
             --core1-plan /tmp/core1a/core1_study_plan.json \
             --study-model /tmp/core1a/learner_study_model.json \
             --out-dir /tmp/core1a/product
 
-      - name: Inspect bucket plan, governance receipt and learner artifact
+      - name: Inspect legacy regression and quarantine learner PDF
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           import fitz
 
-          out = Path('/tmp/core1a/product')
+          root = Path('/tmp/core1a')
+          out = root / 'product'
           bucket_plan = json.loads((out / 'core1a_bucket_plan.json').read_text(encoding='utf-8'))
           manuscript = json.loads((out / 'core1a_textbook_manuscript.json').read_text(encoding='utf-8'))
           audit = json.loads((out / 'core1a_quality_audit.json').read_text(encoding='utf-8'))
           receipt = json.loads((out / 'core1a_governance_receipt.json').read_text(encoding='utf-8'))
-          study = json.loads(Path('/tmp/core1a/learner_study_model.json').read_text(encoding='utf-8'))
+          study = json.loads((root / 'learner_study_model.json').read_text(encoding='utf-8'))
 
           assert bucket_plan['coverage']['status'] == 'PASS'
           assert audit['quality_audit']['status'] == 'PASS'
@@ -121,13 +122,31 @@ jobs:
           raw = json.dumps(bucket_plan)
           assert 'FOUNDATION' not in raw and 'PARTIAL' not in raw, 'Core1A invented a second learner-state vocabulary'
 
-          pdf = fitz.open(out / 'core1a_student_textbook.pdf')
+          legacy_pdf = out / 'core1a_student_textbook.pdf'
+          pdf = fitz.open(legacy_pdf)
           assert len(pdf) >= 2
           text = '\n'.join(page.get_text() for page in pdf).lower()
           forbidden = ['author a new instance','source reuse is forbidden','candidate learner product','publication engineering','promotion registry','{rows}','capability_ref','problem_family_ref','learner_state_readiness','priority_band']
           for token in forbidden: assert token not in text, f'learner PDF leaked internal text: {token}'
           assert 'worked example' in text and 'your turn' in text and 'challenge' in text and 'answer check' in text
-          print(json.dumps({'buckets':len(bucket_plan['buckets']),'pages':len(pdf),'pdf_sha256':audit['artifact']['pdf_sha256'],'actual_problem_instances':audit['quality_audit']['actual_problem_instances'],'governance_receipt':receipt['receipt_id']}, indent=2))
+          pdf.close()
+
+          quarantine = {
+            'schema_version': '1.0.0',
+            'subject': 'MATHEMATICS',
+            'artifact_role': 'NON_PUBLISHABLE_REGRESSION',
+            'publication_authorization': 'NONE',
+            'release_state': receipt['release_state'],
+            'governance_receipt_ref': receipt['receipt_id'],
+            'tested_pdf_sha256': audit['artifact']['pdf_sha256'],
+            'tested_page_count': audit['artifact']['page_count'],
+            'reason': 'Legacy unbound Core1A rendering is retained only as a regression check. The learner PDF is deleted before CI artifact upload; governed publication comes only from the released Blueprint bundle.',
+            'pdf_deleted_before_artifact_upload': True,
+          }
+          (root / 'legacy_core1a_regression_quarantine.json').write_text(json.dumps(quarantine, indent=2) + '\n', encoding='utf-8')
+          legacy_pdf.unlink()
+          assert not legacy_pdf.exists(), 'unbound learner PDF must not survive into uploaded CI artifacts'
+          print(json.dumps({'buckets':len(bucket_plan['buckets']),'tested_pages':quarantine['tested_page_count'],'tested_pdf_sha256':quarantine['tested_pdf_sha256'],'actual_problem_instances':audit['quality_audit']['actual_problem_instances'],'governance_receipt':receipt['receipt_id'],'artifact_role':quarantine['artifact_role'],'legacy_pdf_uploaded':False}, indent=2))
           PY
 
       - name: Run full mixed-corpus Engineering-bound four-producer release golden
@@ -182,6 +201,13 @@ jobs:
           source_keys = [(x['engineering_gate_id'], x['engineering_source_kind'], x['engineering_source_ref']) for x in projection['canonical_assets']]
           assert len(source_keys) == len(set(source_keys)), 'Engineering source identity was duplicated in the Canonical Domain Registry'
 
+          # Real SDU/LAU calibration: no synthetic EASY/1/60% defaults.
+          assert summary['sdu_difficulty_badge_counts'] == {'EASY': 2, 'MEDIUM': 16, 'HARD': 0}
+          assert summary['lau_calibration_mode'] == 'OWNER_WAIVER'
+          assert summary['lau_fabricated_percent'] is False
+          assert summary['learner_observation_ref_count'] == 0
+          assert summary['pedagogy_research_manifest_release_class'] == 'TEST_ONLY'
+
           # Golden evidence for the current full mixed Grade-9 corpus. These values are
           # fixture evidence only; production logic derives them dynamically.
           assert summary['engineering_domain_base_asset_count'] == 102
@@ -222,7 +248,30 @@ jobs:
           print(json.dumps({'bundle_id':summary['bundle_id'],'concept_components':summary['concept_component_count'],'difficulty_badges':summary['difficulty_badge_counts'],'pages':len(pdf),'render_objects':summary['render_object_count'],'pdf_sha256':summary['pdf_sha256'],'semantic_source':summary['semantic_source']}, indent=2))
           PY
 
-      - name: Upload Core1A inputs, learner product and bound release artifacts
+      - name: Enforce uploaded artifact publication boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('/tmp/core1a')
+          quarantine = json.loads((root / 'legacy_core1a_regression_quarantine.json').read_text(encoding='utf-8'))
+          assert quarantine['artifact_role'] == 'NON_PUBLISHABLE_REGRESSION'
+          assert quarantine['publication_authorization'] == 'NONE'
+          assert quarantine['release_state'] == 'UNBOUND_PRE_RELEASE'
+          assert quarantine['pdf_deleted_before_artifact_upload'] is True
+          assert not (root / 'product' / 'core1a_student_textbook.pdf').exists()
+
+          final_pdf = root / 'bound-producer-release' / 'publication' / 'blueprint_regenerated_learner_product.pdf'
+          publication_summary = json.loads((root / 'bound-producer-release' / 'publication' / 'blueprint_publication_summary.json').read_text(encoding='utf-8'))
+          assert final_pdf.exists()
+          assert publication_summary['status'] == 'PASS'
+          assert publication_summary['source_release_gate'] == 'PASS'
+          assert publication_summary['semantic_source'] == 'LEARNER_PUBLICATION_BUNDLE_ONLY'
+          print(json.dumps({'legacy_unbound_pdf_uploaded':False,'governed_blueprint_publication_present':True,'final_pdf':str(final_pdf.relative_to(root))}, indent=2))
+          PY
+
+      - name: Upload Core1A inputs, regression audits and governed bound release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: math-core1a-textbook
