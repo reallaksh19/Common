@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0.0",
+  "audit_id": "CHEM-SOURCE-AUDIT-REDOX-V1",
+  "gate_id": "CHEM-REDOX-OXIDATION",
+  "base_registry_ref": "policies/chemistry-technical-engineering-gates.v1.json",
+  "base_provenance_status": "SUPERSEDED_BY_SOURCE_AUDIT",
+  "effective_provenance": {
+    "authority_class": "MIXED_SOURCE_DEFINED_AND_STANDARD_DERIVED",
+    "source_curriculum": "NCERT Class X Science + NCERT Class XI Chemistry",
+    "scope_policy": "GRADE_BANDED",
+    "source_references": [
+      "NCERT Class X Science, Chapter 1, Section 1.2.5 (Oxidation and Reduction)",
+      "NCERT Chemistry Classes XI-XII syllabus, Unit VIII: Redox Reactions",
+      "NCERT Class XI Chemistry Exemplar, Unit 8: Redox Reactions"
+    ]
+  },
+  "source_layers": [
+    {
+      "layer_id": "SRC-NCERT-X-SCI-REDOX",
+      "authority_class": "SOURCE_DEFINED",
+      "source_ref": "https://ncert.nic.in/textbook.php?jesc1=1-11",
+      "scope": "Class X Chemical Reactions and Equations, oxidation/reduction foundation",
+      "supports": [
+        "oxygen/hydrogen framing of oxidation and reduction",
+        "CuO + H2 -> Cu + H2O textbook redox example",
+        "simultaneous oxidation and reduction recognition at Class X level"
+      ]
+    },
+    {
+      "layer_id": "SRC-NCERT-XI-SYLLABUS-REDOX",
+      "authority_class": "OFFICIAL_SYLLABUS",
+      "source_ref": "https://ncert.nic.in/pdf/syllabus/desm_s_Chemistry.pdf",
+      "scope": "Class XI Unit VIII Redox Reactions",
+      "supports": [
+        "concept of oxidation and reduction",
+        "oxidation number",
+        "balancing redox reactions in terms of loss and gain of electron",
+        "balancing using change in oxidation numbers"
+      ]
+    },
+    {
+      "layer_id": "SRC-NCERT-XI-EXEMPLAR-REDOX",
+      "authority_class": "STANDARD_CHEMISTRY_DERIVED",
+      "source_ref": "https://ncert.nic.in/exemplar-problems.php?ln=en",
+      "scope": "Class XI Chemistry Exemplar Unit 8 Redox Reactions",
+      "supports": [
+        "formal redox problem practice",
+        "oxidising/reducing agent classification",
+        "oxidation-number based discrimination"
+      ]
+    }
+  ],
+  "claim_bindings": [
+    {
+      "asset_id": "CON-CHEM-OIL-RIG",
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX"],
+      "scope_tier": "FORMAL_G11",
+      "claim_class": "SOURCE_DEFINED",
+      "downstream_scope": "Internal legacy ID only; learner wording must use electron loss/gain and oxidation-number increase/decrease."
+    },
+    {
+      "asset_id": "CON-CHEM-OXIDATION-STATE-RULES",
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX"],
+      "scope_tier": "FORMAL_G11",
+      "claim_class": "SOURCE_DEFINED",
+      "downstream_scope": "Class XI formal redox layer; not authorized by the Class X source alone."
+    },
+    {
+      "asset_id": "CON-CHEM-AGENT-INVERSION",
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-NCERT-XI-EXEMPLAR-REDOX"],
+      "scope_tier": "FORMAL_G11",
+      "claim_class": "STANDARD_CHEMISTRY_DERIVED",
+      "downstream_scope": "Formal redox agent assignment after electron/oxidation-number tracking."
+    }
+  ],
+  "equation_bindings": [
+    {
+      "equation_id": "EQ-CHEM-REDOX-TRANSFER",
+      "authority_layer_ids": ["SRC-NCERT-X-SCI-REDOX", "SRC-NCERT-XI-SYLLABUS-REDOX"],
+      "scope_tier": "FOUNDATION_G10",
+      "downstream_scope": "Reaction itself is a Class X foundation example; oxidation-number/agent annotations require FORMAL_G11 authority."
+    }
+  ],
+  "transformation_bindings": [
+    {
+      "fingerprint": "REDOX_EQUATION->AGENT_ASSIGNMENT|Zn+CuSO4",
+      "authority_layer_ids": ["SRC-NCERT-X-SCI-REDOX", "SRC-NCERT-XI-SYLLABUS-REDOX"],
+      "scope_tier": "FORMAL_G11",
+      "downstream_scope": "Reaction-level observation may appear earlier; formal oxidising/reducing-agent assignment is Class XI scope."
+    },
+    {
+      "fingerprint": "HALF_REACTIONS->BALANCED_OVERALL_REDOX|MnO4-acidic",
+      "authority_layer_ids": ["SRC-NCERT-XI-SYLLABUS-REDOX", "SRC-NCERT-XI-EXEMPLAR-REDOX"],
+      "scope_tier": "EXTENDED_G11",
+      "downstream_scope": "Grade XI only; must be SOURCE_SCOPE_HELD for Grade 9/10 learner products unless owner scope explicitly includes formal redox balancing."
+    }
+  ],
+  "scope_tiers": [
+    {
+      "tier_id": "FOUNDATION_G10",
+      "grade_band": "10",
+      "description": "Recognise oxidation/reduction in NCERT Class X reaction examples using oxygen/hydrogen change and the supplied equation context."
+    },
+    {
+      "tier_id": "FORMAL_G11",
+      "grade_band": "11",
+      "description": "Use electron transfer and oxidation-number changes to identify oxidation, reduction, oxidising agents and reducing agents."
+    },
+    {
+      "tier_id": "EXTENDED_G11",
+      "grade_band": "11",
+      "description": "Balance formal ionic redox systems and half-reactions, including acidic/basic medium when the request scope explicitly authorizes it."
+    }
+  ],
+  "learner_surface_policy": {
+    "internal_concept_ids_hidden": true,
+    "legacy_internal_ids": ["CON-CHEM-OIL-RIG"],
+    "forbidden_surface_labels": ["OIL RIG", "agent inversion"],
+    "preferred_surface_language": [
+      "oxidation: electron loss / oxidation number increases",
+      "reduction: electron gain / oxidation number decreases",
+      "oxidising agent is reduced; reducing agent is oxidised"
+    ]
+  },
+  "current_gate_defects": [
+    {
+      "defect_id": "CHEM-REDOX-DEFECT-PROVENANCE-OVERCLAIM",
+      "status": "REPAIRED_BY_AUDIT_LAYER",
+      "repair": "The v1 gate cited Class X Section 1.2.5 as authority for oxidation-number rules, electron transfer and half-reaction balancing. The audit splits Class X foundation from Class XI formal redox authority."
+    },
+    {
+      "defect_id": "CHEM-REDOX-DEFECT-GRADE-SCOPE-LEAK",
+      "status": "REPAIRED_BY_AUDIT_LAYER",
+      "repair": "The permanganate half-reaction transformation is now explicitly EXTENDED_G11 and cannot silently enter Grade 9/10 products."
+    },
+    {
+      "defect_id": "CHEM-REDOX-DEFECT-LEARNER-JARGON",
+      "status": "REPAIRED_BY_AUDIT_LAYER",
+      "repair": "Legacy mnemonic and architecture labels remain internal IDs only and are prohibited from learner-facing surfaces."
+    }
+  ],
+  "audit_status": "SOURCE_HARDENED"
+}
