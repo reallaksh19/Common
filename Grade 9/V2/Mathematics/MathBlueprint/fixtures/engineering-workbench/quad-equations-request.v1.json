@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "request_id": "MATH-ENG-REQ-QUAD-001",
+  "scope_kind": "SUBTOPIC",
+  "scope_ref": "MATH-QUAD-EQUATIONS",
+  "engineering_depth": "STANDARD",
+  "learning_purpose": "FIRST_STUDY",
+  "owner_decision_ref": null
+}
