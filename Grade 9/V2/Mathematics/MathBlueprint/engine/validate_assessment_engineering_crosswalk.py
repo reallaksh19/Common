@@ -10,7 +10,7 @@ from typing import Iterable
 from jsonschema import Draft202012Validator
 
 from compile_mathematics_engineering_workbench import digest as engineering_digest, load as load_engineering
-from engineering_registry_composition import EUCLID_EXTENSION_REL, git_blob_sha
+from engineering_registry_composition import canonical_extension_rels, git_blob_sha
 from validate_mathematics_engineering_gates import validate as validate_engineering_registry
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -75,12 +75,13 @@ def _compose_crosswalk_patch(path: Path) -> dict:
             str(base.get("engineering_registry_digest")),
         )
 
-    if patch["engineering_extension_ref"] != EUCLID_EXTENSION_REL:
+    extension_ref = patch["engineering_extension_ref"]
+    if extension_ref not in set(canonical_extension_rels()):
         raise MathematicsAssessmentEngineeringCrosswalkError(
             "MATH_ENG_CROSSWALK_PATCH_EXTENSION_REF_DRIFT",
-            patch["engineering_extension_ref"],
+            extension_ref,
         )
-    actual_ext_blob = git_blob_sha(EUCLID_EXTENSION_REL)
+    actual_ext_blob = git_blob_sha(extension_ref)
     if actual_ext_blob != patch["engineering_extension_git_blob_sha"]:
         raise MathematicsAssessmentEngineeringCrosswalkError(
             "MATH_ENG_CROSSWALK_PATCH_EXTENSION_STALE",
