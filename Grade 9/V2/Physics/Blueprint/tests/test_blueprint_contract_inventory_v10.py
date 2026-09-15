@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from jsonschema import Draft202012Validator
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load(rel: str):
+    return json.loads((ROOT / rel).read_text(encoding="utf-8"))
+
+
+def test_v10_contract_schemas_are_valid():
+    names = [
+        "contracts/scoped-execution-envelope.schema.json",
+        "contracts/scoped-evidence-receipt.schema.json",
+        "contracts/domain-prerequisite-authority.schema.json",
+        "contracts/domain-prerequisite-closure.schema.json",
+        "contracts/seven-core-stress-test-request.schema.json",
+        "contracts/seven-core-stress-test-receipt.schema.json",
+        "contracts/join-packet.schema.json",
+    ]
+    for rel in names:
+        Draft202012Validator.check_schema(load(rel))
+
+
+def test_v10_join_policy_keeps_verified_absence_distinct_from_unknown():
+    policy = load("policy/join-policy.v2.json")
+    assert policy["policy_id"] == "PHY-JOIN-v2"
+    assert policy["assessment_coverage_states"] == [
+        "DEMANDS_PRESENT",
+        "VERIFIED_NO_TARGET_DEMAND",
+        "COVERAGE_UNKNOWN",
+    ]
+    assert policy["verified_no_target_demand_is_reconciled_state"] is True
+    assert policy["verified_no_target_demand_allows_assimilation"] is True
+    assert policy["coverage_unknown_blocks_assimilation"] is True
+    assert policy["zero_demand_requires_scoped_coverage_receipt"] is True
+
+
+def test_v10_state_semantics_forbid_surrogate_passes():
+    policy = load("policy/stress-test-state-semantics.v1.json")
+    assert set(policy["states"]) == {
+        "PASS",
+        "READY",
+        "HELD",
+        "BLOCKED",
+        "NOT_INSTANTIATED",
+        "NOT_APPLICABLE",
+        "NOT_RUN",
+        "NOT_ISSUED",
+    }
+    assert set(policy["forbidden_surrogate_pass_labels"]) == {
+        "PASS_BY_NONFABRICATION",
+        "PASS_FAIL_CLOSED_DIFFERENTIATION",
+    }
+    assert policy["rules"]["topic_route_may_not_be_reused_for_narrower_scope_without_scoped_evidence"] is True
+    assert policy["rules"]["technical_gate_difficulty_is_not_an_sdu_receipt"] is True
+    assert policy["rules"]["stress_test_fail_requires_architecture_violation_not_merely_missing_authority"] is True
+
+
+def test_v10_normative_architecture_exists_and_declares_canonicality():
+    text = (ROOT / "SELF_HELP_ARCHITECTURE_V10.md").read_text(encoding="utf-8")
+    assert "V10 supersedes V9 as the canonical learner-product architecture" in text
+    assert "Topic-wide evidence may not be silently reused" in text
+    assert "A seven-core stress test is a governed compiler execution" in text
+
+
+def main():
+    tests = [value for name, value in globals().items() if name.startswith("test_") and callable(value)]
+    for test in tests:
+        test()
+    print(f"Blueprint V10 contract inventory: PASS ({len(tests)} tests)")
+
+
+if __name__ == "__main__":
+    main()
