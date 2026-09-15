@@ -1,0 +1,191 @@
+{
+  "authorities": {
+    "attempt_set": "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-attempt-set.fixture.json",
+    "canonical_capabilities": "Grade 9/V2/Physics/Canonical/registry/capabilities.json",
+    "concept_segregation": "Grade 9/V2/Physics/Core2Transfer/registry/physics-concept-segregation.json",
+    "core1_completeness_policy": "Grade 9/V2/Physics/CoreAuthoring/registry/physics-core1-scope-completeness-policy.json",
+    "core2_authoring_profile": "Grade 9/V2/Physics/Core2Transfer/registry/physics-core2-authoring-profile.json",
+    "declared_topic_scope": "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-topic-scope.fixture.json",
+    "diagnostic_policy": "Grade 9/V2/Physics/LearnerEvidence/registry/physics-diagnostic-policy.json",
+    "diagnostic_use_policy": "Grade 9/V2/Physics/AssessmentReview/policies/diagnostic-use-policy.json",
+    "external_corpus_classification": "Grade 9/V2/Physics/Core2Transfer/registry/physics-external-corpus-classification.json",
+    "external_transfer_corpus": "Grade 9/V2/Physics/Core2Transfer/fixtures/physics-external-transfer-source.fixture.json",
+    "figure_render_contract": "Grade 9/V2/Physics/Representation/registry/physics-figure-render-contract.json",
+    "guide_demand_badge_policy": "Grade 9/V2/Physics/ProblemSemantics/registry/guide-demand-badge-policy.json",
+    "instructional_authoring_profile": "Grade 9/V2/Physics/CoreAuthoring/registry/physics-instructional-authoring-profile.json",
+    "item_semantics_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/motion-item-semantics.json",
+    "item_validity_registry": "Grade 9/V2/Physics/AssessmentReview/registry/physics-item-validity-registry.json",
+    "learner_evidence_ledger": "Grade 9/V2/Physics/LearnerEvidence/fixtures/physics-learner-evidence-ledger.fixture.json",
+    "observation_code_registry": "Grade 9/V2/Physics/LearnerEvidence/registry/physics-observation-code-registry.json",
+    "page_intent_profile": "Grade 9/V2/Physics/Representation/registry/physics-page-intent-profile.json",
+    "problem_authoring_profile": "Grade 9/V2/Physics/CoreAuthoring/registry/physics-problem-authoring-profile.json",
+    "problem_family_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-problem-family-registry.json",
+    "question_set": "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-question-set.fixture.json",
+    "reasoning_role_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-reasoning-role-registry.json",
+    "scope_authority": "Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json",
+    "scope_bindings": "Grade 9/V2/Physics/AssessmentScope/registry/motion-question-scope-bindings.json",
+    "teaching_primitive_registry": "Grade 9/V2/Physics/Representation/registry/physics-teaching-primitive-registry.json",
+    "transfer_badge_policy": "Grade 9/V2/Physics/Core2Transfer/registry/physics-transfer-badge-policy.json",
+    "transfer_evidence_ledger": "Grade 9/V2/Physics/CoverageClosure/fixtures/physics-transfer-evidence.fixture.json",
+    "transfer_evidence_policy": "Grade 9/V2/Physics/CoverageClosure/registry/physics-transfer-evidence-policy.json",
+    "treatment_policy": "Grade 9/V2/Physics/StudySynthesis/policies/physics-treatment-policy.json",
+    "verification_route_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-verification-route-registry.json"
+  },
+  "derived_not_runtime_inputs": [
+    "PhysicsAssessmentScopeModel",
+    "PhysicsProblemSemanticsPackage",
+    "LearnerStateSnapshot",
+    "PhysicsLearnerStudyScope",
+    "PhysicsLearnerStudyModel",
+    "PhysicsCore1StudyPlan",
+    "PhysicsRepresentationBundle",
+    "PhysicalPageMap",
+    "PhysicsCore2TransferPlan",
+    "PhysicsPublicationCoverageClosure"
+  ],
+  "engines": {
+    "cold_start_runner": "Grade 9/V2/Physics/ColdStart/engine/physics_cold_start_runner.py",
+    "cold_start_validator": "Grade 9/V2/Physics/ColdStart/engine/physics_cold_start_validator.py",
+    "core1_authoring": "Grade 9/V2/Physics/CoreAuthoring/engine/build_physics_core1.py",
+    "core2_transfer": "Grade 9/V2/Physics/Core2Transfer/engine/build_physics_core2_transfer.py",
+    "coverage_closure": "Grade 9/V2/Physics/CoverageClosure/engine/build_physics_coverage_closure.py",
+    "learner_evidence": "Grade 9/V2/Physics/LearnerEvidence/engine/infer_physics_learner_evidence.py",
+    "problem_semantics": "Grade 9/V2/Physics/ProblemSemantics/engine/build_physics_problem_semantics.py",
+    "product_renderer": "Grade 9/V2/Physics/ColdStart/engine/physics_product_renderer.py",
+    "representation_realization": "Grade 9/V2/Physics/Representation/engine/realize_physics_representations.py",
+    "representations": "Grade 9/V2/Physics/Representation/engine/build_physics_representations.py",
+    "study_synthesis": "Grade 9/V2/Physics/StudySynthesis/engine/build_physics_learner_study_model.py"
+  },
+  "entrypoint_doc": "Grade 9/V2/Physics/V2_GENERATION_ENTRYPOINT.md",
+  "grade": 9,
+  "human_review_boundary": {
+    "current_state": "All human review states are PENDING. No authorized human reviewer has examined any Physics V2 artifact.",
+    "states_requiring_an_authorized_human": [
+      "SUBJECT_EXPERT_PASS",
+      "PEDAGOGY_EXPERT_PASS",
+      "ASSESSMENT_EXPERT_PASS",
+      "VISUAL_USABILITY_EXPERT_PASS"
+    ],
+    "states_this_repository_can_set": [
+      "AI_ASSISTED_REFERENCE_REVIEW",
+      "MACHINE_AUTHORITY_CHECK"
+    ]
+  },
+  "manifest_digest": "859edae5882e875273c961f5659a0aff7a90fac74c332353cbaf0ed3f2b4fdf1",
+  "manifest_id": "PHY-GENERATION-AUTHORITY-v1",
+  "phase_order": [
+    "P-A AssessmentIntake",
+    "P-B AssessmentReview",
+    "P-C AssessmentScope",
+    "P-D ProblemSemantics",
+    "P-E LearnerEvidence",
+    "P-F StudySynthesis",
+    "P-G CoreAuthoring",
+    "P-H Representation",
+    "P-I Core2Transfer",
+    "P-J CoverageClosure",
+    "P-K ColdStart",
+    "P-L ExactProduct"
+  ],
+  "purpose": "Everything a fresh agent needs to regenerate the Physics V2 learner products from repository artifacts alone, with no chat history, no issue history and no manually pre-computed intermediate.",
+  "reference_comparator": {
+    "allowed_stage": "P-L, after every required review gate has been resolved",
+    "comparator_id": "FROZEN_PR156_MATURE_DESIGN_COMPARATOR",
+    "forbidden_as_producer_input": true,
+    "note": "PR #156 is a merged Physics pilot outside this V2 chain. It is a final-comparison reference only and must never be read by any P-A..P-K producer."
+  },
+  "required_authority_trace_decisions": [
+    "REQUIRED_SCOPE",
+    "TREATMENT",
+    "TEACHING_PRIMITIVE_SELECTION",
+    "EXTERNAL_ELIGIBILITY",
+    "COVERAGE_CLOSURE",
+    "FINAL_PAGE_COMPOSITION"
+  ],
+  "runtime_input_contract": {
+    "forbidden": [
+      "ISSUE_HISTORY",
+      "CHAT_HISTORY",
+      "RAW_PR156",
+      "MANUAL_SCOPE_AUTHORITY",
+      "PREFILTERED_ELIGIBLE_EXTERNAL_SET",
+      "MANUAL_LEARNER_STUDY_MODEL",
+      "MANUAL_PROBLEM_FAMILY_MAP",
+      "MANUAL_TEACHING_PRIMITIVE_SELECTION",
+      "MANUAL_HINT_TEXT",
+      "BENCHMARK_TEMPLATE"
+    ],
+    "optional": [
+      "AttemptSet",
+      "LearnerEvidenceLedger",
+      "TransferEvidenceLedger"
+    ],
+    "required": [
+      "QuestionSet",
+      "DeclaredTopicScope",
+      "ItemValidityRegistry",
+      "CanonicalCapabilities",
+      "ScopeAuthority",
+      "ScopeBindings",
+      "ProblemSemanticsRegistries",
+      "TreatmentPolicy",
+      "AuthoringProfiles",
+      "TeachingPrimitiveRegistry",
+      "ExternalTransferCorpus",
+      "ExternalCorpusClassification",
+      "TransferEvidencePolicy"
+    ]
+  },
+  "schema_version": "1.0.0",
+  "shared_libraries": {
+    "visual_primitives": "Grade 9/V2/Shared/MasterTemplates/primitives"
+  },
+  "subject": "PHYSICS",
+  "two_product_topology": [
+    {
+      "artifact_filename": "physics-core-study-guide.pdf",
+      "product_id": "CORE_STUDY_GUIDE",
+      "required_sections": [
+        "MAIN_TEACHING",
+        "APPENDIX_A_CORE_PRACTICE",
+        "APPENDIX_B_CORE_SOLUTIONS",
+        "APPENDIX_C_PRINTABLE_HANDOUT"
+      ]
+    },
+    {
+      "artifact_filename": "physics-transfer-solution-book.pdf",
+      "product_id": "TRANSFER_SOLUTION_BOOK",
+      "required_sections": [
+        "TRANSFER_QUESTIONS",
+        "HINT_LADDERS",
+        "FULL_SOLUTIONS"
+      ]
+    }
+  ],
+  "two_run_requirement": {
+    "may_differ": [
+      "study_model_digest",
+      "core1_plan_digest",
+      "lesson_mode_counts"
+    ],
+    "must_be_identical": [
+      "question_set_digest",
+      "declared_topic_scope_digest",
+      "scope_authority_digest",
+      "external_corpus_digest",
+      "problem_semantics_digest",
+      "study_scope_digest",
+      "required_capability_refs",
+      "required_item_refs",
+      "problem_family_refs",
+      "physical_model_refs",
+      "law_refs",
+      "eligible_external_candidate_refs",
+      "two_product_topology"
+    ],
+    "runs": [
+      "NO_ATTEMPT",
+      "WITH_ATTEMPTS"
+    ]
+  }
+}

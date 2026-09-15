@@ -1,0 +1,42 @@
+{
+  "contract_id": "PHY-P-H-FIGURE-RENDER-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "realization_rule": "A teaching primitive is satisfied only by actual vector graphics. Every rendered primitive must meet its registry minimum_vector_ops floor with real line/rect/roundRect/circle/arc/path operations recorded at draw time. Text operations are counted separately and never contribute to the floor.",
+  "quantity_extraction": {
+    "source": "P-A QuestionSet givens, units, time_intervals and stated_positive_direction for the items in the capability's source scope trace.",
+    "named_quantity_pattern": "([A-Za-z][A-Za-z0-9_]*)\\s*=\\s*(-?\\d+(?:\\.\\d+)?)\\s*([A-Za-z/^0-9]*)",
+    "bare_quantity_pattern": "(?<![A-Za-z0-9=])(-?\\d+(?:\\.\\d+)?)\\s*(km/h|m/s\\^2|m/s|m|s)\\b",
+    "direction_tokens": ["upward", "downward", "left", "right", "forward", "backward", "east", "west", "north", "south"],
+    "symbol_roles": {
+      "u": "INITIAL_VELOCITY",
+      "v": "FINAL_VELOCITY",
+      "a": "ACCELERATION",
+      "a1": "ACCELERATION",
+      "a2": "ACCELERATION",
+      "g": "ACCELERATION",
+      "t": "TIME",
+      "h": "DISPLACEMENT",
+      "s": "DISPLACEMENT"
+    }
+  },
+  "grounding_rule": "Render parameters may only use quantities extracted from the source question set for an item in the capability's own source scope trace. When the required quantities are absent the primitive falls back to its schematic variant and the representation records quantitative_grounding SCHEMATIC_STRUCTURE_ONLY. A figure may never introduce a numeric quantity that is not in its recorded source_quantities.",
+  "page": {
+    "width_pt": 595.2756,
+    "height_pt": 841.8898,
+    "margin_pt": 40
+  },
+  "placement": {
+    "figure_width_pt": 515.2756,
+    "figure_height_pt": 150,
+    "figure_gap_pt": 14,
+    "ink_tolerance_pt": 14,
+    "minimum_font_pt": 5.5
+  },
+  "accessibility": {
+    "grayscale_safe_required": true,
+    "colour_may_not_be_the_only_channel": true,
+    "every_figure_needs_accessibility_text": true
+  },
+  "forbidden_runtime_reference_fragments": ["pull/156", "PR156", "pr156", "mature_reference"]
+}

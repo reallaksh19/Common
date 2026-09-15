@@ -1,0 +1,118 @@
+name: V2 Physics Chain P-G to P-L
+
+on:
+  push:
+    branches:
+      - v2-physics-upgrade-full-chain-g-to-l
+    paths:
+      - "Grade 9/V2/Physics/**"
+      - "Grade 9/V2/Shared/MasterTemplates/primitives/**"
+      - ".github/workflows/v2-physics-chain-g-to-l.yml"
+  pull_request:
+    paths:
+      - "Grade 9/V2/Physics/**"
+      - "Grade 9/V2/Shared/MasterTemplates/primitives/**"
+      - ".github/workflows/v2-physics-chain-g-to-l.yml"
+  workflow_dispatch:
+
+jobs:
+  physics-g-to-l:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install "jsonschema>=4.20,<5" reportlab
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+
+      - name: Re-prove the merged P-A to P-F chain is unbroken
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/AssessmentIntake/contracts/validate_contracts.py"
+          python "$P/AssessmentIntake/tests/test_physics_assessment_intake.py"
+          python "$P/AssessmentReview/contracts/validate_contracts.py"
+          python "$P/AssessmentReview/tests/test_physics_assessment_review.py"
+          python "$P/AssessmentScope/contracts/validate_contracts.py"
+          python "$P/AssessmentScope/tests/test_physics_scope_reconciliation.py"
+          python "$P/ProblemSemantics/contracts/validate_contracts.py"
+          python "$P/ProblemSemantics/tests/test_physics_problem_semantics.py"
+          python "$P/LearnerEvidence/contracts/validate_contracts.py"
+          python "$P/LearnerEvidence/tests/test_physics_learner_evidence.py"
+          python "$P/StudySynthesis/contracts/validate_contracts.py"
+          python "$P/StudySynthesis/tests/test_physics_learner_study.py"
+
+      - name: P-G promoted PCK and Core1 authoring
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/CoreAuthoring/contracts/validate_contracts.py"
+          python "$P/CoreAuthoring/tests/test_physics_core1.py"
+
+      - name: P-H teaching primitives realized as vector graphics
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/Representation/contracts/validate_contracts.py"
+          python "$P/Representation/tests/test_physics_representations.py"
+
+      - name: P-I Core2 transfer and hint ladder
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/Core2Transfer/contracts/validate_contracts.py"
+          python "$P/Core2Transfer/tests/test_physics_core2_transfer.py"
+
+      - name: P-J coverage closure and longitudinal update
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/CoverageClosure/contracts/validate_contracts.py"
+          python "$P/CoverageClosure/tests/test_physics_coverage_closure.py"
+
+      - name: P-K cold start, both runs over the same assessment
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/ColdStart/contracts/validate_contracts.py"
+          python "$P/ColdStart/tests/test_physics_cold_start.py"
+          python "$P/ColdStart/engine/physics_cold_start_runner.py" --out-dir /tmp/phy-cold-start
+          python "$P/ColdStart/engine/physics_cold_start_validator.py" \
+            --report /tmp/phy-cold-start/no-attempt/run_report.json
+          python "$P/ColdStart/engine/physics_cold_start_validator.py" \
+            --report /tmp/phy-cold-start/with-attempts/run_report.json
+
+      - name: P-L exact-product gate must report BLOCKED, not PASS
+        run: |
+          P="Grade 9/V2/Physics"
+          python "$P/ExactProduct/contracts/validate_contracts.py"
+          python "$P/ExactProduct/tests/test_physics_exact_product.py"
+          python "$P/ExactProduct/engine/audit_physics_exact_candidate.py" \
+            --run-dir /tmp/phy-cold-start/with-attempts \
+            --out /tmp/phy-cold-start/ai_pre_review.json
+          set +e
+          python "$P/ExactProduct/engine/evaluate_physics_exact_product.py" \
+            --run-dir /tmp/phy-cold-start/with-attempts \
+            --ai-pre-review /tmp/phy-cold-start/ai_pre_review.json \
+            --out-candidate /tmp/phy-cold-start/exact_candidate.json \
+            --out-release /tmp/phy-cold-start/exact_release.json
+          code=$?
+          set -e
+          echo "P-L exit code: $code"
+          if [ "$code" != "2" ]; then
+            echo "Expected exit 2 (BLOCKED pending authorized human review). Got $code."
+            exit 1
+          fi
+
+      - name: Upload Physics P-G to P-L proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-p-g-to-p-l-proof
+          path: |
+            /tmp/phy-cold-start/comparison.json
+            /tmp/phy-cold-start/no-attempt/run_report.json
+            /tmp/phy-cold-start/with-attempts/run_report.json
+            /tmp/phy-cold-start/with-attempts/physics-core-study-guide.pdf
+            /tmp/phy-cold-start/with-attempts/physics-transfer-solution-book.pdf
+            /tmp/phy-cold-start/exact_candidate.json
+            /tmp/phy-cold-start/exact_release.json
+            /tmp/phy-cold-start/ai_pre_review.json
+          if-no-files-found: error
