@@ -9,7 +9,8 @@ stores it under one deterministic primary subtopic (the first bucket in canonica
 bucket order). Additional teaching memberships remain on Core2A specs.
 
 It also upgrades the same-run integration registry through the generic
-Engineering -> Canonical Domain projector before any producer consumes it.
+Engineering -> Canonical Domain projector before any producer consumes it, then
+independently revalidates the projection receipt against the final release graph.
 """
 from __future__ import annotations
 
@@ -19,6 +20,7 @@ from pathlib import Path
 
 import run_engineering_bound_producer_release_golden as base
 from project_engineering_to_domain_registry import project_engineering_to_domain_registry
+from validate_engineering_domain_projection_binding import validate_release_projection_binding
 
 _LAST_ENGINEERING_DOMAIN_PROJECTION = None
 _ORIGINAL_BUILD_REGISTRY = base.legacy.build_registry
@@ -92,6 +94,20 @@ def main() -> None:
     legacy_key = "engineering_authorized_direct_gate_ids"
     if legacy_key in summary:
         summary["engineering_authorized_direct_gate_count"] = summary.pop(legacy_key)
+
+    registry = json.loads((out_dir / "inputs" / "domain_registry.json").read_text(encoding="utf-8"))
+    full_audit = json.loads((out_dir / "full_mixed_engineering_coverage_audit.json").read_text(encoding="utf-8"))
+    projection_validation = validate_release_projection_binding(
+        registry,
+        _LAST_ENGINEERING_DOMAIN_PROJECTION,
+        summary,
+        full_audit,
+    )
+    summary["engineering_domain_projection_validation"] = projection_validation
+    check = "ENGINEERING_DOMAIN_RICH_PROJECTION_CUSTODY"
+    if check not in summary["release_checks"]:
+        summary["release_checks"].append(check)
+
     base.write(out_dir / "bound_producer_release_summary.json", summary)
     print(json.dumps(summary, indent=2, ensure_ascii=False))
 
