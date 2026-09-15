@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question-occurrence-ledger.schema.json",
+  "title": "QuestionOccurrenceLedger v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["question_occurrence_ledger_id", "schema_version", "records"],
+  "properties": {
+    "question_occurrence_ledger_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "occurrence_id",
+          "question_content_id",
+          "source_id",
+          "source_locator",
+          "source_fingerprint_sha256",
+          "storage_mode",
+          "transcription_state",
+          "answer_state",
+          "rights_status_at_freeze"
+        ],
+        "properties": {
+          "occurrence_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "question_content_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "source_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "source_locator": {"$ref": "common.schema.json#/$defs/source_locator"},
+          "source_fingerprint_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "storage_mode": {"$ref": "common.schema.json#/$defs/question_storage_mode"},
+          "raw_content_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "raw_stem": {"type": "string", "minLength": 1},
+          "raw_options": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "raw_answer": {"type": ["string", "number", "integer", "array", "object"]},
+          "values_units": {"type": "array", "items": {"type": "string"}, "default": []},
+          "figure_locator": {"type": "string", "minLength": 1},
+          "figure_semantics": {"type": "array", "items": {"type": "string", "minLength": 1}, "default": []},
+          "external_dependency": {"$ref": "common.schema.json#/$defs/dependency_class"},
+          "transcription_state": {"$ref": "common.schema.json#/$defs/verification_state"},
+          "answer_state": {"$ref": "common.schema.json#/$defs/verification_state"},
+          "rights_status_at_freeze": {"$ref": "common.schema.json#/$defs/rights_status"},
+          "source_difficulty_code": {"type": ["string", "null"]},
+          "exam_metadata": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "exam_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+              "year": {"type": ["string", "integer"]},
+              "date": {"type": "string"},
+              "shift": {"type": "string"},
+              "source_question_id": {"type": "string"}
+            }
+          },
+          "notes": {"type": "string"}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"storage_mode": {"const": "FULL_TEXT"}}, "required": ["storage_mode"]},
+            "then": {"required": ["raw_stem", "raw_answer"]}
+          },
+          {
+            "if": {"properties": {"storage_mode": {"const": "HASH_ONLY"}}, "required": ["storage_mode"]},
+            "then": {"required": ["raw_content_sha256"]}
+          }
+        ]
+      }
+    }
+  }
+}

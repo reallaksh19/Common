@@ -1,0 +1,32 @@
+{
+  "question_evidence_ledger_id": "QEL-G9-PHY-NLM-001",
+  "schema_version": "1.0.0",
+  "corpus_authority_id": "CORPUS-AUTHORITY-GENERIC",
+  "candidate_denominator": 2,
+  "frozen_at": "2026-09-10T00:00:00Z",
+  "rows": [
+    {
+      "occurrence_id": "QO-SOF-ISO-DEMO-001",
+      "question_content_id": "QC-PHY-NLM-001",
+      "question_family_id": "QF-PHY-NLM-FBD-01",
+      "disposition": "REQUIRED",
+      "primary_owner": "PHY-NLM-FBD",
+      "source_state": "VERIFIED",
+      "transcription_state": "VERIFIED",
+      "answer_state": "VERIFIED",
+      "publication_targets": ["TRANSFER_BOOK", "MOCK_BLUEPRINT"]
+    },
+    {
+      "occurrence_id": "QO-SOF-ISO-DEMO-002",
+      "question_content_id": "QC-PHY-NLM-001",
+      "question_family_id": "QF-PHY-NLM-FBD-01",
+      "disposition": "DUPLICATE",
+      "source_state": "VERIFIED",
+      "transcription_state": "VERIFIED",
+      "answer_state": "VERIFIED",
+      "publication_targets": [],
+      "duplicate_of_occurrence_id": "QO-SOF-ISO-DEMO-001"
+    }
+  ],
+  "summary": {"required": 1, "defer": 0, "exclude": 0, "review": 0, "duplicate": 1}
+}

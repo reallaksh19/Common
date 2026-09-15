@@ -1,0 +1,44 @@
+{
+  "learner_profile_id": "LP-G9-PHY-LAWS-MOTION-BMIX-001",
+  "schema_version": "1.0.0",
+  "privacy_class": "PUBLIC_SYNTHETIC",
+  "grade": 9,
+  "baselines": [
+    {
+      "subtopic_id": "PHY-G9-NEWTON-LAW-1",
+      "value": 80,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    },
+    {
+      "subtopic_id": "PHY-G9-NEWTON-LAW-2",
+      "value": 55,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    },
+    {
+      "subtopic_id": "PHY-G9-SYSTEM-REPRESENTATION",
+      "value": 30,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    },
+    {
+      "subtopic_id": "PHY-G9-FRICTION",
+      "value": 40,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    },
+    {
+      "subtopic_id": "PHY-G9-NEWTON-LAW-3",
+      "value": 50,
+      "basis": "USER_DECLARED",
+      "confidence": "MEDIUM",
+      "evidence_refs": []
+    }
+  ],
+  "notes": "Synthetic cold-start replay profile only: strong first-law baseline, weak system/force-diagram baseline, mixed support elsewhere."
+}

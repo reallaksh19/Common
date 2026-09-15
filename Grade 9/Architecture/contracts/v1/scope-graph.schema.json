@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scope-graph.schema.json",
+  "title": "Project ScopeGraph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scope_graph_id", "schema_version", "canonical_registry_versions", "included_nodes", "excluded_nodes", "project_candidates"],
+  "properties": {
+    "scope_graph_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "canonical_registry_versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["registry_id", "version"],
+        "properties": {
+          "registry_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "version": {"type": "string", "minLength": 1},
+          "registry_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "registry_locator": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "included_nodes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/stable_id"}
+    },
+    "excluded_nodes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/stable_id"}
+    },
+    "included_edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "relation", "to"],
+        "properties": {
+          "from": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "relation": {"type": "string", "minLength": 1},
+          "to": {"$ref": "common.schema.json#/$defs/stable_id"}
+        }
+      },
+      "default": []
+    },
+    "project_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "candidate_type", "status", "description"],
+        "properties": {
+          "candidate_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "candidate_type": {"enum": ["CONCEPT", "RELATION", "METHOD", "REPRESENTATION", "MISCONCEPTION", "QUESTION_FAMILY"]},
+          "status": {"enum": ["RESEARCH_CANDIDATE", "SUBJECT_AUTHORITY_REVIEW", "CANONICAL_PROMOTION_APPROVED", "REJECTED"]},
+          "description": {"type": "string", "minLength": 1},
+          "proposed_parent_ids": {
+            "type": "array",
+            "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+            "default": []
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research-bundle.schema.json",
+  "title": "ResearchBundle v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "research_bundle_id",
+    "schema_version",
+    "evidence_version",
+    "status",
+    "project",
+    "scope_graph",
+    "concept_ids",
+    "research_claims",
+    "representation_requirements",
+    "source_ledger_ref",
+    "unresolved_items"
+  ],
+  "properties": {
+    "research_bundle_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "evidence_version": {"$ref": "common.schema.json#/$defs/semver"},
+    "status": {"$ref": "common.schema.json#/$defs/research_status"},
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grade", "subject", "topic_id", "title"],
+      "properties": {
+        "grade": {"type": "integer", "minimum": 1, "maximum": 12},
+        "subject": {"enum": ["MATHEMATICS", "PHYSICS", "CHEMISTRY"]},
+        "topic_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+        "title": {"type": "string", "minLength": 1}
+      }
+    },
+    "scope_graph": {"$ref": "scope-graph.schema.json"},
+    "research_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "curriculum_profile_ids": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "default": []
+        },
+        "supported_exam_demand_profile_ids": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "default": []
+        },
+        "research_intent": {"type": "string"}
+      }
+    },
+    "concept_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/stable_id"}
+    },
+    "prerequisite_edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["prerequisite_id", "target_id"],
+        "properties": {
+          "prerequisite_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "target_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "bridge_id": {"$ref": "common.schema.json#/$defs/stable_id"}
+        }
+      },
+      "default": []
+    },
+    "misconception_ids": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+      "default": []
+    },
+    "research_claims": {
+      "type": "array",
+      "items": {"$ref": "research-claim.schema.json"}
+    },
+    "representation_requirements": {
+      "type": "array",
+      "items": {"$ref": "representation-requirement.schema.json"}
+    },
+    "equation_or_reaction_objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["id", "kind", "semantic_expression", "research_refs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "kind": {"enum": ["EQUATION", "CHEMICAL_EQUATION", "REACTION_SCHEME", "THEOREM", "IDENTITY"]},
+          "semantic_expression": {"type": "string", "minLength": 1},
+          "research_refs": {"type": "array", "minItems": 1, "items": {"$ref": "common.schema.json#/$defs/stable_id"}}
+        }
+      },
+      "default": []
+    },
+    "worked_reasoning": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["worked_reasoning_id", "concept_ids", "research_refs"],
+        "properties": {
+          "worked_reasoning_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "concept_ids": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/stable_id"}},
+          "research_refs": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/stable_id"}}
+        }
+      },
+      "default": []
+    },
+    "source_ledger_ref": {"$ref": "common.schema.json#/$defs/artifact_ref"},
+    "exam_demand_profile_refs": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/artifact_ref"},
+      "default": []
+    },
+    "question_content_ledger_ref": {"$ref": "common.schema.json#/$defs/artifact_ref"},
+    "question_occurrence_ledger_ref": {"$ref": "common.schema.json#/$defs/artifact_ref"},
+    "question_evidence_ledger_ref": {"$ref": "common.schema.json#/$defs/artifact_ref"},
+    "approved_assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["asset_id", "path", "sha256"],
+        "properties": {
+          "asset_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"$ref": "common.schema.json#/$defs/sha256"}
+        }
+      },
+      "default": []
+    },
+    "unresolved_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["unresolved_id", "type", "blocking", "description"],
+        "properties": {
+          "unresolved_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "type": {"enum": ["SOURCE", "CONCEPT", "REPRESENTATION", "EQUATION", "QUESTION_FAMILY", "EXAM_DEMAND", "ASSET", "OTHER"]},
+          "blocking": {"type": "boolean"},
+          "description": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "exam_demand_profile_id": "EDP-SOF-ISO-G9-NLM-2026",
+  "schema_version": "1.0.0",
+  "exam_id": "SOF_ISO_L1",
+  "cycle": "2026-27",
+  "stage": "LEVEL1",
+  "grade": 9,
+  "response_contract": {"type": "OBJECTIVE"},
+  "evidence_source_refs": ["SRC-OFFICIAL-PHY-NLM-001"],
+  "representative_occurrence_ids": ["QO-SOF-ISO-DEMO-001"],
+  "concept_ids": ["PHY-NLM-LAW2", "PHY-NLM-FBD", "PHY-NLM-FRICTION"],
+  "question_family_ids": ["QF-PHY-NLM-FBD-01"],
+  "representation_types": ["FORCE_DIAGRAM"],
+  "hidden_prerequisite_ids": ["PHY-VECTOR-DIRECTION"],
+  "common_distractors_or_failure_models": ["action-reaction forces placed on the same selected body"],
+  "demand_dimensions": {"recognition": 3, "model_selection": 3, "multi_step": true},
+  "difficulty": {"editorial_label": "EXAM_ALIGNED", "calibration_basis": "SOURCE_MAPPING", "evidence_refs": ["QO-SOF-ISO-DEMO-001"]},
+  "confidence": "MEDIUM",
+  "fresh_until": "2027-06-30"
+}

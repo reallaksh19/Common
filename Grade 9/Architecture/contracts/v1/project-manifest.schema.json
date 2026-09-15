@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project-manifest.schema.json",
+  "title": "Two-Core ProjectManifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project_id", "schema_version", "grade", "subject", "topic_id", "scope_graph_id", "requested_products", "status"],
+  "properties": {
+    "project_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "grade": {"type": "integer", "minimum": 1, "maximum": 12},
+    "subject": {"enum": ["MATHEMATICS", "PHYSICS", "CHEMISTRY"]},
+    "topic_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "scope_graph_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "learner_profile_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "publication_target_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "user_source_refs": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+      "default": []
+    },
+    "requested_products": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core1_research", "core2_study_guide", "core2_transfer_book"],
+      "properties": {
+        "core1_research": {"type": "boolean"},
+        "core2_study_guide": {"type": "boolean"},
+        "core2_transfer_book": {"type": "boolean"}
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core1", "core2"],
+      "properties": {
+        "core1": {"enum": ["PENDING", "IN_PROGRESS", "READY_WITH_NONBLOCKING_GAPS", "READY_FOR_PUBLISH", "BLOCKED"]},
+        "core2": {"enum": ["BLOCKED_ON_CORE1", "READY", "IN_PROGRESS", "CORE1_RESEARCH_GAP", "PUBLISHED", "STALE_PENDING_REVALIDATION", "BLOCKED"]}
+      }
+    }
+  }
+}

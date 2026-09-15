@@ -1,0 +1,23 @@
+{
+  "source_ledger_id": "SL-G9-PHY-NLM-001",
+  "schema_version": "1.0.0",
+  "sources": [
+    {
+      "source_id": "SRC-OFFICIAL-PHY-NLM-001",
+      "provider": "Official curriculum/textbook authority",
+      "source_type": "REFERENCE",
+      "repo_path": "Grade 9/Physics/example-source",
+      "retrieved_at": "2026-09-10T00:00:00Z",
+      "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "authority_level": "OFFICIAL",
+      "verification_status": "VERIFIED",
+      "scope_role": "concept authority",
+      "rights": {
+        "status": "REFERENCE_ONLY",
+        "basis": "example fixture",
+        "allowed_uses": ["EXTRACT_FACTS", "CITE_SOURCE"],
+        "prohibited_uses": ["REPRODUCE_FULL_CONTENT"]
+      }
+    }
+  ]
+}

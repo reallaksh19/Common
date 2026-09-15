@@ -1,0 +1,13 @@
+{
+  "scope_graph_id": "SG-G9-PHY-NLM-001",
+  "schema_version": "1.0.0",
+  "canonical_registry_versions": [
+    {"registry_id": "REG-PHYSICS", "version": "2026.09"}
+  ],
+  "included_nodes": ["PHY-NLM-LAW1", "PHY-NLM-LAW2", "PHY-NLM-FBD", "PHY-NLM-FRICTION"],
+  "excluded_nodes": ["PHY-NLM-CIRCULAR"],
+  "included_edges": [
+    {"from": "PHY-NLM-FBD", "relation": "PREREQUISITE_FOR", "to": "PHY-NLM-LAW2"}
+  ],
+  "project_candidates": []
+}

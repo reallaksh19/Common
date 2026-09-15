@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question-content-ledger.schema.json",
+  "title": "QuestionContentLedger v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["question_content_ledger_id", "schema_version", "records"],
+  "properties": {
+    "question_content_ledger_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+    "schema_version": {"const": "1.0.0"},
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_content_id",
+          "content_origin",
+          "primary_concept_id",
+          "stem",
+          "answer",
+          "dependency_class",
+          "research_refs"
+        ],
+        "properties": {
+          "question_content_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "content_origin": {"$ref": "common.schema.json#/$defs/question_content_origin"},
+          "question_family_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "primary_concept_id": {"$ref": "common.schema.json#/$defs/stable_id"},
+          "supporting_concept_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+            "default": []
+          },
+          "stem": {"type": "string", "minLength": 1},
+          "options": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "answer": {"type": ["string", "number", "integer", "array", "object"]},
+          "dependency_class": {"$ref": "common.schema.json#/$defs/dependency_class"},
+          "representation_semantics": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "default": []
+          },
+          "occurrence_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/stable_id"},
+            "default": []
+          },
+          "research_refs": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "common.schema.json#/$defs/stable_id"}
+          },
+          "authored_item_calibration": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["basis", "evidence_refs"],
+            "properties": {
+              "basis": {"$ref": "common.schema.json#/$defs/calibration_basis"},
+              "evidence_refs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {"$ref": "common.schema.json#/$defs/stable_id"}
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"content_origin": {"const": "SOURCE_DERIVED"}}, "required": ["content_origin"]},
+            "then": {"properties": {"occurrence_ids": {"minItems": 1}}, "required": ["occurrence_ids"]}
+          }
+        ]
+      }
+    }
+  }
+}
