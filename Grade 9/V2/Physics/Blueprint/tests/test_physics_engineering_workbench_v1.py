@@ -58,7 +58,7 @@ def must_ccu_fail(request, manifest, ccu, code):
     raise AssertionError(f"expected {code}")
 
 
-# Contract sanity: all new Workbench schemas must themselves be valid Draft 2020-12 schemas.
+# Contract sanity: all legacy Workbench schemas remain valid while consumer authority is refined downstream.
 for schema_name in (
     "engineering-request.schema.json",
     "engineering-topic-manifest.schema.json",
@@ -69,7 +69,7 @@ for schema_name in (
 ):
     Draft202012Validator.check_schema(load("contracts/" + schema_name))
 
-# Golden proof: one direct SBA-23 gate must derive exactly the existing six-gate closure.
+# Golden regression: legacy v1 still derives exactly the six-gate internal Physics closure.
 receipt = compile_closure(REQUEST, MANIFEST)
 assert receipt["closure_status"] == "READY"
 assert set(receipt["transitive_gate_ids"]) == EXPECTED_CLOSURE
@@ -83,19 +83,15 @@ assert receipt["source_item_status"] == "SOURCE_HELD"
 assert receipt["registry_digest"].startswith("sha256:")
 assert receipt["closure_digest"].startswith("sha256:")
 
+# Legacy Passport is retained as an internal-Physics projection, not aggregate consumer authority.
 passport = compile_passport(REQUEST, receipt)
 assert passport["technical_state"] == "ENGINEERING_READY"
 assert passport["ccu_technical_authorization"] == "ALLOWED"
 assert passport["source_item_status"] == "SOURCE_HELD"
 assert passport["closure_receipt_digest"].startswith("sha256:")
 
-# Integration proof: CCU validation is now callable through an engineering-ready boundary.
-ccu_result = validate_engineered_ccu(REQUEST, MANIFEST, CCU)
-assert ccu_result["status"] == "PASS"
-assert ccu_result["bucket_id"] == "M2D-SBA-23"
-assert ccu_result["engineering_gate_count"] == 6
-assert ccu_result["engineering_closure_digest"] == receipt["closure_digest"]
-assert ccu_result["source_item_status"] == "SOURCE_HELD"
+# Consumer authority is now aggregate. Missing provider-owned Math receipts must block CCU even for legacy manifests.
+must_ccu_fail(REQUEST, MANIFEST, CCU, "E_CCU_ENGINEERING_BLOCKED")
 
 # Falsifier 1: an unknown direct requirement yields a visible BLOCKED receipt, not a manual READY escape hatch.
 bad_manifest = copy.deepcopy(MANIFEST)
@@ -157,4 +153,4 @@ bad_scope = copy.deepcopy(MANIFEST)
 bad_scope["scope_ref"] = "M2D-SBA-OTHER"
 must_ccu_fail(REQUEST, bad_scope, CCU, "E_CCU_ENGINEERING_SCOPE_MISMATCH")
 
-print("Physics Engineering Workbench v1: PASS (request + closure + research + passport + CCU-boundary falsifiers)")
+print("Physics Engineering Workbench v1: PASS (legacy internal closure preserved; aggregate cross-domain consumer boundary enforced)")
