@@ -90,9 +90,35 @@ def bucket():
 def _representation_fixture(gate):
     engineering_refs = [row["representation_id"] for row in gate.get("representations", [])]
     concrete = [f"REP-TEST-CONCRETE-{index:02d}" for index, _ in enumerate(engineering_refs, 1)]
+    # A renderable representation fixture is required now that the B-layer test
+    # proves physical closure rather than only identifier custody. The synthetic
+    # electron-transfer rows are test data; they do not define production authority.
+    representations = [
+        {
+            "representation_id": ref,
+            "primitive_id": "ELECTRON_TRANSFER_LEDGER",
+            "chemical_entities": ["X", "X⁺", "Y", "Y⁻"],
+            "notation_tokens": ["X", "X⁺", "Y", "Y⁻"],
+            "source_semantic_data": {
+                "chemical_entities": ["X", "X⁺", "Y", "Y⁻"],
+                "verification_requirements": ["Check that electron loss equals electron gain."],
+                "oxidation_states": [
+                    {"element":"X","before":0,"after":1,"before_species":"X","after_species":"X⁺","electron_count":1},
+                    {"element":"Y","before":0,"after":-1,"before_species":"Y","after_species":"Y⁻","electron_count":1},
+                ],
+            },
+            "instructional_job": "Track a source-authorized before/after state change and its electron count.",
+            "attention_target": "State direction, electron direction and equal exchange.",
+            "learner_action_expected": "Compare both rows and verify equal electron exchange.",
+            "condition_exception_context": [],
+            "species_roles": [],
+            "accessibility_text": "Synthetic test ledger with one electron lost and one electron gained.",
+        }
+        for ref in concrete
+    ]
     bundle = {
         "bundle_id": "TEST-REP-BUNDLE",
-        "representations": [{"representation_id": ref} for ref in concrete],
+        "representations": representations,
     }
     bindings = [
         {
@@ -271,6 +297,10 @@ class ChemistryFourCoreCompilationTests(unittest.TestCase):
                 self.assertEqual(preflight["status"],"PASS")
                 self.assertEqual(render["product_mode"],mode)
                 self.assertTrue((Path(td) / render["artifact"]["path"]).exists())
+                self.assertEqual(
+                    set(preflight["physical_representation_closure"]["physically_realized_representation_refs"]),
+                    set(authority["representation_closure"]["used_representation_refs"]),
+                )
 
     def test_generic_compilers_do_not_branch_on_topic_names(self):
         names = [
