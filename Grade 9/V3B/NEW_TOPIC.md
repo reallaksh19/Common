@@ -1,5 +1,7 @@
 # New-topic entry contract — current Physics phase
 
+For a reusable production assignment, start with the [V3B stress-test prompt template](Physics/StressTests/V3B-Stress-Test-Prompt-Template.md) and [filled Grade 9 motion example](Physics/StressTests/V3B-Motion-Grade9-Example.md). The [core system guide](Architecture/ProductionSystem/V3B-Core-System-Guide.md) maps current contracts, proposed microtopic-library schemas, scalability, subject adaptation and known limits. Library/roadmap proposals are not implemented runtime capabilities. The owner has excluded the obsolete PR-delivery and Grade 9 workflow skills for this design task.
+
 Research remains open during production: follow [research freedom and minimum criteria](Physics/Blueprint/V3B-Research-and-Minimum-Criteria.md). Begin with a provisional scope/gate outline, research and draft iteratively, then promote verified content. Similarity scores, page allowances and hint counts do not themselves stop the work.
 
 Available publication path: [Physics publish/verify commands](Physics/ProductionKit/V3B-Publication-Input.md). The [runtime map](Physics/ProductionKit/V3B-Runtime-Map.md) states precisely which requirements are enforced and which remain review/integration gates. The legacy authoring command family remains a four-Core prototype.
@@ -37,4 +39,3 @@ The Thermodynamics cycle binding demonstrates adding a subtopic without regenera
 The existing Shared/run.py/Physics ProductionKit/run.py command family implements the earlier four-Core prototype. It does not execute this six-Core release contract. Do not initialize a new production topic with it and claim these engineering gates have run. Future integration must bind the accepted engineering receipts into its real state transitions and pass falsifiers before production use.
 
 Mathematics/Chemistry work is deferred. No V2/source/owner-roadmap mutation or merge is authorized by this entrypoint.
-
