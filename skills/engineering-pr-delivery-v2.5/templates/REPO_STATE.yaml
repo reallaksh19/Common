@@ -61,8 +61,10 @@ status_planes:
 projection:
   required: true
   state: PENDING
-  operation_id: "<stable operation id for newest desired generation>"
-  target: "<durable external projection target>"
+  operation_id: GHGEN-0001
+  target: "github:<owner/repo>:issues"
+  adapter: GITHUB_ISSUES
+  plan: agents/relay/projection/generations/GHGEN-0001.yaml
   roadmap_revision: "<current RM-xxxx>"
   execution_ref: "<current EP-id / PLAN-id / NONE>"
   receipt: null
