@@ -1,43 +1,99 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse
+import argparse,json
+from collections import Counter
 from pathlib import Path
 from relaylib import compute_frontier,load_yaml,print_result,require
 from validate_checkpoint import validate_file as validate_checkpoint
 
 EVIDENCE_STATUS={"PASS","FAIL","NOT_RUN","NA"}
 
-def _validate_transfer(item,label,e):
-    for field in ("unresolved_acceptance","evidence","transfer_to_work_package"):
-        if field not in item:e.append(f"{label} missing {field}")
-    acc=item.get("unresolved_acceptance") or []
-    if not isinstance(acc,list):e.append(f"{label}.unresolved_acceptance must be a list")
-    else:
-        for i,a in enumerate(acc):
-            p=f"{label}.unresolved_acceptance[{i}]"
-            if not isinstance(a,dict):e.append(f"{p} must be a mapping");continue
-            for f in ("id","state","basis"):
-                if f not in a:e.append(f"{p} missing {f}")
-            if not isinstance(a.get("basis"),list) or not a.get("basis"):e.append(f"{p}.basis must contain durable references")
-    ev=item.get("evidence") or []
-    if not isinstance(ev,list):e.append(f"{label}.evidence must be a list")
-    else:
-        for i,x in enumerate(ev):
-            p=f"{label}.evidence[{i}]"
-            if not isinstance(x,dict):e.append(f"{p} must be a mapping");continue
-            for f in ("id","status","basis_ref"):
-                if f not in x:e.append(f"{p} missing {f}")
-            if x.get("status") not in EVIDENCE_STATUS:e.append(f"{p}.status invalid: {x.get('status')}")
-            if x.get("status") in {"PASS","FAIL","NOT_RUN"} and not str(x.get("basis_ref","")).strip():e.append(f"{p}.basis_ref must be explicit")
-            if x.get("status")=="NOT_RUN" and not str(x.get("reason","")).strip():e.append(f"{p} NOT_RUN requires reason")
 
-def _check_inheritance(ep,replan_id,item,label,e):
+def _sig(value):
+    return json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False)
+
+
+def _same_items(a,b):
+    return Counter(_sig(x) for x in (a or []))==Counter(_sig(x) for x in (b or []))
+
+
+def _unique_ids(items,label,e):
+    seen=set()
+    for i,item in enumerate(items or []):
+        if not isinstance(item,dict):continue
+        ident=str(item.get("id","")).strip()
+        if ident and ident in seen:e.append(f"{label} contains duplicate id {ident}")
+        seen.add(ident)
+
+
+def _validate_acceptance(items,label,e):
+    if not isinstance(items,list):e.append(f"{label} must be a list");return
+    _unique_ids(items,label,e)
+    for i,a in enumerate(items):
+        p=f"{label}[{i}]"
+        if not isinstance(a,dict):e.append(f"{p} must be a mapping");continue
+        for f in ("id","state","basis"):
+            if f not in a:e.append(f"{p} missing {f}")
+        if not isinstance(a.get("basis"),list) or not a.get("basis"):e.append(f"{p}.basis must contain durable references")
+
+
+def _validate_evidence(items,label,e):
+    if not isinstance(items,list):e.append(f"{label} must be a list");return
+    _unique_ids(items,label,e)
+    for i,x in enumerate(items):
+        p=f"{label}[{i}]"
+        if not isinstance(x,dict):e.append(f"{p} must be a mapping");continue
+        for f in ("id","status","basis_ref"):
+            if f not in x:e.append(f"{p} missing {f}")
+        if x.get("status") not in EVIDENCE_STATUS:e.append(f"{p}.status invalid: {x.get('status')}")
+        if x.get("status") in {"PASS","FAIL","NOT_RUN"} and not str(x.get("basis_ref","")).strip():e.append(f"{p}.basis_ref must be explicit")
+        if x.get("status")=="NOT_RUN" and not str(x.get("reason","")).strip():e.append(f"{p} NOT_RUN requires reason")
+
+
+def _validate_transfer_partition(item,label,frontier,e):
+    for field in ("unresolved_acceptance","evidence","transfers"):
+        if field not in item:e.append(f"{label} missing {field}")
+    source_acc=item.get("unresolved_acceptance") or [];source_ev=item.get("evidence") or []
+    _validate_acceptance(source_acc,f"{label}.unresolved_acceptance",e);_validate_evidence(source_ev,f"{label}.evidence",e)
+    transfers=item.get("transfers") or []
+    if not isinstance(transfers,list) or not transfers:
+        e.append(f"{label}.transfers must contain at least one successor work package");return []
+    targets=set();flat_acc=[];flat_ev=[];normalized=[]
+    for i,t in enumerate(transfers):
+        p=f"{label}.transfers[{i}]"
+        if not isinstance(t,dict):e.append(f"{p} must be a mapping");continue
+        for field in ("work_package","unresolved_acceptance","evidence"):
+            if field not in t:e.append(f"{p} missing {field}")
+        target=str(t.get("work_package","")).strip()
+        if not target:e.append(f"{p}.work_package must be non-empty")
+        elif target in targets:e.append(f"{label}.transfers contains duplicate target {target}")
+        targets.add(target)
+        if target and target not in frontier:e.append(f"{p} target {target} is not in recomputed frontier")
+        ta=t.get("unresolved_acceptance") or [];te=t.get("evidence") or []
+        _validate_acceptance(ta,f"{p}.unresolved_acceptance",e);_validate_evidence(te,f"{p}.evidence",e)
+        flat_acc.extend(ta);flat_ev.extend(te);normalized.append(t)
+    if not _same_items(source_acc,flat_acc):e.append(f"{label} acceptance transfer partition must preserve every unresolved item exactly once")
+    if not _same_items(source_ev,flat_ev):e.append(f"{label} evidence transfer partition must preserve every item/status/basis exactly once")
+    return normalized
+
+
+def _aggregate_target(transfers,target):
+    acc=[];ev=[];sources=[]
+    for lane_id,source_wp,t in transfers:
+        if str(t.get("work_package"))!=str(target):continue
+        acc.extend(t.get("unresolved_acceptance") or []);ev.extend(t.get("evidence") or [])
+        sources.append({"lane_id":lane_id,"work_package":source_wp})
+    return acc,ev,sources
+
+
+def _check_inheritance(ep,replan_id,expected_acc,expected_ev,label,e):
     ident=ep.get("identity") or {}
     if str(ident.get("previous_replan"))!=str(replan_id):e.append(f"{label}: identity.previous_replan must match {replan_id}")
     inh=ep.get("replan_inheritance") or {}
     if str(inh.get("from_replan"))!=str(replan_id):e.append(f"{label}: replan_inheritance.from_replan must match {replan_id}")
-    if inh.get("unresolved_acceptance")!=(item.get("unresolved_acceptance") or []):e.append(f"{label}: replan inheritance mismatch for unresolved_acceptance")
-    if inh.get("evidence")!=(item.get("evidence") or []):e.append(f"{label}: replan inheritance mismatch for evidence")
+    if not _same_items(inh.get("unresolved_acceptance") or [],expected_acc):e.append(f"{label}: replan inheritance mismatch for unresolved_acceptance")
+    if not _same_items(inh.get("evidence") or [],expected_ev):e.append(f"{label}: replan inheritance mismatch for evidence")
+
 
 def validate(root:Path):
     e=[];w=[];state=load_yaml(root/"agents/relay/REPO_STATE.yaml");ref=(state.get("predecessor_replan") or {}).get("path")
@@ -59,14 +115,14 @@ def validate(root:Path):
     if not str(trigger.get("reason","")).strip():e.append("parallel replan trigger reason is required")
     if not isinstance(trigger.get("basis"),list) or not trigger.get("basis"):e.append("parallel replan trigger basis must contain durable references")
 
-    transfers=[]
     roadmap=load_yaml(root/state["roadmap"]["path"]);frontier=compute_frontier(roadmap);wp_state={}
     for obj in roadmap.get("objectives",[]) or []:
         for ph in obj.get("phases",[]) or []:
             for wp in ph.get("work_packages",[]) or []:wp_state[str(wp.get("id"))]=wp.get("state")
+    all_transfers=[]
     for i,item in enumerate(dispositions):
-        lid=str(item.get("lane_id",""));label=f"lane_dispositions[{i}]";old=old_lanes.get(lid) or {}
-        if str(item.get("work_package"))!=str(old.get("work_package")):e.append(f"{label} work_package does not match predecessor lane")
+        lid=str(item.get("lane_id",""));label=f"lane_dispositions[{i}]";old=old_lanes.get(lid) or {};source_wp=str(item.get("work_package",""))
+        if source_wp!=str(old.get("work_package")):e.append(f"{label} work_package does not match predecessor lane")
         disp=item.get("disposition")
         if disp not in {"COMPLETE","CARRIED","INVALIDATED"}:e.append(f"{label} invalid disposition {disp}");continue
         if trigger.get("type")=="LANE_INVALIDATED" and lid==str(trigger.get("lane_id")) and disp!="INVALIDATED":e.append("trigger lane must have INVALIDATED disposition")
@@ -78,23 +134,20 @@ def validate(root:Path):
                 ce,cw=validate_checkpoint(cp_path);e.extend(f"{label}: {x}" for x in ce);w.extend(f"{label}: {x}" for x in cw);data=load_yaml(cp_path)
                 if str(data.get("checkpoint_id"))!=str(cp.get("id")):e.append(f"{label} checkpoint id mismatch")
                 if str(data.get("ep_id"))!=str(old.get("ep_id")):e.append(f"{label} checkpoint ep_id does not match predecessor lane")
-            if wp_state.get(str(item.get("work_package")))!="COMPLETE":e.append(f"{label} COMPLETE lane work package must be COMPLETE in current roadmap")
+            if wp_state.get(source_wp)!="COMPLETE":e.append(f"{label} COMPLETE lane work package must be COMPLETE in current roadmap")
         else:
             if disp=="INVALIDATED" and (not isinstance(item.get("basis"),list) or not item.get("basis")):e.append(f"{label} INVALIDATED requires durable basis")
-            _validate_transfer(item,label,e);target=str(item.get("transfer_to_work_package") or "")
-            if target not in frontier:e.append(f"{label} transfer target {target} is not in recomputed frontier")
-            transfers.append(item)
+            for t in _validate_transfer_partition(item,label,set(frontier),e):all_transfers.append((lid,source_wp,t))
 
     recon=replan.get("roadmap_reconciliation") or {};e+=require(recon,["roadmap_revision","frontier_after"],"PARALLEL_REPLAN.roadmap_reconciliation")
     if str(recon.get("roadmap_revision"))!=str((state.get("roadmap") or {}).get("revision")):e.append("parallel replan roadmap_revision != current REPO_STATE roadmap revision")
     if sorted(str(x) for x in (recon.get("frontier_after") or []))!=sorted(str(x) for x in frontier):e.append("parallel replan frontier_after != computed current frontier")
 
     route=replan.get("successor_route") or {};e+=require(route,["mode","work_package","ep_id","ep_path","parallel_plan_id","parallel_plan_path"],"PARALLEL_REPLAN.successor_route")
-    mode=route.get("mode");count=len(frontier)
+    mode=route.get("mode");count=len(frontier);rid=str(replan.get("id"))
     if count==0 and mode!="NONE":e.append("empty recomputed frontier requires successor_route.mode NONE")
     if count==1 and mode!="SERIAL":e.append("single-node recomputed frontier requires successor_route.mode SERIAL")
     if count>=2 and mode!="PARALLEL":e.append("multi-node recomputed frontier requires successor_route.mode PARALLEL")
-    rid=str(replan.get("id"))
     if mode=="SERIAL":
         if state.get("relay_state")!="ACTIVE" or (state.get("execution_policy") or {}).get("mode")!="SERIAL":e.append("SERIAL replan successor requires ACTIVE/SERIAL REPO_STATE")
         wp=frontier[0] if frontier else ""
@@ -102,10 +155,7 @@ def validate(root:Path):
         active=state.get("active_ep") or {}
         if str(route.get("ep_id"))!=str(active.get("id")) or str(route.get("ep_path"))!=str(active.get("path")):e.append("SERIAL replan successor route != REPO_STATE active EP")
         if active.get("path") and (root/active["path"]).exists():
-            ep=load_yaml(root/active["path"])
-            if str((ep.get("identity") or {}).get("previous_replan"))!=rid:e.append("SERIAL successor EP must reference identity.previous_replan")
-            for item in transfers:
-                if str(item.get("transfer_to_work_package"))==str(wp):_check_inheritance(ep,rid,item,"SERIAL successor EP",e)
+            acc,ev,_=_aggregate_target(all_transfers,wp);_check_inheritance(load_yaml(root/active["path"]),rid,acc,ev,"SERIAL successor EP",e)
     elif mode=="PARALLEL":
         if state.get("relay_state")!="PARALLEL":e.append("PARALLEL replan successor requires relay_state PARALLEL")
         current_ref=(state.get("execution_policy") or {}).get("parallel_plan")
@@ -115,12 +165,16 @@ def validate(root:Path):
             if str(current.get("id"))!=str(route.get("parallel_plan_id")):e.append("PARALLEL replan successor plan id mismatch")
             if str(current.get("previous_replan"))!=rid:e.append("successor parallel plan must reference previous_replan")
             lane_by_wp={str(x.get("work_package")):x for x in current.get("lanes",[]) or []}
-            for item in transfers:
-                target=str(item.get("transfer_to_work_package"));lane=lane_by_wp.get(target)
-                if lane and (root/lane.get("ep_path","")).exists():_check_inheritance(load_yaml(root/lane["ep_path"]),rid,item,f"successor lane {lane.get('id')}",e)
+            for target in frontier:
+                lane=lane_by_wp.get(str(target))
+                if not lane:continue
+                ep_path=root/str(lane.get("ep_path", ""))
+                if ep_path.exists():
+                    acc,ev,_=_aggregate_target(all_transfers,target);_check_inheritance(load_yaml(ep_path),rid,acc,ev,f"successor lane {lane.get('id')}",e)
     elif mode=="NONE":
         if state.get("relay_state") not in {"IDLE","TERMINAL"}:e.append("NONE replan successor requires IDLE or TERMINAL relay state")
     return e,w
+
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("repo_root",nargs="?",default=".");a=ap.parse_args()
