@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 from relaylib import compute_frontier,load_yaml,print_result
+from validate_owner_decision import validate_file as validate_owner_decision_file
 CLASSES={"EXECUTION_DERIVED_STATUS","ENGINEERING_DISCOVERY_PROPOSAL","OWNER_INTENT_MUTATION"}
 
 def validate(root:Path):
@@ -24,7 +25,11 @@ def validate(root:Path):
         elif isinstance(ref,str) and ref.endswith((".yaml",".yml")):
             p=root/ref
             if not p.exists():e.append(f"referenced ODR does not exist: {ref}")
-            elif (load_yaml(p).get("status"))!="APPLIED":e.append(f"referenced ODR is not APPLIED: {ref}")
+            else:
+                oe,ow=validate_owner_decision_file(p);e.extend(f"referenced ODR: {x}" for x in oe);w.extend(f"referenced ODR: {x}" for x in ow)
+                odr=load_yaml(p)
+                if odr.get("status")!="APPLIED":e.append(f"referenced ODR is not APPLIED: {ref}")
+                if ((odr.get("decision") or {}).get("kind"))!="INTENT_MUTATION":e.append("OWNER_INTENT_MUTATION revision requires ODR decision.kind INTENT_MUTATION")
     change=rev.get("progress_basis_change")
     if not isinstance(change,dict):
         e.append("roadmap revision missing progress_basis_change")
