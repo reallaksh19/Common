@@ -63,6 +63,9 @@ assert ready["engineering_manifest"]["scope_kind"] == "ASSESSMENT_SCOPE"
 assert ready["engineering_manifest"]["topic_id"] is None
 assert ready["engineering_manifest"]["downstream_consumers"] == ["PROBLEM_SEMANTICS"]
 assert ready["required_capability_refs"] == sorted(set(scope_model["assessed_capability_refs"]) | set(scope_model["required_prerequisite_capability_refs"]))
+assert ready["technical_gate_requirement_state"] == "NOT_REQUIRED_FOR_THIS_SCOPE"
+assert ready["engineering_manifest"]["required_gate_ids"] == []
+assert ready["engineering_closure"]["counts"]["direct_gate_count"] == 0
 assert compile_physics_engineering_readiness(copy.deepcopy(scope_model), copy.deepcopy(AUTH), copy.deepcopy(ENG_BIND)) == ready
 
 # Every canonical P-C capability must have an explicit route; adding a new capability cannot silently inherit memory.
@@ -127,13 +130,33 @@ zero_scope["assessed_capability_refs"] = [upstream_cap]
 zero_scope["required_prerequisite_capability_refs"] = []
 zero_scope["scope_model_digest"] = digest_without(zero_scope, "scope_model_digest")
 zero = compile_physics_engineering_readiness(zero_scope, AUTH, ENG_BIND)
+assert zero["technical_gate_requirement_state"] == "NOT_REQUIRED_FOR_THIS_SCOPE"
 assert zero["engineering_manifest"]["required_gate_ids"] == []
-assert zero["engineering_closure"]["counts"]["direct_gate_count"] == 0
+assert zero["engineering_closure"]["counts"] == {
+    "direct_gate_count": 0,
+    "transitive_gate_count": 0,
+    "ready_gate_count": 0,
+    "blocked_gate_count": 0,
+}
+assert zero["engineering_closure"]["closure_status"] == "READY"
 assert zero["consumer_status"] == "ALLOWED"
+
+# Gated scopes take the same generic path and prove actual v3 technical closure; no separate topic branch.
+gated_scope = copy.deepcopy(scope_model)
+gated_scope["assessed_capability_refs"] = ["PHY-CAP-PROJECTILE-COMPONENTS"]
+gated_scope["required_prerequisite_capability_refs"] = []
+gated_scope["scope_model_digest"] = digest_without(gated_scope, "scope_model_digest")
+gated = compile_physics_engineering_readiness(gated_scope, AUTH, ENG_BIND)
+assert gated["technical_gate_requirement_state"] == "REQUIRED_AND_READY"
+assert gated["engineering_manifest"]["required_gate_ids"] == ["PHY-M2D-PROJECTILE-COMPONENTS"]
+assert gated["engineering_closure"]["counts"]["direct_gate_count"] == 1
+assert gated["engineering_closure"]["counts"]["transitive_gate_count"] >= 1
+assert gated["engineering_closure"]["closure_status"] == "READY"
+assert gated["consumer_status"] == "ALLOWED"
 
 # Generic adapter code may not recognize case IDs, topic names or question IDs.
 text = (ROOT / "engine" / "compile_physics_engineering_readiness.py").read_text(encoding="utf-8")
 for forbidden in ("M2D-SBA-04", "M2D-SBA-05", "Q14", "Q27", "Relative Motion", "Thermodynamics"):
     assert forbidden not in text, f"CASE_LITERAL_LEAK:{forbidden}"
 
-print("Physics cold-start Engineering readiness: PASS (P-C capability authority -> global Engineering Gate -> PROBLEM_SEMANTICS)")
+print("Physics cold-start Engineering readiness: PASS (explicit no-gate scopes + real gated scopes -> global Engineering Gate -> PROBLEM_SEMANTICS)")
