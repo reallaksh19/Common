@@ -1,3 +1,24 @@
 {
-  "policy_id":"PHY-STRESS-STATE-SEMANTICS-v1","schema_version":"1.0.0","states":{"PASS":"A governed validator/compiler executed and closed the applicable gate.","READY":"Prerequisites close and the next authorized operation may execute.","HELD":"Required authority or evidence is absent but no invariant was violated.","BLOCKED":"An applicable required upstream gate failed or remains unresolved.","NOT_INSTANTIATED":"No concrete governed unit/artifact exists to validate.","NOT_APPLICABLE":"The architecture says the gate does not apply to this scope.","NOT_RUN":"The gate applies but execution has not occurred.","NOT_ISSUED":"A receipt cannot be issued because its governed unit does not exist."},"forbidden_surrogate_pass_labels":["PASS_BY_NONFABRICATION","PASS_FAIL_CLOSED_DIFFERENTIATION"],"rules":{"nonfabrication_is_required_but_not_a_pass_receipt":true,"technical_gate_difficulty_is_not_an_sdu_receipt":true,"topic_route_may_not_be_reused_for_narrower_scope_without_scoped_evidence":true,"stress_test_pass_may_include_held_or_blocked_downstream_states":true,"stress_test_fail_requires_architecture_violation_not_merely_missing_authority":true}
+  "policy_id":"PHY-STRESS-STATE-SEMANTICS-v1",
+  "schema_version":"1.0.0",
+  "states":{
+    "PASS":"A governed validator/compiler executed and closed the applicable gate.",
+    "READY":"Prerequisites close and the next authorized operation may execute.",
+    "HELD":"Required authority or evidence is absent but no invariant was violated.",
+    "BLOCKED":"An applicable required upstream gate failed or remains unresolved.",
+    "NOT_AUTHORIZED":"The upstream authority explicitly does not grant this permission; technical readiness cannot promote it.",
+    "NOT_INSTANTIATED":"No concrete governed unit/artifact exists to validate.",
+    "NOT_APPLICABLE":"The architecture says the gate does not apply to this scope.",
+    "NOT_RUN":"The gate applies but execution has not occurred.",
+    "NOT_ISSUED":"A receipt cannot be issued because its governed unit does not exist."
+  },
+  "forbidden_surrogate_pass_labels":["PASS_BY_NONFABRICATION","PASS_FAIL_CLOSED_DIFFERENTIATION"],
+  "rules":{
+    "nonfabrication_is_required_but_not_a_pass_receipt":true,
+    "technical_gate_difficulty_is_not_an_sdu_receipt":true,
+    "topic_route_may_not_be_reused_for_narrower_scope_without_scoped_evidence":true,
+    "stress_test_pass_may_include_held_or_blocked_downstream_states":true,
+    "stress_test_fail_requires_architecture_violation_not_merely_missing_authority":true,
+    "not_authorized_cannot_be_promoted_by_blueprint":true
+  }
 }
