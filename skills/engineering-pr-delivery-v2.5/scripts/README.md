@@ -8,6 +8,8 @@ python cold_start_check.py <repo-root>
 python stress_test_relay.py <repo-root> [<repo-root> ...]
 python render_status.py <repo-root>
 python render_handover.py <repo-root>
+python render_owner_status.py <repo-root> [--output agents/relay/generated/OWNER_STATUS.md]
+python render_technical_status.py <repo-root> [--output agents/relay/generated/TECHNICAL_STATUS.md]
 python render_report_projection.py <repo-root> [--output <projection.yaml>]
 ```
 
@@ -21,9 +23,21 @@ python render_report_projection.py <repo-root>
 
 `PROGRESS.yaml` is authoritative for calculated progress through Objective -> Phase -> Work Package -> EP -> implementation step -> acceptance criterion. `REPO_STATE` percentages are checked mirrors only; status/handover rendering uses `progress_projection.py` rather than trusting those mirrors.
 
-`report_projection.py` derives one structured report from roadmap, progress, current EP/plan, checkpoint, issue graph, quality review and repository state. It records source digests and never becomes a competing authority. `validate_report_projection.py` is part of aggregate conformance and requires complete active acceptance, structured next-work coverage and current checkpoint QRV source binding when a QRV exists.
+`report_projection.py` derives one structured report from roadmap, progress, current EP/plan, checkpoint, issue graph, Owner-decision records, quality review and repository state. It records source digests and never becomes a competing authority. `validate_report_projection.py` is part of aggregate conformance and requires complete active acceptance, structured next-work coverage, current contract scope/context, and current checkpoint QRV source binding when a QRV exists.
 
 Every executable EP has `next_work.steps[]`: ordered action, concrete targets, inputs, tests/oracles, acceptance IDs, expected result and stop/reconciliation conditions. The one-line execution `next_action` remains a machine hint only.
+
+## Human communication projections
+
+```bash
+python validate_human_communication.py <repo-root>
+python render_owner_status.py <repo-root>
+python render_technical_status.py <repo-root>
+```
+
+`communication_projection.py` consumes the single source-derived report projection and produces two views. `TECHNICAL_STATUS.md` preserves protocol identifiers, source bindings, scope, evidence, quality review, readiness and exact next-work detail. `OWNER_STATUS.md` translates the same truth into plain language: what can happen now, what the work is for, what will not change, evidence and missing evidence, quality/limitations, roadmap progress, decisions genuinely required from the Owner, exact next work and stop conditions.
+
+The Owner view must not turn an Owner-reserved domain into a fabricated decision request. Conversely, it may not hide a real `OWNER_DECISION_REQUIRED` stop, missing evidence, unresolved quality risk, protected/prohibited scope, or exact next action. Aggregate conformance validates this convergence. Both Markdown files are disposable generated views; neither is an authority source.
 
 ## Semantic baton, takeover and qualification
 
@@ -100,9 +114,9 @@ python prepare_v2_migration.py <inventory.yaml> --output <reconciliation.yaml>
 
 Bootstrap creates complete zero-weight roadmap progress rows without fabricating an EP or acceptance evidence.
 
-Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, quality applicability and QRV custody, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
+Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, quality applicability and QRV custody, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, Owner/technical communication convergence, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
 
-Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report projections and GitHub Issues remain projections, not authority.
+Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report/communication projections and GitHub Issues remain projections, not authority.
 
 The scoped CI must explicitly execute both root unit discovery and the dedicated `tests/stress/` discovery; compiling stress modules is not execution evidence. See `../operating-model/ci-evidence-correction.md`.
 
