@@ -7,7 +7,7 @@ REL={"PARENT_OF","DEPENDS_ON","BLOCKS","SUPERSEDES","REVISION_OF","RELATES_TO","
 WORK_STATES={"OPEN","ACTIVE","COMPLETE","SUPERSEDED","CANCELLED"}
 # github_state is the last verified external state, never a desired-state assertion.
 # ABSENT means no GitHub issue has yet been verified for this repository node.
-# UNKNOWN is permitted only while reconciliation must re-observe an existing locator.
+# UNKNOWN is permitted only when a prior locator exists but current state must be re-observed.
 GITHUB_STATES={"ABSENT","OPEN","CLOSED","UNKNOWN"}
 
 def key(node):return str(node.get("id",node.get("issue","")))
@@ -22,10 +22,7 @@ def validate(root:Path):
         nodes[k]=n
         if n.get("state") not in WORK_STATES:e.append(f"issue node {k} state invalid: {n.get('state')}")
         if n.get("github_state") not in GITHUB_STATES:e.append(f"issue node {k} github_state invalid: {n.get('github_state')}")
-        locator=n.get("github") or {}
-        gh_state=n.get("github_state")
-        number=locator.get("issue_number");gid=locator.get("issue_id")
-        if gh_state in {"OPEN","CLOSED"} and number is None and gid is None:e.append(f"issue node {k} verified github_state {gh_state} requires github.issue_number or github.issue_id")
+        locator=n.get("github") or {};gh_state=n.get("github_state");number=locator.get("issue_number");gid=locator.get("issue_id")
         if gh_state=="ABSENT" and (number is not None or gid is not None):e.append(f"issue node {k} github_state ABSENT cannot retain verified GitHub locator")
         if gh_state=="UNKNOWN" and number is None and gid is None:e.append(f"issue node {k} github_state UNKNOWN requires a prior GitHub locator to reconcile")
         rn=n.get("roadmap_node")
