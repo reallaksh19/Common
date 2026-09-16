@@ -1,0 +1,9 @@
+schema_version: relay-v2.5-drift
+from_base: "<previously observed base commit>"
+to_base: "<current base commit>"
+classification: DISJOINT
+changed_paths: []
+affected_scope: []
+rationale: "<why this drift does or does not affect the EP write/protected domains>"
+observed_by: "<agent/owner>"
+observed_at: "<timestamp>"
