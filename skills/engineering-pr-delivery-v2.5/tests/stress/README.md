@@ -51,6 +51,12 @@ Current stress coverage includes:
 - lifecycle-aware status/handover rendering, including continuity, join and replan custody;
 - required external projection pending/stale without confusing repository recovery with full handover readiness;
 - crash-safe projection publication with stable `operation_id` and `PUBLISHED_UNCONFIRMED` recovery;
+- stale external projection while repository advances across multiple roadmap generations;
+- explicit observed external generation distinct from newest desired generation;
+- intermediate desired projection generations retired with no retry authority;
+- superseded projection-operation chains required to terminate at the current operation;
+- published-but-unconfirmed obsolete generation retaining receipt as history without replay;
+- newest projection generation converging `STALE -> PUBLISHED_UNCONFIRMED -> IN_SYNC`;
 - in-sync projection binding to the current roadmap revision and current execution reference;
 - serial/parallel EP selection from checked-out branch/worktree with ambiguity rejected;
 - base drift classified as `DISJOINT | WITHIN_QUALIFIED_BOUNDARY | OVERLAPPING | UNKNOWN`;
