@@ -1,8 +1,39 @@
 schema_version: relay-v2.5
 
-# SUPERSEDES requires two-sided transfer:
-# - predecessor.supersession_receipt: successor + unresolved_acceptance/inputs/risks/decisions/evidence
-# - successor.supersession_inheritance: predecessor + the same transferred values
-# This makes unresolved-work transfer machine-checkable instead of relying on prose.
+# Node lifecycle separates engineering/work state from actual GitHub open/closed state.
+# Example node:
+# - id: ISSUE-OLD
+#   state: SUPERSEDED
+#   github_state: CLOSED
+#   roadmap_node: WP-OLD
+#   supersession_receipt:
+#     successor: ISSUE-NEW
+#     basis: ["CP-0012", "ODR-0008"]
+#     unresolved_acceptance:
+#       - id: AC-09
+#         state: NOT_RUN
+#         basis: ["EP-0012"]
+#     inputs: []
+#     risks: []
+#     decisions: []
+#     evidence:
+#       - id: TEST-09
+#         status: NOT_RUN
+#         basis_ref: "head-abc"
+#         reason: "External runner unavailable."
+#   closure_receipt:
+#     acceptance_terminal: true
+#     evidence_terminal: true
+#     acceptance: []
+#     evidence: []
+#     pr_disposition: SUPERSEDED
+#     remaining_work_disposition: SUPERSEDED_BY_SUCCESSOR
+#     unresolved_items: []
+#     successor: ISSUE-NEW
+#     checkpoint: CP-0012
+#
+# SUPERSEDES requires the successor.supersession_inheritance to repeat the
+# predecessor transfer exactly, including acceptance/evidence status and basis.
+# This prevents a transferred NOT_RUN/FAIL from silently becoming PASS.
 nodes: []
 relationships: []
