@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-curriculum-authority-record.schema.json",
+  "title": "Physics Curriculum Authority Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority_record_id",
+    "authority_class",
+    "subject",
+    "grade",
+    "curriculum",
+    "academic_session",
+    "evidence_sources",
+    "scope_assertions",
+    "excluded_extensions",
+    "state",
+    "engineering_authorization",
+    "publication_authorization"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "authority_record_id": {"type": "string", "pattern": "^PHY-CURR-AUTH-[A-Z0-9-]+$"},
+    "authority_class": {"const": "CURRICULUM_AUTHORITY_RECORD"},
+    "subject": {"const": "PHYSICS"},
+    "grade": {"type": "integer", "minimum": 1, "maximum": 13},
+    "curriculum": {"type": "string", "minLength": 2},
+    "academic_session": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$"},
+    "evidence_sources": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_role", "organization", "title", "official_locator", "version_identity", "selection_reason", "limitations"],
+        "properties": {
+          "source_role": {"enum": ["CURRICULUM_INDEX", "RELEASE_NOTICE", "CONTENT_SYLLABUS"]},
+          "organization": {"enum": ["CBSE", "NCERT"]},
+          "title": {"type": "string", "minLength": 8},
+          "official_locator": {"type": "string", "pattern": "^https://(www\\.)?(cbseacademic\\.nic\\.in|ncert\\.nic\\.in)/"},
+          "version_identity": {"type": "string", "minLength": 8},
+          "evidence_locator": {"type": ["string", "null"], "minLength": 3},
+          "selection_reason": {"type": "string", "minLength": 12},
+          "limitations": {"type": "array", "items": {"type": "string", "minLength": 3}}
+        }
+      }
+    },
+    "scope_assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scope_kind", "scope_ref", "classification", "supported_gate_ids", "supported_claims"],
+        "properties": {
+          "scope_kind": {"enum": ["TOPIC", "SUBTOPIC", "BUCKET", "CASE"]},
+          "scope_ref": {"type": "string", "minLength": 1},
+          "classification": {"enum": ["CURRICULUM_REQUIRED", "CURRICULUM_DERIVED", "PREREQUISITE_BRIDGE", "COMPETITIVE_EXTENSION", "RESEARCH_EXTENSION"]},
+          "supported_gate_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}
+          },
+          "supported_claims": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]+$"}
+          }
+        }
+      }
+    },
+    "excluded_extensions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 5}
+    },
+    "state": {"const": "CONFIRMED"},
+    "engineering_authorization": {"const": "NOT_EVALUATED"},
+    "publication_authorization": {"const": "NOT_IMPLIED"}
+  }
+}
