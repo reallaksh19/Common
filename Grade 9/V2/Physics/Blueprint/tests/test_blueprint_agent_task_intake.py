@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -13,16 +14,20 @@ AGENT_ENGINE = AGENT_TASKS / "engine"
 BLUEPRINT = ROOT / "Grade 9" / "V2" / "Physics" / "Blueprint"
 BLUEPRINT_ENGINE = BLUEPRINT / "engine"
 ASSESSMENT_INTAKE_ENGINE = ROOT / "Grade 9" / "V2" / "Physics" / "AssessmentIntake" / "engine"
+COLD_ENGINE = ROOT / "Grade 9" / "V2" / "Physics" / "ColdStart" / "engine"
 sys.path.insert(0, str(AGENT_ENGINE))
 sys.path.insert(0, str(BLUEPRINT_ENGINE))
 sys.path.insert(0, str(ASSESSMENT_INTAKE_ENGINE))
+sys.path.insert(0, str(COLD_ENGINE))
 
 from compile_execution_packet import compile_packet, digest  # noqa: E402
 from consume_agent_task_packet import (  # noqa: E402
     BlueprintAgentTaskIntakeError,
     consume_execution_packet,
 )
+from run_agent_task_cold_start import run_packet_cold_start  # noqa: E402
 from build_physics_assessment_intake import build_intake  # noqa: E402
+from physics_cold_start_runner import validate_assessment_input_bindings  # noqa: E402
 
 TASK_FIXTURE = AGENT_TASKS / "fixtures" / "valid" / "physics-subtopic-engineering.task.json"
 ROUTED_TASK_FIXTURE = BLUEPRINT / "fixtures" / "agent-task-routed-motion.fixture.json"
@@ -176,6 +181,40 @@ class BlueprintAgentTaskIntakeTests(unittest.TestCase):
         self.assertEqual(receipt["execution_route"]["status"], "RESOLVED_REPOSITORY_ROUTE")
         self.assertTrue(receipt["execution_route"]["execution_authorized"])
         self.assertEqual(receipt["authority_boundary"]["publication"], "NOT_AUTHORIZED_BY_PACKET")
+
+    def test_route_input_digest_tamper_fails_before_cold_start(self):
+        receipt = consume_execution_packet(compile_packet(load_routed_task()))
+        bindings = copy.deepcopy(receipt["execution_route"]["input_bindings"])
+        bindings[0]["sha256"] = "sha256:" + "0" * 64
+        with self.assertRaisesRegex(ValueError, "ASSESSMENT_INPUT_DIGEST_MISMATCH"):
+            validate_assessment_input_bindings(bindings, ROOT)
+
+    def test_routed_packet_traverses_existing_cold_start_without_gaining_release_authority(self):
+        packet = compile_packet(load_routed_task())
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            receipt = run_packet_cold_start(packet, out)
+            no_attempt = json.loads((out / "no-attempt" / "run_report.json").read_text(encoding="utf-8"))
+            with_attempts = json.loads((out / "with-attempts" / "run_report.json").read_text(encoding="utf-8"))
+
+            self.assertEqual(receipt["route_id"], "PHY-PA-ROUTE-001-V1")
+            self.assertTrue(receipt["comparison_invariants_all_true"])
+            self.assertEqual(receipt["engineering"]["no_attempt_consumer_status"], "ALLOWED")
+            self.assertEqual(receipt["engineering"]["with_attempts_consumer_status"], "ALLOWED")
+            self.assertTrue(receipt["engineering"]["requirement_state_identical"])
+            self.assertEqual(receipt["publication_authorization"], "NOT_IMPLIED")
+            self.assertEqual(receipt["human_review_authorization"], "NOT_IMPLIED")
+
+            roles = {row["role"]: row for row in receipt["assessment_input_bindings"]}
+            no_reads = set(no_attempt["runtime_dependency_audit"]["runtime_reads"])
+            with_reads = set(with_attempts["runtime_dependency_audit"]["runtime_reads"])
+            self.assertIn(roles["QUESTION_SET"]["path"], no_reads)
+            self.assertIn(roles["DECLARED_TOPIC_SCOPE"]["path"], no_reads)
+            self.assertNotIn(roles["ATTEMPT_SET"]["path"], no_reads)
+            self.assertIn(roles["ATTEMPT_SET"]["path"], with_reads)
+            self.assertEqual(no_attempt["manifest_digest"], with_attempts["manifest_digest"])
+            self.assertEqual(no_attempt["assessment_truth"]["assessment_scope_digest"], with_attempts["assessment_truth"]["assessment_scope_digest"])
+            self.assertEqual(no_attempt["assessment_truth"]["engineering_readiness_digest"], with_attempts["assessment_truth"]["engineering_readiness_digest"])
 
     def test_tampered_packet_fails_closed(self):
         packet = compile_packet(load_task())
