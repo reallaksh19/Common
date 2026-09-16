@@ -1,0 +1,32 @@
+{
+  "task_id": "TASK-PHYSICS-THERMODYNAMICS-RESEARCH-P2",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "PHYSICS",
+  "grade": 11,
+  "curriculum": {
+    "system": "CBSE",
+    "version": "2026-27"
+  },
+  "topic": "Thermodynamics",
+  "subtopic": "Thermodynamic laws, state variables and processes",
+  "engineering_depth": "RESEARCH",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+  "write_mode": "IMPLEMENT",
+  "expected_scope": [
+    "research and reconcile current curriculum scope",
+    "separate base subject truth from additive research extensions",
+    "map prerequisites and applicability conditions",
+    "retain contested or population-limited evidence explicitly"
+  ],
+  "explicit_exclusions": [
+    "do not create a production SKP",
+    "do not infer Engineering readiness",
+    "do not create a Thermodynamics-specific Blueprint branch",
+    "do not treat learner state as domain truth"
+  ]
+}
