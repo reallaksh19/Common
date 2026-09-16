@@ -2,6 +2,8 @@ schema_version: relay-v2.5-bootstrap
 repository:
   name: "<repository-name>"
   remote: "<owner/repository>"
+  repository_type: "<application/library/service/monorepo/etc>"
+  default_branch: "<default-branch>"
 relay_protocol:
   basis_ref: "<pinned Common commit>"
 roadmap:
