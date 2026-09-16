@@ -1,4 +1,4 @@
-name: V2 Shared AgentTasks T1
+name: V2 Shared AgentTasks
 
 on:
   pull_request:
@@ -7,6 +7,10 @@ on:
       - 'Grade 9/V2/Shared/LearningEngineering/**'
       - 'Grade 9/V2/Shared/EngineeringGate/**'
       - 'Grade 9/V2/Shared/CrossDomain/**'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_*.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_domain_prerequisite_closure.py'
+      - 'Grade 9/V2/Physics/Blueprint/engineering-gates/**'
+      - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
       - 'Grade 9/V2/**/GENERATION_AUTHORITY_MANIFEST.json'
       - 'Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json'
       - '.github/workflows/v2-shared-agent-tasks.yml'
@@ -24,12 +28,12 @@ jobs:
         run: python -m pip install --disable-pip-version-check jsonschema
       - name: Compile-check execution engines
         run: python -m py_compile 'Grade 9/V2/Shared/AgentTasks/engine/'*.py
-      - name: Run execution-kernel falsifiers
-        run: python -m unittest 'Grade 9/V2/Shared/AgentTasks/tests/test_execution_kernel.py' -v
-      - name: Compile current governed-case packet and preflight
+      - name: Run execution-kernel and governed-case falsifiers
+        run: python -m unittest discover -s 'Grade 9/V2/Shared/AgentTasks/tests' -p 'test_*.py' -v
+      - name: Compile authority-bound governed-case packet and preflight
         run: |
           python 'Grade 9/V2/Shared/AgentTasks/engine/compile_execution_packet.py' \
-            --task 'Grade 9/V2/Shared/AgentTasks/fixtures/valid/physics-subtopic-engineering.task.json' \
+            --task 'Grade 9/V2/Shared/AgentTasks/fixtures/valid/physics-relative-motion-governed.task.json' \
             --output /tmp/execution-packet.json \
             --preflight-output /tmp/engineering-preflight.md
           python - <<'PY'
@@ -37,6 +41,7 @@ jobs:
           packet = json.load(open('/tmp/execution-packet.json', encoding='utf-8'))
           assert packet['engineering_preflight']['engineering_state'] == 'NOT_EVALUATED'
           assert packet['engineering_preflight']['publication_authorization'] == 'NOT_IMPLIED'
+          assert {row['role'] for row in packet['governed_input_bindings']} == {'ENGINEERING_REQUEST', 'ENGINEERING_MANIFEST'}
           assert packet['packet_digest'].startswith('sha256:')
           print(packet['packet_digest'])
           PY
