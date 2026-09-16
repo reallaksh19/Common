@@ -44,21 +44,13 @@ class LifecycleTransactionStressTests(unittest.TestCase):
             revision["frontier_after"]=["WP-1"];dump(root/"agents/relay/roadmap/revisions/RM-2.yaml",revision)
             self.assertTrue(any("frontier_after" in x for x in roadmap_transaction(root)[0]))
 
-    def test_phase_transition_questions_must_be_structurally_grounded_in_incoming_ep(self):
+    def test_inline_phase_transition_questions_are_retired(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
-            state={"active_ep":{"path":"agents/relay/execution-packages/EP-2.yaml"}}
-            ep={"roadmap_source":{"phase":"PHASE-2","work_package":"WP-2"},"inputs":[{"id":"INPUT-1"}],"acceptance":[{"id":"AC-1"}],"validation":[{"id":"TEST-1"}],"implementation_plan":[{"id":"STEP-1"}],"phase_transition":{"required":True,"from_phase":"PHASE-1","to_phase":"PHASE-2","questions":[
-                {"id":"Q1","focus":"PRODUCTION_PATH","anchors":["PHASE-2","WP-2"],"question":"Trace the incoming production path."},
-                {"id":"Q2","focus":"ENGINEERING_PROBLEM","anchors":["WP-2","INPUT-1"],"question":"Explain the incoming engineering problem."},
-                {"id":"Q3","focus":"BOUNDARIES_INVARIANTS","anchors":["WP-2","AC-1"],"question":"State the incoming boundaries and invariants."},
-                {"id":"Q4","focus":"VERIFICATION","anchors":["AC-1","TEST-1"],"question":"Explain how the incoming result is independently verified."},
-                {"id":"Q5","focus":"FIRST_SAFE_SLICE","anchors":["STEP-1","AC-1"],"question":"Identify the first safe bounded contribution."},
-            ]}}
+            state={"relay_state":"ACTIVE","active_ep":{"id":"EP-2","path":"agents/relay/execution-packages/EP-2.yaml","state":"ACTIVE"}}
+            ep={"phase_transition":{"required":True,"from_phase":"PHASE-1","to_phase":"PHASE-2","questions":[{"id":f"Q{i}"} for i in range(1,6)]}}
             dump(root/"agents/relay/REPO_STATE.yaml",state);dump(root/"agents/relay/execution-packages/EP-2.yaml",ep)
-            self.assertEqual([],phase_questions(root)[0])
-            ep["phase_transition"]["questions"][1]["anchors"]=["OLD-PHASE-ANCHOR"];dump(root/"agents/relay/execution-packages/EP-2.yaml",ep)
-            self.assertTrue(any("not present in incoming EP" in x for x in phase_questions(root)[0]))
+            self.assertTrue(any("inline phase_transition questions are retired" in x for x in phase_questions(root)[0]))
 
     def test_supersession_preserves_acceptance_and_exact_evidence_state(self):
         with tempfile.TemporaryDirectory() as td:
