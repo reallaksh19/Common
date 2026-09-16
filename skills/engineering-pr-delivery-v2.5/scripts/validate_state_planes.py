@@ -35,6 +35,7 @@ def validate(root:Path):
         if stop.get("category") not in HARD_STOPS:e.append(f"active hard stop requires valid category, got {stop.get('category')}")
         if not str(stop.get("reason","")).strip():e.append("active hard stop requires plain-language reason")
         if not isinstance(stop.get("basis"),list) or not stop.get("basis"):e.append("active hard stop requires durable basis")
+        if execution.get("can_continue") is not False:e.append("active hard stop requires execution.can_continue=false")
     else:
         if stop.get("category") not in {None,"NONE"}:e.append("inactive stop must use category NONE")
     return e,w
