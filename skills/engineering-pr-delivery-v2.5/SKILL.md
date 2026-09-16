@@ -166,3 +166,5 @@ python skills/engineering-pr-delivery-v2.5/scripts/bootstrap_relay.py <manifest>
 python skills/engineering-pr-delivery-v2.5/scripts/inventory_v2_relay.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/prepare_v2_migration.py <inventory>
 ```
+
+The Common repository includes `.github/workflows/engineering-pr-delivery-v2.5.yml`, scoped to this skill. It installs PyYAML, compile-checks scripts/tests, and runs the complete synthetic unit/stress suite on relevant PR/push changes. A green workflow proves the generic suite executed; it does not replace downstream black-box stress validation.
