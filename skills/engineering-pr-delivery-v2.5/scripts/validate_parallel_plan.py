@@ -38,6 +38,11 @@ def validate(root:Path):
     if not path.exists():return [f"parallel plan does not exist: {ref}"],w
     plan=load_yaml(path);e+=require(plan,["schema_version","id","owner_approval","ascii_topology","lanes","shared_write_exceptions","integration","risks","stop_conditions"],"PARALLEL_PLAN")
     if plan.get("schema_version")!="relay-v2.5":e.append("PARALLEL_PLAN.schema_version must be relay-v2.5")
+    replan_id=(s.get("predecessor_replan") or {}).get("id")
+    if replan_id not in NONE_IDS:
+        if str(plan.get("previous_replan"))!=str(replan_id):e.append("parallel plan previous_replan must match REPO_STATE.predecessor_replan.id")
+    elif plan.get("previous_replan") not in NONE_IDS:
+        e.append("parallel plan previous_replan requires REPO_STATE.predecessor_replan")
     approval=plan.get("owner_approval") or {}
     if approval.get("approved") is not True or approval.get("authority")!="OWNER":e.append("parallel plan lacks explicit OWNER approval")
     if not str(approval.get("source","")).strip():e.append("parallel plan owner approval requires durable source")
@@ -81,7 +86,10 @@ def validate(root:Path):
                 if str(src.get("roadmap_id"))!=str((s.get("roadmap") or {}).get("id")):e.append(f"{lid}: lane EP roadmap id does not match REPO_STATE")
                 if str(src.get("roadmap_revision"))!=str((s.get("roadmap") or {}).get("revision")):e.append(f"{lid}: lane EP roadmap revision does not match REPO_STATE")
                 if src.get("generated_from_frontier") is not True:e.append(f"{lid}: lane EP must declare generated_from_frontier: true")
-                if last in NONE_IDS:
+                if replan_id not in NONE_IDS:
+                    if ident.get("previous_checkpoint") not in NONE_IDS:e.append(f"{lid}: replanned lane previous_checkpoint must be NONE")
+                    if str(ident.get("previous_replan"))!=str(replan_id):e.append(f"{lid}: previous_replan must match REPO_STATE.predecessor_replan.id")
+                elif last in NONE_IDS:
                     if ident.get("previous_checkpoint") not in NONE_IDS:e.append(f"{lid}: previous_checkpoint must be NONE when repository has no last checkpoint")
                 elif str(ident.get("previous_checkpoint"))!=str(last):e.append(f"{lid}: previous_checkpoint must match REPO_STATE.last_checkpoint.id")
 
