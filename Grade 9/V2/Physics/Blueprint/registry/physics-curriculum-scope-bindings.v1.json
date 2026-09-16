@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "PHYSICS-CURRICULUM-SCOPE-BINDINGS-V1",
+  "subject": "PHYSICS",
+  "selector_semantics": "EXACT_GRADE_CURRICULUM_SCOPE_AND_GATE_SET",
+  "bindings": []
+}
