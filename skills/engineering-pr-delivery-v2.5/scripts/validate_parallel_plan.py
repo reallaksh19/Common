@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 from relaylib import compute_frontier,index_roadmap,load_yaml,print_result,require
 from validate_ep_self_contained import validate_ep_data as validate_ep_self_contained_data
+from validate_ep_semantics import validate_ep_data as validate_ep_semantics_data
 from validate_ep_acceptance_mapping import validate_ep_data as validate_ep_acceptance_data
 
 NONE_IDS={None,"","NONE"}
@@ -78,7 +79,10 @@ def validate(root:Path):
             p=root/ep_path
             if not p.exists():e.append(f"{lid}: lane EP does not exist: {ep_path}")
             else:
-                ep=load_yaml(p);ee,ew=validate_ep_self_contained_data(root,ep,lid);e.extend(ee);w.extend(ew);ee,ew=validate_ep_acceptance_data(ep,lid);e.extend(ee);w.extend(ew)
+                ep=load_yaml(p)
+                ee,ew=validate_ep_self_contained_data(root,ep,lid);e.extend(ee);w.extend(ew)
+                ee,ew=validate_ep_semantics_data(root,ep,lid);e.extend(ee);w.extend(ew)
+                ee,ew=validate_ep_acceptance_data(ep,lid);e.extend(ee);w.extend(ew)
                 ident=ep.get("identity") or {};src=ep.get("roadmap_source") or {}
                 if str(ident.get("ep_id"))!=str(lane.get("ep_id")):e.append(f"{lid}: ep_id does not match lane EP identity")
                 if str(ident.get("branch"))!=str(lane.get("branch")):e.append(f"{lid}: branch does not match lane EP identity")
