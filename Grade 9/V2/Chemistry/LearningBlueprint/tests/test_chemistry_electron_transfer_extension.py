@@ -14,6 +14,7 @@ from compile_chemistry_blueprint_obligations import compile_blueprint_obligation
 from compile_chemistry_core_representation_bundle import (  # noqa: E402
     ChemistryCoreRepresentationError,
     compile_core_representation_bundle,
+    compile_core_representation_intent,
 )
 from test_chemistry_four_core_compilation import (  # noqa: E402
     REGISTRY,
@@ -22,9 +23,9 @@ from test_chemistry_four_core_compilation import (  # noqa: E402
     make_request,
 )
 
-EXTENSION = json.loads(
-    (ROOT.parent / "Representation" / "registry" / "chemistry-electron-transfer-primitive-extension.v1.json").read_text(encoding="utf-8")
-)
+REP_ROOT = ROOT.parent / "Representation" / "registry"
+EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-primitive-extension.v1.json").read_text(encoding="utf-8"))
+INTENT_EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-intent-extension.v1.json").read_text(encoding="utf-8"))
 
 
 def electron_transfer_gates():
@@ -34,6 +35,16 @@ def electron_transfer_gates():
         if reps:
             rows.append((gate, reps[0]))
     return rows
+
+
+def packet_for(gate, audit_ref):
+    audit = make_production_audit(gate)
+    return compile_blueprint_obligations(
+        make_request(),
+        make_manifest(gate, audit_ref),
+        registry=REGISTRY,
+        source_audit_payloads={audit_ref: audit},
+    )
 
 
 class ChemistryElectronTransferExtensionTests(unittest.TestCase):
@@ -56,72 +67,51 @@ class ChemistryElectronTransferExtensionTests(unittest.TestCase):
         self.assertGreaterEqual(len(rows), 2)
         self.assertGreaterEqual(len({gate["subtopic_id"] for gate, _ in rows}), 2)
 
-    def test_extension_compiles_from_engineering_representation_metadata_without_topic_branch(self):
+    def test_intent_extension_resolves_engineering_type_without_adapter_selection(self):
         gate, engineering_rep = electron_transfer_gates()[0]
-        audit_ref = "tests/in-memory-electron-transfer-extension-audit.json"
-        audit = make_production_audit(gate)
-        packet = compile_blueprint_obligations(
-            make_request(),
-            make_manifest(gate, audit_ref),
-            registry=REGISTRY,
-            source_audit_payloads={audit_ref: audit},
-        )
-        plan = {
-            "plan_id": "CHEM-REP-PLAN-ELECTRON-TRANSFER-TEST",
-            "representations": [{
-                "representation_id": "REP-TEST-ELECTRON-TRANSFER-LEDGER",
-                "engineering_representation_refs": [engineering_rep["representation_id"]],
-                "capability_ref": "CAP-TRACK-REACTING-SPECIES",
-                "primitive_id": "ELECTRON_TRANSFER_LEDGER",
-                "chemical_entities": ["A", "A+", "B", "B-"],
-                "source_semantic_data": {
-                    "chemical_entities": ["A", "A+", "B", "B-"],
-                    "oxidation_states": [
-                        {"element": "A", "before": 0, "after": 1, "before_species": "A", "after_species": "A+", "electron_count": 1},
-                        {"element": "B", "before": 0, "after": -1, "before_species": "B", "after_species": "B-", "electron_count": 1},
-                    ],
-                    "verification_requirements": ["electrons lost equals electrons gained"],
-                },
-                "notation_tokens": ["A", "A+", "B", "B-"],
-            }],
-        }
+        packet = packet_for(gate, "tests/in-memory-electron-transfer-extension-audit.json")
+        intent = compile_core_representation_intent("CORE1A", packet)
+        self.assertEqual(intent["policy_extension_refs"], [INTENT_EXTENSION["extension_id"]])
+        self.assertEqual(intent["intents"][0]["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
+        self.assertEqual(intent["intents"][0]["source_representation_ref"], engineering_rep["representation_id"])
+        self.assertEqual(intent["intents"][0]["capability_ref"], "CAP-TRACK-OXIDATION-STATE")
+
+        realized = [row["intent_id"] for row in intent["intents"]]
         bundle, bindings = compile_core_representation_bundle(
             "CORE1A",
             packet,
-            plan,
+            intent,
+            realized,
             bundle_id="CHEM-REP-BUNDLE-ELECTRON-TRANSFER-TEST",
         )
         self.assertIn(EXTENSION["extension_id"], bundle["primitive_registry_extension_refs"])
+        self.assertIn(INTENT_EXTENSION["extension_id"], bundle["representation_intent_extension_refs"])
         self.assertEqual(bundle["representations"][0]["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
         self.assertEqual(bindings[0]["engineering_representation_refs"], [engineering_rep["representation_id"]])
+        self.assertFalse(bundle["summary"]["adapter_primitive_selection_allowed"])
+        self.assertFalse(bundle["summary"]["adapter_scientific_semantics_allowed"])
 
-    def test_extension_cannot_enable_renderer_selection_or_override_registry(self):
-        gate, engineering_rep = electron_transfer_gates()[0]
-        audit_ref = "tests/in-memory-electron-transfer-extension-negative.json"
-        audit = make_production_audit(gate)
-        packet = compile_blueprint_obligations(
-            make_request(), make_manifest(gate, audit_ref), registry=REGISTRY, source_audit_payloads={audit_ref: audit}
-        )
-        plan = {
-            "representations": [{
-                "representation_id": "REP-TEST-ELECTRON-TRANSFER-NEGATIVE",
-                "engineering_representation_refs": [engineering_rep["representation_id"]],
-                "capability_ref": "CAP-TRACK-REACTING-SPECIES",
-                "primitive_id": "ELECTRON_TRANSFER_LEDGER",
-                "source_semantic_data": {"chemical_entities": ["A", "A+"]},
-            }]
-        }
+    def test_primitive_extension_cannot_enable_renderer_selection(self):
+        gate, _ = electron_transfer_gates()[0]
+        packet = packet_for(gate, "tests/in-memory-electron-transfer-extension-negative.json")
+        intent = compile_core_representation_intent("CORE1A", packet)
+        realized = [row["intent_id"] for row in intent["intents"]]
         bad = copy.deepcopy(EXTENSION)
         bad["renderer_selection_forbidden"] = False
         with self.assertRaises(ChemistryCoreRepresentationError) as ctx:
             compile_core_representation_bundle(
-                "CORE1A", packet, plan, representation_extensions=[bad], bundle_id="CHEM-REP-BUNDLE-ELECTRON-TRANSFER-NEGATIVE"
+                "CORE1A",
+                packet,
+                intent,
+                realized,
+                representation_extensions=[bad],
+                bundle_id="CHEM-REP-BUNDLE-ELECTRON-TRANSFER-NEGATIVE",
             )
         self.assertEqual(ctx.exception.code, "CHEM_CORE_REP_EXTENSION_RENDERER_SELECTION_FORBIDDEN")
 
-    def test_generic_extension_path_contains_no_topic_named_branch(self):
+    def test_generic_extension_path_contains_no_topic_named_branch_or_adapter_semantics(self):
         compiler = (ENGINE / "compile_chemistry_core_representation_bundle.py").read_text(encoding="utf-8").lower()
-        for forbidden in ("re" + "dox", "mn" + "o4", "perman" + "ganate"):
+        for forbidden in ("re" + "dox", "mn" + "o4", "perman" + "ganate", "representation_plan", "source_semantic_data"):
             self.assertNotIn(forbidden, compiler)
 
 
