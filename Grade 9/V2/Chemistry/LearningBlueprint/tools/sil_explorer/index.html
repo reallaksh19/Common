@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chemistry SIL Explorer</title>
+  <link rel="stylesheet" href="sil_explorer.css">
+</head>
+<body>
+  <header>
+    <h1>📚 Chemistry Subtopic Intelligence Library (SIL) Explorer</h1>
+    <p>4-Layer Pedagogical Architecture across all 52 Chemistry Subtopics (Grades 9–11)</p>
+    <a href="../index.html" class="portal-link">&larr; Observability Portal</a>
+  </header>
+  <div class="sil-container">
+    <aside class="sidebar">
+      <input type="text" id="searchInput" placeholder="Search gate ID, subtopic or concept..." />
+      <div id="packetList" class="packet-list"></div>
+    </aside>
+    <main id="detailArea" class="detail-area">
+      <div class="empty-state">Select a subtopic packet from the left to view 4-layer pedagogical intelligence.</div>
+    </main>
+  </div>
+  <script src="sil_catalog_data.js"></script>
+  <script src="sil_explorer.js"></script>
+</body>
+</html>

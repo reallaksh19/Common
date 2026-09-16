@@ -1,0 +1,13 @@
+{
+  "subject": "CHEMISTRY",
+  "subtopic_request": "Chemical Symbols and Atomic Notation",
+  "exact_gate_id": "CHEM-SYM-LITERACY",
+  "target_program_or_exam": "CBSE Class 9 Science",
+  "current_grade": 9,
+  "learning_purpose": "CBSE_BOARD_EXAM",
+  "learner_knowledge_mode": "UNKNOWN",
+  "learner_knowledge_percent": null,
+  "requested_engineering_depth": "STANDARD",
+  "core1_difficulty_control": "FIXED_INTRINSIC_DEPTH",
+  "core2_adaptation_mode": "STANDARD_PRACTICE"
+}
