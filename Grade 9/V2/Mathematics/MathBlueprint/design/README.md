@@ -30,6 +30,12 @@ The design workspace exists so future architecture can be reviewed, falsified an
 - `mathematics-generated-references.receipt.schema.json` — design-only receipt schema that prevents C3 from claiming runtime/publication authority.
 - `generated/mathematics-architecture-reference-index.generated.json` — machine-readable C3 architecture/reference projection generated from the frozen C1 catalog.
 - `generated/MATHEMATICS_ARCHITECTURE_REFERENCES.generated.md` — generated human reference view containing architecture, schema, policy, validator and catalog-declared test tables.
+- `SUBJECT_ADAPTER_INTERFACE_CANDIDATE.md` — Stage-C4 explanation of the subject-neutral interface, current Mathematics reference projection, Chemistry stress target, limitations and promotion rule.
+- `stem-subject-adapter-interface.candidate.json` — machine-readable C4 interface candidate with eight core operations, one conditional safety operation, current Mathematics component bindings and an unbound Chemistry stress profile.
+- `stem-subject-adapter-interface.candidate.schema.json` — design-only schema that prevents the C4 candidate from claiming authority, runtime migration or Chemistry production bindings.
+- `validate_subject_adapter_interface_candidate.py` — design-only C4 equivalence validator; checks C3 custody, C1 component/evidence ownership, exact current Mathematics object vocabulary, subject-neutral operations and Chemistry non-authority.
+- `mathematics-subject-adapter-equivalence.receipt.json` — machine-readable C4 receipt; records `PASS_DESIGN_PROJECTION_ONLY`, no Mathematics runtime change/validation weakening and no Chemistry runtime binding.
+- `mathematics-subject-adapter-equivalence.receipt.schema.json` — design-only schema locking the C4 receipt to non-authoritative, semantic-noop extraction.
 - `SUBTOPIC_INTELLIGENCE_LIBRARY_ROADMAP.md` — proposed ontology and delivery roadmap for the Subtopic Intelligence Library.
 - `SUBTOPIC_INTELLIGENCE_LIBRARY_SCHEMA_FAMILY_DRAFT.md` — field-level draft of the proposed SIL schema family and fail-closed invariants.
 - `SIL_COMPILATION_AND_CUSTODY_MODEL.md` — proposed deterministic compilation/custody model for reusable subtopic context and run-specific agent context.
@@ -62,7 +68,7 @@ design or audit prose
     → silently overrides an existing schema, policy, validator or registry
 ```
 
-Generated C3 reference views are subject to the same boundary. Reporting that a catalog component has an executable authority effect does not transfer that effect to the generated view itself.
+Generated C3 reference views and the C4 subject-adapter candidate are subject to the same boundary. Reporting that a current Mathematics component has an executable authority effect does not transfer that effect to the design view or adapter candidate.
 
 ## Promotion rule
 
@@ -78,11 +84,11 @@ release-class effect;
 owner decision when authority semantics change.
 ```
 
-Moving prose from this folder into production code without those controls is an architectural regression.
+Moving prose or design data from this folder into production code without those controls is an architectural regression.
 
-## Relationship between C0, C1, C2 and C3
+## Relationship between C0, C1, C2, C3 and C4
 
-The four stages have deliberately different evidence roles:
+The five stages have deliberately different evidence roles:
 
 ```text
 C0
@@ -107,14 +113,24 @@ consume the unchanged C1 catalog after the C2 gate
 → deterministically generate architecture/schema/policy/validator/test references
 → bind the view to exact catalog/schema/C2/generator Git blobs
 → remain derived and non-authoritative
+
+C4
+consume the completed C3 design gate + current C1 component inventory
+→ define subject-neutral adapter operations
+→ map Mathematics operations only to already-current component/evidence identities
+→ verify Mathematics object vocabulary against the current Canonical Domain Registry schema
+→ retain Chemistry as an unbound design stress target
+→ make no runtime migration and weaken no Mathematics validation
 ```
 
 The C0 audit compares the C1 catalog only **after** deriving the executable model. The C1 catalog therefore remains an index/candidate and never becomes evidence merely by agreeing with C0.
 
 C2 resolved the documentation drift identified by C0-F001 through C0-F006. C0-F007 remains intentionally open as `CURRENT + DOCUMENTED ONLY`: optional EASY research is current policy and accepted by the generation-spec validator, but the canonical SDU/LAU compiler does not yet auto-materialize those bindings.
 
-C3 does not modify that status. Its committed reference view currently projects **17 architecture components, 24 schema refs, 11 policy refs, 10 validator refs and 2 catalog-declared test refs**. Those counts describe the C1 catalog projection, not the total number of tests or executable files in Mathematics V2.
+C3 does not modify that status. Its committed reference view projects **17 architecture components, 24 schema refs, 11 policy refs, 10 validator refs and 2 catalog-declared test refs**. Those counts describe the C1 catalog projection, not the total number of tests or executable files in Mathematics V2.
 
-The current design-workspace migration gate is now `C4_SUBJECT_ADAPTER_INTERFACE_READY`. That status authorizes only subject-adapter design/extraction work; it does not authorize runtime changes or weaken Mathematics validation.
+C4 also preserves C0-F007 unchanged. The C4 Mathematics projection binds **8 core subject-adapter operations** to existing C1 component/evidence identities and verifies **13 canonical Mathematics object types** against the current domain-registry schema. `VALIDATE_SUBJECT_SAFETY` remains conditional and unbound in Mathematics; Chemistry remains `DESIGN_STRESS_TARGET_ONLY` with no production registry or validator reference.
+
+The current design-workspace migration gate is now `C5_SUBTOPIC_INTELLIGENCE_LIBRARY_CONTRACTS_READY`. That status authorizes only SIL contract work; it does not authorize a subject-adapter runtime migration.
 
 If a design/audit/generated reference disagrees with current executable authority, the current executable authority remains in force until an explicit governed migration resolves the documentation or contract conflict.
