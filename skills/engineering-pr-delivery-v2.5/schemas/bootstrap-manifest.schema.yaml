@@ -1,0 +1,21 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, repository, relay_protocol, roadmap, initial_position, initialization]
+properties:
+  schema_version: {const: relay-v2.5-bootstrap}
+  repository:
+    type: object
+    required: [name, remote, repository_type, default_branch]
+  relay_protocol:
+    type: object
+    required: [basis_ref]
+  roadmap:
+    type: object
+    required: [id, revision, title]
+  initial_position:
+    type: object
+    required: [objective, phase, work_package]
+  initialization:
+    type: object
+    required: [next_action, notes]
+additionalProperties: true
