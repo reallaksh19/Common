@@ -1,0 +1,31 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, generation_id, operation_id, candidate_basis, publication, readback, result, reason]
+properties:
+  schema_version: {const: relay-v2.5-github-observation}
+  generation_id: {type: string, pattern: '^GHGEN-'}
+  operation_id: {type: string, pattern: '^GHOP-'}
+  candidate_basis: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+  publication:
+    type: object
+    required: [attempted, receipt, error]
+    properties:
+      attempted: {type: boolean}
+      receipt: {}
+      error: {type: [string, 'null']}
+  readback:
+    type: object
+    required: [performed, found, issue_number, issue_id, github_state, marker_present, relationships, basis]
+    properties:
+      performed: {type: boolean}
+      found: {type: boolean}
+      issue_number: {type: [integer, 'null']}
+      issue_id: {type: [integer, string, 'null']}
+      github_state: {enum: [ABSENT, OPEN, CLOSED, UNKNOWN, null]}
+      marker_present: {type: boolean}
+      relationships: {type: array}
+      body_digest: {type: [string, 'null']}
+      basis: {type: array, items: {type: string}}
+  result: {enum: [VERIFIED, UNCONFIRMED, FAILED]}
+  reason: {type: string, minLength: 1}
+additionalProperties: true
