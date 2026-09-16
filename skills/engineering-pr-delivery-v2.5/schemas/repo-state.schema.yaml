@@ -143,7 +143,7 @@ properties:
             target: {type: string, minLength: 1}
             roadmap_revision: {type: string, minLength: 1}
             execution_ref: {type: string, minLength: 1}
-            disposition: {enum: [SUPERSEDED_BEFORE_PUBLICATION, SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED]}
+            disposition: {enum: [SUPERSEDED_BEFORE_PUBLICATION, SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED, SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED]}
             superseded_by: {type: string, minLength: 1}
             receipt: {type: [string, 'null']}
             basis: {type: array}
