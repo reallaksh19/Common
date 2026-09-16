@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 from relaylib import index_roadmap,load_yaml,print_result
+from validate_issue_projection_tree import validate as validate_projection_tree
 
 TERMINAL_WORK={"COMPLETE","SUPERSEDED","CANCELLED"}
 REMAINING={"NONE","TRANSFERRED_TO_SUCCESSOR","SUPERSEDED_BY_SUCCESSOR","CANCELLED_BY_OWNER"}
@@ -51,7 +52,9 @@ def _validate_unresolved(items,label,e):
     return items
 
 def validate(root:Path):
-    e=[];w=[];g=load_yaml(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml");s=load_yaml(root/"agents/relay/REPO_STATE.yaml");r=load_yaml(root/s["roadmap"]["path"]);_,_,wps=index_roadmap(r)
+    e=[];w=[]
+    pe,pw=validate_projection_tree(root);e.extend(pe);w.extend(pw)
+    g=load_yaml(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml");s=load_yaml(root/"agents/relay/REPO_STATE.yaml");r=load_yaml(root/s["roadmap"]["path"]);_,_,wps=index_roadmap(r)
     nodes={key(n):n for n in g.get("nodes",[]) or []};relationships=g.get("relationships",[]) or []
     for n in nodes.values():
         if n.get("github_state")!="CLOSED":continue
