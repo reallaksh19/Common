@@ -28,7 +28,6 @@ def validate(root:Path):
         children.setdefault(p,[]).append(c);parents.setdefault(c,[]).append(p)
     for child,ps in parents.items():
         if len(ps)>1:e.append(f"issue projection child {child} has multiple parents: {sorted(ps)}")
-    # PARENT_OF must be a DAG.
     visiting=set();done=set()
     def visit(n,path):
         if n in visiting:
@@ -64,7 +63,7 @@ def validate(root:Path):
         all_terminal=bool(actual) and all(x.get("state") in TERMINAL for x in actual)
         if roll.get("all_children_terminal") is not all_terminal:e.append(f"aggregate issue {parent} child_rollup.all_children_terminal must be {str(all_terminal).lower()}")
         if node.get("state") not in {"SUPERSEDED","CANCELLED"} and node.get("state")!=derived:e.append(f"aggregate issue {parent} state must project direct children as {derived}")
-        if node.get("github_state")=="CLOSED" and any(x.get("github_state")!="CLOSED" for x in actual):e.append(f"closed aggregate issue {parent} has direct child still GitHub OPEN")
+        if node.get("github_state")=="CLOSED" and any(x.get("github_state")!="CLOSED" for x in actual):e.append(f"closed aggregate issue {parent} has direct child whose GitHub projection is not CLOSED")
     return e,w
 
 def main():
