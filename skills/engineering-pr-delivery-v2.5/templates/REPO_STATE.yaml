@@ -33,6 +33,7 @@ status_planes:
   execution:
     state: READY
     can_continue: true
+    material_authority: WRITE
     next_action: "<exact next action>"
   quality:
     state: CLEAR
