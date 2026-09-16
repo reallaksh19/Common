@@ -48,7 +48,7 @@ artifacts:
   takeover_schema: "skills/engineering-pr-delivery-v2.5/schemas/takeover-certification.schema.yaml"
   takeover_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py"
   baton_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py"
-  write_gate: "skills/engineering-pr-delivery-v2.5/scripts/check_material_write_ready.py"
+  write_gate: "skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py"
   takeover_library: "skills/engineering-pr-delivery-v2.5/scripts/takeoverlib.py"
   aggregate_conformance: "skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py"
   repo_state_template: "skills/engineering-pr-delivery-v2.5/templates/REPO_STATE.yaml"
