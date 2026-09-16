@@ -58,8 +58,13 @@ jobs:
         run: pip install jsonschema
       - name: Prove global Engineering Gate readiness policy without topic fixtures
         run: python "Grade 9/V2/Shared/EngineeringGate/tests/test_readiness_policy.py"
-      - name: Validate shared LearningEngineering architecture and SKP roadmap
-        run: python "Grade 9/V2/Shared/LearningEngineering/tests/test_learning_engineering_architecture.py"
+      - name: Validate shared LearningEngineering architecture and all bounded pilot falsifiers
+        run: |
+          set -euo pipefail
+          for test_file in "Grade 9/V2/Shared/LearningEngineering/tests"/test_*.py; do
+            echo "==> $test_file"
+            python "$test_file"
+          done
       - name: Run legacy v2 gate regression proof
         run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
       - name: Build canonical Physics Technical Engineering Gates v3 registry
