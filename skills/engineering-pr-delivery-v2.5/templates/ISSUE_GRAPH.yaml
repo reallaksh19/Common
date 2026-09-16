@@ -1,7 +1,21 @@
 schema_version: relay-v2.5
+# Required when PARENT_OF relationships exist. Parent rollups bind to this revision.
+graph_revision: IG-0001
 
 # Node lifecycle separates engineering/work state from actual GitHub open/closed state.
-# Example node:
+# Aggregate parent example:
+# - id: ISSUE-PARENT
+#   state: ACTIVE
+#   github_state: OPEN
+#   child_rollup:
+#     graph_revision: IG-0001
+#     direct_children:
+#       - {id: ISSUE-CHILD-A, state: COMPLETE, github_state: CLOSED}
+#       - {id: ISSUE-CHILD-B, state: ACTIVE, github_state: OPEN}
+#     derived_state: ACTIVE
+#     all_children_terminal: false
+#
+# Supersession predecessor example:
 # - id: ISSUE-OLD
 #   state: SUPERSEDED
 #   github_state: CLOSED
@@ -32,8 +46,15 @@ schema_version: relay-v2.5
 #     successor: ISSUE-NEW
 #     checkpoint: CP-0012
 #
-# SUPERSEDES requires the successor.supersession_inheritance to repeat the
-# predecessor transfer exactly, including acceptance/evidence status and basis.
-# This prevents a transferred NOT_RUN/FAIL from silently becoming PASS.
+# An intermediate successor that is superseded again carries inherited unresolved
+# acceptance/evidence unchanged into its outgoing receipt, or records an explicit
+# supersession_resolution with terminal disposition and durable basis.
+# supersession_resolution:
+#   acceptance:
+#     - {id: AC-09, disposition: RESOLVED, basis: ["CP-0013", "TEST-09"]}
+#   evidence: []
+#
+# SUPERSEDES is linear/acyclic at issue level. Work splitting belongs in roadmap
+# topology / child issues, not multiple competing successors.
 nodes: []
 relationships: []
