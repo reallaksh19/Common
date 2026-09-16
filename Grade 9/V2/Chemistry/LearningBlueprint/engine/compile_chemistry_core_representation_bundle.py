@@ -25,7 +25,10 @@ from build_chemistry_representations import (  # noqa: E402
     validate_notation,
     validate_registry,
 )
-from compile_chemistry_representation_intent import validate_representation_intent  # noqa: E402
+from compile_chemistry_representation_intent import (  # noqa: E402
+    compile_representation_intent,
+    validate_representation_intent,
+)
 
 PRIMITIVE_REGISTRY_REL = "../Representation/registry/chemistry-teaching-primitive-registry.json"
 PAGE_INTENT_REL = "../Representation/registry/chemistry-page-intent-profile.json"
@@ -106,6 +109,58 @@ def _apply_extensions(
     return registry, profile, extension_refs
 
 
+def _resolved_authority(
+    *,
+    primitive_registry: dict[str, Any] | None = None,
+    page_intent_profile: dict[str, Any] | None = None,
+    notation_contract: dict[str, Any] | None = None,
+    representation_extensions: list[dict[str, Any]] | None = None,
+    representation_intent_extensions: list[dict[str, Any]] | None = None,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], list[str], list[dict[str, Any]]]:
+    registry = primitive_registry or _load_chem_relative(PRIMITIVE_REGISTRY_REL)
+    profile = page_intent_profile or _load_chem_relative(PAGE_INTENT_REL)
+    notation = notation_contract or _load_chem_relative(NOTATION_REL)
+    primitive_extensions = representation_extensions
+    if primitive_extensions is None:
+        primitive_extensions = [_load_chem_relative(rel) for rel in DEFAULT_EXTENSION_RELS]
+    registry, profile, extension_refs = _apply_extensions(registry, profile, primitive_extensions)
+    validate_registry(registry)
+    validate_notation(notation)
+    intent_extensions = representation_intent_extensions
+    if intent_extensions is None:
+        intent_extensions = [_load_chem_relative(rel) for rel in DEFAULT_INTENT_EXTENSION_RELS]
+    return registry, profile, notation, extension_refs, intent_extensions
+
+
+def compile_core_representation_intent(
+    product_mode: str,
+    obligation_packet: dict[str, Any],
+    *,
+    primitive_registry: dict[str, Any] | None = None,
+    page_intent_profile: dict[str, Any] | None = None,
+    notation_contract: dict[str, Any] | None = None,
+    representation_extensions: list[dict[str, Any]] | None = None,
+    representation_intent_extensions: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    registry, profile, _notation, _extension_refs, intent_extensions = _resolved_authority(
+        primitive_registry=primitive_registry,
+        page_intent_profile=page_intent_profile,
+        notation_contract=notation_contract,
+        representation_extensions=representation_extensions,
+        representation_intent_extensions=representation_intent_extensions,
+    )
+    try:
+        return compile_representation_intent(
+            product_mode,
+            obligation_packet,
+            primitive_registry=registry,
+            page_intent_profile=profile,
+            representation_intent_extensions=intent_extensions,
+        )
+    except Exception as exc:
+        fail("CHEM_CORE_REP_INTENT_COMPILE_FAILED", str(exc))
+
+
 def _intent_map(intent_packet: dict[str, Any]) -> dict[str, dict[str, Any]]:
     rows = intent_packet.get("intents")
     if not isinstance(rows, list):
@@ -137,28 +192,20 @@ def compile_core_representation_bundle(
     if obligation_packet.get("status") != "BLUEPRINT_OBLIGATIONS_READY":
         fail("CHEM_CORE_REP_OBLIGATION_PACKET_NOT_READY")
 
-    primitive_registry = primitive_registry or _load_chem_relative(PRIMITIVE_REGISTRY_REL)
-    page_intent_profile = page_intent_profile or _load_chem_relative(PAGE_INTENT_REL)
-    notation_contract = notation_contract or _load_chem_relative(NOTATION_REL)
-    primitive_extensions = representation_extensions
-    if primitive_extensions is None:
-        primitive_extensions = [_load_chem_relative(rel) for rel in DEFAULT_EXTENSION_RELS]
-    primitive_registry, page_intent_profile, extension_refs = _apply_extensions(
-        primitive_registry, page_intent_profile, primitive_extensions
+    registry, profile, notation, extension_refs, intent_extensions = _resolved_authority(
+        primitive_registry=primitive_registry,
+        page_intent_profile=page_intent_profile,
+        notation_contract=notation_contract,
+        representation_extensions=representation_extensions,
+        representation_intent_extensions=representation_intent_extensions,
     )
-    validate_registry(primitive_registry)
-    validate_notation(notation_contract)
-
-    intent_extensions = representation_intent_extensions
-    if intent_extensions is None:
-        intent_extensions = [_load_chem_relative(rel) for rel in DEFAULT_INTENT_EXTENSION_RELS]
     try:
         validate_representation_intent(
             product_mode,
             obligation_packet,
             intent_packet,
-            primitive_registry=primitive_registry,
-            page_intent_profile=page_intent_profile,
+            primitive_registry=registry,
+            page_intent_profile=profile,
             representation_intent_extensions=intent_extensions,
         )
     except Exception as exc:
@@ -181,15 +228,12 @@ def compile_core_representation_bundle(
     for intent_id in realized:
         row = intents[intent_id]
         primitive_id = row["primitive_id"]
-        primitive = next(
-            (item for item in primitive_registry["primitives"] if item["primitive_id"] == primitive_id),
-            None,
-        )
+        primitive = next((item for item in registry["primitives"] if item["primitive_id"] == primitive_id), None)
         if primitive is None:
             fail("CHEM_CORE_REP_PRIMITIVE_UNKNOWN", primitive_id)
         scientific = copy.deepcopy(row["scientific_semantics"])
         renderer_constraints = sorted(
-            set(list(row["primitive_authority"]["renderer_constraints"]) + ["NOTATION_CONTRACT:" + notation_contract["contract_id"]])
+            set(list(row["primitive_authority"]["renderer_constraints"]) + ["NOTATION_CONTRACT:" + notation["contract_id"]])
         )
         spec = {
             "representation_id": "REP-REALIZED-" + intent_id.removeprefix("CHEM-REP-INTENT-"),
@@ -222,11 +266,11 @@ def compile_core_representation_bundle(
         "obligation_packet_ref": obligation_packet["packet_id"],
         "representation_intent_ref": intent_packet["intent_packet_id"],
         "representation_intent_digest": intent_packet["intent_packet_digest"],
-        "primitive_registry_ref": primitive_registry["registry_id"],
+        "primitive_registry_ref": registry["registry_id"],
         "primitive_registry_extension_refs": extension_refs,
         "representation_intent_extension_refs": list(intent_packet.get("policy_extension_refs", [])),
-        "page_intent_profile_ref": page_intent_profile["profile_id"],
-        "notation_contract_ref": notation_contract["contract_id"],
+        "page_intent_profile_ref": profile["profile_id"],
+        "notation_contract_ref": notation["contract_id"],
         "representations": compiled,
         "summary": {
             "representation_count": len(compiled),
