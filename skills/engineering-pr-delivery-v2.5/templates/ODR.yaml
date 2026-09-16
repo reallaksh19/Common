@@ -1,0 +1,16 @@
+schema_version: relay-v2.5
+id: ODR-0001
+decision:
+  authority: OWNER
+  statement: "<exact Owner decision>"
+  source: "<durable source/reference>"
+impact:
+  class: [LOCAL]
+affected:
+  objectives: []
+  phases: []
+  work_packages: []
+  execution_packages: []
+  issues: []
+required_reconciliation: []
+status: CAPTURED

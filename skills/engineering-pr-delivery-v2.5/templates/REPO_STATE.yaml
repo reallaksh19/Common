@@ -1,0 +1,29 @@
+schema_version: relay-v2.5
+repository:
+  name: "<repo-name>"
+  remote: "<owner/repo>"
+relay_protocol:
+  version: "2.5"
+  basis_ref: "<pinned Common SHA>"
+roadmap:
+  id: "<roadmap-id>"
+  revision: "<RM-xxxx>"
+  path: agents/relay/roadmap/OVERALL_ROADMAP.yaml
+current_position:
+  objective: "<OBJ-id>"
+  phase: "<PHASE-id>"
+  work_package: "<WP-id>"
+execution_policy:
+  mode: SERIAL
+active_ep:
+  id: "<EP-id>"
+  path: agents/relay/execution-packages/<EP-id>.yaml
+  state: EXECUTABLE
+last_checkpoint:
+  id: "<CP-id-or-NONE>"
+progress:
+  overall_percent: 0
+  phase_percent: 0
+  ep_percent: 0
+  basis_revision: "<PB-id>"
+chat_context_required: false

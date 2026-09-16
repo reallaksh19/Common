@@ -1,0 +1,94 @@
+schema_version: relay-v2.5
+identity:
+  ep_id: EP-0001
+  branch: "<branch>"
+  base_ref: "<commit-or-drift-rule>"
+  execution_state: EXECUTABLE
+roadmap_source:
+  roadmap_id: "<roadmap-id>"
+  roadmap_revision: RM-0001
+  objective: OBJ-001
+  phase: PHASE-001
+  work_package: WP-001
+  generated_from_frontier: true
+outcome:
+  user_visible: []
+  engineering: []
+context_capsule:
+  product_goal: ""
+  roadmap_position: ""
+  why_this_work_exists: ""
+  current_architecture: ""
+  prior_owner_decisions: []
+  current_implementation_state: ""
+  known_problems: []
+  deliberate_non_goals: []
+  terminology: {}
+repository_discovery:
+  - id: DISC-01
+    action: VERIFY
+    target: agents/relay/REPO_STATE.yaml
+    purpose: Confirm this EP remains active.
+inputs: []
+benchmarks: []
+scope:
+  allowed: []
+  prohibited: []
+anti_drift:
+  do_not: []
+  stale_if: []
+implementation_plan: []
+quality:
+  blueprints: [coding, testing]
+  findings_policy: Quality findings do not become hard stops unless acceptance, safety or authority requires it.
+acceptance:
+  - id: AC-01
+    description: "<observable acceptance>"
+    weight: 100
+    verification: [TEST-01]
+validation:
+  - id: TEST-01
+    class: MUST_PASS
+    method: "<command/oracle/review>"
+    proves: [AC-01]
+failure_and_stop_conditions:
+  hard_stop_categories:
+    - OWNER_DECISION_REQUIRED
+    - ESSENTIAL_INPUT_MISSING
+    - AUTHORITY_VIOLATION
+    - PROTECTED_INVARIANT_FAILURE
+    - WRITE_COLLISION
+    - SUPERSEDED_EP
+    - ROADMAP_CONFLICT
+    - REPOSITORY_STATE_CONFLICT
+    - UNSAFE_ENGINEERING_RESULT
+report_contract:
+  sections:
+    - Executive state
+    - Overall / phase / EP progress
+    - Work completed
+    - Files changed
+    - Acceptance matrix
+    - Tests and evidence
+    - Quality findings
+    - Known limitations
+    - Owner decisions required
+    - GitHub issue changes
+    - Roadmap changes
+    - Exact next actions
+    - Successor EP
+    - Phase-transition Q1-Q5 when applicable
+checkpoint_contract:
+  required: true
+successor_relay:
+  required: true
+  duties:
+    - reconcile current roadmap node
+    - create checkpoint
+    - update progress
+    - update issue projection when applicable
+    - compute next executable frontier
+    - create successor EP when work continues
+    - validate successor EP
+    - run cold-start check
+    - update REPO_STATE

@@ -1,0 +1,29 @@
+schema_version: relay-v2.5
+id: PLAN-P001
+owner_approval:
+  approved: true
+  authority: OWNER
+  source: "<owner approval reference>"
+ascii_topology: |
+  ROADMAP
+     |
+  +--+--+
+  |     |
+  A     B
+lanes:
+  - id: LANE-A
+    work_package: "<WP>"
+    branch: "<branch>"
+    write_domains: []
+    shared_read_domains: []
+  - id: LANE-B
+    work_package: "<WP>"
+    branch: "<branch>"
+    write_domains: []
+    shared_read_domains: []
+integration:
+  owner: "<integration owner>"
+  work_package: "<WP>"
+  ep: "<EP>"
+risks: []
+stop_conditions: []

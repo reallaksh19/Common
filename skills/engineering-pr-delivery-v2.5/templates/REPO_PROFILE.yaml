@@ -1,0 +1,17 @@
+schema_version: relay-v2.5
+repository_type: application
+default_branch: main
+important_paths:
+  source: []
+  tests: []
+  documentation: []
+  engineering_specs: []
+commands:
+  unit_test: ""
+  e2e_test: ""
+  lint: ""
+  typecheck: ""
+  build: ""
+protected_domains: []
+generated_paths: []
+repository_rules: []
