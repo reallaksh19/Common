@@ -45,6 +45,7 @@ def build(manifest:dict)->dict[str,dict]:
         "execution_policy":{"mode":"SERIAL"},
         "active_ep":{"id":None,"path":None,"state":"NONE"},
         "last_checkpoint":{"id":"NONE","path":None},
+        "predecessor_join":{"id":None,"path":None},
         "progress":{"overall_percent":0,"phase_percent":0,"ep_percent":0,"basis_revision":"PB-0001"},
         "status_planes":{
             "execution":{"state":"WAITING","can_continue":False,"material_authority":"NONE","next_action":init["next_action"]},
@@ -52,7 +53,7 @@ def build(manifest:dict)->dict[str,dict]:
             "evidence":{"state":"NA","summary":"Relay bootstrap created; no executable engineering evidence exists yet.","not_run":[]},
             "stop":{"active":False,"category":"NONE","reason":"","basis":[]}
         },
-        "projection":{"required":False,"state":"NOT_REQUIRED","roadmap_revision":road["revision"],"execution_ref":"NONE","basis":[]},
+        "projection":{"required":False,"state":"NOT_REQUIRED","operation_id":None,"target":None,"roadmap_revision":road["revision"],"execution_ref":"NONE","receipt":None,"basis":[]},
         "relay_readiness":{"repository_ready":False,"projection_ready":True,"handover_ready":False,"reasons":["Relay initialization is incomplete; no executable frontier/EP exists."]},
         "chat_context_required":False
     }
