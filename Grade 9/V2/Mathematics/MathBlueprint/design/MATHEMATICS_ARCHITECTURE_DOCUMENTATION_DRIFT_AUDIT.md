@@ -38,7 +38,7 @@ CONFLICTED / OWNER DECISION REQUIRED
 
 ## Result
 
-C0 found **six material documentation findings** and **zero owner-decision blockers**.
+C0 found **seven material architecture/documentation findings** and **zero owner-decision blockers**.
 
 C2 status:
 
@@ -46,7 +46,9 @@ C2 status:
 READY_WITH_DOCUMENTATION_REMEDIATIONS
 ```
 
-That status does **not** mean the design folder becomes normative. It means the repository contains enough current executable evidence to consolidate the root specification without inventing new runtime semantics.
+That status does **not** mean every documented capability is fully implemented. In particular, C0-F007 identifies one `CURRENT + DOCUMENTED ONLY` compiler-path gap that C2 must label accurately rather than silently upgrading to executable status.
+
+The status also does **not** mean the design folder becomes normative. It means the repository contains enough evidence to consolidate the root specification without inventing new architecture decisions.
 
 ## Finding C0-F001 — canonical authority topology is stale
 
@@ -108,12 +110,12 @@ EASY → no pedagogy-enrichment web research
 Current generation governance says instead:
 
 ```text
-EASY   → research OPTIONAL; if promoted, custody must be complete
+EASY   → research OPTIONAL; if used, binding must be complete
 MEDIUM → TARGETED research REQUIRED
 HARD   → DEEP research REQUIRED
 ```
 
-`GENERATION_CALIBRATION.md`, `SELF_TEACHING.md`, the research manifest contract and current tests/validators implement the latter rule.
+`GENERATION_CALIBRATION.md`, `SELF_TEACHING.md` and `validate_self_teaching_generation_spec.py` implement the latter policy at the generation-spec contract boundary. Tests explicitly accept a fully bound EASY research row and reject a half-bound row.
 
 The distinction is intentional:
 
@@ -123,7 +125,7 @@ research permission != research obligation
 
 External research may improve pedagogy at any difficulty; it never creates mathematical authority.
 
-**C2 action:** remove the EASY prohibition from the consolidated doctrine and align the dual-track documentation with optional-but-governed EASY research.
+**C2 action:** remove the EASY prohibition from the consolidated doctrine and align the dual-track documentation with optional-but-governed EASY research. C0-F007 separately records that the canonical compiler does not yet materialize this optional binding automatically.
 
 ## Finding C0-F003 — publication topology lags current release path
 
@@ -228,6 +230,42 @@ Visibility may explain Engineering authority; it cannot create it.
 
 **C2 action:** place derived visibility between released product authority and semantic publication, explicitly outside both technical and publication authorization.
 
+## Finding C0-F007 — optional EASY research compiler materialization is incomplete
+
+**Classification:** `CURRENT + DOCUMENTED ONLY`  
+**Severity:** MEDIUM
+
+The governed policy and generation-spec validator support this state:
+
+```text
+EASY bucket
++ optional pedagogy research decision
++ bound research brief ref
++ bound research source refs
+→ legal generation spec
+```
+
+The validator proves both sides:
+
+```text
+fully bound optional EASY research → PASS
+half-bound optional EASY research  → BLOCK
+```
+
+However, the canonical `compile_sdu_lau_generation_spec.py::_bind_research()` implementation filters to:
+
+```text
+non_easy = [row for row in rows if row["difficulty_badge"] != "EASY"]
+```
+
+and writes research decision/source bindings only to those non-EASY rows. `validate_generation_research_bindings()` similarly checks promoted source retention per bucket only for non-EASY rows; an all-EASY spec with a manifest merely validates the manifest and returns.
+
+Therefore the policy is current and validator-supported, but **automatic compiler materialization of promoted optional EASY research is not yet complete**.
+
+This is exactly the kind of distinction the C0 classification vocabulary is intended to preserve.
+
+**C2 action:** describe optional EASY research as current policy but mark canonical compiler materialization `CURRENT + DOCUMENTED ONLY`. Closing this gap requires a separate governed compiler migration plus a falsifier; C0 itself must not change runtime semantics.
+
 ## Confirmed current doctrine
 
 The executable-first audit confirms these major rules as current rather than drift:
@@ -237,7 +275,7 @@ The executable-first audit confirms these major rules as current rather than dri
 3. Core1/Core2 retain distinct semantic/assessment roles downstream of Engineering authority;
 4. canonical Engineering source identity is stored once and local teaching use is membership metadata;
 5. SDU depth is intrinsic and Engineering-backed, while LAU learner fit requires governed evidence or explicit owner waiver;
-6. EASY research is optional while MEDIUM/HARD research obligations remain fail-closed, with claim-level promotion custody;
+6. the generation-spec validation contract allows EASY research to be absent or fully bound while MEDIUM/HARD research remains required; C0-F007 separately records the compiler materialization gap;
 7. product release and current Engineering custody are revalidated before governed publication;
 8. Engineering visibility is derived explainability and cannot imply publication authorization.
 
@@ -256,21 +294,25 @@ comparison:                  CONSISTENT_WITH_RECONCILIATION_NOTES
 
 The C1 responsibility decomposition is therefore a useful candidate index for C2/C3. It is **not** promoted into authority by this finding.
 
-One custody weakness should be retained as a design lesson: the C1 candidate's recorded `base_head_sha` predates this audit snapshot even though the catalog describes itself as captured from the current tree. That is harmless because the candidate has `authority = NONE`, but C3 generated references should use an explicit immutable `inventory_source_sha`/digest model rather than language implying a permanently current tree.
+Two reconciliation notes matter:
+
+- the C1 `CALIBRATION` responsibility is real, but C0-F007 prevents C2 from describing every optional EASY research path as fully compiler-executable;
+- the C1 candidate's recorded `base_head_sha` predates this audit snapshot even though the catalog describes itself as captured from the current tree. That is harmless because the candidate has `authority = NONE`, but C3 generated references should use explicit immutable source-snapshot custody rather than language implying a permanently current tree.
 
 ## C2 required remediations
 
-C2 may now consolidate the normative root, provided it does so as a documentation/authority-clarification migration rather than a runtime redesign:
+C2 may now consolidate the normative root, provided it does so as an evidence-led authority/documentation migration rather than a silent runtime redesign:
 
 ```text
 1. add Engineering discovery → exact selection → authorization → closure → custody upstream;
 2. scope Core1/Core2 authority correctly inside that Engineering envelope;
-3. correct EASY research to OPTIONAL, fully governed when promoted;
-4. represent claim-level pedagogy promotion;
-5. represent derived Engineering visibility as non-authoritative;
-6. make the semantic learner publication bundle the governed publication input;
-7. keep design/catalog/audit files outside production authority;
-8. preserve existing runtime behavior unless a separately governed migration explicitly changes it.
+3. correct EASY research to OPTIONAL, fully bound when used;
+4. mark optional EASY compiler materialization documented-only until separately implemented;
+5. represent claim-level pedagogy promotion;
+6. represent derived Engineering visibility as non-authoritative;
+7. make the semantic learner publication bundle the governed publication input;
+8. keep design/catalog/audit files outside production authority;
+9. preserve existing runtime behavior unless a separately governed migration explicitly changes it.
 ```
 
 No `CONFLICTED / OWNER DECISION REQUIRED` finding was identified in C0. If C2 encounters a new conflict that cannot be resolved from existing executable/normative evidence, it must stop and surface that conflict rather than choosing a new architecture silently.
