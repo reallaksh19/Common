@@ -36,7 +36,8 @@ def invariant_digest(value: dict) -> str:
     return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
-assert SPEC["stage_evidence_refs"] == []
+assert len(SPEC["stage_evidence_refs"]) == 9
+assert set(CHAIN + [LINEAGE_RECEIPT]).issubset(SPEC["stage_evidence_refs"])
 plan = load_blueprint(LINEAGE_PLAN)
 assert [row["routine_id"] for row in plan["lineages"]] == [f"M2D-SBA-04-R{x}" for x in range(1, 5)]
 for row in plan["lineages"]:
@@ -56,4 +57,4 @@ assert audit["release_authorized"] is False
 assert LINEAGE_PLAN in audit["source_refs"]
 assert LINEAGE_RECEIPT in audit["source_refs"]
 
-print("Core1A SBA04 worked/faded/independent lineage: PASS (4/4 structural fingerprints verified; unresolved-jump/release remain closed)")
+print("Core1A SBA04 worked/faded/independent lineage: PASS (4/4 structural fingerprints verified; unresolved-jump/release remain closed in isolation)")

@@ -25,13 +25,14 @@ def stage_state(audit: dict, stage: str) -> str:
     return next(row for row in audit["stage_audit"] if row["stage"] == stage)["evidence_state"]
 
 
-assert SPEC["stage_evidence_refs"] == []
 study = load_blueprint(DESIGN_STUDY)
 assert len(study["candidates"]) == 3
 assert study["decision"]["primary_candidate_id"] == "CAND-SBA04-STAGED-TRAJECTORY-FIRST"
 assert study["decision"]["rejected_candidate_ids"] == ["CAND-SBA04-STATE-TABLE-FIRST"]
 
 base_chain = [JUMP_RECEIPT, TRANSFORMATION_RECEIPT, REP_REQUIREMENTS_RECEIPT]
+assert len(SPEC["stage_evidence_refs"]) == 9
+assert set(base_chain + [CANDIDATE_RECEIPT, DECISION_RECEIPT]).issubset(SPEC["stage_evidence_refs"])
 
 # Candidate comparison is independent evidence; it must not manufacture a selection decision.
 probe = copy.deepcopy(SPEC)
@@ -54,4 +55,4 @@ assert DESIGN_STUDY in audit["source_refs"]
 assert CANDIDATE_RECEIPT in audit["source_refs"]
 assert DECISION_RECEIPT in audit["source_refs"]
 
-print("Core1A SBA04 real representation design: PASS (candidate comparison and decision separated; PWSE/release remain closed)")
+print("Core1A SBA04 real representation design: PASS (candidate comparison and decision separated; PWSE/release remain closed in isolation)")

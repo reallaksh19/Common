@@ -21,8 +21,10 @@ def stage_state(audit: dict, stage: str) -> str:
     return next(row for row in audit["stage_audit"] if row["stage"] == stage)["evidence_state"]
 
 
-# Canonical authority stays unchanged; this probe proves the real 1A2 -> 1A3 evidence chain is admissible.
-assert SPEC["stage_evidence_refs"] == []
+# Canonical binding is active; this probe overwrites it to prove the real 1A2 -> 1A3 chain independently.
+assert len(SPEC["stage_evidence_refs"]) == 9
+assert JUMP_RECEIPT in SPEC["stage_evidence_refs"]
+assert TRANSFORMATION_RECEIPT in SPEC["stage_evidence_refs"]
 probe = copy.deepcopy(SPEC)
 probe["stage_evidence_refs"] = [JUMP_RECEIPT, TRANSFORMATION_RECEIPT]
 audit = compile_audit(probe, spec_ref=SPEC_REF)
@@ -35,4 +37,4 @@ assert audit["release_authorized"] is False
 assert JUMP_RECEIPT in audit["source_refs"]
 assert TRANSFORMATION_RECEIPT in audit["source_refs"]
 
-print("Core1A SBA04 real cognitive-transformation receipt: PASS (1A2/1A3 admissible; later stages remain fail-closed)")
+print("Core1A SBA04 real cognitive-transformation receipt: PASS (1A2/1A3 admissible in isolation; later stages remain fail-closed)")

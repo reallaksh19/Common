@@ -30,8 +30,9 @@ def stage_row(audit: dict, stage: str) -> dict:
     return next(row for row in audit["stage_audit"] if row["stage"] == stage)
 
 
-# Canonical authority remains deliberately unbound while real evidence is authored and tested.
-assert SPEC["stage_evidence_refs"] == []
+# Canonical binding is active; overwrite it here to preserve the 1A4 isolation boundary.
+assert len(SPEC["stage_evidence_refs"]) == 9
+assert {JUMP_RECEIPT, TRANSFORMATION_RECEIPT, REP_REQUIREMENTS_RECEIPT}.issubset(SPEC["stage_evidence_refs"])
 probe = copy.deepcopy(SPEC)
 probe["stage_evidence_refs"] = [JUMP_RECEIPT, TRANSFORMATION_RECEIPT, REP_REQUIREMENTS_RECEIPT]
 audit = compile_audit(probe, spec_ref=SPEC_REF)
@@ -51,4 +52,4 @@ assert stage_row(audit, "1A11_UNRESOLVED_JUMP_AUDIT")["evidence_state"] == "PART
 assert audit["release_authorized"] is False
 assert REP_REQUIREMENTS_RECEIPT in audit["source_refs"]
 
-print("Core1A SBA04 real representation-requirements receipt: PASS (6/6 direct-gate representations; candidate/decision/bridge remain closed)")
+print("Core1A SBA04 real representation-requirements receipt: PASS (6/6 direct-gate representations; later authority remains closed in isolation)")

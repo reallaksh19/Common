@@ -39,7 +39,7 @@ def digest_without_field(doc: dict, field: str) -> str:
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
-assert SPEC["stage_evidence_refs"] == []
+assert SPEC["stage_evidence_refs"] == CHAIN
 intrinsic = load_blueprint(INTRINSIC_STATE)
 control = load_blueprint(CONTROL_STATE)
 control_schema = load_blueprint("contracts/learner-purpose-control-state.schema.json")
@@ -71,4 +71,4 @@ assert audit["block_reasons"] == [
     "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05",
 ]
 
-print("Core1A SBA04 learner-state gap: PASS (explicit UNKNOWN prior-heuristic state; all stages present; downstream holds preserve fail-closed release)")
+print("Core1A SBA04 learner-state gap: PASS (explicit UNKNOWN prior-heuristic state; canonical all-stage bind; downstream holds preserve fail-closed release)")

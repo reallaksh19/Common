@@ -14,6 +14,17 @@ from validate_core1a_real_bucket_migration import MigrationValidationError, load
 AUDIT = load_blueprint("topics/m2d-sba04-core1a-migration-audit.v1.json")
 SPEC_REF = AUDIT["migration_spec_ref"]
 SPEC = load_blueprint(SPEC_REF)
+CANONICAL_STAGE_EVIDENCE = [
+    "topics/m2d-sba04-stage-evidence/1a0-learner-state-gap.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a2-inferential-jump-closure.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a3-cognitive-transformation.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a5-representation-candidates.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a6-representation-decision.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a7-pwse-bridge.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a9-worked-faded-independent.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a11-unresolved-jump-closure.v1.json",
+]
 LEARNER_GAP_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-learner-state-gap.json"
 CANDIDATE_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-representation-candidates.json"
 DECISION_RECEIPT = "fixtures/core1a-migration-stage-evidence/valid-representation-decision.json"
@@ -47,9 +58,10 @@ def stage_state(audit, stage):
 
 
 # The canonical audit is compiler output from declared data, not a hand-maintained case exception.
+assert SPEC["stage_evidence_refs"] == CANONICAL_STAGE_EVIDENCE
 assert compile_audit(SPEC, spec_ref=SPEC_REF) == AUDIT
 
-# Positive: live Engineering closure is READY, but incomplete pedagogical stages and explicit transfer holds keep release closed.
+# Positive: every pre-manuscript stage is now evidence-backed, Engineering is READY, but explicit SBA05 transfer holds keep release closed.
 result = validate(AUDIT)
 assert result["status"] == "PASS"
 assert result["legacy_claim"] == "COMPLETE"
@@ -59,12 +71,13 @@ assert result["engineering_registry_ref"] == "GENERATED:physics-technical-engine
 assert result["engineering_gate_count"] == 11
 assert result["engineering_registry_digest"].startswith("sha256:")
 assert result["engineering_closure_digest"].startswith("sha256:")
-assert "1A0_LEARNER_STATE_GAP" in result["incomplete_stages"]
-assert "1A2_INFERENTIAL_JUMPS" in result["incomplete_stages"]
-assert "1A11_UNRESOLVED_JUMP_AUDIT" in result["incomplete_stages"]
-assert stage_state(AUDIT, "1A2_INFERENTIAL_JUMPS") == "PARTIAL"
-assert stage_state(AUDIT, "1A11_UNRESOLVED_JUMP_AUDIT") == "PARTIAL"
+assert result["incomplete_stages"] == []
+assert all(row["evidence_state"] == "PRESENT" for row in AUDIT["stage_audit"])
 assert result["held_questions"] == ["Q14", "Q27"]
+assert AUDIT["block_reasons"] == [
+    "DOWNSTREAM_TRANSFER_HOLD:Q14:requires=M2D-SBA-05",
+    "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05",
+]
 assert len(result["high_fragility_step_refs"]) == 8
 assert result["learning_atom_ids"] == [f"M2D-SBA-04{x}" for x in "ABCDEFG"]
 assert result["transfer_routine_ids"] == [f"M2D-SBA-04-R{x}" for x in range(1, 5)]
@@ -74,7 +87,7 @@ bad = copy.deepcopy(AUDIT)
 bad["legacy_claim"]["accepted_as_v9_release_evidence"] = True
 must_fail(bad, "E_MIGRATION_SCHEMA")
 
-# Falsifier 2: release cannot open while compiler-derived pedagogical gaps or transfer holds remain.
+# Falsifier 2: release cannot open while explicit downstream transfer holds remain.
 bad = copy.deepcopy(AUDIT)
 bad["release_authorized"] = True
 must_fail(bad, "E_MIGRATION_FALSE_RELEASE")
@@ -192,4 +205,4 @@ for rel in (
 ):
     runpy.run_path(str(ROOT / rel), run_name="__main__")
 
-print("Core1A real-bucket migration: PASS (typed stage evidence + real SBA04 authored evidence + generic compiler + fail-closed 1A12 boundary)")
+print("Core1A real-bucket migration: PASS (canonical real SBA04 stage evidence bound; generic compiler; downstream SBA05 holds preserve fail-closed release)")

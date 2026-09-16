@@ -28,7 +28,8 @@ def stage_row(audit: dict, stage: str) -> dict:
     return next(row for row in audit["stage_audit"] if row["stage"] == stage)
 
 
-assert SPEC["stage_evidence_refs"] == []
+assert len(SPEC["stage_evidence_refs"]) == 9
+assert set(CHAIN).issubset(SPEC["stage_evidence_refs"])
 plan = load_blueprint(PLAN_REF)
 assert [row["learning_atom_ref"] for row in plan["bridges"]] == [f"M2D-SBA-04{x}" for x in "ABCDEFG"]
 
@@ -53,4 +54,4 @@ assert stage_row(audit, "1A11_UNRESOLVED_JUMP_AUDIT")["evidence_state"] == "PART
 assert audit["release_authorized"] is False
 assert PLAN_REF in audit["source_refs"]
 
-print("Core1A SBA04 PWSE bridge: PASS (7/7 atoms bridged; worked/faded and unresolved-jump authority remain closed)")
+print("Core1A SBA04 PWSE bridge: PASS (7/7 atoms bridged; worked/faded and unresolved-jump authority remain closed in isolation)")

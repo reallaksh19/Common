@@ -32,7 +32,8 @@ def stage_state(audit: dict, stage: str) -> str:
     return next(row for row in audit["stage_audit"] if row["stage"] == stage)["evidence_state"]
 
 
-assert SPEC["stage_evidence_refs"] == []
+assert len(SPEC["stage_evidence_refs"]) == 9
+assert set(CHAIN).issubset(SPEC["stage_evidence_refs"])
 closure_audit = load_blueprint(AUDIT_REF)
 jump_receipt = load_blueprint(JUMP_RECEIPT)
 closure_receipt = load_blueprint(CLOSURE_RECEIPT)
@@ -55,11 +56,11 @@ assert closure_receipt["proof"]["unresolved_jump_refs"] == []
 assert closure_receipt["proof"]["unresolved_required_jump_count"] == 0
 assert stage_state(audit, "1A11_UNRESOLVED_JUMP_AUDIT") == "PRESENT"
 
-# Closing the jump audit does not promote the legacy-only learner-state stage or release held downstream transfers.
+# In this isolation probe 1A0 is deliberately omitted and downstream holds remain explicit.
 assert stage_state(audit, "1A0_LEARNER_STATE_GAP") == "LEGACY_ONLY"
 assert audit["release_authorized"] is False
 assert "LEGACY_ONLY_STAGE_EVIDENCE:1A0_LEARNER_STATE_GAP" in audit["block_reasons"]
 assert "DOWNSTREAM_TRANSFER_HOLD:Q14:requires=M2D-SBA-05" in audit["block_reasons"]
 assert "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05" in audit["block_reasons"]
 
-print("Core1A SBA04 unresolved-jump audit: PASS (live 8/8 closure exact; 1A0 and downstream holds still block release)")
+print("Core1A SBA04 unresolved-jump audit: PASS (live 8/8 closure exact; isolation omits 1A0 and downstream holds still block release)")
