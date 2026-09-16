@@ -2,7 +2,7 @@
 
 Status: **EXECUTION INFRASTRUCTURE / NON-AUTHORITATIVE**
 
-This package delegates bounded work to a clean agent without becoming a second source of Learning Engineering, subject, Engineering Gate, learner, or publication authority.
+This package delegates bounded work to a clean agent without becoming a second source of Learning Engineering, subject, Engineering Gate, learner, route, or publication authority.
 
 Authority direction is one-way:
 
@@ -11,10 +11,10 @@ current repository authority
   -> LearningEngineering / subject authority / CrossDomain / EngineeringGate
   -> Shared/AgentTasks authority resolution
   -> deterministic execution packet
-  -> clean executing agent
+  -> clean executing agent / governed consumer
 ```
 
-`Shared/AgentTasks` may bind exact repository refs and digests, classify an execution task, validate an execution report, and render a derived Engineering preflight. It must not define SKP semantics, subject ontology, source authority, Engineering readiness, learner truth, or publication authority.
+`Shared/AgentTasks` may bind exact repository refs and digests, classify an execution task, validate an execution report, and render a derived Engineering preflight. It must not define SKP semantics, subject ontology, source authority, Engineering readiness, learner truth, route semantics, or publication authority.
 
 ## T1 scope
 
@@ -31,6 +31,20 @@ The T1 kernel contains:
 - `tests/test_execution_kernel.py` — determinism, stale-custody, anti-authority and anti-case-coupling falsifiers.
 
 There are deliberately no task-owned subject profiles and no family of authoritative prose prompt templates.
+
+## Optional opaque execution-route request
+
+`ExecutionTask.execution_route_id` is optional. It is an opaque request passed through the delegation layer; AgentTasks does not parse it, infer its meaning, map it from `topic`/`subtopic`, or resolve it to subject artifacts.
+
+A governed consumer may resolve the exact ID only through its current repository-owned subject authority. An absent or unknown route may remain held. A resolved route may authorize only the consumer-specific action explicitly granted by that subject authority; it does not change Engineering readiness, domain truth, learner state, consumer permissions, publication, or human-review state.
+
+This preserves the rule:
+
+```text
+free-text intent != execution-route authority
+opaque route request != subject truth
+resolved route != downstream readiness
+```
 
 ## Current Learning Engineering limitation
 
