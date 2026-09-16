@@ -1,0 +1,76 @@
+schema_version: relay-v2.5-qualification
+id: QUAL-0001
+candidate:
+  agent_instance_id: "<incoming-agent-instance>"
+question_set:
+  id: QSET-0001
+  path: agents/relay/certifications/qualification/QSET-0001.yaml
+route:
+  ep_id: EP-0001
+  ep_path: agents/relay/execution-packages/EP-0001.yaml
+  roadmap_revision: RM-0001
+  work_package: WP-001
+  ep_contract_digest: "<sha256>"
+answers:
+  - id: Q1
+    response: "<candidate response>"
+    outputs:
+      production_entrypoint: "<observed entrypoint>"
+      state_owner: "<observed state owner>"
+      authority_source: "<observed authority source>"
+      downstream_consumer: "<observed downstream consumer>"
+    evidence: ["<durable repository evidence>"]
+  - id: Q2
+    response: "<candidate reconstruction>"
+    outputs:
+      reconstruction_steps: ["<step>" ]
+      intermediate_result: "<intermediate result>"
+      expected_result: "<final expected result>"
+    evidence: ["<durable calculation/reconstruction basis>"]
+  - id: Q3
+    response: "<candidate boundary/falsifier explanation>"
+    outputs:
+      mutation_effect: "<effect>"
+      protected_invariant: "<invariant>"
+      falsifier: "<exact falsifier>"
+    evidence: ["<durable basis>"]
+  - id: Q4
+    response: "<candidate independent verification>"
+    outputs:
+      independent_method: "<method>"
+      predicted_result: "<result>"
+      tolerance_or_exactness: "<tolerance/exactness>"
+    evidence: ["<independent oracle basis>"]
+  - id: Q5
+    response: "<candidate first-safe-slice plan>"
+    outputs:
+      first_change: "<exact first change>"
+      predicted_before: "<before observation>"
+      predicted_after: "<after observation>"
+      verification: "<exact verification>"
+    evidence: ["<EP step/test/acceptance basis>"]
+evaluated_by:
+  type: INDEPENDENT_AGENT
+  identity: "<independent evaluator identity>"
+  basis:
+    - "<durable evaluation basis>"
+evaluations:
+  - id: Q1
+    status: PASS
+    basis: ["<why the answer passes>" ]
+  - id: Q2
+    status: PASS
+    basis: ["<why the answer passes>" ]
+  - id: Q3
+    status: PASS
+    basis: ["<why the answer passes>" ]
+  - id: Q4
+    status: PASS
+    basis: ["<why the answer passes>" ]
+  - id: Q5
+    status: PASS
+    basis: ["<why the answer passes>" ]
+self_evaluation:
+  allowed: false
+result: PASS
+conversation_context_used: false
