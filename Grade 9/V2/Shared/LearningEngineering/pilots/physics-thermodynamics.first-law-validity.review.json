@@ -1,0 +1,20 @@
+{
+  "review_id": "REVIEW-PHY-THERMO-FIRST-LAW-VALIDITY-v1",
+  "target_pilot_ref": "PILOT-PHYSICS-THERMODYNAMICS-RESEARCH-PROTOTYPE-v1",
+  "target_relation_ref": "REL-PHY-THERMO-FIRST-LAW",
+  "review_state": "BLOCKING_SEMANTIC_REVIEW",
+  "runtime_authority": false,
+  "publication_authority": false,
+  "finding": "The pilot relation Delta U = Q_in - W_by is an internal-energy form of the first law. The more general energy balance applies to total system energy, including macroscopic kinetic and potential energy where relevant.",
+  "required_applicability_condition_before_promotion": "Use the Delta U form only when macroscopic kinetic and potential energy changes are negligible, zero, or separately accounted outside the internal-energy balance.",
+  "sign_convention_constraint": "Positive W_by denotes work done by the system; any alternate convention must change the algebra consistently.",
+  "source_refs": [
+    {
+      "source_id": "SRC-MIT-UNIFIED-FIRST-LAW",
+      "source_locator": "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_4.htm",
+      "selection_reason": "The MIT Unified Engineering treatment states the general first-law balance in terms of total system energy and separately identifies internal, kinetic and potential energy contributions."
+    }
+  ],
+  "promotion_effect": "REL-PHY-THERMO-FIRST-LAW_MUST_REMAIN_PROTOTYPE_HELD_UNTIL_APPLICABILITY_CONDITION_IS_BOUND_IN_THE_RELATION",
+  "resolution_rule": "A later semantic revision may close this review only by adding the macroscopic-energy applicability condition to the governed relation and updating every dependent verification/base-claim statement consistently; schema validity alone cannot close the review."
+}
