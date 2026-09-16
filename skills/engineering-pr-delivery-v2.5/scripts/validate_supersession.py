@@ -43,8 +43,7 @@ def _validate_evidence(items,label,e):
         if status=="NOT_RUN" and not str(item.get("reason","")).strip():e.append(f"{p} NOT_RUN requires reason")
 
 def _resolution_map(node,kind,e):
-    res=(node.get("supersession_resolution") or {}).get(kind,[]) or []
-    out={}
+    res=(node.get("supersession_resolution") or {}).get(kind,[]) or [];out={}
     for i,item in enumerate(res):
         label=f"issue {key(node)} supersession_resolution.{kind}[{i}]"
         if not isinstance(item,dict):e.append(f"{label} must be a mapping");continue
@@ -59,16 +58,17 @@ def _resolution_map(node,kind,e):
 def _preserve_inherited(node,incoming,outgoing,field,e):
     old=incoming.get(field) or [];new=outgoing.get(field) or []
     out_by={str(x.get("id")):x for x in new if isinstance(x,dict) and x.get("id") is not None}
-    kind="acceptance" if field=="unresolved_acceptance" else "evidence"
-    resolved=_resolution_map(node,kind,e)
+    kind="acceptance" if field=="unresolved_acceptance" else "evidence";resolved=_resolution_map(node,kind,e)
+    incoming_ids={str(x.get("id")) for x in old if isinstance(x,dict) and x.get("id") is not None}
+    for rid in resolved:
+        if rid not in incoming_ids:e.append(f"supersession lineage {key(node)} resolves unknown inherited {field} item {rid}")
     for item in old:
         if not isinstance(item,dict):continue
         rid=str(item.get("id",""))
         if rid in out_by:
             if _sig(out_by[rid])!=_sig(item):e.append(f"supersession lineage {key(node)} mutates inherited {field} item {rid}")
             if rid in resolved:e.append(f"supersession lineage {key(node)} both carries and resolves inherited {field} item {rid}")
-        elif rid not in resolved:
-            e.append(f"supersession lineage {key(node)} drops inherited {field} item {rid} without resolution")
+        elif rid not in resolved:e.append(f"supersession lineage {key(node)} drops inherited {field} item {rid} without resolution")
 
 def validate(root:Path):
     e=[];w=[];g=load_yaml(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml");nodes={key(n):n for n in g.get("nodes",[]) or []}
@@ -77,14 +77,13 @@ def validate(root:Path):
     for rel in rels:
         new,old=str(rel.get("from","")),str(rel.get("to",""))
         if old in successor_for_old and successor_for_old[old]!=new:e.append(f"superseded issue {old} has multiple successors")
+        else:successor_for_old.setdefault(old,new)
         if new in predecessor_for_new and predecessor_for_new[new]!=old:e.append(f"supersession successor {new} has multiple direct predecessors")
-        successor_for_old[old]=new;predecessor_for_new[new]=old
-    # Supersession lineage must be acyclic.
+        else:predecessor_for_new.setdefault(new,old)
     for start in list(successor_for_old):
         seen=[];cur=start
         while cur in successor_for_old:
-            if cur in seen:
-                e.append("supersession cycle: "+" -> ".join(seen+[cur]));break
+            if cur in seen:e.append("supersession cycle: "+" -> ".join(seen+[cur]));break
             seen.append(cur);cur=successor_for_old[cur]
 
     for rel in rels:
@@ -108,14 +107,10 @@ def validate(root:Path):
             if field not in inherited:e.append(f"supersession successor {new} missing inherited field {field}")
             elif field in transfer and inherited.get(field)!=transfer.get(field):e.append(f"supersession {old}->{new} transfer mismatch for {field}")
 
-    # If an inherited successor is superseded again, unresolved inherited acceptance/evidence
-    # must either be carried forward byte-for-byte semantically or explicitly resolved.
     for node_id,node in nodes.items():
-        pred=predecessor_for_new.get(node_id);nxt=successor_for_old.get(node_id)
-        if not pred or not nxt:continue
+        if not predecessor_for_new.get(node_id) or not successor_for_old.get(node_id):continue
         incoming=node.get("supersession_inheritance") or {};outgoing=node.get("supersession_receipt") or {}
-        _preserve_inherited(node,incoming,outgoing,"unresolved_acceptance",e)
-        _preserve_inherited(node,incoming,outgoing,"evidence",e)
+        _preserve_inherited(node,incoming,outgoing,"unresolved_acceptance",e);_preserve_inherited(node,incoming,outgoing,"evidence",e)
     return e,w
 
 def main():
