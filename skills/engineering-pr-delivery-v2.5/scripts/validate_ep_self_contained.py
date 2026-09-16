@@ -4,12 +4,15 @@ import argparse
 from pathlib import Path
 from relaylib import load_yaml,print_result,require,scan_context_phrases
 REQ=["schema_version","identity","git_basis","roadmap_source","outcome","context_capsule","repository_discovery","inputs","benchmarks","scope","anti_drift","implementation_plan","quality","acceptance","validation","failure_and_stop_conditions","report_contract","checkpoint_contract","successor_relay"]
+NONE_IDS={None,"","NONE"}
 
 def validate_ep_data(root:Path,ep:dict,label="EP"):
     e=[];w=[];e+=require(ep,REQ,label)
     if ep.get("schema_version")!="relay-v2.5":e.append(f"{label}: schema_version must be relay-v2.5")
     e+=[f"{label}{x[1:]}" if x.startswith("$") else f"{label}: {x}" for x in scan_context_phrases(ep)]
     identity=ep.get("identity") or {};e+=require(identity,["ep_id","branch","base_ref","execution_state","previous_checkpoint"],f"{label}.identity")
+    previous_checkpoint=identity.get("previous_checkpoint");previous_join=identity.get("previous_join")
+    if previous_checkpoint not in NONE_IDS and previous_join not in NONE_IDS:e.append(f"{label}.identity cannot declare both previous_checkpoint and previous_join")
     git_basis=ep.get("git_basis") or {};e+=require(git_basis,["expected_branch","material_ref","base_branch","base_observed_ref","drift_policy","drift_receipt"],f"{label}.git_basis")
     if git_basis.get("drift_policy")!="RECHECK_BEFORE_WRITE":e.append(f"{label}.git_basis.drift_policy must be RECHECK_BEFORE_WRITE")
     if git_basis.get("expected_branch") and identity.get("branch") and git_basis.get("expected_branch")!=identity.get("branch"):e.append(f"{label}.git_basis.expected_branch must match identity.branch")
