@@ -17,7 +17,7 @@ def validate_ep_data(root:Path,ep:dict,label="EP"):
         inh=ep.get("replan_inheritance") or {}
         if str(inh.get("from_replan"))!=str(identity.get("previous_replan")):e.append(f"{label}.replan_inheritance.from_replan must match identity.previous_replan")
         if "unresolved_acceptance" not in inh or "evidence" not in inh:e.append(f"{label}.replan_inheritance must retain unresolved_acceptance and evidence")
-    elif ep.get("replan_inheritance") not in {None,{}}:
+    elif ep.get("replan_inheritance") not in (None,{}):
         e.append(f"{label}.replan_inheritance requires identity.previous_replan")
     git_basis=ep.get("git_basis") or {};e+=require(git_basis,["expected_branch","material_ref","base_branch","base_observed_ref","drift_policy","drift_receipt"],f"{label}.git_basis")
     if git_basis.get("drift_policy")!="RECHECK_BEFORE_WRITE":e.append(f"{label}.git_basis.drift_policy must be RECHECK_BEFORE_WRITE")
