@@ -75,12 +75,15 @@ properties:
           basis: {type: array}
   projection:
     type: object
-    required: [required, state, roadmap_revision, execution_ref, basis]
+    required: [required, state, operation_id, target, roadmap_revision, execution_ref, receipt, basis]
     properties:
       required: {type: boolean}
-      state: {enum: [NOT_REQUIRED, IN_SYNC, PENDING, STALE]}
+      state: {enum: [NOT_REQUIRED, PENDING, PUBLISHED_UNCONFIRMED, IN_SYNC, STALE]}
+      operation_id: {type: [string, 'null']}
+      target: {type: [string, 'null']}
       roadmap_revision: {type: [string, 'null']}
       execution_ref: {type: [string, 'null']}
+      receipt: {type: [string, 'null']}
       basis: {type: array}
   relay_readiness:
     type: object
