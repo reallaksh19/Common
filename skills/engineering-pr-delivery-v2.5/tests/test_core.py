@@ -15,19 +15,7 @@ from validate_checkpoint_linkage import validate as checkpoint_linkage
 from cold_start_check import validate as cold_start
 
 REPORT_SECTIONS=[
-    "Executive state",
-    "Overall / phase / EP progress",
-    "Work completed",
-    "Files changed",
-    "Acceptance matrix",
-    "Tests and evidence",
-    "Quality findings",
-    "Known limitations",
-    "Owner decisions required",
-    "GitHub issue changes",
-    "Roadmap changes",
-    "Exact next actions",
-    "Successor EP",
+    "Executive state","Overall / phase / EP progress","Work completed","Files changed","Acceptance matrix","Tests and evidence","Quality findings","Known limitations","Owner decisions required","GitHub issue changes","Roadmap changes","Exact next actions","Successor EP",
 ]
 
 def dump(path,data):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(yaml.safe_dump(data,sort_keys=False),encoding="utf-8")
@@ -56,4 +44,13 @@ class CoreTests(unittest.TestCase):
     def test_not_run_infrastructure_is_not_a_hard_stop(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,_,_,s=good(root);s["status_planes"]["evidence"]={"state":"NOT_RUN","summary":"Required external runner did not execute","not_run":[{"id":"TEST-1","reason":"Runner produced no executable job","cause":"INFRASTRUCTURE"}]};s["status_planes"]["execution"]={"state":"WAITING","can_continue":False,"next_action":"Retry when the external runner can execute."};dump(root/"agents/relay/REPO_STATE.yaml",s);self.assertEqual([],state_planes(root)[0])
+    def test_terminal_repo_has_empty_frontier_and_no_active_ep(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);r,_,p,s=good(root)
+            obj=r["objectives"][0];phase=obj["phases"][0];wp=phase["work_packages"][0];obj["state"]="COMPLETE";phase["state"]="COMPLETE";wp["state"]="COMPLETE";wp["execution_status"]="TERMINAL"
+            p["overall"]={"earned_weight":100,"total_weight":100,"percent":100}
+            s["active_ep"]={"id":"NONE","path":None,"state":"NONE"};s["last_checkpoint"]={"id":"CP-1","path":"agents/relay/checkpoints/CP-1.yaml"};s["progress"].update({"overall_percent":100,"phase_percent":100,"ep_percent":100});s["status_planes"]={"execution":{"state":"COMPLETE","can_continue":False,"next_action":"No material work remains."},"quality":{"state":"CLEAR","findings":[]},"evidence":{"state":"COMPLETE","summary":"Required evidence is terminal.","not_run":[]},"stop":{"active":False,"category":"NONE","reason":"","basis":[]}}
+            cp={"schema_version":"relay-v2.5","checkpoint_id":"CP-1","ep_id":"EP-1","roadmap_basis":{"roadmap_id":"RM-T","revision":"RM-0001"},"implementation_result":{},"acceptance_results":[],"validation_results":[],"quality_findings":[],"discoveries":[],"roadmap_reconciliation":{"result":"STATUS_UPDATE"},"successor":{"frontier_work_package":None,"ep_id":None}}
+            dump(root/"agents/relay/roadmap/OVERALL_ROADMAP.yaml",r);dump(root/"agents/relay/roadmap/PROGRESS.yaml",p);dump(root/"agents/relay/REPO_STATE.yaml",s);dump(root/"agents/relay/checkpoints/CP-1.yaml",cp)
+            self.assertEqual([],frontier(root)[0]);self.assertEqual([],checkpoint_linkage(root)[0]);self.assertEqual([],cold_start(root)[0])
 if __name__=="__main__":unittest.main()
