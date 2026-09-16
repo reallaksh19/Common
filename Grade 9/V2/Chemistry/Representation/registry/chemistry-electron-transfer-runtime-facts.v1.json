@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "extension_id": "CHEM-C-H-RUNTIME-FACTS-ELECTRON-TRANSFER-v1",
+  "subject": "CHEMISTRY",
+  "additive_only": true,
+  "adapter_authored_facts_forbidden": true,
+  "fact_packets": [
+    {
+      "fact_packet_id": "CHEM-REP-FACT-ELECTRON-TRANSFER-ARROWS-v1",
+      "source_gate_id": "CHEM-REDOX-OXIDATION",
+      "source_representation_ref": "REP-CHEM-ELECTRON-TRANSFER-ARROWS",
+      "source_equation_refs": [
+        "EQ-CHEM-REDOX-TRANSFER"
+      ],
+      "fact_kind": "ELECTRON_TRANSFER_STATE_LEDGER_V1",
+      "parameters": {
+        "chemical_entities": [
+          "CuO(s) + H2(g) -> Cu(s) + H2O(l)"
+        ],
+        "oxidation_states": [
+          {
+            "element": "Cu",
+            "before": 2,
+            "after": 0,
+            "before_species": "CuO(s)",
+            "after_species": "Cu(s)",
+            "electron_count": 2
+          },
+          {
+            "element": "H",
+            "before": 0,
+            "after": 1,
+            "before_species": "H2(g)",
+            "after_species": "H2O(l)",
+            "electron_count": 2
+          }
+        ],
+        "checks": [
+          "Check total electrons lost by reducing agent equals total electrons gained by oxidizing agent"
+        ]
+      }
+    }
+  ]
+}
