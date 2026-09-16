@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, relay_state, repository, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, chat_context_required]
+required: [schema_version, relay_state, repository, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, projection, relay_readiness, chat_context_required]
 properties:
   schema_version: {const: relay-v2.5}
   relay_state: {enum: [INITIALIZING, ACTIVE, PARALLEL, IDLE, TERMINAL]}
@@ -66,5 +66,22 @@ properties:
           category: {enum: [NONE, OWNER_DECISION_REQUIRED, ESSENTIAL_INPUT_MISSING, AUTHORITY_VIOLATION, PROTECTED_INVARIANT_FAILURE, WRITE_COLLISION, SUPERSEDED_EP, ROADMAP_CONFLICT, REPOSITORY_STATE_CONFLICT, UNSAFE_ENGINEERING_RESULT]}
           reason: {type: string}
           basis: {type: array}
+  projection:
+    type: object
+    required: [required, state, roadmap_revision, execution_ref, basis]
+    properties:
+      required: {type: boolean}
+      state: {enum: [NOT_REQUIRED, IN_SYNC, PENDING, STALE]}
+      roadmap_revision: {type: [string, 'null']}
+      execution_ref: {type: [string, 'null']}
+      basis: {type: array}
+  relay_readiness:
+    type: object
+    required: [repository_ready, projection_ready, handover_ready, reasons]
+    properties:
+      repository_ready: {type: boolean}
+      projection_ready: {type: boolean}
+      handover_ready: {type: boolean}
+      reasons: {type: array}
   chat_context_required: {const: false}
 additionalProperties: true
