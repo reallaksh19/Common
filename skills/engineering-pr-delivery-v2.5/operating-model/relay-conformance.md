@@ -2,14 +2,15 @@
 
 Question: if the current conversation disappears immediately, can a competent replacement recover the correct roadmap position, locate a semantically complete baton, independently prove takeover, resolve the correct live execution route, and continue safely without hidden chat context or stale evidence?
 
-## Kernel conformance today
+## Implemented static conformance
 
-The current PR #396 kernel validates:
+PR #396 now validates:
 
 - `REPO_STATE` lifecycle/routing and current roadmap revision;
+- `REPO_PROFILE` and pinned relay-protocol basis;
 - deterministic executable frontier;
-- one serial EP or an Owner-approved parallel router covering that frontier;
-- structural EP context, inputs/scope/acceptance/tests/report/successor duties;
+- one serial semantic EP or an Owner-approved parallel router whose lane EPs are semantic;
+- typed inputs/oracles, executable discovery contracts, scope/anti-drift/step/report/successor semantics;
 - explicit Git execution basis and branch/worktree routing;
 - drift and roadmap-continuity reconciliation;
 - exact-head checkpoint evidence;
@@ -17,48 +18,49 @@ The current PR #396 kernel validates:
 - independent execution, quality, evidence and stop state;
 - checkpoint/join/replan successor custody;
 - issue graph/closure/supersession semantics;
-- external projection convergence separately from repository recovery;
+- external projection convergence separately from baton readiness;
+- candidate-independent `BATON_READY` derivation;
+- route/candidate `DISC-*` and `TC-*` evidence/admissions;
+- admission staleness through exact roadmap/material plus EP/profile/predecessor digests;
 - no unauthorized parallel material work.
 
-`cold_start_check.py` is stricter than structural conformance about hidden chat dependence, but the kernel does not yet provide the full candidate-specific takeover certification required by the completion architecture.
+`cold_start_check.py` remains a repository-recovery diagnostic. It is no longer the final candidate admission authority; `TC-*` supplies candidate-specific admission and `material_write_ready.py` supplies the live write gate.
 
-## Completion conformance target
+## Readiness predicates
 
-The normative target is `operating-model/completion-architecture.md` and the implementation order is `operating-model/catchup-completion-roadmap.md`.
-
-Completion conformance separates five predicates:
-
-```text
-BATON_READY
-TAKEOVER_CERTIFIED
-PROJECTION_READY
-HANDOVER_READY
-MATERIAL_WRITE_READY
-```
-
-A conforming completed relay must prove:
+V2.5 deliberately separates repository custody from candidate admission and live write permission.
 
 ### Baton readiness
 
-- authoritative roadmap/frontier is valid;
-- one-WP EP/plan is semantically complete rather than merely structurally populated;
-- predecessor custody is valid;
-- current-slice input and benchmark/oracle contracts are complete;
-- repository discovery is executable and receipt-producing;
-- scope/protected/prohibited/anti-drift contracts are complete;
-- implementation steps and exact report/successor payloads are executable without chat context.
+```text
+BATON_READY
+```
 
-`BATON_READY` is a property of the repository baton and must be decidable before a future replacement agent is known.
+Repository-wide and candidate-independent. It proves the authoritative roadmap/frontier, semantic EP/plan, predecessor custody, profile/protocol, current-slice inputs/oracles, discovery contract, scope/anti-drift, report/successor contract, and zero-chat requirement are complete.
+
+A repository may be baton-ready before any future candidate exists.
 
 ### Candidate takeover
 
-The incoming candidate independently produces required discovery/qualification evidence and receives a current Takeover Certification on the exact roadmap/EP/Git-material basis.
+```text
+TAKEOVER_CERTIFIED(route,candidate)
+```
 
-The candidate does not author the criteria, answer them, and unilaterally declare itself qualified. Objective parts may be deterministically evaluated; engineering comprehension that cannot be mechanically proved needs a durable independent evaluation basis.
+Route/candidate-specific. The incoming candidate must have current PASS discovery/certification evidence on the exact current basis. Serial and parallel-lane routes are independent admissions.
+
+A TC re-runs semantic EP and basis checks. Candidate evidence binds the semantic EP digest, profile digest, predecessor-baton digest, roadmap revision, material ref and route so in-place contract mutation invalidates the old certification.
+
+Self-certification is prohibited. The candidate may not prepare its own certification criteria. Objective facts may be deterministically evaluated; engineering comprehension that needs independent evaluation is completed by the WP-03 `QUAL-*` transaction.
+
+If the EP declares a required phase/material qualification boundary, WP-02 rejects TC PASS until valid qualification exists. Takeover Certification does not bypass Q1-Q5.
 
 ### Projection readiness
 
-External GitHub/coordination projection is current independently of engineering repository truth. Projection lag does not erase a valid baton or candidate evidence.
+```text
+PROJECTION_READY
+```
+
+External GitHub/coordination projection is current independently of engineering repository truth.
 
 ### Handover readiness
 
@@ -71,27 +73,36 @@ This is outgoing custody completeness, not candidate write permission.
 ### Material write readiness
 
 ```text
-MATERIAL_WRITE_READY =
-    TAKEOVER_CERTIFIED
+MATERIAL_WRITE_READY(route,candidate,live_git) =
+    TAKEOVER_CERTIFIED(route,candidate)
 AND live route valid
-AND live Git/material basis valid
+AND live Git/material basis acceptable
 AND current drift/continuity permits WRITE
 AND material_authority == WRITE
+AND execution.can_continue == true
 AND no active hard stop
 ```
 
-An `ACTIVE` lifecycle is never sufficient proof of any of these predicates by itself.
+This predicate is deliberately runtime-derived and not stored in `REPO_STATE`. An `ACTIVE` lifecycle or persisted `material_authority: WRITE` is never sufficient permission for an uncertified/wrong-route candidate.
 
 ## Live checkout boundary
 
-Static repository files cannot prove the operator's current checkout. Before material writes, live route and Git context must still be resolved against the selected EP/plan.
+Static repository files cannot prove the operator's current checkout. Before material writes, run route/Git inspection and `material_write_ready.py --candidate-id ...` against the live repository.
+
+For moved base state, a drift receipt is accepted for the live write gate only if it validates for WRITE and its `to_base` equals the base currently observed by Git. Historical drift classification does not authorize a newer base.
 
 ## Reports and generated views
 
 Reports, Owner status, technical status and handover Markdown are projections of authority objects. They do not become competing sources of truth. If a generated report disagrees with roadmap/EP/certification/checkpoint/progress/issue sources, the projection is stale or invalid.
 
+## Current completion boundary
+
+WP-02 establishes zero-context repository takeover/admission. WP-03 still has to implement the stronger `QUESTION_SET -> candidate answers -> independent evaluation -> QUAL-*` engineering comprehension transaction.
+
+Later WPs still own complete progress/handover projection, GitHub operating transactions, quality procedures, plain-language Owner communication and the recursive A -> B -> C release test.
+
 ## Defining release test
 
-Completion requires an Agent A -> Agent B -> Agent C relay with chat custody deliberately removed between candidates. If Agent C needs prior conversation to reconstruct any material Owner intent, current task, input authority, benchmark/oracle, scope, evidence, quality obligation, next work or staleness condition, V2.5 completion fails.
+Completion requires Agent A -> Agent B -> Agent C with chat custody deliberately removed between candidates. If Agent C needs prior conversation to reconstruct any material Owner intent, current task, input authority, benchmark/oracle, scope, evidence, quality obligation, next work or staleness condition, V2.5 completion fails.
 
 A green generic suite proves reusable protocol checks executed successfully. It does not prove a particular downstream product, engineering calculation, release, or human UX acceptance.
