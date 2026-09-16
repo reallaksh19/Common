@@ -17,7 +17,6 @@ router_snapshot:
   not_applicable:
     - blueprint: engineering-numerics
       reason: "No numerical authority or solver behavior changed."
-      review_focus: [confirm numerical path remains untouched]
 procedure_results:
   - blueprint: coding
     result: CLEAR
