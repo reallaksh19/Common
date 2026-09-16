@@ -1,7 +1,20 @@
-# V2.5 synthetic stress tests
+# Generic V2.5 stress scenarios
 
-These tests reproduce difficult relay conditions without copying any downstream repository, issue, branch, product domain or engineering formula.
+These tests are synthetic. They must not encode names, IDs, branches, formulas, paths or workflow semantics from any downstream project.
 
-Stress conditions include topology-derived frontier movement, infrastructure `NOT_RUN` without a hard stop, rejection of overloaded `BLOCKED` execution state, progress-denominator changes that preserve earned work, and conversational-context leakage.
+Current stress coverage includes:
 
-Real repositories may be passed to `scripts/stress_test_relay.py` as read-only black-box validation targets. A real-project failure must be reduced to a generic synthetic regression before changing Common protocol logic.
+- infrastructure `NOT_RUN` without automatic hard stop;
+- overloaded blocker-state rejection;
+- topology-derived executable frontier;
+- progress denominator changes without erasing earned work;
+- context-dependent instruction rejection;
+- checkpoint → successor EP baton linkage;
+- Owner-intent roadmap mutation with frontier/progress-basis reconciliation;
+- incoming-phase Q1-Q5 anchor grounding;
+- supersession transfer into the successor;
+- issue closure only after terminal roadmap/evidence state;
+- hard-stop/execution consistency;
+- terminal/idle relay with empty frontier and no active EP.
+
+Real repositories may be inspected read-only to discover additional failure modes. Every discovered mode must be reduced to a repository-neutral synthetic regression here before changing Common protocol logic.
