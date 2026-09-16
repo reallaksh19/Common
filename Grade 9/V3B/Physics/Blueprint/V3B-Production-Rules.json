@@ -1,0 +1,267 @@
+{
+  "policy_id": "PHYSICS-V3B-PRODUCTION",
+  "version": "1.1.0",
+  "status": "NORMATIVE_SPECIFICATION",
+  "artifact_kind": "RULE_CATALOGUE_NOT_EXECUTABLE_VALIDATOR_OR_SCHEMA",
+  "blueprint_ref": "V3B-Production-Blueprint.md",
+  "agent_work_order_ref": "V3B-Agent-Execution.md",
+  "acceptance_ref": "V3B-Acceptance-and-Regression.md",
+  "core_roles": {
+    "CORE1": "EXISTING_BASIC_NOTES",
+    "CORE2": "EXISTING_FROZEN_QUESTIONS_AND_HINTS",
+    "CORE1A": "DECLARATIVE_STUDY",
+    "CORE1B": "CONCEPTUAL_SELF_TUTOR",
+    "CORE2A": "SOLUTION_APPRENTICESHIP",
+    "CORE2B": "APPLICATION_AND_TRANSFER_TUTOR"
+  },
+  "frozen_products": [
+    "CORE1",
+    "CORE2"
+  ],
+  "applicability": {
+    "ALL_SELECTED": "Every selected product; frozen product defects are reported with separate support/errata, never silently edited.",
+    "STUDY_AB": [
+      "CORE1A",
+      "CORE1B"
+    ],
+    "ALL_AB": [
+      "CORE1A",
+      "CORE1B",
+      "CORE2A",
+      "CORE2B"
+    ],
+    "PRACTICE_AB": [
+      "CORE2A",
+      "CORE2B"
+    ],
+    "COMPUTABLE_ANSWERS": "Every numerical/symbolic answer with an approved scientific evaluator. Missing evaluator is a visible gap, not NOT_APPLICABLE.",
+    "FIGURE_OBLIGATIONS": "Every required or included scientific figure.",
+    "TRANSFER_CLAIMS": "Every claim of new/unseen transfer.",
+    "MEASURED_FIT_CLAIMS": "Every claim of measured learner fit/mastery.",
+    "PUBLISHED_PRODUCTS": "Every product submitted for publication acceptance.",
+    "EXTENSIONS": "Every added/changed scope, depth or dependency baseline."
+  },
+  "depth_controls": {
+    "study_axis": "INTRINSIC_SUBTOPIC_DIFFICULTY",
+    "knowledge_controls_apply_to": [
+      "CORE2A",
+      "CORE2B"
+    ],
+    "research_required_for": [
+      "MEDIUM",
+      "HARD"
+    ],
+    "page_allowances_are_not_quotas": true
+  },
+  "evidence_states": [
+    "PASS",
+    "FAIL",
+    "NOT_RUN",
+    "STALE",
+    "UNKNOWN",
+    "NOT_APPLICABLE"
+  ],
+  "evidence_required_fields": [
+    "rule_id",
+    "rule_version",
+    "scope",
+    "input_digests",
+    "artifact_digests",
+    "evaluator_version",
+    "method_or_command",
+    "observed_comparison",
+    "result",
+    "authority"
+  ],
+  "overlap_screening": {
+    "status": "UNCALIBRATED_REVIEW_TRIGGERS",
+    "shingle_words": 5,
+    "jaccard_candidate": 0.65,
+    "jaccard_review": 0.8,
+    "jaccard_high_review": 0.9,
+    "containment_review": 0.8,
+    "containment_min_words": 50,
+    "exact_short_matches": "REVIEW",
+    "pair_selection": "ALL_ELIGIBLE_OBJECTS_FROM_COMPLETE_INVENTORY",
+    "low_similarity_proves_novelty": false
+  },
+  "reuse_classes": [
+    "REQUIRED_RELATION",
+    "SPACED_RETRIEVAL",
+    "RECONSTRUCTION_ANCHOR",
+    "WORKED_TO_FADED",
+    "REPRESENTATION_TRANSLATION",
+    "NEW_TRANSFER",
+    "ACCIDENTAL_DUPLICATE"
+  ],
+  "rules": [
+    {
+      "id": "SRC-01",
+      "purpose": "source_reconciliation",
+      "applies_to": "ALL_SELECTED",
+      "required_evidence_method": "SOURCE_AND_REVIEW",
+      "falsifier": "alter_value_unit_or_omit_subpart",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "COV-01",
+      "purpose": "publication_coverage",
+      "applies_to": "ALL_SELECTED",
+      "required_evidence_method": "HOST_AND_CONTENT",
+      "falsifier": "retain_anchor_delete_body",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "SEM-01",
+      "purpose": "scientific_semantics",
+      "applies_to": "ALL_SELECTED",
+      "required_evidence_method": "ORACLE_AND_REVIEW",
+      "falsifier": "change_operation_or_condition",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "DEP-01",
+      "purpose": "inference_depth",
+      "applies_to": "STUDY_AB",
+      "required_evidence_method": "ACADEMIC_REVIEW",
+      "falsifier": "delete_critical_transition",
+      "runtime_enforcement": "PENDING"
+    },
+    {
+      "id": "CORE-01",
+      "purpose": "core_purpose",
+      "applies_to": "ALL_AB",
+      "required_evidence_method": "ACADEMIC_REVIEW",
+      "falsifier": "rename_without_changing_learner_action",
+      "runtime_enforcement": "PENDING"
+    },
+    {
+      "id": "ANS-01",
+      "purpose": "all_prompt_answer_closure",
+      "applies_to": "ALL_SELECTED",
+      "required_evidence_method": "HOST_AND_REVIEW",
+      "falsifier": "add_unregistered_prompt_or_empty_answer",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "ANS-02",
+      "purpose": "published_answer_correctness",
+      "applies_to": "COMPUTABLE_ANSWERS",
+      "required_evidence_method": "ORACLE_AND_PUBLICATION",
+      "falsifier": "corrupt_displayed_answer_only",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "FIG-01",
+      "purpose": "figure_instance_binding",
+      "applies_to": "FIGURE_OBLIGATIONS",
+      "required_evidence_method": "HOST_AND_REVIEW",
+      "falsifier": "swap_incompatible_valid_figure",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "FIG-02",
+      "purpose": "figure_scientific_geometry",
+      "applies_to": "FIGURE_OBLIGATIONS",
+      "required_evidence_method": "GEOMETRY_AND_VISUAL_REVIEW",
+      "falsifier": "change_direction_scale_or_graph",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "REUSE-01",
+      "purpose": "complete_exposure_audit",
+      "applies_to": "ALL_AB",
+      "required_evidence_method": "HOST_AND_REVIEW",
+      "falsifier": "omit_repeated_pair_from_author_list",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "TRANSFER-01",
+      "purpose": "reasoning_novelty",
+      "applies_to": "TRANSFER_CLAIMS",
+      "required_evidence_method": "ACADEMIC_REVIEW",
+      "falsifier": "renumber_same_solution_family",
+      "runtime_enforcement": "PENDING"
+    },
+    {
+      "id": "FIT-01",
+      "purpose": "practice_routing_provenance",
+      "applies_to": "PRACTICE_AB",
+      "required_evidence_method": "HOST_AND_REVIEW",
+      "falsifier": "remove_knowledge_and_waiver",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "FIT-02",
+      "purpose": "measured_fit_claim",
+      "applies_to": "MEASURED_FIT_CLAIMS",
+      "required_evidence_method": "LEARNER_EVIDENCE_AND_REVIEW",
+      "falsifier": "assert_mastery_without_scoped_evidence",
+      "runtime_enforcement": "PENDING"
+    },
+    {
+      "id": "LAYOUT-01",
+      "purpose": "final_medium_quality",
+      "applies_to": "PUBLISHED_PRODUCTS",
+      "required_evidence_method": "LAYOUT_AND_VISUAL_REVIEW",
+      "falsifier": "add_blank_canvas_clipping_or_tiny_labels",
+      "runtime_enforcement": "PENDING"
+    },
+    {
+      "id": "RELAY-01",
+      "purpose": "portable_recovery",
+      "applies_to": "ALL_SELECTED",
+      "required_evidence_method": "HOST_RECOVERY_EXERCISE",
+      "falsifier": "omit_dependency_from_bundle",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    },
+    {
+      "id": "EXT-01",
+      "purpose": "extension_and_invalidation",
+      "applies_to": "EXTENSIONS",
+      "required_evidence_method": "HOST_AND_REVIEW",
+      "falsifier": "reuse_stale_receipt_or_duplicate_extension",
+      "runtime_enforcement": "PENDING"
+    },
+    {
+      "id": "RELEASE-01",
+      "purpose": "evidence_and_authorization",
+      "applies_to": "ALL_SELECTED",
+      "required_evidence_method": "TRUSTED_HOST",
+      "falsifier": "claim_missing_or_stale_check_passed",
+      "runtime_enforcement": "PARTIAL_PUBLICATION_HOST"
+    }
+  ],
+  "release": {
+    "all_applicable_rules_require_current_accepted_pass": true,
+    "not_applicable_requires_reviewed_applicability": true,
+    "exact_version_owner_authorization_required": true,
+    "catalogue_validation_authorizes_release": false,
+    "runtime_enforcement": "PREVIEW_HOST_ALWAYS_FALSE; FULL_RELEASE_INTEGRATION_PENDING"
+  },
+  "runtime_coverage_ref": "../ProductionKit/V3B-Runtime-Map.md",
+  "research_policy_ref": "V3B-Research-and-Minimum-Criteria.md",
+  "working_states": [
+    "EXPLORATORY",
+    "REVIEW_DRAFT",
+    "LEARNER_READY"
+  ],
+  "minimum_criteria": [
+    "MIN-1_SCIENTIFIC_CORRECTNESS",
+    "MIN-2_REQUIRED_COVERAGE",
+    "MIN-3_SELF_HELP_CLOSURE",
+    "MIN-4_CORE_AND_LEARNER_FIT",
+    "MIN-5_USABLE_PUBLICATION",
+    "MIN-6_TRACEABLE_ACCEPTED_STATE"
+  ],
+  "stage_controls": {
+    "research_requires_accepted_baseline": false,
+    "per_search_approval_required": false,
+    "advisory_alone_blocks_release": false,
+    "scientific_review_required_blocks": "LEARNER_READY_ONLY",
+    "known_wrong_numeric_result": "BLOCKING_DEFECT",
+    "unsupported_numeric_evaluator": "MARKED_REVIEW_DRAFT_ALLOWED",
+    "equation_transformation": "SOURCE_LINKED_WORKING_AND_SCIENTIFIC_REVIEW",
+    "ab_hint_count": "PURPOSE_APPROPRIATE_NOT_FIXED"
+  }
+}

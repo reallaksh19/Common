@@ -1,0 +1,240 @@
+{
+  "status": "PASS",
+  "count": 57,
+  "tests": [
+    {
+      "name": "Nine registered gates retain 54 explicit obligations",
+      "status": "PASS"
+    },
+    {
+      "name": "Computed closure: THERMODYNAMICS-INITIAL",
+      "status": "PASS"
+    },
+    {
+      "name": "Computed closure: THERMODYNAMICS-WITH-CYCLE",
+      "status": "PASS"
+    },
+    {
+      "name": "Computed closure: GRAVITY-RESEARCH-BOUNDED",
+      "status": "PASS"
+    },
+    {
+      "name": "Computed closure: GRAVITY-ADVANCED-HELD",
+      "status": "PASS"
+    },
+    {
+      "name": "Deleting a required equation fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Changing first-law sign fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Dropping pressure-work applicability fails",
+      "status": "PASS"
+    },
+    {
+      "name": "An unknown gate needs a baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "Unknown prerequisite fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Prerequisite cycle fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Claimed validated maturity fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Self-approved subject state fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Blank evidence fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Representation outside dependency scope fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Easy enrichment research fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Hard missing research fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Changing model scope without baseline review fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Dropping one representation-to-equation link fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Stale binding version fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Omitted dependency closure fails",
+      "status": "PASS"
+    },
+    {
+      "name": "A fourth subtopic in one bundle fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared prerequisite change invalidates transitive consumers",
+      "status": "PASS"
+    },
+    {
+      "name": "Adding cycle retains existing first-law artifacts",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual content-object closure: CORE1A",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual content-object closure: CORE1B",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual content-object closure: CORE2A",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual content-object closure: CORE2B",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing equation realization object fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Mandatory coverage cannot become optional",
+      "status": "PASS"
+    },
+    {
+      "name": "Core-purpose action missing fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Answer removed fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Generated item cannot impersonate source",
+      "status": "PASS"
+    },
+    {
+      "name": "Embedded unanswered prompt fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Frozen number, stem and digest retained",
+      "status": "PASS"
+    },
+    {
+      "name": "Core1 products do not require knowledge",
+      "status": "PASS"
+    },
+    {
+      "name": "Core2 absent calibration fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Known percentage is a prediction, not mastery",
+      "status": "PASS"
+    },
+    {
+      "name": "Calibration controls cannot silently drift",
+      "status": "PASS"
+    },
+    {
+      "name": "Percentage cannot choose a missing purpose",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid percentage fails",
+      "status": "PASS"
+    },
+    {
+      "name": "Owner-waiver path stays unvalidated against knowledge",
+      "status": "PASS"
+    },
+    {
+      "name": "Waiver cannot be invented without authority",
+      "status": "PASS"
+    },
+    {
+      "name": "Waiver and percentage cannot coexist",
+      "status": "PASS"
+    },
+    {
+      "name": "Exact prose is review, not automatic semantic block",
+      "status": "PASS"
+    },
+    {
+      "name": "Containment catches copied excerpt in a longer passage",
+      "status": "PASS"
+    },
+    {
+      "name": "Equation reuse awaits educational judgment",
+      "status": "PASS"
+    },
+    {
+      "name": "Fading anchor cannot count as independent transfer",
+      "status": "PASS"
+    },
+    {
+      "name": "Unreviewed similarity remains pending",
+      "status": "PASS"
+    },
+    {
+      "name": "Thermodynamics oracle: piston work in two unit systems",
+      "status": "PASS"
+    },
+    {
+      "name": "Thermodynamics oracle: two paths and reversal",
+      "status": "PASS"
+    },
+    {
+      "name": "Gravity oracle: exact and approximate energy errors",
+      "status": "PASS"
+    },
+    {
+      "name": "Gravity oracle: field and escape scaling differ",
+      "status": "PASS"
+    },
+    {
+      "name": "Published Markdown retains all objects: CORE1A",
+      "status": "PASS"
+    },
+    {
+      "name": "Published Markdown retains all objects: CORE1B",
+      "status": "PASS"
+    },
+    {
+      "name": "Published Markdown retains all objects: CORE2A",
+      "status": "PASS"
+    },
+    {
+      "name": "Published Markdown retains all objects: CORE2B",
+      "status": "PASS"
+    }
+  ],
+  "scope": "Structural falsifiers and analytical calculations; no independent subject/learner approval.",
+  "node_cli": "NOT_RUN",
+  "browser_visual": "NOT_RUN",
+  "pdf_visual": "NOT_RUN",
+  "release_authorized": false,
+  "execution": "Exact pure module source executed in JavaScript environment; includes published Markdown object preservation"
+}

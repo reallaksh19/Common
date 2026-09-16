@@ -1,0 +1,624 @@
+[
+  {
+    "action_refs": {
+      "EXPLAIN": "CORE1A-WORK",
+      "REPRESENT": "CORE1A-REP",
+      "VERIFY": "CORE1A-CHECK",
+      "WORK": "CORE1A-WORK"
+    },
+    "actions": [
+      "EXPLAIN",
+      "REPRESENT",
+      "WORK",
+      "VERIFY"
+    ],
+    "baseline_version": "1.0.0",
+    "core": "CORE1A",
+    "coverage": [
+      {
+        "disposition": "REALIZED",
+        "id": "SYSTEM",
+        "object_refs": [
+          "CORE1A-SET"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "SIGNS",
+        "object_refs": [
+          "CORE1A-WORK"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "RELATION",
+        "object_refs": [
+          "CORE1A-WORK"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "REPRESENTATION",
+        "object_refs": [
+          "CORE1A-REP"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "REASONING",
+        "object_refs": [
+          "CORE1A-WORK"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "CHECK",
+        "object_refs": [
+          "CORE1A-CHECK"
+        ]
+      }
+    ],
+    "gate_ids": [
+      "PHY-TH-FIRST-LAW"
+    ],
+    "id": "THERMO-CORE1A",
+    "learner_calibration": null,
+    "objects": [
+      {
+        "content": "Imagine gas in a cylinder pushing a piston. The system is the gas. No matter crosses its boundary, and changes in bulk kinetic and gravitational potential energy are negligible. Heat and work describe transfers; internal energy describes the system's state. Define \\(Q>0\\) into the gas and \\(W_{\\rm by}>0\\) for work done by it.",
+        "id": "CORE1A-SET",
+        "kind": "EXPLANATION",
+        "title": "Choose the system"
+      },
+      {
+        "content": "![Signed energy flow](energy-flow.svg)\n\nThe heat arrow crosses inward and contributes \\(+Q\\). The work arrow crosses outward and contributes \\(-W_{\\rm by}\\). The diagram represents energy bookkeeping, not heat stored as a substance inside the gas.",
+        "id": "CORE1A-REP",
+        "kind": "REPRESENTATION",
+        "title": "Map arrows to equation terms"
+      },
+      {
+        "content": "\\[\nU_f=U_i+Q-W_{\\rm by}\n\\quad\\Rightarrow\\quad\n\\Delta U=Q-W_{\\rm by}.\n\\]\nSubtraction follows from energy leaving. If another book defines work **on** the gas, \\(W_{\\rm on}=-W_{\\rm by}\\); the equivalent relation is \\(\\Delta U=Q+W_{\\rm on}\\).\n\nWith 500 J entering as heat and 180 J leaving as work,\n\\[\n\\Delta U=500-180=320\\ {\\rm J}.\n\\]\nThe gas gains internal energy while transferring some energy outward. Do not subtract the outward work twice.\n\nFor piston area \\(A\\) moving through \\(dx\\), \\(dV=A\\,dx\\). Therefore \\(dW_{\\rm by}=F_{\\rm ext}dx=p_{\\rm ext}A\\,dx=p_{\\rm ext}dV\\). At constant opposing pressure, \\(W_{\\rm by}=p_{\\rm ext}(V_f-V_i)\\). Substituting system pressure for opposing pressure requires quasistatic mechanical equilibrium.\n\nExpansion gives positive work; compression gives negative work. A fixed-volume process gives zero pressure-volume work, but may still exchange heat. Electrical or shaft work would require additional terms.",
+        "id": "CORE1A-WORK",
+        "kind": "EXPLANATION",
+        "title": "Build the relation, then use it"
+      },
+      {
+        "content": "A closed rigid vessel receives 120 J of heat. There is no electrical or shaft work and no change in bulk kinetic/potential energy. Determine its pressure-volume work and internal-energy change. Identify the condition fixing the work.",
+        "id": "CORE1A-PROMPT",
+        "kind": "PROMPT",
+        "title": "Self-check: A1-Q1"
+      },
+      {
+        "content": "\\(W_{\\rm by}=0\\), \\(\\Delta U=+120\\ {\\rm J}\\).",
+        "id": "CORE1A-ANSWER",
+        "kind": "ANSWER",
+        "title": "Answer: A1-Q1"
+      },
+      {
+        "content": "Rigidity fixes volume, so the moving-boundary work is zero. The question separately excludes other work modes. Thus all the heat input increases internal energy. Rigidity alone would not exclude electrical work.",
+        "id": "CORE1A-EXPLAIN",
+        "kind": "EXPLANATION",
+        "title": "Explain the result"
+      },
+      {
+        "content": "In the worked illustration, \\(320+180=500\\ {\\rm J}\\). In A1-Q1, \\(120+0=120\\ {\\rm J}\\). Energy retained plus work transferred out equals heat entering. All terms have energy units. Temperature cannot be predicted without an additional material model.",
+        "id": "CORE1A-CHECK",
+        "kind": "CHECK",
+        "title": "Verify"
+      }
+    ],
+    "questions": [
+      {
+        "answer_ref": "CORE1A-ANSWER",
+        "check_refs": [
+          "CORE1A-CHECK"
+        ],
+        "display_source": "Author-created V3B Physics design specimen; not an official question.",
+        "explanation_ref": "CORE1A-EXPLAIN",
+        "id": "CORE1A-Q1",
+        "official_claim": false,
+        "origin": "AUTHOR_CREATED",
+        "original_number": null,
+        "prompt_ref": "CORE1A-PROMPT",
+        "stem": "A closed rigid vessel receives 120 J of heat. There is no electrical or shaft work and no change in bulk kinetic/potential energy. Determine its pressure-volume work and internal-energy change. Identify the condition fixing the work."
+      }
+    ],
+    "status": "DESIGN_SPECIMEN",
+    "title": "Energy entering, energy leaving, energy retained"
+  },
+  {
+    "action_refs": {
+      "ATTEMPT": "CORE1B-SET",
+      "ELICIT": "CORE1B-PROMPT",
+      "GENERALIZE": "CORE1B-P2",
+      "HINT": "CORE1B-HINT",
+      "RESOLVE": "CORE1B-EXPLAIN"
+    },
+    "actions": [
+      "ELICIT",
+      "ATTEMPT",
+      "HINT",
+      "RESOLVE",
+      "GENERALIZE"
+    ],
+    "baseline_version": "1.0.0",
+    "core": "CORE1B",
+    "coverage": [
+      {
+        "disposition": "TRANSFORMED",
+        "id": "SYSTEM",
+        "learner_action": "RECONSTRUCT",
+        "object_refs": [
+          "CORE1B-SET"
+        ],
+        "parent_asset_id": "SYSTEM",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "SIGNS",
+        "learner_action": "RECONSTRUCT",
+        "object_refs": [
+          "CORE1B-EXPLAIN"
+        ],
+        "parent_asset_id": "SIGNS",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "RELATION",
+        "learner_action": "RECONSTRUCT",
+        "object_refs": [
+          "CORE1B-EXPLAIN"
+        ],
+        "parent_asset_id": "RELATION",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "REPRESENTATION",
+        "learner_action": "RECONSTRUCT",
+        "object_refs": [
+          "CORE1B-REP"
+        ],
+        "parent_asset_id": "REPRESENTATION",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "REASONING",
+        "learner_action": "RECONSTRUCT",
+        "object_refs": [
+          "CORE1B-E2"
+        ],
+        "parent_asset_id": "REASONING",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "CHECK",
+        "learner_action": "RECONSTRUCT",
+        "object_refs": [
+          "CORE1B-CHECK"
+        ],
+        "parent_asset_id": "CHECK",
+        "reason": "Different learner action over the same invariant."
+      }
+    ],
+    "gate_ids": [
+      "PHY-TH-FIRST-LAW"
+    ],
+    "id": "THERMO-CORE1B",
+    "learner_calibration": null,
+    "objects": [
+      {
+        "content": "A closed gas is compressed in an insulated cylinder. Exclude electrical/shaft work and changes in bulk kinetic/potential energy. Draw the system boundary and work-transfer arrow. Decide the signs of \\(Q\\), \\(W_{\\rm by}\\) and \\(\\Delta U\\), then derive the relation connecting them.",
+        "id": "CORE1B-PROMPT",
+        "kind": "PROMPT",
+        "title": "Reconstruct: B1-Q1"
+      },
+      {
+        "content": "Mark the selected gas, moving boundary and energy-transfer direction. Write signs beside your arrows. Leave space for a relation derived from the sketch. This is a reconstruction task; numerical substitution is unnecessary. Use only the first help step that restores progress.",
+        "id": "CORE1B-SET",
+        "kind": "EXPLANATION",
+        "title": "Attempt before revealing help"
+      },
+      {
+        "content": "**Notice:** insulation sets heat transfer to zero.\n\n**Represent:** compression transfers energy into the gas as work, so the work arrow crosses inward.\n\n**Connect:** positive \\(W_{\\rm by}\\) describes work transferred out by the gas. Its sign is negative during compression.\n\n**Start:** substitute \\(Q=0\\) into the first law, keeping work symbolic.",
+        "id": "CORE1B-HINT",
+        "kind": "EXPLANATION",
+        "title": "Progressive help"
+      },
+      {
+        "content": "No heat-transfer arrow; an inward work-transfer arrow. \\(Q=0\\), \\(W_{\\rm by}<0\\), and \\(\\Delta U=-W_{\\rm by}>0\\).",
+        "id": "CORE1B-ANSWER",
+        "kind": "ANSWER",
+        "title": "Expected response"
+      },
+      {
+        "content": "If you concluded that insulation means no energy change, you omitted work as a transfer mechanism. Return to the inward arrow. If you concluded that the gas loses energy, check whether you switched between work on and work by.\n\nA correct explanation connects the physical transfer, the chosen convention and the equation. Memorizing that compression “makes work positive” is incomplete without naming whose work is measured.",
+        "id": "CORE1B-EXPLAIN",
+        "kind": "EXPLANATION",
+        "title": "Find the broken link"
+      },
+      {
+        "content": "![Expected boundary-and-work reconstruction](energy-reconstruction.svg)\n\nAccept a boundary sketch or equivalent annotated representation with all these features:\n\n| Feature | Physical meaning | Equation mapping |\n|---|---|---|\n| Gas inside boundary | Chosen system | Change in this gas's \\(U\\) |\n| No heat arrow | Insulation | \\(Q=0\\) |\n| Work arrow inward | Work enters | \\(W_{\\rm by}<0\\) |\n| Energy retained | Internal energy increases | \\(\\Delta U=-W_{\\rm by}>0\\) |\n\nA complete sketch must show the arrow crossing the boundary, not just an arrow floating beside an equation.",
+        "id": "CORE1B-REP",
+        "kind": "REPRESENTATION",
+        "title": "Check your representation"
+      },
+      {
+        "content": "Change only the insulation condition: heat may now leave during compression. Is an internal-energy increase still guaranteed? Give a symbolic condition and a numerical counterexample.",
+        "id": "CORE1B-P2",
+        "kind": "PROMPT",
+        "title": "Generalize: B1-Q2"
+      },
+      {
+        "content": "No. Internal energy increases only if \\(Q-W_{\\rm by}>0\\). It can also remain unchanged or decrease.",
+        "id": "CORE1B-A2",
+        "kind": "ANSWER",
+        "title": "Generalization answer"
+      },
+      {
+        "content": "Let 90 J enter as work and 140 J leave as heat. Then \\(W_{\\rm by}=-90\\ {\\rm J}\\), \\(Q=-140\\ {\\rm J}\\), and \\(\\Delta U=-140-(-90)=-50\\ {\\rm J}\\). Compression alone does not determine the internal-energy change. Insulation was an essential assumption in B1-Q1.",
+        "id": "CORE1B-E2",
+        "kind": "EXPLANATION",
+        "title": "Counterexample"
+      },
+      {
+        "content": "The gas receives 90 J and loses 140 J, supplying the 50 J difference from its internal energy. Both the arrow model and equation predict \\(-50\\ {\\rm J}\\). For the insulated case, setting \\(Q=0\\) restores the positive change.",
+        "id": "CORE1B-CHECK",
+        "kind": "CHECK",
+        "title": "Check the counterexample"
+      }
+    ],
+    "questions": [
+      {
+        "answer_ref": "CORE1B-ANSWER",
+        "check_refs": [
+          "CORE1B-CHECK"
+        ],
+        "display_source": "Author-created V3B Physics design specimen; not an official question.",
+        "explanation_ref": "CORE1B-EXPLAIN",
+        "id": "CORE1B-Q1",
+        "official_claim": false,
+        "origin": "AUTHOR_CREATED",
+        "original_number": null,
+        "prompt_ref": "CORE1B-PROMPT",
+        "stem": "A closed gas is compressed in an insulated cylinder. Exclude electrical/shaft work and changes in bulk kinetic/potential energy. Draw the system boundary and work-transfer arrow. Decide the signs of \\(Q\\), \\(W_{\\rm by}\\) and \\(\\Delta U\\), then derive the relation connecting them."
+      },
+      {
+        "answer_ref": "CORE1B-A2",
+        "check_refs": [
+          "CORE1B-CHECK"
+        ],
+        "display_source": "Author-created V3B Physics design specimen; not an official question.",
+        "explanation_ref": "CORE1B-E2",
+        "id": "CORE1B-Q2",
+        "official_claim": false,
+        "origin": "AUTHOR_CREATED",
+        "original_number": null,
+        "prompt_ref": "CORE1B-P2",
+        "stem": "Change only the insulation condition: heat may now leave during compression. Is an internal-energy increase still guaranteed? Give a symbolic condition and a numerical counterexample."
+      }
+    ],
+    "status": "DESIGN_SPECIMEN",
+    "title": "Reconstruct the model and challenge its assumptions"
+  },
+  {
+    "action_refs": {
+      "QUESTION": "CORE2A-PROMPT",
+      "REPRESENT": "CORE2A-REP",
+      "SETUP": "CORE2A-SET",
+      "VERIFY": "CORE2A-CHECK",
+      "WORK": "CORE2A-WORK"
+    },
+    "actions": [
+      "QUESTION",
+      "SETUP",
+      "REPRESENT",
+      "WORK",
+      "VERIFY"
+    ],
+    "baseline_version": "1.0.0",
+    "core": "CORE2A",
+    "coverage": [
+      {
+        "disposition": "REALIZED",
+        "id": "SYSTEM",
+        "object_refs": [
+          "CORE2A-SET"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "SIGNS",
+        "object_refs": [
+          "CORE2A-WORK"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "RELATION",
+        "object_refs": [
+          "CORE2A-WORK"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "REPRESENTATION",
+        "object_refs": [
+          "CORE2A-REP"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "REASONING",
+        "object_refs": [
+          "CORE2A-WORK"
+        ]
+      },
+      {
+        "disposition": "REALIZED",
+        "id": "CHECK",
+        "object_refs": [
+          "CORE2A-CHECK"
+        ]
+      }
+    ],
+    "gate_ids": [
+      "PHY-TH-FIRST-LAW"
+    ],
+    "id": "THERMO-CORE2A",
+    "learner_calibration": null,
+    "objects": [
+      {
+        "content": "A fixed amount of gas expands quasistatically from 1.5 L to 3.5 L against a constant opposing pressure of 180 kPa. It receives 760 J of heat. Only pressure-volume work occurs, with no bulk kinetic/potential-energy change. Determine work done by the gas and its internal-energy change.",
+        "id": "CORE2A-PROMPT",
+        "kind": "PROMPT",
+        "title": "Worked practice: A2-Q1"
+      },
+      {
+        "content": "System: the gas. Known: \\(V_i=1.5\\ {\\rm L}\\), \\(V_f=3.5\\ {\\rm L}\\), \\(p_{\\rm ext}=180\\ {\\rm kPa}\\), \\(Q=+760\\ {\\rm J}\\).\n\n“Constant opposing pressure” selects a rectangle-area calculation. “Expands” fixes a positive volume change. “Receives” fixes the heat sign. Find work before the internal-energy change.",
+        "id": "CORE2A-SET",
+        "kind": "EXPLANATION",
+        "title": "Extract the setup"
+      },
+      {
+        "content": "![Constant-pressure expansion](piston-work.svg)\n\nThe moving boundary sweeps a volume difference of 2.0 L. The final volume 3.5 L is not the swept volume. The diagram is schematic; do not measure pixels to infer volumes.",
+        "id": "CORE2A-REP",
+        "kind": "REPRESENTATION",
+        "title": "Connect the boundary to the numbers"
+      },
+      {
+        "content": "\\[\n\\Delta V=3.5-1.5=2.0\\ {\\rm L},\n\\quad W_{\\rm by}=p_{\\rm ext}\\Delta V.\n\\]\nSince \\(1\\ {\\rm kPa\\,L}=1\\ {\\rm J}\\),\n\\[\nW_{\\rm by}=180\\times2.0=+360\\ {\\rm J}.\n\\]\nThen\n\\[\n\\Delta U=Q-W_{\\rm by}=760-360=+400\\ {\\rm J}.\n\\]\nUsing \\(pV_f\\) counts volume that was already present. Adding work to the heat would treat energy leaving as if it entered.",
+        "id": "CORE2A-WORK",
+        "kind": "EXPLANATION",
+        "title": "Complete working"
+      },
+      {
+        "content": "\\(W_{\\rm by}=+360\\ {\\rm J}\\), \\(\\Delta U=+400\\ {\\rm J}\\).",
+        "id": "CORE2A-ANSWER",
+        "kind": "ANSWER",
+        "title": "Quick answer"
+      },
+      {
+        "content": "The gas transfers energy out while pushing the surroundings and receives a larger amount as heat. The retained 400 J is the difference. The sign convention describes transfers across this gas's boundary; it is not chosen to make a memorized formula fit.",
+        "id": "CORE2A-EXPLAIN",
+        "kind": "EXPLANATION",
+        "title": "Why the signs matter"
+      },
+      {
+        "content": "\\[\n180000\\ {\\rm Pa}\\times0.0020\\ {\\rm m^3}=360\\ {\\rm J}.\n\\]\nThe energy check is \\(400+360=760\\ {\\rm J}\\). Expansion gives positive work by the gas, and \\(Q-W_{\\rm by}-\\Delta U=0\\). No temperature change is asserted without a material model.",
+        "id": "CORE2A-CHECK",
+        "kind": "CHECK",
+        "title": "Independent unit route"
+      }
+    ],
+    "questions": [
+      {
+        "answer_ref": "CORE2A-ANSWER",
+        "check_refs": [
+          "CORE2A-CHECK"
+        ],
+        "display_source": "Author-created V3B Physics design specimen; not an official question.",
+        "explanation_ref": "CORE2A-EXPLAIN",
+        "id": "CORE2A-Q1",
+        "official_claim": false,
+        "origin": "AUTHOR_CREATED",
+        "original_number": null,
+        "prompt_ref": "CORE2A-PROMPT",
+        "stem": "A fixed amount of gas expands quasistatically from 1.5 L to 3.5 L against a constant opposing pressure of 180 kPa. It receives 760 J of heat. Only pressure-volume work occurs, with no bulk kinetic/potential-energy change. Determine work done by the gas and its internal-energy change."
+      }
+    ],
+    "status": "DESIGN_SPECIMEN",
+    "title": "Recognize cues and build the full solution"
+  },
+  {
+    "action_refs": {
+      "ATTEMPT": "CORE2B-SET",
+      "HINT": "CORE2B-HINT",
+      "QUESTION": "CORE2B-PROMPT",
+      "RESOLVE": "CORE2B-WORK",
+      "SELECT_MODEL": "CORE2B-HINT",
+      "TRANSFER_CHECK": "CORE2B-P2"
+    },
+    "actions": [
+      "QUESTION",
+      "ATTEMPT",
+      "SELECT_MODEL",
+      "HINT",
+      "RESOLVE",
+      "TRANSFER_CHECK"
+    ],
+    "baseline_version": "1.0.0",
+    "core": "CORE2B",
+    "coverage": [
+      {
+        "disposition": "TRANSFORMED",
+        "id": "SYSTEM",
+        "learner_action": "SELECT_AND_TRANSFER",
+        "object_refs": [
+          "CORE2B-SET"
+        ],
+        "parent_asset_id": "SYSTEM",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "SIGNS",
+        "learner_action": "SELECT_AND_TRANSFER",
+        "object_refs": [
+          "CORE2B-WORK"
+        ],
+        "parent_asset_id": "SIGNS",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "RELATION",
+        "learner_action": "SELECT_AND_TRANSFER",
+        "object_refs": [
+          "CORE2B-WORK"
+        ],
+        "parent_asset_id": "RELATION",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "REPRESENTATION",
+        "learner_action": "SELECT_AND_TRANSFER",
+        "object_refs": [
+          "CORE2B-REP"
+        ],
+        "parent_asset_id": "REPRESENTATION",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "REASONING",
+        "learner_action": "SELECT_AND_TRANSFER",
+        "object_refs": [
+          "CORE2B-WORK"
+        ],
+        "parent_asset_id": "REASONING",
+        "reason": "Different learner action over the same invariant."
+      },
+      {
+        "disposition": "TRANSFORMED",
+        "id": "CHECK",
+        "learner_action": "SELECT_AND_TRANSFER",
+        "object_refs": [
+          "CORE2B-CHECK"
+        ],
+        "parent_asset_id": "CHECK",
+        "reason": "Different learner action over the same invariant."
+      }
+    ],
+    "gate_ids": [
+      "PHY-TH-FIRST-LAW"
+    ],
+    "id": "THERMO-CORE2B",
+    "learner_calibration": null,
+    "objects": [
+      {
+        "content": "The same fixed ideal-gas sample moves from A (1.0 L, 100 kPa) to B (3.0 L, 300 kPa) along either of two quasistatic routes. The lower route expands first at 100 kPa, then changes pressure at fixed volume. The upper route changes pressure first at fixed volume, then expands at 300 kPa. Only pressure-volume work occurs, with no bulk kinetic/potential-energy change. Heat supplied on the lower route is 650 J. Find heat supplied on the upper route and explain how the endpoint information helps.",
+        "id": "CORE2B-PROMPT",
+        "kind": "PROMPT",
+        "title": "Choose a strategy: B2-Q1"
+      },
+      {
+        "content": "Draw both routes with axes, units and arrows. Decide which transfers can differ between routes and which state change must agree. Choose an order of calculation. Keep your sketch for comparison with the representation check.",
+        "id": "CORE2B-SET",
+        "kind": "EXPLANATION",
+        "title": "Attempt before the model is revealed"
+      },
+      {
+        "content": "**Notice:** the same sample starts and ends in the same states.\n\n**Structure:** distinguish state-property changes from process-dependent transfers.\n\n**Represent:** fixed-volume segments contribute no pressure-volume work. Constant-pressure expansion contributes a rectangle.\n\n**First move:** calculate work for each route. Use the known lower-route heat to find the internal-energy change.\n\n**Method:** combine the common internal-energy change with upper-route work.",
+        "id": "CORE2B-HINT",
+        "kind": "EXPLANATION",
+        "title": "Progressive rescue"
+      },
+      {
+        "content": "![Two directed p-V routes](pv-paths.svg)\n\nA valid sketch preserves endpoints and process order, labels axes and units, and associates work with area under the directed path. It must not label a vertical segment “zero heat”: only its pressure-volume work is zero.",
+        "id": "CORE2B-REP",
+        "kind": "REPRESENTATION",
+        "title": "Representation check — after attempting"
+      },
+      {
+        "content": "Lower route:\n\\[\nW_l=100(3-1)=200\\ {\\rm J},\\qquad \\Delta U=650-200=450\\ {\\rm J}.\n\\]\nIts vertical leg adds no boundary work. Internal energy is a state property, so the same fixed sample between the same complete equilibrium states has the same \\(\\Delta U\\) on the other route.\n\nUpper route:\n\\[\nW_u=300(3-1)=600\\ {\\rm J},\\qquad Q_u=450+600=1050\\ {\\rm J}.\n\\]\nThe extra heat compensates for extra work. The endpoint match does not make the heat or work identical.",
+        "id": "CORE2B-WORK",
+        "kind": "EXPLANATION",
+        "title": "Full solution"
+      },
+      {
+        "content": "\\(Q_u=1050\\ {\\rm J}\\); both routes have \\(\\Delta U=450\\ {\\rm J}\\).",
+        "id": "CORE2B-ANSWER",
+        "kind": "ANSWER",
+        "title": "Quick answer"
+      },
+      {
+        "content": "The useful bridge is path independence of the internal-energy change. A separate temperature calculation is unnecessary. Treating all three quantities as state properties would erase the work difference; treating none as state properties would discard the endpoint information.",
+        "id": "CORE2B-EXPLAIN",
+        "kind": "EXPLANATION",
+        "title": "The decisive model choice"
+      },
+      {
+        "content": "Subtract the two balances:\n\\[\nQ_u-Q_l=W_u-W_l=600-200=400\\ {\\rm J}.\n\\]\nHence \\(Q_u=650+400=1050\\ {\\rm J}\\). This matches the separate-route calculation and the area between the paths.",
+        "id": "CORE2B-CHECK",
+        "kind": "CHECK",
+        "title": "Verify through subtraction"
+      },
+      {
+        "content": "Traverse the upper route backward from B to A under the same assumptions. Determine the signed work, internal-energy change and heat transfer.",
+        "id": "CORE2B-P2",
+        "kind": "PROMPT",
+        "title": "Linked transfer check: B2-Q2"
+      },
+      {
+        "content": "\\(W_{\\rm by}=-600\\ {\\rm J}\\), \\(\\Delta U=-450\\ {\\rm J}\\), \\(Q=-1050\\ {\\rm J}\\).",
+        "id": "CORE2B-A2",
+        "kind": "ANSWER",
+        "title": "Reversal answer"
+      },
+      {
+        "content": "Reversing the path reverses the work integral; interchanging the end states reverses \\(\\Delta U\\). Therefore \\(Q=\\Delta U+W_{\\rm by}=-1050\\ {\\rm J}\\). Check: \\(-1050-(-600)=-450\\ {\\rm J}\\). This deliberately linked reversal is a reconstruction/variation check, not independent evidence of unfamiliar transfer.",
+        "id": "CORE2B-E2",
+        "kind": "EXPLANATION",
+        "title": "Change orientation, preserve the model"
+      }
+    ],
+    "questions": [
+      {
+        "answer_ref": "CORE2B-ANSWER",
+        "check_refs": [
+          "CORE2B-CHECK"
+        ],
+        "display_source": "Author-created V3B Physics design specimen; not an official question.",
+        "explanation_ref": "CORE2B-EXPLAIN",
+        "id": "CORE2B-Q1",
+        "official_claim": false,
+        "origin": "AUTHOR_CREATED",
+        "original_number": null,
+        "prompt_ref": "CORE2B-PROMPT",
+        "stem": "The same fixed ideal-gas sample moves from A (1.0 L, 100 kPa) to B (3.0 L, 300 kPa) along either of two quasistatic routes. The lower route expands first at 100 kPa, then changes pressure at fixed volume. The upper route changes pressure first at fixed volume, then expands at 300 kPa. Only pressure-volume work occurs, with no bulk kinetic/potential-energy change. Heat supplied on the lower route is 650 J. Find heat supplied on the upper route and explain how the endpoint information helps."
+      },
+      {
+        "answer_ref": "CORE2B-A2",
+        "check_refs": [
+          "CORE2B-CHECK"
+        ],
+        "display_source": "Author-created V3B Physics design specimen; not an official question.",
+        "explanation_ref": "CORE2B-E2",
+        "id": "CORE2B-Q2",
+        "official_claim": false,
+        "origin": "AUTHOR_CREATED",
+        "original_number": null,
+        "prompt_ref": "CORE2B-P2",
+        "stem": "Traverse the upper route backward from B to A under the same assumptions. Determine the signed work, internal-energy change and heat transfer."
+      }
+    ],
+    "status": "DESIGN_SPECIMEN",
+    "title": "Choose a route through an unfamiliar-looking problem"
+  }
+]

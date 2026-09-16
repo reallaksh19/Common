@@ -1,0 +1,130 @@
+[
+  {
+    "id": "THERMODYNAMICS-INITIAL",
+    "version": 1,
+    "registry_version": "1.0.0",
+    "selected_gates": [
+      "PHY-TH-SYSTEM",
+      "PHY-TH-PV-WORK",
+      "PHY-TH-FIRST-LAW"
+    ],
+    "declared_closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-TH-SYSTEM",
+      "PHY-TH-PV-WORK",
+      "PHY-TH-FIRST-LAW"
+    ],
+    "gate_versions": {
+      "PHY-ENERGY-UNITS": 1,
+      "PHY-TH-SYSTEM": 1,
+      "PHY-TH-PV-WORK": 1,
+      "PHY-TH-FIRST-LAW": 1
+    },
+    "bundles": [
+      [
+        "PHY-TH-SYSTEM",
+        "PHY-TH-PV-WORK",
+        "PHY-TH-FIRST-LAW"
+      ]
+    ],
+    "depth_profile": "SCHOOL",
+    "scope_authority": "OWNER_REQUEST:Physics engineering-gate design proof",
+    "release_authorized": false
+  },
+  {
+    "id": "THERMODYNAMICS-WITH-CYCLE",
+    "version": 1,
+    "registry_version": "1.0.0",
+    "selected_gates": [
+      "PHY-TH-SYSTEM",
+      "PHY-TH-PV-WORK",
+      "PHY-TH-FIRST-LAW",
+      "PHY-TH-CYCLE"
+    ],
+    "declared_closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-TH-SYSTEM",
+      "PHY-TH-PV-WORK",
+      "PHY-TH-FIRST-LAW",
+      "PHY-TH-CYCLE"
+    ],
+    "gate_versions": {
+      "PHY-ENERGY-UNITS": 1,
+      "PHY-TH-SYSTEM": 1,
+      "PHY-TH-PV-WORK": 1,
+      "PHY-TH-FIRST-LAW": 1,
+      "PHY-TH-CYCLE": 1
+    },
+    "bundles": [
+      [
+        "PHY-TH-SYSTEM",
+        "PHY-TH-PV-WORK",
+        "PHY-TH-FIRST-LAW"
+      ],
+      [
+        "PHY-TH-CYCLE"
+      ]
+    ],
+    "depth_profile": "SCHOOL",
+    "scope_authority": "OWNER_REQUEST:Physics engineering-gate design proof",
+    "release_authorized": false
+  },
+  {
+    "id": "GRAVITY-RESEARCH-BOUNDED",
+    "version": 1,
+    "registry_version": "1.0.0",
+    "selected_gates": [
+      "PHY-GR-APPROX"
+    ],
+    "declared_closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-GR-NEWTON",
+      "PHY-GR-POTENTIAL",
+      "PHY-GR-APPROX"
+    ],
+    "gate_versions": {
+      "PHY-ENERGY-UNITS": 1,
+      "PHY-GR-NEWTON": 1,
+      "PHY-GR-POTENTIAL": 1,
+      "PHY-GR-APPROX": 1
+    },
+    "bundles": [
+      [
+        "PHY-GR-APPROX"
+      ]
+    ],
+    "depth_profile": "RESEARCH_METHOD",
+    "scope_authority": "OWNER_REQUEST:Physics engineering-gate design proof",
+    "release_authorized": false
+  },
+  {
+    "id": "GRAVITY-ADVANCED-HELD",
+    "version": 1,
+    "registry_version": "1.0.0",
+    "selected_gates": [
+      "PHY-GR-RELATIVITY"
+    ],
+    "declared_closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-GR-NEWTON",
+      "PHY-GR-POTENTIAL",
+      "PHY-GR-APPROX",
+      "PHY-GR-RELATIVITY"
+    ],
+    "gate_versions": {
+      "PHY-ENERGY-UNITS": 1,
+      "PHY-GR-NEWTON": 1,
+      "PHY-GR-POTENTIAL": 1,
+      "PHY-GR-APPROX": 1,
+      "PHY-GR-RELATIVITY": 1
+    },
+    "bundles": [
+      [
+        "PHY-GR-RELATIVITY"
+      ]
+    ],
+    "depth_profile": "ADVANCED_RESEARCH",
+    "scope_authority": "OWNER_REQUEST:Physics engineering-gate design proof",
+    "release_authorized": false
+  }
+]
