@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 
 from compile_chemistry_engineering_closure import load  # noqa: E402
+from compile_chemistry_semantic_projection import compile_semantic_projection  # noqa: E402
 from validate_static_b_layer_boundary import validate_core1b, validate_core2b  # noqa: E402
 
 SCHEMA_REL = "contracts/chemistry-core-authority.schema.json"
@@ -118,13 +119,7 @@ def _surface_strings(value: Any, parent_key: str = "") -> list[str]:
 
 
 def _core1a_section_lineage(manuscript: dict[str, Any]) -> dict[str, Any]:
-    """Close Core1A section identity against its declared learning-atom denominator.
-
-    The manuscript's existing ordered arrays are an explicit realization contract:
-    ``learning_atoms[n]`` supplies semantic identity for ``teaching_sections[n]``.
-    Capability references remain authorization metadata and may be broader than one
-    learner-facing section, so they cannot substitute for this atom-level lineage.
-    """
+    """Close Core1A section identity against its declared learning-atom denominator."""
     total_atoms = 0
     total_sections = 0
     for bucket_index, bucket in enumerate(manuscript.get("buckets", []), 1):
@@ -346,6 +341,52 @@ def _representation_closure(
     }
 
 
+def _semantic_closure(
+    product_mode: str,
+    obligation_packet: dict[str, Any],
+    realized_obligation_ids: list[str],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Bind claimed obligation realization to deterministic semantic-role lineage."""
+    projection = compile_semantic_projection(obligation_packet)
+    realized_obligations = set(realized_obligation_ids)
+    authorized_atoms = [
+        row for row in projection["semantic_atoms"]
+        if product_mode in row["authorized_modes"]
+    ]
+    required_atoms = [
+        row for row in authorized_atoms
+        if row["direct"] and product_mode in row["required_realization_modes"]
+    ]
+    realized_atoms = [
+        row for row in authorized_atoms
+        if row["source_obligation_id"] in realized_obligations
+    ]
+
+    required_ids = {row["semantic_id"] for row in required_atoms}
+    realized_ids = {row["semantic_id"] for row in realized_atoms}
+    missing_required = sorted(required_ids - realized_ids)
+    if missing_required:
+        fail("CHEM_CORE_AUTH_REQUIRED_SEMANTIC_MISSING", ",".join(missing_required))
+
+    realized_sources = {row["source_obligation_id"] for row in realized_atoms}
+    missing_semantic_lineage = sorted(realized_obligations - realized_sources)
+    if missing_semantic_lineage:
+        fail(
+            "CHEM_CORE_AUTH_REALIZED_OBLIGATION_WITHOUT_SEMANTICS",
+            ",".join(missing_semantic_lineage),
+        )
+
+    closure = {
+        "status": "PASS",
+        "authorized_semantic_ids": sorted(row["semantic_id"] for row in authorized_atoms),
+        "required_semantic_ids": sorted(required_ids),
+        "realized_semantic_ids": sorted(realized_ids),
+        "realized_source_obligation_ids": sorted(realized_sources),
+        "semantic_atom_count": len(realized_atoms),
+    }
+    return projection, closure
+
+
 def compile_core_authority(
     product_mode: str,
     subtopic_id: str,
@@ -388,6 +429,10 @@ def compile_core_authority(
     representation_closure = _representation_closure(
         product_mode, payload, obligation_packet, realized
     )
+    semantic_projection, semantic_closure = _semantic_closure(
+        product_mode, obligation_packet, realized
+    )
+
     authority = {
         "schema_version": "1.0.0",
         "authority_id": authority_id,
@@ -396,6 +441,9 @@ def compile_core_authority(
         "subtopic_id": subtopic_id,
         "obligation_packet_id": obligation_packet["packet_id"],
         "obligation_packet_digest": obligation_packet["packet_digest"],
+        "semantic_projection_id": semantic_projection["projection_id"],
+        "semantic_projection_digest": semantic_projection["projection_digest"],
+        "semantic_closure": semantic_closure,
         "payload_ref": payload_ref,
         "payload_digest": digest(payload),
         "scope_units": _scope_units(product_mode, payload),
