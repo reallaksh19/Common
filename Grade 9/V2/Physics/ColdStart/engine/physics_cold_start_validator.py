@@ -48,6 +48,7 @@ def validate_report(
     repo_root=REPO,
 ):
     verify_manifest(manifest)
+    repo_root = Path(repo_root)
     routed_inputs = validate_assessment_input_bindings(assessment_input_bindings, repo_root)
     if report["report_digest"] != digest(report, "report_digest"):
         fail("FINAL_PAGE_DECISION_WITHOUT_AUTHORITY_TRACE", "report digest")
@@ -81,19 +82,34 @@ def validate_report(
     if undeclared:
         fail("RUNTIME_READ_OUTSIDE_AUTHORITY_MANIFEST", ",".join(sorted(undeclared)[:3]))
 
+    custody = report["input_custody"]
     if routed_inputs is not None:
         routed_paths = {role: row["path"] for role, row in routed_inputs.items()}
         for role in ("QUESTION_SET", "DECLARED_TOPIC_SCOPE"):
             if routed_paths[role] not in reads:
                 fail("ROUTED_ASSESSMENT_INPUT_NOT_READ", role)
+
+        expected_question_digest = digest(load(repo_root / routed_paths["QUESTION_SET"]))
+        if custody["question_set_digest"] != expected_question_digest:
+            fail("ROUTED_QUESTION_SET_CUSTODY_MISMATCH")
+        expected_scope_digest = digest(load(repo_root / routed_paths["DECLARED_TOPIC_SCOPE"]))
+        if custody["declared_topic_scope_digest"] != expected_scope_digest:
+            fail("ROUTED_TOPIC_SCOPE_CUSTODY_MISMATCH")
+
         attempt_path = routed_paths.get("ATTEMPT_SET")
-        if report["run_mode"] == "NO_ATTEMPT" and attempt_path and attempt_path in reads:
-            fail("NO_ATTEMPT_RUN_READS_ROUTED_ATTEMPT_SET")
+        if report["run_mode"] == "NO_ATTEMPT":
+            if attempt_path and attempt_path in reads:
+                fail("NO_ATTEMPT_RUN_READS_ROUTED_ATTEMPT_SET")
+            if custody["attempt_set_digest"] is not None:
+                fail("NO_ATTEMPT_RUN_INVENTS_PHYSICS_WEAKNESS", "attempt digest present")
         if report["run_mode"] == "WITH_ATTEMPTS":
             if attempt_path is None:
                 fail("WITH_ATTEMPTS_ROUTE_MISSING_ATTEMPT_SET")
             if attempt_path not in reads:
                 fail("WITH_ATTEMPTS_ROUTE_DID_NOT_READ_ATTEMPT_SET")
+            expected_attempt_digest = digest(load(repo_root / attempt_path))
+            if custody["attempt_set_digest"] != expected_attempt_digest:
+                fail("ROUTED_ATTEMPT_SET_CUSTODY_MISMATCH")
 
     required = set(manifest["required_authority_trace_decisions"])
     traces = report["authority_trace"]
@@ -107,7 +123,6 @@ def validate_report(
             fail("FINAL_PAGE_DECISION_WITHOUT_AUTHORITY_TRACE", t["decision_class"])
 
     truth = report["assessment_truth"]
-    custody = report["input_custody"]
     stages = report["stage_digests"]
     if truth["engineering_consumer_status"] != "ALLOWED":
         fail("ENGINEERING_READINESS_NOT_ALLOWED", truth["engineering_consumer_status"])
