@@ -19,11 +19,13 @@ CP-R004  WP-03 Strong qualification                 COMPLETE
    |
 CP-R005  WP-04 Progress / handover / next-work      COMPLETE
    |
+CP-R006  WP-05 GitHub Program Projection            COMPLETE — exact-head CI pending
+   |
    v
-WP-05    GitHub Program Projection operations       CURRENT FRONTIER
+WP-06    Quality Procedure Library                  NEXT FRONTIER after CP-R006 CI PASS
 ```
 
-CP-R005 checkpoint/status verification passed corrected workflow **35104895179** on head `9531e4e0a98a84c3f61313837ce1fdd4284d95a6`, with compile, root units, and the dedicated synthetic stress suite all passing.
+WP-05 pre-checkpoint implementation verification passed workflow **35140358167** on head `f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b`, with compile, root units and all 111 repository-neutral synthetic stress tests passing.
 
 ## Progress Basis
 
@@ -34,8 +36,8 @@ CP-R005 checkpoint/status verification passed corrected workflow **35104895179**
 | WP-02 Baton readiness + Takeover Certification | 18 | COMPLETE — CP-R003 |
 | WP-03 Strong phase/boundary qualification | 12 | COMPLETE — CP-R004 |
 | WP-04 Full progress / handover / next-work | 12 | COMPLETE — CP-R005 |
-| WP-05 GitHub Program Projection operations | 8 | CURRENT FRONTIER |
-| WP-06 Quality Procedure Library | 10 | WAITING |
+| WP-05 GitHub Program Projection operations | 8 | COMPLETE — CP-R006, exact-head CI pending |
+| WP-06 Quality Procedure Library | 10 | NEXT FRONTIER AFTER CP-R006 CI PASS |
 | WP-07 Human Communication | 6 | WAITING |
 | WP-08 Owner Change Intake | 3 | WAITING |
 | WP-09 End-to-end Relay Certification Matrix | 5 | WAITING |
@@ -43,7 +45,7 @@ CP-R005 checkpoint/status verification passed corrected workflow **35104895179**
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Earned completion: 65%.** Progress is acceptance/checkpoint-derived.
+**Checkpointed content completion: 73%; formal CP-R006 closure awaits exact-head CI.** Progress is acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -76,47 +78,13 @@ Historical interpretation is corrected in `ci-evidence-correction.md`.
 
 ### WP-04 — Full progress / handover / next-work
 
-`CP-R005` and `wp-04-progress-handover.md` deliver source-derived progress and handover:
+`CP-R005` delivered authoritative Objective -> Phase -> WP -> EP -> Step -> AC progress, checked REPO_STATE mirrors, exact structured `next_work.steps[]`, source-digest report projection, and source-derived status/handover while preserving parallel/join/replan custody.
 
-```text
-PROGRESS.yaml
-  -> Objective
-  -> Phase
-  -> Work Package
-  -> EP
-  -> Implementation Step
-  -> Acceptance Criterion
-```
+### WP-05 — GitHub Program Projection operations
 
-`PROGRESS.yaml` is progress authority. `REPO_STATE.progress` percentages are checked mirrors only. Missing roadmap/current-EP progress rows fail conformance.
+`CP-R006` and `wp-05-github-program-projection.md` operationalize GitHub as a crash-safe coordination projection rather than authority.
 
-Every executable EP carries structured ordered `next_work.steps[]` with action, targets, inputs, tests, benchmarks/oracles, acceptance, expected result and stop/reconciliation conditions. The scalar execution `next_action` is only a short machine hint.
-
-`report_projection.py` derives one structured report from repository authority objects and records source digests. `validate_report_projection.py` participates in aggregate conformance. Generated report/YAML/Markdown cannot override roadmap, progress, EP/plan, checkpoint, issue or repository truth.
-
-`render_status.py` and `render_handover.py` consume the source-derived projection. Handover exposes Objective -> Phase -> WP -> Step -> AC progress/status/basis plus exact ordered next work while retaining parallel/join/replan custody detail.
-
-Bootstrap creates complete zero-weight roadmap progress rows without fabricating executable work. Parallel convergence creates integration EP/step/acceptance progress rows before cold start.
-
-WP-04 evidence:
-
-```text
-pre-checkpoint head/run
-  fabcb280167fbc1a8d95d120d4e88d242e1cd211
-  35104423581 — PASS
-
-CP-R005 checkpoint/status head/run
-  9531e4e0a98a84c3f61313837ce1fdd4284d95a6
-  35104895179 — PASS
-
-stress surface: 105 repository-neutral synthetic tests
-```
-
-## WP-05 — GitHub Program Projection operations — CURRENT FRONTIER
-
-WP-05 operationalizes GitHub as an external coordination projection, never roadmap authority.
-
-Required operation classes:
+The current desired external generation is an immutable `GHGEN-*` bound to roadmap revision, execution ref and issue-graph revision. It contains ordered stable `GHOP-*` operations:
 
 ```text
 CREATE
@@ -129,33 +97,48 @@ CLOSE
 REOPEN
 ```
 
-The transaction must prepare a durable desired operation, preserve stable generation identity, perform/publish externally, capture a receipt, verify the result, reconcile `ISSUE_GRAPH.yaml`, and converge the external projection idempotently. Parent/subissue linking, evidence-preserving supersession, closure and reopen must use the already-delivered issue/projection semantics rather than inventing a second authority plane.
+Each write follows:
 
-No real downstream GitHub adoption belongs in WP-05 implementation; prove generic transactions synthetically first.
+```text
+select GHOP
+ -> persist ATTEMPTED_UNCONFIRMED
+ -> external mutation
+ -> GITHUB_OBSERVATION readback
+ -> verify
+ -> reconcile ISSUE_GRAPH / projection readiness
+```
+
+Missing connector response never proves no mutation happened. Uncertain CREATE is reconciled by durable operation identity/marker before retry. Verified readback can recover a lost connector receipt explicitly. Old generations remain durable history and lose publication authority when superseded.
+
+`ISSUE_GRAPH.github_state` now means last verified external state: `ABSENT | OPEN | CLOSED | UNKNOWN`. Native parent/sub-issue or other relationship success may be claimed only when the adapter can create and read back that native relationship; prose/body links are not equivalent.
+
+WP-05 pre-checkpoint evidence:
+
+```text
+f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b
+workflow 35140358167 — PASS
+root units + 111 dedicated stress tests
+```
 
 ## Remaining dependency topology
 
 ```text
-WP-05 GitHub Ops                 CURRENT
+WP-06 Quality Procedures          NEXT after CP-R006 CI PASS
    |
-   +---------------------------+
-                               v
-                       WP-06 Quality Procedures
-                               |
-                               v
-                      WP-07 Human Communication
-                               |
-                               v
-                      WP-08 Owner Change Intake
-                               |
-                               v
-                   WP-09 End-to-end Certification
-                               |
-                               v
-                     WP-10 Self-consistency Audit
-                               |
-                               v
-                        WP-11 PR Readiness
+   v
+WP-07 Human Communication
+   |
+   v
+WP-08 Owner Change Intake
+   |
+   v
+WP-09 End-to-end Certification
+   |
+   v
+WP-10 Self-consistency Audit
+   |
+   v
+WP-11 PR Readiness
 ```
 
 Serial execution remains default. Defined future work is not executable work.
@@ -172,15 +155,16 @@ PR #396 remains draft until:
 [x] full roadmap/WP/task/AC handover
 [x] detailed ordered next-work projection
 [x] generated report reconciliation
-[ ] operational GitHub projection procedures
+[x] operational GitHub projection procedures — CP-R006 content complete, final checkpoint CI pending
 [ ] scoped QRV quality procedures
 [ ] plain-language Owner communication
+[ ] Owner change-intake projection
 [ ] lifecycle cold-start/certification matrix
 [ ] A -> B -> C zero-chat relay
 [ ] schema/template/validator/renderer/docs audit
 [ ] final exact-head generic CI
-[x] V2 untouched through WP-04
-[x] no downstream-specific logic through WP-04
+[x] V2 untouched through WP-05
+[x] no downstream-specific logic through WP-05
 ```
 
 Do not merge automatically.
