@@ -1,0 +1,73 @@
+{
+  "policy_id": "CHEM-ENGINEERING-SEMANTIC-PROJECTION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_class": "ENGINEERING_TO_BLUEPRINT_SEMANTIC_PROJECTION",
+  "principles": [
+    "ENGINEERING_OBLIGATIONS_ARE_THE_ONLY_SOURCE_OF_PROJECTED_SEMANTICS",
+    "TOPIC_NAMES_MAY_NOT_BRANCH_SEMANTIC_PROJECTION",
+    "SEMANTIC_POLARITY_MUST_BE_PRESERVED",
+    "PROJECTED_SEMANTICS_MUST_RETAIN_SOURCE_OBLIGATION_LINEAGE",
+    "MISSING_REQUIRED_SOURCE_FIELDS_FAIL_CLOSED",
+    "DOWNSTREAM_RECLASSIFICATION_MUST_FAIL_CLOSED"
+  ],
+  "kind_rules": {
+    "CONCEPT": [
+      {"source_field": "canonical_statement", "semantic_role": "CONCEPT_RULE", "required": true}
+    ],
+    "EQUATION": [
+      {"source_field": "formula", "semantic_role": "EQUATION_MODEL", "required": true},
+      {"source_field": "conditions_of_validity", "semantic_role": "VALIDITY_BOUNDARY", "required": true}
+    ],
+    "REPRESENTATION": [
+      {"source_field": "chemistry_encoded", "semantic_role": "REPRESENTATION_REQUIREMENT", "required": true},
+      {"source_field": "verification_method", "semantic_role": "VERIFICATION", "required": false}
+    ],
+    "MODEL_CONDITION": [
+      {"source_field": "condition", "semantic_role": "VALIDITY_BOUNDARY", "required": true},
+      {"source_field": "what_changes_if_violated", "semantic_role": "BOUNDARY_CONSEQUENCE", "required": true}
+    ],
+    "REASONING_STEP": [
+      {"source_field": "expert_action", "semantic_role": "REASONING_MOVE", "required": true}
+    ],
+    "TRANSFORMATION": [
+      {"source_field": "description", "semantic_role": "TRANSFORMATION_REQUIREMENT", "required": true}
+    ],
+    "MISCONCEPTION": [
+      {"source_field": "incorrect_belief", "semantic_role": "MISCONCEPTION", "required": true},
+      {"source_field": "required_counterexample", "semantic_role": "COUNTEREXAMPLE", "required": true},
+      {"source_field": "required_technical_repair", "semantic_role": "MISCONCEPTION_REPAIR", "required": true}
+    ],
+    "VERIFICATION": [
+      {"source_field": "statement", "semantic_role": "VERIFICATION", "required": true}
+    ],
+    "PROBLEM_FAMILY": [
+      {"source_field": "recognition_cues", "semantic_role": "RECOGNITION_SIGNAL", "required": true},
+      {"source_field": "first_technical_move", "semantic_role": "METHOD_STEP", "required": true},
+      {"source_field": "common_fatal_error", "semantic_role": "ERROR_TO_AVOID", "required": true},
+      {"source_field": "typical_unknown", "semantic_role": "TARGET_UNKNOWN", "required": false}
+    ],
+    "DIFFICULTY_PROFILE": [
+      {"source_field": "difficulty_basis", "semantic_role": "DIFFICULTY_EVIDENCE", "required": true}
+    ]
+  },
+  "semantic_roles": [
+    "CONCEPT_RULE",
+    "EQUATION_MODEL",
+    "VALIDITY_BOUNDARY",
+    "REPRESENTATION_REQUIREMENT",
+    "VERIFICATION",
+    "BOUNDARY_CONSEQUENCE",
+    "REASONING_MOVE",
+    "TRANSFORMATION_REQUIREMENT",
+    "MISCONCEPTION",
+    "COUNTEREXAMPLE",
+    "MISCONCEPTION_REPAIR",
+    "RECOGNITION_SIGNAL",
+    "METHOD_STEP",
+    "ERROR_TO_AVOID",
+    "TARGET_UNKNOWN",
+    "DIFFICULTY_EVIDENCE"
+  ],
+  "status": "ACTIVE"
+}
