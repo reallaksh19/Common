@@ -1,0 +1,67 @@
+{
+  "$id": "skp-capability.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Pilot Capability",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "capability_id",
+    "skp_ref",
+    "title",
+    "disciplinary_meaning",
+    "learner_success_statement",
+    "scope_refs",
+    "observability",
+    "granularity_rationale",
+    "source_refs",
+    "subject_extension_refs",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "capability_id": {"type": "string", "pattern": "^CAP-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "title": {"type": "string", "minLength": 3},
+    "disciplinary_meaning": {"type": "string", "minLength": 10},
+    "learner_success_statement": {"type": "string", "minLength": 10},
+    "scope_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^SCOPE-[A-Z0-9][A-Z0-9_-]*$"}
+    },
+    "observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "evidence_types"],
+      "properties": {
+        "state": {"enum": ["DIRECT", "INDIRECT", "NOT_YET_DEFINED"]},
+        "evidence_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 2}
+        }
+      }
+    },
+    "granularity_rationale": {"type": "string", "minLength": 10},
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "subject_extension_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "status": {"const": "PILOT"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"observability": {"properties": {"state": {"enum": ["DIRECT", "INDIRECT"]}}}}},
+      "then": {"properties": {"observability": {"properties": {"evidence_types": {"minItems": 1}}}}}
+    }
+  ]
+}

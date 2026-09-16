@@ -1,9 +1,11 @@
 # SKP Schema Roadmap
 
-Status: **DESIGN ROADMAP**  
-Bulk library population: **BLOCKED** until pilot exit criteria are satisfied.
+Status: **DESIGN ROADMAP WITH FOUNDATIONAL PILOT CONTRACTS**  
+Bulk library population: **BLOCKED** until diversity-pilot exit criteria and schema activation are satisfied.
 
-This roadmap translates `SUBTOPIC_KNOWLEDGE_MODEL.md` into a staged machine-contract plan. It intentionally does **not** create the operational SKP schemas yet. The machine-readable status source is `registry/skp-schema-roadmap.v1.json`.
+This roadmap translates `SUBTOPIC_KNOWLEDGE_MODEL.md` into staged machine contracts. Seven foundational modules now have executable **PILOT** contracts and a synthetic subject-neutral fixture. They remain **non-runtime**, do not authorize production consumption, and are not sufficient to describe a complete SKP. The remaining modules are still `PLANNED`. The machine-readable status source is `registry/skp-schema-roadmap.v1.json`.
+
+There is still **no top-level production SKP schema, no production SKP compiler, and no active SKP-to-Engineering promotion path**. Existing Physics, Mathematics, Chemistry, Shared EngineeringGate, CrossDomain and HumanReview authorities remain unchanged.
 
 ## 1. Why modular schemas
 
@@ -13,35 +15,60 @@ A single giant schema would create three problems:
 2. schema evolution would require breaking the whole package for local changes;
 3. agents could satisfy structural counts while semantic ownership remained unclear.
 
-SKP v1 therefore uses a small shared kernel plus subject extensions.
+SKP v1 therefore uses a small shared kernel plus subject extensions. Modules advance independently through a maturity lifecycle and must not become runtime authority merely because a contract file exists.
 
-## 2. Planned shared-kernel modules
+## 2. Shared-kernel and infrastructure modules
 
-| Module | Purpose | Initial dependency |
-|---|---|---|
-| `identity` | stable package/object IDs, aliases, version/supersession | none |
-| `scope` | includes/excludes/boundaries | identity |
-| `curriculum_binding` | board/grade/version/classification/evidence | identity, scope |
-| `capability` | stable teachable/assessable abilities | identity, scope |
-| `prerequisite_edge` | typed dependencies, rationale, missing behavior | capability |
-| `concept` | meaning-bearing disciplinary constructs | identity |
-| `relation` | formal relations and applicability envelope | concept, capability |
-| `reasoning_sequence` | semantic reasoning jobs and fragile jumps | capability, relation |
-| `representation` | representations, purpose, alternatives, translations | capability, concept |
-| `learner_conception` | evidence-backed errors/resources/hypotheses | capability, source_record |
-| `problem_family` | structural task families and transfer boundaries | capability, reasoning_sequence |
-| `verification_route` | subject-appropriate result/reasoning checks | relation, problem_family |
-| `source_plan` | evidence obligations by intent | scope |
-| `source_record` | actual sources, purpose, provenance, limitations | source_plan |
-| `assessment_binding` | stable question-corpus bindings | capability, problem_family |
-| `adaptation_policy` | what learner evidence may change | capability, representation |
-| `research_overlay` | depth-specific claims/evidence/supersession | source_record, relation |
-| `provenance` | entities/activities/agents/custody | all promotable entities |
-| `maturity` | discovery/draft/pilot/validated/active/superseded | provenance |
+| Module | Status | Purpose | Initial dependency |
+|---|---|---|---|
+| `identity` | **PILOT** | stable package/object IDs, aliases, version/supersession | none |
+| `scope` | **PILOT** | includes/excludes/boundaries | identity |
+| `curriculum_binding` | **PILOT** | board/grade/version/classification/evidence | identity, scope |
+| `capability` | **PILOT** | stable teachable/assessable abilities | identity, scope |
+| `prerequisite_edge` | **PILOT** | typed dependencies, rationale, missing behavior, provider ownership | capability |
+| `concept` | PLANNED | meaning-bearing disciplinary constructs | identity |
+| `relation` | PLANNED | formal relations and applicability envelope | concept, capability |
+| `reasoning_sequence` | PLANNED | semantic reasoning jobs and fragile jumps | capability, relation |
+| `representation` | PLANNED | representations, purpose, alternatives, translations | capability, concept |
+| `learner_conception` | PLANNED | evidence-backed errors/resources/hypotheses | capability, source_record |
+| `problem_family` | PLANNED | structural task families and transfer boundaries | capability, reasoning_sequence |
+| `verification_route` | PLANNED | subject-appropriate result/reasoning checks | relation, problem_family |
+| `source_plan` | **PILOT** | evidence obligations by intent | scope |
+| `source_record` | **PILOT** | actual sources, purpose, selection reason, limitations | source_plan |
+| `assessment_binding` | PLANNED | stable question-corpus bindings | capability, problem_family |
+| `adaptation_policy` | PLANNED | what learner evidence may change | capability, representation |
+| `research_overlay` | PLANNED | depth-specific claims/evidence/supersession | source_record, relation |
+| `provenance` | PLANNED | entities/activities/agents/custody | identity, source_record |
+| `maturity` | PLANNED | discovery/pilot/validated/active/superseded lifecycle | provenance |
 
-These names are conceptual module IDs. Exact file/field names may change during pilot design, but their semantic responsibilities should not be silently merged.
+The seven PILOT modules are exercised only through `fixtures/skp-pilot-kernel.synthetic.fixture.json` and `tests/test_skp_pilot_kernel.py`. The synthetic fixture is deliberately not Physics, Mathematics, Chemistry, Relative Motion, or any other real content case. Shared semantics must survive without case knowledge.
 
-## 3. Planned subject extensions
+## 3. What the foundational PILOT kernel proves
+
+The current pilot contracts establish only these boundaries:
+
+- stable package identity and version/supersession shape;
+- explicit scope include/exclude/boundary structure;
+- versioned curriculum classification with evidence refs;
+- capability identity, disciplinary meaning, learner-success semantics and observability;
+- prerequisite edge type, rationale, hardness, missing behavior and provider ownership;
+- source-plan obligations by declared source intent;
+- source records with purpose-specific disposition, selection reason, limitations, corroboration and licensing state.
+
+The synthetic semantic validator additionally falsifies:
+
+- duplicate capability IDs;
+- unresolved remembered references;
+- external prerequisites without provider-owned authority;
+- empirical-progression claims without progression evidence;
+- HARD prerequisites marked `NO_BLOCK`;
+- silent prerequisite cycles;
+- promoted sources without an adequate selection reason;
+- disappearance of required exact source evidence without an explicit hold.
+
+These checks are **pilot evidence**, not production authorization.
+
+## 4. Planned subject extensions
 
 ### Physics
 
@@ -80,11 +107,13 @@ Candidate modules/fields:
 - experiment/source-obligation semantics;
 - explicit representation translations.
 
-Extensions may add subject semantics but may not redefine shared meanings such as capability, prerequisite, source, maturity, or provenance.
+Extensions may add subject semantics but may not redefine shared meanings such as capability, prerequisite, source, maturity, provenance, or evidence state.
 
-## 4. Planned package composition
+All three subject adapters remain `PLANNED` and `runtime_authority=false` until diversity pilots demonstrate that the shared kernel is adequate.
 
-Target top-level shape, for discussion only:
+## 5. Target package composition
+
+The long-term package may resemble the following composition, but this is **not a schema** and has no runtime authority:
 
 ```json
 {
@@ -115,14 +144,14 @@ Target top-level shape, for discussion only:
 }
 ```
 
-This example is **not a schema** and has no runtime authority.
+A top-level SKP contract should not be created until enough component semantics exist to avoid encoding a premature Physics-shaped structure.
 
-## 5. Cross-reference validation requirements
+## 6. Cross-reference validation requirements
 
-A future SKP compiler should validate more than JSON Schema can express easily:
+A future SKP compiler must validate more than JSON Schema can express reliably:
 
 - unique stable IDs;
-- all refs resolve;
+- all references resolve;
 - prerequisite graph cycle policy;
 - external prerequisite provider ownership;
 - curriculum binding version presence;
@@ -132,13 +161,13 @@ A future SKP compiler should validate more than JSON Schema can express easily:
 - problem families reference existing capabilities/reasoning/verification;
 - source claims bind to existing package claims/objects;
 - learner-conception classes meet evidence policy;
-- research overlay base digest matches exact package;
+- research overlay base digest matches the exact package;
 - same-ID mutation is detected;
 - maturity promotion has required evidence/tests.
 
-These semantic validators are as important as structural schema validation.
+The PILOT kernel already begins this semantic-validation layer for the seven foundational modules. JSON Schema validity alone is not promotion authority.
 
-## 6. Planned schema maturity lifecycle
+## 7. Schema maturity lifecycle
 
 Each module follows:
 
@@ -154,9 +183,17 @@ ACTIVE
 DEPRECATED / SUPERSEDED
 ```
 
-A module must not jump directly from `PLANNED` to `ACTIVE` to satisfy a production deadline.
+A module must not jump directly from `PLANNED` or `PILOT` to `ACTIVE` to satisfy a production deadline.
 
-## 7. Activation requirements
+`PILOT` means the contract is executable and falsifiable. It does **not** mean:
+
+- valid production input;
+- semantic correctness across subjects;
+- permission for library backfill;
+- Engineering readiness;
+- publication readiness.
+
+## 8. Activation requirements
 
 Before any shared module can become `ACTIVE`, it must have:
 
@@ -172,7 +209,9 @@ Before any shared module can become `ACTIVE`, it must have:
 - migration/supersession rule;
 - at least one non-Physics pilot if the module claims shared applicability.
 
-## 8. Pilot order
+Foundational PILOT contracts have not yet satisfied this full activation list.
+
+## 9. Pilot order
 
 ### Pilot P1 — Physics Relative Motion / STANDARD
 
@@ -214,7 +253,9 @@ Stress:
 - source/experiment obligations;
 - notation ambiguity.
 
-## 9. Pilot exit criteria
+These are bounded architecture pilots. They are not permission to populate a broad topic library.
+
+## 10. Pilot exit criteria
 
 Do not freeze SKP v1 until all four pilots establish:
 
@@ -229,15 +270,18 @@ Do not freeze SKP v1 until all four pilots establish:
 9. assessment bindings do not force domain ontology changes merely to absorb questions;
 10. semantic falsifiers detect same-ID drift, broken refs, unsupported promotion, and illegal cross-domain ownership.
 
-## 10. Bulk population gate
+## 11. Bulk population gate
 
 `registry/skp-schema-roadmap.v1.json` currently declares:
 
 ```text
 bulk_population_allowed = false
+bulk_population_state = BLOCKED_UNTIL_DIVERSITY_PILOTS_AND_SCHEMA_ACTIVATION
 ```
 
-This should remain false until:
+This remains false even though seven modules are now PILOT.
+
+Do not open bulk population until:
 
 - required shared modules are at least `VALIDATED`;
 - all four diversity pilots are complete;
@@ -245,13 +289,13 @@ This should remain false until:
 - schema migration policy exists;
 - the architecture review explicitly opens library population.
 
-Before that point, only bounded pilot packages/fixtures should be created.
+Before that point, only bounded synthetic fixtures and declared diversity-pilot packages are legal.
 
-## 11. Question/assessment corpus roadmap
+## 12. Question/assessment corpus roadmap
 
 The assessment corpus is intentionally separate from SKP content.
 
-Planned question-record contract should eventually support:
+A planned question-record contract should eventually support:
 
 - question/source ID and exact custody;
 - exam/curriculum/year metadata;
@@ -263,11 +307,11 @@ Planned question-record contract should eventually support:
 - reuse/licensing state;
 - mapping/review status.
 
-SKPs bind question IDs rather than duplicate source text.
+SKPs should bind stable question IDs rather than duplicate question bodies.
 
-## 12. Independent-agent reproducibility roadmap
+## 13. Independent-agent reproducibility roadmap
 
-After schema pilots, run at least three clean-context agents on the same task package and compare structural outputs:
+After enough schema modules exist for real pilots, run at least three clean-context agents on the same governed task and compare structural outputs:
 
 - scope;
 - capability IDs/granularity;
@@ -294,7 +338,22 @@ Disagreement classes should include:
 
 Do not resolve domain conflicts by agent majority vote.
 
-## 13. Roadmap success metric
+## 14. Next schema tranche
+
+Do **not** create all remaining modules at once.
+
+The next bounded tranche should implement only the minimum semantics required to make the first diversity pilot meaningful:
+
+- `concept`;
+- `relation` plus applicability/validity semantics;
+- `reasoning_sequence` and high-fragility jumps;
+- `representation` and representation-translation obligations;
+- `verification_route`;
+- `problem_family` if required by the first pilot.
+
+Only after those contracts survive a real Physics pilot should `learner_conception`, `assessment_binding`, `adaptation_policy`, `research_overlay`, `provenance`, and `maturity` advance as needed. Mathematics and Chemistry pilots must then challenge the shared design before any module becomes `ACTIVE`.
+
+## 15. Roadmap success metrics
 
 The dominant repository change for an ordinary new subtopic should eventually be `DATA_ONLY`.
 
@@ -305,7 +364,7 @@ Track at least:
 - promoted claims with provenance;
 - external prerequisites without declared provider owner (target: zero);
 - learner-state mutations of domain truth (target: zero);
-- research overlay silent base mutations (target: zero);
+- research-overlay silent base mutations (target: zero);
 - source records without selection reason (target: zero);
 - unresolved contradictions at promotion;
 - independent-agent structural agreement after calibration.

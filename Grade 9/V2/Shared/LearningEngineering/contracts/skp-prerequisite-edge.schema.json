@@ -1,0 +1,93 @@
+{
+  "$id": "skp-prerequisite-edge.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Pilot Prerequisite Edge",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "edge_id",
+    "skp_ref",
+    "prerequisite_ref",
+    "target_ref",
+    "edge_type",
+    "rationale",
+    "evidence_refs",
+    "hardness",
+    "missing_behavior",
+    "bridge_ref",
+    "provider_owner",
+    "progression_status",
+    "progression_evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "edge_id": {"type": "string", "pattern": "^EDGE-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "prerequisite_ref": {"type": "string", "pattern": "^CAP-[A-Z0-9][A-Z0-9_-]*$"},
+    "target_ref": {"type": "string", "pattern": "^CAP-[A-Z0-9][A-Z0-9_-]*$"},
+    "edge_type": {
+      "enum": [
+        "STRUCTURAL_PREREQUISITE",
+        "EXTERNAL_DOMAIN_PREREQUISITE",
+        "CURRICULUM_PREREQUISITE",
+        "PEDAGOGICAL_BRIDGE",
+        "OPTIONAL_ENRICHMENT"
+      ]
+    },
+    "rationale": {"type": "string", "minLength": 12},
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "hardness": {"enum": ["HARD", "SOFT", "CONTEXTUAL"]},
+    "missing_behavior": {
+      "enum": ["HARD_BLOCK", "BRIDGE_REQUIRED", "EXTRA_SCAFFOLD", "DIAGNOSTIC_CHECK", "NO_BLOCK", "UNRESOLVED"]
+    },
+    "bridge_ref": {
+      "anyOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "null"}
+      ]
+    },
+    "provider_owner": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["subject", "authority_ref"],
+          "properties": {
+            "subject": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]*$"},
+            "authority_ref": {"type": "string", "minLength": 1}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "progression_status": {
+      "enum": ["NOT_A_PROGRESSION", "HYPOTHESIZED_PROGRESSION", "EMPIRICALLY_SUPPORTED_PROGRESSION"]
+    },
+    "progression_evidence_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"edge_type": {"const": "EXTERNAL_DOMAIN_PREREQUISITE"}}},
+      "then": {"properties": {"provider_owner": {"type": "object"}}},
+      "else": {"properties": {"provider_owner": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"missing_behavior": {"const": "BRIDGE_REQUIRED"}}},
+      "then": {"properties": {"bridge_ref": {"type": "string"}}}
+    },
+    {
+      "if": {"properties": {"progression_status": {"const": "EMPIRICALLY_SUPPORTED_PROGRESSION"}}},
+      "then": {"properties": {"progression_evidence_refs": {"minItems": 1}}}
+    }
+  ]
+}

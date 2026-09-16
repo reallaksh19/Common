@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Falsifiers for the non-runtime Shared LearningEngineering architecture roadmap."""
 import json
+import runpy
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
@@ -26,12 +27,26 @@ assert roadmap["bulk_population_state"] == "BLOCKED_UNTIL_DIVERSITY_PILOTS_AND_S
 module_ids = [m["module_id"] for m in roadmap["modules"]]
 assert len(module_ids) == len(set(module_ids)), "duplicate module IDs"
 module_set = set(module_ids)
+expected_pilot_modules = {
+    "SKP-IDENTITY",
+    "SKP-SCOPE",
+    "SKP-CURRICULUM-BINDING",
+    "SKP-CAPABILITY",
+    "SKP-PREREQUISITE-EDGE",
+    "SKP-SOURCE-PLAN",
+    "SKP-SOURCE-RECORD",
+}
+pilot_modules = {m["module_id"] for m in roadmap["modules"] if m["status"] == "PILOT"}
+assert pilot_modules == expected_pilot_modules, pilot_modules
 for module in roadmap["modules"]:
     assert module["runtime_authority"] is False, module["module_id"]
-    assert module["status"] == "PLANNED", module["module_id"]
+    assert module["status"] in {"PLANNED", "PILOT"}, module["module_id"]
     assert set(module["depends_on"]) <= module_set, (module["module_id"], module["depends_on"])
     target = ROOT / module["target_contract"]
-    assert not target.exists(), f"PLANNED roadmap contract unexpectedly materialized without status change: {target}"
+    if module["status"] == "PILOT":
+        assert target.exists(), f"PILOT roadmap contract missing: {target}"
+    else:
+        assert not target.exists(), f"PLANNED roadmap contract materialized without status change: {target}"
 
 # Shared kernel must remain case-neutral. Topic fixtures are legal in pilot data, not module semantics.
 shared_text = json.dumps(roadmap["modules"], sort_keys=True).upper()
@@ -108,12 +123,17 @@ for phrase in (
 ):
     assert phrase in roadmap_doc, phrase
 
-# The roadmap itself is not a hidden promotion mechanism.
+# The roadmap itself is not a hidden production promotion mechanism.
 assert "ACTIVE" in json.dumps(schema), "lifecycle supports future ACTIVE state"
 assert not any(m["status"] == "ACTIVE" for m in roadmap["modules"])
+assert not any(a["status"] == "ACTIVE" for a in roadmap["subject_adapters"])
+
+# Foundational PILOT contracts are exercised through a synthetic topic-neutral fixture and negative falsifiers.
+runpy.run_path(str(ROOT / "tests" / "test_skp_pilot_kernel.py"), run_name="__main__")
 
 print(
     "Shared LearningEngineering architecture: PASS "
-    f"({len(module_ids)} planned modules, {len(roadmap['subject_adapters'])} subject adapters, "
+    f"({len(pilot_modules)} pilot modules / {len(module_ids) - len(pilot_modules)} planned modules, "
+    f"{len(roadmap['subject_adapters'])} planned subject adapters, "
     f"{len(roadmap['pilots'])} diversity pilots; bulk population remains BLOCKED)"
 )

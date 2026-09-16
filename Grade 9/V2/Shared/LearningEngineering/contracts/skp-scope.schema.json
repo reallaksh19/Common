@@ -1,0 +1,66 @@
+{
+  "$id": "skp-scope.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Pilot Scope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scope_id",
+    "skp_ref",
+    "includes",
+    "excludes",
+    "adjacent_refs",
+    "unresolved_boundaries"
+  ],
+  "$defs": {
+    "scopeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_item_id", "statement", "evidence_refs"],
+      "properties": {
+        "scope_item_id": {"type": "string", "pattern": "^SCOPE-[A-Z0-9][A-Z0-9_-]*$"},
+        "statement": {"type": "string", "minLength": 8},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "unresolvedBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boundary_id", "detail", "state"],
+      "properties": {
+        "boundary_id": {"type": "string", "pattern": "^BOUNDARY-[A-Z0-9][A-Z0-9_-]*$"},
+        "detail": {"type": "string", "minLength": 8},
+        "state": {"const": "UNRESOLVED"}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "scope_id": {"type": "string", "pattern": "^SKP-SCOPE-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "includes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/scopeItem"}
+    },
+    "excludes": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/scopeItem"}
+    },
+    "adjacent_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "unresolved_boundaries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/unresolvedBoundary"}
+    }
+  }
+}
