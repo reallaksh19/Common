@@ -163,7 +163,390 @@ FAMILY-QUAD-04 (JEE Advanced):
 
 ---
 
-## 4. Intake Validation Checklist for Future Subtopics
+## 4. Foundation Packet: Linear Systems & Consistency Criteria (`MATH-LIN-EQUATIONS`)
+
+### 4.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-LIN-EQUATIONS`
+- **Engineering Gate Binding**: `MATH-LIN-EQUATIONS` (Digest-bound closure receipt)
+- **Learner Title**: Pair of Linear Equations in Two Variables, Consistency Ratios & Matrix Determinants
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Non-Degenerate Variable Constraint**: For each equation $a_i x + b_i y + c_i = 0$, the coefficient vector $(a_i, b_i) \neq (0, 0)$ must hold. A relation with $a_i = b_i = 0$ is either a contradiction ($c_i \neq 0 \implies 0 = 1$) or a trivial identity ($c_i = 0$).
+  2. **Non-Zero Divisor Invariant in Ratio Form**: Direct comparison $\frac{a_1}{a_2} = \frac{b_1}{b_2} = \frac{c_1}{c_2}$ is valid only if $a_2, b_2, c_2 \neq 0$. In general, cross-multiplication determinant forms ($a_1 b_2 - a_2 b_1 = 0$, etc.) must be evaluated to prevent division by zero.
+  3. **Solvability Invariant (Rouché-Capelli Theorem)**: A system $\mathbf{A}\mathbf{x} = \mathbf{b}$ is consistent if and only if $\operatorname{rank}(\mathbf{A}) = \operatorname{rank}([\mathbf{A}|\mathbf{b}])$.
+
+### 4.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-LIN-01` (`CONCEPT`): Linear equation in two variables as an infinite set of ordered pairs $(x, y) \in \mathbb{R}^2$ geometrically forming a Euclidean straight line.
+- `ATOM-LIN-02` (`RELATION`): Consistency classification trichotomy:
+  - *Unique solution* (consistent & independent, intersecting lines) $\iff \frac{a_1}{a_2} \neq \frac{b_1}{b_2} \iff a_1 b_2 - a_2 b_1 \neq 0$.
+  - *Infinitely many solutions* (consistent & dependent, coincident lines) $\iff \frac{a_1}{a_2} = \frac{b_1}{b_2} = \frac{c_1}{c_2}$.
+  - *No solution* (inconsistent, distinct parallel lines) $\iff \frac{a_1}{a_2} = \frac{b_1}{b_2} \neq \frac{c_1}{c_2}$.
+- `ATOM-LIN-03` (`PROCEDURE`): Algebraic resolution algorithms:
+  - Substitution method: isolating one variable and evaluating univariate equation.
+  - Elimination by equating coefficients: multiplying by suitable scale factors to cancel one variable.
+  - Determinant / Cross-multiplication method: $x = \frac{b_1 c_2 - b_2 c_1}{a_1 b_2 - a_2 b_1}, y = \frac{c_1 a_2 - c_2 a_1}{a_1 b_2 - a_2 b_1}$ where $a_1 b_2 - a_2 b_1 \neq 0$.
+- `ATOM-LIN-04` (`STRATEGY`): Rational substitution for reducible nonlinear systems: mapping $u = \frac{1}{x+y}, v = \frac{1}{x-y}$ subject to domain constraints $x \neq \pm y$.
+- `ATOM-LIN-05` (`INVARIANT`): Homogeneous linear systems $a_1 x + b_1 y = 0, a_2 x + b_2 y = 0$ always possess the trivial solution $(0, 0)$; non-trivial solutions exist if and only if determinant $D = a_1 b_2 - a_2 b_1 = 0$.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Lines never cross"* | $\frac{a_1}{a_2} = \frac{b_1}{b_2} \neq \frac{c_1}{c_2} \iff \mathbf{n}_1 \parallel \mathbf{n}_2, c_1/c_2 \neq \lambda$ | Inconsistent system; empty intersection set $\emptyset$. |
+| *"Same line written twice"* | $\operatorname{rank}(\mathbf{A}) = \operatorname{rank}([\mathbf{A}\mid\mathbf{b}]) = 1 < 2$ | Infinitely many solutions; 1-dimensional solution manifold. |
+| *"Cross multiplication rule"* | $\frac{x}{b_1 c_2 - b_2 c_1} = \frac{-y}{a_1 c_2 - a_2 c_1} = \frac{1}{a_1 b_2 - a_2 b_1}$ | Determinant expansion of $2 \times 3$ augmented matrix. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Blind Ratio Division with Zero Coefficients**:
+   - *Flawed Action*: Evaluating consistency of $3x + 0y = 6$ and $6x + 0y = 12$ by computing $\frac{a_1}{a_2} = \frac{3}{6} = \frac{1}{2}$, and concluding system is undefined because $\frac{b_1}{b_2} = \frac{0}{0}$.
+   - *Correct Diagnostic Cue*: Coefficient ratios are a shorthand for the cross-product determinant. Because $a_1 b_2 - a_2 b_1 = 3(0) - 6(0) = 0$ and $b_1 c_2 - b_2 c_1 = 0(-12) - 0(-6) = 0$, both lines represent the identical vertical line $x = 2$, yielding infinitely many solutions.
+2. **Misconception: Inconsistent vs Coincident Confusion**:
+   - *Flawed Action*: Concluding a system has no solution whenever $\frac{a_1}{a_2} = \frac{b_1}{b_2}$, ignoring the constant ratio $\frac{c_1}{c_2}$.
+   - *Correct Diagnostic Cue*: Parallel slope only establishes identical orientation; the lines coincide (infinitely many solutions) if $\frac{c_1}{c_2}$ equals the slope ratio, and are parallel (no solution) only if $\frac{c_1}{c_2}$ differs.
+3. **Misconception: Unchecked Rational Substitution Domains**:
+   - *Flawed Action*: In solving $\frac{10}{x+y} + \frac{2}{x-y} = 4$, finding $x=3, y=3$ and accepting it without verification.
+   - *Correct Diagnostic Cue*: If $x = y = 3$, $x - y = 0$, causing division by zero in the original ground truth equation. All candidates must be checked against domain preconditions.
+
+### 4.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-LIN-01: Incomplete Algebraic Elimination Frame (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Solve the linear system by elimination:
+  (1)  3x + 4y = 10
+  (2)  2x - 3y = 1
+
+Step 1: Choose variable to eliminate: [ y ]
+Step 2: Find LCM of coefficients of y: LCM(4, 3) = [ ___ ]
+Step 3: Multiply equation (1) by [ ___ ]:  9x + 12y = [ ___ ]   ... (3)
+Step 4: Multiply equation (2) by [ ___ ]:  8x - 12y = [ ___ ]   ... (4)
+Step 5: Add equations (3) and (4):
+        (9x + 8x) + (12y - 12y) = [ ___ ] + [ ___ ]
+        [ ___ ]x = [ ___ ]
+        x = [ ___ ]
+Step 6: Substitute x into equation (1):
+        3([ ___ ]) + 4y = 10  ==>  [ ___ ] + 4y = 10  ==>  4y = [ ___ ]  ==>  y = [ ___ ]
+Solution Pair: (x, y) = ([ ___ ], [ ___ ])
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 2: LCM = 12
+Step 3: Multiply (1) by 3: 9x + 12y = 30
+Step 4: Multiply (2) by 4: 8x - 12y = 4
+Step 5: 17x = 34 ==> x = 2
+Step 6: 3(2) + 4y = 10 ==> 6 + 4y = 10 ==> 4y = 4 ==> y = 1
+Solution Pair: (x, y) = (2, 1)
+```
+
+#### TTU-LIN-02: Parameter Consistency Invariant Model (Core2A $\to$ Core2B)
+```text
+[BOUNDED VIEWPORT SPECIFICATION]
+Viewport: x ∈ [-5, 5], y ∈ [-5, 5], clip_to_viewport = true
+System:
+  (1)  (k - 1)x + 3y = 2
+  (2)  6x + (k + 2)y = k
+
+Target Condition: Find parameter k such that the system has infinitely many solutions.
+
+[INCOMPLETE GEOMETRIC TTU]
+Consistency Conditions for Coincident Lines:
+  a1 / a2 = b1 / b2 = c1 / c2
+  (k - 1) / 6 = 3 / (k + 2) = 2 / k
+
+Step 1: Solve determinant equation D = (k - 1)(k + 2) - 18 = 0
+        k² + k - 2 - 18 = 0  ==>  k² + k - 20 = 0
+        Factors: (k - [ ___ ])(k + [ ___ ]) = 0  ==>  k ∈ { [ ___ ], [ ___ ] }
+
+Step 2: Test candidate k = 4 against constant ratio:
+        a1/a2 = (4-1)/6 = 3/6 = 1/2
+        b1/b2 = 3/(4+2) = 3/6 = 1/2
+        c1/c2 = 2/4 = 1/2
+        Is k = 4 valid? [ YES / NO ]
+
+Step 3: Test candidate k = -5 against constant ratio:
+        a1/a2 = (-5-1)/6 = -6/6 = -1
+        b1/b2 = 3/(-5+2) = 3/(-3) = -1
+        c1/c2 = 2/(-5) = -2/5
+        Does -1 = -2/5? [ YES / NO ] ==> k = -5 yields: [ NO SOLUTION / INFINITE SOLUTIONS ]
+
+[COMPLETION DERIVATION KEY]
+Step 1: (k - 4)(k + 5) = 0 ==> k ∈ { 4, -5 }
+Step 2: All three ratios equal 1/2. k = 4 produces coincident lines (YES).
+Step 3: -1 ≠ -2/5. k = -5 produces parallel lines with NO solution.
+Conclusion: Unique parameter for infinitely many solutions is k = 4.
+```
+
+### 4.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-LIN-01 (Foundation / CBSE):
+  Two-variable elimination and substitution, graphical intersection points, upstream/downstream and fraction modeling.
+FAMILY-LIN-02 (Olympiad / IOQM):
+  Linear Diophantine equations ax + by = c with integer solutions via Euclidean algorithm, Bézout's identity,
+  and non-negative integer lattice point counting.
+FAMILY-LIN-03 (JEE Main):
+  3-variable systems via Cramer's Rule (Δ, Δx, Δy, Δz), parameter intervals for unique vs non-trivial solutions,
+  and homogeneous systems.
+FAMILY-LIN-04 (JEE Advanced):
+  Matrix rank deficiency, geometric planes intersecting in a line vs parallel planes, and parametric
+  vector line representations in R³.
+```
+
+---
+
+## 5. Foundation Packet: Triangles, Similarity & Thales' Theorem (`MATH-GEO-TRIANGLES`)
+
+### 5.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-GEO-TRIANGLES`
+- **Engineering Gate Binding**: `MATH-GEO-TRIANGLES` (Digest-bound closure receipt)
+- **Learner Title**: Similar Triangles, Basic Proportionality Theorem (Thales) & Cevian Geometry
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Strict Triangle Inequality Invariant**: For three non-collinear vertices $A, B, C$, $AB + BC > AC$, $BC + CA > AB$, and $CA + AB > BC$ strictly. Equality implies collinear degenerate line segment with zero enclosed area ($\operatorname{Area}(\triangle ABC) = 0$).
+  2. **Angle Sum Invariant in Euclidean Metric**: $\angle A + \angle B + \angle C = 180^\circ$ ($\pi$ radians).
+  3. **Parallel Transversal Ratio Preservation (Thales' Axiom)**: If line $l \parallel BC$ intersects $AB$ at $D$ and $AC$ at $E$, then $\frac{AD}{DB} = \frac{AE}{EC}$.
+
+### 5.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-TRI-01` (`CONCEPT`): Dilation and similarity: Two triangles $\triangle ABC$ and $\triangle DEF$ are similar ($\triangle ABC \sim \triangle DEF$) if and only if corresponding angles are equal ($\angle A = \angle D, \angle B = \angle E, \angle C = \angle F$) and corresponding sides are in a constant proportion $k = \frac{AB}{DE} = \frac{BC}{EF} = \frac{CA}{FD}$.
+- `ATOM-TRI-02` (`INVARIANT`): Basic Proportionality Theorem (Thales' Theorem) and its converse: A line drawn parallel to one side of a triangle divides the other two sides in the same ratio; conversely, proportional division implies parallelism.
+- `ATOM-TRI-03` (`RELATION`): Internal Angle Bisector Theorem: An interior angle bisector of a triangle divides the opposite side internally in the ratio of the adjacent sides containing the angle: $\frac{BD}{DC} = \frac{AB}{AC}$.
+- `ATOM-TRI-04` (`PROCEDURE`): Quadratic area scaling: If $\triangle ABC \sim \triangle DEF$ with scale factor $k$, then $\frac{\operatorname{Area}(\triangle ABC)}{\operatorname{Area}(\triangle DEF)} = k^2 = \left(\frac{AB}{DE}\right)^2$.
+- `ATOM-TRI-05` (`STRATEGY`): Auxiliary construction patterns:
+  - Dropping perpendicular altitudes from common vertices to evaluate area ratios of triangles sharing a common base line.
+  - Constructing parallel auxiliary lines through cevian intersections to transfer segment ratios across multiple triangles (Menelaus and Ceva foundations).
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Same shape, different size"* | Dilation under central homothety $\mathcal{H}_{O, k}$ | Conformal mapping preserving angle measure and scaling lengths by $k$. |
+| *"BPT / Thales theorem"* | $DE \parallel BC \implies \frac{AD}{DB} = \frac{AE}{EC}$ and $\frac{AD}{AB} = \frac{AE}{AC} = \frac{DE}{BC}$ | Ratio preservation along transversals. |
+| *"Area ratio theorem"* | $\frac{\operatorname{Area}_1}{\operatorname{Area}_2} = \left(\frac{s_1}{s_2}\right)^2 = \left(\frac{h_1}{h_2}\right)^2$ | 2D area scales with square of linear dimensions. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Area Ratio Equals Side Ratio**:
+   - *Flawed Action*: Stating that if the sides of a triangle are doubled ($k = 2$), its area is also doubled.
+   - *Correct Diagnostic Cue*: Area is a two-dimensional measure: $\operatorname{Area} = \frac{1}{2} \cdot \text{base} \cdot \text{height}$. Because both base and altitude scale by factor $k$, area scales by $k^2 = 2^2 = 4$.
+2. **Misconception: Blind Side Ratios Without Vertex Order Correspondence**:
+   - *Flawed Action*: Given $\triangle ABC \sim \triangle DEF$, writing $\frac{AB}{EF} = \frac{BC}{DE}$.
+   - *Correct Diagnostic Cue*: Similarity notation is strictly order-preserving. $\triangle ABC \sim \triangle DEF$ establishes canonical correspondence $A \leftrightarrow D, B \leftrightarrow E, C \leftrightarrow F$. Thus $\frac{AB}{DE} = \frac{BC}{EF} = \frac{CA}{FD}$.
+3. **Misconception: Misapplying BPT to Arbitrary Non-Parallel Transversals**:
+   - *Flawed Action*: Assuming $\frac{AD}{DB} = \frac{AE}{EC}$ holds for any arbitrary transversal segment $DE$.
+   - *Correct Diagnostic Cue*: BPT strictly requires verified parallelism $DE \parallel BC$. Without verified parallelism or equiangular orientation, side ratios cannot be equated.
+
+### 5.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-TRI-01: Incomplete Thales BPT Proof Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Theorem: If a line is drawn parallel to one side of a triangle intersecting the other two sides,
+         it divides the two sides in the same ratio.
+Given: In ΔABC, DE || BC, intersecting AB at D and AC at E.
+To Prove: AD / DB = AE / EC
+
+Construction:
+  1. Join BE and [ ___ ].
+  2. Draw altitude DM ⊥ AC and altitude EN ⊥ [ ___ ].
+
+Proof Steps:
+Step 1: Area(ΔADE) = 1/2 · base · height = 1/2 · AD · [ ___ ]
+Step 2: Area(ΔBDE) = 1/2 · base · height = 1/2 · DB · [ ___ ]
+Step 3: Ratio (1): Area(ΔADE) / Area(ΔBDE) = (1/2 · AD · EN) / (1/2 · DB · EN) = [ ___ ] / [ ___ ]
+
+Step 4: Similarly, taking base AE and EC with altitude DM:
+        Area(ΔADE) = 1/2 · AE · [ ___ ]
+        Area(ΔCDE) = 1/2 · EC · [ ___ ]
+Step 5: Ratio (2): Area(ΔADE) / Area(ΔCDE) = [ ___ ] / [ ___ ]
+
+Step 6: Geometric Invariant:
+        ΔBDE and ΔCDE are on the same base [ ___ ] and between the same parallel lines [ ___ ] and [ ___ ].
+        Therefore: Area(ΔBDE) = Area([ ___ ])
+
+Step 7: Equating Ratio (1) and Ratio (2):
+        AD / DB = [ ___ ] / [ ___ ]   (Hence Proved)
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Construction: 1. Join CD; 2. EN ⊥ AB
+Step 1: EN
+Step 2: EN
+Step 3: AD / DB
+Step 4: DM; DM
+Step 5: AE / EC
+Step 6: Same base DE; parallel lines DE and BC; Area(ΔCDE)
+Step 7: AD / DB = AE / EC
+```
+
+#### TTU-TRI-02: Trapezoid Parallel Segment Ratio Model (Core2A $\to$ Core2B)
+```text
+[BOUNDED VIEWPORT SPECIFICATION]
+Viewport: x ∈ [-1, 7], y ∈ [-1, 6], clip_to_viewport = true
+Figure: Trapezoid ABCD with AB || CD. Diagonals AC and BD intersect at point O.
+Target Condition: Prove that AO / OC = BO / OD, and if AB = 12, CD = 8, find AO : OC.
+
+[INCOMPLETE GEOMETRIC TTU]
+Step 1: Identify similar triangles:
+        In ΔAOB and ΔCOD:
+        ∠AOB = ∠COD  (Reason: [ _____________________ ])
+        ∠OAB = ∠OCD  (Reason: [ _____________________ ])
+        Therefore, ΔAOB ~ ΔCOD by [ AA / SAS / SSS ] similarity criterion.
+
+Step 2: Formulate corresponding side ratios:
+        AO / CO = BO / [ ___ ] = AB / [ ___ ]
+
+Step 3: Calculate numerical ratio:
+        AO / CO = 12 / [ ___ ] = [ ___ ] / [ ___ ]
+        Ratio AO : OC = [ ___ ] : [ ___ ]
+
+[COMPLETION DERIVATION KEY]
+Step 1: Vertically opposite angles; Alternate interior angles (since AB || CD); AA criterion.
+Step 2: DO; CD
+Step 3: 12 / 8 = 3 / 2. Ratio AO : OC = 3 : 2.
+```
+
+### 5.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-TRI-01 (Foundation / CBSE):
+  Formal BPT proof, ladder against vertical wall, shadow similarity, and trapezoid diagonal proofs.
+FAMILY-TRI-02 (Olympiad / IOQM):
+  Ceva's Theorem, Menelaus' Theorem on transversals, Stewart's theorem, angle bisector cevian ratios,
+  and spiral similarity under central homothety.
+FAMILY-TRI-03 (JEE Main):
+  Sine rule, cosine rule, projection formula, half-angle formulas, inradius r = Δ/s, and circumradius R = abc/(4Δ).
+FAMILY-TRI-04 (JEE Advanced):
+  Coordinate and vector geometry synthesis with triangle centers, pedal triangles, distance between
+  incentre and circumcentre (Euler's formula: d² = R² - 2Rr), and extremum area bounds.
+```
+
+---
+
+## 6. Foundation Packet: Number Theory & Euclid's Division Lemma (`MATH-NUM-EUCLID-DIVISION`)
+
+### 6.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-NUM-EUCLID-DIVISION`
+- **Engineering Gate Binding**: `MATH-NUM-EUCLID-DIVISION` (Digest-bound closure receipt)
+- **Learner Title**: Euclid's Division Lemma, Euclidean Algorithm & Fundamental Theorem of Arithmetic
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Strict Divisor Non-Zero Invariant**: In $a = bq + r$, the divisor $b \neq 0$ must be strictly non-zero. Division by zero is undefined in all rings.
+  2. **Strict Remainder Invariant**: The remainder $r$ must satisfy $0 \le r < |b|$ by definition. Negative remainders or remainders $\ge |b|$ violate the uniqueness theorem.
+  3. **Well-Ordering Principle of $\mathbb{Z}^+$**: Every non-empty set of positive integers contains a least element. This guarantees the finite termination of the Euclidean algorithm.
+  4. **Prime Uniqueness (Fundamental Theorem of Arithmetic)**: Every integer $n > 1$ can be expressed as a product of prime powers $n = p_1^{a_1} p_2^{a_2} \cdots p_k^{a_k}$ uniquely, up to the order of factors.
+
+### 6.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NUM-01` (`CONCEPT`): Euclid's Division Lemma: Given positive integers $a$ and $b$, there exist unique integers $q$ and $r$ such that $a = bq + r$ where $0 \le r < b$.
+- `ATOM-NUM-02` (`PROCEDURE`): Euclidean Algorithm for Greatest Common Divisor: $\gcd(a, b) = \gcd(b, a \pmod b)$ repeatedly until the remainder is 0; the last non-zero remainder is $\gcd(a, b)$.
+- `ATOM-NUM-03` (`RELATION`): Bézout's Identity: For any integers $a$ and $b$, there exist integers $x, y \in \mathbb{Z}$ such that $ax + by = \gcd(a, b)$. In particular, $\gcd(a, b) = 1 \iff \exists x, y: ax + by = 1$.
+- `ATOM-NUM-04` (`INVARIANT`): Two-Number Product Theorem: For any two positive integers $a$ and $b$, $\gcd(a, b) \times \operatorname{lcm}(a, b) = a \cdot b$. (Strictly restricted to pairs; does not generalize to triplets without inclusion-exclusion).
+- `ATOM-NUM-05` (`STRATEGY`): Proof by Contradiction for Irrationality: Assuming $\sqrt{p} = \frac{a}{b}$ where $\gcd(a, b) = 1$, deriving that $p \mid a^2 \implies p \mid a$, which implies $p \mid b$, contradicting coprimality.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Leaves a remainder"* | $a = bq + r \iff a \equiv r \pmod b$ with $0 \le r < b$ | Congruence modulo $b$ on the integers $\mathbb{Z}$. |
+| *"Coprime / relatively prime"* | $\gcd(a, b) = 1 \iff \exists x, y \in \mathbb{Z}: ax + by = 1$ | No shared prime factors; ideal generated is $\mathbb{Z}$. |
+| *"Terminating decimal"* | $\frac{p}{q} \in \mathbb{Q}$ where $q = 2^m 5^n$ ($m, n \in \mathbb{N}_0$) | Denominator factors only into base-10 divisors 2 and 5. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Negative Remainder in Division**:
+   - *Flawed Action*: Calculating $-23 \div 7$ as quotient $-3$ with remainder $-2$.
+   - *Correct Diagnostic Cue*: Euclid's lemma requires $0 \le r < b$. Write $-23 = 7(-4) + 5$. The quotient is $-4$ and the remainder is $+5$.
+2. **Misconception: Product Rule Applied to Three Numbers**:
+   - *Flawed Action*: Stating $\operatorname{lcm}(a, b, c) = \frac{abc}{\gcd(a, b, c)}$.
+   - *Correct Diagnostic Cue*: The product identity holds strictly for **two** numbers. For three numbers: $\operatorname{lcm}(a, b, c) = \frac{abc \cdot \gcd(a, b, c)}{\gcd(a, b) \gcd(b, c) \gcd(c, a)}$.
+3. **Misconception: Assuming Coprimality Without Declaration**:
+   - *Flawed Action*: Proving $\sqrt{2}$ is irrational by setting $\sqrt{2} = a/b$ without explicitly asserting $\gcd(a, b) = 1$.
+   - *Correct Diagnostic Cue*: The contradiction depends entirely on the initial assumption that all common factors were cancelled. If $a/b$ were not coprime, finding a factor of 2 would not contradict the premise.
+
+### 6.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NUM-01: Incomplete Euclidean Algorithm & Reverse Bézout Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Find HCF(135, 225) using Euclid's Division Algorithm, and express it as 135x + 225y.
+
+Step 1: Apply Euclid's lemma to 225 and 135:
+        225 = 135 · [ ___ ] + [ ___ ]   ... (1)
+Step 2: Since remainder ≠ 0, apply lemma to 135 and remainder:
+        135 = [ ___ ] · [ ___ ] + [ ___ ]   ... (2)
+Step 3: Since remainder ≠ 0, apply lemma to [ ___ ] and [ ___ ]:
+        90 = [ ___ ] · [ ___ ] + 0      ... (3)
+Step 4: The last non-zero remainder is: HCF(135, 225) = [ ___ ]
+
+Step 5: Express HCF as linear combination (Bézout's identity):
+        From equation (2):  45 = 135 - 90 · [ ___ ]
+        From equation (1):  90 = 225 - 135 · [ ___ ]
+        Substitute (1) into (2):
+        45 = 135 - (225 - 135 · [ ___ ]) · 1
+        45 = 135 · [ ___ ] - 225 · [ ___ ]
+        x = [ ___ ],  y = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: 225 = 135 · 1 + 90
+Step 2: 135 = 90 · 1 + 45
+Step 3: 90 = 45 · 2 + 0
+Step 4: HCF = 45
+Step 5: 45 = 135 - 90·1; 90 = 225 - 135·1; 45 = 135·2 - 225·1 ==> x = 2, y = -1
+```
+
+#### TTU-NUM-02: Square Root Irrationality Dedekind-Contradiction Scaffold (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Prove that √3 is irrational.
+
+Proof Structure: Proof by Contradiction.
+Step 1: Assume the contrary, that √3 is rational.
+        Then √3 = a / b, where a, b ∈ ℤ+, b ≠ 0, and gcd(a, b) = [ ___ ].
+Step 2: Squaring both sides:
+        3 = a² / b²  ==>  3b² = [ ___ ]   ... (1)
+Step 3: Since 3 divides 3b², 3 divides [ ___ ].
+        By prime divisibility theorem (if p|a² then p|a for prime p):
+        3 divides [ ___ ].
+Step 4: Since 3 divides a, we can write a = 3c for some integer c.
+        Substitute a = 3c into equation (1):
+        3b² = (3c)² = [ ___ ]c²
+        Dividing both sides by 3:  b² = [ ___ ]c²
+Step 5: This means 3 divides b², which implies 3 divides [ ___ ].
+Step 6: Deductive Contradiction:
+        From Step 3, 3 divides a. From Step 5, 3 divides b.
+        Therefore, a and b have at least [ ___ ] as a common factor.
+        This contradicts our initial assumption that gcd(a, b) = [ ___ ].
+Conclusion: Our assumption was false. Therefore, √3 is [ RATIONAL / IRRATIONAL ].
+
+[COMPLETION DERIVATION KEY]
+Step 1: gcd(a, b) = 1 (coprime)
+Step 2: a²
+Step 3: a²; a
+Step 4: 9c²; 3c²
+Step 5: b
+Step 6: 3; 1
+Conclusion: IRRATIONAL (Hence Proved).
+```
+
+### 6.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-NUM-01 (Foundation / CBSE):
+  HCF and LCM via prime factorisation, terminating decimal form q = 2^m 5^n, irrationality proofs for √2, √5.
+FAMILY-NUM-02 (Olympiad / IOQM):
+  Linear Diophantine equations ax + by = c, Chinese Remainder Theorem, Fermat's Little Theorem (a^{p-1} ≡ 1 mod p),
+  Legendre's formula for highest power of prime p dividing n!, and Wilson's theorem.
+FAMILY-NUM-03 (JEE Main):
+  Divisibility in binomial expansions (1+x)^n, finding last two digits via mod 100, floor function properties.
+FAMILY-NUM-04 (JEE Advanced):
+  Cyclotomic polynomial factorization, primitive roots, p-adic valuations in combinatorics,
+  and integer solutions to non-linear Diophantine equations (e.g. y² = x³ + k).
+```
+
+---
+
+## 7. Intake Validation Checklist for Future Subtopics
 
 To admit any new mathematics subtopic into the library, it must pass this 6-point intake gate:
 
@@ -173,3 +556,4 @@ To admit any new mathematics subtopic into the library, it must pass this 6-poin
 4. **Reconstructable TTU Pair**: At least one complete Concept TTU and one reconstructive Problem TTU with explicit completion keys must be authored in Layer 3.
 5. **Exam Family Mapping**: Clear mapping to at least 2 distinct competitive examination families (e.g. CBSE + JEE Main, or IOQM + JEE Advanced) must be provided in Layer 4.
 6. **Zero Topic Hardcoding**: All metadata, terms, and rules must live in JSON data files; zero topic-specific branch logic may be added to Python engine code.
+

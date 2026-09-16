@@ -6,7 +6,7 @@
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
   "component_count": 157,
-  "relation_count": 454,
+  "relation_count": 455,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -3081,7 +3081,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md"
+      ]
     },
     "doc:TECHNICAL_COMPOSITION.md": {
       "component_id": "doc:TECHNICAL_COMPOSITION.md",
@@ -3132,6 +3134,12 @@
     {
       "source": "doc:CANONICAL_ARCHITECTURE.md",
       "target": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5884,5 +5892,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:d95e4ebf02c7423309abc9b12a7d64a47d39012e592afd79ce0ad249704f58ad"
+  "manifest_digest": "sha256:d29eb1d43993c626699d73474546ddb7b470a1a0c2ff5df5f662726ef704da39"
 }
