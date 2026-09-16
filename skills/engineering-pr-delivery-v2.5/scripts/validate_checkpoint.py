@@ -6,6 +6,8 @@ from relaylib import load_yaml,print_result,require
 REQ=["schema_version","checkpoint_id","ep_id","roadmap_basis","execution_basis","implementation_result","acceptance_results","validation_results","quality_findings","discoveries","roadmap_reconciliation","successor"]
 VALIDATION_STATUS={"PASS","FAIL","NOT_RUN","NA"}
 
+def _text(v):return isinstance(v,str) and bool(v.strip())
+
 def validate_file(path:Path):
     e=[];w=[];cp=load_yaml(path);e+=require(cp,REQ,"CP")
     if cp.get("schema_version")!="relay-v2.5":e.append("CP: schema_version must be relay-v2.5")
@@ -23,6 +25,22 @@ def validate_file(path:Path):
         if status not in VALIDATION_STATUS:e.append(f"{label}.status invalid: {status}")
         if status in {"PASS","FAIL","NOT_RUN"} and str(result.get("basis_ref"))!=str(material_ref):e.append(f"{label}.basis_ref must match checkpoint material_ref")
         if status=="NOT_RUN" and not str(result.get("reason","")).strip():e.append(f"{label} NOT_RUN requires reason")
+    qr=cp.get("quality_review")
+    if qr is not None:
+        if not isinstance(qr,dict):e.append("CP.quality_review must be a mapping or null")
+        else:
+            e+=require(qr,["id","path","digest"],"CP.quality_review")
+            if _text(qr.get("id")) and not str(qr.get("id")).startswith("QRV-"):e.append("CP.quality_review.id must use QRV-* namespace")
+            for key in ("path","digest"):
+                if not _text(qr.get(key)):e.append(f"CP.quality_review.{key} must be explicit")
+    qseen=set()
+    for i,item in enumerate(cp.get("quality_findings",[]) or []):
+        label=f"CP.quality_findings[{i}]"
+        if not isinstance(item,dict):e.append(f"{label} must be a mapping");continue
+        fid=item.get("id")
+        if not _text(fid) or not str(fid).startswith("QF-"):e.append(f"{label}.id must use QF-* namespace")
+        elif fid in qseen:e.append(f"duplicate checkpoint quality finding {fid}")
+        else:qseen.add(fid)
     if (cp.get("roadmap_reconciliation") or {}).get("result") not in {"NO_ROADMAP_CHANGE","STATUS_UPDATE","ROADMAP_PROPOSAL","OWNER_DECISION_REQUIRED"}:e.append("CP: invalid roadmap_reconciliation.result")
     successor=cp.get("successor") or {};e+=require(successor,["mode","frontier_work_package","ep_id","parallel_plan","lanes"],"CP.successor")
     mode=successor.get("mode")
