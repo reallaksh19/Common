@@ -40,34 +40,35 @@ def index_roadmap(roadmap:dict[str,Any]):
     return objectives,phases,wps
 
 def compute_frontier(roadmap:dict[str,Any])->list[str]:
-    _,_,idx=index_roadmap(roadmap); out=[]
+    """Derive eligibility from roadmap topology; execution_status is a projection, not authority."""
+    _,_,idx=index_roadmap(roadmap);out=[]
     for _,_,wp in iter_work_packages(roadmap):
-        if wp.get("state") not in {"PLANNED","ACTIVE"}: continue
-        if wp.get("definition")!="DETAILED": continue
-        if wp.get("execution_status")=="TERMINAL": continue
+        if wp.get("state") not in {"PLANNED","ACTIVE"}:continue
+        if wp.get("definition")!="DETAILED":continue
+        if wp.get("execution_status")=="TERMINAL":continue
         deps=wp.get("depends_on",[]) or []
-        if any(dep not in idx or idx[dep][2].get("state")!="COMPLETE" for dep in deps): continue
-        if wp.get("execution_status") in {"EXECUTABLE","ACTIVE"} and wp.get("id"): out.append(wp["id"])
+        if any(dep not in idx or idx[dep][2].get("state")!="COMPLETE" for dep in deps):continue
+        if wp.get("id"):out.append(wp["id"])
     return out
 
 def pct(earned:float,total:float)->float:
     return 0.0 if total<=0 else round(earned*100.0/total,2)
 
 def print_result(errors:list[str],warnings:list[str]|None=None)->int:
-    for x in warnings or []: print(f"WARN: {x}")
+    for x in warnings or []:print(f"WARN: {x}")
     if errors:
-        for x in errors: print(f"FAIL: {x}")
+        for x in errors:print(f"FAIL: {x}")
         return 1
-    print("PASS"); return 0
+    print("PASS");return 0
 
 def scan_context_phrases(value:Any,location:str="$")->list[str]:
     found=[]
     if isinstance(value,dict):
-        for k,v in value.items(): found.extend(scan_context_phrases(v,f"{location}.{k}"))
+        for k,v in value.items():found.extend(scan_context_phrases(v,f"{location}.{k}"))
     elif isinstance(value,list):
-        for i,v in enumerate(value): found.extend(scan_context_phrases(v,f"{location}[{i}]"))
+        for i,v in enumerate(value):found.extend(scan_context_phrases(v,f"{location}[{i}]"))
     elif isinstance(value,str):
         low=value.lower()
         for phrase in CONTEXT_DEPENDENT_PHRASES:
-            if phrase in low: found.append(f"{location}: context-dependent phrase '{phrase}'")
+            if phrase in low:found.append(f"{location}: context-dependent phrase '{phrase}'")
     return found
