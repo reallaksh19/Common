@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-PHY-THERMO-001",
+  "task_kind": "RESEARCH_OVERLAY",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "PHYSICS",
+  "grade": 11,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "Thermodynamics",
+  "subtopic": "Thermodynamics: First Law, Carnot Cycle & Second Law Statements",
+  "engineering_depth": "RESEARCH",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": [
+    "PROBLEM_SEMANTICS",
+    "CORE_AUTHORING",
+    "CORE2_TRANSFER"
+  ],
+  "write_mode": "IMPLEMENT",
+  "scope_hints": [
+    "Carnot cycle efficiency limits",
+    "Clausius and Kelvin-Planck statements equivalence",
+    "Entropy formulation in reversible vs irreversible cycles"
+  ],
+  "explicit_exclusions": [
+    "Non-equilibrium statistical mechanics",
+    "Quantum thermodynamics"
+  ]
+}

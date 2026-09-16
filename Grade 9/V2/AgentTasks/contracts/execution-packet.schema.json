@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/common/schemas/grade9/agent-tasks/execution-packet.schema.json",
+  "title": "StandaloneExecutionPacket",
+  "description": "Governing schema for compiled execution packets in the Standalone Delegation Layer. Binds exact repository authority refs and digests without copying the architecture.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "packet_id",
+    "task",
+    "resolved_repository",
+    "authority_bindings",
+    "task_kind_contract",
+    "research_policy",
+    "allowed_change_classes",
+    "prohibited_actions",
+    "required_outputs",
+    "required_validators",
+    "required_tests",
+    "consumer_targets",
+    "report_contract_ref",
+    "compiled_packet_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "packet_id": {
+      "type": "string",
+      "pattern": "^PKT-[A-Za-z0-9_.-]+$",
+      "description": "Unique cryptographic packet identifier."
+    },
+    "task": {
+      "type": "object",
+      "description": "The validated human task input specification."
+    },
+    "resolved_repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "target_ref", "resolved_head", "resolved_base"],
+      "properties": {
+        "repository": { "type": "string" },
+        "target_ref": { "type": "string" },
+        "resolved_head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Exact git commit SHA-1 of the working branch at compilation time."
+        },
+        "resolved_base": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Merge base commit SHA-1 with target baseline."
+        }
+      }
+    },
+    "authority_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["authority_class", "ref_path", "digest_sha256", "maturity"],
+        "properties": {
+          "authority_class": {
+            "type": "string",
+            "enum": [
+              "SUBJECT_MANIFEST",
+              "SUBJECT_ENTRYPOINT",
+              "ENGINEERING_GATE_SPEC",
+              "ENGINEERING_GATE_POLICY",
+              "ENGINEERING_GATE_VALIDATOR",
+              "CANONICAL_CAPABILITIES",
+              "SOURCE_PROVENANCE_SCHEMA",
+              "BLUEPRINT_ARCHITECTURE",
+              "CROSS_DOMAIN_POLICY"
+            ]
+          },
+          "ref_path": { "type": "string" },
+          "digest_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "maturity": {
+            "type": "string",
+            "enum": ["ACTIVE", "PILOT", "PLANNED", "VALIDATED", "HISTORICAL_COMPARATOR"]
+          },
+          "version": { "type": "string" }
+        }
+      },
+      "minItems": 1,
+      "description": "Exact repository authorities bound to this packet."
+    },
+    "task_kind_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_kind",
+        "required_authority_classes",
+        "allowed_change_classes",
+        "required_outputs",
+        "required_validators",
+        "consumer_targets",
+        "promotion_permitted"
+      ],
+      "properties": {
+        "task_kind": { "type": "string" },
+        "required_authority_classes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "allowed_change_classes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "required_outputs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "required_validators": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "consumer_targets": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "promotion_permitted": { "type": "boolean" }
+      }
+    },
+    "research_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "web_research_allowed",
+        "discovery_dispositions",
+        "promotion_rule",
+        "source_governance_ref"
+      ],
+      "properties": {
+        "web_research_allowed": { "type": "boolean" },
+        "discovery_dispositions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "REUSE_EXISTING",
+              "EXTEND_EXISTING",
+              "CREATE_CHILD",
+              "CREATE_NEW",
+              "CURRICULUM_ONLY",
+              "PEDAGOGY_ONLY",
+              "ASSESSMENT_ONLY",
+              "RESEARCH_OVERLAY_ONLY",
+              "OUT_OF_SCOPE",
+              "CONFLICTING",
+              "UNRESOLVED"
+            ]
+          }
+        },
+        "promotion_rule": {
+          "type": "string",
+          "enum": ["DISCOVERY_PERMISSION_DOES_NOT_IMPLY_PROMOTION_PERMISSION"]
+        },
+        "source_governance_ref": { "type": "string" }
+      }
+    },
+    "allowed_change_classes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DATA_ONLY",
+          "CONTRACT_OR_SCHEMA",
+          "GENERIC_ENGINE",
+          "SUBJECT_ADAPTER",
+          "BLUEPRINT",
+          "TEST",
+          "DOC",
+          "MIGRATION"
+        ]
+      },
+      "minItems": 1
+    },
+    "prohibited_actions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "required_outputs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "required_validators": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "required_tests": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "consumer_targets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "report_contract_ref": {
+      "type": "string",
+      "description": "Path to execution-report.schema.json"
+    },
+    "compiled_packet_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 hex digest of the canonical serialization of this packet excluding this field."
+    }
+  }
+}

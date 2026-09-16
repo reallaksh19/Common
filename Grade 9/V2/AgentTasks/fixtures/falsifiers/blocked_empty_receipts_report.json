@@ -1,0 +1,27 @@
+{
+  "execution_identity": {
+    "execution_id": "EXEC-MUTANT-002",
+    "agent_id": "bad-agent",
+    "timestamp": "2026-09-16T12:00:00Z"
+  },
+  "packet_identity": {
+    "packet_id": "PKT-TASK-001",
+    "compiled_packet_digest": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  },
+  "start_head": "897cb1e8d6ceff6d42e6a4760077facf4fb5195e",
+  "end_head": "897cb1e8d6ceff6d42e6a4760077facf4fb5195e",
+  "execution_result": "BLOCKED",
+  "engineering_state": "HELD",
+  "consumer_permissions": {
+    "PROBLEM_SEMANTICS": "HELD"
+  },
+  "authority_bindings_used": [],
+  "changed_files": [],
+  "tests": [],
+  "workflows": [],
+  "blockers": [],
+  "limitations": [],
+  "unresolved": [],
+  "architecture_findings": [],
+  "memory_dependency_detected": false
+}
