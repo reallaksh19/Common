@@ -1,9 +1,19 @@
 from __future__ import annotations
+import hashlib,json
 from pathlib import Path
 from typing import Any
 from relaylib import load_yaml
 
 NONE_IDS={None,"","NONE"}
+
+
+def digest_mapping(value:Any)->str:
+    payload=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str).encode("utf-8")
+    return "sha256:"+hashlib.sha256(payload).hexdigest()
+
+
+def yaml_digest(path:Path)->str:
+    return digest_mapping(load_yaml(path))
 
 
 def predecessor_baton(state:dict[str,Any])->dict[str,Any]:
@@ -55,14 +65,23 @@ def current_routes(root:Path,state:dict[str,Any]|None=None)->list[dict[str,Any]]
     return []
 
 
-def expected_basis(state:dict[str,Any],route:dict[str,Any])->dict[str,Any]:
+def expected_basis(root:Path,state:dict[str,Any],route:dict[str,Any])->dict[str,Any]:
     roadmap=state.get("roadmap") or {};protocol=state.get("relay_protocol") or {}
+    baton=predecessor_baton(state)
+    if baton.get("path"):
+        path=root/str(baton["path"])
+        baton={**baton,"digest":yaml_digest(path) if path.exists() else None}
+    else:baton={**baton,"digest":None}
+    ep_path=root/str(route.get("ep_path"));profile_path=root/"agents/relay/REPO_PROFILE.yaml"
     return {
         "roadmap_id":roadmap.get("id"),"roadmap_revision":roadmap.get("revision"),
         "relay_protocol_basis_ref":protocol.get("basis_ref"),"route_key":route_key(route),
         "execution_ref":route.get("execution_ref"),"ep_id":route.get("ep_id"),"ep_path":route.get("ep_path"),
         "plan_id":route.get("plan_id"),"plan_path":route.get("plan_path"),"lane_id":route.get("lane_id"),
-        "material_ref":route.get("material_ref"),"predecessor_baton":predecessor_baton(state),
+        "material_ref":route.get("material_ref"),
+        "ep_contract_digest":yaml_digest(ep_path) if ep_path.exists() else None,
+        "repo_profile_digest":yaml_digest(profile_path) if profile_path.exists() else None,
+        "predecessor_baton":baton,
     }
 
 
