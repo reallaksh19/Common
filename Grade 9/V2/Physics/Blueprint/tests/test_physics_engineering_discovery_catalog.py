@@ -28,11 +28,11 @@ def main() -> None:
 
     assert result["status"] == "PASS"
     assert result["discovered_subtopic_count"] == 43
-    assert result["exact_v3_count"] == 12
+    assert result["exact_v3_count"] == 14
     assert result["mapped_v3_target_count"] == 12
-    assert result["migration_required_count"] == 26
+    assert result["migration_required_count"] == 24
     assert result["v3_native_or_refined_count"] == 5
-    assert result["canonical_v3_gate_count"] == 24
+    assert result["canonical_v3_gate_count"] == 26
     assert result["case_artifacts_role"] == "STRESS_TEST_ONLY"
     assert result["readiness_rule"] == "DERIVED_BY_PRODUCTION_V3_VALIDATOR"
 
@@ -77,6 +77,13 @@ def main() -> None:
     assert relative["disposition"] == "MAPPED_V3"
     assert relative["v3_gate_ids"] == ["PHY-M2D-RELATIVE-VELOCITY"]
     assert relative["mapping_review_ref"] == "provenance/pr383/mapping-reviews/PHY-KIN-RELATIVE-2D.v1.json"
+
+    work = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-WORK-ENERGY-POWER")
+    conservation = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-ENERGY-CONSERVATION-LAW")
+    variable = next(x for x in catalog["discovered_subtopics"] if x["discovery_gate_id"] == "PHY-WEP-VARIABLE-FORCE")
+    assert work["disposition"] == "EXACT_V3_ID" and work["v3_gate_ids"] == ["PHY-WORK-ENERGY-POWER"]
+    assert conservation["disposition"] == "EXACT_V3_ID" and conservation["v3_gate_ids"] == ["PHY-ENERGY-CONSERVATION-LAW"]
+    assert variable["disposition"] == "MIGRATION_REQUIRED" and variable["v3_gate_ids"] == []
 
     exact_ids = {
         row["discovery_gate_id"]
