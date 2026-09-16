@@ -4,12 +4,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import fitz
+import pymupdf
 
 HERE = Path(__file__).resolve()
 LP_ROOT = HERE.parents[1]
 CHEM_ROOT = LP_ROOT.parent
 sys.path.insert(0, str(LP_ROOT / "engine"))
+sys.path.insert(0, str(CHEM_ROOT / "ExactProduct" / "engine"))
 
 from render_chemistry_a_content_first import render_core1a_content_first  # noqa: E402
 
@@ -67,7 +68,8 @@ class ChemistryCore1ASectionLineageRenderTests(unittest.TestCase):
             )
             self.assertTrue(path.is_file())
             self.assertEqual(metrics["product"], "CORE1A")
-            text = "\n".join(page.get_text() for page in fitz.open(path))
+            document = pymupdf.open(path)
+            text = "\n".join(page.get_text() for page in document)
             self.assertIn("Identify the conserved entity", text)
             self.assertIn("Verify the governing relationship", text)
             self.assertNotIn("SHARED GENERIC", text.upper())
