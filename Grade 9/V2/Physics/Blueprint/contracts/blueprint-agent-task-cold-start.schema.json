@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "blueprint-agent-task-cold-start.schema.json",
+  "title": "Physics Blueprint AgentTask Cold-Start Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "packet_digest",
+    "intake_receipt_digest",
+    "route_id",
+    "route_registry",
+    "assessment_input_bindings",
+    "no_attempt_report_digest",
+    "with_attempts_report_digest",
+    "comparison_digest",
+    "comparison_invariants_all_true",
+    "engineering",
+    "publication_authorization",
+    "human_review_authorization",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "receipt_id": {"type": "string", "pattern": "^PHY-BLUEPRINT-COLDSTART-[0-9a-f]{16}$"},
+    "packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "intake_receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "route_id": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9._:-]*$"},
+    "route_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_id", "path", "sha256"],
+      "properties": {
+        "registry_id": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "assessment_input_bindings": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "required", "path", "sha256"],
+        "properties": {
+          "role": {"enum": ["QUESTION_SET", "DECLARED_TOPIC_SCOPE", "ATTEMPT_SET"]},
+          "required": {"type": "boolean"},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "no_attempt_report_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "with_attempts_report_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "comparison_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "comparison_invariants_all_true": {"const": true},
+    "engineering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["no_attempt_consumer_status", "with_attempts_consumer_status", "requirement_state_identical"],
+      "properties": {
+        "no_attempt_consumer_status": {"type": "string", "minLength": 1},
+        "with_attempts_consumer_status": {"type": "string", "minLength": 1},
+        "requirement_state_identical": {"const": true}
+      }
+    },
+    "publication_authorization": {"const": "NOT_IMPLIED"},
+    "human_review_authorization": {"const": "NOT_IMPLIED"},
+    "receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
