@@ -7,12 +7,20 @@ from relaylib import load_yaml,print_result,require
 RELAY_STATES={"INITIALIZING","ACTIVE","PARALLEL","IDLE","TERMINAL"}
 NONE_IDS={None,"","NONE"}
 
+def _explicit(value)->bool:
+    if not isinstance(value,str):return False
+    value=value.strip()
+    return bool(value) and not (value.startswith("<") and value.endswith(">"))
+
 def validate(repo_root:Path):
     errors=[]; warnings=[]
     try: state=load_yaml(repo_root/"agents/relay/REPO_STATE.yaml")
     except Exception as exc: return [f"REPO_STATE: {exc}"],warnings
-    errors+=require(state,["schema_version","relay_state","repository","roadmap","current_position","execution_policy","active_ep","last_checkpoint","progress","status_planes","projection","relay_readiness","chat_context_required"],"REPO_STATE")
+    errors+=require(state,["schema_version","relay_state","repository","relay_protocol","roadmap","current_position","execution_policy","active_ep","last_checkpoint","progress","status_planes","projection","relay_readiness","chat_context_required"],"REPO_STATE")
     if state.get("schema_version")!="relay-v2.5": errors.append("REPO_STATE: schema_version must be relay-v2.5")
+    protocol=state.get("relay_protocol") or {};errors+=require(protocol,["version","basis_ref"],"REPO_STATE.relay_protocol")
+    if str(protocol.get("version"))!="2.5":errors.append("REPO_STATE.relay_protocol.version must be 2.5")
+    if not _explicit(protocol.get("basis_ref")):errors.append("REPO_STATE.relay_protocol.basis_ref must be an explicit pinned Common ref")
     relay_state=state.get("relay_state")
     if relay_state not in RELAY_STATES:errors.append(f"REPO_STATE.relay_state invalid: {relay_state}")
     if state.get("chat_context_required") is not False: errors.append("REPO_STATE: chat_context_required must be false")
