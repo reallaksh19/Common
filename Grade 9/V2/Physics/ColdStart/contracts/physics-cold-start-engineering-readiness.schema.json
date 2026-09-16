@@ -60,7 +60,7 @@
     "domain_closure": {"type": "object"},
     "readiness_envelope": {"type": "object"},
     "required_consumer": {"const": "PROBLEM_SEMANTICS"},
-    "consumer_status": {"const": "ALLOWED"},
+    "consumer_status": {"enum": ["ALLOWED", "BLOCKED"]},
     "readiness_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
   }
 }
