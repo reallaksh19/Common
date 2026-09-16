@@ -78,8 +78,38 @@ replan_inheritance:
   evidence: <exact aggregate addressed to this WP>
 ```
 
-A successor parallel plan uses `previous_replan: <REPLAN-ID>`, and every successor lane EP also references that replan. Each lane inherits the exact aggregate addressed to its work package. A new frontier lane that received no predecessor transfer still references the replan and has empty inherited acceptance/evidence.
+A successor parallel plan stores both:
+
+```text
+previous_replan: <REPLAN-ID>
+previous_replan_path: <durable receipt path>
+```
+
+Every successor lane EP also references that replan. Each lane inherits the exact aggregate addressed to its work package. A new frontier lane that received no predecessor transfer still references the replan and has empty inherited acceptance/evidence.
 
 The active `REPO_STATE.execution_policy.parallel_plan` is the only parallel topology eligible for route resolution. Old predecessor-plan branches/worktrees do not resolve an executable lane unless the new approved plan explicitly reuses that route and the new EP passes its live Git/material-basis checks.
 
-After a successor EP/lane produces its next normal checkpoint, ordinary checkpoint custody resumes and the replan becomes immutable history.
+## Multi-generation history
+
+A replacement parallel plan may itself later be replanned. Historical custody therefore forms an alternating chain:
+
+```text
+PLAN-P1
+  -> REPLAN-P2
+  -> PLAN-P2
+  -> REPLAN-P3
+  -> PLAN-P3
+  -> ...
+```
+
+The chain is not optional audit prose. The validator walks backward from the active `predecessor_replan` and requires:
+
+- every cited historical replan receipt to exist;
+- every `previous_replan` ID to match the receipt at `previous_replan_path`;
+- every historical replan successor route to point forward to the exact plan that cites it;
+- predecessor plan IDs/paths to remain consistent;
+- no repeated replan IDs or predecessor-plan paths in the lineage.
+
+Missing receipts, forward-link mismatch and cycles invalidate the current replan chain. This prevents an agent from retaining only the latest plan while silently deleting or rewiring the decisions and evidence that produced it.
+
+After a successor EP/lane produces its next normal checkpoint, ordinary checkpoint custody resumes. Replan receipts and plans remain immutable historical lineage and are not rewritten to simplify the chain.
