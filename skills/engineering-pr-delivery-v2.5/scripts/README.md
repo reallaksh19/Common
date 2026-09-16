@@ -11,6 +11,27 @@ python render_handover.py <repo-root>
 python render_report_projection.py <repo-root> [--output <projection.yaml>]
 ```
 
+## GitHub Program Projection
+
+```bash
+python validate_github_projection.py <repo-root>
+python validate_github_generation_history.py <repo-root>
+python github_projection_next.py <repo-root>
+python begin_github_operation.py <repo-root> --basis <durable-basis> --apply
+# perform exactly the returned external GitHub mutation
+# read the external state back and write GITHUB_OBSERVATION.yaml
+python reconcile_github_projection.py <observation.yaml> <repo-root> --apply
+python activate_github_generation.py agents/relay/projection/generations/GHGEN-xxxx.yaml <repo-root> --apply
+```
+
+`GHGEN-*` is an immutable desired GitHub generation. Its `GHOP-*` operations are `CREATE | LINK | UPDATE | PUBLISH_HANDOVER | SUPERSEDE | REVISE | CLOSE | REOPEN`.
+
+`begin_github_operation.py` must persist `ATTEMPTED_UNCONFIRMED` before the external write. After a timeout/crash, `github_projection_next.py` returns `RECONCILE`; it never advances to another operation while an earlier mutation is uncertain. Stable `relay-operation:GHOP-*` markers and verified locators prevent duplicate CREATEs. `reconcile_github_projection.py` updates `ISSUE_GRAPH` only after external readback verifies desired state.
+
+If an external provider/integration cannot create or verify a required native relationship such as a parent/sub-issue link, do not replace it with a body hyperlink and claim success. Leave the LINK projection incomplete and report the capability limitation.
+
+See `../operating-model/github-program-projection.md`.
+
 ## Progress / report projection
 
 ```bash
@@ -73,7 +94,7 @@ python prepare_v2_migration.py <inventory.yaml> --output <reconciliation.yaml>
 
 Bootstrap creates complete zero-weight roadmap progress rows without fabricating an EP or acceptance evidence.
 
-Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, execution/material authority, projection generation/readiness, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
+Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, crash-safe GitHub generation/operation projection, execution/material authority, projection generation/readiness, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
 
 Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report projections and GitHub Issues remain projections, not authority.
 
