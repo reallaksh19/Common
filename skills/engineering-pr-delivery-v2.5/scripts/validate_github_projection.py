@@ -22,6 +22,9 @@ def _effect_matches(node:dict,effect:dict)->bool:
     if "set_issue_id" in effect and str(gh.get("issue_id"))!=str(effect.get("set_issue_id")):return False
     return True
 
+def _has_locator(node:dict)->bool:
+    gh=node.get("github") or {};return gh.get("issue_number") is not None or gh.get("issue_id") is not None
+
 def validate(root:Path):
     e=[];w=[]
     s=load_yaml(root/"agents/relay/REPO_STATE.yaml");p=s.get("projection") or {}
@@ -60,9 +63,9 @@ def validate(root:Path):
     idset=set(ids)
     deps={}
     for i,op in enumerate(ops):
-        oid=str(op.get("id") or "");label=f"GitHub operation {oid or i}";kind=op.get("kind");state=op.get("state")
+        oid=str(op.get("id") or "");label=f"GitHub operation {oid or i}";kind=op.get("kind");op_state=op.get("state")
         if kind not in KINDS:e.append(f"{label} kind invalid: {kind}")
-        if state not in OP_STATES:e.append(f"{label} state invalid: {state}")
+        if op_state not in OP_STATES:e.append(f"{label} state invalid: {op_state}")
         depends=_list(op.get("depends_on"));deps[oid]=depends
         for d in depends:
             if d not in idset:e.append(f"{label} depends_on unknown operation {d}")
@@ -75,22 +78,22 @@ def validate(root:Path):
         attempts=pub.get("attempt_count")
         if not isinstance(attempts,int) or attempts<0:e.append(f"{label} publication.attempt_count must be non-negative integer")
         receipt=pub.get("receipt");vstatus=ver.get("status")
-        if state=="PREPARED":
+        if op_state=="PREPARED":
             if attempts not in {0,None}:e.append(f"{label} PREPARED cannot have publication attempts")
             if receipt not in NONE:e.append(f"{label} PREPARED cannot have receipt")
             if vstatus not in {"NOT_RUN",None}:e.append(f"{label} PREPARED verification must be NOT_RUN")
-        elif state=="ATTEMPTED_UNCONFIRMED":
+        elif op_state=="ATTEMPTED_UNCONFIRMED":
             if not isinstance(attempts,int) or attempts<1:e.append(f"{label} ATTEMPTED_UNCONFIRMED requires attempt_count >= 1")
             if receipt not in NONE:e.append(f"{label} ATTEMPTED_UNCONFIRMED must not invent receipt")
             if not _list(pub.get("last_attempt_basis")):e.append(f"{label} ATTEMPTED_UNCONFIRMED requires last_attempt_basis")
             if vstatus not in {"NOT_RUN",None}:e.append(f"{label} ATTEMPTED_UNCONFIRMED verification must be NOT_RUN")
             w.append(f"{label} may have executed externally; reconcile by locator/idempotency marker before retry")
-        elif state=="PUBLISHED_UNCONFIRMED":
+        elif op_state=="PUBLISHED_UNCONFIRMED":
             if not isinstance(attempts,int) or attempts<1:e.append(f"{label} PUBLISHED_UNCONFIRMED requires attempt_count >= 1")
             if receipt in NONE:e.append(f"{label} PUBLISHED_UNCONFIRMED requires publication receipt")
             if vstatus not in {"NOT_RUN",None}:e.append(f"{label} PUBLISHED_UNCONFIRMED verification must remain NOT_RUN until readback")
-        elif state=="VERIFIED":
-            if receipt in NONE:e.append(f"{label} VERIFIED requires publication receipt")
+        elif op_state=="VERIFIED":
+            if receipt in NONE:e.append(f"{label} VERIFIED requires publication/recovery receipt")
             if vstatus!="PASS":e.append(f"{label} VERIFIED requires verification.status PASS")
             if not _list(ver.get("basis")):e.append(f"{label} VERIFIED requires verification basis")
             for d in depends:
@@ -100,9 +103,9 @@ def validate(root:Path):
                 if isinstance(effect,dict):
                     target=nodes.get(str(effect.get("node") or node_id)) or {}
                     if not _effect_matches(target,effect):e.append(f"{label} VERIFIED but ISSUE_GRAPH reconciliation effect is not applied")
-        elif state=="SUPERSEDED":
+        elif op_state=="SUPERSEDED":
             if not _explicit(op.get("superseded_by")):e.append(f"{label} SUPERSEDED requires superseded_by")
-        elif state=="FAILED":
+        elif op_state=="FAILED":
             if not _list(op.get("failure_basis")):e.append(f"{label} FAILED requires failure_basis")
         if not isinstance(rec.get("issue_graph_effects"),list):e.append(f"{label} reconciliation.issue_graph_effects must be a list")
         if not _list(rec.get("complete_when")):e.append(f"{label} reconciliation.complete_when must be explicit")
@@ -110,7 +113,10 @@ def validate(root:Path):
         marker=str(desired.get("body_marker") or "")
         if kind in {"CREATE","UPDATE","PUBLISH_HANDOVER","SUPERSEDE","REVISE"} and oid and f"relay-operation:{oid}" not in marker:e.append(f"{label} requires stable body_marker containing relay-operation:{oid}")
         if kind=="CREATE":
-            if node.get("github_state") not in {"ABSENT","UNKNOWN"}:e.append(f"{label} CREATE requires subject last verified GitHub state ABSENT/UNKNOWN")
+            if op_state!="VERIFIED" and node.get("github_state") not in {"ABSENT","UNKNOWN"}:e.append(f"{label} CREATE requires subject last verified GitHub state ABSENT/UNKNOWN before verification")
+            if op_state=="VERIFIED":
+                if node.get("github_state")!="OPEN":e.append(f"{label} verified CREATE requires reconciled github_state OPEN")
+                if not _has_locator(node):e.append(f"{label} verified CREATE requires reconciled GitHub locator")
             if not _explicit(desired.get("title")):e.append(f"{label} CREATE requires desired.title")
             if not _explicit(desired.get("body_projection")):e.append(f"{label} CREATE requires desired.body_projection")
             if desired.get("github_state")!="OPEN":e.append(f"{label} CREATE desired.github_state must be OPEN")
@@ -123,23 +129,29 @@ def validate(root:Path):
                 triple=(str(rel.get("from")),rel.get("relation"),str(rel.get("to")))
                 if not any((str(x.get("from")),x.get("relation"),str(x.get("to")))==triple for x in rels):e.append(f"{label} LINK attempts relationship absent from ISSUE_GRAPH: {triple}")
         elif kind in {"UPDATE","PUBLISH_HANDOVER","REVISE"}:
-            if node.get("github_state") not in {"OPEN","CLOSED","UNKNOWN"}:e.append(f"{label} {kind} requires an existing or reconcilable GitHub locator")
+            if node.get("github_state") not in {"OPEN","CLOSED","UNKNOWN"}:e.append(f"{label} {kind} requires an existing or reconcilable GitHub issue")
+            if not _has_locator(node):e.append(f"{label} {kind} requires GitHub locator")
             if not _explicit(desired.get("body_projection")):e.append(f"{label} {kind} requires desired.body_projection")
         elif kind=="SUPERSEDE":
             if len(related)!=1:e.append(f"{label} SUPERSEDE requires exactly one related successor/predecessor node")
             pair={node_id,*related}
             if len(pair)==2 and not any(x.get("relation")=="SUPERSEDES" and {str(x.get("from")),str(x.get("to"))}==pair for x in rels):e.append(f"{label} SUPERSEDE requires matching ISSUE_GRAPH SUPERSEDES relationship")
+            if not _has_locator(node) or any(not _has_locator(nodes.get(rid) or {}) for rid in related):e.append(f"{label} SUPERSEDE requires GitHub locators for both issues")
             if not _explicit(desired.get("body_projection")):e.append(f"{label} SUPERSEDE requires desired.body_projection")
         elif kind=="CLOSE":
             if node.get("state") not in TERMINAL_WORK:e.append(f"{label} CLOSE requires terminal repository work state")
             if not isinstance(node.get("closure_receipt"),dict):e.append(f"{label} CLOSE requires repository closure_receipt before external close")
+            if not _has_locator(node):e.append(f"{label} CLOSE requires GitHub locator")
+            if op_state!="VERIFIED" and node.get("github_state") not in {"OPEN","UNKNOWN"}:e.append(f"{label} CLOSE requires last verified github_state OPEN/UNKNOWN before verification")
+            if op_state=="VERIFIED" and node.get("github_state")!="CLOSED":e.append(f"{label} verified CLOSE requires reconciled github_state CLOSED")
             if desired.get("github_state")!="CLOSED":e.append(f"{label} CLOSE desired.github_state must be CLOSED")
         elif kind=="REOPEN":
-            if node.get("github_state")!="CLOSED":e.append(f"{label} REOPEN requires last verified github_state CLOSED")
+            if not _has_locator(node):e.append(f"{label} REOPEN requires GitHub locator")
             if node.get("state") not in {"OPEN","ACTIVE"}:e.append(f"{label} REOPEN requires repository work state OPEN or ACTIVE")
+            if op_state!="VERIFIED" and node.get("github_state")!="CLOSED":e.append(f"{label} REOPEN requires last verified github_state CLOSED before verification")
+            if op_state=="VERIFIED" and node.get("github_state")!="OPEN":e.append(f"{label} verified REOPEN requires reconciled github_state OPEN")
             if desired.get("github_state")!="OPEN":e.append(f"{label} REOPEN desired.github_state must be OPEN")
 
-    # Dependency graph must be acyclic.
     visiting=set();done=set()
     def visit(n,path):
         if n in visiting:e.append("GitHub operation dependency cycle: "+" -> ".join(path+[n]));return
@@ -151,12 +163,12 @@ def validate(root:Path):
 
     active=[x for x in ops if x.get("state") not in {"VERIFIED","SUPERSEDED","FAILED"}]
     all_done=bool(ops) and all(x.get("state") in {"VERIFIED","SUPERSEDED"} for x in ops)
-    state=gen.get("state")
-    if state=="IN_SYNC" and not all_done:e.append("GitHub generation IN_SYNC requires every operation VERIFIED or SUPERSEDED")
-    if all_done and state!="IN_SYNC":e.append("GitHub generation with every operation reconciled must be IN_SYNC")
-    if state=="PREPARED" and any(x.get("state")!="PREPARED" for x in ops):e.append("GitHub generation PREPARED cannot contain attempted/terminal operations")
-    if state=="PUBLISHED_UNCONFIRMED" and not any(x.get("state") in {"ATTEMPTED_UNCONFIRMED","PUBLISHED_UNCONFIRMED"} for x in ops):e.append("GitHub generation PUBLISHED_UNCONFIRMED requires unconfirmed operation evidence")
-    if state=="STALE":w.append("GitHub generation is stale; create a successor GHGEN and do not publish obsolete operations")
+    gen_state=gen.get("state")
+    if gen_state=="IN_SYNC" and not all_done:e.append("GitHub generation IN_SYNC requires every operation VERIFIED or SUPERSEDED")
+    if all_done and gen_state!="IN_SYNC":e.append("GitHub generation with every operation reconciled must be IN_SYNC")
+    if gen_state=="PREPARED" and any(x.get("state")!="PREPARED" for x in ops):e.append("GitHub generation PREPARED cannot contain attempted/terminal operations")
+    if gen_state=="PUBLISHED_UNCONFIRMED" and not any(x.get("state") in {"ATTEMPTED_UNCONFIRMED","PUBLISHED_UNCONFIRMED"} for x in ops):e.append("GitHub generation PUBLISHED_UNCONFIRMED requires unconfirmed operation evidence")
+    if gen_state=="STALE":w.append("GitHub generation is stale; create a successor GHGEN and do not publish obsolete operations")
     if active and p.get("state")=="IN_SYNC":e.append("REPO_STATE projection cannot be IN_SYNC while GitHub operations remain unreconciled")
     if all_done and p.get("state")!="IN_SYNC":e.append("fully reconciled GitHub generation requires REPO_STATE projection IN_SYNC")
     return e,w
