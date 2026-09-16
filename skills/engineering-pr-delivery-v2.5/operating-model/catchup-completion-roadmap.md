@@ -19,13 +19,13 @@ CP-R004  WP-03 Strong qualification                 COMPLETE
    |
 CP-R005  WP-04 Progress / handover / next-work      COMPLETE
    |
-CP-R006  WP-05 GitHub Program Projection            COMPLETE — exact-head CI pending
+CP-R006  WP-05 GitHub Program Projection            COMPLETE
    |
    v
-WP-06    Quality Procedure Library                  NEXT FRONTIER after CP-R006 CI PASS
+WP-06    Quality Procedure Library                  CURRENT FRONTIER
 ```
 
-WP-05 pre-checkpoint implementation verification passed workflow **35140358167** on head `f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b`, with compile, root units and all 111 repository-neutral synthetic stress tests passing.
+CP-R006 checkpoint/status verification passed corrected workflow **35140616177** on head `be63257b50e499c195a62a85b8d1b58d990a7327`, with compile, root units and all 111 repository-neutral synthetic stress tests passing.
 
 ## Progress Basis
 
@@ -36,8 +36,8 @@ WP-05 pre-checkpoint implementation verification passed workflow **35140358167**
 | WP-02 Baton readiness + Takeover Certification | 18 | COMPLETE — CP-R003 |
 | WP-03 Strong phase/boundary qualification | 12 | COMPLETE — CP-R004 |
 | WP-04 Full progress / handover / next-work | 12 | COMPLETE — CP-R005 |
-| WP-05 GitHub Program Projection operations | 8 | COMPLETE — CP-R006, exact-head CI pending |
-| WP-06 Quality Procedure Library | 10 | NEXT FRONTIER AFTER CP-R006 CI PASS |
+| WP-05 GitHub Program Projection operations | 8 | COMPLETE — CP-R006 |
+| WP-06 Quality Procedure Library | 10 | CURRENT FRONTIER |
 | WP-07 Human Communication | 6 | WAITING |
 | WP-08 Owner Change Intake | 3 | WAITING |
 | WP-09 End-to-end Relay Certification Matrix | 5 | WAITING |
@@ -45,7 +45,7 @@ WP-05 pre-checkpoint implementation verification passed workflow **35140358167**
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Checkpointed content completion: 73%; formal CP-R006 closure awaits exact-head CI.** Progress is acceptance/checkpoint-derived.
+**Earned completion: 73%.** Progress is acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -112,18 +112,48 @@ Missing connector response never proves no mutation happened. Uncertain CREATE i
 
 `ISSUE_GRAPH.github_state` now means last verified external state: `ABSENT | OPEN | CLOSED | UNKNOWN`. Native parent/sub-issue or other relationship success may be claimed only when the adapter can create and read back that native relationship; prose/body links are not equivalent.
 
-WP-05 pre-checkpoint evidence:
+WP-05 evidence:
 
 ```text
-f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b
-workflow 35140358167 — PASS
-root units + 111 dedicated stress tests
+pre-checkpoint implementation
+  f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b
+  workflow 35140358167 — PASS
+
+CP-R006 checkpoint/status
+  be63257b50e499c195a62a85b8d1b58d990a7327
+  workflow 35140616177 — PASS
+
+stress surface: 111 repository-neutral synthetic tests
 ```
+
+## WP-06 — Quality Procedure Library — CURRENT FRONTIER
+
+WP-06 must convert the quality layer from thin principles into applicability-routed engineering procedures and first-class `QRV-*` Quality Review evidence.
+
+Every EP must explicitly classify quality blueprints as applicable or not applicable with reasons. Only applicable procedures run.
+
+Each quality blueprint must contain:
+
+```text
+WHEN TO APPLY
+REQUIRED INPUTS
+PROCEDURE
+BEST-PRACTICE CHECKLIST
+ANTI-PATTERNS
+REQUIRED ARTIFACTS
+VERIFICATION
+QUALITY FINDING CLASSIFICATION
+TRUE HARD-STOP CONDITIONS
+OWNER REPORT
+SUCCESSOR HANDOVER
+```
+
+Quality findings must remain separate from evidence state and true hard stops. A maintainability, UX or engineering-quality concern is not automatically a blocker. `QRV-*` must record findings, evidence, recommendation and whether execution is actually blocked under the existing hard-stop semantics.
 
 ## Remaining dependency topology
 
 ```text
-WP-06 Quality Procedures          NEXT after CP-R006 CI PASS
+WP-06 Quality Procedures          CURRENT
    |
    v
 WP-07 Human Communication
@@ -155,7 +185,7 @@ PR #396 remains draft until:
 [x] full roadmap/WP/task/AC handover
 [x] detailed ordered next-work projection
 [x] generated report reconciliation
-[x] operational GitHub projection procedures — CP-R006 content complete, final checkpoint CI pending
+[x] operational GitHub projection procedures — CP-R006
 [ ] scoped QRV quality procedures
 [ ] plain-language Owner communication
 [ ] Owner change-intake projection
