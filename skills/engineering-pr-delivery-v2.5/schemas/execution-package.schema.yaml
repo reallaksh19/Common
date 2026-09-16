@@ -5,7 +5,7 @@ properties:
   schema_version: {const: relay-v2.5}
   identity:
     type: object
-    required: [ep_id, branch, execution_state]
+    required: [ep_id, branch, execution_state, previous_checkpoint]
   roadmap_source:
     type: object
     required: [roadmap_id, roadmap_revision, objective, phase, work_package]
