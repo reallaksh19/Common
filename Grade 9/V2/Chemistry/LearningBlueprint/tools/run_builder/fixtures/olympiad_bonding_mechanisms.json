@@ -1,0 +1,13 @@
+{
+  "subject": "CHEMISTRY",
+  "subtopic_request": "Molecular Orbital Theory for Homonuclear and Heteronuclear Diatomic Molecules",
+  "exact_gate_id": "CHEM-BOND-MOT-DIATOMIC",
+  "target_program_or_exam": "National Chemistry Olympiad (INChO)",
+  "current_grade": 11,
+  "learning_purpose": "COMPETITIVE_EXAM",
+  "learner_knowledge_mode": "UNKNOWN",
+  "learner_knowledge_percent": null,
+  "requested_engineering_depth": "RESEARCH",
+  "core1_difficulty_control": "FIXED_INTRINSIC_DEPTH",
+  "core2_adaptation_mode": "CHALLENGE_EXTENDED"
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chemistry LearningBlueprint Observability Workbench</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { margin-bottom: 2.5rem; text-align: center; }
+    h1 { font-size: 2.2rem; color: #38bdf8; margin-bottom: 0.5rem; }
+    p.sub { color: #94a3b8; font-size: 1.1rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; color: inherit; transition: transform 0.2s, border-color 0.2s; }
+    .card:hover { transform: translateY(-3px); border-color: #38bdf8; }
+    .icon { font-size: 2rem; margin-bottom: 1rem; }
+    .title { font-size: 1.25rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.5rem; }
+    .desc { font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.5rem; line-height: 1.5; }
+    .btn { display: inline-block; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; text-align: center; background: #0284c7; color: white; }
+    .btn.purple { background: #9333ea; }
+    .btn.emerald { background: #059669; }
+    .btn.amber { background: #d97706; }
+    .governance { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.5rem; }
+    .gov-title { font-size: 1.1rem; font-weight: 700; color: #f59e0b; margin-bottom: 1rem; }
+    .gov-list { list-style-type: square; padding-left: 1.5rem; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Chemistry LearningBlueprint Observability Workbench</h1>
+      <p class="sub">Developer, Architect, and Curriculum Intelligence Suite across all 52 Chemistry Subtopics (Grades 9–11)</p>
+    </header>
+    <div class="grid">
+      <a href="run_builder/index.html" class="card">
+        <div>
+          <div class="icon">⚙️</div>
+          <div class="title">Run Builder</div>
+          <div class="desc">Visual configuration compiler and manifest generator for CBSE and JEE competitive chemistry tracks.</div>
+        </div>
+        <div class="btn">Launch Run Builder &rarr;</div>
+      </a>
+      <a href="architecture_explorer/index.html" class="card">
+        <div>
+          <div class="icon">🔍</div>
+          <div class="title">Architecture Explorer</div>
+          <div class="desc">Derived graph observatory mapping contracts, policies, engines, and tests with automated drift check.</div>
+        </div>
+        <div class="btn purple">Launch Architecture Explorer &rarr;</div>
+      </a>
+      <a href="../benchmarks/discovery/index.html" class="card">
+        <div>
+          <div class="icon">📊</div>
+          <div class="title">Discovery Quality Benchmark</div>
+          <div class="desc">Quantitative stress-test explorer demonstrating 100% Top-1 recall across 114 curated queries and 52 gates.</div>
+        </div>
+        <div class="btn emerald">Launch Discovery Explorer &rarr;</div>
+      </a>
+      <a href="sil_explorer/index.html" class="card">
+        <div>
+          <div class="icon">📚</div>
+          <div class="title">Subtopic Intelligence Library</div>
+          <div class="desc">Interactive 4-layer pedagogical knowledge explorer: Chemical Core, Learning Atoms, Misconceptions, and TTUs.</div>
+        </div>
+        <div class="btn amber">Launch SIL Explorer &rarr;</div>
+      </a>
+    </div>
+    <div class="governance">
+      <div class="gov-title">🛡️ Chemistry Architectural Governance Invariants</div>
+      <ul class="gov-list">
+        <li><strong>Authority Invariant:</strong> Execution order may vary; authority order may never vary. Ground truth and engineering gates govern all downstream models.</li>
+        <li><strong>Dual-Track Isolation:</strong> Core1 conceptual foundation never consumes learner diagnostic knowledge percentage. SDU depth is intrinsic.</li>
+        <li><strong>Discovery Boundary:</strong> Candidate discovery is candidate-only; exact Engineering Gate IDs require explicit confirmed selection.</li>
+        <li><strong>Zero Topic Hardcoding:</strong> Generic runtime orchestration contains zero topic-specific branch logic.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

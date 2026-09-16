@@ -1,0 +1,1353 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "manifest_class": "DERIVED_ARCHITECTURE_OBSERVATION",
+  "authority": "DERIVED_ARCHITECTURE_OBSERVATION",
+  "technical_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED",
+  "component_count": 155,
+  "relation_count": 39,
+  "components": {
+    "schema:assimilation-bundle.schema.json": {
+      "component_id": "schema:assimilation-bundle.schema.json",
+      "name": "assimilation-bundle.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:assimilation-design.schema.json": {
+      "component_id": "schema:assimilation-design.schema.json",
+      "name": "assimilation-design.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:badge-taxonomy-v7.schema.json": {
+      "component_id": "schema:badge-taxonomy-v7.schema.json",
+      "name": "badge-taxonomy-v7.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:canonical-domain-registry-v6.schema.json": {
+      "component_id": "schema:canonical-domain-registry-v6.schema.json",
+      "name": "canonical-domain-registry-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:cdau-governance-v6.schema.json": {
+      "component_id": "schema:cdau-governance-v6.schema.json",
+      "name": "cdau-governance-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-core-authority.schema.json": {
+      "component_id": "schema:chemistry-core-authority.schema.json",
+      "name": "chemistry-core-authority.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-core-product-custody.schema.json": {
+      "component_id": "schema:chemistry-core-product-custody.schema.json",
+      "name": "chemistry-core-product-custody.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-core-source-scope.schema.json": {
+      "component_id": "schema:chemistry-core-source-scope.schema.json",
+      "name": "chemistry-core-source-scope.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineered-domain-admission.schema.json": {
+      "component_id": "schema:chemistry-engineered-domain-admission.schema.json",
+      "name": "chemistry-engineered-domain-admission.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-authorization-binding.schema.json": {
+      "component_id": "schema:chemistry-engineering-authorization-binding.schema.json",
+      "name": "chemistry-engineering-authorization-binding.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-blueprint-obligations.schema.json": {
+      "component_id": "schema:chemistry-engineering-blueprint-obligations.schema.json",
+      "name": "chemistry-engineering-blueprint-obligations.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-claim-ledger.schema.json": {
+      "component_id": "schema:chemistry-engineering-claim-ledger.schema.json",
+      "name": "chemistry-engineering-claim-ledger.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-closure-receipt.schema.json": {
+      "component_id": "schema:chemistry-engineering-closure-receipt.schema.json",
+      "name": "chemistry-engineering-closure-receipt.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-discovery-receipt.schema.json": {
+      "component_id": "schema:chemistry-engineering-discovery-receipt.schema.json",
+      "name": "chemistry-engineering-discovery-receipt.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-discovery-request.schema.json": {
+      "component_id": "schema:chemistry-engineering-discovery-request.schema.json",
+      "name": "chemistry-engineering-discovery-request.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-discovery-selection.schema.json": {
+      "component_id": "schema:chemistry-engineering-discovery-selection.schema.json",
+      "name": "chemistry-engineering-discovery-selection.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-discovery-vocabulary.schema.json": {
+      "component_id": "schema:chemistry-engineering-discovery-vocabulary.schema.json",
+      "name": "chemistry-engineering-discovery-vocabulary.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-domain-projection-v2.schema.json": {
+      "component_id": "schema:chemistry-engineering-domain-projection-v2.schema.json",
+      "name": "chemistry-engineering-domain-projection-v2.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-domain-projection.schema.json": {
+      "component_id": "schema:chemistry-engineering-domain-projection.schema.json",
+      "name": "chemistry-engineering-domain-projection.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-passport.schema.json": {
+      "component_id": "schema:chemistry-engineering-passport.schema.json",
+      "name": "chemistry-engineering-passport.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-request.schema.json": {
+      "component_id": "schema:chemistry-engineering-request.schema.json",
+      "name": "chemistry-engineering-request.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-research-dossier.schema.json": {
+      "component_id": "schema:chemistry-engineering-research-dossier.schema.json",
+      "name": "chemistry-engineering-research-dossier.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-topic-manifest.schema.json": {
+      "component_id": "schema:chemistry-engineering-topic-manifest.schema.json",
+      "name": "chemistry-engineering-topic-manifest.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-engineering-visibility-manifest.schema.json": {
+      "component_id": "schema:chemistry-engineering-visibility-manifest.schema.json",
+      "name": "chemistry-engineering-visibility-manifest.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-gate-source-audit.schema.json": {
+      "component_id": "schema:chemistry-gate-source-audit.schema.json",
+      "name": "chemistry-gate-source-audit.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-product-engineering-custody-v1.schema.json": {
+      "component_id": "schema:chemistry-product-engineering-custody-v1.schema.json",
+      "name": "chemistry-product-engineering-custody-v1.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-product-source-scope-v1.schema.json": {
+      "component_id": "schema:chemistry-product-source-scope-v1.schema.json",
+      "name": "chemistry-product-source-scope-v1.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-representation-intent.schema.json": {
+      "component_id": "schema:chemistry-representation-intent.schema.json",
+      "name": "chemistry-representation-intent.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-semantic-projection.schema.json": {
+      "component_id": "schema:chemistry-semantic-projection.schema.json",
+      "name": "chemistry-semantic-projection.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:chemistry-technical-engineering-gate.schema.json": {
+      "component_id": "schema:chemistry-technical-engineering-gate.schema.json",
+      "name": "chemistry-technical-engineering-gate.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:concept-ttu-v6.schema.json": {
+      "component_id": "schema:concept-ttu-v6.schema.json",
+      "name": "concept-ttu-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:content-bill-of-materials-v7.schema.json": {
+      "component_id": "schema:content-bill-of-materials-v7.schema.json",
+      "name": "content-bill-of-materials-v7.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:core1a-study-note-authority-v7.schema.json": {
+      "component_id": "schema:core1a-study-note-authority-v7.schema.json",
+      "name": "core1a-study-note-authority-v7.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:core2-learner-conditioning-v4.schema.json": {
+      "component_id": "schema:core2-learner-conditioning-v4.schema.json",
+      "name": "core2-learner-conditioning-v4.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:ground-truth-manifest.schema.json": {
+      "component_id": "schema:ground-truth-manifest.schema.json",
+      "name": "ground-truth-manifest.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:instruction-bucket-v4.schema.json": {
+      "component_id": "schema:instruction-bucket-v4.schema.json",
+      "name": "instruction-bucket-v4.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:join-packet.schema.json": {
+      "component_id": "schema:join-packet.schema.json",
+      "name": "join-packet.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:learner-adaptation-unit-v6.schema.json": {
+      "component_id": "schema:learner-adaptation-unit-v6.schema.json",
+      "name": "learner-adaptation-unit-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:learner-input.schema.json": {
+      "component_id": "schema:learner-input.schema.json",
+      "name": "learner-input.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:learner-state.schema.json": {
+      "component_id": "schema:learner-state.schema.json",
+      "name": "learner-state.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:owner-override.schema.json": {
+      "component_id": "schema:owner-override.schema.json",
+      "name": "owner-override.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:packet-envelope.schema.json": {
+      "component_id": "schema:packet-envelope.schema.json",
+      "name": "packet-envelope.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:problem-ttu-v6.schema.json": {
+      "component_id": "schema:problem-ttu-v6.schema.json",
+      "name": "problem-ttu-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:product-assurance-v7.schema.json": {
+      "component_id": "schema:product-assurance-v7.schema.json",
+      "name": "product-assurance-v7.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:purpose-input.schema.json": {
+      "component_id": "schema:purpose-input.schema.json",
+      "name": "purpose-input.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:purpose-packet.schema.json": {
+      "component_id": "schema:purpose-packet.schema.json",
+      "name": "purpose-packet.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:question-custody-v7.schema.json": {
+      "component_id": "schema:question-custody-v7.schema.json",
+      "name": "question-custody-v7.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:question-product-v5.schema.json": {
+      "component_id": "schema:question-product-v5.schema.json",
+      "name": "question-product-v5.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:realization-evidence.schema.json": {
+      "component_id": "schema:realization-evidence.schema.json",
+      "name": "realization-evidence.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:reconstructable-ttu-v5.schema.json": {
+      "component_id": "schema:reconstructable-ttu-v5.schema.json",
+      "name": "reconstructable-ttu-v5.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:routing-decision.schema.json": {
+      "component_id": "schema:routing-decision.schema.json",
+      "name": "routing-decision.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:routing-input.schema.json": {
+      "component_id": "schema:routing-input.schema.json",
+      "name": "routing-input.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:self-help-closure-v6.schema.json": {
+      "component_id": "schema:self-help-closure-v6.schema.json",
+      "name": "self-help-closure-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:specialist-pass.schema.json": {
+      "component_id": "schema:specialist-pass.schema.json",
+      "name": "specialist-pass.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:study-differentiation-unit-v6.schema.json": {
+      "component_id": "schema:study-differentiation-unit-v6.schema.json",
+      "name": "study-differentiation-unit-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:study-product-v5.schema.json": {
+      "component_id": "schema:study-product-v5.schema.json",
+      "name": "study-product-v5.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:taught-state.schema.json": {
+      "component_id": "schema:taught-state.schema.json",
+      "name": "taught-state.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:transfer-eligibility.schema.json": {
+      "component_id": "schema:transfer-eligibility.schema.json",
+      "name": "transfer-eligibility.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:transfer-envelope.schema.json": {
+      "component_id": "schema:transfer-envelope.schema.json",
+      "name": "transfer-envelope.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:transfer-request.schema.json": {
+      "component_id": "schema:transfer-request.schema.json",
+      "name": "transfer-request.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:tutor-dialogue-v6.schema.json": {
+      "component_id": "schema:tutor-dialogue-v6.schema.json",
+      "name": "tutor-dialogue-v6.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "schema:validation-packet.schema.json": {
+      "component_id": "schema:validation-packet.schema.json",
+      "name": "validation-packet.schema.json",
+      "component_type": "SCHEMA",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:adaptive-routing-policy.json": {
+      "component_id": "policy:adaptive-routing-policy.json",
+      "name": "adaptive-routing-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:assimilation-policy.json": {
+      "component_id": "policy:assimilation-policy.json",
+      "name": "assimilation-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:chemistry-engineering-discovery-vocabulary.v1.json": {
+      "component_id": "policy:chemistry-engineering-discovery-vocabulary.v1.json",
+      "name": "chemistry-engineering-discovery-vocabulary.v1.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:chemistry-engineering-extension-catalog.v1.json": {
+      "component_id": "policy:chemistry-engineering-extension-catalog.v1.json",
+      "name": "chemistry-engineering-extension-catalog.v1.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:chemistry-representation-intent.v1.json": {
+      "component_id": "policy:chemistry-representation-intent.v1.json",
+      "name": "chemistry-representation-intent.v1.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:chemistry-semantic-projection.v1.json": {
+      "component_id": "policy:chemistry-semantic-projection.v1.json",
+      "name": "chemistry-semantic-projection.v1.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:chemistry-technical-engineering-gates.v1.json": {
+      "component_id": "policy:chemistry-technical-engineering-gates.v1.json",
+      "name": "chemistry-technical-engineering-gates.v1.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:engineering-blueprint-compilation.v1.json": {
+      "component_id": "policy:engineering-blueprint-compilation.v1.json",
+      "name": "engineering-blueprint-compilation.v1.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:independent-specialist-protocol.json": {
+      "component_id": "policy:independent-specialist-protocol.json",
+      "name": "independent-specialist-protocol.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:static-b-layer-boundary.v1.json": {
+      "component_id": "policy:static-b-layer-boundary.v1.json",
+      "name": "static-b-layer-boundary.v1.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:transfer-eligibility-policy.json": {
+      "component_id": "policy:transfer-eligibility-policy.json",
+      "name": "transfer-eligibility-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:v4-bucket-and-conditioning-policy.json": {
+      "component_id": "policy:v4-bucket-and-conditioning-policy.json",
+      "name": "v4-bucket-and-conditioning-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:v5-study-product-quality-policy.json": {
+      "component_id": "policy:v5-study-product-quality-policy.json",
+      "name": "v5-study-product-quality-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:v6-dual-router-ttu-family-policy.json": {
+      "component_id": "policy:v6-dual-router-ttu-family-policy.json",
+      "name": "v6-dual-router-ttu-family-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:v7-core1a-study-note-sufficiency-policy.json": {
+      "component_id": "policy:v7-core1a-study-note-sufficiency-policy.json",
+      "name": "v7-core1a-study-note-sufficiency-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "policy:v7-product-assurance-policy.json": {
+      "component_id": "policy:v7-product-assurance-policy.json",
+      "name": "v7-product-assurance-policy.json",
+      "component_type": "POLICY",
+      "consumer_refs": [],
+      "test_refs": []
+    },
+    "engine:apply_owner_override.py": {
+      "component_id": "engine:apply_owner_override.py",
+      "name": "apply_owner_override.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:build_chemistry_engineering_gate_registry.py": {
+      "component_id": "engine:build_chemistry_engineering_gate_registry.py",
+      "name": "build_chemistry_engineering_gate_registry.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:common.py": {
+      "component_id": "engine:common.py",
+      "name": "common.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_assimilation.py": {
+      "component_id": "engine:compile_assimilation.py",
+      "name": "compile_assimilation.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_blueprint_obligations.py": {
+      "component_id": "engine:compile_chemistry_blueprint_obligations.py",
+      "name": "compile_chemistry_blueprint_obligations.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_core_authority.py": {
+      "component_id": "engine:compile_chemistry_core_authority.py",
+      "name": "compile_chemistry_core_authority.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_core_product_custody.py": {
+      "component_id": "engine:compile_chemistry_core_product_custody.py",
+      "name": "compile_chemistry_core_product_custody.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_engineering_authorization_binding.py": {
+      "component_id": "engine:compile_chemistry_engineering_authorization_binding.py",
+      "name": "compile_chemistry_engineering_authorization_binding.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_engineering_closure.py": {
+      "component_id": "engine:compile_chemistry_engineering_closure.py",
+      "name": "compile_chemistry_engineering_closure.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_engineering_discovery.py": {
+      "component_id": "engine:compile_chemistry_engineering_discovery.py",
+      "name": "compile_chemistry_engineering_discovery.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_engineering_passport.py": {
+      "component_id": "engine:compile_chemistry_engineering_passport.py",
+      "name": "compile_chemistry_engineering_passport.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_engineering_workbench.py": {
+      "component_id": "engine:compile_chemistry_engineering_workbench.py",
+      "name": "compile_chemistry_engineering_workbench.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_product_engineering_custody.py": {
+      "component_id": "engine:compile_chemistry_product_engineering_custody.py",
+      "name": "compile_chemistry_product_engineering_custody.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_representation_intent.py": {
+      "component_id": "engine:compile_chemistry_representation_intent.py",
+      "name": "compile_chemistry_representation_intent.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_chemistry_semantic_projection.py": {
+      "component_id": "engine:compile_chemistry_semantic_projection.py",
+      "name": "compile_chemistry_semantic_projection.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_engineering_visibility_manifest.py": {
+      "component_id": "engine:compile_engineering_visibility_manifest.py",
+      "name": "compile_engineering_visibility_manifest.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_join.py": {
+      "component_id": "engine:compile_join.py",
+      "name": "compile_join.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_learner_state.py": {
+      "component_id": "engine:compile_learner_state.py",
+      "name": "compile_learner_state.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_purpose.py": {
+      "component_id": "engine:compile_purpose.py",
+      "name": "compile_purpose.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_taught_state.py": {
+      "component_id": "engine:compile_taught_state.py",
+      "name": "compile_taught_state.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:compile_transfer_eligibility.py": {
+      "component_id": "engine:compile_transfer_eligibility.py",
+      "name": "compile_transfer_eligibility.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:engineering_registry_composition.py": {
+      "component_id": "engine:engineering_registry_composition.py",
+      "name": "engineering_registry_composition.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:freeze_ground_truth.py": {
+      "component_id": "engine:freeze_ground_truth.py",
+      "name": "freeze_ground_truth.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:freeze_specialist_pass.py": {
+      "component_id": "engine:freeze_specialist_pass.py",
+      "name": "freeze_specialist_pass.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:project_engineering_to_domain_registry.py": {
+      "component_id": "engine:project_engineering_to_domain_registry.py",
+      "name": "project_engineering_to_domain_registry.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:project_engineering_to_domain_registry_v2.py": {
+      "component_id": "engine:project_engineering_to_domain_registry_v2.py",
+      "name": "project_engineering_to_domain_registry_v2.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:route_evidence.py": {
+      "component_id": "engine:route_evidence.py",
+      "name": "route_evidence.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:run_blueprint_v0.py": {
+      "component_id": "engine:run_blueprint_v0.py",
+      "name": "run_blueprint_v0.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:run_blueprint_v1.py": {
+      "component_id": "engine:run_blueprint_v1.py",
+      "name": "run_blueprint_v1.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:run_blueprint_v2.py": {
+      "component_id": "engine:run_blueprint_v2.py",
+      "name": "run_blueprint_v2.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:run_blueprint_v3.py": {
+      "component_id": "engine:run_blueprint_v3.py",
+      "name": "run_blueprint_v3.py",
+      "component_type": "COMPILER",
+      "test_refs": []
+    },
+    "engine:validate_blueprint_v4.py": {
+      "component_id": "engine:validate_blueprint_v4.py",
+      "name": "validate_blueprint_v4.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_blueprint_v5.py": {
+      "component_id": "engine:validate_blueprint_v5.py",
+      "name": "validate_blueprint_v5.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_blueprint_v6.py": {
+      "component_id": "engine:validate_blueprint_v6.py",
+      "name": "validate_blueprint_v6.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_blueprint_v7.py": {
+      "component_id": "engine:validate_blueprint_v7.py",
+      "name": "validate_blueprint_v7.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_cdau_engineering_ready.py": {
+      "component_id": "engine:validate_cdau_engineering_ready.py",
+      "name": "validate_cdau_engineering_ready.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_chemistry_core_source_scope.py": {
+      "component_id": "engine:validate_chemistry_core_source_scope.py",
+      "name": "validate_chemistry_core_source_scope.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_chemistry_engineering_binding.py": {
+      "component_id": "engine:validate_chemistry_engineering_binding.py",
+      "name": "validate_chemistry_engineering_binding.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_chemistry_engineering_discovery_vocabulary.py": {
+      "component_id": "engine:validate_chemistry_engineering_discovery_vocabulary.py",
+      "name": "validate_chemistry_engineering_discovery_vocabulary.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_chemistry_engineering_gates.py": {
+      "component_id": "engine:validate_chemistry_engineering_gates.py",
+      "name": "validate_chemistry_engineering_gates.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_chemistry_engineering_registry_runtime.py": {
+      "component_id": "engine:validate_chemistry_engineering_registry_runtime.py",
+      "name": "validate_chemistry_engineering_registry_runtime.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_chemistry_gate_source_audit.py": {
+      "component_id": "engine:validate_chemistry_gate_source_audit.py",
+      "name": "validate_chemistry_gate_source_audit.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_core1a_study_note_v7.py": {
+      "component_id": "engine:validate_core1a_study_note_v7.py",
+      "name": "validate_core1a_study_note_v7.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_engineered_domain_admission.py": {
+      "component_id": "engine:validate_engineered_domain_admission.py",
+      "name": "validate_engineered_domain_admission.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_pal_engineering_ready.py": {
+      "component_id": "engine:validate_pal_engineering_ready.py",
+      "name": "validate_pal_engineering_ready.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_product_source_scope.py": {
+      "component_id": "engine:validate_product_source_scope.py",
+      "name": "validate_product_source_scope.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_specialist_relay.py": {
+      "component_id": "engine:validate_specialist_relay.py",
+      "name": "validate_specialist_relay.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_static_b_layer_boundary.py": {
+      "component_id": "engine:validate_static_b_layer_boundary.py",
+      "name": "validate_static_b_layer_boundary.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "engine:validate_subtopic_intelligence_library.py": {
+      "component_id": "engine:validate_subtopic_intelligence_library.py",
+      "name": "validate_subtopic_intelligence_library.py",
+      "component_type": "VALIDATOR",
+      "test_refs": []
+    },
+    "test:test_blueprint_v0.py": {
+      "component_id": "test:test_blueprint_v0.py",
+      "name": "test_blueprint_v0.py",
+      "component_type": "TEST"
+    },
+    "test:test_blueprint_v1.py": {
+      "component_id": "test:test_blueprint_v1.py",
+      "name": "test_blueprint_v1.py",
+      "component_type": "TEST"
+    },
+    "test:test_blueprint_v2.py": {
+      "component_id": "test:test_blueprint_v2.py",
+      "name": "test_blueprint_v2.py",
+      "component_type": "TEST"
+    },
+    "test:test_blueprint_v3.py": {
+      "component_id": "test:test_blueprint_v3.py",
+      "name": "test_blueprint_v3.py",
+      "component_type": "TEST"
+    },
+    "test:test_blueprint_v4_controls.py": {
+      "component_id": "test:test_blueprint_v4_controls.py",
+      "name": "test_blueprint_v4_controls.py",
+      "component_type": "TEST"
+    },
+    "test:test_blueprint_v5_product_quality.py": {
+      "component_id": "test:test_blueprint_v5_product_quality.py",
+      "name": "test_blueprint_v5_product_quality.py",
+      "component_type": "TEST"
+    },
+    "test:test_blueprint_v6_architecture.py": {
+      "component_id": "test:test_blueprint_v6_architecture.py",
+      "name": "test_blueprint_v6_architecture.py",
+      "component_type": "TEST"
+    },
+    "test:test_blueprint_v7_product_assurance.py": {
+      "component_id": "test:test_blueprint_v7_product_assurance.py",
+      "name": "test_blueprint_v7_product_assurance.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_core_semantic_lineage.py": {
+      "component_id": "test:test_chemistry_core_semantic_lineage.py",
+      "name": "test_chemistry_core_semantic_lineage.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_engineering_discovery.py": {
+      "component_id": "test:test_chemistry_engineering_discovery.py",
+      "name": "test_chemistry_engineering_discovery.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_engineering_gates.py": {
+      "component_id": "test:test_chemistry_engineering_gates.py",
+      "name": "test_chemistry_engineering_gates.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_engineering_manifest_scope_sets.py": {
+      "component_id": "test:test_chemistry_engineering_manifest_scope_sets.py",
+      "name": "test_chemistry_engineering_manifest_scope_sets.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_engineering_workbench.py": {
+      "component_id": "test:test_chemistry_engineering_workbench.py",
+      "name": "test_chemistry_engineering_workbench.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_engineering_workbench_v2.py": {
+      "component_id": "test:test_chemistry_engineering_workbench_v2.py",
+      "name": "test_chemistry_engineering_workbench_v2.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_four_core_compilation.py": {
+      "component_id": "test:test_chemistry_four_core_compilation.py",
+      "name": "test_chemistry_four_core_compilation.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_four_core_content_first.py": {
+      "component_id": "test:test_chemistry_four_core_content_first.py",
+      "name": "test_chemistry_four_core_content_first.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_four_core_cross_grade.py": {
+      "component_id": "test:test_chemistry_four_core_cross_grade.py",
+      "name": "test_chemistry_four_core_cross_grade.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_four_core_transformation_scope.py": {
+      "component_id": "test:test_chemistry_four_core_transformation_scope.py",
+      "name": "test_chemistry_four_core_transformation_scope.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_gate_source_audit_generic.py": {
+      "component_id": "test:test_chemistry_gate_source_audit_generic.py",
+      "name": "test_chemistry_gate_source_audit_generic.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_representation_intent.py": {
+      "component_id": "test:test_chemistry_representation_intent.py",
+      "name": "test_chemistry_representation_intent.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_semantic_projection_generic.py": {
+      "component_id": "test:test_chemistry_semantic_projection_generic.py",
+      "name": "test_chemistry_semantic_projection_generic.py",
+      "component_type": "TEST"
+    },
+    "test:test_chemistry_unknown_gate_metamorphic.py": {
+      "component_id": "test:test_chemistry_unknown_gate_metamorphic.py",
+      "name": "test_chemistry_unknown_gate_metamorphic.py",
+      "component_type": "TEST"
+    },
+    "test:test_core1a_study_note_v7.py": {
+      "component_id": "test:test_core1a_study_note_v7.py",
+      "name": "test_core1a_study_note_v7.py",
+      "component_type": "TEST"
+    },
+    "test:test_engineered_domain_admission.py": {
+      "component_id": "test:test_engineered_domain_admission.py",
+      "name": "test_engineered_domain_admission.py",
+      "component_type": "TEST"
+    },
+    "test:test_engineering_domain_projection.py": {
+      "component_id": "test:test_engineering_domain_projection.py",
+      "name": "test_engineering_domain_projection.py",
+      "component_type": "TEST"
+    },
+    "test:test_engineering_registry_composition.py": {
+      "component_id": "test:test_engineering_registry_composition.py",
+      "name": "test_engineering_registry_composition.py",
+      "component_type": "TEST"
+    },
+    "test:test_engineering_visibility_manifest.py": {
+      "component_id": "test:test_engineering_visibility_manifest.py",
+      "name": "test_engineering_visibility_manifest.py",
+      "component_type": "TEST"
+    },
+    "test:test_subtopic_intelligence_library.py": {
+      "component_id": "test:test_subtopic_intelligence_library.py",
+      "name": "test_subtopic_intelligence_library.py",
+      "component_type": "TEST"
+    }
+  },
+  "relations": [
+    {
+      "source": "engine:compile_chemistry_blueprint_obligations.py",
+      "target": "schema:chemistry-engineering-blueprint-obligations.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_core_authority.py",
+      "target": "schema:chemistry-core-authority.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_core_authority.py",
+      "target": "schema:chemistry-engineering-blueprint-obligations.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_core_product_custody.py",
+      "target": "schema:chemistry-core-authority.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_core_product_custody.py",
+      "target": "schema:chemistry-core-product-custody.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_core_product_custody.py",
+      "target": "schema:chemistry-engineering-blueprint-obligations.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_authorization_binding.py",
+      "target": "schema:chemistry-engineering-authorization-binding.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_closure.py",
+      "target": "schema:chemistry-engineering-claim-ledger.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_closure.py",
+      "target": "schema:chemistry-engineering-closure-receipt.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_closure.py",
+      "target": "schema:chemistry-engineering-request.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_closure.py",
+      "target": "schema:chemistry-engineering-research-dossier.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_closure.py",
+      "target": "schema:chemistry-engineering-topic-manifest.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_discovery.py",
+      "target": "schema:chemistry-engineering-discovery-receipt.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_discovery.py",
+      "target": "schema:chemistry-engineering-discovery-request.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_discovery.py",
+      "target": "schema:chemistry-engineering-discovery-selection.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_discovery.py",
+      "target": "schema:chemistry-engineering-discovery-vocabulary.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_passport.py",
+      "target": "schema:chemistry-engineering-closure-receipt.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_passport.py",
+      "target": "schema:chemistry-engineering-passport.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_engineering_passport.py",
+      "target": "schema:chemistry-engineering-request.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_product_engineering_custody.py",
+      "target": "schema:chemistry-product-engineering-custody-v1.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_product_engineering_custody.py",
+      "target": "schema:chemistry-product-source-scope-v1.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_product_engineering_custody.py",
+      "target": "schema:content-bill-of-materials-v7.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_representation_intent.py",
+      "target": "schema:chemistry-representation-intent.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_representation_intent.py",
+      "target": "schema:chemistry-technical-engineering-gate.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_semantic_projection.py",
+      "target": "schema:chemistry-engineering-blueprint-obligations.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_chemistry_semantic_projection.py",
+      "target": "schema:chemistry-semantic-projection.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "schema:chemistry-engineering-visibility-manifest.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "schema:chemistry-engineering-domain-projection.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry_v2.py",
+      "target": "schema:chemistry-engineering-domain-projection-v2.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_cdau_engineering_ready.py",
+      "target": "schema:cdau-governance-v6.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_chemistry_core_source_scope.py",
+      "target": "schema:chemistry-core-authority.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_chemistry_core_source_scope.py",
+      "target": "schema:chemistry-core-source-scope.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_chemistry_engineering_binding.py",
+      "target": "schema:chemistry-engineering-authorization-binding.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_chemistry_engineering_gates.py",
+      "target": "schema:chemistry-technical-engineering-gate.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_chemistry_engineering_registry_runtime.py",
+      "target": "schema:chemistry-technical-engineering-gate.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_chemistry_gate_source_audit.py",
+      "target": "schema:chemistry-gate-source-audit.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "schema:chemistry-engineered-domain-admission.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_pal_engineering_ready.py",
+      "target": "schema:chemistry-product-engineering-custody-v1.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_product_source_scope.py",
+      "target": "schema:chemistry-product-source-scope-v1.schema.json",
+      "relation_type": "USES_SCHEMA",
+      "confidence": "EXPLICIT"
+    }
+  ],
+  "manifest_digest": "sha256:95c5912cd364b276bda3101b35a9b68767fc6eb0acf6a8f6f70cf5b3ee1dbc9b"
+}

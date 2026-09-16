@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemistry Engineering Discovery Explorer</title>
+  <link rel="stylesheet" href="discovery_explorer.css">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <h1>Chemistry Engineering Discovery Explorer</h1>
+      <p class="subtitle">Interactive Observability & Benchmark Dashboard across all 52 Chemistry Gates (Grades 9–11)</p>
+      <div class="badge-row">
+        <span class="badge badge-purple">52 Engineering Gates</span>
+        <span class="badge badge-teal">100% Top-1 Recall</span>
+        <span class="badge badge-blue">Zero Authorization Invariant</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <section class="controls-card">
+      <div class="search-box">
+        <input type="text" id="queryInput" placeholder="Enter chemical query or concept (e.g. molarity, redox balancing, hybridized orbital)..." />
+        <button id="runSearchBtn" class="btn btn-primary">Search Discovery</button>
+      </div>
+      <div class="filter-row">
+        <label>Filter Grade:
+          <select id="gradeFilter">
+            <option value="ALL">All Grades</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+          </select>
+        </label>
+        <label>Filter Category:
+          <select id="categoryFilter">
+            <option value="ALL">All Categories</option>
+            <option value="CONCEPT_INQUIRY">Concept Inquiry</option>
+            <option value="PROBLEM_SOLVING">Problem Solving</option>
+            <option value="OUT_OF_DOMAIN_NOISE">Out of Domain Noise</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="metrics-card">
+      <div class="metric"><span class="metric-num" id="metricTotal">114</span><span class="metric-lbl">Total Queries</span></div>
+      <div class="metric"><span class="metric-num" id="metricTop1">100%</span><span class="metric-lbl">Top-1 Recall</span></div>
+      <div class="metric"><span class="metric-num" id="metricTop5">100%</span><span class="metric-lbl">Top-5 Recall</span></div>
+      <div class="metric"><span class="metric-num" id="metricMiss">0.0%</span><span class="metric-lbl">Miss Rate</span></div>
+    </section>
+
+    <section class="results-card">
+      <h2>Benchmark Corpus Queries & Results</h2>
+      <div id="resultsList" class="results-list"></div>
+    </section>
+  </main>
+
+  <script src="discovery_explorer.js"></script>
+</body>
+</html>

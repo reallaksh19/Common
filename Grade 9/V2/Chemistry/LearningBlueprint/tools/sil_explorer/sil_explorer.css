@@ -1,0 +1,19 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+header { background: #1e293b; border-bottom: 1px solid #334155; padding: 1rem 1.5rem; position: relative; flex-shrink: 0; }
+header h1 { color: #a855f7; font-size: 1.5rem; }
+header p { color: #94a3b8; font-size: 0.85rem; }
+.portal-link { position: absolute; right: 1.5rem; top: 1.2rem; color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.sil-container { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 360px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 1rem; }
+.sidebar input { padding: 0.6rem; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 4px; margin-bottom: 1rem; }
+.packet-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; }
+.packet-item { padding: 0.6rem; background: #0f172a; border: 1px solid #334155; border-radius: 4px; cursor: pointer; }
+.packet-item:hover, .packet-item.active { border-color: #a855f7; background: #2e1065; }
+.packet-gid { font-size: 0.75rem; color: #c084fc; font-family: monospace; }
+.packet-title { font-size: 0.85rem; color: #f1f5f9; font-weight: 600; }
+.detail-area { flex: 1; overflow-y: auto; padding: 2rem; }
+.empty-state { text-align: center; color: #64748b; margin-top: 4rem; font-size: 1.1rem; }
+.layer-card { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 1.2rem; margin-bottom: 1.5rem; }
+.layer-card h3 { color: #38bdf8; font-size: 1.1rem; margin-bottom: 0.8rem; border-bottom: 1px solid #334155; padding-bottom: 0.4rem; }
+.atom-badge { display: inline-block; background: #0f172a; border: 1px solid #475569; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.75rem; font-family: monospace; color: #facc15; margin-right: 0.5rem; }

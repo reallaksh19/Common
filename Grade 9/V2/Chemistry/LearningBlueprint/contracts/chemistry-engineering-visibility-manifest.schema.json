@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-engineering-visibility-manifest.schema.json",
+  "title": "ChemistryEngineeringVisibilityManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "visibility_manifest_id",
+    "registry_id",
+    "registry_digest",
+    "visible_subtopic_count",
+    "visible_subtopics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "CHEMISTRY"
+    },
+    "visibility_manifest_id": {
+      "type": "string",
+      "pattern": "^CHEM-ENG-VIS-[A-Z0-9_-]+$"
+    },
+    "registry_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "registry_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "visible_subtopic_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "visible_subtopics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subtopic_id",
+          "learner_title",
+          "visibility_tier",
+          "direct_prerequisites",
+          "transitive_prerequisites",
+          "cbse_grade",
+          "jee_tier"
+        ],
+        "properties": {
+          "subtopic_id": {
+            "type": "string",
+            "minLength": 3
+          },
+          "learner_title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "visibility_tier": {
+            "enum": [
+              "PUBLIC",
+              "RESTRICTED",
+              "INTERNAL"
+            ]
+          },
+          "direct_prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "transitive_prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cbse_grade": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "jee_tier": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

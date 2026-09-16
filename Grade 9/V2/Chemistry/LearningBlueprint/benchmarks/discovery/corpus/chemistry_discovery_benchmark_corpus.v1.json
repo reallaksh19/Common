@@ -1,0 +1,2146 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "corpus_id": "CHEM-ENG-DISCOVERY-BENCHMARK-CORPUS-V1",
+  "description": "Comprehensive Chemistry Engineering Discovery Quality Benchmark covering all 52 subtopics in Grades 9-11.",
+  "queries": [
+    {
+      "query_id": "CHEM-QUERY-001",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand chemical symbols and atomic symbols in Chemical Symbols, Atomic Notation & Formula Literacy?",
+      "acceptable_scopes": [
+        "CHEM-SYM-LITERACY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "chemical symbols",
+        "atomic symbols"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-002",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for berzelius notation in Chemical Symbols, Atomic Notation & Formula Literacy",
+      "acceptable_scopes": [
+        "CHEM-SYM-LITERACY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "berzelius notation"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-003",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand valency and ions and radicals in Ions, Valency, Polyatomic Radicals & Formal Charge?",
+      "acceptable_scopes": [
+        "CHEM-ION-VALENCY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "valency",
+        "ions and radicals"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-004",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for polyatomic ions in Ions, Valency, Polyatomic Radicals & Formal Charge",
+      "acceptable_scopes": [
+        "CHEM-ION-VALENCY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "polyatomic ions"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-005",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand chemical formula and criss-cross method in Chemical Formula Construction & Electroneutrality?",
+      "acceptable_scopes": [
+        "CHEM-FORMULA-CONSTRUCTION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "chemical formula",
+        "criss-cross method"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-006",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for electroneutrality rule in Chemical Formula Construction & Electroneutrality",
+      "acceptable_scopes": [
+        "CHEM-FORMULA-CONSTRUCTION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "electroneutrality rule"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-007",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand balancing chemical equations and law of conservation of mass in Conservation of Mass & Chemical Equation Balancing?",
+      "acceptable_scopes": [
+        "CHEM-EQ-BALANCING"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "balancing chemical equations",
+        "law of conservation of mass"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-008",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for hit and trial method in Conservation of Mass & Chemical Equation Balancing",
+      "acceptable_scopes": [
+        "CHEM-EQ-BALANCING"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "hit and trial method"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-009",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand physical state symbols and solid liquid gas aqueous in Physical State Symbols, Precipitation & Gas Evolution?",
+      "acceptable_scopes": [
+        "CHEM-STATE-SYMBOLS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "physical state symbols",
+        "solid liquid gas aqueous"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-010",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for precipitation reactions in Physical State Symbols, Precipitation & Gas Evolution",
+      "acceptable_scopes": [
+        "CHEM-STATE-SYMBOLS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "precipitation reactions"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-011",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand reaction conditions and catalysts in reactions in Reaction Conditions, Enthalpy & Catalytic Constraints?",
+      "acceptable_scopes": [
+        "CHEM-REACTION-CONDITIONS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "reaction conditions",
+        "catalysts in reactions"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-012",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for exothermic and endothermic in Reaction Conditions, Enthalpy & Catalytic Constraints",
+      "acceptable_scopes": [
+        "CHEM-REACTION-CONDITIONS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "exothermic and endothermic"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-013",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand johnstone triplet and particulate symbolic macroscopic in Johnstone's Triplet (Particulate <-> Symbolic <-> Macroscopic)?",
+      "acceptable_scopes": [
+        "CHEM-REP-TRANSLATION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "johnstone triplet",
+        "particulate symbolic macroscopic"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-014",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for submicroscopic representation in Johnstone's Triplet (Particulate <-> Symbolic <-> Macroscopic)",
+      "acceptable_scopes": [
+        "CHEM-REP-TRANSLATION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "submicroscopic representation"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-015",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand mole concept and stoichiometric calculations in Stoichiometry, Mole Conversions & Limiting Reagents?",
+      "acceptable_scopes": [
+        "CHEM-CALC-STOICHIOMETRY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "mole concept",
+        "stoichiometric calculations"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-016",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for avogadro number in Stoichiometry, Mole Conversions & Limiting Reagents",
+      "acceptable_scopes": [
+        "CHEM-CALC-STOICHIOMETRY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "avogadro number"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-017",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand acids and bases and aqueous ionization in Acids, Bases, Aqueous Ionization & Net Ionic Neutralization?",
+      "acceptable_scopes": [
+        "CHEM-ACID-BASE-IONS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "acids and bases",
+        "aqueous ionization"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-018",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for hydronium ion H3O+ in Acids, Bases, Aqueous Ionization & Net Ionic Neutralization",
+      "acceptable_scopes": [
+        "CHEM-ACID-BASE-IONS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "hydronium ion H3O+"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-019",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand redox reactions class 10 and oxidation and reduction in Redox Reactions, Oxidation States & Electron Transfer?",
+      "acceptable_scopes": [
+        "CHEM-REDOX-OXIDATION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "redox reactions class 10",
+        "oxidation and reduction"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-020",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for gain of oxygen loss of hydrogen in Redox Reactions, Oxidation States & Electron Transfer",
+      "acceptable_scopes": [
+        "CHEM-REDOX-OXIDATION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "gain of oxygen loss of hydrogen"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-021",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand states of matter and solid liquid gas in States of Matter: Solid, Liquid, Gas & Kinetic Particle Theory?",
+      "acceptable_scopes": [
+        "CHEM-MATTER-STATES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "states of matter",
+        "solid liquid gas"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-022",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for kinetic particle theory in States of Matter: Solid, Liquid, Gas & Kinetic Particle Theory",
+      "acceptable_scopes": [
+        "CHEM-MATTER-STATES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "kinetic particle theory"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-023",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand latent heat and latent heat of fusion in Latent Heat of Fusion/Vaporization & Evaporative Cooling?",
+      "acceptable_scopes": [
+        "CHEM-MATTER-LATENT-HEAT"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "latent heat",
+        "latent heat of fusion"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-024",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for latent heat of vaporization in Latent Heat of Fusion/Vaporization & Evaporative Cooling",
+      "acceptable_scopes": [
+        "CHEM-MATTER-LATENT-HEAT"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "latent heat of vaporization"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-025",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand mixtures and compounds and homogeneous heterogeneous in Mixtures: True Solutions, Colloids, Suspensions & Tyndall Effect?",
+      "acceptable_scopes": [
+        "CHEM-MIXTURE-SEPARATION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "mixtures and compounds",
+        "homogeneous heterogeneous"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-026",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for true solutions colloids suspensions in Mixtures: True Solutions, Colloids, Suspensions & Tyndall Effect",
+      "acceptable_scopes": [
+        "CHEM-MIXTURE-SEPARATION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "true solutions colloids suspensions"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-027",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand atomic models and rutherford gold foil experiment in Atomic Models: Rutherford Nuclear Planetary Model & Bohr Quantized Shells?",
+      "acceptable_scopes": [
+        "CHEM-ATOM-RUTHERFORD-BOHR"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "atomic models",
+        "rutherford gold foil experiment"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-028",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for alpha particle scattering in Atomic Models: Rutherford Nuclear Planetary Model & Bohr Quantized Shells",
+      "acceptable_scopes": [
+        "CHEM-ATOM-RUTHERFORD-BOHR"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "alpha particle scattering"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-029",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand isotopes and isobars and fractional atomic mass in Valency, Electronic Configuration, Isotopes & Isobars?",
+      "acceptable_scopes": [
+        "CHEM-ATOM-ISOTOPES-ISOBARS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "isotopes and isobars",
+        "fractional atomic mass"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-030",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for isotopes of chlorine and hydrogen in Valency, Electronic Configuration, Isotopes & Isobars",
+      "acceptable_scopes": [
+        "CHEM-ATOM-ISOTOPES-ISOBARS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "isotopes of chlorine and hydrogen"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-031",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand types of chemical reactions and combination reaction in Types of Reactions: Combination, Thermal/Electrolytic Decomposition & Displacement?",
+      "acceptable_scopes": [
+        "CHEM-RXN-TYPES-DECOMPOSITION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "types of chemical reactions",
+        "combination reaction"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-032",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for thermal decomposition in Types of Reactions: Combination, Thermal/Electrolytic Decomposition & Displacement",
+      "acceptable_scopes": [
+        "CHEM-RXN-TYPES-DECOMPOSITION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "thermal decomposition"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-033",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand pH scale and universal indicator in pH Scale, Universal Indicators & Auto-Ionization of Water?",
+      "acceptable_scopes": [
+        "CHEM-ACID-PH-INDICATORS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "pH scale",
+        "universal indicator"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-034",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for litmus phenolphthalein methyl orange in pH Scale, Universal Indicators & Auto-Ionization of Water",
+      "acceptable_scopes": [
+        "CHEM-ACID-PH-INDICATORS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "litmus phenolphthalein methyl orange"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-035",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand salts and preparation and chlor alkali process in Salts: Chlor-Alkali Process, Bleaching Powder, Baking/Washing Soda & POP?",
+      "acceptable_scopes": [
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "salts and preparation",
+        "chlor alkali process"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-036",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for bleaching powder CaOCl2 in Salts: Chlor-Alkali Process, Bleaching Powder, Baking/Washing Soda & POP",
+      "acceptable_scopes": [
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "bleaching powder CaOCl2"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-037",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand reactivity series of metals and activity series in Metals & Non-Metals: Reactivity Series, Amphoteric Oxides & Corrosion?",
+      "acceptable_scopes": [
+        "CHEM-METALS-REACTIVITY-SERIES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "reactivity series of metals",
+        "activity series"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-038",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for amphoteric oxides Al2O3 ZnO in Metals & Non-Metals: Reactivity Series, Amphoteric Oxides & Corrosion",
+      "acceptable_scopes": [
+        "CHEM-METALS-REACTIVITY-SERIES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "amphoteric oxides Al2O3 ZnO"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-039",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand ionic bond formation and electrovalent bonding in Ionic Bonding: Electron Transfer, Electrostatic Lattice & Ionic Properties?",
+      "acceptable_scopes": [
+        "CHEM-IONIC-BOND-PROPERTIES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "ionic bond formation",
+        "electrovalent bonding"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-040",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for electron transfer lewis dots in Ionic Bonding: Electron Transfer, Electrostatic Lattice & Ionic Properties",
+      "acceptable_scopes": [
+        "CHEM-IONIC-BOND-PROPERTIES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "electron transfer lewis dots"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-041",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand metallurgy extraction of metals and ores and minerals in Metallurgy: Concentration, Calcination, Roasting, Carbon Reduction & Refining?",
+      "acceptable_scopes": [
+        "CHEM-METALS-EXTRACTION-METALLURGY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "metallurgy extraction of metals",
+        "ores and minerals"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-042",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for calcination and roasting in Metallurgy: Concentration, Calcination, Roasting, Carbon Reduction & Refining",
+      "acceptable_scopes": [
+        "CHEM-METALS-EXTRACTION-METALLURGY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "calcination and roasting"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-043",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand carbon covalent bonding and tetravalency of carbon in Carbon: Tetravalency, Catenation, Allotropes & Covalent Bond Sharing?",
+      "acceptable_scopes": [
+        "CHEM-CARBON-COVALENT-BONDING"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "carbon covalent bonding",
+        "tetravalency of carbon"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-044",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for catenation property in Carbon: Tetravalency, Catenation, Allotropes & Covalent Bond Sharing",
+      "acceptable_scopes": [
+        "CHEM-CARBON-COVALENT-BONDING"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "catenation property"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-045",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand homologous series and functional groups in carbon compounds in Homologous Series, Functional Groups & IUPAC Nomenclature Basics?",
+      "acceptable_scopes": [
+        "CHEM-CARBON-HOMOLOGOUS-SERIES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "homologous series",
+        "functional groups in carbon compounds"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-046",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for alkanes alkenes alkynes general formula in Homologous Series, Functional Groups & IUPAC Nomenclature Basics",
+      "acceptable_scopes": [
+        "CHEM-CARBON-HOMOLOGOUS-SERIES"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "alkanes alkenes alkynes general formula"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-047",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand carbon chemical properties and combustion complete incomplete soot in Carbon Reactions: Combustion, Esterification, Saponification & Micelles?",
+      "acceptable_scopes": [
+        "CHEM-CARBON-COMBUSTION-SOAPS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "carbon chemical properties",
+        "combustion complete incomplete soot"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-048",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for oxidation of ethanol to ethanoic acid in Carbon Reactions: Combustion, Esterification, Saponification & Micelles",
+      "acceptable_scopes": [
+        "CHEM-CARBON-COMBUSTION-SOAPS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "oxidation of ethanol to ethanoic acid"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-049",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand concentration units and molarity M mol per litre in Solution Concentrations: Molarity, Molality, Mole Fraction & Dilution Law?",
+      "acceptable_scopes": [
+        "CHEM-STOICH-CONCENTRATION-UNITS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "concentration units",
+        "molarity M mol per litre"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-050",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for molality m mol per kg solvent in Solution Concentrations: Molarity, Molality, Mole Fraction & Dilution Law",
+      "acceptable_scopes": [
+        "CHEM-STOICH-CONCENTRATION-UNITS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "molality m mol per kg solvent"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-051",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand empirical formula and molecular formula n factor in Empirical & Molecular Formula Determination from Elemental Analysis?",
+      "acceptable_scopes": [
+        "CHEM-STOICH-EMPIRICAL-FORMULA"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "empirical formula",
+        "molecular formula n factor"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-052",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for percentage elemental composition in Empirical & Molecular Formula Determination from Elemental Analysis",
+      "acceptable_scopes": [
+        "CHEM-STOICH-EMPIRICAL-FORMULA"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "percentage elemental composition"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-053",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand photoelectric effect and planck quantum theory E equals h nu in Photoelectric Effect, Planck's Quantum Theory & Bohr Hydrogen Spectrum?",
+      "acceptable_scopes": [
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "photoelectric effect",
+        "planck quantum theory E equals h nu"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-054",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for einstein photoelectric equation in Photoelectric Effect, Planck's Quantum Theory & Bohr Hydrogen Spectrum",
+      "acceptable_scopes": [
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "einstein photoelectric equation"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-055",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand de broglie matter waves and lambda equals h over mv in de Broglie Wavelength & Heisenberg Uncertainty Principle?",
+      "acceptable_scopes": [
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "de broglie matter waves",
+        "lambda equals h over mv"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-056",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for heisenberg uncertainty principle in de Broglie Wavelength & Heisenberg Uncertainty Principle",
+      "acceptable_scopes": [
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "heisenberg uncertainty principle"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-057",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand quantum numbers n l m s and principal azimuthal magnetic spin in Quantum Numbers, Orbital Shapes (s, p, d) & Radial/Angular Nodes?",
+      "acceptable_scopes": [
+        "CHEM-ATOM-QUANTUM-NUMBERS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "quantum numbers n l m s",
+        "principal azimuthal magnetic spin"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-058",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for orbital shapes s p d f in Quantum Numbers, Orbital Shapes (s, p, d) & Radial/Angular Nodes",
+      "acceptable_scopes": [
+        "CHEM-ATOM-QUANTUM-NUMBERS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "orbital shapes s p d f"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-059",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand electronic configuration and aufbau building up principle in Electronic Configuration: Aufbau Principle, Pauli Exclusion & Hund's Rule?",
+      "acceptable_scopes": [
+        "CHEM-ATOM-ELECTRONIC-CONFIG"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "electronic configuration",
+        "aufbau building up principle"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-060",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for pauli exclusion principle in Electronic Configuration: Aufbau Principle, Pauli Exclusion & Hund's Rule",
+      "acceptable_scopes": [
+        "CHEM-ATOM-ELECTRONIC-CONFIG"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "pauli exclusion principle"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-061",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand periodic trends and effective nuclear charge Zeff in Periodic Trends: Effective Nuclear Charge (Z_eff), Atomic & Ionic Radii?",
+      "acceptable_scopes": [
+        "CHEM-PERIODIC-TABLE-TRENDS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "periodic trends",
+        "effective nuclear charge Zeff"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-062",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for slater rules shielding screening constant in Periodic Trends: Effective Nuclear Charge (Z_eff), Atomic & Ionic Radii",
+      "acceptable_scopes": [
+        "CHEM-PERIODIC-TABLE-TRENDS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "slater rules shielding screening constant"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-063",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand ionization enthalpy trends and first second third ionization energies in Ionization Enthalpy, Electron Gain Enthalpy & Electronegativity Trends?",
+      "acceptable_scopes": [
+        "CHEM-PERIODIC-IONIZATION-ENERGY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "ionization enthalpy trends",
+        "first second third ionization energies"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-064",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for anomalous IE beryllium boron nitrogen oxygen in Ionization Enthalpy, Electron Gain Enthalpy & Electronegativity Trends",
+      "acceptable_scopes": [
+        "CHEM-PERIODIC-IONIZATION-ENERGY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "anomalous IE beryllium boron nitrogen oxygen"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-065",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand lewis electron dot structures and octet rule and exceptions in Lewis Electron Structures, Octet Exceptions & Formal Charge Calculation?",
+      "acceptable_scopes": [
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "lewis electron dot structures",
+        "octet rule and exceptions"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-066",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for expanded octet hypervalent molecules in Lewis Electron Structures, Octet Exceptions & Formal Charge Calculation",
+      "acceptable_scopes": [
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "expanded octet hypervalent molecules"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-067",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand dipole moments mu equals q times d and vector addition of bond dipoles in Dipole Moments (mu = q x d), Bond Polarity & Resonance Hybrid Structures?",
+      "acceptable_scopes": [
+        "CHEM-BOND-DIPOLE-RESONANCE"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "dipole moments mu equals q times d",
+        "vector addition of bond dipoles"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-068",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for percentage ionic character hannay smyth in Dipole Moments (mu = q x d), Bond Polarity & Resonance Hybrid Structures",
+      "acceptable_scopes": [
+        "CHEM-BOND-DIPOLE-RESONANCE"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "percentage ionic character hannay smyth"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-069",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand vsepr theory molecular shapes and electron pair repulsion lp lp lp bp bp bp in VSEPR Theory: Electron Pair Repulsions, Steric Numbers & Molecular Geometries?",
+      "acceptable_scopes": [
+        "CHEM-BOND-VSEPR-GEOMETRY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "vsepr theory molecular shapes",
+        "electron pair repulsion lp lp lp bp bp bp"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-070",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for steric number electron geometry in VSEPR Theory: Electron Pair Repulsions, Steric Numbers & Molecular Geometries",
+      "acceptable_scopes": [
+        "CHEM-BOND-VSEPR-GEOMETRY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "steric number electron geometry"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-071",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand valence bond theory hybridization and sigma and pi bond directional overlap in Valence Bond Theory: Orbital Overlap & Hybridization (sp, sp2, sp3, sp3d, sp3d2)?",
+      "acceptable_scopes": [
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "valence bond theory hybridization",
+        "sigma and pi bond directional overlap"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-072",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for sp sp2 sp3 sp3d sp3d2 hybrid orbitals in Valence Bond Theory: Orbital Overlap & Hybridization (sp, sp2, sp3, sp3d, sp3d2)",
+      "acceptable_scopes": [
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "sp sp2 sp3 sp3d sp3d2 hybrid orbitals"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-073",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand molecular orbital theory MOT and lcao linear combination of atomic orbitals in Molecular Orbital Theory: LCAO, Bonding/Antibonding MOs, Bond Order & Paramagnetism?",
+      "acceptable_scopes": [
+        "CHEM-BOND-MOT-DIATOMIC"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "molecular orbital theory MOT",
+        "lcao linear combination of atomic orbitals"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-074",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for bonding and antibonding molecular orbitals in Molecular Orbital Theory: LCAO, Bonding/Antibonding MOs, Bond Order & Paramagnetism",
+      "acceptable_scopes": [
+        "CHEM-BOND-MOT-DIATOMIC"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "bonding and antibonding molecular orbitals"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-075",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand hydrogen bonding and intermolecular vs intramolecular h bond in Hydrogen Bonding: Intermolecular vs Intramolecular & Anomalous Water Properties?",
+      "acceptable_scopes": [
+        "CHEM-BOND-HYDROGEN-BONDING"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "hydrogen bonding",
+        "intermolecular vs intramolecular h bond"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-076",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for anomalous high boiling point of water HF NH3 in Hydrogen Bonding: Intermolecular vs Intramolecular & Anomalous Water Properties",
+      "acceptable_scopes": [
+        "CHEM-BOND-HYDROGEN-BONDING"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "anomalous high boiling point of water HF NH3"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-077",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand thermodynamics first law and state functions vs path functions in Thermodynamics: State Functions, First Law (Delta U = q + w) & Expansion Work?",
+      "acceptable_scopes": [
+        "CHEM-THERMO-FIRST-LAW-WORK"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "thermodynamics first law",
+        "state functions vs path functions"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-078",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for internal energy delta U equals q plus w in Thermodynamics: State Functions, First Law (Delta U = q + w) & Expansion Work",
+      "acceptable_scopes": [
+        "CHEM-THERMO-FIRST-LAW-WORK"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "internal energy delta U equals q plus w"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-079",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand enthalpy delta H and delta H equals delta U plus delta ng RT in Enthalpy (Delta H = Delta U + Delta n_g RT), Heat Capacities & Hess's Law?",
+      "acceptable_scopes": [
+        "CHEM-THERMO-ENTHALPY-HESS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "enthalpy delta H",
+        "delta H equals delta U plus delta ng RT"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-080",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for heat capacity Cp and Cv relations in Enthalpy (Delta H = Delta U + Delta n_g RT), Heat Capacities & Hess's Law",
+      "acceptable_scopes": [
+        "CHEM-THERMO-ENTHALPY-HESS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "heat capacity Cp and Cv relations"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-081",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand entropy and second law and delta S equals q rev over T in Entropy (Delta S = q_rev / T), Second Law & Spontaneity of Isolated Systems?",
+      "acceptable_scopes": [
+        "CHEM-THERMO-ENTROPY-SECOND-LAW"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "entropy and second law",
+        "delta S equals q rev over T"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-082",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for entropy change in physical state transitions in Entropy (Delta S = q_rev / T), Second Law & Spontaneity of Isolated Systems",
+      "acceptable_scopes": [
+        "CHEM-THERMO-ENTROPY-SECOND-LAW"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "entropy change in physical state transitions"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-083",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand gibbs free energy delta G and delta G equals delta H minus T delta S in Gibbs Free Energy (Delta G = Delta H - T Delta S), Spontaneity & Equilibrium?",
+      "acceptable_scopes": [
+        "CHEM-THERMO-GIBBS-SPONTANEITY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "gibbs free energy delta G",
+        "delta G equals delta H minus T delta S"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-084",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for spontaneity criteria delta G negative in Gibbs Free Energy (Delta G = Delta H - T Delta S), Spontaneity & Equilibrium",
+      "acceptable_scopes": [
+        "CHEM-THERMO-GIBBS-SPONTANEITY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "spontaneity criteria delta G negative"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-085",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand chemical equilibrium Kc and Kp and law of mass action gulberg waage in Dynamic Equilibrium, Equilibrium Constants (Kc, Kp) & Reaction Quotient (Qc)?",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-LAW-MASS-ACTION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "chemical equilibrium Kc and Kp",
+        "law of mass action gulberg waage"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-086",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for Kp equals Kc times RT to delta ng in Dynamic Equilibrium, Equilibrium Constants (Kc, Kp) & Reaction Quotient (Qc)",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-LAW-MASS-ACTION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "Kp equals Kc times RT to delta ng"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-087",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand le chatelier principle and effect of concentration change on shift in Le Chatelier's Principle: Temperature, Pressure, Volume & Inert Gas Shifts?",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-LE-CHATELIER"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "le chatelier principle",
+        "effect of concentration change on shift"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-088",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for effect of temperature endothermic exothermic in Le Chatelier's Principle: Temperature, Pressure, Volume & Inert Gas Shifts",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-LE-CHATELIER"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "effect of temperature endothermic exothermic"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-089",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand ionic equilibrium weak acids bases and ostwald dilution law alpha equals sqrt Ka over c in Ionic Equilibrium: Ostwald Dilution Law, Ka/Kb & Weak Electrolyte pH?",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-IONIC-PH-OSTWALD"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "ionic equilibrium weak acids bases",
+        "ostwald dilution law alpha equals sqrt Ka over c"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-090",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for acid dissociation constant Ka and pKa in Ionic Equilibrium: Ostwald Dilution Law, Ka/Kb & Weak Electrolyte pH",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-IONIC-PH-OSTWALD"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "acid dissociation constant Ka and pKa"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-091",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand buffer solutions and common ion effect suppression of ionization in Common Ion Effect, Buffer Solutions & Henderson-Hasselbalch Equation?",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-BUFFERS-COMMON-ION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "buffer solutions",
+        "common ion effect suppression of ionization"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-092",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for acidic buffer and basic buffer action in Common Ion Effect, Buffer Solutions & Henderson-Hasselbalch Equation",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-BUFFERS-COMMON-ION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "acidic buffer and basic buffer action"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-093",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand solubility product Ksp and ionic product Qsp vs Ksp precipitation in Solubility Product (Ksp), Common Ion Suppression & Precipitation Criteria?",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "solubility product Ksp",
+        "ionic product Qsp vs Ksp precipitation"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-094",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for solubility s calculation AB AB2 A2B3 salts in Solubility Product (Ksp), Common Ion Suppression & Precipitation Criteria",
+      "acceptable_scopes": [
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "solubility s calculation AB AB2 A2B3 salts"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-095",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand redox reactions balancing class 11 and ion electron half reaction method in Redox Balancing (Ion-Electron Method) & Galvanic Cell Foundations?",
+      "acceptable_scopes": [
+        "CHEM-REDOX-BALANCING-CELLS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "redox reactions balancing class 11",
+        "ion electron half reaction method"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-096",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for oxidation number balancing method in Redox Balancing (Ion-Electron Method) & Galvanic Cell Foundations",
+      "acceptable_scopes": [
+        "CHEM-REDOX-BALANCING-CELLS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "oxidation number balancing method"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-097",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand organic nomenclature and isomerism and iupac rules polyfunctional priority order in IUPAC Polyfunctional Nomenclature & Structural/Geometrical Isomerism?",
+      "acceptable_scopes": [
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "organic nomenclature and isomerism",
+        "iupac rules polyfunctional priority order"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-098",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for structural isomerism chain position functional in IUPAC Polyfunctional Nomenclature & Structural/Geometrical Isomerism",
+      "acceptable_scopes": [
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "structural isomerism chain position functional"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-099",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand electronic displacement effects and inductive effect plus I minus I groups in Electronic Displacements: Inductive, Resonance, Electromeric & Hyperconjugation?",
+      "acceptable_scopes": [
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "electronic displacement effects",
+        "inductive effect plus I minus I groups"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-100",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for resonance mesomeric effect plus M minus M in Electronic Displacements: Inductive, Resonance, Electromeric & Hyperconjugation",
+      "acceptable_scopes": [
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "resonance mesomeric effect plus M minus M"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-101",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand reaction intermediates stability and carbocations carbenium ions hybridization in Reaction Intermediates: Carbocations, Carbanions & Free Radicals Stability?",
+      "acceptable_scopes": [
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "reaction intermediates stability",
+        "carbocations carbenium ions hybridization"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-102",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for carbocation stability tertiary secondary primary methyl in Reaction Intermediates: Carbocations, Carbanions & Free Radicals Stability",
+      "acceptable_scopes": [
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "carbocation stability tertiary secondary primary methyl"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-103",
+      "query_category": "CONCEPT_INQUIRY",
+      "query_text": "How do I understand alkene reactions electrophilic addition and markovnikov rule addition of HX in Alkenes: Electrophilic Addition (Markovnikov vs Peroxide Effect) & Ozonolysis?",
+      "acceptable_scopes": [
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "alkene reactions electrophilic addition",
+        "markovnikov rule addition of HX"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-104",
+      "query_category": "PROBLEM_SOLVING",
+      "query_text": "Calculating values and applying rules for anti markovnikov kharasch peroxide effect HBr in Alkenes: Electrophilic Addition (Markovnikov vs Peroxide Effect) & Ozonolysis",
+      "acceptable_scopes": [
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "unacceptable_scopes": [],
+      "hints": [
+        "anti markovnikov kharasch peroxide effect HBr"
+      ],
+      "is_no_target": false,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-105",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Quantum entanglement state swapping and teleportation protocol",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-106",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Photosynthesis light dependent reaction in thylakoid membrane",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-107",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Cellular respiration citric acid Krebs cycle ATP synthesis",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-108",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Integration by parts for transcendental trigonometric functions",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-109",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Electromagnetic induction in moving conducting rods with eddy currents",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-110",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Newtonian gravitational orbit Kepler third law satellite velocity",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-111",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "DNA replication fork helicase and Okazaki fragments synthesis",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-112",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Transformer mutual inductance and core hysteresis eddy losses",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-113",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Fluid dynamics Poiseuille flow laminar viscous resistance",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    },
+    {
+      "query_id": "CHEM-QUERY-114",
+      "query_category": "OUT_OF_DOMAIN_NOISE",
+      "query_text": "Probability distributions Bayes theorem and conditional expectation",
+      "acceptable_scopes": [],
+      "unacceptable_scopes": [
+        "CHEM-SYM-LITERACY",
+        "CHEM-ION-VALENCY",
+        "CHEM-FORMULA-CONSTRUCTION",
+        "CHEM-EQ-BALANCING",
+        "CHEM-STATE-SYMBOLS",
+        "CHEM-REACTION-CONDITIONS",
+        "CHEM-REP-TRANSLATION",
+        "CHEM-CALC-STOICHIOMETRY",
+        "CHEM-ACID-BASE-IONS",
+        "CHEM-REDOX-OXIDATION",
+        "CHEM-MATTER-STATES",
+        "CHEM-MATTER-LATENT-HEAT",
+        "CHEM-MIXTURE-SEPARATION",
+        "CHEM-ATOM-RUTHERFORD-BOHR",
+        "CHEM-ATOM-ISOTOPES-ISOBARS",
+        "CHEM-RXN-TYPES-DECOMPOSITION",
+        "CHEM-ACID-PH-INDICATORS",
+        "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+        "CHEM-METALS-REACTIVITY-SERIES",
+        "CHEM-IONIC-BOND-PROPERTIES",
+        "CHEM-METALS-EXTRACTION-METALLURGY",
+        "CHEM-CARBON-COVALENT-BONDING",
+        "CHEM-CARBON-HOMOLOGOUS-SERIES",
+        "CHEM-CARBON-COMBUSTION-SOAPS",
+        "CHEM-STOICH-CONCENTRATION-UNITS",
+        "CHEM-STOICH-EMPIRICAL-FORMULA",
+        "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+        "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+        "CHEM-ATOM-QUANTUM-NUMBERS",
+        "CHEM-ATOM-ELECTRONIC-CONFIG",
+        "CHEM-PERIODIC-TABLE-TRENDS",
+        "CHEM-PERIODIC-IONIZATION-ENERGY",
+        "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+        "CHEM-BOND-DIPOLE-RESONANCE",
+        "CHEM-BOND-VSEPR-GEOMETRY",
+        "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+        "CHEM-BOND-MOT-DIATOMIC",
+        "CHEM-BOND-HYDROGEN-BONDING",
+        "CHEM-THERMO-FIRST-LAW-WORK",
+        "CHEM-THERMO-ENTHALPY-HESS",
+        "CHEM-THERMO-ENTROPY-SECOND-LAW",
+        "CHEM-THERMO-GIBBS-SPONTANEITY",
+        "CHEM-EQUIL-LAW-MASS-ACTION",
+        "CHEM-EQUIL-LE-CHATELIER",
+        "CHEM-EQUIL-IONIC-PH-OSTWALD",
+        "CHEM-EQUIL-BUFFERS-COMMON-ION",
+        "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+        "CHEM-REDOX-BALANCING-CELLS",
+        "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+        "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+        "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+        "CHEM-HYDROCARBONS-ALKENE-ADDITION"
+      ],
+      "hints": [],
+      "is_no_target": true,
+      "is_ambiguous": false
+    }
+  ]
+}

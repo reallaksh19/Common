@@ -1,0 +1,13 @@
+{
+  "subject": "CHEMISTRY",
+  "subtopic_request": "Gibbs Free Energy, Reaction Spontaneity and Chemical Equilibrium",
+  "exact_gate_id": "CHEM-THERMO-GIBBS-SPONTANEITY",
+  "target_program_or_exam": "IIT JEE Advanced",
+  "current_grade": 11,
+  "learning_purpose": "COMPETITIVE_EXAM",
+  "learner_knowledge_mode": "UNKNOWN",
+  "learner_knowledge_percent": null,
+  "requested_engineering_depth": "DEEP",
+  "core1_difficulty_control": "FIXED_INTRINSIC_DEPTH",
+  "core2_adaptation_mode": "STANDARD_PRACTICE"
+}

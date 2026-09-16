@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-engineering-discovery-selection.schema.json",
+  "title": "ChemistryEngineeringDiscoverySelection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "selection_id",
+    "discovery_id",
+    "discovery_receipt_digest",
+    "selected_scope_kind",
+    "selected_scope_refs",
+    "engineering_depth",
+    "learning_purpose",
+    "explicit_selection_acknowledgement"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "CHEMISTRY"
+    },
+    "selection_id": {
+      "type": "string",
+      "pattern": "^CHEM-ENG-DISC-SEL-[A-Z0-9_-]+$"
+    },
+    "discovery_id": {
+      "type": "string",
+      "pattern": "^CHEM-ENG-DISC-[A-Z0-9_-]+$"
+    },
+    "discovery_receipt_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "selected_scope_kind": {
+      "enum": [
+        "ENGINEERING_GATE",
+        "BUCKET"
+      ]
+    },
+    "selected_scope_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "engineering_depth": {
+      "enum": [
+        "FOUNDATION",
+        "STANDARD",
+        "RESEARCH"
+      ]
+    },
+    "learning_purpose": {
+      "enum": [
+        "FIRST_STUDY",
+        "CONSOLIDATION",
+        "REVISION",
+        "COMPETITIVE_EXAM",
+        "CBSE_EXAM",
+        "OLYMPIAD_FOUNDATION",
+        "CONCEPT_REMEDIATION",
+        "ACCELERATED_STUDY"
+      ]
+    },
+    "explicit_selection_acknowledgement": {
+      "const": "EXACT_IDENTITY_CONFIRMED"
+    }
+  }
+}

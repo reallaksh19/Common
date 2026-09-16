@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chemistry LearningBlueprint Run Builder</title>
+  <link rel="stylesheet" href="run_builder.css">
+</head>
+<body>
+  <header>
+    <h1>⚙️ Chemistry LearningBlueprint Run Builder</h1>
+    <p>Visual Configuration Compiler & Manifest Generator (Grades 9–11 CBSE, JEE Main & Advanced)</p>
+    <a href="../index.html" class="portal-link">&larr; Observability Portal</a>
+  </header>
+  <main class="builder-container">
+    <div class="form-panel">
+      <h2>Run Parameters</h2>
+      <div class="field"><label>Preset:</label>
+        <select id="presetSelect">
+          <option value="cbse_class9_matter_atoms">CBSE Class 9: Chemical Symbols & Formulas</option>
+          <option value="cbse_class10_reactions_metals">CBSE Class 10: Equation Balancing</option>
+          <option value="jee_advanced_thermo_equil">JEE Advanced: Gibbs Free Energy & Equilibrium</option>
+          <option value="olympiad_bonding_mechanisms">Olympiad: Molecular Orbital Theory</option>
+        </select>
+      </div>
+      <div class="field"><label>Subtopic Request (Free-Text):</label><input type="text" id="subtopicRequest" /></div>
+      <div class="field"><label>Exact Gate ID:</label><input type="text" id="exactGateId" /></div>
+      <div class="field"><label>Grade:</label>
+        <select id="gradeSelect"><option value="9">Grade 9</option><option value="10">Grade 10</option><option value="11">Grade 11</option></select>
+      </div>
+      <div class="field"><label>Engineering Depth:</label>
+        <select id="depthSelect"><option value="STANDARD">STANDARD</option><option value="DEEP">DEEP</option><option value="RESEARCH">RESEARCH</option></select>
+      </div>
+      <button id="compileBtn" class="btn">Compile Manifest & Prompt</button>
+    </div>
+    <div class="output-panel">
+      <h2>Compiled Artifacts</h2>
+      <div class="digest-box">Manifest Digest: <span id="manifestDigest" class="code-span">PENDING</span></div>
+      <h3>Execution Manifest</h3>
+      <pre id="manifestJson" class="code-box">Click compile to build manifest...</pre>
+      <h3>Agent Prompt</h3>
+      <pre id="agentPrompt" class="code-box">Click compile to build agent prompt...</pre>
+    </div>
+  </main>
+  <script src="run_builder.js"></script>
+</body>
+</html>

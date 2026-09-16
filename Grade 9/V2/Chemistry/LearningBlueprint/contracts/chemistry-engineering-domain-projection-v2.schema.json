@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-engineering-domain-projection-v2.schema.json",
+  "title": "ChemistryEngineeringDomainProjectionV2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "projection_id",
+    "source_registry_id",
+    "source_registry_digest",
+    "target_domain",
+    "projected_gates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0.0"
+    },
+    "subject": {
+      "const": "CHEMISTRY"
+    },
+    "projection_id": {
+      "type": "string",
+      "pattern": "^CHEM-ENG-PROJ-V2-[A-Z0-9_-]+$"
+    },
+    "source_registry_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_registry_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "target_domain": {
+      "const": "CANONICAL_DOMAIN_REGISTRY"
+    },
+    "projected_gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gate_id",
+          "canonical_id",
+          "domain_tags",
+          "prerequisite_closure",
+          "pedagogy_anchor"
+        ],
+        "properties": {
+          "gate_id": {
+            "type": "string",
+            "minLength": 3
+          },
+          "canonical_id": {
+            "type": "string",
+            "minLength": 3
+          },
+          "domain_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "prerequisite_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pedagogy_anchor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cbse_grade",
+              "jee_tier"
+            ],
+            "properties": {
+              "cbse_grade": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "jee_tier": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 1.5rem; }
+header { margin-bottom: 2rem; border-bottom: 1px solid #334155; padding-bottom: 1rem; position: relative; }
+header h1 { color: #c084fc; font-size: 1.8rem; margin-bottom: 0.3rem; }
+header p { color: #94a3b8; font-size: 0.95rem; }
+.portal-link { position: absolute; right: 0; top: 0; color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.stats-box { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; color: #cbd5e1; font-weight: 600; }
+.components-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.comp-card { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 1rem; }
+.comp-type { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #38bdf8; margin-bottom: 0.3rem; }
+.comp-name { font-family: monospace; font-size: 0.9rem; color: #fff; word-break: break-all; }

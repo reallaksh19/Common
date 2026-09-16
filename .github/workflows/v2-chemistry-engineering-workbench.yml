@@ -1,0 +1,64 @@
+name: V2 Chemistry Engineering Workbench
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-engineering-workbench.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  chemistry-engineering-workbench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install 'jsonschema>=4.20,<5' pytest
+      - name: Validate governed Engineering discovery vocabulary
+        run: python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_chemistry_engineering_discovery_vocabulary.py'
+      - name: Run non-authoritative Engineering discovery falsifiers
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_discovery.py'
+      - name: Run registry-driven Engineering Workbench falsifiers
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_engineering_workbench.py'
+      - name: Run generic Engineering-gated domain admission falsifiers
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_engineered_domain_admission.py'
+      - name: Run Engineering domain projection falsifiers
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_engineering_domain_projection.py'
+      - name: Run Engineering visibility manifest falsifiers
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_engineering_visibility_manifest.py'
+      - name: Run Engineering registry composition falsifiers
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_engineering_registry_composition.py'
+      - name: Verify Architecture Observation Manifest is up to date
+        run: python 'Grade 9/V2/Chemistry/LearningBlueprint/tools/architecture_explorer/generate_architecture_manifest.py' --check
+      - name: Validate Run Builder fixtures
+        run: python 'Grade 9/V2/Chemistry/LearningBlueprint/tools/run_builder/compile_run.py' --validate-fixtures
+      - name: Run Run Builder test suite
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tools/run_builder/tests/test_run_builder.py'
+      - name: Run Architecture Explorer test suite
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tools/architecture_explorer/tests/test_architecture_explorer.py'
+      - name: Run Engineering Discovery benchmark and quantitative recall tests
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/benchmarks/discovery/tests/test_engineering_discovery_benchmark.py'
+      - name: Run Discovery Explorer UI tests
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/benchmarks/discovery/tests/test_discovery_explorer.py'
+      - name: Validate Subtopic Intelligence Library intake specifications
+        run: python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_subtopic_intelligence_library.py'
+      - name: Run Subtopic Intelligence Library test suite
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_subtopic_intelligence_library.py'
+      - name: Run Subtopic Intelligence Library Explorer test suite
+        run: pytest 'Grade 9/V2/Chemistry/LearningBlueprint/tools/sil_explorer/tests/test_sil_explorer.py'
+      - name: Compile registry-wide Blueprint authorization proof
+        run: |
+          mkdir -p /tmp/chemistry-engineering-workbench
+          python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/compile_chemistry_engineering_workbench.py'             --registry-proof-out /tmp/chemistry-engineering-workbench/registry-proof.json
+      - name: Upload Workbench proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-engineering-workbench-proof
+          path: /tmp/chemistry-engineering-workbench/
+          if-no-files-found: error
