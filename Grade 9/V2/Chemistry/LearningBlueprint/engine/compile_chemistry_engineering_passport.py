@@ -39,6 +39,8 @@ def validate_receipt(receipt: dict):
     ext_blocked = sum(x["status"] in {"BLOCKED", "UNRESOLVED"} for x in external)
     expected = {
         "direct_gate_count": len(receipt["direct_gate_ids"]),
+        "optional_gate_count": len(receipt["optional_gate_ids"]),
+        "out_of_scope_gate_count": len(receipt["out_of_scope_gate_ids"]),
         "closure_gate_count": len(receipt["closure_gate_ids"]),
         "ready_gate_count": ready,
         "blocked_gate_count": blocked,
