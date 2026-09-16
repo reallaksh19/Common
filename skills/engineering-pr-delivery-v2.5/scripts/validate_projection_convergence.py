@@ -72,7 +72,7 @@ def validate(root:Path):
     e=[];w=[];s=load_yaml(root/"agents/relay/REPO_STATE.yaml")
     projection=s.get("projection") or {};ready=s.get("relay_readiness") or {}
     e+=require(projection,["required","state","operation_id","target","roadmap_revision","execution_ref","receipt","basis"],"REPO_STATE.projection")
-    e+=require(ready,["repository_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
+    e+=require(ready,["baton_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     required=projection.get("required")
     if not isinstance(required,bool):e.append("projection.required must be boolean")
     pstate=projection.get("state")
@@ -90,10 +90,9 @@ def validate(root:Path):
 
     expected_projection_ready=(required is False) or pstate=="IN_SYNC"
     if ready.get("projection_ready") is not expected_projection_ready:e.append("relay_readiness.projection_ready disagrees with projection state")
-    expected_repository_ready=s.get("relay_state")!="INITIALIZING"
-    if ready.get("repository_ready") is not expected_repository_ready:e.append("relay_readiness.repository_ready disagrees with relay lifecycle")
-    expected_handover=expected_repository_ready and expected_projection_ready
-    if ready.get("handover_ready") is not expected_handover:e.append("relay_readiness.handover_ready must equal repository_ready AND projection_ready")
+    if not isinstance(ready.get("baton_ready"),bool):e.append("relay_readiness.baton_ready must be boolean")
+    expected_handover=ready.get("baton_ready") is True and expected_projection_ready
+    if ready.get("handover_ready") is not expected_handover:e.append("relay_readiness.handover_ready must equal baton_ready AND projection_ready")
     if not isinstance(ready.get("reasons"),list):e.append("relay_readiness.reasons must be a list")
 
     if required and pstate in {"PENDING","PUBLISHED_UNCONFIRMED","IN_SYNC","STALE"}:
