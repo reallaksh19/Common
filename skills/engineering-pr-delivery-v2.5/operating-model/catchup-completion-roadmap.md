@@ -21,13 +21,13 @@ CP-R005  WP-04 Progress / handover / next-work      COMPLETE
    |
 CP-R006  WP-05 GitHub Program Projection            COMPLETE
    |
-CP-R007  WP-06 Quality Procedure Library            COMPLETE — exact-head CI pending
+CP-R007  WP-06 Quality Procedure Library            COMPLETE
    |
    v
-WP-07    Human Communication                        NEXT after CP-R007 CI PASS
+WP-07    Human Communication                        CURRENT FRONTIER
 ```
 
-WP-06 pre-checkpoint implementation verification passed workflow **35146877546** on head `c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868`: compile PASS, 7 root units PASS, 118 repository-neutral synthetic stress tests PASS.
+CP-R007 checkpoint/status verification passed workflow **35147172696** on head `d695329c5bf69fa6c127ae2b47dc35d99227631b`: compile PASS, 7 root units PASS, 118 repository-neutral synthetic stress tests PASS.
 
 ## Progress Basis
 
@@ -39,15 +39,15 @@ WP-06 pre-checkpoint implementation verification passed workflow **35146877546**
 | WP-03 Strong phase/boundary qualification | 12 | COMPLETE — CP-R004 |
 | WP-04 Full progress / handover / next-work | 12 | COMPLETE — CP-R005 |
 | WP-05 GitHub Program Projection operations | 8 | COMPLETE — CP-R006 |
-| WP-06 Quality Procedure Library | 10 | COMPLETE — CP-R007, exact-head CI pending |
-| WP-07 Human Communication | 6 | NEXT after CP-R007 CI PASS |
+| WP-06 Quality Procedure Library | 10 | COMPLETE — CP-R007 |
+| WP-07 Human Communication | 6 | CURRENT FRONTIER |
 | WP-08 Owner Change Intake | 3 | WAITING |
 | WP-09 End-to-end Relay Certification Matrix | 5 | WAITING |
 | WP-10 Self-consistency Audit | 2 | WAITING |
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Post-checkpoint completion basis: 83%, conditional on exact-head CP-R007/program-state CI.** Progress remains acceptance/checkpoint-derived.
+**Earned completion: 83%.** Progress remains acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -103,22 +103,25 @@ A `QRV-*` is bound to exact EP contract digest, roadmap revision, material ref a
 
 Checkpoints cite QRV id/path/digest on the same material basis. A checkpoint cannot publish an executable successor while its QRV has a true blocking finding. Parallel lane checkpoints carry lane-specific QRVs. Report projection source-binds the checkpoint QRV instead of creating a second quality authority.
 
-WP-06 pre-checkpoint evidence:
+WP-06 evidence:
 
 ```text
-head c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868
-workflow 35146877546 — PASS
-root units 7
-stress tests 118
+pre-checkpoint implementation
+  c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868
+  workflow 35146877546 — PASS
+
+CP-R007 checkpoint/status
+  d695329c5bf69fa6c127ae2b47dc35d99227631b
+  workflow 35147172696 — PASS
+
+root units: 7
+stress tests: 118
 ```
 
 ## Remaining dependency topology
 
 ```text
-CP-R007 exact-head CI
-   |
-   v
-WP-07 Human Communication
+WP-07 Human Communication          CURRENT
    |
    v
 WP-08 Owner Change Intake
@@ -148,7 +151,7 @@ PR #396 remains draft until:
 [x] detailed ordered next-work projection
 [x] generated report reconciliation
 [x] operational GitHub projection — CP-R006
-[x] scoped procedural QRV quality system — CP-R007, exact-head CI pending
+[x] scoped procedural QRV quality system — CP-R007
 [ ] plain-language Owner communication
 [ ] Owner change-intake projection
 [ ] lifecycle cold-start/certification matrix
