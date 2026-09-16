@@ -9,8 +9,8 @@ Current implementation status:
 ```text
 WP-00 Kernel baseline / object matrix               DELIVERED — CP-R001
 WP-01 Semantic Execution Package                    DELIVERED — CP-R002
-WP-02 Baton readiness + Takeover Certification      IMPLEMENTED — checkpoint pending exact-head CI
-WP-03 Strong phase/boundary qualification           NEXT FRONTIER after CP-R003
+WP-02 Baton readiness + Takeover Certification      DELIVERED — CP-R003
+WP-03 Strong phase/boundary qualification           CURRENT FRONTIER
 ```
 
 A target object/predicate is not considered delivered until its schema/template/validator/tests and checkpointed evidence exist. Conversation is acceleration, never custody.
@@ -32,19 +32,19 @@ SEMANTIC EP / APPROVED PARALLEL PLAN        [WP-01 delivered]
     +--> DSTEP-* discovery contract          [WP-01 delivered]
     |
     v
-BATON_READY                                  [WP-02 implemented]
+BATON_READY                                  [WP-02 delivered]
     |
     v
 INCOMING REPLACEMENT — ZERO CHAT CONTEXT
     |
-    +--> DISC-* Discovery Receipt            [WP-02 implemented]
-    +--> QUAL-* when required                [WP-03]
+    +--> DISC-* Discovery Receipt            [WP-02 delivered]
+    +--> QUAL-* when required                [WP-03 current]
     |
     v
-TC-* TAKEOVER CERTIFICATION                  [WP-02 implemented]
+TC-* TAKEOVER CERTIFICATION                  [WP-02 delivered]
     |
     v
-TAKEOVER_CERTIFIED(route, candidate)         [WP-02 implemented]
+TAKEOVER_CERTIFIED(route, candidate)         [WP-02 delivered]
     |
     v
 MATERIAL_WRITE_READY(route,candidate,live)   [WP-02 runtime gate]
@@ -111,9 +111,9 @@ STALE
 
 Only unresolved requirements relevant to the current slice remove current execution eligibility; future/informational items do not recreate an everything-is-blocked workflow.
 
-## Readiness and candidate admission — implemented WP-02
+## Readiness and candidate admission — delivered WP-02
 
-Read `takeover-certification.md` for the complete contract.
+Read `takeover-certification.md` for the complete contract and `ci-evidence-correction.md` for the corrected workflow evidence rule.
 
 ### BATON_READY
 
@@ -206,9 +206,9 @@ The outgoing preparer creates the semantic EP and discovery/qualification criter
 
 A candidate may not be its own preparer. An `INDEPENDENT_AGENT` evaluator may not be the candidate. Deterministic evaluation is valid only because the validator itself re-runs the objective semantic/basis checks; a YAML claim naming a validator is not authority.
 
-If the incoming EP requires phase/material qualification, WP-02 explicitly prevents a TC from PASSing until WP-03 provides a valid `QUAL-*` transaction. Takeover admission cannot bypass qualification.
+If the incoming EP requires phase/material qualification, WP-02 prevents a TC from PASSing until WP-03 provides a valid `QUAL-*` transaction. Takeover admission cannot bypass qualification.
 
-## Qualification — WP-03 next
+## Qualification — WP-03 current frontier
 
 Fresh qualification is required when:
 
@@ -234,6 +234,8 @@ Q4 independent verification / benchmark reasoning
 Q5 exact first safe slice plus predicted verification result
 ```
 
+Qualification is candidate/route/basis evidence. It does not itself grant write authority; `TC-*` must consume current `QUAL-*` evidence and the live write gate remains final.
+
 ## Quality — WP-06 target
 
 Quality remains separate from hard-stop/evidence state. Later quality routing selects applicable procedures with reasons and creates `QRV-*` Quality Review evidence. A quality finding is not automatically a stop.
@@ -256,9 +258,9 @@ Machine vocabulary may remain precise. The Owner view will explain capabilities,
 
 ```text
 DSTEP-xxxx  EP discovery instruction          delivered WP-01
-DISC-xxxx   Discovery Receipt                 implemented WP-02
-TC-xxxx     Takeover Certification            implemented WP-02
-QUAL-xxxx   Qualification Receipt             WP-03
+DISC-xxxx   Discovery Receipt                 delivered WP-02
+TC-xxxx     Takeover Certification            delivered WP-02
+QUAL-xxxx   Qualification Receipt             current WP-03
 QRV-xxxx    Quality Review                    WP-06
 CP-xxxx     Checkpoint                        delivered kernel
 ODR-xxxx    Owner Decision Record             delivered kernel
@@ -278,13 +280,24 @@ Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limit
 
 If prior conversation is materially required, V2.5 completion fails.
 
+## Validation evidence discipline
+
+A whole-suite V2.5 claim requires both explicit CI steps to pass on the claimed exact head:
+
+```text
+root unit discovery
+synthetic tests/stress discovery
+```
+
+Historical runs that compiled stress modules without executing the dedicated stress discovery are interpreted according to `ci-evidence-correction.md`.
+
 ## Implementation sequence
 
 ```text
 baseline                         COMPLETE — CP-R001
 -> semantic EP                   COMPLETE — CP-R002
--> baton readiness / TC          IMPLEMENTED — CP-R003 pending final CI
--> strong qualification          NEXT after CP-R003
+-> baton readiness / TC          COMPLETE — CP-R003
+-> strong qualification          CURRENT — WP-03
 -> full progress/handover
 -> GitHub operations + quality procedures
 -> human communication + Owner change intake
