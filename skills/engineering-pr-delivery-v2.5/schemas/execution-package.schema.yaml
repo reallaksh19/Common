@@ -9,6 +9,13 @@ properties:
     properties:
       previous_checkpoint: {type: [string, 'null']}
       previous_join: {type: [string, 'null']}
+      previous_replan: {type: [string, 'null']}
+  replan_inheritance:
+    type: [object, 'null']
+    properties:
+      from_replan: {type: string}
+      unresolved_acceptance: {type: array}
+      evidence: {type: array}
   git_basis:
     type: object
     required: [expected_branch, material_ref, base_branch, base_observed_ref, drift_policy, drift_receipt]
