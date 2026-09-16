@@ -51,6 +51,12 @@ def test_relative_motion_stress_receipt_is_machine_derived():
     assert receipt["downstream"]["SDU"] == "NOT_ISSUED"
     assert receipt["downstream"]["LAU"] == "NOT_ISSUED"
     assert receipt["downstream"]["PUBLICATION"] == "NOT_AUTHORIZED"
+    projection = receipt["authority_projection"]
+    assert projection["curriculum_binding_state"] == "UNBOUND"
+    assert projection["curriculum_binding_id"] is None
+    assert projection["release_authority"] == "NOT_GRANTED_BY_PROJECTION"
+    assert projection["projection_digest"].startswith("sha256:")
+    assert projection["engineering_envelope_digest"].startswith("sha256:")
     assert receipt["architecture_violations"] == []
 
 
@@ -84,6 +90,15 @@ def test_engineering_depth_research_is_additive_and_fail_closed():
     assert standard["transitive_gate_ids"] == research["transitive_gate_ids"]
     blocker_codes = {row["code"] for row in research["blockers"]}
     assert blocker_codes == {"E_ENG_RESEARCH_DOSSIER_REQUIRED", "E_ENG_CLAIM_LEDGER_REQUIRED"}
+
+
+def test_stress_compiler_does_not_recompute_upstream_authority():
+    text = (ROOT / "engine" / "compile_seven_core_stress_test.py").read_text(encoding="utf-8")
+    assert "compile_physics_blueprint_authority" in text
+    assert "from evaluate_readiness import build_envelope" not in text
+    assert 'scoped["curriculum_status"]' not in text
+    assert 'domain["closure_status"] == "READY"' not in text
+    assert '"PUBLICATION": "READY"' not in text
 
 
 def test_no_surrogate_pass_labels_exist():
