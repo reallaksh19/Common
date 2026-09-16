@@ -1,5 +1,41 @@
 {
-  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"physics-scoped-evidence-receipt.schema.json","title":"Physics Scoped Evidence Receipt","type":"object","additionalProperties":false,
-  "required":["schema_version","receipt_id","derivation","scope_kind","scope_ref","topic_id","grade","requested_curriculum","curriculum_status","required_gate_ids","parent_topic_blueprint_ref","parent_topic_blueprint_digest","scope_digest","assessment_coverage","evidence","evidence_digest","repository_assertion_count","receipt_digest"],
-  "properties":{"schema_version":{"const":"1.0.0"},"receipt_id":{"type":"string","pattern":"^SCOPED-EVIDENCE-PHY-[A-Z0-9-]+$"},"derivation":{"const":"SCOPED_EVIDENCE_COMPILER_V1"},"scope_kind":{"enum":["TOPIC","SUBTOPIC","BUCKET","CASE"]},"scope_ref":{"type":"string","minLength":1},"topic_id":{"type":"string","minLength":1},"grade":{"type":"integer","minimum":1,"maximum":13},"requested_curriculum":{"type":"string","minLength":1},"curriculum_status":{"enum":["SUPPORTED_BY_REPOSITORY_AUTHORITY","HELD_INSUFFICIENT_AUTHORITY"]},"required_gate_ids":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},"parent_topic_blueprint_ref":{"type":"string","minLength":1},"parent_topic_blueprint_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"scope_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"assessment_coverage":{"type":"object","additionalProperties":false,"required":["state","matched_target_item_count","scope_digest","corpus_digest","evidence_refs","unresolved_issues"],"properties":{"state":{"enum":["DEMANDS_PRESENT","VERIFIED_NO_TARGET_DEMAND","COVERAGE_UNKNOWN"]},"matched_target_item_count":{"type":"integer","minimum":0},"scope_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"corpus_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"evidence_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},"unresolved_issues":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}}},"evidence":{"type":"object"},"evidence_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"repository_assertion_count":{"type":"integer","minimum":1},"receipt_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"}}
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-scoped-evidence-receipt.schema.json",
+  "title":"Physics Scoped Evidence Receipt",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","receipt_id","derivation","scope_kind","scope_ref","topic_id","grade","requested_curriculum","curriculum_status","curriculum_binding","required_gate_ids","parent_topic_blueprint_ref","parent_topic_blueprint_digest","scope_digest","assessment_coverage","evidence","evidence_digest","repository_assertion_count","receipt_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "receipt_id":{"type":"string","pattern":"^SCOPED-EVIDENCE-PHY-[A-Z0-9-]+$"},
+    "derivation":{"const":"SCOPED_EVIDENCE_COMPILER_V1"},
+    "scope_kind":{"enum":["TOPIC","SUBTOPIC","BUCKET","CASE"]},
+    "scope_ref":{"type":"string","minLength":1},
+    "topic_id":{"type":"string","minLength":1},
+    "grade":{"type":"integer","minimum":1,"maximum":13},
+    "requested_curriculum":{"type":"string","minLength":1},
+    "curriculum_status":{"enum":["SUPPORTED_BY_REPOSITORY_AUTHORITY","HELD_INSUFFICIENT_AUTHORITY"]},
+    "curriculum_binding":{
+      "type":"object","additionalProperties":false,
+      "required":["state","binding_id","binding_digest","classification","authority_refs","registry_ref","registry_digest"],
+      "properties":{
+        "state":{"enum":["BOUND_CONFIRMED","UNBOUND","REPOSITORY_INTERNAL_SCOPE"]},
+        "binding_id":{"type":["string","null"]},
+        "binding_digest":{"anyOf":[{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},{"type":"null"}]},
+        "classification":{"anyOf":[{"enum":["CURRICULUM_REQUIRED","CURRICULUM_DERIVED","PREREQUISITE_BRIDGE","COMPETITIVE_EXTENSION","RESEARCH_EXTENSION"]},{"type":"null"}]},
+        "authority_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},
+        "registry_ref":{"const":"registry/physics-curriculum-scope-bindings.v1.json"},
+        "registry_digest":{"anyOf":[{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},{"type":"null"}]}
+      }
+    },
+    "required_gate_ids":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "parent_topic_blueprint_ref":{"type":"string","minLength":1},
+    "parent_topic_blueprint_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "scope_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "assessment_coverage":{"type":"object","additionalProperties":false,"required":["state","matched_target_item_count","scope_digest","corpus_digest","evidence_refs","unresolved_issues"],"properties":{"state":{"enum":["DEMANDS_PRESENT","VERIFIED_NO_TARGET_DEMAND","COVERAGE_UNKNOWN"]},"matched_target_item_count":{"type":"integer","minimum":0},"scope_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"corpus_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"evidence_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},"unresolved_issues":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}}},
+    "evidence":{"type":"object"},
+    "evidence_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "repository_assertion_count":{"type":"integer","minimum":1},
+    "receipt_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"}
+  }
 }
