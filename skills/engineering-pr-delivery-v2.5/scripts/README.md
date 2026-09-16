@@ -34,11 +34,13 @@ python validate_parallel_replan.py <repo-root>
 python validate_roadmap_continuity.py <repo-root>
 ```
 
+`validate_projection_convergence.py` distinguishes newest desired projection state from the older generation actually observed externally. While `STALE`, top-level operation/roadmap/execution fields must match current repository truth, `observed` identifies the older external generation, and `superseded_operations` retires intermediate desired generations. Superseded operation IDs have no retry authority; their chain must terminate at the current operation. An obsolete published-but-unconfirmed generation retains its receipt as history rather than being replayed.
+
 `validate_issue_projection_tree.py` treats `PARENT_OF` as a coordination projection tree, never an alternative roadmap. The parent graph must be acyclic and every child has at most one direct parent. Aggregate parents carry a `graph_revision`-bound `child_rollup` that exactly snapshots direct child work/GitHub state; parent work state is deterministically projected from those direct children. A closed aggregate parent cannot hide an open direct child, and the rule recursively covers deep trees because aggregate children are validated the same way.
 
 `validate_supersession.py` supports multi-generation A -> B -> C issue replacement. Supersession is linear and acyclic at issue level. An intermediate successor must carry inherited unresolved acceptance/evidence unchanged into its outgoing receipt or explicitly resolve the inherited item with durable basis. Silent drop, status/basis mutation, double carry+resolve, resolution of unknown inherited IDs, branching successors, multiple direct predecessors and cycles are invalid. Work splitting belongs in roadmap/child-issue topology rather than competing supersession edges.
 
-Required external projection publication is idempotent: persist a stable `operation_id` and target before publication, record `PUBLISHED_UNCONFIRMED` when a receipt is observed but not yet verified, and move to `IN_SYNC` only after the receipt is reconciled against current roadmap/execution state. After an interruption, reconcile the same operation before attempting another publication.
+Required external projection publication is idempotent per desired generation. `PENDING` has no receipt, `PUBLISHED_UNCONFIRMED` preserves a receipt for reconciliation, and `IN_SYNC` requires durable verification basis. If repository truth advances first, move obsolete operations into `superseded_operations` and publish/reconcile only the newest operation.
 
 Parallel lane checkpoints use successor mode `JOIN`. `validate_parallel_join.py` verifies the multi-parent baton: every approved lane checkpoint is present, every lane WP is complete, the integration WP is the sole computed frontier, and the integration EP binds the join receipt through `identity.previous_join`.
 
@@ -64,7 +66,7 @@ python inventory_v2_relay.py <repo-root> --output <inventory.yaml>
 python prepare_v2_migration.py <inventory.yaml> --output <reconciliation.yaml>
 ```
 
-Aggregate relay conformance verifies repository lifecycle/routing, roadmap topology/frontier, self-contained serial EPs or every Owner-approved parallel lane EP, acceptance mapping, EP staleness/continuity, calculated progress, execution/material authority, projection/readiness consistency, drift receipts, serial/fork/join/replan baton linkage, Owner-decision semantics, phase-transition Q1-Q5, issue graph/tree/closure/supersession lineage, and roadmap transactions.
+Aggregate relay conformance verifies repository lifecycle/routing, roadmap topology/frontier, self-contained serial EPs or every Owner-approved parallel lane EP, acceptance mapping, EP staleness/continuity, calculated progress, execution/material authority, projection generation/readiness consistency, drift receipts, serial/fork/join/replan baton linkage, Owner-decision semantics, phase-transition Q1-Q5, issue graph/tree/closure/supersession lineage, and roadmap transactions.
 
 Checkpoint validation binds executable PASS/FAIL/NOT_RUN evidence to the checkpoint's exact `execution_basis.material_ref`; evidence from another material head cannot silently qualify the current checkpoint.
 
