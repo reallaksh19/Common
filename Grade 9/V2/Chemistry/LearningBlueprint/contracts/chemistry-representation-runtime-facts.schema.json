@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-representation-runtime-facts.schema.json",
+  "title": "Chemistry Governed Representation Runtime Facts Extension",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "extension_id",
+    "subject",
+    "additive_only",
+    "adapter_authored_facts_forbidden",
+    "fact_packets"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "extension_id": {"type": "string", "pattern": "^CHEM-C-H-RUNTIME-FACTS-[A-Z0-9-]+-v[0-9]+$"},
+    "subject": {"const": "CHEMISTRY"},
+    "additive_only": {"const": true},
+    "adapter_authored_facts_forbidden": {"const": true},
+    "fact_packets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/fact_packet"}
+    }
+  },
+  "$defs": {
+    "oxidation_state_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element",
+        "before",
+        "after",
+        "before_species",
+        "after_species",
+        "electron_count"
+      ],
+      "properties": {
+        "element": {"type": "string", "minLength": 1},
+        "before": {"type": "integer"},
+        "after": {"type": "integer"},
+        "before_species": {"type": "string", "minLength": 1},
+        "after_species": {"type": "string", "minLength": 1},
+        "electron_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "electron_transfer_parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oxidation_states"],
+      "properties": {
+        "oxidation_states": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/oxidation_state_row"}
+        },
+        "chemical_entities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "checks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "fact_packet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_packet_id",
+        "source_gate_id",
+        "source_representation_ref",
+        "source_equation_refs",
+        "fact_kind",
+        "parameters"
+      ],
+      "properties": {
+        "fact_packet_id": {"type": "string", "pattern": "^CHEM-REP-FACT-[A-Z0-9-]+-v[0-9]+$"},
+        "source_gate_id": {"type": "string", "minLength": 1},
+        "source_representation_ref": {"type": "string", "minLength": 1},
+        "source_equation_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "fact_kind": {"const": "ELECTRON_TRANSFER_STATE_LEDGER_V1"},
+        "parameters": {"$ref": "#/$defs/electron_transfer_parameters"}
+      }
+    }
+  }
+}
