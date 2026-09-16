@@ -8,6 +8,7 @@ from render_handover import render as render_handover
 from render_status import render as render_status
 from test_parallel_bootstrap import parallel_repo,dump
 from test_parallel_convergence import converge
+from test_parallel_replan import serial_replan_repo
 
 class RendererStressTests(unittest.TestCase):
     def test_parallel_renderers_show_lanes_integration_authority_and_readiness(self):
@@ -23,6 +24,14 @@ class RendererStressTests(unittest.TestCase):
             status=render_status(root);handover=render_handover(root)
             self.assertIn("Parallel join predecessor: `JOIN-P1`",status)
             self.assertIn("Parallel convergence JOIN-P1",handover);self.assertIn("checkpoint `CP-A`",handover);self.assertIn("checkpoint `CP-B`",handover)
+
+    def test_replan_renderer_preserves_completed_lane_and_replacement_route(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);serial_replan_repo(root)
+            status=render_status(root);handover=render_handover(root)
+            self.assertIn("Parallel replan predecessor: `REPLAN-P2`",status)
+            self.assertIn("Parallel replan REPLAN-P2",handover);self.assertIn("LANE-A",handover);self.assertIn("Complete",handover);self.assertIn("checkpoint `CP-A`",handover)
+            self.assertIn("LANE-B",handover);self.assertIn("Invalidated",handover);self.assertIn("transfer → `WP-B`",handover);self.assertIn("Recomputed route: **Serial** → `WP-B`",handover)
 
     def test_initializing_renderers_do_not_require_an_ep_and_are_not_repository_ready(self):
         manifest={"schema_version":"relay-v2.5-bootstrap","repository":{"name":"synthetic","remote":"owner/synthetic","repository_type":"application","default_branch":"main"},"relay_protocol":{"basis_ref":"abc"},"roadmap":{"id":"RM-B","revision":"RM-0001","title":"Bootstrap"},"initial_position":{"objective":{"id":"OBJ-1","title":"Objective"},"phase":{"id":"PHASE-1","title":"Phase"},"work_package":{"id":"WP-1","title":"Discovery"}},"initialization":{"next_action":"Reconcile owner intent and define the first executable package.","notes":[]}}
