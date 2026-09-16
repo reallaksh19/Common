@@ -5,7 +5,7 @@
   "additionalProperties": false,
   "required": [
     "schema_version","subject","catalog_id","authority","technical_authorization",
-    "publication_authorization","registry_id","registry_digest","entries"
+    "publication_authorization","registry_id","entries"
   ],
   "properties": {
     "schema_version": {"const": "1.0.0"},
@@ -15,7 +15,6 @@
     "technical_authorization": {"const": "NOT_EVALUATED"},
     "publication_authorization": {"const": "NOT_IMPLIED"},
     "registry_id": {"const": "REG-MATH-TECH-GATE-V1"},
-    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "entries": {
       "type": "array",
       "items": {
