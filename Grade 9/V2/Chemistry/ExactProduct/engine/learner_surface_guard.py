@@ -45,6 +45,7 @@ PATTERNS = (
 ALLOWED_TOKENS = frozenset({
     'PDF',
     'A4',
+    'SELF-CHECK',
 })
 
 

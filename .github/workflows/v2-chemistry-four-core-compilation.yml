@@ -41,7 +41,9 @@ jobs:
       - name: Re-run Blueprint suite
         run: pytest -q 'Grade 9/V2/Chemistry/LearningBlueprint/tests/'
 
-      - name: Re-run A-layer render regression
+      - name: Re-run learner-product physical regressions
         run: >-
           pytest -q
           'Grade 9/V2/Chemistry/LearnerProduct/tests/test_chemistry_learner_product_render_pipeline.py'
+          'Grade 9/V2/Chemistry/LearnerProduct/tests/test_chemistry_physical_realization_false_passes.py'
+          'Grade 9/V2/Chemistry/LearnerProduct/tests/test_chemistry_core1a_section_lineage_render.py'

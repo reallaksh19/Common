@@ -1,0 +1,95 @@
+{
+  "policy_id": "CHEM-PRODUCT-CONTROL-CONSOLIDATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_class": "GENERIC_PRODUCT_CONTROL_INVARIANTS",
+  "purpose": "Preserve generic learner-product controls discovered in historical product-maturity work without promoting historical topic fixtures, candidate PDFs, frozen hashes, or branch-specific implementations to canonical authority.",
+  "orchestration": {
+    "machine_readable_stage_contract_required": true,
+    "stage_fields_required": ["stage_id", "depends_on", "consumes", "emits", "pass_gate", "falsifiers"],
+    "silent_stage_skipping_forbidden": true,
+    "not_applicable_requires_reason": true,
+    "undeclared_stage_forbidden": true,
+    "dependency_order_must_validate": true,
+    "production_decision_may_not_be_inferred_from_chat_or_repository_archaeology": true
+  },
+  "source_denominator_custody": {
+    "freeze_before_authoring_required": true,
+    "required_counters": [
+      "TOTAL_SCANNED",
+      "ELIGIBLE_IN_SCOPE",
+      "PLACED_UNIQUE",
+      "EXCLUDED_WITH_REASON",
+      "UNRESOLVED_WITH_REASON",
+      "MISSING",
+      "DUPLICATE_PRIMARY"
+    ],
+    "freeze_states": ["UNFROZEN", "FROZEN_ELIGIBLE_ONLY", "FROZEN_ITEM_LEDGER"],
+    "authoring_requires": "FROZEN_ITEM_LEDGER",
+    "counter_values_must_be_derived_from_declared_evidence": true,
+    "evidence_digest_required": true,
+    "unresolved_values_must_be_recorded_not_inferred": true,
+    "post_authoring_denominator_drift_forbidden": true,
+    "closure_invariants": [
+      "ELIGIBLE_IN_SCOPE == PLACED_UNIQUE",
+      "MISSING == 0",
+      "DUPLICATE_PRIMARY == 0",
+      "TOTAL_SCANNED == ELIGIBLE_IN_SCOPE + EXCLUDED_WITH_REASON + UNRESOLVED_WITH_REASON"
+    ]
+  },
+  "visual_obligations": {
+    "obligation_locality": "CONTENT_REFERENCE",
+    "supported_scopes": ["TEACHING_SECTION", "QUESTION"],
+    "global_realization_does_not_satisfy_local_obligation": true,
+    "required_visual_must_use_allowed_family": true,
+    "renderer_selection_forbidden": true,
+    "renderer_invention_forbidden": true,
+    "unrealized_visual_must_remain_explicitly_unrealized": true,
+    "text_substitution_for_required_visual_forbidden": true
+  },
+  "learner_surface_projection": {
+    "internal_role_to_learner_label_projection_required": true,
+    "unmapped_internal_role_must_fail_closed": true,
+    "fallback_prettification_of_internal_identifiers_forbidden": true,
+    "internal_identifier_spellings_remain_machine_stable": true,
+    "learner_copy_changes_may_not_change_chemistry_claims": true,
+    "actionable_helper_required": true,
+    "method_name_only_helper_is_not_actionable": true
+  },
+  "legibility_assurance": {
+    "engineering_font_floor_separate_from_learner_target": true,
+    "role_level_measurement_required": true,
+    "page_density_gate_required": true,
+    "minimum_leading_ratio": 1.25,
+    "maximum_text_coverage_ratio": 0.60,
+    "document_minimum_font_measurement_required": true,
+    "uncontrolled_shared_primitive_text_must_be_measured_not_silently_claimed_compliant": true,
+    "known_debt_must_remain_visible_until_enforced": true
+  },
+  "already_absorbed_controls": {
+    "answer_custody": [
+      "LearnerProduct/policies/chemistry-answer-path-policy.json",
+      "LearningBlueprint/policies/v7-product-assurance-policy.json"
+    ],
+    "execution_sequence": [
+      "LearnerProduct/EXECUTION_CONTRACT.md"
+    ],
+    "actual_pdf_preflight": [
+      "LearnerProduct/engine/preflight_chemistry_learner_products.py",
+      "LearnerProduct/policies/chemistry-learner-render-policy.json"
+    ],
+    "learner_language_actionability": [
+      "LearnerProduct/policies/chemistry-learner-language-policy.json"
+    ]
+  },
+  "historical_non_authority": {
+    "source_pr": 360,
+    "never_promote_as_ground_truth": [
+      "historical candidate PDFs",
+      "candidate artifact hashes",
+      "topic-specific frozen baselines",
+      "historical branch implementation paths",
+      "historical renderer outputs"
+    ]
+  }
+}
