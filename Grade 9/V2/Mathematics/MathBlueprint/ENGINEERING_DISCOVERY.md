@@ -1,5 +1,8 @@
 # Mathematics Engineering Discovery Boundary
 
+> **Consolidated Specification Notice**:
+> This document is consolidated under the canonical subordinate module [`ENGINEERING_AUTHORITY.md`](ENGINEERING_AUTHORITY.md) as part of Mathematics V2 Specification Consolidation. It is preserved here for contract stability, historical references, and granular analysis.
+
 This document is normative for the non-authoritative discovery surface that precedes Mathematics Engineering authorization.
 
 The architectural rule is:

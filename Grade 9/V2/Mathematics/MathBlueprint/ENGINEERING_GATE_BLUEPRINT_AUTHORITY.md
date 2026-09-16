@@ -1,5 +1,8 @@
 # Mathematics V2 — Engineering Gate → Blueprint Authority Boundary
 
+> **Consolidated Specification Notice**:
+> This document is consolidated under the canonical subordinate module [`ENGINEERING_AUTHORITY.md`](ENGINEERING_AUTHORITY.md) as part of Mathematics V2 Specification Consolidation. It is preserved here for contract stability, historical references, and granular analysis.
+
 This document is normative for the Mathematics Engineering Gate / MathBlueprint boundary.
 
 Its purpose is to prevent Blueprint from becoming topic-specific, example-specific, or dependent on remembered mathematics while still allowing a usable discovery surface. Engineering is upstream technical authority. Blueprint may consume that authority only through exact, digest-bound identities, generic policy evaluation and deterministic closure.

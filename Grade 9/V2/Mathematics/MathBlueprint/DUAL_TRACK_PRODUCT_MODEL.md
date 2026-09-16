@@ -1,5 +1,8 @@
 # Mathematics V2 — Dual-Track Product Model
 
+> **Consolidated Specification Notice**:
+> This document is consolidated under the canonical subordinate module [`PEDAGOGY_AND_CALIBRATION.md`](PEDAGOGY_AND_CALIBRATION.md) as part of Mathematics V2 Specification Consolidation. It is preserved here for contract stability, historical references, and granular analysis.
+
 This contract rebases learner-product architecture around two different control systems. Core1-series study material is governed by **intrinsic mathematical difficulty**. Core2-series question material is governed by **learner adaptation against task demand**.
 
 The split is intentional:
