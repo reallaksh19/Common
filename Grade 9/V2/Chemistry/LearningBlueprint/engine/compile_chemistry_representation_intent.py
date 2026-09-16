@@ -5,6 +5,11 @@ Scientific meaning comes only from Engineering obligations / semantic projection
 Pedagogical primitive selection comes only from declarative representation-intent
 policy plus the existing C-H primitive/page-intent authority. Product adapters do
 not provide primitive IDs or scientific representation payloads at this boundary.
+
+The base policy must cover the complete Engineering representation-type enum. A type
+may be RESOLVED or explicitly BLOCKED_C_H_PRIMITIVE_REQUIRED. Additive extensions may
+resolve a blocked type, but may not override an already-resolved type, introduce a
+new Engineering type, or alter scientific semantics.
 """
 from __future__ import annotations
 
@@ -34,8 +39,11 @@ from build_chemistry_representations import (  # noqa: E402
 
 POLICY_REL = "policies/chemistry-representation-intent.v1.json"
 SCHEMA_REL = "contracts/chemistry-representation-intent.schema.json"
+ENGINEERING_GATE_SCHEMA_REL = "contracts/chemistry-technical-engineering-gate.schema.json"
 PRIMITIVE_REGISTRY_PATH = CHEM_ROOT / "Representation/registry/chemistry-teaching-primitive-registry.json"
 PAGE_INTENT_PATH = CHEM_ROOT / "Representation/registry/chemistry-page-intent-profile.json"
+RESOLVED = "RESOLVED"
+BLOCKED = "BLOCKED_C_H_PRIMITIVE_REQUIRED"
 
 
 class ChemistryRepresentationIntentError(ValueError):
@@ -76,6 +84,19 @@ def _intent_id(obligation_id: str, product_mode: str) -> str:
     return "CHEM-REP-INTENT-" + hashlib.sha256(seed).hexdigest()[:24].upper()
 
 
+def _engineering_representation_types() -> set[str]:
+    schema = load(ENGINEERING_GATE_SCHEMA_REL)
+    try:
+        values = schema["$defs"]["subtopic_gate"]["properties"]["representations"]["items"]["properties"]["representation_type"]["enum"]
+    except (KeyError, TypeError) as exc:
+        fail("CHEM_REP_INTENT_ENGINEERING_TYPE_SCHEMA_INVALID", str(exc))
+    if not isinstance(values, list) or not values or any(not isinstance(value, str) or not value for value in values):
+        fail("CHEM_REP_INTENT_ENGINEERING_TYPE_SCHEMA_INVALID", "representation_type enum")
+    if len(values) != len(set(values)):
+        fail("CHEM_REP_INTENT_ENGINEERING_TYPE_SCHEMA_INVALID", "duplicate representation types")
+    return set(values)
+
+
 def _allowed_primitives(capability_ref: str, primitive_by_id: dict[str, Any], profile: dict[str, Any]) -> set[str]:
     allowed = set(profile.get("primary_primitives_by_capability", {}).get(capability_ref, []))
     for primitive_id in profile.get("conditional_primitives", {}).values():
@@ -83,6 +104,25 @@ def _allowed_primitives(capability_ref: str, primitive_by_id: dict[str, Any], pr
         if primitive and primitive_supports_capability(primitive, capability_ref):
             allowed.add(primitive_id)
     return allowed
+
+
+def _validate_resolved_rule(
+    representation_type: str,
+    rule: dict[str, Any],
+    primitive_by_id: dict[str, Any],
+    page_intent_profile: dict[str, Any],
+) -> None:
+    capability_ref = rule.get("capability_ref")
+    primitive_id = rule.get("primitive_id")
+    if not isinstance(capability_ref, str) or not capability_ref or not isinstance(primitive_id, str) or not primitive_id:
+        fail("CHEM_REP_INTENT_POLICY_INVALID", representation_type)
+    primitive = primitive_by_id.get(primitive_id)
+    if primitive is None:
+        fail("CHEM_REP_INTENT_POLICY_PRIMITIVE_UNKNOWN", f"{representation_type}:{primitive_id}")
+    if not primitive_supports_capability(primitive, capability_ref):
+        fail("CHEM_REP_INTENT_POLICY_CAPABILITY_MISMATCH", f"{representation_type}:{capability_ref}:{primitive_id}")
+    if primitive_id not in _allowed_primitives(capability_ref, primitive_by_id, page_intent_profile):
+        fail("CHEM_REP_INTENT_POLICY_PAGE_INTENT_REJECTED", f"{representation_type}:{capability_ref}:{primitive_id}")
 
 
 def _validate_policy(
@@ -94,25 +134,72 @@ def _validate_policy(
         fail("CHEM_REP_INTENT_POLICY_INVALID", "policy_id")
     if policy.get("subject") != "CHEMISTRY" or policy.get("status") != "ACTIVE":
         fail("CHEM_REP_INTENT_POLICY_INVALID", "subject/status")
+    if policy.get("engineering_type_schema_ref") != ENGINEERING_GATE_SCHEMA_REL:
+        fail("CHEM_REP_INTENT_POLICY_INVALID", "engineering_type_schema_ref")
     if policy.get("selection_rule") != "EXACT_REPRESENTATION_TYPE_TO_GOVERNED_CAPABILITY_AND_PRIMITIVE":
         fail("CHEM_REP_INTENT_POLICY_INVALID", "selection_rule")
     rules = policy.get("representation_type_rules")
     if not isinstance(rules, dict) or not rules:
         fail("CHEM_REP_INTENT_POLICY_INVALID", "representation_type_rules")
+    engineering_types = _engineering_representation_types()
+    if set(rules) != engineering_types:
+        missing = sorted(engineering_types - set(rules))
+        extra = sorted(set(rules) - engineering_types)
+        fail("CHEM_REP_INTENT_POLICY_TYPE_COVERAGE", f"missing={missing};extra={extra}")
     for representation_type, rule in rules.items():
-        if not isinstance(representation_type, str) or not representation_type or not isinstance(rule, dict):
-            fail("CHEM_REP_INTENT_POLICY_INVALID", str(representation_type))
-        capability_ref = rule.get("capability_ref")
-        primitive_id = rule.get("primitive_id")
-        if not isinstance(capability_ref, str) or not capability_ref or not isinstance(primitive_id, str) or not primitive_id:
+        if not isinstance(rule, dict):
             fail("CHEM_REP_INTENT_POLICY_INVALID", representation_type)
-        primitive = primitive_by_id.get(primitive_id)
-        if primitive is None:
-            fail("CHEM_REP_INTENT_POLICY_PRIMITIVE_UNKNOWN", f"{representation_type}:{primitive_id}")
-        if not primitive_supports_capability(primitive, capability_ref):
-            fail("CHEM_REP_INTENT_POLICY_CAPABILITY_MISMATCH", f"{representation_type}:{capability_ref}:{primitive_id}")
-        if primitive_id not in _allowed_primitives(capability_ref, primitive_by_id, page_intent_profile):
-            fail("CHEM_REP_INTENT_POLICY_PAGE_INTENT_REJECTED", f"{representation_type}:{capability_ref}:{primitive_id}")
+        status = rule.get("status")
+        if status == RESOLVED:
+            _validate_resolved_rule(representation_type, rule, primitive_by_id, page_intent_profile)
+        elif status == BLOCKED:
+            reason = rule.get("reason")
+            if not isinstance(reason, str) or not reason.strip():
+                fail("CHEM_REP_INTENT_POLICY_INVALID", f"{representation_type}:blocked reason")
+            if "capability_ref" in rule or "primitive_id" in rule:
+                fail("CHEM_REP_INTENT_POLICY_INVALID", f"{representation_type}:blocked mapping")
+        else:
+            fail("CHEM_REP_INTENT_POLICY_INVALID", f"{representation_type}:status")
+
+
+def _apply_intent_extensions(
+    base_policy: dict[str, Any],
+    extensions: list[dict[str, Any]],
+    primitive_by_id: dict[str, Any],
+    page_intent_profile: dict[str, Any],
+) -> tuple[dict[str, Any], list[str]]:
+    effective = copy.deepcopy(base_policy)
+    extension_refs: list[str] = []
+    seen: set[str] = set()
+    engineering_types = _engineering_representation_types()
+    for extension in extensions:
+        if not isinstance(extension, dict):
+            fail("CHEM_REP_INTENT_EXTENSION_INVALID", "not object")
+        extension_id = extension.get("extension_id")
+        if not isinstance(extension_id, str) or not extension_id or extension_id in seen:
+            fail("CHEM_REP_INTENT_EXTENSION_INVALID", str(extension_id))
+        seen.add(extension_id)
+        if extension.get("schema_version") != "1.0.0" or extension.get("subject") != "CHEMISTRY":
+            fail("CHEM_REP_INTENT_EXTENSION_INVALID", extension_id)
+        if extension.get("extends_policy") != base_policy["policy_id"] or extension.get("additive_only") is not True:
+            fail("CHEM_REP_INTENT_EXTENSION_AUTHORITY_INVALID", extension_id)
+        rows = extension.get("representation_type_rules")
+        if not isinstance(rows, dict) or not rows:
+            fail("CHEM_REP_INTENT_EXTENSION_INVALID", extension_id)
+        for representation_type, rule in rows.items():
+            if representation_type not in engineering_types:
+                fail("CHEM_REP_INTENT_EXTENSION_TYPE_UNKNOWN", representation_type)
+            current = effective["representation_type_rules"][representation_type]
+            if current.get("status") != BLOCKED:
+                fail("CHEM_REP_INTENT_EXTENSION_OVERRIDE_FORBIDDEN", representation_type)
+            if not isinstance(rule, dict) or rule.get("status") != RESOLVED:
+                fail("CHEM_REP_INTENT_EXTENSION_INVALID", f"{extension_id}:{representation_type}")
+            _validate_resolved_rule(representation_type, rule, primitive_by_id, page_intent_profile)
+            effective["representation_type_rules"][representation_type] = copy.deepcopy(rule)
+        extension_refs.append(extension_id)
+    effective["applied_extension_refs"] = list(extension_refs)
+    _validate_policy(effective, primitive_by_id, page_intent_profile)
+    return effective, extension_refs
 
 
 def _scientific_semantics(
@@ -156,6 +243,7 @@ def compile_representation_intent(
     policy: dict[str, Any] | None = None,
     primitive_registry: dict[str, Any] | None = None,
     page_intent_profile: dict[str, Any] | None = None,
+    representation_intent_extensions: list[dict[str, Any]] | None = None,
     intent_packet_id: str | None = None,
 ) -> dict[str, Any]:
     if product_mode not in {"CORE1A", "CORE1B", "CORE2A", "CORE2B"}:
@@ -175,9 +263,15 @@ def compile_representation_intent(
     if page_intent_profile.get("subject") != "CHEMISTRY" or page_intent_profile.get("renderer_selection_forbidden") is not True:
         fail("CHEM_REP_INTENT_PAGE_INTENT_INVALID")
 
-    policy = copy.deepcopy(policy) if policy is not None else load(POLICY_REL)
-    _validate_policy(policy, primitive_by_id, page_intent_profile)
-    rules = policy["representation_type_rules"]
+    base_policy = copy.deepcopy(policy) if policy is not None else load(POLICY_REL)
+    _validate_policy(base_policy, primitive_by_id, page_intent_profile)
+    effective_policy, extension_refs = _apply_intent_extensions(
+        base_policy,
+        list(representation_intent_extensions or []),
+        primitive_by_id,
+        page_intent_profile,
+    )
+    rules = effective_policy["representation_type_rules"]
 
     authorized_rows = [
         row for row in obligation_packet.get("obligations", [])
@@ -193,6 +287,8 @@ def compile_representation_intent(
         rule = rules.get(representation_type)
         if rule is None:
             fail("CHEM_REP_INTENT_TYPE_UNMAPPED", representation_type)
+        if rule.get("status") == BLOCKED:
+            fail("CHEM_REP_INTENT_C_H_SUPPORT_MISSING", f"{representation_type}:{rule['reason']}")
         capability_ref = rule["capability_ref"]
         primitive_id = rule["primitive_id"]
         primitive = primitive_by_id[primitive_id]
@@ -232,7 +328,8 @@ def compile_representation_intent(
         "semantic_projection_id": semantic_projection["projection_id"],
         "semantic_projection_digest": semantic_projection["projection_digest"],
         "policy_ref": POLICY_REL,
-        "policy_digest": digest(policy),
+        "policy_digest": digest(effective_policy),
+        "policy_extension_refs": extension_refs,
         "primitive_registry_ref": primitive_registry["registry_id"],
         "page_intent_profile_ref": page_intent_profile["profile_id"],
         "intents": intents,
@@ -261,6 +358,7 @@ def validate_representation_intent(
     policy: dict[str, Any] | None = None,
     primitive_registry: dict[str, Any] | None = None,
     page_intent_profile: dict[str, Any] | None = None,
+    representation_intent_extensions: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     try:
         jsonschema.validate(intent_packet, load(SCHEMA_REL))
@@ -275,6 +373,7 @@ def validate_representation_intent(
         policy=policy,
         primitive_registry=primitive_registry,
         page_intent_profile=page_intent_profile,
+        representation_intent_extensions=representation_intent_extensions,
         intent_packet_id=intent_packet["intent_packet_id"],
     )
     if canonical(expected) != canonical(intent_packet):
