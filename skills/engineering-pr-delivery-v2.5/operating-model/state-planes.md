@@ -1,12 +1,25 @@
 # Independent status planes
 
-V2.5 separates four status planes so a quality concern, unavailable test runner or missing evidence is not mislabeled as an engineering blocker.
+V2.5 separates execution, quality, evidence and stop state so a quality concern, unavailable test runner, deferred confirmation or missing evidence is not mislabeled as an engineering blocker.
 
 ## Execution
 
-`IDLE | READY | ACTIVE | WAITING | COMPLETE`
+Execution state is `IDLE | READY | ACTIVE | WAITING | COMPLETE` and separately carries:
 
-Execution answers what work is happening, whether material work can continue, and the exact next action. `WAITING` may be non-fatal; it does not imply unsafe engineering.
+```text
+can_continue: true | false
+material_authority: WRITE | READ_ONLY | NONE
+```
+
+`can_continue` answers whether the agent can still perform useful relay work. `material_authority` answers whether it may modify engineering state. These are intentionally independent.
+
+Examples:
+- `ACTIVE + can_continue:true + WRITE`: normal material execution.
+- `ACTIVE + can_continue:true + READ_ONLY`: inspect, validate, reconcile or prepare evidence, but do not change engineering state.
+- `WAITING + can_continue:false + READ_ONLY`: required execution is unavailable; preserve custody and wait/reconcile without writes.
+- `INITIALIZING/IDLE/TERMINAL`: material authority is `NONE`.
+
+An active hard stop can never retain `WRITE` authority.
 
 ## Quality
 
@@ -26,8 +39,8 @@ The stop plane is either inactive or names one true category:
 
 `OWNER_DECISION_REQUIRED | ESSENTIAL_INPUT_MISSING | AUTHORITY_VIOLATION | PROTECTED_INVARIANT_FAILURE | WRITE_COLLISION | SUPERSEDED_EP | ROADMAP_CONFLICT | REPOSITORY_STATE_CONFLICT | UNSAFE_ENGINEERING_RESULT`.
 
-An active stop requires a plain-language reason and durable basis. If stop is inactive, category is `NONE`.
+An active stop requires a plain-language reason and durable basis, requires `can_continue:false`, and forbids `material_authority: WRITE`. If stop is inactive, category is `NONE`.
 
 ## Human language
 
-Render these independently: execution state, whether work can continue, quality state/findings, evidence state/not-run items, and hard stop. Avoid the generic word `blocked` when a more precise state is available.
+Render independently: execution state, whether useful work can continue, material authority, quality state/findings, evidence state/not-run items, and hard-stop state. Avoid the generic word `blocked` when a more precise state is available.
