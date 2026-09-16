@@ -2,6 +2,8 @@
 
 Repository roadmap/state remains authoritative. GitHub Issues or other human coordination surfaces are projections, but custody transfer is not fully handover-ready until every required projection is synchronized.
 
+Projection readiness is independent from both repository baton completeness and candidate-specific takeover certification.
+
 ## Projection publication identity
 
 Every required projection is prepared before publication with a stable `operation_id`, durable `target`, current `roadmap_revision`, and current `execution_ref`. The same operation ID must be reused after interruption for the **same desired generation**. Never create a second publication merely because the agent cannot remember whether the first call returned.
@@ -61,9 +63,28 @@ When the newest operation is published, transition to `PUBLISHED_UNCONFIRMED`. A
 
 ## Readiness
 
-`REPO_STATE.relay_readiness` separates:
-- `repository_ready`: a replacement agent can recover authoritative repository state without chat;
-- `projection_ready`: every required external coordination projection is `IN_SYNC` (or projection is not required);
-- `handover_ready`: both predicates are true.
+`REPO_STATE.relay_readiness` now separates only repository-wide custody predicates:
 
-Projection lag does not rewrite engineering truth and does not automatically create an engineering hard stop. Repository engineering state may continue to advance when otherwise authorized. Projection lag prevents declaring complete custody transfer until the newest desired projection is reconciled. Release qualification is separate from relay handover readiness.
+```text
+baton_ready       semantic repository baton is complete for a zero-context replacement
+projection_ready  every required external coordination projection is IN_SYNC, or not required
+handover_ready    baton_ready AND projection_ready
+```
+
+`baton_ready` is not candidate admission. A baton-ready repository may have no future replacement yet and therefore an empty `takeover_admissions[]` list.
+
+Candidate admission is route-scoped and lives in durable `DISC-*` / `TC-*` evidence referenced by `REPO_STATE.takeover_admissions[]`:
+
+```text
+TAKEOVER_CERTIFIED(route,candidate)
+```
+
+Live engineering write permission is later derived from the certified candidate, live route/Git state, drift/continuity, execution authority and stop state:
+
+```text
+MATERIAL_WRITE_READY(route,candidate,live_git)
+```
+
+It is never inferred from projection readiness and is not persisted as a timeless repository boolean.
+
+Projection lag does not rewrite engineering truth, baton completeness, or existing candidate evidence and does not automatically create an engineering hard stop. Repository engineering state may continue to advance when otherwise authorized. Projection lag prevents declaring complete custody handover until the newest desired projection is reconciled.
