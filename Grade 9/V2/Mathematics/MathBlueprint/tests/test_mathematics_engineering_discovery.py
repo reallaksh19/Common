@@ -10,9 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 
 from compile_mathematics_engineering_discovery import (  # noqa: E402
+    VOCABULARY_REL,
     MathematicsEngineeringDiscoveryError,
     discover_candidates,
     promote_explicit_selection,
+    validate_discovery_vocabulary_catalog,
 )
 from compile_mathematics_engineering_workbench import (  # noqa: E402
     MathematicsEngineeringWorkbenchError,
@@ -23,6 +25,7 @@ from compile_mathematics_engineering_workbench import (  # noqa: E402
 )
 
 REGISTRY = load("policies/mathematics-technical-engineering-gates.v1.json")
+VOCABULARY = load(VOCABULARY_REL)
 
 
 def discovery_request(query: str, suffix: str = "TEST", max_candidates: int = 6, kinds: list[str] | None = None) -> dict:
@@ -52,6 +55,12 @@ def selection_for(receipt: dict, row: dict, suffix: str = "TEST", depth: str = "
         "learning_purpose": "FIRST_STUDY",
         "explicit_selection_acknowledgement": "EXACT_IDENTITY_CONFIRMED",
     }
+
+
+def vocabulary_for(registry: dict) -> dict:
+    catalog = copy.deepcopy(VOCABULARY)
+    catalog["registry_digest"] = digest(registry)
+    return catalog
 
 
 class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
@@ -137,28 +146,29 @@ class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
         target = REGISTRY["subtopic_gates"][0]
         request = discovery_request(target["learner_title"], "STALE", kinds=["ENGINEERING_GATE"])
         registry_a = copy.deepcopy(REGISTRY)
-        receipt = discover_candidates(request, registry_a)
+        receipt = discover_candidates(request, registry_a, vocabulary_for(registry_a))
         selection = selection_for(receipt, receipt["candidates"][0], "STALE")
 
         registry_b = copy.deepcopy(REGISTRY)
         registry_b["subtopic_gates"][0]["learner_title"] += " revised"
         with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
-            promote_explicit_selection(request, receipt, selection, registry_b)
+            promote_explicit_selection(request, receipt, selection, registry_b, vocabulary_for(registry_b))
         self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_RECEIPT_STALE_OR_FORGED")
 
     def test_discovery_can_surface_held_candidate_but_authority_still_blocks(self):
         registry = copy.deepcopy(REGISTRY)
         target = registry["subtopic_gates"][0]
         target["provenance"]["source_scope"] = "HELD_SCOPE"
+        vocabulary = vocabulary_for(registry)
 
         request = discovery_request(target["learner_title"], "HELD", kinds=["ENGINEERING_GATE"])
-        receipt = discover_candidates(request, registry)
+        receipt = discover_candidates(request, registry, vocabulary)
         row = next(candidate for candidate in receipt["candidates"] if candidate["scope_ref"] == target["subtopic_id"])
         self.assertEqual(row["source_scope"], "HELD_SCOPE")
         self.assertEqual(receipt["technical_authorization"], "NOT_EVALUATED")
 
         selection = selection_for(receipt, row, "HELD")
-        engineering_request = promote_explicit_selection(request, receipt, selection, registry)
+        engineering_request = promote_explicit_selection(request, receipt, selection, registry, vocabulary)
         manifest = resolve_manifest(engineering_request, registry)
         closure = compile_closure(engineering_request, manifest, registry)
         self.assertEqual(closure["technical_authorization"], "BLOCKED")
@@ -179,6 +189,83 @@ class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
         manifest = resolve_manifest(engineering_request, registry)
         self.assertEqual(manifest["resolution_mode"], "REGISTRY_LINKED_BUCKET")
         self.assertTrue(manifest["direct_gate_ids"])
+
+    def test_curated_alias_discovers_exact_gate_but_is_not_authority(self):
+        request = discovery_request("simultaneous equations", "VOCAB", kinds=["ENGINEERING_GATE"])
+        receipt = discover_candidates(request, copy.deepcopy(REGISTRY))
+        self.assertEqual(receipt["candidates"][0]["scope_ref"], "MATH-LIN-EQUATIONS")
+        self.assertIn("VOCABULARY_EXACT", receipt["candidates"][0]["match_basis"])
+        self.assertIn("simultaneous equations", receipt["candidates"][0]["matched_vocabulary_terms"])
+        self.assertEqual(receipt["technical_authorization"], "NOT_EVALUATED")
+
+        forged_request = {
+            "schema_version": "1.0.0",
+            "subject": "MATHEMATICS",
+            "request_id": "MATH-ENG-REQ-VOCAB_FORBIDDEN",
+            "scope_kind": "ENGINEERING_GATE",
+            "scope_refs": ["simultaneous equations"],
+            "engineering_depth": "STANDARD",
+            "learning_purpose": "FIRST_STUDY",
+            "owner_decision_ref": None,
+        }
+        with self.assertRaises(MathematicsEngineeringWorkbenchError) as ctx:
+            resolve_manifest(forged_request, copy.deepcopy(REGISTRY))
+        self.assertEqual(ctx.exception.code, "MATH_ENG_SCOPE_UNMAPPED")
+
+    def test_receipt_binds_catalog_and_generated_index(self):
+        request = discovery_request("surds", "INDEX", kinds=["ENGINEERING_GATE"])
+        receipt = discover_candidates(request, copy.deepcopy(REGISTRY))
+        self.assertEqual(receipt["schema_version"], "1.1.0")
+        self.assertEqual(receipt["vocabulary_catalog_id"], VOCABULARY["catalog_id"])
+        self.assertEqual(receipt["vocabulary_catalog_digest"], digest(VOCABULARY))
+        self.assertTrue(receipt["discovery_index_digest"].startswith("sha256:"))
+        self.assertGreaterEqual(receipt["discovery_index_entry_count"], len(REGISTRY["subtopic_gates"]))
+
+    def test_unknown_vocabulary_target_fails_closed(self):
+        catalog = copy.deepcopy(VOCABULARY)
+        catalog["entries"][0]["target_scope_ref"] = "MATH-NOT-A-REAL-GATE"
+        with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
+            validate_discovery_vocabulary_catalog(catalog, copy.deepcopy(REGISTRY))
+        self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_VOCABULARY_UNKNOWN_TARGET")
+
+    def test_duplicate_normalized_vocabulary_term_fails_closed(self):
+        catalog = copy.deepcopy(VOCABULARY)
+        phrase = catalog["entries"][0]["terms"][0]["phrase"]
+        catalog["entries"][0]["terms"].append(
+            {"phrase": phrase.upper() + "!!!", "term_class": "LEARNER_ALIAS"}
+        )
+        with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
+            validate_discovery_vocabulary_catalog(catalog, copy.deepcopy(REGISTRY))
+        self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_VOCABULARY_DUPLICATE_TERM")
+
+    def test_catalog_registry_digest_drift_fails_closed(self):
+        catalog = copy.deepcopy(VOCABULARY)
+        catalog["registry_digest"] = "sha256:" + ("0" * 64)
+        with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
+            validate_discovery_vocabulary_catalog(catalog, copy.deepcopy(REGISTRY))
+        self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_VOCABULARY_REGISTRY_DIGEST_MISMATCH")
+
+    def test_vocabulary_mutation_stales_bound_selection(self):
+        registry = copy.deepcopy(REGISTRY)
+        catalog_a = copy.deepcopy(VOCABULARY)
+        request = discovery_request("simultaneous equations", "VOCAB_STALE", kinds=["ENGINEERING_GATE"])
+        receipt = discover_candidates(request, registry, catalog_a)
+        row = receipt["candidates"][0]
+        selection = selection_for(receipt, row, "VOCAB_STALE")
+
+        catalog_b = copy.deepcopy(catalog_a)
+        target = next(entry for entry in catalog_b["entries"] if entry["target_scope_ref"] == "MATH-LIN-EQUATIONS")
+        target["terms"].append({"phrase": "linear simultaneous equation methods", "term_class": "COMPETITION_TERM"})
+        with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
+            promote_explicit_selection(request, receipt, selection, registry, catalog_b)
+        self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_RECEIPT_STALE_OR_FORGED")
+
+    def test_vocabulary_schema_rejects_authorization_payload(self):
+        catalog = copy.deepcopy(VOCABULARY)
+        catalog["entries"][0]["technical_readiness"] = "ENGINEERING_GATE_READY"
+        with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
+            validate_discovery_vocabulary_catalog(catalog, copy.deepcopy(REGISTRY))
+        self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_VOCABULARY_SCHEMA")
 
 
 if __name__ == "__main__":
