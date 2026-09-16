@@ -10,7 +10,7 @@ def validate(repo_root:Path):
     errors=[]; warnings=[]
     try: state=load_yaml(repo_root/"agents/relay/REPO_STATE.yaml")
     except Exception as exc: return [f"REPO_STATE: {exc}"],warnings
-    errors+=require(state,["schema_version","relay_state","repository","roadmap","current_position","execution_policy","active_ep","last_checkpoint","progress","status_planes","chat_context_required"],"REPO_STATE")
+    errors+=require(state,["schema_version","relay_state","repository","roadmap","current_position","execution_policy","active_ep","last_checkpoint","progress","status_planes","projection","relay_readiness","chat_context_required"],"REPO_STATE")
     if state.get("schema_version")!="relay-v2.5": errors.append("REPO_STATE: schema_version must be relay-v2.5")
     relay_state=state.get("relay_state")
     if relay_state not in RELAY_STATES:errors.append(f"REPO_STATE.relay_state invalid: {relay_state}")
@@ -20,6 +20,8 @@ def validate(repo_root:Path):
     current=state.get("current_position") or {};errors+=require(current,["objective","phase","work_package"],"REPO_STATE.current_position")
     active=state.get("active_ep") or {}; errors+=require(active,["id","path","state"],"REPO_STATE.active_ep")
     last=state.get("last_checkpoint") or {}; errors+=require(last,["id","path"],"REPO_STATE.last_checkpoint")
+    projection=state.get("projection") or {};errors+=require(projection,["required","state","roadmap_revision","execution_ref","basis"],"REPO_STATE.projection")
+    readiness=state.get("relay_readiness") or {};errors+=require(readiness,["repository_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     policy=state.get("execution_policy") or {};mode=policy.get("mode")
     if mode not in {"SERIAL","OWNER_APPROVED_PARALLEL"}: errors.append("REPO_STATE.execution_policy.mode must be SERIAL or OWNER_APPROVED_PARALLEL")
 
