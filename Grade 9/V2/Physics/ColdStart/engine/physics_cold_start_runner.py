@@ -125,19 +125,82 @@ def resolve(manifest, key, repo_root=REPO):
     return path, rel
 
 
+ASSESSMENT_INPUT_ROLES = {
+    "QUESTION_SET": "question_set",
+    "DECLARED_TOPIC_SCOPE": "declared_topic_scope",
+    "ATTEMPT_SET": "attempt_set",
+}
+
+
+def validate_assessment_input_bindings(bindings, repo_root=REPO):
+    """Validate a repository-governed P-A input selection without granting downstream authority."""
+    if bindings is None:
+        return None
+    if not isinstance(bindings, list):
+        fail("ASSESSMENT_INPUT_BINDINGS_INVALID", "expected list")
+
+    repo_root = Path(repo_root)
+    by_role = {}
+    allowed_keys = {"role", "required", "path", "sha256"}
+    for row in bindings:
+        if not isinstance(row, dict) or set(row) != allowed_keys:
+            fail("ASSESSMENT_INPUT_BINDING_INVALID", str(row))
+        role = row["role"]
+        if role not in ASSESSMENT_INPUT_ROLES:
+            fail("ASSESSMENT_INPUT_ROLE_UNKNOWN", str(role))
+        if role in by_role:
+            fail("ASSESSMENT_INPUT_ROLE_DUPLICATE", role)
+        rel = Path(row["path"])
+        if rel.is_absolute() or ".." in rel.parts or not row["path"].startswith("Grade 9/V2/Physics/"):
+            fail("ASSESSMENT_INPUT_PATH_INVALID", row["path"])
+        path = repo_root / rel
+        if not path.is_file():
+            fail("ASSESSMENT_INPUT_FILE_MISSING", row["path"])
+        actual = "sha256:" + sha_bytes(path.read_bytes())
+        if row["sha256"] != actual:
+            fail("ASSESSMENT_INPUT_DIGEST_MISMATCH", f"{role}: expected {row['sha256']} actual {actual}")
+        by_role[role] = copy.deepcopy(row)
+
+    for role in ("QUESTION_SET", "DECLARED_TOPIC_SCOPE"):
+        if role not in by_role or by_role[role]["required"] is not True:
+            fail("ASSESSMENT_INPUT_REQUIRED_ROLE_MISSING", role)
+    if "ATTEMPT_SET" in by_role and by_role["ATTEMPT_SET"]["required"] is not False:
+        fail("ASSESSMENT_INPUT_ATTEMPT_MUST_BE_OPTIONAL")
+    return by_role
+
+
 # ------------------------------------------------------------------- the run
 
 
-def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None):
+def run_cold_start(
+    manifest,
+    out_dir,
+    with_attempts,
+    repo_root=REPO,
+    run_id=None,
+    assessment_input_bindings=None,
+):
     verify_manifest(manifest)
     repo_root = Path(repo_root)
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     reads = []
+    routed_inputs = validate_assessment_input_bindings(assessment_input_bindings, repo_root)
 
     def get(key):
         path, rel = resolve(manifest, key, repo_root)
         reads.append(rel)
+        return load(path)
+
+    def get_assessment(role):
+        fallback_key = ASSESSMENT_INPUT_ROLES[role]
+        if routed_inputs is None:
+            return get(fallback_key)
+        row = routed_inputs.get(role)
+        if row is None:
+            fail("ASSESSMENT_INPUT_ROUTE_ROLE_UNAVAILABLE", role)
+        path = repo_root / row["path"]
+        reads.append(row["path"])
         return load(path)
 
     scope_engine = _module(
@@ -155,8 +218,8 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         manifest["engines"]["learner_evidence"],
     ])
 
-    questions = get("question_set")
-    topic_scope = get("declared_topic_scope")
+    questions = get_assessment("QUESTION_SET")
+    topic_scope = get_assessment("DECLARED_TOPIC_SCOPE")
     review_registry = get("item_validity_registry")
     review_policy = get("diagnostic_use_policy")
     capabilities = get("canonical_capabilities")
@@ -188,7 +251,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
     evidence_ledger = None
     transfer_evidence = None
     if with_attempts:
-        attempts = get("attempt_set")
+        attempts = get_assessment("ATTEMPT_SET")
         evidence_ledger = get("learner_evidence_ledger")
         transfer_evidence = get("transfer_evidence_ledger")
 
