@@ -2,9 +2,16 @@ schema_version: relay-v2.5
 identity:
   ep_id: EP-0001
   branch: "<branch>"
-  base_ref: "<commit-or-drift-rule>"
+  base_ref: "<material-ref>"
   execution_state: EXECUTABLE
   previous_checkpoint: NONE
+git_basis:
+  expected_branch: "<branch>"
+  material_ref: "<material commit/ref>"
+  base_branch: "<base branch, e.g. main>"
+  base_observed_ref: "<base commit observed when EP was prepared>"
+  drift_policy: RECHECK_BEFORE_WRITE
+  drift_receipt: null
 roadmap_source:
   roadmap_id: "<roadmap-id>"
   roadmap_revision: RM-0001
@@ -30,6 +37,10 @@ repository_discovery:
     action: VERIFY
     target: agents/relay/REPO_STATE.yaml
     purpose: Confirm this EP remains active.
+  - id: DISC-02
+    action: VERIFY_GIT
+    target: live checkout
+    purpose: Resolve the execution route and re-check base drift before material writes.
 inputs: []
 benchmarks: []
 scope:
