@@ -3,10 +3,37 @@ schema_version: relay-v2.5
 graph_revision: IG-0001
 
 # ISSUE_GRAPH is a coordination projection. OVERALL_ROADMAP remains engineering authority.
+# github_state is the LAST VERIFIED external state, not a desired publication state:
+#   ABSENT  no GitHub issue has been verified for this node yet
+#   OPEN    external issue was verified open
+#   CLOSED  external issue was verified closed
+#   UNKNOWN a prior locator exists, but current external state must be re-observed
+# A verified locator is stored under github.issue_number / github.issue_id / github.url.
+# Publication intent and uncertain writes live in GHGEN-*/GHOP-* projection generations;
+# never set github_state OPEN merely because a CREATE call was attempted.
+#
+# Planned/executable issue example before GitHub creation:
+# - id: ISSUE-001
+#   state: ACTIVE
+#   github_state: ABSENT
+#   github: {}
+#   roadmap_node: WP-001
+#
+# Same node after verified CREATE reconciliation:
+# - id: ISSUE-001
+#   state: ACTIVE
+#   github_state: OPEN
+#   github:
+#     issue_number: 123
+#     issue_id: "<provider-id>"
+#     url: "<optional-url>"
+#   roadmap_node: WP-001
+#
 # Aggregate parent example:
 # - id: ISSUE-PARENT
 #   state: ACTIVE
 #   github_state: OPEN
+#   github: {issue_number: 100}
 #   child_rollup:
 #     graph_revision: IG-0001
 #     direct_children:
@@ -18,12 +45,13 @@ graph_revision: IG-0001
 # PARENT_OF is acyclic; each child has at most one direct parent. Parent rollups
 # snapshot direct children only. Deep rollups work recursively because an aggregate
 # child is validated against its own direct children before its parent can be trusted.
-# A closed parent may not hide a direct child that is still GitHub OPEN.
+# A closed parent may not hide a direct child whose GitHub projection is not CLOSED.
 #
 # Supersession predecessor example:
 # - id: ISSUE-OLD
 #   state: SUPERSEDED
 #   github_state: CLOSED
+#   github: {issue_number: 120}
 #   roadmap_node: WP-OLD
 #   supersession_receipt:
 #     successor: ISSUE-NEW
