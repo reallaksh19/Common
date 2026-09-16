@@ -21,6 +21,7 @@ sys.path.insert(0, str(COLD_ENGINE))
 from compile_execution_packet import digest as packet_digest  # noqa: E402
 from consume_agent_task_packet import consume_execution_packet  # noqa: E402
 from physics_cold_start_runner import compare_runs, load, run_cold_start  # noqa: E402
+from physics_cold_start_validator import validate_comparison, validate_report  # noqa: E402
 
 RECEIPT_SCHEMA = BLUEPRINT / "contracts" / "blueprint-agent-task-cold-start.schema.json"
 
@@ -90,7 +91,7 @@ def run_packet_cold_start(
 
     manifest = _subject_manifest(packet, repo_root)
     bindings = route["input_bindings"]
-    no_attempt, _ = run_cold_start(
+    no_attempt, no_attempt_artifacts = run_cold_start(
         manifest,
         out / "no-attempt",
         False,
@@ -98,7 +99,7 @@ def run_packet_cold_start(
         run_id="PHY-AGENT-P-K-NO-ATTEMPT",
         assessment_input_bindings=bindings,
     )
-    with_attempts, _ = run_cold_start(
+    with_attempts, with_attempt_artifacts = run_cold_start(
         manifest,
         out / "with-attempts",
         True,
@@ -106,11 +107,28 @@ def run_packet_cold_start(
         run_id="PHY-AGENT-P-K-WITH-ATTEMPTS",
         assessment_input_bindings=bindings,
     )
+
+    validate_report(
+        no_attempt,
+        manifest,
+        no_attempt_artifacts,
+        assessment_input_bindings=bindings,
+        repo_root=repo_root,
+    )
+    validate_report(
+        with_attempts,
+        manifest,
+        with_attempt_artifacts,
+        assessment_input_bindings=bindings,
+        repo_root=repo_root,
+    )
+
     comparison = compare_runs(
         no_attempt,
         with_attempts,
         comparison_id="PHY-AGENT-P-K-COMPARISON-v1",
     )
+    validate_comparison(comparison, no_attempt, with_attempts)
     failed = sorted(key for key, value in comparison["invariants"].items() if not value)
     if failed:
         fail(
