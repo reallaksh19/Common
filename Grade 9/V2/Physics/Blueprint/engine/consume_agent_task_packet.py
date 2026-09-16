@@ -20,6 +20,7 @@ sys.path.insert(0, str(AGENT_ENGINE))
 from compile_execution_packet import PacketCompilationError, digest, validate_packet  # noqa: E402
 
 RECEIPT_SCHEMA = BLUEPRINT / "contracts" / "blueprint-agent-task-intake.schema.json"
+ROUTE_REGISTRY_SCHEMA = BLUEPRINT / "contracts" / "blueprint-execution-route-registry.schema.json"
 
 
 class BlueprintAgentTaskIntakeError(Exception):
@@ -33,10 +34,10 @@ def fail(code: str, message: str) -> None:
     raise BlueprintAgentTaskIntakeError(code, message)
 
 
-def _git_head(repo_root: Path = REPO) -> str:
+def _git(repo_root: Path, *args: str) -> str:
     try:
         proc = subprocess.run(
-            ["git", "-C", str(repo_root), "rev-parse", "HEAD"],
+            ["git", "-C", str(repo_root), *args],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -44,10 +45,18 @@ def _git_head(repo_root: Path = REPO) -> str:
         )
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:
         raise BlueprintAgentTaskIntakeError(
-            "E_BLUEPRINT_REPOSITORY_HEAD_UNRESOLVED",
-            "cannot resolve current repository HEAD",
+            "E_BLUEPRINT_REPOSITORY_STATE_UNRESOLVED",
+            f"cannot resolve repository state for {' '.join(args)}",
         ) from exc
     return proc.stdout.strip()
+
+
+def _git_head(repo_root: Path = REPO) -> str:
+    return _git(repo_root, "rev-parse", "HEAD")
+
+
+def _git_working_tree_state(repo_root: Path = REPO) -> str:
+    return "CLEAN" if _git(repo_root, "status", "--porcelain") == "" else "DIRTY"
 
 
 def _safe_repo_file(repo_root: Path, relative_path: str) -> Path:
@@ -64,6 +73,16 @@ def _file_digest(path: Path) -> str:
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _load_json(path: Path, *, code: str) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise BlueprintAgentTaskIntakeError(code, str(path)) from exc
+    if not isinstance(value, dict):
+        fail(code, f"expected JSON object: {path}")
+    return value
+
+
 def _verify_bound_authorities(packet: dict[str, Any], repo_root: Path) -> None:
     for binding in packet["authority_bindings"]:
         path = _safe_repo_file(repo_root, binding["path"])
@@ -75,8 +94,182 @@ def _verify_bound_authorities(packet: dict[str, Any], repo_root: Path) -> None:
             )
 
 
+def _subject_generation_manifest(packet: dict[str, Any], repo_root: Path) -> dict[str, Any]:
+    rows = [
+        row
+        for row in packet["authority_bindings"]
+        if row["authority_class"] == "SUBJECT_GENERATION_AUTHORITY"
+    ]
+    if len(rows) != 1:
+        fail(
+            "E_BLUEPRINT_SUBJECT_AUTHORITY_UNRESOLVED",
+            f"expected one SUBJECT_GENERATION_AUTHORITY binding; found {len(rows)}",
+        )
+    manifest_path = _safe_repo_file(repo_root, rows[0]["path"])
+    manifest = _load_json(manifest_path, code="E_BLUEPRINT_SUBJECT_MANIFEST_INVALID")
+    expected = manifest.get("manifest_digest")
+    actual = digest({k: v for k, v in manifest.items() if k != "manifest_digest"}).split(":", 1)[1]
+    if expected != actual:
+        fail(
+            "E_BLUEPRINT_SUBJECT_MANIFEST_DIGEST",
+            f"expected {expected}; recomputed {actual}",
+        )
+    if manifest.get("subject") != "PHYSICS":
+        fail("E_BLUEPRINT_SUBJECT_MANIFEST_MISMATCH", str(manifest.get("subject")))
+    return manifest
+
+
+def _validate_route_registry(registry: dict[str, Any]) -> None:
+    schema = _load_json(ROUTE_REGISTRY_SCHEMA, code="E_BLUEPRINT_ROUTE_SCHEMA_INVALID")
+    try:
+        jsonschema.validate(registry, schema)
+    except jsonschema.ValidationError as exc:
+        raise BlueprintAgentTaskIntakeError(
+            "E_BLUEPRINT_ROUTE_REGISTRY_SCHEMA",
+            exc.message,
+        ) from exc
+
+    actual = digest({k: v for k, v in registry.items() if k != "registry_digest"})
+    if registry["registry_digest"] != actual:
+        fail(
+            "E_BLUEPRINT_ROUTE_REGISTRY_DIGEST",
+            f"expected {registry['registry_digest']}; recomputed {actual}",
+        )
+
+    route_ids = [row["route_id"] for row in registry["routes"]]
+    if len(route_ids) != len(set(route_ids)):
+        fail("E_BLUEPRINT_ROUTE_ID_DUPLICATE", "route IDs must be unique")
+
+    for route in registry["routes"]:
+        roles = [row["role"] for row in route["inputs"]]
+        paths = [row["path"] for row in route["inputs"]]
+        if len(roles) != len(set(roles)):
+            fail("E_BLUEPRINT_ROUTE_ROLE_DUPLICATE", route["route_id"])
+        if len(paths) != len(set(paths)):
+            fail("E_BLUEPRINT_ROUTE_PATH_DUPLICATE", route["route_id"])
+        by_role = {row["role"]: row for row in route["inputs"]}
+        for required_role in ("QUESTION_SET", "DECLARED_TOPIC_SCOPE"):
+            if required_role not in by_role or by_role[required_role]["required"] is not True:
+                fail(
+                    "E_BLUEPRINT_ROUTE_REQUIRED_INPUT_MISSING",
+                    f"{route['route_id']} requires {required_role}",
+                )
+        attempt = by_role.get("ATTEMPT_SET")
+        if attempt is not None and attempt["required"] is not False:
+            fail(
+                "E_BLUEPRINT_ROUTE_ATTEMPT_MUST_BE_OPTIONAL",
+                route["route_id"],
+            )
+
+
+def _route_registry_binding(
+    manifest: dict[str, Any],
+    repo_root: Path,
+) -> tuple[dict[str, Any], dict[str, str]] | None:
+    relative = manifest.get("authorities", {}).get("agent_task_execution_routes")
+    if not relative:
+        return None
+    path = _safe_repo_file(repo_root, relative)
+    registry = _load_json(path, code="E_BLUEPRINT_ROUTE_REGISTRY_INVALID")
+    _validate_route_registry(registry)
+    if registry["subject"] != "PHYSICS":
+        fail("E_BLUEPRINT_ROUTE_REGISTRY_SUBJECT", str(registry["subject"]))
+    return registry, {
+        "registry_id": registry["registry_id"],
+        "path": relative,
+        "sha256": _file_digest(path),
+    }
+
+
+def _resolve_execution_route(
+    task: dict[str, Any],
+    manifest: dict[str, Any],
+    repo_root: Path,
+    packet_working_tree_state: str,
+) -> dict[str, Any]:
+    route_id = task.get("execution_route_id")
+    registry_binding = _route_registry_binding(manifest, repo_root)
+
+    if route_id is None:
+        return {
+            "status": "HELD_NO_ROUTE_REQUESTED",
+            "execution_authorized": False,
+            "authorization_scope": "P-A_INPUT_SELECTION_ONLY",
+            "route_id": None,
+            "route_registry": registry_binding[1] if registry_binding else None,
+            "input_bindings": [],
+            "label_inference": "PROHIBITED",
+            "reason": (
+                "No opaque execution_route_id was requested. Blueprint will not infer a route from grade, curriculum, topic, subtopic, learner state, or Engineering depth."
+            ),
+        }
+
+    if registry_binding is None:
+        return {
+            "status": "HELD_ROUTE_UNRESOLVED",
+            "execution_authorized": False,
+            "authorization_scope": "P-A_INPUT_SELECTION_ONLY",
+            "route_id": route_id,
+            "route_registry": None,
+            "input_bindings": [],
+            "label_inference": "PROHIBITED",
+            "reason": "The current Physics generation manifest declares no AgentTasks execution-route registry.",
+        }
+
+    registry, binding = registry_binding
+    matches = [row for row in registry["routes"] if row["route_id"] == route_id]
+    if len(matches) != 1:
+        return {
+            "status": "HELD_ROUTE_UNRESOLVED",
+            "execution_authorized": False,
+            "authorization_scope": "P-A_INPUT_SELECTION_ONLY",
+            "route_id": route_id,
+            "route_registry": binding,
+            "input_bindings": [],
+            "label_inference": "PROHIBITED",
+            "reason": f"Exact route ID {route_id} is not ACTIVE in the repository-owned route registry.",
+        }
+
+    if packet_working_tree_state != "CLEAN" or _git_working_tree_state(repo_root) != "CLEAN":
+        fail(
+            "E_BLUEPRINT_ROUTE_DIRTY_CHECKOUT",
+            "resolved P-A input custody requires a clean checkout at the packet HEAD",
+        )
+
+    route = matches[0]
+    input_bindings: list[dict[str, Any]] = []
+    for row in route["inputs"]:
+        if not row["path"].startswith("Grade 9/V2/Physics/"):
+            fail(
+                "E_BLUEPRINT_ROUTE_INPUT_OUTSIDE_SUBJECT",
+                row["path"],
+            )
+        path = _safe_repo_file(repo_root, row["path"])
+        input_bindings.append(
+            {
+                "role": row["role"],
+                "required": row["required"],
+                "path": row["path"],
+                "sha256": _file_digest(path),
+            }
+        )
+
+    return {
+        "status": "RESOLVED_REPOSITORY_ROUTE",
+        "execution_authorized": True,
+        "authorization_scope": "P-A_INPUT_SELECTION_ONLY",
+        "route_id": route_id,
+        "route_registry": binding,
+        "input_bindings": sorted(input_bindings, key=lambda row: row["role"]),
+        "label_inference": "PROHIBITED",
+        "reason": (
+            "Exact opaque route ID resolved through current Physics generation authority. Authorization is limited to selecting the bound P-A inputs; all downstream authority remains repository-governed."
+        ),
+    }
+
+
 def _validate_receipt(receipt: dict[str, Any]) -> None:
-    schema = json.loads(RECEIPT_SCHEMA.read_text(encoding="utf-8"))
+    schema = _load_json(RECEIPT_SCHEMA, code="E_BLUEPRINT_TASK_INTAKE_SCHEMA_INVALID")
     try:
         jsonschema.validate(receipt, schema)
     except jsonschema.ValidationError as exc:
@@ -85,6 +278,26 @@ def _validate_receipt(receipt: dict[str, Any]) -> None:
             exc.message,
         ) from exc
 
+    route = receipt["execution_route"]
+    resolved = route["status"] == "RESOLVED_REPOSITORY_ROUTE"
+    if route["execution_authorized"] is not resolved:
+        fail(
+            "E_BLUEPRINT_ROUTE_AUTHORIZATION_STATE",
+            "execution_authorized must be true exactly for RESOLVED_REPOSITORY_ROUTE",
+        )
+    if resolved:
+        roles = {row["role"]: row for row in route["input_bindings"]}
+        for required_role in ("QUESTION_SET", "DECLARED_TOPIC_SCOPE"):
+            if required_role not in roles or roles[required_role]["required"] is not True:
+                fail("E_BLUEPRINT_ROUTE_RECEIPT_INCOMPLETE", required_role)
+        if route["route_registry"] is None or route["route_id"] is None:
+            fail("E_BLUEPRINT_ROUTE_RECEIPT_INCOMPLETE", "registry/route identity")
+    elif route["input_bindings"]:
+        fail(
+            "E_BLUEPRINT_HELD_ROUTE_HAS_INPUTS",
+            "held routes may not bind P-A inputs",
+        )
+
 
 def consume_execution_packet(
     packet: dict[str, Any],
@@ -92,7 +305,7 @@ def consume_execution_packet(
     current_head: str | None = None,
     repo_root: Path | None = None,
 ) -> dict[str, Any]:
-    """Accept delegation context without accepting scope, truth, readiness, or release authority."""
+    """Accept delegation context and resolve only repository-owned P-A input routes."""
     try:
         validate_packet(packet)
     except PacketCompilationError as exc:
@@ -117,6 +330,7 @@ def consume_execution_packet(
             f"packet binds {packet_head} but Blueprint checkout is {actual_head}",
         )
     _verify_bound_authorities(packet, repo_root)
+    manifest = _subject_generation_manifest(packet, repo_root)
 
     # These assertions are deliberately redundant with the Shared packet schema.
     # They make the Blueprint consumer boundary explicit and fail closed if that
@@ -141,20 +355,12 @@ def consume_execution_packet(
             "delegation packet cannot authorize Blueprint consumers",
         )
 
-    # Current repository authority starts P-A from exact QuestionSet and
-    # DeclaredTopicScope artifacts. No repository-owned mapping currently binds
-    # a delegated task's free-text labels to an assessment-input set. Therefore
-    # execution must remain explicitly HELD rather than inferred from labels.
-    execution_route = {
-        "status": "HELD_NO_REPOSITORY_ROUTE",
-        "execution_authorized": False,
-        "required_authority": "REPOSITORY_OWNED_TASK_TO_ASSESSMENT_INPUT_ROUTE",
-        "label_inference": "PROHIBITED",
-        "reason": (
-            "Current Physics generation authority requires exact QuestionSet and DeclaredTopicScope inputs, "
-            "but declares no repository-owned route from delegated task intent to that input set."
-        ),
-    }
+    execution_route = _resolve_execution_route(
+        task,
+        manifest,
+        repo_root,
+        packet["repository_state"]["working_tree_state"],
+    )
 
     receipt: dict[str, Any] = {
         "schema_version": "1.0.0",
@@ -196,7 +402,7 @@ def consume_execution_packet(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Validate a Shared AgentTasks packet as non-authoritative Physics Blueprint delegation context"
+        description="Validate a Shared AgentTasks packet and resolve only repository-owned Physics P-A input routes"
     )
     parser.add_argument("--packet", type=Path, required=True)
     parser.add_argument("--output", type=Path)
