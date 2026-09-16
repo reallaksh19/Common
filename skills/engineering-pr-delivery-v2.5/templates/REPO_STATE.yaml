@@ -21,6 +21,7 @@ active_ep:
   id: "<EP-id>"
   path: agents/relay/execution-packages/<EP-id>.yaml
   state: EXECUTABLE
+  continuity_receipt: null
 last_checkpoint:
   id: NONE
   path: null
@@ -56,12 +57,18 @@ status_planes:
 projection:
   required: true
   state: PENDING
-  operation_id: "<stable projection operation id>"
+  # Top-level operation always represents the newest desired repository projection.
+  operation_id: "<stable operation id for newest desired generation>"
   target: "<durable external projection target>"
-  roadmap_revision: "<RM-xxxx>"
-  execution_ref: "<EP-id / PLAN-id / NONE>"
+  roadmap_revision: "<current RM-xxxx>"
+  execution_ref: "<current EP-id / PLAN-id / NONE>"
   receipt: null
   basis: []
+  # Required for STALE when the external surface still reflects an older generation.
+  observed: null
+  # Any intermediate desired generation that lost authority is retained here and
+  # chained through superseded_by to the current operation. Never retry these IDs.
+  superseded_operations: []
 relay_readiness:
   repository_ready: true
   projection_ready: false
