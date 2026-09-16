@@ -42,6 +42,8 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_design_authority_boundary.py'
       - name: Validate non-normative architecture catalog candidate
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_architecture_catalog_candidate.py'
+      - name: Validate executable-first architecture documentation drift audit
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_architecture_documentation_drift_audit.py'
       - name: Validate governed Engineering discovery vocabulary
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_discovery_vocabulary.py'
       - name: Run non-authoritative Engineering discovery falsifiers
