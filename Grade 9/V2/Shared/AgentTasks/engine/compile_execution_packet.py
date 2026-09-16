@@ -113,6 +113,7 @@ def compile_packet(
             "blueprint_change_policy": kind["blueprint_change_policy"],
         },
         "authority_bindings": resolved["authority_bindings"],
+        "governed_input_bindings": resolved["governed_input_bindings"],
         "learning_engineering_state": resolved["learning_engineering_state"],
         "engineering_preflight": resolved["engineering_preflight"],
     }
@@ -157,6 +158,7 @@ def main() -> None:
         resolved_view = {
             "repository_state": packet["repository_state"],
             "authority_bindings": packet["authority_bindings"],
+            "governed_input_bindings": packet["governed_input_bindings"],
             "learning_engineering_state": packet["learning_engineering_state"],
             "engineering_preflight": packet["engineering_preflight"],
         }
