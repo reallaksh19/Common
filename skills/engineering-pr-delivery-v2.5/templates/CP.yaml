@@ -25,4 +25,5 @@ successor:
   frontier_work_package: "<next-WP-or-null>"
   ep_id: "<next-EP-or-null>"
   parallel_plan: null
+  lane_id: null
   lanes: []
