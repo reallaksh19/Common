@@ -72,8 +72,6 @@ def reconcile(root:Path,observation_path:Path,apply:bool=False)->dict:
 
     plan=copy.deepcopy(plan);graph=copy.deepcopy(graph);state=copy.deepcopy(state);op=next(x for x in plan["operations"] if str(x.get("id"))==oid)
     prior_state=op.get("state");pub=op.setdefault("publication",{});ver=op.setdefault("verification",{});publication=obs.get("publication") or {};rb=obs.get("readback") or {}
-    # Normally begin_github_operation.py records the attempt before the write. This fallback
-    # only increments when reconciling a PREPARED operation whose attempt was not recorded.
     if publication.get("attempted") is True and prior_state=="PREPARED":
         pub["attempt_count"]=int(pub.get("attempt_count") or 0)+1
         pub["last_attempt_basis"]=list(obs.get("candidate_basis") or [])
@@ -81,7 +79,9 @@ def reconcile(root:Path,observation_path:Path,apply:bool=False)->dict:
     if publication.get("error") not in {None,""}:pub["last_error"]=publication.get("error")
     result=obs.get("result")
     if result=="VERIFIED":
-        op["state"]="VERIFIED";ver.update({"status":"PASS","observed_issue_number":rb.get("issue_number"),"observed_issue_id":rb.get("issue_id"),"observed_github_state":rb.get("github_state"),"observed_relationships":list(rb.get("relationships") or []),"basis":list(rb.get("basis") or []),"recovered_without_receipt":pub.get("receipt") in {None,""}})
+        recovered=pub.get("receipt") in {None,""}
+        if recovered:pub["receipt"]=f"READBACK_RECOVERY:{gid}:{oid}"
+        op["state"]="VERIFIED";ver.update({"status":"PASS","observed_issue_number":rb.get("issue_number"),"observed_issue_id":rb.get("issue_id"),"observed_github_state":rb.get("github_state"),"observed_relationships":list(rb.get("relationships") or []),"basis":list(rb.get("basis") or []),"recovered_without_connector_receipt":recovered})
         _apply_effects(graph,op,obs)
     elif result=="UNCONFIRMED":
         op["state"]="PUBLISHED_UNCONFIRMED" if pub.get("receipt") not in {None,""} else "ATTEMPTED_UNCONFIRMED";ver.update({"status":"NOT_RUN","basis":list(rb.get("basis") or [])})
