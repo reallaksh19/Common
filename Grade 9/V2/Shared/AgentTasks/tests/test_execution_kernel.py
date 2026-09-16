@@ -161,6 +161,30 @@ class ExecutionKernelTests(unittest.TestCase):
             adapter["runtime_authority"],
         )
 
+    def test_generation_authority_grade_scope_matches_or_holds_generically(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            packet_match = self.compile_in_copy(root)
+            grade_scope = packet_match["learning_engineering_state"]["subject_adapter"]["generation_authority_scope"]
+            self.assertEqual(grade_scope["task_grade"], self.task["grade"])
+            self.assertIn(self.task["grade"], grade_scope["declared_grades"])
+            self.assertEqual(grade_scope["grade_state"], "MATCH")
+
+            mismatched = copy.deepcopy(self.task)
+            mismatched["task_id"] = "TASK-GENERIC-GRADE-MISMATCH"
+            mismatched["grade"] = self.task["grade"] + 2
+            packet_mismatch = compile_packet(
+                mismatched,
+                repo_root=root,
+                head_sha=FIXED_HEAD,
+                working_tree_state="CLEAN",
+            )
+            mismatch_scope = packet_mismatch["learning_engineering_state"]["subject_adapter"]["generation_authority_scope"]
+            self.assertEqual(mismatch_scope["grade_state"], "MISMATCH")
+            self.assertEqual(packet_mismatch["engineering_preflight"]["engineering_state"], "NOT_EVALUATED")
+            self.assertEqual(packet_mismatch["engineering_preflight"]["publication_authorization"], "NOT_IMPLIED")
+            self.assertTrue(any("task grade" in blocker.lower() for blocker in packet_mismatch["engineering_preflight"]["blockers"]))
+
     def test_task_registry_contains_no_subject_ontology(self):
         text = (AGENT_TASKS / "registry" / "task-kind-registry.v1.json").read_text(encoding="utf-8").lower()
         banned = [
