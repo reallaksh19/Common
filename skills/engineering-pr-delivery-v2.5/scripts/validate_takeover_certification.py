@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 from typing import Any
 from relaylib import load_yaml,print_result,require
-from takeoverlib import expected_basis,find_route,route_key
+from takeoverlib import current_routes,expected_basis,find_route,route_key
 from validate_discovery_receipt import validate_file as validate_discovery
 from validate_ep_self_contained import validate_ep_data as validate_ep_self_contained
 from validate_ep_semantics import validate_ep_data as validate_ep_semantics
@@ -101,7 +101,7 @@ def validate(root:Path):
     e=[];w=[];state=load_yaml(root/"agents/relay/REPO_STATE.yaml")
     admissions=state.get("takeover_admissions",[]) or []
     if not isinstance(admissions,list):return ["REPO_STATE.takeover_admissions must be a list"],w
-    seen=set();current={route_key(r):r for r in __import__('takeoverlib').current_routes(root,state)}
+    seen=set();current={route_key(r):r for r in current_routes(root,state)}
     for i,admission in enumerate(admissions):
         label=f"takeover_admissions[{i}]"
         if not isinstance(admission,dict):e.append(f"{label} must be a mapping");continue
@@ -122,6 +122,8 @@ def validate(root:Path):
             tc=load_yaml(root/str(cp.get("path")))
             if str(tc.get("id"))!=str(cp.get("id")):e.append(f"{label}.certification.id does not match certification file")
             if tc.get("result")!="PASS":e.append(f"{label} points to non-PASS Takeover Certification")
+            tdp=tc.get("discovery_receipt") or {}
+            if str(tdp.get("id"))!=str(dp.get("id")) or str(tdp.get("path"))!=str(dp.get("path")):e.append(f"{label}.discovery_receipt pointer must exactly match the certification discovery receipt")
         elif _text(cp.get("path")):e.append(f"{label}.certification.path does not exist: {cp.get('path')}")
     return e,w
 
