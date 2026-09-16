@@ -11,6 +11,10 @@ implementation_result:
   files_changed: []
 acceptance_results: []
 validation_results: []
+quality_review:
+  id: QRV-0001
+  path: agents/relay/quality/QRV-0001.yaml
+  digest: "<sha256 canonical QRV digest>"
 quality_findings: []
 known_limitations: []
 discoveries: []
