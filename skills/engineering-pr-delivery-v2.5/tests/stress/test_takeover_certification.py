@@ -64,10 +64,10 @@ class TakeoverCertificationStressTests(unittest.TestCase):
             root=Path(td);good(root);disc,_,route=attach_takeover(root);disc["steps"][0]["outputs"]=disc["steps"][0]["outputs"][:1];path=root/"agents/relay/certifications/discovery/DISC-1.yaml";dump(path,disc)
             errors=discovery_file(root,path,load_yaml(root/"agents/relay/REPO_STATE.yaml"),route,"agent-B")[0];self.assertTrue(any("exactly cover" in x for x in errors))
 
-    def test_phase_qualification_boundary_cannot_be_bypassed_by_tc(self):
+    def test_qualification_boundary_cannot_be_bypassed_by_tc(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);good(root);ep_path=root/"agents/relay/execution-packages/EP-1.yaml";ep=load_yaml(ep_path);ep["phase_transition"]={"required":True};dump(ep_path,ep);attach_takeover(root)
-            self.assertTrue(any("cannot PASS while qualification is required" in x for x in takeover(root)[0]))
+            root=Path(td);good(root);ep_path=root/"agents/relay/execution-packages/EP-1.yaml";ep=load_yaml(ep_path);ep["qualification_boundary"]={"required":True};dump(ep_path,ep);attach_takeover(root)
+            self.assertTrue(any("incoming EP requires qualification but TC does not" in x for x in takeover(root)[0]))
 
     def test_parallel_certification_is_route_scoped(self):
         with tempfile.TemporaryDirectory() as td:
