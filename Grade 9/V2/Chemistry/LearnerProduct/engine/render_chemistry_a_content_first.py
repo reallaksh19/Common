@@ -18,7 +18,6 @@ from render_chemistry_learner_products import (
     _draw_provenance,
     _source_prompt,
     _visuals_for_refs,
-    capability_title,
     digest,
     public_text,
     representation_index,
@@ -132,9 +131,18 @@ def render_core1a_content_first(manuscript, representations, policy, path):
         writer.heading(f"Part {bi} — {public_text(bucket['learner_title'])}")
         writer.concept_panel("THE IDEA THAT HOLDS THIS PART TOGETHER", bucket["bucket_invariant"])
 
-        for si, section in enumerate(bucket["teaching_sections"], 1):
+        atoms = bucket.get("learning_atoms") or []
+        sections = bucket.get("teaching_sections") or []
+        if len(atoms) != len(sections):
+            raise ValueError(
+                f"CHEM_LP_RENDER_CORE1A_SECTION_ATOM_COUNT_MISMATCH:{len(sections)}:{len(atoms)}"
+            )
+        for si, (atom, section) in enumerate(zip(atoms, sections), 1):
             ref = f"C1A-B{bi:02d}-S{si:02d}"
-            writer.heading(capability_title(section["capability_ref"]), 2, ref)
+            learner_heading = public_text(atom.get("learner_title"))
+            if not learner_heading:
+                raise ValueError(f"CHEM_LP_RENDER_CORE1A_ATOM_TITLE_REQUIRED:{bi}:{si}")
+            writer.heading(learner_heading, 2, ref)
             writer.concept_panel("SEE THE IDEA", section.get("see") or section.get("activation"), ref)
             writer.label("EXPLAIN", ref)
             writer.bullets(section.get("explain"), ref)
@@ -144,6 +152,8 @@ def render_core1a_content_first(manuscript, representations, policy, path):
                 raise ValueError("CHEM_LP_RENDER_REQUIRED_VISUAL_MISSING:" + ref)
             visual_rows.append({
                 "content_ref": ref,
+                "learning_atom_ref": atom.get("atom_id"),
+                "learner_heading": learner_heading,
                 "required_refs": refs,
                 "realized": realized,
                 "unavailable_secondary_refs": unavailable,
