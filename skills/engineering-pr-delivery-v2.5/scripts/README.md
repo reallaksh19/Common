@@ -19,18 +19,24 @@ python inspect_git_context.py <repo-root>
 
 `resolve_execution_route.py` selects the serial EP or exactly one approved parallel lane from the checked-out branch/worktree. `inspect_git_context.py` verifies expected branch/material ancestry and compares the current base branch with the EP's observed base. If the base moved it returns `NEEDS_DRIFT_RECEIPT` plus changed paths; it never auto-classifies drift as safe. The drift receipt may preserve `WRITE` only for a fully `DISJOINT` result or a qualified-boundary result whose independent confirmation is satisfied; otherwise execution remains `READ_ONLY` until reconciliation.
 
-Roadmap, projection, drift and parallel diagnostics:
+Projection, drift, issue and parallel diagnostics:
 
 ```bash
-python validate_roadmap_continuity.py <repo-root>
 python validate_projection_convergence.py <repo-root>
 python validate_drift_receipt.py <repo-root>
+python validate_issue_graph.py <repo-root>
+python validate_issue_projection_tree.py <repo-root>
+python validate_issue_closure.py <repo-root>
+python validate_supersession.py <repo-root>
 python validate_parallel_plan.py <repo-root>
 python validate_parallel_join.py <repo-root>
 python validate_parallel_replan.py <repo-root>
+python validate_roadmap_continuity.py <repo-root>
 ```
 
-If an active serial EP was generated from an older roadmap revision, a `ROADMAP_CONTINUITY` receipt is mandatory. `validate_roadmap_continuity.py` walks every intervening revision record from the EP revision to the current roadmap revision. `CONTINUE_UNCHANGED` requires the active WP to be explicitly listed as unaffected in every covered revision, all contract-impact checks false and the WP still on the computed frontier. `RECONCILE_REQUIRED` keeps repository custody recoverable but requires `active_ep.state: RECONCILING` and `material_authority: READ_ONLY`. `INVALIDATED` cannot remain attached to an active EP.
+`validate_issue_projection_tree.py` treats `PARENT_OF` as a coordination projection tree, never an alternative roadmap. The parent graph must be acyclic and every child has at most one direct parent. Aggregate parents carry a `graph_revision`-bound `child_rollup` that exactly snapshots direct child work/GitHub state; parent work state is deterministically projected from those direct children. A closed aggregate parent cannot hide an open direct child, and the rule recursively covers deep trees because aggregate children are validated the same way.
+
+`validate_supersession.py` supports multi-generation A -> B -> C issue replacement. Supersession is linear and acyclic at issue level. An intermediate successor must carry inherited unresolved acceptance/evidence unchanged into its outgoing receipt or explicitly resolve the inherited item with durable basis. Silent drop, status/basis mutation, double carry+resolve, resolution of unknown inherited IDs, branching successors, multiple direct predecessors and cycles are invalid. Work splitting belongs in roadmap/child-issue topology rather than competing supersession edges.
 
 Required external projection publication is idempotent: persist a stable `operation_id` and target before publication, record `PUBLISHED_UNCONFIRMED` when a receipt is observed but not yet verified, and move to `IN_SYNC` only after the receipt is reconciled against current roadmap/execution state. After an interruption, reconcile the same operation before attempting another publication.
 
@@ -44,6 +50,8 @@ Replacement parallel plans also persist `previous_replan_path`. `validate_parall
 
 After replan, route resolution reads only the current `REPO_STATE.execution_policy.parallel_plan`; stale predecessor-plan branches/worktrees resolve no executable lane unless the new approved plan explicitly reuses that route and the new EP independently passes live Git/material-basis checks.
 
+`validate_roadmap_continuity.py` handles long-lived serial EPs across roadmap revisions. An old-revision EP requires a `ROADMAP_CONTINUITY` receipt covering every intervening revision. `CONTINUE_UNCHANGED` requires explicit unaffected classification plus no contract impact; `RECONCILE_REQUIRED` forces `active_ep.state: RECONCILING` and `READ_ONLY`; `INVALIDATED` forbids the old EP from remaining active.
+
 Safe initialization and migration helpers:
 
 ```bash
@@ -56,7 +64,7 @@ python inventory_v2_relay.py <repo-root> --output <inventory.yaml>
 python prepare_v2_migration.py <inventory.yaml> --output <reconciliation.yaml>
 ```
 
-Aggregate relay conformance verifies repository lifecycle/routing, roadmap topology/frontier, active-EP roadmap continuity, self-contained serial EPs or every Owner-approved parallel lane EP, acceptance mapping, EP staleness, calculated progress, execution/material authority, projection/readiness consistency, drift receipts, serial/fork/join/replan baton linkage, Owner-decision semantics, phase-transition Q1-Q5, issue graph/closure/supersession, and roadmap transactions.
+Aggregate relay conformance verifies repository lifecycle/routing, roadmap topology/frontier, self-contained serial EPs or every Owner-approved parallel lane EP, acceptance mapping, EP staleness/continuity, calculated progress, execution/material authority, projection/readiness consistency, drift receipts, serial/fork/join/replan baton linkage, Owner-decision semantics, phase-transition Q1-Q5, issue graph/tree/closure/supersession lineage, and roadmap transactions.
 
 Checkpoint validation binds executable PASS/FAIL/NOT_RUN evidence to the checkpoint's exact `execution_basis.material_ref`; evidence from another material head cannot silently qualify the current checkpoint.
 
