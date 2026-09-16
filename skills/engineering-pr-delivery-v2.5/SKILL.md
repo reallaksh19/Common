@@ -1,32 +1,42 @@
 ---
 name: engineering-pr-delivery-v2.5
-description: Roadmap-first engineering relay for durable multi-agent delivery. The repository owns a dynamic overall roadmap, deterministic executable frontier, self-contained execution packages, checkpoints, calculated progress, issue projection, owner-decision transactions, phase-transition qualification, and serial-by-default material execution.
+description: Roadmap-first engineering relay for durable zero-chat multi-agent delivery, with semantic execution packages, independent takeover certification, evaluated engineering qualification, calculated progress, issue projection, drift/continuity control, and serial-by-default material execution.
 ---
 
 # Engineering PR Delivery v2.5 — engineering relay with a dynamic overall roadmap
 
 ## Governing objective
-A replacement agent entering the repository with no conversational history must be able to locate the authoritative overall roadmap, determine the current roadmap position/frontier, resolve the authorized execution route from the live checkout, execute the authorized work, validate it against an exact material basis, checkpoint reality, reconcile the roadmap, recompute the frontier, and leave a validated successor relay. Conversation is acceleration, never custody.
+
+A replacement agent with no conversational history must be able to recover Owner intent, roadmap position, authorized work, inputs/oracles, scope, predecessor custody, evidence and exact next work from repository state alone; independently prove takeover; execute only when live write readiness permits; checkpoint reality; reconcile roadmap/progress/issues; and leave an equally strong baton.
+
+Conversation is acceleration, never custody.
 
 ## Repository-agnostic core
-The Common implementation is portable policy, not downstream-project code. Generic skill logic, schemas, templates and validators must not encode downstream repository names, issue numbers, branch names, product domains, formulas or application-specific workflow semantics. Real repositories are read-only black-box validation/stress targets unless the Owner separately authorizes adoption. When a stress target exposes a weakness, repair the generic invariant/validator and add a synthetic reproduction; do not special-case that repository. Read `operating-model/repository-agnosticism.md`.
 
-## Authority order
+Common contains portable relay policy, schemas, templates, validators and synthetic tests. Do not encode downstream repository names, issue IDs, product formulas or workflow-specific exceptions. Real repositories are read-only black-box stress sources unless the Owner separately authorizes adoption. Reduce every discovered weakness to a repository-neutral invariant plus synthetic regression before changing Common protocol logic.
+
+## Authority chain
+
 ```text
-explicit Owner intent / Owner Decision Record
+explicit Owner intent / ODR
 → OVERALL_ROADMAP.yaml
 → executable frontier
-→ current serial EP or Owner-approved parallel router
-→ live Git route/basis confirmation
-→ material authority check
+→ semantic EP or Owner-approved parallel router
+→ BATON_READY
+→ incoming candidate DISC / QUAL / TC evidence
+→ TAKEOVER_CERTIFIED(route,candidate)
+→ live route + Git basis + MATERIAL_WRITE_READY
 → implementation / read-only reconciliation as authorized
 → checkpoint/evidence
-→ roadmap reconciliation
-→ required projection convergence
+→ roadmap / progress / issue reconciliation
+→ required external projection convergence
+→ successor baton
 ```
-GitHub Issues are a coordination projection. They do not replace roadmap or repository authority.
+
+GitHub Issues and generated Markdown are projections, not roadmap authority.
 
 ## Required relay root
+
 ```text
 agents/relay/
   REPO_STATE.yaml
@@ -38,145 +48,267 @@ agents/relay/
     revisions/**
     owner-decisions/**
   execution-packages/**
+  certifications/
+    discovery/**
+    qualification/**
+    takeover/**
   checkpoints/**
   parallel/**
   drift/**
   reports/**
   generated/**
 ```
-`REPO_STATE.yaml` is the deterministic bootstrap locator: which roadmap, lifecycle state, current position, execution policy, projection state, readiness state, predecessor checkpoint/join/replan baton, and what—if anything—can execute now.
 
-## Relay lifecycle
-`REPO_STATE.relay_state` is exactly one of:
+`REPO_STATE.yaml` is the deterministic bootstrap locator.
+
+## Lifecycle and execution policy
+
+Relay lifecycle:
+
 ```text
-INITIALIZING — relay scaffold exists; no material EP is executable yet
-ACTIVE       — serial material work; exactly one frontier WP and one active EP
-PARALLEL     — Owner-approved fork; REPO_STATE is a router and lane EPs live in the parallel plan
+INITIALIZING — scaffold exists; no material EP is executable
+ACTIVE       — one serial frontier WP and one active EP
+PARALLEL     — Owner-approved parallel router; lane EPs live in the plan
 IDLE         — no executable material work currently exists
-TERMINAL     — roadmap work is complete; no material successor exists
+TERMINAL     — roadmap work is complete
 ```
-`INITIALIZING | IDLE | TERMINAL` require an empty computed frontier and `active_ep.state: NONE`. `ACTIVE` requires `SERIAL`. `PARALLEL` requires `OWNER_APPROVED_PARALLEL`, `active_ep.state: ROUTER`, an approved plan, and at least two computed frontier nodes.
 
-## Core objects
-- Overall Roadmap: authoritative objectives, phases, work packages, dependencies, definition maturity, status and execution eligibility.
-- Executable frontier: work package(s) whose prerequisites are satisfied and current execution policy permits.
-- EP: forward-looking executable work contract derived from a frontier node.
-- CP: backward-looking checkpoint of what actually happened on one EP.
-- ODR: durable Owner Decision Record for intent changes, deferrals and bounded Owner dispositions.
-- Progress Basis: revisioned denominator/numerator basis for calculated progress.
-- Issue Graph: GitHub relationship projection.
-- Parallel Plan: Owner-approved router for a multi-node frontier, including lane EPs, isolation and integration semantics.
-- Parallel Join Receipt: multi-parent baton that proves all approved lane checkpoints converged before integration.
-- Parallel Replan Receipt: transaction that retires an invalid parallel topology while retaining completed siblings and transferring unresolved lane custody into a recomputed successor route.
-- Drift Receipt: explicit classification of base-branch movement against the current EP scope and qualification boundary.
-- Projection state: idempotent publication/convergence state for required external coordination surfaces.
+`INITIALIZING | IDLE | TERMINAL` have no active material EP. `ACTIVE` requires `SERIAL`. `PARALLEL` requires `OWNER_APPROVED_PARALLEL`, an approved plan and at least two current frontier WPs.
 
-EP and CP are different objects and must never substitute for each other.
+Material execution is **serial by default**. Do not infer parallelism from apparent independence.
 
 ## Dynamic roadmap
-Roadmap mutation has three classes:
+
+Roadmap mutation classes:
+
 ```text
-A. EXECUTION_DERIVED_STATUS
-B. ENGINEERING_DISCOVERY_PROPOSAL
-C. OWNER_INTENT_MUTATION
-```
-Agents may apply factual A updates, may propose B structural changes, and require explicit Owner authority through an ODR for C changes. Every material revision reconciles dependencies, stale EPs, issue projection, progress basis and frontier.
-
-A revision is not reconciled merely because it names a new frontier or progress basis. `frontier_after` must equal the frontier computed from the resulting roadmap. If the progress denominator changes, the revision must create a new Progress Basis ID bound to the new roadmap revision.
-
-## Owner decisions and deferral
-ODR decision kinds are:
-```text
-INTENT_MUTATION | DEFERRAL | AUTHORIZATION | DECLINE | NO_CHANGE_CONFIRMATION
-```
-An Owner deferral is not technical satisfaction. `DEFERRAL` keeps named requirements `PENDING_NOT_SATISFIED` and does not itself grant material-write authority. A relay may remain recoverable and permit read-only reconciliation while a deferred confirmation remains pending. An `OWNER_INTENT_MUTATION` roadmap revision must reference an applied `INTENT_MUTATION` ODR, not merely any applied Owner decision.
-
-## Serial execution
-Default is `SERIAL`. In `relay_state: ACTIVE`, exactly one material executable frontier node and one active material EP exist. Read-only exploration may be broad. An agent does not start another material stream merely because it appears independent.
-
-## Owner-approved parallel execution
-Parallel material work requires explicit Owner approval of a named plan with an ASCII topology. `REPO_STATE.active_ep` becomes a router and must not contain a lane EP path. The plan must exactly cover the computed frontier and declares, for every lane:
-- unique lane ID, WP, EP ID/path, branch and optional worktree;
-- exclusive write domains and shared read domains;
-- normal self-contained EP, acceptance and roadmap binding;
-- the same prior checkpoint baton when a fork follows a checkpoint.
-
-Any overlapping write domains require a specific Owner-approved shared-write exception naming the lane pair, overlap domain and reason. Otherwise overlap is invalid. The integration WP must depend on every lane WP and remain non-executable until all lane work completes.
-
-A completed lane checkpoint uses `successor.mode: JOIN`; it does not claim the integration EP directly. Once every approved lane checkpoint exists and every lane WP is complete, a `PARALLEL_JOIN` receipt must cover all lanes exactly once and prove the integration WP is the sole recomputed frontier. Only then may the integration EP execute as normal `ACTIVE` + `SERIAL` work with `identity.previous_join` pointing to the join receipt. After the integration EP produces its checkpoint, ordinary single-checkpoint serial custody resumes.
-
-If any lane becomes stale, invalid, unauthorized, superseded, or otherwise unable to continue under the approved topology, the old parallel plan loses material-write authority as a whole. Do not let unaffected lanes silently continue under a stale plan. Create a `PARALLEL_REPLAN` receipt as defined in `operating-model/parallel-replan.md`: every predecessor lane is `COMPLETE | CARRIED | INVALIDATED`, completed sibling checkpoints are retained, unresolved acceptance/evidence transfers with exact status/basis, the roadmap frontier is recomputed, and the successor route is selected from frontier cardinality (`NONE`, one serial EP, or a newly Owner-approved parallel plan). The direct successor route references the receipt through `previous_replan`.
-
-Ambiguous branch/worktree routing means no material execution.
-
-## EP contract
-Every EP contains: identity, `git_basis`, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope.allowed, scope.prohibited, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract and successor_relay.
-
-Exactly one durable predecessor baton may be active for an EP: `identity.previous_checkpoint`, `identity.previous_join`, or `identity.previous_replan`. The first EP uses `previous_checkpoint: NONE`. An integration EP following a fork uses `previous_join`; a replacement EP produced by a parallel replan uses `previous_replan` plus `replan_inheritance`, which retains the transferred unresolved acceptance/evidence exactly. Every serial EP and every parallel lane EP must be executable without chat context. Every acceptance criterion maps to verification.
-
-## Live Git routing and base drift
-Before material writes, run the route/basis checks documented in `operating-model/git-observation.md`.
-
-Every executable EP declares:
-```text
-git_basis.expected_branch
-git_basis.material_ref
-git_basis.base_branch
-git_basis.base_observed_ref
-git_basis.drift_policy = RECHECK_BEFORE_WRITE
-git_basis.drift_receipt
+EXECUTION_DERIVED_STATUS
+ENGINEERING_DISCOVERY_PROPOSAL
+OWNER_INTENT_MUTATION
 ```
 
-`resolve_execution_route.py` resolves the serial EP or exactly one parallel lane from the checked-out branch/worktree. Mismatch or ambiguity means no material execution.
+Agents may apply factual status updates, may propose structural discoveries, and require an applied Owner Decision Record for Owner-intent mutations. Material revisions reconcile dependencies, EP continuity/staleness, issues, Progress Basis and the computed frontier. `frontier_after` must equal the frontier computed from the resulting roadmap.
 
-`inspect_git_context.py` checks expected branch, verifies that `material_ref` remains an ancestor of current HEAD, and compares the live base branch to `base_observed_ref`. If the base moved, the command reports changed paths and requires a durable drift receipt; it never auto-classifies the drift safe.
+Owner deferral is not technical satisfaction. A `DEFERRAL` keeps named items pending and does not itself grant write authority.
 
-Drift classifications are:
+## Semantic Execution Package
+
+Every serial EP and approved parallel lane EP is a forward work contract for one roadmap work package. It contains:
+
+- identity and exact Git basis;
+- roadmap source/frontier origin;
+- outcome and context capsule;
+- executable `DSTEP-*` repository discovery;
+- typed current/future inputs with authority, source, editability, applicability, resolution and stale conditions;
+- benchmark/oracle contracts with payload, expected result, tolerance/exactness and independence;
+- allowed writes/reads, protected invariants, prohibited and Owner-reserved scope;
+- structured anti-drift;
+- exact implementation steps mapped to inputs, ACs and tests;
+- quality applicability;
+- acceptance and validation contracts;
+- optional `qualification_boundary`;
+- source-bound report payloads;
+- checkpoint and successor duties.
+
+Exactly one predecessor baton is active: checkpoint, parallel join or parallel replan. EP and CP are different objects and never substitute for each other.
+
+Read `operating-model/execution-package.md`.
+
+## Five readiness predicates
+
+Do not collapse readiness into lifecycle.
+
+### BATON_READY
+
+Candidate-independent repository property:
+
+```text
+valid roadmap/frontier
++ semantic current EP/plan
++ valid predecessor custody
++ admitted profile/protocol basis
++ complete discovery/input/oracle/scope/report/successor contract
++ valid QSET when fresh qualification is required
++ no chat dependency
+```
+
+A baton can be ready before the future replacement agent exists.
+
+### TAKEOVER_CERTIFIED(route,candidate)
+
+Candidate-specific proof:
+
+```text
+BATON_READY
++ current DISC receipt PASS
++ current TC receipt PASS
++ current QUAL receipt PASS when required
++ all evidence bound to current route/roadmap/EP/profile/predecessor/material basis
+```
+
+It is route-scoped, including per lane under approved parallel work.
+
+### PROJECTION_READY
+
+Every required external coordination projection represents current repository truth.
+
+### HANDOVER_READY
+
+```text
+HANDOVER_READY = BATON_READY AND PROJECTION_READY
+```
+
+This describes outgoing custody completeness, not arbitrary candidate write permission.
+
+### MATERIAL_WRITE_READY
+
+Runtime-derived only:
+
+```text
+TAKEOVER_CERTIFIED(route,candidate)
++ live route resolves exactly that route
++ live Git/material basis acceptable
++ drift/continuity permits WRITE
++ material_authority == WRITE
++ execution.can_continue == true
++ no active hard stop
+```
+
+Never persist this as a timeless boolean.
+
+Read `operating-model/takeover-certification.md`.
+
+## Discovery and takeover certification
+
+EP discovery instructions use `DSTEP-*`. Incoming candidate evidence uses `DISC-*`.
+
+A Discovery Receipt is bound to candidate, exact route, roadmap/protocol/material basis, semantic EP digest, `REPO_PROFILE` digest, predecessor-baton digest, required DSTEP coverage and expected output names. `conversation_context_used` must be false.
+
+A `TC-*` Takeover Certification records candidate, preparer, evaluator, DISC pointer, optional QUAL pointer/digest, exact route/basis, objective checks and final PASS/FAIL. Candidate self-preparation/self-certification is invalid. Validators re-open evidence and recompute current basis; YAML assertions are not authority.
+
+## Engineering qualification — QSET / QUAL
+
+Fresh qualification is mandatory when:
+
+```text
+PHASE_CHANGED
+OR
+MATERIAL_QUALIFICATION_BOUNDARY_CHANGED
+```
+
+A same-phase boundary change includes material change in production path, engineering authority, numerical method, protected invariant, input authority or verification/oracle class.
+
+Inline `phase_transition.questions` is retired. A required EP boundary references a durable `QSET-*` bound to the exact route and EP contract digest.
+
+The transaction is:
+
+```text
+outgoing agent prepares QSET
+→ incoming candidate answers from repository only
+→ independent/deterministic evaluation
+→ QUAL-* receipt
+→ TC cites QUAL id/path/digest
+```
+
+Q1–Q5 semantics:
+
+```text
+Q1 actual production path, state owner, authority source and downstream consumer
+Q2 engineering reconstruction; quantitative work carries concrete payload values
+Q3 explicit mutation + protected invariant + exact falsifier
+Q4 independent verification using incoming benchmark/oracle evidence
+Q5 exact first bounded change + predicted before/after verification
+```
+
+The candidate cannot prepare its own QSET or be its own `INDEPENDENT_AGENT` evaluator. QUAL PASS requires all five evaluations PASS. Editing QUAL after TC issuance invalidates takeover via digest mismatch.
+
+Read `operating-model/phase-transition.md`.
+
+## Live Git routing and drift
+
+Before material writes, use the runtime write gate or diagnose its components:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
+python skills/engineering-pr-delivery-v2.5/scripts/resolve_execution_route.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/inspect_git_context.py <repo-root>
+```
+
+Every EP declares expected branch, material ref, base branch, observed base ref, `RECHECK_BEFORE_WRITE` and optional drift receipt.
+
+Base drift classifications:
+
 ```text
 DISJOINT
 WITHIN_QUALIFIED_BOUNDARY
 OVERLAPPING
 UNKNOWN
 ```
-`DISJOINT` has no affected scope and preserves the EP. `WITHIN_QUALIFIED_BOUNDARY` must name the durable qualification basis and an independent confirmation state. If confirmation is `REQUIRED` or `DEFERRED_PENDING`, material authority is `READ_ONLY` until confirmation is satisfied. `OVERLAPPING` or `UNKNOWN` also removes `WRITE` authority and requires reconciliation before material execution; they do not make repository recovery invalid. Commit count or “one commit behind” is never sufficient evidence of safety.
 
-## Checkpoint successor and evidence contract
-Every checkpoint declares `successor.mode`:
+`DISJOINT` may preserve writes. `WITHIN_QUALIFIED_BOUNDARY` requires durable qualification and confirmation; pending confirmation is READ_ONLY. `OVERLAPPING | UNKNOWN` withhold WRITE until reconciliation. Commit count is never safety evidence.
+
+## State planes
+
+`REPO_STATE` carries independent planes:
+
 ```text
-SERIAL   — one frontier work package and one successor EP
-PARALLEL — one approved parallel plan plus exact lane {WP, EP} receipts
-JOIN     — one completed parallel lane waiting for the parallel join receipt
-NONE     — no material successor
-```
-Checkpoint mode, REPO_STATE lifecycle, current position/router and successor EP/lane/join references must agree.
-
-Every checkpoint also declares `execution_basis.material_ref`. Each executable `PASS`, `FAIL`, or `NOT_RUN` validation result is bound to that exact material reference. Evidence observed on another head may be retained as history, but it cannot silently qualify the current checkpoint. `NOT_RUN` also carries an explicit reason.
-
-## Separate state planes and material authority
-`REPO_STATE.yaml` carries four independent status planes:
-```text
-EXECUTION — what is happening, whether useful work can continue, and material authority
+EXECUTION — state, can_continue, material_authority, next action
 QUALITY   — maintainability/design/UX findings
-EVIDENCE  — what was actually run/proven/not run
-STOP      — true hard-stop condition only
+EVIDENCE  — what actually ran/proved/did not run
+STOP      — true hard stop only
 ```
-Execution separately carries:
+
+`can_continue: true + READ_ONLY` is valid. `NOT_RUN` is evidence truth, not automatically a stop.
+
+Hard stops are reserved for real inability to proceed safely:
+
 ```text
-can_continue: true | false
-material_authority: WRITE | READ_ONLY | NONE
+OWNER_DECISION_REQUIRED
+ESSENTIAL_INPUT_MISSING
+AUTHORITY_VIOLATION
+PROTECTED_INVARIANT_FAILURE
+WRITE_COLLISION
+SUPERSEDED_EP
+ROADMAP_CONFLICT
+REPOSITORY_STATE_CONFLICT
+UNSAFE_ENGINEERING_RESULT
 ```
-`can_continue:true + READ_ONLY` is valid: the agent may inspect, validate, reconcile and preserve custody but may not modify engineering state. `INITIALIZING | IDLE | TERMINAL` use `NONE`. An active hard stop can never retain `WRITE` authority.
 
-Do not use one overloaded `BLOCKED` state. `NOT_RUN` is evidence truth and is not a hard stop by itself. A hard stop must name an allowed category, reason and durable basis, and must set execution `can_continue: false`. Read `operating-model/state-planes.md`.
+An active hard stop cannot retain WRITE.
 
-Validation truth is `PASS | FAIL | NOT_RUN | NA`; test obligation is `MUST_PASS | SHOULD_RUN | INFORMATIONAL`.
+## Checkpoints and exact evidence
 
-Hard stops are reserved for true inability to proceed safely: `OWNER_DECISION_REQUIRED`, `ESSENTIAL_INPUT_MISSING`, `AUTHORITY_VIOLATION`, `PROTECTED_INVARIANT_FAILURE`, `WRITE_COLLISION`, `SUPERSEDED_EP`, `ROADMAP_CONFLICT`, `REPOSITORY_STATE_CONFLICT`, `UNSAFE_ENGINEERING_RESULT`.
+Checkpoint successor modes:
 
-## Projection convergence and handover readiness
-Repository recovery and external projection synchronization are different predicates. Read `operating-model/projection-convergence.md`.
+```text
+SERIAL
+PARALLEL
+JOIN
+NONE
+```
 
-Every required projection is prepared durably with a stable `operation_id`, target, current roadmap revision and current execution reference before publication. Projection states are:
+Checkpoint evidence is bound to `execution_basis.material_ref`. PASS/FAIL/NOT_RUN observed on another material head cannot silently qualify the current checkpoint. NOT_RUN carries an explicit reason.
+
+## Parallel execution
+
+Parallel work requires explicit Owner approval of a named plan and ASCII topology. Each lane declares unique route/branch/worktree, WP/EP, exclusive write domains and shared read domains. Overlapping writes require a specific Owner-approved exception.
+
+Lane completion uses `JOIN`; integration starts only after all approved lane checkpoints converge and integration is the sole computed frontier.
+
+If any lane becomes stale/invalid/unauthorized before convergence, the old plan loses material-write authority as a whole. A `PARALLEL_REPLAN` classifies every predecessor lane, retains completed checkpoints, transfers unresolved acceptance/evidence exactly, recomputes the frontier and produces either no route, one serial successor, or a newly Owner-approved parallel plan. Old plan branches/worktrees do not remain executable merely because they still exist.
+
+## Issue projection
+
+`ISSUE_GRAPH.yaml` models GitHub coordination relationships including parent/child, dependencies and evidence-preserving supersession. GitHub state is separate from engineering lifecycle state.
+
+`PARENT_OF` is an acyclic single-parent projection tree with revision-bound direct-child rollups. Parent closure cannot hide open child work.
+
+A → B → C supersession must preserve inherited unresolved acceptance/evidence exactly or record explicit durable resolution. Silent drop, status/basis mutation, branching successors and cycles are invalid.
+
+## Projection convergence
+
+Required external projections use stable operation IDs and states:
+
 ```text
 NOT_REQUIRED
 PENDING
@@ -184,71 +316,71 @@ PUBLISHED_UNCONFIRMED
 IN_SYNC
 STALE
 ```
-`PENDING` has no observed publication receipt. `PUBLISHED_UNCONFIRMED` records a receipt but remains not-ready until that receipt is reconciled against the current desired state. A replacement agent must reconcile the same operation ID/target before retrying, so an agent crash around publication does not intentionally create duplicate projection events. `IN_SYNC` requires a verified receipt and durable verification basis bound to the current roadmap revision and execution reference.
 
-`REPO_STATE.relay_readiness` separates:
-```text
-repository_ready — repository alone is sufficient for a replacement agent
-projection_ready — every required external projection is synchronized
-handover_ready   — repository_ready AND projection_ready
-```
-Projection lag does not rewrite engineering truth and is not automatically an engineering hard stop. It does prevent claiming complete custody handover. Release qualification is separate from relay handover readiness.
+Repository truth may advance while an external surface is stale. Top-level projection fields describe the newest desired generation; `observed` records the older external generation; intermediate desired generations move to immutable superseded history with no retry authority. Publish/reconcile only the newest authorized operation.
+
+Projection lag does not rewrite engineering truth or automatically create a hard stop, but it prevents `HANDOVER_READY` when projection is required.
 
 ## Progress
-Calculated only:
+
+Progress is calculated only:
+
 ```text
 Acceptance Criteria → EP → Work Package → Phase → Objective → Overall Roadmap
 ```
-Approved scope changes create a new Progress Basis; completed work is not rewritten to make percentages look stable.
 
-## Phase transitions
-Fresh Q1-Q5 are mandatory when the frontier enters a new phase and must derive from the incoming work contract:
-```text
-Q1 Production path
-Q2 Incoming engineering problem
-Q3 Boundaries and invariants
-Q4 Verification
-Q5 First safe implementation slice
-```
-Each question declares a fixed focus and one or more durable anchors from the incoming EP (phase/work-package IDs, AC IDs, TEST IDs, INPUT IDs or STEP IDs). Historical-domain reuse, unknown anchors, or a `to_phase` that differs from the incoming EP is invalid.
+Approved scope/denominator changes create a new Progress Basis. Do not preserve a flattering percentage by rewriting completed work.
 
 ## Relay durability
-Assume conversation termination cannot be predicted. Before material changes, durable roadmap/REPO_STATE/EP-or-plan/scope/inputs/acceptance must exist and the live execution route/Git basis plus material authority must be reconciled. At custody transfer: checkpoint → roadmap/progress/issues reconciliation → frontier recomputation → successor serial EP, approved parallel route, join, or replan → successor validation → cold-start PASS → required projection convergence → REPO_STATE readiness update. Code completion alone is not relay completion.
 
-For a continuing serial relay, `REPO_STATE.last_checkpoint`, that checkpoint's `SERIAL` successor, `REPO_STATE.current_position/active_ep`, and the active EP's `identity.previous_checkpoint` form one consistent baton link. For a fork, the predecessor checkpoint's `PARALLEL` successor, active plan lane receipts and every lane EP `previous_checkpoint` agree. For convergence, all lane CPs use `JOIN`, the `PARALLEL_JOIN` receipt covers every lane, `REPO_STATE.predecessor_join` names that receipt, and the integration EP uses `previous_join`. For partial-plan invalidation, `REPO_STATE.predecessor_replan` names the `PARALLEL_REPLAN` receipt and the direct successor EP/plan uses `previous_replan`. These predecessor batons are mutually exclusive. For a terminal/idle relay, the final checkpoint uses `successor.mode: NONE` unless the no-work state is the direct result of a replan transaction.
+Assume conversation can disappear at any time.
 
-## Safe bootstrap and migration
-Bootstrap must not invent executable work. Use a reviewed `BOOTSTRAP_MANIFEST.yaml`; `bootstrap_relay.py` is dry-run by default and `--apply` refuses to overwrite an existing relay. It creates `relay_state: INITIALIZING`, an empty executable frontier, no EP, empty join/replan predecessors, `material_authority: NONE`, and `repository_ready: false`.
+Before engineering writes, durable roadmap/EP-or-plan/discovery/inputs/oracles/scope/acceptance must exist and `MATERIAL_WRITE_READY` must pass for the current candidate/live checkout.
 
-V2 migration is evidence-first:
+At custody transfer:
+
 ```text
-inventory_v2_relay.py
-→ prepare_v2_migration.py
-→ human/agent reconciliation of Owner intent + roadmap + unresolved work
-→ explicit V2.5 Progress Basis
-→ first DETAILED frontier
-→ first genuine V2.5 EP
-→ conformance + cold-start PASS
+checkpoint
+→ roadmap/progress/issues reconciliation
+→ frontier recomputation
+→ successor EP/parallel route/join/replan/terminal disposition
+→ semantic baton validation
+→ QSET when fresh qualification is required
+→ BATON_READY
+→ required projection convergence
 ```
-A V2 endpoint is never automatically promoted to a V2.5 EP and narrative progress is never copied as calculated progress.
+
+A successor candidate later creates DISC/QUAL/TC evidence independently.
+
+## Safe bootstrap and V2 migration
+
+Bootstrap is dry-run by default and never fabricates executable work. It creates `INITIALIZING`, no EP and `material_authority: NONE` until roadmap/frontier reconciliation creates a genuine V2.5 work contract.
+
+V2 migration is evidence-first: inventory legacy state, reconcile Owner intent/unresolved work, establish an explicit V2.5 Progress Basis, compute a DETAILED frontier and create a genuine semantic V2.5 EP. Never auto-promote a V2 endpoint or copy narrative progress as calculated progress.
 
 ## Human handover
-Always show relay lifecycle, overall roadmap %, current phase %, current serial EP or parallel lane list, material authority, plain-language execution/quality/evidence/stop status, projection publication/convergence state, repository-recovery readiness, projection readiness, full handover readiness, exact next actions, parallel join/integration or replan disposition where applicable, phase-transition YES/NO, new Q1-Q5 when required, and `conversation context required: NO`. Initializing/idle/terminal handovers explicitly say there is no active material EP.
 
-## Validation and lifecycle entrypoints
+Generated views must report lifecycle, roadmap position/progress, current EP or lanes, execution/quality/evidence/stop state, baton readiness, projection readiness, full handover readiness, exact next work, predecessor join/replan/continuity where relevant, qualification boundary/receipt when relevant, and `conversation context required: NO`.
+
+WP-04/WP-07 will further expand complete task/AC checklists and plain-language Owner translation; machine objects remain authoritative.
+
+## Validation entrypoints
+
 ```bash
 python skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/cold_start_check.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/resolve_execution_route.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/inspect_git_context.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_discovery_receipt.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_question_set.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_qualification_receipt.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_projection_convergence.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/validate_drift_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_join.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_replan.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/stress_test_relay.py <repo-root> [<repo-root> ...]
 python skills/engineering-pr-delivery-v2.5/scripts/bootstrap_relay.py <manifest> <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/inventory_v2_relay.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/prepare_v2_migration.py <inventory>
 ```
 
-The Common repository includes `.github/workflows/engineering-pr-delivery-v2.5.yml`, scoped to this skill. It installs PyYAML, compile-checks scripts/tests, and runs the complete synthetic unit/stress suite on relevant PR/push changes. A green workflow proves the generic suite executed; it does not replace downstream black-box stress validation.
+The Common workflow `.github/workflows/engineering-pr-delivery-v2.5.yml` must explicitly execute both root unit discovery and dedicated `tests/stress/` discovery. Compilation alone is not stress-test evidence. See `operating-model/ci-evidence-correction.md`.
+
+A green generic workflow proves only that the repository-neutral protocol suite executed successfully; it does not substitute for downstream product/engineering validation.
