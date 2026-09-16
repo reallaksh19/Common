@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-ground-truth-manifest.schema.json",
+  "title": "Mathematics Ground Truth Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "schema_version",
+    "subject",
+    "evidence_items",
+    "manifest_digest"
+  ],
+  "properties": {
+    "manifest_id": {"type": "string", "pattern": "^MATH-GT-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "evidence_items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evidence"}
+    },
+    "manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "evidence_type",
+        "authority_class",
+        "availability",
+        "ref",
+        "digest",
+        "source_locator",
+        "scope_refs",
+        "notes",
+        "conflict_refs"
+      ],
+      "properties": {
+        "evidence_id": {
+          "type": "string",
+          "pattern": "^GT-(QUESTION_CORPUS|SYLLABUS|AUTHORITATIVE_SOURCE|ANSWER_KEY|SOLUTION_SET|FIGURE_SET)-[0-9a-f]{16}$"
+        },
+        "evidence_type": {
+          "enum": [
+            "QUESTION_CORPUS",
+            "SYLLABUS",
+            "AUTHORITATIVE_SOURCE",
+            "ANSWER_KEY",
+            "SOLUTION_SET",
+            "FIGURE_SET"
+          ]
+        },
+        "authority_class": {
+          "enum": ["ORIGINAL_EVIDENCE", "AUTHORITATIVE_SOURCE"]
+        },
+        "availability": {
+          "enum": ["PRESENT", "ABSENT", "PARTIAL", "UNRESOLVED", "CONFLICTED"]
+        },
+        "ref": {"type": ["string", "null"], "minLength": 1},
+        "digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "source_locator": {"type": ["string", "null"]},
+        "scope_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "notes": {"type": ["string", "null"]},
+        "conflict_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"availability": {"const": "ABSENT"}}},
+          "then": {
+            "properties": {
+              "ref": {"type": "null"},
+              "digest": {"type": "null"}
+            }
+          },
+          "else": {
+            "properties": {
+              "ref": {"type": "string", "minLength": 1},
+              "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"availability": {"const": "CONFLICTED"}}},
+          "then": {"properties": {"conflict_refs": {"type": "array", "minItems": 1}}}
+        }
+      ]
+    }
+  }
+}

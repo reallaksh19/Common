@@ -1,0 +1,26 @@
+{
+  "policy_id": "MATH-QUESTION-CITATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "placement": "INLINE_WITH_EACH_QUESTION",
+  "learner_label": "Where this question came from",
+  "source_core2_rule": {
+    "must_show_exact_core2_question_ref": true,
+    "must_show_source_locator": true,
+    "must_mark_text_relation": "EXACT_SOURCE"
+  },
+  "generated_rule": {
+    "must_disclose_fresh_origin": true,
+    "must_show_core1_or_core1a_concept_support": true,
+    "core2_anchor_required_when_used": true,
+    "competition_benchmark_must_state_style_only": true,
+    "official_past_question_claim_forbidden_without_verified_exact_source": true
+  },
+  "consolidated_bibliography_satisfies_question_citation": false,
+  "falsifiers": [
+    "CORE2A_QUESTION_CITATION_MISSING",
+    "CORE2A_CITATION_NOT_INLINE",
+    "CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION",
+    "CORE2A_COMPETITION_SOURCE_ROLE_UNCLEAR"
+  ]
+}

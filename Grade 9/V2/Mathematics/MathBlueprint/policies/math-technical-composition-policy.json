@@ -1,0 +1,159 @@
+{
+  "policy_id": "MATH-TECHNICAL-COMPOSITION-v1",
+  "policy_version": "1.1.0",
+  "subject": "MATHEMATICS",
+  "scope": ["CORE1", "CORE1A", "CORE1B", "CORE2", "CORE2A", "CORE2B"],
+  "principles": {
+    "page_count_is_output_not_goal": true,
+    "flow_pagination_default": true,
+    "prose_only_pages_forbidden": true,
+    "manual_spacer_padding_forbidden": true,
+    "unbounded_representation_geometry_forbidden": true,
+    "downstream_narrative_duplication_forbidden": true,
+    "renderer_may_not_invent_semantic_content": true,
+    "whitespace_percentage_is_not_a_quality_metric": true,
+    "reconstructable_ttu_required": true
+  },
+  "allowed_cross_core_repeat_roles": [
+    "IMMUTABLE_SOURCE",
+    "CANONICAL_FORMULA",
+    "CANONICAL_DEFINITION",
+    "ANSWER_IDENTITY"
+  ],
+  "ttu_governance": {
+    "definition": "A reconstructable TTU is a bounded technical object with a learner-facing incomplete state, a precise reconstruction target, and an independently checkable completed state.",
+    "required_stages": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+    "required_on_every_page_kinds": ["OPEN_TUTOR", "TRANSFER_TUTOR"],
+    "allowed_kinds": [
+      "INCOMPLETE_DIAGRAM",
+      "COMPONENT_MODEL",
+      "INCOMPLETE_GRAPH",
+      "EQUATION_SKELETON",
+      "EVENT_LINE",
+      "TABLE_SKELETON",
+      "PROOF_CHAIN",
+      "COORDINATE_MODEL",
+      "FLOW_MODEL",
+      "CONSTRUCTION_SEQUENCE"
+    ],
+    "allowed_fading_levels": ["MODELLED", "GUIDED", "FADED", "INDEPENDENT"],
+    "required_fields": [
+      "given_parts",
+      "missing_parts",
+      "target_relations",
+      "reconstruction_prompt",
+      "completion_key",
+      "verification_refs",
+      "viewport"
+    ],
+    "lineage_required_for_downstream_reuse": true,
+    "core1b_must_reconstruct_core1a_ttu": true,
+    "core2b_must_transform_or_reconstruct_core2a_ttu": true,
+    "missing_parts_minimum": 1,
+    "renderer_may_not_choose_missing_parts": true,
+    "renderer_may_not_complete_ttu": true
+  },
+  "page_requirements": {
+    "CORE1": {
+      "allowed_page_kinds": ["BASIC_NOTES"],
+      "required_all": [],
+      "required_any": ["DEFINITION", "EQUATION", "DIAGRAM", "WORKED_EXAMPLE", "CASE_ANALYSIS"]
+    },
+    "CORE1A": {
+      "allowed_page_kinds": ["TEACHING"],
+      "required_all": [],
+      "required_any": ["DERIVATION", "EQUATION", "DIAGRAM", "WORKED_EXAMPLE", "CASE_ANALYSIS", "COUNTEREXAMPLE"]
+    },
+    "CORE1B": {
+      "allowed_page_kinds": ["OPEN_TUTOR"],
+      "required_all": ["OPEN_TASK", "TECHNICAL_WORKSPACE", "ANSWER_DERIVATION", "VERIFICATION"],
+      "required_any": []
+    },
+    "CORE2": {
+      "allowed_page_kinds": ["SOURCE_QUESTION"],
+      "required_all": ["PROBLEM", "HINT_LADDER", "ANSWER_CHECK"],
+      "required_any": []
+    },
+    "CORE2A": {
+      "allowed_page_kinds": ["SOLUTION_APPRENTICESHIP"],
+      "required_all": ["PROBLEM", "SOLUTION_CHAIN", "WHY_MOVE_WORKS", "WRONG_CHAIN", "VERIFICATION"],
+      "required_any": []
+    },
+    "CORE2B": {
+      "allowed_page_kinds": ["TRANSFER_TUTOR"],
+      "required_all": ["PROBLEM", "TRANSFER_CLASSIFICATION", "TECHNICAL_WORKSPACE", "ANSWER_DERIVATION", "VERIFICATION"],
+      "required_any": []
+    }
+  },
+  "depth_obligations": {
+    "CORE1A": {
+      "EASY": [
+        {"id": "OBJECT_MODEL", "required": true},
+        {"id": "PRIMARY_RELATION", "required": true},
+        {"id": "PRIMARY_REPRESENTATION", "required": true},
+        {"id": "WORKED_ANCHOR", "required": true},
+        {"id": "RECONSTRUCTABLE_TTU", "required": true},
+        {"id": "VERIFICATION", "required": true}
+      ],
+      "MEDIUM": [
+        {"id": "OBJECT_MODEL", "required": true},
+        {"id": "PRIMARY_RELATION", "required": true},
+        {"id": "RELATION_DERIVATION", "required": true},
+        {"id": "PRIMARY_REPRESENTATION", "required": true},
+        {"id": "REPRESENTATION_SYMBOL_BRIDGE", "required": true},
+        {"id": "WORKED_ANCHOR", "required": true},
+        {"id": "RECONSTRUCTABLE_TTU", "required": true},
+        {"id": "VALIDITY_OR_SPECIAL_CASE", "required": true},
+        {"id": "MISCONCEPTION_COUNTEREXAMPLE", "required": true},
+        {"id": "INDEPENDENT_CHECK", "required": true}
+      ],
+      "HARD": [
+        {"id": "OBJECT_MODEL", "required": true},
+        {"id": "PRIMARY_RELATION", "required": true},
+        {"id": "RELATION_DERIVATION", "required": true},
+        {"id": "MULTI_REPRESENTATION_TRANSLATION", "required": true},
+        {"id": "REPRESENTATION_SYMBOL_BRIDGE", "required": true},
+        {"id": "WORKED_ANCHOR", "required": true},
+        {"id": "MULTIPLE_RECONSTRUCTABLE_TTUS", "required": true},
+        {"id": "CASE_ANALYSIS", "required": true},
+        {"id": "VALIDITY_OR_SPECIAL_CASE", "required": true},
+        {"id": "MISCONCEPTION_COUNTEREXAMPLE", "required": true},
+        {"id": "FAILURE_MODE", "required": true},
+        {"id": "INVERSE_USE", "required": false},
+        {"id": "ALTERNATIVE_METHOD", "required": false},
+        {"id": "TRANSFER_BRIDGE", "required": true},
+        {"id": "INDEPENDENT_CHECK", "required": true}
+      ]
+    },
+    "CORE1B": {
+      "EASY": [
+        {"id": "OPEN_RECONSTRUCTION", "required": true},
+        {"id": "REPRESENTATION_REBUILD", "required": true},
+        {"id": "RECONSTRUCTABLE_TTU", "required": true},
+        {"id": "INDEPENDENT_USE", "required": true},
+        {"id": "ANSWER_VERIFICATION", "required": true}
+      ],
+      "MEDIUM": [
+        {"id": "OPEN_RECONSTRUCTION", "required": true},
+        {"id": "REPRESENTATION_REBUILD", "required": true},
+        {"id": "RECONSTRUCTABLE_TTU", "required": true},
+        {"id": "METHOD_OR_ERROR_CONTRAST", "required": true},
+        {"id": "FADED_RECONSTRUCTION", "required": true},
+        {"id": "INDEPENDENT_USE", "required": true},
+        {"id": "ANSWER_VERIFICATION", "required": true}
+      ],
+      "HARD": [
+        {"id": "OPEN_RECONSTRUCTION", "required": true},
+        {"id": "MULTI_REPRESENTATION_REBUILD", "required": true},
+        {"id": "MULTIPLE_RECONSTRUCTABLE_TTUS", "required": true},
+        {"id": "METHOD_OR_ERROR_CONTRAST", "required": true},
+        {"id": "CASE_DISCRIMINATION", "required": true},
+        {"id": "FADED_RECONSTRUCTION", "required": true},
+        {"id": "FAILURE_DIAGNOSIS", "required": true},
+        {"id": "INDEPENDENT_USE", "required": true},
+        {"id": "TRANSFER_RECONSTRUCTION", "required": true},
+        {"id": "ANSWER_VERIFICATION", "required": true}
+      ]
+    }
+  }
+}

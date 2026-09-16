@@ -1,0 +1,41 @@
+{
+  "policy_id": "MATH-CORE1A-EXECUTION-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "bucket_synthesis": {
+    "group_direct_capabilities_when": ["SHARED_GROUNDED_PROBLEM_FAMILY_AUTHORITY", "SHARED_GROUNDED_PCK_INVARIANT"],
+    "unambiguous_prerequisite_action": "ATTACH_TO_DEPENDENT_BUCKET",
+    "shared_prerequisite_action": "CREATE_BRIDGE_BUCKET",
+    "capability_coverage": "EXACTLY_ONCE",
+    "preserve_core1_order": true,
+    "invent_new_learner_state": false
+  },
+  "representation_sequence": [
+    "SEE_THE_OBJECT",
+    "SEPARATE_THE_PARTS",
+    "SHOW_INFORMATION_FLOW",
+    "MAP_TO_SYMBOLS",
+    "REBUILD_THE_MODEL",
+    "CHECK_UNDERSTANDING",
+    "CONNECT_TO_CORE2"
+  ],
+  "representation_rule": "A stage may be NOT_APPLICABLE only with a recorded reason. Decorative illustration does not satisfy representation adequacy.",
+  "learning_atom_requirements": [
+    "MEANING",
+    "PLAIN_LANGUAGE",
+    "SYMBOLIC_FORM_WHEN_APPLICABLE",
+    "REPRESENTATION_BINDING",
+    "MISCONCEPTION_CONTRAST",
+    "CHECK_PROMPT",
+    "CORE2_HINT_BINDING_WHEN_AVAILABLE"
+  ],
+  "teaching_progression": ["SEE", "EXPLAIN", "WATCH_ONE", "FINISH_ONE", "TRY_WITH_LESS_HELP", "TRY_ALONE", "CHECK"],
+  "learner_treatment_authority": "M_F_STUDY_MODEL_ONLY",
+  "stop_conditions": [
+    "LEARNER_STATE_REQUIRED_BUT_UNAVAILABLE",
+    "BUCKET_INVARIANT_UNGROUNDED",
+    "CAPABILITY_COVERAGE_DRIFT",
+    "CORE1_STUDY_MODEL_TREATMENT_DRIFT",
+    "REPRESENTATION_REQUIREMENT_UNMATERIALIZED"
+  ]
+}

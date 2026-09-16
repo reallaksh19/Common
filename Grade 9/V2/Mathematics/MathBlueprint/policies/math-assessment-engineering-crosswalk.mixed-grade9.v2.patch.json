@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "patch_id": "MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V2-PATCH",
+  "canonical_crosswalk_id": "MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V2",
+  "base_crosswalk_ref": "policies/math-assessment-engineering-crosswalk.mixed-grade9.v1.json",
+  "base_crosswalk_id": "MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V1",
+  "base_crosswalk_git_blob_sha": "a490323dffeba637f1ccb8a2f7a983198eaff023",
+  "base_engineering_registry_digest": "sha256:8080be765afd04c11c752e5cb0287ce5d46cd5fb1ce95bbf2bc2b0cfce5506c7",
+  "engineering_extension_ref": "policies/mathematics-technical-engineering-gates.v1.euclid-extension.json",
+  "engineering_extension_git_blob_sha": "e10a756dca736fdbd8cf1ab40eccee5988a6c6b8",
+  "overrides": [
+    {
+      "capability_ref": "MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE",
+      "status": "COVERED",
+      "binding_role": "DIRECT_TECHNICAL",
+      "engineering_gate_ids": [
+        "MATH-GEO-EUCLID-FOUNDATIONS"
+      ],
+      "authority_basis_refs": [
+        "MATH-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
+        "MATH-GEO-EUCLID-FOUNDATIONS"
+      ],
+      "mapping_rationale": "The canonical Engineering graph now contains an explicit Euclid Foundations gate whose technical core, formal classification relation, representation, validity boundary and misconception repair directly govern axiom-versus-postulate classification.",
+      "gap_code": null,
+      "gap_reason": null
+    }
+  ]
+}

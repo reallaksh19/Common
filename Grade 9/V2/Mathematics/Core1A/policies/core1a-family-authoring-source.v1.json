@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "source_id": "MATH-CORE1A-FAMILY-AUTHORING-MIGRATION-v1",
+  "content_role": "CORE1A_FAMILY_AUTHORING_CANDIDATE_SOURCE",
+  "curriculum_authority": false,
+  "legacy_source_ref": "policies/core1a-family-authoring.legacy.pydata",
+  "legacy_source_git_blob_sha": "8c99254727bfc58791fda9f8b27339b3d789f891",
+  "projection_contract_ref": "MathBlueprint/contracts/math-core1a-family-authoring-assets.schema.json",
+  "parser_contract": "RESTRICTED_AST_FAMILY_PROJECTION_v1",
+  "migration_note": "Lossless frozen migration of the former executable family instance banks and display titles. The frozen source is data only: it is never imported or executed and is not curriculum authority."
+}

@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://common.local/mathblueprint/design/mathematics-architecture-catalog.candidate.schema.json",
+  "title": "Mathematics Architecture Catalog Candidate (Design Only)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "authority",
+    "semantic_change",
+    "catalog_basis",
+    "independent_audit_status",
+    "core_spec_consolidation_status",
+    "inventory_snapshot",
+    "components"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"const": "DESIGN_NON_NORMATIVE_CANDIDATE"},
+    "authority": {"const": "NONE"},
+    "semantic_change": {"const": "NONE"},
+    "catalog_basis": {"const": "REPOSITORY_INVENTORY_ONLY"},
+    "independent_audit_status": {"const": "PENDING_INDEPENDENT_AUDIT"},
+    "core_spec_consolidation_status": {"const": "BLOCKED_PENDING_INDEPENDENT_AUDIT"},
+    "inventory_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "branch", "base_head_sha", "captured_from_current_tree"],
+      "properties": {
+        "repository": {"const": "reallaksh19/Common"},
+        "branch": {"const": "v2-math-core1a-textbook-quality"},
+        "base_head_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "captured_from_current_tree": {"const": true}
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/component"}
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "name",
+        "architecture_role",
+        "primary_authority_class",
+        "runtime_authority_effect",
+        "publication_authority_effect",
+        "catalog_basis",
+        "audit_status",
+        "semantic_change",
+        "evidence_paths",
+        "responsibility"
+      ],
+      "properties": {
+        "component_id": {"type": "string", "pattern": "^MATH-ARCH-[A-Z0-9-]+$"},
+        "name": {"type": "string", "minLength": 3},
+        "architecture_role": {
+          "enum": [
+            "SUBJECT_AUTHORITY",
+            "POLICY_AND_VALIDATION",
+            "SCOPE_BRIDGE",
+            "NON_AUTHORITATIVE_DISCOVERY",
+            "EXACT_AUTHORIZATION",
+            "RUNTIME_CUSTODY",
+            "DOMAIN_PROJECTION",
+            "ORCHESTRATION",
+            "CALIBRATION",
+            "PEDAGOGY_EVIDENCE",
+            "PRODUCER",
+            "RELEASE_GATE",
+            "DERIVED_VISIBILITY",
+            "PUBLICATION_BOUNDARY",
+            "CI_GUARD",
+            "DESIGN_WORKSPACE"
+          ]
+        },
+        "primary_authority_class": {
+          "enum": [
+            "AUTHORITATIVE_DATA",
+            "GOVERNED_POLICY",
+            "SCHEMA_CONTRACT",
+            "PRODUCTION_VALIDATOR",
+            "PRODUCTION_COMPILER",
+            "DERIVED_NON_AUTHORITATIVE_VIEW",
+            "PRODUCER",
+            "RELEASE_GATE",
+            "PUBLICATION_BOUNDARY",
+            "CI_GUARD",
+            "DESIGN_ONLY"
+          ]
+        },
+        "runtime_authority_effect": {
+          "enum": [
+            "CURRENT_EXECUTABLE_AUTHORITY",
+            "EXECUTABLE_ORCHESTRATION_ONLY",
+            "DERIVED_NON_AUTHORITATIVE",
+            "NONE_DESIGN_ONLY"
+          ]
+        },
+        "publication_authority_effect": {
+          "enum": ["NONE", "NOT_IMPLIED", "RELEASE_GATED_PUBLICATION_BOUNDARY"]
+        },
+        "catalog_basis": {"const": "REPOSITORY_DERIVED"},
+        "audit_status": {"const": "PENDING_INDEPENDENT_AUDIT"},
+        "semantic_change": {"const": "NONE"},
+        "evidence_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 2, "pattern": "^(?!/)(?!.*\\.\\./\\.\\.).+"}
+        },
+        "responsibility": {"type": "string", "minLength": 12},
+        "notes": {"type": "string", "minLength": 3}
+      }
+    }
+  }
+}

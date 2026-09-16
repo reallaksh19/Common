@@ -1,0 +1,97 @@
+{
+  "policy_id": "MATH-B-LAYER-INTEGRATION-v2",
+  "policy_version": "2.0.0",
+  "subject": "MATHEMATICS",
+  "governing_principle": "A-layers govern what is valid; B-layers compile static learner-facing products.",
+  "ownership": {
+    "CORE1A": "Own governed teaching mathematics, assimilation, representation, method-comparison requirements and learner treatment authority.",
+    "CORE1B": "Compile a fixed consolidation workbook from Core1A-governed mathematics and already-authorized learner treatment.",
+    "CORE2A": "Own mathematical legality, source identity, answers, provenance and the purpose-conditioned legal task pool.",
+    "CORE2B": "Compile a fixed transfer workbook from Core2A-legal items using purpose and an upstream-supplied compile-time demand ceiling.",
+    "PUBLICATION": "Own deterministic rendering and rendered-artifact/surface verification.",
+    "EXTERNAL_EVIDENCE": "Own any later learner-attempt, performance, retention or longitudinal evidence; none of these are B-layer responsibilities."
+  },
+  "epistemic_separation": [
+    "ASSIMILATION_PLAN != CORE1A_REALIZATION",
+    "CORE1A_VALIDITY != CORE1B_PRODUCT_COMPOSITION",
+    "CORE2A_LEGALITY != CORE2B_PRODUCT_COMPOSITION",
+    "COMPILED_PRODUCT != LEARNER_ATTEMPT",
+    "COMPILED_PRODUCT != LEARNER_PERFORMANCE_EVIDENCE",
+    "UPSTREAM_UNKNOWN_DEVELOPING_READY != B_LAYER_STATE"
+  ],
+  "core1b_rules": {
+    "delivery_mode": "STATIC",
+    "may_use_only_approved_capability_refs": true,
+    "new_math_refs_forbidden": true,
+    "live_runtime_fields_forbidden": true,
+    "owns_learner_attempts": false,
+    "owns_post_publication_evidence": false,
+    "owns_repair_routing": false,
+    "owns_state_transition": false,
+    "paper_native_blocks": [
+      "METHOD_COMPARISON",
+      "ERROR_CONTRAST",
+      "CONTROLLED_VARIATION",
+      "COMPLETION",
+      "FADED",
+      "CLOSE_INDEPENDENT",
+      "ANSWER_CHECK"
+    ],
+    "required_shape": {
+      "comparison_or_error_contrast": true,
+      "completion_or_faded": true,
+      "close_independent": true,
+      "answer_check": true
+    },
+    "learner_treatment_authority": "UPSTREAM_ONLY"
+  },
+  "core2a_rules": {
+    "legal_pool_requires_ref_and_digest": true,
+    "purpose_is_upstream_authority": true,
+    "learner_evidence_may_not_change_mathematical_legality": true
+  },
+  "core2b_rules": {
+    "delivery_mode": "STATIC",
+    "requires_bound_core2a_legal_pool": true,
+    "may_compile_without_core1b_product": true,
+    "compile_ceiling_must_be_supplied_upstream": true,
+    "compile_ceiling_is_not_inferred_by_core2b": true,
+    "live_runtime_fields_forbidden": true,
+    "owns_attempt_ingestion": false,
+    "owns_state_transition": false,
+    "owns_retrieval_scheduler": false,
+    "owns_dynamic_repair": false,
+    "transfer_levels": [
+      "M0_DIRECT",
+      "M1_CONTROLLED_VARIATION",
+      "M2_REPRESENTATION_TRANSFER",
+      "M3_INVERSE_TARGET",
+      "M4_HIDDEN_STRUCTURE",
+      "M5_METHOD_DISCRIMINATION",
+      "M6_FAMILY_DISCRIMINATION",
+      "M7_MULTI_STEP_SYNTHESIS",
+      "M8_MIXED_COMPETITIVE"
+    ],
+    "all_selected_items_must_resolve_in_core2a_pool": true
+  },
+  "blueprint_decisions": {
+    "core1b_is_not_exposure_verification_runtime": true,
+    "core2b_is_not_adaptive_practice_runtime": true,
+    "core1b_and_core2b_are_parallel_static_product_compilers": true,
+    "core2b_does_not_require_core1b_release": true,
+    "post_publication_learner_evidence_is_external_to_b_layers": true,
+    "rendered_surface_verification_belongs_to_publication": true,
+    "previous_increment6_exposure_receipt_plan_is_superseded": true
+  },
+  "stop_conditions": [
+    "MATH_B_LAYER_CORE1A_AUTHORITY_MISSING",
+    "MATH_B_LAYER_CORE1B_NONSTATIC_DELIVERY",
+    "MATH_B_LAYER_CORE1B_PRODUCT_BINDING_INCOMPLETE",
+    "MATH_B_LAYER_CORE2A_POOL_BINDING_INCOMPLETE",
+    "MATH_B_LAYER_CORE2B_WITHOUT_CORE2A_POOL",
+    "MATH_B_LAYER_CORE2B_COMPILE_CEILING_MISSING",
+    "MATH_B_LAYER_CORE2B_NONSTATIC_DELIVERY",
+    "MATH_B_LAYER_CORE2B_PRODUCT_BINDING_INCOMPLETE",
+    "MATH_B_LAYER_UPSTREAM_STATE_REWRITE_FORBIDDEN"
+  ]
+}

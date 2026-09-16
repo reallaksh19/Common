@@ -1,0 +1,24 @@
+{
+  "fixture_id": "MATH-DUAL-GOLDEN-CORE2-FIRST-v1",
+  "purpose": "Prove that a question-corpus-defined scope may route Core2 first while Core1 independently reconstructs semantic structure from original evidence.",
+  "route": "CORE2_FIRST",
+  "expected_sequence": [
+    "FIRST_ROLE_ANALYSIS",
+    "SECOND_ROLE_INDEPENDENT",
+    "SECOND_ROLE_VALIDATION"
+  ],
+  "required_invariants": {
+    "first_role": "CORE2",
+    "second_role": "CORE1",
+    "distinct_agent_instances": true,
+    "first_context": "GROUND_TRUTH_ONLY",
+    "second_independent_context": "GROUND_TRUTH_ONLY",
+    "first_package_withheld_during_second_independent_pass": true,
+    "independent_package_sealed_before_validation": true,
+    "validation_context": "GROUND_TRUTH_PLUS_UPSTREAM_VALIDATION",
+    "question_derived_claims_do_not_become_semantic_ground_truth": true,
+    "every_first_claim_classified": true,
+    "terminal_state": "CROSS_VALIDATED"
+  },
+  "symmetry_requirement": "The firewall semantics are identical to CORE1_FIRST; only specialist role order changes."
+}

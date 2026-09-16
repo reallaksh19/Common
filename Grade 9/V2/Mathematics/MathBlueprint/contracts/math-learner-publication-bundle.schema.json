@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learner-publication-bundle.schema.json",
+  "title": "Mathematics Learner Publication Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "subject", "bundle_id", "source_release_status",
+    "source_release_gate_digest", "generation_spec_digest", "governed_example_catalog_digest",
+    "pedagogy_research_manifest_digest", "engineering_visibility_manifest_digest", "engineering_visibility",
+    "concept_components", "problem_component", "publication_stage_order", "bundle_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.1.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "bundle_id": {"type": "string", "pattern": "^MATH-PUB-BUNDLE-"},
+    "source_release_status": {"const": "PASS"},
+    "source_release_gate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generation_spec_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "governed_example_catalog_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "pedagogy_research_manifest_digest": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      ]
+    },
+    "engineering_visibility_manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "engineering_visibility": {"type": "object"},
+    "publication_stage_order": {
+      "const": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    "concept_components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "component_id", "sequence", "bucket_ref", "subtopic_ref", "title",
+          "difficulty_badge", "pages", "depth_obligations", "component_digest"
+        ],
+        "properties": {
+          "component_id": {"type": "string", "pattern": "^MATH-CONCEPT-BP-"},
+          "sequence": {"type": "integer", "minimum": 1},
+          "bucket_ref": {"type": "string", "minLength": 3},
+          "subtopic_ref": {"type": "string", "minLength": 3},
+          "title": {"type": "string", "minLength": 3},
+          "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+          "pages": {"type": "array", "minItems": 2, "items": {"type": "object"}},
+          "depth_obligations": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+          "component_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "problem_component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component_id", "governance", "pages", "component_digest"],
+      "properties": {
+        "component_id": {"type": "string", "pattern": "^MATH-PROBLEM-BP-"},
+        "governance": {"const": "LEARNER_FIT"},
+        "pages": {"type": "array", "minItems": 2, "items": {"type": "object"}},
+        "component_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "bundle_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-product-governance-audit.schema.json",
+  "title": "Mathematics Product Governance Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "subject", "audit_id", "registry_ref", "difficulty_audits", "purpose_audits", "learner_fit_audits", "question_custody", "badge_sets"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "audit_id": {"type": "string", "pattern": "^MATH-GOV-[A-Z0-9][A-Z0-9_-]{4,}$"},
+    "registry_ref": {"type": "string", "pattern": "^MATH-REG-"},
+    "difficulty_audits": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/difficultyAudit"}},
+    "purpose_audits": {"type": "array", "minItems": 4, "items": {"$ref": "#/$defs/purposeAudit"}},
+    "learner_fit_audits": {"type": "array", "items": {"$ref": "#/$defs/learnerFitAudit"}},
+    "question_custody": {"type": "array", "items": {"$ref": "#/$defs/questionCustody"}},
+    "badge_sets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/badgeSet"}}
+  },
+  "$defs": {
+    "stage": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "difficultyBadge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "demandLevel": {"enum": ["M0_DIRECT", "M1_CONTROLLED_VARIATION", "M2_REPRESENTATION_TRANSFER", "M3_INVERSE_TARGET", "M4_HIDDEN_STRUCTURE", "M5_METHOD_DISCRIMINATION", "M6_FAMILY_DISCRIMINATION", "M7_MULTI_STEP_SYNTHESIS", "M8_MIXED_COMPETITIVE"]},
+    "difficultyDimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prerequisite_depth", "element_interactivity", "inferential_jump_severity", "representation_translation", "abstraction", "method_discrimination", "notation_density", "derivation_burden", "misconception_density", "special_case_sensitivity"],
+      "properties": {
+        "prerequisite_depth": {"type": "integer", "minimum": 0, "maximum": 4},
+        "element_interactivity": {"type": "integer", "minimum": 0, "maximum": 4},
+        "inferential_jump_severity": {"type": "integer", "minimum": 0, "maximum": 4},
+        "representation_translation": {"type": "integer", "minimum": 0, "maximum": 4},
+        "abstraction": {"type": "integer", "minimum": 0, "maximum": 4},
+        "method_discrimination": {"type": "integer", "minimum": 0, "maximum": 4},
+        "notation_density": {"type": "integer", "minimum": 0, "maximum": 4},
+        "derivation_burden": {"type": "integer", "minimum": 0, "maximum": 4},
+        "misconception_density": {"type": "integer", "minimum": 0, "maximum": 4},
+        "special_case_sensitivity": {"type": "integer", "minimum": 0, "maximum": 4}
+      }
+    },
+    "difficultyAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subtopic_id", "declared_badge", "badge_authority", "derived_dimensions", "derived_score", "derived_badge", "operational_badge", "page_ceiling", "research_level", "owner_override_ref", "consequence_evidence_refs", "status"],
+      "properties": {
+        "subtopic_id": {"type": "string", "minLength": 3},
+        "declared_badge": {"$ref": "#/$defs/difficultyBadge"},
+        "badge_authority": {"enum": ["OWNER", "SOURCE_METADATA", "DERIVED", "VALIDATED_DERIVED"]},
+        "derived_dimensions": {"$ref": "#/$defs/difficultyDimensions"},
+        "derived_score": {"type": "number", "minimum": 0, "maximum": 100},
+        "derived_badge": {"$ref": "#/$defs/difficultyBadge"},
+        "operational_badge": {"$ref": "#/$defs/difficultyBadge"},
+        "page_ceiling": {"enum": [10, 20, 30]},
+        "research_level": {"enum": ["NONE", "TARGETED", "DEEP"]},
+        "owner_override_ref": {"type": ["string", "null"], "minLength": 3},
+        "consequence_evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "status": {"enum": ["ALIGNED", "OWNER_OVERRIDDEN_MISMATCH", "SOURCE_OVERRIDDEN_MISMATCH"]}
+      }
+    },
+    "purposeAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "purpose_contract", "learner_actions", "canonical_reveal_after_attempt", "evidence_refs", "status"],
+      "properties": {
+        "stage": {"$ref": "#/$defs/stage"},
+        "purpose_contract": {"enum": ["BUILD_UNDERSTANDING", "RECONSTRUCT_CONCEPT", "SOLUTION_APPRENTICESHIP", "TRANSFER_TUTOR"]},
+        "learner_actions": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"enum": ["READ", "INSPECT", "INTERPRET", "COMPARE", "PREDICT", "GENERATE", "SELECT", "DISCRIMINATE", "DIAGNOSE", "DERIVE", "CONNECT", "VERIFY", "TRANSFER", "STUDY_SOLUTION", "ANALYZE_FIRST_MOVE", "ATTEMPT", "MODEL_SELECT", "REPRESENT", "FIRST_MOVE", "SOLVE"]}},
+        "canonical_reveal_after_attempt": {"type": "boolean"},
+        "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "status": {"const": "PASS"}
+      }
+    },
+    "capabilityKnowledge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_ref", "percent"],
+      "properties": {
+        "capability_ref": {"type": "string", "pattern": "^REG-MATH-"},
+        "percent": {"type": "number", "minimum": 0, "maximum": 100}
+      }
+    },
+    "calibrationBasis": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["type", "learner_knowledge_percent", "knowledge_source_ref", "calibration_policy_ref", "capability_knowledge"], "properties": {"type": {"const": "KNOWLEDGE_PERCENT"}, "learner_knowledge_percent": {"type": "number", "minimum": 0, "maximum": 100}, "knowledge_source_ref": {"type": "string", "minLength": 3}, "calibration_policy_ref": {"type": "string", "minLength": 3}, "capability_knowledge": {"type": "array", "items": {"$ref": "#/$defs/capabilityKnowledge"}}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "owner_ref", "reason"], "properties": {"type": {"const": "OWNER_OVERRIDE"}, "owner_ref": {"type": "string", "minLength": 3}, "reason": {"type": "string", "minLength": 8}}}
+      ]
+    },
+    "learnerFitAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "item_ref", "calibration_basis", "required_capability_refs", "support_mode", "maximum_allowed_demand", "actual_demand", "taught_scope_verified", "result"],
+      "properties": {
+        "stage": {"enum": ["CORE2A", "CORE2B"]},
+        "item_ref": {"type": "string", "minLength": 2},
+        "calibration_basis": {"$ref": "#/$defs/calibrationBasis"},
+        "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "support_mode": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
+        "maximum_allowed_demand": {"$ref": "#/$defs/demandLevel"},
+        "actual_demand": {"$ref": "#/$defs/demandLevel"},
+        "taught_scope_verified": {"const": true},
+        "result": {"const": "PASS"}
+      }
+    },
+    "questionCustody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_id", "origin", "source_question_no", "source_ref", "source_relation", "parent_question_refs", "exact_stem_hash", "answer_contract_ref", "answer_status", "learner_source_label", "official_past_question_claim", "verified_official_source_ref"],
+      "properties": {
+        "question_id": {"type": "string", "minLength": 2},
+        "origin": {"enum": ["SOURCE_CORE2", "GENERATED_ORIGINAL"]},
+        "source_question_no": {"type": ["string", "null"], "minLength": 1},
+        "source_ref": {"type": "string", "minLength": 2},
+        "source_relation": {"enum": ["EXACT_SOURCE", "FRESH_ORIGINAL", "FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"]},
+        "parent_question_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "exact_stem_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "answer_contract_ref": {"type": "string", "minLength": 3},
+        "answer_status": {"const": "VERIFIED"},
+        "learner_source_label": {"type": "string", "minLength": 5},
+        "official_past_question_claim": {"type": "boolean"},
+        "verified_official_source_ref": {"type": ["string", "null"], "minLength": 3}
+      }
+    },
+    "badgeSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subtopic_id", "difficulty", "concept_refs", "linkage_refs", "bucket_ref", "prerequisite_refs", "equation_refs", "representation_refs", "misconception_refs", "problem_family_refs", "research_badge", "learner_facing_badges"],
+      "properties": {
+        "subtopic_id": {"type": "string", "minLength": 3},
+        "difficulty": {"$ref": "#/$defs/difficultyBadge"},
+        "concept_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "linkage_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "bucket_ref": {"type": "string", "minLength": 2},
+        "prerequisite_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "equation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "misconception_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "problem_family_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "research_badge": {"enum": ["NONE", "TARGETED", "DEEP"]},
+        "learner_facing_badges": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["DIFFICULTY", "CONCEPT", "LINKAGE", "BUCKET", "SUBTOPIC", "PROBLEM_FAMILY", "SOURCE", "SUPPORT"]}}
+      }
+    }
+  }
+}

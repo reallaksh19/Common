@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learner-product-run.schema.json",
+  "title": "Mathematics Learner Product Run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "contract_version",
+    "subject",
+    "inputs",
+    "policy_refs",
+    "execution_sequence",
+    "requested_products",
+    "outputs",
+    "run_digest"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "pattern": "^MATH-LPR-[0-9a-f]{16}$"},
+    "contract_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "learner_study_model_ref",
+        "learner_study_model_digest",
+        "core1_plan_ref",
+        "core1_plan_digest",
+        "core2_plan_ref",
+        "core2_plan_digest"
+      ],
+      "properties": {
+        "learner_study_model_ref": {"type": "string", "minLength": 3},
+        "learner_study_model_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "core1_plan_ref": {"type": "string", "pattern": "^MATH-C1SP-"},
+        "core1_plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "core2_plan_ref": {"type": "string", "pattern": "^MATH-C2TP-"},
+        "core2_plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "competitive_registry_ref": {"type": ["string", "null"]},
+        "competitive_registry_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "policy_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core1a_execution_policy",
+        "core2a_execution_policy",
+        "learner_language_policy",
+        "question_citation_policy",
+        "competitive_challenge_policy"
+      ],
+      "properties": {
+        "core1a_execution_policy": {"const": "MATH-CORE1A-EXECUTION-v1"},
+        "core2a_execution_policy": {"const": "MATH-CORE2A-EXECUTION-v1"},
+        "learner_language_policy": {"const": "MATH-LEARNER-LANGUAGE-v1"},
+        "question_citation_policy": {"const": "MATH-QUESTION-CITATION-v1"},
+        "competitive_challenge_policy": {"const": "MATH-COMPETITIVE-CHALLENGE-v1"}
+      }
+    },
+    "execution_sequence": {
+      "const": [
+        "VALIDATE_INPUT_BINDINGS",
+        "SYNTHESIZE_CORE1A_BUCKETS",
+        "BUILD_CORE1A_REPRESENTATIONS",
+        "REALIZE_CORE1A",
+        "MAP_CORE2_TO_CORE1A",
+        "REALIZE_SOURCE_CORE2A_ITEMS",
+        "SELECT_CHALLENGE_TARGETS",
+        "GENERATE_CHALLENGE_CANDIDATES",
+        "VALIDATE_CHALLENGE_MATHEMATICS",
+        "VALIDATE_TAUGHT_SCOPE",
+        "BIND_INLINE_CITATIONS",
+        "AUTHOR_STAGED_HELP",
+        "AUTHOR_THINK_IT_THROUGH",
+        "AUTHOR_FULL_WORKING",
+        "AUTHOR_QUICK_CHECK",
+        "RENDER_LEARNER_PRODUCTS",
+        "VISUAL_PREFLIGHT",
+        "FINAL_AUDIT"
+      ]
+    },
+    "requested_products": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core1a", "core2a_source", "core2a_challenges"],
+      "properties": {
+        "core1a": {"type": "boolean"},
+        "core2a_source": {"type": "boolean"},
+        "core2a_challenges": {"type": "boolean"}
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core1a_bucket_plan_ref",
+        "core1a_manuscript_ref",
+        "core2a_challenge_plan_ref",
+        "artifact_manifest_ref"
+      ],
+      "properties": {
+        "core1a_bucket_plan_ref": {"type": ["string", "null"]},
+        "core1a_manuscript_ref": {"type": ["string", "null"]},
+        "core2a_challenge_plan_ref": {"type": ["string", "null"]},
+        "artifact_manifest_ref": {"type": ["string", "null"]}
+      }
+    },
+    "run_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

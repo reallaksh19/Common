@@ -1,0 +1,105 @@
+{
+  "schema_version": "2.1.0",
+  "subject": "MATHEMATICS",
+  "self_taught": true,
+  "stage_profiles": {
+    "CORE1A": {
+      "mode": "DECLARATIVE",
+      "role": "BUILD_UNDERSTANDING",
+      "governing_question": "How does this mathematical idea work, and why is each important relation legitimate?",
+      "attempt_before_explanation": false,
+      "help_path": ["MEANING_HELP", "REPRESENTATION_HELP", "CONCEPT_HELP", "FULL_WORKING", "ANSWER_VERIFICATION"],
+      "answer_support": {"present": true, "explanatory": true, "numeric_or_symbolic_check": true, "graphical_or_representation_check_when_useful": true},
+      "visual_contract": {
+        "cognitive_purpose": "Expose the mathematical information structure before symbols become compressed.",
+        "must_make_visible": ["objects and constraints", "information flow", "relation between representation and symbols"],
+        "symbol_bridge": "Every primary representation states explicitly how visible structure maps to variables, equations, or transformations.",
+        "must_not_imply": ["decorative geometry is mathematical evidence", "a special-case picture proves a general claim"]
+      },
+      "required_cognitive_moves": ["SEE", "CONNECT", "EXPLAIN", "RECONSTRUCT", "VERIFY"]
+    },
+    "CORE1B": {
+      "mode": "OPEN_ENDED",
+      "role": "RECONSTRUCT_AND_CONSOLIDATE",
+      "governing_question": "Can the learner reconstruct and independently use what was taught, with help available only when needed?",
+      "attempt_before_explanation": true,
+      "help_path": ["MEANING_HELP", "REPRESENTATION_HELP", "CONCEPT_HELP", "FIRST_MOVE_HELP", "PROCEDURE_HELP", "ANSWER_VERIFICATION"],
+      "answer_support": {"present": true, "explanatory": true, "numeric_or_symbolic_check": true, "graphical_or_representation_check_when_useful": true},
+      "visual_contract": {
+        "cognitive_purpose": "Prompt the learner to reconstruct a known representation rather than passively view it.",
+        "must_make_visible": ["what is fixed", "what can vary", "why a method is valid or fails"],
+        "symbol_bridge": "Help progresses from concept and representation to the first symbolic move; it does not reveal the complete solution prematurely.",
+        "must_not_imply": ["the page has diagnosed mastery", "using a shortcut without its validity condition is acceptable"]
+      },
+      "required_cognitive_moves": ["PREDICT", "REPRESENT", "EXPLAIN", "RECONSTRUCT", "CONTRAST", "INDEPENDENT_USE", "VERIFY"]
+    },
+    "CORE2A": {
+      "mode": "DECLARATIVE",
+      "role": "SOLUTION_APPRENTICESHIP",
+      "governing_question": "How does an expert recognize and solve this legal class of questions, and why does each non-obvious move work?",
+      "attempt_before_explanation": false,
+      "help_path": ["RECOGNITION_HELP", "REPRESENTATION_HELP", "FIRST_MOVE_HELP", "PROCEDURE_HELP", "FULL_WORKING", "ANSWER_VERIFICATION"],
+      "answer_support": {"present": true, "explanatory": true, "numeric_or_symbolic_check": true, "graphical_or_representation_check_when_useful": true},
+      "visual_contract": {
+        "cognitive_purpose": "Make the hidden problem structure and expert solution path inspectable.",
+        "must_make_visible": ["recognition cue", "representation choice", "first non-obvious move", "verification relation"],
+        "symbol_bridge": "The solution explicitly links the problem representation to the selected method and each consequential symbolic transformation.",
+        "must_not_imply": ["a generated variant is an original source question", "a benchmark source defines curriculum scope"]
+      },
+      "required_cognitive_moves": ["RECOGNIZE", "REPRESENT", "FOLLOW_EXPERT_MOVE", "JUSTIFY", "COMPARE_WRONG_CHAIN", "VERIFY", "VARY"]
+    },
+    "CORE2B": {
+      "mode": "OPEN_ENDED",
+      "role": "SELECT_TRANSFER_DISCRIMINATE_SYNTHESIZE",
+      "governing_question": "Can the learner recognize, select, and transfer the mathematics when the surface changes and the method is not named?",
+      "attempt_before_explanation": true,
+      "help_path": ["RECOGNITION_HELP", "CONCEPT_HELP", "REPRESENTATION_HELP", "FIRST_MOVE_HELP", "METHOD_HELP", "ANSWER_VERIFICATION"],
+      "answer_support": {"present": true, "explanatory": true, "numeric_or_symbolic_check": true, "graphical_or_representation_check_when_useful": true},
+      "visual_contract": {
+        "cognitive_purpose": "Support transfer by changing or withholding familiar cues while preserving mathematically valid structure.",
+        "must_make_visible": ["hidden structure after effort", "representation alternatives", "method discrimination", "transfer check"],
+        "symbol_bridge": "Hints restore only the smallest missing cue, moving from recognition to representation to method rather than jumping to full working.",
+        "must_not_imply": ["the family label should be visible when discrimination is being tested", "successful completion proves durable mastery"]
+      },
+      "required_cognitive_moves": ["ATTEMPT", "CLASSIFY", "SELECT_REPRESENTATION", "SELECT_METHOD", "TRANSFER", "DISCRIMINATE", "SYNTHESIZE", "VERIFY"]
+    }
+  },
+  "generation_governance": {
+    "core1_series": {
+      "bucket_unit": "SUBTOPIC_BUCKET",
+      "learner_knowledge_controls_depth": false,
+      "page_budget_is_cap_not_target": true,
+      "pedagogy_research_does_not_change_authority": true,
+      "research_source_count_is_not_quality_proxy": true,
+      "difficulty_badges": {
+        "EASY": {"max_pages": 10, "pedagogy_web_research": "OPTIONAL", "research_depth": "NONE", "subsubtopic_decomposition_allowed": false, "visual_intensity": "STANDARD", "step_by_step_required": true, "dedicated_diagrams_required": true},
+        "MEDIUM": {"max_pages": 20, "pedagogy_web_research": "REQUIRED", "research_depth": "STANDARD", "subsubtopic_decomposition_allowed": true, "visual_intensity": "HIGH", "step_by_step_required": true, "dedicated_diagrams_required": true},
+        "HARD": {"max_pages": 30, "pedagogy_web_research": "REQUIRED", "research_depth": "DEEP", "subsubtopic_decomposition_allowed": true, "visual_intensity": "VERY_HIGH", "step_by_step_required": true, "dedicated_diagrams_required": true}
+      }
+    },
+    "core2_series": {
+      "calibration_applies_to": ["CORE2A", "CORE2B"],
+      "learner_knowledge_percent_required_unless_owner_waiver": true,
+      "owner_waiver_allowed": true,
+      "missing_calibration_blocks_generation": true,
+      "knowledge_percent_is_mastery_claim": false,
+      "purpose_still_required": true,
+      "no_silent_default": true,
+      "core2a_question_demand_is_calibrated": true,
+      "core2b_transfer_demand_is_calibrated": true,
+      "owner_waiver_must_supply_all_resolved_controls": true
+    }
+  },
+  "global_invariants": {
+    "all_stages_close_the_help_loop": true,
+    "answers_are_independently_verified": true,
+    "visuals_have_cognitive_purpose": true,
+    "frozen_core2_questions_are_not_rewritten": true,
+    "generated_variants_have_new_identity": true,
+    "static_products_do_not_claim_learner_mastery": true,
+    "core1_depth_not_learner_percentage_driven": true,
+    "core2_requires_knowledge_or_owner_waiver": true,
+    "page_budgets_are_caps_not_quotas": true,
+    "web_research_never_becomes_curriculum_authority": true
+  }
+}

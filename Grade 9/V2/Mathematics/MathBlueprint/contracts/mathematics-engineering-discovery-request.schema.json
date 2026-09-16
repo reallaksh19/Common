@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mathematics-engineering-discovery-request.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","subject","discovery_request_id","query"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "discovery_request_id": {"type": "string", "pattern": "^MATH-ENG-DISC-REQ-[A-Z0-9_-]+$"},
+    "query": {"type": "string", "minLength": 1, "maxLength": 500},
+    "hints": {
+      "type": "array",
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 200}
+    },
+    "candidate_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"enum": ["ENGINEERING_GATE","BUCKET"]}
+    },
+    "max_candidates": {"type": "integer", "minimum": 1, "maximum": 10}
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "audit_id": "MATH-SIM-THEORY-EQ-001",
+  "policy_ref": "MATH-CROSS-CORE-SIMILARITY-v1",
+  "coverage_declaration": {
+    "comparison_scope": "ALL_CROSS_CORE_CANDIDATES",
+    "stage_pairs": [
+      "CORE1A__CORE1B",
+      "CORE1A__CORE2A",
+      "CORE1A__CORE2B",
+      "CORE1B__CORE2A",
+      "CORE1B__CORE2B",
+      "CORE2A__CORE2B"
+    ],
+    "candidate_pair_count": 7,
+    "uncompared_candidate_count": 0
+  },
+  "comparisons": [
+    {
+      "comparison_id": "SIM-1A-1B-EQ",
+      "left": {"stage":"CORE1A","artifact_ref":"A1-EQ-SUM"},
+      "right": {"stage":"CORE1B","artifact_ref":"B1-EQ-SUM"},
+      "artifact_kind": "EQUATION",
+      "declared_relation": "SEMANTIC_REUSE",
+      "content_similarity": 1.0,
+      "pedagogical_similarity": 0.25,
+      "structural_similarity": null,
+      "capability_overlap": true,
+      "classification": "LEGITIMATE_TRANSFORMATION",
+      "evidence": "The canonical Vieta equation repeats exactly, while Core1A explains it and Core1B requires learner reconstruction."
+    },
+    {
+      "comparison_id": "SIM-1A-2A-CONCEPT",
+      "left": {"stage":"CORE1A","artifact_ref":"A1-CON-VIETA"},
+      "right": {"stage":"CORE2A","artifact_ref":"A2-Q2-CONCEPT"},
+      "artifact_kind": "NARRATIVE",
+      "declared_relation": "SEMANTIC_REUSE",
+      "content_similarity": 0.66,
+      "pedagogical_similarity": 0.31,
+      "structural_similarity": null,
+      "capability_overlap": true,
+      "classification": "LEGITIMATE_TRANSFORMATION",
+      "evidence": "Core2A references the same mathematics only to explain expert solution anatomy; it does not reproduce the Core1A teaching sequence."
+    },
+    {
+      "comparison_id": "SIM-1A-2B-CONCEPT",
+      "left": {"stage":"CORE1A","artifact_ref":"A1-CON-VIETA"},
+      "right": {"stage":"CORE2B","artifact_ref":"B2-Q2-HINT"},
+      "artifact_kind": "NARRATIVE",
+      "declared_relation": "SEMANTIC_REUSE",
+      "content_similarity": 0.51,
+      "pedagogical_similarity": 0.22,
+      "structural_similarity": null,
+      "capability_overlap": true,
+      "classification": "LEGITIMATE_TRANSFORMATION",
+      "evidence": "Core2B exposes only bounded concept help after an attempt rather than the complete Core1A exposition."
+    },
+    {
+      "comparison_id": "SIM-1B-2A-CAPABILITY",
+      "left": {"stage":"CORE1B","artifact_ref":"B1-CAP-COEFF"},
+      "right": {"stage":"CORE2A","artifact_ref":"A2-Q2"},
+      "artifact_kind": "TTU",
+      "declared_relation": "SEMANTIC_REUSE",
+      "content_similarity": 0.48,
+      "pedagogical_similarity": 0.34,
+      "structural_similarity": null,
+      "capability_overlap": true,
+      "classification": "LEGITIMATE_TRANSFORMATION",
+      "evidence": "Core1B reconstructs the coefficient-root concept; Core2A studies a complete expert problem solution using that capability."
+    },
+    {
+      "comparison_id": "SIM-1B-2B-CAPABILITY",
+      "left": {"stage":"CORE1B","artifact_ref":"B1-CAP-COEFF"},
+      "right": {"stage":"CORE2B","artifact_ref":"B2-Q2-SIBLING"},
+      "artifact_kind": "TTU",
+      "declared_relation": "SEMANTIC_REUSE",
+      "content_similarity": 0.43,
+      "pedagogical_similarity": 0.38,
+      "structural_similarity": null,
+      "capability_overlap": true,
+      "classification": "LEGITIMATE_TRANSFORMATION",
+      "evidence": "Both require learner production but one reconstructs concept structure while the other selects and transfers it in a problem."
+    },
+    {
+      "comparison_id": "SIM-2A-2B-FADING",
+      "left": {"stage":"CORE2A","artifact_ref":"A2-Q2"},
+      "right": {"stage":"CORE2B","artifact_ref":"B2-Q2-FADING"},
+      "artifact_kind": "QUESTION",
+      "declared_relation": "FADING_ANCHOR",
+      "content_similarity": 0.97,
+      "pedagogical_similarity": 0.36,
+      "structural_similarity": 0.98,
+      "capability_overlap": true,
+      "classification": "LEGITIMATE_TRANSFORMATION",
+      "evidence": "The same source problem is intentionally reused once as a fading anchor; Core2B withholds the method and solution until after learner reconstruction."
+    },
+    {
+      "comparison_id": "SIM-2A-2B-SIBLING",
+      "left": {"stage":"CORE2A","artifact_ref":"A2-Q2"},
+      "right": {"stage":"CORE2B","artifact_ref":"B2-Q2-SIBLING"},
+      "artifact_kind": "QUESTION",
+      "declared_relation": "STRUCTURAL_SIBLING",
+      "content_similarity": 0.55,
+      "pedagogical_similarity": 0.29,
+      "structural_similarity": 0.78,
+      "capability_overlap": true,
+      "classification": "LEGITIMATE_TRANSFORMATION",
+      "evidence": "The Core2B item preserves the coefficient-root family while changing instance, cueing and learner task."
+    }
+  ]
+}

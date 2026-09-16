@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "policy_id": "MATH-ENGINEERING-DEPTH-V1",
+  "profiles": {
+    "FOUNDATION": {
+      "min_reasoning_steps": 1,
+      "min_model_conditions": 0,
+      "min_misconceptions": 0,
+      "min_required_transformations": 0,
+      "min_falsification_cases": 0,
+      "required_transformation_roles": [],
+      "require_non_provisional_provenance": false
+    },
+    "STANDARD": {
+      "min_reasoning_steps": 1,
+      "min_model_conditions": 0,
+      "min_misconceptions": 0,
+      "min_required_transformations": 0,
+      "min_falsification_cases": 0,
+      "required_transformation_roles": [],
+      "require_non_provisional_provenance": false
+    },
+    "RESEARCH": {
+      "min_reasoning_steps": 2,
+      "min_model_conditions": 1,
+      "min_misconceptions": 1,
+      "min_required_transformations": 4,
+      "min_falsification_cases": 1,
+      "required_transformation_roles": [
+        "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+        "CORE1B_GENERATIVE_RECONSTRUCTION",
+        "CORE2A_DECLARATIVE_WORKED_PROBLEM",
+        "CORE2B_GENERATIVE_TRANSFER"
+      ],
+      "require_non_provisional_provenance": true
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-assessment-engineering-crosswalk.schema.json",
+  "title": "Mathematics AssessmentScope to Engineering Gate Crosswalk",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "subject", "crosswalk_id", "coverage_scope",
+    "assessment_scope_authority_id", "assessment_scope_authority_digest",
+    "engineering_registry_id", "engineering_registry_digest",
+    "coverage_scope_capability_refs", "rows"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "crosswalk_id": {"type": "string", "pattern": "^MATH-ASSESSMENT-ENG-XWALK-[A-Z0-9_-]+$"},
+    "coverage_scope": {"const": "MIXED_GRADE9_COLD_START"},
+    "assessment_scope_authority_id": {"type": "string", "minLength": 3},
+    "assessment_scope_authority_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "engineering_registry_id": {"type": "string", "pattern": "^REG-MATH-TECH-GATE-"},
+    "engineering_registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "coverage_scope_capability_refs": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^MATH-"}
+    },
+    "rows": {
+      "type": "array", "minItems": 1,
+      "items": {"$ref": "#/$defs/row"}
+    }
+  },
+  "$defs": {
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_ref", "status", "binding_role", "engineering_gate_ids",
+        "authority_basis_refs", "mapping_rationale", "gap_code", "gap_reason"
+      ],
+      "properties": {
+        "capability_ref": {"type": "string", "pattern": "^MATH-"},
+        "status": {"enum": ["COVERED", "ENGINEERING_GAP"]},
+        "binding_role": {"enum": ["DIRECT_TECHNICAL", "FOUNDATIONAL_SUPPORT", "UNMAPPED"]},
+        "engineering_gate_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}
+        },
+        "authority_basis_refs": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "mapping_rationale": {"type": "string", "minLength": 20},
+        "gap_code": {"type": ["string", "null"], "minLength": 3},
+        "gap_reason": {"type": ["string", "null"], "minLength": 20}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "COVERED"}}},
+          "then": {
+            "properties": {
+              "binding_role": {"enum": ["DIRECT_TECHNICAL", "FOUNDATIONAL_SUPPORT"]},
+              "engineering_gate_ids": {"minItems": 1},
+              "gap_code": {"type": "null"},
+              "gap_reason": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"status": {"const": "ENGINEERING_GAP"}}},
+          "then": {
+            "properties": {
+              "binding_role": {"const": "UNMAPPED"},
+              "engineering_gate_ids": {"maxItems": 0},
+              "gap_code": {"type": "string", "minLength": 3},
+              "gap_reason": {"type": "string", "minLength": 20}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

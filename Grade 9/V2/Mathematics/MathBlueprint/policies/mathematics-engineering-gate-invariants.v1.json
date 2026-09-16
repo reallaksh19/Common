@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "profile_id": "MATH-ENGINEERING-GATE-INVARIANTS-V1",
+  "gate_invariants": [
+    {
+      "gate_id": "MATH-NUM-RADICALS",
+      "required_concept_ids": ["CON-MATH-PRINCIPAL-SQUARE-ROOT-ABS"],
+      "required_equation_ids": ["EQ-MATH-RADICAL-IDENTITY"],
+      "required_representation_ids": [],
+      "required_misconception_ids": [],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-ALG-POLYNOMIALS",
+      "required_concept_ids": ["CON-MATH-FACTOR-THEOREM"],
+      "required_equation_ids": [],
+      "required_representation_ids": [],
+      "required_misconception_ids": ["MISC-MATH-FRESHMANS-DREAM"],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-LIN-EQUATIONS",
+      "required_concept_ids": ["CON-MATH-LINEAR-SYSTEM-CONSISTENCY"],
+      "required_equation_ids": ["EQ-MATH-RATIO-CONSISTENCY"],
+      "required_representation_ids": [],
+      "required_misconception_ids": [],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-QUAD-EQUATIONS",
+      "required_concept_ids": ["CON-MATH-QUAD-NONZERO-LEAD"],
+      "required_equation_ids": ["EQ-MATH-QUAD-FORMULA"],
+      "required_representation_ids": [],
+      "required_misconception_ids": [],
+      "required_prerequisite_ids": ["MATH-ALG-POLYNOMIALS"]
+    },
+    {
+      "gate_id": "MATH-GEO-COORDINATES",
+      "required_concept_ids": ["CON-MATH-VERTICAL-SLOPE-UNDEFINED"],
+      "required_equation_ids": ["EQ-MATH-DISTANCE-FORMULA"],
+      "required_representation_ids": [],
+      "required_misconception_ids": [],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-GEO-EUCLID-FOUNDATIONS",
+      "required_concept_ids": ["CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION"],
+      "required_equation_ids": ["EQ-MATH-EUCLID-CLASSIFICATION"],
+      "required_representation_ids": ["REP-MATH-EUCLID-CLASSIFICATION-TABLE"],
+      "required_misconception_ids": ["MISC-MATH-EUCLID-AXIOM-POSTULATE-PROOF"],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-GEO-TRIANGLES",
+      "required_concept_ids": ["CON-MATH-CONGRUENCE-CRITERIA"],
+      "required_equation_ids": [],
+      "required_representation_ids": ["REP-MATH-GEOMETRIC-TWO-COLUMN-PROOF"],
+      "required_misconception_ids": ["MISC-MATH-SSA-CONGRUENCE-FALLACY"],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-TRIG-RATIOS",
+      "required_concept_ids": ["CON-MATH-TRIG-ACUTE-DOMAIN"],
+      "required_equation_ids": ["EQ-MATH-PYTHAGOREAN-TRIG-IDENTITY"],
+      "required_representation_ids": [],
+      "required_misconception_ids": [],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-GEO-CIRCLES",
+      "required_concept_ids": ["CON-MATH-TANGENT-RADIUS-PERPENDICULAR"],
+      "required_equation_ids": ["EQ-MATH-CYCLIC-QUAD-SUPPLEMENTARY"],
+      "required_representation_ids": [],
+      "required_misconception_ids": [],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-MENS-SURFACES",
+      "required_concept_ids": ["CON-MATH-COMPOSITE-INTERFACE-EXCLUSION"],
+      "required_equation_ids": ["EQ-MATH-VOLUME-CONSERVATION"],
+      "required_representation_ids": [],
+      "required_misconception_ids": [],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "MATH-STAT-PROBABILITY",
+      "required_concept_ids": ["CON-MATH-PROBABILITY-BOUNDS"],
+      "required_equation_ids": [],
+      "required_representation_ids": [],
+      "required_misconception_ids": ["MISC-MATH-PROBABILITY-OUT-OF-BOUNDS"],
+      "required_prerequisite_ids": []
+    }
+  ]
+}

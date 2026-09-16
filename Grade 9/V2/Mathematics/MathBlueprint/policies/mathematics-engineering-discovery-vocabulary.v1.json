@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "catalog_id": "MATH-ENG-DISC-VOCAB-V1",
+  "authority": "NON_AUTHORITATIVE_DISCOVERY_VOCABULARY",
+  "technical_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED",
+  "registry_id": "REG-MATH-TECH-GATE-V1",
+  "entries": [
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-ALG-POLYNOMIALS",
+      "terms": [
+        {"phrase": "algebraic identities", "term_class": "COMPETITION_TERM"},
+        {"phrase": "binomial square", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "factorisation", "term_class": "REGIONAL_VARIANT"},
+        {"phrase": "factorization", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "polynomials", "term_class": "LEARNER_ALIAS"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-GEO-COORDINATES",
+      "terms": [
+        {"phrase": "cartesian plane", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "collinearity by slope", "term_class": "COMPETITION_TERM"},
+        {"phrase": "coordinate geometry", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "distance formula", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "quadrant signs", "term_class": "LEARNER_ALIAS"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-GEO-EUCLID-FOUNDATIONS",
+      "terms": [
+        {"phrase": "axioms and postulates", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "euclid axioms", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "euclid postulates", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "euclidean foundations", "term_class": "TECHNICAL_TERM"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-GEO-LINES-ANGLES",
+      "terms": [
+        {"phrase": "lines and angles", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "parallel lines", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "transversal angles", "term_class": "TECHNICAL_TERM"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-LIN-EQUATIONS",
+      "terms": [
+        {"phrase": "equations in two variables", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "linear systems", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "pair of linear equations", "term_class": "REGIONAL_VARIANT"},
+        {"phrase": "simultaneous equations", "term_class": "COMPETITION_TERM"},
+        {"phrase": "system of linear equations", "term_class": "TECHNICAL_TERM"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-LINES-2D",
+      "terms": [
+        {"phrase": "equation of a line", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "gradient", "term_class": "REGIONAL_VARIANT"},
+        {"phrase": "line equation", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "slope intercept form", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "straight lines", "term_class": "LEARNER_ALIAS"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-NUM-RADICALS",
+      "terms": [
+        {"phrase": "conjugate rationalization", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "radicals", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "rationalising the denominator", "term_class": "REGIONAL_VARIANT"},
+        {"phrase": "rationalizing the denominator", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "surds", "term_class": "COMPETITION_TERM"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-PERM-COMB",
+      "terms": [
+        {"phrase": "combinatorics", "term_class": "COMPETITION_TERM"},
+        {"phrase": "counting pairs", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "nCr", "term_class": "COMMON_ABBREVIATION"},
+        {"phrase": "permutations and combinations", "term_class": "LEARNER_ALIAS"}
+      ]
+    },
+    {
+      "target_scope_kind": "BUCKET",
+      "target_scope_ref": "BUCKET-MATH-NUMBERS",
+      "terms": [
+        {"phrase": "number systems", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "real numbers", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "surds and radicals", "term_class": "COMPETITION_TERM"}
+      ]
+    }
+  ]
+}

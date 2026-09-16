@@ -1,0 +1,42 @@
+{
+  "registry_id": "MATH-COMPETITIVE-ARCHETYPES-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "archetypes": [
+    {
+      "archetype_id": "MATH-CA-NEAR-TRANSFER-v1",
+      "name": "Same structure, new instance",
+      "novelty_mechanisms": ["INVARIANT_RECOGNITION"],
+      "description": "Preserve the taught invariant while changing the mathematical instance enough to require genuine re-execution rather than copying.",
+      "forbidden": ["SOURCE_NEAR_COPY", "NUMBER_SWAP_ONLY"]
+    },
+    {
+      "archetype_id": "MATH-CA-HIDDEN-INFORMATION-v1",
+      "name": "Useful information is disguised",
+      "novelty_mechanisms": ["HIDDEN_INFORMATION", "REPRESENTATION_SHIFT"],
+      "description": "The needed taught quantity is present indirectly and must first be rewritten into the learner's known representation.",
+      "forbidden": ["UNTAUGHT_IDENTITY"]
+    },
+    {
+      "archetype_id": "MATH-CA-REVERSED-TARGET-v1",
+      "name": "Same idea, different goal",
+      "novelty_mechanisms": ["REVERSED_TARGET", "PARAMETER_CONSTRAINT"],
+      "description": "A quantity that is usually given becomes the target, or a parameter must be chosen so that the taught relationship holds.",
+      "forbidden": ["UNTAUGHT_THEOREM"]
+    },
+    {
+      "archetype_id": "MATH-CA-MIXED-SYNTHESIS-v1",
+      "name": "Join two known ideas",
+      "novelty_mechanisms": ["MIXED_CONCEPT_SYNTHESIS"],
+      "description": "Combine at least two already-taught buckets so the learner must choose and sequence the relevant ideas.",
+      "forbidden": ["USE_UNMATURE_BUCKET", "INTRODUCE_NEW_CURRICULUM"]
+    },
+    {
+      "archetype_id": "MATH-CA-SYMMETRIC-REWRITE-v1",
+      "name": "Rewrite before solving",
+      "novelty_mechanisms": ["SYMMETRIC_REWRITE", "REPRESENTATION_SHIFT"],
+      "description": "The target must first be rewritten into a symmetric form that can be evaluated from taught root information.",
+      "forbidden": ["UNAPPROVED_IDENTITY"]
+    }
+  ]
+}
