@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-INVALID-MANUAL-READINESS",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": {
+    "system": "CBSE",
+    "version": "2026-27"
+  },
+  "topic": "Motion",
+  "subtopic": "Relative Motion",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": ["PROBLEM_SEMANTICS"],
+  "write_mode": "ANALYZE_ONLY",
+  "engineering_ready": true
+}
