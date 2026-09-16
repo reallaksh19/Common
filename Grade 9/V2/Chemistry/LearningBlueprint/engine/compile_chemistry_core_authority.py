@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 
 from compile_chemistry_engineering_closure import load  # noqa: E402
+from compile_chemistry_learner_gate_projection import compile_learner_gate_projection  # noqa: E402
 from compile_chemistry_semantic_projection import compile_semantic_projection  # noqa: E402
 from validate_static_b_layer_boundary import validate_core1b, validate_core2b  # noqa: E402
 
@@ -268,8 +269,7 @@ def _representation_closure(
 ) -> dict[str, Any]:
     authorized_rows = [
         row for row in obligation_packet["obligations"]
-        if row["kind"] == "REPRESENTATION"
-        and product_mode in row["authorized_modes"]
+        if row["kind"] == "REPRESENTATION" and product_mode in row["authorized_modes"]
     ]
     direct_rows = [row for row in authorized_rows if row["direct"]]
     authorized_assets = {str(row["asset_ref"]) for row in authorized_rows}
@@ -322,11 +322,9 @@ def _representation_closure(
     missing_required = sorted(required_assets - realized_assets)
     if missing_required:
         fail("CHEM_CORE_AUTH_REQUIRED_REPRESENTATION_UNREALIZED", ",".join(missing_required))
-
     overclaimed = sorted(claimed_assets - realized_assets)
     if overclaimed:
         fail("CHEM_CORE_AUTH_REPRESENTATION_REALIZATION_OVERCLAIM", ",".join(overclaimed))
-
     if (required_assets or used_refs or claimed_assets) and not defined_refs:
         fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_EMPTY")
 
@@ -349,34 +347,21 @@ def _semantic_closure(
     """Bind claimed obligation realization to deterministic semantic-role lineage."""
     projection = compile_semantic_projection(obligation_packet)
     realized_obligations = set(realized_obligation_ids)
-    authorized_atoms = [
-        row for row in projection["semantic_atoms"]
-        if product_mode in row["authorized_modes"]
-    ]
-    required_atoms = [
-        row for row in authorized_atoms
-        if row["direct"] and product_mode in row["required_realization_modes"]
-    ]
-    realized_atoms = [
-        row for row in authorized_atoms
-        if row["source_obligation_id"] in realized_obligations
-    ]
+    authorized_atoms = [row for row in projection["semantic_atoms"] if product_mode in row["authorized_modes"]]
+    required_atoms = [row for row in authorized_atoms if row["direct"] and product_mode in row["required_realization_modes"]]
+    realized_atoms = [row for row in authorized_atoms if row["source_obligation_id"] in realized_obligations]
 
     required_ids = {row["semantic_id"] for row in required_atoms}
     realized_ids = {row["semantic_id"] for row in realized_atoms}
     missing_required = sorted(required_ids - realized_ids)
     if missing_required:
         fail("CHEM_CORE_AUTH_REQUIRED_SEMANTIC_MISSING", ",".join(missing_required))
-
     realized_sources = {row["source_obligation_id"] for row in realized_atoms}
     missing_semantic_lineage = sorted(realized_obligations - realized_sources)
     if missing_semantic_lineage:
-        fail(
-            "CHEM_CORE_AUTH_REALIZED_OBLIGATION_WITHOUT_SEMANTICS",
-            ",".join(missing_semantic_lineage),
-        )
+        fail("CHEM_CORE_AUTH_REALIZED_OBLIGATION_WITHOUT_SEMANTICS", ",".join(missing_semantic_lineage))
 
-    closure = {
+    return projection, {
         "status": "PASS",
         "authorized_semantic_ids": sorted(row["semantic_id"] for row in authorized_atoms),
         "required_semantic_ids": sorted(required_ids),
@@ -384,7 +369,48 @@ def _semantic_closure(
         "realized_source_obligation_ids": sorted(realized_sources),
         "semantic_atom_count": len(realized_atoms),
     }
-    return projection, closure
+
+
+def _learner_gate_closure(
+    product_mode: str,
+    obligation_packet: dict[str, Any],
+    semantic_projection: dict[str, Any],
+    realized_obligation_ids: list[str],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Bind Core realization to direct learner jobs without promoting prerequisite context."""
+    projection = compile_learner_gate_projection(obligation_packet, semantic_projection=semantic_projection)
+    realized_obligations = set(realized_obligation_ids)
+    authorized_gates = [row for row in projection["learner_gates"] if product_mode in row["authorized_modes"]]
+    required_gates = [row for row in authorized_gates if product_mode in row["required_realization_modes"]]
+    realized_gates = [row for row in authorized_gates if row["source_obligation_id"] in realized_obligations]
+    required_ids = {row["learner_gate_id"] for row in required_gates}
+    realized_ids = {row["learner_gate_id"] for row in realized_gates}
+    missing_required = sorted(required_ids - realized_ids)
+    if missing_required:
+        fail("CHEM_CORE_AUTH_REQUIRED_LEARNER_GATE_MISSING", ",".join(missing_required))
+
+    semantic_by_id = {row["semantic_id"]: row for row in semantic_projection["semantic_atoms"]}
+    context_ids = sorted(
+        semantic_id for semantic_id in projection["context_semantic_ids"]
+        if product_mode in semantic_by_id[semantic_id]["authorized_modes"]
+    )
+    metadata_ids = sorted(
+        semantic_id for semantic_id in projection["metadata_semantic_ids"]
+        if product_mode in semantic_by_id[semantic_id]["authorized_modes"]
+    )
+    realized_source_semantic_ids = {row["source_semantic_id"] for row in realized_gates}
+    if set(context_ids) & realized_source_semantic_ids:
+        fail("CHEM_CORE_AUTH_CONTEXT_PROMOTED_TO_LEARNER_GATE")
+
+    return projection, {
+        "status": "PASS",
+        "authorized_learner_gate_ids": sorted(row["learner_gate_id"] for row in authorized_gates),
+        "required_learner_gate_ids": sorted(required_ids),
+        "realized_learner_gate_ids": sorted(realized_ids),
+        "context_semantic_ids": context_ids,
+        "metadata_semantic_ids": metadata_ids,
+        "learner_gate_count": len(realized_gates),
+    }
 
 
 def compile_core_authority(
@@ -411,26 +437,22 @@ def compile_core_authority(
     unknown = sorted(set(realized) - set(obligations))
     if unknown:
         fail("CHEM_CORE_AUTH_REALIZATION_UNKNOWN", ",".join(unknown))
-    unauthorized = sorted(
-        oid for oid in realized if product_mode not in obligations[oid]["authorized_modes"]
-    )
+    unauthorized = sorted(oid for oid in realized if product_mode not in obligations[oid]["authorized_modes"])
     if unauthorized:
         fail("CHEM_CORE_AUTH_REALIZATION_UNAUTHORIZED", ",".join(unauthorized))
 
     required = {
-        row["obligation_id"]
-        for row in obligation_packet["obligations"]
+        row["obligation_id"] for row in obligation_packet["obligations"]
         if row["direct"] and product_mode in row["required_realization_modes"]
     }
     missing = sorted(required - set(realized))
     if missing:
         fail("CHEM_CORE_AUTH_REQUIRED_OBLIGATION_MISSING", ",".join(missing))
 
-    representation_closure = _representation_closure(
-        product_mode, payload, obligation_packet, realized
-    )
-    semantic_projection, semantic_closure = _semantic_closure(
-        product_mode, obligation_packet, realized
+    representation_closure = _representation_closure(product_mode, payload, obligation_packet, realized)
+    semantic_projection, semantic_closure = _semantic_closure(product_mode, obligation_packet, realized)
+    learner_gate_projection, learner_gate_closure = _learner_gate_closure(
+        product_mode, obligation_packet, semantic_projection, realized
     )
 
     authority = {
@@ -444,6 +466,9 @@ def compile_core_authority(
         "semantic_projection_id": semantic_projection["projection_id"],
         "semantic_projection_digest": semantic_projection["projection_digest"],
         "semantic_closure": semantic_closure,
+        "learner_gate_projection_id": learner_gate_projection["projection_id"],
+        "learner_gate_projection_digest": learner_gate_projection["projection_digest"],
+        "learner_gate_closure": learner_gate_closure,
         "payload_ref": payload_ref,
         "payload_digest": digest(payload),
         "scope_units": _scope_units(product_mode, payload),
