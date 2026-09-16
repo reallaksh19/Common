@@ -9,6 +9,7 @@
     "repository_state",
     "task_kind_contract",
     "authority_bindings",
+    "governed_input_bindings",
     "learning_engineering_state",
     "engineering_preflight",
     "packet_digest"
@@ -48,6 +49,19 @@
         "required": ["authority_class", "path", "sha256"],
         "properties": {
           "authority_class": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "governed_input_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "path", "sha256"],
+        "properties": {
+          "role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
           "path": {"type": "string", "minLength": 1},
           "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
         },
