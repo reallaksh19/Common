@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, repository, roadmap, current_position, execution_policy, active_ep, progress, status_planes, chat_context_required]
+required: [schema_version, repository, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, chat_context_required]
 properties:
   schema_version: {const: relay-v2.5}
   roadmap:
@@ -17,6 +17,9 @@ properties:
   active_ep:
     type: object
     required: [id, path, state]
+  last_checkpoint:
+    type: object
+    required: [id, path]
   status_planes:
     type: object
     required: [execution, quality, evidence, stop]
