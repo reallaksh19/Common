@@ -2,72 +2,55 @@
 
 ## Status
 
-This document is the normative architecture for completing Engineering Relay V2.5 after the control-plane kernel in PR #396.
-
-Current implementation status:
+This document is the normative completion architecture for Engineering Relay V2.5 in PR #396.
 
 ```text
 WP-00 Kernel baseline / object matrix               DELIVERED — CP-R001
 WP-01 Semantic Execution Package                    DELIVERED — CP-R002
 WP-02 Baton readiness + Takeover Certification      DELIVERED — CP-R003
-WP-03 Strong phase/boundary qualification           DELIVERED* — CP-R004
-WP-04 Full progress / handover / next-work          CURRENT FRONTIER*
+WP-03 Strong phase/boundary qualification           DELIVERED — CP-R004
+WP-04 Full progress / handover / next-work          CURRENT FRONTIER
 ```
 
-`*` CP-R004 and the WP-04 successor state are repository-resident, but the final exact-head corrected CI gate must pass before WP-03 is treated as formally checkpoint-valid or WP-04 material execution begins.
+CP-R004/status verification passed corrected workflow **35099657641** on `e3dd0c7d14b2958a65427935303f481bc17a8b5d` before WP-04 activation.
 
-A target object/predicate is not considered delivered until its schema/template/validator/tests and checkpointed evidence exist. Conversation is acceleration, never custody.
+Conversation is acceleration, never custody.
 
 ## Governing relay
 
 ```text
-OWNER INTENT / OWNER DECISION
-    |
-    v
+OWNER INTENT / ODR
+    ↓
 OVERALL ROADMAP
-    |
-    v
+    ↓
 EXECUTABLE FRONTIER
-    |
-    v
-SEMANTIC EP / APPROVED PARALLEL PLAN        [WP-01 delivered]
-    |
-    +--> DSTEP-* discovery contract          [WP-01 delivered]
-    |
-    v
-BATON_READY                                  [WP-02 delivered]
-    |
-    v
-INCOMING REPLACEMENT — ZERO CHAT CONTEXT
-    |
-    +--> DISC-* Discovery Receipt            [WP-02 delivered]
-    +--> QSET-* / QUAL-* when required       [WP-03 delivered]
-    |
-    v
-TC-* TAKEOVER CERTIFICATION                  [WP-02 + WP-03 integration]
-    |
-    v
-TAKEOVER_CERTIFIED(route, candidate)
-    |
-    v
-MATERIAL_WRITE_READY(route,candidate,live)
-    |
-    v
+    ↓
+SEMANTIC EP / APPROVED PARALLEL PLAN
+    ├── DSTEP-* discovery contract
+    └── QSET-* when qualification is required
+    ↓
+BATON_READY
+    ↓
+ZERO-CONTEXT INCOMING CANDIDATE
+    ├── DISC-* repository discovery evidence
+    └── QUAL-* evaluated engineering evidence when required
+    ↓
+TC-* TAKEOVER CERTIFICATION
+    ↓
+TAKEOVER_CERTIFIED(route,candidate)
+    ↓
+MATERIAL_WRITE_READY(route,candidate,live Git)
+    ↓
 IMPLEMENTATION
-    |
-    v
-QUALITY REVIEW + TEST/BENCHMARK EVIDENCE     [WP-06 deepens quality]
-    |
-    v
+    ↓
+QUALITY / TEST / BENCHMARK EVIDENCE
+    ↓
 CHECKPOINT
-    |
-    v
+    ↓
 ROADMAP / PROGRESS / ISSUE RECONCILIATION
-    |
-    v
-STRUCTURED PROGRESS / HANDOVER PROJECTION    [WP-04 current]
-    |
-    v
+    ↓
+STRUCTURED PROGRESS / HANDOVER PROJECTION      [WP-04]
+    ↓
 NEXT EP
 ```
 
@@ -78,124 +61,62 @@ Owner intent / ODR       authoritative intent
 Overall Roadmap          authoritative plan/topology
 EP / Parallel Plan       authorized forward slice
 DSTEP-*                  forward discovery requirements
+QSET-*                   prepared qualification criteria
 DISC-*                   candidate discovery evidence
-QSET-*                   prepared qualification criteria when boundary requires it
 QUAL-*                   evaluated engineering qualification evidence
-TC-*                     route/candidate takeover admission evidence
+TC-*                     route/candidate admission evidence
 Live Git observation     runtime fact
 CP                       backward execution truth
 PROGRESS / ISSUE_GRAPH   reconciled repository state
-Generated report/Markdown projection only
+Generated report/MD      projection only
 GitHub                   external coordination projection
 Chat                     non-authoritative convenience
 ```
 
-No downstream repository is a Common implementation target. Real repositories may reveal protocol failure modes only through read-only stress/validation; fixes first become repository-neutral Common invariants and synthetic regressions.
+No downstream repository is a Common implementation target. Real repositories can reveal generic failure modes only through read-only stress/validation unless separately authorized.
 
-## Semantic Execution Package — delivered WP-01
+## Delivered WP-01 — semantic baton
 
-The EP is semantically validated for serial active work and every Owner-approved parallel lane. It includes typed slice-specific inputs, benchmarks/oracles, executable `DSTEP-*` discovery, bounded scope, structured anti-drift, exact implementation mappings, source-bound report payloads, and durable successor outputs. `REPO_PROFILE.yaml` and the pinned relay protocol basis are admitted into conformance.
+Executable EPs are semantically validated for serial work and approved parallel lanes. They contain typed slice-specific inputs/oracles, executable `DSTEP-*` discovery, bounded scope, structured anti-drift, exact implementation mappings, source-aware report payload requirements and durable successor outputs. `REPO_PROFILE` and the pinned relay-protocol basis are part of conformance.
 
-Input applicability:
+Current-slice unresolved requirements can withhold execution; future/informational items do not recreate an everything-is-blocked workflow.
 
-```text
-CURRENT_STEP_REQUIRED
-CURRENT_EP_REQUIRED
-FUTURE_STEP
-INFORMATIONAL
-```
-
-Resolution:
-
-```text
-READY
-OWNER_EDITABLE_READY
-DEFERRED_NOT_CURRENTLY_REQUIRED
-MISSING_BLOCKING
-INVALID
-STALE
-```
-
-Only unresolved requirements relevant to the current slice remove current execution eligibility; future/informational items do not recreate an everything-is-blocked workflow.
-
-## Readiness and candidate admission — delivered WP-02
-
-Read `takeover-certification.md` for the complete contract and `ci-evidence-correction.md` for the corrected workflow evidence rule.
+## Delivered WP-02 — readiness and candidate admission
 
 ### BATON_READY
 
-Repository-wide and candidate-independent:
+Repository-wide and candidate-independent. It proves the repository contains a complete zero-context baton before a future replacement exists.
+
+### TAKEOVER_CERTIFIED(route,candidate)
+
+Route/candidate-specific. It requires current `BATON_READY`, a current PASS `DISC-*`, a current PASS `TC-*`, and a current PASS `QUAL-*` when the EP declares a qualification boundary. Evidence is revalidated against the current roadmap, route, EP/profile/predecessor digests and material basis.
+
+### PROJECTION_READY / HANDOVER_READY
 
 ```text
-BATON_READY =
-    roadmap/frontier valid
-AND current EP/plan semantically complete
-AND predecessor custody valid
-AND repository profile/protocol admitted
-AND discovery contract complete
-AND required QSET valid when a qualification boundary is declared
-AND current-required input/oracle contracts complete
-AND scope/anti-drift/report/successor contracts complete
-AND conversation context not required
-```
-
-A repository may be `BATON_READY` while `takeover_admissions: []`. The outgoing agent can leave a complete baton before the future replacement exists.
-
-### TAKEOVER_CERTIFIED(route, candidate)
-
-Route/candidate-specific, never a repository-global boolean:
-
-```text
-TAKEOVER_CERTIFIED(route,candidate) =
-    BATON_READY
-AND current DISC receipt for route/candidate PASS
-AND current TC receipt for route/candidate PASS
-AND current required QUAL receipt PASS when applicable
-AND DISC/QSET/QUAL/TC basis matches current roadmap / route /
-    EP contract / REPO_PROFILE / predecessor baton / material basis
-```
-
-Serial route keys are `SERIAL:<EP-id>`. Parallel lane route keys are `PARALLEL_LANE:<PLAN-id>:<LANE-id>:<EP-id>` so different approved lanes may have different certified candidates.
-
-`REPO_STATE.takeover_admissions[]` is only a locator/projection to durable DISC/TC receipts. Validators re-open those files and re-compute current basis.
-
-### PROJECTION_READY and HANDOVER_READY
-
-```text
-PROJECTION_READY = required external coordination projections represent current repository truth
+PROJECTION_READY = required external projections represent current repository truth
 HANDOVER_READY   = BATON_READY AND PROJECTION_READY
 ```
 
-This is outgoing custody completeness, not candidate write authority.
+### MATERIAL_WRITE_READY
 
-### MATERIAL_WRITE_READY(route,candidate,live_git)
-
-Live-derived and deliberately not persisted:
+Runtime-only:
 
 ```text
-MATERIAL_WRITE_READY =
-    TAKEOVER_CERTIFIED(route,candidate)
-AND live route resolves exactly that route
-AND live Git/material basis is acceptable
-AND current drift/continuity permits WRITE
+TAKEOVER_CERTIFIED
+AND live route matches
+AND live Git/material basis acceptable
+AND drift/continuity permits WRITE
 AND material_authority == WRITE
-AND execution.can_continue == true
+AND execution.can_continue
 AND no active hard stop
 ```
 
-`material_authority: WRITE` is necessary but not sufficient. The runtime gate is `scripts/material_write_ready.py`.
+`material_authority: WRITE` alone never authorizes a candidate.
 
-## Independent takeover
+## Delivered WP-03 — strong engineering qualification
 
-The outgoing preparer creates the semantic EP and discovery/qualification criteria. The incoming candidate performs repository discovery and, when required, answers the prepared QSET. Takeover Certification records candidate, preparer and evaluator identities and requires `self_certification.allowed: false`.
-
-A candidate may not be its own preparer. An `INDEPENDENT_AGENT` evaluator may not be the candidate. Deterministic evaluation is valid only when the repository carries exact deterministic expectations and the validator itself compares candidate outputs against them.
-
-## Strong qualification — delivered WP-03
-
-Read `phase-transition.md` and `wp-03-qualification.md`.
-
-Fresh qualification is required when:
+Qualification is required when:
 
 ```text
 PHASE_CHANGED
@@ -203,50 +124,57 @@ OR
 MATERIAL_QUALIFICATION_BOUNDARY_CHANGED
 ```
 
-A material boundary includes significant change in production path, engineering authority, numerical method, protected/safety invariant, input authority or verification/oracle class.
+A material boundary includes substantial changes in production path, engineering authority, numerical method, protected invariant, input authority, or verification/oracle class.
 
 The durable transaction is:
 
 ```text
-qualification_boundary in EP
+EP.qualification_boundary
  -> QSET-* prepared by outgoing agent
- -> candidate answers with zero chat custody
+ -> candidate Q1–Q5 answers with zero chat custody
  -> independent/deterministic evaluation
  -> QUAL-* PASS/FAIL
- -> TC-* cites QUAL id/path/digest
+ -> TC-* cites exact QUAL id/path/digest
  -> TAKEOVER_CERTIFIED
 ```
 
-Q1–Q5 semantics are now enforced:
+Q1–Q5 enforce:
 
 ```text
-Q1 actual production path / source trace
-Q2 concrete engineering reconstruction where applicable
-Q3 boundary/authority mutation plus exact falsifier
-Q4 independent verification / benchmark reasoning
-Q5 exact first safe slice plus predicted verification result
+Q1 actual production/source trace
+Q2 engineering reconstruction; concrete values for quantitative work
+Q3 mutation + protected invariant + exact falsifier
+Q4 independent benchmark/oracle verification
+Q5 exact first safe change + predicted verification
 ```
 
-QSET and QUAL bind to the full execution route, roadmap revision, work package and semantic EP digest. Candidate-authored criteria and self-evaluation are rejected. QUAL PASS requires every Q1–Q5 evaluation PASS with durable basis. Changing QUAL evidence after TC issuance invalidates the TC through `qualification.receipt_digest`.
+QSET/QUAL bind to the exact route, roadmap revision, work package and semantic EP digest. The candidate cannot prepare its own QSET or act as its own independent evaluator. Deterministic evaluation requires explicit deterministic expected outputs. QUAL PASS requires PASS evaluation and durable basis for every question. Changing QUAL evidence invalidates a TC through receipt-digest binding.
 
 Inline `phase_transition.questions` is retired as an executable qualification contract.
 
-Qualification remains admission evidence, not write authority; the live write gate is still final.
+Qualification is admission evidence, not material write authority.
 
-## Progress / handover / next-work — current WP-04
+## Current WP-04 — progress, handover, and exact next work
 
-WP-04 makes project state legible and complete without turning generated reports into authority.
+WP-04 establishes truthful complete information architecture before WP-07 simplifies Owner language.
 
-Authority flow:
+### Source authority
+
+Progress and reports derive from:
 
 ```text
-OVERALL_ROADMAP / PROGRESS / EP / CP / DISC / QSET / QUAL / TC / ISSUE_GRAPH / REPO_STATE-owned lifecycle facts
-    -> structured reconciled report projection
-    -> technical handover/status projection
-    -> later WP-07 Owner-language projection
+OVERALL_ROADMAP
+PROGRESS
+EP / approved lane EP
+CP
+DISC / QSET / QUAL / TC when relevant
+ISSUE_GRAPH
+REPO_STATE only for lifecycle/routing facts it owns
 ```
 
-Required progress hierarchy:
+Generated reports never become a competing source of truth.
+
+### Required hierarchy
 
 ```text
 Overall
@@ -257,73 +185,91 @@ Overall
           Acceptance Criterion
 ```
 
-Progress at human-report levels must be calculated or explicitly reconciled from authoritative sources. Unverified `REPO_STATE.progress.phase_percent` and `ep_percent` mirrors must not remain human-report authority.
+Human-report percentages/state must be calculated or reconciled from authoritative objects. Unverified mirrored `REPO_STATE.progress.phase_percent` / `ep_percent` values must not control handover output.
 
-WP-04 also replaces dependence on a vague scalar `next_action` with structured ordered next work containing targets, required inputs, tests/oracles, acceptance IDs, expected results and stop/reconciliation conditions.
+### Exact next work
 
-A structured/generated report is projection only. If it disagrees with source objects, it is stale or invalid and must be regenerated/reconciled; it never overrides roadmap, EP, CP, progress, certification or issue state.
+The relay must produce ordered successor actions with:
 
-## Quality — WP-06 target
+```text
+order
+action
+targets
+inputs
+tests/oracles
+acceptance IDs
+expected result
+stop/reconciliation conditions
+qualification-boundary flag
+```
 
-Quality remains separate from hard-stop/evidence state. Later quality routing selects applicable procedures with reasons and creates `QRV-*` Quality Review evidence. A quality finding is not automatically a stop.
+A single vague `next_action` string is insufficient as the successor work contract.
 
-## Human representation — WP-07 target
+### Structured report projection
 
-WP-04 establishes truthful complete information architecture. WP-07 then generates distinct technical and plain-language Owner projections from the same source objects so machine vocabulary is not the primary Owner interaction language.
+A report declares source bindings. If its contents disagree with the source objects, it is stale/invalid and must be regenerated. It never overrides roadmap, EP, CP, progress, issue or certification authority.
+
+## Remaining target layers
+
+```text
+WP-05  GitHub Program Projection operations
+WP-06  Quality Procedure Library + QRV-* evidence
+WP-07  Human Communication / Owner projection
+WP-08  Owner Change Intake over ODR/roadmap transactions
+WP-09  End-to-end lifecycle and A -> B -> C zero-chat certification
+WP-10  schema/template/validator/renderer/docs self-consistency audit
+WP-11  PR readiness; never automatic merge
+```
 
 ## Object namespaces
 
 ```text
-DSTEP-xxxx  EP discovery instruction          delivered WP-01
-DISC-xxxx   Discovery Receipt                 delivered WP-02
-QSET-xxxx   Qualification Question Set        delivered WP-03
-QUAL-xxxx   Qualification Receipt             delivered WP-03
-TC-xxxx     Takeover Certification            delivered WP-02/WP-03 integration
-QRV-xxxx    Quality Review                    WP-06
-CP-xxxx     Checkpoint                        delivered kernel
-ODR-xxxx    Owner Decision Record             delivered kernel
+DSTEP-xxxx  EP discovery instruction
+DISC-xxxx   Discovery Receipt
+QSET-xxxx   Qualification Question Set
+QUAL-xxxx   Qualification Receipt
+TC-xxxx     Takeover Certification
+QRV-xxxx    Quality Review             [WP-06]
+CP-xxxx     Checkpoint
+ODR-xxxx    Owner Decision Record
 ```
 
 Existing plan/join/replan/drift namespaces remain unchanged.
 
-## Defining end-to-end acceptance
+## Defining release proof
 
-WP-02 proves the first zero-context candidate can pick up a rich baton without chat; WP-03 proves required engineering understanding can be independently evaluated. WP-09 remains the full recursive release test:
+WP-09 remains:
 
 ```text
 AGENT A -> CHAT DELETED -> AGENT B -> CHAT DELETED -> AGENT C
 ```
 
-Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, input authority/editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, staleness and exact next work from repository state alone and obtain current independent certification.
+Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, inputs and editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, staleness and exact next work from repository state alone and obtain current independent certification.
 
-If prior conversation is materially required, V2.5 completion fails.
+If prior conversation is materially required, V2.5 fails its release criterion.
 
 ## Validation evidence discipline
 
-A whole-suite V2.5 claim requires both explicit CI steps to pass on the claimed exact head:
+A whole-suite claim requires both explicit CI test surfaces on the claimed head:
 
 ```text
 root unit discovery
 synthetic tests/stress discovery
 ```
 
-Historical runs that compiled stress modules without executing the dedicated stress discovery are interpreted according to `ci-evidence-correction.md`.
+Historical workflow evidence is interpreted according to `ci-evidence-correction.md`.
 
 ## Implementation sequence
 
 ```text
 baseline                         COMPLETE — CP-R001
--> semantic EP                   COMPLETE — CP-R002
--> baton readiness / TC          COMPLETE — CP-R003
--> strong qualification          COMPLETE* — CP-R004
--> full progress/handover        CURRENT* — WP-04
--> GitHub operations + quality procedures
--> human communication + Owner change intake
--> end-to-end certification
--> self-consistency audit
--> PR readiness
+semantic EP                      COMPLETE — CP-R002
+baton readiness / TC             COMPLETE — CP-R003
+strong qualification             COMPLETE — CP-R004
+full progress/handover           CURRENT — WP-04
+GitHub operations + quality      WAITING
+human communication / intake     WAITING
+end-to-end certification         WAITING
+self-consistency audit           WAITING
+PR readiness                     WAITING
 ```
-
-`*` The CP-R004/status exact-head CI gate must pass before WP-04 material execution begins.
-
-First make the baton trustworthy. Then independently prove a replacement can pick it up. Then prove engineering understanding. Then make the relay legible and operational end-to-end.
