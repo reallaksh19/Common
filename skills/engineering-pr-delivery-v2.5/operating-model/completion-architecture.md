@@ -10,10 +10,11 @@ WP-01 Semantic Execution Package                    DELIVERED — CP-R002
 WP-02 Baton readiness + Takeover Certification      DELIVERED — CP-R003
 WP-03 Strong phase/boundary qualification           DELIVERED — CP-R004
 WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
-WP-05 GitHub Program Projection operations          CURRENT FRONTIER
+WP-05 GitHub Program Projection operations          DELIVERED — CP-R006, exact-head CI pending
+WP-06 Quality Procedure Library                     NEXT after CP-R006 CI PASS
 ```
 
-CP-R005 checkpoint/status verification passed corrected workflow **35104895179** on `9531e4e0a98a84c3f61313837ce1fdd4284d95a6`.
+WP-05 pre-checkpoint implementation verification passed corrected workflow **35140358167** on `f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b`.
 
 Conversation is acceleration, never custody.
 
@@ -51,6 +52,8 @@ CHECKPOINT
     ↓
 ROADMAP / PROGRESS / ISSUE RECONCILIATION
     ↓
+CRASH-SAFE EXTERNAL PROJECTION TRANSACTION
+    ↓
 SOURCE-DERIVED REPORT / HANDOVER PROJECTION
     ↓
 NEXT EP
@@ -69,9 +72,11 @@ QUAL-*                   evaluated engineering qualification evidence
 TC-*                     route/candidate admission evidence
 Live Git observation     runtime fact
 CP                       backward execution truth
-PROGRESS                  authoritative calculated progress hierarchy
-ISSUE_GRAPH               reconciled issue coordination state
-REPO_STATE                lifecycle/routing/state-plane/bootstrap locator
+PROGRESS                 authoritative calculated progress hierarchy
+ISSUE_GRAPH              reconciled issue coordination state
+REPO_STATE               lifecycle/routing/state-plane/bootstrap locator
+GHGEN/GHOP                desired external GitHub projection transaction
+GitHub observation       verified external readback evidence
 Report projection / MD   derived projection only
 GitHub                   external coordination projection
 Chat                     non-authoritative convenience
@@ -93,69 +98,71 @@ Fresh qualification is required for `PHASE_CHANGED` or `MATERIAL_QUALIFICATION_B
 
 ## Delivered WP-04 — source-derived progress, handover and next work
 
-### Progress authority
+`PROGRESS.yaml` is authoritative through Acceptance Criterion -> Implementation Step -> EP -> Work Package -> Phase -> Objective -> Overall Roadmap. `REPO_STATE.progress` values are checked mirrors only. Every executable EP carries ordered `next_work.steps[]`. `report_projection.py`, status and handover derive from authority objects and cannot override them.
 
-The hierarchy is:
+## Delivered WP-05 — crash-safe GitHub Program Projection operations
 
-```text
-Acceptance Criterion
- -> Implementation Step
- -> EP
- -> Work Package
- -> Phase
- -> Objective
- -> Overall Roadmap
-```
-
-`PROGRESS.yaml` is authoritative. It must cover every roadmap Objective/Phase/WP plus the active EP, implementation steps and acceptance criteria. Acceptance rows carry status and durable basis. `REPO_STATE.progress` percentages are compatibility/location mirrors only and must agree with the authoritative rows.
-
-`progress_projection.py` builds the derived hierarchy used by generated views.
-
-### Exact next work
-
-Every executable semantic EP carries ordered `next_work.steps[]` containing:
-
-```text
-order
-action
-targets
-inputs
-tests
-benchmarks/oracles
-acceptance IDs
-expected result
-stop/reconciliation conditions
-```
-
-The execution state-plane `next_action` remains a short machine hint; it is not the successor work contract.
-
-### Structured report projection
-
-`report_projection.py` derives report state from repository authority objects and records source digests for repository state, roadmap, progress, issue graph, EP and checkpoint. `validate_report_projection.py` participates in aggregate conformance. `render_report_projection.py`, `render_status.py` and `render_handover.py` consume derived state.
-
-Generated YAML/Markdown never becomes writable truth. A source change causes regeneration/source-digest change; stale generated output cannot override authority objects.
-
-### Handover
-
-The handover renders Objective -> Phase -> WP -> Step -> AC percentages/status/basis plus exact ordered next work. Existing parallel-plan, join and replan custody remains visible. Bootstrap emits complete zero-weight roadmap progress without fabricating an EP; parallel convergence reconciles integration progress before cold start.
-
-WP-07 still owns the separate plain-language Owner communication layer; WP-04 establishes truthful complete content first.
-
-## Current WP-05 — GitHub Program Projection operations
-
-GitHub remains an external coordination projection. WP-05 operationalizes:
+GitHub remains external coordination only. The current desired GitHub generation is an immutable `GHGEN-*` object containing ordered stable `GHOP-*` operations:
 
 ```text
 CREATE | LINK | UPDATE | PUBLISH_HANDOVER | SUPERSEDE | REVISE | CLOSE | REOPEN
 ```
 
-Operations must be prepared durably, published with stable generation identity, receipt-backed, verified, reconciled into `ISSUE_GRAPH.yaml`, and idempotent across crash/retry. Parent/subissue and evidence-preserving supersession/closure semantics already delivered by the kernel remain authoritative; WP-05 adds the operating transaction, not a second issue model.
+The durable transaction is:
+
+```text
+select current GHOP
+ -> persist ATTEMPTED_UNCONFIRMED before external write
+ -> perform external mutation
+ -> create durable GITHUB_OBSERVATION from readback
+ -> verify desired issue state / relationship / operation marker
+ -> reconcile ISSUE_GRAPH and projection readiness
+```
+
+A missing connector response never proves the mutation did not occur. An uncertain CREATE must be reconciled by the stable `GHOP-*` marker/locator before retry. Verified readback may recover a lost connector receipt using explicit recovery evidence.
+
+`ISSUE_GRAPH.github_state` is last verified external reality:
+
+```text
+ABSENT | OPEN | CLOSED | UNKNOWN
+```
+
+OPEN/CLOSED require a verified locator. ABSENT has no locator. UNKNOWN preserves a prior locator when external state must be re-observed.
+
+A successor `GHGEN-*` can supersede an obsolete generation while retaining its attempt/receipt history. Old unfinished operations lose retry authority. Projection history distinguishes before-publication, attempted-with-unknown-outcome, and published-but-unconfirmed supersession.
+
+Native parent/sub-issue and other GitHub relationship success may be claimed only if the provider/integration can create and read back that native relationship. A Markdown link or prose reference is not native relationship convergence.
+
+Aggregate relay conformance validates the current GitHub generation and its history. `PROJECTION_READY` becomes true only after the current generation is fully reconciled.
+
+WP-05 pre-checkpoint evidence: head `f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b`, workflow **35140358167**, compile + root units + 111 stress tests PASS.
+
+## Next target — WP-06 Quality Procedure Library
+
+After CP-R006 exact-head CI passes, WP-06 is the sole material frontier. It must add applicability-routed procedural blueprints and first-class `QRV-*` Quality Review evidence while preserving the existing separation between quality findings, evidence state and true hard stops.
+
+Each blueprint must contain:
+
+```text
+WHEN TO APPLY
+REQUIRED INPUTS
+PROCEDURE
+BEST-PRACTICE CHECKLIST
+ANTI-PATTERNS
+REQUIRED ARTIFACTS
+VERIFICATION
+QUALITY FINDING CLASSIFICATION
+TRUE HARD-STOP CONDITIONS
+OWNER REPORT
+SUCCESSOR HANDOVER
+```
+
+Quality must improve engineering rather than recreate blocker-heavy flows.
 
 ## Remaining target layers
 
 ```text
-WP-05  GitHub Program Projection operations         CURRENT
-WP-06  Quality Procedure Library + QRV-* evidence   WAITING
+WP-06  Quality Procedure Library + QRV-* evidence   NEXT after CP-R006 CI PASS
 WP-07  Human Communication / Owner projection       WAITING
 WP-08  Owner Change Intake over ODR transactions    WAITING
 WP-09  End-to-end A -> B -> C certification         WAITING
@@ -171,6 +178,8 @@ DISC-xxxx   Discovery Receipt
 QSET-xxxx   Qualification Question Set
 QUAL-xxxx   Qualification Receipt
 TC-xxxx     Takeover Certification
+GHGEN-xxxx  GitHub projection generation
+GHOP-xxxx   GitHub projection operation
 QRV-xxxx    Quality Review             [WP-06]
 CP-xxxx     Checkpoint
 ODR-xxxx    Owner Decision Record
@@ -194,8 +203,8 @@ semantic EP                      COMPLETE — CP-R002
 baton readiness / TC             COMPLETE — CP-R003
 strong qualification             COMPLETE — CP-R004
 full progress/handover           COMPLETE — CP-R005
-GitHub operations                CURRENT — WP-05
-quality procedures               WAITING
+GitHub operations                COMPLETE — CP-R006, exact-head CI pending
+quality procedures               NEXT after CP-R006 CI PASS
 human communication / intake     WAITING
 end-to-end certification         WAITING
 self-consistency audit           WAITING
