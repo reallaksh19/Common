@@ -1,0 +1,99 @@
+{
+  "policy_id": "CHEM-BLUEPRINT-LEARNER-GATE-PROJECTION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_class": "BLUEPRINT_SEMANTICS_TO_LEARNER_JOBS",
+  "principles": [
+    "ONLY_DIRECT_SEMANTICS_MAY_BECOME_LEARNER_GATES",
+    "PREREQUISITE_CLOSURE_IS_CONTEXT_NOT_AUTOMATIC_LEARNER_CONTENT",
+    "DIFFICULTY_EVIDENCE_IS_METADATA_NOT_LEARNER_CONTENT",
+    "SEMANTIC_POLARITY_MUST_BE_PRESERVED",
+    "LEARNER_JOBS_RETAIN_EXACT_SEMANTIC_AND_OBLIGATION_LINEAGE",
+    "AUTHORIZED_AND_REQUIRED_MODES_MAY_NOT_BE_EXPANDED",
+    "TOPIC_NAMES_MAY_NOT_BRANCH_LEARNER_GATE_PROJECTION",
+    "DOWNSTREAM_LEARNER_JOB_RECLASSIFICATION_MUST_FAIL_CLOSED"
+  ],
+  "role_rules": {
+    "CONCEPT_RULE": {
+      "learner_job": "STATE_OR_EXPLAIN_RULE",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "EQUATION_MODEL": {
+      "learner_job": "USE_EQUATION_MODEL",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "VALIDITY_BOUNDARY": {
+      "learner_job": "CHECK_VALIDITY_BOUNDARY",
+      "polarity": "CONTEXT",
+      "visibility": "LEARNER_GATE"
+    },
+    "REPRESENTATION_REQUIREMENT": {
+      "learner_job": "READ_OR_CONSTRUCT_REPRESENTATION",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "VERIFICATION": {
+      "learner_job": "VERIFY_RESULT",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "BOUNDARY_CONSEQUENCE": {
+      "learner_job": "EXPLAIN_BOUNDARY_CONSEQUENCE",
+      "polarity": "CONTEXT",
+      "visibility": "LEARNER_GATE"
+    },
+    "REASONING_MOVE": {
+      "learner_job": "EXECUTE_REASONING_MOVE",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "TRANSFORMATION_REQUIREMENT": {
+      "learner_job": "PERFORM_TRANSFORMATION",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "MISCONCEPTION": {
+      "learner_job": "REJECT_MISCONCEPTION",
+      "polarity": "NEGATIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "COUNTEREXAMPLE": {
+      "learner_job": "USE_COUNTEREXAMPLE",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "MISCONCEPTION_REPAIR": {
+      "learner_job": "APPLY_MISCONCEPTION_REPAIR",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "RECOGNITION_SIGNAL": {
+      "learner_job": "RECOGNIZE_PROBLEM_FAMILY",
+      "polarity": "CONTEXT",
+      "visibility": "LEARNER_GATE"
+    },
+    "METHOD_STEP": {
+      "learner_job": "EXECUTE_METHOD_STEP",
+      "polarity": "POSITIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "ERROR_TO_AVOID": {
+      "learner_job": "AVOID_FATAL_ERROR",
+      "polarity": "NEGATIVE",
+      "visibility": "LEARNER_GATE"
+    },
+    "TARGET_UNKNOWN": {
+      "learner_job": "IDENTIFY_TARGET_UNKNOWN",
+      "polarity": "CONTEXT",
+      "visibility": "LEARNER_GATE"
+    },
+    "DIFFICULTY_EVIDENCE": {
+      "learner_job": "NONE",
+      "polarity": "CONTEXT",
+      "visibility": "METADATA_ONLY"
+    }
+  },
+  "status": "ACTIVE"
+}
