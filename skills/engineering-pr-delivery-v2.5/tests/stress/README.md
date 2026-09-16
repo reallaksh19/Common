@@ -13,6 +13,12 @@ Current stress coverage includes:
 - context-dependent instruction rejection;
 - checkpoint → successor EP baton linkage;
 - Owner-intent roadmap mutation with frontier/progress-basis reconciliation;
+- long-running active EP continuity across multiple roadmap revisions;
+- positive proof that an old-revision EP's WP is explicitly `unaffected` in every covered revision before `CONTINUE_UNCHANGED`;
+- missing/interrupted roadmap revision-chain rejection;
+- changed active acceptance/scope/invariant state forcing `RECONCILE_REQUIRED` plus `READ_ONLY` authority;
+- retained `WRITE` authority during roadmap reconciliation rejection;
+- active use of an `INVALIDATED` old-revision EP rejection;
 - incoming-phase Q1-Q5 anchor grounding;
 - supersession transfer into the successor with acceptance/evidence status and exact basis preserved;
 - GitHub closure state separated from engineering/work lifecycle;
@@ -35,7 +41,7 @@ Current stress coverage includes:
 - cyclic replan/plan lineage rejection;
 - one-of checkpoint/join/replan predecessor-baton enforcement;
 - bootstrap/migration truth preservation;
-- lifecycle-aware status/handover rendering, including join and replan custody;
+- lifecycle-aware status/handover rendering, including continuity, join and replan custody;
 - required external projection pending/stale without confusing repository recovery with full handover readiness;
 - crash-safe projection publication with stable `operation_id` and `PUBLISHED_UNCONFIRMED` recovery;
 - in-sync projection binding to the current roadmap revision and current execution reference;
