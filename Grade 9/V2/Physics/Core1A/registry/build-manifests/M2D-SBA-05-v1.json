@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-05",
+  "learner_profile": {"prior_knowledge_pct": 20, "intrinsic_difficulty": "D2", "pathway": "FOUNDATION_PATH"},
+  "source_inputs": {
+    "sba_registry": "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "publication_index": "registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "core2_linkage": "registry/physics-core1a-core2-linkage.json",
+    "profile_registry": "registry/physics-core1a-motion-in-a-plane-sba05-20pct-v1.json",
+    "transfer_registry": "registry/physics-core1a-motion-in-a-plane-sba05-transfer-v1.json"
+  },
+  "primary_questions": ["Q02","Q06","Q07","Q12","Q16","Q18","Q19","Q20","Q22","Q24","Q25","Q44","Q52"],
+  "question_release": [
+    {"question_id":"Q02","status":"RELEASED","routine_id":"M2D-SBA-05-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q06","status":"RELEASED","routine_id":"M2D-SBA-05-R2","release_prerequisite_buckets":[]},
+    {"question_id":"Q07","status":"RELEASED","routine_id":"M2D-SBA-05-R3","release_prerequisite_buckets":[]},
+    {"question_id":"Q12","status":"RELEASED","routine_id":"M2D-SBA-05-R2","release_prerequisite_buckets":[]},
+    {"question_id":"Q16","status":"RELEASED","routine_id":"M2D-SBA-05-R4","release_prerequisite_buckets":[]},
+    {"question_id":"Q18","status":"RELEASED","routine_id":"M2D-SBA-05-R5","release_prerequisite_buckets":[]},
+    {"question_id":"Q19","status":"RELEASED","routine_id":"M2D-SBA-05-R5","release_prerequisite_buckets":[]},
+    {"question_id":"Q20","status":"RELEASED","routine_id":"M2D-SBA-05-R4","release_prerequisite_buckets":[]},
+    {"question_id":"Q22","status":"RELEASED","routine_id":"M2D-SBA-05-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q24","status":"RELEASED","routine_id":"M2D-SBA-05-R6","release_prerequisite_buckets":[]},
+    {"question_id":"Q25","status":"RELEASED","routine_id":"M2D-SBA-05-R7","release_prerequisite_buckets":[]},
+    {"question_id":"Q44","status":"RELEASED","routine_id":"M2D-SBA-05-R6","release_prerequisite_buckets":[]},
+    {"question_id":"Q52","status":"RELEASED","routine_id":"M2D-SBA-05-R5","release_prerequisite_buckets":[]}
+  ],
+  "question_load": {"count": 13, "class": "VERY_HIGH", "minimum_transfer_families": 5},
+  "phase_gates": [
+    {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["Published SBA table is the first surface and lists all 13 primary questions."]},
+    {"gate":"G1_SOURCE_AND_CORE2_AUDIT","status":"PASS","evidence":["Time, range, height, max range, complementary-angle, ratio and scaling demands audited against source and Core2."]},
+    {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["D2 concept difficulty, but 20% readiness plus very-high question load requires expanded assimilation."]},
+    {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Nine learning atoms cover model contract through R/H relation and angle convention."]},
+    {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"PASS","evidence":["All 13 primary questions have H1/H2/H3 pre-teaching coverage."]},
+    {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PASS","evidence":["Seven primary problem families cover all 13 primary questions exactly once; R8 closes the SBA04 Q14/Q27 dependency."]},
+    {"gate":"G6_PAGE_PLAN","status":"PASS","evidence":["31-page build expands transfer section rather than compressing 13 questions into one list."]},
+    {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"PASS","evidence":["31-page transfer-revised PDF rendered and visually checked."]},
+    {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"PASS","evidence":["Problem families use independent practice, optional hints and readiness before Core2 release."]},
+    {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"PASS","evidence":["Core1A and full Physics chain CI passed after SBA05 publication-index and transfer updates."]}
+  ],
+  "learning_atoms": ["M2D-SBA-05A","M2D-SBA-05B","M2D-SBA-05C","M2D-SBA-05D","M2D-SBA-05E","M2D-SBA-05F","M2D-SBA-05G","M2D-SBA-05H","M2D-SBA-05I"],
+  "transfer_routines": ["M2D-SBA-05-R1","M2D-SBA-05-R2","M2D-SBA-05-R3","M2D-SBA-05-R4","M2D-SBA-05-R5","M2D-SBA-05-R6","M2D-SBA-05-R7","M2D-SBA-05-R8"],
+  "publication_plan": {
+    "first_surface":"SBA_PUBLICATION_INDEX",
+    "macro_order":["SBA_INDEX","FOUNDATION_PRETRAINING","CONCEPT_BUILD","PICTORIAL_STAGES","PICTURE_TO_MATHS","MISCONCEPTION","WATCH_ONE","COMPLETE_ONE","PROBLEM_FAMILY_ROUTINES","INDEPENDENT_PRACTICE","HINTS","READINESS","CORE2_TRANSFER_SUMMARY"],
+    "independent_practice_policy":"ATTEMPT_BEFORE_HINTS",
+    "hint_delivery_policy":"NEXT_PAGE",
+    "readiness_gate_policy":"RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
+  },
+  "qa": {"schema_valid":true,"primary_question_coverage_exact":true,"hint_preteach_complete":true,"visual_audit_complete":true,"pdf_preflight_complete":true,"ci_passed":true},
+  "handoff": {
+    "status":"COMPLETE",
+    "expected_pdf_name":"M2D-SBA-05-same-height-flight-20pct-transfer-revised.pdf",
+    "expected_montage_name":"M2D-SBA-05-transfer-revised-montage.jpg",
+    "next_active_bucket":"M2D-SBA-06",
+    "notes":["Very-high question load is the reference case for scaling transfer elaboration with Core2 demand.","SBA05 also releases SBA04 Q14/Q27 once their same-height dependency is satisfied through cross-bucket routine R8."]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engineering-passport.schema.json",
+  "title": "Subject Engineering Passport Diagnostic",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "passport_id", "request_id", "manifest_id", "closure_receipt_id", "closure_receipt_digest",
+    "requested_topic", "requested_scope", "engineering_depth", "technical_state", "direct_gate_count",
+    "transitive_gate_count", "ready_gate_count", "blocked_gate_count", "gate_states", "source_item_status",
+    "consumer_authorization", "next_action"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "passport_id": {"type": "string", "pattern": "^ENG-PASS-[A-Z0-9-]+$"},
+    "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
+    "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
+    "closure_receipt_id": {"type": "string", "pattern": "^ENG-CLOSURE-[A-Z0-9-]+$"},
+    "closure_receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "requested_topic": {"type": "string", "minLength": 2},
+    "requested_scope": {"type": "string", "minLength": 2},
+    "engineering_depth": {"enum": ["FOUNDATION", "STANDARD", "RESEARCH"]},
+    "technical_state": {"enum": ["ENGINEERING_READY", "BLOCKED_PENDING_ENGINEERING"]},
+    "direct_gate_count": {"type": "integer", "minimum": 1},
+    "transitive_gate_count": {"type": "integer", "minimum": 0},
+    "ready_gate_count": {"type": "integer", "minimum": 0},
+    "blocked_gate_count": {"type": "integer", "minimum": 0},
+    "gate_states": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["gate_id", "status", "direct"],
+        "properties": {
+          "gate_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$"},
+          "status": {"enum": ["ENGINEERING_GATE_READY", "ENGINEERING_GATE_INCOMPLETE", "SOURCE_SCOPE_HELD", "MISSING"]},
+          "direct": {"type": "boolean"}
+        }
+      }
+    },
+    "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]},
+    "consumer_authorization": {"const": "NOT_EVALUATED"},
+    "next_action": {"type": "string", "minLength": 1}
+  }
+}

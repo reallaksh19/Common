@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-07",
+  "learner_profile": {"prior_knowledge_pct": 20, "intrinsic_difficulty": "D2", "pathway": "FOUNDATION_PATH"},
+  "source_inputs": {
+    "sba_registry": "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "publication_index": "registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "core2_linkage": "registry/physics-core1a-core2-linkage.json",
+    "profile_registry": "registry/physics-core1a-motion-in-a-plane-sba07-20pct-v1.json",
+    "transfer_registry": "registry/physics-core1a-motion-in-a-plane-sba07-transfer-v1.json"
+  },
+  "primary_questions": ["Q03", "Q04", "Q08", "Q09", "Q29", "Q30", "Q34", "Q36", "Q42"],
+  "question_release": [
+    {"question_id": "Q03", "status": "RELEASED", "routine_id": "M2D-SBA-07-R1", "release_prerequisite_buckets": []},
+    {"question_id": "Q29", "status": "RELEASED", "routine_id": "M2D-SBA-07-R1", "release_prerequisite_buckets": []},
+    {"question_id": "Q42", "status": "RELEASED", "routine_id": "M2D-SBA-07-R1", "release_prerequisite_buckets": []},
+    {"question_id": "Q04", "status": "RELEASED", "routine_id": "M2D-SBA-07-R2", "release_prerequisite_buckets": []},
+    {"question_id": "Q08", "status": "RELEASED", "routine_id": "M2D-SBA-07-R2", "release_prerequisite_buckets": []},
+    {"question_id": "Q36", "status": "RELEASED", "routine_id": "M2D-SBA-07-R2", "release_prerequisite_buckets": []},
+    {"question_id": "Q09", "status": "RELEASED", "routine_id": "M2D-SBA-07-R3", "release_prerequisite_buckets": []},
+    {"question_id": "Q30", "status": "RELEASED", "routine_id": "M2D-SBA-07-R3", "release_prerequisite_buckets": []},
+    {"question_id": "Q34", "status": "RELEASED", "routine_id": "M2D-SBA-07-R4", "release_prerequisite_buckets": []}
+  ],
+  "question_load": {"count": 9, "class": "HIGH", "minimum_transfer_families": 3},
+  "phase_gates": [
+    {"gate": "G0_INDEX_SYNC", "status": "PASS", "evidence": ["SBA publication index includes M2D-SBA-07 and is synchronized with canonical ownership."]},
+    {"gate": "G1_SOURCE_AND_CORE2_AUDIT", "status": "PASS", "evidence": ["Source horizontal-launch equations, source Illustration 5 and all nine primary Core2 titles audited."]},
+    {"gate": "G2_DIFFICULTY_AND_READINESS", "status": "PASS", "evidence": ["D2 concept, 20% foundation path; HIGH question load expands transfer into four families."]},
+    {"gate": "G3_LEARNING_ATOM_DECOMPOSITION", "status": "PASS", "evidence": ["Eight learning atoms cover horizontal launch, vertical clock, impact velocity, displacement geometry, unequal heights, downward projection, opposite launches and units/ratios."]},
+    {"gate": "G4_CORE2_HINT_PRETEACH_AUDIT", "status": "PASS", "evidence": ["Q03,Q04,Q08,Q09,Q29,Q30,Q34,Q36,Q42 H1/H2/H3 reveal types are pre-taught by exact atoms before transfer."]},
+    {"gate": "G5_PROBLEM_FAMILY_ASSIMILATION", "status": "PASS", "evidence": ["Four routines separate clock/impact, target/displacement, unequal-height signed motion and opposite-launch separation."]},
+    {"gate": "G6_PAGE_PLAN", "status": "PASS", "evidence": ["24-page professional-lossless plan preserves concept teaching, two worked examples, completion practice, independent practice, next-page hints and readiness."]},
+    {"gate": "G7_RENDER_AND_VISUAL_AUDIT", "status": "PASS", "evidence": ["24 pages rendered at 170 dpi; impact-vector orientation and launch-height label spacing corrected before release."]},
+    {"gate": "G8_READINESS_AND_TRANSFER_AUDIT", "status": "PASS", "evidence": ["Each released family includes independent practice before next-page H1/H2/H3 and a recognise/represent/first-move/finish readiness gate."]},
+    {"gate": "G9_MACHINE_QA_AND_HANDOFF", "status": "PASS", "evidence": ["PDF preflight passed; V2 Physics Core1A run 90 and full P-G to P-L run 95 completed successfully before state advance."]}
+  ],
+  "learning_atoms": ["M2D-SBA-07A", "M2D-SBA-07B", "M2D-SBA-07C", "M2D-SBA-07D", "M2D-SBA-07E", "M2D-SBA-07F", "M2D-SBA-07G", "M2D-SBA-07H"],
+  "transfer_routines": ["M2D-SBA-07-R1", "M2D-SBA-07-R2", "M2D-SBA-07-R3", "M2D-SBA-07-R4"],
+  "publication_plan": {
+    "first_surface": "SBA_PUBLICATION_INDEX",
+    "macro_order": ["SBA_INDEX", "FOUNDATION_PRETRAINING", "CONCEPT_BUILD", "PICTORIAL_STAGES", "PICTURE_TO_MATHS", "MISCONCEPTION", "WATCH_ONE", "COMPLETE_ONE", "PROBLEM_FAMILY_ROUTINES", "INDEPENDENT_PRACTICE", "HINTS", "READINESS", "CORE2_TRANSFER_SUMMARY"],
+    "independent_practice_policy": "ATTEMPT_BEFORE_HINTS",
+    "hint_delivery_policy": "NEXT_PAGE",
+    "readiness_gate_policy": "RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
+  },
+  "qa": {"schema_valid": true, "primary_question_coverage_exact": true, "hint_preteach_complete": true, "visual_audit_complete": true, "pdf_preflight_complete": true, "ci_passed": true},
+  "handoff": {
+    "status": "COMPLETE",
+    "expected_pdf_name": "M2D-SBA-07-professional-textbook-lossless-v1.pdf",
+    "expected_montage_name": "M2D-SBA-07-professional-textbook-lossless-v1-montage.jpg",
+    "next_active_bucket": "M2D-SBA-21",
+    "notes": ["Professional-lossless presentation is mandatory; learner heading hierarchy follows the restrained section-title tiers.", "SBA-08 through SBA-20 have zero primary Core2 questions and are skipped as dedicated PDFs.", "Next active bucket is M2D-SBA-21 after CI-backed handoff."]
+  }
+}

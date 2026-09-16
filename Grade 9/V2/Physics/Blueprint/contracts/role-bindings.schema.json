@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-blueprint-role-bindings.schema.json",
+  "title": "Physics Blueprint Role Bindings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "blueprint_id", "canonical_root", "roles"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "blueprint_id": {"const": "PHY-BLUEPRINT-v1"},
+    "canonical_root": {"const": "Grade 9/V2/Physics/Blueprint"},
+    "roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+      "properties": {
+        "CORE0": {"$ref": "#/$defs/binding"},
+        "CORE1": {"$ref": "#/$defs/binding"},
+        "CORE2": {"$ref": "#/$defs/binding"},
+        "JOIN": {"$ref": "#/$defs/binding"},
+        "CORE1A": {"$ref": "#/$defs/binding"},
+        "CORE1B": {"$ref": "#/$defs/binding"},
+        "CORE2A": {"$ref": "#/$defs/binding"},
+        "CORE2B": {"$ref": "#/$defs/binding"}
+      }
+    }
+  },
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "implementation_root", "ownership"],
+      "properties": {
+        "authority": {"type": "string", "minLength": 1},
+        "implementation_root": {"type": "string", "minLength": 1},
+        "ownership": {"enum": ["BLUEPRINT_NATIVE", "ROLE_EXECUTION_KIT"]}
+      }
+    }
+  }
+}

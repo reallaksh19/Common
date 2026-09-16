@@ -1,0 +1,14 @@
+{
+  "schema_version":"1.0.0",
+  "registry_id":"PHY-C1B-MOVING-LAUNCHER-ATOMS-v1",
+  "provenance_class":"PROCESS_GOLDEN",
+  "atoms":[
+    {"atom_id":"PHY-ML-FRAME-01","proposition":"A velocity statement is incomplete for this family until object and reference frame are identified.","representation":"OBJECT_FRAME_ARROW","micro_check":"Label the object and observer for each velocity arrow.","prerequisites":[],"repair_routes":[],"merge_target":"FRAME_DISCIPLINE"},
+    {"atom_id":"PHY-ML-ADD-01","proposition":"At release in Galilean inertial frames, ground-frame object velocity equals object-relative-to-launcher velocity plus launcher-relative-to-ground velocity.","representation":"VECTOR_ADDITION_TRIANGLE","micro_check":"Construct the ground-frame launch vector from two labelled vectors.","prerequisites":["PHY-ML-FRAME-01"],"repair_routes":["PHY-ML-FRAME-01"],"merge_target":"GROUND_FRAME_LAUNCH"},
+    {"atom_id":"PHY-ML-COMP-01","proposition":"Projectile component equations begin after the launch velocity has been expressed in the chosen frame.","representation":"GROUND_FRAME_COMPONENTS","micro_check":"Resolve the combined launch vector into ux and uy.","prerequisites":["PHY-ML-ADD-01"],"repair_routes":["PHY-ML-ADD-01"],"merge_target":"GROUND_FRAME_LAUNCH"},
+    {"atom_id":"PHY-ML-CLOCK-01","proposition":"After release, horizontal and vertical ground-frame motion share one elapsed time.","representation":"RELEASE_EVENT_TIMELINE","micro_check":"Write x(t) and y(t) using the same t.","prerequisites":["PHY-ML-COMP-01"],"repair_routes":["PHY-ML-COMP-01"],"merge_target":"PROJECTILE_EVOLUTION"},
+    {"atom_id":"PHY-ML-GRAV-01","proposition":"In the standard projectile model, gravity changes vertical velocity while inherited horizontal velocity remains constant.","representation":"VELOCITY_ACCELERATION_ARROWS","micro_check":"Identify which velocity component gravity changes.","prerequisites":["PHY-ML-CLOCK-01"],"repair_routes":["PHY-ML-CLOCK-01"],"merge_target":"PROJECTILE_EVOLUTION"},
+    {"atom_id":"PHY-ML-LIMIT-01","proposition":"Setting launcher speed to zero must reduce the model to ordinary stationary-source projectile motion.","representation":"ZERO_PLATFORM_SPEED_LIMIT","micro_check":"State the launch vector when platform velocity is zero.","prerequisites":["PHY-ML-ADD-01"],"repair_routes":["PHY-ML-ADD-01"],"merge_target":"MODEL_CHECK"},
+    {"atom_id":"PHY-ML-SELECT-01","proposition":"A moving-launcher problem requires frame conversion before ordinary projectile kinematics.","representation":"FIRST_MOVE_DECISION","micro_check":"State and justify the first move for an unseen moving-launcher setup.","prerequisites":["PHY-ML-COMP-01","PHY-ML-LIMIT-01"],"repair_routes":["PHY-ML-FRAME-01","PHY-ML-ADD-01"],"merge_target":"FAMILY_SELECTION"}
+  ]
+}

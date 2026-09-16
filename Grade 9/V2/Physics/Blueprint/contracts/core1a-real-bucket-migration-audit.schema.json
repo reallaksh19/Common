@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core1a-real-bucket-migration-audit.schema.json",
+  "title": "Core1A Real Bucket Migration Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "audit_id", "migration_spec_ref", "bucket_id", "source_refs", "legacy_claim", "technical_gate_audit", "stage_audit", "release_authorized", "block_reasons"],
+  "properties": {
+    "schema_version": {"const": "2.0.0"},
+    "audit_id": {"type": "string", "minLength": 1},
+    "migration_spec_ref": {"type": "string", "minLength": 1},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "legacy_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "claim_ref", "accepted_as_v9_release_evidence"],
+      "properties": {
+        "status": {"type": "string", "minLength": 1},
+        "claim_ref": {"type": "string", "minLength": 1},
+        "accepted_as_v9_release_evidence": {"const": false}
+      }
+    },
+    "technical_gate_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engineering_request_ref", "engineering_manifest_ref", "registry_ref", "direct_gate_ids", "closure_gate_ids", "status"],
+      "properties": {
+        "engineering_request_ref": {"type": "string", "minLength": 1},
+        "engineering_manifest_ref": {"type": "string", "minLength": 1},
+        "registry_ref": {"type": "string", "minLength": 1},
+        "direct_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+        "closure_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+        "status": {"enum": ["READY", "INCOMPLETE"]}
+      }
+    },
+    "stage_audit": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stage", "evidence_state", "artifact_refs", "evidence_refs", "notes"],
+        "properties": {
+          "stage": {"enum": ["1A0_LEARNER_STATE_GAP", "1A1_LEARNING_ATOMS", "1A2_INFERENTIAL_JUMPS", "1A3_COGNITIVE_TRANSFORMATION", "1A4_REPRESENTATION_REQUIREMENTS", "1A5_REPRESENTATION_CANDIDATES", "1A6_REPRESENTATION_DECISIONS", "1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE", "1A8_MISCONCEPTION_CONTRAST", "1A9_WORKED_FADED_INDEPENDENT_PLAN", "1A10_CORE2_TRANSFER_BRIDGE", "1A11_UNRESOLVED_JUMP_AUDIT"]},
+          "evidence_state": {"enum": ["PRESENT", "PARTIAL", "MISSING", "LEGACY_ONLY"]},
+          "artifact_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "notes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "release_authorized": {"type": "boolean"},
+    "block_reasons": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

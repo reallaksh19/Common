@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "manifest_id": "ENG-MAN-M2D-SBA04-V3",
+  "request_id": "ENG-REQ-M2D-SBA04-V1",
+  "scope_kind": "BUCKET",
+  "scope_ref": "M2D-SBA-04",
+  "topic_id": "PHY-M2D-SBA04",
+  "title": "Follow velocity through flight technical scope",
+  "registry_ref": "GENERATED:physics-technical-engineering-gates.v3",
+  "required_gate_ids": [
+    "PHY-M2D-VELOCITY-EVOLUTION",
+    "PHY-M2D-VELOCITY-DIRECTION",
+    "PHY-M2D-SPEED-MAGNITUDE",
+    "PHY-M2D-SAME-HEIGHT-VELOCITY",
+    "PHY-M2D-PERPENDICULAR-VELOCITY",
+    "PHY-M2D-SPEED-AT-HEIGHT"
+  ],
+  "optional_gate_ids": [],
+  "out_of_scope_gate_ids": [],
+  "source_item_status": "SOURCE_READY",
+  "downstream_consumers": ["CCU", "CDAU", "SDU", "LAU", "TTU", "PUBLICATION"],
+  "notes": "All six repository-backed SBA04 capability gates are direct bucket scope. Physics prerequisites are derived transitively. Q14/Q27 release holds remain downstream Core2-transfer prerequisites and do not convert this technical/source manifest into SOURCE_HELD."
+}

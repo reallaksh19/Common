@@ -1,0 +1,24 @@
+{
+  "fixture_id": "PHY-BP-GOLDEN-CORE1-FIRST",
+  "expected_route": "CORE1_FIRST",
+  "evidence": {
+    "schema_version": "1.0.0",
+    "topic_id": "PHY-GOLDEN-SEMANTIC-STRONG",
+    "ground_truth_refs": ["GT-GOLDEN-SEMANTIC-001"],
+    "sources": {
+      "syllabus": {"availability": "PRESENT", "authority_strength": 4, "granularity": "DETAILED", "integrity_state": "CLEAN", "notes": ["Detailed authoritative syllabus defines the topic boundary."]},
+      "semantic_source": {"availability": "PRESENT", "authority_strength": 4, "granularity": "DETAILED", "integrity_state": "CLEAN", "notes": ["Authoritative teaching source is complete for the target scope."]},
+      "question_corpus": {"availability": "ABSENT", "authority_strength": 0, "granularity": "NONE", "count": 0, "integrity_state": "NOT_APPLICABLE", "notes": ["No assessment corpus supplied; this remains absence of assessment evidence."]},
+      "answer_key": {"availability": "ABSENT", "authority_strength": 0, "granularity": "NONE", "integrity_state": "NOT_APPLICABLE", "notes": []},
+      "figures": {"availability": "PRESENT", "authority_strength": 3, "granularity": "MODERATE", "integrity_state": "CLEAN", "notes": []}
+    },
+    "metrics": {
+      "SA": {"value": 4, "basis": "Detailed authoritative syllabus."},
+      "SS": {"value": 4, "basis": "Complete authoritative semantic source."},
+      "QE": {"value": 0, "basis": "No questions supplied."},
+      "QR": {"value": 0, "basis": "No question corpus to resolve."},
+      "UA": {"value": 1, "basis": "Scope is well established despite missing assessment evidence."},
+      "CI": {"value": 0, "basis": "No evidence conflict observed."}
+    }
+  }
+}

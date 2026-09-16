@@ -1,0 +1,55 @@
+{
+  "schema_version": "3.0.0",
+  "policy_id": "PHY-CORE1AB-BUCKET-AUTHORING-V3",
+  "applies_to": ["CORE1A", "CORE1B"],
+  "segmentation_unit": "SUBTOPIC_BUCKET",
+  "student_knowledge_pct_used_for_authored_depth": false,
+  "difficulty_badges": ["EASY", "MEDIUM", "HARD"],
+  "difficulty_badge_authority": ["OWNER_PROVIDED", "SOURCE_PROVIDED", "DERIVED", "VALIDATED_DERIVED"],
+  "supplied_badge_may_be_silently_changed": false,
+  "shared_bucket_learning_model": {
+    "required_fields": ["HIDDEN_INVARIANTS", "PREREQUISITE_BRIDGES", "INFERENTIAL_JUMPS", "REPRESENTATIONS", "MISCONCEPTIONS", "PROBLEM_FAMILIES", "SOURCE_CORE2_LINKAGE", "FRAGILE_CHECKPOINTS"],
+    "purpose": "Core1A and Core1B share capability scope and intrinsic difficulty without requiring equal exposition, equal actual length, equal content or equal learner action."
+  },
+  "shared_page_envelope": {
+    "type": "SOFT_MAXIMUM_DEPTH_ENVELOPE_NOT_TARGET",
+    "EASY": 10,
+    "MEDIUM": 20,
+    "HARD": 30,
+    "applies_to_core1a": true,
+    "applies_to_core1b": true,
+    "same_ceiling_implies_same_actual_length": false,
+    "same_ceiling_implies_same_content": false,
+    "same_ceiling_implies_same_learner_action": false,
+    "actual_lengths_independently_derived": true,
+    "anti_padding": true,
+    "over_ceiling_action": "Split into coherent sub-subtopics first; exceed only with explicit owner decision and preserved provenance. Never compress away necessary inferential steps."
+  },
+  "difficulty_semantics": {
+    "normative_definition": "Difficulty controls inferential closure and reconstruction rigor, not visual quantity or required page count.",
+    "visual_quantity_is_quality_proxy": false
+  },
+  "research_policy": {
+    "EASY": "NONE_BY_DEFAULT_UNLESS_SEMANTIC_OR_SOURCE_UNCERTAINTY",
+    "MEDIUM": "TARGETED_WEB_AND_SOURCE_RESEARCH",
+    "HARD": "DEEP_WEB_AND_SOURCE_RESEARCH",
+    "research_must_produce_design_decisions": true
+  },
+  "mode_rule": {
+    "A_B_ARE_DOMINANT_MODES_NOT_EXCLUSIVE_CONTENT_TYPES": true,
+    "CORE1A": {"dominant_mode": "DECLARATIVE", "must_not_become": "PASSIVE_TEXT_ONLY_OR_QUESTION_BANK"},
+    "CORE1B": {"dominant_mode": "GENERATIVE", "must_not_become": "SECOND_TEXTBOOK_COPY_OR_QUESTION_ONLY_WORKSHEET"}
+  },
+  "core1a_realization": {
+    "ttu_family": "CONCEPT_TTU",
+    "purpose": "Establish the complete declarative mental model and problem-family structure.",
+    "quality_metric": "INFERENTIAL_CLOSURE"
+  },
+  "core1b_realization": {
+    "ttu_family": "CONCEPT_TTU",
+    "purpose": "Make the learner reconstruct fragile conceptual/model structure through high-value transformations.",
+    "reconstruction_modes": ["PREDICTION", "COMPLETION", "GENERATION", "SELECTION", "DISCRIMINATION", "DIAGNOSIS", "DERIVATION_CONNECTION", "VERIFICATION", "TRANSFER"],
+    "page_count_is_derived_from_core1a": false,
+    "required_coverage": ["FRAGILE_INFERENTIAL_JUMPS", "MATERIAL_MISCONCEPTIONS", "PROBLEM_FAMILY_RECOGNITION", "REPRESENTATION_TRANSLATION", "LATER_RETRIEVAL_WHEN_MATERIAL"]
+  }
+}

@@ -6,11 +6,13 @@ on:
       - v2-physics-upgrade-full-chain-g-to-l
     paths:
       - "Grade 9/V2/Physics/**"
+      - "Grade 9/V2/Shared/HumanReview/**"
       - "Grade 9/V2/Shared/MasterTemplates/primitives/**"
       - ".github/workflows/v2-physics-chain-g-to-l.yml"
   pull_request:
     paths:
       - "Grade 9/V2/Physics/**"
+      - "Grade 9/V2/Shared/HumanReview/**"
       - "Grade 9/V2/Shared/MasterTemplates/primitives/**"
       - ".github/workflows/v2-physics-chain-g-to-l.yml"
   workflow_dispatch:
@@ -80,11 +82,14 @@ jobs:
           python "$P/ColdStart/engine/physics_cold_start_validator.py" \
             --report /tmp/phy-cold-start/with-attempts/run_report.json
 
-      - name: P-L exact-product gate must report BLOCKED, not PASS
+      - name: P-L machine exact-product gate and architectural falsifiers
         run: |
           P="Grade 9/V2/Physics"
           python "$P/ExactProduct/contracts/validate_contracts.py"
+          python "$P/ExactProduct/tests/test_release_authority_manifest.py"
           python "$P/ExactProduct/tests/test_physics_exact_product.py"
+          python "$P/ExactProduct/tests/test_physics_human_review_intake.py"
+          python "$P/ExactProduct/tests/test_physics_governed_release.py"
           python "$P/ExactProduct/engine/audit_physics_exact_candidate.py" \
             --run-dir /tmp/phy-cold-start/with-attempts \
             --out /tmp/phy-cold-start/ai_pre_review.json
@@ -93,10 +98,74 @@ jobs:
             --run-dir /tmp/phy-cold-start/with-attempts \
             --ai-pre-review /tmp/phy-cold-start/ai_pre_review.json \
             --out-candidate /tmp/phy-cold-start/exact_candidate.json \
-            --out-release /tmp/phy-cold-start/exact_release.json
+            --out-release /tmp/phy-cold-start/exact_state_projection.json
           code=$?
           set -e
-          echo "P-L exit code: $code"
+          if [ "$code" != "2" ]; then
+            echo "Expected machine-green state projection to remain BLOCKED. Got $code."
+            exit 1
+          fi
+
+      - name: P-L project real shared human-review intake — four gates remain PENDING
+        run: |
+          P="Grade 9/V2/Physics"
+          H="Grade 9/V2/Shared/HumanReview"
+          R="$P/ExactProduct/review-intake"
+          python "$P/ExactProduct/engine/build_physics_human_review_binding.py" \
+            --candidate /tmp/phy-cold-start/exact_candidate.json \
+            --ai-pre-review /tmp/phy-cold-start/ai_pre_review.json \
+            --out /tmp/phy-cold-start/human_review_binding.json
+          python "$H/engine/ingest_human_reviews.py" \
+            --candidate /tmp/phy-cold-start/human_review_binding.json \
+            --registry "$R/reviewer_authorization.real.json" \
+            --policy "$R/review_policy.json" \
+            --rubric-dir "$R" \
+            --submissions-dir "$R/submissions/real" \
+            --mode REAL_RELEASE \
+            --out /tmp/phy-cold-start/human_review_real.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/phy-cold-start/human_review_real.json')); q=r['quality_review_summary']['quality_states']
+          states=['SUBJECT_CORRECTNESS','PEDAGOGICAL_DESIGN','ASSESSMENT_DESIGN','VISUAL_USABILITY']
+          assert [q[x] for x in states]==['PENDING']*4
+          assert r['accepted_submission_ids']==[] and r['release_evidence_eligible'] is False
+          print('real Physics human-review projection = PENDING/PENDING/PENDING/PENDING')
+          PY
+
+      - name: P-L prove frozen reference is unreadable before human gates
+        run: |
+          P="Grade 9/V2/Physics"
+          rm -f /tmp/SHOULD_NOT_BE_READ.json
+          python "$P/ExactProduct/engine/check_physics_reference_eligibility.py" \
+            --binding /tmp/phy-cold-start/human_review_binding.json \
+            --human-review-intake /tmp/phy-cold-start/human_review_real.json \
+            --mode REAL_RELEASE \
+            --reference-record /tmp/SHOULD_NOT_BE_READ.json \
+            --out /tmp/phy-cold-start/reference_eligibility.json
+          python - <<'PY'
+          import json, pathlib
+          r=json.load(open('/tmp/phy-cold-start/reference_eligibility.json'))
+          assert r['status']=='BLOCKED_HUMAN_QUALITY_GATES'
+          assert r['reference_read_attempted'] is False
+          assert not pathlib.Path('/tmp/SHOULD_NOT_BE_READ.json').exists()
+          print('reference read guard = PASS')
+          PY
+
+      - name: P-L governed release must remain BLOCKED, never machine-promoted
+        run: |
+          P="Grade 9/V2/Physics"
+          set +e
+          python "$P/ExactProduct/engine/evaluate_physics_governed_release.py" \
+            --candidate /tmp/phy-cold-start/exact_candidate.json \
+            --policy "$P/ExactProduct/registry/physics-exact-product-quality-policy.json" \
+            --ai-pre-review /tmp/phy-cold-start/ai_pre_review.json \
+            --human-review-binding /tmp/phy-cold-start/human_review_binding.json \
+            --human-review-intake /tmp/phy-cold-start/human_review_real.json \
+            --mode REAL_RELEASE \
+            --out /tmp/phy-cold-start/exact_release.json
+          code=$?
+          set -e
+          echo "P-L governed exit code: $code"
           if [ "$code" != "2" ]; then
             echo "Expected exit 2 (BLOCKED pending authorized human review). Got $code."
             exit 1
@@ -113,6 +182,10 @@ jobs:
             /tmp/phy-cold-start/with-attempts/physics-core-study-guide.pdf
             /tmp/phy-cold-start/with-attempts/physics-transfer-solution-book.pdf
             /tmp/phy-cold-start/exact_candidate.json
-            /tmp/phy-cold-start/exact_release.json
+            /tmp/phy-cold-start/exact_state_projection.json
             /tmp/phy-cold-start/ai_pre_review.json
+            /tmp/phy-cold-start/human_review_binding.json
+            /tmp/phy-cold-start/human_review_real.json
+            /tmp/phy-cold-start/reference_eligibility.json
+            /tmp/phy-cold-start/exact_release.json
           if-no-files-found: error

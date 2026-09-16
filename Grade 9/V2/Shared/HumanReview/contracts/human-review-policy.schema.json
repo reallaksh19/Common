@@ -5,8 +5,29 @@
   "properties": {
     "benchmark_comparative_validation_state": {"const": "NOT_RUN"},
     "policy_id": {"minLength": 1, "type": "string"},
+    "quality_state_by_dimension": {
+      "additionalProperties": false,
+      "properties": {
+        "ASSESSMENT": {"minLength": 1, "type": "string"},
+        "PEDAGOGY": {"minLength": 1, "type": "string"},
+        "SUBJECT": {"minLength": 1, "type": "string"},
+        "VISUAL": {"minLength": 1, "type": "string"}
+      },
+      "type": "object"
+    },
     "reject_on_invalid_submission": {"const": true},
-    "required_pass_submissions": {"additionalProperties": false, "properties": {"PEDAGOGY": {"minimum": 1, "type": "integer"}, "SUBJECT": {"minimum": 1, "type": "integer"}, "VISUAL": {"minimum": 1, "type": "integer"}}, "required": ["SUBJECT", "PEDAGOGY", "VISUAL"], "type": "object"},
+    "require_exact_artifact_set_binding": {"type": "boolean"},
+    "required_pass_submissions": {
+      "additionalProperties": false,
+      "properties": {
+        "ASSESSMENT": {"minimum": 1, "type": "integer"},
+        "PEDAGOGY": {"minimum": 1, "type": "integer"},
+        "SUBJECT": {"minimum": 1, "type": "integer"},
+        "VISUAL": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["SUBJECT", "PEDAGOGY", "VISUAL"],
+      "type": "object"
+    },
     "schema_version": {"const": "1.0.0"},
     "version": {"minLength": 1, "type": "string"}
   },

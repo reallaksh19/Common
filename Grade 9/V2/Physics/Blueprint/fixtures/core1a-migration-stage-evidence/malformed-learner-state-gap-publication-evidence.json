@@ -1,0 +1,36 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "BAD-PUB-AS-EVIDENCE",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A0_LEARNER_STATE_GAP",
+  "evidence_kind": "LEARNER_STATE_GAP",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-learner-state-gap-source.json"
+  ],
+  "artifact_refs": [
+    "CTRL-PHY-SYNTH-M2D-SBA04",
+    "SDU-SYNTH-M2D-SBA04"
+  ],
+  "evidence_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-learner-state-gap-source.json#learner_state_gap"
+  ],
+  "proof": {
+    "intrinsic_design_state_ref": "SDU-SYNTH-M2D-SBA04",
+    "control_state_ref": "CTRL-PHY-SYNTH-M2D-SBA04",
+    "publication_teaching_receipts_used_as_learner_evidence": true,
+    "capability_gap_rows": [
+      {
+        "capability_ref": "CAP-SYNTH-1",
+        "intrinsic_requirement_ref": "REQ-SYNTH-1",
+        "learner_state": "FRAGILE",
+        "gap_assessment": "SUPPORT_GAP",
+        "basis_refs": [
+          "CTRL-PHY-SYNTH-M2D-SBA04#CAP-SYNTH-1",
+          "SDU-SYNTH-M2D-SBA04#REQ-SYNTH-1"
+        ]
+      }
+    ]
+  },
+  "unresolved_requirements": []
+}

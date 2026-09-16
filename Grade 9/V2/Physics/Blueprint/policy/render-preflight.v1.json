@@ -1,0 +1,24 @@
+{
+  "policy_id": "PHY-BP-RENDER-PREFLIGHT-v1",
+  "schema_version": "1.0.0",
+  "page_geometry": {
+    "format": "A4_PORTRAIT",
+    "width_pt": 595.276,
+    "height_pt": 841.89,
+    "tolerance_pt": 1.0
+  },
+  "page_bounds_tolerance_pt": 0.75,
+  "minimum_actual_text_font_pt": 7.0,
+  "sample_raster_dpi": 144,
+  "minimum_sample_nonwhite_fraction": 0.0001,
+  "internal_identifier_patterns": [
+    "\\bPHY-(?:CAP|PF|MODEL|LAW|PCK|CORE1)-[A-Z0-9_-]+\\b",
+    "\\bM2D-SBA-[0-9A-Z_-]+\\b",
+    "\\bPUBUNIT-PHY-[0-9A-Z_-]+\\b",
+    "\\bCORE1A_[A-Z0-9_]+\\b"
+  ],
+  "release_rule": {
+    "machine_preflight_can_authorize_release": false,
+    "human_visual_review_required": true
+  }
+}

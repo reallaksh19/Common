@@ -6,6 +6,7 @@ on:
       - "Grade 9/V2/Shared/HumanReview/**"
       - "Grade 9/V2/Mathematics/Review/intake/**"
       - "Grade 9/V2/Mathematics/Validation/**"
+      - "Grade 9/V2/Physics/ExactProduct/review-intake/**"
       - ".github/workflows/v2-human-review-intake.yml"
   workflow_dispatch:
 
@@ -23,6 +24,24 @@ jobs:
         run: python "Grade 9/V2/Shared/HumanReview/contracts/validate_contracts.py"
       - name: Run human-review intake falsifiers
         run: python "Grade 9/V2/Shared/HumanReview/tests/test_human_review_intake.py"
+      - name: Validate Physics four-gate review configuration
+        run: |
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          R=Path('Grade 9/V2/Physics/ExactProduct/review-intake')
+          S=Path('Grade 9/V2/Shared/HumanReview')
+          sys.path.insert(0,str(S/'engine'))
+          from ingest_human_reviews import load_rubrics, active_dimensions, validate
+          p=json.load(open(R/'review_policy.json')); dims=active_dimensions(p)
+          assert dims==('SUBJECT','PEDAGOGY','ASSESSMENT','VISUAL')
+          rubrics=load_rubrics(R,dims); assert set(rubrics)==set(dims)
+          real=json.load(open(R/'reviewer_authorization.real.json')); test=json.load(open(R/'reviewer_authorization.test-only.json'))
+          validate(real,'reviewer-authorization-registry.schema.json'); validate(test,'reviewer-authorization-registry.schema.json')
+          assert all(real['authorized_reviewers'][k]==[] for k in ('HUMAN_SUBJECT','HUMAN_PEDAGOGY','HUMAN_ASSESSMENT','HUMAN_VISUAL'))
+          assert real['registry_class']=='REAL' and test['registry_class']=='TEST_ONLY'
+          print('Physics human-review configuration = four governed gates, real registry intentionally empty')
+          PY
       - name: Project current real Math review state
         run: |
           SHARED="Grade 9/V2/Shared/HumanReview"

@@ -1,0 +1,24 @@
+{
+  "fixture_id": "PHY-BP-GOLDEN-BLOCKED",
+  "expected_route": "BLOCK",
+  "evidence": {
+    "schema_version": "1.0.0",
+    "topic_id": "PHY-GOLDEN-INSUFFICIENT",
+    "ground_truth_refs": ["GT-GOLDEN-INSUFFICIENT-001"],
+    "sources": {
+      "syllabus": {"availability": "PARTIAL", "authority_strength": 1, "granularity": "COARSE", "integrity_state": "AMBIGUOUS", "notes": ["Only a broad topic label is available."]},
+      "semantic_source": {"availability": "ABSENT", "authority_strength": 0, "granularity": "NONE", "integrity_state": "NOT_APPLICABLE", "notes": ["No authoritative semantic source supplied."]},
+      "question_corpus": {"availability": "PARTIAL", "authority_strength": 1, "granularity": "COARSE", "count": 2, "integrity_state": "AMBIGUOUS", "notes": ["Two ambiguous questions are insufficient to infer stable scope or assessment pattern."]},
+      "answer_key": {"availability": "ABSENT", "authority_strength": 0, "granularity": "NONE", "integrity_state": "NOT_APPLICABLE", "notes": []},
+      "figures": {"availability": "ABSENT", "authority_strength": 0, "granularity": "NONE", "integrity_state": "NOT_APPLICABLE", "notes": []}
+    },
+    "metrics": {
+      "SA": {"value": 1, "basis": "Only a coarse and ambiguous syllabus label is available."},
+      "SS": {"value": 0, "basis": "No semantic source supplied."},
+      "QE": {"value": 1, "basis": "Only two ambiguous questions are available."},
+      "QR": {"value": 1, "basis": "Question evidence does not resolve hidden scope reliably."},
+      "UA": {"value": 4, "basis": "Scope and intended depth are highly uncertain."},
+      "CI": {"value": 2, "basis": "Available fragments do not fully agree but conflict is not resolvable from current evidence."}
+    }
+  }
+}

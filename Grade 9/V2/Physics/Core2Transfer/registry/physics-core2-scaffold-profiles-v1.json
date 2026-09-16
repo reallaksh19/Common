@@ -1,0 +1,8 @@
+{
+  "schema_version":"1.0.0",
+  "profiles":[
+    {"profile_id":"CORE2-GUIDE-LOW","guide_demand":"LOW","minimum_representation_stages":1,"hint_order":["H1_NOTICE","H2_MODEL","H3_START"],"solution_after_hints":true},
+    {"profile_id":"CORE2-GUIDE-MEDIUM","guide_demand":"MEDIUM","minimum_representation_stages":2,"hint_order":["H1_NOTICE","H2_MODEL","H3_START"],"solution_after_hints":true},
+    {"profile_id":"CORE2-GUIDE-HIGH","guide_demand":"HIGH","minimum_representation_stages":3,"hint_order":["H1_NOTICE","H2_MODEL","H3_START"],"solution_after_hints":true}
+  ]
+}

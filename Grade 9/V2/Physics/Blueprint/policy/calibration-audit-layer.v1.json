@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "name": "CALIBRATION_AUDIT_LAYER",
+  "short_name": "CAL",
+  "position": "OBSERVED_EVIDENCE_TO_VERSIONED_POLICY",
+  "purpose": [
+    "separate_engineering_heuristics_from_validated_gates",
+    "calibrate_duplication_detection_against_labelled_physics_pairs",
+    "calibrate_authored_difficulty_against_expert_and_later_learner_evidence",
+    "calibrate_learner_fit_predictions_against_observed_outcomes",
+    "preserve_reproducible_versioned_thresholds"
+  ],
+  "maturity_states": ["ENGINEERING", "CALIBRATING", "VALIDATED"],
+  "constitutional_invariants": {
+    "deterministic_source_custody_answer_and_coverage_gates_are_not_calibration_dependent": true,
+    "calibration_may_not_rewrite_historical_evidence": true,
+    "calibration_may_not_rewrite_source_truth_or_frozen_source_wording": true,
+    "engineering_heuristic_may_not_claim_validated": true,
+    "engineering_similarity_threshold_may_not_auto_block_without_deterministic_corroboration": true,
+    "policy_threshold_changes_are_versioned": true,
+    "held_out_evaluation_required_before_validated": true
+  },
+  "duplication_calibration": {
+    "current_maturity": "ENGINEERING",
+    "label_taxonomy": [
+      "SEMANTIC_REUSE",
+      "PEDAGOGICAL_TRANSFORMATION",
+      "FADING_ANCHOR",
+      "STRUCTURAL_SIBLING",
+      "FAR_TRANSFER_SIBLING",
+      "NEAR_DUPLICATE",
+      "PEDAGOGICAL_DUPLICATION"
+    ],
+    "engineering_signals": [
+      "asset_identity",
+      "example_structural_fingerprint",
+      "lexical_five_shingle_jaccard",
+      "semantic_similarity_review_signal",
+      "usage_mode",
+      "learner_action",
+      "solution_path"
+    ],
+    "engineering_threshold_action": "REVIEW_ONLY",
+    "deterministic_block_conditions": [
+      "DECLARED_PEDAGOGICAL_DUPLICATION",
+      "EXACT_ADJACENT_NUMERIC_DATASET_REUSE_WITHOUT_FADING_ANCHOR",
+      "EXACT_FINGERPRINT_PLUS_EQUIVALENT_USAGE_WITHOUT_FADING_ANCHOR",
+      "SOURCE_OR_GENERATED_IDENTITY_IMPERSONATION"
+    ],
+    "calibration_corpus": {
+      "pair_selection_must_cover_all_taxonomy_classes": true,
+      "boundary_cases_required": true,
+      "two_independent_reviewers_required": true,
+      "adjudication_required_for_disagreement": true,
+      "reviewer_agreement_metric_required": true,
+      "held_out_partition_required": true,
+      "feature_scores_must_be_stored_not_only_composite_score": true
+    },
+    "promotion_to_validated_requires": [
+      "LABELLED_CORPUS_REF",
+      "LABEL_DISTRIBUTION",
+      "REVIEWER_AGREEMENT_REPORT",
+      "HELD_OUT_SET_REF",
+      "PRECISION_RECALL_FALSE_BLOCK_REPORT",
+      "THRESHOLD_SELECTION_RATIONALE",
+      "APPROVAL_REF",
+      "VERSIONED_POLICY_REF"
+    ],
+    "universal_embedding_cosine_threshold_allowed": false
+  },
+  "difficulty_calibration": {
+    "current_maturity": "ENGINEERING",
+    "authored_profile_is_empirical_item_difficulty": false,
+    "engineering_profile_may_route_authoring_depth": true,
+    "expert_calibration_requires": [
+      "MULTIPLE_INDEPENDENT_EXPERT_RATINGS",
+      "DIMENSION_LEVEL_RATINGS",
+      "OVERALL_DIFFICULTY_LABEL",
+      "DISAGREEMENT_ADJUDICATION",
+      "HELD_OUT_CASES"
+    ],
+    "empirical_item_difficulty_requires_observed_learner_response_data": true,
+    "authored_difficulty_and_empirical_difficulty_must_remain_distinct": true
+  },
+  "learner_fit_calibration": {
+    "current_maturity": "ENGINEERING",
+    "fit_prediction_is_mastery_claim": false,
+    "observed_fields": [
+      "correctness",
+      "representation_correctness",
+      "model_selection",
+      "first_move",
+      "hint_level",
+      "completion",
+      "explanation",
+      "verification",
+      "later_retrieval"
+    ],
+    "prediction_outcome_pairs_must_be_retained": true,
+    "automatic_error_hypothesis_is_diagnosis": false,
+    "universal_mastery_cutoff_allowed": false
+  }
+}

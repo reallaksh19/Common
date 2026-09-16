@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "decision_id": "ENG-DISC-GRAV-FIELD-V1",
+  "request_id": "ENG-REQ-GRAV-FIELD-V1",
+  "decision_mode": "HUMAN_REVIEWED",
+  "existing_reusable_gate_ids": [
+    "PHY-VEC-BASICS",
+    "PHY-VEC-COMPONENTS",
+    "PHY-NLM-INTERACTION",
+    "PHY-NLM-SECOND-LAW",
+    "PHY-NLM-THIRD-LAW"
+  ],
+  "missing_capabilities": [
+    "Newtonian gravitational interaction force with explicit inverse-square and source-distance scope",
+    "Gravitational field as force per unit mass with radial inverse-square representation and vector superposition"
+  ],
+  "operations": [
+    {"operation":"REUSE","gate_id":"PHY-VEC-COMPONENTS","rationale":"Existing Cartesian vector competence is reused for field-vector resolution and multi-source superposition."},
+    {"operation":"REUSE","gate_id":"PHY-NLM-SECOND-LAW","rationale":"Existing net-force and acceleration semantics support the force-to-field and field-to-acceleration connection without duplicating Newtonian dynamics."},
+    {"operation":"CREATE_CHILD","gate_id":"PHY-GRAV-FORCE","parent_gate_id":"PHY-NLM-INTERACTION","rationale":"Universal gravitation is a specific non-contact interaction with its own inverse-square relation, source-distance scope, representation and misconceptions."},
+    {"operation":"CREATE_CHILD","gate_id":"PHY-GRAV-FIELD","parent_gate_id":"PHY-GRAV-FORCE","rationale":"Gravitational field introduces a distinct force-per-unit-mass ontology, radial vector-field representation, inverse-square spatial dependence and superposition logic."}
+  ],
+  "status": "DISCOVERY_APPROVED"
+}

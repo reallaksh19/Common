@@ -1,71 +1,67 @@
 # Physics V2 — generation entrypoint (cold start)
 
-Read this file and `GENERATION_AUTHORITY_MANIFEST.json`. Between them they are sufficient:
-**no chat history, no issue history and no manually pre-computed intermediate is required or
-permitted.** If you find yourself needing one, that is a defect in this document, not a
-reason to proceed.
+Read this file and `GENERATION_AUTHORITY_MANIFEST.json` for P-A…P-K generation. For P-L mature-release work, also read `ExactProduct/RELEASE_AUTHORITY_MANIFEST.json`. Together these repository artifacts are sufficient: **no chat history, no issue history and no manually pre-computed intermediate is required or permitted.** If an implementation needs one, the repository architecture is incomplete and must remain blocked.
 
-## One command
+## P-K generation command
 
 ```bash
 python "Grade 9/V2/Physics/ColdStart/engine/physics_cold_start_runner.py" \
   --out-dir /tmp/physics-v2-cold-start
 ```
 
-That drives the whole chain twice over the *same* assessment — once with no `AttemptSet`
-and once with one — and writes, per run:
+The runner executes the same assessment twice, once without an `AttemptSet` and once with learner-attempt evidence. Each run emits exactly two learner PDFs:
 
 ```text
-<out>/no-attempt/      physics-core-study-guide.pdf
-                       physics-transfer-solution-book.pdf
-                       run_report.json  + every intermediate artifact
-<out>/with-attempts/   the same, with learner attempt evidence applied
-<out>/comparison.json  the two-run invariant comparison
+physics-core-study-guide.pdf
+physics-transfer-solution-book.pdf
 ```
 
-Independently validate a run:
+plus the run report and governed intermediate artifacts. `<out>/comparison.json` verifies the two-run invariants.
+
+Validate a run independently with:
 
 ```bash
 python "Grade 9/V2/Physics/ColdStart/engine/physics_cold_start_validator.py" \
   --report /tmp/physics-v2-cold-start/with-attempts/run_report.json
 ```
 
-## The chain
+## Authority chain
 
-| phase | directory | produces |
+| phase | directory | produces / authorizes |
 |---|---|---|
 | P-A | `AssessmentIntake` | QuestionSet, DeclaredTopicScope, AttemptSet (optional) |
-| P-B | `AssessmentReview` | item validity and diagnostic-use review |
-| P-C | `AssessmentScope` | scope authority, question/capability bindings |
-| P-D | `ProblemSemantics` | problem families, reasoning routes, verification routes |
-| P-E | `LearnerEvidence` | LearnerStateSnapshot (identical shape with or without attempts) |
+| P-B | `AssessmentReview` | source/item validity and diagnostic-use review |
+| P-C | `AssessmentScope` | exact assessment scope, capability/prerequisite closure |
+| P-C.5 | `ColdStart` + `Shared/EngineeringGate` | Engineering Readiness for the exact P-C scope; `PROBLEM_SEMANTICS` permission |
+| P-D | `ProblemSemantics` | problem families, reasoning routes, verification routes, consuming the exact gated P-C bundle |
+| P-E | `LearnerEvidence` | LearnerStateSnapshot |
 | P-F | `StudySynthesis` | LearnerStudyScope + LearnerStudyModel + longitudinal init |
-| P-G | `CoreAuthoring` | promoted-pilot PCK + Core1 study plan + Appendices A/B/C |
-| P-H | `Representation` | teaching-primitive registry, representation bundle, PhysicalPageMap |
+| P-G | `CoreAuthoring` | promoted PCK + Core1 study plan + Appendices A/B/C |
+| P-H | `Representation` | teaching-primitives, representation bundle, PhysicalPageMap |
 | P-I | `Core2Transfer` | transfer pages, H1/H2/H3 hint ladder, First-Step Reference |
 | P-J | `CoverageClosure` | coverage matrices, longitudinal update, publication closure |
-| P-K | `ColdStart` | this runner, the authority manifest, the two learner PDFs |
-| P-L | `ExactProduct` | exact-product quality gates and the mature-candidate state model |
+| P-K | `ColdStart` | code-generated two-product learner package |
+| P-L | `ExactProduct` | exact-byte quality gates, governed human-review intake, final comparator guard and mature-release decision |
 
-## What must be identical across the two runs
+### P-C.5 is mandatory authority, not a Blueprint exception
 
-The assessment decides **what must be teachable**; learner evidence decides only
-**order, depth, bridge, treatment and support**. So these are byte-identical in both runs
-and the comparison fails if any differs:
+Cold start derives P-C from the repository inputs, then submits that exact `scope_model_digest` and the governed Physics capability-to-Engineering binding registry to `Grade 9/V2/Shared/EngineeringGate`. Only after the global envelope allows the manifest-declared `PROBLEM_SEMANTICS` consumer may P-D execute.
 
 ```text
-question set digest          declared topic scope digest      scope authority digest
-external corpus digest       problem semantics digest         study scope digest
-required capability set      required item set                problem family truth
-physical model truth         law truth                        external eligibility
-two-product topology
+P-C exact scope
+  ↓
+governed capability → authority routes
+  ↓
+subject technical closure + provider-owned external prerequisites
+  ↓
+Shared Engineering Gate readiness envelope
+  ↓ require PROBLEM_SEMANTICS
+P-D consumes that exact P-C bundle
 ```
 
-These are *expected* to differ, because that is what learner evidence is for:
+No topic name, case ID, prior fixture or model memory may substitute for a binding. If a future capability is routed to a real Engineering gate, the same runtime automatically applies recursive technical closure and cross-domain receipt enforcement. If authority is absent, consumption is held rather than inferred.
 
-```text
-study model digest    core1 plan digest    lesson mode counts
-```
+A scope may legitimately have `technical_gate_requirement_state = NOT_REQUIRED_FOR_THIS_SCOPE` only when every required capability has an explicit governed authority route and none maps to a dedicated active technical gate. That state is still evaluated and receipted by the global Engineering Gate; it is not a bypass.
 
 ## Two products, never three
 
@@ -75,26 +71,64 @@ CORE_STUDY_GUIDE          main teaching + Appendix A practice + Appendix B solut
 TRANSFER_SOLUTION_BOOK    transfer questions + hint ladders + full solutions
 ```
 
-Appendix C is a **section of the Core study guide**, not a third PDF. Emitting it
-separately fails `THIRD_PRODUCT_PDF_CREATED`.
+Appendix C is a section of the Core Study Guide. A separate third PDF is a topology failure.
 
-## Boundaries you must not cross
+## Two-run invariant
 
-- **PR #156 is not a producer input.** It is a merged Physics pilot outside this V2 chain
-  and is admissible only at P-L, as a final design comparator, after every required review
-  gate has been resolved. Any producer read of it fails
-  `PR156_USED_AS_PRODUCER_INPUT_BEFORE_FINAL_COMPARISON`.
-- **`Grade 9/V2/Physics/Publication/` and `Grade 9/V2/Physics/LearningDesign/` are legacy.**
-  They belong to the pre-assessment-gate chain (#221–#233) and must not be wired into any
-  phase above. See their `README_LEGACY_QUARANTINE.md`.
-- **Human review states cannot be set by this repository.** `SUBJECT_EXPERT_PASS`,
-  `PEDAGOGY_EXPERT_PASS`, `ASSESSMENT_EXPERT_PASS` and `VISUAL_USABILITY_EXPERT_PASS`
-  require an authorized human reviewer and an attestation bound to exact artifact bytes.
-  They are all `PENDING`. Marking one `PASS` fails `FAKE_HUMAN_REVIEW_STATE`.
+The assessment determines what must be teachable; learner evidence may change only order, depth, bridge, treatment and support. The question set, declared scope, scope authority, **P-C scope digest, Engineering binding-registry digest, Engineering readiness digest/status/gate-requirement state**, external corpus, problem semantics, study scope, required capability/item sets, problem-family truth, physical-model truth, law truth, external eligibility and two-product topology must remain identical across the two runs.
+
+The study model, Core1 plan and lesson-mode distribution may differ because those are evidence-adaptive. Engineering readiness may not differ because it is upstream of learner evidence.
+
+## P-L governed release
+
+P-K readiness is not mature-product approval. The real P-L path is:
+
+```text
+exact two PDFs
+  ↓
+machine publication engineering
+  ↓
+AI pre-review — advisory only
+  ↓
+exact two-PDF HumanReview binding
+  ↓
+Shared V2 HumanReview REAL_RELEASE projection
+  SUBJECT / PEDAGOGY / ASSESSMENT / VISUAL
+  ↓
+all four authorized human gates PASS
+  ↓
+final reference-comparison eligibility
+  ↓
+frozen PR #156 comparison
+  ↓
+governed mature-release decision
+```
+
+`ExactProduct/RELEASE_AUTHORITY_MANIFEST.json` is the cold-start authority map for this P-L path. `ExactProduct/engine/evaluate_physics_governed_release.py` is the canonical real-release authority. The older `evaluate_physics_exact_product.py` remains the machine/state-projection primitive and synthetic state-machine test surface; arbitrary inline attestations from that helper are not real release authority.
+
+## Boundaries
+
+- PR #156 is never a P-A…P-K producer input. The reference eligibility guard is required to return **before reading any comparator bytes** until governed real human review is complete.
+- `Publication/` and `LearningDesign/` are legacy pre-assessment-gate layers and must not be wired into this P-A…P-L chain.
+- A manually supplied Engineering Readiness result is forbidden. P-C.5 must be recomputed from exact current P-C authority and governed Engineering bindings on every cold start.
+- Human review cannot be generated by repository code. The four real reviewer authorization lists are currently empty, and there are no real review submissions.
+- TEST_ONLY reviewer identities and submissions are falsifier fixtures only and can never become release evidence.
+- Learning effectiveness remains independent of rendering/product polish.
 
 ## Current honest state
 
-The chain runs end to end and produces two real PDFs in both modes, with every figure drawn
-as actual vector graphics and reconciled to physical-page custody. It has had **no human
-subject, pedagogy, assessment or visual review of any kind**. It is not a mature product and
-P-L will report `BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT` until that changes.
+The repository can regenerate and validate the two learner PDFs from repository inputs alone. The cold-start production path now structurally invokes Engineering Readiness before Problem Semantics and persists exact readiness custody in each run report.
+
+Machine publication engineering passes. The architecture for real human intake and the final comparator boundary is present and CI-enforced, but the real product remains:
+
+```text
+SUBJECT_CORRECTNESS       PENDING
+PEDAGOGICAL_DESIGN        PENDING
+ASSESSMENT_DESIGN         PENDING
+VISUAL_USABILITY          PENDING
+REFERENCE_COMPARABILITY   NOT_RUN
+MATURE_DESIGN_QUALITY     PENDING
+release                   BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT
+```
+
+This is an external-evidence block, not missing machine architecture: authorized humans must be explicitly registered and submit reviews bound to the exact PDF hashes before the comparator can legally run.

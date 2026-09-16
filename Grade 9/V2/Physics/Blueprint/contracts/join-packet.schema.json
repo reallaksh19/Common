@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-join-packet.schema.json",
+  "title": "Physics Core1 x Core2 Join Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "join_id",
+    "topic_id",
+    "core1_packet_ref",
+    "core2_packet_ref",
+    "validation_session_refs",
+    "demand_claim_count",
+    "items",
+    "critical_conflicts",
+    "join_status",
+    "assimilation_ready",
+    "join_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "join_id": {"type": "string", "pattern": "^J-PHY-"},
+    "topic_id": {"type": "string", "minLength": 1},
+    "core1_packet_ref": {"type": "string", "minLength": 1},
+    "core2_packet_ref": {"type": "string", "minLength": 1},
+    "validation_session_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "demand_claim_count": {"type": "integer", "minimum": 0},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "join_item_id",
+          "demand_claim_ref",
+          "knowledge_claim_refs",
+          "status",
+          "criticality",
+          "required_capability",
+          "assimilation_obligations",
+          "unresolved_issues",
+          "evidence_refs",
+          "disposition"
+        ],
+        "properties": {
+          "join_item_id": {"type": "string", "pattern": "^JITEM-PHY-"},
+          "demand_claim_ref": {"type": "string", "minLength": 1},
+          "knowledge_claim_refs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "status": {
+            "enum": ["CONFIRMED", "REFINED", "MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"]
+          },
+          "criticality": {"enum": ["REQUIRED", "NON_BLOCKING"]},
+          "required_capability": {"type": "string", "minLength": 1},
+          "assimilation_obligations": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "unresolved_issues": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "disposition": {"enum": ["READY_FOR_ASSIMILATION", "HOLD", "BLOCK"]}
+        }
+      }
+    },
+    "critical_conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["demand_claim_ref", "status", "reason"],
+        "properties": {
+          "demand_claim_ref": {"type": "string", "minLength": 1},
+          "status": {"enum": ["MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"]},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "assessment_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "matched_target_item_count", "scope_digest", "corpus_digest", "evidence_refs", "unresolved_issues"],
+      "properties": {
+        "state": {"enum": ["VERIFIED_NO_TARGET_DEMAND", "COVERAGE_UNKNOWN"]},
+        "matched_target_item_count": {"type": "integer", "minimum": 0},
+        "scope_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "corpus_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "unresolved_issues": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "join_status": {"enum": ["JOIN_READY", "JOIN_READY_WITH_HOLDS", "JOIN_READY_NO_CORE2_DEMAND", "JOIN_BLOCKED"]},
+    "assimilation_ready": {"type": "boolean"},
+    "join_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"demand_claim_count": {"const": 0}},
+        "required": ["demand_claim_count"]
+      },
+      "then": {
+        "required": ["assessment_coverage"],
+        "properties": {"items": {"maxItems": 0}}
+      }
+    },
+    {
+      "if": {
+        "properties": {"demand_claim_count": {"minimum": 1}},
+        "required": ["demand_claim_count"]
+      },
+      "then": {
+        "properties": {"items": {"minItems": 1}}
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "blueprint_id": "PHY-BLUEPRINT-v1",
+  "canonical_root": "Grade 9/V2/Physics/Blueprint",
+  "roles": {
+    "CORE0": {"authority": "EVIDENCE_CLASSIFICATION_AND_ROUTING", "implementation_root": "Grade 9/V2/Physics/Blueprint", "ownership": "BLUEPRINT_NATIVE"},
+    "CORE1": {"authority": "SEMANTIC_PHYSICS_INTELLIGENCE", "implementation_root": "Grade 9/V2/Physics/CoreAuthoring", "ownership": "ROLE_EXECUTION_KIT"},
+    "CORE2": {"authority": "ASSESSMENT_AND_TRANSFER_INTELLIGENCE", "implementation_root": "Grade 9/V2/Physics/Core2Transfer", "ownership": "ROLE_EXECUTION_KIT"},
+    "JOIN": {"authority": "CORE1_CORE2_CLAIM_RECONCILIATION", "implementation_root": "Grade 9/V2/Physics/Blueprint", "ownership": "BLUEPRINT_NATIVE"},
+    "CORE1A": {"authority": "LEARNER_ASSIMILATION_GOVERNANCE_AND_TEACHING_AUTHORITY", "implementation_root": "Grade 9/V2/Physics/Core1A", "ownership": "ROLE_EXECUTION_KIT"},
+    "CORE1B": {"authority": "AUTHORIZED_LEARNER_EXPERIENCE_EXECUTION_NO_SEMANTIC_AUTHORITY", "implementation_root": "Grade 9/V2/Physics/Core1B", "ownership": "ROLE_EXECUTION_KIT"},
+    "CORE2A": {"authority": "TAUGHT_STATE_GATED_TRANSFER_LEGALITY", "implementation_root": "Grade 9/V2/Physics/Core2A", "ownership": "ROLE_EXECUTION_KIT"},
+    "CORE2B": {"authority": "EVIDENCE_GATED_TRANSFER_SELECTION_NO_LEGALITY_AUTHORITY", "implementation_root": "Grade 9/V2/Physics/Core2B", "ownership": "ROLE_EXECUTION_KIT"}
+  }
+}

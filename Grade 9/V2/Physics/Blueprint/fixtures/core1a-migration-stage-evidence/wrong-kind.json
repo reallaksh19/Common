@@ -1,0 +1,22 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "SYNTH-C1A-WRONG-KIND",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A5_REPRESENTATION_CANDIDATES",
+  "evidence_kind": "REPRESENTATION_DECISION",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json"
+  ],
+  "artifact_refs": ["REP-A", "REP-B"],
+  "evidence_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json#representation_decision"
+  ],
+  "proof": {
+    "candidate_set_receipt_ref": "fixtures/core1a-migration-stage-evidence/valid-representation-candidates.json",
+    "primary_representation_id": "REP-A",
+    "secondary_representation_ids": ["REP-B"],
+    "decision_rationale": "Synthetic wrong-kind fixture."
+  },
+  "unresolved_requirements": []
+}

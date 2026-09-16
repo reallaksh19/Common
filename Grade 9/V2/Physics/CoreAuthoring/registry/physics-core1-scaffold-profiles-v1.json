@@ -1,0 +1,10 @@
+{
+  "schema_version":"1.0.0",
+  "profiles":[
+    {"profile_id":"CORE1-FULL-P20","treatment":"FULL_LEARNING","prior_knowledge_pct":20,"required_kinds":["SEE","REALIZE","UNDERSTAND","WORKED","MISCONCEPTION"],"minimum_visual_stages":5,"practice_ladder":["GUIDED","FADED","INDEPENDENT"]},
+    {"profile_id":"CORE1-FULL-P50","treatment":"FULL_LEARNING","prior_knowledge_pct":50,"required_kinds":["SEE","REALIZE","UNDERSTAND","WORKED"],"minimum_visual_stages":3,"practice_ladder":["GUIDED","FADED","INDEPENDENT"]},
+    {"profile_id":"CORE1-READY","treatment":"READY_VERIFY_ONLY","prior_knowledge_pct":50,"required_kinds":["ACTIVATE"],"minimum_visual_stages":1,"practice_ladder":["INDEPENDENT"]},
+    {"profile_id":"CORE1-PROBE-P20","treatment":"PROBE_FIRST","prior_knowledge_pct":20,"required_kinds":["PROBE"],"minimum_visual_stages":1,"practice_ladder":[]},
+    {"profile_id":"CORE1-PROBE-P50","treatment":"PROBE_FIRST","prior_knowledge_pct":50,"required_kinds":["PROBE"],"minimum_visual_stages":1,"practice_ladder":[]}
+  ]
+}

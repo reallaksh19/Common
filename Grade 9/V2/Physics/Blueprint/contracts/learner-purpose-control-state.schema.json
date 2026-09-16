@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-learner-purpose-control-state.schema.json",
+  "title": "Physics Learner and Purpose Control State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","control_state_id","topic_id","learner_prior_pct","purpose","capability_states","purpose_contract","publication_teaching_receipts_used_as_learner_evidence","control_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "control_state_id": {"type": "string", "pattern": "^CTRL-PHY-"},
+    "topic_id": {"type": "string", "minLength": 1},
+    "learner_prior_pct": {"enum": [20,50,80]},
+    "purpose": {"enum": ["FIRST_STUDY","PRACTICE","REVISION","COMPETITIVE_EXAM"]},
+    "capability_states": {"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["capability_ref","state","basis","evidence_refs"],"properties":{"capability_ref":{"type":"string","minLength":1},"state":{"enum":["SECURE","PARTIAL","FRAGILE","UNKNOWN"]},"basis":{"enum":["PRIOR_HEURISTIC","LEARNER_RESPONSE","DIAGNOSTIC","TEACHER_OBSERVATION"]},"evidence_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}}}},
+    "purpose_contract": {"type":"object","additionalProperties":false,"required":["contract_id","priorities","support_bias","transfer_focus","purpose_cannot_bypass_required_prerequisites"],"properties":{"contract_id":{"type":"string","minLength":1},"priorities":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},"support_bias":{"type":"string","minLength":1},"transfer_focus":{"type":"string","minLength":1},"purpose_cannot_bypass_required_prerequisites":{"const":true}}},
+    "publication_teaching_receipts_used_as_learner_evidence": {"const": false},
+    "control_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

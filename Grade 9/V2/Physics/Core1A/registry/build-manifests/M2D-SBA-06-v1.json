@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-06",
+  "learner_profile": {
+    "prior_knowledge_pct": 20,
+    "intrinsic_difficulty": "D3",
+    "pathway": "FOUNDATION_PATH"
+  },
+  "source_inputs": {
+    "sba_registry": "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "publication_index": "registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "core2_linkage": "registry/physics-core1a-core2-linkage.json",
+    "profile_registry": "registry/physics-core1a-motion-in-a-plane-sba06-20pct-v1.json",
+    "transfer_registry": "registry/physics-core1a-motion-in-a-plane-sba06-transfer-v1.json"
+  },
+  "primary_questions": ["Q38", "Q47"],
+  "question_release": [
+    {"question_id": "Q38", "status": "RELEASED", "routine_id": "M2D-SBA-06-R1", "release_prerequisite_buckets": []},
+    {"question_id": "Q47", "status": "RELEASED", "routine_id": "M2D-SBA-06-R2", "release_prerequisite_buckets": []}
+  ],
+  "question_load": {
+    "count": 2,
+    "class": "LOW",
+    "minimum_transfer_families": 1
+  },
+  "phase_gates": [
+    {"gate": "G0_INDEX_SYNC", "status": "PASS", "evidence": ["SBA publication index includes M2D-SBA-06 and is rendered as the first learner surface."]},
+    {"gate": "G1_SOURCE_AND_CORE2_AUDIT", "status": "PASS", "evidence": ["Trajectory source section, component and angle forms, range form, Q38 wall-coordinate demand and Q47 vector-trajectory demand audited."]},
+    {"gate": "G2_DIFFICULTY_AND_READINESS", "status": "PASS", "evidence": ["D3 concept, 20% foundation path; low question load does not reduce derivation or visual staging depth."]},
+    {"gate": "G3_LEARNING_ATOM_DECOMPOSITION", "status": "PASS", "evidence": ["Eight learning atoms cover state-vs-path description, component model, time elimination, physical interpretation, vector notation, wall event, range form and equation audit."]},
+    {"gate": "G4_CORE2_HINT_PRETEACH_AUDIT", "status": "PASS", "evidence": ["Q38 and Q47 H1/H2/H3 reveals are pre-taught by exact learning atoms before transfer."]},
+    {"gate": "G5_PROBLEM_FAMILY_ASSIMILATION", "status": "PASS", "evidence": ["Two transfer routines separate wall-coordinate and vector-trajectory recognition patterns."]},
+    {"gate": "G6_PAGE_PLAN", "status": "PASS", "evidence": ["18-page professional-lossless plan preserves all teaching functions while using restrained textbook heading hierarchy."]},
+    {"gate": "G7_RENDER_AND_VISUAL_AUDIT", "status": "PASS", "evidence": ["18 pages rendered at 170 dpi; label collision and synthesis-table header defects corrected before release."]},
+    {"gate": "G8_READINESS_AND_TRANSFER_AUDIT", "status": "PASS", "evidence": ["Each released family includes independent practice before next-page H1/H2/H3 and a recognise/represent/first-move/finish readiness gate."]},
+    {"gate": "G9_MACHINE_QA_AND_HANDOFF", "status": "PASS", "evidence": ["PDF preflight passes; registry and CI validation added for SBA06 handoff."]}
+  ],
+  "learning_atoms": [
+    "M2D-SBA-06A",
+    "M2D-SBA-06B",
+    "M2D-SBA-06C",
+    "M2D-SBA-06D",
+    "M2D-SBA-06E",
+    "M2D-SBA-06F",
+    "M2D-SBA-06G",
+    "M2D-SBA-06H"
+  ],
+  "transfer_routines": ["M2D-SBA-06-R1", "M2D-SBA-06-R2"],
+  "publication_plan": {
+    "first_surface": "SBA_PUBLICATION_INDEX",
+    "macro_order": [
+      "SBA_INDEX",
+      "FOUNDATION_PRETRAINING",
+      "CONCEPT_BUILD",
+      "PICTORIAL_STAGES",
+      "PICTURE_TO_MATHS",
+      "MISCONCEPTION",
+      "WATCH_ONE",
+      "COMPLETE_ONE",
+      "PROBLEM_FAMILY_ROUTINES",
+      "INDEPENDENT_PRACTICE",
+      "HINTS",
+      "READINESS",
+      "CORE2_TRANSFER_SUMMARY"
+    ],
+    "independent_practice_policy": "ATTEMPT_BEFORE_HINTS",
+    "hint_delivery_policy": "NEXT_PAGE",
+    "readiness_gate_policy": "RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
+  },
+  "qa": {
+    "schema_valid": true,
+    "primary_question_coverage_exact": true,
+    "hint_preteach_complete": true,
+    "visual_audit_complete": true,
+    "pdf_preflight_complete": true,
+    "ci_passed": true
+  },
+  "handoff": {
+    "status": "COMPLETE",
+    "expected_pdf_name": "M2D-SBA-06-professional-textbook-lossless-v1.pdf",
+    "expected_montage_name": "M2D-SBA-06-professional-textbook-lossless-v1-montage.jpg",
+    "next_active_bucket": "M2D-SBA-07",
+    "notes": [
+      "Professional-lossless presentation is mandatory: no pedagogical function may be removed merely to simplify layout.",
+      "Page-level section headings are capped below bucket-opener size; long page headings use the restrained long-heading tier.",
+      "Q38 and Q47 are both released after SBA06 readiness; neither has a cross-bucket hold."
+    ]
+  }
+}

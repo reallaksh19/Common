@@ -1,0 +1,35 @@
+{
+  "architecture_id": "PHY-BLUEPRINT-v1",
+  "schema_version": "1.0.0",
+  "planes": {
+    "EVIDENCE": {"authority": "ORIGINAL_AND_OBSERVED_GROUND_TRUTH", "description": "What source inputs and observed learner interactions actually exist and what they support."},
+    "REASONING": {"authority": "DERIVED_CLAIMS_AND_GOVERNANCE", "description": "What Core1, Core2, Join, Core1A and Core2A infer or authorize from evidence."},
+    "CONTROL": {"authority": "PRODUCT_BEHAVIOUR_ONLY", "description": "Learner state, purpose and owner overrides may alter execution but never historical evidence or upstream authority."},
+    "RUNTIME": {"authority": "AUTHORIZED_EXPERIENCE_EXECUTION", "description": "Core1B and Core2B execute already-authorized learner experiences, capture observed evidence and route repair without gaining semantic or legality authority."}
+  },
+  "roles": ["CORE0","CORE1","CORE2","JOIN","CORE1A","CORE1B","CORE2A","CORE2B"],
+  "role_lifecycle": {"CORE2A":"ACTIVE","CORE1B":"ACTIVE","CORE2B":"ACTIVE"},
+  "invariants": {
+    "ground_truth_is_authority": true,
+    "adaptive_first_role": true,
+    "fresh_agent_per_role": true,
+    "second_role_independent_grounding": true,
+    "max_subtopics_per_handoff": 3,
+    "learning_atoms_unbounded": true,
+    "join_required_before_core1a": true,
+    "core1a_reasoning_before_manuscript": true,
+    "representation_requires_cognitive_purpose": true,
+    "equation_requires_learning_anatomy": true,
+    "owner_override_preserves_system_finding": true,
+    "absence_of_evidence_must_remain_visible": true,
+    "core2a_requires_taught_state_receipts": true,
+    "core2a_may_not_infer_learner_mastery": true,
+    "b_layers_have_no_semantic_or_legality_authority": true,
+    "core1b_requires_released_core1a_authority": true,
+    "teaching_configuration_cannot_prove_learner_state": true,
+    "core2b_requires_digest_bound_core2a_legal_pool": true,
+    "core2b_escalation_requires_per_capability_evidence": true,
+    "runtime_evidence_is_append_only": true,
+    "repair_routing_cannot_rewrite_a_layer_authority": true
+  }
+}

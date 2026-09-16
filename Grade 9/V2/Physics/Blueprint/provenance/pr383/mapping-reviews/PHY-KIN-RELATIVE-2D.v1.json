@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0.0",
+  "review_id": "PR383-MAP-PHY-KIN-RELATIVE-2D-V1",
+  "review_authority": "REPOSITORY_ENGINEERING_MAPPING_REVIEW",
+  "mapping_scope": "TECHNICAL_DISCOVERY_RECONCILIATION_ONLY",
+  "source_snapshot": {
+    "registry_ref": "provenance/pr383/physics-technical-engineering-gates.v1.json",
+    "registry_git_blob_sha": "89b009c31c79ad4b2009577220705d2711eadc4b",
+    "discovery_gate_id": "PHY-KIN-RELATIVE-2D",
+    "source_control_fields_ignored": ["technical_readiness", "release_checklist"]
+  },
+  "target_snapshot": [
+    {
+      "gate_id": "PHY-M2D-RELATIVE-VELOCITY",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-RELATIVE-VELOCITY.v3.json",
+      "gate_git_blob_sha": "f2da74f17e7fd7d142578aff3632c6107957ed23"
+    }
+  ],
+  "coverage": [
+    {
+      "source_pointer": "/prerequisite_ids/0",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/prerequisites/0"}],
+      "review_note": "The source vector-add/sub prerequisite is preserved explicitly as PHY-VEC-ADD-SUB."
+    },
+    {
+      "source_pointer": "/prerequisite_ids/1",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/relations/2"}
+      ],
+      "review_note": "The source 1D-motion prerequisite is not fabricated as a missing canonical gate; its actual river-crossing contribution is explicitly carried by t=d/v_perpendicular and x=v_parallel*t, both stated in the pinned source reasoning/model condition."
+    },
+    {
+      "source_pointer": "/technical_core/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The canonical concept preserves vector-relative velocity and the source distinction between perpendicular crossing progress and parallel drift."
+    },
+    {
+      "source_pointer": "/mandatory_equations/0",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/relations/0"}],
+      "review_note": "The source v_AB=v_A-v_B relation is represented as the typed canonical relative-velocity relation."
+    },
+    {
+      "source_pointer": "/representations/0",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/representations/0"}],
+      "review_note": "The source river-boat velocity triangle, river width, and component-wise verification are retained in the canonical semantic representation."
+    },
+    {
+      "source_pointer": "/model_conditions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/model_conditions/1"},
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/relations/2"}
+      ],
+      "review_note": "The source condition that only the perpendicular component sets crossing time while the parallel component sets drift is explicit and relation-bound."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/0",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/reasoning_sequence/0"}],
+      "review_note": "Source step 1 is preserved as bank-aligned component decomposition."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/1",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/reasoning_sequence/1"}],
+      "review_note": "Source step 2 is preserved as the perpendicular-component crossing-time computation."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/2",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/reasoning_sequence/2"}],
+      "review_note": "Source step 3 is preserved as downstream drift from the parallel component over the crossing time."
+    },
+    {
+      "source_pointer": "/required_transformations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/required_transformations/0"},
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/required_transformations/1"}
+      ],
+      "review_note": "The source scenario-to-governed-equation transformation is made v3-explicit in two source-backed stages: scenario to vector/component model, then that model to the source crossing-time/drift reasoning result."
+    },
+    {
+      "source_pointer": "/misconceptions/0",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/misconceptions/0"}],
+      "review_note": "The source river-current/crossing-time misconception, counterexample and technical repair are retained and bound to the source river representation."
+    },
+    {
+      "source_pointer": "/mandatory_verifications/0",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/verifications"}],
+      "review_note": "The source consistency/dimensional verification is represented by explicit units, sign, geometry, model-validity and substitution checks."
+    },
+    {
+      "source_pointer": "/problem_families/0",
+      "status": "COVERED",
+      "target_refs": [{"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/problem_families/0"}],
+      "review_note": "The shortest-time versus shortest-path river-crossing family and its impossible-heading failure mode are retained."
+    },
+    {
+      "source_pointer": "/falsification_cases/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/required_invariants/0"},
+        {"gate_id": "PHY-M2D-RELATIVE-VELOCITY", "target_pointer": "/falsification_cases/0"}
+      ],
+      "review_note": "The source add-instead-of-subtract falsifier is governed by the required relative-velocity-subtraction invariant and stable v3 failure code."
+    }
+  ],
+  "decision": {
+    "status": "APPROVED",
+    "uncovered_source_pointers": [],
+    "readiness_authorized": false,
+    "source_custody_promoted": false
+  }
+}

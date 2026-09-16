@@ -1,0 +1,34 @@
+name: V2 Physics Blueprint · Core2A Runtime
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Core2A/**'
+      - 'Grade 9/V2/Physics/Core1A/contracts/physics-taught-state-receipt.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/**'
+      - '.github/workflows/v2-physics-core2a.yml'
+  workflow_dispatch:
+
+jobs:
+  core2a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install contract test dependency
+        run: pip install jsonschema
+      - name: Run Physics Core2A model falsifiers
+        run: python 'Grade 9/V2/Physics/Core2A/tests/test_physics_core2a.py'
+      - name: Run executable Core2A golden
+        run: |
+          python 'Grade 9/V2/Physics/Core2A/engine/run_physics_core2a.py' \
+            --run 'Grade 9/V2/Physics/Core2A/golden/projectile-event/core2a-input.json' \
+            --out-dir /tmp/physics-core2a
+      - name: Validate Core2A JSON policies and contracts
+        run: |
+          python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-taught-state-receipt.schema.json' > /dev/null
+          for f in 'Grade 9/V2/Physics/Core2A/contracts/'*.json; do python -m json.tool "$f" > /dev/null; done
+          for f in 'Grade 9/V2/Physics/Core2A/policies/'*.json; do python -m json.tool "$f" > /dev/null; done
+          python -m json.tool 'Grade 9/V2/Physics/Core2A/golden/projectile-event/core2a-input.json' > /dev/null

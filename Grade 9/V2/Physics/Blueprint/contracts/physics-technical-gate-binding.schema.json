@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-technical-gate-binding.schema.json",
+  "title": "Physics Bucket Technical Gate Binding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "binding_id", "bucket_id", "registry_ref", "primary_gate_id", "declared_gate_closure", "status", "downstream_consumers"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "binding_id": {"type": "string", "minLength": 1},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "registry_ref": {"const": "policy/physics-technical-engineering-gates.v2.json"},
+    "primary_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+    "declared_gate_closure": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+    "status": {"enum": ["TECHNICAL_GATE_READY", "TECHNICAL_GATE_BLOCKED"]},
+    "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]},
+    "downstream_consumers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["CCU", "CDAU", "SDU", "LAU", "TTU", "PUBLICATION"]}},
+    "notes": {"type": "string"}
+  }
+}

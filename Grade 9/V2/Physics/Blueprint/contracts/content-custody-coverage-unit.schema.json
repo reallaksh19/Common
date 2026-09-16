@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content-custody-coverage-unit.schema.json",
+  "title": "Physics Content Custody & Coverage Unit",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "bucket_id",
+    "canonical_assets",
+    "coverage_matrix",
+    "question_records",
+    "similarity_pairs",
+    "receipts"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "canonical_assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "asset_type", "canonical_content"],
+        "properties": {
+          "asset_id": {"type": "string", "minLength": 1},
+          "asset_type": {"type": "string", "minLength": 1},
+          "canonical_content": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "coverage_matrix": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "core", "disposition"],
+        "properties": {
+          "asset_id": {"type": "string", "minLength": 1},
+          "core": {"enum": ["CORE1", "CORE1A", "CORE1B", "CORE2", "CORE2A", "CORE2B"]},
+          "disposition": {"enum": ["REQUIRED", "OPTIONAL", "TRANSFORMED", "SOURCE_ONLY", "NOT_APPLICABLE", "PROHIBITED", "HELD"]},
+          "realization_ref": {"type": "string"},
+          "parent_asset_id": {"type": "string"},
+          "transformation_ref": {"type": "string"},
+          "blocking_reason": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "question_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "question_id",
+          "display_number",
+          "core",
+          "source_class",
+          "source",
+          "problem_family",
+          "bucket_id",
+          "capability_ids",
+          "answer",
+          "legal_status",
+          "display_source_label",
+          "badges"
+        ],
+        "properties": {
+          "question_id": {"type": "string", "minLength": 1},
+          "display_number": {"type": "string", "minLength": 1},
+          "core": {"enum": ["CORE1", "CORE1A", "CORE1B", "CORE2", "CORE2A", "CORE2B"]},
+          "source_class": {"enum": ["FROZEN_SOURCE", "OWNER_SUPPLIED", "AUTHOR_CREATED", "GENERATED_LEGAL_SIBLING", "AUTHOR_CREATED_DESIGN_PILOT"]},
+          "source": {
+            "type": "object",
+            "required": ["source_ref"],
+            "properties": {
+              "document_id": {"type": "string"},
+              "title": {"type": "string"},
+              "source_question_no": {"type": "string"},
+              "source_page": {"type": ["string", "integer"]},
+              "source_ref": {"type": "string", "minLength": 1},
+              "source_digest": {"type": "string"}
+            },
+            "additionalProperties": true
+          },
+          "problem_family": {"type": "string", "minLength": 1},
+          "bucket_id": {"type": "string", "minLength": 1},
+          "capability_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "answer": {
+            "type": "object",
+            "required": ["answer_type", "status"],
+            "properties": {
+              "answer_id": {"type": "string"},
+              "answer_type": {"enum": ["SOURCE_ANSWER", "CANONICAL_ANSWER", "CANONICAL_SOLUTION", "CANONICAL_DERIVATION", "CANONICAL_DIAGRAM", "CANONICAL_RUBRIC", "HELD"]},
+              "status": {"enum": ["AVAILABLE", "HELD"]},
+              "canonical_answer": {"type": "string"},
+              "solution_ref": {"type": "string"}
+            },
+            "additionalProperties": true
+          },
+          "legal_status": {"enum": ["RELEASED", "DESIGN_PILOT_ONLY", "HELD", "BLOCKED"]},
+          "display_source_label": {"type": "string", "minLength": 1},
+          "badges": {"type": "object", "minProperties": 5},
+          "example_fingerprint": {"type": "object"},
+          "lineage": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "similarity_pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["left_question_id", "right_question_id", "relationship", "usage_equivalent"],
+        "properties": {
+          "left_question_id": {"type": "string"},
+          "right_question_id": {"type": "string"},
+          "relationship": {"enum": ["SEMANTIC_REUSE", "PEDAGOGICAL_TRANSFORMATION", "FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING", "NEAR_DUPLICATE", "PEDAGOGICAL_DUPLICATION"]},
+          "usage_equivalent": {"type": "boolean"},
+          "lexical_text_left": {"type": "string"},
+          "lexical_text_right": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "receipts": {
+      "type": "object",
+      "required": ["coverage_receipt", "question_custody_receipt", "duplication_receipt", "source_integrity_receipt", "answer_resolution_receipt"],
+      "properties": {
+        "coverage_receipt": {"enum": ["PASS", "BLOCKED"]},
+        "question_custody_receipt": {"enum": ["PASS", "BLOCKED"]},
+        "duplication_receipt": {"enum": ["PASS", "REVIEW", "BLOCKED"]},
+        "source_integrity_receipt": {"enum": ["PASS", "HELD", "BLOCKED"]},
+        "answer_resolution_receipt": {"enum": ["PASS", "HELD", "BLOCKED"]}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

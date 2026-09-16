@@ -1,0 +1,56 @@
+{
+  "schema_version": "2.0.0",
+  "scope": ["CORE1A", "CORE1B"],
+  "student_knowledge_pct_may_drive_authored_depth": false,
+  "difficulty": {
+    "badge_enum": ["EASY", "MEDIUM", "HARD"],
+    "authority_enum": ["OWNER_PROVIDED", "SOURCE_PROVIDED", "DERIVED", "VALIDATED_DERIVED"],
+    "owner_or_source_badge_may_be_silently_changed": false,
+    "dimension_scale": {"minimum": 0, "maximum": 3},
+    "evidence_profile_dimensions": ["prerequisite_depth", "element_interactivity", "inferential_jump_severity", "representation_translation", "model_discrimination", "sign_or_frame_sensitivity", "multi_step_dependency", "abstraction", "misconception_density", "synthesis"],
+    "derived_rules": {
+      "HARD": [
+        "at_least_two_dimensions_score_3",
+        "or_one_declared_critical_bottleneck_controls_the_capability",
+        "or_synthesis_score_3_and_multi_step_dependency_at_least_2"
+      ],
+      "MEDIUM": [
+        "not_HARD_and_at_least_one_dimension_score_2_or_3"
+      ],
+      "EASY": [
+        "no_dimension_above_1_and_no_critical_bottleneck"
+      ]
+    },
+    "difficulty_receipt_requires": ["badge", "authority", "dimension_scores", "critical_bottlenecks", "system_finding", "owner_or_source_decision", "final_badge"],
+    "derived_rule_is_psychometric_claim": false
+  },
+  "research_policy": {
+    "EASY": "NONE_BY_DEFAULT",
+    "MEDIUM": "TARGETED",
+    "HARD": "DEEP",
+    "research_must_produce_design_decisions": true
+  },
+  "shared_depth_envelope": {
+    "EASY": 10,
+    "MEDIUM": 20,
+    "HARD": 30,
+    "applies_to_core1a": true,
+    "applies_to_core1b": true,
+    "page_count_is_quota": false,
+    "same_ceiling_implies_same_actual_length": false,
+    "same_ceiling_implies_same_content": false,
+    "actual_lengths_independently_derived": true
+  },
+  "core1a": {
+    "ttu_family": "CONCEPT_TTU",
+    "dominant_mode": "DECLARATIVE",
+    "primary_quality_metric": "INFERENTIAL_CLOSURE"
+  },
+  "core1b": {
+    "ttu_family": "CONCEPT_TTU",
+    "dominant_mode": "GENERATIVE",
+    "reconstruction_rigor_follows_same_badge": true,
+    "must_not_duplicate_core1a_page_for_page": true,
+    "hard_substantive_tasks_should_use_high_value_reconstruction_modes": true
+  }
+}

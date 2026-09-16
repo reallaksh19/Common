@@ -1,0 +1,6 @@
+{
+  "schema_version":"1.0.0","policy_id":"PHY-C2B-HINT-V2",
+  "levels":["NO_HINT","RETRIEVAL_CUE","REPRESENTATION_CUE","MODEL_CUE","FIRST_MOVE_CUE","FULL_SOLUTION"],
+  "learner_surface_forbidden_tokens":["STATE_FRAGILE","TRANSFER_READY","REPAIR_","DIAGNOSTIC_BRANCH","CORE2A_LEGAL"],
+  "rules":{"hints_reactivate_taught_knowledge_only":true,"attempt_first_by_default":true,"full_solution_does_not_count_as_independent_transfer_evidence":true}
+}

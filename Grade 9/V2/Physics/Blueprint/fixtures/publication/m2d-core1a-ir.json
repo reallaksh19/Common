@@ -1,0 +1,11 @@
+{
+  "publication_ir_id":"PUBIR-PHY-M2D-C1A-GOLDEN-001","topic_id":"PHY-M2D","product_mode":"CORE1A_TEXTBOOK",
+  "upstream_artifacts":[
+    {"role":"CORE1","artifact_ref":"K-PHY-M2D-GOLDEN","artifact_digest":"1111111111111111111111111111111111111111111111111111111111111111","release_state":"RELEASED","semantic_units":[{"semantic_ref":"K-APEX-EVENT","content_digest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","required":true,"authorized_representation_refs":["RD-APEX-VECTOR-SEQUENCE"]}]},
+    {"role":"CORE1A","artifact_ref":"A-PHY-M2D-GOLDEN","artifact_digest":"2222222222222222222222222222222222222222222222222222222222222222","release_state":"RELEASED","semantic_units":[{"semantic_ref":"A-APEX-TEACHING-BRIDGE","content_digest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","required":true,"authorized_representation_refs":["RD-APEX-VECTOR-SEQUENCE"]},{"semantic_ref":"A-OPTIONAL-RETRIEVAL","content_digest":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","required":false,"authorized_representation_refs":[]}]}
+  ],
+  "publication_units":[
+    {"source_role":"CORE1","source_artifact_ref":"K-PHY-M2D-GOLDEN","semantic_ref":"K-APEX-EVENT","content_digest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","surface_kind":"EXPLANATION","representation_refs":["RD-APEX-VECTOR-SEQUENCE"]},
+    {"source_role":"CORE1A","source_artifact_ref":"A-PHY-M2D-GOLDEN","semantic_ref":"A-APEX-TEACHING-BRIDGE","content_digest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","surface_kind":"WORKED_EXAMPLE","representation_refs":["RD-APEX-VECTOR-SEQUENCE"]}
+  ]
+}

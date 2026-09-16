@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "PHY-PDF-LAYOUT-INTEGRITY-V1",
+  "applies_to": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "release_rule": "A learner PDF may not release with clipped, overlapping or unreadable text/figure content.",
+  "authoring": {
+    "preferred_text_layout": "FLOW_LAYOUT",
+    "figure_rule": "Figures are isolated layout blocks with explicit bounding boxes. Text must not be hand-positioned into the same free canvas region unless collision checks exist.",
+    "absolute_positioning": "ALLOWED_ONLY_WITH_COLLISION_VALIDATION",
+    "svg_or_vector_labels": "Labels must stay within the figure bounding box or dedicated caption area; they may not intrude into headings/body text."
+  },
+  "preflight": {
+    "render_every_page": true,
+    "minimum_renderer_count": 1,
+    "human_visual_review_required_for_new_layout": true,
+    "must_check": [
+      "TEXT_TEXT_OVERLAP",
+      "TEXT_FIGURE_OVERLAP",
+      "CLIPPED_LABELS",
+      "BROKEN_GLYPHS",
+      "UNREADABLE_EQUATIONS",
+      "FIGURE_CAPTION_COLLISION",
+      "HEADER_FIGURE_COLLISION"
+    ],
+    "fail_closed": true
+  },
+  "regression_note": "The SBA23 pilot exposed heading/figure collisions caused by free-canvas labels. This policy forbids treating successful PDF generation as visual-preflight success."
+}

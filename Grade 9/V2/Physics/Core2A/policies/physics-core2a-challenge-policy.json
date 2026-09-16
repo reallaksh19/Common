@@ -1,0 +1,54 @@
+{
+  "policy_id": "PHY-CORE2A-CHALLENGE-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "allowed_archetypes": [
+    "GUIDED_DIRECT",
+    "NEAR_TRANSFER",
+    "REVERSED_TARGET",
+    "HIDDEN_INFORMATION",
+    "REPRESENTATION_SHIFT",
+    "EVENT_CONSTRAINT",
+    "PARAMETER_CONSTRAINT",
+    "ERROR_DIAGNOSIS",
+    "COMPARE_RANK",
+    "MULTI_STEP_BRIDGE",
+    "MIXED_SYNTHESIS"
+  ],
+  "structural_archetypes": [
+    "REVERSED_TARGET",
+    "HIDDEN_INFORMATION",
+    "REPRESENTATION_SHIFT",
+    "EVENT_CONSTRAINT",
+    "PARAMETER_CONSTRAINT",
+    "ERROR_DIAGNOSIS",
+    "COMPARE_RANK",
+    "MULTI_STEP_BRIDGE"
+  ],
+  "near_copy": {
+    "exact_normalized_copy_forbidden": true,
+    "max_sequence_ratio": 0.88,
+    "max_token_jaccard": 0.75,
+    "compare_against_all_source_stems": true
+  },
+  "generation_boundary": {
+    "required_capabilities_must_have_teaching_complete_receipts": true,
+    "new_physics_law_forbidden": true,
+    "new_reference_frame_rule_forbidden": true,
+    "arithmetic_only_difficulty_forbidden": true,
+    "unsupported_validator_action": "FAIL_CLOSED",
+    "mixed_synthesis_requires_explicit_compatibility_authority": true
+  },
+  "stop_conditions": [
+    "CORE2A_PURPOSE_REQUIRED",
+    "CORE2A_UNTAUGHT_PHYSICS_REQUIRED",
+    "CORE2A_SOURCE_BINDING_INVALID",
+    "CORE2A_GENERATED_ITEM_TOO_CLOSE_TO_SOURCE",
+    "CORE2A_PHYSICS_VALIDATOR_UNSUPPORTED",
+    "CORE2A_PHYSICS_VALIDATION_FAILED",
+    "CORE2A_HINT_DISCLOSES_ANSWER",
+    "CORE2A_HINT_DISCLOSES_SOLUTION",
+    "CORE2A_FALSE_OFFICIAL_ATTRIBUTION",
+    "CORE2A_PURPOSE_COVERAGE_GAP"
+  ]
+}

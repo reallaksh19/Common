@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-M2D-SBA-PUBLICATION-INDEX-v1",
+  "render_as_first_step": true,
+  "title": "Motion in a Plane - SBA Bucket Map",
+  "columns": ["SBA index", "Subtopic bucket", "Origin", "Core (1A) teaching home", "Core (2) primary questions", "State"],
+  "rows": [
+    {"bucket_id":"M2D-SBA-01","subtopic_bucket":"From one direction to two - 1D vs 2D, coordinates, axes, origin, shared time","origin":"§1-§2","core1a_teaching_home":["M2D_FOUNDATION"],"core2_primary_questions":[],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-02","subtopic_bucket":"What makes a projectile? - projectile, trajectory, launch anatomy, launch angle, range terminology","origin":"§3-§3.1","core1a_teaching_home":["PROJECTILE_FOUNDATION","PROJECTILE_ANATOMY"],"core2_primary_questions":[],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-03","subtopic_bucket":"One clock, two directions - resolve u, horizontal and vertical component equations","origin":"§3.1.1-§3.1.2","core1a_teaching_home":["PROJECTILE_COMPONENT_CLOCK"],"core2_primary_questions":["Q10","Q43"],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-04","subtopic_bucket":"Follow velocity through the flight - rising, apex, falling, velocity direction, minimum speed","origin":"§3.1.2 + §3.1.5","core1a_teaching_home":["PROJECTILE_APEX"],"core2_primary_questions":["Q01","Q11","Q13","Q14","Q17","Q27","Q40"],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-05","subtopic_bucket":"Same-height flight - time, range, height, complementary angles, maximum range, R/H relations","origin":"§3.1.3-§3.1.5 + Illus. 1-3","core1a_teaching_home":["PROJECTILE_SAME_HEIGHT"],"core2_primary_questions":["Q02","Q06","Q07","Q12","Q16","Q18","Q19","Q20","Q22","Q24","Q25","Q44","Q52"],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-06","subtopic_bucket":"Describe the path without time - eliminate t, derive y(x), read path geometry, wall-coordinate and vector-notation transfer","origin":"Trajectory section","core1a_teaching_home":["PROJECTILE_TRAJECTORY"],"core2_primary_questions":["Q38","Q47"],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-07","subtopic_bucket":"Horizontal launch and launch from height - vertical fall clock, impact velocity, displacement geometry, unequal-height signed motion","origin":"§3.1.1-§3.1.2 + Illus. 5","core1a_teaching_home":["PROJECTILE_HORIZONTAL_LAUNCH"],"core2_primary_questions":["Q03","Q04","Q08","Q09","Q29","Q30","Q34","Q36","Q42"],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-21","subtopic_bucket":"Projectile meets a sloping plane - plane equation, trajectory intersection, along-plane range, projection geometry and normal-impact constraints","origin":"Formula sheet + Level-I practice","core1a_teaching_home":["PROJECTILE_INCLINED_PLANE"],"core2_primary_questions":["Q54","Q55","Q56"],"state":"BUILT"},
+    {"bucket_id":"M2D-SBA-22","subtopic_bucket":"Use one clock at a special event - timed coordinates, recovering launch components, continuing the same flight, time partitions and event height","origin":"Level-I practice","core1a_teaching_home":["PROJECTILE_TIMED_EVENTS"],"core2_primary_questions":["Q05","Q26"],"state":"BUILT"}
+  ]
+}

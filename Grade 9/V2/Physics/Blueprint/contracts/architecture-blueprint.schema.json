@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-architecture-blueprint.schema.json",
+  "title": "Physics Architecture Blueprint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["architecture_id", "schema_version", "planes", "roles", "role_lifecycle", "invariants"],
+  "properties": {
+    "architecture_id": {"type": "string", "pattern": "^PHY-BLUEPRINT-v[0-9]+$"},
+    "schema_version": {"const": "1.0.0"},
+    "planes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["EVIDENCE", "REASONING", "CONTROL", "RUNTIME"],
+      "properties": {
+        "EVIDENCE": {"$ref": "#/$defs/plane"},
+        "REASONING": {"$ref": "#/$defs/plane"},
+        "CONTROL": {"$ref": "#/$defs/plane"},
+        "RUNTIME": {"$ref": "#/$defs/plane"}
+      }
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true,
+      "items": {"enum": ["CORE0", "CORE1", "CORE2", "JOIN", "CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+      "allOf": [
+        {"contains": {"const": "CORE0"}},
+        {"contains": {"const": "CORE1"}},
+        {"contains": {"const": "CORE2"}},
+        {"contains": {"const": "JOIN"}},
+        {"contains": {"const": "CORE1A"}},
+        {"contains": {"const": "CORE1B"}},
+        {"contains": {"const": "CORE2A"}},
+        {"contains": {"const": "CORE2B"}}
+      ]
+    },
+    "role_lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["CORE2A", "CORE1B", "CORE2B"],
+      "properties": {
+        "CORE2A": {"enum": ["PLACEHOLDER", "DRAFT", "ACTIVE"]},
+        "CORE1B": {"enum": ["PLACEHOLDER", "DRAFT", "ACTIVE"]},
+        "CORE2B": {"enum": ["PLACEHOLDER", "DRAFT", "ACTIVE"]}
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ground_truth_is_authority", "adaptive_first_role", "fresh_agent_per_role", "second_role_independent_grounding",
+        "max_subtopics_per_handoff", "learning_atoms_unbounded", "join_required_before_core1a", "core1a_reasoning_before_manuscript",
+        "representation_requires_cognitive_purpose", "equation_requires_learning_anatomy", "owner_override_preserves_system_finding",
+        "absence_of_evidence_must_remain_visible", "core2a_requires_taught_state_receipts", "core2a_may_not_infer_learner_mastery",
+        "b_layers_have_no_semantic_or_legality_authority", "core1b_requires_released_core1a_authority",
+        "teaching_configuration_cannot_prove_learner_state", "core2b_requires_digest_bound_core2a_legal_pool",
+        "core2b_escalation_requires_per_capability_evidence", "runtime_evidence_is_append_only",
+        "repair_routing_cannot_rewrite_a_layer_authority"
+      ],
+      "properties": {
+        "ground_truth_is_authority": {"const": true},
+        "adaptive_first_role": {"const": true},
+        "fresh_agent_per_role": {"const": true},
+        "second_role_independent_grounding": {"const": true},
+        "max_subtopics_per_handoff": {"const": 3},
+        "learning_atoms_unbounded": {"const": true},
+        "join_required_before_core1a": {"const": true},
+        "core1a_reasoning_before_manuscript": {"const": true},
+        "representation_requires_cognitive_purpose": {"const": true},
+        "equation_requires_learning_anatomy": {"const": true},
+        "owner_override_preserves_system_finding": {"const": true},
+        "absence_of_evidence_must_remain_visible": {"const": true},
+        "core2a_requires_taught_state_receipts": {"const": true},
+        "core2a_may_not_infer_learner_mastery": {"const": true},
+        "b_layers_have_no_semantic_or_legality_authority": {"const": true},
+        "core1b_requires_released_core1a_authority": {"const": true},
+        "teaching_configuration_cannot_prove_learner_state": {"const": true},
+        "core2b_requires_digest_bound_core2a_legal_pool": {"const": true},
+        "core2b_escalation_requires_per_capability_evidence": {"const": true},
+        "runtime_evidence_is_append_only": {"const": true},
+        "repair_routing_cannot_rewrite_a_layer_authority": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "plane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority"],
+      "properties": {
+        "authority": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

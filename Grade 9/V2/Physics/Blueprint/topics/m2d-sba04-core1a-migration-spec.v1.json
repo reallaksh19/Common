@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "audit_id": "C1A-MIGRATION-AUDIT-M2D-SBA04-V1",
+  "bucket_id": "M2D-SBA-04",
+  "build_manifest_ref": "Core1A/registry/build-manifests/M2D-SBA-04-v1.json",
+  "legacy_claim_ref": "Core1A/registry/build-manifests/M2D-SBA-04-v1.json#handoff.status",
+  "engineering_request_ref": "fixtures/engineering-workbench/m2d-sba04-request.v1.json",
+  "engineering_manifest_ref": "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json",
+  "stage_evidence_refs": [
+    "topics/m2d-sba04-stage-evidence/1a0-learner-state-gap.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a2-inferential-jump-closure.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a3-cognitive-transformation.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a5-representation-candidates.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a6-representation-decision.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a7-pwse-bridge.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a9-worked-faded-independent.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a11-unresolved-jump-closure.v1.json"
+  ]
+}

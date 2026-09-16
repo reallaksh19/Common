@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0.0",
+  "architecture_version": "SELF_HELP_V8",
+  "bucket_id": "M2D-SBA-23",
+  "learner_title": "Launch from something already moving",
+  "canonical_capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+  "canonical_problem_family_id": "PF-MOVING-LAUNCHER-PROJECTILE",
+  "architecture_refs": {
+    "ccu": "m2d-sba23-ccu.v1.json",
+    "cdau": "../policy/core-governance-cdau.v2.json",
+    "sdu": "../policy/study-differentiation-unit.v2.json",
+    "lau": "../policy/learner-adaptation-unit.v2.json",
+    "ttu": "../policy/technical-teaching-unit.v3.json",
+    "badges": "../policy/question-badge-metadata.v1.json"
+  },
+  "ccu_receipts": {
+    "coverage_receipt":"PASS",
+    "question_custody_receipt":"PASS",
+    "duplication_receipt":"PASS",
+    "source_integrity_receipt":"HELD",
+    "answer_resolution_receipt":"HELD",
+    "held_scope":"Frozen Q15 only; design-pilot learner questions are individually sourced and resolved.",
+    "production_release_authorized":false
+  },
+  "difficulty_receipt": {
+    "badge":"HARD",
+    "authority":"VALIDATED_DERIVED",
+    "dimension_scores": {
+      "prerequisite_depth":2,
+      "element_interactivity":3,
+      "inferential_jump_severity":3,
+      "representation_translation":3,
+      "model_discrimination":2,
+      "sign_or_frame_sensitivity":3,
+      "multi_step_dependency":3,
+      "abstraction":2,
+      "misconception_density":3,
+      "synthesis":2
+    },
+    "critical_bottlenecks":["FRAME_IDENTIFICATION_BEFORE_KINEMATICS","VECTOR_FRAME_CONVERSION_BEFORE_PROJECTILE_MODEL"],
+    "system_finding":"HARD because multiple dimensions score 3 and the frame-conversion bottleneck controls downstream solution validity.",
+    "owner_or_source_decision":"ACCEPT_HARD",
+    "final_badge":"HARD",
+    "psychometric_claim":false
+  },
+  "purpose_receipts": {
+    "CORE1A": {
+      "purpose":"COMPLETE_CONCEPTUAL_CONSTRUCTION",
+      "dominant_mode":"DECLARATIVE",
+      "learner_actions":["EXPLAIN","DERIVE","COMPARE","VERIFY"],
+      "prohibited_mode_present":false,
+      "status":"PASS"
+    },
+    "CORE1B": {
+      "purpose":"CONCEPT_RECONSTRUCTION",
+      "dominant_mode":"GENERATIVE",
+      "learner_actions":["GENERATION","SELECTION","DISCRIMINATION","DIAGNOSIS","DERIVATION_CONNECTION","VERIFICATION"],
+      "fragile_checkpoint_without_generative_transformation":false,
+      "passive_reference_only_checkpoint":false,
+      "status":"PASS"
+    },
+    "CORE2A": {
+      "purpose":"EXPERT_PROBLEM_LEARNING",
+      "dominant_mode":"DECLARATIVE",
+      "learner_actions":["WORKED_EXEMPLAR","COMPARE","VERIFY"],
+      "production_status":"BLOCKED_SOURCE_CUSTODY",
+      "design_pilot_status":"PASS_NONPRODUCTION"
+    },
+    "CORE2B": {
+      "purpose":"TRANSFER_AND_INDEPENDENT_MODELLING",
+      "dominant_mode":"GENERATIVE",
+      "learner_actions":["SELECT","TRANSFER","VERIFY"],
+      "production_status":"BLOCKED_CORE2A_LEGAL_POOL",
+      "design_pilot_status":"PASS_NONPRODUCTION",
+      "fading_anchor_counts_as_transfer_evidence":false
+    }
+  },
+  "sdu_realization": {
+    "student_knowledge_pct_used":false,
+    "shared_soft_maximum_page_envelope":30,
+    "core1a_actual_length_derived_independently":true,
+    "core1b_actual_length_derived_independently":true,
+    "core1a_ttu_family":"CONCEPT_TTU",
+    "core1b_ttu_family":"CONCEPT_TTU"
+  },
+  "lau_realization": {
+    "production_selection_basis":"UNRESOLVED_BECAUSE_LEGAL_POOL_EMPTY",
+    "design_pilot_fit_receipt": {
+      "selection_basis":"OWNER_OVERRIDE",
+      "owner_ref":"OWNER-SBA23-DESIGN-PILOT",
+      "learner_scope":"PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+      "task_demand": {
+        "structural_distance":1,
+        "representation_change":1,
+        "model_discrimination":1,
+        "sign_or_direction_reversal":1,
+        "reversed_target":1,
+        "constraint_inversion":1,
+        "multi_step_bridge":1,
+        "synthesis":0,
+        "competitive_mixing":0,
+        "calculation_load":1
+      },
+      "support_band":"GUIDED",
+      "fit_prediction":"OWNER_ROUTED_NOT_KNOWLEDGE_VALIDATED",
+      "reason":"Usable capability-specific knowledge evidence is unavailable and the Q15 legal pool is empty; this route validates architecture only.",
+      "scope":"DESIGN_PILOT_ONLY",
+      "psychometric_claim":false
+    },
+    "core2a_production_legal_items":[],
+    "core2b_production_transfer_items":[]
+  },
+  "question_release_rules": {
+    "every_question_has_question_id":true,
+    "every_question_has_visible_source_label":true,
+    "every_released_or_design_pilot_question_has_answer_or_canonical_resolution":true,
+    "frozen_source_question_number_retained":true,
+    "author_created_questions_cannot_impersonate_source":true,
+    "q15_release_status":"HELD"
+  },
+  "similarity_rules": {
+    "lexical_five_shingle_high_risk_threshold":0.90,
+    "lexical_review_threshold":0.80,
+    "structural_block_threshold_when_usage_equivalent":0.85,
+    "structural_review_threshold":0.70,
+    "universal_semantic_cosine_threshold_used":false,
+    "semantic_threshold_mode":"CALIBRATED_ON_LABELLED_PHYSICS_PAIRS",
+    "same_equation_alone_is_duplication":false,
+    "same_example_plus_same_usage_plus_same_solution_path_is_duplication_risk":true
+  },
+  "release_gates": {
+    "G_DOMAIN":"PASS_FOR_AUTHOR_CREATED_CONCEPT_MODEL",
+    "G_CUSTODY_COVERAGE":"PASS_WITH_Q15_HELD_SCOPE",
+    "G_PURPOSE":"PASS_FOR_V8_PLAN",
+    "G_DIFFERENTIATION":"PASS_FOR_DECLARED_FINGERPRINTS_AND_CCU",
+    "G_TTU":"PROCESS_GOLDEN_ONLY",
+    "G_DIFFICULTY":"PASS_HARD_WITH_EVIDENCE_RECEIPT",
+    "G_FIT":"OWNER_ROUTED_NOT_KNOWLEDGE_VALIDATED_DESIGN_PILOT_ONLY",
+    "G_PUBLICATION":"BLOCKED_UPSTREAM_SOURCE_AND_MANUSCRIPT_RELEASE"
+  }
+}

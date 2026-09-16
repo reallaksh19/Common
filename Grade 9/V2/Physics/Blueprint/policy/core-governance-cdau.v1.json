@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "authority_order": ["GROUND_TRUTH", "CORE0", "CORE1_CORE2_INDEPENDENT_VALIDATION", "JOIN", "CANONICAL_DOMAIN_REGISTRY", "CDAU", "SDU_OR_LAU", "TTU", "PUBLICATION_OR_RUNTIME"],
+  "core_purpose": {
+    "CORE1": {"purpose": "COMPACT_ORIENTATION", "must_not_become": "DEEP_DUPLICATE_TEXTBOOK"},
+    "CORE1A": {"purpose": "COMPLETE_CONCEPTUAL_CONSTRUCTION", "dominant_mode": "DECLARATIVE", "must_not_become": "QUESTION_BANK_DOMINANCE"},
+    "CORE1B": {"purpose": "CONCEPT_RECONSTRUCTION", "dominant_mode": "GENERATIVE", "must_not_become": "SECOND_COPY_OF_CORE1A"},
+    "CORE2": {"purpose": "FROZEN_SOURCE_QUESTION", "must_not_become": "REWRITTEN_SOURCE"},
+    "CORE2A": {"purpose": "EXPERT_PROBLEM_LEARNING", "dominant_mode": "DECLARATIVE", "must_not_become": "EXHAUSTIVE_SOLVED_COPY_OF_POOL"},
+    "CORE2B": {"purpose": "TRANSFER_AND_INDEPENDENT_MODELLING", "dominant_mode": "GENERATIVE", "must_not_become": "REPLAY_OF_CORE2A"}
+  },
+  "usage_modes": ["REFERENCE", "EXPLAIN", "DERIVE", "WORKED_EXEMPLAR", "COMPARE", "COMPLETE", "RECONSTRUCT", "SELECT", "DISCRIMINATE", "DIAGNOSE", "RETRIEVE", "TRANSFER", "VERIFY"],
+  "cross_core_relationships": {
+    "release_allowed": ["SEMANTIC_REUSE", "PEDAGOGICAL_TRANSFORMATION", "FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"],
+    "warning": ["NEAR_DUPLICATE"],
+    "release_blocked": ["PEDAGOGICAL_DUPLICATION"]
+  },
+  "example_fingerprint_required_fields": ["problem_family", "context", "givens", "numeric_values", "target_unknown", "representation", "model_sequence", "special_condition", "solution_path"],
+  "owner_control": {
+    "global_decision_provenance_required": ["SYSTEM_FINDING", "OWNER_DECISION", "FINAL_ACTION"],
+    "may_override_product_routing": true,
+    "may_override_difficulty_badge": true,
+    "may_override_research_depth": true,
+    "may_override_bucket_or_subtopic_split": true,
+    "may_override_representation_choice": true,
+    "may_override_support_band": true,
+    "may_choose_design_pilot_when_source_unresolved": true,
+    "may_override_physics_or_math_correctness": false,
+    "may_override_frozen_source_wording": false,
+    "may_override_source_integrity_classification": false,
+    "may_override_provenance": false,
+    "may_override_observed_evidence": false,
+    "may_expand_core2a_legal_pool": false,
+    "may_bypass_authority_order": false
+  },
+  "release_gates": ["G_DOMAIN", "G_PURPOSE", "G_DIFFERENTIATION", "G_TTU", "G_DIFFICULTY", "G_FIT", "G_PUBLICATION"],
+  "post_use_gate": "G_CALIBRATION"
+}

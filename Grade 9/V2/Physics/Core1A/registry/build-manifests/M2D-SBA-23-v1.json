@@ -1,0 +1,44 @@
+{
+  "schema_version":"1.0.0",
+  "bucket_id":"M2D-SBA-23",
+  "learner_profile":{"prior_knowledge_pct":20,"intrinsic_difficulty":"D3","pathway":"FOUNDATION_PATH"},
+  "source_inputs":{
+    "sba_registry":"registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "publication_index":"registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "core2_linkage":"registry/physics-core1a-core2-linkage.json",
+    "profile_registry":"registry/physics-core1a-motion-in-a-plane-sba23-teaching-plan-v1.json",
+    "transfer_registry":"registry/physics-core1a-motion-in-a-plane-sba23-transfer-v1.json"
+  },
+  "primary_questions":["Q15"],
+  "question_release":[{"question_id":"Q15","status":"HELD","routine_id":"M2D-SBA-23-R1","release_prerequisite_buckets":["M2D-SBA-03","M2D-SBA-09"]}],
+  "question_load":{"count":1,"class":"LOW","minimum_transfer_families":1},
+  "phase_gates":[
+    {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["SBA registry and Core1A/Core2 linkage agree on M2D-SBA-23 -> Q15 -> moving-launcher."]},
+    {"gate":"G1_SOURCE_AND_CORE2_AUDIT","status":"BLOCKED","evidence":["Question identity and linkage are repository-backed, but exact Q15 prompt, solution and H1/H2/H3 text were not resolved from the repository text surfaces checked."]},
+    {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["Registry classifies SBA-23 as D3 with prerequisites M2D-SBA-03 and M2D-SBA-09; a 20-percent foundation teaching decomposition is staged without source-exact claims."]},
+    {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Eight provisional atoms cover frame labels, Galilean velocity addition at release, ground-frame componentization, one projectile clock, gravity/component separation, observer consistency, a limiting-case check and first-move selection."]},
+    {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"BLOCKED","evidence":["Cannot certify Q15 H1/H2/H3 pre-teaching until the exact governed Q15 hint ladder is located."]},
+    {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"IN_PROGRESS","evidence":["One author-created moving-launcher routine exercises the invariant but is explicitly not a surrogate for the source Q15 hint ladder."]},
+    {"gate":"G6_PAGE_PLAN","status":"NOT_STARTED","evidence":["Publication authoring waits for G1/G4 source closure."]},
+    {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"NOT_STARTED","evidence":["No learner-facing PDF is authorized while source audit is blocked."]},
+    {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"NOT_STARTED","evidence":["Q15 remains held; only generated-practice readiness can be exercised."]},
+    {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"BLOCKED","evidence":["Machine QA may validate this fail-closed manifest, but handoff cannot complete until G1 and G4 close."]}
+  ],
+  "learning_atoms":["M2D-SBA-23A","M2D-SBA-23B","M2D-SBA-23C","M2D-SBA-23D","M2D-SBA-23E","M2D-SBA-23F","M2D-SBA-23G","M2D-SBA-23H"],
+  "transfer_routines":["M2D-SBA-23-R1"],
+  "publication_plan":{
+    "first_surface":"SBA_PUBLICATION_INDEX",
+    "macro_order":["SBA_INDEX","FOUNDATION_PRETRAINING","CONCEPT_BUILD","PICTORIAL_STAGES","PICTURE_TO_MATHS","MISCONCEPTION","WATCH_ONE","COMPLETE_ONE","PROBLEM_FAMILY_ROUTINES","INDEPENDENT_PRACTICE","HINTS","READINESS","CORE2_TRANSFER_SUMMARY"],
+    "independent_practice_policy":"ATTEMPT_BEFORE_HINTS",
+    "hint_delivery_policy":"NEXT_PAGE",
+    "readiness_gate_policy":"RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
+  },
+  "qa":{"schema_valid":true,"primary_question_coverage_exact":true,"hint_preteach_complete":false,"visual_audit_complete":false,"pdf_preflight_complete":false,"ci_passed":false},
+  "handoff":{
+    "status":"BLOCKED",
+    "expected_pdf_name":"M2D-SBA-23-professional-textbook-lossless-v1.pdf",
+    "expected_montage_name":"M2D-SBA-23-professional-textbook-lossless-v1-montage.jpg",
+    "next_active_bucket":"M2D-SBA-23",
+    "notes":["Source-integrity block is intentional and machine-readable.","Do not add SBA-23 to completed_active_buckets or the BUILT publication index.","The R1 hint ladder belongs only to author-created independent practice; it is not asserted to reproduce Q15 H1/H2/H3.","Do not issue a production Core1A authority, teaching receipt or Core2A Q15 release from this manifest."]
+  }
+}

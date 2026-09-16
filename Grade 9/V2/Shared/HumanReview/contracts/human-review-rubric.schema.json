@@ -4,7 +4,7 @@
   "additionalProperties": false,
   "properties": {
     "criteria": {"items": {"additionalProperties": false, "properties": {"criterion_id": {"minLength": 1, "type": "string"}, "description": {"minLength": 1, "type": "string"}, "required": {"type": "boolean"}}, "required": ["criterion_id", "required", "description"], "type": "object"}, "minItems": 1, "type": "array"},
-    "review_dimension": {"enum": ["SUBJECT", "PEDAGOGY", "VISUAL"]},
+    "review_dimension": {"enum": ["SUBJECT", "PEDAGOGY", "ASSESSMENT", "VISUAL"]},
     "rubric_id": {"minLength": 1, "type": "string"},
     "schema_version": {"const": "1.0.0"}
   },

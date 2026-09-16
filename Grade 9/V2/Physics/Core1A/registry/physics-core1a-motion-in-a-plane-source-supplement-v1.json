@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "source_title": "Motion in a Plane",
+  "purpose": "Supplement the seed source inventory with formula-sheet and derivation relations that were not individually itemized in the first inventory pass.",
+  "equations": [
+    {
+      "id": "M2D-EQ-REL-POS",
+      "source_locator": "Formulae Sheet - Relative Motion",
+      "canonical_expression": "x_BA = x_B - x_A",
+      "learner_name": "Relative position along a straight line",
+      "core1a_home": "RELATIVE_MOTION_FOUNDATION",
+      "valid_when": "positions use one axis and one origin/sign convention",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-RIVER-ZERODRIFT-VY",
+      "source_locator": "Formulae Sheet - Shortest Path",
+      "canonical_expression": "v_across = sqrt(v_boat,water^2 - v_stream^2)",
+      "learner_name": "Across-river speed when drift is zero",
+      "core1a_home": "RIVER_ZERO_DRIFT",
+      "valid_when": "boat can cancel the stream component; v_boat,water >= v_stream",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-RIVER-ZERODRIFT-T",
+      "source_locator": "Formulae Sheet - Shortest Path",
+      "canonical_expression": "t = d / sqrt(v_boat,water^2 - v_stream^2)",
+      "learner_name": "Crossing time for zero drift",
+      "core1a_home": "RIVER_ZERO_DRIFT",
+      "valid_when": "ground motion is perpendicular to the banks and the stream component is exactly cancelled",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-RIVER-ZERODRIFT-ANGLE",
+      "source_locator": "Formulae Sheet - Shortest Path",
+      "canonical_expression": "sin(theta) = v_stream / v_boat,water",
+      "learner_name": "Upstream aiming condition for zero drift",
+      "core1a_home": "RIVER_ZERO_DRIFT",
+      "valid_when": "theta is measured using the source geometry and v_boat,water >= v_stream",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-RAIN-MAG-SPECIAL",
+      "source_locator": "Formulae Sheet - Rain Problems",
+      "canonical_expression": "v_rain,observer = sqrt(v_rain^2 + v_observer^2)",
+      "learner_name": "Apparent rain speed in the perpendicular special case",
+      "core1a_home": "RAIN_APPARENT_MOTION",
+      "valid_when": "ground-frame rain and observer velocities are perpendicular as in the formula-sheet special case",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-CIRC-ALPHA-THETA",
+      "source_locator": "Formulae Sheet - Circular Motion",
+      "canonical_expression": "alpha = omega d(omega)/d(theta)",
+      "learner_name": "Angular acceleration when time is removed",
+      "core1a_home": "CIRCULAR_ANGULAR_LINEAR",
+      "valid_when": "omega is treated as a differentiable function of theta",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-CIRC-X",
+      "source_locator": "§7.1 Uniform Circular Motion derivation",
+      "canonical_expression": "x = r cos(theta)",
+      "learner_name": "Horizontal coordinate on a circle",
+      "core1a_home": "CIRCULAR_UNIFORM",
+      "valid_when": "circle is centered at the origin and theta is measured from the +x direction",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-CIRC-Y",
+      "source_locator": "§7.1 Uniform Circular Motion derivation",
+      "canonical_expression": "y = r sin(theta)",
+      "learner_name": "Vertical coordinate on a circle",
+      "core1a_home": "CIRCULAR_UNIFORM",
+      "valid_when": "circle is centered at the origin and theta is measured from the +x direction",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-CIRC-VX",
+      "source_locator": "§7.1 Uniform Circular Motion derivation",
+      "canonical_expression": "v_x = -v sin(theta)",
+      "learner_name": "Horizontal component of tangent velocity",
+      "core1a_home": "CIRCULAR_UNIFORM",
+      "valid_when": "uniform circular motion uses v = r omega with the source angle convention",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-CIRC-VY",
+      "source_locator": "§7.1 Uniform Circular Motion derivation",
+      "canonical_expression": "v_y = v cos(theta)",
+      "learner_name": "Vertical component of tangent velocity",
+      "core1a_home": "CIRCULAR_UNIFORM",
+      "valid_when": "uniform circular motion uses v = r omega with the source angle convention",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-CIRC-AT-DVDT",
+      "source_locator": "§7.2 / Formulae Sheet",
+      "canonical_expression": "a_t = dv/dt",
+      "learner_name": "Tangential acceleration as change of speed",
+      "core1a_home": "CIRCULAR_NONUNIFORM",
+      "valid_when": "a_t is the tangential component of acceleration",
+      "must_be_taught": true
+    },
+    {
+      "id": "M2D-EQ-CIRC-AR-OMEGA",
+      "source_locator": "Formulae Sheet - Circular Motion",
+      "canonical_expression": "a_r = omega^2 r",
+      "learner_name": "Radial acceleration from angular speed",
+      "core1a_home": "CIRCULAR_UNIFORM",
+      "valid_when": "v = omega r and the instantaneous radius is r",
+      "must_be_taught": true
+    }
+  ]
+}

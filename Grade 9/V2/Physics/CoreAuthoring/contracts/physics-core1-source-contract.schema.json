@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1-source-contract.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","source_contract_id","capability_ref","problem_family_ref","treatment","canonical_authorities","model_conditions","allowed_relations","external_candidate_refs"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "source_contract_id":{"type":"string","pattern":"^CORE1-SRC-"},
+    "capability_ref":{"type":"string","minLength":1},
+    "problem_family_ref":{"type":"string","minLength":1},
+    "treatment":{"enum":["FULL_LEARNING","READY_VERIFY_ONLY","PROBE_FIRST"]},
+    "canonical_authorities":{"type":"array","minItems":1,"items":{"type":"string"},"uniqueItems":true},
+    "model_conditions":{"type":"array","minItems":1,"items":{"type":"string"}},
+    "allowed_relations":{"type":"array","minItems":1,"items":{"type":"string"},"uniqueItems":true},
+    "external_candidate_refs":{"type":"array","maxItems":0,"items":{"type":"string"}}
+  }
+}

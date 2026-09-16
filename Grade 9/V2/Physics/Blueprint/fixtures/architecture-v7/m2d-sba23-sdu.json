@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "sdu_id": "SDU-M2D-SBA23-PROCESS-GOLDEN",
+  "bucket_id": "M2D-SBA-23",
+  "capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+  "difficulty": {
+    "badge": "HARD",
+    "authority": "OWNER_PROVIDED",
+    "student_knowledge_pct_used": false,
+    "evidence_profile": {
+      "prerequisite_depth": "MEDIUM",
+      "element_interactivity": "HIGH",
+      "inferential_jump_severity": "HIGH",
+      "representation_translation": "HIGH",
+      "model_discrimination": "HIGH",
+      "sign_or_frame_sensitivity": "HIGH",
+      "multi_step_dependency": "HIGH",
+      "abstraction": "MEDIUM",
+      "misconception_density": "HIGH",
+      "synthesis": "MEDIUM"
+    }
+  },
+  "research_dossier": {
+    "research_level": "DEEP",
+    "semantic_sources": ["classical relative-motion / Galilean frame references"],
+    "misconception_evidence": ["changed trajectory can be confused with changed force", "unlabelled velocity may be treated as frame-free"],
+    "representation_evidence": ["frame-labelled vectors", "component mapping", "same-event two-frame comparison"],
+    "design_decisions": {
+      "selected_representations": ["frame-labelled velocity triangle", "component transformation", "two-frame trajectory comparison", "event timeline"],
+      "rejected_representations": ["generic A/B/C cards", "oversized unlabeled axes"],
+      "translation_risks": ["diagram-to-equation mapping", "source-relative vs ground-relative components"],
+      "visual_implications": ["every material vector must carry object/frame identity", "equation terms must bind to representation elements"]
+    }
+  },
+  "concept_decomposition": {
+    "subtopics": ["moving-source launch and relative velocity"],
+    "sub_subtopics": ["frame naming", "signed velocity", "2D vector addition", "release inheritance", "same event different observer", "convert then projectile"],
+    "learning_atoms": ["PHY-ML-FRAME-01", "PHY-ML-ADD-01", "PHY-ML-COMP-01", "PHY-ML-CLOCK-01", "PHY-ML-GRAV-01", "PHY-ML-LIMIT-01", "PHY-ML-SELECT-01"],
+    "inferential_jumps": ["velocity needs a frame", "release does not erase inherited velocity", "convert before projectile kinematics", "different path description does not imply new force"],
+    "problem_families": ["RELEASE_CONVERSION", "OBSERVER_COMPARISON", "CONVERT_THEN_CONTINUE"],
+    "misconceptions": ["always add speed magnitudes", "gravity cancels inherited horizontal motion", "new path means new force"],
+    "representations": ["velocity triangle", "component table", "two-frame trajectory", "release timeline"]
+  },
+  "core1a_realization": {
+    "soft_page_ceiling": 30,
+    "actual_length_independently_derived": true,
+    "closure_requirements": ["all major inferential jumps closed", "representations mapped to equations", "misconception contrasts explicit"],
+    "ttu_family": "CONCEPT_TTU",
+    "dominant_mode": "DECLARATIVE"
+  },
+  "core1b_realization": {
+    "soft_page_ceiling": 30,
+    "actual_length_independently_derived": true,
+    "closure_requirements": ["fragile jumps reconstructed", "multiple high-value transformation modes", "later retrieval included"],
+    "ttu_family": "CONCEPT_TTU",
+    "dominant_mode": "GENERATIVE"
+  }
+}

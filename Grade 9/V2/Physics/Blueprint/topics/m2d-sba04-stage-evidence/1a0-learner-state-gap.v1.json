@@ -1,0 +1,78 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A0-LEARNER-STATE-GAP-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A0_LEARNER_STATE_GAP",
+  "evidence_kind": "LEARNER_STATE_GAP",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "topics/m2d-sba04-design/intrinsic-design-state.v1.json",
+    "topics/m2d-sba04-design/learner-purpose-control-state.v1.json",
+    "Core1A/registry/build-manifests/M2D-SBA-04-v1.json"
+  ],
+  "artifact_refs": [
+    "SDU-M2D-SBA04-INTRINSIC-V1",
+    "CTRL-PHY-M2D-SBA04-PRIOR20-V1"
+  ],
+  "evidence_refs": [
+    "topics/m2d-sba04-design/intrinsic-design-state.v1.json#requirements",
+    "topics/m2d-sba04-design/learner-purpose-control-state.v1.json#capability_states"
+  ],
+  "proof": {
+    "intrinsic_design_state_ref": "SDU-M2D-SBA04-INTRINSIC-V1",
+    "control_state_ref": "CTRL-PHY-M2D-SBA04-PRIOR20-V1",
+    "publication_teaching_receipts_used_as_learner_evidence": false,
+    "capability_gap_rows": [
+      {
+        "capability_ref": "M2D-SBA-04A",
+        "intrinsic_requirement_ref": "REQ-M2D-SBA04-A-VECTOR-STATE",
+        "learner_state": "UNKNOWN",
+        "gap_assessment": "UNKNOWN_GAP",
+        "basis_refs": ["CTRL-PHY-M2D-SBA04-PRIOR20-V1#M2D-SBA-04A", "SDU-M2D-SBA04-INTRINSIC-V1#REQ-M2D-SBA04-A-VECTOR-STATE"]
+      },
+      {
+        "capability_ref": "M2D-SBA-04B",
+        "intrinsic_requirement_ref": "REQ-M2D-SBA04-B-APEX-COMPONENT-EVENT",
+        "learner_state": "UNKNOWN",
+        "gap_assessment": "UNKNOWN_GAP",
+        "basis_refs": ["CTRL-PHY-M2D-SBA04-PRIOR20-V1#M2D-SBA-04B", "SDU-M2D-SBA04-INTRINSIC-V1#REQ-M2D-SBA04-B-APEX-COMPONENT-EVENT"]
+      },
+      {
+        "capability_ref": "M2D-SBA-04C",
+        "intrinsic_requirement_ref": "REQ-M2D-SBA04-C-CURRENT-DIRECTION",
+        "learner_state": "UNKNOWN",
+        "gap_assessment": "UNKNOWN_GAP",
+        "basis_refs": ["CTRL-PHY-M2D-SBA04-PRIOR20-V1#M2D-SBA-04C", "SDU-M2D-SBA04-INTRINSIC-V1#REQ-M2D-SBA04-C-CURRENT-DIRECTION"]
+      },
+      {
+        "capability_ref": "M2D-SBA-04D",
+        "intrinsic_requirement_ref": "REQ-M2D-SBA04-D-SPEED-MAGNITUDE",
+        "learner_state": "UNKNOWN",
+        "gap_assessment": "UNKNOWN_GAP",
+        "basis_refs": ["CTRL-PHY-M2D-SBA04-PRIOR20-V1#M2D-SBA-04D", "SDU-M2D-SBA04-INTRINSIC-V1#REQ-M2D-SBA04-D-SPEED-MAGNITUDE"]
+      },
+      {
+        "capability_ref": "M2D-SBA-04E",
+        "intrinsic_requirement_ref": "REQ-M2D-SBA04-E-SAME-HEIGHT-SYMMETRY",
+        "learner_state": "UNKNOWN",
+        "gap_assessment": "UNKNOWN_GAP",
+        "basis_refs": ["CTRL-PHY-M2D-SBA04-PRIOR20-V1#M2D-SBA-04E", "SDU-M2D-SBA04-INTRINSIC-V1#REQ-M2D-SBA04-E-SAME-HEIGHT-SYMMETRY"]
+      },
+      {
+        "capability_ref": "M2D-SBA-04F",
+        "intrinsic_requirement_ref": "REQ-M2D-SBA04-F-PERPENDICULAR-CONSTRAINT",
+        "learner_state": "UNKNOWN",
+        "gap_assessment": "UNKNOWN_GAP",
+        "basis_refs": ["CTRL-PHY-M2D-SBA04-PRIOR20-V1#M2D-SBA-04F", "SDU-M2D-SBA04-INTRINSIC-V1#REQ-M2D-SBA04-F-PERPENDICULAR-CONSTRAINT"]
+      },
+      {
+        "capability_ref": "M2D-SBA-04G",
+        "intrinsic_requirement_ref": "REQ-M2D-SBA04-G-HEIGHT-SPEED",
+        "learner_state": "UNKNOWN",
+        "gap_assessment": "UNKNOWN_GAP",
+        "basis_refs": ["CTRL-PHY-M2D-SBA04-PRIOR20-V1#M2D-SBA-04G", "SDU-M2D-SBA04-INTRINSIC-V1#REQ-M2D-SBA04-G-HEIGHT-SPEED"]
+      }
+    ]
+  },
+  "unresolved_requirements": []
+}

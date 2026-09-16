@@ -1,0 +1,25 @@
+{
+  "$id":"physics-reference-comparison.schema.json",
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties":false,
+  "properties":{
+    "artifact_sha256_refs":{"items":{"pattern":"^[a-f0-9]{64}$","type":"string"},"minItems":2,"type":"array","uniqueItems":true},
+    "candidate_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "candidate_ref":{"minLength":1,"type":"string"},
+    "comparator_id":{"const":"FROZEN_PR156_MATURE_DESIGN_COMPARATOR"},
+    "comparison_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "comparison_id":{"minLength":1,"type":"string"},
+    "fixture_class":{"enum":["REAL","TEST_ONLY_SYNTHETIC"]},
+    "mode":{"enum":["REAL_RELEASE","TEST_ONLY"]},
+    "raw_reference_used_as_runtime_template":{"const":false},
+    "reference_access_phase":{"const":"FINAL_COMPARATIVE_VALIDATION"},
+    "reference_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "reference_ref":{"minLength":1,"type":"string"},
+    "release_evidence_eligible":{"type":"boolean"},
+    "schema_version":{"const":"1.0.0"},
+    "status":{"enum":["PASS","FAIL"]},
+    "subject":{"const":"PHYSICS"}
+  },
+  "required":["comparison_id","schema_version","subject","comparator_id","candidate_ref","candidate_digest","artifact_sha256_refs","mode","fixture_class","reference_access_phase","raw_reference_used_as_runtime_template","reference_ref","reference_digest","status","release_evidence_eligible","comparison_digest"],
+  "type":"object"
+}

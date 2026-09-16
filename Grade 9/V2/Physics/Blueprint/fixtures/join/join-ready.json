@@ -1,0 +1,43 @@
+{
+  "join_id": "J-PHY-M2D-GOLDEN-001",
+  "topic_id": "PHY-M2D",
+  "core1_packet_ref": "K-PHY-M2D-GOLDEN",
+  "core2_packet_ref": "D-PHY-M2D-GOLDEN",
+  "validation_session_refs": ["V-PHY-M2D-GOLDEN"],
+  "knowledge_claims": [
+    {"claim_ref": "K-PROJECTILE-COMPONENTS"},
+    {"claim_ref": "K-APEX-EVENT"}
+  ],
+  "demand_claims": [
+    {"claim_ref": "D-Q11-HORIZONTAL-EVENT"},
+    {"claim_ref": "D-Q17-WORK-BACKWARD"}
+  ],
+  "reconciliations": [
+    {
+      "demand_claim_ref": "D-Q11-HORIZONTAL-EVENT",
+      "knowledge_claim_refs": ["K-PROJECTILE-COMPONENTS", "K-APEX-EVENT"],
+      "status": "CONFIRMED",
+      "criticality": "REQUIRED",
+      "required_capability": "Recognize a horizontal-velocity event as vy = 0 and preserve vx.",
+      "assimilation_obligations": [
+        "Teach the velocity-component state before the event equation.",
+        "Contrast vy = 0 with acceleration = 0."
+      ],
+      "unresolved_issues": [],
+      "evidence_refs": ["GT-M2D-Q11", "V-PHY-M2D-GOLDEN"]
+    },
+    {
+      "demand_claim_ref": "D-Q17-WORK-BACKWARD",
+      "knowledge_claim_refs": ["K-APEX-EVENT"],
+      "status": "REFINED",
+      "criticality": "REQUIRED",
+      "required_capability": "Work backward from a later apex event on one global clock.",
+      "assimilation_obligations": [
+        "Teach the one-clock event model before inverse-time transfer.",
+        "Include a worked backward-inference example before independent transfer."
+      ],
+      "unresolved_issues": [],
+      "evidence_refs": ["GT-M2D-Q17", "V-PHY-M2D-GOLDEN"]
+    }
+  ]
+}

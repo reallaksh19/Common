@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """P-K — Physics cold-start runner.
 
-Drives the whole merged chain from repository artifacts alone:
+Drives the governed chain from repository artifacts alone:
 
-    P-A intake fixtures -> P-B review -> P-C scope authority -> P-D problem semantics
-    -> P-E learner evidence -> P-F study scope/model -> P-G Core1 -> P-H representations
+    P-A intake -> P-B review -> P-C scope -> P-C.5 Engineering Gate -> P-D semantics
+    -> P-E learner evidence -> P-F study synthesis -> P-G Core1 -> P-H representations
     -> P-I Core2 transfer -> P-J coverage closure -> two learner PDFs
 
-It runs twice over the *same* assessment, once with no AttemptSet and once with one,
-and proves that the assessment-derived scope and the Physics truth are identical in
-both. A fresh agent with no chat or issue history can execute this from
-``GENERATION_AUTHORITY_MANIFEST.json`` alone.
+P-C.5 is learner-independent. The runner derives P-C once, submits that exact scope
+through the global Engineering Gate, requires PROBLEM_SEMANTICS permission, and then
+passes the exact gated P-C bundle into P-D. No topic-name or model-memory inference is
+permitted at this boundary.
 """
 import argparse, copy, hashlib, json, sys
 from pathlib import Path
@@ -76,6 +76,12 @@ def fail(code, detail=""):
     raise ValueError(f"{code}: {detail}" if detail else code)
 
 
+def _plain_sha256(value):
+    if not isinstance(value, str) or not value.startswith("sha256:"):
+        fail("ENGINEERING_READINESS_DIGEST_INVALID", str(value))
+    return value.split(":", 1)[1]
+
+
 # ------------------------------------------------------------------ manifest
 
 
@@ -87,15 +93,22 @@ def verify_manifest(manifest):
     forbidden = set(manifest["runtime_input_contract"]["forbidden"])
     required_forbidden = {
         "ISSUE_HISTORY", "CHAT_HISTORY", "RAW_PR156", "MANUAL_SCOPE_AUTHORITY",
-        "PREFILTERED_ELIGIBLE_EXTERNAL_SET", "MANUAL_LEARNER_STUDY_MODEL",
-        "MANUAL_PROBLEM_FAMILY_MAP", "MANUAL_TEACHING_PRIMITIVE_SELECTION",
+        "MANUAL_ENGINEERING_READINESS", "PREFILTERED_ELIGIBLE_EXTERNAL_SET",
+        "MANUAL_LEARNER_STUDY_MODEL", "MANUAL_PROBLEM_FAMILY_MAP",
+        "MANUAL_TEACHING_PRIMITIVE_SELECTION",
     }
     if not required_forbidden <= forbidden:
         fail("COLD_START_REQUIRES_CHAT_OR_ISSUE_HISTORY", "forbidden boundary incomplete")
     derived = set(manifest["derived_not_runtime_inputs"])
-    if not {"PhysicsAssessmentScopeModel", "PhysicsLearnerStudyModel",
-            "PhysicsRepresentationBundle", "PhysicsCore2TransferPlan"} <= derived:
+    if not {"PhysicsAssessmentScopeModel", "PhysicsEngineeringReadiness",
+            "PhysicsLearnerStudyModel", "PhysicsRepresentationBundle",
+            "PhysicsCore2TransferPlan"} <= derived:
         fail("GENERATION_STARTS_AFTER_SCOPE_WAS_MANUALLY_DERIVED")
+    for engine_key in ("assessment_scope", "engineering_readiness", "problem_semantics"):
+        if engine_key not in manifest["engines"]:
+            fail("ENGINEERING_READINESS_ORCHESTRATION_MISSING", engine_key)
+    if "engineering_scope_bindings" not in manifest["authorities"]:
+        fail("ENGINEERING_READINESS_ORCHESTRATION_MISSING", "engineering_scope_bindings")
     if len(manifest["two_product_topology"]) != 2:
         fail("THIRD_PRODUCT_PDF_CREATED")
     core = next((p for p in manifest["two_product_topology"] if p["product_id"] == "CORE_STUDY_GUIDE"), None)
@@ -117,6 +130,7 @@ def resolve(manifest, key, repo_root=REPO):
 
 def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None):
     verify_manifest(manifest)
+    repo_root = Path(repo_root)
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     reads = []
@@ -126,11 +140,20 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         reads.append(rel)
         return load(path)
 
+    scope_engine = _module(
+        "phy_pc_runner", repo_root / manifest["engines"]["assessment_scope"])
+    engineering_engine = _module(
+        "phy_pc5_runner", repo_root / manifest["engines"]["engineering_readiness"])
     semantics_engine = _module(
-        "phy_pd_runner", Path(repo_root) / manifest["engines"]["problem_semantics"])
+        "phy_pd_runner", repo_root / manifest["engines"]["problem_semantics"])
     evidence_engine = _module(
-        "phy_pe_runner", Path(repo_root) / manifest["engines"]["learner_evidence"])
-    reads.extend([manifest["engines"]["problem_semantics"], manifest["engines"]["learner_evidence"]])
+        "phy_pe_runner", repo_root / manifest["engines"]["learner_evidence"])
+    reads.extend([
+        manifest["engines"]["assessment_scope"],
+        manifest["engines"]["engineering_readiness"],
+        manifest["engines"]["problem_semantics"],
+        manifest["engines"]["learner_evidence"],
+    ])
 
     questions = get("question_set")
     topic_scope = get("declared_topic_scope")
@@ -139,6 +162,7 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
     capabilities = get("canonical_capabilities")
     scope_authority = get("scope_authority")
     scope_bindings = get("scope_bindings")
+    engineering_scope_bindings = get("engineering_scope_bindings")
     role_registry = get("reasoning_role_registry")
     family_registry = get("problem_family_registry")
     verification_registry = get("verification_route_registry")
@@ -168,13 +192,34 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         evidence_ledger = get("learner_evidence_ledger")
         transfer_evidence = get("transfer_evidence_ledger")
 
-    # ---- P-D problem semantics (learner independent)
+    # ---- P-C exact assessment scope (learner independent)
+    scope_bundle = scope_engine.reconcile(
+        copy.deepcopy(questions), copy.deepcopy(topic_scope), copy.deepcopy(review_registry),
+        copy.deepcopy(review_policy), copy.deepcopy(capabilities), copy.deepcopy(scope_authority),
+        copy.deepcopy(scope_bindings),
+    )
+    scope_model, scope_coverage, scope_reconciliation, prerequisite_closure = scope_bundle
+
+    # ---- P-C.5 global Engineering Gate; consumption is strict
+    engineering_readiness = engineering_engine.compile_physics_engineering_readiness(
+        copy.deepcopy(scope_model), copy.deepcopy(scope_authority),
+        copy.deepcopy(engineering_scope_bindings),
+        scope_model_ref=f"DERIVED:P-C:{scope_model['scope_model_id']}",
+        binding_registry_ref=manifest["authorities"]["engineering_scope_bindings"],
+    )
+    engineering_engine.require_problem_semantics(engineering_readiness)
+    engineering_digest = _plain_sha256(engineering_readiness["readiness_digest"])
+
+    # ---- P-D consumes the exact P-C bundle that P-C.5 authorized
     semantics = semantics_engine.build_package(
         copy.deepcopy(questions), copy.deepcopy(topic_scope), copy.deepcopy(review_registry),
         copy.deepcopy(review_policy), copy.deepcopy(capabilities), copy.deepcopy(scope_authority),
         copy.deepcopy(scope_bindings), copy.deepcopy(role_registry), copy.deepcopy(family_registry),
         copy.deepcopy(verification_registry), copy.deepcopy(item_registry), copy.deepcopy(badge_policy),
+        precomputed_scope=copy.deepcopy(scope_bundle),
     )
+    if semantics["scope_model_ref"] != scope_model["scope_model_id"]:
+        fail("P_D_CONSUMED_DIFFERENT_SCOPE_AFTER_ENGINEERING_GATE")
 
     # ---- P-E learner evidence
     kwargs = {}
@@ -266,10 +311,15 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
             "question_set_digest": digest(questions),
             "declared_topic_scope_digest": digest(topic_scope),
             "scope_authority_digest": scope_authority["authority_digest"],
+            "engineering_binding_registry_digest": engineering_scope_bindings["registry_digest"],
             "attempt_set_digest": digest(attempts) if attempts is not None else None,
             "external_corpus_digest": transfer_corpus["corpus_digest"],
         },
         "assessment_truth": {
+            "assessment_scope_digest": scope_model["scope_model_digest"],
+            "engineering_readiness_digest": engineering_digest,
+            "engineering_consumer_status": engineering_readiness["consumer_status"],
+            "engineering_gate_requirement_state": engineering_readiness["technical_gate_requirement_state"],
             "problem_semantics_digest": semantics["package_digest"],
             "study_scope_ref": study_scope["study_scope_id"],
             "study_scope_digest": study_scope["study_scope_digest"],
@@ -285,6 +335,8 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
             "eligible_external_candidate_refs": list(core2["eligible_candidate_refs"]),
         },
         "stage_digests": {
+            "P_C_assessment_scope": scope_model["scope_model_digest"],
+            "P_C5_engineering_readiness": engineering_digest,
             "P_D_problem_semantics": semantics["package_digest"],
             "P_E_learner_snapshot": digest(snapshot),
             "P_F_study_scope": study_scope["study_scope_digest"],
@@ -304,29 +356,35 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
         },
         "authority_trace": [
             {"decision_class": "REQUIRED_SCOPE",
-             "authority_refs": [scope_authority["authority_id"], study_scope["study_scope_id"]],
-             "resolution": "Required capabilities were derived from the P-C scope authority and the "
-                           "question/capability bindings, not chosen by the agent."},
+             "authority_refs": [scope_authority["authority_id"], scope_model["scope_model_id"],
+                                study_scope["study_scope_id"]],
+             "resolution": "P-C derived the required capabilities from governed assessment bindings; "
+                           "learner evidence did not participate."},
+            {"decision_class": "ENGINEERING_READINESS",
+             "authority_refs": [engineering_readiness["readiness_id"],
+                                engineering_readiness["engineering_manifest"]["manifest_id"],
+                                engineering_readiness["readiness_envelope"]["policy_id"]],
+             "resolution": "The exact P-C scope was submitted through global Engineering Gate policy; "
+                           "P-D was invoked only after PROBLEM_SEMANTICS consumption was allowed."},
             {"decision_class": "TREATMENT",
              "authority_refs": [treatment_policy["policy_id"], study_model["study_model_id"]],
              "resolution": "Treatment per capability came from the P-F treatment policy applied to the "
                            "P-E learner snapshot."},
             {"decision_class": "TEACHING_PRIMITIVE_SELECTION",
              "authority_refs": [primitive_registry["registry_id"], page_intent_profile["profile_id"]],
-             "resolution": "Primitives were selected from the capability's own representation "
-                           "requirements through the page-intent profile."},
+             "resolution": "Primitives were selected from capability representation requirements through "
+                           "the page-intent profile."},
             {"decision_class": "EXTERNAL_ELIGIBILITY",
              "authority_refs": [transfer_classification["registry_id"]],
-             "resolution": "External eligibility was classified against the scope authority before any "
-                           "learner evidence was read."},
+             "resolution": "External eligibility was classified against scope authority before learner "
+                           "evidence was read."},
             {"decision_class": "COVERAGE_CLOSURE",
              "authority_refs": [evidence_policy["policy_id"], closure["closure_id"]],
-             "resolution": "Closure state was computed from the coverage matrices and the physical page "
-                           "map, not asserted."},
+             "resolution": "Closure state was computed from coverage matrices and the physical page map."},
             {"decision_class": "FINAL_PAGE_COMPOSITION",
              "authority_refs": [core1["plan_id"], bundle["bundle_id"], core2["plan_id"]],
-             "resolution": "Page composition followed the Core1 lesson order and the P-H page-intent "
-                           "phases; placement evidence was emitted while drawing."},
+             "resolution": "Page composition followed governed Core1 and representation plans; placement "
+                           "evidence was emitted while drawing."},
         ],
         "summary": {
             "capability_count": len(study_scope["capability_scope_records"]),
@@ -349,11 +407,22 @@ def run_cold_start(manifest, out_dir, with_attempts, repo_root=REPO, run_id=None
     report["report_digest"] = digest(report, "report_digest")
 
     artifacts = {
-        "problem_semantics": semantics, "learner_snapshot": snapshot,
-        "study_scope": study_scope, "study_model": study_model, "core1": core1,
-        "representation_bundle": bundle, "representation_page_map": rep_map,
-        "core2": core2, "coverage_closure": closure,
-        "core1_page_map": core1_map, "core2_page_map": core2_map,
+        "assessment_scope_model": scope_model,
+        "assessment_coverage": scope_coverage,
+        "scope_reconciliation": scope_reconciliation,
+        "prerequisite_closure": prerequisite_closure,
+        "engineering_readiness": engineering_readiness,
+        "problem_semantics": semantics,
+        "learner_snapshot": snapshot,
+        "study_scope": study_scope,
+        "study_model": study_model,
+        "core1": core1,
+        "representation_bundle": bundle,
+        "representation_page_map": rep_map,
+        "core2": core2,
+        "coverage_closure": closure,
+        "core1_page_map": core1_map,
+        "core2_page_map": core2_map,
     }
     for name, obj in artifacts.items():
         (out / f"{name}.json").write_text(
@@ -371,7 +440,17 @@ def compare_runs(no_attempt, with_attempts, comparison_id="PHY-P-K-COMPARISON-v1
         "declared_topic_scope_digest_identical":
             ia["declared_topic_scope_digest"] == ib["declared_topic_scope_digest"],
         "scope_authority_digest_identical": ia["scope_authority_digest"] == ib["scope_authority_digest"],
+        "engineering_binding_registry_digest_identical":
+            ia["engineering_binding_registry_digest"] == ib["engineering_binding_registry_digest"],
         "external_corpus_digest_identical": ia["external_corpus_digest"] == ib["external_corpus_digest"],
+        "assessment_scope_digest_identical":
+            a["assessment_scope_digest"] == b["assessment_scope_digest"],
+        "engineering_readiness_digest_identical":
+            a["engineering_readiness_digest"] == b["engineering_readiness_digest"],
+        "engineering_consumer_status_identical":
+            a["engineering_consumer_status"] == b["engineering_consumer_status"],
+        "engineering_gate_requirement_state_identical":
+            a["engineering_gate_requirement_state"] == b["engineering_gate_requirement_state"],
         "problem_semantics_identical": a["problem_semantics_digest"] == b["problem_semantics_digest"],
         "study_scope_digest_identical": a["study_scope_digest"] == b["study_scope_digest"],
         "required_capability_set_identical": a["required_capability_refs"] == b["required_capability_refs"],
@@ -427,7 +506,8 @@ def main():
         f"{no_attempt['summary']['core2_page_count']} transfer pages, "
         f"with-attempts {with_attempts['summary']['core1_lesson_count']} lessons / "
         f"{with_attempts['summary']['core2_page_count']} transfer pages, "
-        f"scope digest identical, two products each run)"
+        f"Engineering {no_attempt['assessment_truth']['engineering_consumer_status']} with exact P-C custody, "
+        f"two products each run)"
     )
 
 

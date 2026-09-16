@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-engineering-discovery-mapping-review.schema.json",
+  "title": "Physics Engineering Discovery Mapping Review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "review_id", "review_authority", "mapping_scope", "source_snapshot", "target_snapshot", "coverage", "decision"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "review_id": {"type": "string", "pattern": "^PR383-MAP-PHY-[A-Z0-9-]+-V[0-9]+$"},
+    "review_authority": {"const": "REPOSITORY_ENGINEERING_MAPPING_REVIEW"},
+    "mapping_scope": {"const": "TECHNICAL_DISCOVERY_RECONCILIATION_ONLY"},
+    "source_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_ref", "registry_git_blob_sha", "discovery_gate_id", "source_control_fields_ignored"],
+      "properties": {
+        "registry_ref": {"const": "provenance/pr383/physics-technical-engineering-gates.v1.json"},
+        "registry_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "discovery_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+        "source_control_fields_ignored": {"const": ["technical_readiness", "release_checklist"]}
+      }
+    },
+    "target_snapshot": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gate_id", "gate_ref", "gate_git_blob_sha"],
+        "properties": {
+          "gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+          "gate_ref": {"type": "string", "pattern": "^engineering-gates/.+\\.v3\\.json$"},
+          "gate_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        }
+      }
+    },
+    "coverage": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_pointer", "status", "target_refs", "review_note"],
+        "properties": {
+          "source_pointer": {"type": "string", "pattern": "^/(prerequisite_ids|technical_core|mandatory_equations|representations|model_conditions|reasoning_sequence|required_transformations|misconceptions|mandatory_verifications|problem_families|falsification_cases)/[0-9]+$"},
+          "status": {"enum": ["COVERED", "UNCOVERED"]},
+          "target_refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["gate_id", "target_pointer"],
+              "properties": {
+                "gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+                "target_pointer": {"type": "string", "pattern": "^/(prerequisites|required_invariants|concepts|relations|model_conditions|representations|reasoning_sequence|required_transformations|misconceptions|verifications|problem_families|falsification_cases)(/.*)?$"}
+              }
+            }
+          },
+          "review_note": {"type": "string", "minLength": 1}
+        },
+        "allOf": [
+          {"if": {"properties": {"status": {"const": "COVERED"}}}, "then": {"properties": {"target_refs": {"minItems": 1}}}},
+          {"if": {"properties": {"status": {"const": "UNCOVERED"}}}, "then": {"properties": {"target_refs": {"maxItems": 0}}}}
+        ]
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "uncovered_source_pointers", "readiness_authorized", "source_custody_promoted"],
+      "properties": {
+        "status": {"enum": ["APPROVED", "BLOCKED"]},
+        "uncovered_source_pointers": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "readiness_authorized": {"const": false},
+        "source_custody_promoted": {"const": false}
+      }
+    }
+  }
+}

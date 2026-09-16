@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-scoped-execution-envelope.schema.json",
+  "title": "Physics Scoped Execution Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","envelope_id","subject","grade","scope_kind","topic_id","scope_ref","requested_curriculum","required_gate_ids","topic_blueprint_ref","semantic_evidence_refs","curriculum_authority_refs","assessment_corpus_ref","assessment_coverage","repository_assertions"],
+  "properties": {
+    "schema_version": {"const":"1.0.0"}, "envelope_id":{"type":"string","pattern":"^SCOPE-PHY-[A-Z0-9-]+$"}, "subject":{"const":"PHYSICS"}, "grade":{"type":"integer","minimum":1,"maximum":13},
+    "scope_kind":{"enum":["TOPIC","SUBTOPIC","BUCKET","CASE"]}, "topic_id":{"type":"string","pattern":"^PHY-[A-Z0-9-]+$"}, "scope_ref":{"type":"string","minLength":1}, "requested_curriculum":{"type":"string","minLength":1},
+    "required_gate_ids":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+    "topic_blueprint_ref":{"type":"string","minLength":1}, "semantic_evidence_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}, "curriculum_authority_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}, "assessment_corpus_ref":{"type":"string","minLength":1},
+    "assessment_coverage":{"type":"object","additionalProperties":false,"required":["state","matched_target_item_count","evidence_refs"],"properties":{"state":{"enum":["DEMANDS_PRESENT","VERIFIED_NO_TARGET_DEMAND","COVERAGE_UNKNOWN"]},"matched_target_item_count":{"type":"integer","minimum":0},"evidence_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},"unresolved_issues":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}}},
+    "repository_assertions":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["path","contains_all"],"properties":{"path":{"type":"string","minLength":1},"contains_all":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}}}}}, "notes":{"type":"string"}
+  }
+}

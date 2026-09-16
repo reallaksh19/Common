@@ -1,0 +1,6 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"physics-core2b-retrieval-state.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","retrieval_count","success_streak","next_due_bucket","hint_dependence","representation_success","last_event_ref","last_event_sequence","previous_state_digest","state_digest"],
+  "properties":{"schema_version":{"const":"1.0.0"},"retrieval_count":{"type":"integer","minimum":0},"success_streak":{"type":"integer","minimum":0},"next_due_bucket":{"enum":["NOW","SHORT","MEDIUM","LONG"]},"hint_dependence":{"enum":["NONE","LOW","MEDIUM","HIGH"]},"representation_success":{"type":"array","uniqueItems":true,"items":{"type":"string"}},"last_event_ref":{"type":["string","null"]},"last_event_sequence":{"type":"integer","minimum":0},"previous_state_digest":{"type":["string","null"]},"state_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}
+}

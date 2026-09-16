@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "audit_id": "M2D-SBA04-UNRESOLVED-JUMP-AUDIT-V1",
+  "bucket_id": "M2D-SBA-04",
+  "authority_class": "CORE1A_MIGRATION_CLOSURE_AUDIT",
+  "required_jump_source": "LIVE_ENGINEERING_DIRECT_GATES:reasoning_sequence[inferential_jump=HIGH_FRAGILITY]",
+  "primary_closure_receipt_ref": "topics/m2d-sba04-stage-evidence/1a2-inferential-jump-closure.v1.json",
+  "supporting_receipt_refs": [
+    "topics/m2d-sba04-stage-evidence/1a3-cognitive-transformation.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a7-pwse-bridge.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a9-worked-faded-independent.v1.json"
+  ],
+  "required_jump_refs": [
+    "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+    "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+    "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+    "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+  ],
+  "closed_jump_refs": [
+    "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+    "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+    "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+    "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+  ],
+  "unresolved_jump_refs": [],
+  "unresolved_required_jump_count": 0,
+  "audit_rule": "required_jump_refs must equal the compiler-derived live HIGH_FRAGILITY set; closed_jump_refs must equal the jump_refs in the governed 1A2 closure receipt; unresolved is required minus closed."
+}

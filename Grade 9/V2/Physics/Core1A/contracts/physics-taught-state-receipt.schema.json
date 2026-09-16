@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-taught-state-receipt.schema.json",
+  "title": "Physics Core1A Taught-State Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_id",
+    "schema_version",
+    "subject",
+    "capability_id",
+    "bucket_id",
+    "learner_profile_ref",
+    "purpose_ref",
+    "teaching_evidence",
+    "publication_state",
+    "learner_evidence_state"
+  ],
+  "properties": {
+    "receipt_id": {"type": "string", "pattern": "^T-PHY-"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "PHYSICS"},
+    "capability_id": {"type": "string", "minLength": 3},
+    "bucket_id": {"type": "string", "minLength": 3},
+    "learner_profile_ref": {"type": "string", "minLength": 1},
+    "purpose_ref": {
+      "enum": ["FIRST_STUDY", "PRACTICE", "REVISION", "COMPETITIVE_EXAM"]
+    },
+    "teaching_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "introduced_at",
+        "represented_at",
+        "worked_at",
+        "independent_task_at",
+        "readiness_probe_at"
+      ],
+      "properties": {
+        "introduced_at": {"type": "string", "minLength": 1},
+        "represented_at": {"type": "string", "minLength": 1},
+        "worked_at": {"type": "string", "minLength": 1},
+        "guided_at": {"type": ["string", "null"]},
+        "independent_task_at": {"type": "string", "minLength": 1},
+        "readiness_probe_at": {"type": "string", "minLength": 1}
+      }
+    },
+    "publication_state": {"const": "TEACHING_COMPLETE"},
+    "learner_evidence_state": {
+      "enum": ["UNKNOWN", "PARTIAL", "FRAGILE", "SECURE"]
+    }
+  }
+}

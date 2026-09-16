@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-m2d-manuscript-release-binding.schema.json",
+  "title": "Physics Motion in a Plane Manuscript Release Binding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version","binding_id","topic_id","provenance_class",
+    "stage_run_ref","stage_run_digest","chapter_plan_digest",
+    "repository_artifact_refs","repository_evidence_refs","binding_digest"
+  ],
+  "properties": {
+    "schema_version": {"const":"1.0.0"},
+    "binding_id": {"type":"string","pattern":"^M2D-MANUSCRIPT-RELEASE-"},
+    "topic_id": {"const":"PHY-M2D"},
+    "provenance_class": {"const":"REPOSITORY_PRODUCTION"},
+    "stage_run_ref": {"type":"string","pattern":"^C1A-RUN-PHY-"},
+    "stage_run_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "chapter_plan_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "repository_artifact_refs": {
+      "type":"array","minItems":1,"uniqueItems":true,
+      "items":{"type":"string","pattern":"^repo:.+"}
+    },
+    "repository_evidence_refs": {
+      "type":"array","minItems":1,"uniqueItems":true,
+      "items":{"type":"string","pattern":"^repo:.+"}
+    },
+    "binding_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version":"1.0.0",
+  "chapter_id":"PHY-M2D-SBA23-TRANSFER-v1",
+  "purpose":"Author-created moving-launcher assimilation routine for M2D-SBA-23. This is not the exact Q15 H1/H2/H3 ladder and cannot release Q15 while source audit is blocked.",
+  "bucket_id":"M2D-SBA-23",
+  "prior_knowledge_pct":20,
+  "transfer_routines":[{
+    "routine_id":"M2D-SBA-23-R1",
+    "title":"Convert the launch into the ground frame, then use projectile motion",
+    "core2_questions":["Q15"],
+    "release_prerequisite_buckets":["M2D-SBA-03","M2D-SBA-09"],
+    "recognition_signals":["the launch source or platform is moving relative to the ground","the launch velocity is stated relative to the moving source","the requested motion is described in a different frame"],
+    "method_steps":[
+      {"step":1,"title":"Name the frame","learner_move":"Label every given velocity by object and reference frame."},
+      {"step":2,"title":"Convert the launch velocity","learner_move":"Use vector addition to obtain the object's launch velocity in the requested inertial frame."},
+      {"step":3,"title":"Resolve the converted launch vector","learner_move":"Find the horizontal and vertical components in that same frame."},
+      {"step":4,"title":"Run the projectile clock","learner_move":"Use the converted components with one elapsed time and gravity, keeping all quantities in one frame."}
+    ],
+    "independent_practice":{"prompt":"A trolley moves east at 6 m/s. A ball is projected at 10 m/s relative to the trolley, 37 degrees above east. Using sin 37 degrees = 0.6 and cos 37 degrees = 0.8, find the initial ground-frame velocity components.","answer_check":"Relative components are (8,6) m/s; adding trolley velocity (6,0) m/s gives ground-frame components (14,6) m/s."},
+    "hint_ladder":[
+      {"rung":"H1","label":"Practice clue","prompt":"First decide which velocities are relative to the trolley and which are relative to the ground."},
+      {"rung":"H2","label":"Practice representation","prompt":"Draw v_ball,ground = v_ball,trolley + v_trolley,ground before resolving the final vector."},
+      {"rung":"H3","label":"Practice first move","prompt":"Resolve the 10 m/s relative launch into (8,6) m/s, then add the trolley's horizontal velocity."}
+    ],
+    "readiness_checks":["identify object and reference frame for every velocity","perform vector frame conversion before projectile kinematics","obtain ground-frame u_x and u_y without H2/H3","check the zero-platform-speed limit and keep one frame throughout"],
+    "release_rule":"This routine may establish generated-practice readiness only. Hold Q15 until the exact repository-backed Q15 prompt, solution and source H1/H2/H3 ladder are audited and pre-taught."
+  }]
+}

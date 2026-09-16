@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-M2D-SBA07-TRANSFER-v1",
+  "purpose": "Problem-family assimilation routines for M2D-SBA-07 after concept teaching and before Revised Core (2) transfer.",
+  "bucket_id": "M2D-SBA-07",
+  "prior_knowledge_pct": 20,
+  "transfer_routines": [
+    {
+      "routine_id": "M2D-SBA-07-R1",
+      "title": "Horizontal-launch clock and impact state",
+      "core2_questions": ["Q03", "Q29", "Q42"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": ["horizontal launch from a known height", "fall time/range/impact state is asked", "a ratio between vertical and horizontal velocity components may be given"],
+      "method_steps": [
+        {"step": 1, "title": "Lock the launch model", "learner_move": "Use u_y=0, v_x=u_x and a_y=-g."},
+        {"step": 2, "title": "Let vertical motion set the event time", "learner_move": "Use h=1/2 gt^2 or the signed vertical equation."},
+        {"step": 3, "title": "Use the same time in x and velocity equations", "learner_move": "Use x=u_x t and |v_y|=gt."},
+        {"step": 4, "title": "Finish the requested state", "learner_move": "Use Pythagoras, direction geometry or the given component ratio."}
+      ],
+      "independent_practice": {"prompt": "A ball is launched horizontally at 12 m/s from a height of 20 m. Take g=10 m/s^2. Find fall time, horizontal distance and impact speed.", "answer_check": "t=2 s; x=24 m; |v_y|=20 m/s; impact speed=4sqrt(34) m/s."},
+      "hint_ladder": [
+        {"rung": "H1", "label": "Key physics", "prompt": "For a horizontal launch, vertical launch velocity is zero and the drop determines the time."},
+        {"rung": "H2", "label": "Representation", "prompt": "Use 20=1/2(10)t^2, then x=12t and |v_y|=10t."},
+        {"rung": "H3", "label": "First move", "prompt": "Start with t=2 s."}
+      ],
+      "readiness_checks": ["recognise a horizontal-launch clock/impact question", "write u_y=0, v_x=u_x and the vertical event equation", "find t from vertical motion without H2/H3", "finish x and impact velocity for a fresh problem"],
+      "release_rule": "Release Q03, Q29 and Q42 after 4/4 readiness without H2/H3."
+    },
+    {
+      "routine_id": "M2D-SBA-07-R2",
+      "title": "Target, geometry and displacement",
+      "core2_questions": ["Q04", "Q08", "Q36"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": ["target coordinate or point is given", "45-degree or other displacement geometry appears", "displacement magnitude/direction is asked"],
+      "method_steps": [
+        {"step": 1, "title": "Draw the displacement triangle", "learner_move": "Mark Delta x and signed Delta y from launch to target."},
+        {"step": 2, "title": "Use geometry before dynamics when possible", "learner_move": "Use 45-degree or target-coordinate relations immediately."},
+        {"step": 3, "title": "Find the event time vertically", "learner_move": "Use the vertical drop or signed y-equation."},
+        {"step": 4, "title": "Finish with x=u_x t and vector geometry", "learner_move": "Keep displacement distinct from path length."}
+      ],
+      "independent_practice": {"prompt": "A target is 20 m below and 30 m horizontally from a launch point. A ball is projected horizontally and hits it. Take g=10 m/s^2. Find required horizontal speed and displacement magnitude.", "answer_check": "t=2 s; u_x=15 m/s; displacement=10sqrt(13) m."},
+      "hint_ladder": [
+        {"rung": "H1", "label": "Key physics", "prompt": "The target fixes both horizontal and vertical displacement; the vertical drop sets the available time."},
+        {"rung": "H2", "label": "Representation", "prompt": "Use 20=1/2(10)t^2 and 30=u_x t; displacement is sqrt(30^2+20^2)."},
+        {"rung": "H3", "label": "First move", "prompt": "Start with t=2 s."}
+      ],
+      "readiness_checks": ["recognise target/displacement geometry", "draw Delta x and Delta y before calculating", "use vertical drop to set time without H2/H3", "finish launch speed or displacement while distinguishing path length"],
+      "release_rule": "Release Q04, Q08 and Q36 after 4/4 readiness."
+    },
+    {
+      "routine_id": "M2D-SBA-07-R3",
+      "title": "Unequal-height signed vertical motion",
+      "core2_questions": ["Q09", "Q30"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": ["tower/cliff/raised platform", "launch and landing heights differ", "upward or downward initial vertical component is present"],
+      "method_steps": [
+        {"step": 1, "title": "Choose the vertical coordinate convention", "learner_move": "Write +y and landing displacement explicitly."},
+        {"step": 2, "title": "Assign signed vertical quantities", "learner_move": "Give u_y, a_y and Delta y signs from the chosen axis."},
+        {"step": 3, "title": "Solve the actual landing equation", "learner_move": "Use Delta y=u_y t-1/2 gt^2 or y=y0+u_y t-1/2 gt^2."},
+        {"step": 4, "title": "Take the physical root then use horizontal motion", "learner_move": "Reject negative elapsed time and use the same positive t horizontally."}
+      ],
+      "independent_practice": {"prompt": "A projectile leaves a platform with u_x=8 m/s and u_y=+5 m/s. Ground is 10 m below launch. Take g=10 m/s^2. Find landing time and horizontal distance.", "answer_check": "-10=5t-5t^2 gives t=2 s; x=16 m."},
+      "hint_ladder": [
+        {"rung": "H1", "label": "Key physics", "prompt": "Same-height flight-time shortcuts do not apply; use the actual signed landing equation."},
+        {"rung": "H2", "label": "Representation", "prompt": "With +y upward, write -10=5t-5t^2."},
+        {"rung": "H3", "label": "First move", "prompt": "Rearrange to t^2-t-2=0."}
+      ],
+      "readiness_checks": ["recognise unequal-height landing", "assign signed vertical quantities consistently", "write the actual landing equation without a same-height shortcut", "take the physical root and finish x-motion"],
+      "release_rule": "Release Q09 and Q30 after 4/4 readiness."
+    },
+    {
+      "routine_id": "M2D-SBA-07-R4",
+      "title": "Opposite horizontal launches and separation",
+      "core2_questions": ["Q34"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": ["two horizontal launches start from the same height", "motions are in opposite horizontal directions", "separation before landing is asked"],
+      "method_steps": [
+        {"step": 1, "title": "Use the shared vertical drop", "learner_move": "Recognise identical vertical motion and one common fall time."},
+        {"step": 2, "title": "Find the fall time once", "learner_move": "Use t=sqrt(2h/g)."},
+        {"step": 3, "title": "Build separation speed", "learner_move": "Opposite directions give |u1|+|u2|."},
+        {"step": 4, "title": "Multiply by the common time", "learner_move": "separation=(|u1|+|u2|)t."}
+      ],
+      "independent_practice": {"prompt": "Two balls are launched horizontally in opposite directions from a point 45 m above ground with speeds 6 m/s and 10 m/s. Take g=10 m/s^2. Find their separation just before landing.", "answer_check": "t=3 s; separation=(6+10)3=48 m."},
+      "hint_ladder": [
+        {"rung": "H1", "label": "Key physics", "prompt": "Both objects have the same vertical motion and therefore the same fall time."},
+        {"rung": "H2", "label": "Representation", "prompt": "Use 45=1/2(10)t^2, then separation speed=6+10."},
+        {"rung": "H3", "label": "First move", "prompt": "Start with t=3 s."}
+      ],
+      "readiness_checks": ["recognise one shared vertical clock", "draw both horizontal directions and common drop", "find the common fall time first", "use relative separation speed correctly"],
+      "release_rule": "Release Q34 after 4/4 readiness."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-M2D-SBA06-TRANSFER-v1",
+  "purpose": "Problem-family assimilation routines for M2D-SBA-06 after concept teaching and before Revised Core (2) transfer.",
+  "bucket_id": "M2D-SBA-06",
+  "prior_knowledge_pct": 20,
+  "transfer_routines": [
+    {
+      "routine_id": "M2D-SBA-06-R1",
+      "title": "Projectile coordinate at a wall",
+      "core2_questions": ["Q38"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": [
+        "a wall, screen, pole or known horizontal coordinate is given",
+        "height, clearance or projectile coordinate at that x-position is asked",
+        "the wall coordinate is not itself a time"
+      ],
+      "method_steps": [
+        {"step": 1, "title": "Draw the event", "learner_move": "Mark the wall at a fixed horizontal position and keep it distinct from time."},
+        {"step": 2, "title": "Find or read the components", "learner_move": "Resolve the launch or read u_x and u_y directly if already supplied."},
+        {"step": 3, "title": "Choose a route", "learner_move": "Either find the shared time from x=u_x t and use y(t), or substitute the wall x-coordinate directly into y(x)."},
+        {"step": 4, "title": "Check the result", "learner_move": "Require a positive event time and a height below the corresponding no-gravity straight-line rise."}
+      ],
+      "independent_practice": {
+        "prompt": "A projectile is launched with u_x=15 m/s and u_y=20 m/s. Take g=10 m/s^2. A wall is 12 m away horizontally. Find the projectile height when it reaches the wall.",
+        "answer_check": "t=0.8 s; y=12.8 m."
+      },
+      "hint_ladder": [
+        {"rung": "H1", "label": "Key physics", "prompt": "The wall gives a horizontal position event, not a time."},
+        {"rung": "H2", "label": "Representation", "prompt": "Use x=u_x t to connect the wall coordinate to the shared clock, then use the vertical equation at that same t."},
+        {"rung": "H3", "label": "First move", "prompt": "Start with t=12/15=0.8 s."}
+      ],
+      "readiness_checks": [
+        "recognise a wall as x=constant rather than time",
+        "represent the event with the component model",
+        "choose t=x/u_x or direct y(x) without H2/H3",
+        "finish and physically check a fresh wall-coordinate problem"
+      ],
+      "release_rule": "Release Q38 after 4/4 readiness without H2/H3."
+    },
+    {
+      "routine_id": "M2D-SBA-06-R2",
+      "title": "Trajectory from vector notation",
+      "core2_questions": ["Q47"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": [
+        "initial velocity is written using i-hat and j-hat",
+        "the trajectory equation or y as a function of x is requested",
+        "finding a launch angle is unnecessary"
+      ],
+      "method_steps": [
+        {"step": 1, "title": "Read components directly", "learner_move": "From u=a i-hat+b j-hat, take u_x=a and u_y=b."},
+        {"step": 2, "title": "Use the component-form trajectory", "learner_move": "Write y=(u_y/u_x)x-gx^2/(2u_x^2)."},
+        {"step": 3, "title": "Substitute before simplifying", "learner_move": "Keep the component ratio and the squared horizontal denominator visible until values are inserted."},
+        {"step": 4, "title": "Audit the result", "learner_move": "Check y(0)=0, a negative x^2 coefficient and consistent dimensions."}
+      ],
+      "independent_practice": {
+        "prompt": "The initial velocity is u=8 i-hat+6 j-hat m/s. Take g=10 m/s^2. Derive the trajectory equation y(x).",
+        "answer_check": "y=(3/4)x-(5/64)x^2."
+      },
+      "hint_ladder": [
+        {"rung": "H1", "label": "Key physics", "prompt": "The coefficients of i-hat and j-hat are already the initial horizontal and vertical components."},
+        {"rung": "H2", "label": "Representation", "prompt": "Use the component-form trajectory y=(u_y/u_x)x-gx^2/(2u_x^2)."},
+        {"rung": "H3", "label": "First move", "prompt": "Substitute u_x=8 m/s and u_y=6 m/s before simplifying."}
+      ],
+      "readiness_checks": [
+        "recognise vector coefficients as velocity components",
+        "write the component-form trajectory without first finding theta",
+        "substitute u_x and u_y correctly including u_x^2",
+        "simplify and audit a fresh trajectory equation"
+      ],
+      "release_rule": "Release Q47 after 4/4 readiness without H2/H3."
+    }
+  ]
+}

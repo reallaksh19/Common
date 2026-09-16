@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "core1a-real-bucket-migration-spec.schema.json",
+  "title": "Core1A Real Bucket Migration Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "audit_id",
+    "bucket_id",
+    "build_manifest_ref",
+    "legacy_claim_ref",
+    "engineering_request_ref",
+    "engineering_manifest_ref",
+    "stage_evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "audit_id": {"type": "string", "minLength": 1},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "build_manifest_ref": {"type": "string", "minLength": 1},
+    "legacy_claim_ref": {"type": "string", "pattern": "^[^#]+#[A-Za-z0-9_.-]+$"},
+    "engineering_request_ref": {"type": "string", "minLength": 1},
+    "engineering_manifest_ref": {"type": "string", "minLength": 1},
+    "stage_evidence_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

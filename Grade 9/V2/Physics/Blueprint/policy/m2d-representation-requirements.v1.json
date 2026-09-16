@@ -1,0 +1,93 @@
+{
+  "policy_id": "PHY-BP-M2D-REPRESENTATION-REQUIREMENTS-v1",
+  "schema_version": "1.0.0",
+  "topic_id": "PHY-M2D",
+  "rules": {
+    "exact_concept_coverage_required": true,
+    "name_similarity_authorization_forbidden": true,
+    "schematic_fallback_does_not_satisfy_missing_cognitive_job": true,
+    "ready_requires_at_least_one_authorized_existing_primitive": true
+  },
+  "requirements": [
+    {
+      "concept_id": "M2D_FOUNDATION",
+      "illustration_archetype": "COMPARE_THEN_BUILD",
+      "required_cognitive_jobs": ["ONE_DIMENSION_TO_TWO_DIMENSIONS","BUILD_2D_COORDINATE_FRAME"],
+      "authorized_existing_primitive_refs": ["CARTESIAN_FRAME_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "CARTESIAN_FRAME_2D now provides one origin and two perpendicular positive axes without inventing quantities."
+    },
+    {
+      "concept_id": "PROJECTILE_FOUNDATION",
+      "illustration_archetype": "MOTION_UNFOLDS",
+      "required_cognitive_jobs": ["LAUNCH_TO_FREE_FLIGHT","DOWNWARD_GRAVITY_WITH_CURVED_PATH"],
+      "authorized_existing_primitive_refs": ["STATE_SEQUENCE_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "STATE_SEQUENCE_2D shows one body's ordered 2D states on one shared clock and can keep a constant downward field visible."
+    },
+    {
+      "concept_id": "PROJECTILE_ANATOMY",
+      "illustration_archetype": "ANATOMY",
+      "required_cognitive_jobs": ["LABEL_PROJECTILE_FLIGHT_EVENTS","DECOMPOSE_LAUNCH_VECTOR_INTO_PERPENDICULAR_COMPONENTS"],
+      "authorized_existing_primitive_refs": ["PATH_ANATOMY_2D","VECTOR_COMPONENTS_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "Path anatomy and vector components are separate generic jobs and together preserve one path plus one resolved vector."
+    },
+    {
+      "concept_id": "PROJECTILE_COMPONENT_CLOCK",
+      "illustration_archetype": "STAGED_SEQUENCE",
+      "required_cognitive_jobs": ["DECOMPOSE_LAUNCH_VECTOR_INTO_PERPENDICULAR_COMPONENTS","TRACK_2D_PROJECTILE_STATES_ON_ONE_SHARED_CLOCK"],
+      "authorized_existing_primitive_refs": ["VECTOR_COMPONENTS_2D","STATE_SEQUENCE_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "VECTOR_COMPONENTS_2D resolves the state and STATE_SEQUENCE_2D preserves the same clock across later states."
+    },
+    {
+      "concept_id": "PROJECTILE_APEX",
+      "illustration_archetype": "EVENT_TIMELINE",
+      "required_cognitive_jobs": ["COMPARE_RISING_APEX_FALLING_VECTOR_STATES","DISTINGUISH_VY_ZERO_FROM_V_ZERO_AND_A_ZERO"],
+      "authorized_existing_primitive_refs": ["STATE_SEQUENCE_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "STATE_SEQUENCE_2D can suppress only the middle vertical component while retaining horizontal state and the constant field arrow."
+    },
+    {
+      "concept_id": "PROJECTILE_SAME_HEIGHT",
+      "illustration_archetype": "COMPARE_AND_DERIVE",
+      "required_cognitive_jobs": ["MARK_SAME_HEIGHT_LANDING_EVENT","COMPARE_COMPLEMENTARY_ANGLE_PATHS_AT_EQUAL_RANGE"],
+      "authorized_existing_primitive_refs": ["EVENT_COMPARE_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "EVENT_COMPARE_2D fixes a common start/end boundary event while comparing two path shapes without adding numerical parameters."
+    },
+    {
+      "concept_id": "PROJECTILE_TRAJECTORY",
+      "illustration_archetype": "DERIVATION_BRIDGE",
+      "required_cognitive_jobs": ["LINK_XT_AND_YT_TO_ONE_SHARED_TIME","ELIMINATE_TIME_TO_FORM_Y_OF_X","READ_PARABOLIC_PATH_FROM_RESULT"],
+      "authorized_existing_primitive_refs": ["PARAMETRIC_ELIMINATION_BRIDGE_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "PARAMETRIC_ELIMINATION_BRIDGE_2D makes the shared parameter and transformation stages explicit before showing the direct path relation."
+    },
+    {
+      "concept_id": "PROJECTILE_HORIZONTAL_LAUNCH",
+      "illustration_archetype": "MOTION_UNFOLDS",
+      "required_cognitive_jobs": ["SHOW_ZERO_INITIAL_VERTICAL_COMPONENT","TRACK_FALL_TIME_AND_HORIZONTAL_MOTION_ON_ONE_CLOCK","REBUILD_IMPACT_VELOCITY_FROM_COMPONENTS"],
+      "authorized_existing_primitive_refs": ["STATE_SEQUENCE_2D","VECTOR_COMPONENTS_2D"],
+      "missing_primitive_capabilities": [],
+      "rationale": "The generic state sequence handles shared-clock evolution; vector components handle the final reconstructed state."
+    },
+    {
+      "concept_id": "PROJECTILE_OUTFIELDER",
+      "illustration_archetype": "SCENE_PLUS_GRAPH",
+      "required_cognitive_jobs": ["SHOW_OBSERVER_LINE_OF_SIGHT_GEOMETRY","COMPARE_ANGLE_TIME_GRAPH_OPTIONS"],
+      "authorized_existing_primitive_refs": ["OBSERVER_LINE_OF_SIGHT_2D","OPTION_GRAPH_SET_VIEW"],
+      "missing_primitive_capabilities": [],
+      "rationale": "The new observer primitive supplies the sight-line geometry while the existing option-graph primitive keeps the graph discrimination governed."
+    },
+    {
+      "concept_id": "RELATIVE_MOTION_FOUNDATION",
+      "illustration_archetype": "VECTOR_BUILD",
+      "required_cognitive_jobs": ["CHOOSE_OBSERVER_FRAME","SUBTRACT_FRAME_BODY_VECTOR","READ_RELATIVE_QUANTITY"],
+      "authorized_existing_primitive_refs": ["RELATIVE_FRAME_VIEW"],
+      "missing_primitive_capabilities": [],
+      "rationale": "RELATIVE_FRAME_VIEW explicitly marks the frame body and the relative quantity and matches the chapter's observer-frame cognitive job."
+    }
+  ]
+}

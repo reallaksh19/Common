@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "control_state_id": "CTRL-PHY-M2D-SBA04-PRIOR20-V1",
+  "topic_id": "M2D-SBA-04",
+  "learner_prior_pct": 20,
+  "purpose": "FIRST_STUDY",
+  "capability_states": [
+    {"capability_ref": "M2D-SBA-04A", "state": "UNKNOWN", "basis": "PRIOR_HEURISTIC", "evidence_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile"]},
+    {"capability_ref": "M2D-SBA-04B", "state": "UNKNOWN", "basis": "PRIOR_HEURISTIC", "evidence_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile"]},
+    {"capability_ref": "M2D-SBA-04C", "state": "UNKNOWN", "basis": "PRIOR_HEURISTIC", "evidence_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile"]},
+    {"capability_ref": "M2D-SBA-04D", "state": "UNKNOWN", "basis": "PRIOR_HEURISTIC", "evidence_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile"]},
+    {"capability_ref": "M2D-SBA-04E", "state": "UNKNOWN", "basis": "PRIOR_HEURISTIC", "evidence_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile"]},
+    {"capability_ref": "M2D-SBA-04F", "state": "UNKNOWN", "basis": "PRIOR_HEURISTIC", "evidence_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile"]},
+    {"capability_ref": "M2D-SBA-04G", "state": "UNKNOWN", "basis": "PRIOR_HEURISTIC", "evidence_refs": ["Core1A/registry/build-manifests/M2D-SBA-04-v1.json#learner_profile"]}
+  ],
+  "purpose_contract": {
+    "contract_id": "PURPOSE-M2D-SBA04-FIRST-STUDY-V1",
+    "priorities": ["INFERENTIAL_CLOSURE", "REPRESENTATION_TRANSLATION", "PROBLEM_FAMILY_RECOGNITION"],
+    "support_bias": "FOUNDATION_HIGH_SUPPORT while capability states remain UNKNOWN; do not infer mastery from the 20-percent prior heuristic.",
+    "transfer_focus": "Prepare governed SBA04 transfer families while preserving explicit downstream holds and prerequisites.",
+    "purpose_cannot_bypass_required_prerequisites": true
+  },
+  "publication_teaching_receipts_used_as_learner_evidence": false,
+  "control_digest": "9346fc27b48d13610527fcd540576dbfa69c29df458a0f8887c62df78b151554"
+}
