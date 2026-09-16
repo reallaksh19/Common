@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 
 HERE = Path(__file__).resolve()
 ROOT = HERE.parents[1]
@@ -75,6 +75,35 @@ def _load_curriculum_binding_registry() -> dict[str, Any]:
     return registry
 
 
+def _load_curriculum_authority_record(ref: str) -> dict[str, Any]:
+    try:
+        record = load_repo_json(ref)
+        validate_schema("physics-curriculum-authority-record.schema.json", record)
+    except (json.JSONDecodeError, ValidationError, KeyError, TypeError) as exc:
+        raise ScopedEvidenceError("SCOPED_EVIDENCE_CURRICULUM_AUTHORITY_RECORD_INVALID:" + ref) from exc
+    return record
+
+
+def _validate_authority_record_for_binding(record: dict[str, Any], binding: dict[str, Any], ref: str) -> None:
+    if int(record["grade"]) != int(binding["grade"]) or record["curriculum"] != binding["curriculum"]:
+        raise ScopedEvidenceError("SCOPED_EVIDENCE_CURRICULUM_AUTHORITY_IDENTITY_MISMATCH:" + ref)
+
+    source_roles = {row["source_role"] for row in record["evidence_sources"]}
+    if "CONTENT_SYLLABUS" not in source_roles or not source_roles.intersection({"CURRICULUM_INDEX", "RELEASE_NOTICE"}):
+        raise ScopedEvidenceError("SCOPED_EVIDENCE_CURRICULUM_AUTHORITY_SOURCE_ROLE_INCOMPLETE:" + ref)
+
+    assertions = [
+        row
+        for row in record["scope_assertions"]
+        if row["scope_kind"] == binding["scope_kind"]
+        and row["scope_ref"] == binding["scope_ref"]
+        and row["classification"] == binding["classification"]
+        and set(row["supported_gate_ids"]) == set(binding["required_gate_ids"])
+    ]
+    if len(assertions) != 1:
+        raise ScopedEvidenceError("SCOPED_EVIDENCE_CURRICULUM_AUTHORITY_SCOPE_MISMATCH:" + ref)
+
+
 def resolve_curriculum_binding(envelope: dict[str, Any], registry: dict[str, Any] | None = None) -> dict[str, Any]:
     requested = envelope["requested_curriculum"]
     if requested == "REPOSITORY_GOVERNED_PHYSICS":
@@ -119,7 +148,8 @@ def resolve_curriculum_binding(envelope: dict[str, Any], registry: dict[str, Any
     if set(binding_refs) != set(envelope["curriculum_authority_refs"]):
         raise ScopedEvidenceError("SCOPED_EVIDENCE_CURRICULUM_BINDING_REF_MISMATCH")
     for ref in binding_refs:
-        repo_path(ref)
+        record = _load_curriculum_authority_record(ref)
+        _validate_authority_record_for_binding(record, binding, ref)
     return {
         "state": "BOUND_CONFIRMED",
         "binding_id": binding["binding_id"],
