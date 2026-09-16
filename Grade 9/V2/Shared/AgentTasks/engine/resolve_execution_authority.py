@@ -94,6 +94,39 @@ def _subject_adapter(roadmap: dict[str, Any], subject: str) -> dict[str, Any]:
     return matches[0]
 
 
+def _declared_grades(manifest: dict[str, Any]) -> list[int]:
+    """Read only explicit manifest grade declarations; never infer grade from paths or labels."""
+    values: list[Any]
+    if "grades" in manifest:
+        raw = manifest["grades"]
+        values = raw if isinstance(raw, list) else []
+    elif "grade" in manifest:
+        values = [manifest["grade"]]
+    else:
+        values = []
+
+    declared: list[int] = []
+    for value in values:
+        if isinstance(value, bool):
+            continue
+        if isinstance(value, int):
+            declared.append(value)
+        elif isinstance(value, str) and re.fullmatch(r"[0-9]+", value):
+            declared.append(int(value))
+    return sorted(set(declared))
+
+
+def _generation_authority_scope(task: dict[str, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+    task_grade = int(task["grade"])
+    declared = _declared_grades(manifest)
+    state = "UNDECLARED" if not declared else ("MATCH" if task_grade in declared else "MISMATCH")
+    return {
+        "task_grade": task_grade,
+        "declared_grades": declared,
+        "grade_state": state,
+    }
+
+
 def resolve_authority(
     task: dict[str, Any],
     *,
@@ -126,13 +159,14 @@ def resolve_authority(
     roadmap = _load_json(repo_root / roadmap_binding["path"])
 
     adapter = _subject_adapter(roadmap, task["subject"])
-    bindings.append(
-        _bind_file(
-            repo_root,
-            "SUBJECT_GENERATION_AUTHORITY",
-            adapter["current_authority_manifest_ref"],
-        )
+    subject_manifest_binding = _bind_file(
+        repo_root,
+        "SUBJECT_GENERATION_AUTHORITY",
+        adapter["current_authority_manifest_ref"],
     )
+    bindings.append(subject_manifest_binding)
+    subject_manifest = _load_json(repo_root / subject_manifest_binding["path"])
+    generation_scope = _generation_authority_scope(task, subject_manifest)
 
     counts = Counter(str(row.get("status", "UNKNOWN")) for row in roadmap.get("modules", []))
     learning_state = {
@@ -145,6 +179,7 @@ def resolve_authority(
             "status": adapter["status"],
             "runtime_authority": bool(adapter["runtime_authority"]),
             "current_authority_manifest_ref": adapter["current_authority_manifest_ref"],
+            "generation_authority_scope": generation_scope,
         },
     }
 
@@ -161,6 +196,17 @@ def resolve_authority(
         )
     if not roadmap.get("bulk_population_allowed", False):
         blockers.append(f"SKP bulk population is blocked by roadmap {roadmap['roadmap_id']}.")
+    if generation_scope["grade_state"] == "MISMATCH":
+        blockers.append(
+            f"Bound {adapter['subject']} generation authority explicitly declares grade(s) "
+            f"{generation_scope['declared_grades']} but task grade is {generation_scope['task_grade']}; "
+            "discovery/reconciliation may proceed, but this manifest cannot authorize subject production or Engineering consumption for the task grade."
+        )
+    elif generation_scope["grade_state"] == "UNDECLARED":
+        blockers.append(
+            f"Bound {adapter['subject']} generation authority declares no machine-readable grade scope; "
+            "discovery/reconciliation may proceed, but subject production or Engineering consumption must remain held until grade authority is explicit."
+        )
 
     preflight = {
         "engineering_state": "NOT_EVALUATED",
@@ -169,8 +215,8 @@ def resolve_authority(
         "publication_authorization": "NOT_IMPLIED",
         "blockers": blockers,
         "next_action": (
-            "Read the exact bound authorities, perform only the delegated task, and use the current subject Engineering path. "
-            "Only a governed downstream evaluator may produce Engineering readiness or consumer authorization."
+            "Read the exact bound authorities and perform only the delegated task. Discovery/reconciliation may preserve explicit holds. "
+            "Use a current subject Engineering path only when its declared scope covers the task; only a governed downstream evaluator may produce Engineering readiness or consumer authorization."
         ),
     }
 
@@ -190,6 +236,7 @@ def resolve_authority(
 def render_preflight(resolved: dict[str, Any], task: dict[str, Any]) -> str:
     le = resolved["learning_engineering_state"]
     preflight = resolved["engineering_preflight"]
+    grade_scope = le["subject_adapter"].get("generation_authority_scope")
     lines = [
         "# Engineering Preflight",
         "",
@@ -199,13 +246,20 @@ def render_preflight(resolved: dict[str, Any], task: dict[str, Any]) -> str:
         f"- **LearningEngineering:** `{le['authority_state']}`",
         f"- **SKP bulk population allowed:** `{str(le['bulk_population_allowed']).lower()}`",
         f"- **Subject adapter:** `{le['subject_adapter']['status']}` / runtime authority `{str(le['subject_adapter']['runtime_authority']).lower()}`",
+    ]
+    if grade_scope is not None:
+        lines.append(
+            f"- **Generation-authority grade scope:** task `{grade_scope['task_grade']}` / "
+            f"declared `{grade_scope['declared_grades']}` / `{grade_scope['grade_state']}`"
+        )
+    lines.extend([
         f"- **Engineering state:** `{preflight['engineering_state']}`",
         f"- **Research state:** `{preflight['research_state']}`",
         f"- **Publication:** `{preflight['publication_authorization']}`",
         "",
         "## Bound authority",
         "",
-    ]
+    ])
     for row in resolved["authority_bindings"]:
         lines.append(f"- **{row['authority_class']}:** `{row['path']}` — `{row['sha256']}`")
     lines.extend(["", "## Consumer permissions", ""])
