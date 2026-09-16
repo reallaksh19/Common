@@ -19,6 +19,8 @@ from validate_parallel_join import validate as parallel_join
 from validate_parallel_replan import validate as parallel_replan
 from validate_roadmap_continuity import validate as roadmap_continuity
 from validate_phase_transition_questions import validate as questions
+from validate_question_set import validate as question_sets
+from validate_qualification_receipt import validate as qualifications
 from validate_issue_graph import validate as issue_graph
 from validate_issue_projection_tree import validate as issue_projection_tree
 from validate_issue_closure import validate as issue_closure
@@ -32,8 +34,8 @@ from validate_drift_receipt import validate as drift
 from validate_takeover_certification import validate as takeover
 from validate_baton_readiness import validate as baton_readiness
 
-ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("takeover",takeover)]
-ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_semantics",ep_semantics),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
+ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("question_sets",question_sets),("qualifications",qualifications),("takeover",takeover)]
+ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_semantics",ep_semantics),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions_compat",questions)]
 
 def validate(root:Path):
     e=[];w=[]
