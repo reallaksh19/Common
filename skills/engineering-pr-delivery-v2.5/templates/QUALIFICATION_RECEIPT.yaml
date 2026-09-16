@@ -6,8 +6,14 @@ question_set:
   id: QSET-0001
   path: agents/relay/certifications/qualification/QSET-0001.yaml
 route:
+  route_key: "SERIAL:EP-0001"
+  mode: SERIAL
+  execution_ref: EP-0001
   ep_id: EP-0001
   ep_path: agents/relay/execution-packages/EP-0001.yaml
+  plan_id: null
+  plan_path: null
+  lane_id: null
   roadmap_revision: RM-0001
   work_package: WP-001
   ep_contract_digest: "<sha256>"
@@ -23,7 +29,7 @@ answers:
   - id: Q2
     response: "<candidate reconstruction>"
     outputs:
-      reconstruction_steps: ["<step>" ]
+      reconstruction_steps: ["<step>"]
       intermediate_result: "<intermediate result>"
       expected_result: "<final expected result>"
     evidence: ["<durable calculation/reconstruction basis>"]
@@ -57,19 +63,19 @@ evaluated_by:
 evaluations:
   - id: Q1
     status: PASS
-    basis: ["<why the answer passes>" ]
+    basis: ["<why the answer passes>"]
   - id: Q2
     status: PASS
-    basis: ["<why the answer passes>" ]
+    basis: ["<why the answer passes>"]
   - id: Q3
     status: PASS
-    basis: ["<why the answer passes>" ]
+    basis: ["<why the answer passes>"]
   - id: Q4
     status: PASS
-    basis: ["<why the answer passes>" ]
+    basis: ["<why the answer passes>"]
   - id: Q5
     status: PASS
-    basis: ["<why the answer passes>" ]
+    basis: ["<why the answer passes>"]
 self_evaluation:
   allowed: false
 result: PASS
