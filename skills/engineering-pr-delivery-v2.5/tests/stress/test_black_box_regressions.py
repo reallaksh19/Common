@@ -15,24 +15,38 @@ from validate_checkpoint import validate_file as checkpoint
 
 def dump(path,data):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(yaml.safe_dump(data,sort_keys=False),encoding="utf-8")
 
+def required_projection(state="PENDING",execution_ref="EP-1",receipt=None,basis=None):
+    return {"required":True,"state":state,"operation_id":"PROJ-OP-1","target":"issue:synthetic-active-handover","roadmap_revision":"RM-0001","execution_ref":execution_ref,"receipt":receipt,"basis":basis or []}
+
 class BlackBoxRegressionTests(unittest.TestCase):
     def test_pending_required_projection_is_recoverable_but_not_handover_ready(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,_,_,s=good(root)
-            s["projection"]={"required":True,"state":"PENDING","roadmap_revision":"RM-0001","execution_ref":"EP-1","basis":[]}
+            s["projection"]=required_projection()
             s["relay_readiness"]={"repository_ready":True,"projection_ready":False,"handover_ready":False,"reasons":["Issue projection pending"]}
             dump(root/"agents/relay/REPO_STATE.yaml",s)
             self.assertEqual([],projection(root)[0])
             s["relay_readiness"]["handover_ready"]=True;dump(root/"agents/relay/REPO_STATE.yaml",s)
             self.assertTrue(any("handover_ready" in x for x in projection(root)[0]))
 
-    def test_in_sync_projection_must_bind_current_execution_reference(self):
+    def test_published_unconfirmed_projection_survives_crash_without_duplicate_readiness(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,_,_,s=good(root)
-            s["projection"]={"required":True,"state":"IN_SYNC","roadmap_revision":"RM-0001","execution_ref":"EP-OLD","basis":["issue-comment:synthetic"]}
+            s["projection"]=required_projection("PUBLISHED_UNCONFIRMED",receipt="external-receipt-17")
+            s["relay_readiness"]={"repository_ready":True,"projection_ready":False,"handover_ready":False,"reasons":["Publication observed but not yet reconciled"]}
+            dump(root/"agents/relay/REPO_STATE.yaml",s)
+            errors,warnings=projection(root);self.assertEqual([],errors);self.assertTrue(any("operation_id" in x for x in warnings))
+            self.assertEqual("PROJ-OP-1",s["projection"]["operation_id"])
+
+    def test_in_sync_projection_requires_receipt_basis_and_current_execution_reference(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,_,_,s=good(root)
+            s["projection"]=required_projection("IN_SYNC",execution_ref="EP-OLD",receipt="external-receipt-17",basis=["verified:synthetic"])
             s["relay_readiness"]={"repository_ready":True,"projection_ready":True,"handover_ready":True,"reasons":[]}
             dump(root/"agents/relay/REPO_STATE.yaml",s)
             self.assertTrue(any("execution_ref" in x for x in projection(root)[0]))
+            s["projection"]["execution_ref"]="EP-1";s["projection"]["receipt"]=None;dump(root/"agents/relay/REPO_STATE.yaml",s)
+            self.assertTrue(any("receipt" in x for x in projection(root)[0]))
 
     def test_parallel_route_resolves_from_checked_out_branch_and_rejects_unknown(self):
         with tempfile.TemporaryDirectory() as td:
