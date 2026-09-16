@@ -46,6 +46,7 @@ def build(manifest:dict)->dict[str,dict]:
         "active_ep":{"id":None,"path":None,"state":"NONE"},
         "last_checkpoint":{"id":"NONE","path":None},
         "predecessor_join":{"id":None,"path":None},
+        "predecessor_replan":{"id":None,"path":None},
         "progress":{"overall_percent":0,"phase_percent":0,"ep_percent":0,"basis_revision":"PB-0001"},
         "status_planes":{
             "execution":{"state":"WAITING","can_continue":False,"material_authority":"NONE","next_action":init["next_action"]},
