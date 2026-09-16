@@ -434,6 +434,52 @@ document.addEventListener("DOMContentLoaded", () => {
     mutation_mode: "READ_ONLY"
   };
 
+  const CBSE_TRIG_PRESET = {
+    subject: "MATHEMATICS",
+    subtopic_request: "Trigonometric Identities and Circle Tangents",
+    current_grade: 10,
+    target_program_or_exam: "CBSE Class 10 Board Examination",
+    learning_purpose: "CONSOLIDATION",
+    learner_knowledge_mode: "KNOWN_PERCENT",
+    learner_knowledge_percent: 88,
+    knowledge_source_ref: "CBSE_PRE_BOARD_EXAM_1",
+    knowledge_calibration_policy_ref: "POL-MATH-KNOW-CALIB-V1",
+    requested_engineering_depth: "STANDARD",
+    core1_difficulty_control: "DERIVE",
+    owner_difficulty_override: null,
+    pedagogy_research_mode: "DEFAULT",
+    web_research_allowed: false,
+    local_question_bank_ref: "LOCAL_FIXTURE_QBANK_G10_CBSE_TRIG_CIRCLES",
+    owner_scope_notes: "CBSE Class 10 Board Trigonometry and Circle Tangency Invariants. Non-authoritative.",
+    repository: "reallaksh19/Common",
+    branch_or_ref: "v2-math-core1a-textbook-quality",
+    run_mode: "STRESS_TEST",
+    mutation_mode: "READ_ONLY"
+  };
+
+  const IOQM_NT_PRESET = {
+    subject: "MATHEMATICS",
+    subtopic_request: "Number Theory, Euclid Division and Diophantine Equations",
+    current_grade: 9,
+    target_program_or_exam: "IOQM / PRMO Mathematical Olympiad",
+    learning_purpose: "COMPETITIVE_EXAM",
+    learner_knowledge_mode: "UNKNOWN",
+    learner_knowledge_percent: null,
+    knowledge_source_ref: "",
+    knowledge_calibration_policy_ref: "",
+    requested_engineering_depth: "RESEARCH",
+    core1_difficulty_control: "OWNER_OVERRIDE",
+    owner_difficulty_override: "HARD",
+    pedagogy_research_mode: "DEFAULT",
+    web_research_allowed: true,
+    local_question_bank_ref: "LOCAL_FIXTURE_QBANK_G9_IOQM_NT",
+    owner_scope_notes: "IOQM Olympiad Number Theory and Diophantine Equations Fixture. Non-authoritative.",
+    repository: "reallaksh19/Common",
+    branch_or_ref: "v2-math-core1a-textbook-quality",
+    run_mode: "STRESS_TEST",
+    mutation_mode: "READ_ONLY"
+  };
+
   const bindPresetBtn = (btnId, fixturePath, fallbackPreset) => {
     const btn = document.getElementById(btnId);
     if (!btn) return;
@@ -448,6 +494,8 @@ document.addEventListener("DOMContentLoaded", () => {
   bindPresetBtn("loadJeeFixtureBtn", "fixtures/theory_of_equations_jee_fixture.json", JEE_PRESET);
   bindPresetBtn("loadIoqmFixtureBtn", "fixtures/ioqm_olympiad_geometry_fixture.json", IOQM_PRESET);
   bindPresetBtn("loadCbseFixtureBtn", "fixtures/cbse_linear_equations_fixture.json", CBSE_PRESET);
+  bindPresetBtn("loadCbseTrigBtn", "fixtures/cbse_g10_trig_circles_fixture.json", CBSE_TRIG_PRESET);
+  bindPresetBtn("loadIoqmNtBtn", "fixtures/ioqm_g9_number_theory_fixture.json", IOQM_NT_PRESET);
 
   const copyCliBtn = document.getElementById("copyCliBtn");
   if (copyCliBtn) {

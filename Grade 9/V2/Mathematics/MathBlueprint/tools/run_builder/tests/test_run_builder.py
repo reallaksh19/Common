@@ -146,10 +146,32 @@ class RunBuilderTests(unittest.TestCase):
         self.assertEqual(manifest["engineering"]["requested_depth"], "STANDARD")
         self.assertIn("CBSE Board Examination", prompt)
 
+    def test_cbse_g10_trig_circles_fixture_compiles_successfully(self):
+        fixture_path = TOOL_DIR / "fixtures" / "cbse_g10_trig_circles_fixture.json"
+        cfg = json.loads(fixture_path.read_text(encoding="utf-8"))
+        manifest = compile_manifest(cfg)
+        prompt = compile_prompt(cfg)
+        self.assertEqual(manifest["validation"]["status"], "VALID")
+        self.assertEqual(manifest["learner"]["knowledge_percent"], 88)
+        self.assertEqual(manifest["engineering"]["requested_depth"], "STANDARD")
+        self.assertEqual(manifest["learner"]["current_grade"], 10)
+        self.assertIn("CBSE Class 10 Board Examination", prompt)
+
+    def test_ioqm_g9_number_theory_fixture_compiles_successfully(self):
+        fixture_path = TOOL_DIR / "fixtures" / "ioqm_g9_number_theory_fixture.json"
+        cfg = json.loads(fixture_path.read_text(encoding="utf-8"))
+        manifest = compile_manifest(cfg)
+        prompt = compile_prompt(cfg)
+        self.assertEqual(manifest["validation"]["status"], "VALID")
+        self.assertEqual(manifest["learner"]["knowledge_mode"], "UNKNOWN")
+        self.assertEqual(manifest["core1_control"]["owner_difficulty_override"], "HARD")
+        self.assertEqual(manifest["learner"]["current_grade"], 9)
+        self.assertIn("IOQM / PRMO Mathematical Olympiad", prompt)
+
     def test_validate_all_fixtures_passes_all_curated_fixtures(self):
         from compile_run import validate_all_fixtures
         results = validate_all_fixtures()
-        self.assertGreaterEqual(len(results), 3)
+        self.assertEqual(len(results), 5)
         for r in results:
             self.assertEqual(r["status"], "VALID")
             self.assertEqual(r["error_count"], 0)
